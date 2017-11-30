@@ -14,3 +14,9 @@ python_version = "3.6"
 
 flask = "==0.12.2"
 structlog = "==17.2.0"
+
+
+[dev-packages]
+
+pytest = "==3.3.0"
+pytest-cov = "==2.5.1"
