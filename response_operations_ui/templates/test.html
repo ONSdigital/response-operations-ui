@@ -1,0 +1,19 @@
+<html>
+    <head>
+        {% assets "scss_all" %}
+        <link rel=stylesheet type=text/css href="{{ ASSET_URL }}">
+        {% endassets %}
+        <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js" type="text/javascript"></script>
+        {% assets "js_all" %}
+        <script type="text/javascript" src="{{ ASSET_URL }}"></script>
+        {% endassets %}
+    </head>
+    <body>
+        <div id="test-div">
+            Hello
+        </div>
+        <button id="test-button">
+            Change
+        </button>
+    </body>
+</html>
