@@ -11,3 +11,8 @@ class Config(object):
 class DevelopmentConfig(Config):
     DEBUG = os.getenv('DEBUG', True)
     LOGGING_LEVEL = os.getenv('LOGGING_LEVEL', 'DEBUG')
+
+
+class TestingConfig(DevelopmentConfig):
+    DEBUG = os.getenv('DEBUG', True)
+    Testing = True
