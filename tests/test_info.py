@@ -36,3 +36,13 @@ class TestInfo(unittest.TestCase):
         self.assertEqual(response.status_code, 200)
         self.assertIn('"name": "response-operations-ui"'.encode(), response.data)
         self.assertIn('"test": "test"'.encode(), response.data)
+
+    def test_info_with_non_json_git_info(self):
+        with open('git_info', 'w') as outfile:
+            outfile.write('"test": "test"')
+
+        response = self.app.get("/info")
+
+        self.assertEqual(response.status_code, 200)
+        self.assertIn('"name": "response-operations-ui"'.encode(), response.data)
+        self.assertNotIn('"test": "test"'.encode(), response.data)

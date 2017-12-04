@@ -1,9 +1,14 @@
-import json
+from json import JSONDecodeError, loads
+import logging
 from pathlib import Path
 
 from flask import make_response, jsonify
+from structlog import wrap_logger
 
 from response_operations_ui import app
+
+
+logger = wrap_logger(logging.getLogger(__name__))
 
 
 @app.route('/info', methods=['GET'])
@@ -12,7 +17,10 @@ def get_info():
     _health_check = {}
     if Path('git_info').exists():
         with open('git_info') as io:
-            _health_check = json.loads(io.read())
+            try:
+                _health_check = loads(io.read())
+            except JSONDecodeError as e:
+                logger.exception('Failed to decode git_info json', exception=e)
 
     info = {
         "name": 'response-operations-ui',
