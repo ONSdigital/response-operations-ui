@@ -20,6 +20,11 @@ Once these have been installed the app can be run from the root directory using 
 pipenv run python run.py
 ```
 
+Alternatively run with gunicorn
+```
+$ pipenv run gunicorn -b 0.0.0.0:8085 response_operations_ui:app -w=4
+```
+
 Frontend development
 -------------------
 Styling is implemented using scss and javascript. You can find the styling files in [the static folder](response_operations_ui/static)
@@ -43,9 +48,4 @@ $ pipenv run python run_tests.py
 Run linting (the travis build sets a custom max line length)
 ```
 $ pipenv check --style . --max-line-length 100
-```
-
-Alternatively run with gunicorn
-```
-$ pipenv run gunicorn -b 0.0.0.0:8085 response_operations_ui:app -w=4
 ```
