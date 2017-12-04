@@ -17,8 +17,6 @@ def logger_initial_config(service_name=None,
         log_level = os.getenv('LOGGING_LEVEL')
     if not logger_format:
         logger_format = "%(message)s"
-    if not service_name:
-        service_name = os.getenv('NAME')
     try:
         indent = int(os.getenv('JSON_INDENT_LOGGING'))
     except TypeError:
