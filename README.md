@@ -44,3 +44,8 @@ Run linting (the travis build sets a custom max line length)
 ```
 $ pipenv check --style . --max-line-length 100
 ```
+
+Alternatively run with gunicorn
+```
+$ pipenv run gunicorn -b 0.0.0.0:8085 response_operations_ui:app -w=4
+```
