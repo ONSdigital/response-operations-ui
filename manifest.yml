@@ -1,0 +1,7 @@
+applications:
+- name: response-operations-ui
+  disk_quota: 1G
+  instances: 1
+  memory: 512M
+  stack: cflinuxfs2
+  timeout: 180
