@@ -25,3 +25,4 @@ logger_initial_config(service_name='response-operations-ui', log_level=app.confi
 
 
 from response_operations_ui.views import hello  # NOQA # pylint: disable=wrong-import-position
+from response_operations_ui.views import info  # NOQA # pylint: disable=wrong-import-position
