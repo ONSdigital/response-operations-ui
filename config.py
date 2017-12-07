@@ -7,6 +7,8 @@ class Config(object):
     PORT = os.getenv('PORT', 8085)
     LOGGING_LEVEL = os.getenv('LOGGING_LEVEL', 'INFO')
 
+    BACKSTAGE_API_URL = os.getenv('BACKSTAGE_API_URL', 'http://localhost:8001')
+
 
 class DevelopmentConfig(Config):
     DEBUG = os.getenv('DEBUG', True)

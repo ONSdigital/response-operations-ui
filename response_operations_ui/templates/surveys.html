@@ -1,0 +1,59 @@
+{% extends "layouts/base.html" %}
+{% block page_title %}Surveys | Survey Data Collection{% endblock %}
+
+{% block main %}
+<div class="container page__container">
+  <div role="main" id="main" class="page__main">
+    <h1 class="neptune">Surveys</h1>
+    <div class="grid">
+      <div class="grid__col col-8@l">
+        <div class="survey-list">
+
+          <table class="table__dense" summary="Surveys in the system">
+            <thead class="table--head">
+              <tr class="table--row">
+                <th scope="col" class="table--header--cell tbl-surveys-id">
+                  ID
+                </th>
+                <th scope="col" class="table--header--cell tbl-surveys-title">
+                  Title
+                </th>
+                <th scope="col" class="table--header--cell tbl-surveys-abbreviation">
+                  Abbreviation
+                </th>
+                <th scope="col" class="table--header--cell tbl-surveys-legal-basis">
+                  Legal basis
+                </th>
+                <th scope="col" class="table--header--cell tbl-surveys-frequency">
+                  Frequency
+                </th>
+              </tr>
+            </thead>
+
+            <tbody>
+              <tr class="table--row table--row__selectable">
+                <td class="table--cell tbl-surveys-id">
+                  023
+                </td>
+                <td class="table--cell tbl-surveys-title">
+                  <a href="">Monthly Business Survey - Retail Sales Index</a>
+                </td>
+                <td class="table--cell tbl-surveys-abbreviation">
+                  RSI
+                </td>
+                <td class="table--cell tbl-surveys-legal-basis">
+                  Statistics of Trade Act 1947
+                </td>
+                <td class="table--cell tbl-surveys-frequency">
+                  Monthly
+                </td>
+              </tr>
+            </tbody>
+          </table>
+
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

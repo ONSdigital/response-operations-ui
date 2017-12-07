@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="en">
+
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, shrink-to-fit=no">
+    <meta name="author" content="Survey Data Collection team for ONS" />
+    <meta name="description" content="ONS Business Surveys" />
+
+    <title>{% block page_title %}{{ _('Survey Data Collection') }}{% endblock page_title %}</title>
+
+    {% assets "scss_all" %}
+    <link rel=stylesheet type=text/css href="{{ ASSET_URL }}">
+    {% endassets %}
+    <!--<link href="/images/favicon.ico" rel="Shortcut Icon" />-->
+  </head>
+
+  <body>
+    <div class="page account">
+      {% include 'partials/header.html' %}
+      {%- block main %}{% endblock main -%}
+    </div>
+      {% include 'partials/footer.html' %}
+  </body>
+
+</html>
