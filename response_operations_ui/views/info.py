@@ -20,7 +20,7 @@ def get_info():
             try:
                 _health_check = loads(io.read())
             except JSONDecodeError as e:
-                logger.exception('Failed to decode git_info json', exception=e)
+                logger.error('Failed to decode git_info json', exc_info=e)
 
     info = {
         "name": 'response-operations-ui',

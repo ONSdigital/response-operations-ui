@@ -3,7 +3,7 @@ import os
 
 from structlog import configure
 from structlog.stdlib import add_log_level, filter_by_level
-from structlog.processors import JSONRenderer, TimeStamper
+from structlog.processors import format_exc_info, JSONRenderer, TimeStamper
 
 
 def logger_initial_config(service_name=None,
@@ -32,6 +32,6 @@ def logger_initial_config(service_name=None,
         return event_dict
 
     logging.basicConfig(level=log_level, format=logger_format)
-    configure(processors=[add_log_level, filter_by_level, add_service,
+    configure(processors=[add_log_level, filter_by_level, add_service, format_exc_info,
                           TimeStamper(fmt=logger_date_format, utc=True, key="created_at"),
                           JSONRenderer(indent=indent)])
