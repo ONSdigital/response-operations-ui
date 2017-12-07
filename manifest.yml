@@ -1,6 +1,5 @@
 applications:
 - name: response-operations-ui
-  buildpack: https://github.com/cloudfoundry/staticfile-buildpack.git
   disk_quota: 1G
   instances: 1
   memory: 512M
