@@ -1,0 +1,108 @@
+*,
+*:before,
+*:after {
+  box-sizing: inherit;
+}
+
+html {
+  font-size: 16px;
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+}
+
+body {
+  position: relative;
+  height: auto;
+  min-height: 100%;
+  font-family: "Lato", "Helvetica Neue", Arial, sans-serif;
+  color: #222;
+  margin: 0;
+}
+
+h1, h2, h3, h4, h5 {
+    font-size: 16px;
+    font-size: 1rem;
+    margin: 0 0 16px;
+    margin: 0 0 1rem;
+    line-height: 1.2;
+}
+
+.page {
+  display: -webkit-box;
+  display: -webkit-flex;
+  display: -ms-flexbox;
+  display: flex;
+  min-height: 100%;
+  -webkit-box-orient: vertical;
+  -webkit-box-direction: normal;
+  -webkit-flex-direction: column;
+  -ms-flex-direction: column;
+  flex-direction: column;
+  width: 100%;
+  overflow-x: hidden;
+}
+
+.page__content {
+  -webkit-box-flex: 1;
+  -webkit-flex: 1 0 auto;
+  -ms-flex: 1 0 auto;
+  flex: 1 0 auto;
+  padding-bottom: 1px;
+  position: relative;
+  overflow-x: hidden;
+}
+
+.container {
+    max-width: 1280px;
+    margin: 0 auto;
+    padding: 0 1rem;
+    box-sizing: border-box;
+    width: 100%;
+}
+
+.page__container {
+    -webkit-transition: -webkit-transform 200ms ease-out;
+    transition: -webkit-transform 200ms ease-out;
+    transition: transform 200ms ease-out;
+    transition: transform 200ms ease-out, -webkit-transform 200ms ease-out;
+}
+
+.logo {
+    display: inline-block;
+}
+
+img {
+    border: 0;
+    vertical-align: middle;
+    max-width: 100%;
+    height: auto;
+}
+
+.neptune {
+  font-weight: 600;
+  line-height: 1.4;
+  font-size: 1.22222rem;
+}
+
+.grid {
+    box-sizing: border-box;
+    font-size: 0;
+    margin-left: -16px;
+    margin-left: -1rem;
+}
+
+.grid__col {
+    display: inline-block;
+    width: 100%;
+    vertical-align: top;
+    box-sizing: border-box;
+    background-clip: content-box;
+    font-size: 16px;
+    font-size: 1rem;
+    padding-left: 16px;
+    padding-left: 1rem;
+}
+
+.col-8\@l {
+    width: calc(100% / 1.5);
+}

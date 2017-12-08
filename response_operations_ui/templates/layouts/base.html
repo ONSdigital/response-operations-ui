@@ -12,15 +12,20 @@
     {% assets "scss_all" %}
     <link rel=stylesheet type=text/css href="{{ ASSET_URL }}">
     {% endassets %}
+    <!--{% assets "js_all" %}-->
+    <!--<script type="text/javascript" src="{{ ASSET_URL }}"></script>-->
+    <!--{% endassets %}-->
     <!--<link href="/images/favicon.ico" rel="Shortcut Icon" />-->
   </head>
 
   <body>
     <div class="page account">
-      {% include 'partials/header.html' %}
-      {%- block main %}{% endblock main -%}
+      <div class="page__content">
+        {% include 'partials/header.html' %}
+        {%- block main %}{% endblock main -%}
+      </div>
     </div>
-      {% include 'partials/footer.html' %}
+    {% include 'partials/footer.html' %}
   </body>
 
 </html>
