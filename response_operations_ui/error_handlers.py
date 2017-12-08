@@ -1,6 +1,6 @@
 import logging
 
-from requests import ConnectionError
+from requests import RequestException
 from structlog import wrap_logger
 
 from response_operations_ui import app
@@ -17,7 +17,7 @@ def api_error(error):
     return "FAIL"
 
 
-@app.errorhandler(ConnectionError)
+@app.errorhandler(RequestException)
 def connection_error(error):
     logger.error('Failed to connect to external service', url=error.request.url)
     return "FAIL"
