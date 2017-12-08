@@ -29,20 +29,22 @@
             </thead>
 
             <tbody>
+              {% for survey in survey_list %}
               <tr class="table--row table--row__selectable">
                 <td class="table--cell tbl-surveys-id">
-                  023
+                  {{ survey.surveyRef }}
                 </td>
                 <td class="table--cell tbl-surveys-title">
-                  <a href="">Monthly Business Survey - Retail Sales Index</a>
+                  {{ survey.longName }}
                 </td>
                 <td class="table--cell tbl-surveys-abbreviation">
-                  RSI
+                  {{ survey.shortName }}
                 </td>
                 <td class="table--cell tbl-surveys-legal-basis">
-                  Statistics of Trade Act 1947
+                  {{ survey.legal_basis }}
                 </td>
               </tr>
+              {% endfor %}
             </tbody>
           </table>
 
