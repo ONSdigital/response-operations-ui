@@ -19,9 +19,6 @@ pyscss = "==1.3.5"
 cssmin = "==0.2.0"
 jsmin = "==2.2.2"
 gunicorn = "==19.7.1"
-scss = "*"
-sass = "*"
-requests-mock = "*"
 
 
 [dev-packages]
@@ -30,3 +27,4 @@ codecov = "==2.0.9"
 pytest = "==3.3.0"
 pytest-cov = "==2.5.1"
 testfixtures = "==5.3.1"
+requests-mock = "==1.4.0"

@@ -13,7 +13,7 @@ assets = Environment(app)
 assets.url = app.static_url_path
 scss_min = Bundle('scss/*', filters=['pyscss', 'cssmin'], output='minimised/all.min.css')
 assets.register('scss_all', scss_min)
-js_min = Bundle('js/*', filters='jsmin', output='minimised/all.js.min')
+js_min = Bundle('js/*', filters='jsmin', output='minimised/all.min.js')
 assets.register('js_all', js_min)
 
 app_config = 'config.{}'.format(os.environ.get('APP_SETTINGS', 'Config'))
