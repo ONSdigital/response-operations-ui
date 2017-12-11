@@ -13,7 +13,7 @@ with open('tests/test_data/survey/survey_list.json') as json_data:
     survey_list = json.load(json_data)
 
 
-class TestInfo(unittest.TestCase):
+class TestSurvey(unittest.TestCase):
 
     def setUp(self):
         self.app = app.test_client()

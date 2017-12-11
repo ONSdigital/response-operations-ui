@@ -17,7 +17,6 @@ def get_surveys_list():
 
     response = requests.get(url)
     if response.status_code != 200:
-        logger.error('Failed to retrieve surveys list')
         raise ApiError(response)
 
     logger.debug('Successfully retrieved surveys list')
