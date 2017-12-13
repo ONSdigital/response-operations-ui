@@ -96,4 +96,5 @@ ENV/
 .ropeproject
 .build
 
-*.min
+all.min.css
+all.min.js

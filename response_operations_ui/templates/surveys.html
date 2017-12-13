@@ -1,0 +1,56 @@
+{% extends "layouts/base.html" %}
+{% block page_title %}Surveys | Survey Data Collection{% endblock %}
+
+{% block main %}
+</br>
+<div class="container page__container">
+  <div role="main" id="main" class="page__main">
+    <h1 class="neptune">Surveys</h1>
+    <div class="grid">
+      <div class="grid__col col-8@l">
+        <div class="survey-list">
+
+          <table class="table__dense" summary="Surveys in the system">
+            <thead class="table--head">
+              <tr class="table--row">
+                <th scope="col" class="table--header--cell tbl-surveys-id">
+                  ID
+                </th>
+                <th scope="col" class="table--header--cell tbl-surveys-title">
+                  Title
+                </th>
+                <th scope="col" class="table--header--cell tbl-surveys-abbreviation">
+                  Abbreviation
+                </th>
+                <th scope="col" class="table--header--cell tbl-surveys-legal-basis">
+                  Legal basis
+                </th>
+              </tr>
+            </thead>
+
+            <tbody>
+              {% for survey in survey_list %}
+              <tr class="table--row table--row__selectable">
+                <td class="table--cell tbl-surveys-id">
+                  {{ survey.surveyRef }}
+                </td>
+                <td class="table--cell tbl-surveys-title">
+                  {{ survey.longName }}
+                </td>
+                <td class="table--cell tbl-surveys-abbreviation">
+                  {{ survey.shortName }}
+                </td>
+                <td class="table--cell tbl-surveys-legal-basis">
+                  {{ survey.legal_basis }}
+                </td>
+              </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}
