@@ -10,7 +10,7 @@
       <div class="grid__col col-8@l">
         <div class="survey-list">
 
-          <table class="table__dense" summary="Surveys in the system">
+          <table id="tbl-surveys" class="table__dense" summary="Surveys in the system">
             <thead class="table--head">
               <tr class="table--row">
                 <th scope="col" class="table--header--cell tbl-surveys-id">
@@ -31,16 +31,16 @@
             <tbody>
               {% for survey in survey_list %}
               <tr class="table--row table--row__selectable">
-                <td class="table--cell tbl-surveys-id">
+                <td name="tbl-surveys-id" class="table--cell tbl-surveys-id">
                   {{ survey.surveyRef }}
                 </td>
-                <td class="table--cell tbl-surveys-title">
+                <td name="tbl-surveys-title" class="table--cell tbl-surveys-title">
                   {{ survey.longName }}
                 </td>
-                <td class="table--cell tbl-surveys-abbreviation">
+                <td name="tbl-surveys-abbreviation" class="table--cell tbl-surveys-abbreviation">
                   {{ survey.shortName }}
                 </td>
-                <td class="table--cell tbl-surveys-legal-basis">
+                <td name="tbl-surveys-legal-basis" class="table--cell tbl-surveys-legal-basis">
                   {{ survey.legal_basis }}
                 </td>
               </tr>
