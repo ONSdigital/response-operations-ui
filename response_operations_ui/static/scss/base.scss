@@ -7,6 +7,7 @@
 html {
   font-size: 16px;
   line-height: 1.6;
+  -ms-text-size-adjust: 100%;
   -webkit-font-smoothing: antialiased;
 }
 
@@ -107,9 +108,18 @@ img {
     width: calc(100% / 1.5);
 }
 
+.saturn {
+    font-size: 1.55556rem;
+}
+
 .jupiter {
     font-size: 31.5px;
     font-size: 2rem;
     font-weight: 600;
     line-height: 1.4;
+}
+
+.u-pt-m {
+    padding-top: 32px;
+    padding-top: 2rem;
 }

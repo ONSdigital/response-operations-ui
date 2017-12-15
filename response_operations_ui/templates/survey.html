@@ -7,7 +7,7 @@
   <div role="main" id="main" class="page__main">
   <h1 class="jupiter">{{survey.longName}}</h1>
 
-  <div class="grid">
+    <div class="grid">
       <div class="grid__col col-8@l">
         <div class="">
           <dl class="survey-info info-panel">
@@ -36,6 +36,39 @@
               {{survey.legalBasis}}
             </dd>
           </dl>
+        </div>
+        <div class="ce-list">
+          <h2 class="saturn u-pt-m">Collection exercises for {{survey.shortName}}</h2>
+          <table class="table__dense" summary="Collection exercises for the MWSS survey">
+            <thead class="table--head">
+              <tr class="table--row">
+                <th scope="col" class="table--header--cell tbl-ce-period">
+                  Period
+                </th>
+                <th scope="col" class="table--header--cell tbl-ce-respondent-info">
+                  Shown to respondent as
+                </th>
+                <th scope="col" class="table--header--cell tbl-ce-status">
+                  Status
+                </th>
+              </tr>
+            </thead>
+            <tbody>
+              {% for exercise in collection_exercises %}
+              <tr class="table--row">
+                <td class="table--cell tbl-ce-period">
+                  {{ exercise.name }}
+                </td>
+                <td class="table--cell tbl-ce-respondent-info">
+                  January 2018
+                </td>
+                <td class="table--cell tbl-ce-status">
+                  Scheduled
+                </td>
+              </tr>
+              {% endfor %}
+            </tbody>
+          </table>
         </div>
       </div>
     </div>

@@ -34,5 +34,7 @@ def view_surveys():
 
 @app.route('/surveys/<short_name>', methods=['GET'])
 def view_survey(short_name):
-    survey = survey_controllers.get_survey(short_name)
-    return render_template('survey.html', survey=survey)
+    survey_details = survey_controllers.get_survey(short_name)
+    return render_template('survey.html',
+                           survey=survey_details['survey'],
+                           collection_exercises=survey_details['collection_exercises'])
