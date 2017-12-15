@@ -12,23 +12,7 @@ logger = wrap_logger(logging.getLogger(__name__))
 
 @app.route('/', methods=['GET'])
 def view_surveys():
-    # survey_list = survey_controllers.get_surveys_list()
-    survey_list = [
-        {
-            "id": "cb0711c3-0ac8-41d3-ae0e-567e5ea1ef87",
-            "shortName": "RSI",
-            "longName": "Monthly Business Survey - Retail Sales Index",
-            "surveyRef": "023",
-            "legal_basis": "Statistics of Trade Act 1947"
-        },
-        {
-            "id": "cb0711c3-0ac8-41d3-ae0e-567e5ea1ef88",
-            "shortName": "BRUS",
-            "longName": "Business Register and Umployment Survey",
-            "surveyRef": "222",
-            "legal_basis": "Statistics of Trade Act 1947"
-        }
-    ]
+    survey_list = survey_controllers.get_surveys_list()
     return render_template('surveys.html', survey_list=survey_list)
 
 
