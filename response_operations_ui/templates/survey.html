@@ -1,0 +1,44 @@
+{% extends "layouts/base.html" %}
+{% block page_title %}{{survey.shortName}} | Surveys | Survey Data Collection{% endblock %}
+
+{% block main %}
+</br>
+<div class="container page__container">
+  <div role="main" id="main" class="page__main">
+  <h1 class="jupiter">{{survey.longName}}</h1>
+
+  <div class="grid">
+      <div class="grid__col col-8@l">
+        <div class="">
+          <dl class="survey-info info-panel">
+            <dt class="survey-info__title">
+              Survey ID:
+            </dt>
+            <dd class="survey-info__data">
+              {{survey.surveyRef}}
+            </dd>
+            <dt class="survey-info__title">
+              Title:
+            </dt>
+            <dd class="survey-info__data">
+              {{survey.longName}}
+            </dd>
+            <dt class="survey-info__title">
+              Abbreviation:
+            </dt>
+            <dd class="survey-info__data">
+              {{survey.shortName}}
+            </dd>
+            <dt class="survey-info__title">
+              Legal basis:
+            </dt>
+            <dd class="survey-info__data">
+              {{survey.legalBasis}}
+            </dd>
+          </dl>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}
