@@ -54,10 +54,10 @@
               {% for exercise in collection_exercises %}
               <tr class="table--row">
                 <td class="table--cell tbl-ce-period">
-                  201801
+                  {{exercise.exerciseRef}}
                 </td>
                 <td class="table--cell tbl-ce-respondent-info">
-                  January 2018
+                  {{exercise.userDescription}}
                 </td>
               </tr>
               {% endfor %}
