@@ -10,36 +10,36 @@
     <div class="grid">
       <div class="grid__col col-8@l">
         <div class="">
-          <dl class="survey-info info-panel">
+          <dl class="survey-info info-panel" id="survey-attributes">
             <dt class="survey-info__title">
               Survey ID:
             </dt>
-            <dd class="survey-info__data">
+            <dd class="survey-info__data" name="survey-id">
               {{survey.surveyRef}}
             </dd>
             <dt class="survey-info__title">
               Title:
             </dt>
-            <dd class="survey-info__data">
+            <dd class="survey-info__data" name="survey-title">
               {{survey.longName}}
             </dd>
             <dt class="survey-info__title">
               Abbreviation:
             </dt>
-            <dd class="survey-info__data">
+            <dd class="survey-info__data" name="survey-abbreviation">
               {{survey.shortName}}
             </dd>
             <dt class="survey-info__title">
               Legal basis:
             </dt>
-            <dd class="survey-info__data">
+            <dd class="survey-info__data" name="survey-legal-basis">
               {{survey.legalBasis}}
             </dd>
           </dl>
         </div>
         <div class="ce-list">
           <h2 class="saturn u-pt-m">Collection exercises for {{survey.shortName}}</h2>
-          <table class="table__dense" summary="Collection exercises for the MWSS survey">
+          <table class="table__dense" summary="Collection exercises for the MWSS survey" id="tbl-collection-exercise">
             <thead class="table--head">
               <tr class="table--row">
                 <th scope="col" class="table--header--cell tbl-ce-period">
@@ -53,10 +53,10 @@
             <tbody>
               {% for exercise in collection_exercises %}
               <tr class="table--row">
-                <td class="table--cell tbl-ce-period">
+                <td class="table--cell tbl-ce-period" name="tbl-ce-period">
                   {{exercise.exerciseRef}}
                 </td>
-                <td class="table--cell tbl-ce-respondent-info">
+                <td class="table--cell tbl-ce-respondent-info" name="tbl-ce-shown-as">
                   {{exercise.userDescription}}
                 </td>
               </tr>
