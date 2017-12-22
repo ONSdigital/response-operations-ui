@@ -13,11 +13,22 @@ logger = wrap_logger(logging.getLogger(__name__))
 
 def get_surveys_list():
     logger.debug('Retrieving surveys list')
-    url = '{}/{}'.format(app.config['BACKSTAGE_API_URL'], 'survey/surveys')
-
+    url = f'{app.config["BACKSTAGE_API_URL"]}/survey/surveys'
     response = requests.get(url)
     if response.status_code != 200:
         raise ApiError(response)
 
     logger.debug('Successfully retrieved surveys list')
+    return json.loads(response.text)
+
+
+def get_survey(short_name):
+    logger.debug('Retrieving survey', short_name=short_name)
+    url = f'{app.config["BACKSTAGE_API_URL"]}/survey/shortname/{short_name}'
+
+    response = requests.get(url)
+    if response.status_code != 200:
+        raise ApiError(response)
+
+    logger.debug('Successfully retrieved survey', short_name=short_name)
     return json.loads(response.text)

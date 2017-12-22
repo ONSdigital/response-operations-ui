@@ -8,9 +8,12 @@ import requests_mock
 from response_operations_ui import app
 
 
-url_get_survey_list = '{}/{}'.format(app.config['BACKSTAGE_API_URL'], 'survey/surveys')
+url_get_survey_list = f'{app.config["BACKSTAGE_API_URL"]}/survey/surveys'
 with open('tests/test_data/survey/survey_list.json') as json_data:
     survey_list = json.load(json_data)
+url_get_survey_by_short_name = f'{app.config["BACKSTAGE_API_URL"]}/survey/shortname/bres'
+with open('tests/test_data/survey/survey.json') as json_data:
+    survey_info = json.load(json_data)
 
 
 class TestSurvey(unittest.TestCase):
@@ -42,6 +45,23 @@ class TestSurvey(unittest.TestCase):
         mock_request.get(url_get_survey_list, exc=RequestException(request=MagicMock()))
 
         response = self.app.get("/")
+
+        self.assertEqual(response.status_code, 200)
+        self.assertIn("FAIL".encode(), response.data)
+
+    @requests_mock.mock()
+    def test_survey_view(self, mock_request):
+        mock_request.get(url_get_survey_by_short_name, json=survey_info)
+
+        response = self.app.get("/surveys/bres")
+
+        self.assertEqual(response.status_code, 200)
+
+    @requests_mock.mock()
+    def test_survey_view_fail(self, mock_request):
+        mock_request.get(url_get_survey_by_short_name, status_code=500)
+
+        response = self.app.get("/surveys/bres")
 
         self.assertEqual(response.status_code, 200)
         self.assertIn("FAIL".encode(), response.data)
