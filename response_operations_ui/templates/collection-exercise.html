@@ -5,7 +5,7 @@
 <div class="container page__container">
   <div role="main" id="main" class="page__main">
     <br/>
-    <h1 class="jupiter">{{ce.shortName}} {{period}}</h1>
+    <h1 class="jupiter">{{survey.shortName}} {{ce.name}}</h1>
 
     <div class="grid">
       <div class="grid__col col-5@l"></div>
@@ -22,7 +22,7 @@
                   Survey ID / Abbreviation / Title
                 </td>
                 <td class="table--cell tbl-ce-value">
-                  {{ce.surveyRef}} - {{ce.longName}} ({{ce.shortName}})
+                  {{survey.surveyRef}} - {{survey.longName}} ({{survey.shortName}})
                 </td>
               </tr>
 
@@ -31,7 +31,16 @@
                   Period
                 </td>
                 <td class="table--cell tbl-ce-">
-                  {{period}}
+                  {{ce.name}}
+                </td>
+              </tr>
+
+              <tr class="table--row">
+                <td class="table--cell tbl-ce-">
+                  Shown to respondent as
+                </td>
+                <td class="table--cell tbl-ce-">
+                  {{ce.userDescription}}
                 </td>
               </tr>
             </tbody>

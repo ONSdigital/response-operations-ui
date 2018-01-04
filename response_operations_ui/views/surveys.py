@@ -27,4 +27,5 @@ def view_survey(short_name):
 @app.route('/surveys/<short_name>/<period>', methods=['GET'])
 def view_collection_exercise(short_name, period):
     ce_details = collection_exercise_controllers.get_collection_exercise(short_name, period)
-    return render_template('collection-exercise.html', ce=ce_details, period=period)
+    return render_template('collection-exercise.html',
+                           survey=ce_details['survey'], ce=ce_details['collection_exercise'])
