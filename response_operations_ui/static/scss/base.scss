@@ -104,6 +104,18 @@ img {
     padding-left: 1rem;
 }
 
+.col-1\@l {
+    width: calc(100% / 12);
+}
+
+.col-5\@l {
+    width: calc(100% / 2.4);
+}
+
+.col-6\@l {
+    width: calc(100% / 2);
+}
+
 .col-8\@l {
     width: calc(100% / 1.5);
 }
@@ -114,6 +126,12 @@ img {
 
 .saturn {
     font-size: 1.55556rem;
+}
+
+.venus {
+    font-size: 1rem;
+    font-weight: 600;
+    line-height: 1.4;
 }
 
 .jupiter {

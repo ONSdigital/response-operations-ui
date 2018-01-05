@@ -14,6 +14,9 @@ with open('tests/test_data/survey/survey_list.json') as json_data:
 url_get_survey_by_short_name = f'{app.config["BACKSTAGE_API_URL"]}/survey/shortname/bres'
 with open('tests/test_data/survey/survey.json') as json_data:
     survey_info = json.load(json_data)
+url_get_collection_exercise = f'{app.config["BACKSTAGE_API_URL"]}/collection-exercise/test/000000'
+with open('tests/test_data/collection_exercise/collection_exercise_details.json') as json_data:
+    collection_exercise_details = json.load(json_data)
 
 
 class TestSurvey(unittest.TestCase):
@@ -62,6 +65,25 @@ class TestSurvey(unittest.TestCase):
         mock_request.get(url_get_survey_by_short_name, status_code=500)
 
         response = self.app.get("/surveys/bres")
+
+        self.assertEqual(response.status_code, 200)
+        self.assertIn("FAIL".encode(), response.data)
+
+    @requests_mock.mock()
+    def test_collection_exercise_view(self, mock_request):
+        mock_request.get(url_get_collection_exercise, json=collection_exercise_details)
+
+        response = self.app.get("/surveys/test/000000")
+
+        self.assertEqual(response.status_code, 200)
+        self.assertIn("Business Register and Employment Survey".encode(), response.data)
+        self.assertIn("000000".encode(), response.data)
+
+    @requests_mock.mock()
+    def test_collection_exercise_view_fail(self, mock_request):
+        mock_request.get(url_get_collection_exercise, status_code=500)
+
+        response = self.app.get("/surveys/test/000000")
 
         self.assertEqual(response.status_code, 200)
         self.assertIn("FAIL".encode(), response.data)
