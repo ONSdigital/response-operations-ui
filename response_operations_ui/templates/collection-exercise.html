@@ -21,7 +21,7 @@
                 <td class="table--cell tbl-ce-label">
                   Survey ID / Abbreviation / Title
                 </td>
-                <td class="table--cell tbl-ce-value">
+                <td class="table--cell tbl-ce-value" name="survey-info">
                   {{survey.surveyRef}} - {{survey.longName}} ({{survey.shortName}})
                 </td>
               </tr>
@@ -30,7 +30,7 @@
                 <td class="table--cell tbl-ce-">
                   Period
                 </td>
-                <td class="table--cell tbl-ce-">
+                <td class="table--cell tbl-ce-" name="period">
                   {{ce.name}}
                 </td>
               </tr>
@@ -39,7 +39,7 @@
                 <td class="table--cell tbl-ce-">
                   Shown to respondent as
                 </td>
-                <td class="table--cell tbl-ce-">
+                <td class="table--cell tbl-ce-" name="user-description">
                   {{ce.userDescription}}
                 </td>
               </tr>
