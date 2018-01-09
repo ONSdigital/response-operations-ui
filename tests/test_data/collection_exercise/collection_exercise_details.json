@@ -23,12 +23,40 @@
     "scheduledReturnDateTime": "2017-10-06T00:00:00.000+0000",
     "scheduledStartDateTime": "2017-09-11T23:00:00.000+0000",
     "state": "PUBLISHED",
-    "surveyId": "cb0711c3-0ac8-41d3-ae0e-567e5ea1ef87"
+    "surveyId": "cb0711c3-0ac8-41d3-ae0e-567e5ea1ef87",
+    "userDescription": "January 2017"
   },
   "survey": {
     "id": "cb0711c3-0ac8-41d3-ae0e-567e5ea1ef87",
     "longName": "Business Register and Employment Survey",
     "shortName": "BRES",
     "surveyRef": "221"
+  },
+  "events": {
+    "mps": {
+      "day": "Mon",
+      "date": "15 May 1993",
+      "time": "12:00 GMT"
+    },
+    "goLive": {
+      "day": "Mon",
+      "date": "15 May 1993",
+      "time": "12:00 GMT"
+    },
+    "returnBy": {
+      "day": "Mon",
+      "date": "15 May 1993",
+      "time": "12:00 GMT"
+    },
+    "firstReminder": {
+      "day": "Mon",
+      "date": "15 May 1993",
+      "time": "12:00 GMT"
+    },
+    "exerciseEnd": {
+      "day": "Mon",
+      "date": "15 May 1993",
+      "time": "12:00 GMT"
+    }
   }
 }
