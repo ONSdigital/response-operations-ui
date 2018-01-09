@@ -10,7 +10,6 @@
     <div class="grid">
       <div class="grid__col col-5@l">
         <section class="ce-section ce-events">
-
           <h2 class="venus u-pt-m">Dates</h2>
 
           <table class="table table__dense" summary="Dates for this collection exercise">
@@ -27,8 +26,8 @@
                 </th>
               </tr>
             </thead>
-            <tbody>
 
+            <tbody>
               <tr class="table--row tbl-ce-label">
                 <td class="table--cell">
                   MPS (Main print selection)
@@ -87,15 +86,6 @@
           <table class="table table__dense" summary="Collection exercise details">
             <tbody>
               <tr class="table--row">
-                <td class="table--cell tbl-ce-label">
-                  Survey ID / Abbreviation / Title
-                </td>
-                <td class="table--cell tbl-ce-value" name="survey-info">
-                  {{survey.surveyRef}} - {{survey.longName}} ({{survey.shortName}})
-                </td>
-              </tr>
-
-              <tr class="table--row">
                 <td class="table--cell tbl-ce-">
                   Period
                 </td>
@@ -110,6 +100,24 @@
                 </td>
                 <td class="table--cell tbl-ce-" name="user-description">
                   {{ce.userDescription}}
+                </td>
+              </tr>
+
+              <tr class="table--row">
+                <td class="table--cell tbl-ce-label">
+                  Survey ID and Abbreviation
+                </td>
+                <td class="table--cell tbl-ce-value" name="survey-info">
+                  {{survey.surveyRef}} {{survey.shortName}}
+                </td>
+              </tr>
+
+              <tr class="table--row">
+                <td class="table--cell tbl-ce-">
+                  Survey title
+                </td>
+                <td class="table--cell tbl-ce-" name="survey-title">
+                  {{survey.longName}}
                 </td>
               </tr>
             </tbody>
