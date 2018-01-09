@@ -8,7 +8,76 @@
     <h1 class="jupiter">{{survey.shortName}} {{ce.name}}</h1>
 
     <div class="grid">
-      <div class="grid__col col-5@l"></div>
+      <div class="grid__col col-5@l">
+        <section class="ce-section ce-events">
+
+          <h2 class="venus u-pt-m">Dates</h2>
+
+          <table class="table table__dense" summary="Dates for this collection exercise">
+            <thead class="table--head u-vh">
+              <tr class="table--row">
+                <th scope="col" class="table--header--cell tbl-ce-label">
+                  Event
+                </th>
+                <th scope="col" class="table--header--cell tbl-ce-value">
+                  Date
+                </th>
+                <th scope="col" class="table--header--cell tbl-ce-status">
+                  Status
+                </th>
+              </tr>
+            </thead>
+            <tbody>
+
+              <tr class="table--row tbl-ce-label">
+                <td class="table--cell">
+                  MPS (Main print selection)
+                </td>
+                <td class="table--cell tbl-ce-value ce-event-date">
+                  {{events.mps.day}} <em>{{events.mps.date}}</em> {{events.mps.time}}
+                </td>
+              </tr>
+
+              <tr class="table--row">
+                <td class="table--cell tbl-ce-label">
+                  Go live
+                </td>
+                <td class="table--cell tbl-ce-value ce-event-date">
+                  {{events.goLive.day}} <em>{{events.goLive.date}}</em> {{events.goLive.time}}
+                </td>
+              </tr>
+
+              <tr class="table--row">
+                <td class="table--cell tbl-ce-label">
+                  Return by
+                </td>
+                <td class="table--cell tbl-ce-value ce-event-date">
+                  {{events.returnBy.day}} <em>{{events.returnBy.date}}</em> {{events.returnBy.time}}
+                </td>
+              </tr>
+
+              <tr class="table--row">
+                <td class="table--cell tbl-ce-label">
+                  First reminder
+                </td>
+                <td class="table--cell tbl-ce-value ce-event-date">
+                  {{events.firstReminder.day}} <em>{{events.firstReminder.date}}</em> {{events.firstReminder.time}}
+                </td>
+              </tr>
+
+              <tr class="table--row">
+                <td class="table--cell tbl-ce-label">
+                  Exercise end
+                </td>
+                <td class="table--cell tbl-ce-value ce-event-date">
+                  {{events.exerciseEnd.day}} <em>{{events.exerciseEnd.date}}</em> {{events.exerciseEnd.time}}
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </section>
+      </div>
+
       <div class="grid__col col-1@l"></div>
 
       <div class="grid__col col-6@l">
