@@ -33,14 +33,23 @@ def view_collection_exercise(short_name, period):
 
 @app.route('/surveys/<short_name>/<period>', methods=['POST'])
 def upload_collection_instrument(short_name, period):
-    file = request.files['ciFile']
-    filename = file.filename
-    error = None
-    if not str.endswith('.xlsx', filename):
-        error = 'Invalid file format'
-    else:
-        collection_instrument_controllers.upload_collection_instrument(file)
+    error = _validate_collection_instrument()
+
+    if not error:
+        collection_instrument_controllers.upload_collection_instrument(short_name, period, request.files['ciFile'])
 
     ce_details = collection_exercise_controllers.get_collection_exercise(short_name, period)
     return render_template('collection-exercise.html',
                            survey=ce_details['survey'], ce=ce_details['collection_exercise'], error=error)
+
+
+def _validate_collection_instrument():
+    error = None
+    if 'ciFile' in request.files:
+        file = request.files['ciFile']
+        if str.endswith('.xlsx', file.filename):
+            error = 'Invalid file format'
+    else:
+        error = 'File not uploaded'
+
+    return error

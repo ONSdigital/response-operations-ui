@@ -1,5 +1,6 @@
 import json
 import unittest
+from io import BytesIO
 from unittest.mock import MagicMock
 
 from requests import RequestException
@@ -17,6 +18,7 @@ with open('tests/test_data/survey/survey.json') as json_data:
 url_get_collection_exercise = f'{app.config["BACKSTAGE_API_URL"]}/collection-exercise/test/000000'
 with open('tests/test_data/collection_exercise/collection_exercise_details.json') as json_data:
     collection_exercise_details = json.load(json_data)
+url_upload_collection_instrument = f'{app.config["BACKSTAGE_API_URL"]}/collection-instrument/test/000000'
 
 
 class TestSurvey(unittest.TestCase):
@@ -87,3 +89,14 @@ class TestSurvey(unittest.TestCase):
 
         self.assertEqual(response.status_code, 200)
         self.assertIn("FAIL".encode(), response.data)
+
+    @requests_mock.mock()
+    def test_upload_collection_instrument(self, mock_request):
+        mock_request.post(url_upload_collection_instrument)
+        mock_request.get(url_get_collection_exercise, json=collection_exercise_details)
+
+        response = self.app.post("/surveys/test/000000", data=dict(
+            ciFile=(BytesIO(b'data'), 'test.xlsx'),
+        ))
+
+        self.assertEqual(response.status_code, 200)
