@@ -32,8 +32,10 @@
                 <td class="table--cell">
                   MPS (Main print selection)
                 </td>
-                <td class="table--cell tbl-ce-value ce-event-date">
+                <td class="table--cell tbl-ce-value ce-event-date" name="mps-date">
+                  {% if events.mps %}
                   {{events.mps.day}} <em>{{events.mps.date}}</em> {{events.mps.time}}
+                  {% endif %}
                 </td>
               </tr>
 
@@ -41,8 +43,10 @@
                 <td class="table--cell tbl-ce-label">
                   Go live
                 </td>
-                <td class="table--cell tbl-ce-value ce-event-date">
+                <td class="table--cell tbl-ce-value ce-event-date" name="go-live-date">
+                  {% if events.goLive %}
                   {{events.goLive.day}} <em>{{events.goLive.date}}</em> {{events.goLive.time}}
+                  {% endif %}
                 </td>
               </tr>
 
@@ -50,8 +54,10 @@
                 <td class="table--cell tbl-ce-label">
                   Return by
                 </td>
-                <td class="table--cell tbl-ce-value ce-event-date">
+                <td class="table--cell tbl-ce-value ce-event-date" name="return-by-date">
+                  {% if events.returnBy %}
                   {{events.returnBy.day}} <em>{{events.returnBy.date}}</em> {{events.returnBy.time}}
+                  {% endif %}
                 </td>
               </tr>
 
@@ -59,8 +65,10 @@
                 <td class="table--cell tbl-ce-label">
                   First reminder
                 </td>
-                <td class="table--cell tbl-ce-value ce-event-date">
+                <td class="table--cell tbl-ce-value ce-event-date" name="first-reminder-date">
+                  {% if events.firstReminder %}
                   {{events.firstReminder.day}} <em>{{events.firstReminder.date}}</em> {{events.firstReminder.time}}
+                  {% endif %}
                 </td>
               </tr>
 
@@ -68,8 +76,10 @@
                 <td class="table--cell tbl-ce-label">
                   Exercise end
                 </td>
-                <td class="table--cell tbl-ce-value ce-event-date">
+                <td class="table--cell tbl-ce-value ce-event-date" name="exercise-end-date">
+                  {% if events.exerciseEnd %}
                   {{events.exerciseEnd.day}} <em>{{events.exerciseEnd.date}}</em> {{events.exerciseEnd.time}}
+                  {% endif %}
                 </td>
               </tr>
             </tbody>
