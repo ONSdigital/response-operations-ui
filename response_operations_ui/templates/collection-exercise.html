@@ -6,19 +6,24 @@
   <div role="main" id="main" class="page__main">
     <br/>
     <h1 class="jupiter">{{survey.shortName}} {{ce.exerciseRef}}</h1>
+    <ul>
+      {% if ci_loaded %}
+        <li class="system-feedback__item success">Collection instrument loaded</li>
+      {% endif %}
+    </ul>
 
     <div class="grid">
       <div class="grid__col col-6@l">
         <section class="ce-section">
           <h2 class="venus u-pt-m">Collection instruments</h2>
           <div class="u-mb-m">
-            <form action="" class="form" method="post">
+            <form action="" class="form" method="post" enctype="multipart/form-data">
               <p>
                 Choose a collection instrument (CI) to load
               </p>
               <label class="upload-file u-vh" for="ciFile">Choose CI file</label>
               <input id="ciFile" type="file" class="" name="ciFile">
-              <button id="btn-load-ci" class="btn btn--primary unready" type="submit">Load CI</button>
+              <button id="btn-load-ci" class="btn btn--primary unready">Load CI</button>
             </form>
           </div>
         </section>

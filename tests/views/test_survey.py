@@ -92,11 +92,12 @@ class TestSurvey(unittest.TestCase):
 
     @requests_mock.mock()
     def test_upload_collection_instrument(self, mock_request):
+        file = dict(
+            ciFile=(BytesIO(b'data'), 'test.xlsx'),
+        )
         mock_request.post(url_upload_collection_instrument)
         mock_request.get(url_get_collection_exercise, json=collection_exercise_details)
 
-        response = self.app.post("/surveys/test/000000", data=dict(
-            ciFile=(BytesIO(b'data'), 'test.xlsx'),
-        ))
+        response = self.app.post("/surveys/test/000000", data=file)
 
         self.assertEqual(response.status_code, 200)
