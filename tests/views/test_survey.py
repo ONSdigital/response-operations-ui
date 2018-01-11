@@ -101,3 +101,25 @@ class TestSurvey(unittest.TestCase):
         response = self.app.post("/surveys/test/000000", data=file)
 
         self.assertEqual(response.status_code, 200)
+        self.assertIn("Collection instrument loaded".encode(), response.data)
+
+    @requests_mock.mock()
+    def test_no_upload_collection_instrument_when_bad_extension(self, mock_request):
+        file = dict(
+            ciFile=(BytesIO(b'data'), 'test.html'),
+        )
+        mock_request.get(url_get_collection_exercise, json=collection_exercise_details)
+
+        response = self.app.post("/surveys/test/000000", data=file)
+
+        self.assertEqual(response.status_code, 200)
+        self.assertNotIn("Collection instrument loaded".encode(), response.data)
+
+    @requests_mock.mock()
+    def test_no_upload_collection_instrument_when_no_file(self, mock_request):
+        mock_request.get(url_get_collection_exercise, json=collection_exercise_details)
+
+        response = self.app.post("/surveys/test/000000")
+
+        self.assertEqual(response.status_code, 200)
+        self.assertNotIn("Collection instrument loaded".encode(), response.data)

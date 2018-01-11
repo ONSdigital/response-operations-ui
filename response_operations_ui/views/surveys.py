@@ -50,7 +50,7 @@ def _validate_collection_instrument():
     error = None
     if 'ciFile' in request.files:
         file = request.files['ciFile']
-        if str.endswith('.xlsx', file.filename):
+        if not str.endswith(file.filename, '.xlsx'):
             logger.debug('Invalid file format uploaded', filename=file.filename)
             error = 'Invalid file format'
     else:
