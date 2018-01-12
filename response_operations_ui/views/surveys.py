@@ -1,6 +1,6 @@
 import logging
 
-from flask import render_template
+from flask import render_template, request
 from structlog import wrap_logger
 
 from response_operations_ui import app
@@ -29,3 +29,22 @@ def view_collection_exercise(short_name, period):
     ce_details = collection_exercise_controllers.get_collection_exercise(short_name, period)
     return render_template('collection-exercise.html',
                            survey=ce_details['survey'], ce=ce_details['collection_exercise'])
+
+
+@app.route('/surveys/<short_name>/<period>', methods=['POST'])
+def upload_sample(short_name, period):
+    ce_details = collection_exercise_controllers.get_collection_exercise(short_name, period)
+
+    upload_file = request.files['sampleFile']
+
+    sample = {"businesses": 1,
+              "collection_instruments": 1,
+              "submission_time": '13:10 on 11 January 2018'
+              }
+
+
+    # sample = sample_controllers.get_sample_contents(upload_file)
+    # sample_controllers.upload_sample(upload_file)
+
+    return render_template('collection-exercise.html',
+                           survey=ce_details['survey'], ce=ce_details['collection_exercise'], sample=sample)
