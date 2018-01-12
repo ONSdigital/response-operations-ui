@@ -32,31 +32,26 @@
     "shortName": "BRES",
     "surveyRef": "221"
   },
-  "events": {
-    "mps": {
-      "day": "Mon",
-      "date": "15 May 1993",
-      "time": "12:00 GMT"
+  "events": [
+    {
+      "tag": "mps",
+      "timestamp": "1993-05-15T23:00:00.000+0000"
     },
-    "goLive": {
-      "day": "Mon",
-      "date": "15 May 1993",
-      "time": "12:00 GMT"
+    {
+      "tag": "goLive",
+      "timestamp": "1993-05-15T23:00:00.000+0000"
     },
-    "returnBy": {
-      "day": "Mon",
-      "date": "15 May 1993",
-      "time": "12:00 GMT"
+    {
+      "tag": "returnBy",
+      "timestamp": "1993-05-15T23:00:00.000+0000"
     },
-    "firstReminder": {
-      "day": "Mon",
-      "date": "15 May 1993",
-      "time": "12:00 GMT"
+    {
+      "tag": "firstReminder",
+      "timestamp": "1993-05-15T23:00:00.000+0000"
     },
-    "exerciseEnd": {
-      "day": "Mon",
-      "date": "15 May 1993",
-      "time": "12:00 GMT"
+    {
+      "tag": "exerciseEnd",
+      "timestamp": "1993-05-15T23:00:00.000+0000"
     }
-  }
+  ]
 }

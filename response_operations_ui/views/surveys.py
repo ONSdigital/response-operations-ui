@@ -4,6 +4,7 @@ from flask import render_template
 from structlog import wrap_logger
 
 from response_operations_ui import app
+from response_operations_ui.common.mappers import convert_events_to_new_format
 from response_operations_ui.controllers import collection_exercise_controllers, survey_controllers
 
 
@@ -27,7 +28,8 @@ def view_survey(short_name):
 @app.route('/surveys/<short_name>/<period>', methods=['GET'])
 def view_collection_exercise(short_name, period):
     ce_details = collection_exercise_controllers.get_collection_exercise(short_name, period)
+    formatted_events = convert_events_to_new_format(ce_details['events'])
     return render_template('collection-exercise.html',
                            survey=ce_details['survey'],
                            ce=ce_details['collection_exercise'],
-                           events=ce_details['events'])
+                           events=formatted_events)

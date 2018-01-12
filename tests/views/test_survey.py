@@ -91,7 +91,7 @@ class TestSurvey(unittest.TestCase):
 
     @requests_mock.mock()
     def test_collection_exercise_view_no_reminder(self, mock_request):
-        del collection_exercise_details['events']['firstReminder']
+        del collection_exercise_details['events'][4]
         mock_request.get(url_get_collection_exercise, json=collection_exercise_details)
 
         response = self.app.get("/surveys/test/000000")
