@@ -10,8 +10,8 @@ logger = wrap_logger(logging.getLogger(__name__))
 
 
 def upload_collection_instrument(short_name, period, file):
-    logger.debug('Retrieving collection exercise details', short_name=short_name, period=period)
+    logger.debug('Uploading collection instrument', short_name=short_name, period=period)
     url = f'{app.config["BACKSTAGE_API_URL"]}/collection-instrument/{short_name}/{period}'
     response = requests.post(url, files={"file": (file.filename, file.stream, file.mimetype)})
-    if response.status_code != 200:
+    if response.status_code != 201:
         raise ApiError(response)

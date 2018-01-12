@@ -95,13 +95,26 @@ class TestSurvey(unittest.TestCase):
         file = dict(
             ciFile=(BytesIO(b'data'), 'test.xlsx'),
         )
-        mock_request.post(url_upload_collection_instrument)
+        mock_request.post(url_upload_collection_instrument, status_code=201)
         mock_request.get(url_get_collection_exercise, json=collection_exercise_details)
 
         response = self.app.post("/surveys/test/000000", data=file)
 
         self.assertEqual(response.status_code, 200)
         self.assertIn("Collection instrument loaded".encode(), response.data)
+
+    @requests_mock.mock()
+    def test_failed_upload_collection_instrument(self, mock_request):
+        file = dict(
+            ciFile=(BytesIO(b'data'), 'test.xlsx'),
+        )
+        mock_request.post(url_upload_collection_instrument, status_code=500)
+        mock_request.get(url_get_collection_exercise, json=collection_exercise_details)
+
+        response = self.app.post("/surveys/test/000000", data=file)
+
+        self.assertEqual(response.status_code, 200)
+        self.assertIn("FAIL".encode(), response.data)
 
     @requests_mock.mock()
     def test_no_upload_collection_instrument_when_bad_extension(self, mock_request):
