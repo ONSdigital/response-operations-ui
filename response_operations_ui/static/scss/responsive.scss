@@ -1,115 +1,62 @@
-.btn {
-  background-color: #0f8243;
-  color: #fff;
-  border: none;
-  padding: 13.5px 45px;
-  padding: 0.75rem 2.5rem;
-  margin: 0 0 16px;
-  margin: 0 0 1rem;
-  font-size: 16px;
-  font-size: 1rem;
-  border-radius: 3px;
-  display: inline-block;
-  text-rendering: optimizeLegibility;
-  text-decoration: none;
-  width: 100%;
-  -webkit-transition: background-color 200ms ease-in, color 200ms ease-in;
-  transition: background-color 200ms ease-in, color 200ms ease-in;
-  *display: inline;
-  *zoom: 1;
+/**
+ * 1. Correct font family not being inherited in all browsers.
+ * 2. Correct font size not being inherited in all browsers.
+ * 3. Address margins set differently in Firefox 4+, Safari 5, and Chrome.
+ * 4. Improves appearance and consistency in all browsers.
+ */
+button,
+input,
+select,
+textarea {
+  font-family: inherit;
+  /* 1 */
+  font-size: 100%;
+  /* 2 */
+  margin: 0;
+  /* 3 */
+  vertical-align: baseline;
+  /* 3 */
+  *vertical-align: middle;
+  /* 3 */
 }
 
-.btn:hover {
-  text-decoration: none;
-  color: #fff;
-  background-color: #0a542b;
+/**
+ * Address Firefox 4+ setting `line-height` on `input` using `!important` in
+ * the UA stylesheet.
+ */
+button,
+input {
+  line-height: normal;
 }
 
-.btn:focus {
-  background-color: #4263c2;
-  outline: none;
+/**
+ * Address inconsistent `text-transform` inheritance for `button` and `select`.
+ * All other form control elements do not inherit `text-transform` values.
+ * Correct `button` style inheritance in Chrome, Safari 5+, and IE 8+.
+ * Correct `select` style inheritance in Firefox 4+ and Opera.
+ */
+button,
+select {
+  text-transform: none;
 }
 
-.btn.btn--border {
-  font-weight: 600;
-  background: #fff;
-  border: 1px solid #0f8243;
-  color: #0f8243;
-  padding: 8px 32px;
-  padding: 0.5rem 2rem;
-}
-
-.btn.btn--border:hover, .btn.btn--border:focus {
-  background: #0f8243;
-  color: #fff;
-}
-
-@media only screen and (min-width: 500px) {
-  .btn.btn--border {
-    border-width: 2px;
-  }
-}
-
-@media only screen and (min-width: 500px) {
-  .btn {
-    width: auto;
-  }
-}
-
-.btn--secondary {
-  background-color: #033e58;
-  color: #fff;
-  border: none;
-  padding: 13.5px 45px;
-  padding: 0.75rem 2.5rem;
-  margin: 0 0 16px;
-  margin: 0 0 1rem;
-  font-size: 16px;
-  font-size: 1rem;
-  border-radius: 3px;
-  display: inline-block;
-  text-rendering: optimizeLegibility;
-  text-decoration: none;
-  width: 100%;
-  -webkit-transition: background-color 200ms ease-in, color 200ms ease-in;
-  transition: background-color 200ms ease-in, color 200ms ease-in;
-  *display: inline;
-  *zoom: 1;
-}
-
-.btn--secondary:hover {
-  text-decoration: none;
-  color: #fff;
-  background-color: #011b27;
-}
-
-.btn--secondary:focus {
-  background-color: #4263c2;
-  outline: none;
-}
-
-.btn--secondary.btn--border {
-  font-weight: 600;
-  background: #fff;
-  border: 1px solid #033e58;
-  color: #033e58;
-  padding: 8px 32px;
-  padding: 0.5rem 2rem;
-}
-
-.btn--secondary.btn--border:hover, .btn--secondary.btn--border:focus {
-  background: #033e58;
-  color: #fff;
-}
-
-@media only screen and (min-width: 500px) {
-  .btn--secondary.btn--border {
-    border-width: 2px;
-  }
-}
-
-@media only screen and (min-width: 500px) {
-  .btn--secondary {
-    width: auto;
-  }
+/**
+ * 1. Avoid the WebKit bug in Android 4.0.* where (2) destroys native `audio`
+ *    and `video` controls.
+ * 2. Correct inability to style clickable `input` types in iOS.
+ * 3. Improve usability and consistency of cursor style between image-type
+ *    `input` and others.
+ * 4. Removes inner spacing in IE 7 without affecting normal text inputs.
+ *    Known issue: inner spacing remains in IE 6.
+ */
+button,
+html input[type="button"],
+input[type="reset"],
+input[type="submit"] {
+  -webkit-appearance: button;
+  /* 2 */
+  cursor: pointer;
+  /* 3 */
+  *overflow: visible;
+  /* 4 */
 }

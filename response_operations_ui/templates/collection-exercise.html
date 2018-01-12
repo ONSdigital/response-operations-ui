@@ -6,6 +6,11 @@
   <div role="main" id="main" class="page__main">
     <br/>
     <h1 class="jupiter">{{survey.shortName}} {{ce.exerciseRef}}</h1>
+    <ul>
+      {% if ci_loaded %}
+        <li id="collection-instrument-success" class="system-feedback__item success">Collection instrument loaded</li>
+      {% endif %}
+    </ul>
 
     <div class="grid">
       <div class="grid__col col-5@l">
@@ -39,14 +44,14 @@
             <div class="u-mb-m">
               <form id="form-load-sample"
                     method="post"
-                    action="{{ url_for('upload_sample', short_name=survey.shortName, period=ce.exerciseRef) }}"
+                    action=""
                     class="form"
                     enctype="multipart/form-data">
                 <p>
                   Choose a sample file to check details before loading
                 </p>
-                <label class="upload-file u-vh" for="file">Choose file</label>
-                <input type="file" class="" name="sampleFile" id="file" onchange="handleFiles(this.files)"
+                <label class="upload-file u-vh" for="sampleFile">Choose file</label>
+                <input type="file" class="" name="sampleFile" id="sampleFile" onchange="handleFiles(this.files)"
                 accept=".csv">
                 <div id="output" class="u-mb-s">
                 </div>
@@ -62,6 +67,25 @@
       <div class="grid__col col-1@l"></div>
 
       <div class="grid__col col-6@l">
+        <section class="ce-section">
+          <h2 class="venus u-pt-m">Collection instruments</h2>
+          <div class="u-mb-m">
+            <form id="form-load-ci" action="" class="form" method="post" enctype="multipart/form-data">
+              <p>
+                Choose a collection instrument (CI) to load
+              </p>
+              <label class="upload-file u-vh" for="ciFile">Choose CI file</label>
+              <input id="ciFile" type="file" class="" name="ciFile" accept=".xlsx">
+              <button id="btn-load-ci" class="btn btn--primary unready">Add CI</button>
+            </form>
+          </div>
+        </section>
+      </div>
+
+      <div class="grid__col col-1@l">
+      </div>
+
+      <div class="grid__col col-5@l">
         <div class="ce-section ce-details">
           <h2 class="venus u-pt-m">Reference information for this collection exercise</h2>
 
