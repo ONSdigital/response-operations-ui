@@ -96,5 +96,5 @@ ENV/
 .ropeproject
 .build
 
-all.min.css
-all.min.js
+# Minified
+minimised/
