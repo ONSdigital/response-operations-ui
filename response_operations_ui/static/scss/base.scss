@@ -145,3 +145,53 @@ img {
     padding-top: 32px;
     padding-top: 2rem;
 }
+
+.u-mb-m {
+  margin-bottom: 24px;
+  margin-bottom: 1.5rem;
+}
+
+.u-visuallyhidden,
+.u-vh {
+  border: 0;
+  clip: rect(0 0 0 0);
+  height: 1px;
+  margin: -1px;
+  overflow: hidden;
+  padding: 0;
+  position: absolute;
+  width: 1px;
+}
+
+.u-visuallyhidden.u-focusable:active,
+.u-vh.u-focusable:active,
+.u-visuallyhidden.u-focusable:focus,
+.u-vh.u-focusable:focus {
+  clip: auto;
+  height: auto;
+  margin: 0;
+  overflow: visible;
+  position: static;
+  width: auto;
+}
+
+.u-vh, .u-visuallyhidden {
+    border: 0;
+    clip: rect(0 0 0 0);
+    height: 1px;
+    margin: -1px;
+    overflow: hidden;
+    padding: 0;
+    position: absolute;
+    width: 1px;
+}
+
+.system-feedback__item.success{
+  list-style: none;
+  background-image: url("../images/tick-green.png");
+  background-size: 20px 20px;
+  background-repeat: no-repeat;
+  background-position: left center;
+  padding-left: 24px;
+  margin-left: -20px;
+}
