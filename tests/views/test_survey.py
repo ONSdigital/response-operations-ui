@@ -77,7 +77,15 @@ class TestSurvey(unittest.TestCase):
 
         self.assertEqual(response.status_code, 200)
         self.assertIn("Business Register and Employment Survey".encode(), response.data)
-        self.assertIn("000000".encode(), response.data)
+        self.assertIn("221_201712".encode(), response.data)
+
+    @requests_mock.mock()
+    def test_collection_exercise_view_events(self, mock_request):
+        mock_request.get(url_get_collection_exercise, json=collection_exercise_details)
+
+        response = self.app.get("/surveys/test/000000")
+
+        self.assertEqual(response.status_code, 200)
         self.assertIn("January 2017".encode(), response.data)
         self.assertIn("15 May 1993".encode(), response.data)
 
@@ -89,8 +97,6 @@ class TestSurvey(unittest.TestCase):
         response = self.app.get("/surveys/test/000000")
 
         self.assertEqual(response.status_code, 200)
-        self.assertIn("Business Register and Employment Survey".encode(), response.data)
-        self.assertIn("000000".encode(), response.data)
         self.assertIn("January 2017".encode(), response.data)
         self.assertIn("15 May 1993".encode(), response.data)
 
