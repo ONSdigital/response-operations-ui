@@ -12,7 +12,7 @@ logger = wrap_logger(logging.getLogger(__name__))
 
 
 @app.route('/', methods=['GET'])
-def view_surveys():
+def view_home():
     return render_template('home.html')
 
 
