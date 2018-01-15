@@ -5,7 +5,7 @@ from structlog import wrap_logger
 
 from response_operations_ui import app
 from response_operations_ui.controllers import collection_exercise_controllers, survey_controllers
-from response_operations_ui.controllers import collection_instrument_controllers
+from response_operations_ui.controllers import collection_instrument_controllers, sample_controllers
 
 logger = wrap_logger(logging.getLogger(__name__))
 
@@ -40,21 +40,22 @@ def upload(short_name, period):
 
 
 def _upload_sample(short_name, period):
+    error = _validate_sample()
+    sample = False
+    total_businesses = request.form.get('sample-businesses')
+    total_ci = request.form.get('sample-collection-instruments')
+
     ce_details = collection_exercise_controllers.get_collection_exercise(short_name, period)
 
-    upload_file = request.files['sampleFile']
-
-    sample = {"businesses": 1,
-              "collection_instruments": 1,
-              "submission_time": '13:10 on 11 January 2018'
-              }
-
-
-    # sample = sample_controllers.get_sample_contents(upload_file)
-    # sample_controllers.upload_sample(upload_file)
+    if not error:
+        sample = sample_controllers.upload_sample(ce_details['collection_exercise']['id'],
+                                                  request.files['sampleFile'],
+                                                  total_businesses,
+                                                  total_ci)
 
     return render_template('collection-exercise.html',
-                           survey=ce_details['survey'], ce=ce_details['collection_exercise'], sample=sample)
+                           survey=ce_details['survey'], ce=ce_details['collection_exercise'], sample=sample,
+                           error=error)
 
 
 def _upload_collection_instrument(short_name, period):
@@ -76,6 +77,20 @@ def _validate_collection_instrument():
     if 'ciFile' in request.files:
         file = request.files['ciFile']
         if not str.endswith(file.filename, '.xlsx'):
+            logger.debug('Invalid file format uploaded', filename=file.filename)
+            error = 'Invalid file format'
+    else:
+        logger.debug('No file uploaded')
+        error = 'File not uploaded'
+
+    return error
+
+
+def _validate_sample():
+    error = None
+    if 'sampleFile' in request.files:
+        file = request.files['sampleFile']
+        if not str.endswith(file.filename, '.csv'):
             logger.debug('Invalid file format uploaded', filename=file.filename)
             error = 'Invalid file format'
     else:

@@ -10,6 +10,9 @@
       {% if ci_loaded %}
         <li id="collection-instrument-success" class="system-feedback__item success">Collection instrument loaded</li>
       {% endif %}
+      {% if sample %}
+        <li id="sample-success" class="system-feedback__item success">Sample loaded</li>
+      {% endif %}
     </ul>
 
     <div class="grid">
@@ -18,13 +21,13 @@
         <div class="ce-section">
           <h2 class="venus u-pt-m">Sample</h2>
           {% if sample %}
-            <table class="table table__dense" summary="Dates for this collection exercises">
+            <table class="table table__dense" summary="Loaded sample summary">
               <tbody>
                 <tr class="table--row">
                   <td class="table--cell tbl-ce-label">
                     Total businesses
                   </td>
-                  <td class="table--cell tbl-ce-value" name="mps">
+                  <td class="table--cell tbl-ce-value" name="total-businesses">
                     {{sample.businesses}}
                   </td>
                 </tr>
@@ -33,7 +36,7 @@
                   <td class="table--cell tbl-ce-">
                     Collection instruments
                   </td>
-                  <td class="table--cell tbl-ce-" name="go-live-date">
+                  <td class="table--cell tbl-ce-" name="total-ci">
                     {{sample.collection_instruments}}
                   </td>
                 </tr>
@@ -50,11 +53,14 @@
                 <p>
                   Choose a sample file to check details before loading
                 </p>
+                <input type="hidden" id="sample-businesses" name="sample-businesses" value="">
+                <input type="hidden" id="sample-collection-instruments" name="sample-collection-instruments" value="">
                 <label class="upload-file u-vh" for="sampleFile">Choose file</label>
                 <input type="file" class="" name="sampleFile" id="sampleFile" onchange="handleFiles(this.files)"
                 accept=".csv">
-                <div id="output" class="u-mb-s">
-                </div>
+
+                <div id="sample-preview" class="u-mb-s"></div>
+
                 <button id="btn-check-sample-contents" class="btn btn--primary unready" type="button" disabled="">Check sample contents</button>
                 <button id="btn-load-sample" name="load-sample" class="btn btn--primary hidden" type="submit">Load sample</button>
                 <button id="btn-cancel-load-sample" class="btn btn--secondary hidden" type="button" onclick="cancelLoadSample()">Cancel</button>

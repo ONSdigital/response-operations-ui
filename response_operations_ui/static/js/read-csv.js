@@ -51,13 +51,10 @@ function errorHandler(evt) {
 
 function drawOutput(lines){
 
-
-	// How many unique collection instruments assuming they're specified in column 2 in each sample line
-	// This ought really to be a separate function of course...
 	// Put the form types into their own separate array, so we can interrogate it faster
 	var formTypes = [];
 	for (var i = 0; i < lines.length; i++) {
-			formTypes.push(lines[i][1]);
+			formTypes.push(lines[i][lines.length - 2]);
 	}
 
 	//console.log(formTypes);
@@ -68,7 +65,7 @@ function drawOutput(lines){
 
 
 	//Clear previous data
-	document.getElementById("output").innerHTML = "";
+	document.getElementById("sample-preview").innerHTML = "";
 
 	var preview = "";
 	preview = preview + "<div class='panel panel--info'>"
@@ -81,17 +78,19 @@ function drawOutput(lines){
 	preview = preview + "  </div>";
 	preview = preview + "</div>";
 
-	document.getElementById("output").innerHTML = preview;
+	document.getElementById("sample-preview").innerHTML = preview;
 	document.getElementById("btn-check-sample-contents").style.display = "none";
 	document.getElementById("btn-load-sample").style.display = "inline-block";
 	document.getElementById("btn-cancel-load-sample").style.display = "inline-block";
+	document.getElementById("sample-businesses").value = lines.length;
+	document.getElementById("sample-collection-instruments").value = ciCount;
 }
 
 
 
 function cancelLoadSample(){
 
-	document.getElementById("output").innerHTML = "";
+	document.getElementById("sample-preview").innerHTML = "";
 	document.getElementById("form-load-sample").reset();
 	document.getElementById("btn-check-sample-contents").style.display = "block";
 	document.getElementById("btn-load-sample").style.display = "none";

@@ -19,6 +19,7 @@ url_get_collection_exercise = f'{app.config["BACKSTAGE_API_URL"]}/collection-exe
 with open('tests/test_data/collection_exercise/collection_exercise_details.json') as json_data:
     collection_exercise_details = json.load(json_data)
 url_upload_collection_instrument = f'{app.config["BACKSTAGE_API_URL"]}/collection-instrument/test/000000'
+url_upload_sample = f'{app.config["BACKSTAGE_API_URL"]}/sample/upload/14fb3e68-4dca-46db-bf49-04b84e07e77c'
 
 
 class TestSurvey(unittest.TestCase):
@@ -79,7 +80,7 @@ class TestSurvey(unittest.TestCase):
 
         self.assertEqual(response.status_code, 200)
         self.assertIn("Business Register and Employment Survey".encode(), response.data)
-        self.assertIn("000000".encode(), response.data)
+        self.assertIn("221_201712".encode(), response.data)
 
     @requests_mock.mock()
     def test_collection_exercise_view_fail(self, mock_request):
@@ -136,3 +137,63 @@ class TestSurvey(unittest.TestCase):
 
         self.assertEqual(response.status_code, 200)
         self.assertNotIn("Collection instrument loaded".encode(), response.data)
+
+    @requests_mock.mock()
+    def test_upload_sample(self, mock_request):
+        data = {
+            "sampleFile": (BytesIO(b'data'), 'test.csv'),
+            "load-sample": "",
+            "sample-businesses": "5",
+            "sample-collection-instruments": "2"
+        }
+
+        mock_request.post(url_upload_sample, status_code=201)
+        mock_request.get(url_get_collection_exercise, json=collection_exercise_details)
+
+        response = self.app.post("/surveys/test/000000", data=data)
+
+        self.assertEqual(response.status_code, 200)
+        self.assertIn("Sample loaded".encode(), response.data)
+        self.assertIn("Loaded sample summary".encode(), response.data)
+        self.assertIn('2\n'.encode(), response.data)
+        self.assertIn('5\n'.encode(), response.data)
+
+    @requests_mock.mock()
+    def test_failed_upload_sample(self, mock_request):
+        data = {
+            "sampleFile": (BytesIO(b'data'), 'test.csv'),
+            "load-sample": ""
+        }
+
+        mock_request.post(url_upload_sample, status_code=500)
+        mock_request.get(url_get_collection_exercise, json=collection_exercise_details)
+
+        response = self.app.post("/surveys/test/000000", data=data)
+
+        self.assertEqual(response.status_code, 200)
+        self.assertIn("FAIL".encode(), response.data)
+
+    @requests_mock.mock()
+    def test_no_upload_sample_when_bad_extension(self, mock_request):
+        data = {
+            "sampleFile": (BytesIO(b'data'), 'test.html'),
+            "load-sample": ""
+        }
+        mock_request.get(url_get_collection_exercise, json=collection_exercise_details)
+
+        response = self.app.post("/surveys/test/000000", data=data)
+
+        self.assertEqual(response.status_code, 200)
+        self.assertNotIn("Sample loaded".encode(), response.data)
+        self.assertNotIn("Loaded sample summary".encode(), response.data)
+
+    @requests_mock.mock()
+    def test_no_upload_sample_when_no_file(self, mock_request):
+        data = {"load-sample": ""}
+        mock_request.get(url_get_collection_exercise, json=collection_exercise_details)
+
+        response = self.app.post("/surveys/test/000000", data=data)
+
+        self.assertEqual(response.status_code, 200)
+        self.assertNotIn("Sample loaded".encode(), response.data)
+        self.assertNotIn("Loaded sample summary".encode(), response.data)
