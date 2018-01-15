@@ -35,7 +35,7 @@
                   {{ survey.surveyRef }}
                 </td>
                 <td name="tbl-surveys-title" class="table--cell tbl-surveys-title">
-                  {{ survey.longName }}
+                  <a href="/surveys/{{ survey.shortName.replace(' ', '') }}">{{ survey.longName }}</a>
                 </td>
                 <td name="tbl-surveys-abbreviation" class="table--cell tbl-surveys-abbreviation">
                   {{ survey.shortName }}

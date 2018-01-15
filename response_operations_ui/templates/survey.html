@@ -54,7 +54,9 @@
               {% for exercise in collection_exercises %}
               <tr class="table--row">
                 <td class="table--cell tbl-ce-period" name="tbl-ce-period">
-                  {{exercise.exerciseRef}}
+                  <a href="/surveys/{{ survey.shortName.replace(' ', '') }}/{{ exercise.exerciseRef }}">
+                    {{exercise.exerciseRef}}
+                  </a>
                 </td>
                 <td class="table--cell tbl-ce-respondent-info" name="tbl-ce-shown-as">
                   {{exercise.userDescription}}
