@@ -79,7 +79,7 @@ class TestSurvey(unittest.TestCase):
 
         self.assertEqual(response.status_code, 200)
         self.assertIn("Business Register and Employment Survey".encode(), response.data)
-        self.assertIn("000000".encode(), response.data)
+        self.assertIn("221_201712".encode(), response.data)
 
     @requests_mock.mock()
     def test_collection_exercise_view_fail(self, mock_request):
