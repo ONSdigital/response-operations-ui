@@ -5,7 +5,13 @@
 <div class="container page__container">
   <div role="main" id="main" class="page__main">
     <br/>
-    <h1 class="jupiter">{{survey.surveyRef}} {{survey.shortName}} {{ce.exerciseRef}}</h1>
+    <h1 class="jupiter" name="page-ce-title">{{survey.shortName}} {{ce.exerciseRef}}</h1>
+    
+    <ul>
+      {% if ci_loaded %}
+        <li id="collection-instrument-success" class="system-feedback__item success">Collection instrument loaded</li>
+      {% endif %}
+    </ul>
 
     <div class="grid">
       <div class="grid__col col-6@l">

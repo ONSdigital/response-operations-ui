@@ -8,10 +8,16 @@ from response_operations_ui.common.mappers import convert_events_to_new_format
 from response_operations_ui.controllers import collection_exercise_controllers, survey_controllers
 from response_operations_ui.controllers import collection_instrument_controllers
 
+
 logger = wrap_logger(logging.getLogger(__name__))
 
 
 @app.route('/', methods=['GET'])
+def view_home():
+    return render_template('home.html')
+
+
+@app.route('/surveys', methods=['GET'])
 def view_surveys():
     survey_list = survey_controllers.get_surveys_list()
     return render_template('surveys.html', survey_list=survey_list)
