@@ -13,7 +13,7 @@
     </ul>
 
     <div class="grid">
-      <div class="grid__col col-5@l">
+      <div class="grid__col col-6@l">
 
         <div class="ce-section">
           <h2 class="venus u-pt-m">Sample</h2>
@@ -56,17 +56,13 @@
                 <div id="output" class="u-mb-s">
                 </div>
                 <button id="btn-check-sample-contents" class="btn btn--primary unready" type="button" disabled="">Check sample contents</button>
-                <button id="btn-load-sample" class="btn btn--primary hidden" type="submit">Load sample</button>
+                <button id="btn-load-sample" name="load-sample" class="btn btn--primary hidden" type="submit">Load sample</button>
                 <button id="btn-cancel-load-sample" class="btn btn--secondary hidden" type="button" onclick="cancelLoadSample()">Cancel</button>
               </form>
             </div>
           {% endif %}
         </div>
-      </div>
 
-      <div class="grid__col col-1@l"></div>
-
-      <div class="grid__col col-6@l">
         <section class="ce-section">
           <h2 class="venus u-pt-m">Collection instruments</h2>
           <div class="u-mb-m">
@@ -76,7 +72,7 @@
               </p>
               <label class="upload-file u-vh" for="ciFile">Choose CI file</label>
               <input id="ciFile" type="file" class="" name="ciFile" accept=".xlsx">
-              <button id="btn-load-ci" class="btn btn--primary unready">Add CI</button>
+              <button id="btn-load-ci" name="load-ci" class="btn btn--primary unready">Add CI</button>
             </form>
           </div>
         </section>

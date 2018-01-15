@@ -33,10 +33,13 @@ def view_collection_exercise(short_name, period):
 
 @app.route('/surveys/<short_name>/<period>', methods=['POST'])
 def upload(short_name, period):
-    pass
+    if 'load-sample' in request.form:
+        return _upload_sample(short_name, period)
+    else:
+        return _upload_collection_instrument(short_name, period)
 
 
-def upload_sample(short_name, period):
+def _upload_sample(short_name, period):
     ce_details = collection_exercise_controllers.get_collection_exercise(short_name, period)
 
     upload_file = request.files['sampleFile']
@@ -54,7 +57,7 @@ def upload_sample(short_name, period):
                            survey=ce_details['survey'], ce=ce_details['collection_exercise'], sample=sample)
 
 
-def upload_collection_instrument(short_name, period):
+def _upload_collection_instrument(short_name, period):
     error = _validate_collection_instrument()
     ci_loaded = False
 
