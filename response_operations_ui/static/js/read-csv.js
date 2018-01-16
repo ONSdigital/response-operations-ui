@@ -73,8 +73,8 @@ function drawOutput(lines){
 	preview = preview + "    <h3 class='venus'>Sample contents</h3>";
 	preview = preview + "  </div>";
 	preview = preview + "  <div class='panel__body'>";
-	preview = preview + "    <div>Number of businesses: " + lines.length + "</div>";
-	preview = preview + "    <div>Collection instruments: " + ciCount + "</div>";
+	preview = preview + "    <div id='sample-preview-businesses'>Number of businesses: " + lines.length + "</div>";
+	preview = preview + "    <div id='sample-preview-ci'>Collection instruments: " + ciCount + "</div>";
 	preview = preview + "  </div>";
 	preview = preview + "</div>";
 
