@@ -1,3 +1,4 @@
+import datetime
 import logging
 
 from flask import render_template, request
@@ -52,10 +53,8 @@ def _upload_sample(short_name, period):
     total_ci = request.form.get('sample-collection-instruments')
 
     if not error:
-        sample = sample_controllers.upload_sample(short_name, period,
-                                                  request.files['sampleFile'],
-                                                  total_businesses,
-                                                  total_ci)
+        sample_controllers.upload_sample(short_name, period, request.files['sampleFile'])
+        sample = _sample_summary(total_businesses, total_ci)
 
     ce_details = collection_exercise_controllers.get_collection_exercise(short_name, period)
 
@@ -104,3 +103,12 @@ def _validate_sample():
         error = 'File not uploaded'
 
     return error
+
+
+def _sample_summary(total_businesses, total_ci):
+    sample = {"businesses": total_businesses,
+              "collection_instruments": total_ci,
+              "submission_time": datetime.datetime.now().strftime("%I:%M%p on %B %d, %Y")
+              }
+
+    return sample

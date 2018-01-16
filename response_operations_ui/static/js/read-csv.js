@@ -1,12 +1,4 @@
 
-
-
-function checkSampleContents(){
-
-}
-
-
-
 function handleFiles(files) {
 	// Check for the various File API support.
 	if (window.FileReader) {
@@ -27,19 +19,19 @@ function getAsText(fileToRead) {
 }
 
 function loadHandler(event) {
-	var csv = event.target.result;
+    var csv = event.target.result;
 	processData(csv);
 }
 
 function processData(csv) {
     var allTextLines = csv.split(/\r\n|\n/);
     var lines = [];
-    	while (allTextLines.length) {
-				//lines.push(allTextLines.shift().split(','));
-				lines.push(allTextLines.shift().split(':'));
-    		}
-				//console.log(lines);
-				drawOutput(lines);
+
+    while (allTextLines.length) {
+        lines.push(allTextLines.shift().split(':'));
+    }
+
+    drawOutput(lines);
 }
 
 
