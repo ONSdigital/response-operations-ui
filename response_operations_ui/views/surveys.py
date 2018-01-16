@@ -51,9 +51,10 @@ def upload_collection_instrument(short_name, period):
         ci_loaded = True
 
     ce_details = collection_exercise_controllers.get_collection_exercise(short_name, period)
+    formatted_events = convert_events_to_new_format(ce_details['events'])
     return render_template('collection-exercise.html',
                            survey=ce_details['survey'], ce=ce_details['collection_exercise'], error=error,
-                           ci_loaded=ci_loaded)
+                           ci_loaded=ci_loaded, events=formatted_events)
 
 
 def _validate_collection_instrument():
