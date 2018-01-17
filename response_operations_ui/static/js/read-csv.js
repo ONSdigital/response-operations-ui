@@ -8,7 +8,7 @@ function drawOutput(lines){
 	}
 
 	var ciCount = formTypes.filter(function(val, i, arr) {
-	    return arr.indexOf(val) === i;
+        return arr.indexOf(val) === i;
 	}).length;
 
 
@@ -69,7 +69,7 @@ function processData(csv) {
     var lines = [];
 
     while (allTextLines.length) {
-        line = allTextLines.shift().split(":")
+        var line = allTextLines.shift().split(":")
         if (line && line.length && line[0]) {
             lines.push(line);
         }
