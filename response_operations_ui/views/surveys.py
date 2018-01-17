@@ -27,13 +27,13 @@ def view_surveys():
 def view_survey(short_name):
     survey_details = survey_controllers.get_survey(short_name)
     breadcrumbs = [
-       {
-           "title": "Surveys",
-           "link": "/surveys"
-       },
-       {
-           "title": f"{survey_details['survey']['surveyRef']} {survey_details['survey']['shortName']}",
-       }
+        {
+            "title": "Surveys",
+            "link": "/surveys"
+        },
+        {
+            "title": f"{survey_details['survey']['surveyRef']} {survey_details['survey']['shortName']}",
+        }
     ]
     return render_template('survey.html',
                            survey=survey_details['survey'],
@@ -45,17 +45,17 @@ def view_survey(short_name):
 def view_collection_exercise(short_name, period):
     ce_details = collection_exercise_controllers.get_collection_exercise(short_name, period)
     breadcrumbs = [
-       {
-           "title": "Surveys",
-           "link": "/surveys"
-       },
-       {
-           "title": f"{ce_details['survey']['surveyRef']} {ce_details['survey']['shortName']}",
-           "link": f"/surveys/{ce_details['survey']['shortName'].replace(' ', '')}"
-       },
-       {
-           "title": f"{ce_details['collection_exercise']['exerciseRef']}"
-       }
+        {
+            "title": "Surveys",
+            "link": "/surveys"
+        },
+        {
+            "title": f"{ce_details['survey']['surveyRef']} {ce_details['survey']['shortName']}",
+            "link": f"/surveys/{ce_details['survey']['shortName'].replace(' ', '')}"
+        },
+        {
+            "title": f"{ce_details['collection_exercise']['exerciseRef']}"
+        }
     ]
     return render_template('collection-exercise.html',
                            survey=ce_details['survey'], ce=ce_details['collection_exercise'],
