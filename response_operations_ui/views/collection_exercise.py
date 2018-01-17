@@ -13,9 +13,9 @@ logger = wrap_logger(logging.getLogger(__name__))
 @app.route('/surveys/<short_name>/<period>', methods=['GET'])
 def view_collection_exercise(short_name, period):
     ce_details = collection_exercise_controllers.get_collection_exercise(short_name, period)
-    cis = collection_instrument_controllers.get_collection_instruments(short_name, period)
     return render_template('collection-exercise.html', survey=ce_details['survey'],
-                           ce=ce_details['collection_exercise'], collection_instruments=cis)
+                           ce=ce_details['collection_exercise'],
+                           collection_instruments=ce_details['collection_instruments'])
 
 
 @app.route('/surveys/<short_name>/<period>', methods=['POST'])
@@ -28,9 +28,9 @@ def upload_collection_instrument(short_name, period):
         ci_loaded = True
 
     ce_details = collection_exercise_controllers.get_collection_exercise(short_name, period)
-    cis = collection_instrument_controllers.get_collection_instruments(short_name, period)
     return render_template('collection-exercise.html', survey=ce_details['survey'],
-                           ce=ce_details['collection_exercise'], ci_loaded=ci_loaded, collection_instruments=cis)
+                           ce=ce_details['collection_exercise'], ci_loaded=ci_loaded,
+                           collection_instruments=ce_details['collection_instruments'])
 
 
 def _validate_collection_instrument():
