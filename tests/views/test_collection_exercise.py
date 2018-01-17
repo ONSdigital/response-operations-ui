@@ -20,7 +20,6 @@ class TestCollectionExercise(unittest.TestCase):
     @requests_mock.mock()
     def test_collection_exercise_view(self, mock_request):
         mock_request.get(url_get_collection_exercise, json=collection_exercise_details)
-        mock_request.get(url_collection_instrument, json=[])
 
         response = self.app.get("/surveys/test/000000")
 
@@ -43,7 +42,6 @@ class TestCollectionExercise(unittest.TestCase):
             ciFile=(BytesIO(b'data'), 'test.xlsx'),
         )
         mock_request.post(url_collection_instrument, status_code=201)
-        mock_request.get(url_collection_instrument, json=[])
         mock_request.get(url_get_collection_exercise, json=collection_exercise_details)
 
         response = self.app.post("/surveys/test/000000", data=file)
@@ -52,12 +50,24 @@ class TestCollectionExercise(unittest.TestCase):
         self.assertIn("Collection instrument loaded".encode(), response.data)
 
     @requests_mock.mock()
+    def test_view_collection_instrument_after_upload(self, mock_request):
+        file = dict(
+            ciFile=(BytesIO(b'data'), 'collection_instrument.xlsx'),
+        )
+        mock_request.post(url_collection_instrument, status_code=201)
+        mock_request.get(url_get_collection_exercise, json=collection_exercise_details)
+
+        response = self.app.post("/surveys/test/000000", data=file)
+
+        self.assertEqual(response.status_code, 200)
+        self.assertIn("collection_instrument.xlsx".encode(), response.data)
+
+    @requests_mock.mock()
     def test_failed_upload_collection_instrument(self, mock_request):
         file = dict(
             ciFile=(BytesIO(b'data'), 'test.xlsx'),
         )
         mock_request.post(url_collection_instrument, status_code=500)
-        mock_request.get(url_collection_instrument, json=[])
         mock_request.get(url_get_collection_exercise, json=collection_exercise_details)
 
         response = self.app.post("/surveys/test/000000", data=file)
@@ -71,7 +81,6 @@ class TestCollectionExercise(unittest.TestCase):
             ciFile=(BytesIO(b'data'), 'test.html'),
         )
         mock_request.get(url_get_collection_exercise, json=collection_exercise_details)
-        mock_request.get(url_collection_instrument, json=[])
 
         response = self.app.post("/surveys/test/000000", data=file)
 
@@ -81,7 +90,6 @@ class TestCollectionExercise(unittest.TestCase):
     @requests_mock.mock()
     def test_no_upload_collection_instrument_when_no_file(self, mock_request):
         mock_request.get(url_get_collection_exercise, json=collection_exercise_details)
-        mock_request.get(url_collection_instrument, json=[])
 
         response = self.app.post("/surveys/test/000000")
 
@@ -91,7 +99,6 @@ class TestCollectionExercise(unittest.TestCase):
     @requests_mock.mock()
     def test_view_collection_instrument(self, mock_request):
         mock_request.get(url_get_collection_exercise, json=collection_exercise_details)
-        mock_request.get(url_collection_instrument, json=['collection_instrument.xlsx'])
 
         response = self.app.get("/surveys/test/000000")
 
@@ -100,8 +107,8 @@ class TestCollectionExercise(unittest.TestCase):
 
     @requests_mock.mock()
     def test_choose_collection_instrument_when_first(self, mock_request):
-        mock_request.get(url_get_collection_exercise, json=collection_exercise_details)
-        mock_request.get(url_collection_instrument, json=[])
+        with open('tests/test_data/collection_exercise/collection_exercise_details_no_ci.json') as collection_exercise:
+            mock_request.get(url_get_collection_exercise, json=json.load(collection_exercise))
 
         response = self.app.get("/surveys/test/000000")
 
@@ -111,19 +118,8 @@ class TestCollectionExercise(unittest.TestCase):
     @requests_mock.mock()
     def test_add_another_collection_instrument_when_already_uploaded(self, mock_request):
         mock_request.get(url_get_collection_exercise, json=collection_exercise_details)
-        mock_request.get(url_collection_instrument, json=['collection_instrument.xlsx'])
 
         response = self.app.get("/surveys/test/000000")
 
         self.assertEqual(response.status_code, 200)
         self.assertIn("Add another collection instrument (CI)".encode(), response.data)
-
-    @requests_mock.mock()
-    def test_failed_get_collection_instruments(self, mock_request):
-        mock_request.get(url_get_collection_exercise, json=collection_exercise_details)
-        mock_request.get(url_collection_instrument, status_code=500)
-
-        response = self.app.get("/surveys/test/000000")
-
-        self.assertEqual(response.status_code, 200)
-        self.assertIn("FAIL".encode(), response.data)
