@@ -69,7 +69,10 @@ function processData(csv) {
     var lines = [];
 
     while (allTextLines.length) {
-        lines.push(allTextLines.shift().split(":"));
+        line = allTextLines.shift().split(":")
+        if (line && line.length && line[0]) {
+            lines.push(line);
+        }
     }
 
     drawOutput(lines);
