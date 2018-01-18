@@ -19,3 +19,7 @@ script:
 
 after_success:
   - pipenv run codecov
+
+branches:
+  only:
+    - master
