@@ -149,17 +149,24 @@ class TestSurvey(unittest.TestCase):
 
     @requests_mock.mock()
     def test_upload_sample(self, mock_request):
-        data = {
+        post_data = {
             "sampleFile": (BytesIO(b'data'), 'test.csv'),
             "load-sample": "",
             "sample-businesses": "5",
             "sample-collection-instruments": "2"
         }
 
-        mock_request.post(url_upload_sample, status_code=201)
+        json_date = {
+            "sampleSummaryPK": 1,
+            "id": "d7d13200-34a1-4a66-9f3b-ea0af4bc023d",
+            "state": "INIT",
+            "ingestDateTime": "2017-11-06T14:02:24.203+0000"
+        }
+
+        mock_request.post(url_upload_sample, status_code=201, json=json_date)
         mock_request.get(url_get_collection_exercise, json=collection_exercise_details)
 
-        response = self.app.post("/surveys/test/000000", data=data)
+        response = self.app.post("/surveys/test/000000", data=post_data)
 
         self.assertEqual(response.status_code, 200)
         self.assertIn("Sample loaded".encode(), response.data)

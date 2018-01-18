@@ -42,7 +42,9 @@
                 </tr>
               </tbody>
             </table>
-            <p>Sample loaded: {{sample.submission_time}}</p>
+            {% if 'submission_time' in sample %}
+              <p>Sample loaded: {{sample.submission_time}}</p>
+            {% endif %}
           {% else %}
             <div class="u-mb-m">
               <form id="form-load-sample"

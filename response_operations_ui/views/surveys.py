@@ -53,8 +53,8 @@ def _upload_sample(short_name, period):
     total_ci = request.form.get('sample-collection-instruments')
 
     if not error:
-        sample_controllers.upload_sample(short_name, period, request.files['sampleFile'])
-        sample = _sample_summary(total_businesses, total_ci)
+        upload_receipt = sample_controllers.upload_sample(short_name, period, request.files['sampleFile'])
+        sample = _sample_summary(total_businesses, total_ci, upload_receipt.get('ingestDateTime'))
 
     ce_details = collection_exercise_controllers.get_collection_exercise(short_name, period)
 
@@ -105,10 +105,14 @@ def _validate_sample():
     return error
 
 
-def _sample_summary(total_businesses, total_ci):
+def _sample_summary(total_businesses, total_ci, submission_time_stamp):
     sample = {"businesses": total_businesses,
-              "collection_instruments": total_ci,
-              "submission_time": datetime.datetime.now().strftime("%I:%M%p on %B %d, %Y")
+              "collection_instruments": total_ci
               }
+
+    if submission_time_stamp:
+        submission_datetime = datetime.datetime.strptime(submission_time_stamp, "%Y-%m-%dT%H:%M:%S.%f%z")
+        submission_time = submission_datetime.strftime("%I:%M%p on %B %d, %Y")
+        sample["submission_time"] = submission_time
 
     return sample
