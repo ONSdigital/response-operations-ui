@@ -52,11 +52,12 @@ def _upload_sample(short_name, period):
     total_businesses = request.form.get('sample-businesses')
     total_ci = request.form.get('sample-collection-instruments')
 
-    if not error:
-        upload_receipt = sample_controllers.upload_sample(short_name, period, request.files['sampleFile'])
-        sample = _sample_summary(total_businesses, total_ci, upload_receipt.get('ingestDateTime'))
-
     ce_details = collection_exercise_controllers.get_collection_exercise(short_name, period)
+
+    if not error:
+        upload_receipt = sample_controllers.upload_sample(ce_details['collection_exercise']['id'],
+                                                          request.files['sampleFile'])
+        sample = _sample_summary(total_businesses, total_ci, upload_receipt.get('ingestDateTime'))
 
     return render_template('collection-exercise.html',
                            survey=ce_details['survey'], ce=ce_details['collection_exercise'], sample=sample,

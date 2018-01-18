@@ -19,7 +19,7 @@ url_get_collection_exercise = f'{app.config["BACKSTAGE_API_URL"]}/collection-exe
 with open('tests/test_data/collection_exercise/collection_exercise_details.json') as json_data:
     collection_exercise_details = json.load(json_data)
 url_upload_collection_instrument = f'{app.config["BACKSTAGE_API_URL"]}/collection-instrument/test/000000'
-url_upload_sample = f'{app.config["BACKSTAGE_API_URL"]}/sample/test/000000'
+url_upload_sample = f'{app.config["BACKSTAGE_API_URL"]}/sample'
 
 
 class TestSurvey(unittest.TestCase):
