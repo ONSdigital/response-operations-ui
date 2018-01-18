@@ -10,14 +10,13 @@ from response_operations_ui.exceptions.exceptions import ApiError
 logger = wrap_logger(logging.getLogger(__name__))
 
 
-def upload_sample(ce, file):
-    logger.debug('Uploading sample', collection_exercise=ce, filename=file.filename)
-    url = f'{app.config["BACKSTAGE_API_URL"]}/sample'
-    params = {'collection_exercise_id': ce}
-    response = requests.post(url, params=params, files={"file": (file.filename, file.stream, file.mimetype)})
+def upload_sample(short_name, period, file):
+    logger.debug('Uploading sample', short_name=short_name, period=period, filename=file.filename)
+    url = f'{app.config["BACKSTAGE_API_URL"]}/sample/{short_name}/{period}'
+    response = requests.post(url, files={"file": (file.filename, file.stream, file.mimetype)})
     if response.status_code != 201:
         raise ApiError(response)
 
-    logger.debug('Successfully uploaded sample', collection_exercise=ce, filename=file.filename)
+    logger.debug('Successfully uploaded sample', short_name=short_name, filename=file.filename, period=period)
 
     return json.loads(response.text)
