@@ -60,7 +60,8 @@ def _upload_sample(short_name, period):
         sample = _sample_summary(total_businesses, total_ci, upload_receipt.get('ingestDateTime'))
 
     return render_template('collection-exercise.html',
-                           survey=ce_details['survey'], ce=ce_details['collection_exercise'], sample=sample,
+                           survey=ce_details['survey'], ce=ce_details['collection_exercise'],
+                           sample=sample,
                            error=error)
 
 
