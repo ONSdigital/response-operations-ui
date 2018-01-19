@@ -8,6 +8,7 @@
 <div class="container page__container">
   <div class="grid">
     <div class="grid__col col-12@m">
+      <form action="" method="post">
       <div class="field">
         <label class="label" for="username-input">Username</label>
         <input class="input input--text" type="text" id="username-input" />
@@ -17,10 +18,11 @@
         <label class="label" for="password-input">Password</label>
         <input class="input input--text" type="text" id="password-input" />
       </div>
+
       <br>
 
       <button class="btn btn--primary">Sign-in</button>
-
+    </form>
     </div>
   </div>
 </div>
@@ -32,9 +34,8 @@
     <div class="grid__col col-12@m">
       <div role="main" id="main" class="page__main">
         <ul class="u-pt-l">
-          <li>
-            <a name="surveys-link" href="/surveys/">View list of business surveys</a>
-          </li>
+          <li><a name="surveys-link" href="/surveys/">View list of business surveys</a></li>
+          <li><a name="logout-link" href="/logout">Logout</a></li>
         </ul>
       </div>
     </div>

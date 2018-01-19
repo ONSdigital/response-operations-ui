@@ -1,6 +1,7 @@
 import logging
 
 from flask import Blueprint, render_template, request
+from flask_login import login_required
 from structlog import wrap_logger
 
 from response_operations_ui import app
@@ -15,12 +16,14 @@ surveys_bp = Blueprint('surveys_bp', __name__,
 
 
 @surveys_bp.route('/', methods=['GET'])
+@login_required
 def view_surveys():
     survey_list = survey_controllers.get_surveys_list()
     return render_template('surveys.html', survey_list=survey_list)
 
 
 @surveys_bp.route('/<short_name>', methods=['GET'])
+@login_required
 def view_survey(short_name):
     survey_details = survey_controllers.get_survey(short_name)
     return render_template('survey.html',
@@ -29,6 +32,7 @@ def view_survey(short_name):
 
 
 @surveys_bp.route('/<short_name>/<period>', methods=['GET'])
+@login_required
 def view_collection_exercise(short_name, period):
     ce_details = collection_exercise_controllers.get_collection_exercise(short_name, period)
     return render_template('collection-exercise.html',
@@ -36,6 +40,7 @@ def view_collection_exercise(short_name, period):
 
 
 @surveys_bp.route('/<short_name>/<period>', methods=['POST'])
+@login_required
 def upload_collection_instrument(short_name, period):
     error = _validate_collection_instrument()
     ci_loaded = False

@@ -5,10 +5,14 @@ from flask_assets import Bundle, Environment
 from flask_login import LoginManager
 
 from response_operations_ui.logger_config import logger_initial_config
+from response_operations_ui.user import User
 
 
 app = Flask(__name__)
+app.secret_key = "secret"
 login_manager = LoginManager(app)
+login_manager.init_app(app)
+login_manager.login_view = "sign_in_bp.login"
 
 # Load scss and js assets
 assets = Environment(app)
@@ -26,5 +30,9 @@ app.url_map.strict_slashes = False
 
 logger_initial_config(service_name='response-operations-ui', log_level=app.config['LOGGING_LEVEL'])
 
+
+@login_manager.user_loader
+def user_loader(id):
+    return User(id)
 
 import response_operations_ui.views  # NOQA # pylint: disable=wrong-import-position
