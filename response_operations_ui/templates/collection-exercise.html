@@ -94,10 +94,36 @@
 
         <section class="ce-section">
           <h2 class="venus u-pt-m">Collection instruments</h2>
+
+          {% if collection_instruments %}
+          <div>
+            <table id="collection-instruments-table" class="table table__dense" summary="Sample details for this collection exercise">
+              <thead class="table--head u-vh">
+                <tr class="table--row">
+                  <th scope="col" class="table--header--cell tbl-ce-value">
+                    Collection instrument
+                  </th>
+                </tr>
+              </thead>
+              <tbody>
+
+              {% for collection_instrument in collection_instruments %}
+                <tr class="table--row">
+                  <td class="table--cell tbl-ce-value">
+                    {{collection_instrument.file_name}}
+                  </td>
+                </tr>
+              {% endfor %}
+
+              </tbody>
+            </table>
+          </div>
+          {% endif %}
+
           <div class="u-mb-m">
             <form action="" class="form" method="post" enctype="multipart/form-data">
               <p>
-                Choose a collection instrument (CI) to load
+                {{ 'Add another collection instrument (CI)' if collection_instruments else 'Choose a collection instrument (CI) to load'}}
               </p>
               <label class="upload-file u-vh" for="ciFile">Choose CI file</label>
               <input id="ciFile" type="file" class="" name="ciFile" accept=".xlsx">

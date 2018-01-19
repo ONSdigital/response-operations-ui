@@ -23,8 +23,7 @@
     "scheduledReturnDateTime": "2017-10-06T00:00:00.000+0000",
     "scheduledStartDateTime": "2017-09-11T23:00:00.000+0000",
     "state": "PUBLISHED",
-    "surveyId": "cb0711c3-0ac8-41d3-ae0e-567e5ea1ef87",
-    "userDescription": "January 2017"
+    "surveyId": "cb0711c3-0ac8-41d3-ae0e-567e5ea1ef87"
   },
   "survey": {
     "id": "cb0711c3-0ac8-41d3-ae0e-567e5ea1ef87",
@@ -32,40 +31,6 @@
     "shortName": "BRES",
     "surveyRef": "221"
   },
-  "events": [
-    {
-      "tag": "mps",
-      "timestamp": "1993-05-15T23:00:00.000+0000"
-    },
-    {
-      "tag": "goLive",
-      "timestamp": "1993-05-15T23:00:00.000+0000"
-    },
-    {
-      "tag": "returnBy",
-      "timestamp": "1993-05-15T23:00:00.000+0000"
-    },
-    {
-      "tag": "firstReminder",
-      "timestamp": "1993-05-15T23:00:00.000+0000"
-    },
-    {
-      "tag": "exerciseEnd",
-      "timestamp": "1993-05-15T23:00:00.000+0000"
-    }
-  ],
   "collection_instruments": [
-    {
-      "classifiers": {
-        "COLLECTION_EXERCISE": [
-          "e33daf0e-6a27-40cd-98dc-c6231f50e84a"
-        ],
-        "RU_REF": [],
-        "SURVEY_ID": "cb0711c3-0ac8-41d3-ae0e-567e5ea1ef87"
-      },
-      "file_name": "collection_instrument.xlsx",
-      "id": "f732afbe-c710-4c95-a8d3-6644833195a7",
-      "surveyId": "cb0711c3-0ac8-41d3-ae0e-567e5ea1ef87"
-    }
   ]
 }
