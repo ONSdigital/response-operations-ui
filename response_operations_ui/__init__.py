@@ -2,11 +2,13 @@ import os
 
 from flask import Flask
 from flask_assets import Bundle, Environment
+from flask_login import LoginManager
 
 from response_operations_ui.logger_config import logger_initial_config
 
 
 app = Flask(__name__)
+login_manager = LoginManager(app)
 
 # Load scss and js assets
 assets = Environment(app)
@@ -25,6 +27,4 @@ app.url_map.strict_slashes = False
 logger_initial_config(service_name='response-operations-ui', log_level=app.config['LOGGING_LEVEL'])
 
 
-from response_operations_ui import error_handlers  # NOQA # pylint: disable=wrong-import-position
-from response_operations_ui.views import surveys  # NOQA # pylint: disable=wrong-import-position
-from response_operations_ui.views import info  # NOQA # pylint: disable=wrong-import-position
+import response_operations_ui.views  # NOQA # pylint: disable=wrong-import-position

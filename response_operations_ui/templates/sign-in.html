@@ -1,0 +1,46 @@
+{% extends "layouts/base.html" %}
+
+{% block page_title %} Sign-In | Survey Data Collection {% endblock %}
+
+
+{% block main %}
+<br>
+<div class="container page__container">
+  <div class="grid">
+    <div class="grid__col col-12@m">
+      <div class="field">
+        <label class="label" for="username-input">Username</label>
+        <input class="input input--text" type="text" id="username-input" />
+      </div>
+
+      <div class="field">
+        <label class="label" for="password-input">Password</label>
+        <input class="input input--text" type="text" id="password-input" />
+      </div>
+      <br>
+
+      <button class="btn btn--primary">Sign-in</button>
+
+    </div>
+  </div>
+</div>
+
+
+
+<div class="container page__container">
+  <div class="grid">
+    <div class="grid__col col-12@m">
+      <div role="main" id="main" class="page__main">
+        <ul class="u-pt-l">
+          <li>
+            <a name="surveys-link" href="/surveys/">View list of business surveys</a>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+
+{% endblock main %}
