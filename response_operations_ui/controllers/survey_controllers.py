@@ -1,4 +1,3 @@
-import json
 import logging
 
 import requests
@@ -6,7 +5,6 @@ from structlog import wrap_logger
 
 from response_operations_ui import app
 from response_operations_ui.exceptions.exceptions import ApiError
-
 
 logger = wrap_logger(logging.getLogger(__name__))
 
@@ -19,7 +17,7 @@ def get_surveys_list():
         raise ApiError(response)
 
     logger.debug('Successfully retrieved surveys list')
-    return json.loads(response.text)
+    return response.json()
 
 
 def get_survey(short_name):
@@ -31,4 +29,4 @@ def get_survey(short_name):
         raise ApiError(response)
 
     logger.debug('Successfully retrieved survey', short_name=short_name)
-    return json.loads(response.text)
+    return response.json()
