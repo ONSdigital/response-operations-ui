@@ -13,7 +13,13 @@
 
   <div class="bar header__site" role="banner">
     <div class="bar__inner container">
-      <div class="bar__title neptune"><a href="/">Survey Data Collection</a></div>
+      <div class="bar__title neptune"><a href="/">Survey Data Collection</a><br>
+        {% if current_user.is_authenticated %}
+          Logged in as: {{current_user.username}}
+        {% else %}
+          You are not logged in.
+        {% endif %}
+      </div>
     </div>
   </div>
 

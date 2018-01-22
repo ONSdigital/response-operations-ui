@@ -1,6 +1,6 @@
 import logging
 
-from flask import Blueprint, render_template, request
+from flask import Blueprint, render_template, request, flash
 from flask_login import login_user
 from structlog import wrap_logger
 
@@ -27,7 +27,8 @@ def login():
         # For now log in the user without checking
         # response = api_call('POST', 'sign-in', json=sign_in_data)
 
-        user = User(request.form.get('username'))
-        login_user(user)
+        user = User(form.id.data)
+        if request.form.get('username') == 'user' and request.form.get('password') == 'pass':
+            login_user(user)
 
     return render_template('sign-in.html', form=form)

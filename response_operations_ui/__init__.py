@@ -32,7 +32,7 @@ logger_initial_config(service_name='response-operations-ui', log_level=app.confi
 
 
 @login_manager.user_loader
-def user_loader(id):
-    return User(id)
+def user_loader(user_id):
+    return User(user_id)
 
 import response_operations_ui.views  # NOQA # pylint: disable=wrong-import-position
