@@ -1,4 +1,4 @@
-from flask import Blueprint, redirect, request, make_response, url_for
+from flask import Blueprint, redirect, url_for
 from flask_login import logout_user
 
 
@@ -8,13 +8,4 @@ logout_bp = Blueprint('logout_bp', __name__, static_folder='static', template_fo
 @logout_bp.route('/')
 def logout():
     logout_user()
-    return redirect(url_for("sign_in_bp.my_form"))
-    # Delete user session in redis
-    # session_key = request.cookies.get('authorization')
-    # session = SessionHandler()
-    # session.delete_session(session_key)
-    #
-    # # Delete session cookie
-    # response = make_response(redirect(url_for('sign_in_bp.login')))
-    # response.set_cookie('authorization', value='', expires=0)
-    # return response
+    return redirect(url_for("sign_in_bp.login"))
