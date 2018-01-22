@@ -8,4 +8,4 @@ logout_bp = Blueprint('logout_bp', __name__, static_folder='static', template_fo
 @logout_bp.route('/')
 def logout():
     logout_user()
-    return redirect(url_for("sign_in_bp.login"))
+    return redirect(url_for("login_bp.login"))

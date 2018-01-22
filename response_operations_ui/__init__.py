@@ -12,7 +12,7 @@ app = Flask(__name__)
 app.secret_key = "secret"
 login_manager = LoginManager(app)
 login_manager.init_app(app)
-login_manager.login_view = "sign_in_bp.login"
+login_manager.login_view = "login_bp.login"
 
 # Load scss and js assets
 assets = Environment(app)

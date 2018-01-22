@@ -9,10 +9,10 @@ from response_operations_ui.user import User
 
 logger = wrap_logger(logging.getLogger(__name__))
 
-sign_in_bp = Blueprint('sign_in_bp', __name__, static_folder='static', template_folder='templates/sign-in')
+login_bp = Blueprint('login_bp', __name__, static_folder='static', template_folder='templates/sign-in')
 
 
-@sign_in_bp.route('/', methods=['GET', 'POST'])
+@login_bp.route('/', methods=['GET', 'POST'])
 def login():
     form = LoginForm(request.form)
 
