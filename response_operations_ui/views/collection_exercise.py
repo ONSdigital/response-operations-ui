@@ -15,10 +15,24 @@ logger = wrap_logger(logging.getLogger(__name__))
 def view_collection_exercise(short_name, period):
     ce_details = collection_exercise_controllers.get_collection_exercise(short_name, period)
     formatted_events = convert_events_to_new_format(ce_details['events'])
+    breadcrumbs = [
+        {
+            "title": "Surveys",
+            "link": "/surveys"
+        },
+        {
+            "title": f"{ce_details['survey']['surveyRef']} {ce_details['survey']['shortName']}",
+            "link": f"/surveys/{ce_details['survey']['shortName'].replace(' ', '')}"
+        },
+        {
+            "title": f"{ce_details['collection_exercise']['exerciseRef']}"
+        }
+    ]
     return render_template('collection-exercise.html', survey=ce_details['survey'],
                            ce=ce_details['collection_exercise'],
                            collection_instruments=ce_details['collection_instruments'],
-                           events=formatted_events)
+                           events=formatted_events,
+                           breadcrumbs=breadcrumbs)
 
 
 @app.route('/surveys/<short_name>/<period>', methods=['POST'])

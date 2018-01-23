@@ -1,0 +1,13 @@
+<ol id="breadcrumbs" class="breadcrumb">
+  <li id="breadcrumb-1" class="breadcrumb--item mercury">
+    <a href="/">Home</a>
+  </li>
+  {% for breadcrumb in breadcrumbs[:-1] %}
+  <li id="breadcrumb-{{loop.index+1}}" class="breadcrumb--item mercury">
+    <a href={{breadcrumb.link}}>{{breadcrumb.title}}</a>
+  </li>
+  {% endfor %}
+  <li id="breadcrumb-{{breadcrumbs | length + 1}}" class="breadcrumb--item__current mercury">
+    {{breadcrumbs[-1].title}}
+  </li>
+</ol>

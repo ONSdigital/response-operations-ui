@@ -3,52 +3,50 @@
 
 {% block main %}
 </br>
-<div class="container page__container">
-  <div role="main" id="main" class="page__main">
-    <h1 class="jupiter" name="page-surveys-title">Surveys</h1>
-    <div class="grid">
-      <div class="grid__col col-12@l">
-        <div class="survey-list">
+<div role="main" id="main" class="page__main">
+  <h1 class="jupiter" name="page-surveys-title">Surveys</h1>
+  <div class="grid">
+    <div class="grid__col col-12@l">
+      <div class="survey-list">
 
-          <table id="tbl-surveys" class="table__dense" summary="Surveys in the system">
-            <thead class="table--head">
-              <tr class="table--row">
-                <th scope="col" class="table--header--cell tbl-surveys-id">
-                  ID
-                </th>
-                <th scope="col" class="table--header--cell tbl-surveys-title">
-                  Title
-                </th>
-                <th scope="col" class="table--header--cell tbl-surveys-abbreviation">
-                  Abbreviation
-                </th>
-                <th scope="col" class="table--header--cell tbl-surveys-legal-basis">
-                  Legal basis
-                </th>
-              </tr>
-            </thead>
+        <table id="tbl-surveys" class="table__dense" summary="Surveys in the system">
+          <thead class="table--head">
+            <tr class="table--row">
+              <th scope="col" class="table--header--cell tbl-surveys-id">
+                ID
+              </th>
+              <th scope="col" class="table--header--cell tbl-surveys-title">
+                Title
+              </th>
+              <th scope="col" class="table--header--cell tbl-surveys-abbreviation">
+                Abbreviation
+              </th>
+              <th scope="col" class="table--header--cell tbl-surveys-legal-basis">
+                Legal basis
+              </th>
+            </tr>
+          </thead>
 
-            <tbody>
-              {% for survey in survey_list %}
-              <tr class="table--row table--row__selectable">
-                <td name="tbl-surveys-id" class="table--cell tbl-surveys-id">
-                  {{ survey.surveyRef }}
-                </td>
-                <td name="tbl-surveys-title" class="table--cell tbl-surveys-title">
-                  <a href="/surveys/{{ survey.shortName.replace(' ', '') }}" name="survey-link-{{survey.shortName}}">{{ survey.longName }}</a>
-                </td>
-                <td name="tbl-surveys-abbreviation" class="table--cell tbl-surveys-abbreviation">
-                  {{ survey.shortName }}
-                </td>
-                <td name="tbl-surveys-legal-basis" class="table--cell tbl-surveys-legal-basis">
-                  {{ survey.legalBasis }}
-                </td>
-              </tr>
-              {% endfor %}
-            </tbody>
-          </table>
+          <tbody>
+            {% for survey in survey_list %}
+            <tr class="table--row table--row__selectable">
+              <td name="tbl-surveys-id" class="table--cell tbl-surveys-id">
+                {{ survey.surveyRef }}
+              </td>
+              <td name="tbl-surveys-title" class="table--cell tbl-surveys-title">
+                <a href="/surveys/{{ survey.shortName.replace(' ', '') }}" name="survey-link-{{survey.shortName}}">{{ survey.longName }}</a>
+              </td>
+              <td name="tbl-surveys-abbreviation" class="table--cell tbl-surveys-abbreviation">
+                {{ survey.shortName }}
+              </td>
+              <td name="tbl-surveys-legal-basis" class="table--cell tbl-surveys-legal-basis">
+                {{ survey.legalBasis }}
+              </td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
 
-        </div>
       </div>
     </div>
   </div>
