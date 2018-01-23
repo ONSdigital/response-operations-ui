@@ -3,70 +3,68 @@
 
 {% block main %}
 </br>
-<div class="container page__container">
-  <div role="main" id="main" class="page__main">
-  <h1 class="jupiter" name="page-survey-title">{{survey.longName}}</h1>
+<div role="main" id="main" class="page__main">
+<h1 class="jupiter" name="page-survey-title">{{survey.longName}}</h1>
 
-    <div class="grid">
-      <div class="grid__col col-8@l">
-        <div class="">
-          <dl class="survey-info info-panel" id="survey-attributes">
-            <dt class="survey-info__title">
-              Survey ID:
-            </dt>
-            <dd class="survey-info__data" name="survey-id">
-              {{survey.surveyRef}}
-            </dd>
-            <dt class="survey-info__title">
-              Survey title:
-            </dt>
-            <dd class="survey-info__data" name="survey-title">
-              {{survey.longName}}
-            </dd>
-            <dt class="survey-info__title">
-              Abbreviation:
-            </dt>
-            <dd class="survey-info__data" name="survey-abbreviation">
-              {{survey.shortName}}
-            </dd>
-            <dt class="survey-info__title">
-              Legal basis:
-            </dt>
-            <dd class="survey-info__data" name="survey-legal-basis">
-              {{survey.legalBasis}}
-            </dd>
-          </dl>
-        </div>
-        <div class="ce-list">
-          <h2 class="saturn u-pt-m">Collection exercises for {{survey.shortName}}</h2>
-          <table class="table__dense" summary="Collection exercises for the MWSS survey" id="tbl-collection-exercise">
-            <thead class="table--head">
-              <tr class="table--row">
-                <th scope="col" class="table--header--cell tbl-ce-period">
-                  Period
-                </th>
-                <th scope="col" class="table--header--cell tbl-ce-respondent-info">
-                  Shown to respondent as
-                </th>
-              </tr>
-            </thead>
-            <tbody>
-              {% for exercise in collection_exercises %}
-              <tr class="table--row">
-                <td class="table--cell tbl-ce-period" name="tbl-ce-period">
-                  <a href="/surveys/{{ survey.shortName.replace(' ', '') }}/{{ exercise.exerciseRef }}"
-                     name="ce-link-{{exercise.exerciseRef}}">
-                    {{exercise.exerciseRef}}
-                  </a>
-                </td>
-                <td class="table--cell tbl-ce-respondent-info" name="tbl-ce-shown-as">
-                  {{exercise.userDescription}}
-                </td>
-              </tr>
-              {% endfor %}
-            </tbody>
-          </table>
-        </div>
+  <div class="grid">
+    <div class="grid__col col-8@l">
+      <div class="">
+        <dl class="survey-info info-panel" id="survey-attributes">
+          <dt class="survey-info__title">
+            Survey ID:
+          </dt>
+          <dd class="survey-info__data" name="survey-id">
+            {{survey.surveyRef}}
+          </dd>
+          <dt class="survey-info__title">
+            Survey title:
+          </dt>
+          <dd class="survey-info__data" name="survey-title">
+            {{survey.longName}}
+          </dd>
+          <dt class="survey-info__title">
+            Abbreviation:
+          </dt>
+          <dd class="survey-info__data" name="survey-abbreviation">
+            {{survey.shortName}}
+          </dd>
+          <dt class="survey-info__title">
+            Legal basis:
+          </dt>
+          <dd class="survey-info__data" name="survey-legal-basis">
+            {{survey.legalBasis}}
+          </dd>
+        </dl>
+      </div>
+      <div class="ce-list">
+        <h2 class="saturn u-pt-m">Collection exercises for {{survey.shortName}}</h2>
+        <table class="table__dense" summary="Collection exercises for the MWSS survey" id="tbl-collection-exercise">
+          <thead class="table--head">
+            <tr class="table--row">
+              <th scope="col" class="table--header--cell tbl-ce-period">
+                Period
+              </th>
+              <th scope="col" class="table--header--cell tbl-ce-respondent-info">
+                Shown to respondent as
+              </th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for exercise in collection_exercises %}
+            <tr class="table--row">
+              <td class="table--cell tbl-ce-period" name="tbl-ce-period">
+                <a href="/surveys/{{ survey.shortName.replace(' ', '') }}/{{ exercise.exerciseRef }}"
+                   name="ce-link-{{exercise.exerciseRef}}">
+                  {{exercise.exerciseRef}}
+                </a>
+              </td>
+              <td class="table--cell tbl-ce-respondent-info" name="tbl-ce-shown-as">
+                {{exercise.userDescription}}
+              </td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
       </div>
     </div>
   </div>
