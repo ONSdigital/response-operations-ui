@@ -1,0 +1,45 @@
+
+/* Breadcrumb trail styles */
+
+
+.breadcrumb{
+  /*display: none;*/
+}
+
+
+.breadcrumb{
+    list-style: none;
+    padding-left: 0;
+    margin-top: 1rem;
+}
+
+.breadcrumb--item, .breadcrumb--item__current{
+    list-style: none;
+    display: inline-block;
+    color: #666;
+    font-weight: 400;
+}
+
+.breadcrumb a:link{
+    text-decoration: none;
+}
+
+.breadcrumb a:visited{
+    text-decoration: none;
+}
+
+.breadcrumb a:hover{
+    text-decoration: underline;
+    color: #222;
+}
+
+.breadcrumb a:focus,
+.breadcrumb a:active{
+    text-decoration: underline;
+    color: #fff;
+}
+
+.breadcrumb--item::after{
+    content: " >  ";
+    margin: 0 0.3rem;
+}

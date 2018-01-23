@@ -2,8 +2,8 @@
 {% block page_title %}{{ce.shortName}} {{period}}{% endblock %}
 
 {% block main %}
-<div class="container page__container">
-  <div role="main" id="main" class="page__main">
+
+<div role="main" id="main" class="page__main">
     <br/>
     <h1 class="jupiter" name="page-ce-title">{{survey.shortName}} {{ce.exerciseRef}}</h1>
     <ul>
@@ -84,8 +84,8 @@
                   </th>
                 </tr>
               </thead>
-              <tbody>
 
+              <tbody>
               {% for collection_instrument in collection_instruments %}
                 <tr class="table--row">
                   <td class="table--cell tbl-ce-value">
@@ -112,44 +112,43 @@
         </section>
       </div>
 
-      <div class="grid__col col-1@l">
-      </div>
+    <div class="grid__col col-1@l">
+    </div>
 
-      <div class="grid__col col-5@l">
-        <div class="ce-section ce-details">
-          <h2 class="venus u-pt-m">Reference information for this collection exercise</h2>
+    <div class="grid__col col-5@l">
+      <div class="ce-section ce-details">
+        <h2 class="venus u-pt-m">Reference information for this collection exercise</h2>
 
-          <table class="table table__dense" summary="Collection exercise details">
-            <tbody>
-              <tr class="table--row">
-                <td class="table--cell tbl-ce-label">
-                  Survey ID / Abbreviation / Title
-                </td>
-                <td class="table--cell tbl-ce-value" name="survey-info">
-                  {{survey.surveyRef}} - {{survey.longName}} ({{survey.shortName}})
-                </td>
-              </tr>
+        <table class="table table__dense" summary="Collection exercise details">
+          <tbody>
+            <tr class="table--row">
+              <td class="table--cell tbl-ce-label">
+                Survey ID / Abbreviation / Title
+              </td>
+              <td class="table--cell tbl-ce-value" name="survey-info">
+                {{survey.surveyRef}} - {{survey.longName}} ({{survey.shortName}})
+              </td>
+            </tr>
 
-              <tr class="table--row">
-                <td class="table--cell tbl-ce-">
-                  Period
-                </td>
-                <td class="table--cell tbl-ce-" name="period">
-                  {{ce.exerciseRef}}
-                </td>
-              </tr>
+            <tr class="table--row">
+              <td class="table--cell tbl-ce-">
+                Period
+              </td>
+              <td class="table--cell tbl-ce-" name="period">
+                {{ce.exerciseRef}}
+              </td>
+            </tr>
 
-              <tr class="table--row">
-                <td class="table--cell tbl-ce-">
-                  Shown to respondent as
-                </td>
-                <td class="table--cell tbl-ce-" name="user-description">
-                  {{ce.userDescription}}
-                </td>
-              </tr>
-            </tbody>
-          </table>
-        </div>
+            <tr class="table--row">
+              <td class="table--cell tbl-ce-">
+                Shown to respondent as
+              </td>
+              <td class="table--cell tbl-ce-" name="user-description">
+                {{ce.userDescription}}
+              </td>
+            </tr>
+          </tbody>
+        </table>
       </div>
     </div>
   </div>
