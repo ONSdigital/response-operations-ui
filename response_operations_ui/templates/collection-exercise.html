@@ -4,16 +4,73 @@
 {% block main %}
 
 <div role="main" id="main" class="page__main">
-  <br/>
-  <h1 class="jupiter" name="page-ce-title">{{survey.shortName}} {{ce.exerciseRef}}</h1>
-  <ul>
-    {% if ci_loaded %}
-      <li id="collection-instrument-success" class="system-feedback__item success">Collection instrument loaded</li>
-    {% endif %}
-  </ul>
+    <br/>
+    <h1 class="jupiter" name="page-ce-title">{{survey.shortName}} {{ce.exerciseRef}}</h1>
+    <ul>
+      {% if ci_loaded %}
+        <li id="collection-instrument-success" class="system-feedback__item success">Collection instrument loaded</li>
+      {% endif %}
+      {% if sample_loaded %}
+        <li id="sample-success" class="system-feedback__item success">Sample loaded</li>
+      {% endif %}
+    </ul>
 
-  <div class="grid">
+    <div class="grid">
       <div class="grid__col col-6@l">
+
+        <div class="ce-section">
+          <h2 class="venus u-pt-m">Sample</h2>
+          {% if sample %}
+            <table class="table table__dense" summary="Loaded sample summary">
+              <tbody>
+                <tr class="table--row">
+                  <td class="table--cell tbl-ce-label">
+                    Total businesses
+                  </td>
+                  <td class="table--cell tbl-ce-value" name="total-businesses">
+                    {{sample.businesses}}
+                  </td>
+                </tr>
+
+                <tr class="table--row">
+                  <td class="table--cell tbl-ce-">
+                    Collection instruments
+                  </td>
+                  <td class="table--cell tbl-ce-" name="total-ci">
+                    {{sample.collection_instruments}}
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+            {% if 'submission_time' in sample %}
+              <p>Sample loaded: {{sample.submission_time}}</p>
+            {% endif %}
+          {% else %}
+            <div class="u-mb-m">
+              <form id="form-load-sample"
+                    method="post"
+                    action=""
+                    class="form"
+                    enctype="multipart/form-data">
+                <p>
+                  Choose a sample file to check details before loading
+                </p>
+                <input type="hidden" id="sample-businesses" name="sample-businesses" value="">
+                <input type="hidden" id="sample-collection-instruments" name="sample-collection-instruments" value="">
+                <label class="upload-file u-vh" for="sampleFile">Choose file</label>
+                <input type="file" class="" name="sampleFile" id="sampleFile" onchange="handleFiles(this.files)"
+                accept=".csv">
+
+                <div id="sample-preview" class="u-mb-s"></div>
+
+                <button id="btn-check-sample-contents" class="btn btn--primary unready" type="button" disabled="">Check sample contents</button>
+                <button id="btn-load-sample" name="load-sample" class="btn btn--primary hidden" type="submit">Load sample</button>
+                <button id="btn-cancel-load-sample" class="btn btn--secondary hidden" type="button" onclick="cancelLoadSample()">Cancel</button>
+              </form>
+            </div>
+          {% endif %}
+        </div>
+
         <section class="ce-section">
           <h2 class="venus u-pt-m">Collection instruments</h2>
 
@@ -43,13 +100,13 @@
           {% endif %}
 
           <div class="u-mb-m">
-            <form action="" class="form" method="post" enctype="multipart/form-data">
+            <form id="form-load-ci" action="" class="form" method="post" enctype="multipart/form-data">
               <p>
                 {{ 'Add another collection instrument (CI)' if collection_instruments else 'Choose a collection instrument (CI) to load'}}
               </p>
               <label class="upload-file u-vh" for="ciFile">Choose CI file</label>
               <input id="ciFile" type="file" class="" name="ciFile" accept=".xlsx">
-              <button id="btn-load-ci" class="btn btn--primary unready">Add CI</button>
+              <button id="btn-load-ci" name="load-ci" class="btn btn--primary unready">Add CI</button>
             </form>
           </div>
         </section>
