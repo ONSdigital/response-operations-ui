@@ -25,19 +25,20 @@ def sign_in():
             "password": request.form.get('password'),
         }
         url = f'{app.config["BACKSTAGE_API_URL"]}/sign-in-uaa'
-        response = requests.post(url, json=sign_in_data)
-        logger.info(response.text)
-        response = json.loads(response.text)
 
-        if 'token' in response:
-            user = User(response['token'])
+        response = requests.post(url, json=sign_in_data)
+        response_json = json.loads(response.text)
+
+        if 'token' in response_json:
+            user = User(response_json['token'])
             login_user(user)
 
             next = request.args.get('next')
 
             # Do we test if the redirect is safe or just assume it's fine?
-            return redirect(next or url_for('home'))
+            return redirect(next or url_for('home_bp.home'))
         else:
-            form.username.errors.append(response['error'])
+            form.username.errors.append(response_json['error'])
 
+    logger.info(form.errors)
     return render_template('sign_in.html', form=form)

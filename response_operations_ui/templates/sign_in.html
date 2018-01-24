@@ -11,10 +11,16 @@
       <form method="post">
         {{ form.csrf_token }}
         <div>
+          {% if form.username.errors %}
+            <ul class="errors">{% for error in form.username.errors %}<li>{{ error }}</li>{% endfor %}</ul>
+          {% endif %}
           Username <br>
           {{ form.username(size=20) }} <br>
         </div>
         <div>
+          {% if form.password.errors %}
+            <ul class="errors">{% for error in form.password.errors %}<li>{{ error }}</li>{% endfor %}</ul>
+          {% endif %}
           Password <br>
           {{ form.password(size=20) }} <br>
         </div>
