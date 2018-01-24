@@ -15,7 +15,7 @@ install:
 
 script:
   - pipenv run python run_tests.py
-  - pipenv check --style . --max-line-length 120
+  - pipenv check --style . --max-line-length 160
 
 after_success:
   - pipenv run codecov
