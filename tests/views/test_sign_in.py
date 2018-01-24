@@ -20,13 +20,6 @@ class TestSignIn(unittest.TestCase):
         self.assertIn(b'Username', response.data)
         self.assertIn(b'Password', response.data)
 
-    def test_login_success(self):
-        response = self.app.get('/')
-        self.assertEqual(response.status_code, 302)
-
-        response_value = self.login(response.location, 'user', 'pass')
-        self.assertIn(b'View list of business surveys', response_value.data)
-
     def test_logout(self):
         response = self.logout()
         self.assertIn(b'You\'ve logged out', response.data)
