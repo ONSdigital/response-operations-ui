@@ -33,10 +33,10 @@ def sign_in():
             user = User(response_json['token'])
             login_user(user)
 
-            next = request.args.get('next')
+            next_url = request.args.get('next')
 
             # Do we test if the redirect is safe or just assume it's fine?
-            return redirect(next or url_for('home_bp.home'))
+            return redirect(next_url or url_for('home_bp.home'))
         else:
             form.username.errors.append(response_json['error'])
 

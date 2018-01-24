@@ -33,6 +33,9 @@ logger_initial_config(service_name='response-operations-ui', log_level=app.confi
 
 @login_manager.user_loader
 def user_loader(user_id):
+    # TODO This will need to be replaced with a call to reddis to get the token
+    # as we can't leave that sort of information in the cookie.  Will be implemented
+    # down the line once uaa is sorted out.
     return User(user_id)
 
 import response_operations_ui.views  # NOQA # pylint: disable=wrong-import-position
