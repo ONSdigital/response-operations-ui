@@ -12,7 +12,7 @@ collection_exercise_bp = Blueprint('collection_exercise_bp', __name__,
                                    static_folder='static', template_folder='templates')
 
 
-@collection_exercise_bp.route('/surveys/<short_name>/<period>', methods=['GET'])
+@collection_exercise_bp.route('/<short_name>/<period>', methods=['GET'])
 def view_collection_exercise(short_name, period):
     ce_details = collection_exercise_controllers.get_collection_exercise(short_name, period)
     return render_template('collection-exercise.html', survey=ce_details['survey'],
@@ -20,7 +20,7 @@ def view_collection_exercise(short_name, period):
                            collection_instruments=ce_details['collection_instruments'])
 
 
-@collection_exercise_bp.route('/surveys/<short_name>/<period>', methods=['POST'])
+@collection_exercise_bp.route('/<short_name>/<period>', methods=['POST'])
 def upload_collection_instrument(short_name, period):
     error = _validate_collection_instrument()
     ci_loaded = False

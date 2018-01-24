@@ -1,6 +1,6 @@
 import logging
 
-from flask import Blueprint, render_template, request
+from flask import Blueprint, redirect, render_template, request, url_for
 from flask_login import login_user
 from structlog import wrap_logger
 
@@ -13,7 +13,7 @@ sign_in_bp = Blueprint('sign_in_bp', __name__, static_folder='static', template_
 
 
 @sign_in_bp.route('/', methods=['GET', 'POST'])
-def login():
+def sign_in():
     form = LoginForm(request.form)
 
     if form.validate_on_submit():
@@ -25,6 +25,8 @@ def login():
         if username == 'user' and password == 'pass':
             login_user(user)
 
-            return render_template('home.html')
+            next = request.args.get('next')
+
+            return redirect(next or url_for('home_bp.home'))
 
     return render_template('sign_in.html', form=form)
