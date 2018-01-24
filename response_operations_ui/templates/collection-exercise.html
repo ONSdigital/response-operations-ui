@@ -48,8 +48,8 @@
                 Go live
               </td>
               <td class="table--cell tbl-ce-value ce-event-date" name="go-live-date">
-                {% if events.goLive %}
-                {{events.goLive.day}} <em>{{events.goLive.date}}</em> {{events.goLive.time}}
+                {% if events.go-live %}
+                {{events.go-live.day}} <em>{{events.go-live.date}}</em> {{events.go-live.time}}
                 {% endif %}
               </td>
             </tr>
@@ -59,8 +59,8 @@
                 Return by
               </td>
               <td class="table--cell tbl-ce-value ce-event-date" name="return-by-date">
-                {% if events.returnBy %}
-                {{events.returnBy.day}} <em>{{events.returnBy.date}}</em> {{events.returnBy.time}}
+                {% if events.return-by %}
+                {{events.return-by.day}} <em>{{events.return-by.date}}</em> {{events.return-by.time}}
                 {% endif %}
               </td>
             </tr>
@@ -70,8 +70,8 @@
                 First reminder
               </td>
               <td class="table--cell tbl-ce-value ce-event-date" name="first-reminder-date">
-                {% if events.firstReminder %}
-                {{events.firstReminder.day}} <em>{{events.firstReminder.date}}</em> {{events.firstReminder.time}}
+                {% if events.reminder %}
+                {{events.reminder.day}} <em>{{events.reminder.date}}</em> {{events.reminder.time}}
                 {% endif %}
               </td>
             </tr>
@@ -81,8 +81,8 @@
                 Exercise end
               </td>
               <td class="table--cell tbl-ce-value ce-event-date" name="exercise-end-date">
-                {% if events.exerciseEnd %}
-                {{events.exerciseEnd.day}} <em>{{events.exerciseEnd.date}}</em> {{events.exerciseEnd.time}}
+                {% if events.exercise-end %}
+                {{events.exercise-end.day}} <em>{{events.exercise-end.date}}</em> {{events.exercise-end.time}}
                 {% endif %}
               </td>
             </tr>

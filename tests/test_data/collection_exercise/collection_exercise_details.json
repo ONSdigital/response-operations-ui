@@ -38,19 +38,19 @@
       "timestamp": "1993-05-15T23:00:00.000Z"
     },
     {
-      "tag": "goLive",
+      "tag": "go-live",
       "timestamp": "1993-05-15T23:00:00.000Z"
     },
     {
-      "tag": "returnBy",
+      "tag": "return-by",
       "timestamp": "1993-05-15T23:00:00.000Z"
     },
     {
-      "tag": "firstReminder",
+      "tag": "reminder",
       "timestamp": "1993-05-15T23:00:00.000Z"
     },
     {
-      "tag": "exerciseEnd",
+      "tag": "exercise-end",
       "timestamp": "1993-05-15T23:00:00.000Z"
     }
   ],
