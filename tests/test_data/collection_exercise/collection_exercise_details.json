@@ -38,11 +38,11 @@
       "timestamp": "1993-05-15T23:00:00.000Z"
     },
     {
-      "tag": "go-live",
+      "tag": "go_live",
       "timestamp": "1993-05-15T23:00:00.000Z"
     },
     {
-      "tag": "return-by",
+      "tag": "return_by",
       "timestamp": "1993-05-15T23:00:00.000Z"
     },
     {
@@ -50,7 +50,7 @@
       "timestamp": "1993-05-15T23:00:00.000Z"
     },
     {
-      "tag": "exercise-end",
+      "tag": "exercise_end",
       "timestamp": "1993-05-15T23:00:00.000Z"
     }
   ],
