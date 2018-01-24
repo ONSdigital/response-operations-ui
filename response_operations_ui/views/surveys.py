@@ -17,13 +17,24 @@ surveys_bp = Blueprint('surveys_bp', __name__,
 @login_required
 def view_surveys():
     survey_list = survey_controllers.get_surveys_list()
-    return render_template('surveys.html', survey_list=survey_list)
+    breadcrumbs = [{"title": "Surveys"}]
+    return render_template('surveys.html', survey_list=survey_list, breadcrumbs=breadcrumbs)
 
 
 @surveys_bp.route('/<short_name>', methods=['GET'])
 @login_required
 def view_survey(short_name):
     survey_details = survey_controllers.get_survey(short_name)
+    breadcrumbs = [
+        {
+            "title": "Surveys",
+            "link": "/surveys"
+        },
+        {
+            "title": f"{survey_details['survey']['surveyRef']} {survey_details['survey']['shortName']}",
+        }
+    ]
     return render_template('survey.html',
                            survey=survey_details['survey'],
-                           collection_exercises=survey_details['collection_exercises'])
+                           collection_exercises=survey_details['collection_exercises'],
+                           breadcrumbs=breadcrumbs)
