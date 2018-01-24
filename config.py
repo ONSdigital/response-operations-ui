@@ -8,6 +8,7 @@ class Config(object):
     LOGGING_LEVEL = os.getenv('LOGGING_LEVEL', 'INFO')
 
     BACKSTAGE_API_URL = os.getenv('BACKSTAGE_API_URL', 'http://localhost:8001/backstage-api/v1')
+    RESPONSE_OPERATIONS_UI_SECRET = os.getenv('RESPONSE_OPERATIONS_UI_SECRET', "secret")
 
     PASSWORD_MATCH_ERROR_TEXT = 'Your passwords do not match'
     PASSWORD_CRITERIA_ERROR_TEXT = 'Your password doesn\'t meet the requirements'
