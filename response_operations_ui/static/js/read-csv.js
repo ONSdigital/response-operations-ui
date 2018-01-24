@@ -30,8 +30,6 @@ function drawOutput(lines){
 	document.getElementById("btn-check-sample-contents").style.display = "none";
 	document.getElementById("btn-load-sample").style.display = "inline-block";
 	document.getElementById("btn-cancel-load-sample").style.display = "inline-block";
-	document.getElementById("sample-businesses").value = lines.length;
-	document.getElementById("sample-collection-instruments").value = ciCount;
 }
 
 function errorHandler(evt) {

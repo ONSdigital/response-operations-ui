@@ -16,7 +16,3 @@ def upload_sample(short_name, period, file):
     response = requests.post(url, files={"file": (file.filename, file.stream, file.mimetype)})
     if response.status_code != 201:
         raise ApiError(response)
-
-    logger.debug('Successfully uploaded sample', short_name=short_name, filename=file.filename, period=period)
-
-    return json.loads(response.text)
