@@ -33,7 +33,7 @@ class TestCollectionExercise(unittest.TestCase):
 
         response = self.app.get("/surveys/test/000000")
 
-        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.status_code, 500)
         self.assertIn("FAIL".encode(), response.data)
 
     @requests_mock.mock()
