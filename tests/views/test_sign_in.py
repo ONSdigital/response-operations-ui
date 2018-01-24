@@ -8,8 +8,8 @@ class TestSignIn(unittest.TestCase):
         app.config['WTF_CSRF_ENABLED'] = False
         self.app = app.test_client()
 
-    def login(self, path, username, password):
-        return self.app.post(path, data={'username': username, 'password': password},
+    def login(self, username, password):
+        return self.app.post('/sign-in', data={'username': username, 'password': password},
                              follow_redirects=True)
 
     def logout(self):
@@ -20,11 +20,8 @@ class TestSignIn(unittest.TestCase):
         self.assertIn(b'Username', response.data)
         self.assertIn(b'Password', response.data)
 
-    def test_login_success(self):
-        response = self.app.get('/')
-        self.assertEqual(response.status_code, 302)
-
-        response_value = self.login(response.location, 'user', 'pass')
+        response_value = self.login('user', 'pass')
+        self.assertEqual(response_value.status_code, 200)
         self.assertIn(b'View list of business surveys', response_value.data)
 
     def test_logout(self):

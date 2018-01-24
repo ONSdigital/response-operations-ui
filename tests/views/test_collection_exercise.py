@@ -32,10 +32,10 @@ class TestCollectionExercise(unittest.TestCase):
     def test_collection_exercise_view_fail(self, mock_request):
         mock_request.get(url_get_collection_exercise, status_code=500)
 
-        response = self.app.get("/surveys/test/000000")
+        response = self.app.get("/surveys/test/000000", follow_redirects=True)
 
-        self.assertEqual(response.status_code, 200)
-        self.assertIn("FAIL".encode(), response.data)
+        self.assertEqual(response.status_code, 500)
+        self.assertIn("Error 500 - Server error".encode(), response.data)
 
     @requests_mock.mock()
     def test_upload_collection_instrument(self, mock_request):
@@ -71,10 +71,10 @@ class TestCollectionExercise(unittest.TestCase):
         mock_request.post(url_collection_instrument, status_code=500)
         mock_request.get(url_get_collection_exercise, json=collection_exercise_details)
 
-        response = self.app.post("/surveys/test/000000", data=file)
+        response = self.app.post("/surveys/test/000000", data=file, follow_redirects=True)
 
-        self.assertEqual(response.status_code, 200)
-        self.assertIn("FAIL".encode(), response.data)
+        self.assertEqual(response.status_code, 500)
+        self.assertIn("Error 500 - Server error".encode(), response.data)
 
     @requests_mock.mock()
     def test_no_upload_collection_instrument_when_bad_extension(self, mock_request):
@@ -162,10 +162,10 @@ class TestCollectionExercise(unittest.TestCase):
         mock_request.post(url_upload_sample, status_code=500)
         mock_request.get(url_get_collection_exercise, json=collection_exercise_details)
 
-        response = self.app.post("/surveys/test/000000", data=data)
+        response = self.app.post("/surveys/test/000000", data=data, follow_redirects=True)
 
-        self.assertEqual(response.status_code, 200)
-        self.assertIn("FAIL".encode(), response.data)
+        self.assertEqual(response.status_code, 500)
+        self.assertIn("Error 500 - Server error".encode(), response.data)
 
     @requests_mock.mock()
     def test_no_upload_sample_when_bad_extension(self, mock_request):
