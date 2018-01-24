@@ -35,7 +35,7 @@ def sign_in():
 
             next = request.args.get('next')
 
-            # Do we test if the redirect is safe or just asssume it's fine?
+            # Do we test if the redirect is safe or just assume it's fine?
             return redirect(next or url_for('home'))
         else:
             form.username.errors.append(response['error'])

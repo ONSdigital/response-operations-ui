@@ -11,7 +11,7 @@ from response_operations_ui.user import User
 app = Flask(__name__)
 login_manager = LoginManager(app)
 login_manager.init_app(app)
-login_manager.login_view = "sign_in_bp.login"
+login_manager.login_view = "sign_in_bp.sign_in"
 
 # Load scss and js assets
 assets = Environment(app)
