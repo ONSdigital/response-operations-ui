@@ -2,6 +2,7 @@ import datetime
 import logging
 
 from flask import Blueprint, render_template, request
+from flask_login import login_required
 from structlog import wrap_logger
 
 from response_operations_ui.controllers import collection_exercise_controllers
@@ -14,6 +15,7 @@ collection_exercise_bp = Blueprint('collection_exercise_bp', __name__,
 
 
 @collection_exercise_bp.route('/<short_name>/<period>', methods=['GET'])
+@login_required
 def view_collection_exercise(short_name, period):
     ce_details = collection_exercise_controllers.get_collection_exercise(short_name, period)
     breadcrumbs = [
@@ -36,6 +38,7 @@ def view_collection_exercise(short_name, period):
 
 
 @collection_exercise_bp.route('/<short_name>/<period>', methods=['POST'])
+@login_required
 def upload(short_name, period):
     if 'load-sample' in request.form:
         return _upload_sample(short_name, period)
