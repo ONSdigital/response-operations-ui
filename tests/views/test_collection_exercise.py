@@ -4,6 +4,7 @@ from io import BytesIO
 
 import requests_mock
 
+from config import TestingConfig
 from response_operations_ui import app
 
 url_get_collection_exercise = f'{app.config["BACKSTAGE_API_URL"]}/collection-exercise/test/000000'
@@ -16,6 +17,9 @@ url_upload_sample = f'{app.config["BACKSTAGE_API_URL"]}/sample/test/000000'
 class TestCollectionExercise(unittest.TestCase):
 
     def setUp(self):
+        app_config = TestingConfig()
+        app.config.from_object(app_config)
+        app.login_manager.init_app(app)
         self.app = app.test_client()
 
     @requests_mock.mock()

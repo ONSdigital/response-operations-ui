@@ -1,6 +1,4 @@
 import logging
-import requests
-import json
 
 from flask import Blueprint, redirect, render_template, request, url_for
 from flask_login import login_user
@@ -9,7 +7,6 @@ from structlog import wrap_logger
 from response_operations_ui.controllers.sign_in_controller import get_sign_in
 from response_operations_ui.forms import LoginForm
 from response_operations_ui.user import User
-from response_operations_ui import app
 
 logger = wrap_logger(logging.getLogger(__name__))
 
