@@ -181,6 +181,11 @@ img {
   width: auto;
 }
 
+em {
+    font-style: normal;
+    font-weight: 600;
+}
+
 .system-feedback__item.success{
   list-style: none;
   background-image: url("../images/tick-green.png");
