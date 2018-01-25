@@ -1,5 +1,4 @@
 build:
-	pipenv install
 	pipenv install --dev
 
 test:

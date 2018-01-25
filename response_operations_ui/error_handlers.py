@@ -15,7 +15,7 @@ logger = wrap_logger(logging.getLogger(__name__))
 @app.errorhandler(ApiError)
 def api_error(error):
     logger.error('Api failed to retrieve required data', url=error.url,
-                 status_code=str(error.status_code), exc_info=error)
+                 status_code=str(error.status_code))
     return redirect(url_for('error_bp.server_error_page',
                             _external=True,
                             _scheme=getenv('SCHEME', 'http')))
@@ -31,7 +31,7 @@ def connection_error(error):
 
 @app.errorhandler(Exception)
 def server_error(error):  # pylint: disable=unused-argument
-    logger.exception('Uncaught exception generated', exception=error)
+    logger.exception('Uncaught exception generated')
     return redirect(url_for('error_bp.server_error_page',
                             _external=True,
                             _scheme=getenv('SCHEME', 'http')))
