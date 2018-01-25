@@ -10,11 +10,6 @@ class Config(object):
     BACKSTAGE_API_URL = os.getenv('BACKSTAGE_API_URL', 'http://localhost:8001/backstage-api/v1')
     RESPONSE_OPERATIONS_UI_SECRET = os.getenv('RESPONSE_OPERATIONS_UI_SECRET', "secret")
 
-    PASSWORD_MATCH_ERROR_TEXT = 'Your passwords do not match'
-    PASSWORD_CRITERIA_ERROR_TEXT = 'Your password doesn\'t meet the requirements'
-    PASSWORD_MIN_LENGTH = 8
-    PASSWORD_MAX_LENGTH = 160
-
 
 class DevelopmentConfig(Config):
     DEBUG = os.getenv('DEBUG', True)
@@ -26,5 +21,3 @@ class TestingConfig(DevelopmentConfig):
     TESTING = True
     LOGIN_DISABLED = True
     WTF_CSRF_ENABLED = False
-
-    BACKSTAGE_API_URL = os.getenv('BACKSTAGE_API_URL', 'http://localhost:8001/backstage-api/v1')
