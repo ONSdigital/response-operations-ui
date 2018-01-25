@@ -6,6 +6,7 @@ from flask import Blueprint, redirect, render_template, request, url_for
 from flask_login import login_user
 from structlog import wrap_logger
 
+from response_operations_ui.controllers.sign_in_controller import get_sign_in
 from response_operations_ui.forms import LoginForm
 from response_operations_ui.user import User
 from response_operations_ui import app
@@ -24,10 +25,8 @@ def sign_in():
             "username": request.form.get('username'),
             "password": request.form.get('password'),
         }
-        url = f'{app.config["BACKSTAGE_API_URL"]}/sign-in-uaa'
 
-        response = requests.post(url, json=sign_in_data)
-        response_json = json.loads(response.text)
+        response_json = get_sign_in(sign_in_data)
 
         if 'token' in response_json:
             user = User(response_json['token'])
