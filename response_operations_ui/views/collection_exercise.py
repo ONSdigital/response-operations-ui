@@ -5,7 +5,6 @@ from flask import Blueprint, render_template, request
 from flask_login import login_required
 from structlog import wrap_logger
 
-from response_operations_ui import app
 from response_operations_ui.common.mappers import convert_events_to_new_format
 from response_operations_ui.controllers import collection_exercise_controllers
 from response_operations_ui.controllers import collection_instrument_controllers, sample_controllers
