@@ -4,113 +4,226 @@
 {% block main %}
 
 <div role="main" id="main" class="page__main">
-    <br/>
-    <h1 class="jupiter" name="page-ce-title">{{survey.shortName}} {{ce.exerciseRef}}</h1>
-    <ul>
-      {% if ci_loaded %}
-        <li id="collection-instrument-success" class="system-feedback__item success">Collection instrument loaded</li>
-      {% endif %}
-      {% if sample_loaded %}
-        <li id="sample-success" class="system-feedback__item success">Sample loaded</li>
-      {% endif %}
-    </ul>
+  <br/>
+  <h1 class="jupiter" name="page-ce-title">{{survey.shortName}} {{ce.exerciseRef}}</h1>
+  <ul>
+    {% if ci_loaded %}
+      <li id="collection-instrument-success" class="system-feedback__item success">Collection instrument loaded</li>
+    {% endif %}
+  </ul>
 
-    <div class="grid">
-      <div class="grid__col col-6@l">
+  <div class="grid">
+    <div class="grid__col col-6@l">
+      <section class="ce-section ce-events">
+        <h2 class="venus u-pt-m">Dates</h2>
+        <table class="table table__dense" summary="Dates for this collection exercise">
+          <thead class="table--head u-vh">
+            <tr class="table--row">
+              <th scope="col" class="table--header--cell tbl-ce-label">
+                Event
+              </th>
+              <th scope="col" class="table--header--cell tbl-ce-value">
+                Date
+              </th>
+              <th scope="col" class="table--header--cell tbl-ce-status">
+                Status
+              </th>
+            </tr>
+          </thead>
 
-        <div class="ce-section">
-          <h2 class="venus u-pt-m">Sample</h2>
-          {% if sample %}
-            <table class="table table__dense" summary="Loaded sample summary">
-              <tbody>
-                <tr class="table--row">
-                  <td class="table--cell tbl-ce-label">
-                    Total businesses
-                  </td>
-                  <td class="table--cell tbl-ce-value" name="total-businesses">
-                    {{sample.businesses}}
-                  </td>
-                </tr>
+          <tbody>
+            <tr class="table--row tbl-ce-label">
+              <td class="table--cell">
+                MPS (Main print selection)
+              </td>
+              <td class="table--cell tbl-ce-value ce-event-date" name="mps-date">
+                {% if events.mps %}
+                {{events.mps.day}} <em>{{events.mps.date}}</em> {{events.mps.time}}
+                {% endif %}
+              </td>
+            </tr>
 
-                <tr class="table--row">
-                  <td class="table--cell tbl-ce-">
-                    Collection instruments
-                  </td>
-                  <td class="table--cell tbl-ce-" name="total-ci">
-                    {{sample.collection_instruments}}
-                  </td>
-                </tr>
-              </tbody>
-            </table>
-            {% if 'submission_time' in sample %}
-              <p>Sample loaded: {{sample.submission_time}}</p>
-            {% endif %}
-          {% else %}
-            <div class="u-mb-m">
-              <form id="form-load-sample"
-                    method="post"
-                    action=""
-                    class="form"
-                    enctype="multipart/form-data">
-                <p>
-                  Choose a sample file to check details before loading
-                </p>
-                <input type="hidden" id="sample-businesses" name="sample-businesses" value="">
-                <input type="hidden" id="sample-collection-instruments" name="sample-collection-instruments" value="">
-                <label class="upload-file u-vh" for="sampleFile">Choose file</label>
-                <input type="file" class="" name="sampleFile" id="sampleFile" onchange="handleFiles(this.files)"
-                accept=".csv">
+            <tr class="table--row">
+              <td class="table--cell tbl-ce-label">
+                Go live
+              </td>
+              <td class="table--cell tbl-ce-value ce-event-date" name="go-live-date">
+                {% if events.go_live %}
+                {{events.go_live.day}} <em>{{events.go_live.date}}</em> {{events.go_live.time}}
+                {% endif %}
+              </td>
+            </tr>
 
-                <div id="sample-preview" class="u-mb-s"></div>
+            <tr class="table--row">
+              <td class="table--cell tbl-ce-label">
+                Return by
+              </td>
+              <td class="table--cell tbl-ce-value ce-event-date" name="return-by-date">
+                {% if events.return_by %}
+                {{events.return_by.day}} <em>{{events.return_by.date}}</em> {{events.return_by.time}}
+                {% endif %}
+              </td>
+            </tr>
 
-                <button id="btn-check-sample-contents" class="btn btn--primary unready" type="button" disabled="">Check sample contents</button>
-                <button id="btn-load-sample" name="load-sample" class="btn btn--primary hidden" type="submit">Load sample</button>
-                <button id="btn-cancel-load-sample" class="btn btn--secondary hidden" type="button" onclick="cancelLoadSample()">Cancel</button>
-              </form>
-            </div>
+            <tr class="table--row">
+              <td class="table--cell tbl-ce-label">
+                First reminder
+              </td>
+              <td class="table--cell tbl-ce-value ce-event-date" name="first-reminder-date">
+                {% if events.reminder %}
+                {{events.reminder.day}} <em>{{events.reminder.date}}</em> {{events.reminder.time}}
+                {% endif %}
+              </td>
+            </tr>
+
+            <tr class="table--row">
+              <td class="table--cell tbl-ce-label">
+                Exercise end
+              </td>
+              <td class="table--cell tbl-ce-value ce-event-date" name="exercise-end-date">
+                {% if events.exercise_end %}
+                {{events.exercise_end.day}} <em>{{events.exercise_end.date}}</em> {{events.exercise_end.time}}
+                {% endif %}
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </section>
+
+      <div class="ce-section">
+        <h2 class="venus u-pt-m">Sample</h2>
+        {% if sample %}
+          <table class="table table__dense" summary="Loaded sample summary">
+            <tbody>
+              <tr class="table--row">
+                <td class="table--cell tbl-ce-label">
+                  Total businesses
+                </td>
+                <td class="table--cell tbl-ce-value" name="total-businesses">
+                  {{sample.businesses}}
+                </td>
+              </tr>
+
+              <tr class="table--row">
+                <td class="table--cell tbl-ce-">
+                  Collection instruments
+                </td>
+                <td class="table--cell tbl-ce-" name="total-ci">
+                  {{sample.collection_instruments}}
+                </td>
+              </tr>
+            </tbody>
+          </table>
+          {% if 'submission_time' in sample %}
+            <p>Sample loaded: {{sample.submission_time}}</p>
           {% endif %}
-        </div>
-
-        <section class="ce-section">
-          <h2 class="venus u-pt-m">Collection instruments</h2>
-
-          {% if collection_instruments %}
-          <div>
-            <table id="collection-instruments-table" class="table table__dense" summary="Sample details for this collection exercise">
-              <thead class="table--head u-vh">
-                <tr class="table--row">
-                  <th scope="col" class="table--header--cell tbl-ce-value">
-                    Collection instrument
-                  </th>
-                </tr>
-              </thead>
-
-              <tbody>
-              {% for collection_instrument in collection_instruments %}
-                <tr class="table--row">
-                  <td class="table--cell tbl-ce-value">
-                    {{collection_instrument.file_name}}
-                  </td>
-                </tr>
-              {% endfor %}
-
-              </tbody>
-            </table>
-          </div>
-          {% endif %}
-
+        {% else %}
           <div class="u-mb-m">
-            <form id="form-load-ci" action="" class="form" method="post" enctype="multipart/form-data">
+            <form id="form-load-sample"
+                  method="post"
+                  action=""
+                  class="form"
+                  enctype="multipart/form-data">
               <p>
-                {{ 'Add another collection instrument (CI)' if collection_instruments else 'Choose a collection instrument (CI) to load'}}
+                Choose a sample file to check details before loading
               </p>
-              <label class="upload-file u-vh" for="ciFile">Choose CI file</label>
-              <input id="ciFile" type="file" class="" name="ciFile" accept=".xlsx">
-              <button id="btn-load-ci" name="load-ci" class="btn btn--primary unready">Add CI</button>
+              <input type="hidden" id="sample-businesses" name="sample-businesses" value="">
+              <input type="hidden" id="sample-collection-instruments" name="sample-collection-instruments" value="">
+              <label class="upload-file u-vh" for="sampleFile">Choose file</label>
+              <input type="file" class="" name="sampleFile" id="sampleFile" onchange="handleFiles(this.files)"
+              accept=".csv">
+
+              <div id="sample-preview" class="u-mb-s"></div>
+
+              <button id="btn-check-sample-contents" class="btn btn--primary unready" type="button" disabled="">Check sample contents</button>
+              <button id="btn-load-sample" name="load-sample" class="btn btn--primary hidden" type="submit">Load sample</button>
+              <button id="btn-cancel-load-sample" class="btn btn--secondary hidden" type="button" onclick="cancelLoadSample()">Cancel</button>
             </form>
           </div>
-        </section>
+        {% endif %}
       </div>
+
+      <section class="ce-section">
+        <h2 class="venus u-pt-m">Collection instruments</h2>
+
+        {% if collection_instruments %}
+        <div>
+          <table id="collection-instruments-table" class="table table__dense" summary="Sample details for this collection exercise">
+            <thead class="table--head u-vh">
+              <tr class="table--row">
+                <th scope="col" class="table--header--cell tbl-ce-value">
+                  Collection instrument
+                </th>
+              </tr>
+            </thead>
+
+            <tbody>
+            {% for collection_instrument in collection_instruments %}
+              <tr class="table--row">
+                <td class="table--cell tbl-ce-value">
+                  {{collection_instrument.file_name}}
+                </td>
+              </tr>
+            {% endfor %}
+
+            </tbody>
+          </table>
+        </div>
+        {% endif %}
+
+        <div class="u-mb-m">
+          <form id="form-load-ci" action="" class="form" method="post" enctype="multipart/form-data">
+            <p>
+              {{ 'Add another collection instrument (CI)' if collection_instruments else 'Choose a collection instrument (CI) to load'}}
+            </p>
+            <label class="upload-file u-vh" for="ciFile">Choose CI file</label>
+            <input id="ciFile" type="file" class="" name="ciFile" accept=".xlsx">
+            <button id="btn-load-ci" name="load-ci" class="btn btn--primary unready">Add CI</button>
+          </form>
+        </div>
+      </section>
+
+
+      <section class="ce-section">
+        <h2 class="venus u-pt-m">Collection instruments</h2>
+
+        {% if collection_instruments %}
+        <div>
+          <table id="collection-instruments-table" class="table table__dense" summary="Sample details for this collection exercise">
+            <thead class="table--head u-vh">
+              <tr class="table--row">
+                <th scope="col" class="table--header--cell tbl-ce-value">
+                  Collection instrument
+                </th>
+              </tr>
+            </thead>
+
+            <tbody>
+            {% for collection_instrument in collection_instruments %}
+              <tr class="table--row">
+                <td class="table--cell tbl-ce-value">
+                  {{collection_instrument.file_name}}
+                </td>
+              </tr>
+            {% endfor %}
+
+            </tbody>
+          </table>
+        </div>
+        {% endif %}
+
+        <div class="u-mb-m">
+          <form action="" class="form" method="post" enctype="multipart/form-data">
+            <p>
+              {{ 'Add another collection instrument (CI)' if collection_instruments else 'Choose a collection instrument (CI) to load'}}
+            </p>
+            <label class="upload-file u-vh" for="ciFile">Choose CI file</label>
+            <input id="ciFile" type="file" class="" name="ciFile" accept=".xlsx">
+            <button id="btn-load-ci" class="btn btn--primary unready">Add CI</button>
+          </form>
+        </div>
+      </section>
+    </div>
 
     <div class="grid__col col-1@l">
     </div>
@@ -118,18 +231,8 @@
     <div class="grid__col col-5@l">
       <div class="ce-section ce-details">
         <h2 class="venus u-pt-m">Reference information for this collection exercise</h2>
-
         <table class="table table__dense" summary="Collection exercise details">
           <tbody>
-            <tr class="table--row">
-              <td class="table--cell tbl-ce-label">
-                Survey ID / Abbreviation / Title
-              </td>
-              <td class="table--cell tbl-ce-value" name="survey-info">
-                {{survey.surveyRef}} - {{survey.longName}} ({{survey.shortName}})
-              </td>
-            </tr>
-
             <tr class="table--row">
               <td class="table--cell tbl-ce-">
                 Period
@@ -145,6 +248,24 @@
               </td>
               <td class="table--cell tbl-ce-" name="user-description">
                 {{ce.userDescription}}
+              </td>
+            </tr>
+
+            <tr class="table--row">
+              <td class="table--cell tbl-ce-label">
+                Survey ID and Abbreviation
+              </td>
+              <td class="table--cell tbl-ce-value" name="survey-info">
+                {{survey.surveyRef}} {{survey.shortName}}
+              </td>
+            </tr>
+
+            <tr class="table--row">
+              <td class="table--cell tbl-ce-">
+                Survey title
+              </td>
+              <td class="table--cell tbl-ce-" name="survey-title">
+                {{survey.longName}}
               </td>
             </tr>
           </tbody>
