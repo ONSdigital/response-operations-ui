@@ -31,7 +31,7 @@ def connection_error(error):
 
 @app.errorhandler(Exception)
 def server_error(error):  # pylint: disable=unused-argument
-    logger.exception('Uncaught exception generated', exception=error)
+    logger.exception('Uncaught exception generated')
     return redirect(url_for('error_bp.server_error_page',
                             _external=True,
                             _scheme=getenv('SCHEME', 'http')))
