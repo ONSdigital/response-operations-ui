@@ -45,5 +45,27 @@
       "surveyId": "cb0711c3-0ac8-41d3-ae0e-567e5ea1ef87"
     }
   ],
-  "sample_summary": null
+  "sample_summary": null,
+  "events": [
+    {
+      "tag": "mps",
+      "timestamp": "1993-05-15T23:00:00.000+0000"
+    },
+    {
+      "tag": "go_live",
+      "timestamp": "1993-05-15T23:00:00.000+0000"
+    },
+    {
+      "tag": "return_by",
+      "timestamp": "1993-05-15T23:00:00.000+0000"
+    },
+    {
+      "tag": "reminder",
+      "timestamp": "1993-05-15T23:00:00.000+0000"
+    },
+    {
+      "tag": "exercise_end",
+      "timestamp": "1993-05-15T23:00:00.000+0000"
+    }
+  ]
 }

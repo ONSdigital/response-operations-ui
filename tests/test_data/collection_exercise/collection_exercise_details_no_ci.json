@@ -42,5 +42,27 @@
     "state":"INIT",
     "totalSampleUnits":5,
     "expectedCollectionInstruments":2
-  }
+  },
+  "events": [
+    {
+      "tag": "mps",
+      "timestamp": "1993-05-15T23:00:00.000+0000"
+    },
+    {
+      "tag": "go_live",
+      "timestamp": "1993-05-15T23:00:00.000+0000"
+    },
+    {
+      "tag": "return_by",
+      "timestamp": "1993-05-15T23:00:00.000+0000"
+    },
+    {
+      "tag": "reminder",
+      "timestamp": "1993-05-15T23:00:00.000+0000"
+    },
+    {
+      "tag": "exercise_end",
+      "timestamp": "1993-05-15T23:00:00.000+0000"
+    }
+  ]
 }
