@@ -9,9 +9,6 @@ from response_operations_ui.user import User
 
 
 app = Flask(__name__)
-login_manager = LoginManager(app)
-login_manager.init_app(app)
-login_manager.login_view = "sign_in_bp.sign_in"
 
 # Load scss and js assets
 assets = Environment(app)
@@ -30,6 +27,9 @@ app.secret_key = app.config['RESPONSE_OPERATIONS_UI_SECRET']
 
 logger_initial_config(service_name='response-operations-ui', log_level=app.config['LOGGING_LEVEL'])
 
+login_manager = LoginManager(app)
+login_manager.init_app(app)
+login_manager.login_view = "sign_in_bp.sign_in"
 
 @login_manager.user_loader
 def user_loader(user_id):
