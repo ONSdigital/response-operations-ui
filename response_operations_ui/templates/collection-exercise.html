@@ -179,7 +179,7 @@
             </p>
             <div id="ciFileErrorPanel" class="{{'panel panel--simple panel--error' if error.section == 'ciFile' else ''}}">
               <div id="ciFileErrorPanelBody" class="{{'panel__body' if error.section == 'ciFile' else ''}}">
-                <p class="hidden">
+                <p id="ciFileErrorText" class="hidden">
                   Incorrect file type. Please choose a file type XLSX
                 </p>
                 <label class="upload-file u-vh" for="ciFile">Choose CI file</label>

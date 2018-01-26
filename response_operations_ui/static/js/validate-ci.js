@@ -2,7 +2,7 @@ function checkCI(file){
 
 	var type = file.type;
 
-	if( type == 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' ){
+	if( type === "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" ){
 
 		$("#ciFileErrorPanel").removeClass("panel");
 		$("#ciFileErrorPanel").removeClass("panel--simple");
@@ -13,9 +13,7 @@ function checkCI(file){
 
 		$("#btn-add-ci").removeClass("unready");
 
-	}else{
-
-		//alert("that's not an xlsx :(");
+	} else{
 
 		$("#ciFileErrorPanel").addClass("panel");
 		$("#ciFileErrorPanel").addClass("panel--simple");
@@ -37,8 +35,6 @@ function checkSelectedCI(files){
 	if (window.FileReader) {
 		// FileReader are supported.
 		checkCI(files[0]);
-	} else {
-		alert('FileReader is not supported in this browser.');
 	}
 
 }
