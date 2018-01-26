@@ -11,5 +11,4 @@ error_bp = Blueprint('error_bp', __name__, template_folder='templates/errors')
 
 @error_bp.route('/500', methods=['GET', 'POST'])
 def server_error_page():
-    return render_template('errors/500-error.html', _theme='default',
-                           data={"error": {"type": "failed"}}), 500
+    return render_template('errors/500-error.html'), 500
