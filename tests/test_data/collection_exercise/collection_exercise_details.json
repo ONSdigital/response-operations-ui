@@ -67,5 +67,15 @@
       "id": "f732afbe-c710-4c95-a8d3-6644833195a7",
       "surveyId": "cb0711c3-0ac8-41d3-ae0e-567e5ea1ef87"
     }
-  ]
+  ],
+  "sample_summary": {
+    "id":"1a11543f-eb19-41f5-825f-e41aca15e724",
+    "effectiveStartDateTime":null,
+    "effectiveEndDateTime":null,
+    "surveyRef":null,
+    "ingestDateTime":"2018-01-24T08:57:28.686+0000",
+    "state":"INIT",
+    "totalSampleUnits":5,
+    "expectedCollectionInstruments":2
+  }
 }

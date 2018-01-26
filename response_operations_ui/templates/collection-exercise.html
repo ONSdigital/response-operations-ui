@@ -4,13 +4,16 @@
 {% block main %}
 
 <div role="main" id="main" class="page__main">
-  <br/>
-  <h1 class="jupiter" name="page-ce-title">{{survey.shortName}} {{ce.exerciseRef}}</h1>
-  <ul>
-    {% if ci_loaded %}
-      <li id="collection-instrument-success" class="system-feedback__item success">Collection instrument loaded</li>
-    {% endif %}
-  </ul>
+    <br/>
+    <h1 class="jupiter" name="page-ce-title">{{survey.shortName}} {{ce.exerciseRef}}</h1>
+    <ul>
+      {% if ci_loaded %}
+        <li id="collection-instrument-success" class="system-feedback__item success">Collection instrument loaded</li>
+      {% endif %}
+      {% if sample_loaded %}
+        <li id="sample-success" class="system-feedback__item success">Sample successfully loaded</li>
+      {% endif %}
+    </ul>
 
   <div class="grid">
     <div class="grid__col col-6@l">
@@ -93,14 +96,14 @@
       <div class="ce-section">
         <h2 class="venus u-pt-m">Sample</h2>
         {% if sample %}
-          <table class="table table__dense" summary="Loaded sample summary">
+          <table id="sample-table" class="table table__dense" summary="Loaded sample summary">
             <tbody>
               <tr class="table--row">
                 <td class="table--cell tbl-ce-label">
                   Total businesses
                 </td>
                 <td class="table--cell tbl-ce-value" name="total-businesses">
-                  {{sample.businesses}}
+                  {{sample.totalSampleUnits}}
                 </td>
               </tr>
 
@@ -109,14 +112,12 @@
                   Collection instruments
                 </td>
                 <td class="table--cell tbl-ce-" name="total-ci">
-                  {{sample.collection_instruments}}
+                  {{sample.expectedCollectionInstruments}}
                 </td>
               </tr>
             </tbody>
           </table>
-          {% if 'submission_time' in sample %}
-            <p>Sample loaded: {{sample.submission_time}}</p>
-          {% endif %}
+        <p>Sample loaded: {{sample.ingestDateTime}}</p>
         {% else %}
           <div class="u-mb-m">
             <form id="form-load-sample"
@@ -127,8 +128,6 @@
               <p>
                 Choose a sample file to check details before loading
               </p>
-              <input type="hidden" id="sample-businesses" name="sample-businesses" value="">
-              <input type="hidden" id="sample-collection-instruments" name="sample-collection-instruments" value="">
               <label class="upload-file u-vh" for="sampleFile">Choose file</label>
               <input type="file" class="" name="sampleFile" id="sampleFile" onchange="handleFiles(this.files)"
               accept=".csv">

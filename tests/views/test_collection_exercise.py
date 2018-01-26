@@ -9,6 +9,8 @@ from response_operations_ui import app
 url_get_collection_exercise = f'{app.config["BACKSTAGE_API_URL"]}/collection-exercise/test/000000'
 with open('tests/test_data/collection_exercise/collection_exercise_details.json') as json_data:
     collection_exercise_details = json.load(json_data)
+with open('tests/test_data/collection_exercise/collection_exercise_details_no_sample.json') as json_data:
+    collection_exercise_details_no_sample = json.load(json_data)
 url_collection_instrument = f'{app.config["BACKSTAGE_API_URL"]}/collection-instrument/test/000000'
 url_upload_sample = f'{app.config["BACKSTAGE_API_URL"]}/sample/test/000000'
 
@@ -130,8 +132,6 @@ class TestCollectionExercise(unittest.TestCase):
         post_data = {
             "sampleFile": (BytesIO(b'data'), 'test.csv'),
             "load-sample": "",
-            "sample-businesses": "5",
-            "sample-collection-instruments": "2"
         }
 
         json_date = {
@@ -147,7 +147,7 @@ class TestCollectionExercise(unittest.TestCase):
         response = self.app.post("/surveys/test/000000", data=post_data)
 
         self.assertEqual(response.status_code, 200)
-        self.assertIn("Sample loaded".encode(), response.data)
+        self.assertIn("Sample successfully loaded".encode(), response.data)
         self.assertIn("Loaded sample summary".encode(), response.data)
         self.assertIn('2\n'.encode(), response.data)
         self.assertIn('5\n'.encode(), response.data)
@@ -173,21 +173,21 @@ class TestCollectionExercise(unittest.TestCase):
             "sampleFile": (BytesIO(b'data'), 'test.html'),
             "load-sample": ""
         }
-        mock_request.get(url_get_collection_exercise, json=collection_exercise_details)
+        mock_request.get(url_get_collection_exercise, json=collection_exercise_details_no_sample)
 
         response = self.app.post("/surveys/test/000000", data=data)
 
         self.assertEqual(response.status_code, 200)
-        self.assertNotIn("Sample loaded".encode(), response.data)
+        self.assertNotIn("Sample successfully loaded".encode(), response.data)
         self.assertNotIn("Loaded sample summary".encode(), response.data)
 
     @requests_mock.mock()
     def test_no_upload_sample_when_no_file(self, mock_request):
         data = {"load-sample": ""}
-        mock_request.get(url_get_collection_exercise, json=collection_exercise_details)
+        mock_request.get(url_get_collection_exercise, json=collection_exercise_details_no_sample)
 
         response = self.app.post("/surveys/test/000000", data=data)
 
         self.assertEqual(response.status_code, 200)
-        self.assertNotIn("Sample loaded".encode(), response.data)
+        self.assertNotIn("Sample successfully loaded".encode(), response.data)
         self.assertNotIn("Loaded sample summary".encode(), response.data)
