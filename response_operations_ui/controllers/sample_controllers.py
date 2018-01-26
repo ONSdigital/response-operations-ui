@@ -15,3 +15,5 @@ def upload_sample(short_name, period, file):
     response = requests.post(url, files={"file": (file.filename, file.stream, file.mimetype)})
     if response.status_code != 201:
         raise ApiError(response)
+
+    logger.debug('Successfully uploaded sample')
