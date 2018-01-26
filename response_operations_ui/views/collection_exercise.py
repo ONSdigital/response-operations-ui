@@ -19,6 +19,7 @@ collection_exercise_bp = Blueprint('collection_exercise_bp', __name__,
 @login_required
 def view_collection_exercise(short_name, period):
     ce_details = collection_exercise_controllers.get_collection_exercise(short_name, period)
+    ce_details['sample_summary'] = _format_sample_summary(ce_details['sample_summary'])
     formatted_events = convert_events_to_new_format(ce_details['events'])
     breadcrumbs = [
         {
@@ -36,6 +37,7 @@ def view_collection_exercise(short_name, period):
     return render_template('collection-exercise.html', survey=ce_details['survey'],
                            ce=ce_details['collection_exercise'],
                            collection_instruments=ce_details['collection_instruments'],
+                           sample=ce_details['sample_summary'],
                            events=formatted_events,
                            breadcrumbs=breadcrumbs)
 
@@ -52,16 +54,14 @@ def upload(short_name, period):
 def _upload_sample(short_name, period):
     error = _validate_sample()
     sample_loaded = False
-    sample = None
-    total_businesses = request.form.get('sample-businesses')
-    total_ci = request.form.get('sample-collection-instruments')
 
     if not error:
-        upload_receipt = sample_controllers.upload_sample(short_name, period, request.files['sampleFile'])
-        sample = _sample_summary(total_businesses, total_ci, upload_receipt.get('ingestDateTime'))
+        sample_controllers.upload_sample(short_name, period, request.files['sampleFile'])
         sample_loaded = True
 
     ce_details = collection_exercise_controllers.get_collection_exercise(short_name, period)
+    ce_details['sample_summary'] = _format_sample_summary(ce_details['sample_summary'])
+    formatted_events = convert_events_to_new_format(ce_details['events'])
 
     breadcrumbs = [
         {
@@ -78,9 +78,8 @@ def _upload_sample(short_name, period):
     ]
     return render_template('collection-exercise.html',
                            survey=ce_details['survey'], ce=ce_details['collection_exercise'],
-                           sample_loaded=sample_loaded,
-                           sample=sample,
-                           events=ce_details['events'],
+                           sample_loaded=sample_loaded, sample=ce_details['sample_summary'],
+                           events=formatted_events,
                            breadcrumbs=breadcrumbs,
                            error=error)
 
@@ -143,14 +142,11 @@ def _validate_sample():
     return error
 
 
-def _sample_summary(total_businesses, total_ci, submission_time_stamp):
-    sample = {"businesses": total_businesses,
-              "collection_instruments": total_ci
-              }
+def _format_sample_summary(sample):
 
-    if submission_time_stamp:
-        submission_datetime = datetime.datetime.strptime(submission_time_stamp, "%Y-%m-%dT%H:%M:%S.%f%z")
+    if sample and sample.get('ingestDateTime'):
+        submission_datetime = datetime.datetime.strptime(sample['ingestDateTime'], "%Y-%m-%dT%H:%M:%S.%f%z")
         submission_time = submission_datetime.strftime("%I:%M%p on %B %d, %Y")
-        sample["submission_time"] = submission_time
+        sample["ingestDateTime"] = submission_time
 
     return sample

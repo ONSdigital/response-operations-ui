@@ -1,4 +1,3 @@
-import json
 import logging
 
 import requests
@@ -17,6 +16,4 @@ def upload_sample(short_name, period, file):
     if response.status_code != 201:
         raise ApiError(response)
 
-    logger.debug('Successfully uploaded sample', short_name=short_name, filename=file.filename, period=period)
-
-    return json.loads(response.text)
+    logger.debug('Successfully uploaded sample')
