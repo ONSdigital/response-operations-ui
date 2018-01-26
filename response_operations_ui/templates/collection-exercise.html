@@ -17,6 +17,9 @@
 
   <div class="grid">
     <div class="grid__col col-6@l">
+
+      {% include 'partials/error-box.html' %}
+
       <section class="ce-section ce-events">
         <h2 class="venus u-pt-m">Dates</h2>
         <table class="table table__dense" summary="Dates for this collection exercise">
@@ -164,7 +167,6 @@
                 </td>
               </tr>
             {% endfor %}
-
             </tbody>
           </table>
         </div>
@@ -173,10 +175,17 @@
         <div class="u-mb-m">
           <form id="form-load-ci" action="" class="form" method="post" enctype="multipart/form-data">
             <p>
-              {{ 'Add another collection instrument (CI)' if collection_instruments else 'Choose a collection instrument (CI) to load'}}
+              {{'Add another' if collection_instruments else 'Add a'}} collection instrument. Must be XLSX
             </p>
-            <label class="upload-file u-vh" for="ciFile">Choose CI file</label>
-            <input id="ciFile" type="file" class="" name="ciFile" accept=".xlsx">
+            <div id="ciFileErrorPanel" class="{{'panel panel--simple panel--error' if error.section == 'ciFile' else ''}}">
+              <div id="ciFileErrorPanelBody" class="{{'panel__body' if error.section == 'ciFile' else ''}}">
+                <p class="hidden">
+                  Incorrect file type. Please choose a file type XLSX
+                </p>
+                <label class="upload-file u-vh" for="ciFile">Choose CI file</label>
+                <input type="file" class="u-mb-s" name="ciFile" id="ciFile" required accept=".xlsx" onchange="checkSelectedCI(this.files)" />
+              </div>
+            </div>
             <button id="btn-load-ci" name="load-ci" class="btn btn--primary unready">Add CI</button>
           </form>
         </div>

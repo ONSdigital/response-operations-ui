@@ -13,47 +13,7 @@ logger = wrap_logger(logging.getLogger(__name__))
 
 
 @app.route('/surveys/<short_name>/<period>', methods=['GET'])
-def view_collection_exercise(short_name, period):
-    ce_details = collection_exercise_controllers.get_collection_exercise(short_name, period)
-    ce_details['sample_summary'] = _format_sample_summary(ce_details['sample_summary'])
-    formatted_events = convert_events_to_new_format(ce_details['events'])
-    breadcrumbs = [
-        {
-            "title": "Surveys",
-            "link": "/surveys"
-        },
-        {
-            "title": f"{ce_details['survey']['surveyRef']} {ce_details['survey']['shortName']}",
-            "link": f"/surveys/{ce_details['survey']['shortName'].replace(' ', '')}"
-        },
-        {
-            "title": f"{ce_details['collection_exercise']['exerciseRef']}"
-        }
-    ]
-    return render_template('collection-exercise.html', survey=ce_details['survey'],
-                           ce=ce_details['collection_exercise'],
-                           collection_instruments=ce_details['collection_instruments'],
-                           sample=ce_details['sample_summary'],
-                           events=formatted_events,
-                           breadcrumbs=breadcrumbs)
-
-
-@app.route('/surveys/<short_name>/<period>', methods=['POST'])
-def upload(short_name, period):
-    if 'load-sample' in request.form:
-        return _upload_sample(short_name, period)
-    else:
-        return _upload_collection_instrument(short_name, period)
-
-
-def _upload_sample(short_name, period):
-    error = _validate_sample()
-    sample_loaded = False
-
-    if not error:
-        sample_controllers.upload_sample(short_name, period, request.files['sampleFile'])
-        sample_loaded = True
-
+def view_collection_exercise(short_name, period, error={}, ci_loaded=False, sample_loaded=False):
     ce_details = collection_exercise_controllers.get_collection_exercise(short_name, period)
     ce_details['sample_summary'] = _format_sample_summary(ce_details['sample_summary'])
     formatted_events = convert_events_to_new_format(ce_details['events'])
@@ -72,11 +32,32 @@ def _upload_sample(short_name, period):
         }
     ]
     return render_template('collection-exercise.html',
-                           survey=ce_details['survey'], ce=ce_details['collection_exercise'],
-                           sample_loaded=sample_loaded, sample=ce_details['sample_summary'],
+                           survey=ce_details['survey'],
+                           ce=ce_details['collection_exercise'],
+                           sample=ce_details['sample_summary'], sample_loaded=sample_loaded,
+                           collection_instruments=ce_details['collection_instruments'], ci_loaded=ci_loaded,
                            events=formatted_events,
                            breadcrumbs=breadcrumbs,
                            error=error)
+
+
+@app.route('/surveys/<short_name>/<period>', methods=['POST'])
+def upload(short_name, period):
+    if 'load-sample' in request.form:
+        return _upload_sample(short_name, period)
+    else:
+        return _upload_collection_instrument(short_name, period)
+
+
+def _upload_sample(short_name, period):
+    error = _validate_sample()
+    sample_loaded = False
+
+    if not error:
+        sample_controllers.upload_sample(short_name, period, request.files['sampleFile'])
+        sample_loaded = True
+
+    return view_collection_exercise(short_name, period, error=error, sample_loaded=sample_loaded)
 
 
 def _upload_collection_instrument(short_name, period):
@@ -84,29 +65,17 @@ def _upload_collection_instrument(short_name, period):
     ci_loaded = False
 
     if not error:
-        collection_instrument_controllers.upload_collection_instrument(short_name, period, request.files['ciFile'])
-        ci_loaded = True
+        ci_loaded = collection_instrument_controllers.upload_collection_instrument(short_name,
+                                                                                   period,
+                                                                                   request.files['ciFile'])
+        if not ci_loaded:
+            error = {
+                "section": "ciFile",
+                "header": "Error: Failed to upload Collection Instrument",
+                "message": "Please try again"
+            }
 
-    ce_details = collection_exercise_controllers.get_collection_exercise(short_name, period)
-    formatted_events = convert_events_to_new_format(ce_details['events'])
-    breadcrumbs = [
-        {
-            "title": "Surveys",
-            "link": "/surveys"
-        },
-        {
-            "title": f"{ce_details['survey']['surveyRef']} {ce_details['survey']['shortName']}",
-            "link": f"/surveys/{ce_details['survey']['shortName'].replace(' ', '')}"
-        },
-        {
-            "title": f"{ce_details['collection_exercise']['exerciseRef']}"
-        }
-    ]
-    return render_template('collection-exercise.html', survey=ce_details['survey'],
-                           ce=ce_details['collection_exercise'], ci_loaded=ci_loaded,
-                           collection_instruments=ce_details['collection_instruments'],
-                           events=formatted_events,
-                           breadcrumbs=breadcrumbs)
+    return view_collection_exercise(short_name, period, error=error, ci_loaded=ci_loaded)
 
 
 def _validate_collection_instrument():
@@ -115,11 +84,18 @@ def _validate_collection_instrument():
         file = request.files['ciFile']
         if not str.endswith(file.filename, '.xlsx'):
             logger.debug('Invalid file format uploaded', filename=file.filename)
-            error = 'Invalid file format'
+            error = {
+                "section": "ciFile",
+                "header": "Error: wrong file type for Collection instrument",
+                "message": "Please use XLSX file only"
+            }
     else:
         logger.debug('No file uploaded')
-        error = 'File not uploaded'
-
+        error = {
+            "section": "ciFile",
+            "header": "Error: No Collection instrument supplied",
+            "message": "Please provide a Collection instrument"
+        }
     return error
 
 
