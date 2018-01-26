@@ -31,6 +31,7 @@ login_manager = LoginManager(app)
 login_manager.init_app(app)
 login_manager.login_view = "sign_in_bp.sign_in"
 
+
 @login_manager.user_loader
 def user_loader(user_id):
     # TODO This will need to be replaced with a call to reddis to get the token
