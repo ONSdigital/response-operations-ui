@@ -30,11 +30,8 @@ def sign_in():
             login_user(user)
 
             next_url = request.args.get('next')
-
-            # Do we test if the redirect is safe or just assume it's fine?
             return redirect(next_url or url_for('home_bp.home'))
         else:
             form.username.errors.append(response_json['error'])
 
-    logger.info(form.errors)
     return render_template('sign_in.html', form=form)
