@@ -13,4 +13,5 @@ def sign_in(sign_in_data):
     url = f'{app.config["BACKSTAGE_API_URL"]}/sign-in-uaa'
 
     response = requests.post(url, json=sign_in_data)
+    logger.debug('Successfully signed in')
     return response.json()

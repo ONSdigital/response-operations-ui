@@ -35,6 +35,10 @@ This command will run the application
 ```
 make start
 ```
+
+When the application is running and you are required to sign-in, you will need an authenticated account,
+but for now the username and password are 'user' and 'pass'
+
 Frontend development
 -------------------
 Styling is implemented using scss and javascript. You can find the styling files in [the static folder](response_operations_ui/static)
