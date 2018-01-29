@@ -199,3 +199,24 @@ em {
 a {
     color: #4263c2;
 }
+
+.hidden {
+    display: none;
+}
+
+.panel {
+    border-radius: 0;
+}
+
+.panel--simple {
+    border: none;
+    border-left: 8px solid transparent;
+    margin-left: -8px;
+    color: #222;
+    padding: 16px;
+    padding: 1rem;
+}
+
+.panel--simple.panel--error {
+    border-color: #d0021b;
+}
