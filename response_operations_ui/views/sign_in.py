@@ -4,7 +4,7 @@ from flask import Blueprint, redirect, render_template, request, url_for
 from flask_login import login_user
 from structlog import wrap_logger
 
-from response_operations_ui.controllers.sign_in_controller import get_sign_in
+from response_operations_ui.controllers import sign_in_controller
 from response_operations_ui.forms import LoginForm
 from response_operations_ui.user import User
 
@@ -23,7 +23,7 @@ def sign_in():
             "password": request.form.get('password'),
         }
 
-        response_json = get_sign_in(sign_in_data)
+        response_json = sign_in_controller.sign_in(sign_in_data)
 
         if 'token' in response_json:
             user = User(response_json['token'])
