@@ -13,7 +13,7 @@ logger = wrap_logger(logging.getLogger(__name__))
 
 
 @app.route('/surveys/<short_name>/<period>', methods=['GET'])
-def view_collection_exercise(short_name, period, error={}, ci_loaded=False, sample_loaded=False):
+def view_collection_exercise(short_name, period, error=None, ci_loaded=False, sample_loaded=False):
     ce_details = collection_exercise_controllers.get_collection_exercise(short_name, period)
     ce_details['sample_summary'] = _format_sample_summary(ce_details['sample_summary'])
     formatted_events = convert_events_to_new_format(ce_details['events'])
