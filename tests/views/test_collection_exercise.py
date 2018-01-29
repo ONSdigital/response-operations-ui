@@ -79,8 +79,8 @@ class TestCollectionExercise(unittest.TestCase):
 
         response = self.app.post("/surveys/test/000000", data=file, follow_redirects=True)
 
-        self.assertEqual(response.status_code, 500)
-        self.assertIn("Error 500 - Server error".encode(), response.data)
+        self.assertEqual(response.status_code, 200)
+        self.assertIn("Error: Failed to upload Collection Instrument".encode(), response.data)
 
     @requests_mock.mock()
     def test_no_upload_collection_instrument_when_bad_extension(self, mock_request):
@@ -93,6 +93,7 @@ class TestCollectionExercise(unittest.TestCase):
 
         self.assertEqual(response.status_code, 200)
         self.assertNotIn("Collection instrument loaded".encode(), response.data)
+        self.assertIn("Error: wrong file type for Collection instrument".encode(), response.data)
 
     @requests_mock.mock()
     def test_no_upload_collection_instrument_when_no_file(self, mock_request):
@@ -102,6 +103,7 @@ class TestCollectionExercise(unittest.TestCase):
 
         self.assertEqual(response.status_code, 200)
         self.assertNotIn("Collection instrument loaded".encode(), response.data)
+        self.assertIn("Error: No Collection instrument supplied".encode(), response.data)
 
     @requests_mock.mock()
     def test_view_collection_instrument(self, mock_request):
@@ -120,7 +122,7 @@ class TestCollectionExercise(unittest.TestCase):
         response = self.app.get("/surveys/test/000000")
 
         self.assertEqual(response.status_code, 200)
-        self.assertIn("Choose a collection instrument (CI) to load".encode(), response.data)
+        self.assertIn("Add a collection instrument. Must be XLSX".encode(), response.data)
 
     @requests_mock.mock()
     def test_add_another_collection_instrument_when_already_uploaded(self, mock_request):
@@ -129,7 +131,7 @@ class TestCollectionExercise(unittest.TestCase):
         response = self.app.get("/surveys/test/000000")
 
         self.assertEqual(response.status_code, 200)
-        self.assertIn("Add another collection instrument (CI)".encode(), response.data)
+        self.assertIn("Add another collection instrument. Must be XLSX".encode(), response.data)
 
     @requests_mock.mock()
     def test_upload_sample(self, mock_request):
