@@ -4,7 +4,7 @@ import requests_mock
 
 from response_operations_ui import app
 
-url_sign_in_data = f'{app.config["BACKSTAGE_API_URL"]}/sign-in-uaa'
+url_sign_in_data = f'{app.config["BACKSTAGE_API_URL"]}/v2/sign-in/'
 
 
 class TestSignIn(unittest.TestCase):
@@ -23,9 +23,18 @@ class TestSignIn(unittest.TestCase):
 
     @requests_mock.mock()
     def test_sign_in(self, mock_request):
-        mock_request.post(url_sign_in_data, json={"token": "1234abc"})
+        mock_request.post(url_sign_in_data, json={"token": "1234abc"}, status_code=201)
 
         response = self.app.post("/sign-in", follow_redirects=True, data={"username": "user", "password": "pass"})
 
         self.assertEqual(response.status_code, 200)
         self.assertIn("View list of business surveys".encode(), response.data)
+
+    @requests_mock.mock()
+    def test_fail_sign_in(self, mock_request):
+        mock_request.post(url_sign_in_data, json={"token": "1234abc"}, status_code=500)
+
+        response = self.app.post("/sign-in", follow_redirects=True, data={"username": "user", "password": "pass"})
+
+        self.assertEqual(response.status_code, 500)
+        self.assertIn("Error 500 - Server error".encode(), response.data)
