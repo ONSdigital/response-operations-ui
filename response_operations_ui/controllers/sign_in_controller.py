@@ -11,7 +11,6 @@ logger = wrap_logger(logging.getLogger(__name__))
 
 def get_sign_in(sign_in_data):
     logger.debug('Retrieving sign in authorisation')
-
     url = f'{app.config["BACKSTAGE_API_URL"]}/sign-in-uaa'
 
     response_json = requests.post(url, json=sign_in_data)

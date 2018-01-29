@@ -1,5 +1,4 @@
 import logging
-from os import getenv
 
 from flask import redirect, url_for
 from requests import RequestException
@@ -16,22 +15,16 @@ logger = wrap_logger(logging.getLogger(__name__))
 def api_error(error):
     logger.error('Api failed to retrieve required data', url=error.url,
                  status_code=str(error.status_code))
-    return redirect(url_for('error_bp.server_error_page',
-                            _external=True,
-                            _scheme=getenv('SCHEME', 'http')))
+    return redirect(url_for('error_bp.server_error_page'))
 
 
 @app.errorhandler(RequestException)
 def connection_error(error):
     logger.error('Failed to connect to external service', url=error.request.url)
-    return redirect(url_for('error_bp.server_error_page',
-                            _external=True,
-                            _scheme=getenv('SCHEME', 'http')))
+    return redirect(url_for('error_bp.server_error_page'))
 
 
 @app.errorhandler(Exception)
 def server_error(error):  # pylint: disable=unused-argument
     logger.exception('Uncaught exception generated')
-    return redirect(url_for('error_bp.server_error_page',
-                            _external=True,
-                            _scheme=getenv('SCHEME', 'http')))
+    return redirect(url_for('error_bp.server_error_page'))

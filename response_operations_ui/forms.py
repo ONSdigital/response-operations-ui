@@ -10,7 +10,7 @@ logger = wrap_logger(logging.getLogger(__name__))
 
 
 class LoginForm(FlaskForm):
-    id = StringField('id')
+    user_id = StringField('user_id')
     username = StringField('Username', [InputRequired("Username is required")])
     password = PasswordField('Password', [InputRequired("Password is required")])
     submit = SubmitField('Sign in')
