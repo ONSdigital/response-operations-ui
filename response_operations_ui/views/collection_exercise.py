@@ -1,4 +1,4 @@
-import datetime
+import iso8601
 import logging
 
 from flask import render_template, request
@@ -116,7 +116,7 @@ def _validate_sample():
 def _format_sample_summary(sample):
 
     if sample and sample.get('ingestDateTime'):
-        submission_datetime = datetime.datetime.strptime(sample['ingestDateTime'], "%Y-%m-%dT%H:%M:%S.%f%z")
+        submission_datetime = iso8601.parse_date(sample['ingestDateTime'])
         submission_time = submission_datetime.strftime("%I:%M%p on %B %d, %Y")
         sample["ingestDateTime"] = submission_time
 

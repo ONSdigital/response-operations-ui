@@ -1,11 +1,11 @@
 import calendar
-from datetime import datetime
+import iso8601
 
 
 def convert_events_to_new_format(events):
     formatted_events = {}
     for event in events:
-        date_time = datetime.strptime(event['timestamp'], '%Y-%m-%dT%H:%M:%S.%f%z')
+        date_time = iso8601.parse_date(event['timestamp'])
         day = calendar.day_name[date_time.weekday()]
         month = calendar.month_name[date_time.month][:3]
         date = f"{date_time.strftime('%d')} {month} {date_time.strftime('%Y')}"
