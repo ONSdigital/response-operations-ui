@@ -1,6 +1,6 @@
 import logging
 
-from flask import abort, flash
+from flask import abort
 import requests
 from requests.exceptions import HTTPError
 from structlog import wrap_logger
