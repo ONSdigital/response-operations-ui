@@ -23,7 +23,7 @@ class TestSignIn(unittest.TestCase):
 
     @requests_mock.mock()
     def test_sign_in(self, mock_request):
-        mock_request.post(url_sign_in_data, json={"token": "1234abc"})
+        mock_request.post(url_sign_in_data, json={"token": "1234abc"}, status_code=201)
 
         response = self.app.post("/sign-in", follow_redirects=True, data={"username": "user", "password": "pass"})
 
