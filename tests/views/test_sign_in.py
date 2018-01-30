@@ -4,7 +4,7 @@ import requests_mock
 
 from response_operations_ui import app
 
-url_sign_in_data = f'http://localhost:8001/backstage-api/v2/sign-in'
+url_sign_in_data = f'{app.config["BACKSTAGE_API_URL"]}/v2/sign-in/'
 
 
 class TestSignIn(unittest.TestCase):
