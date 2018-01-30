@@ -1,6 +1,6 @@
 import logging
 
-from flask import redirect, url_for
+from flask import flash, redirect, url_for
 from structlog import wrap_logger
 
 from response_operations_ui import app
@@ -20,6 +20,7 @@ def api_error(error):
 @app.errorhandler(401)
 def handle_authentication_error(error):
     logger.error('Authentication failed')
+    flash('Authentication failed', category='failed_authentication')
     return redirect(url_for('sign_in_bp.sign_in'))
 
 

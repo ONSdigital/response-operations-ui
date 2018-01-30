@@ -8,6 +8,17 @@
 <div class="container page__container">
   <div class="grid">
     <div class="grid__col col-12@m">
+      {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+          <ul class=flashes>
+            {% for category, message in messages %}
+              {% if category == "failed_authentication" %}
+                <li>{{ message }}</li>
+              {% endif %}
+            {% endfor %}
+          </ul>
+        {% endif %}
+      {% endwith %}
       <form method="post">
         {{ form.csrf_token }}
         <div>
