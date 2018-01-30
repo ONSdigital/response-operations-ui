@@ -21,6 +21,8 @@ def sign_in(sign_in_data):
     except HTTPError as e:
         if e.response.status_code == 401:
             abort(401)
+        else:
+            raise e
 
     logger.debug('Successfully signed in')
     return response.json()
