@@ -1,7 +1,6 @@
 import logging
 
 from flask import redirect, url_for
-from requests import RequestException
 from structlog import wrap_logger
 
 from response_operations_ui import app

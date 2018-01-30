@@ -6,7 +6,6 @@ from requests.exceptions import HTTPError
 from structlog import wrap_logger
 
 from response_operations_ui import app
-from response_operations_ui.exceptions.exceptions import ApiError
 
 logger = wrap_logger(logging.getLogger(__name__))
 
