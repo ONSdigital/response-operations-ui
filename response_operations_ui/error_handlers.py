@@ -18,10 +18,10 @@ def api_error(error):
     return redirect(url_for('error_bp.server_error_page'))
 
 
-@app.errorhandler(RequestException)
-def connection_error(error):
-    logger.error('Failed to connect to external service', url=error.request.url)
-    return redirect(url_for('error_bp.server_error_page'))
+@app.errorhandler(401)
+def handle_authentication_error(error):
+    logger.error('Authentication failed')
+    return redirect(url_for('sign_in_bp.sign_in'))
 
 
 @app.errorhandler(Exception)

@@ -1,6 +1,8 @@
 import logging
 
+from flask import abort
 import requests
+from requests.exceptions import HTTPError
 from structlog import wrap_logger
 
 from response_operations_ui import app
@@ -14,8 +16,12 @@ def sign_in(sign_in_data):
     url = f'{app.config["BACKSTAGE_API_URL"]}/v2/sign-in/'
 
     response = requests.post(url, json=sign_in_data)
-    if response.status_code != 201:
-        raise ApiError(response)
+
+    try:
+        response.raise_for_status()
+    except HTTPError as e:
+        if e.response.status_code == 401:
+            abort(401)
 
     logger.debug('Successfully signed in')
     return response.json()
