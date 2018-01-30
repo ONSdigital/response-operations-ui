@@ -1,12 +1,15 @@
 import unittest
 from unittest.mock import patch
 
+from config import TestingConfig
 from response_operations_ui import app
 
 
 class TestErrorHandlers(unittest.TestCase):
     def setUp(self):
-        app.config['WTF_CSRF_ENABLED'] = False
+        app_config = TestingConfig()
+        app.config.from_object(app_config)
+        app.login_manager.init_app(app)
         self.app = app.test_client()
 
     @patch('requests.post')
