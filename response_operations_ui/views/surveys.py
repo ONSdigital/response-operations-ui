@@ -1,28 +1,28 @@
 import logging
 
-from flask import render_template
+from flask import Blueprint, render_template
+from flask_login import login_required
 from structlog import wrap_logger
 
-from response_operations_ui import app
 from response_operations_ui.controllers import survey_controllers
 
 
 logger = wrap_logger(logging.getLogger(__name__))
 
-
-@app.route('/', methods=['GET'])
-def view_home():
-    return render_template('home.html')
+surveys_bp = Blueprint('surveys_bp', __name__,
+                       static_folder='static', template_folder='templates/surveys')
 
 
-@app.route('/surveys', methods=['GET'])
+@surveys_bp.route('/', methods=['GET'])
+@login_required
 def view_surveys():
     survey_list = survey_controllers.get_surveys_list()
     breadcrumbs = [{"title": "Surveys"}]
     return render_template('surveys.html', survey_list=survey_list, breadcrumbs=breadcrumbs)
 
 
-@app.route('/surveys/<short_name>', methods=['GET'])
+@surveys_bp.route('/<short_name>', methods=['GET'])
+@login_required
 def view_survey(short_name):
     survey_details = survey_controllers.get_survey(short_name)
     breadcrumbs = [

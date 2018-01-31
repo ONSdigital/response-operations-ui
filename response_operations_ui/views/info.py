@@ -2,16 +2,16 @@ from json import JSONDecodeError, loads
 import logging
 from pathlib import Path
 
-from flask import make_response, jsonify
+from flask import Blueprint, make_response, jsonify
 from structlog import wrap_logger
-
-from response_operations_ui import app
 
 
 logger = wrap_logger(logging.getLogger(__name__))
 
+info_bp = Blueprint('info_bp', __name__, static_folder='static', template_folder='templates')
 
-@app.route('/info', methods=['GET'])
+
+@info_bp.route('/', methods=['GET'])
 def get_info():
 
     _health_check = {}

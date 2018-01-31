@@ -4,20 +4,24 @@ from io import BytesIO
 
 import requests_mock
 
+from config import TestingConfig
 from response_operations_ui import app
 
-url_get_collection_exercise = f'{app.config["BACKSTAGE_API_URL"]}/collection-exercise/test/000000'
+url_get_collection_exercise = f'{app.config["BACKSTAGE_API_URL"]}/v1/collection-exercise/test/000000'
 with open('tests/test_data/collection_exercise/collection_exercise_details.json') as json_data:
     collection_exercise_details = json.load(json_data)
 with open('tests/test_data/collection_exercise/collection_exercise_details_no_sample.json') as json_data:
     collection_exercise_details_no_sample = json.load(json_data)
-url_collection_instrument = f'{app.config["BACKSTAGE_API_URL"]}/collection-instrument/test/000000'
-url_upload_sample = f'{app.config["BACKSTAGE_API_URL"]}/sample/test/000000'
+url_collection_instrument = f'{app.config["BACKSTAGE_API_URL"]}/v1/collection-instrument/test/000000'
+url_upload_sample = f'{app.config["BACKSTAGE_API_URL"]}/v1/sample/test/000000'
 
 
 class TestCollectionExercise(unittest.TestCase):
 
     def setUp(self):
+        app_config = TestingConfig()
+        app.config.from_object(app_config)
+        app.login_manager.init_app(app)
         self.app = app.test_client()
 
     @requests_mock.mock()
@@ -34,10 +38,10 @@ class TestCollectionExercise(unittest.TestCase):
     def test_collection_exercise_view_fail(self, mock_request):
         mock_request.get(url_get_collection_exercise, status_code=500)
 
-        response = self.app.get("/surveys/test/000000")
+        response = self.app.get("/surveys/test/000000", follow_redirects=True)
 
-        self.assertEqual(response.status_code, 200)
-        self.assertIn("FAIL".encode(), response.data)
+        self.assertEqual(response.status_code, 500)
+        self.assertIn("Error 500 - Server error".encode(), response.data)
 
     @requests_mock.mock()
     def test_upload_collection_instrument(self, mock_request):
@@ -73,7 +77,7 @@ class TestCollectionExercise(unittest.TestCase):
         mock_request.post(url_collection_instrument, status_code=500)
         mock_request.get(url_get_collection_exercise, json=collection_exercise_details)
 
-        response = self.app.post("/surveys/test/000000", data=file)
+        response = self.app.post("/surveys/test/000000", data=file, follow_redirects=True)
 
         self.assertEqual(response.status_code, 200)
         self.assertIn("Error: Failed to upload Collection Instrument".encode(), response.data)
@@ -164,10 +168,10 @@ class TestCollectionExercise(unittest.TestCase):
         mock_request.post(url_upload_sample, status_code=500)
         mock_request.get(url_get_collection_exercise, json=collection_exercise_details)
 
-        response = self.app.post("/surveys/test/000000", data=data)
+        response = self.app.post("/surveys/test/000000", data=data, follow_redirects=True)
 
-        self.assertEqual(response.status_code, 200)
-        self.assertIn("FAIL".encode(), response.data)
+        self.assertEqual(response.status_code, 500)
+        self.assertIn("Error 500 - Server error".encode(), response.data)
 
     @requests_mock.mock()
     def test_no_upload_sample_when_bad_extension(self, mock_request):

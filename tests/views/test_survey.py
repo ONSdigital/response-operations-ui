@@ -5,12 +5,13 @@ from unittest.mock import MagicMock
 import requests_mock
 from requests import RequestException
 
+from config import TestingConfig
 from response_operations_ui import app
 
-url_get_survey_list = f'{app.config["BACKSTAGE_API_URL"]}/survey/surveys'
+url_get_survey_list = f'{app.config["BACKSTAGE_API_URL"]}/v1/survey/surveys'
 with open('tests/test_data/survey/survey_list.json') as json_data:
     survey_list = json.load(json_data)
-url_get_survey_by_short_name = f'{app.config["BACKSTAGE_API_URL"]}/survey/shortname/bres'
+url_get_survey_by_short_name = f'{app.config["BACKSTAGE_API_URL"]}/v1/survey/shortname/bres'
 with open('tests/test_data/survey/survey.json') as json_data:
     survey_info = json.load(json_data)
 
@@ -18,6 +19,9 @@ with open('tests/test_data/survey/survey.json') as json_data:
 class TestSurvey(unittest.TestCase):
 
     def setUp(self):
+        app_config = TestingConfig()
+        app.config.from_object(app_config)
+        app.login_manager.init_app(app)
         self.app = app.test_client()
 
     @requests_mock.mock()
@@ -43,19 +47,19 @@ class TestSurvey(unittest.TestCase):
     def test_survey_list_fail(self, mock_request):
         mock_request.get(url_get_survey_list, status_code=500)
 
-        response = self.app.get("/surveys")
+        response = self.app.get("/surveys", follow_redirects=True)
 
-        self.assertEqual(response.status_code, 200)
-        self.assertIn("FAIL".encode(), response.data)
+        self.assertEqual(response.status_code, 500)
+        self.assertIn("Error 500 - Server error".encode(), response.data)
 
     @requests_mock.mock()
     def test_survey_list_connection_error(self, mock_request):
         mock_request.get(url_get_survey_list, exc=RequestException(request=MagicMock()))
 
-        response = self.app.get("/surveys")
+        response = self.app.get("/surveys", follow_redirects=True)
 
-        self.assertEqual(response.status_code, 200)
-        self.assertIn("FAIL".encode(), response.data)
+        self.assertEqual(response.status_code, 500)
+        self.assertIn("Error 500 - Server error".encode(), response.data)
 
     @requests_mock.mock()
     def test_survey_view(self, mock_request):
@@ -69,7 +73,7 @@ class TestSurvey(unittest.TestCase):
     def test_survey_view_fail(self, mock_request):
         mock_request.get(url_get_survey_by_short_name, status_code=500)
 
-        response = self.app.get("/surveys/bres")
+        response = self.app.get("/surveys/bres", follow_redirects=True)
 
-        self.assertEqual(response.status_code, 200)
-        self.assertIn("FAIL".encode(), response.data)
+        self.assertEqual(response.status_code, 500)
+        self.assertIn("Error 500 - Server error".encode(), response.data)

@@ -1,0 +1,45 @@
+{% extends "layouts/base.html" %}
+
+{% block page_title %} Sign-In | Survey Data Collection {% endblock %}
+
+
+{% block main %}
+
+<div class="container page__container">
+  <div class="grid">
+    <div class="grid__col col-12@m">
+      {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+          <ul class=flashes>
+            {% for category, message in messages %}
+              {% if category == "failed_authentication" %}
+                <li>{{ message }}</li>
+              {% endif %}
+            {% endfor %}
+          </ul>
+        {% endif %}
+      {% endwith %}
+      <form method="post">
+        {{ form.csrf_token }}
+        <div>
+          {% if form.username.errors %}
+            <ul class="errors">{% for error in form.username.errors %}<li>{{ error }}</li>{% endfor %}</ul>
+          {% endif %}
+          Username <br>
+          {{ form.username(size=20) }} <br>
+        </div>
+        <div>
+          {% if form.password.errors %}
+            <ul class="errors">{% for error in form.password.errors %}<li>{{ error }}</li>{% endfor %}</ul>
+          {% endif %}
+          Password <br>
+          {{ form.password(size=20) }} <br>
+        </div>
+        <br>
+        <input type="submit" class="btn btn--primary" value="Sign in">
+      </form>
+    </div>
+  </div>
+</div>
+
+{% endblock main %}

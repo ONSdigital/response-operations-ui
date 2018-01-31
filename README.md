@@ -25,6 +25,20 @@ Alternatively run with gunicorn
 $ pipenv run gunicorn -b 0.0.0.0:8085 response_operations_ui:app -w=4
 ```
 
+Alternatively run with Make
+
+This command will build all the requirements
+```
+make build
+```
+This command will run the application
+```
+make start
+```
+
+When the application is running and you are required to sign-in, you will need an authenticated account,
+but for now the username and password are 'user' and 'pass'
+
 Frontend development
 -------------------
 Styling is implemented using scss and javascript. You can find the styling files in [the static folder](response_operations_ui/static)
@@ -39,7 +53,6 @@ Ensure dev dependencies have been installed
 ```bash
 pipenv install --dev
 ```
-
 Run tests with coverage
 ```
 $ pipenv run python run_tests.py
@@ -48,4 +61,9 @@ $ pipenv run python run_tests.py
 Run linting (the travis build sets a custom max line length)
 ```
 $ pipenv check --style . --max-line-length 100
+```
+
+Run tests with Make
+```
+make test
 ```

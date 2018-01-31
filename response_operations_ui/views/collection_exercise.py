@@ -1,18 +1,22 @@
 import iso8601
 import logging
 
-from flask import render_template, request
+from flask import Blueprint, render_template, request
+from flask_login import login_required
 from structlog import wrap_logger
 
-from response_operations_ui import app
 from response_operations_ui.common.mappers import convert_events_to_new_format
 from response_operations_ui.controllers import collection_exercise_controllers
 from response_operations_ui.controllers import collection_instrument_controllers, sample_controllers
 
 logger = wrap_logger(logging.getLogger(__name__))
 
+collection_exercise_bp = Blueprint('collection_exercise_bp', __name__,
+                                   static_folder='static', template_folder='templates')
 
-@app.route('/surveys/<short_name>/<period>', methods=['GET'])
+
+@collection_exercise_bp.route('/<short_name>/<period>', methods=['GET'])
+@login_required
 def view_collection_exercise(short_name, period, error=None, ci_loaded=False, sample_loaded=False):
     ce_details = collection_exercise_controllers.get_collection_exercise(short_name, period)
     ce_details['sample_summary'] = _format_sample_summary(ce_details['sample_summary'])
@@ -41,7 +45,8 @@ def view_collection_exercise(short_name, period, error=None, ci_loaded=False, sa
                            error=error)
 
 
-@app.route('/surveys/<short_name>/<period>', methods=['POST'])
+@collection_exercise_bp.route('/<short_name>/<period>', methods=['POST'])
+@login_required
 def upload(short_name, period):
     if 'load-sample' in request.form:
         return _upload_sample(short_name, period)
