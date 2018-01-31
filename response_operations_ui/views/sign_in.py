@@ -1,7 +1,7 @@
 import logging
 
 from flask import Blueprint, redirect, render_template, request, url_for
-from flask_login import login_user
+from flask_login import login_user, current_user
 from structlog import wrap_logger
 
 from response_operations_ui.controllers import sign_in_controller
@@ -16,6 +16,9 @@ sign_in_bp = Blueprint('sign_in_bp', __name__, static_folder='static', template_
 @sign_in_bp.route('/', methods=['GET', 'POST'])
 def sign_in():
     form = LoginForm(request.form)
+
+    if current_user.is_authenticated:
+        return redirect(url_for('home_bp.home'))
 
     if form.validate_on_submit():
         sign_in_data = {
