@@ -16,10 +16,14 @@ class TestSignIn(unittest.TestCase):
         response = self.app.get('/sign-in')
         self.assertIn(b'Username', response.data)
         self.assertIn(b'Password', response.data)
+        self.assertEqual(response.status_code, 200)
+        self.assertNotIn(b"Sign out", response.data)
 
     def test_logout(self):
         response = self.app.get('/logout', follow_redirects=True)
         self.assertIn(b'You\'ve logged out', response.data)
+        self.assertEqual(response.status_code, 200)
+        self.assertNotIn(b"Sign out", response.data)
 
     @requests_mock.mock()
     def test_sign_in(self, mock_request):
@@ -30,6 +34,7 @@ class TestSignIn(unittest.TestCase):
 
         self.assertEqual(response.status_code, 200)
         self.assertIn("View list of business surveys".encode(), response.data)
+        self.assertIn("Sign out".encode(), response.data)
 
     @requests_mock.mock()
     def test_fail_authentication(self, mock_request):
@@ -45,3 +50,21 @@ class TestSignIn(unittest.TestCase):
         # being displayed on the page
         self.assertIn(b'Username', response.data)
         self.assertIn(b'Password', response.data)
+
+    @requests_mock.mock()
+    def test_sign_in_redirect_while_authenticated(self, mock_request):
+        mock_request.post(url_sign_in_data, json={"token": "1234abc"}, status_code=201)
+
+        response = self.app.post("/sign-in", follow_redirects=True,
+                                 data={"username": "user", "password": "pass"})
+
+        self.assertIn("View list of business surveys".encode(), response.data)
+
+        # First test that we hit a redirect
+        response = self.app.get('/sign-in')
+        self.assertEqual(response.status_code, 302)
+
+        # Then test that the redirect takes you to the home page.
+        response = self.app.get('/sign-in', follow_redirects=True)
+        self.assertEqual(response.status_code, 200)
+        self.assertIn("View list of business surveys".encode(), response.data)
