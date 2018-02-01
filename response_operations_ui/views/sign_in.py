@@ -1,7 +1,7 @@
 import logging
 
-from flask import Blueprint, redirect, render_template, request, url_for, session
-from flask_login import login_user, current_user
+from flask import Blueprint, redirect, render_template, request, session, url_for
+from flask_login import current_user, login_user
 from structlog import wrap_logger
 
 from response_operations_ui.controllers import sign_in_controller
