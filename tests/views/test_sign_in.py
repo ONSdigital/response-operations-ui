@@ -9,6 +9,7 @@ url_sign_in_data = f'{app.config["BACKSTAGE_API_URL"]}/v2/sign-in/'
 
 class TestSignIn(unittest.TestCase):
     def setUp(self):
+        app.config['SECRET_KEY'] = 'sekrit!'
         app.config['WTF_CSRF_ENABLED'] = False
         self.app = app.test_client()
 
@@ -68,3 +69,15 @@ class TestSignIn(unittest.TestCase):
         response = self.app.get('/sign-in', follow_redirects=True)
         self.assertEqual(response.status_code, 200)
         self.assertIn("View list of business surveys".encode(), response.data)
+
+    @requests_mock.mock()
+    def test_sign_in_next_url(self, mock_request):
+        with self.app.session_transaction() as session:
+            session['next'] = '/surveys'
+        mock_request.post(url_sign_in_data, json={"token": "1234abc"}, status_code=201)
+
+        response = self.app.post("/sign-in", follow_redirects=True,
+                                 data={"username": "user", "password": "pass"})
+
+        self.assertEqual(response.status_code, 200)
+        self.assertIn("Surveys".encode(), response.data)
