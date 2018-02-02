@@ -33,7 +33,6 @@ def sign_in():
             login_user(user)
             if 'next' in session:
                 return redirect(session['next'])
-            else:
-                return redirect(url_for('home_bp.home'))
+            return redirect(url_for('home_bp.home'))
 
     return render_template('sign_in.html', form=form)
