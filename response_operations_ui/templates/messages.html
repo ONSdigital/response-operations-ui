@@ -1,9 +1,70 @@
 {% extends "layouts/base.html" %}
+{% block page_title %}Messages | Survey Data Collection{% endblock %}
 
-{% block page_title %} Home | Survey Data Collection {% endblock %}
+{% block main %}
+</br>
+<div role="main" id="main" class="page__main">
+  <h1 class="jupiter" name="page-messages-title">Messages</h1>
+  <div class="grid">
+    <div class="grid__col col-30@l">
+      <div class="messages-list">
 
-{%block main%}
+        <table id="tbl-messages" class="table__dense" summary="messages in the system">
+          <thead class="table--head">
+            <tr class="table--row">
+              <th scope="col" class="table--header--cell tbl-messages-RU-Ref">
+                RU_Ref
+              </th>
+              <th scope="col" class="table--header--cell tbl-messages-business">
+                Business
+              </th>
+              <th scope="col" class="table--header--cell tbl-messages-subject">
+                Subject
+              </th>
+              <th scope="col" class="table--header--cell tbl-messages-from">
+                From
+              </th>
+              <th scope="col" class="table--header--cell tbl-messages-to">
+                To
+              </th>
+              <th scope="col" class="table--header--cell tbl-messages-received">
+                Received
+              </th>
+            </tr>
+          </thead>
+              <tbody>
+              {%if not message_list%}
+            <p>there is no new messages</p>
+              {% else %}
+              {% for messages in message_list %}
+               <tr class="table--row table--row__selectable">
+                <td name="tbl-messages-RU_Ref" class="table--cell tbl-messages-RU_Ref">
+                    {{ messages.ru_id }}
+                </td>
+                <td name="tbl-messages-business" class="table--cell tbl-messages-business">
+                    {{ messages.business }}
+                </td>
+                <td name="tbl-messages-subject" class="table--cell tbl-messages-subject">
+                    {{ messages.subject}}
+                </td>
+                <td name="tbl-messages-from" class="table--cell tbl-messages-from">
+                    {{messages.from}}
+                </td>
+                <td name="tbl-messages-to" class="table--cell tbl-messages-to">
+                    {{messages.to}}
+                </td>
+                <td name="tbl-messages-received" class="table--cell tbl-messages-received">
+                   <ol reversed><time datetime="{{messages.received}}">{{messages.received}}</time></ol>
+                </td>
+               </tr>
+              {% endfor %}
+              {% endif %}
 
+          </tbody>
+        </table>
 
-
-{%endblock%}
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}
