@@ -8,7 +8,10 @@
   <div class="grid__col col-12@m">
     <div role="main" id="main" class="page__main">
       <ul class="u-pt-l">
-        <li><a name="create-message-link" href="/create-message/">Create a new secure message</a></li>
+        <li><a name="create-message-link"
+              id="create-message-link"
+              href="{{ url_for('messages_bp.create_message',ru=args) }}">
+              Create a new secure message</a></li>
       </ul>
     </div>
   </div>
