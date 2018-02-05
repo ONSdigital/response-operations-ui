@@ -34,7 +34,18 @@ def create_message():
         form.business.text = form.hidden_business.data
         form.to.text = form.hidden_to.data
 
+        breadcrumbs = [
+            {
+                "title": "Messages",
+                "link": "/messages"
+            },
+            {
+                "title": "Create Message"
+            }
+        ]
+
         return render_template('create-message.html',
                                _theme='default',
                                form=form,
-                               errors=form.errors)
+                               errors=form.errors,
+                               breadcrumbs=breadcrumbs)

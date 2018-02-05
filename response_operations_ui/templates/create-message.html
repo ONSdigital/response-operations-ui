@@ -1,5 +1,7 @@
 {% extends "layouts/base.html" %}
 
+{% include "partials/breadcrumbs.html" %}
+
 {% block page_title %} Create Message | Survey Data Collection {% endblock %}
 
 {% block main %}
@@ -28,10 +30,7 @@
     <div class="secure-message-form">
         <form action="{{ url_for('messages_bp.create_message') }}" method="post">
             {{ form.hidden_tag() }}
-            {{ form.hidden_survey() }}
-            {{ form.hidden_ru_ref() }}
-            {{ form.hidden_business() }}
-            {{ form.hidden_to() }}
+
             <table border="0" cellpadding="0" cellspacing="0" width="40%">
                 <tr>
                     <td width="10%">Survey:</td><td><b>{{ form.survey(id="survey-label") }}</b></td>
