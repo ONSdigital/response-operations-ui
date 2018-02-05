@@ -1,0 +1,15 @@
+{% extends "layouts/base.html" %}
+{% block page_title %}{{ru.name}} | Reporting units | Survey Data Collection{% endblock %}
+
+{% block main %}
+<h1 class="jupiter">{{ ru.name }}</h1>
+
+<dl class="item-headlines">
+  <dt class="item-headlines-term">
+    Reference:
+  </dt>
+  <dd class="item-headlines-definition">
+    {{ ru.attributes.ruref }}
+  </dd>
+</dl>
+{% endblock %}

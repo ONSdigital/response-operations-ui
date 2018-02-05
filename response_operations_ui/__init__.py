@@ -39,5 +39,6 @@ def user_loader(user_id):
     # down the line once uaa is sorted out.
     return User(user_id)
 
+
 import response_operations_ui.views  # NOQA # pylint: disable=wrong-import-position
 import response_operations_ui.error_handlers  # NOQA # pylint: disable=wrong-import-position
