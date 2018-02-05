@@ -28,3 +28,13 @@ class TestReportingUnits(unittest.TestCase):
 
         self.assertEqual(response.status_code, 200)
         self.assertIn("Bolts and Ratchets Ltd".encode(), response.data)
+        self.assertIn("50012345678".encode(), response.data)
+
+    @requests_mock.mock()
+    def test_get_reporting_unit_fail(self, mock_request):
+        mock_request.get(url_get_reporting_unit, status_code=500)
+
+        response = self.app.get("/reporting-units/50012345678", follow_redirects=True)
+
+        self.assertEqual(response.status_code, 500)
+        self.assertIn("Error 500 - Server error".encode(), response.data)
