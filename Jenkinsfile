@@ -1,0 +1,135 @@
+pipeline {
+    agent any
+
+    triggers {
+        pollSCM('* * * * *')
+    }
+
+    stages {
+
+        stage('dev') {
+            agent {
+                docker {
+                    image 'governmentpaas/cf-cli'
+                    args '-u root'
+                }
+            }
+
+            environment {
+                CLOUDFOUNDRY_API = credentials('CLOUDFOUNDRY_API')
+                CF_DOMAIN = credentials('CF_DOMAIN')
+                DEV_SECURITY = credentials('DEV_SECURITY')
+                CF_USER = credentials('CF_USER')
+            }
+            steps {
+                sh "cf login -a https://${env.CLOUDFOUNDRY_API} --skip-ssl-validation -u ${CF_USER_USR} -p ${CF_USER_PSW} -o rmras -s dev"
+                sh 'cf push --no-start ras-party-dev'
+                sh 'cf set-env ras-party-dev ONS_ENV dev'
+                sh "cf set-env ras-party-dev BACKSTAGE_API_URL http://ras-backstage-service-dev.${env.CF_DOMAIN}:80/backstage-api"
+                sh 'cf start ras-party-dev'
+            }
+        }
+
+        stage('ci?') {
+            agent none
+            steps {
+                script {
+                    try {
+                        timeout(time: 60, unit: 'SECONDS') {
+                            script {
+                                env.deploy_ci = input message: 'Deploy to CI?', id: 'deploy_ci', parameters: [choice(name: 'Deploy to CI', choices: 'no\nyes', description: 'Choose "yes" if you want to deploy to CI')]
+                            }
+                        }
+                    } catch (ignored) {
+                        echo 'Skipping ci deployment'
+                    }
+                }
+            }
+        }
+
+        stage('ci') {
+            agent {
+                docker {
+                    image 'governmentpaas/cf-cli'
+                    args '-u root'
+                }
+
+            }
+            when {
+                environment name: 'deploy_ci', value: 'yes'
+            }
+
+            environment {
+                CLOUDFOUNDRY_API = credentials('CLOUDFOUNDRY_API')
+                CF_DOMAIN = credentials('CF_DOMAIN')
+                CI_SECURITY = credentials('CI_SECURITY')
+                CF_USER = credentials('CF_USER')
+            }
+            steps {
+                sh "cf login -a https://${env.CLOUDFOUNDRY_API} --skip-ssl-validation -u ${CF_USER_USR} -p ${CF_USER_PSW} -o rmras -s ci"
+                sh 'cf push --no-start ras-party-ci'
+                sh "cf set-env ras-party-dev BACKSTAGE_API_URL http://ras-backstage-service-ci.${env.CF_DOMAIN}:80/backstage-api"
+                sh 'cf start ras-party-ci'
+            }
+        }
+
+        stage('test?') {
+            agent none
+            steps {
+                script {
+                    try {
+                        timeout(time: 60, unit: 'SECONDS') {
+                            script {
+                                env.deploy_test = input message: 'Deploy to test?', id: 'deploy_test', parameters: [choice(name: 'Deploy to test', choices: 'no\nyes', description: 'Choose "yes" if you want to deploy to test')]
+                            }
+                        }
+                    } catch (ignored) {
+                        echo 'Skipping test deployment'
+                    }
+                }
+            }
+        }
+
+        stage('test') {
+            agent {
+                docker {
+                    image 'governmentpaas/cf-cli'
+                    args '-u root'
+                }
+
+            }
+            when {
+                environment name: 'deploy_test', value: 'yes'
+            }
+
+            environment {
+                CLOUDFOUNDRY_API = credentials('CLOUDFOUNDRY_API')
+                CF_DOMAIN = credentials('CF_DOMAIN')
+                TEST_SECURITY = credentials('TEST_SECURITY')
+                CF_USER = credentials('CF_USER')
+            }
+            steps {
+                sh "cf login -a https://${env.CLOUDFOUNDRY_API} --skip-ssl-validation -u ${CF_USER_USR} -p ${CF_USER_PSW} -o rmras -s test"
+                sh 'cf push --no-start ras-party-test'
+                sh 'cf set-env ras-party-test ONS_ENV test'
+                sh "cf set-env ras-party-dev BACKSTAGE_API_URL http://ras-backstage-service-sit.${env.CF_DOMAIN}:80/backstage-api"
+                sh 'cf start ras-party-test'
+            }
+        }
+    }
+
+    post {
+        always {
+            cleanWs()
+            dir('${env.WORKSPACE}@tmp') {
+                deleteDir()
+            }
+            dir('${env.WORKSPACE}@script') {
+                deleteDir()
+            }
+            dir('${env.WORKSPACE}@script@tmp') {
+                deleteDir()
+            }
+        }
+    }
+}
