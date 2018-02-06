@@ -58,4 +58,3 @@ def view_survey(short_name):
                            collection_exercises=survey_details['collection_exercises'],
                            survey_state=collection_exercise_state['state'],
                            breadcrumbs=breadcrumbs)
-
