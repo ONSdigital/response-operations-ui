@@ -7,16 +7,16 @@
     <br/>
     <h1 class="jupiter" name="page-ce-title">{{survey.shortName}} {{ce.exerciseRef}}</h1>
 
-    {% if ce.state == "INIT" %}
-       <dl class="survey-info info-panel" id="survey-attributes">
-           <dt class="survey-info__title">
-             Status:
-           </dt>
-          <dd class="survey-info__data">
-             Created
-          </dd>
-       </dl>
-  {% endif %}
+      {% if ce.state == "INIT" %}
+         <dl class="survey-info info-panel" id="survey-attributes">
+             <dt class="survey-info__title">
+               Status:
+             </dt>
+             <dd class="survey-info__data">
+               Created
+             </dd>
+         </dl>
+      {% endif %}
 
     <ul>
       {% if ci_loaded %}
