@@ -13,7 +13,7 @@ logger = wrap_logger(logging.getLogger(__name__))
 @app.errorhandler(ApiError)
 def api_error(error):
     logger.error('Api failed to retrieve required data', url=error.url,
-                 status_code=str(error.status_code))
+                 status=str(error.status_code))
     return redirect(url_for('error_bp.server_error_page'))
 
 
