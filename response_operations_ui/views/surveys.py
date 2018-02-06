@@ -51,7 +51,6 @@ def view_survey(short_name):
 
         if collection_exercise_state["state"] == "READY_FOR_LIVE":
             collection_exercise_state["state"] = "Live"
-        logger.debug("survey details value {}".format(collection_exercise_state['state']))
 
     return render_template('survey.html',
                            survey=survey_details['survey'],
