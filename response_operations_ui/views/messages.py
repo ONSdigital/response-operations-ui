@@ -16,5 +16,16 @@ messages_bp = Blueprint("messages_bp", __name__, static_folder='Static',
 @login_required
 def view_messages():
     messages = message_controllers.get_message_list()
+    refined_messages = []
+    for message in messages:
+        refined_message = {
+            'ru_ref': message.get('ru_id'),
+            'business_name': message.get('@ru_id').get('name'),
+            'subject': message.get('subject'),
+            'from': message.get('msg_from'),
+            'to': message.get('@msg_to')[0].get('firstName') + ' ' + message.get('@msg_to')[0].get('lastName'),
+            'sent_date': message.get('sent_date')
+        }
+        refined_messages.append(refined_message)
     breadcrumbs = [{"title": "Messages"}]
-    return render_template("messages.html", breadcrumbs=breadcrumbs, messages=messages)
+    return render_template("messages.html", breadcrumbs=breadcrumbs, messages=refined_messages)

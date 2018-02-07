@@ -41,22 +41,22 @@
               {% for message in messages %}
                <tr class="table--row table--row__selectable">
                 <td name="tbl-messages-RU_Ref" class="table--cell tbl-messages-RU_Ref">
-                    {{ message.ru_id }}
+                    {{ message.ru_ref }}
                 </td>
                 <td name="tbl-messages-business" class="table--cell tbl-messages-business">
-                    {{ message['@ru_id']['name'] }}
+                    {{ message.business_name }}
                 </td>
                 <td name="tbl-messages-subject" class="table--cell tbl-messages-subject">
                     {{ message.subject }}
                 </td>
                 <td name="tbl-messages-from" class="table--cell tbl-messages-from">
-                    {{ message.msg_from }}
+                    {{ message.from }}
                 </td>
                 <td name="tbl-messages-to" class="table--cell tbl-messages-to">
-                    {{ message['@msg_to'][0]['firstName'] }} {{ message['@msg_to'][0]['lastName'] }}
+                    {{ message.to }}
                 </td>
                 <td name="tbl-messages-received" class="table--cell tbl-messages-received">
-                   <time datetime="{{message.received}}">{{ message.sent_date }}</time>
+                   <time datetime="{{ message.sent_date }}">{{ message.sent_date }}</time>
                 </td>
                </tr>
               {% endfor %}
