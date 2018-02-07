@@ -38,9 +38,9 @@
                     <div class="panel panel--error">
                         <div class="panel__header">
                             {% if form.errors|length == 1 %}
-                            <h1 class="panel__title venus">There is 1 error</h1>
+                            <h1 id="error-count" class="panel__title venus">There is 1 error</h1>
                             {% else %}
-                            <h1 class="panel__title venus">There are {{ form.errors|length }} errors</h1>
+                            <h1 id="error-count" class="panel__title venus">There are {{ form.errors|length }} errors</h1>
                             {% endif %}
                         </div>
                         <div class="panel__body" data-qa="error-body">
