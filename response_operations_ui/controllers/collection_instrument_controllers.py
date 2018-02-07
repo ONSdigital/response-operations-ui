@@ -14,7 +14,8 @@ def upload_collection_instrument(short_name, period, file):
     url = f'{app.config["BACKSTAGE_API_URL"]}/v1/collection-instrument/{short_name}/{period}'
     response = requests.post(url, files={"file": (file.filename, file.stream, file.mimetype)})
     if response.status_code != 201:
-        logger.error('Failed to upload collection instrument', short_name=short_name, period=period)
+        logger.error('Failed to upload collection instrument', short_name=short_name, period=period,
+                     status=response.status_code)
         return False
 
     logger.debug('Successfully uploaded collection instrument', short_name=short_name, period=period)
