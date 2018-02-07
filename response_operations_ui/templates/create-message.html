@@ -8,9 +8,10 @@
 {% if form.errors %}
     <div class="panel panel--error">
         <div class="panel__header">
-            {% if form.errors|length >= 1 %}
-            <h1 class="panel__title venus">There are {{ form.errors|length }} errors on this page</h1>
-
+            {% if form.errors|length > 1 %}
+                <h1 class="panel__title venus">There page has {{ form.errors|length }} errors</h1>
+            {% elif form.errors %}
+                <h1 class="panel__title venus">There page has {{ form.errors|length }} error</h1>
             {% endif %}
         </div>
         <div class="panel__body">
@@ -18,11 +19,12 @@
                 {% for error in form.errors %}
                 <li class="panel__title venus">{{ form.errors[error][0] }}</li>
                 {% endfor %}
-            <ol>
+            </ol>
         </div>
     </div>
     <br />
 {% endif %}
+
 <h1 class="saturn">Create message</h1>
 
 <fieldset>
@@ -44,15 +46,15 @@
                 <tr>
                     <td width="10%">To:</td><td><b>{{ form.to(id="to-label") }}</b></td>
                 </tr>
-
             </table>
 
 
-            {% if "subject" in errors %}
+            {% if form.subject.errors %}
                 <div class="panel panel--simple panel--error panel--spacious" id="subject-error">
                     <p class="error-message">{{ errors['subject'][0] }}</p>
             {% endif %}
                 <label class="venus" for="subject">Subject</label>
+                    <p class="u-vh">Message subject is required</p>
                 {{ form.subject(id='secure-message-subject',
                     class_='secure-message-form__subject input input--text',
                     maxlength='96') }}
@@ -68,7 +70,8 @@
                     <p class="error-message">{{ errors['body'][0] }}</p>
             {% endif %}
                 <label class="venus" for="body">Message</label>
-            {{ form.body(id='secure-message-body',
+                    <p class="u-vh">Message body is required</p>
+                {{ form.body(id='secure-message-body',
                     class_='input input--textarea input--textarea-message', rows='10',
                     maxlength='10000') }}
             {% if "body" in errors %}
