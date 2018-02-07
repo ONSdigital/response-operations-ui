@@ -20,5 +20,8 @@ def get_message_list():
         raise ApiError(response)
 
     logger.debug("Retrieve success")
-
-    return response.json()
+    resp = response.json()
+   # logger.info(resp["messages"])
+    mes_dict = resp["messages"]
+    logger.info(mes_dict[1])
+    return mes_dict

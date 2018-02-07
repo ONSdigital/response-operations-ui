@@ -3,6 +3,11 @@
 
 {% block main %}
 </br>
+{%for mess in message_list%}
+<p>{{ mess}}</p>
+
+{%endfor%}
+
 <div role="main" id="main" class="page__main">
   <h1 class="jupiter" name="page-messages-title">Messages</h1>
   <div class="grid">
@@ -32,6 +37,7 @@
               </th>
             </tr>
           </thead>
+
               <tbody>
               {%if not message_list%}
             <p>there is no new messages</p>
@@ -42,19 +48,19 @@
                     {{ messages.ru_id }}
                 </td>
                 <td name="tbl-messages-business" class="table--cell tbl-messages-business">
-                    {{ messages.business }}
+                    {{ messages.name }}
                 </td>
                 <td name="tbl-messages-subject" class="table--cell tbl-messages-subject">
                     {{ messages.subject}}
                 </td>
                 <td name="tbl-messages-from" class="table--cell tbl-messages-from">
-                    {{messages.from}}
+                    {{messages.msg_from}}
                 </td>
                 <td name="tbl-messages-to" class="table--cell tbl-messages-to">
-                    {{messages.to}}
+                    {{messages.msg_to}}
                 </td>
                 <td name="tbl-messages-received" class="table--cell tbl-messages-received">
-                   <ol reversed><time datetime="{{messages.received}}">{{messages.received}}</time></ol>
+                   <time datetime="{{messages.received}}">{{messages.sent_date}}</time>
                 </td>
                </tr>
               {% endfor %}
