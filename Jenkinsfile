@@ -68,7 +68,7 @@ pipeline {
             steps {
                 sh "cf login -a https://${env.CLOUDFOUNDRY_API} --skip-ssl-validation -u ${CF_USER_USR} -p ${CF_USER_PSW} -o rmras -s ci"
                 sh 'cf push --no-start ras-party-ci'
-                sh "cf set-env ras-party-dev BACKSTAGE_API_URL http://ras-backstage-service-ci.${env.CF_DOMAIN}:80/backstage-api"
+                sh "cf set-env ras-party-ci BACKSTAGE_API_URL http://ras-backstage-service-ci.${env.CF_DOMAIN}:80/backstage-api"
                 sh 'cf start ras-party-ci'
             }
         }
@@ -135,7 +135,7 @@ pipeline {
                 sh "cf login -a https://${env.CLOUDFOUNDRY_API} --skip-ssl-validation -u ${CF_USER_USR} -p ${CF_USER_PSW} -o rmras -s test"
                 sh 'cf push --no-start ras-party-test'
                 sh 'cf set-env ras-party-test ONS_ENV test'
-                sh "cf set-env ras-party-dev BACKSTAGE_API_URL http://ras-backstage-service-sit.${env.CF_DOMAIN}:80/backstage-api"
+                sh "cf set-env ras-party-test BACKSTAGE_API_URL http://ras-backstage-service-test.${env.CF_DOMAIN}:80/backstage-api"
                 sh 'cf start ras-party-test'
             }
         }
