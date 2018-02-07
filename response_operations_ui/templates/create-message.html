@@ -28,15 +28,15 @@
 <fieldset>
 
     <div class="secure-message-form">
-        <form action="{{ url_for('messages_bp.create_message') }}" method="post">
+        <form action="{{ url_for('messages_bp.create_message') }}" method="post" id="create-message-form">
             {{ form.hidden_tag() }}
 
-            <table border="0" cellpadding="0" cellspacing="0" width="40%">
+            <table id="ru-details-table" border="0" cellpadding="0" cellspacing="0" width="40%">
                 <tr>
                     <td width="10%">Survey:</td><td><b>{{ form.survey(id="survey-label") }}</b></td>
                 </tr>
                 <tr>
-                    <td width="10%">RU Ref:</td><td><b>{{ form.ru_ref(id="ru_ref-label") }}</b></td>
+                    <td width="10%">RU Ref:</td><td><b>{{ form.ru_ref(id="ru-ref-label") }}</b></td>
                 </tr>
                 <tr>
                     <td width="10%">Business:</td><td><b>{{ form.business(id="business-label") }}</b></td>
