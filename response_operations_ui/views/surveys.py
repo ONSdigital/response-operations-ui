@@ -37,14 +37,14 @@ def view_survey(short_name):
 
     # Mapping backend states to frontend sates for the user
     for collection_exercise_state in survey_details["collection_exercises"]:
-        if collection_exercise_state["state"] == "INIT":
+        if collection_exercise_state["state"] == "CREATED":
             collection_exercise_state["state"] = "Created"
 
         if collection_exercise_state["state"] == "SCHEDULED":
             collection_exercise_state["state"] = "Scheduled"
 
         if collection_exercise_state["state"] == "READY_FOR_REVIEW":
-            collection_exercise_state["state"] = "Ready for review"
+            collection_exercise_state["state"] = "Ready for Review"
 
         if collection_exercise_state["state"] == "EXECUTION_STARTED":
             collection_exercise_state["state"] = "Processing"

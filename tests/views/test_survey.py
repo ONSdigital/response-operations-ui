@@ -87,6 +87,6 @@ class TestSurvey(unittest.TestCase):
         response = self.app.get("/surveys/bres")
         self.assertIn(b'Created', response.data)
         self.assertIn(b'Scheduled', response.data)
-        self.assertIn(b'Ready for review', response.data)
+        self.assertIn(b'Ready for Review', response.data)
         self.assertIn(b'Processing', response.data)
         self.assertIn(b'Live', response.data)
