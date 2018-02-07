@@ -23,7 +23,7 @@ class TestSignIn(unittest.TestCase):
 
     def test_logout(self):
         response = self.app.get('/logout', follow_redirects=True)
-        self.assertIn(b'You\'ve logged out', response.data)
+        self.assertIn(b'Successfully signed out', response.data)
         self.assertEqual(response.status_code, 200)
         self.assertNotIn(b"Sign out", response.data)
 

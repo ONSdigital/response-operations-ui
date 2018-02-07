@@ -2,44 +2,71 @@
 
 {% block page_title %} Sign-In | Survey Data Collection {% endblock %}
 
-
 {% block main %}
 
 <div class="container page__container">
-  <div class="grid">
-    <div class="grid__col col-12@m">
-      {% with messages = get_flashed_messages(with_categories=true) %}
-        {% if messages %}
-          <ul class=flashes>
-            {% for category, message in messages %}
-              {% if category == "failed_authentication" %}
-                <li>{{ message }}</li>
-              {% endif %}
-            {% endfor %}
-          </ul>
-        {% endif %}
-      {% endwith %}
-      <form method="post">
-        {{ form.csrf_token }}
-        <div>
-          {% if form.username.errors %}
-            <ul class="errors">{% for error in form.username.errors %}<li>{{ error }}</li>{% endfor %}</ul>
-          {% endif %}
-          Username <br>
-          {{ form.username(size=20) }} <br>
+    <div class="grid">
+        <div class="grid__col col-12@m">
+            <br>
+            {% with messages = get_flashed_messages(with_categories=true) %}
+                {% if messages %}
+                    {% for category, message in messages %}
+                        {% if category == "failed_authentication" %}
+                        <div class="panel panel--error">
+                            <div class="panel__header">
+                                <h1 class="panel__title venus">{{ message }}</h1>
+                            </div>
+                            <div class="panel__body" data-qa="error-body">
+                                <p class="mars"><a href="#sign-in-details" id="try-again-link" class="js-inpagelink">Please try again</a></p>
+                            </div>
+                        </div>
+                        {% endif %}
+                        {% if category == "successful_signout" %}
+                        <div class="panel panel--success">
+                            <div class="panel__body" data-qa="success-body">
+                                <p class="mars">{{ message }}</p>
+                            </div>
+                        </div>
+                        {% endif %}
+                    {% endfor %}
+                {% endif %}
+            {% endwith %}
+            <form method="post">
+                {{ form.csrf_token }}
+                <div>
+                    {% if form.errors %}
+                    <div class="panel panel--error">
+                        <div class="panel__header">
+                            {% if form.errors|length == 1 %}
+                            <h1 id="error-count" class="panel__title venus">There is 1 error</h1>
+                            {% else %}
+                            <h1 id="error-count" class="panel__title venus">There are {{ form.errors|length }} errors</h1>
+                            {% endif %}
+                        </div>
+                        <div class="panel__body" data-qa="error-body">
+                            {% for field in form.errors.values() %}
+                                {% for error in field %}
+                                <p class="mars"><a href="#sign-in-details" id="try-again-link" class="js-inpagelink">{{ error }}</a></p>
+                                {% endfor %}
+                            {% endfor %}
+                        </div>
+                    </div>
+                    {% endif %}
+                    <h1>Sign in</h1>
+                    <div id="username-panel" {% if form.username.errors %} class="panel panel--simple panel--error" {% endif %}>
+                        Username <br>
+                        {{ form.username(size=20) }} <br>
+                    </div>
+                    <div id="password-panel" {% if form.password.errors %} class="panel panel--simple panel--error" {% endif %}>
+                        Password <br>
+                        {{ form.password(size=20) }} <br>
+                    </div>
+                </div>
+                <br>
+                <input type="submit" class="btn btn--primary" value="Sign in" id="SIGN_IN_BUTTON">
+            </form>
         </div>
-        <div>
-          {% if form.password.errors %}
-            <ul class="errors">{% for error in form.password.errors %}<li>{{ error }}</li>{% endfor %}</ul>
-          {% endif %}
-          Password <br>
-          {{ form.password(size=20) }} <br>
-        </div>
-        <br>
-        <input type="submit" class="btn btn--primary" value="Sign in" id="SIGN_IN_BUTTON">
-      </form>
     </div>
-  </div>
 </div>
 
 {% endblock main %}
