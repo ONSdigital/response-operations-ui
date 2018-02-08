@@ -23,10 +23,10 @@ pipeline {
             }
             steps {
                 sh "cf login -a https://${env.CLOUDFOUNDRY_API} --skip-ssl-validation -u ${CF_USER_USR} -p ${CF_USER_PSW} -o rmras -s dev"
-                sh 'cf push --no-start ras-party-dev'
-                sh 'cf set-env ras-party-dev ONS_ENV dev'
-                sh "cf set-env ras-party-dev BACKSTAGE_API_URL http://ras-backstage-service-dev.${env.CF_DOMAIN}:80/backstage-api"
-                sh 'cf start ras-party-dev'
+                sh 'cf push --no-start response-operations-ui-dev'
+                sh 'cf set-env response-operations-ui-dev ONS_ENV dev'
+                sh "cf set-env response-operations-ui-dev BACKSTAGE_API_URL http://ras-backstage-service-dev.${env.CF_DOMAIN}:80/backstage-api"
+                sh 'cf start response-operations-ui-dev'
             }
         }
 
@@ -67,9 +67,9 @@ pipeline {
             }
             steps {
                 sh "cf login -a https://${env.CLOUDFOUNDRY_API} --skip-ssl-validation -u ${CF_USER_USR} -p ${CF_USER_PSW} -o rmras -s ci"
-                sh 'cf push --no-start ras-party-ci'
-                sh "cf set-env ras-party-ci BACKSTAGE_API_URL http://ras-backstage-service-ci.${env.CF_DOMAIN}:80/backstage-api"
-                sh 'cf start ras-party-ci'
+                sh 'cf push --no-start response-operations-ui-ci'
+                sh "cf set-env response-operations-ui-ci BACKSTAGE_API_URL http://ras-backstage-service-ci.${env.CF_DOMAIN}:80/backstage-api"
+                sh 'cf start response-operations-ui-ci'
             }
         }
 
@@ -133,10 +133,10 @@ pipeline {
             }
             steps {
                 sh "cf login -a https://${env.CLOUDFOUNDRY_API} --skip-ssl-validation -u ${CF_USER_USR} -p ${CF_USER_PSW} -o rmras -s test"
-                sh 'cf push --no-start ras-party-test'
-                sh 'cf set-env ras-party-test ONS_ENV test'
-                sh "cf set-env ras-party-test BACKSTAGE_API_URL http://ras-backstage-service-test.${env.CF_DOMAIN}:80/backstage-api"
-                sh 'cf start ras-party-test'
+                sh 'cf push --no-start response-operations-ui-test'
+                sh 'cf set-env response-operations-ui-test ONS_ENV test'
+                sh "cf set-env response-operations-ui-test BACKSTAGE_API_URL http://ras-backstage-service-test.${env.CF_DOMAIN}:80/backstage-api"
+                sh 'cf start response-operations-ui-test'
             }
         }
     }
