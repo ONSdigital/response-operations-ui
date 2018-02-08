@@ -1,15 +1,13 @@
 import json
 import unittest
-from unittest.mock import MagicMock
 
 import requests_mock
-from requests import RequestException
 
 from config import TestingConfig
 from response_operations_ui import app
 
 get_message_list = f'{app.config["BACKSTAGE_API_URL"]}/v1/secure-message/messages'
-with open('tests/test_data/survey/survey_list.json') as json_data:
+with open('tests/test_data/message/messages.json') as json_data:
     message_list = json.load(json_data)
 
 
