@@ -30,3 +30,5 @@ class SecureMessageForm(FlaskForm):
     hidden_ru_ref = HiddenField('hidden_ru_ref')
     hidden_business = HiddenField('hidden_business')
     hidden_to = HiddenField('hidden_to')
+    hidden_to_uuid = HiddenField('hidden_to_uuid')
+    hidden_to_ru_id = HiddenField('hidden_to_ru_id')
