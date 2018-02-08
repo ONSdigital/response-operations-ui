@@ -35,7 +35,7 @@
           </thead>
 
               <tbody>
-              {%if not messages %}
+              {% if not messages %}
                 <p>There are no messages for this user</p>
               {% else %}
               {% for message in messages %}
@@ -61,7 +61,6 @@
                </tr>
               {% endfor %}
               {% endif %}
-
           </tbody>
         </table>
       </div>
