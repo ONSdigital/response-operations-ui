@@ -5,10 +5,12 @@ import requests_mock
 from response_operations_ui import app
 
 url_sign_in_data = f'{app.config["BACKSTAGE_API_URL"]}/v2/sign-in/'
+url_surveys = f'{app.config["BACKSTAGE_API_URL"]}/v1/survey/surveys'
 
 
 class TestSignIn(unittest.TestCase):
     def setUp(self):
+        app.config['SECRET_KEY'] = 'sekrit!'
         app.config['WTF_CSRF_ENABLED'] = False
         self.app = app.test_client()
 
@@ -21,7 +23,7 @@ class TestSignIn(unittest.TestCase):
 
     def test_logout(self):
         response = self.app.get('/logout', follow_redirects=True)
-        self.assertIn(b'You\'ve logged out', response.data)
+        self.assertIn(b'Successfully signed out', response.data)
         self.assertEqual(response.status_code, 200)
         self.assertNotIn(b"Sign out", response.data)
 
@@ -68,3 +70,24 @@ class TestSignIn(unittest.TestCase):
         response = self.app.get('/sign-in', follow_redirects=True)
         self.assertEqual(response.status_code, 200)
         self.assertIn("View list of business surveys".encode(), response.data)
+
+    @requests_mock.mock()
+    def test_sign_in_next_url(self, mock_request):
+        with self.app.session_transaction() as session:
+            session['next'] = '/surveys'
+        mock_request.post(url_sign_in_data, json={"token": "1234abc"}, status_code=201)
+        mock_request.get(url_surveys, json=[{
+            "id": "75b19ea0-69a4-4c58-8d7f-4458c8f43f5c",
+            "legalBasis": "Statistics of Trade Act 1947",
+            "longName": "Monthly Business Survey - Retail Sales Index",
+            "shortName": "RSI",
+            "surveyRef": "023"}],
+            status_code=200)
+
+        response = self.app.post("/sign-in", follow_redirects=True,
+                                 data={"username": "user", "password": "pass"})
+
+        self.assertEqual(response.status_code, 200)
+        self.assertIn("Surveys".encode(), response.data)
+        self.assertIn("Legal basis".encode(), response.data)
+        self.assertIn("Statistics of Trade Act 1947".encode(), response.data)
