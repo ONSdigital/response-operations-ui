@@ -55,9 +55,11 @@
                     <h1>Sign in</h1>
                     <div id="username-panel" {% if form.username.errors %} class="panel panel--simple panel--error" {% endif %}>
                         Username <br>
+                        {% if form.username.errors %}<p class="u-vh">Username is required</p>{% endif %}
                         {{ form.username(size=20) }} <br>
                     </div>
                     <div id="password-panel" {% if form.password.errors %} class="panel panel--simple panel--error" {% endif %}>
+                        {% if form.password.errors %}<p class="u-vh">Password is required</p>{% endif %}
                         Password <br>
                         {{ form.password(size=20) }} <br>
                     </div>
