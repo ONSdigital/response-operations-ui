@@ -51,4 +51,4 @@ class TestMessage(unittest.TestCase):
         response = self.app.get("/messages")
 
         self.assertEqual(response.status_code, 200)
-        self.assertIn("There are no messages for this user".encode(), response.data)
+        self.assertIn("No new messages".encode(), response.data)
