@@ -25,38 +25,38 @@
             </div>
 
             {% if business_list is not none and business_list|length==0 %}
-                    No results found
+            No results found
             {% endif %}
 
             {% if business_list %}
-                <div class="u-pt-m">
+            <div class="u-pt-m">
 
-                    <table id="tbl-businesses" class="table__dense" summary="Businesses in the system">
-                        <thead class="table--head">
-                        <tr class="table--row">
-                            <th scope="col" class="table--header--cell">
-                                RU reference
-                            </th>
-                            <th scope="col" class="table--header--cell">
-                                Name
-                            </th>
-                        </tr>
-                        </thead>
+                <table id="tbl-businesses" class="table__dense" summary="Businesses in the system">
+                    <thead class="table--head">
+                    <tr class="table--row">
+                        <th scope="col" class="table--header--cell">
+                            RU reference
+                        </th>
+                        <th scope="col" class="table--header--cell">
+                            Name
+                        </th>
+                    </tr>
+                    </thead>
 
-                        <tbody>
-                        {% for business in business_list %}
-                        <tr class="table--row table--row__selectable">
-                            <td class="table--cell ">
-                                <a href="/reporting-units/{{ business.ruref }}" name="survey-link-{{ business.ruref }}">{{ business.ruref }}</a>
-                            </td>
-                            <td class="table--cell">
-                                {{ business.name }}
-                            </td>
-                        </tr>
-                        {% endfor %}
-                        </tbody>
-                    </table>
-                </div>
+                    <tbody>
+                    {% for business in business_list %}
+                    <tr class="table--row table--row__selectable">
+                        <td class="table--cell ">
+                            <a href="/reporting-units/{{ business.ruref }}" name="survey-link-{{ business.ruref }}">{{ business.ruref }}</a>
+                        </td>
+                        <td class="table--cell">
+                            {{ business.name }}
+                        </td>
+                    </tr>
+                    {% endfor %}
+                    </tbody>
+                </table>
+            </div>
             {% endif %}
         </div>
     </div>

@@ -17,6 +17,6 @@ def search_reporting_units(query):
     if response.status_code != 200:
         raise ApiError(response)
 
-    logger.debug('Successfully retrieved reporting units by search')
+    logger.debug('Successfully retrieved reporting units by search', query=query)
 
     return response.json()

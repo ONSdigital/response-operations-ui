@@ -36,7 +36,7 @@ class TestReportingUnits(unittest.TestCase):
 
     @requests_mock.mock()
     def test_search_reporting_units_fail(self, mock_request):
-        mock_request.post(url_search_reporting_units, status_code=500)
+        mock_request.get(url_search_reporting_units, status_code=500)
 
         response = self.app.post("/reporting-units", follow_redirects=True)
 

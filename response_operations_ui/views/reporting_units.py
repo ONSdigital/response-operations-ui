@@ -18,12 +18,11 @@ reporting_unit_bp = Blueprint('reporting_unit_bp', __name__,
 def search_reporting_units():
     form = SearchForm(request.form)
     breadcrumbs = [{"title": "Reporting units"}]
+    business_list = None
 
     if form.validate_on_submit():
         query = request.form.get('query')
 
-        businesses = reporting_units_controllers.search_reporting_units(query)
+        business_list = reporting_units_controllers.search_reporting_units(query)
 
-        return render_template('reporting-units.html', business_list=businesses, form=form, breadcrumbs=breadcrumbs)
-
-    return render_template('reporting-units.html', business_list=None, form=form, breadcrumbs=breadcrumbs)
+    return render_template('reporting-units.html', business_list=business_list, form=form, breadcrumbs=breadcrumbs)
