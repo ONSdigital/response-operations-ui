@@ -19,4 +19,28 @@
       {% endif %}
   </div>
 
+  <div class="bar bar__sitenavigation" role="banner">
+    <div class="bar__inner container">
+      <div class="sitenavigation">
+        <ul class="sitenavigation__list">
+          <li class="sitenavigation__listitem {% if request.path == '/' %} sitenavigation__listitem--active{% endif %}">
+            <a href="/">Home</a>
+          </li>
+          <li class="sitenavigation__listitem{% if request.path.startswith('/surveys') %} sitenavigation__listitem--active{% endif %}">
+            <a href="/surveys/">Surveys</a>
+          </li>
+          <li class="sitenavigation__listitem{% if request.path.startswith('/reporting-units') %} sitenavigation__listitem--active{% endif %}">
+            <a href="/reporting-units/">Reporting units</a>
+          </li>
+          <li class="sitenavigation__listitem{% if request.path.startswith('/respondents') %} sitenavigation__listitem--active{% endif %}">
+            <a href="/respondents/">Respondents</a>
+          </li>
+          <li class="sitenavigation__listitem{% if request.path.startswith('/messages') %} sitenavigation__listitem--active{% endif %}">
+            <a href="/messages/">Messages</a>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
 </header>
