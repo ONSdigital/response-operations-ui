@@ -1,10 +1,10 @@
-import jwt
 import logging
-import requests
-from structlog import wrap_logger
 
+import jwt
+import requests
 from flask import current_app
 from requests.exceptions import HTTPError
+from structlog import wrap_logger
 
 from response_operations_ui.exceptions.exceptions import ApiError
 

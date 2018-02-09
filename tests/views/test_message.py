@@ -24,7 +24,7 @@ class TestMessage(unittest.TestCase):
         self.assertEqual(response.status_code, 200)
         self.assertIn("View messages".encode(), response.data)
 
-# Test showing that the messages list loads into the website and displays User, business name and subject
+    # Test showing that the messages list loads into the website and displays User, business name and subject
     @requests_mock.mock()
     def test_Message_list(self, mock_request):
         mock_request.get(get_message_list, json=message_list)
@@ -47,6 +47,17 @@ class TestMessage(unittest.TestCase):
     @requests_mock.mock()
     def test_message_list_empty(self, mock_request):
         mock_request.get(get_message_list, json={"messages": []})
+
+        response = self.app.get("/messages")
+
+        self.assertEqual(response.status_code, 200)
+        self.assertIn("No new messages".encode(), response.data)
+
+    # If response doesn't have a messages key then it shouldn't give a server error,
+    # but instead log the problem and display an empty inbox to the user.
+    @requests_mock.mock()
+    def test_request_response_malformed(self, mock_request):
+        mock_request.get(get_message_list, json={})
 
         response = self.app.get("/messages")
 
