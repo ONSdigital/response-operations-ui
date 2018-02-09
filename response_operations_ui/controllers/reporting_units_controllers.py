@@ -17,6 +17,7 @@ def get_reporting_unit(ru_ref):
         raise ApiError(response)
 
     logger.debug('Successfully retrieved reporting unit', ru_ref=ru_ref)
+    return response.json()
 
 
 def search_reporting_units(query):
