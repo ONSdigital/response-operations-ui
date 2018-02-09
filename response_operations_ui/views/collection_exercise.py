@@ -35,6 +35,11 @@ def view_collection_exercise(short_name, period, error=None, ci_loaded=False, sa
             "title": f"{ce_details['collection_exercise']['exerciseRef']}"
         }
     ]
+
+    if ce_details['collection_exercise']['state'] == "CREATED":
+        ce_details['collection_exercise']['state']="Created"
+
+
     return render_template('collection-exercise.html',
                            survey=ce_details['survey'],
                            ce=ce_details['collection_exercise'],
