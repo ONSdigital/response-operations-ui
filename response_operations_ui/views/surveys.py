@@ -47,6 +47,7 @@ def view_survey(short_name):
 
 
 def map_collection_exercise_state(ce_state):
+    frontend_ce_state = ce_state
     if ce_state == "CREATED":
         frontend_ce_state = "Created"
 

@@ -88,5 +88,5 @@ class TestSurvey(unittest.TestCase):
         self.assertIn(b'Created', response.data)
         self.assertIn(b'Scheduled', response.data)
         self.assertIn(b'Ready for Review', response.data)
-        self.assertIn(b'Processing', response.data)
+        self.assertIn(b'Ready for Live', response.data)
         self.assertIn(b'Live', response.data)
