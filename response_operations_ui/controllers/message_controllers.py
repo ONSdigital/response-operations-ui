@@ -29,11 +29,17 @@ def get_message_list():
     logger.debug("Retrieval successful")
     try:
         messages = response.json()['messages']
-        return messages
+        if messages == []:
+            logger.exception("Response was successful but didn't contain messages element")
+            error = ["error"]
+            return error
+
     except KeyError:
         # TODO: Look to fail more gracefully.  Returning an empty list will display
         # 'you have no mail' on the screen, which isn't accurate as it's more accurately
         # 'we don't know if you have messages, try again later'.  This should error for the
         # user but not give a server error page.
-        logger.exception("Response was successful but didn't contain messages element")
-        return []
+       print("error")
+
+        # return []
+    return messages

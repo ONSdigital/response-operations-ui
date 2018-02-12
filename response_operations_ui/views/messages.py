@@ -15,6 +15,7 @@ messages_bp = Blueprint("messages_bp", __name__, static_folder='Static',
 @messages_bp.route('/', methods=['GET'])
 @login_required
 def view_messages():
+    breadcrumbs = [{"title": "Messages"}]
     # TODO: Accept an optional label parameter so this endpoint can be used for inbox/drafts/sent
 
     # TODO: Aceept an optional survey name parameter to this get so that the inbox isn't every message ever sent by
@@ -23,16 +24,18 @@ def view_messages():
     # and save it within the app?
     messages = message_controllers.get_message_list()
     refined_messages = [_refine(msg) for msg in messages]
-    breadcrumbs = [{"title": "Messages"}]
     return render_template("messages.html", breadcrumbs=breadcrumbs, messages=refined_messages)
 
 
 def _refine(message):
-    return {
-        'ru_ref': message.get('ru_id'),
-        'business_name': message.get('@ru_id').get('name'),
-        'subject': message.get('subject'),
-        'from': message.get('msg_from'),
-        'to': message.get('@msg_to')[0].get('firstName') + ' ' + message.get('@msg_to')[0].get('lastName'),
-        'sent_date': message.get('sent_date')
-    }
+    if message == "error":
+        return message
+    else:
+        return {
+            'ru_ref': message.get('ru_id'),
+            'business_name': message.get('@ru_id').get('name'),
+            'subject': message.get('subject'),
+            'from': message.get('msg_from'),
+            'to': message.get('@msg_to')[0].get('firstName') + ' ' + message.get('@msg_to')[0].get('lastName'),
+            'sent_date': message.get('sent_date')
+        }
