@@ -1,6 +1,6 @@
 import logging
 
-from flask import Blueprint, render_template
+from flask import Blueprint, render_template, request
 from flask_login import login_required
 from structlog import wrap_logger
 
@@ -15,14 +15,15 @@ messages_bp = Blueprint("messages_bp", __name__, static_folder='Static',
 @messages_bp.route('/', methods=['GET'])
 @login_required
 def view_messages():
+    # Currently the filtering is only being done with parameters.  In the future, the session
+    # will have the a list of survey_ids the user is allowed to see and the parameters for the
+    # backstage call can be populated by looking at the session instead of http parameters.
+    params = {
+        'label': request.args.get('label'),
+        'survey': request.args.get('survey')
+    }
     breadcrumbs = [{"title": "Messages"}]
-    # TODO: Accept an optional label parameter so this endpoint can be used for inbox/drafts/sent
-
-    # TODO: Accept an optional survey name parameter to this get so that the inbox isn't every message ever sent by
-    # an internal person. We'll need to figure out how to get the survey_id that secure-message service
-    # will require.  Maybe call the rm-survey-service for all the id's of the surveys in the environment
-    # and save it within the app?
-    messages = message_controllers.get_message_list()
+    messages = message_controllers.get_message_list(params)
     if "Response did not contain 'messages' key" in messages:
         return render_template("messages.html", breadcrumbs=breadcrumbs, response_error=True)
     else:
