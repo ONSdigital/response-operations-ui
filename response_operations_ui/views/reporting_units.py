@@ -1,4 +1,5 @@
 import logging
+from urllib.parse import urlencode
 
 from flask import Blueprint, render_template, request
 from flask_login import login_required
@@ -26,7 +27,17 @@ def view_reporting_unit(ru_ref):
             "title": f"{ru_ref}"
         }
     ]
-    return render_template('reporting-unit.html', ru=reporting_unit, breadcrumbs=breadcrumbs)
+
+    # Details for mock create message link
+    ru_details = {'survey': 'BRES 2017',
+                  'ru_ref': ru_ref,
+                  'business': 'Bolts & Rachets Ltd',
+                  'to': 'Jacky Turner',
+                  'to_uuid': "f62dfda8-73b0-4e0e-97cf-1b06327a6712",
+                  'to_ru_id': "c614e64e-d981-4eba-b016-d9822f09a4fb"}
+
+    return render_template('reporting-unit.html', ru=reporting_unit, breadcrumbs=breadcrumbs,
+                           args=urlencode(ru_details))
 
 
 @reporting_unit_bp.route('/', methods=['GET', 'POST'])

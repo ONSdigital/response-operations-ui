@@ -70,7 +70,7 @@ def create_message():
 
     else:
         if not form.is_submitted():
-            query_ru = request.args.get('ru')
+            query_ru = request.args.get('ru_details')
             ru_dict = parse_qs(query_ru)
             form.hidden_survey.data = ru_dict.get('survey')[0]
             form.hidden_ru_ref.data = ru_dict.get('ru_ref')[0]
