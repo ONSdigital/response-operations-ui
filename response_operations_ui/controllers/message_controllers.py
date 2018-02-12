@@ -15,12 +15,9 @@ def send_message(message_json):
     url = f'{app.config["BACKSTAGE_API_URL"]}/v1/secure-message/send-message'
     # This will be removed once UAA is completed.  For now we need the call to backstage to include
     # an Authorization in its header a JWT that includes party_id and role.
-    encoded_jwt = jwt.encode({"user": "BRES", "party_id": "BRES", "role": "internal"}, "testsecret", algorithm='HS256')
+    encoded_jwt = jwt.encode({'user': 'BRES', 'party_id': 'BRES', 'role': 'internal'}, 'testsecret', algorithm='HS256')
 
-    response = requests.post(url, headers={'Authorization': encoded_jwt}, data=message_json)
-
+    response = requests.post(url, headers={'Authorization': encoded_jwt, 'Content-Type': 'application/json',
+                                           'Accept': 'application/json'}, data=message_json)
     if response.status_code != 201:
         raise ApiError(response)
-
-    logger.debug("Sending successful")
-    resp = response.json()
