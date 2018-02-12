@@ -65,8 +65,7 @@ def create_message():
                                    _theme='default',
                                    form=form,
                                    breadcrumbs=breadcrumbs)
-
-        return redirect(url_for('home_bp.home'))
+        return redirect(url_for('messages_bp.view_messages'))
 
     else:
         if not form.is_submitted():
