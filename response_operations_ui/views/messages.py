@@ -2,7 +2,7 @@ import json
 import logging
 from urllib.parse import parse_qs
 
-from flask import Blueprint, render_template, request, redirect, url_for, g
+from flask import Blueprint, g, render_template, request, redirect, url_for
 from flask_login import login_required
 from structlog import wrap_logger
 
