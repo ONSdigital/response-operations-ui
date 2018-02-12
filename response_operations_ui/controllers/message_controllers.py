@@ -37,10 +37,12 @@ def get_message_list(params):
         # user but not give a server error page.
         logger.exception("Response was successful but didn't contain messages element")
         return []
+
+
 def send_message(message_json):
     logger.debug("Sending messsage")
 
-    url = f'{app.config["BACKSTAGE_API_URL"]}/v1/secure-message/send-message'
+    url = f'{current_app.config["BACKSTAGE_API_URL"]}/v1/secure-message/send-message'
     # This will be removed once UAA is completed.  For now we need the call to backstage to include
     # an Authorization in its header a JWT that includes party_id and role.
     encoded_jwt = jwt.encode({'user': 'BRES', 'party_id': 'BRES', 'role': 'internal'}, 'testsecret', algorithm='HS256')

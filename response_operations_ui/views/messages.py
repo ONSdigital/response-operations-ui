@@ -6,7 +6,7 @@ from flask import Blueprint, render_template, request, redirect, url_for, g
 from flask_login import login_required
 from structlog import wrap_logger
 
-from response_operations_ui.controllers.message_controllers import send_message
+from response_operations_ui.controllers import message_controllers
 from response_operations_ui.exceptions.exceptions import ApiError
 from response_operations_ui.forms import SecureMessageForm
 
@@ -48,7 +48,7 @@ def create_message():
         g.form_body_data = form.body.data
 
         try:
-            send_message(message_json)
+            message_controllers.send_message(message_json)
 
         except ApiError:
 
@@ -88,18 +88,6 @@ def create_message():
                                _theme='default',
                                form=form,
                                breadcrumbs=breadcrumbs)
-import logging
-
-from flask import Blueprint, render_template, request
-from flask_login import login_required
-from structlog import wrap_logger
-
-from response_operations_ui.controllers import message_controllers
-
-logger = wrap_logger(logging.getLogger(__name__))
-
-messages_bp = Blueprint("messages_bp", __name__, static_folder='Static',
-                        template_folder='templates')
 
 
 @messages_bp.route('/', methods=['GET'])
