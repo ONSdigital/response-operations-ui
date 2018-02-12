@@ -62,7 +62,6 @@ def create_message():
             form.errors['sending'] = ["Something went wrong: Message failed to send"]
 
             return render_template('create-message.html',
-                                   _theme='default',
                                    form=form,
                                    breadcrumbs=breadcrumbs)
         return redirect(url_for('messages_bp.view_messages'))
@@ -84,7 +83,6 @@ def create_message():
         form.to.text = form.hidden_to.data
 
         return render_template('create-message.html',
-                               _theme='default',
                                form=form,
                                breadcrumbs=breadcrumbs)
 
