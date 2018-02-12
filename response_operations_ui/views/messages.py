@@ -16,7 +16,6 @@ messages_bp = Blueprint("messages_bp", __name__, static_folder='Static',
 @login_required
 def view_messages():
     breadcrumbs = [{"title": "Messages"}]
-    errorcheck = False
     # TODO: Accept an optional label parameter so this endpoint can be used for inbox/drafts/sent
 
     # TODO: Accept an optional survey name parameter to this get so that the inbox isn't every message ever sent by
@@ -24,14 +23,11 @@ def view_messages():
     # will require.  Maybe call the rm-survey-service for all the id's of the surveys in the environment
     # and save it within the app?
     messages = message_controllers.get_message_list()
-    if messages == []:
-        return render_template("messages.html", breadcrumbs=breadcrumbs, errors=errorcheck, messages=messages)
-    elif messages[0] == "A KeyError has occurred":
-        errorcheck = True
-        return render_template("messages.html", breadcrumbs=breadcrumbs, errors=errorcheck)
+    if messages[0] == "Reponse didn't contain a key named 'messages'":
+        return render_template("messages.html", breadcrumbs=breadcrumbs, response_error=True)
     else:
         refined_messages = [_refine(msg) for msg in messages]
-        return render_template("messages.html", breadcrumbs=breadcrumbs, messages=refined_messages, errors=errorcheck)
+        return render_template("messages.html", breadcrumbs=breadcrumbs, messages=refined_messages)
 
 
 def _refine(message):

@@ -27,21 +27,10 @@ def get_message_list():
         raise ApiError(response)
 
     logger.debug("Retrieval successful")
-    # try:
-    #     messages = response.json()['messages']
-    # if messages == []:
-    #     logger.exception("Response was successful but didn't contain messages element")
-    #     error = ["error"]
-    #     return error
-    # return messages
     try:
         messages = response.json()['messages']
         return messages
     except KeyError:
-        # TODO: Look to fail more gracefully.  Returning an empty list will display
-        # 'you have no mail' on the screen, which isn't accurate as it's more accurately
-        # 'we don't know if you have messages, try again later'.  This should error for the
-        # user but not give a server error page.
-        error = ["A KeyError has occurred"]
-        logger.exception("Response was successful but didn't contain messages element")
+        error = ["Reponse didn't contain a key named 'messages'"]
+        logger.exception("Response was successful but didn't contain a 'messages' key")
         return error
