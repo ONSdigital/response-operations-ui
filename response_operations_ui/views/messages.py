@@ -32,11 +32,11 @@ def view_messages():
 
 
 def _refine(message):
-        return {
-            'ru_ref': message.get('ru_id'),
-            'business_name': message.get('@ru_id').get('name'),
-            'subject': message.get('subject'),
-            'from': message.get('msg_from'),
-            'to': message.get('@msg_to')[0].get('firstName') + ' ' + message.get('@msg_to')[0].get('lastName'),
-            'sent_date': message.get('sent_date')
-        }
+    return {
+        'ru_ref': message.get('ru_id'),
+        'business_name': message.get('@ru_id').get('name'),
+        'subject': message.get('subject'),
+        'from': message.get('msg_from'),
+        'to': message.get('@msg_to')[0].get('firstName') + ' ' + message.get('@msg_to')[0].get('lastName'),
+        'sent_date': message.get('sent_date')
+    }
