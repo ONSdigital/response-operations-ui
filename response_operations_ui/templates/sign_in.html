@@ -43,12 +43,15 @@
                             <h1 id="error-count" class="panel__title venus">There are {{ form.errors|length }} errors</h1>
                             {% endif %}
                         </div>
-                        <div class="panel__body" data-qa="error-body">
-                            {% for field in form.errors.values() %}
-                                {% for error in field %}
-                                <p class="mars"><a href="#sign-in-details" id="try-again-link" class="js-inpagelink">{{ error }}</a></p>
-                                {% endfor %}
-                            {% endfor %}
+                        <div class="panel__body">
+                            <ol>
+                              {% for error in form.username.errors %}
+                                <li class="panel__title venus"><a href='#username'>{{ error }}</a></li>
+                              {% endfor %}
+                              {% for error in form.password.errors %}
+                                <li class="panel__title venus"><a href='#password'>{{ error }}</a></li>
+                              {% endfor %}
+                            </ol>
                         </div>
                     </div>
                     {% endif %}
@@ -56,12 +59,12 @@
                     <div id="username-panel" {% if form.username.errors %} class="panel panel--simple panel--error" {% endif %}>
                         Username <br>
                         {% if form.username.errors %}<p class="u-vh">Username is required</p>{% endif %}
-                        {{ form.username(size=20) }} <br>
+                        {{ form.username(id='username', size=20) }} <br>
                     </div>
                     <div id="password-panel" {% if form.password.errors %} class="panel panel--simple panel--error" {% endif %}>
                         {% if form.password.errors %}<p class="u-vh">Password is required</p>{% endif %}
                         Password <br>
-                        {{ form.password(size=20) }} <br>
+                        {{ form.password(id='password', size=20) }} <br>
                     </div>
                 </div>
                 <br>
