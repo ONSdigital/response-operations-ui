@@ -32,3 +32,8 @@ class SecureMessageForm(FlaskForm):
     hidden_to = HiddenField('hidden_to')
     hidden_to_uuid = HiddenField('hidden_to_uuid')
     hidden_to_ru_id = HiddenField('hidden_to_ru_id')
+
+
+class SearchForm(FlaskForm):
+    query = StringField('Query')
+    submit = SubmitField('Search')

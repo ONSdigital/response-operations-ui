@@ -34,7 +34,36 @@ def view_survey(short_name):
             "title": f"{survey_details['survey']['surveyRef']} {survey_details['survey']['shortName']}",
         }
     ]
+
+    # Mapping backend states to frontend sates for the user
+    for collection_exercise in survey_details["collection_exercises"]:
+        collection_exercise['state'] = map_collection_exercise_state(collection_exercise['state'])
+
     return render_template('survey.html',
                            survey=survey_details['survey'],
                            collection_exercises=survey_details['collection_exercises'],
+                           survey_state=collection_exercise['state'],
                            breadcrumbs=breadcrumbs)
+
+
+def map_collection_exercise_state(ce_state):
+    frontend_ce_state = ce_state
+    if ce_state == "CREATED":
+        frontend_ce_state = "Created"
+
+    if ce_state == "SCHEDULED":
+        frontend_ce_state = "Scheduled"
+
+    if ce_state == "READY_FOR_REVIEW" or ce_state == "FAILEDVALIDATION":
+        frontend_ce_state = "Ready for Review"
+
+    if ce_state == "EXECUTION_STARTED" or ce_state == "VALIDATED" or ce_state == "EXECUTED":
+        frontend_ce_state = "Setting Ready for Live"
+
+    if ce_state == "READY_FOR_LIVE":
+        frontend_ce_state = "Ready for Live"
+
+    if ce_state == "LIVE":
+        frontend_ce_state = "Live"
+
+    return frontend_ce_state

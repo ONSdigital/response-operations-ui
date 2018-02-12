@@ -25,6 +25,7 @@ requests = "==2.18.4"
 "iso8601" = "==0.1.12"
 pyjwt = "*"
 
+
 [dev-packages]
 
 codecov = "==2.0.9"
