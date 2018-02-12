@@ -13,3 +13,8 @@ class LoginForm(FlaskForm):
     username = StringField('Username', [InputRequired("Username is required")])
     password = PasswordField('Password', [InputRequired("Password is required")])
     submit = SubmitField('Sign in')
+
+
+class SearchForm(FlaskForm):
+    query = StringField('Query')
+    submit = SubmitField('Search')
