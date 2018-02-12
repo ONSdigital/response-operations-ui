@@ -37,7 +37,7 @@ def view_collection_exercise(short_name, period, error=None, ci_loaded=False, sa
         }
     ]
 
-    ce_details['collection_exercise']['state'] = map_collection_exercise_state(ce_details['collection_exercise']['state'])
+    ce_details['collection_exercise']['state'] = map_collection_exercise_state(ce_details['collection_exercise']['state'])  # NOQA
 
     return render_template('collection-exercise.html',
                            survey=ce_details['survey'],
