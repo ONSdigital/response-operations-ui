@@ -16,21 +16,25 @@ messages_bp = Blueprint("messages_bp", __name__, static_folder='Static',
 @login_required
 def view_messages():
     breadcrumbs = [{"title": "Messages"}]
+    errorcheck = False
     # TODO: Accept an optional label parameter so this endpoint can be used for inbox/drafts/sent
 
-    # TODO: Aceept an optional survey name parameter to this get so that the inbox isn't every message ever sent by
+    # TODO: Accept an optional survey name parameter to this get so that the inbox isn't every message ever sent by
     # an internal person. We'll need to figure out how to get the survey_id that secure-message service
-    # will require.  Maybe call the rm-survey-service for all the id's of the surveys in the environement
+    # will require.  Maybe call the rm-survey-service for all the id's of the surveys in the environment
     # and save it within the app?
     messages = message_controllers.get_message_list()
-    refined_messages = [_refine(msg) for msg in messages]
-    return render_template("messages.html", breadcrumbs=breadcrumbs, messages=refined_messages)
+    if messages == []:
+        return render_template("messages.html", breadcrumbs=breadcrumbs, errors=errorcheck, messages=messages)
+    elif messages[0] == "A KeyError has occurred":
+        errorcheck = True
+        return render_template("messages.html", breadcrumbs=breadcrumbs, errors=errorcheck)
+    else:
+        refined_messages = [_refine(msg) for msg in messages]
+        return render_template("messages.html", breadcrumbs=breadcrumbs, messages=refined_messages, errors=errorcheck)
 
 
 def _refine(message):
-    if message == "error":
-        return message
-    else:
         return {
             'ru_ref': message.get('ru_id'),
             'business_name': message.get('@ru_id').get('name'),
