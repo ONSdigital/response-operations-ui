@@ -31,6 +31,6 @@ def get_message_list():
         messages = response.json()['messages']
         return messages
     except KeyError:
-        error = ["Reponse didn't contain a key named 'messages'"]
+        error = ["Response did not contain 'messages' key"]
         logger.exception("Response was successful but didn't contain a 'messages' key")
         return error

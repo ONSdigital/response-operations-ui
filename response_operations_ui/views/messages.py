@@ -23,7 +23,7 @@ def view_messages():
     # will require.  Maybe call the rm-survey-service for all the id's of the surveys in the environment
     # and save it within the app?
     messages = message_controllers.get_message_list()
-    if messages[0] == "Reponse didn't contain a key named 'messages'":
+    if "Response did not contain 'messages' key" in messages:
         return render_template("messages.html", breadcrumbs=breadcrumbs, response_error=True)
     else:
         refined_messages = [_refine(msg) for msg in messages]
