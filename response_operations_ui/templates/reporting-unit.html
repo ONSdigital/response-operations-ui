@@ -4,12 +4,64 @@
 {% block main %}
 <h1 id="RU_NAME" class="jupiter">{{ ru.name }}</h1>
 
-<dl class="item-headlines">
-  <dt class="item-headlines-term">
-    Reference:
-  </dt>
-  <dd id="RU_REF" class="item-headlines-definition">
-    {{ ru.sampleUnitRef }}
-  </dd>
-</dl>
+  <dl class="item-headlines">
+    <dt class="item-headlines-term">
+      Reference:
+    </dt>
+    <dd id="RU_REF" class="item-headlines-definition">
+      {{ ru.sampleUnitRef }}
+    </dd>
+  </dl>
+
+  <h2 class="saturn">Surveys</h2>
+
+  {% for survey in surveys %}
+  <div class="ru-survey">
+    <h3 class="saturn">{{ survey.surveyRef }} {{ survey.shortName }}</h3>
+
+    <div class="ru-survey-ces">
+
+      <h4 class="neptune">Collection exercises</h4>
+
+      <table class="table table__dense" summary="Collection exercises for [Survey] for [RU]">
+        <thead class="table--head u-vhx">
+          <tr class="table--row">
+            <th scope="col" class="table--header--cell">
+              Period
+            </th>
+            <th scope="col" class="table--header--cell">
+              Reporting unit name (from sample)
+            </th>
+            <th scope="col" class="table--header--cell">
+              Trading as (from sample)
+            </th>
+            <th scope="col" class="table--header--cell">
+              Status
+            </th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for ce in survey.collection_exercises %}
+          <tr class="table--row">
+            <td class="table--cell">
+              {{ ce.exerciseRef }}
+            </td>
+            <td class="table--cell">
+              PLACE HOLDER
+            </td>
+            <td class="table--cell">
+              PLACE HOLDER
+            </td>
+            <td class="table--cell">
+              {{ ce.status }}
+            </td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+
+    </div>
+
+  </div>
+  {% endfor %}
 {% endblock %}
