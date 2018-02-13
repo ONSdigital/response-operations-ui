@@ -18,13 +18,29 @@
     </li>
 </ul>
 
-  {% if not messages %}
-    <p>No new messages</p>
-  {% else %}
-
   <div class="grid">
     <div class="grid__col col-30@l">
       <div class="messages-list">
+        {% if response_error %}
+        <div class="container page__container">
+          <div class="grid">
+            <div class="grid__col col-12@m">
+              <div role="main" id="mains" class="page__main">
+                <h1 class="saturn u-mt-l">Oops! Something went wrong</h1>
+                <p>
+                  There's an issue with the messaging service, please try again later.
+                </p>
+                <p>
+                  Until then you can still use other parts of the system.
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+        {% else %}
+        {% if not messages %}
+          <p>No new messages</p>
+        {% else %}
         <table id="tbl-messages" class="table__dense" summary="messages in the system">
           <thead class="table--head">
             <tr class="table--row">
@@ -48,7 +64,6 @@
               </th>
             </tr>
           </thead>
-
               <tbody>
               {% for message in messages %}
                <tr class="table--row table--row__selectable">
@@ -75,6 +90,7 @@
               {% endif %}
           </tbody>
         </table>
+        {% endif %}
       </div>
     </div>
   </div>
