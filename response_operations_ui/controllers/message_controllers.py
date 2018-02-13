@@ -6,7 +6,7 @@ from flask import current_app
 from requests.exceptions import HTTPError
 from structlog import wrap_logger
 
-from response_operations_ui.exceptions.exceptions import ApiError
+from response_operations_ui.exceptions.exceptions import ApiError, NoMessages
 
 logger = wrap_logger(logging.getLogger(__name__))
 
@@ -31,6 +31,5 @@ def get_message_list(params):
         messages = response.json()['messages']
         return messages
     except KeyError:
-        error = ["Response did not contain 'messages' key"]
         logger.exception("Response was successful but didn't contain a 'messages' key")
-        return error
+        raise NoMessages
