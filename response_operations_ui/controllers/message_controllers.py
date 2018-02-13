@@ -6,7 +6,7 @@ from flask import current_app
 from requests.exceptions import HTTPError
 from structlog import wrap_logger
 
-from response_operations_ui.exceptions.exceptions import ApiError
+from response_operations_ui.exceptions.exceptions import ApiError, NoMessagesError
 
 logger = wrap_logger(logging.getLogger(__name__))
 
@@ -31,12 +31,8 @@ def get_message_list(params):
         messages = response.json()['messages']
         return messages
     except KeyError:
-        # TODO: Look to fail more gracefully.  Returning an empty list will display
-        # 'you have no mail' on the screen, which isn't accurate as it's more accurately
-        # 'we don't know if you have messages, try again later'.  This should error for the
-        # user but not give a server error page.
-        logger.exception("Response was successful but didn't contain messages element")
-        return []
+        logger.exception("Response was successful but didn't contain a 'messages' key")
+        raise NoMessagesError
 
 
 def send_message(message_json):
