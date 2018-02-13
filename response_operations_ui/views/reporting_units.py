@@ -16,7 +16,15 @@ reporting_unit_bp = Blueprint('reporting_unit_bp', __name__, static_folder='stat
 @reporting_unit_bp.route('/<ru_ref>', methods=['GET'])
 @login_required
 def view_reporting_unit(ru_ref):
-    reporting_unit_details = reporting_units_controllers.get_reporting_unit(ru_ref)
+    ru_details = reporting_units_controllers.get_reporting_unit(ru_ref)
+
+    ru_details['surveys'] = sorted(ru_details['surveys'], key=lambda survey: survey['surveyRef'])
+
+    for i in range(0, len(ru_details['surveys'])):
+        ru_details['surveys'][i]['collection_exercises'] = sorted(ru_details['surveys'][i]['collection_exercises'],
+                                                                  key=lambda ce: ce['actualPublishDateTime'],
+                                                                  reverse=True)
+
     breadcrumbs = [
         {
             "title": "Reporting units",
@@ -26,8 +34,8 @@ def view_reporting_unit(ru_ref):
             "title": f"{ru_ref}"
         }
     ]
-    return render_template('reporting-unit.html', ru=reporting_unit_details['reporting_unit'],
-                           surveys=reporting_unit_details['surveys'],
+    return render_template('reporting-unit.html', ru=ru_details['reporting_unit'],
+                           surveys=ru_details['surveys'],
                            breadcrumbs=breadcrumbs)
 
 

@@ -33,7 +33,7 @@
               Reporting unit name (from sample)
             </th>
             <th scope="col" class="table--header--cell">
-              Trading as (from sample)
+              Region (from sample)
             </th>
             <th scope="col" class="table--header--cell">
               Status
@@ -41,19 +41,19 @@
           </tr>
         </thead>
         <tbody>
-          {% for ce in survey.collection_exercises %}
+          {% for ce in survey.collection_exercises[:4] %}
           <tr class="table--row">
             <td class="table--cell">
               {{ ce.exerciseRef }}
             </td>
             <td class="table--cell">
-              PLACE HOLDER
+              {{ ce.companyName }}
             </td>
             <td class="table--cell">
-              PLACE HOLDER
+              {{ ce.companyRegion }}
             </td>
             <td class="table--cell">
-              {{ ce.status }}
+              {{ ce.responseStatus }}
             </td>
           </tr>
           {% endfor %}

@@ -30,6 +30,10 @@ class TestReportingUnits(unittest.TestCase):
         self.assertEqual(response.status_code, 200)
         self.assertIn("Bolts and Ratchets Ltd".encode(), response.data)
         self.assertIn("50012345678".encode(), response.data)
+        self.assertIn("BLOCKS".encode(), response.data)
+        self.assertIn("BRICKS".encode(), response.data)
+        self.assertIn("GB".encode(), response.data)
+        self.assertIn("YY".encode(), response.data)
 
     @requests_mock.mock()
     def test_get_reporting_unit_fail(self, mock_request):
