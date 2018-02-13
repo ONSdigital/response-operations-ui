@@ -6,6 +6,17 @@
 <div role="main" id="main" class="page__main">
     <br/>
     <h1 class="jupiter" name="page-ce-title">{{survey.shortName}} {{ce.exerciseRef}}</h1>
+
+         <dl class="survey-info info-panel" id="survey-attributes">
+             <dt class="survey-info__title">
+               Status:
+             </dt>
+             <dd class="survey-info__data">
+               {{ce.state}}
+             </dd>
+         </dl>
+
+
     <ul>
       {% if ci_loaded %}
         <li id="collection-instrument-success" class="system-feedback__item success">Collection instrument loaded</li>
