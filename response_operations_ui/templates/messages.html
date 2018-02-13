@@ -10,6 +10,18 @@
     <div class="grid__col col-30@l">
       <div class="messages-list">
 
+        {% with messages = get_flashed_messages() %}
+          {% if messages %}
+          <div class="panel panel--success">
+              <div class="panel__body" data-qa="success-body">
+                {% for message in messages %}
+                <p class="mars">{{ message }}</p>
+                {% endfor %}
+              </div>
+          </div>
+          {% endif %}
+        {% endwith %}
+
         <table id="tbl-messages" class="table__dense" summary="messages in the system">
           <thead class="table--head">
             <tr class="table--row">

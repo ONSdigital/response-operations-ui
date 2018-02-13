@@ -2,7 +2,7 @@ import json
 import logging
 from urllib.parse import parse_qs
 
-from flask import Blueprint, g, render_template, request, redirect, url_for
+from flask import Blueprint, flash, g, render_template, request, redirect, url_for
 from flask_login import login_required
 from structlog import wrap_logger
 
@@ -19,19 +19,9 @@ messages_bp = Blueprint('messages_bp', __name__,
 @login_required
 def create_message():
     form = SecureMessageForm(request.form)
-    breadcrumbs = [
-        {
-            "title": "Messages",
-            "link": "/messages"
-        },
-        {
-            "title": "Create Message"
-        }
-    ]
+    breadcrumbs = _build_create_message_breadcrumbs()
 
     if form.validate_on_submit():
-        # TODO logic for sending message and confirmation on redirect and controller
-
         # Hard coded id's until we can fetch them from UAA or passed by Reporting Units page
         message_json = json.dumps({
             'msg_from': "BRES",
@@ -49,33 +39,19 @@ def create_message():
 
         try:
             message_controllers.send_message(message_json)
-
+            flash("Message sent.")
+            return redirect(url_for('messages_bp.view_messages'))
         except ApiError:
-
-            form.survey.text = form.hidden_survey.data
-            form.ru_ref.text = form.hidden_ru_ref.data
-            form.business.text = form.hidden_business.data
-            form.to.text = form.hidden_to.data
-            form.body.data = g.form_body_data
-            form.subject.data = g.form_subject_data
-
+            form = _repopulate_form_with_submitted_data(form)
             form.errors['sending'] = ["Something went wrong: Message failed to send"]
-
             return render_template('create-message.html',
                                    form=form,
                                    breadcrumbs=breadcrumbs)
-        return redirect(url_for('messages_bp.view_messages'))
 
     else:
         if not form.is_submitted():
-            query_ru = request.args.get('ru_details')
-            ru_dict = parse_qs(query_ru)
-            form.hidden_survey.data = ru_dict.get('survey')[0]
-            form.hidden_ru_ref.data = ru_dict.get('ru_ref')[0]
-            form.hidden_business.data = ru_dict.get('business')[0]
-            form.hidden_to.data = ru_dict.get('to')[0]
-            form.hidden_to_uuid.data = ru_dict.get('to_uuid')[0]
-            form.hidden_to_ru_id.data = ru_dict.get('to_ru_id')[0]
+            ru_dict = parse_qs(request.args.get('ru_details'))
+            form = _populate_hidden_form_fields_from_url_params(form, ru_dict)
 
         form.survey.text = form.hidden_survey.data
         form.ru_ref.text = form.hidden_ru_ref.data
@@ -85,6 +61,33 @@ def create_message():
         return render_template('create-message.html',
                                form=form,
                                breadcrumbs=breadcrumbs)
+
+
+def _build_create_message_breadcrumbs():
+    return [
+        {"title": "Messages", "link": "/messages"},
+        {"title": "Create Message"}
+    ]
+
+
+def _repopulate_form_with_submitted_data(form):
+    form.survey.text = form.hidden_survey.data
+    form.ru_ref.text = form.hidden_ru_ref.data
+    form.business.text = form.hidden_business.data
+    form.to.text = form.hidden_to.data
+    form.body.data = g.form_body_data
+    form.subject.data = g.form_subject_data
+    return form
+
+
+def _populate_hidden_form_fields_from_url_params(form, ru_dict):
+    form.hidden_survey.data = ru_dict.get('survey')[0]
+    form.hidden_ru_ref.data = ru_dict.get('ru_ref')[0]
+    form.hidden_business.data = ru_dict.get('business')[0]
+    form.hidden_to.data = ru_dict.get('to')[0]
+    form.hidden_to_uuid.data = ru_dict.get('to_uuid')[0]
+    form.hidden_to_ru_id.data = ru_dict.get('to_ru_id')[0]
+    return form
 
 
 @messages_bp.route('/', methods=['GET'])
