@@ -37,8 +37,10 @@ def view_collection_exercise(short_name, period, error=None, ci_loaded=False, sa
     ]
 
     if ce_details['collection_exercise']['state'] == "CREATED":
-        ce_details['collection_exercise']['state']="Created"
+     ce_details['collection_exercise']['state']="Created"
 
+    elif ce_details['collection_exercise']["state"] == "LIVE":
+        ce_details['collection_exercise']['state'] = "Live"
 
     return render_template('collection-exercise.html',
                            survey=ce_details['survey'],

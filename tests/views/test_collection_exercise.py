@@ -199,10 +199,19 @@ class TestCollectionExercise(unittest.TestCase):
         self.assertNotIn("Loaded sample summary".encode(), response.data)
 
     @requests_mock.mock()
-    def test_collection_exercise_state(self, mock_request):
+    def test_collection_exercise_state_created(self, mock_request):
         json_data = collection_exercise_details
         json_data['collection_exercise']['state'] = 'CREATED'
         mock_request.get(url_get_collection_exercise, json=json_data)
         response = self.app.get("/surveys/test/000000")
         self.assertEqual(response.status_code, 200)
         self.assertIn('Created'.encode(), response.data)
+
+    @requests_mock.mock()
+    def test_collection_exercise_state_live(self, mock_request):
+        json_data = collection_exercise_details
+        json_data['collection_exercise']['state'] = 'LIVE'
+        mock_request.get(url_get_collection_exercise, json=json_data)
+        response = self.app.get("/surveys/test/000000")
+        self.assertEqual(response.status_code, 200)
+        self.assertIn('Live'.encode(), response.data)
