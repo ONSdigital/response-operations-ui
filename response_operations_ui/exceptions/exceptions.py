@@ -5,5 +5,8 @@ class ApiError(Exception):
         self.status_code = response.status_code
 
 
-class NoMessages(Exception):
+class NoMessagesError(Exception):
+    """ Thrown when getting a list of messages but the response doesn't
+    contain a key named 'messages'.
+    """
     pass
