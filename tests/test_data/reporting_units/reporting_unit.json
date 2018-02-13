@@ -76,7 +76,7 @@
                     "deleted": null,
                     "responseStatus": "COMPLETED",
                     "companyName": "companyname",
-                    "companyRegion": "GB"
+                    "companyRegion": "FF"
                 },
                 {
                     "id": "b447e134-5e5d-46fb-b4fc-15efdcbe5ca7",
@@ -98,7 +98,7 @@
                     "created": "2018-01-09T12:56:09.709Z",
                     "updated": null,
                     "deleted": null,
-                    "responseStatus": "COMPLETED",
+                    "responseStatus": "NOTSTARTED",
                     "companyName": "companyname",
                     "companyRegion": "YY"
                 }
@@ -155,7 +155,7 @@
                     "created": "2018-01-09T12:56:09.709Z",
                     "updated": null,
                     "deleted": null,
-                    "responseStatus": "COMPLETED",
+                    "responseStatus": "INPROGRESS",
                     "companyName": "companyname",
                     "companyRegion": "YY"
                 }

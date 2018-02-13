@@ -20,10 +20,14 @@ def view_reporting_unit(ru_ref):
 
     ru_details['surveys'] = sorted(ru_details['surveys'], key=lambda survey: survey['surveyRef'])
 
-    for i in range(0, len(ru_details['surveys'])):
-        ru_details['surveys'][i]['collection_exercises'] = sorted(ru_details['surveys'][i]['collection_exercises'],
-                                                                  key=lambda ce: ce['actualPublishDateTime'],
-                                                                  reverse=True)
+    for survey in ru_details['surveys']:
+        survey['collection_exercises'] = sorted(survey['collection_exercises'],
+                                                key=lambda ce: ce['scheduledStartDateTime'],
+                                                reverse=True)
+
+        for collection_exercise in survey['collection_exercises']:
+            collection_exercise['responseStatus'] = map_ce_reponse_status(collection_exercise['responseStatus'])
+            collection_exercise['companyRegion'] = map_region(collection_exercise['companyRegion'])
 
     breadcrumbs = [
         {
@@ -52,3 +56,23 @@ def search_reporting_units():
         business_list = reporting_units_controllers.search_reporting_units(query)
 
     return render_template('reporting-units.html', business_list=business_list, form=form, breadcrumbs=breadcrumbs)
+
+
+def map_ce_reponse_status(ce_response_status):
+    if ce_response_status == "NOTSTARTED":
+        ce_response_status = "Not started"
+    elif ce_response_status == "COMPLETE":
+        ce_response_status = "Completed"
+    elif ce_response_status == "INPROGRESS":
+        ce_response_status = "In progress"
+
+    return ce_response_status
+
+
+def map_region(region):
+    if region == "YY":
+        region = "NI"
+    else:
+        region = "GB"
+
+    return region

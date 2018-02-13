@@ -33,7 +33,7 @@ class TestReportingUnits(unittest.TestCase):
         self.assertIn("BLOCKS".encode(), response.data)
         self.assertIn("BRICKS".encode(), response.data)
         self.assertIn("GB".encode(), response.data)
-        self.assertIn("YY".encode(), response.data)
+        self.assertIn("NI".encode(), response.data)
 
     @requests_mock.mock()
     def test_get_reporting_unit_fail(self, mock_request):
