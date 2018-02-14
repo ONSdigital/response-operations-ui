@@ -26,7 +26,7 @@ def view_reporting_unit(ru_ref):
                                                 reverse=True)
 
         for collection_exercise in survey['collection_exercises']:
-            collection_exercise['responseStatus'] = map_ce_reponse_status(collection_exercise['responseStatus'])
+            collection_exercise['responseStatus'] = map_ce_response_status(collection_exercise['responseStatus'])
             collection_exercise['companyRegion'] = map_region(collection_exercise['companyRegion'])
 
     breadcrumbs = [
