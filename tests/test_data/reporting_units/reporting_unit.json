@@ -74,7 +74,7 @@
                     "created": "2018-01-09T12:56:09.652Z",
                     "updated": null,
                     "deleted": null,
-                    "responseStatus": "COMPLETED",
+                    "responseStatus": "COMPLETE",
                     "companyName": "companyname",
                     "companyRegion": "FF"
                 },
@@ -131,7 +131,7 @@
                     "created": "2018-01-09T12:56:09.652Z",
                     "updated": null,
                     "deleted": null,
-                    "responseStatus": "COMPLETED",
+                    "responseStatus": "COMPLETE",
                     "companyName": "companyname",
                     "companyRegion": "YY"
                 },
