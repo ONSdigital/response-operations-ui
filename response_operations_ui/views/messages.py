@@ -5,6 +5,7 @@ from flask_login import login_required
 from structlog import wrap_logger
 
 from response_operations_ui.controllers import message_controllers
+from response_operations_ui.exceptions.exceptions import NoMessagesError
 
 logger = wrap_logger(logging.getLogger(__name__))
 
@@ -22,10 +23,13 @@ def view_messages():
         'label': request.args.get('label'),
         'survey': request.args.get('survey')
     }
-    messages = message_controllers.get_message_list(params)
-    refined_messages = [_refine(msg) for msg in messages]
     breadcrumbs = [{"title": "Messages"}]
-    return render_template("messages.html", breadcrumbs=breadcrumbs, messages=refined_messages)
+    try:
+        messages = message_controllers.get_message_list(params)
+        refined_messages = [_refine(msg) for msg in messages]
+        return render_template("messages.html", breadcrumbs=breadcrumbs, messages=refined_messages)
+    except NoMessagesError:
+        return render_template("messages.html", breadcrumbs=breadcrumbs, response_error=True)
 
 
 def _refine(message):

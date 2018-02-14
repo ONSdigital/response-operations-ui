@@ -58,8 +58,7 @@ class TestMessage(unittest.TestCase):
     @requests_mock.mock()
     def test_request_response_malformed(self, mock_request):
         mock_request.get(get_message_list, json={})
-
         response = self.app.get("/messages")
 
         self.assertEqual(response.status_code, 200)
-        self.assertIn("No new messages".encode(), response.data)
+        self.assertIn("Something went wrong".encode(), response.data)
