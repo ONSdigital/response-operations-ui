@@ -58,7 +58,7 @@ def search_reporting_units():
     return render_template('reporting-units.html', business_list=business_list, form=form, breadcrumbs=breadcrumbs)
 
 
-def map_ce_reponse_status(ce_response_status):
+def map_ce_response_status(ce_response_status):
     if ce_response_status == "NOTSTARTED":
         ce_response_status = "Not started"
     elif ce_response_status == "COMPLETE":
