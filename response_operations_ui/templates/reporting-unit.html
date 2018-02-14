@@ -23,7 +23,7 @@
 
       <h4 class="neptune">Collection exercises</h4>
 
-      <table class="table table__dense" summary="Collection exercises for [Survey] for [RU]">
+      <table name="tbl-ce-for-survey" class="table table__dense" summary="Collection exercises for {{survey.shortName}} for {{ ru.sampleUnitRef }}">
         <thead class="table--head u-vhx">
           <tr class="table--row">
             <th scope="col" class="table--header--cell">
@@ -43,16 +43,16 @@
         <tbody>
           {% for ce in survey.collection_exercises[:4] %}
           <tr class="table--row">
-            <td class="table--cell">
+            <td name="tbl-ce-period" class="table--cell">
               {{ ce.exerciseRef }}
             </td>
-            <td class="table--cell">
+            <td name="tbl-ce-company-name" class="table--cell">
               {{ ce.companyName }}
             </td>
-            <td class="table--cell">
+            <td name="tbl-ce-company-region" class="table--cell">
               {{ ce.companyRegion }}
             </td>
-            <td class="table--cell">
+            <td name="tbl-ce-status" class="table--cell">
               {{ ce.responseStatus }}
             </td>
           </tr>
