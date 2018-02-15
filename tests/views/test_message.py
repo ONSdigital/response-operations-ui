@@ -61,9 +61,7 @@ class TestMessage(unittest.TestCase):
 
     def test_get_url_fail_when_no_configuration_key(self):
         with app.app_context():
-            print(app.config.values())
             app.config['BACKSTAGE_BASE_URL'] = None
-            print(app.config.values())
 
             with self.assertRaises(KeyError):
                 _get_url()
@@ -86,7 +84,6 @@ class TestMessage(unittest.TestCase):
     @requests_mock.mock()
     def test_request_response_malformed(self, mock_request):
         url = f'{app.config["BACKSTAGE_BASE_URL"]}/v1/secure-message/messages'
-        print('URL : ' + url)
         mock_request.get(url, json={})
         response = self.app.get("/messages")
 
