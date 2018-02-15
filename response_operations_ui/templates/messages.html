@@ -6,10 +6,52 @@
 
 <div role="main" id="main" class="page__main">
   <h1 class="jupiter" name="page-messages-title">Messages</h1>
+  <ul class="navigation-tabs">
+    <li class="navigation-tabs__tab{% if request.url.endswith('/messages') or request.url.endswith('/messages/') %} navigation-tabs__tab--active{% endif %}">
+        <a id="inbox" href="/messages" class="navigation-tabs__tab navigation-tabs__tab--active tab-label">Inbox</a>
+    </li>
+    <li class="navigation-tabs__tab{% if 'label=SENT' in request.url %} navigation-tabs__tab--active{% endif %}">
+        <a id="sent" href="/messages?label=SENT" class="navigation-tabs__tab tab-label">Sent</a>
+    </li>
+    <li class="navigation-tabs__tab{% if 'label=DRAFT' in request.url %} navigation-tabs__tab--active{% endif %}">
+        <a id="drafts" href="/messages?label=DRAFT" class="navigation-tabs__tab tab-label">Drafts</a>
+    </li>
+</ul>
+
   <div class="grid">
     <div class="grid__col col-30@l">
       <div class="messages-list">
-
+        {% with messages = get_flashed_messages() %}
+          {% if messages %}
+          <div class="panel panel--success">
+              <div class="panel__body" data-qa="success-body">
+                {% for message in messages %}
+                <p class="mars">{{ message }}</p>
+                {% endfor %}
+              </div>
+          </div>
+          {% endif %}
+        {% endwith %}
+        {% if response_error %}
+        <div class="container page__container">
+          <div class="grid">
+            <div class="grid__col col-12@m">
+              <div role="main" id="mains" class="page__main">
+                <h1 class="saturn u-mt-l">Oops! Something went wrong</h1>
+                <p>
+                  There's an issue with the messaging service, please try again later.
+                </p>
+                <p>
+                  Until then you can still use other parts of the system.
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+        {% else %}
+        {% if not messages %}
+          <p>No new messages</p>
+        {% else %}
         <table id="tbl-messages" class="table__dense" summary="messages in the system">
           <thead class="table--head">
             <tr class="table--row">
@@ -33,11 +75,7 @@
               </th>
             </tr>
           </thead>
-
               <tbody>
-              {% if not messages %}
-                <p>No new messages</p>
-              {% else %}
               {% for message in messages %}
                <tr class="table--row table--row__selectable">
                 <td name="tbl-messages-RU_Ref" class="table--cell tbl-messages-RU_Ref">
@@ -63,6 +101,7 @@
               {% endif %}
           </tbody>
         </table>
+        {% endif %}
       </div>
     </div>
   </div>

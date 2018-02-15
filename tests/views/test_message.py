@@ -57,17 +57,6 @@ class TestMessage(unittest.TestCase):
         self.assertEqual(response.status_code, 200)
         self.assertIn("No new messages".encode(), response.data)
 
-    # If response doesn't have a messages key then it shouldn't give a server error,
-    # but instead log the problem and display an empty inbox to the user.
-    # @requests_mock.mock()
-    # def test_request_response_malformed(self, mock_request):
-    #     mock_request.post(get_url(), json={})
-    #
-    #     response = self.app.get("/messages")
-    #
-    #     self.assertEqual(response.status_code, 200)
-    #     self.assertIn("No new messages".encode(), response.data)
-
     # Test Send message API
 
     def test_get_url_fail_when_no_configuration_key(self):
@@ -93,12 +82,17 @@ class TestMessage(unittest.TestCase):
         '''
 
     @requests_mock.mock()
+    def test_request_response_malformed(self, mock_request):
+        mock_request.get(get_message_list, json={})
+        response = self.app.get("/messages")
+
     def test_send_message_created(self, mock_request):
 
         url = f'{app.config["BACKSTAGE_BASE_URL"]}' + app.config["BACKSTAGE_API_SEND"]
         mock_request.post(url, json=self.json)
         response = self.app.post("/messages/create-message")
         self.assertEqual(response.status_code, 200)
+        self.assertIn("Something went wrong".encode(), response.data)
 
     @requests_mock.mock()
     def test_send_message_fail(self, mock_request):
