@@ -20,4 +20,4 @@ class InternalError(Exception):
         self.status = status
 
     def __str__(self):
-        return ' '.join('url:', self.url, 'status:', self.status, 'exception:', str(self.exception))
+        return f'url: {self.url} status:{self.status} exception:{self.exception}'

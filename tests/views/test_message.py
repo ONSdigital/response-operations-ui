@@ -1,7 +1,5 @@
 import json
 import unittest
-
-import os
 import requests_mock
 
 from config import TestingConfig
