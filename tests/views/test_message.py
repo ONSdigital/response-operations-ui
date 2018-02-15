@@ -84,7 +84,7 @@ class TestMessage(unittest.TestCase):
     @requests_mock.mock()
     def test_request_response_malformed(self, mock_request):
         mock_request.get(get_message_list, json={})
-        response = self.app.get("/messages")
+        self.app.get("/messages")
 
     def test_send_message_created(self, mock_request):
 
