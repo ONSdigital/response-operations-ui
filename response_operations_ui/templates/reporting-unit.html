@@ -62,6 +62,68 @@
 
     </div>
 
+    <div class="ru-survey-respondents u-pt-s">
+
+      <h4 class="neptune">Respondents</h4>
+
+      <table class="table table__dense tbl-ru-survey-respondents" summary="Respondents for {{survey.shortName}} for {{ ru.sampleUnitRef }}">
+        <thead class="table--head">
+        <tr class="table--row">
+          <th scope="col" class="table--header--cell">
+            Name and contact details
+          </th>
+          <th scope="col" class="table--header--cell">
+            Enrolment status
+          </th>
+          <th scope="col" class="table--header--cell">
+            Messages
+          </th>
+        </tr>
+        </thead>
+        <tbody>
+        {% for respondent in survey.respondents %}
+        <tr class="table--row">
+          <td name="tbl-respondent-details" class="table--cell">
+            <dl class="description-list">
+              <dt>
+                Name
+              </dt>
+              <dd>
+                {{ respondent.firstName }} {{ respondent.lastName }}
+              </dd>
+              <dt>
+                Email
+              </dt>
+              <dd>
+                {{ respondent.emailAddress }}
+              </dd>
+              <dt>
+                Tel
+              </dt>
+              <dd>
+                {{ respondent.telephone }}
+              </dd>
+              <dt>
+                Account
+              </dt>
+              <dd>
+                {{ respondent.status }}
+              </dd>
+            </dl>
+          </td>
+          <td name="tbl-enrolment-status" class="table--cell">
+            {{ respondent.enrolmentStatus }}
+          </td>
+          <td class="table--cell">
+            <a href="">Create message</a>
+          </td>
+        </tr>
+        {% endfor %}
+        </tbody>
+      </table>
+
+    </div>
+
   </div>
   {% endfor %}
 {% endblock %}

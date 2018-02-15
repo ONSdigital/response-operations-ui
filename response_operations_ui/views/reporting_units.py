@@ -29,6 +29,10 @@ def view_reporting_unit(ru_ref):
             collection_exercise['responseStatus'] = map_ce_response_status(collection_exercise['responseStatus'])
             collection_exercise['companyRegion'] = map_region(collection_exercise['companyRegion'])
 
+        for respondent in survey['respondents']:
+            respondent['status'] = map_respondent_status(respondent['status'])
+            respondent['enrolmentStatus'] = map_respondent_status(respondent['enrolmentStatus'])
+
     breadcrumbs = [
         {
             "title": "Reporting units",
@@ -76,3 +80,20 @@ def map_region(region):
         region = "GB"
 
     return region
+
+
+def map_respondent_status(status):
+    if status == "CREATED":
+        status = "Created"
+    elif status == "ACTIVE":
+        status = "Active"
+    elif status == "PENDING":
+        status = "Pending"
+    elif status == "ENABLED":
+        status = "Enabled"
+    elif status == "DISABLED":
+        status = "Disabled"
+    elif status == "SUSPENDED":
+        status = "Suspended"
+
+    return status

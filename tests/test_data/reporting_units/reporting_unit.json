@@ -102,6 +102,18 @@
                     "companyName": "companyname",
                     "companyRegion": "YY"
                 }
+            ],
+            "respondents": [
+                {
+                    "emailAddress": "Jacky.Turner@email.com",
+                    "firstName": "Jacky",
+                    "lastName": "Turner",
+                    "telephone": "7971161859",
+                    "id": "cd592e0f-8d07-407b-b75d-e01fbdae8233",
+                    "sampleUnitType": "BI",
+                    "status": "ACTIVE",
+                    "enrolmentStatus": "ENABLED"
+                }
             ]
         },
         {
@@ -158,6 +170,28 @@
                     "responseStatus": "INPROGRESS",
                     "companyName": "companyname",
                     "companyRegion": "YY"
+                }
+            ],
+            "respondents": [
+                {
+                    "emailAddress": "Jacky.Turner@email.com",
+                    "firstName": "Jacky",
+                    "lastName": "Turner",
+                    "telephone": "7971161859",
+                    "id": "cd592e0f-8d07-407b-b75d-e01fbdae8233",
+                    "sampleUnitType": "BI",
+                    "status": "CREATED",
+                    "enrolmentStatus": "PENDING"
+                },
+                {
+                    "emailAddress": "Jacky.Turner@email.com",
+                    "firstName": "Jacky",
+                    "lastName": "Turner",
+                    "telephone": "7971161859",
+                    "id": "cd592e0f-8d07-407b-b75d-e01fbdae9999",
+                    "sampleUnitType": "BI",
+                    "status": "SUSPENDED",
+                    "enrolmentStatus": "DISABLED"
                 }
             ]
         }
