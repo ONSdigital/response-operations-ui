@@ -23,4 +23,3 @@ class TestingConfig(DevelopmentConfig):
     TESTING = True
     LOGIN_DISABLED = True
     WTF_CSRF_ENABLED = False
-    BACKSTAGE_BASE_URL = os.getenv('BACKSTAGE_BASE_URL', 'http://localhost:8001/backstage-api')
