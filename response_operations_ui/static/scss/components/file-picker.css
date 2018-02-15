@@ -27,7 +27,6 @@ input[type=file]::-webkit-file-upload-button {
 input[type=file] {
     border: 2px solid #033e58;
     border-radius: 4px;
-    font-size: 1rem;
     width: 100%;
     display: block;
     margin-bottom: 1rem;

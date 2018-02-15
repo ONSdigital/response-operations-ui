@@ -1,3 +1,11 @@
+/* need to separate out */
+
+
+.bar__sitenavigation{
+  border-top: 1px solid rgba(128, 158, 171, 1);
+}
+
+
 .sitenavigation{
   margin:0;
   padding: 0;
@@ -34,15 +42,25 @@
   border-bottom: 0.15rem solid #fff;
 }
 
-/* Tabbed navigation for secure messages */
 
-.navigation-tabs{
+
+
+
+
+
+
+
+
+/* Tabbed navigation */
+/* Using BEM         */
+
+.nav-tabs{
     list-style: none;
     padding: 0;
     border-bottom: 1px solid #666;
 }
 
-.navigation-tabs__tab, .navigation-tabs__tab--active{
+.nav-tabs__tab, .nav-tabs__tab--active{
     display: inline-block;
     list-style: none;
     padding: 0;
@@ -63,30 +81,53 @@
     font-weight: 400;
 }
 
-.navigation-tabs__tab--active .tab-label{
+.nav-tabs__tab--active .tab-label{
     font-weight: 600;
     border: 1px solid #666;
     background: #fff;
     border-bottom: 1px solid #fff;
 }
 
-.navigation-tabs__tab .tab-label{
+.nav-tabs__tab .tab-label{
     text-decoration: none;
 }
 
-.navigation-tabs__tab .tab-label:hover,
-.navigation-tabs__tab .tab-label:focus{
+.nav-tabs__tab .tab-label:hover,
+.nav-tabs__tab .tab-label:focus{
     text-decoration: underline;
     border: 1px solid #666;
     background-color: #4263c2;
+    /*background-color: #f7f7f7;*/
 }
 
-.navigation-tabs__tab .tab-label:hover{
+.nav-tabs__tab .tab-label:hover{
   text-decoration: underline;
   background-color: #4263c2;
   color: #fff;
 }
 
-.navigation-tabs__tab.create{
+
+
+.nav-tabs__tab.create{
   float: right;
+}
+
+.tab-label.create-new-message{
+  text-decoration: underline;
+  color: #4263c2;
+}
+
+.tab-label.create-new-message:active,
+.tab-label.create-new-message:focus{
+
+  background-color: : #4263c2;
+  color: #fff;
+
+}
+
+
+.tab-label.create-new-message:hover{
+  text-decoration: underline;
+  background-color: #4263c2;
+  color: #fff;
 }

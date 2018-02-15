@@ -14,7 +14,7 @@ app = Flask(__name__)
 assets = Environment(app)
 assets.url = app.static_url_path
 scss_min = Bundle('scss/*', 'scss/fonts/*', 'scss/components/*',
-                  filters=['pyscss', 'cssmin'], output='minimised/all.min.css')
+                  filters=['cssmin'], output='minimised/all.min.css')
 assets.register('scss_all', scss_min)
 js_min = Bundle('js/*', filters='jsmin', output='minimised/all.min.js')
 assets.register('js_all', js_min)
