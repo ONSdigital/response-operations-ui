@@ -6,7 +6,7 @@ from flask import current_app
 from requests.exceptions import HTTPError
 from structlog import wrap_logger
 
-from response_operations_ui.exceptions.exceptions import ApiError
+from response_operations_ui.exceptions.exceptions import ApiError, InternalError
 
 logger = wrap_logger(logging.getLogger(__name__))
 
@@ -14,7 +14,7 @@ logger = wrap_logger(logging.getLogger(__name__))
 def get_message_list(params):
     logger.debug("Retrieving Message list")
 
-    url = f'{current_app.config["BACKSTAGE_API_URL"]}/v1/secure-message/messages'
+    url = f'{current_app.config["BACKSTAGE_BASE_URL"]}/v1/secure-message/messages'
     # This will be removed once UAA is completed.  For now we need the call to backstage to include
     # an Authorization in its header a JWT that includes party_id and role.
     encoded_jwt = jwt.encode({'party_id': 'BRES', 'role': 'internal'}, 'testsecret', algorithm='HS256')
@@ -40,17 +40,28 @@ def get_message_list(params):
 
 
 def send_message(message_json):
-    logger.debug("Sending message")
-
-    url = f'{current_app.config["BACKSTAGE_API_URL"]}/v1/secure-message/send-message'
-    # This will be removed once UAA is completed.  For now we need the call to backstage to include
-    # an Authorization in its header a JWT that includes party_id and role.
-    encoded_jwt = jwt.encode({'user': 'BRES', 'party_id': 'BRES', 'role': 'internal'}, 'testsecret', algorithm='HS256')
-    response = requests.post(url, headers={'Authorization': encoded_jwt, 'Content-Type': 'application/json',
-                                           'Accept': 'application/json'}, data=message_json)
     try:
-        response.raise_for_status()
-        logger.debug("Message sending successful")
-    except HTTPError:
-        logger.exception("Message sending failed")
-        raise ApiError(response)
+        response = _post_new_message(message_json).raise_for_status()
+        logger.info("new message has been sent with response ", response=response)
+    except (HTTPError,  KeyError) as ex:
+
+        logger.exception("Message sending failed because ex ", ex=ex)
+        raise InternalError(ex)
+
+
+def _post_new_message(message):
+    return requests.post(_get_url(), headers={'Authorization': _get_jwt(), 'Content-Type': 'application/json',
+                                             'Accept': 'application/json'}, data=message)
+
+
+def _get_url():
+    if current_app.config["BACKSTAGE_BASE_URL"] is None or current_app.config["BACKSTAGE_API_SEND"] is None:
+        raise KeyError("Back stage configuration URL not available.")
+
+    return f'{current_app.config["BACKSTAGE_BASE_URL"]}' + current_app.config["BACKSTAGE_API_SEND"]
+
+
+def _get_jwt():
+    # TODO : Remove once UAA is completed.  For now we need the call to backstage to include
+    # an Authorization in its header a JWT that includes party_id and role.
+    return jwt.encode({'user': 'BRES', 'party_id': 'BRES', 'role': 'internal'}, 'testsecret', algorithm='HS256')
