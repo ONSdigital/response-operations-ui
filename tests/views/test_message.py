@@ -109,3 +109,26 @@ class TestMessage(unittest.TestCase):
 
             with self.assertRaises(InternalError):
                 send_message(self.json)
+
+    create_message_url = (
+        "/messages/create-message?ru_details="
+        "survey%3DBRES%2B2017%26"
+        "ru_ref%3D49900000280%26"
+        "business%3DBolts%2B%2526%2BRachets%2BLtd%26"
+        "to%3DJacky%2BTurner%26"
+        "to_uuid%3Df62dfda8-73b0-4e0e-97cf-1b06327a6712%26"
+        "to_ru_id%3Dc614e64e-d981-4eba-b016-d9822f09a4fb")
+
+    def test_details_fields_prepopulated(self):
+        response = self.app.get(self.create_message_url)
+
+        self.assertIn("BRES 2017".encode(), response.data)
+        self.assertIn("49900000280".encode(), response.data)
+        self.assertIn("Bolts &amp; Rachets Ltd".encode(), response.data)
+        self.assertIn("Jacky Turner".encode(), response.data)
+
+    def test_empty_subject_and_body_rejected(self):
+        response = self.app.post(self.create_message_url)
+
+        self.assertIn("Please enter a subject".encode(), response.data)
+        self.assertIn("Please enter a message".encode(), response.data)
