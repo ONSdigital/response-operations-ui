@@ -12,7 +12,7 @@ logger = wrap_logger(logging.getLogger(__name__))
 
 def sign_in(sign_in_data):
     logger.debug('Retrieving sign in authorisation')
-    url = f'{app.config["BACKSTAGE_API_URL"]}/v2/sign-in/'
+    url = f'{app.config["BACKSTAGE_BASE_URL"]}/v2/sign-in/'
 
     response = requests.post(url, json=sign_in_data)
 
