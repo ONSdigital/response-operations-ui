@@ -4,6 +4,7 @@ import unittest
 import os
 import requests_mock
 
+from config import TestingConfig
 from response_operations_ui import app
 from response_operations_ui.controllers.message_controllers import _get_url, send_message
 from response_operations_ui.exceptions.exceptions import InternalError
@@ -18,6 +19,7 @@ class TestMessage(unittest.TestCase):
     def setUp(self):
         self.app = app.test_client()
         self.app.testing = True
+        app.config.from_object(TestingConfig)
 
     @requests_mock.mock()
     def test_Home(self, mock_request):
@@ -68,7 +70,7 @@ class TestMessage(unittest.TestCase):
             with self.assertRaises(KeyError):
                 _get_url()
 
-    json = ''' 
+    json = '''
         {
           "msg_from": "BRES",
           "msg_to": ["f62dfda8-73b0-4e0e-97cf-1b06327a6712"],
@@ -78,21 +80,27 @@ class TestMessage(unittest.TestCase):
           "collection_case": "ACollectionCase",
           "survey": "BRES2017",
           "ru_id": "c614e64e-d981-4eba-b016-d9822f09a4fb"
-        }    
+        }
         '''
 
+    # If response doesn't have a messages key then it shouldn't give a server error,
+    # but instead log the problem and display an empty inbox to the user.
     @requests_mock.mock()
     def test_request_response_malformed(self, mock_request):
-        mock_request.get(get_message_list, json={})
-        self.app.get("/messages")
+        url = f'{app.config["BACKSTAGE_BASE_URL"]}/v1/secure-message/messages'
+        print('URL : ' + url)
+        mock_request.get(url, json={})
+        response = self.app.get("/messages")
 
+        self.assertEqual(response.status_code, 200)
+        self.assertIn("Something went wrong".encode(), response.data)
+
+    @requests_mock.mock()
     def test_send_message_created(self, mock_request):
-
         url = f'{app.config["BACKSTAGE_BASE_URL"]}' + app.config["BACKSTAGE_API_SEND"]
         mock_request.post(url, json=self.json)
         response = self.app.post("/messages/create-message")
         self.assertEqual(response.status_code, 200)
-        self.assertIn("Something went wrong".encode(), response.data)
 
     @requests_mock.mock()
     def test_send_message_fail(self, mock_request):
@@ -100,8 +108,6 @@ class TestMessage(unittest.TestCase):
             app.config['BACKSTAGE_BASE_URL'] = None
             url = f'{app.config["BACKSTAGE_BASE_URL"]}' + app.config["BACKSTAGE_API_SEND"]
             mock_request.post(url, json=self.json)
-            os.unsetenv('BACKSTAGE_BASE_URL')
 
             with self.assertRaises(InternalError):
                 send_message(self.json)
-
