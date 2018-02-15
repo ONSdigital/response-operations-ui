@@ -15,7 +15,7 @@ class Config(object):
 class DevelopmentConfig(Config):
     DEBUG = os.getenv('DEBUG', True)
     LOGGING_LEVEL = os.getenv('LOGGING_LEVEL', 'DEBUG')
-    BACKSTAGE_BASE_URL = os.getenv('BACKSTAGE_BASE_URL', 'http://localhost:8001/backstage-api/')
+    BACKSTAGE_BASE_URL = os.getenv('BACKSTAGE_BASE_URL', 'http://localhost:8001/backstage-api')
 
 
 class TestingConfig(DevelopmentConfig):
