@@ -7,13 +7,13 @@ import requests_mock
 from config import TestingConfig
 from response_operations_ui import app
 
-url_get_collection_exercise = f'{app.config["BACKSTAGE_API_URL"]}/v1/collection-exercise/test/000000'
+url_get_collection_exercise = f'{app.config["BACKSTAGE_BASE_URL"]}/v1/collection-exercise/test/000000'
 with open('tests/test_data/collection_exercise/collection_exercise_details.json') as json_data:
     collection_exercise_details = json.load(json_data)
 with open('tests/test_data/collection_exercise/collection_exercise_details_no_sample.json') as json_data:
     collection_exercise_details_no_sample = json.load(json_data)
-url_collection_instrument = f'{app.config["BACKSTAGE_API_URL"]}/v1/collection-instrument/test/000000'
-url_upload_sample = f'{app.config["BACKSTAGE_API_URL"]}/v1/sample/test/000000'
+url_collection_instrument = f'{app.config["BACKSTAGE_BASE_URL"]}/v1/collection-instrument/test/000000'
+url_upload_sample = f'{app.config["BACKSTAGE_BASE_URL"]}/v1/sample/test/000000'
 
 
 class TestCollectionExercise(unittest.TestCase):
