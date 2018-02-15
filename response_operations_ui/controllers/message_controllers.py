@@ -51,10 +51,10 @@ def _post_new_message(message):
 
 
 def _get_url():
-    if current_app.config["BACKSTAGE_BASE_URL"] is None or current_app.config["BACKSTAGE_API_SEND"] is None:
+    if current_app.config["BACKSTAGE_BASE_URL"] is None:
         raise KeyError("Back stage configuration URL not available.")
 
-    return f'{current_app.config["BACKSTAGE_BASE_URL"]}' + current_app.config["BACKSTAGE_API_SEND"]
+    return f'{current_app.config["BACKSTAGE_BASE_URL"]}/v1/secure-message/send-message'
 
 
 def _get_jwt():

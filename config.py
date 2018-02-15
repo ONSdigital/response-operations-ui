@@ -9,7 +9,6 @@ class Config(object):
     USE_SESSION_FOR_NEXT = True
     RESPONSE_OPERATIONS_UI_SECRET = os.getenv('RESPONSE_OPERATIONS_UI_SECRET', "secret")
     BACKSTAGE_BASE_URL = os.getenv('BACKSTAGE_BASE_URL')
-    BACKSTAGE_API_SEND = '/v1/secure-message/send-message'
 
 
 class DevelopmentConfig(Config):

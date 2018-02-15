@@ -95,7 +95,7 @@ class TestMessage(unittest.TestCase):
 
     @requests_mock.mock()
     def test_send_message_created(self, mock_request):
-        url = f'{app.config["BACKSTAGE_BASE_URL"]}' + app.config["BACKSTAGE_API_SEND"]
+        url = f'{app.config["BACKSTAGE_BASE_URL"]}/v1/secure-message/send-message'
         mock_request.post(url, json=self.json)
         response = self.app.post("/messages/create-message")
         self.assertEqual(response.status_code, 200)
@@ -104,7 +104,7 @@ class TestMessage(unittest.TestCase):
     def test_send_message_fail(self, mock_request):
         with app.app_context():
             app.config['BACKSTAGE_BASE_URL'] = None
-            url = f'{app.config["BACKSTAGE_BASE_URL"]}' + app.config["BACKSTAGE_API_SEND"]
+            url = f'{app.config["BACKSTAGE_BASE_URL"]}/v1/secure-message/send-message'
             mock_request.post(url, json=self.json)
 
             with self.assertRaises(InternalError):
