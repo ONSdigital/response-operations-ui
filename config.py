@@ -8,13 +8,13 @@ class Config(object):
     LOGGING_LEVEL = os.getenv('LOGGING_LEVEL', 'INFO')
     USE_SESSION_FOR_NEXT = True
     RESPONSE_OPERATIONS_UI_SECRET = os.getenv('RESPONSE_OPERATIONS_UI_SECRET', "secret")
-    BACKSTAGE_BASE_URL = os.getenv('BACKSTAGE_BASE_URL')
+    BACKSTAGE_API_URL = os.getenv('BACKSTAGE_API_URL')
 
 
 class DevelopmentConfig(Config):
     DEBUG = os.getenv('DEBUG', True)
     LOGGING_LEVEL = os.getenv('LOGGING_LEVEL', 'DEBUG')
-    BACKSTAGE_BASE_URL = os.getenv('BACKSTAGE_BASE_URL', 'http://localhost:8001/backstage-api')
+    BACKSTAGE_API_URL = os.getenv('BACKSTAGE_API_URL', 'http://localhost:8001/backstage-api')
 
 
 class TestingConfig(DevelopmentConfig):

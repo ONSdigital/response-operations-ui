@@ -7,7 +7,7 @@ from response_operations_ui import app
 from response_operations_ui.controllers.message_controllers import _get_url, send_message
 from response_operations_ui.exceptions.exceptions import InternalError
 
-get_message_list = f'{app.config["BACKSTAGE_BASE_URL"]}/v1/secure-message/messages'
+get_message_list = f'{app.config["BACKSTAGE_API_URL"]}/v1/secure-message/messages'
 with open('tests/test_data/message/messages.json') as json_data:
     message_list = json.load(json_data)
 
@@ -61,7 +61,7 @@ class TestMessage(unittest.TestCase):
 
     def test_get_url_fail_when_no_configuration_key(self):
         with app.app_context():
-            app.config['BACKSTAGE_BASE_URL'] = None
+            app.config['BACKSTAGE_API_URL'] = None
 
             with self.assertRaises(KeyError):
                 _get_url()
@@ -83,7 +83,7 @@ class TestMessage(unittest.TestCase):
     # but instead log the problem and display an empty inbox to the user.
     @requests_mock.mock()
     def test_request_response_malformed(self, mock_request):
-        url = f'{app.config["BACKSTAGE_BASE_URL"]}/v1/secure-message/messages'
+        url = f'{app.config["BACKSTAGE_API_URL"]}/v1/secure-message/messages'
         mock_request.get(url, json={})
         response = self.app.get("/messages")
 
@@ -92,7 +92,7 @@ class TestMessage(unittest.TestCase):
 
     @requests_mock.mock()
     def test_send_message_created(self, mock_request):
-        url = f'{app.config["BACKSTAGE_BASE_URL"]}/v1/secure-message/send-message'
+        url = f'{app.config["BACKSTAGE_API_URL"]}/v1/secure-message/send-message'
         mock_request.post(url, json=self.json)
         response = self.app.post("/messages/create-message")
         self.assertEqual(response.status_code, 200)
@@ -100,8 +100,8 @@ class TestMessage(unittest.TestCase):
     @requests_mock.mock()
     def test_send_message_fail(self, mock_request):
         with app.app_context():
-            app.config['BACKSTAGE_BASE_URL'] = None
-            url = f'{app.config["BACKSTAGE_BASE_URL"]}/v1/secure-message/send-message'
+            app.config['BACKSTAGE_API_URL'] = None
+            url = f'{app.config["BACKSTAGE_API_URL"]}/v1/secure-message/send-message'
             mock_request.post(url, json=self.json)
 
             with self.assertRaises(InternalError):

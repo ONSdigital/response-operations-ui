@@ -14,7 +14,7 @@ logger = wrap_logger(logging.getLogger(__name__))
 def get_message_list(params):
     logger.debug("Retrieving Message list")
 
-    url = f'{current_app.config["BACKSTAGE_BASE_URL"]}/v1/secure-message/messages'
+    url = f'{current_app.config["BACKSTAGE_API_URL"]}/v1/secure-message/messages'
     # This will be removed once UAA is completed.  For now we need the call to backstage to include
     # an Authorization in its header a JWT that includes party_id and role.
 
@@ -51,10 +51,10 @@ def _post_new_message(message):
 
 
 def _get_url():
-    if current_app.config["BACKSTAGE_BASE_URL"] is None:
+    if current_app.config["BACKSTAGE_API_URL"] is None:
         raise KeyError("Back stage configuration URL not available.")
 
-    return f'{current_app.config["BACKSTAGE_BASE_URL"]}/v1/secure-message/send-message'
+    return f'{current_app.config["BACKSTAGE_API_URL"]}/v1/secure-message/send-message'
 
 
 def _get_jwt():
