@@ -7,7 +7,7 @@ from flask_login import login_required
 from structlog import wrap_logger
 
 from response_operations_ui.controllers import message_controllers
-from response_operations_ui.exceptions.exceptions import ApiError, NoMessagesError
+from response_operations_ui.exceptions.exceptions import ApiError, InternalError, NoMessagesError
 from response_operations_ui.forms import SecureMessageForm
 
 logger = wrap_logger(logging.getLogger(__name__))
@@ -41,7 +41,7 @@ def create_message():
             message_controllers.send_message(message_json)
             flash("Message sent.")
             return redirect(url_for('messages_bp.view_messages'))
-        except ApiError:
+        except (ApiError, InternalError):
             form = _repopulate_form_with_submitted_data(form)
             form.errors['sending'] = ["Something went wrong: Message failed to send"]
             return render_template('create-message.html',
