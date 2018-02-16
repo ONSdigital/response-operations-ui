@@ -4,8 +4,8 @@ import requests_mock
 
 from response_operations_ui import app
 
-url_sign_in_data = f'{app.config["BACKSTAGE_BASE_URL"]}/v2/sign-in/'
-url_surveys = f'{app.config["BACKSTAGE_BASE_URL"]}/v1/survey/surveys'
+url_sign_in_data = f'{app.config["BACKSTAGE_API_URL"]}/v2/sign-in/'
+url_surveys = f'{app.config["BACKSTAGE_API_URL"]}/v1/survey/surveys'
 
 
 class TestSignIn(unittest.TestCase):
