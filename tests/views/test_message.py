@@ -143,14 +143,16 @@ class TestMessage(unittest.TestCase):
 
             self.assertIn("Message sent.".encode(), response.data)
 
-    # @requests_mock.mock()
-    # def test_form_submit_raises_api_error(self, mock_request):
-    #     mock_request.post(f'{app.config["BACKSTAGE_API_URL"]}/v1/secure-message/send-message', status_code=500)
-    #
-    #     with app.app_context():
-    #         message_form = {'body': "TEST BODY",
-    #                         'subject': "TEST SUBJECT"}
-    #
-    #         response = self.app.post(self.create_message_url, data=message_form, follow_redirects=True)
-    #
-    #         self.assertIn("Something went wrong: Message failed to send".encode(), response.data)
+    @requests_mock.mock()
+    def test_form_submitted_with_api_error(self, mock_request):
+        mock_request.post(f'{app.config["BACKSTAGE_API_URL"]}/v1/secure-message/send-message', status_code=500)
+
+        with app.app_context():
+            message_form = {'body': "TEST BODY",
+                            'subject': "TEST SUBJECT"}
+
+            response = self.app.post(self.create_message_url, data=message_form, follow_redirects=True)
+
+            self.assertIn(
+                "Message failed to send, something has gone wrong with the website.".encode(),
+                response.data)

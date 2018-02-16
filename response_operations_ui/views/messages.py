@@ -21,6 +21,15 @@ def create_message():
     form = SecureMessageForm(request.form)
     breadcrumbs = _build_create_message_breadcrumbs()
 
+    if (not form.is_submitted()) or (form.to.text is None):
+        ru_dict = parse_qs(request.args.get('ru_details'))
+        form = _populate_hidden_form_fields_from_url_params(form, ru_dict)
+
+    form.survey.text = form.hidden_survey.data
+    form.ru_ref.text = form.hidden_ru_ref.data
+    form.business.text = form.hidden_business.data
+    form.to.text = form.hidden_to.data
+
     if form.validate_on_submit():
         # Hard coded id's until we can fetch them from UAA or passed by Reporting Units page
         message_json = json.dumps({
@@ -43,20 +52,12 @@ def create_message():
             return redirect(url_for('messages_bp.view_messages'))
         except (ApiError, InternalError):
             form = _repopulate_form_with_submitted_data(form)
-            form.errors['sending'] = ["Something went wrong: Message failed to send"]
+            form.errors['sending'] = ["Message failed to send, something has gone wrong with the website."]
             return render_template('create-message.html',
                                    form=form,
                                    breadcrumbs=breadcrumbs)
 
     else:
-        if not form.is_submitted():
-            ru_dict = parse_qs(request.args.get('ru_details'))
-            form = _populate_hidden_form_fields_from_url_params(form, ru_dict)
-
-        form.survey.text = form.hidden_survey.data
-        form.ru_ref.text = form.hidden_ru_ref.data
-        form.business.text = form.hidden_business.data
-        form.to.text = form.hidden_to.data
 
         return render_template('create-message.html',
                                form=form,
