@@ -85,16 +85,14 @@ def map_region(region):
 
 def map_respondent_status(status):
     if status == "CREATED":
-        status = "Created"
+        return "Created"
     elif status == "ACTIVE":
-        status = "Active"
+        return "Active"
     elif status == "PENDING":
-        status = "Pending"
+        return "Pending"
     elif status == "ENABLED":
-        status = "Enabled"
+        return"Enabled"
     elif status == "DISABLED":
-        status = "Disabled"
+        return "Disabled"
     elif status == "SUSPENDED":
-        status = "Suspended"
-
-    return status
+        return "Suspended"
