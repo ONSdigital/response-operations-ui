@@ -1,0 +1,65 @@
+{% extends "layouts/base.html" %}
+
+{% block page_title %} Create Message | Survey Data Collection {% endblock %}
+
+{% block main %}
+
+{% if form.errors %}
+    <div class="panel panel--error">
+        <div class="panel__header">
+            {% if form.errors|length > 1 %}
+                <h1 class="panel__title venus">This page has {{ form.errors|length }} errors</h1>
+            {% elif form.errors %}
+                <h1 class="panel__title venus">This page has {{ form.errors|length }} error</h1>
+            {% endif %}
+        </div>
+        <div class="panel__body">
+            <ol>
+              {% if form.subject.errors %}
+                {% for error in form.subject.errors %}
+                  <li class="panel__title venus"><a href='#secure-message-subject'>{{ error }}</a></li>
+                {% endfor %}
+              {% endif %}
+              {% if form.body.errors %}
+                {% for error in form.body.errors %}
+                  <li class="panel__title venus"><a href='#secure-message-body'>{{ error }}</a></li>
+                {% endfor %}
+              {% endif %}
+            </ol>
+        </div>
+    </div>
+    <br />
+{% endif %}
+
+<h1 class="saturn">Create message</h1>
+<form action="{{ url_for('messages_bp.create_message') }}" method="post" id="create-message-form">
+    {{ form.hidden_tag() }}
+    <div class="secure-message--meta venus"><span class="sm-form-meta-label">Survey: </span><span id="survey">{{ form.survey(id="survey-label") }}</span></div>
+    <div class="secure-message--meta venus"><span class="sm-form-meta-label">RU Ref: </span><span id="ruref">{{ form.ru_ref(id="ru-ref-label") }}</span></div>
+    <div class="secure-message--meta venus"><span class="sm-form-meta-label">Business: </span><span id="ru">{{ form.business(id="business-label") }}</span></div>
+    <div class="secure-message--recipient venus"><span class="sm-form-recipient-label">To: </span><span id="recipient">{{ form.to(id="to-label") }}</span></div>
+
+    <div id="subject-field"{% if form.body.errors %} class="panel panel--simple panel--error{% endif %}">
+        {% for error in form.subject.errors %}
+            <p id="subject-error-{{ loop.index }}" class="error-message">{{ error }}</p>
+        {% endfor %}
+        <label class="secure-message--subject venus" for="message-subject">Subject</label>
+        {{ form.subject(id='secure-message-subject',
+        class_='secure-message--subject input input--text',
+        maxlength='96', size=80) }}
+    </div>
+
+    <div id="body-field"{% if form.body.errors %} class="panel panel--simple panel--error{% endif %}">
+        {% for error in form.body.errors %}
+            <p id="body-error-{{ loop.index }}" class="error-message">{{ error }}</p>
+        {% endfor %}
+        <label class="secure-message--message venus" for="message-text">Message</label>
+        {{ form.body(id='secure-message-body',
+        class_='secure-message--message input input--textarea',
+        rows='10', maxlength='10000', cols=80) }}
+    </div>
+    <button id="btn-send-message" name="send-message" class="btn secure-message--send-btn" type="submit">Send</button>
+</form>
+
+<p class="pluto"><a href="{{ url_for('home_bp.home') }}" id="btn-cancel">Cancel</a></p>
+{% endblock %}

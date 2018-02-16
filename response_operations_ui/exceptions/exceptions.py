@@ -10,3 +10,14 @@ class NoMessagesError(Exception):
     contain a key named 'messages'.
     """
     pass
+
+
+class InternalError(Exception):
+
+    def __init__(self, exception, url=None, status=500):
+        self.exception = exception
+        self.url = url
+        self.status = status
+
+    def __str__(self):
+        return f'url: {self.url} status:{self.status} exception:{self.exception}'

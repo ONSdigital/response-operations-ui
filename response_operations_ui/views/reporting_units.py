@@ -42,6 +42,7 @@ def view_reporting_unit(ru_ref):
             "title": f"{ru_ref}"
         }
     ]
+
     return render_template('reporting-unit.html', ru=ru_details['reporting_unit'],
                            surveys=ru_details['surveys'],
                            breadcrumbs=breadcrumbs)
