@@ -8,6 +8,7 @@ from structlog import wrap_logger
 from response_operations_ui.common.mappers import convert_events_to_new_format
 from response_operations_ui.controllers import collection_exercise_controllers
 from response_operations_ui.controllers import collection_instrument_controllers, sample_controllers
+from response_operations_ui.views.surveys import map_collection_exercise_state
 
 logger = wrap_logger(logging.getLogger(__name__))
 
@@ -35,6 +36,9 @@ def view_collection_exercise(short_name, period, error=None, ci_loaded=False, sa
             "title": f"{ce_details['collection_exercise']['exerciseRef']}"
         }
     ]
+
+    ce_details['collection_exercise']['state'] = map_collection_exercise_state(ce_details['collection_exercise']['state'])  # NOQA
+
     return render_template('collection-exercise.html',
                            survey=ce_details['survey'],
                            ce=ce_details['collection_exercise'],
