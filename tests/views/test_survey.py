@@ -8,10 +8,10 @@ from requests import RequestException
 from config import TestingConfig
 from response_operations_ui import app
 
-url_get_survey_list = f'{app.config["BACKSTAGE_BASE_URL"]}/v1/survey/surveys'
+url_get_survey_list = f'{app.config["BACKSTAGE_API_URL"]}/v1/survey/surveys'
 with open('tests/test_data/survey/survey_list.json') as json_data:
     survey_list = json.load(json_data)
-url_get_survey_by_short_name = f'{app.config["BACKSTAGE_BASE_URL"]}/v1/survey/shortname/bres'
+url_get_survey_by_short_name = f'{app.config["BACKSTAGE_API_URL"]}/v1/survey/shortname/bres'
 with open('tests/test_data/survey/survey.json') as json_data:
     survey_info = json.load(json_data)
 with open('tests/test_data/survey/survey_states.json') as json_data:
