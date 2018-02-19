@@ -142,8 +142,6 @@ class TestMessage(unittest.TestCase):
             response = self.app.post(self.create_message_url, data=self.message_form, follow_redirects=True)
 
         self.assertIn("Message sent.".encode(), response.data)
-
-        # Check it lands on the message inbox page
         self.assertIn("Inbox".encode(), response.data)
 
     @requests_mock.mock()
