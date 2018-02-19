@@ -54,11 +54,9 @@ def create_message():
                                    form=form,
                                    breadcrumbs=breadcrumbs)
 
-    else:
-
-        return render_template('create-message.html',
-                               form=form,
-                               breadcrumbs=breadcrumbs)
+    return render_template('create-message.html',
+                           form=form,
+                           breadcrumbs=breadcrumbs)
 
 
 def _build_create_message_breadcrumbs():
