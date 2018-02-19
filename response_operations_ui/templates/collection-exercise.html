@@ -90,6 +90,28 @@
               </td>
             </tr>
 
+            {% if events.reminder2 %}
+            <tr class="table--row">
+              <td class="table--cell tbl-ce-label">
+                Second reminder
+              </td>
+              <td class="table--cell tbl-ce-value ce-event-date" name="second-reminder-date">
+                {{events.reminder2.day}} <em>{{events.reminder2.date}}</em> {{events.reminder2.time}}
+              </td>
+            </tr>
+            {% endif %}
+
+            {% if events.reminder3 %}
+            <tr class="table--row">
+              <td class="table--cell tbl-ce-label">
+                Third reminder
+              </td>
+              <td class="table--cell tbl-ce-value ce-event-date" name="third-reminder-date">
+                {{events.reminder3.day}} <em>{{events.reminder3.date}}</em> {{events.reminder3.time}}
+              </td>
+            </tr>
+            {% endif %}
+
             <tr class="table--row">
               <td class="table--cell tbl-ce-label">
                 Exercise end
@@ -242,6 +264,39 @@
               <td class="table--cell tbl-ce-" name="survey-title">
                 {{survey.longName}}
               </td>
+            </tr>
+
+            {% if events.ref_period_start %}
+            <tr class="table--row">
+              <td class="table--cell tbl-ce-label">
+                Reference period start date
+              </td>
+              <td class="table--cell tbl-ce-" name="period-start-date">
+                  {{events.ref_period_start.day}} {{events.ref_period_start.date}}
+              </td>
+            </tr>
+            {% endif %}
+
+            {% if events.employment %}
+            <tr class="table--row">
+              <td class="table--cell tbl-ce-label">
+                Employment date
+              </td>
+              <td class="table--cell tbl-ce-" name="employment-date">
+                  {{events.employment.day}} {{events.employment.date}}
+              </td>
+            </tr>
+            {% endif %}
+
+            {% if events.ref_period_end %}
+            <tr class="table--row">
+              <td class="table--cell tbl-ce-label">
+                Reference period end date
+              </td>
+              <td class="table--cell tbl-ce-" name="period-end-date">
+                  {{events.ref_period_end.day}} {{events.ref_period_end.date}}
+              </td>
+            {% endif %}
             </tr>
           </tbody>
         </table>
