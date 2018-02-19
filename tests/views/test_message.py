@@ -156,3 +156,8 @@ class TestMessage(unittest.TestCase):
             self.assertIn(
                 "Message failed to send, something has gone wrong with the website.".encode(),
                 response.data)
+
+        self.assertIn("BRES 2017".encode(), response.data)
+        self.assertIn("49900000280".encode(), response.data)
+        self.assertIn("Bolts &amp; Rachets Ltd".encode(), response.data)
+        self.assertIn("Jacky Turner".encode(), response.data)

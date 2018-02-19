@@ -21,14 +21,11 @@ def create_message():
     form = SecureMessageForm(request.form)
     breadcrumbs = _build_create_message_breadcrumbs()
 
-    if (not form.is_submitted()) or (form.to.text is None):
+    if not form.is_submitted() or form.to.text == "":
         ru_dict = parse_qs(request.args.get('ru_details'))
         form = _populate_hidden_form_fields_from_url_params(form, ru_dict)
 
-    form.survey.text = form.hidden_survey.data
-    form.ru_ref.text = form.hidden_ru_ref.data
-    form.business.text = form.hidden_business.data
-    form.to.text = form.hidden_to.data
+    form = _populate_form_details_from_hidden_fields(form)
 
     if form.validate_on_submit():
         # Hard coded id's until we can fetch them from UAA or passed by Reporting Units page
@@ -88,6 +85,14 @@ def _populate_hidden_form_fields_from_url_params(form, ru_dict):
     form.hidden_to.data = ru_dict.get('to')[0]
     form.hidden_to_uuid.data = ru_dict.get('to_uuid')[0]
     form.hidden_to_ru_id.data = ru_dict.get('to_ru_id')[0]
+    return form
+
+
+def _populate_form_details_from_hidden_fields(form):
+    form.survey.text = form.hidden_survey.data
+    form.ru_ref.text = form.hidden_ru_ref.data
+    form.business.text = form.hidden_business.data
+    form.to.text = form.hidden_to.data
     return form
 
 
