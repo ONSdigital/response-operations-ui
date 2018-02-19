@@ -7,7 +7,7 @@ from flask_login import login_required
 from structlog import wrap_logger
 
 from response_operations_ui.controllers import message_controllers
-from response_operations_ui.exceptions.exceptions import ApiError, NoMessagesError
+from response_operations_ui.exceptions.exceptions import ApiError, InternalError, NoMessagesError
 from response_operations_ui.forms import SecureMessageForm
 
 logger = wrap_logger(logging.getLogger(__name__))
@@ -20,6 +20,12 @@ messages_bp = Blueprint('messages_bp', __name__,
 def create_message():
     form = SecureMessageForm(request.form)
     breadcrumbs = _build_create_message_breadcrumbs()
+
+    if not form.is_submitted() or form.to.text == "":
+        ru_dict = parse_qs(request.args.get('ru_details'))
+        form = _populate_hidden_form_fields_from_url_params(form, ru_dict)
+
+    form = _populate_form_details_from_hidden_fields(form)
 
     if form.validate_on_submit():
         # Hard coded id's until we can fetch them from UAA or passed by Reporting Units page
@@ -41,26 +47,16 @@ def create_message():
             message_controllers.send_message(message_json)
             flash("Message sent.")
             return redirect(url_for('messages_bp.view_messages'))
-        except ApiError:
+        except (ApiError, InternalError):
             form = _repopulate_form_with_submitted_data(form)
-            form.errors['sending'] = ["Something went wrong: Message failed to send"]
+            form.errors['sending'] = ["Message failed to send, something has gone wrong with the website."]
             return render_template('create-message.html',
                                    form=form,
                                    breadcrumbs=breadcrumbs)
 
-    else:
-        if not form.is_submitted():
-            ru_dict = parse_qs(request.args.get('ru_details'))
-            form = _populate_hidden_form_fields_from_url_params(form, ru_dict)
-
-        form.survey.text = form.hidden_survey.data
-        form.ru_ref.text = form.hidden_ru_ref.data
-        form.business.text = form.hidden_business.data
-        form.to.text = form.hidden_to.data
-
-        return render_template('create-message.html',
-                               form=form,
-                               breadcrumbs=breadcrumbs)
+    return render_template('create-message.html',
+                           form=form,
+                           breadcrumbs=breadcrumbs)
 
 
 def _build_create_message_breadcrumbs():
@@ -87,6 +83,14 @@ def _populate_hidden_form_fields_from_url_params(form, ru_dict):
     form.hidden_to.data = ru_dict.get('to')[0]
     form.hidden_to_uuid.data = ru_dict.get('to_uuid')[0]
     form.hidden_to_ru_id.data = ru_dict.get('to_ru_id')[0]
+    return form
+
+
+def _populate_form_details_from_hidden_fields(form):
+    form.survey.text = form.hidden_survey.data
+    form.ru_ref.text = form.hidden_ru_ref.data
+    form.business.text = form.hidden_business.data
+    form.to.text = form.hidden_to.data
     return form
 
 

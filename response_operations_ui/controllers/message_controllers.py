@@ -39,10 +39,12 @@ def send_message(message_json):
     try:
         response = _post_new_message(message_json).raise_for_status()
         logger.info("new message has been sent with response ", response=response)
-    except (HTTPError, KeyError) as ex:
-
-        logger.exception("Message sending failed because ex ", ex=ex)
+    except KeyError as ex:
+        logger.exception("Message sending failed due to internal error")
         raise InternalError(ex)
+    except HTTPError as ex:
+        logger.exception("Message sending failed due to API Error")
+        raise ApiError(ex.response)
 
 
 def _post_new_message(message):

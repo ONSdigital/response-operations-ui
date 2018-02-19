@@ -25,6 +25,9 @@
                   <li class="panel__title venus"><a href='#secure-message-body'>{{ error }}</a></li>
                 {% endfor %}
               {% endif %}
+              {% if form.errors['sending'] %}
+                  <p class="panel__title venus">{{ form.errors['sending'][0] }}</p>
+              {% endif %}
             </ol>
         </div>
     </div>

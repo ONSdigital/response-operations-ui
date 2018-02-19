@@ -129,3 +129,34 @@ class TestMessage(unittest.TestCase):
 
         self.assertIn("Please enter a subject".encode(), response.data)
         self.assertIn("Please enter a message".encode(), response.data)
+
+    message_form = {'body': "TEST BODY",
+                    'subject': "TEST SUBJECT"}
+
+    @requests_mock.mock()
+    def test_form_submit_with_valid_data(self, mock_request):
+        mock_request.post(f'{app.config["BACKSTAGE_API_URL"]}/v1/secure-message/send-message', status_code=201)
+        mock_request.get(f'{app.config["BACKSTAGE_API_URL"]}/v1/secure-message/messages', json={}, status_code=200)
+
+        with app.app_context():
+            response = self.app.post(self.create_message_url, data=self.message_form, follow_redirects=True)
+
+        self.assertIn("Message sent.".encode(), response.data)
+        self.assertIn("Inbox".encode(), response.data)
+
+    @requests_mock.mock()
+    def test_form_submitted_with_api_error(self, mock_request):
+        mock_request.post(f'{app.config["BACKSTAGE_API_URL"]}/v1/secure-message/send-message', status_code=500)
+
+        with app.app_context():
+            response = self.app.post(self.create_message_url, data=self.message_form, follow_redirects=True)
+
+        self.assertIn(
+            "Message failed to send, something has gone wrong with the website.".encode(),
+            response.data)
+        self.assertIn("TEST SUBJECT".encode(), response.data)
+        self.assertIn("TEST BODY".encode(), response.data)
+        self.assertIn("BRES 2017".encode(), response.data)
+        self.assertIn("49900000280".encode(), response.data)
+        self.assertIn("Bolts &amp; Rachets Ltd".encode(), response.data)
+        self.assertIn("Jacky Turner".encode(), response.data)
