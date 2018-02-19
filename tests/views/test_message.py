@@ -141,7 +141,7 @@ class TestMessage(unittest.TestCase):
 
             response = self.app.post(self.create_message_url, data=message_form, follow_redirects=True)
 
-            self.assertIn("Message sent.".encode(), response.data)
+        self.assertIn("Message sent.".encode(), response.data)
 
     @requests_mock.mock()
     def test_form_submitted_with_api_error(self, mock_request):
@@ -153,10 +153,11 @@ class TestMessage(unittest.TestCase):
 
             response = self.app.post(self.create_message_url, data=message_form, follow_redirects=True)
 
-            self.assertIn(
-                "Message failed to send, something has gone wrong with the website.".encode(),
-                response.data)
-
+        self.assertIn(
+            "Message failed to send, something has gone wrong with the website.".encode(),
+            response.data)
+        self.assertIn("TEST SUBJECT".encode(), response.data)
+        self.assertIn("TEST BODY".encode(), response.data)
         self.assertIn("BRES 2017".encode(), response.data)
         self.assertIn("49900000280".encode(), response.data)
         self.assertIn("Bolts &amp; Rachets Ltd".encode(), response.data)
