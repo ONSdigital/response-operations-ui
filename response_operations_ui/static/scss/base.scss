@@ -251,3 +251,21 @@ a {
     padding: 1rem;
     border: 1rem solid #eeecec;
 }
+
+.description-list dt {
+    float: left;
+    clear: left;
+    width: 6rem;
+    margin: 0;
+    padding: 0;
+    color: #444;
+    font-weight: 600;
+}
+
+dl {
+    display: block;
+    -webkit-margin-before: 1em;
+    -webkit-margin-after: 1em;
+    -webkit-margin-start: 0px;
+    -webkit-margin-end: 0px;
+}

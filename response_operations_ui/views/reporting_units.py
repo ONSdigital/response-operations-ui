@@ -29,6 +29,10 @@ def view_reporting_unit(ru_ref):
             collection_exercise['responseStatus'] = map_ce_response_status(collection_exercise['responseStatus'])
             collection_exercise['companyRegion'] = map_region(collection_exercise['companyRegion'])
 
+        for respondent in survey['respondents']:
+            respondent['status'] = respondent['status'].title()
+            respondent['enrolmentStatus'] = respondent['enrolmentStatus'].title()
+
     breadcrumbs = [
         {
             "title": "Reporting units",
