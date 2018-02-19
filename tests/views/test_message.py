@@ -143,6 +143,9 @@ class TestMessage(unittest.TestCase):
 
         self.assertIn("Message sent.".encode(), response.data)
 
+        # Check it lands on the message inbox page
+        self.assertIn("Inbox".encode(), response.data)
+
     @requests_mock.mock()
     def test_form_submitted_with_api_error(self, mock_request):
         mock_request.post(f'{app.config["BACKSTAGE_API_URL"]}/v1/secure-message/send-message', status_code=500)
