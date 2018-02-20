@@ -15,11 +15,16 @@ messages_bp = Blueprint('messages_bp', __name__,
                         static_folder='static', template_folder='templates')
 
 
-@messages_bp.route('/create-message', methods=['GET', 'POST'])
+@messages_bp.route('/create-message', methods=['POST'])
 @login_required
 def create_message():
     form = SecureMessageForm(request.form)
     breadcrumbs = _build_create_message_breadcrumbs()
+
+
+
+    if 'create-message-view' in request.form:
+        form.ru_ref.
 
     if not form.is_submitted() or form.to.text == "":
         ru_dict = parse_qs(request.args.get('ru_details'))
@@ -29,6 +34,7 @@ def create_message():
 
     if form.validate_on_submit():
         # Hard coded id's until we can fetch them from UAA or passed by Reporting Units page
+        # TODO Replace this
         message_json = json.dumps({
             'msg_from': "BRES",
             'msg_to': ["f62dfda8-73b0-4e0e-97cf-1b06327a6712"],
@@ -74,6 +80,13 @@ def _repopulate_form_with_submitted_data(form):
     form.body.data = g.form_body_data
     form.subject.data = g.form_subject_data
     return form
+
+def _populate_hidden_form_fields_from_post(current_view_form, calling_form):
+    current_view_form.hidden_survey.data =  calling_form.survey.data
+    current_view_form.hidden_ru_ref.data = calling_form.ru_ref.data
+    current_view_form.hidden_business.data = calling_form.msg_to_name.data
+    current_view_form.hidden_to.data = calling_form.msg_to.data
+    return current_view_form
 
 
 def _populate_hidden_form_fields_from_url_params(form, ru_dict):
@@ -122,3 +135,23 @@ def _refine(message):
         'to': message.get('@msg_to')[0].get('firstName') + ' ' + message.get('@msg_to')[0].get('lastName'),
         'sent_date': message.get('sent_date')
     }
+
+
+def _add_msg_details(request):
+    try:
+
+        if not request.headers["new_msg_details"]:
+            raise InternalError(Exception)
+        else:
+            message_json = json.dumps({
+                'msg_from': "BRES",
+                'msg_to': ["f62dfda8-73b0-4e0e-97cf-1b06327a6712"],
+                'subject': form.subject.data,
+                'body': form.body.data,
+                'thread_id': "",
+                'collection_case': "CC_PLACEHOLDER",
+                'survey': form.hidden_survey.data,
+                'ru_id': "c614e64e-d981-4eba-b016-d9822f09a4fb"})
+
+    except Exception as e:
+        logger.error(f'{e}\nDetails:\n{pformat(e.error.details)}')
