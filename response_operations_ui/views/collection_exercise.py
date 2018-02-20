@@ -38,7 +38,8 @@ def view_collection_exercise(short_name, period, error=None, ci_loaded=False, ex
     ]
 
     ce_state = ce_details['collection_exercise']['state']
-    show_button = ce_state == 'READY_FOR_REVIEW'
+    show_set_live_button = ce_state == 'READY_FOR_REVIEW'
+    locked = ce_state in ('LIVE', 'READY_FOR_LIVE', 'EXECUTION_STARTED', 'VALIDATED', 'EXECUTED')
 
     ce_details['collection_exercise']['state'] = map_collection_exercise_state(ce_state)  # NOQA
 
@@ -50,9 +51,10 @@ def view_collection_exercise(short_name, period, error=None, ci_loaded=False, ex
                            error=error,
                            executed=executed,
                            events=formatted_events,
+                           locked=locked,
                            sample=ce_details['sample_summary'],
                            sample_loaded=sample_loaded,
-                           show_button=show_button,
+                           show_set_live_button=show_set_live_button,
                            survey=ce_details['survey'])
 
 
