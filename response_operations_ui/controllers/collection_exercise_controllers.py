@@ -27,6 +27,6 @@ def execute_collection_exercise(short_name, period):
     response = requests.post(url)
     if response.ok:
         logger.debug('Successfully began execution of collection exercise',
-                 short_name=short_name, period=period)
+                     short_name=short_name, period=period)
         return True
     return False
