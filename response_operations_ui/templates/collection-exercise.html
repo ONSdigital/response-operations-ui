@@ -14,14 +14,14 @@
         <li id="sample-success" class="system-feedback__item success">Sample successfully loaded</li>
       {% endif %}
     </ul>
-    <dl class="ce-info">
-        <dt class="ce-status__title ce-status">
-          Status:
-        </dt>
-        <dd class="ce-status__data ce-status" id="ce_status">
-          {{ ce.state }}
-        </dd>
-      </dl>
+    <dl class="ce-info" id="ce-attributes">
+      <dt class="ce-info__title ce-status">
+        Status:
+      </dt>
+      <dd class="ce-info__data ce-status" id="ce_status">
+        {{ ce.state }}
+      </dd>
+    </dl>
 
   <div class="grid">
     <div class="grid__col col-6@l">
