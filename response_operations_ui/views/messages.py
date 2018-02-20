@@ -1,6 +1,5 @@
 import json
 import logging
-from urllib.parse import parse_qs
 
 from flask import Blueprint, flash, g, render_template, request, redirect, url_for
 from flask_login import login_required
@@ -21,36 +20,18 @@ def create_message():
     form = SecureMessageForm(request.form)
     breadcrumbs = _build_create_message_breadcrumbs()
 
-
-
-    if 'create-message-view' in request.form:
-        form.ru_ref.
-
-    if not form.is_submitted() or form.to.text == "":
-        ru_dict = parse_qs(request.args.get('ru_details'))
-        form = _populate_hidden_form_fields_from_url_params(form, ru_dict)
-
-    form = _populate_form_details_from_hidden_fields(form)
+    if not form.is_submitted() and 'create-message-view' in request.form:
+        form = _populate_hidden_form_fields_from_post(form, request.form)
+        form = _populate_form_details_from_hidden_fields(form)
 
     if form.validate_on_submit():
-        # Hard coded id's until we can fetch them from UAA or passed by Reporting Units page
-        # TODO Replace this
-        message_json = json.dumps({
-            'msg_from': "BRES",
-            'msg_to': ["f62dfda8-73b0-4e0e-97cf-1b06327a6712"],
-            'subject': form.subject.data,
-            'body': form.body.data,
-            'thread_id': "",
-            'collection_case': "CC_PLACEHOLDER",
-            'survey': form.hidden_survey.data,
-            'ru_id': "c614e64e-d981-4eba-b016-d9822f09a4fb"})
 
         # Keep the message subject and body
         g.form_subject_data = form.subject.data
         g.form_body_data = form.body.data
 
         try:
-            message_controllers.send_message(message_json)
+            message_controllers.send_message(_get_message_json(form))
             flash("Message sent.")
             return redirect(url_for('messages_bp.view_messages'))
         except (ApiError, InternalError):
@@ -81,8 +62,26 @@ def _repopulate_form_with_submitted_data(form):
     form.subject.data = g.form_subject_data
     return form
 
+
+def _get_message_json(form):
+    return json.dumps({
+        'msg_from': "BRES",
+        'msg_to': ["f62dfda8-73b0-4e0e-97cf-1b06327a6712"],
+        'subject': form.subject.data,
+        'body': form.body.data,
+        'thread_id': "",
+        'collection_case': "CC_PLACEHOLDER",
+        'survey': form.hidden_survey.data,
+        'ru_id': "c614e64e-d981-4eba-b016-d9822f09a4fb"})
+
+
 def _populate_hidden_form_fields_from_post(current_view_form, calling_form):
-    current_view_form.hidden_survey.data =  calling_form.survey.data
+    """
+    :param current_view_form: it sthe form just create when land in the view
+    :param calling_form: is the form that is actually sent from the caller
+    :return: a form with all the hidden data filled in.
+    """
+    current_view_form.hidden_survey.data = calling_form.survey.data
     current_view_form.hidden_ru_ref.data = calling_form.ru_ref.data
     current_view_form.hidden_business.data = calling_form.msg_to_name.data
     current_view_form.hidden_to.data = calling_form.msg_to.data
@@ -135,23 +134,3 @@ def _refine(message):
         'to': message.get('@msg_to')[0].get('firstName') + ' ' + message.get('@msg_to')[0].get('lastName'),
         'sent_date': message.get('sent_date')
     }
-
-
-def _add_msg_details(request):
-    try:
-
-        if not request.headers["new_msg_details"]:
-            raise InternalError(Exception)
-        else:
-            message_json = json.dumps({
-                'msg_from': "BRES",
-                'msg_to': ["f62dfda8-73b0-4e0e-97cf-1b06327a6712"],
-                'subject': form.subject.data,
-                'body': form.body.data,
-                'thread_id': "",
-                'collection_case': "CC_PLACEHOLDER",
-                'survey': form.hidden_survey.data,
-                'ru_id': "c614e64e-d981-4eba-b016-d9822f09a4fb"})
-
-    except Exception as e:
-        logger.error(f'{e}\nDetails:\n{pformat(e.error.details)}')
