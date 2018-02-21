@@ -82,12 +82,16 @@ def _populate_hidden_form_fields_from_post(current_view_form, calling_form):
     :param calling_form: is the form that is actually sent from the caller
     :return: a form with all the hidden data filled in.
     """
-    current_view_form.hidden_survey.data = calling_form.get('survey')
-    current_view_form.hidden_ru_ref.data = calling_form.get('ru_ref')
-    current_view_form.hidden_business.data = calling_form.get('business')
-    current_view_form.hidden_to_uuid.data = calling_form.get('msg_to')
-    current_view_form.hidden_to.data = calling_form.get('msg_to_name')
-    current_view_form.hidden_to_ru_id.data = calling_form.get('ru_id')
+    try:
+        current_view_form.hidden_survey.data = calling_form['survey']
+        current_view_form.hidden_ru_ref.data = calling_form['ru_ref']
+        current_view_form.hidden_business.data = calling_form['business']
+        current_view_form.hidden_to_uuid.data = calling_form['msg_to']
+        current_view_form.hidden_to.data = calling_form['msg_to_name']
+        current_view_form.hidden_to_ru_id.data = calling_form['ru_id']
+    except KeyError as ex:
+        logger.exception("Failed to load create message page")
+        raise InternalError(ex)
     return current_view_form
 
 
