@@ -91,18 +91,11 @@ class TestMessage(unittest.TestCase):
         self.assertIn("Something went wrong".encode(), response.data)
 
     @requests_mock.mock()
-    def test_send_message_created(self, mock_request):
-        url = f'{app.config["BACKSTAGE_API_URL"]}/v1/secure-message/send-message'
-        mock_request.post(url, json=self.json)
-        response = self.app.post("/messages/create-message")
-        self.assertEqual(response.status_code, 200)
-
-    @requests_mock.mock()
     def test_send_message_fail(self, mock_request):
         with app.app_context():
             app.config['BACKSTAGE_API_URL'] = None
             url = f'{app.config["BACKSTAGE_API_URL"]}/v1/secure-message/send-message'
-            mock_request.post(url, json=self.json)
+            mock_request.post(url)
 
             with self.assertRaises(InternalError):
                 send_message(self.json)
