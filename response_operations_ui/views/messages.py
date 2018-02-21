@@ -20,11 +20,11 @@ def create_message():
     form = SecureMessageForm(request.form)
     breadcrumbs = _build_create_message_breadcrumbs()
 
-    if not form.is_submitted() and 'create-message-view' in request.form:
+    if "create-message" in request.form:
         form = _populate_hidden_form_fields_from_post(form, request.form)
         form = _populate_form_details_from_hidden_fields(form)
 
-    if form.validate_on_submit():
+    elif form.validate_on_submit():
 
         # Keep the message subject and body
         g.form_subject_data = form.subject.data
@@ -77,14 +77,16 @@ def _get_message_json(form):
 
 def _populate_hidden_form_fields_from_post(current_view_form, calling_form):
     """
-    :param current_view_form: it sthe form just create when land in the view
+    :param current_view_form: is the form just create when land in the view
     :param calling_form: is the form that is actually sent from the caller
     :return: a form with all the hidden data filled in.
     """
-    current_view_form.hidden_survey.data = calling_form.survey.data
-    current_view_form.hidden_ru_ref.data = calling_form.ru_ref.data
-    current_view_form.hidden_business.data = calling_form.msg_to_name.data
-    current_view_form.hidden_to.data = calling_form.msg_to.data
+    current_view_form.hidden_survey.data = calling_form.get('survey')
+    current_view_form.hidden_ru_ref.data = calling_form.get('ru_ref')
+    current_view_form.hidden_business.data = calling_form.get('business')
+    current_view_form.hidden_to_uuid.data = calling_form.get('msg_to')
+    current_view_form.hidden_to.data = calling_form.get('msg_to_name')
+    current_view_form.hidden_to_ru_id.data = calling_form.get('ru_id')
     return current_view_form
 
 

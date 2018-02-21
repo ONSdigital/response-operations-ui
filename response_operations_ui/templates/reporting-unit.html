@@ -114,12 +114,12 @@
           <td name="tbl-enrolment-status" class="table--cell">
             {{ respondent.enrolmentStatus }}
           </td>
-          {{ url_for('messages_bp.create_message', ru_details=args) }}"
-
           <td class="table--cell">
-            <form action="{{ url_for('messages_bp.create_message'}}" method="post" id="create-message-view">
+            <form action="{{ url_for('messages_bp.create_message')}}" method="post" id="create-message-view">
               <button type="submit" name="create-message" value="create-message-view" class="btn-link">Create message</button>
               <input type="hidden" name="ru_ref" value={{ ru.sampleUnitRef }} >
+              <input type="hidden" name="ru_id" value={{ ru.id }}>
+              <input type="hidden" name="business" value={{ ru.name }}>
               <input type="hidden" name="survey" value={{ survey.shortName }}>
               <input type="hidden" name="msg_to_name" value={{ respondent.firstName }} {{ respondent.lastName }}>
               <input type="hidden" name="msg_to" value={{ respondent.id }}>
