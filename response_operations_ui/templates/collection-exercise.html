@@ -17,11 +17,11 @@
         <li id="execution-success" class="system-feedback__item success">Collection exercise executed</li>
       {% endif %}
     </ul>
-    <dl class="ce-info">
-      <dt class="ce-status__title ce-status">
+    <dl class="ce-info" id="ce-attributes">
+      <dt class="ce-info__title ce-status">
         Status:
       </dt>
-      <dd class="ce-status__data ce-status" id="ce_status">
+      <dd class="ce-info__data ce-status" id="ce_status">
         {{ ce.state }}
       </dd>
     </dl>
