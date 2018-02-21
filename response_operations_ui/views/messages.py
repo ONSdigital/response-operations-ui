@@ -91,16 +91,6 @@ def _populate_hidden_form_fields_from_post(current_view_form, calling_form):
     return current_view_form
 
 
-def _populate_hidden_form_fields_from_url_params(form, ru_dict):
-    form.hidden_survey.data = ru_dict.get('survey')[0]
-    form.hidden_ru_ref.data = ru_dict.get('ru_ref')[0]
-    form.hidden_business.data = ru_dict.get('business')[0]
-    form.hidden_to.data = ru_dict.get('to')[0]
-    form.hidden_to_uuid.data = ru_dict.get('to_uuid')[0]
-    form.hidden_to_ru_id.data = ru_dict.get('to_ru_id')[0]
-    return form
-
-
 def _populate_form_details_from_hidden_fields(form):
     form.survey.text = form.hidden_survey.data
     form.ru_ref.text = form.hidden_ru_ref.data

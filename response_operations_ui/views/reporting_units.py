@@ -1,12 +1,11 @@
 import logging
 
-from flask import Blueprint, render_template, request, session
+from flask import Blueprint, render_template, request
 from flask_login import login_required
 from structlog import wrap_logger
 
 from response_operations_ui.controllers import reporting_units_controllers
 from response_operations_ui.forms import SearchForm
-
 
 logger = wrap_logger(logging.getLogger(__name__))
 
