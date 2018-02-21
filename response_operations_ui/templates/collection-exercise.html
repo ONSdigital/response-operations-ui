@@ -13,6 +13,9 @@
       {% if sample_loaded %}
         <li id="sample-success" class="system-feedback__item success">Sample successfully loaded</li>
       {% endif %}
+      {% if executed %}
+        <li id="execution-success" class="system-feedback__item success">Collection exercise executed</li>
+      {% endif %}
     </ul>
     <dl class="ce-info" id="ce-attributes">
       <dt class="ce-info__title ce-status">
@@ -22,6 +25,14 @@
         {{ ce.state }}
       </dd>
     </dl>
+
+    <div>
+    {% if show_set_live_button %}
+      <form id="form-ready-for-live" action="" class="form" method="post" enctype="multipart/form-data">
+        <button id="btn-ready-for-live" onclick="return confirm('There\'s no going back...')" name="ready-for-live" class="btn btn--primary" type="submit">Set as ready for live</button>
+      </form>
+    {% endif %}
+    </div>
 
   <div class="grid">
     <div class="grid__col col-6@l">
@@ -151,7 +162,7 @@
             </tbody>
           </table>
         <p>Sample loaded: {{sample.ingestDateTime}}</p>
-        {% else %}
+        {% elif not locked %}
           <div class="u-mb-m">
             <form id="form-load-sample"
                   method="post"
@@ -202,6 +213,7 @@
         </div>
         {% endif %}
 
+        {% if not locked %}
         <div class="u-mb-m">
           <form id="form-load-ci" action="" class="form" method="post" enctype="multipart/form-data">
             <p>
@@ -219,6 +231,7 @@
             <button id="btn-load-ci" name="load-ci" class="btn btn--primary unready">Add CI</button>
           </form>
         </div>
+        {% endif %}
       </section>
     </div>
 
