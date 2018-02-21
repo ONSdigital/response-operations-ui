@@ -53,6 +53,7 @@
             "legalBasis": "",
             "surveyRef": "074",
             "shortName": "BLOCKS",
+            "activeIacCode": "22yrn9qzx7v2",
             "collection_exercises": [
                 {
                     "id": "c6467711-21eb-4e78-804c-1db8392f93fb",
@@ -122,6 +123,7 @@
             "legalBasis": "",
             "surveyRef": "074",
             "shortName": "BRICKS",
+            "activeIacCode": null,
             "collection_exercises": [
                 {
                     "id": "c6467711-21eb-4e78-804c-1db8392f93fb",
