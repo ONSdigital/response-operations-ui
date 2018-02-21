@@ -65,14 +65,15 @@ def _repopulate_form_with_submitted_data(form):
 
 def _get_message_json(form):
     return json.dumps({
+        # TODO remove BRES soon you get the information from the UUA
         'msg_from': "BRES",
-        'msg_to': ["f62dfda8-73b0-4e0e-97cf-1b06327a6712"],
+        'msg_to': [form.hidden_to_uuid.data],
         'subject': form.subject.data,
         'body': form.body.data,
         'thread_id': "",
-        'collection_case': "CC_PLACEHOLDER",
+        'collection_case': "",
         'survey': form.hidden_survey.data,
-        'ru_id': "c614e64e-d981-4eba-b016-d9822f09a4fb"})
+        'ru_id': form.hidden_to_ru_id.data})
 
 
 def _populate_hidden_form_fields_from_post(current_view_form, calling_form):

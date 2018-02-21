@@ -42,8 +42,6 @@ def view_reporting_unit(ru_ref):
             "title": f"{ru_ref}"
         }
     ]
-    # Add the message detail in session
-    _get_msg_details(ru_details)
 
     return render_template('reporting-unit.html', ru=ru_details['reporting_unit'],
                            surveys=ru_details['surveys'],
@@ -83,9 +81,3 @@ def map_region(region):
         region = "GB"
 
     return region
-
-
-def _get_msg_details(ru_details):
-    return {}
-
-
