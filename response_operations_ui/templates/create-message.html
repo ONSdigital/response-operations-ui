@@ -64,5 +64,5 @@
     <button id="btn-send-message" name="send-message" class="btn secure-message--send-btn" type="submit">Send</button>
 </form>
 
-<p class="pluto"><a href="{{ url_for('home_bp.home') }}" id="btn-cancel">Cancel</a></p>
+<p class="pluto"><a href="{{ url_for('reporting_unit_bp.view_reporting_unit', ru_ref=form.hidden_ru_ref.data) }}" id="btn-cancel">Cancel</a></p>
 {% endblock %}

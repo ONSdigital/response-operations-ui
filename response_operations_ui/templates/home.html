@@ -10,7 +10,15 @@
       <ul class="u-pt-l">
         <li><a name="surveys-link" href="/surveys/">View list of business surveys</a></li>
         <li><a name="messages-link" href="/messages/">View messages</a></li>
-        <li><a name="create-message-link" href="/messages/create-message?ru_details=survey%3DBRES%2B2017%26ru_ref%3D49900000280%26business%3DBolts%2B%2526%2BRachets%2BLtd%26to%3DJacky%2BTurner%26to_uuid%3Df62dfda8-73b0-4e0e-97cf-1b06327a6712%26to_ru_id%3Dc614e64e-d981-4eba-b016-d9822f09a4fb">Create message link</a>
+        <li><form action="{{ url_for('messages_bp.create_message')}}" method="post" id="create-message-view">
+          <button type="submit" name="create-message" value="create-message-view" class="btn-link">Create message</button>
+          <input type="hidden" name="ru_ref" value="49900000280">
+          <input type="hidden" name="ru_id" value="c614e64e-d981-4eba-b016-d9822f09a4fb">
+          <input type="hidden" name="business" value="Bolts & Rachets Ltd">
+          <input type="hidden" name="survey" value="BRES 2017">
+          <input type="hidden" name="msg_to_name" value="Jacky Turner">
+          <input type="hidden" name="msg_to" value="f62dfda8-73b0-4e0e-97cf-1b06327a6712">
+        </form></li>
       </ul>
     </div>
   </div>
