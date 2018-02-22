@@ -29,7 +29,7 @@ def sign_in():
         response_json = sign_in_controller.sign_in(sign_in_data)
 
         if 'token' in response_json:
-            user = User(response_json['token'])
+            user = User(response_json['token'], response_json.get('user_id'))
             login_user(user)
             if 'next' in session:
                 return redirect(session['next'])

@@ -33,11 +33,11 @@ login_manager.login_view = "sign_in_bp.sign_in"
 
 
 @login_manager.user_loader
-def user_loader(user_id):
+def user_loader(token):
     # TODO This will need to be replaced with a call to reddis to get the token
     # as we can't leave that sort of information in the cookie.  Will be implemented
     # down the line once uaa is sorted out.
-    return User(user_id)
+    return User(token)
 
 
 import response_operations_ui.views  # NOQA # pylint: disable=wrong-import-position

@@ -3,6 +3,7 @@ import logging
 import jwt
 import requests
 from flask import current_app
+from flask_login import current_user
 from requests.exceptions import HTTPError
 from structlog import wrap_logger
 
@@ -60,6 +61,5 @@ def _get_url():
 
 
 def _get_jwt():
-    # TODO : Remove once UAA is completed.  For now we need the call to backstage to include
-    # an Authorization in its header a JWT that includes party_id and role.
-    return jwt.encode({'user': 'BRES', 'party_id': 'BRES', 'role': 'internal'}, 'testsecret', algorithm='HS256')
+    logger.debug(f"Retrieving current token {current_user.token}")
+    return current_user.token
