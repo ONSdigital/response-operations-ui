@@ -42,5 +42,4 @@ def view_survey(short_name):
     return render_template('survey.html',
                            survey=survey_details['survey'],
                            collection_exercises=survey_details['collection_exercises'],
-                           survey_state=collection_exercise['state'],
                            breadcrumbs=breadcrumbs)
