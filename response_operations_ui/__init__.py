@@ -1,14 +1,17 @@
 import os
 import redis
+import logging
 
 from flask import Flask
 from flask_assets import Bundle, Environment
 from flask_login import LoginManager
 from flask_session import Session
 
+from response_operations_ui.cloud.cloudfoundry import ONSCloudFoundry
 from response_operations_ui.logger_config import logger_initial_config
 from response_operations_ui.user import User
 
+cf = ONSCloudFoundry()
 
 app = Flask(__name__)
 
@@ -28,11 +31,17 @@ app.url_map.stricts_slashes = False
 app.secret_key = app.config['RESPONSE_OPERATIONS_UI_SECRET']
 
 logger_initial_config(service_name='response-operations-ui', log_level=app.config['LOGGING_LEVEL'])
+logger = logging.getLogger(__name__)
 
 login_manager = LoginManager(app)
 login_manager.init_app(app)
 login_manager.login_view = "sign_in_bp.sign_in"
 
+# If deploying in cloudfoundry set config to use cf redis instance
+if cf.detected:
+    logger.info('Cloudfoundry detected, setting service configurations')
+    app.config['REDIS_HOST'] = cf.redis.credentials['host']
+    app.config['REDIS_PORT'] = cf.redis.credentials['port']
 
 redis = redis.StrictRedis(host=app.config['REDIS_HOST'],
                           port=app.config['REDIS_PORT'],

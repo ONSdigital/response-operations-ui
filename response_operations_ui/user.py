@@ -4,7 +4,11 @@ import jwt
 
 
 def decode_access_token(access_token):
-    decoded_jwt = jwt.decode(access_token)
+    decoded_jwt = jwt.decode(
+        access_token,
+        verify=False,
+        leeway=10,
+    )
     return decoded_jwt
 
 
