@@ -149,3 +149,10 @@ class TestMessage(unittest.TestCase):
             response.data)
         self.assertIn("TEST SUBJECT".encode(), response.data)
         self.assertIn("TEST BODY".encode(), response.data)
+
+    def test_link_post_details_malformed(self):
+        malformed_ru_details = {'create-message': 'create-message-view'}
+        with self.assertRaises(Exception) as raises:
+            self.app.post("/messages/create-message", data=malformed_ru_details)
+            self.assertEqual(raises.exception.message, "Failed to load create message page")
+
