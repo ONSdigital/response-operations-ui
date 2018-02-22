@@ -2,13 +2,9 @@ from flask_login import UserMixin
 
 import jwt
 
+
 def decode_access_token(access_token):
-    decoded_jwt = jwt.decode(
-        access_token,
-        verify=False,
-        audience='ras_backstage',
-        leeway=10,
-    )
+    decoded_jwt = jwt.decode(access_token)
     return decoded_jwt
 
 
