@@ -72,7 +72,8 @@ def _get_message_json(form):
         'body': form.body.data,
         'thread_id': "",
         'collection_case': "",
-        'survey': form.hidden_survey_id.data,
+        # TODO Make this UUID for v2 api
+        'survey': form.hidden_survey.data,
         'ru_id': form.hidden_to_ru_id.data})
 
 
