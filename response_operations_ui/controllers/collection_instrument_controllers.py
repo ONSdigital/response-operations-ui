@@ -26,7 +26,7 @@ def select_collection_instrument(ce_id, ci_id):
     logger.debug('Linking collection instrument to collection exercise', ce_id=ce_id, ci_id=ci_id)
     url = f'{app.config["BACKSTAGE_API_URL"]}/v1/collection-instrument/link/{ci_id}/{ce_id}'
     response = requests.post(url)
-    if response.status_code != 201:
+    if response.status_code != 200:
         logger.error('Failed to link collection instrument to collection exercise', ce_id=ce_id, ci_id=ci_id,
                      status=response.status_code)
         return False

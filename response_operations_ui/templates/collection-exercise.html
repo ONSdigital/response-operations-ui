@@ -228,7 +228,7 @@
             <select name="select-ci-options" class="u-mb-s">
               <option value="" disabled selected>Select a CI</option>
               {% for ci in eq_ci_selectors %}
-              <option value="{{ci.id}}">Some_identifier</option>
+              <option value="{{ci.id}}">{{ci.file_name}}</option>
               {% endfor %}
             </select>
             <br><br>
