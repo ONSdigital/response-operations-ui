@@ -66,6 +66,12 @@
 
       <h4 class="neptune">Respondents</h4>
 
+      <div class="ru-survey-enrolment-code u-pb-s">
+        {% if survey.activeIacCode %}
+        Unused enrolment code: {{survey.activeIacCode}}
+        {% endif %}
+      </div>
+
       <table name="tbl-respondents-for-survey" class="table table__dense tbl-ru-survey-respondents" summary="Respondents for {{survey.shortName}} for {{ ru.sampleUnitRef }}">
         <thead class="table--head">
         <tr class="table--row">
