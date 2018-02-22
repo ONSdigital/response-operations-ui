@@ -102,6 +102,7 @@ class TestMessage(unittest.TestCase):
 
     ru_details = {'create-message': 'create-message-view',
                   'survey': 'BRES 2017',
+                  'survey_id': 'cb0711c3-0ac8-41d3-ae0e-567e5ea1ef87',
                   'ru_ref': '49900000280',
                   'business': 'Bolts & Rachets Ltd',
                   'msg_to_name': 'Jacky Turner',

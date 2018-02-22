@@ -72,7 +72,7 @@ def _get_message_json(form):
         'body': form.body.data,
         'thread_id': "",
         'collection_case': "",
-        'survey': form.hidden_survey.data,
+        'survey': form.hidden_survey_id.data,
         'ru_id': form.hidden_to_ru_id.data})
 
 
@@ -84,6 +84,7 @@ def _populate_hidden_form_fields_from_post(current_view_form, calling_form):
     """
     try:
         current_view_form.hidden_survey.data = calling_form['survey']
+        current_view_form.hidden_survey_id.data = calling_form['survey_id']
         current_view_form.hidden_ru_ref.data = calling_form['ru_ref']
         current_view_form.hidden_business.data = calling_form['business']
         current_view_form.hidden_to_uuid.data = calling_form['msg_to']
