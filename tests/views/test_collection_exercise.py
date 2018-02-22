@@ -14,6 +14,7 @@ with open('tests/test_data/collection_exercise/collection_exercise_details.json'
 with open('tests/test_data/collection_exercise/collection_exercise_details_no_sample.json') as json_data:
     collection_exercise_details_no_sample = json.load(json_data)
 url_collection_instrument = f'{app.config["BACKSTAGE_API_URL"]}/v1/collection-instrument/test/000000'
+url_collection_instrument_link = f'{app.config["BACKSTAGE_API_URL"]}/v1/collection-instrument/link/111111/000000'
 url_upload_sample = f'{app.config["BACKSTAGE_API_URL"]}/v1/sample/test/000000'
 url_execute = f'{app.config["BACKSTAGE_API_URL"]}/v1/collection-exercise/test/000000/execute'
 
@@ -58,6 +59,35 @@ class TestCollectionExercise(unittest.TestCase):
 
         self.assertEqual(response.status_code, 200)
         self.assertIn("Collection instrument loaded".encode(), response.data)
+
+    @requests_mock.mock()
+    def test_select_collection_instrument(self, mock_request):
+        post_data = {
+            'select-ci-options': '111111',
+            'ce_id': '000000',
+            'select-ci': ''
+        }
+        mock_request.post(url_collection_instrument_link, status_code=200)
+        mock_request.get(url_get_collection_exercise, json=collection_exercise_details)
+
+        response = self.app.post("/surveys/test/000000", data=post_data)
+
+        self.assertEqual(response.status_code, 200)
+        self.assertIn("Collection instrument selected".encode(), response.data)
+
+    @requests_mock.mock()
+    def test_failed_select_collection_instrument(self, mock_request):
+        post_data = {
+            'select-ci-options': '111111',
+            'ce_id': '000000',
+            'select-ci': ''
+        }
+        mock_request.post(url_collection_instrument_link, status_code=500)
+        mock_request.get(url_get_collection_exercise, json=collection_exercise_details)
+
+        response = self.app.post("/surveys/test/000000", data=post_data)
+
+        self.assertEqual(response.status_code, 200)
 
     @requests_mock.mock()
     def test_view_collection_instrument_after_upload(self, mock_request):
