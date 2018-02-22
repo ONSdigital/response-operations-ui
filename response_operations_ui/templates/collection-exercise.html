@@ -10,6 +10,9 @@
       {% if ci_loaded %}
         <li id="collection-instrument-success" class="system-feedback__item success">Collection instrument loaded</li>
       {% endif %}
+      {% if ci_selected %}
+        <li id="collection-instrument-selected-success" class="system-feedback__item success">Collection instrument selected</li>
+      {% endif %}
       {% if sample_loaded %}
         <li id="sample-success" class="system-feedback__item success">Sample successfully loaded</li>
       {% endif %}
@@ -215,6 +218,23 @@
 
         {% if not locked %}
         <div class="u-mb-m">
+
+          {% if eq_ci_selectors %}
+          <form id="form-select-ci" action="" class="form" method="post" enctype="multipart/form-data">
+            <p>
+              Select {{'another' if collection_instruments else 'a'}} collection instrument.
+            </p>
+            <input type="hidden" name="ce_id" value="{{ ce.id }}">
+            <select name="select-ci-options" class="u-mb-s">
+              <option value="" disabled selected>Select a CI</option>
+              {% for ci in eq_ci_selectors %}
+              <option value="{{ci.id}}">Some_identifier</option>
+              {% endfor %}
+            </select>
+            <br><br>
+            <button id="btn-select-ci" name="select-ci" class="btn btn--primary unready">Select CI</button>
+          </form>
+          {% else %}
           <form id="form-load-ci" action="" class="form" method="post" enctype="multipart/form-data">
             <p>
               Add {{'another' if collection_instruments else 'a'}} collection instrument. Must be XLSX
@@ -230,6 +250,7 @@
             </div>
             <button id="btn-load-ci" name="load-ci" class="btn btn--primary unready">Add CI</button>
           </form>
+          {% endif %}
         </div>
         {% endif %}
       </section>

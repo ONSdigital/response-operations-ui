@@ -17,7 +17,8 @@ collection_exercise_bp = Blueprint('collection_exercise_bp', __name__,
 
 @collection_exercise_bp.route('/<short_name>/<period>', methods=['GET'])
 @login_required
-def view_collection_exercise(short_name, period, error=None, ci_loaded=False, executed=False, sample_loaded=False):
+def view_collection_exercise(short_name, period, error=None, ci_loaded=False, executed=False,
+                             sample_loaded=False, ci_selected=False):
     ce_details = collection_exercise_controllers.get_collection_exercise(short_name, period)
     ce_details['sample_summary'] = _format_sample_summary(ce_details['sample_summary'])
     formatted_events = convert_events_to_new_format(ce_details['events'])
@@ -47,12 +48,14 @@ def view_collection_exercise(short_name, period, error=None, ci_loaded=False, ex
                            ce=ce_details['collection_exercise'],
                            ci_loaded=ci_loaded,
                            collection_instruments=ce_details['collection_instruments'],
+                           eq_ci_selectors=ce_details['eq_ci_selectors'],
                            error=error,
                            executed=executed,
                            events=formatted_events,
                            locked=locked,
                            sample=ce_details['sample_summary'],
                            sample_loaded=sample_loaded,
+                           ci_selected=ci_selected,
                            show_set_live_button=show_set_live_button,
                            survey=ce_details['survey'])
 
@@ -66,6 +69,8 @@ def post_collection_exercise(short_name, period):
         return _upload_collection_instrument(short_name, period)
     elif 'ready-for-live' in request.form:
         return _set_ready_for_live(short_name, period)
+    elif 'select-ci' in request.form:
+        return _select_collection_instrument(short_name, period)
     return view_collection_exercise(short_name, period)
 
 
@@ -91,6 +96,14 @@ def _upload_sample(short_name, period):
         sample_loaded = True
 
     return view_collection_exercise(short_name, period, error=error, sample_loaded=sample_loaded)
+
+
+def _select_collection_instrument(short_name, period):
+
+    ci_selected = collection_instrument_controllers.select_collection_instrument(request.form['ce_id'],
+                                                                                 request.form['select-ci-options'])
+
+    return view_collection_exercise(short_name, period, ci_selected=ci_selected)
 
 
 def _upload_collection_instrument(short_name, period):
