@@ -12,4 +12,4 @@ class ONSCloudFoundry(object):
 
     @property
     def redis(self):
-        return self._cf_env.get_service(name='rm-redis')
+        return self._cf_env.get_service(name='ras-redis')
