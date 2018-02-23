@@ -7,6 +7,7 @@ from response_operations_ui import app
 from response_operations_ui.controllers.message_controllers import _get_url, send_message
 from response_operations_ui.exceptions.exceptions import InternalError
 
+url_sign_in_data = f'{app.config["BACKSTAGE_API_URL"]}/v2/sign-in/'
 get_message_list = f'{app.config["BACKSTAGE_API_URL"]}/v1/secure-message/messages'
 with open('tests/test_data/message/messages.json') as json_data:
     message_list = json.load(json_data)
@@ -18,6 +19,13 @@ class TestMessage(unittest.TestCase):
         self.app = app.test_client()
         self.app.testing = True
         app.config.from_object(TestingConfig)
+        self.before()
+
+    @requests_mock.mock()
+    def before(self, mock_request):
+        mock_request.post(url_sign_in_data, json={"token": "1234abc", "user_id": "test_user"}, status_code=201)
+        # sign-in to setup the user in the session
+        self.app.post("/sign-in", follow_redirects=True, data={"username": "user", "password": "pass"})
 
     @requests_mock.mock()
     def test_Home(self, mock_request):

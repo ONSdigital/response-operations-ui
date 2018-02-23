@@ -2,7 +2,7 @@ import logging
 
 import jwt
 import requests
-from flask import current_app
+from flask import current_app, session
 from flask_login import current_user
 from requests.exceptions import HTTPError
 from structlog import wrap_logger
@@ -61,5 +61,6 @@ def _get_url():
 
 
 def _get_jwt():
-    logger.debug(f"Retrieving current token {current_user.token}")
-    return current_user.token
+    token = session.get('token')
+    logger.debug(f"Retrieving current token {token}")
+    return token

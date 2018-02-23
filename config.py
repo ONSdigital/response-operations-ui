@@ -30,3 +30,5 @@ class TestingConfig(DevelopmentConfig):
     TESTING = True
     LOGIN_DISABLED = True
     WTF_CSRF_ENABLED = False
+    SESSION_TYPE = "filesystem"
+    SESSION_PERMANENT = False

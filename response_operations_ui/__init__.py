@@ -27,7 +27,7 @@ assets.register('js_all', js_min)
 app_config = 'config.{}'.format(os.environ.get('APP_SETTINGS', 'Config'))
 app.config.from_object(app_config)
 
-app.url_map.stricts_slashes = False
+app.url_map.strict_slashes = False
 app.secret_key = app.config['RESPONSE_OPERATIONS_UI_SECRET']
 
 logger_initial_config(service_name='response-operations-ui', log_level=app.config['LOGGING_LEVEL'])
@@ -38,17 +38,19 @@ login_manager.init_app(app)
 login_manager.login_view = "sign_in_bp.sign_in"
 
 # If deploying in cloudfoundry set config to use cf redis instance
-if cf.detected:
-    logger.info('Cloudfoundry detected, setting service configurations')
-    app.config['REDIS_HOST'] = cf.redis.credentials['host']
-    app.config['REDIS_PORT'] = cf.redis.credentials['port']
+if app.config['SESSION_TYPE'] == 'redis':
+    if cf.detected:
+        logger.info('Cloudfoundry detected, setting service configurations')
+        app.config['REDIS_HOST'] = cf.redis.credentials['host']
+        app.config['REDIS_PORT'] = cf.redis.credentials['port']
 
-redis = redis.StrictRedis(host=app.config['REDIS_HOST'],
-                          port=app.config['REDIS_PORT'],
-                          db=app.config['REDIS_DB'])
+    redis = redis.StrictRedis(host=app.config['REDIS_HOST'],
+                              port=app.config['REDIS_PORT'],
+                              db=app.config['REDIS_DB'])
 
-# wrap in the flask server side session manager and back it by redis
-app.config['SESSION_REDIS'] = redis
+    # wrap in the flask server side session manager and back it by redis
+    app.config['SESSION_REDIS'] = redis
+
 Session(app)
 
 
