@@ -10,7 +10,7 @@ class Config(object):
     RESPONSE_OPERATIONS_UI_SECRET = os.getenv('RESPONSE_OPERATIONS_UI_SECRET', "secret")
     BACKSTAGE_API_URL = os.getenv('BACKSTAGE_API_URL')
     SESSION_TYPE = "redis"
-    SESSION_PERMANENT = False
+    PERMANENT_SESSION_LIFETIME = os.getenv('PERMANENT_SESSION_LIFETIME', 43200)
     REDIS_HOST = os.getenv('REDIS_HOST')
     REDIS_PORT = os.getenv('REDIS_PORT')
     REDIS_DB = os.getenv('REDIS_DB', 3)

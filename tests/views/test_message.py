@@ -22,7 +22,7 @@ class TestMessage(unittest.TestCase):
         self.before()
 
     @requests_mock.mock()
-    def before(self, mock_request):
+    def before(self, mock_request=None):
         mock_request.post(url_sign_in_data, json={"token": "1234abc", "user_id": "test_user"}, status_code=201)
         # sign-in to setup the user in the session
         self.app.post("/sign-in", follow_redirects=True, data={"username": "user", "password": "pass"})
