@@ -155,4 +155,3 @@ class TestMessage(unittest.TestCase):
         with self.assertRaises(Exception) as raises:
             self.app.post("/messages/create-message", data=malformed_ru_details)
             self.assertEqual(raises.exception.message, "Failed to load create message page")
-
