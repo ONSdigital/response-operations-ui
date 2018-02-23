@@ -1,6 +1,5 @@
 import json
 import logging
-from urllib.parse import parse_qs
 
 from flask import Blueprint, flash, g, render_template, request, redirect, url_for
 from flask_login import login_required
@@ -15,36 +14,24 @@ messages_bp = Blueprint('messages_bp', __name__,
                         static_folder='static', template_folder='templates')
 
 
-@messages_bp.route('/create-message', methods=['GET', 'POST'])
+@messages_bp.route('/create-message', methods=['POST'])
 @login_required
 def create_message():
     form = SecureMessageForm(request.form)
     breadcrumbs = _build_create_message_breadcrumbs()
 
-    if not form.is_submitted() or form.to.text == "":
-        ru_dict = parse_qs(request.args.get('ru_details'))
-        form = _populate_hidden_form_fields_from_url_params(form, ru_dict)
+    if "create-message" in request.form:
+        form = _populate_hidden_form_fields_from_post(form, request.form)
+        form = _populate_form_details_from_hidden_fields(form)
 
-    form = _populate_form_details_from_hidden_fields(form)
-
-    if form.validate_on_submit():
-        # Hard coded id's until we can fetch them from UAA or passed by Reporting Units page
-        message_json = json.dumps({
-            'msg_from': "BRES",
-            'msg_to': ["f62dfda8-73b0-4e0e-97cf-1b06327a6712"],
-            'subject': form.subject.data,
-            'body': form.body.data,
-            'thread_id': "",
-            'collection_case': "CC_PLACEHOLDER",
-            'survey': form.hidden_survey.data,
-            'ru_id': "c614e64e-d981-4eba-b016-d9822f09a4fb"})
+    elif form.validate_on_submit():
 
         # Keep the message subject and body
         g.form_subject_data = form.subject.data
         g.form_body_data = form.body.data
 
         try:
-            message_controllers.send_message(message_json)
+            message_controllers.send_message(_get_message_json(form))
             flash("Message sent.")
             return redirect(url_for('messages_bp.view_messages'))
         except (ApiError, InternalError):
@@ -76,14 +63,38 @@ def _repopulate_form_with_submitted_data(form):
     return form
 
 
-def _populate_hidden_form_fields_from_url_params(form, ru_dict):
-    form.hidden_survey.data = ru_dict.get('survey')[0]
-    form.hidden_ru_ref.data = ru_dict.get('ru_ref')[0]
-    form.hidden_business.data = ru_dict.get('business')[0]
-    form.hidden_to.data = ru_dict.get('to')[0]
-    form.hidden_to_uuid.data = ru_dict.get('to_uuid')[0]
-    form.hidden_to_ru_id.data = ru_dict.get('to_ru_id')[0]
-    return form
+def _get_message_json(form):
+    return json.dumps({
+        # TODO remove BRES soon you get the information from the UUA
+        'msg_from': "BRES",
+        'msg_to': [form.hidden_to_uuid.data],
+        'subject': form.subject.data,
+        'body': form.body.data,
+        'thread_id': "",
+        'collection_case': "",
+        # TODO Make this UUID for v2 api
+        'survey': form.hidden_survey_id.data,
+        'ru_id': form.hidden_to_ru_id.data})
+
+
+def _populate_hidden_form_fields_from_post(current_view_form, calling_form):
+    """
+    :param current_view_form: is the form just create when land in the view
+    :param calling_form: is the form that is actually sent from the caller
+    :return: a form with all the hidden data filled in.
+    """
+    try:
+        current_view_form.hidden_survey.data = calling_form['survey']
+        current_view_form.hidden_survey_id.data = calling_form['survey_id']
+        current_view_form.hidden_ru_ref.data = calling_form['ru_ref']
+        current_view_form.hidden_business.data = calling_form['business']
+        current_view_form.hidden_to_uuid.data = calling_form['msg_to']
+        current_view_form.hidden_to.data = calling_form['msg_to_name']
+        current_view_form.hidden_to_ru_id.data = calling_form['ru_id']
+    except KeyError as ex:
+        logger.exception("Failed to load create message page")
+        raise InternalError(ex)
+    return current_view_form
 
 
 def _populate_form_details_from_hidden_fields(form):

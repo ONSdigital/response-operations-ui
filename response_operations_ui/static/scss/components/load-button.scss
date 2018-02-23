@@ -51,6 +51,18 @@
   color: #fff;
 }
 
+.btn-link{
+  border:none;
+  outline:none;
+  background:none;
+  cursor:pointer;
+  color:#0000EE;
+  padding:0;
+  text-decoration:underline;
+  font-family:inherit;
+  font-size:inherit;
+}
+
 @media only screen and (min-width: 500px) {
   .btn.btn--border {
     border-width: 2px;

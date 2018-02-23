@@ -27,6 +27,7 @@ class SecureMessageForm(FlaskForm):
     business = Label('Business', text="")
     to = Label('To', text="")
     hidden_survey = HiddenField('hidden_survey')
+    hidden_survey_id = HiddenField('hidden_survey_id')
     hidden_ru_ref = HiddenField('hidden_ru_ref')
     hidden_business = HiddenField('hidden_business')
     hidden_to = HiddenField('hidden_to')
