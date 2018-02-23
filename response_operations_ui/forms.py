@@ -38,3 +38,8 @@ class SecureMessageForm(FlaskForm):
 class SearchForm(FlaskForm):
     query = StringField('Query')
     submit = SubmitField('Search')
+
+
+class ChangeGroupStatusForm(FlaskForm):
+    event = StringField('event')
+    submit = SubmitField('Confirm')

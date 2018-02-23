@@ -4,6 +4,7 @@ from flask import Blueprint, render_template, request
 from flask_login import login_required
 from structlog import wrap_logger
 
+from response_operations_ui.common.mappers import map_ce_response_status
 from response_operations_ui.controllers import reporting_units_controllers
 from response_operations_ui.forms import SearchForm
 
@@ -60,17 +61,6 @@ def search_reporting_units():
         business_list = reporting_units_controllers.search_reporting_units(query)
 
     return render_template('reporting-units.html', business_list=business_list, form=form, breadcrumbs=breadcrumbs)
-
-
-def map_ce_response_status(ce_response_status):
-    if ce_response_status == "NOTSTARTED":
-        ce_response_status = "Not started"
-    elif ce_response_status == "COMPLETE":
-        ce_response_status = "Completed"
-    elif ce_response_status == "INPROGRESS":
-        ce_response_status = "In progress"
-
-    return ce_response_status
 
 
 def map_region(region):

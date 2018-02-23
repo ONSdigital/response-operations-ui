@@ -30,3 +30,16 @@ def map_collection_exercise_state(ce_state):
         'READY_FOR_LIVE': 'Ready for Live',
         'LIVE': 'Live',
     }.get(ce_state, ce_state)
+
+
+def map_ce_response_status(ce_response_status):
+    if ce_response_status == "NOTSTARTED":
+        ce_response_status = "Not started"
+    elif ce_response_status == "COMPLETE":
+        ce_response_status = "Completed"
+    elif ce_response_status == "COMPLETEDBYPHONE":
+        ce_response_status = "Completed by phone"
+    elif ce_response_status == "INPROGRESS":
+        ce_response_status = "In progress"
+
+    return ce_response_status

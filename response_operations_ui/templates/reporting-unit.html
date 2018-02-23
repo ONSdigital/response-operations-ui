@@ -53,7 +53,7 @@
               {{ ce.companyRegion }}
             </td>
             <td name="tbl-ce-status" class="table--cell">
-              {{ ce.responseStatus }}
+              {{ ce.responseStatus }} &nbsp; <a href="{{ url_for('case_bp.get_response_statuses', ru_ref=ru.sampleUnitRef) }}/?survey={{ survey.shortName }}&period={{ ce.exerciseRef }}">Change</a>
             </td>
           </tr>
           {% endfor %}
