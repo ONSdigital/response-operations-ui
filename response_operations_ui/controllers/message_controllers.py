@@ -1,6 +1,5 @@
 import logging
 
-import jwt
 import requests
 from flask import current_app, session
 from flask_login import current_user

@@ -23,10 +23,8 @@ def create_message():
     if "create-message" in request.form:
         form = _populate_hidden_form_fields_from_post(form, request.form)
         form = _populate_form_details_from_hidden_fields(form)
-
     elif form.validate_on_submit():
-
-         # Keep the message subject and body
+        # Keep the message subject and body
         g.form_subject_data = form.subject.data
         g.form_body_data = form.body.data
 
