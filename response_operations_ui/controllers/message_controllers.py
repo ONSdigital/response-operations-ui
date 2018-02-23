@@ -62,5 +62,5 @@ def _get_url():
 
 def _get_jwt():
     token = session.get('token')
-    logger.debug(f"Retrieving current token {token}")
+    logger.debug(f"Retrieving current token for user {current_user.id}")
     return token
