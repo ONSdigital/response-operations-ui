@@ -53,8 +53,8 @@ Session(app)
 
 
 @login_manager.user_loader
-def user_loader(token):
-    return User(token)
+def user_loader(user_id):
+    return User(user_id)
 
 
 import response_operations_ui.views  # NOQA # pylint: disable=wrong-import-position

@@ -26,7 +26,7 @@ def create_message():
 
     elif form.validate_on_submit():
 
-        # Keep the message subject and body
+         # Keep the message subject and body
         g.form_subject_data = form.subject.data
         g.form_body_data = form.body.data
 
