@@ -63,7 +63,7 @@ class TestCollectionExercise(unittest.TestCase):
     @requests_mock.mock()
     def test_select_collection_instrument(self, mock_request):
         post_data = {
-            'select-ci-options': '111111',
+            'checkbox-answer': ['111111'],
             'ce_id': '000000',
             'select-ci': ''
         }
@@ -73,12 +73,12 @@ class TestCollectionExercise(unittest.TestCase):
         response = self.app.post("/surveys/test/000000", data=post_data)
 
         self.assertEqual(response.status_code, 200)
-        self.assertIn("Collection instrument selected".encode(), response.data)
+        self.assertIn("Collection instruments added".encode(), response.data)
 
     @requests_mock.mock()
     def test_failed_select_collection_instrument(self, mock_request):
         post_data = {
-            'select-ci-options': '111111',
+            'checkbox-answer': ['111111'],
             'ce_id': '000000',
             'select-ci': ''
         }
@@ -88,6 +88,21 @@ class TestCollectionExercise(unittest.TestCase):
         response = self.app.post("/surveys/test/000000", data=post_data)
 
         self.assertEqual(response.status_code, 200)
+        self.assertIn("Error: Failed to add Collection Instrument(s)".encode(), response.data)
+
+    @requests_mock.mock()
+    def test_failed_no_selected_collection_instrument(self, mock_request):
+        post_data = {
+            'checkbox-answer': [],
+            'ce_id': '000000',
+            'select-ci': ''
+        }
+        mock_request.get(url_get_collection_exercise, json=collection_exercise_details)
+
+        response = self.app.post("/surveys/test/000000", data=post_data)
+
+        self.assertEqual(response.status_code, 200)
+        self.assertIn("Error: No Collection Instruments selected".encode(), response.data)
 
     @requests_mock.mock()
     def test_view_collection_instrument_after_upload(self, mock_request):

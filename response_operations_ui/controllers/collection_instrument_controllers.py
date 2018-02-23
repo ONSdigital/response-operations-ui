@@ -22,7 +22,7 @@ def upload_collection_instrument(short_name, period, file):
     return True
 
 
-def select_collection_instrument(ce_id, ci_id):
+def link_collection_instrument(ce_id, ci_id):
     logger.debug('Linking collection instrument to collection exercise', ce_id=ce_id, ci_id=ci_id)
     url = f'{app.config["BACKSTAGE_API_URL"]}/v1/collection-instrument/link/{ci_id}/{ce_id}'
     response = requests.post(url)
