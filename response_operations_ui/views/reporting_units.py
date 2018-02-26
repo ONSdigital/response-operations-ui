@@ -7,7 +7,6 @@ from structlog import wrap_logger
 from response_operations_ui.controllers import reporting_units_controllers
 from response_operations_ui.forms import SearchForm
 
-
 logger = wrap_logger(logging.getLogger(__name__))
 
 reporting_unit_bp = Blueprint('reporting_unit_bp', __name__, static_folder='static', template_folder='templates')

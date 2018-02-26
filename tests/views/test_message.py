@@ -91,41 +91,34 @@ class TestMessage(unittest.TestCase):
         self.assertIn("Something went wrong".encode(), response.data)
 
     @requests_mock.mock()
-    def test_send_message_created(self, mock_request):
-        url = f'{app.config["BACKSTAGE_API_URL"]}/v1/secure-message/send-message'
-        mock_request.post(url, json=self.json)
-        response = self.app.post("/messages/create-message")
-        self.assertEqual(response.status_code, 200)
-
-    @requests_mock.mock()
     def test_send_message_fail(self, mock_request):
         with app.app_context():
             app.config['BACKSTAGE_API_URL'] = None
             url = f'{app.config["BACKSTAGE_API_URL"]}/v1/secure-message/send-message'
-            mock_request.post(url, json=self.json)
+            mock_request.post(url)
 
             with self.assertRaises(InternalError):
                 send_message(self.json)
 
-    create_message_url = (
-        "/messages/create-message?ru_details="
-        "survey%3DBRES%2B2017%26"
-        "ru_ref%3D49900000280%26"
-        "business%3DBolts%2B%2526%2BRachets%2BLtd%26"
-        "to%3DJacky%2BTurner%26"
-        "to_uuid%3Df62dfda8-73b0-4e0e-97cf-1b06327a6712%26"
-        "to_ru_id%3Dc614e64e-d981-4eba-b016-d9822f09a4fb")
+    ru_details = {'create-message': 'create-message-view',
+                  'survey': 'BRES 2017',
+                  'survey_id': 'cb0711c3-0ac8-41d3-ae0e-567e5ea1ef87',
+                  'ru_ref': '49900000280',
+                  'business': 'Bolts & Rachets Ltd',
+                  'msg_to_name': 'Jacky Turner',
+                  'msg_to': 'f62dfda8-73b0-4e0e-97cf-1b06327a6712',
+                  'ru_id': 'c614e64e-d981-4eba-b016-d9822f09a4fb'}
 
     def test_details_fields_prepopulated(self):
-        response = self.app.get(self.create_message_url)
+        response = self.app.post("/messages/create-message", data=self.ru_details)
 
         self.assertIn("BRES 2017".encode(), response.data)
         self.assertIn("49900000280".encode(), response.data)
-        self.assertIn("Bolts &amp; Rachets Ltd".encode(), response.data)
+        self.assertIn("Bolts & Rachets Ltd".encode(), response.data)
         self.assertIn("Jacky Turner".encode(), response.data)
 
     def test_empty_subject_and_body_rejected(self):
-        response = self.app.post(self.create_message_url)
+        response = self.app.post("/messages/create-message")
 
         self.assertIn("Please enter a subject".encode(), response.data)
         self.assertIn("Please enter a message".encode(), response.data)
@@ -139,7 +132,7 @@ class TestMessage(unittest.TestCase):
         mock_request.get(f'{app.config["BACKSTAGE_API_URL"]}/v1/secure-message/messages', json={}, status_code=200)
 
         with app.app_context():
-            response = self.app.post(self.create_message_url, data=self.message_form, follow_redirects=True)
+            response = self.app.post("/messages/create-message", data=self.message_form, follow_redirects=True)
 
         self.assertIn("Message sent.".encode(), response.data)
         self.assertIn("Inbox".encode(), response.data)
@@ -149,14 +142,16 @@ class TestMessage(unittest.TestCase):
         mock_request.post(f'{app.config["BACKSTAGE_API_URL"]}/v1/secure-message/send-message', status_code=500)
 
         with app.app_context():
-            response = self.app.post(self.create_message_url, data=self.message_form, follow_redirects=True)
+            response = self.app.post("/messages/create-message", data=self.message_form, follow_redirects=True)
 
         self.assertIn(
             "Message failed to send, something has gone wrong with the website.".encode(),
             response.data)
         self.assertIn("TEST SUBJECT".encode(), response.data)
         self.assertIn("TEST BODY".encode(), response.data)
-        self.assertIn("BRES 2017".encode(), response.data)
-        self.assertIn("49900000280".encode(), response.data)
-        self.assertIn("Bolts &amp; Rachets Ltd".encode(), response.data)
-        self.assertIn("Jacky Turner".encode(), response.data)
+
+    def test_link_post_details_malformed(self):
+        malformed_ru_details = {'create-message': 'create-message-view'}
+        with self.assertRaises(Exception) as raises:
+            self.app.post("/messages/create-message", data=malformed_ru_details)
+            self.assertEqual(raises.exception.message, "Failed to load create message page")
