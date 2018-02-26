@@ -5,7 +5,7 @@ from flask_login import login_required
 from structlog import wrap_logger
 
 from response_operations_ui.controllers import survey_controllers
-
+from response_operations_ui.common.mappers import map_collection_exercise_state
 
 logger = wrap_logger(logging.getLogger(__name__))
 
@@ -42,28 +42,4 @@ def view_survey(short_name):
     return render_template('survey.html',
                            survey=survey_details['survey'],
                            collection_exercises=survey_details['collection_exercises'],
-                           survey_state=collection_exercise['state'],
                            breadcrumbs=breadcrumbs)
-
-
-def map_collection_exercise_state(ce_state):
-    frontend_ce_state = ce_state
-    if ce_state == "CREATED":
-        frontend_ce_state = "Created"
-
-    if ce_state == "SCHEDULED":
-        frontend_ce_state = "Scheduled"
-
-    if ce_state == "READY_FOR_REVIEW" or ce_state == "FAILEDVALIDATION":
-        frontend_ce_state = "Ready for Review"
-
-    if ce_state == "EXECUTION_STARTED" or ce_state == "VALIDATED" or ce_state == "EXECUTED":
-        frontend_ce_state = "Setting Ready for Live"
-
-    if ce_state == "READY_FOR_LIVE":
-        frontend_ce_state = "Ready for Live"
-
-    if ce_state == "LIVE":
-        frontend_ce_state = "Live"
-
-    return frontend_ce_state

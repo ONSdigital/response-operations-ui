@@ -25,6 +25,9 @@
                   <li class="panel__title venus"><a href='#secure-message-body'>{{ error }}</a></li>
                 {% endfor %}
               {% endif %}
+              {% if form.errors['sending'] %}
+                  <p class="panel__title venus">{{ form.errors['sending'][0] }}</p>
+              {% endif %}
             </ol>
         </div>
     </div>
@@ -60,6 +63,7 @@
     </div>
     <button id="btn-send-message" name="send-message" class="btn secure-message--send-btn" type="submit">Send</button>
 </form>
-
-<p class="pluto"><a href="{{ url_for('home_bp.home') }}" id="btn-cancel">Cancel</a></p>
+{% if form.hidden_ru_ref.data %}
+<p class="pluto"><a href="{{ url_for('reporting_unit_bp.view_reporting_unit', ru_ref=form.hidden_ru_ref.data) }}" id="btn-cancel">Cancel</a></p>
+{% endif %}
 {% endblock %}

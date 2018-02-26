@@ -53,6 +53,7 @@
             "legalBasis": "",
             "surveyRef": "074",
             "shortName": "BLOCKS",
+            "activeIacCode": "22yrn9qzx7v2",
             "collection_exercises": [
                 {
                     "id": "c6467711-21eb-4e78-804c-1db8392f93fb",
@@ -102,6 +103,18 @@
                     "companyName": "companyname",
                     "companyRegion": "YY"
                 }
+            ],
+            "respondents": [
+                {
+                    "emailAddress": "Jacky.Turner@email.com",
+                    "firstName": "Jacky",
+                    "lastName": "Turner",
+                    "telephone": "7971161859",
+                    "id": "cd592e0f-8d07-407b-b75d-e01fbdae8233",
+                    "sampleUnitType": "BI",
+                    "status": "ACTIVE",
+                    "enrolmentStatus": "ENABLED"
+                }
             ]
         },
         {
@@ -110,6 +123,7 @@
             "legalBasis": "",
             "surveyRef": "074",
             "shortName": "BRICKS",
+            "activeIacCode": null,
             "collection_exercises": [
                 {
                     "id": "c6467711-21eb-4e78-804c-1db8392f93fb",
@@ -158,6 +172,28 @@
                     "responseStatus": "INPROGRESS",
                     "companyName": "companyname",
                     "companyRegion": "YY"
+                }
+            ],
+            "respondents": [
+                {
+                    "emailAddress": "Jacky.Turner@email.com",
+                    "firstName": "Jacky",
+                    "lastName": "Turner",
+                    "telephone": "7971161859",
+                    "id": "cd592e0f-8d07-407b-b75d-e01fbdae8233",
+                    "sampleUnitType": "BI",
+                    "status": "CREATED",
+                    "enrolmentStatus": "PENDING"
+                },
+                {
+                    "emailAddress": "Jacky.Turner@email.com",
+                    "firstName": "Jacky",
+                    "lastName": "Turner",
+                    "telephone": "7971161859",
+                    "id": "cd592e0f-8d07-407b-b75d-e01fbdae9999",
+                    "sampleUnitType": "BI",
+                    "status": "SUSPENDED",
+                    "enrolmentStatus": "DISABLED"
                 }
             ]
         }

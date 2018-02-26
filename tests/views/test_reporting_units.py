@@ -7,8 +7,8 @@ from config import TestingConfig
 from response_operations_ui import app
 
 
-url_get_reporting_unit = f'{app.config["BACKSTAGE_BASE_URL"]}/v1/reporting-unit/50012345678'
-url_search_reporting_units = f'{app.config["BACKSTAGE_BASE_URL"]}/v1/reporting-unit/search'
+url_get_reporting_unit = f'{app.config["BACKSTAGE_API_URL"]}/v1/reporting-unit/50012345678'
+url_search_reporting_units = f'{app.config["BACKSTAGE_API_URL"]}/v1/reporting-unit/search'
 with open('tests/test_data/reporting_units/reporting_unit.json') as json_data:
     reporting_unit = json.load(json_data)
 
@@ -34,6 +34,9 @@ class TestReportingUnits(unittest.TestCase):
         self.assertIn("BRICKS".encode(), response.data)
         self.assertIn("GB".encode(), response.data)
         self.assertIn("NI".encode(), response.data)
+        self.assertIn("Jacky Turner".encode(), response.data)
+        self.assertIn("Enabled".encode(), response.data)
+        self.assertIn("Active".encode(), response.data)
 
     @requests_mock.mock()
     def test_get_reporting_unit_fail(self, mock_request):

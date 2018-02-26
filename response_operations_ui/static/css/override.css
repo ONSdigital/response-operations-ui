@@ -6,9 +6,10 @@
 @import "/css/components/header.css";
 @import "/css/components/headings.css";
 @import "/css/components/images.css";
+@import "/css/components/lists.css";
 @import "/css/components/nav.css";
 @import "/css/components/table.css";
-@import "/css/components/utilities.css";
+/* @import "/css/components/utilities.css"; */
 
 
 html{
@@ -27,10 +28,53 @@ footer{
 }
 
 
+
+/* For when we really do want not to display something! */
+
 .hidden{display:none;}
 
+.not-mvp{
+  display: none;
+}
 
 
+
+/* Does this active style need to go into CDN? */
+
+a:active{
+  color: white;
+  background: #4263c2;
+  outline: 3px solid white;
+}
+
+
+
+/* Spoke pages - Starts */
+
+.spoke{
+  background-color: #999;
+}
+
+.spoke__header{
+  margin: 2rem 2rem 0 2rem;
+  padding: 2rem 2rem 1rem 2rem;
+  background-color: #fff;
+  border-bottom: 1px solid #999;
+}
+
+.spoke__body{
+  margin: 0 2rem 2rem 2rem;
+  padding: 1rem 2rem 2rem 2rem;
+  background-color: #fff;
+}
+
+/* Spoke pages - Ends */
+
+
+
+
+
+/* Colletcion exercise page START */
 
 
 #output{
@@ -44,7 +88,6 @@ footer{
 #output h3{
   margin-bottom: 0;
 }
-
 
 button.unready{
   background:#6a6a6a;
@@ -72,15 +115,15 @@ button.hidden{
 }
 
 
-.paginatorLink{
-
-margin: 0 0.5rem;
-padding-left: 0.3rem;
-padding-right: 0.3rem;
-/*color: #fff;
-background: #4263c2;*/
-
+.list__item--ci{
+  list-style-type: square;
 }
+
+
+
+
+
+
 
 /* grid and layout - needs checking! */
 
@@ -98,6 +141,9 @@ background: #4263c2;*/
 
 
 
+
+/* used on CE page */
+
 .btn--light.btn--border {
     font-weight: 600;
     background: transparent;
@@ -110,43 +156,7 @@ background: #4263c2;*/
     background: #033e58;
     color: #fff;
 }
-@media only screen and (max-width: 540px) {
-  .header__btn span {
-    display: none;
-  }
-}
-@media only screen and (max-width: 499px) {
-  .header__btn {
-    font-size: 6.4px;
-    font-size: 0.8rem;
-    padding: 2.4px 4px !important;
-    padding: 0.3rem 0.5rem !important;
-    margin: 0 0 0 8px;
-    margin: 0 0 0 1rem;
-  }
-}
 
-
-/* Surveys list */
-
-.tbl-surveys-id{}
-
-.tbl-surveys-title{}
-
-.tbl-surveys-abbreviation{
-}
-
-.tbl-surveys-legal-basis{}
-
-.tbl-surveys-frequency{
-  /*display: none;*/
-}
-
-
-
-.info-panel{
-  /*font-size: 90%;*/
-}
 
 
 
@@ -165,31 +175,6 @@ background: #4263c2;*/
   margin-left: -20px;
 }
 
-
-
-.system-feedback{
-  /*font-size: 81.25%;*/
-  margin: 1rem 0;
-}
-
-.system-feedback-x{
-  /*font-size: 81.25%;*/
-  margin: 1rem 0;
-}
-
-.system-feedback--empty{
-  height: 1.2rem;
-}
-
-.system-feedback__item.success{
-  list-style: none;
-  background-image: url("/s/img/tick-green.png");
-  background-size: 20px 20px;
-  background-repeat: no-repeat;
-  background-position: left center;
-  padding-left: 24px;
-  margin-left: -20px;
-}
 
 
 .btn--secondary.btn--border.btn--small{
@@ -257,38 +242,13 @@ background: #4263c2;*/
 }
 
 
-/* Description lists */
-
-/* Needs discussion for SDC pattern library and BEM */
-
-.description-list{
-  margin: 0;
-}
-
-.description-list dt{
-  float: left;
-  clear: left;
-  width: 6rem;
-  margin: 0;
-  padding: 0;
-  color: #444;
-  font-weight: 600;
-}
-
-.description-list dd{
-  margin: 0 0 0 6rem;
-  padding: 0 0 0.5rem 0;
-}
-
-
-
 
 /* RU page Reporting unit page*/
 
 .ru-survey{
   margin: 1rem 0;
-  padding: 1rem;
-  border: 1rem solid #eeecec;
+  /* padding: 1.5rem 1.5rem 0.5rem 1.5rem; */
+  border: 0.5rem solid #eeecec;
 }
 
 
@@ -299,14 +259,21 @@ background: #4263c2;*/
 
 
 .tbl-ru-survey-respondents{
-  width: 75%;
+  /* width: 75%; */
 }
 
 
+
+
+.response__changed{
+  background-color: #edf4f0;
+}
+
+
+
+
+
 /* Collection exercise views */
-
-
-
 
 
 .ce-section h2{
@@ -315,49 +282,6 @@ background: #4263c2;*/
 }
 
 
-.item-headlines{
-}
-
-.item-headlines-term{
-  float: left;
-  clear: left;
-  width: 6rem;
-  margin: 0;
-  padding: 0;
-  color: #444;
-  font-weight: 600;
-}
-
-.item-headlines-definition{
-  margin: 0 0 0 6rem;
-  padding: 0 0 0.5rem 0;
-}
-
-
-.ru-search{
-  /*max-width: 30rem;*/
-}
-
-
-.ce-status__title{
-  float: left;
-  clear: left;
-  width: 4rem;
-  margin: 0;
-  padding: 0;
-  color: #444;
-  font-weight: 600;
-}
-
-
-.ce-status__data{
-  margin: 0 0 0 4rem;
-  padding: 0 0 0.5rem 0;
-}
-
-.ce-status__data.ce-status{
-  font-weight: 600;
-}
 
 
 
@@ -373,34 +297,10 @@ background: #4263c2;*/
 }
 
 
-
-
 table.ce-cis .tbl-ce-label{
   vertical-align: middle;
 }
 
-
-
-
-.survey-info{
-  margin: 0;
-  /*font-size: 0.9rem;*/
-}
-
-
-.survey-info__title{
-  float: left;
-  clear: left;
-  width: 6rem;
-  margin: 0;
-  padding: 0;
-  color: #444;
-}
-
-.survey-info__data{
-  margin: 0 0 0 7rem;
-  padding: 0 0 0.5rem 0;
-}
 
 .ci-info-panel{
   margin: 2rem 0;
@@ -470,7 +370,7 @@ input[type="file"] {
   width: 100%;
 }
 
-.ci-list th, td{
+.ci-list th, .ci-list td{
   text-align: left;
   padding: 0.5rem;
 }
@@ -496,12 +396,6 @@ input[type="file"] {
 
 /*** this is nic confessing to the horror of this little bit below on 3 May - need to sort it out sooner rather than later! */
 
-
-
-.cta,
-.list-item-cta{
-  /*font-size: 90%;*/
-}
 
 .message-list,
 .message-actions,
@@ -673,14 +567,6 @@ background: #eee;
 }
 
 
-
-
-
-.XXXsm-draft{
-  text-transform: uppercase;
-  color: #fe781f;
-}
-
 .sm-draft{
   text-transform: uppercase;
   font-weight: 400;
@@ -691,15 +577,10 @@ background: #eee;
 }
 
 
-
-
-
-
-
-
-
-.create-message.block{
-  width: 60%;
+@media only screen and (min-width: 740px) {
+  .create-message.block{
+    width: 60%;
+  }
 }
 
 .message-view.block{
@@ -736,7 +617,6 @@ background: #eee;
   clear: right;
 }
 
-
 .message-content-view{
   display: block;
   float: left;
@@ -744,21 +624,22 @@ background: #eee;
   margin: 2rem 0;
 }
 
-
-.secure-message-conversation{
-  width: 64%;
+@media only screen and (min-width: 740px) {
+  .secure-message-conversation{
+    width: 62.5%;
+  }
 }
 
 .secure-message-sent-message{
   width: 96%;
 }
 
-.sm-from-ons{
-  float: left;
+.secure-message-sent-message-meta.sm-from-ons{
+  background: #033E58;
 }
 
-.sm-from-respondent{
-  float: right;
+.secure-message-sent-message-meta.sm-from-respondent{
+  background: #0F8243;
 }
 
 .secure-message-conversation-meta{
@@ -771,7 +652,7 @@ background: #eee;
 
 .secure-message-sent-message{
    /*margin: 1rem;*/
-   border: 1px solid #eee;
+   border: 1px solid #222;
    margin-bottom: 2rem;
    border-radius: 0.2rem;
 }
@@ -783,8 +664,6 @@ background: #eee;
 }
 
 .secure-message-sent-message-meta{
-  background: #eee;
-  border: 1px solid #eee;
   border-top-left-radius: 0.2rem;
   border-top-right-radius: 0.2rem;
   padding-top: 0.333rem;
@@ -799,12 +678,15 @@ background: #eee;
 
 .secure-message-sent-message-meta-datetime{
   display: block;
+  color: #fff;
 }
 .secure-message-sent-message-meta-from{
   display: block;
+  color: #fff;
 }
 .secure-message-sent-message-meta-to{
   display: block;
+  color: #fff;
 }
 
 .tempHack{
@@ -885,6 +767,14 @@ textarea.secure-message--message{
   margin-bottom: 1rem;
 }
 
-.not-mvp{
-  display: none;
+.error-message {
+  color: #D0021B;
+}
+
+.circle:before {
+  content: ' \25CF';
+  font-size: 16px;
+  color: #4263C2;
+  margin-left: -0.75rem;
+  margin-right: .2rem;
 }

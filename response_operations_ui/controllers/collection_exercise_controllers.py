@@ -11,7 +11,7 @@ logger = wrap_logger(logging.getLogger(__name__))
 
 def get_collection_exercise(short_name, period):
     logger.debug('Retrieving collection exercise details', short_name=short_name, period=period)
-    url = f'{app.config["BACKSTAGE_BASE_URL"]}/v1/collection-exercise/{short_name}/{period}'
+    url = f'{app.config["BACKSTAGE_API_URL"]}/v1/collection-exercise/{short_name}/{period}'
     response = requests.get(url)
     if response.status_code != 200:
         raise ApiError(response)
@@ -19,3 +19,14 @@ def get_collection_exercise(short_name, period):
     logger.debug('Successfully retrieved collection exercise details',
                  short_name=short_name, period=period)
     return response.json()
+
+
+def execute_collection_exercise(short_name, period):
+    logger.debug('Executing collection exercise', short_name=short_name, period=period)
+    url = f'{app.config["BACKSTAGE_API_URL"]}/v1/collection-exercise/{short_name}/{period}/execute'
+    response = requests.post(url)
+    if response.ok:
+        logger.debug('Successfully began execution of collection exercise',
+                     short_name=short_name, period=period)
+        return True
+    return False
