@@ -17,7 +17,8 @@ collection_exercise_bp = Blueprint('collection_exercise_bp', __name__,
 
 @collection_exercise_bp.route('/<short_name>/<period>', methods=['GET'])
 @login_required
-def view_collection_exercise(short_name, period, error=None, ci_loaded=False, executed=False, sample_loaded=False):
+def view_collection_exercise(short_name, period, error=None, ci_loaded=False, executed=False,
+                             sample_loaded=False, ci_added=False):
     ce_details = collection_exercise_controllers.get_collection_exercise(short_name, period)
     ce_details['sample_summary'] = _format_sample_summary(ce_details['sample_summary'])
     formatted_events = convert_events_to_new_format(ce_details['events'])
@@ -41,18 +42,21 @@ def view_collection_exercise(short_name, period, error=None, ci_loaded=False, ex
     locked = ce_state in ('LIVE', 'READY_FOR_LIVE', 'EXECUTION_STARTED', 'VALIDATED', 'EXECUTED')
 
     ce_details['collection_exercise']['state'] = map_collection_exercise_state(ce_state)  # NOQA
+    _format_ci_file_name(ce_details['collection_instruments'], ce_details['survey'])
 
     return render_template('collection-exercise.html',
                            breadcrumbs=breadcrumbs,
                            ce=ce_details['collection_exercise'],
                            ci_loaded=ci_loaded,
                            collection_instruments=ce_details['collection_instruments'],
+                           eq_ci_selectors=ce_details['eq_ci_selectors'],
                            error=error,
                            executed=executed,
                            events=formatted_events,
                            locked=locked,
                            sample=ce_details['sample_summary'],
                            sample_loaded=sample_loaded,
+                           ci_added=ci_added,
                            show_set_live_button=show_set_live_button,
                            survey=ce_details['survey'])
 
@@ -66,6 +70,8 @@ def post_collection_exercise(short_name, period):
         return _upload_collection_instrument(short_name, period)
     elif 'ready-for-live' in request.form:
         return _set_ready_for_live(short_name, period)
+    elif 'select-ci' in request.form:
+        return _select_collection_instrument(short_name, period)
     return view_collection_exercise(short_name, period)
 
 
@@ -91,6 +97,31 @@ def _upload_sample(short_name, period):
         sample_loaded = True
 
     return view_collection_exercise(short_name, period, error=error, sample_loaded=sample_loaded)
+
+
+def _select_collection_instrument(short_name, period):
+    ci_added = False
+    error = None
+    cis_selected = request.form.getlist("checkbox-answer")
+
+    if cis_selected:
+        for ci in cis_selected:
+            ci_added = collection_instrument_controllers.link_collection_instrument(request.form['ce_id'], ci)
+
+            if not ci_added:
+                error = {
+                    "section": "ciSelect",
+                    "header": "Error: Failed to add Collection Instrument(s)",
+                    "message": "Please try again"
+                }
+    else:
+        error = {
+            "section": "ciSelect",
+            "header": "Error: No Collection Instruments selected",
+            "message": "Please select a collection instrument"
+        }
+
+    return view_collection_exercise(short_name, period, error=error, ci_added=ci_added)
 
 
 def _upload_collection_instrument(short_name, period):
@@ -154,3 +185,9 @@ def _format_sample_summary(sample):
         sample["ingestDateTime"] = submission_time
 
     return sample
+
+
+def _format_ci_file_name(collection_instruments, survey_details):
+    for ci in collection_instruments:
+        if 'xlsx' not in ci.get('file_name', ''):
+            ci['file_name'] = f"{survey_details['surveyRef']} {ci['file_name']} eQ"
