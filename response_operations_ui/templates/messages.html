@@ -6,15 +6,15 @@
 
 <div role="main" id="main" class="page__main">
   <h1 class="jupiter" name="page-messages-title">Messages</h1>
-  <ul class="navigation-tabs">
-    <li class="navigation-tabs__tab{% if request.url.endswith('/messages') or request.url.endswith('/messages/') %} navigation-tabs__tab--active{% endif %}">
-        <a id="inbox" href="/messages" class="navigation-tabs__tab navigation-tabs__tab--active tab-label">Inbox</a>
+  <ul class="nav-tabs">
+    <li class="nav-tabs__tab{% if request.url.endswith('/messages') or request.url.endswith('/messages/') %} nav-tabs__tab--active{% endif %}">
+        <a id="inbox" href="/messages" class="nav-tabs__tab nav-tabs__tab--active tab-label">Inbox</a>
     </li>
-    <li class="navigation-tabs__tab{% if 'label=SENT' in request.url %} navigation-tabs__tab--active{% endif %}">
-        <a id="sent" href="/messages?label=SENT" class="navigation-tabs__tab tab-label">Sent</a>
+    <li class="nav-tabs__tab{% if 'label=SENT' in request.url %} nav-tabs__tab--active{% endif %}">
+        <a id="sent" href="/messages?label=SENT" class="navgation-tabs__tab tab-label">Sent</a>
     </li>
-    <li class="navigation-tabs__tab{% if 'label=DRAFT' in request.url %} navigation-tabs__tab--active{% endif %}">
-        <a id="drafts" href="/messages?label=DRAFT" class="navigation-tabs__tab tab-label">Drafts</a>
+    <li class="nav-tabs__tab{% if 'label=DRAFT' in request.url %} nav-tabs__tab--active{% endif %}">
+        <a id="drafts" href="/messages?label=DRAFT" class="nav-tabs__tab tab-label">Drafts</a>
     </li>
 </ul>
 

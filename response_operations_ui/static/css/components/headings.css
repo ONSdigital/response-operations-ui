@@ -1,3 +1,7 @@
+
+/* Styles for headings levels 1-6 */
+
+
 h1.jupiter{
     font-weight: 500;
 }
@@ -6,7 +10,7 @@ h2.saturn{
   font-weight: 500;
 }
 
-h3.saturn{
+h2.mars{
   font-weight: 600;
 }
 
