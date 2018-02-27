@@ -105,6 +105,7 @@ class TestMessage(unittest.TestCase):
                   'survey_id': 'cb0711c3-0ac8-41d3-ae0e-567e5ea1ef87',
                   'ru_ref': '49900000280',
                   'business': 'Bolts & Rachets Ltd',
+                  'case_id': 'cb0711c3-0ac8-41d3-ae0e-567e5ea1ef87',
                   'msg_to_name': 'Jacky Turner',
                   'msg_to': 'f62dfda8-73b0-4e0e-97cf-1b06327a6712',
                   'ru_id': 'c614e64e-d981-4eba-b016-d9822f09a4fb'}

@@ -30,6 +30,7 @@ class SecureMessageForm(FlaskForm):
     hidden_survey_id = HiddenField('hidden_survey_id')
     hidden_ru_ref = HiddenField('hidden_ru_ref')
     hidden_business = HiddenField('hidden_business')
+    hidden_case_id = HiddenField('case_id')
     hidden_to = HiddenField('hidden_to')
     hidden_to_uuid = HiddenField('hidden_to_uuid')
     hidden_to_ru_id = HiddenField('hidden_to_ru_id')

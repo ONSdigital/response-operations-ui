@@ -71,8 +71,7 @@ def _get_message_json(form):
         'subject': form.subject.data,
         'body': form.body.data,
         'thread_id': "",
-        'collection_case': "",
-        # TODO Make this UUID for v2 api
+        'collection_case': form.hidden_case_id.data,
         'survey': form.hidden_survey_id.data,
         'ru_id': form.hidden_to_ru_id.data})
 
@@ -88,6 +87,7 @@ def _populate_hidden_form_fields_from_post(current_view_form, calling_form):
         current_view_form.hidden_survey_id.data = calling_form['survey_id']
         current_view_form.hidden_ru_ref.data = calling_form['ru_ref']
         current_view_form.hidden_business.data = calling_form['business']
+        current_view_form.hidden_case_id.data = calling_form['case_id']
         current_view_form.hidden_to_uuid.data = calling_form['msg_to']
         current_view_form.hidden_to.data = calling_form['msg_to_name']
         current_view_form.hidden_to_ru_id.data = calling_form['ru_id']
