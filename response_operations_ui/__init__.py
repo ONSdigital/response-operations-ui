@@ -10,11 +10,11 @@ from response_operations_ui.user import User
 
 app = Flask(__name__)
 
-# Load scss and js assets
+# Load css and js assets
 assets = Environment(app)
 assets.url = app.static_url_path
-scss_min = Bundle('scss/*', 'scss/fonts/*', 'scss/components/*',
-                  filters=['pyscss', 'cssmin'], output='minimised/all.min.css')
+scss_min = Bundle('css/*', 'css/fonts/*', 'css/components/*',
+                  filters=['cssmin'], output='minimised/all.min.css')
 assets.register('scss_all', scss_min)
 js_min = Bundle('js/*', filters='jsmin', output='minimised/all.min.js')
 assets.register('js_all', js_min)

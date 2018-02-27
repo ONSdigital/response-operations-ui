@@ -1,0 +1,75 @@
+
+/* Styles for the footer */
+
+
+
+footer{
+  /*display: none;*/
+}
+
+
+footer{
+  background-color: #eeecec;
+  margin-top: 3rem;
+}
+
+.keepfornow{
+
+  border-top: 1px solid #222;
+
+}
+
+
+
+.footer-content{
+  max-width: 1248px;
+  margin: 0 auto;
+  padding: 2rem 0;
+  text-align: center;
+}
+
+
+
+
+
+footer ul{
+  list-style: none;
+  margin: 0 auto;
+}
+
+footer ul li{
+  display: inline-block;
+  margin-right: 2rem;
+}
+
+
+
+
+
+
+
+
+/* old footer styles */
+
+
+
+.page__footer{
+  display: none;
+}
+
+#footer ul{
+    padding: 0;
+}
+
+#footer ul li{
+    display: inline-block;
+    margin: 0 16px 0 0;
+}
+
+#footer a{
+    color: #454a4c;
+}
+
+#footer a:visited{
+    color: #4c2c92;
+}

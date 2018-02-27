@@ -10,6 +10,9 @@
       {% if ci_loaded %}
         <li id="collection-instrument-success" class="system-feedback__item success">Collection instrument loaded</li>
       {% endif %}
+      {% if ci_added %}
+        <li id="collection-instrument-added-success" class="system-feedback__item success">Collection instruments added</li>
+      {% endif %}
       {% if sample_loaded %}
         <li id="sample-success" class="system-feedback__item success">Sample successfully loaded</li>
       {% endif %}
@@ -215,6 +218,29 @@
 
         {% if not locked %}
         <div class="u-mb-m">
+
+          {% if eq_ci_selectors %}
+          <form id="form-select-ci" action="" class="form" method="post" enctype="multipart/form-data">
+                <div class="u-mb-s">
+                  eQ collection instruments available:
+                </div>
+            <div id="ciSelectErrorPanel" class="{{'panel panel--simple panel--error' if error.section == 'ciSelect' else ''}}">
+              <div id="ciSelectErrorPanelBody" class="{{'panel__body' if error.section == 'ciSelect' else ''}}">
+                <input type="hidden" name="ce_id" value="{{ ce.id }}">
+                {% for ci in eq_ci_selectors %}
+                <div class="field__item js-focusable-box">
+                  <input class="input input--checkbox js-focusable" name="checkbox-answer" value="{{ci.id}}" id="{{ci.id}}" type="checkbox">
+                  <label class="label label--inline venus " for="{{ci.id}}">{{survey.surveyRef}} {{ci.file_name}} eQ </label>
+                </div>
+                {% endfor %}
+                <div>
+                  <button id="btn-add-ci" name="select-ci" class="btn btn--primary unready" type="submit">Add</button>
+                </div>
+              </div>
+            </div>
+
+          </form>
+          {% else %}
           <form id="form-load-ci" action="" class="form" method="post" enctype="multipart/form-data">
             <p>
               Add {{'another' if collection_instruments else 'a'}} collection instrument. Must be XLSX
@@ -230,6 +256,7 @@
             </div>
             <button id="btn-load-ci" name="load-ci" class="btn btn--primary unready">Add CI</button>
           </form>
+          {% endif %}
         </div>
         {% endif %}
       </section>
