@@ -76,7 +76,10 @@
         <thead class="table--head">
         <tr class="table--row">
           <th scope="col" class="table--header--cell">
-            Name and contact details
+            Contact details
+          </th>
+          <th scope="col" class="table--header--cell">
+            Account status
           </th>
           <th scope="col" class="table--header--cell">
             Enrolment status
@@ -109,13 +112,16 @@
               <dd name="tbl-respondent-phone">
                 {{ respondent.telephone }}
               </dd>
-              <dt>
-                Account
-              </dt>
-              <dd name="tbl-respondent-status">
-                {{ respondent.status }}
-              </dd>
+              <div>
+                <form action="{{ url_for('reporting_unit_bp.edit_contact_details', ru_ref=ru.sampleUnitRef)}}" method="post">
+                <a href=# onclick="this.parentNode.submit()"> Edit contact details</a>
+                <input type="hidden" name="respondent-first-name" value={{ respondent.firstName }} >
+                </form>
+              </div>
             </dl>
+          </td>
+          <td name="tbl-respondent-status" class="table--cell">
+            {{ respondent.status }}
           </td>
           <td name="tbl-enrolment-status" class="table--cell">
             {{ respondent.enrolmentStatus }}

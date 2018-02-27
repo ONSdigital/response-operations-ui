@@ -47,6 +47,14 @@ def view_reporting_unit(ru_ref):
                            breadcrumbs=breadcrumbs)
 
 
+@reporting_unit_bp.route('/<ru_ref>/edit-contact-details', methods=['GET', 'POST'])
+@login_required
+def edit_contact_details(ru_ref):
+
+    firstName = request.form.get('respondent-first-name')
+    return render_template('edit-contact-details.html', ru_ref=ru_ref, firstName=firstName)
+
+
 @reporting_unit_bp.route('/', methods=['GET', 'POST'])
 @login_required
 def search_reporting_units():
