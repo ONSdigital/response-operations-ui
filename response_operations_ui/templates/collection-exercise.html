@@ -9,35 +9,35 @@
     <ul>
       {% if ci_loaded %}
         <div class="panel panel--simple panel--success">
-          <div class="panel__body">
+          <div id="collection-instrument-success" class="panel__body">
             Collection instrument loaded
           </div>
         </div>
       {% endif %}
       {% if ci_added %}
         <div class="panel panel--simple panel--success">
-          <div class="panel__body">
+          <div id="collection-instrument-added-success" class="panel__body">
             Collection instruments added
           </div>
         </div>
       {% endif %}
       {% if sample_loaded %}
         <div class="panel panel--simple panel--success">
-          <div class="panel__body">
+          <div id="sample-success" class="panel__body">
             Sample successfully loaded
           </div>
         </div>
       {% endif %}
       {% if executed %}
         <div class="panel panel--simple panel--success">
-          <div class="panel__body">
+          <div id="execution-success" class="panel__body">
             Collection exercise executed
           </div>
         </div>
       {% endif %}
       {% if processing %}
         <div class="panel panel--simple panel--info">
-          <div class="panel__body">
+          <div id="processing-info" class="panel__body">
             Processing collection exercise – <a href="">refresh to see progress</a>
           </div>
         </div>
