@@ -42,7 +42,7 @@
     <div class="secure-message--meta venus"><span class="sm-form-meta-label">Business: </span><span id="ru">{{ form.business(id="business-label") }}</span></div>
     <div class="secure-message--recipient venus"><span class="sm-form-recipient-label">To: </span><span id="recipient">{{ form.to(id="to-label") }}</span></div>
 
-    <div id="subject-field"{% if form.body.errors %} class="panel panel--simple panel--error{% endif %}">
+    <div id="subject-field"{% if form.subject.errors %} class="panel panel--simple panel--error{% endif %}">
         {% for error in form.subject.errors %}
             <p id="subject-error-{{ loop.index }}" class="error-message">{{ error }}</p>
         {% endfor %}
