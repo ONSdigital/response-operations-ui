@@ -30,7 +30,7 @@ def update_response_status(ru_ref):
     short_name = request.args.get('survey')
     collection_exercise_period = request.args.get('period')
     form = ChangeGroupStatusForm(request.form)
-    if form.event:
+    if form.event.data:
         case_controller.update_case_group_statuses(short_name, collection_exercise_period, ru_ref, form.event.data)
         return redirect(url_for('reporting_unit_bp.view_reporting_unit', ru_ref=ru_ref,
                         survey=short_name, period=collection_exercise_period))
@@ -42,4 +42,5 @@ def update_response_status(ru_ref):
                            survey_short_name=short_name, survey_id=statuses['survey_id'],
                            ce_period=collection_exercise_period,
                            case_group_status=map_ce_response_status(statuses['current_status']),
-                           statuses=statuses['available_statuses'])
+                           statuses=statuses['available_statuses'],
+                           error="Please select one of these options.")

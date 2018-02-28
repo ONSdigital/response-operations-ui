@@ -6,14 +6,14 @@ from config import TestingConfig
 from response_operations_ui import app
 
 
-class TestCollectionExercise(unittest.TestCase):
+class TestCase(unittest.TestCase):
 
     def setUp(self):
         app_config = TestingConfig()
         app.config.from_object(app_config)
         app.login_manager.init_app(app)
         self.app = app.test_client()
-        self.case_group_statuses = {
+        self.case_group_status = {
             "ru_ref": "19000001",
             "trading_as": "Company Name",
             "survey_id": "123",
@@ -26,12 +26,12 @@ class TestCollectionExercise(unittest.TestCase):
         }
 
     @requests_mock.mock()
-    def test_get_available_statuses(self, mock_request):
+    def test_get_available_status(self, mock_request):
         short_name = 'MYSURVEY'
         period = '221_202018'
         ru_ref = '19000001'
         mock_request.get(f'{app.config["BACKSTAGE_API_URL"]}/v1/case/status/{short_name}/{period}/{ru_ref}',
-                         json=self.case_group_statuses)
+                         json=self.case_group_status)
 
         response = self.app.get(f'/case/{ru_ref}/change-response-status?survey={short_name}&period={period}')
 
@@ -45,16 +45,18 @@ class TestCollectionExercise(unittest.TestCase):
         self.assertIn(b'Completed', data)
 
     @requests_mock.mock()
-    def test_get_available_statuses_fail(self, mock_request):
+    def test_get_available_status_fail(self, mock_request):
         short_name = 'MYSURVEY'
         period = '221_202018'
         ru_ref = '19000001'
-        mock_request.get(f'{app.config["BACKSTAGE_API_URL"]}/v1/case/statuses/{short_name}/{period}/{ru_ref}',
+        mock_request.get(f'{app.config["BACKSTAGE_API_URL"]}/v1/case/status/{short_name}/{period}/{ru_ref}',
                          status_code=500)
 
-        response = self.app.get(f'/case/{ru_ref}/change-response-status?survey={short_name}&period={period}')
+        response = self.app.get(f'/case/{ru_ref}/change-response-status?survey={short_name}&period={period}',
+                                follow_redirects=True)
 
-        self.assertEqual(response.status_code, 302)
+        self.assertEqual(response.status_code, 500)
+        self.assertIn("Error 500 - Server error".encode(), response.data)
 
     @requests_mock.mock()
     def test_should_update_status_completed_by_phone(self, mock_request):
@@ -70,6 +72,7 @@ class TestCollectionExercise(unittest.TestCase):
                                  data={'event': 'COMPLETEDBYPHONE'})
 
         self.assertEqual(response.status_code, 302)
+        self.assertIn('reporting-unit', response.location)
 
     @requests_mock.mock()
     def test_should_redirect_after_updating_status(self, mock_request):
@@ -89,15 +92,27 @@ class TestCollectionExercise(unittest.TestCase):
         self.assertIn(f'period={period}', response.location)
 
     @requests_mock.mock()
-    def test_should_get_error_page_when_(self, mock_request):
+    def test_should_get_error_page_when_backstage_fails(self, mock_request):
         short_name = 'MYSURVEY'
         period = '221_202018'
         ru_ref = '19000001'
         mock_request.post(f'{app.config["BACKSTAGE_API_URL"]}/v1/case/status/'
-                          f'{short_name}/{period}/{ru_ref}/COMPLETEDBYPHONE', status_code=500)
+                          f'{short_name}/{period}/{ru_ref}', status_code=503)
 
         response = self.app.post(f'/case/{ru_ref}/change-response-status?survey={short_name}&period={period}',
-                                 data={'event': 'COMPLETEDBYPHONE'})
+                                 data={'event': 'COMPLETEDBYPHONE'}, follow_redirects=True)
 
-        self.assertEqual(response.status_code, 302)
-        self.assertIn('error', response.location)
+        self.assertEqual(response.status_code, 500)
+        self.assertIn("Error 500 - Server error".encode(), response.data)
+
+    @requests_mock.mock()
+    def test_should_not_change_status_when_event_not_sent(self, mock_request):
+        short_name = 'MYSURVEY'
+        period = '221_202018'
+        ru_ref = '19000001'
+        mock_request.get(f'{app.config["BACKSTAGE_API_URL"]}/v1/case/status/{short_name}/{period}/{ru_ref}',
+                         json=self.case_group_status)
+
+        response = self.app.post(f'/case/{ru_ref}/change-response-status?survey={short_name}&period={period}')
+
+        self.assertEqual(response.status_code, 200)
