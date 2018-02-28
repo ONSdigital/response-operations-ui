@@ -36,7 +36,8 @@ def update_response_status(ru_ref):
                         survey=short_name, period=collection_exercise_period))
 
     statuses = case_controller.get_available_case_group_statuses(short_name, collection_exercise_period, ru_ref)
-    statuses['available_statuses'] = {event: map_ce_response_status(status) for event, status in statuses['available_statuses'].items()}
+    statuses['available_statuses'] = {event: map_ce_response_status(status)
+                                      for event, status in statuses['available_statuses'].items()}
     return render_template('change-response-status.html', ru_ref=statuses['ru_ref'], trading_as=statuses['trading_as'],
                            survey_short_name=short_name, survey_id=statuses['survey_id'],
                            ce_period=collection_exercise_period,
