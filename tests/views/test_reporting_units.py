@@ -39,6 +39,15 @@ class TestReportingUnits(unittest.TestCase):
         self.assertIn("Active".encode(), response.data)
 
     @requests_mock.mock()
+    def test_get_reporting_unit_after_changed_status_shows_new_status(self, mock_request):
+        mock_request.get(url_get_reporting_unit, json=reporting_unit)
+
+        response = self.app.get("/reporting-units/50012345678?survey=BRICKS&period=201801")
+
+        self.assertEqual(response.status_code, 200)
+        self.assertIn("Response status for 074 BRICKS period 201801 changed to Completed".encode(), response.data)
+
+    @requests_mock.mock()
     def test_get_reporting_unit_fail(self, mock_request):
         mock_request.get(url_get_reporting_unit, status_code=500)
 

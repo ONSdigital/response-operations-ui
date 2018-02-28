@@ -43,9 +43,19 @@ def view_reporting_unit(ru_ref):
         }
     ]
 
+    survey_arg = request.args.get('survey')
+    period_arg = request.args.get('period')
+    info_message = None
+    if survey_arg and period_arg:
+        survey = next(filter(lambda s: s['shortName'] == survey_arg, ru_details['surveys']))
+        collection_exercise = next(filter(lambda s: s['exerciseRef'] == period_arg, survey['collection_exercises']))
+        new_status = collection_exercise['responseStatus']
+        info_message = f'Response status for {survey["surveyRef"]} {survey["shortName"]}' \
+                       f' period {period_arg} changed to {new_status}'
+
     return render_template('reporting-unit.html', ru=ru_details['reporting_unit'],
                            surveys=ru_details['surveys'],
-                           breadcrumbs=breadcrumbs)
+                           breadcrumbs=breadcrumbs, info_message=info_message)
 
 
 @reporting_unit_bp.route('/', methods=['GET', 'POST'])
