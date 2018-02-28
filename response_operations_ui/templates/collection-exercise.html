@@ -8,16 +8,39 @@
     <h1 class="jupiter" name="page-ce-title">{{survey.shortName}} {{ce.exerciseRef}}</h1>
     <ul>
       {% if ci_loaded %}
-        <li id="collection-instrument-success" class="system-feedback__item success">Collection instrument loaded</li>
+        <div class="panel panel--simple panel--success">
+          <div id="collection-instrument-success" class="panel__body">
+            Collection instrument loaded
+          </div>
+        </div>
       {% endif %}
       {% if ci_added %}
-        <li id="collection-instrument-added-success" class="system-feedback__item success">Collection instruments added</li>
+        <div class="panel panel--simple panel--success">
+          <div id="collection-instrument-added-success" class="panel__body">
+            Collection instruments added
+          </div>
+        </div>
       {% endif %}
       {% if sample_loaded %}
-        <li id="sample-success" class="system-feedback__item success">Sample successfully loaded</li>
+        <div class="panel panel--simple panel--success">
+          <div id="sample-success" class="panel__body">
+            Sample successfully loaded
+          </div>
+        </div>
       {% endif %}
       {% if executed %}
-        <li id="execution-success" class="system-feedback__item success">Collection exercise executed</li>
+        <div class="panel panel--simple panel--success">
+          <div id="execution-success" class="panel__body">
+            Collection exercise executed
+          </div>
+        </div>
+      {% endif %}
+      {% if processing %}
+        <div class="panel panel--simple panel--info">
+          <div id="processing-info" class="panel__body">
+            Processing collection exercise – <a id="a-processing-refresh" href="">refresh to see progress</a>
+          </div>
+        </div>
       {% endif %}
     </ul>
     <dl class="ce-info" id="ce-attributes">

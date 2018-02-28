@@ -263,6 +263,7 @@ class TestCollectionExercise(unittest.TestCase):
         self.assertEqual(response.status_code, 200)
         self.assertNotIn('Sample successfully loaded'.encode(), response.data)
         self.assertIn('Collection exercise executed'.encode(), response.data)
+        self.assertIn('Processing collection exercise'.encode(), response.data)
 
     @requests_mock.mock()
     def test_post_ready_for_live_failed(self, mock_request):
@@ -276,3 +277,13 @@ class TestCollectionExercise(unittest.TestCase):
         self.assertNotIn('Sample successfully loaded'.encode(), response.data)
         self.assertNotIn('Collection exercise executed'.encode(), response.data)
         self.assertIn('Failed to execute Collection Exercise'.encode(), response.data)
+
+    @requests_mock.mock()
+    def test_get_processing(self, mock_request):
+        collection_exercise_details['collection_exercise']['state'] = 'EXECUTION_STARTED'
+        mock_request.get(url_get_collection_exercise, json=collection_exercise_details)
+
+        response = self.app.get('/surveys/test/000000')
+
+        self.assertEqual(response.status_code, 200)
+        self.assertIn('Processing collection exercise'.encode(), response.data)
