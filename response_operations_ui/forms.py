@@ -38,3 +38,10 @@ class SecureMessageForm(FlaskForm):
 class SearchForm(FlaskForm):
     query = StringField('Query')
     submit = SubmitField('Search')
+
+
+class EditContactDetailsForm(FlaskForm):
+    first_name = StringField('first_name')
+    last_name = StringField('last_name')
+    email = StringField('emailAddress')
+    telephone = StringField('telephone')

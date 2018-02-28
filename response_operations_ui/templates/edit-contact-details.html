@@ -7,9 +7,10 @@
 
   <title>Edit contact details</title>
 
-  <link rel="stylesheet" href="/static/scss/responsive.css"/>
-  <link rel="stylesheet" href="/static/scss/override.css" />
-  <link rel="stylesheet" href="/static/scss/internal.css" />
+  <link rel=stylesheet type=text/css href="https://cdn.ons.gov.uk/sdc/322aece/css/styles.css">
+  {% assets "scss_all" %}
+    <link rel=stylesheet type=text/css href="{{ ASSET_URL }}">
+  {% endassets %}
 
   <link href="/static/images/favicon.ico" rel="Shortcut Icon" />
 
@@ -42,32 +43,56 @@
 
                 <form action="index-changed.html" class="u-mt-s">
 
-                <div class="field u-mb-m">
-                  <label class="label" for="lastName">Last name</label>
-                  <input class="input input--text" value="Turner" type="text" id="lastName" />
+                <div class="field u-mb-l">
+                    <label class="label" for="lastName">
+                      Last name
+                      <span class="secondary-info current-value">
+                        <span class="u-vh">Current value: </span>
+                        {{ last_name }}
+                      </span>
+                    </label>
+                    <input class="input input--text" value="{{ last_name }}" type="text" id="lastName" name="lastName" required maxlength="254" />
+                </div>
+
+                <div class="field u-mb-l">
+                    <label class="label" for="firstName">
+                      First name
+                      <span class="secondary-info current-value">
+                        <span class="u-vh">Current value: </span>
+                        {{ first_name }}
+                      </span>
+                    </label>
+                    <!--<input class="input input&#45;&#45;text" value="{{ first_name }}" type="text" id="firstName" name="firstName" required maxlength="254"/>-->
+                </div>
+
+                <div class="field u-mb-l">
+                    <label class="label" for="email">
+                      Email address
+                      <span class="secondary-info current-value">
+                        <span class="u-vh">Current value: </span>
+                        {{ email }}
+                      </span>
+                      <span class="label__description pluto">ONS will send a verification email to a new address</span>
+                    </label>
+                    <!--<input class="input input&#45;&#45;text" value="{{ email }}" type="email" id="email" name="emailAddress" required maxlength="254" />-->
+                  {{ form.email(value=email, class_="input input--text", id='email', required=required) }}
                 </div>
 
                 <div class="field u-mb-m">
-                  <label class="label" for="firstName">First name </label><span class="u-vh"> - {{ firstName }} </span>
-                  <input class="input input--text" value= {{ firstName }} type="email" id="firstName" />
+                    <label class="label" for="telephone">
+                      Phone number
+                      <span class="secondary-info current-value">
+                        <span class="u-vh">Current value: </span>
+                        {{ telephone }}
+                      </span>
+                    </label>
+                    <input class="input input--text" value="{{ telephone }}" type="tel" id="telephone" name="telephoneNumber" required maxlength=""/>
                 </div>
 
-                <div class="field u-mb-m">
-                  <label class="label" for="email">Email address</label>
-                  <input class="input input--text" value="jacky.turner@boltsandratchets.co.uk" type="tel" id="email" />
-                </div>
-
-                <div class="field">
-                  <label class="label" for="text-input">Phone number</label>
-                  <input class="input input--text" value="01682 439 125" type="text" id="text-input" />
-                </div>
-
-                <input type="hidden" name="ce" value="073-201801" />
-
-                <button class="btn btn--primary u-mt-s">Save changes</button>
+                <button class="btn btn--primary u-mt-s" id="save-btn">Save changes</button>
 
                 <div>
-                  <a href="/reporting-units/49900000118/" onclick="history.back(); return false;">Cancel</a>
+                  <a href="{{ referrer }}">Cancel</a>
                 </div>
 
                 </form>

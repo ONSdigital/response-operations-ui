@@ -116,6 +116,9 @@
                 <form action="{{ url_for('reporting_unit_bp.edit_contact_details', ru_ref=ru.sampleUnitRef)}}" method="post">
                 <a href=# onclick="this.parentNode.submit()"> Edit contact details</a>
                 <input type="hidden" name="respondent-first-name" value={{ respondent.firstName }} >
+                <input type="hidden" name="respondent-last-name" value={{ respondent.lastName }} >
+                <input type="hidden" name="respondent-email" value={{ respondent.emailAddress }} >
+                <input type="hidden" name="respondent-telephone" value={{ respondent.telephone }} >
                 </form>
               </div>
             </dl>

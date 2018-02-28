@@ -5,7 +5,7 @@ from flask_login import login_required
 from structlog import wrap_logger
 
 from response_operations_ui.controllers import reporting_units_controllers
-from response_operations_ui.forms import SearchForm
+from response_operations_ui.forms import SearchForm, EditContactDetailsForm
 
 logger = wrap_logger(logging.getLogger(__name__))
 
@@ -50,9 +50,20 @@ def view_reporting_unit(ru_ref):
 @reporting_unit_bp.route('/<ru_ref>/edit-contact-details', methods=['GET', 'POST'])
 @login_required
 def edit_contact_details(ru_ref):
+    first_name = request.form.get('respondent-first-name')
+    last_name = request.form.get('respondent-last-name')
+    email = request.form.get('respondent-email')
+    telephone = request.form.get('respondent-telephone')
+    referrer = request.referrer
+    form = EditContactDetailsForm(request.form)
 
-    firstName = request.form.get('respondent-first-name')
-    return render_template('edit-contact-details.html', ru_ref=ru_ref, firstName=firstName)
+    if form.validate_on_submit():
+        edit_details_data = {
+                "first_name": request.form.get()
+            }
+
+    return render_template('edit-contact-details.html', ru_ref=ru_ref, first_name=first_name, last_name=last_name,
+                           email=email, telephone=telephone, referrer=referrer, form=form)
 
 
 @reporting_unit_bp.route('/', methods=['GET', 'POST'])

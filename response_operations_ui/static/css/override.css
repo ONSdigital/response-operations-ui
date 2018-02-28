@@ -48,32 +48,6 @@ a:active{
 }
 
 
-
-/* Spoke pages - Starts */
-
-.spoke{
-  background-color: #999;
-}
-
-.spoke__header{
-  margin: 2rem 2rem 0 2rem;
-  padding: 2rem 2rem 1rem 2rem;
-  background-color: #fff;
-  border-bottom: 1px solid #999;
-}
-
-.spoke__body{
-  margin: 0 2rem 2rem 2rem;
-  padding: 1rem 2rem 2rem 2rem;
-  background-color: #fff;
-}
-
-/* Spoke pages - Ends */
-
-
-
-
-
 /* Colletcion exercise page START */
 
 
@@ -778,3 +752,27 @@ textarea.secure-message--message{
   margin-left: -0.75rem;
   margin-right: .2rem;
 }
+
+/* Spoke pages - Starts */
+.spoke{
+  background-color: #999;
+}
+.spoke__header{
+  margin: 2rem 2rem 0 2rem;
+  padding: 1.5rem 2rem 0.5rem 2rem;
+  background-color: #eeecec;
+  /* border-bottom: 1px solid #999; */
+}
+.spoke__body{
+  margin: 0 2rem 2rem 2rem;
+  padding: 2rem 2rem 2rem 2rem;
+  background-color: #fff;
+}
+.secondary-info{
+  color: #595959;
+  font-weight: 400;
+}
+.current-value::before{
+  content: "-";
+}
+/* Spoke pages - Ends */
