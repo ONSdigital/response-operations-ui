@@ -5,6 +5,7 @@ from flask_login import login_required
 from structlog import wrap_logger
 
 from response_operations_ui.common.mappers import map_ce_response_status
+from response_operations_ui.controllers import case_controller
 from response_operations_ui.controllers import reporting_units_controllers
 from response_operations_ui.forms import SearchForm
 
@@ -27,6 +28,9 @@ def view_reporting_unit(ru_ref):
 
         for collection_exercise in survey['collection_exercises']:
             collection_exercise['responseStatus'] = map_ce_response_status(collection_exercise['responseStatus'])
+            statuses = case_controller.get_available_case_group_statuses(survey['shortName'],
+                                                                         collection_exercise['exerciseRef'], ru_ref)
+            collection_exercise['statusChangeable'] = len(statuses['available_statuses']) > 0
             collection_exercise['companyRegion'] = map_region(collection_exercise['companyRegion'])
 
         for respondent in survey['respondents']:
