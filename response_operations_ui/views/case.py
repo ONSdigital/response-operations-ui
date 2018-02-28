@@ -32,7 +32,8 @@ def update_response_status(ru_ref):
     form = ChangeGroupStatusForm(request.form)
     if form.event:
         case_controller.update_case_group_statuses(short_name, collection_exercise_period, ru_ref, form.event.data)
-        return redirect(url_for('reporting_unit_bp.view_reporting_unit', ru_ref=ru_ref))
+        return redirect(url_for('reporting_unit_bp.view_reporting_unit', ru_ref=ru_ref,
+                        survey=short_name, period=collection_exercise_period))
 
     statuses = case_controller.get_available_case_group_statuses(short_name, collection_exercise_period, ru_ref)
     statuses['available_statuses'] = {event: map_ce_response_status(status) for event, status in statuses['available_statuses'].items()}
