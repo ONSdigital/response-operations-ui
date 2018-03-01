@@ -2,7 +2,7 @@ from json import JSONDecodeError, loads
 import logging
 from pathlib import Path
 
-from flask import Blueprint, make_response, jsonify
+from flask import Blueprint, make_response, jsonify, g
 from structlog import wrap_logger
 
 
@@ -28,4 +28,5 @@ def get_info():
     }
     info = {**_health_check, **info}
 
+    setattr(g, "info", True)
     return make_response(jsonify(info), 200)

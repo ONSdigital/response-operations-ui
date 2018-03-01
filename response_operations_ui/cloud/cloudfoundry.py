@@ -1,4 +1,5 @@
 import cfenv
+from flask import current_app
 
 
 class ONSCloudFoundry(object):
@@ -12,4 +13,4 @@ class ONSCloudFoundry(object):
 
     @property
     def redis(self):
-        return self._cf_env.get_service(name='ras-redis')
+        return self._cf_env.get_service(name=current_app.app_config['REDIS_SERVICE'])
