@@ -57,14 +57,19 @@ def edit_contact_details(ru_ref):
     referrer = request.referrer
     form = EditContactDetailsForm(request.form)
 
-    if form.validate_on_submit():
+    # need to finish/ tidy up logic errors currently but talks to backstage
+    if request.method == 'POST' and form.validate:
         edit_details_data = {
                 "first_name": request.form.get('first_name'),
                 "last_name": request.form.get('last_name'),
                 "email": request.form.get('email'),
                 "telephone": request.form.get('telephone')
             }
-        response_json = edit_contact_details_controller.edit_contact_details(edit_details_data)
+        edit_contact_details_controller.edit_contact_details(edit_details_data)
+
+    else:
+        logger.info('Error submitting respondent details')
+        return render_template('reporting-unit.html', form=form)
 
     return render_template('edit-contact-details.html', ru_ref=ru_ref, first_name=first_name, last_name=last_name,
                            email=email, telephone=telephone, referrer=referrer, form=form)
