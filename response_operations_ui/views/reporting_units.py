@@ -4,8 +4,8 @@ from flask import Blueprint, render_template, request
 from flask_login import login_required
 from structlog import wrap_logger
 
-from response_operations_ui.controllers import reporting_units_controllers
-from response_operations_ui.forms import SearchForm, EditContactDetailsForm
+from response_operations_ui.controllers import edit_contact_details_controller, reporting_units_controllers
+from response_operations_ui.forms import EditContactDetailsForm, SearchForm
 
 logger = wrap_logger(logging.getLogger(__name__))
 
@@ -59,8 +59,12 @@ def edit_contact_details(ru_ref):
 
     if form.validate_on_submit():
         edit_details_data = {
-                "first_name": request.form.get()
+                "first_name": request.form.get('first_name'),
+                "last_name": request.form.get('last_name'),
+                "email": request.form.get('email'),
+                "telephone": request.form.get('telephone')
             }
+        response_json = edit_contact_details_controller.edit_contact_details(edit_details_data)
 
     return render_template('edit-contact-details.html', ru_ref=ru_ref, first_name=first_name, last_name=last_name,
                            email=email, telephone=telephone, referrer=referrer, form=form)

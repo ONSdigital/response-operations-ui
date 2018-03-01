@@ -51,7 +51,6 @@
                         {{ last_name }}
                       </span>
                     </label>
-                    <!--<input class="input input&#45;&#45;text" value="{{ last_name }}" type="text" id="lastName" name="lastName" required maxlength="254" />-->
                   {{ form.last_name(value=last_name, class_="input input--text", id='lastName', required=required, max=254) }}
                 </div>
 
@@ -63,7 +62,6 @@
                         {{ first_name }}
                       </span>
                     </label>
-                    <!--<input class="input input&#45;&#45;text" value="{{ first_name }}" type="text" id="firstName" name="firstName" required maxlength="254"/>-->
                   {{ form.first_name(value=first_name, class_="input input--text", id='firstName', required=required, max=254) }}
                 </div>
 
@@ -76,7 +74,6 @@
                       </span>
                       <span class="label__description pluto">ONS will send a verification email to a new address</span>
                     </label>
-                    <!--<input class="input input&#45;&#45;text" value="{{ email }}" type="email" id="email" name="emailAddress" required maxlength="254" />-->
                   {{ form.email(value=email, class_="input input--text", id='email', required=required, maxlength=254) }}
                 </div>
 
@@ -88,7 +85,6 @@
                         {{ telephone }}
                       </span>
                     </label>
-                    <!--<input class="input input&#45;&#45;text" value="{{ telephone }}" type="tel" id="telephone" name="telephoneNumber" required maxlength=""/>-->
                   {{ form.telephone(value=first_name, class_="input input--text", id='telephone', required=required, max=254) }}
                 </div>
 
