@@ -11,7 +11,7 @@ class Config(object):
     BACKSTAGE_API_URL = os.getenv('BACKSTAGE_API_URL')
     SESSION_TYPE = "redis"
     PERMANENT_SESSION_LIFETIME = os.getenv('PERMANENT_SESSION_LIFETIME', 43200)
-    REDIS_SERVICE = os.getenv('REDIS_SERVICE', "res-ops-redis")
+    REDIS_SERVICE = os.getenv('REDIS_SERVICE')
     REDIS_HOST = os.getenv('REDIS_HOST')
     REDIS_PORT = os.getenv('REDIS_PORT')
     REDIS_DB = os.getenv('REDIS_DB', 0)
