@@ -2,7 +2,7 @@ import os
 import redis
 import logging
 
-from flask import Flask, session, g
+from flask import Flask
 from flask_assets import Bundle, Environment
 from flask_login import LoginManager
 from flask_session import Session
