@@ -28,13 +28,15 @@ def sign_in():
 
         response_json = sign_in_controller.sign_in(sign_in_data)
 
-        if 'token' in response_json:
-            user = User(response_json.get('user_id'))
+        try:
             # store the token in the session (it's server side and stored in redis)
             session['token'] = response_json['token']
+            user = User(response_json.get('user_id'))
             login_user(user)
             if 'next' in session:
                 return redirect(session['next'])
             return redirect(url_for('home_bp.home'))
+        except KeyError:
+            logger.exception("Token missing from authentication server response")
 
     return render_template('sign_in.html', form=form)
