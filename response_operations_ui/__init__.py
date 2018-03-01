@@ -58,15 +58,5 @@ Session(app)
 def user_loader(user_id):
     return User(user_id)
 
-
-@app.after_request
-def clear_session_if_info_endpoint(response):
-    # the info endpoint will be hit by CF to confirm app status
-    # we don't want lots of sessions in REDIS for this so clear
-    # the session after each request
-    if getattr(g, 'info', None):
-        session.clear()
-    return response
-
 import response_operations_ui.views  # NOQA # pylint: disable=wrong-import-position
 import response_operations_ui.error_handlers  # NOQA # pylint: disable=wrong-import-position

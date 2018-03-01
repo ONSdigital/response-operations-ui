@@ -2,7 +2,7 @@ from json import JSONDecodeError, loads
 import logging
 from pathlib import Path
 
-from flask import Blueprint, make_response, jsonify, g
+from flask import Blueprint, make_response, jsonify, session
 from structlog import wrap_logger
 
 
@@ -28,5 +28,13 @@ def get_info():
     }
     info = {**_health_check, **info}
 
-    setattr(g, "info", True)
     return make_response(jsonify(info), 200)
+
+
+@info_bp.after_request
+def clear_session(response):
+    # the info endpoint will be hit by CF to confirm app status
+    # we don't want lots of sessions in REDIS for this so clear
+    # the session after each request
+    session.clear()
+    return response
