@@ -127,6 +127,14 @@ def _refine(message):
         'business_name': message.get('@ru_id').get('name'),
         'subject': message.get('subject'),
         'from': message.get('msg_from'),
-        'to': message.get('@msg_to')[0].get('firstName') + ' ' + message.get('@msg_to')[0].get('lastName'),
+        'to': _get_name_from_message(message),
         'sent_date': message.get('sent_date').split(".")[0]
     }
+
+
+def _get_name_from_message(message):
+    try:
+        name = message.get('@msg_to')[0].get('firstName') + ' ' + message.get('@msg_to')[0].get('lastName')
+    except IndexError:
+        name = message.get('msg_to')[0]
+    return name
