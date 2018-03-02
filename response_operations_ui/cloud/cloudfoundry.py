@@ -10,6 +10,5 @@ class ONSCloudFoundry(object):
     def __bool__(self):
         return True if self._cf_env.app else False
 
-    @property
-    def redis(self):
-        return self._cf_env.get_service(name=current_app.app_config['REDIS_SERVICE'])
+    def redis(self, service_name):
+        return self._cf_env.get_service(name=service_name)
