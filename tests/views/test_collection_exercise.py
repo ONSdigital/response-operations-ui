@@ -287,3 +287,13 @@ class TestCollectionExercise(unittest.TestCase):
 
         self.assertEqual(response.status_code, 200)
         self.assertIn('Processing collection exercise'.encode(), response.data)
+
+    @requests_mock.mock()
+    def test_failed_execution(self, mock_request):
+        collection_exercise_details['collection_exercise']['state'] = 'FAILEDVALIDATION'
+        mock_request.get(url_get_collection_exercise, json=collection_exercise_details)
+
+        response = self.app.get('/surveys/test/000000')
+
+        self.assertEqual(response.status_code, 200)
+        self.assertIn('Error processing collection exercise. Please try again.'.encode(), response.data)
