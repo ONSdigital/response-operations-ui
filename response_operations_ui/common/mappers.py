@@ -22,12 +22,12 @@ def map_collection_exercise_state(ce_state):
     return {
         'CREATED': 'Created',
         'SCHEDULED': 'Scheduled',
-        'READY_FOR_REVIEW': 'Ready for Review',
-        'FAILEDVALIDATION': 'Ready for Review',
-        'EXECUTION_STARTED': 'Setting Ready for Live',
-        'VALIDATED': 'Setting Ready for Live',
-        'EXECUTED': 'Setting Ready for Live',
-        'READY_FOR_LIVE': 'Ready for Live',
+        'READY_FOR_REVIEW': 'Ready for review',
+        'FAILEDVALIDATION': 'Ready for review',
+        'EXECUTION_STARTED': 'Setting ready for live',
+        'VALIDATED': 'Setting ready for live',
+        'EXECUTED': 'Setting ready for live',
+        'READY_FOR_LIVE': 'Ready for live',
         'LIVE': 'Live',
     }.get(ce_state, ce_state)
 
