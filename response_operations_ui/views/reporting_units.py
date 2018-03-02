@@ -47,9 +47,9 @@ def view_reporting_unit(ru_ref):
                            breadcrumbs=breadcrumbs)
 
 
-@reporting_unit_bp.route('/<ru_ref>/edit-contact-details', methods=['GET', 'POST'])
+@reporting_unit_bp.route('/<ru_ref>/edit-contact-details', methods=['GET'])
 @login_required
-def edit_contact_details(ru_ref):
+def view_edit_contact_details(ru_ref):
     first_name = request.form.get('respondent-first-name')
     last_name = request.form.get('respondent-last-name')
     email = request.form.get('respondent-email')
@@ -57,22 +57,30 @@ def edit_contact_details(ru_ref):
     referrer = request.referrer
     form = EditContactDetailsForm(request.form)
 
+    return render_template('edit-contact-details.html', ru_ref=ru_ref, first_name=first_name, last_name=last_name,
+                           email=email, telephone=telephone, referrer=referrer, form=form)
+
+
+@reporting_unit_bp.route('/<ru_ref>/edit-contact-details', methods=['POST'])
+@login_required
+def edit_contact_details(ru_ref):
+    form = EditContactDetailsForm(request.form)
+
     # need to finish/ tidy up logic errors currently but talks to backstage
-    if request.method == 'POST' and form.validate:
+    if form.validate:
         edit_details_data = {
-                "first_name": request.form.get('first_name'),
-                "last_name": request.form.get('last_name'),
-                "email": request.form.get('email'),
-                "telephone": request.form.get('telephone')
-            }
-        edit_contact_details_controller.edit_contact_details(edit_details_data)
+              "first_name": request.form.get('first_name'),
+              "last_name": request.form.get('last_name'),
+              "email": request.form.get('email'),
+              "telephone": request.form.get('telephone')
+          }
+        # edit_contact_details_controller.edit_contact_details(edit_details_data)
 
     else:
         logger.info('Error submitting respondent details')
         return render_template('reporting-unit.html', form=form)
 
-    return render_template('edit-contact-details.html', ru_ref=ru_ref, first_name=first_name, last_name=last_name,
-                           email=email, telephone=telephone, referrer=referrer, form=form)
+    return render_template('reporting-unit.html')
 
 
 @reporting_unit_bp.route('/', methods=['GET', 'POST'])

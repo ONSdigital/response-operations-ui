@@ -51,7 +51,7 @@
                         {{ last_name }}
                       </span>
                     </label>
-                  {{ form.last_name(value=last_name, class_="input input--text", id='lastName', required=required, max=254) }}
+                  {{ form.last_name(value=last_name, class_="input input--text", id='lastName', required=required, maxlength=254) }}
                 </div>
 
                 <div class="field u-mb-l">
@@ -62,7 +62,7 @@
                         {{ first_name }}
                       </span>
                     </label>
-                  {{ form.first_name(value=first_name, class_="input input--text", id='firstName', required=required, max=254) }}
+                  {{ form.first_name(value=first_name, class_="input input--text", id='firstName', required=required, maxlength=254) }}
                 </div>
 
                 <div class="field u-mb-l">
@@ -74,7 +74,7 @@
                       </span>
                       <span class="label__description pluto">ONS will send a verification email to a new address</span>
                     </label>
-                  {{ form.email(value=email, class_="input input--text", id='email', required=required, maxlength=254) }}
+                  {{ form.email(value=email, class_="input input--text", id='email', required=required, maxlength=254, type="email") }}
                 </div>
 
                 <div class="field u-mb-m">
@@ -85,7 +85,7 @@
                         {{ telephone }}
                       </span>
                     </label>
-                  {{ form.telephone(value=first_name, class_="input input--text", id='telephone', required=required, max=254) }}
+                  {{ form.telephone(value=telephone, class_="input input--text", id='telephone', required=required, maxlength=254) }}
                 </div>
 
                 <button class="btn btn--primary u-mt-s" id="save-btn">Save changes</button>
