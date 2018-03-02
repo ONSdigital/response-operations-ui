@@ -2,7 +2,7 @@ import json
 import logging
 
 from flask import Blueprint, flash, g, render_template, request, redirect, url_for
-from flask_login import login_required
+from flask_login import login_required, current_user
 from structlog import wrap_logger
 
 from response_operations_ui.controllers import message_controllers
@@ -23,9 +23,7 @@ def create_message():
     if "create-message" in request.form:
         form = _populate_hidden_form_fields_from_post(form, request.form)
         form = _populate_form_details_from_hidden_fields(form)
-
     elif form.validate_on_submit():
-
         # Keep the message subject and body
         g.form_subject_data = form.subject.data
         g.form_body_data = form.body.data
@@ -65,8 +63,7 @@ def _repopulate_form_with_submitted_data(form):
 
 def _get_message_json(form):
     return json.dumps({
-        # TODO remove BRES soon you get the information from the UUA
-        'msg_from': "BRES",
+        'msg_from': current_user.id,
         'msg_to': [form.hidden_to_uuid.data],
         'subject': form.subject.data,
         'body': form.body.data,
