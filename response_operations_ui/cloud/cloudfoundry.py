@@ -8,7 +8,7 @@ class ONSCloudFoundry(object):
         self._cf_env = cfenv.AppEnv()
 
     def __bool__(self):
-        return self._cf_env.app
+        return True if self._cf_env.app else False
 
     @property
     def redis(self):

@@ -39,7 +39,7 @@ login_manager.login_view = "sign_in_bp.sign_in"
 
 if app.config['SESSION_TYPE'] == 'redis':
     # If deploying in cloudfoundry set config to use cf redis instance
-    if cf.detected:
+    if cf:
         logger.info('Cloudfoundry detected, setting service configurations')
         app.config['REDIS_HOST'] = cf.redis.credentials['host']
         app.config['REDIS_PORT'] = cf.redis.credentials['port']
