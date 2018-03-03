@@ -11,7 +11,7 @@ from response_operations_ui.cloud.cloudfoundry import ONSCloudFoundry
 from response_operations_ui.logger_config import logger_initial_config
 from response_operations_ui.user import User
 
-cf = ONSCloudFoundry()
+
 
 app = Flask(__name__)
 
@@ -38,11 +38,14 @@ login_manager.init_app(app)
 login_manager.login_view = "sign_in_bp.sign_in"
 
 if app.config['SESSION_TYPE'] == 'redis':
+    cf = ONSCloudFoundry()
     # If deploying in cloudfoundry set config to use cf redis instance
     if cf:
+        redis_service_name = app.config['REDIS_SERVICE']
         logger.info('Cloudfoundry detected, setting service configurations')
-        app.config['REDIS_HOST'] = cf.redis.credentials['host']
-        app.config['REDIS_PORT'] = cf.redis.credentials['port']
+        redis_service = cf.redis(redis_service_name)
+        app.config['REDIS_HOST'] = redis_service.credentials['host']
+        app.config['REDIS_PORT'] = redis_service.credentials['port']
 
     redis = redis.StrictRedis(host=app.config['REDIS_HOST'],
                               port=app.config['REDIS_PORT'],
