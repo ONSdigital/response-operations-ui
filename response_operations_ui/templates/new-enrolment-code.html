@@ -1,0 +1,53 @@
+{% extends "layouts/spoke.html" %}
+{% block page_title %}New enrolment code for {{trading_as}} ({{ru_ref}}) for survey {{survey_ref}} {{survey_name}}{% endblock %}
+{% block main %}
+  <div role="main" id="main" class="page__main">
+    <div class="spoke__header">
+      <div class="spoke__header__title">
+        <h1 class="jupiter">New enrolment code</h1>
+      </div>
+    </div>
+
+    <div class="spoke__body">
+      <dl class="description-list description-list-8">
+        <dt class="">
+          Reference:
+        </dt>
+        <dd class="">
+          {{ru_ref}}
+        </dd>
+        <dt class="">
+          Trading as:
+        </dt>
+        <dd class="">
+          {{trading_as}}
+        </dd>
+        <dt class="">
+          Survey:
+        </dt>
+        <dd class="">
+          {{survey_ref}} {{survey_name}}
+        </dd>
+      </dl>
+
+      <div class="u-mt-l u-mb-m">
+        <div class="mars">New enrolment code:</div>
+        <div id="IAC" class="saturn u-mt-s u-mb-s">{{case.iac}}</div>
+        <div id="copyEnrolmentCode" class="mars">
+          You might want to make a note of this code before continuing
+        </div>
+        <div id="confirmCopy">
+
+        </div>
+      </div>
+
+      <form action="/reporting-units/{{ru_ref}}">
+        <input type="hidden" name="s" value="073" />
+        <button class="btn btn--primary">Ok</button>
+      </form>
+    </div>
+  </div>
+{% endblock %}
+
+
+
