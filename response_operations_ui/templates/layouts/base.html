@@ -20,6 +20,7 @@
     <link href="/static/images/favicon.ico" rel="Shortcut Icon" />
   </head>
 
+  {%- block body %}
   <body style="position: relative; height: auto; min-height: 100%;">
     <div class="page account">
       <div class="page__content">
@@ -35,5 +36,6 @@
     </div>
     {% include 'partials/footer.html' %}
   </body>
+  {% endblock body -%}
 
 </html>

@@ -2,6 +2,7 @@
 {% block page_title %}{{ru.name}} | Reporting units | Survey Data Collection{% endblock %}
 
 {% block main %}
+{% include 'partials/info-box.html' %}
 <h1 id="RU_NAME" class="jupiter">{{ ru.name }}</h1>
 
   <dl class="item-headlines">
@@ -16,7 +17,7 @@
   <h2 class="saturn">Surveys</h2>
 
   {% for survey in surveys %}
-  <div class="ru-survey">
+  <div class="ru-survey" name="associated-surveys">
     <h3 name="survey-titles" class="saturn">{{ survey.surveyRef }} {{ survey.shortName }}</h3>
 
     <div class="ru-survey-ces">
@@ -54,6 +55,9 @@
             </td>
             <td name="tbl-ce-status" class="table--cell">
               {{ ce.responseStatus }}
+              {% if ce.statusChangeable %}
+              &nbsp;<a href="{{ url_for('case_bp.get_response_statuses', ru_ref=ru.sampleUnitRef, survey=survey.shortName, period=ce.exerciseRef) }}">Change</a>
+              {% endif %}
             </td>
           </tr>
           {% endfor %}
@@ -66,7 +70,7 @@
 
       <h4 class="neptune">Respondents</h4>
 
-      <div class="ru-survey-enrolment-code u-pb-s">
+      <div class="ru-survey-enrolment-code u-pb-s" name="enrolment-code">
         {% if survey.activeIacCode %}
         Unused enrolment code: {{survey.activeIacCode}}
         {% endif %}
