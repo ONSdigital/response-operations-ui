@@ -49,13 +49,9 @@ def view_reporting_unit(ru_ref):
 
 @reporting_unit_bp.route('/<ru_ref>/edit-contact-details/<respondent_id>', methods=['GET'])
 @login_required
-def view_edit_contact_details(ru_ref, respondent_id):
+def view_contact_details(ru_ref, respondent_id):
     respondent_details = edit_contact_details_controller.get_contact_details(respondent_id)
 
-    # first_name = details.get("firstName")
-    # last_name = details.get("lastName")
-    # email = details.get("emailAddress")
-    # telephone = details.get("telephone")
     referrer = request.referrer
     form = EditContactDetailsForm()
 
@@ -78,7 +74,7 @@ def edit_contact_details(ru_ref):
 
     else:
         logger.info('Error submitting respondent details')
-        return render_template('reporting-unit.html', form=form)
+        return render_template('edit-contact-details.html', form=form)
 
     return render_template('reporting-unit.html')
 

@@ -41,7 +41,7 @@
 
               <div class="spoke__body">
 
-                <form action="index-changed.html" class="u-mt-s">
+                <form action="{{ url_for('reporting_unit_bp.edit_contact_details', ru_ref=ru_ref) }}" method="post">
 
                 <div class="field u-mb-l">
                     <label class="label" for="lastName">
@@ -89,12 +89,13 @@
                 </div>
 
                 <button class="btn btn--primary u-mt-s" id="save-btn">Save changes</button>
+                </form>
 
                 <div>
                   <a id="cancel-btn" href="{{ referrer }}">Cancel</a>
                 </div>
 
-                </form>
+
               </div>
             </div>
           </div>
