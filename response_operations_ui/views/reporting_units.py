@@ -50,16 +50,16 @@ def view_reporting_unit(ru_ref):
 @reporting_unit_bp.route('/<ru_ref>/edit-contact-details/<respondent_id>', methods=['GET'])
 @login_required
 def view_edit_contact_details(ru_ref, respondent_id):
+    respondent_details = edit_contact_details_controller.get_contact_details(respondent_id)
 
-    first_name = request.form.get('respondent-first-name')
-    last_name = request.form.get('respondent-last-name')
-    email = request.form.get('respondent-email')
-    telephone = request.form.get('respondent-telephone')
+    # first_name = details.get("firstName")
+    # last_name = details.get("lastName")
+    # email = details.get("emailAddress")
+    # telephone = details.get("telephone")
     referrer = request.referrer
-    form = EditContactDetailsForm(request.form)
+    form = EditContactDetailsForm()
 
-    return render_template('edit-contact-details.html', ru_ref=ru_ref, first_name=first_name, last_name=last_name,
-                           email=email, telephone=telephone, referrer=referrer, form=form)
+    return render_template('edit-contact-details.html', ru_ref=ru_ref, respondent_details=respondent_details, referrer=referrer, form=form)
 
 
 @reporting_unit_bp.route('/<ru_ref>/edit-contact-details', methods=['POST'])

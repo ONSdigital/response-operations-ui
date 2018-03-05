@@ -41,17 +41,17 @@
 
               <div class="spoke__body">
 
-                <form action="edit-contact-details.html" class="u-mt-s">
+                <form action="index-changed.html" class="u-mt-s">
 
                 <div class="field u-mb-l">
                     <label class="label" for="lastName">
                       Last name
                       <span class="secondary-info current-value">
                         <span class="u-vh">Current value: </span>
-                        {{ last_name }}
+                        {{ respondent_details.lastName }}
                       </span>
                     </label>
-                  {{ form.last_name(value=last_name, class_="input input--text", id='lastName', required=required, maxlength=254) }}
+                  {{ form.last_name(value=respondent_details.lastName, class_="input input--text", id='lastName', required=required, maxlength=254) }}
                 </div>
 
                 <div class="field u-mb-l">
@@ -59,10 +59,10 @@
                       First name
                       <span class="secondary-info current-value">
                         <span class="u-vh">Current value: </span>
-                        {{ first_name }}
+                        {{ respondent_details.firstName }}
                       </span>
                     </label>
-                  {{ form.first_name(value=first_name, class_="input input--text", id='firstName', required=required, maxlength=254) }}
+                  {{ form.first_name(value=respondent_details.firstName, class_="input input--text", id='firstName', required=required, maxlength=254) }}
                 </div>
 
                 <div class="field u-mb-l">
@@ -70,11 +70,11 @@
                       Email address
                       <span class="secondary-info current-value">
                         <span class="u-vh">Current value: </span>
-                        {{ email }}
+                        {{ respondent_details.emailAddress }}
                       </span>
                       <span class="label__description pluto">ONS will send a verification email to a new address</span>
                     </label>
-                  {{ form.email(value=email, class_="input input--text", id='email', required=required, maxlength=254, type="email") }}
+                  {{ form.email(value=respondent_details.emailAddress, class_="input input--text", id='email', required=required, maxlength=254, type="email") }}
                 </div>
 
                 <div class="field u-mb-m">
@@ -82,13 +82,13 @@
                       Phone number
                       <span class="secondary-info current-value">
                         <span class="u-vh">Current value: </span>
-                        {{ telephone }}
+                        {{ respondent_details.telephone }}
                       </span>
                     </label>
-                  {{ form.telephone(value=telephone, class_="input input--text", id='telephone', required=required, maxlength=254) }}
+                  {{ form.telephone(value=respondent_details.telephone, class_="input input--text", id='telephone', required=required, maxlength=254) }}
                 </div>
 
-                <button type="submit" class="btn btn--primary u-mt-s" id="save-btn">Save changes</button>
+                <button class="btn btn--primary u-mt-s" id="save-btn">Save changes</button>
 
                 <div>
                   <a id="cancel-btn" href="{{ referrer }}">Cancel</a>
