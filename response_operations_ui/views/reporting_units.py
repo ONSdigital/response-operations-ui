@@ -47,9 +47,10 @@ def view_reporting_unit(ru_ref):
                            breadcrumbs=breadcrumbs)
 
 
-@reporting_unit_bp.route('/<ru_ref>/edit-contact-details', methods=['GET'])
+@reporting_unit_bp.route('/<ru_ref>/edit-contact-details/<respondent_id>', methods=['GET'])
 @login_required
-def view_edit_contact_details(ru_ref):
+def view_edit_contact_details(ru_ref, respondent_id):
+
     first_name = request.form.get('respondent-first-name')
     last_name = request.form.get('respondent-last-name')
     email = request.form.get('respondent-email')
@@ -66,7 +67,6 @@ def view_edit_contact_details(ru_ref):
 def edit_contact_details(ru_ref):
     form = EditContactDetailsForm(request.form)
 
-    # need to finish/ tidy up logic errors currently but talks to backstage
     if form.validate:
         edit_details_data = {
               "first_name": request.form.get('first_name'),
@@ -74,7 +74,7 @@ def edit_contact_details(ru_ref):
               "email": request.form.get('email'),
               "telephone": request.form.get('telephone')
           }
-        # edit_contact_details_controller.edit_contact_details(edit_details_data)
+        edit_contact_details_controller.edit_contact_details(edit_details_data)
 
     else:
         logger.info('Error submitting respondent details')

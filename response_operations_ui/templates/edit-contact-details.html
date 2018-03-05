@@ -41,7 +41,7 @@
 
               <div class="spoke__body">
 
-                <form action="index-changed.html" class="u-mt-s">
+                <form action="edit-contact-details.html" class="u-mt-s">
 
                 <div class="field u-mb-l">
                     <label class="label" for="lastName">
@@ -88,7 +88,7 @@
                   {{ form.telephone(value=telephone, class_="input input--text", id='telephone', required=required, maxlength=254) }}
                 </div>
 
-                <button class="btn btn--primary u-mt-s" id="save-btn">Save changes</button>
+                <button type="submit" class="btn btn--primary u-mt-s" id="save-btn">Save changes</button>
 
                 <div>
                   <a id="cancel-btn" href="{{ referrer }}">Cancel</a>

@@ -26,3 +26,6 @@ def edit_contact_details(edit_details_data):
 
     logger.debug('Successfully changed contact details')
     return response.json()
+
+def get_contact_details(respondent_id):
+    logger.debug('Retrieving contect details by id', id=respondent_id)
