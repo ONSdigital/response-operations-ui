@@ -10,12 +10,12 @@ env:
   - APP_SETTINGS=TestingConfig
 
 install:
-  - pip install pipenv==8.3.2
+  - pip install pipenv
   - pipenv install --dev --deploy
 
 script:
-  - pipenv run python run_tests.py
   - pipenv check --style . --max-line-length 120
+  - pipenv run python run_tests.py
 
 after_success:
   - pipenv run codecov
