@@ -17,7 +17,7 @@
   <h2 class="saturn">Surveys</h2>
 
   {% for survey in surveys %}
-  <div class="ru-survey">
+  <div class="ru-survey" name="associated-surveys">
     <h3 name="survey-titles" class="saturn">{{ survey.surveyRef }} {{ survey.shortName }}</h3>
 
     <div class="ru-survey-ces">
@@ -70,7 +70,7 @@
 
       <h4 class="neptune">Respondents</h4>
 
-      <div class="ru-survey-enrolment-code u-pb-s">
+      <div class="ru-survey-enrolment-code u-pb-s" name="enrolment-code">
         {% if survey.activeIacCode %}
         Unused enrolment code: {{survey.activeIacCode}}
         {% endif %}
