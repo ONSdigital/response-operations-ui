@@ -82,7 +82,3 @@ function checkForChange(){
     }
 
 }
-
-$(dataPanels);
-$(checkForChange);
-$(openPanel);

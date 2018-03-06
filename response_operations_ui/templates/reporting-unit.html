@@ -1,4 +1,4 @@
-<link rel="stylesheet" href="../../../../../Dropbox/Prototype-SDC-Back-Stage-Beta (1)/css/components/data-panel.css">{% extends "layouts/base.html" %}
+{% extends "layouts/base.html" %}
 {% block page_title %}{{ru.name}} | Reporting units | Survey Data Collection{% endblock %}
 
 {% block main %}
@@ -18,7 +18,7 @@
 
   <section class="grid__col col-12@l ru-surveys">
     {% for survey in surveys %}
-    <div class="ru-survey data-panel" name="associated-surveys">
+    <div class="ru-survey data-panel" id="survey-{{survey.shortName}}" name="associated-surveys">
       <h3 name="survey-titles" class="saturn data-panel-header">{{ survey.surveyRef }} {{ survey.shortName }}</h3>
 
       <div class="data-panel-body" style="display: none">
@@ -65,17 +65,21 @@
               {% endfor %}
             </tbody>
           </table>
-
         </div>
 
         <div class="ru-survey-respondents u-pt-s">
-
           <h4 class="neptune">Respondents</h4>
 
-          <div class="ru-survey-enrolment-code u-pb-s">
+          <div class="ru-survey-enrolment-code u-pb-s" name="enrolment-code">
+            {% if survey.activeIacCode %}
+            Unused enrolment code:
+            <code class="mars" id="unused-enrolment-code-{{survey.shortName}}">{{survey.activeIacCode}}</code>
+            {% endif %}
+            <br/>
             <a href="{{ url_for('reporting_unit_bp.generate_new_enrolment_code',
                                 collection_exercise_id=survey.collection_exercises[-1]['id'], ru_ref=ru.sampleUnitRef,
-                                trading_as=ru.name, survey_ref=survey.surveyRef, survey_name=survey.shortName) }}">
+                                trading_as=ru.name, survey_ref=survey.surveyRef, survey_name=survey.shortName) }}"
+               id="generate-new-code">
               Generate new enrolment code
             </a>
           </div>
@@ -149,4 +153,9 @@
     </div>
     {% endfor %}
   </section>
+  <script>
+    $(dataPanels);
+    $(checkForChange);
+    $(openPanel);
+  </script>
 {% endblock %}
