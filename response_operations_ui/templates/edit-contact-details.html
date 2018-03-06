@@ -46,6 +46,7 @@
               <div class="spoke__body">
 
                 <form action="{{ url_for('reporting_unit_bp.edit_contact_details', ru_ref=ru_ref, respondent_id=respondent_details.id) }}" method="post">
+                {{ form.csrf_token }}
                 {% if error %}
                 <div class="panel panel--simple panel--error u-mb-l">
                   <div class="panel__body" id="save-error">

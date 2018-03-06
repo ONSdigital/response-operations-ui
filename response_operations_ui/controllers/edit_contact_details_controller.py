@@ -39,6 +39,6 @@ def get_contact_details(respondent_id):
     if response.status_code != 200:
         raise ApiError(response)
 
-    logger.debug('Succesfully retrieved contact details', id=respondent_id)
+    logger.debug('Successfully retrieved contact details', id=respondent_id)
 
     return response.json().get("respondent_party")
