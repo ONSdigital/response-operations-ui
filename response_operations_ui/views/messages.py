@@ -126,7 +126,7 @@ def _refine(message):
         'ru_ref': message.get('ru_id'),
         'business_name': message.get('@ru_id').get('name'),
         'subject': message.get('subject'),
-        'from':_get_from_name(message),
+        'from': _get_from_name(message),
         'to': _get_to_name(message),
         'sent_date': message.get('sent_date').split(".")[0]
     }
