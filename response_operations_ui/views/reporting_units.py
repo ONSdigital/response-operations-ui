@@ -76,7 +76,7 @@ def edit_contact_details(ru_ref, respondent_id):
     else:
         respondent_details = edit_contact_details_controller.get_contact_details(respondent_id)
         logger.info('Error submitting respondent details', respondent_id=respondent_id)
-        return render_template('edit-contact-details.html', form=form, error=True, respondent_details=respondent_details)
+        return render_template('edit-contact-details.html', ru_ref=ru_ref, form=form, error=True, respondent_details=respondent_details)
 
     return render_template('reporting-units.html', edit_details=True)
 
