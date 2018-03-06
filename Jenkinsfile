@@ -69,6 +69,8 @@ pipeline {
             steps {
                 sh "cf login -a https://${env.CLOUDFOUNDRY_API} --skip-ssl-validation -u ${CF_USER_USR} -p ${CF_USER_PSW} -o rmras -s ci"
                 sh 'cf push --no-start response-operations-ui-ci'
+                sh 'cf set-env response-operations-ui-test ONS_ENV ci'
+                sh 'cf set-env response-operations-ui-dev REDIS_SERVICE ras-redis'
                 sh "cf set-env response-operations-ui-ci BACKSTAGE_API_URL http://ras-backstage-service-ci.${env.CF_DOMAIN}:80/backstage-api"
                 sh 'cf start response-operations-ui-ci'
             }
@@ -136,6 +138,7 @@ pipeline {
                 sh "cf login -a https://${env.CLOUDFOUNDRY_API} --skip-ssl-validation -u ${CF_USER_USR} -p ${CF_USER_PSW} -o rmras -s test"
                 sh 'cf push --no-start response-operations-ui-test'
                 sh 'cf set-env response-operations-ui-test ONS_ENV test'
+                sh 'cf set-env response-operations-ui-dev REDIS_SERVICE ras-redis'
                 sh "cf set-env response-operations-ui-test BACKSTAGE_API_URL http://ras-backstage-service-test.${env.CF_DOMAIN}:80/backstage-api"
                 sh 'cf start response-operations-ui-test'
             }
