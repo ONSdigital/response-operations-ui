@@ -56,7 +56,7 @@
           <thead class="table--head">
             <tr class="table--row">
               <th scope="col" class="table--header--cell tbl-messages-RU-Ref">
-                RU_Ref
+                RU Ref
               </th>
               <th scope="col" class="table--header--cell tbl-messages-business">
                 Business name
@@ -85,7 +85,8 @@
                     {{ message.business_name }}
                 </td>
                 <td name="tbl-messages-subject" class="table--cell tbl-messages-subject">
-                    {{ message.subject }}
+                    {{ message }}
+                    <a href="{{ url_for('messages_bp.view_conversation', thread_id=message.thread_id) }}" id="message-link-{{ loop.index }}">{{ message.subject }}</a>
                 </td>
                 <td name="tbl-messages-from" class="table--cell tbl-messages-from">
                     {{ message.from }}

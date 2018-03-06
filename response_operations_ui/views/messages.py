@@ -124,6 +124,7 @@ def view_messages():
 def _refine(message):
     return {
         'ru_ref': message.get('ru_id'),
+        'thread_id': message.get('thread_id'),
         'business_name': message.get('@ru_id').get('name'),
         'subject': message.get('subject'),
         'from': message.get('msg_from'),
@@ -138,3 +139,14 @@ def _get_name_from_message(message):
     except IndexError:
         name = message.get('msg_to')[0]
     return name
+
+
+@messages_bp.route('/threads/<thread_id>', methods=['GET'])
+@login_required
+def view_conversation(thread_id):
+    breadcrumbs = _build_create_message_breadcrumbs()
+
+    conversation = message_controllers.get_conversation(thread_id)
+
+    return render_template("conversation-view.html", breadcrumbs=breadcrumbs, conversation=conversation)
+

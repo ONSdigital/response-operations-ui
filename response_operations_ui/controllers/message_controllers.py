@@ -11,6 +11,19 @@ from response_operations_ui.exceptions.exceptions import ApiError, NoMessagesErr
 logger = wrap_logger(logging.getLogger(__name__))
 
 
+def get_conversation(thread_id):
+    logger.debug("Retrieving conversation")
+
+    url = f'{current_app.config["BACKSTAGE_API_URL"]}/v1/secure-message/threads/{thread_id}'
+
+    response = requests.get(url, headers={'Authorization': _get_jwt()})
+
+    conversation = response.json()
+
+    return conversation
+
+
+
 def get_message_list(params):
     logger.debug("Retrieving Message list")
 

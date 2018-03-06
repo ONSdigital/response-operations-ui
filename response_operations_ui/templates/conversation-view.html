@@ -1,0 +1,13 @@
+{% extends "layouts/base.html" %}
+
+{% block page_title %} Create Message | Survey Data Collection {% endblock %}
+
+{% block main %}
+
+<h1 class="saturn" name="page-messages-title">{{ conversation.get('messages')[0].get('subject') }}</h1>
+    <div class="secure-message--meta venus"><span class="sm-form-meta-label">Survey: </span><span id="survey">{{ conversation.get('messages')[0].get('@msg_to')[0].get('associations')[0].get('enrolments')[0].get('name') }}</span></div>
+    <div class="secure-message--meta venus"><span class="sm-form-meta-label">RU Ref: </span><span id="ruref">    {{ conversation.get('messages')[0].get('@ru_id').get('sampleUnitRef') }}</span></div>
+    <div class="secure-message--meta venus"><span class="sm-form-meta-label">Business: </span><span id="ru">{{ conversation.get('messages')[0].get('@ru_id').get('name') }}</span></div>
+    <div class="secure-message--recipient venus"><span class="sm-form-recipient-label">To: </span><span id="recipient">    {{ conversation.get('messages')[0].get('@msg_to')[0].get('firstName') }}  {{ conversation.get('messages')[0].get('@msg_to')[0].get('lastName') }}</span></div>
+
+{% endblock %}
