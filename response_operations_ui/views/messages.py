@@ -114,7 +114,7 @@ def view_messages():
     }
     breadcrumbs = [{"title": "Messages"}]
     try:
-        messages = message_controllers.get_message_list(params)
+        messages = message_controllers.get_thread_list(params)
         refined_messages = [_refine(msg) for msg in messages]
         return render_template("messages.html", breadcrumbs=breadcrumbs, messages=refined_messages)
     except NoMessagesError:
@@ -123,8 +123,8 @@ def view_messages():
 
 def _refine(message):
     return {
-        'ru_ref': message.get('ru_id'),
-        'business_name': message.get('@ru_id').get('name'),
+        'ru_ref': _get_ru_ref_from_message(message),
+        'business_name': (message.get('@ru_id') or {}).get('name'),
         'subject': message.get('subject'),
         'from': message.get('msg_from'),
         'to': _get_name_from_message(message),
@@ -138,3 +138,11 @@ def _get_name_from_message(message):
     except IndexError:
         name = message.get('msg_to')[0]
     return name
+
+
+def _get_ru_ref_from_message(message):
+    try:
+        ru_ref = message.get('@ru_id').get('sampleUnitRef')
+    except (KeyError, AttributeError):
+        ru_ref = 'unknown'
+    return ru_ref
