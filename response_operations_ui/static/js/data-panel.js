@@ -1,3 +1,16 @@
+function openPanel(){
+
+    var panelToOpen = qs['s'];
+
+    if( panelToOpen != ''){
+      $('#' + panelToOpen + ' .data-panel-header').addClass('active');
+      $('#' + panelToOpen + ' .data-panel-body').css( 'display', 'block' );
+
+      // location.href = '#' + panelToOpen;
+    }
+
+}
+
 function dataPanels(){
 
   var acc = document.getElementsByClassName("data-panel-header");
@@ -23,5 +36,49 @@ function dataPanels(){
       }
     });
   }
+
+}
+
+
+function checkForChange(){
+
+    var whatToChange = qs['change'];
+
+    // this is all very inefficient, but for now...
+
+    if( whatToChange == 'contact'){
+      $('#contact-changed').removeClass('hidden');
+
+      var fullName = qs['firstName'] + ' ' + qs['lastName'];
+      var currentEmail = qs['currentEmail'];
+      var newEmail = qs['email'];
+      var tel = qs['tel'];
+
+      $('#rName').html( fullName );
+      $('#rEmail').html( currentEmail );
+      $('#rTel').html( tel );
+
+      if( currentEmail != newEmail ){
+
+        var dt = new Date();
+
+
+        $('#contact-changed').html('Verification email sent to ' + newEmail );
+        $('#rNewEmail').html( 'Verification email sent<br \/>' + newEmail );
+        // $('#rNewEmail').html( 'Verification email sent + ' + dt + '<br \/>' + newEmail );
+        $('.newEmail').removeClass('hidden');
+      }
+
+
+    }
+
+    if( whatToChange == 'verification-email-sent'){
+      $('#verification-email-sent').removeClass('hidden');
+    }
+
+    if( whatToChange == 'response-status'){
+      $('#response-status-changed').removeClass('hidden');
+      $('#074-201801').html('Completed by phone');
+    }
 
 }
