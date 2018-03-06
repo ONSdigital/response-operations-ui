@@ -26,7 +26,6 @@ def edit_contact_details(edit_details_data):
             raise e
 
     logger.debug('Successfully changed contact details')
-    return response.json()
 
 
 def get_contact_details(respondent_id):
