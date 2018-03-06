@@ -35,13 +35,26 @@
 
               <div class="spoke__header">
 
-              <h1 class="jupiter">Edit contact details</h1>
+                <div class="spoke__header__title">
+
+                  <h1 class="jupiter">Edit contact details</h1>
+
+                </div>
 
               </div>
 
               <div class="spoke__body">
 
-                <form action="{{ url_for('reporting_unit_bp.edit_contact_details', ru_ref=ru_ref) }}" method="post">
+                <form action="{{ url_for('reporting_unit_bp.edit_contact_details', ru_ref=ru_ref, respondent_id=respondent_details.id) }}" method="post">
+                {% if error %}
+                <div class="panel panel--simple panel--error u-mb-l">
+                  <div class="panel__body" id="save-error">
+                    <h2 class="venus">Error saving changes</h2>
+                    <p class="mars">Please try again.</p>
+                  </div>
+                </div>
+
+                {% endif %}
 
                 <div class="field u-mb-l">
                     <label class="label" for="lastName">
@@ -51,7 +64,7 @@
                         {{ respondent_details.lastName }}
                       </span>
                     </label>
-                  {{ form.last_name(value=respondent_details.lastName, class_="input input--text", id='lastName', required=required, maxlength=254) }}
+                  {{ form.last_name(class_="input input--text", id='lastName', required=required, maxlength=254) }}
                 </div>
 
                 <div class="field u-mb-l">
@@ -62,7 +75,7 @@
                         {{ respondent_details.firstName }}
                       </span>
                     </label>
-                  {{ form.first_name(value=respondent_details.firstName, class_="input input--text", id='firstName', required=required, maxlength=254) }}
+                  {{ form.first_name(class_="input input--text", id='firstName', required=required, maxlength=254) }}
                 </div>
 
                 <div class="field u-mb-l">
@@ -74,7 +87,7 @@
                       </span>
                       <span class="label__description pluto">ONS will send a verification email to a new address</span>
                     </label>
-                  {{ form.email(value=respondent_details.emailAddress, class_="input input--text", id='email', required=required, maxlength=254, type="email") }}
+                  {{ form.email(class_="input input--text", id='email', required=required, maxlength=254, type="email") }}
                 </div>
 
                 <div class="field u-mb-m">
@@ -85,7 +98,7 @@
                         {{ respondent_details.telephone }}
                       </span>
                     </label>
-                  {{ form.telephone(value=respondent_details.telephone, class_="input input--text", id='telephone', required=required, maxlength=254) }}
+                  {{ form.telephone(class_="input input--text", id='telephone', required=required, maxlength=254) }}
                 </div>
 
                 <button class="btn btn--primary u-mt-s" id="save-btn">Save changes</button>

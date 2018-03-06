@@ -53,30 +53,32 @@ def view_contact_details(ru_ref, respondent_id):
     respondent_details = edit_contact_details_controller.get_contact_details(respondent_id)
 
     referrer = request.referrer
-    form = EditContactDetailsForm()
+    form = EditContactDetailsForm(form=request.form, default_values=respondent_details)
 
     return render_template('edit-contact-details.html', ru_ref=ru_ref, respondent_details=respondent_details, referrer=referrer, form=form)
 
 
-@reporting_unit_bp.route('/<ru_ref>/edit-contact-details', methods=['POST'])
+@reporting_unit_bp.route('/<ru_ref>/edit-contact-details/<respondent_id>', methods=['POST'])
 @login_required
-def edit_contact_details(ru_ref):
+def edit_contact_details(ru_ref, respondent_id):
     form = EditContactDetailsForm(request.form)
 
-    if form.validate:
+    if form.validate():
         edit_details_data = {
               "first_name": request.form.get('first_name'),
               "last_name": request.form.get('last_name'),
               "email": request.form.get('email'),
-              "telephone": request.form.get('telephone')
+              "telephone": request.form.get('telephone'),
+              "respondent_id": respondent_id
           }
         edit_contact_details_controller.edit_contact_details(edit_details_data)
 
     else:
-        logger.info('Error submitting respondent details')
-        return render_template('edit-contact-details.html', form=form)
+        respondent_details = edit_contact_details_controller.get_contact_details(respondent_id)
+        logger.info('Error submitting respondent details', respondent_id=respondent_id)
+        return render_template('edit-contact-details.html', form=form, error=True, respondent_details=respondent_details)
 
-    return render_template('reporting-unit.html')
+    return render_template('reporting-units.html', edit_details=True)
 
 
 @reporting_unit_bp.route('/', methods=['GET', 'POST'])
