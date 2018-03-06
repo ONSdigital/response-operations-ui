@@ -25,6 +25,7 @@ pipeline {
                 sh "cf login -a https://${env.CLOUDFOUNDRY_API} --skip-ssl-validation -u ${CF_USER_USR} -p ${CF_USER_PSW} -o rmras -s dev"
                 sh 'cf push --no-start response-operations-ui-dev'
                 sh 'cf set-env response-operations-ui-dev ONS_ENV dev'
+                sh 'cf set-env response-operations-ui-dev REDIS_SERVICE ras-redis'
                 sh "cf set-env response-operations-ui-dev BACKSTAGE_API_URL http://ras-backstage-service-dev.${env.CF_DOMAIN}:80/backstage-api"
                 sh 'cf start response-operations-ui-dev'
             }
