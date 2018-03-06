@@ -23,13 +23,13 @@ class TestSignIn(unittest.TestCase):
 
     def test_logout(self):
         response = self.app.get('/logout', follow_redirects=True)
-        self.assertIn(b'You\'ve logged out', response.data)
+        self.assertIn(b'Successfully signed out', response.data)
         self.assertEqual(response.status_code, 200)
         self.assertNotIn(b"Sign out", response.data)
 
     @requests_mock.mock()
     def test_sign_in(self, mock_request):
-        mock_request.post(url_sign_in_data, json={"token": "1234abc"}, status_code=201)
+        mock_request.post(url_sign_in_data, json={"token": "1234abc", "user_id": "test_user"}, status_code=201)
 
         response = self.app.post("/sign-in", follow_redirects=True,
                                  data={"username": "user", "password": "pass"})

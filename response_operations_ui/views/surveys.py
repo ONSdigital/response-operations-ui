@@ -5,7 +5,7 @@ from flask_login import login_required
 from structlog import wrap_logger
 
 from response_operations_ui.controllers import survey_controllers
-
+from response_operations_ui.common.mappers import map_collection_exercise_state
 
 logger = wrap_logger(logging.getLogger(__name__))
 
@@ -34,6 +34,11 @@ def view_survey(short_name):
             "title": f"{survey_details['survey']['surveyRef']} {survey_details['survey']['shortName']}",
         }
     ]
+
+    # Mapping backend states to frontend sates for the user
+    for collection_exercise in survey_details["collection_exercises"]:
+        collection_exercise['state'] = map_collection_exercise_state(collection_exercise['state'])
+
     return render_template('survey.html',
                            survey=survey_details['survey'],
                            collection_exercises=survey_details['collection_exercises'],

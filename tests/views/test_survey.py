@@ -14,6 +14,8 @@ with open('tests/test_data/survey/survey_list.json') as json_data:
 url_get_survey_by_short_name = f'{app.config["BACKSTAGE_API_URL"]}/v1/survey/shortname/bres'
 with open('tests/test_data/survey/survey.json') as json_data:
     survey_info = json.load(json_data)
+with open('tests/test_data/survey/survey_states.json') as json_data:
+    survey_info_states = json.load(json_data)
 
 
 class TestSurvey(unittest.TestCase):
@@ -77,3 +79,14 @@ class TestSurvey(unittest.TestCase):
 
         self.assertEqual(response.status_code, 500)
         self.assertIn("Error 500 - Server error".encode(), response.data)
+
+    @requests_mock.mock()
+    def test_survey_state_mapping(self, mock_request):
+        mock_request.get(url_get_survey_by_short_name, json=survey_info_states)
+
+        response = self.app.get("/surveys/bres")
+        self.assertIn(b'Created', response.data)
+        self.assertIn(b'Scheduled', response.data)
+        self.assertIn(b'Ready for review', response.data)
+        self.assertIn(b'Ready for live', response.data)
+        self.assertIn(b'Live', response.data)

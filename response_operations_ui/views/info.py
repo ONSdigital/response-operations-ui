@@ -2,7 +2,7 @@ from json import JSONDecodeError, loads
 import logging
 from pathlib import Path
 
-from flask import Blueprint, make_response, jsonify
+from flask import Blueprint, make_response, jsonify, session
 from structlog import wrap_logger
 
 
@@ -19,8 +19,8 @@ def get_info():
         with open('git_info') as io:
             try:
                 _health_check = loads(io.read())
-            except JSONDecodeError as e:
-                logger.error('Failed to decode git_info json', exc_info=e)
+            except JSONDecodeError:
+                logger.exception('Failed to decode git_info json')
 
     info = {
         "name": 'response-operations-ui',
@@ -29,3 +29,12 @@ def get_info():
     info = {**_health_check, **info}
 
     return make_response(jsonify(info), 200)
+
+
+@info_bp.after_request
+def clear_session(response):
+    # the info endpoint will be hit by CF to confirm app status
+    # we don't want lots of sessions in REDIS for this so clear
+    # the session after each request
+    session.clear()
+    return response

@@ -8,12 +8,57 @@
     <h1 class="jupiter" name="page-ce-title">{{survey.shortName}} {{ce.exerciseRef}}</h1>
     <ul>
       {% if ci_loaded %}
-        <li id="collection-instrument-success" class="system-feedback__item success">Collection instrument loaded</li>
+        <div class="panel panel--simple panel--success">
+          <div id="collection-instrument-success" class="panel__body">
+            Collection instrument loaded
+          </div>
+        </div>
+      {% endif %}
+      {% if ci_added %}
+        <div class="panel panel--simple panel--success">
+          <div id="collection-instrument-added-success" class="panel__body">
+            Collection instruments added
+          </div>
+        </div>
       {% endif %}
       {% if sample_loaded %}
-        <li id="sample-success" class="system-feedback__item success">Sample successfully loaded</li>
+        <div class="panel panel--simple panel--success">
+          <div id="sample-success" class="panel__body">
+            Sample successfully loaded
+          </div>
+        </div>
+      {% endif %}
+      {% if executed %}
+        <div class="panel panel--simple panel--success">
+          <div id="execution-success" class="panel__body">
+            Collection exercise executed
+          </div>
+        </div>
+      {% endif %}
+      {% if processing %}
+        <div class="panel panel--simple panel--info">
+          <div id="processing-info" class="panel__body">
+            Processing collection exercise – <a id="a-processing-refresh" href="">refresh to see progress</a>
+          </div>
+        </div>
       {% endif %}
     </ul>
+    <dl class="ce-info" id="ce-attributes">
+      <dt class="ce-status__title item-headlines-term ce-status">
+        Status:
+      </dt>
+      <dd class="ce-status__data item-headlines-definition ce-status" id="ce_status">
+        {{ ce.state }}
+      </dd>
+    </dl>
+
+    <div>
+    {% if show_set_live_button %}
+      <form id="form-ready-for-live" action="" class="form" method="post" enctype="multipart/form-data">
+        <button id="btn-ready-for-live" onclick="return confirm('There\'s no going back...')" name="ready-for-live" class="btn btn--primary" type="submit">Set as ready for live</button>
+      </form>
+    {% endif %}
+    </div>
 
   <div class="grid">
     <div class="grid__col col-6@l">
@@ -82,6 +127,28 @@
               </td>
             </tr>
 
+            {% if events.reminder2 %}
+            <tr class="table--row">
+              <td class="table--cell tbl-ce-label">
+                Second reminder
+              </td>
+              <td class="table--cell tbl-ce-value ce-event-date" name="second-reminder-date">
+                {{events.reminder2.day}} <em>{{events.reminder2.date}}</em> {{events.reminder2.time}}
+              </td>
+            </tr>
+            {% endif %}
+
+            {% if events.reminder3 %}
+            <tr class="table--row">
+              <td class="table--cell tbl-ce-label">
+                Third reminder
+              </td>
+              <td class="table--cell tbl-ce-value ce-event-date" name="third-reminder-date">
+                {{events.reminder3.day}} <em>{{events.reminder3.date}}</em> {{events.reminder3.time}}
+              </td>
+            </tr>
+            {% endif %}
+
             <tr class="table--row">
               <td class="table--cell tbl-ce-label">
                 Exercise end
@@ -121,7 +188,7 @@
             </tbody>
           </table>
         <p>Sample loaded: {{sample.ingestDateTime}}</p>
-        {% else %}
+        {% elif not locked %}
           <div class="u-mb-m">
             <form id="form-load-sample"
                   method="post"
@@ -172,7 +239,31 @@
         </div>
         {% endif %}
 
+        {% if not locked %}
         <div class="u-mb-m">
+
+          {% if eq_ci_selectors %}
+          <form id="form-select-ci" action="" class="form" method="post" enctype="multipart/form-data">
+                <div class="u-mb-s">
+                  eQ collection instruments available:
+                </div>
+            <div id="ciSelectErrorPanel" class="{{'panel panel--simple panel--error' if error.section == 'ciSelect' else ''}}">
+              <div id="ciSelectErrorPanelBody" class="{{'panel__body' if error.section == 'ciSelect' else ''}}">
+                <input type="hidden" name="ce_id" value="{{ ce.id }}">
+                {% for ci in eq_ci_selectors %}
+                <div class="field__item js-focusable-box">
+                  <input class="input input--checkbox js-focusable" name="checkbox-answer" value="{{ci.id}}" id="{{ci.id}}" type="checkbox">
+                  <label class="label label--inline venus " for="{{ci.id}}">{{survey.surveyRef}} {{ci.file_name}} eQ </label>
+                </div>
+                {% endfor %}
+                <div>
+                  <button id="btn-add-ci" name="select-ci" class="btn btn--primary unready" type="submit">Add</button>
+                </div>
+              </div>
+            </div>
+
+          </form>
+          {% else %}
           <form id="form-load-ci" action="" class="form" method="post" enctype="multipart/form-data">
             <p>
               Add {{'another' if collection_instruments else 'a'}} collection instrument. Must be XLSX
@@ -188,7 +279,9 @@
             </div>
             <button id="btn-load-ci" name="load-ci" class="btn btn--primary unready">Add CI</button>
           </form>
+          {% endif %}
         </div>
+        {% endif %}
       </section>
     </div>
 
@@ -234,6 +327,39 @@
               <td class="table--cell tbl-ce-" name="survey-title">
                 {{survey.longName}}
               </td>
+            </tr>
+
+            {% if events.ref_period_start %}
+            <tr class="table--row">
+              <td class="table--cell tbl-ce-label">
+                Reference period start date
+              </td>
+              <td class="table--cell tbl-ce-" name="period-start-date">
+                  {{events.ref_period_start.day}} {{events.ref_period_start.date}}
+              </td>
+            </tr>
+            {% endif %}
+
+            {% if events.employment %}
+            <tr class="table--row">
+              <td class="table--cell tbl-ce-label">
+                Employment date
+              </td>
+              <td class="table--cell tbl-ce-" name="employment-date">
+                  {{events.employment.day}} {{events.employment.date}}
+              </td>
+            </tr>
+            {% endif %}
+
+            {% if events.ref_period_end %}
+            <tr class="table--row">
+              <td class="table--cell tbl-ce-label">
+                Reference period end date
+              </td>
+              <td class="table--cell tbl-ce-" name="period-end-date">
+                  {{events.ref_period_end.day}} {{events.ref_period_end.date}}
+              </td>
+            {% endif %}
             </tr>
           </tbody>
         </table>

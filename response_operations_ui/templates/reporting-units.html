@@ -1,0 +1,65 @@
+{% extends "layouts/base.html" %}
+{% block page_title %}Reporting units | Survey Data Collection{% endblock %}
+
+{% block main %}
+</br>
+<div role="main" id="main" class="page__main">
+    <h1 class="jupiter">Reporting units</h1>
+    <div class="grid">
+        <div class="grid__col col-12@l">
+
+            <div class="ru-search">
+
+                <form action="" method="post">
+                    {{ form.csrf_token }}
+
+                    <div class="field u-mb-s">
+                        <label class="label">Type a reference or company name</label>
+                        {{ form.query(size=20, class_="ru-search-box input input--text")}}
+                    </div>
+
+                    <div>
+                        <button id="btn-search-ru" type="submit" class="btn btn--primary">Search</button>
+                    </div>
+                </form>
+
+            </div>
+
+            {% if business_list is not none and business_list|length==0 %}
+            No results found
+            {% endif %}
+
+            {% if business_list %}
+            <div class="u-pt-m">
+
+                <table id="tbl-businesses" class="table__dense" summary="Businesses in the system">
+                    <thead class="table--head">
+                    <tr class="table--row">
+                        <th scope="col" class="table--header--cell">
+                            RU reference
+                        </th>
+                        <th scope="col" class="table--header--cell">
+                            Name
+                        </th>
+                    </tr>
+                    </thead>
+
+                    <tbody>
+                    {% for business in business_list %}
+                    <tr class="table--row table--row__selectable">
+                        <td class="table--cell ">
+                            <a href="/reporting-units/{{ business.ruref }}" name="survey-link-{{ business.ruref }}">{{ business.ruref }}</a>
+                        </td>
+                        <td class="table--cell">
+                            {{ business.name }}
+                        </td>
+                    </tr>
+                    {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %}

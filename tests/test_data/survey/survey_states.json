@@ -1,0 +1,46 @@
+{
+  "collection_exercises": [
+    {
+      "id": "14fb3e68-4dca-46db-bf49-04b84e07e77c",
+      "name": "BRES_2017",
+      "scheduledExecutionDateTime": "2017-09-10T23:00:00.000+0000",
+      "state": "CREATED"
+    },
+    {
+      "id": "14fb3e68-4dca-46db-bf49-04b84e07e77c",
+      "name": "BRES_2017",
+      "scheduledExecutionDateTime": "2017-09-10T23:00:00.000+0000",
+      "state": "SCHEDULED"
+    },
+    {
+      "id": "14fb3e68-4dca-46db-bf49-04b84e07e77c",
+      "name": "BRES_2017",
+      "scheduledExecutionDateTime": "2017-09-10T23:00:00.000+0000",
+      "state": "READY_FOR_REVIEW"
+    },
+    {
+      "id": "14fb3e68-4dca-46db-bf49-04b84e07e77c",
+      "name": "BRES_2017",
+      "scheduledExecutionDateTime": "2017-09-10T23:00:00.000+0000",
+      "state": "EXECUTION_STARTED"
+    },
+    {
+      "id": "14fb3e68-4dca-46db-bf49-04b84e07e77c",
+      "name": "BRES_2017",
+      "scheduledExecutionDateTime": "2017-09-10T23:00:00.000+0000",
+      "state": "READY_FOR_LIVE"
+    },
+    {
+      "id": "14fb3e68-4dca-46db-bf49-04b84e07e77c",
+      "name": "BRES_2017",
+      "scheduledExecutionDateTime": "2017-09-10T23:00:00.000+0000",
+      "state": "LIVE"
+    }
+  ],
+  "survey": {
+    "id": "cb0711c3-0ac8-41d3-ae0e-567e5ea1ef87",
+    "longName": "Business Register and Employment Survey",
+    "shortName": "BRES",
+    "surveyRef": "221"
+  }
+}
