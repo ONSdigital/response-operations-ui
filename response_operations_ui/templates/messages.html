@@ -85,7 +85,7 @@
                     {{ message.business_name }}
                 </td>
                 <td name="tbl-messages-subject" class="table--cell tbl-messages-subject">
-                    <a {{ message.subject }}
+                    <a href="" id="message-link-{{ loop.index }}">{{ message.subject }}</a>
                 </td>
                 <td name="tbl-messages-from" class="table--cell tbl-messages-from">
                     {{ message.from }}

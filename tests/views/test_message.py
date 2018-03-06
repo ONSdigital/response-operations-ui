@@ -8,7 +8,7 @@ from response_operations_ui.controllers.message_controllers import _get_url, sen
 from response_operations_ui.exceptions.exceptions import InternalError
 
 url_sign_in_data = f'{app.config["BACKSTAGE_API_URL"]}/v2/sign-in/'
-get_message_list = f'{app.config["BACKSTAGE_API_URL"]}/v1/secure-message/messages'
+get_threads_list = f'{app.config["BACKSTAGE_API_URL"]}/v1/secure-message/threads'
 with open('tests/test_data/message/messages.json') as json_data:
     message_list = json.load(json_data)
 
@@ -29,7 +29,7 @@ class TestMessage(unittest.TestCase):
 
     @requests_mock.mock()
     def test_Home(self, mock_request):
-        mock_request.get(get_message_list, json=message_list)
+        mock_request.get(get_threads_list, json=message_list)
 
         response = self.app.get("/")
 
@@ -39,7 +39,7 @@ class TestMessage(unittest.TestCase):
     # Test showing that the messages list loads into the website and displays User, business name and subject
     @requests_mock.mock()
     def test_Message_list(self, mock_request):
-        mock_request.get(get_message_list, json=message_list)
+        mock_request.get(get_threads_list, json=message_list)
 
         response = self.app.get("/messages")
         self.assertEqual(response.status_code, 200)
@@ -49,7 +49,7 @@ class TestMessage(unittest.TestCase):
 
     @requests_mock.mock()
     def test_message_list_fail(self, mock_request):
-        mock_request.get(get_message_list, status_code=500)
+        mock_request.get(get_threads_list, status_code=500)
 
         response = self.app.get("/messages", follow_redirects=True)
 
@@ -58,7 +58,7 @@ class TestMessage(unittest.TestCase):
 
     @requests_mock.mock()
     def test_message_list_empty(self, mock_request):
-        mock_request.get(get_message_list, json={"messages": []})
+        mock_request.get(get_threads_list, json={"messages": []})
 
         response = self.app.get("/messages")
 
@@ -74,14 +74,14 @@ class TestMessage(unittest.TestCase):
             with self.assertRaises(KeyError):
                 _get_url()
 
-    json = '''
+    message_json = '''
         {
           "msg_from": "BRES",
           "msg_to": ["f62dfda8-73b0-4e0e-97cf-1b06327a6712"],
           "subject": "TEST SUBJECT",
           "body": "TEST MESSAGE",
           "thread_id": "",
-          "collection_case": "ACollectionCase",
+          "collection_case": "",
           "survey": "BRES2017",
           "ru_id": "c614e64e-d981-4eba-b016-d9822f09a4fb"
         }
@@ -91,7 +91,7 @@ class TestMessage(unittest.TestCase):
     # but instead log the problem and display an empty inbox to the user.
     @requests_mock.mock()
     def test_request_response_malformed(self, mock_request):
-        url = f'{app.config["BACKSTAGE_API_URL"]}/v1/secure-message/messages'
+        url = get_threads_list
         mock_request.get(url, json={})
         response = self.app.get("/messages")
 
@@ -106,7 +106,7 @@ class TestMessage(unittest.TestCase):
             mock_request.post(url)
 
             with self.assertRaises(InternalError):
-                send_message(self.json)
+                send_message(self.message_json)
 
     ru_details = {'create-message': 'create-message-view',
                   'survey': 'BRES 2017',
@@ -137,7 +137,7 @@ class TestMessage(unittest.TestCase):
     @requests_mock.mock()
     def test_form_submit_with_valid_data(self, mock_request):
         mock_request.post(f'{app.config["BACKSTAGE_API_URL"]}/v1/secure-message/send-message', status_code=201)
-        mock_request.get(f'{app.config["BACKSTAGE_API_URL"]}/v1/secure-message/messages', json={}, status_code=200)
+        mock_request.get(get_threads_list, json={}, status_code=200)
 
         with app.app_context():
             response = self.app.post("/messages/create-message", data=self.message_form, follow_redirects=True)
