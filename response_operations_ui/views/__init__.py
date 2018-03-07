@@ -1,4 +1,5 @@
 from response_operations_ui import app
+from response_operations_ui.views.case import case_bp
 from response_operations_ui.views.collection_exercise import collection_exercise_bp
 from response_operations_ui.views.errors import error_bp
 from response_operations_ui.views.home import home_bp
@@ -19,3 +20,4 @@ app.register_blueprint(messages_bp, url_prefix='/messages')
 app.register_blueprint(reporting_unit_bp, url_prefix='/reporting-units')
 app.register_blueprint(sign_in_bp, url_prefix='/sign-in')
 app.register_blueprint(surveys_bp, url_prefix='/surveys')
+app.register_blueprint(case_bp, url_prefix='/case')

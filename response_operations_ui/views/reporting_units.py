@@ -4,8 +4,12 @@ from flask import Blueprint, render_template, request, redirect, url_for
 from flask_login import login_required
 from structlog import wrap_logger
 
-from response_operations_ui.controllers import edit_contact_details_controller, reporting_units_controllers
-from response_operations_ui.forms import EditContactDetailsForm, SearchForm
+from response_operations_ui.common.mappers import map_ce_response_status
+from response_operations_ui.controllers import case_controller
+from response_operations_ui.controllers import edit_contact_details_controller
+from response_operations_ui.controllers import reporting_units_controllers
+from response_operations_ui.forms import EditContactDetailsForm
+from response_operations_ui.forms import SearchForm
 
 logger = wrap_logger(logging.getLogger(__name__))
 
@@ -27,6 +31,9 @@ def view_reporting_unit(ru_ref):
 
         for collection_exercise in survey['collection_exercises']:
             collection_exercise['responseStatus'] = map_ce_response_status(collection_exercise['responseStatus'])
+            statuses = case_controller.get_available_case_group_statuses(survey['shortName'],
+                                                                         collection_exercise['exerciseRef'], ru_ref)
+            collection_exercise['statusChangeable'] = len(statuses['available_statuses']) > 0
             collection_exercise['companyRegion'] = map_region(collection_exercise['companyRegion'])
 
         for respondent in survey['respondents']:
@@ -43,9 +50,18 @@ def view_reporting_unit(ru_ref):
         }
     ]
 
-    return render_template('reporting-unit.html', ru=ru_details['reporting_unit'],
-                           surveys=ru_details['surveys'],
-                           breadcrumbs=breadcrumbs, edit_details=edit_details)
+    survey_arg = request.args.get('survey')
+    period_arg = request.args.get('period')
+    info_message = None
+    if survey_arg and period_arg:
+        survey = next(filter(lambda s: s['shortName'] == survey_arg, ru_details['surveys']))
+        collection_exercise = next(filter(lambda s: s['exerciseRef'] == period_arg, survey['collection_exercises']))
+        new_status = collection_exercise['responseStatus']
+        info_message = f'Response status for {survey["surveyRef"]} {survey["shortName"]}' \
+                       f' period {period_arg} changed to {new_status}'
+
+    return render_template('reporting-unit.html', ru=ru_details['reporting_unit'], surveys=ru_details['surveys'],
+                           breadcrumbs=breadcrumbs, info_message=info_message, edit_details=edit_details)
 
 
 @reporting_unit_bp.route('/<ru_ref>/edit-contact-details/<respondent_id>', methods=['GET'])
@@ -97,17 +113,6 @@ def search_reporting_units():
         business_list = reporting_units_controllers.search_reporting_units(query)
 
     return render_template('reporting-units.html', business_list=business_list, form=form, breadcrumbs=breadcrumbs)
-
-
-def map_ce_response_status(ce_response_status):
-    if ce_response_status == "NOTSTARTED":
-        ce_response_status = "Not started"
-    elif ce_response_status == "COMPLETE":
-        ce_response_status = "Completed"
-    elif ce_response_status == "INPROGRESS":
-        ce_response_status = "In progress"
-
-    return ce_response_status
 
 
 def map_region(region):

@@ -12,7 +12,6 @@ from response_operations_ui.logger_config import logger_initial_config
 from response_operations_ui.user import User
 
 
-
 app = Flask(__name__)
 
 # Load css and js assets

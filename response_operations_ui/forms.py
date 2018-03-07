@@ -53,3 +53,9 @@ class EditContactDetailsForm(FlaskForm):
             self.last_name.data = default_values.get('lastName')
             self.email.data = default_values.get('emailAddress')
             self.telephone.data = default_values.get('telephone')
+
+
+class ChangeGroupStatusForm(FlaskForm):
+    event = StringField('event')
+    submit = SubmitField('Confirm')
+
