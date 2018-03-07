@@ -4,10 +4,45 @@
 
 {% block main %}
 
-<h1 class="saturn" name="page-messages-title">{{ conversation.get('messages')[0].get('subject') }}</h1>
-    <div class="secure-message--meta venus"><span class="sm-form-meta-label">Survey: </span><span id="survey">{{ conversation.get('messages')[0].get('@msg_to')[0].get('associations')[0].get('enrolments')[0].get('name') }}</span></div>
-    <div class="secure-message--meta venus"><span class="sm-form-meta-label">RU Ref: </span><span id="ruref">    {{ conversation.get('messages')[0].get('@ru_id').get('sampleUnitRef') }}</span></div>
-    <div class="secure-message--meta venus"><span class="sm-form-meta-label">Business: </span><span id="ru">{{ conversation.get('messages')[0].get('@ru_id').get('name') }}</span></div>
-    <div class="secure-message--recipient venus"><span class="sm-form-recipient-label">To: </span><span id="recipient">    {{ conversation.get('messages')[0].get('@msg_to')[0].get('firstName') }}  {{ conversation.get('messages')[0].get('@msg_to')[0].get('lastName') }}</span></div>
 
+<h1 class="saturn" name="page-messages-title">{{ messages[0].get('subject') }}</h1>
+
+<div class="secure-message-conversation block">
+    <div class="secure-message-sent-message-meta">
+         <div class="secure-message--meta venus"><span class="sm-form-meta-label">Survey: </span><span id="survey">{{ messages[0].get('survey') }}</span></div>
+         <div class="secure-message--meta venus"><span class="sm-form-meta-label">RU Ref: </span><span id="ruref">    {{ messages[0].get('ruref') }}</span></div>
+         <div class="secure-message--meta venus"><span class="sm-form-meta-label">Business: </span><span id="ru">{{ messages[0].get('business') }}</span></div>
+         <div class="secure-message--recipient venus"><span class="sm-form-recipient-label">To: </span><span id="recipient">    {{ messages[0].get('to') }}  </span></div>
+
+    </div>
+    {% for msg in messages %}
+    {% if msg.get('internal') == True %}
+    <div id="smC1M1" class="secure-message-sent-message">
+        <div class="secure-message-sent-message-meta sm-from-ons">
+    {% else %}
+    <div id="smC1M2" class="secure-message-sent-message">
+        <div class="secure-message-sent-message-meta sm-from-respondent">
+    {% endif %}
+            <span class="secure-message-sent-message-meta-from venus ">
+                <span class="tempHack">From:</span>
+
+                {{ msg.get('username') }}
+            </span>
+            <span class="secure-message-sent-message-meta-datetime mercury">
+                <span class="tempHack">Sent:</span>
+                {{ msg.get('sentDate') }}
+
+            </span>
+
+
+        </div>
+        <div class="secure-message-sent-message-body mars">
+
+            <p>{{ msg.get('body') }}</p>
+
+        </div>
+    </div>
+    {% endfor %}
+        </div>
+    </div>
 {% endblock %}

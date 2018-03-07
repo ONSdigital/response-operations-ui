@@ -148,5 +148,23 @@ def view_conversation(thread_id):
 
     conversation = message_controllers.get_conversation(thread_id)
 
-    return render_template("conversation-view.html", breadcrumbs=breadcrumbs, conversation=conversation)
+    messages = [_threadrefine(message) for message in conversation['messages']]
 
+    return render_template("conversation-view.html", breadcrumbs=breadcrumbs, messages=messages)
+
+
+def _threadrefine(message):
+    return {
+        'body': message.get('body'),
+        'subject': message.get('subject'),
+        'username': message.get('@msg_from').get('emailAddress'),
+        #TODO use survey ref instead of survey id
+        'survey': message.get('survey'),
+        'ruref': message.get('@ru_id').get('sampleUnitRef'),
+        'business': message.get('@ru_id').get('name'),
+        'to': _get_name_from_message(message),
+        'sentDate': message.get('sent_date'),
+        'internal': message.get('from_internal')
+
+
+    }
