@@ -1,6 +1,6 @@
 import logging
 
-from flask import Blueprint, render_template, request
+from flask import Blueprint, render_template, request, redirect, url_for
 from flask_login import login_required
 from structlog import wrap_logger
 
@@ -15,6 +15,7 @@ reporting_unit_bp = Blueprint('reporting_unit_bp', __name__, static_folder='stat
 @reporting_unit_bp.route('/<ru_ref>', methods=['GET'])
 @login_required
 def view_reporting_unit(ru_ref):
+    edit_details = request.args.get('edit_details')
     ru_details = reporting_units_controllers.get_reporting_unit(ru_ref)
 
     ru_details['surveys'] = sorted(ru_details['surveys'], key=lambda survey: survey['surveyRef'])
@@ -44,7 +45,7 @@ def view_reporting_unit(ru_ref):
 
     return render_template('reporting-unit.html', ru=ru_details['reporting_unit'],
                            surveys=ru_details['surveys'],
-                           breadcrumbs=breadcrumbs)
+                           breadcrumbs=breadcrumbs, edit_details=edit_details)
 
 
 @reporting_unit_bp.route('/<ru_ref>/edit-contact-details/<respondent_id>', methods=['GET'])
@@ -55,7 +56,8 @@ def view_contact_details(ru_ref, respondent_id):
     referrer = request.referrer
     form = EditContactDetailsForm(form=request.form, default_values=respondent_details)
 
-    return render_template('edit-contact-details.html', ru_ref=ru_ref, respondent_details=respondent_details, referrer=referrer, form=form)
+    return render_template('edit-contact-details.html', ru_ref=ru_ref, respondent_details=respondent_details,
+                           referrer=referrer, form=form)
 
 
 @reporting_unit_bp.route('/<ru_ref>/edit-contact-details/<respondent_id>', methods=['POST'])
@@ -76,9 +78,10 @@ def edit_contact_details(ru_ref, respondent_id):
     else:
         respondent_details = edit_contact_details_controller.get_contact_details(respondent_id)
         logger.info('Error submitting respondent details', respondent_id=respondent_id)
-        return render_template('edit-contact-details.html', ru_ref=ru_ref, form=form, error=True, respondent_details=respondent_details)
+        return render_template('edit-contact-details.html', ru_ref=ru_ref, form=form,
+                               respondent_details=respondent_details)
 
-    return render_template('reporting-units.html', edit_details=True)
+    return redirect(url_for('reporting_unit_bp.view_reporting_unit', ru_ref=ru_ref, edit_details=True))
 
 
 @reporting_unit_bp.route('/', methods=['GET', 'POST'])

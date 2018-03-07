@@ -9,6 +9,7 @@ from response_operations_ui import app
 
 url_get_reporting_unit = f'{app.config["BACKSTAGE_API_URL"]}/v1/reporting-unit/50012345678'
 url_search_reporting_units = f'{app.config["BACKSTAGE_API_URL"]}/v1/reporting-unit/search'
+url_get_contact_details = f'{app.config["BACKSTAGE_API_URL"]}/v1/party/party-details'
 with open('tests/test_data/reporting_units/reporting_unit.json') as json_data:
     reporting_unit = json.load(json_data)
 
@@ -72,3 +73,7 @@ class TestReportingUnits(unittest.TestCase):
 
         self.assertEqual(response.status_code, 500)
         self.assertIn("Error 500 - Server error".encode(), response.data)
+
+    @requests_mock.mock()
+    def test_get_contact_details(self, mock_request):
+        mock_request.get(url_get_contact_details, )
