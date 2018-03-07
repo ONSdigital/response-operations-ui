@@ -155,8 +155,8 @@ def _get_to_name(message):
 
 def _get_ru_ref_from_message(message):
     try:
-        return message.get('@ru_id').get('sampleUnitRef')
-    except (KeyError, AttributeError):
+        return message['@ru_id']['sampleUnitRef']
+    except (KeyError, TypeError):
         logger.exception("Failed to retrieve RU ref from message", message_id=message['msg_id'])
         return 'Unavailable'
 
@@ -167,4 +167,5 @@ def _get_human_readable_date(sent_date):
         sent_time = sent_date.split(' ')[1][0:5]
         return f'{slang_date} at {sent_time}'
     except (ValueError, IndexError):
-        return sent_date.split(".")[0]
+        logger.exception("Failed to parse sent date from message", sent_date=sent_date, message_id=['msg_id'])
+        return 'Unavailable'

@@ -1,0 +1,34 @@
+{
+  "messages": [
+    {
+      "msg_id": "9ecfad50-2ff5-4bea-a997-d73c4faa73ae",
+      "thread_id": "9ecfad50-2ff5-4bea-a997-d73c4faa73ae",
+      "msg_to": [
+        "ff4537df-2097-4a73-a530-e98dba7bf28f"
+      ],
+      "msg_from": "GROUP",
+      "body": "body",
+      "subject": "Subject of message this is missing details",
+      "@msg_to": [
+        {
+          "emailAddress": "name@email.co.uk",
+          "firstName": "FirstName",
+          "id": "ef7737df-2097-4a73-a530-e98dba7bf28f",
+          "lastName": "LastName"
+        }
+      ],
+      "@msg_from": {
+        "emailAddress": "",
+        "firstName": "ONS",
+        "id": "ff4537df-2097-4a73-a530-e98dba7bf28f",
+        "lastName": "Employee"
+      },
+      "@ru_id": {
+        "id": "f1a5e99c-8edf-489a-9c72-6cabe6c387fc",
+        "name": "Apple",
+        "sampleUnitRef": "50012345678"
+      },
+      "sent_date": ""
+    }
+  ]
+}
