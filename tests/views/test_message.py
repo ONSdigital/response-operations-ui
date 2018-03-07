@@ -55,7 +55,7 @@ class TestMessage(unittest.TestCase):
 
     @requests_mock.mock()
     def test_message_list_with_missing_atmsg_to(self, mock_request):
-        with open('tests/test_data/message/message_missing_atmsg_to.json') as thread_json:
+        with open('tests/test_data/message/threads_missing_atmsg_to.json') as thread_json:
             malformed_thread_list = json.load(thread_json)
         mock_request.get(url_get_threads_list,
                          json=malformed_thread_list
@@ -69,7 +69,7 @@ class TestMessage(unittest.TestCase):
 
     @requests_mock.mock()
     def test_message_list_with_missing_atmsg_from(self, mock_request):
-        with open('tests/test_data/message/message_missing_atmsg_from.json') as thread_json:
+        with open('tests/test_data/message/threads_missing_atmsg_from.json') as thread_json:
             malformed_thread_list = json.load(thread_json)
         mock_request.get(url_get_threads_list,
                          json=malformed_thread_list
@@ -83,7 +83,7 @@ class TestMessage(unittest.TestCase):
 
     @requests_mock.mock()
     def test_message_list_with_missing_date(self, mock_request):
-        with open('tests/test_data/message/message_missing_sent_date.json') as thread_json:
+        with open('tests/test_data/message/threads_missing_sent_date.json') as thread_json:
             malformed_thread_list = json.load(thread_json)
         mock_request.get(url_get_threads_list,
                          json=malformed_thread_list
@@ -97,7 +97,7 @@ class TestMessage(unittest.TestCase):
 
     @requests_mock.mock()
     def test_message_list_with_missing_ru_ref(self, mock_request):
-        with open('tests/test_data/message/message_missing_ru_ref.json') as thread_json:
+        with open('tests/test_data/message/threads_missing_ru_ref.json') as thread_json:
             malformed_thread_list = json.load(thread_json)
         mock_request.get(url_get_threads_list,
                          json=malformed_thread_list
