@@ -6,7 +6,7 @@ function initDataPanels() {
         acc[i].innerHTML = "<button class='data-panel-header__title'>" + panelTitle + "<\/button>";
         var initPanel = acc[i].nextElementSibling;
         initPanel.style.display = "none";
-        
+
         // Add event listener to toggle displaying the data panel
         acc[i].addEventListener("click", function() {
             var panel = this.nextElementSibling;
