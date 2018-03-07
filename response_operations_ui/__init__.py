@@ -6,12 +6,10 @@ from flask_assets import Bundle, Environment
 from flask_login import LoginManager
 from flask_session import Session
 import redis
-import requests
 
 from response_operations_ui.cloud.cloudfoundry import ONSCloudFoundry
 from response_operations_ui.logger_config import logger_initial_config
 from response_operations_ui.user import User
-from response_operations_ui.exceptions.exceptions import ApiError
 
 
 app = Flask(__name__)
@@ -56,22 +54,6 @@ if app.config['SESSION_TYPE'] == 'redis':
     app.config['SESSION_REDIS'] = redis
 
 Session(app)
-
-
-def get_surveys_dict():
-    logger.debug('Retrieving surveys list')
-    url = f'{app.config["BACKSTAGE_API_URL"]}/v1/survey/surveys'
-    response = requests.get(url)
-    if response.status_code != 200:
-        raise ApiError(response)
-    logger.debug('Successfully retrieved surveys list')
-    try:
-        return {survey['id']: survey for survey in response.json()}
-    except ValueError:
-        logger.exception("Failed to decode survey list")
-
-
-app.surveys_dict = get_surveys_dict() or {}
 
 
 @login_manager.user_loader
