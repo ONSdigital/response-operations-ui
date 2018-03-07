@@ -78,22 +78,22 @@
               <tbody>
               {% for message in messages %}
                <tr class="table--row table--row__selectable">
-                <td name="tbl-messages-RU_Ref" class="table--cell tbl-messages-RU_Ref">
+                <td name="tbl-messages-RU_Ref" class="table--cell tbl-messages-RU_Ref" id="ru-ref-{{ loop.index }}">
                     {{ message.ru_ref }}
                 </td>
-                <td name="tbl-messages-business" class="table--cell tbl-messages-business">
+                <td name="tbl-messages-business" class="table--cell tbl-messages-business" id="business-name-{{ loop.index }}">
                     {{ message.business_name }}
                 </td>
-                <td name="tbl-messages-subject" class="table--cell tbl-messages-subject">
+                <td name="tbl-messages-subject" class="table--cell tbl-messages-subject" id="message-subject-{{ loop.index }}">
                     <a href="" id="message-link-{{ loop.index }}">{{ message.subject }}</a>
                 </td>
-                <td name="tbl-messages-from" class="table--cell tbl-messages-from">
+                <td name="tbl-messages-from" class="table--cell tbl-messages-from" id="message-from-{{ loop.index }}">
                     {{ message.from }}
                 </td>
-                <td name="tbl-messages-to" class="table--cell tbl-messages-to">
+                <td name="tbl-messages-to" class="table--cell tbl-messages-to" id="message-to-{{ loop.index }}">
                     {{ message.to }}
                 </td>
-                <td name="tbl-messages-received" class="table--cell tbl-messages-received">
+                <td name="tbl-messages-received" class="table--cell tbl-messages-received" id="received-time-{{ loop.index }}">
                    {{ message.sent_date }}
                 </td>
                </tr>

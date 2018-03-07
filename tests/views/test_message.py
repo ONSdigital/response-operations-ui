@@ -9,8 +9,8 @@ from response_operations_ui.exceptions.exceptions import InternalError
 
 url_sign_in_data = f'{app.config["BACKSTAGE_API_URL"]}/v2/sign-in/'
 get_threads_list = f'{app.config["BACKSTAGE_API_URL"]}/v1/secure-message/threads'
-with open('tests/test_data/message/messages.json') as json_data:
-    message_list = json.load(json_data)
+with open('tests/test_data/message/threads.json') as json_data:
+    thread_list = json.load(json_data)
 
 
 class TestMessage(unittest.TestCase):
@@ -27,25 +27,16 @@ class TestMessage(unittest.TestCase):
         # sign-in to setup the user in the session
         self.app.post("/sign-in", follow_redirects=True, data={"username": "user", "password": "pass"})
 
-    @requests_mock.mock()
-    def test_Home(self, mock_request):
-        mock_request.get(get_threads_list, json=message_list)
-
-        response = self.app.get("/")
-
-        self.assertEqual(response.status_code, 200)
-        self.assertIn("View messages".encode(), response.data)
-
     # Test showing that the messages list loads into the website and displays User, business name and subject
     @requests_mock.mock()
     def test_Message_list(self, mock_request):
-        mock_request.get(get_threads_list, json=message_list)
+        mock_request.get(get_threads_list, json=thread_list)
 
         response = self.app.get("/messages")
         self.assertEqual(response.status_code, 200)
-        self.assertIn("Acme Studios LTD".encode(), response.data)
-        self.assertIn("Jordon Dutch".encode(), response.data)
-        self.assertIn("Q3 Statistics".encode(), response.data)
+        self.assertIn("Apple".encode(), response.data)
+        self.assertIn("John Soth".encode(), response.data)
+        self.assertIn("This is the message subject".encode(), response.data)
 
     @requests_mock.mock()
     def test_message_list_fail(self, mock_request):
