@@ -1,9 +1,11 @@
 import json
 import logging
+import pprint
 
 from flask import Blueprint, flash, g, render_template, request, redirect, url_for
 from flask_login import login_required, current_user
 from structlog import wrap_logger
+import maya
 
 from response_operations_ui.controllers import message_controllers
 from response_operations_ui.exceptions.exceptions import ApiError, InternalError, NoMessagesError
@@ -122,27 +124,45 @@ def view_messages():
 
 
 def _refine(message):
+    pprint.pprint(message)
     return {
         'ru_ref': _get_ru_ref_from_message(message),
         'business_name': (message.get('@ru_id') or {}).get('name'),
         'subject': message.get('subject'),
-        'from': message.get('msg_from'),
-        'to': _get_name_from_message(message),
-        'sent_date': message.get('sent_date').split(".")[0]
+        'from': _get_from_name(message),
+        'to': _get_to_name(message),
+        'sent_date': _get_human_readable_date(message.get('sent_date'))
     }
 
 
-def _get_name_from_message(message):
+def _get_from_name(message):
     try:
-        name = message.get('@msg_to')[0].get('firstName') + ' ' + message.get('@msg_to')[0].get('lastName')
+        msg_from = message['@msg_from']
+        return f"{msg_from.get('firstName')} {msg_from.get('lastName')}"
+    except KeyError:
+        logger.exception("Failed to retrieve message from name", message_id=message['id'])
+        return 'Unavailable'
+
+
+def _get_to_name(message):
+    try:
+        return f"{message.get('@msg_to')[0].get('firstName')} {message.get('@msg_to')[0].get('lastName')}"
     except IndexError:
-        name = message.get('msg_to')[0]
-    return name
+        logger.exception("Failed to retrieve message to name ", message_id=message['id'])
+        return 'Unavailable'
 
 
 def _get_ru_ref_from_message(message):
     try:
-        ru_ref = message.get('@ru_id').get('sampleUnitRef')
+        return message.get('@ru_id').get('sampleUnitRef')
     except (KeyError, AttributeError):
-        ru_ref = 'unknown'
-    return ru_ref
+        return 'Unavailable'
+
+
+def _get_human_readable_date(sent_date):
+    try:
+        slang_date = maya.parse(sent_date).slang_date().capitalize()
+        sent_time = sent_date.split(' ')[1][0:5]
+        return f'{slang_date} at {sent_time}'
+    except (ValueError, IndexError):
+        return sent_date.split(".")[0]
