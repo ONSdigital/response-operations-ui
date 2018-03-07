@@ -18,10 +18,16 @@ def get_conversation(thread_id):
 
     response = requests.get(url, headers={'Authorization': _get_jwt()})
 
+    try:
+        response.raise_for_status()
+    except HTTPError:
+        logger.exception("Message retrieval failed")
+        raise ApiError(response)
+
+    logger.debug("Retrieval successful")
     conversation = response.json()
 
     return conversation
-
 
 
 def get_message_list(params):

@@ -144,13 +144,19 @@ def _get_name_from_message(message):
 @messages_bp.route('/threads/<thread_id>', methods=['GET'])
 @login_required
 def view_conversation(thread_id):
-    breadcrumbs = _build_create_message_breadcrumbs()
+    breadcrumbs = [
+        {"title": "Messages", "link": "/messages"},
+        {"title": "Threads"},
+        {"title": f'{thread_id}'}
+    ]
+
+    form = SecureMessageForm(request.form)
 
     conversation = message_controllers.get_conversation(thread_id)
 
     messages = [_threadrefine(message) for message in conversation['messages']]
 
-    return render_template("conversation-view.html", breadcrumbs=breadcrumbs, messages=messages)
+    return render_template("conversation-view.html", breadcrumbs=breadcrumbs, messages=messages, form=form)
 
 
 def _threadrefine(message):
@@ -158,7 +164,7 @@ def _threadrefine(message):
         'body': message.get('body'),
         'subject': message.get('subject'),
         'username': message.get('@msg_from').get('emailAddress'),
-        #TODO use survey ref instead of survey id
+        # TODO use survey ref instead of survey id
         'survey': message.get('survey'),
         'ruref': message.get('@ru_id').get('sampleUnitRef'),
         'business': message.get('@ru_id').get('name'),

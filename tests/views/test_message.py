@@ -7,6 +7,9 @@ from response_operations_ui import app
 from response_operations_ui.controllers.message_controllers import _get_url, send_message
 from response_operations_ui.exceptions.exceptions import InternalError
 
+url_get_thread = f'{app.config["BACKSTAGE_API_URL"]}/v1/secure-message/threads/fb0e79bd-e132-4f4f-a7fd-5e8c6b41b9af'
+with open('tests/test_data/message/thread.json') as json_data:
+    thread_json = json.load(json_data)
 url_sign_in_data = f'{app.config["BACKSTAGE_API_URL"]}/v2/sign-in/'
 get_message_list = f'{app.config["BACKSTAGE_API_URL"]}/v1/secure-message/messages'
 with open('tests/test_data/message/messages.json') as json_data:
@@ -163,3 +166,16 @@ class TestMessage(unittest.TestCase):
         with self.assertRaises(Exception) as raises:
             self.app.post("/messages/create-message", data=malformed_ru_details)
             self.assertEqual(raises.exception.message, "Failed to load create message page")
+
+    @requests_mock.mock()
+    def test_conversation(self, mock_request):
+        mock_request.get(url_get_thread, json=thread_json)
+
+        response = self.app.get("/messages/threads/fb0e79bd-e132-4f4f-a7fd-5e8c6b41b9af")
+
+        self.assertEqual(response.status_code, 200)
+        self.assertIn("Need more information on project".encode(), response.data)
+        self.assertIn("Project ideas".encode(), response.data)
+        self.assertIn("49900000001".encode(), response.data)
+        self.assertIn("Apple".encode(), response.data)
+
