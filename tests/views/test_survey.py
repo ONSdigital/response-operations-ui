@@ -7,6 +7,7 @@ from requests import RequestException
 
 from config import TestingConfig
 from response_operations_ui import app
+from response_operations_ui.controllers.survey_controllers import get_surveys_dict, get_survey_short_name_by_id
 
 url_get_survey_list = f'{app.config["BACKSTAGE_API_URL"]}/v1/survey/surveys'
 with open('tests/test_data/survey/survey_list.json') as json_data:
@@ -90,3 +91,28 @@ class TestSurvey(unittest.TestCase):
         self.assertIn(b'Ready for review', response.data)
         self.assertIn(b'Ready for live', response.data)
         self.assertIn(b'Live', response.data)
+
+    @requests_mock.mock()
+    def test_get_survey_dictionary(self, mock_request):
+        mock_request.get(url_get_survey_list, json=survey_list)
+        surveys_dict = {"cb0711c3-0ac8-41d3-ae0e-567e5ea1ef87":
+                        {
+                            "id": "cb0711c3-0ac8-41d3-ae0e-567e5ea1ef87",
+                            "shortName": "BRES",
+                            "longName": "Business Register and Employment Survey",
+                            "surveyRef": "221"
+                        },
+                        "cb0711c3-0ac8-41d3-ae0e-567e5ea1ef88":
+                        {
+                            "id": "cb0711c3-0ac8-41d3-ae0e-567e5ea1ef88",
+                            "shortName": "BRUS",
+                            "longName": "Business Register and Umployment Survey",
+                            "surveyRef": "222"
+                        }
+                        }
+        self.assertEqual(get_surveys_dict(), surveys_dict)
+
+    @requests_mock.mock()
+    def test_get_survey_short_name_by_id(self, mock_request):
+        mock_request.get(url_get_survey_list, json=survey_list)
+        self.assertEqual(get_survey_short_name_by_id("cb0711c3-0ac8-41d3-ae0e-567e5ea1ef87"), "BRES")
