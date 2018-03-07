@@ -65,7 +65,7 @@ class TestMessage(unittest.TestCase):
         response = self.app.get("/messages")
         self.assertEqual(response.status_code, 200)
         self.assertIn("Unavailable".encode(), response.data)
-        self.assertIn("Subject of message this is missing details".encode(), response.data)
+        self.assertIn("Example message subject".encode(), response.data)
 
     @requests_mock.mock()
     def test_message_list_with_missing_atmsg_from(self, mock_request):
@@ -79,7 +79,7 @@ class TestMessage(unittest.TestCase):
         response = self.app.get("/messages")
         self.assertEqual(response.status_code, 200)
         self.assertIn("Unavailable".encode(), response.data)
-        self.assertIn("Subject of message this is missing details".encode(), response.data)
+        self.assertIn("Example message subject".encode(), response.data)
 
     @requests_mock.mock()
     def test_message_list_with_missing_date(self, mock_request):
@@ -93,7 +93,7 @@ class TestMessage(unittest.TestCase):
         response = self.app.get("/messages")
         self.assertEqual(response.status_code, 200)
         self.assertIn("Unavailable".encode(), response.data)
-        self.assertIn("Subject of message this is missing details".encode(), response.data)
+        self.assertIn("Example message subject".encode(), response.data)
 
     @requests_mock.mock()
     def test_message_list_with_missing_ru_ref(self, mock_request):
@@ -107,7 +107,7 @@ class TestMessage(unittest.TestCase):
         response = self.app.get("/messages")
         self.assertEqual(response.status_code, 200)
         self.assertIn("Unavailable".encode(), response.data)
-        self.assertIn("Subject of message this is missing details".encode(), response.data)
+        self.assertIn("Example message subject".encode(), response.data)
 
     @requests_mock.mock()
     def test_message_list_fail(self, mock_request):

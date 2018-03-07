@@ -8,7 +8,7 @@
       ],
       "msg_from": "GROUP",
       "body": "body",
-      "subject": "Subject of message this is missing details",
+      "subject": "Example message subject",
       "@msg_to": [
         {
           "emailAddress": "name@email.co.uk",
