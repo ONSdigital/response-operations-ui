@@ -19,7 +19,10 @@
   <section class="grid__col col-12@l ru-surveys">
     {% for survey in surveys %}
     <div class="ru-survey data-panel" id="survey-{{survey.shortName}}" name="associated-surveys">
-      <h3 name="survey-titles" class="saturn data-panel-header">{{ survey.surveyRef }} {{ survey.shortName }}</h3>
+      <h3 name="survey-titles" class="saturn data-panel-header">
+        <button class='data-panel-header__title'></button>
+        {{ survey.surveyRef }} {{ survey.shortName }}
+      </h3>
 
       <div class="data-panel-body">
         <div class="ru-survey-ces">
