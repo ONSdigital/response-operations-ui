@@ -125,34 +125,23 @@ def view_messages():
 @messages_bp.route('/select-survey', methods=['GET', 'POST'])
 @login_required
 def view_select_survey():
-    params = {
-        'label': request.args.get('label'),
-        'survey': request.args.get('survey')
-    }
-
-    breadcrumbs = [{"title": "Select survey"},
+    breadcrumbs = [{"title": "Select survey", "link": "/messages/select-survey"},
                    {"title": "Messages", "link": "/messages"}]
 
-    try:
-        messages = message_controllers.get_message_list(params)
-        refined_messages = [_refine(msg) for msg in messages]
-        if request.method == 'POST':
-            selected_survey = request.form['radio-answer']
-            return redirect(url_for("messages_bp.view_selected_survey",
-                                    breadcrumbs=breadcrumbs,
-                                    messages=refined_messages,
-                                    selected_survey=selected_survey))
-        else:
-            return render_template("message_select_survey.html", breadcrumbs=breadcrumbs)
-    except NoMessagesError:
-        return render_template("message_select_survey.html", breadcrumbs=breadcrumbs, response_error=True)
+    if request.method == 'POST':
+        selected_survey = request.form['radio-answer']
+        return redirect(url_for("messages_bp.view_selected_survey",
+                                selected_survey=selected_survey))
+    else:
+        return render_template("message_select_survey.html", breadcrumbs=breadcrumbs)
 
 
 @messages_bp.route('/<selected_survey>', methods=['GET'])
 @login_required
 def view_selected_survey(selected_survey):
-    breadcrumbs = [{"title": "Messages"},
-                   {"survey": selected_survey}]
+    breadcrumbs = [{"title": "Select survey", "link": "/messages/select-survey"},
+                   {"title": "Messages", "link": "/messages"},
+                   {"title": selected_survey}]
 
     params = {
         'label': request.args.get('label'),
@@ -160,33 +149,17 @@ def view_selected_survey(selected_survey):
     }
 
     try:
-        messages = message_controllers.get_message_list(params)
-        refined_messages = [_refine(msg) for msg in messages]
+        refined_messages = [_refine(msg) for msg in message_controllers.get_message_list(params)]
         survey_id = _get_survey_id(selected_survey)
-        filtered_messages_list = []
+        filtered_messages = []
 
-        for filtered_messages in refined_messages:
-            if survey_id == filtered_messages['survey']:
-                filtered_messages_list.append(filtered_messages)
+        for msgs in refined_messages:
+            if survey_id == msgs['survey']:
+                filtered_messages.append(msgs)
 
-        return render_template("messages.html", breadcrumbs=breadcrumbs, messages=filtered_messages_list)
+        return render_template("messages.html", breadcrumbs=breadcrumbs, messages=filtered_messages)
     except NoMessagesError:
         return render_template("messages.html", breadcrumbs=breadcrumbs, response_error=True)
-
-    # filtered_messages_list = []
-    #
-    # for filtered_messages in refined_messages:
-    #     if survey_id == selected_survey:
-    #         filtered_messages_list.append(filtered_messages)
-    #
-    # return render_template("messages.html", breadcrumbs=breadcrumbs, messages=filtered_messages_list)
-
-    # try:
-    #     messages = message_controllers.get_message_list(params)
-    #     refined_messages = [_refine(msg) for msg in messages]
-    #     return render_template("messages.html", breadcrumbs=breadcrumbs, messages=refined_messages)
-    # except NoMessagesError:
-    #     return render_template("messages.html", breadcrumbs=breadcrumbs, response_error=True)
 
 
 def _refine(message):
