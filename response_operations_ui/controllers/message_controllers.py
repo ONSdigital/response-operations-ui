@@ -3,7 +3,8 @@ import logging
 import requests
 from flask import current_app, session
 from flask_login import current_user
-from requests.exceptions import HTTPError
+from requests.exceptions import HTTPError, RequestException
+from json import JSONDecodeError
 from structlog import wrap_logger
 
 from response_operations_ui.exceptions.exceptions import ApiError, NoMessagesError, InternalError
@@ -20,14 +21,16 @@ def get_conversation(thread_id):
 
     try:
         response.raise_for_status()
-    except HTTPError:
-        logger.exception("Conversation retrieval failed")
+    except (HTTPError, RequestException):
+        logger.exception("Thread retrieval failed ")
         raise ApiError(response)
+    logger.debug("Thread Retrieval successful")
 
-    logger.debug("Retrieval successful")
-    conversation = response.json()
-
-    return conversation
+    try:
+        return response.json()
+    except JSONDecodeError:
+        logger.exception("the response could not be decoded")
+        raise ApiError(response)
 
 
 def get_message_list(params):

@@ -124,17 +124,25 @@ def view_messages():
 @messages_bp.route('/threads/<thread_id>', methods=['GET'])
 @login_required
 def view_conversation(thread_id):
+    try:
+        messages = [_thread_refine(message) for message in message_controllers.get_conversation(thread_id)['messages']]
+    except KeyError as ex:
+        # TODO change exception message
+        logger.exception("A key error occurred")
+        raise ApiError(ex)
     breadcrumbs = [
         {"title": "Messages", "link": "/messages"},
-        {"title": "Threads"},
-        {"title": f'{thread_id}'}
+        {"title": f'{_get_messages_subject(messages)}'}
     ]
 
-    conversation = message_controllers.get_conversation(thread_id)
-
-    messages = [_thread_refine(message) for message in conversation['messages']]
-
     return render_template("conversation-view.html", breadcrumbs=breadcrumbs, messages=messages)
+
+
+def _get_messages_subject(messages):
+    try:
+        return messages[0].get("subject")
+    except (IndexError, AttributeError):
+        return 'Unavailable'
 
 
 def _refine(message):
@@ -177,6 +185,4 @@ def _thread_refine(message):
         'to': _get_to_name(message),
         'sentDate': message.get('sent_date'),
         'internal': message.get('from_internal')
-
-
     }

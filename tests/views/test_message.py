@@ -187,3 +187,19 @@ class TestMessage(unittest.TestCase):
             response = self.app.get("/messages/threads/fb0e79bd-e132-4f4f-a7fd-5e8c6b41b9af")
             self.assertEqual(response.status_code, 500)
             self.assertEqual(raises.exception.message, "Conversation retrieval failed")
+
+    @requests_mock.mock()
+    def test_conversation_decode_error(self, mock_request):
+        mock_request.get(url_get_thread)
+        with self.assertRaises(Exception) as raises:
+            response = self.app.get("/messages/threads/fb0e79bd-e132-4f4f-a7fd-5e8c6b41b9af")
+            self.assertEqual(response.status_code, 500)
+            self.assertEqual(raises.exception.message, "the response could not be decoded")
+
+    @requests_mock.mock()
+    def test_conversation_key_error(self, mock_request):
+        mock_request.get(url_get_thread, json={})
+        with self.assertRaises(Exception) as raises:
+            response = self.app.get("/messages/threads/fb0e79bd-e132-4f4f-a7fd-5e8c6b41b9af")
+            self.assertEqual(response.status_code, 500)
+            self.assertEqual(raises.exception.message, "A key error occurred")
