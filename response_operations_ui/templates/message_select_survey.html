@@ -1,0 +1,69 @@
+{% extends "layouts/base.html" %}
+{% block page_title %}Messages | Survey Data Collection{% endblock %}
+
+{% block main %}
+</br>
+
+<div role="main" id="main" class="page__main">
+
+  <div class="grid">
+    <div class="grid__col col-30@l">
+      <h1 class="jupiter">Filter messages by survey</h1>
+        <form method="POST">
+
+            <div class="field field--radio field--multiplechoice">
+              <fieldset>
+                <legend class="field__legend mars u-mb-s">Please select a survey to see messages for your team</legend>
+                <div class="field field--radio">
+                  <div class="field__item js-focusable-box">
+                      <input class="input input--radio js-focusable" name="radio-answer" value="ASHE" id="ASHE" type="radio">
+                      <label class="label label--inline venus " for="ASHE">ASHE</label>
+                  </div><br />
+                  <div class="field__item js-focusable-box">
+                      <input class="input input--radio js-focusable" name="radio-answer" value="BRES" id="BRES" type="radio">
+                      <label class="label label--inline venus " for="BRES">BRES</label>
+                  </div><br />
+                  <div class="field__item js-focusable-box">
+                      <input class="input input--radio js-focusable" name="radio-answer" value="Blocks" id="Blocks" type="radio">
+                      <label class="label label--inline venus " for="Blocks">Blocks</label>
+                  </div><br />
+                  <div class="field__item js-focusable-box">
+                      <input class="input input--radio js-focusable" name="radio-answer" value="Bricks" id="Bricks" type="radio">
+                      <label class="label label--inline venus " for="Bricks">Bricks</label>
+                  </div><br />
+                  <div class="field__item js-focusable-box">
+                      <input class="input input--radio js-focusable" name="radio-answer" value="FDI" id="FDI" type="radio">
+                      <label class="label label--inline venus " for="FDI">FDI</label>
+                  </div><br />
+                  <div class="field__item js-focusable-box">
+                      <input class="input input--radio js-focusable" name="radio-answer" value="NBS" id="NBS" type="radio">
+                      <label class="label label--inline venus " for="NBS">NBS</label>
+                  </div><br />
+                  <div class="field__item js-focusable-box">
+                      <input class="input input--radio js-focusable" name="radio-answer" value="PCS" id="PCS" type="radio">
+                      <label class="label label--inline venus " for="PCS">PCS</label>
+                  </div><br />
+                  <div class="field__item js-focusable-box">
+                      <input class="input input--radio js-focusable" name="radio-answer" value="QBS" id="QBS" type="radio">
+                      <label class="label label--inline venus " for="QBS">QBS</label>
+                  </div><br />
+                  <div class="field__item js-focusable-box">
+                      <input class="input input--radio js-focusable" name="radio-answer" value="Sand-and-Gravel" id="Sand-and-Gravel" type="radio">
+                      <label class="label label--inline venus " for="Sand-and-Gravel">Sand & Gravel</label>
+                  </div><br />
+                </div>
+              </fieldset>
+            </div>
+
+          <button class="btn u-mt-m" type="submit" id="continue">Continue</button>
+
+          <br>
+          <p>
+            Or you can <a href="/messages"> view <b>all</b> messages.</a>
+          </p>
+
+        </form>
+    </div>
+  </div>
+</div>
+{% endblock %}

@@ -5,7 +5,8 @@ from flask import Blueprint, flash, g, render_template, request, redirect, url_f
 from flask_login import login_required, current_user
 from structlog import wrap_logger
 
-from response_operations_ui.controllers import message_controllers
+from response_operations_ui import app
+from response_operations_ui.controllers import message_controllers, survey_controllers
 from response_operations_ui.exceptions.exceptions import ApiError, InternalError, NoMessagesError
 from response_operations_ui.forms import SecureMessageForm
 
@@ -121,8 +122,76 @@ def view_messages():
         return render_template("messages.html", breadcrumbs=breadcrumbs, response_error=True)
 
 
+@messages_bp.route('/select-survey', methods=['GET', 'POST'])
+@login_required
+def view_select_survey():
+    params = {
+        'label': request.args.get('label'),
+        'survey': request.args.get('survey')
+    }
+
+    breadcrumbs = [{"title": "Select survey"},
+                   {"title": "Messages", "link": "/messages"}]
+
+    try:
+        messages = message_controllers.get_message_list(params)
+        refined_messages = [_refine(msg) for msg in messages]
+        if request.method == 'POST':
+            selected_survey = request.form['radio-answer']
+            return redirect(url_for("messages_bp.view_selected_survey",
+                                    breadcrumbs=breadcrumbs,
+                                    messages=refined_messages,
+                                    selected_survey=selected_survey))
+        else:
+            return render_template("message_select_survey.html", breadcrumbs=breadcrumbs)
+    except NoMessagesError:
+        return render_template("message_select_survey.html", breadcrumbs=breadcrumbs, response_error=True)
+
+
+@messages_bp.route('/<selected_survey>', methods=['GET'])
+@login_required
+def view_selected_survey(selected_survey):
+    breadcrumbs = [{"title": "Messages"},
+                   {"survey": selected_survey}]
+
+    params = {
+        'label': request.args.get('label'),
+        'survey': request.args.get('survey')
+    }
+
+    try:
+        messages = message_controllers.get_message_list(params)
+        refined_messages = [_refine(msg) for msg in messages]
+        survey_id = _get_survey_id(selected_survey)
+        filtered_messages_list = []
+
+        for filtered_messages in refined_messages:
+            if survey_id == filtered_messages['survey']:
+                filtered_messages_list.append(filtered_messages)
+
+        return render_template("messages.html", breadcrumbs=breadcrumbs, messages=filtered_messages_list)
+    except NoMessagesError:
+        return render_template("messages.html", breadcrumbs=breadcrumbs, response_error=True)
+
+    # filtered_messages_list = []
+    #
+    # for filtered_messages in refined_messages:
+    #     if survey_id == selected_survey:
+    #         filtered_messages_list.append(filtered_messages)
+    #
+    # return render_template("messages.html", breadcrumbs=breadcrumbs, messages=filtered_messages_list)
+
+    # try:
+    #     messages = message_controllers.get_message_list(params)
+    #     refined_messages = [_refine(msg) for msg in messages]
+    #     return render_template("messages.html", breadcrumbs=breadcrumbs, messages=refined_messages)
+    # except NoMessagesError:
+    #     return render_template("messages.html", breadcrumbs=breadcrumbs, response_error=True)
+
+
 def _refine(message):
     return {
+        'survey': message.get('survey'),
         'ru_ref': message.get('ru_id'),
         'business_name': message.get('@ru_id').get('name'),
         'subject': message.get('subject'),
@@ -130,6 +199,12 @@ def _refine(message):
         'to': _get_to_name(message),
         'sent_date': message.get('sent_date').split(".")[0]
     }
+
+
+def _get_survey_id(selected_survey):
+    # use this to get only one survey
+    survey_messages = survey_controllers.get_survey(selected_survey)
+    return survey_messages['survey']['id']
 
 
 def _get_from_name(message):

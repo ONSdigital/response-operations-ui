@@ -73,6 +73,9 @@
               <th scope="col" class="table--header--cell tbl-messages-received">
                 Received
               </th>
+              <th scope="col" class="table--header--cell tbl-messages-survey">
+                Survey
+              </th>
             </tr>
           </thead>
               <tbody>
@@ -95,6 +98,9 @@
                 </td>
                 <td name="tbl-messages-received" class="table--cell tbl-messages-received">
                    {{ message.sent_date }}
+                </td>
+                 <td name="tbl-messages-survey" class="table--cell tbl-messages-survey">
+                   {{ message.survey }}
                 </td>
                </tr>
               {% endfor %}
