@@ -33,6 +33,7 @@ def get_survey(short_name):
 
 
 def get_surveys_dict():
+    # TODO get and cache this dictionary at app startup
     logger.debug('Retrieving surveys list')
     url = f'{app.config["BACKSTAGE_API_URL"]}/v1/survey/surveys'
     response = requests.get(url)
