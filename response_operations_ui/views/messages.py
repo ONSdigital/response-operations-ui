@@ -143,13 +143,21 @@ def _refine(message):
         'thread_id': message.get('thread_id'),
         'business_name': message.get('@ru_id').get('name'),
         'subject': message.get('subject'),
-        'from': message.get('msg_from'),
-        'to': _get_name_from_message(message),
+        'from': _get_from_name(message),
+        'to': _get_to_name(message),
         'sent_date': message.get('sent_date').split(".")[0]
     }
 
 
-def _get_name_from_message(message):
+def _get_from_name(message):
+    try:
+        msg_from = message['@msg_from']
+        return f"{msg_from.get('firstName')} {msg_from.get('lastName')}"
+    except KeyError:
+        return message.get('msg_from')
+
+
+def _get_to_name(message):
     try:
         name = message.get('@msg_to')[0].get('firstName') + ' ' + message.get('@msg_to')[0].get('lastName')
     except IndexError:
