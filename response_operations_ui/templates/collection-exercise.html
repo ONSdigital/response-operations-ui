@@ -43,7 +43,12 @@
     {% elif validation_failed %}
       <div class="panel panel--simple panel--error">
         <div id="validation-error" class="panel__body">
-          Error processing collection exercise. Please try again.
+          Error processing collection exercise
+          {% if missing_ci %}
+          <div id="collection-instrument-error">
+            <a href="#ciFile">Check collection instruments</a>
+          </div>
+          {% endif %}
         </div>
       </div>
     {% endif %}
@@ -216,7 +221,7 @@
         {% endif %}
       </div>
 
-      <section class="ce-section">
+      <section class="ce-section {{'panel panel--simple panel--error' if missing_ci else ''}}">
         <h2 class="venus u-pt-m">Collection instruments</h2>
 
         {% if collection_instruments %}

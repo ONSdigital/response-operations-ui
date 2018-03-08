@@ -43,6 +43,10 @@ def view_collection_exercise(short_name, period, error=None, ci_loaded=False, ex
     processing = ce_state in ('EXECUTION_STARTED', 'EXECUTED', 'VALIDATED')
     validation_failed = ce_state == 'FAILEDVALIDATION'
 
+    validation_errors = ce_details['collection_exercise']['validationErrors']
+    missing_ci = validation_errors and any('MISSING_COLLECTION_INSTRUMENT' in unit['errors']
+                                           for unit in validation_errors)
+
     ce_details['collection_exercise']['state'] = map_collection_exercise_state(ce_state)  # NOQA
     _format_ci_file_name(ce_details['collection_instruments'], ce_details['survey'])
 
@@ -57,6 +61,7 @@ def view_collection_exercise(short_name, period, error=None, ci_loaded=False, ex
                            executed=executed,
                            events=formatted_events,
                            locked=locked,
+                           missing_ci=missing_ci,
                            processing=processing,
                            sample=ce_details['sample_summary'],
                            sample_loaded=sample_loaded,
