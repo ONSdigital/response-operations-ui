@@ -15,7 +15,7 @@ def edit_contact_details(edit_details_data):
     logger.debug('Validating contact details')
     url = f'{app.config["BACKSTAGE_API_URL"]}/v1/party/update-respondent-details'
 
-    response = requests.post(url, json=edit_details_data)
+    response = requests.put(url, json=edit_details_data)
 
     try:
         response.raise_for_status()
