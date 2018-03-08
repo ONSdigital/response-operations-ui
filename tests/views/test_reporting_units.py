@@ -153,6 +153,8 @@ class TestReportingUnits(unittest.TestCase):
 
         self.assertEqual(response.status_code, 200)
         self.assertIn("Jacky".encode(), response.data)
+        self.assertIn("Turner".encode(), response.data)
+        self.assertIn("7971161859".encode(), response.data)
 
     @requests_mock.mock()
     def test_edit_contact_details(self, mock_request):
@@ -179,3 +181,31 @@ class TestReportingUnits(unittest.TestCase):
 
         self.assertEqual(response.status_code, 200)
         self.assertIn('Tom'.encode(), response.data)
+        self.assertIn('Smith'.encode(), response.data)
+        self.assertIn('7971161867'.encode(), response.data)
+
+    @requests_mock.mock()
+    def test_edit_contact_details_fail(self, mock_request):
+        changed_details = {
+            "first_name": 'Tom',
+            "last_name": 'Smith',
+            "email": 'Jacky.Turner@email.com',
+            "telephone": '7971161867'
+            }
+
+        mock_request.get(url_get_reporting_unit + '?edit_details=True')
+        mock_request.get(url_get_reporting_unit, json=edited_reporting_unit)
+        mock_request.get(f'{app.config["BACKSTAGE_API_URL"]}/v1/case/status/BLOCKS/201801/50012345678',
+                         json=self.case_group_status)
+        mock_request.get(f'{app.config["BACKSTAGE_API_URL"]}/v1/case/status/BLOCKS/201802/50012345678',
+                         json=self.case_group_status)
+        mock_request.get(f'{app.config["BACKSTAGE_API_URL"]}/v1/case/status/BRICKS/201801/50012345678',
+                         json=self.case_group_status)
+        mock_request.get(f'{app.config["BACKSTAGE_API_URL"]}/v1/case/status/BRICKS/201802/50012345678',
+                         json=self.case_group_status)
+
+        response = self.app.post(
+            "/reporting-units/50012345678/edit-contact-details/cd592e0f-8d07-407b-b75d-e01fbdae8233",
+            data=changed_details, follow_redirects=True)
+
+        self.assertEqual(response.status_code, 500)
