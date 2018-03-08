@@ -39,11 +39,14 @@ def get_surveys_dict():
 
 def get_survey_short_name_by_id(survey_id):
     try:
-        return app.surveys_dict[survey_id]['shortName']
+        survey_short_name = app.surveys_dict[survey_id]['shortName']
     except (AttributeError, KeyError):
         try:
             app.surveys_dict = get_surveys_dict()
-            return app.surveys_dict[survey_id]['shortName']
-        except (AttributeError, KeyError):
+            survey_short_name = app.surveys_dict[survey_id]['shortName']
+        except AttributeError:
+            survey_short_name = 'Unavailable'
+        except KeyError:
             logger.exception("Failed to resolve survey short name", survey_id=survey_id)
-            return 'Unavailable'
+            survey_short_name = 'Unavailable'
+    return survey_short_name
