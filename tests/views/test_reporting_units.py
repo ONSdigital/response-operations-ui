@@ -10,6 +10,9 @@ url_get_reporting_unit = f'{app.config["BACKSTAGE_API_URL"]}/v1/reporting-unit/5
 url_search_reporting_units = f'{app.config["BACKSTAGE_API_URL"]}/v1/reporting-unit/search'
 with open('tests/test_data/reporting_units/reporting_unit.json') as json_data:
     reporting_unit = json.load(json_data)
+url_generate_new_code = f'{app.config["BACKSTAGE_API_URL"]}/v1/reporting-unit/iac/ce_id/ru_ref'
+with open('tests/test_data/case/case.json') as json_data:
+    case = json.load(json_data)
 
 
 class TestReportingUnits(unittest.TestCase):
@@ -135,6 +138,24 @@ class TestReportingUnits(unittest.TestCase):
         mock_request.get(f'{app.config["BACKSTAGE_API_URL"]}/v1/reporting-unit/search', status_code=500)
 
         response = self.app.post("/reporting-units", follow_redirects=True)
+
+        self.assertEqual(response.status_code, 500)
+        self.assertIn("Error 500 - Server error".encode(), response.data)
+
+    @requests_mock.mock()
+    def test_reporting_unit_generate_new_code(self, mock_request):
+        mock_request.post(url_generate_new_code, json=case)
+
+        response = self.app.get("/reporting-units/ru_ref/ce_id/new_enrolment_code", follow_redirects=True)
+
+        self.assertEqual(response.status_code, 200)
+        self.assertIn("jkbvyklkwj88".encode(), response.data)
+
+    @requests_mock.mock()
+    def test_reporting_unit_generate_new_code_fail(self, mock_request):
+        mock_request.post(url_generate_new_code, status_code=500)
+
+        response = self.app.get("/reporting-units/ru_ref/ce_id/new_enrolment_code", follow_redirects=True)
 
         self.assertEqual(response.status_code, 500)
         self.assertIn("Error 500 - Server error".encode(), response.data)
