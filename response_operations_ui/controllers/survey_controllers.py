@@ -35,15 +35,8 @@ def get_survey(short_name):
 def get_surveys_dict():
     # TODO get and cache this dictionary at app startup
     logger.debug('Retrieving surveys list')
-    url = f'{app.config["BACKSTAGE_API_URL"]}/v1/survey/surveys'
-    response = requests.get(url)
-    if response.status_code != 200:
-        raise ApiError(response)
-    logger.debug('Successfully retrieved surveys list')
-    try:
-        return {survey['id']: survey for survey in response.json()}
-    except ValueError:
-        logger.exception("Failed to decode survey list")
+    surveys_list = get_surveys_list()
+    return {survey['id']: survey for survey in surveys_list}
 
 
 def get_survey_short_name_by_id(survey_id):
