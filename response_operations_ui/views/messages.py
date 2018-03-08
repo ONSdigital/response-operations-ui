@@ -144,11 +144,11 @@ def _get_from_name(message):
 
 
 def _get_to_name(message):
-    if message.get('msg_to')[0] == 'GROUP':
-        return f"{get_survey_short_name_by_id(message.get('survey'))} Team"
     try:
+        if message.get('msg_to')[0] == 'GROUP':
+            return f"{get_survey_short_name_by_id(message.get('survey'))} Team"
         return f"{message.get('@msg_to')[0].get('firstName')} {message.get('@msg_to')[0].get('lastName')}"
-    except IndexError:
+    except (IndexError, TypeError):
         logger.exception("Failed to retrieve message to name ", message_id=message['msg_id'])
         return 'Unavailable'
 
@@ -174,6 +174,6 @@ def _get_human_readable_date(sent_date):
         slang_date = maya.parse(sent_date).slang_date().capitalize()
         sent_time = sent_date.split(' ')[1][0:5]
         return f'{slang_date} at {sent_time}'
-    except (ValueError, IndexError):
+    except (ValueError, IndexError, TypeError):
         logger.exception("Failed to parse sent date from message", sent_date=sent_date, message_id=['msg_id'])
         return 'Unavailable'

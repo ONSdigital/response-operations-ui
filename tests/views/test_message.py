@@ -82,6 +82,20 @@ class TestMessage(unittest.TestCase):
         self.assertIn("Example message subject".encode(), response.data)
 
     @requests_mock.mock()
+    def test_threads_list_with_missing_msg_to(self, mock_request):
+        with open('tests/test_data/message/threads_missing_msg_to.json') as thread_json:
+            malformed_thread_list = json.load(thread_json)
+        mock_request.get(url_get_threads_list,
+                         json=malformed_thread_list
+                         )
+        mock_request.get(url_get_surveys_list, json=self.surveys_list_json)
+
+        response = self.app.get("/messages")
+        self.assertEqual(response.status_code, 200)
+        self.assertIn("Unavailable".encode(), response.data)
+        self.assertIn("Example message subject".encode(), response.data)
+
+    @requests_mock.mock()
     def test_threads_list_with_missing_date(self, mock_request):
         with open('tests/test_data/message/threads_missing_sent_date.json') as thread_json:
             malformed_thread_list = json.load(thread_json)
