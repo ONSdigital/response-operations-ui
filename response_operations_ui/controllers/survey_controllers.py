@@ -32,15 +32,13 @@ def get_survey(short_name):
     return response.json()
 
 
-def get_surveys_dict():
-    # TODO cache this dictionary in app
-    surveys_list = get_surveys_list()
-    return {survey['id']: survey for survey in surveys_list}
-
-
 def get_survey_short_name_by_id(survey_id):
+    # TODO cache the surveys dictionary at app start up
     try:
-        return get_surveys_dict()[survey_id]['shortName']
+        surveys_dict = {survey['id']: survey for survey in get_surveys_list()}
+        return surveys_dict[survey_id]['shortName']
+    except ApiError:
+        return 'Unavailable'
     except KeyError:
         logger.exception("failed to resolve survey short name", survey_id=survey_id)
         return 'Unavailable'
