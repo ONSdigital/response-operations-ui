@@ -121,8 +121,6 @@ def view_messages():
         return render_template("messages.html", breadcrumbs=breadcrumbs, response_error=True)
 
 
-
-
 @messages_bp.route('/threads/<thread_id>', methods=['GET'])
 @login_required
 def view_conversation(thread_id):
