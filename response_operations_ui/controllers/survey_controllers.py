@@ -33,8 +33,7 @@ def get_survey(short_name):
 
 
 def get_surveys_dict():
-    # TODO get and cache this dictionary at app startup
-    logger.debug('Retrieving surveys list')
+    # TODO cache this dictionary in app
     surveys_list = get_surveys_list()
     return {survey['id']: survey for survey in surveys_list}
 
