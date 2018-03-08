@@ -33,14 +33,17 @@ def get_survey(short_name):
 
 
 def get_surveys_dict():
-    # TODO cache this dictionary in app
     surveys_list = get_surveys_list()
     return {survey['id']: survey for survey in surveys_list}
 
 
 def get_survey_short_name_by_id(survey_id):
     try:
-        return get_surveys_dict()[survey_id]['shortName']
-    except KeyError:
-        logger.exception("failed to resolve survey short name", survey_id=survey_id)
-        return 'Unavailable'
+        return app.surveys_dict[survey_id]['shortName']
+    except (AttributeError, KeyError):
+        try:
+            app.surveys_dict = get_surveys_dict()
+            return app.surveys_dict[survey_id]['shortName']
+        except (AttributeError, KeyError):
+            logger.exception("Failed to resolve survey short name", survey_id=survey_id)
+            return 'Unavailable'
