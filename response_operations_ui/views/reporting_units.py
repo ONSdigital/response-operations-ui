@@ -115,6 +115,16 @@ def search_reporting_units():
     return render_template('reporting-units.html', business_list=business_list, form=form, breadcrumbs=breadcrumbs)
 
 
+@reporting_unit_bp.route('/<ru_ref>/<collection_exercise_id>/new_enrolment_code', methods=['GET'])
+@login_required
+def generate_new_enrolment_code(ru_ref, collection_exercise_id):
+    case = reporting_units_controllers.generate_new_enrolment_code(collection_exercise_id, ru_ref)
+    return render_template('new-enrolment-code.html', case=case, ru_ref=ru_ref,
+                           trading_as=request.args.get('trading_as'),
+                           survey_name=request.args.get('survey_name'),
+                           survey_ref=request.args.get('survey_ref'))
+
+
 def map_region(region):
     if region == "YY":
         region = "NI"
