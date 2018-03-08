@@ -45,22 +45,7 @@
     </div>
     {% endfor %}
         </div>
-<form action="{{ url_for('messages_bp.create_message') }}" method="post" id="create-message-form">
-    {{ form.hidden_tag() }}
-
-    <div id="body-field"{% if form.body.errors %} class="panel panel--simple panel--error{% endif %}">
-        {% for error in form.body.errors %}
-            <p id="body-error-{{ loop.index }}" class="error-message">{{ error }}</p>
-        {% endfor %}
-        <label class="secure-message--message venus" for="message-text">Message</label>
-        {{ form.body(id='secure-message-body',
-        class_='message-view.block',
-        rows='10', maxlength='10000', cols=80) }}
-    </div>
-    <button id="btn-send-message" name="send-message" class="btn secure-message--send-btn" type="submit">Send</button>
-
-</form>
-
+        <!--TODO Add in the reply box -->
     </div>
     <a id="bottom"></a>
 </div>
