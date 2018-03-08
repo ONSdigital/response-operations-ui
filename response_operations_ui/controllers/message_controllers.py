@@ -21,7 +21,7 @@ def get_conversation(thread_id):
     try:
         response.raise_for_status()
     except HTTPError:
-        logger.exception("Message retrieval failed")
+        logger.exception("Conversation retrieval failed")
         raise ApiError(response)
 
     logger.debug("Retrieval successful")

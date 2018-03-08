@@ -179,3 +179,11 @@ class TestMessage(unittest.TestCase):
         self.assertIn("49900000001".encode(), response.data)
         self.assertIn("Apple".encode(), response.data)
 
+    @requests_mock.mock()
+    def test_conversation_fail(self, mock_request):
+        mock_request.get(url_get_thread, status_code=500)
+        with self.assertRaises(Exception) as raises:
+
+            response = self.app.get("/messages/threads/fb0e79bd-e132-4f4f-a7fd-5e8c6b41b9af")
+            self.assertEqual(response.status_code, 500)
+            self.assertEqual(raises.exception.message, "Conversation retrieval failed")
