@@ -174,7 +174,7 @@ def _thread_refine(message):
         'survey': message.get('survey'),
         'ruref': message.get('@ru_id').get('sampleUnitRef'),
         'business': message.get('@ru_id').get('name'),
-        'to': _get_name_from_message(message),
+        'to': _get_to_name(message),
         'sentDate': message.get('sent_date'),
         'internal': message.get('from_internal')
 
