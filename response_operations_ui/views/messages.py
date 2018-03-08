@@ -126,7 +126,7 @@ def view_messages():
 def _refine(message):
     return {
         'ru_ref': _get_ru_ref_from_message(message),
-        'business_name': (message.get('@ru_id') or {}).get('name'),
+        'business_name': _get_business_name_from_message(message),
         'subject': message.get('subject'),
         'from': _get_from_name(message),
         'to': _get_to_name(message),
@@ -158,6 +158,14 @@ def _get_ru_ref_from_message(message):
         return message['@ru_id']['sampleUnitRef']
     except (KeyError, TypeError):
         logger.exception("Failed to retrieve RU ref from message", message_id=message['msg_id'])
+        return 'Unavailable'
+
+
+def _get_business_name_from_message(message):
+    try:
+        return message['@ru_id']['name']
+    except (KeyError, TypeError):
+        logger.exception("Failed to retrieve business name from message", message_id=message['msg_id'])
         return 'Unavailable'
 
 

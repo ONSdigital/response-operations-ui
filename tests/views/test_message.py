@@ -40,7 +40,7 @@ class TestMessage(unittest.TestCase):
     # Test showing that the threads list loads into the website and displays User, business name and subject
 
     @requests_mock.mock()
-    def test_message_list(self, mock_request):
+    def test_threads_list(self, mock_request):
         mock_request.get(url_get_threads_list, json=thread_list)
         mock_request.get(url_get_surveys_list, json=self.surveys_list_json)
 
@@ -54,7 +54,7 @@ class TestMessage(unittest.TestCase):
         self.assertIn("Message from ONS".encode(), response.data)
 
     @requests_mock.mock()
-    def test_message_list_with_missing_atmsg_to(self, mock_request):
+    def test_threads_list_with_missing_atmsg_to(self, mock_request):
         with open('tests/test_data/message/threads_missing_atmsg_to.json') as thread_json:
             malformed_thread_list = json.load(thread_json)
         mock_request.get(url_get_threads_list,
@@ -68,7 +68,7 @@ class TestMessage(unittest.TestCase):
         self.assertIn("Example message subject".encode(), response.data)
 
     @requests_mock.mock()
-    def test_message_list_with_missing_atmsg_from(self, mock_request):
+    def test_threads_list_with_missing_atmsg_from(self, mock_request):
         with open('tests/test_data/message/threads_missing_atmsg_from.json') as thread_json:
             malformed_thread_list = json.load(thread_json)
         mock_request.get(url_get_threads_list,
@@ -82,7 +82,7 @@ class TestMessage(unittest.TestCase):
         self.assertIn("Example message subject".encode(), response.data)
 
     @requests_mock.mock()
-    def test_message_list_with_missing_date(self, mock_request):
+    def test_threads_list_with_missing_date(self, mock_request):
         with open('tests/test_data/message/threads_missing_sent_date.json') as thread_json:
             malformed_thread_list = json.load(thread_json)
         mock_request.get(url_get_threads_list,
@@ -96,7 +96,7 @@ class TestMessage(unittest.TestCase):
         self.assertIn("Example message subject".encode(), response.data)
 
     @requests_mock.mock()
-    def test_message_list_with_missing_ru_ref(self, mock_request):
+    def test_threads_list_with_missing_ru_ref(self, mock_request):
         with open('tests/test_data/message/threads_missing_ru_ref.json') as thread_json:
             malformed_thread_list = json.load(thread_json)
         mock_request.get(url_get_threads_list,
@@ -110,7 +110,21 @@ class TestMessage(unittest.TestCase):
         self.assertIn("Example message subject".encode(), response.data)
 
     @requests_mock.mock()
-    def test_message_list_fail(self, mock_request):
+    def test_threads_list_with_missing_business_name(self, mock_request):
+        with open('tests/test_data/message/threads_missing_business_name.json') as thread_json:
+            malformed_thread_list = json.load(thread_json)
+        mock_request.get(url_get_threads_list,
+                         json=malformed_thread_list
+                         )
+        mock_request.get(url_get_surveys_list, json=self.surveys_list_json)
+
+        response = self.app.get("/messages")
+        self.assertEqual(response.status_code, 200)
+        self.assertIn("Unavailable".encode(), response.data)
+        self.assertIn("Example message subject".encode(), response.data)
+
+    @requests_mock.mock()
+    def test_threads_list_fail(self, mock_request):
         mock_request.get(url_get_threads_list, status_code=500)
 
         response = self.app.get("/messages", follow_redirects=True)
@@ -119,7 +133,7 @@ class TestMessage(unittest.TestCase):
         self.assertIn("Error 500 - Server error".encode(), response.data)
 
     @requests_mock.mock()
-    def test_message_list_empty(self, mock_request):
+    def test_threads_list_empty(self, mock_request):
         mock_request.get(url_get_threads_list, json={"messages": []})
 
         response = self.app.get("/messages")
