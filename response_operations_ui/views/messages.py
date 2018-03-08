@@ -121,6 +121,24 @@ def view_messages():
         return render_template("messages.html", breadcrumbs=breadcrumbs, response_error=True)
 
 
+
+
+@messages_bp.route('/threads/<thread_id>', methods=['GET'])
+@login_required
+def view_conversation(thread_id):
+    breadcrumbs = [
+        {"title": "Messages", "link": "/messages"},
+        {"title": "Threads"},
+        {"title": f'{thread_id}'}
+    ]
+
+    conversation = message_controllers.get_conversation(thread_id)
+
+    messages = [_thread_refine(message) for message in conversation['messages']]
+
+    return render_template("conversation-view.html", breadcrumbs=breadcrumbs, messages=messages)
+
+
 def _refine(message):
     return {
         'ru_ref': message.get('ru_id'),
@@ -141,25 +159,7 @@ def _get_name_from_message(message):
     return name
 
 
-@messages_bp.route('/threads/<thread_id>', methods=['GET'])
-@login_required
-def view_conversation(thread_id):
-    breadcrumbs = [
-        {"title": "Messages", "link": "/messages"},
-        {"title": "Threads"},
-        {"title": f'{thread_id}'}
-    ]
-
-    form = SecureMessageForm(request.form)
-
-    conversation = message_controllers.get_conversation(thread_id)
-
-    messages = [_threadrefine(message) for message in conversation['messages']]
-
-    return render_template("conversation-view.html", breadcrumbs=breadcrumbs, messages=messages, form=form)
-
-
-def _threadrefine(message):
+def _thread_refine(message):
     return {
         'body': message.get('body'),
         'subject': message.get('subject'),
