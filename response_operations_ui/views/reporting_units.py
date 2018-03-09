@@ -89,7 +89,7 @@ def edit_contact_details(ru_ref, respondent_id):
               "telephone": request.form.get('telephone'),
               "respondent_id": respondent_id
           }
-        edit_contact_details_controller.edit_contact_details(edit_details_data)
+        edit_contact_details_controller.edit_contact_details(edit_details_data, respondent_id)
 
     else:
         respondent_details = edit_contact_details_controller.get_contact_details(respondent_id)

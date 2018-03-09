@@ -9,7 +9,7 @@ from response_operations_ui import app
 url_get_reporting_unit = f'{app.config["BACKSTAGE_API_URL"]}/v1/reporting-unit/50012345678'
 url_search_reporting_units = f'{app.config["BACKSTAGE_API_URL"]}/v1/reporting-unit/search'
 url_get_contact_details = f'{app.config["BACKSTAGE_API_URL"]}/v1/party/party-details?respondent_party_id=cd592e0f-8d07-407b-b75d-e01fbdae8233'
-url_edit_contact_details = f'{app.config["BACKSTAGE_API_URL"]}/v1/party/update-respondent-details'
+url_edit_contact_details = f'{app.config["BACKSTAGE_API_URL"]}/v1/party/update-respondent-details/cd592e0f-8d07-407b-b75d-e01fbdae8233'
 url_generate_new_code = f'{app.config["BACKSTAGE_API_URL"]}/v1/reporting-unit/iac/ce_id/ru_ref'
 with open('tests/test_data/reporting_units/reporting_unit.json') as json_data:
     reporting_unit = json.load(json_data)
@@ -167,7 +167,7 @@ class TestReportingUnits(unittest.TestCase):
             "email": 'Jacky.Turner@email.com',
             "telephone": '7971161867'
             }
-        mock_request.post(url_edit_contact_details)
+        mock_request.put(url_edit_contact_details)
         mock_request.get(url_get_reporting_unit + '?edit_details=True')
         mock_request.get(url_get_reporting_unit, json=edited_reporting_unit)
         mock_request.get(f'{app.config["BACKSTAGE_API_URL"]}/v1/case/status/BLOCKS/201801/50012345678',

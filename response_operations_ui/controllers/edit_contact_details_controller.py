@@ -11,9 +11,9 @@ from response_operations_ui.exceptions.exceptions import ApiError
 logger = wrap_logger(logging.getLogger(__name__))
 
 
-def edit_contact_details(edit_details_data):
+def edit_contact_details(edit_details_data, respondent_id):
     logger.debug('Validating contact details')
-    url = f'{app.config["BACKSTAGE_API_URL"]}/v1/party/update-respondent-details'
+    url = f'{app.config["BACKSTAGE_API_URL"]}/v1/party/update-respondent-details/{respondent_id}'
 
     response = requests.put(url, json=edit_details_data)
 
