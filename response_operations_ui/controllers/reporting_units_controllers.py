@@ -31,3 +31,22 @@ def search_reporting_units(query):
     logger.debug('Successfully retrieved reporting units by search', query=query)
 
     return response.json()
+
+
+def change_enrolment_status(business_id, respondent_id, survey_id, change_flag):
+    logger.debug('Changing the enrolment status', business_id=business_id, respondent_id=respondent_id, survey_id=survey_id, change_flag=change_flag)
+    url = f'{app.config["BACKSTAGE_API_URL"]}/v1/party/change-enrolment-status'
+
+    enrolment_json = {
+        'respondent_party_id': respondent_id,
+        'business_party_id': business_id,
+        'survey_id': survey_id,
+        'change_flag': change_flag
+    }
+
+    response = requests.put(url, json=enrolment_json)
+
+    if response.status_code != 200:
+        raise ApiError(response)
+
+    logger.debug('Successfully changed enrolment status')

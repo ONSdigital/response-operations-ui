@@ -1,13 +1,13 @@
 import logging
 
-from flask import Blueprint, render_template, request
+from flask import Blueprint, redirect, render_template, request, url_for
 from flask_login import login_required
 from structlog import wrap_logger
 
 from response_operations_ui.common.mappers import map_ce_response_status
 from response_operations_ui.controllers import case_controller
 from response_operations_ui.controllers import reporting_units_controllers
-from response_operations_ui.forms import SearchForm
+from response_operations_ui.forms import SearchForm, ConfirmChangeEnrolmentForm
 
 logger = wrap_logger(logging.getLogger(__name__))
 
@@ -17,6 +17,7 @@ reporting_unit_bp = Blueprint('reporting_unit_bp', __name__, static_folder='stat
 @reporting_unit_bp.route('/<ru_ref>', methods=['GET'])
 @login_required
 def view_reporting_unit(ru_ref):
+    enrolment_changed = request.args.get('enrolment_changed')
     ru_details = reporting_units_controllers.get_reporting_unit(ru_ref)
 
     ru_details['surveys'] = sorted(ru_details['surveys'], key=lambda survey: survey['surveyRef'])
@@ -57,8 +58,10 @@ def view_reporting_unit(ru_ref):
         info_message = f'Response status for {survey["surveyRef"]} {survey["shortName"]}' \
                        f' period {period_arg} changed to {new_status}'
 
+    if enrolment_changed:
+        info_message = 'Enrolment status changed'
     return render_template('reporting-unit.html', ru=ru_details['reporting_unit'],
-                           surveys=ru_details['surveys'],
+                           surveys=ru_details['surveys'], enrolment_changed=enrolment_changed,
                            breadcrumbs=breadcrumbs, info_message=info_message)
 
 
@@ -84,3 +87,27 @@ def map_region(region):
         region = "GB"
 
     return region
+
+
+@reporting_unit_bp.route('/confirm-change-enrolment-status', methods=['POST'])
+@login_required
+def confirm_change_enrolment_status():
+    form = ConfirmChangeEnrolmentForm(request.form)
+
+    return render_template('confirm-enrolment-change.html', form=form, survey_id=request.args['survey_id'], survey_name=request.args['survey_name'],
+                           respondent_id=request.args['respondent_id'], first_name=request.args['respondent_first_name'],
+                           last_name=request.args['respondent_last_name'], business_id=request.args['business_id'],
+                           ru_ref=request.args['ru_ref'], change_flag=request.args['change_flag'],
+                           ru_name=request.args['ru_name'])
+
+
+@reporting_unit_bp.route('/change-enrolment-status', methods=['POST'])
+@login_required
+def change_enrolment_status():
+    survey_id = request.args['survey_id']
+    respondent_id = request.args['respondent_id']
+    business_id = request.args['business_id']
+
+    reporting_units_controllers.change_enrolment_status(business_id=business_id, respondent_id=respondent_id, survey_id=survey_id)
+
+    return redirect(url_for('reporting_unit_bp.view_reporting_unit', ru_ref=request.args['ru_ref'], enrolment_changed='True'))
