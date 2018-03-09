@@ -14,6 +14,8 @@ url_sign_in_data = f'{app.config["BACKSTAGE_API_URL"]}/v2/sign-in/'
 get_message_list = f'{app.config["BACKSTAGE_API_URL"]}/v1/secure-message/messages'
 with open('tests/test_data/message/messages.json') as json_data:
     message_list = json.load(json_data)
+with open('tests/test_data/message/thread_missing_subject.json') as json_data:
+    thread_missing_subject = json.load(json_data)
 
 
 class TestMessage(unittest.TestCase):

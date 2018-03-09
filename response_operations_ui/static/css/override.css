@@ -778,3 +778,8 @@ textarea.secure-message--message{
   margin-left: -0.75rem;
   margin-right: .2rem;
 }
+
+.secure-message-sent-message-meta-from > span{
+  width: 2.5rem;
+  display: inline-block;
+}
