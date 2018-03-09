@@ -115,8 +115,7 @@ def view_messages():
     }
     breadcrumbs = [{"title": "Messages"}]
     try:
-        messages = message_controllers.get_message_list(params)
-        refined_messages = [_refine(msg) for msg in messages]
+        refined_messages = [_refine(msg) for msg in message_controllers.get_message_list(params)]
         return render_template("messages.html", breadcrumbs=breadcrumbs, messages=refined_messages)
     except NoMessagesError:
         return render_template("messages.html", breadcrumbs=breadcrumbs, response_error=True)
