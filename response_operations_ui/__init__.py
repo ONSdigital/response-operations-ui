@@ -58,25 +58,6 @@ if app.config['SESSION_TYPE'] == 'redis':
 Session(app)
 
 
-def get_surveys_dict():
-    logger.debug('Retrieving surveys list')
-    url = f'{app.config["BACKSTAGE_API_URL"]}/v1/survey/surveys'
-    response = requests.get(url)
-    if response.status_code != 200:
-        logger.debug('Failed to retrieve surveys list, retrying in 10 seconds')
-        time.sleep(10)
-        # This will loop infinitely, we do not want the service to start without this succeeding
-        return get_surveys_dict()
-    logger.debug('Successfully retrieved surveys list')
-    try:
-        return {survey['id']: survey for survey in response.json()}
-    except ValueError:
-        logger.exception("Failed to decode survey list")
-
-
-app.surveys_dict = get_surveys_dict()
-
-
 @login_manager.user_loader
 def user_loader(user_id):
     return User(user_id)
