@@ -31,3 +31,15 @@ def search_reporting_units(query):
     logger.debug('Successfully retrieved reporting units by search', query=query)
 
     return response.json()
+
+
+def generate_new_enrolment_code(collection_exercise_id, ru_ref):
+    logger.debug('Generating new enrolment code', collection_exercise_id=collection_exercise_id, ru_ref=ru_ref)
+    url = f'{app.config["BACKSTAGE_API_URL"]}/v1/reporting-unit/iac/{collection_exercise_id}/{ru_ref}'
+    response = requests.post(url)
+
+    if response.status_code != 200:
+        raise ApiError(response)
+
+    logger.debug('Successfully generated new enrolment code', collection_exercise_id=collection_exercise_id, ru_ref=ru_ref)
+    return response.json()
