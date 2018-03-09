@@ -1,8 +1,9 @@
 import logging
 
-from flask import Blueprint, render_template, request
+from flask import Blueprint, render_template, request, url_for
 from flask_login import login_required
 from structlog import wrap_logger
+from werkzeug.utils import redirect
 
 from response_operations_ui.common.mappers import map_ce_response_status
 from response_operations_ui.controllers import case_controller
@@ -57,7 +58,12 @@ def view_reporting_unit(ru_ref):
         info_message = f'Response status for {survey["surveyRef"]} {survey["shortName"]}' \
                        f' period {period_arg} changed to {new_status}'
 
+    info_arg = request.args.get('info')
+    if info_arg:
+        info_message = 'Verification email re-sent'
+
     return render_template('reporting-unit.html', ru=ru_details['reporting_unit'],
+                           ru_ref=ru_ref, party_id=respondent['id'],
                            surveys=ru_details['surveys'],
                            breadcrumbs=breadcrumbs, info_message=info_message)
 
@@ -75,6 +81,19 @@ def search_reporting_units():
         business_list = reporting_units_controllers.search_reporting_units(query)
 
     return render_template('reporting-units.html', business_list=business_list, form=form, breadcrumbs=breadcrumbs)
+
+@reporting_unit_bp.route('/resend_verification/<ru_ref>/<email>/<party_id>', methods=['GET'])
+@login_required
+def resend_verification(ru_ref, email, party_id):
+    return render_template('re-send-verification-email.html', ru_ref=ru_ref, email=email)
+
+
+@reporting_unit_bp.route('/resend_verification/<ru_ref>/<email>/<party_id>', methods=['POST'])
+@login_required
+def resent_verification(ru_ref, email, party_id):
+    reporting_units_controllers.resend_verification_email(party_id)
+    return redirect(url_for('reporting_unit_bp.view_reporting_unit', ru_ref=ru_ref,
+                            info='Verification email re-sent'))
 
 
 @reporting_unit_bp.route('/<ru_ref>/<collection_exercise_id>/new_enrolment_code', methods=['GET'])
