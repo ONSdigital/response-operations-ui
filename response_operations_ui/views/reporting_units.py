@@ -69,11 +69,10 @@ def view_reporting_unit(ru_ref):
 def view_contact_details(ru_ref, respondent_id):
     respondent_details = edit_contact_details_controller.get_contact_details(respondent_id)
 
-    referrer = request.referrer
     form = EditContactDetailsForm(form=request.form, default_values=respondent_details)
 
     return render_template('edit-contact-details.html', ru_ref=ru_ref, respondent_details=respondent_details,
-                           referrer=referrer, form=form)
+                           form=form)
 
 
 @reporting_unit_bp.route('/<ru_ref>/edit-contact-details/<respondent_id>', methods=['POST'])
