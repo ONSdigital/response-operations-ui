@@ -139,7 +139,6 @@ def _get_from_name(message):
         return f"{msg_from.get('firstName')} {msg_from.get('lastName')}"
     except KeyError:
         logger.exception("Failed to retrieve message from name", message_id=message['msg_id'])
-        return 'Unavailable'
 
 
 def _get_to_name(message):
@@ -149,7 +148,6 @@ def _get_to_name(message):
         return f"{message.get('@msg_to')[0].get('firstName')} {message.get('@msg_to')[0].get('lastName')}"
     except (IndexError, TypeError):
         logger.exception("Failed to retrieve message to name ", message_id=message['msg_id'])
-        return 'Unavailable'
 
 
 def _get_ru_ref_from_message(message):
@@ -157,7 +155,6 @@ def _get_ru_ref_from_message(message):
         return message['@ru_id']['sampleUnitRef']
     except (KeyError, TypeError):
         logger.exception("Failed to retrieve RU ref from message", message_id=message['msg_id'])
-        return 'Unavailable'
 
 
 def _get_business_name_from_message(message):
@@ -165,7 +162,6 @@ def _get_business_name_from_message(message):
         return message['@ru_id']['name']
     except (KeyError, TypeError):
         logger.exception("Failed to retrieve business name from message", message_id=message['msg_id'])
-        return 'Unavailable'
 
 
 def _get_human_readable_date(sent_date):
@@ -175,4 +171,3 @@ def _get_human_readable_date(sent_date):
         return f'{slang_date} at {sent_time}'
     except (ValueError, IndexError, TypeError):
         logger.exception("Failed to parse sent date from message", sent_date=sent_date, message_id=['msg_id'])
-        return 'Unavailable'
