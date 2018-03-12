@@ -156,7 +156,11 @@ def view_selected_survey(selected_survey):
             if survey_id == messages['survey']:
                 filtered_messages.append(messages)
 
-        return render_template("messages.html", breadcrumbs=breadcrumbs, messages=filtered_messages, change_survey=True)
+        return render_template("messages.html",
+                               breadcrumbs=breadcrumbs,
+                               messages=filtered_messages,
+                               selected_survey=selected_survey,
+                               change_survey=True)
     except NoMessagesError:
         return render_template("messages.html", breadcrumbs=breadcrumbs, response_error=True)
 
@@ -174,7 +178,6 @@ def _refine(message):
 
 
 def _get_survey_id(selected_survey):
-    # use this to get only one survey
     survey_messages = survey_controllers.get_survey(selected_survey)
     return survey_messages['survey']['id']
 

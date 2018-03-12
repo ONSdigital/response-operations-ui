@@ -3,7 +3,6 @@ from enum import Enum
 
 class Surveys(Enum):
     """Includes all surveys for the api"""
-    """should we have all 'active' surveys?"""
     ASHE = "ASHE"
     BLOCKS = "Blocks"
     BRICKS = "Bricks"

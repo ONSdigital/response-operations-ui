@@ -7,7 +7,7 @@
 <div role="main" id="main" class="page__main">
 
   {% if change_survey %}
-    <h1 class="jupiter" name="page-messages-title">{{ messages.survey }} Messages</h1>
+    <h1 class="jupiter" name="page-messages-title">{{ selected_survey }} Messages</h1>
     <p>(<a id="change-survey" href="/messages/select-survey">Change survey</a>)</p>
   {% else %}
     <h1 class="jupiter" name="page-messages-title">Messages</h1>
@@ -79,9 +79,6 @@
               <th scope="col" class="table--header--cell tbl-messages-received">
                 Received
               </th>
-              <th scope="col" class="table--header--cell tbl-messages-survey">
-                Survey
-              </th>
             </tr>
           </thead>
           <tbody>
@@ -104,9 +101,6 @@
             </td>
             <td name="tbl-messages-received" class="table--cell tbl-messages-received">
                {{ message.sent_date }}
-            </td>
-             <td name="tbl-messages-survey" class="table--cell tbl-messages-survey">
-               {{ message.survey }}
             </td>
            </tr>
           {% endfor %}
