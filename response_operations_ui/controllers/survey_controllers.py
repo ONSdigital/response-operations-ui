@@ -34,15 +34,12 @@ def get_survey(short_name):
 
 def get_survey_short_name_by_id(survey_id):
     try:
-        survey_short_name = app.surveys_dict[survey_id]['shortName']
+        return app.surveys_dict[survey_id]['shortName']
     except (AttributeError, KeyError):
         try:
             app.surveys_dict = {survey['id']: survey for survey in get_surveys_list()}
-            survey_short_name = app.surveys_dict[survey_id]['shortName']
-        except ApiError as raised_apierror:
+            return app.surveys_dict[survey_id]['shortName']
+        except ApiError:
             logger.exception("Failed to resolve survey short name due to API error", survey_id=survey_id)
-            raise raised_apierror
         except KeyError:
             logger.exception("Failed to resolve survey short name", survey_id=survey_id)
-            survey_short_name = 'Unavailable'
-    return survey_short_name
