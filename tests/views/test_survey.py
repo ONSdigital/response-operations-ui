@@ -106,14 +106,12 @@ class TestSurvey(unittest.TestCase):
     @requests_mock.mock()
     def test_get_survey_short_name_with_unknown_id(self, mock_request):
         mock_request.get(url_get_survey_list, json=survey_list)
-        self.assertEqual(get_survey_short_name_by_id("not_a_valid_survey_id"), "Unavailable")
+        self.assertEqual(get_survey_short_name_by_id("not_a_valid_survey_id"), None)
 
     @requests_mock.mock()
     def test_get_survey_short_name_survey_call_fails_returns_unavailable(self, mock_request):
         with suppress(AttributeError):
             del app.surveys_dict
 
-        with self.assertRaises(ApiError) as raises:
-            mock_request.get(url_get_survey_list, status_code=500)
-            get_survey_short_name_by_id("cb0711c3-0ac8-41d3-ae0e-567e5ea1ef87")
-            self.assertEqual(raises.exception.message, "Failed to resolve survey short name due to API error")
+        mock_request.get(url_get_survey_list, status_code=500)
+        self.assertEqual(get_survey_short_name_by_id("cb0711c3-0ac8-41d3-ae0e-567e5ea1ef87"), None)
