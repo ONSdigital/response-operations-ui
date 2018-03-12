@@ -1,7 +1,7 @@
 {
   "_links": {
     "first": {
-      "href": "http://localhost:5050/messages"
+      "href": "http://localhost:5050/threads"
     },
     "next": {
       "href": "http://localhost:5050/messages?page=2&limit=20"
