@@ -10,7 +10,7 @@ logger = wrap_logger(logging.getLogger(__name__))
 
 
 def edit_contact_details(edit_details_data, respondent_id):
-    logger.debug('Validating contact details')
+    logger.debug('Editing contact details', respondent_id=respondent_id)
     url = f'{app.config["BACKSTAGE_API_URL"]}/v1/party/update-respondent-details/{respondent_id}'
 
     response = requests.put(url, json=edit_details_data)
