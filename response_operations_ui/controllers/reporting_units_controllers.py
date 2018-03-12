@@ -41,5 +41,7 @@ def generate_new_enrolment_code(collection_exercise_id, ru_ref):
     if response.status_code != 200:
         raise ApiError(response)
 
-    logger.debug('Successfully generated new enrolment code', collection_exercise_id=collection_exercise_id, ru_ref=ru_ref)
+    logger.debug('Successfully generated new enrolment code',
+                 collection_exercise_id=collection_exercise_id,
+                 ru_ref=ru_ref)
     return response.json()
