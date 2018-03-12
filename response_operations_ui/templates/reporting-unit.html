@@ -16,65 +16,76 @@
 
   <h2 class="saturn">Surveys</h2>
 
-  {% for survey in surveys %}
-  <div class="ru-survey" name="associated-surveys">
-    <h3 name="survey-titles" class="saturn">{{ survey.surveyRef }} {{ survey.shortName }}</h3>
+  <section class="grid__col col-12@l ru-surveys">
+    {% for survey in surveys %}
+    <div class="ru-survey data-panel" id="survey-{{survey.shortName}}" name="associated-surveys">
+      <h3 name="survey-titles" class="saturn data-panel-header">
+        <button class='data-panel-header__title'></button>
+        {{ survey.surveyRef }} {{ survey.shortName }}
+      </h3>
 
-    <div class="ru-survey-ces">
+      <div class="data-panel-body">
+        <div class="ru-survey-ces">
 
-      <h4 class="neptune">Collection exercises</h4>
+          <h4 class="neptune">Collection exercises</h4>
 
-      <table name="tbl-ce-for-survey" class="table table__dense" summary="Collection exercises for {{survey.shortName}} for {{ ru.sampleUnitRef }}">
-        <thead class="table--head u-vhx">
-          <tr class="table--row">
-            <th scope="col" class="table--header--cell">
-              Period
-            </th>
-            <th scope="col" class="table--header--cell">
-              Reporting unit name (from sample)
-            </th>
-            <th scope="col" class="table--header--cell">
-              Region (from sample)
-            </th>
-            <th scope="col" class="table--header--cell">
-              Status
-            </th>
-          </tr>
-        </thead>
-        <tbody>
-          {% for ce in survey.collection_exercises[:4] %}
-          <tr class="table--row">
-            <td name="tbl-ce-period" class="table--cell">
-              {{ ce.exerciseRef }}
-            </td>
-            <td name="tbl-ce-company-name" class="table--cell">
-              {{ ce.companyName }}
-            </td>
-            <td name="tbl-ce-company-region" class="table--cell">
-              {{ ce.companyRegion }}
-            </td>
-            <td name="tbl-ce-status" class="table--cell">
-              {{ ce.responseStatus }}
-              {% if ce.statusChangeable %}
-              &nbsp;<a href="{{ url_for('case_bp.get_response_statuses', ru_ref=ru.sampleUnitRef, survey=survey.shortName, period=ce.exerciseRef) }}">Change</a>
-              {% endif %}
-            </td>
-          </tr>
-          {% endfor %}
-        </tbody>
-      </table>
+          <table name="tbl-ce-for-survey" class="table table__dense" summary="Collection exercises for {{survey.shortName}} for {{ ru.sampleUnitRef }}">
+            <thead class="table--head u-vhx">
+              <tr class="table--row">
+                <th scope="col" class="table--header--cell">
+                  Period
+                </th>
+                <th scope="col" class="table--header--cell">
+                  Reporting unit name (from sample)
+                </th>
+                <th scope="col" class="table--header--cell">
+                  Region (from sample)
+                </th>
+                <th scope="col" class="table--header--cell">
+                  Status
+                </th>
+              </tr>
+            </thead>
+            <tbody>
+              {% for ce in survey.collection_exercises[:4] %}
+              <tr class="table--row">
+                <td name="tbl-ce-period" class="table--cell">
+                  {{ ce.exerciseRef }}
+                </td>
+                <td name="tbl-ce-company-name" class="table--cell">
+                  {{ ce.companyName }}
+                </td>
+                <td name="tbl-ce-company-region" class="table--cell">
+                  {{ ce.companyRegion }}
+                </td>
+                <td name="tbl-ce-status" class="table--cell">
+                  {{ ce.responseStatus }}
+                  {% if ce.statusChangeable %}
+                  &nbsp;<a href="{{ url_for('case_bp.get_response_statuses', ru_ref=ru.sampleUnitRef, survey=survey.shortName, period=ce.exerciseRef) }}">Change</a>
+                  {% endif %}
+                </td>
+              </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        </div>
 
-    </div>
+        <div class="ru-survey-respondents u-pt-s">
+          <h4 class="neptune">Respondents</h4>
 
-    <div class="ru-survey-respondents u-pt-s">
-
-      <h4 class="neptune">Respondents</h4>
-
-      <div class="ru-survey-enrolment-code u-pb-s" name="enrolment-code">
-        {% if survey.activeIacCode %}
-        Unused enrolment code: {{survey.activeIacCode}}
-        {% endif %}
-      </div>
+          <div class="ru-survey-enrolment-code u-pb-s" name="enrolment-code">
+            {% if survey.activeIacCode %}
+            Unused enrolment code:
+            <code class="mars" id="unused-enrolment-code-{{survey.shortName}}">{{survey.activeIacCode}}</code>
+            {% endif %}
+            <br/>
+            <a href="{{ url_for('reporting_unit_bp.generate_new_enrolment_code',
+                                collection_exercise_id=survey.collection_exercises[-1]['id'], ru_ref=ru.sampleUnitRef,
+                                trading_as=ru.name, survey_ref=survey.surveyRef, survey_name=survey.shortName) }}"
+               id="generate-new-code">
+              Generate new enrolment code
+            </a>
+          </div>
 
       <table name="tbl-respondents-for-survey" class="table table__dense tbl-ru-survey-respondents" summary="Respondents for {{survey.shortName}} for {{ ru.sampleUnitRef }}">
         <thead class="table--head">
@@ -123,13 +134,13 @@
           </td>
           <td name="tbl-enrolment-status" class="table--cell">
             {{ respondent.enrolmentStatus }}
-              <div>
+            <div>
                   {% if respodent.enrolmentStatus == 'Enabled' %}
                   <a href="{{ url_for(reporting_unit_bp.confirm_change_enrolment_status, survey_id=survey.id, survey_name=survey.shortName, respondent_id=respondent.id, respondent_first_name=respondent.firstName, respondent_last_name=respondent.lastName, business_id=ru.id, ru_ref=ru.sampleUnitRef, ru_name=ru.name, change_flag='DISABLED') }}">Disable</a>
                   {% else %}
                   <a href="{{ url_for(reporting_unit_bp.confirm_change_enrolment_status, survey_id=survey.id, survey_name=survey.shortName, respondent_id=respondent.id, respondent_first_name=respondent.firstName, respondent_last_name=respondent.lastName, business_id=ru.id, ru_ref=ru.sampleUnitRef, ru_name=ru.name, change_flag='ENABLED') }}">Re-enable</a>
                   {% endif %}
-              </div>
+            </div>
           </td>
           <td class="table--cell">
             <form action="{{ url_for('messages_bp.create_message')}}" method="post" id="create-message-view">
@@ -147,9 +158,12 @@
         {% endfor %}
         </tbody>
       </table>
-
+        </div>
+        </div>
     </div>
-
-  </div>
-  {% endfor %}
+    {% endfor %}
+    <script>
+        initDataPanels();
+    </script>
+  </section>
 {% endblock %}
