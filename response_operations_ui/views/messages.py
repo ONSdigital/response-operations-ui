@@ -116,9 +116,13 @@ def view_messages():
     breadcrumbs = [{"title": "Messages"}]
     try:
         refined_messages = [_refine(msg) for msg in message_controllers.get_message_list(params)]
-        return render_template("messages.html", breadcrumbs=breadcrumbs, messages=refined_messages)
+        return render_template("messages.html",
+                               breadcrumbs=breadcrumbs,
+                               messages=refined_messages)
     except NoMessagesError:
-        return render_template("messages.html", breadcrumbs=breadcrumbs, response_error=True)
+        return render_template("messages.html",
+                               breadcrumbs=breadcrumbs,
+                               response_error=True)
 
 
 @messages_bp.route('/select-survey', methods=['GET', 'POST'])
@@ -127,14 +131,16 @@ def view_select_survey():
     breadcrumbs = [{"title": "Messages", "link": "/messages"},
                    {"title": "Filter by survey"}]
 
-    survey_list = Surveys.survey_list.value
+    survey_list = [survey.value for survey in Surveys]
 
     if request.method == 'POST':
         selected_survey = request.form['radio-answer']
         return redirect(url_for("messages_bp.view_selected_survey",
                                 selected_survey=selected_survey))
     else:
-        return render_template("message_select_survey.html", breadcrumbs=breadcrumbs, survey_list=survey_list)
+        return render_template("message_select_survey.html",
+                               breadcrumbs=breadcrumbs,
+                               survey_list=survey_list)
 
 
 @messages_bp.route('/<selected_survey>', methods=['GET'])
@@ -150,19 +156,25 @@ def view_selected_survey(selected_survey):
     try:
         refined_messages = [_refine(message) for message in message_controllers.get_message_list(params)]
         survey_id = _get_survey_id(selected_survey)
-        filtered_messages = []
 
-        for messages in refined_messages:
-            if survey_id == messages['survey']:
-                filtered_messages.append(messages)
+        filtered_messages = [messages for messages in refined_messages if messages['survey'] == survey_id]
 
         return render_template("messages.html",
                                breadcrumbs=breadcrumbs,
                                messages=filtered_messages,
                                selected_survey=selected_survey,
                                change_survey=True)
+
+    except KeyError:
+        logger.debug("Failed to retrieve survey id")
+        return render_template("messages.html",
+                               breadcrumbs=breadcrumbs,
+                               response_error=True)
     except NoMessagesError:
-        return render_template("messages.html", breadcrumbs=breadcrumbs, response_error=True)
+        logger.debug("Failed to retrieve messages")
+        return render_template("messages.html",
+                               breadcrumbs=breadcrumbs,
+                               response_error=True)
 
 
 def _refine(message):

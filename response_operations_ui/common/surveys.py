@@ -10,6 +10,4 @@ class Surveys(Enum):
     NBS = "NBS"
     PCS = "PCS"
     QBS = "QBS"
-    SANDANDGRAVEL = "Sand & Gravel"
-
-    survey_list = [ASHE, BLOCKS, BRICKS, FDI, NBS, PCS, QBS]
+    SANDANDGRAVEL = "Sand&Gravel"
