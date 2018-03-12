@@ -125,25 +125,26 @@ def view_messages():
 @login_required
 def view_conversation(thread_id):
     try:
-        messages = [_thread_refine(message) for message in message_controllers.get_conversation(thread_id)['messages']]
+        thread_conversation = message_controllers.get_conversation(thread_id)['messages']
+        refined_thread = [_refine(thread) for thread in reversed(thread_conversation)]
     except KeyError as ex:
         logger.exception("A key error occurred")
         raise ApiError(ex)
-    subject = _get_messages_subject(messages)
     breadcrumbs = [
         {"title": "Messages", "link": "/messages"},
-        {"title": subject}
+        {"title": refined_thread[0]["subject"]}
     ]
 
-    return render_template("conversation-view.html", breadcrumbs=breadcrumbs, messages=messages, subject=subject)
+    return render_template("conversation-view.html", breadcrumbs=breadcrumbs, messages=refined_thread)
 
 
-def _get_messages_subject(messages):
+def _get_message_subject(thread):
     try:
-        return messages[0]["subject"]
+        subject = thread["subject"]
+        return subject
     except KeyError:
-        logger.exception("Failed to retrieve RU ref from message")
-        return "Unavailable"
+        logger.exception("Failed to retrieve Subject from thread")
+        return None
 
 
 def _refine(message):
@@ -151,10 +152,15 @@ def _refine(message):
         'ru_ref': message.get('@ru_id').get('sampleUnitRef'),
         'thread_id': message.get('thread_id'),
         'business_name': message.get('@ru_id').get('name'),
-        'subject': message.get('subject'),
+        'subject': _get_message_subject(message),
         'from': _get_from_name(message),
         'to': _get_to_name(message),
-        'sent_date': message.get('sent_date').split(".")[0]
+        'sent_date': message.get('sent_date').split(".")[0],
+        'body': message.get('body'),
+        'internal': message.get('from_internal'),
+        'username': message.get('@msg_from', dict()).get('emailAddress'),
+        # TODO use survey ref instead of survey id
+        'survey': message.get('survey')
     }
 
 
@@ -172,18 +178,3 @@ def _get_to_name(message):
     except IndexError:
         name = message.get('msg_to')[0]
     return name
-
-
-def _thread_refine(message):
-    return {
-        'body': message.get('body'),
-        'subject': message.get('subject'),
-        'username': message.get('@msg_from').get('emailAddress'),
-        # TODO use survey ref instead of survey id
-        'survey': message.get('survey'),
-        'ru_ref': message.get('@ru_id').get('sampleUnitRef'),
-        'business_name': message.get('@ru_id').get('name'),
-        'to': _get_to_name(message),
-        'sent_date': message.get('sent_date'),
-        'internal': message.get('from_internal')
-    }

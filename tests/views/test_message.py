@@ -205,3 +205,10 @@ class TestMessage(unittest.TestCase):
             response = self.app.get("/messages/threads/fb0e79bd-e132-4f4f-a7fd-5e8c6b41b9af")
             self.assertEqual(response.status_code, 500)
             self.assertEqual(raises.exception.message, "A key error occurred")
+
+    @requests_mock.mock()
+    def test_conversation_subject_error(self, mock_request):
+        mock_request.get(url_get_thread, json=thread_missing_subject)
+        response = self.app.get("/messages/threads/fb0e79bd-e132-4f4f-a7fd-5e8c6b41b9af")
+        self.assertEqual(response.status_code, 200)
+        self.assertIn("No Subject".encode(), response.data)

@@ -22,7 +22,7 @@ def get_conversation(thread_id):
     try:
         response.raise_for_status()
     except (HTTPError, RequestException):
-        logger.exception("Thread retrieval failed ", thread_id=thread_id)
+        logger.exception("Thread retrieval failed", thread_id=thread_id)
         raise ApiError(response)
     logger.debug("Thread Retrieval successful")
 
