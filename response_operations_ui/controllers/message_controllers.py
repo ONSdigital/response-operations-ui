@@ -13,7 +13,7 @@ logger = wrap_logger(logging.getLogger(__name__))
 
 
 def get_conversation(thread_id):
-    logger.debug("Retrieving conversation")
+    logger.debug("Retrieving thread")
 
     url = f'{current_app.config["BACKSTAGE_API_URL"]}/v1/secure-message/threads/{thread_id}'
 
@@ -24,7 +24,7 @@ def get_conversation(thread_id):
     except (HTTPError, RequestException):
         logger.exception("Thread retrieval failed", thread_id=thread_id)
         raise ApiError(response)
-    logger.debug("Thread Retrieval successful")
+    logger.debug("Thread retrieval successful")
 
     try:
         return response.json()

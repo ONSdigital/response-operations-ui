@@ -126,7 +126,7 @@ def view_messages():
 def view_conversation(thread_id):
     try:
         thread_conversation = message_controllers.get_conversation(thread_id)['messages']
-        refined_thread = [_refine(thread) for thread in reversed(thread_conversation)]
+        refined_thread = [_refine(message) for message in reversed(thread_conversation)]
     except KeyError as ex:
         logger.exception("A key error occurred")
         raise ApiError(ex)
@@ -178,3 +178,5 @@ def _get_to_name(message):
     except IndexError:
         name = message.get('msg_to')[0]
     return name
+
+
