@@ -80,20 +80,17 @@ def view_contact_details(ru_ref, respondent_id):
 def edit_contact_details(ru_ref, respondent_id):
     form = EditContactDetailsForm(request.form)
 
-    if form.validate():
-        edit_details_data = {
-              "first_name": request.form.get('first_name'),
-              "last_name": request.form.get('last_name'),
-              "email": request.form.get('email'),
-              "telephone": request.form.get('telephone'),
-              "respondent_id": respondent_id
-          }
-        edit_contact_details_controller.edit_contact_details(edit_details_data, respondent_id)
-
-    else:
+    edit_details_data = {
+          "first_name": request.form.get('first_name'),
+          "last_name": request.form.get('last_name'),
+          "email": request.form.get('email'),
+          "telephone": request.form.get('telephone'),
+          "respondent_id": respondent_id
+      }
+    if not edit_contact_details_controller.edit_contact_details(edit_details_data, respondent_id):
         respondent_details = edit_contact_details_controller.get_contact_details(respondent_id)
         logger.info('Error submitting respondent details', respondent_id=respondent_id)
-        return render_template('edit-contact-details.html', ru_ref=ru_ref, form=form,
+        return render_template('edit-contact-details.html', ru_ref=ru_ref, form=form, error=True,
                                respondent_details=respondent_details)
 
     return redirect(url_for('reporting_unit_bp.view_reporting_unit', ru_ref=ru_ref, edit_details=True))

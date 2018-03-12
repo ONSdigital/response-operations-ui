@@ -15,9 +15,11 @@ def edit_contact_details(edit_details_data, respondent_id):
 
     response = requests.put(url, json=edit_details_data)
     if response.status_code != 200:
-        raise ApiError(response)
+        logger.debug('Error changing contact details', respondent_id=respondent_id)
+        return False
 
-    logger.debug('Successfully changed contact details')
+    logger.debug('Successfully changed contact details', respondent_id=respondent_id)
+    return True
 
 
 def get_contact_details(respondent_id):
