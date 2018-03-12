@@ -87,7 +87,10 @@ def edit_contact_details(ru_ref, respondent_id):
           "telephone": request.form.get('telephone'),
           "respondent_id": respondent_id
       }
-    if not edit_contact_details_controller.edit_contact_details(edit_details_data, respondent_id):
+
+    edit_successfully = edit_contact_details_controller.edit_contact_details(edit_details_data, respondent_id)
+
+    if not edit_successfully:
         respondent_details = edit_contact_details_controller.get_contact_details(respondent_id)
         logger.info('Error submitting respondent details', respondent_id=respondent_id)
         return render_template('edit-contact-details.html', ru_ref=ru_ref, form=form, error=True,
