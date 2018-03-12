@@ -38,7 +38,6 @@ def get_survey_short_name_by_id(survey_id):
         surveys_dict = {survey['id']: survey for survey in get_surveys_list()}
         return surveys_dict[survey_id]['shortName']
     except ApiError:
-        return 'Unavailable'
+        logger.exception("Failed to resolve survey short name due to API error", survey_id=survey_id)
     except KeyError:
-        logger.exception("failed to resolve survey short name", survey_id=survey_id)
-        return 'Unavailable'
+        logger.exception("Failed to resolve survey short name", survey_id=survey_id)
