@@ -166,12 +166,12 @@ def view_selected_survey(selected_survey):
                                change_survey=True)
 
     except KeyError:
-        logger.debug("Failed to retrieve survey id")
+        logger.exception("Failed to retrieve survey id")
         return render_template("messages.html",
                                breadcrumbs=breadcrumbs,
                                response_error=True)
     except NoMessagesError:
-        logger.debug("Failed to retrieve messages")
+        logger.exception("Failed to retrieve messages")
         return render_template("messages.html",
                                breadcrumbs=breadcrumbs,
                                response_error=True)
