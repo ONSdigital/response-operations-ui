@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, shrink-to-fit=no">
+    <meta name="author" content="Survey Data Collection team for ONS" />
+    <meta name="description" content="ONS Business Surveys" />
+
+    <title>{% block page_title %}{% endblock page_title %}</title>
+
+    <link rel=stylesheet type=text/css href="https://cdn.ons.gov.uk/sdc/322aece/css/styles.css">
+    {% assets "scss_all" %}
+    <link rel=stylesheet type=text/css href="{{ ASSET_URL }}">
+    {% endassets %}
+    <script type="text/javascript" src="http://code.jquery.com/jquery-1.7.1.min.js"></script>
+    {% assets "js_all" %}
+    <script type="text/javascript" src="{{ ASSET_URL }}"></script>
+    {% endassets %}
+    <link href="/static/images/favicon.ico" rel="Shortcut Icon" />
+  </head>
+
+  {%- block body %}
+  <body class="spoke">
+    <div class="page">
+      <div class="page__content">
+        <div class="container page__container">
+
+          <div class="grid">
+            <div class="grid__col col-3@l"></div>
+
+            <div class="grid__col col-6@l">
+              {%- block main %}{% endblock main -%}
+            </div>
+
+            <div class="grid__col col-3@l"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </body>
+  {% endblock body -%}
+</html>

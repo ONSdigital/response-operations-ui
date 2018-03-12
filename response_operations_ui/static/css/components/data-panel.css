@@ -1,0 +1,47 @@
+/* Data panel */
+
+/* To change and add to the data-panel CSS component */
+
+.data-panel-header{
+  cursor: pointer;
+  padding: 1.5rem;
+  margin-bottom: 0;
+  color: #4263c2;
+}
+
+.data-panel-header:hover *{
+  text-decoration: underline;
+}
+
+.data-panel-header__title{
+  border: 0;
+  background: none;
+  color: #4263c2;
+  padding: 0;
+  display: none;
+}
+
+/* need to only apply some of these if we know we've got css and js loaded - to discuss */
+
+.data-panel-header:after {
+  content: '\02795'; /* Unicode character for "plus" sign (+) */
+  color: #4263c2;
+  float: right;
+  margin-left: 5px;
+}
+
+.data-panel-header.active:after {
+  content: "\2796"; /* Unicode character for "minus" sign (-) */
+}
+
+.data-panel-header.active{
+  /* background-color: #eeecec; */
+}
+
+.data-panel-header:hover{
+  background-color: #eeecec;
+}
+
+.data-panel-body{
+  padding: 1.5rem 1.5rem 0.5rem 1.5rem;
+}
