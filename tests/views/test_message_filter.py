@@ -50,8 +50,8 @@ class TestMessageFilter(unittest.TestCase):
         response = self.app.get("/messages/Bricks")
 
         self.assertEqual(200, response.status_code)
-        self.assertIn("Select survey".encode(), response.data)
-        self.assertIn("Messages".encode(), response.data)
+        self.assertIn("Bricks Messages".encode(), response.data)
+        self.assertIn("Change survey".encode(), response.data)
         self.assertIn("Walmart".encode(), response.data)
 
     @requests_mock.mock()
@@ -62,7 +62,7 @@ class TestMessageFilter(unittest.TestCase):
         response = self.app.get("/messages/ASHE", follow_redirects=True)
 
         self.assertEqual(200, response.status_code)
-        self.assertIn("Select survey".encode(), response.data)
+        self.assertIn("ASHE Messages".encode(), response.data)
         self.assertIn("Messages".encode(), response.data)
         self.assertIn("No new messages".encode(), response.data)
 

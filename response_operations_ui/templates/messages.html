@@ -5,7 +5,13 @@
 </br>
 
 <div role="main" id="main" class="page__main">
-  <h1 class="jupiter" name="page-messages-title">Messages</h1>
+
+  {% if change_survey %}
+    <h1 class="jupiter" name="page-messages-title">{{ messages.survey }} Messages</h1>
+    <p>(<a id="change-survey" href="/messages/select-survey">Change survey</a>)</p>
+  {% else %}
+    <h1 class="jupiter" name="page-messages-title">Messages</h1>
+  {% endif %}
   <ul class="nav-tabs">
     <li class="nav-tabs__tab{% if request.url.endswith('/messages') or request.url.endswith('/messages/') %} nav-tabs__tab--active{% endif %}">
         <a id="inbox" href="/messages" class="nav-tabs__tab nav-tabs__tab--active tab-label">Inbox</a>

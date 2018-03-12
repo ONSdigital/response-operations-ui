@@ -124,8 +124,8 @@ def view_messages():
 @messages_bp.route('/select-survey', methods=['GET', 'POST'])
 @login_required
 def view_select_survey():
-    breadcrumbs = [{"title": "Select survey", "link": "/messages/select-survey"},
-                   {"title": "Messages", "link": "/messages"}]
+    breadcrumbs = [{"title": "Messages", "link": "/messages"},
+                   {"title": "Filter by survey"}]
 
     survey_list = Surveys.survey_list.value
 
@@ -140,9 +140,7 @@ def view_select_survey():
 @messages_bp.route('/<selected_survey>', methods=['GET'])
 @login_required
 def view_selected_survey(selected_survey):
-    breadcrumbs = [{"title": "Select survey", "link": "/messages/select-survey"},
-                   {"title": "Messages", "link": "/messages"},
-                   {"title": selected_survey}]
+    breadcrumbs = [{"title": selected_survey + " Messages"}]
 
     params = {
         'label': request.args.get('label'),
@@ -150,15 +148,15 @@ def view_selected_survey(selected_survey):
     }
 
     try:
-        refined_messages = [_refine(msg) for msg in message_controllers.get_message_list(params)]
+        refined_messages = [_refine(message) for message in message_controllers.get_message_list(params)]
         survey_id = _get_survey_id(selected_survey)
         filtered_messages = []
 
-        for msgs in refined_messages:
-            if survey_id == msgs['survey']:
-                filtered_messages.append(msgs)
+        for messages in refined_messages:
+            if survey_id == messages['survey']:
+                filtered_messages.append(messages)
 
-        return render_template("messages.html", breadcrumbs=breadcrumbs, messages=filtered_messages)
+        return render_template("messages.html", breadcrumbs=breadcrumbs, messages=filtered_messages, change_survey=True)
     except NoMessagesError:
         return render_template("messages.html", breadcrumbs=breadcrumbs, response_error=True)
 
