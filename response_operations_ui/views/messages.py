@@ -5,7 +5,7 @@ from flask import Blueprint, flash, g, render_template, request, redirect, url_f
 from flask_login import login_required, current_user
 from structlog import wrap_logger
 
-from response_operations_ui import app
+from response_operations_ui.common.surveys import Surveys
 from response_operations_ui.controllers import message_controllers, survey_controllers
 from response_operations_ui.exceptions.exceptions import ApiError, InternalError, NoMessagesError
 from response_operations_ui.forms import SecureMessageForm
@@ -127,12 +127,14 @@ def view_select_survey():
     breadcrumbs = [{"title": "Select survey", "link": "/messages/select-survey"},
                    {"title": "Messages", "link": "/messages"}]
 
+    survey_list = Surveys.survey_list.value
+
     if request.method == 'POST':
         selected_survey = request.form['radio-answer']
         return redirect(url_for("messages_bp.view_selected_survey",
                                 selected_survey=selected_survey))
     else:
-        return render_template("message_select_survey.html", breadcrumbs=breadcrumbs)
+        return render_template("message_select_survey.html", breadcrumbs=breadcrumbs, survey_list=survey_list)
 
 
 @messages_bp.route('/<selected_survey>', methods=['GET'])
