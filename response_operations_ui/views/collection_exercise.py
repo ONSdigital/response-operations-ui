@@ -38,9 +38,14 @@ def view_collection_exercise(short_name, period, error=None, ci_loaded=False, ex
     ]
 
     ce_state = ce_details['collection_exercise']['state']
-    show_set_live_button = ce_state == 'READY_FOR_REVIEW'
+    show_set_live_button = ce_state in ('READY_FOR_REVIEW', 'FAILEDVALIDATION')
     locked = ce_state in ('LIVE', 'READY_FOR_LIVE', 'EXECUTION_STARTED', 'VALIDATED', 'EXECUTED')
     processing = ce_state in ('EXECUTION_STARTED', 'EXECUTED', 'VALIDATED')
+    validation_failed = ce_state == 'FAILEDVALIDATION'
+
+    validation_errors = ce_details['collection_exercise']['validationErrors']
+    missing_ci = validation_errors and any('MISSING_COLLECTION_INSTRUMENT' in unit['errors']
+                                           for unit in validation_errors)
 
     ce_details['collection_exercise']['state'] = map_collection_exercise_state(ce_state)  # NOQA
     _format_ci_file_name(ce_details['collection_instruments'], ce_details['survey'])
@@ -56,11 +61,13 @@ def view_collection_exercise(short_name, period, error=None, ci_loaded=False, ex
                            executed=executed,
                            events=formatted_events,
                            locked=locked,
+                           missing_ci=missing_ci,
                            processing=processing,
                            sample=ce_details['sample_summary'],
                            sample_loaded=sample_loaded,
                            show_set_live_button=show_set_live_button,
-                           survey=ce_details['survey'])
+                           survey=ce_details['survey'],
+                           validation_failed=validation_failed)
 
 
 @collection_exercise_bp.route('/<short_name>/<period>', methods=['POST'])
