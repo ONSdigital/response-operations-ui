@@ -659,6 +659,7 @@ background: #eee;
 .secure-message-sent-message-meta,
 .secure-message-sent-message-body{
   padding: 0.5rem;
+  font-size: 16px;
 }
 
 .secure-message-sent-message-meta{
@@ -666,7 +667,7 @@ background: #eee;
   border-top-right-radius: 0.2rem;
   padding-top: 0.333rem;
   padding-bottom: 0.333rem;
-  /*font-size: 12px;*/
+  font-size: 18px;
 }
 
 

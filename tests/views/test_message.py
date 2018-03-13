@@ -20,6 +20,9 @@ url_get_surveys_list = f'{app.config["BACKSTAGE_API_URL"]}/v1/survey/surveys'
 with open('tests/test_data/message/threads.json') as json_data:
     thread_list = json.load(json_data)
 
+with open('tests/test_data/survey/survey_list.json') as json_data:
+    survey_list = json.load(json_data)
+
 
 class TestMessage(unittest.TestCase):
 
@@ -261,6 +264,7 @@ class TestMessage(unittest.TestCase):
     @requests_mock.mock()
     def test_conversation(self, mock_request):
         mock_request.get(url_get_thread, json=thread_json)
+        mock_request.get(url_get_surveys_list, json=survey_list)
 
         response = self.app.get("/messages/threads/fb0e79bd-e132-4f4f-a7fd-5e8c6b41b9af")
 
@@ -273,6 +277,7 @@ class TestMessage(unittest.TestCase):
     @requests_mock.mock()
     def test_conversation_fail(self, mock_request):
         mock_request.get(url_get_thread, status_code=500)
+        mock_request.get(url_get_surveys_list, json=survey_list)
         with self.assertRaises(Exception) as raises:
 
             response = self.app.get("/messages/threads/fb0e79bd-e132-4f4f-a7fd-5e8c6b41b9af")
@@ -298,6 +303,7 @@ class TestMessage(unittest.TestCase):
     @requests_mock.mock()
     def test_conversation_subject_error(self, mock_request):
         mock_request.get(url_get_thread, json=thread_missing_subject)
+        mock_request.get(url_get_surveys_list, json=survey_list)
         response = self.app.get("/messages/threads/fb0e79bd-e132-4f4f-a7fd-5e8c6b41b9af")
         self.assertEqual(response.status_code, 200)
         self.assertIn("No Subject".encode(), response.data)

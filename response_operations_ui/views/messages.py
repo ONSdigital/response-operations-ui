@@ -9,7 +9,7 @@ import maya
 from response_operations_ui.controllers import message_controllers
 from response_operations_ui.exceptions.exceptions import ApiError, InternalError, NoMessagesError
 from response_operations_ui.forms import SecureMessageForm
-from response_operations_ui.controllers.survey_controllers import get_survey_short_name_by_id
+from response_operations_ui.controllers.survey_controllers import get_survey_short_name_by_id, get_survey_ref_by_id
 
 logger = wrap_logger(logging.getLogger(__name__))
 messages_bp = Blueprint('messages_bp', __name__,
@@ -166,7 +166,8 @@ def _refine(message):
         'internal': message.get('from_internal'),
         'username': _get_user_summary_for_message(message),
         # TODO use survey ref instead of survey id
-        'survey': message.get('survey'),
+        'survey_ref': get_survey_ref_by_id(message.get('survey')),
+        'survey': get_survey_short_name_by_id(message.get('survey')),
         'ru_ref': _get_ru_ref_from_message(message),
         'business_name': _get_business_name_from_message(message),
         'from': _get_from_name(message),
