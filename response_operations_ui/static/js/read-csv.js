@@ -1,10 +1,9 @@
 
 function drawOutput(lines){
-
 	// Put the form types into their own separate array, so we can interrogate it faster
 	var formTypes = [];
 	for (var i = 0; i < lines.length; i++) {
-			formTypes.push(lines[i][lines.length - 1]);
+		formTypes.push(lines[i][lines.length - 1]);
 	}
 
 	var ciCount = formTypes.filter(function(val, i, arr) {

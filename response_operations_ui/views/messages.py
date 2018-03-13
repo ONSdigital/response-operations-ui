@@ -4,11 +4,13 @@ import logging
 from flask import Blueprint, flash, g, render_template, request, redirect, url_for
 from flask_login import login_required, current_user
 from structlog import wrap_logger
+import maya
 
 from response_operations_ui.common.surveys import Surveys
 from response_operations_ui.controllers import message_controllers, survey_controllers
 from response_operations_ui.exceptions.exceptions import ApiError, InternalError, NoMessagesError
 from response_operations_ui.forms import SecureMessageForm
+from response_operations_ui.controllers.survey_controllers import get_survey_short_name_by_id
 
 logger = wrap_logger(logging.getLogger(__name__))
 messages_bp = Blueprint('messages_bp', __name__,
@@ -115,10 +117,8 @@ def view_messages():
     }
     breadcrumbs = [{"title": "Messages"}]
     try:
-        refined_messages = [_refine(msg) for msg in message_controllers.get_message_list(params)]
-        return render_template("messages.html",
-                               breadcrumbs=breadcrumbs,
-                               messages=refined_messages)
+        refined_messages = [_refine(msg) for msg in message_controllers.get_thread_list(params)]
+        return render_template("messages.html", breadcrumbs=breadcrumbs, messages=refined_messages)
     except NoMessagesError:
         return render_template("messages.html",
                                breadcrumbs=breadcrumbs,
@@ -154,7 +154,7 @@ def view_selected_survey(selected_survey):
     }
 
     try:
-        refined_messages = [_refine(message) for message in message_controllers.get_message_list(params)]
+        refined_messages = [_refine(message) for message in message_controllers.get_thread_list(params)]
         survey_id = _get_survey_id(selected_survey)
 
         filtered_messages = [messages for messages in refined_messages if messages['survey'] == survey_id]
@@ -180,12 +180,12 @@ def view_selected_survey(selected_survey):
 def _refine(message):
     return {
         'survey': message.get('survey'),
-        'ru_ref': message.get('ru_id'),
-        'business_name': message.get('@ru_id').get('name'),
+        'ru_ref': _get_ru_ref_from_message(message),
+        'business_name': _get_business_name_from_message(message),
         'subject': message.get('subject'),
         'from': _get_from_name(message),
         'to': _get_to_name(message),
-        'sent_date': message.get('sent_date').split(".")[0]
+        'sent_date': _get_human_readable_date(message.get('sent_date'))
     }
 
 
@@ -199,12 +199,38 @@ def _get_from_name(message):
         msg_from = message['@msg_from']
         return f"{msg_from.get('firstName')} {msg_from.get('lastName')}"
     except KeyError:
-        return message.get('msg_from')
+        logger.exception("Failed to retrieve message from name", message_id=message.get('msg_id'))
 
 
 def _get_to_name(message):
     try:
-        name = message.get('@msg_to')[0].get('firstName') + ' ' + message.get('@msg_to')[0].get('lastName')
-    except IndexError:
-        name = message.get('msg_to')[0]
-    return name
+        if message.get('msg_to')[0] == 'GROUP':
+            if get_survey_short_name_by_id(message.get('survey')):
+                return f"{get_survey_short_name_by_id(message.get('survey'))} Team"
+            return "ONS"
+        return f"{message.get('@msg_to')[0].get('firstName')} {message.get('@msg_to')[0].get('lastName')}"
+    except (IndexError, TypeError):
+        logger.exception("Failed to retrieve message to name ", message_id=message.get('msg_id'))
+
+
+def _get_ru_ref_from_message(message):
+    try:
+        return message['@ru_id']['sampleUnitRef']
+    except (KeyError, TypeError):
+        logger.exception("Failed to retrieve RU ref from message", message_id=message.get('msg_id'))
+
+
+def _get_business_name_from_message(message):
+    try:
+        return message['@ru_id']['name']
+    except (KeyError, TypeError):
+        logger.exception("Failed to retrieve business name from message", message_id=message.get('msg_id'))
+
+
+def _get_human_readable_date(sent_date):
+    try:
+        slang_date = maya.parse(sent_date).slang_date().capitalize()
+        sent_time = sent_date.split(' ')[1][0:5]
+        return f'{slang_date} at {sent_time}'
+    except (ValueError, IndexError, TypeError):
+        logger.exception("Failed to parse sent date from message", sent_date=sent_date)
