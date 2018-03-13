@@ -56,7 +56,7 @@
           <thead class="table--head">
             <tr class="table--row">
               <th scope="col" class="table--header--cell tbl-messages-RU-Ref">
-                RU_Ref
+                RU Ref
               </th>
               <th scope="col" class="table--header--cell tbl-messages-business">
                 Business name
@@ -78,23 +78,23 @@
               <tbody>
               {% for message in messages %}
                <tr class="table--row table--row__selectable">
-                <td name="tbl-messages-RU_Ref" class="table--cell tbl-messages-RU_Ref">
-                    {{ message.ru_ref }}
+                <td name="tbl-messages-RU_Ref" class="table--cell tbl-messages-RU_Ref" id="ru-ref-{{ loop.index }}">
+                    {{ message.ru_ref or 'Unavailable' }}
                 </td>
-                <td name="tbl-messages-business" class="table--cell tbl-messages-business">
-                    {{ message.business_name }}
+                <td name="tbl-messages-business" class="table--cell tbl-messages-business" id="business-name-{{ loop.index }}">
+                    {{ message.business_name or 'Unavailable' }}
                 </td>
-                <td name="tbl-messages-subject" class="table--cell tbl-messages-subject">
-                    {{ message.subject }}
+                <td name="tbl-messages-subject" class="table--cell tbl-messages-subject" id="message-subject-{{ loop.index }}">
+                    <a href="" id="message-link-{{ loop.index }}">{{ message.subject or 'No Subject' }}</a>
                 </td>
-                <td name="tbl-messages-from" class="table--cell tbl-messages-from">
-                    {{ message.from }}
+                <td name="tbl-messages-from" class="table--cell tbl-messages-from" id="message-from-{{ loop.index }}">
+                    {{ message.from or 'Unavailable' }}
                 </td>
-                <td name="tbl-messages-to" class="table--cell tbl-messages-to">
-                    {{ message.to }}
+                <td name="tbl-messages-to" class="table--cell tbl-messages-to" id="message-to-{{ loop.index }}">
+                    {{ message.to or 'Unavailable' }}
                 </td>
-                <td name="tbl-messages-received" class="table--cell tbl-messages-received">
-                   {{ message.sent_date }}
+                <td name="tbl-messages-received" class="table--cell tbl-messages-received" id="received-time-{{ loop.index }}">
+                   {{ message.sent_date or 'Unavailable' }}
                 </td>
                </tr>
               {% endfor %}
