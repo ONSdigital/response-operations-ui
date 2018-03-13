@@ -81,12 +81,11 @@ def edit_contact_details(ru_ref, respondent_id):
     form = EditContactDetailsForm(request.form)
 
     edit_details_data = {
-          "first_name": request.form.get('first_name'),
-          "last_name": request.form.get('last_name'),
-          "email": request.form.get('email'),
-          "telephone": request.form.get('telephone'),
-          "respondent_id": respondent_id
-      }
+        "first_name": request.form.get('first_name'),
+        "last_name": request.form.get('last_name'),
+        "email": request.form.get('email'),
+        "telephone": request.form.get('telephone'),
+        "respondent_id": respondent_id}
 
     edit_successfully = edit_contact_details_controller.edit_contact_details(edit_details_data, respondent_id)
 
