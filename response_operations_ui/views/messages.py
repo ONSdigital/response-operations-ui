@@ -144,7 +144,9 @@ def _get_from_name(message):
 def _get_to_name(message):
     try:
         if message.get('msg_to')[0] == 'GROUP':
-            return f"{get_survey_short_name_by_id(message.get('survey'))} Team"
+            if get_survey_short_name_by_id(message.get('survey')):
+                return f"{get_survey_short_name_by_id(message.get('survey'))} Team"
+            return "ONS"
         return f"{message.get('@msg_to')[0].get('firstName')} {message.get('@msg_to')[0].get('lastName')}"
     except (IndexError, TypeError):
         logger.exception("Failed to retrieve message to name ", message_id=message['msg_id'])
