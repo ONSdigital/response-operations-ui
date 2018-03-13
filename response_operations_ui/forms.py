@@ -58,3 +58,7 @@ class EditContactDetailsForm(FlaskForm):
 class ChangeGroupStatusForm(FlaskForm):
     event = StringField('event')
     submit = SubmitField('Confirm')
+
+
+class Confirm(FlaskForm):
+    submit = SubmitField('Confirm')
