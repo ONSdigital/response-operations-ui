@@ -44,12 +44,15 @@ def generate_new_enrolment_code(collection_exercise_id, ru_ref):
     logger.debug('Successfully generated new enrolment code', collection_exercise_id=collection_exercise_id, ru_ref=ru_ref)
     return response.json()
 
+
 def resend_verification_email(party_id):
     logger.debug('Re-sending verification email', party_id=party_id)
     url = f'{app.config["BACKSTAGE_API_URL"]}/v1/reporting-unit/resend-verification-email/{party_id}'
+
     response = requests.post(url)
     if response.status_code != 200:
+        logger.exception("Re-sending of verification email failed", party_id=party_id)
         raise ApiError(response)
 
-    logger.debug('Successfully re-sent verification email', party_id=party_id)
+    logger.info('Successfully re-sent verification email', party_id=party_id)
     return response.json()

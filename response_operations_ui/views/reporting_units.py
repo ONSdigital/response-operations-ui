@@ -1,9 +1,8 @@
 import logging
 
-from flask import Blueprint, render_template, request, url_for
+from flask import Blueprint, render_template, request, url_for, redirect
 from flask_login import login_required
 from structlog import wrap_logger
-from werkzeug.utils import redirect
 
 from response_operations_ui.common.mappers import map_ce_response_status
 from response_operations_ui.controllers import case_controller
@@ -58,8 +57,7 @@ def view_reporting_unit(ru_ref):
         info_message = f'Response status for {survey["surveyRef"]} {survey["shortName"]}' \
                        f' period {period_arg} changed to {new_status}'
 
-    info_arg = request.args.get('info')
-    if info_arg:
+    if request.args.get('info'):
         info_message = 'Verification email re-sent'
 
     return render_template('reporting-unit.html', ru=ru_details['reporting_unit'],
