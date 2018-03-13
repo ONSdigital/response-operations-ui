@@ -45,6 +45,7 @@ class EditContactDetailsForm(FlaskForm):
     last_name = StringField('last_name')
     email = StringField('emailAddress')
     telephone = StringField('telephone')
+    hidden_email = HiddenField('hidden_email')
 
     def __init__(self, form, default_values=None):
         super().__init__(form)

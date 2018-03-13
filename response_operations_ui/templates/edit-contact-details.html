@@ -45,13 +45,13 @@
 
               <div class="spoke__body">
 
-                <form action="{{ url_for('reporting_unit_bp.edit_contact_details', ru_ref=ru_ref, respondent_id=respondent_details.id, email=respondent_details.emailAddress) }}" method="post">
+                <form action="{{ url_for('reporting_unit_bp.edit_contact_details', ru_ref=ru_ref, respondent_id=respondent_details.id) }}" method="post">
                 {{ form.csrf_token }}
                 {% if error %}
                 <div class="panel panel--simple panel--error u-mb-l">
                   <div class="panel__body" id="save-error">
-                    <h2 id='error-saving-message' class="venus">Error saving changes</h2>
-                    <p class="mars">Please try again.</p>
+                    <h2 id='error-saving-message' class="venus">System error</h2>
+                    <p class="mars">Please try saving your changes again.</p>
                   </div>
                 </div>
 
@@ -89,6 +89,7 @@
                       <span class="label__description pluto">ONS will send a verification email to a new address</span>
                     </label>
                   {{ form.email(class_="input input--text", id='email', required=required, maxlength=254, type="email") }}
+                    <input type="hidden" name="hidden_email" value={{ respondent_details.emailAddress }}>
                 </div>
 
                 <div class="field u-mb-m">
