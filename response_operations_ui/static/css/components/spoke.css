@@ -1,16 +1,29 @@
+/* Spoke styles for hub and spoke patterns and modals */
+
+
+/* Spoke pages - Starts */
+
 .spoke{
+  margin: 2rem 0;
   background-color: #999;
 }
 
+
 .spoke__header{
-  margin: 2rem 2rem 0 2rem;
-  padding: 1.5rem 2rem 0.5rem 2rem;
   background-color: #eeecec;
-  /* border-bottom: 1px solid #999; */
+}
+
+/* needs properly bemifying! @nicprice */
+
+.spoke__header__title{
+  /* border-top: 1px solid #fff; */
+  margin: 0;
+  padding: 1.5rem 2rem 0.5rem 2rem;
 }
 
 .spoke__body{
-  margin: 0 2rem 2rem 2rem;
+  /* margin: 0 2rem 2rem 2rem; */
+  margin: 0 0 2rem 0;
   padding: 2rem 2rem 2rem 2rem;
   background-color: #fff;
 }
@@ -23,3 +36,6 @@
 .current-value::before{
   content: "-";
 }
+
+
+/* Spoke pages - Ends */
