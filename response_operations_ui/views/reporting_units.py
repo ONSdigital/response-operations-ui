@@ -92,6 +92,7 @@ def resend_verification(ru_ref, email, party_id):
 @login_required
 def resent_verification(ru_ref, email, party_id):
     reporting_units_controllers.resend_verification_email(party_id)
+    logger.info("Re-sent verification email.", party_id=party_id, email=email)
     return redirect(url_for('reporting_unit_bp.view_reporting_unit', ru_ref=ru_ref,
                             info='Verification email re-sent'))
 
