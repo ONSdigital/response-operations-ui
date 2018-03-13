@@ -94,6 +94,9 @@
                 Name and contact details
               </th>
               <th scope="col" class="table--header--cell">
+                Account status
+              </th>
+              <th scope="col" class="table--header--cell">
                 Enrolment status
               </th>
               <th scope="col" class="table--header--cell">
@@ -124,13 +127,19 @@
                   <dd name="tbl-respondent-phone">
                     {{ respondent.telephone }}
                   </dd>
-                  <dt>
-                    Account
-                  </dt>
-                  <dd name="tbl-respondent-status">
-                    {{ respondent.status }}
-                  </dd>
                 </dl>
+              </td>
+              <td name="tbl-account-status" class="table--cell">
+                {{ respondent.status }}
+                <div>
+                  {% if respondent.status == 'Created'%}
+                    <a href=""></a>
+                  {% elif respondent.status == 'Active' %}
+                    <a href="{{ url_for('reporting_unit_bp.confirm_change_account_status', party_id=respondent.id, change_status='SUSPENDED', ru_ref=ru.sampleUnitRef )}}">Suspend</a>
+                  {% elif respondent.status == 'Suspended' %}
+                    <a href="{{ url_for('reporting_unit_bp.confirm_change_account_status', party_id=respondent.id, change_status='ACTIVE', ru_ref=ru.sampleUnitRef )}}">Re-activate</a>
+                  {% endif %}
+                </div>
               </td>
               <td name="tbl-enrolment-status" class="table--cell">
                 {{ respondent.enrolmentStatus }}

@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, shrink-to-fit=no">
+
+    <title>Change account status</title>
+
+     <link rel=stylesheet type=text/css href="https://cdn.ons.gov.uk/sdc/322aece/css/styles.css">
+     {% assets "scss_all" %}
+        <link rel=stylesheet type=text/css href="{{ ASSET_URL }}">
+     {% endassets %}
+
+    <link href="/static/images/favicon.ico" rel="Shortcut Icon" />
+</head>
+<body class="spoke">
+
+  <div class="page">
+
+    <div class="page__content">
+
+  <div class="container page__container">
+
+    <div class="grid">
+      <div class="grid__col col-3@l">
+      </div>
+
+      <div class="grid__col col-6@l">
+
+        <div role="main" id="main" class="page__main">
+
+
+          <div class="spoke__header">
+
+            <div class="spoke__header__title">
+              <h1 id="page-title" class="jupiter">Change respondent account status</h1>
+            </div>
+
+          </div>
+
+          <div class="spoke__body">
+              <form action="{{ url_for('reporting_unit_bp.change_account_status') }}" class="u-mt-l">
+
+              <input type="hidden" name="party_id" value="{{ party_id }}" />
+
+              <input type="hidden" id="change_status" name="change_status" value="{{ change_status }}" />
+
+                  <input type="hidden" id="ru_ref" name="ru_ref" value="{{ ru_ref }}" />
+
+              <dl class="description-list description-list-8">
+                <dt class="">
+                  Respondent:
+                </dt>
+                <dd class="">
+                  {{ first_name }} {{ last_name }}
+                </dd>
+              </dl>
+
+
+              <div id="action-to-confirm" class="u-mt-m">
+                {% if change_status == 'SUSPENDED' %}
+                  Suspend account?
+                  {% else %}
+                    Re-activate account?
+                  {% endif %}
+
+              </div>
+
+              <button type="submit" class="btn btn--primary u-mt-s">Confirm</button>
+
+              <div class="u-mt-xs">
+                <a href="{{ url_for('reporting_unit_bp.view_reporting_unit', ru_ref=ru_ref)}}">Cancel</a>
+              </div>
+
+            </form>
+
+          </div>
+
+
+        </div>
+
+      </div>
+
+      <div class="grid__col col-3@l">
+      </div>
+
+    </div>
+
+  </div>
+
+</div>
+
+
+</div>
+
+</body>
+</html>
