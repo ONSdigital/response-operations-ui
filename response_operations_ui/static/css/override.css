@@ -1,6 +1,7 @@
 /* Override styles - temporary for prototype */
 
 @import "/css/components/breadcrumb.css";
+@import "/css/components/data-panel.css";
 @import "/css/components/file-picker.css";
 @import "/css/components/footer.css";
 @import "/css/components/header.css";
@@ -8,6 +9,7 @@
 @import "/css/components/images.css";
 @import "/css/components/lists.css";
 @import "/css/components/nav.css";
+@import "/css/components/spoke.css";
 @import "/css/components/table.css";
 /* @import "/css/components/utilities.css"; */
 
@@ -49,27 +51,15 @@ a:active{
 
 
 
-/* Spoke pages - Starts */
 
-.spoke{
-  background-color: #999;
+/* new button icon for copy from material design icon library */
+
+.btn__icon--copy-link{
+
+  background-image: url(/s/img/icons/ic_content_copy_black_18px.svg);
+  width: 1.2rem;
+
 }
-
-.spoke__header{
-  margin: 2rem 2rem 0 2rem;
-  padding: 2rem 2rem 1rem 2rem;
-  background-color: #fff;
-  border-bottom: 1px solid #999;
-}
-
-.spoke__body{
-  margin: 0 2rem 2rem 2rem;
-  padding: 1rem 2rem 2rem 2rem;
-  background-color: #fff;
-}
-
-/* Spoke pages - Ends */
-
 
 
 
@@ -122,6 +112,13 @@ button.hidden{
 
 
 
+/* .current-value::before{
+  content: "(";
+}
+
+.current-value::after{
+  content: ")";
+} */
 
 
 
@@ -492,15 +489,17 @@ background: #eee;
 }
 
 .message-list__date-time{
+  width: 10rem;
   white-space: nowrap;
 }
 
 .message-list__ru-ref{
+  width: 8rem;
   white-space: nowrap;
 }
 
 .message-list__ru-name{
-  max-width: 200px;
+  width: 16rem;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -514,7 +513,7 @@ background: #eee;
 }
 
 .message-list__from{
-  max-width: 150px;
+  width: 10rem;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -522,14 +521,14 @@ background: #eee;
 
 .message-list__to{
   padding: 0.5rem 1rem 0.5rem 1rem;
-  max-width: 150px;
+  width: 8rem;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
 }
 
 .message-list__item--unread{
-  font-weight: 700;
+  font-weight: 800;
 }
 
 
