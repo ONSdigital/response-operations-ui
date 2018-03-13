@@ -6,11 +6,14 @@ import requests_mock
 from config import TestingConfig
 from response_operations_ui import app
 
-url_get_reporting_unit = f'{app.config["BACKSTAGE_API_URL"]}/v1/reporting-unit/50012345678'
-url_search_reporting_units = f'{app.config["BACKSTAGE_API_URL"]}/v1/reporting-unit/search'
-url_get_contact_details = f'{app.config["BACKSTAGE_API_URL"]}/v1/party/party-details?respondent_party_id=cd592e0f-8d07-407b-b75d-e01fbdae8233'
-url_edit_contact_details = f'{app.config["BACKSTAGE_API_URL"]}/v1/party/update-respondent-details/cd592e0f-8d07-407b-b75d-e01fbdae8233'
-url_generate_new_code = f'{app.config["BACKSTAGE_API_URL"]}/v1/reporting-unit/iac/ce_id/ru_ref'
+respondent_party_id = "cd592e0f-8d07-407b-b75d-e01fbdae8233"
+backstage_api_url = app.config["BACKSTAGE_API_URL"]
+
+url_get_reporting_unit = f'{backstage_api_url}/v1/reporting-unit/50012345678'
+url_search_reporting_units = f'{backstage_api_url}/v1/reporting-unit/search'
+url_get_contact_details = f'{backstage_api_url}/v1/party/party-details?respondent_party_id={respondent_party_id}'
+url_edit_contact_details = f'{backstage_api_url}/v1/party/update-respondent-details/{respondent_party_id}'
+url_generate_new_code = f'{backstage_api_url}/v1/reporting-unit/iac/ce_id/ru_ref'
 with open('tests/test_data/reporting_units/reporting_unit.json') as json_data:
     reporting_unit = json.load(json_data)
 with open('tests/test_data/reporting_units/respondent.json') as json_data:
@@ -152,7 +155,7 @@ class TestReportingUnits(unittest.TestCase):
     def test_get_contact_details(self, mock_request):
         mock_request.get(url_get_contact_details, json=respondent)
 
-        response = self.app.get("/reporting-units/50012345678/edit-contact-details/cd592e0f-8d07-407b-b75d-e01fbdae8233")
+        response = self.app.get(f"/reporting-units/50012345678/edit-contact-details/{respondent_party_id}")
 
         self.assertEqual(response.status_code, 200)
         self.assertIn("Jacky".encode(), response.data)
@@ -163,7 +166,7 @@ class TestReportingUnits(unittest.TestCase):
     def test_get_contact_details_fail(self, mock_request):
         mock_request.get(url_get_contact_details, status_code=500)
 
-        response = self.app.get("/reporting-units/50012345678/edit-contact-details/cd592e0f-8d07-407b-b75d-e01fbdae8233",
+        response = self.app.get(f"/reporting-units/50012345678/edit-contact-details/{respondent_party_id}",
                                 follow_redirects=True)
 
         self.assertEqual(response.status_code, 500)
@@ -175,8 +178,7 @@ class TestReportingUnits(unittest.TestCase):
             "first_name": 'Tom',
             "last_name": 'Smith',
             "email": 'Jacky.Turner@email.com',
-            "telephone": '7971161867'
-            }
+            "telephone": '7971161867'}
         mock_request.put(url_edit_contact_details)
         mock_request.get(url_get_reporting_unit + '?edit_details=True')
         mock_request.get(url_get_reporting_unit, json=edited_reporting_unit)
@@ -189,7 +191,7 @@ class TestReportingUnits(unittest.TestCase):
         mock_request.get(f'{app.config["BACKSTAGE_API_URL"]}/v1/case/status/BRICKS/201802/50012345678',
                          json=self.case_group_status)
 
-        response = self.app.post("/reporting-units/50012345678/edit-contact-details/cd592e0f-8d07-407b-b75d-e01fbdae8233",
+        response = self.app.post(f"/reporting-units/50012345678/edit-contact-details/{respondent_party_id}",
                                  data=changed_details, follow_redirects=True)
 
         self.assertEqual(response.status_code, 200)
@@ -203,8 +205,7 @@ class TestReportingUnits(unittest.TestCase):
             "first_name": 'Tom',
             "last_name": 'Smith',
             "email": 'Jacky.Turner@email.com',
-            "telephone": '7971161867'
-            }
+            "telephone": '7971161867'}
         mock_request.put(url_edit_contact_details, status_code=500)
 
         response = self.app.post(
@@ -230,4 +231,3 @@ class TestReportingUnits(unittest.TestCase):
 
         self.assertEqual(response.status_code, 500)
         self.assertIn("Error 500 - Server error".encode(), response.data)
-

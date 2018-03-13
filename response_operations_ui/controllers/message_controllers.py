@@ -11,7 +11,6 @@ from response_operations_ui.exceptions.exceptions import ApiError, NoMessagesErr
 
 logger = wrap_logger(logging.getLogger(__name__))
 
-
 def get_conversation(thread_id):
     logger.debug("Retrieving thread")
 
@@ -33,10 +32,11 @@ def get_conversation(thread_id):
         raise ApiError(response)
 
 
-def get_message_list(params):
-    logger.debug("Retrieving Message list")
 
-    url = f'{current_app.config["BACKSTAGE_API_URL"]}/v1/secure-message/messages'
+def get_thread_list(params):
+    logger.debug("Retrieving threads list")
+
+    url = f'{current_app.config["BACKSTAGE_API_URL"]}/v1/secure-message/threads'
     # This will be removed once UAA is completed.  For now we need the call to backstage to include
     # an Authorization in its header a JWT that includes party_id and role.
 
@@ -45,7 +45,7 @@ def get_message_list(params):
     try:
         response.raise_for_status()
     except HTTPError:
-        logger.exception("Message retrieval failed")
+        logger.exception("Threads retrieval failed")
         raise ApiError(response)
 
     logger.debug("Retrieval successful")
