@@ -7,12 +7,21 @@ from response_operations_ui import app
 from response_operations_ui.controllers.message_controllers import _get_url, send_message
 from response_operations_ui.exceptions.exceptions import InternalError
 
+url_get_thread = f'{app.config["BACKSTAGE_API_URL"]}/v1/secure-message/threads/fb0e79bd-e132-4f4f-a7fd-5e8c6b41b9af'
+with open('tests/test_data/message/thread.json') as json_data:
+    thread_json = json.load(json_data)
 url_sign_in_data = f'{app.config["BACKSTAGE_API_URL"]}/v2/sign-in/'
+
+with open('tests/test_data/message/thread_missing_subject.json') as json_data:
+    thread_missing_subject = json.load(json_data)
 url_get_threads_list = f'{app.config["BACKSTAGE_API_URL"]}/v1/secure-message/threads'
 url_get_surveys_list = f'{app.config["BACKSTAGE_API_URL"]}/v1/survey/surveys'
 
 with open('tests/test_data/message/threads.json') as json_data:
     thread_list = json.load(json_data)
+
+with open('tests/test_data/survey/survey_list.json') as json_data:
+    survey_list = json.load(json_data)
 
 
 class TestMessage(unittest.TestCase):
@@ -251,3 +260,50 @@ class TestMessage(unittest.TestCase):
         with self.assertRaises(Exception) as raises:
             self.app.post("/messages/create-message", data=malformed_ru_details)
             self.assertEqual(raises.exception.message, "Failed to load create message page")
+
+    @requests_mock.mock()
+    def test_conversation(self, mock_request):
+        mock_request.get(url_get_thread, json=thread_json)
+        mock_request.get(url_get_surveys_list, json=survey_list)
+
+        response = self.app.get("/messages/threads/fb0e79bd-e132-4f4f-a7fd-5e8c6b41b9af")
+
+        self.assertEqual(response.status_code, 200)
+        self.assertIn("Need more information on project".encode(), response.data)
+        self.assertIn("Project ideas".encode(), response.data)
+        self.assertIn("49900000001".encode(), response.data)
+        self.assertIn("Apple".encode(), response.data)
+
+    @requests_mock.mock()
+    def test_conversation_fail(self, mock_request):
+        mock_request.get(url_get_thread, status_code=500)
+        mock_request.get(url_get_surveys_list, json=survey_list)
+        with self.assertRaises(Exception) as raises:
+
+            response = self.app.get("/messages/threads/fb0e79bd-e132-4f4f-a7fd-5e8c6b41b9af")
+            self.assertEqual(response.status_code, 500)
+            self.assertEqual(raises.exception.message, "Conversation retrieval failed")
+
+    @requests_mock.mock()
+    def test_conversation_decode_error(self, mock_request):
+        mock_request.get(url_get_thread)
+        with self.assertRaises(Exception) as raises:
+            response = self.app.get("/messages/threads/fb0e79bd-e132-4f4f-a7fd-5e8c6b41b9af")
+            self.assertEqual(response.status_code, 500)
+            self.assertEqual(raises.exception.message, "the response could not be decoded")
+
+    @requests_mock.mock()
+    def test_conversation_key_error(self, mock_request):
+        mock_request.get(url_get_thread, json={})
+        with self.assertRaises(Exception) as raises:
+            response = self.app.get("/messages/threads/fb0e79bd-e132-4f4f-a7fd-5e8c6b41b9af")
+            self.assertEqual(response.status_code, 500)
+            self.assertEqual(raises.exception.message, "A key error occurred")
+
+    @requests_mock.mock()
+    def test_conversation_subject_error(self, mock_request):
+        mock_request.get(url_get_thread, json=thread_missing_subject)
+        mock_request.get(url_get_surveys_list, json=survey_list)
+        response = self.app.get("/messages/threads/fb0e79bd-e132-4f4f-a7fd-5e8c6b41b9af")
+        self.assertEqual(response.status_code, 200)
+        self.assertIn("No Subject".encode(), response.data)

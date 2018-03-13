@@ -72,8 +72,8 @@
                 <td name="tbl-messages-business" class="message-list__ru-name" id="business-name-{{ loop.index }}">
                     {{ message.business_name or 'Unavailable' }}
                 </td>
-                <td name="tbl-messages-subject" class="message-list__subject" id="message-subject-{{ loop.index }}">
-                    <a href="" id="message-link-{{ loop.index }}">{{ message.subject or 'No Subject' }}</a>
+                <td name="tbl-messages-subject" class="table--cell tbl-messages-subject">
+                    <a href="{{ url_for('messages_bp.view_conversation', thread_id=message.thread_id) }}#latest-message" id="message-link-{{ loop.index }}">{{ message.subject }}</a>
                 </td>
                 <td name="tbl-messages-from" class="message-list__from" id="message-from-{{ loop.index }}">
                     {{ message.from or 'Unavailable' }}
