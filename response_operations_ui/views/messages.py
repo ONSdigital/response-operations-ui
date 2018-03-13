@@ -138,34 +138,32 @@ def _get_from_name(message):
         msg_from = message['@msg_from']
         return f"{msg_from.get('firstName')} {msg_from.get('lastName')}"
     except KeyError:
-        logger.exception("Failed to retrieve message from name", message_id=message['msg_id'])
-        return 'Unavailable'
+        logger.exception("Failed to retrieve message from name", message_id=message.get('msg_id'))
 
 
 def _get_to_name(message):
     try:
         if message.get('msg_to')[0] == 'GROUP':
-            return f"{get_survey_short_name_by_id(message.get('survey'))} Team"
+            if get_survey_short_name_by_id(message.get('survey')):
+                return f"{get_survey_short_name_by_id(message.get('survey'))} Team"
+            return "ONS"
         return f"{message.get('@msg_to')[0].get('firstName')} {message.get('@msg_to')[0].get('lastName')}"
     except (IndexError, TypeError):
-        logger.exception("Failed to retrieve message to name ", message_id=message['msg_id'])
-        return 'Unavailable'
+        logger.exception("Failed to retrieve message to name ", message_id=message.get('msg_id'))
 
 
 def _get_ru_ref_from_message(message):
     try:
         return message['@ru_id']['sampleUnitRef']
     except (KeyError, TypeError):
-        logger.exception("Failed to retrieve RU ref from message", message_id=message['msg_id'])
-        return 'Unavailable'
+        logger.exception("Failed to retrieve RU ref from message", message_id=message.get('msg_id'))
 
 
 def _get_business_name_from_message(message):
     try:
         return message['@ru_id']['name']
     except (KeyError, TypeError):
-        logger.exception("Failed to retrieve business name from message", message_id=message['msg_id'])
-        return 'Unavailable'
+        logger.exception("Failed to retrieve business name from message", message_id=message.get('msg_id'))
 
 
 def _get_human_readable_date(sent_date):
@@ -174,5 +172,4 @@ def _get_human_readable_date(sent_date):
         sent_time = sent_date.split(' ')[1][0:5]
         return f'{slang_date} at {sent_time}'
     except (ValueError, IndexError, TypeError):
-        logger.exception("Failed to parse sent date from message", sent_date=sent_date, message_id=['msg_id'])
-        return 'Unavailable'
+        logger.exception("Failed to parse sent date from message", sent_date=sent_date)

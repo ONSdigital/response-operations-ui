@@ -9,7 +9,6 @@ from requests import RequestException
 from config import TestingConfig
 from response_operations_ui import app
 from response_operations_ui.controllers.survey_controllers import get_survey_short_name_by_id
-from response_operations_ui.exceptions.exceptions import ApiError
 
 url_get_survey_list = f'{app.config["BACKSTAGE_API_URL"]}/v1/survey/surveys'
 with open('tests/test_data/survey/survey_list.json') as json_data:
@@ -99,19 +98,30 @@ class TestSurvey(unittest.TestCase):
         mock_request.get(url_get_survey_list, json=survey_list)
         self.assertEqual(get_survey_short_name_by_id("cb0711c3-0ac8-41d3-ae0e-567e5ea1ef87"), "BRES")
 
-        # Surveys should now be cached, so the survey service should not be called
-        mock_request.get(url_get_survey_list, status_code=404)
+    @requests_mock.mock()
+    def test_get_survey_short_name_by_id_is_cached(self, mock_request):
+        mock_request.get(url_get_survey_list, json=survey_list)
+        self.assertEqual(get_survey_short_name_by_id("cb0711c3-0ac8-41d3-ae0e-567e5ea1ef87"), "BRES")
+
+        mock_request.get(url_get_survey_list, status_code=500)
         self.assertEqual(get_survey_short_name_by_id("cb0711c3-0ac8-41d3-ae0e-567e5ea1ef87"), "BRES")
 
     @requests_mock.mock()
-    def test_get_survey_short_name_with_unknown_id(self, mock_request):
+    def test_get_survey_short_name_by_id_for_new_survey_id(self, mock_request):
         mock_request.get(url_get_survey_list, json=survey_list)
-        self.assertEqual(get_survey_short_name_by_id("not_a_valid_survey_id"), None)
+        self.assertEqual(get_survey_short_name_by_id("cb0711c3-0ac8-41d3-ae0e-567e5ea1ef87"), "BRES")
+
+        mock_request.get(url_get_survey_list, json=[{"shortName": "NEW", "id": "a_new_survey_id"}])
+        self.assertEqual(get_survey_short_name_by_id("a_new_survey_id"), "NEW")
 
     @requests_mock.mock()
-    def test_get_survey_short_name_survey_call_fails_returns_unavailable(self, mock_request):
+    def test_get_survey_short_name_by_id_when_get_list_fails(self, mock_request):
         with suppress(AttributeError):
             del app.surveys_dict
-
         mock_request.get(url_get_survey_list, status_code=500)
         self.assertEqual(get_survey_short_name_by_id("cb0711c3-0ac8-41d3-ae0e-567e5ea1ef87"), None)
+
+    @requests_mock.mock()
+    def test_get_survey_short_name_by_id_when_id_not_found(self, mock_request):
+        mock_request.get(url_get_survey_list, json=survey_list)
+        self.assertEqual(get_survey_short_name_by_id("not_a_valid_survey_id"), None)

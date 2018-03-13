@@ -37,8 +37,6 @@ class TestMessage(unittest.TestCase):
         }
     ]
 
-    # Test showing that the threads list loads into the website and displays User, business name and subject
-
     @requests_mock.mock()
     def test_threads_list(self, mock_request):
         mock_request.get(url_get_threads_list, json=thread_list)

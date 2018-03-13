@@ -33,6 +33,7 @@ maya = "*"
 [dev-packages]
 
 codecov = "==2.0.9"
+flake8 = "*"
 pytest = "==3.3.0"
 pytest-cov = "==2.5.1"
 testfixtures = "==5.3.1"
