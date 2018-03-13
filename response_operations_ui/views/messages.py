@@ -137,10 +137,10 @@ def view_conversation(thread_id):
         breadcrumbs = _get_conversation_breadcrumbs(thread_conversation)
         refined_thread = [_refine(message) for message in reversed(thread_conversation)]
 
-    except KeyError as ex:
+    except KeyError as e:
         logger.exception("A key error occurred")
-        raise ApiError(ex)
-    except IndexError as e:
+        raise ApiError(e)
+    except IndexError:
         breadcrumbs = [
             {"title": "Messages", "link": "/messages"},
             {"title": "Unavailable"}
@@ -164,7 +164,7 @@ def _refine(message):
         'subject': _get_message_subject(message),
         'body': message.get('body'),
         'internal': message.get('from_internal'),
-        'username': message.get('@msg_from', dict()).get('emailAddress'),
+        'username': _get_user_summary_for_message(message),
         # TODO use survey ref instead of survey id
         'survey': message.get('survey'),
         'ru_ref': _get_ru_ref_from_message(message),
@@ -173,6 +173,12 @@ def _refine(message):
         'to': _get_to_name(message),
         'sent_date': _get_human_readable_date(message.get('sent_date'))
     }
+
+
+def _get_user_summary_for_message(message):
+    if message.get('from_internal'):
+        return _get_from_name(message)
+    return f'{_get_from_name(message)} - {_get_ru_ref_from_message(message)}'
 
 
 def _get_from_name(message):

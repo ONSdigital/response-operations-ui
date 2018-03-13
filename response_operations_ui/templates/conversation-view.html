@@ -6,7 +6,6 @@
 
 {% block main %}
 
-
 <h1 class="saturn" name="page-messages-title">{{ subject }}</h1>
 
 <div class="secure-message-conversation block">
@@ -32,7 +31,7 @@
 
             </span>
         </div>
-        <div class="secure-message-sent-message-body mars">
+        <div class="secure-message-sent-message-body mars" style="white-space:pre-line">
             {{ message.get('body') }}
         </div>
     </div>

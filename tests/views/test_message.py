@@ -21,7 +21,6 @@ with open('tests/test_data/message/threads.json') as json_data:
     thread_list = json.load(json_data)
 
 
-
 class TestMessage(unittest.TestCase):
 
     def setUp(self):

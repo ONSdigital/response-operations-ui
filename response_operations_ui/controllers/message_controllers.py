@@ -11,6 +11,7 @@ from response_operations_ui.exceptions.exceptions import ApiError, NoMessagesErr
 
 logger = wrap_logger(logging.getLogger(__name__))
 
+
 def get_conversation(thread_id):
     logger.debug("Retrieving thread")
 
@@ -30,7 +31,6 @@ def get_conversation(thread_id):
     except JSONDecodeError:
         logger.exception("the response could not be decoded")
         raise ApiError(response)
-
 
 
 def get_thread_list(params):
