@@ -237,7 +237,7 @@ class TestMessage(unittest.TestCase):
             response = self.app.post("/messages/create-message", data=self.message_form, follow_redirects=True)
 
         self.assertIn("Message sent.".encode(), response.data)
-        self.assertIn("Inbox".encode(), response.data)
+        self.assertIn("Messages".encode(), response.data)
 
     @requests_mock.mock()
     def test_form_submitted_with_api_error(self, mock_request):

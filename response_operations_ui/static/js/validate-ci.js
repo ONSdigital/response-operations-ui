@@ -11,7 +11,7 @@ function checkCI(file){
 		$("#ciFileErrorPanelBody").removeClass("panel__body");
 		$("#ciFileErrorPanelBody p").addClass("hidden");
 
-		$("#btn-add-ci").removeClass("unready");
+		$("#btn-load-ci").removeClass("unready");
 
 	} else{
 
@@ -22,7 +22,7 @@ function checkCI(file){
 		$("#ciFileErrorPanelBody").addClass("panel__body");
 		$("#ciFileErrorPanelBody p").removeClass("hidden");
 
-		$("#btn-add-ci").addClass("unready");
+		$("#btn-load-ci").addClass("unready");
 
 	}
 

@@ -5,25 +5,13 @@
 </br>
 
 <div role="main" id="main" class="page__main">
-  <h1 class="jupiter" name="page-messages-title">Messages</h1>
-  <ul class="nav-tabs">
-    <li class="nav-tabs__tab{% if request.url.endswith('/messages') or request.url.endswith('/messages/') %} nav-tabs__tab--active{% endif %}">
-        <a id="inbox" href="/messages" class="nav-tabs__tab nav-tabs__tab--active tab-label">Inbox</a>
-    </li>
-    <li class="nav-tabs__tab{% if 'label=SENT' in request.url %} nav-tabs__tab--active{% endif %}">
-        <a id="sent" href="/messages?label=SENT" class="navgation-tabs__tab tab-label">Sent</a>
-    </li>
-    <li class="nav-tabs__tab{% if 'label=DRAFT' in request.url %} nav-tabs__tab--active{% endif %}">
-        <a id="drafts" href="/messages?label=DRAFT" class="nav-tabs__tab tab-label">Drafts</a>
-    </li>
-</ul>
-
+  <h1 class="saturn" name="page-messages-title">Messages</h1>
   <div class="grid">
-    <div class="grid__col col-30@l">
+    <div class="grid__col col-12@m">
       <div class="messages-list">
         {% with messages = get_flashed_messages() %}
           {% if messages %}
-          <div class="panel panel--success">
+          <div class="panel panel--simple panel--success col-6@m">
               <div class="panel__body" data-qa="success-body">
                 {% for message in messages %}
                 <p class="mars" id="flashed-message-{{ loop.index }}">{{ message }}</p>
@@ -52,48 +40,48 @@
         {% if not messages %}
           <p>No new messages</p>
         {% else %}
-        <table id="tbl-messages" class="table__dense" summary="messages in the system">
+        <table id="tbl-messages" class="message-list sortable" summary="messages in the system">
           <thead class="table--head">
             <tr class="table--row">
-              <th scope="col" class="table--header--cell tbl-messages-RU-Ref">
+              <th scope="col" class="message-list__ru-ref sortable-column">
                 RU Ref
               </th>
-              <th scope="col" class="table--header--cell tbl-messages-business">
+              <th scope="col" class="message-list__ru-name sortable-column">
                 Business name
               </th>
-              <th scope="col" class="table--header--cell tbl-messages-subject">
+              <th scope="col" class="message-list__subject sortable-column">
                 Subject
               </th>
-              <th scope="col" class="table--header--cell tbl-messages-from">
+              <th scope="col" class="message-list__from sortable-column">
                 From
               </th>
-              <th scope="col" class="table--header--cell tbl-messages-to">
+              <th scope="col" class="message-list__to sortable-column">
                 To
               </th>
-              <th scope="col" class="table--header--cell tbl-messages-received">
-                Received
+              <th scope="col" class="message-list__date-time sortable-column">
+                Date and time
               </th>
             </tr>
           </thead>
               <tbody>
               {% for message in messages %}
                <tr class="table--row table--row__selectable">
-                <td name="tbl-messages-RU_Ref" class="table--cell tbl-messages-RU_Ref" id="ru-ref-{{ loop.index }}">
+                <td name="tbl-messages-RU_Ref" class="message-list__ru-ref" id="ru-ref-{{ loop.index }}">
                     {{ message.ru_ref or 'Unavailable' }}
                 </td>
-                <td name="tbl-messages-business" class="table--cell tbl-messages-business" id="business-name-{{ loop.index }}">
+                <td name="tbl-messages-business" class="message-list__ru-name" id="business-name-{{ loop.index }}">
                     {{ message.business_name or 'Unavailable' }}
                 </td>
                 <td name="tbl-messages-subject" class="table--cell tbl-messages-subject">
                     <a href="{{ url_for('messages_bp.view_conversation', thread_id=message.thread_id) }}#latest-message" id="message-link-{{ loop.index }}">{{ message.subject }}</a>
                 </td>
-                <td name="tbl-messages-from" class="table--cell tbl-messages-from" id="message-from-{{ loop.index }}">
+                <td name="tbl-messages-from" class="message-list__from" id="message-from-{{ loop.index }}">
                     {{ message.from or 'Unavailable' }}
                 </td>
-                <td name="tbl-messages-to" class="table--cell tbl-messages-to" id="message-to-{{ loop.index }}">
+                <td name="tbl-messages-to" class="message-list__to" id="message-to-{{ loop.index }}">
                     {{ message.to or 'Unavailable' }}
                 </td>
-                <td name="tbl-messages-received" class="table--cell tbl-messages-received" id="received-time-{{ loop.index }}">
+                <td name="tbl-messages-received" class="message-list__date-time" id="received-time-{{ loop.index }}">
                    {{ message.sent_date or 'Unavailable' }}
                 </td>
                </tr>
