@@ -118,7 +118,8 @@ def search_reporting_units():
 
 @reporting_unit_bp.route('/resend_verification/<ru_ref>/<email>/<party_id>', methods=['GET'])
 @login_required
-def resend_verification(ru_ref, email, _):
+def resend_verification(ru_ref, email, party_id):
+    logger.debug("Re-send verification email requested", ru_ref=ru_ref, email=email, party_id=party_id,)
     return render_template('re-send-verification-email.html', ru_ref=ru_ref, email=email)
 
 
