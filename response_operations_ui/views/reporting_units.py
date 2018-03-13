@@ -75,15 +75,17 @@ def view_contact_details(ru_ref, respondent_id):
                            form=form)
 
 
-@reporting_unit_bp.route('/<ru_ref>/edit-contact-details/<respondent_id>', methods=['POST'])
+@reporting_unit_bp.route('/<ru_ref>/edit-contact-details/<respondent_id>/<string:email>', methods=['POST'])
 @login_required
-def edit_contact_details(ru_ref, respondent_id):
+def edit_contact_details(ru_ref, respondent_id, email):
+    # TODO: Is there a more elegant way of getting the current email address without having to add it to the route path above? What about security?
     form = EditContactDetailsForm(request.form)
 
     edit_details_data = {
           "first_name": request.form.get('first_name'),
           "last_name": request.form.get('last_name'),
-          "email": request.form.get('email'),
+          "old_email": email,
+          "new_email": request.form.get('email'),
           "telephone": request.form.get('telephone'),
           "respondent_id": respondent_id
       }
