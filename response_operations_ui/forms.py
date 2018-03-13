@@ -40,6 +40,21 @@ class SearchForm(FlaskForm):
     submit = SubmitField('Search')
 
 
+class EditContactDetailsForm(FlaskForm):
+    first_name = StringField('first_name')
+    last_name = StringField('last_name')
+    email = StringField('emailAddress')
+    telephone = StringField('telephone')
+
+    def __init__(self, form, default_values=None):
+        super().__init__(form)
+        if default_values:
+            self.first_name.data = default_values.get('firstName')
+            self.last_name.data = default_values.get('lastName')
+            self.email.data = default_values.get('emailAddress')
+            self.telephone.data = default_values.get('telephone')
+
+
 class ChangeGroupStatusForm(FlaskForm):
     event = StringField('event')
     submit = SubmitField('Confirm')
