@@ -152,7 +152,9 @@ class TestReportingUnits(unittest.TestCase):
         self.assertIn("Error 500 - Server error".encode(), response.data)
 
     def test_resend_verification_email(self):
-        response = self.app.get("reporting-units/resend_verification/49900000001/brooke.bond%40email.com/9cb3c385-f4c7-4f37-ad21-0f66dcf57a99")
+        response = self.app.get(
+            "reporting-units/resend_verification/49900000001/"
+            "brooke.bond%40email.com/9cb3c385-f4c7-4f37-ad21-0f66dcf57a99")
         self.assertEqual(response.status_code, 200)
 
     @requests_mock.mock()
