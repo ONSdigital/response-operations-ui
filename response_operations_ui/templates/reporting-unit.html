@@ -2,161 +2,178 @@
 {% block page_title %}{{ru.name}} | Reporting units | Survey Data Collection{% endblock %}
 
 {% block main %}
+
+
+{% if edit_details %}
+<div id="contact-changed" class="panel panel--simple panel--success">
+   <div class="panel__body">
+      <div>Contact details changed</div>
+   </div>
+</div>
+{% endif %}
+
+
 {% include 'partials/info-box.html' %}
+
 <h1 id="RU_NAME" class="jupiter">{{ ru.name }}</h1>
 
-  <dl class="item-headlines">
-    <dt class="item-headlines-term">
-      Reference:
-    </dt>
-    <dd id="RU_REF" class="item-headlines-definition">
-      {{ ru.sampleUnitRef }}
-    </dd>
-  </dl>
+<dl class="item-headlines">
+  <dt class="item-headlines-term">
+    Reference:
+  </dt>
+  <dd id="RU_REF" class="item-headlines-definition">
+    {{ ru.sampleUnitRef }}
+  </dd>
+</dl>
 
-  <h2 class="saturn">Surveys</h2>
+<h2 class="saturn">Surveys</h2>
 
-  <section class="grid__col col-12@l ru-surveys">
-    {% for survey in surveys %}
-    <div class="ru-survey data-panel" id="survey-{{survey.shortName}}" name="associated-surveys">
-      <h3 name="survey-titles" class="saturn data-panel-header">
-        <button class='data-panel-header__title'></button>
-        {{ survey.surveyRef }} {{ survey.shortName }}
-      </h3>
+<section class="grid__col col-12@l ru-surveys">
+  {% for survey in surveys %}
+  <div class="ru-survey data-panel" id="survey-{{survey.shortName}}" name="associated-surveys">
+    <h3 name="survey-titles" class="saturn data-panel-header">
+      <button class='data-panel-header__title'></button>
+      {{ survey.surveyRef }} {{ survey.shortName }}
+    </h3>
 
-      <div class="data-panel-body">
-        <div class="ru-survey-ces">
+    <div class="data-panel-body">
+      <div class="ru-survey-ces">
 
-          <h4 class="neptune">Collection exercises</h4>
+        <h4 class="neptune">Collection exercises</h4>
 
-          <table name="tbl-ce-for-survey" class="table table__dense" summary="Collection exercises for {{survey.shortName}} for {{ ru.sampleUnitRef }}">
-            <thead class="table--head u-vhx">
-              <tr class="table--row">
-                <th scope="col" class="table--header--cell">
-                  Period
-                </th>
-                <th scope="col" class="table--header--cell">
-                  Reporting unit name (from sample)
-                </th>
-                <th scope="col" class="table--header--cell">
-                  Region (from sample)
-                </th>
-                <th scope="col" class="table--header--cell">
-                  Status
-                </th>
-              </tr>
-            </thead>
-            <tbody>
-              {% for ce in survey.collection_exercises[:4] %}
-              <tr class="table--row">
-                <td name="tbl-ce-period" class="table--cell">
-                  {{ ce.exerciseRef }}
-                </td>
-                <td name="tbl-ce-company-name" class="table--cell">
-                  {{ ce.companyName }}
-                </td>
-                <td name="tbl-ce-company-region" class="table--cell">
-                  {{ ce.companyRegion }}
-                </td>
-                <td name="tbl-ce-status" class="table--cell">
-                  {{ ce.responseStatus }}
-                  {% if ce.statusChangeable %}
-                  &nbsp;<a href="{{ url_for('case_bp.get_response_statuses', ru_ref=ru.sampleUnitRef, survey=survey.shortName, period=ce.exerciseRef) }}">Change</a>
-                  {% endif %}
-                </td>
-              </tr>
-              {% endfor %}
-            </tbody>
-          </table>
-        </div>
-
-        <div class="ru-survey-respondents u-pt-s">
-          <h4 class="neptune">Respondents</h4>
-
-          <div class="ru-survey-enrolment-code u-pb-s" name="enrolment-code">
-            {% if survey.activeIacCode %}
-            Unused enrolment code:
-            <code class="mars" id="unused-enrolment-code-{{survey.shortName}}">{{survey.activeIacCode}}</code>
-            {% endif %}
-            <br/>
-            <a href="{{ url_for('reporting_unit_bp.generate_new_enrolment_code',
-                                collection_exercise_id=survey.collection_exercises[-1]['id'], ru_ref=ru.sampleUnitRef,
-                                trading_as=ru.name, survey_ref=survey.surveyRef, survey_name=survey.shortName) }}"
-               id="generate-new-code">
-              Generate new enrolment code
-            </a>
-          </div>
-
-          <table name="tbl-respondents-for-survey" class="table table__dense tbl-ru-survey-respondents" summary="Respondents for {{survey.shortName}} for {{ ru.sampleUnitRef }}">
-            <thead class="table--head">
+        <table name="tbl-ce-for-survey" class="table table__dense" summary="Collection exercises for {{survey.shortName}} for {{ ru.sampleUnitRef }}">
+          <thead class="table--head u-vhx">
             <tr class="table--row">
               <th scope="col" class="table--header--cell">
-                Name and contact details
+                Period
               </th>
               <th scope="col" class="table--header--cell">
-                Enrolment status
+                Reporting unit name (from sample)
               </th>
               <th scope="col" class="table--header--cell">
-                Messages
+                Region (from sample)
+              </th>
+              <th scope="col" class="table--header--cell">
+                Status
               </th>
             </tr>
-            </thead>
-            <tbody>
-            {% for respondent in survey.respondents %}
+          </thead>
+          <tbody>
+            {% for ce in survey.collection_exercises[:4] %}
             <tr class="table--row">
-              <td name="tbl-respondent-details" class="table--cell">
-                <dl class="description-list">
-                  <dt>
-                    Name
-                  </dt>
-                  <dd name="tbl-respondent-name">
-                    {{ respondent.firstName }} {{ respondent.lastName }}
-                  </dd>
-                  <dt>
-                    Email
-                  </dt>
-                  <dd name="tbl-respondent-email">
-                    {{ respondent.emailAddress }}
-                  </dd>
-                  <dt>
-                    Tel
-                  </dt>
-                  <dd name="tbl-respondent-phone">
-                    {{ respondent.telephone }}
-                  </dd>
-                  <dt>
-                    Account
-                  </dt>
-                  <dd name="tbl-respondent-status">
-                    {{ respondent.status }}
-                  </dd>
-                </dl>
+              <td name="tbl-ce-period" class="table--cell">
+                {{ ce.exerciseRef }}
               </td>
-              <td name="tbl-enrolment-status" class="table--cell">
-                {{ respondent.enrolmentStatus }}
+              <td name="tbl-ce-company-name" class="table--cell">
+                {{ ce.companyName }}
               </td>
-              <td class="table--cell">
-                <form action="{{ url_for('messages_bp.create_message')}}" method="post" id="create-message-view">
-                  <button type="submit" name="create-message" id="create-message-button-{{ loop.index }}" value="create-message-view" class="btn-link">Create message</button>
-                  <input type="hidden" name="ru_ref" value={{ ru.sampleUnitRef }} >
-                  <input type="hidden" name="ru_id" value={{ ru.id }}>
-                  <input type="hidden" name="business" value={{ ru.name }}>
-                  <input type="hidden" name="survey" value={{ survey.shortName }}>
-                  <input type="hidden" name="survey_id" value={{ survey.id }}>
-                  <input type="hidden" name="msg_to_name" value="{{ respondent.firstName }} {{ respondent.lastName }}">
-                  <input type="hidden" name="msg_to" value={{ respondent.id }}>
-                </form>
+              <td name="tbl-ce-company-region" class="table--cell">
+                {{ ce.companyRegion }}
+              </td>
+              <td name="tbl-ce-status" class="table--cell">
+                {{ ce.responseStatus }}
+                {% if ce.statusChangeable %}
+                &nbsp;<a href="{{ url_for('case_bp.get_response_statuses', ru_ref=ru.sampleUnitRef, survey=survey.shortName, period=ce.exerciseRef) }}">Change</a>
+                {% endif %}
               </td>
             </tr>
             {% endfor %}
-            </tbody>
-          </table>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="ru-survey-respondents u-pt-s">
+        <h4 class="neptune">Respondents</h4>
+
+        <div class="ru-survey-enrolment-code u-pb-s" name="enrolment-code">
+          {% if survey.activeIacCode %}
+          Unused enrolment code:
+          <code class="mars" id="unused-enrolment-code-{{survey.shortName}}">{{survey.activeIacCode}}</code>
+          {% endif %}
+          <br/>
+          <a href="{{ url_for('reporting_unit_bp.generate_new_enrolment_code',
+                              collection_exercise_id=survey.collection_exercises[-1]['id'], ru_ref=ru.sampleUnitRef,
+                              trading_as=ru.name, survey_ref=survey.surveyRef, survey_name=survey.shortName) }}"
+             id="generate-new-code">
+            Generate new enrolment code
+          </a>
         </div>
+
+        <table name="tbl-respondents-for-survey" class="table table__dense tbl-ru-survey-respondents" summary="Respondents for {{survey.shortName}} for {{ ru.sampleUnitRef }}">
+          <thead class="table--head">
+          <tr class="table--row">
+            <th scope="col" class="table--header--cell">
+              Contact details
+            </th>
+            <th scope="col" class="table--header--cell">
+              Account status
+            </th>
+            <th scope="col" class="table--header--cell">
+              Enrolment status
+            </th>
+            <th scope="col" class="table--header--cell">
+              Messages
+            </th>
+          </tr>
+          </thead>
+          <tbody>
+          {% for respondent in survey.respondents %}
+          <tr class="table--row">
+            <td name="tbl-respondent-details" class="table--cell">
+              <dl class="description-list">
+                <dt>
+                  Name
+                </dt>
+                <dd name="tbl-respondent-name">
+                  {{ respondent.firstName }} {{ respondent.lastName }}
+                </dd>
+                <dt>
+                  Email
+                </dt>
+                <dd name="tbl-respondent-email">
+                  {{ respondent.emailAddress }}
+                </dd>
+                <dt>
+                  Tel
+                </dt>
+                <dd name="tbl-respondent-phone">
+                  {{ respondent.telephone }}
+                </dd>
+                <div>
+                  <form action="{{ url_for('reporting_unit_bp.view_contact_details', ru_ref=ru.sampleUnitRef, respondent_id=respondent.id)}}" method="get">
+                  <a href=# id="edit-contact-details-btn" onclick="this.parentNode.submit()"> Edit contact details </a>
+                  </form>
+                </div>
+              </dl>
+            </td>
+            <td name="tbl-respondent-status" class="table--cell">
+              {{ respondent.status }}
+            </td>
+            <td name="tbl-enrolment-status" class="table--cell">
+              {{ respondent.enrolmentStatus }}
+            </td>
+            <td class="table--cell">
+              <form action="{{ url_for('messages_bp.create_message')}}" method="post" id="create-message-view">
+                <button type="submit" name="create-message" id="create-message-button-{{ loop.index }}" value="create-message-view" class="btn-link">Create message</button>
+                <input type="hidden" name="ru_ref" value={{ ru.sampleUnitRef }} >
+                <input type="hidden" name="ru_id" value={{ ru.id }}>
+                <input type="hidden" name="business" value={{ ru.name }}>
+                <input type="hidden" name="survey" value={{ survey.shortName }}>
+                <input type="hidden" name="survey_id" value={{ survey.id }}>
+                <input type="hidden" name="msg_to_name" value="{{ respondent.firstName }} {{ respondent.lastName }}">
+                <input type="hidden" name="msg_to" value={{ respondent.id }}>
+              </form>
+            </td>
+          </tr>
+          {% endfor %}
+          </tbody>
+        </table>
       </div>
     </div>
-    {% endfor %}
-    <script>
-        initDataPanels();
-    </script>
-  </section>
+  </div>
+  {% endfor %}
+  <script>
+      initDataPanels();
+  </script>
+</section>
 {% endblock %}
