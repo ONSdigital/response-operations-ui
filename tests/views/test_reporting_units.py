@@ -14,6 +14,8 @@ url_search_reporting_units = f'{backstage_api_url}/v1/reporting-unit/search'
 url_get_contact_details = f'{backstage_api_url}/v1/party/party-details?respondent_party_id={respondent_party_id}'
 url_edit_contact_details = f'{backstage_api_url}/v1/party/update-respondent-details/{respondent_party_id}'
 url_generate_new_code = f'{backstage_api_url}/v1/reporting-unit/iac/ce_id/ru_ref'
+url_resend_verification_email = f'{backstage_api_url}/v1/reporting-unit/resend-verification-email/{respondent_party_id}'
+
 with open('tests/test_data/reporting_units/reporting_unit.json') as json_data:
     reporting_unit = json.load(json_data)
 with open('tests/test_data/reporting_units/respondent.json') as json_data:
@@ -153,9 +155,35 @@ class TestReportingUnits(unittest.TestCase):
 
     def test_resend_verification_email(self):
         response = self.app.get(
-            "reporting-units/resend_verification/49900000001/"
-            "brooke.bond%40email.com/9cb3c385-f4c7-4f37-ad21-0f66dcf57a99")
+            f"reporting-units/resend_verification/50012345678/"
+            f"brooke.bond%40email.com/{respondent_party_id}")
         self.assertEqual(response.status_code, 200)
+
+    @requests_mock.mock()
+    def test_resent_verification_email(self, mock_request):
+        mock_request.post(url_resend_verification_email)
+        mock_request.get(url_get_reporting_unit, json=reporting_unit)
+        mock_request.get(f'{app.config["BACKSTAGE_API_URL"]}/v1/case/status/BLOCKS/201801/50012345678',
+                         json=self.case_group_status)
+        mock_request.get(f'{app.config["BACKSTAGE_API_URL"]}/v1/case/status/BLOCKS/201802/50012345678',
+                         json=self.case_group_status)
+        mock_request.get(f'{app.config["BACKSTAGE_API_URL"]}/v1/case/status/BRICKS/201801/50012345678',
+                         json=self.case_group_status)
+        mock_request.get(f'{app.config["BACKSTAGE_API_URL"]}/v1/case/status/BRICKS/201802/50012345678',
+                         json=self.case_group_status)
+
+        response = self.app.post(
+            f"reporting-units/resend_verification/50012345678/"
+            f"brooke.bond%40email.com/{respondent_party_id}", follow_redirects=True)
+        self.assertEqual(response.status_code, 200)
+
+    @requests_mock.mock()
+    def test_fail_resent_verification_email(self, mock_request):
+        mock_request.post(url_resend_verification_email, status_code=500)
+        response = self.app.post(
+            f"reporting-units/resend_verification/50012345678/"
+            f"brooke.bond%40email.com/{respondent_party_id}", follow_redirects=True)
+        self.assertEqual(response.status_code, 500)
 
     @requests_mock.mock()
     def test_get_contact_details(self, mock_request):

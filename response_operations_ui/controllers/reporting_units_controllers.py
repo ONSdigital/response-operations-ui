@@ -57,4 +57,3 @@ def resend_verification_email(party_id):
         raise ApiError(response)
 
     logger.info('Successfully re-sent verification email', party_id=party_id)
-    return response.json()
