@@ -659,7 +659,7 @@ background: #eee;
 .secure-message-sent-message-meta,
 .secure-message-sent-message-body{
   padding: 0.5rem;
-  font-size: 81.25%;
+  font-size: 16px;
 }
 
 .secure-message-sent-message-meta{
@@ -667,7 +667,7 @@ background: #eee;
   border-top-right-radius: 0.2rem;
   padding-top: 0.333rem;
   padding-bottom: 0.333rem;
-  /*font-size: 12px;*/
+  font-size: 18px;
 }
 
 
@@ -695,7 +695,6 @@ background: #eee;
 
 .secure-message-sent-message-actions{
   padding: 0.5rem;
-  font-size: 81.25%;
 }
 
 .secure-message-sent-message-actions{
@@ -776,4 +775,9 @@ textarea.secure-message--message{
   color: #4263C2;
   margin-left: -0.75rem;
   margin-right: .2rem;
+}
+
+.secure-message-sent-message-meta-from > span{
+  width: 2.5rem;
+  display: inline-block;
 }

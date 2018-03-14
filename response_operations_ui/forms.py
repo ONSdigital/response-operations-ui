@@ -59,4 +59,3 @@ class EditContactDetailsForm(FlaskForm):
 class ChangeGroupStatusForm(FlaskForm):
     event = StringField('event')
     submit = SubmitField('Confirm')
-

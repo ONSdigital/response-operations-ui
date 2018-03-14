@@ -7,10 +7,21 @@ from response_operations_ui import app
 from response_operations_ui.controllers.message_controllers import _get_url, send_message
 from response_operations_ui.exceptions.exceptions import InternalError
 
+url_get_thread = f'{app.config["BACKSTAGE_API_URL"]}/v1/secure-message/threads/fb0e79bd-e132-4f4f-a7fd-5e8c6b41b9af'
+with open('tests/test_data/message/thread.json') as json_data:
+    thread_json = json.load(json_data)
 url_sign_in_data = f'{app.config["BACKSTAGE_API_URL"]}/v2/sign-in/'
-get_message_list = f'{app.config["BACKSTAGE_API_URL"]}/v1/secure-message/messages'
-with open('tests/test_data/message/messages.json') as json_data:
-    message_list = json.load(json_data)
+
+with open('tests/test_data/message/thread_missing_subject.json') as json_data:
+    thread_missing_subject = json.load(json_data)
+url_get_threads_list = f'{app.config["BACKSTAGE_API_URL"]}/v1/secure-message/threads'
+url_get_surveys_list = f'{app.config["BACKSTAGE_API_URL"]}/v1/survey/surveys'
+
+with open('tests/test_data/message/threads.json') as json_data:
+    thread_list = json.load(json_data)
+
+with open('tests/test_data/survey/survey_list.json') as json_data:
+    survey_list = json.load(json_data)
 
 
 class TestMessage(unittest.TestCase):
@@ -27,29 +38,115 @@ class TestMessage(unittest.TestCase):
         # sign-in to setup the user in the session
         self.app.post("/sign-in", follow_redirects=True, data={"username": "user", "password": "pass"})
 
+    surveys_list_json = [
+        {
+            "id": "f235e99c-8edf-489a-9c72-6cabe6c387fc",
+            "shortName": "QBS",
+            "longName": "Quarterly Business Survey"
+        }
+    ]
+
     @requests_mock.mock()
-    def test_Home(self, mock_request):
-        mock_request.get(get_message_list, json=message_list)
-
-        response = self.app.get("/")
-
-        self.assertEqual(response.status_code, 200)
-        self.assertIn("View messages".encode(), response.data)
-
-    # Test showing that the messages list loads into the website and displays User, business name and subject
-    @requests_mock.mock()
-    def test_Message_list(self, mock_request):
-        mock_request.get(get_message_list, json=message_list)
+    def test_threads_list(self, mock_request):
+        mock_request.get(url_get_threads_list, json=thread_list)
+        mock_request.get(url_get_surveys_list, json=self.surveys_list_json)
 
         response = self.app.get("/messages")
         self.assertEqual(response.status_code, 200)
-        self.assertIn("Acme Studios LTD".encode(), response.data)
-        self.assertIn("Jordon Dutch".encode(), response.data)
-        self.assertIn("Q3 Statistics".encode(), response.data)
+        self.assertIn("Apple".encode(), response.data)
+        self.assertIn("50012345678".encode(), response.data)
+        self.assertIn("John Example".encode(), response.data)
+        self.assertIn("QBS Team".encode(), response.data)
+        self.assertIn("Message from respondent".encode(), response.data)
+        self.assertIn("Message from ONS".encode(), response.data)
 
     @requests_mock.mock()
-    def test_message_list_fail(self, mock_request):
-        mock_request.get(get_message_list, status_code=500)
+    def test_threads_list_with_missing_atmsg_to(self, mock_request):
+        with open('tests/test_data/message/threads_missing_atmsg_to.json') as thread_json:
+            malformed_thread_list = json.load(thread_json)
+        mock_request.get(url_get_threads_list,
+                         json=malformed_thread_list
+                         )
+        mock_request.get(url_get_surveys_list, json=self.surveys_list_json)
+
+        response = self.app.get("/messages")
+        self.assertEqual(response.status_code, 200)
+        self.assertIn("Unavailable".encode(), response.data)
+        self.assertIn("Example message subject".encode(), response.data)
+
+    @requests_mock.mock()
+    def test_threads_list_with_missing_atmsg_from(self, mock_request):
+        with open('tests/test_data/message/threads_missing_atmsg_from.json') as thread_json:
+            malformed_thread_list = json.load(thread_json)
+        mock_request.get(url_get_threads_list,
+                         json=malformed_thread_list
+                         )
+        mock_request.get(url_get_surveys_list, json=self.surveys_list_json)
+
+        response = self.app.get("/messages")
+        self.assertEqual(response.status_code, 200)
+        self.assertIn("Unavailable".encode(), response.data)
+        self.assertIn("Example message subject".encode(), response.data)
+
+    @requests_mock.mock()
+    def test_threads_list_with_missing_msg_to(self, mock_request):
+        with open('tests/test_data/message/threads_missing_msg_to.json') as thread_json:
+            malformed_thread_list = json.load(thread_json)
+        mock_request.get(url_get_threads_list,
+                         json=malformed_thread_list
+                         )
+        mock_request.get(url_get_surveys_list, json=self.surveys_list_json)
+
+        response = self.app.get("/messages")
+        self.assertEqual(response.status_code, 200)
+        self.assertIn("Unavailable".encode(), response.data)
+        self.assertIn("Example message subject".encode(), response.data)
+
+    @requests_mock.mock()
+    def test_threads_list_with_missing_date(self, mock_request):
+        with open('tests/test_data/message/threads_missing_sent_date.json') as thread_json:
+            malformed_thread_list = json.load(thread_json)
+        mock_request.get(url_get_threads_list,
+                         json=malformed_thread_list
+                         )
+        mock_request.get(url_get_surveys_list, json=self.surveys_list_json)
+
+        response = self.app.get("/messages")
+        self.assertEqual(response.status_code, 200)
+        self.assertIn("Unavailable".encode(), response.data)
+        self.assertIn("Example message subject".encode(), response.data)
+
+    @requests_mock.mock()
+    def test_threads_list_with_missing_ru_ref(self, mock_request):
+        with open('tests/test_data/message/threads_missing_ru_ref.json') as thread_json:
+            malformed_thread_list = json.load(thread_json)
+        mock_request.get(url_get_threads_list,
+                         json=malformed_thread_list
+                         )
+        mock_request.get(url_get_surveys_list, json=self.surveys_list_json)
+
+        response = self.app.get("/messages")
+        self.assertEqual(response.status_code, 200)
+        self.assertIn("Unavailable".encode(), response.data)
+        self.assertIn("Example message subject".encode(), response.data)
+
+    @requests_mock.mock()
+    def test_threads_list_with_missing_business_name(self, mock_request):
+        with open('tests/test_data/message/threads_missing_business_name.json') as thread_json:
+            malformed_thread_list = json.load(thread_json)
+        mock_request.get(url_get_threads_list,
+                         json=malformed_thread_list
+                         )
+        mock_request.get(url_get_surveys_list, json=self.surveys_list_json)
+
+        response = self.app.get("/messages")
+        self.assertEqual(response.status_code, 200)
+        self.assertIn("Unavailable".encode(), response.data)
+        self.assertIn("Example message subject".encode(), response.data)
+
+    @requests_mock.mock()
+    def test_threads_list_fail(self, mock_request):
+        mock_request.get(url_get_threads_list, status_code=500)
 
         response = self.app.get("/messages", follow_redirects=True)
 
@@ -57,8 +154,8 @@ class TestMessage(unittest.TestCase):
         self.assertIn("Error 500 - Server error".encode(), response.data)
 
     @requests_mock.mock()
-    def test_message_list_empty(self, mock_request):
-        mock_request.get(get_message_list, json={"messages": []})
+    def test_threads_list_empty(self, mock_request):
+        mock_request.get(url_get_threads_list, json={"messages": []})
 
         response = self.app.get("/messages")
 
@@ -74,14 +171,14 @@ class TestMessage(unittest.TestCase):
             with self.assertRaises(KeyError):
                 _get_url()
 
-    json = '''
+    message_json = '''
         {
           "msg_from": "BRES",
           "msg_to": ["f62dfda8-73b0-4e0e-97cf-1b06327a6712"],
           "subject": "TEST SUBJECT",
           "body": "TEST MESSAGE",
           "thread_id": "",
-          "collection_case": "ACollectionCase",
+          "collection_case": "",
           "survey": "BRES2017",
           "ru_id": "c614e64e-d981-4eba-b016-d9822f09a4fb"
         }
@@ -91,7 +188,7 @@ class TestMessage(unittest.TestCase):
     # but instead log the problem and display an empty inbox to the user.
     @requests_mock.mock()
     def test_request_response_malformed(self, mock_request):
-        url = f'{app.config["BACKSTAGE_API_URL"]}/v1/secure-message/messages'
+        url = url_get_threads_list
         mock_request.get(url, json={})
         response = self.app.get("/messages")
 
@@ -106,7 +203,7 @@ class TestMessage(unittest.TestCase):
             mock_request.post(url)
 
             with self.assertRaises(InternalError):
-                send_message(self.json)
+                send_message(self.message_json)
 
     ru_details = {'create-message': 'create-message-view',
                   'survey': 'BRES 2017',
@@ -137,13 +234,13 @@ class TestMessage(unittest.TestCase):
     @requests_mock.mock()
     def test_form_submit_with_valid_data(self, mock_request):
         mock_request.post(f'{app.config["BACKSTAGE_API_URL"]}/v1/secure-message/send-message', status_code=201)
-        mock_request.get(f'{app.config["BACKSTAGE_API_URL"]}/v1/secure-message/messages', json={}, status_code=200)
+        mock_request.get(url_get_threads_list, json={}, status_code=200)
 
         with app.app_context():
             response = self.app.post("/messages/create-message", data=self.message_form, follow_redirects=True)
 
         self.assertIn("Message sent.".encode(), response.data)
-        self.assertIn("Inbox".encode(), response.data)
+        self.assertIn("Messages".encode(), response.data)
 
     @requests_mock.mock()
     def test_form_submitted_with_api_error(self, mock_request):
@@ -163,3 +260,50 @@ class TestMessage(unittest.TestCase):
         with self.assertRaises(Exception) as raises:
             self.app.post("/messages/create-message", data=malformed_ru_details)
             self.assertEqual(raises.exception.message, "Failed to load create message page")
+
+    @requests_mock.mock()
+    def test_conversation(self, mock_request):
+        mock_request.get(url_get_thread, json=thread_json)
+        mock_request.get(url_get_surveys_list, json=survey_list)
+
+        response = self.app.get("/messages/threads/fb0e79bd-e132-4f4f-a7fd-5e8c6b41b9af")
+
+        self.assertEqual(response.status_code, 200)
+        self.assertIn("Need more information on project".encode(), response.data)
+        self.assertIn("Project ideas".encode(), response.data)
+        self.assertIn("49900000001".encode(), response.data)
+        self.assertIn("Apple".encode(), response.data)
+
+    @requests_mock.mock()
+    def test_conversation_fail(self, mock_request):
+        mock_request.get(url_get_thread, status_code=500)
+        mock_request.get(url_get_surveys_list, json=survey_list)
+        with self.assertRaises(Exception) as raises:
+
+            response = self.app.get("/messages/threads/fb0e79bd-e132-4f4f-a7fd-5e8c6b41b9af")
+            self.assertEqual(response.status_code, 500)
+            self.assertEqual(raises.exception.message, "Conversation retrieval failed")
+
+    @requests_mock.mock()
+    def test_conversation_decode_error(self, mock_request):
+        mock_request.get(url_get_thread)
+        with self.assertRaises(Exception) as raises:
+            response = self.app.get("/messages/threads/fb0e79bd-e132-4f4f-a7fd-5e8c6b41b9af")
+            self.assertEqual(response.status_code, 500)
+            self.assertEqual(raises.exception.message, "the response could not be decoded")
+
+    @requests_mock.mock()
+    def test_conversation_key_error(self, mock_request):
+        mock_request.get(url_get_thread, json={})
+        with self.assertRaises(Exception) as raises:
+            response = self.app.get("/messages/threads/fb0e79bd-e132-4f4f-a7fd-5e8c6b41b9af")
+            self.assertEqual(response.status_code, 500)
+            self.assertEqual(raises.exception.message, "A key error occurred")
+
+    @requests_mock.mock()
+    def test_conversation_subject_error(self, mock_request):
+        mock_request.get(url_get_thread, json=thread_missing_subject)
+        mock_request.get(url_get_surveys_list, json=survey_list)
+        response = self.app.get("/messages/threads/fb0e79bd-e132-4f4f-a7fd-5e8c6b41b9af")
+        self.assertEqual(response.status_code, 200)
+        self.assertIn("No Subject".encode(), response.data)
