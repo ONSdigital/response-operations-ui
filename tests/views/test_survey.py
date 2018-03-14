@@ -138,10 +138,11 @@ class TestSurvey(unittest.TestCase):
         self.assertEqual(get_survey_short_name_by_id("QIFDI_id"), "QIFDI")
         self.assertEqual(get_survey_short_name_by_id("AOFDI_id"), "AOFDI")
         self.assertEqual(get_survey_short_name_by_id("AIFDI_id"), "AIFDI")
+        self.assertEqual(get_survey_short_name_by_id("cb0711c3-0ac8-41d3-ae0e-567e5ea1ef87"), "BRES")
 
         get_survey_short_name_by_id_wrapped = fdi_survey_short_name_wrapper(get_survey_short_name_by_id)
-        mock_request.get(url_get_survey_list, json=survey_list)
         self.assertEqual(get_survey_short_name_by_id_wrapped("QOFDI_id"), "FDI")
         self.assertEqual(get_survey_short_name_by_id_wrapped("QIFDI_id"), "FDI")
         self.assertEqual(get_survey_short_name_by_id_wrapped("AOFDI_id"), "FDI")
         self.assertEqual(get_survey_short_name_by_id_wrapped("AIFDI_id"), "FDI")
+        self.assertEqual(get_survey_short_name_by_id_wrapped("cb0711c3-0ac8-41d3-ae0e-567e5ea1ef87"), "BRES")
