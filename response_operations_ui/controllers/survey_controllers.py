@@ -1,10 +1,12 @@
 import logging
+from pprint import pprint
 
 import requests
 from structlog import wrap_logger
 
 from response_operations_ui import app
 from response_operations_ui.exceptions.exceptions import ApiError
+from response_operations_ui.common.surveys import FDISurveys
 
 logger = wrap_logger(logging.getLogger(__name__))
 
@@ -35,8 +37,7 @@ def get_survey(short_name):
 def fdi_survey_short_name_wrapper(get_survey_short_name_func):
     def convert_fdi_surveys(survey_id):
         survey_short_name = get_survey_short_name_func(survey_id)
-        # TODO replace with enums
-        if survey_short_name in {"AOFDI", "AIFDI", "QIFDI", "QOFDI"}:
+        if survey_short_name in FDISurveys.__members__:
             return "FDI"
         return survey_short_name
     return convert_fdi_surveys
@@ -45,6 +46,7 @@ def fdi_survey_short_name_wrapper(get_survey_short_name_func):
 @fdi_survey_short_name_wrapper
 def get_survey_short_name_by_id(survey_id):
     try:
+        pprint(app.surveys_dict)
         return app.surveys_dict[survey_id]['shortName']
     except (AttributeError, KeyError):
         try:
