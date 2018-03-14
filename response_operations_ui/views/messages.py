@@ -6,7 +6,7 @@ from flask_login import login_required, current_user
 from structlog import wrap_logger
 import maya
 
-from response_operations_ui.common.surveys import Surveys
+from response_operations_ui.common.surveys import Surveys, FDISurveys
 from response_operations_ui.controllers import message_controllers, survey_controllers
 from response_operations_ui.exceptions.exceptions import ApiError, InternalError, NoMessagesError
 from response_operations_ui.forms import SecureMessageForm
@@ -135,7 +135,7 @@ def view_messages():
 @messages_bp.route('/select-survey', methods=['GET', 'POST'])
 @login_required
 def view_select_survey():
-    breadcrumbs = [{"title": "Messages", "link": "/messages"},
+    breadcrumbs = [{"title": "Messages", "link": "/select-survey"},
                    {"title": "Filter by survey"}]
 
     if request.method == 'POST':
@@ -162,12 +162,12 @@ def view_selected_survey(selected_survey):
 
     try:
         refined_messages = [_refine(message) for message in message_controllers.get_thread_list(params)]
-        if selected_survey == 'FDI':
+        if selected_survey == Surveys.FDI.value:
             survey_id = _get_FDI_survey_id()
         else:
             survey_id = _get_survey_id(selected_survey)
 
-        filtered_messages = [messages for messages in refined_messages if messages['survey_id'] == survey_id]
+        filtered_messages = [message for message in refined_messages if message['survey_id'] in survey_id]
 
         return render_template("messages.html",
                                breadcrumbs=breadcrumbs,
@@ -240,8 +240,7 @@ def _get_survey_id(selected_survey):
 
 
 def _get_FDI_survey_id():
-    fdi_surveys = ["AOFDI", "AIFDI", "QIFDI", "QOFDI"]
-    return [survey_controllers.get_survey(fdi_survey)['survey']['id'] for fdi_survey in fdi_surveys]
+    return [survey_controllers.get_survey(fdi_survey.value)['survey']['id'] for fdi_survey in FDISurveys]
 
 
 def _get_user_summary_for_message(message):

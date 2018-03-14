@@ -11,3 +11,12 @@ class Surveys(Enum):
     PCS = "PCS"
     QBS = "QBS"
     SANDANDGRAVEL = "Sand&Gravel"
+    BRES = "BRES"
+
+
+class FDISurveys(Enum):
+    """Includes all FDI surveys"""
+    AOFDI = "AOFDI"
+    AIFDI = "AIFDI"
+    QIFDI = "QIFDI"
+    QOFDI = "QOFDI"
