@@ -32,6 +32,17 @@ def get_survey(short_name):
     return response.json()
 
 
+def fdi_survey_short_name_wrapper(get_survey_short_name_func):
+    def convert_fdi_surveys(survey_id):
+        survey_short_name = get_survey_short_name_func(survey_id)
+        # TODO replace with enums
+        if survey_short_name in {"AOFDI", "AIFDI", "QIFDI", "QOFDI"}:
+            return "FDI"
+        return survey_short_name
+    return convert_fdi_surveys
+
+
+@fdi_survey_short_name_wrapper
 def get_survey_short_name_by_id(survey_id):
     try:
         return app.surveys_dict[survey_id]['shortName']
