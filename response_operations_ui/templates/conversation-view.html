@@ -21,7 +21,9 @@
     {% else %}
         <div name="sm-from-respondent" id="sm-from-respondent-{{ loop.index }}" class="secure-message-sent-message-meta sm-from-respondent">
     {% endif %}
-            <div  {% if loop.last %} id='latest-message' {% endif %}></div>
+            {% if loop.last %}
+            <div name="latest-message"   id='latest-message' ></div>
+            {% endif %}
             <span class="secure-message-sent-message-meta-from venus">
                 From:
                 <span name="sm-from-user" id="sm-from-user-{{ loop.index }}" style="display:inline;">{{ message.get('username') }}</span>
