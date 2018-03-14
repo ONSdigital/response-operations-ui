@@ -80,14 +80,7 @@ def view_contact_details(ru_ref, respondent_id):
 def edit_contact_details(ru_ref, respondent_id):
     form = EditContactDetailsForm(request.form)
 
-    edit_details_data = {
-          "first_name": request.form.get('first_name'),
-          "last_name": request.form.get('last_name'),
-          "email_address": request.form.get('hidden_email'),
-          "new_email_address": request.form.get('email'),
-          "telephone": request.form.get('telephone'),
-          "respondent_id": respondent_id
-    }
+    edit_details_data = build_contact_details(request.form, respondent_id)
 
     edit_successfully = edit_contact_details_controller.edit_contact_details(edit_details_data, respondent_id)
 
@@ -97,7 +90,12 @@ def edit_contact_details(ru_ref, respondent_id):
         return render_template('edit-contact-details.html', ru_ref=ru_ref, form=form, error=True,
                                respondent_details=respondent_details)
 
-    return redirect(url_for('reporting_unit_bp.view_reporting_unit', ru_ref=ru_ref, edit_details=True))
+    name_or_num_changed = has_name_or_number_changed(edit_details_data)  # TODO: Do we need this for name or num?
+    email_changed = has_email_changed(edit_details_data)
+
+    return redirect(url_for('reporting_unit_bp.view_reporting_unit', ru_ref=ru_ref, edit_details=True,
+                            name_or_num_changed=name_or_num_changed, email_changed=email_changed,
+                            email=edit_details_data['email_address']))
 
 
 @reporting_unit_bp.route('/', methods=['GET', 'POST'])
@@ -132,3 +130,25 @@ def map_region(region):
         region = "GB"
 
     return region
+
+
+def has_email_changed(edit_details_data):
+    return edit_details_data['email_address'] != edit_details_data['new_email_address']
+
+# TODO: Is this needed?
+def has_name_or_number_changed(edit_details_data):
+    return True
+
+
+def build_contact_details(form, respondent_id):
+    return {
+        "respondent_id": respondent_id,
+        "first_name": form.get('hidden_first_name'),
+        "last_name": form.get('hidden_last_name'),
+        "email_address": form.get('hidden_email'),
+        "telephone": form.get('hidden_telephone'),
+        "new_first_name": form.get('first_name'),
+        "new_last_name": form.get('last_name'),
+        "new_email_address": form.get('email'),
+        "new_telephone": form.get('telephone')
+    }
