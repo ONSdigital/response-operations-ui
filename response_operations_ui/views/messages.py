@@ -3,17 +3,20 @@ import logging
 
 from flask import Blueprint, flash, g, render_template, request, redirect, url_for
 from flask_login import login_required, current_user
-from structlog import wrap_logger
 import maya
+from structlog import wrap_logger
 
 from response_operations_ui.controllers import message_controllers
+from response_operations_ui.controllers.survey_controllers import get_survey_short_name_by_id, get_survey_ref_by_id, \
+    fdi_survey_short_name_wrapper
 from response_operations_ui.exceptions.exceptions import ApiError, InternalError, NoMessagesError
 from response_operations_ui.forms import SecureMessageForm
-from response_operations_ui.controllers.survey_controllers import get_survey_short_name_by_id, get_survey_ref_by_id
 
 logger = wrap_logger(logging.getLogger(__name__))
 messages_bp = Blueprint('messages_bp', __name__,
                         static_folder='static', template_folder='templates')
+
+get_survey_short_name_by_id = fdi_survey_short_name_wrapper(get_survey_short_name_by_id)
 
 
 @messages_bp.route('/create-message', methods=['POST'])

@@ -1,3 +1,4 @@
+from functools import wraps
 import logging
 
 import requests
@@ -34,6 +35,8 @@ def get_survey(short_name):
 
 
 def fdi_survey_short_name_wrapper(get_survey_short_name_func):
+    """Function wrapper that converts the FDI specific survey names to all return as the string 'FDI'"""
+    @wraps(get_survey_short_name_func)
     def convert_fdi_surveys(survey_id):
         survey_short_name = get_survey_short_name_func(survey_id)
         if survey_short_name in FDISurveys.__members__:
@@ -42,7 +45,6 @@ def fdi_survey_short_name_wrapper(get_survey_short_name_func):
     return convert_fdi_surveys
 
 
-@fdi_survey_short_name_wrapper
 def get_survey_short_name_by_id(survey_id):
     try:
         return app.surveys_dict[survey_id]['shortName']
