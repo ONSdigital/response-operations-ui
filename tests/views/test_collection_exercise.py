@@ -149,7 +149,7 @@ class TestCollectionExercise(unittest.TestCase):
         self.assertIn("Error: wrong file type for Collection instrument".encode(), response.data)
 
     @requests_mock.mock()
-    def test_no_upload_collection_instrument_when_bad_extension(self, mock_request):
+    def test_no_upload_collection_instrument_when_bad_form_type_format(self, mock_request):
         post_data = {
             'ciFile': (BytesIO(b'data'), '064_201803_xxxxx.xlsx'),
             'load-ci': '',

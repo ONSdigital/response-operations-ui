@@ -164,7 +164,8 @@ def _validate_collection_instrument():
                 "message": "Please use XLSX file only"
             }
         else:
-            form_type = _get_form_type(file.filename)
+            # file name format is surveyId_period_formType
+            form_type = _get_form_type(file.filename) if file.filename.count('_') == 2 else None
             if not form_type.isdigit() and len(form_type) != 4:
                 logger.debug('Invalid file format uploaded', filename=file.filename)
                 error = {
