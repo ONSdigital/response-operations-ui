@@ -10,7 +10,8 @@ from response_operations_ui.common.surveys import Surveys
 from response_operations_ui.controllers import message_controllers, survey_controllers
 from response_operations_ui.exceptions.exceptions import ApiError, InternalError, NoMessagesError
 from response_operations_ui.forms import SecureMessageForm
-from response_operations_ui.controllers.survey_controllers import get_survey_short_name_by_id
+from response_operations_ui.controllers.survey_controllers import get_survey_short_name_by_id, get_survey_ref_by_id, \
+    get_survey
 
 logger = wrap_logger(logging.getLogger(__name__))
 messages_bp = Blueprint('messages_bp', __name__,
@@ -51,6 +52,13 @@ def _build_create_message_breadcrumbs():
     return [
         {"title": "Messages", "link": "/messages"},
         {"title": "Create Message"}
+    ]
+
+
+def _get_conversation_breadcrumbs(messages):
+    return [
+        {"title": "Messages", "link": "/messages"},
+        {"title": messages[-1].get('subject', 'No Subject')}
     ]
 
 
@@ -157,7 +165,7 @@ def view_selected_survey(selected_survey):
         refined_messages = [_refine(message) for message in message_controllers.get_thread_list(params)]
         survey_id = _get_survey_id(selected_survey)
 
-        filtered_messages = [messages for messages in refined_messages if messages['survey'] == survey_id]
+        filtered_messages = [messages for messages in refined_messages if messages['survey_id'] == survey_id]
 
         return render_template("messages.html",
                                breadcrumbs=breadcrumbs,
@@ -177,12 +185,47 @@ def view_selected_survey(selected_survey):
                                response_error=True)
 
 
+@messages_bp.route('/threads/<thread_id>', methods=['GET'])
+@login_required
+def view_conversation(thread_id):
+    try:
+        thread_conversation = message_controllers.get_conversation(thread_id)['messages']
+        breadcrumbs = _get_conversation_breadcrumbs(thread_conversation)
+        refined_thread = [_refine(message) for message in reversed(thread_conversation)]
+
+    except KeyError as e:
+        logger.exception("A key error occurred")
+        raise ApiError(e)
+    except IndexError:
+        breadcrumbs = [
+            {"title": "Messages", "link": "/messages"},
+            {"title": "Unavailable"}
+        ]
+
+    return render_template("conversation-view.html", breadcrumbs=breadcrumbs, messages=refined_thread)
+
+
+def _get_message_subject(thread):
+    try:
+        subject = thread["subject"]
+        return subject
+    except KeyError:
+        logger.exception("Failed to retrieve Subject from thread")
+        return None
+
+
 def _refine(message):
     return {
-        'survey': message.get('survey'),
+        'thread_id': message.get('thread_id'),
+        'subject': _get_message_subject(message),
+        'body': message.get('body'),
+        'internal': message.get('from_internal'),
+        'username': _get_user_summary_for_message(message),
+        'survey_ref': get_survey_ref_by_id(message.get('survey')),
+        'survey': get_survey_short_name_by_id(message.get('survey')),
+        'survey_id': message.get('survey'),
         'ru_ref': _get_ru_ref_from_message(message),
         'business_name': _get_business_name_from_message(message),
-        'subject': message.get('subject'),
         'from': _get_from_name(message),
         'to': _get_to_name(message),
         'sent_date': _get_human_readable_date(message.get('sent_date'))
@@ -192,6 +235,12 @@ def _refine(message):
 def _get_survey_id(selected_survey):
     survey_messages = survey_controllers.get_survey(selected_survey)
     return survey_messages['survey']['id']
+
+
+def _get_user_summary_for_message(message):
+    if message.get('from_internal'):
+        return _get_from_name(message)
+    return f'{_get_from_name(message)} - {_get_ru_ref_from_message(message)}'
 
 
 def _get_from_name(message):
