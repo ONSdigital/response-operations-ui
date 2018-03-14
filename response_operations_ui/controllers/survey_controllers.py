@@ -1,12 +1,11 @@
 import logging
-from pprint import pprint
 
 import requests
 from structlog import wrap_logger
 
 from response_operations_ui import app
-from response_operations_ui.exceptions.exceptions import ApiError
 from response_operations_ui.common.surveys import FDISurveys
+from response_operations_ui.exceptions.exceptions import ApiError
 
 logger = wrap_logger(logging.getLogger(__name__))
 
@@ -46,7 +45,6 @@ def fdi_survey_short_name_wrapper(get_survey_short_name_func):
 @fdi_survey_short_name_wrapper
 def get_survey_short_name_by_id(survey_id):
     try:
-        pprint(app.surveys_dict)
         return app.surveys_dict[survey_id]['shortName']
     except (AttributeError, KeyError):
         try:
