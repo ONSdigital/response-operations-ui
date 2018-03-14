@@ -38,8 +38,8 @@ def view_reporting_unit(ru_ref):
             collection_exercise['companyRegion'] = map_region(collection_exercise['companyRegion'])
 
         for respondent in survey['respondents']:
-            respondent['status'] = respondent.get('status', "").title()
-            respondent['enrolmentStatus'] = respondent.get('enrolmentStatus', "").title()
+            respondent['status'] = respondent['status'].title()
+            respondent['enrolmentStatus'] = respondent['enrolmentStatus'].title()
 
     breadcrumbs = [
         {
@@ -64,7 +64,7 @@ def view_reporting_unit(ru_ref):
     if request.args.get('info'):
         info_message = 'Verification email re-sent'
 
-    return render_template('reporting-unit.html', ru_ref=ru_ref, party_id=respondent['id'],
+    return render_template('reporting-unit.html', ru_ref=ru_ref, party_id=respondent.get('id'),
                            ru=ru_details['reporting_unit'], surveys=ru_details['surveys'],
                            breadcrumbs=breadcrumbs, info_message=info_message, edit_details=edit_details)
 
