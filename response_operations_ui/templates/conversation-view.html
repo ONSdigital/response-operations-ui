@@ -15,12 +15,13 @@
          <div class="secure-message--meta venus"><span class="secure-message-conversation-meta__label">Business: </span><span id="ru">{{ messages[0].get('business_name') }}</span></div>
     </div>
     {% for message in messages %}
-       <div class="secure-message-sent-message" {% if loop.last %}id="latest-message"{% endif %}>
+       <div class="secure-message-sent-message">
     {% if message.get('internal') == True %}
         <div name="sm-from-ons" id="sm-from-ons-{{ loop.index }}" class="secure-message-sent-message-meta sm-from-ons">
     {% else %}
         <div name="sm-from-respondent" id="sm-from-respondent-{{ loop.index }}" class="secure-message-sent-message-meta sm-from-respondent">
     {% endif %}
+            <div  {% if loop.last %} id='latest-message' {% endif %}></div>
             <span class="secure-message-sent-message-meta-from venus">
                 From:
                 <span name="sm-from-user" id="sm-from-user-{{ loop.index }}" style="display:inline;">{{ message.get('username') }}</span>
