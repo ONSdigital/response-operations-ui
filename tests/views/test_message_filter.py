@@ -7,9 +7,17 @@ from response_operations_ui import app
 
 filtered_url = f'{app.config["BACKSTAGE_API_URL"]}/v1/survey/shortname'
 url_sign_in_data = f'{app.config["BACKSTAGE_API_URL"]}/v2/sign-in/'
-get_message_list = f'{app.config["BACKSTAGE_API_URL"]}/v1/secure-message/messages'
-with open('tests/test_data/message/messages.json') as json_data:
-    message_list = json.load(json_data)
+url_get_thread = f'{app.config["BACKSTAGE_API_URL"]}/v1/secure-message/threads/fb0e79bd-e132-4f4f-a7fd-5e8c6b41b9af'
+url_get_threads_list = f'{app.config["BACKSTAGE_API_URL"]}/v1/secure-message/threads'
+url_get_surveys_list = f'{app.config["BACKSTAGE_API_URL"]}/v1/survey/surveys'
+with open('tests/test_data/message/thread.json') as json_data:
+    thread_json = json.load(json_data)
+with open('tests/test_data/message/thread_missing_subject.json') as json_data:
+    thread_missing_subject = json.load(json_data)
+with open('tests/test_data/message/threads.json') as json_data:
+    thread_list = json.load(json_data)
+with open('tests/test_data/survey/survey_list.json') as json_data:
+    survey_list = json.load(json_data)
 with open('tests/test_data/survey/bricks_response.json') as json_data:
     bricks_info = json.load(json_data)
 with open('tests/test_data/survey/ashe_response.json') as json_data:
@@ -23,6 +31,14 @@ class TestMessageFilter(unittest.TestCase):
         self.app.testing = True
         app.config.from_object(TestingConfig)
         self.before()
+
+    surveys_list_json = [
+        {
+            "id": "f235e99c-8edf-489a-9c72-6cabe6c387fc",
+            "shortName": "QBS",
+            "longName": "Quarterly Business Survey"
+        }
+    ]
 
     @requests_mock.mock()
     def before(self, mock_request):
@@ -44,7 +60,8 @@ class TestMessageFilter(unittest.TestCase):
 
     @requests_mock.mock()
     def test_get_bricks_messages(self, mock_request):
-        mock_request.get(get_message_list, json=message_list)
+        mock_request.get(url_get_threads_list, json=thread_list)
+        mock_request.get(url_get_surveys_list, json=self.surveys_list_json)
         mock_request.get(filtered_url + "/Bricks", json=bricks_info)
 
         response = self.app.get("/messages/Bricks")
@@ -56,14 +73,14 @@ class TestMessageFilter(unittest.TestCase):
 
     @requests_mock.mock()
     def test_get_ashe_no_messages(self, mock_request):
-        mock_request.get(get_message_list, json=message_list)
+        mock_request.get(url_get_threads_list, json=thread_list)
+        mock_request.get(url_get_surveys_list, json=self.surveys_list_json)
         mock_request.get(filtered_url + "/ASHE", json=ashe_info)
 
-        response = self.app.get("/messages/ASHE", follow_redirects=True)
+        response = self.app.get("/messages/ASHE")
 
         self.assertEqual(200, response.status_code)
         self.assertIn("ASHE Messages".encode(), response.data)
-        self.assertIn("Messages".encode(), response.data)
         self.assertIn("No new messages".encode(), response.data)
 
     @requests_mock.mock()
@@ -77,12 +94,12 @@ class TestMessageFilter(unittest.TestCase):
 
     @requests_mock.mock()
     def test_get_all_messages(self, mock_request):
-        mock_request.get(get_message_list, json=message_list)
+        mock_request.get(url_get_threads_list, json=thread_list)
+        mock_request.get(url_get_surveys_list, json=self.surveys_list_json)
 
-        response = self.app.get("/messages")
+        response = self.app.get("/messages", follow_redirects=True)
 
-        self.assertIn("Acme Studios LTD".encode(), response.data)
-        self.assertIn("Jordon Dutch".encode(), response.data)
-        self.assertIn("Q3 Statistics".encode(), response.data)
+        self.assertIn("Apple".encode(), response.data)
+        self.assertIn("John Example".encode(), response.data)
+        self.assertIn("Q3 Bricks".encode(), response.data)
         self.assertIn("Walmart".encode(), response.data)
-        self.assertIn("Andy Robertson".encode(), response.data)
