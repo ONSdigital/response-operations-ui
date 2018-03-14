@@ -38,8 +38,8 @@ def view_reporting_unit(ru_ref):
             collection_exercise['companyRegion'] = map_region(collection_exercise['companyRegion'])
 
         for respondent in survey['respondents']:
-            respondent['status'] = respondent['status'].title()
-            respondent['enrolmentStatus'] = respondent['enrolmentStatus'].title()
+            respondent['status'] = respondent.get('status', "").title()
+            respondent['enrolmentStatus'] = respondent.get('enrolmentStatus', "").title()
 
     breadcrumbs = [
         {
