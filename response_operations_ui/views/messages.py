@@ -138,15 +138,15 @@ def view_select_survey():
     breadcrumbs = [{"title": "Messages", "link": "/messages"},
                    {"title": "Filter by survey"}]
 
-    survey_list = [survey.value for survey in Surveys]
-
     if request.method == 'POST':
-        selected_survey = request.form['radio-answer']
+        selected_survey = request.form.get('radio-answer', '')
         return redirect(url_for("messages_bp.view_selected_survey",
                                 selected_survey=selected_survey))
     else:
+        survey_list = [survey.value for survey in Surveys]
         return render_template("message_select_survey.html",
                                breadcrumbs=breadcrumbs,
+                               selected_survey=None,
                                survey_list=survey_list)
 
 
@@ -162,7 +162,10 @@ def view_selected_survey(selected_survey):
 
     try:
         refined_messages = [_refine(message) for message in message_controllers.get_thread_list(params)]
-        survey_id = _get_survey_id(selected_survey)
+        if selected_survey == 'FDI':
+            survey_id = _get_FDI_survey_id()
+        else:
+            survey_id = _get_survey_id(selected_survey)
 
         filtered_messages = [messages for messages in refined_messages if messages['survey_id'] == survey_id]
 
@@ -172,7 +175,7 @@ def view_selected_survey(selected_survey):
                                selected_survey=selected_survey,
                                change_survey=True)
 
-    except KeyError:
+    except TypeError:
         logger.exception("Failed to retrieve survey id")
         return render_template("messages.html",
                                breadcrumbs=breadcrumbs,
@@ -234,6 +237,11 @@ def _refine(message):
 def _get_survey_id(selected_survey):
     survey_messages = survey_controllers.get_survey(selected_survey)
     return survey_messages['survey']['id']
+
+
+def _get_FDI_survey_id():
+    fdi_surveys = ["AOFDI", "AIFDI", "QIFDI", "QOFDI"]
+    return [survey_controllers.get_survey(fdi_survey)['survey']['id'] for fdi_survey in fdi_surveys]
 
 
 def _get_user_summary_for_message(message):

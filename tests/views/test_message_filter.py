@@ -7,17 +7,10 @@ from response_operations_ui import app
 
 filtered_url = f'{app.config["BACKSTAGE_API_URL"]}/v1/survey/shortname'
 url_sign_in_data = f'{app.config["BACKSTAGE_API_URL"]}/v2/sign-in/'
-url_get_thread = f'{app.config["BACKSTAGE_API_URL"]}/v1/secure-message/threads/fb0e79bd-e132-4f4f-a7fd-5e8c6b41b9af'
 url_get_threads_list = f'{app.config["BACKSTAGE_API_URL"]}/v1/secure-message/threads'
 url_get_surveys_list = f'{app.config["BACKSTAGE_API_URL"]}/v1/survey/surveys'
-with open('tests/test_data/message/thread.json') as json_data:
-    thread_json = json.load(json_data)
-with open('tests/test_data/message/thread_missing_subject.json') as json_data:
-    thread_missing_subject = json.load(json_data)
 with open('tests/test_data/message/threads.json') as json_data:
     thread_list = json.load(json_data)
-with open('tests/test_data/survey/survey_list.json') as json_data:
-    survey_list = json.load(json_data)
 with open('tests/test_data/survey/bricks_response.json') as json_data:
     bricks_info = json.load(json_data)
 with open('tests/test_data/survey/ashe_response.json') as json_data:
@@ -52,11 +45,17 @@ class TestMessageFilter(unittest.TestCase):
         self.assertEqual(200, response.status_code)
         self.assertIn("Filter messages by survey".encode(), response.data)
 
-    def test_radio_buttons_post_nothing_selected(self):
+    @requests_mock.mock()
+    def test_radio_buttons_post_nothing_selected(self, mock_request):
+        mock_request.get(url_get_threads_list, json=thread_list)
+        mock_request.get(url_get_surveys_list, json=self.surveys_list_json)
+
         response = self.app.post("messages/select-survey", follow_redirects=True)
 
-        self.assertEqual(400, response.status_code)
-        self.assertIn("Bad Request".encode(), response.data)
+        self.assertEqual(200, response.status_code)
+        self.assertIn("Home".encode(), response.data)
+        self.assertIn("Messages".encode(), response.data)
+        self.assertIn("RU Ref".encode(), response.data)
 
     @requests_mock.mock()
     def test_get_bricks_messages(self, mock_request):
