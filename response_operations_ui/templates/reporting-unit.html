@@ -151,6 +151,11 @@
             </td>
             <td name="tbl-enrolment-status" class="table--cell">
               {{ respondent.enrolmentStatus }}
+                {% if respondent.enrolmentStatus|upper == "PENDING" %}
+                <br>
+                  <a href="{{ url_for('reporting_unit_bp.resend_verification', ru_ref=ru_ref, email=respondent.emailAddress, party_id=party_id) }}">Re-send verification email</a>
+                </br>
+                {% endif %}
             </td>
             <td class="table--cell">
               <form action="{{ url_for('messages_bp.create_message')}}" method="post" id="create-message-view">
@@ -169,6 +174,7 @@
           </tbody>
         </table>
       </div>
+
     </div>
   </div>
   {% endfor %}
