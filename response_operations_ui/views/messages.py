@@ -155,23 +155,21 @@ def view_select_survey():
 def view_selected_survey(selected_survey):
     breadcrumbs = [{"title": selected_survey + " Messages"}]
 
-    params = {
-        'label': request.args.get('label'),
-        'survey': request.args.get('survey')
-    }
-
     try:
-        refined_messages = [_refine(message) for message in message_controllers.get_thread_list(params)]
         if selected_survey == Surveys.FDI.value:
             survey_id = _get_FDI_survey_id()
         else:
             survey_id = _get_survey_id(selected_survey)
 
-        filtered_messages = [message for message in refined_messages if message['survey_id'] in survey_id]
+        params = {
+            'survey': survey_id
+        }
+
+        refined_messages = [_refine(message) for message in message_controllers.get_thread_list(params)]
 
         return render_template("messages.html",
                                breadcrumbs=breadcrumbs,
-                               messages=filtered_messages,
+                               messages=refined_messages,
                                selected_survey=selected_survey,
                                change_survey=True)
 
