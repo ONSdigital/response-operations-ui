@@ -84,14 +84,7 @@ def view_contact_details(ru_ref, respondent_id):
 def edit_contact_details(ru_ref, respondent_id):
     form = EditContactDetailsForm(request.form)
 
-    edit_details_data = {
-          "first_name": request.form.get('first_name'),
-          "last_name": request.form.get('last_name'),
-          "email_address": request.form.get('hidden_email'),
-          "new_email_address": request.form.get('email'),
-          "telephone": request.form.get('telephone'),
-          "respondent_id": respondent_id
-    }
+    edit_details_data = build_contact_details(request.form, respondent_id)
 
     edit_successfully, error_type = edit_contact_details_controller.edit_contact_details(edit_details_data,
                                                                                          respondent_id)
