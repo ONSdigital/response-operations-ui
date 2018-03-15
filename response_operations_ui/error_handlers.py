@@ -19,8 +19,8 @@ def api_error(error):
 
 @app.errorhandler(401)
 def handle_authentication_error(error):
-    logger.error('Authentication failed')
-    flash('Authentication failed', category='failed_authentication')
+    logger.info('Authentication failed')
+    flash('Incorrect username or password', category='failed_authentication')
     return redirect(url_for('sign_in_bp.sign_in'))
 
 
