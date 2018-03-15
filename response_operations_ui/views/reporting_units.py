@@ -107,16 +107,17 @@ def edit_contact_details(ru_ref, respondent_id):
             return render_template('edit-contact-details.html', ru_ref=ru_ref, form=form, error=True,
                                    respondent_details=respondent_details)
 
+    message = None
     details_changed = False
     email_changed = False
 
-    if respondent_details["firstName"] != edit_details_data["first_name"]:
+    if respondent_details.get("firstName") != edit_details_data.get("first_name"):
         details_changed = True
-    elif respondent_details["lastName"] != edit_details_data["last_name"]:
+    elif respondent_details.get("lastName") != edit_details_data.get("last_name"):
         details_changed = True
-    elif respondent_details["telephone"] != edit_details_data["telephone"]:
+    elif respondent_details.get("telephone") != edit_details_data.get("telephone"):
         details_changed = True
-    if respondent_details['emailAddress'] != edit_details_data["new_email_address"]:
+    if respondent_details.get('emailAddress') != edit_details_data.get("new_email_address"):
         email_changed = True
 
     if details_changed and email_changed:
@@ -125,8 +126,6 @@ def edit_contact_details(ru_ref, respondent_id):
         message = 'Contact details changed'
     elif email_changed:
         message = f'Verification email sent to {edit_details_data["new_email_address"]}'
-    else:
-        message = None
 
     return redirect(url_for('reporting_unit_bp.view_reporting_unit', ru_ref=ru_ref, info=message))
 
