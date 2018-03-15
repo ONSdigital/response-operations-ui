@@ -24,6 +24,7 @@ def view_reporting_unit(ru_ref):
 
     ru_details['surveys'] = sorted(ru_details['surveys'], key=lambda survey: survey['surveyRef'])
 
+    respondent = {}
     for survey in ru_details['surveys']:
         survey['collection_exercises'] = sorted(survey['collection_exercises'],
                                                 key=lambda ce: ce['scheduledStartDateTime'],
@@ -143,6 +144,22 @@ def search_reporting_units():
         business_list = reporting_units_controllers.search_reporting_units(query)
 
     return render_template('reporting-units.html', business_list=business_list, form=form, breadcrumbs=breadcrumbs)
+
+
+@reporting_unit_bp.route('/resend_verification/<ru_ref>/<email>/<party_id>', methods=['GET'])
+@login_required
+def resend_verification(ru_ref, email, party_id):
+    logger.debug("Re-send verification email requested", ru_ref=ru_ref, party_id=party_id)
+    return render_template('re-send-verification-email.html', ru_ref=ru_ref, email=email)
+
+
+@reporting_unit_bp.route('/resend_verification/<ru_ref>/<email>/<party_id>', methods=['POST'])
+@login_required
+def resent_verification(ru_ref, email, party_id):
+    reporting_units_controllers.resend_verification_email(party_id)
+    logger.info("Re-sent verification email.", party_id=party_id)
+    return redirect(url_for('reporting_unit_bp.view_reporting_unit', ru_ref=ru_ref,
+                            info='Verification email re-sent'))
 
 
 @reporting_unit_bp.route('/<ru_ref>/<collection_exercise_id>/new_enrolment_code', methods=['GET'])
