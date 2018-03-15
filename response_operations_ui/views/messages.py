@@ -6,6 +6,7 @@ from flask_login import login_required, current_user
 from structlog import wrap_logger
 import maya
 
+from response_operations_ui.common.mappers import format_short_name
 from response_operations_ui.common.surveys import Surveys, FDISurveys
 from response_operations_ui.controllers import message_controllers, survey_controllers
 from response_operations_ui.exceptions.exceptions import ApiError, InternalError, NoMessagesError
@@ -33,8 +34,9 @@ def create_message():
 
         try:
             message_controllers.send_message(_get_message_json(form))
+            survey = request.form.get("hidden_survey")
             flash("Message sent.")
-            return redirect(url_for('messages_bp.view_messages'))
+            return redirect(url_for('messages_bp.view_selected_survey', selected_survey=survey))
         except (ApiError, InternalError):
             form = _repopulate_form_with_submitted_data(form)
             form.errors['sending'] = ["Message failed to send, something has gone wrong with the website."]
@@ -112,38 +114,26 @@ def _populate_form_details_from_hidden_fields(form):
     return form
 
 
-@messages_bp.route('/', methods=['GET'])
-@login_required
-def view_messages():
-    # Currently the filtering is only being done with parameters.  In the future, the session
-    # will have the a list of survey_ids the user is allowed to see and the parameters for the
-    # backstage call can be populated by looking at the session instead of http parameters.
-    params = {
-        'label': request.args.get('label'),
-        'survey': request.args.get('survey')
-    }
-    breadcrumbs = [{"title": "Messages"}]
-    try:
-        refined_messages = [_refine(msg) for msg in message_controllers.get_thread_list(params)]
-        return render_template("messages.html", breadcrumbs=breadcrumbs, messages=refined_messages)
-    except NoMessagesError:
-        return render_template("messages.html",
-                               breadcrumbs=breadcrumbs,
-                               response_error=True)
-
-
-@messages_bp.route('/select-survey', methods=['GET', 'POST'])
+@messages_bp.route('/', methods=['GET', 'POST'])
 @login_required
 def view_select_survey():
-    breadcrumbs = [{"title": "Messages", "link": "/select-survey"},
+    breadcrumbs = [{"title": "Messages", "link": "/messages"},
                    {"title": "Filter by survey"}]
 
+    survey_list = [survey.value for survey in Surveys]
+
     if request.method == 'POST':
-        selected_survey = request.form.get('radio-answer', '')
+        selected_survey = request.form.get('radio-answer')
+        if not selected_survey:
+            return render_template("message_select_survey.html",
+                                   breadcrumbs=breadcrumbs,
+                                   selected_survey=None,
+                                   survey_list=survey_list,
+                                   response_error=True)
+
         return redirect(url_for("messages_bp.view_selected_survey",
                                 selected_survey=selected_survey))
     else:
-        survey_list = [survey.value for survey in Surveys]
         return render_template("message_select_survey.html",
                                breadcrumbs=breadcrumbs,
                                selected_survey=None,
@@ -153,7 +143,8 @@ def view_select_survey():
 @messages_bp.route('/<selected_survey>', methods=['GET'])
 @login_required
 def view_selected_survey(selected_survey):
-    breadcrumbs = [{"title": selected_survey + " Messages"}]
+    formatted_survey = format_short_name(selected_survey)
+    breadcrumbs = [{"title": formatted_survey + " Messages"}]
 
     try:
         if selected_survey == Surveys.FDI.value:
@@ -170,7 +161,7 @@ def view_selected_survey(selected_survey):
         return render_template("messages.html",
                                breadcrumbs=breadcrumbs,
                                messages=refined_messages,
-                               selected_survey=selected_survey,
+                               selected_survey=formatted_survey,
                                change_survey=True)
 
     except TypeError:

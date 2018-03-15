@@ -2,12 +2,21 @@
 {% block page_title %}Messages | Survey Data Collection{% endblock %}
 
 {% block main %}
-</br>
 
 <div role="main" id="main" class="page__main">
 
   <div class="grid">
-    <div class="grid__col col-30@l">
+    <div class="grid__col col-12@m">
+      {% if response_error %}
+      <div class="panel panel--error col-6@m">
+        <div class="panel__header">
+            <h1 class="panel__title venus">Select a survey</h1>
+        </div>
+        <div class="panel__body">
+            <p class="mars">Please select a survey to filter your messages.</p>
+        </div>
+      </div>
+      {% endif %}
       <h1 class="jupiter">Filter messages by survey</h1>
         <form method="POST">
           {% if survey_list %}
@@ -17,8 +26,8 @@
                 <div class="field field--radio">
                   {% for survey in survey_list %}
                   <div class="field__item js-focusable-box">
-                      <input class="input input--radio js-focusable" name="radio-answer" value={{ survey }} id={{ survey }} type="radio">
-                      <label class="label label--inline venus" for={{ survey }}>{{ survey }}</label>
+                      <input class="input input--radio js-focusable" name="radio-answer" value="{{ survey.replace(' ', '') }}" id="{{ survey.replace(' ', '') }}" type="radio" required>
+                      <label class="label label--inline venus" for="{{ survey.replace(' ', '') }}">{{ survey }}</label>
                   </div><br />
                   {% endfor %}
                 </div>
@@ -31,6 +40,7 @@
             <p> Unable to retrieve list of surveys </p>
           {% endif %}
         </form>
+
     </div>
   </div>
 </div>

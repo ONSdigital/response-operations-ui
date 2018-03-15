@@ -10,7 +10,7 @@ class Surveys(Enum):
     NBS = "NBS"
     PCS = "PCS"
     QBS = "QBS"
-    SANDANDGRAVEL = "Sand&Gravel"
+    SANDANDGRAVEL = "Sand & Gravel"
     BRES = "BRES"
 
 

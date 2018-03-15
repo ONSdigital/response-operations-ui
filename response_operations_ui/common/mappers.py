@@ -1,5 +1,10 @@
 import calendar
 import iso8601
+import re
+
+
+def format_short_name(short_name):
+    return re.sub('(&)', r' \1 ', short_name)
 
 
 def convert_events_to_new_format(events):
