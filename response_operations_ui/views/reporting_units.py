@@ -41,16 +41,6 @@ def view_reporting_unit(ru_ref):
             respondent['status'] = respondent['status'].title()
             respondent['enrolmentStatus'] = respondent['enrolmentStatus'].title()
 
-    breadcrumbs = [
-        {
-            "title": "Reporting units",
-            "link": "/reporting-units"
-        },
-        {
-            "title": f"{ru_ref}"
-        }
-    ]
-
     survey_arg = request.args.get('survey')
     period_arg = request.args.get('period')
     info_message = None
@@ -64,6 +54,15 @@ def view_reporting_unit(ru_ref):
     if request.args.get('info'):
         info_message = 'Verification email re-sent'
 
+    breadcrumbs = [
+        {
+            "title": "Reporting units",
+            "link": "/reporting-units"
+        },
+        {
+            "title": f"{ru_ref}"
+        }
+    ]
     return render_template('reporting-unit.html', ru_ref=ru_ref, party_id=respondent.get('id'),
                            ru=ru_details['reporting_unit'], surveys=ru_details['surveys'],
                            breadcrumbs=breadcrumbs, info_message=info_message, edit_details=edit_details)
