@@ -24,12 +24,14 @@
   <dd id="RU_REF" class="item-headlines-definition">
     {{ ru.sampleUnitRef }}
   </dd>
+  {% if ru.attributes.tradstyle1 %}}
   <dt class="item-headlines-term">
     Trading as:
   </dt>
   <dd id="TRADING_AS" class="item-headlines-definition">
     {{ ru.attributes.tradstyle1 + " " + ru.attributes.tradstyle2 + " " + ru.attributes.tradstyle3 }}
   </dd>
+  {% endif %}
 </dl>
 
 <h2 class="saturn">Surveys</h2>
