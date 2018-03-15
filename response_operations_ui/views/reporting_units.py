@@ -60,6 +60,10 @@ def view_reporting_unit(ru_ref):
         info_message = f'Response status for {survey["surveyRef"]} {survey["shortName"]}' \
                        f' period {period_arg} changed to {new_status}'
 
+    info = request.args.get('info')
+    if info:
+        info_message = info
+
     return render_template('reporting-unit.html', ru=ru_details['reporting_unit'], surveys=ru_details['surveys'],
                            breadcrumbs=breadcrumbs, info_message=info_message, edit_details=edit_details)
 
@@ -89,15 +93,43 @@ def edit_contact_details(ru_ref, respondent_id):
           "respondent_id": respondent_id
     }
 
-    edit_successfully = edit_contact_details_controller.edit_contact_details(edit_details_data, respondent_id)
+    edit_successfully, error_type = edit_contact_details_controller.edit_contact_details(edit_details_data,
+                                                                                         respondent_id)
+
+    respondent_details = edit_contact_details_controller.get_contact_details(respondent_id)
 
     if not edit_successfully:
-        respondent_details = edit_contact_details_controller.get_contact_details(respondent_id)
-        logger.info('Error submitting respondent details', respondent_id=respondent_id)
-        return render_template('edit-contact-details.html', ru_ref=ru_ref, form=form, error=True,
-                               respondent_details=respondent_details)
 
-    return redirect(url_for('reporting_unit_bp.view_reporting_unit', ru_ref=ru_ref, edit_details=True))
+        logger.info('Error submitting respondent details', respondent_id=respondent_id)
+        if error_type == 'bad-email':
+            return render_template('edit-contact-details.html', ru_ref=ru_ref, form=form, email_error=True,
+                                   respondent_details=respondent_details)
+        else:
+            return render_template('edit-contact-details.html', ru_ref=ru_ref, form=form, error=True,
+                                   respondent_details=respondent_details)
+
+    details_changed = False
+    email_changed = False
+
+    if respondent_details["firstName"] != edit_details_data["first_name"]:
+        details_changed = True
+    elif respondent_details["lastName"] != edit_details_data["last_name"]:
+        details_changed = True
+    elif respondent_details["telephone"] != edit_details_data["telephone"]:
+        details_changed = True
+    if respondent_details['emailAddress'] != edit_details_data["email_address"]:
+        email_changed = True
+
+    if details_changed and email_changed:
+        message = f'Contact details saved and verification email sent to {edit_details_data["new_email_address"]}'
+    elif details_changed and not email_changed:
+        message = 'Contact details changed'
+    elif email_changed:
+        message = f'Verification email sent to {edit_details_data["new_email_address"]}'
+    else:
+        message = None
+
+    return redirect(url_for('reporting_unit_bp.view_reporting_unit', ru_ref=ru_ref, info=message))
 
 
 @reporting_unit_bp.route('/', methods=['GET', 'POST'])

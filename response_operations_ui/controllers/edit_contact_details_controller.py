@@ -14,12 +14,22 @@ def edit_contact_details(edit_details_data, respondent_id):
     url = f'{app.config["BACKSTAGE_API_URL"]}/v1/party/update-respondent-details/{respondent_id}'
 
     response = requests.put(url, json=edit_details_data)
-    if response.status_code != 200:
-        logger.debug('Error changing contact details', respondent_id=respondent_id)
-        return False
+    if response.status_code == 200:
+        logger.debug('Respondent details updated', respondent_id=respondent_id, status_code=response.status_code)
+        return True, ''
 
-    logger.debug('Successfully changed contact details', respondent_id=respondent_id)
-    return True
+    if response.status_code == 409:
+        logger.debug('Email address already exists', respondent_id=respondent_id, status_code=response.status_code)
+        return False, 'bad-email'
+
+    if response.status_code == 404:
+        logger.debug('Respondent id does not exist', respondent_id=respondent_id, status_code=response.status_code)
+    elif response.status_code == 500:
+        logger.debug('Internal server error', status_code=response.status_code)
+    else:
+        logger.debug('Error updating respondent details', respondent_id=respondent_id, status_code=response.status_code)
+
+    return False, ''
 
 
 def get_contact_details(respondent_id):
