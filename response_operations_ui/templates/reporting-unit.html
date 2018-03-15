@@ -24,6 +24,12 @@
   <dd id="RU_REF" class="item-headlines-definition">
     {{ ru.sampleUnitRef }}
   </dd>
+  <dt class="item-headlines-term">
+    Trading as:
+  </dt>
+  <dd id="TRADING_AS" class="item-headlines-definition">
+    {{ ru.attributes.tradstyle1 + " " + ru.attributes.tradstyle2 + " " + ru.attributes.tradstyle3 }}
+  </dd>
 </dl>
 
 <h2 class="saturn">Surveys</h2>
@@ -48,10 +54,13 @@
                 Period
               </th>
               <th scope="col" class="table--header--cell">
-                Reporting unit name (from sample)
+                Reporting unit name
               </th>
               <th scope="col" class="table--header--cell">
-                Region (from sample)
+                Trading as
+              </th>
+              <th scope="col" class="table--header--cell">
+                Region
               </th>
               <th scope="col" class="table--header--cell">
                 Status
@@ -66,6 +75,9 @@
               </td>
               <td name="tbl-ce-company-name" class="table--cell">
                 {{ ce.companyName }}
+              </td>
+              <td name="tbl-ce-company-name" class="table--cell">
+                {{ ce.tradingAs }}
               </td>
               <td name="tbl-ce-company-region" class="table--cell">
                 {{ ce.companyRegion }}
