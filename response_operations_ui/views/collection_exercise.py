@@ -121,13 +121,13 @@ def _select_collection_instrument(short_name, period):
             if not ci_added:
                 error = {
                     "section": "ciSelect",
-                    "header": "Error: Failed to add Collection Instrument(s)",
+                    "header": "Error: Failed to add collection instrument(s)",
                     "message": "Please try again"
                 }
     else:
         error = {
             "section": "ciSelect",
-            "header": "Error: No Collection Instruments selected",
+            "header": "Error: No collection instruments selected",
             "message": "Please select a collection instrument"
         }
 
@@ -145,7 +145,7 @@ def _upload_collection_instrument(short_name, period):
         if not ci_loaded:
             error = {
                 "section": "ciFile",
-                "header": "Error: Failed to upload Collection Instrument",
+                "header": "Error: Failed to upload collection instrument",
                 "message": "Please try again"
             }
 
@@ -160,25 +160,25 @@ def _validate_collection_instrument():
             logger.debug('Invalid file format uploaded', filename=file.filename)
             error = {
                 "section": "ciFile",
-                "header": "Error: wrong file type for Collection instrument",
+                "header": "Error: wrong file type for collection instrument",
                 "message": "Please use XLSX file only"
             }
         else:
             # file name format is surveyId_period_formType
-            form_type = _get_form_type(file.filename) if file.filename.count('_') == 2 else None
+            form_type = _get_form_type(file.filename) if file.filename.count('_') == 2 else ''
             if not form_type.isdigit() and len(form_type) != 4:
                 logger.debug('Invalid file format uploaded', filename=file.filename)
                 error = {
                     "section": "ciFile",
-                    "header": "Error: invalid file name format for Collection instrument",
+                    "header": "Error: invalid file name format for collection instrument",
                     "message": "Please provide file with correct form type in file name"
                 }
     else:
         logger.debug('No file uploaded')
         error = {
             "section": "ciFile",
-            "header": "Error: No Collection instrument supplied",
-            "message": "Please provide a Collection instrument"
+            "header": "Error: No collection instrument supplied",
+            "message": "Please provide a collection instrument"
         }
     return error
 
