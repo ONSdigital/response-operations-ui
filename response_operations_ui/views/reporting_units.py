@@ -116,7 +116,7 @@ def edit_contact_details(ru_ref, respondent_id):
         details_changed = True
     elif respondent_details["telephone"] != edit_details_data["telephone"]:
         details_changed = True
-    if respondent_details['emailAddress'] != edit_details_data["email_address"]:
+    if respondent_details['emailAddress'] != edit_details_data["new_email_address"]:
         email_changed = True
 
     if details_changed and email_changed:
