@@ -74,7 +74,6 @@
                       </span>
                     </label>
                   {{ form.last_name(class_="input input--text", id='lastName', required=required, maxlength=254) }}
-                  <input type="hidden" name="hidden_last_name" value={{ respondent_details.lastName }}>
                 </div>
 
                 <div class="field u-mb-l">
@@ -86,7 +85,6 @@
                       </span>
                     </label>
                   {{ form.first_name(class_="input input--text", id='firstName', required=required, maxlength=254) }}
-                  <input type="hidden" name="hidden_first_name" value={{ respondent_details.firstName }}>
                 </div>
 
                 <div class="field u-mb-l">
@@ -111,7 +109,6 @@
                       </span>
                     </label>
                   {{ form.telephone(class_="input input--text", id='telephone', required=required, maxlength=254) }}
-                  <input type="hidden" name="hidden_telephone" value={{ respondent_details.telephone }}>
                 </div>
 
                 <button class="btn btn--primary u-mt-s" id="save-btn">Save changes</button>
