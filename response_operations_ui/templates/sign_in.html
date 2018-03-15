@@ -29,7 +29,6 @@
                         {% endif %}
                     {% endfor %}
                 {% endif %}
-            {% endwith %}
             <section>
                 <form method="post" class="form u-mt-m">
                     {{ form.csrf_token }}
@@ -56,12 +55,28 @@
                         </div>
                         {% endif %}
                         <h1 class="saturn">Sign in</h1>
+                        {% if messages %}
+                            {% for category, message in messages %}
+                                {% if category == "failed_authentication" %}
+                                <div id="username-panel" class="field panel panel--simple panel--error">
+                                {% endif %}
+                            {% endfor %}
+                        {% else %}
                         <div id="username-panel" class="field{% if form.username.errors %} panel panel--simple panel--error{% endif %}">
+                        {% endif %}
                             <label for="username" class="label">Username</label>
                             {% if form.username.errors %}<p class="u-vh">Username is required</p>{% endif %}
                             {{ form.username(id='username', class='input input--text input-type__input', required=True, size=20) }} <br>
                         </div>
+                        {% if messages %}
+                            {% for category, message in messages %}
+                                {% if category == "failed_authentication" %}
+                                <div id="password-panel" class="field panel panel--simple panel--error u-mb-s">
+                                {% endif %}
+                            {% endfor %}
+                        {% else %}
                         <div id="password-panel" class="field{% if form.password.errors %} panel panel--simple panel--error u-mb-s{% endif %}">
+                        {% endif %}
                             {% if form.password.errors %}<p class="u-vh">Password is required</p>{% endif %}
                             <label for="password" class="label">Password</label>
                             {{ form.password(id='password', class='input input--text', required=True, size=20) }} <br>
@@ -70,6 +85,7 @@
                     <input type="submit" class="btn btn--primary" value="Sign in" id="SIGN_IN_BUTTON">
                 </form>
             </section>
+            {% endwith %}
         </div>
     </div>
 </div>
