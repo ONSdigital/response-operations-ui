@@ -227,7 +227,7 @@ class TestReportingUnits(unittest.TestCase):
             "first_name": 'Tom',
             "last_name": 'Smith',
             "email": 'Jacky.Turner@email.com',
-            "telephone": '7971161867'}
+            "telephone": '7971161859'}
         mock_request.get(url_get_contact_details, json=respondent)
         mock_request.put(url_edit_contact_details, status_code=409)
 
@@ -242,7 +242,7 @@ class TestReportingUnits(unittest.TestCase):
             "first_name": 'Tom',
             "last_name": 'Smith',
             "email": 'Jacky.Turner@email.com',
-            "telephone": '7971161867'}
+            "telephone": '7971161859'}
         mock_request.get(url_get_contact_details, json=respondent)
         mock_request.put(url_edit_contact_details, status_code=404)
 
@@ -287,13 +287,13 @@ class TestReportingUnits(unittest.TestCase):
             "first_name": 'Jacky',
             "last_name": 'Smith',
             "email": 'Jacky.Turner@email.com',
-            "telephone": '7971161867'}
+            "telephone": '7971161859'}
         response = self.mock_for_change_details(changed_details, mock_request)
 
         self.assertEqual(response.status_code, 200)
         self.assertIn('Jacky'.encode(), response.data)
         self.assertIn('Smith'.encode(), response.data)
-        self.assertIn('7971161867'.encode(), response.data)
+        self.assertIn('7971161859'.encode(), response.data)
 
     def mock_for_change_details(self, changed_details, mock_request):
         mock_request.get(url_get_contact_details, json=respondent)
@@ -324,6 +324,36 @@ class TestReportingUnits(unittest.TestCase):
         self.assertEqual(response.status_code, 200)
         self.assertIn('Jacky'.encode(), response.data)
         self.assertIn('Turner'.encode(), response.data)
+        self.assertIn('7971161867'.encode(), response.data)
+
+    @requests_mock.mock()
+    def test_edit_contact_details_email_change(self, mock_request):
+        changed_details = {
+            "first_name": 'Jacky',
+            "last_name": 'Turner',
+            "email": 'Jacky.Turner@thisemail.com',
+            "telephone": '7971161859'}
+        response = self.mock_for_change_details(changed_details, mock_request)
+
+        self.assertEqual(response.status_code, 200)
+        self.assertIn('Jacky'.encode(), response.data)
+        self.assertIn('Turner'.encode(), response.data)
+        self.assertIn('Jacky.Turner@thisemail.com'.encode(), response.data)
+        self.assertIn('7971161859'.encode(), response.data)
+
+    @requests_mock.mock()
+    def test_edit_contact_details_and_email_change(self, mock_request):
+        changed_details = {
+            "first_name": 'Jacky',
+            "last_name": 'Turner',
+            "email": 'Jacky.Turner@thisemail.com',
+            "telephone": '7971161867'}
+        response = self.mock_for_change_details(changed_details, mock_request)
+
+        self.assertEqual(response.status_code, 200)
+        self.assertIn('Jacky'.encode(), response.data)
+        self.assertIn('Turner'.encode(), response.data)
+        self.assertIn('Jacky.Turner@thisemail.com'.encode(), response.data)
         self.assertIn('7971161867'.encode(), response.data)
 
     @requests_mock.mock()
