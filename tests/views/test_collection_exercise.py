@@ -51,7 +51,7 @@ class TestCollectionExercise(unittest.TestCase):
     @requests_mock.mock()
     def test_upload_collection_instrument(self, mock_request):
         post_data = {
-            'ciFile': (BytesIO(b'data'), 'test.xlsx'),
+            'ciFile': (BytesIO(b'data'), '064_201803_0001.xlsx'),
             'load-ci': '',
         }
         mock_request.post(url_collection_instrument, status_code=201)
@@ -90,7 +90,7 @@ class TestCollectionExercise(unittest.TestCase):
         response = self.app.post("/surveys/test/000000", data=post_data)
 
         self.assertEqual(response.status_code, 200)
-        self.assertIn("Error: Failed to add Collection Instrument(s)".encode(), response.data)
+        self.assertIn("Error: Failed to add collection instrument(s)".encode(), response.data)
 
     @requests_mock.mock()
     def test_failed_no_selected_collection_instrument(self, mock_request):
@@ -104,12 +104,12 @@ class TestCollectionExercise(unittest.TestCase):
         response = self.app.post("/surveys/test/000000", data=post_data)
 
         self.assertEqual(response.status_code, 200)
-        self.assertIn("Error: No Collection Instruments selected".encode(), response.data)
+        self.assertIn("Error: No collection instruments selected".encode(), response.data)
 
     @requests_mock.mock()
     def test_view_collection_instrument_after_upload(self, mock_request):
         post_data = {
-            'ciFile': (BytesIO(b'data'), 'collection_instrument.xlsx'),
+            'ciFile': (BytesIO(b'data'), '064_201803_0001.xlsx'),
             'load-ci': '',
         }
         mock_request.post(url_collection_instrument, status_code=201)
@@ -123,7 +123,7 @@ class TestCollectionExercise(unittest.TestCase):
     @requests_mock.mock()
     def test_failed_upload_collection_instrument(self, mock_request):
         post_data = {
-            'ciFile': (BytesIO(b'data'), 'test.xlsx'),
+            'ciFile': (BytesIO(b'data'), '064_201803_0001.xlsx'),
             'load-ci': '',
         }
         mock_request.post(url_collection_instrument, status_code=500)
@@ -132,12 +132,12 @@ class TestCollectionExercise(unittest.TestCase):
         response = self.app.post("/surveys/test/000000", data=post_data, follow_redirects=True)
 
         self.assertEqual(response.status_code, 200)
-        self.assertIn("Error: Failed to upload Collection Instrument".encode(), response.data)
+        self.assertIn("Error: Failed to upload collection instrument".encode(), response.data)
 
     @requests_mock.mock()
     def test_no_upload_collection_instrument_when_bad_extension(self, mock_request):
         post_data = {
-            'ciFile': (BytesIO(b'data'), 'test.html'),
+            'ciFile': (BytesIO(b'data'), '064_201803_0001.html'),
             'load-ci': '',
         }
         mock_request.get(url_get_collection_exercise, json=collection_exercise_details)
@@ -146,7 +146,35 @@ class TestCollectionExercise(unittest.TestCase):
 
         self.assertEqual(response.status_code, 200)
         self.assertNotIn("Collection instrument loaded".encode(), response.data)
-        self.assertIn("Error: wrong file type for Collection instrument".encode(), response.data)
+        self.assertIn("Error: wrong file type for collection instrument".encode(), response.data)
+
+    @requests_mock.mock()
+    def test_no_upload_collection_instrument_when_bad_form_type_format(self, mock_request):
+        post_data = {
+            'ciFile': (BytesIO(b'data'), '064_201803_xxxxx.xlsx'),
+            'load-ci': '',
+        }
+        mock_request.get(url_get_collection_exercise, json=collection_exercise_details)
+
+        response = self.app.post("/surveys/test/000000", data=post_data)
+
+        self.assertEqual(response.status_code, 200)
+        self.assertNotIn("Collection instrument loaded".encode(), response.data)
+        self.assertIn("Error: invalid file name format for collection instrument".encode(), response.data)
+
+    @requests_mock.mock()
+    def test_no_upload_collection_instrument_bad_file_name_format(self, mock_request):
+        post_data = {
+            'ciFile': (BytesIO(b'data'), '064201803_xxxxx.xlsx'),
+            'load-ci': '',
+        }
+        mock_request.get(url_get_collection_exercise, json=collection_exercise_details)
+
+        response = self.app.post("/surveys/test/000000", data=post_data)
+
+        self.assertEqual(response.status_code, 200)
+        self.assertNotIn("Collection instrument loaded".encode(), response.data)
+        self.assertIn("Error: invalid file name format for collection instrument".encode(), response.data)
 
     @requests_mock.mock()
     def test_no_upload_collection_instrument_when_no_file(self, mock_request):
@@ -159,7 +187,7 @@ class TestCollectionExercise(unittest.TestCase):
 
         self.assertEqual(response.status_code, 200)
         self.assertNotIn("Collection instrument loaded".encode(), response.data)
-        self.assertIn("Error: No Collection instrument supplied".encode(), response.data)
+        self.assertIn("Error: No collection instrument supplied".encode(), response.data)
 
     @requests_mock.mock()
     def test_view_collection_instrument(self, mock_request):
