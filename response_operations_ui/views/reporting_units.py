@@ -15,6 +15,9 @@ logger = wrap_logger(logging.getLogger(__name__))
 
 reporting_unit_bp = Blueprint('reporting_unit_bp', __name__, static_folder='static', template_folder='templates')
 
+#@errors_blueprint.change_details(409)
+
+
 
 @reporting_unit_bp.route('/<ru_ref>', methods=['GET'])
 @login_required
@@ -94,9 +97,9 @@ def edit_contact_details(ru_ref, respondent_id):
 
     respondent_details = edit_contact_details_controller.get_contact_details(respondent_id)
 
-    edit_successfully, error_type = edit_contact_details_controller.edit_contact_details(edit_details_data,
-                                                                                         respondent_id)
-
+    details_changed_message = edit_contact_details_controller.edit_contact_details(edit_details_data,
+                                                                                         respondent_id,
+                                                                                         respondent_details)
     if not edit_successfully:
 
         logger.info('Error submitting respondent details', respondent_id=respondent_id)
@@ -107,27 +110,8 @@ def edit_contact_details(ru_ref, respondent_id):
             return render_template('edit-contact-details.html', ru_ref=ru_ref, form=form, error=True,
                                    respondent_details=respondent_details)
 
-    message = None
-    details_changed = False
-    email_changed = False
 
-    if respondent_details.get("firstName") != edit_details_data.get("first_name"):
-        details_changed = True
-    elif respondent_details.get("lastName") != edit_details_data.get("last_name"):
-        details_changed = True
-    elif respondent_details.get("telephone") != edit_details_data.get("telephone"):
-        details_changed = True
-    if respondent_details.get('emailAddress') != edit_details_data.get("new_email_address"):
-        email_changed = True
-
-    if details_changed and email_changed:
-        message = f'Contact details saved and verification email sent to {edit_details_data["new_email_address"]}'
-    elif details_changed and not email_changed:
-        message = 'Contact details changed'
-    elif email_changed:
-        message = f'Verification email sent to {edit_details_data["new_email_address"]}'
-
-    return redirect(url_for('reporting_unit_bp.view_reporting_unit', ru_ref=ru_ref, info=message))
+    return redirect(url_for('reporting_unit_bp.view_reporting_unit', ru_ref=ru_ref, info=details_changed_message))
 
 
 @reporting_unit_bp.route('/', methods=['GET', 'POST'])
