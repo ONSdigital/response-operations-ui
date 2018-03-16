@@ -120,24 +120,22 @@ def view_select_survey():
     breadcrumbs = [{"title": "Messages", "link": "/messages"},
                    {"title": "Filter by survey"}]
 
-    survey_list = [survey.value for survey in Surveys]
-
     if request.method == 'POST':
         selected_survey = request.form.get('radio-answer')
-        if not selected_survey:
-            return render_template("message_select_survey.html",
-                                   breadcrumbs=breadcrumbs,
-                                   selected_survey=None,
-                                   survey_list=survey_list,
-                                   response_error=True)
-
-        return redirect(url_for("messages_bp.view_selected_survey",
-                                selected_survey=selected_survey))
+        if selected_survey:
+            return redirect(url_for("messages_bp.view_selected_survey",
+                                    selected_survey=selected_survey))
+        else:
+            response_error = True
     else:
-        return render_template("message_select_survey.html",
-                               breadcrumbs=breadcrumbs,
-                               selected_survey=None,
-                               survey_list=survey_list)
+        response_error = False
+
+    survey_list = [survey.value for survey in Surveys]
+    return render_template("message_select_survey.html",
+                           breadcrumbs=breadcrumbs,
+                           selected_survey=None,
+                           response_error=response_error,
+                           survey_list=survey_list)
 
 
 @messages_bp.route('/<selected_survey>', methods=['GET'])
@@ -224,12 +222,11 @@ def _refine(message):
 
 
 def _get_survey_id(selected_survey):
-    survey_messages = survey_controllers.get_survey(selected_survey)
-    return survey_messages['survey']['id']
+    return survey_controllers.get_survey_id_by_short_name(selected_survey)
 
 
 def _get_FDI_survey_id():
-    return [survey_controllers.get_survey(fdi_survey.value)['survey']['id'] for fdi_survey in FDISurveys]
+    return [survey_controllers.get_survey_id_by_short_name(fdi_survey.value) for fdi_survey in FDISurveys]
 
 
 def _get_user_summary_for_message(message):
