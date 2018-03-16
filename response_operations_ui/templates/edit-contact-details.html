@@ -47,7 +47,7 @@
 
                 <form action="{{ url_for('reporting_unit_bp.edit_contact_details', ru_ref=ru_ref, respondent_id=respondent_details.id) }}" method="post">
                 {{ form.csrf_token }}
-                {% if error %}
+                {% if error_type == 'api error' %}
                 <div class="panel panel--simple panel--error u-mb-l">
                   <div class="panel__body" id="save-error">
                     <h2 id='error-saving-message' class="venus">Connection error</h2>
@@ -56,7 +56,7 @@
                 </div>
                 {% endif %}
 
-                {% if email_error %}
+                {% if error_type == 'email conflict' %}
                 <div class="panel panel--simple panel--error u-mb-l">
                   <div class="panel__body" id="save-email-error">
                     <h2 id='error-saving-email' class="venus">Error - email address already exists</h2>
