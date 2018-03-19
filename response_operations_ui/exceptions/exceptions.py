@@ -21,3 +21,12 @@ class InternalError(Exception):
 
     def __str__(self):
         return f'url: {self.url} status:{self.status} exception:{self.exception}'
+
+
+class UpdateContactDetailsException(Exception):
+
+    def __init__(self, ru_ref, form, respondent_details, status_code):
+        self.ru_ref = ru_ref
+        self.form = form
+        self.respondent_details = respondent_details
+        self.status_code = status_code
