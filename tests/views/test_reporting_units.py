@@ -8,6 +8,7 @@ from response_operations_ui import app
 
 respondent_party_id = "cd592e0f-8d07-407b-b75d-e01fbdae8233"
 backstage_api_url = app.config["BACKSTAGE_API_URL"]
+CONNECTION_ERROR = 'Connection error'
 
 url_get_reporting_unit = f'{backstage_api_url}/v1/reporting-unit/50012345678'
 url_search_reporting_units = f'{backstage_api_url}/v1/reporting-unit/search'
@@ -213,6 +214,89 @@ class TestReportingUnits(unittest.TestCase):
             "last_name": 'Smith',
             "email": 'Jacky.Turner@email.com',
             "telephone": '7971161867'}
+        response = self.mock_for_change_details(changed_details, mock_request)
+
+        self.assertEqual(response.status_code, 200)
+        self.assertIn('Tom'.encode(), response.data)
+        self.assertIn('Smith'.encode(), response.data)
+        self.assertIn('7971161867'.encode(), response.data)
+
+    @requests_mock.mock()
+    def test_edit_contact_details_email_already_exists(self, mock_request):
+        changed_details = {
+            "first_name": 'Tom',
+            "last_name": 'Smith',
+            "email": 'Jacky.Turner@email.com',
+            "telephone": '7971161859'}
+        mock_request.get(url_get_contact_details, json=respondent)
+        mock_request.put(url_edit_contact_details, status_code=409)
+
+        response = self.app.post(f"/reporting-units/50012345678/edit-contact-details/{respondent_party_id}",
+                                 data=changed_details, follow_redirects=True)
+
+        self.assertIn('Error - email address already exists'.encode(), response.data)
+
+    @requests_mock.mock()
+    def test_edit_contact_details_404_response(self, mock_request):
+        changed_details = {
+            "first_name": 'Tom',
+            "last_name": 'Smith',
+            "email": 'Jacky.Turner@email.com',
+            "telephone": '7971161859'}
+        mock_request.get(url_get_contact_details, json=respondent)
+        mock_request.put(url_edit_contact_details, status_code=404)
+
+        response = self.app.post(f"/reporting-units/50012345678/edit-contact-details/{respondent_party_id}",
+                                 data=changed_details, follow_redirects=True)
+
+        self.assertIn(CONNECTION_ERROR.encode(), response.data)
+
+    @requests_mock.mock()
+    def test_edit_contact_details_500_response(self, mock_request):
+        changed_details = {
+            "first_name": 'Tom',
+            "last_name": 'Smith',
+            "email": 'Jacky.Turner@email.com',
+            "telephone": '7971161867'}
+        mock_request.get(url_get_contact_details, json=respondent)
+        mock_request.put(url_edit_contact_details, status_code=500)
+
+        response = self.app.post(f"/reporting-units/50012345678/edit-contact-details/{respondent_party_id}",
+                                 data=changed_details, follow_redirects=True)
+
+        self.assertIn(CONNECTION_ERROR.encode(), response.data)
+
+    @requests_mock.mock()
+    def test_edit_contact_details_error_response(self, mock_request):
+        changed_details = {
+            "first_name": 'Tom',
+            "last_name": 'Smith',
+            "email": 'Jacky.Turner@email.com',
+            "telephone": '7971161867'}
+        mock_request.get(url_get_contact_details, json=respondent)
+        mock_request.put(url_edit_contact_details, status_code=405)
+
+        response = self.app.post(f"/reporting-units/50012345678/edit-contact-details/{respondent_party_id}",
+                                 data=changed_details, follow_redirects=True)
+
+        self.assertIn(CONNECTION_ERROR.encode(), response.data)
+
+    @requests_mock.mock()
+    def test_edit_contact_details_last_name_change(self, mock_request):
+        changed_details = {
+            "first_name": 'Jacky',
+            "last_name": 'Smith',
+            "email": 'Jacky.Turner@email.com',
+            "telephone": '7971161859'}
+        response = self.mock_for_change_details(changed_details, mock_request)
+
+        self.assertEqual(response.status_code, 200)
+        self.assertIn('Jacky'.encode(), response.data)
+        self.assertIn('Smith'.encode(), response.data)
+        self.assertIn('7971161859'.encode(), response.data)
+
+    def mock_for_change_details(self, changed_details, mock_request):
+        mock_request.get(url_get_contact_details, json=respondent)
         mock_request.put(url_edit_contact_details)
         mock_request.get(url_get_reporting_unit + '?edit_details=True')
         mock_request.get(url_get_reporting_unit, json=edited_reporting_unit)
@@ -224,29 +308,53 @@ class TestReportingUnits(unittest.TestCase):
                          json=self.case_group_status)
         mock_request.get(f'{app.config["BACKSTAGE_API_URL"]}/v1/case/status/BRICKS/201802/50012345678',
                          json=self.case_group_status)
-
         response = self.app.post(f"/reporting-units/50012345678/edit-contact-details/{respondent_party_id}",
                                  data=changed_details, follow_redirects=True)
+        return response
+
+    @requests_mock.mock()
+    def test_edit_contact_details_telephone_change(self, mock_request):
+        changed_details = {
+            "first_name": 'Jacky',
+            "last_name": 'Turner',
+            "email": 'Jacky.Turner@email.com',
+            "telephone": '7971161867'}
+        response = self.mock_for_change_details(changed_details, mock_request)
 
         self.assertEqual(response.status_code, 200)
-        self.assertIn('Tom'.encode(), response.data)
-        self.assertIn('Smith'.encode(), response.data)
+        self.assertIn('Jacky'.encode(), response.data)
+        self.assertIn('Turner'.encode(), response.data)
         self.assertIn('7971161867'.encode(), response.data)
 
     @requests_mock.mock()
-    def test_edit_contact_details_fail(self, mock_request):
+    def test_edit_contact_details_email_change(self, mock_request):
         changed_details = {
-            "first_name": 'Tom',
-            "last_name": 'Smith',
-            "email": 'Jacky.Turner@email.com',
+            "first_name": 'Jacky',
+            "last_name": 'Turner',
+            "email": 'Jacky.Turner@thisemail.com',
+            "telephone": '7971161859'}
+        response = self.mock_for_change_details(changed_details, mock_request)
+
+        self.assertEqual(response.status_code, 200)
+        self.assertIn('Jacky'.encode(), response.data)
+        self.assertIn('Turner'.encode(), response.data)
+        self.assertIn('Jacky.Turner@thisemail.com'.encode(), response.data)
+        self.assertIn('7971161859'.encode(), response.data)
+
+    @requests_mock.mock()
+    def test_edit_contact_details_and_email_change(self, mock_request):
+        changed_details = {
+            "first_name": 'Jacky',
+            "last_name": 'Turner',
+            "email": 'Jacky.Turner@thisemail.com',
             "telephone": '7971161867'}
-        mock_request.put(url_edit_contact_details, status_code=500)
+        response = self.mock_for_change_details(changed_details, mock_request)
 
-        response = self.app.post(
-            "/reporting-units/50012345678/edit-contact-details/cd592e0f-8d07-407b-b75d-e01fbdae8233",
-            data=changed_details, follow_redirects=True)
-
-        self.assertEqual(response.status_code, 500)
+        self.assertEqual(response.status_code, 200)
+        self.assertIn('Jacky'.encode(), response.data)
+        self.assertIn('Turner'.encode(), response.data)
+        self.assertIn('Jacky.Turner@thisemail.com'.encode(), response.data)
+        self.assertIn('7971161867'.encode(), response.data)
 
     @requests_mock.mock()
     def test_reporting_unit_generate_new_code(self, mock_request):
