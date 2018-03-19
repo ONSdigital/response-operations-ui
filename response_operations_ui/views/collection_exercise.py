@@ -216,3 +216,14 @@ def _format_ci_file_name(collection_instruments, survey_details):
 def _get_form_type(file_name):
     file_name = file_name.split(".")[0]
     return file_name.split("_")[2]  # file name format is surveyId_period_formType
+
+
+@collection_exercise_bp.route('', methods=['POST'])
+@login_required
+def update_collection_exercise_details():
+    form = EditContactDetailsForm(request.form)
+
+    edit_successfully = collection_exercise_controllers.update_collection_exercise_details()
+
+
+    return redirect(url_for(''))
