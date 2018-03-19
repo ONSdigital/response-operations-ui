@@ -172,7 +172,8 @@ def _refine(message):
         'business_name': _get_business_name_from_message(message),
         'from': _get_from_name(message),
         'to': _get_to_name(message),
-        'sent_date': _get_human_readable_date(message.get('sent_date'))
+        'sent_date': _get_human_readable_date(message.get('sent_date')),
+        'unread': _get_unread_status(message)
     }
 
 
@@ -222,3 +223,7 @@ def _get_human_readable_date(sent_date):
         return f'{slang_date} at {sent_time}'
     except (ValueError, IndexError, TypeError):
         logger.exception("Failed to parse sent date from message", sent_date=sent_date)
+
+
+def _get_unread_status(message):
+    return 'UNREAD' in message.get('labels', [])

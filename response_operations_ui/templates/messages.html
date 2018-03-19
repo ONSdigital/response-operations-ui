@@ -65,7 +65,7 @@
           </thead>
               <tbody>
               {% for message in messages %}
-               <tr class="table--row table--row__selectable">
+               <tr class="table--row table--row__selectable {% if message.unread %} message-list__item--unread {% endif %}">
                 <td name="tbl-messages-RU_Ref" class="message-list__ru-ref" id="ru-ref-{{ loop.index }}">
                     {{ message.ru_ref or 'Unavailable' }}
                 </td>
