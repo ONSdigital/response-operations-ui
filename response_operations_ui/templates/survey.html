@@ -45,10 +45,25 @@
                 Period
               </th>
               <th scope="col" class="table--header--cell tbl-ce-respondent-info">
-                Shown to respondent as
+                Respondent sees
               </th>
               <th scope="col" class="table--header--cell tbl-ce-status">
                 Status
+              </th>
+              <th scope="col" class="table--header--cell tbl-ce-status">
+                Sample
+              </th>
+              <th scope="col" class="table--header--cell tbl-ce-status">
+                Report (CSV)
+              </th>
+              <th scope="col" class="table--header--cell tbl-ce-status">
+                MPS
+              </th>
+              <th scope="col" class="table--header--cell tbl-ce-status">
+                Go live
+              </th>
+              <th scope="col" class="table--header--cell tbl-ce-status">
+                Return by
               </th>
             </tr>
           </thead>
@@ -62,6 +77,15 @@
               </td>
               <td class="table--cell tbl-ce-respondent-info" name="tbl-ce-shown-as">
                 {{exercise.userDescription}}
+              </td>
+              <td class="table--cell tbl-ce-status" name="tbl-ce-status">
+                {{exercise.state}}
+              </td>
+              <td class="table--cell tbl-ce-status" name="tbl-ce-status">
+                {{ exercise.events.mps and exercise.events.mps.date or ""}}
+              </td>
+              <td class="table--cell tbl-ce-status" name="tbl-ce-status">
+                {{exercise.state}}
               </td>
               <td class="table--cell tbl-ce-status" name="tbl-ce-status">
                 {{exercise.state}}
