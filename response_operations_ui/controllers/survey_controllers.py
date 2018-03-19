@@ -45,6 +45,7 @@ def fdi_survey_short_name_wrapper(get_survey_short_name_func):
     return convert_fdi_surveys
 
 
+@fdi_survey_short_name_wrapper
 def get_survey_short_name_by_id(survey_id):
     try:
         return app.surveys_dict[survey_id]['shortName']

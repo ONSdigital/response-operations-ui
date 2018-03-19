@@ -8,8 +8,7 @@ import requests_mock
 
 from config import TestingConfig
 from response_operations_ui import app
-from response_operations_ui.controllers.survey_controllers import get_survey_short_name_by_id, \
-    fdi_survey_short_name_wrapper
+from response_operations_ui.controllers.survey_controllers import get_survey_short_name_by_id
 
 url_get_survey_list = f'{app.config["BACKSTAGE_API_URL"]}/v1/survey/surveys'
 with open('tests/test_data/survey/survey_list.json') as json_data:
@@ -134,15 +133,8 @@ class TestSurvey(unittest.TestCase):
     @requests_mock.mock()
     def test_get_survey_short_name_by_id_fdi_surveys_wrapper(self, mock_request):
         mock_request.get(url_get_survey_list, json=survey_list)
-        self.assertEqual(get_survey_short_name_by_id("QOFDI_id"), "QOFDI")
-        self.assertEqual(get_survey_short_name_by_id("QIFDI_id"), "QIFDI")
-        self.assertEqual(get_survey_short_name_by_id("AOFDI_id"), "AOFDI")
-        self.assertEqual(get_survey_short_name_by_id("AIFDI_id"), "AIFDI")
+        self.assertEqual(get_survey_short_name_by_id("QOFDI_id"), "FDI")
+        self.assertEqual(get_survey_short_name_by_id("QIFDI_id"), "FDI")
+        self.assertEqual(get_survey_short_name_by_id("AOFDI_id"), "FDI")
+        self.assertEqual(get_survey_short_name_by_id("AIFDI_id"), "FDI")
         self.assertEqual(get_survey_short_name_by_id("cb0711c3-0ac8-41d3-ae0e-567e5ea1ef87"), "BRES")
-
-        get_survey_short_name_by_id_wrapped = fdi_survey_short_name_wrapper(get_survey_short_name_by_id)
-        self.assertEqual(get_survey_short_name_by_id_wrapped("QOFDI_id"), "FDI")
-        self.assertEqual(get_survey_short_name_by_id_wrapped("QIFDI_id"), "FDI")
-        self.assertEqual(get_survey_short_name_by_id_wrapped("AOFDI_id"), "FDI")
-        self.assertEqual(get_survey_short_name_by_id_wrapped("AIFDI_id"), "FDI")
-        self.assertEqual(get_survey_short_name_by_id_wrapped("cb0711c3-0ac8-41d3-ae0e-567e5ea1ef87"), "BRES")
