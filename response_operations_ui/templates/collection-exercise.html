@@ -6,43 +6,52 @@
 <div role="main" id="main" class="page__main">
     <br/>
     <h1 class="jupiter" name="page-ce-title">{{survey.shortName}} {{ce.exerciseRef}}</h1>
-    <ul>
-      {% if ci_loaded %}
-        <div class="panel panel--simple panel--success">
-          <div id="collection-instrument-success" class="panel__body">
-            Collection instrument loaded
-          </div>
+    {% if ci_loaded %}
+      <div class="panel panel--simple panel--success">
+        <div id="collection-instrument-success" class="panel__body">
+          Collection instrument loaded
         </div>
-      {% endif %}
-      {% if ci_added %}
-        <div class="panel panel--simple panel--success">
-          <div id="collection-instrument-added-success" class="panel__body">
-            Collection instruments added
-          </div>
+      </div>
+    {% endif %}
+    {% if ci_added %}
+      <div class="panel panel--simple panel--success">
+        <div id="collection-instrument-added-success" class="panel__body">
+          Collection instruments added
         </div>
-      {% endif %}
-      {% if sample_loaded %}
-        <div class="panel panel--simple panel--success">
-          <div id="sample-success" class="panel__body">
-            Sample successfully loaded
-          </div>
+      </div>
+    {% endif %}
+    {% if sample_loaded %}
+      <div class="panel panel--simple panel--success">
+        <div id="sample-success" class="panel__body">
+          Sample successfully loaded
         </div>
-      {% endif %}
-      {% if executed %}
-        <div class="panel panel--simple panel--success">
-          <div id="execution-success" class="panel__body">
-            Collection exercise executed
-          </div>
+      </div>
+    {% endif %}
+    {% if executed %}
+      <div class="panel panel--simple panel--success">
+        <div id="execution-success" class="panel__body">
+          Collection exercise executed
         </div>
-      {% endif %}
-      {% if processing %}
-        <div class="panel panel--simple panel--info">
-          <div id="processing-info" class="panel__body">
-            Processing collection exercise – <a id="a-processing-refresh" href="">refresh to see progress</a>
-          </div>
+      </div>
+    {% endif %}
+    {% if processing %}
+      <div class="panel panel--simple panel--info">
+        <div id="processing-info" class="panel__body">
+          Processing collection exercise – <a id="a-processing-refresh" href="">refresh to see progress</a>
         </div>
-      {% endif %}
-    </ul>
+      </div>
+    {% elif validation_failed %}
+      <div class="panel panel--simple panel--error">
+        <div id="validation-error" class="panel__body">
+          Error processing collection exercise
+          {% if missing_ci %}
+          <div id="collection-instrument-error">
+            <a href="#ciFile">Check collection instruments</a>
+          </div>
+          {% endif %}
+        </div>
+      </div>
+    {% endif %}
     <dl class="ce-info" id="ce-attributes">
       <dt class="ce-status__title item-headlines-term ce-status">
         Status:
@@ -199,7 +208,7 @@
                 Choose a sample file to check details before loading
               </p>
               <label class="upload-file u-vh" for="sampleFile">Choose file</label>
-              <input type="file" class="" name="sampleFile" id="sampleFile" onchange="handleFiles(this.files)"
+              <input type="file" class="" name="sampleFile" id="sampleFile" onchange="handleFiles(this.files, {{ ci_classifiers }})"
               accept=".csv">
 
               <div id="sample-preview" class="u-mb-s"></div>
@@ -212,7 +221,7 @@
         {% endif %}
       </div>
 
-      <section class="ce-section">
+      <section class="ce-section {{'panel panel--simple panel--error' if missing_ci else ''}}">
         <h2 class="venus u-pt-m">Collection instruments</h2>
 
         {% if collection_instruments %}

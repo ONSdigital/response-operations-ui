@@ -3,12 +3,34 @@ import logging
 import requests
 from flask import current_app, session
 from flask_login import current_user
-from requests.exceptions import HTTPError
+from requests.exceptions import HTTPError, RequestException
+from json import JSONDecodeError
 from structlog import wrap_logger
 
 from response_operations_ui.exceptions.exceptions import ApiError, NoMessagesError, InternalError
 
 logger = wrap_logger(logging.getLogger(__name__))
+
+
+def get_conversation(thread_id):
+    logger.debug("Retrieving thread")
+
+    url = f'{current_app.config["BACKSTAGE_API_URL"]}/v1/secure-message/threads/{thread_id}'
+
+    response = requests.get(url, headers={'Authorization': _get_jwt()})
+
+    try:
+        response.raise_for_status()
+    except (HTTPError, RequestException):
+        logger.exception("Thread retrieval failed", thread_id=thread_id)
+        raise ApiError(response)
+    logger.debug("Thread retrieval successful")
+
+    try:
+        return response.json()
+    except JSONDecodeError:
+        logger.exception("the response could not be decoded")
+        raise ApiError(response)
 
 
 def get_thread_list(params):

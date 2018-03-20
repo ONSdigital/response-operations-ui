@@ -38,9 +38,14 @@ def view_collection_exercise(short_name, period, error=None, ci_loaded=False, ex
     ]
 
     ce_state = ce_details['collection_exercise']['state']
-    show_set_live_button = ce_state == 'READY_FOR_REVIEW'
+    show_set_live_button = ce_state in ('READY_FOR_REVIEW', 'FAILEDVALIDATION')
     locked = ce_state in ('LIVE', 'READY_FOR_LIVE', 'EXECUTION_STARTED', 'VALIDATED', 'EXECUTED')
     processing = ce_state in ('EXECUTION_STARTED', 'EXECUTED', 'VALIDATED')
+    validation_failed = ce_state == 'FAILEDVALIDATION'
+
+    validation_errors = ce_details['collection_exercise']['validationErrors']
+    missing_ci = validation_errors and any('MISSING_COLLECTION_INSTRUMENT' in unit['errors']
+                                           for unit in validation_errors)
 
     ce_details['collection_exercise']['state'] = map_collection_exercise_state(ce_state)  # NOQA
     _format_ci_file_name(ce_details['collection_instruments'], ce_details['survey'])
@@ -56,11 +61,14 @@ def view_collection_exercise(short_name, period, error=None, ci_loaded=False, ex
                            executed=executed,
                            events=formatted_events,
                            locked=locked,
+                           missing_ci=missing_ci,
                            processing=processing,
                            sample=ce_details['sample_summary'],
                            sample_loaded=sample_loaded,
                            show_set_live_button=show_set_live_button,
-                           survey=ce_details['survey'])
+                           survey=ce_details['survey'],
+                           validation_failed=validation_failed,
+                           ci_classifiers=ce_details['ci_classifiers']['classifierTypes'])
 
 
 @collection_exercise_bp.route('/<short_name>/<period>', methods=['POST'])
@@ -113,13 +121,13 @@ def _select_collection_instrument(short_name, period):
             if not ci_added:
                 error = {
                     "section": "ciSelect",
-                    "header": "Error: Failed to add Collection Instrument(s)",
+                    "header": "Error: Failed to add collection instrument(s)",
                     "message": "Please try again"
                 }
     else:
         error = {
             "section": "ciSelect",
-            "header": "Error: No Collection Instruments selected",
+            "header": "Error: No collection instruments selected",
             "message": "Please select a collection instrument"
         }
 
@@ -131,13 +139,13 @@ def _upload_collection_instrument(short_name, period):
     ci_loaded = False
 
     if not error:
-        ci_loaded = collection_instrument_controllers.upload_collection_instrument(short_name,
-                                                                                   period,
-                                                                                   request.files['ciFile'])
+        file = request.files['ciFile']
+        form_type = _get_form_type(file.filename)
+        ci_loaded = collection_instrument_controllers.upload_collection_instrument(short_name, period, file, form_type)
         if not ci_loaded:
             error = {
                 "section": "ciFile",
-                "header": "Error: Failed to upload Collection Instrument",
+                "header": "Error: Failed to upload collection instrument",
                 "message": "Please try again"
             }
 
@@ -152,15 +160,25 @@ def _validate_collection_instrument():
             logger.debug('Invalid file format uploaded', filename=file.filename)
             error = {
                 "section": "ciFile",
-                "header": "Error: wrong file type for Collection instrument",
+                "header": "Error: wrong file type for collection instrument",
                 "message": "Please use XLSX file only"
             }
+        else:
+            # file name format is surveyId_period_formType
+            form_type = _get_form_type(file.filename) if file.filename.count('_') == 2 else ''
+            if not form_type.isdigit() and len(form_type) != 4:
+                logger.debug('Invalid file format uploaded', filename=file.filename)
+                error = {
+                    "section": "ciFile",
+                    "header": "Error: invalid file name format for collection instrument",
+                    "message": "Please provide file with correct form type in file name"
+                }
     else:
         logger.debug('No file uploaded')
         error = {
             "section": "ciFile",
-            "header": "Error: No Collection instrument supplied",
-            "message": "Please provide a Collection instrument"
+            "header": "Error: No collection instrument supplied",
+            "message": "Please provide a collection instrument"
         }
     return error
 
@@ -193,3 +211,8 @@ def _format_ci_file_name(collection_instruments, survey_details):
     for ci in collection_instruments:
         if 'xlsx' not in ci.get('file_name', ''):
             ci['file_name'] = f"{survey_details['surveyRef']} {ci['file_name']} eQ"
+
+
+def _get_form_type(file_name):
+    file_name = file_name.split(".")[0]
+    return file_name.split("_")[2]  # file name format is surveyId_period_formType

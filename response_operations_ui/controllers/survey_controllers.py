@@ -33,11 +33,39 @@ def get_survey(short_name):
 
 
 def get_survey_short_name_by_id(survey_id):
-    # TODO cache the surveys dictionary at app start up
     try:
-        surveys_dict = {survey['id']: survey for survey in get_surveys_list()}
-        return surveys_dict[survey_id]['shortName']
-    except ApiError:
-        logger.exception("Failed to resolve survey short name due to API error", survey_id=survey_id)
-    except KeyError:
-        logger.exception("Failed to resolve survey short name", survey_id=survey_id)
+        return app.surveys_dict[survey_id]['shortName']
+    except (AttributeError, KeyError):
+        try:
+            app.surveys_dict = {survey['id']: survey for survey in get_surveys_list()}
+            return app.surveys_dict[survey_id]['shortName']
+        except ApiError:
+            logger.exception("Failed to resolve survey short name due to API error", survey_id=survey_id)
+        except KeyError:
+            logger.exception("Failed to resolve survey short name", survey_id=survey_id)
+
+
+def get_survey_id_by_short_name(short_name):
+    logger.debug('Retrieving survey id by short name', short_name=short_name)
+    url = f'{app.config["BACKSTAGE_API_URL"]}/v1/survey/shortname/{short_name}'
+
+    response = requests.get(url)
+    if response.status_code != 200:
+        raise ApiError(response)
+
+    survey_data = response.json()
+
+    return survey_data['survey']['id']
+
+
+def get_survey_ref_by_id(survey_id):
+    try:
+        return app.surveys_dict[survey_id]['surveyRef']
+    except (AttributeError, KeyError):
+        try:
+            app.surveys_dict = {survey['id']: survey for survey in get_surveys_list()}
+            return app.surveys_dict[survey_id]['surveyRef']
+        except ApiError:
+            logger.exception("Failed to resolve survey ref due to API error", survey_id=survey_id)
+        except KeyError:
+            logger.exception("Failed to resolve survey ref", survey_id=survey_id)
