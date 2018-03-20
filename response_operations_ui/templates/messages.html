@@ -67,12 +67,13 @@
               {% for message in messages %}
                <tr class="table--row table--row__selectable {% if message.unread %} message-list__item--unread {% endif %}">
                 <td name="tbl-messages-RU_Ref" class="message-list__ru-ref" id="ru-ref-{{ loop.index }}">
+                    {% if message.unread %} <span class="circle"></span>{% endif %}
                     {{ message.ru_ref or 'Unavailable' }}
                 </td>
                 <td name="tbl-messages-business" class="message-list__ru-name" id="business-name-{{ loop.index }}">
                     {{ message.business_name or 'Unavailable' }}
                 </td>
-                <td name="tbl-messages-subject" class="table--cell tbl-messages-subject">
+                <td name="tbl-messages-subject" class="message-list__subject">
                     <a href="{{ url_for('messages_bp.view_conversation', thread_id=message.thread_id) }}#latest-message" id="message-link-{{ loop.index }}">{{ message.subject }}</a>
                 </td>
                 <td name="tbl-messages-from" class="message-list__from" id="message-from-{{ loop.index }}">
