@@ -7,7 +7,7 @@
 <h1 class="jupiter" name="page-survey-title">{{survey.longName}}</h1>
 
   <div class="grid">
-    <div class="grid__col col-8@l">
+    <div class="grid__col col-12@l">
       <div class="">
         <dl class="survey-info info-panel" id="survey-attributes">
           <dt class="survey-info__title">
@@ -85,7 +85,9 @@
                 {{ exercise.sample_summary and exercise.sample_summary.totalSampleUnits or "" }}
               </td>
               <td class="table--cell tbl-ce-status" name="tbl-ce-status">
-                {{exercise.state}}
+                {% if exercise.state|upper == "LIVE" %}
+                  <a href="{{ url_for('reporting_unit_bp.response_chasing', ce_id=exercise.id) }}">Response chasing</a>
+                {% endif %}
               </td>
               <td class="table--cell tbl-ce-status" name="tbl-ce-status">
                 {{ exercise.events.mps and exercise.events.mps.date or "" }}

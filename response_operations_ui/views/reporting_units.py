@@ -129,6 +129,12 @@ def resent_verification(ru_ref, email, party_id):
                             info='Verification email re-sent'))
 
 
+@reporting_unit_bp.route('response_chasing/<ce_id>', methods=['GET'])
+@login_required
+def response_chasing(ce_id):
+    logger.debug('Response chasing', ce_id=ce_id)
+
+
 @reporting_unit_bp.route('/<ru_ref>/<collection_exercise_id>/new_enrolment_code', methods=['GET'])
 @login_required
 def generate_new_enrolment_code(ru_ref, collection_exercise_id):
