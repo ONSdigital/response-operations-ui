@@ -1,13 +1,14 @@
 import iso8601
 import logging
 
-from flask import Blueprint, render_template, request
+from flask import Blueprint, render_template, request, redirect, url_for
 from flask_login import login_required
 from structlog import wrap_logger
 
 from response_operations_ui.common.mappers import convert_events_to_new_format, map_collection_exercise_state
 from response_operations_ui.controllers import collection_exercise_controllers
 from response_operations_ui.controllers import collection_instrument_controllers, sample_controllers
+from response_operations_ui.forms import EditCollectionExerciseDetailsForm
 
 logger = wrap_logger(logging.getLogger(__name__))
 
@@ -218,12 +219,25 @@ def _get_form_type(file_name):
     return file_name.split("_")[2]  # file name format is surveyId_period_formType
 
 
-@collection_exercise_bp.route('', methods=['POST'])
+@collection_exercise_bp.route('/<short_name>/<period>/edit-collection-exercise-details', methods=['GET'])
 @login_required
-def update_collection_exercise_details():
-    form = EditContactDetailsForm(request.form)
+def view_collection_exercise_details(short_name, period):
+    collection_exercise_details = collection_exercise_controllers.get_collection_exercise(short_name, period)
 
-    edit_successfully = collection_exercise_controllers.update_collection_exercise_details()
+    form = EditCollectionExerciseDetailsForm(form=request.form, default_values=collection_exercise_details)
+
+    return render_template('edit-collection-exercise-details.html', form=form, short_name=short_name, period=period)
 
 
-    return redirect(url_for(''))
+@collection_exercise_bp.route('/<short_name>/<period>/edit-collection-exercise-details', methods=['POST'])
+@login_required
+def update_collection_exercise_details(short_name, period):
+    EditCollectionExerciseDetailsForm(request.form)
+
+    edit_ce_details_data = {
+        "userDescription": request.form.get('userDescription')
+    }
+
+    collection_exercise_controllers.update_collection_exercise_details(edit_ce_details_data, short_name, period)
+
+    return redirect(url_for('collection_exercise_bp.view_collection_exercise'))

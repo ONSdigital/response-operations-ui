@@ -1,0 +1,97 @@
+
+<html dir="ltr" lang="en-gb">
+<head>
+
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, shrink-to-fit=no">
+
+  <title>Edit collection exercise details</title>
+
+  <link rel=stylesheet type=text/css href="https://cdn.ons.gov.uk/sdc/322aece/css/styles.css">
+  {% assets "scss_all" %}
+    <link rel=stylesheet type=text/css href="{{ ASSET_URL }}">
+  {% endassets %}
+
+  <link href="/static/images/favicon.ico" rel="Shortcut Icon" />
+
+</head>
+
+<body class="spoke">
+
+  <div class="page">
+
+    <div class="page__content">
+
+      <div class="container page__container">
+
+        <div class="grid">
+          <div class="grid__col col-3@l">
+          </div>
+
+          <div class="grid__col col-6@l">
+
+            <div role="main" id="main" class="page__main">
+
+
+              <div class="spoke__header">
+
+                <div class="spoke__header__title">
+
+                  <h1 class="jupiter">Edit collection exercise details</h1>
+
+                </div>
+
+              </div>
+
+              <div class="spoke__body">
+
+                <form action="{{ url_for('collection_exercise_bp.update_collection_exercise_details', short_name=shortName, period=exerciseRef)}}" method="post">
+                {{ form.csrf_token }}
+                <div class="field u-mb-l">
+
+                  <label class="label" for="Survey">
+                    Survey
+                    <span class="secondary-info current-value">
+                      <span class="u-vh">Current value: </span>
+                      {{ short_name }}
+                    </span>
+                  </label>
+
+                  <label class="label" for="Period">
+                    Period
+                    <span class="secondary-info current-value">
+                      <span class="u-vh">Current value: </span>
+                      {{ period }}
+                    </span>
+                  </label>
+
+                    <label class="label">
+                      Period as shown to respondent
+                      <span class="secondary-info current-value">
+                        <span class="u-vh">Current value: </span>
+                        {{ userDescription }}
+                      </span>
+                    </label>
+                  {{ form.userDescription(class_="input input--text", id='userDescription', required=required) }}
+                </div>
+
+                <button class="btn btn--primary u-mt-s" id="save-btn">Save</button>
+                </form>
+
+                <div>
+                  <a id="cancel-btn" href="{{ url_for('collection_exercise_bp.view_collection_exercise', short_name=shortName, period=exerciseRef) }}">Cancel</a>
+                </div>
+
+
+              </div>
+            </div>
+          </div>
+
+          <div class="grid__col col-3@l">
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</body>
+</html>
