@@ -123,7 +123,7 @@ def view_messages():
     }
     breadcrumbs = [{"title": "Messages"}]
     try:
-        refined_messages = [_refine(msg) for msg in message_controllers.get_thread_list(params)]
+        refined_messages = [_refine_message(msg) for msg in message_controllers.get_thread_list(params)]
         return render_template("messages.html", breadcrumbs=breadcrumbs, messages=refined_messages)
     except NoMessagesError:
         return render_template("messages.html", breadcrumbs=breadcrumbs, response_error=True)
@@ -135,7 +135,7 @@ def view_conversation(thread_id):
     try:
         thread_conversation = message_controllers.get_conversation(thread_id)['messages']
         breadcrumbs = _get_conversation_breadcrumbs(thread_conversation)
-        refined_thread = [_refine(message) for message in reversed(thread_conversation)]
+        refined_thread = [_refine_message(message) for message in reversed(thread_conversation)]
 
     except KeyError as e:
         logger.exception("A key error occurred")
@@ -146,6 +146,9 @@ def view_conversation(thread_id):
             {"title": "Unavailable"}
         ]
 
+    if refined_thread[-1]['unread']:
+        print(refined_thread)
+        message_controllers.remove_unread_label(refined_thread[-1]['message_id'])
     return render_template("conversation-view.html", breadcrumbs=breadcrumbs, messages=refined_thread)
 
 
@@ -158,7 +161,7 @@ def _get_message_subject(thread):
         return None
 
 
-def _refine(message):
+def _refine_message(message):
     return {
         'thread_id': message.get('thread_id'),
         'subject': _get_message_subject(message),
@@ -173,7 +176,8 @@ def _refine(message):
         'from': _get_from_name(message),
         'to': _get_to_name(message),
         'sent_date': _get_human_readable_date(message.get('sent_date')),
-        'unread': _get_unread_status(message)
+        'unread': _get_unread_status(message),
+        'message_id': message.get('msg_id')
     }
 
 
