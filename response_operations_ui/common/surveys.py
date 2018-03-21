@@ -13,7 +13,7 @@ class Surveys(Enum):
     SANDANDGRAVEL = "Sand & Gravel"
     BRES = "BRES"
 
-    
+
 class FDISurveys(Enum):
     """Includes all FDI surveys"""
     AOFDI = "AOFDI"

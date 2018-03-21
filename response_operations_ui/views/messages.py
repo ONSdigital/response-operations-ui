@@ -209,8 +209,8 @@ def _refine(message):
         'body': message.get('body'),
         'internal': message.get('from_internal'),
         'username': _get_user_summary_for_message(message),
-        'survey_ref': get_survey_ref_by_id(message.get('survey')),
-        'survey': get_survey_short_name_by_id(message.get('survey')),
+        'survey_ref': survey_controllers.get_survey_ref_by_id(message.get('survey')),
+        'survey': survey_controllers.get_survey_short_name_by_id(message.get('survey')),
         'survey_id': message.get('survey'),
         'ru_ref': _get_ru_ref_from_message(message),
         'business_name': _get_business_name_from_message(message),
@@ -245,8 +245,8 @@ def _get_from_name(message):
 def _get_to_name(message):
     try:
         if message.get('msg_to')[0] == 'GROUP':
-            if get_survey_short_name_by_id(message.get('survey')):
-                return f"{get_survey_short_name_by_id(message.get('survey'))} Team"
+            if survey_controllers.get_survey_short_name_by_id(message.get('survey')):
+                return f"{survey_controllers.get_survey_short_name_by_id(message.get('survey'))} Team"
             return "ONS"
         return f"{message.get('@msg_to')[0].get('firstName')} {message.get('@msg_to')[0].get('lastName')}"
     except (IndexError, TypeError):
