@@ -51,7 +51,7 @@
       "msg_to": ["ff4537df-2097-4a73-a530-e98dba7bf28f"],
       "ru_id": "f1a5e99c-8edf-489a-9c72-6cabe6c387fc",
       "subject": "Message from ONS",
-      "survey": "f235e99c-8edf-489a-9c72-6cabe6c387fc",
+      "survey": "6aa8896f-ced5-4694-800c-6cd661b0c8b2",
       "thread_id": "9ecfad50-2ff5-4bea-a997-d73c4faa73ae"
     },
     {
@@ -92,7 +92,7 @@
       "msg_to": ["GROUP"],
       "ru_id": "f1a5e99c-8edf-489a-9c72-6cabe6c387fc",
       "subject": "Message from respondent",
-      "survey": "f235e99c-8edf-489a-9c72-6cabe6c387fc",
+      "survey": "6aa8896f-ced5-4694-800c-6cd661b0c8b2",
       "thread_id": "ae46748b-c6e6-4859-a57a-86e01db2dcbc"
     }
   ]

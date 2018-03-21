@@ -53,9 +53,9 @@ class TestMessage(unittest.TestCase):
     surveys_list_json = [
         {
             "id": "f235e99c-8edf-489a-9c72-6cabe6c387fc",
-            "shortName": "QBS",
-            "longName": "Quarterly Business Survey",
-            "surveyRef": "111"
+            "shortName": "ASHE",
+            "longName": "ASHE long name",
+            "surveyRef": "123"
         }
     ]
 
@@ -70,7 +70,7 @@ class TestMessage(unittest.TestCase):
         self.assertIn("Apple".encode(), response.data)
         self.assertIn("50012345678".encode(), response.data)
         self.assertIn("John Example".encode(), response.data)
-        self.assertIn("QBS Team".encode(), response.data)
+        self.assertIn("ASHE Team".encode(), response.data)
         self.assertIn("Message from respondent".encode(), response.data)
         self.assertIn("Message from ONS".encode(), response.data)
 
@@ -182,7 +182,9 @@ class TestMessage(unittest.TestCase):
 
         mock_request.get(url_get_surveys_list, json=self.surveys_list_json)
         mock_request.get(url_get_threads_list, json=threads_no_unread_list)
-        response = self.app.get("/messages")
+        mock_request.get(shortname_url + "/ASHE", json=ashe_info)
+
+        response = self.app.get("/messages/ASHE")
         self.assertNotIn("message-list__item--unread".encode(), response.data)
         self.assertNotIn("circle-icon".encode(), response.data)
 
@@ -193,7 +195,8 @@ class TestMessage(unittest.TestCase):
 
         mock_request.get(url_get_surveys_list, json=self.surveys_list_json)
         mock_request.get(url_get_threads_list, json=threads_unread_list)
-        response = self.app.get("/messages")
+        mock_request.get(shortname_url + "/ASHE", json=ashe_info)
+        response = self.app.get("/messages/ASHE")
         self.assertIn("message-list__item--unread".encode(), response.data)
         self.assertIn("circle-icon".encode(), response.data)
 
@@ -214,7 +217,7 @@ class TestMessage(unittest.TestCase):
 
         mock_request.get(url_get_thread, json=thread_unread_json)
         mock_request.put(url_update_label)
-        mock_request.get(url_get_surveys_list)
+        mock_request.get(url_get_surveys_list, json=survey_list)
         response = self.app.get('/messages/threads/fb0e79bd-e132-4f4f-a7fd-5e8c6b41b9af')
 
         self.assertIn("Unread Message Subject".encode(), response.data)
@@ -227,7 +230,7 @@ class TestMessage(unittest.TestCase):
 
         mock_request.get(url_get_thread, json=thread_unread_json)
         mock_request.put(url_update_label, status_code=500)
-        mock_request.get(url_get_surveys_list)
+        mock_request.get(url_get_surveys_list, json=survey_list)
         response = self.app.get('/messages/threads/fb0e79bd-e132-4f4f-a7fd-5e8c6b41b9af')
 
         self.assertIn("Unread Message Subject".encode(), response.data)

@@ -154,7 +154,7 @@ def view_selected_survey(selected_survey):
             'survey': survey_id
         }
 
-        refined_messages = [_refine_message(message) for message in message_controllers.get_thread_list(params)]
+        refined_messages = [_refine(message) for message in message_controllers.get_thread_list(params)]
 
         return render_template("messages.html",
                                breadcrumbs=breadcrumbs,
@@ -180,7 +180,7 @@ def view_conversation(thread_id):
     try:
         thread_conversation = message_controllers.get_conversation(thread_id)['messages']
         breadcrumbs = _get_conversation_breadcrumbs(thread_conversation)
-        refined_thread = [_refine_message(message) for message in reversed(thread_conversation)]
+        refined_thread = [_refine(message) for message in reversed(thread_conversation)]
 
     except KeyError as e:
         logger.exception("A key error occurred")
@@ -205,7 +205,7 @@ def _get_message_subject(thread):
         return None
 
 
-def _refine_message(message):
+def _refine(message):
     return {
         'thread_id': message.get('thread_id'),
         'subject': _get_message_subject(message),

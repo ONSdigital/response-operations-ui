@@ -10,5 +10,12 @@
     "shortName": "BRUS",
     "longName": "Business Register and Umployment Survey",
     "surveyRef": "222"
+  },
+  {
+    "id": "6aa8896f-ced5-4694-800c-6cd661b0c8b2",
+    "legalBasis": "Statistics of Trade Act 1947",
+    "longName": "Annual Survey of Hours and Earnings",
+    "shortName": "ASHE",
+    "surveyRef": "141"
   }
 ]
