@@ -42,7 +42,8 @@ class TestMessage(unittest.TestCase):
         {
             "id": "f235e99c-8edf-489a-9c72-6cabe6c387fc",
             "shortName": "QBS",
-            "longName": "Quarterly Business Survey"
+            "longName": "Quarterly Business Survey",
+            "surveyRef": "111"
         }
     ]
 
@@ -162,7 +163,27 @@ class TestMessage(unittest.TestCase):
         self.assertEqual(response.status_code, 200)
         self.assertIn("No new messages".encode(), response.data)
 
-    # Test Send message API
+    @requests_mock.mock()
+    def test_read_messages_are_displayed_correctly(self, mock_request):
+        with open('tests/test_data/message/threads_no_unread.json') as threads_json:
+            threads_no_unread_list = json.load(threads_json)
+
+        mock_request.get(url_get_surveys_list, json=self.surveys_list_json)
+        mock_request.get(url_get_threads_list, json=threads_no_unread_list)
+        response = self.app.get("/messages")
+        self.assertNotIn("message-list__item--unread".encode(), response.data)
+        self.assertNotIn("circle-icon".encode(), response.data)
+
+    @requests_mock.mock()
+    def test_unread_messages_are_displayed_correctly(self, mock_request):
+        with open('tests/test_data/message/threads_unread.json') as threads_json:
+            threads_unread_list = json.load(threads_json)
+
+        mock_request.get(url_get_surveys_list, json=self.surveys_list_json)
+        mock_request.get(url_get_threads_list, json=threads_unread_list)
+        response = self.app.get("/messages")
+        self.assertIn("message-list__item--unread".encode(), response.data)
+        self.assertIn("circle-icon".encode(), response.data)
 
     def test_get_url_fail_when_no_configuration_key(self):
         with app.app_context():

@@ -1,6 +1,5 @@
 from json import JSONDecodeError, dumps
 import logging
-from pprint import pprint
 
 from flask import current_app, session
 from flask_login import current_user
