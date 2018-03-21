@@ -1,13 +1,14 @@
 {% extends "layouts/base.html" %}
 
-{% set subject = messages[-1]["subject"] or "No Subject" %}
-
+{% set subject = messages[0]["subject"] or "No Subject" %}
+{% set survey_ref = messages[0]['survey_ref'] %}
+{% set to = messages[0][''] %}
+{% set ru_id = messages[0]['ru_id'] %}
 {% block page_title %} {{ subject }} | Survey Data Collection {% endblock %}
 
 {% block main %}
 
 <h1 class="saturn" name="page-messages-title">{{ subject }}</h1>
-
 <div class="secure-message-conversation block">
     <div class="secure-message-sent-message-meta">
          <div class="secure-message--meta venus"><span class="secure-message-conversation-meta__label">Survey: </span><span id="survey">{{ messages[0].get('survey') }} {{ messages[0].get('survey_ref') }}</span></div>
@@ -37,7 +38,56 @@
         </div>
     </div>
     {% endfor %}
+<div>
+    <div class="secure-message-view-component">
+        <div class="grid grid--reverse">
+            <div class="grid__col col-4@m"></div>
+            <div class="grid__col col-7@m pull-1@m">
+                <h1 class="saturn" name="page-messages-title">{{ subject }}</h1>
+                <div class="secure-message-conversation block">
+                    <div class="secure-message-sent-message-meta">
+                         <div class="secure-message--meta venus"><span class="secure-message-conversation-meta__label">Survey: </span><span id="survey">{{ messages[0].get('survey') }} {{ survey_ref }}</span></div>
+                         <div class="secure-message--meta venus"><span class="secure-message-conversation-meta__label">RU Ref: </span><span id="ruref">{{ messages[0].get('ru_ref') }}</span></div>
+                         <div class="secure-message--meta venus"><span class="secure-message-conversation-meta__label">Business: </span><span id="ru">{{ messages[0].get('business_name') }}</span></div>
+                    </div>
+                    {% for message in messages %}
+                       <div class="secure-message-sent-message" {% if loop.last %}id="latest-message"{% endif %}>
+                        {% if message.get('internal') == True %}
+                            <div name="sm-from-ons" id="sm-from-ons-{{ loop.index }}" class="secure-message-sent-message-meta sm-from-ons">
+                        {% else %}
+                            <div name="sm-from-respondent" id="sm-from-respondent-{{ loop.index }}" class="secure-message-sent-message-meta sm-from-respondent">
+                        {% endif %}
+                                <span class="secure-message-sent-message-meta-from venus">
+                                    From:
+                                    <span name="sm-from-user" id="sm-from-user-{{ loop.index }}" style="display:inline;">{{ message.get('username') }}</span>
+                                    </span>
+                                <span class="secure-message-sent-message-meta-from mercury">
+                                    Sent:
+                                    <span name="sm-sent-date" id="sm-sent-date-{{ loop.index }}" style="display:inline;">{{ message.get('sent_date') }}</span>
+                                </span>
+                            </div>
+                            <div class="secure-message-sent-message-body mars">
+                                <span style="white-space:pre-line">{{ message.get('body') }}</span>
+                            </div>
+                        </div>
+                    {% endfor %}
+                        <div class="secure-message-form">
+                            <form action="{{ url_for('messages_bp.view_conversation', thread_id=messages[0].thread_id) }}" method="post", id="create-message-form">
+                                {{ form.csrf_token }}
+                                {{ form.subject(id='secure-message-subject', type='hidden', value=subject) }}
+                                {{ form.hidden_survey_id(type='hidden', value=survey_ref) }}
+                                {{ form.hidden_to_uuid(type='hidden', value=to) }}
+                                <label class="venus" for="body">Reply</label>
+                                {{ form.body(id='secure-message-body', class_='input input--textarea input--textarea-message', rows='10') }}
+                                <br>
+                                <input class="btn btn--secondary" id="save_draft" name="save_draft" type="submit" value="Save Draft">
+                                <input class="btn" id="send-message-btn" name="send" type="submit" value="Send">
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
-        <!--TODO Add in the reply box -->
     </div>
+</div>
 {% endblock %}
