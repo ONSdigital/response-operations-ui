@@ -118,10 +118,22 @@ class TestSurvey(unittest.TestCase):
 
     @requests_mock.mock()
     def test_get_survey_short_name_by_id_when_get_list_fails(self, mock_request):
+
+        # Delete any existing survey cache
         with suppress(AttributeError):
             del app.surveys_dict
+
+        # API error on first attempt
         mock_request.get(url_get_survey_list, status_code=500)
         self.assertEqual(get_survey_short_name_by_id("cb0711c3-0ac8-41d3-ae0e-567e5ea1ef87"), None)
+
+        # Successfully retrieve surveys
+        mock_request.get(url_get_survey_list, json=survey_list)
+        self.assertEqual(get_survey_short_name_by_id("cb0711c3-0ac8-41d3-ae0e-567e5ea1ef87"), "BRES")
+
+        # API error trying to fetch new survey
+        mock_request.get(url_get_survey_list, status_code=500)
+        self.assertEqual(get_survey_short_name_by_id("a_new_survey_id1234567890"), None)
 
     @requests_mock.mock()
     def test_get_survey_short_name_by_id_when_id_not_found(self, mock_request):
