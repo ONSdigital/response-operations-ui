@@ -177,6 +177,20 @@ class TestCollectionExercise(unittest.TestCase):
         self.assertIn("Error: invalid file name format for collection instrument".encode(), response.data)
 
     @requests_mock.mock()
+    def test_no_upload_collection_instrument_form_type_not_integer(self, mock_request):
+        post_data = {
+            'ciFile': (BytesIO(b'data'), '064_201803_123E.xlsx'),
+            'load-ci': '',
+        }
+        mock_request.get(url_get_collection_exercise, json=collection_exercise_details)
+
+        response = self.app.post("/surveys/test/000000", data=post_data)
+
+        self.assertEqual(response.status_code, 200)
+        self.assertNotIn("Collection instrument loaded".encode(), response.data)
+        self.assertIn("Error: invalid file name format for collection instrument".encode(), response.data)
+
+    @requests_mock.mock()
     def test_no_upload_collection_instrument_when_no_file(self, mock_request):
         post_data = {
             'load-ci': '',
