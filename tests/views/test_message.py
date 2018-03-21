@@ -1,11 +1,13 @@
 import json
 import unittest
+
 import requests_mock
 
 from config import TestingConfig
 from response_operations_ui import app
 from response_operations_ui.controllers.message_controllers import _get_url, send_message
 from response_operations_ui.exceptions.exceptions import InternalError
+from response_operations_ui.views.messages import _get_unread_status
 
 url_get_thread = f'{app.config["BACKSTAGE_API_URL"]}/v1/secure-message/threads/fb0e79bd-e132-4f4f-a7fd-5e8c6b41b9af'
 with open('tests/test_data/message/thread.json') as json_data:
@@ -14,8 +16,11 @@ url_sign_in_data = f'{app.config["BACKSTAGE_API_URL"]}/v2/sign-in/'
 
 with open('tests/test_data/message/thread_missing_subject.json') as json_data:
     thread_missing_subject = json.load(json_data)
+
 url_get_threads_list = f'{app.config["BACKSTAGE_API_URL"]}/v1/secure-message/threads'
 url_get_surveys_list = f'{app.config["BACKSTAGE_API_URL"]}/v1/survey/surveys'
+url_update_label = (f'{app.config["BACKSTAGE_API_URL"]}'
+                    f'/v1/secure-message/update-label/ae46748b-c6e6-4859-a57a-86e01db2dcbc')
 
 with open('tests/test_data/message/threads.json') as json_data:
     thread_list = json.load(json_data)
@@ -156,6 +161,9 @@ class TestMessage(unittest.TestCase):
 
     @requests_mock.mock()
     def test_threads_list_empty(self, mock_request):
+        # If response doesn't have a messages key then it shouldn't give a server error,
+        # but instead log the problem and display an empty inbox to the user.
+
         mock_request.get(url_get_threads_list, json={"messages": []})
 
         response = self.app.get("/messages")
@@ -185,6 +193,41 @@ class TestMessage(unittest.TestCase):
         self.assertIn("message-list__item--unread".encode(), response.data)
         self.assertIn("circle-icon".encode(), response.data)
 
+    def test_get_message_unread_status(self):
+        unread_message = {"labels": ["INBOX", "UNREAD"]}
+        self.assertTrue(_get_unread_status(unread_message))
+
+        read_message = {"labels": ["INBOX"]}
+        self.assertFalse(_get_unread_status(read_message))
+
+        message_missing_labels = {}
+        self.assertFalse(_get_unread_status(message_missing_labels))
+
+    @requests_mock.mock()
+    def test_get_thread(self, mock_request):
+        with open('tests/test_data/message/thread_unread.json') as thread_unread_json:
+            thread_unread_json = json.load(thread_unread_json)
+
+        mock_request.get(url_get_thread, json=thread_unread_json)
+        mock_request.put(url_update_label)
+        mock_request.get(url_get_surveys_list)
+        response = self.app.get('/messages/threads/fb0e79bd-e132-4f4f-a7fd-5e8c6b41b9af')
+
+        self.assertIn("Unread Message Subject".encode(), response.data)
+
+    @requests_mock.mock()
+    def test_get_thread_when_update_label_fails(self, mock_request):
+        # The page should still load if the update label call fails
+        with open('tests/test_data/message/thread_unread.json') as thread_unread_json:
+            thread_unread_json = json.load(thread_unread_json)
+
+        mock_request.get(url_get_thread, json=thread_unread_json)
+        mock_request.put(url_update_label, status_code=500)
+        mock_request.get(url_get_surveys_list)
+        response = self.app.get('/messages/threads/fb0e79bd-e132-4f4f-a7fd-5e8c6b41b9af')
+
+        self.assertIn("Unread Message Subject".encode(), response.data)
+
     def test_get_url_fail_when_no_configuration_key(self):
         with app.app_context():
             app.config['BACKSTAGE_API_URL'] = None
@@ -205,8 +248,6 @@ class TestMessage(unittest.TestCase):
         }
         '''
 
-    # If response doesn't have a messages key then it shouldn't give a server error,
-    # but instead log the problem and display an empty inbox to the user.
     @requests_mock.mock()
     def test_request_response_malformed(self, mock_request):
         url = url_get_threads_list

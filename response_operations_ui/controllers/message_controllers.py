@@ -78,9 +78,9 @@ def remove_unread_label(message_id):
 
     try:
         response.raise_for_status()
+        logger.debug("Successfully removed unread label", message_id=message_id)
     except HTTPError:
         logger.exception("Failed to remove unread label", message_id=message_id)
-    logger.debug("Successfully removed unread label", message_id=message_id)
 
 
 def _post_new_message(message):

@@ -147,7 +147,6 @@ def view_conversation(thread_id):
         ]
 
     if refined_thread[-1]['unread']:
-        print(refined_thread)
         message_controllers.remove_unread_label(refined_thread[-1]['message_id'])
     return render_template("conversation-view.html", breadcrumbs=breadcrumbs, messages=refined_thread)
 
