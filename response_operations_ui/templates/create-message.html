@@ -46,9 +46,7 @@
             <p id="subject-error-{{ loop.index }}" class="error-message">{{ error }}</p>
         {% endfor %}
         <label class="secure-message--subject venus" for="message-subject">Subject</label>
-        {{ form.subject(id='secure-message-subject',
-        class_='secure-message--subject input input--text',
-        maxlength='96', size=80) }}
+        {{ form.subject(id='secure-message-subject', class_='secure-message--subject input input--text', maxlength='96', size=80) }}
     </div>
 
     <div id="body-field"{% if form.body.errors %} class="panel panel--simple panel--error{% endif %}">
