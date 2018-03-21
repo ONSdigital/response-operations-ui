@@ -1,4 +1,3 @@
-from functools import wraps
 import logging
 
 import requests
@@ -34,24 +33,26 @@ def get_survey(short_name):
     return response.json()
 
 
-def fdi_survey_short_name_wrapper(get_survey_short_name_func):
-    """Function wrapper that converts the FDI specific survey names to all return as the string 'FDI'"""
-    @wraps(get_survey_short_name_func)
-    def convert_fdi_surveys(survey_id):
-        survey_short_name = get_survey_short_name_func(survey_id)
-        if survey_short_name in FDISurveys.__members__:
+def convert_specific_fdi_survey_to_fdi(survey_short_name):
+    for fdi_survey in FDISurveys:
+        if survey_short_name == fdi_survey.value:
             return "FDI"
-        return survey_short_name
-    return convert_fdi_surveys
+    return survey_short_name
 
 
-@fdi_survey_short_name_wrapper
+def get_surveys_dictionary():
+    surveys_list = get_surveys_list()
+    return {survey['id']: {'shortName': convert_specific_fdi_survey_to_fdi(survey.get('shortName')),
+                           'surveyRef': survey.get('surveyRef')}
+            for survey in surveys_list}
+
+
 def get_survey_short_name_by_id(survey_id):
     try:
         return app.surveys_dict[survey_id]['shortName']
     except (AttributeError, KeyError):
         try:
-            app.surveys_dict = {survey['id']: survey for survey in get_surveys_list()}
+            app.surveys_dict = get_surveys_dictionary()
             return app.surveys_dict[survey_id]['shortName']
         except ApiError:
             logger.exception("Failed to resolve survey short name due to API error", survey_id=survey_id)
@@ -64,7 +65,7 @@ def get_survey_ref_by_id(survey_id):
         return app.surveys_dict[survey_id]['surveyRef']
     except (AttributeError, KeyError):
         try:
-            app.surveys_dict = {survey['id']: survey for survey in get_surveys_list()}
+            app.surveys_dict = get_surveys_dictionary()
             return app.surveys_dict[survey_id]['surveyRef']
         except ApiError:
             logger.exception("Failed to resolve survey ref due to API error", survey_id=survey_id)
