@@ -1,0 +1,33 @@
+{
+  "collection_exercises": [
+    {
+      "actualExecutionDateTime": null,
+      "actualPublishDateTime": null,
+      "caseTypes": [],
+      "created": "2018-03-09T13:03:46.895Z",
+      "deleted": null,
+      "executedBy": null,
+      "exerciseRef": "201803",
+      "id": "c1b9a8a1-357b-45e7-bb2a-f21c350ff390",
+      "name": "Annual Survey of Hou",
+      "periodEndDateTime": "2021-05-31T00:00:00.000Z",
+      "periodStartDateTime": "2018-04-11T00:00:00.000Z",
+      "scheduledEndDateTime": "2021-05-31T00:00:00.000Z",
+      "scheduledExecutionDateTime": "2018-04-11T00:00:00.000Z",
+      "scheduledReturnDateTime": "2018-05-18T00:00:00.000Z",
+      "scheduledStartDateTime": "2018-04-11T00:00:00.000Z",
+      "state": "SCHEDULED",
+      "surveyId": "6aa8896f-ced5-4694-800c-6cd661b0c8b2",
+      "updated": "2018-03-09T13:04:12.068Z",
+      "userDescription": "The pay period that includes 18 April 2018",
+      "validationErrors": null
+    }
+  ],
+  "survey": {
+    "id": "6aa8896f-ced5-4694-800c-6cd661b0c8b2",
+    "legalBasis": "Statistics of Trade Act 1947",
+    "longName": "Annual Survey of Hours and Earnings",
+    "shortName": "ASHE",
+    "surveyRef": "141"
+  }
+}

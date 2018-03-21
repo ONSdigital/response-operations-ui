@@ -781,3 +781,8 @@ textarea.secure-message--message{
   width: 2.5rem;
   display: inline-block;
 }
+
+a.sign-out,
+a.sign-out:hover {
+  color :#fff;
+}
