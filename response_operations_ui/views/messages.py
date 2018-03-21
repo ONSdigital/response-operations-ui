@@ -154,7 +154,7 @@ def view_selected_survey(selected_survey):
             'survey': survey_id
         }
 
-        refined_messages = [_refine(message) for message in message_controllers.get_thread_list(params)]
+        refined_messages = [_refine_message(message) for message in message_controllers.get_thread_list(params)]
 
         return render_template("messages.html",
                                breadcrumbs=breadcrumbs,
