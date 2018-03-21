@@ -5,7 +5,14 @@
 </br>
 
 <div role="main" id="main" class="page__main">
-  <h1 class="saturn" name="page-messages-title">Messages</h1>
+  {% if change_survey %}
+    <h1 class="jupiter" name="page-messages-title">{{ selected_survey }} Messages
+      <span class="mars">(<a id="change-survey" href="/messages">Change survey</a>)</span>
+    </h1>
+
+  {% else %}
+    <h1 class="jupiter" name="page-messages-title">Messages</h1>
+  {% endif %}
   <div class="grid">
     <div class="grid__col col-12@m">
       <div class="messages-list">

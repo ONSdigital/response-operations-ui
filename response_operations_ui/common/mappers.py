@@ -1,5 +1,14 @@
 import calendar
 import iso8601
+import re
+
+
+def format_short_name(short_name):
+    """
+    This regex function returns a short name value without spaces
+    e.g. Sand & Gravel -> Sand&Gravel
+    """
+    return re.sub('(&)', r' \1 ', short_name)
 
 
 def convert_events_to_new_format(events):

@@ -6,8 +6,9 @@ from flask_login import login_required, current_user
 import maya
 from structlog import wrap_logger
 
-from response_operations_ui.controllers import message_controllers
-from response_operations_ui.controllers.survey_controllers import get_survey_short_name_by_id, get_survey_ref_by_id
+from response_operations_ui.common.mappers import format_short_name
+from response_operations_ui.common.surveys import Surveys, FDISurveys
+from response_operations_ui.controllers import message_controllers, survey_controllers
 from response_operations_ui.exceptions.exceptions import ApiError, InternalError, NoMessagesError
 from response_operations_ui.forms import SecureMessageForm
 
@@ -32,8 +33,9 @@ def create_message():
 
         try:
             message_controllers.send_message(_get_message_json(form))
+            survey = request.form.get("hidden_survey")
             flash("Message sent.")
-            return redirect(url_for('messages_bp.view_messages'))
+            return redirect(url_for('messages_bp.view_selected_survey', selected_survey=survey))
         except (ApiError, InternalError):
             form = _repopulate_form_with_submitted_data(form)
             form.errors['sending'] = ["Message failed to send, something has gone wrong with the website."]
@@ -111,22 +113,64 @@ def _populate_form_details_from_hidden_fields(form):
     return form
 
 
-@messages_bp.route('/', methods=['GET'])
+@messages_bp.route('/', methods=['GET', 'POST'])
 @login_required
-def view_messages():
-    # Currently the filtering is only being done with parameters.  In the future, the session
-    # will have the a list of survey_ids the user is allowed to see and the parameters for the
-    # backstage call can be populated by looking at the session instead of http parameters.
-    params = {
-        'label': request.args.get('label'),
-        'survey': request.args.get('survey')
-    }
-    breadcrumbs = [{"title": "Messages"}]
+def view_select_survey():
+    breadcrumbs = [{"title": "Messages", "link": "/messages"},
+                   {"title": "Filter by survey"}]
+
+    if request.method == 'POST':
+        selected_survey = request.form.get('radio-answer')
+        if selected_survey:
+            return redirect(url_for("messages_bp.view_selected_survey",
+                                    selected_survey=selected_survey))
+        else:
+            response_error = True
+    else:
+        response_error = False
+
+    survey_list = [survey.value for survey in Surveys]
+    return render_template("message_select_survey.html",
+                           breadcrumbs=breadcrumbs,
+                           selected_survey=None,
+                           response_error=response_error,
+                           survey_list=survey_list)
+
+
+@messages_bp.route('/<selected_survey>', methods=['GET'])
+@login_required
+def view_selected_survey(selected_survey):
+    formatted_survey = format_short_name(selected_survey)
+    breadcrumbs = [{"title": formatted_survey + " Messages"}]
+
     try:
-        refined_messages = [_refine(msg) for msg in message_controllers.get_thread_list(params)]
-        return render_template("messages.html", breadcrumbs=breadcrumbs, messages=refined_messages)
+        if selected_survey == Surveys.FDI.value:
+            survey_id = _get_FDI_survey_id()
+        else:
+            survey_id = _get_survey_id(selected_survey)
+
+        params = {
+            'survey': survey_id
+        }
+
+        refined_messages = [_refine(message) for message in message_controllers.get_thread_list(params)]
+
+        return render_template("messages.html",
+                               breadcrumbs=breadcrumbs,
+                               messages=refined_messages,
+                               selected_survey=formatted_survey,
+                               change_survey=True)
+
+    except TypeError:
+        logger.exception("Failed to retrieve survey id")
+        return render_template("messages.html",
+                               breadcrumbs=breadcrumbs,
+                               response_error=True)
     except NoMessagesError:
-        return render_template("messages.html", breadcrumbs=breadcrumbs, response_error=True)
+        logger.exception("Failed to retrieve messages")
+        return render_template("messages.html",
+                               breadcrumbs=breadcrumbs,
+                               response_error=True)
 
 
 @messages_bp.route('/threads/<thread_id>', methods=['GET'])
@@ -165,15 +209,23 @@ def _refine(message):
         'body': message.get('body'),
         'internal': message.get('from_internal'),
         'username': _get_user_summary_for_message(message),
-        # TODO use survey ref instead of survey id
         'survey_ref': get_survey_ref_by_id(message.get('survey')),
         'survey': get_survey_short_name_by_id(message.get('survey')),
+        'survey_id': message.get('survey'),
         'ru_ref': _get_ru_ref_from_message(message),
         'business_name': _get_business_name_from_message(message),
         'from': _get_from_name(message),
         'to': _get_to_name(message),
         'sent_date': _get_human_readable_date(message.get('sent_date'))
     }
+
+
+def _get_survey_id(selected_survey):
+    return survey_controllers.get_survey_id_by_short_name(selected_survey)
+
+
+def _get_FDI_survey_id():
+    return [survey_controllers.get_survey_id_by_short_name(fdi_survey.value) for fdi_survey in FDISurveys]
 
 
 def _get_user_summary_for_message(message):
