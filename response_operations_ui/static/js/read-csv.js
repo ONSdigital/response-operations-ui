@@ -64,10 +64,9 @@ function processFile(event, classifiers) {
     if (classifiers.indexOf('RU_REF') > -1) {
         ciCount = lines.length  // each line should be a distinct RU_REF (sampleUnitRef)
     } else if (classifiers.indexOf('FORM_TYPE') > -1){
-
         // Put the form types into their own separate array, so we can interrogate it faster
         for (var i = 0; i < lines.length; i++) {
-            classifierColumn.push(lines[i][lines.length - 1]);
+            classifierColumn.push(lines[i][lines[i].length - 2]);
         }
 
         ciCount = classifierColumn.filter(function(val, i, arr) {
