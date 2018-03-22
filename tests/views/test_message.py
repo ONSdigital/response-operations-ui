@@ -196,7 +196,9 @@ class TestMessage(unittest.TestCase):
         mock_request.get(url_get_surveys_list, json=self.surveys_list_json)
         mock_request.get(url_get_threads_list, json=threads_unread_list)
         mock_request.get(shortname_url + "/ASHE", json=ashe_info)
+
         response = self.app.get("/messages/ASHE")
+        self.assertIn('name="message-unread"'.encode(), response.data)
         self.assertIn("message-list__item--unread".encode(), response.data)
         self.assertIn("circle-icon".encode(), response.data)
 

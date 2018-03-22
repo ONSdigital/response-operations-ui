@@ -72,8 +72,13 @@
           </thead>
               <tbody>
               {% for message in messages %}
-               <tr class="table--row table--row__selectable {% if message.unread %}message-list__item--unread{% endif %}">
-                <td name="tbl-messages-RU_Ref" class="message-list__ru-ref {% if message.unread %}circle-icon{% endif %}" id="ru-ref-{{ loop.index }}">
+                {% if message.unread %}
+                   <tr name="message-unread" class="table--row table--row__selectable message-list__item--unread" id="message-{{ loop.index }}">
+                    <td name="tbl-messages-RU_Ref" class="message-list__ru-ref circle-icon" id="ru-ref-{{ loop.index }}">
+                {% else %}
+                   <tr name="message" class="table--row table--row__selectable" id="message-{{ loop.index }}">
+                    <td name="tbl-messages-RU_Ref" class="message-list__ru-ref" id="ru-ref-{{ loop.index }}">
+                {% endif %}
                     {{ message.ru_ref or 'Unavailable' }}
                 </td>
                 <td name="tbl-messages-business" class="message-list__ru-name" id="business-name-{{ loop.index }}">
