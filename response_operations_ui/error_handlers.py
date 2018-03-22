@@ -26,5 +26,5 @@ def handle_authentication_error(error):
 
 @app.errorhandler(Exception)
 def server_error(error):  # pylint: disable=unused-argument
-    logger.exception('Uncaught exception generated')
+    logger.exception('Generic exception generated')
     return redirect(url_for('error_bp.server_error_page'))
