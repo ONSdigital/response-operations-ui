@@ -26,7 +26,7 @@ def create_message():
         form = _populate_hidden_form_fields_from_post(form, request.form)
         form = _populate_form_details_from_hidden_fields(form)
     elif form.validate_on_submit():
-        # Keep the message subject and body
+        # Keep the message subject and body when message sent
         g.form_subject_data = form.subject.data
         g.form_body_data = form.body.data
 
@@ -63,22 +63,28 @@ def view_conversation(thread_id):
         ]
 
     form = SecureMessageForm(request.form)
-    if form.validate_on_submit():
+    print(form.data)
+    if request.method == 'POST':
         form = _populate_form_details_from_hidden_fields(form)
+        print(form.data)
         g.form_subject_data = form.subject.data
         g.form_body_data = form.body.data
 
         try:
-            message_controllers.send_message(_get_message_json(form))
+            message_controllers.send_message(_get_message_json(form,
+                                                               thread_id=refined_thread[0]['thread_id']))
             survey = request.form.get("hidden_survey")
+            logger.error("here")
             flash("Message sent.")
             return redirect(url_for('messages_bp.view_selected_survey', selected_survey=survey))
         except (ApiError, InternalError):
             form = _repopulate_form_with_submitted_data(form)
             form.errors['sending'] = ["Message failed to send, something has gone wrong with the website."]
-            return render_template('create-message.html',
+            return render_template('conversation-view.html',
                                    form=form,
-                                   breadcrumbs=breadcrumbs)
+                                   breadcrumbs=breadcrumbs,
+                                   messages=refined_thread,
+                                   error="Message send failed")
 
     return render_template("conversation-view.html",
                            breadcrumbs=breadcrumbs,
@@ -170,17 +176,17 @@ def _repopulate_form_with_submitted_data(form):
     return form
 
 
-def _get_message_json(form):
+def _get_message_json(form, thread_id=""):
     return json.dumps({
         'msg_from': current_user.id,
         'msg_to': [form.hidden_to_uuid.data],
         'subject': form.subject.data,
         'body': form.body.data,
-        'thread_id': "",
+        'thread_id': thread_id,
         'collection_case': "",
         # TODO Make this UUID for v2 api
         'survey': form.hidden_survey_id.data,
-        'ru_id': form.hidden_to_uuid.data})
+        'ru_id': form.hidden_to_ru_id.data})
 
 
 def _populate_hidden_form_fields_from_post(current_view_form, calling_form):
@@ -230,6 +236,8 @@ def _refine(message):
         'survey': survey_controllers.get_survey_short_name_by_id(message.get('survey')),
         'survey_id': message.get('survey'),
         'ru_ref': _get_ru_ref_from_message(message),
+        'to_id': message.get('msg_to')[0],
+        'from_id': message.get('msg_from'),
         'business_name': _get_business_name_from_message(message),
         'from': _get_from_name(message),
         'to': _get_to_name(message),
