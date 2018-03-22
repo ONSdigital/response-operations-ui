@@ -17,5 +17,32 @@
     "longName": "Annual Survey of Hours and Earnings",
     "shortName": "ASHE",
     "surveyRef": "141"
+  },
+    "id": "QOFDI_id",
+    "legalBasis": "Statistics of Trade Act 1947",
+    "longName": "Quarterly Outward Foreign Direct Investment Survey",
+    "shortName": "QOFDI",
+    "surveyRef": "065"
+  },
+  {
+    "id": "AIFDI_id",
+    "legalBasis": "Statistics of Trade Act 1947",
+    "longName": "Annual Inward Foreign Direct Investment Survey",
+    "shortName": "AIFDI",
+    "surveyRef": "062"
+  },
+  {
+    "id": "AOFDI_id",
+    "legalBasis": "Statistics of Trade Act 1947",
+    "longName": "Annual Outward Foreign Direct Investment Survey",
+    "shortName": "AOFDI",
+    "surveyRef": "063"
+  },
+  {
+    "id": "QIFDI_id",
+    "legalBasis": "Statistics of Trade Act 1947",
+    "longName": "Quarterly Inward Foreign Direct Investment Survey",
+    "shortName": "QIFDI",
+    "surveyRef": "064"
   }
 ]

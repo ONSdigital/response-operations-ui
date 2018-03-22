@@ -56,6 +56,7 @@ class TestMessage(unittest.TestCase):
             "shortName": "ASHE",
             "longName": "ASHE long name",
             "surveyRef": "123"
+
         }
     ]
 

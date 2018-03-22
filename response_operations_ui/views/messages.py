@@ -3,15 +3,14 @@ import logging
 
 from flask import Blueprint, flash, g, render_template, request, redirect, url_for
 from flask_login import login_required, current_user
-from structlog import wrap_logger
 import maya
+from structlog import wrap_logger
 
 from response_operations_ui.common.mappers import format_short_name
 from response_operations_ui.common.surveys import Surveys, FDISurveys
 from response_operations_ui.controllers import message_controllers, survey_controllers
 from response_operations_ui.exceptions.exceptions import ApiError, InternalError, NoMessagesError
 from response_operations_ui.forms import SecureMessageForm
-from response_operations_ui.controllers.survey_controllers import get_survey_short_name_by_id, get_survey_ref_by_id
 
 logger = wrap_logger(logging.getLogger(__name__))
 messages_bp = Blueprint('messages_bp', __name__,
@@ -212,8 +211,8 @@ def _refine(message):
         'body': message.get('body'),
         'internal': message.get('from_internal'),
         'username': _get_user_summary_for_message(message),
-        'survey_ref': get_survey_ref_by_id(message.get('survey')),
-        'survey': get_survey_short_name_by_id(message.get('survey')),
+        'survey_ref': survey_controllers.get_survey_ref_by_id(message.get('survey')),
+        'survey': survey_controllers.get_survey_short_name_by_id(message.get('survey')),
         'survey_id': message.get('survey'),
         'ru_ref': _get_ru_ref_from_message(message),
         'business_name': _get_business_name_from_message(message),
@@ -250,8 +249,8 @@ def _get_from_name(message):
 def _get_to_name(message):
     try:
         if message.get('msg_to')[0] == 'GROUP':
-            if get_survey_short_name_by_id(message.get('survey')):
-                return f"{get_survey_short_name_by_id(message.get('survey'))} Team"
+            if survey_controllers.get_survey_short_name_by_id(message.get('survey')):
+                return f"{survey_controllers.get_survey_short_name_by_id(message.get('survey'))} Team"
             return "ONS"
         return f"{message.get('@msg_to')[0].get('firstName')} {message.get('@msg_to')[0].get('lastName')}"
     except (IndexError, TypeError):
