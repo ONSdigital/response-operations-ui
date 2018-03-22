@@ -1,4 +1,4 @@
-from json import JSONDecodeError, dumps
+from json import JSONDecodeError
 import logging
 
 from flask import current_app, session
@@ -71,10 +71,10 @@ def send_message(message_json):
 
 def remove_unread_label(message_id):
     url = f'{current_app.config["BACKSTAGE_API_URL"]}/v1/secure-message/update-label/{message_id}'
-    json = dumps({"label": "UNREAD", "action": "remove"})
+    data = '{"label": "UNREAD", "action": "remove"}'
 
     logger.debug("Removing message unread label", message_id=message_id)
-    response = requests.put(url, headers={"Authorization": _get_jwt(), "Content-Type": "application/json"}, data=json)
+    response = requests.put(url, headers={"Authorization": _get_jwt(), "Content-Type": "application/json"}, data=data)
 
     try:
         response.raise_for_status()
