@@ -2,12 +2,16 @@
 
 {% set subject = messages[0]["subject"] or "No Subject" %}
 {% set survey_ref = messages[0]['survey_ref'] %}
-{% set to = messages[0][''] %}
+{% if messages[0]['internal'] %}
+    {% set to_uuid = messages[0]['to_id'] %}
+{% else %}
+    {% set to_uuid = messages[0]['from_id'] %}
+{% endif %}
 {% set ru_id = messages[0]['ru_id'] %}
+{% set survey = messages[0]['survey_id'] %}
 {% block page_title %} {{ subject }} | Survey Data Collection {% endblock %}
 
 {% block main %}
-
 <h1 class="saturn" name="page-messages-title">{{ subject }}</h1>
 <div class="secure-message-conversation block">
     <div class="secure-message-sent-message-meta">
@@ -38,6 +42,36 @@
         </div>
     </div>
     {% endfor %}
+{% if form.errors %}
+    <div class="panel panel--error">
+        <div class="panel__header">
+            {% if form.errors|length > 1 %}
+                <h1 class="panel__title venus">This page has {{ form.errors|length }} errors</h1>
+            {% elif form.errors %}
+                <h1 class="panel__title venus">This page has {{ form.errors|length }} error</h1>
+            {% endif %}
+        </div>
+        <div class="panel__body">
+            <ol>
+              {% if form.subject.errors %}
+                {% for error in form.subject.errors %}
+                  <li class="panel__title venus"><a href='#secure-message-subject'>{{ error }}</a></li>
+                {% endfor %}
+              {% endif %}
+              {% if form.body.errors %}
+                {% for error in form.body.errors %}
+                  <li class="panel__title venus"><a href='#secure-message-body'>{{ error }}</a></li>
+                {% endfor %}
+              {% endif %}
+              {% if form.errors['sending'] %}
+                  <p class="panel__title venus">{{ form.errors['sending'][0] }}</p>
+              {% endif %}
+            </ol>
+        </div>
+    </div>
+    <br />
+{% endif %}
+
 <div>
     <div class="secure-message-view-component">
         <div class="grid grid--reverse">
@@ -75,8 +109,9 @@
                             <form action="{{ url_for('messages_bp.view_conversation', thread_id=messages[0].thread_id) }}" method="post", id="create-message-form">
                                 {{ form.csrf_token }}
                                 {{ form.subject(id='secure-message-subject', type='hidden', value=subject) }}
-                                {{ form.hidden_survey_id(type='hidden', value=survey_ref) }}
-                                {{ form.hidden_to_uuid(type='hidden', value=to) }}
+                                {{ form.hidden_to_ru_id(type='hidden', value=ru_id) }}
+                                {{ form.hidden_survey_id(type='hidden', value=survey) }}
+                                {{ form.hidden_to_uuid(type='hidden', value=to_uuid)}}
                                 <label class="venus" for="body">Reply</label>
                                 {{ form.body(id='secure-message-body', class_='input input--textarea input--textarea-message', rows='10') }}
                                 <br>
