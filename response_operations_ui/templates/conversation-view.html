@@ -12,77 +12,94 @@
 {% block page_title %} {{ subject }} | Survey Data Collection {% endblock %}
 
 {% block main %}
-<h1 class="saturn" name="page-messages-title">{{ subject }}</h1>
-<div class="secure-message-conversation block">
-    <div class="secure-message-sent-message-meta">
-         <div class="secure-message--meta venus"><span class="secure-message-conversation-meta__label">Survey: </span><span id="survey">{{ messages[0].get('survey') }} {{ messages[0].get('survey_ref') }}</span></div>
-         <div class="secure-message--meta venus"><span class="secure-message-conversation-meta__label">RU Ref: </span><span id="ruref">{{ messages[0].get('ru_ref') }}</span></div>
-         <div class="secure-message--meta venus"><span class="secure-message-conversation-meta__label">Business: </span><span id="ru">{{ messages[0].get('business_name') }}</span></div>
-    </div>
-    {% for message in messages %}
-        <div class="secure-message-sent-message">
-        {% if message.get('internal') == True %}
-            <div name="sm-from-ons" id="sm-from-ons-{{ loop.index }}" class="secure-message-sent-message-meta sm-from-ons">
-        {% else %}
-            <div name="sm-from-respondent" id="sm-from-respondent-{{ loop.index }}" class="secure-message-sent-message-meta sm-from-respondent">
-        {% endif %}
-        {% if loop.last %}<div name="latest-message"   id='latest-message' ></div>{% endif %}
-        <span class="secure-message-sent-message-meta-from venus">
-            From:
-            <span name="sm-from-user" id="sm-from-user-{{ loop.index }}" style="display:inline;">{{ message.get('username') }}</span>
-        </span>
-        <span class="secure-message-sent-message-meta-from mercury">
-            Sent:
-            <span name="sm-sent-date" id="sm-sent-date-{{ loop.index }}" style="display:inline;">{{ message.get('sent_date') }}</span>
-        </span>
+
+    {% if form.errors %}
+        <div class="panel panel--error">
+            <div class="panel__header">
+                {% if form.errors|length > 1 %}
+                    <h1 class="panel__title venus">This page has {{ form.errors|length }} errors</h1>
+                {% elif form.errors %}
+                    <h1 class="panel__title venus">This page has {{ form.errors|length }} error</h1>
+                {% endif %}
+            </div>
+            <div class="panel__body">
+                <ol>
+                  {% if form.subject.errors %}
+                    {% for error in form.subject.errors %}
+                      <li class="panel__title venus"><a href='#secure-message-subject'>{{ error }}</a></li>
+                    {% endfor %}
+                  {% endif %}
+                  {% if form.body.errors %}
+                    {% for error in form.body.errors %}
+                      <li class="panel__title venus"><a href='#secure-message-body'>{{ error }}</a></li>
+                    {% endfor %}
+                  {% endif %}
+                  {% if form.errors['sending'] %}
+                      <p class="panel__title venus">{{ form.errors['sending'][0] }}</p>
+                  {% endif %}
+                </ol>
+            </div>
         </div>
-        <div class="secure-message-sent-message-body mars">
-            <span style="white-space:pre-line">{{ message.get('body') }}</span>
+    <br />
+    {% endif %}
+
+    <h1 class="saturn" name="page-messages-title">{{ subject }}</h1>
+    <div class="secure-message-conversation block">
+        <div class="secure-message-sent-message-meta">
+             <div class="secure-message--meta venus"><span class="secure-message-conversation-meta__label">Survey: </span><span id="survey">{{ messages[0].get('survey') }} {{ messages[0].get('survey_ref') }}</span></div>
+             <div class="secure-message--meta venus"><span class="secure-message-conversation-meta__label">RU Ref: </span><span id="ruref">{{ messages[0].get('ru_ref') }}</span></div>
+             <div class="secure-message--meta venus"><span class="secure-message-conversation-meta__label">Business: </span><span id="ru">{{ messages[0].get('business_name') }}</span></div>
         </div>
-    </div>
-    {% endfor %}
-    <div class="secure-message-form">
-        <form action="{{ url_for('messages_bp.view_conversation', thread_id=messages[0].thread_id) }}" method="post", id="create-message-form">
-            {{ form.csrf_token }}
-            {{ form.subject(id='secure-message-subject', type='hidden', value=subject) }}
-            {{ form.hidden_to_ru_id(type='hidden', value=ru_id) }}
-            {{ form.hidden_survey_id(type='hidden', value=survey) }}
-            {{ form.hidden_to_uuid(type='hidden', value=to_uuid)}}
-            <label class="venus" for="body">Reply</label>
-            {{ form.body(id='secure-message-body', class_='input input--textarea input--textarea-message', rows='10') }}
-            <br>
-            <input class="btn btn--secondary" id="save_draft" name="save_draft" type="submit" value="Save Draft" />
-            <input class="btn" id="send-message-btn" name="send" type="submit" value="Send" />
-            {% if form.errors %}
-            <div class="panel panel--error">
-                <div class="panel__header">
-                    {% if form.errors|length > 1 %}
-                        <h1 class="panel__title venus">This page has {{ form.errors|length }} errors</h1>
-                    {% elif form.errors %}
-                        <h1 class="panel__title venus">This page has {{ form.errors|length }} error</h1>
-                    {% endif %}
+
+        {% for message in messages %}
+            <div class="secure-message-sent-message">
+                {% if message.get('internal') == True %}
+                    <div name="sm-from-ons" id="sm-from-ons-{{ loop.index }}" class="secure-message-sent-message-meta sm-from-ons">
+                {% else %}
+                    <div name="sm-from-respondent" id="sm-from-respondent-{{ loop.index }}" class="secure-message-sent-message-meta sm-from-respondent">
+                {% endif %}
+                {% if loop.last %}<div name="latest-message"   id='latest-message' ></div>{% endif %}
+                    <span class="secure-message-sent-message-meta-from venus">
+                        From:
+                        <span name="sm-from-user" id="sm-from-user-{{ loop.index }}" style="display:inline;">{{ message.get('username') }}</span>
+                    </span>
+                    <span class="secure-message-sent-message-meta-from mercury">
+                        Sent:
+                        <span name="sm-sent-date" id="sm-sent-date-{{ loop.index }}" style="display:inline;">{{ message.get('sent_date') }}</span>
+                    </span>
                 </div>
-                <div class="panel__body">
-                    <ol>
-                        {% if form.subject.errors %}
-                            {% for error in form.subject.errors %}
-                                <li class="panel__title venus"><a href='#secure-message-subject'>{{ error }}</a></li>
-                            {% endfor %}
-                        {% endif %}
-                        {% if form.body.errors %}
-                            {% for error in form.body.errors %}
-                                <li class="panel__title venus"><a href='#secure-message-body'>{{ error }}</a></li>
-                            {% endfor %}
-                        {% endif %}
-                        {% if form.errors['sending'] %}
-                            <p class="panel__title venus">{{ form.errors['sending'][0] }}</p>
-                        {% endif %}
-                    </ol>
+                <div class="secure-message-sent-message-body mars">
+                    <span style="white-space:pre-line">{{ message.get('body') }}</span>
                 </div>
             </div>
-            <br />
+        {% endfor %}
+
+        <div class="secure-message-form">
+            <form action="{{ url_for('messages_bp.view_conversation', thread_id=messages[0].thread_id) }}" method="post", id="create-message-form">
+                {{ form.csrf_token }}
+                {{ form.subject(id='secure-message-subject', type='hidden', value=subject) }}
+                {{ form.hidden_to_ru_id(type='hidden', value=ru_id) }}
+                {{ form.hidden_survey_id(type='hidden', value=survey) }}
+                {{ form.hidden_to_uuid(type='hidden', value=to_uuid)}}
+                <div id="body-field"{% if form.body.errors %} class="panel panel--simple panel--error{% endif %}">
+                    {% for error in form.body.errors %}
+                        <p id="body-error-{{ loop.index }}" class="error-message">{{ error }}</p>
+                    {% endfor %}
+                    {% if form.errors['sending'] %}
+                        <p class="panel__title venus">{{ form.errors['sending'][0] }}</p>
+                    {% endif %}
+                    <label class="secure-message--message venus" for="message-text">Reply</label>
+                    {{ form.body(id='secure-message-body',
+                                 class_='input input--textarea input--textarea-message',
+                                 rows='10',
+                                 maxlength='10000',
+                                 cols=80) }}
+                </div>
+                <br />
+                <input class="btn btn--secondary" id="save_draft" name="save_draft" type="submit" value="Save Draft" />
+                <input class="btn" id="send-message-btn" name="send" type="submit" value="Send" />
+                <br />
             </form>
-        {% endif %}
+        </div>
     </div>
-</div>
 {% endblock %}

@@ -75,7 +75,8 @@ def view_conversation(thread_id):
                                   thread_id=refined_thread[0]['thread_id'])
             )
             flash("Message sent.")
-            return redirect(url_for('messages_bp.view_select_survey'))
+            return redirect(url_for('messages_bp.view_selected_survey',
+                                    selected_survey='QBS'))
         except (ApiError, InternalError):
             form = _repopulate_form_with_submitted_data(form)
             form.errors['sending'] = ["Message failed to send, something has gone wrong with the website."]
@@ -84,11 +85,10 @@ def view_conversation(thread_id):
                                    breadcrumbs=breadcrumbs,
                                    messages=refined_thread,
                                    error="Message send failed")
-
     return render_template("conversation-view.html",
                            breadcrumbs=breadcrumbs,
                            messages=refined_thread,
-                           form=SecureMessageForm(request.form))
+                           form=form)
 
 @messages_bp.route('/', methods=['GET', 'POST'])
 @login_required
