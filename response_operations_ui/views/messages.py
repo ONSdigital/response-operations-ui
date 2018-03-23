@@ -17,6 +17,7 @@ logger = wrap_logger(logging.getLogger(__name__))
 messages_bp = Blueprint('messages_bp', __name__,
                         static_folder='static', template_folder='templates')
 
+
 @messages_bp.route('/create-message', methods=['POST'])
 @login_required
 def create_message():
@@ -46,6 +47,7 @@ def create_message():
     return render_template('create-message.html',
                            form=form,
                            breadcrumbs=breadcrumbs)
+
 
 @messages_bp.route('/threads/<thread_id>', methods=['GET', 'POST'])
 @login_required
@@ -89,6 +91,7 @@ def view_conversation(thread_id):
                            breadcrumbs=breadcrumbs,
                            messages=refined_thread,
                            form=form)
+
 
 @messages_bp.route('/', methods=['GET', 'POST'])
 @login_required
@@ -148,7 +151,6 @@ def view_selected_survey(selected_survey):
         return render_template("messages.html",
                                breadcrumbs=breadcrumbs,
                                response_error=True)
-
 
 
 def _build_create_message_breadcrumbs():
@@ -214,6 +216,7 @@ def _populate_form_details_from_hidden_fields(form):
     form.business.text = form.hidden_business.data
     form.to.text = form.hidden_to.data
     return form
+
 
 def _get_message_subject(thread):
     try:
