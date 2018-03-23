@@ -226,7 +226,8 @@ def view_collection_exercise_details(short_name, period):
 
     form = EditCollectionExerciseDetailsForm(form=request.form)
 
-    return render_template('edit-collection-exercise-details.html', survey_ref=ce_details['survey']['surveyRef'], form=form, short_name=short_name, period=period,
+    return render_template('edit-collection-exercise-details.html', survey_ref=ce_details['survey']['surveyRef'],
+                           form=form, short_name=short_name, period=period,
                            collection_exercise_id=ce_details['collection_exercise']['id'])
 
 

@@ -7,7 +7,7 @@ import requests_mock
 from config import TestingConfig
 from response_operations_ui import app
 
-
+collection_exercise_id = "14fb3e68-4dca-46db-bf49-04b84e07e77c"
 url_get_collection_exercise = f'{app.config["BACKSTAGE_API_URL"]}/v1/collection-exercise/test/000000'
 with open('tests/test_data/collection_exercise/collection_exercise_details.json') as json_data:
     collection_exercise_details = json.load(json_data)
@@ -15,10 +15,14 @@ with open('tests/test_data/collection_exercise/collection_exercise_details_no_sa
     collection_exercise_details_no_sample = json.load(json_data)
 with open('tests/test_data/collection_exercise/collection_exercise_details_failedvalidation.json') as json_data:
     collection_exercise_details_failedvalidation = json.load(json_data)
+with open('tests/test_data/collection_exercise/edited_collection_exercise_details.json') as json_data:
+    edited_collection_exercise_details = json.load(json_data)
 url_collection_instrument = f'{app.config["BACKSTAGE_API_URL"]}/v1/collection-instrument/test/000000'
 url_collection_instrument_link = f'{app.config["BACKSTAGE_API_URL"]}/v1/collection-instrument/link/111111/000000'
 url_upload_sample = f'{app.config["BACKSTAGE_API_URL"]}/v1/sample/test/000000'
 url_execute = f'{app.config["BACKSTAGE_API_URL"]}/v1/collection-exercise/test/000000/execute'
+url_update_ce = f'{app.config["BACKSTAGE_API_URL"]}/v1/collection-exercise/update-collection-exercise-details/' \
+                f'{collection_exercise_id}'
 
 
 class TestCollectionExercise(unittest.TestCase):
@@ -28,6 +32,10 @@ class TestCollectionExercise(unittest.TestCase):
         app.config.from_object(app_config)
         app.login_manager.init_app(app)
         self.app = app.test_client()
+        self.headers = {
+            'Authorization': 'test_jwt',
+            'Content-Type': 'application/json',
+        }
 
     @requests_mock.mock()
     def test_collection_exercise_view(self, mock_request):
@@ -342,3 +350,46 @@ class TestCollectionExercise(unittest.TestCase):
         self.assertIn('Ready for review'.encode(), response.data)
         self.assertIn('Error processing collection exercise'.encode(), response.data)
         self.assertIn('Check collection instruments'.encode(), response.data)
+
+    def mock_for_update_ce_details(self, changed_details, mock_request):
+        mock_request.get(url_get_collection_exercise, json=collection_exercise_details)
+        mock_request.put(url_update_ce)
+        mock_request.get(url_get_collection_exercise, json=edited_collection_exercise_details)
+        response = self.app.post(f"/surveys/test/000000/edit-collection-exercise-details",
+                                 data=changed_details, follow_redirects=True)
+        return response
+
+    @requests_mock.mock()
+    def test_update_collection_exercise_details_success(self, mock_request):
+        changed_ce_details = {
+            "collection_exercise_id": '14fb3e68-4dca-46db-bf49-04b84e07e77c',
+            "user_description": '16th June 2019'
+        }
+        response = self.mock_for_update_ce_details(changed_ce_details, mock_request)
+
+        self.assertEqual(response.status_code, 200)
+        self.assertIn('16th June 2019'.encode(), response.data)
+
+    @requests_mock.mock()
+    def test_update_collection_exercise_details_fail(self, mock_request):
+        changed_ce_details = {
+            "collection_exercise_id": '14fb3e68-4dca-46db-bf49-04b84e07e77c',
+            "user_description": '16th June 2019'
+        }
+        mock_request.get(url_get_collection_exercise, json=collection_exercise_details)
+        mock_request.put(url_update_ce, status_code=500)
+
+        response = self.app.post(f"/surveys/test/000000/edit-collection-exercise-details",
+                                 data=changed_ce_details, follow_redirects=True)
+
+        self.assertIn("Server error (Error 500)".encode(), response.data)
+
+    @requests_mock.mock()
+    def test_get_ce_details(self, mock_request):
+        mock_request.get(url_get_collection_exercise, json=collection_exercise_details)
+
+        response = self.app.get(f"/surveys/test/000000/edit-collection-exercise-details",
+                                follow_redirects=True)
+
+        self.assertEqual(response.status_code, 200)
+        self.assertIn("14fb3e68-4dca-46db-bf49-04b84e07e77c".encode(), response.data)
