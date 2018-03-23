@@ -19,12 +19,12 @@ def api_error(error):
 
 @app.errorhandler(401)
 def handle_authentication_error(error):
-    logger.error('Authentication failed')
-    flash('Authentication failed', category='failed_authentication')
+    logger.warn('Authentication failed')
+    flash('Incorrect username or password', category='failed_authentication')
     return redirect(url_for('sign_in_bp.sign_in'))
 
 
 @app.errorhandler(Exception)
 def server_error(error):  # pylint: disable=unused-argument
-    logger.exception('Uncaught exception generated')
+    logger.exception('Generic exception generated')
     return redirect(url_for('error_bp.server_error_page'))

@@ -1,6 +1,7 @@
 import logging
 
 from flask import Blueprint, redirect, render_template, request, session, url_for
+from flask import get_flashed_messages
 from flask_login import current_user, login_user
 from structlog import wrap_logger
 
@@ -38,5 +39,9 @@ def sign_in():
             return redirect(url_for('home_bp.home'))
         except KeyError:
             logger.exception("Token missing from authentication server response")
+
+    for message in get_flashed_messages(with_categories=True):
+        if "failed_authentication" in message:
+            return render_template('sign_in.html', form=form, failed_authentication=True)
 
     return render_template('sign_in.html', form=form)
