@@ -222,22 +222,20 @@ def _get_form_type(file_name):
 @collection_exercise_bp.route('/<short_name>/<period>/edit-collection-exercise-details', methods=['GET'])
 @login_required
 def view_collection_exercise_details(short_name, period):
-    collection_exercise_details = collection_exercise_controllers.get_collection_exercise(short_name, period)
+    ce_details = collection_exercise_controllers.get_collection_exercise(short_name, period)
 
-    form = EditCollectionExerciseDetailsForm(form=request.form, default_values=collection_exercise_details)
+    form = EditCollectionExerciseDetailsForm(form=request.form)
 
-    return render_template('edit-collection-exercise-details.html', form=form, short_name=short_name, period=period)
+    return render_template('edit-collection-exercise-details.html', survey_ref=ce_details['survey']['surveyRef'], form=form, short_name=short_name, period=period,
+                           collection_exercise_id=ce_details['collection_exercise']['id'])
 
 
 @collection_exercise_bp.route('/<short_name>/<period>/edit-collection-exercise-details', methods=['POST'])
 @login_required
-def update_collection_exercise_details(short_name, period):
-    EditCollectionExerciseDetailsForm(request.form)
+def edit_collection_exercise_details(short_name, period):
+    form = request.form
 
-    edit_ce_details_data = {
-        "userDescription": request.form.get('userDescription')
-    }
+    collection_exercise_controllers.update_collection_exercise_user_description(form.get('collection_exercise_id'),
+                                                                                form.get('user_description'))
 
-    collection_exercise_controllers.update_collection_exercise_details(edit_ce_details_data, short_name, period)
-
-    return redirect(url_for('collection_exercise_bp.view_collection_exercise'))
+    return redirect(url_for('collection_exercise_bp.view_collection_exercise', short_name=short_name, period=period))

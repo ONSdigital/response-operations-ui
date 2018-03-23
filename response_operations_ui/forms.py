@@ -57,7 +57,8 @@ class EditContactDetailsForm(FlaskForm):
 
 
 class EditCollectionExerciseDetailsForm(FlaskForm):
-    userDescription = StringField('userDescription')
+    user_description = StringField('user_description')
+    collection_exercise_id = HiddenField('collection_exercise_id')
 
 
 class ChangeGroupStatusForm(FlaskForm):
