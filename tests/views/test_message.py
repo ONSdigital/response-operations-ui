@@ -47,7 +47,8 @@ class TestMessage(unittest.TestCase):
         {
             "id": "f235e99c-8edf-489a-9c72-6cabe6c387fc",
             "shortName": "QBS",
-            "longName": "Quarterly Business Survey"
+            "longName": "Quarterly Business Survey",
+            "surveyRef": "111"
         }
     ]
 
