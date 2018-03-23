@@ -3,14 +3,15 @@ import logging
 
 from flask import Blueprint, flash, g, render_template, request, redirect, url_for
 from flask_login import login_required, current_user
-import maya
 from structlog import wrap_logger
+import maya
 
 from response_operations_ui.common.mappers import format_short_name
 from response_operations_ui.common.surveys import Surveys, FDISurveys
 from response_operations_ui.controllers import message_controllers, survey_controllers
 from response_operations_ui.exceptions.exceptions import ApiError, InternalError, NoMessagesError
 from response_operations_ui.forms import SecureMessageForm
+from response_operations_ui.controllers.survey_controllers import get_survey_short_name_by_id, get_survey_ref_by_id
 
 logger = wrap_logger(logging.getLogger(__name__))
 messages_bp = Blueprint('messages_bp', __name__,
@@ -51,8 +52,8 @@ def create_message():
 def view_conversation(thread_id):
     try:
         thread_conversation = message_controllers.get_conversation(thread_id)['messages']
-        breadcrumbs = _get_conversation_breadcrumbs(thread_conversation)
         refined_thread = [_refine(message) for message in reversed(thread_conversation)]
+        breadcrumbs = _get_conversation_breadcrumbs(thread_conversation)
     except KeyError as e:
         logger.exception("A key error occurred")
         raise ApiError(e)
@@ -63,20 +64,18 @@ def view_conversation(thread_id):
         ]
 
     form = SecureMessageForm(request.form)
-    print(form.data)
-    if request.method == 'POST':
+    if form.validate_on_submit():
         form = _populate_form_details_from_hidden_fields(form)
-        print(form.data)
         g.form_subject_data = form.subject.data
         g.form_body_data = form.body.data
 
         try:
-            message_controllers.send_message(_get_message_json(form,
-                                                               thread_id=refined_thread[0]['thread_id']))
-            survey = request.form.get("hidden_survey")
-            logger.error("here")
+            message_controllers.send_message(
+                _get_message_json(form,
+                                  thread_id=refined_thread[0]['thread_id'])
+            )
             flash("Message sent.")
-            return redirect(url_for('messages_bp.view_selected_survey', selected_survey=survey))
+            return redirect(url_for('messages_bp.view_select_survey'))
         except (ApiError, InternalError):
             form = _repopulate_form_with_submitted_data(form)
             form.errors['sending'] = ["Message failed to send, something has gone wrong with the website."]
@@ -232,8 +231,8 @@ def _refine(message):
         'body': message.get('body'),
         'internal': message.get('from_internal'),
         'username': _get_user_summary_for_message(message),
-        'survey_ref': survey_controllers.get_survey_ref_by_id(message.get('survey')),
-        'survey': survey_controllers.get_survey_short_name_by_id(message.get('survey')),
+        'survey_ref': get_survey_ref_by_id(message.get('survey')),
+        'survey': get_survey_short_name_by_id(message.get('survey')),
         'survey_id': message.get('survey'),
         'ru_ref': _get_ru_ref_from_message(message),
         'to_id': message.get('msg_to')[0],
@@ -273,8 +272,8 @@ def _get_from_name(message):
 def _get_to_name(message):
     try:
         if message.get('msg_to')[0] == 'GROUP':
-            if survey_controllers.get_survey_short_name_by_id(message.get('survey')):
-                return f"{survey_controllers.get_survey_short_name_by_id(message.get('survey'))} Team"
+            if get_survey_short_name_by_id(message.get('survey')):
+                return f"{get_survey_short_name_by_id(message.get('survey'))} Team"
             return "ONS"
         return f"{message.get('@msg_to')[0].get('firstName')} {message.get('@msg_to')[0].get('lastName')}"
     except (IndexError, TypeError):
