@@ -33,6 +33,7 @@
     </div>
     <br />
 {% endif %}
+
 <h1 class="saturn">Create message</h1>
 <form action="{{ url_for('messages_bp.create_message') }}" method="post" id="create-message-form">
     {{ form.hidden_tag() }}
