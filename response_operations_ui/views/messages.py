@@ -1,7 +1,7 @@
 import json
 import logging
 
-from flask import Blueprint, flash, g, render_template, request, redirect, url_for
+from flask import Blueprint, flash, g, Markup, render_template, request, redirect, url_for
 from flask_login import login_required, current_user
 from structlog import wrap_logger
 import maya
@@ -74,9 +74,9 @@ def view_conversation(thread_id):
                 _get_message_json(form,
                                   thread_id=refined_thread[0]['thread_id'])
             )
-            flash("Message sent.")
-            return redirect(url_for('messages_bp.view_selected_survey',
-                                    selected_survey='QBS'))
+            thread_url = url_for("messages_bp.view_conversation", thread_id=thread_id)
+            flash(Markup(f'Message sent. <a href={thread_url}>View Message</a>'))
+            return redirect(url_for('messages_bp.view_selected_survey', selected_survey=refined_thread[0]['survey']))
         except (ApiError, InternalError):
             form = _repopulate_form_with_submitted_data(form)
             form.errors['sending'] = ["Message failed to send, something has gone wrong with the website."]
