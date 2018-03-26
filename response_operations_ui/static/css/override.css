@@ -499,15 +499,15 @@ background: #eee;
 }
 
 .message-list__ru-name{
-  width: 16rem;
-  max-width: 22rem;
+  width: 10rem;
+  max-width: 12rem;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
 }
 
 .message-list__subject{
-  max-width: 200px;
+  max-width: 12px;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -515,7 +515,7 @@ background: #eee;
 
 .message-list__from{
   width: 10rem;
-  max-width: 16rem;
+  max-width: 12rem;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
