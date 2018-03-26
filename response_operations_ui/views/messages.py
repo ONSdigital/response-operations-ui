@@ -238,7 +238,7 @@ def _refine(message):
         'survey': get_survey_short_name_by_id(message.get('survey')),
         'survey_id': message.get('survey'),
         'ru_ref': _get_ru_ref_from_message(message),
-        'to_id': message.get('msg_to')[0],
+        'to_id': _get_to_id(message),
         'from_id': message.get('msg_from'),
         'business_name': _get_business_name_from_message(message),
         'from': _get_from_name(message),
@@ -270,6 +270,13 @@ def _get_from_name(message):
         return f"{msg_from.get('firstName')} {msg_from.get('lastName')}"
     except KeyError:
         logger.exception("Failed to retrieve message from name", message_id=message.get('msg_id'))
+
+
+def _get_to_id(message):
+    try:
+        return message.get('msg_to')[0]
+    except (IndexError, TypeError):
+        logger.exception("No 'msg_to' in message.", message_id=message.get('msg_id'))
 
 
 def _get_to_name(message):
