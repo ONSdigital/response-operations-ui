@@ -20,7 +20,7 @@ def get_formatted_date(datetime_string, string_format='%Y-%m-%d %H:%M:%S'):
     delta = datetime.date(datetime_parsed) - date.today()
 
     if delta.days == 0:
-        return f"today at {datetime_parsed.strftime('%H:%M')}"
+        return f"Today at {datetime_parsed.strftime('%H:%M')}"
     elif delta.days == -1:
-        return f"yesterday at {datetime_parsed.strftime('%H:%M')}"
-    return f"{datetime_parsed.strftime('%d %b %Y')} {datetime_parsed.strftime('%H:%M')}"
+        return f"Yesterday at {datetime_parsed.strftime('%H:%M')}"
+    return f"{datetime_parsed.strftime('%d %b %Y').title()} {datetime_parsed.strftime('%H:%M')}"

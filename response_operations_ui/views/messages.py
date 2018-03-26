@@ -274,7 +274,7 @@ def _get_business_name_from_message(message):
 def _get_human_readable_date(sent_date):
     try:
         formatted_date = get_formatted_date(sent_date.split('.')[0])
-        return formatted_date.capitalize()
+        return formatted_date
     except (AttributeError, ValueError, IndexError, TypeError):
         logger.exception("Failed to parse sent date from message", sent_date=sent_date)
 

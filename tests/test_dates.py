@@ -9,13 +9,13 @@ class TestDates(unittest.TestCase):
     def test_get_formatted_date_today(self):
         today_formatted_string = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
         self.assertEqual(get_formatted_date(today_formatted_string),
-                         f'today at {today_formatted_string[11:16]}')
+                         f'Today at {today_formatted_string[11:16]}')
 
     def test_get_formatted_date_yesterday(self):
         today = datetime.now()
         yesterday_formatted_string = today.replace(day=today.day - 1).strftime('%Y-%m-%d %H:%M:%S')
         self.assertEqual(get_formatted_date(yesterday_formatted_string),
-                         f'yesterday at {yesterday_formatted_string[11:16]}')
+                         f'Yesterday at {yesterday_formatted_string[11:16]}')
 
     def test_get_formatted_date_full_dates(self):
         self.assertEqual(get_formatted_date('2000-01-01 00:00:00'), '01 Jan 2000 00:00')
