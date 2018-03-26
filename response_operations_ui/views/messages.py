@@ -271,5 +271,5 @@ def _get_human_readable_date(sent_date):
     try:
         slang_date = get_slang_date(sent_date.split('.')[0])
         return slang_date.capitalize()
-    except (ValueError, IndexError, TypeError):
+    except (AttributeError, ValueError, IndexError, TypeError):
         logger.exception("Failed to parse sent date from message", sent_date=sent_date)
