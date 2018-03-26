@@ -5,7 +5,7 @@ from flask import Blueprint, flash, g, render_template, request, redirect, url_f
 from flask_login import login_required, current_user
 from structlog import wrap_logger
 
-from response_operations_ui.common.dates import get_slang_date
+from response_operations_ui.common.dates import get_formatted_date
 from response_operations_ui.common.mappers import format_short_name
 from response_operations_ui.common.surveys import Surveys, FDISurveys
 from response_operations_ui.controllers import message_controllers, survey_controllers
@@ -269,7 +269,7 @@ def _get_business_name_from_message(message):
 
 def _get_human_readable_date(sent_date):
     try:
-        slang_date = get_slang_date(sent_date.split('.')[0])
-        return slang_date.capitalize()
+        formatted_date = get_formatted_date(sent_date.split('.')[0])
+        return formatted_date.capitalize()
     except (AttributeError, ValueError, IndexError, TypeError):
         logger.exception("Failed to parse sent date from message", sent_date=sent_date)

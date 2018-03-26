@@ -6,7 +6,7 @@ from structlog import wrap_logger
 logger = wrap_logger(logging.getLogger(__name__))
 
 
-def get_slang_date(datetime_string, string_format='%Y-%m-%d %H:%M:%S'):
+def get_formatted_date(datetime_string, string_format='%Y-%m-%d %H:%M:%S'):
     """Takes a string date in given format returns a string 'today', 'yesterday' at the time in format '%H:%M'
     if the given date is today or yesterday respectively otherwise returns the full date in the format '%b %d %Y %H:%M'
     """
