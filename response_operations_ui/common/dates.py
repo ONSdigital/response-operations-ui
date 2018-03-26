@@ -23,5 +23,4 @@ def get_slang_date(datetime_string, string_format='%Y-%m-%d %H:%M:%S'):
         return f"today at {datetime_parsed.strftime('%H:%M')}"
     elif delta.days == -1:
         return f"yesterday at {datetime_parsed.strftime('%H:%M')}"
-    else:
-        return f"{datetime_parsed.strftime('%b %d %Y')} {datetime_parsed.strftime('%H:%M')}"
+    return f"{datetime_parsed.strftime('%b %d %Y')} {datetime_parsed.strftime('%H:%M')}"
