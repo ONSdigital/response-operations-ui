@@ -771,7 +771,7 @@ textarea.secure-message--message{
   color: #D0021B;
 }
 
-.circle:before {
+.circle-icon:before {
   content: ' \25CF';
   font-size: 16px;
   color: #4263C2;
