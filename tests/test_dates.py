@@ -17,9 +17,9 @@ class TestDates(unittest.TestCase):
                          f'yesterday at {yesterday_formatted_string[11:16]}')
 
     def test_get_slang_date_full_dates(self):
-        self.assertEqual(get_slang_date('2000-01-01 00:00:00'), 'Jan 01 2000 00:00')
-        self.assertEqual(get_slang_date('1999-12-31 23:59:59'), 'Dec 31 1999 23:59')
-        self.assertEqual(get_slang_date('00:00:00 2000-01-01', string_format='%H:%M:%S %Y-%m-%d'), 'Jan 01 2000 00:00')
+        self.assertEqual(get_slang_date('2000-01-01 00:00:00'), '01 Jan 2000 00:00')
+        self.assertEqual(get_slang_date('1999-12-31 23:59:59'), '31 Dec 1999 23:59')
+        self.assertEqual(get_slang_date('00:00:00 2000-01-01', string_format='%H:%M:%S %Y-%m-%d'), '01 Jan 2000 00:00')
 
     def test_get_slang_date_returns_malformed_dates(self):
         # Strings not in the correct format should be returned as given and a exception logged
