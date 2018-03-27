@@ -3,9 +3,9 @@ import logging
 
 from flask import Blueprint, flash, g, render_template, request, redirect, url_for
 from flask_login import login_required, current_user
-import maya
 from structlog import wrap_logger
 
+from response_operations_ui.common.dates import get_formatted_date
 from response_operations_ui.common.mappers import format_short_name
 from response_operations_ui.common.surveys import Surveys, FDISurveys
 from response_operations_ui.controllers import message_controllers, survey_controllers
@@ -190,6 +190,8 @@ def view_conversation(thread_id):
             {"title": "Unavailable"}
         ]
 
+    if refined_thread[-1]['unread']:
+        message_controllers.remove_unread_label(refined_thread[-1]['message_id'])
     return render_template("conversation-view.html", breadcrumbs=breadcrumbs, messages=refined_thread)
 
 
@@ -216,7 +218,9 @@ def _refine(message):
         'business_name': _get_business_name_from_message(message),
         'from': _get_from_name(message),
         'to': _get_to_name(message),
-        'sent_date': _get_human_readable_date(message.get('sent_date'))
+        'sent_date': _get_human_readable_date(message.get('sent_date')),
+        'unread': _get_unread_status(message),
+        'message_id': message.get('msg_id')
     }
 
 
@@ -269,8 +273,11 @@ def _get_business_name_from_message(message):
 
 def _get_human_readable_date(sent_date):
     try:
-        slang_date = maya.parse(sent_date).slang_date().capitalize()
-        sent_time = sent_date.split(' ')[1][0:5]
-        return f'{slang_date} at {sent_time}'
-    except (ValueError, IndexError, TypeError):
+        formatted_date = get_formatted_date(sent_date.split('.')[0])
+        return formatted_date
+    except (AttributeError, ValueError, IndexError, TypeError):
         logger.exception("Failed to parse sent date from message", sent_date=sent_date)
+
+
+def _get_unread_status(message):
+    return 'UNREAD' in message.get('labels', [])
