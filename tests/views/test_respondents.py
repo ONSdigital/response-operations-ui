@@ -7,8 +7,8 @@ from config import TestingConfig
 from response_operations_ui import app
 from response_operations_ui.controllers.respondent_controllers import search_respondent_by_email
 
-get_respondent_by_email_url = 'http://localhost:8001/backstage-api/v1/party/get-respondent-by-email'
-get_respondent_by_id_url = 'http://localhost:8001/backstage-api/v1/party/party-details?respondent_party_id=cd592e0f-8d07-407b-b75d-e01fbdae8233'
+get_respondent_by_email_url = f'{app.config["BACKSTAGE_API_URL"]}/v1/party/get-respondent-by-email'
+get_respondent_by_id_url = f'{app.config["BACKSTAGE_API_URL"]}/v1/party/party-details?respondent_party_id=cd592e0f-8d07-407b-b75d-e01fbdae8233'
 
 with open('tests/test_data/reporting_units/respondent.json') as json_data:
     respondent = json.load(json_data)
@@ -67,7 +67,7 @@ class TestRespondents(unittest.TestCase):
         self.assertEqual(response.status_code, 200)
 
     @requests_mock.mock()
-    def test_get_respondent_by_email_no_respondent(self, mock_request):
+    def test_search_respondent_by_email_no_respondent(self, mock_request):
         email = 'Jacky.Turner@email.com'
         mock_request.get(get_respondent_by_email_url, json={"Response": "No respondent found"}, status_code=404)
 
