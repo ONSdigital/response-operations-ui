@@ -65,7 +65,11 @@ def view_conversation(thread_id):
             {"title": "Unavailable"}
         ]
 
+    if refined_thread[-1]['unread']:
+        message_controllers.remove_unread_label(refined_thread[-1]['message_id'])
+
     form = SecureMessageForm(request.form)
+
     if form.validate_on_submit():
         form = _populate_form_details_from_hidden_fields(form)
         g.form_subject_data = form.subject.data
@@ -87,6 +91,7 @@ def view_conversation(thread_id):
                                    breadcrumbs=breadcrumbs,
                                    messages=refined_thread,
                                    error="Message send failed")
+
     return render_template("conversation-view.html",
                            breadcrumbs=breadcrumbs,
                            messages=refined_thread,
