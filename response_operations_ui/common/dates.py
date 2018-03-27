@@ -17,10 +17,10 @@ def get_formatted_date(datetime_string, string_format='%Y-%m-%d %H:%M:%S'):
         logger.exception("Failed to parse date from message", sent_date=datetime_string)
         return datetime_string
 
-    delta = datetime.date(datetime_parsed) - date.today()
+    time_difference = datetime.date(datetime_parsed) - date.today()
 
-    if delta.days == 0:
+    if time_difference.days == 0:
         return f"Today at {datetime_parsed.strftime('%H:%M')}"
-    elif delta.days == -1:
+    elif time_difference.days == -1:
         return f"Yesterday at {datetime_parsed.strftime('%H:%M')}"
     return f"{datetime_parsed.strftime('%d %b %Y').title()} {datetime_parsed.strftime('%H:%M')}"
