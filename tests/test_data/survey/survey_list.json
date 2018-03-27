@@ -12,6 +12,13 @@
     "surveyRef": "222"
   },
   {
+    "id": "6aa8896f-ced5-4694-800c-6cd661b0c8b2",
+    "legalBasis": "Statistics of Trade Act 1947",
+    "longName": "Annual Survey of Hours and Earnings",
+    "shortName": "ASHE",
+    "surveyRef": "141"
+  },
+  {
     "id": "QOFDI_id",
     "legalBasis": "Statistics of Trade Act 1947",
     "longName": "Quarterly Outward Foreign Direct Investment Survey",
