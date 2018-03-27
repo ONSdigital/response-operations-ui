@@ -18,6 +18,9 @@ def search_respondent_by_email(email):
     url = f'{app.config["BACKSTAGE_API_URL"]}/v1/party/get-respondent-by-email'
     response = requests.get(url, json=request_json)
 
+    if 'No respondent found' in response:
+        return response.json()
+
     try:
         response.raise_for_status()
     except requests.exceptions.HTTPError:

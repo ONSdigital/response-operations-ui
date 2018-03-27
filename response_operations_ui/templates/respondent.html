@@ -1,0 +1,34 @@
+{% extends "layouts/base.html" %}
+{% block page_title %}Respondents | Survey Data Collection{% endblock %}
+
+{% block main %}
+    <div role="main" id="main" class="page__main">
+    <h1 class="jupiter">Respondent</h1>
+        <dl class="description-list">
+            <dt>
+                  Name
+            </dt>
+            <dd id="respondent-name" name="tbl-respondent-name">
+                {{ respondent.firstName }} {{ respondent.lastName }}
+            </dd>
+            <dt>
+                Email
+            </dt>
+            <dd id="respondent-email" name="tbl-respondent-email">
+                {{ respondent.emailAddress }}
+            </dd>
+            <dt>
+                Tel
+            </dt>
+            <dd name="tbl-respondent-phone">
+                {{ respondent.telephone }}
+            </dd>
+            <dt>
+                Status
+            </dt>
+            <dd>
+                {{ respondent.status|lower }}
+            </dd>
+        </dl>
+    </div>
+{% endblock %}

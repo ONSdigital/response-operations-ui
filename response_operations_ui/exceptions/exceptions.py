@@ -25,7 +25,8 @@ class InternalError(Exception):
 
 class UpdateContactDetailsException(Exception):
 
-    def __init__(self, form, respondent_details, status_code):
+    def __init__(self, ru_ref, form, respondent_details, status_code):
+        self.ru_ref = ru_ref
         self.form = form
         self.respondent_details = respondent_details
         self.status_code = status_code

@@ -23,41 +23,7 @@
                 </form>
 
             </div>
-
-            {% if respondent.id %}
-
-                <dl class="description-list">
-                <dt>
-                  Name
-                </dt>
-                <dd id="respondent-name" name="tbl-respondent-name">
-                  {{ respondent.firstName }} {{ respondent.lastName }}
-                </dd>
-                <dt>
-                  Email
-                </dt>
-                <dd id="respondent-email" name="tbl-respondent-email">
-                  {{ respondent.emailAddress }}
-                </dd>
-                <dt>
-                  Tel
-                </dt>
-                <dd name="tbl-respondent-phone">
-                  {{ respondent.telephone }}
-                </dd>
-                    <dt>
-                        Account Status
-                    </dt>
-                    <dd>
-                        {{ respondent.status }}
-                    </dd>
-                <div>
-                  <form action="{{ url_for('reporting_unit_bp.view_contact_details', ru_ref=ru.sampleUnitRef, respondent_id=respondent.id)}}" method="get">
-                  <a href=# id="edit-contact-details-btn" onclick="this.parentNode.submit()"> Edit contact details </a>
-                  </form>
-                </div>
-              </dl>
-            {% else %}
+            {% if response %}
                 No Respondent found.
             {% endif %}
         </div>
