@@ -4,7 +4,6 @@ import logging
 from flask import Blueprint, flash, g, Markup, render_template, request, redirect, url_for
 from flask_login import login_required, current_user
 from structlog import wrap_logger
-import maya
 
 from response_operations_ui.common.dates import get_formatted_date
 from response_operations_ui.common.mappers import format_short_name
