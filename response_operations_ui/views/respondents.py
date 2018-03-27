@@ -39,4 +39,14 @@ def respondent_details(respondent_id):
 
     respondent = contact_details_controller.get_contact_details(respondent_id)
 
-    return render_template('respondent.html', respondent=respondent)
+    breadcrumbs = [
+        {
+            "title": "Respondents",
+            "link": "/respondents"
+        },
+        {
+            "title": f"{respondent['firstName']} {respondent['lastName']}"
+        }
+    ]
+
+    return render_template('respondent.html', respondent=respondent, breadcrumbs=breadcrumbs)
