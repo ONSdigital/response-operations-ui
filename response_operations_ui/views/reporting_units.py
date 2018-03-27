@@ -79,12 +79,12 @@ def view_contact_details(ru_ref, respondent_id):
                            form=form)
 
 
-@reporting_unit_bp.route('/<ru_ref>/edit-contact-details/<respondent_id>', methods=['POST'])
+@reporting_unit_bp.route('edit-contact-details/<respondent_id>', methods=['POST'])
 @login_required
-def edit_contact_details(ru_ref, respondent_id):
-
+def edit_contact_details(respondent_id):
+    ru_ref = request.args.get('ru_ref')
     form = request.form
-    contact_details_changed = contact_details_controller.update_contact_details(ru_ref, respondent_id, form)
+    contact_details_changed = contact_details_controller.update_contact_details(respondent_id, form)
 
     ui_message = 'No updates were necessary'
     if 'emailAddress' in contact_details_changed:
@@ -95,7 +95,10 @@ def edit_contact_details(ru_ref, respondent_id):
     elif len(contact_details_changed) > 0:
         ui_message = 'Contact details changed'
 
-    return redirect(url_for('reporting_unit_bp.view_reporting_unit', ru_ref=ru_ref, info=ui_message))
+    if ru_ref:
+        return redirect(url_for('reporting_unit_bp.view_reporting_unit', ru_ref=ru_ref, info=ui_message))
+    else:
+        return redirect(url_for('respondent_bp.respondent_search', respondent_id=respondent_id))
 
 
 @reporting_unit_bp.route('/', methods=['GET', 'POST'])

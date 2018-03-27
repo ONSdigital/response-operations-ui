@@ -25,7 +25,7 @@ def get_contact_details(respondent_id):
     return response.json().get("respondent_party")
 
 
-def update_contact_details(ru_ref, respondent_id, form):
+def update_contact_details(respondent_id, form):
 
     new_contact_details = {
         "first_name": form.get('first_name'),
@@ -43,7 +43,7 @@ def update_contact_details(ru_ref, respondent_id, form):
         response = requests.put(url, json=new_contact_details)
 
         if response.status_code != 200:
-            raise UpdateContactDetailsException(ru_ref, EditContactDetailsForm(form),
+            raise UpdateContactDetailsException(EditContactDetailsForm(form),
                                                 old_contact_details, response.status_code)
 
         logger.debug('Respondent details updated', respondent_id=respondent_id, status_code=response.status_code)
