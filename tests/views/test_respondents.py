@@ -70,7 +70,7 @@ class TestRespondents(unittest.TestCase):
     @requests_mock.mock()
     def test_search_respondent_by_email_no_respondent(self, mock_request):
         email = 'Jacky.Turner@email.com'
-        mock_request.get(get_respondent_by_email_url, json={"Response": "No respondent found"}, status_code=404)
+        mock_request.get(get_respondent_by_email_url, json={"Response": "No respondent found"}, status_code=200)
 
         response = self.app.post("/respondents/", data={"query": email}, follow_redirects=True)
 

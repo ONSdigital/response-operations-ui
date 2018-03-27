@@ -18,7 +18,7 @@ def search_respondent_by_email(email):
     url = f'{app.config["BACKSTAGE_API_URL"]}/v1/party/get-respondent-by-email'
     response = requests.get(url, json=request_json)
 
-    if response.status_code == 404:
+    if 'No respondent found' in response.text:
         return response.json()
 
     try:
