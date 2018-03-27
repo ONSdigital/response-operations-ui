@@ -1,7 +1,5 @@
 import unittest
 
-import requests_mock
-
 from config import TestingConfig
 from response_operations_ui import app
 
@@ -19,9 +17,3 @@ class TestRespondents(unittest.TestCase):
 
         self.assertEqual(response.status_code, 200)
         self.assertIn("Respondents".encode(), response.data)
-
-    
-
-
-
-
