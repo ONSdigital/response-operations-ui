@@ -14,7 +14,8 @@
         "id": "ff4537df-2097-4a73-a530-e98dba7bf28f",
         "lastName": "Employee"
       },
-      "@ru_id": {}
+      "@ru_id": {},
+      "sent_date": "2017-10-03 15:51:32.961321"
     },
     {
       "msg_id": "9ecfad50-2ff5-4bea-a997-d73c4faa73ae",
@@ -27,7 +28,8 @@
         "firstName": "ONS",
         "id": "ff4537df-2097-4a73-a530-e98dba7bf28f",
         "lastName": "Employee"
-      }
+      },
+      "sent_date": "2017-10-03 15:51:32.961321"
     }
   ]
 }

@@ -143,6 +143,7 @@ class TestSurvey(unittest.TestCase):
         # Check cached dictionary is preserved
         mock_request.get(url_get_survey_list, status_code=500)
         self.assertEqual(get_survey_short_name_by_id("cb0711c3-0ac8-41d3-ae0e-567e5ea1ef87"), "BRES")
+        self.assertEqual(get_survey_short_name_by_id("not_a_valid_survey_id"), None)
 
     @requests_mock.mock()
     def test_get_survey_short_name_by_id_fdi_surveys(self, mock_request):
