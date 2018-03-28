@@ -145,7 +145,7 @@
                   {{ respondent.telephone }}
                 </dd>
                 <div>
-                  <form action="{{ url_for('reporting_unit_bp.view_contact_details', ru_ref=ru.sampleUnitRef, respondent_id=respondent.id)}}" method="get">
+                  <form action="{{ url_for('reporting_unit_bp.view_contact_details', respondent_id=respondent.id, ru_ref=ru.sampleUnitRef)}}" method="get">
                   <a href=# id="edit-contact-details-btn-{{ survey.shortName }}" onclick="this.parentNode.submit()"> Edit contact details </a>
                   </form>
                 </div>
