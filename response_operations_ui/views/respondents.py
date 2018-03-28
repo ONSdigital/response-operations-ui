@@ -49,4 +49,5 @@ def respondent_details(respondent_id):
         }
     ]
 
+    respondent['status'] = respondent['status'].title()
     return render_template('respondent.html', respondent=respondent, breadcrumbs=breadcrumbs)
