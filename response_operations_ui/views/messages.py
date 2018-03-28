@@ -80,7 +80,7 @@ def view_conversation(thread_id):
                 _get_message_json(form,
                                   thread_id=refined_thread[0]['thread_id'])
             )
-            thread_url = url_for("messages_bp.view_conversation", thread_id=thread_id)
+            thread_url = url_for("messages_bp.view_conversation", thread_id=thread_id) + "#latest-message"
             flash(Markup(f'Message sent. <a href={thread_url}>View Message</a>'))
             return redirect(url_for('messages_bp.view_selected_survey', selected_survey=refined_thread[0]['survey']))
         except (ApiError, InternalError):

@@ -14,7 +14,7 @@
 {% block main %}
 
     {% if form.errors %}
-        <div class="panel panel--error">
+        <div class="panel panel--error col-7@m">
             <div class="panel__header">
                 {% if form.errors|length > 1 %}
                     <h1 class="panel__title venus">This page has {{ form.errors|length }} errors</h1>
@@ -45,7 +45,7 @@
 
     <h1 class="saturn" name="page-messages-title">{{ subject }}</h1>
     <div class="secure-message-conversation block">
-        <div class="secure-message-sent-message-meta">
+        <div class="secure-message-sent-message-meta u-mb-s">
              <div class="secure-message--meta venus"><span class="secure-message-conversation-meta__label">Survey: </span><span id="survey">{{ messages[0].get('survey') }} {{ messages[0].get('survey_ref') }}</span></div>
              <div class="secure-message--meta venus"><span class="secure-message-conversation-meta__label">RU Ref: </span><span id="ruref">{{ messages[0].get('ru_ref') }}</span></div>
              <div class="secure-message--meta venus"><span class="secure-message-conversation-meta__label">Business: </span><span id="ru">{{ messages[0].get('business_name') }}</span></div>
@@ -96,7 +96,6 @@
                                  cols=80) }}
                 </div>
                 <br />
-                <input class="btn btn--secondary" id="save_draft" name="save_draft" type="submit" value="Save Draft" />
                 <input class="btn" id="send-message-btn" name="send" type="submit" value="Send" />
                 <br />
             </form>
