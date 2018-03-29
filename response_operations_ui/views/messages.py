@@ -1,7 +1,9 @@
 import json
 import logging
+import pprint
+from contextlib import suppress
 
-from flask import Blueprint, flash, g, render_template, request, redirect, url_for
+from flask import Blueprint, flash, g, render_template, request, redirect, url_for, session
 from flask_login import login_required, current_user
 from structlog import wrap_logger
 
@@ -113,11 +115,23 @@ def _populate_form_details_from_hidden_fields(form):
     return form
 
 
-@messages_bp.route('/', methods=['GET', 'POST'])
+@messages_bp.route('/', methods=['GET'])
 @login_required
 def view_select_survey():
+    try:
+        selected_survey = session["messages_survey"]
+        return redirect(url_for("messages_bp.view_selected_survey",
+                                selected_survey=selected_survey))
+    except KeyError:
+        return redirect(url_for("messages_bp.select_survey"))
+
+
+@messages_bp.route('/select-survey', methods=['GET', 'POST'])
+@login_required
+def select_survey():
     breadcrumbs = [{"title": "Messages", "link": "/messages"},
                    {"title": "Filter by survey"}]
+    survey_list = [survey.value for survey in Surveys]
 
     if request.method == 'POST':
         selected_survey = request.form.get('radio-answer')
@@ -125,15 +139,19 @@ def view_select_survey():
             return redirect(url_for("messages_bp.view_selected_survey",
                                     selected_survey=selected_survey))
         else:
-            response_error = True
-    else:
-        response_error = False
+            return render_template("message_select_survey.html",
+                                   breadcrumbs=breadcrumbs,
+                                   selected_survey=None,
+                                   response_error=True,
+                                   survey_list=survey_list)
 
-    survey_list = [survey.value for survey in Surveys]
+    with suppress(KeyError):
+        del session['messages_survey']
+
     return render_template("message_select_survey.html",
                            breadcrumbs=breadcrumbs,
                            selected_survey=None,
-                           response_error=response_error,
+                           response_error=False,
                            survey_list=survey_list)
 
 
@@ -141,8 +159,8 @@ def view_select_survey():
 @login_required
 def view_selected_survey(selected_survey):
     formatted_survey = format_short_name(selected_survey)
+    session['messages_survey'] = selected_survey
     breadcrumbs = [{"title": formatted_survey + " Messages"}]
-
     try:
         if selected_survey == Surveys.FDI.value:
             survey_id = _get_FDI_survey_id()
