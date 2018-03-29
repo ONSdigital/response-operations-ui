@@ -383,7 +383,7 @@ class TestMessage(unittest.TestCase):
         self.assertIn("No Subject".encode(), response.data)
 
     def test_get_radio_buttons(self):
-        response = self.app.get("/messages")
+        response = self.app.get("/messages/select-survey")
 
         self.assertEqual(200, response.status_code)
         self.assertIn("Filter messages by survey".encode(), response.data)
@@ -395,7 +395,7 @@ class TestMessage(unittest.TestCase):
         mock_request.get(url_get_threads_list, json=thread_list)
         mock_request.get(url_get_surveys_list, json=self.surveys_list_json)
 
-        response = self.app.post("/messages", follow_redirects=True)
+        response = self.app.post("/messages/select-survey", follow_redirects=True)
 
         self.assertEqual(200, response.status_code)
         self.assertIn("Home".encode(), response.data)
