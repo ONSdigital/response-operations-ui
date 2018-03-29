@@ -410,3 +410,27 @@ class TestMessage(unittest.TestCase):
 
         self.assertEqual(response.status_code, 500)
         self.assertIn("Error 500 - Server error".encode(), response.data)
+
+    def test_get_messages_page_without_survey(self):
+        response = self.app.get("/messages", follow_redirects=True)
+
+        self.assertEqual(response.status_code, 200)
+        self.assertIn("Filter messages by survey".encode(), response.data)
+
+    @requests_mock.mock()
+    def test_get_messages_page_with_survey(self, mock_request):
+        mock_request.get(url_get_threads_list, json=thread_list)
+        mock_request.get(url_get_surveys_list, json=self.surveys_list_json)
+        mock_request.get(shortname_url + "/ASHE", json=ashe_info)
+
+        posts_survey_json = {"radio-answer": "ASHE"}
+
+        response = self.app.post("/messages/select-survey", follow_redirects=True, data=posts_survey_json)
+
+        self.assertEqual(response.status_code, 200)
+        self.assertIn("ASHE Messages".encode(), response.data)
+
+        response = self.app.get("/messages", follow_redirects=True)
+
+        self.assertEqual(response.status_code, 200)
+        self.assertIn("ASHE Messages".encode(), response.data)

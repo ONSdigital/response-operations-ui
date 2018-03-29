@@ -1,6 +1,5 @@
 import json
 import logging
-import pprint
 from contextlib import suppress
 
 from flask import Blueprint, flash, g, render_template, request, redirect, url_for, session
