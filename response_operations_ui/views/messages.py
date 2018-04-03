@@ -117,9 +117,8 @@ def _populate_form_details_from_hidden_fields(form):
 @login_required
 def view_select_survey():
     if "messages_survey_selection" in session:
-        selected_survey = session["messages_survey_selection"]
         return redirect(url_for("messages_bp.view_selected_survey",
-                                selected_survey=selected_survey))
+                                selected_survey=session["messages_survey_selection"]))
 
     return redirect(url_for("messages_bp.select_survey"))
 
