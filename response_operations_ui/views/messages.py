@@ -1,6 +1,5 @@
 import json
 import logging
-from contextlib import suppress
 
 from flask import Blueprint, flash, g, render_template, request, redirect, url_for, session
 from flask_login import login_required, current_user
@@ -117,12 +116,12 @@ def _populate_form_details_from_hidden_fields(form):
 @messages_bp.route('/', methods=['GET'])
 @login_required
 def view_select_survey():
-    try:
+    if "messages_survey_selection" in session:
         selected_survey = session["messages_survey_selection"]
         return redirect(url_for("messages_bp.view_selected_survey",
                                 selected_survey=selected_survey))
-    except KeyError:
-        return redirect(url_for("messages_bp.select_survey"))
+
+    return redirect(url_for("messages_bp.select_survey"))
 
 
 @messages_bp.route('/select-survey', methods=['GET', 'POST'])
@@ -143,9 +142,6 @@ def select_survey():
                                    selected_survey=None,
                                    response_error=True,
                                    survey_list=survey_list)
-
-    with suppress(KeyError):
-        del session['messages_survey_selection']
 
     return render_template("message_select_survey.html",
                            breadcrumbs=breadcrumbs,
