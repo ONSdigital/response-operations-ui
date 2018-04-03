@@ -118,7 +118,7 @@ def _populate_form_details_from_hidden_fields(form):
 @login_required
 def view_select_survey():
     try:
-        selected_survey = session["messages_survey"]
+        selected_survey = session["messages_survey_selection"]
         return redirect(url_for("messages_bp.view_selected_survey",
                                 selected_survey=selected_survey))
     except KeyError:
@@ -145,7 +145,7 @@ def select_survey():
                                    survey_list=survey_list)
 
     with suppress(KeyError):
-        del session['messages_survey']
+        del session['messages_survey_selection']
 
     return render_template("message_select_survey.html",
                            breadcrumbs=breadcrumbs,
@@ -158,7 +158,7 @@ def select_survey():
 @login_required
 def view_selected_survey(selected_survey):
     formatted_survey = format_short_name(selected_survey)
-    session['messages_survey'] = selected_survey
+    session['messages_survey_selection'] = selected_survey
     breadcrumbs = [{"title": formatted_survey + " Messages"}]
     try:
         if selected_survey == Surveys.FDI.value:
