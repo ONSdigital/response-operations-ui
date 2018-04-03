@@ -423,9 +423,9 @@ class TestMessage(unittest.TestCase):
         mock_request.get(url_get_surveys_list, json=self.surveys_list_json)
         mock_request.get(shortname_url + "/ASHE", json=ashe_info)
 
-        posts_survey_json = {"radio-answer": "ASHE"}
+        posts_survey = {"radio-answer": "ASHE"}
 
-        response = self.app.post("/messages/select-survey", follow_redirects=True, data=posts_survey_json)
+        response = self.app.post("/messages/select-survey", follow_redirects=True, data=posts_survey)
 
         self.assertEqual(response.status_code, 200)
         self.assertIn("ASHE Messages".encode(), response.data)
