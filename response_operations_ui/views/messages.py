@@ -1,7 +1,7 @@
 import json
 import logging
 
-from flask import Blueprint, flash, g, Markup, render_template, request, redirect, url_for, session
+from flask import Blueprint, flash, g, Markup, render_template, request, redirect, session, url_for
 
 from flask_login import login_required, current_user
 from structlog import wrap_logger
@@ -122,16 +122,14 @@ def select_survey():
             return redirect(url_for("messages_bp.view_selected_survey",
                                     selected_survey=selected_survey))
         else:
-            return render_template("message_select_survey.html",
-                                   breadcrumbs=breadcrumbs,
-                                   selected_survey=None,
-                                   response_error=True,
-                                   survey_list=survey_list)
+            response_error = True
+    else:
+        response_error = False
 
     return render_template("message_select_survey.html",
                            breadcrumbs=breadcrumbs,
                            selected_survey=None,
-                           response_error=False,
+                           response_error=response_error,
                            survey_list=survey_list)
 
 
