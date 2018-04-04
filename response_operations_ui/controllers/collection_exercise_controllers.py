@@ -32,13 +32,14 @@ def execute_collection_exercise(short_name, period):
     return False
 
 
-def update_collection_exercise_user_description(collection_exercise_id, user_description):
+def update_collection_exercise_details(collection_exercise_id, user_description, period):
     logger.debug('Updating collection exercise details', collection_exercise_id=collection_exercise_id)
     url = f'{app.config["BACKSTAGE_API_URL"]}/v1/collection-exercise/update-collection-exercise-details/' \
           f'{collection_exercise_id}'
 
     collection_exercise_details = {
-        "user_description": user_description
+        "user_description": user_description,
+        "period": period
     }
 
     response = requests.put(url, json=collection_exercise_details)

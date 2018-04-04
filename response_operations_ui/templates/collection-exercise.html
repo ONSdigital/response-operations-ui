@@ -310,6 +310,9 @@
                 {{ce.exerciseRef}}
               </td>
               <td class="table--cell tbl-ce-">
+                <form action="{{ url_for('collection_exercise_bp.view_collection_exercise_details', short_name=survey.shortName, period=ce.exerciseRef, surveyRef=survey.surveyRef)}}" method="get">
+                  <a class="edit-icon" href=# id="edit-collection-exercise-period" onclick="this.parentNode.submit()"></a>
+                </form>
               </td>
             </tr>
 
@@ -322,7 +325,7 @@
               </td>
               <td class="table--cell tbl-ce-">
                 <form action="{{ url_for('collection_exercise_bp.view_collection_exercise_details', short_name=survey.shortName, period=ce.exerciseRef, surveyRef=survey.surveyRef)}}" method="get">
-                  <a class="edit-icon" href=# id="edit-collection-exercise-details" onclick="this.parentNode.submit()"></a>
+                  <a class="edit-icon" href=# id="edit-collection-exercise-user-description" onclick="this.parentNode.submit()"></a>
                 </form>
               </td>
             </tr>

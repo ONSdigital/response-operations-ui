@@ -228,6 +228,7 @@ def view_collection_exercise_details(short_name, period):
 
     return render_template('edit-collection-exercise-details.html', survey_ref=ce_details['survey']['surveyRef'],
                            form=form, short_name=short_name, period=period,
+                           user_description=ce_details['collection_exercise']['userDescription'],
                            collection_exercise_id=ce_details['collection_exercise']['id'])
 
 
@@ -236,7 +237,8 @@ def view_collection_exercise_details(short_name, period):
 def edit_collection_exercise_details(short_name, period):
     form = request.form
 
-    collection_exercise_controllers.update_collection_exercise_user_description(form.get('collection_exercise_id'),
-                                                                                form.get('user_description'))
+    collection_exercise_controllers.update_collection_exercise_details(form.get('collection_exercise_id'),
+                                                                       form.get('user_description'),
+                                                                       form.get('period'))
 
-    return redirect(url_for('collection_exercise_bp.view_collection_exercise', short_name=short_name, period=period))
+    return redirect(url_for('surveys_bp.view_survey', short_name=short_name, period=period))
