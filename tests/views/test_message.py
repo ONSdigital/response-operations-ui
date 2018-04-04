@@ -5,6 +5,7 @@ import requests_mock
 
 from config import TestingConfig
 from response_operations_ui import app
+from response_operations_ui.views.messages import _get_to_id
 from response_operations_ui.controllers.message_controllers import _get_url, send_message
 from response_operations_ui.exceptions.exceptions import InternalError
 from response_operations_ui.views.messages import _get_unread_status
@@ -410,3 +411,15 @@ class TestMessage(unittest.TestCase):
 
         self.assertEqual(response.status_code, 500)
         self.assertIn("Error 500 - Server error".encode(), response.data)
+
+    def test_get_to_id(self):
+        with open('tests/test_data/message/threads.json') as fp:
+            conversation = json.load(fp)
+        self.assertEqual(conversation['messages'][0]['msg_to'][0],
+                         _get_to_id(conversation['messages'][0]))
+
+    def test_get_to_id_index_error(self):
+        with open('tests/test_data/message/threads.json') as fp:
+            conversation = json.load(fp)
+        del conversation['messages'][0]['msg_to'][0]
+        self.assertEqual(None, _get_to_id(conversation['messages'][0]))
