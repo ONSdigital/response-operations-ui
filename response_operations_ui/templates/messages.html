@@ -6,7 +6,7 @@
 
 <div role="main" id="main" class="page__main">
   {% if change_survey %}
-    <h1 class="jupiter" name="page-messages-title">{{ selected_survey }} Messages
+    <h1 class="saturn u-mb-l" name="page-messages-title">{{ selected_survey }} Messages
       <span class="mars">(<a id="change-survey" href="/messages">Change survey</a>)</span>
     </h1>
 
@@ -72,14 +72,19 @@
           </thead>
               <tbody>
               {% for message in messages %}
-               <tr class="table--row table--row__selectable">
-                <td name="tbl-messages-RU_Ref" class="message-list__ru-ref" id="ru-ref-{{ loop.index }}">
+                {% if message.unread %}
+                   <tr name="message-unread" class="table--row table--row__selectable message-list__item--unread" id="message-{{ loop.index }}">
+                    <td name="tbl-messages-RU_Ref" class="message-list__ru-ref circle-icon" id="ru-ref-{{ loop.index }}">
+                {% else %}
+                   <tr name="message" class="table--row table--row__selectable" id="message-{{ loop.index }}">
+                    <td name="tbl-messages-RU_Ref" class="message-list__ru-ref" id="ru-ref-{{ loop.index }}">
+                {% endif %}
                     {{ message.ru_ref or 'Unavailable' }}
                 </td>
                 <td name="tbl-messages-business" class="message-list__ru-name" id="business-name-{{ loop.index }}">
                     {{ message.business_name or 'Unavailable' }}
                 </td>
-                <td name="tbl-messages-subject" class="table--cell tbl-messages-subject">
+                <td name="tbl-messages-subject" class="message-list__subject">
                     <a href="{{ url_for('messages_bp.view_conversation', thread_id=message.thread_id) }}#latest-message" id="message-link-{{ loop.index }}">{{ message.subject }}</a>
                 </td>
                 <td name="tbl-messages-from" class="message-list__from" id="message-from-{{ loop.index }}">

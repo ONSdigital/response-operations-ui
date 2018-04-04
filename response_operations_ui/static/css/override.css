@@ -499,15 +499,15 @@ background: #eee;
 }
 
 .message-list__ru-name{
-  width: 16rem;
-  max-width: 22rem;
+  width: 10rem;
+  max-width: 12rem;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
 }
 
 .message-list__subject{
-  max-width: 200px;
+  max-width: 12px;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -515,7 +515,7 @@ background: #eee;
 
 .message-list__from{
   width: 10rem;
-  max-width: 16rem;
+  max-width: 12rem;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -771,7 +771,7 @@ textarea.secure-message--message{
   color: #D0021B;
 }
 
-.circle:before {
+.circle-icon:before {
   content: ' \25CF';
   font-size: 16px;
   color: #4263C2;
@@ -787,4 +787,14 @@ textarea.secure-message--message{
 a.sign-out,
 a.sign-out:hover {
   color :#fff;
+}
+
+button{
+     background:none;
+     color: #4263c2;
+     border:none;
+     padding:0;
+     font: inherit;
+     border-bottom:1px solid #4263c2;
+     cursor: pointer;
 }

@@ -1,10 +1,10 @@
+from json import JSONDecodeError
 import logging
 
-import requests
 from flask import current_app, session
 from flask_login import current_user
+import requests
 from requests.exceptions import HTTPError, RequestException
-from json import JSONDecodeError
 from structlog import wrap_logger
 
 from response_operations_ui.exceptions.exceptions import ApiError, NoMessagesError, InternalError
@@ -67,6 +67,20 @@ def send_message(message_json):
     except HTTPError as ex:
         logger.exception("Message sending failed due to API Error")
         raise ApiError(ex.response)
+
+
+def remove_unread_label(message_id):
+    url = f'{current_app.config["BACKSTAGE_API_URL"]}/v1/secure-message/update-label/{message_id}'
+    data = '{"label": "UNREAD", "action": "remove"}'
+
+    logger.debug("Removing message unread label", message_id=message_id)
+    response = requests.put(url, headers={"Authorization": _get_jwt(), "Content-Type": "application/json"}, data=data)
+
+    try:
+        response.raise_for_status()
+        logger.debug("Successfully removed unread label", message_id=message_id)
+    except HTTPError:
+        logger.exception("Failed to remove unread label", message_id=message_id)
 
 
 def _post_new_message(message):
