@@ -59,12 +59,14 @@
 
                   <br>
 
+                {% if ce_state != 'READY_FOR_LIVE' and ce_state != 'LIVE' %}
                 <div class="field u-mb-l">
                   <label class="label" for="period">
                     Period
                   </label>
                   {{ form.period(class_="input input--text", id='period', required=required, maxlength=254, value=period) }}
                 </div>
+                {% endif %}
 
                 <div class="field u-mb-l">
                   <label class="label" for="user_description">
