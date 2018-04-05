@@ -22,6 +22,7 @@ def convert_events_to_new_format(events):
         formatted_events[event['tag']] = {
             "day": day,
             "date": date,
+            "month": str(date_time.month) if len(str(date_time.month)) == 2 else f"0{date_time.month}",
             "time": time
         }
     return formatted_events

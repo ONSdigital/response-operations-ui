@@ -94,7 +94,10 @@ def update_event_date(short_name, period, tag, errors=None):
     date_restriction_text = _get_date_restriction_text(tag, formatted_events)
 
     form = UpdateEventDateForm(day=formatted_events[tag]['date'][:2],
-                               year=formatted_events[tag]['date'][-4:])
+                               month=formatted_events[tag]['month'],
+                               year=formatted_events[tag]['date'][-4:],
+                               hour=formatted_events[tag]['time'][:2],
+                               minute=formatted_events[tag]['time'][2:4])
     return render_template('update-event-date.html',
                            form=form,
                            ce=ce_details['collection_exercise'],
@@ -113,7 +116,7 @@ def update_event_date_submit(short_name, period, tag):
         return update_event_date(short_name, period, tag, errors=form.errors)
 
     day = form.day.data if not len(form.day.data) == 1 else f"0{form.day.data}"
-    timestamp_string = f"{form.year.data}{form.month.data}{day}T{form.hours.data}{form.minutes.data}"
+    timestamp_string = f"{form.year.data}{form.month.data}{day}T{form.hour.data}{form.minute.data}"
     timestamp = iso8601.parse_date(timestamp_string)
     updated = collection_exercise_controllers.update_event(short_name, period, tag, timestamp)
     if not updated:
