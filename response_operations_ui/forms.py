@@ -74,4 +74,8 @@ class UpdateEventDateForm(FlaskForm):
     year = IntegerField('year',
                         validators=[InputRequired(message="Please enter year"),
                                     NumberRange(min=2017, max=2999, message="Please enter a valid year")])
+    HOURS = [(hour, hour) for hour in ['01', '02', '03', '04', '05', '06', '07', '08', '09', '10', '11', '12']]
+    hours = SelectField('hours', choices=HOURS)
     submit = SubmitField('Save')
+    MINUTES = [('00', '00'), ('15', '15'), ('30', '30'), ('45', '45')]
+    minutes = SelectField('minutes', choices=MINUTES)
