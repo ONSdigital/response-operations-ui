@@ -87,7 +87,7 @@ def post_collection_exercise(short_name, period):
 
 
 @collection_exercise_bp.route('/<short_name>/<period>/event/<tag>', methods=['GET'])
-def update_event_date(short_name, period, tag):
+def update_event_date(short_name, period, tag, errors=None):
     ce_details = collection_exercise_controllers.get_collection_exercise_event_page_info(short_name, period)
     event_name = _get_event_name(tag)
     formatted_events = convert_events_to_new_format(ce_details['events'])
@@ -101,16 +101,23 @@ def update_event_date(short_name, period, tag):
                            survey=ce_details['survey'],
                            event_name=event_name,
                            event_date=formatted_events[tag],
-                           date_restriction_text=date_restriction_text)
+                           date_restriction_text=date_restriction_text,
+                           errors=errors)
 
 
 @collection_exercise_bp.route('/<short_name>/<period>/event/<tag>', methods=['POST'])
 def update_event_date_submit(short_name, period, tag):
     form = UpdateEventDateForm(form=request.form)
-    if form.validate():
-        timestamp_string = f"{form.year.data}{form.month.data}{form.day.data}T{form.hours.data}{form.minutes.data}"
-        timestamp = iso8601.parse_date(timestamp_string)
-        collection_exercise_controllers.update_event(short_name, period, tag, timestamp)
+
+    if not form.validate():
+        return update_event_date(short_name, period, tag, errors=form.errors)
+
+    timestamp_string = f"{form.year.data}{form.month.data}{form.day.data}T{form.hours.data}{form.minutes.data}"
+    timestamp = iso8601.parse_date(timestamp_string)
+    updated = collection_exercise_controllers.update_event(short_name, period, tag, timestamp)
+    if not updated:
+        return update_event_date(short_name, period, tag, errors=True)
+
     return view_collection_exercise(short_name, period)
 
 

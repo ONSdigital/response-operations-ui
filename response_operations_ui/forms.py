@@ -1,9 +1,10 @@
+import calendar
 import logging
 
 from flask_wtf import FlaskForm
 from structlog import wrap_logger
 from wtforms import HiddenField, IntegerField, Label, PasswordField, \
-    SelectField, StringField, SubmitField, TextAreaField
+    SelectField, StringField, SubmitField, TextAreaField, ValidationError
 from wtforms.validators import InputRequired, Length, NumberRange
 
 logger = wrap_logger(logging.getLogger(__name__))
@@ -64,18 +65,27 @@ class ChangeGroupStatusForm(FlaskForm):
 
 
 class UpdateEventDateForm(FlaskForm):
-    day = IntegerField('day',
-                       validators=[InputRequired(message="Please enter day"),
-                                   NumberRange(min=1, max=31, message="Please enter a number between 1 and 31")])
+    day = StringField('day',
+                      validators=[InputRequired(message="Please enter day"),
+                                  Length(min=2, max=2, message="Please enter a 2 digit number")])
+
     MONTHS = [('01', 'January'), ('02', 'February'), ('03', 'March'), ('04', 'April'),
               ('05', 'May'), ('06', 'June'), ('07', 'July'), ('08', 'August'),
               ('09', 'September'), ('10', 'October'), ('11', 'November'), ('12', 'December')]
     month = SelectField('month', choices=MONTHS)
-    year = IntegerField('year',
-                        validators=[InputRequired(message="Please enter year"),
-                                    NumberRange(min=2017, max=2999, message="Please enter a valid year")])
+
+    year = StringField('year',
+                       validators=[InputRequired(message="Please enter year"),
+                                   Length(min=4, max=4, message="Please enter a 4 digit number")])
+
     HOURS = [(hour, hour) for hour in ['01', '02', '03', '04', '05', '06', '07', '08', '09', '10', '11', '12']]
     hours = SelectField('hours', choices=HOURS)
-    submit = SubmitField('Save')
+
     MINUTES = [('00', '00'), ('15', '15'), ('30', '30'), ('45', '45')]
     minutes = SelectField('minutes', choices=MINUTES)
+    submit = SubmitField('Save')
+
+    def validate_day(form, field):
+        days_in_month = calendar.monthrange(int(form.year.data), int(form.month.data))[1]
+        if int(field.data) < 1 or int(field.data) > days_in_month:
+            raise ValidationError('Day out of range for month')
