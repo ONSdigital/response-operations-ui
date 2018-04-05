@@ -8,6 +8,7 @@ from structlog import wrap_logger
 from response_operations_ui.common.mappers import convert_events_to_new_format, map_collection_exercise_state
 from response_operations_ui.controllers import collection_exercise_controllers
 from response_operations_ui.controllers import collection_instrument_controllers, sample_controllers
+from response_operations_ui.forms import UpdateEventDateForm
 
 logger = wrap_logger(logging.getLogger(__name__))
 
@@ -82,6 +83,33 @@ def post_collection_exercise(short_name, period):
         return _set_ready_for_live(short_name, period)
     elif 'select-ci' in request.form:
         return _select_collection_instrument(short_name, period)
+    return view_collection_exercise(short_name, period)
+
+
+@collection_exercise_bp.route('/<short_name>/<period>/event/<tag>', methods=['GET'])
+def update_event_date(short_name, period, tag):
+    ce_details = collection_exercise_controllers.get_collection_exercise_event_page_info(short_name, period)
+    event_name = _get_event_name(tag)
+    formatted_events = convert_events_to_new_format(ce_details['events'])
+    date_restriction_text = _get_date_restriction_text(tag, formatted_events)
+
+    form = UpdateEventDateForm(day=formatted_events[tag]['date'][:2],
+                               year=formatted_events[tag]['date'][-4:])
+    return render_template('update-event-date.html',
+                           form=form,
+                           ce=ce_details['collection_exercise'],
+                           survey=ce_details['survey'],
+                           event_name=event_name,
+                           event_date=formatted_events[tag],
+                           date_restriction_text=date_restriction_text)
+
+
+@collection_exercise_bp.route('/<short_name>/<period>/event/<tag>', methods=['POST'])
+def update_event_date_submit(short_name, period, tag):
+    form = UpdateEventDateForm(form=request.form)
+    if form.validate():
+        timestamp = iso8601.parse_date(f"{form.year.data}{form.month.data}{form.day.data}")
+        collection_exercise_controllers.update_event(short_name, period, tag, timestamp)
     return view_collection_exercise(short_name, period)
 
 
@@ -216,3 +244,22 @@ def _format_ci_file_name(collection_instruments, survey_details):
 def _get_form_type(file_name):
     file_name = file_name.split(".")[0]
     return file_name.split("_")[2]  # file name format is surveyId_period_formType
+
+
+def _get_event_name(tag):
+    event_names = {
+        "mps": "Main print selection",
+        "go_live": "Go Live",
+        "return_by": "Return by"
+    }
+    return event_names.get(tag)
+
+
+def _get_date_restriction_text(tag, events):
+    date_restriction_text = {
+        "mps": [f"Must be before Go Live {events['go_live']['day']} {events['go_live']['date']} {events['go_live']['time']}"],
+        "go_live": [f"Must be before Return by {events['return_by']['day']} {events['return_by']['date']} {events['return_by']['time']}",
+                    f"Must be after MPS {events['mps']['day']} {events['mps']['date']} {events['mps']['time']}"],
+        "return_by": [f"Must be after Go Live {events['go_live']['day']} {events['go_live']['date']} {events['go_live']['time']}"]
+    }
+    return date_restriction_text[tag]

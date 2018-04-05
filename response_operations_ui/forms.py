@@ -2,8 +2,9 @@ import logging
 
 from flask_wtf import FlaskForm
 from structlog import wrap_logger
-from wtforms import HiddenField, Label, PasswordField, StringField, SubmitField, TextAreaField
-from wtforms.validators import InputRequired, Length
+from wtforms import HiddenField, IntegerField, Label, PasswordField, \
+    SelectField, StringField, SubmitField, TextAreaField
+from wtforms.validators import InputRequired, Length, NumberRange
 
 logger = wrap_logger(logging.getLogger(__name__))
 
@@ -60,3 +61,17 @@ class EditContactDetailsForm(FlaskForm):
 class ChangeGroupStatusForm(FlaskForm):
     event = StringField('event')
     submit = SubmitField('Confirm')
+
+
+class UpdateEventDateForm(FlaskForm):
+    day = IntegerField('day',
+                       validators=[InputRequired(message="Please enter day"),
+                                   NumberRange(min=1, max=31, message="Please enter a number between 1 and 31")])
+    MONTHS = [('01', 'January'), ('02', 'February'), ('03', 'March'), ('04', 'April'),
+              ('05', 'May'), ('06', 'June'), ('07', 'July'), ('08', 'August'),
+              ('09', 'September'), ('10', 'October'), ('11', 'November'), ('12', 'December')]
+    month = SelectField('month', choices=MONTHS)
+    year = IntegerField('year',
+                        validators=[InputRequired(message="Please enter year"),
+                                    NumberRange(min=2017, max=2999, message="Please enter a valid year")])
+    submit = SubmitField('Save')
