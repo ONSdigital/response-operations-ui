@@ -38,7 +38,7 @@ def update_event(short_name, period, tag, timestamp):
     logger.debug('Updating event date',
                  short_name=short_name, period=period, tag=tag)
     url = f'{app.config["BACKSTAGE_API_URL"]}/v1/collection-exercise/{short_name}/{period}/update-events/{tag}'
-    formatted_timestamp = timestamp.strftime('%Y-%m-%dT00:00:00.000+0000')
+    formatted_timestamp = timestamp.strftime('%Y-%m-%dT%H:%M:00.000+0000')
     response = requests.put(url, json={'timestamp': formatted_timestamp})
     if response.status_code != 201:
         raise ApiError(response)

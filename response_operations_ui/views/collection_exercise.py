@@ -108,7 +108,8 @@ def update_event_date(short_name, period, tag):
 def update_event_date_submit(short_name, period, tag):
     form = UpdateEventDateForm(form=request.form)
     if form.validate():
-        timestamp = iso8601.parse_date(f"{form.year.data}{form.month.data}{form.day.data}")
+        timestamp_string = f"{form.year.data}{form.month.data}{form.day.data}T{form.hours.data}{form.minutes.data}"
+        timestamp = iso8601.parse_date(timestamp_string)
         collection_exercise_controllers.update_event(short_name, period, tag, timestamp)
     return view_collection_exercise(short_name, period)
 
