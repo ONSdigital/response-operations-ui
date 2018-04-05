@@ -67,7 +67,7 @@ class ChangeGroupStatusForm(FlaskForm):
 class UpdateEventDateForm(FlaskForm):
     day = StringField('day',
                       validators=[InputRequired(message="Please enter day"),
-                                  Length(min=2, max=2, message="Please enter a 2 digit number")])
+                                  Length(min=1, max=2, message="Please enter a one or 2 digit number")])
 
     MONTHS = [('01', 'January'), ('02', 'February'), ('03', 'March'), ('04', 'April'),
               ('05', 'May'), ('06', 'June'), ('07', 'July'), ('08', 'August'),

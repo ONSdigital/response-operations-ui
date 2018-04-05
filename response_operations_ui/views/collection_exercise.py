@@ -112,7 +112,8 @@ def update_event_date_submit(short_name, period, tag):
     if not form.validate():
         return update_event_date(short_name, period, tag, errors=form.errors)
 
-    timestamp_string = f"{form.year.data}{form.month.data}{form.day.data}T{form.hours.data}{form.minutes.data}"
+    day = form.day.data if not len(form.day.data) == 1 else f"0{form.day.data}"
+    timestamp_string = f"{form.year.data}{form.month.data}{day}T{form.hours.data}{form.minutes.data}"
     timestamp = iso8601.parse_date(timestamp_string)
     updated = collection_exercise_controllers.update_event(short_name, period, tag, timestamp)
     if not updated:
