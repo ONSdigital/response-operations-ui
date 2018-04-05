@@ -47,4 +47,3 @@ def update_collection_exercise_details(collection_exercise_id, user_description,
         raise ApiError(response)
 
     logger.debug('Successfully updated collection exercise details', collection_exercise_id=collection_exercise_id)
-    return 200

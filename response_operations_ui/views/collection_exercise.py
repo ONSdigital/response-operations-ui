@@ -223,11 +223,12 @@ def _get_form_type(file_name):
 @login_required
 def view_collection_exercise_details(short_name, period):
     ce_details = collection_exercise_controllers.get_collection_exercise(short_name, period)
-
     form = EditCollectionExerciseDetailsForm(form=request.form)
+    ce_state = ce_details['collection_exercise']['state']
+    show_edit_period = ce_state not in ('READY_FOR_LIVE', 'LIVE')
 
     return render_template('edit-collection-exercise-details.html', survey_ref=ce_details['survey']['surveyRef'],
-                           form=form, short_name=short_name, period=period,
+                           form=form, short_name=short_name, period=period, show_edit_period=show_edit_period,
                            ce_state=ce_details['collection_exercise']['state'],
                            user_description=ce_details['collection_exercise']['userDescription'],
                            collection_exercise_id=ce_details['collection_exercise']['id'])

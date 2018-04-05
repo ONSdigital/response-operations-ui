@@ -1,103 +1,50 @@
-
-<html dir="ltr" lang="en-gb">
-<head>
-
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, shrink-to-fit=no">
-
-  <title>Edit collection exercise details</title>
-
-  <link rel=stylesheet type=text/css href="https://cdn.ons.gov.uk/sdc/322aece/css/styles.css">
-  {% assets "scss_all" %}
-  <link rel=stylesheet type=text/css href="{{ ASSET_URL }}">
-  {% endassets %}
-
-  <link href="/static/images/favicon.ico" rel="Shortcut Icon" />
-
-</head>
-
-<body class="spoke">
-
-<div class="page">
-
-  <div class="page__content">
-
-    <div class="container page__container">
-
-      <div class="grid">
-        <div class="grid__col col-3@l">
-        </div>
-
-        <div class="grid__col col-6@l">
-
-          <div role="main" id="main" class="page__main">
-
-
-            <div class="spoke__header">
-
-              <div class="spoke__header__title">
-
-                <h1 class="jupiter">Edit collection exercise details</h1>
-
-              </div>
-
-            </div>
-
-            <div class="spoke__body">
-
-              <form action="" method="post">
-                {{ form.csrf_token }}
-                <div class="field u-mb-l">
-
-                  <label class="label" for="Survey">
-                    Survey:
-                    <span class="u-vh">Current value: </span>
-                      <span class="mars">
-                        {{ survey_ref }} {{ short_name }}
-                      </span>
-                  </label>
-
-                  <br>
-
-                {% if ce_state != 'READY_FOR_LIVE' and ce_state != 'LIVE' %}
-                <div class="field u-mb-l">
-                  <label class="label" for="period">
-                    Period
-                  </label>
-                  {{ form.period(class_="input input--text", id='period', required=required, maxlength=254, value=period) }}
-                </div>
-                {% endif %}
-
-                <div class="field u-mb-l">
-                  <label class="label" for="user_description">
-                    Period as shown to respondent
-                  </label>
-                  {{ form.user_description(class_="input input--text", id='user_description', required=required, maxlength=254, value=user_description) }}
-                </div>
-
-                  <div class="field u-mb-l">
-                    <span class="u-vh">Current value: </span>
-                    </span>
-                    {{ form.collection_exercise_id(value=collection_exercise_id, id='collection_exercise_id') }}
-                  </div>
-                </div>
-
-                <button class="btn btn--primary u-mt-s" id="save-btn">Save</button>
-
-              <div>
-                <a id="cancel-btn" href="{{ url_for('collection_exercise_bp.view_collection_exercise', short_name=short_name, period=period) }}">Cancel</a>
-              </div>
-            </form>
-
-            </div>
-          </div>
-        </div>
-
-        <div class="grid__col col-3@l">
-        </div>
+{% extends "layouts/spoke.html" %}
+{% block page_title %} Edit collection exercise details {% endblock %}
+{% block main %}
+  <div role="main" id="main" class="page__main">
+    <div class="spoke__header">
+      <div class="spoke__header__title">
+        <h1 class="jupiter">Edit collection exercise details</h1>
       </div>
     </div>
+    <div class="spoke__body">
+      <form action="" method="post">
+        {{ form.csrf_token }}
+        <div class="field u-mb-l">
+          <label class="label" for="Survey">
+            Survey:
+            <span class="u-vh">Current value: </span>
+              <span class="mars">
+                {{ survey_ref }} {{ short_name }}
+              </span>
+          </label>
+          <br>
+        {% if show_edit_period %}
+        <div class="field u-mb-l">
+          <label class="label" for="period">
+            Period
+          </label>
+          {{ form.period(class_="input input--text", id='period', required=required, maxlength=254, value=period) }}
+        </div>
+        {% endif %}
+        <div class="field u-mb-l">
+          <label class="label" for="user_description">
+            Period as shown to respondent
+          </label>
+          {{ form.user_description(class_="input input--text", id='user_description', required=required, maxlength=254, value=user_description) }}
+        </div>
+          <div class="field u-mb-l">
+            <span class="u-vh">Current value: </span>
+            </span>
+            {{ form.collection_exercise_id(value=collection_exercise_id, id='collection_exercise_id') }}
+          </div>
+        </div>
+        <button class="btn btn--primary u-mt-s" id="save-btn">Save</button>
+      <div>
+        <a id="cancel-btn" href="{{ url_for('collection_exercise_bp.view_collection_exercise', short_name=short_name, period=period) }}">Cancel</a>
+      </div>
+    </form>
+    </div>
   </div>
-</div>
-</body>
-</html>
+{% endblock %}
+
