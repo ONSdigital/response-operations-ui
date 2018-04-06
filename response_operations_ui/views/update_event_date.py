@@ -17,6 +17,7 @@ logger = wrap_logger(logging.getLogger(__name__))
 @collection_exercise_bp.route('/<short_name>/<period>/event/<tag>', methods=['GET'])
 @login_required
 def update_event_date(short_name, period, tag, errors=None):
+    errors = request.args.get('errors') if not errors else errors
     ce_details = collection_exercise_controllers.get_collection_exercise_event_page_info(short_name, period)
     event_name = _get_event_name(tag)
     formatted_events = convert_events_to_new_format(ce_details['events'])
