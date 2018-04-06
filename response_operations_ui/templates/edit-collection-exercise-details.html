@@ -1,24 +1,24 @@
 {% extends "layouts/spoke.html" %}
 {% block page_title %} Edit collection exercise details {% endblock %}
 {% block main %}
-  <div role="main" id="main" class="page__main">
-    <div class="spoke__header">
-      <div class="spoke__header__title">
-        <h1 class="jupiter">Edit collection exercise details</h1>
-      </div>
+<div role="main" id="main" class="page__main">
+  <div class="spoke__header">
+    <div class="spoke__header__title">
+      <h1 class="jupiter">Edit collection exercise details</h1>
     </div>
-    <div class="spoke__body">
-      <form action="" method="post">
-        {{ form.csrf_token }}
-        <div class="field u-mb-l">
-          <label class="label" for="Survey">
-            Survey:
-            <span class="u-vh">Current value: </span>
-              <span class="mars">
+  </div>
+  <div class="spoke__body">
+    <form action="" method="post">
+      {{ form.csrf_token }}
+      <div class="field u-mb-l">
+        <label class="label" for="Survey">
+          Survey:
+          <span class="u-vh">Current value: </span>
+          <span class="mars">
                 {{ survey_ref }} {{ short_name }}
               </span>
-          </label>
-          <br>
+        </label>
+        <br>
         {% if show_edit_period %}
         <div class="field u-mb-l">
           <label class="label" for="period">
@@ -33,18 +33,18 @@
           </label>
           {{ form.user_description(class_="input input--text", id='user_description', required=required, maxlength=254, value=user_description) }}
         </div>
-          <div class="field u-mb-l">
-            <span class="u-vh">Current value: </span>
-            </span>
-            {{ form.collection_exercise_id(value=collection_exercise_id, id='collection_exercise_id') }}
-          </div>
+        <div class="field u-mb-l">
+          <span class="u-vh">Current value: </span>
+          </span>
+          {{ form.collection_exercise_id(value=collection_exercise_id, id='collection_exercise_id') }}
         </div>
-        <button class="btn btn--primary u-mt-s" id="save-btn">Save</button>
+      </div>
+      <button class="btn btn--primary u-mt-s" id="save-btn">Save</button>
       <div>
         <a id="cancel-btn" href="{{ url_for('collection_exercise_bp.view_collection_exercise', short_name=short_name, period=period) }}">Cancel</a>
       </div>
     </form>
-    </div>
   </div>
+</div>
 {% endblock %}
 

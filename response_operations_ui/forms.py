@@ -62,12 +62,6 @@ class EditCollectionExerciseDetailsForm(FlaskForm):
     period = StringField('period')
     collection_exercise_id = HiddenField('collection_exercise_id')
 
-    def __init__(self, form, default_values=None):
-        super().__init__(form)
-        if default_values:
-            self.user_description.data = default_values.get('user_description')
-            self.period.data = default_values.get('period')
-
 
 class ChangeGroupStatusForm(FlaskForm):
     event = StringField('event')
