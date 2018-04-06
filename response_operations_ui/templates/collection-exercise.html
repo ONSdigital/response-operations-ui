@@ -101,11 +101,13 @@
                 {{events.mps.day}} <em>{{events.mps.date}}</em> {{events.mps.time}}
                 {% endif %}
               </td>
+              {% if not ce.state == 'Live' and not ce.state == 'Ready for live' %}
               <td class="table--cell tbl-ce-">
                 <form action="{{ url_for('collection_exercise_bp.update_event_date', short_name=survey.shortName, period=ce.exerciseRef, tag='mps')}}" method="get">
                   <a class="edit-icon" href=# id="edit-event-date-mps" onclick="this.parentNode.submit()"></a>
                 </form>
               </td>
+              {% endif %}
             </tr>
 
             <tr class="table--row">
@@ -117,11 +119,13 @@
                 {{events.go_live.day}} <em>{{events.go_live.date}}</em> {{events.go_live.time}}
                 {% endif %}
               </td>
+              {% if not ce.state == 'Live' and not ce.state == 'Ready for live' %}
               <td class="table--cell tbl-ce-">
                 <form action="{{ url_for('collection_exercise_bp.update_event_date', short_name=survey.shortName, period=ce.exerciseRef, tag='go_live')}}" method="get">
                   <a class="edit-icon" href=# id="edit-event-date-go-live" onclick="this.parentNode.submit()"></a>
                 </form>
               </td>
+              {% endif %}
             </tr>
 
             <tr class="table--row">
@@ -133,11 +137,13 @@
                 {{events.return_by.day}} <em>{{events.return_by.date}}</em> {{events.return_by.time}}
                 {% endif %}
               </td>
+              {% if not ce.state == 'Live' and not ce.state == 'Ready for live' %}
               <td class="table--cell tbl-ce-">
                 <form action="{{ url_for('collection_exercise_bp.update_event_date', short_name=survey.shortName, period=ce.exerciseRef, tag='return_by')}}" method="get">
                   <a class="edit-icon" href=# id="edit-event-date-return-by" onclick="this.parentNode.submit()"></a>
                 </form>
               </td>
+              {% endif %}
             </tr>
 
             <tr class="table--row">
@@ -188,8 +194,13 @@
                 {{events.exercise_end.day}} <em>{{events.exercise_end.date}}</em> {{events.exercise_end.time}}
                 {% endif %}
               </td>
+              {% if not ce.state == 'Live' and not ce.state == 'Ready for live' %}
               <td class="table--cell tbl-ce-">
+                <form action="{{ url_for('collection_exercise_bp.update_event_date', short_name=survey.shortName, period=ce.exerciseRef, tag='exercise_end')}}" method="get">
+                  <a class="edit-icon" href=# id="edit-event-date-exercise-end" onclick="this.parentNode.submit()"></a>
+                </form>
               </td>
+              {% endif %}
             </tr>
           </tbody>
         </table>
