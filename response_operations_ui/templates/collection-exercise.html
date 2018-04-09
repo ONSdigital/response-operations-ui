@@ -155,8 +155,13 @@
                 {{events.reminder.day}} <em>{{events.reminder.date}}</em> {{events.reminder.time}}
                 {% endif %}
               </td>
+              {% if not ce.state == 'Live' and not ce.state == 'Ready for live' %}
               <td class="table--cell tbl-ce-">
+                <form action="{{ url_for('collection_exercise_bp.update_event_date', short_name=survey.shortName, period=ce.exerciseRef, tag='reminder')}}" method="get">
+                  <a class="edit-icon" href=# id="edit-event-date-reminder" onclick="this.parentNode.submit()"></a>
+                </form>
               </td>
+              {% endif %}
             </tr>
 
             {% if events.reminder2 %}
@@ -167,8 +172,13 @@
               <td class="table--cell tbl-ce-value ce-event-date" name="second-reminder-date">
                 {{events.reminder2.day}} <em>{{events.reminder2.date}}</em> {{events.reminder2.time}}
               </td>
+              {% if not ce.state == 'Live' and not ce.state == 'Ready for live' %}
               <td class="table--cell tbl-ce-">
+                <form action="{{ url_for('collection_exercise_bp.update_event_date', short_name=survey.shortName, period=ce.exerciseRef, tag='reminder2')}}" method="get">
+                  <a class="edit-icon" href=# id="edit-event-date-reminder2" onclick="this.parentNode.submit()"></a>
+                </form>
               </td>
+              {% endif %}
             </tr>
             {% endif %}
 
@@ -180,8 +190,13 @@
               <td class="table--cell tbl-ce-value ce-event-date" name="third-reminder-date">
                 {{events.reminder3.day}} <em>{{events.reminder3.date}}</em> {{events.reminder3.time}}
               </td>
+              {% if not ce.state == 'Live' and not ce.state == 'Ready for live' %}
               <td class="table--cell tbl-ce-">
+                <form action="{{ url_for('collection_exercise_bp.update_event_date', short_name=survey.shortName, period=ce.exerciseRef, tag='reminder3')}}" method="get">
+                  <a class="edit-icon" href=# id="edit-event-date-reminder3" onclick="this.parentNode.submit()"></a>
+                </form>
               </td>
+              {% endif %}
             </tr>
             {% endif %}
 

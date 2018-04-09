@@ -23,17 +23,21 @@ def update_event_date(short_name, period, tag, errors=None):
     formatted_events = convert_events_to_new_format(ce_details['events'])
     date_restriction_text = _get_date_restriction_text(tag, formatted_events)
 
-    form = UpdateEventDateForm(day=formatted_events[tag]['date'][:2],
-                               month=formatted_events[tag]['month'],
-                               year=formatted_events[tag]['date'][-4:],
-                               hour=formatted_events[tag]['time'][:2],
-                               minute=formatted_events[tag]['time'][2:4])
+    if formatted_events.get(tag):
+        event = formatted_events[tag]
+        form = UpdateEventDateForm(day=event['date'][:2],
+                                   month=event['month'],
+                                   year=event['date'][-4:],
+                                   hour=event['time'][:2],
+                                   minute=event['time'][2:4])
+    else:
+        form = UpdateEventDateForm()
+
     return render_template('update-event-date.html',
                            form=form,
                            ce=ce_details['collection_exercise'],
                            survey=ce_details['survey'],
                            event_name=event_name,
-                           event_date=formatted_events[tag],
                            date_restriction_text=date_restriction_text,
                            errors=errors)
 
@@ -63,7 +67,10 @@ def _get_event_name(tag):
         "mps": "Main print selection",
         "go_live": "Go Live",
         "return_by": "Return by",
-        "exercise_end": "Exercise end"
+        "exercise_end": "Exercise end",
+        "reminder": "First reminder",
+        "reminder2": "Second reminder",
+        "reminder3": "Third reminder"
     }
     return event_names.get(tag)
 
@@ -75,7 +82,13 @@ def _get_date_restriction_text(tag, events):
                     f"Must be before Return by {_get_event_date_string('return_by', events)}"],
         "return_by": [f"Must be after Go Live {_get_event_date_string('go_live', events)}",
                       f"Must be before Exercise end {_get_event_date_string('exercise_end', events)}"],
-        "exercise_end": [f"Must be after Return by {_get_event_date_string('return_by', events)}"]
+        "exercise_end": [f"Must be after Return by {_get_event_date_string('return_by', events)}"],
+        "reminder": [f"Must be after Go Live {_get_event_date_string('go_live', events)}",
+                     f"Must be before Exercise end {_get_event_date_string('exercise_end', events)}"],
+        "reminder2": [f"Must be after Go Live {_get_event_date_string('go_live', events)}",
+                      f"Must be before Exercise end {_get_event_date_string('exercise_end', events)}"],
+        "reminder3": [f"Must be after Go Live {_get_event_date_string('go_live', events)}",
+                      f"Must be before Exercise end {_get_event_date_string('exercise_end', events)}"]
     }
     return date_restriction_text[tag]
 
