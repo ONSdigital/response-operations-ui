@@ -43,6 +43,7 @@ def view_collection_exercise(short_name, period, error=None, ci_loaded=False, ex
     locked = ce_state in ('LIVE', 'READY_FOR_LIVE', 'EXECUTION_STARTED', 'VALIDATED', 'EXECUTED')
     processing = ce_state in ('EXECUTION_STARTED', 'EXECUTED', 'VALIDATED')
     validation_failed = ce_state == 'FAILEDVALIDATION'
+    show_edit_period = ce_state not in ('READY_FOR_LIVE', 'LIVE')
 
     validation_errors = ce_details['collection_exercise']['validationErrors']
     missing_ci = validation_errors and any('MISSING_COLLECTION_INSTRUMENT' in unit['errors']
@@ -69,6 +70,7 @@ def view_collection_exercise(short_name, period, error=None, ci_loaded=False, ex
                            show_set_live_button=show_set_live_button,
                            survey=ce_details['survey'],
                            validation_failed=validation_failed,
+                           show_edit_period=show_edit_period,
                            ci_classifiers=ce_details['ci_classifiers']['classifierTypes'])
 
 
