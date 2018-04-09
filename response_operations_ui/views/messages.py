@@ -102,11 +102,13 @@ def view_conversation(thread_id):
 @messages_bp.route('/', methods=['GET'])
 @login_required
 def view_select_survey():
-    if "messages_survey_selection" in session:
-        return redirect(url_for("messages_bp.view_selected_survey",
-                                selected_survey=session["messages_survey_selection"]))
+    try:
+        selected_survey = session["messages_survey_selection"]
+    except KeyError:
+        return redirect(url_for("messages_bp.select_survey"))
 
-    return redirect(url_for("messages_bp.select_survey"))
+    return redirect(url_for("messages_bp.view_selected_survey",
+                            selected_survey=selected_survey))
 
 
 @messages_bp.route('/select-survey', methods=['GET', 'POST'])
