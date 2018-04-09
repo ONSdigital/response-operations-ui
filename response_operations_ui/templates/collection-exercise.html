@@ -146,6 +146,7 @@
               {% endif %}
             </tr>
 
+            {% if events.reminder %}
             <tr class="table--row">
               <td class="table--cell tbl-ce-label">
                 First reminder
@@ -163,6 +164,7 @@
               </td>
               {% endif %}
             </tr>
+            {% endif %}
 
             {% if events.reminder2 %}
             <tr class="table--row">
@@ -395,6 +397,13 @@
               <td class="table--cell tbl-ce-" name="period-start-date">
                   {{events.ref_period_start.day}} {{events.ref_period_start.date}}
               </td>
+              {% if not ce.state == 'Live' and not ce.state == 'Ready for live' %}
+              <td class="table--cell tbl-ce-">
+                <form action="{{ url_for('collection_exercise_bp.update_event_date', short_name=survey.shortName, period=ce.exerciseRef, tag='ref_period_start')}}" method="get">
+                  <a class="edit-icon" href=# id="edit-event-date-ref-period-start" onclick="this.parentNode.submit()"></a>
+                </form>
+              </td>
+              {% endif %}
             </tr>
             {% endif %}
 
@@ -417,6 +426,13 @@
               <td class="table--cell tbl-ce-" name="period-end-date">
                   {{events.ref_period_end.day}} {{events.ref_period_end.date}}
               </td>
+              {% if not ce.state == 'Live' and not ce.state == 'Ready for live' %}
+              <td class="table--cell tbl-ce-">
+                <form action="{{ url_for('collection_exercise_bp.update_event_date', short_name=survey.shortName, period=ce.exerciseRef, tag='ref_period_end')}}" method="get">
+                  <a class="edit-icon" href=# id="edit-event-date-ref-period-end" onclick="this.parentNode.submit()"></a>
+                </form>
+              </td>
+              {% endif %}
             {% endif %}
             </tr>
           </tbody>

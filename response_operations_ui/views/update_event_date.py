@@ -70,7 +70,9 @@ def _get_event_name(tag):
         "exercise_end": "Exercise end",
         "reminder": "First reminder",
         "reminder2": "Second reminder",
-        "reminder3": "Third reminder"
+        "reminder3": "Third reminder",
+        "ref_period_start": "Reference period start date",
+        "ref_period_end": "Reference period end date"
     }
     return event_names.get(tag)
 
@@ -88,7 +90,11 @@ def _get_date_restriction_text(tag, events):
         "reminder2": [f"Must be after Go Live {_get_event_date_string('go_live', events)}",
                       f"Must be before Exercise end {_get_event_date_string('exercise_end', events)}"],
         "reminder3": [f"Must be after Go Live {_get_event_date_string('go_live', events)}",
-                      f"Must be before Exercise end {_get_event_date_string('exercise_end', events)}"]
+                      f"Must be before Exercise end {_get_event_date_string('exercise_end', events)}"],
+        "ref_period_start": [f"Must be after Go Live {_get_event_date_string('go_live', events)}",
+                             f"Must be before Exercise end {_get_event_date_string('exercise_end', events)}"],
+        "ref_period_end": [f"Must be after Go Live {_get_event_date_string('go_live', events)}",
+                           f"Must be before Exercise end {_get_event_date_string('exercise_end', events)}"]
     }
     return date_restriction_text[tag]
 
