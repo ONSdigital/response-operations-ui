@@ -1,7 +1,8 @@
 import json
 import logging
 
-from flask import Blueprint, flash, g, Markup, render_template, request, redirect, url_for
+from flask import Blueprint, flash, g, Markup, render_template, request, redirect, session, url_for
+
 from flask_login import login_required, current_user
 from structlog import wrap_logger
 
@@ -98,11 +99,24 @@ def view_conversation(thread_id):
                            form=form)
 
 
-@messages_bp.route('/', methods=['GET', 'POST'])
+@messages_bp.route('/', methods=['GET'])
 @login_required
 def view_select_survey():
+    try:
+        selected_survey = session["messages_survey_selection"]
+    except KeyError:
+        return redirect(url_for("messages_bp.select_survey"))
+
+    return redirect(url_for("messages_bp.view_selected_survey",
+                            selected_survey=selected_survey))
+
+
+@messages_bp.route('/select-survey', methods=['GET', 'POST'])
+@login_required
+def select_survey():
     breadcrumbs = [{"title": "Messages", "link": "/messages"},
                    {"title": "Filter by survey"}]
+    survey_list = [survey.value for survey in Surveys]
 
     if request.method == 'POST':
         selected_survey = request.form.get('radio-answer')
@@ -114,7 +128,6 @@ def view_select_survey():
     else:
         response_error = False
 
-    survey_list = [survey.value for survey in Surveys]
     return render_template("message_select_survey.html",
                            breadcrumbs=breadcrumbs,
                            selected_survey=None,
@@ -126,8 +139,8 @@ def view_select_survey():
 @login_required
 def view_selected_survey(selected_survey):
     formatted_survey = format_short_name(selected_survey)
+    session['messages_survey_selection'] = selected_survey
     breadcrumbs = [{"title": formatted_survey + " Messages"}]
-
     try:
         if selected_survey == Surveys.FDI.value:
             survey_id = _get_FDI_survey_id()

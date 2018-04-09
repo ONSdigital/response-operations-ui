@@ -7,7 +7,9 @@
 <div role="main" id="main" class="page__main">
   {% if change_survey %}
     <h1 class="saturn u-mb-l" name="page-messages-title">{{ selected_survey }} Messages
-      <span class="mars">(<a id="change-survey" href="/messages">Change survey</a>)</span>
+
+      <span class="mars">(<a id="change-survey" href="{{ url_for('messages_bp.select_survey') }}">Change survey</a>)</span>
+
     </h1>
 
   {% else %}
