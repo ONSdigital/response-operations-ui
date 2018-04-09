@@ -33,7 +33,9 @@
     </div>
     <br />
 {% endif %}
+
 <h1 class="saturn">Create message</h1>
+<div class="create-message block">
 <form action="{{ url_for('messages_bp.create_message') }}" method="post" id="create-message-form">
     {{ form.hidden_tag() }}
     <div class="secure-message--meta venus"><span class="sm-form-meta-label">Survey: </span><span id="survey">{{ form.survey(id="survey-label") }}</span></div>
@@ -46,9 +48,7 @@
             <p id="subject-error-{{ loop.index }}" class="error-message">{{ error }}</p>
         {% endfor %}
         <label class="secure-message--subject venus" for="message-subject">Subject</label>
-        {{ form.subject(id='secure-message-subject',
-        class_='secure-message--subject input input--text',
-        maxlength='96', size=80) }}
+        {{ form.subject(id='secure-message-subject', class_='secure-message--subject input input--text', maxlength='96', size=80) }}
     </div>
 
     <div id="body-field"{% if form.body.errors %} class="panel panel--simple panel--error{% endif %}">
@@ -61,7 +61,7 @@
         rows='10', maxlength='10000', cols=80) }}
     </div>
     <button id="btn-send-message" name="send-message" class="btn secure-message--send-btn" type="submit">Send</button>
-</form>
+</form></div>
 {% if form.hidden_ru_ref.data %}
 <p class="pluto"><a href="{{ url_for('reporting_unit_bp.view_reporting_unit', ru_ref=form.hidden_ru_ref.data) }}" id="btn-cancel">Cancel</a></p>
 {% endif %}

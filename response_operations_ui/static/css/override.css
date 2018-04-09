@@ -788,3 +788,13 @@ a.sign-out,
 a.sign-out:hover {
   color :#fff;
 }
+
+button{
+     background:none;
+     color: #4263c2;
+     border:none;
+     padding:0;
+     font: inherit;
+     border-bottom:1px solid #4263c2;
+     cursor: pointer;
+}

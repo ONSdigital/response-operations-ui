@@ -5,6 +5,7 @@ import requests_mock
 
 from config import TestingConfig
 from response_operations_ui import app
+from response_operations_ui.views.messages import _get_to_id
 from response_operations_ui.controllers.message_controllers import _get_url, send_message
 from response_operations_ui.exceptions.exceptions import InternalError
 from response_operations_ui.views.messages import _get_unread_status
@@ -383,7 +384,7 @@ class TestMessage(unittest.TestCase):
         self.assertIn("No Subject".encode(), response.data)
 
     def test_get_radio_buttons(self):
-        response = self.app.get("/messages")
+        response = self.app.get("/messages/select-survey")
 
         self.assertEqual(200, response.status_code)
         self.assertIn("Filter messages by survey".encode(), response.data)
@@ -395,7 +396,7 @@ class TestMessage(unittest.TestCase):
         mock_request.get(url_get_threads_list, json=thread_list)
         mock_request.get(url_get_surveys_list, json=self.surveys_list_json)
 
-        response = self.app.post("/messages", follow_redirects=True)
+        response = self.app.post("/messages/select-survey", follow_redirects=True)
 
         self.assertEqual(200, response.status_code)
         self.assertIn("Home".encode(), response.data)
@@ -410,3 +411,39 @@ class TestMessage(unittest.TestCase):
 
         self.assertEqual(response.status_code, 500)
         self.assertIn("Error 500 - Server error".encode(), response.data)
+
+    def test_get_messages_page_without_survey(self):
+        response = self.app.get("/messages", follow_redirects=True)
+
+        self.assertEqual(response.status_code, 200)
+        self.assertIn("Filter messages by survey".encode(), response.data)
+
+    @requests_mock.mock()
+    def test_get_messages_page_with_survey(self, mock_request):
+        mock_request.get(url_get_threads_list, json=thread_list)
+        mock_request.get(url_get_surveys_list, json=self.surveys_list_json)
+        mock_request.get(shortname_url + "/ASHE", json=ashe_info)
+
+        posts_survey = {"radio-answer": "ASHE"}
+
+        response = self.app.post("/messages/select-survey", follow_redirects=True, data=posts_survey)
+
+        self.assertEqual(response.status_code, 200)
+        self.assertIn("ASHE Messages".encode(), response.data)
+
+        response = self.app.get("/messages", follow_redirects=True)
+
+        self.assertEqual(response.status_code, 200)
+        self.assertIn("ASHE Messages".encode(), response.data)
+
+    def test_get_to_id(self):
+        with open('tests/test_data/message/threads.json') as fp:
+            conversation = json.load(fp)
+        self.assertEqual(conversation['messages'][0]['msg_to'][0],
+                         _get_to_id(conversation['messages'][0]))
+
+    def test_get_to_id_index_error(self):
+        with open('tests/test_data/message/threads.json') as fp:
+            conversation = json.load(fp)
+        del conversation['messages'][0]['msg_to'][0]
+        self.assertEqual(None, _get_to_id(conversation['messages'][0]))
