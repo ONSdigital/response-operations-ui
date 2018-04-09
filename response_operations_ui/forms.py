@@ -57,6 +57,12 @@ class EditContactDetailsForm(FlaskForm):
             self.telephone.data = default_values.get('telephone')
 
 
+class EditCollectionExerciseDetailsForm(FlaskForm):
+    user_description = StringField('user_description')
+    period = StringField('period')
+    collection_exercise_id = HiddenField('collection_exercise_id')
+
+
 class ChangeGroupStatusForm(FlaskForm):
     event = StringField('event')
     submit = SubmitField('Confirm')
