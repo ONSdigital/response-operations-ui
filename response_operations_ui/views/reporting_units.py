@@ -8,6 +8,7 @@ from response_operations_ui.common.mappers import map_ce_response_status
 from response_operations_ui.controllers import case_controller
 from response_operations_ui.controllers import contact_details_controller
 from response_operations_ui.controllers import reporting_units_controllers
+from response_operations_ui.controllers import collection_exercise_controllers
 from response_operations_ui.forms import EditContactDetailsForm
 from response_operations_ui.forms import SearchForm
 
@@ -133,6 +134,8 @@ def resent_verification(ru_ref, email, party_id):
 @login_required
 def response_chasing(ce_id):
     logger.debug('Response chasing', ce_id=ce_id)
+    response = collection_exercise_controllers.download_report(ce_id)
+    return response.content, response.status_code, response.headers.items()
 
 
 @reporting_unit_bp.route('/<ru_ref>/<collection_exercise_id>/new_enrolment_code', methods=['GET'])
