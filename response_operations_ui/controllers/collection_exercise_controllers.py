@@ -8,11 +8,11 @@ from response_operations_ui.exceptions.exceptions import ApiError
 
 logger = wrap_logger(logging.getLogger(__name__))
 
+
 def download_report(ce_id):
     url = f'{app.config["BACKSTAGE_API_URL"]}/v1/collection-exercise/download-report/{ce_id}'
     response = requests.get(url)
     return response
-
 
 
 def get_collection_exercise(short_name, period):
