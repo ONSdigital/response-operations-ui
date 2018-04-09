@@ -1,13 +1,14 @@
 import iso8601
 import logging
 
-from flask import Blueprint, render_template, request
+from flask import Blueprint, render_template, request, redirect, url_for
 from flask_login import login_required
 from structlog import wrap_logger
 
 from response_operations_ui.common.mappers import convert_events_to_new_format, map_collection_exercise_state
 from response_operations_ui.controllers import collection_exercise_controllers
 from response_operations_ui.controllers import collection_instrument_controllers, sample_controllers
+from response_operations_ui.forms import EditCollectionExerciseDetailsForm
 
 logger = wrap_logger(logging.getLogger(__name__))
 
@@ -42,6 +43,7 @@ def view_collection_exercise(short_name, period, error=None, ci_loaded=False, ex
     locked = ce_state in ('LIVE', 'READY_FOR_LIVE', 'EXECUTION_STARTED', 'VALIDATED', 'EXECUTED')
     processing = ce_state in ('EXECUTION_STARTED', 'EXECUTED', 'VALIDATED')
     validation_failed = ce_state == 'FAILEDVALIDATION'
+    show_edit_period = ce_state not in ('READY_FOR_LIVE', 'LIVE')
 
     validation_errors = ce_details['collection_exercise']['validationErrors']
     missing_ci = validation_errors and any('MISSING_COLLECTION_INSTRUMENT' in unit['errors']
@@ -68,6 +70,7 @@ def view_collection_exercise(short_name, period, error=None, ci_loaded=False, ex
                            show_set_live_button=show_set_live_button,
                            survey=ce_details['survey'],
                            validation_failed=validation_failed,
+                           show_edit_period=show_edit_period,
                            ci_classifiers=ce_details['ci_classifiers']['classifierTypes'])
 
 
@@ -216,3 +219,30 @@ def _format_ci_file_name(collection_instruments, survey_details):
 def _get_form_type(file_name):
     file_name = file_name.split(".")[0]
     return file_name.split("_")[2]  # file name format is surveyId_period_formType
+
+
+@collection_exercise_bp.route('/<short_name>/<period>/edit-collection-exercise-details', methods=['GET'])
+@login_required
+def view_collection_exercise_details(short_name, period):
+    ce_details = collection_exercise_controllers.get_collection_exercise(short_name, period)
+    form = EditCollectionExerciseDetailsForm(form=request.form)
+    ce_state = ce_details['collection_exercise']['state']
+    show_edit_period = ce_state not in ('READY_FOR_LIVE', 'LIVE')
+
+    return render_template('edit-collection-exercise-details.html', survey_ref=ce_details['survey']['surveyRef'],
+                           form=form, short_name=short_name, period=period, show_edit_period=show_edit_period,
+                           ce_state=ce_details['collection_exercise']['state'],
+                           user_description=ce_details['collection_exercise']['userDescription'],
+                           collection_exercise_id=ce_details['collection_exercise']['id'])
+
+
+@collection_exercise_bp.route('/<short_name>/<period>/edit-collection-exercise-details', methods=['POST'])
+@login_required
+def edit_collection_exercise_details(short_name, period):
+    form = request.form
+
+    collection_exercise_controllers.update_collection_exercise_details(form.get('collection_exercise_id'),
+                                                                       form.get('user_description'),
+                                                                       form.get('period'))
+
+    return redirect(url_for('surveys_bp.view_survey', short_name=short_name))
