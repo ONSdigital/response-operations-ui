@@ -9,8 +9,8 @@ logger = wrap_logger(logging.getLogger(__name__))
 
 
 class LoginForm(FlaskForm):
-    username = StringField('Username', [InputRequired("Username is required")])
-    password = PasswordField('Password', [InputRequired("Password is required")])
+    username = StringField('Username', [InputRequired("Please enter a username")])
+    password = PasswordField('Password', [InputRequired("Please enter a password")])
     submit = SubmitField('Sign in')
 
 
@@ -26,6 +26,7 @@ class SecureMessageForm(FlaskForm):
     ru_ref = Label('RU ref', text="")
     business = Label('Business', text="")
     to = Label('To', text="")
+    hidden_subject = HiddenField('hidden_subject')
     hidden_survey = HiddenField('hidden_survey')
     hidden_survey_id = HiddenField('hidden_survey_id')
     hidden_ru_ref = HiddenField('hidden_ru_ref')
@@ -38,6 +39,28 @@ class SecureMessageForm(FlaskForm):
 class SearchForm(FlaskForm):
     query = StringField('Query')
     submit = SubmitField('Search')
+
+
+class EditContactDetailsForm(FlaskForm):
+    first_name = StringField('first_name')
+    last_name = StringField('last_name')
+    email = StringField('emailAddress')
+    telephone = StringField('telephone')
+    hidden_email = HiddenField('hidden_email')
+
+    def __init__(self, form, default_values=None):
+        super().__init__(form)
+        if default_values:
+            self.first_name.data = default_values.get('firstName')
+            self.last_name.data = default_values.get('lastName')
+            self.email.data = default_values.get('emailAddress')
+            self.telephone.data = default_values.get('telephone')
+
+
+class EditCollectionExerciseDetailsForm(FlaskForm):
+    user_description = StringField('user_description')
+    period = StringField('period')
+    collection_exercise_id = HiddenField('collection_exercise_id')
 
 
 class ChangeGroupStatusForm(FlaskForm):

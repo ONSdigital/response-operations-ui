@@ -1,9 +1,10 @@
+from json import JSONDecodeError
 import logging
 
-import requests
 from flask import current_app, session
 from flask_login import current_user
-from requests.exceptions import HTTPError
+import requests
+from requests.exceptions import HTTPError, RequestException
 from structlog import wrap_logger
 
 from response_operations_ui.exceptions.exceptions import ApiError, NoMessagesError, InternalError
@@ -11,10 +12,31 @@ from response_operations_ui.exceptions.exceptions import ApiError, NoMessagesErr
 logger = wrap_logger(logging.getLogger(__name__))
 
 
-def get_message_list(params):
-    logger.debug("Retrieving Message list")
+def get_conversation(thread_id):
+    logger.debug("Retrieving thread")
 
-    url = f'{current_app.config["BACKSTAGE_API_URL"]}/v1/secure-message/messages'
+    url = f'{current_app.config["BACKSTAGE_API_URL"]}/v1/secure-message/threads/{thread_id}'
+
+    response = requests.get(url, headers={'Authorization': _get_jwt()})
+
+    try:
+        response.raise_for_status()
+    except (HTTPError, RequestException):
+        logger.exception("Thread retrieval failed", thread_id=thread_id)
+        raise ApiError(response)
+    logger.debug("Thread retrieval successful")
+
+    try:
+        return response.json()
+    except JSONDecodeError:
+        logger.exception("the response could not be decoded")
+        raise ApiError(response)
+
+
+def get_thread_list(params):
+    logger.debug("Retrieving threads list")
+
+    url = f'{current_app.config["BACKSTAGE_API_URL"]}/v1/secure-message/threads'
     # This will be removed once UAA is completed.  For now we need the call to backstage to include
     # an Authorization in its header a JWT that includes party_id and role.
 
@@ -23,7 +45,7 @@ def get_message_list(params):
     try:
         response.raise_for_status()
     except HTTPError:
-        logger.exception("Message retrieval failed")
+        logger.exception("Threads retrieval failed")
         raise ApiError(response)
 
     logger.debug("Retrieval successful")
@@ -45,6 +67,20 @@ def send_message(message_json):
     except HTTPError as ex:
         logger.exception("Message sending failed due to API Error")
         raise ApiError(ex.response)
+
+
+def remove_unread_label(message_id):
+    url = f'{current_app.config["BACKSTAGE_API_URL"]}/v1/secure-message/update-label/{message_id}'
+    data = '{"label": "UNREAD", "action": "remove"}'
+
+    logger.debug("Removing message unread label", message_id=message_id)
+    response = requests.put(url, headers={"Authorization": _get_jwt(), "Content-Type": "application/json"}, data=data)
+
+    try:
+        response.raise_for_status()
+        logger.debug("Successfully removed unread label", message_id=message_id)
+    except HTTPError:
+        logger.exception("Failed to remove unread label", message_id=message_id)
 
 
 def _post_new_message(message):

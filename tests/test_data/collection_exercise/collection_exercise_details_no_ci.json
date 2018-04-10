@@ -23,7 +23,8 @@
     "scheduledReturnDateTime": "2017-10-06T00:00:00.000+0000",
     "scheduledStartDateTime": "2017-09-11T23:00:00.000+0000",
     "state": "PUBLISHED",
-    "surveyId": "cb0711c3-0ac8-41d3-ae0e-567e5ea1ef87"
+    "surveyId": "cb0711c3-0ac8-41d3-ae0e-567e5ea1ef87",
+    "validationErrors": null
   },
   "survey": {
     "id": "cb0711c3-0ac8-41d3-ae0e-567e5ea1ef87",
@@ -65,5 +66,13 @@
       "tag": "exercise_end",
       "timestamp": "1993-05-15T23:00:00.000+0000"
     }
-  ]
+  ],
+  "ci_classifiers": {
+    "id": "efa868fb-fb80-44c7-9f33-d6800a17c4da",
+    "name": "COLLECTION_INSTRUMENT",
+    "classifierTypes": [
+      "COLLECTION_EXERCISE",
+      "RU_REF"
+    ]
+  }
 }

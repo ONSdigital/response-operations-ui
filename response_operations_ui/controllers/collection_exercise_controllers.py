@@ -30,3 +30,20 @@ def execute_collection_exercise(short_name, period):
                      short_name=short_name, period=period)
         return True
     return False
+
+
+def update_collection_exercise_details(collection_exercise_id, user_description, period):
+    logger.debug('Updating collection exercise details', collection_exercise_id=collection_exercise_id)
+    url = f'{app.config["BACKSTAGE_API_URL"]}/v1/collection-exercise/update-collection-exercise-details/' \
+          f'{collection_exercise_id}'
+
+    collection_exercise_details = {
+        "user_description": user_description,
+        "period": period
+    }
+
+    response = requests.put(url, json=collection_exercise_details)
+    if response.status_code != 200:
+        raise ApiError(response)
+
+    logger.debug('Successfully updated collection exercise details', collection_exercise_id=collection_exercise_id)

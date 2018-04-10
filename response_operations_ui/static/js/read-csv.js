@@ -1,16 +1,5 @@
 
-function drawOutput(lines){
-
-	// Put the form types into their own separate array, so we can interrogate it faster
-	var formTypes = [];
-	for (var i = 0; i < lines.length; i++) {
-			formTypes.push(lines[i][lines.length - 1]);
-	}
-
-	var ciCount = formTypes.filter(function(val, i, arr) {
-        return arr.indexOf(val) === i;
-	}).length;
-
+function drawOutput(businessCount, ciCount){
 
 	//Clear previous data
 	document.getElementById("sample-preview").innerHTML = "";
@@ -21,7 +10,7 @@ function drawOutput(lines){
 	preview = preview + "    <h3 class='venus'>Sample contents</h3>";
 	preview = preview + "  </div>";
 	preview = preview + "  <div class='panel__body'>";
-	preview = preview + "    <div id='sample-preview-businesses'>Number of businesses: " + lines.length + "</div>";
+	preview = preview + "    <div id='sample-preview-businesses'>Number of businesses: " + businessCount + "</div>";
 	preview = preview + "    <div id='sample-preview-ci'>Collection instruments: " + ciCount + "</div>";
 	preview = preview + "  </div>";
 	preview = preview + "</div>";
@@ -38,33 +27,32 @@ function errorHandler(evt) {
 	}
 }
 
-function loadHandler(event) {
-    var csv = event.target.result;
-	processData(csv);
-}
-
-function getAsText(fileToRead) {
-	var reader = new FileReader();
-	// Handle errors load
-	reader.onload = loadHandler;
-	reader.onerror = errorHandler;
-	// Read file into memory as UTF-8
-	reader.readAsText(fileToRead);
-}
-
-function handleFiles(files) {
+function handleFiles(files, classifiers) {
 	// Check for the various File API support.
 	if (window.FileReader) {
 		// FileReader are supported.
-		getAsText(files[0]);
+		var reader = new FileReader();
+
+        // Handle errors load
+        reader.onload = function(evt) {
+            processFile(evt, classifiers);
+        };
+        reader.onerror = errorHandler;
+
+        // Read file into memory as UTF-8
+        reader.readAsText(files[0]);
+
 	} else {
 		alert('FileReader is not supported in this browser.');
 	}
 }
 
-function processData(csv) {
+function processFile(event, classifiers) {
+    var csv = event.target.result;
     var allTextLines = csv.split(/\r\n|\n/);
+    var classifierColumn = [];
     var lines = [];
+    var ciCount;
 
     while (allTextLines.length) {
         var line = allTextLines.shift().split(":")
@@ -73,7 +61,20 @@ function processData(csv) {
         }
     }
 
-    drawOutput(lines);
+    if (classifiers.indexOf('RU_REF') > -1) {
+        ciCount = lines.length  // each line should be a distinct RU_REF (sampleUnitRef)
+    } else if (classifiers.indexOf('FORM_TYPE') > -1){
+        // Put the form types into their own separate array, so we can interrogate it faster
+        for (var i = 0; i < lines.length; i++) {
+            classifierColumn.push(lines[i][lines[i].length - 2]);
+        }
+
+        ciCount = classifierColumn.filter(function(val, i, arr) {
+            return arr.indexOf(val) === i;
+        }).length;
+    }
+
+    drawOutput(lines.length, ciCount);
 }
 
 function cancelLoadSample(){

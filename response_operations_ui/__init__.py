@@ -11,7 +11,6 @@ from response_operations_ui.cloud.cloudfoundry import ONSCloudFoundry
 from response_operations_ui.logger_config import logger_initial_config
 from response_operations_ui.user import User
 
-
 app = Flask(__name__)
 
 # Load css and js assets
@@ -59,7 +58,6 @@ Session(app)
 @login_manager.user_loader
 def user_loader(user_id):
     return User(user_id)
-
 
 import response_operations_ui.views  # NOQA # pylint: disable=wrong-import-position
 import response_operations_ui.error_handlers  # NOQA # pylint: disable=wrong-import-position
