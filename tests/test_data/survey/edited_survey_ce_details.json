@@ -1,0 +1,18 @@
+{
+  "collection_exercises": [
+    {
+      "id": "14fb3e68-4dca-46db-bf49-04b84e07e77c",
+      "name": "BRES_2017",
+      "scheduledExecutionDateTime": "2017-09-10T23:00:00.000+0000",
+      "exerciseRef": "201906",
+      "userDescription": "16th June 2019",
+      "state": "INIT"
+    }
+  ],
+  "survey": {
+    "id": "cb0711c3-0ac8-41d3-ae0e-567e5ea1ef87",
+    "longName": "Business Register and Employment Survey",
+    "shortName": "BRES",
+    "surveyRef": "221"
+  }
+}
