@@ -8,7 +8,6 @@ from response_operations_ui.common.mappers import map_ce_response_status
 from response_operations_ui.controllers import case_controller
 from response_operations_ui.controllers import contact_details_controller
 from response_operations_ui.controllers import reporting_units_controllers
-from response_operations_ui.controllers import collection_exercise_controllers
 from response_operations_ui.forms import EditContactDetailsForm
 from response_operations_ui.forms import SearchForm
 
