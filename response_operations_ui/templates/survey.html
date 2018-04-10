@@ -86,7 +86,7 @@
               </td>
               <td class="table--cell tbl-ce-status" name="tbl-ce-report">
                 {% if exercise.state|upper == "LIVE" %}
-                  <a class="download" href="{{ url_for('reporting_unit_bp.response_chasing', ce_id=exercise.id) }}" target="_blank">Response chasing</a>
+                  <a class="download" href="{{ url_for('collection_exercise_bp.response_chasing', ce_id=exercise.id) }}" target="_blank">Response chasing</a>
                 {% endif %}
               </td>
               <td class="table--cell tbl-ce-status" name="tbl-ce-status">
