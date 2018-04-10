@@ -1,104 +1,57 @@
-<!DOCTYPE html>
-<html dir="ltr" lang="en-gb">
-<head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, shrink-to-fit=no">
-    <title>Change enrolment status</title>
-    <link rel="stylesheet" href="https://cdn.ons.gov.uk/sdc/322aece/css/styles.css" />
-    <link rel="stylesheet" href="/css/override.css" />
-    <link rel="stylesheet" href="/css/internal.css">
-    <link rel="stylesheet" href="/css/components/confirm-page.css"
-  <link href="/static/images/favicon.ico" rel="Shortcut Icon" />
-</head>
-<body class="spoke">
-
-  <div class="page">
-
-    <div class="page__content">
-        <div class="container page__container">
-
-            <div class="grid">
-              <div class="grid__col col-3@l">
-              </div>
-
-              <div class="grid__col col-6@l">
-
-                <div role="main" id="main" class="page__main">
-
-
-                  <div class="spoke__header">
-
-                    <div class="spoke__header__title">
-                      <h1 class="jupiter">Disable enrolment</h1>
-                    </div>
-
-                  </div>
-
-                    <div class="spoke__body">
-
-                    <form action="{{ url_for(reporting_unit_bp.change_enrolment_status, business_id=business_id, survey_id=survey_id, respondent_id=respondent_id, change_flag=change_flag))}}" class="u-mt-l">
-
-                       <input type="hidden" name="s" value="073" />
-                       <input type="hidden" name="change" value="disable-enrolment" />
-                        <dl class="description-list description-list-8">
-                          <dt class="">
-                            Reference:
-                          </dt>
-                          <dd class="">
-                            {{ ru_ref }}
-                          </dd>
-                          <dt class="">
-                            Trading as:
-                          </dt>
-                          <dd class="">
-                            {{ ru_name }}
-                          </dd>
-                          <dt class="">
-                            Survey:
-                          </dt>
-                          <dd class="" id="survey">
-                            {{ survey_id }}{{ survey_name }}
-                          </dd>
-                          <dt class="">
-                            Respondent:
-                          </dt>
-                          <dd class="" id="period">
-                            {{ first_name }} {{ last_name }}
-                          </dd>
-                        </dl>
-                        <div class="u-mt-m">
-                    {% if change_flag == 'DISABLED' %}
-                          Disable enrolment?
-                    {% else %}
-                          Enable enrolment?
-                    {% endif %}
-                  </div>
-
-                  <button type="submit" id="confirm-btn" class="btn btn--primary u-mt-s">Confirm</button>
-
-                  <div class="u-mt-xs">
-                    <a href="{{ url_for(reporting_unit_bp.view_reporting_unit, ru_ref=ru_ref)}}">Cancel</a>
-                  </div>
-
-            </form>
-                        </div>
-
-
-        </div>
-
-      </div>
-
-      <div class="grid__col col-3@l">
-      </div>
-
+{% extends "layouts/spoke.html" %}
+{% block page_title %} Edit collection exercise details {% endblock %}
+{% block main %}
+<div role="main" id="main" class="page__main">
+  <div class="spoke__header">
+    <div class="spoke__header__title">
+      <h1 class="jupiter">Disable enrolment</h1>
     </div>
-
   </div>
+  <div class="spoke__body">
+    <form method="post" action="{{ url_for('reporting_unit_bp.change_enrolment_status', ru_ref=ru_ref, business_id=business_id,
+                                           survey_id=survey_id, respondent_id=respondent_id, change_flag=change_flag)}}" class="u-mt-l">
+      <dl class="description-list description-list-8">
+        <dt class="">
+          Reference:
+        </dt>
+        <dd class="">
+          {{ ru_ref }}
+        </dd>
 
+        <dt class="">
+          Trading as:
+        </dt>
+        <dd class="">
+          {{ ru_name }}
+        </dd>
+        <dt class="">
+          Survey:
+        </dt>
+        <dd class="" id="survey">
+          {{ survey_name }}
+        </dd>
+        <dt class="">
+          Respondent:
+        </dt>
+        <dd class="" id="period">
+          {{ first_name }} {{ last_name }}
+        </dd>
+      </dl>
+      <div class="u-mt-m">
+        {% if change_flag == 'DISABLED' %}
+        Disable enrolment?
+        {% else %}
+        Enable enrolment?
+        {% endif %}
+      </div>
+
+      <button type="submit" id="confirm-btn" class="btn btn--primary u-mt-s">Confirm</button>
+
+      <div class="u-mt-xs">
+        <a href="{{ url_for('reporting_unit_bp.view_reporting_unit', ru_ref=ru_ref, survey_id=survey_id,
+                            respondent_id=respondent_id, business_id=business_id, change_flag=change_flag)}}">Cancel</a>
+      </div>
+    </form>
+  </div>
 </div>
-
-
-</div>
-
-</body>
-</html>
+{% endblock %}

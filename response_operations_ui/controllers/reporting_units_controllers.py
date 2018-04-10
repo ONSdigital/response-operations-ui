@@ -38,8 +38,8 @@ def change_enrolment_status(business_id, respondent_id, survey_id, change_flag):
     url = f'{app.config["BACKSTAGE_API_URL"]}/v1/party/change-enrolment-status'
 
     enrolment_json = {
-        'respondent_party_id': respondent_id,
-        'business_party_id': business_id,
+        'respondent_id': respondent_id,
+        'business_id': business_id,
         'survey_id': survey_id,
         'change_flag': change_flag
     }
