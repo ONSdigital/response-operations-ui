@@ -50,7 +50,6 @@ def change_enrolment_status(business_id, respondent_id, survey_id, change_flag):
         raise ApiError(response)
 
     logger.debug('Successfully changed enrolment status')
-    return response.json()
 
 
 def generate_new_enrolment_code(collection_exercise_id, ru_ref):

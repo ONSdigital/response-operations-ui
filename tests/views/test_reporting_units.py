@@ -16,6 +16,7 @@ url_get_contact_details = f'{backstage_api_url}/v1/party/party-details?responden
 url_edit_contact_details = f'{backstage_api_url}/v1/party/update-respondent-details/{respondent_party_id}'
 url_generate_new_code = f'{backstage_api_url}/v1/reporting-unit/iac/ce_id/ru_ref'
 url_resend_verification_email = f'{backstage_api_url}/v1/reporting-unit/resend-verification-email/{respondent_party_id}'
+url_change_enrolment_status = f'{app.config["BACKSTAGE_API_URL"]}/v1/party/change-enrolment-status'
 
 with open('tests/test_data/reporting_units/reporting_unit.json') as json_data:
     reporting_unit = json.load(json_data)
@@ -370,6 +371,49 @@ class TestReportingUnits(unittest.TestCase):
         mock_request.post(url_generate_new_code, status_code=500)
 
         response = self.app.get("/reporting-units/ru_ref/ce_id/new_enrolment_code", follow_redirects=True)
+
+        self.assertEqual(response.status_code, 500)
+        self.assertIn("Error 500 - Server error".encode(), response.data)
+
+    def test_disable_enrolment_view(self):
+        response = self.app.get("/reporting-units/ru_ref/change-enrolment-status"
+                                "?survey_id=test_id&survey_name=test_survey_name&respondent_id=test_id"
+                                "&respondent_first_name=first_name&respondent_last_name=last_name&business_id=test_id"
+                                "&ru_name=test_name&change_flag=DISABLED")
+
+        self.assertEqual(response.status_code, 200)
+        self.assertIn("test_name".encode(), response.data)
+        self.assertIn("test_survey_name".encode(), response.data)
+        self.assertIn("first_name".encode(), response.data)
+        self.assertIn("Disable enrolment".encode(), response.data)
+
+    @requests_mock.mock()
+    def test_disable_enrolment_post(self, mock_request):
+        mock_request.put(url_change_enrolment_status)
+        mock_request.get(url_get_reporting_unit, json=reporting_unit)
+        mock_request.get(f'{app.config["BACKSTAGE_API_URL"]}/v1/case/status/BLOCKS/201801/50012345678',
+                         json=self.case_group_status)
+        mock_request.get(f'{app.config["BACKSTAGE_API_URL"]}/v1/case/status/BLOCKS/201802/50012345678',
+                         json=self.case_group_status)
+        mock_request.get(f'{app.config["BACKSTAGE_API_URL"]}/v1/case/status/BRICKS/201801/50012345678',
+                         json=self.case_group_status)
+        mock_request.get(f'{app.config["BACKSTAGE_API_URL"]}/v1/case/status/BRICKS/201802/50012345678',
+                         json=self.case_group_status)
+
+        response = self.app.post("/reporting-units/50012345678/change-enrolment-status"
+                                 "?survey_id=test_id&respondent_id=test_id&business_id=test_id&change_flag=DISABLED",
+                                 follow_redirects=True)
+
+        self.assertEqual(response.status_code, 200)
+        self.assertIn("Bolts and Ratchets Ltd".encode(), response.data)
+
+    @requests_mock.mock()
+    def test_disable_enrolment_post_fail(self, mock_request):
+        mock_request.put(url_change_enrolment_status, status_code=500)
+
+        response = self.app.post("/reporting-units/50012345678/change-enrolment-status"
+                                 "?survey_id=test_id&respondent_id=test_id&business_id=test_id&change_flag=DISABLED",
+                                 follow_redirects=True)
 
         self.assertEqual(response.status_code, 500)
         self.assertIn("Error 500 - Server error".encode(), response.data)

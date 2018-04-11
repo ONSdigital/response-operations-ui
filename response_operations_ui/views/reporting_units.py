@@ -142,12 +142,7 @@ def generate_new_enrolment_code(ru_ref, collection_exercise_id):
 
 
 def map_region(region):
-    if region == "YY":
-        region = "NI"
-    else:
-        region = "GB"
-
-    return region
+    return "NI" if region == "YY" else "GB"
 
 
 @reporting_unit_bp.route('/<ru_ref>/change-enrolment-status', methods=['GET'])
