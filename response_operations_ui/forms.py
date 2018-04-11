@@ -66,3 +66,8 @@ class EditCollectionExerciseDetailsForm(FlaskForm):
 class ChangeGroupStatusForm(FlaskForm):
     event = StringField('event')
     submit = SubmitField('Confirm')
+
+
+class EditSurveyDetailsForm(FlaskForm):
+    long_name = StringField('long_name')
+    short_name = StringField('short_name')

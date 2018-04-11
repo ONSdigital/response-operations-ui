@@ -1,0 +1,61 @@
+{% extends "layouts/spoke.html" %}
+{% block page_title %} Edit collection exercise details {% endblock %}
+{% block main %}
+<div role="main" id="main" class="page__main">
+  <div class="spoke__header">
+    <div class="spoke__header__title">
+      <h1 class="jupiter">Edit survey details</h1>
+    </div>
+  </div>
+  <div class="spoke__body">
+    <form action="" method="post">
+      {{ form.csrf_token }}
+      <div class="field u-mb-l">
+        <label class="label" for="survey_id">
+          Survey ID:
+          <span class="u-vh">Current value: </span>
+          <span class="mars">
+              {{ survey_ref }}
+              </span>
+        </label>
+        <label class="label" for="legal_basis">
+          Legal Basis:
+          <span class="u-vh">Current value: </span>
+          <span class="mars">
+              {{ legal_basis }}
+              </span>
+        </label>
+      </div>
+        <div class="field u-mb-s">
+          <label class="label" for="short_name">
+            Short Name
+            <span class="secondary-info current-value">
+            <span class="u-vh">Current value: </span>
+                {{ short_name }}
+            </span>
+          </label>
+          {{ form.short_name(class_="input input--text", id='short_name', required=required, maxlength=254, value=short_name) }}
+        </div>
+        <div class="field u-mb-l">
+          <label class="label" for="long_name">
+            Long Name
+            <span class="secondary-info current-value">
+            <span class="u-vh">Current value: </span>
+                {{ long_name }}
+            </span>
+          </label>
+          {{ form.long_name(class_="input input--text", id='long_name', required=required, maxlength=254, value=long_name) }}
+        <div class="field u-mb-l">
+          <span class="u-vh">Current value: </span>
+          </span>
+          {{ form.survey_id(value=survey_id, id='survey_id') }}
+        </div>
+        </div>
+      <button class="btn btn--primary u-mt-s" id="save-btn">Save</button>
+      <div>
+        <a id="cancel-btn" href="{{ url_for('surveys_bp.view_surveys') }}">Cancel</a>
+      </div>
+    </form>
+  </div>
+</div>
+{% endblock %}
