@@ -5,13 +5,13 @@ class Surveys(Enum):
     """Includes all surveys for the api"""
     ASHE = "ASHE"
     BLOCKS = "Blocks"
+    BRES = "BRES"
     BRICKS = "Bricks"
     FDI = "FDI"
     NBS = "NBS"
     PCS = "PCS"
     QBS = "QBS"
     SANDANDGRAVEL = "Sand & Gravel"
-    BRES = "BRES"
 
 
 class FDISurveys(Enum):
