@@ -8,7 +8,7 @@ from response_operations_ui.common.mappers import map_ce_response_status
 from response_operations_ui.controllers import case_controller
 from response_operations_ui.controllers import contact_details_controller
 from response_operations_ui.controllers import reporting_units_controllers
-from response_operations_ui.forms import ConfirmChangeEnrolmentForm, EditContactDetailsForm, SearchForm
+from response_operations_ui.forms import EditContactDetailsForm, SearchForm
 
 logger = wrap_logger(logging.getLogger(__name__))
 
@@ -23,7 +23,6 @@ def view_reporting_unit(ru_ref):
 
     ru_details['surveys'] = sorted(ru_details['surveys'], key=lambda survey: survey['surveyRef'])
 
-    respondent = {}
     for survey in ru_details['surveys']:
         survey['collection_exercises'] = sorted(survey['collection_exercises'],
                                                 key=lambda ce: ce['scheduledStartDateTime'],
@@ -35,10 +34,6 @@ def view_reporting_unit(ru_ref):
                                                                          collection_exercise['exerciseRef'], ru_ref)
             collection_exercise['statusChangeable'] = len(statuses['available_statuses']) > 0
             collection_exercise['companyRegion'] = map_region(collection_exercise['companyRegion'])
-
-        for respondent in survey['respondents']:
-            respondent['status'] = respondent['status'].title()
-            respondent['enrolmentStatus'] = respondent['enrolmentStatus'].title()
 
     survey_arg = request.args.get('survey')
     period_arg = request.args.get('period')
@@ -65,7 +60,7 @@ def view_reporting_unit(ru_ref):
             "title": f"{ru_ref}"
         }
     ]
-    return render_template('reporting-unit.html', ru_ref=ru_ref, party_id=respondent.get('id'),
+    return render_template('reporting-unit.html', ru_ref=ru_ref,
                            ru=ru_details['reporting_unit'], surveys=ru_details['surveys'],
                            breadcrumbs=breadcrumbs, info_message=info_message, enrolment_changed=enrolment_changed,)
 

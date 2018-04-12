@@ -9,11 +9,13 @@ from response_operations_ui.exceptions.exceptions import ApiError
 logger = wrap_logger(logging.getLogger(__name__))
 
 
-def download_report(ce_id):
-    url = f'{app.config["BACKSTAGE_API_URL"]}/v1/collection-exercise/download-report/{ce_id}'
+def download_report(collection_exercise_id):
+    logger.debug('Downloading response chasing report', collection_exercise_id=collection_exercise_id)
+    url = f'{app.config["BACKSTAGE_API_URL"]}/v1/collection-exercise/download-report/{collection_exercise_id}'
     response = requests.get(url)
     if response.status_code != 200:
         raise ApiError(response)
+    logger.debug('Successfully downloaded response chasing report', collection_exercise_id=collection_exercise_id)
     return response
 
 
@@ -37,7 +39,6 @@ def execute_collection_exercise(short_name, period):
         logger.debug('Successfully began execution of collection exercise',
                      short_name=short_name, period=period)
         return True
-    return False
 
 
 def update_collection_exercise_details(collection_exercise_id, user_description, period):
