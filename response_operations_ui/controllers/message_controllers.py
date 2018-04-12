@@ -72,11 +72,11 @@ def send_message(message_json):
 
 
 def remove_unread_label(message_id):
-    url = f'{current_app.config["BACKSTAGE_API_URL"]}/v1/secure-message/update-label/{message_id}'
-    data = '{"label": "UNREAD", "action": "remove"}'
+    url = f"{current_app.config['SECURE_MESSAGE_URL']}/v2/messages/modify/{message_id}"
+    data = {"label": "UNREAD", "action": "remove"}
 
     logger.debug("Removing message unread label", message_id=message_id)
-    response = requests.put(url, headers={"Authorization": _get_jwt(), "Content-Type": "application/json"}, data=data)
+    response = requests.put(url, headers={"Authorization": _get_jwt(), "Content-Type": "application/json"}, json=data)
 
     try:
         response.raise_for_status()
@@ -86,24 +86,15 @@ def remove_unread_label(message_id):
 
 
 def _post_new_message(message):
-    return requests.post(_get_url(), headers={'Authorization': _get_jwt(), 'Content-Type': 'application/json',
+    url = f'{current_app.config["SECURE_MESSAGE_URL"]}/v2/messages'
+    return requests.post(url, headers={'Authorization': _get_jwt(), 'Content-Type': 'application/json',
                                               'Accept': 'application/json'}, data=message)
-
-
-def _get_url():
-    if current_app.config["BACKSTAGE_API_URL"] is None:
-        raise KeyError("Back stage configuration URL not available.")
-
-    return f'{current_app.config["BACKSTAGE_API_URL"]}/v1/secure-message/send-message'
 
 
 def _get_jwt():
     token = session.get('token')
-
-    token = token_decoder.decode_access_token(token)
-    logger.info("TOKEN IS", token=token)
-    user_id = token.get('user_id')
-    logger.info("USER ID IS", user_id=user_id)
+    decoded_token = token_decoder.decode_access_token(token)
+    user_id = decoded_token.get('user_id')
     secret = current_app.config['RAS_SECURE_MESSAGING_JWT_SECRET']
     sm_token = jwt.encode({'party_id': user_id, 'role': 'internal'}, secret, algorithm='HS256')
     logger.debug(f"Retrieving current token for user {current_user.id}")
