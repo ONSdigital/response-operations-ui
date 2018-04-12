@@ -59,6 +59,14 @@
       <dd class="ce-status__data item-headlines-definition ce-status" id="ce_status">
         {{ ce.state }}
       </dd>
+      {% if ce.state|upper == "LIVE" %}
+      <dt class="ce-status__title item-headlines-term ce-status">
+        Report:
+      </dt>
+      <dd class="ce-status__data item-headlines-definition ce-status" id="ce_status">
+        <a class="download" href="{{ url_for('collection_exercise_bp.response_chasing', ce_id=ce.id, survey_id=survey.id) }}">Response chasing</a>
+      </dd>
+      {% endif %}
     </dl>
 
     <div>
@@ -309,6 +317,13 @@
               <td class="table--cell tbl-ce-" name="period">
                 {{ce.exerciseRef}}
               </td>
+              <td class="table--cell tbl-ce-">
+                <form action="{{ url_for('collection_exercise_bp.view_collection_exercise_details', short_name=survey.shortName, period=ce.exerciseRef, surveyRef=survey.surveyRef)}}" method="get">
+                {% if show_edit_period %}
+                  <a class="edit-icon" href=# id="edit-collection-exercise-period" onclick="this.parentNode.submit()"></a>
+                {% endif %}
+                </form>
+              </td>
             </tr>
 
             <tr class="table--row">
@@ -317,6 +332,11 @@
               </td>
               <td class="table--cell tbl-ce-" name="user-description">
                 {{ce.userDescription}}
+              </td>
+              <td class="table--cell tbl-ce-">
+                <form action="{{ url_for('collection_exercise_bp.view_collection_exercise_details', short_name=survey.shortName, period=ce.exerciseRef, surveyRef=survey.surveyRef)}}" method="get">
+                  <a class="edit-icon" href=# id="edit-collection-exercise-user-description" onclick="this.parentNode.submit()"></a>
+                </form>
               </td>
             </tr>
 
@@ -327,6 +347,8 @@
               <td class="table--cell tbl-ce-value" name="survey-info">
                 {{survey.surveyRef}} {{survey.shortName}}
               </td>
+              <td class="table--cell tbl-ce-">
+              </td>
             </tr>
 
             <tr class="table--row">
@@ -335,6 +357,8 @@
               </td>
               <td class="table--cell tbl-ce-" name="survey-title">
                 {{survey.longName}}
+              </td>
+              <td class="table--cell tbl-ce-">
               </td>
             </tr>
 
@@ -345,6 +369,8 @@
               </td>
               <td class="table--cell tbl-ce-" name="period-start-date">
                   {{events.ref_period_start.day}} {{events.ref_period_start.date}}
+              </td>
+              <td class="table--cell tbl-ce-">
               </td>
             </tr>
             {% endif %}
@@ -357,6 +383,8 @@
               <td class="table--cell tbl-ce-" name="employment-date">
                   {{events.employment.day}} {{events.employment.date}}
               </td>
+              <td class="table--cell tbl-ce-">
+              </td>
             </tr>
             {% endif %}
 
@@ -367,6 +395,8 @@
               </td>
               <td class="table--cell tbl-ce-" name="period-end-date">
                   {{events.ref_period_end.day}} {{events.ref_period_end.date}}
+              </td>
+              <td class="table--cell tbl-ce-">
               </td>
             {% endif %}
             </tr>

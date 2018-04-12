@@ -2,23 +2,11 @@
 {% block page_title %}Messages | Survey Data Collection{% endblock %}
 
 {% block main %}
-</br>
 
 <div role="main" id="main" class="page__main">
-  {% if change_survey %}
-    <h1 class="saturn u-mb-l" name="page-messages-title">{{ selected_survey }} Messages
-      <span class="mars">(<a id="change-survey" href="/messages">Change survey</a>)</span>
-    </h1>
-
-  {% else %}
-    <h1 class="jupiter" name="page-messages-title">Messages</h1>
-  {% endif %}
-  <div class="grid">
-    <div class="grid__col col-12@m">
-      <div class="messages-list">
-        {% with messages = get_flashed_messages() %}
+  {% with messages = get_flashed_messages() %}
           {% if messages %}
-          <div class="panel panel--simple panel--success col-6@m">
+          <div class="panel panel--simple panel--success col-6@m u-mb-m">
               <div class="panel__body" data-qa="success-body">
                 {% for message in messages %}
                 <p class="mars" id="flashed-message-{{ loop.index }}">{{ message }}</p>
@@ -27,6 +15,20 @@
           </div>
           {% endif %}
         {% endwith %}
+
+  {% if change_survey %}
+    <h1 class="saturn u-mb-xs" name="page-messages-title">{{ selected_survey }} Messages
+
+      <span class="mars">(<a id="change-survey" href="{{ url_for('messages_bp.select_survey') }}">Change survey</a>)</span>
+
+    </h1>
+
+  {% else %}
+    <h1 class="jupiter" name="page-messages-title">Messages</h1>
+  {% endif %}
+  <div class="grid">
+    <div class="grid__col col-12@m">
+      <div class="messages-list">
         {% if response_error %}
         <div class="container page__container">
           <div class="grid">
