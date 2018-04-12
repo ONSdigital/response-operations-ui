@@ -66,7 +66,3 @@ class EditCollectionExerciseDetailsForm(FlaskForm):
 class ChangeGroupStatusForm(FlaskForm):
     event = StringField('event')
     submit = SubmitField('Confirm')
-
-
-class ConfirmChangeEnrolmentForm(FlaskForm):
-    submit = SubmitField('Confirm')

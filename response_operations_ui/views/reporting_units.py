@@ -18,7 +18,6 @@ reporting_unit_bp = Blueprint('reporting_unit_bp', __name__, static_folder='stat
 @reporting_unit_bp.route('/<ru_ref>', methods=['GET'])
 @login_required
 def view_reporting_unit(ru_ref):
-    enrolment_changed = request.args.get('enrolment_changed')
     ru_details = reporting_units_controllers.get_reporting_unit(ru_ref)
 
     ru_details['surveys'] = sorted(ru_details['surveys'], key=lambda survey: survey['surveyRef'])
@@ -48,7 +47,7 @@ def view_reporting_unit(ru_ref):
     info = request.args.get('info')
     if info:
         info_message = info
-    if enrolment_changed:
+    if request.args.get('enrolment_changed'):
         info_message = 'Enrolment status changed'
 
     breadcrumbs = [
@@ -60,9 +59,9 @@ def view_reporting_unit(ru_ref):
             "title": f"{ru_ref}"
         }
     ]
-    return render_template('reporting-unit.html', ru_ref=ru_ref,
-                           ru=ru_details['reporting_unit'], surveys=ru_details['surveys'],
-                           breadcrumbs=breadcrumbs, info_message=info_message, enrolment_changed=enrolment_changed,)
+    return render_template('reporting-unit.html', ru_ref=ru_ref, ru=ru_details['reporting_unit'],
+                           surveys=ru_details['surveys'], breadcrumbs=breadcrumbs,
+                           info_message=info_message, enrolment_changed=request.args.get('enrolment_changed'))
 
 
 @reporting_unit_bp.route('/<ru_ref>/edit-contact-details/<respondent_id>', methods=['GET'])
@@ -143,9 +142,11 @@ def map_region(region):
 @reporting_unit_bp.route('/<ru_ref>/change-enrolment-status', methods=['GET'])
 @login_required
 def confirm_change_enrolment_status(ru_ref):
-    return render_template('confirm-enrolment-change.html', business_id=request.args['business_id'], ru_ref=ru_ref, ru_name=request.args['ru_name'],
-                           survey_id=request.args['survey_id'], survey_name=request.args['survey_name'], respondent_id=request.args['respondent_id'],
-                           first_name=request.args['respondent_first_name'], last_name=request.args['respondent_last_name'],
+    return render_template('confirm-enrolment-change.html', business_id=request.args['business_id'], ru_ref=ru_ref,
+                           ru_name=request.args['ru_name'], survey_id=request.args['survey_id'],
+                           survey_name=request.args['survey_name'], respondent_id=request.args['respondent_id'],
+                           first_name=request.args['respondent_first_name'],
+                           last_name=request.args['respondent_last_name'],
                            change_flag=request.args['change_flag'])
 
 
@@ -154,5 +155,6 @@ def confirm_change_enrolment_status(ru_ref):
 def change_enrolment_status(ru_ref):
     reporting_units_controllers.change_enrolment_status(business_id=request.args['business_id'],
                                                         respondent_id=request.args['respondent_id'],
-                                                        survey_id=request.args['survey_id'], change_flag=request.args['change_flag'])
+                                                        survey_id=request.args['survey_id'],
+                                                        change_flag=request.args['change_flag'])
     return redirect(url_for('reporting_unit_bp.view_reporting_unit', ru_ref=ru_ref, enrolment_changed='True'))

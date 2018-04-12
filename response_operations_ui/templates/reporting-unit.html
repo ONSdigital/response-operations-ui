@@ -156,17 +156,17 @@
             </td>
 
             <td name="tbl-enrolment-status" class="table--cell">
-            {{ respondent.enrolmentStatus.title() }}
+              {{ respondent.enrolmentStatus.title() }}
               <div>
-                  {% if respondent.enrolmentStatus == 'ENABLED' %}
-                  <a href="{{ url_for('reporting_unit_bp.confirm_change_enrolment_status', ru_ref=ru.sampleUnitRef, survey_id=survey.id, survey_name=survey.shortName,
-                                      respondent_id=respondent.id, respondent_first_name=respondent.firstName, respondent_last_name=respondent.lastName, business_id=ru.id,
-                                      ru_name=ru.name, change_flag='DISABLED')}}">Disable</a>
-                  {% else %}
-                  <a href="{{ url_for('reporting_unit_bp.confirm_change_enrolment_status', survey_id=survey.id, survey_name=survey.shortName, respondent_id=respondent.id,
-                              respondent_first_name=respondent.firstName, respondent_last_name=respondent.lastName, business_id=ru.id, ru_ref=ru.sampleUnitRef,
-                              ru_name=ru.name, change_flag='ENABLED')}}">Re-enable</a>
-                  {% endif %}
+                {% if respondent.enrolmentStatus == 'ENABLED' %}
+                <a href="{{ url_for('reporting_unit_bp.confirm_change_enrolment_status', ru_ref=ru.sampleUnitRef, survey_id=survey.id, survey_name=survey.shortName,
+                                    respondent_id=respondent.id, respondent_first_name=respondent.firstName, respondent_last_name=respondent.lastName, business_id=ru.id,
+                                    ru_name=ru.name, change_flag='DISABLED')}}">Disable</a>
+                {% else %}
+                <a href="{{ url_for('reporting_unit_bp.confirm_change_enrolment_status', survey_id=survey.id, survey_name=survey.shortName, respondent_id=respondent.id,
+                            respondent_first_name=respondent.firstName, respondent_last_name=respondent.lastName, business_id=ru.id, ru_ref=ru.sampleUnitRef,
+                            ru_name=ru.name, change_flag='ENABLED')}}">Re-enable</a>
+                {% endif %}
               </div>
             </td>
 
