@@ -45,6 +45,11 @@
             </span>
           </label>
           {{ form.long_name(class_="input input--text", id='long_name', required=required, maxlength=254, value=long_name) }}
+          <div class="field u-mb-l">
+            <span class="u-vh">Current value: </span>
+            </span>
+            {{ form.survey_ref(value=survey_ref, id='survey_ref') }}
+          </div>
         </div>
       <button class="btn btn--primary u-mt-s" id="save-btn">Save</button>
       <div>

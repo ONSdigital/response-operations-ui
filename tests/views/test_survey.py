@@ -10,6 +10,8 @@ from config import TestingConfig
 from response_operations_ui import app
 from response_operations_ui.controllers.survey_controllers import get_survey_short_name_by_id
 
+survey_ref = '222'
+
 url_get_survey_list = f'{app.config["BACKSTAGE_API_URL"]}/v1/survey/surveys'
 with open('tests/test_data/survey/survey_list.json') as json_data:
     survey_list = json.load(json_data)
@@ -18,6 +20,9 @@ with open('tests/test_data/survey/survey.json') as json_data:
     survey_info = json.load(json_data)
 with open('tests/test_data/survey/survey_states.json') as json_data:
     survey_info_states = json.load(json_data)
+url_update_survey_details = f'{app.config["BACKSTAGE_API_URL"]}/v1/survey/edit-survey-details/{survey_ref}'
+with open('tests/test_data/survey/updated_survey_list.json') as json_data:
+    updated_survey_list = json.load(json_data)
 
 
 class TestSurvey(unittest.TestCase):
@@ -154,3 +159,42 @@ class TestSurvey(unittest.TestCase):
         self.assertEqual(get_survey_short_name_by_id("AOFDI_id"), "FDI")
         self.assertEqual(get_survey_short_name_by_id("AIFDI_id"), "FDI")
         self.assertEqual(get_survey_short_name_by_id("cb0711c3-0ac8-41d3-ae0e-567e5ea1ef87"), "BRES")
+
+    @requests_mock.mock()
+    def test_update_survey_details_success(self, mock_request):
+        changed_survey_details = {
+            "survey_ref": '222',
+            "long_name": 'New Survey Long Name',
+            "short_name": 'QBX'
+        }
+        mock_request.get(url_get_survey_list, json=survey_list)
+        mock_request.put(url_update_survey_details)
+        mock_request.get(url_get_survey_list, json=updated_survey_list)
+        response = self.app.post(f"/surveys/edit-survey-details/QBS", data=changed_survey_details,
+                                 follow_redirects=True)
+        self.assertEqual(response.status_code, 200)
+        self.assertIn('New Survey Long Name'.encode(), response.data)
+        self.assertIn('QBX'.encode(), response.data)
+
+    @requests_mock.mock()
+    def test_update_survey_details_failure(self, mock_request):
+        changed_survey_details = {
+            "survey_ref": '222',
+            "long_name": 'New Survey Long Name',
+            "short_name": 'QBX'
+        }
+        mock_request.get(url_get_survey_list, json=survey_list)
+        mock_request.put(url_update_survey_details, status_code=500)
+        mock_request.get(url_get_survey_list, json=updated_survey_list)
+        response = self.app.post(f"/surveys/edit-survey-details/QBS", data=changed_survey_details,
+                                 follow_redirects=True)
+        self.assertEqual(response.status_code, 500)
+        self.assertIn("Server error (Error 500)".encode(), response.data)
+
+    @requests_mock.mock()
+    def test_get_survey_details(self, mock_request):
+        mock_request.get(url_get_survey_list, json=survey_list)
+        mock_request.get(url_get_survey_by_short_name, json=survey_info)
+        response = self.app.get(f"surveys/edit-survey-details/bres", follow_redirects=True)
+        self.assertEqual(response.status_code, 200)
+        self.assertIn("221".encode(), response.data)
