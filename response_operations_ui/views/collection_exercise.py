@@ -88,11 +88,11 @@ def post_collection_exercise(short_name, period):
     return view_collection_exercise(short_name, period)
 
 
-@collection_exercise_bp.route('response_chasing/<ce_id>', methods=['GET'])
+@collection_exercise_bp.route('response_chasing/<ce_id>/<survey_id>', methods=['GET'])
 @login_required
-def response_chasing(ce_id):
-    logger.debug('Response chasing', ce_id=ce_id)
-    response = collection_exercise_controllers.download_report(ce_id)
+def response_chasing(ce_id, survey_id):
+    logger.debug('Response chasing', ce_id=ce_id, survey_id=survey_id)
+    response = collection_exercise_controllers.download_report(ce_id, survey_id)
     return response.content, response.status_code, response.headers.items()
 
 
