@@ -148,7 +148,8 @@ def view_selected_survey(selected_survey):
             survey_id = _get_survey_id(selected_survey)
 
         params = {
-            'survey': survey_id
+            'survey': survey_id,
+            'limit' : request.args.get('limit', 1000)
         }
 
         refined_messages = [_refine(message) for message in message_controllers.get_thread_list(params)]
