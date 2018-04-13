@@ -88,7 +88,7 @@ def remove_unread_label(message_id):
 def _post_new_message(message):
     url = f'{current_app.config["SECURE_MESSAGE_URL"]}/v2/messages'
     return requests.post(url, headers={'Authorization': _get_jwt(), 'Content-Type': 'application/json',
-                                              'Accept': 'application/json'}, data=message)
+                                       'Accept': 'application/json'}, data=message)
 
 
 def _get_jwt():
