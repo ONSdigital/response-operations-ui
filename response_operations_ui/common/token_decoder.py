@@ -9,7 +9,6 @@ logger = wrap_logger(logging.getLogger(__name__))
 
 def decode_access_token(access_token):
     uaa_public_key = get_uaa_public_key()
-    logger.info(uaa_public_key)
     decoded_jwt = jwt.decode(
         access_token,
         uaa_public_key,
