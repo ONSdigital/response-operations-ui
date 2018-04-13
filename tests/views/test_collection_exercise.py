@@ -7,16 +7,23 @@ import requests_mock
 from config import TestingConfig
 from response_operations_ui import app
 
-
+collection_exercise_id = "14fb3e68-4dca-46db-bf49-04b84e07e77c"
 url_get_collection_exercise = f'{app.config["BACKSTAGE_API_URL"]}/v1/collection-exercise/test/000000'
 with open('tests/test_data/collection_exercise/collection_exercise_details.json') as json_data:
     collection_exercise_details = json.load(json_data)
 with open('tests/test_data/collection_exercise/collection_exercise_details_no_sample.json') as json_data:
     collection_exercise_details_no_sample = json.load(json_data)
+with open('tests/test_data/collection_exercise/collection_exercise_details_failedvalidation.json') as json_data:
+    collection_exercise_details_failedvalidation = json.load(json_data)
 url_collection_instrument = f'{app.config["BACKSTAGE_API_URL"]}/v1/collection-instrument/test/000000'
 url_collection_instrument_link = f'{app.config["BACKSTAGE_API_URL"]}/v1/collection-instrument/link/111111/000000'
 url_upload_sample = f'{app.config["BACKSTAGE_API_URL"]}/v1/sample/test/000000'
 url_execute = f'{app.config["BACKSTAGE_API_URL"]}/v1/collection-exercise/test/000000/execute'
+url_update_ce = f'{app.config["BACKSTAGE_API_URL"]}/v1/collection-exercise/update-collection-exercise-details/' \
+                f'{collection_exercise_id}'
+url_get_survey_by_short_name = f'{app.config["BACKSTAGE_API_URL"]}/v1/survey/shortname/test'
+with open('tests/test_data/survey/edited_survey_ce_details.json') as json_data:
+    updated_survey_info = json.load(json_data)
 
 
 class TestCollectionExercise(unittest.TestCase):
@@ -26,6 +33,10 @@ class TestCollectionExercise(unittest.TestCase):
         app.config.from_object(app_config)
         app.login_manager.init_app(app)
         self.app = app.test_client()
+        self.headers = {
+            'Authorization': 'test_jwt',
+            'Content-Type': 'application/json',
+        }
 
     @requests_mock.mock()
     def test_collection_exercise_view(self, mock_request):
@@ -49,7 +60,7 @@ class TestCollectionExercise(unittest.TestCase):
     @requests_mock.mock()
     def test_upload_collection_instrument(self, mock_request):
         post_data = {
-            'ciFile': (BytesIO(b'data'), 'test.xlsx'),
+            'ciFile': (BytesIO(b'data'), '064_201803_0001.xlsx'),
             'load-ci': '',
         }
         mock_request.post(url_collection_instrument, status_code=201)
@@ -88,7 +99,7 @@ class TestCollectionExercise(unittest.TestCase):
         response = self.app.post("/surveys/test/000000", data=post_data)
 
         self.assertEqual(response.status_code, 200)
-        self.assertIn("Error: Failed to add Collection Instrument(s)".encode(), response.data)
+        self.assertIn("Error: Failed to add collection instrument(s)".encode(), response.data)
 
     @requests_mock.mock()
     def test_failed_no_selected_collection_instrument(self, mock_request):
@@ -102,12 +113,12 @@ class TestCollectionExercise(unittest.TestCase):
         response = self.app.post("/surveys/test/000000", data=post_data)
 
         self.assertEqual(response.status_code, 200)
-        self.assertIn("Error: No Collection Instruments selected".encode(), response.data)
+        self.assertIn("Error: No collection instruments selected".encode(), response.data)
 
     @requests_mock.mock()
     def test_view_collection_instrument_after_upload(self, mock_request):
         post_data = {
-            'ciFile': (BytesIO(b'data'), 'collection_instrument.xlsx'),
+            'ciFile': (BytesIO(b'data'), '064_201803_0001.xlsx'),
             'load-ci': '',
         }
         mock_request.post(url_collection_instrument, status_code=201)
@@ -121,7 +132,7 @@ class TestCollectionExercise(unittest.TestCase):
     @requests_mock.mock()
     def test_failed_upload_collection_instrument(self, mock_request):
         post_data = {
-            'ciFile': (BytesIO(b'data'), 'test.xlsx'),
+            'ciFile': (BytesIO(b'data'), '064_201803_0001.xlsx'),
             'load-ci': '',
         }
         mock_request.post(url_collection_instrument, status_code=500)
@@ -130,12 +141,12 @@ class TestCollectionExercise(unittest.TestCase):
         response = self.app.post("/surveys/test/000000", data=post_data, follow_redirects=True)
 
         self.assertEqual(response.status_code, 200)
-        self.assertIn("Error: Failed to upload Collection Instrument".encode(), response.data)
+        self.assertIn("Error: Failed to upload collection instrument".encode(), response.data)
 
     @requests_mock.mock()
     def test_no_upload_collection_instrument_when_bad_extension(self, mock_request):
         post_data = {
-            'ciFile': (BytesIO(b'data'), 'test.html'),
+            'ciFile': (BytesIO(b'data'), '064_201803_0001.html'),
             'load-ci': '',
         }
         mock_request.get(url_get_collection_exercise, json=collection_exercise_details)
@@ -144,7 +155,49 @@ class TestCollectionExercise(unittest.TestCase):
 
         self.assertEqual(response.status_code, 200)
         self.assertNotIn("Collection instrument loaded".encode(), response.data)
-        self.assertIn("Error: wrong file type for Collection instrument".encode(), response.data)
+        self.assertIn("Error: wrong file type for collection instrument".encode(), response.data)
+
+    @requests_mock.mock()
+    def test_no_upload_collection_instrument_when_bad_form_type_format(self, mock_request):
+        post_data = {
+            'ciFile': (BytesIO(b'data'), '064_201803_xxxxx.xlsx'),
+            'load-ci': '',
+        }
+        mock_request.get(url_get_collection_exercise, json=collection_exercise_details)
+
+        response = self.app.post("/surveys/test/000000", data=post_data)
+
+        self.assertEqual(response.status_code, 200)
+        self.assertNotIn("Collection instrument loaded".encode(), response.data)
+        self.assertIn("Error: invalid file name format for collection instrument".encode(), response.data)
+
+    @requests_mock.mock()
+    def test_no_upload_collection_instrument_bad_file_name_format(self, mock_request):
+        post_data = {
+            'ciFile': (BytesIO(b'data'), '064201803_xxxxx.xlsx'),
+            'load-ci': '',
+        }
+        mock_request.get(url_get_collection_exercise, json=collection_exercise_details)
+
+        response = self.app.post("/surveys/test/000000", data=post_data)
+
+        self.assertEqual(response.status_code, 200)
+        self.assertNotIn("Collection instrument loaded".encode(), response.data)
+        self.assertIn("Error: invalid file name format for collection instrument".encode(), response.data)
+
+    @requests_mock.mock()
+    def test_no_upload_collection_instrument_form_type_not_integer(self, mock_request):
+        post_data = {
+            'ciFile': (BytesIO(b'data'), '064_201803_123E.xlsx'),
+            'load-ci': '',
+        }
+        mock_request.get(url_get_collection_exercise, json=collection_exercise_details)
+
+        response = self.app.post("/surveys/test/000000", data=post_data)
+
+        self.assertEqual(response.status_code, 200)
+        self.assertNotIn("Collection instrument loaded".encode(), response.data)
+        self.assertIn("Error: invalid file name format for collection instrument".encode(), response.data)
 
     @requests_mock.mock()
     def test_no_upload_collection_instrument_when_no_file(self, mock_request):
@@ -157,7 +210,7 @@ class TestCollectionExercise(unittest.TestCase):
 
         self.assertEqual(response.status_code, 200)
         self.assertNotIn("Collection instrument loaded".encode(), response.data)
-        self.assertIn("Error: No Collection instrument supplied".encode(), response.data)
+        self.assertIn("Error: No collection instrument supplied".encode(), response.data)
 
     @requests_mock.mock()
     def test_view_collection_instrument(self, mock_request):
@@ -287,3 +340,60 @@ class TestCollectionExercise(unittest.TestCase):
 
         self.assertEqual(response.status_code, 200)
         self.assertIn('Processing collection exercise'.encode(), response.data)
+
+    @requests_mock.mock()
+    def test_failed_execution(self, mock_request):
+        mock_request.get(url_get_collection_exercise, json=collection_exercise_details_failedvalidation)
+
+        response = self.app.get('/surveys/test/000000')
+
+        self.assertEqual(response.status_code, 200)
+        self.assertIn('Ready for review'.encode(), response.data)
+        self.assertIn('Error processing collection exercise'.encode(), response.data)
+        self.assertIn('Check collection instruments'.encode(), response.data)
+
+    def mock_for_update_ce_details(self, changed_details, mock_request):
+        mock_request.get(url_get_collection_exercise, json=collection_exercise_details)
+        mock_request.put(url_update_ce)
+        mock_request.get(url_get_survey_by_short_name, json=updated_survey_info)
+        response = self.app.post(f"/surveys/test/000000/edit-collection-exercise-details",
+                                 data=changed_details, follow_redirects=True)
+        return response
+
+    @requests_mock.mock()
+    def test_update_collection_exercise_details_success(self, mock_request):
+        changed_ce_details = {
+            "collection_exercise_id": '14fb3e68-4dca-46db-bf49-04b84e07e77c',
+            "user_description": '16th June 2019',
+            "period": '201906'
+        }
+        response = self.mock_for_update_ce_details(changed_ce_details, mock_request)
+
+        self.assertEqual(response.status_code, 200)
+        self.assertIn('16th June 2019'.encode(), response.data)
+        self.assertIn('201906'.encode(), response.data)
+
+    @requests_mock.mock()
+    def test_update_collection_exercise_details_fail(self, mock_request):
+        changed_ce_details = {
+            "collection_exercise_id": '14fb3e68-4dca-46db-bf49-04b84e07e77c',
+            "user_description": '16th June 2019',
+            "period": '201906'
+        }
+        mock_request.get(url_get_collection_exercise, json=collection_exercise_details)
+        mock_request.put(url_update_ce, status_code=500)
+
+        response = self.app.post(f"/surveys/test/000000/edit-collection-exercise-details",
+                                 data=changed_ce_details, follow_redirects=True)
+
+        self.assertIn("Server error (Error 500)".encode(), response.data)
+
+    @requests_mock.mock()
+    def test_get_ce_details(self, mock_request):
+        mock_request.get(url_get_collection_exercise, json=collection_exercise_details)
+
+        response = self.app.get(f"/surveys/test/000000/edit-collection-exercise-details",
+                                follow_redirects=True)
+
+        self.assertEqual(response.status_code, 200)
+        self.assertIn("14fb3e68-4dca-46db-bf49-04b84e07e77c".encode(), response.data)

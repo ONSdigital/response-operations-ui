@@ -58,3 +58,15 @@ def change_respondent_account_status(party_id, status_change):
     logger.debug('Successfully changed respondent account status', party_id=party_id, status_change=status_change)
 
     return response.json()
+
+
+def resend_verification_email(party_id):
+    logger.debug('Re-sending verification email', party_id=party_id)
+    url = f'{app.config["BACKSTAGE_API_URL"]}/v1/reporting-unit/resend-verification-email/{party_id}'
+
+    response = requests.post(url)
+    if response.status_code != 200:
+        logger.exception("Re-sending of verification email failed", party_id=party_id)
+        raise ApiError(response)
+
+    logger.info('Successfully re-sent verification email', party_id=party_id)

@@ -8,7 +8,7 @@ from structlog import wrap_logger
 from response_operations_ui.common.mappers import map_ce_response_status
 from response_operations_ui.controllers import case_controller
 from response_operations_ui.controllers import party_controller
-from response_operations_ui.controllers import edit_contact_details_controller
+from response_operations_ui.controllers import contact_details_controller
 from response_operations_ui.controllers import reporting_units_controllers
 from response_operations_ui.forms import EditContactDetailsForm
 from response_operations_ui.forms import SearchForm, Confirm
@@ -22,11 +22,11 @@ reporting_unit_bp = Blueprint('reporting_unit_bp', __name__, static_folder='stat
 @reporting_unit_bp.route('/<ru_ref>', methods=['GET'])
 @login_required
 def view_reporting_unit(ru_ref):
-    edit_details = request.args.get('edit_details')
     ru_details = reporting_units_controllers.get_reporting_unit(ru_ref)
 
     ru_details['surveys'] = sorted(ru_details['surveys'], key=lambda survey: survey['surveyRef'])
 
+    respondent = {}
     for survey in ru_details['surveys']:
         survey['collection_exercises'] = sorted(survey['collection_exercises'],
                                                 key=lambda ce: ce['scheduledStartDateTime'],
@@ -43,16 +43,6 @@ def view_reporting_unit(ru_ref):
             respondent['status'] = respondent['status'].title()
             respondent['enrolmentStatus'] = respondent['enrolmentStatus'].title()
 
-    breadcrumbs = [
-        {
-            "title": "Reporting units",
-            "link": "/reporting-units"
-        },
-        {
-            "title": f"{ru_ref}"
-        }
-    ]
-
     survey_arg = request.args.get('survey')
     period_arg = request.args.get('period')
     info_message = None
@@ -67,14 +57,24 @@ def view_reporting_unit(ru_ref):
     if info:
         info_message = info
 
-    return render_template('reporting-unit.html', ru=ru_details['reporting_unit'], surveys=ru_details['surveys'],
-                           breadcrumbs=breadcrumbs, info_message=info_message, edit_details=edit_details)
+    breadcrumbs = [
+        {
+            "title": "Reporting units",
+            "link": "/reporting-units"
+        },
+        {
+            "title": f"{ru_ref}"
+        }
+    ]
+    return render_template('reporting-unit.html', ru_ref=ru_ref, party_id=respondent.get('id'),
+                           ru=ru_details['reporting_unit'], surveys=ru_details['surveys'],
+                           breadcrumbs=breadcrumbs, info_message=info_message)
 
 
 @reporting_unit_bp.route('/<ru_ref>/edit-contact-details/<respondent_id>', methods=['GET'])
 @login_required
 def view_contact_details(ru_ref, respondent_id):
-    respondent_details = edit_contact_details_controller.get_contact_details(respondent_id)
+    respondent_details = contact_details_controller.get_contact_details(respondent_id)
 
     form = EditContactDetailsForm(form=request.form, default_values=respondent_details)
 
@@ -85,24 +85,20 @@ def view_contact_details(ru_ref, respondent_id):
 @reporting_unit_bp.route('/<ru_ref>/edit-contact-details/<respondent_id>', methods=['POST'])
 @login_required
 def edit_contact_details(ru_ref, respondent_id):
-    form = EditContactDetailsForm(request.form)
 
-    edit_details_data = {
-        "first_name": request.form.get('first_name'),
-        "last_name": request.form.get('last_name'),
-        "email": request.form.get('email'),
-        "telephone": request.form.get('telephone'),
-        "respondent_id": respondent_id}
+    form = request.form
+    contact_details_changed = contact_details_controller.update_contact_details(ru_ref, respondent_id, form)
 
-    edit_successfully = edit_contact_details_controller.edit_contact_details(edit_details_data, respondent_id)
+    ui_message = 'No updates were necessary'
+    if 'emailAddress' in contact_details_changed:
+        if len(contact_details_changed) > 1:
+            ui_message = f'Contact details saved and verification email sent to {form.get("email")}'
+        else:
+            ui_message = f'Verification email sent to {form.get("email")}'
+    elif len(contact_details_changed) > 0:
+        ui_message = 'Contact details changed'
 
-    if not edit_successfully:
-        respondent_details = edit_contact_details_controller.get_contact_details(respondent_id)
-        logger.info('Error submitting respondent details', respondent_id=respondent_id)
-        return render_template('edit-contact-details.html', ru_ref=ru_ref, form=form, error=True,
-                               respondent_details=respondent_details)
-
-    return redirect(url_for('reporting_unit_bp.view_reporting_unit', ru_ref=ru_ref, edit_details=True))
+    return redirect(url_for('reporting_unit_bp.view_reporting_unit', ru_ref=ru_ref, info=ui_message))
 
 
 @reporting_unit_bp.route('/', methods=['GET', 'POST'])
@@ -118,6 +114,22 @@ def search_reporting_units():
         business_list = reporting_units_controllers.search_reporting_units(query)
 
     return render_template('reporting-units.html', business_list=business_list, form=form, breadcrumbs=breadcrumbs)
+
+
+@reporting_unit_bp.route('/resend_verification/<ru_ref>/<email>/<party_id>', methods=['GET'])
+@login_required
+def resend_verification(ru_ref, email, party_id):
+    logger.debug("Re-send verification email requested", ru_ref=ru_ref, party_id=party_id)
+    return render_template('re-send-verification-email.html', ru_ref=ru_ref, email=email)
+
+
+@reporting_unit_bp.route('/resend_verification/<ru_ref>/<email>/<party_id>', methods=['POST'])
+@login_required
+def resent_verification(ru_ref, email, party_id):
+    reporting_units_controllers.resend_verification_email(party_id)
+    logger.info("Re-sent verification email.", party_id=party_id)
+    return redirect(url_for('reporting_unit_bp.view_reporting_unit', ru_ref=ru_ref,
+                            info='Verification email re-sent'))
 
 
 @reporting_unit_bp.route('/<ru_ref>/<collection_exercise_id>/new_enrolment_code', methods=['GET'])

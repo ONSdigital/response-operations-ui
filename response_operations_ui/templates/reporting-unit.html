@@ -4,15 +4,6 @@
 {% block main %}
 
 
-{% if edit_details %}
-<div id="contact-changed" class="panel panel--simple panel--success">
-   <div class="panel__body">
-      <div>Contact details changed</div>
-   </div>
-</div>
-{% endif %}
-
-
 {% include 'partials/info-box.html' %}
 
 <h1 id="RU_NAME" class="jupiter">{{ ru.name }}</h1>
@@ -24,6 +15,14 @@
   <dd id="RU_REF" class="item-headlines-definition">
     {{ ru.sampleUnitRef }}
   </dd>
+  {% if ru.attributes.tradstyle1 %}
+  <dt class="item-headlines-term">
+    Trading as:
+  </dt>
+  <dd id="TRADING_AS" class="item-headlines-definition">
+    {{ ru.attributes.tradstyle1 + " " + ru.attributes.tradstyle2 + " " + ru.attributes.tradstyle3 }}
+  </dd>
+  {% endif %}
 </dl>
 
 <h2 class="saturn">Surveys</h2>
@@ -48,10 +47,13 @@
                 Period
               </th>
               <th scope="col" class="table--header--cell">
-                Reporting unit name (from sample)
+                Reporting unit name
               </th>
               <th scope="col" class="table--header--cell">
-                Region (from sample)
+                Trading as
+              </th>
+              <th scope="col" class="table--header--cell">
+                Region
               </th>
               <th scope="col" class="table--header--cell">
                 Status
@@ -66,6 +68,9 @@
               </td>
               <td name="tbl-ce-company-name" class="table--cell">
                 {{ ce.companyName }}
+              </td>
+              <td name="tbl-ce-company-name" class="table--cell">
+                {{ ce.tradingAs }}
               </td>
               <td name="tbl-ce-company-region" class="table--cell">
                 {{ ce.companyRegion }}
@@ -140,8 +145,8 @@
                   {{ respondent.telephone }}
                 </dd>
                 <div>
-                  <form action="{{ url_for('reporting_unit_bp.view_contact_details', ru_ref=ru.sampleUnitRef, respondent_id=respondent.id)}}" method="get">
-                  <a href=# id="edit-contact-details-btn" onclick="this.parentNode.submit()"> Edit contact details </a>
+                  <form action="{{ url_for('reporting_unit_bp.view_contact_details', respondent_id=respondent.id, ru_ref=ru.sampleUnitRef)}}" method="get">
+                  <a href=# id="edit-contact-details-btn-{{ survey.shortName }}" onclick="this.parentNode.submit()"> Edit contact details </a>
                   </form>
                 </div>
               </dl>
@@ -160,17 +165,22 @@
             </td>
             <td name="tbl-enrolment-status" class="table--cell">
               {{ respondent.enrolmentStatus }}
+                {% if respondent.enrolmentStatus|upper == "PENDING" %}
+                <br>
+                  <a href="{{ url_for('reporting_unit_bp.resend_verification', ru_ref=ru_ref, email=respondent.emailAddress, party_id=party_id) }}">Re-send verification email</a>
+                </br>
+                {% endif %}
             </td>
             <td class="table--cell">
               <form action="{{ url_for('messages_bp.create_message')}}" method="post" id="create-message-view">
-                <button type="submit" name="create-message" id="create-message-button-{{ loop.index }}" value="create-message-view" class="btn-link">Create message</button>
-                <input type="hidden" name="ru_ref" value={{ ru.sampleUnitRef }} >
-                <input type="hidden" name="ru_id" value={{ ru.id }}>
-                <input type="hidden" name="business" value={{ ru.name }}>
-                <input type="hidden" name="survey" value={{ survey.shortName }}>
-                <input type="hidden" name="survey_id" value={{ survey.id }}>
+                <button type="submit" name="create-message" id="create-message-button-{{ loop.index }}" value="create-message-view" class="button">Create message</button>
+                <input type="hidden" name="ru_ref" value="{{ ru.sampleUnitRef }}">
+                <input type="hidden" name="ru_id" value="{{ ru.id }}">
+                <input type="hidden" name="business" value="{{ ru.name }}">
+                <input type="hidden" name="survey" value="{{ survey.shortName }}">
+                <input type="hidden" name="survey_id" value="{{ survey.id }}">
                 <input type="hidden" name="msg_to_name" value="{{ respondent.firstName }} {{ respondent.lastName }}">
-                <input type="hidden" name="msg_to" value={{ respondent.id }}>
+                <input type="hidden" name="msg_to" value="{{ respondent.id }}">
               </form>
             </td>
           </tr>
@@ -178,6 +188,7 @@
           </tbody>
         </table>
       </div>
+
     </div>
   </div>
   {% endfor %}
