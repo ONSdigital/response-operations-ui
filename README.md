@@ -60,7 +60,7 @@ $ pipenv run python run_tests.py
 
 Run linting (the travis build sets a custom max line length)
 ```
-$ pipenv check --style . --max-line-length 100
+$ pipenv check --style . --max-line-length 120
 ```
 
 Run tests with Make
