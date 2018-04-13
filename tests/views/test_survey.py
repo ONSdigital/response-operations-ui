@@ -74,7 +74,7 @@ class TestSurvey(unittest.TestCase):
     def test_survey_view(self, mock_request):
         mock_request.get(url_get_survey_by_short_name, json=survey_info)
 
-        response = self.app.get("/surveys/bres")
+        response = self.app.get("/surveys/bres", follow_redirects=True)
 
         self.assertEqual(response.status_code, 200)
 
