@@ -57,9 +57,6 @@ def view_conversation(thread_id):
         thread_conversation = message_controllers.get_conversation(thread_id)['messages']
         refined_thread = [_refine(message) for message in reversed(thread_conversation)]
         breadcrumbs = _get_conversation_breadcrumbs(thread_conversation)
-    except KeyError as e:
-        logger.exception("A key error occurred")
-        raise ApiError(e)
     except IndexError:
         breadcrumbs = [
             {"title": "Messages", "link": "/messages"},
