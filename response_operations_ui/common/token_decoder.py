@@ -11,9 +11,8 @@ def decode_access_token(access_token):
     uaa_public_key = get_uaa_public_key()
     decoded_jwt = jwt.decode(
         access_token,
-        uaa_public_key,
+        key=uaa_public_key,
         audience='ras_backstage',
-        leeway=10,
-        verify=False
+        leeway=10
     )
     return decoded_jwt
