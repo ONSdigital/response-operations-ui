@@ -46,7 +46,7 @@
               </td>
               <td class="table--cell tbl-ce-">
                 <form action="{{ url_for('surveys_bp.view_survey_details', short_name=survey.shortName, long_name=survey.longName, legal_basis=survey.legalBasis, survey_ref=survey.surveyRef)}}" method="get">
-                  <a class="edit-icon" href=# id="edit-survey-details" onclick="this.parentNode.submit()"></a>
+                  <a class="edit-icon" href=# id="edit-survey-details-{{survey.surveyRef}}" onclick="this.parentNode.submit()"></a>
                 </form>
               </td>
             </tr>

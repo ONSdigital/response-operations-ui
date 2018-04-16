@@ -67,7 +67,7 @@ def edit_survey_details(short_name):
     form = request.form
 
     survey_controllers.update_survey_details(form.get('survey_ref'),
-                                             form.get('long_name'),
-                                             form.get('short_name'))
+                                             form.get('short_name'),
+                                             form.get('long_name'))
 
     return redirect(url_for('surveys_bp.view_surveys', short_name=short_name))
