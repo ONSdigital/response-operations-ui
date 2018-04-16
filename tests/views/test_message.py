@@ -16,8 +16,8 @@ url_sign_in_data = f'{app.config["BACKSTAGE_API_URL"]}/v2/sign-in/'
 url_get_surveys_list = f'{app.config["BACKSTAGE_API_URL"]}/v1/survey/surveys'
 url_get_thread = f'{app.config["SECURE_MESSAGE_URL"]}/v2/threads/fb0e79bd-e132-4f4f-a7fd-5e8c6b41b9af'
 url_get_threads_list = f'{app.config["SECURE_MESSAGE_URL"]}/threads'
-url_update_label = (f'{app.config["SECURE_MESSAGE_URL"]}'
-                    f'/v1/secure-message/update-label/ae46748b-c6e6-4859-a57a-86e01db2dcbc')
+url_send_message = f'{app.config["SECURE_MESSAGE_URL"]}/v2/messages'
+url_update_label = f'{app.config["SECURE_MESSAGE_URL"]}/v2/messages/modify/ae46748b-c6e6-4859-a57a-86e01db2dcbc'
 
 with open('tests/test_data/message/thread.json') as json_data:
     thread_json = json.load(json_data)
@@ -232,7 +232,9 @@ class TestMessage(unittest.TestCase):
         self.assertFalse(_get_unread_status(message_missing_labels))
 
     @requests_mock.mock()
-    def test_get_thread(self, mock_request):
+    @patch('response_operations_ui.controllers.message_controllers._get_jwt')
+    def test_get_thread(self, mock_request, mock_get_jwt):
+        mock_get_jwt.return_value = "blah"
         with open('tests/test_data/message/thread_unread.json') as thread_unread_json:
             thread_unread_json = json.load(thread_unread_json)
 
@@ -244,7 +246,9 @@ class TestMessage(unittest.TestCase):
         self.assertIn("Unread Message Subject".encode(), response.data)
 
     @requests_mock.mock()
-    def test_get_thread_when_update_label_fails(self, mock_request):
+    @patch('response_operations_ui.controllers.message_controllers._get_jwt')
+    def test_get_thread_when_update_label_fails(self, mock_request, mock_get_jwt):
+        mock_get_jwt.return_value = "blah"
         # The page should still load if the update label call fails
         with open('tests/test_data/message/thread_unread.json') as thread_unread_json:
             thread_unread_json = json.load(thread_unread_json)
@@ -258,10 +262,10 @@ class TestMessage(unittest.TestCase):
 
     def test_get_conversation_fail_when_no_configuration_key(self):
         with app.app_context():
-            app.config['SECURE_MESSAGE_URL'] = None
+            app.config.pop('SECURE_MESSAGE_URL')
 
             with self.assertRaises(KeyError):
-                get_conversation()
+                get_conversation("test123")
 
     message_json = '''
         {
@@ -291,8 +295,8 @@ class TestMessage(unittest.TestCase):
     @requests_mock.mock()
     def test_send_message_fail(self, mock_request):
         with app.app_context():
-            app.config['SECURE_MESSAGE_URL'] = None
-            url = f'{app.config["SECURE_MESSAGE_URL"]}/v1/secure-message/send-message'
+            app.config.pop('SECURE_MESSAGE_URL')
+            url = url_send_message
             mock_request.post(url)
 
             with self.assertRaises(InternalError):
@@ -326,8 +330,10 @@ class TestMessage(unittest.TestCase):
                     'hidden_survey': "ASHE"}
 
     @requests_mock.mock()
-    def test_form_submit_with_valid_data(self, mock_request):
-        mock_request.post(f'{app.config["SECURE_MESSAGE_URL"]}/v1/secure-message/send-message', status_code=201)
+    @patch('response_operations_ui.controllers.message_controllers._get_jwt')
+    def test_form_submit_with_valid_data(self, mock_request, mock_get_jwt):
+        mock_get_jwt.return_value = "blah"
+        mock_request.post(url_send_message, status_code=201)
         mock_request.get(url_get_threads_list, json=thread_list, status_code=200)
         mock_request.get(url_get_surveys_list, json=self.surveys_list_json)
         mock_request.get(shortname_url + "/ASHE", json=ashe_info)
@@ -339,8 +345,10 @@ class TestMessage(unittest.TestCase):
         self.assertIn("Messages".encode(), response.data)
 
     @requests_mock.mock()
-    def test_form_submitted_with_api_error(self, mock_request):
-        mock_request.post(f'{app.config["SECURE_MESSAGE_URL"]}/v1/secure-message/send-message', status_code=500)
+    @patch('response_operations_ui.controllers.message_controllers._get_jwt')
+    def test_form_submitted_with_api_error(self, mock_request, mock_get_jwt):
+        mock_request.post(url_send_message, status_code=500)
+        mock_get_jwt.return_value = "blah"
 
         with app.app_context():
             response = self.app.post("/messages/create-message", data=self.message_form, follow_redirects=True)
@@ -397,7 +405,9 @@ class TestMessage(unittest.TestCase):
             self.assertEqual(raises.exception.message, "A key error occurred")
 
     @requests_mock.mock()
-    def test_conversation_subject_error(self, mock_request):
+    @patch('response_operations_ui.controllers.message_controllers._get_jwt')
+    def test_conversation_subject_error(self, mock_request, mock_get_jwt):
+        mock_get_jwt.return_value = "blah"
         mock_request.get(url_get_thread, json=thread_missing_subject)
         mock_request.get(url_get_surveys_list, json=survey_list)
         response = self.app.get("/messages/threads/fb0e79bd-e132-4f4f-a7fd-5e8c6b41b9af")
@@ -440,7 +450,9 @@ class TestMessage(unittest.TestCase):
         self.assertIn("Filter messages by survey".encode(), response.data)
 
     @requests_mock.mock()
-    def test_get_messages_page_with_survey(self, mock_request):
+    @patch('response_operations_ui.controllers.message_controllers._get_jwt')
+    def test_get_messages_page_with_survey(self, mock_request, mock_get_jwt):
+        mock_get_jwt.return_value = "blah"
         mock_request.get(url_get_threads_list, json=thread_list)
         mock_request.get(url_get_surveys_list, json=self.surveys_list_json)
         mock_request.get(shortname_url + "/ASHE", json=ashe_info)
