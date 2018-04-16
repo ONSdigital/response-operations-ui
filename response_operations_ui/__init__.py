@@ -52,6 +52,16 @@ if app.config['SESSION_TYPE'] == 'redis':
     # wrap in the flask server side session manager and back it by redis
     app.config['SESSION_REDIS'] = redis
 
+
+@app.after_request
+def apply_headers(response):
+    response.headers["Strict-Transport-Security"] = "max-age=31536000; includeSubDomains"
+    response.headers["Content-Security-Policy"] = "default-src 'self'"
+    response.headers["X-XSS-Protection"] = "1"
+    response.headers["X-Content-Type-Options"] = "nosniff"
+    response.headers["Referrer-Policy"] = "same-origin"
+    return response
+
 Session(app)
 
 
