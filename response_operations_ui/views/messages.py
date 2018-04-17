@@ -147,10 +147,8 @@ def view_selected_survey(selected_survey):
         else:
             survey_id = _get_survey_id(selected_survey)
 
-        page = request.args.get(get_parameter('page'), type=int
-                                , default=1)
-
-        limit = request.args.get(get_parameter('limit'), type=int, default=5)
+        page = request.args.get(get_parameter('page'), type=int, default=1)
+        limit = request.args.get(get_parameter('limit'), type=int, default=10)
 
         params = {
             'survey': survey_id,
@@ -158,12 +156,12 @@ def view_selected_survey(selected_survey):
             'limit': limit
         }
 
-        count = message_controllers.get_conversation_count({'survey': survey_id})
+        thread_count = message_controllers.get_conversation_count({'survey': survey_id})
         messages = [_refine(message) for message in message_controllers.get_thread_list(params)]
 
         pagination = get_pagination(page=page,
                                     per_page=limit,
-                                    total=count,
+                                    total=thread_count,
                                     record_name='messages',
                                     format_total=True,
                                     format_number=True)
