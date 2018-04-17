@@ -2,7 +2,7 @@ import json
 import logging
 
 from flask import Blueprint, flash, g, Markup, render_template, request, redirect, session, url_for
-
+from flask_paginate import get_page_args, get_parameter, Pagination
 from flask_login import login_required, current_user
 from structlog import wrap_logger
 
@@ -147,17 +147,32 @@ def view_selected_survey(selected_survey):
         else:
             survey_id = _get_survey_id(selected_survey)
 
+        page, per_page, offset = get_page_args(page_parameter='page',
+                                               per_page_parameter='per_page')
+
+        limit = request.args.get(get_parameter('limit'), type=int, default=5)
+
         params = {
             'survey': survey_id,
-            'limit': request.args.get('limit', 1000)
+            'page': page,
+            'limit': limit
         }
 
-        refined_messages = [_refine(message) for message in message_controllers.get_thread_list(params)]
+        count = message_controllers.get_conversation_count({'survey': survey_id})
+        messages = [_refine(message) for message in message_controllers.get_thread_list(params)]
 
-        return render_template("messages.html",
+        pagination = get_pagination(page=page,
+                                    per_page=per_page,
+                                    total=count,
+                                    record_name='messages',
+                                    format_total=True,
+                                    format_number=True)
+
+        return render_template("messages.html", page=page, per_page=per_page,
                                breadcrumbs=breadcrumbs,
-                               messages=refined_messages,
+                               messages=messages[offset:offset + limit],
                                selected_survey=formatted_survey,
+                               pagination=pagination,
                                change_survey=True)
 
     except TypeError:
@@ -184,6 +199,11 @@ def _get_conversation_breadcrumbs(messages):
         {"title": "Messages", "link": "/messages"},
         {"title": messages[-1].get('subject', 'No Subject')}
     ]
+
+
+def get_pagination(**kwargs):
+    kwargs.setdefault('record_name', 'records')
+    return Pagination(show_single_page=False, **kwargs)
 
 
 def _repopulate_form_with_submitted_data(form):
@@ -270,7 +290,7 @@ def _refine(message):
 
 
 def _get_survey_id(selected_survey):
-    return survey_controllers.get_survey_id_by_short_name(selected_survey)
+    return [survey_controllers.get_survey_id_by_short_name(selected_survey)]
 
 
 def _get_FDI_survey_id():

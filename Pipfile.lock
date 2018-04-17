@@ -1,7 +1,7 @@
 {
     "_meta": {
         "hash": {
-            "sha256": "b6d61b684c6f1b4255b6cbf8b4bec1a78f9e6a546e2d5849895e56e6efc9688c"
+            "sha256": "d47a64801baa17c240c380503e1d20d5423efbed49c2b98ab81351fd07d5bb43"
         },
         "pipfile-spec": 6,
         "requires": {
@@ -136,6 +136,13 @@
             ],
             "index": "pypi",
             "version": "==0.4.1"
+        },
+        "flask-paginate": {
+            "hashes": [
+                "sha256:b68e8d7664419ad53728514139811bce9c3f2e56199a6c057ef4c08f9f35f35d"
+            ],
+            "index": "pypi",
+            "version": "==0.5.1"
         },
         "flask-session": {
             "hashes": [
@@ -324,13 +331,6 @@
             "index": "pypi",
             "version": "==2.0.9"
         },
-        "configparser": {
-            "hashes": [
-                "sha256:5308b47021bc2340965c371f0f058cc6971a04502638d4244225c49d80db273a"
-            ],
-            "markers": "python_version < '3.2'",
-            "version": "==3.5.0"
-        },
         "coverage": {
             "hashes": [
                 "sha256:03481e81d558d30d230bc12999e3edffe392d244349a90f4ef9b88425fac74ba",
@@ -372,16 +372,6 @@
             ],
             "version": "==4.5.1"
         },
-        "enum34": {
-            "hashes": [
-                "sha256:2d81cbbe0e73112bdfe6ef8576f2238f2ba27dd0d55752a776c41d38b7da2850",
-                "sha256:644837f692e5f550741432dd3f223bbb9852018674981b1664e5dc339387588a",
-                "sha256:6bd0f6ad48ec2aa117d3d141940d484deccda84d4fcd884f5c3d93c23ecd8c79",
-                "sha256:8ad8c4783bf61ded74527bffb48ed9b54166685e4230386a9ed9b1279e2df5b1"
-            ],
-            "markers": "python_version < '3.4'",
-            "version": "==1.1.6"
-        },
         "flake8": {
             "hashes": [
                 "sha256:7253265f7abd8b313e3892944044a365e3f4ac3fcdcfb4298f55ee9ddf188ba0",
@@ -403,14 +393,6 @@
                 "sha256:dd8d182285a0fe56bace7f45b5e7d1a6ebcbf524e8f3bd87eb0f125271b8831f"
             ],
             "version": "==0.6.1"
-        },
-        "more-itertools": {
-            "hashes": [
-                "sha256:0dd8f72eeab0d2c3bd489025bb2f6a1b8342f9b198f6fc37b52d15cfa4531fea",
-                "sha256:11a625025954c20145b37ff6309cd54e39ca94f72f6bb9576d1195db6fa2442e",
-                "sha256:c9ce7eccdcb901a2c75d326ea134e0886abfbea5f93e91cc95de9507c0816c44"
-            ],
-            "version": "==4.1.0"
         },
         "pluggy": {
             "hashes": [
