@@ -2,7 +2,7 @@ import json
 import logging
 
 from flask import Blueprint, flash, g, Markup, render_template, request, redirect, session, url_for
-from flask_paginate import get_page_args, get_parameter, Pagination
+from flask_paginate import get_parameter, Pagination
 from flask_login import login_required, current_user
 from structlog import wrap_logger
 
@@ -57,9 +57,6 @@ def view_conversation(thread_id):
         thread_conversation = message_controllers.get_conversation(thread_id)['messages']
         refined_thread = [_refine(message) for message in reversed(thread_conversation)]
         breadcrumbs = _get_conversation_breadcrumbs(thread_conversation)
-    except KeyError as e:
-        logger.exception("A key error occurred")
-        raise ApiError(e)
     except IndexError:
         breadcrumbs = [
             {"title": "Messages", "link": "/messages"},
