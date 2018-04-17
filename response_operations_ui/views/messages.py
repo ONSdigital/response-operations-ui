@@ -160,6 +160,9 @@ def view_selected_survey(selected_survey):
                                     per_page=limit,
                                     total=thread_count,
                                     record_name='messages',
+                                    prev_label='Previous',
+                                    next_label='Next',
+                                    outer_window=0,
                                     format_total=True,
                                     format_number=True)
 

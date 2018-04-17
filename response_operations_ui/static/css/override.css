@@ -798,3 +798,47 @@ button{
      border-bottom:1px solid #4263c2;
      cursor: pointer;
 }
+
+.pagination {
+	color: black;
+	padding: 0;
+    display: inline;
+}
+
+.pagination ul {
+	color: black;
+	float: left;
+    padding-left: 0rem;
+	display:inline;
+}
+
+.pagination li {
+	list-style-type: none;
+	float: left;
+    padding: 8px 16px;
+	display:inline;
+	text-decoration: none;
+}
+
+.pagination li a {
+	text-decoration: none;
+}
+
+.pagination li.active {
+	background-color: #033E58;
+	color: white;
+}
+
+.pagination li.active a {
+	background-color: #033E58;
+	color: white;
+}
+
+.pagination li.disabled a {
+	color: black;
+}
+
+.pagination li:hover:not(.active) {
+	background-color: #E4E8EB;
+	transition: background-color .3s;
+}
