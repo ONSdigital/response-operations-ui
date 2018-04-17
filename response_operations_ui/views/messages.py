@@ -147,8 +147,8 @@ def view_selected_survey(selected_survey):
         else:
             survey_id = _get_survey_id(selected_survey)
 
-        page, per_page, offset = get_page_args(page_parameter='page',
-                                               per_page_parameter='per_page')
+        page = request.args.get(get_parameter('page'), type=int
+                                , default=1)
 
         limit = request.args.get(get_parameter('limit'), type=int, default=5)
 
@@ -162,15 +162,15 @@ def view_selected_survey(selected_survey):
         messages = [_refine(message) for message in message_controllers.get_thread_list(params)]
 
         pagination = get_pagination(page=page,
-                                    per_page=per_page,
+                                    per_page=limit,
                                     total=count,
                                     record_name='messages',
                                     format_total=True,
                                     format_number=True)
 
-        return render_template("messages.html", page=page, per_page=per_page,
+        return render_template("messages.html", page=page,
                                breadcrumbs=breadcrumbs,
-                               messages=messages[offset:offset + limit],
+                               messages=messages,
                                selected_survey=formatted_survey,
                                pagination=pagination,
                                change_survey=True)
