@@ -4,13 +4,15 @@
 <div role="main" id="main" class="page__main">
   <div class="spoke__header">
     <div class="spoke__header__title">
-      <h1 class="jupiter">Disable enrolment</h1>
+      <h1 class="jupiter">
+        {% if change_flag == 'DISABLED' %}Disable{% else %}Enable{% endif %} enrolment
+      </h1>
     </div>
   </div>
   <div class="spoke__body">
     <form method="post" action="{{ url_for('reporting_unit_bp.change_enrolment_status', ru_ref=ru_ref, business_id=business_id,
                                            survey_id=survey_id, respondent_id=respondent_id, change_flag=change_flag)}}" class="u-mt-l">
-      <dl class="description-list description-list-8">
+      <dl class="description-list description-list-8 u-pb-m">
         <dt class="">
           Reference:
         </dt>
@@ -24,12 +26,14 @@
         <dd class="">
           {{ ru_name }}
         </dd>
+
         <dt class="">
           Survey:
         </dt>
         <dd class="" id="survey">
           {{ survey_name }}
         </dd>
+
         <dt class="">
           Respondent:
         </dt>
@@ -37,15 +41,10 @@
           {{ first_name }} {{ last_name }}
         </dd>
       </dl>
-      <div class="u-mt-m">
-        {% if change_flag == 'DISABLED' %}
-        Disable enrolment?
-        {% else %}
-        Enable enrolment?
-        {% endif %}
-      </div>
 
-      <button type="submit" id="confirm-btn" class="btn btn--primary u-mt-s">Confirm</button>
+      <button type="submit" id="confirm-btn" class="btn btn--primary u-mt-s">
+        {% if change_flag == 'DISABLED' %}Disable{% else %}Enable{% endif %} enrolment?
+      </button>
 
       <div class="u-mt-xs">
         <a href="{{ url_for('reporting_unit_bp.view_reporting_unit', ru_ref=ru_ref, survey_id=survey_id,
