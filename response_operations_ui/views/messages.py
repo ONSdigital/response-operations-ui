@@ -1,7 +1,7 @@
 import json
 import logging
 
-from flask import Blueprint, flash, g, Markup, render_template, request, redirect, session, url_for
+from flask import Blueprint, flash, g, Markup, render_template, request, redirect, session, url_for, make_response
 
 from flask_login import login_required, current_user
 from structlog import wrap_logger
@@ -153,11 +153,13 @@ def view_selected_survey(selected_survey):
 
         refined_messages = [_refine(message) for message in message_controllers.get_thread_list(params)]
 
-        return render_template("messages.html",
-                               breadcrumbs=breadcrumbs,
-                               messages=refined_messages,
-                               selected_survey=formatted_survey,
-                               change_survey=True)
+        response = make_response(render_template("messages.html",
+                                 breadcrumbs=breadcrumbs,
+                                 messages=refined_messages,
+                                 selected_survey=formatted_survey,
+                                 change_survey=True))
+        response.headers.set("Cache-Control", "no-cache, max-age=0, must-revalidate, no-store")
+        return response
 
     except TypeError:
         logger.exception("Failed to retrieve survey id")
