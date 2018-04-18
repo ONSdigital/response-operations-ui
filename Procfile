@@ -1,1 +1,1 @@
-web: gunicorn -b 0.0.0.0:$PORT response_operations_ui:app -w=4
+web: gunicorn -b 0.0.0.0:$PORT --workers 4 --timeout 60 response_operations_ui:app
