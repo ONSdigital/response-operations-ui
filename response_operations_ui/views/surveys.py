@@ -19,7 +19,13 @@ surveys_bp = Blueprint('surveys_bp', __name__,
 def view_surveys():
     survey_list = survey_controllers.get_surveys_list()
     breadcrumbs = [{"title": "Surveys"}]
-    return render_template('surveys.html', survey_list=survey_list, breadcrumbs=breadcrumbs)
+
+    info_message = None
+    if request.args.get('survey_changed'):
+        info_message = 'Survey details changed'
+
+    return render_template('surveys.html', survey_changed=request.args.get('survey_changed'), info_message=info_message,
+                           survey_list=survey_list, breadcrumbs=breadcrumbs)
 
 
 @surveys_bp.route('/<short_name>', methods=['GET'])
@@ -70,4 +76,4 @@ def edit_survey_details(short_name):
                                              form.get('short_name'),
                                              form.get('long_name'))
 
-    return redirect(url_for('surveys_bp.view_surveys', short_name=short_name))
+    return redirect(url_for('surveys_bp.view_surveys', short_name=short_name, survey_changed='True'))

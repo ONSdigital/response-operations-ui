@@ -4,6 +4,13 @@
 {% block main %}
 </br>
 <div role="main" id="main" class="page__main">
+{% if info_message %}
+  <div class="panel panel--simple panel--success">
+    <div id="collection-instrument-success" class="panel__body">
+      Survey details changed
+    </div>
+</div>
+{% endif %}
   <h1 class="jupiter" name="page-surveys-title">Surveys</h1>
   <div class="grid">
     <div class="grid__col col-12@l">
