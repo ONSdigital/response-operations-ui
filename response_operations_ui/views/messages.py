@@ -1,7 +1,7 @@
 import json
 import logging
 
-from flask import Blueprint, flash, g, make_response, Markup, render_template, request, redirect, session, url_for
+from flask import Blueprint, flash, g, Markup, render_template, request, redirect, session, url_for
 from flask_login import login_required, current_user
 from structlog import wrap_logger
 
@@ -16,6 +16,11 @@ from response_operations_ui.forms import SecureMessageForm
 logger = wrap_logger(logging.getLogger(__name__))
 messages_bp = Blueprint('messages_bp', __name__,
                         static_folder='static', template_folder='templates')
+
+CACHE_HEADERS = {
+    'Cache-Control': 'no-cache, no-store, must-revalidate',
+    'Pragma': 'no-cache'
+}
 
 
 @messages_bp.route('/create-message', methods=['POST'])
@@ -152,13 +157,11 @@ def view_selected_survey(selected_survey):
 
         refined_messages = [_refine(message) for message in message_controllers.get_thread_list(params)]
 
-        response = make_response(render_template("messages.html",
-                                 breadcrumbs=breadcrumbs,
-                                 messages=refined_messages,
-                                 selected_survey=formatted_survey,
-                                 change_survey=True))
-        response.headers.set("Cache-Control", "no-cache, max-age=0, must-revalidate, no-store")
-        return response
+        return render_template("messages.html",
+                               breadcrumbs=breadcrumbs,
+                               messages=refined_messages,
+                               selected_survey=formatted_survey,
+                               change_survey=True)
 
     except TypeError:
         logger.exception("Failed to retrieve survey id")
@@ -333,3 +336,10 @@ def _get_human_readable_date(sent_date):
 
 def _get_unread_status(message):
     return 'UNREAD' in message.get('labels', [])
+
+
+@messages_bp.after_request
+def disabling_caching_headers(response):
+    for k, v in CACHE_HEADERS.items():
+        response.headers[k] = v
+    return response
