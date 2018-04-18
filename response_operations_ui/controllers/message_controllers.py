@@ -1,5 +1,6 @@
 from json import JSONDecodeError
 import logging
+import jwt
 
 from flask import current_app, session
 from flask_login import current_user
@@ -8,6 +9,7 @@ from requests.exceptions import HTTPError, RequestException
 from structlog import wrap_logger
 
 from response_operations_ui.exceptions.exceptions import ApiError, NoMessagesError, InternalError
+from response_operations_ui.common import token_decoder
 
 logger = wrap_logger(logging.getLogger(__name__))
 
@@ -15,7 +17,7 @@ logger = wrap_logger(logging.getLogger(__name__))
 def get_conversation(thread_id):
     logger.debug("Retrieving thread")
 
-    url = f'{current_app.config["BACKSTAGE_API_URL"]}/v1/secure-message/threads/{thread_id}'
+    url = f'{current_app.config["SECURE_MESSAGE_URL"]}/v2/threads/{thread_id}'
 
     response = requests.get(url, headers={'Authorization': _get_jwt()})
 
@@ -36,7 +38,7 @@ def get_conversation(thread_id):
 def get_thread_list(params):
     logger.debug("Retrieving threads list")
 
-    url = f'{current_app.config["BACKSTAGE_API_URL"]}/v1/secure-message/threads'
+    url = f'{current_app.config["SECURE_MESSAGE_URL"]}/threads'
     # This will be removed once UAA is completed.  For now we need the call to backstage to include
     # an Authorization in its header a JWT that includes party_id and role.
 
@@ -70,11 +72,11 @@ def send_message(message_json):
 
 
 def remove_unread_label(message_id):
-    url = f'{current_app.config["BACKSTAGE_API_URL"]}/v1/secure-message/update-label/{message_id}'
-    data = '{"label": "UNREAD", "action": "remove"}'
+    url = f"{current_app.config['SECURE_MESSAGE_URL']}/v2/messages/modify/{message_id}"
+    data = {"label": "UNREAD", "action": "remove"}
 
     logger.debug("Removing message unread label", message_id=message_id)
-    response = requests.put(url, headers={"Authorization": _get_jwt(), "Content-Type": "application/json"}, data=data)
+    response = requests.put(url, headers={"Authorization": _get_jwt(), "Content-Type": "application/json"}, json=data)
 
     try:
         response.raise_for_status()
@@ -84,18 +86,16 @@ def remove_unread_label(message_id):
 
 
 def _post_new_message(message):
-    return requests.post(_get_url(), headers={'Authorization': _get_jwt(), 'Content-Type': 'application/json',
-                                              'Accept': 'application/json'}, data=message)
-
-
-def _get_url():
-    if current_app.config["BACKSTAGE_API_URL"] is None:
-        raise KeyError("Back stage configuration URL not available.")
-
-    return f'{current_app.config["BACKSTAGE_API_URL"]}/v1/secure-message/send-message'
+    url = f'{current_app.config["SECURE_MESSAGE_URL"]}/v2/messages'
+    return requests.post(url, headers={'Authorization': _get_jwt(), 'Content-Type': 'application/json',
+                                       'Accept': 'application/json'}, data=message)
 
 
 def _get_jwt():
     token = session.get('token')
+    decoded_token = token_decoder.decode_access_token(token)
+    user_id = decoded_token.get('user_id')
+    secret = current_app.config['RAS_SECURE_MESSAGING_JWT_SECRET']
+    sm_token = jwt.encode({'party_id': user_id, 'role': 'internal'}, secret, algorithm='HS256')
     logger.debug(f"Retrieving current token for user {current_user.id}")
-    return token
+    return sm_token
