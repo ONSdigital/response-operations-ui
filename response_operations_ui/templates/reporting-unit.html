@@ -139,6 +139,14 @@
                 <dd name="tbl-respondent-email">
                   {{ respondent.emailAddress }}
                 </dd>
+                {% if respondent.pendingEmailAddress %}
+                <dt>
+                  Pending Email
+                </dt>
+                <dd id="respondent-pending-email">
+                  {{ respondent.pendingEmailAddress }}
+                </dd>
+                {% endif %}
                 <dt>
                   Tel
                 </dt>
