@@ -156,7 +156,10 @@
             </td>
 
             <td name="tbl-enrolment-status" class="table--cell">
-              {{ respondent.enrolmentStatus.title() }}
+              <div id="enrolment-status">
+                {{ respondent.enrolmentStatus.title() }}
+              </div>
+              
               <div>
                 {% if respondent.enrolmentStatus == 'ENABLED' %}
                 <a href="{{ url_for('reporting_unit_bp.confirm_change_enrolment_status', ru_ref=ru.sampleUnitRef, survey_id=survey.id, survey_name=survey.shortName,
