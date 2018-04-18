@@ -92,10 +92,11 @@
 
         <div class="ru-survey-enrolment-code u-pb-s" name="enrolment-code">
           {% if survey.activeIacCode %}
-          Unused enrolment code:
-          <code class="mars" id="unused-enrolment-code-{{survey.shortName}}">{{survey.activeIacCode}}</code>
+          <div id="unused-enrolment-code">
+            Unused enrolment code:
+            <code class="mars u-ml-s" id="unused-enrolment-code-{{survey.shortName}}">{{ survey.activeIacCode }}</code>
+          </div>
           {% endif %}
-          <br/>
           <a href="{{ url_for('reporting_unit_bp.generate_new_enrolment_code',
                               collection_exercise_id=survey.collection_exercises[-1]['id'], ru_ref=ru.sampleUnitRef,
                               trading_as=ru.name, survey_ref=survey.surveyRef, survey_name=survey.shortName) }}"
