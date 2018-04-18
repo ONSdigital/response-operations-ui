@@ -57,9 +57,6 @@ def view_conversation(thread_id):
         thread_conversation = message_controllers.get_conversation(thread_id)['messages']
         refined_thread = [_refine(message) for message in reversed(thread_conversation)]
         breadcrumbs = _get_conversation_breadcrumbs(thread_conversation)
-    except KeyError as e:
-        logger.exception("A key error occurred")
-        raise ApiError(e)
     except IndexError:
         breadcrumbs = [
             {"title": "Messages", "link": "/messages"},
@@ -148,7 +145,8 @@ def view_selected_survey(selected_survey):
             survey_id = _get_survey_id(selected_survey)
 
         params = {
-            'survey': survey_id
+            'survey': survey_id,
+            'limit': request.args.get('limit', 1000)
         }
 
         refined_messages = [_refine(message) for message in message_controllers.get_thread_list(params)]
