@@ -337,7 +337,7 @@ def _get_unread_status(message):
 
 
 @messages_bp.after_request
-def disabling_caching_headers(response):
+def disable_caching(response):
     for k, v in CACHE_HEADERS.items():
         response.headers[k] = v
     return response
