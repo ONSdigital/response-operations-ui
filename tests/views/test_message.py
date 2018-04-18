@@ -78,6 +78,18 @@ class TestMessage(unittest.TestCase):
 
     @requests_mock.mock()
     @patch('response_operations_ui.controllers.message_controllers._get_jwt')
+    def test_survey_short_name_failure(self, mock_request, mock_get_jwt):
+        mock_get_jwt.return_value = "blah"
+        mock_request.get(url_get_threads_list, json=thread_list)
+        mock_request.get(url_get_surveys_list, json=self.surveys_list_json)
+        mock_request.get(shortname_url + "/ASHE", status_code=500)
+
+        response = self.app.get("/messages/ASHE", follow_redirects=True)
+        self.assertEqual(response.status_code, 500)
+        self.assertIn("Something has gone wrong with the website.".encode(), response.data)
+
+    @requests_mock.mock()
+    @patch('response_operations_ui.controllers.message_controllers._get_jwt')
     def test_threads_list_with_missing_atmsg_to(self, mock_request, mock_get_jwt):
         mock_get_jwt.return_value = "blah"
         with open('tests/test_data/message/threads_missing_atmsg_to.json') as thread_json:
@@ -167,7 +179,9 @@ class TestMessage(unittest.TestCase):
         self.assertIn("Example message subject".encode(), response.data)
 
     @requests_mock.mock()
-    def test_threads_list_fail(self, mock_request):
+    @patch('response_operations_ui.controllers.message_controllers._get_jwt')
+    def test_threads_list_fail(self, mock_request, mock_get_jwt):
+        mock_get_jwt.return_value = "blah"
         mock_request.get(url_get_threads_list, status_code=500)
         mock_request.get(shortname_url + "/ASHE", json=ashe_info)
 
@@ -379,14 +393,14 @@ class TestMessage(unittest.TestCase):
         self.assertIn("Apple".encode(), response.data)
 
     @requests_mock.mock()
-    def test_conversation_fail(self, mock_request):
+    @patch('response_operations_ui.controllers.message_controllers._get_jwt')
+    def test_conversation_fail(self, mock_request, mock_get_jwt):
+        mock_get_jwt.return_value = "blah"
         mock_request.get(url_get_thread, status_code=500)
         mock_request.get(url_get_surveys_list, json=survey_list)
-        with self.assertRaises(Exception) as raises:
-
-            response = self.app.get("/messages/threads/fb0e79bd-e132-4f4f-a7fd-5e8c6b41b9af")
-            self.assertEqual(response.status_code, 500)
-            self.assertEqual(raises.exception.message, "Conversation retrieval failed")
+        response = self.app.get("/messages/threads/fb0e79bd-e132-4f4f-a7fd-5e8c6b41b9af", follow_redirects=True)
+        self.assertEqual(response.status_code, 500)
+        self.assertIn("Error 500 - Server error".encode(), response.data)
 
     @requests_mock.mock()
     def test_conversation_decode_error(self, mock_request):
