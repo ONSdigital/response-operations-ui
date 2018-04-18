@@ -799,9 +799,16 @@ button{
      cursor: pointer;
 }
 
+
+.message-read {
+color: purple;
+font-weight: 400;
+}
+
+
 .pagination {
 	color: black;
-	padding: 0;
+	padding: 1;
     display: inline;
 }
 
@@ -817,28 +824,31 @@ button{
 	float: left;
     padding: 8px 16px;
 	display:inline;
-	text-decoration: none;
-}
-
-.pagination li a {
-	text-decoration: none;
 }
 
 .pagination li.active {
+	margin: 0 6px;
 	background-color: #033E58;
-	color: white;
 }
 
 .pagination li.active a {
-	background-color: #033E58;
 	color: white;
 }
 
 .pagination li.disabled a {
-	color: black;
+	color: #666666;
+	text-decoration: none;
 }
 
 .pagination li:hover:not(.active) {
 	background-color: #E4E8EB;
 	transition: background-color .3s;
+}
+
+.pagination li.previous.disabled.unavailable {
+	display: none;
+}
+
+.pagination li.next.disabled {
+	display: none;
 }
