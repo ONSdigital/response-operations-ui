@@ -20,7 +20,7 @@
     Trading as:
   </dt>
   <dd id="TRADING_AS" class="item-headlines-definition">
-    {{ ru.attributes.tradstyle1 + " " + ru.attributes.tradstyle2 + " " + ru.attributes.tradstyle3 }}
+    {{ ru.trading_as }}
   </dd>
   {% endif %}
 </dl>
@@ -70,7 +70,7 @@
                 {{ ce.companyName }}
               </td>
               <td name="tbl-ce-company-name" class="table--cell">
-                {{ ce.tradingAs }}
+                {{ ce.trading_as }}
               </td>
               <td name="tbl-ce-company-region" class="table--cell">
                 {{ ce.companyRegion }}
@@ -98,7 +98,7 @@
           <br/>
           <a href="{{ url_for('reporting_unit_bp.generate_new_enrolment_code',
                               collection_exercise_id=survey.collection_exercises[-1]['id'], ru_ref=ru.sampleUnitRef,
-                              trading_as=ru.name, survey_ref=survey.surveyRef, survey_name=survey.shortName) }}"
+                              trading_as=ru.trading_as, survey_ref=survey.surveyRef, survey_name=survey.shortName) }}"
              id="generate-new-code">
             Generate new enrolment code
           </a>
