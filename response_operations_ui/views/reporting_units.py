@@ -144,7 +144,7 @@ def map_region(region):
 @login_required
 def confirm_change_enrolment_status(ru_ref):
     return render_template('confirm-enrolment-change.html', business_id=request.args['business_id'], ru_ref=ru_ref,
-                           ru_name=request.args['ru_name'], survey_id=request.args['survey_id'],
+                           trading_as=request.args['trading_as'], survey_id=request.args['survey_id'],
                            survey_name=request.args['survey_name'], respondent_id=request.args['respondent_id'],
                            first_name=request.args['respondent_first_name'],
                            last_name=request.args['respondent_last_name'],
