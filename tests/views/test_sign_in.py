@@ -54,6 +54,16 @@ class TestSignIn(unittest.TestCase):
         self.assertIn(b'Password', response.data)
 
     @requests_mock.mock()
+    def test_fail_server_error(self, mock_request):
+        mock_request.post(url_sign_in_data, status_code=500)
+
+        response = self.app.post("/sign-in", follow_redirects=True,
+                                 data={"username": "user", "password": "pass"})
+
+        self.assertEqual(response.status_code, 500)
+        self.assertIn(b'Error 500 - Server error', response.data)
+
+    @requests_mock.mock()
     def test_sign_in_redirect_while_authenticated(self, mock_request):
         mock_request.post(url_sign_in_data, json={"token": "1234abc"}, status_code=201)
 

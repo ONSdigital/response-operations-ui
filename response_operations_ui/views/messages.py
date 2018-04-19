@@ -2,7 +2,6 @@ import json
 import logging
 
 from flask import Blueprint, flash, g, Markup, render_template, request, redirect, session, url_for
-
 from flask_login import login_required, current_user
 from structlog import wrap_logger
 
@@ -10,13 +9,18 @@ from response_operations_ui.common.dates import get_formatted_date
 from response_operations_ui.common.mappers import format_short_name
 from response_operations_ui.common.surveys import Surveys, FDISurveys
 from response_operations_ui.controllers import message_controllers, survey_controllers
+from response_operations_ui.controllers.survey_controllers import get_survey_short_name_by_id, get_survey_ref_by_id
 from response_operations_ui.exceptions.exceptions import ApiError, InternalError, NoMessagesError
 from response_operations_ui.forms import SecureMessageForm
-from response_operations_ui.controllers.survey_controllers import get_survey_short_name_by_id, get_survey_ref_by_id
 
 logger = wrap_logger(logging.getLogger(__name__))
 messages_bp = Blueprint('messages_bp', __name__,
                         static_folder='static', template_folder='templates')
+
+CACHE_HEADERS = {
+    'Cache-Control': 'no-cache, no-store, must-revalidate',
+    'Pragma': 'no-cache'
+}
 
 
 @messages_bp.route('/create-message', methods=['POST'])
@@ -57,9 +61,6 @@ def view_conversation(thread_id):
         thread_conversation = message_controllers.get_conversation(thread_id)['messages']
         refined_thread = [_refine(message) for message in reversed(thread_conversation)]
         breadcrumbs = _get_conversation_breadcrumbs(thread_conversation)
-    except KeyError as e:
-        logger.exception("A key error occurred")
-        raise ApiError(e)
     except IndexError:
         breadcrumbs = [
             {"title": "Messages", "link": "/messages"},
@@ -148,7 +149,8 @@ def view_selected_survey(selected_survey):
             survey_id = _get_survey_id(selected_survey)
 
         params = {
-            'survey': survey_id
+            'survey': survey_id,
+            'limit': request.args.get('limit', 1000)
         }
 
         refined_messages = [_refine(message) for message in message_controllers.get_thread_list(params)]
@@ -332,3 +334,10 @@ def _get_human_readable_date(sent_date):
 
 def _get_unread_status(message):
     return 'UNREAD' in message.get('labels', [])
+
+
+@messages_bp.after_request
+def disable_caching(response):
+    for k, v in CACHE_HEADERS.items():
+        response.headers[k] = v
+    return response
