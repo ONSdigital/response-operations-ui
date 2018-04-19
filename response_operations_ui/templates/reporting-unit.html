@@ -92,10 +92,11 @@
 
         <div class="ru-survey-enrolment-code u-pb-s" name="enrolment-code">
           {% if survey.activeIacCode %}
-          Unused enrolment code:
-          <code class="mars" id="unused-enrolment-code-{{survey.shortName}}">{{survey.activeIacCode}}</code>
+          <div id="unused-enrolment-code">
+            Unused enrolment code:
+            <code class="mars u-ml-s" id="unused-enrolment-code-{{survey.shortName}}">{{ survey.activeIacCode }}</code>
+          </div>
           {% endif %}
-          <br/>
           <a href="{{ url_for('reporting_unit_bp.generate_new_enrolment_code',
                               collection_exercise_id=survey.collection_exercises[-1]['id'], ru_ref=ru.sampleUnitRef,
                               trading_as=ru.trading_as, survey_ref=survey.surveyRef, survey_name=survey.shortName) }}"
@@ -152,16 +153,25 @@
               </dl>
             </td>
             <td name="tbl-respondent-status" class="table--cell">
-              {{ respondent.status }}
+              {{ respondent.status.title() }}
             </td>
+
             <td name="tbl-enrolment-status" class="table--cell">
-              {{ respondent.enrolmentStatus }}
-                {% if respondent.enrolmentStatus|upper == "PENDING" %}
-                <br>
-                  <a href="{{ url_for('reporting_unit_bp.view_resend_verification', ru_ref=ru_ref, party_id=party_id) }}">Re-send verification email</a>
-                </br>
+              <div id="enrolment-status">
+                {{ respondent.enrolmentStatus.title() }}
+              </div>
+              
+              <div>
+                {% if respondent.enrolmentStatus == 'ENABLED' %}
+                <a href="{{ url_for('reporting_unit_bp.confirm_change_enrolment_status', ru_ref=ru.sampleUnitRef, survey_id=survey.id, survey_name=survey.shortName,
+                                    respondent_id=respondent.id, respondent_first_name=respondent.firstName, respondent_last_name=respondent.lastName, business_id=ru.id,
+                                    ru_name=ru.name, change_flag='DISABLED')}}" id="change-enrolment-status">Disable</a>
+                {% elif respondent.enrolmentStatus == 'PENDING' %}
+                <a href="{{ url_for('reporting_unit_bp.view_resend_verification', ru_ref=ru_ref, email=respondent.emailAddress, party_id=respondent.id) }}">Re-send verification email</a>
                 {% endif %}
+              </div>
             </td>
+
             <td class="table--cell">
               <form action="{{ url_for('messages_bp.create_message')}}" method="post" id="create-message-view">
                 <button type="submit" name="create-message" id="create-message-button-{{ loop.index }}" value="create-message-view" class="button">Create message</button>
@@ -179,7 +189,6 @@
           </tbody>
         </table>
       </div>
-
     </div>
   </div>
   {% endfor %}
