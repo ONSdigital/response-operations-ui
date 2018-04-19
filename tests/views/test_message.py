@@ -224,7 +224,6 @@ class TestMessage(unittest.TestCase):
 
         mock_request.get(url_send_message + '/count', json={"total": 1}, status_code=200)
         mock_request.get(url_get_threads_list, json={"messages": []})
-        mock_request.get(url_send_message + '/count', json={"total": 0}, status_code=200)
         mock_request.get(shortname_url + "/ASHE", json=ashe_info)
 
         response = self.app.get("/messages/ASHE")
