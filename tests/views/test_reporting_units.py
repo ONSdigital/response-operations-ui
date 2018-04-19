@@ -155,10 +155,11 @@ class TestReportingUnits(unittest.TestCase):
         self.assertEqual(response.status_code, 500)
         self.assertIn("Error 500 - Server error".encode(), response.data)
 
-    def test_resend_verification_email(self):
+    @requests_mock.mock()
+    def test_resend_verification_email(self, mock_request):
+        mock_request.get(url_get_contact_details, json=respondent)
         response = self.app.get(
-            f"reporting-units/resend_verification/50012345678/"
-            f"brooke.bond%40email.com/{respondent_party_id}")
+            f"reporting-units/resend_verification/50012345678/{respondent_party_id}")
         self.assertEqual(response.status_code, 200)
 
     @requests_mock.mock()
@@ -175,16 +176,14 @@ class TestReportingUnits(unittest.TestCase):
                          json=self.case_group_status)
 
         response = self.app.post(
-            f"reporting-units/resend_verification/50012345678/"
-            f"brooke.bond%40email.com/{respondent_party_id}", follow_redirects=True)
+            f"reporting-units/resend_verification/50012345678/{respondent_party_id}", follow_redirects=True)
         self.assertEqual(response.status_code, 200)
 
     @requests_mock.mock()
     def test_fail_resent_verification_email(self, mock_request):
         mock_request.post(url_resend_verification_email, status_code=500)
         response = self.app.post(
-            f"reporting-units/resend_verification/50012345678/"
-            f"brooke.bond%40email.com/{respondent_party_id}", follow_redirects=True)
+            f"reporting-units/resend_verification/50012345678/{respondent_party_id}", follow_redirects=True)
         self.assertEqual(response.status_code, 500)
 
     @requests_mock.mock()
