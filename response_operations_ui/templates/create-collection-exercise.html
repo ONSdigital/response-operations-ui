@@ -1,0 +1,47 @@
+{% extends "layouts/spoke.html" %}
+{% block page_title %} Create collection exercise {% endblock %}
+{% block main %}
+<div role="main" id="main" class="page__main">
+  <div class="spoke__header">
+    <div class="spoke__header__title">
+      <h1 class="jupiter">Create collection exercise</h1>
+    </div>
+  </div>
+  <div class="spoke__body">
+    <form action="" method="post">
+      {{ form.csrf_token }}
+      <div class="field u-mb-l">
+        <label class="label" for="Survey">
+          Survey:
+          <span class="u-vh">Current value: </span>
+          <span class="mars">
+                {{ survey_ref }} {{ short_name }}
+              </span>
+        </label>
+        <br>
+        <div class="field u-mb-l">
+          <label class="label" for="period">
+            Period
+          </label>
+          {{ form.period(class_="input input--text", id='period', required=required, maxlength=6, value=period) }}
+        </div>
+        <div class="field u-mb-l">
+          <label class="label" for="user_description">
+            Period as shown to respondent
+          </label>
+          {{ form.user_description(class_="input input--text", id='user_description', required=required, maxlength=100, value=user_description) }}
+        </div>
+        <div class="field u-mb-l">
+          <span class="u-vh">Current value: </span>
+          </span>
+          {{ form.collection_exercise_id(value=collection_exercise_id, id='collection_exercise_id') }}
+        </div>
+      </div>
+      <button class="btn btn--primary u-mt-s" id="save-btn">Save</button>
+      <div>
+        <a id="cancel-btn" href="{{ url_for('surveys_bp.view_survey', short_name=short_name, period=period) }}">Cancel</a>
+      </div>
+    </form>
+  </div>
+</div>
+{% endblock %}

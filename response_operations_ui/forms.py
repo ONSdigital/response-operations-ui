@@ -66,3 +66,9 @@ class EditCollectionExerciseDetailsForm(FlaskForm):
 class ChangeGroupStatusForm(FlaskForm):
     event = StringField('event')
     submit = SubmitField('Confirm')
+
+
+class CreateCollectionExerciseDetailsForm(FlaskForm):
+    user_description = StringField('user_description')
+    period = StringField('period')
+    collection_exercise_id = HiddenField('collection_exercise_id')

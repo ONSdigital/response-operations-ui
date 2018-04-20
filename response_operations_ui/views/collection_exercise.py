@@ -8,7 +8,7 @@ from structlog import wrap_logger
 from response_operations_ui.common.mappers import convert_events_to_new_format, map_collection_exercise_state
 from response_operations_ui.controllers import collection_exercise_controllers
 from response_operations_ui.controllers import collection_instrument_controllers, sample_controllers
-from response_operations_ui.forms import EditCollectionExerciseDetailsForm
+from response_operations_ui.forms import EditCollectionExerciseDetailsForm, CreateCollectionExerciseDetailsForm
 
 logger = wrap_logger(logging.getLogger(__name__))
 
@@ -252,5 +252,26 @@ def edit_collection_exercise_details(short_name, period):
     collection_exercise_controllers.update_collection_exercise_details(form.get('collection_exercise_id'),
                                                                        form.get('user_description'),
                                                                        form.get('period'))
+
+    return redirect(url_for('surveys_bp.view_survey', short_name=short_name))
+
+
+@collection_exercise_bp.route('/<survey_ref>-<short_name>/create-collection-exercise', methods=['GET'])
+@login_required
+def get_create_collection_exercise_form(survey_ref, short_name):
+    form = CreateCollectionExerciseDetailsForm(form=request.form)
+    collection_exercise_id = collection_exercise_controllers
+    return render_template('create-collection-exercise.html', form=form, short_name=short_name,
+                           survey_ref=survey_ref)
+
+
+@collection_exercise_bp.route('/<survey_ref>-<short_name>/create-collection-exercise', methods=['POST'])
+@login_required
+def create_collection_exercise(survey_ref, short_name):
+    form = request.form
+
+    collection_exercise_controllers.create_collection_exercise(form.get('collection_exercise_id'),
+                                                               form.get('user_description'),
+                                                               form.get('period'))
 
     return redirect(url_for('surveys_bp.view_survey', short_name=short_name))
