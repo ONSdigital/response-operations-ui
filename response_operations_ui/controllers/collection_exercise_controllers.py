@@ -39,7 +39,7 @@ def get_collection_exercise(short_name, period):
 def get_collection_exercise_event_page_info(short_name, period):
     logger.debug('Retrieving collection exercise details for the event page',
                  short_name=short_name, period=period)
-    url = f'{app.config["BACKSTAGE_API_URL"]}/v1/collection-exercise/{short_name}/{period}/update-events'
+    url = f'{app.config["BACKSTAGE_API_URL"]}/v1/collection-exercise/{short_name}/{period}/events'
     response = requests.get(url)
     if response.status_code != 200:
         raise ApiError(response)
@@ -52,7 +52,7 @@ def get_collection_exercise_event_page_info(short_name, period):
 def update_event(short_name, period, tag, timestamp):
     logger.debug('Updating event date',
                  short_name=short_name, period=period, tag=tag)
-    url = f'{app.config["BACKSTAGE_API_URL"]}/v1/collection-exercise/{short_name}/{period}/update-events/{tag}'
+    url = f'{app.config["BACKSTAGE_API_URL"]}/v1/collection-exercise/{short_name}/{period}/events/{tag}'
     formatted_timestamp = timestamp.strftime('%Y-%m-%dT%H:%M:00.000+0000')
     response = requests.put(url, json={'timestamp': formatted_timestamp})
 

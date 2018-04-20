@@ -1,3 +1,4 @@
+from datetime import datetime
 import calendar
 import iso8601
 import re
@@ -23,7 +24,8 @@ def convert_events_to_new_format(events):
             "day": day,
             "date": date,
             "month": str(date_time.month) if len(str(date_time.month)) == 2 else f"0{date_time.month}",
-            "time": time
+            "time": time,
+            "is_in_future": date_time > iso8601.parse_date(datetime.now().isoformat())
         }
     return formatted_events
 
