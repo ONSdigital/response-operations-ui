@@ -72,7 +72,7 @@ def view_survey_details(short_name):
 def edit_survey_details(short_name):
     form = request.form
 
-    survey_controllers.update_survey_details(form.get('survey_ref'),
+    survey_controllers.update_survey_details(form.get('hidden_survey_ref'),
                                              form.get('short_name'),
                                              form.get('long_name'))
 

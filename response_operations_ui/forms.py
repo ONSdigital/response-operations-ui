@@ -71,4 +71,4 @@ class ChangeGroupStatusForm(FlaskForm):
 class EditSurveyDetailsForm(FlaskForm):
     long_name = StringField('long_name')
     short_name = StringField('short_name')
-    survey_ref = HiddenField('survey_ref')
+    hidden_survey_ref = HiddenField('hidden_survey_ref')

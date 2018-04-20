@@ -10,8 +10,6 @@ from config import TestingConfig
 from response_operations_ui import app
 from response_operations_ui.controllers.survey_controllers import get_survey_short_name_by_id
 
-survey_ref = '222'
-
 url_get_survey_list = f'{app.config["BACKSTAGE_API_URL"]}/v1/survey/surveys'
 with open('tests/test_data/survey/survey_list.json') as json_data:
     survey_list = json.load(json_data)
@@ -20,7 +18,7 @@ with open('tests/test_data/survey/survey.json') as json_data:
     survey_info = json.load(json_data)
 with open('tests/test_data/survey/survey_states.json') as json_data:
     survey_info_states = json.load(json_data)
-url_update_survey_details = f'{app.config["BACKSTAGE_API_URL"]}/v1/survey/edit-survey-details/{survey_ref}'
+url_update_survey_details = f'{app.config["BACKSTAGE_API_URL"]}/v1/survey/edit-survey-details/222'
 with open('tests/test_data/survey/updated_survey_list.json') as json_data:
     updated_survey_list = json.load(json_data)
 
@@ -163,7 +161,7 @@ class TestSurvey(unittest.TestCase):
     @requests_mock.mock()
     def test_update_survey_details_success(self, mock_request):
         changed_survey_details = {
-            "survey_ref": '222',
+            "hidden_survey_ref": '222',
             "long_name": 'New Survey Long Name',
             "short_name": 'QBX'
         }
@@ -179,7 +177,7 @@ class TestSurvey(unittest.TestCase):
     @requests_mock.mock()
     def test_update_survey_details_failure(self, mock_request):
         changed_survey_details = {
-            "survey_ref": '222',
+            "hidden_survey_ref": '222',
             "long_name": 'New Survey Long Name',
             "short_name": 'QBX'
         }
