@@ -35,7 +35,7 @@ def upload_collection_instrument(short_name, period, file, form_type=None):
 
 def link_collection_instrument(ce_id, ci_id):
     logger.debug('Linking collection instrument to collection exercise',
-                 collection_exercise_id=ce_id,collection_instrument_id=ci_id)
+                 collection_exercise_id=ce_id, collection_instrument_id=ci_id)
     url = f'{app.config["BACKSTAGE_API_URL"]}/v1/collection-instrument/link/{ci_id}/{ce_id}'
     response = requests.post(url)
     if response.status_code != 200:
