@@ -14,7 +14,7 @@
     {% endif %}
     {% if ci_unlinked %}
       <div class="panel panel--simple panel--success">
-        <div id="collection-instrument-unlinked-success" class="panel__body">
+        <div id="collection-instrument-removed-success" class="panel__body">
           Collection instrument removed
         </div>
       </div>
@@ -257,8 +257,8 @@
                 </td>
                 {% if not locked %}
                 <td class="table--cell tbl-ce-status tbl-ce-action">
-                  <form id="form-unselect-ci" action="" method="post">
-                    <a class="remove-icon" href=# id="unlink-ci" onclick="this.parentNode.submit()"></a>
+                  <form id="form-unselect-ci-{loop.index}" action="" method="post">
+                    <a class="remove-icon" href=# id="unlink-ci-{loop.index}" onclick="this.parentNode.submit()"></a>
                     <input type="hidden" name="ce_id" value="{{ ce.id }}">
                     <input type="hidden" name="ci_id" value="{{ collection_instrument.id }}">
                     <input type="hidden" name="unselect-ci">
