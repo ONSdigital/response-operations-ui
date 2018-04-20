@@ -108,7 +108,7 @@
                 {{events.mps.day}} <em>{{events.mps.date}}</em> {{events.mps.time}}
                 {% endif %}
               </td>
-              {% if not ce.state == 'Live' and not ce.state == 'Ready for live' and events.mps.is_in_future %}
+              {% if not ce.state == 'Live' and not ce.state == 'Ready for live' and events.mps.is_in_future and config.EDIT_EVENT_DATES_ENABLED %}
               <td class="table--cell tbl-ce-">
                 <form action="{{ url_for('collection_exercise_bp.update_event_date', short_name=survey.shortName, period=ce.exerciseRef, tag='mps')}}" method="get">
                   <a class="edit-icon" href=# id="edit-event-date-mps" onclick="this.parentNode.submit()"></a>
@@ -126,7 +126,7 @@
                 {{events.go_live.day}} <em>{{events.go_live.date}}</em> {{events.go_live.time}}
                 {% endif %}
               </td>
-              {% if not ce.state == 'Live' and not ce.state == 'Ready for live' and events.go_live.is_in_future %}
+              {% if not ce.state == 'Live' and not ce.state == 'Ready for live' and events.go_live.is_in_future and config.EDIT_EVENT_DATES_ENABLED %}
               <td class="table--cell tbl-ce-">
                 <form action="{{ url_for('collection_exercise_bp.update_event_date', short_name=survey.shortName, period=ce.exerciseRef, tag='go_live')}}" method="get">
                   <a class="edit-icon" href=# id="edit-event-date-go-live" onclick="this.parentNode.submit()"></a>
@@ -144,7 +144,7 @@
                 {{events.return_by.day}} <em>{{events.return_by.date}}</em> {{events.return_by.time}}
                 {% endif %}
               </td>
-              {% if not ce.state == 'Live' and not ce.state == 'Ready for live' and events.return_by.is_in_future %}
+              {% if not ce.state == 'Live' and not ce.state == 'Ready for live' and events.return_by.is_in_future and config.EDIT_EVENT_DATES_ENABLED %}
               <td class="table--cell tbl-ce-">
                 <form action="{{ url_for('collection_exercise_bp.update_event_date', short_name=survey.shortName, period=ce.exerciseRef, tag='return_by')}}" method="get">
                   <a class="edit-icon" href=# id="edit-event-date-return-by" onclick="this.parentNode.submit()"></a>
@@ -163,7 +163,7 @@
                 {{events.reminder.day}} <em>{{events.reminder.date}}</em> {{events.reminder.time}}
                 {% endif %}
               </td>
-              {% if events.reminder.is_in_future %}
+              {% if events.reminder.is_in_future and config.EDIT_EVENT_DATES_ENABLED %}
               <td class="table--cell tbl-ce-">
                 <form action="{{ url_for('collection_exercise_bp.update_event_date', short_name=survey.shortName, period=ce.exerciseRef, tag='reminder')}}" method="get">
                   <a class="edit-icon" href=# id="edit-event-date-reminder" onclick="this.parentNode.submit()"></a>
@@ -181,7 +181,7 @@
               <td class="table--cell tbl-ce-value ce-event-date" name="second-reminder-date">
                 {{events.reminder2.day}} <em>{{events.reminder2.date}}</em> {{events.reminder2.time}}
               </td>
-              {% if events.reminder2.is_in_future %}
+              {% if events.reminder2.is_in_future and config.EDIT_EVENT_DATES_ENABLED %}
               <td class="table--cell tbl-ce-">
                 <form action="{{ url_for('collection_exercise_bp.update_event_date', short_name=survey.shortName, period=ce.exerciseRef, tag='reminder2')}}" method="get">
                   <a class="edit-icon" href=# id="edit-event-date-reminder2" onclick="this.parentNode.submit()"></a>
@@ -199,7 +199,7 @@
               <td class="table--cell tbl-ce-value ce-event-date" name="third-reminder-date">
                 {{events.reminder3.day}} <em>{{events.reminder3.date}}</em> {{events.reminder3.time}}
               </td>
-              {% if events.reminder3.is_in_future %}
+              {% if events.reminder3.is_in_future and config.EDIT_EVENT_DATES_ENABLED %}
               <td class="table--cell tbl-ce-">
                 <form action="{{ url_for('collection_exercise_bp.update_event_date', short_name=survey.shortName, period=ce.exerciseRef, tag='reminder3')}}" method="get">
                   <a class="edit-icon" href=# id="edit-event-date-reminder3" onclick="this.parentNode.submit()"></a>
@@ -218,7 +218,7 @@
                 {{events.exercise_end.day}} <em>{{events.exercise_end.date}}</em> {{events.exercise_end.time}}
                 {% endif %}
               </td>
-              {% if not ce.state == 'Live' and not ce.state == 'Ready for live' and events.exercise_end.is_in_future %}
+              {% if not ce.state == 'Live' and not ce.state == 'Ready for live' and events.exercise_end.is_in_future and config.EDIT_EVENT_DATES_ENABLED %}
               <td class="table--cell tbl-ce-">
                 <form action="{{ url_for('collection_exercise_bp.update_event_date', short_name=survey.shortName, period=ce.exerciseRef, tag='exercise_end')}}" method="get">
                   <a class="edit-icon" href=# id="edit-event-date-exercise-end" onclick="this.parentNode.submit()"></a>
@@ -420,7 +420,7 @@
               <td class="table--cell tbl-ce-" name="period-start-date">
                   {{events.ref_period_start.day}} {{events.ref_period_start.date}}
               </td>
-              {% if not ce.state == 'Live' and not ce.state == 'Ready for live' and events.ref_period_start.is_in_future %}
+              {% if not ce.state == 'Live' and not ce.state == 'Ready for live' and events.ref_period_start.is_in_future and config.EDIT_EVENT_DATES_ENABLED %}
               <td class="table--cell tbl-ce-">
                 <form action="{{ url_for('collection_exercise_bp.update_event_date', short_name=survey.shortName, period=ce.exerciseRef, tag='ref_period_start')}}" method="get">
                   <a class="edit-icon" href=# id="edit-event-date-ref-period-start" onclick="this.parentNode.submit()"></a>
@@ -451,7 +451,7 @@
               <td class="table--cell tbl-ce-" name="period-end-date">
                   {{events.ref_period_end.day}} {{events.ref_period_end.date}}
               </td>
-              {% if not ce.state == 'Live' and not ce.state == 'Ready for live' and events.ref_period_end.is_in_future %}
+              {% if not ce.state == 'Live' and not ce.state == 'Ready for live' and events.ref_period_end.is_in_future and config.EDIT_EVENT_DATES_ENABLED %}
               <td class="table--cell tbl-ce-">
                 <form action="{{ url_for('collection_exercise_bp.update_event_date', short_name=survey.shortName, period=ce.exerciseRef, tag='ref_period_end')}}" method="get">
                   <a class="edit-icon" href=# id="edit-event-date-ref-period-end" onclick="this.parentNode.submit()"></a>
