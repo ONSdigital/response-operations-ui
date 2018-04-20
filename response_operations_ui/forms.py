@@ -3,9 +3,9 @@ import logging
 
 from flask_wtf import FlaskForm
 from structlog import wrap_logger
-from wtforms import HiddenField, IntegerField, Label, PasswordField, \
+from wtforms import HiddenField, Label, PasswordField, \
     SelectField, StringField, SubmitField, TextAreaField, ValidationError
-from wtforms.validators import InputRequired, Length, NumberRange
+from wtforms.validators import InputRequired, Length
 
 logger = wrap_logger(logging.getLogger(__name__))
 
