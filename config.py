@@ -34,6 +34,7 @@ class DevelopmentConfig(Config):
 
     UAA_SERVICE_URL = os.getenv('UAA_SERVICE_URL', 'http://localhost:9080')
     RAS_SECURE_MESSAGING_JWT_SECRET = os.getenv('RAS_SECURE_MESSAGING_JWT_SECRET', 'testsecret')
+    EDIT_EVENT_DATES_ENABLED = True
 
 
 class TestingConfig(DevelopmentConfig):

@@ -11,7 +11,7 @@ survey_short_name = 'BRES'
 period = '201801'
 
 url_get_update_event_date = f'{app.config["BACKSTAGE_API_URL"]}/v1/collection-exercise' \
-                            f'/{survey_short_name}/{period}/update-events'
+                            f'/{survey_short_name}/{period}/events'
 with open('tests/test_data/collection_exercise/collection_exercise_details.json') as json_data:
     collection_exercise = json.load(json_data)
 with open('tests/test_data/survey/survey.json') as json_data:
@@ -19,7 +19,7 @@ with open('tests/test_data/survey/survey.json') as json_data:
 with open('tests/test_data/collection_exercise/events.json') as json_data:
     events = json.load(json_data)
 url_put_update_event_date = f'{app.config["BACKSTAGE_API_URL"]}/v1/collection-exercise' \
-                            f'/{survey_short_name}/{period}/update-events/go_live'
+                            f'/{survey_short_name}/{period}/events/go_live'
 url_get_collection_exercise = f'{app.config["BACKSTAGE_API_URL"]}/v1/collection-exercise/{survey_short_name}/{period}'
 
 
