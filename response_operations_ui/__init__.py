@@ -6,10 +6,19 @@ from flask_assets import Bundle, Environment
 from flask_login import LoginManager
 from flask_session import Session
 import redis
+from flask_talisman import Talisman
 
 from response_operations_ui.cloud.cloudfoundry import ONSCloudFoundry
 from response_operations_ui.logger_config import logger_initial_config
 from response_operations_ui.user import User
+
+CSP_POLICY = {
+    'default-src': ["'self'", 'https://cdn.ons.gov.uk', ],
+    'font-src': ["'self'", 'data:', 'https://cdn.ons.gov.uk', ],
+    'script-src': ["'self'", 'https://www.google-analytics.com', 'https://cdn.ons.gov.uk', ],
+    'connect-src': ["'self'", 'https://www.google-analytics.com', 'https://cdn.ons.gov.uk', ],
+    'img-src': ["'self'", 'data:', 'https://www.google-analytics.com', 'https://cdn.ons.gov.uk', ]
+}
 
 app = Flask(__name__)
 
@@ -52,15 +61,16 @@ if app.config['SESSION_TYPE'] == 'redis':
     # wrap in the flask server side session manager and back it by redis
     app.config['SESSION_REDIS'] = redis
 
-
-@app.after_request
-def apply_headers(response):
-    response.headers["Strict-Transport-Security"] = "max-age=31536000; includeSubDomains"
-    response.headers["Content-Security-Policy"] = "default-src 'self'"
-    response.headers["X-XSS-Protection"] = "1"
-    response.headers["X-Content-Type-Options"] = "nosniff"
-    response.headers["Referrer-Policy"] = "same-origin"
-    return response
+Talisman(app,
+         content_security_policy=CSP_POLICY,
+         content_security_policy_nonce_in=['script-src'],
+         session_cookie_secure=True,  # Will setting True this cause issues when https is terminated?
+         force_https=False,  # this is handled at the firewall
+         strict_transport_security=True,
+         strict_transport_security_max_age=31536000,
+         strict_transport_security_include_subdomains=True,
+         referrer_policy='same-origin',
+         frame_options='DENY')
 
 Session(app)
 
