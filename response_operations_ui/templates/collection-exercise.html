@@ -4,7 +4,6 @@
 {% block main %}
 
 <div role="main" id="main" class="page__main">
-    <br/>
     <h1 class="jupiter" name="page-ce-title">{{survey.shortName}} {{ce.exerciseRef}}</h1>
     {% if ci_loaded %}
       <div class="panel panel--simple panel--success">
@@ -59,6 +58,14 @@
       <dd class="ce-status__data item-headlines-definition ce-status" id="ce_status">
         {{ ce.state }}
       </dd>
+      {% if ce.state|upper == "LIVE" %}
+      <dt class="ce-status__title item-headlines-term ce-status">
+        Report:
+      </dt>
+      <dd class="ce-status__data item-headlines-definition ce-status" id="ce_status">
+        <a class="download" href="{{ url_for('collection_exercise_bp.response_chasing', ce_id=ce.id, survey_id=survey.id) }}">Response chasing</a>
+      </dd>
+      {% endif %}
     </dl>
 
     <div>

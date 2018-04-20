@@ -13,6 +13,7 @@ def get_reporting_unit(ru_ref):
     logger.debug('Retrieving reporting unit', ru_ref=ru_ref)
     url = f'{app.config["BACKSTAGE_API_URL"]}/v1/reporting-unit/{ru_ref}'
     response = requests.get(url)
+
     if response.status_code != 200:
         raise ApiError(response)
 
@@ -33,6 +34,25 @@ def search_reporting_units(query):
     return response.json()
 
 
+def change_enrolment_status(business_id, respondent_id, survey_id, change_flag):
+    logger.debug('Changing the enrolment status',
+                 business_id=business_id, respondent_id=respondent_id, survey_id=survey_id, change_flag=change_flag)
+    url = f'{app.config["BACKSTAGE_API_URL"]}/v1/party/change-enrolment-status'
+    enrolment_json = {
+        'respondent_id': respondent_id,
+        'business_id': business_id,
+        'survey_id': survey_id,
+        'change_flag': change_flag
+    }
+    response = requests.put(url, json=enrolment_json)
+
+    if response.status_code != 200:
+        raise ApiError(response)
+
+    logger.debug('Successfully changed enrolment status',
+                 business_id=business_id, respondent_id=respondent_id, survey_id=survey_id, change_flag=change_flag)
+
+
 def generate_new_enrolment_code(collection_exercise_id, ru_ref):
     logger.debug('Generating new enrolment code', collection_exercise_id=collection_exercise_id, ru_ref=ru_ref)
     url = f'{app.config["BACKSTAGE_API_URL"]}/v1/reporting-unit/iac/{collection_exercise_id}/{ru_ref}'
@@ -42,18 +62,17 @@ def generate_new_enrolment_code(collection_exercise_id, ru_ref):
         raise ApiError(response)
 
     logger.debug('Successfully generated new enrolment code',
-                 collection_exercise_id=collection_exercise_id,
-                 ru_ref=ru_ref)
+                 collection_exercise_id=collection_exercise_id, ru_ref=ru_ref)
     return response.json()
 
 
 def resend_verification_email(party_id):
     logger.debug('Re-sending verification email', party_id=party_id)
     url = f'{app.config["BACKSTAGE_API_URL"]}/v1/reporting-unit/resend-verification-email/{party_id}'
-
     response = requests.post(url)
+
     if response.status_code != 200:
         logger.exception("Re-sending of verification email failed", party_id=party_id)
         raise ApiError(response)
 
-    logger.info('Successfully re-sent verification email', party_id=party_id)
+    logger.debug('Successfully re-sent verification email', party_id=party_id)

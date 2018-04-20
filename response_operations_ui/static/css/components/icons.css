@@ -1,4 +1,13 @@
-.edit-icon{
+.download {
   padding-left: 18px;
-  background: url("/static/images/ic_mode_edit_black_18px.svg") no-repeat 0 2px;
+  background-image: url("/static/images/ic_file_download_black_18px.svg");
+  background-repeat: no-repeat;
+  background-position: 0 2px;
+  }
+
+.edit-icon {
+  padding-left: 18px;
+  background-image: url("/static/images/ic_mode_edit_black_18px.svg");
+  background-repeat: no-repeat;
+  background-position: 0 2px;
 }
