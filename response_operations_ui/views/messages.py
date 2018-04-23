@@ -150,7 +150,7 @@ def view_selected_survey(selected_survey):
             survey_id = _get_survey_id(selected_survey)
 
         page = request.args.get(get_parameter('page'), type=int, default=1)
-        limit = request.args.get(get_parameter('limit'), type=int, default=15)
+        limit = request.args.get(get_parameter('limit'), type=int, default=10)
 
         params = {
             'survey': survey_id,
