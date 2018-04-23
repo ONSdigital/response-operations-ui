@@ -12,6 +12,13 @@
         </div>
       </div>
     {% endif %}
+    {% if ci_unlinked %}
+      <div class="panel panel--simple panel--success">
+        <div id="collection-instrument-removed-success" class="panel__body">
+          Collection instrument removed
+        </div>
+      </div>
+    {% endif %}
     {% if ci_added %}
       <div class="panel panel--simple panel--success">
         <div id="collection-instrument-added-success" class="panel__body">
@@ -248,6 +255,16 @@
                 <td class="table--cell tbl-ce-value">
                   {{collection_instrument.file_name}}
                 </td>
+                {% if not locked %}
+                <td class="table--cell tbl-ce-status tbl-ce-action">
+                  <form id="form-unselect-ci-{{loop.index}}" action="" method="post">
+                    <a class="remove-icon" href=# id="unlink-ci-{{loop.index}}" onclick="this.parentNode.submit()"></a>
+                    <input type="hidden" name="ce_id" value="{{ ce.id }}">
+                    <input type="hidden" name="ci_id" value="{{ collection_instrument.id }}">
+                    <input type="hidden" name="unselect-ci">
+                  </form>
+                </td>
+                {% endif %}
               </tr>
             {% endfor %}
             </tbody>
