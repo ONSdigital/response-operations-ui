@@ -84,6 +84,9 @@ a.site-title:hover, a.site-title:focus, a.site-title:active{
   text-decoration: underline;
 }
 
+a.sign-out, a.sign-out:hover {
+    color: #fff;
+}
 
 .header:before{
   height: 0;
@@ -94,6 +97,9 @@ a.site-title:hover, a.site-title:focus, a.site-title:active{
   padding: 0;
 }
 
+.bar__title {
+    margin-right: auto;
+}
 
 .header__container {
   display: -webkit-box;
