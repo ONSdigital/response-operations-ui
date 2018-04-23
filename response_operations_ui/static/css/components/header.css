@@ -269,3 +269,8 @@ a.sign-out, a.sign-out:hover {
     margin: 0;
     /*margin-left: 1rem;*/
 }
+
+.bar__title a {
+    color: #fff;
+    text-decoration: none;
+}
