@@ -17,7 +17,6 @@ def convert_events_to_new_format(events):
     for event in events:
         date_time = iso8601.parse_date(event['timestamp'], )
         day = calendar.day_name[date_time.weekday()]
-        # month = calendar.month_name[date_time.month][:3]
         date = date_time.strftime('%d %b %Y')
         time = date_time.strftime('%H:%M GMT')
         formatted_events[event['tag']] = {
