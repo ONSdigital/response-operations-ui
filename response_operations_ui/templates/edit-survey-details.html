@@ -26,6 +26,14 @@
               </span>
         </label>
       </div>
+      {% if errors %}
+      <div class="panel panel--simple panel--error u-mb-l">
+        <div class="panel__body" id="save-error">
+          <h2 id='error-saving-message' class="venus">Error updating survey details</h2>
+          <p class="mars">Please remove any spaces in the short name and try saving your changes again</p>
+        </div>
+      </div>
+      {% endif %}
         <div class="field u-mb-s">
           <label class="label" for="short_name">
             Short Name

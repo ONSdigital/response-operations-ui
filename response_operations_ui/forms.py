@@ -3,7 +3,7 @@ import logging
 from flask_wtf import FlaskForm
 from structlog import wrap_logger
 from wtforms import HiddenField, Label, PasswordField, StringField, SubmitField, TextAreaField
-from wtforms.validators import InputRequired, Length
+from wtforms.validators import InputRequired, Length, ValidationError
 
 logger = wrap_logger(logging.getLogger(__name__))
 
@@ -70,5 +70,11 @@ class ChangeGroupStatusForm(FlaskForm):
 
 class EditSurveyDetailsForm(FlaskForm):
     long_name = StringField('long_name')
-    short_name = StringField('short_name')
+    short_name = StringField('short_name', validators=[InputRequired(message="Please remove spaces in short name")])
     hidden_survey_ref = HiddenField('hidden_survey_ref')
+
+    @staticmethod
+    def validate_short_name(form, field):
+        short_name = field.data
+        if ' ' in short_name:
+            raise ValidationError('Please remove spaces in short name')

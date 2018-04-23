@@ -67,13 +67,21 @@ def view_survey_details(short_name):
                            survey_ref=survey_details['survey']['surveyRef'])
 
 
-@surveys_bp.route('/edit-survey-details/<short_name>', methods=['POST'])
+@surveys_bp.route('/edit-survey-details/<short_name>', methods=['POST', 'GET'])
 @login_required
 def edit_survey_details(short_name):
-    form = request.form
+    form = EditSurveyDetailsForm(form=request.form)
+    if not form.validate():
+        survey_details = survey_controllers.get_survey(short_name)
+        return render_template('edit-survey-details.html', form=form, short_name=short_name, errors=form.errors,
+                               legal_basis=survey_details['survey']['legalBasis'],
+                               long_name=survey_details['survey']['longName'],
+                               survey_ref=survey_details['survey']['surveyRef'],
+                               survey_details=survey_details)
 
-    survey_controllers.update_survey_details(form.get('hidden_survey_ref'),
-                                             form.get('short_name'),
-                                             form.get('long_name'))
-
-    return redirect(url_for('surveys_bp.view_surveys', short_name=short_name, survey_changed='True'))
+    else:
+        form = request.form
+        survey_controllers.update_survey_details(form.get('hidden_survey_ref'),
+                                                 form.get('short_name'),
+                                                 form.get('long_name'))
+        return redirect(url_for('surveys_bp.view_surveys', short_name=short_name, survey_changed='True'))
