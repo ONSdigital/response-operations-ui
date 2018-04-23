@@ -58,7 +58,7 @@ def update_event(short_name, period, tag, timestamp):
 
     if response.status_code == 400:
         logger.warning('Bad request updating event',
-                       short_name=short_name, period=period, tag=tag, timestamp=timestamp)
+                       short_name=short_name, period=period, tag=tag, timestamp=timestamp, status=response.status_code)
         return False
     elif response.status_code != 201:
         raise ApiError(response)
