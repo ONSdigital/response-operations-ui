@@ -81,6 +81,8 @@ def post_collection_exercise(short_name, period):
         return _set_ready_for_live(short_name, period)
     elif 'select-ci' in request.form:
         return _select_collection_instrument(short_name, period)
+    elif 'unselect-ci' in request.form:
+        return _unselect_collection_instrument(short_name, period)
     return view_collection_exercise(short_name, period)
 
 
@@ -178,6 +180,28 @@ def _upload_collection_instrument(short_name, period):
                 "header": "Error: Failed to upload collection instrument",
                 "message": "Please try again"
             }
+
+    return view_collection_exercise(short_name, period, error=error, success_panel=success_panel)
+
+
+def _unselect_collection_instrument(short_name, period):
+    error = None
+    success_panel = None
+    ci_id = request.form.get('ci_id')
+    ce_id = request.form.get('ce_id')
+
+    ci_unlinked = collection_instrument_controllers.unlink_collection_instrument(ce_id, ci_id)
+
+    if ci_unlinked:
+        success_panel = {
+            "id": "collection-instrument-removed-success",
+            "message": "Collection instrument removed"
+
+        }
+    else:
+        error = {
+            "header": "Error: Failed to remove collection instrument"
+        }
 
     return view_collection_exercise(short_name, period, error=error, success_panel=success_panel)
 

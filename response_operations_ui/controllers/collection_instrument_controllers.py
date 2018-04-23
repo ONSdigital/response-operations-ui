@@ -34,13 +34,30 @@ def upload_collection_instrument(short_name, period, file, form_type=None):
 
 
 def link_collection_instrument(ce_id, ci_id):
-    logger.debug('Linking collection instrument to collection exercise', ce_id=ce_id, ci_id=ci_id)
+    logger.debug('Linking collection instrument to collection exercise',
+                 collection_exercise_id=ce_id, collection_instrument_id=ci_id)
     url = f'{app.config["BACKSTAGE_API_URL"]}/v1/collection-instrument/link/{ci_id}/{ce_id}'
     response = requests.post(url)
     if response.status_code != 200:
-        logger.error('Failed to link collection instrument to collection exercise', ce_id=ce_id, ci_id=ci_id,
-                     status=response.status_code)
+        logger.error('Failed to link collection instrument to collection exercise',
+                     collection_exercise_id=ce_id, collection_instrument_id=ci_id, status=response.status_code)
         return False
 
-    logger.debug('Successfully linked collection instrument to collection exercise', ce_id=ce_id, ci_id=ci_id)
+    logger.debug('Successfully linked collection instrument to collection exercise',
+                 collection_exercise_id=ce_id, collection_instrument_id=ci_id)
+    return True
+
+
+def unlink_collection_instrument(ce_id, ci_id):
+    logger.debug('Unlinking collection instrument and collection exercise',
+                 collection_exercise_id=ce_id, collection_instrument_id=ci_id)
+    url = f'{app.config["BACKSTAGE_API_URL"]}/v1/collection-instrument/unlink/{ci_id}/{ce_id}'
+    response = requests.put(url)
+    if response.status_code != 200:
+        logger.error('Failed to unlink collection instrument and collection exercise',
+                     collection_exercise_id=ce_id, collection_instrument_id=ci_id, status=response.status_code)
+        return False
+
+    logger.debug('Successfully unlinked collection instrument and collection exercise',
+                 collection_exercise_id=ce_id, collection_instrument_id=ci_id)
     return True
