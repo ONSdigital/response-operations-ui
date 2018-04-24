@@ -249,7 +249,7 @@ class TestMessage(unittest.TestCase):
         mock_get_jwt.return_value = "blah"
         mock_request.get(url_send_message + '/count', json={"total": 1}, status_code=200)
         mock_request.get(url_get_surveys_list, json=self.surveys_list_json)
-        params = "?survey=6aa8896f-ced5-4694-800c-6cd661b0c8b2&page=1&limit=15"
+        params = "?survey=6aa8896f-ced5-4694-800c-6cd661b0c8b2&page=1&limit=10"
         mock_request.get(url_get_threads_list + params, json=threads_unread_list)
         mock_request.get(shortname_url + "/ASHE", json=ashe_info)
 
