@@ -19,7 +19,7 @@ collection_exercise_bp = Blueprint('collection_exercise_bp', __name__,
 @collection_exercise_bp.route('/<short_name>/<period>', methods=['GET'])
 @login_required
 def view_collection_exercise(short_name, period, error=None, ci_loaded=False, executed=False,
-                             sample_loaded=False, ci_added=False):
+                             sample_loaded=False, ci_added=False, ci_unlinked=False):
     ce_details = collection_exercise_controllers.get_collection_exercise(short_name, period)
     ce_details['sample_summary'] = _format_sample_summary(ce_details['sample_summary'])
     formatted_events = convert_events_to_new_format(ce_details['events'])
@@ -57,6 +57,7 @@ def view_collection_exercise(short_name, period, error=None, ci_loaded=False, ex
                            ce=ce_details['collection_exercise'],
                            ci_added=ci_added,
                            ci_loaded=ci_loaded,
+                           ci_unlinked=ci_unlinked,
                            collection_instruments=ce_details['collection_instruments'],
                            eq_ci_selectors=ce_details['eq_ci_selectors'],
                            error=error,
@@ -85,6 +86,8 @@ def post_collection_exercise(short_name, period):
         return _set_ready_for_live(short_name, period)
     elif 'select-ci' in request.form:
         return _select_collection_instrument(short_name, period)
+    elif 'unselect-ci' in request.form:
+        return _unselect_collection_instrument(short_name, period)
     return view_collection_exercise(short_name, period)
 
 
@@ -161,6 +164,21 @@ def _upload_collection_instrument(short_name, period):
             }
 
     return view_collection_exercise(short_name, period, error=error, ci_loaded=ci_loaded)
+
+
+def _unselect_collection_instrument(short_name, period):
+    error = None
+    ci_id = request.form.get('ci_id')
+    ce_id = request.form.get('ce_id')
+
+    ci_unlinked = collection_instrument_controllers.unlink_collection_instrument(ce_id, ci_id)
+
+    if not ci_unlinked:
+        error = {
+            "header": "Error: Failed to remove collection instrument"
+        }
+
+    return view_collection_exercise(short_name, period, error=error, ci_unlinked=ci_unlinked)
 
 
 def _validate_collection_instrument():

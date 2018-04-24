@@ -28,6 +28,9 @@ td {
   /*display:none;*/
 }
 
+.tbl-ce-action {
+    text-align: right;
+}
 
 /* sortable table styles from ljwatson https://ljwatson.github.io/sortable-tables/ */
 
