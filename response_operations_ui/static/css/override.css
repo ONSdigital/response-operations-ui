@@ -822,7 +822,8 @@ font-weight: 400;
 .pagination li {
 	list-style-type: none;
 	float: left;
-    padding: 8px 16px;
+    padding-top: 4px;
+    padding-bottom: 4px;
 	display:inline;
 }
 
@@ -843,6 +844,10 @@ font-weight: 400;
 .pagination li:hover:not(.active) {
 	background-color: #E4E8EB;
 	transition: background-color .3s;
+}
+
+.pagination li a {
+	padding: 8px 16px;
 }
 
 .pagination li.previous.disabled.unavailable {
