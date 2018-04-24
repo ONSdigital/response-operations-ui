@@ -17,6 +17,8 @@ with open('tests/test_data/collection_exercise/collection_exercise_details_faile
     collection_exercise_details_failedvalidation = json.load(json_data)
 url_collection_instrument = f'{app.config["BACKSTAGE_API_URL"]}/v1/collection-instrument/test/000000'
 url_collection_instrument_link = f'{app.config["BACKSTAGE_API_URL"]}/v1/collection-instrument/link/111111/000000'
+url_collection_instrument_unlink = f'{app.config["BACKSTAGE_API_URL"]}/v1/collection-instrument/' \
+                                   f'unlink/14fb3e68-4dca-46db-bf49-04b84e07e77c/000000'
 url_upload_sample = f'{app.config["BACKSTAGE_API_URL"]}/v1/sample/test/000000'
 url_execute = f'{app.config["BACKSTAGE_API_URL"]}/v1/collection-exercise/test/000000/execute'
 url_update_ce = f'{app.config["BACKSTAGE_API_URL"]}/v1/collection-exercise/update-collection-exercise-details/' \
@@ -397,3 +399,35 @@ class TestCollectionExercise(unittest.TestCase):
 
         self.assertEqual(response.status_code, 200)
         self.assertIn("14fb3e68-4dca-46db-bf49-04b84e07e77c".encode(), response.data)
+
+    @requests_mock.mock()
+    def test_unlink_collection_instrument(self, mock_request):
+        post_data = {
+            'ci_id': '14fb3e68-4dca-46db-bf49-04b84e07e77c',
+            'ce_id': '000000',
+            'unselect-ci': ''
+        }
+
+        mock_request.put(url_collection_instrument_unlink, status_code=200)
+        mock_request.get(url_get_collection_exercise, json=collection_exercise_details)
+
+        response = self.app.post("/surveys/test/000000", data=post_data)
+
+        self.assertEqual(response.status_code, 200)
+        self.assertIn("Collection instrument removed".encode(), response.data)
+
+    @requests_mock.mock()
+    def test_failed_unlink_collection_instrument(self, mock_request):
+        post_data = {
+            'ci_id': '14fb3e68-4dca-46db-bf49-04b84e07e77c',
+            'ce_id': '000000',
+            'unselect-ci': ''
+        }
+
+        mock_request.put(url_collection_instrument_unlink, status_code=500)
+        mock_request.get(url_get_collection_exercise, json=collection_exercise_details)
+
+        response = self.app.post("/surveys/test/000000", data=post_data)
+
+        self.assertEqual(response.status_code, 200)
+        self.assertIn("Error: Failed to remove collection instrument".encode(), response.data)

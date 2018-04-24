@@ -95,4 +95,3 @@ def get_survey_by_id(survey_id):
         raise ApiError(response)
 
     return response.json()
-

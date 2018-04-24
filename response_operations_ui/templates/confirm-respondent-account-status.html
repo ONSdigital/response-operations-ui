@@ -52,7 +52,20 @@
                   Respondent:
                 </dt>
                 <dd class="">
-                  {{ first_name }} {{ last_name }}
+                  {{ respondent.first_name }} {{ respondent.last_name }}
+                </dd>
+                <dt class="description-list__name">
+                  Enrolments
+                </dt>
+                <dd class="description-list__value">
+                  <ul class="editor-account-enrolments">
+                      {% for enrolment in enrolments %}
+                    <li class="editor-account-enrolments__item">
+
+                            {{ enrolment['survey']['surveyRef'] enrolment['survey']['shortName'] for enrolment['business']['sampleUnitRef'] enrolment['business']['name']}}
+                    </li>
+                      {% endfor %}
+                  </ul>
                 </dd>
               </dl>
 
@@ -60,10 +73,6 @@
               <div id="action-to-confirm" class="u-mt-m">
                 {% if change_status == 'SUSPENDED' %}
                   Suspend account?
-                  {% else %}
-                    Re-activate account?
-                  {% endif %}
-
               </div>
 
               <button type="submit" class="btn btn--primary u-mt-s">Confirm</button>

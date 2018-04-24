@@ -9,8 +9,7 @@ from response_operations_ui.common.mappers import map_ce_response_status
 from response_operations_ui.controllers import case_controller
 from response_operations_ui.controllers import contact_details_controller
 from response_operations_ui.controllers import reporting_units_controllers
-from response_operations_ui.forms import EditContactDetailsForm
-from response_operations_ui.forms import SearchForm
+from response_operations_ui.forms import EditContactDetailsForm, SearchForm
 
 
 logger = wrap_logger(logging.getLogger(__name__))
@@ -25,7 +24,6 @@ def view_reporting_unit(ru_ref):
 
     ru_details['surveys'] = sorted(ru_details['surveys'], key=lambda survey: survey['surveyRef'])
 
-    respondent = {}
     for survey in ru_details['surveys']:
         survey['collection_exercises'] = sorted(survey['collection_exercises'],
                                                 key=lambda ce: ce['scheduledStartDateTime'],
@@ -37,10 +35,6 @@ def view_reporting_unit(ru_ref):
                                                                          collection_exercise['exerciseRef'], ru_ref)
             collection_exercise['statusChangeable'] = len(statuses['available_statuses']) > 0
             collection_exercise['companyRegion'] = map_region(collection_exercise['companyRegion'])
-
-        for respondent in survey['respondents']:
-            respondent['status'] = respondent['status'].title()
-            respondent['enrolmentStatus'] = respondent['enrolmentStatus'].title()
 
     survey_arg = request.args.get('survey')
     period_arg = request.args.get('period')
@@ -55,6 +49,8 @@ def view_reporting_unit(ru_ref):
     info = request.args.get('info')
     if info:
         info_message = info
+    if request.args.get('enrolment_changed'):
+        info_message = 'Enrolment status changed'
 
     breadcrumbs = [
         {
@@ -65,9 +61,9 @@ def view_reporting_unit(ru_ref):
             "title": f"{ru_ref}"
         }
     ]
-    return render_template('reporting-unit.html', ru_ref=ru_ref, party_id=respondent.get('id'),
-                           ru=ru_details['reporting_unit'], surveys=ru_details['surveys'],
-                           breadcrumbs=breadcrumbs, info_message=info_message)
+    return render_template('reporting-unit.html', ru_ref=ru_ref, ru=ru_details['reporting_unit'],
+                           surveys=ru_details['surveys'], breadcrumbs=breadcrumbs,
+                           info_message=info_message, enrolment_changed=request.args.get('enrolment_changed'))
 
 
 @reporting_unit_bp.route('/<ru_ref>/edit-contact-details/<respondent_id>', methods=['GET'])
@@ -115,16 +111,17 @@ def search_reporting_units():
     return render_template('reporting-units.html', business_list=business_list, form=form, breadcrumbs=breadcrumbs)
 
 
-@reporting_unit_bp.route('/resend_verification/<ru_ref>/<email>/<party_id>', methods=['GET'])
+@reporting_unit_bp.route('/resend_verification/<ru_ref>/<party_id>', methods=['GET'])
 @login_required
-def resend_verification(ru_ref, email, party_id):
+def view_resend_verification(ru_ref, party_id):
     logger.debug("Re-send verification email requested", ru_ref=ru_ref, party_id=party_id)
-    return render_template('re-send-verification-email.html', ru_ref=ru_ref, email=email)
+    respondent = contact_details_controller.get_contact_details(party_id)
+    return render_template('re-send-verification-email.html', ru_ref=ru_ref, email=respondent['emailAddress'])
 
 
-@reporting_unit_bp.route('/resend_verification/<ru_ref>/<email>/<party_id>', methods=['POST'])
+@reporting_unit_bp.route('/resend_verification/<ru_ref>/<party_id>', methods=['POST'])
 @login_required
-def resent_verification(ru_ref, email, party_id):
+def resend_verification(ru_ref, party_id):
     reporting_units_controllers.resend_verification_email(party_id)
     logger.info("Re-sent verification email.", party_id=party_id)
     return redirect(url_for('reporting_unit_bp.view_reporting_unit', ru_ref=ru_ref,
@@ -142,9 +139,25 @@ def generate_new_enrolment_code(ru_ref, collection_exercise_id):
 
 
 def map_region(region):
-    if region == "YY":
-        region = "NI"
-    else:
-        region = "GB"
+    return "NI" if region == "YY" else "GB"
 
-    return region
+
+@reporting_unit_bp.route('/<ru_ref>/change-enrolment-status', methods=['GET'])
+@login_required
+def confirm_change_enrolment_status(ru_ref):
+    return render_template('confirm-enrolment-change.html', business_id=request.args['business_id'], ru_ref=ru_ref,
+                           trading_as=request.args['trading_as'], survey_id=request.args['survey_id'],
+                           survey_name=request.args['survey_name'], respondent_id=request.args['respondent_id'],
+                           first_name=request.args['respondent_first_name'],
+                           last_name=request.args['respondent_last_name'],
+                           change_flag=request.args['change_flag'])
+
+
+@reporting_unit_bp.route('/<ru_ref>/change-enrolment-status', methods=['POST'])
+@login_required
+def change_enrolment_status(ru_ref):
+    reporting_units_controllers.change_enrolment_status(business_id=request.args['business_id'],
+                                                        respondent_id=request.args['respondent_id'],
+                                                        survey_id=request.args['survey_id'],
+                                                        change_flag=request.args['change_flag'])
+    return redirect(url_for('reporting_unit_bp.view_reporting_unit', ru_ref=ru_ref, enrolment_changed='True'))
