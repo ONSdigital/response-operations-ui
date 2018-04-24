@@ -161,15 +161,16 @@ def view_selected_survey(selected_survey):
         thread_count = message_controllers.get_conversation_count({'survey': survey_id})
         messages = [_refine(message) for message in message_controllers.get_thread_list(params)]
 
-        pagination = get_pagination(page=page,
-                                    per_page=limit,
-                                    total=thread_count,
-                                    record_name='messages',
-                                    prev_label='Previous',
-                                    next_label='Next',
-                                    outer_window=0,
-                                    format_total=True,
-                                    format_number=True)
+        pagination = Pagination(page=page,
+                                per_page=limit,
+                                total=thread_count,
+                                record_name='messages',
+                                prev_label='Previous',
+                                next_label='Next',
+                                outer_window=0,
+                                format_total=True,
+                                format_number=True,
+                                show_single_page=False)
 
         return render_template("messages.html", page=page,
                                breadcrumbs=breadcrumbs,
@@ -202,11 +203,6 @@ def _get_conversation_breadcrumbs(messages):
         {"title": "Messages", "link": "/messages"},
         {"title": messages[-1].get('subject', 'No Subject')}
     ]
-
-
-def get_pagination(**kwargs):
-    kwargs.setdefault('record_name', 'records')
-    return Pagination(show_single_page=False, **kwargs)
 
 
 def _repopulate_form_with_submitted_data(form):
