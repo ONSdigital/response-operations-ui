@@ -84,3 +84,15 @@ def get_survey_ref_by_id(survey_id):
             logger.exception("Failed to resolve survey ref due to API error", survey_id=survey_id)
         except KeyError:
             logger.exception("Failed to resolve survey ref", survey_id=survey_id)
+
+
+def get_survey_by_id(survey_id):
+    logger.debug("Retrieve survey using survey id", survey_id=survey_id)
+    url = f'{app.config["SURVEY_SERVICE_URL"]}/surveys/{survey_id}'
+    response = requests.get(url, auth=app.config['BASIC_AUTH'])
+
+    if response.status_code != 200:
+        raise ApiError(response)
+
+    return response.json()
+

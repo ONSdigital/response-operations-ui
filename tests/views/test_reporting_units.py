@@ -373,3 +373,6 @@ class TestReportingUnits(unittest.TestCase):
 
         self.assertEqual(response.status_code, 500)
         self.assertIn("Error 500 - Server error".encode(), response.data)
+
+    def test_change_respondent_account_status_view(self):
+

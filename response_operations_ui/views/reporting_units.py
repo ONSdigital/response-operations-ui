@@ -7,11 +7,10 @@ from structlog import wrap_logger
 
 from response_operations_ui.common.mappers import map_ce_response_status
 from response_operations_ui.controllers import case_controller
-from response_operations_ui.controllers import party_controller
 from response_operations_ui.controllers import contact_details_controller
 from response_operations_ui.controllers import reporting_units_controllers
 from response_operations_ui.forms import EditContactDetailsForm
-from response_operations_ui.forms import SearchForm, Confirm
+from response_operations_ui.forms import SearchForm
 
 
 logger = wrap_logger(logging.getLogger(__name__))
@@ -149,27 +148,3 @@ def map_region(region):
         region = "GB"
 
     return region
-
-
-@reporting_unit_bp.route('/confirm-change-respondent-account-status', methods=['GET'])
-@login_required
-def confirm_change_account_status():
-    party_id = request.args['party_id']
-    change_status = request.args['change_status']
-    ru_ref = request.args['ru_ref']
-    form = Confirm(request.form)
-
-    respondent = party_controller.get_respondent_details(party_id)
-
-    return render_template('confirm-respondent-account-status.html', form=form, first_name=respondent['respondent_party']['firstName'],
-                           last_name=respondent['respondent_party']['lastName'], change_status=change_status, party_id=party_id, ru_ref=ru_ref)
-
-
-@reporting_unit_bp.route('/change-respondent-account-status')
-@login_required
-def change_account_status():
-    party_id = request.args['party_id']
-    change_status = request.args['change_status']
-    ru_ref = request.args['ru_ref']
-    reporting_units_controllers.change_respondent_account_status(party_id, change_status)
-    return redirect(url_for('reporting_unit_bp.view_reporting_unit', ru_ref=ru_ref, info='Account status changed'))

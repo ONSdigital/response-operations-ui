@@ -47,19 +47,6 @@ def generate_new_enrolment_code(collection_exercise_id, ru_ref):
     return response.json()
 
 
-def change_respondent_account_status(party_id, status_change):
-    logger.debug('Changing respondent account status', party_id=party_id, status_change=status_change)
-    url = f'{app.config["BACKSTAGE_API_URL"]}/v1/party/change-respondent-account-status'
-    response = requests.put(url, json={'party_id': party_id, 'status_change': status_change})
-
-    if response.status_code != 200:
-        raise ApiError(response)
-
-    logger.debug('Successfully changed respondent account status', party_id=party_id, status_change=status_change)
-
-    return response.json()
-
-
 def resend_verification_email(party_id):
     logger.debug('Re-sending verification email', party_id=party_id)
     url = f'{app.config["BACKSTAGE_API_URL"]}/v1/reporting-unit/resend-verification-email/{party_id}'
