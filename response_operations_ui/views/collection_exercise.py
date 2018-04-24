@@ -18,8 +18,7 @@ collection_exercise_bp = Blueprint('collection_exercise_bp', __name__,
 
 @collection_exercise_bp.route('/<short_name>/<period>', methods=['GET'])
 @login_required
-def view_collection_exercise(short_name, period, error=None, ci_loaded=False, executed=False,
-                             sample_loaded=False, ci_added=False, ci_unlinked=False):
+def view_collection_exercise(short_name, period, error=None, success_panel=None):
     ce_details = collection_exercise_controllers.get_collection_exercise(short_name, period)
     ce_details['sample_summary'] = _format_sample_summary(ce_details['sample_summary'])
     formatted_events = convert_events_to_new_format(ce_details['events'])
@@ -55,19 +54,15 @@ def view_collection_exercise(short_name, period, error=None, ci_loaded=False, ex
     return render_template('collection-exercise.html',
                            breadcrumbs=breadcrumbs,
                            ce=ce_details['collection_exercise'],
-                           ci_added=ci_added,
-                           ci_loaded=ci_loaded,
-                           ci_unlinked=ci_unlinked,
+                           success_panel=success_panel,
                            collection_instruments=ce_details['collection_instruments'],
                            eq_ci_selectors=ce_details['eq_ci_selectors'],
                            error=error,
-                           executed=executed,
                            events=formatted_events,
                            locked=locked,
                            missing_ci=missing_ci,
                            processing=processing,
                            sample=ce_details['sample_summary'],
-                           sample_loaded=sample_loaded,
                            show_set_live_button=show_set_live_button,
                            survey=ce_details['survey'],
                            validation_failed=validation_failed,
@@ -101,43 +96,61 @@ def response_chasing(ce_id, survey_id):
 
 def _set_ready_for_live(short_name, period):
     error = None
+    success_panel = None
     result = collection_exercise_controllers.execute_collection_exercise(short_name, period)
-    if not result:
+
+    if result:
+        success_panel = {
+            "id": "execution-success",
+            "message": "Collection exercise executed"
+        }
+    else:
         error = {
             "section": "ce_status",
             "header": "Error: Failed to execute Collection Exercise",
             "message": "Please try again"
         }
 
-    return view_collection_exercise(short_name, period, error=error, executed=result)
+    return view_collection_exercise(short_name, period, error=error, success_panel=success_panel)
 
 
 def _upload_sample(short_name, period):
+    success_panel = None
     error = _validate_sample()
-    sample_loaded = False
 
     if not error:
         sample_controllers.upload_sample(short_name, period, request.files['sampleFile'])
-        sample_loaded = True
+        success_panel = {
+            "id": "sample-success",
+            "message": "Sample successfully loaded"
+        }
 
-    return view_collection_exercise(short_name, period, error=error, sample_loaded=sample_loaded)
+    return view_collection_exercise(short_name, period, error=error, success_panel=success_panel)
 
 
 def _select_collection_instrument(short_name, period):
-    ci_added = False
+    success_panel = None
     error = None
     cis_selected = request.form.getlist("checkbox-answer")
+    cis_added = []
 
     if cis_selected:
         for ci in cis_selected:
             ci_added = collection_instrument_controllers.link_collection_instrument(request.form['ce_id'], ci)
+            cis_added.append(ci_added)
 
-            if not ci_added:
-                error = {
-                    "section": "ciSelect",
-                    "header": "Error: Failed to add collection instrument(s)",
-                    "message": "Please try again"
-                }
+        if all(added for added in cis_added):
+            success_panel = {
+                "id": "collection-instrument-added-success",
+                "message": "Collection instruments added"
+            }
+        else:
+            error = {
+                "section": "ciSelect",
+                "header": "Error: Failed to add collection instrument(s)",
+                "message": "Please try again"
+            }
+
     else:
         error = {
             "section": "ciSelect",
@@ -145,40 +158,52 @@ def _select_collection_instrument(short_name, period):
             "message": "Please select a collection instrument"
         }
 
-    return view_collection_exercise(short_name, period, error=error, ci_added=ci_added)
+    return view_collection_exercise(short_name, period, error=error, success_panel=success_panel)
 
 
 def _upload_collection_instrument(short_name, period):
+    success_panel = None
     error = _validate_collection_instrument()
-    ci_loaded = False
 
     if not error:
         file = request.files['ciFile']
         form_type = _get_form_type(file.filename)
         ci_loaded = collection_instrument_controllers.upload_collection_instrument(short_name, period, file, form_type)
-        if not ci_loaded:
+        if ci_loaded:
+            success_panel = {
+                "id": "collection-instrument-success",
+                "message": "Collection instrument loaded"
+            }
+        else:
             error = {
                 "section": "ciFile",
                 "header": "Error: Failed to upload collection instrument",
                 "message": "Please try again"
             }
 
-    return view_collection_exercise(short_name, period, error=error, ci_loaded=ci_loaded)
+    return view_collection_exercise(short_name, period, error=error, success_panel=success_panel)
 
 
 def _unselect_collection_instrument(short_name, period):
     error = None
+    success_panel = None
     ci_id = request.form.get('ci_id')
     ce_id = request.form.get('ce_id')
 
     ci_unlinked = collection_instrument_controllers.unlink_collection_instrument(ce_id, ci_id)
 
-    if not ci_unlinked:
+    if ci_unlinked:
+        success_panel = {
+            "id": "collection-instrument-removed-success",
+            "message": "Collection instrument removed"
+
+        }
+    else:
         error = {
             "header": "Error: Failed to remove collection instrument"
         }
 
-    return view_collection_exercise(short_name, period, error=error, ci_unlinked=ci_unlinked)
+    return view_collection_exercise(short_name, period, error=error, success_panel=success_panel)
 
 
 def _validate_collection_instrument():
