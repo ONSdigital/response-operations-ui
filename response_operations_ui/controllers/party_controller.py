@@ -10,17 +10,6 @@ from response_operations_ui.exceptions.exceptions import ApiError
 logger = wrap_logger(logging.getLogger(__name__))
 
 
-def get_respondent_details(party_id):
-    logger.debug("Get respondent details")
-    url = f'{app.config["BACKSTAGE_API_URL"]}/v1/party/party-details?respondent_party_id={party_id}'
-    response = requests.get(url)
-
-    if response.status_code != 200:
-        raise ApiError(response)
-
-    return response.json()
-
-
 def get_business_by_party_id(party_id):
     logger.debug("Get business details")
     url = f'{app.config["PARTY_SERVICE_URL"]}/party-api/v1/businesses/id/{party_id}'
@@ -74,8 +63,6 @@ def change_respondent_account_status(party_id, status_change):
         raise ApiError(response)
 
     logger.debug('Successfully changed respondent account status', party_id=party_id, status_change=status_change)
-
-    return response.json()
 
 
 def search_respondent_by_email(email):

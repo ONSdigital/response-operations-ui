@@ -39,7 +39,7 @@
           </div>
 
           <div class="spoke__body">
-              <form action="{{ url_for('respondent_bp.change_account_status') }}" class="u-mt-l">
+              <form method="post" action="{{ url_for('respondent_bp.change_account_status') }}" class="u-mt-l">
 
               <input type="hidden" name="party_id" value="{{ party_id }}" />
 

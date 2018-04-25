@@ -37,7 +37,7 @@ def respondent_search():
 @login_required
 def respondent_details(respondent_id):
 
-    respondent = contact_details_controller.get_contact_details(respondent_id)
+    respondent = party_controller.get_respondent_by_party_id(respondent_id)
 
     breadcrumbs = [
         {
@@ -45,12 +45,12 @@ def respondent_details(respondent_id):
             "link": "/respondents"
         },
         {
-            "title": f"{respondent['firstName']} {respondent['lastName']}"
+            "title": f"{respondent['respondent_party']['firstName']} {respondent['respondent_party']['lastName']}"
         }
     ]
 
-    respondent['status'] = respondent['status'].title()
-    return render_template('respondent.html', respondent=respondent, breadcrumbs=breadcrumbs)
+    respondent['respondent_party']['status'] = respondent['respondent_party']['status'].title()
+    return render_template('respondent.html', respondent=respondent['respondent_party'], breadcrumbs=breadcrumbs)
 
 
 @respondent_bp.route('/confirm-change-respondent-account-status', methods=['GET'])
@@ -61,7 +61,7 @@ def confirm_change_account_status():
     ru_ref = request.args['ru_ref'] if request.args['ru_ref'] else None
     form = Confirm(request.form)
 
-    respondent = party_controller.get_respondent_details(party_id)
+    respondent = party_controller.get_respondent_by_party_id(party_id)
     enrolments = party_controller.get_respondent_enrolments(party_id, enrolment_status='ENABLED')
 
     return render_template('confirm-respondent-account-status.html', form=form,
@@ -69,7 +69,7 @@ def confirm_change_account_status():
                            change_status=change_status, party_id=party_id, ru_ref=ru_ref)
 
 
-@respondent_bp.route('/change-respondent-account-status')
+@respondent_bp.route('/change-respondent-account-status', methods=['POST'])
 @login_required
 def change_account_status():
     party_id = request.args['party_id']
