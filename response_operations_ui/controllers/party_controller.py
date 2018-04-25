@@ -84,7 +84,7 @@ def search_respondent_by_email(email):
     request_json = {
         'email': email
     }
-    url = f'{app.config["PARTY_SERVICE_URL"]}party-api/v1/respondents/email'
+    url = f'{app.config["PARTY_SERVICE_URL"]}/party-api/v1/respondents/email'
     response = requests.get(url, json=request_json, auth=app.config['BASIC_AUTH'])
 
     if response.status_code == 404:
