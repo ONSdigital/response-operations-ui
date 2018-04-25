@@ -34,7 +34,12 @@
         <div class="field u-mb-l">
           <span class="u-vh">Current value: </span>
           </span>
-          {{ form.collection_exercise_id(value=collection_exercise_id, id='collection_exercise_id') }}
+          {{ form.hidden_survey_id(value=survey_id, id='survey_id') }}
+        </div>
+        <div class="field u-mb-l">
+          <span class="u-vh">Current value: </span>
+          </span>
+          {{ form.hidden_survey_name(value=survey_name, id='survey_name') }}
         </div>
       </div>
       <button class="btn btn--primary u-mt-s" id="save-btn">Save</button>

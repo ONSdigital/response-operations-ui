@@ -65,12 +65,13 @@ def update_collection_exercise_details(collection_exercise_id, user_description,
     logger.debug('Successfully updated collection exercise details', collection_exercise_id=collection_exercise_id)
 
 
-def create_collection_exercise(collection_exercise_id, user_description, period):
-    logger.debug('Creating a new collection exercise', collection_exercise_id=collection_exercise_id)
-    url = f'{app.config["BACKSTAGE_API_URL"]}/v1/collection-exercise/create-collection-exercise/' \
-          f'{collection_exercise_id}'
+def create_collection_exercise(survey_id, survey_name, user_description, period):
+    logger.debug('Creating a new collection exercise for', survey_id=survey_id, survey_name=survey_name)
+    url = f'{app.config["BACKSTAGE_API_URL"]}/v1/collection-exercise/create-collection-exercise'
 
     collection_exercise_details = {
+        "survey_id": survey_id,
+        "survey_name": survey_name,
         "user_description": user_description,
         "period": period
     }
@@ -79,4 +80,4 @@ def create_collection_exercise(collection_exercise_id, user_description, period)
     if response.status_code != 200:
         raise ApiError(response)
 
-    logger.debug('Successfully created collection exercise', collection_exercise_id=collection_exercise_id)
+    logger.debug('Successfully created collection exercise for', survey_id=survey_id, survey_name=survey_name)
