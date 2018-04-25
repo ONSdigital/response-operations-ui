@@ -5,38 +5,10 @@
 
 <div role="main" id="main" class="page__main">
     <h1 class="jupiter" name="page-ce-title">{{survey.shortName}} {{ce.exerciseRef}}</h1>
-    {% if ci_loaded %}
+    {% if success_panel %}
       <div class="panel panel--simple panel--success">
-        <div id="collection-instrument-success" class="panel__body">
-          Collection instrument loaded
-        </div>
-      </div>
-    {% endif %}
-    {% if ci_unlinked %}
-      <div class="panel panel--simple panel--success">
-        <div id="collection-instrument-removed-success" class="panel__body">
-          Collection instrument removed
-        </div>
-      </div>
-    {% endif %}
-    {% if ci_added %}
-      <div class="panel panel--simple panel--success">
-        <div id="collection-instrument-added-success" class="panel__body">
-          Collection instruments added
-        </div>
-      </div>
-    {% endif %}
-    {% if sample_loaded %}
-      <div class="panel panel--simple panel--success">
-        <div id="sample-success" class="panel__body">
-          Sample successfully loaded
-        </div>
-      </div>
-    {% endif %}
-    {% if executed %}
-      <div class="panel panel--simple panel--success">
-        <div id="execution-success" class="panel__body">
-          Collection exercise executed
+        <div id="{{ success_panel.id }}" class="panel__body">
+          {{ success_panel.message }}
         </div>
       </div>
     {% endif %}

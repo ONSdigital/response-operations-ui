@@ -95,3 +95,19 @@ def get_survey_by_id(survey_id):
         raise ApiError(response)
 
     return response.json()
+
+
+def update_survey_details(survey_ref, short_name, long_name):
+    logger.debug('Updating survey details', survey_ref=survey_ref)
+    url = f'{app.config["BACKSTAGE_API_URL"]}/v1/survey/edit-survey-details/{survey_ref}'
+
+    survey_details = {
+        "short_name": short_name,
+        "long_name": long_name
+    }
+
+    response = requests.put(url, json=survey_details)
+    if response.status_code != 200:
+        raise ApiError(response)
+
+    logger.debug('Successfully updated survey details', survey_ref=survey_ref)
