@@ -156,7 +156,8 @@
               {{ respondent.status.title() }}
               <div>
                  {% if respondent.status.title() == 'Active'%}
-                   <a href="{{ url_for(respondent_bp.confirm_change_account_status, party_id=respondent.id, change_status='SUSPENDED', ru_ref=ru.sampleUnitRef)}}"></a>
+                   <a href="{{ url_for('respondent_bp.confirm_change_account_status', party_id=respondent.id, change_status='SUSPENDED', ru_ref=ru.sampleUnitRef)}}">Suspend</a>
+                {% endif %}
               </div>
             </td>
 

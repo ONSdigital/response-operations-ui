@@ -42,7 +42,7 @@ class DevelopmentConfig(Config):
     BACKSTAGE_API_URL = os.getenv('BACKSTAGE_API_URL', 'http://localhost:8001/backstage-api')
     PARTY_SERVICE_URL = os.getenv('PARTY_SERVICE_URL', 'http://localhost:8081')
     SECURE_MESSAGE_URL = os.getenv('SECURE_MESSAGE_URL', 'http://localhost:5050')
-    SURVEY_SERVICE_URL = os.getenv('SURVEY_SERVICE_URL', 'http://localhost:8080')
+    SURVEY_SERVICE_URL = os.getenv('SURVEY_SERVICE_URL', 'http://localhost:8080/')
     UAA_SERVICE_URL = os.getenv('UAA_SERVICE_URL', 'http://localhost:9080')
     RAS_SECURE_MESSAGING_JWT_SECRET = os.getenv('RAS_SECURE_MESSAGING_JWT_SECRET', 'testsecret')
 

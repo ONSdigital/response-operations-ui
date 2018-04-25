@@ -39,7 +39,7 @@
           </div>
 
           <div class="spoke__body">
-              <form action="{{ url_for('reporting_unit_bp.change_account_status') }}" class="u-mt-l">
+              <form action="{{ url_for('respondent_bp.change_account_status') }}" class="u-mt-l">
 
               <input type="hidden" name="party_id" value="{{ party_id }}" />
 
@@ -52,17 +52,16 @@
                   Respondent:
                 </dt>
                 <dd class="">
-                  {{ respondent.first_name }} {{ respondent.last_name }}
+                  {{ respondent['firstName'] }} {{ respondent['lastName'] }}
                 </dd>
                 <dt class="description-list__name">
-                  Enrolments
+                  Enrolments:
                 </dt>
                 <dd class="description-list__value">
                   <ul class="editor-account-enrolments">
                       {% for enrolment in enrolments %}
                     <li class="editor-account-enrolments__item">
-
-                            {{ enrolment['survey']['surveyRef'] enrolment['survey']['shortName'] for enrolment['business']['sampleUnitRef'] enrolment['business']['name']}}
+                            {{ enrolment['survey']['surveyRef'] }} {{ enrolment['survey']['shortName'] }} for {{ enrolment['business']['sampleUnitRef'] }} {{ enrolment['business']['name'] }}
                     </li>
                       {% endfor %}
                   </ul>
@@ -73,6 +72,7 @@
               <div id="action-to-confirm" class="u-mt-m">
                 {% if change_status == 'SUSPENDED' %}
                   Suspend account?
+                 {% endif %}
               </div>
 
               <button type="submit" class="btn btn--primary u-mt-s">Confirm</button>
