@@ -378,7 +378,7 @@ class TestReportingUnits(unittest.TestCase):
         response = self.app.get("/reporting-units/ru_ref/change-enrolment-status"
                                 "?survey_id=test_id&survey_name=test_survey_name&respondent_id=test_id"
                                 "&respondent_first_name=first_name&respondent_last_name=last_name&business_id=test_id"
-                                "&trading_as=test_name&change_flag=DISABLED")
+                                "&trading_as=test_name&change_flag=DISABLED&ru_name=test")
 
         self.assertEqual(response.status_code, 200)
         self.assertIn("test_name".encode(), response.data)
