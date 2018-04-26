@@ -4,7 +4,7 @@ from flask import Blueprint, redirect, render_template, request, url_for
 from flask_login import login_required
 from structlog import wrap_logger
 
-from response_operations_ui.controllers import contact_details_controller, party_controller
+from response_operations_ui.controllers import party_controller
 from response_operations_ui.forms import Confirm, SearchForm
 
 
@@ -62,7 +62,7 @@ def confirm_change_account_status():
     form = Confirm(request.form)
 
     respondent = party_controller.get_respondent_by_party_id(party_id)
-    enrolments = party_controller.get_respondent_enrolments(party_id, enrolment_status='ENABLED')
+    enrolments = party_controller.get_respondent_enrolments(respondent['respondent_party'], enrolment_status='ENABLED')
 
     return render_template('confirm-respondent-account-status.html', form=form,
                            respondent=respondent['respondent_party'], enrolments=enrolments,

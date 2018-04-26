@@ -59,11 +59,15 @@
                 </dt>
                 <dd class="description-list__value">
                   <ul class="editor-account-enrolments">
-                      {% for enrolment in enrolments %}
-                    <li class="editor-account-enrolments__item">
-                            {{ enrolment['survey']['surveyRef'] }} {{ enrolment['survey']['shortName'] }} for {{ enrolment['business']['sampleUnitRef'] }} {{ enrolment['business']['name'] }}
-                    </li>
-                      {% endfor %}
+                      {% if not enrolments %}
+                            No enrolments currently enabled
+                      {% else %}
+                          {% for enrolment in enrolments %}
+                        <li class="editor-account-enrolments__item">
+                                {{ enrolment['survey']['surveyRef'] }} {{ enrolment['survey']['shortName'] }} for {{ enrolment['business']['sampleUnitRef'] }} {{ enrolment['business']['name'] }}
+                        </li>
+                          {% endfor %}
+                      {% endif %}
                   </ul>
                 </dd>
               </dl>

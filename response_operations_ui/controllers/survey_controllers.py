@@ -1,6 +1,7 @@
 import logging
 
 import requests
+from requests.exceptions import HTTPError, RequestException
 from structlog import wrap_logger
 
 from response_operations_ui import app
@@ -91,7 +92,10 @@ def get_survey_by_id(survey_id):
     url = f'{app.config["SURVEY_SERVICE_URL"]}/surveys/{survey_id}'
     response = requests.get(url, auth=app.config['BASIC_AUTH'])
 
-    if response.status_code != 200:
+    try:
+        response.raise_for_status()
+    except (HTTPError, RequestException):
+        logger.exception("Survey retrieval failed", survey_id=survey_id)
         raise ApiError(response)
 
     return response.json()

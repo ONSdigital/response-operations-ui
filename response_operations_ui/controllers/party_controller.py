@@ -1,5 +1,6 @@
 import logging
 import requests
+from requests.exceptions import HTTPError, RequestException
 
 from structlog import wrap_logger
 
@@ -15,7 +16,10 @@ def get_business_by_party_id(party_id):
     url = f'{app.config["PARTY_SERVICE_URL"]}/party-api/v1/businesses/id/{party_id}'
     response = requests.get(url, auth=app.config['BASIC_AUTH'])
 
-    if response.status_code != 200:
+    try:
+        response.raise_for_status()
+    except (HTTPError, RequestException):
+        logger.exception("Business retrieval failed", party_id=party_id)
         raise ApiError(response)
 
     return response.json()
@@ -26,19 +30,20 @@ def get_respondent_by_party_id(party_id):
     url = f'{app.config["PARTY_SERVICE_URL"]}/party-api/v1/respondents/id/{party_id}'
     response = requests.get(url=url, auth=app.config['BASIC_AUTH'])
 
-    if response.status_code != 200:
+    try:
+        response.raise_for_status()
+    except (HTTPError, RequestException):
+        logger.exception("Respondent retrieval failed", party_id=party_id)
         raise ApiError(response)
 
     return response.json()
 
 
-def get_respondent_enrolments(party_id, enrolment_status=None):
+def get_respondent_enrolments(respondent, enrolment_status=None):
     logger.debug("Get respondent enrolment details")
 
-    respondent_details = get_respondent_by_party_id(party_id)
-
     enrolments = []
-    for association in respondent_details['associations']:
+    for association in respondent['associations']:
         business_party = get_business_by_party_id(association['partyId'])
         for enrolment in association['enrolments']:
             enrolment_data = {
