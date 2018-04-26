@@ -14,7 +14,8 @@ backstage_api_url = app.config["BACKSTAGE_API_URL"]
 url_get_reporting_unit = f'{backstage_api_url}/v1/reporting-unit/50012345678'
 get_respondent_by_email_url = f'{app.config["PARTY_SERVICE_URL"]}/party-api/v1/respondents/email'
 get_respondent_by_id_url = f'{app.config["PARTY_SERVICE_URL"]}/party-api/v1/respondents/id/{party_id}'
-put_respondent_account_status_by_id_url = f'{app.config["PARTY_SERVICE_URL"]}/party-api/v1/respondents/edit-account-status/{party_id}'
+put_respondent_account_status_by_id_url = \
+    f'{app.config["PARTY_SERVICE_URL"]}/party-api/v1/respondents/edit-account-status/{party_id}'
 get_business_by_id_url = f'{app.config["PARTY_SERVICE_URL"]}/party-api/v1/businesses/id/{business_party_id}'
 get_survey_by_id_url = f'{app.config["SURVEY_SERVICE_URL"]}/surveys/{survey_id}'
 
@@ -114,7 +115,8 @@ class TestRespondents(unittest.TestCase):
                          json=self.case_group_status)
 
         response = self.app.post(
-            f'respondents/change-respondent-account-status?party_id={respondent["respondent_party"]["id"]}&ru_ref=50012345678&change_status=SUSPENDED',
+            f'respondents/change-respondent-account-status?'
+            f'party_id={respondent["respondent_party"]["id"]}&ru_ref=50012345678&change_status=SUSPENDED',
             follow_redirects=True)
 
         self.assertEquals(response.status_code, 200)
@@ -124,7 +126,8 @@ class TestRespondents(unittest.TestCase):
         mock_request.put(put_respondent_account_status_by_id_url, json={"status_change": "SUSPENDED"}, status_code=500)
 
         response = self.app.post(
-            f'respondents/change-respondent-account-status?party_id={respondent["respondent_party"]["id"]}&ru_ref=50012345678&change_status=SUSPENDED',
+            f'respondents/change-respondent-account-status?'
+            f'party_id={respondent["respondent_party"]["id"]}&ru_ref=50012345678&change_status=SUSPENDED',
             follow_redirects=True)
 
         self.assertEqual(response.status_code, 500)
@@ -137,7 +140,8 @@ class TestRespondents(unittest.TestCase):
         mock_request.get(get_survey_by_id_url, json=survey, status_code=200)
 
         response = self.app.get(
-            f'/respondents/confirm-change-respondent-account-status?party_id={respondent["respondent_party"]["id"]}&ru_ref=50012345678&change_status=SUSPENDED')
+            f'/respondents/confirm-change-respondent-account-status?'
+            f'party_id={respondent["respondent_party"]["id"]}&ru_ref=50012345678&change_status=SUSPENDED')
 
         self.assertEqual(response.status_code, 200)
         self.assertIn("Suspend account?".encode(), response.data)
@@ -149,7 +153,8 @@ class TestRespondents(unittest.TestCase):
         mock_request.get(get_survey_by_id_url, json=survey, status_code=200)
 
         response = self.app.get(
-            f'/respondents/confirm-change-respondent-account-status?party_id={respondent["respondent_party"]["id"]}&ru_ref=50012345678&change_status=SUSPENDED')
+            f'/respondents/confirm-change-respondent-account-status?'
+            f'party_id={respondent["respondent_party"]["id"]}&ru_ref=50012345678&change_status=SUSPENDED')
 
         self.assertEqual(response.status_code, 200)
         self.assertIn("No enrolments currently enabled".encode(), response.data)
@@ -161,7 +166,8 @@ class TestRespondents(unittest.TestCase):
         mock_request.get(get_survey_by_id_url, json=survey, status_code=200)
 
         response = self.app.get(
-            f'/respondents/confirm-change-respondent-account-status?party_id={respondent["respondent_party"]["id"]}&ru_ref=50012345678&change_status=SUSPENDED',
+            f'/respondents/confirm-change-respondent-account-status?'
+            f'party_id={respondent["respondent_party"]["id"]}&ru_ref=50012345678&change_status=SUSPENDED',
             follow_redirects=True)
 
         self.assertEqual(response.status_code, 500)
@@ -174,7 +180,8 @@ class TestRespondents(unittest.TestCase):
         mock_request.get(get_survey_by_id_url, json=survey, status_code=200)
 
         response = self.app.get(
-            f'/respondents/confirm-change-respondent-account-status?party_id={respondent["respondent_party"]["id"]}&ru_ref=50012345678&change_status=SUSPENDED',
+            f'/respondents/confirm-change-respondent-account-status?'
+            f'party_id={respondent["respondent_party"]["id"]}&ru_ref=50012345678&change_status=SUSPENDED',
             follow_redirects=True)
 
         self.assertEqual(response.status_code, 500)
@@ -187,7 +194,8 @@ class TestRespondents(unittest.TestCase):
         mock_request.get(get_survey_by_id_url, json=survey, status_code=500)
 
         response = self.app.get(
-            f'/respondents/confirm-change-respondent-account-status?party_id={respondent["respondent_party"]["id"]}&ru_ref=50012345678&change_status=SUSPENDED',
+            f'/respondents/confirm-change-respondent-account-status?'
+            f'party_id={respondent["respondent_party"]["id"]}&ru_ref=50012345678&change_status=SUSPENDED',
             follow_redirects=True)
 
         self.assertEqual(response.status_code, 500)
