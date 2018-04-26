@@ -1,6 +1,7 @@
 import logging
 
 import requests
+from requests.exceptions import HTTPError
 from structlog import wrap_logger
 
 from response_operations_ui import app
@@ -81,3 +82,19 @@ def create_collection_exercise(survey_id, survey_name, user_description, period)
         raise ApiError(response)
 
     logger.debug('Successfully created collection exercise for', survey_id=survey_id, survey_name=survey_name)
+
+
+def get_collection_exercises_by_survey(survey_id):
+    logger.debug('Retrieving collection exercises', survey_id=survey_id)
+    url = f'{app.config["RM_COLLECTION_EXERCISE_SERVICE"]}collectionexercises/survey/{survey_id}'
+
+    response = requests.get(url, auth=app.config['BASIC_AUTH'])
+
+    try:
+        response.raise_for_status()
+    except HTTPError:
+        logger.exception('Failed to retrieve collection exercises by survey', survey_id=survey_id)
+        return ApiError(response)
+
+    logger.debug('Successfully retrieved collection exercises', survey_id=survey_id)
+    return response.json()

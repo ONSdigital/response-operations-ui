@@ -1,5 +1,7 @@
 import logging
 
+from response_operations_ui.controllers import collection_exercise_controllers
+
 from flask_wtf import FlaskForm
 from structlog import wrap_logger
 from wtforms import HiddenField, Label, PasswordField, StringField, SubmitField, TextAreaField
@@ -61,6 +63,7 @@ class EditCollectionExerciseDetailsForm(FlaskForm):
     user_description = StringField('user_description')
     period = StringField('period')
     collection_exercise_id = HiddenField('collection_exercise_id')
+    hidden_survey_id = HiddenField('hidden_survey_id')
 
 
 class ChangeGroupStatusForm(FlaskForm):
@@ -73,6 +76,15 @@ class CreateCollectionExerciseDetailsForm(FlaskForm):
     period = StringField('period')
     hidden_survey_id = HiddenField('hidden_survey_id')
     hidden_survey_name = HiddenField('hidden_survey_name')
+
+    @staticmethod
+    def validate_period(form, field):
+        hidden_survey_id = form.hidden_survey_id.data
+        ce_details = collection_exercise_controllers.get_collection_exercises_by_survey(hidden_survey_id)
+        inputted_period = field.data
+        for key in ce_details:
+            if key['exerciseRef'] == inputted_period:
+                raise ValidationError('Please enter a period not in use')
 
 
 class EditSurveyDetailsForm(FlaskForm):

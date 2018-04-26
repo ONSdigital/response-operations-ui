@@ -6,10 +6,24 @@ class Config(object):
     TESTING = False
     PORT = os.getenv('PORT', 8085)
     LOGGING_LEVEL = os.getenv('LOGGING_LEVEL', 'INFO')
+    SECURITY_USER_NAME = os.getenv('SECURITY_USER_NAME')
+    SECURITY_USER_PASSWORD = os.getenv('SECURITY_USER_PASSWORD')
+    BASIC_AUTH = (SECURITY_USER_NAME, SECURITY_USER_PASSWORD)
     USE_SESSION_FOR_NEXT = True
     RESPONSE_OPERATIONS_UI_SECRET = os.getenv('RESPONSE_OPERATIONS_UI_SECRET', "secret")
     SECURE_MESSAGE_URL = os.getenv('SECURE_MESSAGE_URL')
     BACKSTAGE_API_URL = os.getenv('BACKSTAGE_API_URL')
+
+    RM_COLLECTION_EXERCISE_SERVICE_HOST = os.getenv('RM_COLLECTION_EXERCISE_SERVICE_HOST',
+                                                    'localhost')
+    RM_COLLECTION_EXERCISE_SERVICE_PORT = os.getenv('RM_COLLECTION_EXERCISE_SERVICE_PORT',
+                                                    8145)
+    RM_COLLECTION_EXERCISE_SERVICE_PROTOCOL = os.getenv('RM_COLLECTION_EXERCISE_SERVICE_PROTOCOL',
+                                                        'http')
+    RM_COLLECTION_EXERCISE_SERVICE = '{}://{}:{}/'.format(RM_COLLECTION_EXERCISE_SERVICE_PROTOCOL,
+                                                          RM_COLLECTION_EXERCISE_SERVICE_HOST,
+                                                          RM_COLLECTION_EXERCISE_SERVICE_PORT)
+
     SESSION_TYPE = "redis"
     PERMANENT_SESSION_LIFETIME = os.getenv('PERMANENT_SESSION_LIFETIME', 43200)
     REDIS_SERVICE = os.getenv('REDIS_SERVICE')
@@ -29,6 +43,9 @@ class DevelopmentConfig(Config):
     REDIS_HOST = os.getenv('REDIS_HOST', "localhost")
     REDIS_PORT = os.getenv('REDIS_PORT', 7379)
     REDIS_DB = os.getenv('REDIS_DB', 0)
+    SECURITY_USER_NAME = os.getenv('SECURITY_USER_NAME', 'admin')
+    SECURITY_USER_PASSWORD = os.getenv('SECURITY_USER_PASSWORD', 'secret')
+    BASIC_AUTH = (SECURITY_USER_NAME, SECURITY_USER_PASSWORD)
 
     UAA_SERVICE_URL = os.getenv('UAA_SERVICE_URL', 'http://localhost:9080')
     RAS_SECURE_MESSAGING_JWT_SECRET = os.getenv('RAS_SECURE_MESSAGING_JWT_SECRET', 'testsecret')

@@ -19,6 +19,14 @@
               </span>
         </label>
         <br>
+      {% if errors %}
+      <div class="panel panel--simple panel--error u-mb-l">
+        <div class="panel__body" id="save-error">
+          <h2 id='error-creating-ce-message' class="venus">Error creating collection exercise</h2>
+          <p class="mars">Please use a period that is not in use by any collection exercise for this survey</p>
+        </div>
+      </div>
+      {% endif %}
         <div class="field u-mb-l">
           <label class="label" for="period">
             Period

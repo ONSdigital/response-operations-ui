@@ -3,6 +3,20 @@
 
 {% block main %}
 <div role="main" id="main" class="page__main">
+{% if updated_ce_message %}
+  <div class="panel panel--simple panel--success">
+    <div id="updated_ce_message" class="panel__body">
+      Collection exercise details updated
+    </div>
+  </div>
+{% endif %}
+{% if created_ce_message %}
+  <div class="panel panel--simple panel--success">
+    <div id="created_ce_message" class="panel__body">
+      Collection exercise created
+    </div>
+  </div>
+{% endif %}
 <h1 class="jupiter" name="page-survey-title">{{survey.longName}}</h1>
 
   <div class="grid">
