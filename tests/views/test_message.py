@@ -232,6 +232,21 @@ class TestMessage(unittest.TestCase):
         self.assertIn("No new messages".encode(), response.data)
 
     @requests_mock.mock()
+    @patch('response_operations_ui.controllers.message_controllers._get_jwt')
+    def test_conversation_count_response_error(self, mock_request, mock_get_jwt):
+        mock_get_jwt.return_value = "blah"
+        mock_request.get(url_send_message + '/count', json={"total": 1}, status_code=500)
+        mock_request.get(url_get_surveys_list, json=self.surveys_list_json)
+        params = "?survey=6aa8896f-ced5-4694-800c-6cd661b0c8b2&page=1&limit=10"
+        mock_request.get(url_get_threads_list + params, json=threads_unread_list)
+        mock_request.get(shortname_url + "/ASHE", json=ashe_info)
+
+        response = self.app.get("/messages/ASHE", follow_redirects=True)
+
+        self.assertEqual(response.status_code, 500)
+        self.assertIn("Error 500 - Server error".encode(), response.data)
+
+    @requests_mock.mock()
     def test_read_messages_are_displayed_correctly(self, mock_request):
         mock_request.get(url_send_message + '/count', json={"total": 1}, status_code=200)
         mock_request.get(url_get_surveys_list, json=self.surveys_list_json)
