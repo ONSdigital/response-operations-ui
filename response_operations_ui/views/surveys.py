@@ -50,6 +50,8 @@ def view_survey(short_name):
     if request.args.get('ce_created'):
         created_ce_message = 'Collection exercise created'
 
+    newly_created_period = request.args.get('new_period')
+
     # Mapping backend states to frontend sates for the user
     for collection_exercise in survey_details["collection_exercises"]:
         collection_exercise['state'] = map_collection_exercise_state(collection_exercise['state'])
@@ -61,7 +63,7 @@ def view_survey(short_name):
                            survey=survey_details['survey'],
                            collection_exercises=survey_details['collection_exercises'],
                            breadcrumbs=breadcrumbs, updated_ce_message=updated_ce_message,
-                           created_ce_message=created_ce_message)
+                           created_ce_message=created_ce_message, newly_created_period=newly_created_period)
 
 
 @surveys_bp.route('/edit-survey-details/<short_name>', methods=['GET'])

@@ -325,4 +325,4 @@ def create_collection_exercise(survey_ref, short_name):
                                                                    form.get('user_description'),
                                                                    form.get('period'))
 
-        return redirect(url_for('surveys_bp.view_survey', short_name=short_name, ce_created='True'))
+        return redirect(url_for('surveys_bp.view_survey', short_name=short_name, ce_created='True', new_period=form.get('period')))

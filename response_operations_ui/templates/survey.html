@@ -13,9 +13,13 @@
 {% if created_ce_message %}
   <div class="panel panel--simple panel--success">
     <div id="created_ce_message" class="panel__body">
-      Collection exercise created
+      <h1 class="venus">Collection exercise created</h1>
+      <p class="mars">
+        <a href="/surveys/{{ survey.shortName }}/{{ newly_created_period }}" id="newly_created_link">View/edit {{survey.shortName}} {{newly_created_period}}</a>
+      </p>
     </div>
   </div>
+  <br>
 {% endif %}
 <h1 class="jupiter" name="page-survey-title">{{survey.longName}}</h1>
 
@@ -86,6 +90,10 @@
           </thead>
           <tbody>
             {% for exercise in collection_exercises %}
+            {% if newly_created_period == exercise.exerciseRef%}
+            <tr style="background-color:#edf4f0;" class="table--row  table--row__editable">
+              {% else %}
+              {% endif %}
               <td class="table--cell tbl-ce-period" name="tbl-ce-period">
                 <a href="/surveys/{{ survey.shortName.replace(' ', '') }}/{{ exercise.exerciseRef }}"
                    name="ce-link-{{exercise.exerciseRef}}">
