@@ -63,7 +63,6 @@ class EditCollectionExerciseDetailsForm(FlaskForm):
     user_description = StringField('user_description')
     period = StringField('period')
     collection_exercise_id = HiddenField('collection_exercise_id')
-    hidden_survey_id = HiddenField('hidden_survey_id')
 
 
 class ChangeGroupStatusForm(FlaskForm):
@@ -97,4 +96,3 @@ class EditSurveyDetailsForm(FlaskForm):
         short_name = field.data
         if ' ' in short_name:
             raise ValidationError('Please remove spaces in short name')
-

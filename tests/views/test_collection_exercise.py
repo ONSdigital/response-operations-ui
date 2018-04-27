@@ -3,6 +3,7 @@ import unittest
 from io import BytesIO
 
 import requests_mock
+from requests import HTTPError
 
 from config import TestingConfig
 from response_operations_ui import app
@@ -26,6 +27,9 @@ url_update_ce = f'{app.config["BACKSTAGE_API_URL"]}/v1/collection-exercise/updat
 url_get_survey_by_short_name = f'{app.config["BACKSTAGE_API_URL"]}/v1/survey/shortname/test'
 with open('tests/test_data/survey/edited_survey_ce_details.json') as json_data:
     updated_survey_info = json.load(json_data)
+url_create_collection_exercise = f'{app.config["BACKSTAGE_API_URL"]}/v1/collection-exercise/create-collection-exercise'
+url_ce_by_survey = f'{app.config["RM_COLLECTION_EXERCISE_SERVICE"]}collectionexercises/survey/' \
+          f'14fb3e68-4dca-46db-bf49-04b84e07e77c'
 
 
 class TestCollectionExercise(unittest.TestCase):
@@ -39,6 +43,13 @@ class TestCollectionExercise(unittest.TestCase):
             'Authorization': 'test_jwt',
             'Content-Type': 'application/json',
         }
+        self.collection_exercises = [
+            {
+                "id": "c6467711-21eb-4e78-804c-1db8392f93fb",
+                "exerciseRef": "201601",
+                "scheduledExecutionDateTime": "2017-05-15T00:00:00Z"
+            }
+        ]
 
     @requests_mock.mock()
     def test_collection_exercise_view(self, mock_request):
@@ -431,3 +442,64 @@ class TestCollectionExercise(unittest.TestCase):
 
         self.assertEqual(response.status_code, 200)
         self.assertIn("Error: Failed to remove collection instrument".encode(), response.data)
+
+    @requests_mock.mock()
+    def test_create_collection_exercise_success(self, mock_request):
+        new_collection_exercise_details = {
+            "hidden_survey_name": 'BRES',
+            "hidden_survey_id": '14fb3e68-4dca-46db-bf49-04b84e07e77c',
+            "user_description": 'New collection exercise',
+            "period": '123456'
+        }
+        mock_request.get(url_ce_by_survey, json=self.collection_exercises)
+        mock_request.get(url_get_survey_by_short_name, json=updated_survey_info)
+        mock_request.post(url_create_collection_exercise, status_code=200)
+
+        response = self.app.post(f"/surveys/141-test/create-collection-exercise", data=new_collection_exercise_details,
+                                 follow_redirects=True)
+        self.assertEqual(response.status_code, 200)
+        self.assertIn('123456'.encode(), response.data)
+
+    @requests_mock.mock()
+    def test_create_collection_exercise_failure(self, mock_request):
+        new_collection_exercise_details = {
+            "hidden_survey_name": 'BRES',
+            "hidden_survey_id": '14fb3e68-4dca-46db-bf49-04b84e07e77c',
+            "user_description": 'New collection exercise',
+            "period": '123456'
+        }
+        mock_request.get(url_ce_by_survey, json=self.collection_exercises)
+        mock_request.get(url_get_survey_by_short_name, json=updated_survey_info)
+        mock_request.post(url_create_collection_exercise, status_code=500)
+
+        response = self.app.post(f"/surveys/141-test/create-collection-exercise", data=new_collection_exercise_details,
+                                 follow_redirects=True)
+        self.assertEqual(response.status_code, 500)
+        self.assertRaises(HTTPError)
+        self.assertIn("Server error (Error 500)".encode(), response.data)
+
+    @requests_mock.mock()
+    def test_get_create_ce_form(self, mock_request):
+        mock_request.get(url_get_survey_by_short_name, json=updated_survey_info)
+        response = self.app.get(f"/surveys/141-test/create-collection-exercise",
+                                follow_redirects=True)
+
+        self.assertEqual(response.status_code, 200)
+        self.assertIn("Create collection exercise".encode(), response.data)
+
+    @requests_mock.mock()
+    def test_failed_create_ce_validation_period_exists(self, mock_request):
+        new_collection_exercise_details = {
+            "hidden_survey_name": 'BRES',
+            "hidden_survey_id": '14fb3e68-4dca-46db-bf49-04b84e07e77c',
+            "user_description": 'New collection exercise',
+            "period": '201601'
+        }
+        mock_request.get(url_ce_by_survey, json=self.collection_exercises)
+        mock_request.get(url_get_survey_by_short_name, json=updated_survey_info)
+        mock_request.post(url_create_collection_exercise, status_code=200)
+
+        response = self.app.post(f"/surveys/141-test/create-collection-exercise", data=new_collection_exercise_details,
+                                 follow_redirects=True)
+        self.assertEqual(response.status_code, 200)
+        self.assertIn("Error creating collection exercise".encode(), response.data)

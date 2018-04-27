@@ -96,5 +96,5 @@ def get_collection_exercises_by_survey(survey_id):
         logger.exception('Failed to retrieve collection exercises by survey', survey_id=survey_id)
         return ApiError(response)
 
-    logger.debug('Successfully retrieved collection exercises', survey_id=survey_id)
+    logger.debug('Successfully retrieved collection exercises by survey', survey_id=survey_id)
     return response.json()
