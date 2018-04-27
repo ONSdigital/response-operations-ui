@@ -455,18 +455,6 @@ class TestMessage(unittest.TestCase):
             self.assertEqual(response.status_code, 500)
             self.assertEqual(raises.exception.message, "A key error occurred")
 
-    @requests_mock.mock()
-    @patch('response_operations_ui.controllers.message_controllers._get_jwt')
-    def test_conversation_subject_error(self, mock_request, mock_get_jwt):
-        mock_get_jwt.return_value = "blah"
-        mock_request.get(url_get_thread, json=thread_missing_subject)
-        mock_request.get(url_get_surveys_list, json=survey_list)
-
-        response = self.app.get("/messages/threads/fb0e79bd-e132-4f4f-a7fd-5e8c6b41b9af")
-
-        self.assertEqual(response.status_code, 200)
-        self.assertIn("No Subject".encode(), response.data)
-
     def test_get_radio_buttons(self):
         response = self.app.get("/messages/select-survey")
 
