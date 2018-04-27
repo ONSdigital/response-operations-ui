@@ -101,6 +101,7 @@ def update_survey_details(survey_ref, short_name, long_name):
 
     logger.debug('Successfully updated survey details', survey_ref=survey_ref)
 
+
 def get_legal_basis_list():
     logger.debug('Retrieving legal basis list')
     url = f'{app.config["SURVEY_SERVICE_URL"]}/legal-bases'
@@ -108,9 +109,10 @@ def get_legal_basis_list():
     if response.status_code != 200:
         raise ApiError(response)
 
-    lbs = [( lb['ref'], lb['longName'] ) for lb in response.json()]
+    lbs = [(lb['ref'], lb['longName']) for lb in response.json()]
     logger.debug('Successfully retrieved surveys list: {}'.format(lbs))
     return lbs
+
 
 def create_survey(survey_ref, short_name, long_name, legal_basis):
     logger.debug('Creating new survey',

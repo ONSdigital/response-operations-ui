@@ -11,6 +11,7 @@ logger = wrap_logger(logging.getLogger(__name__))
 
 survey_ref_validation = re.compile("^[0-9]{1,6}$")
 
+
 class LoginForm(FlaskForm):
     username = StringField('Username', [InputRequired("Please enter a username")])
     password = PasswordField('Password', [InputRequired("Please enter a password")])
@@ -82,13 +83,14 @@ class EditSurveyDetailsForm(FlaskForm):
         if ' ' in short_name:
             raise ValidationError('Please remove spaces in short name')
 
+
 class CreateSurveyDetailsForm(FlaskForm):
     legal_basis_list = survey_controllers.get_legal_basis_list()
     long_name = StringField('long_name')
     short_name = StringField('short_name', validators=[InputRequired(message="Please remove spaces in Abbreviation")])
     # MATTTODO implement actual validation
     survey_ref = StringField('survey_ref', validators=[InputRequired(message="Please remove spaces in Survey ID")])
-    legal_basis = SelectField('legal_basis', choices=[('','Select an option')] + legal_basis_list)
+    legal_basis = SelectField('legal_basis', choices=[('', 'Select an option')] + legal_basis_list)
 
     @staticmethod
     def validate_short_name(form, field):

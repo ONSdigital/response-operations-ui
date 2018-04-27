@@ -15,11 +15,13 @@ logger = wrap_logger(logging.getLogger(__name__))
 surveys_bp = Blueprint('surveys_bp', __name__,
                        static_folder='static', template_folder='templates/surveys')
 
+
 def get_info_message(message_key):
     return {
         'survey_changed': "Survey details changed",
         'survey_created': "Survey created successfully"
     }[message_key]
+
 
 @surveys_bp.route('/', methods=['GET'])
 @login_required
@@ -30,7 +32,7 @@ def view_surveys():
     message_key = request.args.get('message_key')
 
     if message_key:
-        info_message  = get_info_message(message_key)
+        info_message = get_info_message(message_key)
     else:
         info_message = None
 
@@ -96,12 +98,14 @@ def edit_survey_details(short_name):
                                                  form.get('long_name'))
         return redirect(url_for('surveys_bp.view_surveys', short_name=short_name, message_key='survey_changed'))
 
+
 @surveys_bp.route('/create', methods=['GET'])
 @login_required
 def show_create_survey():
     form = CreateSurveyDetailsForm(form=request.form)
 
     return render_template('create-survey.html', form=form)
+
 
 @surveys_bp.route('/create', methods=['POST', 'GET'])
 @login_required
@@ -115,21 +119,22 @@ def create_survey():
                                legal_basis=request.form.get('legal_basis'))
     else:
         logger.debug('create-survey form: {}'.format(form))
-        try: 
+        try:
             survey_controllers.create_survey(request.form.get('survey_ref'),
-                                            request.form.get('short_name'),
-                                            request.form.get('long_name'),
-                                            request.form.get('legal_basis'))
-            
-            return redirect(url_for('surveys_bp.view_surveys', short_name=request.form.get('short_name'), message_key='survey_created'))
+                                             request.form.get('short_name'),
+                                             request.form.get('long_name'),
+                                             request.form.get('legal_basis'))
+
+            return redirect(url_for('surveys_bp.view_surveys', short_name=request.form.get('short_name'),
+                                    message_key='survey_created'))
         except ApiError as err:
-            # If it's conflict or bad request assume the service has returned a useful error message as the body of the response
+            # If it's conflict or bad request assume the service has returned a useful error
+            # message as the body of the response
             if err.status_code == 409 or err.status_code == 400:
                 return render_template('create-survey.html', form=form, errors=[("", [err.message])],
-                                    survey_ref=request.form.get('survey_ref'),
-                                    long_name=request.form.get('long_name'),
-                                    short_name=request.form.get('short_name'),
-                                    legal_basis=request.form.get('legal_basis'))
+                                       survey_ref=request.form.get('survey_ref'),
+                                       long_name=request.form.get('long_name'),
+                                       short_name=request.form.get('short_name'),
+                                       legal_basis=request.form.get('legal_basis'))
             else:
                 raise
-
