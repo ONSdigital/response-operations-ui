@@ -100,3 +100,37 @@ def update_survey_details(survey_ref, short_name, long_name):
         raise ApiError(response)
 
     logger.debug('Successfully updated survey details', survey_ref=survey_ref)
+
+def get_legal_basis_list():
+    logger.debug('Retrieving legal basis list')
+    url = f'{app.config["SURVEY_SERVICE_URL"]}/legal-bases'
+    response = requests.get(url, auth=(app.config['SURVEY_SERVICE_USERNAME'], app.config['SURVEY_SERVICE_PASSWORD']))
+    if response.status_code != 200:
+        raise ApiError(response)
+
+    lbs = [( lb['ref'], lb['longName'] ) for lb in response.json()]
+    logger.debug('Successfully retrieved surveys list: {}'.format(lbs))
+    return lbs
+
+def create_survey(survey_ref, short_name, long_name, legal_basis):
+    logger.debug('Creating new survey',
+                 survey_ref=survey_ref, short_name=short_name,
+                 long_name=long_name, legal_basis=legal_basis)
+    url = f'{app.config["SURVEY_SERVICE_URL"]}/surveys'
+
+    survey_details = {
+        "surveyRef": survey_ref,
+        "shortName": short_name,
+        "longName": long_name,
+        "legalBasisRef": legal_basis
+    }
+
+    response = requests.post(
+        url,
+        json=survey_details,
+        auth=(app.config['SURVEY_SERVICE_USERNAME'], app.config['SURVEY_SERVICE_PASSWORD']))
+
+    if response.status_code != 201:
+        raise ApiError(response)
+
+    logger.debug('Successfully created new survey', survey_ref=survey_ref)

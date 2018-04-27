@@ -1,0 +1,55 @@
+{% extends "layouts/spoke.html" %}
+{% block page_title %} Create survey {% endblock %}
+{% block main %}
+<div role="main" id="main" class="page__main">
+    <div class="spoke__header">
+    <div class="spoke__header__title">
+        <h1 class="jupiter">Create survey</h1>
+    </div>
+    </div>
+    <div class="spoke__body" id="spoke__body">
+    <form action="" method="post">
+        {{ form.csrf_token }}
+        {% if errors %}
+        <div class="panel panel--simple panel--error u-mb-l">
+            {% for field, error_list in errors %}
+            <div class="panel__body" id="save-error">
+                <p class="mars">{{ ', '.join(error_list) }}</p>
+            </div>
+            {% endfor %}
+        </div>
+        {% endif %}
+        <div class="field u-mt-l u-mb-l">
+        <label class="label" for="ce-period">
+            Survey ID
+        </label>
+        {{ form.survey_ref(class_="input input--text", id='survey_ref', required=required, maxlength=20, value=survey_ref) }}
+        </div>
+        <div class="field u-mt-l u-mb-l">
+        <label class="label" for="ce-period">
+            Survey name
+        </label>
+        {{ form.long_name(class_="input input--text", id='long_name', required=required, maxlength=100, value=long_name) }}
+        </div>
+        <div class="field u-mt-l u-mb-l">
+        <label class="label" for="respondent-period">
+            Abbreviation
+        </label>
+        {{ form.short_name(class_="input input--text", id='short_name', required=required, maxlength=20, value=short_name) }}
+        </div>
+        <div class="field field--select u-mb-m">
+        <label class="label venus " for="select">
+            Legal basis
+        </label>
+        {{ form.legal_basis(class_="input input--select", id='legal_basis', required=required) }}
+        </div>
+        <button type="submit" class="btn btn--primary u-mt-s">Create</button>
+        <div>
+        <a id="cancel-btn" href="{{ url_for('surveys_bp.view_surveys') }}">Cancel</a>
+        </div>
+    </form>
+    </div>
+</div>
+{{ errors }}
+{{ legal_basis_list }}
+{% endblock %}

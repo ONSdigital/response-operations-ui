@@ -1,12 +1,15 @@
 import logging
+import re
 
 from flask_wtf import FlaskForm
 from structlog import wrap_logger
-from wtforms import HiddenField, Label, PasswordField, StringField, SubmitField, TextAreaField
+from wtforms import HiddenField, Label, PasswordField, StringField, SubmitField, TextAreaField, SelectField
 from wtforms.validators import InputRequired, Length, ValidationError
+from response_operations_ui.controllers import survey_controllers
 
 logger = wrap_logger(logging.getLogger(__name__))
 
+survey_ref_validation = re.compile("^[0-9]{1,6}$")
 
 class LoginForm(FlaskForm):
     username = StringField('Username', [InputRequired("Please enter a username")])
@@ -78,3 +81,29 @@ class EditSurveyDetailsForm(FlaskForm):
         short_name = field.data
         if ' ' in short_name:
             raise ValidationError('Please remove spaces in short name')
+
+class CreateSurveyDetailsForm(FlaskForm):
+    legal_basis_list = survey_controllers.get_legal_basis_list()
+    long_name = StringField('long_name')
+    short_name = StringField('short_name', validators=[InputRequired(message="Please remove spaces in Abbreviation")])
+    # MATTTODO implement actual validation
+    survey_ref = StringField('survey_ref', validators=[InputRequired(message="Please remove spaces in Survey ID")])
+    legal_basis = SelectField('legal_basis', choices=[('','Select an option')] + legal_basis_list)
+
+    @staticmethod
+    def validate_short_name(form, field):
+        short_name = field.data
+        if ' ' in short_name:
+            raise ValidationError('Please remove spaces in Abbreviation')
+
+    @staticmethod
+    def validate_survey_ref(form, field):
+        survey_ref = field.data
+        if not survey_ref_validation.match(survey_ref):
+            raise ValidationError('The Survey ID should consist of between 1 and 6 digits')
+
+    @staticmethod
+    def validate_legal_basis(form, field):
+        legal_basis = field.data
+        if not legal_basis:
+            raise ValidationError('Please select a legal basis')

@@ -10,3 +10,6 @@ test: lint
 
 start:
 	pipenv run python run.py
+
+docker:
+	docker build -t sdcplatform/response-operations-ui:latest .
