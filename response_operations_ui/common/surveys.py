@@ -8,9 +8,11 @@ class Surveys(Enum):
     BRES = "BRES"
     BRICKS = "Bricks"
     FDI = "FDI"
+    MWSS = "MWSS"
     NBS = "NBS"
     PCS = "PCS"
     QBS = "QBS"
+    RSI = "RSI"
     SANDANDGRAVEL = "Sand & Gravel"
 
 
