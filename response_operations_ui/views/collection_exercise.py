@@ -276,6 +276,7 @@ def _get_form_type(file_name):
 def view_collection_exercise_details(short_name, period):
     ce_details = collection_exercise_controllers.get_collection_exercise(short_name, period)
     form = EditCollectionExerciseDetailsForm(form=request.form)
+    survey_details = survey_controllers.get_survey(short_name)
     ce_state = ce_details['collection_exercise']['state']
     show_edit_period = ce_state not in ('READY_FOR_LIVE', 'LIVE')
 
@@ -283,19 +284,34 @@ def view_collection_exercise_details(short_name, period):
                            form=form, short_name=short_name, period=period, show_edit_period=show_edit_period,
                            ce_state=ce_details['collection_exercise']['state'],
                            user_description=ce_details['collection_exercise']['userDescription'],
-                           collection_exercise_id=ce_details['collection_exercise']['id'])
+                           collection_exercise_id=ce_details['collection_exercise']['id'],
+                           survey_id=survey_details['survey']['id'])
 
 
 @collection_exercise_bp.route('/<short_name>/<period>/edit-collection-exercise-details', methods=['POST'])
 @login_required
 def edit_collection_exercise_details(short_name, period):
-    form = request.form
+    form = EditCollectionExerciseDetailsForm(form=request.form)
+    if not form.validate():
+        ce_details = collection_exercise_controllers.get_collection_exercise(short_name, period)
+        ce_state = ce_details['collection_exercise']['state']
+        survey_details = survey_controllers.get_survey(short_name)
+        show_edit_period = ce_state not in ('READY_FOR_LIVE', 'LIVE')
 
-    collection_exercise_controllers.update_collection_exercise_details(form.get('collection_exercise_id'),
-                                                                       form.get('user_description'),
-                                                                       form.get('period'))
+        return render_template('edit-collection-exercise-details.html', survey_ref=ce_details['survey']['surveyRef'],
+                               form=form, short_name=short_name, period=period, show_edit_period=show_edit_period,
+                               ce_state=ce_details['collection_exercise']['state'], errors=form.errors,
+                               user_description=ce_details['collection_exercise']['userDescription'],
+                               collection_exercise_id=ce_details['collection_exercise']['id'],
+                               survey_id=survey_details['survey']['id'])
 
-    return redirect(url_for('surveys_bp.view_survey', short_name=short_name, ce_updated='True'))
+    else:
+        form = request.form
+        collection_exercise_controllers.update_collection_exercise_details(form.get('collection_exercise_id'),
+                                                                           form.get('user_description'),
+                                                                           form.get('period'))
+
+        return redirect(url_for('surveys_bp.view_survey', short_name=short_name, ce_updated='True'))
 
 
 @collection_exercise_bp.route('/<survey_ref>-<short_name>/create-collection-exercise', methods=['GET'])

@@ -28,8 +28,8 @@ url_get_survey_by_short_name = f'{app.config["BACKSTAGE_API_URL"]}/v1/survey/sho
 with open('tests/test_data/survey/edited_survey_ce_details.json') as json_data:
     updated_survey_info = json.load(json_data)
 url_create_collection_exercise = f'{app.config["BACKSTAGE_API_URL"]}/v1/collection-exercise/create-collection-exercise'
-url_ce_by_survey = f'{app.config["RM_COLLECTION_EXERCISE_SERVICE"]}collectionexercises/survey/' \
-          f'14fb3e68-4dca-46db-bf49-04b84e07e77c'
+url_ce_by_survey = f'{app.config["RM_COLLECTION_EXERCISE_SERVICE"]}collectionexercises/' \
+                   f'survey/14fb3e68-4dca-46db-bf49-04b84e07e77c'
 
 
 class TestCollectionExercise(unittest.TestCase):
@@ -365,22 +365,29 @@ class TestCollectionExercise(unittest.TestCase):
         self.assertIn('Error processing collection exercise'.encode(), response.data)
         self.assertIn('Check collection instruments'.encode(), response.data)
 
-    def mock_for_update_ce_details(self, changed_details, mock_request):
-        mock_request.get(url_get_collection_exercise, json=collection_exercise_details)
-        mock_request.put(url_update_ce)
-        mock_request.get(url_get_survey_by_short_name, json=updated_survey_info)
-        response = self.app.post(f"/surveys/test/000000/edit-collection-exercise-details",
-                                 data=changed_details, follow_redirects=True)
-        return response
+    # def mock_for_update_ce_details(self, changed_details, mock_request):
+    #     mock_request.get(url_get_collection_exercise, json=collection_exercise_details)
+    #     mock_request.put(url_update_ce)
+    #     mock_request.get(url_ce_by_survey, status_code=200)
+    #     mock_request.get(url_get_survey_by_short_name, json=updated_survey_info)
+    #     response = self.app.post(f"/surveys/test/000000/edit-collection-exercise-details",
+    #                              data=changed_details, follow_redirects=True)
+    #     return response
 
     @requests_mock.mock()
     def test_update_collection_exercise_details_success(self, mock_request):
         changed_ce_details = {
             "collection_exercise_id": '14fb3e68-4dca-46db-bf49-04b84e07e77c',
             "user_description": '16th June 2019',
-            "period": '201906'
+            "period": '201906',
+            "hidden_survey_id": '14fb3e68-4dca-46db-bf49-04b84e07e77c'
         }
-        response = self.mock_for_update_ce_details(changed_ce_details, mock_request)
+        mock_request.get(url_get_collection_exercise, json=collection_exercise_details)
+        mock_request.put(url_update_ce)
+        mock_request.get(url_ce_by_survey, json=self.collection_exercises)
+        mock_request.get(url_get_survey_by_short_name, json=updated_survey_info)
+        response = self.app.post(f"/surveys/test/000000/edit-collection-exercise-details",
+                                 data=changed_ce_details, follow_redirects=True)
 
         self.assertEqual(response.status_code, 200)
         self.assertIn('16th June 2019'.encode(), response.data)
@@ -391,7 +398,8 @@ class TestCollectionExercise(unittest.TestCase):
         changed_ce_details = {
             "collection_exercise_id": '14fb3e68-4dca-46db-bf49-04b84e07e77c',
             "user_description": '16th June 2019',
-            "period": '201906'
+            "period": '201906',
+            "hidden_survey_id": '14fb3e68-4dca-46db-bf49-04b84e07e77c'
         }
         mock_request.get(url_get_collection_exercise, json=collection_exercise_details)
         mock_request.put(url_update_ce, status_code=500)
@@ -404,7 +412,7 @@ class TestCollectionExercise(unittest.TestCase):
     @requests_mock.mock()
     def test_get_ce_details(self, mock_request):
         mock_request.get(url_get_collection_exercise, json=collection_exercise_details)
-
+        mock_request.get(url_get_survey_by_short_name, json=updated_survey_info)
         response = self.app.get(f"/surveys/test/000000/edit-collection-exercise-details",
                                 follow_redirects=True)
 
@@ -503,3 +511,21 @@ class TestCollectionExercise(unittest.TestCase):
                                  follow_redirects=True)
         self.assertEqual(response.status_code, 200)
         self.assertIn("Error creating collection exercise".encode(), response.data)
+
+    @requests_mock.mock()
+    def test_failed_edit_ce_validation_period_exists(self, mock_request):
+        changed_ce_details = {
+            "collection_exercise_id": '14fb3e68-4dca-46db-bf49-04b84e07e77c',
+            "user_description": '16th June 2019',
+            "period": '201601',
+            "hidden_survey_id": '14fb3e68-4dca-46db-bf49-04b84e07e77c'
+        }
+        mock_request.get(url_get_collection_exercise, json=collection_exercise_details)
+        mock_request.put(url_update_ce)
+        mock_request.get(url_ce_by_survey, json=self.collection_exercises)
+        mock_request.get(url_get_survey_by_short_name, json=updated_survey_info)
+        response = self.app.post(f"/surveys/test/000000/edit-collection-exercise-details",
+                                 data=changed_ce_details, follow_redirects=True)
+
+        self.assertEqual(response.status_code, 200)
+        self.assertIn("Error editing collection exercise".encode(), response.data)

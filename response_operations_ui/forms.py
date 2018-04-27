@@ -63,6 +63,16 @@ class EditCollectionExerciseDetailsForm(FlaskForm):
     user_description = StringField('user_description')
     period = StringField('period')
     collection_exercise_id = HiddenField('collection_exercise_id')
+    hidden_survey_id = HiddenField('hidden_survey_id')
+
+    @staticmethod
+    def validate_period(form, field):
+        hidden_survey_id = form.hidden_survey_id.data
+        ce_details = collection_exercise_controllers.get_collection_exercises_by_survey(hidden_survey_id)
+        inputted_period = field.data
+        for key in ce_details:
+            if key['exerciseRef'] == inputted_period:
+                raise ValidationError('Please enter a period not in use')
 
 
 class ChangeGroupStatusForm(FlaskForm):
