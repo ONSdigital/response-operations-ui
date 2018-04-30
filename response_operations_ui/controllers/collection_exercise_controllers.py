@@ -86,7 +86,7 @@ def create_collection_exercise(survey_id, survey_name, user_description, period)
 
 def get_collection_exercises_by_survey(survey_id):
     logger.debug('Retrieving collection exercises', survey_id=survey_id)
-    url = f'{app.config["RM_COLLECTION_EXERCISE_SERVICE"]}/collectionexercises/survey/{survey_id}'
+    url = f'{app.config["COLLECTION_EXERCISE_SERVICE"]}/collectionexercises/survey/{survey_id}'
 
     response = requests.get(url, auth=app.config['BASIC_AUTH'])
 
