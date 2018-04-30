@@ -27,8 +27,8 @@ url_update_ce = f'{app.config["BACKSTAGE_API_URL"]}/v1/collection-exercise/updat
 url_get_survey_by_short_name = f'{app.config["BACKSTAGE_API_URL"]}/v1/survey/shortname/test'
 with open('tests/test_data/survey/edited_survey_ce_details.json') as json_data:
     updated_survey_info = json.load(json_data)
-url_create_collection_exercise = f'{app.config["BACKSTAGE_API_URL"]}/v1/collection-exercise/create-collection-exercise'
-url_ce_by_survey = f'{app.config["COLLECTION_EXERCISE_SERVICE"]}/collectionexercises/' \
+url_create_collection_exercise = f'{app.config["COLLECTION_EXERCISE_SERVICE_URL"]}/collectionexercises'
+url_ce_by_survey = f'{app.config["COLLECTION_EXERCISE_SERVICE_URL"]}/collectionexercises/' \
                    f'survey/14fb3e68-4dca-46db-bf49-04b84e07e77c'
 
 

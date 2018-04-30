@@ -13,7 +13,7 @@ class Config(object):
     RESPONSE_OPERATIONS_UI_SECRET = os.getenv('RESPONSE_OPERATIONS_UI_SECRET', "secret")
     SECURE_MESSAGE_URL = os.getenv('SECURE_MESSAGE_URL')
     BACKSTAGE_API_URL = os.getenv('BACKSTAGE_API_URL')
-    COLLECTION_EXERCISE_SERVICE = os.getenv('COLLECTION_EXERCISE_SERVICE')
+    COLLECTION_EXERCISE_SERVICE_URL = os.getenv('COLLECTION_EXERCISE_SERVICE_URL')
     SESSION_TYPE = "redis"
     PERMANENT_SESSION_LIFETIME = os.getenv('PERMANENT_SESSION_LIFETIME', 43200)
     REDIS_SERVICE = os.getenv('REDIS_SERVICE')
@@ -30,7 +30,7 @@ class DevelopmentConfig(Config):
     LOGGING_LEVEL = os.getenv('LOGGING_LEVEL', 'DEBUG')
     BACKSTAGE_API_URL = os.getenv('BACKSTAGE_API_URL', 'http://localhost:8001/backstage-api')
     SECURE_MESSAGE_URL = os.getenv('SECURE_MESSAGE_URL', 'http://localhost:5050')
-    COLLECTION_EXERCISE_SERVICE = os.getenv('COLLECTION_EXERCISE_SERVICE', 'http://localhost:8145')
+    COLLECTION_EXERCISE_SERVICE_URL = os.getenv('COLLECTION_EXERCISE_SERVICE_URL', 'http://localhost:8145')
     REDIS_HOST = os.getenv('REDIS_HOST', "localhost")
     REDIS_PORT = os.getenv('REDIS_PORT', 7379)
     REDIS_DB = os.getenv('REDIS_DB', 0)

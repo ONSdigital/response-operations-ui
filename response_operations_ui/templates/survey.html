@@ -16,7 +16,7 @@
     <div id="created_ce_message" class="panel__body">
       <h1 class="venus">Collection exercise created</h1>
       <p class="mars">
-        <a href="/surveys/{{ survey.shortName }}/{{ newly_created_period }}" id="newly_created_link">View/edit {{survey.shortName}} {{newly_created_period}}</a>
+        <a href="/surveys/{{ survey.shortName }}/{{ newly_created_period }}" id="newly_created_ce_link">View/edit {{survey.shortName}} {{newly_created_period}}</a>
       </p>
     </div>
   </div>
@@ -58,7 +58,7 @@
         <h2 class="saturn u-pt-m">Collection exercises for {{survey.shortName}}</h2>
         <div class="u-mb-l">
           <a href="/surveys/{{survey.surveyRef}}-{{survey.shortName}}/create-collection-exercise"
-             name="create-collection-exercise-link">Create collection exercise</a>
+             name="create-collection-exercise-link" id="create-collection-exercise">Create collection exercise</a>
         </div>
         <table class="table__dense" summary="Collection exercises for the survey" id="tbl-collection-exercise">
           <thead class="table--head">

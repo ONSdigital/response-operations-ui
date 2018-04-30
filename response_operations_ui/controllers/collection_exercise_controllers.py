@@ -68,25 +68,29 @@ def update_collection_exercise_details(collection_exercise_id, user_description,
 
 def create_collection_exercise(survey_id, survey_name, user_description, period):
     logger.debug('Creating a new collection exercise for', survey_id=survey_id, survey_name=survey_name)
-    url = f'{app.config["BACKSTAGE_API_URL"]}/v1/collection-exercise/create-collection-exercise'
+    header = {'Content-Type': "application/json"}
+    url = f'{app.config["COLLECTION_EXERCISE_SERVICE_URL"]}/collectionexercises'
 
     collection_exercise_details = {
-        "survey_id": survey_id,
-        "survey_name": survey_name,
-        "user_description": user_description,
-        "period": period
+        "surveyId": survey_id,
+        "name": survey_name,
+        "userDescription": user_description,
+        "exerciseRef": period
     }
 
-    response = requests.post(url, json=collection_exercise_details)
-    if response.status_code != 200:
+    response = requests.post(url, json=collection_exercise_details, headers=header, auth=app.config['BASIC_AUTH'])
+    if response.status_code == 404:
+        logger.error('Error retrieving new collection exercise data')
         raise ApiError(response)
-
+    if response.status_code not in (200, 201, 202):
+        logger.error('Error creating new collection exercise')
+        raise ApiError(response)
     logger.debug('Successfully created collection exercise for', survey_id=survey_id, survey_name=survey_name)
 
 
 def get_collection_exercises_by_survey(survey_id):
     logger.debug('Retrieving collection exercises', survey_id=survey_id)
-    url = f'{app.config["COLLECTION_EXERCISE_SERVICE"]}/collectionexercises/survey/{survey_id}'
+    url = f'{app.config["COLLECTION_EXERCISE_SERVICE_URL"]}/collectionexercises/survey/{survey_id}'
 
     response = requests.get(url, auth=app.config['BASIC_AUTH'])
 
