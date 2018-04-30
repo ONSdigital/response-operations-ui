@@ -45,11 +45,11 @@ def respondent_details(respondent_id):
             "link": "/respondents"
         },
         {
-            "title": f"{respondent['respondent_party']['firstName']} {respondent['respondent_party']['lastName']}"
+            "title": f"{respondent['firstName']} {respondent['lastName']}"
         }
     ]
 
-    respondent['respondent_party']['status'] = respondent['respondent_party']['status'].title()
+    respondent['status'] = respondent['status'].title()
     return render_template('respondent.html', respondent=respondent['respondent_party'], breadcrumbs=breadcrumbs)
 
 
@@ -62,10 +62,10 @@ def confirm_change_account_status():
     form = Confirm(request.form)
 
     respondent = party_controller.get_respondent_by_party_id(party_id)
-    enrolments = party_controller.get_respondent_enrolments(respondent['respondent_party'], enrolment_status='ENABLED')
+    enrolments = party_controller.get_respondent_enrolments(respondent, enrolment_status='ENABLED')
 
     return render_template('confirm-respondent-account-status.html', form=form,
-                           respondent=respondent['respondent_party'], enrolments=enrolments,
+                           respondent=respondent, enrolments=enrolments,
                            change_status=change_status, party_id=party_id, ru_ref=ru_ref)
 
 

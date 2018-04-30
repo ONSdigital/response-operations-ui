@@ -39,13 +39,7 @@
           </div>
 
           <div class="spoke__body">
-              <form method="post" action="{{ url_for('respondent_bp.change_account_status') }}" class="u-mt-l">
-
-              <input type="hidden" name="party_id" value="{{ party_id }}" />
-
-              <input type="hidden" id="change_status" name="change_status" value="{{ change_status }}" />
-
-                  <input type="hidden" id="ru_ref" name="ru_ref" value="{{ ru_ref }}" />
+              <form method="post" action="{{ url_for('respondent_bp.change_account_status', party_id=party_id, ru_ref=ru_ref, change_status=change_status) }}" class="u-mt-l">
 
               <dl class="description-list description-list-8">
                 <dt class="">
