@@ -110,7 +110,7 @@ def get_legal_basis_list():
         raise ApiError(response)
 
     lbs = [(lb['ref'], lb['longName']) for lb in response.json()]
-    logger.debug('Successfully retrieved surveys list: {}'.format(lbs))
+    logger.debug('Successfully retrieved legal basis list: {}'.format(lbs))
     return lbs
 
 
@@ -133,6 +133,7 @@ def create_survey(survey_ref, short_name, long_name, legal_basis):
         auth=(app.config['SURVEY_SERVICE_USERNAME'], app.config['SURVEY_SERVICE_PASSWORD']))
 
     if response.status_code != 201:
+        logger.debug("Raising ApiError for response code {}".format(response.status_code))
         raise ApiError(response)
 
     logger.debug('Successfully created new survey', survey_ref=survey_ref)
