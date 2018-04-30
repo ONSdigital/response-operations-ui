@@ -110,7 +110,7 @@ def get_legal_basis_list():
         raise ApiError(response)
 
     lbs = [(lb['ref'], lb['longName']) for lb in response.json()]
-    logger.debug('Successfully retrieved legal basis list: {}'.format(lbs))
+    logger.debug('Successfully retrieved legal basis list', lbs=lbs)
     return lbs
 
 

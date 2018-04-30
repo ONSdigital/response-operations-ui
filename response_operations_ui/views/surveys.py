@@ -118,7 +118,7 @@ def create_survey():
                                short_name=request.form.get('short_name'),
                                legal_basis=request.form.get('legal_basis'))
     else:
-        logger.debug('create-survey form: {}'.format(form))
+        logger.debug('create-survey form', form=form)
         try:
             survey_controllers.create_survey(request.form.get('survey_ref'),
                                              request.form.get('short_name'),
