@@ -55,9 +55,12 @@ class TestInfo(unittest.TestCase):
 
         self.assertIn('font-src \'self\' data: https://cdn.ons.gov.uk', response.headers['Content-Security-Policy'])
         self.assertIn('default-src \'self\' https://cdn.ons.gov.uk', response.headers['Content-Security-Policy'])
-        self.assertIn('connect-src \'self\' https://www.google-analytics.com https://cdn.ons.gov.uk', response.headers['Content-Security-Policy'])
-        self.assertIn('img-src \'self\' data: https://www.google-analytics.com https://cdn.ons.gov.uk', response.headers['Content-Security-Policy'])
-        self.assertIn('script-src \'self\' https://www.google-analytics.com https://cdn.ons.gov.uk', response.headers['Content-Security-Policy'])
+        self.assertIn('connect-src \'self\' https://www.google-analytics.com https://cdn.ons.gov.uk',
+                      response.headers['Content-Security-Policy'])
+        self.assertIn('img-src \'self\' data: https://www.google-analytics.com https://cdn.ons.gov.uk',
+                      response.headers['Content-Security-Policy'])
+        self.assertIn('script-src \'self\' https://www.google-analytics.com https://cdn.ons.gov.uk',
+                      response.headers['Content-Security-Policy'])
 
     def test_x_xss_protection_header_is_set(self):
         response = self.app.get("/info")
