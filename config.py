@@ -27,6 +27,7 @@ class Config(object):
 
     UAA_SERVICE_URL = os.getenv('UAA_SERVICE_URL')
     RAS_SECURE_MESSAGING_JWT_SECRET = os.getenv('RAS_SECURE_MESSAGING_JWT_SECRET')
+    SECURE_COOKIES = os.getenv('SECURE_COOKIES', True)
 
 
 class DevelopmentConfig(Config):
