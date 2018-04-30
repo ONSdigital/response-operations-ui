@@ -107,7 +107,7 @@ def show_create_survey():
     return render_template('create-survey.html', form=form)
 
 
-@surveys_bp.route('/create', methods=['POST', 'GET'])
+@surveys_bp.route('/create', methods=['POST'])
 @login_required
 def create_survey():
     form = CreateSurveyDetailsForm(form=request.form)
