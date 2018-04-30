@@ -85,12 +85,14 @@ class EditSurveyDetailsForm(FlaskForm):
 
 
 class CreateSurveyDetailsForm(FlaskForm):
-    legal_basis_list = survey_controllers.get_legal_basis_list()
     long_name = StringField('long_name')
     short_name = StringField('short_name', validators=[InputRequired(message="Please remove spaces in Abbreviation")])
-    # MATTTODO implement actual validation
     survey_ref = StringField('survey_ref', validators=[InputRequired(message="Please remove spaces in Survey ID")])
-    legal_basis = SelectField('legal_basis', choices=[('', 'Select an option')] + legal_basis_list)
+    legal_basis = SelectField('legal_basis', choices=[('', 'Select an option')])
+
+    def __init__(self, form):
+        super().__init__(form)
+        self.legal_basis.choices = [('', 'Select an option')] + survey_controllers.get_legal_basis_list()
 
     @staticmethod
     def validate_short_name(form, field):
