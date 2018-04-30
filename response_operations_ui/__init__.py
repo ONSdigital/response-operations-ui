@@ -14,8 +14,9 @@ from response_operations_ui.user import User
 
 CSP_POLICY = {
     'default-src': ["'self'", 'https://cdn.ons.gov.uk', ],
-    'font-src': ["'self'", 'data:', 'https://cdn.ons.gov.uk', ],
-    'script-src': ["'self'", 'https://www.google-analytics.com', 'https://cdn.ons.gov.uk', ],
+    'style-src': ["'self'", 'https://cdn.ons.gov.uk', 'https://maxcdn.bootstrapcdn.com', ],
+    'font-src': ["'self'", 'data:', 'https://cdn.ons.gov.uk', 'https://fonts.gstatic.com', ],
+    'script-src': ["'self'", 'https://www.google-analytics.com', 'https://cdn.ons.gov.uk', 'http://code.jquery.com', ],
     'connect-src': ["'self'", 'https://www.google-analytics.com', 'https://cdn.ons.gov.uk', ],
     'img-src': ["'self'", 'data:', 'https://www.google-analytics.com', 'https://cdn.ons.gov.uk', ]
 }
