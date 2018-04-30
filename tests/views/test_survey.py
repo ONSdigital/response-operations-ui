@@ -19,6 +19,7 @@ with open('tests/test_data/survey/survey_list.json') as json_data:
 with open('tests/test_data/survey/legal_basis_list.json') as json_data:
     legal_basis_list = json.load(json_data)
 url_get_survey_by_short_name = f'{app.config["BACKSTAGE_API_URL"]}/v1/survey/shortname/bres'
+url_get_survey_by_qbs = f'{app.config["BACKSTAGE_API_URL"]}/v1/survey/shortname/QBS'
 with open('tests/test_data/survey/survey.json') as json_data:
     survey_info = json.load(json_data)
 with open('tests/test_data/survey/survey_states.json') as json_data:
@@ -195,6 +196,22 @@ class TestSurvey(unittest.TestCase):
                                  follow_redirects=True)
         self.assertEqual(response.status_code, 500)
         self.assertIn("Server error (Error 500)".encode(), response.data)
+
+    @requests_mock.mock()
+    def test_update_survey_details_failed_validation(self, mock_request):
+        changed_survey_details = {
+            "hidden_survey_ref": '222',
+            "long_name": 'New Survey Long Name',
+            "short_name": 'Q BX'
+        }
+        mock_request.get(url_get_survey_list, json=survey_list)
+        mock_request.put(url_update_survey_details)
+        mock_request.get(url_get_survey_list, json=updated_survey_list)
+        mock_request.get(url_get_survey_by_qbs, json=survey_info)
+        response = self.app.post(f"/surveys/edit-survey-details/QBS", data=changed_survey_details,
+                                 follow_redirects=True)
+        self.assertIn("Error updating survey details".encode(), response.data)
+        self.assertEqual(response.status_code, 200)
 
     @requests_mock.mock()
     def test_get_survey_details(self, mock_request):
