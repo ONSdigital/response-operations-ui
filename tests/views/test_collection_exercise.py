@@ -28,7 +28,7 @@ url_get_survey_by_short_name = f'{app.config["BACKSTAGE_API_URL"]}/v1/survey/sho
 with open('tests/test_data/survey/edited_survey_ce_details.json') as json_data:
     updated_survey_info = json.load(json_data)
 url_create_collection_exercise = f'{app.config["BACKSTAGE_API_URL"]}/v1/collection-exercise/create-collection-exercise'
-url_ce_by_survey = f'{app.config["RM_COLLECTION_EXERCISE_SERVICE"]}collectionexercises/' \
+url_ce_by_survey = f'{app.config["RM_COLLECTION_EXERCISE_SERVICE"]}/collectionexercises/' \
                    f'survey/14fb3e68-4dca-46db-bf49-04b84e07e77c'
 
 
@@ -364,15 +364,6 @@ class TestCollectionExercise(unittest.TestCase):
         self.assertIn('Ready for review'.encode(), response.data)
         self.assertIn('Error processing collection exercise'.encode(), response.data)
         self.assertIn('Check collection instruments'.encode(), response.data)
-
-    # def mock_for_update_ce_details(self, changed_details, mock_request):
-    #     mock_request.get(url_get_collection_exercise, json=collection_exercise_details)
-    #     mock_request.put(url_update_ce)
-    #     mock_request.get(url_ce_by_survey, status_code=200)
-    #     mock_request.get(url_get_survey_by_short_name, json=updated_survey_info)
-    #     response = self.app.post(f"/surveys/test/000000/edit-collection-exercise-details",
-    #                              data=changed_details, follow_redirects=True)
-    #     return response
 
     @requests_mock.mock()
     def test_update_collection_exercise_details_success(self, mock_request):
