@@ -23,7 +23,11 @@
       <div class="panel panel--simple panel--error u-mb-l">
         <div class="panel__body" id="save-error">
           <h2 id='error-creating-ce-message' class="venus">Error creating collection exercise</h2>
+          {% if form.errors.period[0] == 'Not a valid integer value' %}
+          <p class="mars">{{form.period.errors[1]}}</p>
+          {% else %}
           <p class="mars">Please use a period that is not in use by any collection exercise for this survey</p>
+          {% endif %}
         </div>
       </div>
       {% endif %}

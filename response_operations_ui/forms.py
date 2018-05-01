@@ -4,7 +4,7 @@ from response_operations_ui.controllers import collection_exercise_controllers
 
 from flask_wtf import FlaskForm
 from structlog import wrap_logger
-from wtforms import HiddenField, Label, PasswordField, StringField, SubmitField, TextAreaField
+from wtforms import HiddenField, Label, PasswordField, StringField, SubmitField, TextAreaField, IntegerField
 from wtforms.validators import InputRequired, Length, ValidationError
 
 logger = wrap_logger(logging.getLogger(__name__))
@@ -61,7 +61,7 @@ class EditContactDetailsForm(FlaskForm):
 
 class EditCollectionExerciseDetailsForm(FlaskForm):
     user_description = StringField('user_description')
-    period = StringField('period')
+    period = IntegerField('period')
     collection_exercise_id = HiddenField('collection_exercise_id')
     hidden_survey_id = HiddenField('hidden_survey_id')
 
@@ -73,6 +73,8 @@ class EditCollectionExerciseDetailsForm(FlaskForm):
         for key in ce_details:
             if key['exerciseRef'] == inputted_period:
                 raise ValidationError('Please enter a period not in use')
+            else:
+                raise ValidationError('Please enter numbers only for the period')
 
 
 class ChangeGroupStatusForm(FlaskForm):
@@ -82,7 +84,7 @@ class ChangeGroupStatusForm(FlaskForm):
 
 class CreateCollectionExerciseDetailsForm(FlaskForm):
     user_description = StringField('user_description')
-    period = StringField('period')
+    period = IntegerField('period', validators=[InputRequired(message="Please use numbers only")])
     hidden_survey_id = HiddenField('hidden_survey_id')
     hidden_survey_name = HiddenField('hidden_survey_name')
 
@@ -94,6 +96,8 @@ class CreateCollectionExerciseDetailsForm(FlaskForm):
         for key in ce_details:
             if key['exerciseRef'] == inputted_period:
                 raise ValidationError('Please enter a period not in use')
+            else:
+                raise ValidationError('Please enter numbers only for the period')
 
 
 class EditSurveyDetailsForm(FlaskForm):
