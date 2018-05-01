@@ -23,6 +23,7 @@ redis = "==2.10.6"
 Flask-Session = "==0.3.1"
 cfenv = "==0.5.3"
 cryptography = "*"
+flask-paginate = "*"
 
 [dev-packages]
 codecov = "==2.0.9"
