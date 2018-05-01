@@ -1,4 +1,4 @@
-from datetime import datetime
+from datetime import datetime, timedelta
 import unittest
 
 from response_operations_ui.common.dates import get_formatted_date
@@ -7,13 +7,15 @@ from response_operations_ui.common.dates import get_formatted_date
 class TestDates(unittest.TestCase):
 
     def test_get_formatted_date_today(self):
-        today_formatted_string = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
+        today=datetime.now()
+        today_formatted_string = today.strftime('%Y-%m-%d %H:%M:%S')
         self.assertEqual(get_formatted_date(today_formatted_string),
                          f'Today at {today_formatted_string[11:16]}')
 
     def test_get_formatted_date_yesterday(self):
         today = datetime.now()
-        yesterday_formatted_string = today.replace(day=today.day - 1).strftime('%Y-%m-%d %H:%M:%S')
+        yesterday = today - timedelta(1)
+        yesterday_formatted_string = yesterday.strftime('%Y-%m-%d %H:%M:%S')
         self.assertEqual(get_formatted_date(yesterday_formatted_string),
                          f'Yesterday at {yesterday_formatted_string[11:16]}')
 
