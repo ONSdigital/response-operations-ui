@@ -146,6 +146,12 @@
                 <dd id="respondent-pending-email">
                   {{ respondent.pendingEmailAddress }}
                 </dd>
+                <dd>
+                Verification email sent
+                <br>
+                  <a href="{{ url_for('reporting_unit_bp.resend_verification', ru_ref=ru_ref, email=respondent.emailAddress, party_id=party_id) }}">Re-send verification email</a>
+                </br>
+                </dd>
                 {% endif %}
                 <dt>
                   Tel

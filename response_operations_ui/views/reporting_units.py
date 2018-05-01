@@ -84,10 +84,7 @@ def edit_contact_details(ru_ref, respondent_id):
 
     ui_message = 'No updates were necessary'
     if 'emailAddress' in contact_details_changed:
-        if len(contact_details_changed) > 1:
-            ui_message = f'Contact details saved and verification email sent to {form.get("email")}'
-        else:
-            ui_message = f'Verification email sent to {form.get("email")}'
+        ui_message = f'Contact details changed and verification email sent to {form.get("email")}'
     elif len(contact_details_changed) > 0:
         ui_message = 'Contact details changed'
 
