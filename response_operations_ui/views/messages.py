@@ -125,7 +125,7 @@ def select_survey():
     survey_list = [survey.value for survey in Surveys]
 
     if request.method == 'POST':
-        selected_survey = request.form.get('radio-answer')
+        selected_survey = request.form.get('select-survey')
         if selected_survey:
             return redirect(url_for("messages_bp.view_selected_survey",
                                     selected_survey=selected_survey))
@@ -134,7 +134,7 @@ def select_survey():
     else:
         response_error = False
 
-    return render_template("message_select_survey.html",
+    return render_template("message-select-survey.html",
                            breadcrumbs=breadcrumbs,
                            selected_survey=None,
                            response_error=response_error,

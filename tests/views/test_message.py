@@ -513,7 +513,7 @@ class TestMessage(unittest.TestCase):
         self.assertIn("Bricks".encode(), response.data)
 
     @requests_mock.mock()
-    def test_radio_buttons_post_nothing_selected(self, mock_request):
+    def test_dropdown_post_nothing_selected(self, mock_request):
         mock_request.get(url_get_threads_list, json=thread_list)
         mock_request.get(url_get_surveys_list, json=self.surveys_list_json)
 
@@ -521,8 +521,8 @@ class TestMessage(unittest.TestCase):
 
         self.assertEqual(200, response.status_code)
         self.assertIn("Home".encode(), response.data)
-        self.assertIn("Please select a survey to filter your messages.".encode(), response.data)
-        self.assertIn("Filter messages by survey".encode(), response.data)
+        self.assertIn("filter your messages".encode(), response.data)
+        self.assertIn("Please select a survey to see messages for your team".encode(), response.data)
 
     @requests_mock.mock()
     def test_get_messages_survey_does_not_exist(self, mock_request):
@@ -550,7 +550,7 @@ class TestMessage(unittest.TestCase):
 
         response = self.app.post("/messages/select-survey",
                                  follow_redirects=True,
-                                 data={"radio-answer": "ASHE"})
+                                 data={"select-survey": "ASHE"})
 
         self.assertEqual(response.status_code, 200)
         self.assertIn("ASHE Messages".encode(), response.data)
