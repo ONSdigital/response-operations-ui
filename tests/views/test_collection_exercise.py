@@ -3,7 +3,6 @@ import unittest
 from io import BytesIO
 
 import requests_mock
-from requests import HTTPError
 
 from config import TestingConfig
 from response_operations_ui import app
