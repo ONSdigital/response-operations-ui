@@ -1,0 +1,50 @@
+{% extends "layouts/base.html" %}
+{% block page_title %}Messages | Survey Data Collection{% endblock %}
+
+{% block main %}
+
+<div role="main" id="main" class="page__main">
+
+  <div class="grid">
+    <div class="grid__col col-12@m">
+      {% if response_error %}
+      <div class="panel panel--error col-6@m u-mb-m">
+        <div class="panel__header">
+          <h1 class="panel__title venus">Select a survey</h1>
+        </div>
+        <div class="panel__body">
+          <p class="mars"><a href="#survey-list" id="survey-select-link" class="js-inpagelink">Please select a survey</a> to filter your messages</p>
+        </div>
+      </div>
+      {% endif %}
+      <h1 class="jupiter">Filter messages by survey</h1>
+
+      {% if response_error %}
+      <div class="panel panel--simple panel--error col-6@m">
+        <div class="panel__body">
+      {% endif %}
+        <form method="POST">
+          {% if survey_list %}
+            <div class="field field--select">
+              <label class="label mars u-mb-s" for="survey-list">Please select a survey to see messages for your team</label>
+              <select class="input input--select" id="survey-list" name="select-survey" required>
+                <option selected disabled>Select a survey</option>
+
+                {% for survey in survey_list %}
+                <option value="{{ survey.replace(' ', '') }}" id="{{ survey.replace(' ', '') }}"> {{ survey }}  </option>
+                {% endfor %}
+              </select>
+            </div>
+        </div>
+      </div>
+
+      <button class="btn u-mt-m" type="submit" id="continue">Continue</button>
+
+          {% else %}
+            <p> Unable to retrieve list of surveys </p>
+          {% endif %}
+        </form>
+    </div>
+  </div>
+</div>
+{% endblock %}
