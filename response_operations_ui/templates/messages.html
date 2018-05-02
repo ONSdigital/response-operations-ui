@@ -87,7 +87,7 @@
                     {{ message.business_name or 'Unavailable' }}
                 </td>
                 <td name="tbl-messages-subject" class="message-list__subject">
-                    <a href="{{ url_for('messages_bp.view_conversation', thread_id=message.thread_id) }}#latest-message" id="message-link-{{ loop.index }}">{{ message.subject }}</a>
+                    <a href="{{ url_for('messages_bp.view_conversation', thread_id=message.thread_id, page=page) }}#latest-message" id="message-link-{{ loop.index }}">{{ message.subject }}</a>
                 </td>
                 <td name="tbl-messages-from" class="message-list__from" id="message-from-{{ loop.index }}">
                     {{ message.from or 'Unavailable' }}
@@ -103,6 +103,9 @@
               {% endif %}
           </tbody>
         </table>
+
+        {{ pagination.links }}
+
         {% endif %}
       </div>
     </div>

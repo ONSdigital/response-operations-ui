@@ -3,6 +3,7 @@ import logging
 
 from flask import Blueprint, flash, g, Markup, render_template, request, redirect, session, url_for
 from flask_login import login_required, current_user
+from flask_paginate import get_parameter, Pagination
 from structlog import wrap_logger
 
 from response_operations_ui.common.dates import get_formatted_date
@@ -70,6 +71,7 @@ def view_conversation(thread_id):
     if refined_thread[-1]['unread']:
         message_controllers.remove_unread_label(refined_thread[-1]['message_id'])
 
+    page = request.args.get('page')
     form = SecureMessageForm(request.form)
 
     if form.validate_on_submit():
@@ -84,7 +86,8 @@ def view_conversation(thread_id):
             )
             thread_url = url_for("messages_bp.view_conversation", thread_id=thread_id) + "#latest-message"
             flash(Markup(f'Message sent. <a href={thread_url}>View Message</a>'))
-            return redirect(url_for('messages_bp.view_selected_survey', selected_survey=refined_thread[0]['survey']))
+            return redirect(url_for('messages_bp.view_selected_survey',
+                                    selected_survey=refined_thread[0]['survey']))
         except (ApiError, InternalError):
             form = _repopulate_form_with_submitted_data(form)
             form.errors['sending'] = ["Message failed to send, something has gone wrong with the website."]
@@ -97,7 +100,9 @@ def view_conversation(thread_id):
     return render_template("conversation-view.html",
                            breadcrumbs=breadcrumbs,
                            messages=refined_thread,
-                           form=form)
+                           form=form,
+                           selected_survey=refined_thread[0]['survey'],
+                           page=page)
 
 
 @messages_bp.route('/', methods=['GET'])
@@ -120,7 +125,7 @@ def select_survey():
     survey_list = [survey.value for survey in Surveys]
 
     if request.method == 'POST':
-        selected_survey = request.form.get('radio-answer')
+        selected_survey = request.form.get('select-survey')
         if selected_survey:
             return redirect(url_for("messages_bp.view_selected_survey",
                                     selected_survey=selected_survey))
@@ -129,7 +134,7 @@ def select_survey():
     else:
         response_error = False
 
-    return render_template("message_select_survey.html",
+    return render_template("message-select-survey.html",
                            breadcrumbs=breadcrumbs,
                            selected_survey=None,
                            response_error=response_error,
@@ -148,17 +153,34 @@ def view_selected_survey(selected_survey):
         else:
             survey_id = _get_survey_id(selected_survey)
 
+        page = request.args.get(get_parameter('page'), type=int, default=1)
+        limit = request.args.get(get_parameter('limit'), type=int, default=10)
+
         params = {
             'survey': survey_id,
-            'limit': request.args.get('limit', 1000)
+            'page': page,
+            'limit': limit
         }
 
-        refined_messages = [_refine(message) for message in message_controllers.get_thread_list(params)]
+        thread_count = message_controllers.get_conversation_count({'survey': survey_id})
+        messages = [_refine(message) for message in message_controllers.get_thread_list(params)]
 
-        return render_template("messages.html",
+        pagination = Pagination(page=page,
+                                per_page=limit,
+                                total=thread_count,
+                                record_name='messages',
+                                prev_label='Previous',
+                                next_label='Next',
+                                outer_window=0,
+                                format_total=True,
+                                format_number=True,
+                                show_single_page=False)
+
+        return render_template("messages.html", page=page,
                                breadcrumbs=breadcrumbs,
-                               messages=refined_messages,
+                               messages=messages,
                                selected_survey=formatted_survey,
+                               pagination=pagination,
                                change_survey=True)
 
     except TypeError:
@@ -271,7 +293,7 @@ def _refine(message):
 
 
 def _get_survey_id(selected_survey):
-    return survey_controllers.get_survey_id_by_short_name(selected_survey)
+    return [survey_controllers.get_survey_id_by_short_name(selected_survey)]
 
 
 def _get_FDI_survey_id():

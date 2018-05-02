@@ -7,6 +7,7 @@ from wtforms import HiddenField, Label, PasswordField, \
     SelectField, StringField, SubmitField, TextAreaField, ValidationError
 from wtforms.validators import InputRequired, Length
 
+
 logger = wrap_logger(logging.getLogger(__name__))
 
 
@@ -96,3 +97,15 @@ class UpdateEventDateForm(FlaskForm):
         days_in_month = calendar.monthrange(int(form.year.data), int(form.month.data))[1]
         if int(field.data) < 1 or int(field.data) > days_in_month:
             raise ValidationError('Day out of range for month')
+
+
+class EditSurveyDetailsForm(FlaskForm):
+    long_name = StringField('long_name')
+    short_name = StringField('short_name', validators=[InputRequired(message="Please remove spaces in short name")])
+    hidden_survey_ref = HiddenField('hidden_survey_ref')
+
+    @staticmethod
+    def validate_short_name(form, field):
+        short_name = field.data
+        if ' ' in short_name:
+            raise ValidationError('Please remove spaces in short name')

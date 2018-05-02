@@ -1,10 +1,11 @@
 import logging
 
-from flask import Blueprint, render_template
+from flask import Blueprint, render_template, request, redirect, url_for
 from flask_login import login_required
 from structlog import wrap_logger
 
 from response_operations_ui.controllers import survey_controllers
+from response_operations_ui.forms import EditSurveyDetailsForm
 from response_operations_ui.common.mappers import map_collection_exercise_state, convert_events_to_new_format
 
 logger = wrap_logger(logging.getLogger(__name__))
@@ -18,7 +19,13 @@ surveys_bp = Blueprint('surveys_bp', __name__,
 def view_surveys():
     survey_list = survey_controllers.get_surveys_list()
     breadcrumbs = [{"title": "Surveys"}]
-    return render_template('surveys.html', survey_list=survey_list, breadcrumbs=breadcrumbs)
+
+    info_message = None
+    if request.args.get('survey_changed'):
+        info_message = 'Survey details changed'
+
+    return render_template('surveys.html', survey_changed=request.args.get('survey_changed'), info_message=info_message,
+                           survey_list=survey_list, breadcrumbs=breadcrumbs)
 
 
 @surveys_bp.route('/<short_name>', methods=['GET'])
@@ -46,3 +53,35 @@ def view_survey(short_name):
                            survey=survey_details['survey'],
                            collection_exercises=survey_details['collection_exercises'],
                            breadcrumbs=breadcrumbs)
+
+
+@surveys_bp.route('/edit-survey-details/<short_name>', methods=['GET'])
+@login_required
+def view_survey_details(short_name):
+    survey_details = survey_controllers.get_survey(short_name)
+    form = EditSurveyDetailsForm(form=request.form)
+
+    return render_template('edit-survey-details.html', form=form, short_name=short_name,
+                           legal_basis=survey_details['survey']['legalBasis'],
+                           long_name=survey_details['survey']['longName'],
+                           survey_ref=survey_details['survey']['surveyRef'])
+
+
+@surveys_bp.route('/edit-survey-details/<short_name>', methods=['POST', 'GET'])
+@login_required
+def edit_survey_details(short_name):
+    form = EditSurveyDetailsForm(form=request.form)
+    if not form.validate():
+        survey_details = survey_controllers.get_survey(short_name)
+        return render_template('edit-survey-details.html', form=form, short_name=short_name, errors=form.errors,
+                               legal_basis=survey_details['survey']['legalBasis'],
+                               long_name=survey_details['survey']['longName'],
+                               survey_ref=survey_details['survey']['surveyRef'],
+                               survey_details=survey_details)
+
+    else:
+        form = request.form
+        survey_controllers.update_survey_details(form.get('hidden_survey_ref'),
+                                                 form.get('short_name'),
+                                                 form.get('long_name'))
+        return redirect(url_for('surveys_bp.view_surveys', short_name=short_name, survey_changed='True'))

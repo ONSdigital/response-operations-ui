@@ -849,11 +849,80 @@ textarea.secure-message--message{
   text-decoration: underline;
 }
 
-.message-action {
+ .message-action {
   color: #fff;
   float: right;
 }
 
 .message-action:hover {
   color: #ccc;
+}
+
+button{
+     background:none;
+     color: #4263c2;
+     border:none;
+     padding:0;
+     font: inherit;
+     border-bottom:1px solid #4263c2;
+     cursor: pointer;
+}
+
+
+.message-read {
+color: purple;
+font-weight: 400;
+}
+
+
+.pagination {
+	color: black;
+	padding: 1;
+    display: inline;
+}
+
+.pagination ul {
+	color: black;
+	float: left;
+    padding-left: 0rem;
+	display:inline;
+}
+
+.pagination li {
+	list-style-type: none;
+	float: left;
+    padding-top: 4px;
+    padding-bottom: 4px;
+	display:inline;
+}
+
+.pagination li.active {
+	margin: 0 6px;
+	background-color: #033E58;
+}
+
+.pagination li.active a {
+	color: white;
+}
+
+.pagination li.disabled a {
+	color: #666666;
+	text-decoration: none;
+}
+
+.pagination li:hover:not(.active) {
+	background-color: #E4E8EB;
+	transition: background-color .3s;
+}
+
+.pagination li a {
+	padding: 8px 16px;
+}
+
+.pagination li.previous.disabled.unavailable {
+	display: none;
+}
+
+.pagination li.next.disabled {
+	display: none;
 }
