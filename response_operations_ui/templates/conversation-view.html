@@ -43,6 +43,8 @@
     <br />
     {% endif %}
 
+    <a href="{{ url_for('messages_bp.view_selected_survey', selected_survey=selected_survey, page=page) }}">< Back</a>
+
     <h1 class="saturn" name="page-messages-title">{{ subject }}</h1>
     <div class="secure-message-conversation block">
         <div class="secure-message-sent-message-meta u-mb-s">
@@ -75,7 +77,7 @@
         {% endfor %}
 
         <div class="secure-message-form">
-            <form action="{{ url_for('messages_bp.view_conversation', thread_id=messages[0].thread_id) }}" method="post", id="create-message-form">
+            <form action="{{ url_for('messages_bp.view_conversation', thread_id=messages[0].thread_id, page=page) }}" method="post", id="create-message-form">
                 {{ form.csrf_token }}
                 {{ form.subject(id='secure-message-subject', type='hidden', value=subject) }}
                 {{ form.hidden_to_ru_id(type='hidden', value=ru_id) }}
@@ -99,6 +101,7 @@
                 <input class="btn" id="btn-send-message" name="send" type="submit" value="Send" />
                 <br />
             </form>
+          <a href="{{ url_for('messages_bp.view_selected_survey', selected_survey=selected_survey, page=page) }}">< Back</a>
         </div>
     </div>
 {% endblock %}
