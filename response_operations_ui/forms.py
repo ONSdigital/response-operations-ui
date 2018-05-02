@@ -70,11 +70,11 @@ class EditCollectionExerciseDetailsForm(FlaskForm):
         hidden_survey_id = form.hidden_survey_id.data
         ce_details = collection_exercise_controllers.get_collection_exercises_by_survey(hidden_survey_id)
         inputted_period = field.data
-        for key in ce_details:
-            if key['exerciseRef'] == inputted_period:
+        if inputted_period is None:
+            raise ValidationError('Please enter numbers only for the period')
+        for ce in ce_details:
+            if ce['exerciseRef'] == str(inputted_period):
                 raise ValidationError('Please enter a period not in use')
-            else:
-                raise ValidationError('Please enter numbers only for the period')
 
 
 class ChangeGroupStatusForm(FlaskForm):
@@ -84,7 +84,7 @@ class ChangeGroupStatusForm(FlaskForm):
 
 class CreateCollectionExerciseDetailsForm(FlaskForm):
     user_description = StringField('user_description')
-    period = IntegerField('period', validators=[InputRequired(message="Please use numbers only")])
+    period = IntegerField('period')
     hidden_survey_id = HiddenField('hidden_survey_id')
     hidden_survey_name = HiddenField('hidden_survey_name')
 
@@ -93,11 +93,11 @@ class CreateCollectionExerciseDetailsForm(FlaskForm):
         hidden_survey_id = form.hidden_survey_id.data
         ce_details = collection_exercise_controllers.get_collection_exercises_by_survey(hidden_survey_id)
         inputted_period = field.data
-        for key in ce_details:
-            if key['exerciseRef'] == inputted_period:
+        if inputted_period is None:
+            raise ValidationError('Please enter numbers only for the period')
+        for ce in ce_details:
+            if ce['exerciseRef'] == str(inputted_period):
                 raise ValidationError('Please enter a period not in use')
-            else:
-                raise ValidationError('Please enter numbers only for the period')
 
 
 class EditSurveyDetailsForm(FlaskForm):
