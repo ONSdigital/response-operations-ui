@@ -442,6 +442,19 @@ class TestMessage(unittest.TestCase):
 
     @requests_mock.mock()
     @patch('response_operations_ui.controllers.message_controllers._get_jwt')
+    def test_conversation_reply_fail_500(self, mock_request, mock_get_jwt):
+        mock_get_jwt.return_value = "blah"
+        mock_request.get(url_get_thread, json=thread_json, status_code=500)
+        mock_request.get(url_get_surveys_list, json=survey_list)
+
+        response = self.app.post("/messages/threads/fb0e79bd-e132-4f4f-a7fd-5e8c6b41b9af",
+                                 follow_redirects=True)
+
+        self.assertEqual(response.status_code, 500)
+        self.assertIn("Error 500 - Server error".encode(), response.data)
+
+    @requests_mock.mock()
+    @patch('response_operations_ui.controllers.message_controllers._get_jwt')
     def test_conversation_reply(self, mock_request, mock_get_jwt):
         mock_get_jwt.return_value = "blah"
         mock_request.post(url_send_message, json=threads_no_unread_list, status_code=201)
