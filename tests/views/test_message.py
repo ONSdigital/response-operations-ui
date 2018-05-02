@@ -429,6 +429,55 @@ class TestMessage(unittest.TestCase):
 
     @requests_mock.mock()
     @patch('response_operations_ui.controllers.message_controllers._get_jwt')
+    def test_conversation_reply_fail(self, mock_request, mock_get_jwt):
+        mock_get_jwt.return_value = "blah"
+        mock_request.get(url_get_thread, json=thread_json)
+        mock_request.get(url_get_surveys_list, json=survey_list)
+
+        response = self.app.post("/messages/threads/fb0e79bd-e132-4f4f-a7fd-5e8c6b41b9af",
+                                 follow_redirects=True)
+
+        self.assertEqual(response.status_code, 200)
+        self.assertIn("Please enter a message".encode(), response.data)
+
+    @requests_mock.mock()
+    @patch('response_operations_ui.controllers.message_controllers._get_jwt')
+    def test_conversation_reply_fail_500(self, mock_request, mock_get_jwt):
+        mock_get_jwt.return_value = "blah"
+        mock_request.get(url_get_thread, json=thread_json, status_code=500)
+        mock_request.get(url_get_surveys_list, json=survey_list)
+
+        response = self.app.post("/messages/threads/fb0e79bd-e132-4f4f-a7fd-5e8c6b41b9af",
+                                 follow_redirects=True)
+
+        self.assertEqual(response.status_code, 500)
+        self.assertIn("Error 500 - Server error".encode(), response.data)
+
+    @requests_mock.mock()
+    @patch('response_operations_ui.controllers.message_controllers._get_jwt')
+    def test_conversation_reply(self, mock_request, mock_get_jwt):
+        mock_get_jwt.return_value = "blah"
+        # Post message on reply
+        mock_request.get(url_get_thread, json=thread_json)
+        mock_request.post(url_send_message, json=threads_no_unread_list, status_code=201)
+
+        # Conversation list
+        mock_request.get(shortname_url + "/ASHE", json=ashe_info)
+        mock_request.get(url_get_threads_list, json=thread_list)
+        mock_request.get(url_get_surveys_list, json=survey_list)
+        mock_request.get(url_send_message + '/count', json={"total": 1}, status_code=200)
+
+        response = self.app.post("/messages/threads/fb0e79bd-e132-4f4f-a7fd-5e8c6b41b9af",
+                                 data=self.message_form,
+                                 follow_redirects=True)
+
+        self.assertEqual(response.status_code, 200)
+        self.assertIn("RU Ref".encode(), response.data)
+        self.assertIn("Business name".encode(), response.data)
+        self.assertIn("Subject".encode(), response.data)
+
+    @requests_mock.mock()
+    @patch('response_operations_ui.controllers.message_controllers._get_jwt')
     def test_conversation_fail(self, mock_request, mock_get_jwt):
         mock_get_jwt.return_value = "blah"
         mock_request.get(url_get_thread, status_code=500)
@@ -455,18 +504,6 @@ class TestMessage(unittest.TestCase):
             self.assertEqual(response.status_code, 500)
             self.assertEqual(raises.exception.message, "A key error occurred")
 
-    @requests_mock.mock()
-    @patch('response_operations_ui.controllers.message_controllers._get_jwt')
-    def test_conversation_subject_error(self, mock_request, mock_get_jwt):
-        mock_get_jwt.return_value = "blah"
-        mock_request.get(url_get_thread, json=thread_missing_subject)
-        mock_request.get(url_get_surveys_list, json=survey_list)
-
-        response = self.app.get("/messages/threads/fb0e79bd-e132-4f4f-a7fd-5e8c6b41b9af")
-
-        self.assertEqual(response.status_code, 200)
-        self.assertIn("No Subject".encode(), response.data)
-
     def test_get_radio_buttons(self):
         response = self.app.get("/messages/select-survey")
 
@@ -476,7 +513,7 @@ class TestMessage(unittest.TestCase):
         self.assertIn("Bricks".encode(), response.data)
 
     @requests_mock.mock()
-    def test_radio_buttons_post_nothing_selected(self, mock_request):
+    def test_dropdown_post_nothing_selected(self, mock_request):
         mock_request.get(url_get_threads_list, json=thread_list)
         mock_request.get(url_get_surveys_list, json=self.surveys_list_json)
 
@@ -484,8 +521,8 @@ class TestMessage(unittest.TestCase):
 
         self.assertEqual(200, response.status_code)
         self.assertIn("Home".encode(), response.data)
-        self.assertIn("Please select a survey to filter your messages.".encode(), response.data)
-        self.assertIn("Filter messages by survey".encode(), response.data)
+        self.assertIn("filter your messages".encode(), response.data)
+        self.assertIn("Please select a survey to see messages for your team".encode(), response.data)
 
     @requests_mock.mock()
     def test_get_messages_survey_does_not_exist(self, mock_request):
@@ -511,9 +548,9 @@ class TestMessage(unittest.TestCase):
         mock_request.get(url_get_surveys_list, json=self.surveys_list_json)
         mock_request.get(shortname_url + "/ASHE", json=ashe_info)
 
-        posts_survey = {"radio-answer": "ASHE"}
-
-        response = self.app.post("/messages/select-survey", follow_redirects=True, data=posts_survey)
+        response = self.app.post("/messages/select-survey",
+                                 follow_redirects=True,
+                                 data={"select-survey": "ASHE"})
 
         self.assertEqual(response.status_code, 200)
         self.assertIn("ASHE Messages".encode(), response.data)
