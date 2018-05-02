@@ -71,6 +71,7 @@ def view_conversation(thread_id):
     if refined_thread[-1]['unread']:
         message_controllers.remove_unread_label(refined_thread[-1]['message_id'])
 
+    page = request.args.get('page')
     form = SecureMessageForm(request.form)
 
     if form.validate_on_submit():
@@ -85,7 +86,8 @@ def view_conversation(thread_id):
             )
             thread_url = url_for("messages_bp.view_conversation", thread_id=thread_id) + "#latest-message"
             flash(Markup(f'Message sent. <a href={thread_url}>View Message</a>'))
-            return redirect(url_for('messages_bp.view_selected_survey', selected_survey=refined_thread[0]['survey']))
+            return redirect(url_for('messages_bp.view_selected_survey',
+                                    selected_survey=refined_thread[0]['survey']))
         except (ApiError, InternalError):
             form = _repopulate_form_with_submitted_data(form)
             form.errors['sending'] = ["Message failed to send, something has gone wrong with the website."]
@@ -98,7 +100,9 @@ def view_conversation(thread_id):
     return render_template("conversation-view.html",
                            breadcrumbs=breadcrumbs,
                            messages=refined_thread,
-                           form=form)
+                           form=form,
+                           selected_survey=refined_thread[0]['survey'],
+                           page=page)
 
 
 @messages_bp.route('/', methods=['GET'])
