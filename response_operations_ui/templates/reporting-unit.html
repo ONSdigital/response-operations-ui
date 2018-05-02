@@ -139,6 +139,20 @@
                 <dd name="tbl-respondent-email">
                   {{ respondent.emailAddress }}
                 </dd>
+                {% if respondent.pendingEmailAddress %}
+                <dt>
+                  New Email
+                </dt>
+                <dd name="tbl-respondent-pending-email">
+                  {{ respondent.pendingEmailAddress }}
+                </dd>
+                <dd>
+                Verification email sent
+                <br>
+                  <a href="{{ url_for('reporting_unit_bp.resend_verification', ru_ref=ru_ref, email=respondent.pendingEmailAddress, party_id=party_id) }}">Re-send verification email</a>
+                </br>
+                </dd>
+                {% endif %}
                 <dt>
                   Tel
                 </dt>
