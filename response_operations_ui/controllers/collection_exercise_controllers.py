@@ -69,7 +69,7 @@ def update_collection_exercise_details(collection_exercise_id, user_description,
 def create_collection_exercise(survey_id, survey_name, user_description, period):
     logger.debug('Creating a new collection exercise for', survey_id=survey_id, survey_name=survey_name)
     header = {'Content-Type': "application/json"}
-    url = f'{app.config["COLLECTION_EXERCISE_SERVICE_URL"]}/collectionexercises'
+    url = f'{app.config["COLLECTION_EXERCISE_URL"]}/collectionexercises'
 
     collection_exercise_details = {
         "surveyId": survey_id,
@@ -90,7 +90,7 @@ def create_collection_exercise(survey_id, survey_name, user_description, period)
 
 def get_collection_exercises_by_survey(survey_id):
     logger.debug('Retrieving collection exercises', survey_id=survey_id)
-    url = f'{app.config["COLLECTION_EXERCISE_SERVICE_URL"]}/collectionexercises/survey/{survey_id}'
+    url = f'{app.config["COLLECTION_EXERCISE_URL"]}/collectionexercises/survey/{survey_id}'
 
     response = requests.get(url, auth=app.config['BASIC_AUTH'])
 
