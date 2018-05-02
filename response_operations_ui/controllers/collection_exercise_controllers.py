@@ -79,12 +79,12 @@ def create_collection_exercise(survey_id, survey_name, user_description, period)
     }
 
     response = requests.post(url, json=collection_exercise_details, headers=header, auth=app.config['BASIC_AUTH'])
-    if response.status_code == 404:
-        logger.error('Error retrieving new collection exercise data')
-        raise ApiError(response)
-    if response.status_code not in (200, 201, 202):
-        logger.error('Error creating new collection exercise')
-        raise ApiError(response)
+    try:
+        response.raise_for_status()
+    except HTTPError:
+        logger.exception('Error creating new collection exercise', survey_id=survey_id)
+        return ApiError(response)
+
     logger.debug('Successfully created collection exercise for', survey_id=survey_id, survey_name=survey_name)
 
 

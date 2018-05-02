@@ -461,21 +461,13 @@ class TestCollectionExercise(unittest.TestCase):
 
     @requests_mock.mock()
     def test_create_collection_exercise_failure(self, mock_request):
-        new_collection_exercise_details = {
-            "hidden_survey_name": 'BRES',
-            "hidden_survey_id": '14fb3e68-4dca-46db-bf49-04b84e07e77c',
-            "user_description": 'New collection exercise',
-            "period": '123456'
-        }
         mock_request.get(url_ce_by_survey, json=self.collection_exercises)
         mock_request.get(url_get_survey_by_short_name, json=updated_survey_info)
         mock_request.post(url_create_collection_exercise, status_code=500)
 
-        response = self.app.post(f"/surveys/141-test/create-collection-exercise", data=new_collection_exercise_details,
-                                 follow_redirects=True)
+        response = self.app.post(f"/surveys/141-test/create-collection-exercise", follow_redirects=True)
         self.assertEqual(response.status_code, 500)
-        self.assertRaises(HTTPError)
-        self.assertIn("Server error (Error 500)".encode(), response.data)
+        self.assertIn("Error 500 - Server error".encode(), response.data)
 
     @requests_mock.mock()
     def test_get_create_ce_form(self, mock_request):
@@ -501,7 +493,25 @@ class TestCollectionExercise(unittest.TestCase):
         response = self.app.post(f"/surveys/141-test/create-collection-exercise", data=new_collection_exercise_details,
                                  follow_redirects=True)
         self.assertEqual(response.status_code, 200)
-        self.assertIn("Error creating collection exercise".encode(), response.data)
+        self.assertIn("Please use a period that is not in use by any collection exercise for this survey".encode(),
+                      response.data)
+
+    @requests_mock.mock()
+    def test_failed_create_ce_letters_fails_in_period_validation(self, mock_request):
+        new_collection_exercise_details = {
+            "hidden_survey_name": 'BRES',
+            "hidden_survey_id": '14fb3e68-4dca-46db-bf49-04b84e07e77c',
+            "user_description": 'New collection exercise',
+            "period": 'hello'
+        }
+        mock_request.get(url_ce_by_survey, json=self.collection_exercises)
+        mock_request.get(url_get_survey_by_short_name, json=updated_survey_info)
+        mock_request.post(url_create_collection_exercise, status_code=200)
+
+        response = self.app.post(f"/surveys/141-test/create-collection-exercise", data=new_collection_exercise_details,
+                                 follow_redirects=True)
+        self.assertEqual(response.status_code, 200)
+        self.assertIn("Please enter numbers only for the period".encode(), response.data)
 
     @requests_mock.mock()
     def test_failed_edit_ce_validation_period_exists(self, mock_request):
@@ -519,4 +529,23 @@ class TestCollectionExercise(unittest.TestCase):
                                  data=changed_ce_details, follow_redirects=True)
 
         self.assertEqual(response.status_code, 200)
-        self.assertIn("Error editing collection exercise".encode(), response.data)
+        self.assertIn("Please use a period that is not in use by any collection exercise for this survey".encode(),
+                      response.data)
+
+    @requests_mock.mock()
+    def test_failed_edit_ce_validation_letters_in_period_fails_validation(self, mock_request):
+        changed_ce_details = {
+            "collection_exercise_id": '14fb3e68-4dca-46db-bf49-04b84e07e77c',
+            "user_description": '16th June 2019',
+            "period": 'hello',
+            "hidden_survey_id": '14fb3e68-4dca-46db-bf49-04b84e07e77c'
+        }
+        mock_request.get(url_get_collection_exercise, json=collection_exercise_details)
+        mock_request.put(url_update_ce)
+        mock_request.get(url_ce_by_survey, json=self.collection_exercises)
+        mock_request.get(url_get_survey_by_short_name, json=updated_survey_info)
+        response = self.app.post(f"/surveys/test/000000/edit-collection-exercise-details",
+                                 data=changed_ce_details, follow_redirects=True)
+
+        self.assertEqual(response.status_code, 200)
+        self.assertIn("Please enter numbers only for the period".encode(), response.data)
