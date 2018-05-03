@@ -35,6 +35,27 @@ def get_conversation(thread_id):
         raise ApiError(response)
 
 
+def get_conversation_count(params):
+    logger.debug("Retrieving count of threads")
+
+    url = f'{current_app.config["SECURE_MESSAGE_URL"]}/v2/messages/count'
+
+    response = requests.get(url, headers={'Authorization': _get_jwt()}, params=params)
+
+    try:
+        response.raise_for_status()
+    except HTTPError:
+        logger.exception("Thread count failed")
+        raise ApiError(response)
+
+    logger.debug("Count successful")
+    try:
+        return response.json()['total']
+    except KeyError:
+        logger.exception("Response was successful but didn't contain a 'total' key")
+        raise NoMessagesError
+
+
 def get_thread_list(params):
     logger.debug("Retrieving threads list")
 
