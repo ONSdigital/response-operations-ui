@@ -43,7 +43,7 @@
         </label>
         {{ form.legal_basis(class_="input input--select", id='legal_basis', required=required) }}
         </div>
-        <button type="submit" class="btn btn--primary u-mt-s">Create</button>
+        <button id="save-btn" type="submit" class="btn btn--primary u-mt-s">Create</button>
         <div>
         <a id="cancel-btn" href="{{ url_for('surveys_bp.view_surveys') }}">Cancel</a>
         </div>
