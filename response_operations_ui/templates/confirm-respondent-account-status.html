@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, shrink-to-fit=no">
+
+    <title>Change account status</title>
+
+     <link rel=stylesheet type=text/css href="https://cdn.ons.gov.uk/sdc/322aece/css/styles.css">
+     {% assets "scss_all" %}
+        <link rel=stylesheet type=text/css href="{{ ASSET_URL }}">
+     {% endassets %}
+
+    <link href="/static/images/favicon.ico" rel="Shortcut Icon" />
+</head>
+<body class="spoke">
+
+  <div class="page">
+
+    <div class="page__content">
+
+  <div class="container page__container">
+
+    <div class="grid">
+      <div class="grid__col col-3@l">
+      </div>
+
+      <div class="grid__col col-6@l">
+
+        <div role="main" id="main" class="page__main">
+
+
+          <div class="spoke__header">
+
+            <div class="spoke__header__title">
+              <h1 id="page-title" class="jupiter">Change respondent account status</h1>
+            </div>
+
+          </div>
+
+          <div class="spoke__body">
+              <form method="post" action="{{ url_for('respondent_bp.change_account_status', party_id=party_id, ru_ref=ru_ref, change_status=change_status) }}" class="u-mt-l">
+
+              <dl class="description-list description-list-8">
+                <dt class="">
+                  Respondent:
+                </dt>
+                <dd class="">
+                  {{ respondent['firstName'] }} {{ respondent['lastName'] }}
+                </dd>
+                <dt class="description-list__name">
+                  Enrolments:
+                </dt>
+                <dd class="description-list__value">
+                  <ul class="editor-account-enrolments">
+                      {% if not enrolments %}
+                            No enrolments currently enabled
+                      {% else %}
+                          {% for enrolment in enrolments %}
+                        <li class="editor-account-enrolments__item">
+                                {{ enrolment['survey']['surveyRef'] }} {{ enrolment['survey']['shortName'] }} for {{ enrolment['business']['sampleUnitRef'] }} {{ enrolment['business']['name'] }} {% if enrolment['business']['trading_as']%} (trading as {{  enrolment['business']['trading_as'] }}) {% endif %}
+                        </li>
+                          {% endfor %}
+                      {% endif %}
+                  </ul>
+                </dd>
+              </dl>
+
+
+              <div id="action-to-confirm" class="u-mt-m">
+                {% if change_status == 'SUSPENDED' %}
+                  Suspend account?
+                 {% endif %}
+              </div>
+
+              <button type="submit" class="btn btn--primary u-mt-s">Confirm</button>
+
+              <div class="u-mt-xs">
+                <a href="{{ url_for('reporting_unit_bp.view_reporting_unit', ru_ref=ru_ref)}}">Cancel</a>
+              </div>
+
+            </form>
+
+          </div>
+
+
+        </div>
+
+      </div>
+
+      <div class="grid__col col-3@l">
+      </div>
+
+    </div>
+
+  </div>
+
+</div>
+
+
+</div>
+
+</body>
+</html>

@@ -1,6 +1,7 @@
 import logging
 
 import requests
+from requests.exceptions import HTTPError, RequestException
 from structlog import wrap_logger
 
 from response_operations_ui import app
@@ -84,6 +85,20 @@ def get_survey_ref_by_id(survey_id):
             logger.exception("Failed to resolve survey ref due to API error", survey_id=survey_id)
         except KeyError:
             logger.exception("Failed to resolve survey ref", survey_id=survey_id)
+
+
+def get_survey_by_id(survey_id):
+    logger.debug("Retrieve survey using survey id", survey_id=survey_id)
+    url = f'{app.config["SURVEY_SERVICE_URL"]}/surveys/{survey_id}'
+    response = requests.get(url, auth=app.config['BASIC_AUTH'])
+
+    try:
+        response.raise_for_status()
+    except (HTTPError, RequestException):
+        logger.exception("Survey retrieval failed", survey_id=survey_id)
+        raise ApiError(response)
+
+    return response.json()
 
 
 def update_survey_details(survey_ref, short_name, long_name):

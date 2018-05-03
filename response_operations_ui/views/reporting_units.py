@@ -1,6 +1,7 @@
 import logging
 
-from flask import Blueprint, render_template, request, redirect, url_for
+
+from flask import Blueprint, redirect, render_template, request, url_for
 from flask_login import login_required
 from structlog import wrap_logger
 
@@ -9,6 +10,7 @@ from response_operations_ui.controllers import case_controller
 from response_operations_ui.controllers import contact_details_controller
 from response_operations_ui.controllers import reporting_units_controllers
 from response_operations_ui.forms import EditContactDetailsForm, SearchForm
+
 
 logger = wrap_logger(logging.getLogger(__name__))
 
@@ -145,7 +147,7 @@ def confirm_change_enrolment_status(ru_ref):
                            survey_name=request.args['survey_name'], respondent_id=request.args['respondent_id'],
                            first_name=request.args['respondent_first_name'],
                            last_name=request.args['respondent_last_name'],
-                           change_flag=request.args['change_flag'])
+                           change_flag=request.args['change_flag'], ru_name=request.args['ru_name'])
 
 
 @reporting_unit_bp.route('/<ru_ref>/change-enrolment-status', methods=['POST'])

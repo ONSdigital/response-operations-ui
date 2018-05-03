@@ -168,6 +168,11 @@
             </td>
             <td name="tbl-respondent-status" class="table--cell">
               {{ respondent.status.title() }}
+              <div>
+                 {% if respondent.status.title() == 'Active'%}
+                   <a href="{{ url_for('respondent_bp.confirm_change_account_status', party_id=respondent.id, change_status='SUSPENDED', ru_ref=ru.sampleUnitRef)}}" id="deactivate-respondent-account">Suspend</a>
+                {% endif %}
+              </div>
             </td>
 
             <td name="tbl-enrolment-status" class="table--cell">
@@ -179,7 +184,7 @@
                 {% if respondent.enrolmentStatus == 'ENABLED' %}
                 <a href="{{ url_for('reporting_unit_bp.confirm_change_enrolment_status', ru_ref=ru.sampleUnitRef, survey_id=survey.id, survey_name=survey.shortName,
                                     respondent_id=respondent.id, respondent_first_name=respondent.firstName, respondent_last_name=respondent.lastName, business_id=ru.id,
-                                    trading_as=trading_as, change_flag='DISABLED')}}" id="change-enrolment-status">Disable</a>
+                                    trading_as=trading_as, change_flag='DISABLED', ru_name=ru.name)}}" id="change-enrolment-status">Disable</a>
                 {% elif respondent.enrolmentStatus == 'PENDING' %}
                 <a href="{{ url_for('reporting_unit_bp.view_resend_verification', ru_ref=ru_ref, email=respondent.emailAddress, party_id=respondent.id) }}">Re-send verification email</a>
                 {% endif %}
@@ -187,6 +192,7 @@
             </td>
 
             <td class="table--cell">
+              {% if respondent.status.title() == 'Active' %}
               <form action="{{ url_for('messages_bp.create_message')}}" method="post" id="create-message-view">
                 <button type="submit" name="create-message" id="create-message-button-{{ loop.index }}" value="create-message-view" class="button">Create message</button>
                 <input type="hidden" name="ru_ref" value="{{ ru.sampleUnitRef }}">
@@ -197,6 +203,7 @@
                 <input type="hidden" name="msg_to_name" value="{{ respondent.firstName }} {{ respondent.lastName }}">
                 <input type="hidden" name="msg_to" value="{{ respondent.id }}">
               </form>
+              {% endif %}
             </td>
           </tr>
           {% endfor %}

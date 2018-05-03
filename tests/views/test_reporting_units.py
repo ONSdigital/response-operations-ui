@@ -20,7 +20,7 @@ url_change_enrolment_status = f'{app.config["BACKSTAGE_API_URL"]}/v1/party/chang
 
 with open('tests/test_data/reporting_units/reporting_unit.json') as json_data:
     reporting_unit = json.load(json_data)
-with open('tests/test_data/reporting_units/respondent.json') as json_data:
+with open('tests/test_data/respondent/respondent.json') as json_data:
     respondent = json.load(json_data)
 with open('tests/test_data/reporting_units/edited_reporting_unit.json') as json_data:
     edited_reporting_unit = json.load(json_data)
@@ -378,7 +378,7 @@ class TestReportingUnits(unittest.TestCase):
         response = self.app.get("/reporting-units/ru_ref/change-enrolment-status"
                                 "?survey_id=test_id&survey_name=test_survey_name&respondent_id=test_id"
                                 "&respondent_first_name=first_name&respondent_last_name=last_name&business_id=test_id"
-                                "&trading_as=test_name&change_flag=DISABLED")
+                                "&trading_as=test_name&change_flag=DISABLED&ru_name=test")
 
         self.assertEqual(response.status_code, 200)
         self.assertIn("test_name".encode(), response.data)

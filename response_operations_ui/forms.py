@@ -68,6 +68,10 @@ class ChangeGroupStatusForm(FlaskForm):
     submit = SubmitField('Confirm')
 
 
+class Confirm(FlaskForm):
+    submit = SubmitField('Confirm')
+
+
 class EditSurveyDetailsForm(FlaskForm):
     long_name = StringField('long_name')
     short_name = StringField('short_name', validators=[InputRequired(message="Please remove spaces in short name")])
