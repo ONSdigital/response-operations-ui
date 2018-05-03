@@ -11,8 +11,8 @@ from response_operations_ui import app
 from response_operations_ui.controllers.survey_controllers import get_survey_short_name_by_id
 
 url_get_survey_list = f'{app.config["BACKSTAGE_API_URL"]}/v1/survey/surveys'
-url_get_legal_basis_list = f'{app.config["SURVEY_SERVICE_URL"]}/legal-bases'
-url_create_survey = f'{app.config["SURVEY_SERVICE_URL"]}/surveys'
+url_get_legal_basis_list = f'{app.config["SURVEY_URL"]}/legal-bases'
+url_create_survey = f'{app.config["SURVEY_URL"]}/surveys'
 
 with open('tests/test_data/survey/survey_list.json') as json_data:
     survey_list = json.load(json_data)
