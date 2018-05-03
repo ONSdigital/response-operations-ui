@@ -156,7 +156,7 @@
               {{ respondent.status.title() }}
               <div>
                  {% if respondent.status.title() == 'Active'%}
-                   <a href="{{ url_for('respondent_bp.confirm_change_account_status', party_id=respondent.id, change_status='SUSPENDED', ru_ref=ru.sampleUnitRef)}}">Suspend</a>
+                   <a href="{{ url_for('respondent_bp.confirm_change_account_status', party_id=respondent.id, change_status='SUSPENDED', ru_ref=ru.sampleUnitRef)}}" id="deactivate-respondent-account">Suspend</a>
                 {% endif %}
               </div>
             </td>
@@ -178,6 +178,7 @@
             </td>
 
             <td class="table--cell">
+              {% if respondent.status.title() == 'Active' %}
               <form action="{{ url_for('messages_bp.create_message')}}" method="post" id="create-message-view">
                 <button type="submit" name="create-message" id="create-message-button-{{ loop.index }}" value="create-message-view" class="button">Create message</button>
                 <input type="hidden" name="ru_ref" value="{{ ru.sampleUnitRef }}">
@@ -188,6 +189,7 @@
                 <input type="hidden" name="msg_to_name" value="{{ respondent.firstName }} {{ respondent.lastName }}">
                 <input type="hidden" name="msg_to" value="{{ respondent.id }}">
               </form>
+              {% endif %}
             </td>
           </tr>
           {% endfor %}
