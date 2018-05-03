@@ -78,7 +78,8 @@ def create_collection_exercise(survey_id, survey_name, user_description, period)
         "exerciseRef": period
     }
 
-    response = requests.post(url, json=collection_exercise_details, headers=header, auth=app.config['BASIC_AUTH'])
+    response = requests.post(url, json=collection_exercise_details, headers=header,
+                             auth=app.config['COLLECTION_EXERCISE_AUTH'])
     try:
         response.raise_for_status()
     except HTTPError:
@@ -92,7 +93,7 @@ def get_collection_exercises_by_survey(survey_id):
     logger.debug('Retrieving collection exercises', survey_id=survey_id)
     url = f'{app.config["COLLECTION_EXERCISE_URL"]}/collectionexercises/survey/{survey_id}'
 
-    response = requests.get(url, auth=app.config['BASIC_AUTH'])
+    response = requests.get(url, auth=app.config['COLLECTION_EXERCISE_AUTH'])
 
     try:
         response.raise_for_status()
