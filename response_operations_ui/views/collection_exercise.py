@@ -6,9 +6,9 @@ from flask_login import login_required
 from structlog import wrap_logger
 
 from response_operations_ui.common.mappers import convert_events_to_new_format, map_collection_exercise_state
-from response_operations_ui.controllers import collection_exercise_controllers
-from response_operations_ui.controllers import collection_instrument_controllers, sample_controllers
-from response_operations_ui.forms import EditCollectionExerciseDetailsForm
+from response_operations_ui.controllers import collection_instrument_controllers, sample_controllers, \
+    collection_exercise_controllers, survey_controllers
+from response_operations_ui.forms import EditCollectionExerciseDetailsForm, CreateCollectionExerciseDetailsForm
 
 logger = wrap_logger(logging.getLogger(__name__))
 
@@ -43,7 +43,6 @@ def view_collection_exercise(short_name, period, error=None, success_panel=None)
     processing = ce_state in ('EXECUTION_STARTED', 'EXECUTED', 'VALIDATED')
     validation_failed = ce_state == 'FAILEDVALIDATION'
     show_edit_period = ce_state not in ('READY_FOR_LIVE', 'LIVE')
-
     validation_errors = ce_details['collection_exercise']['validationErrors']
     missing_ci = validation_errors and any('MISSING_COLLECTION_INSTRUMENT' in unit['errors']
                                            for unit in validation_errors)
@@ -275,8 +274,10 @@ def _get_form_type(file_name):
 @collection_exercise_bp.route('/<short_name>/<period>/edit-collection-exercise-details', methods=['GET'])
 @login_required
 def view_collection_exercise_details(short_name, period):
+    logger.info("Retrieving collection exercise data for form", short_name=short_name, period=period)
     ce_details = collection_exercise_controllers.get_collection_exercise(short_name, period)
     form = EditCollectionExerciseDetailsForm(form=request.form)
+    survey_details = survey_controllers.get_survey(short_name)
     ce_state = ce_details['collection_exercise']['state']
     show_edit_period = ce_state not in ('READY_FOR_LIVE', 'LIVE')
 
@@ -284,16 +285,68 @@ def view_collection_exercise_details(short_name, period):
                            form=form, short_name=short_name, period=period, show_edit_period=show_edit_period,
                            ce_state=ce_details['collection_exercise']['state'],
                            user_description=ce_details['collection_exercise']['userDescription'],
-                           collection_exercise_id=ce_details['collection_exercise']['id'])
+                           collection_exercise_id=ce_details['collection_exercise']['id'],
+                           survey_id=survey_details['survey']['id'])
 
 
 @collection_exercise_bp.route('/<short_name>/<period>/edit-collection-exercise-details', methods=['POST'])
 @login_required
 def edit_collection_exercise_details(short_name, period):
-    form = request.form
+    form = EditCollectionExerciseDetailsForm(form=request.form)
+    if not form.validate():
+        logger.info("Failed validation, retrieving collection exercise data for form",
+                    short_name=short_name, period=period)
+        ce_details = collection_exercise_controllers.get_collection_exercise(short_name, period)
+        ce_state = ce_details['collection_exercise']['state']
+        survey_details = survey_controllers.get_survey(short_name)
+        show_edit_period = ce_state not in ('READY_FOR_LIVE', 'LIVE')
 
-    collection_exercise_controllers.update_collection_exercise_details(form.get('collection_exercise_id'),
-                                                                       form.get('user_description'),
-                                                                       form.get('period'))
+        return render_template('edit-collection-exercise-details.html', survey_ref=ce_details['survey']['surveyRef'],
+                               form=form, short_name=short_name, period=period, show_edit_period=show_edit_period,
+                               ce_state=ce_details['collection_exercise']['state'], errors=form.errors,
+                               user_description=ce_details['collection_exercise']['userDescription'],
+                               collection_exercise_id=ce_details['collection_exercise']['id'],
+                               survey_id=survey_details['survey']['id'])
 
-    return redirect(url_for('surveys_bp.view_survey', short_name=short_name))
+    else:
+        logger.info("Updating collection exercise details", short_name=short_name, period=period)
+        form = request.form
+        collection_exercise_controllers.update_collection_exercise_details(form.get('collection_exercise_id'),
+                                                                           form.get('user_description'),
+                                                                           form.get('period'))
+
+        return redirect(url_for('surveys_bp.view_survey', short_name=short_name, ce_updated='True'))
+
+
+@collection_exercise_bp.route('/<survey_ref>-<short_name>/create-collection-exercise', methods=['GET'])
+@login_required
+def get_create_collection_exercise_form(survey_ref, short_name):
+    logger.info("Retrieving survey data for form", short_name=short_name, survey_ref=survey_ref)
+    form = CreateCollectionExerciseDetailsForm(form=request.form)
+    survey_details = survey_controllers.get_survey(short_name)
+    return render_template('create-collection-exercise.html', form=form, short_name=short_name,
+                           survey_ref=survey_ref, survey_id=survey_details['survey']['id'],
+                           survey_name=survey_details['collection_exercises'][0]['name'])
+
+
+@collection_exercise_bp.route('/<survey_ref>-<short_name>/create-collection-exercise', methods=['POST'])
+@login_required
+def create_collection_exercise(survey_ref, short_name):
+    form = CreateCollectionExerciseDetailsForm(form=request.form)
+    if not form.validate():
+        logger.info("Failed validation, retrieving survey data for form", short_name=short_name, survey_ref=survey_ref)
+        survey_details = survey_controllers.get_survey(short_name)
+        return render_template('create-collection-exercise.html', form=form, short_name=short_name, errors=form.errors,
+                               survey_ref=survey_ref, survey_id=survey_details['survey']['id'],
+                               survey_name=survey_details['collection_exercises'][0]['name'])
+
+    else:
+        logger.info("Creating collection exercise for survey", short_name=short_name, survey_ref=survey_ref)
+        form = request.form
+        collection_exercise_controllers.create_collection_exercise(form.get('hidden_survey_id'),
+                                                                   form.get('hidden_survey_name'),
+                                                                   form.get('user_description'),
+                                                                   form.get('period'))
+
+        return redirect(url_for('surveys_bp.view_survey', short_name=short_name, ce_created='True',
+                                new_period=form.get('period')))
