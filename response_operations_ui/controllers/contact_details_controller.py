@@ -22,7 +22,7 @@ def get_contact_details(respondent_id):
 
     logger.debug('Successfully retrieved contact details', id=respondent_id)
 
-    return response.json().get("respondent_party")
+    return response.json()
 
 
 def update_contact_details(ru_ref, respondent_id, form):

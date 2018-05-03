@@ -6,7 +6,7 @@ import requests_mock
 from config import TestingConfig
 from response_operations_ui import app
 
-respondent_party_id = "cd592e0f-8d07-407b-b75d-e01fbdae8233"
+respondent_party_id = "2e73f1c2-5ca0-473f-8d46-a358c3c3ee52"
 backstage_api_url = app.config["BACKSTAGE_API_URL"]
 CONNECTION_ERROR = 'Connection error'
 
@@ -195,7 +195,7 @@ class TestReportingUnits(unittest.TestCase):
         self.assertEqual(response.status_code, 200)
         self.assertIn("Jacky".encode(), response.data)
         self.assertIn("Turner".encode(), response.data)
-        self.assertIn("7971161859".encode(), response.data)
+        self.assertIn("7971161867".encode(), response.data)
 
     @requests_mock.mock()
     def test_get_contact_details_fail(self, mock_request):

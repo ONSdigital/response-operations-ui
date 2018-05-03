@@ -13,7 +13,7 @@ logger = wrap_logger(logging.getLogger(__name__))
 
 def get_business_by_party_id(party_id):
     logger.debug("Get business details")
-    url = f'{app.config["PARTY_SERVICE_URL"]}/party-api/v1/businesses/id/{party_id}'
+    url = f'{app.config["PARTY_URL"]}/party-api/v1/businesses/id/{party_id}'
     response = requests.get(url, auth=app.config['BASIC_AUTH'])
 
     try:
@@ -27,7 +27,7 @@ def get_business_by_party_id(party_id):
 
 def get_respondent_by_party_id(party_id):
     logger.debug("Get respondent details")
-    url = f'{app.config["PARTY_SERVICE_URL"]}/party-api/v1/respondents/id/{party_id}'
+    url = f'{app.config["PARTY_URL"]}/party-api/v1/respondents/id/{party_id}'
     response = requests.get(url=url, auth=app.config['BASIC_AUTH'])
 
     try:
@@ -61,7 +61,7 @@ def get_respondent_enrolments(respondent, enrolment_status=None):
 
 def change_respondent_account_status(party_id, status_change):
     logger.debug('Changing respondent account status', party_id=party_id, status_change=status_change)
-    url = f'{app.config["PARTY_SERVICE_URL"]}/party-api/v1/respondents/edit-account-status/{party_id}'
+    url = f'{app.config["PARTY_URL"]}/party-api/v1/respondents/edit-account-status/{party_id}'
     response = requests.put(url, auth=app.config['BASIC_AUTH'], json={'status_change': status_change})
 
     if response.status_code != 200:
@@ -76,7 +76,7 @@ def search_respondent_by_email(email):
     request_json = {
         'email': email
     }
-    url = f'{app.config["PARTY_SERVICE_URL"]}/party-api/v1/respondents/email'
+    url = f'{app.config["PARTY_URL"]}/party-api/v1/respondents/email'
     response = requests.get(url, json=request_json, auth=app.config['BASIC_AUTH'])
 
     if response.status_code == 404:

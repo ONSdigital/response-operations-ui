@@ -21,9 +21,13 @@ class Config(object):
 
     # Service URLs and Service specific config
     BACKSTAGE_API_URL = os.getenv('BACKSTAGE_API_URL')
-    PARTY_SERVICE_URL = os.getenv('PARTY_SERVICE_URL')
+    PARTY_URL = os.getenv('PARTY_SERVICE_URL')
+    PARTY_USERNAME = os.getenv('PARTY_USERNAME')
+    PARTY_PASSWORD = os.getenv('PARTY_PASSWORD')
     SECURE_MESSAGE_URL = os.getenv('SECURE_MESSAGE_URL')
-    SURVEY_SERVICE_URL = os.getenv('SURVEY_SERVICE_URL')
+    SURVEY_URL = os.getenv('SURVEY_URL')
+    SURVEY_USERNAME = os.getenv('SURVEY_USERNAME')
+    SURVEY_PASSWORD = os.getenv('SURVEY_PASSWORD')
     UAA_SERVICE_URL = os.getenv('UAA_SERVICE_URL')
     RAS_SECURE_MESSAGING_JWT_SECRET = os.getenv('RAS_SECURE_MESSAGING_JWT_SECRET')
 
@@ -40,9 +44,13 @@ class DevelopmentConfig(Config):
 
     # Service URLS and Service specific config
     BACKSTAGE_API_URL = os.getenv('BACKSTAGE_API_URL', 'http://localhost:8001/backstage-api')
-    PARTY_SERVICE_URL = os.getenv('PARTY_SERVICE_URL', 'http://localhost:8081')
+    PARTY_URL = os.getenv('PARTY_URL', 'http://localhost:8081')
+    PARTY_USERNAME = os.getenv('PARTY_USERNAME', 'admin')
+    PARTY_PASSWORD = os.getenv('PARTY_PASSWORD', 'secret')
     SECURE_MESSAGE_URL = os.getenv('SECURE_MESSAGE_URL', 'http://localhost:5050')
-    SURVEY_SERVICE_URL = os.getenv('SURVEY_SERVICE_URL', 'http://localhost:8080/')
+    SURVEY_URL = os.getenv('SURVEY_URL', 'http://localhost:8080/')
+    SURVEY_USERNAME = os.getenv('SURVEY_USERNAME', 'admin')
+    SURVEY_PASSWORD = os.getenv('SURVEY_PASSWORD', 'secret')
     UAA_SERVICE_URL = os.getenv('UAA_SERVICE_URL', 'http://localhost:9080')
     RAS_SECURE_MESSAGING_JWT_SECRET = os.getenv('RAS_SECURE_MESSAGING_JWT_SECRET', 'testsecret')
 

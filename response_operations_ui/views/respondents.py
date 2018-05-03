@@ -50,7 +50,7 @@ def respondent_details(respondent_id):
     ]
 
     respondent['status'] = respondent['status'].title()
-    return render_template('respondent.html', respondent=respondent['respondent_party'], breadcrumbs=breadcrumbs)
+    return render_template('respondent.html', respondent=respondent, breadcrumbs=breadcrumbs)
 
 
 @respondent_bp.route('/confirm-change-respondent-account-status', methods=['GET'])

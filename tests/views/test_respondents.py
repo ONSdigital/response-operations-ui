@@ -8,16 +8,16 @@ from response_operations_ui import app
 from response_operations_ui.controllers.party_controller import get_respondent_enrolments, search_respondent_by_email
 
 business_party_id = "b3ba864b-7cbc-4f44-84fe-88dc018a1a4c"
-party_id = "cd592e0f-8d07-407b-b75d-e01fbdae8233"
+party_id = "2e73f1c2-5ca0-473f-8d46-a358c3c3ee52"
 survey_id = "cb0711c3-0ac8-41d3-ae0e-567e5ea1ef87"
 backstage_api_url = app.config["BACKSTAGE_API_URL"]
 url_get_reporting_unit = f'{backstage_api_url}/v1/reporting-unit/50012345678'
-get_respondent_by_email_url = f'{app.config["PARTY_SERVICE_URL"]}/party-api/v1/respondents/email'
-get_respondent_by_id_url = f'{app.config["PARTY_SERVICE_URL"]}/party-api/v1/respondents/id/{party_id}'
+get_respondent_by_email_url = f'{app.config["PARTY_URL"]}/party-api/v1/respondents/email'
+get_respondent_by_id_url = f'{app.config["PARTY_URL"]}/party-api/v1/respondents/id/{party_id}'
 put_respondent_account_status_by_id_url = \
-    f'{app.config["PARTY_SERVICE_URL"]}/party-api/v1/respondents/edit-account-status/{party_id}'
-get_business_by_id_url = f'{app.config["PARTY_SERVICE_URL"]}/party-api/v1/businesses/id/{business_party_id}'
-get_survey_by_id_url = f'{app.config["SURVEY_SERVICE_URL"]}/surveys/{survey_id}'
+    f'{app.config["PARTY_URL"]}/party-api/v1/respondents/edit-account-status/{party_id}'
+get_business_by_id_url = f'{app.config["PARTY_URL"]}/party-api/v1/businesses/id/{business_party_id}'
+get_survey_by_id_url = f'{app.config["SURVEY_URL"]}/surveys/{survey_id}'
 
 with open('tests/test_data/respondent/respondent.json') as json_data:
     respondent = json.load(json_data)
@@ -57,7 +57,7 @@ class TestRespondents(unittest.TestCase):
     @requests_mock.mock()
     def test_get_respondent_by_email_success(self, mock_request):
         email = 'Jacky.Turner@email.com'
-        mock_request.get(get_respondent_by_email_url, json=respondent['respondent_party'], status_code=200)
+        mock_request.get(get_respondent_by_email_url, json=respondent, status_code=200)
 
         response = search_respondent_by_email(email)
 
@@ -85,7 +85,7 @@ class TestRespondents(unittest.TestCase):
     @requests_mock.mock()
     def test_search_respondent_by_email_success(self, mock_request):
         email = 'Jacky.Turner@email.com'
-        mock_request.get(get_respondent_by_email_url, json=respondent['respondent_party'], status_code=200)
+        mock_request.get(get_respondent_by_email_url, json=respondent, status_code=200)
         mock_request.get(get_respondent_by_id_url, json=respondent, status_code=200)
 
         response = self.app.post("/respondents", data={"query": email}, follow_redirects=True)
@@ -104,6 +104,7 @@ class TestRespondents(unittest.TestCase):
     @requests_mock.mock()
     def test_suspend_respondent_account_status_success(self, mock_request):
         mock_request.put(put_respondent_account_status_by_id_url, json={"status_change": "SUSPENDED"}, status_code=200)
+        mock_request.get(get_business_by_id_url, json=reporting_unit, status_code=200)
         mock_request.get(url_get_reporting_unit, json=reporting_unit)
         mock_request.get(f'{app.config["BACKSTAGE_API_URL"]}/v1/case/status/BLOCKS/201801/50012345678',
                          json=self.case_group_status)
@@ -116,7 +117,7 @@ class TestRespondents(unittest.TestCase):
 
         response = self.app.post(
             f'respondents/change-respondent-account-status?'
-            f'party_id={respondent["respondent_party"]["id"]}&ru_ref=50012345678&change_status=SUSPENDED',
+            f'party_id={respondent["id"]}&ru_ref=50012345678&change_status=SUSPENDED',
             follow_redirects=True)
 
         self.assertEquals(response.status_code, 200)
@@ -127,7 +128,7 @@ class TestRespondents(unittest.TestCase):
 
         response = self.app.post(
             f'respondents/change-respondent-account-status?'
-            f'party_id={respondent["respondent_party"]["id"]}&ru_ref=50012345678&change_status=SUSPENDED',
+            f'party_id={respondent["id"]}&ru_ref=50012345678&change_status=SUSPENDED',
             follow_redirects=True)
 
         self.assertEqual(response.status_code, 500)
@@ -141,7 +142,7 @@ class TestRespondents(unittest.TestCase):
 
         response = self.app.get(
             f'/respondents/confirm-change-respondent-account-status?'
-            f'party_id={respondent["respondent_party"]["id"]}&ru_ref=50012345678&change_status=SUSPENDED')
+            f'party_id={respondent["id"]}&ru_ref=50012345678&change_status=SUSPENDED')
 
         self.assertEqual(response.status_code, 200)
         self.assertIn("Suspend account?".encode(), response.data)
@@ -154,7 +155,7 @@ class TestRespondents(unittest.TestCase):
 
         response = self.app.get(
             f'/respondents/confirm-change-respondent-account-status?'
-            f'party_id={respondent["respondent_party"]["id"]}&ru_ref=50012345678&change_status=SUSPENDED')
+            f'party_id={respondent["id"]}&ru_ref=50012345678&change_status=SUSPENDED')
 
         self.assertEqual(response.status_code, 200)
         self.assertIn("No enrolments currently enabled".encode(), response.data)
@@ -167,7 +168,7 @@ class TestRespondents(unittest.TestCase):
 
         response = self.app.get(
             f'/respondents/confirm-change-respondent-account-status?'
-            f'party_id={respondent["respondent_party"]["id"]}&ru_ref=50012345678&change_status=SUSPENDED',
+            f'party_id={respondent["id"]}&ru_ref=50012345678&change_status=SUSPENDED',
             follow_redirects=True)
 
         self.assertEqual(response.status_code, 500)
@@ -181,7 +182,7 @@ class TestRespondents(unittest.TestCase):
 
         response = self.app.get(
             f'/respondents/confirm-change-respondent-account-status?'
-            f'party_id={respondent["respondent_party"]["id"]}&ru_ref=50012345678&change_status=SUSPENDED',
+            f'party_id={respondent["id"]}&ru_ref=50012345678&change_status=SUSPENDED',
             follow_redirects=True)
 
         self.assertEqual(response.status_code, 500)
@@ -195,7 +196,7 @@ class TestRespondents(unittest.TestCase):
 
         response = self.app.get(
             f'/respondents/confirm-change-respondent-account-status?'
-            f'party_id={respondent["respondent_party"]["id"]}&ru_ref=50012345678&change_status=SUSPENDED',
+            f'party_id={respondent["id"]}&ru_ref=50012345678&change_status=SUSPENDED',
             follow_redirects=True)
 
         self.assertEqual(response.status_code, 500)
@@ -206,7 +207,7 @@ class TestRespondents(unittest.TestCase):
         mock_request.get(get_business_by_id_url, json=reporting_unit, status_code=200)
         mock_request.get(get_survey_by_id_url, json=survey, status_code=200)
 
-        enrolments = get_respondent_enrolments(respondent['respondent_party'])
+        enrolments = get_respondent_enrolments(respondent)
 
         self.assertEqual(enrolments[0]['business']['reporting_unit']['id'], business_party_id)
         self.assertEqual(enrolments[0]['survey']['survey']['id'], survey_id)

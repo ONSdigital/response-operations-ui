@@ -1,5 +1,4 @@
 {
-    "respondent_party": {
     "associations": [
         {
             "enrolments": [
@@ -20,5 +19,4 @@
     "id": "cd592e0f-8d07-407b-b75d-e01fbdae8233",
     "sampleUnitType": "BI",
     "status": "ACTIVE"
-}
 }
