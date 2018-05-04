@@ -347,3 +347,19 @@ class TestSurvey(unittest.TestCase):
 
         self.assertEqual(response.status_code, 500)
         self.assertIn("Error 500 - Server error".encode(), response.data)
+
+    @requests_mock.mock()
+    def test_update_survey_details_failed_validation_short_name_has_spaces(self, mock_request):
+        changed_survey_details = {
+            "hidden_survey_ref": '222',
+            "long_name": 'New Survey Long Name',
+            "short_name": 'QBX spaces'
+        }
+        mock_request.get(url_get_survey_list, json=survey_list)
+        mock_request.put(url_update_survey_details)
+        mock_request.get(url_get_survey_list, json=updated_survey_list)
+        mock_request.get(url_get_survey_by_short_name, json=survey_info)
+        response = self.app.post(f"/surveys/edit-survey-details/bres", data=changed_survey_details,
+                                 follow_redirects=True)
+        self.assertEqual(response.status_code, 200)
+        self.assertIn("Error updating survey details".encode(), response.data)
