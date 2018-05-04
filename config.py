@@ -16,6 +16,7 @@ class Config(object):
     SURVEY_URL = os.getenv('SURVEY_URL')
     SURVEY_USERNAME = os.getenv('SURVEY_USERNAME')
     SURVEY_PASSWORD = os.getenv('SURVEY_PASSWORD')
+    SURVEY_AUTH = (SURVEY_USERNAME, SURVEY_PASSWORD)
     COLLECTION_EXERCISE_URL = os.getenv('COLLECTION_EXERCISE_URL')
     SESSION_TYPE = "redis"
     PERMANENT_SESSION_LIFETIME = os.getenv('PERMANENT_SESSION_LIFETIME', 43200)
@@ -36,6 +37,7 @@ class DevelopmentConfig(Config):
     SURVEY_URL = os.getenv('SURVEY_URL', 'http://localhost:8080')
     SURVEY_USERNAME = os.getenv('SURVEY_USERNAME', 'admin')
     SURVEY_PASSWORD = os.getenv('SURVEY_PASSWORD', 'secret')
+    SURVEY_AUTH = (SURVEY_USERNAME, SURVEY_PASSWORD)
     COLLECTION_EXERCISE_URL = os.getenv('COLLECTION_EXERCISE_URL', 'http://localhost:8145')
     REDIS_HOST = os.getenv('REDIS_HOST', "localhost")
     REDIS_PORT = os.getenv('REDIS_PORT', 7379)

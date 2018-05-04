@@ -105,7 +105,7 @@ def update_survey_details(survey_ref, short_name, long_name):
 def get_legal_basis_list():
     logger.debug('Retrieving legal basis list')
     url = f'{app.config["SURVEY_URL"]}/legal-bases'
-    response = requests.get(url, auth=(app.config['SURVEY_USERNAME'], app.config['SURVEY_PASSWORD']))
+    response = requests.get(url, auth=app.config['SURVEY_AUTH'])
     if response.status_code != 200:
         raise ApiError(response)
 
