@@ -1,0 +1,22 @@
+[
+    {
+        "ref": "GovERD",
+        "longName": "GovERD"
+    },
+    {
+        "ref": "STA1947",
+        "longName": "Statistics of Trade Act 1947"
+    },
+    {
+        "ref": "STA1947_BEIS",
+        "longName": "Statistics of Trade Act 1947 - BEIS"
+    },
+    {
+        "ref": "Vol",
+        "longName": "Voluntary Not Stated"
+    },
+    {
+        "ref": "Vol_BEIS",
+        "longName": "Voluntary - BEIS"
+    }
+]

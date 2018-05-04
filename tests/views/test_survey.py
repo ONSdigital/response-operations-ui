@@ -11,9 +11,15 @@ from response_operations_ui import app
 from response_operations_ui.controllers.survey_controllers import get_survey_short_name_by_id
 
 url_get_survey_list = f'{app.config["BACKSTAGE_API_URL"]}/v1/survey/surveys'
+url_get_legal_basis_list = f'{app.config["SURVEY_URL"]}/legal-bases'
+url_create_survey = f'{app.config["SURVEY_URL"]}/surveys'
+
 with open('tests/test_data/survey/survey_list.json') as json_data:
     survey_list = json.load(json_data)
+with open('tests/test_data/survey/legal_basis_list.json') as json_data:
+    legal_basis_list = json.load(json_data)
 url_get_survey_by_short_name = f'{app.config["BACKSTAGE_API_URL"]}/v1/survey/shortname/bres'
+url_get_survey_by_qbs = f'{app.config["BACKSTAGE_API_URL"]}/v1/survey/shortname/QBS'
 with open('tests/test_data/survey/survey.json') as json_data:
     survey_info = json.load(json_data)
 with open('tests/test_data/survey/survey_states.json') as json_data:
@@ -21,6 +27,8 @@ with open('tests/test_data/survey/survey_states.json') as json_data:
 url_update_survey_details = f'{app.config["BACKSTAGE_API_URL"]}/v1/survey/edit-survey-details/222'
 with open('tests/test_data/survey/updated_survey_list.json') as json_data:
     updated_survey_list = json.load(json_data)
+with open('tests/test_data/survey/create_survey_response.json') as json_data:
+    create_survey_response = json.load(json_data)
 
 
 class TestSurvey(unittest.TestCase):
@@ -190,12 +198,155 @@ class TestSurvey(unittest.TestCase):
         self.assertIn("Server error (Error 500)".encode(), response.data)
 
     @requests_mock.mock()
+    def test_update_survey_details_failed_validation(self, mock_request):
+        changed_survey_details = {
+            "hidden_survey_ref": '222',
+            "long_name": 'New Survey Long Name',
+            "short_name": 'Q BX'
+        }
+        mock_request.get(url_get_survey_list, json=survey_list)
+        mock_request.put(url_update_survey_details)
+        mock_request.get(url_get_survey_list, json=updated_survey_list)
+        mock_request.get(url_get_survey_by_qbs, json=survey_info)
+        response = self.app.post(f"/surveys/edit-survey-details/QBS", data=changed_survey_details,
+                                 follow_redirects=True)
+        self.assertIn("Error updating survey details".encode(), response.data)
+        self.assertEqual(response.status_code, 200)
+
+    @requests_mock.mock()
     def test_get_survey_details(self, mock_request):
         mock_request.get(url_get_survey_list, json=survey_list)
         mock_request.get(url_get_survey_by_short_name, json=survey_info)
         response = self.app.get(f"surveys/edit-survey-details/bres", follow_redirects=True)
         self.assertEqual(response.status_code, 200)
         self.assertIn("221".encode(), response.data)
+
+    @requests_mock.mock()
+    def test_get_survey_create(self, mock_request):
+        mock_request.get(url_get_legal_basis_list, json=legal_basis_list)
+
+        response = self.app.get(f"surveys/create")
+
+        self.assertEqual(response.status_code, 200)
+
+        # Check form fields all present and correct
+        self.assertIn("id=\"survey_ref\"".encode(), response.data)
+        self.assertIn("id=\"long_name\"".encode(), response.data)
+        self.assertIn("id=\"short_name\"".encode(), response.data)
+        self.assertIn("id=\"legal_basis\"".encode(), response.data)
+
+        # Check legal bases populated - slightly brittle but these really don't change very often
+        self.assertIn("\"STA1947\"".encode(), response.data)
+        self.assertIn("\"GovERD\"".encode(), response.data)
+        self.assertIn("\"Vol\"".encode(), response.data)
+        self.assertIn("\"STA1947_BEIS\"".encode(), response.data)
+        self.assertIn("\"Vol_BEIS\"".encode(), response.data)
+
+    @requests_mock.mock()
+    def test_create_survey_ok(self, mock_request):
+        create_survey_request = {
+            "survey_ref": "999",
+            "long_name": "Test Survey",
+            "short_name": "TEST",
+            "legal_basis": "STA1947"
+        }
+        mock_request.get(url_get_legal_basis_list, json=legal_basis_list)
+        mock_request.post(url_create_survey, json=create_survey_response, status_code=201)
+        mock_request.get(url_get_survey_list, json=updated_survey_list)
+
+        response = self.app.post(f"surveys/create", data=create_survey_request, follow_redirects=True)
+
+        self.assertEqual(response.status_code, 200)
+
+    @requests_mock.mock()
+    def test_create_survey_conflict(self, mock_request):
+        error_message = "XXX ERROR MESSAGE XXX"
+        create_survey_request = {
+            "survey_ref": "999",
+            "long_name": "Test Survey",
+            "short_name": "TEST",
+            "legal_basis": "STA1947"
+        }
+        mock_request.get(url_get_legal_basis_list, json=legal_basis_list)
+        mock_request.post(url_create_survey, text=error_message, status_code=409)
+
+        response = self.app.post(f"surveys/create", data=create_survey_request)
+
+        self.assertEqual(response.status_code, 200)
+
+        # Check for error message
+        self.assertIn(error_message.encode(), response.data)
+
+    @requests_mock.mock()
+    def test_create_survey_bad_request(self, mock_request):
+        error_message = "XXX ERROR MESSAGE XXX"
+        create_survey_request = {
+            "survey_ref": "999",
+            "long_name": "Test Survey",
+            "short_name": "TEST",
+            "legal_basis": "STA1947"
+        }
+        mock_request.get(url_get_legal_basis_list, json=legal_basis_list)
+        mock_request.post(url_create_survey, text=error_message, status_code=400)
+
+        response = self.app.post(f"surveys/create", data=create_survey_request)
+
+        self.assertEqual(response.status_code, 200)
+
+        # Check for error message
+        self.assertIn(error_message.encode(), response.data)
+
+    @requests_mock.mock()
+    def test_create_survey_bad_survey_ref(self, mock_request):
+        create_survey_request = {
+            "survey_ref": "BAD!",
+            "long_name": "Test Survey",
+            "short_name": "TEST",
+            "legal_basis": "STA1947"
+        }
+        mock_request.get(url_get_legal_basis_list, json=legal_basis_list)
+        mock_request.post(url_create_survey, json=create_survey_response, status_code=201)
+
+        response = self.app.post(f"surveys/create", data=create_survey_request)
+
+        self.assertEqual(response.status_code, 200)
+
+        # Check error div is present
+        self.assertIn("id=\"save-error\"".encode(), response.data)
+
+    @requests_mock.mock()
+    def test_create_survey_bad_shortname(self, mock_request):
+        create_survey_request = {
+            "survey_ref": "999",
+            "long_name": "Test Survey",
+            "short_name": "TE ST",
+            "legal_basis": "STA1947"
+        }
+        mock_request.get(url_get_legal_basis_list, json=legal_basis_list)
+        mock_request.post(url_create_survey, json=create_survey_response, status_code=201)
+
+        response = self.app.post(f"surveys/create", data=create_survey_request)
+
+        self.assertEqual(response.status_code, 200)
+
+        # Check error div is present
+        self.assertIn("id=\"save-error\"".encode(), response.data)
+
+    @requests_mock.mock()
+    def test_create_survey_internal_server_error(self, mock_request):
+        create_survey_request = {
+            "survey_ref": "999",
+            "long_name": "Test Survey",
+            "short_name": "TEST",
+            "legal_basis": "STA1947"
+        }
+        mock_request.get(url_get_legal_basis_list, json=legal_basis_list)
+        mock_request.post(url_create_survey, text="Internal server error", status_code=500)
+
+        response = self.app.post(f"surveys/create", data=create_survey_request, follow_redirects=True)
+
+        self.assertEqual(response.status_code, 500)
+        self.assertIn("Error 500 - Server error".encode(), response.data)
 
     @requests_mock.mock()
     def test_update_survey_details_failed_validation_short_name_has_spaces(self, mock_request):
