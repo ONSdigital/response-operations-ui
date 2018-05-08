@@ -28,7 +28,7 @@ def respondent_search():
         if respondent.get('id'):
             return redirect(url_for('respondent_bp.respondent_details', respondent_id=respondent['id']))
         else:
-            response = respondent['Response']
+            response = "No Respondent found."
 
     return render_template('search-respondent.html', response=response, form=form, breadcrumbs=breadcrumbs)
 

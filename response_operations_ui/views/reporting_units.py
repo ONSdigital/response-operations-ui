@@ -7,7 +7,7 @@ from structlog import wrap_logger
 
 from response_operations_ui.common.mappers import map_ce_response_status
 from response_operations_ui.controllers import case_controller
-from response_operations_ui.controllers import contact_details_controller
+from response_operations_ui.controllers import party_controller
 from response_operations_ui.controllers import reporting_units_controllers
 from response_operations_ui.forms import EditContactDetailsForm, SearchForm
 
@@ -69,7 +69,7 @@ def view_reporting_unit(ru_ref):
 @reporting_unit_bp.route('/<ru_ref>/edit-contact-details/<respondent_id>', methods=['GET'])
 @login_required
 def view_contact_details(ru_ref, respondent_id):
-    respondent_details = contact_details_controller.get_contact_details(respondent_id)
+    respondent_details = party_controller.get_respondent_by_party_id(respondent_id)
 
     form = EditContactDetailsForm(form=request.form, default_values=respondent_details)
 
@@ -82,7 +82,7 @@ def view_contact_details(ru_ref, respondent_id):
 def edit_contact_details(ru_ref, respondent_id):
 
     form = request.form
-    contact_details_changed = contact_details_controller.update_contact_details(ru_ref, respondent_id, form)
+    contact_details_changed = party_controller.update_contact_details(ru_ref, respondent_id, form)
 
     ui_message = 'No updates were necessary'
     if 'emailAddress' in contact_details_changed:
@@ -112,7 +112,7 @@ def search_reporting_units():
 @login_required
 def view_resend_verification(ru_ref, party_id):
     logger.debug("Re-send verification email requested", ru_ref=ru_ref, party_id=party_id)
-    respondent = contact_details_controller.get_contact_details(party_id)
+    respondent = party_controller.get_respondent_by_party_id(party_id)
     return render_template('re-send-verification-email.html', ru_ref=ru_ref, email=respondent['emailAddress'])
 
 
