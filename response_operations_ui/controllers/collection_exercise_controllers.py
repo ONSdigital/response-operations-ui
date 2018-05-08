@@ -1,6 +1,7 @@
 import logging
 
 import requests
+from requests.exceptions import HTTPError
 from structlog import wrap_logger
 
 from response_operations_ui import app
@@ -95,3 +96,42 @@ def update_collection_exercise_details(collection_exercise_id, user_description,
         raise ApiError(response)
 
     logger.debug('Successfully updated collection exercise details', collection_exercise_id=collection_exercise_id)
+
+
+def create_collection_exercise(survey_id, survey_name, user_description, period):
+    logger.debug('Creating a new collection exercise for', survey_id=survey_id, survey_name=survey_name)
+    header = {'Content-Type': "application/json"}
+    url = f'{app.config["COLLECTION_EXERCISE_URL"]}/collectionexercises'
+
+    collection_exercise_details = {
+        "surveyId": survey_id,
+        "name": survey_name,
+        "userDescription": user_description,
+        "exerciseRef": period
+    }
+
+    response = requests.post(url, json=collection_exercise_details, headers=header,
+                             auth=app.config['COLLECTION_EXERCISE_AUTH'])
+    try:
+        response.raise_for_status()
+    except HTTPError:
+        logger.exception('Error creating new collection exercise', survey_id=survey_id)
+        return ApiError(response)
+
+    logger.debug('Successfully created collection exercise for', survey_id=survey_id, survey_name=survey_name)
+
+
+def get_collection_exercises_by_survey(survey_id):
+    logger.debug('Retrieving collection exercises', survey_id=survey_id)
+    url = f'{app.config["COLLECTION_EXERCISE_URL"]}/collectionexercises/survey/{survey_id}'
+
+    response = requests.get(url, auth=app.config['COLLECTION_EXERCISE_AUTH'])
+
+    try:
+        response.raise_for_status()
+    except HTTPError:
+        logger.exception('Failed to retrieve collection exercises by survey', survey_id=survey_id)
+        return ApiError(response)
+
+    logger.debug('Successfully retrieved collection exercises by survey', survey_id=survey_id)
+    return response.json()

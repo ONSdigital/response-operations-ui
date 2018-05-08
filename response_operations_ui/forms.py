@@ -1,14 +1,18 @@
 import calendar
 import logging
+import re
 
 from flask_wtf import FlaskForm
 from structlog import wrap_logger
-from wtforms import HiddenField, Label, PasswordField, \
+from wtforms import HiddenField, IntegerField, Label, PasswordField, \
     SelectField, StringField, SubmitField, TextAreaField, ValidationError
 from wtforms.validators import InputRequired, Length
 
+from response_operations_ui.controllers import collection_exercise_controllers, survey_controllers
 
 logger = wrap_logger(logging.getLogger(__name__))
+
+survey_ref_validation = re.compile("^[0-9]{1,6}$")
 
 
 class LoginForm(FlaskForm):
@@ -62,8 +66,20 @@ class EditContactDetailsForm(FlaskForm):
 
 class EditCollectionExerciseDetailsForm(FlaskForm):
     user_description = StringField('user_description')
-    period = StringField('period')
+    period = IntegerField('period')
     collection_exercise_id = HiddenField('collection_exercise_id')
+    hidden_survey_id = HiddenField('hidden_survey_id')
+
+    @staticmethod
+    def validate_period(form, field):
+        hidden_survey_id = form.hidden_survey_id.data
+        ce_details = collection_exercise_controllers.get_collection_exercises_by_survey(hidden_survey_id)
+        inputted_period = field.data
+        if inputted_period is None:
+            raise ValidationError('Please enter numbers only for the period')
+        for ce in ce_details:
+            if ce['exerciseRef'] == str(inputted_period):
+                raise ValidationError('Please enter a period not in use')
 
 
 class ChangeGroupStatusForm(FlaskForm):
@@ -99,6 +115,24 @@ class UpdateEventDateForm(FlaskForm):
             raise ValidationError('Day out of range for month')
 
 
+class CreateCollectionExerciseDetailsForm(FlaskForm):
+    user_description = StringField('user_description')
+    period = IntegerField('period')
+    hidden_survey_id = HiddenField('hidden_survey_id')
+    hidden_survey_name = HiddenField('hidden_survey_name')
+
+    @staticmethod
+    def validate_period(form, field):
+        hidden_survey_id = form.hidden_survey_id.data
+        ce_details = collection_exercise_controllers.get_collection_exercises_by_survey(hidden_survey_id)
+        inputted_period = field.data
+        if inputted_period is None:
+            raise ValidationError('Please enter numbers only for the period')
+        for ce in ce_details:
+            if ce['exerciseRef'] == str(inputted_period):
+                raise ValidationError('Please enter a period not in use')
+
+
 class EditSurveyDetailsForm(FlaskForm):
     long_name = StringField('long_name')
     short_name = StringField('short_name', validators=[InputRequired(message="Please remove spaces in short name")])
@@ -109,3 +143,32 @@ class EditSurveyDetailsForm(FlaskForm):
         short_name = field.data
         if ' ' in short_name:
             raise ValidationError('Please remove spaces in short name')
+
+
+class CreateSurveyDetailsForm(FlaskForm):
+    long_name = StringField('long_name')
+    short_name = StringField('short_name', validators=[InputRequired(message="Please remove spaces in Abbreviation")])
+    survey_ref = StringField('survey_ref', validators=[InputRequired(message="Please remove spaces in Survey ID")])
+    legal_basis = SelectField('legal_basis', choices=[('', 'Select an option')])
+
+    def __init__(self, form):
+        super().__init__(form)
+        self.legal_basis.choices = [('', 'Select an option')] + survey_controllers.get_legal_basis_list()
+
+    @staticmethod
+    def validate_short_name(form, field):
+        short_name = field.data
+        if ' ' in short_name:
+            raise ValidationError('Please remove spaces in Abbreviation')
+
+    @staticmethod
+    def validate_survey_ref(form, field):
+        survey_ref = field.data
+        if not survey_ref_validation.match(survey_ref):
+            raise ValidationError('The Survey ID should consist of between 1 and 6 digits')
+
+    @staticmethod
+    def validate_legal_basis(form, field):
+        legal_basis = field.data
+        if not legal_basis:
+            raise ValidationError('Please select a legal basis')
