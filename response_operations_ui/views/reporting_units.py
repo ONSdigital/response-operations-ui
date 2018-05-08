@@ -17,29 +17,46 @@ logger = wrap_logger(logging.getLogger(__name__))
 reporting_unit_bp = Blueprint('reporting_unit_bp', __name__, static_folder='static', template_folder='templates')
 
 
+def survey_with_respondents_and_exercises(survey, respondents, collection_exercises, cases, ru_ref):
+    respondents_in_survey = [respondent
+                             for respondent in respondents
+                             if survey['id'] in party_controller.survey_ids_for_respondent(respondent, ru_ref)]
+    survey_respondents = [party_controller.get_respondent_with_enrolment_status(respondent, ru_ref, survey['id'])
+                          for respondent in respondents_in_survey]
+    survey_collection_exercises = [collection_exercise
+                                   for collection_exercise in collection_exercises
+                                   if survey['id'] == collection_exercise['surveyId']]
+    active_iac_code = get_latest_active_iac_code(survey['id'], cases, collection_exercises)
+
+    return {
+        **survey,
+        'respondents': survey_respondents,
+        'collection_exercises': survey_collection_exercises,
+        'activeIacCode': active_iac_code
+    }
+
+
 @reporting_unit_bp.route('/<ru_ref>', methods=['GET'])
 @login_required
 def view_reporting_unit(ru_ref):
     # ru_details = reporting_units_controllers.get_reporting_unit(ru_ref)
 
-    # Get all collection exercises for ru_ref
     reporting_unit = party_controller.get_party_by_ru_ref(ru_ref)
     case_groups = case_controller.get_case_groups_by_business_party_id(reporting_unit['id'])
+
+    # Get all collection exercises from case groups
     collection_exercise_ids = [case_group['collectionExerciseId'] for case_group in case_groups]
     collection_exercises = [collection_exercise_controllers.get_collection_exercise_by_id(ce_id)
                             for ce_id in collection_exercise_ids]
 
-    # We only want collection exercises which are live
+    # We want collection exercises with extra details which are live
     now = datetime.now(timezone.utc)
-    collection_exercises = [collection_exercise
-                            for collection_exercise in collection_exercises
-                            if parse_date(collection_exercise['scheduledStartDateTime']) < now]
-
-    # Add extra collection exercise details using data from case service
-    collection_exercise_controllers.add_collection_exercise_details(collection_exercises, reporting_unit, case_groups)
+    live_collection_exercises = [collection_exercise_controllers.add_collection_exercise_details(ce, reporting_unit, case_groups)
+                                 for ce in collection_exercises
+                                 if parse_date(ce['scheduledStartDateTime']) < now]
 
     # Get all surveys for gathered collection exercises
-    survey_ids = {collection_exercise['surveyId'] for collection_exercise in collection_exercises}
+    survey_ids = {collection_exercise['surveyId'] for collection_exercise in live_collection_exercises}
     surveys = [survey_controllers.get_survey_by_id(survey_id) for survey_id in survey_ids]
 
     # Get all respondents for the given ru
@@ -48,20 +65,13 @@ def view_reporting_unit(ru_ref):
 
     # Link collection exercises and respondents to surveys
     cases = case_controller.get_cases_by_business_party_id(reporting_unit['id'])
-    for survey in surveys:
-        respondents_in_survey = [respondent
-                                 for respondent in respondents
-                                 if survey['id'] in party_controller.survey_ids_for_respondent(respondent, ru_ref)]
-        survey['respondents'] = [party_controller.get_respondent_with_enrolment_status(respondent, ru_ref, survey['id'])
-                                 for respondent in respondents_in_survey]
-        survey['collection_exercises'] = [collection_exercise
-                                          for collection_exercise in collection_exercises
-                                          if survey['id'] == collection_exercise['surveyId']]
-        survey['activeIacCode'] = get_latest_active_iac_code(survey['id'], cases, collection_exercises)
+
+    updated_surveys = [survey_with_respondents_and_exercises(survey, respondents, live_collection_exercises, cases, ru_ref)
+                       for survey in surveys]
 
     ru_details = {
         "reporting_unit": reporting_unit,
-        "surveys": surveys
+        "surveys": updated_surveys
     }
 
     ru_details['surveys'] = sorted(ru_details['surveys'], key=lambda survey: survey['surveyRef'])

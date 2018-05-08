@@ -5,7 +5,7 @@ from requests.exceptions import HTTPError
 from structlog import wrap_logger
 
 from response_operations_ui import app
-from response_operations_ui.controllers import party_controller
+from response_operations_ui.controllers import case_controller, party_controller
 from response_operations_ui.exceptions.exceptions import ApiError
 
 logger = wrap_logger(logging.getLogger(__name__))
@@ -121,13 +121,27 @@ def get_collection_exercises_by_survey(survey_id):
     return response.json()
 
 
-def add_collection_exercise_details(collection_exercises, reporting_unit, case_groups):
-    for exercise in collection_exercises:
-        exercise['responseStatus'] = get_case_group_status_by_collection_exercise(case_groups, exercise['id'])
-        reporting_unit_ce = party_controller.get_business_party_by_party_id(reporting_unit['id'], exercise['id'])
-        exercise['companyName'] = reporting_unit_ce['name']
-        exercise['companyRegion'] = reporting_unit_ce['region']
-        exercise['trading_as'] = reporting_unit_ce['trading_as']
+def get_collection_exercises_for_ru_ref(ru_ref):
+    reporting_unit = party_controller.get_party_by_ru_ref(ru_ref)
+    case_groups = case_controller.get_case_groups_by_business_party_id(reporting_unit['id'])
+    collection_exercise_ids = [case_group['collectionExerciseId'] for case_group in case_groups]
+    return [get_collection_exercise_by_id(ce_id) for ce_id in collection_exercise_ids]
+
+
+def add_collection_exercise_details(collection_exercise, reporting_unit, case_groups):
+    response_status = get_case_group_status_by_collection_exercise(case_groups, collection_exercise['id'])
+    reporting_unit_ce = party_controller.get_business_party_by_party_id(reporting_unit['id'], collection_exercise['id'])
+    company_name = reporting_unit_ce['name']
+    company_region = reporting_unit_ce['region']
+    trading_as = reporting_unit_ce['trading_as']
+    ce_extra = {
+        **collection_exercise,
+        'responseStatus': response_status,
+        'companyName': company_name,
+        'companyRegion': company_region,
+        'trading_as': trading_as
+    }
+    return ce_extra
 
 
 def get_case_group_status_by_collection_exercise(case_groups, collection_exercise_id):
