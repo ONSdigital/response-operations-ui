@@ -39,4 +39,65 @@
             </dd>
         </dl>
     </div>
+
+    <section class="grid__col col-12@l respondent-account-enrolments">
+
+        <h2 class="saturn">Enrolments</h2>
+
+        <div class="respondent-account-enrolment data-panelx">
+
+
+            <table class="table table__dense" summary="Enrolments">
+                <thead class="table--head">
+                    <tr class="table--row">
+                          <th scope="col" class="table--header--cell">
+                            RU Reference
+                          </th>
+                          <th scope="col" class="table--header--cell">
+                            Reporting unit name
+                          </th>
+                          <th scope="col" class="table--header--cell">
+                            Trading as
+                          </th>
+                          <th scope="col" class="table--header--cell">
+                            Survey
+                          </th>
+                          <th scope="col" class="table--header--cell">
+                            Enrolment status
+                          </th>
+                          <th scope="col" class="table--header--cell">
+                            Messages
+                          </th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {% for enrolment in enrolments %}
+                            <tr class="table--row">
+                              <td class="table--cell">
+                                {{ enrolment['business']['sampleUnitRef'] }}
+                              </td>
+                              <td class="table--cell">
+                                {{ enrolment['business']['name'] }}
+                              </td>
+                              <td class="table--cell">
+                                {% if enrolment['business']['trading_as'] %}
+                                  {{ enrolment['business']['trading_as'] }}
+                                {% endif %}
+                              </td>
+                              <td class="table--cell">
+                                {{ enrolment['survey']['surveyRef'] }} {{ enrolment['survey']['shortName'] }}
+                              </td>
+                              <td class="table--cell">
+                                {{ enrolment['status'].title() }}
+                              </td>
+                              <td class="table--cell">
+                                -
+                              </td>
+                            </tr>
+                        {% endfor %}
+                      </tbody>
+                    </table>
+                  </div>
+
+    </section>
 {% endblock %}
