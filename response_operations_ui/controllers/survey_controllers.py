@@ -10,6 +10,21 @@ from response_operations_ui.exceptions.exceptions import ApiError
 logger = wrap_logger(logging.getLogger(__name__))
 
 
+def get_survey_by_id(survey_id):
+    logger.debug('Retrieving survey', survey_id=survey_id)
+    url = f'{app.config["SURVEY_URL"]}/surveys/{survey_id}'
+    response = requests.get(url, auth=app.config['SURVEY_AUTH'])
+
+    try:
+        response.raise_for_status()
+    except requests.exceptions.HTTPError:
+        logger.error('Error retrieving survey', survey_id=survey_id)
+        raise ApiError(response)
+
+    logger.debug('Successfully retrieved survey', survey_id=survey_id)
+    return response.json()
+
+
 def get_surveys_list():
     logger.debug('Retrieving surveys list')
     url = f'{app.config["BACKSTAGE_API_URL"]}/v1/survey/surveys'

@@ -1,0 +1,32 @@
+import logging
+
+import requests
+from structlog import wrap_logger
+
+from response_operations_ui import app
+from response_operations_ui.exceptions.exceptions import ApiError
+
+
+logger = wrap_logger(logging.getLogger(__name__))
+
+
+def get_iac(iac):
+    logger.debug('Retrieving iac')
+    if not iac:
+        logger.warning('No iac provided')
+        return None
+
+    url = f'{app.config["IAC_URL"]}/iacs/{iac}'
+    response = requests.get(url, auth=app.config['IAC_AUTH'])
+
+    try:
+        response.raise_for_status()
+    except requests.exceptions.HTTPError:
+        if response.status_code == 404:
+            logger.warning('IAC code not found')
+            return
+        logger.error('Error retrieving iac')
+        raise ApiError(response)
+
+    logger.debug('Successfully retrieved iac')
+    return response.json()

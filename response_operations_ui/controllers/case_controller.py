@@ -26,3 +26,41 @@ def update_case_group_statuses(short_name, period, ru_ref, event):
     response = requests.post(url, json={'event': event})
     if response.status_code != 200:
         raise ApiError(response)
+
+    logger.debug('Successfully updated case group status', short_name=short_name, period=period, ru_ref=ru_ref)
+
+
+def get_case_groups_by_business_party_id(business_party_id):
+    logger.debug('Retrieving case groups', party_id=business_party_id)
+    url = f'{app.config["CASE_URL"]}/casegroups/partyid/{business_party_id}'
+    response = requests.get(url, auth=app.config["CASE_AUTH"])
+
+    try:
+        response.raise_for_status()
+    except requests.exceptions.HTTPError:
+        if response.status_code == 204:
+            logger.debug('No case groups found for business', party_id=business_party_id)
+            return []
+        logger.error('Failed to retrieve case groups', business_party_id=business_party_id)
+        raise ApiError(response)
+
+    logger.debug('Successfully retrieved case groups', business_party_id=business_party_id)
+    return response.json()
+
+
+def get_cases_by_business_party_id(business_party_id):
+    logger.debug('Retrieving cases', business_party_id=business_party_id)
+    url = f'{app.config["CASE_URL"]}/cases/partyid/{business_party_id}'
+    response = requests.get(url, auth=app.config['CASE_AUTH'], params={"iac": "True"})
+
+    try:
+        response.raise_for_status()
+    except requests.exceptions.HTTPError:
+        if response.status_code == 404 or response.status_code == 204:
+            logger.debug('No cases found for business', business_party_id=business_party_id)
+            return []
+        logger.error('Error retrieving cases', business_party_id=business_party_id)
+        raise ApiError(response)
+
+    logger.debug('Successfully retrieved cases', business_party_id=business_party_id)
+    return response.json()
