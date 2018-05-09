@@ -6,7 +6,11 @@ from flask_login import login_required
 from iso8601 import parse_date
 from structlog import wrap_logger
 
-from response_operations_ui.controllers import case_controller, collection_exercise_controllers, iac_controller, party_controller, survey_controllers
+from response_operations_ui.controllers.collection_exercise_controllers import add_collection_exercise_details, \
+    get_collection_exercise_by_id
+from response_operations_ui.controllers.survey_controllers import get_survey_by_id, \
+    survey_with_respondents_and_exercises
+from response_operations_ui.controllers import case_controller, iac_controller, party_controller
 from response_operations_ui.controllers import contact_details_controller
 from response_operations_ui.controllers import reporting_units_controllers
 from response_operations_ui.forms import EditContactDetailsForm, SearchForm
@@ -26,32 +30,36 @@ def view_reporting_unit(ru_ref):
 
     # Get all collection exercises for retrieved case groups
     collection_exercise_ids = {case_group['collectionExerciseId'] for case_group in case_groups}
-    collection_exercises = [collection_exercise_controllers.get_collection_exercise_by_id(ce_id)
+    collection_exercises = [get_collection_exercise_by_id(ce_id)
                             for ce_id in collection_exercise_ids]
 
     # Add extra collection exercise details and filter by live date
     now = datetime.now(timezone.utc)
-    live_collection_exercises = [collection_exercise_controllers.add_collection_exercise_details(ce, reporting_unit, case_groups)
+    live_collection_exercises = [add_collection_exercise_details(ce, reporting_unit, case_groups)
                                  for ce in collection_exercises
                                  if parse_date(ce['scheduledStartDateTime']) < now]
 
     # Get all related surveys for gathered collection exercises
     survey_ids = {collection_exercise['surveyId'] for collection_exercise in live_collection_exercises}
-    surveys = [survey_controllers.get_survey_by_id(survey_id) for survey_id in survey_ids]
+    surveys = [get_survey_by_id(survey_id) for survey_id in survey_ids]
 
     # Get all respondents for the given ru
     respondents = [party_controller.get_respondent_party_by_party_id(respondent['partyId'])
                    for respondent in reporting_unit.get('associations')]
 
     # Link collection exercises and respondents to appropriate surveys
-    linked_surveys = [survey_controllers.survey_with_respondents_and_exercises(survey, respondents, live_collection_exercises, ru_ref)
+    linked_surveys = [survey_with_respondents_and_exercises(survey, respondents, live_collection_exercises, ru_ref)
                       for survey in surveys]
     sorted_linked_surveys = sorted(linked_surveys, key=lambda survey: survey['surveyRef'])
 
     # Add latest active iac code to surveys
-    surveys_with_iacs = [{**survey,
-                          "activeIacCode": iac_controller.get_latest_active_iac_code(cases, survey['collection_exercises'])}
-                         for survey in sorted_linked_surveys]
+    surveys_with_iacs = [
+        {
+            **survey,
+            "activeIacCode": iac_controller.get_latest_active_iac_code(cases, survey['collection_exercises'])
+        }
+        for survey in sorted_linked_surveys
+    ]
 
     # Generate appropriate info message is necessary
     # TODO Standardise how the info messages are generated

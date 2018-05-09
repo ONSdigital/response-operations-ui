@@ -28,7 +28,8 @@ url_get_cases_by_business_party_id = f'{app.config["CASE_URL"]}/cases/partyid/{b
 url_get_casegroups_by_business_party_id = f'{app.config["CASE_URL"]}/casegroups/partyid/{business_party_id}'
 url_get_collection_exercise_by_id = f'{app.config["COLLECTION_EXERCISE_URL"]}/collectionexercises'
 url_get_business_party_by_party_id = f'{app.config["PARTY_URL"]}/party-api/v1/businesses/id/{business_party_id}'
-url_get_available_case_group_statuses_direct = f'{app.config["CASE_URL"]}/casegroups/transitions/{collection_exercise_id_1}/{ru_ref}'
+url_get_available_case_group_statuses_direct = f'{app.config["CASE_URL"]}/casegroups/transitions' \
+                                               f'/{collection_exercise_id_1}/{ru_ref}'
 url_get_survey_by_id = f'{app.config["SURVEY_URL"]}/surveys/{survey_id}'
 url_get_respondent_party_by_party_id = f'{app.config["PARTY_URL"]}/party-api/v1/respondents/id/{respondent_party_id}'
 url_get_iac = f'{app.config["IAC_URL"]}/iacs'
@@ -319,7 +320,7 @@ class TestReportingUnits(unittest.TestCase):
         mock_request.get(f'{url_get_collection_exercise_by_id}/{collection_exercise_id_1}', json=collection_exercise)
         mock_request.get(f'{url_get_collection_exercise_by_id}/{collection_exercise_id_2}', json=collection_exercise)
         mock_request.get(url_get_business_party_by_party_id, json=business_party)
-        mock_request.get(url_get_available_case_group_statuses_direct, json=case_group_statuses)                     
+        mock_request.get(url_get_available_case_group_statuses_direct, json=case_group_statuses)
         mock_request.get(url_get_survey_by_id, json=survey)
         mock_request.get(url_get_respondent_party_by_party_id, json=respondent_party)
         mock_request.get(f'{url_get_iac}/{iac_1}', json=iac)
@@ -490,6 +491,7 @@ class TestReportingUnits(unittest.TestCase):
         response = self.mock_for_change_details(changed_details, mock_request)
 
         self.assertEqual(response.status_code, 200)
+
     @requests_mock.mock()
     def test_reporting_unit_generate_new_code(self, mock_request):
         mock_request.post(url_generate_new_code, json=case)
