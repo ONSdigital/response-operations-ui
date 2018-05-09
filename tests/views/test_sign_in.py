@@ -101,12 +101,3 @@ class TestSignIn(unittest.TestCase):
         self.assertIn("Surveys".encode(), response.data)
         self.assertIn("Legal basis".encode(), response.data)
         self.assertIn("Statistics of Trade Act 1947".encode(), response.data)
-
-    @requests_mock.mock()
-    def test_sign_in_with_secure_cookies(self, mock_request):
-        mock_request.post(url_sign_in_data, json={"token": "1234abc"}, status_code=201)
-
-        response = self.app.post("/sign-in", follow_redirects=True, base_url='https://localhost',
-                                 data={"username": "user", "password": "pass"})
-
-        self.assertIn('Secure;', response.headers['Set-Cookie'])
