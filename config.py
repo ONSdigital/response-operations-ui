@@ -1,13 +1,15 @@
 import os
+from distutils.util import strtobool
 
 
 class Config(object):
-    DEBUG = os.getenv('DEBUG', False)
+    DEBUG = strtobool(os.getenv('DEBUG', 'False'))
     TESTING = False
     PORT = os.getenv('PORT', 8085)
     LOGGING_LEVEL = os.getenv('LOGGING_LEVEL', 'INFO')
     RESPONSE_OPERATIONS_UI_SECRET = os.getenv('RESPONSE_OPERATIONS_UI_SECRET', "secret")
     USE_SESSION_FOR_NEXT = True
+    SECURE_COOKIES = strtobool(os.getenv('SECURE_COOKIES', 'True'))
 
     BACKSTAGE_API_URL = os.getenv('BACKSTAGE_API_URL')
 
@@ -50,8 +52,9 @@ class Config(object):
 
 
 class DevelopmentConfig(Config):
-    DEBUG = os.getenv('DEBUG', True)
+    DEBUG = strtobool(os.getenv('DEBUG', 'True'))
     LOGGING_LEVEL = os.getenv('LOGGING_LEVEL', 'DEBUG')
+    SECURE_COOKIES = strtobool(os.getenv('SECURE_COOKIES', 'False'))
 
     BACKSTAGE_API_URL = os.getenv('BACKSTAGE_API_URL', 'http://localhost:8001/backstage-api')
 
@@ -97,3 +100,4 @@ class TestingConfig(DevelopmentConfig):
     WTF_CSRF_ENABLED = False
     SESSION_TYPE = "filesystem"
     SESSION_PERMANENT = False
+    SECURE_COOKIES = True
