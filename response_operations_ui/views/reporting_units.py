@@ -30,8 +30,7 @@ def view_reporting_unit(ru_ref):
 
     # Get all collection exercises for retrieved case groups
     collection_exercise_ids = {case_group['collectionExerciseId'] for case_group in case_groups}
-    collection_exercises = [get_collection_exercise_by_id(ce_id)
-                            for ce_id in collection_exercise_ids]
+    collection_exercises = [get_collection_exercise_by_id(ce_id) for ce_id in collection_exercise_ids]
 
     # Add extra collection exercise details and filter by live date
     now = datetime.now(timezone.utc)
