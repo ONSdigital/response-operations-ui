@@ -3,101 +3,96 @@
 
 {% block main %}
     <div role="main" id="main" class="page__main">
-    <h1 class="jupiter">Respondent</h1>
-        <dl class="description-list">
-            <dt>
-                  Name
-            </dt>
-            <dd id="respondent-name" name="tbl-respondent-name">
-                {{ respondent.firstName }} {{ respondent.lastName }}
-            </dd>
-            <dt>
-                Email
-            </dt>
-            <dd id="respondent-email" name="tbl-respondent-email">
-                {{ respondent.emailAddress }}
-            </dd>
-            {% if respondent.pendingEmailAddress %}
-            <dt>
-                New Email
-            </dt>
-            <dd id="respondent-pending-email" name="tbl-respondent-pending-email">
-                {{ respondent.pendingEmailAddress }}
-            </dd>
-            {% endif %}
-            <dt>
-                Tel
-            </dt>
-            <dd name="tbl-respondent-phone">
-                {{ respondent.telephone }}
-            </dd>
-            <dt>
-                Status
-            </dt>
-            <dd>
-                {{ respondent.status }}
-            </dd>
-        </dl>
-    </div>
+        <div class="grid">
+            <section class="grid__col col-12@l u-mb-xl respondent-account-details">
 
-    <section class="grid__col col-12@l respondent-account-enrolments">
-
-        <h2 class="saturn">Enrolments</h2>
-
-        <div class="respondent-account-enrolment data-panelx">
+                    <h1 class="jupiter">{{ respondent.firstName }} {{ respondent.lastName }}</h1>
+                    <dl class="description-list">
+                        <dt>
+                            Email
+                        </dt>
+                        <dd id="respondent-email" name="tbl-respondent-email">
+                            {{ respondent.emailAddress }}
+                        </dd>
+                        {% if respondent.pendingEmailAddress %}
+                        <dt>
+                            New Email
+                        </dt>
+                        <dd id="respondent-pending-email" name="tbl-respondent-pending-email">
+                            {{ respondent.pendingEmailAddress }}
+                        </dd>
+                        {% endif %}
+                        <dt>
+                            Tel
+                        </dt>
+                        <dd name="tbl-respondent-phone">
+                            {{ respondent.telephone }}
+                        </dd>
+                        <dt>
+                            Account
+                        </dt>
+                        <dd>
+                            {{ respondent.status }}
+                        </dd>
+                    </dl>
+            </section>
 
 
-            <table class="table table__dense" summary="Enrolments">
-                <thead class="table--head">
-                    <tr class="table--row">
-                          <th scope="col" class="table--header--cell">
-                            RU Reference
-                          </th>
-                          <th scope="col" class="table--header--cell">
-                            Reporting unit name
-                          </th>
-                          <th scope="col" class="table--header--cell">
-                            Trading as
-                          </th>
-                          <th scope="col" class="table--header--cell">
-                            Survey
-                          </th>
-                          <th scope="col" class="table--header--cell">
-                            Enrolment status
-                          </th>
-                          <th scope="col" class="table--header--cell">
-                            Messages
-                          </th>
-                        </tr>
-                      </thead>
-                      <tbody>
-                        {% for enrolment in enrolments %}
+
+            <section class="grid__col col-12@l respondent-account-enrolments">
+
+                <h2 class="saturn">Enrolments</h2>
+
+                <div class="respondent-account-enrolment data-panelx">
+
+
+                    <table class="table table__dense" summary="Enrolments">
+                        <thead class="table--head">
                             <tr class="table--row">
-                              <td class="table--cell">
-                                {{ enrolment['business']['sampleUnitRef'] }}
-                              </td>
-                              <td class="table--cell">
-                                {{ enrolment['business']['name'] }}
-                              </td>
-                              <td class="table--cell">
-                                {% if enrolment['business']['trading_as'] %}
-                                  {{ enrolment['business']['trading_as'] }}
-                                {% endif %}
-                              </td>
-                              <td class="table--cell">
-                                {{ enrolment['survey']['surveyRef'] }} {{ enrolment['survey']['shortName'] }}
-                              </td>
-                              <td class="table--cell">
-                                {{ enrolment['status'].title() }}
-                              </td>
-                              <td class="table--cell">
-                                -
-                              </td>
-                            </tr>
-                        {% endfor %}
-                      </tbody>
-                    </table>
-                  </div>
+                                  <th scope="col" class="table--header--cell">
+                                    RU Reference
+                                  </th>
+                                  <th scope="col" class="table--header--cell">
+                                    Reporting unit name
+                                  </th>
+                                  <th scope="col" class="table--header--cell">
+                                    Trading as
+                                  </th>
+                                  <th scope="col" class="table--header--cell">
+                                    Survey
+                                  </th>
+                                  <th scope="col" class="table--header--cell">
+                                    Enrolment status
+                                  </th>
+                                </tr>
+                              </thead>
+                              <tbody>
+                                {% for enrolment in enrolments %}
+                                    <tr class="table--row">
+                                      <td class="table--cell">
+                                          <a href=" {{ url_for('reporting_unit_bp.view_reporting_unit', ru_ref=enrolment['business']['sampleUnitRef'], _anchor=enrolment['survey']['shortName'] )}}">{{ enrolment['business']['sampleUnitRef'] }}</a>
+                                      </td>
+                                      <td class="table--cell">
+                                        {{ enrolment['business']['name'] }}
+                                      </td>
+                                      <td class="table--cell">
+                                        {% if enrolment['business']['trading_as'] %}
+                                          {{ enrolment['business']['trading_as'] }}
+                                        {% endif %}
+                                      </td>
+                                      <td class="table--cell">
+                                        {{ enrolment['survey']['surveyRef'] }} {{ enrolment['survey']['shortName'] }}
+                                      </td>
+                                      <td class="table--cell">
+                                        {{ enrolment['status'].title() }}
+                                      </td>
+                                    </tr>
+                                {% endfor %}
+                              </tbody>
+                            </table>
+                          </div>
 
-    </section>
+            </section>
+    </div>
+    </div>
 {% endblock %}

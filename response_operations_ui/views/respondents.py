@@ -46,7 +46,7 @@ def respondent_details(respondent_id):
             "link": "/respondents"
         },
         {
-            "title": f"{respondent['firstName']} {respondent['lastName']}"
+            "title": f"{respondent['emailAddress']}"
         }
     ]
 
