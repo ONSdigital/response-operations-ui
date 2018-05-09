@@ -6,20 +6,10 @@ from flask_assets import Bundle, Environment
 from flask_login import LoginManager
 from flask_session import Session
 import redis
-from flask_talisman import Talisman
 
 from response_operations_ui.cloud.cloudfoundry import ONSCloudFoundry
 from response_operations_ui.logger_config import logger_initial_config
 from response_operations_ui.user import User
-
-CSP_POLICY = {
-    'default-src': ["'self'", 'https://cdn.ons.gov.uk', ],
-    'style-src': ["'self'", 'https://cdn.ons.gov.uk', 'https://maxcdn.bootstrapcdn.com', ],
-    'font-src': ["'self'", 'data:', 'https://cdn.ons.gov.uk', 'https://fonts.gstatic.com', ],
-    'script-src': ["'self'", 'https://www.google-analytics.com', 'https://cdn.ons.gov.uk', 'http://code.jquery.com', ],
-    'connect-src': ["'self'", 'https://www.google-analytics.com', 'https://cdn.ons.gov.uk', ],
-    'img-src': ["'self'", 'data:', 'https://www.google-analytics.com', 'https://cdn.ons.gov.uk', ]
-}
 
 app = Flask(__name__)
 
@@ -61,17 +51,6 @@ if app.config['SESSION_TYPE'] == 'redis':
 
     # wrap in the flask server side session manager and back it by redis
     app.config['SESSION_REDIS'] = redis
-
-Talisman(app,
-         content_security_policy=CSP_POLICY,
-         content_security_policy_nonce_in=['script-src'],
-         session_cookie_secure=app.config['SECURE_COOKIES'],
-         force_https=False,  # this is handled at the firewall
-         strict_transport_security=True,
-         strict_transport_security_max_age=31536000,
-         strict_transport_security_include_subdomains=True,
-         referrer_policy='same-origin',
-         frame_options='DENY')
 
 Session(app)
 
