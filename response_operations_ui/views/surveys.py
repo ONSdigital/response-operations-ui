@@ -1,4 +1,5 @@
 import logging
+from datetime import datetime
 
 from flask import Blueprint, render_template, request, redirect, url_for
 from flask_login import login_required
@@ -65,12 +66,14 @@ def view_survey(short_name):
     newly_created_period = request.args.get('new_period')
 
     # Mapping backend states to frontend sates for the user
-    for collection_exercise in survey_details["collection_exercises"]:
-        collection_exercise['state'] = map_collection_exercise_state(collection_exercise['state'])
-        if collection_exercise.get('events'):
-            collection_exercise['events'] = convert_events_to_new_format(collection_exercise['events'])
-        else:
-            collection_exercise['events'] = None
+    for collex in survey_details["collection_exercises"]:
+        collex['state'] = map_collection_exercise_state(collex['state'])
+        collex['events'] = convert_events_to_new_format(collex['events']) if collex.get('events') else {}
+
+    survey_details["collection_exercises"].sort(key=lambda ce:
+                                                datetime.strptime(ce['events']['mps']['date'], '%d %b %Y')
+                                                if 'mps' in ce['events'] else datetime.max)
+
     return render_template('survey.html',
                            survey=survey_details['survey'],
                            collection_exercises=survey_details['collection_exercises'],
