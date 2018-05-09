@@ -30,6 +30,24 @@ def update_case_group_statuses(short_name, period, ru_ref, event):
     logger.debug('Successfully updated case group status', short_name=short_name, period=period, ru_ref=ru_ref)
 
 
+def get_available_case_group_statuses_direct(collection_exercise_id, ru_ref):
+    logger.debug('Retrieving statuses', collection_exercise_id=collection_exercise_id, ru_ref=ru_ref)
+    url = f'{app.config["CASE_URL"]}/casegroups/transitions/{collection_exercise_id}/{ru_ref}'
+    response = requests.get(url, auth=app.config['CASE_AUTH'])
+
+    try:
+        response.raise_for_status()
+    except requests.exceptions.HTTPError:
+        if response.status_code == 404:
+            logger.debug('No statuses found', collection_exercise_id=collection_exercise_id, ru_ref=ru_ref)
+            return []
+        logger.error('Error retrieving statuses', collection_exercise_id=collection_exercise_id, ru_ref=ru_ref)
+        raise ApiError(response)
+
+    logger.debug('Successfully retrieved statuses', collection_exercise_id=collection_exercise_id, ru_ref=ru_ref)
+    return response.json()
+
+
 def get_case_groups_by_business_party_id(business_party_id):
     logger.debug('Retrieving case groups', party_id=business_party_id)
     url = f'{app.config["CASE_URL"]}/casegroups/partyid/{business_party_id}'

@@ -5,6 +5,7 @@ from structlog import wrap_logger
 
 from response_operations_ui import app
 from response_operations_ui.common.surveys import FDISurveys
+from response_operations_ui.controllers import party_controller
 from response_operations_ui.exceptions.exceptions import ApiError
 
 logger = wrap_logger(logging.getLogger(__name__))
@@ -152,3 +153,19 @@ def create_survey(survey_ref, short_name, long_name, legal_basis):
         raise ApiError(response)
 
     logger.debug('Successfully created new survey', survey_ref=survey_ref)
+
+
+def survey_with_respondents_and_exercises(survey, respondents, collection_exercises, ru_ref):
+    survey_respondents = [party_controller.add_enrolment_status_to_respondent(respondent, ru_ref, survey['id'])
+                          for respondent in respondents
+                          if survey['id'] in party_controller.survey_ids_for_respondent(respondent, ru_ref)]
+    survey_collection_exercises = [collection_exercise
+                                   for collection_exercise in collection_exercises
+                                   if survey['id'] == collection_exercise['surveyId']]
+    sorted_survey_exercises = sorted(survey_collection_exercises,
+                                     key=lambda ce: ce['scheduledStartDateTime'], reverse=True)
+    return {
+        **survey,
+        'respondents': survey_respondents,
+        'collection_exercises': sorted_survey_exercises
+    }
