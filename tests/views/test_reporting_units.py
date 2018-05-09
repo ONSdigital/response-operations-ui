@@ -17,8 +17,6 @@ survey_id = 'cb0711c3-0ac8-41d3-ae0e-567e5ea1ef87'
 backstage_api_url = app.config["BACKSTAGE_API_URL"]
 CONNECTION_ERROR = 'Connection error'
 
-url_get_reporting_unit = f'{backstage_api_url}/v1/reporting-unit/50012345678'
-url_search_reporting_units = f'{backstage_api_url}/v1/reporting-unit/search'
 url_get_contact_details = f'{backstage_api_url}/v1/party/party-details?respondent_party_id={respondent_party_id}'
 url_edit_contact_details = f'{backstage_api_url}/v1/party/update-respondent-details/{respondent_party_id}'
 url_generate_new_code = f'{backstage_api_url}/v1/reporting-unit/iac/ce_id/ru_ref'
@@ -35,12 +33,8 @@ url_get_survey_by_id = f'{app.config["SURVEY_URL"]}/surveys/{survey_id}'
 url_get_respondent_party_by_party_id = f'{app.config["PARTY_URL"]}/party-api/v1/respondents/id/{respondent_party_id}'
 url_get_iac = f'{app.config["IAC_URL"]}/iacs'
 
-with open('tests/test_data/reporting_units/reporting_unit.json') as json_data:
-    reporting_unit = json.load(json_data)
 with open('tests/test_data/reporting_units/respondent.json') as json_data:
     respondent = json.load(json_data)
-with open('tests/test_data/reporting_units/edited_reporting_unit.json') as json_data:
-    edited_reporting_unit = json.load(json_data)
 with open('tests/test_data/case/case.json') as json_data:
     case = json.load(json_data)
 
