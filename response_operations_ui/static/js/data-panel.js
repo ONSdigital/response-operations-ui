@@ -4,6 +4,9 @@ function initDataPanels() {
         // Introduce button and hide data panel content if js running
 
         var initPanel = acc[i].nextElementSibling;
+        if (window.location.hash) {
+
+        }
         initPanel.style.display = "none";
 
         // Add event listener to toggle displaying the data panel
@@ -16,5 +19,15 @@ function initDataPanels() {
                 panel.style.display = "block";
             }
         });
+
     }
+}
+
+
+function openPanel(){
+  var panelToOpen = window.location.hash;
+  if( panelToOpen != ''){
+     $( panelToOpen + ' .data-panel-header').addClass('active');
+     $( panelToOpen + ' .data-panel-body').css( 'display', 'block' );
+   }
 }

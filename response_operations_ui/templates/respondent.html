@@ -70,7 +70,7 @@
                                 {% for enrolment in enrolments %}
                                     <tr class="table--row">
                                       <td class="table--cell">
-                                          <a href=" {{ url_for('reporting_unit_bp.view_reporting_unit', ru_ref=enrolment['business']['sampleUnitRef'], _anchor=enrolment['survey']['shortName'] )}}">{{ enrolment['business']['sampleUnitRef'] }}</a>
+                                          <a href=" {{ url_for('reporting_unit_bp.view_reporting_unit', ru_ref=enrolment['business']['sampleUnitRef'], _anchor='survey-'+enrolment['survey']['shortName'] )}}">{{ enrolment['business']['sampleUnitRef'] }}</a>
                                       </td>
                                       <td class="table--cell">
                                         {{ enrolment['business']['name'] }}
