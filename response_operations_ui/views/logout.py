@@ -11,6 +11,10 @@ def logout():
 
     try:
         del (session['messages_survey_selection'])
+    except KeyError:
+        pass
+
+    try:
         del (session['next'])
     except KeyError:
         pass
