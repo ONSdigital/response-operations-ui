@@ -132,14 +132,14 @@ def get_collection_exercises_for_ru_ref(ru_ref):
 def add_collection_exercise_details(collection_exercise, reporting_unit, case_groups):
     response_status = get_case_group_status_by_collection_exercise(case_groups, collection_exercise['id'])
     reporting_unit_ce = party_controller.get_business_party_by_party_id(reporting_unit['id'], collection_exercise['id'])
-    available_statuses = case_controller.get_available_case_group_statuses_direct(collection_exercise['id'], reporting_unit['sampleUnitRef'])
+    statuses = case_controller.get_available_case_group_statuses_direct(collection_exercise['id'], reporting_unit['sampleUnitRef'])
     ce_extra = {
         **collection_exercise,
         'responseStatus': map_ce_response_status(response_status),
         'companyName': reporting_unit_ce['name'],
         'companyRegion': map_region(reporting_unit_ce['region']),
         'trading_as': reporting_unit_ce['trading_as'],
-        'statuses': available_statuses
+        'statuses': statuses.values()
     }
     return ce_extra
 

@@ -7,6 +7,13 @@ from config import TestingConfig
 from response_operations_ui import app
 
 respondent_party_id = "cd592e0f-8d07-407b-b75d-e01fbdae8233"
+business_party_id = 'b3ba864b-7cbc-4f44-84fe-88dc018a1a4c'
+ru_ref = '50012345678'
+collection_exercise_id_1 = '14fb3e68-4dca-46db-bf49-04b84e07e77c'
+collection_exercise_id_2 = '9af403f8-5fc5-43b1-9fca-afbd9c65da5c'
+iac_1 = 'jkbvyklkwj88'
+iac_2 = 'ljbgg3kgstr4'
+survey_id = 'cb0711c3-0ac8-41d3-ae0e-567e5ea1ef87'
 backstage_api_url = app.config["BACKSTAGE_API_URL"]
 CONNECTION_ERROR = 'Connection error'
 
@@ -18,6 +25,16 @@ url_generate_new_code = f'{backstage_api_url}/v1/reporting-unit/iac/ce_id/ru_ref
 url_resend_verification_email = f'{backstage_api_url}/v1/reporting-unit/resend-verification-email/{respondent_party_id}'
 url_change_enrolment_status = f'{app.config["BACKSTAGE_API_URL"]}/v1/party/change-enrolment-status'
 
+url_get_party_by_ru_ref = f'{app.config["PARTY_URL"]}/party-api/v1/parties/type/B/ref/{ru_ref}'
+url_get_cases_by_business_party_id = f'{app.config["CASE_URL"]}/cases/partyid/{business_party_id}'
+url_get_casegroups_by_business_party_id = f'{app.config["CASE_URL"]}/casegroups/partyid/{business_party_id}'
+url_get_collection_exercise_by_id = f'{app.config["COLLECTION_EXERCISE_URL"]}/collectionexercises'
+url_get_business_party_by_party_id = f'{app.config["PARTY_URL"]}/party-api/v1/businesses/id/{business_party_id}'
+url_get_available_case_group_statuses_direct = f'{app.config["CASE_URL"]}/casegroups/transitions/{collection_exercise_id_1}/{ru_ref}'
+url_get_survey_by_id = f'{app.config["SURVEY_URL"]}/surveys/{survey_id}'
+url_get_respondent_party_by_party_id = f'{app.config["PARTY_URL"]}/party-api/v1/respondents/id/{respondent_party_id}'
+url_get_iac = f'{app.config["IAC_URL"]}/iacs'
+
 with open('tests/test_data/reporting_units/reporting_unit.json') as json_data:
     reporting_unit = json.load(json_data)
 with open('tests/test_data/reporting_units/respondent.json') as json_data:
@@ -26,6 +43,27 @@ with open('tests/test_data/reporting_units/edited_reporting_unit.json') as json_
     edited_reporting_unit = json.load(json_data)
 with open('tests/test_data/case/case.json') as json_data:
     case = json.load(json_data)
+
+with open('tests/test_data/party/business_reporting_unit.json') as json_data:
+    business_reporting_unit = json.load(json_data)
+with open('tests/test_data/case/cases_list.json') as json_data:
+    cases_list = json.load(json_data)
+with open('tests/test_data/case/case_groups_list.json') as json_data:
+    case_groups = json.load(json_data)
+with open('tests/test_data/case/case_groups_list_completed.json') as json_data:
+    case_groups_completed = json.load(json_data)
+with open('tests/test_data/collection_exercise/collection_exercise.json') as json_data:
+    collection_exercise = json.load(json_data)
+with open('tests/test_data/party/business_party.json') as json_data:
+    business_party = json.load(json_data)
+with open('tests/test_data/case/case_group_statuses.json') as json_data:
+    case_group_statuses = json.load(json_data)
+with open('tests/test_data/survey/single_survey.json') as json_data:
+    survey = json.load(json_data)
+with open('tests/test_data/party/respondent_party.json') as json_data:
+    respondent_party = json.load(json_data)
+with open('tests/test_data/iac/iac.json') as json_data:
+    iac = json.load(json_data)
 
 
 class TestReportingUnits(unittest.TestCase):
@@ -49,91 +87,207 @@ class TestReportingUnits(unittest.TestCase):
 
     @requests_mock.mock()
     def test_get_reporting_unit(self, mock_request):
-        mock_request.get(url_get_reporting_unit, json=reporting_unit)
-        mock_request.get(f'{app.config["BACKSTAGE_API_URL"]}/v1/case/status/BLOCKS/201801/50012345678',
-                         json=self.case_group_status)
-        mock_request.get(f'{app.config["BACKSTAGE_API_URL"]}/v1/case/status/BLOCKS/201802/50012345678',
-                         json=self.case_group_status)
-        mock_request.get(f'{app.config["BACKSTAGE_API_URL"]}/v1/case/status/BRICKS/201801/50012345678',
-                         json=self.case_group_status)
-        mock_request.get(f'{app.config["BACKSTAGE_API_URL"]}/v1/case/status/BRICKS/201802/50012345678',
-                         json=self.case_group_status)
+        mock_request.get(url_get_party_by_ru_ref, json=business_reporting_unit)
+        mock_request.get(url_get_cases_by_business_party_id, json=cases_list)
+        mock_request.get(url_get_casegroups_by_business_party_id, json=case_groups)
+        mock_request.get(f'{url_get_collection_exercise_by_id}/{collection_exercise_id_1}', json=collection_exercise)
+        mock_request.get(f'{url_get_collection_exercise_by_id}/{collection_exercise_id_2}', json=collection_exercise)
+        mock_request.get(url_get_business_party_by_party_id, json=business_party)
+        mock_request.get(url_get_available_case_group_statuses_direct, json=case_group_statuses)
+        mock_request.get(url_get_survey_by_id, json=survey)
+        mock_request.get(url_get_respondent_party_by_party_id, json=respondent_party)
+        mock_request.get(f'{url_get_iac}/{iac_1}', json=iac)
+        mock_request.get(f'{url_get_iac}/{iac_2}', json=iac)
 
-        response = self.app.get("/reporting-units/50012345678")
+        response = self.app.get("/reporting-units/50012345678", follow_redirects=True)
 
         self.assertEqual(response.status_code, 200)
         self.assertIn("Bolts and Ratchets Ltd".encode(), response.data)
         self.assertIn("50012345678".encode(), response.data)
         self.assertIn("BLOCKS".encode(), response.data)
-        self.assertIn("BRICKS".encode(), response.data)
         self.assertIn("GB".encode(), response.data)
-        self.assertIn("NI".encode(), response.data)
         self.assertIn("Jacky Turner".encode(), response.data)
         self.assertIn("Enabled".encode(), response.data)
         self.assertIn("Active".encode(), response.data)
 
     @requests_mock.mock()
-    def test_get_reporting_unit_when_changed_status_shows_new_status(self, mock_request):
-        mock_request.get(url_get_reporting_unit, json=reporting_unit)
-        mock_request.get(f'{app.config["BACKSTAGE_API_URL"]}/v1/case/status/BLOCKS/201801/50012345678',
-                         json=self.case_group_status)
-        mock_request.get(f'{app.config["BACKSTAGE_API_URL"]}/v1/case/status/BLOCKS/201802/50012345678',
-                         json=self.case_group_status)
-        mock_request.get(f'{app.config["BACKSTAGE_API_URL"]}/v1/case/status/BRICKS/201801/50012345678',
-                         json=self.case_group_status)
-        mock_request.get(f'{app.config["BACKSTAGE_API_URL"]}/v1/case/status/BRICKS/201802/50012345678',
-                         json=self.case_group_status)
-
-        response = self.app.get("/reporting-units/50012345678?survey=BRICKS&period=201801")
-
-        self.assertEqual(response.status_code, 200)
-        self.assertIn("Response status for 074 BRICKS period 201801 changed to Completed".encode(), response.data)
-
-    @requests_mock.mock()
-    def test_get_reporting_unit_shows_change_link_when_no_available_statuses_hides_change_link(self, mock_request):
-        mock_request.get(url_get_reporting_unit, json=reporting_unit)
-        mock_request.get(f'{app.config["BACKSTAGE_API_URL"]}/v1/case/status/BLOCKS/201801/50012345678',
-                         json=self.case_group_status)
-        mock_request.get(f'{app.config["BACKSTAGE_API_URL"]}/v1/case/status/BLOCKS/201802/50012345678',
-                         json=self.case_group_status)
-        mock_request.get(f'{app.config["BACKSTAGE_API_URL"]}/v1/case/status/BRICKS/201801/50012345678',
-                         json=self.case_group_status)
-        mock_request.get(f'{app.config["BACKSTAGE_API_URL"]}/v1/case/status/BRICKS/201802/50012345678',
-                         json=self.case_group_status)
-
-        response = self.app.get("/reporting-units/50012345678?survey=BRICKS&period=201801")
-
-        self.assertEqual(response.status_code, 200)
-        self.assertIn("Change</a>".encode(), response.data)
-
-    @requests_mock.mock()
-    def test_get_reporting_unit_hides_change_link_when_no_available_statuses(self, mock_request):
-        mock_request.get(url_get_reporting_unit, json=reporting_unit)
-        collex = {'available_statuses': []}
-        mock_request.get(f'{app.config["BACKSTAGE_API_URL"]}/v1/case/status/BLOCKS/201801/50012345678', json=collex)
-        mock_request.get(f'{app.config["BACKSTAGE_API_URL"]}/v1/case/status/BLOCKS/201802/50012345678', json=collex)
-        mock_request.get(f'{app.config["BACKSTAGE_API_URL"]}/v1/case/status/BRICKS/201801/50012345678', json=collex)
-        mock_request.get(f'{app.config["BACKSTAGE_API_URL"]}/v1/case/status/BRICKS/201802/50012345678', json=collex)
-
-        response = self.app.get("/reporting-units/50012345678?survey=BRICKS&period=201801")
-
-        self.assertEqual(response.status_code, 200)
-        self.assertNotIn("Change</a>".encode(), response.data)
-
-    @requests_mock.mock()
-    def test_get_reporting_unit_fail(self, mock_request):
-        mock_request.get(url_get_reporting_unit, status_code=500)
+    def test_get_reporting_unit_party_ru_fail(self, mock_request):
+        mock_request.get(url_get_party_by_ru_ref, status_code=500)
 
         response = self.app.get("/reporting-units/50012345678", follow_redirects=True)
 
         self.assertEqual(response.status_code, 500)
         self.assertIn("Error 500 - Server error".encode(), response.data)
 
-    def test_search_reporting_units_get(self):
-        response = self.app.get("/reporting-units")
+    @requests_mock.mock()
+    def test_get_reporting_unit_cases_fail(self, mock_request):
+        mock_request.get(url_get_party_by_ru_ref, json=business_reporting_unit)
+        mock_request.get(url_get_cases_by_business_party_id, status_code=500)
+
+        response = self.app.get("/reporting-units/50012345678", follow_redirects=True)
+
+        self.assertEqual(response.status_code, 500)
+        self.assertIn("Error 500 - Server error".encode(), response.data)
+
+    @requests_mock.mock()
+    def test_get_reporting_unit_casegroups_fail(self, mock_request):
+        mock_request.get(url_get_party_by_ru_ref, json=business_reporting_unit)
+        mock_request.get(url_get_cases_by_business_party_id, json=cases_list)
+        mock_request.get(url_get_casegroups_by_business_party_id, status_code=500)
+
+        response = self.app.get("/reporting-units/50012345678", follow_redirects=True)
+
+        self.assertEqual(response.status_code, 500)
+        self.assertIn("Error 500 - Server error".encode(), response.data)
+
+    @requests_mock.mock()
+    def test_get_reporting_unit_collection_exercise_fail(self, mock_request):
+        mock_request.get(url_get_party_by_ru_ref, json=business_reporting_unit)
+        mock_request.get(url_get_cases_by_business_party_id, json=cases_list)
+        mock_request.get(url_get_casegroups_by_business_party_id, json=case_groups)
+        mock_request.get(f'{url_get_collection_exercise_by_id}/{collection_exercise_id_1}', status_code=500)
+
+        response = self.app.get("/reporting-units/50012345678", follow_redirects=True)
+
+        self.assertEqual(response.status_code, 500)
+        self.assertIn("Error 500 - Server error".encode(), response.data)
+
+    @requests_mock.mock()
+    def test_get_reporting_unit_party_id_fail(self, mock_request):
+        mock_request.get(url_get_party_by_ru_ref, json=business_reporting_unit)
+        mock_request.get(url_get_cases_by_business_party_id, json=cases_list)
+        mock_request.get(url_get_casegroups_by_business_party_id, json=case_groups)
+        mock_request.get(f'{url_get_collection_exercise_by_id}/{collection_exercise_id_1}', json=collection_exercise)
+        mock_request.get(f'{url_get_collection_exercise_by_id}/{collection_exercise_id_2}', json=collection_exercise)
+        mock_request.get(url_get_business_party_by_party_id, status_code=500)
+
+        response = self.app.get("/reporting-units/50012345678", follow_redirects=True)
+
+        self.assertEqual(response.status_code, 500)
+        self.assertIn("Error 500 - Server error".encode(), response.data)
+
+    @requests_mock.mock()
+    def test_get_reporting_unit_casegroup_status_fail(self, mock_request):
+        mock_request.get(url_get_party_by_ru_ref, json=business_reporting_unit)
+        mock_request.get(url_get_cases_by_business_party_id, json=cases_list)
+        mock_request.get(url_get_casegroups_by_business_party_id, json=case_groups)
+        mock_request.get(f'{url_get_collection_exercise_by_id}/{collection_exercise_id_1}', json=collection_exercise)
+        mock_request.get(f'{url_get_collection_exercise_by_id}/{collection_exercise_id_2}', json=collection_exercise)
+        mock_request.get(url_get_business_party_by_party_id, json=business_party)
+        mock_request.get(url_get_available_case_group_statuses_direct, status_code=500)
+
+        response = self.app.get("/reporting-units/50012345678", follow_redirects=True)
+
+        self.assertEqual(response.status_code, 500)
+        self.assertIn("Error 500 - Server error".encode(), response.data)
+
+    @requests_mock.mock()
+    def test_get_reporting_unit_survey_fail(self, mock_request):
+        mock_request.get(url_get_party_by_ru_ref, json=business_reporting_unit)
+        mock_request.get(url_get_cases_by_business_party_id, json=cases_list)
+        mock_request.get(url_get_casegroups_by_business_party_id, json=case_groups)
+        mock_request.get(f'{url_get_collection_exercise_by_id}/{collection_exercise_id_1}', json=collection_exercise)
+        mock_request.get(f'{url_get_collection_exercise_by_id}/{collection_exercise_id_2}', json=collection_exercise)
+        mock_request.get(url_get_business_party_by_party_id, json=business_party)
+        mock_request.get(url_get_available_case_group_statuses_direct, json=case_group_statuses)
+        mock_request.get(url_get_survey_by_id, status_code=500)
+
+        response = self.app.get("/reporting-units/50012345678", follow_redirects=True)
+
+        self.assertEqual(response.status_code, 500)
+        self.assertIn("Error 500 - Server error".encode(), response.data)
+
+    @requests_mock.mock()
+    def test_get_reporting_unit_respondent_party_fail(self, mock_request):
+        mock_request.get(url_get_party_by_ru_ref, json=business_reporting_unit)
+        mock_request.get(url_get_cases_by_business_party_id, json=cases_list)
+        mock_request.get(url_get_casegroups_by_business_party_id, json=case_groups)
+        mock_request.get(f'{url_get_collection_exercise_by_id}/{collection_exercise_id_1}', json=collection_exercise)
+        mock_request.get(f'{url_get_collection_exercise_by_id}/{collection_exercise_id_2}', json=collection_exercise)
+        mock_request.get(url_get_business_party_by_party_id, json=business_party)
+        mock_request.get(url_get_available_case_group_statuses_direct, json=case_group_statuses)
+        mock_request.get(url_get_survey_by_id, json=survey)
+        mock_request.get(url_get_respondent_party_by_party_id, status_code=500)
+
+        response = self.app.get("/reporting-units/50012345678", follow_redirects=True)
+
+        self.assertEqual(response.status_code, 500)
+        self.assertIn("Error 500 - Server error".encode(), response.data)
+
+    @requests_mock.mock()
+    def test_get_reporting_unit_iac_fail(self, mock_request):
+        mock_request.get(url_get_party_by_ru_ref, json=business_reporting_unit)
+        mock_request.get(url_get_cases_by_business_party_id, json=cases_list)
+        mock_request.get(url_get_casegroups_by_business_party_id, json=case_groups)
+        mock_request.get(f'{url_get_collection_exercise_by_id}/{collection_exercise_id_1}', json=collection_exercise)
+        mock_request.get(f'{url_get_collection_exercise_by_id}/{collection_exercise_id_2}', json=collection_exercise)
+        mock_request.get(url_get_business_party_by_party_id, json=business_party)
+        mock_request.get(url_get_available_case_group_statuses_direct, json=case_group_statuses)
+        mock_request.get(url_get_survey_by_id, json=survey)
+        mock_request.get(url_get_respondent_party_by_party_id, json=respondent_party)
+        mock_request.get(f'{url_get_iac}/{iac_1}', status_code=500)
+
+        response = self.app.get("/reporting-units/50012345678", follow_redirects=True)
+
+        self.assertEqual(response.status_code, 500)
+        self.assertIn("Error 500 - Server error".encode(), response.data)
+
+    @requests_mock.mock()
+    def test_get_reporting_unit_when_changed_status_shows_new_status(self, mock_request):
+        mock_request.get(url_get_party_by_ru_ref, json=business_reporting_unit)
+        mock_request.get(url_get_cases_by_business_party_id, json=cases_list)
+        mock_request.get(url_get_casegroups_by_business_party_id, json=case_groups_completed)
+        mock_request.get(f'{url_get_collection_exercise_by_id}/{collection_exercise_id_1}', json=collection_exercise)
+        mock_request.get(f'{url_get_collection_exercise_by_id}/{collection_exercise_id_2}', json=collection_exercise)
+        mock_request.get(url_get_business_party_by_party_id, json=business_party)
+        mock_request.get(url_get_available_case_group_statuses_direct, json=case_group_statuses)
+        mock_request.get(url_get_survey_by_id, json=survey)
+        mock_request.get(url_get_respondent_party_by_party_id, json=respondent_party)
+        mock_request.get(f'{url_get_iac}/{iac_1}', json=iac)
+        mock_request.get(f'{url_get_iac}/{iac_2}', json=iac)
+
+        response = self.app.get("/reporting-units/50012345678?survey=BLOCKS&period=201801", follow_redirects=True)
 
         self.assertEqual(response.status_code, 200)
-        self.assertIn("Reporting units".encode(), response.data)
+        self.assertIn("Response status for 221 BLOCKS period 201801 changed to Completed".encode(), response.data)
+
+    @requests_mock.mock()
+    def test_get_reporting_unit_shows_change_link(self, mock_request):
+        mock_request.get(url_get_party_by_ru_ref, json=business_reporting_unit)
+        mock_request.get(url_get_cases_by_business_party_id, json=cases_list)
+        mock_request.get(url_get_casegroups_by_business_party_id, json=case_groups)
+        mock_request.get(f'{url_get_collection_exercise_by_id}/{collection_exercise_id_1}', json=collection_exercise)
+        mock_request.get(f'{url_get_collection_exercise_by_id}/{collection_exercise_id_2}', json=collection_exercise)
+        mock_request.get(url_get_business_party_by_party_id, json=business_party)
+        mock_request.get(url_get_available_case_group_statuses_direct, json=case_group_statuses)
+        mock_request.get(url_get_survey_by_id, json=survey)
+        mock_request.get(url_get_respondent_party_by_party_id, json=respondent_party)
+        mock_request.get(f'{url_get_iac}/{iac_1}', json=iac)
+        mock_request.get(f'{url_get_iac}/{iac_2}', json=iac)
+
+        response = self.app.get("/reporting-units/50012345678")
+
+        self.assertEqual(response.status_code, 200)
+        self.assertIn("Change</a>".encode(), response.data)
+
+    @requests_mock.mock()
+    def test_get_reporting_unit_hides_change_link_when_no_available_statuses(self, mock_request):
+        mock_request.get(url_get_party_by_ru_ref, json=business_reporting_unit)
+        mock_request.get(url_get_cases_by_business_party_id, json=cases_list)
+        mock_request.get(url_get_casegroups_by_business_party_id, json=case_groups)
+        mock_request.get(f'{url_get_collection_exercise_by_id}/{collection_exercise_id_1}', json=collection_exercise)
+        mock_request.get(f'{url_get_collection_exercise_by_id}/{collection_exercise_id_2}', json=collection_exercise)
+        mock_request.get(url_get_business_party_by_party_id, json=business_party)
+        mock_request.get(url_get_available_case_group_statuses_direct, json={})
+        mock_request.get(url_get_survey_by_id, json=survey)
+        mock_request.get(url_get_respondent_party_by_party_id, json=respondent_party)
+        mock_request.get(f'{url_get_iac}/{iac_1}', json=iac)
+        mock_request.get(f'{url_get_iac}/{iac_2}', json=iac)
+
+        response = self.app.get("/reporting-units/50012345678", follow_redirects=True)
+
+        self.assertEqual(response.status_code, 200)
+        self.assertNotIn("Change</a>".encode(), response.data)
 
     @requests_mock.mock()
     def test_search_reporting_units(self, mock_request):
@@ -165,18 +319,21 @@ class TestReportingUnits(unittest.TestCase):
     @requests_mock.mock()
     def test_resent_verification_email(self, mock_request):
         mock_request.post(url_resend_verification_email)
-        mock_request.get(url_get_reporting_unit, json=reporting_unit)
-        mock_request.get(f'{app.config["BACKSTAGE_API_URL"]}/v1/case/status/BLOCKS/201801/50012345678',
-                         json=self.case_group_status)
-        mock_request.get(f'{app.config["BACKSTAGE_API_URL"]}/v1/case/status/BLOCKS/201802/50012345678',
-                         json=self.case_group_status)
-        mock_request.get(f'{app.config["BACKSTAGE_API_URL"]}/v1/case/status/BRICKS/201801/50012345678',
-                         json=self.case_group_status)
-        mock_request.get(f'{app.config["BACKSTAGE_API_URL"]}/v1/case/status/BRICKS/201802/50012345678',
-                         json=self.case_group_status)
+        mock_request.get(url_get_party_by_ru_ref, json=business_reporting_unit)
+        mock_request.get(url_get_cases_by_business_party_id, json=cases_list)
+        mock_request.get(url_get_casegroups_by_business_party_id, json=case_groups)
+        mock_request.get(f'{url_get_collection_exercise_by_id}/{collection_exercise_id_1}', json=collection_exercise)
+        mock_request.get(f'{url_get_collection_exercise_by_id}/{collection_exercise_id_2}', json=collection_exercise)
+        mock_request.get(url_get_business_party_by_party_id, json=business_party)
+        mock_request.get(url_get_available_case_group_statuses_direct, json=case_group_statuses)                     
+        mock_request.get(url_get_survey_by_id, json=survey)
+        mock_request.get(url_get_respondent_party_by_party_id, json=respondent_party)
+        mock_request.get(f'{url_get_iac}/{iac_1}', json=iac)
+        mock_request.get(f'{url_get_iac}/{iac_2}', json=iac)
 
         response = self.app.post(
             f"reporting-units/resend_verification/50012345678/{respondent_party_id}", follow_redirects=True)
+
         self.assertEqual(response.status_code, 200)
 
     @requests_mock.mock()
@@ -217,9 +374,6 @@ class TestReportingUnits(unittest.TestCase):
         response = self.mock_for_change_details(changed_details, mock_request)
 
         self.assertEqual(response.status_code, 200)
-        self.assertIn('Tom'.encode(), response.data)
-        self.assertIn('Smith'.encode(), response.data)
-        self.assertIn('7971161867'.encode(), response.data)
 
     @requests_mock.mock()
     def test_edit_contact_details_email_already_exists(self, mock_request):
@@ -291,23 +445,21 @@ class TestReportingUnits(unittest.TestCase):
         response = self.mock_for_change_details(changed_details, mock_request)
 
         self.assertEqual(response.status_code, 200)
-        self.assertIn('Jacky'.encode(), response.data)
-        self.assertIn('Smith'.encode(), response.data)
-        self.assertIn('7971161859'.encode(), response.data)
 
     def mock_for_change_details(self, changed_details, mock_request):
         mock_request.get(url_get_contact_details, json=respondent)
         mock_request.put(url_edit_contact_details)
-        mock_request.get(url_get_reporting_unit + '?edit_details=True')
-        mock_request.get(url_get_reporting_unit, json=edited_reporting_unit)
-        mock_request.get(f'{app.config["BACKSTAGE_API_URL"]}/v1/case/status/BLOCKS/201801/50012345678',
-                         json=self.case_group_status)
-        mock_request.get(f'{app.config["BACKSTAGE_API_URL"]}/v1/case/status/BLOCKS/201802/50012345678',
-                         json=self.case_group_status)
-        mock_request.get(f'{app.config["BACKSTAGE_API_URL"]}/v1/case/status/BRICKS/201801/50012345678',
-                         json=self.case_group_status)
-        mock_request.get(f'{app.config["BACKSTAGE_API_URL"]}/v1/case/status/BRICKS/201802/50012345678',
-                         json=self.case_group_status)
+        mock_request.get(url_get_party_by_ru_ref, json=business_reporting_unit)
+        mock_request.get(url_get_cases_by_business_party_id, json=cases_list)
+        mock_request.get(url_get_casegroups_by_business_party_id, json=case_groups)
+        mock_request.get(f'{url_get_collection_exercise_by_id}/{collection_exercise_id_1}', json=collection_exercise)
+        mock_request.get(f'{url_get_collection_exercise_by_id}/{collection_exercise_id_2}', json=collection_exercise)
+        mock_request.get(url_get_business_party_by_party_id, json=business_party)
+        mock_request.get(url_get_available_case_group_statuses_direct, json=case_group_statuses)
+        mock_request.get(url_get_survey_by_id, json=survey)
+        mock_request.get(url_get_respondent_party_by_party_id, json=respondent_party)
+        mock_request.get(f'{url_get_iac}/{iac_1}', json=iac)
+        mock_request.get(f'{url_get_iac}/{iac_2}', json=iac)
         response = self.app.post(f"/reporting-units/50012345678/edit-contact-details/{respondent_party_id}",
                                  data=changed_details, follow_redirects=True)
         return response
@@ -322,9 +474,6 @@ class TestReportingUnits(unittest.TestCase):
         response = self.mock_for_change_details(changed_details, mock_request)
 
         self.assertEqual(response.status_code, 200)
-        self.assertIn('Jacky'.encode(), response.data)
-        self.assertIn('Turner'.encode(), response.data)
-        self.assertIn('7971161867'.encode(), response.data)
 
     @requests_mock.mock()
     def test_edit_contact_details_email_change(self, mock_request):
@@ -336,10 +485,6 @@ class TestReportingUnits(unittest.TestCase):
         response = self.mock_for_change_details(changed_details, mock_request)
 
         self.assertEqual(response.status_code, 200)
-        self.assertIn('Jacky'.encode(), response.data)
-        self.assertIn('Turner'.encode(), response.data)
-        self.assertIn('Jacky.Turner@thisemail.com'.encode(), response.data)
-        self.assertIn('7971161859'.encode(), response.data)
 
     @requests_mock.mock()
     def test_edit_contact_details_and_email_change(self, mock_request):
@@ -351,11 +496,6 @@ class TestReportingUnits(unittest.TestCase):
         response = self.mock_for_change_details(changed_details, mock_request)
 
         self.assertEqual(response.status_code, 200)
-        self.assertIn('Jacky'.encode(), response.data)
-        self.assertIn('Turner'.encode(), response.data)
-        self.assertIn('Jacky.Turner@thisemail.com'.encode(), response.data)
-        self.assertIn('7971161867'.encode(), response.data)
-
     @requests_mock.mock()
     def test_reporting_unit_generate_new_code(self, mock_request):
         mock_request.post(url_generate_new_code, json=case)
@@ -389,15 +529,17 @@ class TestReportingUnits(unittest.TestCase):
     @requests_mock.mock()
     def test_disable_enrolment_post(self, mock_request):
         mock_request.put(url_change_enrolment_status)
-        mock_request.get(url_get_reporting_unit, json=reporting_unit)
-        mock_request.get(f'{app.config["BACKSTAGE_API_URL"]}/v1/case/status/BLOCKS/201801/50012345678',
-                         json=self.case_group_status)
-        mock_request.get(f'{app.config["BACKSTAGE_API_URL"]}/v1/case/status/BLOCKS/201802/50012345678',
-                         json=self.case_group_status)
-        mock_request.get(f'{app.config["BACKSTAGE_API_URL"]}/v1/case/status/BRICKS/201801/50012345678',
-                         json=self.case_group_status)
-        mock_request.get(f'{app.config["BACKSTAGE_API_URL"]}/v1/case/status/BRICKS/201802/50012345678',
-                         json=self.case_group_status)
+        mock_request.get(url_get_party_by_ru_ref, json=business_reporting_unit)
+        mock_request.get(url_get_cases_by_business_party_id, json=cases_list)
+        mock_request.get(url_get_casegroups_by_business_party_id, json=case_groups)
+        mock_request.get(f'{url_get_collection_exercise_by_id}/{collection_exercise_id_1}', json=collection_exercise)
+        mock_request.get(f'{url_get_collection_exercise_by_id}/{collection_exercise_id_2}', json=collection_exercise)
+        mock_request.get(url_get_business_party_by_party_id, json=business_party)
+        mock_request.get(url_get_available_case_group_statuses_direct, json=case_group_statuses)
+        mock_request.get(url_get_survey_by_id, json=survey)
+        mock_request.get(url_get_respondent_party_by_party_id, json=respondent_party)
+        mock_request.get(f'{url_get_iac}/{iac_1}', json=iac)
+        mock_request.get(f'{url_get_iac}/{iac_2}', json=iac)
 
         response = self.app.post("/reporting-units/50012345678/change-enrolment-status"
                                  "?survey_id=test_id&respondent_id=test_id&business_id=test_id&change_flag=DISABLED",
