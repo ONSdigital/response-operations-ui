@@ -125,10 +125,31 @@ class TestReportingUnits(unittest.TestCase):
         self.assertIn("Error 500 - Server error".encode(), response.data)
 
     @requests_mock.mock()
+    def test_get_reporting_unit_cases_404(self, mock_request):
+        mock_request.get(url_get_party_by_ru_ref, json=business_reporting_unit)
+        mock_request.get(url_get_cases_by_business_party_id, status_code=404)
+
+        response = self.app.get("/reporting-units/50012345678", follow_redirects=True)
+
+        self.assertEqual(response.status_code, 500)
+        self.assertIn("Error 500 - Server error".encode(), response.data)
+
+    @requests_mock.mock()
     def test_get_reporting_unit_casegroups_fail(self, mock_request):
         mock_request.get(url_get_party_by_ru_ref, json=business_reporting_unit)
         mock_request.get(url_get_cases_by_business_party_id, json=cases_list)
         mock_request.get(url_get_casegroups_by_business_party_id, status_code=500)
+
+        response = self.app.get("/reporting-units/50012345678", follow_redirects=True)
+
+        self.assertEqual(response.status_code, 500)
+        self.assertIn("Error 500 - Server error".encode(), response.data)
+
+    @requests_mock.mock()
+    def test_get_reporting_unit_casegroups_fail(self, mock_request):
+        mock_request.get(url_get_party_by_ru_ref, json=business_reporting_unit)
+        mock_request.get(url_get_cases_by_business_party_id, json=cases_list)
+        mock_request.get(url_get_casegroups_by_business_party_id, status_code=404)
 
         response = self.app.get("/reporting-units/50012345678", follow_redirects=True)
 
@@ -170,6 +191,21 @@ class TestReportingUnits(unittest.TestCase):
         mock_request.get(f'{url_get_collection_exercise_by_id}/{collection_exercise_id_2}', json=collection_exercise)
         mock_request.get(url_get_business_party_by_party_id, json=business_party)
         mock_request.get(url_get_available_case_group_statuses_direct, status_code=500)
+
+        response = self.app.get("/reporting-units/50012345678", follow_redirects=True)
+
+        self.assertEqual(response.status_code, 500)
+        self.assertIn("Error 500 - Server error".encode(), response.data)
+
+    @requests_mock.mock()
+    def test_get_reporting_unit_casegroup_status_404(self, mock_request):
+        mock_request.get(url_get_party_by_ru_ref, json=business_reporting_unit)
+        mock_request.get(url_get_cases_by_business_party_id, json=cases_list)
+        mock_request.get(url_get_casegroups_by_business_party_id, json=case_groups)
+        mock_request.get(f'{url_get_collection_exercise_by_id}/{collection_exercise_id_1}', json=collection_exercise)
+        mock_request.get(f'{url_get_collection_exercise_by_id}/{collection_exercise_id_2}', json=collection_exercise)
+        mock_request.get(url_get_business_party_by_party_id, json=business_party)
+        mock_request.get(url_get_available_case_group_statuses_direct, status_code=404)
 
         response = self.app.get("/reporting-units/50012345678", follow_redirects=True)
 
@@ -226,6 +262,25 @@ class TestReportingUnits(unittest.TestCase):
 
         self.assertEqual(response.status_code, 500)
         self.assertIn("Error 500 - Server error".encode(), response.data)
+
+    @requests_mock.mock()
+    def test_get_reporting_unit_iac_404(self, mock_request):
+        mock_request.get(url_get_party_by_ru_ref, json=business_reporting_unit)
+        mock_request.get(url_get_cases_by_business_party_id, json=cases_list)
+        mock_request.get(url_get_casegroups_by_business_party_id, json=case_groups)
+        mock_request.get(f'{url_get_collection_exercise_by_id}/{collection_exercise_id_1}', json=collection_exercise)
+        mock_request.get(f'{url_get_collection_exercise_by_id}/{collection_exercise_id_2}', json=collection_exercise)
+        mock_request.get(url_get_business_party_by_party_id, json=business_party)
+        mock_request.get(url_get_available_case_group_statuses_direct, json=case_group_statuses)
+        mock_request.get(url_get_survey_by_id, json=survey)
+        mock_request.get(url_get_respondent_party_by_party_id, json=respondent_party)
+        mock_request.get(f'{url_get_iac}/{iac_1}', status_code=404)
+
+        response = self.app.get("/reporting-units/50012345678", follow_redirects=True)
+
+        self.assertEqual(response.status_code, 200)
+        self.assertIn("Bolts and Ratchets Ltd".encode(), response.data)
+        self.assertIn("50012345678".encode(), response.data)
 
     @requests_mock.mock()
     def test_get_reporting_unit_when_changed_status_shows_new_status(self, mock_request):
