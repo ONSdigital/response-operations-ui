@@ -13,35 +13,36 @@ logger = wrap_logger(logging.getLogger(__name__))
 
 
 def get_respondent_by_party_id(party_id):
-    logger.debug("Get respondent details")
+    logger.debug("Get respondent details", party_id=party_id)
     url = f'{app.config["PARTY_URL"]}/party-api/v1/respondents/id/{party_id}'
     response = requests.get(url=url, auth=app.config['PARTY_AUTH'])
 
     try:
         response.raise_for_status()
     except (HTTPError, RequestException):
-        logger.exception("Respondent retrieval failed", party_id=party_id)
-        raise ApiError(response)
+        log_level = logger.warning if response.status_code in (400, 404) else logger.exception
+        log_level("Respondent retrieval failed", party_id=party_id)
 
+    logger.debug("Successfully retrieved respondent details", party_id=party_id)
     return response.json()
 
 
 def get_business_by_party_id(party_id):
-    logger.debug("Get business details")
+    logger.debug("Get business details", party_id=party_id)
     url = f'{app.config["PARTY_URL"]}/party-api/v1/businesses/id/{party_id}'
     response = requests.get(url, auth=app.config['PARTY_AUTH'])
 
     try:
         response.raise_for_status()
     except (HTTPError, RequestException):
-        logger.exception("Business retrieval failed", party_id=party_id)
-        raise ApiError(response)
+        log_level = logger.warning if response.status_code in (400, 404) else logger.exception
+        log_level("Business retrieval failed", party_id=party_id)
 
+    logger.debug("Successfully retrieved business details", party_id=party_id)
     return response.json()
 
 
 def get_respondent_enrolments(respondent, enrolment_status=None):
-    logger.debug("Get respondent enrolment details")
 
     enrolments = []
     for association in respondent['associations']:
@@ -57,6 +58,7 @@ def get_respondent_enrolments(respondent, enrolment_status=None):
                     enrolments.append(enrolment_data)
             else:
                 enrolments.append(enrolment_data)
+
     return enrolments
 
 
@@ -75,8 +77,8 @@ def search_respondent_by_email(email):
     try:
         response.raise_for_status()
     except (HTTPError, RequestException):
-        logger.exception("Respondent retrieval failed")
-        raise ApiError(response)
+        log_level = logger.warning if response.status_code in 400 else logger.exception
+        log_level("Respondent retrieval failed")
     logger.debug("Respondent retrieved successfully")
 
     return response.json()
@@ -116,10 +118,7 @@ def _compare_contact_details(new_contact_details, old_contact_details):
         "lastName": "last_name",
         "telephone": "telephone",
         "emailAddress": "new_email_address"}
-    details_different = []
 
-    for key in contact_details_map:
-        if old_contact_details.get(key) != new_contact_details.get(contact_details_map[key]):
-            details_different.append(key)
+    details_different = [key for key in contact_details_map if old_contact_details.get(key) != new_contact_details.get(contact_details_map[key])]
 
     return details_different

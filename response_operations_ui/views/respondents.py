@@ -25,10 +25,10 @@ def respondent_search():
 
         respondent = party_controller.search_respondent_by_email(email)
 
-        if respondent is None:
-            response = 'No Respondent found for ' + email
-        else:
+        if respondent:
             return redirect(url_for('respondent_bp.respondent_details', respondent_id=respondent['id']))
+
+        response = 'No Respondent found for ' + email
 
     return render_template('search-respondent.html', response=response, form=form, breadcrumbs=breadcrumbs)
 
