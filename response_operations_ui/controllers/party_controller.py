@@ -6,7 +6,7 @@ from structlog import wrap_logger
 
 from response_operations_ui import app
 from response_operations_ui.controllers.survey_controllers import get_survey_by_id
-from response_operations_ui.exceptions.exceptions import ApiError, UpdateContactDetailsException
+from response_operations_ui.exceptions.exceptions import UpdateContactDetailsException
 from response_operations_ui.forms import EditContactDetailsForm
 
 logger = wrap_logger(logging.getLogger(__name__))
@@ -120,6 +120,7 @@ def _compare_contact_details(new_contact_details, old_contact_details):
         "telephone": "telephone",
         "emailAddress": "new_email_address"}
 
-    details_different = [key for key in contact_details_map if old_contact_details.get(key) != new_contact_details.get(contact_details_map[key])]
+    details_different = [key for key in contact_details_map
+                         if old_contact_details.get(key) != new_contact_details.get(contact_details_map[key])]
 
     return details_different

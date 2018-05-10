@@ -19,8 +19,8 @@ with open('tests/test_data/reporting_units/respondent.json') as json_data:
     respondent = json.load(json_data)
 with open('tests/test_data/reporting_units/reporting_unit.json') as json_data:
     reporting_unit = json.load(json_data)
-with open('tests/test_data/survey/survey.json') as json_data:
-    survey = json.load(json_data)
+with open('tests/test_data/survey/survey_by_id.json') as json_data:
+    survey_by_id = json.load(json_data)
 
 
 class TestRespondents(unittest.TestCase):
@@ -71,7 +71,7 @@ class TestRespondents(unittest.TestCase):
         mock_request.get(get_business_by_id_url, json=reporting_unit, status_code=200)
         mock_request.get(get_respondent_by_email_url, json=respondent, status_code=200)
         mock_request.get(get_respondent_by_id_url, json=respondent, status_code=200)
-        mock_request.get(get_survey_by_id_url, json=survey, status_code=200)
+        mock_request.get(get_survey_by_id_url, json=survey_by_id, status_code=200)
 
         response = self.app.post("/respondents", data={"query": email}, follow_redirects=True)
 
