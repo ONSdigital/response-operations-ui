@@ -1,5 +1,4 @@
 from datetime import datetime
-import calendar
 import iso8601
 import re
 
