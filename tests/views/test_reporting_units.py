@@ -146,7 +146,7 @@ class TestReportingUnits(unittest.TestCase):
         self.assertIn("Error 500 - Server error".encode(), response.data)
 
     @requests_mock.mock()
-    def test_get_reporting_unit_casegroups_fail(self, mock_request):
+    def test_get_reporting_unit_casegroups_404(self, mock_request):
         mock_request.get(url_get_party_by_ru_ref, json=business_reporting_unit)
         mock_request.get(url_get_cases_by_business_party_id, json=cases_list)
         mock_request.get(url_get_casegroups_by_business_party_id, status_code=404)
