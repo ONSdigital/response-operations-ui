@@ -76,7 +76,8 @@ def get_collection_exercise_by_id(collection_exercise_id):
     try:
         response.raise_for_status()
     except requests.exceptions.HTTPError:
-        logger.error('Failed to retrieve collection exercise', collection_exercise_id=collection_exercise_id)
+        log_level = logger.warning if response.status_code == 404 else logger.exception
+        log_level('Failed to retrieve collection exercise', collection_exercise_id=collection_exercise_id)
         raise ApiError(response)
 
     logger.debug('Successfully retrieved collection exercise', collection_exercise_id=collection_exercise_id)

@@ -41,7 +41,7 @@ def get_available_case_group_statuses_direct(collection_exercise_id, ru_ref):
         if response.status_code == 404:
             logger.debug('No statuses found', collection_exercise_id=collection_exercise_id, ru_ref=ru_ref)
             return []
-        logger.error('Error retrieving statuses', collection_exercise_id=collection_exercise_id, ru_ref=ru_ref)
+        logger.exception('Error retrieving statuses', collection_exercise_id=collection_exercise_id, ru_ref=ru_ref)
         raise ApiError(response)
 
     logger.debug('Successfully retrieved statuses', collection_exercise_id=collection_exercise_id, ru_ref=ru_ref)
