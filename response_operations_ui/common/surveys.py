@@ -9,6 +9,7 @@ class Surveys(Enum):
     BRICKS = "Bricks"
     FDI = "FDI"
     GOVERD = "GovERD"
+    MBS = "MBS"
     MWSS = "MWSS"
     NBS = "NBS"
     OFATS = "OFATS"
