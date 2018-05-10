@@ -1,9 +1,8 @@
 import os
-from distutils.util import strtobool
 
 
 class Config(object):
-    DEBUG = strtobool(os.getenv('DEBUG', 'False'))
+    DEBUG = os.getenv('DEBUG', False)
     TESTING = False
     PORT = os.getenv('PORT', 8085)
     LOGGING_LEVEL = os.getenv('LOGGING_LEVEL', 'INFO')
@@ -28,11 +27,10 @@ class Config(object):
 
     UAA_SERVICE_URL = os.getenv('UAA_SERVICE_URL')
     RAS_SECURE_MESSAGING_JWT_SECRET = os.getenv('RAS_SECURE_MESSAGING_JWT_SECRET')
-    SECURE_COOKIES = strtobool(os.getenv('SECURE_COOKIES', 'True'))
 
 
 class DevelopmentConfig(Config):
-    DEBUG = strtobool(os.getenv('DEBUG', 'True'))
+    DEBUG = os.getenv('DEBUG', True)
     LOGGING_LEVEL = os.getenv('LOGGING_LEVEL', 'DEBUG')
     BACKSTAGE_API_URL = os.getenv('BACKSTAGE_API_URL', 'http://localhost:8001/backstage-api')
     SECURE_MESSAGE_URL = os.getenv('SECURE_MESSAGE_URL', 'http://localhost:5050')
@@ -47,7 +45,6 @@ class DevelopmentConfig(Config):
     COLLECTION_EXERCISE_USERNAME = os.getenv('COLLECTION_EXERCISE_USERNAME', 'admin')
     COLLECTION_EXERCISE_PASSWORD = os.getenv('COLLECTION_EXERCISE_PASSWORD', 'secret')
     COLLECTION_EXERCISE_AUTH = (COLLECTION_EXERCISE_USERNAME, COLLECTION_EXERCISE_PASSWORD)
-    SECURE_COOKIES = strtobool(os.getenv('SECURE_COOKIES', 'False'))
 
     UAA_SERVICE_URL = os.getenv('UAA_SERVICE_URL', 'http://localhost:9080')
     RAS_SECURE_MESSAGING_JWT_SECRET = os.getenv('RAS_SECURE_MESSAGING_JWT_SECRET', 'testsecret')
@@ -60,4 +57,3 @@ class TestingConfig(DevelopmentConfig):
     WTF_CSRF_ENABLED = False
     SESSION_TYPE = "filesystem"
     SESSION_PERMANENT = False
-    SECURE_COOKIES = True
