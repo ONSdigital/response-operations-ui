@@ -6,7 +6,7 @@
         <div class="grid">
             <section class="grid__col col-12@l u-mb-xl respondent-account-details">
 
-                    <h1 class="jupiter">{{ respondent.firstName }} {{ respondent.lastName }}</h1>
+                    <h1 class="jupiter" id="respondent-name">{{ respondent.firstName }} {{ respondent.lastName }}</h1>
                     <dl class="description-list">
                         <dt>
                             Email
@@ -25,13 +25,13 @@
                         <dt>
                             Tel
                         </dt>
-                        <dd name="tbl-respondent-phone">
+                        <dd id="respondent-telephone" name="tbl-respondent-phone">
                             {{ respondent.telephone }}
                         </dd>
                         <dt>
                             Account
                         </dt>
-                        <dd>
+                        <dd id="respondent-account-status">
                             {{ respondent.status }}
                         </dd>
                     </dl>
