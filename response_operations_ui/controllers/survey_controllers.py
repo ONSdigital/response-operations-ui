@@ -150,6 +150,7 @@ def get_survey_by_id(survey_id):
     except (HTTPError, RequestException):
         log_level = logger.warning if response.status_code in (400, 404) else logger.exception
         log_level("Survey retrieval failed", survey_id=survey_id)
+        raise ApiError(response)
 
     logger.debug("Successfully retrieved survey", survey_id=survey_id)
     return response.json()

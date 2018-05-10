@@ -6,7 +6,7 @@ from structlog import wrap_logger
 
 from response_operations_ui import app
 from response_operations_ui.controllers.survey_controllers import get_survey_by_id
-from response_operations_ui.exceptions.exceptions import UpdateContactDetailsException
+from response_operations_ui.exceptions.exceptions import ApiError, UpdateContactDetailsException
 from response_operations_ui.forms import EditContactDetailsForm
 
 logger = wrap_logger(logging.getLogger(__name__))
@@ -22,6 +22,7 @@ def get_respondent_by_party_id(party_id):
     except (HTTPError, RequestException):
         log_level = logger.warning if response.status_code in (400, 404) else logger.exception
         log_level("Respondent retrieval failed", party_id=party_id)
+        raise ApiError(response)
 
     logger.debug("Successfully retrieved respondent details", party_id=party_id)
     return response.json()
@@ -37,6 +38,7 @@ def get_business_by_party_id(party_id):
     except (HTTPError, RequestException):
         log_level = logger.warning if response.status_code in (400, 404) else logger.exception
         log_level("Business retrieval failed", party_id=party_id)
+        raise ApiError(response)
 
     logger.debug("Successfully retrieved business details", party_id=party_id)
     return response.json()
@@ -79,6 +81,7 @@ def search_respondent_by_email(email):
     except (HTTPError, RequestException):
         log_level = logger.warning if response.status_code in 400 else logger.exception
         log_level("Respondent retrieval failed")
+        raise ApiError(response)
     logger.debug("Respondent retrieved successfully")
 
     return response.json()

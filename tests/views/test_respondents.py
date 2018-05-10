@@ -2,6 +2,7 @@ import json
 import unittest
 
 import requests_mock
+from requests.exceptions import HTTPError
 
 from config import TestingConfig
 from response_operations_ui import app
@@ -85,3 +86,42 @@ class TestRespondents(unittest.TestCase):
         response = self.app.post("/respondents/", data={"query": email}, follow_redirects=True)
 
         self.assertIn('No Respondent found'.encode(), response.data)
+
+    @requests_mock.mock()
+    def test_search_respondent_by_email_unable_to_get_survey(self, mock_request):
+        email = 'Jacky.Turner@email.com'
+        mock_request.get(get_business_by_id_url, json=reporting_unit, status_code=200)
+        mock_request.get(get_respondent_by_email_url, json=respondent, status_code=200)
+        mock_request.get(get_respondent_by_id_url, json=respondent, status_code=200)
+        mock_request.get(get_survey_by_id_url, json=survey_by_id, status_code=500)
+
+        response = self.app.post("/respondents", data={"query": email}, follow_redirects=True)
+
+        self.assertEqual(response.status_code, 500)
+        self.assertIn("Error 500 - Server error".encode(), response.data)
+
+    @requests_mock.mock()
+    def test_search_respondent_by_email_unable_to_get_respondent_details(self, mock_request):
+        email = 'Jacky.Turner@email.com'
+        mock_request.get(get_business_by_id_url, json=reporting_unit, status_code=200)
+        mock_request.get(get_respondent_by_email_url, json=respondent, status_code=200)
+        mock_request.get(get_respondent_by_id_url, json=respondent, status_code=500)
+        mock_request.get(get_survey_by_id_url, json=survey_by_id, status_code=200)
+
+        response = self.app.post("/respondents", data={"query": email}, follow_redirects=True)
+
+        self.assertEqual(response.status_code, 500)
+        self.assertIn("Error 500 - Server error".encode(), response.data)
+
+    @requests_mock.mock()
+    def test_search_respondent_by_email_unable_to_get_business_details(self, mock_request):
+        email = 'Jacky.Turner@email.com'
+        mock_request.get(get_business_by_id_url, json=reporting_unit, status_code=500)
+        mock_request.get(get_respondent_by_email_url, json=respondent, status_code=200)
+        mock_request.get(get_respondent_by_id_url, json=respondent, status_code=200)
+        mock_request.get(get_survey_by_id_url, json=survey_by_id, status_code=200)
+
+        response = self.app.post("/respondents", data={"query": email}, follow_redirects=True)
+
+        self.assertEqual(response.status_code, 500)
+        self.assertIn("Error 500 - Server error".encode(), response.data)
