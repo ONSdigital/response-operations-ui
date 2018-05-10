@@ -123,13 +123,6 @@ def get_collection_exercises_by_survey(survey_id):
     return response.json()
 
 
-def get_collection_exercises_for_ru_ref(ru_ref):
-    reporting_unit = party_controller.get_party_by_ru_ref(ru_ref)
-    case_groups = case_controller.get_case_groups_by_business_party_id(reporting_unit['id'])
-    collection_exercise_ids = [case_group['collectionExerciseId'] for case_group in case_groups]
-    return [get_collection_exercise_by_id(ce_id) for ce_id in collection_exercise_ids]
-
-
 def add_collection_exercise_details(collection_exercise, reporting_unit, case_groups):
     response_status = get_case_group_status_by_collection_exercise(case_groups, collection_exercise['id'])
     reporting_unit_ce = party_controller.get_business_party_by_party_id(reporting_unit['id'], collection_exercise['id'])
