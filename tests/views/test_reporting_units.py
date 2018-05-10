@@ -34,31 +34,31 @@ url_get_survey_by_id = f'{app.config["SURVEY_URL"]}/surveys/{survey_id}'
 url_get_respondent_party_by_party_id = f'{app.config["PARTY_URL"]}/party-api/v1/respondents/id/{respondent_party_id}'
 url_get_iac = f'{app.config["IAC_URL"]}/iacs'
 
-with open('tests/test_data/reporting_units/respondent.json') as json_data:
-    respondent = json.load(json_data)
-with open('tests/test_data/case/case.json') as json_data:
-    case = json.load(json_data)
+with open('tests/test_data/reporting_units/respondent.json') as fp:
+    respondent = json.load(fp)
+with open('tests/test_data/case/case.json') as fp:
+    case = json.load(fp)
 
-with open('tests/test_data/party/business_reporting_unit.json') as json_data:
-    business_reporting_unit = json.load(json_data)
-with open('tests/test_data/case/cases_list.json') as json_data:
-    cases_list = json.load(json_data)
-with open('tests/test_data/case/case_groups_list.json') as json_data:
-    case_groups = json.load(json_data)
-with open('tests/test_data/case/case_groups_list_completed.json') as json_data:
-    case_groups_completed = json.load(json_data)
-with open('tests/test_data/collection_exercise/collection_exercise.json') as json_data:
-    collection_exercise = json.load(json_data)
-with open('tests/test_data/party/business_party.json') as json_data:
-    business_party = json.load(json_data)
-with open('tests/test_data/case/case_group_statuses.json') as json_data:
-    case_group_statuses = json.load(json_data)
-with open('tests/test_data/survey/single_survey.json') as json_data:
-    survey = json.load(json_data)
-with open('tests/test_data/party/respondent_party.json') as json_data:
-    respondent_party = json.load(json_data)
-with open('tests/test_data/iac/iac.json') as json_data:
-    iac = json.load(json_data)
+with open('tests/test_data/party/business_reporting_unit.json') as fp:
+    business_reporting_unit = json.load(fp)
+with open('tests/test_data/case/cases_list.json') as fp:
+    cases_list = json.load(fp)
+with open('tests/test_data/case/case_groups_list.json') as fp:
+    case_groups = json.load(fp)
+with open('tests/test_data/case/case_groups_list_completed.json') as fp:
+    case_groups_completed = json.load(fp)
+with open('tests/test_data/collection_exercise/collection_exercise.json') as fp:
+    collection_exercise = json.load(fp)
+with open('tests/test_data/party/business_party.json') as fp:
+    business_party = json.load(fp)
+with open('tests/test_data/case/case_group_statuses.json') as fp:
+    case_group_statuses = json.load(fp)
+with open('tests/test_data/survey/single_survey.json') as fp:
+    survey = json.load(fp)
+with open('tests/test_data/party/respondent_party.json') as fp:
+    respondent_party = json.load(fp)
+with open('tests/test_data/iac/iac.json') as fp:
+    iac = json.load(fp)
 
 
 class TestReportingUnits(unittest.TestCase):

@@ -10,7 +10,7 @@ from response_operations_ui.exceptions.exceptions import ApiError
 logger = wrap_logger(logging.getLogger(__name__))
 
 
-def get_iac(iac):
+def get_iac_details(iac):
     logger.debug('Retrieving iac')
     if not iac:
         logger.warning('No iac provided')
@@ -45,5 +45,5 @@ def get_latest_active_iac_code(cases, collection_exercises):
 
 
 def _is_iac_active(iac):
-    iac_response = get_iac(iac)
+    iac_response = get_iac_details(iac)
     return iac_response.get('active') if iac_response else None
