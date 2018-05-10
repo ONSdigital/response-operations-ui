@@ -2,7 +2,6 @@ import json
 import unittest
 
 import requests_mock
-from requests.exceptions import HTTPError
 
 from config import TestingConfig
 from response_operations_ui import app
