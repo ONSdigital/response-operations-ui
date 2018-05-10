@@ -1,9 +1,8 @@
 import os
-from distutils.util import strtobool
 
 
 class Config(object):
-    DEBUG = strtobool(os.getenv('DEBUG', 'False'))
+    DEBUG = os.getenv('DEBUG', False)
     TESTING = False
     PORT = os.getenv('PORT', 8085)
     LOGGING_LEVEL = os.getenv('LOGGING_LEVEL', 'INFO')
@@ -42,7 +41,7 @@ class Config(object):
 
 
 class DevelopmentConfig(Config):
-    DEBUG = strtobool(os.getenv('DEBUG', 'True'))
+    DEBUG = os.getenv('DEBUG', True)
     LOGGING_LEVEL = os.getenv('LOGGING_LEVEL', 'DEBUG')
     REDIS_HOST = os.getenv('REDIS_HOST', "localhost")
     REDIS_PORT = os.getenv('REDIS_PORT', 7379)
@@ -80,4 +79,3 @@ class TestingConfig(DevelopmentConfig):
     WTF_CSRF_ENABLED = False
     SESSION_TYPE = "filesystem"
     SESSION_PERMANENT = False
-    SECURE_COOKIES = True
