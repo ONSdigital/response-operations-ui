@@ -17,7 +17,7 @@ def get_party_by_ru_ref(ru_ref):
     try:
         response.raise_for_status()
     except requests.exceptions.HTTPError:
-        log_level = logger.warning if response.status_code == 404 else logger.exception
+        log_level = logger.warning if response.status_code in (400, 404) else logger.exception
         log_level('Failed to retrieve reporting unit', ru_ref=ru_ref)
         raise ApiError(response)
 
@@ -35,7 +35,7 @@ def get_business_party_by_party_id(business_party_id, collection_exercise_id=Non
     try:
         response.raise_for_status()
     except requests.exceptions.HTTPError:
-        log_level = logger.warning if response.status_code == 404 else logger.exception
+        log_level = logger.warning if response.status_code in (400, 404) else logger.exception
         log_level('Error retrieving business party',
                   business_party_id=business_party_id, collection_exercise_id=collection_exercise_id)
         raise ApiError(response)
@@ -53,7 +53,7 @@ def get_respondent_party_by_party_id(respondent_party_id):
     try:
         response.raise_for_status()
     except requests.exceptions.HTTPError:
-        log_level = logger.warning if response.status_code == 404 else logger.exception
+        log_level = logger.warning if response.status_code in (400, 404) else logger.exception
         log_level('Error retrieving respondent party', respondent_party_id=respondent_party_id)
         raise ApiError(response)
 

@@ -59,7 +59,7 @@ def get_case_groups_by_business_party_id(business_party_id):
         if response.status_code == 204:
             logger.debug('No case groups found for business', party_id=business_party_id)
             return []
-        logger.error('Failed to retrieve case groups', business_party_id=business_party_id)
+        logger.exception('Failed to retrieve case groups', business_party_id=business_party_id)
         raise ApiError(response)
 
     logger.debug('Successfully retrieved case groups', business_party_id=business_party_id)
@@ -77,7 +77,7 @@ def get_cases_by_business_party_id(business_party_id):
         if response.status_code == 404 or response.status_code == 204:
             logger.debug('No cases found for business', business_party_id=business_party_id)
             return []
-        logger.error('Error retrieving cases', business_party_id=business_party_id)
+        logger.exception('Error retrieving cases', business_party_id=business_party_id)
         raise ApiError(response)
 
     logger.debug('Successfully retrieved cases', business_party_id=business_party_id)
