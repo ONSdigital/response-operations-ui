@@ -92,7 +92,8 @@ def update_contact_details(ru_ref, respondent_id, form):
         "email_address": form.get('hidden_email'),
         "new_email_address": form.get('email'),
         "telephone": form.get('telephone'),
-        "respondent_id": respondent_id}
+        "respondent_id": respondent_id
+    }
 
     old_contact_details = get_respondent_by_party_id(respondent_id)
     contact_details_changed = _compare_contact_details(new_contact_details, old_contact_details)
