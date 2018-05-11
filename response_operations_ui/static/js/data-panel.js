@@ -16,5 +16,15 @@ function initDataPanels() {
                 panel.style.display = "block";
             }
         });
+
     }
+}
+
+
+function openPanel(){
+  var panelToOpen = window.location.hash;
+  if( panelToOpen !== " "){
+     $( panelToOpen + " .data-panel-header").addClass("active");
+     $( panelToOpen + " .data-panel-body").css( "display", "block" );
+   }
 }
