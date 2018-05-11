@@ -350,3 +350,11 @@ def create_collection_exercise(survey_ref, short_name):
 
         return redirect(url_for('surveys_bp.view_survey', short_name=short_name, ce_created='True',
                                 new_period=form.get('period')))
+
+
+@collection_exercise_bp.route('/<short_name>/<period>/confirm-remove-sample', methods=['GET'])
+@login_required
+def confirm_remove_sample(short_name, period):
+    logger.info("Removing sample for collection exercise", short_name=short_name, period=period)
+    form = CreateCollectionExerciseDetailsForm(form=request.form)
+    return render_template('confirm-remove-sample.html', form=form, short_name=short_name, period=period)

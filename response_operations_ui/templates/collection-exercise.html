@@ -182,7 +182,7 @@
               </tr>
             </tbody>
           </table>
-        <p>Sample loaded: {{sample.ingestDateTime}}</p>
+        <p>Sample loaded: {{sample.ingestDateTime}}<a class="u-ml-xs" href="{{ url_for('collection_exercise_bp.confirm_remove_sample', short_name=survey.shortName, period=ce.exerciseRef) }}">Remove</a></p>
         {% elif not locked %}
           <div class="u-mb-m">
             <form id="form-load-sample"

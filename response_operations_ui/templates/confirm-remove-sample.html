@@ -1,0 +1,20 @@
+{% extends "layouts/spoke.html" %}
+{% block page_title %} Confirm remove sample {% endblock %}
+{% block main %}
+<div role="main" id="main" class="page__main">
+  <div class="spoke__header">
+    <div class="spoke__header__title">
+      <h1 class="jupiter">Confirm remove sample</h1>
+    </div>
+  </div>
+  <div class="spoke__body">
+    <form action="" method="post">
+      {{ form.csrf_token }}
+      <button class="btn btn--primary u-mt-l" id="remove-sample-btn">Remove sample</button>
+      <div>
+        <a id="cancel-btn" href="{{ url_for('collection_exercise_bp.view_collection_exercise', short_name=short_name, period=period) }}">Cancel</a>
+      </div>
+    </form>
+  </div>
+</div>
+{% endblock %}
