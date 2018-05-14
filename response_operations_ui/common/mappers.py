@@ -51,3 +51,7 @@ def map_ce_response_status(ce_response_status):
         ce_response_status = "In progress"
 
     return ce_response_status
+
+
+def map_region(region):
+    return "NI" if region == "YY" else "GB"
