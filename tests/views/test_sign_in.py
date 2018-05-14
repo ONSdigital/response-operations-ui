@@ -101,3 +101,13 @@ class TestSignIn(unittest.TestCase):
         self.assertIn("Surveys".encode(), response.data)
         self.assertIn("Legal basis".encode(), response.data)
         self.assertIn("Statistics of Trade Act 1947".encode(), response.data)
+
+    def test_sign_out_deleting_session_variables(self):
+        with self.app.session_transaction() as session:
+            session['next'] = '/messages/bricks'
+        response = self.app.get('/logout', follow_redirects=True)
+        self.assertIn(b'You are now signed out', response.data)
+        self.assertEqual(response.status_code, 200)
+        self.assertNotIn(b"Sign out", response.data)
+        with self.app.session_transaction() as session:
+            self.assertEqual(session.get("next"), None)
