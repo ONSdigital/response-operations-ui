@@ -4,7 +4,7 @@ from flask import Blueprint, redirect, render_template, request, url_for
 from flask_login import login_required
 from structlog import wrap_logger
 
-from response_operations_ui.controllers import contact_details_controller, respondent_controllers
+from response_operations_ui.controllers import party_controller
 from response_operations_ui.forms import SearchForm
 
 
@@ -23,12 +23,12 @@ def respondent_search():
     if form.validate_on_submit():
         email = request.form.get('query')
 
-        respondent = respondent_controllers.search_respondent_by_email(email)
+        respondent = party_controller.search_respondent_by_email(email)
 
-        if respondent.get('id'):
+        if respondent:
             return redirect(url_for('respondent_bp.respondent_details', respondent_id=respondent['id']))
-        else:
-            response = respondent['Response']
+
+        response = 'No Respondent found for ' + email
 
     return render_template('search-respondent.html', response=response, form=form, breadcrumbs=breadcrumbs)
 
@@ -37,7 +37,8 @@ def respondent_search():
 @login_required
 def respondent_details(respondent_id):
 
-    respondent = contact_details_controller.get_contact_details(respondent_id)
+    respondent = party_controller.get_respondent_by_party_id(respondent_id)
+    enrolments = party_controller.get_respondent_enrolments(respondent)
 
     breadcrumbs = [
         {
@@ -45,9 +46,9 @@ def respondent_details(respondent_id):
             "link": "/respondents"
         },
         {
-            "title": f"{respondent['firstName']} {respondent['lastName']}"
+            "title": f"{respondent['emailAddress']}"
         }
     ]
 
     respondent['status'] = respondent['status'].title()
-    return render_template('respondent.html', respondent=respondent, breadcrumbs=breadcrumbs)
+    return render_template('respondent.html', respondent=respondent, enrolments=enrolments, breadcrumbs=breadcrumbs)

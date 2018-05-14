@@ -12,7 +12,7 @@ CONNECTION_ERROR = 'Connection error'
 
 url_get_reporting_unit = f'{backstage_api_url}/v1/reporting-unit/50012345678'
 url_search_reporting_units = f'{backstage_api_url}/v1/reporting-unit/search'
-url_get_contact_details = f'{backstage_api_url}/v1/party/party-details?respondent_party_id={respondent_party_id}'
+get_respondent_by_id_url = f'{app.config["PARTY_URL"]}/party-api/v1/respondents/id/{respondent_party_id}'
 url_edit_contact_details = f'{backstage_api_url}/v1/party/update-respondent-details/{respondent_party_id}'
 url_generate_new_code = f'{backstage_api_url}/v1/reporting-unit/iac/ce_id/ru_ref'
 url_resend_verification_email = f'{backstage_api_url}/v1/reporting-unit/resend-verification-email/{respondent_party_id}'
@@ -157,7 +157,7 @@ class TestReportingUnits(unittest.TestCase):
 
     @requests_mock.mock()
     def test_resend_verification_email(self, mock_request):
-        mock_request.get(url_get_contact_details, json=respondent)
+        mock_request.get(get_respondent_by_id_url, json=respondent)
         response = self.app.get(
             f"reporting-units/resend_verification/50012345678/{respondent_party_id}")
         self.assertEqual(response.status_code, 200)
@@ -188,18 +188,18 @@ class TestReportingUnits(unittest.TestCase):
 
     @requests_mock.mock()
     def test_get_contact_details(self, mock_request):
-        mock_request.get(url_get_contact_details, json=respondent)
+        mock_request.get(get_respondent_by_id_url, json=respondent)
 
         response = self.app.get(f"/reporting-units/50012345678/edit-contact-details/{respondent_party_id}")
 
         self.assertEqual(response.status_code, 200)
         self.assertIn("Jacky".encode(), response.data)
         self.assertIn("Turner".encode(), response.data)
-        self.assertIn("7971161859".encode(), response.data)
+        self.assertIn("0987654321".encode(), response.data)
 
     @requests_mock.mock()
     def test_get_contact_details_fail(self, mock_request):
-        mock_request.get(url_get_contact_details, status_code=500)
+        mock_request.get(get_respondent_by_id_url, status_code=500)
 
         response = self.app.get(f"/reporting-units/50012345678/edit-contact-details/{respondent_party_id}",
                                 follow_redirects=True)
@@ -228,7 +228,7 @@ class TestReportingUnits(unittest.TestCase):
             "last_name": 'Smith',
             "email": 'Jacky.Turner@email.com',
             "telephone": '7971161859'}
-        mock_request.get(url_get_contact_details, json=respondent)
+        mock_request.get(get_respondent_by_id_url, json=respondent)
         mock_request.put(url_edit_contact_details, status_code=409)
 
         response = self.app.post(f"/reporting-units/50012345678/edit-contact-details/{respondent_party_id}",
@@ -243,7 +243,7 @@ class TestReportingUnits(unittest.TestCase):
             "last_name": 'Smith',
             "email": 'Jacky.Turner@email.com',
             "telephone": '7971161859'}
-        mock_request.get(url_get_contact_details, json=respondent)
+        mock_request.get(get_respondent_by_id_url, json=respondent)
         mock_request.put(url_edit_contact_details, status_code=404)
 
         response = self.app.post(f"/reporting-units/50012345678/edit-contact-details/{respondent_party_id}",
@@ -258,7 +258,7 @@ class TestReportingUnits(unittest.TestCase):
             "last_name": 'Smith',
             "email": 'Jacky.Turner@email.com',
             "telephone": '7971161867'}
-        mock_request.get(url_get_contact_details, json=respondent)
+        mock_request.get(get_respondent_by_id_url, json=respondent)
         mock_request.put(url_edit_contact_details, status_code=500)
 
         response = self.app.post(f"/reporting-units/50012345678/edit-contact-details/{respondent_party_id}",
@@ -273,7 +273,7 @@ class TestReportingUnits(unittest.TestCase):
             "last_name": 'Smith',
             "email": 'Jacky.Turner@email.com',
             "telephone": '7971161867'}
-        mock_request.get(url_get_contact_details, json=respondent)
+        mock_request.get(get_respondent_by_id_url, json=respondent)
         mock_request.put(url_edit_contact_details, status_code=405)
 
         response = self.app.post(f"/reporting-units/50012345678/edit-contact-details/{respondent_party_id}",
@@ -296,7 +296,7 @@ class TestReportingUnits(unittest.TestCase):
         self.assertIn('7971161859'.encode(), response.data)
 
     def mock_for_change_details(self, changed_details, mock_request):
-        mock_request.get(url_get_contact_details, json=respondent)
+        mock_request.get(get_respondent_by_id_url, json=respondent)
         mock_request.put(url_edit_contact_details)
         mock_request.get(url_get_reporting_unit + '?edit_details=True')
         mock_request.get(url_get_reporting_unit, json=edited_reporting_unit)

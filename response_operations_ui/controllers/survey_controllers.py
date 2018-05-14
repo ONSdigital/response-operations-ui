@@ -1,6 +1,7 @@
 import logging
 
 import requests
+from requests.exceptions import HTTPError, RequestException
 from structlog import wrap_logger
 
 from response_operations_ui import app
@@ -137,3 +138,19 @@ def create_survey(survey_ref, short_name, long_name, legal_basis):
         raise ApiError(response)
 
     logger.debug('Successfully created new survey', survey_ref=survey_ref)
+
+
+def get_survey_by_id(survey_id):
+    logger.debug("Retrieve survey using survey id", survey_id=survey_id)
+    url = f'{app.config["SURVEY_URL"]}/surveys/{survey_id}'
+    response = requests.get(url, auth=app.config['SURVEY_AUTH'])
+
+    try:
+        response.raise_for_status()
+    except (HTTPError, RequestException):
+        log_level = logger.warning if response.status_code in (400, 404) else logger.exception
+        log_level("Survey retrieval failed", survey_id=survey_id)
+        raise ApiError(response)
+
+    logger.debug("Successfully retrieved survey", survey_id=survey_id)
+    return response.json()
