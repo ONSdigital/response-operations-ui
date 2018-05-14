@@ -28,12 +28,11 @@
 
     <h2 class="saturn u-mt-l">{{event_name}}</h2>
 
+    {% for text in date_restriction_text %}
     <div>
-      {% for text in date_restriction_text %}
-      {{ text }} <br/>
-      {% endfor %}
-      <br/>
+      {{ text }}
     </div>
+    {% endfor %}
 
     <form method="POST" class="">
       <div class="date-time-editor u-mb-l">
