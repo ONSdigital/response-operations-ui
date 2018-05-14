@@ -9,8 +9,7 @@ from structlog import wrap_logger
 from response_operations_ui.common.mappers import map_ce_response_status, map_region
 from response_operations_ui.controllers.collection_exercise_controllers import get_case_group_status_by_collection_exercise, \
     get_collection_exercise_by_id
-from response_operations_ui.controllers.survey_controllers import get_survey_by_id, \
-    survey_with_respondents_and_exercises
+from response_operations_ui.controllers.survey_controllers import get_survey_by_id
 from response_operations_ui.controllers import case_controller, iac_controller, party_controller, \
     reporting_units_controllers
 from response_operations_ui.forms import EditContactDetailsForm, SearchForm
@@ -106,6 +105,22 @@ def add_collection_exercise_details(collection_exercise, reporting_unit, case_gr
         'statuses': statuses.values()
     }
     return ce_extra
+
+
+def survey_with_respondents_and_exercises(survey, respondents, collection_exercises, ru_ref):
+    survey_respondents = [party_controller.add_enrolment_status_to_respondent(respondent, ru_ref, survey['id'])
+                          for respondent in respondents
+                          if survey['id'] in party_controller.survey_ids_for_respondent(respondent, ru_ref)]
+    survey_collection_exercises = [collection_exercise
+                                   for collection_exercise in collection_exercises
+                                   if survey['id'] == collection_exercise['surveyId']]
+    sorted_survey_exercises = sorted(survey_collection_exercises,
+                                     key=lambda ce: ce['scheduledStartDateTime'], reverse=True)
+    return {
+        **survey,
+        'respondents': survey_respondents,
+        'collection_exercises': sorted_survey_exercises
+    }
 
 
 @reporting_unit_bp.route('/<ru_ref>/edit-contact-details/<respondent_id>', methods=['GET'])
