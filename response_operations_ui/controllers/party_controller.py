@@ -73,12 +73,12 @@ def survey_ids_for_respondent(respondent, ru_ref):
 
 
 def add_enrolment_status_to_respondent(respondent, ru_ref, survey_id):
-    association = next(association
-                       for association in respondent.get('associations')
-                       if association['sampleUnitRef'] == ru_ref)
-    enrolment_status = next(enrolment['enrolmentStatus']
-                            for enrolment in association.get('enrolments')
-                            if enrolment['surveyId'] == survey_id)
+    association = next((association
+                        for association in respondent.get('associations')
+                        if association['sampleUnitRef'] == ru_ref), None)
+    enrolment_status = next((enrolment['enrolmentStatus']
+                             for enrolment in association.get('enrolments')
+                             if enrolment['surveyId'] == survey_id), None)
     return {**respondent, 'enrolmentStatus': enrolment_status}
 
 
