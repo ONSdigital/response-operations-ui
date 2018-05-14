@@ -16,7 +16,7 @@ class Config(object):
     REDIS_PORT = os.getenv('REDIS_PORT')
     REDIS_DB = os.getenv('REDIS_DB', 0)
     SECURE_COOKIES = strtobool(os.getenv('SECURE_COOKIES', 'True'))
-    EDIT_EVENT_DATES_ENABLED = os.getenv('EDIT_EVENT_DATES_ENABLED') == 'True'
+    EDIT_EVENT_DATES_ENABLED = strtobool(os.getenv('EDIT_EVENT_DATES_ENABLED'))
 
     # Service Configs
     BACKSTAGE_API_URL = os.getenv('BACKSTAGE_API_URL')
