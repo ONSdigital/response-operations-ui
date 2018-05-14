@@ -70,9 +70,7 @@ def view_survey(short_name):
         collex['state'] = map_collection_exercise_state(collex['state'])
         collex['events'] = convert_events_to_new_format(collex['events']) if collex.get('events') else {}
 
-    survey_details["collection_exercises"].sort(key=lambda ce:
-                                                datetime.strptime(ce['events']['mps']['date'], '%d %b %Y')
-                                                if 'mps' in ce['events'] else datetime.max)
+    _sort_collection_exercise(survey_details)
 
     return render_template('survey.html',
                            survey=survey_details['survey'],
@@ -152,3 +150,9 @@ def create_survey():
                                        legal_basis=request.form.get('legal_basis'))
             else:
                 raise
+
+
+def _sort_collection_exercise(survey_details):
+    survey_details["collection_exercises"].sort(key=lambda ce:
+                                                datetime.strptime(ce['events']['mps']['date'], '%d %b %Y')
+                                                if 'mps' in ce['events'] else datetime.max)
