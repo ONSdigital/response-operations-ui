@@ -1,8 +1,8 @@
-import iso8601
 import logging
 
 from flask import redirect, render_template, request, url_for
 from flask_login import login_required
+import iso8601
 from structlog import wrap_logger
 
 from response_operations_ui.common.mappers import convert_events_to_new_format
@@ -23,15 +23,16 @@ def update_event_date(short_name, period, tag, errors=None):
     formatted_events = convert_events_to_new_format(ce_details['events'])
     date_restriction_text = _get_date_restriction_text(tag, formatted_events)
 
-    if formatted_events.get(tag):
+    try:
         event = formatted_events[tag]
+    except KeyError:
+        form = UpdateEventDateForm()
+    else:
         form = UpdateEventDateForm(day=event['date'][:2],
                                    month=event['month'],
                                    year=event['date'][-4:],
                                    hour=event['time'][:2],
                                    minute=event['time'][2:4])
-    else:
-        form = UpdateEventDateForm()
 
     return render_template('update-event-date.html',
                            form=form,

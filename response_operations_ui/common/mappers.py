@@ -1,6 +1,7 @@
-from datetime import datetime
-import iso8601
 import re
+from datetime import datetime
+
+import iso8601
 
 
 def format_short_name(short_name):
@@ -15,14 +16,11 @@ def convert_events_to_new_format(events):
     formatted_events = {}
     for event in events:
         date_time = iso8601.parse_date(event['timestamp'])
-        day = date_time.strftime('%A')
-        date = date_time.strftime('%d %b %Y')
-        time = date_time.strftime('%H:%M GMT')
         formatted_events[event['tag']] = {
-            "day": day,
-            "date": date,
+            "day": date_time.strftime('%A'),
+            "date": date_time.strftime('%d %b %Y'),
             "month": date_time.strftime('%m'),
-            "time": time,
+            "time": date_time.strftime('%H:%M GMT'),
             "is_in_future": date_time > iso8601.parse_date(datetime.now().isoformat())
         }
     return formatted_events
