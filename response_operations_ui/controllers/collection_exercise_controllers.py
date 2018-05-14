@@ -5,8 +5,6 @@ from requests.exceptions import HTTPError
 from structlog import wrap_logger
 
 from response_operations_ui import app
-from response_operations_ui.common.mappers import map_ce_response_status, map_region
-from response_operations_ui.controllers import case_controller, party_controller
 from response_operations_ui.exceptions.exceptions import ApiError
 
 logger = wrap_logger(logging.getLogger(__name__))
@@ -123,23 +121,6 @@ def get_collection_exercises_by_survey(survey_id):
     return response.json()
 
 
-def add_collection_exercise_details(collection_exercise, reporting_unit, case_groups):
-    response_status = get_case_group_status_by_collection_exercise(case_groups, collection_exercise['id'])
-    reporting_unit_ce = party_controller.get_business_by_party_id(reporting_unit['id'], collection_exercise['id'])
-    statuses = case_controller.get_available_case_group_statuses_direct(collection_exercise['id'],
-                                                                        reporting_unit['sampleUnitRef'])
-    ce_extra = {
-        **collection_exercise,
-        'responseStatus': map_ce_response_status(response_status),
-        'companyName': reporting_unit_ce['name'],
-        'companyRegion': map_region(reporting_unit_ce['region']),
-        'trading_as': reporting_unit_ce['trading_as'],
-        'statuses': statuses.values()
-    }
-    return ce_extra
-
-
 def get_case_group_status_by_collection_exercise(case_groups, collection_exercise_id):
-    for case_group in case_groups:
-        if case_group['collectionExerciseId'] == collection_exercise_id:
-            return case_group['caseGroupStatus']
+    return next(case_group['caseGroupStatus'] for case_group in case_groups
+                if case_group['collectionExerciseId'] == collection_exercise_id)

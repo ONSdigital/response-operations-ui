@@ -6,7 +6,8 @@ from flask_login import login_required
 from iso8601 import parse_date
 from structlog import wrap_logger
 
-from response_operations_ui.controllers.collection_exercise_controllers import add_collection_exercise_details, \
+from response_operations_ui.common.mappers import map_ce_response_status, map_region
+from response_operations_ui.controllers.collection_exercise_controllers import get_case_group_status_by_collection_exercise, \
     get_collection_exercise_by_id
 from response_operations_ui.controllers.survey_controllers import get_survey_by_id, \
     survey_with_respondents_and_exercises
@@ -89,6 +90,22 @@ def view_reporting_unit(ru_ref):
     return render_template('reporting-unit.html', ru_ref=ru_ref, ru=reporting_unit,
                            surveys=surveys_with_iacs, breadcrumbs=breadcrumbs,
                            info_message=info_message, enrolment_changed=request.args.get('enrolment_changed'))
+
+
+def add_collection_exercise_details(collection_exercise, reporting_unit, case_groups):
+    response_status = get_case_group_status_by_collection_exercise(case_groups, collection_exercise['id'])
+    reporting_unit_ce = party_controller.get_business_by_party_id(reporting_unit['id'], collection_exercise['id'])
+    statuses = case_controller.get_available_case_group_statuses_direct(collection_exercise['id'],
+                                                                        reporting_unit['sampleUnitRef'])
+    ce_extra = {
+        **collection_exercise,
+        'responseStatus': map_ce_response_status(response_status),
+        'companyName': reporting_unit_ce['name'],
+        'companyRegion': map_region(reporting_unit_ce['region']),
+        'trading_as': reporting_unit_ce['trading_as'],
+        'statuses': statuses.values()
+    }
+    return ce_extra
 
 
 @reporting_unit_bp.route('/<ru_ref>/edit-contact-details/<respondent_id>', methods=['GET'])
