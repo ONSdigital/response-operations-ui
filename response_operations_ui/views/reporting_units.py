@@ -7,8 +7,8 @@ from iso8601 import parse_date
 from structlog import wrap_logger
 
 from response_operations_ui.common.mappers import map_ce_response_status, map_region
-from response_operations_ui.controllers.collection_exercise_controllers import get_case_group_status_by_collection_exercise, \
-    get_collection_exercise_by_id
+from response_operations_ui.controllers.collection_exercise_controllers import \
+    get_case_group_status_by_collection_exercise, get_collection_exercise_by_id
 from response_operations_ui.controllers.survey_controllers import get_survey_by_id
 from response_operations_ui.controllers import case_controller, iac_controller, party_controller, \
     reporting_units_controllers
