@@ -17,13 +17,10 @@ survey_id = 'cb0711c3-0ac8-41d3-ae0e-567e5ea1ef87'
 backstage_api_url = app.config["BACKSTAGE_API_URL"]
 CONNECTION_ERROR = 'Connection error'
 
-<<<<<<< HEAD
 url_get_contact_details = f'{backstage_api_url}/v1/party/party-details?respondent_party_id={respondent_party_id}'
-=======
 url_get_reporting_unit = f'{backstage_api_url}/v1/reporting-unit/50012345678'
 url_search_reporting_units = f'{backstage_api_url}/v1/reporting-unit/search'
 get_respondent_by_id_url = f'{app.config["PARTY_URL"]}/party-api/v1/respondents/id/{respondent_party_id}'
->>>>>>> master
 url_edit_contact_details = f'{backstage_api_url}/v1/party/update-respondent-details/{respondent_party_id}'
 url_generate_new_code = f'{backstage_api_url}/v1/reporting-unit/iac/ce_id/ru_ref'
 url_resend_verification_email = f'{backstage_api_url}/v1/reporting-unit/resend-verification-email/{respondent_party_id}'
