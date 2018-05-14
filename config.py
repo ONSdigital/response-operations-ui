@@ -8,6 +8,14 @@ class Config(object):
     PORT = os.getenv('PORT', 8085)
     LOGGING_LEVEL = os.getenv('LOGGING_LEVEL', 'INFO')
     RESPONSE_OPERATIONS_UI_SECRET = os.getenv('RESPONSE_OPERATIONS_UI_SECRET', "secret")
+    SESSION_TYPE = "redis"
+    PERMANENT_SESSION_LIFETIME = os.getenv('PERMANENT_SESSION_LIFETIME', 43200)
+    REDIS_SERVICE = os.getenv('REDIS_SERVICE')
+    REDIS_HOST = os.getenv('REDIS_HOST')
+    REDIS_PORT = os.getenv('REDIS_PORT')
+    REDIS_DB = os.getenv('REDIS_DB', 0)
+    SECURE_COOKIES = strtobool(os.getenv('SECURE_COOKIES', 'True'))
+    EDIT_EVENT_DATES_ENABLED = strtobool(os.getenv('EDIT_EVENT_DATES_ENABLED', 'False'))
     USE_SESSION_FOR_NEXT = True
 
     # Service Configs
@@ -41,20 +49,17 @@ class Config(object):
     SURVEY_PASSWORD = os.getenv('SURVEY_PASSWORD')
     SURVEY_AUTH = (SURVEY_USERNAME, SURVEY_PASSWORD)
 
-    SESSION_TYPE = "redis"
-    PERMANENT_SESSION_LIFETIME = os.getenv('PERMANENT_SESSION_LIFETIME', 43200)
-    REDIS_SERVICE = os.getenv('REDIS_SERVICE')
-    REDIS_HOST = os.getenv('REDIS_HOST')
-    REDIS_PORT = os.getenv('REDIS_PORT')
-    REDIS_DB = os.getenv('REDIS_DB', 0)
-    SECURE_COOKIES = strtobool(os.getenv('SECURE_COOKIES', 'True'))
-
     UAA_SERVICE_URL = os.getenv('UAA_SERVICE_URL')
 
 
 class DevelopmentConfig(Config):
     DEBUG = os.getenv('DEBUG', True)
     LOGGING_LEVEL = os.getenv('LOGGING_LEVEL', 'DEBUG')
+    REDIS_HOST = os.getenv('REDIS_HOST', "localhost")
+    REDIS_PORT = os.getenv('REDIS_PORT', 7379)
+    REDIS_DB = os.getenv('REDIS_DB', 0)
+    SECURE_COOKIES = strtobool(os.getenv('SECURE_COOKIES', 'False'))
+    EDIT_EVENT_DATES_ENABLED = True
 
     # Service Config
     BACKSTAGE_API_URL = os.getenv('BACKSTAGE_API_URL', 'http://localhost:8001/backstage-api')
@@ -86,11 +91,6 @@ class DevelopmentConfig(Config):
     SURVEY_USERNAME = os.getenv('SURVEY_USERNAME', 'admin')
     SURVEY_PASSWORD = os.getenv('SURVEY_PASSWORD', 'secret')
     SURVEY_AUTH = (SURVEY_USERNAME, SURVEY_PASSWORD)
-
-    REDIS_HOST = os.getenv('REDIS_HOST', "localhost")
-    REDIS_PORT = os.getenv('REDIS_PORT', 7379)
-    REDIS_DB = os.getenv('REDIS_DB', 0)
-    SECURE_COOKIES = strtobool(os.getenv('SECURE_COOKIES', 'False'))
 
     UAA_SERVICE_URL = os.getenv('UAA_SERVICE_URL', 'http://localhost:9080')
 

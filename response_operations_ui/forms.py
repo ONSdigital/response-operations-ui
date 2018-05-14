@@ -1,8 +1,10 @@
+import calendar
 import logging
 import re
 
 from flask_wtf import FlaskForm
 from structlog import wrap_logger
+
 from wtforms import HiddenField, Label, PasswordField, StringField,\
     SubmitField, TextAreaField, SelectField, IntegerField
 from wtforms.validators import InputRequired, Length, ValidationError
@@ -85,6 +87,34 @@ class EditCollectionExerciseDetailsForm(FlaskForm):
 class ChangeGroupStatusForm(FlaskForm):
     event = StringField('event')
     submit = SubmitField('Confirm')
+
+
+class UpdateEventDateForm(FlaskForm):
+    day = StringField('day',
+                      validators=[InputRequired(message="Please enter day"),
+                                  Length(min=1, max=2, message="Please enter a one or two digit number")])
+
+    MONTHS = [('01', 'January'), ('02', 'February'), ('03', 'March'), ('04', 'April'),
+              ('05', 'May'), ('06', 'June'), ('07', 'July'), ('08', 'August'),
+              ('09', 'September'), ('10', 'October'), ('11', 'November'), ('12', 'December')]
+    month = SelectField('month', choices=MONTHS)
+
+    year = StringField('year',
+                       validators=[InputRequired(message="Please enter year"),
+                                   Length(min=4, max=4, message="Please enter a 4 digit number")])
+
+    HOURS = [(hour, hour) for hour in ['00', '01', '02', '03', '04', '05', '06', '07', '08', '09', '10', '11',
+                                       '12', '13', '14', '15', '16', '17', '18', '19', '20', '21', '22', '23']]
+    hour = SelectField('hours', choices=HOURS)
+
+    MINUTES = [('00', '00'), ('15', '15'), ('30', '30'), ('45', '45')]
+    minute = SelectField('minutes', choices=MINUTES)
+    submit = SubmitField('Save')
+
+    def validate_day(form, field):
+        days_in_month = calendar.monthrange(int(form.year.data), int(form.month.data))[1]
+        if int(field.data) < 1 or int(field.data) > days_in_month:
+            raise ValidationError('Day out of range for month')
 
 
 class CreateCollectionExerciseDetailsForm(FlaskForm):
