@@ -125,7 +125,7 @@ def get_collection_exercises_by_survey(survey_id):
 
 def add_collection_exercise_details(collection_exercise, reporting_unit, case_groups):
     response_status = get_case_group_status_by_collection_exercise(case_groups, collection_exercise['id'])
-    reporting_unit_ce = party_controller.get_business_party_by_party_id(reporting_unit['id'], collection_exercise['id'])
+    reporting_unit_ce = party_controller.get_business_by_party_id(reporting_unit['id'], collection_exercise['id'])
     statuses = case_controller.get_available_case_group_statuses_direct(collection_exercise['id'],
                                                                         reporting_unit['sampleUnitRef'])
     ce_extra = {

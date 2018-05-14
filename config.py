@@ -1,4 +1,5 @@
 import os
+from distutils.util import strtobool
 
 
 class Config(object):
@@ -9,6 +10,7 @@ class Config(object):
     RESPONSE_OPERATIONS_UI_SECRET = os.getenv('RESPONSE_OPERATIONS_UI_SECRET', "secret")
     USE_SESSION_FOR_NEXT = True
 
+    # Service Configs
     BACKSTAGE_API_URL = os.getenv('BACKSTAGE_API_URL')
 
     CASE_URL = os.getenv('CASE_URL')
@@ -45,6 +47,7 @@ class Config(object):
     REDIS_HOST = os.getenv('REDIS_HOST')
     REDIS_PORT = os.getenv('REDIS_PORT')
     REDIS_DB = os.getenv('REDIS_DB', 0)
+    SECURE_COOKIES = strtobool(os.getenv('SECURE_COOKIES', 'True'))
 
     UAA_SERVICE_URL = os.getenv('UAA_SERVICE_URL')
 
@@ -53,6 +56,7 @@ class DevelopmentConfig(Config):
     DEBUG = os.getenv('DEBUG', True)
     LOGGING_LEVEL = os.getenv('LOGGING_LEVEL', 'DEBUG')
 
+    # Service Config
     BACKSTAGE_API_URL = os.getenv('BACKSTAGE_API_URL', 'http://localhost:8001/backstage-api')
 
     CASE_URL = os.getenv('CASE_URL', 'http://localhost:8171')
@@ -86,6 +90,7 @@ class DevelopmentConfig(Config):
     REDIS_HOST = os.getenv('REDIS_HOST', "localhost")
     REDIS_PORT = os.getenv('REDIS_PORT', 7379)
     REDIS_DB = os.getenv('REDIS_DB', 0)
+    SECURE_COOKIES = strtobool(os.getenv('SECURE_COOKIES', 'False'))
 
     UAA_SERVICE_URL = os.getenv('UAA_SERVICE_URL', 'http://localhost:9080')
 

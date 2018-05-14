@@ -15,14 +15,12 @@
   <dd id="RU_REF" class="item-headlines-definition">
     {{ ru.sampleUnitRef }}
   </dd>
-  {% if ru.attributes.tradstyle1 %}
   <dt class="item-headlines-term">
     Trading as:
   </dt>
   <dd id="TRADING_AS" class="item-headlines-definition">
-    {{ ru.trading_as }}
+    {{ ru.trading_as }} &#160;
   </dd>
-  {% endif %}
 </dl>
 
 <h2 class="saturn">Surveys</h2>
@@ -70,7 +68,7 @@
                 {{ ce.companyName }}
               </td>
               <td name="tbl-ce-company-name" class="table--cell">
-                {{ ce.trading_as }}
+                {{ ce.trading_as }} &#160;
               </td>
               <td name="tbl-ce-company-region" class="table--cell">
                 {{ ce.companyRegion }}
@@ -208,6 +206,7 @@
   {% endfor %}
   <script>
       initDataPanels();
+      openPanel();
   </script>
 </section>
 {% endblock %}
