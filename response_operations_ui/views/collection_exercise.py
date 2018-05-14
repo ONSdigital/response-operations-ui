@@ -354,7 +354,32 @@ def create_collection_exercise(survey_ref, short_name):
 
 @collection_exercise_bp.route('/<short_name>/<period>/confirm-remove-sample', methods=['GET'])
 @login_required
-def confirm_remove_sample(short_name, period):
-    logger.info("Removing sample for collection exercise", short_name=short_name, period=period)
+def get_confirm_remove_sample(short_name, period):
+    logger.info("Retrieving confirm remove sample page", short_name=short_name, period=period)
     form = CreateCollectionExerciseDetailsForm(form=request.form)
     return render_template('confirm-remove-sample.html', form=form, short_name=short_name, period=period)
+
+
+@collection_exercise_bp.route('/<short_name>/<period>/confirm-remove-sample', methods=['POST'])
+@login_required
+def remove_loaded_sample(short_name, period):
+    error = None
+    success_panel = None
+
+    sample_removed = None  # TODO finish when endpoint is done
+
+    if sample_removed:
+        success_panel = {
+            "id": "sample-removed-success",
+            "message": "Sample removed"
+
+        }
+    else:
+        error = {
+            "header": "Error: Failed to remove sample"
+        }
+
+    logger.info("Removing sample for collection exercise", short_name=short_name, period=period)
+    form = request.form
+    # TODO call to CE/sample here
+    return view_collection_exercise(short_name, period, form=form, success_panel=success_panel, error=error)
