@@ -1,13 +1,13 @@
 import logging
 import re
 
-from response_operations_ui.controllers import collection_exercise_controllers
-
 from flask_wtf import FlaskForm
 from structlog import wrap_logger
 from wtforms import HiddenField, Label, PasswordField, StringField,\
     SubmitField, TextAreaField, SelectField, IntegerField
 from wtforms.validators import InputRequired, Length, ValidationError
+
+from response_operations_ui.controllers import collection_exercise_controllers
 from response_operations_ui.controllers import survey_controllers
 
 logger = wrap_logger(logging.getLogger(__name__))

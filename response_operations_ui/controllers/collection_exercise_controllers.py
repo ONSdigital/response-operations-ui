@@ -66,6 +66,22 @@ def update_collection_exercise_details(collection_exercise_id, user_description,
     logger.debug('Successfully updated collection exercise details', collection_exercise_id=collection_exercise_id)
 
 
+def get_collection_exercise_by_id(collection_exercise_id):
+    logger.debug('Retrieving collection exercise', collection_exercise_id=collection_exercise_id)
+    url = f'{app.config["COLLECTION_EXERCISE_URL"]}/collectionexercises/{collection_exercise_id}'
+    response = requests.get(url, auth=app.config['COLLECTION_EXERCISE_AUTH'])
+
+    try:
+        response.raise_for_status()
+    except requests.exceptions.HTTPError:
+        log_level = logger.warning if response.status_code == 404 else logger.exception
+        log_level('Failed to retrieve collection exercise', collection_exercise_id=collection_exercise_id)
+        raise ApiError(response)
+
+    logger.debug('Successfully retrieved collection exercise', collection_exercise_id=collection_exercise_id)
+    return response.json()
+
+
 def create_collection_exercise(survey_id, survey_name, user_description, period):
     logger.debug('Creating a new collection exercise for', survey_id=survey_id, survey_name=survey_name)
     header = {'Content-Type': "application/json"}
@@ -103,3 +119,8 @@ def get_collection_exercises_by_survey(survey_id):
 
     logger.debug('Successfully retrieved collection exercises by survey', survey_id=survey_id)
     return response.json()
+
+
+def get_case_group_status_by_collection_exercise(case_groups, collection_exercise_id):
+    return next(case_group['caseGroupStatus'] for case_group in case_groups
+                if case_group['collectionExerciseId'] == collection_exercise_id)
