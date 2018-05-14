@@ -183,6 +183,7 @@
             </tbody>
           </table>
         <p>Sample loaded: {{sample.ingestDateTime}}</p>
+        <p><a href="/surveys/{{survey.shortName}}/{{ce.exerciseRef}}">Refresh</a></p>
         {% elif not locked %}
           <div class="u-mb-m">
             <form id="form-load-sample"
