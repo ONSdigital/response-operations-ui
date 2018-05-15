@@ -82,3 +82,15 @@ def get_cases_by_business_party_id(business_party_id):
 
     logger.debug('Successfully retrieved cases', business_party_id=business_party_id)
     return response.json()
+
+
+def is_allowed_status(status):
+    allowed_statuses = {
+        'COMPLETED_BY_PHONE',
+    }
+    return status in allowed_statuses
+
+
+def get_case_group_status_by_collection_exercise(case_groups, collection_exercise_id):
+    return next((case_group['caseGroupStatus'] for case_group in case_groups
+                 if case_group['collectionExerciseId'] == collection_exercise_id), None)
