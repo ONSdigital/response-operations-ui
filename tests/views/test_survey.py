@@ -9,26 +9,27 @@ import requests_mock
 from config import TestingConfig
 from response_operations_ui import app
 from response_operations_ui.controllers.survey_controllers import get_survey_short_name_by_id
+from response_operations_ui.views.surveys import _sort_collection_exercise
 
 url_get_survey_list = f'{app.config["BACKSTAGE_API_URL"]}/v1/survey/surveys'
 url_get_legal_basis_list = f'{app.config["SURVEY_URL"]}/legal-bases'
 url_create_survey = f'{app.config["SURVEY_URL"]}/surveys'
 
-with open('tests/test_data/survey/survey_list.json') as json_data:
-    survey_list = json.load(json_data)
-with open('tests/test_data/survey/legal_basis_list.json') as json_data:
-    legal_basis_list = json.load(json_data)
+with open('tests/test_data/survey/survey_list.json') as f:
+    survey_list = json.load(f)
+with open('tests/test_data/survey/legal_basis_list.json') as f:
+    legal_basis_list = json.load(f)
 url_get_survey_by_short_name = f'{app.config["BACKSTAGE_API_URL"]}/v1/survey/shortname/bres'
 url_get_survey_by_qbs = f'{app.config["BACKSTAGE_API_URL"]}/v1/survey/shortname/QBS'
-with open('tests/test_data/survey/survey.json') as json_data:
-    survey_info = json.load(json_data)
-with open('tests/test_data/survey/survey_states.json') as json_data:
-    survey_info_states = json.load(json_data)
+with open('tests/test_data/survey/survey.json') as f:
+    survey_info = json.load(f)
+with open('tests/test_data/survey/survey_states.json') as f:
+    survey_info_states = json.load(f)
 url_update_survey_details = f'{app.config["BACKSTAGE_API_URL"]}/v1/survey/edit-survey-details/222'
-with open('tests/test_data/survey/updated_survey_list.json') as json_data:
-    updated_survey_list = json.load(json_data)
-with open('tests/test_data/survey/create_survey_response.json') as json_data:
-    create_survey_response = json.load(json_data)
+with open('tests/test_data/survey/updated_survey_list.json') as f:
+    updated_survey_list = json.load(f)
+with open('tests/test_data/survey/create_survey_response.json') as f:
+    create_survey_response = json.load(f)
 
 
 class TestSurvey(unittest.TestCase):
@@ -363,3 +364,19 @@ class TestSurvey(unittest.TestCase):
                                  follow_redirects=True)
         self.assertEqual(response.status_code, 200)
         self.assertIn("Error updating survey details".encode(), response.data)
+
+    def test_sort_collection_exercise(self):
+        # Given there are collection exercises loaded for a survey
+        with open('tests/test_data/survey/survey_details_multiple_ce.json') as f:
+            survey_details = json.load(f)
+
+        # When collection exercises are sorted
+        _sort_collection_exercise(survey_details)
+
+        # Then CEs should be in order by mps date
+        # And CEs without mps date should be at the end
+        ce_ids_in_order = [ce['id'] for ce in survey_details['collection_exercises']]
+        self.assertEqual(ce_ids_in_order, ['bd4d2bec-28d3-421c-a399-b2840e52e36e',
+                                           '23a83a62-87dd-4c6c-97e2-4b207f7e57f5',
+                                           '9f9d28c6-d010-47cc-832c-6ab9b741ee96',
+                                           '48b6c58a-bf5b-4bb3-8d7d-5e205ff3a0fd'])

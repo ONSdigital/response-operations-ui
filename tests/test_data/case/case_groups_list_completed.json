@@ -1,0 +1,18 @@
+[
+  {
+      "collectionExerciseId": "14fb3e68-4dca-46db-bf49-04b84e07e77c",
+      "id": "612f5c34-7e11-4740-8e24-cb321a86a917",
+      "partyId": "b3ba864b-7cbc-4f44-84fe-88dc018a1a4c",
+      "sampleUnitRef": "50012345678",
+      "sampleUnitType": "B",
+      "caseGroupStatus": "COMPLETE"
+  },
+  {
+      "collectionExerciseId": "9af403f8-5fc5-43b1-9fca-afbd9c65da5c",
+      "id": "f68c70d6-4a30-48bf-9c35-0202d3c2893f",
+      "partyId": "b3ba864b-7cbc-4f44-84fe-88dc018a1a4c",
+      "sampleUnitRef": "50012345678",
+      "sampleUnitType": "B",
+      "caseGroupStatus": "COMPLETE"
+    }
+]
