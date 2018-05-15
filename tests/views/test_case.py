@@ -15,6 +15,7 @@ class TestCase(unittest.TestCase):
         self.app = app.test_client()
         self.case_group_status = {
             "ru_ref": "19000001",
+            "ru_name": "RU Name",
             "trading_as": "Company Name",
             "survey_id": "123",
             "short_name": "MYSURVEY",
@@ -38,6 +39,7 @@ class TestCase(unittest.TestCase):
         data = response.data
         self.assertEqual(response.status_code, 200)
         self.assertIn(b'19000001', data)
+        self.assertIn(b'RU Name', data)
         self.assertIn(b'Company Name', data)
         self.assertIn(b'123 &nbsp; MYSURVEY', data)
         self.assertIn(b'Not started', data)

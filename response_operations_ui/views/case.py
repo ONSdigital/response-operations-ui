@@ -18,7 +18,7 @@ def get_response_statuses(ru_ref):
     statuses['available_statuses'] = {event: map_ce_response_status(status)
                                       for event, status in statuses['available_statuses'].items()}
     return render_template('change-response-status.html', ru_ref=statuses['ru_ref'], trading_as=statuses['trading_as'],
-                           survey_short_name=short_name, survey_id=statuses['survey_id'], ru_name=statuses['name'],
+                           survey_short_name=short_name, survey_id=statuses['survey_id'], ru_name=statuses['ru_name'],
                            ce_period=collection_exercise_period,
                            case_group_status=map_ce_response_status(statuses['current_status']),
                            statuses=statuses['available_statuses'])
@@ -39,7 +39,7 @@ def update_response_status(ru_ref):
     statuses['available_statuses'] = {event: map_ce_response_status(status)
                                       for event, status in statuses['available_statuses'].items()}
     return render_template('change-response-status.html', ru_ref=statuses['ru_ref'], trading_as=statuses['trading_as'],
-                           survey_short_name=short_name, survey_id=statuses['survey_id'], ru_name=statuses['name'],
+                           survey_short_name=short_name, survey_id=statuses['survey_id'], ru_name=statuses['ru_name'],
                            ce_period=collection_exercise_period,
                            case_group_status=map_ce_response_status(statuses['current_status']),
                            statuses=statuses['available_statuses'],
