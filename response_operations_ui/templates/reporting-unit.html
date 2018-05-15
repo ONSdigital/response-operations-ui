@@ -75,7 +75,7 @@
               </td>
               <td name="tbl-ce-status" class="table--cell">
                 {{ ce.responseStatus }}
-                {% if ce.statusChangeable %}
+                {% if ce.statuses|length > 0 %}
                 &nbsp;<a href="{{ url_for('case_bp.get_response_statuses', ru_ref=ru.sampleUnitRef, survey=survey.shortName, period=ce.exerciseRef) }}">Change</a>
                 {% endif %}
               </td>

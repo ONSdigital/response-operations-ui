@@ -11,6 +11,10 @@ from response_operations_ui.views.respondents import respondent_bp
 from response_operations_ui.views.sign_in import sign_in_bp
 from response_operations_ui.views.surveys import surveys_bp
 
+# Only enable the edit event dates endpoints if flag is present
+if app.config['EDIT_EVENT_DATES_ENABLED']:
+    from response_operations_ui.views import update_event_date  # NOQA
+
 
 app.register_blueprint(collection_exercise_bp, url_prefix='/surveys')
 app.register_blueprint(error_bp, url_prefix='/errors')
