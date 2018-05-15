@@ -338,7 +338,8 @@ def create_collection_exercise(survey_ref, short_name):
 
     if not ce_form.validate():
         logger.info("Failed validation, retrieving survey data for form", short_name=short_name, survey_ref=survey_ref)
-        error = ce_form.errors['period'][1] if ce_form.errors['period'][1] == 'Please enter numbers only for the period' else None
+        error = ce_form.errors['period'][1] \
+            if ce_form.errors['period'][1] == 'Please enter numbers only for the period' else None
         return render_template('create-collection-exercise.html', form=ce_form, short_name=short_name, errors=error,
                                survey_ref=survey_ref, survey_id=survey_details['survey']['id'],
                                survey_name=survey_details['survey']['shortName'])
@@ -353,8 +354,9 @@ def create_collection_exercise(survey_ref, short_name):
         if ce_details:
             for ce in ce_details:
                 if ce['exerciseRef'] == str(created_period):
+                    error = "Please use a period that is not in use by any collection exercise for this survey."
                     return render_template('create-collection-exercise.html', form=ce_form, short_name=short_name,
-                                           errors="Please use a period that is not in use by any collection exercise for this survey.",
+                                           errors=error,
                                            survey_ref=survey_ref, survey_id=survey_details['survey']['id'],
                                            survey_name=survey_details['survey']['shortName'])
 
