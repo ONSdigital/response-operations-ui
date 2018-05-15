@@ -17,7 +17,8 @@ url_get_survey_by_short_name = f'{app.config["SURVEY_URL"]}/surveys/shortname/{s
 url_get_collection_exercises_by_survey = f'{app.config["COLLECTION_EXERCISE_URL"]}' \
                                          f'/collectionexercises/survey/{survey_id}'
 url_get_party_by_ru_ref = f'{app.config["PARTY_URL"]}/party-api/v1/parties/type/B/ref/{ru_ref}'
-url_get_available_case_group_statuses = f'{app.config["CASE_URL"]}/casegroups/transitions/{collection_exercise_id}/{ru_ref}'
+url_get_available_case_group_statuses = f'{app.config["CASE_URL"]}' \
+                                        f'/casegroups/transitions/{collection_exercise_id}/{ru_ref}'
 url_get_case_groups_by_business_party_id = f'{app.config["CASE_URL"]}/casegroups/partyid/{business_party_id}'
 url_update_case_group_status = f'{app.config["CASE_URL"]}/casegroups/transitions/{collection_exercise_id}/{ru_ref}'
 
@@ -117,18 +118,6 @@ class TestChangeResponseStatus(unittest.TestCase):
                                 follow_redirects=True)
 
         self.assertIn("Server error (Error 500)".encode(), response.data)
-
-    @requests_mock.mock()
-    def test_update_case_group_status(self, mock_request):
-        mock_request.get(url_get_survey_by_short_name, json=survey)
-        mock_request.get(url_get_collection_exercises_by_survey, json=collection_exercise_list)
-        mock_request.put(url_update_case_group_status)
-
-        response = self.app.post(f'/case/{ru_ref}/change-response-status?survey={short_name}&period={period}',
-                                 data={'event': 'COMPLETEDBYPHONE'})
-
-        self.assertEqual(response.status_code, 302)
-        self.assertIn('reporting-unit', response.location)
 
     @requests_mock.mock()
     def test_update_case_group_status(self, mock_request):
