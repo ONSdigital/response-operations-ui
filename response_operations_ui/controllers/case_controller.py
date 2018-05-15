@@ -83,6 +83,7 @@ def get_cases_by_business_party_id(business_party_id):
 def is_allowed_status(status):
     allowed_statuses = {
         'COMPLETEDBYPHONE',
+        'NOLONGERREQUIRED',
     }
     return status in allowed_statuses
 
