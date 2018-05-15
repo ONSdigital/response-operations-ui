@@ -7,7 +7,7 @@ from structlog import wrap_logger
 
 from response_operations_ui.common.mappers import convert_events_to_new_format, map_collection_exercise_state
 from response_operations_ui.controllers import collection_instrument_controllers, sample_controllers, \
-    collection_exercise_controllers, survey_controllers
+    collection_exercise_controllers, survey_controllers, party_controller
 from response_operations_ui.forms import EditCollectionExerciseDetailsForm, CreateCollectionExerciseDetailsForm
 
 logger = wrap_logger(logging.getLogger(__name__))
@@ -365,21 +365,21 @@ def get_confirm_remove_sample(short_name, period):
 def remove_loaded_sample(short_name, period):
     error = None
     success_panel = None
-
-    sample_removed = None  # TODO finish when endpoint is done
+    ce_details = collection_exercise_controllers.get_collection_exercise(short_name, period)
+    ce_details['sample_summary'] = _format_sample_summary(ce_details['sample_summary'])
+    sample = ce_details['sample_summary']
+    sample_removed = party_controller.remove_loaded_sample(sample)
 
     if sample_removed:
         success_panel = {
             "id": "sample-removed-success",
             "message": "Sample removed"
-
         }
     else:
         error = {
+            "id": "sample-removed-error",
             "header": "Error: Failed to remove sample"
         }
 
     logger.info("Removing sample for collection exercise", short_name=short_name, period=period)
-    form = request.form
-    # TODO call to CE/sample here
-    return view_collection_exercise(short_name, period, form=form, success_panel=success_panel, error=error)
+    return view_collection_exercise(short_name, period, success_panel=success_panel, error=error)

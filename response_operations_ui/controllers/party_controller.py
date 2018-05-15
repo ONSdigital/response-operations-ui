@@ -165,3 +165,16 @@ def _compare_contact_details(new_contact_details, old_contact_details):
                          if old_contact_details.get(key) != new_contact_details.get(contact_details_map[key])]
 
     return details_different
+
+
+def remove_loaded_sample(sample):
+    logger.debug('removing loaded sample')
+    url = f'{app.config["PARTY_URL"]}/party-api/v1/businesses/sample/remove/{sample}'
+    response = requests.put(url, auth=app.config['PARTY_AUTH'])
+    try:
+        response.raise_for_status()
+    except requests.exceptions.HTTPError:
+        raise ApiError(response)
+
+    logger.debug('Successfully removed sample file')
+    return response.json
