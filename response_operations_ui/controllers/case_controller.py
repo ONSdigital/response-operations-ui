@@ -30,6 +30,21 @@ def update_case_group_statuses(short_name, period, ru_ref, event):
     logger.debug('Successfully updated case group status', short_name=short_name, period=period, ru_ref=ru_ref)
 
 
+def update_case_group_status(collection_exercise_id, ru_ref, case_group_event):
+    logger.debug('Updating status', collection_exercise_id=collection_exercise_id, ru_ref=ru_ref,
+                 case_group_event=case_group_event)
+    url = f'{app.config["CASE_URL"]}/casegroups/transitions/{collection_exercise_id}/{ru_ref}'
+    response = requests.put(url, auth=app.config['CASE_AUTH'], json={'event': case_group_event})
+
+    if response.status_code != 200:
+        logger.error('Error updating status', collection_exercise_id=collection_exercise_id, ru_ref=ru_ref,
+                     case_group_event=case_group_event)
+        raise ApiError(url, response.status_code)
+
+    logger.debug('Successfully updated status', collection_exercise_id=collection_exercise_id, ru_ref=ru_ref,
+                 case_group_event=case_group_event)
+
+
 def get_available_case_group_statuses_direct(collection_exercise_id, ru_ref):
     logger.debug('Retrieving statuses', collection_exercise_id=collection_exercise_id, ru_ref=ru_ref)
     url = f'{app.config["CASE_URL"]}/casegroups/transitions/{collection_exercise_id}/{ru_ref}'
@@ -86,7 +101,7 @@ def get_cases_by_business_party_id(business_party_id):
 
 def is_allowed_status(status):
     allowed_statuses = {
-        'COMPLETED_BY_PHONE',
+        'COMPLETEDBYPHONE',
     }
     return status in allowed_statuses
 
