@@ -186,6 +186,7 @@ def resend_verification(ru_ref, party_id):
 def generate_new_enrolment_code(ru_ref, collection_exercise_id):
     case = reporting_units_controllers.generate_new_enrolment_code(collection_exercise_id, ru_ref)
     return render_template('new-enrolment-code.html', case=case, ru_ref=ru_ref,
+                           ru_name=request.args.get('ru_name'),
                            trading_as=request.args.get('trading_as'),
                            survey_name=request.args.get('survey_name'),
                            survey_ref=request.args.get('survey_ref'))
@@ -195,6 +196,7 @@ def generate_new_enrolment_code(ru_ref, collection_exercise_id):
 @login_required
 def confirm_change_enrolment_status(ru_ref):
     return render_template('confirm-enrolment-change.html', business_id=request.args['business_id'], ru_ref=ru_ref,
+                           ru_name=request.args.get('ru_name'),
                            trading_as=request.args['trading_as'], survey_id=request.args['survey_id'],
                            survey_name=request.args['survey_name'], respondent_id=request.args['respondent_id'],
                            first_name=request.args['respondent_first_name'],
