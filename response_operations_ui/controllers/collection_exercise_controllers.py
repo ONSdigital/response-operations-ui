@@ -37,22 +37,6 @@ def get_collection_exercise(short_name, period):
     return response.json()
 
 
-def get_collection_exercise_by_id_period(survey_id, period):
-    logger.debug('Retrieving collection exercise', survey_id=survey_id, period=period)
-    url = f'{app.config["COLLECTION_EXERCISE_URL"]}/collectionexercises/{period}/survey/{survey_id}'
-    response = requests.get(url, auth=app.config['COLLECTION_EXERCISE_AUTH'])
-
-    try:
-        response.raise_for_status()
-    except HTTPError:
-        log_level = logger.warning if response.status_code in (400, 404) else logger.exception
-        log_level('Error retrieving collection exercise', survey_id=survey_id, period=period)
-        raise ApiError(response)
-
-    logger.debug('Successfully retrieved collection exercise', survey_id=survey_id, period=period)
-    return response.json()
-
-
 def get_collection_exercise_event_page_info(short_name, period):
     logger.debug('Retrieving collection exercise details for the event page',
                  short_name=short_name, period=period)
