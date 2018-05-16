@@ -83,17 +83,25 @@
                 MPS (Main print selection)
               </td>
               {% if events.mps %}
-              <td class="table--cell tbl-ce-value ce-event-date" name="mps-date">
-                {{events.mps.day}} <em>{{events.mps.date}}</em> {{events.mps.time}}
-              </td>
-              {% if not ce.state == 'Live' and not ce.state == 'Ready for live' and events.mps.is_in_future and config.EDIT_EVENT_DATES_ENABLED %}
-              <td class="table--cell tbl-ce-">
-                <form action="{{ url_for('collection_exercise_bp.update_event_date', short_name=survey.shortName, period=ce.exerciseRef, tag='mps')}}" method="get">
-                  <a class="edit-icon" href=# id="edit-event-date-mps" onclick="this.parentNode.submit()"></a>
-                </form>
-              </td>
+                <td class="table--cell tbl-ce-value ce-event-date" name="mps-date">
+                  {{events.mps.day}} <em>{{events.mps.date}}</em> {{events.mps.time}}
+                </td>
+
+                {% if (not ce.state == 'Live' and not ce.state == 'Ready for live' and events.mps.is_in_future and config.EDIT_EVENT_DATES_ENABLED) or (not events.mps) %}
+                <td class="table--cell tbl-ce-">
+                  <form action="{{ url_for('collection_exercise_bp.update_event_date', short_name=survey.shortName, period=ce.exerciseRef, tag='mps')}}" method="get">
+                    <a class="edit-icon" href=# id="edit-event-date-mps" onclick="this.parentNode.submit()"></a>
+                  </form>
+                </td>
+                {% endif %}
+              {% else %}
+                <td class="table--cell tbl-ce-">
+                  <form action="{{ url_for('collection_exercise_bp.update_event_date', short_name=survey.shortName, period=ce.exerciseRef, tag='mps')}}" method="get">
+                    <a class="edit-icon" href=# id="create-event-date-mps" onclick="this.parentNode.submit()"></a>
+                  </form>
+                </td>
               {% endif %}
-              {% endif %}
+
             </tr>
 
             <tr class="table--row">
