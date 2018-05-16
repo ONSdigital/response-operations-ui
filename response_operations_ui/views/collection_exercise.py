@@ -18,7 +18,7 @@ collection_exercise_bp = Blueprint('collection_exercise_bp', __name__,
 
 @collection_exercise_bp.route('/<short_name>/<period>', methods=['GET'])
 @login_required
-def view_collection_exercise(short_name, period, error=None, success_panel=None):
+def view_collection_exercise(short_name, period, error=None, success_panel=None, show_msg=None):
     ce_details = collection_exercise_controllers.get_collection_exercise(short_name, period)
     ce_details['sample_summary'] = _format_sample_summary(ce_details['sample_summary'])
     formatted_events = convert_events_to_new_format(ce_details['events'])
@@ -50,6 +50,9 @@ def view_collection_exercise(short_name, period, error=None, success_panel=None)
     ce_details['collection_exercise']['state'] = map_collection_exercise_state(ce_state)  # NOQA
     _format_ci_file_name(ce_details['collection_instruments'], ce_details['survey'])
 
+    if show_msg is None:
+        show_msg = request.args.get('show_msg')
+
     return render_template('collection-exercise.html',
                            breadcrumbs=breadcrumbs,
                            ce=ce_details['collection_exercise'],
@@ -66,7 +69,7 @@ def view_collection_exercise(short_name, period, error=None, success_panel=None)
                            survey=ce_details['survey'],
                            validation_failed=validation_failed,
                            show_edit_period=show_edit_period,
-                           show_msg=request.args.get('show_msg'),
+                           show_msg=show_msg,
                            ci_classifiers=ce_details['ci_classifiers']['classifierTypes'])
 
 
@@ -120,7 +123,7 @@ def _upload_sample(short_name, period):
     if not error:
         sample_controllers.upload_sample(short_name, period, request.files['sampleFile'])
 
-    return view_collection_exercise(short_name, period, error=error)
+    return view_collection_exercise(short_name, period, error=error, show_msg='true')
 
 
 def _select_collection_instrument(short_name, period):

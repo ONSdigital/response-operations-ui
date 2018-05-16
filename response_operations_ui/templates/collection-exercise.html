@@ -29,20 +29,20 @@
         </div>
       </div>
     {% endif %}
-    {% if sample %}
+    {% if sample and show_msg == 'true' %}
       {% if sample.state == 'INIT' %}
         <div class="panel panel--simple panel--info u-mb-l">
             <div class="panel__body">
             Loading sample&hellip; <span class="u-ml-xs"><a href="/surveys/{{survey.shortName}}/{{ce.exerciseRef}}?show_msg=true">Refresh to see progress</a></span>
             </div>
         </div>
-      {% elif sample.state == 'ACTIVE' and show_msg == 'true' %}
+      {% elif sample.state == 'ACTIVE' %}
         <div class="panel panel--simple panel--success u-mb-l">
           <div class="panel__body">
             Sample loaded successfully
           </div>
         </div>
-      {% elif sample.state == 'FAILED' and show_msg == 'true' %}
+      {% elif sample.state == 'FAILED' %}
         <div class="panel panel--simple panel--error u-mb-l">
           <div class="panel__body">
            Error loading sample <span class="u-ml-xs"><a href="#section-sample">See error details</a></span>
