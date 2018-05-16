@@ -332,36 +332,36 @@ def get_create_collection_exercise_form(survey_ref, short_name):
 @collection_exercise_bp.route('/<survey_ref>-<short_name>/create-collection-exercise', methods=['POST'])
 @login_required
 def create_collection_exercise(survey_ref, short_name):
+    logger.info("Creating collection exercise", survey_ref=survey_ref, survey=short_name)
     ce_form = CreateCollectionExerciseDetailsForm(form=request.form)
+    form = request.form
 
-    survey_details = survey_controllers.get_survey(short_name)
+    survey_id = form.get('hidden_survey_id')
+    survey_name = form.get('hidden_survey_name')
 
     if not ce_form.validate():
         logger.info("Failed validation, retrieving survey data for form", short_name=short_name, survey_ref=survey_ref)
         error = ce_form.errors['period'][1] \
             if ce_form.errors['period'][1] == 'Please enter numbers only for the period' else None
         return render_template('create-collection-exercise.html', form=ce_form, short_name=short_name, errors=error,
-                               survey_ref=survey_ref, survey_id=survey_details['survey']['id'],
-                               survey_name=survey_details['survey']['shortName'])
-
+                               survey_ref=survey_ref, survey_id=survey_id,
+                               survey_name=survey_name)
     else:
         logger.info("Creating collection exercise for survey", short_name=short_name, survey_ref=survey_ref)
-        form = request.form
 
         created_period = form.get('period')
-        ce_details = collection_exercise_controllers.get_collection_exercises_by_survey(survey_details['survey']['id'])
+        ce_details = collection_exercise_controllers.get_collection_exercises_by_survey(survey_id)
 
-        if ce_details:
-            for ce in ce_details:
-                if ce['exerciseRef'] == str(created_period):
-                    error = "Please use a period that is not in use by any collection exercise for this survey."
-                    return render_template('create-collection-exercise.html', form=ce_form, short_name=short_name,
-                                           errors=error,
-                                           survey_ref=survey_ref, survey_id=survey_details['survey']['id'],
-                                           survey_name=survey_details['survey']['shortName'])
+        for ce in ce_details:
+            if ce['exerciseRef'] == str(created_period):
+                error = "Please use a period that is not in use by any collection exercise for this survey."
+                return render_template('create-collection-exercise.html', form=ce_form, short_name=short_name,
+                                       errors=error,
+                                       survey_ref=survey_ref, survey_id=survey_id,
+                                       survey_name=survey_name)
 
-        collection_exercise_controllers.create_collection_exercise(form.get('hidden_survey_id'),
-                                                                   form.get('hidden_survey_name'),
+        collection_exercise_controllers.create_collection_exercise(survey_id,
+                                                                   survey_name,
                                                                    form.get('user_description'),
                                                                    form.get('period'))
 
