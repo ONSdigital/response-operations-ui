@@ -262,7 +262,7 @@ class TestCollectionExercise(unittest.TestCase):
         json_date = {
             "sampleSummaryPK": 1,
             "id": "d7d13200-34a1-4a66-9f3b-ea0af4bc023d",
-            "state": "INIT",
+            "state": "ACTIVE",
             "ingestDateTime": "2017-11-06T14:02:24.203+0000"
         }
 

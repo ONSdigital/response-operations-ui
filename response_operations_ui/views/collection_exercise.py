@@ -66,6 +66,7 @@ def view_collection_exercise(short_name, period, error=None, success_panel=None)
                            survey=ce_details['survey'],
                            validation_failed=validation_failed,
                            show_edit_period=show_edit_period,
+                           show_msg=request.args.get('show_msg'),
                            ci_classifiers=ce_details['ci_classifiers']['classifierTypes'])
 
 
@@ -114,17 +115,12 @@ def _set_ready_for_live(short_name, period):
 
 
 def _upload_sample(short_name, period):
-    success_panel = None
     error = _validate_sample()
 
     if not error:
         sample_controllers.upload_sample(short_name, period, request.files['sampleFile'])
-        success_panel = {
-            "id": "sample-success",
-            "message": "Sample successfully loaded"
-        }
 
-    return view_collection_exercise(short_name, period, error=error, success_panel=success_panel)
+    return view_collection_exercise(short_name, period, error=error)
 
 
 def _select_collection_instrument(short_name, period):
