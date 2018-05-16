@@ -18,12 +18,12 @@ def update_case_group_status(collection_exercise_id, ru_ref, case_group_event):
     try:
         response.raise_for_status()
     except requests.exceptions.HTTPError:
-        logger.exception('Error updating status', collection_exercise_id=collection_exercise_id, ru_ref=ru_ref,
-                         case_group_event=case_group_event)
+        logger.exception('Error updating case group status', collection_exercise_id=collection_exercise_id,
+                         ru_ref=ru_ref, case_group_event=case_group_event)
         raise ApiError(response)
 
-    logger.debug('Successfully updated status', collection_exercise_id=collection_exercise_id, ru_ref=ru_ref,
-                 case_group_event=case_group_event)
+    logger.debug('Successfully updated case group status', collection_exercise_id=collection_exercise_id,
+                 ru_ref=ru_ref, case_group_event=case_group_event)
 
 
 def get_available_case_group_statuses_direct(collection_exercise_id, ru_ref):
