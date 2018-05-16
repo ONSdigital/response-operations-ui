@@ -159,3 +159,8 @@ def get_collection_exercises_by_survey(survey_id):
 def get_case_group_status_by_collection_exercise(case_groups, collection_exercise_id):
     return next(case_group['caseGroupStatus'] for case_group in case_groups
                 if case_group['collectionExerciseId'] == collection_exercise_id)
+
+
+def get_collection_exercise_from_list(exercises, period):
+    return next((exercise for exercise in exercises
+                 if exercise['exerciseRef'] == period), None)
