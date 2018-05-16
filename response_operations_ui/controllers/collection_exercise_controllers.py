@@ -144,7 +144,7 @@ def get_collection_exercises_by_survey(survey_id):
     response = requests.get(url, auth=app.config['COLLECTION_EXERCISE_AUTH'])
 
     if response.status_code == 204:
-        return
+        return []
 
     try:
         response.raise_for_status()
