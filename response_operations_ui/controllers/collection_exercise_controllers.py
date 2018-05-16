@@ -156,3 +156,23 @@ def get_collection_exercises_by_survey(survey_id):
 def get_case_group_status_by_collection_exercise(case_groups, collection_exercise_id):
     return next(case_group['caseGroupStatus'] for case_group in case_groups
                 if case_group['collectionExerciseId'] == collection_exercise_id)
+
+
+def unlink_sample_summary(collection_exercise_id, sample_summary_id):
+    logger.debug('un-linking sample summary from collection exercise', collection_exercise_id=collection_exercise_id,
+                 sample_summary_id=sample_summary_id)
+    url = f'{app.config["COLLECTION_EXERCISE_URL"]}/collectionexercises/unlink/{collection_exercise_id}' \
+          f'/sample/{sample_summary_id}'
+
+    response = requests.put(url, auth=app.config['COLLECTION_EXERCISE_AUTH'])
+
+    try:
+        response.raise_for_status()
+    except HTTPError:
+        logger.exception('Failed to unlink sample summary from collection exercise',
+                         collection_exercise_id=collection_exercise_id, sample_summary_id=sample_summary_id)
+        return ApiError(response)
+
+    logger.debug('Successfully unlinked sample summary from a collection exercise',
+                 collection_exercise_id=collection_exercise_id, sample_summary_id=sample_summary_id)
+    return response.json

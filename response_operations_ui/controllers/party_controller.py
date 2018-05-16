@@ -167,14 +167,16 @@ def _compare_contact_details(new_contact_details, old_contact_details):
     return details_different
 
 
-def remove_loaded_sample(sample):
-    logger.debug('removing loaded sample')
+def remove_business_attributes_by_sample(sample):
+    logger.debug('removing loaded sample', sample=sample)
     url = f'{app.config["PARTY_URL"]}/party-api/v1/businesses/sample/remove/{sample}'
     response = requests.put(url, auth=app.config['PARTY_AUTH'])
     try:
         response.raise_for_status()
     except requests.exceptions.HTTPError:
+        log_level = logger.warning if response.status_code in (400, 404) else logger.exception
+        log_level('Failed to remove business attribute by sample', sample=sample)
         raise ApiError(response)
 
-    logger.debug('Successfully removed sample file')
-    return response.json
+    logger.debug('Successfully removed business attribute by sample', sample=sample)
+    return response.json()

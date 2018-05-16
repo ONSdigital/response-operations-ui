@@ -8,7 +8,8 @@ from structlog import wrap_logger
 from response_operations_ui.common.mappers import convert_events_to_new_format, map_collection_exercise_state
 from response_operations_ui.controllers import collection_instrument_controllers, sample_controllers, \
     collection_exercise_controllers, survey_controllers, party_controller
-from response_operations_ui.forms import EditCollectionExerciseDetailsForm, CreateCollectionExerciseDetailsForm
+from response_operations_ui.forms import EditCollectionExerciseDetailsForm, CreateCollectionExerciseDetailsForm, \
+    RemoveLoadedSample
 
 logger = wrap_logger(logging.getLogger(__name__))
 
@@ -18,7 +19,7 @@ collection_exercise_bp = Blueprint('collection_exercise_bp', __name__,
 
 @collection_exercise_bp.route('/<short_name>/<period>', methods=['GET'])
 @login_required
-def view_collection_exercise(short_name, period, error=None, success_panel=None):
+def view_collection_exercise(short_name, period, error=None, success_panel=None, error_panel=None):
     ce_details = collection_exercise_controllers.get_collection_exercise(short_name, period)
     ce_details['sample_summary'] = _format_sample_summary(ce_details['sample_summary'])
     formatted_events = convert_events_to_new_format(ce_details['events'])
@@ -57,6 +58,7 @@ def view_collection_exercise(short_name, period, error=None, success_panel=None)
                            collection_instruments=ce_details['collection_instruments'],
                            eq_ci_selectors=ce_details['eq_ci_selectors'],
                            error=error,
+                           error_panel=error_panel,
                            events=formatted_events,
                            locked=locked,
                            missing_ci=missing_ci,
@@ -356,30 +358,34 @@ def create_collection_exercise(survey_ref, short_name):
 @login_required
 def get_confirm_remove_sample(short_name, period):
     logger.info("Retrieving confirm remove sample page", short_name=short_name, period=period)
-    form = CreateCollectionExerciseDetailsForm(form=request.form)
+    form = RemoveLoadedSample(form=request.form)
     return render_template('confirm-remove-sample.html', form=form, short_name=short_name, period=period)
 
 
 @collection_exercise_bp.route('/<short_name>/<period>/confirm-remove-sample', methods=['POST'])
 @login_required
 def remove_loaded_sample(short_name, period):
-    error = None
+    error_panel = None
     success_panel = None
     ce_details = collection_exercise_controllers.get_collection_exercise(short_name, period)
     ce_details['sample_summary'] = _format_sample_summary(ce_details['sample_summary'])
-    sample = ce_details['sample_summary']
-    sample_removed = party_controller.remove_loaded_sample(sample)
+    sample_id = ce_details['sample_summary']['id']
+    collection_exercise_id = ce_details['collection_exercise']['id']
 
-    if sample_removed:
+    unlink_sample_summary = collection_exercise_controllers.unlink_sample_summary(collection_exercise_id,
+                                                                                  sample_id)
+    sample_removed = party_controller.remove_business_attributes_by_sample(sample_id)
+
+    if sample_removed and unlink_sample_summary:
         success_panel = {
             "id": "sample-removed-success",
             "message": "Sample removed"
         }
     else:
-        error = {
+        error_panel = {
             "id": "sample-removed-error",
-            "header": "Error: Failed to remove sample"
+            "message": "Error failed to remove sample"
         }
 
     logger.info("Removing sample for collection exercise", short_name=short_name, period=period)
-    return view_collection_exercise(short_name, period, success_panel=success_panel, error=error)
+    return view_collection_exercise(short_name, period, success_panel=success_panel, error_panel=error_panel)

@@ -30,6 +30,13 @@
         </div>
       </div>
     {% endif %}
+    {% if error_panel %}
+      <div class="panel panel--simple panel--error u-mb-l">
+        <div id="{{ error_panel.id }}" class="panel__body">
+          {{ error_panel.message }}
+        </div>
+      </div>
+    {% endif %}
     <dl class="ce-info" id="ce-attributes">
       <dt class="ce-status__title item-headlines-term ce-status">
         Status:
