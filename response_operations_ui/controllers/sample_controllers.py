@@ -14,7 +14,7 @@ def upload_sample(collection_exercise_id, sample_file, survey_type='B'):
                  collection_exercise_id=collection_exercise_id,
                  survey_type=survey_type)
     url = f'{app.config["SAMPLE_URL"]}/samples/{survey_type}/fileupload'
-    response = requests.post(url=url, auth=app.config['BASIC_AUTH'], files={'file': sample_file})
+    response = requests.post(url=url, auth=app.config['SAMPLE_AUTH'], files={'file': sample_file})
 
     try:
         response.raise_for_status()
