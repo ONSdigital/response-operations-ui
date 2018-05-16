@@ -44,7 +44,7 @@ class Config(object):
     PARTY_PASSWORD = os.getenv('PARTY_PASSWORD')
     PARTY_AUTH = (PARTY_USERNAME, PARTY_PASSWORD)
 
-    SAMPLE_SERVICE = os.getenv('SAMPLE_URL')
+    SAMPLE_URL = os.getenv('SAMPLE_URL')
 
     SURVEY_URL = os.getenv('SURVEY_URL')
     SURVEY_USERNAME = os.getenv('SURVEY_USERNAME')
