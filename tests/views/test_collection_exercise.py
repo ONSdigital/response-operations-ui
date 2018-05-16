@@ -8,6 +8,7 @@ from config import TestingConfig
 from response_operations_ui import app
 
 collection_exercise_id = "14fb3e68-4dca-46db-bf49-04b84e07e77c"
+survey_id = "cb0711c3-0ac8-41d3-ae0e-567e5ea1ef87"
 url_get_collection_exercise = f'{app.config["BACKSTAGE_API_URL"]}/v1/collection-exercise/test/000000'
 with open('tests/test_data/collection_exercise/collection_exercise_details.json') as json_data:
     collection_exercise_details = json.load(json_data)
@@ -26,9 +27,11 @@ url_update_ce = f'{app.config["BACKSTAGE_API_URL"]}/v1/collection-exercise/updat
 url_get_survey_by_short_name = f'{app.config["BACKSTAGE_API_URL"]}/v1/survey/shortname/test'
 with open('tests/test_data/survey/edited_survey_ce_details.json') as json_data:
     updated_survey_info = json.load(json_data)
+with open('tests/test_data/survey/survey_by_id.json') as fp:
+    survey_by_id = json.load(fp)
 url_create_collection_exercise = f'{app.config["COLLECTION_EXERCISE_URL"]}/collectionexercises'
-url_ce_by_survey = f'{app.config["COLLECTION_EXERCISE_URL"]}/collectionexercises/' \
-                   f'survey/14fb3e68-4dca-46db-bf49-04b84e07e77c'
+url_ce_by_survey = f'{app.config["COLLECTION_EXERCISE_URL"]}/collectionexercises/survey/' \
+                   f'{survey_id}'
 
 
 class TestCollectionExercise(unittest.TestCase):
@@ -370,7 +373,7 @@ class TestCollectionExercise(unittest.TestCase):
             "collection_exercise_id": '14fb3e68-4dca-46db-bf49-04b84e07e77c',
             "user_description": '16th June 2019',
             "period": '201906',
-            "hidden_survey_id": '14fb3e68-4dca-46db-bf49-04b84e07e77c'
+            "hidden_survey_id": survey_id
         }
         mock_request.get(url_get_collection_exercise, json=collection_exercise_details)
         mock_request.put(url_update_ce)
@@ -389,7 +392,7 @@ class TestCollectionExercise(unittest.TestCase):
             "collection_exercise_id": '14fb3e68-4dca-46db-bf49-04b84e07e77c',
             "user_description": '16th June 2019',
             "period": '201906',
-            "hidden_survey_id": '14fb3e68-4dca-46db-bf49-04b84e07e77c'
+            "hidden_survey_id": survey_id
         }
         mock_request.get(url_get_collection_exercise, json=collection_exercise_details)
         mock_request.put(url_update_ce, status_code=500)
@@ -445,7 +448,7 @@ class TestCollectionExercise(unittest.TestCase):
     def test_create_collection_exercise_success(self, mock_request):
         new_collection_exercise_details = {
             "hidden_survey_name": 'BRES',
-            "hidden_survey_id": '14fb3e68-4dca-46db-bf49-04b84e07e77c',
+            "hidden_survey_id": survey_id,
             "user_description": 'New collection exercise',
             "period": '123456'
         }
@@ -460,11 +463,18 @@ class TestCollectionExercise(unittest.TestCase):
 
     @requests_mock.mock()
     def test_create_collection_exercise_failure(self, mock_request):
+        new_collection_exercise_details = {
+            "hidden_survey_name": 'BRES',
+            "hidden_survey_id": survey_id,
+            "user_description": 'New collection exercise',
+            "period": '123456'
+        }
         mock_request.get(url_ce_by_survey, json=self.collection_exercises)
         mock_request.get(url_get_survey_by_short_name, json=updated_survey_info)
         mock_request.post(url_create_collection_exercise, status_code=500)
 
-        response = self.app.post(f"/surveys/141-test/create-collection-exercise", follow_redirects=True)
+        response = self.app.post(f"/surveys/141-test/create-collection-exercise", data=new_collection_exercise_details,
+                                 follow_redirects=True)
         self.assertEqual(response.status_code, 500)
         self.assertIn("Error 500 - Server error".encode(), response.data)
 
@@ -481,7 +491,7 @@ class TestCollectionExercise(unittest.TestCase):
     def test_failed_create_ce_validation_period_exists(self, mock_request):
         new_collection_exercise_details = {
             "hidden_survey_name": 'BRES',
-            "hidden_survey_id": '14fb3e68-4dca-46db-bf49-04b84e07e77c',
+            "hidden_survey_id": survey_id,
             "user_description": 'New collection exercise',
             "period": '201601'
         }
@@ -499,7 +509,7 @@ class TestCollectionExercise(unittest.TestCase):
     def test_failed_create_ce_letters_fails_in_period_validation(self, mock_request):
         new_collection_exercise_details = {
             "hidden_survey_name": 'BRES',
-            "hidden_survey_id": '14fb3e68-4dca-46db-bf49-04b84e07e77c',
+            "hidden_survey_id": survey_id,
             "user_description": 'New collection exercise',
             "period": 'hello'
         }
@@ -518,7 +528,7 @@ class TestCollectionExercise(unittest.TestCase):
             "collection_exercise_id": '14fb3e68-4dca-46db-bf49-04b84e07e77c',
             "user_description": '16th June 2019',
             "period": '201601',
-            "hidden_survey_id": '14fb3e68-4dca-46db-bf49-04b84e07e77c'
+            "hidden_survey_id": survey_id
         }
         mock_request.get(url_get_collection_exercise, json=collection_exercise_details)
         mock_request.put(url_update_ce)
@@ -537,7 +547,7 @@ class TestCollectionExercise(unittest.TestCase):
             "collection_exercise_id": '14fb3e68-4dca-46db-bf49-04b84e07e77c',
             "user_description": '16th June 2019',
             "period": 'hello',
-            "hidden_survey_id": '14fb3e68-4dca-46db-bf49-04b84e07e77c'
+            "hidden_survey_id": survey_id
         }
         mock_request.get(url_get_collection_exercise, json=collection_exercise_details)
         mock_request.put(url_update_ce)

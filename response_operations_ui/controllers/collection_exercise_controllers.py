@@ -37,6 +37,38 @@ def get_collection_exercise(short_name, period):
     return response.json()
 
 
+def get_collection_exercise_event_page_info(short_name, period):
+    logger.debug('Retrieving collection exercise details for the event page',
+                 short_name=short_name, period=period)
+    url = f'{app.config["BACKSTAGE_API_URL"]}/v1/collection-exercise/{short_name}/{period}/events'
+    response = requests.get(url)
+    if response.status_code != 200:
+        raise ApiError(response)
+
+    logger.debug('Successfully retrieved collection exercise details for the event page',
+                 short_name=short_name, period=period)
+    return response.json()
+
+
+def update_event(short_name, period, tag, timestamp):
+    logger.debug('Updating event date',
+                 short_name=short_name, period=period, tag=tag)
+    url = f'{app.config["BACKSTAGE_API_URL"]}/v1/collection-exercise/{short_name}/{period}/events/{tag}'
+    formatted_timestamp = timestamp.strftime('%Y-%m-%dT%H:%M:00.000+0000')
+    response = requests.put(url, json={'timestamp': formatted_timestamp})
+
+    if response.status_code == 400:
+        logger.warning('Bad request updating event',
+                       short_name=short_name, period=period, tag=tag, timestamp=timestamp, status=response.status_code)
+        return False
+    elif response.status_code != 201:
+        raise ApiError(response)
+
+    logger.debug('Successfully updated event date',
+                 short_name=short_name, period=period, tag=tag)
+    return True
+
+
 def execute_collection_exercise(short_name, period):
     logger.debug('Executing collection exercise', short_name=short_name, period=period)
     url = f'{app.config["BACKSTAGE_API_URL"]}/v1/collection-exercise/{short_name}/{period}/execute'
@@ -66,6 +98,22 @@ def update_collection_exercise_details(collection_exercise_id, user_description,
     logger.debug('Successfully updated collection exercise details', collection_exercise_id=collection_exercise_id)
 
 
+def get_collection_exercise_by_id(collection_exercise_id):
+    logger.debug('Retrieving collection exercise', collection_exercise_id=collection_exercise_id)
+    url = f'{app.config["COLLECTION_EXERCISE_URL"]}/collectionexercises/{collection_exercise_id}'
+    response = requests.get(url, auth=app.config['COLLECTION_EXERCISE_AUTH'])
+
+    try:
+        response.raise_for_status()
+    except requests.exceptions.HTTPError:
+        log_level = logger.warning if response.status_code == 404 else logger.exception
+        log_level('Failed to retrieve collection exercise', collection_exercise_id=collection_exercise_id)
+        raise ApiError(response)
+
+    logger.debug('Successfully retrieved collection exercise', collection_exercise_id=collection_exercise_id)
+    return response.json()
+
+
 def create_collection_exercise(survey_id, survey_name, user_description, period):
     logger.debug('Creating a new collection exercise for', survey_id=survey_id, survey_name=survey_name)
     header = {'Content-Type': "application/json"}
@@ -84,7 +132,7 @@ def create_collection_exercise(survey_id, survey_name, user_description, period)
         response.raise_for_status()
     except HTTPError:
         logger.exception('Error creating new collection exercise', survey_id=survey_id)
-        return ApiError(response)
+        raise ApiError(response)
 
     logger.debug('Successfully created collection exercise for', survey_id=survey_id, survey_name=survey_name)
 
@@ -95,6 +143,9 @@ def get_collection_exercises_by_survey(survey_id):
 
     response = requests.get(url, auth=app.config['COLLECTION_EXERCISE_AUTH'])
 
+    if response.status_code == 204:
+        return []
+
     try:
         response.raise_for_status()
     except HTTPError:
@@ -103,3 +154,13 @@ def get_collection_exercises_by_survey(survey_id):
 
     logger.debug('Successfully retrieved collection exercises by survey', survey_id=survey_id)
     return response.json()
+
+
+def get_case_group_status_by_collection_exercise(case_groups, collection_exercise_id):
+    return next(case_group['caseGroupStatus'] for case_group in case_groups
+                if case_group['collectionExerciseId'] == collection_exercise_id)
+
+
+def get_collection_exercise_from_list(exercises, period):
+    return next((exercise for exercise in exercises
+                 if exercise['exerciseRef'] == period), None)
