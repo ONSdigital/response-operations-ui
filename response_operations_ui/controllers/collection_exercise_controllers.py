@@ -132,7 +132,7 @@ def create_collection_exercise(survey_id, survey_name, user_description, period)
         response.raise_for_status()
     except HTTPError:
         logger.exception('Error creating new collection exercise', survey_id=survey_id)
-        return ApiError(response)
+        raise ApiError(response)
 
     logger.debug('Successfully created collection exercise for', survey_id=survey_id, survey_name=survey_name)
 
@@ -142,6 +142,9 @@ def get_collection_exercises_by_survey(survey_id):
     url = f'{app.config["COLLECTION_EXERCISE_URL"]}/collectionexercises/survey/{survey_id}'
 
     response = requests.get(url, auth=app.config['COLLECTION_EXERCISE_AUTH'])
+
+    if response.status_code == 204:
+        return []
 
     try:
         response.raise_for_status()

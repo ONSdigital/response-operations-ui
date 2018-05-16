@@ -32,7 +32,7 @@ def get_response_statuses(ru_ref, error=None):
     current_status = case_controller.get_case_group_status_by_collection_exercise(case_groups, exercise['id'])
 
     return render_template('change-response-status.html',
-                           ru_ref=ru_ref, trading_as=reporting_unit['trading_as'],
+                           ru_ref=ru_ref, ru_name=reporting_unit['name'], trading_as=reporting_unit['trading_as'],
                            survey_short_name=format_short_name(survey['shortName']), survey_ref=survey['surveyRef'],
                            ce_period=period,
                            statuses=available_statuses, case_group_status=map_ce_response_status(current_status),
