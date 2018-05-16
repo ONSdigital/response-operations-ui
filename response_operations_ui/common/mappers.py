@@ -42,7 +42,7 @@ def map_collection_exercise_state(ce_state):
 
 def map_ce_response_status(ce_response_status):
     return {
-        'NOTSTARTED': "Not Started",
+        'NOTSTARTED': "Not started",
         'INPROGRESS': "In progress",
         'COMPLETE': "Completed",
         'COMPLETEDBYPHONE': 'Completed by phone',
