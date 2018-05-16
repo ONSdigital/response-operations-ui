@@ -125,14 +125,9 @@ class CreateCollectionExerciseDetailsForm(FlaskForm):
 
     @staticmethod
     def validate_period(form, field):
-        hidden_survey_id = form.hidden_survey_id.data
-        ce_details = collection_exercise_controllers.get_collection_exercises_by_survey(hidden_survey_id)
         inputted_period = field.data
         if inputted_period is None:
             raise ValidationError('Please enter numbers only for the period')
-        for ce in ce_details:
-            if ce['exerciseRef'] == str(inputted_period):
-                raise ValidationError('Please enter a period not in use')
 
 
 class EditSurveyDetailsForm(FlaskForm):
