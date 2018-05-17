@@ -7,7 +7,7 @@ from structlog import wrap_logger
 
 from response_operations_ui.common.mappers import convert_events_to_new_format, map_collection_exercise_state
 from response_operations_ui.controllers import collection_instrument_controllers, sample_controllers, \
-    collection_exercise_controllers, survey_controllers, party_controller
+    collection_exercise_controllers, survey_controllers
 from response_operations_ui.forms import EditCollectionExerciseDetailsForm, CreateCollectionExerciseDetailsForm, \
     RemoveLoadedSample
 
