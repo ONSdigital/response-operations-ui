@@ -29,6 +29,10 @@ with open('tests/test_data/survey/edited_survey_ce_details.json') as json_data:
 url_create_collection_exercise = f'{app.config["COLLECTION_EXERCISE_URL"]}/collectionexercises'
 url_ce_by_survey = f'{app.config["COLLECTION_EXERCISE_URL"]}/collectionexercises/' \
                    f'survey/14fb3e68-4dca-46db-bf49-04b84e07e77c'
+url_ce_remove_sample = f'{app.config["COLLECTION_EXERCISE_URL"]}/collectionexercises/unlink/{collection_exercise_id}' \
+                       f'/sample/1a11543f-eb19-41f5-825f-e41aca15e724'
+url_party_remove_sample = f'{app.config["PARTY_URL"]}/party-api/v1/businesses/sample/remove' \
+                          f'/1a11543f-eb19-41f5-825f-e41aca15e724'
 
 
 class TestCollectionExercise(unittest.TestCase):
@@ -548,3 +552,31 @@ class TestCollectionExercise(unittest.TestCase):
 
         self.assertEqual(response.status_code, 200)
         self.assertIn("Please enter numbers only for the period".encode(), response.data)
+
+    @requests_mock.mock()
+    def test_remove_loaded_sample_success(self, mock_request):
+        mock_request.get(url_get_collection_exercise, json=collection_exercise_details)
+        mock_request.put(url_ce_remove_sample, status_code=200)
+        mock_request.put(url_party_remove_sample, status_code=200)
+        response = self.app.post(f"/surveys/test/000000/confirm-remove-sample", follow_redirects=True)
+
+        self.assertEquals(response.status_code, 200)
+        self.assertIn('Sample removed'.encode(), response.data)
+
+    @requests_mock.mock()
+    def test_remove_loaded_sample_failed(self, mock_request):
+        mock_request.get(url_get_collection_exercise, json=collection_exercise_details)
+        mock_request.put(url_ce_remove_sample, status_code=500)
+        mock_request.put(url_party_remove_sample, status_code=500)
+        response = self.app.post(f"/surveys/test/000000/confirm-remove-sample", follow_redirects=True)
+
+        self.assertEquals(response.status_code, 200)
+        self.assertIn('Error failed to remove sample'.encode(), response.data)
+
+    @requests_mock.mock()
+    def test_get_confirm_remove_sample(self, mock_request):
+        response = self.app.get(f"/surveys/test/000000/confirm-remove-sample",
+                                follow_redirects=True)
+
+        self.assertEqual(response.status_code, 200)
+        self.assertIn("Remove sample from test 000000".encode(), response.data)

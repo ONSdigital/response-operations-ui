@@ -369,12 +369,12 @@ def remove_loaded_sample(short_name, period):
     success_panel = None
     ce_details = collection_exercise_controllers.get_collection_exercise(short_name, period)
     ce_details['sample_summary'] = _format_sample_summary(ce_details['sample_summary'])
-    sample_id = ce_details['sample_summary']['id']
+    sample_summary_id = ce_details['sample_summary']['id']
     collection_exercise_id = ce_details['collection_exercise']['id']
 
     unlink_sample_summary = collection_exercise_controllers.unlink_sample_summary(collection_exercise_id,
-                                                                                  sample_id)
-    sample_removed = party_controller.remove_business_attributes_by_sample(sample_id)
+                                                                                  sample_summary_id)
+    sample_removed = party_controller.remove_business_attributes_by_sample(sample_summary_id)
 
     if sample_removed and unlink_sample_summary:
         success_panel = {

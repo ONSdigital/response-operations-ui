@@ -171,7 +171,7 @@ def unlink_sample_summary(collection_exercise_id, sample_summary_id):
     except HTTPError:
         logger.exception('Failed to unlink sample summary from collection exercise',
                          collection_exercise_id=collection_exercise_id, sample_summary_id=sample_summary_id)
-        return ApiError(response)
+        return False
 
     logger.debug('Successfully unlinked sample summary from a collection exercise',
                  collection_exercise_id=collection_exercise_id, sample_summary_id=sample_summary_id)
