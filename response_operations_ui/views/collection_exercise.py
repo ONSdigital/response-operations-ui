@@ -392,9 +392,8 @@ def remove_loaded_sample(short_name, period):
 
     unlink_sample_summary = collection_exercise_controllers.unlink_sample_summary(collection_exercise_id,
                                                                                   sample_summary_id)
-    sample_removed = party_controller.remove_business_attributes_by_sample(sample_summary_id)
 
-    if sample_removed and unlink_sample_summary:
+    if unlink_sample_summary:
         success_panel = {
             "id": "sample-removed-success",
             "message": "Sample removed"

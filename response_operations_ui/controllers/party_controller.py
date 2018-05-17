@@ -165,17 +165,3 @@ def _compare_contact_details(new_contact_details, old_contact_details):
                          if old_contact_details.get(key) != new_contact_details.get(contact_details_map[key])]
 
     return details_different
-
-
-def remove_business_attributes_by_sample(sample_summary_id):
-    logger.debug('removing loaded sample', sample_summary_id=sample_summary_id)
-    url = f'{app.config["PARTY_URL"]}/party-api/v1/businesses/sample/remove/{sample_summary_id}'
-    response = requests.put(url, auth=app.config['PARTY_AUTH'])
-    try:
-        response.raise_for_status()
-    except HTTPError:
-        logger.exception('Failed to remove business attribute by sample', sample_summary_id=sample_summary_id)
-        return False
-
-    logger.debug('Successfully removed business attribute by sample', sample_summary_id=sample_summary_id)
-    return response.json
