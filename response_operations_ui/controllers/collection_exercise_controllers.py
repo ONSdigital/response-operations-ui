@@ -164,3 +164,27 @@ def get_case_group_status_by_collection_exercise(case_groups, collection_exercis
 def get_collection_exercise_from_list(exercises, period):
     return next((exercise for exercise in exercises
                  if exercise['exerciseRef'] == period), None)
+
+
+def link_sample_summary_to_collection_exercise(collection_exercise_id, sample_summary_id):
+    logger.debug('Linking sample summary to collection exercise',
+                 collection_exercise_id=collection_exercise_id,
+                 sample_summary_id=sample_summary_id)
+    url = f'{app.config["COLLECTION_EXERCISE_URL"]}/collectionexercises/link/{collection_exercise_id}'
+    # Currently we only need to link a single sample to a single collection exercise
+    payload = {'sampleSummaryIds': [str(sample_summary_id)]}
+    response = requests.put(url, auth=app.config['COLLECTION_EXERCISE_AUTH'], json=payload)
+
+    if response.status_code == 404:
+        logger.error('Error retrieving collection exercise', collection_exercise_id=collection_exercise_id)
+        raise ApiError(url, response.status_code)
+    if response.status_code != 200:
+        logger.error('Error linking sample to collection exercise',
+                     collection_exercise_id=collection_exercise_id,
+                     sample_summary_id=sample_summary_id)
+        raise ApiError(url, response.status_code)
+
+    logger.debug('Successfully linked sample summary with collection exercise',
+                 collection_exercise_id=collection_exercise_id,
+                 sample_summary_id=sample_summary_id)
+    return response.json()
