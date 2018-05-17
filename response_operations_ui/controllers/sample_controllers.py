@@ -34,9 +34,7 @@ def upload_sample(short_name, period, file):
     except (HTTPError, RequestException):
         log_level = logger.warning if response.status_code in (400, 404) else logger.exception
         log_level('Error uploading sample file',
-                     collection_exercise_id=exercise['id'],
-                     status=response.status_code,
-                     survey_type=survey_type)
+                  collection_exercise_id=exercise['id'], status=response.status_code, survey_type=survey_type)
         raise ApiError(response)
 
     sample_summary = response.json()
