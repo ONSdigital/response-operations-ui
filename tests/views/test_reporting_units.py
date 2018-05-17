@@ -73,6 +73,7 @@ class TestReportingUnits(unittest.TestCase):
         self.app = app.test_client()
         self.case_group_status = {
             "ru_ref": "19000001",
+            "ru_name": "RU Name",
             "trading_as": "Company Name",
             "survey_id": "123",
             "short_name": "MYSURVEY",
@@ -554,10 +555,15 @@ class TestReportingUnits(unittest.TestCase):
     def test_reporting_unit_generate_new_code(self, mock_request):
         mock_request.post(url_generate_new_code, json=case)
 
-        response = self.app.get("/reporting-units/ru_ref/ce_id/new_enrolment_code", follow_redirects=True)
+        response = self.app.get("/reporting-units/ru_ref/ce_id/new_enrolment_code"
+                                "?survey_name=test_survey_name&trading_as=trading_name&ru_name=test_ru_name",
+                                follow_redirects=True)
 
         self.assertEqual(response.status_code, 200)
         self.assertIn("jkbvyklkwj88".encode(), response.data)
+        self.assertIn("test_ru_name".encode(), response.data)
+        self.assertIn("trading_name".encode(), response.data)
+        self.assertIn("test_survey_name".encode(), response.data)
 
     @requests_mock.mock()
     def test_reporting_unit_generate_new_code_fail(self, mock_request):
@@ -572,9 +578,10 @@ class TestReportingUnits(unittest.TestCase):
         response = self.app.get("/reporting-units/ru_ref/change-enrolment-status"
                                 "?survey_id=test_id&survey_name=test_survey_name&respondent_id=test_id"
                                 "&respondent_first_name=first_name&respondent_last_name=last_name&business_id=test_id"
-                                "&trading_as=test_name&change_flag=DISABLED")
+                                "&trading_as=test_name&change_flag=DISABLED&ru_name=test_ru_name")
 
         self.assertEqual(response.status_code, 200)
+        self.assertIn("test_ru_name".encode(), response.data)
         self.assertIn("test_name".encode(), response.data)
         self.assertIn("test_survey_name".encode(), response.data)
         self.assertIn("first_name".encode(), response.data)

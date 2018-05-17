@@ -27,6 +27,22 @@ def get_survey_by_id(survey_id):
     return response.json()
 
 
+def get_survey_by_shortname(short_name):
+    logger.debug('Retrieving survey', short_name=short_name)
+    url = f'{app.config["SURVEY_URL"]}/surveys/shortname/{short_name}'
+    response = requests.get(url, auth=app.config['SURVEY_AUTH'])
+
+    try:
+        response.raise_for_status()
+    except (HTTPError, RequestException):
+        log_level = logger.warning if response.status_code in (400, 404) else logger.exception
+        log_level('Error retrieving survey', short_name=short_name)
+        raise ApiError(response)
+
+    logger.debug('Successfully retrieved survey', short_name=short_name)
+    return response.json()
+
+
 def get_surveys_list():
     logger.debug('Retrieving surveys list')
     url = f'{app.config["BACKSTAGE_API_URL"]}/v1/survey/surveys'
