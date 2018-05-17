@@ -20,6 +20,14 @@ url_collection_instrument = f'{app.config["BACKSTAGE_API_URL"]}/v1/collection-in
 url_collection_instrument_link = f'{app.config["BACKSTAGE_API_URL"]}/v1/collection-instrument/link/111111/000000'
 url_collection_instrument_unlink = f'{app.config["BACKSTAGE_API_URL"]}/v1/collection-instrument/' \
                                    f'unlink/14fb3e68-4dca-46db-bf49-04b84e07e77c/000000'
+
+url_survey_shortname = f'{app.config["SURVEY_URL"]}/surveys/shortname/test'
+url_sample_service_upload = f'{app.config["SAMPLE_URL"]}/samples/B/fileupload'
+url_collection_exercise_survey_id = f'{app.config["COLLECTION_EXERCISE_URL"]}/collectionexercises/survey/' \
+                                     'af6ddd8f-7bd0-4c51-b879-ff4b367461c5'
+url_collection_exercise_link = f'{app.config["COLLECTION_EXERCISE_URL"]}/collectionexercises/link/' \
+                                '6e65acc4-4192-474b-bd3d-08071c4768e2'
+
 url_upload_sample = f'{app.config["BACKSTAGE_API_URL"]}/v1/sample/test/000000'
 url_execute = f'{app.config["BACKSTAGE_API_URL"]}/v1/collection-exercise/test/000000/execute'
 url_update_ce = f'{app.config["BACKSTAGE_API_URL"]}/v1/collection-exercise/update-collection-exercise-details/' \
@@ -269,8 +277,39 @@ class TestCollectionExercise(unittest.TestCase):
             "ingestDateTime": "2017-11-06T14:02:24.203+0000"
         }
 
+        survey_data = {
+            "id": "af6ddd8f-7bd0-4c51-b879-ff4b367461c5"
+        }
+
+        exercise_data = [{
+            'id': '6e65acc4-4192-474b-bd3d-08071c4768e2',
+            'surveyId': '0b1f8376-28e9-4884-bea5-acf9d709464e',
+            'name': 'Monthly Business Sur',
+            'scheduledExecutionDateTime': '2018-06-19T00:00:00.000Z',
+            'scheduledStartDateTime': '2018-06-19T00:00:00.000Z',
+            'periodStartDateTime': '2018-06-19T00:00:00.000Z',
+            'periodEndDateTime': '2020-08-31T00:00:00.000Z',
+            'scheduledReturnDateTime': '2018-07-07T00:00:00.000Z',
+            'scheduledEndDateTime': '2020-08-31T00:00:00.000Z',
+            'state': 'SCHEDULED',
+            'caseTypes': [],
+            'exerciseRef': '000000'
+        }]
+
+        sample_data = {
+            "id": "d29489a0-1044-4c33-9d0d-02aeb57ce82d"
+        }
+
+        collection_exercise_link = {
+            "id": ""
+        }
+
         mock_request.post(url_upload_sample, status_code=201, json=json_date)
         mock_request.get(url_get_collection_exercise, json=collection_exercise_details)
+        mock_request.get(url_survey_shortname, status_code=200, json=survey_data)
+        mock_request.get(url_collection_exercise_survey_id, status_code=200, json=exercise_data)
+        mock_request.post(url_sample_service_upload, status_code=200, json=sample_data)
+        mock_request.put(url_collection_exercise_link, status_code=200, json=collection_exercise_link)
 
         response = self.app.post("/surveys/test/000000", data=post_data)
 
