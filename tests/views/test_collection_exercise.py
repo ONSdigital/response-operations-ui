@@ -26,7 +26,7 @@ url_sample_service_upload = f'{app.config["SAMPLE_URL"]}/samples/B/fileupload'
 url_collection_exercise_survey_id = f'{app.config["COLLECTION_EXERCISE_URL"]}/collectionexercises/survey/' \
                                     'af6ddd8f-7bd0-4c51-b879-ff4b367461c5'
 url_collection_exercise_link = f'{app.config["COLLECTION_EXERCISE_URL"]}/collectionexercises/link/' \
-                            '6e65acc4-4192-474b-bd3d-08071c4768e2'
+                               '6e65acc4-4192-474b-bd3d-08071c4768e2'
 
 url_upload_sample = f'{app.config["BACKSTAGE_API_URL"]}/v1/sample/test/000000'
 url_execute = f'{app.config["BACKSTAGE_API_URL"]}/v1/collection-exercise/test/000000/execute'
