@@ -93,19 +93,6 @@ def get_survey_short_name_by_id(survey_id):
             logger.exception("Failed to resolve survey short name", survey_id=survey_id)
 
 
-def get_survey_by_shortname(short_name):
-    logger.debug('Retrieving survey', short_name=short_name)
-    url = f'{app.config["SURVEY_URL"]}/surveys/shortname/{short_name}'
-    response = requests.get(url, auth=app.config['SURVEY_AUTH'])
-
-    if response.status_code != 200:
-        logger.error('Error retrieving survey', short_name=short_name)
-        raise ApiError(url, response.status_code)
-
-    logger.debug('Successfully retrieved survey', short_name=short_name)
-    return response.json()
-
-
 def get_survey_id_by_short_name(short_name):
     logger.debug('Retrieving survey id by short name', short_name=short_name)
     url = f'{app.config["BACKSTAGE_API_URL"]}/v1/survey/shortname/{short_name}'
