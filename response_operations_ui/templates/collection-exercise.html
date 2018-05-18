@@ -37,6 +37,13 @@
         </div>
       </div>
     {% endif %}
+    {% if info_message %}
+    <div class="panel panel--simple panel--success">
+      <div id="collection-instrument-success" class="panel__body">
+        {{ info_message }}
+      </div>
+    </div>
+    {% endif %}
     <dl class="ce-info" id="ce-attributes">
       <dt class="ce-status__title item-headlines-term ce-status">
         Status:

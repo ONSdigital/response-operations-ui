@@ -17,13 +17,21 @@ collection_exercise_bp = Blueprint('collection_exercise_bp', __name__,
                                    static_folder='static', template_folder='templates')
 
 
+def get_info_message(message_key):
+    return {
+        'sample_removed_success': "Sample removed",
+        'sample_removed_error': "Error failed to remove sample",
+        'sample_success': "Sample successfully loaded"
+    }[message_key]
+
+
 @collection_exercise_bp.route('/<short_name>/<period>', methods=['GET'])
 @login_required
-def view_collection_exercise(short_name, period, error=None, success_panel=None, error_panel=None):
+def view_collection_exercise(short_name, period, error=None, success_panel=None):
     ce_details = collection_exercise_controllers.get_collection_exercise(short_name, period)
     ce_details['sample_summary'] = _format_sample_summary(ce_details['sample_summary'])
     formatted_events = convert_events_to_new_format(ce_details['events'])
-
+    error_panel = None
     breadcrumbs = [
         {
             "title": "Surveys",
@@ -37,6 +45,12 @@ def view_collection_exercise(short_name, period, error=None, success_panel=None,
             "title": f"{ce_details['collection_exercise']['exerciseRef']}"
         }
     ]
+
+    message_key = request.args.get('message_key')
+    if message_key:
+        info_message = get_info_message(message_key)
+    else:
+        info_message = None
 
     ce_state = ce_details['collection_exercise']['state']
     show_set_live_button = ce_state in ('READY_FOR_REVIEW', 'FAILEDVALIDATION')
@@ -61,6 +75,7 @@ def view_collection_exercise(short_name, period, error=None, success_panel=None,
                            error_panel=error_panel,
                            events=formatted_events,
                            locked=locked,
+                           info_message=info_message,
                            missing_ci=missing_ci,
                            processing=processing,
                            sample=ce_details['sample_summary'],
@@ -116,17 +131,15 @@ def _set_ready_for_live(short_name, period):
 
 
 def _upload_sample(short_name, period):
-    success_panel = None
+    sample_success = None
     error = _validate_sample()
 
     if not error:
         sample_controllers.upload_sample(short_name, period, request.files['sampleFile'])
-        success_panel = {
-            "id": "sample-success",
-            "message": "Sample successfully loaded"
-        }
+        sample_success = 'sample_success'
 
-    return view_collection_exercise(short_name, period, error=error, success_panel=success_panel)
+    return redirect(url_for('collection_exercise_bp.view_collection_exercise', short_name=short_name, period=period,
+                            message_key=sample_success, error=error))
 
 
 def _select_collection_instrument(short_name, period):
@@ -383,8 +396,6 @@ def get_confirm_remove_sample(short_name, period):
 @collection_exercise_bp.route('/<short_name>/<period>/confirm-remove-sample', methods=['POST'])
 @login_required
 def remove_loaded_sample(short_name, period):
-    error_panel = None
-    success_panel = None
     ce_details = collection_exercise_controllers.get_collection_exercise(short_name, period)
     ce_details['sample_summary'] = _format_sample_summary(ce_details['sample_summary'])
     sample_summary_id = ce_details['sample_summary']['id']
@@ -394,15 +405,12 @@ def remove_loaded_sample(short_name, period):
                                                                                   sample_summary_id)
 
     if unlink_sample_summary:
-        success_panel = {
-            "id": "sample-removed-success",
-            "message": "Sample removed"
-        }
+        sample_removed_success = 'sample_removed_success'
+        logger.info("Removing sample for collection exercise", short_name=short_name, period=period)
+        return redirect(url_for('collection_exercise_bp.view_collection_exercise', short_name=short_name, period=period,
+                                message_key=sample_removed_success))
     else:
-        error_panel = {
-            "id": "sample-removed-error",
-            "message": "Error failed to remove sample"
-        }
-
-    logger.info("Removing sample for collection exercise", short_name=short_name, period=period)
-    return view_collection_exercise(short_name, period, success_panel=success_panel, error_panel=error_panel)
+        sample_removed_error = 'sample_removed_error'
+        logger.info("Failed to remove sample for collection exercise", short_name=short_name, period=period)
+        return redirect(url_for('collection_exercise_bp.view_collection_exercise', short_name=short_name, period=period,
+                                message_key=sample_removed_error))

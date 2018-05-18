@@ -274,7 +274,7 @@ class TestCollectionExercise(unittest.TestCase):
         mock_request.post(url_upload_sample, status_code=201, json=json_date)
         mock_request.get(url_get_collection_exercise, json=collection_exercise_details)
 
-        response = self.app.post("/surveys/test/000000", data=post_data)
+        response = self.app.post("/surveys/test/000000", data=post_data, follow_redirects=True)
 
         self.assertEqual(response.status_code, 200)
         self.assertIn("Sample successfully loaded".encode(), response.data)
@@ -305,7 +305,7 @@ class TestCollectionExercise(unittest.TestCase):
         }
         mock_request.get(url_get_collection_exercise, json=collection_exercise_details_no_sample)
 
-        response = self.app.post("/surveys/test/000000", data=data)
+        response = self.app.post("/surveys/test/000000", data=data, follow_redirects=True)
 
         self.assertEqual(response.status_code, 200)
         self.assertNotIn("Sample successfully loaded".encode(), response.data)
@@ -316,7 +316,7 @@ class TestCollectionExercise(unittest.TestCase):
         data = {"load-sample": ""}
         mock_request.get(url_get_collection_exercise, json=collection_exercise_details_no_sample)
 
-        response = self.app.post("/surveys/test/000000", data=data)
+        response = self.app.post("/surveys/test/000000", data=data, follow_redirects=True)
 
         self.assertEqual(response.status_code, 200)
         self.assertNotIn("Sample successfully loaded".encode(), response.data)
