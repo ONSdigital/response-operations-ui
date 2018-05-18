@@ -177,12 +177,12 @@ def link_sample_summary_to_collection_exercise(collection_exercise_id, sample_su
 
     if response.status_code == 404:
         logger.error('Error retrieving collection exercise', collection_exercise_id=collection_exercise_id)
-        raise ApiError(url, response.status_code)
+        raise ApiError(response)
     if response.status_code != 200:
         logger.error('Error linking sample to collection exercise',
                      collection_exercise_id=collection_exercise_id,
                      sample_summary_id=sample_summary_id)
-        raise ApiError(url, response.status_code)
+        raise ApiError(response)
 
     logger.debug('Successfully linked sample summary with collection exercise',
                  collection_exercise_id=collection_exercise_id,
