@@ -406,11 +406,13 @@ def remove_loaded_sample(short_name, period):
 
     if unlink_sample_summary:
         sample_removed_success = 'sample_removed_success'
-        logger.info("Removing sample for collection exercise", short_name=short_name, period=period)
+        logger.info("Removing sample for collection exercise", short_name=short_name, period=period,
+                    collection_exercise_id=collection_exercise_id)
         return redirect(url_for('collection_exercise_bp.view_collection_exercise', short_name=short_name, period=period,
                                 message_key=sample_removed_success))
     else:
         sample_removed_error = 'sample_removed_error'
-        logger.info("Failed to remove sample for collection exercise", short_name=short_name, period=period)
+        logger.info("Failed to remove sample for collection exercise", short_name=short_name, period=period,
+                    collection_exercise_id=collection_exercise_id)
         return redirect(url_for('collection_exercise_bp.view_collection_exercise', short_name=short_name, period=period,
                                 message_key=sample_removed_error))
