@@ -1,12 +1,12 @@
 {% extends "layouts/spoke.html" %}
-{% block page_title %}Update event date{% endblock %}
+{% block page_title %}Create event date{% endblock %}
 {% block main %}
 
 <div role="main" id="main" class="page__main">
 
   <div class="spoke__header">
     <div class="spoke__header__title">
-      <h1 class="jupiter">Change business event</h1>
+      <h1 class="jupiter">Create business event</h1>
     </div>
   </div>
 
@@ -41,7 +41,7 @@
         {% if errors %}
         <div class="panel panel--simple panel--error u-mb-l">
           <div class="panel__body" id="save-error">
-            <h2 id='error-saving-message' class="venus">Error updating {{event_name}} date</h2>
+            <h2 id='error-saving-message' class="venus">Error creating {{event_name}} date</h2>
             <p class="mars">Please try saving your changes again</p>
           </div>
         </div>

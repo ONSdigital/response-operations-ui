@@ -37,7 +37,7 @@ def get_collection_exercise(short_name, period):
     return response.json()
 
 
-def get_collection_exercise_event_page_info(short_name, period):
+def get_collection_exercise_events(short_name, period):
     logger.debug('Retrieving collection exercise details for the event page',
                  short_name=short_name, period=period)
     url = f'{app.config["BACKSTAGE_API_URL"]}/v1/collection-exercise/{short_name}/{period}/events'
@@ -67,6 +67,27 @@ def update_event(short_name, period, tag, timestamp):
     logger.debug('Successfully updated event date',
                  short_name=short_name, period=period, tag=tag)
     return True
+
+
+def create_collection_exercise_event(collection_exercise_id, tag, timestamp):
+    logger.debug('Creating event date', collection_exercise_id=collection_exercise_id,
+                 tag=tag)
+
+    url = f'{app.config["COLLECTION_EXERCISE_URL"]}/collectionexercises/{collection_exercise_id}/events'
+    formatted_timestamp = timestamp.strftime('%Y-%m-%dT%H:%M:00.000+0000')
+    response = requests.post(url=url, auth=app.config['COLLECTION_EXERCISE_AUTH'],
+                             json={'tag': tag, 'timestamp': formatted_timestamp})
+
+    try:
+        response.raise_for_status()
+    except HTTPError:
+        logger.error("Failed to create collection exercise event",
+                     collection_exercise_id=collection_exercise_id,
+                     tag=tag)
+        raise ApiError(response)
+
+    logger.debug("Successfully created collection exercise event", collection_exercise_id=collection_exercise_id,
+                 tag=tag)
 
 
 def execute_collection_exercise(short_name, period):
@@ -105,7 +126,7 @@ def get_collection_exercise_by_id(collection_exercise_id):
 
     try:
         response.raise_for_status()
-    except requests.exceptions.HTTPError:
+    except HTTPError:
         log_level = logger.warning if response.status_code == 404 else logger.exception
         log_level('Failed to retrieve collection exercise', collection_exercise_id=collection_exercise_id)
         raise ApiError(response)

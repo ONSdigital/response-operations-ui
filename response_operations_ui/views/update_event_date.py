@@ -7,7 +7,7 @@ from structlog import wrap_logger
 
 from response_operations_ui.common.mappers import convert_events_to_new_format
 from response_operations_ui.controllers import collection_exercise_controllers
-from response_operations_ui.forms import UpdateEventDateForm
+from response_operations_ui.forms import EventDateForm
 from response_operations_ui.views.collection_exercise import collection_exercise_bp
 
 
@@ -18,7 +18,7 @@ logger = wrap_logger(logging.getLogger(__name__))
 @login_required
 def update_event_date(short_name, period, tag, errors=None):
     errors = request.args.get('errors') if not errors else errors
-    ce_details = collection_exercise_controllers.get_collection_exercise_event_page_info(short_name, period)
+    ce_details = collection_exercise_controllers.get_collection_exercise_events(short_name, period)
     event_name = _get_event_name(tag)
     formatted_events = convert_events_to_new_format(ce_details['events'])
     date_restriction_text = _get_date_restriction_text(tag, formatted_events)
@@ -26,13 +26,13 @@ def update_event_date(short_name, period, tag, errors=None):
     try:
         event = formatted_events[tag]
     except KeyError:
-        form = UpdateEventDateForm()
+        form = EventDateForm()
     else:
-        form = UpdateEventDateForm(day=event['date'][:2],
-                                   month=event['month'],
-                                   year=event['date'][-4:],
-                                   hour=event['time'][:2],
-                                   minute=event['time'][2:4])
+        form = EventDateForm(day=event['date'][:2],
+                             month=event['month'],
+                             year=event['date'][-4:],
+                             hour=event['time'][:2],
+                             minute=event['time'][2:4])
 
     return render_template('update-event-date.html',
                            form=form,
@@ -46,7 +46,7 @@ def update_event_date(short_name, period, tag, errors=None):
 @collection_exercise_bp.route('/<short_name>/<period>/event/<tag>', methods=['POST'])
 @login_required
 def update_event_date_submit(short_name, period, tag):
-    form = UpdateEventDateForm(form=request.form)
+    form = EventDateForm(form=request.form)
 
     if not form.validate():
         return update_event_date(short_name, period, tag, errors=form.errors)

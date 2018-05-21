@@ -89,7 +89,7 @@ class ChangeGroupStatusForm(FlaskForm):
     submit = SubmitField('Confirm')
 
 
-class UpdateEventDateForm(FlaskForm):
+class EventDateForm(FlaskForm):
     day = StringField('day',
                       validators=[InputRequired(message="Please enter day"),
                                   Length(min=1, max=2, message="Please enter a one or two digit number")])

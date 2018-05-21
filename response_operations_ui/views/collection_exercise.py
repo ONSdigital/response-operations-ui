@@ -8,7 +8,7 @@ from structlog import wrap_logger
 from response_operations_ui.common.mappers import convert_events_to_new_format, map_collection_exercise_state
 from response_operations_ui.controllers import collection_instrument_controllers, sample_controllers, \
     collection_exercise_controllers, survey_controllers
-from response_operations_ui.forms import EditCollectionExerciseDetailsForm, CreateCollectionExerciseDetailsForm
+from response_operations_ui.forms import EditCollectionExerciseDetailsForm, CreateCollectionExerciseDetailsForm, EventDateForm
 
 logger = wrap_logger(logging.getLogger(__name__))
 
@@ -368,3 +368,21 @@ def create_collection_exercise(survey_ref, short_name):
         logger.info("Successfully created collection exercise", survey=short_name, survey_ref=survey_ref)
         return redirect(url_for('surveys_bp.view_survey', short_name=short_name, ce_created='True',
                                 new_period=form.get('period')))
+
+@collection_exercise_bp.route('/<short_name>/<period>/<ce_id>/create-event/<tag>', methods=['GET'])
+@login_required
+def get_create_collection_event_form(short_name, period, ce_id, tag):
+    logger.info("Retrieving form for create collection exercise event", short_name=short_name, period=period,
+                ce_id=ce_id, tag=tag)
+
+    form = 
+
+
+@collection_exercise_bp.route('/<short_name>/<period>/<ce_id>/create-event/<tag>', methods=['POST'])
+@login_required
+def create_collection_exercise_event(short_name, period, ce_id, tag):
+    logger.info("Attempting to create collection exercise event", short_name=short_name, period=period,
+                collection_exercise_id=ce_id, tag=tag)
+
+    collection_exercise_controllers.create_collection_exercise_event(ce_id, tag, timestamp=timestamp)
+
