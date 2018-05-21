@@ -167,7 +167,7 @@ def unlink_sample_summary(collection_exercise_id, sample_summary_id):
     url = f'{app.config["COLLECTION_EXERCISE_URL"]}/collectionexercises/unlink/{collection_exercise_id}' \
           f'/sample/{sample_summary_id}'
 
-    response = requests.put(url, auth=app.config['COLLECTION_EXERCISE_AUTH'])
+    response = requests.delete(url, auth=app.config['COLLECTION_EXERCISE_AUTH'])
 
     try:
         response.raise_for_status()

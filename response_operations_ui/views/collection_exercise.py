@@ -17,21 +17,26 @@ collection_exercise_bp = Blueprint('collection_exercise_bp', __name__,
                                    static_folder='static', template_folder='templates')
 
 
-def get_info_message(message_key):
+def get_success_message(success_key):
     return {
         'sample_removed_success': "Sample removed",
-        'sample_removed_error': "Error failed to remove sample",
-        'sample_success': "Sample successfully loaded"
-    }[message_key]
+        'sample_loaded_success': "Sample successfully loaded"
+    }[success_key]
+
+
+def get_error_message(error_key):
+    return {
+        'sample_removed_error': "Error failed to remove sample"
+    }[error_key]
 
 
 @collection_exercise_bp.route('/<short_name>/<period>', methods=['GET'])
 @login_required
-def view_collection_exercise(short_name, period, error=None, success_panel=None):
+def view_collection_exercise(short_name, period, error=None, success_message=None, error_message=None,
+                             success_panel=None):
     ce_details = collection_exercise_controllers.get_collection_exercise(short_name, period)
     ce_details['sample_summary'] = _format_sample_summary(ce_details['sample_summary'])
     formatted_events = convert_events_to_new_format(ce_details['events'])
-    error_panel = None
     breadcrumbs = [
         {
             "title": "Surveys",
@@ -46,18 +51,21 @@ def view_collection_exercise(short_name, period, error=None, success_panel=None)
         }
     ]
 
-    message_key = request.args.get('message_key')
-    if message_key:
-        info_message = get_info_message(message_key)
+    success_key = request.args.get('success_key')
+    error_key = request.args.get('error_key')
+    if success_key:
+        success_message = get_success_message(success_key)
+    elif error_key:
+        error_message = get_error_message(error_key)
     else:
-        info_message = None
+        success_message = None
+        error_message = None
 
     ce_state = ce_details['collection_exercise']['state']
     show_set_live_button = ce_state in ('READY_FOR_REVIEW', 'FAILEDVALIDATION')
     locked = ce_state in ('LIVE', 'READY_FOR_LIVE', 'EXECUTION_STARTED', 'VALIDATED', 'EXECUTED')
     processing = ce_state in ('EXECUTION_STARTED', 'EXECUTED', 'VALIDATED')
     validation_failed = ce_state == 'FAILEDVALIDATION'
-    show_edit_period = ce_state not in ('READY_FOR_LIVE', 'LIVE')
     validation_errors = ce_details['collection_exercise']['validationErrors']
     missing_ci = validation_errors and any('MISSING_COLLECTION_INSTRUMENT' in unit['errors']
                                            for unit in validation_errors)
@@ -68,21 +76,20 @@ def view_collection_exercise(short_name, period, error=None, success_panel=None)
     return render_template('collection-exercise.html',
                            breadcrumbs=breadcrumbs,
                            ce=ce_details['collection_exercise'],
-                           success_panel=success_panel,
                            collection_instruments=ce_details['collection_instruments'],
                            eq_ci_selectors=ce_details['eq_ci_selectors'],
                            error=error,
-                           error_panel=error_panel,
                            events=formatted_events,
                            locked=locked,
-                           info_message=info_message,
                            missing_ci=missing_ci,
                            processing=processing,
                            sample=ce_details['sample_summary'],
                            show_set_live_button=show_set_live_button,
                            survey=ce_details['survey'],
+                           success_message=success_message,
+                           success_panel=success_panel,
+                           error_message=error_message,
                            validation_failed=validation_failed,
-                           show_edit_period=show_edit_period,
                            ci_classifiers=ce_details['ci_classifiers']['classifierTypes'])
 
 
@@ -131,15 +138,15 @@ def _set_ready_for_live(short_name, period):
 
 
 def _upload_sample(short_name, period):
-    sample_success = None
+    sample_loaded_success = None
     error = _validate_sample()
 
     if not error:
         sample_controllers.upload_sample(short_name, period, request.files['sampleFile'])
-        sample_success = 'sample_success'
+        sample_loaded_success = 'sample_loaded_success'
 
     return redirect(url_for('collection_exercise_bp.view_collection_exercise', short_name=short_name, period=period,
-                            message_key=sample_success, error=error))
+                            success_key=sample_loaded_success, error=error))
 
 
 def _select_collection_instrument(short_name, period):
@@ -294,10 +301,10 @@ def view_collection_exercise_details(short_name, period):
     form = EditCollectionExerciseDetailsForm(form=request.form)
     survey_details = survey_controllers.get_survey(short_name)
     ce_state = ce_details['collection_exercise']['state']
-    show_edit_period = ce_state not in ('READY_FOR_LIVE', 'LIVE')
+    locked = ce_state in ('LIVE', 'READY_FOR_LIVE', 'EXECUTION_STARTED', 'VALIDATED', 'EXECUTED')
 
     return render_template('edit-collection-exercise-details.html', survey_ref=ce_details['survey']['surveyRef'],
-                           form=form, short_name=short_name, period=period, show_edit_period=show_edit_period,
+                           form=form, short_name=short_name, period=period, locked=locked,
                            ce_state=ce_details['collection_exercise']['state'],
                            user_description=ce_details['collection_exercise']['userDescription'],
                            collection_exercise_id=ce_details['collection_exercise']['id'],
@@ -314,10 +321,10 @@ def edit_collection_exercise_details(short_name, period):
         ce_details = collection_exercise_controllers.get_collection_exercise(short_name, period)
         ce_state = ce_details['collection_exercise']['state']
         survey_details = survey_controllers.get_survey(short_name)
-        show_edit_period = ce_state not in ('READY_FOR_LIVE', 'LIVE')
+        locked = ce_state in ('LIVE', 'READY_FOR_LIVE', 'EXECUTION_STARTED', 'VALIDATED', 'EXECUTED')
 
         return render_template('edit-collection-exercise-details.html', survey_ref=ce_details['survey']['surveyRef'],
-                               form=form, short_name=short_name, period=period, show_edit_period=show_edit_period,
+                               form=form, short_name=short_name, period=period, locked=locked,
                                ce_state=ce_details['collection_exercise']['state'], errors=form.errors,
                                user_description=ce_details['collection_exercise']['userDescription'],
                                collection_exercise_id=ce_details['collection_exercise']['id'],
@@ -409,10 +416,10 @@ def remove_loaded_sample(short_name, period):
         logger.info("Removing sample for collection exercise", short_name=short_name, period=period,
                     collection_exercise_id=collection_exercise_id)
         return redirect(url_for('collection_exercise_bp.view_collection_exercise', short_name=short_name, period=period,
-                                message_key=sample_removed_success))
+                                success_key=sample_removed_success))
     else:
         sample_removed_error = 'sample_removed_error'
         logger.info("Failed to remove sample for collection exercise", short_name=short_name, period=period,
                     collection_exercise_id=collection_exercise_id)
         return redirect(url_for('collection_exercise_bp.view_collection_exercise', short_name=short_name, period=period,
-                                message_key=sample_removed_error))
+                                error_key=sample_removed_error))
