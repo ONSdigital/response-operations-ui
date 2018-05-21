@@ -4,7 +4,6 @@
 {% block main %}
 
 <div role="main" id="main" class="page__main">
-    <h1 class="jupiter" name="page-ce-title">{{survey.shortName}} {{ce.exerciseRef}}</h1>
     {% if success_panel %}
       <div class="panel panel--simple panel--success">
         <div id="{{ success_panel.id }}" class="panel__body">
@@ -44,6 +43,28 @@
       </div>
     </div>
     {% endif %}
+    {% if sample and show_msg == 'true' %}
+      {% if sample.state == 'INIT' %}
+        <div class="panel panel--simple panel--info u-mb-l">
+            <div class="panel__body">
+            Loading sample&hellip; <span class="u-ml-xs"><a href="/surveys/{{survey.shortName}}/{{ce.exerciseRef}}?show_msg=true">Refresh to see progress</a></span>
+            </div>
+        </div>
+      {% elif sample.state == 'ACTIVE' %}
+        <div class="panel panel--simple panel--success u-mb-l">
+          <div class="panel__body">
+            Sample loaded successfully
+          </div>
+        </div>
+      {% elif sample.state == 'FAILED' %}
+        <div class="panel panel--simple panel--error u-mb-l">
+          <div class="panel__body">
+           Error loading sample <span class="u-ml-xs"><a href="#section-sample">See error details</a></span>
+          </div>
+        </div>
+      {% endif %}
+    {% endif %}
+    <h1 class="jupiter" name="page-ce-title">{{survey.shortName}} {{ce.exerciseRef}}</h1>
     <dl class="ce-info" id="ce-attributes">
       <dt class="ce-status__title item-headlines-term ce-status">
         Status:
@@ -221,19 +242,20 @@
         </table>
       </section>
 
-      <div class="ce-section">
+      <section id="section-sample" class="ce-section">
         <h2 class="venus u-pt-m">Sample</h2>
         {% if sample %}
-          <table id="sample-table" class="table table__dense" summary="Loaded sample summary">
-            <tbody>
-              <tr class="table--row">
-                <td class="table--cell tbl-ce-label">
-                  Total businesses
-                </td>
-                <td class="table--cell tbl-ce-value" name="total-businesses">
-                  {{sample.totalSampleUnits}}
-                </td>
-              </tr>
+          {% if 'ACTIVE' == sample.state %}
+              <table id="sample-table" class="table table__dense" summary="Loaded sample summary">
+                <tbody>
+                  <tr class="table--row">
+                    <td class="table--cell tbl-ce-label">
+                      Total businesses
+                    </td>
+                    <td class="table--cell tbl-ce-value" name="total-businesses">
+                      {{sample.totalSampleUnits}}
+                    </td>
+                  </tr>
 
               <tr class="table--row">
                 <td class="table--cell tbl-ce-">
@@ -245,11 +267,37 @@
               </tr>
             </tbody>
           </table>
-        <p>Sample loaded: {{sample.ingestDateTime}}
-          {% if not locked %}
-          <a class="u-ml-xs" id="remove_sample_btn" href="{{ url_for('collection_exercise_bp.get_confirm_remove_sample', short_name=survey.shortName, period=ce.exerciseRef) }}">Remove</a>
+          <p>Sample loaded: {{sample.ingestDateTime}}
+            {% if not locked %}
+            <a class="u-ml-xs" id="remove_sample_btn" href="{{ url_for('collection_exercise_bp.get_confirm_remove_sample', short_name=survey.shortName, period=ce.exerciseRef) }}">Remove</a>
+            {% endif %}
+          </p>
+                  <tr class="table--row">
+                    <td class="table--cell tbl-ce-">
+                      Collection instruments
+                    </td>
+                    <td class="table--cell tbl-ce-" name="total-ci">
+                      {{sample.expectedCollectionInstruments}}
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+              <p>Sample loaded: {{sample.ingestDateTime}}</p>
+          {% elif 'INIT' == sample.state %}
+              <div class="u-mb-xl">
+                  <div class="mars">
+                      Loading&hellip; <span class="u-ml-xs"><a href="/surveys/{{survey.shortName}}/{{ce.exerciseRef}}?show_msg=true">Refresh to see progress</a></span>
+                   </div>
+              </div>
+          {% elif 'FAILED' == sample.state %}
+               <div class="u-mb-xl">
+                   <div class="panel panel--simple panel--error u-mb-l">
+                       <div class="panel__body">
+                           {{ sample.notes }}
+                       </div>
+                   </div>
+               </div>
           {% endif %}
-        </p>
         {% elif not locked %}
           <div class="u-mb-m">
             <form id="form-load-sample"
@@ -272,7 +320,7 @@
             </form>
           </div>
         {% endif %}
-      </div>
+      </section>
 
       <section class="ce-section {{'panel panel--simple panel--error' if missing_ci else ''}}">
         <h2 class="venus u-pt-m">Collection instruments</h2>

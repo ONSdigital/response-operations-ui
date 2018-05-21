@@ -267,7 +267,7 @@ class TestCollectionExercise(unittest.TestCase):
         json_date = {
             "sampleSummaryPK": 1,
             "id": "d7d13200-34a1-4a66-9f3b-ea0af4bc023d",
-            "state": "INIT",
+            "state": "ACTIVE",
             "ingestDateTime": "2017-11-06T14:02:24.203+0000"
         }
 
@@ -277,7 +277,7 @@ class TestCollectionExercise(unittest.TestCase):
         response = self.app.post("/surveys/test/000000", data=post_data, follow_redirects=True)
 
         self.assertEqual(response.status_code, 200)
-        self.assertIn("Sample successfully loaded".encode(), response.data)
+        self.assertIn("Sample loaded successfully".encode(), response.data)
         self.assertIn("Loaded sample summary".encode(), response.data)
         self.assertIn('2\n'.encode(), response.data)
         self.assertIn('5\n'.encode(), response.data)
@@ -308,7 +308,7 @@ class TestCollectionExercise(unittest.TestCase):
         response = self.app.post("/surveys/test/000000", data=data, follow_redirects=True)
 
         self.assertEqual(response.status_code, 200)
-        self.assertNotIn("Sample successfully loaded".encode(), response.data)
+        self.assertNotIn("Sample loaded successfully".encode(), response.data)
         self.assertNotIn("Loaded sample summary".encode(), response.data)
 
     @requests_mock.mock()
@@ -319,7 +319,7 @@ class TestCollectionExercise(unittest.TestCase):
         response = self.app.post("/surveys/test/000000", data=data, follow_redirects=True)
 
         self.assertEqual(response.status_code, 200)
-        self.assertNotIn("Sample successfully loaded".encode(), response.data)
+        self.assertNotIn("Sample loaded successfully".encode(), response.data)
         self.assertNotIn("Loaded sample summary".encode(), response.data)
 
     @requests_mock.mock()
@@ -331,7 +331,7 @@ class TestCollectionExercise(unittest.TestCase):
         response = self.app.post('/surveys/test/000000', data=post_data)
 
         self.assertEqual(response.status_code, 200)
-        self.assertNotIn('Sample successfully loaded'.encode(), response.data)
+        self.assertNotIn('Sample loaded successfully'.encode(), response.data)
         self.assertIn('Collection exercise executed'.encode(), response.data)
         self.assertIn('Processing collection exercise'.encode(), response.data)
 
@@ -344,7 +344,7 @@ class TestCollectionExercise(unittest.TestCase):
         response = self.app.post('/surveys/test/000000', data=post_data)
 
         self.assertEqual(response.status_code, 200)
-        self.assertNotIn('Sample successfully loaded'.encode(), response.data)
+        self.assertNotIn('Sample loaded successfully'.encode(), response.data)
         self.assertNotIn('Collection exercise executed'.encode(), response.data)
         self.assertIn('Failed to execute Collection Exercise'.encode(), response.data)
 
