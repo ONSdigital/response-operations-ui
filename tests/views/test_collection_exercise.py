@@ -564,7 +564,7 @@ class TestCollectionExercise(unittest.TestCase):
     @requests_mock.mock()
     def test_remove_loaded_sample_success(self, mock_request):
         mock_request.get(url_get_collection_exercise, json=collection_exercise_details)
-        mock_request.put(url_ce_remove_sample, status_code=200)
+        mock_request.delete(url_ce_remove_sample, status_code=200)
         response = self.app.post(f"/surveys/test/000000/confirm-remove-sample", follow_redirects=True)
 
         self.assertEquals(response.status_code, 200)
@@ -573,7 +573,7 @@ class TestCollectionExercise(unittest.TestCase):
     @requests_mock.mock()
     def test_remove_loaded_sample_failed(self, mock_request):
         mock_request.get(url_get_collection_exercise, json=collection_exercise_details)
-        mock_request.put(url_ce_remove_sample, status_code=500)
+        mock_request.delete(url_ce_remove_sample, status_code=500)
         response = self.app.post(f"/surveys/test/000000/confirm-remove-sample", follow_redirects=True)
 
         self.assertEquals(response.status_code, 200)
