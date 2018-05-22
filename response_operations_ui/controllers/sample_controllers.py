@@ -9,8 +9,6 @@ from structlog import wrap_logger
 
 from response_operations_ui import app
 from response_operations_ui.exceptions.exceptions import ApiError
-from response_operations_ui.controllers import collection_exercise_controllers, survey_controllers
-from response_operations_ui.common.filters import get_collection_exercise_by_period
 
 logger = wrap_logger(logging.getLogger(__name__))
 

@@ -44,6 +44,7 @@ url_ce_by_survey = f'{app.config["COLLECTION_EXERCISE_URL"]}/collectionexercises
 with open('tests/test_data/collection_exercise/exercise_data.json') as json_data:
     exercise_data = json.load(json_data)
 
+
 class TestCollectionExercise(unittest.TestCase):
 
     def setUp(self):
@@ -282,7 +283,6 @@ class TestCollectionExercise(unittest.TestCase):
         survey_data = {
             "id": "af6ddd8f-7bd0-4c51-b879-ff4b367461c5"
         }
-
 
         sample_data = {
             "id": "d29489a0-1044-4c33-9d0d-02aeb57ce82d"
