@@ -6,7 +6,6 @@ import requests_mock
 
 from config import TestingConfig
 from response_operations_ui import app
-from response_operations_ui.exceptions.exceptions import ApiError
 
 collection_exercise_id = "14fb3e68-4dca-46db-bf49-04b84e07e77c"
 survey_id = "cb0711c3-0ac8-41d3-ae0e-567e5ea1ef87"
@@ -345,7 +344,6 @@ class TestCollectionExercise(unittest.TestCase):
 
         self.assertEqual(response.status_code, 500)
         self.assertIn("Error 500 - Server error".encode(), response.data)
-
 
     @requests_mock.mock()
     def test_failed_upload_sample(self, mock_request):
