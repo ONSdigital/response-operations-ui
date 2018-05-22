@@ -41,6 +41,8 @@ url_create_collection_exercise = f'{app.config["COLLECTION_EXERCISE_URL"]}/colle
 url_ce_by_survey = f'{app.config["COLLECTION_EXERCISE_URL"]}/collectionexercises/survey/' \
                    f'{survey_id}'
 
+with open('tests/test_data/collection_exercise/exercise_data.json') as json_data:
+    exercise_data = json.load(json_data)
 
 class TestCollectionExercise(unittest.TestCase):
 
@@ -293,8 +295,7 @@ class TestCollectionExercise(unittest.TestCase):
         mock_request.post(url_upload_sample, status_code=201, json=json_date)
         mock_request.get(url_get_collection_exercise, json=collection_exercise_details)
         mock_request.get(url_survey_shortname, status_code=200, json=survey_data)
-        with open('tests/test_data/collection_exercise/exercise_data.json') as exercise_data:
-            mock_request.get(url_collection_exercise_survey_id, status_code=200, json=json.load(exercise_data))
+        mock_request.get(url_collection_exercise_survey_id, status_code=200, json=exercise_data)
         mock_request.post(url_sample_service_upload, status_code=200, json=sample_data)
         mock_request.put(url_collection_exercise_link, status_code=200, json=collection_exercise_link)
 
@@ -332,8 +333,7 @@ class TestCollectionExercise(unittest.TestCase):
         }
         mock_request.get(url_get_collection_exercise, json=collection_exercise_details_no_sample)
         mock_request.get(url_survey_shortname, status_code=200, json=survey_data)
-        with open('tests/test_data/collection_exercise/exercise_data.json') as exercise_data:
-            mock_request.get(url_collection_exercise_survey_id, status_code=200, json=json.load(exercise_data))
+        mock_request.get(url_collection_exercise_survey_id, status_code=200, json=exercise_data)
 
         response = self.app.post("/surveys/test/000000", data=data)
 
@@ -350,9 +350,7 @@ class TestCollectionExercise(unittest.TestCase):
 
         mock_request.get(url_get_collection_exercise, json=collection_exercise_details_no_sample)
         mock_request.get(url_survey_shortname, status_code=200, json=survey_data)
-        with open('tests/test_data/collection_exercise/exercise_data.json') as exercise_data:
-            mock_request.get(url_collection_exercise_survey_id, status_code=200, json=json.load(exercise_data))
-
+        mock_request.get(url_collection_exercise_survey_id, status_code=200, json=exercise_data)
         response = self.app.post("/surveys/test/000000", data=data)
 
         self.assertEqual(response.status_code, 200)
