@@ -21,13 +21,13 @@ def get_success_message(success_key):
     return {
         'sample_removed_success': "Sample removed",
         'sample_loaded_success': "Sample successfully loaded"
-    }[success_key]
+    }.get(success_key, None)
 
 
 def get_error_message(error_key):
     return {
         'sample_removed_error': "Error failed to remove sample"
-    }[error_key]
+    }.get(error_key, None)
 
 
 @collection_exercise_bp.route('/<short_name>/<period>', methods=['GET'])
@@ -53,13 +53,8 @@ def view_collection_exercise(short_name, period, error=None, success_message=Non
 
     success_key = request.args.get('success_key')
     error_key = request.args.get('error_key')
-    if success_key:
-        success_message = get_success_message(success_key)
-    elif error_key:
-        error_message = get_error_message(error_key)
-    else:
-        success_message = None
-        error_message = None
+    success_message = get_success_message(success_key)
+    error_message = get_error_message(error_key)
 
     ce_state = ce_details['collection_exercise']['state']
     show_set_live_button = ce_state in ('READY_FOR_REVIEW', 'FAILEDVALIDATION')

@@ -178,7 +178,7 @@ def unlink_sample_summary(collection_exercise_id, sample_summary_id):
 
     logger.debug('Successfully unlinked sample summary from a collection exercise',
                  collection_exercise_id=collection_exercise_id, sample_summary_id=sample_summary_id)
-    return response.json
+    return True
 
 
 def get_collection_exercise_from_list(exercises, period):

@@ -272,17 +272,6 @@
             <a class="u-ml-xs" id="remove_sample_btn" href="{{ url_for('collection_exercise_bp.get_confirm_remove_sample', short_name=survey.shortName, period=ce.exerciseRef) }}">Remove</a>
             {% endif %}
           </p>
-                  <tr class="table--row">
-                    <td class="table--cell tbl-ce-">
-                      Collection instruments
-                    </td>
-                    <td class="table--cell tbl-ce-" name="total-ci">
-                      {{sample.expectedCollectionInstruments}}
-                    </td>
-                  </tr>
-                </tbody>
-              </table>
-              <p>Sample loaded: {{sample.ingestDateTime}}</p>
           {% elif 'INIT' == sample.state %}
               <div class="u-mb-xl">
                   <div class="mars">
