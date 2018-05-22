@@ -6,6 +6,7 @@ import requests_mock
 
 from config import TestingConfig
 from response_operations_ui import app
+from response_operations_ui.exceptions.exceptions import ApiError
 
 collection_exercise_id = "14fb3e68-4dca-46db-bf49-04b84e07e77c"
 survey_id = "cb0711c3-0ac8-41d3-ae0e-567e5ea1ef87"
@@ -306,6 +307,45 @@ class TestCollectionExercise(unittest.TestCase):
         self.assertIn("Loaded sample summary".encode(), response.data)
         self.assertIn('2\n'.encode(), response.data)
         self.assertIn('5\n'.encode(), response.data)
+
+    @requests_mock.mock()
+    def test_upload_sample_exception(self, mock_request):
+        post_data = {
+            "sampleFile": (BytesIO(b'data'), 'test.csv'),
+            "load-sample": "",
+        }
+
+        json_date = {
+            "sampleSummaryPK": 1,
+            "id": "d7d13200-34a1-4a66-9f3b-ea0af4bc023d",
+            "state": "ACTIVE",
+            "ingestDateTime": "2017-11-06T14:02:24.203+0000"
+        }
+
+        survey_data = {
+            "id": "af6ddd8f-7bd0-4c51-b879-ff4b367461c5"
+        }
+
+        sample_data = {
+            "id": "d29489a0-1044-4c33-9d0d-02aeb57ce82d"
+        }
+
+        collection_exercise_link = {
+            "id": ""
+        }
+        url_survey_shortname = f'{app.config["SURVEY_URL"]}/surveys/shortname/test'
+        mock_request.post(url_upload_sample, status_code=201, json=json_date)
+        mock_request.get(url_get_collection_exercise, json=collection_exercise_details)
+        mock_request.get(url_survey_shortname, status_code=200, json=survey_data)
+        mock_request.get(url_collection_exercise_survey_id, status_code=200, json=exercise_data)
+        mock_request.post(url_sample_service_upload, status_code=500, json=sample_data)
+        mock_request.put(url_collection_exercise_link, status_code=200, json=collection_exercise_link)
+
+        response = self.app.post("/surveys/test/000000", data=post_data, follow_redirects=True)
+
+        self.assertEqual(response.status_code, 500)
+        self.assertIn("Error 500 - Server error".encode(), response.data)
+
 
     @requests_mock.mock()
     def test_failed_upload_sample(self, mock_request):
