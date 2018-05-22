@@ -137,15 +137,13 @@ def _set_ready_for_live(short_name, period):
 
 
 def _upload_sample(short_name, period):
-    sample_loaded_success = None
     error = _validate_sample()
 
     if not error:
         sample_controllers.upload_sample(short_name, period, request.files['sampleFile'])
-        sample_loaded_success = 'sample_loaded_success'
 
     return redirect(url_for('collection_exercise_bp.view_collection_exercise', short_name=short_name, period=period,
-                            success_key=sample_loaded_success, error=error, show_msg='true'))
+                            error=error, show_msg='true'))
 
 
 def _select_collection_instrument(short_name, period):
