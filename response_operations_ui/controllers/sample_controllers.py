@@ -15,13 +15,9 @@ from response_operations_ui.common.filters import get_collection_exercise_by_per
 logger = wrap_logger(logging.getLogger(__name__))
 
 
-def upload_sample(short_name, period, file):
+def upload_sample(short_name, period, file, exercise):
     logger.debug('Uploading sample', short_name=short_name, period=period, filename=file.filename)
 
-    survey = survey_controllers.get_survey_by_shortname(short_name)
-    exercises = collection_exercise_controllers.get_collection_exercises_by_survey(survey['id'])
-    # Find the collection exercise for the given period
-    exercise = get_collection_exercise_by_period(exercises, period)
     if not exercise:
         return make_response(jsonify({'message': 'Collection exercise not found'}), 404)
 
@@ -45,17 +41,5 @@ def upload_sample(short_name, period, file):
                  survey_type=survey_type)
 
     logger.info('Successfully uploaded sample', sample_id=sample_summary['id'])
-
-    logger.info('Linking sample summary with collection exercise',
-                collection_exercise_id=exercise['id'],
-                sample_id=sample_summary['id'])
-
-    collection_exercise_controllers.link_sample_summary_to_collection_exercise(
-        collection_exercise_id=exercise['id'],
-        sample_summary_id=sample_summary['id'])
-
-    logger.info('Successfully linked sample to collection exercise',
-                collection_exercise_id=exercise['id'],
-                sample_id=sample_summary['id'])
 
     return sample_summary

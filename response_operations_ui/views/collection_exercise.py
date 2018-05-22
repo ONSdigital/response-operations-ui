@@ -9,6 +9,7 @@ from response_operations_ui.common.mappers import convert_events_to_new_format, 
 from response_operations_ui.controllers import collection_instrument_controllers, sample_controllers, \
     collection_exercise_controllers, survey_controllers
 from response_operations_ui.forms import EditCollectionExerciseDetailsForm, CreateCollectionExerciseDetailsForm
+from response_operations_ui.common.filters import get_collection_exercise_by_period
 
 logger = wrap_logger(logging.getLogger(__name__))
 
@@ -120,8 +121,26 @@ def _set_ready_for_live(short_name, period):
 def _upload_sample(short_name, period):
     error = _validate_sample()
 
+    survey = survey_controllers.get_survey_by_shortname(short_name)
+    exercises = collection_exercise_controllers.get_collection_exercises_by_survey(survey['id'])
+
+    # Find the collection exercise for the given period
+    exercise = get_collection_exercise_by_period(exercises, period)
+
     if not error:
-        sample_controllers.upload_sample(short_name, period, request.files['sampleFile'])
+        sample_summary = sample_controllers.upload_sample(short_name, period, request.files['sampleFile'], exercise)
+
+        logger.info('Linking sample summary with collection exercise',
+                    collection_exercise_id=exercise['id'],
+                    sample_id=sample_summary['id'])
+
+        collection_exercise_controllers.link_sample_summary_to_collection_exercise(
+            collection_exercise_id=exercise['id'],
+            sample_summary_id=sample_summary['id'])
+
+        logger.info('Successfully linked sample to collection exercise',
+                    collection_exercise_id=exercise['id'],
+                    sample_id=sample_summary['id'])
 
     return view_collection_exercise(short_name, period, error=error, show_msg='true')
 
