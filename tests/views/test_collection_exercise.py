@@ -281,20 +281,6 @@ class TestCollectionExercise(unittest.TestCase):
             "id": "af6ddd8f-7bd0-4c51-b879-ff4b367461c5"
         }
 
-        exercise_data = [{
-            'id': '6e65acc4-4192-474b-bd3d-08071c4768e2',
-            'surveyId': '0b1f8376-28e9-4884-bea5-acf9d709464e',
-            'name': 'Monthly Business Sur',
-            'scheduledExecutionDateTime': '2018-06-19T00:00:00.000Z',
-            'scheduledStartDateTime': '2018-06-19T00:00:00.000Z',
-            'periodStartDateTime': '2018-06-19T00:00:00.000Z',
-            'periodEndDateTime': '2020-08-31T00:00:00.000Z',
-            'scheduledReturnDateTime': '2018-07-07T00:00:00.000Z',
-            'scheduledEndDateTime': '2020-08-31T00:00:00.000Z',
-            'state': 'SCHEDULED',
-            'caseTypes': [],
-            'exerciseRef': '000000'
-        }]
 
         sample_data = {
             "id": "d29489a0-1044-4c33-9d0d-02aeb57ce82d"
@@ -307,7 +293,8 @@ class TestCollectionExercise(unittest.TestCase):
         mock_request.post(url_upload_sample, status_code=201, json=json_date)
         mock_request.get(url_get_collection_exercise, json=collection_exercise_details)
         mock_request.get(url_survey_shortname, status_code=200, json=survey_data)
-        mock_request.get(url_collection_exercise_survey_id, status_code=200, json=exercise_data)
+        with open('tests/test_data/collection_exercise/exercise_data.json') as exercise_data:
+            mock_request.get(url_collection_exercise_survey_id, status_code=200, json=json.load(exercise_data))
         mock_request.post(url_sample_service_upload, status_code=200, json=sample_data)
         mock_request.put(url_collection_exercise_link, status_code=200, json=collection_exercise_link)
 
@@ -340,7 +327,13 @@ class TestCollectionExercise(unittest.TestCase):
             "sampleFile": (BytesIO(b'data'), 'test.html'),
             "load-sample": ""
         }
+        survey_data = {
+            "id": "af6ddd8f-7bd0-4c51-b879-ff4b367461c5"
+        }
         mock_request.get(url_get_collection_exercise, json=collection_exercise_details_no_sample)
+        mock_request.get(url_survey_shortname, status_code=200, json=survey_data)
+        with open('tests/test_data/collection_exercise/exercise_data.json') as exercise_data:
+            mock_request.get(url_collection_exercise_survey_id, status_code=200, json=json.load(exercise_data))
 
         response = self.app.post("/surveys/test/000000", data=data)
 
@@ -351,7 +344,14 @@ class TestCollectionExercise(unittest.TestCase):
     @requests_mock.mock()
     def test_no_upload_sample_when_no_file(self, mock_request):
         data = {"load-sample": ""}
+        survey_data = {
+            "id": "af6ddd8f-7bd0-4c51-b879-ff4b367461c5"
+        }
+
         mock_request.get(url_get_collection_exercise, json=collection_exercise_details_no_sample)
+        mock_request.get(url_survey_shortname, status_code=200, json=survey_data)
+        with open('tests/test_data/collection_exercise/exercise_data.json') as exercise_data:
+            mock_request.get(url_collection_exercise_survey_id, status_code=200, json=json.load(exercise_data))
 
         response = self.app.post("/surveys/test/000000", data=data)
 
