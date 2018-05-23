@@ -3,8 +3,8 @@ import logging
 
 from flask import Blueprint, render_template, request, redirect, url_for
 from flask_login import login_required
+from flask import jsonify, make_response
 from structlog import wrap_logger
-
 from response_operations_ui.common.filters import get_collection_exercise_by_period
 from response_operations_ui.common.mappers import convert_events_to_new_format, map_collection_exercise_state
 from response_operations_ui.controllers import collection_instrument_controllers, sample_controllers, \
@@ -121,14 +121,16 @@ def _set_ready_for_live(short_name, period):
 def _upload_sample(short_name, period):
     error = _validate_sample()
 
-    survey = survey_controllers.get_survey_by_shortname(short_name)
-    exercises = collection_exercise_controllers.get_collection_exercises_by_survey(survey['id'])
-
-    # Find the collection exercise for the given period
-    exercise = get_collection_exercise_by_period(exercises, period)
-
     if not error:
-        sample_summary = sample_controllers.upload_sample(short_name, period, request.files['sampleFile'], exercise)
+        survey = survey_controllers.get_survey_by_shortname(short_name)
+        exercises = collection_exercise_controllers.get_collection_exercises_by_survey(survey['id'])
+
+        # Find the collection exercise for the given period
+        exercise = get_collection_exercise_by_period(exercises, period)
+
+        if not exercise:
+            return make_response(jsonify({'message': 'Collection exercise not found'}), 404)
+        sample_summary = sample_controllers.upload_sample(short_name, period, request.files['sampleFile'])
 
         logger.info('Linking sample summary with collection exercise',
                     collection_exercise_id=exercise['id'],
@@ -137,10 +139,6 @@ def _upload_sample(short_name, period):
         collection_exercise_controllers.link_sample_summary_to_collection_exercise(
             collection_exercise_id=exercise['id'],
             sample_summary_id=sample_summary['id'])
-
-        logger.info('Successfully linked sample to collection exercise',
-                    collection_exercise_id=exercise['id'],
-                    sample_id=sample_summary['id'])
 
     return view_collection_exercise(short_name, period, error=error, show_msg='true')
 
