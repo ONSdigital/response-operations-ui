@@ -1,10 +1,11 @@
 import unittest
 
+import jwt
 import requests_mock
 
 from response_operations_ui import app
 
-url_sign_in_data = f'{app.config["BACKSTAGE_API_URL"]}/v2/sign-in/'
+url_sign_in_data = f'{app.config["UAA_SERVICE_URL"]}/oauth/token'
 url_surveys = f'{app.config["BACKSTAGE_API_URL"]}/v1/survey/surveys'
 
 
@@ -12,6 +13,14 @@ class TestSignIn(unittest.TestCase):
     def setUp(self):
         app.config['SECRET_KEY'] = 'sekrit!'
         app.config['WTF_CSRF_ENABLED'] = False
+        app.config["UAA_PUBLIC_KEY"] = "Test"
+
+        payload = {'user_id': 'test-id',
+                   'aud': 'ras_backstage'}
+
+        key = app.config["UAA_PUBLIC_KEY"]
+
+        self.access_token = jwt.encode(payload, key=key)
         self.app = app.test_client()
 
     def test_sign_in_page(self):
@@ -29,7 +38,7 @@ class TestSignIn(unittest.TestCase):
 
     @requests_mock.mock()
     def test_sign_in(self, mock_request):
-        mock_request.post(url_sign_in_data, json={"token": "1234abc", "user_id": "test_user"}, status_code=201)
+        mock_request.post(url_sign_in_data, json={"access_token": self.access_token.decode()}, status_code=201)
 
         response = self.app.post("/sign-in", follow_redirects=True,
                                  data={"username": "user", "password": "pass"})
@@ -40,7 +49,7 @@ class TestSignIn(unittest.TestCase):
 
     @requests_mock.mock()
     def test_fail_authentication(self, mock_request):
-        mock_request.post(url_sign_in_data, json={"token": "1234abc"}, status_code=401)
+        mock_request.post(url_sign_in_data, json={}, status_code=200)  # No token in response
 
         response = self.app.post("/sign-in", follow_redirects=True,
                                  data={"username": "user", "password": "wrong"})
@@ -65,7 +74,7 @@ class TestSignIn(unittest.TestCase):
 
     @requests_mock.mock()
     def test_sign_in_redirect_while_authenticated(self, mock_request):
-        mock_request.post(url_sign_in_data, json={"token": "1234abc"}, status_code=201)
+        mock_request.post(url_sign_in_data, json={"access_token": self.access_token.decode()}, status_code=201)
 
         response = self.app.post("/sign-in", follow_redirects=True,
                                  data={"username": "user", "password": "pass"})
@@ -85,7 +94,7 @@ class TestSignIn(unittest.TestCase):
     def test_sign_in_next_url(self, mock_request):
         with self.app.session_transaction() as session:
             session['next'] = '/surveys'
-        mock_request.post(url_sign_in_data, json={"token": "1234abc"}, status_code=201)
+        mock_request.post(url_sign_in_data, json={"access_token": self.access_token.decode()}, status_code=201)
         mock_request.get(url_surveys, json=[{
             "id": "75b19ea0-69a4-4c58-8d7f-4458c8f43f5c",
             "legalBasis": "Statistics of Trade Act 1947",

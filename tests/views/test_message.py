@@ -2,6 +2,7 @@ import json
 from unittest.mock import patch
 import unittest
 
+import jwt
 import requests_mock
 
 from config import TestingConfig
@@ -12,7 +13,7 @@ from response_operations_ui.exceptions.exceptions import InternalError
 from response_operations_ui.views.messages import _get_unread_status
 
 shortname_url = f'{app.config["BACKSTAGE_API_URL"]}/v1/survey/shortname'
-url_sign_in_data = f'{app.config["BACKSTAGE_API_URL"]}/v2/sign-in/'
+url_sign_in_data = f'{app.config["UAA_SERVICE_URL"]}/oauth/token'
 url_get_surveys_list = f'{app.config["BACKSTAGE_API_URL"]}/v1/survey/surveys'
 url_get_thread = f'{app.config["SECURE_MESSAGE_URL"]}/v2/threads/fb0e79bd-e132-4f4f-a7fd-5e8c6b41b9af'
 url_get_threads_list = f'{app.config["SECURE_MESSAGE_URL"]}/threads'
@@ -50,11 +51,16 @@ class TestMessage(unittest.TestCase):
         self.app = app.test_client()
         self.app.testing = True
         app.config.from_object(TestingConfig)
+        app.config["UAA_PUBLIC_KEY"] = 'Test'
         self.before()
 
     @requests_mock.mock()
     def before(self, mock_request=None):
-        mock_request.post(url_sign_in_data, json={"token": "1234abc", "user_id": "test_user"}, status_code=201)
+        payload = {'user_id': 'test-id',
+                   'aud': 'ras_backstage'}
+
+        access_token = jwt.encode(payload, key='Test')
+        mock_request.post(url_sign_in_data, json={"access_token": access_token.decode()}, status_code=201)
         # sign-in to setup the user in the session
         self.app.post("/sign-in", follow_redirects=True, data={"username": "user", "password": "pass"})
 
