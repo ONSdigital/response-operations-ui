@@ -31,5 +31,5 @@ def server_error(error):  # pylint: disable=unused-argument
 
 
 @app.errorhandler(500)
-def server_error(error):  # pylint: disable=unused-argument
+def server_error_500(error):  # pylint: disable=unused-argument
     return redirect(url_for('error_bp.server_error_page'))
