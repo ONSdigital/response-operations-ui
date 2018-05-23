@@ -57,7 +57,7 @@ class TestMessage(unittest.TestCase):
     @requests_mock.mock()
     def before(self, mock_request=None):
         payload = {'user_id': 'test-id',
-                   'aud': 'ras_backstage'}
+                   'aud': 'response_operations'}
 
         access_token = jwt.encode(payload, key='Test')
         mock_request.post(url_sign_in_data, json={"access_token": access_token.decode()}, status_code=201)

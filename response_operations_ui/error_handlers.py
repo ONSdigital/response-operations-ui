@@ -28,3 +28,8 @@ def handle_authentication_error(error):
 def server_error(error):  # pylint: disable=unused-argument
     logger.exception('Generic exception generated')
     return redirect(url_for('error_bp.server_error_page'))
+
+
+@app.errorhandler(500)
+def server_error(error):  # pylint: disable=unused-argument
+    return redirect(url_for('error_bp.server_error_page'))

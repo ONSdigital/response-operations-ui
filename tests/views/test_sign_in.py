@@ -16,7 +16,7 @@ class TestSignIn(unittest.TestCase):
         app.config["UAA_PUBLIC_KEY"] = "Test"
 
         payload = {'user_id': 'test-id',
-                   'aud': 'ras_backstage'}
+                   'aud': 'response_operations'}
 
         key = app.config["UAA_PUBLIC_KEY"]
 
@@ -46,6 +46,16 @@ class TestSignIn(unittest.TestCase):
         self.assertEqual(response.status_code, 200)
         self.assertIn("View list of business surveys".encode(), response.data)
         self.assertIn("Sign out".encode(), response.data)
+
+    @requests_mock.mock()
+    def test_sign_in_unable_to_decode_token(self, mock_request):
+        mock_request.post(url_sign_in_data, json={"access_token": 'invalid'}, status_code=201)
+
+        response = self.app.post("/sign-in", follow_redirects=True,
+                                 data={"username": "user", "password": "pass"})
+
+        self.assertEqual(response.status_code, 500)
+        self.assertIn(b'Error 500 - Server error', response.data)
 
     @requests_mock.mock()
     def test_fail_authentication(self, mock_request):
