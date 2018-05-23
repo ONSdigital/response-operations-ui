@@ -40,7 +40,7 @@ def sign_in():
             abort(500)
         else:
             # store the token in the session (it's server side and stored in redis)
-            session['token'] = token
+            session['token'] = access_token
             user = User(user_id)
             login_user(user)
             if 'next' in session:
