@@ -5,11 +5,11 @@ from flask import Blueprint, render_template, request, redirect, url_for
 from flask_login import login_required
 from structlog import wrap_logger
 
+from response_operations_ui.common.filters import get_collection_exercise_by_period
 from response_operations_ui.common.mappers import convert_events_to_new_format, map_collection_exercise_state
 from response_operations_ui.controllers import collection_instrument_controllers, sample_controllers, \
     collection_exercise_controllers, survey_controllers
 from response_operations_ui.forms import EditCollectionExerciseDetailsForm, CreateCollectionExerciseDetailsForm
-from response_operations_ui.common.filters import get_collection_exercise_by_period
 
 logger = wrap_logger(logging.getLogger(__name__))
 
@@ -269,7 +269,6 @@ def _validate_sample():
 
 
 def _format_sample_summary(sample):
-
     if sample and sample.get('ingestDateTime'):
         submission_datetime = iso8601.parse_date(sample['ingestDateTime'])
         submission_time = submission_datetime.strftime("%I:%M%p on %B %d, %Y")
