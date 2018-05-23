@@ -292,7 +292,6 @@ class TestCollectionExercise(unittest.TestCase):
             "id": ""
         }
 
-        mock_request.post(url_upload_sample, status_code=201, json=json_date)
         mock_request.get(url_get_collection_exercise, json=collection_exercise_details)
         mock_request.get(url_survey_shortname, status_code=200, json=survey_data)
         mock_request.get(url_collection_exercise_survey_id, status_code=200, json=exercise_data)
@@ -333,7 +332,7 @@ class TestCollectionExercise(unittest.TestCase):
             "id": ""
         }
         url_survey_shortname = f'{app.config["SURVEY_URL"]}/surveys/shortname/test'
-        mock_request.post(url_upload_sample, status_code=201, json=json_date)
+
         mock_request.get(url_get_collection_exercise, json=collection_exercise_details)
         mock_request.get(url_survey_shortname, status_code=200, json=survey_data)
         mock_request.get(url_collection_exercise_survey_id, status_code=200, json=exercise_data)
