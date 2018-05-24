@@ -50,6 +50,22 @@ def get_collection_exercise_events(short_name, period):
     return response.json()
 
 
+def get_collection_exercise_events_by_id(ce_id):
+    logger.debug('Retrieving collection exercise events by id', collection_exercise_id=ce_id)
+
+    url = f'{app.config["COLLECTION_EXERCISE_URL"]}/{ce_id}/events'
+    response = requests.get(url=url, auth=app.config['COLLECTION_EXERCISE_AUTH'])
+
+    try:
+        response.raise_for_status()
+    except HTTPError:
+        logger.error("Failed to get collection exercise events", collection_exercise_id=ce_id)
+        raise ApiError(response)
+
+    logger.debug('Successfully retrieved collection exercise events.', collection_exercise_id=ce_id)
+    return response.json()
+
+
 def update_event(short_name, period, tag, timestamp):
     logger.debug('Updating event date',
                  short_name=short_name, period=period, tag=tag)

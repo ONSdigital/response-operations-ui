@@ -8,7 +8,7 @@ from structlog import wrap_logger
 from response_operations_ui.common.mappers import convert_events_to_new_format
 from response_operations_ui.controllers import collection_exercise_controllers
 from response_operations_ui.forms import EventDateForm
-from response_operations_ui.views.collection_exercise import collection_exercise_bp
+from response_operations_ui.views.collection_exercise import collection_exercise_bp, get_event_name
 
 
 logger = wrap_logger(logging.getLogger(__name__))
@@ -19,7 +19,7 @@ logger = wrap_logger(logging.getLogger(__name__))
 def update_event_date(short_name, period, tag, errors=None):
     errors = request.args.get('errors') if not errors else errors
     ce_details = collection_exercise_controllers.get_collection_exercise_events(short_name, period)
-    event_name = _get_event_name(tag)
+    event_name = get_event_name(tag)
     formatted_events = convert_events_to_new_format(ce_details['events'])
     date_restriction_text = _get_date_restriction_text(tag, formatted_events)
 
@@ -61,21 +61,6 @@ def update_event_date_submit(short_name, period, tag):
 
     return redirect(url_for('collection_exercise_bp.view_collection_exercise',
                             short_name=short_name, period=period))
-
-
-def _get_event_name(tag):
-    event_names = {
-        "mps": "Main print selection",
-        "go_live": "Go Live",
-        "return_by": "Return by",
-        "exercise_end": "Exercise end",
-        "reminder": "First reminder",
-        "reminder2": "Second reminder",
-        "reminder3": "Third reminder",
-        "ref_period_start": "Reference period start date",
-        "ref_period_end": "Reference period end date"
-    }
-    return event_names.get(tag)
 
 
 def _get_date_restriction_text(tag, events):

@@ -29,6 +29,11 @@ footer{
   grid-row-end: 3;
 }
 
+.ce-add-event-date-btn {
+text-decoration: none;
+border: 0 none;
+}
+
 
 
 

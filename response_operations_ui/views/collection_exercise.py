@@ -369,20 +369,64 @@ def create_collection_exercise(survey_ref, short_name):
         return redirect(url_for('surveys_bp.view_survey', short_name=short_name, ce_created='True',
                                 new_period=form.get('period')))
 
+
 @collection_exercise_bp.route('/<short_name>/<period>/<ce_id>/create-event/<tag>', methods=['GET'])
 @login_required
 def get_create_collection_event_form(short_name, period, ce_id, tag):
     logger.info("Retrieving form for create collection exercise event", short_name=short_name, period=period,
                 ce_id=ce_id, tag=tag)
 
-    form = 
+    survey = survey_controllers.get_survey(short_name)
+
+    form = EventDateForm()
+    event_name = get_event_name(tag)
+
+    logger.info("Successfully retrieved form for create collection exercise event", short_name=short_name, period=period,
+                ce_id=ce_id, tag=tag)
+
+    return render_template('create-ce-event.html',
+                           short_name=short_name,
+                           period=period,
+                           survey=survey,
+                           event_name=event_name,
+                           form=form)
 
 
 @collection_exercise_bp.route('/<short_name>/<period>/<ce_id>/create-event/<tag>', methods=['POST'])
 @login_required
 def create_collection_exercise_event(short_name, period, ce_id, tag):
-    logger.info("Attempting to create collection exercise event", short_name=short_name, period=period,
-                collection_exercise_id=ce_id, tag=tag)
+    logger.info("Creating collection exercise event", short_name=short_name, period=period, collection_exercise_id=ce_id,
+                tag=tag)
 
-    collection_exercise_controllers.create_collection_exercise_event(ce_id, tag, timestamp=timestamp)
+    form = EventDateForm(request.form)
 
+    if not form.validate():
+        return get_create_collection_event_form(short_name, period, ce_id, tag, errors=form.errors)
+
+    day = form.day.data if not len(form.day.data) == 1 else f"0{form.day.data}"
+    timestamp_string = f"{form.year.data}{form.month.data}{day}T{form.hour.data}{form.minute.data}"
+    timestamp = iso8601.parse_date(timestamp_string)
+
+    collection_exercise_controllers.create_collection_exercise_event(collection_exercise_id=ce_id, tag=tag, timestamp=timestamp)
+
+    success_panel = {
+        "id": "add-event",
+        "message": "Event date added."
+    }
+
+    return redirect(url_for('collection_exercise_bp.view_collection_exercise', period=period, short_name=short_name, success_panel=success_panel))
+
+
+def get_event_name(tag):
+    event_names = {
+        "mps": "Main print selection",
+        "go_live": "Go Live",
+        "return_by": "Return by",
+        "exercise_end": "Exercise end",
+        "reminder": "First reminder",
+        "reminder2": "Second reminder",
+        "reminder3": "Third reminder",
+        "ref_period_start": "Reference period start date",
+        "ref_period_end": "Reference period end date"
+    }
+    return event_names.get(tag)
