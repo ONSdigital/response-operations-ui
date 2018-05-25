@@ -273,13 +273,6 @@ class TestCollectionExercise(unittest.TestCase):
             "load-sample": "",
         }
 
-        json_date = {
-            "sampleSummaryPK": 1,
-            "id": "d7d13200-34a1-4a66-9f3b-ea0af4bc023d",
-            "state": "ACTIVE",
-            "ingestDateTime": "2017-11-06T14:02:24.203+0000"
-        }
-
         survey_data = {
             "id": "af6ddd8f-7bd0-4c51-b879-ff4b367461c5"
         }
@@ -313,13 +306,6 @@ class TestCollectionExercise(unittest.TestCase):
             "load-sample": "",
         }
 
-        json_date = {
-            "sampleSummaryPK": 1,
-            "id": "d7d13200-34a1-4a66-9f3b-ea0af4bc023d",
-            "state": "ACTIVE",
-            "ingestDateTime": "2017-11-06T14:02:24.203+0000"
-        }
-
         survey_data = {
             "id": "af6ddd8f-7bd0-4c51-b879-ff4b367461c5"
         }
@@ -343,19 +329,11 @@ class TestCollectionExercise(unittest.TestCase):
         self.assertEqual(response.status_code, 500)
         self.assertIn("Error 500 - Server error".encode(), response.data)
 
-
     @requests_mock.mock()
     def test_upload_sample_exception(self, mock_request):
         post_data = {
             "sampleFile": (BytesIO(b'data'), 'test.csv'),
             "load-sample": "",
-        }
-
-        json_date = {
-            "sampleSummaryPK": 1,
-            "id": "d7d13200-34a1-4a66-9f3b-ea0af4bc023d",
-            "state": "ACTIVE",
-            "ingestDateTime": "2017-11-06T14:02:24.203+0000"
         }
 
         survey_data = {
