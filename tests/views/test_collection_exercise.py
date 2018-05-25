@@ -307,6 +307,44 @@ class TestCollectionExercise(unittest.TestCase):
         self.assertIn('5\n'.encode(), response.data)
 
     @requests_mock.mock()
+    def test_upload_sample_link_failure(self, mock_request):
+        post_data = {
+            "sampleFile": (BytesIO(b'data'), 'test.csv'),
+            "load-sample": "",
+        }
+
+        json_date = {
+            "sampleSummaryPK": 1,
+            "id": "d7d13200-34a1-4a66-9f3b-ea0af4bc023d",
+            "state": "ACTIVE",
+            "ingestDateTime": "2017-11-06T14:02:24.203+0000"
+        }
+
+        survey_data = {
+            "id": "af6ddd8f-7bd0-4c51-b879-ff4b367461c5"
+        }
+
+        sample_data = {
+            "id": "d29489a0-1044-4c33-9d0d-02aeb57ce82d"
+        }
+
+        collection_exercise_link = {
+            "id": ""
+        }
+
+        mock_request.get(url_get_collection_exercise, json=collection_exercise_details)
+        mock_request.get(url_survey_shortname, status_code=200, json=survey_data)
+        mock_request.get(url_collection_exercise_survey_id, status_code=200, json=exercise_data)
+        mock_request.post(url_sample_service_upload, status_code=200, json=sample_data)
+        mock_request.put(url_collection_exercise_link, status_code=500, json=collection_exercise_link)
+
+        response = self.app.post("/surveys/test/000000", data=post_data, follow_redirects=True)
+
+        self.assertEqual(response.status_code, 500)
+        self.assertIn("Error 500 - Server error".encode(), response.data)
+
+
+    @requests_mock.mock()
     def test_upload_sample_exception(self, mock_request):
         post_data = {
             "sampleFile": (BytesIO(b'data'), 'test.csv'),
