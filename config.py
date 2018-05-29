@@ -44,6 +44,11 @@ class Config(object):
     PARTY_PASSWORD = os.getenv('PARTY_PASSWORD')
     PARTY_AUTH = (PARTY_USERNAME, PARTY_PASSWORD)
 
+    SAMPLE_URL = os.getenv('SAMPLE_URL')
+    SAMPLE_USERNAME = os.getenv('SAMPLE_USERNAME')
+    SAMPLE_PASSWORD = os.getenv('SAMPLE_PASSWORD')
+    SAMPLE_AUTH = (SAMPLE_USERNAME, SAMPLE_PASSWORD)
+
     SURVEY_URL = os.getenv('SURVEY_URL')
     SURVEY_USERNAME = os.getenv('SURVEY_USERNAME')
     SURVEY_PASSWORD = os.getenv('SURVEY_PASSWORD')
@@ -88,6 +93,11 @@ class DevelopmentConfig(Config):
     PARTY_USERNAME = os.getenv('PARTY_USERNAME', 'admin')
     PARTY_PASSWORD = os.getenv('PARTY_PASSWORD', 'secret')
     PARTY_AUTH = (PARTY_USERNAME, PARTY_PASSWORD)
+
+    SAMPLE_URL = os.getenv('SAMPLE_URL', 'http://localhost:8125')
+    SAMPLE_USERNAME = os.getenv('SAMPLE_USERNAME', 'admin')
+    SAMPLE_PASSWORD = os.getenv('SAMPLE_PASSWORD', 'secret')
+    SAMPLE_AUTH = (SAMPLE_USERNAME, SAMPLE_PASSWORD)
 
     SURVEY_URL = os.getenv('SURVEY_URL', 'http://localhost:8080')
     SURVEY_USERNAME = os.getenv('SURVEY_USERNAME', 'admin')
