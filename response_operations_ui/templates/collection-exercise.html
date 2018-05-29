@@ -29,6 +29,20 @@
         </div>
       </div>
     {% endif %}
+    {% if error_message %}
+      <div class="panel panel--simple panel--error u-mb-l">
+        <div id="error-panel" class="panel__body">
+          {{ error_message }}
+        </div>
+      </div>
+    {% endif %}
+    {% if success_message %}
+    <div class="panel panel--simple panel--success">
+      <div id="success-panel" class="panel__body">
+        {{ success_message }}
+      </div>
+    </div>
+    {% endif %}
     {% if sample and show_msg == 'true' %}
       {% if sample.state == 'INIT' %}
         <div class="panel panel--simple panel--info u-mb-l">
@@ -107,7 +121,7 @@
               <td class="table--cell tbl-ce-value ce-event-date" name="mps-date">
                 {{events.mps.day}} <em>{{events.mps.date}}</em> {{events.mps.time}}
               </td>
-              {% if not ce.state == 'Live' and not ce.state == 'Ready for live' and events.mps.is_in_future and config.EDIT_EVENT_DATES_ENABLED %}
+              {% if not locked and events.mps.is_in_future and config.EDIT_EVENT_DATES_ENABLED %}
               <td class="table--cell tbl-ce-">
                 <form action="{{ url_for('collection_exercise_bp.update_event_date', short_name=survey.shortName, period=ce.exerciseRef, tag='mps')}}" method="get">
                   <a class="edit-icon" href=# id="edit-event-date-mps" onclick="this.parentNode.submit()"></a>
@@ -125,7 +139,7 @@
               <td class="table--cell tbl-ce-value ce-event-date" name="go-live-date">
                 {{events.go_live.day}} <em>{{events.go_live.date}}</em> {{events.go_live.time}}
               </td>
-              {% if not ce.state == 'Live' and not ce.state == 'Ready for live' and events.go_live.is_in_future and config.EDIT_EVENT_DATES_ENABLED %}
+              {% if not locked and events.go_live.is_in_future and config.EDIT_EVENT_DATES_ENABLED %}
               <td class="table--cell tbl-ce-">
                 <form action="{{ url_for('collection_exercise_bp.update_event_date', short_name=survey.shortName, period=ce.exerciseRef, tag='go_live')}}" method="get">
                   <a class="edit-icon" href=# id="edit-event-date-go-live" onclick="this.parentNode.submit()"></a>
@@ -143,7 +157,7 @@
               <td class="table--cell tbl-ce-value ce-event-date" name="return-by-date">
                 {{events.return_by.day}} <em>{{events.return_by.date}}</em> {{events.return_by.time}}
               </td>
-              {% if not ce.state == 'Live' and not ce.state == 'Ready for live' and events.return_by.is_in_future and config.EDIT_EVENT_DATES_ENABLED %}
+              {% if not locked and events.return_by.is_in_future and config.EDIT_EVENT_DATES_ENABLED %}
               <td class="table--cell tbl-ce-">
                 <form action="{{ url_for('collection_exercise_bp.update_event_date', short_name=survey.shortName, period=ce.exerciseRef, tag='return_by')}}" method="get">
                   <a class="edit-icon" href=# id="edit-event-date-return-by" onclick="this.parentNode.submit()"></a>
@@ -215,7 +229,7 @@
               <td class="table--cell tbl-ce-value ce-event-date" name="exercise-end-date">
                 {{events.exercise_end.day}} <em>{{events.exercise_end.date}}</em> {{events.exercise_end.time}}
               </td>
-              {% if not ce.state == 'Live' and not ce.state == 'Ready for live' and events.exercise_end.is_in_future and config.EDIT_EVENT_DATES_ENABLED %}
+              {% if not locked and events.exercise_end.is_in_future and config.EDIT_EVENT_DATES_ENABLED %}
               <td class="table--cell tbl-ce-">
                 <form action="{{ url_for('collection_exercise_bp.update_event_date', short_name=survey.shortName, period=ce.exerciseRef, tag='exercise_end')}}" method="get">
                   <a class="edit-icon" href=# id="edit-event-date-exercise-end" onclick="this.parentNode.submit()"></a>
@@ -243,17 +257,21 @@
                     </td>
                   </tr>
 
-                  <tr class="table--row">
-                    <td class="table--cell tbl-ce-">
-                      Collection instruments
-                    </td>
-                    <td class="table--cell tbl-ce-" name="total-ci">
-                      {{sample.expectedCollectionInstruments}}
-                    </td>
-                  </tr>
-                </tbody>
-              </table>
-              <p>Sample loaded: {{sample.ingestDateTime}}</p>
+              <tr class="table--row">
+                <td class="table--cell tbl-ce-">
+                  Collection instruments
+                </td>
+                <td class="table--cell tbl-ce-" name="total-ci">
+                  {{sample.expectedCollectionInstruments}}
+                </td>
+              </tr>
+            </tbody>
+          </table>
+          <p>Sample loaded: {{sample.ingestDateTime}}
+            {% if not locked %}
+            <a class="u-ml-xs" id="remove_sample_btn_1" href="{{ url_for('collection_exercise_bp.get_confirm_remove_sample', short_name=survey.shortName, period=ce.exerciseRef) }}">Remove</a>
+            {% endif %}
+          </p>
           {% elif 'INIT' == sample.state %}
               <div class="u-mb-xl">
                   <div class="mars">
@@ -267,6 +285,9 @@
                            {{ sample.notes }}
                        </div>
                    </div>
+                 {% if not locked %}
+                 <a class="u-ml-xs" id="remove_sample_btn_2" href="{{ url_for('collection_exercise_bp.get_confirm_remove_sample', short_name=survey.shortName, period=ce.exerciseRef) }}">Remove</a>
+                 {% endif %}
                </div>
           {% endif %}
         {% elif not locked %}
@@ -393,7 +414,7 @@
               </td>
               <td class="table--cell tbl-ce-">
                 <form action="{{ url_for('collection_exercise_bp.view_collection_exercise_details', short_name=survey.shortName, period=ce.exerciseRef, surveyRef=survey.surveyRef)}}" method="get">
-                {% if show_edit_period %}
+                {% if not locked %}
                   <a class="edit-icon" href=# id="edit-collection-exercise-period" onclick="this.parentNode.submit()"></a>
                 {% endif %}
                 </form>
@@ -444,7 +465,7 @@
               <td class="table--cell tbl-ce-" name="period-start-date">
                   {{events.ref_period_start.day}} {{events.ref_period_start.date}}
               </td>
-              {% if not ce.state == 'Live' and not ce.state == 'Ready for live' and events.ref_period_start.is_in_future and config.EDIT_EVENT_DATES_ENABLED %}
+              {% if not locked and events.ref_period_start.is_in_future and config.EDIT_EVENT_DATES_ENABLED %}
               <td class="table--cell tbl-ce-">
                 <form action="{{ url_for('collection_exercise_bp.update_event_date', short_name=survey.shortName, period=ce.exerciseRef, tag='ref_period_start')}}" method="get">
                   <a class="edit-icon" href=# id="edit-event-date-ref-period-start" onclick="this.parentNode.submit()"></a>
@@ -475,7 +496,7 @@
               <td class="table--cell tbl-ce-" name="period-end-date">
                   {{events.ref_period_end.day}} {{events.ref_period_end.date}}
               </td>
-              {% if not ce.state == 'Live' and not ce.state == 'Ready for live' and events.ref_period_end.is_in_future and config.EDIT_EVENT_DATES_ENABLED %}
+              {% if not locked and events.ref_period_end.is_in_future and config.EDIT_EVENT_DATES_ENABLED %}
               <td class="table--cell tbl-ce-">
                 <form action="{{ url_for('collection_exercise_bp.update_event_date', short_name=survey.shortName, period=ce.exerciseRef, tag='ref_period_end')}}" method="get">
                   <a class="edit-icon" href=# id="edit-event-date-ref-period-end" onclick="this.parentNode.submit()"></a>

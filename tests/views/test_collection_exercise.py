@@ -38,6 +38,8 @@ with open('tests/test_data/survey/edited_survey_ce_details.json') as json_data:
 with open('tests/test_data/survey/survey_by_id.json') as fp:
     survey_by_id = json.load(fp)
 url_create_collection_exercise = f'{app.config["COLLECTION_EXERCISE_URL"]}/collectionexercises'
+url_ce_remove_sample = f'{app.config["COLLECTION_EXERCISE_URL"]}/collectionexercises/unlink/{collection_exercise_id}' \
+                       f'/sample/1a11543f-eb19-41f5-825f-e41aca15e724'
 url_ce_by_survey = f'{app.config["COLLECTION_EXERCISE_URL"]}/collectionexercises/survey/' \
                    f'{survey_id}'
 
@@ -291,7 +293,7 @@ class TestCollectionExercise(unittest.TestCase):
         mock_request.post(url_sample_service_upload, status_code=200, json=sample_data)
         mock_request.put(url_collection_exercise_link, status_code=200, json=collection_exercise_link)
 
-        response = self.app.post("/surveys/test/000000", data=post_data)
+        response = self.app.post("/surveys/test/000000", data=post_data, follow_redirects=True)
 
         self.assertEqual(response.status_code, 200)
         self.assertIn("Sample loaded successfully".encode(), response.data)
@@ -388,7 +390,7 @@ class TestCollectionExercise(unittest.TestCase):
         mock_request.get(url_survey_shortname, status_code=200, json=survey_data)
         mock_request.get(url_collection_exercise_survey_id, status_code=200, json=exercise_data)
 
-        response = self.app.post("/surveys/test/000000", data=data)
+        response = self.app.post("/surveys/test/000000", data=data, follow_redirects=True)
 
         self.assertEqual(response.status_code, 200)
         self.assertNotIn("Sample loaded successfully".encode(), response.data)
@@ -404,7 +406,7 @@ class TestCollectionExercise(unittest.TestCase):
         mock_request.get(url_get_collection_exercise, json=collection_exercise_details_no_sample)
         mock_request.get(url_survey_shortname, status_code=200, json=survey_data)
         mock_request.get(url_collection_exercise_survey_id, status_code=200, json=exercise_data)
-        response = self.app.post("/surveys/test/000000", data=data)
+        response = self.app.post("/surveys/test/000000", data=data, follow_redirects=True)
 
         self.assertEqual(response.status_code, 200)
         self.assertNotIn("Sample loaded successfully".encode(), response.data)
@@ -648,3 +650,29 @@ class TestCollectionExercise(unittest.TestCase):
 
         self.assertEqual(response.status_code, 200)
         self.assertIn("Please enter numbers only for the period".encode(), response.data)
+
+    @requests_mock.mock()
+    def test_remove_loaded_sample_success(self, mock_request):
+        mock_request.get(url_get_collection_exercise, json=collection_exercise_details)
+        mock_request.delete(url_ce_remove_sample, status_code=200)
+        response = self.app.post(f"/surveys/test/000000/confirm-remove-sample", follow_redirects=True)
+
+        self.assertEquals(response.status_code, 200)
+        self.assertIn('Sample removed'.encode(), response.data)
+
+    @requests_mock.mock()
+    def test_remove_loaded_sample_failed(self, mock_request):
+        mock_request.get(url_get_collection_exercise, json=collection_exercise_details)
+        mock_request.delete(url_ce_remove_sample, status_code=500)
+        response = self.app.post(f"/surveys/test/000000/confirm-remove-sample", follow_redirects=True)
+
+        self.assertEquals(response.status_code, 200)
+        self.assertIn('Error failed to remove sample'.encode(), response.data)
+
+    @requests_mock.mock()
+    def test_get_confirm_remove_sample(self, mock_request):
+        response = self.app.get(f"/surveys/test/000000/confirm-remove-sample",
+                                follow_redirects=True)
+
+        self.assertEqual(response.status_code, 200)
+        self.assertIn("Remove sample from test 000000".encode(), response.data)
