@@ -59,18 +59,25 @@ class TestSignIn(unittest.TestCase):
 
     @requests_mock.mock()
     def test_fail_authentication(self, mock_request):
-        mock_request.post(url_sign_in_data, json={}, status_code=200)  # No token in response
+        mock_request.post(url_sign_in_data, status_code=401)
 
         response = self.app.post("/sign-in", follow_redirects=True,
                                  data={"username": "user", "password": "wrong"})
 
         self.assertEqual(response.status_code, 200)
 
-        # TODO - When RAD have defined what message or error to display on a 401
-        # these tests should be expanded to test for the relevant error message
-        # being displayed on the page
-        self.assertIn(b'Username', response.data)
-        self.assertIn(b'Password', response.data)
+        self.assertIn(b'Incorrect username or password', response.data)
+
+    @requests_mock.mock()
+    def test_fail_authentication_missing_token(self, mock_request):
+        mock_request.post(url_sign_in_data, json={}, status_code=201)  # No token in response
+
+        response = self.app.post("/sign-in", follow_redirects=True,
+                                 data={"username": "user", "password": "wrong"})
+
+        self.assertEqual(response.status_code, 200)
+
+        self.assertIn(b'Incorrect username or password', response.data)
 
     @requests_mock.mock()
     def test_fail_server_error(self, mock_request):
