@@ -20,6 +20,14 @@ url_collection_instrument = f'{app.config["BACKSTAGE_API_URL"]}/v1/collection-in
 url_collection_instrument_link = f'{app.config["BACKSTAGE_API_URL"]}/v1/collection-instrument/link/111111/000000'
 url_collection_instrument_unlink = f'{app.config["BACKSTAGE_API_URL"]}/v1/collection-instrument/' \
                                    f'unlink/14fb3e68-4dca-46db-bf49-04b84e07e77c/000000'
+
+url_survey_shortname = f'{app.config["SURVEY_URL"]}/surveys/shortname/test'
+url_sample_service_upload = f'{app.config["SAMPLE_URL"]}/samples/B/fileupload'
+url_collection_exercise_survey_id = f'{app.config["COLLECTION_EXERCISE_URL"]}/collectionexercises/survey/' \
+                                    'af6ddd8f-7bd0-4c51-b879-ff4b367461c5'
+url_collection_exercise_link = f'{app.config["COLLECTION_EXERCISE_URL"]}/collectionexercises/link/' \
+                               '6e65acc4-4192-474b-bd3d-08071c4768e2'
+
 url_upload_sample = f'{app.config["BACKSTAGE_API_URL"]}/v1/sample/test/000000'
 url_execute = f'{app.config["BACKSTAGE_API_URL"]}/v1/collection-exercise/test/000000/execute'
 url_update_ce = f'{app.config["BACKSTAGE_API_URL"]}/v1/collection-exercise/update-collection-exercise-details/' \
@@ -30,8 +38,13 @@ with open('tests/test_data/survey/edited_survey_ce_details.json') as json_data:
 with open('tests/test_data/survey/survey_by_id.json') as fp:
     survey_by_id = json.load(fp)
 url_create_collection_exercise = f'{app.config["COLLECTION_EXERCISE_URL"]}/collectionexercises'
+url_ce_remove_sample = f'{app.config["COLLECTION_EXERCISE_URL"]}/collectionexercises/unlink/{collection_exercise_id}' \
+                       f'/sample/1a11543f-eb19-41f5-825f-e41aca15e724'
 url_ce_by_survey = f'{app.config["COLLECTION_EXERCISE_URL"]}/collectionexercises/survey/' \
                    f'{survey_id}'
+
+with open('tests/test_data/collection_exercise/exercise_data.json') as json_data:
+    exercise_data = json.load(json_data)
 
 
 class TestCollectionExercise(unittest.TestCase):
@@ -262,23 +275,92 @@ class TestCollectionExercise(unittest.TestCase):
             "load-sample": "",
         }
 
-        json_date = {
-            "sampleSummaryPK": 1,
-            "id": "d7d13200-34a1-4a66-9f3b-ea0af4bc023d",
-            "state": "ACTIVE",
-            "ingestDateTime": "2017-11-06T14:02:24.203+0000"
+        survey_data = {
+            "id": "af6ddd8f-7bd0-4c51-b879-ff4b367461c5"
         }
 
-        mock_request.post(url_upload_sample, status_code=201, json=json_date)
-        mock_request.get(url_get_collection_exercise, json=collection_exercise_details)
+        sample_data = {
+            "id": "d29489a0-1044-4c33-9d0d-02aeb57ce82d"
+        }
 
-        response = self.app.post("/surveys/test/000000", data=post_data)
+        collection_exercise_link = {
+            "id": ""
+        }
+
+        mock_request.get(url_get_collection_exercise, json=collection_exercise_details)
+        mock_request.get(url_survey_shortname, status_code=200, json=survey_data)
+        mock_request.get(url_collection_exercise_survey_id, status_code=200, json=exercise_data)
+        mock_request.post(url_sample_service_upload, status_code=200, json=sample_data)
+        mock_request.put(url_collection_exercise_link, status_code=200, json=collection_exercise_link)
+
+        response = self.app.post("/surveys/test/000000", data=post_data, follow_redirects=True)
 
         self.assertEqual(response.status_code, 200)
         self.assertIn("Sample loaded successfully".encode(), response.data)
         self.assertIn("Loaded sample summary".encode(), response.data)
         self.assertIn('2\n'.encode(), response.data)
         self.assertIn('5\n'.encode(), response.data)
+
+    @requests_mock.mock()
+    def test_upload_sample_link_failure(self, mock_request):
+        post_data = {
+            "sampleFile": (BytesIO(b'data'), 'test.csv'),
+            "load-sample": "",
+        }
+
+        survey_data = {
+            "id": "af6ddd8f-7bd0-4c51-b879-ff4b367461c5"
+        }
+
+        sample_data = {
+            "id": "d29489a0-1044-4c33-9d0d-02aeb57ce82d"
+        }
+
+        collection_exercise_link = {
+            "id": ""
+        }
+
+        mock_request.get(url_get_collection_exercise, json=collection_exercise_details)
+        mock_request.get(url_survey_shortname, status_code=200, json=survey_data)
+        mock_request.get(url_collection_exercise_survey_id, status_code=200, json=exercise_data)
+        mock_request.post(url_sample_service_upload, status_code=200, json=sample_data)
+        mock_request.put(url_collection_exercise_link, status_code=500, json=collection_exercise_link)
+
+        response = self.app.post("/surveys/test/000000", data=post_data, follow_redirects=True)
+
+        self.assertEqual(response.status_code, 500)
+        self.assertIn("Error 500 - Server error".encode(), response.data)
+
+    @requests_mock.mock()
+    def test_upload_sample_exception(self, mock_request):
+        post_data = {
+            "sampleFile": (BytesIO(b'data'), 'test.csv'),
+            "load-sample": "",
+        }
+
+        survey_data = {
+            "id": "af6ddd8f-7bd0-4c51-b879-ff4b367461c5"
+        }
+
+        sample_data = {
+            "id": "d29489a0-1044-4c33-9d0d-02aeb57ce82d"
+        }
+
+        collection_exercise_link = {
+            "id": ""
+        }
+        url_survey_shortname = f'{app.config["SURVEY_URL"]}/surveys/shortname/test'
+
+        mock_request.get(url_get_collection_exercise, json=collection_exercise_details)
+        mock_request.get(url_survey_shortname, status_code=200, json=survey_data)
+        mock_request.get(url_collection_exercise_survey_id, status_code=200, json=exercise_data)
+        mock_request.post(url_sample_service_upload, status_code=500, json=sample_data)
+        mock_request.put(url_collection_exercise_link, status_code=200, json=collection_exercise_link)
+
+        response = self.app.post("/surveys/test/000000", data=post_data, follow_redirects=True)
+
+        self.assertEqual(response.status_code, 500)
+        self.assertIn("Error 500 - Server error".encode(), response.data)
 
     @requests_mock.mock()
     def test_failed_upload_sample(self, mock_request):
@@ -301,9 +383,14 @@ class TestCollectionExercise(unittest.TestCase):
             "sampleFile": (BytesIO(b'data'), 'test.html'),
             "load-sample": ""
         }
+        survey_data = {
+            "id": "af6ddd8f-7bd0-4c51-b879-ff4b367461c5"
+        }
         mock_request.get(url_get_collection_exercise, json=collection_exercise_details_no_sample)
+        mock_request.get(url_survey_shortname, status_code=200, json=survey_data)
+        mock_request.get(url_collection_exercise_survey_id, status_code=200, json=exercise_data)
 
-        response = self.app.post("/surveys/test/000000", data=data)
+        response = self.app.post("/surveys/test/000000", data=data, follow_redirects=True)
 
         self.assertEqual(response.status_code, 200)
         self.assertNotIn("Sample loaded successfully".encode(), response.data)
@@ -312,9 +399,14 @@ class TestCollectionExercise(unittest.TestCase):
     @requests_mock.mock()
     def test_no_upload_sample_when_no_file(self, mock_request):
         data = {"load-sample": ""}
-        mock_request.get(url_get_collection_exercise, json=collection_exercise_details_no_sample)
+        survey_data = {
+            "id": "af6ddd8f-7bd0-4c51-b879-ff4b367461c5"
+        }
 
-        response = self.app.post("/surveys/test/000000", data=data)
+        mock_request.get(url_get_collection_exercise, json=collection_exercise_details_no_sample)
+        mock_request.get(url_survey_shortname, status_code=200, json=survey_data)
+        mock_request.get(url_collection_exercise_survey_id, status_code=200, json=exercise_data)
+        response = self.app.post("/surveys/test/000000", data=data, follow_redirects=True)
 
         self.assertEqual(response.status_code, 200)
         self.assertNotIn("Sample loaded successfully".encode(), response.data)
@@ -558,3 +650,29 @@ class TestCollectionExercise(unittest.TestCase):
 
         self.assertEqual(response.status_code, 200)
         self.assertIn("Please enter numbers only for the period".encode(), response.data)
+
+    @requests_mock.mock()
+    def test_remove_loaded_sample_success(self, mock_request):
+        mock_request.get(url_get_collection_exercise, json=collection_exercise_details)
+        mock_request.delete(url_ce_remove_sample, status_code=200)
+        response = self.app.post(f"/surveys/test/000000/confirm-remove-sample", follow_redirects=True)
+
+        self.assertEquals(response.status_code, 200)
+        self.assertIn('Sample removed'.encode(), response.data)
+
+    @requests_mock.mock()
+    def test_remove_loaded_sample_failed(self, mock_request):
+        mock_request.get(url_get_collection_exercise, json=collection_exercise_details)
+        mock_request.delete(url_ce_remove_sample, status_code=500)
+        response = self.app.post(f"/surveys/test/000000/confirm-remove-sample", follow_redirects=True)
+
+        self.assertEquals(response.status_code, 200)
+        self.assertIn('Error failed to remove sample'.encode(), response.data)
+
+    @requests_mock.mock()
+    def test_get_confirm_remove_sample(self, mock_request):
+        response = self.app.get(f"/surveys/test/000000/confirm-remove-sample",
+                                follow_redirects=True)
+
+        self.assertEqual(response.status_code, 200)
+        self.assertIn("Remove sample from test 000000".encode(), response.data)

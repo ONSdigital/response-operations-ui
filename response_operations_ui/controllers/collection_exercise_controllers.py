@@ -161,6 +161,48 @@ def get_case_group_status_by_collection_exercise(case_groups, collection_exercis
                 if case_group['collectionExerciseId'] == collection_exercise_id)
 
 
+def unlink_sample_summary(collection_exercise_id, sample_summary_id):
+    logger.debug('un-linking sample summary from collection exercise', collection_exercise_id=collection_exercise_id,
+                 sample_summary_id=sample_summary_id)
+    url = f'{app.config["COLLECTION_EXERCISE_URL"]}/collectionexercises/unlink/{collection_exercise_id}' \
+          f'/sample/{sample_summary_id}'
+
+    response = requests.delete(url, auth=app.config['COLLECTION_EXERCISE_AUTH'])
+
+    try:
+        response.raise_for_status()
+    except HTTPError:
+        logger.exception('Failed to unlink sample summary from collection exercise',
+                         collection_exercise_id=collection_exercise_id, sample_summary_id=sample_summary_id)
+        return False
+
+    logger.debug('Successfully unlinked sample summary from a collection exercise',
+                 collection_exercise_id=collection_exercise_id, sample_summary_id=sample_summary_id)
+    return True
+
+
 def get_collection_exercise_from_list(exercises, period):
     return next((exercise for exercise in exercises
                  if exercise['exerciseRef'] == period), None)
+
+
+def link_sample_summary_to_collection_exercise(collection_exercise_id, sample_summary_id):
+    logger.debug('Linking sample summary to collection exercise',
+                 collection_exercise_id=collection_exercise_id,
+                 sample_summary_id=sample_summary_id)
+    url = f'{app.config["COLLECTION_EXERCISE_URL"]}/collectionexercises/link/{collection_exercise_id}'
+    # Currently we only need to link a single sample to a single collection exercise
+    payload = {'sampleSummaryIds': [str(sample_summary_id)]}
+    response = requests.put(url, auth=app.config['COLLECTION_EXERCISE_AUTH'], json=payload)
+
+    try:
+        response.raise_for_status()
+    except HTTPError:
+        logger.error('Error retrieving collection exercise', collection_exercise_id=collection_exercise_id,
+                     sample_summary_id=sample_summary_id)
+        raise ApiError(response)
+
+    logger.debug('Successfully linked sample summary with collection exercise',
+                 collection_exercise_id=collection_exercise_id,
+                 sample_summary_id=sample_summary_id)
+    return response.json()
