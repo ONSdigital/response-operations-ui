@@ -1,0 +1,14 @@
+[{
+  "id": "6e65acc4-4192-474b-bd3d-08071c4768e2",
+  "surveyId": "0b1f8376-28e9-4884-bea5-acf9d709464e",
+  "name": "Monthly Business Sur",
+  "scheduledExecutionDateTime": "2018-06-19T00:00:00.000Z",
+  "scheduledStartDateTime": "2018-06-19T00:00:00.000Z",
+  "periodStartDateTime": "2018-06-19T00:00:00.000Z",
+  "periodEndDateTime": "2020-08-31T00:00:00.000Z",
+  "scheduledReturnDateTime": "2018-07-07T00:00:00.000Z",
+  "scheduledEndDateTime": "2020-08-31T00:00:00.000Z",
+  "state": "SCHEDULED",
+  "caseTypes": [],
+  "exerciseRef": "000000"
+}]
