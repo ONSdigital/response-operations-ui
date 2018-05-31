@@ -85,8 +85,8 @@
               {% if events.mps %}
 
                   {{events.mps.day}} <em>{{events.mps.date}}</em> {{events.mps.time}}
-                {% if (not ce.state == 'Live' and not ce.state == 'Ready for live' and events.mps.is_in_future and config.EDIT_EVENT_DATES_ENABLED) or (not events.mps) %}
-                </td>
+              </td>
+                {% if (not ce.state == 'Live' and not ce.state == 'Ready for live' and events.mps.is_in_future and config.EDIT_EVENT_DATES_ENABLED and editable_events) %}
                   <td class="table--cell tbl-ce-status tbl-ce-action">
                       <form action="{{ url_for('collection_exercise_bp.update_event_date', short_name=survey.shortName, period=ce.exerciseRef, tag='mps')}}" method="get">
                         <a class="edit-icon" href=# id="edit-event-date-mps" onclick="this.parentNode.submit()"></a>
@@ -97,7 +97,7 @@
               </td>
                 <td class="table--cell tbl-ce-status tbl-ce-action">
                   <form action="{{ url_for('collection_exercise_bp.get_create_collection_event_form', short_name=survey.shortName, period=ce.exerciseRef, ce_id=ce.id, tag='mps')}}" method="get">
-                    <button class="ce-add-event-date-btn" id="create-event-date-mps" type="submit"><i class="add-icon"></i></button>
+                    <button class="btn btn--secondary btn--small btn__table-row" id="create-event-date-mps" type="submit">Add</button>
                   </form>
                 </td>
               {% endif %}
@@ -112,18 +112,19 @@
               {% if events.go_live %}
                 {{events.go_live.day}} <em>{{events.go_live.date}}</em> {{events.go_live.time}}
 
-                {% if not ce.state == 'Live' and not ce.state == 'Ready for live' and events.go_live.is_in_future and config.EDIT_EVENT_DATES_ENABLED %}
+                {% if not ce.state == 'Live' and not ce.state == 'Ready for live' and events.go_live.is_in_future and config.EDIT_EVENT_DATES_ENABLED and editable_events  %}
                 </td>
                 <td class="table--cell tbl-ce-status tbl-ce-action">
                   <form action="{{ url_for('collection_exercise_bp.update_event_date', short_name=survey.shortName, period=ce.exerciseRef, tag='go_live')}}" method="get">
                     <a class="edit-icon" href=# id="edit-event-date-go-live" onclick="this.parentNode.submit()"></a>
                   </form>
                 </td>
-              {% endif %}
+                {% endif %}
               {% else %}
+            </td>
                 <td class="table--cell tbl-ce-status tbl-ce-action">
                   <form action="{{ url_for('collection_exercise_bp.get_create_collection_event_form', short_name=survey.shortName, period=ce.exerciseRef, ce_id=ce.id, tag='go_live')}}" method="get">
-                    <button class="ce-add-event-date-btn" id="create-event-date-go-live" type="submit"><i class="add-icon"></i></button>
+                    <button class="btn btn--secondary btn--small btn__table-row" id="create-event-date-go-live" type="submit">Add</button>
                   </form>
                 </td>
               {% endif %}
@@ -137,7 +138,7 @@
               {% if events.return_by %}
                 {{events.return_by.day}} <em>{{events.return_by.date}}</em> {{events.return_by.time}}
               </td>
-              {% if not ce.state == 'Live' and not ce.state == 'Ready for live' and events.return_by.is_in_future and config.EDIT_EVENT_DATES_ENABLED %}
+              {% if not ce.state == 'Live' and not ce.state == 'Ready for live' and events.return_by.is_in_future and config.EDIT_EVENT_DATES_ENABLED and editable_events %}
               <td class="table--cell tbl-ce-status tbl-ce-action">
                 <form action="{{ url_for('collection_exercise_bp.update_event_date', short_name=survey.shortName, period=ce.exerciseRef, tag='return_by')}}" method="get">
                   <a class="edit-icon" href=# id="edit-event-date-return-by" onclick="this.parentNode.submit()"></a>
@@ -147,7 +148,7 @@
               {% else %}
               <td class="table--cell tbl-ce-status tbl-ce-action">
                 <form action="{{ url_for('collection_exercise_bp.get_create_collection_event_form', short_name=survey.shortName, period=ce.exerciseRef, ce_id=ce.id, tag='return_by')}}" method="get">
-                  <button class="ce-add-event-date-btn" id="create-event-date-return-by" type="submit"><i class="add-icon"></i></button>
+                  <button class="btn btn--secondary btn--small btn__table-row" id="create-event-date-return-by" type="submit">Add</button>
                 </form>
               </td>
               {% endif %}
@@ -220,7 +221,7 @@
               {% if events.exercise_end %}
                   {{events.exercise_end.day}} <em>{{events.exercise_end.date}}</em> {{events.exercise_end.time}}
 
-                {% if not ce.state == 'Live' and not ce.state == 'Ready for live' and events.exercise_end.is_in_future and config.EDIT_EVENT_DATES_ENABLED %}
+                {% if not ce.state == 'Live' and not ce.state == 'Ready for live' and events.exercise_end.is_in_future and config.EDIT_EVENT_DATES_ENABLED and editable_events %}
               </td>
                   <td class="table--cell tbl-ce-status tbl-ce-action">
                     <form action="{{ url_for('collection_exercise_bp.update_event_date', short_name=survey.shortName, period=ce.exerciseRef, tag='exercise_end')}}" method="get">
@@ -232,7 +233,7 @@
               </td>
                 <td class="table--cell tbl-ce-status tbl-ce-action">
                   <form action="{{ url_for('collection_exercise_bp.get_create_collection_event_form', short_name=survey.shortName, ce_id=ce.id, period=ce.exerciseRef, tag='exercise_end')}}" method="get">
-                    <button class="ce-add-event-date-btn" id="create-event-date-exercise-end" type="submit"><i class="add-icon"></i></button>
+                    <button class="btn btn--secondary btn--small btn__table-row" id="create-event-date-exercise-end" type="submit">Add</button>
                   </form>
                 </td>
               {% endif %}

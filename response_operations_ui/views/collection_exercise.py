@@ -50,6 +50,10 @@ def view_collection_exercise(short_name, period, error=None, success_panel=None)
     ce_details['collection_exercise']['state'] = map_collection_exercise_state(ce_state)  # NOQA
     _format_ci_file_name(ce_details['collection_instruments'], ce_details['survey'])
 
+    editable_events = True
+    if 'mps' not in formatted_events or 'go_live' not in formatted_events or 'return_by' not in formatted_events or 'exercise_end' not in formatted_events:
+        editable_events = False
+
     return render_template('collection-exercise.html',
                            breadcrumbs=breadcrumbs,
                            ce=ce_details['collection_exercise'],
@@ -66,7 +70,8 @@ def view_collection_exercise(short_name, period, error=None, success_panel=None)
                            survey=ce_details['survey'],
                            validation_failed=validation_failed,
                            show_edit_period=show_edit_period,
-                           ci_classifiers=ce_details['ci_classifiers']['classifierTypes'])
+                           ci_classifiers=ce_details['ci_classifiers']['classifierTypes'],
+                           editable_events=editable_events)
 
 
 @collection_exercise_bp.route('/<short_name>/<period>', methods=['POST'])
