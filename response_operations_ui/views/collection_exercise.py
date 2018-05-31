@@ -9,8 +9,8 @@ from response_operations_ui.common.filters import get_collection_exercise_by_per
 from response_operations_ui.common.mappers import convert_events_to_new_format, map_collection_exercise_state
 from response_operations_ui.controllers import collection_instrument_controllers, sample_controllers, \
     collection_exercise_controllers, survey_controllers
-from response_operations_ui.forms import EditCollectionExerciseDetailsForm, CreateCollectionExerciseDetailsForm, EventDateForm, \
-    RemoveLoadedSample
+from response_operations_ui.forms import EditCollectionExerciseDetailsForm, CreateCollectionExerciseDetailsForm, \
+    EventDateForm, RemoveLoadedSample
 
 logger = wrap_logger(logging.getLogger(__name__))
 
@@ -70,7 +70,10 @@ def view_collection_exercise(short_name, period, error=None,
     _format_ci_file_name(ce_details['collection_instruments'], ce_details['survey'])
 
     editable_events = True
-    if 'mps' not in formatted_events or 'go_live' not in formatted_events or 'return_by' not in formatted_events or 'exercise_end' not in formatted_events:
+    if 'mps' not in formatted_events \
+            or 'go_live' not in formatted_events \
+            or 'return_by' not in formatted_events \
+            or 'exercise_end' not in formatted_events:
         editable_events = False
 
     if show_msg is None:
@@ -421,7 +424,9 @@ def get_create_collection_event_form(short_name, period, ce_id, tag):
     form = EventDateForm()
     event_name = get_event_name(tag)
 
-    logger.info("Successfully retrieved form for create collection exercise event", short_name=short_name, period=period,
+    logger.info("Successfully retrieved form for create collection exercise event",
+                short_name=short_name,
+                period=period,
                 ce_id=ce_id, tag=tag)
 
     return render_template('create-ce-event.html',
@@ -435,7 +440,10 @@ def get_create_collection_event_form(short_name, period, ce_id, tag):
 @collection_exercise_bp.route('/<short_name>/<period>/<ce_id>/create-event/<tag>', methods=['POST'])
 @login_required
 def create_collection_exercise_event(short_name, period, ce_id, tag):
-    logger.info("Creating collection exercise event", short_name=short_name, period=period, collection_exercise_id=ce_id,
+    logger.info("Creating collection exercise event",
+                short_name=short_name,
+                period=period,
+                collection_exercise_id=ce_id,
                 tag=tag)
 
     form = EventDateForm(request.form)
@@ -447,14 +455,20 @@ def create_collection_exercise_event(short_name, period, ce_id, tag):
     timestamp_string = f"{form.year.data}{form.month.data}{day}T{form.hour.data}{form.minute.data}"
     timestamp = iso8601.parse_date(timestamp_string)
 
-    collection_exercise_controllers.create_collection_exercise_event(collection_exercise_id=ce_id, tag=tag, timestamp=timestamp)
+    collection_exercise_controllers.create_collection_exercise_event(
+        collection_exercise_id=ce_id,
+        tag=tag,
+        timestamp=timestamp)
 
     success_panel = {
         "id": "add-event",
         "message": "Event date added."
     }
 
-    return redirect(url_for('collection_exercise_bp.view_collection_exercise', period=period, short_name=short_name, success_panel=success_panel))
+    return redirect(url_for('collection_exercise_bp.view_collection_exercise',
+                            period=period,
+                            short_name=short_name,
+                            success_panel=success_panel))
 
 
 def get_event_name(tag):
@@ -470,6 +484,7 @@ def get_event_name(tag):
         "ref_period_end": "Reference period end date"
     }
     return event_names.get(tag)
+
 
 @collection_exercise_bp.route('/<short_name>/<period>/confirm-remove-sample', methods=['GET'])
 @login_required
@@ -492,13 +507,21 @@ def remove_loaded_sample(short_name, period):
 
     if unlink_sample_summary:
         sample_removed_success = 'sample_removed_success'
-        logger.info("Removing sample for collection exercise", short_name=short_name, period=period,
+        logger.info("Removing sample for collection exercise",
+                    short_name=short_name,
+                    period=period,
                     collection_exercise_id=collection_exercise_id)
-        return redirect(url_for('collection_exercise_bp.view_collection_exercise', short_name=short_name, period=period,
+        return redirect(url_for('collection_exercise_bp.view_collection_exercise',
+                                short_name=short_name,
+                                period=period,
                                 success_key=sample_removed_success))
     else:
         sample_removed_error = 'sample_removed_error'
-        logger.info("Failed to remove sample for collection exercise", short_name=short_name, period=period,
+        logger.info("Failed to remove sample for collection exercise",
+                    short_name=short_name,
+                    period=period,
                     collection_exercise_id=collection_exercise_id)
-        return redirect(url_for('collection_exercise_bp.view_collection_exercise', short_name=short_name, period=period,
+        return redirect(url_for('collection_exercise_bp.view_collection_exercise',
+                                short_name=short_name,
+                                period=period,
                                 error_key=sample_removed_error))

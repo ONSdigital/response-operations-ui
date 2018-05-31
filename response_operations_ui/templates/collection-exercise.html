@@ -121,7 +121,7 @@
 
                   {{events.mps.day}} <em>{{events.mps.date}}</em> {{events.mps.time}}
               </td>
-                {% if not locked and events.mps.is_in_future and config.EDIT_EVENT_DATES_ENABLED and editable_events) %}
+                {% if not locked and events.mps.is_in_future and config.EDIT_EVENT_DATES_ENABLED and editable_events %}
                   <td class="table--cell tbl-ce-status tbl-ce-action">
                       <form action="{{ url_for('collection_exercise_bp.update_event_date', short_name=survey.shortName, period=ce.exerciseRef, tag='mps')}}" method="get">
                         <a class="edit-icon" href=# id="edit-event-date-mps" onclick="this.parentNode.submit()"></a>
@@ -173,7 +173,7 @@
               {% if events.return_by %}
                 {{events.return_by.day}} <em>{{events.return_by.date}}</em> {{events.return_by.time}}
               </td>
-              {% if not locked and events.return_by.is_in_future and config.EDIT_EVENT_DATES_ENABLED and editable_event %}
+              {% if not locked and events.return_by.is_in_future and config.EDIT_EVENT_DATES_ENABLED and editable_events %}
               <td class="table--cell tbl-ce-status tbl-ce-action">
                 <form action="{{ url_for('collection_exercise_bp.update_event_date', short_name=survey.shortName, period=ce.exerciseRef, tag='return_by')}}" method="get">
                   <a class="edit-icon" href=# id="edit-event-date-return-by" onclick="this.parentNode.submit()"></a>
