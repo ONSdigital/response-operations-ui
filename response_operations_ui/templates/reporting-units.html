@@ -40,6 +40,9 @@
                         <th scope="col" class="table--header--cell">
                             Name
                         </th>
+                        <th scope="col" class="table--header--cell">
+                            Trading as
+                        </th>
                     </tr>
                     </thead>
 
@@ -47,10 +50,13 @@
                     {% for business in business_list %}
                     <tr class="table--row table--row__selectable">
                         <td class="table--cell ">
-                            <a href="/reporting-units/{{ business.ruref }}" name="survey-link-{{ business.ruref }}">{{ business.ruref }}</a>
+                            <a href="/reporting-units/{{ business.ruref }}" name="details-link-{{ business.ruref }}">{{ business.ruref }}</a>
                         </td>
                         <td class="table--cell">
                             {{ business.name }}
+                        </td>
+                        <td class="table--cell">
+                            {{ business.trading_as }}
                         </td>
                     </tr>
                     {% endfor %}

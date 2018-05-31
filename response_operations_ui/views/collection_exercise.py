@@ -3,12 +3,14 @@ import logging
 
 from flask import Blueprint, render_template, request, redirect, url_for
 from flask_login import login_required
+from flask import jsonify, make_response
 from structlog import wrap_logger
-
+from response_operations_ui.common.filters import get_collection_exercise_by_period
 from response_operations_ui.common.mappers import convert_events_to_new_format, map_collection_exercise_state
 from response_operations_ui.controllers import collection_instrument_controllers, sample_controllers, \
     collection_exercise_controllers, survey_controllers
-from response_operations_ui.forms import EditCollectionExerciseDetailsForm, CreateCollectionExerciseDetailsForm, EventDateForm
+from response_operations_ui.forms import EditCollectionExerciseDetailsForm, CreateCollectionExerciseDetailsForm, EventDateForm, \
+    RemoveLoadedSample
 
 logger = wrap_logger(logging.getLogger(__name__))
 
@@ -16,13 +18,26 @@ collection_exercise_bp = Blueprint('collection_exercise_bp', __name__,
                                    static_folder='static', template_folder='templates')
 
 
+def get_success_message(success_key):
+    return {
+        'sample_removed_success': "Sample removed",
+        'sample_loaded_success': "Sample successfully loaded"
+    }.get(success_key, None)
+
+
+def get_error_message(error_key):
+    return {
+        'sample_removed_error': "Error failed to remove sample"
+    }.get(error_key, None)
+
+
 @collection_exercise_bp.route('/<short_name>/<period>', methods=['GET'])
 @login_required
-def view_collection_exercise(short_name, period, error=None, success_panel=None):
+def view_collection_exercise(short_name, period, error=None,
+                             success_panel=None, show_msg=None):
     ce_details = collection_exercise_controllers.get_collection_exercise(short_name, period)
     ce_details['sample_summary'] = _format_sample_summary(ce_details['sample_summary'])
     formatted_events = convert_events_to_new_format(ce_details['events'])
-
     breadcrumbs = [
         {
             "title": "Surveys",
@@ -37,12 +52,16 @@ def view_collection_exercise(short_name, period, error=None, success_panel=None)
         }
     ]
 
+    success_key = request.args.get('success_key')
+    error_key = request.args.get('error_key')
+    success_message = get_success_message(success_key)
+    error_message = get_error_message(error_key)
+
     ce_state = ce_details['collection_exercise']['state']
     show_set_live_button = ce_state in ('READY_FOR_REVIEW', 'FAILEDVALIDATION')
     locked = ce_state in ('LIVE', 'READY_FOR_LIVE', 'EXECUTION_STARTED', 'VALIDATED', 'EXECUTED')
     processing = ce_state in ('EXECUTION_STARTED', 'EXECUTED', 'VALIDATED')
     validation_failed = ce_state == 'FAILEDVALIDATION'
-    show_edit_period = ce_state not in ('READY_FOR_LIVE', 'LIVE')
     validation_errors = ce_details['collection_exercise']['validationErrors']
     missing_ci = validation_errors and any('MISSING_COLLECTION_INSTRUMENT' in unit['errors']
                                            for unit in validation_errors)
@@ -54,10 +73,12 @@ def view_collection_exercise(short_name, period, error=None, success_panel=None)
     if 'mps' not in formatted_events or 'go_live' not in formatted_events or 'return_by' not in formatted_events or 'exercise_end' not in formatted_events:
         editable_events = False
 
+    if show_msg is None:
+        show_msg = request.args.get('show_msg')
+
     return render_template('collection-exercise.html',
                            breadcrumbs=breadcrumbs,
                            ce=ce_details['collection_exercise'],
-                           success_panel=success_panel,
                            collection_instruments=ce_details['collection_instruments'],
                            eq_ci_selectors=ce_details['eq_ci_selectors'],
                            error=error,
@@ -68,8 +89,11 @@ def view_collection_exercise(short_name, period, error=None, success_panel=None)
                            sample=ce_details['sample_summary'],
                            show_set_live_button=show_set_live_button,
                            survey=ce_details['survey'],
+                           success_message=success_message,
+                           success_panel=success_panel,
+                           error_message=error_message,
                            validation_failed=validation_failed,
-                           show_edit_period=show_edit_period,
+                           show_msg=show_msg,
                            ci_classifiers=ce_details['ci_classifiers']['classifierTypes'],
                            editable_events=editable_events)
 
@@ -119,17 +143,29 @@ def _set_ready_for_live(short_name, period):
 
 
 def _upload_sample(short_name, period):
-    success_panel = None
     error = _validate_sample()
 
     if not error:
-        sample_controllers.upload_sample(short_name, period, request.files['sampleFile'])
-        success_panel = {
-            "id": "sample-success",
-            "message": "Sample successfully loaded"
-        }
+        survey = survey_controllers.get_survey_by_shortname(short_name)
+        exercises = collection_exercise_controllers.get_collection_exercises_by_survey(survey['id'])
 
-    return view_collection_exercise(short_name, period, error=error, success_panel=success_panel)
+        # Find the collection exercise for the given period
+        exercise = get_collection_exercise_by_period(exercises, period)
+
+        if not exercise:
+            return make_response(jsonify({'message': 'Collection exercise not found'}), 404)
+        sample_summary = sample_controllers.upload_sample(short_name, period, request.files['sampleFile'])
+
+        logger.info('Linking sample summary with collection exercise',
+                    collection_exercise_id=exercise['id'],
+                    sample_id=sample_summary['id'])
+
+        collection_exercise_controllers.link_sample_summary_to_collection_exercise(
+            collection_exercise_id=exercise['id'],
+            sample_summary_id=sample_summary['id'])
+
+    return redirect(url_for('collection_exercise_bp.view_collection_exercise', short_name=short_name, period=period,
+                            error=error, show_msg='true'))
 
 
 def _select_collection_instrument(short_name, period):
@@ -256,7 +292,6 @@ def _validate_sample():
 
 
 def _format_sample_summary(sample):
-
     if sample and sample.get('ingestDateTime'):
         submission_datetime = iso8601.parse_date(sample['ingestDateTime'])
         submission_time = submission_datetime.strftime("%I:%M%p on %B %d, %Y")
@@ -284,10 +319,10 @@ def view_collection_exercise_details(short_name, period):
     form = EditCollectionExerciseDetailsForm(form=request.form)
     survey_details = survey_controllers.get_survey(short_name)
     ce_state = ce_details['collection_exercise']['state']
-    show_edit_period = ce_state not in ('READY_FOR_LIVE', 'LIVE')
+    locked = ce_state in ('LIVE', 'READY_FOR_LIVE', 'EXECUTION_STARTED', 'VALIDATED', 'EXECUTED')
 
     return render_template('edit-collection-exercise-details.html', survey_ref=ce_details['survey']['surveyRef'],
-                           form=form, short_name=short_name, period=period, show_edit_period=show_edit_period,
+                           form=form, short_name=short_name, period=period, locked=locked,
                            ce_state=ce_details['collection_exercise']['state'],
                            user_description=ce_details['collection_exercise']['userDescription'],
                            collection_exercise_id=ce_details['collection_exercise']['id'],
@@ -304,10 +339,10 @@ def edit_collection_exercise_details(short_name, period):
         ce_details = collection_exercise_controllers.get_collection_exercise(short_name, period)
         ce_state = ce_details['collection_exercise']['state']
         survey_details = survey_controllers.get_survey(short_name)
-        show_edit_period = ce_state not in ('READY_FOR_LIVE', 'LIVE')
+        locked = ce_state in ('LIVE', 'READY_FOR_LIVE', 'EXECUTION_STARTED', 'VALIDATED', 'EXECUTED')
 
         return render_template('edit-collection-exercise-details.html', survey_ref=ce_details['survey']['surveyRef'],
-                               form=form, short_name=short_name, period=period, show_edit_period=show_edit_period,
+                               form=form, short_name=short_name, period=period, locked=locked,
                                ce_state=ce_details['collection_exercise']['state'], errors=form.errors,
                                user_description=ce_details['collection_exercise']['userDescription'],
                                collection_exercise_id=ce_details['collection_exercise']['id'],
@@ -435,3 +470,35 @@ def get_event_name(tag):
         "ref_period_end": "Reference period end date"
     }
     return event_names.get(tag)
+
+@collection_exercise_bp.route('/<short_name>/<period>/confirm-remove-sample', methods=['GET'])
+@login_required
+def get_confirm_remove_sample(short_name, period):
+    logger.info("Retrieving confirm remove sample page", short_name=short_name, period=period)
+    form = RemoveLoadedSample(form=request.form)
+    return render_template('confirm-remove-sample.html', form=form, short_name=short_name, period=period)
+
+
+@collection_exercise_bp.route('/<short_name>/<period>/confirm-remove-sample', methods=['POST'])
+@login_required
+def remove_loaded_sample(short_name, period):
+    ce_details = collection_exercise_controllers.get_collection_exercise(short_name, period)
+    ce_details['sample_summary'] = _format_sample_summary(ce_details['sample_summary'])
+    sample_summary_id = ce_details['sample_summary']['id']
+    collection_exercise_id = ce_details['collection_exercise']['id']
+
+    unlink_sample_summary = collection_exercise_controllers.unlink_sample_summary(collection_exercise_id,
+                                                                                  sample_summary_id)
+
+    if unlink_sample_summary:
+        sample_removed_success = 'sample_removed_success'
+        logger.info("Removing sample for collection exercise", short_name=short_name, period=period,
+                    collection_exercise_id=collection_exercise_id)
+        return redirect(url_for('collection_exercise_bp.view_collection_exercise', short_name=short_name, period=period,
+                                success_key=sample_removed_success))
+    else:
+        sample_removed_error = 'sample_removed_error'
+        logger.info("Failed to remove sample for collection exercise", short_name=short_name, period=period,
+                    collection_exercise_id=collection_exercise_id)
+        return redirect(url_for('collection_exercise_bp.view_collection_exercise', short_name=short_name, period=period,
+                                error_key=sample_removed_error))

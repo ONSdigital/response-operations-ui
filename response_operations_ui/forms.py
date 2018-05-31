@@ -169,3 +169,8 @@ class CreateSurveyDetailsForm(FlaskForm):
         legal_basis = field.data
         if not legal_basis:
             raise ValidationError('Please select a legal basis')
+
+
+class RemoveLoadedSample(FlaskForm):
+    period = StringField('period')
+    short_name = StringField('short_name')

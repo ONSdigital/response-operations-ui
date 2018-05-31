@@ -76,7 +76,7 @@
     "effectiveEndDateTime":null,
     "surveyRef":null,
     "ingestDateTime":"2018-01-24T08:57:28.686+0000",
-    "state":"INIT",
+    "state":"ACTIVE",
     "totalSampleUnits":5,
     "expectedCollectionInstruments":2
   },
