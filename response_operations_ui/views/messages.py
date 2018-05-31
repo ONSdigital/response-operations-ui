@@ -195,6 +195,28 @@ def view_selected_survey(selected_survey):
                                response_error=True)
 
 
+@messages_bp.route('/close_conversation', methods=['GET', 'POST'])
+@login_required
+def close_conversation(selected_survey, thread_id):
+    # get the data needed... thread_id or message_id??
+    # work out whether to do post/get etc
+    # find out about speed bump page (for now this could be
+    # redirect to speed bump page then post and redirect)
+    if request.method == "POST":
+        try:
+            message_controllers.add_closed_conversation_label(thread_id=thread_id)
+        except KeyError:
+            return redirect(url_for("messages_bp.view_conversation"))
+    else:
+        try:
+            message_controllers.remove_closed_conversation_label(thread_id=thread_id)
+        except KeyError:
+            return redirect(url_for("messages_bp.view_conversation"))
+
+    return redirect(url_for("messages_bp.view_selected_survey",
+                            selected_survey=selected_survey))
+
+
 def _build_create_message_breadcrumbs():
     return [
         {"title": "Messages", "link": "/messages"},

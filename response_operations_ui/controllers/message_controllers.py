@@ -106,6 +106,32 @@ def remove_unread_label(message_id):
         logger.exception("Failed to remove unread label", message_id=message_id)
 
 
+def add_closed_conversation_label(thread_id):
+    url = f"{current_app.config['SECURE_MESSAGE_URL']}/threads/{thread_id}"
+
+    logger.debug("Adding closed conversation label", message_id=thread_id)
+    response = requests.put(url, headers={"Authorization": _get_jwt(), "Content-Type": "application/json"})
+
+    try:
+        response.raise_for_status()
+        logger.debug("Successfully added closed conversation label", message_id=thread_id)
+    except HTTPError:
+        logger.exception("Failed to add closed conversation label", message_id=thread_id)
+
+
+def remove_closed_conversation_label(thread_id):
+    url = f"{current_app.config['SECURE_MESSAGE_URL']}/threads/{thread_id}"
+
+    logger.debug("Removing closed conversation label", message_id=thread_id)
+    response = requests.put(url, headers={"Authorization": _get_jwt(), "Content-Type": "application/json"})
+
+    try:
+        response.raise_for_status()
+        logger.debug("Successfully removed closed conversation label", message_id=thread_id)
+    except HTTPError:
+        logger.exception("Failed to remove closed conversation label", message_id=thread_id)
+
+
 def _post_new_message(message):
     url = f'{current_app.config["SECURE_MESSAGE_URL"]}/v2/messages'
     return requests.post(url, headers={'Authorization': _get_jwt(), 'Content-Type': 'application/json',

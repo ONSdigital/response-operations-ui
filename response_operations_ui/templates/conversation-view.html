@@ -14,7 +14,7 @@
 {% block main %}
 
     {% if form.errors %}
-        <div class="panel panel--error col-7@m">
+        <div class="panel panel--error u-mb-s col-7@m">
             <div class="panel__header">
                 {% if form.errors|length > 1 %}
                     <h1 class="panel__title venus">This page has {{ form.errors|length }} errors</h1>
@@ -40,7 +40,6 @@
                 </ol>
             </div>
         </div>
-    <br />
     {% endif %}
 
     <a href="{{ url_for('messages_bp.view_selected_survey', selected_survey=selected_survey, page=page) }}">< Back</a>
@@ -76,8 +75,9 @@
             </div>
         {% endfor %}
 
+        {% if messages %}
         <div class="secure-message-form">
-            <form action="{{ url_for('messages_bp.view_conversation', thread_id=messages[0].thread_id, page=page) }}" method="post", id="create-message-form">
+            <form action="{{ url_for('messages_bp.view_conversation', thread_id=messages[0].thread_id, page=page) }}" method="post" id="create-message-form">
                 {{ form.csrf_token }}
                 {{ form.subject(id='secure-message-subject', type='hidden', value=subject) }}
                 {{ form.hidden_to_ru_id(type='hidden', value=ru_id) }}
@@ -97,11 +97,28 @@
                                  maxlength='10000',
                                  cols=80) }}
                 </div>
-                <br />
-                <input class="btn" id="btn-send-message" name="send" type="submit" value="Send" />
-                <br />
+                <input class="btn u-mt-s" id="btn-send-message" name="send" type="submit" value="Send" />
+                <span>
+
+                </span>
             </form>
-          <a href="{{ url_for('messages_bp.view_selected_survey', selected_survey=selected_survey, page=page) }}">< Back</a>
+            <span>
+              <form action="{{ url_for('messages_bp.close_conversation', page=page, thread_id=messages[0].thread_id) }}" method="post">
+                <input class="btn u-mt-s" id="btn-close-conversation" name="close" type="submit" value="Close conversation" />
+              </form>
+            </span>
         </div>
+        {% else %}
+        <div class="panel panel--simple panel--info">
+            <div class="panel__body">
+                <p class="mars">This conversation was closed on 12/04/18 at 17:03 by vardol</p>
+            </div>
+        </div>
+        <form action="{{ url_for('messages_bp.close_conversation', selected_survey=selected_survey) }}" id="reopen-conversation">
+            <input class="btn u-mt-s" id="btn-reopen-message" name="reopen" type="submit" value="Re-open conversation" />
+        </form>
+        {% endif %}
+
+        <a href="{{ url_for('messages_bp.view_selected_survey', selected_survey=selected_survey, page=page) }}">< Back</a>
     </div>
 {% endblock %}
