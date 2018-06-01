@@ -97,6 +97,8 @@ def view_conversation(thread_id):
                                    messages=refined_thread,
                                    error="Message send failed")
 
+    session['messages'] = refined_thread
+
     return render_template("conversation-view.html",
                            breadcrumbs=breadcrumbs,
                            messages=refined_thread,
@@ -195,26 +197,29 @@ def view_selected_survey(selected_survey):
                                response_error=True)
 
 
-@messages_bp.route('/close_conversation', methods=['GET', 'POST'])
+@messages_bp.route('/close-conversation', methods=['GET', 'POST'])
 @login_required
-def close_conversation(selected_survey, thread_id):
-    # get the data needed... thread_id or message_id??
-    # work out whether to do post/get etc
-    # find out about speed bump page (for now this could be
-    # redirect to speed bump page then post and redirect)
-    if request.method == "POST":
-        try:
-            message_controllers.add_closed_conversation_label(thread_id=thread_id)
-        except KeyError:
-            return redirect(url_for("messages_bp.view_conversation"))
-    else:
-        try:
-            message_controllers.remove_closed_conversation_label(thread_id=thread_id)
-        except KeyError:
-            return redirect(url_for("messages_bp.view_conversation"))
+def close_conversation():
+    try:
+        messages = session['messages']
+        selected_survey = session['messages_survey_selection']
+        thread_id = messages[0]['thread_id']
+    except KeyError:
+        logger.exception('Session unavailable')
 
-    return redirect(url_for("messages_bp.view_selected_survey",
-                            selected_survey=selected_survey))
+    if request.method == 'POST':
+        message_controllers.add_closed_conversation_label(thread_id=thread_id)
+        thread_url = url_for("messages_bp.view_conversation", thread_id=thread_id) + "#latest-message"
+        flash(Markup(f'Message sent. <a href={thread_url}>View Message</a>'))
+        return redirect(url_for('messages_bp.view_selected_survey',
+                                selected_survey=selected_survey))
+
+    return render_template('close-conversation.html',
+                           subject=messages[0]['subject'],
+                           business=messages[0]['business_name'],
+                           ru_ref=messages[0]['ru_ref'],
+                           respondent=messages[0]['to'],
+                           messages=messages)
 
 
 def _build_create_message_breadcrumbs():
