@@ -1,10 +1,11 @@
 import unittest
 
+import jwt
 import requests_mock
 
 from response_operations_ui import app
 
-url_sign_in_data = f'{app.config["BACKSTAGE_API_URL"]}/v2/sign-in/'
+url_sign_in_data = f'{app.config["UAA_SERVICE_URL"]}/oauth/token'
 url_surveys = f'{app.config["BACKSTAGE_API_URL"]}/v1/survey/surveys'
 
 
@@ -12,6 +13,14 @@ class TestSignIn(unittest.TestCase):
     def setUp(self):
         app.config['SECRET_KEY'] = 'sekrit!'
         app.config['WTF_CSRF_ENABLED'] = False
+        app.config["UAA_PUBLIC_KEY"] = "Test"
+
+        payload = {'user_id': 'test-id',
+                   'aud': 'response_operations'}
+
+        key = app.config["UAA_PUBLIC_KEY"]
+
+        self.access_token = jwt.encode(payload, key=key)
         self.app = app.test_client()
 
     def test_sign_in_page(self):
@@ -29,7 +38,7 @@ class TestSignIn(unittest.TestCase):
 
     @requests_mock.mock()
     def test_sign_in(self, mock_request):
-        mock_request.post(url_sign_in_data, json={"token": "1234abc", "user_id": "test_user"}, status_code=201)
+        mock_request.post(url_sign_in_data, json={"access_token": self.access_token.decode()}, status_code=201)
 
         response = self.app.post("/sign-in", follow_redirects=True,
                                  data={"username": "user", "password": "pass"})
@@ -39,19 +48,36 @@ class TestSignIn(unittest.TestCase):
         self.assertIn("Sign out".encode(), response.data)
 
     @requests_mock.mock()
+    def test_sign_in_unable_to_decode_token(self, mock_request):
+        mock_request.post(url_sign_in_data, json={"access_token": 'invalid'}, status_code=201)
+
+        response = self.app.post("/sign-in", follow_redirects=True,
+                                 data={"username": "user", "password": "pass"})
+
+        self.assertEqual(response.status_code, 500)
+        self.assertIn(b'Error 500 - Server error', response.data)
+
+    @requests_mock.mock()
     def test_fail_authentication(self, mock_request):
-        mock_request.post(url_sign_in_data, json={"token": "1234abc"}, status_code=401)
+        mock_request.post(url_sign_in_data, status_code=401)
 
         response = self.app.post("/sign-in", follow_redirects=True,
                                  data={"username": "user", "password": "wrong"})
 
         self.assertEqual(response.status_code, 200)
 
-        # TODO - When RAD have defined what message or error to display on a 401
-        # these tests should be expanded to test for the relevant error message
-        # being displayed on the page
-        self.assertIn(b'Username', response.data)
-        self.assertIn(b'Password', response.data)
+        self.assertIn(b'Incorrect username or password', response.data)
+
+    @requests_mock.mock()
+    def test_fail_authentication_missing_token(self, mock_request):
+        mock_request.post(url_sign_in_data, json={}, status_code=201)  # No token in response
+
+        response = self.app.post("/sign-in", follow_redirects=True,
+                                 data={"username": "user", "password": "wrong"})
+
+        self.assertEqual(response.status_code, 200)
+
+        self.assertIn(b'Incorrect username or password', response.data)
 
     @requests_mock.mock()
     def test_fail_server_error(self, mock_request):
@@ -65,7 +91,7 @@ class TestSignIn(unittest.TestCase):
 
     @requests_mock.mock()
     def test_sign_in_redirect_while_authenticated(self, mock_request):
-        mock_request.post(url_sign_in_data, json={"token": "1234abc"}, status_code=201)
+        mock_request.post(url_sign_in_data, json={"access_token": self.access_token.decode()}, status_code=201)
 
         response = self.app.post("/sign-in", follow_redirects=True,
                                  data={"username": "user", "password": "pass"})
@@ -85,7 +111,7 @@ class TestSignIn(unittest.TestCase):
     def test_sign_in_next_url(self, mock_request):
         with self.app.session_transaction() as session:
             session['next'] = '/surveys'
-        mock_request.post(url_sign_in_data, json={"token": "1234abc"}, status_code=201)
+        mock_request.post(url_sign_in_data, json={"access_token": self.access_token.decode()}, status_code=201)
         mock_request.get(url_surveys, json=[{
             "id": "75b19ea0-69a4-4c58-8d7f-4458c8f43f5c",
             "legalBasis": "Statistics of Trade Act 1947",
