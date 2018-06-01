@@ -16,7 +16,7 @@ def upload_sample(short_name, period, file):
 
     survey_type = 'B'
     url = f'{app.config["SAMPLE_URL"]}/samples/{survey_type}/fileupload'
-    response = requests.post(url=url, auth=app.config['SAMPLE_AUTH'], files={'file': file})
+    response = requests.post(url=url, auth=app.config['SAMPLE_AUTH'], files={'file': (file.filename, file)})
 
     try:
         response.raise_for_status()
@@ -33,3 +33,20 @@ def upload_sample(short_name, period, file):
                  sample_id=sample_summary['id'])
 
     return sample_summary
+
+
+def get_sample_summary(summary_uuid):
+    logger.debug('Getting sample summary', summary_uuid=summary_uuid)
+
+    url = f'{app.config["SAMPLE_URL"]}/samples/samplesummary/{summary_uuid}'
+    response = requests.get(url, auth=app.config['SAMPLE_AUTH'])
+
+    try:
+        response.raise_for_status()
+    except (HTTPError, RequestException):
+        log_level = logger.warning if response.status_code in (400, 404) else logger.exception
+        log_level("Sample summary retrieval failed", summary_uuid=summary_uuid)
+        raise ApiError(response)
+
+    logger.debug("Successfully retrieved survey", summary_uuid=summary_uuid)
+    return response.json()
