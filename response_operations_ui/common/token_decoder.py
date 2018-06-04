@@ -12,7 +12,7 @@ def decode_access_token(access_token):
     decoded_jwt = jwt.decode(
         access_token,
         key=uaa_public_key,
-        audience='ras_backstage',
+        audience='response_operations',
         leeway=10
     )
     return decoded_jwt
