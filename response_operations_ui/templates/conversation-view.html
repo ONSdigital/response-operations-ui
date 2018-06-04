@@ -75,7 +75,7 @@
             </div>
         {% endfor %}
 
-        {% if messages %}
+        {% if not is_closed %}
         <div class="secure-message-form">
             <form action="{{ url_for('messages_bp.view_conversation', thread_id=messages[0].thread_id, page=page) }}" method="post" id="create-message-form">
                 {{ form.csrf_token }}
@@ -105,10 +105,10 @@
         {% else %}
         <div class="panel panel--simple panel--info">
             <div class="panel__body">
-                <p class="mars">This conversation was closed on [date_closed] by [user]</p>
+                <p class="mars">This conversation was closed on {{ closed_at }} by {{ closed_by }}</p>
             </div>
         </div>
-        <form action="{{ url_for('messages_bp.close_conversation', selected_survey=selected_survey, open_conversation=True) }}" method="post">
+        <form action="{{ url_for('messages_bp.close_conversation', selected_survey=selected_survey, reopen_conversation=True) }}" method="post">
             <input class="btn u-mt-s" id="btn-reopen-conversation" name="reopen" type="submit" value="Re-open conversation" />
         </form>
         {% endif %}

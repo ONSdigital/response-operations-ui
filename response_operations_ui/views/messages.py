@@ -104,7 +104,8 @@ def view_conversation(thread_id):
                            messages=refined_thread,
                            form=form,
                            selected_survey=refined_thread[0]['survey'],
-                           page=page)
+                           page=page,
+                           is_closed=refined_thread[0]['is_closed'])
 
 
 @messages_bp.route('/', methods=['GET'])
@@ -200,6 +201,7 @@ def view_selected_survey(selected_survey):
 @messages_bp.route('/close-conversation', methods=['GET', 'POST'])
 @login_required
 def close_conversation():
+    reopen_conversation = request.args.get('reopen_conversation')
     try:
         messages = session['messages']
         selected_survey = session['messages_survey_selection']
@@ -208,9 +210,16 @@ def close_conversation():
         logger.exception('Session unavailable')
 
     if request.method == 'POST':
+        if reopen_conversation:
+            message_controllers.remove_closed_conversation_label(thread_id=thread_id)
+            thread_url = url_for("messages_bp.view_conversation", thread_id=thread_id) + "#latest-message"
+            flash(Markup(f'Conversation re-opened. <a href={thread_url}>View conversation</a>'))
+            return redirect(url_for('messages_bp.view_selected_survey',
+                                    selected_survey=selected_survey))
+
         message_controllers.add_closed_conversation_label(thread_id=thread_id)
         thread_url = url_for("messages_bp.view_conversation", thread_id=thread_id) + "#latest-message"
-        flash(Markup(f'Message sent. <a href={thread_url}>View Message</a>'))
+        flash(Markup(f'Conversation closed. <a href={thread_url}>View conversation</a>'))
         return redirect(url_for('messages_bp.view_selected_survey',
                                 selected_survey=selected_survey))
 
@@ -316,6 +325,7 @@ def _refine(message):
         'unread': _get_unread_status(message),
         'message_id': message.get('msg_id'),
         'ru_id': message.get('ru_id'),
+        'is_closed': message.get('is_closed')
     }
 
 
