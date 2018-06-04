@@ -286,7 +286,7 @@
                                Error uploading - incorrect file type. The sample file must be in .csv format
                            {% elif sample.errorCode == 'DataError' %}
                                <div>Duplicate records or wrongly formatted data found in sample</div>
-                               <div><a href="/samples/{{sample.id}}/notes" target="_blank">See detailed error report</a></div>
+                               <div><a href="/samples/{{sample.id}}/notes" target="_blank">See error details</a></div>
                            {% else %}
                                {{ sample.notes }}
                            {% endif %}
