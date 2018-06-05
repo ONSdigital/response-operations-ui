@@ -59,9 +59,9 @@ def create_message():
 @login_required
 def view_conversation(thread_id):
     try:
-        thread_conversation = message_controllers.get_conversation(thread_id)['messages']
-        refined_thread = [_refine(message) for message in reversed(thread_conversation)]
-        breadcrumbs = _get_conversation_breadcrumbs(thread_conversation)
+        thread_conversation = message_controllers.get_conversation(thread_id)
+        refined_thread = [_refine(message) for message in reversed(thread_conversation['messages'])]
+        breadcrumbs = _get_conversation_breadcrumbs(thread_conversation['messages'])
     except IndexError:
         breadcrumbs = [
             {"title": "Messages", "link": "/messages"},
@@ -97,6 +97,11 @@ def view_conversation(thread_id):
                                    messages=refined_thread,
                                    error="Message send failed")
 
+    try:
+        is_closed = thread_conversation['is_closed']
+    except KeyError:
+        is_closed = False
+
     session['messages'] = refined_thread
 
     return render_template("conversation-view.html",
@@ -105,7 +110,7 @@ def view_conversation(thread_id):
                            form=form,
                            selected_survey=refined_thread[0]['survey'],
                            page=page,
-                           is_closed=refined_thread[0]['is_closed'])
+                           is_closed=is_closed)
 
 
 @messages_bp.route('/', methods=['GET'])
@@ -202,6 +207,7 @@ def view_selected_survey(selected_survey):
 @login_required
 def close_conversation():
     reopen_conversation = request.args.get('reopen_conversation')
+
     try:
         messages = session['messages']
         selected_survey = session['messages_survey_selection']
@@ -325,7 +331,6 @@ def _refine(message):
         'unread': _get_unread_status(message),
         'message_id': message.get('msg_id'),
         'ru_id': message.get('ru_id'),
-        'is_closed': message.get('is_closed')
     }
 
 
