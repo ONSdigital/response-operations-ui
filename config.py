@@ -55,6 +55,8 @@ class Config(object):
     SURVEY_AUTH = (SURVEY_USERNAME, SURVEY_PASSWORD)
 
     UAA_SERVICE_URL = os.getenv('UAA_SERVICE_URL')
+    UAA_CLIENT_ID = os.getenv('UAA_CLIENT_ID')
+    UAA_CLIENT_SECRET = os.getenv('UAA_CLIENT_SECRET')
 
 
 class DevelopmentConfig(Config):
@@ -103,6 +105,8 @@ class DevelopmentConfig(Config):
     SURVEY_AUTH = (SURVEY_USERNAME, SURVEY_PASSWORD)
 
     UAA_SERVICE_URL = os.getenv('UAA_SERVICE_URL', 'http://localhost:9080')
+    UAA_CLIENT_ID = os.getenv('UAA_CLIENT_ID', 'response_operations')
+    UAA_CLIENT_SECRET = os.getenv('UAA_CLIENT_SECRET', 'password')
 
 
 class TestingConfig(DevelopmentConfig):
