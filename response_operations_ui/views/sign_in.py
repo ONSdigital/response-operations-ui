@@ -1,11 +1,13 @@
 import logging
 
-from flask import Blueprint, redirect, render_template, request, session, url_for
+from flask import abort, Blueprint, redirect, render_template, request, session, url_for
 from flask import get_flashed_messages
 from flask_login import current_user, login_user
+from jwt import DecodeError
 from structlog import wrap_logger
 
-from response_operations_ui.controllers import sign_in_controller
+from response_operations_ui.controllers import uaa_controller
+from response_operations_ui.common import token_decoder
 from response_operations_ui.forms import LoginForm
 from response_operations_ui.user import User
 
@@ -22,23 +24,28 @@ def sign_in():
         return redirect(url_for('home_bp.home'))
 
     if form.validate_on_submit():
-        sign_in_data = {
-            "username": request.form.get('username'),
-            "password": request.form.get('password'),
-        }
 
-        response_json = sign_in_controller.sign_in(sign_in_data)
+        username = request.form.get('username')
+        password = request.form.get('password')
+
+        logger.info('Retrieving sign-in details')
+        access_token = uaa_controller.sign_in(username, password)
 
         try:
+            logger.info('Successfully retrieved sign-in details')
+            token = token_decoder.decode_access_token(access_token)
+            user_id = token.get('user_id')
+        except DecodeError:
+            logger.error("Unable to decode token - confirm the UAA public key is correct", access_token=access_token)
+            abort(500)
+        else:
             # store the token in the session (it's server side and stored in redis)
-            session['token'] = response_json['token']
-            user = User(response_json.get('user_id'))
+            session['token'] = access_token
+            user = User(user_id)
             login_user(user)
             if 'next' in session:
                 return redirect(session['next'])
             return redirect(url_for('home_bp.home'))
-        except KeyError:
-            logger.exception("Token missing from authentication server response")
 
     for message in get_flashed_messages(with_categories=True):
         if "failed_authentication" in message:
