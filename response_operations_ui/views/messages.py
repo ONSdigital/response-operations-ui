@@ -202,8 +202,6 @@ def view_selected_survey(selected_survey):
 @messages_bp.route('/close-conversation', methods=['GET', 'POST'])
 @login_required
 def close_conversation():
-    reopen_conversation = request.args.get('reopen_conversation')
-
     try:
         messages = session['messages']
         selected_survey = session['messages_survey_selection']
@@ -212,7 +210,7 @@ def close_conversation():
         logger.exception('Session unavailable')
 
     if request.method == 'POST':
-        if reopen_conversation:
+        if request.args.get('reopen_conversation'):
             message_controllers.remove_closed_conversation_label(thread_id=thread_id)
             thread_url = url_for("messages_bp.view_conversation", thread_id=thread_id) + "#latest-message"
             flash(Markup(f'Conversation re-opened. <a href={thread_url}>View conversation</a>'))

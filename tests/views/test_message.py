@@ -630,10 +630,9 @@ class TestMessage(unittest.TestCase):
         mock_request.get(url_send_message + '/count', json={"total": 1}, status_code=200)
         mock_request.get(url_get_threads_list, json=thread_list)
 
-        response = self.app.post("/messages/close-conversation",
-                                 data={"reopen_conversation": True},
+        response = self.app.post("/messages/close-conversation?reopen_conversation=True",
                                  follow_redirects=True)
 
         self.assertEqual(200, response.status_code)
-        self.assertIn("Conversation closed".encode(), response.data)
+        self.assertIn("Conversation re-opened.".encode(), response.data)
         self.assertIn("Ashe Messages".encode(), response.data)
