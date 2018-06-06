@@ -577,3 +577,63 @@ class TestMessage(unittest.TestCase):
             conversation = json.load(fp)
         del conversation['messages'][0]['msg_to'][0]
         self.assertEqual(None, _get_to_id(conversation['messages'][0]))
+
+    @requests_mock.mock()
+    @patch('response_operations_ui.controllers.message_controllers._get_jwt')
+    def test_get_close_conversation_speedbump(self, mock_request, mock_get_jwt):
+        with self.app.session_transaction() as session:
+            session['messages'] = thread_json['messages']
+            session['messages_survey_selection'] = 'QBS'
+        mock_get_jwt.return_value = "blah"
+        mock_request.get(url_get_thread, json=thread_json)
+        mock_request.get(url_get_surveys_list, json=survey_list)
+
+        response = self.app.get("/messages/close-conversation", follow_redirects=True)
+
+        self.assertEqual(200, response.status_code)
+        self.assertIn("Subject".encode(), response.data)
+        self.assertIn("Business".encode(), response.data)
+        self.assertIn("Reference".encode(), response.data)
+        self.assertIn("Respondent".encode(), response.data)
+
+    @requests_mock.mock()
+    @patch('response_operations_ui.controllers.message_controllers._get_jwt')
+    def test_post_close_conversation_add_closed_label(self, mock_request, mock_get_jwt):
+        with self.app.session_transaction() as session:
+            session['messages'] = thread_json['messages']
+            session['messages_survey_selection'] = 'Ashe'
+        mock_get_jwt.return_value = "blah"
+        mock_request.get(url_get_thread, json=thread_json)
+        mock_request.get(url_get_surveys_list, json=survey_list)
+        mock_request.patch(url_get_thread, json=thread_json)
+        mock_request.get(shortname_url + "/ASHE", json=ashe_info)
+        mock_request.get(url_send_message + '/count', json={"total": 1}, status_code=200)
+        mock_request.get(url_get_threads_list, json=thread_list)
+
+        response = self.app.post("/messages/close-conversation", follow_redirects=True)
+
+        self.assertEqual(200, response.status_code)
+        self.assertIn("Conversation closed".encode(), response.data)
+        self.assertIn("Ashe Messages".encode(), response.data)
+
+    @requests_mock.mock()
+    @patch('response_operations_ui.controllers.message_controllers._get_jwt')
+    def test_post_close_conversation_remove_closed_label(self, mock_request, mock_get_jwt):
+        with self.app.session_transaction() as session:
+            session['messages'] = thread_json['messages']
+            session['messages_survey_selection'] = 'Ashe'
+        mock_get_jwt.return_value = "blah"
+        mock_request.get(url_get_thread, json=thread_json)
+        mock_request.get(url_get_surveys_list, json=survey_list)
+        mock_request.patch(url_get_thread, json=thread_json)
+        mock_request.get(shortname_url + "/ASHE", json=ashe_info)
+        mock_request.get(url_send_message + '/count', json={"total": 1}, status_code=200)
+        mock_request.get(url_get_threads_list, json=thread_list)
+
+        response = self.app.post("/messages/close-conversation",
+                                 data={"reopen_conversation": True},
+                                 follow_redirects=True)
+
+        self.assertEqual(200, response.status_code)
+        self.assertIn("Conversation closed".encode(), response.data)
+        self.assertIn("Ashe Messages".encode(), response.data)

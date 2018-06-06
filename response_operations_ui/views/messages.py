@@ -58,9 +58,10 @@ def create_message():
 @messages_bp.route('/threads/<thread_id>', methods=['GET', 'POST'])
 @login_required
 def view_conversation(thread_id):
+    thread_conversation = message_controllers.get_conversation(thread_id)
+    refined_thread = [_refine(message) for message in reversed(thread_conversation['messages'])]
+
     try:
-        thread_conversation = message_controllers.get_conversation(thread_id)
-        refined_thread = [_refine(message) for message in reversed(thread_conversation['messages'])]
         breadcrumbs = _get_conversation_breadcrumbs(thread_conversation['messages'])
     except IndexError:
         breadcrumbs = [
@@ -97,11 +98,6 @@ def view_conversation(thread_id):
                                    messages=refined_thread,
                                    error="Message send failed")
 
-    try:
-        is_closed = thread_conversation['is_closed']
-    except KeyError:
-        is_closed = False
-
     session['messages'] = refined_thread
 
     return render_template("conversation-view.html",
@@ -110,7 +106,7 @@ def view_conversation(thread_id):
                            form=form,
                            selected_survey=refined_thread[0]['survey'],
                            page=page,
-                           is_closed=is_closed)
+                           thread_data=thread_conversation)
 
 
 @messages_bp.route('/', methods=['GET'])
