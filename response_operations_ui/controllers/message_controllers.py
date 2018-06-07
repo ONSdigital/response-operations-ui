@@ -118,6 +118,7 @@ def add_closed_conversation_label(thread_id):
         logger.debug("Successfully added closed conversation label", thread_id=thread_id)
     except HTTPError:
         logger.exception("Failed to add closed conversation label", thread_id=thread_id)
+        raise ApiError(response)
 
 
 def remove_closed_conversation_label(thread_id):
@@ -132,6 +133,7 @@ def remove_closed_conversation_label(thread_id):
         logger.debug("Successfully removed closed conversation label", thread_id=thread_id)
     except HTTPError:
         logger.exception("Failed to remove closed conversation label", thread_id=thread_id)
+        raise ApiError(response)
 
 
 def _post_new_message(message):
