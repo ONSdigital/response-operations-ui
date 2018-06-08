@@ -33,8 +33,7 @@ def get_error_message(error_key):
 
 @collection_exercise_bp.route('/<short_name>/<period>', methods=['GET'])
 @login_required
-def view_collection_exercise(short_name, period, error=None,
-                             success_panel=None, show_msg=None):
+def view_collection_exercise(short_name, period):
     ce_details = collection_exercise_controllers.get_collection_exercise(short_name, period)
     ce_details['sample_summary'] = _format_sample_summary(ce_details['sample_summary'])
     formatted_events = convert_events_to_new_format(ce_details['events'])
@@ -69,15 +68,16 @@ def view_collection_exercise(short_name, period, error=None,
     ce_details['collection_exercise']['state'] = map_collection_exercise_state(ce_state)  # NOQA
     _format_ci_file_name(ce_details['collection_instruments'], ce_details['survey'])
 
-    editable_events = True
-    if 'mps' not in formatted_events \
-            or 'go_live' not in formatted_events \
-            or 'return_by' not in formatted_events \
-            or 'exercise_end' not in formatted_events:
+    events = set('mps', 'go_live', 'return_by', 'exercise_end')
+    event_keys = set(formatted_events.keys())
+    if events.difference(event_keys):  # difference will be truthy if any of events are not in _keys
         editable_events = False
+    else:
+        editable_events = True  # all expected keys are present
 
-    if show_msg is None:
-        show_msg = request.args.get('show_msg')
+    show_msg = request.args.get('show_msg')
+    success_panel = request.args.get('success_panel')
+    error = request.args.get('error')
 
     return render_template('collection-exercise.html',
                            breadcrumbs=breadcrumbs,
@@ -142,7 +142,11 @@ def _set_ready_for_live(short_name, period):
             "message": "Please try again"
         }
 
-    return view_collection_exercise(short_name, period, error=error, success_panel=success_panel)
+    return redirect(url_for('collection_exercise_bp.view_collection_exercise',
+                            short_name=short_name,
+                            period=period,
+                            error=error,
+                            success_panel=success_panel))
 
 
 def _upload_sample(short_name, period):
@@ -167,8 +171,11 @@ def _upload_sample(short_name, period):
             collection_exercise_id=exercise['id'],
             sample_summary_id=sample_summary['id'])
 
-    return redirect(url_for('collection_exercise_bp.view_collection_exercise', short_name=short_name, period=period,
-                            error=error, show_msg='true'))
+    return redirect(url_for('collection_exercise_bp.view_collection_exercise',
+                            short_name=short_name,
+                            period=period,
+                            error=error,
+                            show_msg='true'))
 
 
 def _select_collection_instrument(short_name, period):
@@ -201,7 +208,11 @@ def _select_collection_instrument(short_name, period):
             "message": "Please select a collection instrument"
         }
 
-    return view_collection_exercise(short_name, period, error=error, success_panel=success_panel)
+    return redirect(url_for('collection_exercise_bp.view_collection_exercise',
+                            short_name=short_name,
+                            period=period,
+                            error=error,
+                            success_panel=success_panel))
 
 
 def _upload_collection_instrument(short_name, period):
@@ -246,7 +257,11 @@ def _unselect_collection_instrument(short_name, period):
             "header": "Error: Failed to remove collection instrument"
         }
 
-    return view_collection_exercise(short_name, period, error=error, success_panel=success_panel)
+    return redirect(url_for('collection_exercise_bpview_collection_exercise',
+                            short_name=short_name,
+                            period=period,
+                            error=error,
+                            success_panel=success_panel))
 
 
 def _validate_collection_instrument():
@@ -413,7 +428,7 @@ def create_collection_exercise(survey_ref, short_name):
                                 new_period=form.get('period')))
 
 
-@collection_exercise_bp.route('/<short_name>/<period>/<ce_id>/create-event/<tag>', methods=['GET'])
+@collection_exercise_bp.route('/<short_name>/<period>/<ce_id>/confirm-create-event/<tag>', methods=['GET'])
 @login_required
 def get_create_collection_event_form(short_name, period, ce_id, tag):
     logger.info("Retrieving form for create collection exercise event", short_name=short_name, period=period,

@@ -80,7 +80,7 @@
       {{ form.submit(class_="btn btn--primary u-mt-s") }}
 
       <div>
-        <a href="#" onclick="history.back(); return false;">Cancel</a>
+        <a href=" {{ url_for('collection_exercise_bp.view_collection_exercise', survey.shortName, period) }}" onclick="history.back(); return false;">Cancel</a>
       </div>
     </form>
 
