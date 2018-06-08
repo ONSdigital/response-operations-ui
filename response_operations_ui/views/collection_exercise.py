@@ -451,8 +451,7 @@ def create_collection_exercise_event(short_name, period, ce_id, tag):
     if not form.validate():
         return get_create_collection_event_form(short_name, period, ce_id, tag, errors=form.errors)
 
-    day = form.day.data if not len(form.day.data) == 1 else f"0{form.day.data}"
-    timestamp_string = f"{form.year.data}{form.month.data}{day}T{form.hour.data}{form.minute.data}"
+    timestamp_string = f"{form.year.data}{form.month.data}{form.day.data:02d}T{form.hour.data}{form.minute.data}"
     timestamp = iso8601.parse_date(timestamp_string)
 
     collection_exercise_controllers.create_collection_exercise_event(

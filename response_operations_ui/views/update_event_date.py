@@ -19,7 +19,6 @@ logger = wrap_logger(logging.getLogger(__name__))
 def update_event_date(short_name, period, tag, errors=None):
     errors = request.args.get('errors') if not errors else errors
     ce_details = collection_exercise_controllers.get_collection_exercise_events(short_name, period)
-    event_name = get_event_name(tag)
     formatted_events = convert_events_to_new_format(ce_details['events'])
     date_restriction_text = _get_date_restriction_text(tag, formatted_events)
 
@@ -38,7 +37,7 @@ def update_event_date(short_name, period, tag, errors=None):
                            form=form,
                            ce=ce_details['collection_exercise'],
                            survey=ce_details['survey'],
-                           event_name=event_name,
+                           event_name=get_event_name(tag),
                            date_restriction_text=date_restriction_text,
                            errors=errors)
 

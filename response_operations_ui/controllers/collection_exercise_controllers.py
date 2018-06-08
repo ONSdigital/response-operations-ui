@@ -53,8 +53,8 @@ def get_collection_exercise_events(short_name, period):
 def get_collection_exercise_events_by_id(ce_id):
     logger.debug('Retrieving collection exercise events by id', collection_exercise_id=ce_id)
 
-    url = f'{app.config["COLLECTION_EXERCISE_URL"]}/{ce_id}/events'
-    response = requests.get(url=url, auth=app.config['COLLECTION_EXERCISE_AUTH'])
+    url = f'{app.config["COLLECTION_EXERCISE_URL"]}/collectionexercises/{ce_id}/events'
+    response = requests.Session().get(url=url, auth=app.config['COLLECTION_EXERCISE_AUTH'])
 
     try:
         response.raise_for_status()
@@ -91,8 +91,8 @@ def create_collection_exercise_event(collection_exercise_id, tag, timestamp):
 
     url = f'{app.config["COLLECTION_EXERCISE_URL"]}/collectionexercises/{collection_exercise_id}/events'
     formatted_timestamp = timestamp.strftime('%Y-%m-%dT%H:%M:00.000+0000')
-    response = requests.post(url=url, auth=app.config['COLLECTION_EXERCISE_AUTH'],
-                             json={'tag': tag, 'timestamp': formatted_timestamp})
+    response = requests.Session().post(url=url, auth=app.config['COLLECTION_EXERCISE_AUTH'],
+                                       json={'tag': tag, 'timestamp': formatted_timestamp})
 
     try:
         response.raise_for_status()
@@ -138,7 +138,7 @@ def update_collection_exercise_details(collection_exercise_id, user_description,
 def get_collection_exercise_by_id(collection_exercise_id):
     logger.debug('Retrieving collection exercise', collection_exercise_id=collection_exercise_id)
     url = f'{app.config["COLLECTION_EXERCISE_URL"]}/collectionexercises/{collection_exercise_id}'
-    response = requests.get(url, auth=app.config['COLLECTION_EXERCISE_AUTH'])
+    response = requests.get(url=url, auth=app.config['COLLECTION_EXERCISE_AUTH'])
 
     try:
         response.raise_for_status()
