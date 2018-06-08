@@ -94,7 +94,7 @@ class TestCollectionExercise(unittest.TestCase):
         mock_request.post(url_collection_instrument, status_code=201)
         mock_request.get(url_get_collection_exercise, json=collection_exercise_details)
 
-        response = self.app.post("/surveys/test/000000", data=post_data)
+        response = self.app.post("/surveys/test/000000", data=post_data, follow_redirects=True)
 
         self.assertEqual(response.status_code, 200)
         self.assertIn("Collection instrument loaded".encode(), response.data)
@@ -109,7 +109,7 @@ class TestCollectionExercise(unittest.TestCase):
         mock_request.post(url_collection_instrument_link, status_code=200)
         mock_request.get(url_get_collection_exercise, json=collection_exercise_details)
 
-        response = self.app.post("/surveys/test/000000", data=post_data)
+        response = self.app.post("/surveys/test/000000", data=post_data, follow_redirects=True)
 
         self.assertEqual(response.status_code, 200)
         self.assertIn("Collection instruments added".encode(), response.data)
@@ -124,7 +124,7 @@ class TestCollectionExercise(unittest.TestCase):
         mock_request.post(url_collection_instrument_link, status_code=500)
         mock_request.get(url_get_collection_exercise, json=collection_exercise_details)
 
-        response = self.app.post("/surveys/test/000000", data=post_data)
+        response = self.app.post("/surveys/test/000000", data=post_data, follow_redirects=True)
 
         self.assertEqual(response.status_code, 200)
         self.assertIn("Error: Failed to add collection instrument(s)".encode(), response.data)
@@ -138,7 +138,7 @@ class TestCollectionExercise(unittest.TestCase):
         }
         mock_request.get(url_get_collection_exercise, json=collection_exercise_details)
 
-        response = self.app.post("/surveys/test/000000", data=post_data)
+        response = self.app.post("/surveys/test/000000", data=post_data, follow_redirects=True)
 
         self.assertEqual(response.status_code, 200)
         self.assertIn("Error: No collection instruments selected".encode(), response.data)
@@ -152,7 +152,7 @@ class TestCollectionExercise(unittest.TestCase):
         mock_request.post(url_collection_instrument, status_code=201)
         mock_request.get(url_get_collection_exercise, json=collection_exercise_details)
 
-        response = self.app.post("/surveys/test/000000", data=post_data)
+        response = self.app.post("/surveys/test/000000", data=post_data, follow_redirects=True)
 
         self.assertEqual(response.status_code, 200)
         self.assertIn("collection_instrument.xlsx".encode(), response.data)
@@ -179,7 +179,7 @@ class TestCollectionExercise(unittest.TestCase):
         }
         mock_request.get(url_get_collection_exercise, json=collection_exercise_details)
 
-        response = self.app.post("/surveys/test/000000", data=post_data)
+        response = self.app.post("/surveys/test/000000", data=post_data, follow_redirects=True)
 
         self.assertEqual(response.status_code, 200)
         self.assertNotIn("Collection instrument loaded".encode(), response.data)
@@ -193,7 +193,7 @@ class TestCollectionExercise(unittest.TestCase):
         }
         mock_request.get(url_get_collection_exercise, json=collection_exercise_details)
 
-        response = self.app.post("/surveys/test/000000", data=post_data)
+        response = self.app.post("/surveys/test/000000", data=post_data, follow_redirects=True)
 
         self.assertEqual(response.status_code, 200)
         self.assertNotIn("Collection instrument loaded".encode(), response.data)
@@ -207,7 +207,7 @@ class TestCollectionExercise(unittest.TestCase):
         }
         mock_request.get(url_get_collection_exercise, json=collection_exercise_details)
 
-        response = self.app.post("/surveys/test/000000", data=post_data)
+        response = self.app.post("/surveys/test/000000", data=post_data, follow_redirects=True)
 
         self.assertEqual(response.status_code, 200)
         self.assertNotIn("Collection instrument loaded".encode(), response.data)
@@ -221,7 +221,7 @@ class TestCollectionExercise(unittest.TestCase):
         }
         mock_request.get(url_get_collection_exercise, json=collection_exercise_details)
 
-        response = self.app.post("/surveys/test/000000", data=post_data)
+        response = self.app.post("/surveys/test/000000", data=post_data, follow_redirects=True)
 
         self.assertEqual(response.status_code, 200)
         self.assertNotIn("Collection instrument loaded".encode(), response.data)
@@ -234,7 +234,7 @@ class TestCollectionExercise(unittest.TestCase):
         }
         mock_request.get(url_get_collection_exercise, json=collection_exercise_details)
 
-        response = self.app.post("/surveys/test/000000", data=post_data)
+        response = self.app.post("/surveys/test/000000", data=post_data, follow_redirects=True)
 
         self.assertEqual(response.status_code, 200)
         self.assertNotIn("Collection instrument loaded".encode(), response.data)
@@ -244,7 +244,7 @@ class TestCollectionExercise(unittest.TestCase):
     def test_view_collection_instrument(self, mock_request):
         mock_request.get(url_get_collection_exercise, json=collection_exercise_details)
 
-        response = self.app.get("/surveys/test/000000")
+        response = self.app.get("/surveys/test/000000", follow_redirects=True)
 
         self.assertEqual(response.status_code, 200)
         self.assertIn("collection_instrument.xlsx".encode(), response.data)
@@ -254,7 +254,7 @@ class TestCollectionExercise(unittest.TestCase):
         with open('tests/test_data/collection_exercise/collection_exercise_details_no_ci.json') as collection_exercise:
             mock_request.get(url_get_collection_exercise, json=json.load(collection_exercise))
 
-        response = self.app.get("/surveys/test/000000")
+        response = self.app.get("/surveys/test/000000", follow_redirects=True)
 
         self.assertEqual(response.status_code, 200)
         self.assertIn("Add a collection instrument. Must be XLSX".encode(), response.data)
@@ -263,7 +263,8 @@ class TestCollectionExercise(unittest.TestCase):
     def test_add_another_collection_instrument_when_already_uploaded(self, mock_request):
         mock_request.get(url_get_collection_exercise, json=collection_exercise_details)
 
-        response = self.app.get("/surveys/test/000000")
+        response = self.app.get("/surveys/test/000000", follow_redirects=True
+                                )
 
         self.assertEqual(response.status_code, 200)
         self.assertIn("Add another collection instrument. Must be XLSX".encode(), response.data)

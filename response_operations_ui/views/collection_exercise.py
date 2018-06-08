@@ -68,7 +68,7 @@ def view_collection_exercise(short_name, period):
     ce_details['collection_exercise']['state'] = map_collection_exercise_state(ce_state)  # NOQA
     _format_ci_file_name(ce_details['collection_instruments'], ce_details['survey'])
 
-    events = set('mps', 'go_live', 'return_by', 'exercise_end')
+    events = {'mps', 'go_live', 'return_by', 'exercise_end'}
     event_keys = set(formatted_events.keys())
     if events.difference(event_keys):  # difference will be truthy if any of events are not in _keys
         editable_events = False
@@ -84,7 +84,6 @@ def view_collection_exercise(short_name, period):
                            ce=ce_details['collection_exercise'],
                            collection_instruments=ce_details['collection_instruments'],
                            eq_ci_selectors=ce_details['eq_ci_selectors'],
-                           error=error,
                            events=formatted_events,
                            locked=locked,
                            missing_ci=missing_ci,
@@ -145,7 +144,7 @@ def _set_ready_for_live(short_name, period):
     return redirect(url_for('collection_exercise_bp.view_collection_exercise',
                             short_name=short_name,
                             period=period,
-                            error=error,
+                            error_message=error,
                             success_panel=success_panel))
 
 
@@ -235,7 +234,11 @@ def _upload_collection_instrument(short_name, period):
                 "message": "Please try again"
             }
 
-    return view_collection_exercise(short_name, period, error=error, success_panel=success_panel)
+    return redirect(url_for('collection_exercise_bp.view_collection_exercise',
+                            short_name=short_name,
+                            period=period,
+                            error=error,
+                            success_panel=success_panel))
 
 
 def _unselect_collection_instrument(short_name, period):
@@ -257,7 +260,7 @@ def _unselect_collection_instrument(short_name, period):
             "header": "Error: Failed to remove collection instrument"
         }
 
-    return redirect(url_for('collection_exercise_bpview_collection_exercise',
+    return redirect(url_for('collection_exercise_bp.view_collection_exercise',
                             short_name=short_name,
                             period=period,
                             error=error,
