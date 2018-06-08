@@ -1,6 +1,6 @@
 # Motivation and Context
 <!--- Why is this change required? What problem does it solve? -->
-<!--- If it fixes an open issue, please link to the issue here. -->
+<!--- If it fixes an open issue or a trello card, please link to it here. -->
 
 # What has changed
 <!--- What code changes has been made -->
