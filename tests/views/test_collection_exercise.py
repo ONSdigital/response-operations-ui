@@ -419,7 +419,7 @@ class TestCollectionExercise(unittest.TestCase):
         mock_request.post(url_execute, status_code=200)
         mock_request.get(url_get_collection_exercise, json=collection_exercise_details)
 
-        response = self.app.post('/surveys/test/000000', data=post_data)
+        response = self.app.post('/surveys/test/000000', data=post_data, follow_redirects=True)
 
         self.assertEqual(response.status_code, 200)
         self.assertNotIn('Sample loaded successfully'.encode(), response.data)
@@ -432,7 +432,7 @@ class TestCollectionExercise(unittest.TestCase):
         mock_request.post(url_execute, status_code=500)
         mock_request.get(url_get_collection_exercise, json=collection_exercise_details)
 
-        response = self.app.post('/surveys/test/000000', data=post_data)
+        response = self.app.post('/surveys/test/000000', data=post_data, follow_redirects=True)
 
         self.assertEqual(response.status_code, 200)
         self.assertNotIn('Sample loaded successfully'.encode(), response.data)
@@ -516,7 +516,7 @@ class TestCollectionExercise(unittest.TestCase):
         mock_request.put(url_collection_instrument_unlink, status_code=200)
         mock_request.get(url_get_collection_exercise, json=collection_exercise_details)
 
-        response = self.app.post("/surveys/test/000000", data=post_data)
+        response = self.app.post("/surveys/test/000000", data=post_data, follow_redirects=True)
 
         self.assertEqual(response.status_code, 200)
         self.assertIn("Collection instrument removed".encode(), response.data)
@@ -532,7 +532,7 @@ class TestCollectionExercise(unittest.TestCase):
         mock_request.put(url_collection_instrument_unlink, status_code=500)
         mock_request.get(url_get_collection_exercise, json=collection_exercise_details)
 
-        response = self.app.post("/surveys/test/000000", data=post_data)
+        response = self.app.post("/surveys/test/000000", data=post_data, follow_redirects=True)
 
         self.assertEqual(response.status_code, 200)
         self.assertIn("Error: Failed to remove collection instrument".encode(), response.data)
