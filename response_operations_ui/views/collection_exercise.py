@@ -84,6 +84,7 @@ def view_collection_exercise(short_name, period):
                            ce=ce_details['collection_exercise'],
                            collection_instruments=ce_details['collection_instruments'],
                            eq_ci_selectors=ce_details['eq_ci_selectors'],
+                           error=error,
                            events=formatted_events,
                            locked=locked,
                            missing_ci=missing_ci,
@@ -130,10 +131,7 @@ def _set_ready_for_live(short_name, period):
     result = collection_exercise_controllers.execute_collection_exercise(short_name, period)
 
     if result:
-        success_panel = {
-            "id": "execution-success",
-            "message": "Collection exercise executed"
-        }
+        success_panel = "Collection exercise executed"
     else:
         error = {
             "section": "ce_status",
@@ -189,10 +187,7 @@ def _select_collection_instrument(short_name, period):
             cis_added.append(ci_added)
 
         if all(added for added in cis_added):
-            success_panel = {
-                "id": "collection-instrument-added-success",
-                "message": "Collection instruments added"
-            }
+            success_panel = "Collection instruments added"
         else:
             error = {
                 "section": "ciSelect",
@@ -223,10 +218,7 @@ def _upload_collection_instrument(short_name, period):
         form_type = _get_form_type(file.filename)
         ci_loaded = collection_instrument_controllers.upload_collection_instrument(short_name, period, file, form_type)
         if ci_loaded:
-            success_panel = {
-                "id": "collection-instrument-success",
-                "message": "Collection instrument loaded"
-            }
+            success_panel = "Collection instrument loaded"
         else:
             error = {
                 "section": "ciFile",
@@ -250,11 +242,7 @@ def _unselect_collection_instrument(short_name, period):
     ci_unlinked = collection_instrument_controllers.unlink_collection_instrument(ce_id, ci_id)
 
     if ci_unlinked:
-        success_panel = {
-            "id": "collection-instrument-removed-success",
-            "message": "Collection instrument removed"
-
-        }
+        success_panel = "Collection instrument removed"
     else:
         error = {
             "header": "Error: Failed to remove collection instrument"
@@ -477,10 +465,7 @@ def create_collection_exercise_event(short_name, period, ce_id, tag):
         tag=tag,
         timestamp=timestamp)
 
-    success_panel = {
-        "id": "add-event",
-        "message": "Event date added."
-    }
+    success_panel = "Event date added."
 
     return redirect(url_for('collection_exercise_bp.view_collection_exercise',
                             period=period,
