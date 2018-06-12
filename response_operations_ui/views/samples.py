@@ -1,5 +1,6 @@
 from flask import Blueprint, render_template, make_response
 from flask_login import login_required
+
 from response_operations_ui.controllers import sample_controllers
 
 sample_bp = Blueprint('sample_bp', __name__,
