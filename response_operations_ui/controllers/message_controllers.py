@@ -106,33 +106,18 @@ def remove_unread_label(message_id):
         logger.exception("Failed to remove unread label", message_id=message_id)
 
 
-def add_closed_conversation_label(thread_id):
+def update_close_conversation_label(thread_id, status):
     url = f"{current_app.config['SECURE_MESSAGE_URL']}/v2/threads/{thread_id}"
-    data = {"is_closed": True}
+    data = {"is_closed": status}
 
-    logger.debug("Adding closed conversation label", thread_id=thread_id)
+    logger.debug("Updating close conversation label", thread_id=thread_id)
     response = requests.patch(url, headers={"Authorization": _get_jwt(), "Content-Type": "application/json"}, json=data)
 
     try:
         response.raise_for_status()
-        logger.debug("Successfully added closed conversation label", thread_id=thread_id)
+        logger.debug("Successfully updated close conversation label", thread_id=thread_id)
     except HTTPError:
-        logger.exception("Failed to add closed conversation label", thread_id=thread_id)
-        raise ApiError(response)
-
-
-def remove_closed_conversation_label(thread_id):
-    url = f"{current_app.config['SECURE_MESSAGE_URL']}/v2/threads/{thread_id}"
-    data = {"is_closed": False}
-
-    logger.debug("Removing closed conversation label", thread_id=thread_id)
-    response = requests.patch(url, headers={"Authorization": _get_jwt(), "Content-Type": "application/json"}, json=data)
-
-    try:
-        response.raise_for_status()
-        logger.debug("Successfully removed closed conversation label", thread_id=thread_id)
-    except HTTPError:
-        logger.exception("Failed to remove closed conversation label", thread_id=thread_id)
+        logger.exception("Failed to update close conversation label", thread_id=thread_id)
         raise ApiError(response)
 
 

@@ -36,11 +36,11 @@
         </dd>
       </dl>
 
-      <form action="{{ url_for('messages_bp.close_conversation', page=page) }}" method="post">
+      <form action="{{ url_for('messages_bp.close_conversation', thread_id=thread_id, page=page) }}" method="post">
         <input type="hidden" name="closed" value="True" />
         <button class="btn btn--primary u-mt-m">Close conversation</button>
       </form>
-      <a href="{{ url_for('messages_bp.view_conversation', thread_id=messages[0].thread_id, page=page) }}#latest-message">Cancel</a>
+      <a href="{{ url_for('messages_bp.view_conversation', thread_id=thread_id, page=page) }}#latest-message">Cancel</a>
     </div>
   </div>
 {% endblock %}

@@ -582,13 +582,13 @@ class TestMessage(unittest.TestCase):
     @patch('response_operations_ui.controllers.message_controllers._get_jwt')
     def test_get_close_conversation_speedbump(self, mock_request, mock_get_jwt):
         with self.app.session_transaction() as session:
-            session['messages'] = thread_json['messages']
             session['messages_survey_selection'] = 'QBS'
         mock_get_jwt.return_value = "blah"
         mock_request.get(url_get_thread, json=thread_json)
         mock_request.get(url_get_surveys_list, json=survey_list)
 
-        response = self.app.get("/messages/close-conversation", follow_redirects=True)
+        response = self.app.get("/messages/threads/fb0e79bd-e132-4f4f-a7fd-5e8c6b41b9af/close-conversation",
+                                follow_redirects=True)
 
         self.assertEqual(200, response.status_code)
         self.assertIn("Subject".encode(), response.data)
@@ -600,7 +600,6 @@ class TestMessage(unittest.TestCase):
     @patch('response_operations_ui.controllers.message_controllers._get_jwt')
     def test_post_close_conversation_add_closed_label(self, mock_request, mock_get_jwt):
         with self.app.session_transaction() as session:
-            session['messages'] = thread_json['messages']
             session['messages_survey_selection'] = 'Ashe'
         mock_get_jwt.return_value = "blah"
         mock_request.get(url_get_thread, json=thread_json)
@@ -610,7 +609,8 @@ class TestMessage(unittest.TestCase):
         mock_request.get(url_send_message + '/count', json={"total": 1}, status_code=200)
         mock_request.get(url_get_threads_list, json=thread_list)
 
-        response = self.app.post("/messages/close-conversation", follow_redirects=True)
+        response = self.app.post("/messages/threads/fb0e79bd-e132-4f4f-a7fd-5e8c6b41b9af/close-conversation",
+                                 follow_redirects=True)
 
         self.assertEqual(200, response.status_code)
         self.assertIn("Conversation closed".encode(), response.data)
@@ -620,7 +620,6 @@ class TestMessage(unittest.TestCase):
     @patch('response_operations_ui.controllers.message_controllers._get_jwt')
     def test_post_close_conversation_add_closed_label_http_error(self, mock_request, mock_get_jwt):
         with self.app.session_transaction() as session:
-            session['messages'] = thread_json['messages']
             session['messages_survey_selection'] = 'Ashe'
         mock_get_jwt.return_value = "blah"
         mock_request.get(url_get_thread, json=thread_json)
@@ -630,7 +629,8 @@ class TestMessage(unittest.TestCase):
         mock_request.get(url_send_message + '/count', json={"total": 1}, status_code=200)
         mock_request.get(url_get_threads_list, json=thread_list)
 
-        response = self.app.post("/messages/close-conversation", follow_redirects=True)
+        response = self.app.post("/messages/threads/fb0e79bd-e132-4f4f-a7fd-5e8c6b41b9af/close-conversation",
+                                 follow_redirects=True)
 
         self.assertEqual(500, response.status_code)
         self.assertIn("Error 500 - Server error".encode(), response.data)
@@ -639,7 +639,6 @@ class TestMessage(unittest.TestCase):
     @patch('response_operations_ui.controllers.message_controllers._get_jwt')
     def test_post_close_conversation_remove_closed_label(self, mock_request, mock_get_jwt):
         with self.app.session_transaction() as session:
-            session['messages'] = thread_json['messages']
             session['messages_survey_selection'] = 'Ashe'
         mock_get_jwt.return_value = "blah"
         mock_request.get(url_get_thread, json=thread_json)
@@ -649,7 +648,8 @@ class TestMessage(unittest.TestCase):
         mock_request.get(url_send_message + '/count', json={"total": 1}, status_code=200)
         mock_request.get(url_get_threads_list, json=thread_list)
 
-        response = self.app.post("/messages/close-conversation?reopen_conversation=True",
+        response = self.app.post("/messages/threads/fb0e79bd-e132-4f4f-a7fd-5e8c6b41b9af/close-conversation"
+                                 "?reopen_conversation=True",
                                  follow_redirects=True)
 
         self.assertEqual(200, response.status_code)
@@ -660,7 +660,6 @@ class TestMessage(unittest.TestCase):
     @patch('response_operations_ui.controllers.message_controllers._get_jwt')
     def test_post_close_conversation_remove_closed_label_http_error(self, mock_request, mock_get_jwt):
         with self.app.session_transaction() as session:
-            session['messages'] = thread_json['messages']
             session['messages_survey_selection'] = 'Ashe'
         mock_get_jwt.return_value = "blah"
         mock_request.get(url_get_thread, json=thread_json)
@@ -670,14 +669,9 @@ class TestMessage(unittest.TestCase):
         mock_request.get(url_send_message + '/count', json={"total": 1}, status_code=200)
         mock_request.get(url_get_threads_list, json=thread_list)
 
-        response = self.app.post("/messages/close-conversation?reopen_conversation=True",
+        response = self.app.post("messages/threads/fb0e79bd-e132-4f4f-a7fd-5e8c6b41b9af/close-conversation"
+                                 "?reopen_conversation=True",
                                  follow_redirects=True)
-
-        self.assertEqual(500, response.status_code)
-        self.assertIn("Error 500 - Server error".encode(), response.data)
-
-    def test_get_close_conversation_page_session_error(self):
-        response = self.app.get("/messages/close-conversation", follow_redirects=True)
 
         self.assertEqual(500, response.status_code)
         self.assertIn("Error 500 - Server error".encode(), response.data)
