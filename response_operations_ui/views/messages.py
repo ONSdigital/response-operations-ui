@@ -58,6 +58,12 @@ def create_message():
 @messages_bp.route('/threads/<thread_id>', methods=['GET', 'POST'])
 @login_required
 def view_conversation(thread_id):
+    if request.method == 'POST' and request.form.get('reopen'):
+        message_controllers.update_close_conversation_status(thread_id=thread_id, status=False)
+        thread_url = url_for("messages_bp.view_conversation", thread_id=thread_id) + "#latest-message"
+        flash(Markup(f'Conversation re-opened. <a href={thread_url}>View conversation</a>'))
+        return redirect(url_for('messages_bp.view_select_survey'))
+
     thread_conversation = message_controllers.get_conversation(thread_id)
     refined_thread = [_refine(message) for message in reversed(thread_conversation['messages'])]
 
@@ -97,8 +103,6 @@ def view_conversation(thread_id):
                                    breadcrumbs=breadcrumbs,
                                    messages=refined_thread,
                                    error="Message send failed")
-
-    session['messages'] = refined_thread
 
     return render_template("conversation-view.html",
                            breadcrumbs=breadcrumbs,
@@ -202,34 +206,23 @@ def view_selected_survey(selected_survey):
 @messages_bp.route('/threads/<thread_id>/close-conversation', methods=['GET', 'POST'])
 @login_required
 def close_conversation(thread_id):
-    thread_conversation = message_controllers.get_conversation(thread_id)
-    refined_thread = [_refine(message) for message in reversed(thread_conversation['messages'])]
-    try:
-        selected_survey = session['messages_survey_selection']
-    except KeyError:
-        logger.exception('Session unavailable')
-        selected_survey = None
-
     if request.method == 'POST':
-        if request.args.get('reopen_conversation'):
-            message_controllers.update_close_conversation_label(thread_id=thread_id, status=False)
-            thread_url = url_for("messages_bp.view_conversation", thread_id=thread_id) + "#latest-message"
-            flash(Markup(f'Conversation re-opened. <a href={thread_url}>View conversation</a>'))
-            return redirect(url_for('messages_bp.view_selected_survey',
-                                    selected_survey=selected_survey))
-
-        message_controllers.update_close_conversation_label(thread_id=thread_id, status=True)
+        message_controllers.update_close_conversation_status(thread_id=thread_id, status=True)
         thread_url = url_for("messages_bp.view_conversation", thread_id=thread_id) + "#latest-message"
         flash(Markup(f'Conversation closed. <a href={thread_url}>View conversation</a>'))
-        return redirect(url_for('messages_bp.view_selected_survey',
-                                selected_survey=selected_survey))
+        return redirect(url_for('messages_bp.view_select_survey'))
+
+    thread_conversation = message_controllers.get_conversation(thread_id)
+    refined_thread = [_refine(message) for message in reversed(thread_conversation['messages'])]
+    page = request.args.get('page')
 
     return render_template('close-conversation.html',
                            subject=refined_thread[0]['subject'],
                            business=refined_thread[0]['business_name'],
                            ru_ref=refined_thread[0]['ru_ref'],
                            respondent=refined_thread[0]['to'],
-                           thread_id=thread_id)
+                           thread_id=thread_id,
+                           page=page)
 
 
 def _build_create_message_breadcrumbs():
