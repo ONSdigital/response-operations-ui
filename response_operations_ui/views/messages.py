@@ -1,3 +1,4 @@
+from datetime import datetime
 import json
 import logging
 
@@ -68,6 +69,12 @@ def view_conversation(thread_id):
     refined_thread = [_refine(message) for message in reversed(thread_conversation['messages'])]
 
     try:
+        closed_time = datetime.strptime(thread_conversation['closed_at'], "%Y-%m-%dT%H:%M:%S.%f")
+        closed_at = closed_time.strftime("%d/%m/%Y" + " at %H:%M")
+    except KeyError:
+        closed_at = None
+
+    try:
         breadcrumbs = _get_conversation_breadcrumbs(thread_conversation['messages'])
     except IndexError:
         breadcrumbs = [
@@ -110,6 +117,7 @@ def view_conversation(thread_id):
                            form=form,
                            selected_survey=refined_thread[0]['survey'],
                            page=page,
+                           closed_at=closed_at,
                            thread_data=thread_conversation)
 
 
