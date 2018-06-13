@@ -52,7 +52,7 @@ if app.config['SESSION_TYPE'] == 'redis':
     # wrap in the flask server side session manager and back it by redis
     app.config['SESSION_REDIS'] = redis
 
-if app.config['DEBUG'] == True:
+if app.config['DEBUG']:
     app.jinja_env.auto_reload = True
 
 Session(app)
