@@ -7,6 +7,7 @@ from flask_login import login_required, current_user
 from flask_paginate import get_parameter, Pagination
 from structlog import wrap_logger
 
+from response_operations_ui import app
 from response_operations_ui.common.dates import get_formatted_date
 from response_operations_ui.common.mappers import format_short_name
 from response_operations_ui.common.surveys import Surveys, FDISurveys
@@ -118,7 +119,8 @@ def view_conversation(thread_id):
                            selected_survey=refined_thread[0]['survey'],
                            page=page,
                            closed_at=closed_at,
-                           thread_data=thread_conversation)
+                           thread_data=thread_conversation,
+                           close_feature_enabled=app.config['FEATURE_ENABLE_CLOSE_CONVERSATION'])
 
 
 @messages_bp.route('/', methods=['GET'])
