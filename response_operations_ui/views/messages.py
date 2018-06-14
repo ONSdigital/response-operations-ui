@@ -1,3 +1,4 @@
+from datetime import datetime
 import json
 import logging
 
@@ -58,8 +59,20 @@ def create_message():
 @messages_bp.route('/threads/<thread_id>', methods=['GET', 'POST'])
 @login_required
 def view_conversation(thread_id):
+    if request.method == 'POST' and request.form.get('reopen'):
+        message_controllers.update_close_conversation_status(thread_id=thread_id, status=False)
+        thread_url = url_for("messages_bp.view_conversation", thread_id=thread_id) + "#latest-message"
+        flash(Markup(f'Conversation re-opened. <a href={thread_url}>View conversation</a>'))
+        return redirect(url_for('messages_bp.view_select_survey'))
+
     thread_conversation = message_controllers.get_conversation(thread_id)
     refined_thread = [_refine(message) for message in reversed(thread_conversation['messages'])]
+
+    try:
+        closed_time = datetime.strptime(thread_conversation['closed_at'], "%Y-%m-%dT%H:%M:%S.%f")
+        closed_at = closed_time.strftime("%d/%m/%Y" + " at %H:%M")
+    except KeyError:
+        closed_at = None
 
     try:
         breadcrumbs = _get_conversation_breadcrumbs(thread_conversation['messages'])
@@ -98,14 +111,13 @@ def view_conversation(thread_id):
                                    messages=refined_thread,
                                    error="Message send failed")
 
-    session['messages'] = refined_thread
-
     return render_template("conversation-view.html",
                            breadcrumbs=breadcrumbs,
                            messages=refined_thread,
                            form=form,
                            selected_survey=refined_thread[0]['survey'],
                            page=page,
+                           closed_at=closed_at,
                            thread_data=thread_conversation)
 
 
@@ -203,36 +215,26 @@ def view_selected_survey(selected_survey):
                                response_error=True)
 
 
-@messages_bp.route('/close-conversation', methods=['GET', 'POST'])
+@messages_bp.route('/threads/<thread_id>/close-conversation', methods=['GET', 'POST'])
 @login_required
-def close_conversation():
-    try:
-        messages = session['messages']
-        selected_survey = session['messages_survey_selection']
-        thread_id = messages[0]['thread_id']
-    except KeyError:
-        logger.exception('Session unavailable')
-
+def close_conversation(thread_id):
     if request.method == 'POST':
-        if request.args.get('reopen_conversation'):
-            message_controllers.remove_closed_conversation_label(thread_id=thread_id)
-            thread_url = url_for("messages_bp.view_conversation", thread_id=thread_id) + "#latest-message"
-            flash(Markup(f'Conversation re-opened. <a href={thread_url}>View conversation</a>'))
-            return redirect(url_for('messages_bp.view_selected_survey',
-                                    selected_survey=selected_survey))
-
-        message_controllers.add_closed_conversation_label(thread_id=thread_id)
+        message_controllers.update_close_conversation_status(thread_id=thread_id, status=True)
         thread_url = url_for("messages_bp.view_conversation", thread_id=thread_id) + "#latest-message"
         flash(Markup(f'Conversation closed. <a href={thread_url}>View conversation</a>'))
-        return redirect(url_for('messages_bp.view_selected_survey',
-                                selected_survey=selected_survey))
+        return redirect(url_for('messages_bp.view_select_survey'))
+
+    thread_conversation = message_controllers.get_conversation(thread_id)
+    refined_thread = [_refine(message) for message in reversed(thread_conversation['messages'])]
+    page = request.args.get('page')
 
     return render_template('close-conversation.html',
-                           subject=messages[0]['subject'],
-                           business=messages[0]['business_name'],
-                           ru_ref=messages[0]['ru_ref'],
-                           respondent=messages[0]['to'],
-                           messages=messages)
+                           subject=refined_thread[0]['subject'],
+                           business=refined_thread[0]['business_name'],
+                           ru_ref=refined_thread[0]['ru_ref'],
+                           respondent=refined_thread[0]['to'],
+                           thread_id=thread_id,
+                           page=page)
 
 
 def _build_create_message_breadcrumbs():
