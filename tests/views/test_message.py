@@ -622,11 +622,7 @@ class TestMessage(unittest.TestCase):
         with self.app.session_transaction() as session:
             session['messages_survey_selection'] = 'Ashe'
         mock_get_jwt.return_value = "blah"
-        mock_request.get(url_get_surveys_list, json=survey_list)
         mock_request.patch(url_get_thread, json=thread_json, status_code=500)
-        mock_request.get(shortname_url + "/ASHE", json=ashe_info)
-        mock_request.get(url_send_message + '/count', json={"total": 1}, status_code=200)
-        mock_request.get(url_get_threads_list, json=thread_list)
 
         response = self.app.post("/messages/threads/fb0e79bd-e132-4f4f-a7fd-5e8c6b41b9af/close-conversation",
                                  follow_redirects=True)
