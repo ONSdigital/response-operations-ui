@@ -598,7 +598,7 @@ class TestMessage(unittest.TestCase):
 
     @requests_mock.mock()
     @patch('response_operations_ui.controllers.message_controllers._get_jwt')
-    def test_post_close_conversation_add_closed_status(self, mock_request, mock_get_jwt):
+    def test_close_conversation(self, mock_request, mock_get_jwt):
         with self.app.session_transaction() as session:
             session['messages_survey_selection'] = 'Ashe'
         mock_get_jwt.return_value = "blah"
@@ -618,11 +618,10 @@ class TestMessage(unittest.TestCase):
 
     @requests_mock.mock()
     @patch('response_operations_ui.controllers.message_controllers._get_jwt')
-    def test_post_close_conversation_add_closed_status_http_error(self, mock_request, mock_get_jwt):
+    def test_close_conversation_http_error(self, mock_request, mock_get_jwt):
         with self.app.session_transaction() as session:
             session['messages_survey_selection'] = 'Ashe'
         mock_get_jwt.return_value = "blah"
-        mock_request.get(url_get_thread, json=thread_json)
         mock_request.get(url_get_surveys_list, json=survey_list)
         mock_request.patch(url_get_thread, json=thread_json, status_code=500)
         mock_request.get(shortname_url + "/ASHE", json=ashe_info)
@@ -637,7 +636,7 @@ class TestMessage(unittest.TestCase):
 
     @requests_mock.mock()
     @patch('response_operations_ui.controllers.message_controllers._get_jwt')
-    def test_post_close_conversation_remove_closed_status(self, mock_request, mock_get_jwt):
+    def test_reopen_conversation(self, mock_request, mock_get_jwt):
         with self.app.session_transaction() as session:
             session['messages_survey_selection'] = 'Ashe'
         mock_get_jwt.return_value = "blah"
