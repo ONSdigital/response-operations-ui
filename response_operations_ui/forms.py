@@ -89,7 +89,7 @@ class ChangeGroupStatusForm(FlaskForm):
     submit = SubmitField('Confirm')
 
 
-class UpdateEventDateForm(FlaskForm):
+class EventDateForm(FlaskForm):
     day = StringField('day',
                       validators=[InputRequired(message="Please enter day"),
                                   Length(min=1, max=2, message="Please enter a one or two digit number")])
@@ -105,10 +105,10 @@ class UpdateEventDateForm(FlaskForm):
 
     HOURS = [(hour, hour) for hour in ['00', '01', '02', '03', '04', '05', '06', '07', '08', '09', '10', '11',
                                        '12', '13', '14', '15', '16', '17', '18', '19', '20', '21', '22', '23']]
-    hour = SelectField('hours', choices=HOURS)
+    hour = SelectField('hours', choices=HOURS, default='07')
 
     MINUTES = [('00', '00'), ('15', '15'), ('30', '30'), ('45', '45')]
-    minute = SelectField('minutes', choices=MINUTES)
+    minute = SelectField('minutes', choices=MINUTES, default='00')
     submit = SubmitField('Save')
 
     def validate_day(form, field):

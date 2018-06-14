@@ -1,12 +1,12 @@
 {% extends "layouts/spoke.html" %}
-{% block page_title %}Update event date{% endblock %}
+{% block page_title %}Create event date{% endblock %}
 {% block main %}
 
 <div role="main" id="main" class="page__main">
 
   <div class="spoke__header">
     <div class="spoke__header__title">
-      <h1 class="jupiter">Change business event</h1>
+      <h1 class="jupiter">Create business event</h1>
     </div>
   </div>
 
@@ -22,17 +22,11 @@
         Period:
       </dt>
       <dd class="" id="period">
-        {{ce.exerciseRef}}
+        {{period}}
       </dd>
     </dl>
 
     <h2 class="saturn u-mt-l">{{event_name}}</h2>
-
-    {% for text in date_restriction_text %}
-    <div>
-      {{ text }}
-    </div>
-    {% endfor %}
 
     <form method="POST" class="">
       <div class="date-time-editor u-mb-l">
@@ -41,7 +35,7 @@
         {% if errors %}
         <div class="panel panel--simple panel--error u-mb-l">
           <div class="panel__body" id="save-error">
-            <h2 id='error-saving-message' class="venus">Error updating {{event_name}} date</h2>
+            <h2 id='error-saving-message' class="venus">Error creating {{event_name}} date</h2>
             <p class="mars">Please try saving your changes again</p>
           </div>
         </div>
@@ -86,7 +80,7 @@
       {{ form.submit(class_="btn btn--primary u-mt-s") }}
 
       <div>
-        <a href="#" onclick="history.back(); return false;">Cancel</a>
+        <a href=" {{ url_for('collection_exercise_bp.view_collection_exercise', survey.shortName, period) }}" onclick="history.back(); return false;">Cancel</a>
       </div>
     </form>
 

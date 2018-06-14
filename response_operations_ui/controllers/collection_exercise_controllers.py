@@ -37,7 +37,7 @@ def get_collection_exercise(short_name, period):
     return response.json()
 
 
-def get_collection_exercise_event_page_info(short_name, period):
+def get_collection_exercise_events(short_name, period):
     logger.debug('Retrieving collection exercise details for the event page',
                  short_name=short_name, period=period)
     url = f'{app.config["BACKSTAGE_API_URL"]}/v1/collection-exercise/{short_name}/{period}/events'
@@ -47,6 +47,22 @@ def get_collection_exercise_event_page_info(short_name, period):
 
     logger.debug('Successfully retrieved collection exercise details for the event page',
                  short_name=short_name, period=period)
+    return response.json()
+
+
+def get_collection_exercise_events_by_id(ce_id):
+    logger.debug('Retrieving collection exercise events by id', collection_exercise_id=ce_id)
+
+    url = f'{app.config["COLLECTION_EXERCISE_URL"]}/collectionexercises/{ce_id}/events'
+    response = requests.Session().get(url=url, auth=app.config['COLLECTION_EXERCISE_AUTH'])
+
+    try:
+        response.raise_for_status()
+    except HTTPError:
+        logger.error("Failed to get collection exercise events", collection_exercise_id=ce_id)
+        raise ApiError(response)
+
+    logger.debug('Successfully retrieved collection exercise events.', collection_exercise_id=ce_id)
     return response.json()
 
 
@@ -67,6 +83,27 @@ def update_event(short_name, period, tag, timestamp):
     logger.debug('Successfully updated event date',
                  short_name=short_name, period=period, tag=tag)
     return True
+
+
+def create_collection_exercise_event(collection_exercise_id, tag, timestamp):
+    logger.debug('Creating event date', collection_exercise_id=collection_exercise_id,
+                 tag=tag)
+
+    url = f'{app.config["COLLECTION_EXERCISE_URL"]}/collectionexercises/{collection_exercise_id}/events'
+    formatted_timestamp = timestamp.strftime('%Y-%m-%dT%H:%M:00.000+0000')
+    response = requests.Session().post(url=url, auth=app.config['COLLECTION_EXERCISE_AUTH'],
+                                       json={'tag': tag, 'timestamp': formatted_timestamp})
+
+    try:
+        response.raise_for_status()
+    except HTTPError:
+        logger.error("Failed to create collection exercise event",
+                     collection_exercise_id=collection_exercise_id,
+                     tag=tag)
+        raise ApiError(response)
+
+    logger.debug("Successfully created collection exercise event", collection_exercise_id=collection_exercise_id,
+                 tag=tag)
 
 
 def execute_collection_exercise(short_name, period):
@@ -101,11 +138,11 @@ def update_collection_exercise_details(collection_exercise_id, user_description,
 def get_collection_exercise_by_id(collection_exercise_id):
     logger.debug('Retrieving collection exercise', collection_exercise_id=collection_exercise_id)
     url = f'{app.config["COLLECTION_EXERCISE_URL"]}/collectionexercises/{collection_exercise_id}'
-    response = requests.get(url, auth=app.config['COLLECTION_EXERCISE_AUTH'])
+    response = requests.get(url=url, auth=app.config['COLLECTION_EXERCISE_AUTH'])
 
     try:
         response.raise_for_status()
-    except requests.exceptions.HTTPError:
+    except HTTPError:
         log_level = logger.warning if response.status_code == 404 else logger.exception
         log_level('Failed to retrieve collection exercise', collection_exercise_id=collection_exercise_id)
         raise ApiError(response)
