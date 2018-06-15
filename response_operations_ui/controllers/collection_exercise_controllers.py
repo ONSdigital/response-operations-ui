@@ -17,9 +17,12 @@ def download_report(collection_exercise_id, survey_id):
         survey_id=survey_id,
     )
 
-    url = app.config["RM_REPORT_SERVICE"]
-    url += "reporting-api/v1/response-chasing/download-report/"
-    url += f"{collection_exercise_id}/{survey_id}"
+    url = (
+        app.config["RM_REPORT_SERVICE"]
+        "reporting-api/v1/response-chasing/download-report/"
+        f"{collection_exercise_id}/{survey_id}"
+    )
+
     response = requests.get(url)
 
     if response.status_code != 200:
@@ -251,8 +254,11 @@ def unlink_sample_summary(collection_exercise_id, sample_summary_id):
         collection_exercise_id=collection_exercise_id,
         sample_summary_id=sample_summary_id,
     )
-    url = f'{app.config["COLLECTION_EXERCISE_URL"]}/collectionexercises/unlink/'
-    url += f"{collection_exercise_id}/sample/{sample_summary_id}"
+
+    url = (
+        f'{app.config["COLLECTION_EXERCISE_URL"]}/collectionexercises/unlink/'
+        f"{collection_exercise_id}/sample/{sample_summary_id}"
+    )
 
     response = requests.delete(url, auth=app.config["COLLECTION_EXERCISE_AUTH"])
 
