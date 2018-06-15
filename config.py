@@ -58,6 +58,8 @@ class Config(object):
     UAA_CLIENT_ID = os.getenv('UAA_CLIENT_ID')
     UAA_CLIENT_SECRET = os.getenv('UAA_CLIENT_SECRET')
 
+    FEATURE_ENABLE_CLOSE_CONVERSATION = strtobool(os.getenv('FEATURE_ENABLE_CLOSE_CONVERSATION', 'False'))
+
 
 class DevelopmentConfig(Config):
     DEBUG = os.getenv('DEBUG', True)
@@ -107,6 +109,8 @@ class DevelopmentConfig(Config):
     UAA_SERVICE_URL = os.getenv('UAA_SERVICE_URL', 'http://localhost:9080')
     UAA_CLIENT_ID = os.getenv('UAA_CLIENT_ID', 'response_operations')
     UAA_CLIENT_SECRET = os.getenv('UAA_CLIENT_SECRET', 'password')
+
+    FEATURE_ENABLE_CLOSE_CONVERSATION = strtobool(os.getenv('FEATURE_ENABLE_CLOSE_CONVERSATION', 'True'))
 
 
 class TestingConfig(DevelopmentConfig):

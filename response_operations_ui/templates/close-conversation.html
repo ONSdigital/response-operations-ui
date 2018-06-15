@@ -1,0 +1,46 @@
+{% extends "layouts/spoke.html" %}
+{% block page_title %} Close conversation {% endblock %}
+{% block main %}
+  <div role="main" id="main" class="page__main">
+    <div class="spoke__header">
+      <div class="spoke__header__title">
+        <h1 class="jupiter">Close conversation</h1>
+      </div>
+    </div>
+
+    <div class="spoke__body">
+      <dl class="description-list description-list-8">
+        <dt class="">
+          Subject:
+        </dt>
+        <dd class="">
+          {{subject}}
+        </dd>
+        <dt class="">
+          Business:
+        </dt>
+        <dd class="">
+          {{business}}
+        </dd>
+        <dt class="">
+          Reference:
+        </dt>
+        <dd class="">
+          {{ru_ref}}
+        </dd>
+        <dt class="">
+          Respondent:
+        </dt>
+        <dd class="">
+          {{respondent}}
+        </dd>
+      </dl>
+
+      <form action="{{ url_for('messages_bp.close_conversation', thread_id=thread_id) }}" method="post">
+        <input type="hidden" name="closed" value="True" />
+        <button class="btn btn--primary u-mt-m">Close conversation</button>
+      </form>
+      <a href="{{ url_for('messages_bp.view_conversation', thread_id=thread_id, page=page) }}#latest-message">Cancel</a>
+    </div>
+  </div>
+{% endblock %}
