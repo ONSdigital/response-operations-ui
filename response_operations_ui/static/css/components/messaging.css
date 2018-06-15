@@ -97,7 +97,7 @@ background: #eee;
 }
 
 .message-list__ru-name {
-  width: 16rem;
+  max-width: 16rem;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
