@@ -114,7 +114,10 @@ def update_collection_exercise_details(collection_exercise_id, user_description,
     logger.debug(
         "Updating collection exercise details", collection_exercise_id=collection_exercise_id
     )
-    url = f'{app.config["BACKSTAGE_API_URL"]}/v1/collection-exercise/update-collection-exercise-details/' f"{collection_exercise_id}"
+    url = (
+        f'{app.config["BACKSTAGE_API_URL"]}/v1/collection-exercise/'
+        'update-collection-exercise-details/{collection_exercise_id}'
+    )
 
     collection_exercise_details = {"user_description": user_description, "period": period}
 
@@ -212,7 +215,8 @@ def unlink_sample_summary(collection_exercise_id, sample_summary_id):
         collection_exercise_id=collection_exercise_id,
         sample_summary_id=sample_summary_id,
     )
-    url = f'{app.config["COLLECTION_EXERCISE_URL"]}/collectionexercises/unlink/{collection_exercise_id}' f"/sample/{sample_summary_id}"
+    url = f'{app.config["COLLECTION_EXERCISE_URL"]}/collectionexercises/unlink/'
+    url += f'{collection_exercise_id}/sample/{sample_summary_id}'
 
     response = requests.delete(url, auth=app.config["COLLECTION_EXERCISE_AUTH"])
 
