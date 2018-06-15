@@ -116,7 +116,7 @@ def update_collection_exercise_details(collection_exercise_id, user_description,
     )
     url = (
         f'{app.config["BACKSTAGE_API_URL"]}/v1/collection-exercise/'
-        'update-collection-exercise-details/{collection_exercise_id}'
+        f'update-collection-exercise-details/{collection_exercise_id}'
     )
 
     collection_exercise_details = {"user_description": user_description, "period": period}
