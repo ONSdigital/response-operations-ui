@@ -16,7 +16,6 @@ def server_error_page():
 
 @error_bp.app_errorhandler(UpdateContactDetailsException)
 def update_details_exception(error=None):
-
     logger.error('update details error', ru_ref=error.ru_ref, status_code=error.status_code)
     error_type = 'email conflict' if error.status_code == 409 else 'api error'
 
