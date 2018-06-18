@@ -8,7 +8,9 @@
 @import "/css/components/headings.css";
 @import "/css/components/images.css";
 @import "/css/components/lists.css";
+@import "/css/components/messaging.css";
 @import "/css/components/nav.css";
+@import "/css/components/pagination.css";
 @import "/css/components/pills.css";
 @import "/css/components/spoke.css";
 @import "/css/components/table.css";
@@ -31,14 +33,10 @@ footer{
 }
 
 
-
-
-
 .date-time-editor{
   /* display: flex; */
 }
 
-
 .date-time-editor .fieldgroup--date{
   /* display: inline-block; */
 }
@@ -46,12 +44,10 @@ footer{
 .date-time-editor .fieldgroup--date{
   /* display: inline-block; */
 }
-
 
 .date-time-editor .fieldgroup--date{
   /* margin-right: 3rem; */
 }
-
 
 .fieldgroup--date .field--day{
   /* width: 2rem;
@@ -69,8 +65,6 @@ footer{
   /* min-width: 4rem; */
   max-width: 4rem;
 }
-
-
 
 .fieldgroup--time .fieldgroup__fields{
   display: flex;
@@ -92,12 +86,13 @@ footer{
 
 /* For when we really do want not to display something! */
 
-.hidden{display:none;}
-
-.not-mvp{
-  display: none;
+.hidden {
+  display:none;
 }
 
+.not-mvp {
+  display: none;
+}
 
 
 /* Does this active style need to go into CDN? */
@@ -109,18 +104,12 @@ a:active{
 }
 
 
-
-
 /* new button icon for copy from material design icon library */
 
 .btn__icon--copy-link{
-
   background-image: url("/s/img/icons/ic_content_copy_black_18px.svg");
   width: 1.2rem;
-
 }
-
-
 
 
 .iac{
@@ -131,13 +120,10 @@ a:active{
 }
 
 
-
 /* Survey page */
 
 .in-the-past{
-
   color: #6a6a6a;
-
 }
 
 
@@ -149,10 +135,7 @@ a:active{
 }
 
 
-
-
 /* Colletcion exercise page START */
-
 
 #output{
 
@@ -191,39 +174,9 @@ button.hidden{
   margin-top: 0.6rem;
 }
 
-
 .list__item--ci{
   list-style-type: square;
 }
-
-
-
-
-/* .current-value::before{
-  content: "(";
-}
-
-.current-value::after{
-  content: ")";
-} */
-
-
-
-/* grid and layout - needs checking! */
-
-
-/**
- * Structure/layout
-
-
- see responsive.css
- changed 18px to 16px, 9px to 8px and 36px to 32px
- others will need changing and all will need rethinking
-
-
- */
-
-
 
 
 /* used on CE page */
@@ -242,9 +195,6 @@ button.hidden{
 }
 
 
-
-
-
 .ce-ci-info-list__item{
   list-style: square;
 }
@@ -258,8 +208,6 @@ button.hidden{
   padding-left: 24px;
   margin-left: -20px;
 }
-
-
 
 .btn--secondary.btn--border.btn--small{
   margin: 0 0.5rem;
@@ -276,9 +224,6 @@ button.hidden{
 }
 
 
-
-
-
 /* RU page Reporting unit page*/
 
 .ru-survey{
@@ -287,30 +232,20 @@ button.hidden{
   border: 0.5rem solid #eeecec;
 }
 
-
 .ru-survey h3{
   font-weight: 500;
 }
 
-
-
 .tbl-ru-survey-respondents{
   /* width: 75%; */
 }
-
-
-
 
 .response__changed{
   background-color: #edf4f0;
 }
 
 
-
-
-
 /* Collection exercise views */
-
 
 .ce-section h2{
   border-bottom: 2px solid #222;
@@ -319,26 +254,19 @@ button.hidden{
   padding-bottom: 0.4rem;
 }
 
-
-
-
-
 .ce-event-date{
   color: #666;
   font-weight: 400;
 }
-
 
 .ce-event-date em{
   color: #222;
   font-weight: 500;
 }
 
-
 table.ce-cis .tbl-ce-label{
   vertical-align: middle;
 }
-
 
 .ci-info-panel{
   margin: 2rem 0;
@@ -347,8 +275,7 @@ table.ce-cis .tbl-ce-label{
 .ce-events__list{
   width: 100%;
   border-collapse: collapse;
-  margin: 1.3rem 0 0.3rem 0;
-  margin-left:auto;
+  margin: 1.3rem 0 0.3rem auto;
 }
 
 .ce-events__list th, .ce-events__list td{
@@ -380,8 +307,7 @@ input[type="file"] {
   display: none;
 }
 
-#filedrag
-{
+#filedrag {
 	display: none;
 	font-weight: bold;
 	text-align: center;
@@ -393,15 +319,12 @@ input[type="file"] {
 	cursor: default;
 }
 
-#filedrag.hover
-{
+#filedrag.hover {
   color: #0f8243;
-	border-color: #0f8243;
-	border-style: solid;
-	box-shadow: inset 0 3px 4px #888;
+  border-color: #0f8243;
+  border-style: solid;
+  box-shadow: inset 0 3px 4px #888;
 }
-
-
 
 .ci-list{
   border-collapse: collapse;
@@ -427,437 +350,16 @@ input[type="file"] {
 }
 
 
-
-
-
-
-
-/*** this is nic confessing to the horror of this little bit below on 3 May - need to sort it out sooner rather than later! */
-
-
-/* .message-list,
-.message-actions,
-.sm-nav,
-.sm-form label.venus,
-.sm-form input,
-.sm-form textarea,
-.sm-form button,
-.secure-message__header,
-.message-content-view
-{
-
-  font-size: 81.25%;
-  font-size: 90%;
-
-} */
-
-
-
-.list-item-cta{
-  list-style: square;
-}
-
-
-
-#message-list-sent tbody tr{
-  display: none;
-}
-
-
-
-
-
-
-
-
-.message-list-actions{
-  display: none;
-}
-
-
-.message-list{
-  margin-top: 1.5rem;
-  margin-bottom: 1rem;
-  width: 100%;
-}
-
-.message-list--no-messages{
-  height: 300px;
-  padding-left: 1rem;
-  padding-right: 1rem;
-}
-
-.rainbow{
-  background-image: url("/images/rainbow-butterfly.png");
-  background-repeat: no-repeat;
-  background-position: bottom;
-}
-
-.message-list thead tr{
-  border-bottom: 2px solid #666;
-}
-
-.message-list tbody tr{
-  border-bottom: 1px solid #ccc;
-}
-
-.message-list tbody tr:hover{
-cursor: pointer;
-background: #e4d8eb;
-background: #eee;
-}
-
-
-.message-list th, .message-list td{
-  text-align: left;
-  padding: 0.5rem 0 0.5rem 1rem;
-}
-
-
-.message-list th{
-  padding-bottom: 0.25rem;
-  background: #e4e8eb;
-  background: #fff;
-}
-
-
-
-.message-list__select{
-  /*display: none;*/
-}
-
-.message-list input[type="checkbox"]{
-}
-
-.message-list__date-time{
-  width: 10rem;
-  white-space: nowrap;
-}
-
-.message-list__ru-ref{
-  width: 8rem;
-  white-space: nowrap;
-}
-
-.message-list__ru-name{
-  width: 16rem;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-}
-
-.message-list__subject{
-  max-width: 200px;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-}
-
-.message-list__from{
-  width: 10rem;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-}
-
-.message-list__to{
-  padding: 0.5rem 1rem 0.5rem 1rem;
-  width: 8rem;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-}
-
-.message-list__item--unread{
-  font-weight: 800;
-}
-
-
-
-@media only screen and (min-width: 740px) {
-
-
-  .message-list__date-time{
-    padding-right: 2rem;
-  }
-
-  .message-list__ru-ref{
-    padding-right: 2rem;
-  }
-
-  .message-list__ru-name{
-    padding-right: 2rem;
-  }
-
-
-  .message-list__subject{
-    min-width: 250px;
-    padding-right: 2rem;
-  }
-
-  .message-list__from{
-    min-width: 150px;
-    padding-right: 2rem;
-  }
-
-  .message-list__to{
-    min-width: 150px;
-  }
-
-}
-
-
-.sm-draft{
-  text-transform: uppercase;
-  font-weight: 400;
-  color: #000;
-  background: #ff0;
-  padding: 2px;
-  font-size: 12px;
-}
-
-
-@media only screen and (min-width: 740px) {
-  .create-message.block{
-    width: 60%;
-  }
-}
-
-.message-view.block{
-  width: 60%;
-}
-
-.message-reply.block{
-  width: 60%;
-}
-
-.secure-message__header dl{
-  display: block;
-  float: left;
-  clear: both;
-  padding-bottom: 2rem;
-}
-
-.secure-message__header dt::after{
-  content: ": "
-}
-
-.secure-message__header dt, .secure-message__header dd{
-  display: inline-block;
-  float: left;
-}
-
-.secure-message__header dt{
-  margin-right: 0;
-  padding-right: 0;
-  clear: left;
-}
-
-.secure-message__header dd{
-  clear: right;
-}
-
-.message-content-view{
-  display: block;
-  float: left;
-  clear:both;
-  margin: 2rem 0;
-}
-
-@media only screen and (min-width: 740px) {
-  .secure-message-conversation{
-    width: 62.5%;
-  }
-}
-
-.secure-message-sent-message{
-  width: 96%;
-}
-
-.secure-message-sent-message-meta.sm-from-ons{
-  background: #033E58;
-}
-
-.secure-message-sent-message-meta.sm-from-respondent{
-  background: #0F8243;
-}
-
-.secure-message-conversation-meta{
-  margin-bottom: 1rem;
-}
-
-.sm-from-respondent .secure-message-conversation-meta{
-    text-align: right;
-}
-
-.secure-message-sent-message{
-   /*margin: 1rem;*/
-   border: 1px solid #222;
-   margin-bottom: 2rem;
-   border-radius: 0.2rem;
-}
-
-.secure-message-sent-message-meta,
-.secure-message-sent-message-body{
-  padding: 0.5rem;
-}
-
-.secure-message-sent-message-meta{
-  border-top-left-radius: 0.2rem;
-  border-top-right-radius: 0.2rem;
-  padding-top: 0.333rem;
-  padding-bottom: 0.333rem;
-  /*font-size: 12px;*/
-}
-
-
-.secure-message-sent-message-meta__label{
-  display: none;
-}
-
-.secure-message-sent-message-meta-datetime{
-  display: block;
-  color: #fff;
-}
-.secure-message-sent-message-meta-from{
-  display: block;
-  color: #fff;
-}
-.secure-message-sent-message-meta-to{
-  display: block;
-  color: #fff;
-}
-
 .tempHack{
   width: 2.5rem;
   display: inline-block;
 }
 
-.secure-message-sent-message-actions{
-  padding: 0.5rem;
-}
-
-.secure-message-sent-message-actions{
-  background: #fff;
-  border-bottom: 1px solid #eee;
-  padding-top: 0.333rem;
-  padding-bottom: 0.333rem;
-  text-align: left;
-}
-
-.sm-message-action{
-  float: right;
-  margin-right: 0.5rem;
-}
-
-.sm-form-recipient-label,
-.sm-form-meta-label{
-  display: inline-block;
-  width: 5rem;
-  color: #666;
-}
-
-
-.secure-message-conversation-meta__label{
-  display: inline-block;
-  width: 5rem;
-  color: #666;
-}
-
-
-
-.secure-message--subject, .secure-message--message{
-  display: block;
-  width: 100%;
-}
-
-
-
-
-
-input.secure-message--recipient{
-  width: 80%;
-  font-size: 1rem; /* avert your eyes! */
-  margin-bottom: 1rem;
-}
-
-label.secure-message--subject{
-  margin-top: 1rem;
-}
-
-input.secure-message--subject{
-  border: 1px solid #222;
-  margin-bottom: 1rem;
-}
-
-textarea.secure-message--message{
-  border: 1px solid #222;
-  margin-bottom: 1rem;
-}
 
 .error-message {
   color: #D0021B;
 }
 
-.circle:before {
-  content: ' \25CF';
-  font-size: 16px;
-  color: #4263C2;
-  margin-left: -0.75rem;
-  margin-right: .2rem;
-}
-
-
-/* Leah messing around trying to implement DigiPubs pagination  pattern */
-
-.list--inline {
-  display: inline-block;
-}
-
-.list--neutral {
-  list-style: none;
-  padding: 0;
-}
-
-.list-inline li {
-  display: inline-block;
-}
-
-.pag {
-  font-size: 14px;
-  font-weight: 700;
-  display: inline-block;
-  width: auto;
-  padding: 6px 16px 10px 16px;
-  border: 0 none;
-  text-align: center;
-  line-height: 24px;
-}
-
-.pag--block {
-  display: inline-block;
-}
-
-.pag--plain-active {
-  background: #033e58;
-  color: #fff;
-  text-decoration: none;
-}
-
-.pag--plain {
-  background-color: #fff;
-  color: #4263c2;
-  text-decoration: underline;
-}
-
- .message-action {
-  color: #fff;
-  float: right;
-}
-
-.message-action:hover {
-  color: #ccc;
-}
 
 button{
      background:none;
@@ -867,63 +369,4 @@ button{
      font: inherit;
      border-bottom:1px solid #4263c2;
      cursor: pointer;
-}
-
-
-.message-read {
-color: purple;
-font-weight: 400;
-}
-
-
-.pagination {
-	color: black;
-	padding: 1;
-    display: inline;
-}
-
-.pagination ul {
-	color: black;
-	float: left;
-    padding-left: 0rem;
-	display:inline;
-}
-
-.pagination li {
-	list-style-type: none;
-	float: left;
-    padding-top: 4px;
-    padding-bottom: 4px;
-	display:inline;
-}
-
-.pagination li.active {
-	margin: 0 6px;
-	background-color: #033E58;
-}
-
-.pagination li.active a {
-	color: white;
-}
-
-.pagination li.disabled a {
-	color: #666666;
-	text-decoration: none;
-}
-
-.pagination li:hover:not(.active) {
-	background-color: #E4E8EB;
-	transition: background-color .3s;
-}
-
-.pagination li a {
-	padding: 8px 16px;
-}
-
-.pagination li.previous.disabled.unavailable {
-	display: none;
-}
-
-.pagination li.next.disabled {
-	display: none;
 }
