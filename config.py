@@ -49,10 +49,10 @@ class Config(object):
     PARTY_PASSWORD = os.getenv('PARTY_PASSWORD')
     PARTY_AUTH = (PARTY_USERNAME, PARTY_PASSWORD)
 
-    RM_REPORT_SERVICE_HOST = os.getenv('RM_REPORT_SERVICE_HOST', 'localhost')
-    RM_REPORT_SERVICE_PORT = os.getenv('RM_REPORT_SERVICE_PORT', 8084)
-    RM_REPORT_SERVICE_PROTOCOL = os.getenv('RM_REPORT_SERVICE_PROTOCOL', 'http')
-    RM_REPORT_SERVICE = f'{RM_REPORT_SERVICE_PROTOCOL}://{RM_REPORT_SERVICE_HOST}:{RM_REPORT_SERVICE_PORT}/'
+    REPORT_HOST = os.getenv('REPORT_HOST')
+    REPORT_PORT = os.getenv('REPORT_PORT')
+    REPORT_PROTOCOL = os.getenv('REPORT_PROTOCOL')
+    REPORT_URL = f'{REPORT_PROTOCOL}://{REPORT_HOST}:{REPORT_PORT}/'
 
     SAMPLE_URL = os.getenv('SAMPLE_URL')
     SAMPLE_USERNAME = os.getenv('SAMPLE_USERNAME')
@@ -105,6 +105,11 @@ class DevelopmentConfig(Config):
 
     SECURE_MESSAGE_URL = os.getenv('SECURE_MESSAGE_URL', 'http://localhost:5050')
     RAS_SECURE_MESSAGING_JWT_SECRET = os.getenv('RAS_SECURE_MESSAGING_JWT_SECRET', 'testsecret')
+
+    REPORT_HOST = os.getenv('REPORT_HOST', 'localhost')
+    REPORT_PORT = os.getenv('REPORT_PORT', 8084)
+    REPORT_PROTOCOL = os.getenv('REPORT_PROTOCOL', 'http')
+    REPORT_URL = f'{REPORT_PROTOCOL}://{REPORT_HOST}:{REPORT_PORT}/'
 
     PARTY_URL = os.getenv('PARTY_URL', 'http://localhost:8081')
     PARTY_USERNAME = os.getenv('PARTY_USERNAME', 'admin')
