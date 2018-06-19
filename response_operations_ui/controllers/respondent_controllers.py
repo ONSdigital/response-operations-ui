@@ -10,22 +10,20 @@ logger = wrap_logger(logging.getLogger(__name__))
 
 
 def search_respondent_by_email(email):
-    logger.debug('Search respondent via email')
+    logger.debug('Searching for respondent by email')
 
-    request_json = {
-        'email': email
-    }
-    url = f'{app.config["BACKSTAGE_API_URL"]}/v1/party/get-respondent-by-email'
-    response = requests.get(url, json=request_json)
+    url = f'{app.config["PARTY_URL"]}/party-api/v1/respondents/email'
+    response = requests.get(url, json={'email': email}, auth=app.config['PARTY_AUTH'])
 
-    if 'No respondent found' in response.text:
-        return response.json()
+    if response.status_code == 404:
+        logger.debug("No respondent found for email address", status_code=response.status_code)
+        return
 
     try:
         response.raise_for_status()
     except requests.exceptions.HTTPError:
         logger.exception("Respondent retrieval failed")
         raise ApiError(response)
-    logger.debug("Respondent retrieved successfully")
+    logger.debug("Respondent retrieved by email successfully")
 
     return response.json()
