@@ -569,7 +569,8 @@ class TestReportingUnits(unittest.TestCase):
     def test_reporting_unit_generate_new_code_fail(self, mock_request):
         mock_request.post(url_generate_new_code, status_code=500)
 
-        response = self.app.get(f"/reporting-units/{ru_ref}/{collection_exercise_id_1}/new_enrolment_code", follow_redirects=True)
+        response = self.app.get(f"/reporting-units/{ru_ref}/{collection_exercise_id_1}/new_enrolment_code",
+                                follow_redirects=True)
 
         self.assertEqual(response.status_code, 500)
         self.assertIn("Error 500 - Server error".encode(), response.data)
