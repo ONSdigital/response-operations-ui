@@ -16,7 +16,8 @@ with open('tests/test_data/collection_exercise/collection_exercise_details_no_sa
     collection_exercise_details_no_sample = json.load(json_data)
 with open('tests/test_data/collection_exercise/collection_exercise_details_failedvalidation.json') as json_data:
     collection_exercise_details_failedvalidation = json.load(json_data)
-url_collection_instrument = f'{app.config["BACKSTAGE_API_URL"]}/v1/collection-instrument/test/000000'
+url_collection_instrument = f'{app.config["COLLECTION_INSTRUMENT_URL"]}' \
+                            f'/collection-instrument-api/1.0.2/upload/6e65acc4-4192-474b-bd3d-08071c4768e2'
 url_collection_instrument_link = f'{app.config["BACKSTAGE_API_URL"]}/v1/collection-instrument/link/111111/000000'
 url_collection_instrument_unlink = f'{app.config["BACKSTAGE_API_URL"]}/v1/collection-instrument/' \
                                    f'unlink/14fb3e68-4dca-46db-bf49-04b84e07e77c/000000'
@@ -91,10 +92,15 @@ class TestCollectionExercise(unittest.TestCase):
             'ciFile': (BytesIO(b'data'), '064_201803_0001.xlsx'),
             'load-ci': '',
         }
+        survey_data = {
+            "id": "af6ddd8f-7bd0-4c51-b879-ff4b367461c5"
+        }
         mock_request.post(url_collection_instrument, status_code=201)
+        mock_request.get(url_survey_shortname, status_code=200, json=survey_data)
+        mock_request.get(url_collection_exercise_survey_id, status_code=200, json=exercise_data)
         mock_request.get(url_get_collection_exercise, json=collection_exercise_details)
 
-        response = self.app.post("/surveys/test/000000", data=post_data)
+        response = self.app.post("/surveys/test/000000", data=post_data, follow_redirects=True)
 
         self.assertEqual(response.status_code, 200)
         self.assertIn("Collection instrument loaded".encode(), response.data)
@@ -149,10 +155,15 @@ class TestCollectionExercise(unittest.TestCase):
             'ciFile': (BytesIO(b'data'), '064_201803_0001.xlsx'),
             'load-ci': '',
         }
+        survey_data = {
+            "id": "af6ddd8f-7bd0-4c51-b879-ff4b367461c5"
+        }
         mock_request.post(url_collection_instrument, status_code=201)
+        mock_request.get(url_survey_shortname, status_code=200, json=survey_data)
+        mock_request.get(url_collection_exercise_survey_id, status_code=200, json=exercise_data)
         mock_request.get(url_get_collection_exercise, json=collection_exercise_details)
 
-        response = self.app.post("/surveys/test/000000", data=post_data)
+        response = self.app.post("/surveys/test/000000", data=post_data, follow_redirects=True)
 
         self.assertEqual(response.status_code, 200)
         self.assertIn("collection_instrument.xlsx".encode(), response.data)
@@ -163,7 +174,12 @@ class TestCollectionExercise(unittest.TestCase):
             'ciFile': (BytesIO(b'data'), '064_201803_0001.xlsx'),
             'load-ci': '',
         }
+        survey_data = {
+            "id": "af6ddd8f-7bd0-4c51-b879-ff4b367461c5"
+        }
         mock_request.post(url_collection_instrument, status_code=500)
+        mock_request.get(url_survey_shortname, status_code=200, json=survey_data)
+        mock_request.get(url_collection_exercise_survey_id, status_code=200, json=exercise_data)
         mock_request.get(url_get_collection_exercise, json=collection_exercise_details)
 
         response = self.app.post("/surveys/test/000000", data=post_data, follow_redirects=True)
