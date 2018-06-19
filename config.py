@@ -106,10 +106,7 @@ class DevelopmentConfig(Config):
     SECURE_MESSAGE_URL = os.getenv('SECURE_MESSAGE_URL', 'http://localhost:5050')
     RAS_SECURE_MESSAGING_JWT_SECRET = os.getenv('RAS_SECURE_MESSAGING_JWT_SECRET', 'testsecret')
 
-    REPORT_HOST = os.getenv('REPORT_HOST', 'localhost')
-    REPORT_PORT = os.getenv('REPORT_PORT', 8084)
-    REPORT_PROTOCOL = os.getenv('REPORT_PROTOCOL', 'http')
-    REPORT_URL = f'{REPORT_PROTOCOL}://{REPORT_HOST}:{REPORT_PORT}/'
+    REPORT_URL = os.getenv('REPORT_URL', 'http://localhost:8084')
 
     PARTY_URL = os.getenv('PARTY_URL', 'http://localhost:8081')
     PARTY_USERNAME = os.getenv('PARTY_USERNAME', 'admin')
