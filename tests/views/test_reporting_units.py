@@ -24,7 +24,7 @@ get_respondent_by_id_url = f'{app.config["PARTY_URL"]}/party-api/v1/respondents/
 url_edit_contact_details = f'{app.config["PARTY_URL"]}/party-api/v1/respondents/id/{respondent_party_id}'
 url_generate_new_code = f'{backstage_api_url}/v1/reporting-unit/iac/ce_id/ru_ref'
 url_resend_verification_email = f'{backstage_api_url}/v1/reporting-unit/resend-verification-email/{respondent_party_id}'
-url_change_enrolment_status = f'{app.config["BACKSTAGE_API_URL"]}/v1/party/change-enrolment-status'
+url_change_enrolment_status = f'{app.config["PARTY_URL"]}/party-api/v1/respondents/change_enrolment_status'
 
 url_get_party_by_ru_ref = f'{app.config["PARTY_URL"]}/party-api/v1/parties/type/B/ref/{ru_ref}'
 url_get_cases_by_business_party_id = f'{app.config["CASE_URL"]}/cases/partyid/{business_party_id}'

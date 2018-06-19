@@ -23,18 +23,20 @@ def search_reporting_units(query):
 
 
 def change_enrolment_status(business_id, respondent_id, survey_id, change_flag):
-    logger.debug('Changing the enrolment status',
+    logger.debug('Changing enrolment status',
                  business_id=business_id, respondent_id=respondent_id, survey_id=survey_id, change_flag=change_flag)
-    url = f'{app.config["BACKSTAGE_API_URL"]}/v1/party/change-enrolment-status'
+    url = f'{app.config["PARTY_URL"]}/party-api/v1/respondents/change_enrolment_status'
     enrolment_json = {
         'respondent_id': respondent_id,
         'business_id': business_id,
         'survey_id': survey_id,
         'change_flag': change_flag
     }
-    response = requests.put(url, json=enrolment_json)
+    response = requests.put(url, json=enrolment_json, auth=app.config['PARTY_AUTH'])
 
     if response.status_code != 200:
+        logger.error('Failed to change enrolment status',
+                     business_id=business_id, respondent_id=respondent_id, survey_id=survey_id, change_flag=change_flag)
         raise ApiError(response)
 
     logger.debug('Successfully changed enrolment status',
