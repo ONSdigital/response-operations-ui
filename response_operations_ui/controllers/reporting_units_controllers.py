@@ -11,10 +11,11 @@ logger = wrap_logger(logging.getLogger(__name__))
 
 def search_reporting_units(query):
     logger.debug('Retrieving reporting units by search query', query=query)
-    url = f'{app.config["BACKSTAGE_API_URL"]}/v1/reporting-unit/search'
-    response = requests.get(url, params={'query': query})
+    url = f'{app.config["PARTY_URL"]}/party-api/v1/businesses/search'
+    response = requests.get(url, params={'query': query}, auth=app.config['PARTY_AUTH'])
 
     if response.status_code != 200:
+        logger.error('Error retrieving reporting units by search query', query=query)
         raise ApiError(response)
 
     logger.debug('Successfully retrieved reporting units by search', query=query)
