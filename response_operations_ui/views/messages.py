@@ -1,4 +1,5 @@
 from datetime import datetime
+from distutils.util import strtobool
 import json
 import logging
 
@@ -173,7 +174,8 @@ def view_selected_survey(selected_survey):
 
         page = request.args.get(get_parameter('page'), type=int, default=1)
         limit = request.args.get(get_parameter('limit'), type=int, default=10)
-        is_closed = request.args.get('is_closed', type=bool, default=False)
+
+        is_closed = request.args.get('is_closed', default='false')
 
         params = {
             'survey': survey_id,
@@ -182,7 +184,8 @@ def view_selected_survey(selected_survey):
             'is_closed': is_closed
         }
 
-        thread_count = message_controllers.get_conversation_count({'survey': survey_id})
+        thread_count = message_controllers.get_conversation_count({'survey': survey_id,
+                                                                   'is_closed': is_closed})
         messages = [_refine(message) for message in message_controllers.get_thread_list(params)]
 
         pagination = Pagination(page=page,
@@ -203,7 +206,7 @@ def view_selected_survey(selected_survey):
                                selected_survey=formatted_survey,
                                pagination=pagination,
                                change_survey=True,
-                               is_closed=is_closed)
+                               is_closed=strtobool(is_closed))
 
     except TypeError:
         logger.exception("Failed to retrieve survey id")
