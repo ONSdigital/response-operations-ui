@@ -10,9 +10,10 @@ from response_operations_ui import app
 logger = wrap_logger(logging.getLogger(__name__))
 
 
-def upload_collection_instrument(short_name, period, file, form_type=None):
-    logger.debug('Uploading collection instrument', short_name=short_name, period=period, form_type=form_type)
-    url = f'{app.config["BACKSTAGE_API_URL"]}/v1/collection-instrument/{short_name}/{period}'
+def upload_collection_instrument(collection_exercise_id, file, form_type=None):
+    logger.debug('Uploading collection instrument', collection_exercise_id=collection_exercise_id, form_type=form_type)
+    url = f'{app.config["COLLECTION_INSTRUMENT_URL"]}' \
+          f'/collection-instrument-api/1.0.2/upload/{collection_exercise_id}'
 
     params = dict()
 
@@ -22,13 +23,16 @@ def upload_collection_instrument(short_name, period, file, form_type=None):
         }
         params['classifiers'] = json.dumps(classifiers)
 
-    response = requests.post(url, files={"file": (file.filename, file.stream, file.mimetype)}, params=params)
-    if response.status_code != 201:
-        logger.error('Failed to upload collection instrument', short_name=short_name, period=period,
-                     form_type=form_type, status=response.status_code)
+    files = {"file": (file.filename, file.stream, file.mimetype)}
+    response = requests.post(url, files=files, params=params, auth=app.config['COLLECTION_INSTRUMENT_AUTH'])
+    try:
+        response.raise_for_status()
+    except requests.exceptions.HTTPError:
+        logger.exception('Failed to upload collection instrument', collection_exercise_id=collection_exercise_id,
+                         form_type=form_type, status=response.status_code)
         return False
 
-    logger.debug('Successfully uploaded collection instrument', short_name=short_name, period=period,
+    logger.debug('Successfully uploaded collection instrument', collection_exercise_id=collection_exercise_id,
                  form_type=form_type)
     return True
 

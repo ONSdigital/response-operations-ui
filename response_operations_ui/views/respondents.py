@@ -22,12 +22,10 @@ def respondent_search():
 
     if form.validate_on_submit():
         email = request.form.get('query')
-
+        # NB: requires exact email to be entered
         respondent = party_controller.search_respondent_by_email(email)
-
         if respondent:
             return redirect(url_for('respondent_bp.respondent_details', respondent_id=respondent['id']))
-
         response = 'No Respondent found for ' + email
 
     return render_template('search-respondent.html', response=response, form=form, breadcrumbs=breadcrumbs)
