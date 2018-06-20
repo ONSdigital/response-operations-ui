@@ -10,6 +10,7 @@ from response_operations_ui.views.reporting_units import reporting_unit_bp
 from response_operations_ui.views.respondents import respondent_bp
 from response_operations_ui.views.sign_in import sign_in_bp
 from response_operations_ui.views.surveys import surveys_bp
+from response_operations_ui.views.samples import sample_bp
 
 # Only enable the edit event dates endpoints if flag is present
 if app.config['EDIT_EVENT_DATES_ENABLED']:
@@ -27,3 +28,4 @@ app.register_blueprint(respondent_bp, url_prefix='/respondents')
 app.register_blueprint(sign_in_bp, url_prefix='/sign-in')
 app.register_blueprint(surveys_bp, url_prefix='/surveys')
 app.register_blueprint(case_bp, url_prefix='/case')
+app.register_blueprint(sample_bp, url_prefix='/samples')

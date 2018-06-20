@@ -282,11 +282,24 @@
                <div class="u-mb-xl">
                    <div class="panel panel--simple panel--error u-mb-l">
                        <div class="panel__body">
-                           {{ sample.notes }}
+                           {% if sample.errorCode == 'NotCsv' %}
+                               Error uploading - incorrect file type. The sample file must be in .csv format
+                           {% elif sample.errorCode == 'DataError' %}
+                               <div>Duplicate records or wrongly formatted data found in sample</div>
+                               <div><a href="/samples/{{sample.id}}/notes" target="_blank">See error details</a></div>
+                           {% else %}
+                               {{ sample.notes }}
+                           {% endif %}
                        </div>
                    </div>
                  {% if not locked %}
-                 <a class="u-ml-xs" id="remove_sample_btn_2" href="{{ url_for('collection_exercise_bp.get_confirm_remove_sample', short_name=survey.shortName, period=ce.exerciseRef) }}">Remove</a>
+                 <a class="u-ml-xs" id="remove_sample_btn_2" href="{{ url_for('collection_exercise_bp.get_confirm_remove_sample', short_name=survey.shortName, period=ce.exerciseRef) }}">
+                   {% if sample.errorCode == 'DataError' %}
+                       Reset to upload new sample file
+                   {% else %}
+                       Remove
+                   {% endif %}
+                 </a>
                  {% endif %}
                </div>
           {% endif %}

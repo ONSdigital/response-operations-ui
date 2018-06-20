@@ -27,7 +27,8 @@ def get_success_message(success_key):
 
 def get_error_message(error_key):
     return {
-        'sample_removed_error': "Error failed to remove sample"
+        'sample_removed_error': "Error failed to remove sample",
+        'invalid_file_format': "Error uploading - incorrect file type. The sample file must be in .csv format"
     }.get(error_key, None)
 
 
@@ -160,7 +161,7 @@ def _upload_sample(short_name, period):
             sample_summary_id=sample_summary['id'])
 
     return redirect(url_for('collection_exercise_bp.view_collection_exercise', short_name=short_name, period=period,
-                            error=error, show_msg='true'))
+                            error_key=error, show_msg='true'))
 
 
 def _select_collection_instrument(short_name, period):
@@ -285,7 +286,7 @@ def _validate_sample():
         file = request.files['sampleFile']
         if not str.endswith(file.filename, '.csv'):
             logger.debug('Invalid file format uploaded', filename=file.filename)
-            error = 'Invalid file format'
+            error = 'invalid_file_format'
     else:
         logger.debug('No file uploaded')
         error = 'File not uploaded'
