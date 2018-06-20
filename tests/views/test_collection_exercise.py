@@ -381,7 +381,6 @@ class TestCollectionExercise(unittest.TestCase):
     @requests_mock.mock()
     def test_no_upload_sample_when_bad_extension(self, mock_request):
         data = {"sampleFile": (BytesIO(b"data"), "test.html"), "load-sample": ""}
-        survey_data = {"id": "af6ddd8f-7bd0-4c51-b879-ff4b367461c5"}
         mock_request.get(
             url_get_collection_exercise, json=collection_exercise_details_no_sample
         )
@@ -399,7 +398,6 @@ class TestCollectionExercise(unittest.TestCase):
     @requests_mock.mock()
     def test_no_upload_sample_when_no_file(self, mock_request):
         data = {"load-sample": ""}
-        survey_data = {"id": "af6ddd8f-7bd0-4c51-b879-ff4b367461c5"}
 
         mock_request.get(
             url_get_collection_exercise, json=collection_exercise_details_no_sample
