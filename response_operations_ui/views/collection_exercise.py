@@ -203,8 +203,15 @@ def _upload_collection_instrument(short_name, period):
     if not error:
         file = request.files['ciFile']
         form_type = _get_form_type(file.filename)
-        ci_loaded = collection_instrument_controllers.upload_collection_instrument(short_name, period, file, form_type)
-        if ci_loaded:
+        survey = survey_controllers.get_survey_by_shortname(short_name)
+        exercises = collection_exercise_controllers.get_collection_exercises_by_survey(survey['id'])
+
+        # Find the collection exercise for the given period
+        exercise = get_collection_exercise_by_period(exercises, period)
+        if not exercise:
+            return make_response(jsonify({'message': 'Collection exercise not found'}), 404)
+
+        if collection_instrument_controllers.upload_collection_instrument(exercise['id'], file, form_type):
             success_panel = {
                 "id": "collection-instrument-success",
                 "message": "Collection instrument loaded"
