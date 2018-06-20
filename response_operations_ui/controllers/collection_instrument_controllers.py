@@ -25,9 +25,11 @@ def upload_collection_instrument(collection_exercise_id, file, form_type=None):
 
     files = {"file": (file.filename, file.stream, file.mimetype)}
     response = requests.post(url, files=files, params=params, auth=app.config['COLLECTION_INSTRUMENT_AUTH'])
-    if response.status_code != 201:
-        logger.error('Failed to upload collection instrument', collection_exercise_id=collection_exercise_id,
-                     form_type=form_type, status=response.status_code)
+    try:
+        response.raise_for_status()
+    except requests.exceptions.HTTPError:
+        logger.exception('Failed to upload collection instrument', collection_exercise_id=collection_exercise_id,
+                         form_type=form_type, status=response.status_code)
         return False
 
     logger.debug('Successfully uploaded collection instrument', collection_exercise_id=collection_exercise_id,
