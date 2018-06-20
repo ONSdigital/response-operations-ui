@@ -49,10 +49,7 @@ class Config(object):
     PARTY_PASSWORD = os.getenv('PARTY_PASSWORD')
     PARTY_AUTH = (PARTY_USERNAME, PARTY_PASSWORD)
 
-    REPORT_HOST = os.getenv('REPORT_HOST')
-    REPORT_PORT = os.getenv('REPORT_PORT')
-    REPORT_PROTOCOL = os.getenv('REPORT_PROTOCOL')
-    REPORT_URL = f'{REPORT_PROTOCOL}://{REPORT_HOST}:{REPORT_PORT}/'
+    REPORT_URL = os.getenv('REPORT_URL')
 
     SAMPLE_URL = os.getenv('SAMPLE_URL')
     SAMPLE_USERNAME = os.getenv('SAMPLE_USERNAME')
