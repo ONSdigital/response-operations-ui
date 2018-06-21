@@ -46,7 +46,9 @@ def generate_new_enrolment_code(collection_exercise_id, ru_ref):
     url = f'{app.config["CASE_URL"]}/cases/iac/{collection_exercise_id}/{ru_ref}'
     response = requests.post(url, auth=app.config['CASE_AUTH'])
 
-    if response.status_code != 200:
+    try:
+        response.raise_for_status()
+    except requests.exceptions.HTTPError:
         logger.error('Failed to generate new enrolment code',
                      collection_exercise_id=collection_exercise_id, ru_ref=ru_ref)
         raise ApiError(response)
