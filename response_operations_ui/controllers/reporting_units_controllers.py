@@ -59,7 +59,9 @@ def resend_verification_email(party_id):
     url = f'{app.config["PARTY_URL"]}/party-api/v1/resend-verification-email/{party_id}'
     response = requests.get(url, auth=app.config['PARTY_AUTH'])
 
-    if response.status_code != 200:
+    try:
+        response.raise_for_status()
+    except requests.exceptions.HTTPError:
         logger.exception("Re-sending of verification email failed", party_id=party_id)
         raise ApiError(response)
 
