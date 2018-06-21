@@ -14,7 +14,9 @@ def search_reporting_units(query):
     url = f'{app.config["PARTY_URL"]}/party-api/v1/businesses/search'
     response = requests.get(url, params={'query': query}, auth=app.config['PARTY_AUTH'])
 
-    if response.status_code != 200:
+    try:
+        response.raise_for_status()
+    except requests.exceptions.HTTPError:
         logger.error('Error retrieving reporting units by search query', query=query)
         raise ApiError(response)
 
