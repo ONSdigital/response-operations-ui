@@ -49,6 +49,8 @@ class Config(object):
     PARTY_PASSWORD = os.getenv('PARTY_PASSWORD')
     PARTY_AUTH = (PARTY_USERNAME, PARTY_PASSWORD)
 
+    REPORT_URL = os.getenv('REPORT_URL')
+
     SAMPLE_URL = os.getenv('SAMPLE_URL')
     SAMPLE_USERNAME = os.getenv('SAMPLE_USERNAME')
     SAMPLE_PASSWORD = os.getenv('SAMPLE_PASSWORD')
@@ -100,6 +102,8 @@ class DevelopmentConfig(Config):
 
     SECURE_MESSAGE_URL = os.getenv('SECURE_MESSAGE_URL', 'http://localhost:5050')
     RAS_SECURE_MESSAGING_JWT_SECRET = os.getenv('RAS_SECURE_MESSAGING_JWT_SECRET', 'testsecret')
+
+    REPORT_URL = os.getenv('REPORT_URL', 'http://localhost:8084')
 
     PARTY_URL = os.getenv('PARTY_URL', 'http://localhost:8081')
     PARTY_USERNAME = os.getenv('PARTY_USERNAME', 'admin')
