@@ -22,9 +22,10 @@ url_get_reporting_unit = f'{backstage_api_url}/v1/reporting-unit/50012345678'
 url_search_reporting_units = f'{backstage_api_url}/v1/reporting-unit/search'
 get_respondent_by_id_url = f'{app.config["PARTY_URL"]}/party-api/v1/respondents/id/{respondent_party_id}'
 url_edit_contact_details = f'{app.config["PARTY_URL"]}/party-api/v1/respondents/id/{respondent_party_id}'
-url_generate_new_code = f'{backstage_api_url}/v1/reporting-unit/iac/ce_id/ru_ref'
-url_resend_verification_email = f'{backstage_api_url}/v1/reporting-unit/resend-verification-email/{respondent_party_id}'
-url_change_enrolment_status = f'{app.config["BACKSTAGE_API_URL"]}/v1/party/change-enrolment-status'
+url_generate_new_code = f'{app.config["CASE_URL"]}/cases/iac/{collection_exercise_id_1}/{ru_ref}'
+url_change_enrolment_status = f'{app.config["PARTY_URL"]}/party-api/v1/respondents/change_enrolment_status'
+url_resend_verification_email = f'{app.config["PARTY_URL"]}/party-api/v1/resend-verification-email' \
+                                f'/{respondent_party_id}'
 
 url_get_party_by_ru_ref = f'{app.config["PARTY_URL"]}/party-api/v1/parties/type/B/ref/{ru_ref}'
 url_get_cases_by_business_party_id = f'{app.config["CASE_URL"]}/cases/partyid/{business_party_id}'
@@ -372,7 +373,7 @@ class TestReportingUnits(unittest.TestCase):
 
     @requests_mock.mock()
     def test_resent_verification_email(self, mock_request):
-        mock_request.post(url_resend_verification_email)
+        mock_request.get(url_resend_verification_email)
         mock_request.get(url_get_party_by_ru_ref, json=business_reporting_unit)
         mock_request.get(url_get_cases_by_business_party_id, json=cases_list)
         mock_request.get(url_get_casegroups_by_business_party_id, json=case_groups)
@@ -392,7 +393,7 @@ class TestReportingUnits(unittest.TestCase):
 
     @requests_mock.mock()
     def test_fail_resent_verification_email(self, mock_request):
-        mock_request.post(url_resend_verification_email, status_code=500)
+        mock_request.get(url_resend_verification_email, status_code=500)
         response = self.app.post(
             f"reporting-units/resend_verification/50012345678/{respondent_party_id}", follow_redirects=True)
         self.assertEqual(response.status_code, 500)
@@ -555,7 +556,7 @@ class TestReportingUnits(unittest.TestCase):
     def test_reporting_unit_generate_new_code(self, mock_request):
         mock_request.post(url_generate_new_code, json=case)
 
-        response = self.app.get("/reporting-units/ru_ref/ce_id/new_enrolment_code"
+        response = self.app.get(f"/reporting-units/{ru_ref}/{collection_exercise_id_1}/new_enrolment_code"
                                 "?survey_name=test_survey_name&trading_as=trading_name&ru_name=test_ru_name",
                                 follow_redirects=True)
 
@@ -569,7 +570,8 @@ class TestReportingUnits(unittest.TestCase):
     def test_reporting_unit_generate_new_code_fail(self, mock_request):
         mock_request.post(url_generate_new_code, status_code=500)
 
-        response = self.app.get("/reporting-units/ru_ref/ce_id/new_enrolment_code", follow_redirects=True)
+        response = self.app.get(f"/reporting-units/{ru_ref}/{collection_exercise_id_1}/new_enrolment_code",
+                                follow_redirects=True)
 
         self.assertEqual(response.status_code, 500)
         self.assertIn("Error 500 - Server error".encode(), response.data)
