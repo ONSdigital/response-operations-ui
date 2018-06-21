@@ -106,6 +106,21 @@ def remove_unread_label(message_id):
         logger.exception("Failed to remove unread label", message_id=message_id)
 
 
+def update_close_conversation_status(thread_id, status):
+    url = f"{current_app.config['SECURE_MESSAGE_URL']}/v2/threads/{thread_id}"
+    data = {"is_closed": status}
+
+    logger.debug("Updating close conversation status", thread_id=thread_id)
+    response = requests.patch(url, headers={"Authorization": _get_jwt(), "Content-Type": "application/json"}, json=data)
+
+    try:
+        response.raise_for_status()
+        logger.debug("Successfully updated close conversation status", thread_id=thread_id)
+    except HTTPError:
+        logger.exception("Failed to update close conversation status", thread_id=thread_id)
+        raise ApiError(response)
+
+
 def _post_new_message(message):
     url = f'{current_app.config["SECURE_MESSAGE_URL"]}/v2/messages'
     return requests.post(url, headers={'Authorization': _get_jwt(), 'Content-Type': 'application/json',

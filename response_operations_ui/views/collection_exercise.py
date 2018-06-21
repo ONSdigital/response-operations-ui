@@ -1,10 +1,12 @@
 import iso8601
+import json
 import logging
 
-from flask import Blueprint, render_template, request, redirect, url_for
+from flask import Blueprint, render_template, request, redirect, session, url_for
 from flask_login import login_required
 from flask import jsonify, make_response
 from structlog import wrap_logger
+
 from response_operations_ui.common.filters import get_collection_exercise_by_period
 from response_operations_ui.common.mappers import convert_events_to_new_format, map_collection_exercise_state
 from response_operations_ui.controllers import collection_instrument_controllers, sample_controllers, \
@@ -52,9 +54,7 @@ def view_collection_exercise(short_name, period):
     ]
 
     success_key = request.args.get('success_key')
-    error_key = request.args.get('error_key')
     success_message = get_success_message(success_key)
-    error_message = get_error_message(error_key)
 
     ce_state = ce_details['collection_exercise']['state']
     show_set_live_button = ce_state in ('READY_FOR_REVIEW', 'FAILEDVALIDATION')
@@ -77,14 +77,13 @@ def view_collection_exercise(short_name, period):
 
     show_msg = request.args.get('show_msg')
     success_panel = request.args.get('success_panel')
-    error = request.args.get('error')
 
     return render_template('collection-exercise.html',
                            breadcrumbs=breadcrumbs,
                            ce=ce_details['collection_exercise'],
                            collection_instruments=ce_details['collection_instruments'],
                            eq_ci_selectors=ce_details['eq_ci_selectors'],
-                           error=error,
+                           error=json.loads(session.get('error')) if session.get('error') else None,
                            events=formatted_events,
                            locked=locked,
                            missing_ci=missing_ci,
@@ -94,7 +93,6 @@ def view_collection_exercise(short_name, period):
                            survey=ce_details['survey'],
                            success_message=success_message,
                            success_panel=success_panel,
-                           error_message=error_message,
                            validation_failed=validation_failed,
                            show_msg=show_msg,
                            ci_classifiers=ce_details['ci_classifiers']['classifierTypes'],
@@ -126,23 +124,21 @@ def response_chasing(ce_id, survey_id):
 
 
 def _set_ready_for_live(short_name, period):
-    error = None
     success_panel = None
     result = collection_exercise_controllers.execute_collection_exercise(short_name, period)
 
     if result:
         success_panel = "Collection exercise executed"
     else:
-        error = {
-            "section": "ce_status",
+        session['error'] = json.dumps({
+            "section": "head",
             "header": "Error: Failed to execute Collection Exercise",
-            "message": "Please try again"
-        }
+            "message": "Error processing collection exercise"
+        })
 
     return redirect(url_for('collection_exercise_bp.view_collection_exercise',
                             short_name=short_name,
                             period=period,
-                            error_message=error,
                             success_panel=success_panel))
 
 
@@ -177,7 +173,6 @@ def _upload_sample(short_name, period):
 
 def _select_collection_instrument(short_name, period):
     success_panel = None
-    error = None
     cis_selected = request.form.getlist("checkbox-answer")
     cis_added = []
 
@@ -189,23 +184,22 @@ def _select_collection_instrument(short_name, period):
         if all(added for added in cis_added):
             success_panel = "Collection instruments added"
         else:
-            error = {
+            session['error'] = json.dumps({
                 "section": "ciSelect",
                 "header": "Error: Failed to add collection instrument(s)",
                 "message": "Please try again"
-            }
+            })
 
     else:
-        error = {
+        session['error'] = json.dumps({
             "section": "ciSelect",
             "header": "Error: No collection instruments selected",
             "message": "Please select a collection instrument"
-        }
+        })
 
     return redirect(url_for('collection_exercise_bp.view_collection_exercise',
                             short_name=short_name,
                             period=period,
-                            error=error,
                             success_panel=success_panel))
 
 
@@ -220,21 +214,21 @@ def _upload_collection_instrument(short_name, period):
         if ci_loaded:
             success_panel = "Collection instrument loaded"
         else:
-            error = {
+            session['error'] = json.dumps({
                 "section": "ciFile",
                 "header": "Error: Failed to upload collection instrument",
                 "message": "Please try again"
-            }
+            })
+    else:
+        session['error'] = json.dumps(error)
 
     return redirect(url_for('collection_exercise_bp.view_collection_exercise',
                             short_name=short_name,
                             period=period,
-                            error=error,
                             success_panel=success_panel))
 
 
 def _unselect_collection_instrument(short_name, period):
-    error = None
     success_panel = None
     ci_id = request.form.get('ci_id')
     ce_id = request.form.get('ce_id')
@@ -244,14 +238,13 @@ def _unselect_collection_instrument(short_name, period):
     if ci_unlinked:
         success_panel = "Collection instrument removed"
     else:
-        error = {
-            "header": "Error: Failed to remove collection instrument"
-        }
+        session['error'] = json.dumps({"section": "head",
+                                       "header": "Error: Failed to remove collection instrument",
+                                       "message": "Please try again"})
 
     return redirect(url_for('collection_exercise_bp.view_collection_exercise',
                             short_name=short_name,
                             period=period,
-                            error=error,
                             success_panel=success_panel))
 
 
@@ -436,10 +429,12 @@ def get_create_collection_event_form(short_name, period, ce_id, tag):
                 ce_id=ce_id, tag=tag)
 
     return render_template('create-ce-event.html',
+                           ce_id=ce_id,
                            short_name=short_name,
                            period=period,
                            survey=survey,
                            event_name=event_name,
+                           tag=tag,
                            form=form)
 
 
@@ -457,7 +452,8 @@ def create_collection_exercise_event(short_name, period, ce_id, tag):
     if not form.validate():
         return get_create_collection_event_form(short_name, period, ce_id, tag, errors=form.errors)
 
-    timestamp_string = f"{form.year.data}{form.month.data}{form.day.data:02d}T{form.hour.data}{form.minute.data}"
+    day = form.day.data if not len(form.day.data) == 1 else f"0{form.day.data}"
+    timestamp_string = f"{form.year.data}{form.month.data}{day}T{form.hour.data}{form.minute.data}"
     timestamp = iso8601.parse_date(timestamp_string)
 
     collection_exercise_controllers.create_collection_exercise_event(
@@ -518,12 +514,15 @@ def remove_loaded_sample(short_name, period):
                                 period=period,
                                 success_key=sample_removed_success))
     else:
-        sample_removed_error = 'sample_removed_error'
         logger.info("Failed to remove sample for collection exercise",
                     short_name=short_name,
                     period=period,
                     collection_exercise_id=collection_exercise_id)
+        session['error'] = json.dumps({
+            "section": "head",
+            "header": "Error: Failed to remove sample",
+            "message": "Please try again"
+        })
         return redirect(url_for('collection_exercise_bp.view_collection_exercise',
                                 short_name=short_name,
-                                period=period,
-                                error_key=sample_removed_error))
+                                period=period))

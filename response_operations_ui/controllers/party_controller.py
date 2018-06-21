@@ -126,22 +126,22 @@ def search_respondent_by_email(email):
 
 
 def update_contact_details(ru_ref, respondent_id, form):
+    logger.debug('Updating respondent details', respondent_id=respondent_id)
 
     new_contact_details = {
-        "first_name": form.get('first_name'),
-        "last_name": form.get('last_name'),
+        "firstName": form.get('first_name'),
+        "lastName": form.get('last_name'),
         "email_address": form.get('hidden_email'),
         "new_email_address": form.get('email'),
-        "telephone": form.get('telephone'),
-        "respondent_id": respondent_id
+        "telephone": form.get('telephone')
     }
 
     old_contact_details = get_respondent_by_party_id(respondent_id)
     contact_details_changed = _compare_contact_details(new_contact_details, old_contact_details)
 
     if len(contact_details_changed) > 0:
-        url = f'{app.config["BACKSTAGE_API_URL"]}/v1/party/update-respondent-details/{respondent_id}'
-        response = requests.put(url, json=new_contact_details)
+        url = f'{app.config["PARTY_URL"]}/party-api/v1/respondents/id/{respondent_id}'
+        response = requests.put(url, json=new_contact_details, auth=app.config['PARTY_AUTH'])
 
         if response.status_code != 200:
             raise UpdateContactDetailsException(ru_ref, EditContactDetailsForm(form),
@@ -153,15 +153,12 @@ def update_contact_details(ru_ref, respondent_id, form):
 
 
 def _compare_contact_details(new_contact_details, old_contact_details):
-
     # Currently the 'get contact details' and 'update respondent details' keys do not match and must be mapped
     contact_details_map = {
-        "firstName": "first_name",
-        "lastName": "last_name",
+        "firstName": "firstName",
+        "lastName": "lastName",
         "telephone": "telephone",
         "emailAddress": "new_email_address"}
 
-    details_different = [key for key in contact_details_map
-                         if old_contact_details.get(key) != new_contact_details.get(contact_details_map[key])]
-
-    return details_different
+    return {old_key for old_key, new_key in contact_details_map.items()
+            if old_contact_details[old_key] != new_contact_details[new_key]}

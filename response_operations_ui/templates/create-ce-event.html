@@ -16,7 +16,7 @@
         Survey:
       </dt>
       <dd class="">
-        {{survey.surveyRef}} {{survey.shortName}}
+        {{survey.surveyRef}} {{short_name}}
       </dd>
       <dt class="">
         Period:
@@ -28,7 +28,7 @@
 
     <h2 class="saturn u-mt-l">{{event_name}}</h2>
 
-    <form method="POST" class="">
+    <form method="POST" action="{{ url_for('collection_exercise_bp.create_collection_exercise_event', short_name=short_name, period=period, ce_id=ce_id, tag=tag)}}" class="">
       <div class="date-time-editor u-mb-l">
         {{ form.csrf_token }}
 
@@ -80,7 +80,7 @@
       {{ form.submit(class_="btn btn--primary u-mt-s") }}
 
       <div>
-        <a href=" {{ url_for('collection_exercise_bp.view_collection_exercise', survey.shortName, period) }}" onclick="history.back(); return false;">Cancel</a>
+        <a href=" {{ url_for('collection_exercise_bp.view_collection_exercise', short_name=survey.shortName, period=period) }}" onclick="history.back(); return false;">Cancel</a>
       </div>
     </form>
 

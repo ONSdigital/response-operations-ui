@@ -16,6 +16,7 @@ class Config(object):
     REDIS_DB = os.getenv('REDIS_DB', 0)
     SECURE_COOKIES = strtobool(os.getenv('SECURE_COOKIES', 'True'))
     EDIT_EVENT_DATES_ENABLED = strtobool(os.getenv('EDIT_EVENT_DATES_ENABLED', 'False'))
+    ADD_EVENT_DATES_ENABLED = strtobool(os.getenv('ADD_EVENT_DATES_ENABLED', 'False'))
     USE_SESSION_FOR_NEXT = True
 
     # Service Configs
@@ -58,6 +59,8 @@ class Config(object):
     UAA_CLIENT_ID = os.getenv('UAA_CLIENT_ID')
     UAA_CLIENT_SECRET = os.getenv('UAA_CLIENT_SECRET')
 
+    FEATURE_ENABLE_CLOSE_CONVERSATION = strtobool(os.getenv('FEATURE_ENABLE_CLOSE_CONVERSATION', 'False'))
+
 
 class DevelopmentConfig(Config):
     DEBUG = os.getenv('DEBUG', True)
@@ -67,6 +70,7 @@ class DevelopmentConfig(Config):
     REDIS_DB = os.getenv('REDIS_DB', 0)
     SECURE_COOKIES = strtobool(os.getenv('SECURE_COOKIES', 'False'))
     EDIT_EVENT_DATES_ENABLED = True
+    ADD_EVENT_DATES_ENABLED = True
 
     # Service Config
     BACKSTAGE_API_URL = os.getenv('BACKSTAGE_API_URL', 'http://localhost:8001/backstage-api')
@@ -107,6 +111,8 @@ class DevelopmentConfig(Config):
     UAA_SERVICE_URL = os.getenv('UAA_SERVICE_URL', 'http://localhost:9080')
     UAA_CLIENT_ID = os.getenv('UAA_CLIENT_ID', 'response_operations')
     UAA_CLIENT_SECRET = os.getenv('UAA_CLIENT_SECRET', 'password')
+
+    FEATURE_ENABLE_CLOSE_CONVERSATION = strtobool(os.getenv('FEATURE_ENABLE_CLOSE_CONVERSATION', 'True'))
 
 
 class TestingConfig(DevelopmentConfig):

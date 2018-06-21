@@ -32,10 +32,13 @@
         </div>
       </div>
     {% endif %}
-    {% if error_message %}
-      <div class="panel panel--simple panel--error u-mb-l">
-        <div id="error-panel" class="panel__body">
-          {{ error_message }}
+    {% if error['section'] == 'head' %}
+      <div class="panel panel--error u-mb-s" data-qa="error">
+        <div class="panel__header">
+          <h1 class="panel__title venus">{{ error['header'] }}</h1>
+        </div>
+        <div class="panel__body" data-qa="error-body">
+           {{ error['message'] }}
         </div>
       </div>
     {% endif %}
@@ -131,7 +134,7 @@
                       </form>
                   </td>
                 {% endif %}
-              {% else %}
+              {% elif config.ADD_EVENT_DATES_ENABLED %}
               </td>
                 <td class="table--cell tbl-ce-status tbl-ce-action">
                   <form action="{{ url_for('collection_exercise_bp.get_create_collection_event_form', short_name=survey.shortName, period=ce.exerciseRef, ce_id=ce.id, tag='mps')}}" method="get">
@@ -158,7 +161,7 @@
                   </form>
                 </td>
                 {% endif %}
-              {% else %}
+              {% elif config.ADD_EVENT_DATES_ENABLED %}
             </td>
                 <td class="table--cell tbl-ce-status tbl-ce-action">
                   <form action="{{ url_for('collection_exercise_bp.get_create_collection_event_form', short_name=survey.shortName, period=ce.exerciseRef, ce_id=ce.id, tag='go_live')}}" method="get">
@@ -183,7 +186,7 @@
                 </form>
               </td>
               {% endif %}
-              {% else %}
+              {% elif config.ADD_EVENT_DATES_ENABLED %}
               <td class="table--cell tbl-ce-status tbl-ce-action">
                 <form action="{{ url_for('collection_exercise_bp.get_create_collection_event_form', short_name=survey.shortName, period=ce.exerciseRef, ce_id=ce.id, tag='return_by')}}" method="get">
                   <button class="btn btn--secondary btn--small btn__table-row" id="create-event-date-return-by" type="submit">Add</button>
@@ -267,7 +270,7 @@
                     </form>
                   </td>
                 {% endif %}
-              {% else %}
+              {% elif config.ADD_EVENT_DATES_ENABLED %}
               </td>
                 <td class="table--cell tbl-ce-status tbl-ce-action">
                   <form action="{{ url_for('collection_exercise_bp.get_create_collection_event_form', short_name=survey.shortName, ce_id=ce.id, period=ce.exerciseRef, tag='exercise_end')}}" method="get">

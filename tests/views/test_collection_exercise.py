@@ -1,11 +1,13 @@
 import json
 import unittest
+import mock
 from io import BytesIO
 
 import requests_mock
 
 from config import TestingConfig
 from response_operations_ui import app
+from response_operations_ui.views import collection_exercise
 
 collection_exercise_id = "14fb3e68-4dca-46db-bf49-04b84e07e77c"
 survey_id = "cb0711c3-0ac8-41d3-ae0e-567e5ea1ef87"
@@ -668,12 +670,19 @@ class TestCollectionExercise(unittest.TestCase):
         response = self.app.post(f"/surveys/test/000000/confirm-remove-sample", follow_redirects=True)
 
         self.assertEquals(response.status_code, 200)
-        self.assertIn('Error failed to remove sample'.encode(), response.data)
+        self.assertIn('Error: Failed to remove sample'.encode(), response.data)
 
-    @requests_mock.mock()
-    def test_get_confirm_remove_sample(self, mock_request):
+    def test_get_confirm_remove_sample(self):
         response = self.app.get(f"/surveys/test/000000/confirm-remove-sample",
                                 follow_redirects=True)
 
         self.assertEqual(response.status_code, 200)
         self.assertIn("Remove sample from test 000000".encode(), response.data)
+
+    @mock.patch("response_operations_ui.controllers.survey_controllers.get_survey", return_value=survey_by_id)
+    def test_get_create_ce_event_form_success(self, survey):
+
+        response = self.app.get(f"/surveys/MBS/201901/{collection_exercise_id}/confirm-create-event/mps",
+                                follow_redirects=True)
+
+        self.assertEqual(response.status_code, 200)

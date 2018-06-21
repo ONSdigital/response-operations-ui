@@ -12,7 +12,7 @@ python_version = "3.6"
 
 [packages]
 
-Flask = "==0.12"
+flask = "==0.12"
 flask-login = "==0.4.1"
 flask-wtf = "==0.14.2"
 structlog = "==17.2.0"
@@ -30,6 +30,7 @@ cfenv = "==0.5.3"
 cryptography = "*"
 flask-paginate = "*"
 responses = "*"
+mock = "*"
 
 
 [dev-packages]
