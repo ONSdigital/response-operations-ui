@@ -24,18 +24,22 @@ def search_reporting_units(query):
 
 
 def change_enrolment_status(business_id, respondent_id, survey_id, change_flag):
-    logger.debug('Changing the enrolment status',
+    logger.debug('Changing enrolment status',
                  business_id=business_id, respondent_id=respondent_id, survey_id=survey_id, change_flag=change_flag)
-    url = f'{app.config["BACKSTAGE_API_URL"]}/v1/party/change-enrolment-status'
+    url = f'{app.config["PARTY_URL"]}/party-api/v1/respondents/change_enrolment_status'
     enrolment_json = {
         'respondent_id': respondent_id,
         'business_id': business_id,
         'survey_id': survey_id,
         'change_flag': change_flag
     }
-    response = requests.put(url, json=enrolment_json)
+    response = requests.put(url, json=enrolment_json, auth=app.config['PARTY_AUTH'])
 
-    if response.status_code != 200:
+    try:
+        response.raise_for_status()
+    except requests.exceptions.HTTPError:
+        logger.error('Failed to change enrolment status',
+                     business_id=business_id, respondent_id=respondent_id, survey_id=survey_id, change_flag=change_flag)
         raise ApiError(response)
 
     logger.debug('Successfully changed enrolment status',
@@ -57,10 +61,12 @@ def generate_new_enrolment_code(collection_exercise_id, ru_ref):
 
 def resend_verification_email(party_id):
     logger.debug('Re-sending verification email', party_id=party_id)
-    url = f'{app.config["BACKSTAGE_API_URL"]}/v1/reporting-unit/resend-verification-email/{party_id}'
-    response = requests.post(url)
+    url = f'{app.config["PARTY_URL"]}/party-api/v1/resend-verification-email/{party_id}'
+    response = requests.get(url, auth=app.config['PARTY_AUTH'])
 
-    if response.status_code != 200:
+    try:
+        response.raise_for_status()
+    except requests.exceptions.HTTPError:
         logger.exception("Re-sending of verification email failed", party_id=party_id)
         raise ApiError(response)
 
