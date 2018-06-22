@@ -23,7 +23,7 @@ def get_sample_summary(sample_summary_id):
         logger.error('Error retrieving sample summary',
                      sample_summary_id=sample_summary_id,
                      status_code=response.status_code)
-        raise ApiError(url, response.status_code)
+        raise ApiError(response)
 
     logger.debug('Successfully retrieved sample summary', sample_summary_id=sample_summary_id)
     return response.json()
