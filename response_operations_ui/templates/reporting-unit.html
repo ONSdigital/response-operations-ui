@@ -148,7 +148,7 @@
                 <dd>
                 Verification email sent
                 <br>
-                  <a href="{{ url_for('reporting_unit_bp.resend_verification', ru_ref=ru_ref, email=respondent.pendingEmailAddress, party_id=party_id) }}">Re-send verification email</a>
+                  <a href="{{ url_for('reporting_unit_bp.resend_verification', ru_ref=ru_ref, party_id=party_id) }}">Re-send verification email</a>
                 </br>
                 </dd>
                 {% endif %}
@@ -181,7 +181,7 @@
                                     respondent_last_name=respondent.lastName, business_id=ru.id, trading_as=ru.trading_as, change_flag='DISABLED')}}"
                    id="change-enrolment-status">Disable</a>
                 {% elif respondent.enrolmentStatus == 'PENDING' %}
-                <a href="{{ url_for('reporting_unit_bp.view_resend_verification', ru_ref=ru_ref, email=respondent.emailAddress, party_id=respondent.id) }}">Re-send verification email</a>
+                <a href="{{ url_for('reporting_unit_bp.view_resend_verification', ru_ref=ru_ref, party_id=respondent.id) }}">Re-send verification email</a>
                 {% endif %}
               </div>
             </td>
