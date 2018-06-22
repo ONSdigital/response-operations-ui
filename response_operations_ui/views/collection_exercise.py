@@ -462,6 +462,7 @@ def create_collection_exercise_event(short_name, period, ce_id, tag):
                                short_name=short_name,
                                period=period,
                                survey=survey_controllers.get_survey(short_name),
+                               tag=tag,
                                event_name=get_event_name(tag),
                                form=form)
 
