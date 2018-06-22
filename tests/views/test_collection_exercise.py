@@ -7,7 +7,6 @@ import requests_mock
 
 from config import TestingConfig
 from response_operations_ui import app
-from response_operations_ui.views import collection_exercise
 
 collection_exercise_id = "14fb3e68-4dca-46db-bf49-04b84e07e77c"
 survey_id = "cb0711c3-0ac8-41d3-ae0e-567e5ea1ef87"
@@ -37,6 +36,8 @@ with open("tests/test_data/survey/survey_by_id.json") as fp:
 with open("tests/test_data/collection_exercise/exercise_data.json") as json_data:
     exercise_data = json.load(json_data)
 
+with open("tests/test_data/collection_exercise/ce_details_new_event.json") as fp:
+    ce_details_no_events = json.load(fp)
 
 """Define URLS"""
 
@@ -723,4 +724,40 @@ class TestCollectionExercise(unittest.TestCase):
         response = self.app.get(f"/surveys/MBS/201901/{collection_exercise_id}/confirm-create-event/mps",
                                 follow_redirects=True)
 
+        self.assertEquals(response.status_code, 200)
+        self.assertIn("MBS".encode(), response.data)
+        self.assertIn("Main print selection".encode(), response.data)
+
+    @mock.patch("response_operations_ui.controllers.collection_exercise_controllers.get_collection_exercise")
+    @mock.patch("response_operations_ui.controllers.collection_exercise_controllers.create_collection_exercise_event")
+    def test_create_collection_exercise_event_success(self, mock_create_ce_event, mock_get_ce_details):
+        mock_get_ce_details.return_value = ce_details_no_events
+        create_ce_event_form = {
+            "day": "01",
+            "month": "01",
+            "year": "2018",
+            "hour": "01",
+            "minute": "00"
+        }
+
+        response = self.app.post(f"/surveys/MBS/201901/{collection_exercise_id}/create-event/mps",
+                                 data=create_ce_event_form, follow_redirects=True)
+
         self.assertEqual(response.status_code, 200)
+        self.assertIn("Event date added.".encode(), response.data)
+
+    @mock.patch("response_operations_ui.controllers.survey_controllers.get_survey", return_value=survey_by_id)
+    def test_create_collection_exercise_invalid_form(self, survey):
+        create_ce_event_form = {
+            "day": "50",
+            "month": "01",
+            "year": "2018",
+            "hour": "01",
+            "minute": "00"
+        }
+
+        response = self.app.post(f"/surveys/MBS/201901/{collection_exercise_id}/create-event/mps",
+                                 data=create_ce_event_form, follow_redirects=True)
+
+        self.assertEqual(response.status_code, 200)
+        self.assertIn("Please try saving your changes again".encode(), response.data)

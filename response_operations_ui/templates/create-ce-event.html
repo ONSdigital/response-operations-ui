@@ -32,7 +32,7 @@
       <div class="date-time-editor u-mb-l">
         {{ form.csrf_token }}
 
-        {% if errors %}
+        {% if form.errors %}
         <div class="panel panel--simple panel--error u-mb-l">
           <div class="panel__body" id="save-error">
             <h2 id='error-saving-message' class="venus">Error creating {{event_name}} date</h2>

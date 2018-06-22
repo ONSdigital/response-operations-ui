@@ -457,7 +457,13 @@ def create_collection_exercise_event(short_name, period, ce_id, tag):
     form = EventDateForm(request.form)
 
     if not form.validate():
-        return get_create_collection_event_form(short_name, period, ce_id, tag, errors=form.errors)
+        return render_template('create-ce-event.html',
+                               ce_id=ce_id,
+                               short_name=short_name,
+                               period=period,
+                               survey=survey_controllers.get_survey(short_name),
+                               event_name=get_event_name(tag),
+                               form=form)
 
     day = form.day.data if not len(form.day.data) == 1 else f"0{form.day.data}"
     timestamp_string = f"{form.year.data}{form.month.data}{day}T{form.hour.data}{form.minute.data}"
