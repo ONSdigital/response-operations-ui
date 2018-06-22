@@ -124,7 +124,6 @@ class TestCollectionExercise(unittest.TestCase):
             {
                 "id": collection_exercise_id,
                 "name": "201601",
-                "exerciseRef": "201601",
                 "scheduledExecutionDateTime": "2017-05-15T00:00:00Z",
                 "state": "PUBLISHED",
                 "exerciseRef": "000000"
