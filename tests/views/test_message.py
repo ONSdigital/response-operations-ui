@@ -235,7 +235,7 @@ class TestMessage(unittest.TestCase):
         response = self.app.get("/messages/ASHE")
 
         self.assertEqual(response.status_code, 200)
-        self.assertIn("No new messages".encode(), response.data)
+        self.assertIn("No new conversations".encode(), response.data)
 
     @requests_mock.mock()
     @patch('response_operations_ui.controllers.message_controllers._get_jwt')
