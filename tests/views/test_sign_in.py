@@ -6,7 +6,7 @@ import requests_mock
 from response_operations_ui import app
 
 url_sign_in_data = f'{app.config["UAA_SERVICE_URL"]}/oauth/token'
-url_surveys = f'{app.config["BACKSTAGE_API_URL"]}/v1/survey/surveys'
+url_surveys = f'{app.config["SURVEY_URL"]}/surveys'
 
 
 class TestSignIn(unittest.TestCase):
