@@ -466,7 +466,7 @@ class TestSurvey(unittest.TestCase):
                                            '48b6c58a-bf5b-4bb3-8d7d-5e205ff3a0fd'])
 
     def test_format_shortname(self):
-        from response_operations_ui.controllers.survey_controllers import format_short_name
+        from response_operations_ui.common.mappers import format_short_name
 
         self.assertEqual(format_short_name('QBS'), 'QBS')
         self.assertEqual(format_short_name('Sand&Gravel'), 'Sand & Gravel')

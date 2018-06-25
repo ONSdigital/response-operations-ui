@@ -1,11 +1,11 @@
 import logging
-import re
 
 import requests
 from requests.exceptions import HTTPError, RequestException
 from structlog import wrap_logger
 
 from response_operations_ui import app
+from response_operations_ui.common.mappers import format_short_name
 from response_operations_ui.common.surveys import FDISurveys
 from response_operations_ui.controllers.collection_exercise_controllers import (
     get_collection_exercise_events, get_collection_exercises_by_survey,
@@ -72,10 +72,6 @@ def get_surveys_list():
     return sorted(survey_list, key=lambda k: k['surveyRef'])
 
 
-def format_short_name(short_name):
-    return re.sub('(&)', r' \1 ', short_name)
-
-
 def get_survey_by_short_name(short_name):
     logger.debug('Retrieving survey by short name', short_name=short_name)
     url = f'{app.config["SURVEY_URL"]}/surveys/shortname/{short_name}'
@@ -89,10 +85,6 @@ def get_survey_by_short_name(short_name):
 
     logger.debug('Successfully retrieved survey by short name', short_name=short_name)
     return response.json()
-
-
-def format_short_name(short_name):
-    return re.sub('(&)', r' \1 ', short_name)
 
 
 def get_survey(short_name):
