@@ -11,6 +11,12 @@ from response_operations_ui import app
 from response_operations_ui.controllers.survey_controllers import get_survey_short_name_by_id
 from response_operations_ui.views.surveys import _sort_collection_exercise
 
+
+collection_exercise_id = '14fb3e68-4dca-46db-bf49-04b84e07e77c'
+collection_exercise_event_id = 'b4a36392-a21f-485b-9dc4-d151a8fcd565'
+sample_summary_id = 'b9487b59-2ac7-4fbf-b734-5a4c260ff235'
+survey_id = 'cb0711c3-0ac8-41d3-ae0e-567e5ea1ef87'
+
 url_get_survey_list = f'{app.config["SURVEY_URL"]}/surveys'
 url_get_legal_basis_list = f'{app.config["SURVEY_URL"]}/legal-bases'
 url_create_survey = f'{app.config["SURVEY_URL"]}/surveys'
@@ -19,8 +25,9 @@ with open('tests/test_data/survey/survey_list.json') as f:
     survey_list = json.load(f)
 with open('tests/test_data/survey/legal_basis_list.json') as f:
     legal_basis_list = json.load(f)
-url_get_survey_by_short_name = f'{app.config["BACKSTAGE_API_URL"]}/v1/survey/shortname/bres'
-url_get_survey_by_qbs = f'{app.config["BACKSTAGE_API_URL"]}/v1/survey/shortname/QBS'
+
+url_get_survey_by_short_name = f'{app.config["SURVEY_URL"]}/surveys/shortname/bres'
+url_get_survey_by_qbs = f'{app.config["SURVEY_URL"]}/surveys/shortname/QBS'
 with open('tests/test_data/survey/survey.json') as f:
     survey_info = json.load(f)
 with open('tests/test_data/survey/survey_states.json') as f:
@@ -30,6 +37,22 @@ with open('tests/test_data/survey/updated_survey_list.json') as f:
     updated_survey_list = json.load(f)
 with open('tests/test_data/survey/create_survey_response.json') as f:
     create_survey_response = json.load(f)
+url_get_collection_exercises = (
+    f'{app.config["COLLECTION_EXERCISE_URL"]}'
+    f'/collectionexercises/survey/{survey_info["survey"]["id"]}'
+)
+url_get_collection_exercise_events = (
+    f'{app.config["COLLECTION_EXERCISE_URL"]}'
+    f'/collectionexercises/{collection_exercise_id}/events'
+)
+url_get_collection_exercises_link = (
+    f'{app.config["COLLECTION_EXERCISE_URL"]}'
+    f'/collectionexercises/link/{collection_exercise_id}'
+)
+url_get_sample_summary = (
+    f'{app.config["SAMPLE_URL"]}'
+    f'/samples/samplesummary/{sample_summary_id}'
+)
 
 
 class TestSurvey(unittest.TestCase):
@@ -39,6 +62,39 @@ class TestSurvey(unittest.TestCase):
         app.config.from_object(app_config)
         app.login_manager.init_app(app)
         self.app = app.test_client()
+        self.survey = {
+            "id": survey_id,
+            "longName": "Business Register and Employment Survey",
+            "shortName": "BRES",
+            "surveyRef": "221"
+        }
+        self.collection_exercises = [
+            {
+                "id": collection_exercise_id,
+                "name": "201601",
+                "scheduledExecutionDateTime": "2017-05-15T00:00:00Z",
+                "state": "PUBLISHED"
+            }
+        ]
+        self.collection_exercises_events = [
+            {
+                "id": collection_exercise_event_id,
+                "collectionExerciseId": collection_exercise_id,
+                "tag": "mps",
+                "timestamp": "2018-03-16T00:00:00.000Z"
+            }
+        ]
+        self.collection_exercises_link = [sample_summary_id]
+        self.sample_summary = {
+            "id": sample_summary_id,
+            "effectiveStartDateTime": "",
+            "effectiveEndDateTime": "",
+            "surveyRef": "",
+            "ingestDateTime": "2018-03-14T14:29:51.325Z",
+            "state": "ACTIVE",
+            "totalSampleUnits": 5,
+            "expectedCollectionInstruments": 1
+        }
 
     @requests_mock.mock()
     def test_home(self, mock_request):
@@ -87,7 +143,11 @@ class TestSurvey(unittest.TestCase):
 
     @requests_mock.mock()
     def test_survey_view(self, mock_request):
-        mock_request.get(url_get_survey_by_short_name, json=survey_info)
+        mock_request.get(url_get_collection_exercise_events, json=self.collection_exercises_events)
+        mock_request.get(url_get_collection_exercises, json=self.collection_exercises)
+        mock_request.get(url_get_collection_exercises_link, json=self.collection_exercises_link)
+        mock_request.get(url_get_sample_summary, json=self.sample_summary)
+        mock_request.get(url_get_survey_by_short_name, json=survey_info['survey'])
 
         response = self.app.get("/surveys/bres", follow_redirects=True)
 
@@ -104,7 +164,11 @@ class TestSurvey(unittest.TestCase):
 
     @requests_mock.mock()
     def test_survey_state_mapping(self, mock_request):
-        mock_request.get(url_get_survey_by_short_name, json=survey_info_states)
+        mock_request.get(url_get_collection_exercise_events, json=self.collection_exercises_events)
+        mock_request.get(url_get_collection_exercises, json=survey_info_states['collection_exercises'])
+        mock_request.get(url_get_collection_exercises_link, json=self.collection_exercises_link)
+        mock_request.get(url_get_sample_summary, json=self.sample_summary)
+        mock_request.get(url_get_survey_by_short_name, json=survey_info_states['survey'])
 
         response = self.app.get("/surveys/bres")
         self.assertIn(b'Created', response.data)
@@ -216,7 +280,11 @@ class TestSurvey(unittest.TestCase):
         mock_request.get(url_get_survey_list, json=survey_list)
         mock_request.put(url_update_survey_details)
         mock_request.get(url_get_survey_list, json=updated_survey_list)
-        mock_request.get(url_get_survey_by_qbs, json=survey_info)
+        mock_request.get(url_get_collection_exercise_events, json=self.collection_exercises_events)
+        mock_request.get(url_get_collection_exercises, json=self.collection_exercises)
+        mock_request.get(url_get_collection_exercises_link, json=self.collection_exercises_link)
+        mock_request.get(url_get_sample_summary, json=self.sample_summary)
+        mock_request.get(url_get_survey_by_qbs, json=survey_info['survey'])
         response = self.app.post(f"/surveys/edit-survey-details/QBS", data=changed_survey_details,
                                  follow_redirects=True)
         self.assertIn("Error updating survey details".encode(), response.data)
@@ -225,7 +293,11 @@ class TestSurvey(unittest.TestCase):
     @requests_mock.mock()
     def test_get_survey_details(self, mock_request):
         mock_request.get(url_get_survey_list, json=survey_list)
-        mock_request.get(url_get_survey_by_short_name, json=survey_info)
+        mock_request.get(url_get_collection_exercise_events, json=self.collection_exercises_events)
+        mock_request.get(url_get_collection_exercises, json=self.collection_exercises)
+        mock_request.get(url_get_collection_exercises_link, json=self.collection_exercises_link)
+        mock_request.get(url_get_sample_summary, json=self.sample_summary)
+        mock_request.get(url_get_survey_by_short_name, json=survey_info['survey'])
         response = self.app.get(f"surveys/edit-survey-details/bres", follow_redirects=True)
         self.assertEqual(response.status_code, 200)
         self.assertIn("221".encode(), response.data)
@@ -367,7 +439,11 @@ class TestSurvey(unittest.TestCase):
         mock_request.get(url_get_survey_list, json=survey_list)
         mock_request.put(url_update_survey_details)
         mock_request.get(url_get_survey_list, json=updated_survey_list)
-        mock_request.get(url_get_survey_by_short_name, json=survey_info)
+        mock_request.get(url_get_survey_by_short_name, json=survey_info['survey'])
+        mock_request.get(url_get_collection_exercise_events, json=self.collection_exercises_events)
+        mock_request.get(url_get_collection_exercises, json=self.collection_exercises)
+        mock_request.get(url_get_collection_exercises_link, json=self.collection_exercises_link)
+        mock_request.get(url_get_sample_summary, json=self.sample_summary)
         response = self.app.post(f"/surveys/edit-survey-details/bres", data=changed_survey_details,
                                  follow_redirects=True)
         self.assertEqual(response.status_code, 200)
@@ -390,7 +466,7 @@ class TestSurvey(unittest.TestCase):
                                            '48b6c58a-bf5b-4bb3-8d7d-5e205ff3a0fd'])
 
     def test_format_shortname(self):
-        from response_operations_ui.controllers.survey_controllers import format_short_name
+        from response_operations_ui.common.mappers import format_short_name
 
         self.assertEqual(format_short_name('QBS'), 'QBS')
         self.assertEqual(format_short_name('Sand&Gravel'), 'Sand & Gravel')

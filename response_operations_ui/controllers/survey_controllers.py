@@ -1,12 +1,16 @@
 import logging
-import re
 
 import requests
 from requests.exceptions import HTTPError, RequestException
 from structlog import wrap_logger
 
 from response_operations_ui import app
+from response_operations_ui.common.mappers import format_short_name
 from response_operations_ui.common.surveys import FDISurveys
+from response_operations_ui.controllers.collection_exercise_controllers import (
+    get_collection_exercise_events, get_collection_exercises_by_survey,
+    get_linked_sample_summary_id)
+from response_operations_ui.controllers.sample_controllers import get_sample_summary
 from response_operations_ui.exceptions.exceptions import ApiError
 
 logger = wrap_logger(logging.getLogger(__name__))
@@ -68,20 +72,39 @@ def get_surveys_list():
     return sorted(survey_list, key=lambda k: k['surveyRef'])
 
 
-def format_short_name(short_name):
-    return re.sub('(&)', r' \1 ', short_name)
+def get_survey_by_short_name(short_name):
+    logger.debug('Retrieving survey by short name', short_name=short_name)
+    url = f'{app.config["SURVEY_URL"]}/surveys/shortname/{short_name}'
+
+    response = requests.get(url, auth=app.config['SURVEY_AUTH'])
+    try:
+        response.raise_for_status()
+    except HTTPError:
+        logger.error('Failed to get survey by short name', short_name=short_name)
+        raise ApiError(response)
+
+    logger.debug('Successfully retrieved survey by short name', short_name=short_name)
+    return response.json()
 
 
 def get_survey(short_name):
-    logger.debug('Retrieving survey', short_name=short_name)
-    url = f'{app.config["BACKSTAGE_API_URL"]}/v1/survey/shortname/{short_name}'
+    survey = get_survey_by_shortname(short_name)
+    logger.debug('Getting survey details', short_name=short_name, survey_id=survey['id'])
 
-    response = requests.get(url)
-    if response.status_code != 200:
-        raise ApiError(response)
+    # Format survey shortName
+    survey['shortName'] = format_short_name(survey['shortName'])
+    # Build collection exercises list
+    ce_list = get_collection_exercises_by_survey(survey['id'])
+    for ce in ce_list:
+        # add collection exercise events
+        ce['events'] = get_collection_exercise_events(ce['id'])
+        # add sample summaries
+        sample_summary_id = get_linked_sample_summary_id(ce['id'])
+        if sample_summary_id:
+            ce['sample_summary'] = get_sample_summary(sample_summary_id)
 
-    logger.debug('Successfully retrieved survey', short_name=short_name)
-    return response.json()
+    logger.debug('Successfully retrieved survey details', short_name=short_name, survey_id=survey['id'])
+    return {"survey": survey, "collection_exercises": ce_list}
 
 
 def convert_specific_fdi_survey_to_fdi(survey_short_name):
@@ -113,15 +136,8 @@ def get_survey_short_name_by_id(survey_id):
 
 def get_survey_id_by_short_name(short_name):
     logger.debug('Retrieving survey id by short name', short_name=short_name)
-    url = f'{app.config["BACKSTAGE_API_URL"]}/v1/survey/shortname/{short_name}'
 
-    response = requests.get(url)
-    if response.status_code != 200:
-        raise ApiError(response)
-
-    survey_data = response.json()
-
-    return survey_data['survey']['id']
+    return get_survey_by_shortname(short_name)['id']
 
 
 def get_survey_ref_by_id(survey_id):
