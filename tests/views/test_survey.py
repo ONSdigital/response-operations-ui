@@ -25,7 +25,7 @@ with open('tests/test_data/survey/survey.json') as f:
     survey_info = json.load(f)
 with open('tests/test_data/survey/survey_states.json') as f:
     survey_info_states = json.load(f)
-url_update_survey_details = f'{app.config["BACKSTAGE_API_URL"]}/v1/survey/edit-survey-details/222'
+url_update_survey_details = f'{app.config["SURVEY_URL"]}/surveys/ref/222'
 with open('tests/test_data/survey/updated_survey_list.json') as f:
     updated_survey_list = json.load(f)
 with open('tests/test_data/survey/create_survey_response.json') as f:
