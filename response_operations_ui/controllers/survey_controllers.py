@@ -1,4 +1,5 @@
 import logging
+import re
 
 import requests
 from requests.exceptions import HTTPError, RequestException
@@ -45,13 +46,30 @@ def get_survey_by_shortname(short_name):
 
 def get_surveys_list():
     logger.debug('Retrieving surveys list')
-    url = f'{app.config["BACKSTAGE_API_URL"]}/v1/survey/surveys'
-    response = requests.get(url)
-    if response.status_code != 200:
+    url = f'{app.config["SURVEY_URL"]}/surveys'
+    response = requests.get(url, auth=app.config['SURVEY_AUTH'])
+
+    if response.status_code == 204:
+        logger.debug('No surveys found in survey service')
+        return []
+
+    try:
+        response.raise_for_status()
+    except HTTPError:
+        logger.error('Error retrieving the survey list')
         raise ApiError(response)
 
     logger.debug('Successfully retrieved surveys list')
-    return response.json()
+    survey_list = response.json()
+    # Format survey shortName
+    for survey in survey_list:
+        survey['shortName'] = format_short_name(survey['shortName'])
+    # Order List by surveyRef
+    return sorted(survey_list, key=lambda k: k['surveyRef'])
+
+
+def format_short_name(short_name):
+    return re.sub('(&)', r' \1 ', short_name)
 
 
 def get_survey(short_name):

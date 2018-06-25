@@ -11,7 +11,7 @@ from response_operations_ui import app
 from response_operations_ui.controllers.survey_controllers import get_survey_short_name_by_id
 from response_operations_ui.views.surveys import _sort_collection_exercise
 
-url_get_survey_list = f'{app.config["BACKSTAGE_API_URL"]}/v1/survey/surveys'
+url_get_survey_list = f'{app.config["SURVEY_URL"]}/surveys'
 url_get_legal_basis_list = f'{app.config["SURVEY_URL"]}/legal-bases'
 url_create_survey = f'{app.config["SURVEY_URL"]}/surveys'
 
@@ -58,6 +58,14 @@ class TestSurvey(unittest.TestCase):
         self.assertEqual(response.status_code, 200)
         self.assertIn("BRES".encode(), response.data)
         self.assertIn("BRUS".encode(), response.data)
+
+    @requests_mock.mock()
+    def test_survey_list_no_surveys(self, mock_request):
+        mock_request.get(url_get_survey_list, status_code=204)
+
+        response = self.app.get("/surveys")
+
+        self.assertEqual(response.status_code, 200)
 
     @requests_mock.mock()
     def test_survey_list_fail(self, mock_request):
@@ -380,3 +388,9 @@ class TestSurvey(unittest.TestCase):
                                            '23a83a62-87dd-4c6c-97e2-4b207f7e57f5',
                                            '9f9d28c6-d010-47cc-832c-6ab9b741ee96',
                                            '48b6c58a-bf5b-4bb3-8d7d-5e205ff3a0fd'])
+
+    def test_format_shortname(self):
+        from response_operations_ui.controllers.survey_controllers import format_short_name
+
+        self.assertEqual(format_short_name('QBS'), 'QBS')
+        self.assertEqual(format_short_name('Sand&Gravel'), 'Sand & Gravel')
