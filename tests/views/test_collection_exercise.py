@@ -108,6 +108,10 @@ url_link_sample = (
     f'{app.config["COLLECTION_EXERCISE_URL"]}'
     f'/collectionexercises/link/{collection_exercise_id}'
 )
+url_get_collection_exercises_link = (
+    f'{app.config["COLLECTION_EXERCISE_URL"]}'
+    f'/collectionexercises/link/{collection_exercise_id}'
+)
 url_sample_service_upload = f'{app.config["SAMPLE_URL"]}/samples/B/fileupload'
 url_update_ce = (
     f'{app.config["BACKSTAGE_API_URL"]}/v1/collection-exercise/update-collection-exercise-details'
@@ -209,7 +213,7 @@ class TestCollectionExercise(unittest.TestCase):
         mock_request.get(url_ce_by_id, json=collection_exercise_details['collection_exercise'])
         mock_request.get(url_get_collection_exercise_events, json=self.collection_exercise_events)
         mock_request.get(url_link_sample, json=[sample_summary_id])
-        mock_request.get(url_sample_summary, json=self.sample_summary)
+        mock_request.get(url_get_sample_summary, json=self.sample_summary)
         mock_request.get(url_get_classifier_type, json=classifier_types)
         mock_request.get(url_get_classifier_type_selectors, json=classifier_type_selectors)
         mock_request.get(f'{url_get_collection_instrument}?{ci_search_string}', json=self.collection_instruments,
@@ -308,13 +312,13 @@ class TestCollectionExercise(unittest.TestCase):
         self.assertIn("Error: No collection instruments selected".encode(), response.data)
 
     @requests_mock.mock()
-    def test_view_collection_instrument_after_upload(self, mock_request):
+    @patch('response_operations_ui.controllers.collection_exercise_controllers.get_collection_exercise_details')
+    def test_view_collection_instrument_after_upload(self, mock_request, mock_details):
         post_data = {"ciFile": (BytesIO(b"data"), "064_201803_0001.xlsx"), "load-ci": ""}
         mock_request.post(url_collection_instrument, status_code=201)
-        mock_request.get(url_get_survey_by_short_name, status_code=200, json=self.survey_data)
-        mock_request.get(url_collection_exercise_survey_id, status_code=200, json=exercise_data)
-        mock_request.get(url_get_collection_exercises, json=self.collection_exercises)
-        mock_request.get(url_get_collection_exercise, json=collection_exercise_details)
+        mock_request.get(url_get_survey_by_short_name, json=self.survey_data)
+        mock_request.get(url_ces_by_survey, json=self.collection_exercises)
+        mock_details.return_value = collection_exercise_details
 
         response = self.app.post(f'/surveys/{short_name}/{period}', data=post_data, follow_redirects=True)
 
@@ -322,13 +326,13 @@ class TestCollectionExercise(unittest.TestCase):
         self.assertIn("collection_instrument.xlsx".encode(), response.data)
 
     @requests_mock.mock()
-    def test_failed_upload_collection_instrument(self, mock_request):
+    @patch('response_operations_ui.controllers.collection_exercise_controllers.get_collection_exercise_details')
+    def test_failed_upload_collection_instrument(self, mock_request, mock_details):
         post_data = {"ciFile": (BytesIO(b"data"), "064_201803_0001.xlsx"), "load-ci": ""}
         mock_request.post(url_collection_instrument, status_code=500)
         mock_request.get(url_get_survey_by_short_name, status_code=200, json=self.survey_data)
-        mock_request.get(url_collection_exercise_survey_id, status_code=200, json=exercise_data)
-        mock_request.get(url_get_collection_exercise, json=collection_exercise_details)
-        mock_request.get(url_get_collection_exercises, json=self.collection_exercises)
+        mock_request.get(url_ces_by_survey, json=self.collection_exercises)
+        mock_details.return_value = collection_exercise_details
 
         response = self.app.post(f'/surveys/{short_name}/{period}', data=post_data, follow_redirects=True)
 
@@ -336,9 +340,10 @@ class TestCollectionExercise(unittest.TestCase):
         self.assertIn("Error: Failed to upload collection instrument".encode(), response.data)
 
     @requests_mock.mock()
-    def test_no_upload_collection_instrument_when_bad_extension(self, mock_request):
+    @patch('response_operations_ui.controllers.collection_exercise_controllers.get_collection_exercise_details')
+    def test_no_upload_collection_instrument_when_bad_extension(self, mock_request, mock_details):
         post_data = {"ciFile": (BytesIO(b"data"), "064_201803_0001.html"), "load-ci": ""}
-        mock_request.get(url_get_collection_exercise, json=collection_exercise_details)
+        mock_details.return_value = collection_exercise_details
 
         response = self.app.post(f'/surveys/{short_name}/{period}', data=post_data)
 
@@ -347,9 +352,10 @@ class TestCollectionExercise(unittest.TestCase):
         self.assertIn("Error: wrong file type for collection instrument".encode(), response.data)
 
     @requests_mock.mock()
-    def test_no_upload_collection_instrument_when_bad_form_type_format(self, mock_request):
+    @patch('response_operations_ui.controllers.collection_exercise_controllers.get_collection_exercise_details')
+    def test_no_upload_collection_instrument_when_bad_form_type_format(self, mock_request, mock_details):
         post_data = {"ciFile": (BytesIO(b"data"), "064_201803_xxxxx.xlsx"), "load-ci": ""}
-        mock_request.get(url_get_collection_exercise, json=collection_exercise_details)
+        mock_details.return_value = collection_exercise_details
 
         response = self.app.post(f'/surveys/{short_name}/{period}', data=post_data)
 
@@ -360,9 +366,10 @@ class TestCollectionExercise(unittest.TestCase):
         )
 
     @requests_mock.mock()
-    def test_no_upload_collection_instrument_bad_file_name_format(self, mock_request):
+    @patch('response_operations_ui.controllers.collection_exercise_controllers.get_collection_exercise_details')
+    def test_no_upload_collection_instrument_bad_file_name_format(self, mock_request, mock_details):
         post_data = {"ciFile": (BytesIO(b"data"), "064201803_xxxxx.xlsx"), "load-ci": ""}
-        mock_request.get(url_get_collection_exercise, json=collection_exercise_details)
+        mock_details.return_value = collection_exercise_details
 
         response = self.app.post(f'/surveys/{short_name}/{period}', data=post_data)
 
@@ -373,9 +380,10 @@ class TestCollectionExercise(unittest.TestCase):
         )
 
     @requests_mock.mock()
-    def test_no_upload_collection_instrument_form_type_not_integer(self, mock_request):
+    @patch('response_operations_ui.controllers.collection_exercise_controllers.get_collection_exercise_details')
+    def test_no_upload_collection_instrument_form_type_not_integer(self, mock_request, mock_details):
         post_data = {"ciFile": (BytesIO(b"data"), "064_201803_123E.xlsx"), "load-ci": ""}
-        mock_request.get(url_get_collection_exercise, json=collection_exercise_details)
+        mock_details.return_value = collection_exercise_details
 
         response = self.app.post(f'/surveys/{short_name}/{period}', data=post_data)
 
@@ -386,9 +394,10 @@ class TestCollectionExercise(unittest.TestCase):
         )
 
     @requests_mock.mock()
-    def test_no_upload_collection_instrument_when_no_file(self, mock_request):
+    @patch('response_operations_ui.controllers.collection_exercise_controllers.get_collection_exercise_details')
+    def test_no_upload_collection_instrument_when_no_file(self, mock_request, mock_details):
         post_data = {"load-ci": ""}
-        mock_request.get(url_get_collection_exercise, json=collection_exercise_details)
+        mock_details.return_value = collection_exercise_details
 
         response = self.app.post(f'/surveys/{short_name}/{period}', data=post_data)
 
@@ -397,8 +406,9 @@ class TestCollectionExercise(unittest.TestCase):
         self.assertIn("Error: No collection instrument supplied".encode(), response.data)
 
     @requests_mock.mock()
-    def test_view_collection_instrument(self, mock_request):
-        mock_request.get(url_get_collection_exercise, json=collection_exercise_details)
+    @patch('response_operations_ui.controllers.collection_exercise_controllers.get_collection_exercise_details')
+    def test_view_collection_instrument(self, mock_request, mock_details):
+        mock_details.return_value = collection_exercise_details
 
         response = self.app.get(f'/surveys/{short_name}/{period}')
 
@@ -406,11 +416,12 @@ class TestCollectionExercise(unittest.TestCase):
         self.assertIn("collection_instrument.xlsx".encode(), response.data)
 
     @requests_mock.mock()
-    def test_choose_collection_instrument_when_first(self, mock_request):
+    @patch('response_operations_ui.controllers.collection_exercise_controllers.get_collection_exercise_details')
+    def test_choose_collection_instrument_when_first(self, mock_request, mock_details):
         with open(
             "tests/test_data/collection_exercise/collection_exercise_details_no_ci.json"
         ) as collection_exercise:
-            mock_request.get(url_get_collection_exercise, json=json.load(collection_exercise))
+            mock_details.return_value = json.load(collection_exercise)
 
         response = self.app.get(f'/surveys/{short_name}/{period}')
 
@@ -418,8 +429,9 @@ class TestCollectionExercise(unittest.TestCase):
         self.assertIn("Add a collection instrument. Must be XLSX".encode(), response.data)
 
     @requests_mock.mock()
-    def test_add_another_collection_instrument_when_already_uploaded(self, mock_request):
-        mock_request.get(url_get_collection_exercise, json=collection_exercise_details)
+    @patch('response_operations_ui.controllers.collection_exercise_controllers.get_collection_exercise_details')
+    def test_add_another_collection_instrument_when_already_uploaded(self, mock_request, mock_details):
+        mock_details.return_value = collection_exercise_details
 
         response = self.app.get(f'/surveys/{short_name}/{period}')
 
@@ -427,7 +439,8 @@ class TestCollectionExercise(unittest.TestCase):
         self.assertIn("Add another collection instrument. Must be XLSX".encode(), response.data)
 
     @requests_mock.mock()
-    def test_upload_sample(self, mock_request):
+    @patch('response_operations_ui.controllers.collection_exercise_controllers.get_collection_exercise_details')
+    def test_upload_sample(self, mock_request, mock_details):
         post_data = {"sampleFile": (BytesIO(b"data"), "test.csv"), "load-sample": ""}
 
         sample_data = {
@@ -436,15 +449,15 @@ class TestCollectionExercise(unittest.TestCase):
 
         collection_exercise_link = {"id": ""}
 
-        mock_request.get(url_get_collection_exercise, json=collection_exercise_details)
-        mock_request.get(url_get_collection_exercises, json=self.collection_exercises)
+        mock_details.return_value = collection_exercise_details
+        mock_request.get(url_ces_by_survey, json=self.collection_exercises)
         mock_request.get(url_get_survey_by_short_name, json=self.survey_data)
         mock_request.get(
-            url_collection_exercise_survey_id, status_code=200, json=exercise_data
+            url_ces_by_survey, json=exercise_data
         )
-        mock_request.post(url_sample_service_upload, status_code=200, json=sample_data)
+        mock_request.post(url_sample_service_upload, json=sample_data)
         mock_request.put(
-            url_collection_exercise_link, status_code=200, json=collection_exercise_link
+            url_collection_exercise_link, json=collection_exercise_link
         )
 
         response = self.app.post(f'/surveys/{short_name}/{period}', data=post_data, follow_redirects=True)
@@ -456,7 +469,8 @@ class TestCollectionExercise(unittest.TestCase):
         self.assertIn("5\n".encode(), response.data)
 
     @requests_mock.mock()
-    def test_upload_sample_link_failure(self, mock_request):
+    @patch('response_operations_ui.controllers.collection_exercise_controllers.get_collection_exercise_details')
+    def test_upload_sample_link_failure(self, mock_request, mock_details):
         post_data = {"sampleFile": (BytesIO(b"data"), "test.csv"), "load-sample": ""}
 
         sample_data = {
@@ -465,10 +479,10 @@ class TestCollectionExercise(unittest.TestCase):
 
         collection_exercise_link = {"id": ""}
 
-        mock_request.get(url_get_collection_exercise, json=collection_exercise_details)
+        mock_details.return_value = collection_exercise_details
         mock_request.get(url_get_survey_by_short_name, status_code=200, json=self.survey_data)
         mock_request.get(
-            url_collection_exercise_survey_id, status_code=200, json=exercise_data
+            url_ces_by_survey, status_code=200, json=exercise_data
         )
         mock_request.post(url_sample_service_upload, status_code=200, json=sample_data)
         mock_request.put(
@@ -481,7 +495,8 @@ class TestCollectionExercise(unittest.TestCase):
         self.assertIn("Error 500 - Server error".encode(), response.data)
 
     @requests_mock.mock()
-    def test_upload_sample_exception(self, mock_request):
+    @patch('response_operations_ui.controllers.collection_exercise_controllers.get_collection_exercise_details')
+    def test_upload_sample_exception(self, mock_request, mock_details):
         post_data = {"sampleFile": (BytesIO(b"data"), "test.csv"), "load-sample": ""}
 
         sample_data = {
@@ -490,9 +505,9 @@ class TestCollectionExercise(unittest.TestCase):
 
         collection_exercise_link = {"id": ""}
 
-        mock_request.get(url_get_collection_exercise, json=collection_exercise_details)
+        mock_details.return_value = collection_exercise_details
         mock_request.get(url_get_survey_by_short_name, status_code=200, json=self.survey_data)
-        mock_request.get(url_collection_exercise_survey_id, status_code=200, json=exercise_data)
+        mock_request.get(url_ces_by_survey, status_code=200, json=exercise_data)
         mock_request.post(url_sample_service_upload, status_code=500, json=sample_data)
         mock_request.put(
             url_collection_exercise_link, status_code=200, json=collection_exercise_link
@@ -504,11 +519,12 @@ class TestCollectionExercise(unittest.TestCase):
         self.assertIn("Error 500 - Server error".encode(), response.data)
 
     @requests_mock.mock()
-    def test_failed_upload_sample(self, mock_request):
+    @patch('response_operations_ui.controllers.collection_exercise_controllers.get_collection_exercise_details')
+    def test_failed_upload_sample(self, mock_request, mock_details):
         data = {"sampleFile": (BytesIO(b"data"), "test.csv"), "load-sample": ""}
 
         mock_request.post(url_sample_service_upload, status_code=500)
-        mock_request.get(url_get_collection_exercise, json=collection_exercise_details)
+        mock_details.return_value = collection_exercise_details
 
         response = self.app.post(f'/surveys/{short_name}/{period}', data=data, follow_redirects=True)
 
@@ -516,14 +532,13 @@ class TestCollectionExercise(unittest.TestCase):
         self.assertIn("Error 500 - Server error".encode(), response.data)
 
     @requests_mock.mock()
-    def test_no_upload_sample_when_bad_extension(self, mock_request):
+    @patch('response_operations_ui.controllers.collection_exercise_controllers.get_collection_exercise_details')
+    def test_no_upload_sample_when_bad_extension(self, mock_request, mock_details):
         data = {"sampleFile": (BytesIO(b"data"), "test.html"), "load-sample": ""}
-        mock_request.get(
-            url_get_collection_exercise, json=collection_exercise_details_no_sample
-        )
+        mock_details.return_value = collection_exercise_details_no_sample
         mock_request.get(url_get_survey_by_short_name, status_code=200, json=self.survey_data)
         mock_request.get(
-            url_collection_exercise_survey_id, status_code=200, json=exercise_data
+            url_ces_by_survey, status_code=200, json=exercise_data
         )
 
         response = self.app.post(f'/surveys/{short_name}/{period}', data=data, follow_redirects=True)
@@ -533,15 +548,14 @@ class TestCollectionExercise(unittest.TestCase):
         self.assertNotIn("Loaded sample summary".encode(), response.data)
 
     @requests_mock.mock()
-    def test_no_upload_sample_when_no_file(self, mock_request):
+    @patch('response_operations_ui.controllers.collection_exercise_controllers.get_collection_exercise_details')
+    def test_no_upload_sample_when_no_file(self, mock_request, mock_details):
         data = {"load-sample": ""}
 
-        mock_request.get(
-            url_get_collection_exercise, json=collection_exercise_details_no_sample
-        )
+        mock_details.return_value = collection_exercise_details_no_sample
         mock_request.get(url_get_survey_by_short_name, status_code=200, json=self.survey_data)
         mock_request.get(
-            url_collection_exercise_survey_id, status_code=200, json=exercise_data
+            url_ces_by_survey, status_code=200, json=exercise_data
         )
         response = self.app.post(
             f'/surveys/{short_name}/{period}', data=data, follow_redirects=True
@@ -552,10 +566,13 @@ class TestCollectionExercise(unittest.TestCase):
         self.assertNotIn("Loaded sample summary".encode(), response.data)
 
     @requests_mock.mock()
-    def test_post_ready_for_live(self, mock_request):
+    @patch('response_operations_ui.controllers.collection_exercise_controllers.get_collection_exercise_details')
+    def test_post_ready_for_live(self, mock_request, mock_details):
         post_data = {"ready-for-live": ""}
+        details = collection_exercise_details.copy()
+        details['collection_exercise']['state'] = 'EXECUTION_STARTED'
         mock_request.post(url_execute, status_code=200)
-        mock_request.get(url_get_collection_exercise, json=collection_exercise_details)
+        mock_details.return_value = details
 
         response = self.app.post(f'/surveys/{short_name}/{period}', data=post_data)
 
@@ -565,10 +582,11 @@ class TestCollectionExercise(unittest.TestCase):
         self.assertIn("Processing collection exercise".encode(), response.data)
 
     @requests_mock.mock()
-    def test_post_ready_for_live_failed(self, mock_request):
+    @patch('response_operations_ui.controllers.collection_exercise_controllers.get_collection_exercise_details')
+    def test_post_ready_for_live_failed(self, mock_request, mock_details):
         post_data = {"ready-for-live": ""}
         mock_request.post(url_execute, status_code=500)
-        mock_request.get(url_get_collection_exercise, json=collection_exercise_details)
+        mock_details.return_value = collection_exercise_details
 
         response = self.app.post(f'/surveys/{short_name}/{period}', data=post_data)
 
@@ -578,9 +596,11 @@ class TestCollectionExercise(unittest.TestCase):
         self.assertIn("Failed to execute Collection Exercise".encode(), response.data)
 
     @requests_mock.mock()
-    def test_get_processing(self, mock_request):
-        collection_exercise_details["collection_exercise"]["state"] = "EXECUTION_STARTED"
-        mock_request.get(url_get_collection_exercise, json=collection_exercise_details)
+    @patch('response_operations_ui.controllers.collection_exercise_controllers.get_collection_exercise_details')
+    def test_get_processing(self, mock_request, mock_details):
+        details = collection_exercise_details.copy()
+        details["collection_exercise"]["state"] = "EXECUTION_STARTED"
+        mock_details.return_value = details
 
         response = self.app.get(f'/surveys/{short_name}/{period}')
 
@@ -588,10 +608,9 @@ class TestCollectionExercise(unittest.TestCase):
         self.assertIn("Processing collection exercise".encode(), response.data)
 
     @requests_mock.mock()
-    def test_failed_execution(self, mock_request):
-        mock_request.get(
-            url_get_collection_exercise, json=collection_exercise_details_failedvalidation
-        )
+    @patch('response_operations_ui.controllers.collection_exercise_controllers.get_collection_exercise_details')
+    def test_failed_execution(self, mock_request, mock_details):
+        mock_details.return_value = collection_exercise_details_failedvalidation
 
         response = self.app.get(f'/surveys/{short_name}/{period}')
 
@@ -601,7 +620,8 @@ class TestCollectionExercise(unittest.TestCase):
         self.assertIn("Check collection instruments".encode(), response.data)
 
     @requests_mock.mock()
-    def test_update_collection_exercise_details_success(self, mock_request):
+    @patch('response_operations_ui.controllers.collection_exercise_controllers.get_collection_exercise_details')
+    def test_update_collection_exercise_details_success(self, mock_request, mock_details):
         changed_ce_details = {
             "collection_exercise_id": collection_exercise_id,
             "user_description": "16th June 2019",
@@ -609,11 +629,11 @@ class TestCollectionExercise(unittest.TestCase):
             "hidden_survey_id": survey_id,
         }
         # update survey
-        mock_request.get(url_get_collection_exercise, json=collection_exercise_details)
+        mock_details.return_value = collection_exercise_details
         mock_request.get(url_get_survey_by_short_name, json=updated_survey_info['survey'])
         mock_request.put(url_update_ce)
         # redirect to survey details
-        mock_request.get(url_get_collection_exercises, json=updated_survey_info['collection_exercises'])
+        mock_request.get(url_ces_by_survey, json=updated_survey_info['collection_exercises'])
         mock_request.get(url_get_collection_exercise_events, json=self.collection_exercises_events)
         mock_request.get(url_get_collection_exercises_link, json=self.collection_exercises_link)
         mock_request.get(url_get_sample_summary, json=self.sample_summary)
@@ -629,14 +649,15 @@ class TestCollectionExercise(unittest.TestCase):
         self.assertIn("201906".encode(), response.data)
 
     @requests_mock.mock()
-    def test_update_collection_exercise_details_fail(self, mock_request):
+    @patch('response_operations_ui.controllers.collection_exercise_controllers.get_collection_exercise_details')
+    def test_update_collection_exercise_details_fail(self, mock_request, mock_details):
         changed_ce_details = {
             "collection_exercise_id": collection_exercise_id,
             "user_description": "16th June 2019",
             "period": "201906",
             "hidden_survey_id": survey_id,
         }
-        mock_request.get(url_get_collection_exercise, json=collection_exercise_details)
+        mock_details.return_value = collection_exercise_details
         mock_request.put(url_update_ce, status_code=500)
 
         response = self.app.post(
@@ -648,10 +669,11 @@ class TestCollectionExercise(unittest.TestCase):
         self.assertIn("Server error (Error 500)".encode(), response.data)
 
     @requests_mock.mock()
-    def test_get_ce_details(self, mock_request):
-        mock_request.get(url_get_collection_exercise, json=collection_exercise_details)
+    @patch('response_operations_ui.controllers.collection_exercise_controllers.get_collection_exercise_details')
+    def test_get_ce_details(self, mock_request, mock_details):
+        mock_details.return_value = collection_exercise_details
         mock_request.get(url_get_survey_by_short_name, json=updated_survey_info['survey'])
-        mock_request.get(url_get_collection_exercises, json=updated_survey_info['collection_exercises'])
+        mock_request.get(url_ces_by_survey, json=updated_survey_info['collection_exercises'])
         mock_request.get(url_get_collection_exercise_events, json=self.collection_exercises_events)
         mock_request.get(url_get_collection_exercises_link, json=self.collection_exercises_link)
         mock_request.get(url_get_sample_summary, json=self.sample_summary)
@@ -663,7 +685,8 @@ class TestCollectionExercise(unittest.TestCase):
         self.assertIn(collection_exercise_id.encode(), response.data)
 
     @requests_mock.mock()
-    def test_unlink_collection_instrument(self, mock_request):
+    @patch('response_operations_ui.controllers.collection_exercise_controllers.get_collection_exercise_details')
+    def test_unlink_collection_instrument(self, mock_request, mock_details):
         post_data = {
             "ci_id": collection_instrument_id,
             "ce_id": collection_exercise_id,
@@ -671,7 +694,7 @@ class TestCollectionExercise(unittest.TestCase):
         }
 
         mock_request.put(url_collection_instrument_unlink, status_code=200)
-        mock_request.get(url_get_collection_exercise, json=collection_exercise_details)
+        mock_details.return_value = collection_exercise_details
 
         response = self.app.post(f"/surveys/{short_name}/{period}", data=post_data)
 
@@ -679,7 +702,8 @@ class TestCollectionExercise(unittest.TestCase):
         self.assertIn("Collection instrument removed".encode(), response.data)
 
     @requests_mock.mock()
-    def test_failed_unlink_collection_instrument(self, mock_request):
+    @patch('response_operations_ui.controllers.collection_exercise_controllers.get_collection_exercise_details')
+    def test_failed_unlink_collection_instrument(self, mock_request, mock_details):
         post_data = {
             "ci_id": collection_instrument_id,
             "ce_id": collection_exercise_id,
@@ -687,7 +711,7 @@ class TestCollectionExercise(unittest.TestCase):
         }
 
         mock_request.put(url_collection_instrument_unlink, status_code=500)
-        mock_request.get(url_get_collection_exercise, json=collection_exercise_details)
+        mock_details.return_value = collection_exercise_details
 
         response = self.app.post(f"/surveys/{short_name}/{period}", data=post_data)
 
@@ -702,7 +726,7 @@ class TestCollectionExercise(unittest.TestCase):
             "user_description": "New collection exercise",
             "period": "123456",
         }
-        mock_request.get(url_ce_by_survey, json=self.collection_exercises)
+        mock_request.get(url_ces_by_survey, json=self.collection_exercises)
         mock_request.get(url_get_survey_by_short_name, json=self.survey)
         mock_request.get(url_get_collection_exercise_events, json=self.collection_exercises_events)
         mock_request.get(url_get_collection_exercises_link, json=self.collection_exercises_link)
@@ -725,8 +749,11 @@ class TestCollectionExercise(unittest.TestCase):
             "user_description": "New collection exercise",
             "period": "123456",
         }
-        mock_request.get(url_ce_by_survey, json=self.collection_exercises)
-        mock_request.get(url_get_survey_by_short_name, json=updated_survey_info)
+        mock_request.get(url_ces_by_survey, json=self.collection_exercises)
+        mock_request.get(url_get_survey_by_short_name, json=self.survey)
+        mock_request.get(url_get_collection_exercise_events, json=self.collection_exercises_events)
+        mock_request.get(url_get_collection_exercises_link, json=self.collection_exercises_link)
+        mock_request.get(url_get_sample_summary, json=self.sample_summary)
         mock_request.post(url_create_collection_exercise, status_code=500)
 
         response = self.app.post(
@@ -739,7 +766,7 @@ class TestCollectionExercise(unittest.TestCase):
 
     @requests_mock.mock()
     def test_get_create_ce_form(self, mock_request):
-        mock_request.get(url_ce_by_survey, json=self.collection_exercises)
+        mock_request.get(url_ces_by_survey, json=self.collection_exercises)
         mock_request.get(url_get_survey_by_short_name, json=self.survey)
         mock_request.get(url_get_collection_exercise_events, json=self.collection_exercises_events)
         mock_request.get(url_get_collection_exercises_link, json=self.collection_exercises_link)
@@ -762,7 +789,7 @@ class TestCollectionExercise(unittest.TestCase):
         }
         ces = self.collection_exercises
         ces[0]['exerciseRef'] = taken_period
-        mock_request.get(url_ce_by_survey, json=ces)
+        mock_request.get(url_ces_by_survey, json=ces)
         mock_request.get(url_get_survey_by_short_name, json=updated_survey_info['survey'])
         mock_request.get(url_get_collection_exercise_events, json=self.collection_exercises_events)
         mock_request.get(url_get_collection_exercises_link, json=self.collection_exercises_link)
@@ -788,7 +815,7 @@ class TestCollectionExercise(unittest.TestCase):
             "user_description": "New collection exercise",
             "period": "hello",
         }
-        mock_request.get(url_ce_by_survey, json=self.collection_exercises)
+        mock_request.get(url_ces_by_survey, json=self.collection_exercises)
         mock_request.get(url_get_survey_by_short_name, json=updated_survey_info)
         mock_request.post(url_create_collection_exercise, status_code=200)
 
@@ -801,7 +828,8 @@ class TestCollectionExercise(unittest.TestCase):
         self.assertIn("Please enter numbers only for the period".encode(), response.data)
 
     @requests_mock.mock()
-    def test_failed_edit_ce_validation_period_exists(self, mock_request):
+    @patch('response_operations_ui.controllers.collection_exercise_controllers.get_collection_exercise_details')
+    def test_failed_edit_ce_validation_period_exists(self, mock_request, mock_details):
         taken_period = '12345'
         changed_ce_details = {
             "collection_exercise_id": collection_exercise_id,
@@ -811,14 +839,14 @@ class TestCollectionExercise(unittest.TestCase):
         }
 
         # update survey
-        mock_request.get(url_get_collection_exercise, json=collection_exercise_details)
+        mock_details.return_value = collection_exercise_details
         mock_request.get(url_get_survey_by_short_name, json=updated_survey_info['survey'])
         mock_request.put(url_update_ce)
 
         # failed validation
         ces = self.collection_exercises
         ces[0]['exerciseRef'] = taken_period
-        mock_request.get(url_get_collection_exercises, json=ces)
+        mock_request.get(url_ces_by_survey, json=ces)
         mock_request.get(url_get_collection_exercise_events, json=self.collection_exercises_events)
         mock_request.get(url_get_collection_exercises_link, json=self.collection_exercises_link)
         mock_request.get(url_get_sample_summary, json=self.sample_summary)
@@ -836,7 +864,8 @@ class TestCollectionExercise(unittest.TestCase):
         )
 
     @requests_mock.mock()
-    def test_failed_edit_ce_validation_letters_in_period_fails_validation(self, mock_request):
+    @patch('response_operations_ui.controllers.collection_exercise_controllers.get_collection_exercise_details')
+    def test_failed_edit_ce_validation_letters_in_period_fails_validation(self, mock_request, mock_details):
         changed_ce_details = {
             "collection_exercise_id": collection_exercise_id,
             "user_description": "16th June 2019",
@@ -844,12 +873,12 @@ class TestCollectionExercise(unittest.TestCase):
             "hidden_survey_id": survey_id,
         }
         # update survey
-        mock_request.get(url_get_collection_exercise, json=collection_exercise_details)
+        mock_details.return_value = collection_exercise_details
         mock_request.get(url_get_survey_by_short_name, json=updated_survey_info['survey'])
         mock_request.put(url_update_ce)
 
         # failed validation
-        mock_request.get(url_get_collection_exercises, json=self.collection_exercises)
+        mock_request.get(url_ces_by_survey, json=self.collection_exercises)
         mock_request.get(url_get_collection_exercise_events, json=self.collection_exercises_events)
         mock_request.get(url_get_collection_exercises_link, json=self.collection_exercises_link)
         mock_request.get(url_get_sample_summary, json=self.sample_summary)
@@ -864,8 +893,9 @@ class TestCollectionExercise(unittest.TestCase):
         self.assertIn("Please enter numbers only for the period".encode(), response.data)
 
     @requests_mock.mock()
-    def test_remove_loaded_sample_success(self, mock_request):
-        mock_request.get(url_get_collection_exercise, json=collection_exercise_details)
+    @patch('response_operations_ui.controllers.collection_exercise_controllers.get_collection_exercise_details')
+    def test_remove_loaded_sample_success(self, mock_request, mock_details):
+        mock_details.return_value = collection_exercise_details
         mock_request.delete(url_ce_remove_sample, status_code=200)
         response = self.app.post(
             f"/surveys/{short_name}/{period}/confirm-remove-sample", follow_redirects=True
@@ -875,8 +905,9 @@ class TestCollectionExercise(unittest.TestCase):
         self.assertIn("Sample removed".encode(), response.data)
 
     @requests_mock.mock()
-    def test_remove_loaded_sample_failed(self, mock_request):
-        mock_request.get(url_get_collection_exercise, json=collection_exercise_details)
+    @patch('response_operations_ui.controllers.collection_exercise_controllers.get_collection_exercise_details')
+    def test_remove_loaded_sample_failed(self, mock_request, mock_details):
+        mock_details.return_value = collection_exercise_details
         mock_request.delete(url_ce_remove_sample, status_code=500)
         response = self.app.post(
             f"/surveys/{short_name}/{period}/confirm-remove-sample", follow_redirects=True
