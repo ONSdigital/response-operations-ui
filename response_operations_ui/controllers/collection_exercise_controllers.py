@@ -1,17 +1,10 @@
 import logging
 
-from flask import abort
 import requests
 from requests.exceptions import HTTPError
 from structlog import wrap_logger
 
 from response_operations_ui import app
-from response_operations_ui.common.filters import get_collection_exercise_by_period
-from response_operations_ui.common.mappers import format_short_name
-from response_operations_ui.controllers import (
-    collection_instrument_controllers as ci,
-    sample_controllers,
-    survey_controllers)
 from response_operations_ui.exceptions.exceptions import ApiError
 
 
@@ -47,50 +40,6 @@ def download_report(collection_exercise_id, survey_id):
         survey_id=survey_id,
     )
     return response
-
-
-def get_collection_exercise_details(short_name, period):
-    logger.debug(
-        "Retrieving collection exercise details", short_name=short_name, period=period
-    )
-    survey = survey_controllers.get_survey_by_shortname(short_name)
-    survey_id = survey['id']
-    exercises = get_collection_exercises_by_survey(survey_id)
-    exercise = get_collection_exercise_by_period(exercises, period)
-    if not exercise:
-        logger.error('Failed to find collection exercise by period',
-                     short_name=short_name, period=period)
-        abort(404)
-    collection_exercise_id = exercise['id']
-    survey['shortName'] = format_short_name(survey['shortName'])
-    full_exercise = get_collection_exercise_by_id(collection_exercise_id)
-    exercise_events = get_collection_exercise_events(collection_exercise_id)
-    collection_instruments = ci.get_collection_instruments_by_classifier(survey_id=survey_id,
-                                                                         collection_exercise_id=collection_exercise_id)
-
-    eq_ci_selectors = ci.get_collection_instruments_by_classifier(survey_id=survey_id,
-                                                                  ci_type='EQ')
-
-    summary_id = get_linked_sample_summary_id(collection_exercise_id)
-    sample_summary = sample_controllers.get_sample_summary(summary_id) if summary_id else None
-    ci_classifiers = survey_controllers.get_survey_ci_classifier(survey_id)
-
-    response_json = {
-        "survey": survey,
-        "collection_exercise": full_exercise,
-        "events": exercise_events,
-        "collection_instruments": collection_instruments,
-        "eq_ci_selectors": eq_ci_selectors,
-        "sample_summary": sample_summary,
-        "ci_classifiers": ci_classifiers
-    }
-
-    logger.debug(
-        "Successfully retrieved collection exercise details",
-        short_name=short_name,
-        period=period,
-    )
-    return response_json
 
 
 def get_collection_exercise_event_page_info(short_name, period):
