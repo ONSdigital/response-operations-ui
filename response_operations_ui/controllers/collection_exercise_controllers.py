@@ -18,8 +18,8 @@ def download_report(collection_exercise_id, survey_id):
     )
 
     url = (
-        f"{app.config['RM_REPORT_SERVICE']}"
-        f"reporting-api/v1/response-chasing/download-report/"
+        f"{app.config['REPORT_URL']}"
+        f"/reporting-api/v1/response-chasing/download-report/"
         f"{collection_exercise_id}/{survey_id}"
     )
 
