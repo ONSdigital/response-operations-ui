@@ -35,7 +35,7 @@ def get_error_message(error_key):
 @login_required
 def view_collection_exercise(short_name, period, error=None, success_message=None, error_message=None,
                              success_panel=None, show_msg=None):
-    ce_details = collection_exercise_controllers.get_collection_exercise(short_name, period)
+    ce_details = collection_exercise_controllers.get_collection_exercise_details(short_name, period)
     ce_details['sample_summary'] = _format_sample_summary(ce_details['sample_summary'])
     formatted_events = convert_events_to_new_format(ce_details['events'])
     breadcrumbs = [
@@ -317,7 +317,7 @@ def _get_form_type(file_name):
 @login_required
 def view_collection_exercise_details(short_name, period):
     logger.info("Retrieving collection exercise data for form", short_name=short_name, period=period)
-    ce_details = collection_exercise_controllers.get_collection_exercise(short_name, period)
+    ce_details = collection_exercise_controllers.get_collection_exercise_details(short_name, period)
     form = EditCollectionExerciseDetailsForm(form=request.form)
     survey_details = survey_controllers.get_survey(short_name)
     ce_state = ce_details['collection_exercise']['state']
@@ -338,7 +338,7 @@ def edit_collection_exercise_details(short_name, period):
     if not form.validate():
         logger.info("Failed validation, retrieving collection exercise data for form",
                     short_name=short_name, period=period)
-        ce_details = collection_exercise_controllers.get_collection_exercise(short_name, period)
+        ce_details = collection_exercise_controllers.get_collection_exercise_details(short_name, period)
         ce_state = ce_details['collection_exercise']['state']
         survey_id = survey_controllers.get_survey_id_by_short_name(short_name)
         locked = ce_state in ('LIVE', 'READY_FOR_LIVE', 'EXECUTION_STARTED', 'VALIDATED', 'EXECUTED')
@@ -423,7 +423,7 @@ def get_confirm_remove_sample(short_name, period):
 @collection_exercise_bp.route('/<short_name>/<period>/confirm-remove-sample', methods=['POST'])
 @login_required
 def remove_loaded_sample(short_name, period):
-    ce_details = collection_exercise_controllers.get_collection_exercise(short_name, period)
+    ce_details = collection_exercise_controllers.get_collection_exercise_details(short_name, period)
     ce_details['sample_summary'] = _format_sample_summary(ce_details['sample_summary'])
     sample_summary_id = ce_details['sample_summary']['id']
     collection_exercise_id = ce_details['collection_exercise']['id']
