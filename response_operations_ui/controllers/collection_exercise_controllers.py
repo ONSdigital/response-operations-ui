@@ -215,6 +215,21 @@ def create_collection_exercise(survey_id, survey_name, user_description, period)
     )
 
 
+def get_collection_exercise_events(collection_exercise_id):
+    logger.debug('Retrieving collection exercise events', collection_exercise_id=collection_exercise_id)
+    url = f'{app.config["COLLECTION_EXERCISE_URL"]}/collectionexercises/{collection_exercise_id}/events'
+    response = requests.get(url, auth=app.config['COLLECTION_EXERCISE_AUTH'])
+
+    try:
+        response.raise_for_status()
+    except HTTPError:
+        logger.error('Error retrieving collection exercise events', collection_exercise_id=collection_exercise_id)
+        raise ApiError(response)
+
+    logger.debug('Successfully retrieved collection exercise events', collection_exercise_id=collection_exercise_id)
+    return response.json()
+
+
 def get_collection_exercises_by_survey(survey_id):
     logger.debug("Retrieving collection exercises", survey_id=survey_id)
     url = (
@@ -284,6 +299,30 @@ def get_collection_exercise_from_list(exercises, period):
     return next(
         (exercise for exercise in exercises if exercise["exerciseRef"] == period), None
     )
+
+
+def get_linked_sample_summary_id(collection_exercise_id):
+    logger.debug('Retrieving sample linked to collection exercise', collection_exercise_id=collection_exercise_id)
+    url = f'{app.config["COLLECTION_EXERCISE_URL"]}/collectionexercises/link/{collection_exercise_id}'
+    response = requests.get(url, auth=app.config['COLLECTION_EXERCISE_AUTH'])
+
+    if response.status_code == 204:
+        logger.info('No samples linked to collection exercise', collection_exercise_id=collection_exercise_id)
+        return
+    try:
+        response.raise_for_status()
+    except HTTPError:
+        logger.error('Error retrieving sample summaries linked to collection exercise',
+                     collection_exercise_id=collection_exercise_id)
+        raise ApiError(response)
+
+    # currently, we only want a single sample summary
+    sample_summary_id = response.json()[0]
+
+    logger.debug('Successfully retrieved linked sample summary',
+                 collection_exercise_id=collection_exercise_id,
+                 sample_summary_id=sample_summary_id)
+    return sample_summary_id
 
 
 def link_sample_summary_to_collection_exercise(

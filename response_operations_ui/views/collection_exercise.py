@@ -340,7 +340,7 @@ def edit_collection_exercise_details(short_name, period):
                     short_name=short_name, period=period)
         ce_details = collection_exercise_controllers.get_collection_exercise(short_name, period)
         ce_state = ce_details['collection_exercise']['state']
-        survey_details = survey_controllers.get_survey(short_name)
+        survey_id = survey_controllers.get_survey_id_by_short_name(short_name)
         locked = ce_state in ('LIVE', 'READY_FOR_LIVE', 'EXECUTION_STARTED', 'VALIDATED', 'EXECUTED')
 
         return render_template('edit-collection-exercise-details.html', survey_ref=ce_details['survey']['surveyRef'],
@@ -348,7 +348,7 @@ def edit_collection_exercise_details(short_name, period):
                                ce_state=ce_details['collection_exercise']['state'], errors=form.errors,
                                user_description=ce_details['collection_exercise']['userDescription'],
                                collection_exercise_id=ce_details['collection_exercise']['id'],
-                               survey_id=survey_details['survey']['id'])
+                               survey_id=survey_id)
 
     else:
         logger.info("Updating collection exercise details", short_name=short_name, period=period)

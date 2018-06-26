@@ -7,14 +7,14 @@ import requests_mock
 from config import TestingConfig
 from response_operations_ui import app
 
-
+collection_exercise_event_id = 'b4a36392-a21f-485b-9dc4-d151a8fcd565'
 collection_exercise_id = '14fb3e68-4dca-46db-bf49-04b84e07e77c'
 collection_instrument_id = 'a32800c5-5dc1-459d-9932-0da6c21d2ed2'
+period = '000000'
 sample_summary_id = '1a11543f-eb19-41f5-825f-e41aca15e724'
+short_name = 'ashortname'
 survey_id = 'cb0711c3-0ac8-41d3-ae0e-567e5ea1ef87'
 survey_ref = '141'
-short_name = 'ashortname'
-period = '000000'
 
 collex_root = "tests/test_data/collection_exercise/collection_exercise_details"
 no_sample = collex_root + "_no_sample.json"
@@ -45,59 +45,61 @@ with open("tests/test_data/collection_exercise/exercise_data.json") as json_data
 url_get_collection_exercise = (
     f'{app.config["BACKSTAGE_API_URL"]}/v1/collection-exercise/{short_name}/{period}'
 )
-
 url_collection_instrument = (
     f'{app.config["COLLECTION_INSTRUMENT_URL"]}'
     f'/collection-instrument-api/1.0.2/upload/{collection_exercise_id}'
 )
-
 url_collection_instrument_link = (
     f'{app.config["COLLECTION_INSTRUMENT_URL"]}'
     f'/collection-instrument-api/1.0.2/link-exercise'
     f'/{collection_instrument_id}/{collection_exercise_id}'
 )
-
 url_collection_instrument_unlink = (
     f'{app.config["COLLECTION_INSTRUMENT_URL"]}'
     f'/collection-instrument-api/1.0.2/unlink-exercise'
     f'/{collection_instrument_id}/{collection_exercise_id}'
 )
-
 url_survey_shortname = f'{app.config["SURVEY_URL"]}/surveys/shortname/{short_name}'
-
 url_sample_service_upload = f'{app.config["SAMPLE_URL"]}/samples/B/fileupload'
-
 url_collection_exercise_survey_id = (
     f'{app.config["COLLECTION_EXERCISE_URL"]}/collectionexercises/survey'
     f'/{survey_id}'
 )
-
 url_collection_exercise_link = (
     f'{app.config["COLLECTION_EXERCISE_URL"]}/collectionexercises/link'
     f'/{collection_exercise_id}'
 )
-
 url_upload_sample = f'{app.config["BACKSTAGE_API_URL"]}/v1/sample/{short_name}/{period}'
-
 url_execute = (
     f'{app.config["BACKSTAGE_API_URL"]}/v1/collection-exercise'
     f'/{short_name}/{period}/execute'
 )
-
 url_update_ce = (
     f'{app.config["BACKSTAGE_API_URL"]}/v1/collection-exercise/update-collection-exercise-details'
     f'/{collection_exercise_id}'
 )
-
-url_get_survey_by_short_name = f'{app.config["BACKSTAGE_API_URL"]}/v1/survey/shortname/{short_name}'
-
+url_get_survey_by_short_name = f'{app.config["SURVEY_URL"]}/surveys/shortname/{short_name}'
 url_create_collection_exercise = f'{app.config["COLLECTION_EXERCISE_URL"]}/collectionexercises'
-
 url_ce_remove_sample = (
     f'{app.config["COLLECTION_EXERCISE_URL"]}/collectionexercises/unlink/{collection_exercise_id}'
     f'/sample/{sample_summary_id}'
 )
-
+url_get_collection_exercises = (
+    f'{app.config["COLLECTION_EXERCISE_URL"]}'
+    f'/collectionexercises/survey/{survey_id}'
+)
+url_get_collection_exercise_events = (
+    f'{app.config["COLLECTION_EXERCISE_URL"]}'
+    f'/collectionexercises/{collection_exercise_id}/events'
+)
+url_get_collection_exercises_link = (
+    f'{app.config["COLLECTION_EXERCISE_URL"]}'
+    f'/collectionexercises/link/{collection_exercise_id}'
+)
+url_get_sample_summary = (
+    f'{app.config["SAMPLE_URL"]}'
+    f'/samples/samplesummary/{sample_summary_id}'
+)
 url_ce_by_survey = (
     f'{app.config["COLLECTION_EXERCISE_URL"]}/collectionexercises/survey/{survey_id}'
 )
@@ -111,14 +113,41 @@ class TestCollectionExercise(unittest.TestCase):
         app.login_manager.init_app(app)
         self.app = app.test_client()
         self.headers = {"Authorization": "test_jwt", "Content-Type": "application/json"}
+        self.survey_data = {"id": survey_id}
+        self.survey = {
+            "id": survey_id,
+            "longName": "Business Register and Employment Survey",
+            "shortName": "BRES",
+            "surveyRef": "221"
+        }
         self.collection_exercises = [
             {
                 "id": collection_exercise_id,
-                "exerciseRef": "201601",
+                "name": "201601",
                 "scheduledExecutionDateTime": "2017-05-15T00:00:00Z",
+                "state": "PUBLISHED",
+                "exerciseRef": "000000"
             }
         ]
-        self.survey_data = {"id": survey_id}
+        self.collection_exercises_events = [
+            {
+                "id": collection_exercise_event_id,
+                "collectionExerciseId": collection_exercise_id,
+                "tag": "mps",
+                "timestamp": "2018-03-16T00:00:00.000Z"
+            }
+        ]
+        self.collection_exercises_link = [sample_summary_id]
+        self.sample_summary = {
+            "id": sample_summary_id,
+            "effectiveStartDateTime": "",
+            "effectiveEndDateTime": "",
+            "surveyRef": "",
+            "ingestDateTime": "2018-03-14T14:29:51.325Z",
+            "state": "ACTIVE",
+            "totalSampleUnits": 5,
+            "expectedCollectionInstruments": 1
+        }
 
     @requests_mock.mock()
     def test_collection_exercise_view(self, mock_request):
@@ -143,9 +172,10 @@ class TestCollectionExercise(unittest.TestCase):
     def test_upload_collection_instrument(self, mock_request):
         post_data = {"ciFile": (BytesIO(b"data"), "064_201803_0001.xlsx"), "load-ci": ""}
         mock_request.post(url_collection_instrument, status_code=201)
-        mock_request.get(url_survey_shortname, status_code=200, json=self.survey_data)
         mock_request.get(url_collection_exercise_survey_id, status_code=200, json=exercise_data)
+        mock_request.get(url_survey_shortname, status_code=200, json=self.survey_data)
         mock_request.get(url_get_collection_exercise, json=collection_exercise_details)
+        mock_request.get(url_get_collection_exercises, json=self.collection_exercises)
 
         response = self.app.post(f'/surveys/{short_name}/{period}', data=post_data, follow_redirects=True)
 
@@ -194,6 +224,7 @@ class TestCollectionExercise(unittest.TestCase):
         mock_request.post(url_collection_instrument, status_code=201)
         mock_request.get(url_survey_shortname, status_code=200, json=self.survey_data)
         mock_request.get(url_collection_exercise_survey_id, status_code=200, json=exercise_data)
+        mock_request.get(url_get_collection_exercises, json=self.collection_exercises)
         mock_request.get(url_get_collection_exercise, json=collection_exercise_details)
 
         response = self.app.post(f'/surveys/{short_name}/{period}', data=post_data, follow_redirects=True)
@@ -208,6 +239,7 @@ class TestCollectionExercise(unittest.TestCase):
         mock_request.get(url_survey_shortname, status_code=200, json=self.survey_data)
         mock_request.get(url_collection_exercise_survey_id, status_code=200, json=exercise_data)
         mock_request.get(url_get_collection_exercise, json=collection_exercise_details)
+        mock_request.get(url_get_collection_exercises, json=self.collection_exercises)
 
         response = self.app.post(f'/surveys/{short_name}/{period}', data=post_data, follow_redirects=True)
 
@@ -316,6 +348,7 @@ class TestCollectionExercise(unittest.TestCase):
         collection_exercise_link = {"id": ""}
 
         mock_request.get(url_get_collection_exercise, json=collection_exercise_details)
+        mock_request.get(url_get_collection_exercises, json=self.collection_exercises)
         mock_request.get(url_survey_shortname, status_code=200, json=self.survey_data)
         mock_request.get(
             url_collection_exercise_survey_id, status_code=200, json=exercise_data
@@ -483,13 +516,19 @@ class TestCollectionExercise(unittest.TestCase):
         changed_ce_details = {
             "collection_exercise_id": collection_exercise_id,
             "user_description": "16th June 2019",
-            "period": "201906",
+            "period": "201907",  # NB: slight difference in value to avoid validation error
             "hidden_survey_id": survey_id,
         }
+        # update survey
         mock_request.get(url_get_collection_exercise, json=collection_exercise_details)
+        mock_request.get(url_get_survey_by_short_name, json=updated_survey_info['survey'])
         mock_request.put(url_update_ce)
-        mock_request.get(url_ce_by_survey, json=self.collection_exercises)
-        mock_request.get(url_get_survey_by_short_name, json=updated_survey_info)
+        # redirect to survey details
+        mock_request.get(url_get_collection_exercises, json=updated_survey_info['collection_exercises'])
+        mock_request.get(url_get_collection_exercise_events, json=self.collection_exercises_events)
+        mock_request.get(url_get_collection_exercises_link, json=self.collection_exercises_link)
+        mock_request.get(url_get_sample_summary, json=self.sample_summary)
+
         response = self.app.post(
             f"/surveys/{short_name}/{period}/edit-collection-exercise-details",
             data=changed_ce_details,
@@ -522,7 +561,11 @@ class TestCollectionExercise(unittest.TestCase):
     @requests_mock.mock()
     def test_get_ce_details(self, mock_request):
         mock_request.get(url_get_collection_exercise, json=collection_exercise_details)
-        mock_request.get(url_get_survey_by_short_name, json=updated_survey_info)
+        mock_request.get(url_get_survey_by_short_name, json=updated_survey_info['survey'])
+        mock_request.get(url_get_collection_exercises, json=updated_survey_info['collection_exercises'])
+        mock_request.get(url_get_collection_exercise_events, json=self.collection_exercises_events)
+        mock_request.get(url_get_collection_exercises_link, json=self.collection_exercises_link)
+        mock_request.get(url_get_sample_summary, json=self.sample_summary)
         response = self.app.get(
             f"/surveys/{short_name}/{period}/edit-collection-exercise-details", follow_redirects=True
         )
@@ -571,7 +614,10 @@ class TestCollectionExercise(unittest.TestCase):
             "period": "123456",
         }
         mock_request.get(url_ce_by_survey, json=self.collection_exercises)
-        mock_request.get(url_get_survey_by_short_name, json=updated_survey_info)
+        mock_request.get(url_get_survey_by_short_name, json=self.survey)
+        mock_request.get(url_get_collection_exercise_events, json=self.collection_exercises_events)
+        mock_request.get(url_get_collection_exercises_link, json=self.collection_exercises_link)
+        mock_request.get(url_get_sample_summary, json=self.sample_summary)
         mock_request.post(url_create_collection_exercise, status_code=200)
 
         response = self.app.post(
@@ -604,7 +650,11 @@ class TestCollectionExercise(unittest.TestCase):
 
     @requests_mock.mock()
     def test_get_create_ce_form(self, mock_request):
-        mock_request.get(url_get_survey_by_short_name, json=updated_survey_info)
+        mock_request.get(url_ce_by_survey, json=self.collection_exercises)
+        mock_request.get(url_get_survey_by_short_name, json=self.survey)
+        mock_request.get(url_get_collection_exercise_events, json=self.collection_exercises_events)
+        mock_request.get(url_get_collection_exercises_link, json=self.collection_exercises_link)
+        mock_request.get(url_get_sample_summary, json=self.sample_summary)
         response = self.app.get(
             f"/surveys/{survey_ref}-{short_name}/create-collection-exercise", follow_redirects=True
         )
@@ -614,14 +664,20 @@ class TestCollectionExercise(unittest.TestCase):
 
     @requests_mock.mock()
     def test_failed_create_ce_validation_period_exists(self, mock_request):
+        taken_period = '12345'
         new_collection_exercise_details = {
             "hidden_survey_name": "BRES",
             "hidden_survey_id": survey_id,
             "user_description": "New collection exercise",
-            "period": "201601",
+            "period": taken_period,
         }
-        mock_request.get(url_ce_by_survey, json=self.collection_exercises)
-        mock_request.get(url_get_survey_by_short_name, json=updated_survey_info)
+        ces = self.collection_exercises
+        ces[0]['exerciseRef'] = taken_period
+        mock_request.get(url_ce_by_survey, json=ces)
+        mock_request.get(url_get_survey_by_short_name, json=updated_survey_info['survey'])
+        mock_request.get(url_get_collection_exercise_events, json=self.collection_exercises_events)
+        mock_request.get(url_get_collection_exercises_link, json=self.collection_exercises_link)
+        mock_request.get(url_get_sample_summary, json=self.sample_summary)
         mock_request.post(url_create_collection_exercise, status_code=200)
 
         response = self.app.post(
@@ -657,16 +713,27 @@ class TestCollectionExercise(unittest.TestCase):
 
     @requests_mock.mock()
     def test_failed_edit_ce_validation_period_exists(self, mock_request):
+        taken_period = '12345'
         changed_ce_details = {
             "collection_exercise_id": collection_exercise_id,
             "user_description": "16th June 2019",
-            "period": "201601",
+            "period": taken_period,
             "hidden_survey_id": survey_id,
         }
+
+        # update survey
         mock_request.get(url_get_collection_exercise, json=collection_exercise_details)
+        mock_request.get(url_get_survey_by_short_name, json=updated_survey_info['survey'])
         mock_request.put(url_update_ce)
-        mock_request.get(url_ce_by_survey, json=self.collection_exercises)
-        mock_request.get(url_get_survey_by_short_name, json=updated_survey_info)
+
+        # failed validation
+        ces = self.collection_exercises
+        ces[0]['exerciseRef'] = taken_period
+        mock_request.get(url_get_collection_exercises, json=ces)
+        mock_request.get(url_get_collection_exercise_events, json=self.collection_exercises_events)
+        mock_request.get(url_get_collection_exercises_link, json=self.collection_exercises_link)
+        mock_request.get(url_get_sample_summary, json=self.sample_summary)
+
         response = self.app.post(
             f"/surveys/{short_name}/{period}/edit-collection-exercise-details",
             data=changed_ce_details,
@@ -687,10 +754,17 @@ class TestCollectionExercise(unittest.TestCase):
             "period": "hello",
             "hidden_survey_id": survey_id,
         }
+        # update survey
         mock_request.get(url_get_collection_exercise, json=collection_exercise_details)
+        mock_request.get(url_get_survey_by_short_name, json=updated_survey_info['survey'])
         mock_request.put(url_update_ce)
-        mock_request.get(url_ce_by_survey, json=self.collection_exercises)
-        mock_request.get(url_get_survey_by_short_name, json=updated_survey_info)
+
+        # failed validation
+        mock_request.get(url_get_collection_exercises, json=self.collection_exercises)
+        mock_request.get(url_get_collection_exercise_events, json=self.collection_exercises_events)
+        mock_request.get(url_get_collection_exercises_link, json=self.collection_exercises_link)
+        mock_request.get(url_get_sample_summary, json=self.sample_summary)
+
         response = self.app.post(
             f"/surveys/{short_name}/{period}/edit-collection-exercise-details",
             data=changed_ce_details,
