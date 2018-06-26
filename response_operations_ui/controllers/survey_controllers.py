@@ -202,7 +202,8 @@ def create_survey(survey_ref, short_name, long_name, legal_basis):
         "surveyRef": survey_ref,
         "shortName": short_name,
         "longName": long_name,
-        "legalBasisRef": legal_basis
+        "legalBasisRef": legal_basis,
+        "surveyType": "Business"
     }
 
     response = requests.post(url, json=survey_details, auth=app.config['SURVEY_AUTH'])
