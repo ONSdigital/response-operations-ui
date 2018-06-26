@@ -1,11 +1,11 @@
 import json
-import unittest
 
 import requests_mock
 
-from config import TestingConfig
 from response_operations_ui import app
 from response_operations_ui.controllers.party_controller import search_respondent_by_email
+from tests.views import ViewTestCase
+
 
 business_party_id = "b3ba864b-7cbc-4f44-84fe-88dc018a1a4c"
 party_id = "cd592e0f-8d07-407b-b75d-e01fbdae8233"
@@ -23,13 +23,10 @@ with open('tests/test_data/survey/survey_by_id.json') as json_data:
     survey_by_id = json.load(json_data)
 
 
-class TestRespondents(unittest.TestCase):
+class TestRespondents(ViewTestCase):
 
-    def setUp(self):
-        app_config = TestingConfig()
-        app.config.from_object(app_config)
-        app.login_manager.init_app(app)
-        self.app = app.test_client()
+    def init_data(self):
+        pass
 
     def test_search_respondent_get(self):
         response = self.app.get("/respondents")
@@ -60,10 +57,9 @@ class TestRespondents(unittest.TestCase):
         email = 'Jacky.Turner@email.com'
         mock_request.get(get_respondent_by_email_url, status_code=500)
 
-        response = self.app.post("/respondents/", data={"email": email}, follow_redirects=True)
+        self.app.post("/respondents/", data={"email": email})
 
-        self.assertEqual(response.status_code, 500)
-        self.assertIn("Error 500 - Server error".encode(), response.data)
+        self.assertApiError(get_respondent_by_email_url, 500)
 
     @requests_mock.mock()
     def test_search_respondent_by_email_success(self, mock_request):
@@ -94,10 +90,9 @@ class TestRespondents(unittest.TestCase):
         mock_request.get(get_respondent_by_id_url, json=respondent, status_code=200)
         mock_request.get(get_survey_by_id_url, json=survey_by_id, status_code=500)
 
-        response = self.app.post("/respondents", data={"query": email}, follow_redirects=True)
+        self.app.post("/respondents", data={"query": email}, follow_redirects=True)
 
-        self.assertEqual(response.status_code, 500)
-        self.assertIn("Error 500 - Server error".encode(), response.data)
+        self.assertApiError(get_survey_by_id_url, 500)
 
     @requests_mock.mock()
     def test_search_respondent_by_email_unable_to_get_respondent_details(self, mock_request):
@@ -107,10 +102,9 @@ class TestRespondents(unittest.TestCase):
         mock_request.get(get_respondent_by_id_url, json=respondent, status_code=500)
         mock_request.get(get_survey_by_id_url, json=survey_by_id, status_code=200)
 
-        response = self.app.post("/respondents", data={"query": email}, follow_redirects=True)
+        self.app.post("/respondents", data={"query": email}, follow_redirects=True)
 
-        self.assertEqual(response.status_code, 500)
-        self.assertIn("Error 500 - Server error".encode(), response.data)
+        self.assertApiError(get_respondent_by_id_url, 500)
 
     @requests_mock.mock()
     def test_search_respondent_by_email_unable_to_get_business_details(self, mock_request):
@@ -120,7 +114,6 @@ class TestRespondents(unittest.TestCase):
         mock_request.get(get_respondent_by_id_url, json=respondent, status_code=200)
         mock_request.get(get_survey_by_id_url, json=survey_by_id, status_code=200)
 
-        response = self.app.post("/respondents", data={"query": email}, follow_redirects=True)
+        self.app.post("/respondents", data={"query": email}, follow_redirects=True)
 
-        self.assertEqual(response.status_code, 500)
-        self.assertIn("Error 500 - Server error".encode(), response.data)
+        self.assertApiError(f'{get_business_by_id_url}?verbose=True', 500)
