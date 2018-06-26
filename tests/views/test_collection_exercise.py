@@ -273,7 +273,7 @@ class TestCollectionExercise(unittest.TestCase):
     def test_collection_exercise_view_service_fail(self, mock_request):
         mock_request.get(url_get_survey_by_short_name, status_code=500)
 
-        response = self.app.get(f'/surveys/{short_name}/{period}')
+        self.app.get(f'/surveys/{short_name}/{period}')
 
         self.mocked_handler.assert_called()
         self.assertEqual(self.mocked_handler.call_args[0][0].status_code, 500)
@@ -287,7 +287,7 @@ class TestCollectionExercise(unittest.TestCase):
         mock_request.get(url_get_collection_exercise_events, json=self.collection_exercise_events)
         mock_request.get(f'{url_get_collection_instrument}?{ci_search_string}', status_code=400)
 
-        response = self.app.get(f'/surveys/{short_name}/{period}')
+        self.app.get(f'/surveys/{short_name}/{period}')
 
         self.mocked_handler.assert_called()
         self.assertEqual(self.mocked_handler.call_args[0][0].status_code, 400)
@@ -308,7 +308,7 @@ class TestCollectionExercise(unittest.TestCase):
         mock_request.get(url_get_classifier_type_selectors, json=classifier_type_selectors)
         mock_request.get(url_get_classifier_type, status_code=400)
 
-        response = self.app.get(f'/surveys/{short_name}/{period}')
+        self.app.get(f'/surveys/{short_name}/{period}')
 
         self.mocked_handler.assert_called()
         self.assertEqual(self.mocked_handler.call_args[0][0].status_code, 400)
@@ -328,7 +328,7 @@ class TestCollectionExercise(unittest.TestCase):
         mock_request.get(url_get_sample_summary, json=self.sample_summary)
         mock_request.get(url_get_classifier_type_selectors, status_code=400)
 
-        response = self.app.get(f'/surveys/{short_name}/{period}')
+        self.app.get(f'/surveys/{short_name}/{period}')
 
         self.mocked_handler.assert_called()
         self.assertEqual(self.mocked_handler.call_args[0][0].status_code, 400)
@@ -565,7 +565,7 @@ class TestCollectionExercise(unittest.TestCase):
             url_collection_exercise_link, status_code=500, json=collection_exercise_link
         )
 
-        response = self.app.post(f'/surveys/{short_name}/{period}', data=post_data)
+        self.app.post(f'/surveys/{short_name}/{period}', data=post_data)
 
         self.mocked_handler.assert_called()
         self.assertEqual(self.mocked_handler.call_args[0][0].status_code, 500)
@@ -590,7 +590,7 @@ class TestCollectionExercise(unittest.TestCase):
             url_collection_exercise_link, status_code=200, json=collection_exercise_link
         )
 
-        response = self.app.post(f'/surveys/{short_name}/{period}', data=post_data)
+        self.app.post(f'/surveys/{short_name}/{period}', data=post_data)
 
         self.mocked_handler.assert_called()
         self.assertEqual(self.mocked_handler.call_args[0][0].status_code, 500)
@@ -606,7 +606,7 @@ class TestCollectionExercise(unittest.TestCase):
         mock_request.post(url_sample_service_upload, status_code=500)
         mock_details.return_value = collection_exercise_details
 
-        response = self.app.post(f'/surveys/{short_name}/{period}', data=data)
+        self.app.post(f'/surveys/{short_name}/{period}', data=data)
 
         self.mocked_handler.assert_called()
         self.assertEqual(self.mocked_handler.call_args[0][0].status_code, 500)
@@ -739,15 +739,18 @@ class TestCollectionExercise(unittest.TestCase):
             "hidden_survey_id": survey_id,
         }
         mock_details.return_value = collection_exercise_details
+        mock_request.get(url_get_survey_by_short_name, json=updated_survey_info['survey'])
+        mock_request.get(url_ces_by_survey, json=[])
         mock_request.put(url_update_ce, status_code=500)
 
-        response = self.app.post(
+        self.app.post(
             f"/surveys/{short_name}/{period}/edit-collection-exercise-details",
-            data=changed_ce_details,
-            follow_redirects=True,
+            data=changed_ce_details
         )
 
-        self.assertIn("Server error (Error 500)".encode(), response.data)
+        self.mocked_handler.assert_called()
+        self.assertEqual(self.mocked_handler.call_args[0][0].status_code, 500)
+        self.assertEqual(self.mocked_handler.call_args[0][0].url, url_update_ce)
 
     @requests_mock.mock()
     @patch('response_operations_ui.views.collection_exercise.build_collection_exercise_details')
@@ -837,7 +840,7 @@ class TestCollectionExercise(unittest.TestCase):
         mock_request.get(url_get_sample_summary, json=self.sample_summary)
         mock_request.post(url_create_collection_exercise, status_code=500)
 
-        response = self.app.post(
+        self.app.post(
             f"/surveys/{survey_ref}-{short_name}/create-collection-exercise",
             data=new_collection_exercise_details
         )
