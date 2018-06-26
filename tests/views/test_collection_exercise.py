@@ -212,14 +212,14 @@ class TestCollectionExercise(unittest.TestCase):
         mock_request.get(url_ces_by_survey, json=self.collection_exercises)
         mock_request.get(url_ce_by_id, json=collection_exercise_details['collection_exercise'])
         mock_request.get(url_get_collection_exercise_events, json=self.collection_exercise_events)
-        mock_request.get(url_link_sample, json=[sample_summary_id])
-        mock_request.get(url_get_sample_summary, json=self.sample_summary)
-        mock_request.get(url_get_classifier_type, json=classifier_types)
-        mock_request.get(url_get_classifier_type_selectors, json=classifier_type_selectors)
         mock_request.get(f'{url_get_collection_instrument}?{ci_search_string}', json=self.collection_instruments,
                          complete_qs=True)
         mock_request.get(f'{url_get_collection_instrument}?{ci_type_search_string}', json=self.eq_ci_selectors,
                          complete_qs=True)
+        mock_request.get(url_link_sample, json=[sample_summary_id])
+        mock_request.get(url_get_sample_summary, json=self.sample_summary)
+        mock_request.get(url_get_classifier_type, json=classifier_types)
+        mock_request.get(url_get_classifier_type_selectors, json=classifier_type_selectors)
 
         response = self.app.get(f'/surveys/{short_name}/{period}')
 
@@ -231,6 +231,15 @@ class TestCollectionExercise(unittest.TestCase):
     def test_collection_exercise_view_404(self, mock_request):
         mock_request.get(url_get_survey_by_short_name, json=self.survey)
         mock_request.get(url_ces_by_survey, json=[])
+
+        response = self.app.get(f'/surveys/{short_name}/{period}')
+
+        self.assertEqual(response.status_code, 404)
+
+    @requests_mock.mock()
+    def test_collection_exercise_view_empty_list(self, mock_request):
+        mock_request.get(url_get_survey_by_short_name, json=self.survey)
+        mock_request.get(url_ces_by_survey, status_code=204)
 
         response = self.app.get(f'/surveys/{short_name}/{period}')
 
@@ -257,6 +266,55 @@ class TestCollectionExercise(unittest.TestCase):
 
         self.assertEqual(response.status_code, 500)
         self.assertIn("Error 500 - Server error".encode(), response.data)
+
+    @requests_mock.mock()
+    def test_collection_exercise_view_ci_fail(self, mock_request):
+        mock_request.get(url_get_survey_by_short_name, json=self.survey)
+        mock_request.get(url_ces_by_survey, json=self.collection_exercises)
+        mock_request.get(url_ce_by_id, json=collection_exercise_details['collection_exercise'])
+        mock_request.get(url_get_collection_exercise_events, json=self.collection_exercise_events)
+        mock_request.get(f'{url_get_collection_instrument}?{ci_search_string}', status_code=400)
+
+        response = self.app.get(f'/surveys/{short_name}/{period}', follow_redirects=True)
+
+        self.assertEqual(response.status_code, 500)
+
+    @requests_mock.mock()
+    def test_collection_exercise_view_classifiers_fail(self, mock_request):
+        mock_request.get(url_get_survey_by_short_name, json=self.survey)
+        mock_request.get(url_ces_by_survey, json=self.collection_exercises)
+        mock_request.get(url_ce_by_id, json=collection_exercise_details['collection_exercise'])
+        mock_request.get(url_get_collection_exercise_events, json=self.collection_exercise_events)
+        mock_request.get(f'{url_get_collection_instrument}?{ci_search_string}', json=self.collection_instruments,
+                         complete_qs=True)
+        mock_request.get(f'{url_get_collection_instrument}?{ci_type_search_string}', json=self.eq_ci_selectors,
+                         complete_qs=True)
+        mock_request.get(url_link_sample, json=[sample_summary_id])
+        mock_request.get(url_get_sample_summary, json=self.sample_summary)
+        mock_request.get(url_get_classifier_type, status_code=400)
+
+        response = self.app.get(f'/surveys/{short_name}/{period}', follow_redirects=True)
+
+        self.assertEqual(response.status_code, 500)
+
+    @requests_mock.mock()
+    def test_collection_exercise_view_selectors_fail(self, mock_request):
+        mock_request.get(url_get_survey_by_short_name, json=self.survey)
+        mock_request.get(url_ces_by_survey, json=self.collection_exercises)
+        mock_request.get(url_ce_by_id, json=collection_exercise_details['collection_exercise'])
+        mock_request.get(url_get_collection_exercise_events, json=self.collection_exercise_events)
+        mock_request.get(f'{url_get_collection_instrument}?{ci_search_string}', json=self.collection_instruments,
+                         complete_qs=True)
+        mock_request.get(f'{url_get_collection_instrument}?{ci_type_search_string}', json=self.eq_ci_selectors,
+                         complete_qs=True)
+        mock_request.get(url_link_sample, json=[sample_summary_id])
+        mock_request.get(url_get_sample_summary, json=self.sample_summary)
+        mock_request.get(url_get_classifier_type, json=classifier_types)
+        mock_request.get(url_get_classifier_type_selectors, status_code=400)
+
+        response = self.app.get(f'/surveys/{short_name}/{period}', follow_redirects=True)
+
+        self.assertEqual(response.status_code, 500)
 
     @requests_mock.mock()
     @patch('response_operations_ui.views.collection_exercise.build_collection_exercise_details')

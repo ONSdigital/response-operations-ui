@@ -109,9 +109,7 @@ def execute_collection_exercise(short_name, period):
     )
 
 
-def update_collection_exercise_details(
-    collection_exercise_id, user_description, period
-):
+def update_collection_exercise_details(collection_exercise_id, user_description, period):
     logger.debug(
         "Updating collection exercise details",
         collection_exercise_id=collection_exercise_id,
@@ -305,9 +303,7 @@ def get_linked_sample_summary_id(collection_exercise_id):
     return sample_summary_id
 
 
-def link_sample_summary_to_collection_exercise(
-    collection_exercise_id, sample_summary_id
-):
+def link_sample_summary_to_collection_exercise(collection_exercise_id, sample_summary_id):
     logger.debug(
         "Linking sample summary to collection exercise",
         collection_exercise_id=collection_exercise_id,
