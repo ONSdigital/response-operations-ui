@@ -18,8 +18,8 @@ def download_report(collection_exercise_id, survey_id):
     )
 
     url = (
-        f"{app.config['RM_REPORT_SERVICE']}"
-        f"reporting-api/v1/response-chasing/download-report/"
+        f"{app.config['REPORT_URL']}"
+        f"/reporting-api/v1/response-chasing/download-report/"
         f"{collection_exercise_id}/{survey_id}"
     )
 
@@ -313,6 +313,30 @@ def get_collection_exercise_from_list(exercises, period):
     return next(
         (exercise for exercise in exercises if exercise["exerciseRef"] == period), None
     )
+
+
+def get_linked_sample_summary_id(collection_exercise_id):
+    logger.debug('Retrieving sample linked to collection exercise', collection_exercise_id=collection_exercise_id)
+    url = f'{app.config["COLLECTION_EXERCISE_URL"]}/collectionexercises/link/{collection_exercise_id}'
+    response = requests.get(url, auth=app.config['COLLECTION_EXERCISE_AUTH'])
+
+    if response.status_code == 204:
+        logger.info('No samples linked to collection exercise', collection_exercise_id=collection_exercise_id)
+        return
+    try:
+        response.raise_for_status()
+    except HTTPError:
+        logger.error('Error retrieving sample summaries linked to collection exercise',
+                     collection_exercise_id=collection_exercise_id)
+        raise ApiError(response)
+
+    # currently, we only want a single sample summary
+    sample_summary_id = response.json()[0]
+
+    logger.debug('Successfully retrieved linked sample summary',
+                 collection_exercise_id=collection_exercise_id,
+                 sample_summary_id=sample_summary_id)
+    return sample_summary_id
 
 
 def link_sample_summary_to_collection_exercise(

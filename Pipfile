@@ -29,8 +29,7 @@ flask-session = "==0.3.1"
 cfenv = "==0.5.3"
 cryptography = "*"
 flask-paginate = "*"
-responses = "*"
-mock = "*"
+python-dateutil = "*"
 
 
 [dev-packages]
@@ -41,3 +40,5 @@ pytest = "==3.3.0"
 pytest-cov = "==2.5.1"
 testfixtures = "==5.3.1"
 requests-mock = "==1.4.0"
+responses = "*"
+mock = "*"
