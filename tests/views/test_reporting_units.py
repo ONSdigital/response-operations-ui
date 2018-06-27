@@ -164,6 +164,7 @@ class TestReportingUnits(unittest.TestCase):
         mock_request.get(url_get_cases_by_business_party_id, json=cases_list)
         mock_request.get(url_get_casegroups_by_business_party_id, json=case_groups)
         mock_request.get(f'{url_get_collection_exercise_by_id}/{collection_exercise_id_1}', status_code=500)
+        mock_request.get(f'{url_get_collection_exercise_by_id}/{collection_exercise_id_2}', status_code=500)
 
         response = self.app.get("/reporting-units/50012345678", follow_redirects=True)
 
