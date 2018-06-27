@@ -76,6 +76,7 @@ def view_collection_exercise(short_name, period):
         editable_events = True  # all expected keys are present
 
     show_msg = request.args.get('show_msg')
+
     success_panel = request.args.get('success_panel')
 
     return render_template('collection-exercise.html',
@@ -518,7 +519,6 @@ def remove_loaded_sample(short_name, period):
                                                                                   sample_summary_id)
 
     if unlink_sample_summary:
-        sample_removed_success = 'sample_removed_success'
         logger.info("Removing sample for collection exercise",
                     short_name=short_name,
                     period=period,
@@ -526,7 +526,7 @@ def remove_loaded_sample(short_name, period):
         return redirect(url_for('collection_exercise_bp.view_collection_exercise',
                                 short_name=short_name,
                                 period=period,
-                                success_key=sample_removed_success))
+                                success_panel="Sample removed"))
     else:
         logger.info("Failed to remove sample for collection exercise",
                     short_name=short_name,

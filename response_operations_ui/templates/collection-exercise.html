@@ -5,11 +5,11 @@
 
 <div role="main" id="main" class="page__main">
     {% if success_panel %}
-      <div class="panel panel--simple panel--success">
-        <div id="{{ success_panel.id }}" class="panel__body">
-          {{ success_panel }}
-        </div>
+    <div class="panel panel--simple panel--success">
+      <div class="panel__body" id="success-panel">
+        {{ success_panel }}
       </div>
+    </div>
     {% endif %}
     {% if error %}
 
@@ -41,13 +41,6 @@
            {{ error['message'] }}
         </div>
       </div>
-    {% endif %}
-    {% if success_message %}
-    <div class="panel panel--simple panel--success">
-      <div id="success-panel" class="panel__body">
-        {{ success_message }}
-      </div>
-    </div>
     {% endif %}
     {% if sample and show_msg == 'true' %}
       {% if sample.state == 'INIT' %}
@@ -444,7 +437,7 @@
     <div class="grid__col col-5@l">
       <div class="ce-section ce-details">
         <h2 class="venus u-pt-m">Reference information for this collection exercise</h2>
-        <table class="table table__dense" summary="Collection exercise details">
+        <table class="table table__dense" id="tbl-ce-details" summary="Collection exercise details">
           <tbody>
             <tr class="table--row">
               <td class="table--cell tbl-ce-">
