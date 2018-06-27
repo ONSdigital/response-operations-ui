@@ -353,9 +353,12 @@ def edit_collection_exercise_details(short_name, period):
     else:
         logger.info("Updating collection exercise details", short_name=short_name, period=period)
         form = request.form
-        collection_exercise_controllers.update_collection_exercise_details(form.get('collection_exercise_id'),
-                                                                           form.get('user_description'),
-                                                                           form.get('period'))
+        collection_exercise_controllers.update_collection_exercise_user_description(form.get('collection_exercise_id'),
+                                                                                    form.get('user_description'))
+
+        if form.get('period') != period:
+            collection_exercise_controllers.update_collection_exercise_period(form.get('collection_exercise_id'),
+                                                                              form.get('period'))
 
         return redirect(url_for('surveys_bp.view_survey', short_name=short_name, ce_updated='True'))
 
