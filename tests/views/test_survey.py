@@ -11,7 +11,6 @@ from response_operations_ui import app
 from response_operations_ui.controllers.survey_controllers import get_survey_short_name_by_id
 from response_operations_ui.views.surveys import _sort_collection_exercise
 
-
 collection_exercise_id = '14fb3e68-4dca-46db-bf49-04b84e07e77c'
 collection_exercise_event_id = 'b4a36392-a21f-485b-9dc4-d151a8fcd565'
 sample_summary_id = 'b9487b59-2ac7-4fbf-b734-5a4c260ff235'
@@ -202,7 +201,6 @@ class TestSurvey(unittest.TestCase):
 
     @requests_mock.mock()
     def test_get_survey_short_name_by_id_when_get_list_fails(self, mock_request):
-
         # Delete any existing survey cache
         with suppress(AttributeError):
             del app.surveys_dict
@@ -332,7 +330,15 @@ class TestSurvey(unittest.TestCase):
             "legal_basis": "STA1947"
         }
         mock_request.get(url_get_legal_basis_list, json=legal_basis_list)
-        mock_request.post(url_create_survey, json=create_survey_response, status_code=201)
+        expected_survey_request = {
+            "surveyRef": "999",
+            "shortName": "TEST",
+            "longName": "Test Survey",
+            "legalBasisRef": "STA1947",
+            "surveyType": 'Business'
+        }
+        mock_request.post(url_create_survey, additional_matcher=lambda req: req.json() == expected_survey_request,
+                          status_code=201)
         mock_request.get(url_get_survey_list, json=updated_survey_list)
 
         response = self.app.post(f"surveys/create", data=create_survey_request, follow_redirects=True)
