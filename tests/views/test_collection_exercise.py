@@ -592,6 +592,65 @@ class TestCollectionExercise(unittest.TestCase):
         self.assertIn("Server error (Error 500)".encode(), response.data)
 
     @requests_mock.mock()
+    def test_update_collection_exercise_details_404(self, mock_request):
+        changed_ce_details = {
+            "collection_exercise_id": collection_exercise_id,
+            "user_description": "16th June 2019",
+            "period": "201906",
+            "hidden_survey_id": survey_id,
+        }
+        mock_request.get(url_get_collection_exercise, json=collection_exercise_details)
+        mock_request.put(url_update_ce_user_details, status_code=404)
+
+        response = self.app.post(
+            f"/surveys/{short_name}/{period}/edit-collection-exercise-details",
+            data=changed_ce_details,
+            follow_redirects=True,
+        )
+
+        self.assertIn("Server error (Error 500)".encode(), response.data)
+
+    @requests_mock.mock()
+    def test_update_collection_exercise_period_fail(self, mock_request):
+        changed_ce_details = {
+            "collection_exercise_id": collection_exercise_id,
+            "user_description": "16th June 2019",
+            "period": "201907",
+            "hidden_survey_id": survey_id,
+        }
+        mock_request.get(url_get_collection_exercise, json=collection_exercise_details)
+        mock_request.put(url_update_ce_user_details, status_code=200)
+        mock_request.put(url_update_ce_period, status_code=500)
+
+        response = self.app.post(
+            f"/surveys/{short_name}/{period}/edit-collection-exercise-details",
+            data=changed_ce_details,
+            follow_redirects=True,
+        )
+
+        self.assertIn("Server error (Error 500)".encode(), response.data)
+
+    @requests_mock.mock()
+    def test_update_collection_exercise_period_404(self, mock_request):
+        changed_ce_details = {
+            "collection_exercise_id": collection_exercise_id,
+            "user_description": "16th June 2019",
+            "period": "201907",
+            "hidden_survey_id": survey_id,
+        }
+        mock_request.get(url_get_collection_exercise, json=collection_exercise_details)
+        mock_request.put(url_update_ce_user_details, status_code=200)
+        mock_request.put(url_update_ce_period, status_code=404)
+
+        response = self.app.post(
+            f"/surveys/{short_name}/{period}/edit-collection-exercise-details",
+            data=changed_ce_details,
+            follow_redirects=True,
+        )
+
+        self.assertIn("Server error (Error 500)".encode(), response.data)
+
+    @requests_mock.mock()
     def test_get_ce_details(self, mock_request):
         mock_request.get(url_get_collection_exercise, json=collection_exercise_details)
         mock_request.get(url_get_survey_by_short_name, json=updated_survey_info['survey'])
