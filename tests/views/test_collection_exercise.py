@@ -70,10 +70,7 @@ url_collection_exercise_link = (
     f'/{collection_exercise_id}'
 )
 url_upload_sample = f'{app.config["BACKSTAGE_API_URL"]}/v1/sample/{short_name}/{period}'
-url_execute = (
-    f'{app.config["BACKSTAGE_API_URL"]}/v1/collection-exercise'
-    f'/{short_name}/{period}/execute'
-)
+url_execute = f'{app.config["COLLECTION_EXERCISE_URL"]}/collectionexerciseexecution/{collection_exercise_id}'
 url_update_ce = (
     f'{app.config["BACKSTAGE_API_URL"]}/v1/collection-exercise/update-collection-exercise-details'
     f'/{collection_exercise_id}'
@@ -466,6 +463,8 @@ class TestCollectionExercise(unittest.TestCase):
     def test_post_ready_for_live(self, mock_request):
         post_data = {"ready-for-live": ""}
         mock_request.post(url_execute, status_code=200)
+        mock_request.get(url_survey_shortname, status_code=200, json=self.survey_data)
+        mock_request.get(url_collection_exercise_survey_id, status_code=200, json=exercise_data)
         mock_request.get(url_get_collection_exercise, json=collection_exercise_details)
 
         response = self.app.post(f'/surveys/{short_name}/{period}', data=post_data)
@@ -476,9 +475,11 @@ class TestCollectionExercise(unittest.TestCase):
         self.assertIn("Processing collection exercise".encode(), response.data)
 
     @requests_mock.mock()
-    def test_post_ready_for_live_failed(self, mock_request):
+    def test_post_ready_for_live_404(self, mock_request):
         post_data = {"ready-for-live": ""}
-        mock_request.post(url_execute, status_code=500)
+        mock_request.post(url_execute, status_code=404)
+        mock_request.get(url_survey_shortname, status_code=200, json=self.survey_data)
+        mock_request.get(url_collection_exercise_survey_id, status_code=200, json=exercise_data)
         mock_request.get(url_get_collection_exercise, json=collection_exercise_details)
 
         response = self.app.post(f'/surveys/{short_name}/{period}', data=post_data)
@@ -486,7 +487,44 @@ class TestCollectionExercise(unittest.TestCase):
         self.assertEqual(response.status_code, 200)
         self.assertNotIn("Sample loaded successfully".encode(), response.data)
         self.assertNotIn("Collection exercise executed".encode(), response.data)
-        self.assertIn("Failed to execute Collection Exercise".encode(), response.data)
+        self.assertIn("Failed to execute Collection Exercise (status: 404)".encode(), response.data)
+
+    @requests_mock.mock()
+    def test_post_ready_for_live_empty(self, mock_request):
+        post_data = {"ready-for-live": ""}
+        mock_request.post(url_execute, status_code=404)
+        mock_request.get(url_survey_shortname, status_code=200, json=self.survey_data)
+        mock_request.get(url_collection_exercise_survey_id, status_code=200, json=[])
+        mock_request.get(url_get_collection_exercise, json=collection_exercise_details)
+
+        response = self.app.post(f'/surveys/{short_name}/{period}', data=post_data)
+
+        self.assertEqual(response.status_code, 404)
+
+    @requests_mock.mock()
+    def test_post_ready_for_live_failed(self, mock_request):
+        post_data = {"ready-for-live": ""}
+        mock_request.post(url_execute, status_code=500)
+        mock_request.get(url_survey_shortname, status_code=200, json=self.survey_data)
+        mock_request.get(url_collection_exercise_survey_id, status_code=200, json=exercise_data)
+        mock_request.get(url_get_collection_exercise, json=collection_exercise_details)
+
+        response = self.app.post(f'/surveys/{short_name}/{period}', data=post_data)
+
+        self.assertEqual(response.status_code, 200)
+        self.assertNotIn("Sample loaded successfully".encode(), response.data)
+        self.assertNotIn("Collection exercise executed".encode(), response.data)
+        self.assertIn("Failed to execute Collection Exercise (status: 500)".encode(), response.data)
+
+    @requests_mock.mock()
+    def test_post_ready_for_live_service_fail(self, mock_request):
+        post_data = {"ready-for-live": ""}
+        mock_request.get(url_survey_shortname, status_code=200, json=self.survey_data)
+        mock_request.get(url_collection_exercise_survey_id, status_code=500)
+
+        response = self.app.post(f'/surveys/{short_name}/{period}', data=post_data, follow_redirects=True)
+
+        self.assertEqual(response.status_code, 500)
 
     @requests_mock.mock()
     def test_get_processing(self, mock_request):
