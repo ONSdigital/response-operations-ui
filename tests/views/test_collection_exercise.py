@@ -90,6 +90,7 @@ url_update_ce_user_details = (
 url_update_ce_period = (
     f'{app.config["COLLECTION_EXERCISE_URL"]}/collectionexercises'
     f'/{collection_exercise_id}/exerciseRef'
+)
 url_get_classifier_type_selectors = (
     f'{app.config["SURVEY_URL"]}/surveys/{survey_id}/classifiertypeselectors'
 )
@@ -702,6 +703,7 @@ class TestCollectionExercise(ViewTestCase):
             "period": "201906",
             "hidden_survey_id": survey_id,
         }
+        mock_request.get(url_ces_by_survey, json=updated_survey_info['collection_exercises'])
         mock_request.put(url_update_ce_user_details)
 
         response = self.app.post(
@@ -721,6 +723,7 @@ class TestCollectionExercise(ViewTestCase):
             "period": "201906",
             "hidden_survey_id": survey_id,
         }
+        mock_request.get(url_ces_by_survey, json=updated_survey_info['collection_exercises'])
         mock_request.put(url_update_ce_user_details, status_code=500)
 
         self.app.post(
@@ -738,8 +741,8 @@ class TestCollectionExercise(ViewTestCase):
             "period": "201906",
             "hidden_survey_id": survey_id,
         }
+        mock_request.get(url_ces_by_survey, json=updated_survey_info['collection_exercises'])
         mock_request.put(url_update_ce_user_details, status_code=404)
-
 
         self.app.post(
             f"/surveys/{short_name}/{period}/edit-collection-exercise-details",
@@ -756,6 +759,7 @@ class TestCollectionExercise(ViewTestCase):
             "period": "201907",
             "hidden_survey_id": survey_id,
         }
+        mock_request.get(url_ces_by_survey, json=updated_survey_info['collection_exercises'])
         mock_request.put(url_update_ce_user_details, status_code=200)
         mock_request.put(url_update_ce_period, status_code=500)
 
@@ -775,6 +779,7 @@ class TestCollectionExercise(ViewTestCase):
             "period": "201907",
             "hidden_survey_id": survey_id,
         }
+        mock_request.get(url_ces_by_survey, json=updated_survey_info['collection_exercises'])
         mock_request.put(url_update_ce_user_details, status_code=200)
         mock_request.put(url_update_ce_period, status_code=404)
 
@@ -965,7 +970,7 @@ class TestCollectionExercise(ViewTestCase):
         ces[1]['id'] = survey_id  # new id
         ces[1]['exerciseRef'] = taken_period
         mock_request.get(url_ces_by_survey, json=ces)
-        mock_request.get(url_get_collection_exercise_events, json=self.collection_exercises_events)
+        mock_request.get(url_get_collection_exercise_events, json=self.collection_exercise_events)
         mock_request.get(url_get_collection_exercises_link, json=self.collection_exercises_link)
         mock_request.get(url_get_sample_summary, json=self.sample_summary)
 
