@@ -54,7 +54,7 @@ def view_reporting_unit(ru_ref):
     surveys_with_iacs = [
         {
             **survey,
-            "activeIacCode": iac_controller.get_latest_active_iac_code(cases, survey['collection_exercises'])
+            "case": iac_controller.get_latest_case(cases, survey['collection_exercises'])
         }
         for survey in sorted_linked_surveys
     ]
@@ -181,11 +181,15 @@ def resend_verification(ru_ref, party_id):
                             info='Verification email re-sent'))
 
 
-@reporting_unit_bp.route('/<ru_ref>/<collection_exercise_id>/new_enrolment_code', methods=['GET'])
+@reporting_unit_bp.route('/<ru_ref>/new_enrolment_code', methods=['GET'])
 @login_required
-def generate_new_enrolment_code(ru_ref, collection_exercise_id):
-    case = reporting_units_controllers.generate_new_enrolment_code(collection_exercise_id, ru_ref)
-    return render_template('new-enrolment-code.html', case=case, ru_ref=ru_ref,
+def generate_new_enrolment_code(ru_ref):
+    case_id = request.args.get('case_id')
+    reporting_units_controllers.generate_new_enrolment_code(case_id)
+    case = case_controller.get_case_by_id(case_id)
+    return render_template('new-enrolment-code.html',
+                           iac=case['iac'],
+                           ru_ref=ru_ref,
                            ru_name=request.args.get('ru_name'),
                            trading_as=request.args.get('trading_as'),
                            survey_name=request.args.get('survey_name'),

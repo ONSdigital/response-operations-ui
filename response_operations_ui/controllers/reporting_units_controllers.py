@@ -48,20 +48,25 @@ def change_enrolment_status(business_id, respondent_id, survey_id, change_flag):
                  business_id=business_id, respondent_id=respondent_id, survey_id=survey_id, change_flag=change_flag)
 
 
-def generate_new_enrolment_code(collection_exercise_id, ru_ref):
-    logger.debug('Generating new enrolment code', collection_exercise_id=collection_exercise_id, ru_ref=ru_ref)
-    url = f'{app.config["CASE_URL"]}/cases/iac/{collection_exercise_id}/{ru_ref}'
-    response = requests.post(url, auth=app.config['CASE_AUTH'])
+def generate_new_enrolment_code(case_id):
+    logger.debug('Generating new enrolment code', case_id=case_id)
+    url = f'{app.config["CASE_URL"]}/cases/{case_id}/events'
+    case_event = {
+        "description": "Generating new enrolment code",
+        "category": "GENERATE_ENROLMENT_CODE",
+        "subCategory": None,
+        "createdBy": "ROPS"
+    }
+
+    response = requests.post(url, json=case_event, auth=app.config['CASE_AUTH'])
 
     try:
         response.raise_for_status()
     except requests.exceptions.HTTPError:
-        logger.error('Failed to generate new enrolment code',
-                     collection_exercise_id=collection_exercise_id, ru_ref=ru_ref)
+        logger.error('Failed to generate new enrolment code', case_id=case_id)
         raise ApiError(response)
 
-    logger.debug('Successfully generated new enrolment code',
-                 collection_exercise_id=collection_exercise_id, ru_ref=ru_ref)
+    logger.debug('Successfully generated new enrolment code', case_id=case_id)
     return response.json()
 
 
