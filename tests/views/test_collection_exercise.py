@@ -163,7 +163,7 @@ class TestCollectionExercise(ViewTestCase):
     def test_collection_exercise_view_fail(self, mock_request):
         mock_request.get(url_get_collection_exercise, status_code=500)
 
-        response = self.app.get(f'/surveys/{short_name}/{period}', follow_redirects=True)
+        self.app.get(f'/surveys/{short_name}/{period}', follow_redirects=True)
 
         self.assertApiError(url_get_collection_exercise, 500)
 
@@ -377,7 +377,7 @@ class TestCollectionExercise(ViewTestCase):
         mock_request.post(url_sample_service_upload, status_code=200, json=sample_data)
         mock_request.put(url_collection_exercise_link, status_code=500, json=collection_exercise_link)
 
-        response = self.app.post(f'/surveys/{short_name}/{period}', data=post_data, follow_redirects=True)
+        self.app.post(f'/surveys/{short_name}/{period}', data=post_data, follow_redirects=True)
 
         self.assertApiError(url_collection_exercise_link, 500)
 
@@ -393,7 +393,7 @@ class TestCollectionExercise(ViewTestCase):
         mock_request.post(url_sample_service_upload, status_code=500, json=sample_data)
         mock_request.put(url_collection_exercise_link, status_code=200, json=collection_exercise_link)
 
-        response = self.app.post(f'/surveys/{short_name}/{period}', data=post_data, follow_redirects=True)
+        self.app.post(f'/surveys/{short_name}/{period}', data=post_data, follow_redirects=True)
 
         self.assertApiError(url_sample_service_upload, 500)
 
@@ -563,7 +563,7 @@ class TestCollectionExercise(ViewTestCase):
         mock_request.get(url_get_collection_exercises, json=updated_survey_info['collection_exercises'])
         mock_request.put(url_update_ce_user_details, status_code=500)
 
-        response = self.app.post(
+        self.app.post(
             f"/surveys/{short_name}/{period}/edit-collection-exercise-details",
             data=changed_ce_details
         )
@@ -582,7 +582,7 @@ class TestCollectionExercise(ViewTestCase):
         mock_request.get(url_get_collection_exercises, json=updated_survey_info['collection_exercises'])
         mock_request.put(url_update_ce_user_details, status_code=404)
 
-        response = self.app.post(
+        self.app.post(
             f"/surveys/{short_name}/{period}/edit-collection-exercise-details",
             data=changed_ce_details,
             follow_redirects=True,
@@ -603,7 +603,7 @@ class TestCollectionExercise(ViewTestCase):
         mock_request.put(url_update_ce_user_details, status_code=200)
         mock_request.put(url_update_ce_period, status_code=500)
 
-        response = self.app.post(
+        self.app.post(
             f"/surveys/{short_name}/{period}/edit-collection-exercise-details",
             data=changed_ce_details,
             follow_redirects=True,
@@ -624,7 +624,7 @@ class TestCollectionExercise(ViewTestCase):
         mock_request.put(url_update_ce_user_details, status_code=200)
         mock_request.put(url_update_ce_period, status_code=404)
 
-        response = self.app.post(
+        self.app.post(
             f"/surveys/{short_name}/{period}/edit-collection-exercise-details",
             data=changed_ce_details,
             follow_redirects=True,
@@ -714,7 +714,7 @@ class TestCollectionExercise(ViewTestCase):
         mock_request.get(url_get_survey_by_short_name, json=updated_survey_info)
         mock_request.post(url_create_collection_exercise, status_code=500)
 
-        response = self.app.post(
+        self.app.post(
             f"/surveys/{survey_ref}-{short_name}/create-collection-exercise",
             data=new_collection_exercise_details,
             follow_redirects=True,
