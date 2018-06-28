@@ -1,12 +1,13 @@
 import iso8601
 import logging
 
-from flask import Blueprint, render_template, request, redirect, url_for
+from flask import Blueprint, abort, render_template, request, redirect, url_for
 from flask_login import login_required
 from flask import jsonify, make_response
 from structlog import wrap_logger
 from response_operations_ui.common.filters import get_collection_exercise_by_period
-from response_operations_ui.common.mappers import convert_events_to_new_format, map_collection_exercise_state
+from response_operations_ui.common.mappers import convert_events_to_new_format, format_short_name, \
+    map_collection_exercise_state
 from response_operations_ui.controllers import collection_instrument_controllers, sample_controllers, \
     collection_exercise_controllers, survey_controllers
 from response_operations_ui.forms import EditCollectionExerciseDetailsForm, CreateCollectionExerciseDetailsForm, \
@@ -31,13 +32,47 @@ def get_error_message(error_key):
     }.get(error_key, None)
 
 
+def build_collection_exercise_details(short_name, period):
+    survey = survey_controllers.get_survey_by_shortname(short_name)
+    survey_id = survey['id']
+    exercises = collection_exercise_controllers.get_collection_exercises_by_survey(survey_id)
+    exercise = get_collection_exercise_by_period(exercises, period)
+    if not exercise:
+        logger.error('Failed to find collection exercise by period',
+                     short_name=short_name, period=period)
+        abort(404)
+    collection_exercise_id = exercise['id']
+    survey['shortName'] = format_short_name(survey['shortName'])
+    full_exercise = collection_exercise_controllers.get_collection_exercise_by_id(collection_exercise_id)
+    exercise_events = collection_exercise_controllers.get_collection_exercise_events(collection_exercise_id)
+    collection_instruments = collection_instrument_controllers.get_collection_instruments_by_classifier(
+        collection_exercise_id=collection_exercise_id,
+        survey_id=survey_id)
+
+    eq_ci_selectors = collection_instrument_controllers.get_collection_instruments_by_classifier(
+        ci_type='EQ',
+        survey_id=survey_id)
+
+    summary_id = collection_exercise_controllers.get_linked_sample_summary_id(collection_exercise_id)
+    sample_summary = sample_controllers.get_sample_summary(summary_id) if summary_id else None
+    ci_classifiers = survey_controllers.get_survey_ci_classifier(survey_id)
+
+    return {
+        "survey": survey,
+        "collection_exercise": full_exercise,
+        "events": convert_events_to_new_format(exercise_events),
+        "collection_instruments": collection_instruments,
+        "eq_ci_selectors": eq_ci_selectors,
+        "sample_summary": _format_sample_summary(sample_summary),
+        "ci_classifiers": ci_classifiers
+    }
+
+
 @collection_exercise_bp.route('/<short_name>/<period>', methods=['GET'])
 @login_required
 def view_collection_exercise(short_name, period, error=None, success_message=None, error_message=None,
                              success_panel=None, show_msg=None):
-    ce_details = collection_exercise_controllers.get_collection_exercise(short_name, period)
-    ce_details['sample_summary'] = _format_sample_summary(ce_details['sample_summary'])
-    formatted_events = convert_events_to_new_format(ce_details['events'])
+    ce_details = build_collection_exercise_details(short_name, period)
     breadcrumbs = [
         {
             "title": "Surveys",
@@ -78,7 +113,7 @@ def view_collection_exercise(short_name, period, error=None, success_message=Non
                            collection_instruments=ce_details['collection_instruments'],
                            eq_ci_selectors=ce_details['eq_ci_selectors'],
                            error=error,
-                           events=formatted_events,
+                           events=ce_details['events'],
                            locked=locked,
                            missing_ci=missing_ci,
                            processing=processing,
@@ -317,7 +352,7 @@ def _get_form_type(file_name):
 @login_required
 def view_collection_exercise_details(short_name, period):
     logger.info("Retrieving collection exercise data for form", short_name=short_name, period=period)
-    ce_details = collection_exercise_controllers.get_collection_exercise(short_name, period)
+    ce_details = build_collection_exercise_details(short_name, period)
     form = EditCollectionExerciseDetailsForm(form=request.form)
     survey_details = survey_controllers.get_survey(short_name)
     ce_state = ce_details['collection_exercise']['state']
@@ -338,7 +373,7 @@ def edit_collection_exercise_details(short_name, period):
     if not form.validate():
         logger.info("Failed validation, retrieving collection exercise data for form",
                     short_name=short_name, period=period)
-        ce_details = collection_exercise_controllers.get_collection_exercise(short_name, period)
+        ce_details = build_collection_exercise_details(short_name, period)
         ce_state = ce_details['collection_exercise']['state']
         survey_id = survey_controllers.get_survey_id_by_short_name(short_name)
         locked = ce_state in ('LIVE', 'READY_FOR_LIVE', 'EXECUTION_STARTED', 'VALIDATED', 'EXECUTED')
@@ -423,8 +458,7 @@ def get_confirm_remove_sample(short_name, period):
 @collection_exercise_bp.route('/<short_name>/<period>/confirm-remove-sample', methods=['POST'])
 @login_required
 def remove_loaded_sample(short_name, period):
-    ce_details = collection_exercise_controllers.get_collection_exercise(short_name, period)
-    ce_details['sample_summary'] = _format_sample_summary(ce_details['sample_summary'])
+    ce_details = build_collection_exercise_details(short_name, period)
     sample_summary_id = ce_details['sample_summary']['id']
     collection_exercise_id = ce_details['collection_exercise']['id']
 
