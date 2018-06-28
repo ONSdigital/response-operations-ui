@@ -2,7 +2,6 @@ import json
 from urllib.parse import urlparse
 
 import requests_mock
-from flask import url_for
 
 from response_operations_ui import app
 from tests.views import ViewTestCase
