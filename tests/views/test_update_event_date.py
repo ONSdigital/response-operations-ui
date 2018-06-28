@@ -3,8 +3,8 @@ import unittest
 
 import requests_mock
 
-from config import TestingConfig
 from response_operations_ui import app
+from tests.views import ViewTestCase
 
 
 collection_exercise_id = '14fb3e68-4dca-46db-bf49-04b84e07e77c'
@@ -40,13 +40,9 @@ url_get_collection_exercise_events = (
 )
 
 
-class TestUpdateEventDate(unittest.TestCase):
+class TestUpdateEventDate(ViewTestCase):
 
-    def setUp(self):
-        app_config = TestingConfig()
-        app.config.from_object(app_config)
-        app.login_manager.init_app(app)
-        self.app = app.test_client()
+    def setup_data(self):
         self.get_update_event_data = {
             "collection_exercise": collection_exercise,
             "survey": survey,
@@ -96,8 +92,7 @@ class TestUpdateEventDate(unittest.TestCase):
 
         response = self.app.get(f"/surveys/{survey_short_name}/{period}/event/go_live", follow_redirects=True)
 
-        self.assertEqual(response.status_code, 500)
-        self.assertIn("Error 500 - Server error".encode(), response.data)
+        self.assertApiError(url_survey_shortname, 500)
 
     @requests_mock.mock()
     def test_put_update_event_date(self, mock_request):
@@ -160,5 +155,4 @@ class TestUpdateEventDate(unittest.TestCase):
         response = self.app.post(f"/surveys/{survey_short_name}/{period}/event/go_live",
                                  data=self.update_event_form, follow_redirects=True)
 
-        self.assertEqual(response.status_code, 500)
-        self.assertIn("Error 500 - Server error".encode(), response.data)
+        self.assertApiError(url_put_update_event_date, 500)
