@@ -63,7 +63,7 @@ with open('tests/test_data/iac/iac.json') as fp:
 
 class TestReportingUnits(ViewTestCase):
 
-    def init_data(self):
+    def setup_data(self):
         self.case_group_status = {
             "ru_ref": "19000001",
             "ru_name": "RU Name",

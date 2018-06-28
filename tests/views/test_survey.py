@@ -56,7 +56,7 @@ url_get_sample_summary = (
 
 class TestSurvey(ViewTestCase):
 
-    def init_data(self):
+    def setup_data(self):
         self.survey = {
             "id": survey_id,
             "longName": "Business Register and Employment Survey",

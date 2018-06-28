@@ -50,9 +50,20 @@ with open('tests/test_data/message/thread_unread.json') as json_data:
 
 class TestMessage(ViewTestCase):
 
+    def setup_data(self):
+        self.surveys_list_json = [
+            {
+                "id": "f235e99c-8edf-489a-9c72-6cabe6c387fc",
+                "shortName": "ASHE",
+                "longName": "ASHE long name",
+                "surveyRef": "123"
+
+            }
+        ]
+        self.before()
+
     @requests_mock.mock()
-    def init_data(self, mock_request=None):
-        app.config["UAA_PUBLIC_KEY"] = 'Test'
+    def before(self, mock_request):
         payload = {'user_id': 'test-id',
                    'aud': 'response_operations'}
 
@@ -60,16 +71,6 @@ class TestMessage(ViewTestCase):
         mock_request.post(url_sign_in_data, json={"access_token": access_token.decode()}, status_code=201)
         # sign-in to setup the user in the session
         self.app.post("/sign-in", follow_redirects=True, data={"username": "user", "password": "pass"})
-
-    surveys_list_json = [
-        {
-            "id": "f235e99c-8edf-489a-9c72-6cabe6c387fc",
-            "shortName": "ASHE",
-            "longName": "ASHE long name",
-            "surveyRef": "123"
-
-        }
-    ]
 
     @requests_mock.mock()
     @patch('response_operations_ui.controllers.message_controllers._get_jwt')

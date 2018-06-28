@@ -25,7 +25,7 @@ with open('tests/test_data/survey/survey_by_id.json') as json_data:
 
 class TestRespondents(ViewTestCase):
 
-    def init_data(self):
+    def setup_data(self):
         pass
 
     def test_search_respondent_get(self):

@@ -3,6 +3,7 @@ import unittest
 import requests_mock
 from requests import HTTPError
 
+from config import TestingConfig
 from response_operations_ui import app
 from response_operations_ui.common import uaa
 
@@ -10,8 +11,8 @@ from response_operations_ui.common import uaa
 class TestUaa(unittest.TestCase):
 
     def setUp(self):
+        app.config.from_object(TestingConfig)
         self.app = app
-        app.config["UAA_PUBLIC_KEY"] = "Test"
 
     def test_get_uaa_public_key_with_config_set(self):
         with self.app.app_context():

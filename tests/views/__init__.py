@@ -15,9 +15,9 @@ class ViewTestCase(TestCase):
         app.login_manager.init_app(app)
         self._create_apierror_handler_mock()
         self.app = app.test_client()
-        self.init_data()
+        self.setup_data()
 
-    def init_data(self):
+    def setup_data(self):
         raise NotImplementedError
 
     def tearDown(self):
