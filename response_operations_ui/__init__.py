@@ -22,7 +22,7 @@ assets.register('scss_all', scss_min)
 js_min = Bundle('js/*', filters='jsmin', output='minimised/all.min.js')
 assets.register('js_all', js_min)
 
-app_config = 'config.{}'.format(os.environ.get('APP_SETTINGS', 'Config'))
+app_config = f'config.{os.environ.get("APP_SETTINGS", "Config")}'
 app.config.from_object(app_config)
 
 app.url_map.strict_slashes = False
