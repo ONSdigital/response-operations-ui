@@ -134,3 +134,5 @@ class TestingConfig(DevelopmentConfig):
     WTF_CSRF_ENABLED = False
     SESSION_TYPE = "filesystem"
     SESSION_PERMANENT = False
+    UAA_PUBLIC_KEY = 'Test'
+    SECRET_KEY = 'sekrit!'

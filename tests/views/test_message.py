@@ -1,16 +1,16 @@
 import json
 from unittest.mock import patch
-import unittest
 
 import jwt
 import requests_mock
 
-from config import TestingConfig
 from response_operations_ui import app
 from response_operations_ui.views.messages import _get_to_id
 from response_operations_ui.controllers.message_controllers import get_conversation, send_message
 from response_operations_ui.exceptions.exceptions import InternalError
 from response_operations_ui.views.messages import _get_unread_status
+from tests.views import ViewTestCase
+
 
 shortname_url = f'{app.config["SURVEY_URL"]}/surveys/shortname'
 url_sign_in_data = f'{app.config["UAA_SERVICE_URL"]}/oauth/token'
@@ -19,6 +19,9 @@ url_get_thread = f'{app.config["SECURE_MESSAGE_URL"]}/v2/threads/fb0e79bd-e132-4
 url_get_threads_list = f'{app.config["SECURE_MESSAGE_URL"]}/threads'
 url_send_message = f'{app.config["SECURE_MESSAGE_URL"]}/v2/messages'
 url_update_label = f'{app.config["SECURE_MESSAGE_URL"]}/v2/messages/modify/ae46748b-c6e6-4859-a57a-86e01db2dcbc'
+
+survey_id = '6aa8896f-ced5-4694-800c-6cd661b0c8b2'
+params = f'?survey={survey_id}&page=1&limit=10'
 
 with open('tests/test_data/message/thread.json') as json_data:
     thread_json = json.load(json_data)
@@ -45,17 +48,22 @@ with open('tests/test_data/message/thread_unread.json') as json_data:
     thread_unread_json = json.load(json_data)
 
 
-class TestMessage(unittest.TestCase):
+class TestMessage(ViewTestCase):
 
-    def setUp(self):
-        self.app = app.test_client()
-        self.app.testing = True
-        app.config.from_object(TestingConfig)
-        app.config["UAA_PUBLIC_KEY"] = 'Test'
+    def setup_data(self):
+        self.surveys_list_json = [
+            {
+                "id": "f235e99c-8edf-489a-9c72-6cabe6c387fc",
+                "shortName": "ASHE",
+                "longName": "ASHE long name",
+                "surveyRef": "123"
+
+            }
+        ]
         self.before()
 
     @requests_mock.mock()
-    def before(self, mock_request=None):
+    def before(self, mock_request):
         payload = {'user_id': 'test-id',
                    'aud': 'response_operations'}
 
@@ -63,16 +71,6 @@ class TestMessage(unittest.TestCase):
         mock_request.post(url_sign_in_data, json={"access_token": access_token.decode()}, status_code=201)
         # sign-in to setup the user in the session
         self.app.post("/sign-in", follow_redirects=True, data={"username": "user", "password": "pass"})
-
-    surveys_list_json = [
-        {
-            "id": "f235e99c-8edf-489a-9c72-6cabe6c387fc",
-            "shortName": "ASHE",
-            "longName": "ASHE long name",
-            "surveyRef": "123"
-
-        }
-    ]
 
     @requests_mock.mock()
     @patch('response_operations_ui.controllers.message_controllers._get_jwt')
@@ -101,10 +99,9 @@ class TestMessage(unittest.TestCase):
         mock_request.get(url_get_surveys_list, json=self.surveys_list_json)
         mock_request.get(shortname_url + "/ASHE", status_code=500)
 
-        response = self.app.get("/messages/ASHE", follow_redirects=True)
+        self.app.get("/messages/ASHE", follow_redirects=True)
 
-        self.assertEqual(response.status_code, 500)
-        self.assertIn("Something has gone wrong with the website.".encode(), response.data)
+        self.assertApiError(shortname_url + "/ASHE", 500)
 
     @requests_mock.mock()
     @patch('response_operations_ui.controllers.message_controllers._get_jwt')
@@ -216,10 +213,9 @@ class TestMessage(unittest.TestCase):
         mock_request.get(url_get_threads_list, status_code=500)
         mock_request.get(shortname_url + "/ASHE", json=ashe_info['survey'])
 
-        response = self.app.get("/messages/ASHE", follow_redirects=True)
+        self.app.get("/messages/ASHE", follow_redirects=True)
 
-        self.assertEqual(response.status_code, 500)
-        self.assertIn("Error 500 - Server error".encode(), response.data)
+        self.assertApiError(f'{url_get_threads_list}{params}', 500)
 
     @requests_mock.mock()
     @patch('response_operations_ui.controllers.message_controllers._get_jwt')
@@ -243,14 +239,12 @@ class TestMessage(unittest.TestCase):
         mock_get_jwt.return_value = "blah"
         mock_request.get(url_send_message + '/count', json={"total": 1}, status_code=500)
         mock_request.get(url_get_surveys_list, json=self.surveys_list_json)
-        params = "?survey=6aa8896f-ced5-4694-800c-6cd661b0c8b2&page=1&limit=10"
         mock_request.get(url_get_threads_list + params, json=threads_unread_list)
         mock_request.get(shortname_url + "/ASHE", json=ashe_info['survey'])
 
-        response = self.app.get("/messages/ASHE", follow_redirects=True)
+        self.app.get("/messages/ASHE", follow_redirects=True)
 
-        self.assertEqual(response.status_code, 500)
-        self.assertIn("Error 500 - Server error".encode(), response.data)
+        self.assertApiError(f'{url_send_message}/count?survey={survey_id}', 500)
 
     @requests_mock.mock()
     def test_read_messages_are_displayed_correctly(self, mock_request):
@@ -270,7 +264,6 @@ class TestMessage(unittest.TestCase):
         mock_get_jwt.return_value = "blah"
         mock_request.get(url_send_message + '/count', json={"total": 1}, status_code=200)
         mock_request.get(url_get_surveys_list, json=self.surveys_list_json)
-        params = "?survey=6aa8896f-ced5-4694-800c-6cd661b0c8b2&page=1&limit=10"
         mock_request.get(url_get_threads_list + params, json=threads_unread_list)
         mock_request.get(shortname_url + "/ASHE", json=ashe_info['survey'])
 
@@ -453,11 +446,10 @@ class TestMessage(unittest.TestCase):
         mock_request.get(url_get_thread, json=thread_json, status_code=500)
         mock_request.get(url_get_surveys_list, json=survey_list)
 
-        response = self.app.post("/messages/threads/fb0e79bd-e132-4f4f-a7fd-5e8c6b41b9af",
-                                 follow_redirects=True)
+        self.app.post("/messages/threads/fb0e79bd-e132-4f4f-a7fd-5e8c6b41b9af",
+                      follow_redirects=True)
 
-        self.assertEqual(response.status_code, 500)
-        self.assertIn("Error 500 - Server error".encode(), response.data)
+        self.assertApiError(url_get_thread, 500)
 
     @requests_mock.mock()
     @patch('response_operations_ui.controllers.message_controllers._get_jwt')
@@ -489,10 +481,9 @@ class TestMessage(unittest.TestCase):
         mock_request.get(url_get_thread, status_code=500)
         mock_request.get(url_get_surveys_list, json=survey_list)
 
-        response = self.app.get("/messages/threads/fb0e79bd-e132-4f4f-a7fd-5e8c6b41b9af", follow_redirects=True)
+        self.app.get("/messages/threads/fb0e79bd-e132-4f4f-a7fd-5e8c6b41b9af", follow_redirects=True)
 
-        self.assertEqual(response.status_code, 500)
-        self.assertIn("Error 500 - Server error".encode(), response.data)
+        self.assertApiError(url_get_thread, 500)
 
     @requests_mock.mock()
     def test_conversation_decode_error(self, mock_request):
@@ -624,11 +615,10 @@ class TestMessage(unittest.TestCase):
         mock_get_jwt.return_value = "blah"
         mock_request.patch(url_get_thread, json=thread_json, status_code=500)
 
-        response = self.app.post("/messages/threads/fb0e79bd-e132-4f4f-a7fd-5e8c6b41b9af/close-conversation",
-                                 follow_redirects=True)
+        self.app.post("/messages/threads/fb0e79bd-e132-4f4f-a7fd-5e8c6b41b9af/close-conversation",
+                      follow_redirects=True)
 
-        self.assertEqual(500, response.status_code)
-        self.assertIn("Error 500 - Server error".encode(), response.data)
+        self.assertApiError(url_get_thread, 500)
 
     @requests_mock.mock()
     @patch('response_operations_ui.controllers.message_controllers._get_jwt')
