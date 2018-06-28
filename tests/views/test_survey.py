@@ -1,15 +1,15 @@
 from contextlib import suppress
 import json
-import unittest
 from unittest.mock import MagicMock
 
 from requests import RequestException
 import requests_mock
 
-from config import TestingConfig
 from response_operations_ui import app
 from response_operations_ui.controllers.survey_controllers import get_survey_short_name_by_id
 from response_operations_ui.views.surveys import _sort_collection_exercise
+from tests.views import ViewTestCase
+
 
 collection_exercise_id = '14fb3e68-4dca-46db-bf49-04b84e07e77c'
 collection_exercise_event_id = 'b4a36392-a21f-485b-9dc4-d151a8fcd565'
@@ -54,13 +54,9 @@ url_get_sample_summary = (
 )
 
 
-class TestSurvey(unittest.TestCase):
+class TestSurvey(ViewTestCase):
 
-    def setUp(self):
-        app_config = TestingConfig()
-        app.config.from_object(app_config)
-        app.login_manager.init_app(app)
-        self.app = app.test_client()
+    def setup_data(self):
         self.survey = {
             "id": survey_id,
             "longName": "Business Register and Employment Survey",
@@ -126,10 +122,9 @@ class TestSurvey(unittest.TestCase):
     def test_survey_list_fail(self, mock_request):
         mock_request.get(url_get_survey_list, status_code=500)
 
-        response = self.app.get("/surveys", follow_redirects=True)
+        self.app.get("/surveys")
 
-        self.assertEqual(response.status_code, 500)
-        self.assertIn("Error 500 - Server error".encode(), response.data)
+        self.assertApiError(url_get_survey_list, 500)
 
     @requests_mock.mock()
     def test_survey_list_connection_error(self, mock_request):
@@ -138,7 +133,6 @@ class TestSurvey(unittest.TestCase):
         response = self.app.get("/surveys", follow_redirects=True)
 
         self.assertEqual(response.status_code, 500)
-        self.assertIn("Error 500 - Server error".encode(), response.data)
 
     @requests_mock.mock()
     def test_survey_view(self, mock_request):
@@ -156,10 +150,9 @@ class TestSurvey(unittest.TestCase):
     def test_survey_view_fail(self, mock_request):
         mock_request.get(url_get_survey_by_short_name, status_code=500)
 
-        response = self.app.get("/surveys/bres", follow_redirects=True)
+        self.app.get("/surveys/bres")
 
-        self.assertEqual(response.status_code, 500)
-        self.assertIn("Error 500 - Server error".encode(), response.data)
+        self.assertApiError(url_get_survey_by_short_name, 500)
 
     @requests_mock.mock()
     def test_survey_state_mapping(self, mock_request):
@@ -263,10 +256,8 @@ class TestSurvey(unittest.TestCase):
         mock_request.get(url_get_survey_list, json=survey_list)
         mock_request.put(url_update_survey_details, status_code=500)
         mock_request.get(url_get_survey_list, json=updated_survey_list)
-        response = self.app.post(f"/surveys/edit-survey-details/QBS", data=changed_survey_details,
-                                 follow_redirects=True)
-        self.assertEqual(response.status_code, 500)
-        self.assertIn("Server error (Error 500)".encode(), response.data)
+        self.app.post(f"/surveys/edit-survey-details/QBS", data=changed_survey_details)
+        self.assertApiError(url_update_survey_details, 500)
 
     @requests_mock.mock()
     def test_update_survey_details_failed_validation(self, mock_request):
@@ -430,10 +421,9 @@ class TestSurvey(unittest.TestCase):
         mock_request.get(url_get_legal_basis_list, json=legal_basis_list)
         mock_request.post(url_create_survey, text="Internal server error", status_code=500)
 
-        response = self.app.post(f"surveys/create", data=create_survey_request, follow_redirects=True)
+        self.app.post(f"surveys/create", data=create_survey_request)
 
-        self.assertEqual(response.status_code, 500)
-        self.assertIn("Error 500 - Server error".encode(), response.data)
+        self.assertApiError(url_create_survey, 500)
 
     @requests_mock.mock()
     def test_update_survey_details_failed_validation_short_name_has_spaces(self, mock_request):
