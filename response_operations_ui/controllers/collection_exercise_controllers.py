@@ -44,7 +44,6 @@ def download_report(collection_exercise_id, survey_id):
     return response
 
 
-
 def update_event(collection_exercise_id, tag, timestamp):
     logger.debug('Updating collection exercise event date', collection_exercise_id=collection_exercise_id, tag=tag)
 

@@ -1,7 +1,8 @@
 import json
-from unittest.mock import patch
+from urllib.parse import urlparse
 
 import requests_mock
+from flask import url_for
 
 from response_operations_ui import app
 from tests.views import ViewTestCase
@@ -21,10 +22,6 @@ with open('tests/test_data/survey/single_survey.json') as json_data:
     survey = json.load(json_data)
 with open('tests/test_data/collection_exercise/events.json') as json_data:
     events = json.load(json_data)
-url_get_collection_exercise = (
-    f'{app.config["BACKSTAGE_API_URL"]}/v1/collection-exercise'
-    f'/{survey_short_name}/{period}'
-)
 url_put_update_event_date = (
     f'{app.config["COLLECTION_EXERCISE_URL"]}/collectionexercises'
     f'/{collection_exercise_id}/events/{tag}'
@@ -95,15 +92,16 @@ class TestUpdateEventDate(ViewTestCase):
         self.assertApiError(url_survey_shortname, 500)
 
     @requests_mock.mock()
-    @patch('response_operations_ui.views.collection_exercise.build_collection_exercise_details')
-    def test_put_update_event_date(self, mock_request, mock_details):
+    def test_put_update_event_date(self, mock_request):
+        mock_request.get(url_survey_shortname, json=survey)
+        mock_request.get(url_collection_exercise_survey_id, json=[collection_exercise])
         mock_request.put(url_put_update_event_date, status_code=201)
-        mock_details.return_value = collection_exercise
 
         response = self.app.post(f"/surveys/{survey_short_name}/{period}/event/go_live",
-                                 data=self.update_event_form, follow_redirects=True)
+                                 data=self.update_event_form)
 
-        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.status_code, 302)
+        self.assertEqual(urlparse(response.location).path, f'/surveys/{survey_short_name}/{period}')
 
     @requests_mock.mock()
     def test_put_update_event_date_no_collection_exercise(self, mock_request):
