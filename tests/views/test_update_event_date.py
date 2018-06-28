@@ -152,6 +152,6 @@ class TestUpdateEventDate(ViewTestCase):
         mock_request.put(url_put_update_event_date, status_code=500)
 
         self.app.post(f"/surveys/{survey_short_name}/{period}/event/go_live",
-                                 data=self.update_event_form, follow_redirects=True)
+                      data=self.update_event_form, follow_redirects=True)
 
         self.assertApiError(url_put_update_event_date, 500)
