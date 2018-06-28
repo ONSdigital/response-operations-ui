@@ -293,6 +293,25 @@ class TestCollectionExercise(ViewTestCase):
         self.assertApiError(url_get_classifier_type, 400)
 
     @requests_mock.mock()
+    def test_collection_exercise_view_classifiers_204(self, mock_request):
+        mock_request.get(url_get_survey_by_short_name, json=self.survey)
+        mock_request.get(url_ces_by_survey, json=self.collection_exercises)
+        mock_request.get(url_ce_by_id, json=collection_exercise_details['collection_exercise'])
+        mock_request.get(url_get_collection_exercise_events, json=self.collection_exercise_events)
+        mock_request.get(f'{url_get_collection_instrument}?{ci_search_string}', json=self.collection_instruments,
+                         complete_qs=True)
+        mock_request.get(f'{url_get_collection_instrument}?{ci_type_search_string}', json=self.eq_ci_selectors,
+                         complete_qs=True)
+        mock_request.get(url_link_sample, json=[sample_summary_id])
+        mock_request.get(url_get_sample_summary, json=self.sample_summary)
+        mock_request.get(url_get_classifier_type_selectors, status_code=204)
+        mock_request.get(url_get_classifier_type, json=classifier_types)
+
+        self.app.get(f'/surveys/{short_name}/{period}')
+
+        self.assertApiError(url_get_classifier_type_selectors, 204)
+
+    @requests_mock.mock()
     def test_collection_exercise_view_selectors_fail(self, mock_request):
         mock_request.get(url_get_survey_by_short_name, json=self.survey)
         mock_request.get(url_ces_by_survey, json=self.collection_exercises)
