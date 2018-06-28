@@ -1,5 +1,6 @@
 import json
 import unittest
+from unittest.mock import patch
 
 import requests_mock
 
@@ -71,9 +72,10 @@ class TestUpdateEventDate(unittest.TestCase):
         self.assertIn("Error 500 - Server error".encode(), response.data)
 
     @requests_mock.mock()
-    def test_put_update_event_date(self, mock_request):
+    @patch('response_operations_ui.views.collection_exercise.build_collection_exercise_details')
+    def test_put_update_event_date(self, mock_request, mock_details):
         mock_request.put(url_put_update_event_date, status_code=201)
-        mock_request.get(url_get_collection_exercise, json=collection_exercise)
+        mock_details.return_value = collection_exercise
 
         response = self.app.post(f"/surveys/{survey_short_name}/{period}/event/go_live",
                                  data=self.update_event_form, follow_redirects=True)
