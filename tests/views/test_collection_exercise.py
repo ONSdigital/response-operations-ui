@@ -1,15 +1,12 @@
 import json
-import unittest
 from io import BytesIO
-from unittest.mock import patch, MagicMock
+from unittest.mock import patch
 from urllib.parse import urlencode
 
-from flask import Response
 import requests_mock
 
-from config import TestingConfig
 from response_operations_ui import app
-from response_operations_ui.exceptions.exceptions import ApiError
+from tests.views import ViewTestCase
 
 
 ci_selector_id = 'efa868fb-fb80-44c7-9f33-d6800a17c4da'
@@ -131,22 +128,9 @@ ci_type_search_string = urlencode({'searchString': json.dumps({
 })})
 
 
-class TestCollectionExercise(unittest.TestCase):
+class TestCollectionExercise(ViewTestCase):
 
-    def tearDown(self):
-        # NB: each of test cases use the same app object
-        app._error_handlers[None][ApiError] = self._old_handler
-
-    def setUp(self):
-        app_config = TestingConfig()
-        app.config.from_object(app_config)
-        app.login_manager.init_app(app)
-        self.mocked_handler = MagicMock(return_value=Response(''))
-        # This mocks the error handler so we can validate that an ApiError was raised
-        # and not that a generic exception (500) has occurred.
-        self._old_handler = app._error_handlers[None][ApiError]
-        app._error_handlers[None][ApiError] = self.mocked_handler
-        self.app = app.test_client()
+    def setup_data(self):
         self.headers = {"Authorization": "test_jwt", "Content-Type": "application/json"}
         self.survey_data = {"id": survey_id}
         self.survey = {
@@ -275,9 +259,7 @@ class TestCollectionExercise(unittest.TestCase):
 
         self.app.get(f'/surveys/{short_name}/{period}')
 
-        self.mocked_handler.assert_called()
-        self.assertEqual(self.mocked_handler.call_args[0][0].status_code, 500)
-        self.assertEqual(self.mocked_handler.call_args[0][0].url, url_get_survey_by_short_name)
+        self.assertApiError(url_get_survey_by_short_name, 500)
 
     @requests_mock.mock()
     def test_collection_exercise_view_ci_fail(self, mock_request):
@@ -289,9 +271,7 @@ class TestCollectionExercise(unittest.TestCase):
 
         self.app.get(f'/surveys/{short_name}/{period}')
 
-        self.mocked_handler.assert_called()
-        self.assertEqual(self.mocked_handler.call_args[0][0].status_code, 400)
-        self.assertEqual(self.mocked_handler.call_args[0][0].url, f'{url_get_collection_instrument}?{ci_search_string}')
+        self.assertApiError(f'{url_get_collection_instrument}?{ci_search_string}', 400)
 
     @requests_mock.mock()
     def test_collection_exercise_view_classifiers_fail(self, mock_request):
@@ -310,9 +290,7 @@ class TestCollectionExercise(unittest.TestCase):
 
         self.app.get(f'/surveys/{short_name}/{period}')
 
-        self.mocked_handler.assert_called()
-        self.assertEqual(self.mocked_handler.call_args[0][0].status_code, 400)
-        self.assertEqual(self.mocked_handler.call_args[0][0].url, url_get_classifier_type)
+        self.assertApiError(url_get_classifier_type, 400)
 
     @requests_mock.mock()
     def test_collection_exercise_view_selectors_fail(self, mock_request):
@@ -330,9 +308,7 @@ class TestCollectionExercise(unittest.TestCase):
 
         self.app.get(f'/surveys/{short_name}/{period}')
 
-        self.mocked_handler.assert_called()
-        self.assertEqual(self.mocked_handler.call_args[0][0].status_code, 400)
-        self.assertEqual(self.mocked_handler.call_args[0][0].url, url_get_classifier_type_selectors)
+        self.assertApiError(url_get_classifier_type_selectors, 400)
 
     @requests_mock.mock()
     @patch('response_operations_ui.views.collection_exercise.build_collection_exercise_details')
@@ -548,53 +524,35 @@ class TestCollectionExercise(unittest.TestCase):
     @patch('response_operations_ui.views.collection_exercise.build_collection_exercise_details')
     def test_upload_sample_link_failure(self, mock_request, mock_details):
         post_data = {"sampleFile": (BytesIO(b"data"), "test.csv"), "load-sample": ""}
-
-        sample_data = {
-            "id": sample_summary_id
-        }
-
+        sample_data = {"id": sample_summary_id}
         collection_exercise_link = {"id": ""}
 
         mock_details.return_value = collection_exercise_details
         mock_request.get(url_get_survey_by_short_name, status_code=200, json=self.survey_data)
-        mock_request.get(
-            url_ces_by_survey, status_code=200, json=exercise_data
-        )
+        mock_request.get(url_ces_by_survey, status_code=200, json=exercise_data)
         mock_request.post(url_sample_service_upload, status_code=200, json=sample_data)
-        mock_request.put(
-            url_collection_exercise_link, status_code=500, json=collection_exercise_link
-        )
+        mock_request.put(url_collection_exercise_link, status_code=500, json=collection_exercise_link)
 
         self.app.post(f'/surveys/{short_name}/{period}', data=post_data)
 
-        self.mocked_handler.assert_called()
-        self.assertEqual(self.mocked_handler.call_args[0][0].status_code, 500)
-        self.assertEqual(self.mocked_handler.call_args[0][0].url, url_collection_exercise_link)
+        self.assertApiError(url_collection_exercise_link, 500)
 
     @requests_mock.mock()
     @patch('response_operations_ui.views.collection_exercise.build_collection_exercise_details')
     def test_upload_sample_exception(self, mock_request, mock_details):
         post_data = {"sampleFile": (BytesIO(b"data"), "test.csv"), "load-sample": ""}
-
-        sample_data = {
-            "id": sample_summary_id
-        }
-
+        sample_data = {"id": sample_summary_id}
         collection_exercise_link = {"id": ""}
 
         mock_details.return_value = collection_exercise_details
         mock_request.get(url_get_survey_by_short_name, status_code=200, json=self.survey_data)
         mock_request.get(url_ces_by_survey, status_code=200, json=exercise_data)
         mock_request.post(url_sample_service_upload, status_code=500, json=sample_data)
-        mock_request.put(
-            url_collection_exercise_link, status_code=200, json=collection_exercise_link
-        )
+        mock_request.put(url_collection_exercise_link, status_code=200, json=collection_exercise_link)
 
         self.app.post(f'/surveys/{short_name}/{period}', data=post_data)
 
-        self.mocked_handler.assert_called()
-        self.assertEqual(self.mocked_handler.call_args[0][0].status_code, 500)
-        self.assertEqual(self.mocked_handler.call_args[0][0].url, url_sample_service_upload)
+        self.assertApiError(url_sample_service_upload, 500)
 
     @requests_mock.mock()
     @patch('response_operations_ui.views.collection_exercise.build_collection_exercise_details')
@@ -608,9 +566,7 @@ class TestCollectionExercise(unittest.TestCase):
 
         self.app.post(f'/surveys/{short_name}/{period}', data=data)
 
-        self.mocked_handler.assert_called()
-        self.assertEqual(self.mocked_handler.call_args[0][0].status_code, 500)
-        self.assertEqual(self.mocked_handler.call_args[0][0].url, url_sample_service_upload)
+        self.assertApiError(url_sample_service_upload, 500)
 
     @requests_mock.mock()
     @patch('response_operations_ui.views.collection_exercise.build_collection_exercise_details')
@@ -748,9 +704,7 @@ class TestCollectionExercise(unittest.TestCase):
             data=changed_ce_details
         )
 
-        self.mocked_handler.assert_called()
-        self.assertEqual(self.mocked_handler.call_args[0][0].status_code, 500)
-        self.assertEqual(self.mocked_handler.call_args[0][0].url, url_update_ce)
+        self.assertApiError(url_update_ce, 500)
 
     @requests_mock.mock()
     @patch('response_operations_ui.views.collection_exercise.build_collection_exercise_details')
@@ -845,9 +799,7 @@ class TestCollectionExercise(unittest.TestCase):
             data=new_collection_exercise_details
         )
 
-        self.mocked_handler.assert_called()
-        self.assertEqual(self.mocked_handler.call_args[0][0].status_code, 500)
-        self.assertEqual(self.mocked_handler.call_args[0][0].url, url_create_collection_exercise)
+        self.assertApiError(url_create_collection_exercise, 500)
 
     @requests_mock.mock()
     def test_get_create_ce_form(self, mock_request):
