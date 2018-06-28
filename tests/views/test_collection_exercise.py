@@ -1,11 +1,10 @@
 import json
-import unittest
 from io import BytesIO
 
 import requests_mock
 
-from config import TestingConfig
 from response_operations_ui import app
+from tests.views import ViewTestCase
 
 collection_exercise_event_id = 'b4a36392-a21f-485b-9dc4-d151a8fcd565'
 collection_exercise_id = '14fb3e68-4dca-46db-bf49-04b84e07e77c'
@@ -102,13 +101,9 @@ url_ce_by_survey = (
 )
 
 
-class TestCollectionExercise(unittest.TestCase):
+class TestCollectionExercise(ViewTestCase):
 
-    def setUp(self):
-        app_config = TestingConfig()
-        app.config.from_object(app_config)
-        app.login_manager.init_app(app)
-        self.app = app.test_client()
+    def setup_data(self):
         self.headers = {"Authorization": "test_jwt", "Content-Type": "application/json"}
         self.survey_data = {"id": survey_id}
         self.survey = {
@@ -160,10 +155,9 @@ class TestCollectionExercise(unittest.TestCase):
     def test_collection_exercise_view_fail(self, mock_request):
         mock_request.get(url_get_collection_exercise, status_code=500)
 
-        response = self.app.get(f'/surveys/{short_name}/{period}', follow_redirects=True)
+        self.app.get(f'/surveys/{short_name}/{period}', follow_redirects=True)
 
-        self.assertEqual(response.status_code, 500)
-        self.assertIn("Error 500 - Server error".encode(), response.data)
+        self.assertApiError(url_get_collection_exercise, 500)
 
     @requests_mock.mock()
     def test_upload_collection_instrument(self, mock_request):
@@ -366,27 +360,18 @@ class TestCollectionExercise(unittest.TestCase):
     @requests_mock.mock()
     def test_upload_sample_link_failure(self, mock_request):
         post_data = {"sampleFile": (BytesIO(b"data"), "test.csv"), "load-sample": ""}
-
-        sample_data = {
-            "id": sample_summary_id
-        }
-
+        sample_data = {"id": sample_summary_id}
         collection_exercise_link = {"id": ""}
 
         mock_request.get(url_get_collection_exercise, json=collection_exercise_details)
         mock_request.get(url_survey_shortname, status_code=200, json=self.survey_data)
-        mock_request.get(
-            url_collection_exercise_survey_id, status_code=200, json=exercise_data
-        )
+        mock_request.get(url_collection_exercise_survey_id, status_code=200, json=exercise_data)
         mock_request.post(url_sample_service_upload, status_code=200, json=sample_data)
-        mock_request.put(
-            url_collection_exercise_link, status_code=500, json=collection_exercise_link
-        )
+        mock_request.put(url_collection_exercise_link, status_code=500, json=collection_exercise_link)
 
-        response = self.app.post(f'/surveys/{short_name}/{period}', data=post_data, follow_redirects=True)
+        self.app.post(f'/surveys/{short_name}/{period}', data=post_data, follow_redirects=True)
 
-        self.assertEqual(response.status_code, 500)
-        self.assertIn("Error 500 - Server error".encode(), response.data)
+        self.assertApiError(url_collection_exercise_link, 500)
 
     @requests_mock.mock()
     def test_upload_sample_exception(self, mock_request):
@@ -406,10 +391,9 @@ class TestCollectionExercise(unittest.TestCase):
             url_collection_exercise_link, status_code=200, json=collection_exercise_link
         )
 
-        response = self.app.post(f'/surveys/{short_name}/{period}', data=post_data, follow_redirects=True)
+        self.app.post(f'/surveys/{short_name}/{period}', data=post_data, follow_redirects=True)
 
-        self.assertEqual(response.status_code, 500)
-        self.assertIn("Error 500 - Server error".encode(), response.data)
+        self.assertApiError(url_sample_service_upload, 500)
 
     @requests_mock.mock()
     def test_failed_upload_sample(self, mock_request):
@@ -522,9 +506,9 @@ class TestCollectionExercise(unittest.TestCase):
         mock_request.get(url_survey_shortname, status_code=200, json=self.survey_data)
         mock_request.get(url_collection_exercise_survey_id, status_code=500)
 
-        response = self.app.post(f'/surveys/{short_name}/{period}', data=post_data, follow_redirects=True)
+        self.app.post(f'/surveys/{short_name}/{period}', data=post_data, follow_redirects=True)
 
-        self.assertEqual(response.status_code, 500)
+        self.assertApiError(url_collection_exercise_survey_id, 500)
 
     @requests_mock.mock()
     def test_get_processing(self, mock_request):
@@ -538,9 +522,7 @@ class TestCollectionExercise(unittest.TestCase):
 
     @requests_mock.mock()
     def test_failed_execution(self, mock_request):
-        mock_request.get(
-            url_get_collection_exercise, json=collection_exercise_details_failedvalidation
-        )
+        mock_request.get(url_get_collection_exercise, json=collection_exercise_details_failedvalidation)
 
         response = self.app.get(f'/surveys/{short_name}/{period}')
 
@@ -678,13 +660,12 @@ class TestCollectionExercise(unittest.TestCase):
         mock_request.get(url_get_survey_by_short_name, json=updated_survey_info)
         mock_request.post(url_create_collection_exercise, status_code=500)
 
-        response = self.app.post(
+        self.app.post(
             f"/surveys/{survey_ref}-{short_name}/create-collection-exercise",
             data=new_collection_exercise_details,
             follow_redirects=True,
         )
-        self.assertEqual(response.status_code, 500)
-        self.assertIn("Error 500 - Server error".encode(), response.data)
+        self.assertApiError(url_create_collection_exercise, 500)
 
     @requests_mock.mock()
     def test_get_create_ce_form(self, mock_request):
