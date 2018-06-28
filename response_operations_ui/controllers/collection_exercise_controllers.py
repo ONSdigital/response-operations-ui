@@ -26,7 +26,9 @@ def download_report(collection_exercise_id, survey_id):
 
     response = requests.get(url)
 
-    if response.status_code != 200:
+    try:
+        response.raise_for_status()
+    except HTTPError:
         logger.error(
             "Error retrieving collection exercise",
             collection_exercise_id=collection_exercise_id,
@@ -42,51 +44,28 @@ def download_report(collection_exercise_id, survey_id):
     return response
 
 
-def get_collection_exercise_event_page_info(short_name, period):
-    logger.debug(
-        "Retrieving collection exercise details for the event page",
-        short_name=short_name,
-        period=period,
-    )
-    url = (
-        f'{app.config["BACKSTAGE_API_URL"]}/v1/collection-exercise/{short_name}/{period}/events'
-    )
-    response = requests.get(url)
-    if response.status_code != 200:
-        raise ApiError(response)
+def update_event(collection_exercise_id, tag, timestamp):
+    logger.debug('Updating collection exercise event date', collection_exercise_id=collection_exercise_id, tag=tag)
 
-    logger.debug(
-        "Successfully retrieved collection exercise details for the event page",
-        short_name=short_name,
-        period=period,
-    )
-    return response.json()
-
-
-def update_event(short_name, period, tag, timestamp):
-    logger.debug("Updating event date", short_name=short_name, period=period, tag=tag)
-    url = (
-        f'{app.config["BACKSTAGE_API_URL"]}/v1/collection-exercise/{short_name}/{period}/events/{tag}'
-    )
     formatted_timestamp = timestamp.strftime("%Y-%m-%dT%H:%M:00.000+0000")
-    response = requests.put(url, json={"timestamp": formatted_timestamp})
+    url = f'{app.config["COLLECTION_EXERCISE_URL"]}/collectionexercises/{collection_exercise_id}/events/{tag}'
+    response = requests.put(url, auth=app.config['COLLECTION_EXERCISE_AUTH'],
+                            headers={'content-type': 'text/plain'}, data=formatted_timestamp)
 
-    if response.status_code == 400:
-        logger.warning(
-            "Bad request updating event",
-            short_name=short_name,
-            period=period,
-            tag=tag,
-            timestamp=timestamp,
-            status=response.status_code,
-        )
-        return False
-    elif response.status_code != 201:
+    try:
+        response.raise_for_status()
+    except HTTPError:
+        if response.status_code == 400:
+            logger.warning('Bad request updating event', collection_exercise_id=collection_exercise_id,
+                           tag=tag, timestamp=formatted_timestamp, status=response.status_code)
+            return False
+        else:
+            logger.error('Failed to update collection exercise event', collection_exercise_id=collection_exercise_id,
+                         tag=tag, timestamp=formatted_timestamp, status=response.status_code)
         raise ApiError(response)
 
-    logger.debug(
-        "Successfully updated event date", short_name=short_name, period=period, tag=tag
-    )
+    logger.debug('Successfully updated event date', collection_exercise_id=collection_exercise_id,
+                 tag=tag, timestamp=formatted_timestamp)
     return True
 
 
@@ -212,17 +191,22 @@ def create_collection_exercise(survey_id, survey_name, user_description, period)
 
 
 def get_collection_exercise_events(collection_exercise_id):
-    logger.debug('Retrieving collection exercise events', collection_exercise_id=collection_exercise_id)
-    url = f'{app.config["COLLECTION_EXERCISE_URL"]}/collectionexercises/{collection_exercise_id}/events'
+    logger.debug('Retrieving collection exercise events',
+                 collection_exercise_id=collection_exercise_id)
+    url = (
+        f'{app.config["COLLECTION_EXERCISE_URL"]}/collectionexercises'
+        f'/{collection_exercise_id}/events')
     response = requests.get(url, auth=app.config['COLLECTION_EXERCISE_AUTH'])
 
     try:
         response.raise_for_status()
     except HTTPError:
-        logger.error('Error retrieving collection exercise events', collection_exercise_id=collection_exercise_id)
+        logger.error('Error retrieving collection exercise events',
+                     collection_exercise_id=collection_exercise_id)
         raise ApiError(response)
 
-    logger.debug('Successfully retrieved collection exercise events', collection_exercise_id=collection_exercise_id)
+    logger.debug('Successfully retrieved collection exercise events',
+                 collection_exercise_id=collection_exercise_id)
     return response.json()
 
 
