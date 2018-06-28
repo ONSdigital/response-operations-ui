@@ -91,7 +91,7 @@ url_collection_exercise_link = (
 url_execute = f'{app.config["COLLECTION_EXERCISE_URL"]}/collectionexerciseexecution/{collection_exercise_id}'
 url_create_collection_exercise = f'{app.config["COLLECTION_EXERCISE_URL"]}/collectionexercises'
 url_get_classifier_type_selectors = (
-  f'{app.config["SURVEY_URL"]}/surveys/{survey_id}/classifiertypeselectors'
+    f'{app.config["SURVEY_URL"]}/surveys/{survey_id}/classifiertypeselectors'
 )
 url_get_classifier_type = (
     f'{app.config["SURVEY_URL"]}'
