@@ -7,6 +7,7 @@ from structlog import wrap_logger
 from response_operations_ui import app
 from response_operations_ui.exceptions.exceptions import ApiError
 
+
 logger = wrap_logger(logging.getLogger(__name__))
 
 
@@ -39,25 +40,6 @@ def download_report(collection_exercise_id, survey_id):
         survey_id=survey_id,
     )
     return response
-
-
-def get_collection_exercise(short_name, period):
-    logger.debug(
-        "Retrieving collection exercise details", short_name=short_name, period=period
-    )
-    url = (
-        f'{app.config["BACKSTAGE_API_URL"]}/v1/collection-exercise/{short_name}/{period}'
-    )
-    response = requests.get(url)
-    if response.status_code != 200:
-        raise ApiError(response)
-
-    logger.debug(
-        "Successfully retrieved collection exercise details",
-        short_name=short_name,
-        period=period,
-    )
-    return response.json()
 
 
 def get_collection_exercise_event_page_info(short_name, period):
@@ -127,9 +109,7 @@ def execute_collection_exercise(short_name, period):
     )
 
 
-def update_collection_exercise_details(
-    collection_exercise_id, user_description, period
-):
+def update_collection_exercise_details(collection_exercise_id, user_description, period):
     logger.debug(
         "Updating collection exercise details",
         collection_exercise_id=collection_exercise_id,
@@ -235,12 +215,10 @@ def get_collection_exercises_by_survey(survey_id):
     url = (
         f'{app.config["COLLECTION_EXERCISE_URL"]}/collectionexercises/survey/{survey_id}'
     )
-
     response = requests.get(url, auth=app.config["COLLECTION_EXERCISE_AUTH"])
 
     if response.status_code == 204:
         return []
-
     try:
         response.raise_for_status()
     except HTTPError:
@@ -325,9 +303,7 @@ def get_linked_sample_summary_id(collection_exercise_id):
     return sample_summary_id
 
 
-def link_sample_summary_to_collection_exercise(
-    collection_exercise_id, sample_summary_id
-):
+def link_sample_summary_to_collection_exercise(collection_exercise_id, sample_summary_id):
     logger.debug(
         "Linking sample summary to collection exercise",
         collection_exercise_id=collection_exercise_id,
