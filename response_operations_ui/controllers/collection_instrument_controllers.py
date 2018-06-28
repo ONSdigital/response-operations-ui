@@ -5,6 +5,7 @@ import requests
 from structlog import wrap_logger
 
 from response_operations_ui import app
+from response_operations_ui.exceptions.exceptions import ApiError
 
 
 logger = wrap_logger(logging.getLogger(__name__))
@@ -73,3 +74,37 @@ def unlink_collection_instrument(ce_id, ci_id):
     logger.debug('Successfully unlinked collection instrument and collection exercise',
                  collection_exercise_id=ce_id, collection_instrument_id=ci_id)
     return True
+
+
+def get_collection_instruments_by_classifier(survey_id=None, collection_exercise_id=None, ci_type=None):
+    logger.debug('Retrieving collection instruments', survey_id=survey_id,
+                 collection_exercise_id=collection_exercise_id, ci_type=ci_type)
+    url = (
+        f'{app.config["COLLECTION_INSTRUMENT_URL"]}'
+        f'/collection-instrument-api/1.0.2/collectioninstrument'
+    )
+
+    classifiers = _build_classifiers(collection_exercise_id, survey_id, ci_type)
+    response = requests.get(url, auth=app.config['COLLECTION_INSTRUMENT_AUTH'],
+                            params={'searchString': json.dumps(classifiers)})
+
+    try:
+        response.raise_for_status()
+    except requests.exceptions.HTTPError:
+        logger.error('Error retrieving collection instruments')
+        raise ApiError(response)
+
+    logger.debug('Successfully retrieved collection instruments', survey_id=survey_id,
+                 collection_exercise_id=collection_exercise_id, ci_type=ci_type)
+    return response.json()
+
+
+def _build_classifiers(collection_exercise_id=None, survey_id=None, ci_type=None):
+    classifiers = {}
+    if survey_id:
+        classifiers['SURVEY_ID'] = survey_id
+    if collection_exercise_id:
+        classifiers['COLLECTION_EXERCISE'] = collection_exercise_id
+    if ci_type:
+        classifiers['TYPE'] = ci_type
+    return classifiers
