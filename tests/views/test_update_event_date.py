@@ -1,5 +1,4 @@
 import json
-import unittest
 
 import requests_mock
 
@@ -90,7 +89,7 @@ class TestUpdateEventDate(ViewTestCase):
     def test_update_event_date_service_fail(self, mock_request):
         mock_request.get(url_survey_shortname, status_code=500)
 
-        response = self.app.get(f"/surveys/{survey_short_name}/{period}/event/go_live", follow_redirects=True)
+        self.app.get(f"/surveys/{survey_short_name}/{period}/event/go_live", follow_redirects=True)
 
         self.assertApiError(url_survey_shortname, 500)
 
@@ -152,7 +151,7 @@ class TestUpdateEventDate(ViewTestCase):
         mock_request.get(url_get_collection_exercise_events, json=events)
         mock_request.put(url_put_update_event_date, status_code=500)
 
-        response = self.app.post(f"/surveys/{survey_short_name}/{period}/event/go_live",
+        self.app.post(f"/surveys/{survey_short_name}/{period}/event/go_live",
                                  data=self.update_event_form, follow_redirects=True)
 
         self.assertApiError(url_put_update_event_date, 500)
