@@ -11,10 +11,6 @@ url_surveys = f'{app.config["SURVEY_URL"]}/surveys'
 
 class TestSignIn(unittest.TestCase):
     def setUp(self):
-        app.config['SECRET_KEY'] = 'sekrit!'
-        app.config['WTF_CSRF_ENABLED'] = False
-        app.config["UAA_PUBLIC_KEY"] = "Test"
-
         payload = {'user_id': 'test-id',
                    'aud': 'response_operations'}
 
