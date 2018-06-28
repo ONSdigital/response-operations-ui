@@ -1,4 +1,5 @@
 import json
+from unittest.mock import patch
 
 import requests_mock
 
@@ -94,11 +95,10 @@ class TestUpdateEventDate(ViewTestCase):
         self.assertApiError(url_survey_shortname, 500)
 
     @requests_mock.mock()
-    def test_put_update_event_date(self, mock_request):
-        mock_request.get(url_survey_shortname, json=survey)
-        mock_request.get(url_collection_exercise_survey_id, json=[collection_exercise])
+    @patch('response_operations_ui.views.collection_exercise.build_collection_exercise_details')
+    def test_put_update_event_date(self, mock_request, mock_details):
         mock_request.put(url_put_update_event_date, status_code=201)
-        mock_request.get(url_get_collection_exercise, json=collection_exercise_details)
+        mock_details.return_value = collection_exercise
 
         response = self.app.post(f"/surveys/{survey_short_name}/{period}/event/go_live",
                                  data=self.update_event_form, follow_redirects=True)
