@@ -67,7 +67,6 @@ def generate_new_enrolment_code(case_id):
         raise ApiError(response)
 
     logger.debug('Successfully generated new enrolment code', case_id=case_id)
-    return response.json()
 
 
 def resend_verification_email(party_id):
