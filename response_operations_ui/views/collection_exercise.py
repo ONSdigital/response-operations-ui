@@ -154,7 +154,7 @@ def _set_ready_for_live(short_name, period):
     try:
         collection_exercise_controllers.execute_collection_exercise(exercise['id'])
         success_panel = "Collection exercise executed"
-    except ApiError as e:
+    except ApiError:
         session['error'] = json.dumps({
             "section": "head",
             "header": "Error: Failed to execute Collection Exercise",
