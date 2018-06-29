@@ -158,29 +158,45 @@ def execute_collection_exercise(collection_exercise_id):
     logger.debug("Successfully began execution of collection exercise", collection_exercise_id=collection_exercise_id)
 
 
-def update_collection_exercise_details(collection_exercise_id, user_description, period):
-    logger.debug(
-        "Updating collection exercise details",
-        collection_exercise_id=collection_exercise_id,
-    )
-    url = (
-        f'{app.config["BACKSTAGE_API_URL"]}/v1/collection-exercise/'
-        f"update-collection-exercise-details/{collection_exercise_id}"
-    )
+def update_collection_exercise_user_description(collection_exercise_id, user_description):
+    logger.debug('Updating collection exercise user description',
+                 collection_exercise_id=collection_exercise_id)
 
-    collection_exercise_details = {
-        "user_description": user_description,
-        "period": period,
-    }
+    header = {'Content-Type': "text/plain"}
+    url = f'{app.config["COLLECTION_EXERCISE_URL"]}/collectionexercises/{collection_exercise_id}/userDescription'
+    response = requests.put(url, headers=header, data=user_description, auth=app.config['COLLECTION_EXERCISE_AUTH'])
 
-    response = requests.put(url, json=collection_exercise_details)
-    if response.status_code != 200:
+    try:
+        response.raise_for_status()
+    except HTTPError:
+        if response.status_code == 404:
+            logger.error('Error retrieving collection exercise', collection_exercise_id=collection_exercise_id)
+        else:
+            logger.error('Failed to update collection exercise user description',
+                         collection_exercise_id=collection_exercise_id)
         raise ApiError(response)
 
-    logger.debug(
-        "Successfully updated collection exercise details",
-        collection_exercise_id=collection_exercise_id,
-    )
+    logger.debug('Successfully updated collection exercise user description',
+                 collection_exercise_id=collection_exercise_id)
+
+
+def update_collection_exercise_period(collection_exercise_id, period):
+    logger.debug('Updating collection exercise period', collection_exercise_id=collection_exercise_id, period=period)
+
+    header = {'Content-Type': "text/plain"}
+    url = f'{app.config["COLLECTION_EXERCISE_URL"]}/collectionexercises/{collection_exercise_id}/exerciseRef'
+    response = requests.put(url, headers=header, data=period, auth=app.config['COLLECTION_EXERCISE_AUTH'])
+
+    try:
+        response.raise_for_status()
+    except HTTPError:
+        if response.status_code == 404:
+            logger.error('Error retrieving collection exercise', collection_exercise_id=collection_exercise_id)
+        else:
+            logger.error('Failed to update collection exercise period', collection_exercise_id=collection_exercise_id)
+        raise ApiError(response)
+
+    logger.debug('Successfully updated collection exercise period', collection_exercise_id=collection_exercise_id)
 
 
 def get_collection_exercise_by_id(collection_exercise_id):
