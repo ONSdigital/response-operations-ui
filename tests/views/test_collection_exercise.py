@@ -1,7 +1,7 @@
 import json
 from io import BytesIO
 from unittest.mock import patch
-from urllib.parse import urlencode
+from urllib.parse import urlencode, urlparse
 
 import requests_mock
 
@@ -83,6 +83,14 @@ url_sample_service_upload = f'{app.config["SAMPLE_URL"]}/samples/B/fileupload'
 url_collection_exercise_survey_id = (
     f'{app.config["COLLECTION_EXERCISE_URL"]}/collectionexercises/survey'
     f'/{survey_id}'
+)
+url_update_ce_user_details = (
+    f'{app.config["COLLECTION_EXERCISE_URL"]}/collectionexercises'
+    f'/{collection_exercise_id}/userDescription'
+)
+url_update_ce_period = (
+    f'{app.config["COLLECTION_EXERCISE_URL"]}/collectionexercises'
+    f'/{collection_exercise_id}/exerciseRef'
 )
 url_collection_exercise_link = (
     f'{app.config["COLLECTION_EXERCISE_URL"]}/collectionexercises/link'
@@ -298,6 +306,25 @@ class TestCollectionExercise(ViewTestCase):
         self.app.get(f'/surveys/{short_name}/{period}')
 
         self.assertApiError(url_get_classifier_type, 400)
+
+    @requests_mock.mock()
+    def test_collection_exercise_view_classifiers_204(self, mock_request):
+        mock_request.get(url_get_survey_by_short_name, json=self.survey)
+        mock_request.get(url_ces_by_survey, json=self.collection_exercises)
+        mock_request.get(url_ce_by_id, json=collection_exercise_details['collection_exercise'])
+        mock_request.get(url_get_collection_exercise_events, json=self.collection_exercise_events)
+        mock_request.get(f'{url_get_collection_instrument}?{ci_search_string}', json=self.collection_instruments,
+                         complete_qs=True)
+        mock_request.get(f'{url_get_collection_instrument}?{ci_type_search_string}', json=self.eq_ci_selectors,
+                         complete_qs=True)
+        mock_request.get(url_link_sample, json=[sample_summary_id])
+        mock_request.get(url_get_sample_summary, json=self.sample_summary)
+        mock_request.get(url_get_classifier_type_selectors, status_code=204)
+        mock_request.get(url_get_classifier_type, json=classifier_types)
+
+        self.app.get(f'/surveys/{short_name}/{period}')
+
+        self.assertApiError(url_get_classifier_type_selectors, 204)
 
     @requests_mock.mock()
     def test_collection_exercise_view_selectors_fail(self, mock_request):
@@ -710,13 +737,14 @@ class TestCollectionExercise(ViewTestCase):
         changed_ce_details = {
             "collection_exercise_id": collection_exercise_id,
             "user_description": "16th June 2019",
-            "period": "201907",  # NB: slight difference in value to avoid validation error
+            "period": "201907",
             "hidden_survey_id": survey_id,
         }
         # update survey
         mock_details.return_value = collection_exercise_details
         mock_request.get(url_get_survey_by_short_name, json=updated_survey_info['survey'])
-        mock_request.put(url_update_ce)
+        mock_request.put(url_update_ce_user_details)
+        mock_request.put(url_update_ce_period)
         # redirect to survey details
         mock_request.get(url_ces_by_survey, json=updated_survey_info['collection_exercises'])
         mock_request.get(url_get_collection_exercise_events, json=self.collection_exercise_events)
@@ -734,25 +762,101 @@ class TestCollectionExercise(ViewTestCase):
         self.assertIn("201906".encode(), response.data)
 
     @requests_mock.mock()
-    @patch('response_operations_ui.views.collection_exercise.build_collection_exercise_details')
-    def test_update_collection_exercise_details_fail(self, mock_request, mock_details):
+    def test_update_collection_exercise_userdescription_success(self, mock_request):
+        test_description = '16th June 2019'
+        changed_ce_details = {
+            "collection_exercise_id": collection_exercise_id,
+            "user_description": test_description,
+            "period": "201906",
+            "hidden_survey_id": survey_id,
+        }
+        mock_request.get(url_ces_by_survey, json=updated_survey_info['collection_exercises'])
+        mock_request.put(url_update_ce_user_details)
+
+        response = self.app.post(
+            f"/surveys/{short_name}/201906/edit-collection-exercise-details",
+            data=changed_ce_details,
+            follow_redirects=False,
+        )
+
+        self.assertEqual(response.status_code, 302)
+        self.assertEqual(urlparse(response.location).path, f'/surveys/{short_name}')
+
+    @requests_mock.mock()
+    def test_update_collection_exercise_details_fail(self, mock_request):
         changed_ce_details = {
             "collection_exercise_id": collection_exercise_id,
             "user_description": "16th June 2019",
             "period": "201906",
             "hidden_survey_id": survey_id,
         }
-        mock_details.return_value = collection_exercise_details
-        mock_request.get(url_get_survey_by_short_name, json=updated_survey_info['survey'])
-        mock_request.get(url_ces_by_survey, json=[])
-        mock_request.put(url_update_ce, status_code=500)
+        mock_request.get(url_ces_by_survey, json=updated_survey_info['collection_exercises'])
+        mock_request.put(url_update_ce_user_details, status_code=500)
 
         self.app.post(
             f"/surveys/{short_name}/{period}/edit-collection-exercise-details",
             data=changed_ce_details
         )
 
-        self.assertApiError(url_update_ce, 500)
+        self.assertApiError(url_update_ce_user_details, 500)
+
+    @requests_mock.mock()
+    def test_update_collection_exercise_details_404(self, mock_request):
+        changed_ce_details = {
+            "collection_exercise_id": collection_exercise_id,
+            "user_description": "16th June 2019",
+            "period": "201906",
+            "hidden_survey_id": survey_id,
+        }
+        mock_request.get(url_ces_by_survey, json=updated_survey_info['collection_exercises'])
+        mock_request.put(url_update_ce_user_details, status_code=404)
+
+        self.app.post(
+            f"/surveys/{short_name}/{period}/edit-collection-exercise-details",
+            data=changed_ce_details
+        )
+
+        self.assertApiError(url_update_ce_user_details, 404)
+
+    @requests_mock.mock()
+    def test_update_collection_exercise_period_fail(self, mock_request):
+        changed_ce_details = {
+            "collection_exercise_id": collection_exercise_id,
+            "user_description": "16th June 2019",
+            "period": "201907",
+            "hidden_survey_id": survey_id,
+        }
+        mock_request.get(url_ces_by_survey, json=updated_survey_info['collection_exercises'])
+        mock_request.put(url_update_ce_user_details, status_code=200)
+        mock_request.put(url_update_ce_period, status_code=500)
+
+        self.app.post(
+            f"/surveys/{short_name}/{period}/edit-collection-exercise-details",
+            data=changed_ce_details,
+            follow_redirects=True,
+        )
+
+        self.assertApiError(url_update_ce_period, 500)
+
+    @requests_mock.mock()
+    def test_update_collection_exercise_period_404(self, mock_request):
+        changed_ce_details = {
+            "collection_exercise_id": collection_exercise_id,
+            "user_description": "16th June 2019",
+            "period": "201907",
+            "hidden_survey_id": survey_id,
+        }
+        mock_request.get(url_ces_by_survey, json=updated_survey_info['collection_exercises'])
+        mock_request.put(url_update_ce_user_details, status_code=200)
+        mock_request.put(url_update_ce_period, status_code=404)
+
+        self.app.post(
+            f"/surveys/{short_name}/{period}/edit-collection-exercise-details",
+            data=changed_ce_details,
+            follow_redirects=True,
+        )
+
+        self.assertApiError(url_update_ce_period, 404)
 
     @requests_mock.mock()
     @patch('response_operations_ui.views.collection_exercise.build_collection_exercise_details')
@@ -925,11 +1029,13 @@ class TestCollectionExercise(ViewTestCase):
         # update survey
         mock_details.return_value = collection_exercise_details
         mock_request.get(url_get_survey_by_short_name, json=updated_survey_info['survey'])
-        mock_request.put(url_update_ce)
+        mock_request.put(url_update_ce_user_details)
 
         # failed validation
         ces = self.collection_exercises
-        ces[0]['exerciseRef'] = taken_period
+        ces.append(ces[0])
+        ces[1]['id'] = survey_id  # new id
+        ces[1]['exerciseRef'] = taken_period
         mock_request.get(url_ces_by_survey, json=ces)
         mock_request.get(url_get_collection_exercise_events, json=self.collection_exercise_events)
         mock_request.get(url_get_collection_exercises_link, json=self.collection_exercises_link)
@@ -959,7 +1065,7 @@ class TestCollectionExercise(ViewTestCase):
         # update survey
         mock_details.return_value = collection_exercise_details
         mock_request.get(url_get_survey_by_short_name, json=updated_survey_info['survey'])
-        mock_request.put(url_update_ce)
+        mock_request.put(url_update_ce_user_details)
 
         # failed validation
         mock_request.get(url_ces_by_survey, json=self.collection_exercises)
