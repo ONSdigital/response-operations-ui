@@ -11,7 +11,7 @@ logger = wrap_logger(logging.getLogger(__name__))
 
 def get_case_by_id(case_id):
     logger.debug('Retrieving case', case_id=case_id)
-    url = f'{app.config["CASE_URL"]}/cases/{case_id}'
+    url = f'{app.config["CASE_URL"]}/cases/{case_id}?iac=true'
     response = requests.get(url, auth=app.config['CASE_AUTH'])
 
     try:
