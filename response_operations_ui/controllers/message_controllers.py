@@ -60,7 +60,7 @@ def get_thread_list(params):
     logger.debug("Retrieving threads list")
 
     url = f'{current_app.config["SECURE_MESSAGE_URL"]}/threads'
-    # This will be removed once UAA is completed.  For now we need the call to backstage to include
+    # This will be removed once UAA is completed.  For now we need the call to sm to include
     # an Authorization in its header a JWT that includes party_id and role.
 
     response = requests.get(url, headers={'Authorization': _get_jwt()}, params=params)

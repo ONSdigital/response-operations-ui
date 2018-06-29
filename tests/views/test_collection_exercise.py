@@ -127,10 +127,6 @@ url_get_collection_exercises_link = (
     f'/collectionexercises/link/{collection_exercise_id}'
 )
 url_sample_service_upload = f'{app.config["SAMPLE_URL"]}/samples/B/fileupload'
-url_update_ce = (
-    f'{app.config["BACKSTAGE_API_URL"]}/v1/collection-exercise/update-collection-exercise-details'
-    f'/{collection_exercise_id}'
-)
 
 ci_search_string = urlencode({'searchString': json.dumps({
     "SURVEY_ID": survey_id,
