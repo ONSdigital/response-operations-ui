@@ -53,6 +53,9 @@ def get_survey_ci_classifier(survey_id):
     url = f'{app.config["SURVEY_URL"]}/surveys/{survey_id}/classifiertypeselectors'
     response = requests.get(url, auth=app.config['SURVEY_AUTH'])
 
+    if response.status_code is 204:
+        logger.error('classifiers missing for survey', survey_id=survey_id)
+        raise ApiError(response)
     try:
         response.raise_for_status()
     except HTTPError:

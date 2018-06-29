@@ -1,36 +1,44 @@
 import json
-import unittest
-from unittest.mock import patch
+from urllib.parse import urlparse
 
 import requests_mock
 
-from config import TestingConfig
 from response_operations_ui import app
+from tests.views import ViewTestCase
 
 
+collection_exercise_id = '14fb3e68-4dca-46db-bf49-04b84e07e77c'
+survey_id = 'cb0711c3-0ac8-41d3-ae0e-567e5ea1ef87'
 survey_short_name = 'BRES'
 period = '201801'
+tag = 'go_live'
 
-url_get_update_event_date = f'{app.config["BACKSTAGE_API_URL"]}/v1/collection-exercise' \
-                            f'/{survey_short_name}/{period}/events'
-with open('tests/test_data/collection_exercise/collection_exercise_details.json') as json_data:
+with open('tests/test_data/collection_exercise/collection_exercise.json') as json_data:
     collection_exercise = json.load(json_data)
-with open('tests/test_data/survey/survey.json') as json_data:
+with open('tests/test_data/collection_exercise/collection_exercise_details.json') as json_data:
+    collection_exercise_details = json.load(json_data)
+with open('tests/test_data/survey/single_survey.json') as json_data:
     survey = json.load(json_data)
 with open('tests/test_data/collection_exercise/events.json') as json_data:
     events = json.load(json_data)
-url_put_update_event_date = f'{app.config["BACKSTAGE_API_URL"]}/v1/collection-exercise' \
-                            f'/{survey_short_name}/{period}/events/go_live'
-url_get_collection_exercise = f'{app.config["BACKSTAGE_API_URL"]}/v1/collection-exercise/{survey_short_name}/{period}'
+url_put_update_event_date = (
+    f'{app.config["COLLECTION_EXERCISE_URL"]}/collectionexercises'
+    f'/{collection_exercise_id}/events/{tag}'
+)
+url_survey_shortname = f'{app.config["SURVEY_URL"]}/surveys/shortname/{survey_short_name}'
+url_collection_exercise_survey_id = (
+    f'{app.config["COLLECTION_EXERCISE_URL"]}/collectionexercises/survey'
+    f'/{survey_id}'
+)
+url_get_collection_exercise_events = (
+    f'{app.config["COLLECTION_EXERCISE_URL"]}'
+    f'/collectionexercises/{collection_exercise_id}/events'
+)
 
 
-class TestUpdateEventDate(unittest.TestCase):
+class TestUpdateEventDate(ViewTestCase):
 
-    def setUp(self):
-        app_config = TestingConfig()
-        app.config.from_object(app_config)
-        app.login_manager.init_app(app)
-        self.app = app.test_client()
+    def setup_data(self):
         self.get_update_event_data = {
             "collection_exercise": collection_exercise,
             "survey": survey,
@@ -53,7 +61,9 @@ class TestUpdateEventDate(unittest.TestCase):
 
     @requests_mock.mock()
     def test_update_event_date_view(self, mock_request):
-        mock_request.get(url_get_update_event_date, json=self.get_update_event_data)
+        mock_request.get(url_survey_shortname, json=survey)
+        mock_request.get(url_collection_exercise_survey_id, json=[collection_exercise])
+        mock_request.get(url_get_collection_exercise_events, json=events)
 
         response = self.app.get(f"/surveys/{survey_short_name}/{period}/event/go_live")
 
@@ -63,29 +73,52 @@ class TestUpdateEventDate(unittest.TestCase):
         self.assertIn("Must be before Return by Thursday 11 Oct 2018 23:00 GMT".encode(), response.data)
 
     @requests_mock.mock()
-    def test_update_event_date_view_fail(self, mock_request):
-        mock_request.get(url_get_update_event_date, status_code=500)
+    def test_update_event_no_collection_exercise(self, mock_request):
+        mock_request.get(url_survey_shortname, json=survey)
+        mock_request.get(url_collection_exercise_survey_id, json=[])
+        mock_request.get(url_get_collection_exercise_events, json=events)
 
-        response = self.app.get(f"/surveys/{survey_short_name}/{period}/event/go_live", follow_redirects=True)
+        response = self.app.get(f"/surveys/{survey_short_name}/{period}/event/go_live")
 
-        self.assertEqual(response.status_code, 500)
-        self.assertIn("Error 500 - Server error".encode(), response.data)
+        self.assertEqual(response.status_code, 404)
 
     @requests_mock.mock()
-    @patch('response_operations_ui.views.collection_exercise.build_collection_exercise_details')
-    def test_put_update_event_date(self, mock_request, mock_details):
+    def test_update_event_date_service_fail(self, mock_request):
+        mock_request.get(url_survey_shortname, status_code=500)
+
+        self.app.get(f"/surveys/{survey_short_name}/{period}/event/go_live", follow_redirects=True)
+
+        self.assertApiError(url_survey_shortname, 500)
+
+    @requests_mock.mock()
+    def test_put_update_event_date(self, mock_request):
+        mock_request.get(url_survey_shortname, json=survey)
+        mock_request.get(url_collection_exercise_survey_id, json=[collection_exercise])
         mock_request.put(url_put_update_event_date, status_code=201)
-        mock_details.return_value = collection_exercise
+
+        response = self.app.post(f"/surveys/{survey_short_name}/{period}/event/go_live",
+                                 data=self.update_event_form)
+
+        self.assertEqual(response.status_code, 302)
+        self.assertEqual(urlparse(response.location).path, f'/surveys/{survey_short_name}/{period}')
+
+    @requests_mock.mock()
+    def test_put_update_event_date_no_collection_exercise(self, mock_request):
+        mock_request.get(url_survey_shortname, json=survey)
+        mock_request.get(url_collection_exercise_survey_id, json=[])
+        mock_request.get(url_get_collection_exercise_events, json=events)
 
         response = self.app.post(f"/surveys/{survey_short_name}/{period}/event/go_live",
                                  data=self.update_event_form, follow_redirects=True)
 
-        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.status_code, 404)
 
     @requests_mock.mock()
     def test_put_update_event_date_invalid_form(self, mock_request):
         mock_request.put(url_put_update_event_date, status_code=201)
-        mock_request.get(url_get_update_event_date, json=self.get_update_event_data)
+        mock_request.get(url_survey_shortname, json=survey)
+        mock_request.get(url_collection_exercise_survey_id, json=[collection_exercise])
+        mock_request.get(url_get_collection_exercise_events, json=events)
 
         response = self.app.post(f"/surveys/{survey_short_name}/{period}/event/go_live",
                                  data=self.invalid_update_event_form, follow_redirects=True)
@@ -97,7 +130,9 @@ class TestUpdateEventDate(unittest.TestCase):
     @requests_mock.mock()
     def test_put_update_event_date_update_bad_request(self, mock_request):
         mock_request.put(url_put_update_event_date, status_code=400)
-        mock_request.get(url_get_update_event_date, json=self.get_update_event_data)
+        mock_request.get(url_survey_shortname, json=survey)
+        mock_request.get(url_collection_exercise_survey_id, json=[collection_exercise])
+        mock_request.get(url_get_collection_exercise_events, json=events)
 
         response = self.app.post(f"/surveys/{survey_short_name}/{period}/event/go_live",
                                  data=self.update_event_form, follow_redirects=True)
@@ -107,11 +142,13 @@ class TestUpdateEventDate(unittest.TestCase):
         self.assertIn("Error updating Go Live date".encode(), response.data)
 
     @requests_mock.mock()
-    def test_put_update_event_date_update_fail(self, mock_request):
+    def test_put_update_event_date_update_service_fail(self, mock_request):
+        mock_request.get(url_survey_shortname, json=survey)
+        mock_request.get(url_collection_exercise_survey_id, json=[collection_exercise])
+        mock_request.get(url_get_collection_exercise_events, json=events)
         mock_request.put(url_put_update_event_date, status_code=500)
 
-        response = self.app.post(f"/surveys/{survey_short_name}/{period}/event/go_live",
-                                 data=self.update_event_form, follow_redirects=True)
+        self.app.post(f"/surveys/{survey_short_name}/{period}/event/go_live",
+                      data=self.update_event_form, follow_redirects=True)
 
-        self.assertEqual(response.status_code, 500)
-        self.assertIn("Error 500 - Server error".encode(), response.data)
+        self.assertApiError(url_put_update_event_date, 500)
