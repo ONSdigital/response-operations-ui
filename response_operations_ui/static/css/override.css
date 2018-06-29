@@ -171,6 +171,8 @@ button.hidden{
 #btn-cancel-load-sample,
 #btn-add-ci,
 #btn-load-ci,
+#btn-send-message,
+#btn-close-conversation,
 #continue{
   margin-top: 0.6rem;
 }
