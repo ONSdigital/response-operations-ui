@@ -13,6 +13,7 @@ from response_operations_ui.common.mappers import convert_events_to_new_format, 
     map_collection_exercise_state
 from response_operations_ui.controllers import collection_instrument_controllers, sample_controllers, \
     collection_exercise_controllers, survey_controllers
+from response_operations_ui.exceptions.exceptions import ApiError
 from response_operations_ui.forms import EditCollectionExerciseDetailsForm, CreateCollectionExerciseDetailsForm, \
     EventDateForm, RemoveLoadedSample
 
@@ -151,17 +152,22 @@ def response_chasing(ce_id, survey_id):
 
 
 def _set_ready_for_live(short_name, period):
-    success_panel = None
-    result = collection_exercise_controllers.execute_collection_exercise(short_name, period)
+    survey = survey_controllers.get_survey_by_shortname(short_name)
+    exercises = collection_exercise_controllers.get_collection_exercises_by_survey(survey['id'])
+    exercise = get_collection_exercise_by_period(exercises, period)
 
-    if result:
+    if not exercise:
+        abort(404)
+    try:
+        collection_exercise_controllers.execute_collection_exercise(exercise['id'])
         success_panel = "Collection exercise executed"
-    else:
+    except ApiError as e:
         session['error'] = json.dumps({
             "section": "head",
             "header": "Error: Failed to execute Collection Exercise",
             "message": "Error processing collection exercise"
         })
+        success_panel = None
 
     return redirect(url_for('collection_exercise_bp.view_collection_exercise',
                             short_name=short_name,

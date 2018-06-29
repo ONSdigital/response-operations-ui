@@ -26,7 +26,9 @@ def download_report(collection_exercise_id, survey_id):
 
     response = requests.get(url)
 
-    if response.status_code != 200:
+    try:
+        response.raise_for_status()
+    except HTTPError:
         logger.error(
             "Error retrieving collection exercise",
             collection_exercise_id=collection_exercise_id,
@@ -94,30 +96,28 @@ def get_collection_exercise_events_by_id(ce_id):
     return response.json()
 
 
-def update_event(short_name, period, tag, timestamp):
-    logger.debug("Updating event date", short_name=short_name, period=period, tag=tag)
-    url = (
-        f'{app.config["BACKSTAGE_API_URL"]}/v1/collection-exercise/{short_name}/{period}/events/{tag}'
-    )
-    formatted_timestamp = timestamp.strftime("%Y-%m-%dT%H:%M:00.000+0000")
-    response = requests.put(url, json={"timestamp": formatted_timestamp})
+def update_event(collection_exercise_id, tag, timestamp):
+    logger.debug('Updating collection exercise event date', collection_exercise_id=collection_exercise_id, tag=tag)
 
-    if response.status_code == 400:
-        logger.warning(
-            "Bad request updating event",
-            short_name=short_name,
-            period=period,
-            tag=tag,
-            timestamp=timestamp,
-            status=response.status_code,
-        )
-        return False
-    elif response.status_code != 201:
+    formatted_timestamp = timestamp.strftime("%Y-%m-%dT%H:%M:00.000+0000")
+    url = f'{app.config["COLLECTION_EXERCISE_URL"]}/collectionexercises/{collection_exercise_id}/events/{tag}'
+    response = requests.put(url, auth=app.config['COLLECTION_EXERCISE_AUTH'],
+                            headers={'content-type': 'text/plain'}, data=formatted_timestamp)
+
+    try:
+        response.raise_for_status()
+    except HTTPError:
+        if response.status_code == 400:
+            logger.warning('Bad request updating event', collection_exercise_id=collection_exercise_id,
+                           tag=tag, timestamp=formatted_timestamp, status=response.status_code)
+            return False
+        else:
+            logger.error('Failed to update collection exercise event', collection_exercise_id=collection_exercise_id,
+                         tag=tag, timestamp=formatted_timestamp, status=response.status_code)
         raise ApiError(response)
 
-    logger.debug(
-        "Successfully updated event date", short_name=short_name, period=period, tag=tag
-    )
+    logger.debug('Successfully updated event date', collection_exercise_id=collection_exercise_id,
+                 tag=tag, timestamp=formatted_timestamp)
     return True
 
 
@@ -142,23 +142,20 @@ def create_collection_exercise_event(collection_exercise_id, tag, timestamp):
                  tag=tag)
 
 
-def execute_collection_exercise(short_name, period):
-    logger.debug("Executing collection exercise", short_name=short_name, period=period)
-    url = (
-        f'{app.config["BACKSTAGE_API_URL"]}/v1/collection-exercise/{short_name}/{period}/execute'
-    )
-    response = requests.post(url)
-    if response.ok:
-        logger.debug(
-            "Successfully began execution of collection exercise",
-            short_name=short_name,
-            period=period,
-        )
-        return True
+def execute_collection_exercise(collection_exercise_id):
+    logger.debug("Executing collection exercise", collection_exercise_id=collection_exercise_id)
+    url = f'{app.config["COLLECTION_EXERCISE_URL"]}/collectionexerciseexecution/{collection_exercise_id}'
+    response = requests.post(url, auth=app.config['COLLECTION_EXERCISE_AUTH'])
+    try:
+        response.raise_for_status()
+    except HTTPError:
+        if response.status_code == 404:
+            logger.error('Failed to retrieve collection exercise', collection_exercise_id=collection_exercise_id)
+        else:
+            logger.error('Error executing collection exercise', collection_exercise_id=collection_exercise_id)
+        raise ApiError(response)
 
-    logger.debug(
-        "Failed to execute collection exercise", short_name=short_name, period=period
-    )
+    logger.debug("Successfully began execution of collection exercise", collection_exercise_id=collection_exercise_id)
 
 
 def update_collection_exercise_details(collection_exercise_id, user_description, period):
@@ -258,7 +255,7 @@ def get_collection_exercises_by_survey(survey_id):
         logger.exception(
             "Failed to retrieve collection exercises by survey", survey_id=survey_id
         )
-        return ApiError(response)
+        raise ApiError(response)
 
     logger.debug(
         "Successfully retrieved collection exercises by survey", survey_id=survey_id

@@ -23,7 +23,7 @@
       "scheduledReturnDateTime": "2018-07-08T09:19:09.000Z",
       "scheduledEndDateTime": "2018-07-09T09:19:09.000Z",
       "executedBy": null,
-      "state": "Live",
+      "state": "FAILEDVALIDATION",
       "caseTypes": [
         {
           "actionPlanId": "cb255845-63c2-4e9b-891b-c2c89208856f",
@@ -62,11 +62,11 @@
       "exercise_end":
         {
           "day": "Monday",
-          "date": "09 Jul 2018", 
-          "month": "07", 
-          "time": "09:19 GMT", 
+          "date": "09 Jul 2018",
+          "month": "07",
+          "time": "09:19 GMT",
           "is_in_future": true
-        }, 
+        },
       "mps":
         {
           "day": "Thursday",

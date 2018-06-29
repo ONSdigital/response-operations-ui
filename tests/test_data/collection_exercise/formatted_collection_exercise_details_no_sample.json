@@ -62,11 +62,11 @@
       "exercise_end":
         {
           "day": "Monday",
-          "date": "09 Jul 2018", 
-          "month": "07", 
-          "time": "09:19 GMT", 
+          "date": "09 Jul 2018",
+          "month": "07",
+          "time": "09:19 GMT",
           "is_in_future": true
-        }, 
+        },
       "mps":
         {
           "day": "Thursday",
@@ -88,19 +88,7 @@
       "surveyId": "cb8accda-6118-4d3b-85a3-149e28960c54"
     }],
   "eq_ci_selectors": [],
-  "sample_summary":
-    {
-      "id": "1a11543f-eb19-41f5-825f-e41aca15e724",
-      "effectiveStartDateTime": null,
-      "effectiveEndDateTime": null,
-      "surveyRef": null,
-      "ingestDateTime": "09:19AM on June 28, 2018",
-      "state": "ACTIVE",
-      "totalSampleUnits": 8,
-      "expectedCollectionInstruments": 1,
-      "notes": null,
-      "errorCode": "None"
-    },
+  "sample_summary": null,
   "ci_classifiers":
     {
       "id": "f8bb361a-e63a-11e7-80c1-9a214cf093ae",

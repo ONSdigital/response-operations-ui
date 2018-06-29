@@ -43,38 +43,6 @@
     },
   "events":
     {
-      "go_live":
-        {
-          "day": "Thursday",
-          "date": "28 Jun 2018",
-          "month": "06",
-          "time": "09:20 GMT",
-          "is_in_future": false
-        },
-      "return_by":
-        {
-          "day": "Sunday",
-          "date": "08 Jul 2018",
-          "month": "07",
-          "time": "09:19 GMT",
-          "is_in_future": true
-        },
-      "exercise_end":
-        {
-          "day": "Monday",
-          "date": "09 Jul 2018", 
-          "month": "07", 
-          "time": "09:19 GMT", 
-          "is_in_future": true
-        }, 
-      "mps":
-        {
-          "day": "Thursday",
-          "date": "28 Jun 2018",
-          "month": "06",
-          "time": "09:19 GMT",
-          "is_in_future": false
-        }
     },
   "collection_instruments": [
     {
