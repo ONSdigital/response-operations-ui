@@ -169,7 +169,9 @@ button.hidden{
 #btn-check-sample-contents,
 #btn-load-sample,
 #btn-cancel-load-sample,
-#btn-add-ci{
+#btn-add-ci,
+#btn-load-ci,
+#continue{
   margin-top: 0.6rem;
 }
 
