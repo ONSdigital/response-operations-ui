@@ -30,10 +30,11 @@ class TestCollectionExerciseController(unittest.TestCase):
 
             collection_exercise = collection_exercise_controllers.get_collection_exercise_events_by_id(ce_id)
 
-            assert 'mps' in collection_exercise[0]['tag'], 'MPS not in collection exercise events'
-            assert 'go_live' in collection_exercise[1]['tag'], 'Go live not in collection exercise events'
-            assert 'return_by' in collection_exercise[2]['tag'], 'Return by not in collection exercise events'
-            assert 'exercise_end' in collection_exercise[3]['tag'], 'Exercise end not in collection exercise events'
+            self.assertIn('mps', collection_exercise[0]['tag'], 'MPS not in collection exercise events')
+            self.assertIn('go_live', collection_exercise[1]['tag'], 'Go live not in collection exercise events')
+            self.assertIn('return_by', collection_exercise[2]['tag'], 'Return by not in collection exercise events')
+            self.assertIn('exercise_end', collection_exercise[3]['tag'],
+                          'Exercise end not in collection exercise events')
 
     def test_get_ce_events_by_id_no_events(self):
         with responses.RequestsMock() as rsps:
