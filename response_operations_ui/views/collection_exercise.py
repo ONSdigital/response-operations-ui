@@ -23,13 +23,6 @@ collection_exercise_bp = Blueprint('collection_exercise_bp', __name__,
                                    static_folder='static', template_folder='templates')
 
 
-def get_success_message(success_key):
-    return {
-        'sample_removed_success': "Sample removed",
-        'sample_loaded_success': "Sample successfully loaded"
-    }.get(success_key, None)
-
-
 def build_collection_exercise_details(short_name, period):
     survey = survey_controllers.get_survey_by_shortname(short_name)
     survey_id = survey['id']
