@@ -101,10 +101,6 @@ url_update_ce_period = (
     f'{app.config["COLLECTION_EXERCISE_URL"]}/collectionexercises'
     f'/{collection_exercise_id}/exerciseRef'
 )
-url_collection_exercise_link = (
-    f'{app.config["COLLECTION_EXERCISE_URL"]}/collectionexercises/link'
-    f'/{collection_exercise_id}'
-)
 
 url_execute = f'{app.config["COLLECTION_EXERCISE_URL"]}/collectionexerciseexecution/{collection_exercise_id}'
 url_create_collection_exercise = f'{app.config["COLLECTION_EXERCISE_URL"]}/collectionexercises'
@@ -136,10 +132,7 @@ url_get_collection_exercises_link = (
     f'{app.config["COLLECTION_EXERCISE_URL"]}'
     f'/collectionexercises/link/{collection_exercise_id}'
 )
-url_update_ce = (
-    f'{app.config["BACKSTAGE_API_URL"]}/v1/collection-exercise/update-collection-exercise-details'
-    f'/{collection_exercise_id}'
-)
+
 
 ci_search_string = urlencode({'searchString': json.dumps({
     "SURVEY_ID": survey_id,

@@ -20,8 +20,6 @@ class Config(object):
     USE_SESSION_FOR_NEXT = True
 
     # Service Configs
-    BACKSTAGE_API_URL = os.getenv('BACKSTAGE_API_URL')
-
     CASE_URL = os.getenv('CASE_URL')
     CASE_USERNAME = os.getenv('CASE_USERNAME')
     CASE_PASSWORD = os.getenv('CASE_PASSWORD')
@@ -80,8 +78,6 @@ class DevelopmentConfig(Config):
     ADD_EVENT_DATES_ENABLED = True
 
     # Service Config
-    BACKSTAGE_API_URL = os.getenv('BACKSTAGE_API_URL', 'http://localhost:8001/backstage-api')
-
     CASE_URL = os.getenv('CASE_URL', 'http://localhost:8171')
     CASE_USERNAME = os.getenv('CASE_USERNAME', 'admin')
     CASE_PASSWORD = os.getenv('CASE_PASSWORD', 'secret')
