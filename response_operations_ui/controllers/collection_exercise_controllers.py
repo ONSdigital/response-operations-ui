@@ -44,42 +44,6 @@ def download_report(collection_exercise_id, survey_id):
     return response
 
 
-def get_collection_exercise(short_name, period):
-    logger.debug(
-        "Retrieving collection exercise details", short_name=short_name, period=period
-    )
-    url = (
-        f'{app.config["BACKSTAGE_API_URL"]}/v1/collection-exercise/{short_name}/{period}'
-    )
-    response = requests.get(url)
-    if response.status_code != 200:
-        raise ApiError(response)
-
-    logger.debug(
-        "Successfully retrieved collection exercise details",
-        short_name=short_name,
-        period=period,
-    )
-    return response.json()
-
-
-def get_collection_exercise_events(short_name, period):
-    logger.debug('Retrieving collection exercise details for the event page',
-                 short_name=short_name, period=period)
-    url = f'{app.config["BACKSTAGE_API_URL"]}/v1/collection-exercise/{short_name}/{period}/events'
-
-    response = requests.get(url)
-    if response.status_code != 200:
-        raise ApiError(response)
-
-    logger.debug(
-        "Successfully retrieved collection exercise details for the event page",
-        short_name=short_name,
-        period=period,
-    )
-    return response.json()
-
-
 def get_collection_exercise_events_by_id(ce_id):
     logger.debug('Retrieving collection exercise events by id', collection_exercise_id=ce_id)
 
