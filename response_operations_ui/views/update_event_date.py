@@ -7,9 +7,9 @@ from structlog import wrap_logger
 
 from response_operations_ui.common.filters import get_collection_exercise_by_period
 from response_operations_ui.common.mappers import convert_events_to_new_format
+from response_operations_ui.views.collection_exercise import collection_exercise_bp, get_event_name
 from response_operations_ui.controllers import collection_exercise_controllers, survey_controllers
-from response_operations_ui.forms import UpdateEventDateForm
-from response_operations_ui.views.collection_exercise import collection_exercise_bp
+from response_operations_ui.forms import EventDateForm
 
 
 logger = wrap_logger(logging.getLogger(__name__))
@@ -26,21 +26,21 @@ def update_event_date(short_name, period, tag, errors=None):
         logger.error('Failed to find collection exercise by period',
                      short_name=short_name, period=period)
         abort(404)
-    events = collection_exercise_controllers.get_collection_exercise_events(exercise['id'])
-    event_name = _get_event_name(tag)
+    events = collection_exercise_controllers.get_collection_exercise_events_by_id(exercise['id'])
+    event_name = get_event_name(tag)
     formatted_events = convert_events_to_new_format(events)
     date_restriction_text = _get_date_restriction_text(tag, formatted_events)
 
     try:
         event = formatted_events[tag]
     except KeyError:
-        form = UpdateEventDateForm()
+        form = EventDateForm()
     else:
-        form = UpdateEventDateForm(day=event['date'][:2],
-                                   month=event['month'],
-                                   year=event['date'][-4:],
-                                   hour=event['time'][:2],
-                                   minute=event['time'][2:4])
+        form = EventDateForm(day=event['date'][:2],
+                             month=event['month'],
+                             year=event['date'][-4:],
+                             hour=event['time'][:2],
+                             minute=event['time'][2:4])
 
     return render_template('update-event-date.html',
                            form=form,
@@ -54,6 +54,8 @@ def update_event_date(short_name, period, tag, errors=None):
 @collection_exercise_bp.route('/<short_name>/<period>/event/<tag>', methods=['POST'])
 @login_required
 def update_event_date_submit(short_name, period, tag):
+    form = EventDateForm(form=request.form)
+
     survey = survey_controllers.get_survey_by_shortname(short_name)
     exercises = collection_exercise_controllers.get_collection_exercises_by_survey(survey['id'])
     exercise = get_collection_exercise_by_period(exercises, period)
@@ -61,8 +63,6 @@ def update_event_date_submit(short_name, period, tag):
         logger.error('Failed to find collection exercise by period',
                      short_name=short_name, period=period)
         abort(404)
-
-    form = UpdateEventDateForm(form=request.form)
 
     if not form.validate():
         return update_event_date(short_name, period, tag, errors=form.errors)
@@ -76,21 +76,6 @@ def update_event_date_submit(short_name, period, tag):
 
     return redirect(url_for('collection_exercise_bp.view_collection_exercise',
                             short_name=short_name, period=period))
-
-
-def _get_event_name(tag):
-    event_names = {
-        "mps": "Main print selection",
-        "go_live": "Go Live",
-        "return_by": "Return by",
-        "exercise_end": "Exercise end",
-        "reminder": "First reminder",
-        "reminder2": "Second reminder",
-        "reminder3": "Third reminder",
-        "ref_period_start": "Reference period start date",
-        "ref_period_end": "Reference period end date"
-    }
-    return event_names.get(tag)
 
 
 def _get_date_restriction_text(tag, events):
