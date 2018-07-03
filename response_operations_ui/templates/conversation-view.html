@@ -42,7 +42,11 @@
         </div>
     {% endif %}
 
+    {% if thread_data.is_closed %}
+    <a href="{{ url_for('messages_bp.view_selected_survey', selected_survey=selected_survey, page=page, is_closed='true') }}" class="u-mb-s">< Back</a>
+    {% else %}
     <a href="{{ url_for('messages_bp.view_selected_survey', selected_survey=selected_survey, page=page) }}" class="u-mb-s">< Back</a>
+    {% endif %}
 
     <h1 class="saturn u-mt-s" name="page-messages-title">{{ subject }}</h1>
     <div class="secure-message-conversation block">
@@ -115,6 +119,11 @@
         </form>
         {% endif %}
 
-        <a href="{{ url_for('messages_bp.view_selected_survey', selected_survey=selected_survey, page=page) }}">< Back</a>
+
+        {% if thread_data.is_closed %}
+        <a href="{{ url_for('messages_bp.view_selected_survey', selected_survey=selected_survey, page=page, is_closed='true') }}" class="u-mb-s">< Back</a>
+        {% else %}
+        <a href="{{ url_for('messages_bp.view_selected_survey', selected_survey=selected_survey, page=page) }}" class="u-mb-s">< Back</a>
+        {% endif %}
     </div>
 {% endblock %}

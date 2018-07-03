@@ -215,7 +215,7 @@ class TestMessage(ViewTestCase):
 
         self.app.get("/messages/ASHE", follow_redirects=True)
 
-        self.assertApiError(f'{url_get_threads_list}{params}', 500)
+        self.assertApiError(f'{url_get_threads_list}{params}&is_closed=false', 500)
 
     @requests_mock.mock()
     @patch('response_operations_ui.controllers.message_controllers._get_jwt')
@@ -231,7 +231,7 @@ class TestMessage(ViewTestCase):
         response = self.app.get("/messages/ASHE")
 
         self.assertEqual(response.status_code, 200)
-        self.assertIn("No new messages".encode(), response.data)
+        self.assertIn("No new conversations".encode(), response.data)
 
     @requests_mock.mock()
     @patch('response_operations_ui.controllers.message_controllers._get_jwt')
@@ -244,7 +244,7 @@ class TestMessage(ViewTestCase):
 
         self.app.get("/messages/ASHE", follow_redirects=True)
 
-        self.assertApiError(f'{url_send_message}/count?survey={survey_id}', 500)
+        self.assertApiError(f'{url_send_message}/count?survey={survey_id}&is_closed=false', 500)
 
     @requests_mock.mock()
     def test_read_messages_are_displayed_correctly(self, mock_request):
