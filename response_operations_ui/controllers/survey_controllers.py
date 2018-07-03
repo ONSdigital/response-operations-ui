@@ -8,7 +8,7 @@ from response_operations_ui import app
 from response_operations_ui.common.mappers import format_short_name
 from response_operations_ui.common.surveys import FDISurveys
 from response_operations_ui.controllers.collection_exercise_controllers import (
-    get_collection_exercise_events, get_collection_exercises_by_survey,
+    get_collection_exercise_events_by_id, get_collection_exercises_by_survey,
     get_linked_sample_summary_id)
 from response_operations_ui.controllers.sample_controllers import get_sample_summary
 from response_operations_ui.exceptions.exceptions import ApiError
@@ -53,6 +53,9 @@ def get_survey_ci_classifier(survey_id):
     url = f'{app.config["SURVEY_URL"]}/surveys/{survey_id}/classifiertypeselectors'
     response = requests.get(url, auth=app.config['SURVEY_AUTH'])
 
+    if response.status_code is 204:
+        logger.error('classifiers missing for survey', survey_id=survey_id)
+        raise ApiError(response)
     try:
         response.raise_for_status()
     except HTTPError:
@@ -134,7 +137,7 @@ def get_survey(short_name):
     ce_list = get_collection_exercises_by_survey(survey['id'])
     for ce in ce_list:
         # add collection exercise events
-        ce['events'] = get_collection_exercise_events(ce['id'])
+        ce['events'] = get_collection_exercise_events_by_id(ce['id'])
         # add sample summaries
         sample_summary_id = get_linked_sample_summary_id(ce['id'])
         if sample_summary_id:
