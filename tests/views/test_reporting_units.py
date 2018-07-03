@@ -555,13 +555,24 @@ class TestReportingUnits(ViewTestCase):
         self.assertIn("test_survey_name".encode(), response.data)
 
     @requests_mock.mock()
-    def test_reporting_unit_generate_new_code_fail(self, mock_request):
+    def test_reporting_unit_generate_new_code_event_fail(self, mock_request):
         mock_request.post(url_post_case_event, status_code=500)
 
         self.app.get(f"/reporting-units/{ru_ref}/new_enrolment_code?case_id={case['id']}",
                      follow_redirects=True)
 
         self.assertApiError(url_post_case_event, 500)
+
+    @requests_mock.mock()
+    def test_reporting_unit_generate_new_code_case_fail(self, mock_request):
+        mock_request.post(url_post_case_event)
+        mock_request.get(url_get_case, status_code=500)
+
+        self.app.get(f"/reporting-units/{ru_ref}/new_enrolment_code?case_id={case['id']}&"
+                     "survey_name=test_survey_name&trading_as=trading_name&ru_name=test_ru_name",
+                     follow_redirects=True)
+
+        self.assertApiError(url_get_case, 500)
 
     def test_disable_enrolment_view(self):
         response = self.app.get("/reporting-units/ru_ref/change-enrolment-status"
