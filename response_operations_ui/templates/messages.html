@@ -28,6 +28,13 @@
   {% endif %}
   <div class="grid">
     <div class="grid__col col-12@m">
+      <nav class="sm-nav u-mb-l">
+        <h2 class="u-vh">Messages navigation</h2>
+          <ul class="nav-pills">
+            <li class="nav-pills__pill{% if not is_closed %}--active {% endif %}"><a class="pill-label" href="{{ url_for('messages_bp.view_selected_survey', selected_survey=selected_survey) }}">Open</a></li>
+            <li class="nav-pills__pill{% if is_closed %}--active {% endif %}"><a class="pill-label" href="{{ url_for('messages_bp.view_selected_survey', selected_survey=selected_survey, is_closed='true') }}">Closed</a></li>
+          </ul>
+      </nav>
       <div class="messages-list">
         {% if response_error %}
         <div class="container page__container">
@@ -47,7 +54,11 @@
         </div>
         {% else %}
         {% if not messages %}
-          <p>No new messages</p>
+          {% if is_closed %}
+          <p>No closed conversations</p>
+          {% else %}
+          <p>No new conversations</p>
+          {% endif %}
         {% else %}
         <table id="tbl-messages" class="message-list sortable" summary="messages in the system">
           <thead class="table--head">
