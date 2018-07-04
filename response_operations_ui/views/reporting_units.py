@@ -170,8 +170,10 @@ def view_resend_verification(ru_ref, party_id):
     logger.debug("Re-send verification email requested", ru_ref=ru_ref, party_id=party_id)
     respondent = party_controller.get_respondent_by_party_id(party_id)
     if 'pendingEmailAddress' in respondent:
-        return render_template('re-send-verification-email.html', ru_ref=ru_ref, email=respondent['pendingEmailAddress'])
-    return render_template('re-send-verification-email.html', ru_ref=ru_ref, email=respondent['emailAddress'])
+        return render_template('re-send-verification-email.html', ru_ref=ru_ref,
+                               email=respondent['pendingEmailAddress'])
+    return render_template('re-send-verification-email.html', ru_ref=ru_ref,
+                           email=respondent['emailAddress'])
 
 
 @reporting_unit_bp.route('/resend_verification/<ru_ref>/<party_id>', methods=['POST'])
