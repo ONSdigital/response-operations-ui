@@ -36,6 +36,8 @@ url_get_iac = f'{app.config["IAC_URL"]}/iacs'
 
 with open('tests/test_data/reporting_units/respondent.json') as fp:
     respondent = json.load(fp)
+with open('tests/test_data/reporting_units/respondent_with_pending_email.json') as fp:
+    respondent_with_pending_email = json.load(fp)
 with open('tests/test_data/case/case.json') as fp:
     case = json.load(fp)
 
@@ -355,6 +357,13 @@ class TestReportingUnits(ViewTestCase):
     @requests_mock.mock()
     def test_resend_verification_email(self, mock_request):
         mock_request.get(get_respondent_by_id_url, json=respondent)
+        response = self.app.get(
+            f"reporting-units/resend_verification/50012345678/{respondent_party_id}")
+        self.assertEqual(response.status_code, 200)
+
+    @requests_mock.mock()
+    def test_resend_verification_email_to_pending_email_address(self, mock_request):
+        mock_request.get(get_respondent_by_id_url, json=respondent_with_pending_email)
         response = self.app.get(
             f"reporting-units/resend_verification/50012345678/{respondent_party_id}")
         self.assertEqual(response.status_code, 200)
