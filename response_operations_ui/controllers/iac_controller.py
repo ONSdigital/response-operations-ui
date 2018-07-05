@@ -32,17 +32,6 @@ def get_iac_details(iac):
     return response.json()
 
 
-def get_latest_case(cases, collection_exercises):
-    ces_ids = [ce['id'] for ce in collection_exercises]
-    cases_for_survey = [case
-                        for case in cases
-                        if case.get('caseGroup', {}).get('collectionExerciseId') in ces_ids]
-    cases_for_survey_ordered = sorted(cases_for_survey, key=lambda c: c['createdDateTime'], reverse=True)
-    case = next((case for case in cases_for_survey_ordered), None)
-    case['activeIAC'] = _is_iac_active(case['iac'])
-    return case
-
-
-def _is_iac_active(iac):
+def is_iac_active(iac):
     iac_response = get_iac_details(iac)
     return iac_response.get('active') if iac_response else None

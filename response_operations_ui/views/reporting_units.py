@@ -51,10 +51,10 @@ def view_reporting_unit(ru_ref):
     sorted_linked_surveys = sorted(linked_surveys, key=lambda survey: survey['surveyRef'])
 
     # Add latest active iac code to surveys
-    surveys_with_iacs = [
+    surveys_with_latest_case = [
         {
             **survey,
-            "case": iac_controller.get_latest_case(cases, survey['collection_exercises'])
+            "case": get_latest_case_with_ce(cases, survey['collection_exercises'])
         }
         for survey in sorted_linked_surveys
     ]
@@ -87,7 +87,7 @@ def view_reporting_unit(ru_ref):
         }
     ]
     return render_template('reporting-unit.html', ru_ref=ru_ref, ru=reporting_unit,
-                           surveys=surveys_with_iacs, breadcrumbs=breadcrumbs,
+                           surveys=surveys_with_latest_case, breadcrumbs=breadcrumbs,
                            info_message=info_message, enrolment_changed=request.args.get('enrolment_changed'))
 
 
@@ -121,6 +121,19 @@ def survey_with_respondents_and_exercises(survey, respondents, collection_exerci
         'respondents': survey_respondents,
         'collection_exercises': sorted_survey_exercises
     }
+
+
+def get_latest_case_with_ce(cases, collection_exercises):
+    # Takes in a list of cases and a list of collection exercises and
+    # returns the latest case which is in one of the collection exercises
+    ces_ids = [ce['id'] for ce in collection_exercises]
+    cases_for_survey = [case
+                        for case in cases
+                        if case.get('caseGroup', {}).get('collectionExerciseId') in ces_ids]
+    cases_for_survey_ordered = sorted(cases_for_survey, key=lambda c: c['createdDateTime'], reverse=True)
+    case = next((case for case in cases_for_survey_ordered), None)
+    case['activeIAC'] = iac_controller.is_iac_active(case['iac'])
+    return case
 
 
 @reporting_unit_bp.route('/<ru_ref>/edit-contact-details/<respondent_id>', methods=['GET'])
