@@ -14,6 +14,7 @@
     }
   ],
   "emailAddress": "Jacky.Turner@email.com",
+  "pendingEmailAddress": null,
   "firstName": "Jacky",
   "id": "cd592e0f-8d07-407b-b75d-e01fbdae8233",
   "lastName": "Turner",
