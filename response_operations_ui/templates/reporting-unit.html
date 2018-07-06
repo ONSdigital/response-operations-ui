@@ -89,19 +89,20 @@
         <h4 class="neptune">Respondents</h4>
 
         <div class="ru-survey-enrolment-code u-pb-s" name="enrolment-code">
-          {% if survey.activeIacCode %}
+          {% if survey.case.activeIAC %}
           <div id="unused-enrolment-code">
             Unused enrolment code:
-            <code class="mars u-ml-s" id="unused-enrolment-code-{{survey.shortName}}">{{ survey.activeIacCode }}</code>
+            <code class="mars u-ml-s" id="unused-enrolment-code-{{survey.shortName}}">{{ survey.case.iac }}</code>
           </div>
-          {% endif %}
-          <a href="{{ url_for('reporting_unit_bp.generate_new_enrolment_code',
+          {% else %}
+          <a href="{{ url_for('reporting_unit_bp.generate_new_enrolment_code', case_id=survey.case.id,
                               collection_exercise_id=survey.collection_exercises[-1]['id'], ru_name=ru.name,
                               ru_ref=ru.sampleUnitRef, trading_as=ru.trading_as, survey_ref=survey.surveyRef,
                               survey_name=survey.shortName) }}"
              id="generate-new-code">
             Generate new enrolment code
           </a>
+          {% endif %}
         </div>
 
         <table name="tbl-respondents-for-survey" class="table table__dense tbl-ru-survey-respondents" summary="Respondents for {{survey.shortName}} for {{ ru.sampleUnitRef }}">

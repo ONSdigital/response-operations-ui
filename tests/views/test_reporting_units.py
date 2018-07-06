@@ -13,12 +13,13 @@ collection_exercise_id_2 = '9af403f8-5fc5-43b1-9fca-afbd9c65da5c'
 iac_1 = 'jkbvyklkwj88'
 iac_2 = 'ljbgg3kgstr4'
 survey_id = 'cb0711c3-0ac8-41d3-ae0e-567e5ea1ef87'
+case_id = '10b04906-f478-47f9-a985-783400dd8482'
 CONNECTION_ERROR = 'Connection error'
 
 url_search_reporting_units = f'{app.config["PARTY_URL"]}/party-api/v1/businesses/search'
 get_respondent_by_id_url = f'{app.config["PARTY_URL"]}/party-api/v1/respondents/id/{respondent_party_id}'
 url_edit_contact_details = f'{app.config["PARTY_URL"]}/party-api/v1/respondents/id/{respondent_party_id}'
-url_generate_new_code = f'{app.config["CASE_URL"]}/cases/iac/{collection_exercise_id_1}/{ru_ref}'
+url_post_case_event = f'{app.config["CASE_URL"]}/cases/{case_id}/events'
 url_change_enrolment_status = f'{app.config["PARTY_URL"]}/party-api/v1/respondents/change_enrolment_status'
 url_resend_verification_email = f'{app.config["PARTY_URL"]}/party-api/v1/resend-verification-email' \
                                 f'/{respondent_party_id}'
@@ -33,6 +34,7 @@ url_get_available_case_group_statuses_direct = f'{app.config["CASE_URL"]}/casegr
 url_get_survey_by_id = f'{app.config["SURVEY_URL"]}/surveys/{survey_id}'
 url_get_respondent_party_by_party_id = f'{app.config["PARTY_URL"]}/party-api/v1/respondents/id/{respondent_party_id}'
 url_get_iac = f'{app.config["IAC_URL"]}/iacs'
+url_get_case = f'{app.config["CASE_URL"]}/cases/{case_id}?iac=true'
 
 with open('tests/test_data/reporting_units/respondent.json') as fp:
     respondent = json.load(fp)
@@ -548,10 +550,11 @@ class TestReportingUnits(ViewTestCase):
 
     @requests_mock.mock()
     def test_reporting_unit_generate_new_code(self, mock_request):
-        mock_request.post(url_generate_new_code, json=case)
+        mock_request.post(url_post_case_event)
+        mock_request.get(url_get_case, json=case)
 
-        response = self.app.get(f"/reporting-units/{ru_ref}/{collection_exercise_id_1}/new_enrolment_code"
-                                "?survey_name=test_survey_name&trading_as=trading_name&ru_name=test_ru_name",
+        response = self.app.get(f"/reporting-units/{ru_ref}/new_enrolment_code?case_id={case['id']}&"
+                                "survey_name=test_survey_name&trading_as=trading_name&ru_name=test_ru_name",
                                 follow_redirects=True)
 
         self.assertEqual(response.status_code, 200)
@@ -561,12 +564,24 @@ class TestReportingUnits(ViewTestCase):
         self.assertIn("test_survey_name".encode(), response.data)
 
     @requests_mock.mock()
-    def test_reporting_unit_generate_new_code_fail(self, mock_request):
-        mock_request.post(url_generate_new_code, status_code=500)
+    def test_reporting_unit_generate_new_code_event_fail(self, mock_request):
+        mock_request.post(url_post_case_event, status_code=500)
 
-        self.app.get(f"/reporting-units/{ru_ref}/{collection_exercise_id_1}/new_enrolment_code", follow_redirects=True)
+        self.app.get(f"/reporting-units/{ru_ref}/new_enrolment_code?case_id={case['id']}",
+                     follow_redirects=True)
 
-        self.assertApiError(url_generate_new_code, 500)
+        self.assertApiError(url_post_case_event, 500)
+
+    @requests_mock.mock()
+    def test_reporting_unit_generate_new_code_case_fail(self, mock_request):
+        mock_request.post(url_post_case_event)
+        mock_request.get(url_get_case, status_code=500)
+
+        self.app.get(f"/reporting-units/{ru_ref}/new_enrolment_code?case_id={case['id']}&"
+                     "survey_name=test_survey_name&trading_as=trading_name&ru_name=test_ru_name",
+                     follow_redirects=True)
+
+        self.assertApiError(url_get_case, 500)
 
     def test_disable_enrolment_view(self):
         response = self.app.get("/reporting-units/ru_ref/change-enrolment-status"

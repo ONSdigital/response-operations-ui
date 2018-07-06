@@ -9,6 +9,21 @@ from response_operations_ui.exceptions.exceptions import ApiError
 logger = wrap_logger(logging.getLogger(__name__))
 
 
+def get_case_by_id(case_id):
+    logger.debug('Retrieving case', case_id=case_id)
+    url = f'{app.config["CASE_URL"]}/cases/{case_id}?iac=true'
+    response = requests.get(url, auth=app.config['CASE_AUTH'])
+
+    try:
+        response.raise_for_status()
+    except requests.exceptions.HTTPError:
+        logger.exception('Error retrieving case', case_id=case_id)
+        raise ApiError(response)
+
+    logger.debug('Successfully retrieved case', case_id=case_id)
+    return response.json()
+
+
 def update_case_group_status(collection_exercise_id, ru_ref, case_group_event):
     logger.debug('Updating status', collection_exercise_id=collection_exercise_id, ru_ref=ru_ref,
                  case_group_event=case_group_event)
