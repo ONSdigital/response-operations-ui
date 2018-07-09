@@ -361,7 +361,7 @@ def view_collection_exercise_details(short_name, period):
                            ce_state=ce_details['collection_exercise']['state'],
                            user_description=ce_details['collection_exercise']['userDescription'],
                            collection_exercise_id=ce_details['collection_exercise']['id'],
-                           survey_id=survey_details['survey']['id'])
+                           survey_id=survey_details['id'])
 
 
 @collection_exercise_bp.route('/<short_name>/<period>/edit-collection-exercise-details', methods=['POST'])
@@ -403,8 +403,8 @@ def get_create_collection_exercise_form(survey_ref, short_name):
     form = CreateCollectionExerciseDetailsForm(form=request.form)
     survey_details = survey_controllers.get_survey(short_name)
     return render_template('create-collection-exercise.html', form=form, short_name=short_name,
-                           survey_ref=survey_ref, survey_id=survey_details['survey']['id'],
-                           survey_name=survey_details['survey']['shortName'])
+                           survey_ref=survey_ref, survey_id=survey_details['id'],
+                           survey_name=survey_details['shortName'])
 
 
 @collection_exercise_bp.route('/<survey_ref>-<short_name>/create-collection-exercise', methods=['POST'])

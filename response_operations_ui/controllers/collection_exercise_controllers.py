@@ -5,8 +5,8 @@ from requests.exceptions import HTTPError
 from structlog import wrap_logger
 
 from response_operations_ui import app
+from response_operations_ui.controllers.sample_controllers import get_sample_summary
 from response_operations_ui.exceptions.exceptions import ApiError
-
 
 logger = wrap_logger(logging.getLogger(__name__))
 
@@ -344,3 +344,25 @@ def link_sample_summary_to_collection_exercise(collection_exercise_id, sample_su
         sample_summary_id=sample_summary_id,
     )
     return response.json()
+
+
+def get_collection_exercises_with_events_and_samples_by_survey_id(survey_id):
+    logger.debug(
+        "Retrieving collection exercise with events and samples",
+        survey_id=survey_id
+    )
+
+    # Build collection exercises list
+    ce_list = get_collection_exercises_by_survey(survey_id)
+
+    for ce in ce_list:
+        # add collection exercise events
+        ce['events'] = get_collection_exercise_events_by_id(ce['id'])
+        # add sample summaries
+        sample_summary_id = get_linked_sample_summary_id(ce['id'])
+        if sample_summary_id:
+            ce['sample_summary'] = get_sample_summary(sample_summary_id)
+
+    logger.debug('Successfully retrieved collection exercise details', survey_id=survey_id)
+
+    return ce_list
