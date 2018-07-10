@@ -145,8 +145,8 @@ def response_chasing(ce_id, survey_id):
 
 
 def _set_ready_for_live(short_name, period):
-    survey = survey_controllers.get_survey_by_shortname(short_name)
-    exercises = collection_exercise_controllers.get_collection_exercises_by_survey(survey['id'])
+    survey_id = survey_controllers.get_survey_id_by_short_name(short_name)
+    exercises = collection_exercise_controllers.get_collection_exercises_by_survey(survey_id)
     exercise = get_collection_exercise_by_period(exercises, period)
 
     if not exercise:
@@ -172,8 +172,8 @@ def _upload_sample(short_name, period):
     error = _validate_sample()
 
     if not error:
-        survey = survey_controllers.get_survey_by_shortname(short_name)
-        exercises = collection_exercise_controllers.get_collection_exercises_by_survey(survey['id'])
+        survey_id = survey_controllers.get_survey_id_by_short_name(short_name)
+        exercises = collection_exercise_controllers.get_collection_exercises_by_survey(survey_id)
 
         # Find the collection exercise for the given period
         exercise = get_collection_exercise_by_period(exercises, period)
@@ -236,8 +236,8 @@ def _upload_collection_instrument(short_name, period):
     if not error:
         file = request.files['ciFile']
         form_type = _get_form_type(file.filename)
-        survey = survey_controllers.get_survey_by_shortname(short_name)
-        exercises = collection_exercise_controllers.get_collection_exercises_by_survey(survey['id'])
+        survey_id = survey_controllers.get_survey_id_by_short_name(short_name)
+        exercises = collection_exercise_controllers.get_collection_exercises_by_survey(survey_id)
 
         # Find the collection exercise for the given period
         exercise = get_collection_exercise_by_period(exercises, period)

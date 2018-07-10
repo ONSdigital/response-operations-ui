@@ -108,21 +108,6 @@ def get_surveys_list():
     return sorted(survey_list, key=lambda k: k['surveyRef'])
 
 
-def get_survey_by_short_name(short_name):
-    logger.debug('Retrieving survey by short name', short_name=short_name)
-    url = f'{app.config["SURVEY_URL"]}/surveys/shortname/{short_name}'
-
-    response = requests.get(url, auth=app.config['SURVEY_AUTH'])
-    try:
-        response.raise_for_status()
-    except HTTPError:
-        logger.error('Failed to get survey by short name', short_name=short_name)
-        raise ApiError(response)
-
-    logger.debug('Successfully retrieved survey by short name', short_name=short_name)
-    return response.json()
-
-
 def get_survey(short_name):
     survey = get_survey_by_shortname(short_name)
     logger.debug('Getting survey details', short_name=short_name, survey_id=survey['id'])

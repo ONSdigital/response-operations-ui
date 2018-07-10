@@ -56,8 +56,8 @@ def update_event_date(short_name, period, tag, errors=None):
 def update_event_date_submit(short_name, period, tag):
     form = EventDateForm(form=request.form)
 
-    survey = survey_controllers.get_survey_by_shortname(short_name)
-    exercises = collection_exercise_controllers.get_collection_exercises_by_survey(survey['id'])
+    survey_id = survey_controllers.get_survey_id_by_short_name(short_name)
+    exercises = collection_exercise_controllers.get_collection_exercises_by_survey(survey_id)
     exercise = get_collection_exercise_by_period(exercises, period)
     if not exercise:
         logger.error('Failed to find collection exercise by period',

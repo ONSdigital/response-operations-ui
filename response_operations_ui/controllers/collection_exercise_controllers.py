@@ -352,13 +352,10 @@ def get_collection_exercises_with_events_and_samples_by_survey_id(survey_id):
         survey_id=survey_id
     )
 
-    # Build collection exercises list
     ce_list = get_collection_exercises_by_survey(survey_id)
 
     for ce in ce_list:
-        # add collection exercise events
         ce['events'] = get_collection_exercise_events_by_id(ce['id'])
-        # add sample summaries
         sample_summary_id = get_linked_sample_summary_id(ce['id'])
         if sample_summary_id:
             ce['sample_summary'] = get_sample_summary(sample_summary_id)
