@@ -282,10 +282,6 @@ class TestSurvey(ViewTestCase):
     @requests_mock.mock()
     def test_get_survey_details(self, mock_request):
         mock_request.get(url_get_survey_list, json=survey_list)
-        mock_request.get(url_get_collection_exercise_events, json=self.collection_exercises_events)
-        mock_request.get(url_get_collection_exercises, json=self.collection_exercises)
-        mock_request.get(url_get_collection_exercises_link, json=self.collection_exercises_link)
-        mock_request.get(url_get_sample_summary, json=self.sample_summary)
         mock_request.get(url_get_survey_by_short_name, json=survey_info['survey'])
         response = self.app.get(f"surveys/edit-survey-details/bres", follow_redirects=True)
         self.assertEqual(response.status_code, 200)
@@ -436,10 +432,6 @@ class TestSurvey(ViewTestCase):
         mock_request.put(url_update_survey_details)
         mock_request.get(url_get_survey_list, json=updated_survey_list)
         mock_request.get(url_get_survey_by_short_name, json=survey_info['survey'])
-        mock_request.get(url_get_collection_exercise_events, json=self.collection_exercises_events)
-        mock_request.get(url_get_collection_exercises, json=self.collection_exercises)
-        mock_request.get(url_get_collection_exercises_link, json=self.collection_exercises_link)
-        mock_request.get(url_get_sample_summary, json=self.sample_summary)
         response = self.app.post(f"/surveys/edit-survey-details/bres", data=changed_survey_details,
                                  follow_redirects=True)
         self.assertEqual(response.status_code, 200)
@@ -447,15 +439,15 @@ class TestSurvey(ViewTestCase):
 
     def test_sort_collection_exercise(self):
         # Given there are collection exercises loaded for a survey
-        with open('tests/test_data/survey/survey_details_multiple_ce.json') as f:
-            survey_details = json.load(f)
+        with open('tests/test_data/survey/multiple_ces.json') as f:
+            collection_exercises = json.load(f)
 
         # When collection exercises are sorted
-        _sort_collection_exercise(survey_details)
+        _sort_collection_exercise(collection_exercises)
 
         # Then CEs should be in order by mps date
         # And CEs without mps date should be at the end
-        ce_ids_in_order = [ce['id'] for ce in survey_details['collection_exercises']]
+        ce_ids_in_order = [ce['id'] for ce in collection_exercises]
         self.assertEqual(ce_ids_in_order, ['bd4d2bec-28d3-421c-a399-b2840e52e36e',
                                            '23a83a62-87dd-4c6c-97e2-4b207f7e57f5',
                                            '9f9d28c6-d010-47cc-832c-6ab9b741ee96',

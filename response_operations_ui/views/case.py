@@ -52,8 +52,8 @@ def update_response_status(ru_ref):
                                 error="Please select one of these options"))
 
     # Retrieve the correct collection exercise and update case group status
-    survey = survey_controllers.get_survey_by_shortname(short_name)
-    exercises = collection_exercise_controllers.get_collection_exercises_by_survey(survey['id'])
+    survey_id = survey_controllers.get_survey_id_by_short_name(short_name)
+    exercises = collection_exercise_controllers.get_collection_exercises_by_survey(survey_id)
     exercise = collection_exercise_controllers.get_collection_exercise_from_list(exercises, period)
     case_controller.update_case_group_status(exercise['id'], ru_ref, form.event.data)
 

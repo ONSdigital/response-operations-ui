@@ -1,3 +1,4 @@
+import copy
 import json
 import mock
 
@@ -8,6 +9,8 @@ from urllib.parse import urlencode, urlparse
 import requests_mock
 
 from response_operations_ui import app
+from response_operations_ui.controllers.collection_exercise_controllers import \
+    get_collection_exercises_with_events_and_samples_by_survey_id
 from tests.views import ViewTestCase
 
 
@@ -874,9 +877,6 @@ class TestCollectionExercise(ViewTestCase):
         mock_details.return_value = formatted_collection_exercise_details
         mock_request.get(url_get_survey_by_short_name, json=updated_survey_info['survey'])
         mock_request.get(url_ces_by_survey, json=updated_survey_info['collection_exercises'])
-        mock_request.get(url_get_collection_exercise_events, json=self.collection_exercise_events)
-        mock_request.get(url_get_collection_exercises_link, json=self.collection_exercises_link)
-        mock_request.get(url_get_sample_summary, json=self.sample_summary)
         response = self.app.get(
             f"/surveys/{short_name}/{period}/edit-collection-exercise-details", follow_redirects=True
         )
@@ -951,9 +951,6 @@ class TestCollectionExercise(ViewTestCase):
         }
         mock_request.get(url_ces_by_survey, json=self.collection_exercises)
         mock_request.get(url_get_survey_by_short_name, json=self.survey)
-        mock_request.get(url_get_collection_exercise_events, json=self.collection_exercise_events)
-        mock_request.get(url_get_collection_exercises_link, json=self.collection_exercises_link)
-        mock_request.get(url_get_sample_summary, json=self.sample_summary)
         mock_request.post(url_create_collection_exercise, status_code=500)
 
         self.app.post(
@@ -966,9 +963,6 @@ class TestCollectionExercise(ViewTestCase):
     def test_get_create_ce_form(self, mock_request):
         mock_request.get(url_ces_by_survey, json=self.collection_exercises)
         mock_request.get(url_get_survey_by_short_name, json=self.survey)
-        mock_request.get(url_get_collection_exercise_events, json=self.collection_exercise_events)
-        mock_request.get(url_get_collection_exercises_link, json=self.collection_exercises_link)
-        mock_request.get(url_get_sample_summary, json=self.sample_summary)
         response = self.app.get(
             f"/surveys/{survey_ref}-{short_name}/create-collection-exercise", follow_redirects=True
         )
@@ -989,9 +983,6 @@ class TestCollectionExercise(ViewTestCase):
         ces[0]['exerciseRef'] = taken_period
         mock_request.get(url_ces_by_survey, json=ces)
         mock_request.get(url_get_survey_by_short_name, json=updated_survey_info['survey'])
-        mock_request.get(url_get_collection_exercise_events, json=self.collection_exercise_events)
-        mock_request.get(url_get_collection_exercises_link, json=self.collection_exercises_link)
-        mock_request.get(url_get_sample_summary, json=self.sample_summary)
         mock_request.post(url_create_collection_exercise, status_code=200)
 
         response = self.app.post(
@@ -1169,3 +1160,21 @@ class TestCollectionExercise(ViewTestCase):
 
         self.assertEqual(response.status_code, 200)
         self.assertIn("Please try saving your changes again".encode(), response.data)
+
+    def test_get_collection_exercises_with_events_and_samples_by_survey_id(self):
+        name_space = 'response_operations_ui.controllers.collection_exercise_controllers.'
+        with mock.patch(
+                name_space + "get_collection_exercises_by_survey", return_value=self.collection_exercises),\
+            mock.patch(
+                name_space + "get_collection_exercise_events_by_id", return_value=self.collection_exercise_events),\
+            mock.patch(
+                name_space + "get_linked_sample_summary_id", return_value=self.sample_summary['id']),\
+            mock.patch(
+                name_space + "get_sample_summary", return_value=self.sample_summary):
+
+            ce_list = get_collection_exercises_with_events_and_samples_by_survey_id(self.survey['id'])
+
+        expected_ce_list = copy.deepcopy(self.collection_exercises)
+        expected_ce_list[0]['events'] = self.collection_exercise_events
+        expected_ce_list[0]['sample_summary'] = self.sample_summary
+        self.assertEquals(ce_list, expected_ce_list)

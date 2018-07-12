@@ -145,8 +145,8 @@ def response_chasing(ce_id, survey_id):
 
 
 def _set_ready_for_live(short_name, period):
-    survey = survey_controllers.get_survey_by_shortname(short_name)
-    exercises = collection_exercise_controllers.get_collection_exercises_by_survey(survey['id'])
+    survey_id = survey_controllers.get_survey_id_by_short_name(short_name)
+    exercises = collection_exercise_controllers.get_collection_exercises_by_survey(survey_id)
     exercise = get_collection_exercise_by_period(exercises, period)
 
     if not exercise:
@@ -172,8 +172,8 @@ def _upload_sample(short_name, period):
     error = _validate_sample()
 
     if not error:
-        survey = survey_controllers.get_survey_by_shortname(short_name)
-        exercises = collection_exercise_controllers.get_collection_exercises_by_survey(survey['id'])
+        survey_id = survey_controllers.get_survey_id_by_short_name(short_name)
+        exercises = collection_exercise_controllers.get_collection_exercises_by_survey(survey_id)
 
         # Find the collection exercise for the given period
         exercise = get_collection_exercise_by_period(exercises, period)
@@ -236,8 +236,8 @@ def _upload_collection_instrument(short_name, period):
     if not error:
         file = request.files['ciFile']
         form_type = _get_form_type(file.filename)
-        survey = survey_controllers.get_survey_by_shortname(short_name)
-        exercises = collection_exercise_controllers.get_collection_exercises_by_survey(survey['id'])
+        survey_id = survey_controllers.get_survey_id_by_short_name(short_name)
+        exercises = collection_exercise_controllers.get_collection_exercises_by_survey(survey_id)
 
         # Find the collection exercise for the given period
         exercise = get_collection_exercise_by_period(exercises, period)
@@ -361,7 +361,7 @@ def view_collection_exercise_details(short_name, period):
                            ce_state=ce_details['collection_exercise']['state'],
                            user_description=ce_details['collection_exercise']['userDescription'],
                            collection_exercise_id=ce_details['collection_exercise']['id'],
-                           survey_id=survey_details['survey']['id'])
+                           survey_id=survey_details['id'])
 
 
 @collection_exercise_bp.route('/<short_name>/<period>/edit-collection-exercise-details', methods=['POST'])
@@ -403,8 +403,8 @@ def get_create_collection_exercise_form(survey_ref, short_name):
     form = CreateCollectionExerciseDetailsForm(form=request.form)
     survey_details = survey_controllers.get_survey(short_name)
     return render_template('create-collection-exercise.html', form=form, short_name=short_name,
-                           survey_ref=survey_ref, survey_id=survey_details['survey']['id'],
-                           survey_name=survey_details['survey']['shortName'])
+                           survey_ref=survey_ref, survey_id=survey_details['id'],
+                           survey_name=survey_details['shortName'])
 
 
 @collection_exercise_bp.route('/<survey_ref>-<short_name>/create-collection-exercise', methods=['POST'])
@@ -419,33 +419,36 @@ def create_collection_exercise(survey_ref, short_name):
 
     if not ce_form.validate():
         logger.info("Failed validation, retrieving survey data for form", survey=short_name, survey_ref=survey_ref)
-        error = ce_form.errors['period'][1] \
-            if ce_form.errors['period'][1] == 'Please enter numbers only for the period' else None
+        error = None
+
+        if ce_form.errors['period'][1] == 'Please enter numbers only for the period':
+            error = ce_form.errors['period'][1]
+
         return render_template('create-collection-exercise.html', form=ce_form, short_name=short_name, errors=error,
                                survey_ref=survey_ref, survey_id=survey_id,
                                survey_name=survey_name)
-    else:
-        logger.info("Creating collection exercise for survey", survey=short_name, survey_ref=survey_ref)
 
-        created_period = form.get('period')
-        ce_details = collection_exercise_controllers.get_collection_exercises_by_survey(survey_id)
+    created_period = form.get('period')
+    ce_details = collection_exercise_controllers.get_collection_exercises_by_survey(survey_id)
 
-        for ce in ce_details:
-            if ce['exerciseRef'] == str(created_period):
-                error = "Please use a period that is not in use by any collection exercise for this survey."
-                return render_template('create-collection-exercise.html', form=ce_form, short_name=short_name,
-                                       errors=error,
-                                       survey_ref=survey_ref, survey_id=survey_id,
-                                       survey_name=survey_name)
+    for ce in ce_details:
+        if ce['exerciseRef'] == str(created_period):
+            error = "Please use a period that is not in use by any collection exercise for this survey."
+            return render_template('create-collection-exercise.html', form=ce_form, short_name=short_name,
+                                   errors=error,
+                                   survey_ref=survey_ref, survey_id=survey_id,
+                                   survey_name=survey_name)
 
-        collection_exercise_controllers.create_collection_exercise(survey_id,
-                                                                   survey_name,
-                                                                   form.get('user_description'),
-                                                                   form.get('period'))
+    logger.info("Creating collection exercise for survey", survey=short_name, survey_ref=survey_ref)
 
-        logger.info("Successfully created collection exercise", survey=short_name, survey_ref=survey_ref)
-        return redirect(url_for('surveys_bp.view_survey', short_name=short_name, ce_created='True',
-                                new_period=form.get('period')))
+    collection_exercise_controllers.create_collection_exercise(survey_id,
+                                                               survey_name,
+                                                               form.get('user_description'),
+                                                               form.get('period'))
+
+    logger.info("Successfully created collection exercise", survey=short_name, survey_ref=survey_ref)
+    return redirect(url_for('surveys_bp.view_survey', short_name=short_name, ce_created='True',
+                            new_period=form.get('period')))
 
 
 @collection_exercise_bp.route('/<short_name>/<period>/<ce_id>/confirm-create-event/<tag>', methods=['GET'])

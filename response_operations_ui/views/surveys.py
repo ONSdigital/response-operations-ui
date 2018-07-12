@@ -5,7 +5,7 @@ from flask import Blueprint, render_template, request, redirect, url_for
 from flask_login import login_required
 from structlog import wrap_logger
 
-from response_operations_ui.controllers import survey_controllers
+from response_operations_ui.controllers import survey_controllers, collection_exercise_controllers
 from response_operations_ui.forms import EditSurveyDetailsForm
 from response_operations_ui.forms import CreateSurveyDetailsForm
 from response_operations_ui.common.mappers import map_collection_exercise_state, convert_events_to_new_format
@@ -44,16 +44,20 @@ def view_surveys():
 @surveys_bp.route('/<short_name>', methods=['GET'])
 @login_required
 def view_survey(short_name):
-    survey_details = survey_controllers.get_survey(short_name)
+
+    survey = survey_controllers.get_survey(short_name)
     breadcrumbs = [
         {
             "title": "Surveys",
             "link": "/surveys"
         },
         {
-            "title": f"{survey_details['survey']['surveyRef']} {survey_details['survey']['shortName']}",
+            "title": f"{survey['surveyRef']} {survey['shortName']}",
         }
     ]
+
+    collection_exercises = collection_exercise_controllers.\
+        get_collection_exercises_with_events_and_samples_by_survey_id(survey['id'])
 
     updated_ce_message = None
     if request.args.get('ce_updated'):
@@ -66,15 +70,15 @@ def view_survey(short_name):
     newly_created_period = request.args.get('new_period')
 
     # Mapping backend states to frontend sates for the user
-    for collex in survey_details["collection_exercises"]:
+    for collex in collection_exercises:
         collex['state'] = map_collection_exercise_state(collex['state'])
         collex['events'] = convert_events_to_new_format(collex['events']) if collex.get('events') else {}
 
-    _sort_collection_exercise(survey_details)
+    _sort_collection_exercise(collection_exercises)
 
     return render_template('survey.html',
-                           survey=survey_details['survey'],
-                           collection_exercises=survey_details['collection_exercises'],
+                           survey=survey,
+                           collection_exercises=collection_exercises,
                            breadcrumbs=breadcrumbs, updated_ce_message=updated_ce_message,
                            created_ce_message=created_ce_message, newly_created_period=newly_created_period)
 
@@ -86,9 +90,9 @@ def view_survey_details(short_name):
     form = EditSurveyDetailsForm(form=request.form)
 
     return render_template('edit-survey-details.html', form=form, short_name=short_name,
-                           legal_basis=survey_details['survey']['legalBasis'],
-                           long_name=survey_details['survey']['longName'],
-                           survey_ref=survey_details['survey']['surveyRef'])
+                           legal_basis=survey_details['legalBasis'],
+                           long_name=survey_details['longName'],
+                           survey_ref=survey_details['surveyRef'])
 
 
 @surveys_bp.route('/edit-survey-details/<short_name>', methods=['POST', 'GET'])
@@ -98,9 +102,9 @@ def edit_survey_details(short_name):
     if not form.validate():
         survey_details = survey_controllers.get_survey(short_name)
         return render_template('edit-survey-details.html', form=form, short_name=short_name, errors=form.errors,
-                               legal_basis=survey_details['survey']['legalBasis'],
-                               long_name=survey_details['survey']['longName'],
-                               survey_ref=survey_details['survey']['surveyRef'],
+                               legal_basis=survey_details['legalBasis'],
+                               long_name=survey_details['longName'],
+                               survey_ref=survey_details['surveyRef'],
                                survey_details=survey_details)
 
     else:
@@ -152,7 +156,7 @@ def create_survey():
                 raise
 
 
-def _sort_collection_exercise(survey_details):
-    survey_details["collection_exercises"].sort(key=lambda ce:
-                                                datetime.strptime(ce['events']['mps']['date'], '%d %b %Y')
-                                                if 'mps' in ce['events'] else datetime.max)
+def _sort_collection_exercise(collection_exercises):
+    collection_exercises.sort(key=lambda ce:
+                              datetime.strptime(ce['events']['mps']['date'], '%d %b %Y')
+                              if 'mps' in ce['events'] else datetime.max)
