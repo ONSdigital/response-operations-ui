@@ -1,0 +1,11 @@
+{% extends 'layouts/base-head.html' %}
+ {% block base %}
+  {%- block body %}
+    <body style="position: relative; height: auto; min-height: 100%;">
+    <div class="page account">
+        {% include 'partials/social-header.html' %}
+        {%- block main %}{% endblock main -%}
+    </div>
+    </body>
+  {% endblock body -%}
+{% endblock %}

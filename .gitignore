@@ -101,3 +101,7 @@ ENV/
 
 # Minified
 minimised/
+
+# Floobits
+*.floo
+*.flooignore
