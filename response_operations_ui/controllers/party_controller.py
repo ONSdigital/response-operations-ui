@@ -1,10 +1,10 @@
 import logging
 
 import requests
+from flask import current_app as app
 from requests.exceptions import HTTPError, RequestException
 from structlog import wrap_logger
 
-from response_operations_ui import app
 from response_operations_ui.controllers.survey_controllers import get_survey_by_id
 from response_operations_ui.exceptions.exceptions import ApiError, UpdateContactDetailsException
 from response_operations_ui.forms import EditContactDetailsForm

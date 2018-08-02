@@ -12,6 +12,7 @@ from wtforms.validators import InputRequired, Length, ValidationError
 from response_operations_ui.controllers import collection_exercise_controllers
 from response_operations_ui.controllers import survey_controllers
 
+
 logger = wrap_logger(logging.getLogger(__name__))
 
 survey_ref_validation = re.compile("^[0-9]{1,6}$")

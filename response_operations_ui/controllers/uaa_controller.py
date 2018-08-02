@@ -2,11 +2,9 @@ import logging
 from json import JSONDecodeError
 
 import requests
-from flask import abort
+from flask import abort, current_app as app
 from requests import HTTPError
 from structlog import wrap_logger
-
-from response_operations_ui import app
 
 
 logger = wrap_logger(logging.getLogger(__name__))

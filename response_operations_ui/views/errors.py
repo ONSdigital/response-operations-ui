@@ -4,6 +4,7 @@ from flask import Blueprint, render_template
 from structlog import wrap_logger
 from response_operations_ui.exceptions.exceptions import UpdateContactDetailsException
 
+
 logger = wrap_logger(logging.getLogger(__name__))
 
 error_bp = Blueprint('error_bp', __name__, template_folder='templates/errors')
