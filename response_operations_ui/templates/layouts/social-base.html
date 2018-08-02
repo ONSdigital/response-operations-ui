@@ -1,18 +1,13 @@
 {% extends 'layouts/base-head.html' %}
+
 {% block base %}
   {%- block body %}
     <body style="position: relative; height: auto; min-height: 100%;">
     <div class="page account">
       <div class="page__content">
-        {% include 'partials/header.html' %}
-
-        <div class="container page__container">
-          {% if breadcrumbs %}
-            {% include 'partials/breadcrumbs.html' %}
-          {% endif %}
-          {%- block main %}{% endblock main -%}
-        </div>
+        {% include 'partials/social-header.html' %}
       </div>
+      {%- block main %}{% endblock main -%}
     </div>
     {% include 'partials/footer.html' %}
     </body>
