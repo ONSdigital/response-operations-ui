@@ -3,31 +3,35 @@ import unittest
 import jwt
 import requests_mock
 
-from response_operations_ui import app
+from config import TestingConfig
+from response_operations_ui import create_app
 
-url_sign_in_data = f'{app.config["UAA_SERVICE_URL"]}/oauth/token'
-url_surveys = f'{app.config["SURVEY_URL"]}/surveys'
+
+url_sign_in_data = f'{TestingConfig.UAA_SERVICE_URL}/oauth/token'
+url_surveys = f'{TestingConfig.SURVEY_URL}/surveys'
 
 
 class TestSignIn(unittest.TestCase):
+
     def setUp(self):
         payload = {'user_id': 'test-id',
                    'aud': 'response_operations'}
 
-        key = app.config["UAA_PUBLIC_KEY"]
+        app = create_app('TestingConfig')
+        key = app.config['UAA_PUBLIC_KEY']
 
         self.access_token = jwt.encode(payload, key=key)
-        self.app = app.test_client()
+        self.client = app.test_client()
 
     def test_sign_in_page(self):
-        response = self.app.get('/sign-in')
+        response = self.client.get('/sign-in')
         self.assertIn(b'Username', response.data)
         self.assertIn(b'Password', response.data)
         self.assertEqual(response.status_code, 200)
         self.assertNotIn(b"Sign out", response.data)
 
     def test_logout(self):
-        response = self.app.get('/logout', follow_redirects=True)
+        response = self.client.get('/logout', follow_redirects=True)
         self.assertIn(b'You are now signed out', response.data)
         self.assertEqual(response.status_code, 200)
         self.assertNotIn(b"Sign out", response.data)
@@ -36,8 +40,8 @@ class TestSignIn(unittest.TestCase):
     def test_sign_in(self, mock_request):
         mock_request.post(url_sign_in_data, json={"access_token": self.access_token.decode()}, status_code=201)
 
-        response = self.app.post("/sign-in", follow_redirects=True,
-                                 data={"username": "user", "password": "pass"})
+        response = self.client.post("/sign-in", follow_redirects=True,
+                                    data={"username": "user", "password": "pass"})
 
         self.assertEqual(response.status_code, 200)
         self.assertIn("View list of business surveys".encode(), response.data)
@@ -47,8 +51,8 @@ class TestSignIn(unittest.TestCase):
     def test_sign_in_unable_to_decode_token(self, mock_request):
         mock_request.post(url_sign_in_data, json={"access_token": 'invalid'}, status_code=201)
 
-        response = self.app.post("/sign-in", follow_redirects=True,
-                                 data={"username": "user", "password": "pass"})
+        response = self.client.post("/sign-in", follow_redirects=True,
+                                    data={"username": "user", "password": "pass"})
 
         self.assertEqual(response.status_code, 500)
         self.assertIn(b'Error 500 - Server error', response.data)
@@ -57,8 +61,8 @@ class TestSignIn(unittest.TestCase):
     def test_fail_authentication(self, mock_request):
         mock_request.post(url_sign_in_data, status_code=401)
 
-        response = self.app.post("/sign-in", follow_redirects=True,
-                                 data={"username": "user", "password": "wrong"})
+        response = self.client.post("/sign-in", follow_redirects=True,
+                                    data={"username": "user", "password": "wrong"})
 
         self.assertEqual(response.status_code, 200)
 
@@ -68,8 +72,8 @@ class TestSignIn(unittest.TestCase):
     def test_fail_authentication_missing_token(self, mock_request):
         mock_request.post(url_sign_in_data, json={}, status_code=201)  # No token in response
 
-        response = self.app.post("/sign-in", follow_redirects=True,
-                                 data={"username": "user", "password": "wrong"})
+        response = self.client.post("/sign-in", follow_redirects=True,
+                                    data={"username": "user", "password": "wrong"})
 
         self.assertEqual(response.status_code, 200)
 
@@ -79,8 +83,8 @@ class TestSignIn(unittest.TestCase):
     def test_fail_server_error(self, mock_request):
         mock_request.post(url_sign_in_data, status_code=500)
 
-        response = self.app.post("/sign-in", follow_redirects=True,
-                                 data={"username": "user", "password": "pass"})
+        response = self.client.post("/sign-in", follow_redirects=True,
+                                    data={"username": "user", "password": "pass"})
 
         self.assertEqual(response.status_code, 500)
         self.assertIn(b'Error 500 - Server error', response.data)
@@ -89,23 +93,23 @@ class TestSignIn(unittest.TestCase):
     def test_sign_in_redirect_while_authenticated(self, mock_request):
         mock_request.post(url_sign_in_data, json={"access_token": self.access_token.decode()}, status_code=201)
 
-        response = self.app.post("/sign-in", follow_redirects=True,
-                                 data={"username": "user", "password": "pass"})
+        response = self.client.post("/sign-in", follow_redirects=True,
+                                    data={"username": "user", "password": "pass"})
 
         self.assertIn("View list of business surveys".encode(), response.data)
 
         # First test that we hit a redirect
-        response = self.app.get('/sign-in')
+        response = self.client.get('/sign-in')
         self.assertEqual(response.status_code, 302)
 
         # Then test that the redirect takes you to the home page.
-        response = self.app.get('/sign-in', follow_redirects=True)
+        response = self.client.get('/sign-in', follow_redirects=True)
         self.assertEqual(response.status_code, 200)
         self.assertIn("View list of business surveys".encode(), response.data)
 
     @requests_mock.mock()
     def test_sign_in_next_url(self, mock_request):
-        with self.app.session_transaction() as session:
+        with self.client.session_transaction() as session:
             session['next'] = '/surveys'
         mock_request.post(url_sign_in_data, json={"access_token": self.access_token.decode()}, status_code=201)
         mock_request.get(url_surveys, json=[{
@@ -116,8 +120,8 @@ class TestSignIn(unittest.TestCase):
             "surveyRef": "023"}],
             status_code=200)
 
-        response = self.app.post("/sign-in", follow_redirects=True,
-                                 data={"username": "user", "password": "pass"})
+        response = self.client.post("/sign-in", follow_redirects=True,
+                                    data={"username": "user", "password": "pass"})
 
         self.assertEqual(response.status_code, 200)
         self.assertIn("Surveys".encode(), response.data)
@@ -125,11 +129,11 @@ class TestSignIn(unittest.TestCase):
         self.assertIn("Statistics of Trade Act 1947".encode(), response.data)
 
     def test_sign_out_deleting_session_variables(self):
-        with self.app.session_transaction() as session:
+        with self.client.session_transaction() as session:
             session['next'] = '/messages/bricks'
-        response = self.app.get('/logout', follow_redirects=True)
+        response = self.client.get('/logout', follow_redirects=True)
         self.assertIn(b'You are now signed out', response.data)
         self.assertEqual(response.status_code, 200)
         self.assertNotIn(b"Sign out", response.data)
-        with self.app.session_transaction() as session:
+        with self.client.session_transaction() as session:
             self.assertEqual(session.get("next"), None)

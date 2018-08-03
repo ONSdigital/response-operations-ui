@@ -11,6 +11,7 @@ from response_operations_ui.forms import CreateSurveyDetailsForm
 from response_operations_ui.common.mappers import map_collection_exercise_state, convert_events_to_new_format
 from response_operations_ui.exceptions.exceptions import ApiError
 
+
 logger = wrap_logger(logging.getLogger(__name__))
 
 surveys_bp = Blueprint('surveys_bp', __name__,

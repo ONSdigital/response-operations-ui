@@ -337,7 +337,7 @@ def _format_sample_summary(sample):
 
 def _format_ci_file_name(collection_instruments, survey_details):
     for ci in collection_instruments:
-        if 'xlsx' not in ci.get('file_name', ''):
+        if 'xlsx' not in str(ci.get('file_name', '')):
             ci['file_name'] = f"{survey_details['surveyRef']} {ci['file_name']} eQ"
 
 

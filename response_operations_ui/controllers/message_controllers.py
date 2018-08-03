@@ -11,6 +11,7 @@ from structlog import wrap_logger
 from response_operations_ui.exceptions.exceptions import ApiError, NoMessagesError, InternalError
 from response_operations_ui.common import token_decoder
 
+
 logger = wrap_logger(logging.getLogger(__name__))
 
 
