@@ -7,7 +7,9 @@
       <div class="page__content">
         {% include 'partials/social-header.html' %}
       </div>
-      {%- block main %}{% endblock main -%}
+      <div class="container page__container">
+        {%- block main %}{% endblock main -%}
+      </div>
     </div>
     {% include 'partials/footer.html' %}
     </body>

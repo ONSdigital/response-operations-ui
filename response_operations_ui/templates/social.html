@@ -3,5 +3,19 @@
 
 {% block main %}
   <div role="main" id="main" class="page__main">
+    {% if results is not none%}
+      <h2>
+        {{ results|length }} result{% if results|length != 1 %}s{% endif %} found for {{ postcode }}
+      </h2>
+      <pl class="case-search-results-list">
+        {% for result in results %}
+          <li class="case-search-results-list__item">
+          <span class="results-list-ref">{{ result.attributes.Reference }}</span>
+          <span class="results-list-postcode">{{ result.attributes.Postcode }}</span>
+          <span class="results-list-address">{{ result.attributes.Prem1 }}</span>
+          </li>
+        {% endfor %}
+      </pl>
+    {% endif %}
   </div>
 {% endblock %}
