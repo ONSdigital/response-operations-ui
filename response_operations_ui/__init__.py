@@ -8,7 +8,6 @@ from flask_session import Session
 import redis
 
 from response_operations_ui.cloud.cloudfoundry import ONSCloudFoundry
-from response_operations_ui.error_handlers import setup_error_handlers
 from response_operations_ui.logger_config import logger_initial_config
 from response_operations_ui.user import User
 from response_operations_ui.views import setup_blueprints
@@ -63,7 +62,6 @@ def create_app(config_name=None):
 
     Session(app)
 
-    setup_error_handlers(app)
     setup_blueprints(app)
 
     return app
