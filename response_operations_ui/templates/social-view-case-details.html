@@ -1,57 +1,58 @@
 {% extends "layouts/social-base.html" %}
-
 {% block page_title %}Social | Survey Data Collection{% endblock %}
-
 {% block main %}
+
 <div class="container page__container">
-    <div class="grid">
-        <div class="grid__col col-12@l">
-            <div role="main" id="main" class="page__main">
-                <h1 class="jupiter u-mt-m" id="case_ref">{{attributes.Reference}}</h1>
-                <div class="case-details u-mt-m">
-                    <dl class="description-list description-list-4" id="case-status">
-                        <dt class="description-list__name">
-                            Status:
-                        </dt>
-                        <dd class="description-list__value">
-                            {{status.caseGroupStatus}}
-                            <span class="u-ml-s">
-                            </span>
-                        </dd>
-                    </dl>
-                      <div class="grid">
-                        <div class="grid__col col-12@l">
-                            <div class="">
-                                <h2 class="neptune">Property address</h2>
-                                <dl class="survey-info info-panel" id="case-attributes">
-                                    <dt class="case-address__prem" name="case-prem1">
-                                        {{attributes.Prem1}}
-                                    </dt>
-                                    <dt class="case-address__prem" name="case-prem2">
-                                        {{attributes.Prem2}}
-                                    </dt>
-                                    <dt class="case-address__prem" name="case-prem3">
-                                        {{attributes.Prem3}}
-                                    </dt>
-                                    <dt class="case-address__prem" name="case-prem4">
-                                        {{attributes.Prem4}}
-                                    </dt>
-                                    <dt class="case-address__prem" name="case-district">
-                                        {{attributes.District}}
-                                    </dt>
-                                    <dt class="case-address__prem" name="case-post_town">
-                                        {{attributes.PostTown}}
-                                    </dt>
-                                    <dt class="case-address__prem postcode" name="case-postcode">
-                                        {{attributes.Postcode}}
-                                    </dt>
-                                </dl>
-                            </div>
-                        </div>
-                      </div>
-                    </div>
-            </div>
-        </div>
+    <h1 class="jupiter u-mt-m" id="case_ref">{{attributes.Reference}}</h1>
+    <div class="case-details u-mt-m">
+        <dl class="description-list description-list-4" id="case-status">
+            <dt class="description-list__name">
+                Status:
+            </dt>
+            <dd class="description-list__value" id="case-group-status">
+                {{status.caseGroupStatus}}
+            </dd>
+        </dl>
+        <section class="social-case-section u-mt-l">
+            <h2 class="neptune">Property address</h2>
+            <dl class="survey-info info-panel" id="case-attributes">
+                {% if attributes.Prem1 %}
+                <dt class="case-address__prem" id="case-prem1">
+                    {{attributes.Prem1}}
+                </dt>
+                {% endif %}
+                {% if attributes.Prem2 %}
+                <dt class="case-address__prem" id="case-prem2">
+                    {{attributes.Prem2}}
+                </dt>
+                {% endif %}
+                {% if attributes.Prem3 %}
+                <dt class="case-address__prem" id="case-prem3">
+                    {{attributes.Prem3}}
+                </dt>
+                {% endif %}
+                {% if attributes.Prem4 %}
+                <dt class="case-address__prem" id="case-prem4">
+                    {{attributes.Prem4}}
+                </dt>
+                {% endif %}
+                {% if attributes.District %}
+                <dt class="case-address__prem" id="case-district">
+                    {{attributes.District}}
+                </dt>
+                {% endif %}
+                {% if attributes.PostTown %}
+                <dt class="case-address__prem" id="case-post_town">
+                    {{attributes.PostTown}}
+                </dt>
+                {% endif %}
+                {% if attributes.Postcode %}
+                <dt class="case-address__prem postcode" id="case-postcode">
+                    {{attributes.Postcode}}
+                </dt>
+                {% endif %}
+            </dl>
+        </section>
     </div>
 </div>
 {% endblock %}

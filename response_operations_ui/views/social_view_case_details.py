@@ -21,9 +21,12 @@ def view_social_case_details(case_id):
 
     mocked_case_id = mocked_case['id']
     mocked_sample_unit_id = mocked_case['sampleUnitId']
+    mocked_case_status = mocked_case['caseGroup']['caseGroupStatus']
 
     # case_id = case_controller.get_case_by_id(case_id)
     # sample_controllers.get_sample_attributes(mocked_sample_unit_id)
+
+    mocked_case['caseGroup']['caseGroupStatus'] = map_social_case_status(mocked_case_status)
 
     return render_template('social-view-case-details.html', attributes=mocked_attributes['attributes'],
                            status=mocked_case['caseGroup'])
