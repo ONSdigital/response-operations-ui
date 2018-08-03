@@ -52,8 +52,6 @@
               <th scope="col" class="table--header--cell">
                 Trading as
               </th>
-
-
               <th scope="col" class="table--header--cell">
                 Region
               </th>
@@ -71,11 +69,9 @@
               <td name="tbl-ce-company-name" class="table--cell">
                 {{ ce.companyName }}
               </td>
-              {% if ce.trading_as %}
-                <td name="tbl-ce-company-name" class="table--cell">
-                  {{ ce.trading_as }} &#160;
-                </td>
-              {% endif %}
+              <td name="tbl-ce-company-name" class="table--cell">
+                {{ ce.trading_as }} &#160;
+              </td>
 
               <td name="tbl-ce-company-region" class="table--cell">
                 {{ ce.companyRegion }}
