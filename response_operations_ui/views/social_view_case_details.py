@@ -5,15 +5,24 @@ from flask_login import login_required
 from structlog import wrap_logger
 from response_operations_ui.controllers import case_controller, sample_controllers
 from response_operations_ui.common.mappers import map_social_case_status
+from response_operations_ui.forms import SearchForm
 
 logger = wrap_logger(logging.getLogger(__name__))
 social_bp = Blueprint('social_bp', __name__,
                       static_folder='static', template_folder='templates')
 
 
+# @login_required
+# @social_bp.route('/', methods=['GET', 'POST'])
+# def social_case_search():
+#     if form.validate_on_submit():
+#         return render_template('social.html', form=form)
+
+
 @social_bp.route('/view_case_details/<case_id>', methods=['GET'])
 @login_required
 def view_social_case_details(case_id):
+    form = SearchForm()
     with open('tests/test_data/case/social_case.json') as fp:
         mocked_case = json.load(fp)
     with open('tests/test_data/sample/sample_attributes.json') as fp:
@@ -29,4 +38,4 @@ def view_social_case_details(case_id):
     mocked_case['caseGroup']['caseGroupStatus'] = map_social_case_status(mocked_case_status)
 
     return render_template('social-view-case-details.html', attributes=mocked_attributes['attributes'],
-                           status=mocked_case['caseGroup'])
+                           status=mocked_case['caseGroup'], form=form)
