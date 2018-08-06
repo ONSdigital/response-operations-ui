@@ -57,7 +57,7 @@ def map_social_case_status(case_response_status):
         'COMPLETE': "Completed",
         'COMPLETEDBYPHONE': 'Completed by phone',
         'NOLONGERREQUIRED': 'No longer required',
-        'REOPENED' : 'Reopened'
+        'REOPENED': 'Reopened'
     }.get(case_response_status, case_response_status)
 
 

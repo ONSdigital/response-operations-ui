@@ -12,30 +12,23 @@ social_bp = Blueprint('social_bp', __name__,
                       static_folder='static', template_folder='templates')
 
 
-# @login_required
-# @social_bp.route('/', methods=['GET', 'POST'])
-# def social_case_search():
-#     if form.validate_on_submit():
-#         return render_template('social.html', form=form)
-
-
-@social_bp.route('/view_case_details/<case_id>', methods=['GET'])
+@social_bp.route('/case/<case_id>', methods=['GET'])
 @login_required
 def view_social_case_details(case_id):
-    form = SearchForm()
-    with open('tests/test_data/case/social_case.json') as fp:
-        mocked_case = json.load(fp)
-    with open('tests/test_data/sample/sample_attributes.json') as fp:
-        mocked_attributes = json.load(fp)
+    form = SearchForm()  # TODO Remove banner before committing
 
-    mocked_case_id = mocked_case['id']
-    mocked_sample_unit_id = mocked_case['sampleUnitId']
-    mocked_case_status = mocked_case['caseGroup']['caseGroupStatus']
+    # with open('tests/test_data/case/social_case.json') as fp:
+    #     mocked_case = json.load(fp)
+    # with open('tests/test_data/sample/sample_attributes.json') as fp:
+    #     mocked_attributes = json.load(fp)
+    # mocked_case_id = case_id['id']
+    # mocked_sample_unit_id = social_case['sampleUnitId']
+    # mocked_case_status = social_case['caseGroup']['caseGroupStatus']
 
-    # case_id = case_controller.get_case_by_id(case_id)
-    # sample_controllers.get_sample_attributes(mocked_sample_unit_id)
+    social_case = case_controller.get_case_by_id(case_id)
+    sample_attributes = sample_controllers.get_sample_attributes(social_case['sampleUnitId'])
 
-    mocked_case['caseGroup']['caseGroupStatus'] = map_social_case_status(mocked_case_status)
+    social_case['caseGroup']['caseGroupStatus'] = map_social_case_status(social_case['caseGroup']['caseGroupStatus'])
 
-    return render_template('social-view-case-details.html', attributes=mocked_attributes['attributes'],
-                           status=mocked_case['caseGroup'], form=form)
+    return render_template('social-view-case-details.html', attributes=sample_attributes['attributes'],
+                           status=social_case['caseGroup'], form=form)
