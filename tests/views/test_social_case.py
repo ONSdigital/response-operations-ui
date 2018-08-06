@@ -1,5 +1,4 @@
 import json
-import mock
 
 import requests_mock
 
