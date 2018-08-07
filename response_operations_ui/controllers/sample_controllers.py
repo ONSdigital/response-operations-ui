@@ -55,7 +55,7 @@ def upload_sample(short_name, period, file):
 
 
 def search_samples_by_postcode(postcode) -> dict:
-    url = f'{app.config["SAMPLE_URL"]}/samples/postcode'
+    url = f'{app.config["SAMPLE_URL"]}/samples/sampleunits'
     response = requests.get(url=url,
                             auth=app.config['SAMPLE_AUTH'],
                             params={'postcode': postcode})
