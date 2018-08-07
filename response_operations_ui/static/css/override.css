@@ -393,10 +393,6 @@ button{
     margin-left: 0.5rem;
 }
 
-.social-case-search-results {
-    /* display: none; */
-}
-
 .case-search-results-info {
     margin: 1rem 0 2rem 0;
 }
@@ -416,9 +412,6 @@ button{
 
 .results-list-postcode {
     margin-right: 1rem;
-}
-
-.results-list-address {
 }
 
 .results-list-survey {
