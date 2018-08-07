@@ -5,7 +5,7 @@ from unittest.mock import MagicMock
 from requests import RequestException
 import requests_mock
 
-from response_operations_ui import app
+from config import TestingConfig
 from response_operations_ui.controllers.survey_controllers import get_survey_short_name_by_id
 from response_operations_ui.views.surveys import _sort_collection_exercise
 from tests.views import ViewTestCase
@@ -16,40 +16,40 @@ collection_exercise_event_id = 'b4a36392-a21f-485b-9dc4-d151a8fcd565'
 sample_summary_id = 'b9487b59-2ac7-4fbf-b734-5a4c260ff235'
 survey_id = 'cb0711c3-0ac8-41d3-ae0e-567e5ea1ef87'
 
-url_get_survey_list = f'{app.config["SURVEY_URL"]}/surveys'
-url_get_legal_basis_list = f'{app.config["SURVEY_URL"]}/legal-bases'
-url_create_survey = f'{app.config["SURVEY_URL"]}/surveys'
+url_get_survey_list = f'{TestingConfig.SURVEY_URL}/surveys'
+url_get_legal_basis_list = f'{TestingConfig.SURVEY_URL}/legal-bases'
+url_create_survey = f'{TestingConfig.SURVEY_URL}/surveys'
 
 with open('tests/test_data/survey/survey_list.json') as f:
     survey_list = json.load(f)
 with open('tests/test_data/survey/legal_basis_list.json') as f:
     legal_basis_list = json.load(f)
 
-url_get_survey_by_short_name = f'{app.config["SURVEY_URL"]}/surveys/shortname/bres'
-url_get_survey_by_qbs = f'{app.config["SURVEY_URL"]}/surveys/shortname/QBS'
+url_get_survey_by_short_name = f'{TestingConfig.SURVEY_URL}/surveys/shortname/bres'
+url_get_survey_by_qbs = f'{TestingConfig.SURVEY_URL}/surveys/shortname/QBS'
 with open('tests/test_data/survey/survey.json') as f:
     survey_info = json.load(f)
 with open('tests/test_data/survey/survey_states.json') as f:
     survey_info_states = json.load(f)
-url_update_survey_details = f'{app.config["SURVEY_URL"]}/surveys/ref/222'
+url_update_survey_details = f'{TestingConfig.SURVEY_URL}/surveys/ref/222'
 with open('tests/test_data/survey/updated_survey_list.json') as f:
     updated_survey_list = json.load(f)
 with open('tests/test_data/survey/create_survey_response.json') as f:
     create_survey_response = json.load(f)
 url_get_collection_exercises = (
-    f'{app.config["COLLECTION_EXERCISE_URL"]}'
+    f'{TestingConfig.COLLECTION_EXERCISE_URL}'
     f'/collectionexercises/survey/{survey_info["survey"]["id"]}'
 )
 url_get_collection_exercise_events = (
-    f'{app.config["COLLECTION_EXERCISE_URL"]}'
+    f'{TestingConfig.COLLECTION_EXERCISE_URL}'
     f'/collectionexercises/{collection_exercise_id}/events'
 )
 url_get_collection_exercises_link = (
-    f'{app.config["COLLECTION_EXERCISE_URL"]}'
+    f'{TestingConfig.COLLECTION_EXERCISE_URL}'
     f'/collectionexercises/link/{collection_exercise_id}'
 )
 url_get_sample_summary = (
-    f'{app.config["SAMPLE_URL"]}'
+    f'{TestingConfig.SAMPLE_URL}'
     f'/samples/samplesummary/{sample_summary_id}'
 )
 
@@ -95,7 +95,7 @@ class TestSurvey(ViewTestCase):
     def test_home(self, mock_request):
         mock_request.get(url_get_survey_list, json=survey_list)
 
-        response = self.app.get("/")
+        response = self.client.get("/")
 
         self.assertEqual(response.status_code, 200)
         self.assertIn("View list of business surveys".encode(), response.data)
@@ -104,7 +104,7 @@ class TestSurvey(ViewTestCase):
     def test_survey_list(self, mock_request):
         mock_request.get(url_get_survey_list, json=survey_list)
 
-        response = self.app.get("/surveys")
+        response = self.client.get("/surveys")
 
         self.assertEqual(response.status_code, 200)
         self.assertIn("BRES".encode(), response.data)
@@ -114,7 +114,7 @@ class TestSurvey(ViewTestCase):
     def test_survey_list_no_surveys(self, mock_request):
         mock_request.get(url_get_survey_list, status_code=204)
 
-        response = self.app.get("/surveys")
+        response = self.client.get("/surveys")
 
         self.assertEqual(response.status_code, 200)
 
@@ -122,7 +122,7 @@ class TestSurvey(ViewTestCase):
     def test_survey_list_fail(self, mock_request):
         mock_request.get(url_get_survey_list, status_code=500)
 
-        self.app.get("/surveys")
+        self.client.get("/surveys")
 
         self.assertApiError(url_get_survey_list, 500)
 
@@ -130,7 +130,7 @@ class TestSurvey(ViewTestCase):
     def test_survey_list_connection_error(self, mock_request):
         mock_request.get(url_get_survey_list, exc=RequestException(request=MagicMock()))
 
-        response = self.app.get("/surveys", follow_redirects=True)
+        response = self.client.get("/surveys", follow_redirects=True)
 
         self.assertEqual(response.status_code, 500)
 
@@ -142,7 +142,7 @@ class TestSurvey(ViewTestCase):
         mock_request.get(url_get_sample_summary, json=self.sample_summary)
         mock_request.get(url_get_survey_by_short_name, json=survey_info['survey'])
 
-        response = self.app.get("/surveys/bres", follow_redirects=True)
+        response = self.client.get("/surveys/bres", follow_redirects=True)
 
         self.assertEqual(response.status_code, 200)
 
@@ -150,7 +150,7 @@ class TestSurvey(ViewTestCase):
     def test_survey_view_fail(self, mock_request):
         mock_request.get(url_get_survey_by_short_name, status_code=500)
 
-        self.app.get("/surveys/bres")
+        self.client.get("/surveys/bres")
 
         self.assertApiError(url_get_survey_by_short_name, 500)
 
@@ -162,7 +162,8 @@ class TestSurvey(ViewTestCase):
         mock_request.get(url_get_sample_summary, json=self.sample_summary)
         mock_request.get(url_get_survey_by_short_name, json=survey_info_states['survey'])
 
-        response = self.app.get("/surveys/bres")
+        response = self.client.get("/surveys/bres")
+
         self.assertIn(b'Created', response.data)
         self.assertIn(b'Scheduled', response.data)
         self.assertIn(b'Ready for review', response.data)
@@ -171,64 +172,70 @@ class TestSurvey(ViewTestCase):
 
     @requests_mock.mock()
     def test_get_survey_short_name_by_id(self, mock_request):
-        mock_request.get(url_get_survey_list, json=survey_list)
-        self.assertEqual(get_survey_short_name_by_id("cb0711c3-0ac8-41d3-ae0e-567e5ea1ef87"), "BRES")
+        with self.app.app_context():
+            mock_request.get(url_get_survey_list, json=survey_list)
+            self.assertEqual(get_survey_short_name_by_id("cb0711c3-0ac8-41d3-ae0e-567e5ea1ef87"), "BRES")
 
     @requests_mock.mock()
     def test_get_survey_short_name_by_id_is_cached(self, mock_request):
-        mock_request.get(url_get_survey_list, json=survey_list)
-        self.assertEqual(get_survey_short_name_by_id("cb0711c3-0ac8-41d3-ae0e-567e5ea1ef87"), "BRES")
+        with self.app.app_context():
+            mock_request.get(url_get_survey_list, json=survey_list)
+            self.assertEqual(get_survey_short_name_by_id("cb0711c3-0ac8-41d3-ae0e-567e5ea1ef87"), "BRES")
 
-        mock_request.get(url_get_survey_list, status_code=500)
-        self.assertEqual(get_survey_short_name_by_id("cb0711c3-0ac8-41d3-ae0e-567e5ea1ef87"), "BRES")
+            mock_request.get(url_get_survey_list, status_code=500)
+            self.assertEqual(get_survey_short_name_by_id("cb0711c3-0ac8-41d3-ae0e-567e5ea1ef87"), "BRES")
 
     @requests_mock.mock()
     def test_get_survey_short_name_by_id_for_new_survey_id(self, mock_request):
-        mock_request.get(url_get_survey_list, json=survey_list)
-        self.assertEqual(get_survey_short_name_by_id("cb0711c3-0ac8-41d3-ae0e-567e5ea1ef87"), "BRES")
+        with self.app.app_context():
+            mock_request.get(url_get_survey_list, json=survey_list)
+            self.assertEqual(get_survey_short_name_by_id("cb0711c3-0ac8-41d3-ae0e-567e5ea1ef87"), "BRES")
 
-        mock_request.get(url_get_survey_list, json=[{"shortName": "NEW",
-                                                     "id": "a_new_survey_id",
-                                                     "surveyRef": "999"}])
-        self.assertEqual(get_survey_short_name_by_id("a_new_survey_id"), "NEW")
+            mock_request.get(url_get_survey_list, json=[{"shortName": "NEW",
+                                                         "id": "a_new_survey_id",
+                                                         "surveyRef": "999"}])
+            self.assertEqual(get_survey_short_name_by_id("a_new_survey_id"), "NEW")
 
     @requests_mock.mock()
     def test_get_survey_short_name_by_id_when_get_list_fails(self, mock_request):
         # Delete any existing survey cache
         with suppress(AttributeError):
-            del app.surveys_dict
+            del self.app.surveys_dict
 
-        # API error on first attempt
-        mock_request.get(url_get_survey_list, status_code=500)
-        self.assertEqual(get_survey_short_name_by_id("cb0711c3-0ac8-41d3-ae0e-567e5ea1ef87"), None)
+        with self.app.app_context():
+            # API error on first attempt
+            mock_request.get(url_get_survey_list, status_code=500)
+            self.assertEqual(get_survey_short_name_by_id("cb0711c3-0ac8-41d3-ae0e-567e5ea1ef87"), None)
 
-        # Successfully retrieve surveys
-        mock_request.get(url_get_survey_list, json=survey_list)
-        self.assertEqual(get_survey_short_name_by_id("cb0711c3-0ac8-41d3-ae0e-567e5ea1ef87"), "BRES")
+            # Successfully retrieve surveys
+            mock_request.get(url_get_survey_list, json=survey_list)
+            self.assertEqual(get_survey_short_name_by_id("cb0711c3-0ac8-41d3-ae0e-567e5ea1ef87"), "BRES")
 
-        # API error trying to fetch new survey
-        mock_request.get(url_get_survey_list, status_code=500)
-        self.assertEqual(get_survey_short_name_by_id("a_new_survey_id1234567890"), None)
+            # API error trying to fetch new survey
+            mock_request.get(url_get_survey_list, status_code=500)
+            self.assertEqual(get_survey_short_name_by_id("a_new_survey_id1234567890"), None)
 
     @requests_mock.mock()
     def test_get_survey_short_name_by_id_when_id_not_found(self, mock_request):
-        mock_request.get(url_get_survey_list, json=survey_list)
-        self.assertEqual(get_survey_short_name_by_id("not_a_valid_survey_id"), None)
+        with self.app.app_context():
+            mock_request.get(url_get_survey_list, json=survey_list)
+            self.assertEqual(get_survey_short_name_by_id("not_a_valid_survey_id"), None)
 
-        # Check cached dictionary is preserved
-        mock_request.get(url_get_survey_list, status_code=500)
-        self.assertEqual(get_survey_short_name_by_id("cb0711c3-0ac8-41d3-ae0e-567e5ea1ef87"), "BRES")
-        self.assertEqual(get_survey_short_name_by_id("not_a_valid_survey_id"), None)
+            # Check cached dictionary is preserved
+            mock_request.get(url_get_survey_list, status_code=500)
+            self.assertEqual(get_survey_short_name_by_id("cb0711c3-0ac8-41d3-ae0e-567e5ea1ef87"), "BRES")
+            self.assertEqual(get_survey_short_name_by_id("not_a_valid_survey_id"), None)
 
     @requests_mock.mock()
     def test_get_survey_short_name_by_id_fdi_surveys(self, mock_request):
-        mock_request.get(url_get_survey_list, json=survey_list)
+        with self.app.app_context():
+            mock_request.get(url_get_survey_list, json=survey_list)
 
-        self.assertEqual(get_survey_short_name_by_id("QOFDI_id"), "FDI")
-        self.assertEqual(get_survey_short_name_by_id("QIFDI_id"), "FDI")
-        self.assertEqual(get_survey_short_name_by_id("AOFDI_id"), "FDI")
-        self.assertEqual(get_survey_short_name_by_id("AIFDI_id"), "FDI")
-        self.assertEqual(get_survey_short_name_by_id("cb0711c3-0ac8-41d3-ae0e-567e5ea1ef87"), "BRES")
+            self.assertEqual(get_survey_short_name_by_id("QOFDI_id"), "FDI")
+            self.assertEqual(get_survey_short_name_by_id("QIFDI_id"), "FDI")
+            self.assertEqual(get_survey_short_name_by_id("AOFDI_id"), "FDI")
+            self.assertEqual(get_survey_short_name_by_id("AIFDI_id"), "FDI")
+            self.assertEqual(get_survey_short_name_by_id("cb0711c3-0ac8-41d3-ae0e-567e5ea1ef87"), "BRES")
 
     @requests_mock.mock()
     def test_update_survey_details_success(self, mock_request):
@@ -240,8 +247,8 @@ class TestSurvey(ViewTestCase):
         mock_request.get(url_get_survey_list, json=survey_list)
         mock_request.put(url_update_survey_details)
         mock_request.get(url_get_survey_list, json=updated_survey_list)
-        response = self.app.post(f"/surveys/edit-survey-details/QBS", data=changed_survey_details,
-                                 follow_redirects=True)
+        response = self.client.post(f"/surveys/edit-survey-details/QBS", data=changed_survey_details,
+                                    follow_redirects=True)
         self.assertEqual(response.status_code, 200)
         self.assertIn('New Survey Long Name'.encode(), response.data)
         self.assertIn('QBX'.encode(), response.data)
@@ -256,7 +263,9 @@ class TestSurvey(ViewTestCase):
         mock_request.get(url_get_survey_list, json=survey_list)
         mock_request.put(url_update_survey_details, status_code=500)
         mock_request.get(url_get_survey_list, json=updated_survey_list)
-        self.app.post(f"/surveys/edit-survey-details/QBS", data=changed_survey_details)
+
+        self.client.post(f"/surveys/edit-survey-details/QBS", data=changed_survey_details)
+
         self.assertApiError(url_update_survey_details, 500)
 
     @requests_mock.mock()
@@ -274,8 +283,9 @@ class TestSurvey(ViewTestCase):
         mock_request.get(url_get_collection_exercises_link, json=self.collection_exercises_link)
         mock_request.get(url_get_sample_summary, json=self.sample_summary)
         mock_request.get(url_get_survey_by_qbs, json=survey_info['survey'])
-        response = self.app.post(f"/surveys/edit-survey-details/QBS", data=changed_survey_details,
-                                 follow_redirects=True)
+
+        response = self.client.post(f"/surveys/edit-survey-details/QBS", data=changed_survey_details,
+                                    follow_redirects=True)
         self.assertIn("Error updating survey details".encode(), response.data)
         self.assertEqual(response.status_code, 200)
 
@@ -283,7 +293,9 @@ class TestSurvey(ViewTestCase):
     def test_get_survey_details(self, mock_request):
         mock_request.get(url_get_survey_list, json=survey_list)
         mock_request.get(url_get_survey_by_short_name, json=survey_info['survey'])
-        response = self.app.get(f"surveys/edit-survey-details/bres", follow_redirects=True)
+
+        response = self.client.get(f"surveys/edit-survey-details/bres", follow_redirects=True)
+
         self.assertEqual(response.status_code, 200)
         self.assertIn("221".encode(), response.data)
 
@@ -291,7 +303,7 @@ class TestSurvey(ViewTestCase):
     def test_get_survey_create(self, mock_request):
         mock_request.get(url_get_legal_basis_list, json=legal_basis_list)
 
-        response = self.app.get(f"surveys/create")
+        response = self.client.get(f"surveys/create")
 
         self.assertEqual(response.status_code, 200)
 
@@ -328,7 +340,7 @@ class TestSurvey(ViewTestCase):
                           status_code=201)
         mock_request.get(url_get_survey_list, json=updated_survey_list)
 
-        response = self.app.post(f"surveys/create", data=create_survey_request, follow_redirects=True)
+        response = self.client.post(f"surveys/create", data=create_survey_request, follow_redirects=True)
 
         self.assertEqual(response.status_code, 200)
 
@@ -344,7 +356,7 @@ class TestSurvey(ViewTestCase):
         mock_request.get(url_get_legal_basis_list, json=legal_basis_list)
         mock_request.post(url_create_survey, text=error_message, status_code=409)
 
-        response = self.app.post(f"surveys/create", data=create_survey_request)
+        response = self.client.post(f"surveys/create", data=create_survey_request)
 
         self.assertEqual(response.status_code, 200)
 
@@ -363,7 +375,7 @@ class TestSurvey(ViewTestCase):
         mock_request.get(url_get_legal_basis_list, json=legal_basis_list)
         mock_request.post(url_create_survey, text=error_message, status_code=400)
 
-        response = self.app.post(f"surveys/create", data=create_survey_request)
+        response = self.client.post(f"surveys/create", data=create_survey_request)
 
         self.assertEqual(response.status_code, 200)
 
@@ -381,7 +393,7 @@ class TestSurvey(ViewTestCase):
         mock_request.get(url_get_legal_basis_list, json=legal_basis_list)
         mock_request.post(url_create_survey, json=create_survey_response, status_code=201)
 
-        response = self.app.post(f"surveys/create", data=create_survey_request)
+        response = self.client.post(f"surveys/create", data=create_survey_request)
 
         self.assertEqual(response.status_code, 200)
 
@@ -399,7 +411,7 @@ class TestSurvey(ViewTestCase):
         mock_request.get(url_get_legal_basis_list, json=legal_basis_list)
         mock_request.post(url_create_survey, json=create_survey_response, status_code=201)
 
-        response = self.app.post(f"surveys/create", data=create_survey_request)
+        response = self.client.post(f"surveys/create", data=create_survey_request)
 
         self.assertEqual(response.status_code, 200)
 
@@ -417,7 +429,7 @@ class TestSurvey(ViewTestCase):
         mock_request.get(url_get_legal_basis_list, json=legal_basis_list)
         mock_request.post(url_create_survey, text="Internal server error", status_code=500)
 
-        self.app.post(f"surveys/create", data=create_survey_request)
+        self.client.post(f"surveys/create", data=create_survey_request)
 
         self.assertApiError(url_create_survey, 500)
 
@@ -432,8 +444,10 @@ class TestSurvey(ViewTestCase):
         mock_request.put(url_update_survey_details)
         mock_request.get(url_get_survey_list, json=updated_survey_list)
         mock_request.get(url_get_survey_by_short_name, json=survey_info['survey'])
-        response = self.app.post(f"/surveys/edit-survey-details/bres", data=changed_survey_details,
-                                 follow_redirects=True)
+
+        response = self.client.post(f"/surveys/edit-survey-details/bres", data=changed_survey_details,
+                                    follow_redirects=True)
+
         self.assertEqual(response.status_code, 200)
         self.assertIn("Error updating survey details".encode(), response.data)
 

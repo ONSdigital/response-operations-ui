@@ -3,12 +3,11 @@ from distutils.util import strtobool
 import json
 import logging
 
-from flask import Blueprint, flash, g, Markup, render_template, request, redirect, session, url_for
+from flask import Blueprint, current_app as app, flash, g, Markup, render_template, request, redirect, session, url_for
 from flask_login import login_required, current_user
 from flask_paginate import get_parameter, Pagination
 from structlog import wrap_logger
 
-from response_operations_ui import app
 from response_operations_ui.common.dates import get_formatted_date, convert_to_bst
 from response_operations_ui.common.mappers import format_short_name
 from response_operations_ui.common.surveys import Surveys, FDISurveys
@@ -17,7 +16,9 @@ from response_operations_ui.controllers.survey_controllers import get_survey_sho
 from response_operations_ui.exceptions.exceptions import ApiError, InternalError, NoMessagesError
 from response_operations_ui.forms import SecureMessageForm
 
+
 logger = wrap_logger(logging.getLogger(__name__))
+
 messages_bp = Blueprint('messages_bp', __name__,
                         static_folder='static', template_folder='templates')
 

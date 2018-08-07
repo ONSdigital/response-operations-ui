@@ -4,6 +4,7 @@ import logging
 from structlog import wrap_logger
 from response_operations_ui.common.uaa import get_uaa_public_key
 
+
 logger = wrap_logger(logging.getLogger(__name__))
 
 
