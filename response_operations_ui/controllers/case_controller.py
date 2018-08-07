@@ -114,7 +114,7 @@ def get_cases_by_sample_unit_id(sample_unit_ids):
 
     response = requests.get(url=url,
                             auth=app.config['CASE_AUTH'],
-                            params={'id': sample_unit_ids})
+                            params={'sampleUnitId': sample_unit_ids})
 
     if response.status_code == 404:
         return {}

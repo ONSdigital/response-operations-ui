@@ -4,7 +4,7 @@
             {{ form.csrf_token }}
             <label class="label venus u-mt-s" for="postcode-search">Find case by postcode</label>
             <div class="field cosy">
-                {{ form.query(size=8, class_="input input--text case-search-input2")}}
+                {{ form.query(size=8, class_="input input--text case-search-input2", required=True)}}
             </div>
             <div class="cosy">
                 {{ form.submit(class="btn btn--primary case-search-submit2") }}
