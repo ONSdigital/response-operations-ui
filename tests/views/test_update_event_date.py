@@ -3,7 +3,7 @@ from urllib.parse import urlparse
 
 import requests_mock
 
-from response_operations_ui import app
+from config import TestingConfig
 from tests.views import ViewTestCase
 
 
@@ -22,16 +22,16 @@ with open('tests/test_data/survey/single_survey.json') as json_data:
 with open('tests/test_data/collection_exercise/events.json') as json_data:
     events = json.load(json_data)
 url_put_update_event_date = (
-    f'{app.config["COLLECTION_EXERCISE_URL"]}/collectionexercises'
+    f'{TestingConfig.COLLECTION_EXERCISE_URL}/collectionexercises'
     f'/{collection_exercise_id}/events/{tag}'
 )
-url_survey_shortname = f'{app.config["SURVEY_URL"]}/surveys/shortname/{survey_short_name}'
+url_survey_shortname = f'{TestingConfig.SURVEY_URL}/surveys/shortname/{survey_short_name}'
 url_collection_exercise_survey_id = (
-    f'{app.config["COLLECTION_EXERCISE_URL"]}/collectionexercises/survey'
+    f'{TestingConfig.COLLECTION_EXERCISE_URL}/collectionexercises/survey'
     f'/{survey_id}'
 )
 url_get_collection_exercise_events = (
-    f'{app.config["COLLECTION_EXERCISE_URL"]}'
+    f'{TestingConfig.COLLECTION_EXERCISE_URL}'
     f'/collectionexercises/{collection_exercise_id}/events'
 )
 
@@ -65,7 +65,7 @@ class TestUpdateEventDate(ViewTestCase):
         mock_request.get(url_collection_exercise_survey_id, json=[collection_exercise])
         mock_request.get(url_get_collection_exercise_events, json=events)
 
-        response = self.app.get(f"/surveys/{survey_short_name}/{period}/event/go_live")
+        response = self.client.get(f"/surveys/{survey_short_name}/{period}/event/go_live")
 
         self.assertEqual(response.status_code, 200)
         self.assertIn("Go Live".encode(), response.data)
@@ -78,7 +78,7 @@ class TestUpdateEventDate(ViewTestCase):
         mock_request.get(url_collection_exercise_survey_id, json=[])
         mock_request.get(url_get_collection_exercise_events, json=events)
 
-        response = self.app.get(f"/surveys/{survey_short_name}/{period}/event/go_live")
+        response = self.client.get(f"/surveys/{survey_short_name}/{period}/event/go_live")
 
         self.assertEqual(response.status_code, 404)
 
@@ -86,7 +86,7 @@ class TestUpdateEventDate(ViewTestCase):
     def test_update_event_date_service_fail(self, mock_request):
         mock_request.get(url_survey_shortname, status_code=500)
 
-        self.app.get(f"/surveys/{survey_short_name}/{period}/event/go_live", follow_redirects=True)
+        self.client.get(f"/surveys/{survey_short_name}/{period}/event/go_live", follow_redirects=True)
 
         self.assertApiError(url_survey_shortname, 500)
 
@@ -96,8 +96,8 @@ class TestUpdateEventDate(ViewTestCase):
         mock_request.get(url_collection_exercise_survey_id, json=[collection_exercise])
         mock_request.put(url_put_update_event_date, status_code=201)
 
-        response = self.app.post(f"/surveys/{survey_short_name}/{period}/event/go_live",
-                                 data=self.update_event_form)
+        response = self.client.post(f"/surveys/{survey_short_name}/{period}/event/go_live",
+                                    data=self.update_event_form)
 
         self.assertEqual(response.status_code, 302)
         self.assertEqual(urlparse(response.location).path, f'/surveys/{survey_short_name}/{period}')
@@ -108,8 +108,8 @@ class TestUpdateEventDate(ViewTestCase):
         mock_request.get(url_collection_exercise_survey_id, json=[])
         mock_request.get(url_get_collection_exercise_events, json=events)
 
-        response = self.app.post(f"/surveys/{survey_short_name}/{period}/event/go_live",
-                                 data=self.update_event_form, follow_redirects=True)
+        response = self.client.post(f"/surveys/{survey_short_name}/{period}/event/go_live",
+                                    data=self.update_event_form, follow_redirects=True)
 
         self.assertEqual(response.status_code, 404)
 
@@ -120,8 +120,8 @@ class TestUpdateEventDate(ViewTestCase):
         mock_request.get(url_collection_exercise_survey_id, json=[collection_exercise])
         mock_request.get(url_get_collection_exercise_events, json=events)
 
-        response = self.app.post(f"/surveys/{survey_short_name}/{period}/event/go_live",
-                                 data=self.invalid_update_event_form, follow_redirects=True)
+        response = self.client.post(f"/surveys/{survey_short_name}/{period}/event/go_live",
+                                    data=self.invalid_update_event_form, follow_redirects=True)
 
         self.assertEqual(response.status_code, 200)
         self.assertIn("Must be after MPS Thursday 11 Oct 2018 23:00 GMT".encode(), response.data)
@@ -134,8 +134,8 @@ class TestUpdateEventDate(ViewTestCase):
         mock_request.get(url_collection_exercise_survey_id, json=[collection_exercise])
         mock_request.get(url_get_collection_exercise_events, json=events)
 
-        response = self.app.post(f"/surveys/{survey_short_name}/{period}/event/go_live",
-                                 data=self.update_event_form, follow_redirects=True)
+        response = self.client.post(f"/surveys/{survey_short_name}/{period}/event/go_live",
+                                    data=self.update_event_form, follow_redirects=True)
 
         self.assertEqual(response.status_code, 200)
         self.assertIn("Must be after MPS Thursday 11 Oct 2018 23:00 GMT".encode(), response.data)
@@ -148,7 +148,7 @@ class TestUpdateEventDate(ViewTestCase):
         mock_request.get(url_get_collection_exercise_events, json=events)
         mock_request.put(url_put_update_event_date, status_code=500)
 
-        self.app.post(f"/surveys/{survey_short_name}/{period}/event/go_live",
-                      data=self.update_event_form, follow_redirects=True)
+        self.client.post(f"/surveys/{survey_short_name}/{period}/event/go_live",
+                         data=self.update_event_form, follow_redirects=True)
 
         self.assertApiError(url_put_update_event_date, 500)

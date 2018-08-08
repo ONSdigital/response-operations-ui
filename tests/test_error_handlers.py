@@ -1,15 +1,12 @@
 import unittest
 from unittest.mock import patch
 
-from config import TestingConfig
-from response_operations_ui import app
+from response_operations_ui import create_app
 
 
 class TestErrorHandlers(unittest.TestCase):
     def setUp(self):
-        app_config = TestingConfig()
-        app.config.from_object(app_config)
-        app.login_manager.init_app(app)
+        app = create_app('TestingConfig')
         self.app = app.test_client()
 
     @patch('requests.post')
