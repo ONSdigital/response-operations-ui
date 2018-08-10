@@ -27,4 +27,5 @@ def setup_blueprints(app):
     app.register_blueprint(sign_in_bp, url_prefix='/sign-in')
     app.register_blueprint(surveys_bp, url_prefix='/surveys')
     app.register_blueprint(case_bp, url_prefix='/case')
+    app.register_blueprint(social_bp, url_prefix='/social')
     return app
