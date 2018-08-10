@@ -21,7 +21,7 @@ def social_case_search():
     if form.validate_on_submit():
 
         postcode = request.form.get('query')
-        logger.info("Now retrieving cases for postcode %s" % postcode)
+        logger.info("Now retrieving cases for postcode", postcode=postcode)
 
         results = get_cases_by_postcode(postcode)
         return render_template('social.html',
