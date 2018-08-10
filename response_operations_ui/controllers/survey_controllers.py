@@ -1,13 +1,14 @@
 import logging
 
 import requests
+from flask import current_app as app
 from requests.exceptions import HTTPError, RequestException
 from structlog import wrap_logger
 
-from response_operations_ui import app
 from response_operations_ui.common.mappers import format_short_name
 from response_operations_ui.common.surveys import FDISurveys
 from response_operations_ui.exceptions.exceptions import ApiError
+
 
 logger = wrap_logger(logging.getLogger(__name__))
 

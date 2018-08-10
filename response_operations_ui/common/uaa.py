@@ -5,6 +5,7 @@ import requests
 from flask import current_app
 from requests import HTTPError
 
+
 logger = logging.getLogger(__name__)
 
 

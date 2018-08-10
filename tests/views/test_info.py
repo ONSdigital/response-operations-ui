@@ -3,7 +3,7 @@ import os
 import unittest
 from pathlib import Path
 
-from response_operations_ui import app
+from response_operations_ui import create_app
 
 
 class TestInfo(unittest.TestCase):
@@ -14,14 +14,15 @@ class TestInfo(unittest.TestCase):
             os.remove('git_info')
 
     def setUp(self):
-        self.app = app.test_client()
+        app = create_app('TestingConfig')
+        self.client = app.test_client()
         self.delete_git_info()
 
     def tearDown(self):
         self.delete_git_info()
 
     def test_info_no_git_info(self):
-        response = self.app.get("/info")
+        response = self.client.get("/info")
 
         self.assertEqual(response.status_code, 200)
         self.assertIn('"name": "response-operations-ui"'.encode(), response.data)
@@ -31,7 +32,7 @@ class TestInfo(unittest.TestCase):
         with open('git_info', 'w') as outfile:
             json.dump({"test": "test"}, outfile)
 
-        response = self.app.get("/info")
+        response = self.client.get("/info")
 
         self.assertEqual(response.status_code, 200)
         self.assertIn('"name": "response-operations-ui"'.encode(), response.data)
@@ -40,7 +41,7 @@ class TestInfo(unittest.TestCase):
         with open('git_info', 'w') as outfile:
             outfile.write('"test": "test"')
 
-        response = self.app.get("/info")
+        response = self.client.get("/info")
 
         self.assertEqual(response.status_code, 200)
         self.assertIn('"name": "response-operations-ui"'.encode(), response.data)
