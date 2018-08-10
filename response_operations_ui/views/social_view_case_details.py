@@ -19,7 +19,7 @@ def view_social_case_details(case_id):
     social_case = case_controller.get_case_by_id(case_id)
     sample_attributes = sample_controllers.get_sample_attributes(social_case['sampleUnitId'])
 
-    social_case['caseGroup']['caseGroupStatus'] = map_social_case_status(social_case['caseGroup']['caseGroupStatus'])
+    mapped_status = map_social_case_status(social_case['caseGroup']['caseGroupStatus'])
 
     return render_template('social-view-case-details.html', attributes=sample_attributes['attributes'],
-                           status=social_case['caseGroup'], form=form)
+                           status=mapped_status, form=form)
