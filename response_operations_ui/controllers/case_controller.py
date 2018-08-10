@@ -117,6 +117,7 @@ def get_cases_by_sample_unit_id(sample_unit_ids):
                             params={'sampleUnitId': sample_unit_ids})
 
     if response.status_code == 404:
+        logger.error("There were no cases found for sample unit ids", sample_unit_ids)
         return {}
     try:
         response.raise_for_status()

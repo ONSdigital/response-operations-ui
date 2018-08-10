@@ -1,6 +1,4 @@
 import logging
-from http import HTTPStatus
-from json import JSONDecodeError
 
 import requests
 from requests.exceptions import HTTPError, RequestException
@@ -59,10 +57,13 @@ def search_samples_by_postcode(postcode) -> dict:
     response = requests.get(url=url,
                             auth=app.config['SAMPLE_AUTH'],
                             params={'postcode': postcode})
+
+    logger.debug("Searching for samples by postcode %s" % postcode)
     try:
         response.raise_for_status()
     except HTTPError:
         if response.status_code == 404:
+            logger.error("No samples were found for post code %s" % postcode)
             return dict()
         logger.exception('Error searching for sample by postcode', status=response.status_code)
         raise ApiError(response)
