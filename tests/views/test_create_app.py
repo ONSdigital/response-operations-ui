@@ -16,11 +16,11 @@ class TestCreateApp(unittest.TestCase):
         mock_cf.redis.return_value = 'REDIS_SERVICE'
 
         mock_cf.redis_service = {
-            'host': 'test',
-            'port': 'test'
+            'host': 'test_host',
+            'port': 'test_port'
         }
 
         test_app = create_app('CFTestingConfig')
 
-        self.assertEqual(test_app.config['REDIS_HOST'], 'test')
-        self.assertEqual(test_app.config['REDIS_PORT'], 'test')
+        self.assertEqual(test_app.config['REDIS_HOST'], 'test_host')
+        self.assertEqual(test_app.config['REDIS_PORT'], 'test_port')
