@@ -1,18 +1,20 @@
-import unittest
-import requests_mock
 import json
-from response_operations_ui import create_app
+from urllib.parse import quote_plus
+
+import requests_mock
+
 from config import TestingConfig
+from response_operations_ui.views.social import format_address_for_results
 from tests.views import ViewTestCase
 
 with open('tests/test_data/case/case_details.json') as f:
     case_details = json.load(f)
 
-CASE_SAMPLES_URL = f'{TestingConfig.CASE_URL}/cases/sampleunitids'
+CASES_BY_SAMPLE_UNIT_ID_URL = f'{TestingConfig.CASE_URL}/cases/sampleunitids'
 
 
-def postcode_url(postcode):
-    postcode = postcode.replace(' ', '+')
+def get_postcode_search_url(postcode):
+    quote_plus(postcode)
     return f'{TestingConfig.SAMPLE_URL}/samples/sampleunits?postcode={postcode}'
 
 
@@ -30,30 +32,57 @@ class TestSocial(ViewTestCase):
 
     @requests_mock.mock()
     def test_valid_postcode(self, mock_request):
-        pc = 'TW9 4ET'
+        postcode = 'TW9 4ET'
 
         # Mock getting samples related to postcode
-        mock_request.get(postcode_url(pc), status_code=200, json=mock_sample_units(pc))
+        mock_request.get(get_postcode_search_url(postcode),
+                         status_code=200,
+                         json=mock_sample_units(postcode))
 
         # Mock getting cases based on returned samples
-        mock_request.get(CASE_SAMPLES_URL, status_code=200, json=case_details)
+        mock_request.get(CASES_BY_SAMPLE_UNIT_ID_URL,
+                         status_code=200,
+                         json=case_details)
 
-        response = self.client.post("/social", data={'query': pc})
+        response = self.client.get(f'/social?query={quote_plus(postcode)}')
 
         self.assertEqual(response.status_code, 200)
 
-        self.assertIn(f'1 result found for {pc}', str(response.data))
+        self.assertIn(f'1 result found for {postcode}', str(response.data))
 
     @requests_mock.mock()
-    def test_invalid_postcode(self, mock_request):
-        pc = 'LE18 FML'
+    def test_postcode_not_found(self, mock_request):
+        postcode = 'LE18 FML'
 
-        mock_request.get(postcode_url(pc), status_code=404)
+        mock_request.get(get_postcode_search_url(postcode), status_code=404)
 
-        response = self.client.post("/social", data={'query': pc})
+        response = self.client.get(f'/social?query={quote_plus(postcode)}')
 
         self.assertEqual(response.status_code, 200)
-        self.assertIn(f'0 results found for {pc}', str(response.data))
+        self.assertIn(f'0 results found for {postcode}', str(response.data))
 
-        # A blank postcode cannot be entered due to text validation in place on the UI
-        # If a blank post code is somehow entered, it is deemed invalid and will bear similar results to this test case
+    def test_format_result_address_all_fields_present(self):
+        sample_unit_attributes = {
+            'Prem1': '1',
+            'Prem2': '2',
+            'Prem3': '3',
+            'Prem4': '4',
+            'District': 'district',
+            'PostTown': 'posttown'
+        }
+
+        formatted_address = format_address_for_results(sample_unit_attributes)
+        self.assertEqual('1, 2, 3, 4, district, posttown',
+                         formatted_address,
+                         'Formatted address with all fields does not match requirement')
+
+    def test_format_result_address_missing_fields(self):
+        sample_unit_attributes = {
+            'Prem1': '1',
+            'PostTown': 'posttown'
+        }
+
+        formatted_address = format_address_for_results(sample_unit_attributes)
+        self.assertEqual('1, posttown',
+                         formatted_address,
+                         'Formatted address with missing fields does not match requirement')

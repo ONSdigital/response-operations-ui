@@ -6,7 +6,6 @@ from structlog import wrap_logger
 
 from response_operations_ui.controllers.case_controller import get_cases_by_sample_unit_id
 from response_operations_ui.controllers.sample_controllers import search_samples_by_postcode
-from response_operations_ui.forms import SearchForm
 
 logger = wrap_logger(logging.getLogger(__name__))
 social_bp = Blueprint('social_bp', __name__,
@@ -16,22 +15,18 @@ social_bp = Blueprint('social_bp', __name__,
 @login_required
 @social_bp.route('/', methods=['GET', 'POST'])
 def social_case_search():
-    form = SearchForm()
+    postcode = request.args.get('query')
 
-    if form.validate_on_submit():
-
-        postcode = request.form.get('query')
-        logger.info("Now retrieving cases for postcode", postcode=postcode)
+    if postcode:
+        logger.info("Retrieving cases for postcode", postcode=postcode)
 
         results = get_cases_by_postcode(postcode)
         return render_template('social.html',
                                results=results,
-                               postcode=postcode,
-                               form=form)
+                               postcode=postcode)
 
     return render_template('social.html',
-                           results=None,
-                           form=form)
+                           results=None)
 
 
 def get_cases_by_postcode(postcode):
@@ -50,7 +45,17 @@ def get_cases_by_postcode(postcode):
             if sample_unit['id'] == case['sampleUnitId']:
                 case_attributes.append({
                     'case': case,
-                    'attributes': sample_unit['sampleAttributes']['attributes']
+                    'attributes': sample_unit['sampleAttributes']['attributes'],
+                    'address': format_address_for_results(sample_unit['sampleAttributes']['attributes'])
                 })
 
     return case_attributes
+
+
+def format_address_for_results(sample_unit_attributes):
+    return ', '.join(filter(None, (sample_unit_attributes.get('Prem1'),
+                                   sample_unit_attributes.get('Prem2'),
+                                   sample_unit_attributes.get('Prem3'),
+                                   sample_unit_attributes.get('Prem4'),
+                                   sample_unit_attributes.get('District'),
+                                   sample_unit_attributes.get('PostTown'))))

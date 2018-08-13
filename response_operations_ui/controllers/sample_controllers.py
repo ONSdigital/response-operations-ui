@@ -65,7 +65,7 @@ def search_samples_by_postcode(postcode) -> dict:
         response.raise_for_status()
     except HTTPError:
         if response.status_code == 404:
-            logger.error("No samples were found for postcode", postcode=postcode)
+            logger.debug("No samples were found for postcode", postcode=postcode)
             return dict()
         logger.exception('Error searching for sample by postcode', status=response.status_code)
         raise ApiError(response)
