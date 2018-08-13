@@ -374,3 +374,63 @@ button{
      border-bottom:1px solid #4263c2;
      cursor: pointer;
 }
+
+/* Social */
+
+.cosy{
+  display: inline-block;
+}
+
+.case-search{
+  background-color: #e4e8eb;
+}
+
+.case-search-input2{
+  width: 8rem;
+}
+
+.case-search-submit2{
+  padding: 0.5rem 1rem;
+  margin-left: 0.5rem;
+}
+
+.social-case-search-results{
+  /* display: none; */
+}
+
+.case-search-results-info{
+  margin: 1rem 0 2rem 0;
+}
+
+.case-search-results-list{
+  list-style: none;
+  padding-left: 0;
+}
+
+.case-search-results-list__item{
+  margin-bottom: 1rem;
+}
+
+.results-list-ref{
+  margin-right: 1rem;
+}
+
+.results-list-postcode{
+  margin-right: 1rem;
+}
+
+.results-list-address{}
+
+.results-list-survey{
+  display: none;
+}
+
+.results-list-status{
+  display: none;
+}
+
+/* temporary styles for social */
+
+.case-address__prem{
+  display: block;
+}

@@ -1,6 +1,7 @@
 import logging
 
 import requests
+
 from flask import current_app as app
 from requests.exceptions import HTTPError, RequestException
 from structlog import wrap_logger
@@ -51,3 +52,23 @@ def upload_sample(short_name, period, file):
                  sample_id=sample_summary['id'])
 
     return sample_summary
+
+
+def search_samples_by_postcode(postcode) -> dict:
+    logger.debug("Searching for samples by postcode")
+
+    url = f'{app.config["SAMPLE_URL"]}/samples/sampleunits'
+    response = requests.get(url=url,
+                            auth=app.config['SAMPLE_AUTH'],
+                            params={'postcode': postcode})
+
+    try:
+        response.raise_for_status()
+    except HTTPError:
+        if response.status_code == 404:
+            logger.debug("No samples were found for postcode")
+            return dict()
+        logger.exception('Error searching for sample by postcode', status=response.status_code)
+        raise ApiError(response)
+
+    return response.json()
