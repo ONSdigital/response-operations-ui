@@ -1,11 +1,12 @@
 import logging
 import os
 
+import redis
 from flask import Flask
 from flask_assets import Bundle, Environment
 from flask_login import LoginManager
 from flask_session import Session
-import redis
+from structlog import wrap_logger
 
 from response_operations_ui.cloud.cloudfoundry import ONSCloudFoundry
 from response_operations_ui.logger_config import logger_initial_config
@@ -25,14 +26,16 @@ def create_app(config_name=None):
     js_min = Bundle('js/*', filters='jsmin', output='minimised/all.min.js')
     assets.register('js_all', js_min)
 
-    app_config = f'config.{config_name or os.environ.get("APP_SETTINGS", "Config")}'
+    config_name = config_name or os.environ.get("APP_SETTINGS", "Config")
+    app_config = f'config.{config_name}'
     app.config.from_object(app_config)
 
     app.url_map.strict_slashes = False
     app.secret_key = app.config['RESPONSE_OPERATIONS_UI_SECRET']
 
     logger_initial_config(service_name='response-operations-ui', log_level=app.config['LOGGING_LEVEL'])
-    logger = logging.getLogger(__name__)
+    logger = wrap_logger(logging.getLogger(__name__))
+    logger.info('Logger created', log_level=app.config['LOGGING_LEVEL'])
 
     login_manager = LoginManager(app)
     login_manager.init_app(app)
@@ -63,5 +66,7 @@ def create_app(config_name=None):
     Session(app)
 
     setup_blueprints(app)
+
+    logger.info("App setup complete", config=config_name)
 
     return app
