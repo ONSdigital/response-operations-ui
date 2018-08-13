@@ -134,8 +134,3 @@ class TestingConfig(DevelopmentConfig):
     SESSION_PERMANENT = False
     UAA_PUBLIC_KEY = 'Test'
     SECRET_KEY = 'sekrit!'
-
-
-class CFTestingConfig(DevelopmentConfig):
-    REDIS_SERVICE = "test"
-
