@@ -18,8 +18,6 @@ def social_case_search():
     postcode = request.args.get('query')
 
     if postcode:
-        logger.info("Retrieving cases for postcode", postcode=postcode)
-
         results = get_cases_by_postcode(postcode)
         return render_template('social.html',
                                results=results,
