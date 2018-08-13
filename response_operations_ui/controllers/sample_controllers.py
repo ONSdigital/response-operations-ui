@@ -55,17 +55,18 @@ def upload_sample(short_name, period, file):
 
 
 def search_samples_by_postcode(postcode) -> dict:
+    logger.debug("Searching for samples by postcode")
+
     url = f'{app.config["SAMPLE_URL"]}/samples/sampleunits'
     response = requests.get(url=url,
                             auth=app.config['SAMPLE_AUTH'],
                             params={'postcode': postcode})
 
-    logger.debug("Searching for samples by postcode", postcode=postcode)
     try:
         response.raise_for_status()
     except HTTPError:
         if response.status_code == 404:
-            logger.debug("No samples were found for postcode", postcode=postcode)
+            logger.debug("No samples were found for postcode")
             return dict()
         logger.exception('Error searching for sample by postcode', status=response.status_code)
         raise ApiError(response)
