@@ -13,7 +13,7 @@ social_bp = Blueprint('social_bp', __name__,
 
 
 @login_required
-@social_bp.route('/', methods=['GET', 'POST'])
+@social_bp.route('/', methods=['GET'])
 def social_case_search():
     postcode = request.args.get('query')
 
