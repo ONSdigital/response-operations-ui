@@ -34,7 +34,7 @@ def create_app(config_name=None):
 
     logger_initial_config(service_name='response-operations-ui', log_level=app.config['LOGGING_LEVEL'])
     logger = logging.getLogger(__name__)
-    logger.info('Logger created', level=app.config['LOGGING_LEVEL'])
+    logger.info('Logger created', log_level=app.config['LOGGING_LEVEL'])
 
     login_manager = LoginManager(app)
     login_manager.init_app(app)
