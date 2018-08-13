@@ -377,7 +377,6 @@ button{
 
 /* Social */
 
-
 .cosy{
   display: inline-block;
 }
@@ -391,13 +390,9 @@ button{
 }
 
 .case-search-submit2{
-
   padding: 0.5rem 1rem;
   margin-left: 0.5rem;
-
-
 }
-
 
 .social-case-search-results{
   /* display: none; */
@@ -407,7 +402,6 @@ button{
   margin: 1rem 0 2rem 0;
 }
 
-
 .case-search-results-list{
   list-style: none;
   padding-left: 0;
@@ -416,7 +410,6 @@ button{
 .case-search-results-list__item{
   margin-bottom: 1rem;
 }
-
 
 .results-list-ref{
   margin-right: 1rem;
@@ -435,8 +428,6 @@ button{
 .results-list-status{
   display: none;
 }
-
-
 
 /* temporary styles for social */
 
