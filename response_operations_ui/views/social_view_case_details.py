@@ -1,13 +1,12 @@
 import logging
-from flask import Blueprint, render_template
+from flask import render_template
 from flask_login import login_required
 from structlog import wrap_logger
 from response_operations_ui.controllers import case_controller, sample_controllers
 from response_operations_ui.common.mappers import map_social_case_status
+from response_operations_ui.views import social_bp
 
 logger = wrap_logger(logging.getLogger(__name__))
-social_bp = Blueprint('social_bp', __name__,
-                      static_folder='static', template_folder='templates')
 
 
 @social_bp.route('/case/<case_id>', methods=['GET'])
