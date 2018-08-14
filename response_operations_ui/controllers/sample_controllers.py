@@ -54,6 +54,22 @@ def upload_sample(short_name, period, file):
     return sample_summary
 
 
+def get_sample_attributes(sample_unit_id):
+    logger.debug('Retrieving sample attributes from sample unit', sample_unit_id=sample_unit_id)
+
+    url = f'{app.config["SAMPLE_URL"]}/samples/{sample_unit_id}/attributes'
+    response = requests.get(url, auth=app.config['SAMPLE_AUTH'])
+    try:
+        response.raise_for_status()
+    except HTTPError:
+        logger.error('Error retrieving sample attributes', sample_unit_id=sample_unit_id,
+                     status_code=response.status_code)
+        raise ApiError(response)
+
+    logger.debug('Successfully retrieved sample attributes', sample_unit_id=sample_unit_id)
+    return response.json()
+
+
 def search_samples_by_postcode(postcode) -> dict:
     logger.debug("Searching for samples by postcode")
 
@@ -61,7 +77,6 @@ def search_samples_by_postcode(postcode) -> dict:
     response = requests.get(url=url,
                             auth=app.config['SAMPLE_AUTH'],
                             params={'postcode': postcode})
-
     try:
         response.raise_for_status()
     except HTTPError:
