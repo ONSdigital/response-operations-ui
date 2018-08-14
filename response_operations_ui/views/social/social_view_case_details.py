@@ -1,9 +1,12 @@
 import logging
+
 from flask import render_template
 from flask_login import login_required
 from structlog import wrap_logger
-from response_operations_ui.controllers import case_controller, sample_controllers
+
 from response_operations_ui.common.mappers import map_social_case_status
+from response_operations_ui.controllers import case_controller, sample_controllers
+
 
 logger = wrap_logger(logging.getLogger(__name__))
 

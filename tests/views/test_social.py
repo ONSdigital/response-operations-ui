@@ -7,6 +7,7 @@ from config import TestingConfig
 from response_operations_ui.views.social.social_case_search import format_address_for_results
 from tests.views import ViewTestCase
 
+
 with open('tests/test_data/case/case_details.json') as f:
     case_details = json.load(f)
 

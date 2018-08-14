@@ -4,6 +4,7 @@ import requests_mock
 from config import TestingConfig
 from tests.views import ViewTestCase
 
+
 case_id = "8849c299-5014-4637-bd2b-fc866aeccdf5"
 sample_unit_id = "519bb700-1bd9-432d-9db7-d34ea1727415"
 

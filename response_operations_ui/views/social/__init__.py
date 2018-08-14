@@ -3,6 +3,7 @@ from flask import Blueprint
 from response_operations_ui.views.social.social_case_search import social_case_search
 from response_operations_ui.views.social.social_view_case_details import view_social_case_details
 
+
 social_bp = Blueprint('social_bp', __name__,
                       static_folder='static', template_folder='templates')
 

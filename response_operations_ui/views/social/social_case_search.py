@@ -7,6 +7,7 @@ from structlog import wrap_logger
 from response_operations_ui.controllers.case_controller import get_cases_by_sample_unit_id
 from response_operations_ui.controllers.sample_controllers import search_samples_by_postcode
 
+
 logger = wrap_logger(logging.getLogger(__name__))
 
 
