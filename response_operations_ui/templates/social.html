@@ -1,0 +1,34 @@
+{% extends "layouts/social-base.html" %}
+{% block page_title %}Social | Survey Data Collection{% endblock %}
+
+{% block main %}
+
+  <div role="main" id="main" class="page__main">
+    <div class="grid">
+      <div class="grid__col col-12@m">
+        <div id="case-search-results" class="social-case-search-results">
+          {% if results is not none %}
+            <h2 class="case-search-results-info" id="search-results-info">
+              {{ results|length }} result{% if results|length != 1 %}s{% endif %} found for {{ postcode }}
+            </h2>
+            <pl class="case-search-results-list" id="search-results-list">
+              {% for result in results %}
+                <li class="case-search-results-list__item" id="search-results-item-{{ loop.index }}">
+                  <span class="results-list-ref" id="search-results-ref-{{ loop.index }}"><a
+                          id="search-results-case-link-{{ loop.index }}"
+                          href="{{ url_for('social_bp.view_social_case_details', case_id=result.case.id) }}">
+                    {{ result.attributes.Reference }}</a></span>
+                  <span class="results-list-postcode"
+                        id="search-results-postcode-{{ loop.index }}">{{ result.attributes.Postcode }}</span>
+                  <span class="results-list-address"
+                        id="search-results-address-{{ loop.index }}">{{ result.address }}</span>
+                </li>
+              {% endfor %}
+            </pl>
+          {% endif %}
+        </div>
+      </div>
+    </div>
+  </div>
+
+{% endblock %}

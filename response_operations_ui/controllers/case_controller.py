@@ -1,10 +1,11 @@
 import logging
 
 import requests
+from flask import current_app as app
 from structlog import wrap_logger
 
-from response_operations_ui import app
 from response_operations_ui.exceptions.exceptions import ApiError
+
 
 logger = wrap_logger(logging.getLogger(__name__))
 
@@ -106,3 +107,23 @@ def is_allowed_status(status):
 def get_case_group_status_by_collection_exercise(case_groups, collection_exercise_id):
     return next((case_group['caseGroupStatus'] for case_group in case_groups
                  if case_group['collectionExerciseId'] == collection_exercise_id), None)
+
+
+def get_cases_by_sample_unit_id(sample_unit_ids):
+    logger.debug('Retrieving cases for sample unit IDs', sample_unit_ids=sample_unit_ids)
+    url = f'{app.config["CASE_URL"]}/cases/sampleunitids'
+
+    response = requests.get(url=url,
+                            auth=app.config['CASE_AUTH'],
+                            params={'sampleUnitId': sample_unit_ids})
+
+    if response.status_code == 404:
+        logger.debug("There were no cases found for sample unit ids", sample_unit_ids)
+        return {}
+    try:
+        response.raise_for_status()
+    except requests.HTTPError:
+        logger.exception('Error retrieving cases for sample unit IDs', sample_unit_ids=sample_unit_ids)
+        raise ApiError(response)
+
+    return response.json()

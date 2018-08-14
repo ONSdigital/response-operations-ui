@@ -1,0 +1,9 @@
+<div class="bar header__site" role="banner">
+  <div class="bar__inner container">
+    <div class="bar__title neptune"><a href="/">Survey Data Collection</a></div>
+    {% if current_user.is_authenticated %}
+      <div><a id="sign-out-btn" href="/logout" class="sign-out">Sign out</a></div>
+    {% endif %}
+  </div>
+</div>
+

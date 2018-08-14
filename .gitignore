@@ -53,7 +53,7 @@ coverage.xml
 *,cover
 .hypothesis/
 flask_session/
-pytest_cache
+.pytest_cache
 
 # Translations
 *.mo
@@ -101,3 +101,8 @@ ENV/
 
 # Minified
 minimised/
+
+# Floobits
+*.floo
+*.flooignore
+

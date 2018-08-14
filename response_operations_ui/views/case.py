@@ -7,6 +7,7 @@ from response_operations_ui.controllers import case_controller, collection_exerc
     party_controller, survey_controllers
 from response_operations_ui.forms import ChangeGroupStatusForm
 
+
 case_bp = Blueprint('case_bp', __name__, static_folder='static', template_folder='templates')
 
 

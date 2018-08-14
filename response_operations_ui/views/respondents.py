@@ -9,6 +9,7 @@ from response_operations_ui.forms import SearchForm
 
 
 logger = wrap_logger(logging.getLogger(__name__))
+
 respondent_bp = Blueprint('respondent_bp', __name__,
                           static_folder='static', template_folder='templates')
 
