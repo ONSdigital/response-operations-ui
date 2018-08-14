@@ -8,6 +8,7 @@ from response_operations_ui.views.messages import messages_bp
 from response_operations_ui.views.reporting_units import reporting_unit_bp
 from response_operations_ui.views.respondents import respondent_bp
 from response_operations_ui.views.sign_in import sign_in_bp
+from response_operations_ui.views.social import social_bp
 from response_operations_ui.views.surveys import surveys_bp
 from response_operations_ui.views.social_view_case_details import social_bp
 

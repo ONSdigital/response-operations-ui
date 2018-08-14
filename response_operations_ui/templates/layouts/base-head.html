@@ -1,12 +1,15 @@
 <!DOCTYPE html>
 <html lang="en">
-   <head>
+
+  <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, shrink-to-fit=no">
     <meta name="author" content="Survey Data Collection team for ONS" />
     <meta name="description" content="ONS Business Surveys" />
-     <title>{% block page_title %}{{ _('Survey Data Collection') }}{% endblock page_title %}</title>
-     <link rel=stylesheet type=text/css href="https://cdn.ons.gov.uk/sdc/322aece/css/styles.css">
+
+    <title>{% block page_title %}{{ _('Survey Data Collection') }}{% endblock page_title %}</title>
+
+    <link rel=stylesheet type=text/css href="https://cdn.ons.gov.uk/sdc/322aece/css/styles.css">
     {% assets "scss_all" %}
     <link rel=stylesheet type=text/css href="{{ ASSET_URL }}">
     {% endassets %}
@@ -16,5 +19,6 @@
     {% endassets %}
     <link href="/static/images/favicon.ico" rel="Shortcut Icon" />
   </head>
- {% block base %}{% endblock %}
+
+{% block base %}{% endblock %}
 </html>

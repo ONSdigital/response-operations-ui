@@ -1,15 +1,15 @@
 {% extends 'layouts/base-head.html' %}
 {% block base %}
-{%- block body %}
-<body style="position: relative; height: auto; min-height: 100%;">
-<div class="page account">
-    <div class="page__content">
+  {%- block body %}
+    <body style="position: relative; height: auto; min-height: 100%;">
+    <div class="page account">
+      <div class="page__content">
         {% include 'partials/social-header.html' %}
         <div class="container page__container">
-            {%- block main %}{% endblock main -%}
+          {%- block main %}{% endblock main -%}
         </div>
+      </div>
     </div>
-</div>
-</body>
-{% endblock body -%}
+    </body>
+  {% endblock body -%}
 {% endblock %}

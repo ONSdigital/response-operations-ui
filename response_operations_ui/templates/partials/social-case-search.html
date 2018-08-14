@@ -1,14 +1,14 @@
 <div class="case-search">
-    <div class="bar__inner container">
-        <form action="{{ url_for('social_bp.view_social_case_details', case_id=case_id) }}" method="post">
-            {{ form.csrf_token }}
-            <label class="label venus u-mt-s" for="postcode-search">Find case by postcode</label>
-            <div class="field cosy">
-                {{ form.query(size=8, class="input input--text case-search-input2")}}
-            </div>
-            <div class="cosy">
-                {{ form.submit(class_="btn btn--primary case-search-submit2") }}
-            </div>
-        </form>
-    </div>
+  <div class="bar__inner container">
+    <form action="{{ url_for('social_bp.social_case_search') }}" method='get'>
+      <label class="label venus u-mt-s" for="postcode-search">Find case by postcode</label>
+      <div class="field cosy">
+        <input class="input input--text case-search-input2" type="text" name="query" id="postcode-search"
+               maxlength="8" required/>
+      </div>
+      <div class="cosy">
+        <button type="submit" class="btn btn--primary case-search-submit2" id="postcode-search-submit">Search</button>
+      </div>
+    </form>
+  </div>
 </div>

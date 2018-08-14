@@ -1,0 +1,25 @@
+[
+  {
+    "state": "ACTIONABLE",
+    "id": "f3539cfd-6075-4f4c-82a8-87edb70e2bbd",
+    "actionPlanId": "7952e342-0291-4ea4-9f08-d046d2852e44",
+    "collectionInstrumentId": "628ddda3-df4b-48d2-8e38-8f00a6f4125c",
+    "partyId": "",
+    "sampleUnitId": "3eff4678-a8d1-41fd-b986-4e497de9bbda",
+    "iac": "",
+    "caseRef": "1000000000000016",
+    "createdBy": "SYSTEM",
+    "sampleUnitType": "H",
+    "createdDateTime": "2018-08-09T09:52:42.221Z",
+    "caseGroup": {
+      "collectionExerciseId": "7c776f35-a126-47fc-8b29-f4adf43ed263",
+      "id": "2f55d727-a20b-40f2-a4ca-d81747b263da",
+      "partyId": "",
+      "sampleUnitRef": "LMS100016",
+      "sampleUnitType": "H",
+      "caseGroupStatus": "NOTSTARTED"
+    },
+    "responses": [],
+    "caseEvents": ""
+  }
+]
