@@ -3,7 +3,7 @@
 {% block main %}
 
 <div class="container page__container">
-    <h1 class="jupiter u-mt-m" id="case_ref">{{attributes.Reference}}</h1>
+    <h1 class="jupiter u-mt-m" id="case_ref">{{attributes.TLA}}{{attributes.REFERENCE}}</h1>
     <div class="case-details u-mt-m">
         <dl class="description-list description-list-4" id="case-status">
             <dt class="description-list__name">
@@ -16,39 +16,29 @@
         <section class="social-case-section u-mt-l">
             <h2 class="neptune">Property address</h2>
             <dl class="survey-info info-panel" id="case-attributes">
-                {% if attributes.Prem1 %}
-                <dt class="case-address__prem" id="case-prem1">
-                    {{attributes.Prem1}}
+                {% if attributes.ADDRESS_LINE1 %}
+                <dt class="case-address__prem" id="case-address_line_1">
+                    {{attributes.ADDRESS_LINE1}}
                 </dt>
                 {% endif %}
-                {% if attributes.Prem2 %}
-                <dt class="case-address__prem" id="case-prem2">
-                    {{attributes.Prem2}}
+                {% if attributes.ADDRESS_LINE2 %}
+                <dt class="case-address__prem" id="case-address_line_2">
+                    {{attributes.ADDRESS_LINE2}}
                 </dt>
                 {% endif %}
-                {% if attributes.Prem3 %}
-                <dt class="case-address__prem" id="case-prem3">
-                    {{attributes.Prem3}}
+                {% if attributes.LOCALITY %}
+                <dt class="case-address__prem" id="case-locality">
+                    {{attributes.LOCALITY}}
                 </dt>
                 {% endif %}
-                {% if attributes.Prem4 %}
-                <dt class="case-address__prem" id="case-prem4">
-                    {{attributes.Prem4}}
+                {% if attributes.TOWN_NAME %}
+                <dt class="case-address__prem" id="case-town_name">
+                    {{attributes.TOWN_NAME}}
                 </dt>
                 {% endif %}
-                {% if attributes.District %}
-                <dt class="case-address__prem" id="case-district">
-                    {{attributes.District}}
-                </dt>
-                {% endif %}
-                {% if attributes.PostTown %}
-                <dt class="case-address__prem" id="case-post_town">
-                    {{attributes.PostTown}}
-                </dt>
-                {% endif %}
-                {% if attributes.Postcode %}
+                {% if attributes.POSTCODE %}
                 <dt class="case-address__prem postcode" id="case-postcode">
-                    {{attributes.Postcode}}
+                    {{attributes.POSTCODE}}
                 </dt>
                 {% endif %}
             </dl>

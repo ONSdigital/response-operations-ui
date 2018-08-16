@@ -32,7 +32,7 @@ class TestSocialCase(ViewTestCase):
 
         self.assertEqual(response.status_code, 200)
         self.assertIn("LMS0001".encode(), response.data)
-        self.assertIn("TS184QG".encode(), response.data)
+        self.assertIn("NV184QG".encode(), response.data)
         self.assertIn("In progress".encode(), response.data)
 
     @requests_mock.mock()

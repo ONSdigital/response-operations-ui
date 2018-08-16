@@ -49,9 +49,7 @@ def get_cases_by_postcode(postcode):
 
 
 def format_address_for_results(sample_unit_attributes):
-    return ', '.join(filter(None, (sample_unit_attributes.get('Prem1'),
-                                   sample_unit_attributes.get('Prem2'),
-                                   sample_unit_attributes.get('Prem3'),
-                                   sample_unit_attributes.get('Prem4'),
-                                   sample_unit_attributes.get('District'),
-                                   sample_unit_attributes.get('PostTown'))))
+    return ', '.join(filter(None, (sample_unit_attributes.get('ADDRESS_LINE1'),
+                                   sample_unit_attributes.get('ADDRESS_LINE2'),
+                                   sample_unit_attributes.get('LOCALITY'),
+                                   sample_unit_attributes.get('TOWN_NAME'))))

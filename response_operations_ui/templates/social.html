@@ -17,9 +17,9 @@
                   <span class="results-list-ref" id="search-results-ref-{{ loop.index }}"><a
                           id="search-results-case-link-{{ loop.index }}"
                           href="{{ url_for('social_bp.view_social_case_details', case_id=result.case.id) }}">
-                    {{ result.attributes.Reference }}</a></span>
+                    {{ result.attributes.REFERENCE }}</a></span>
                   <span class="results-list-postcode"
-                        id="search-results-postcode-{{ loop.index }}">{{ result.attributes.Postcode }}</span>
+                        id="search-results-postcode-{{ loop.index }}">{{ result.attributes.POSTCODE }}</span>
                   <span class="results-list-address"
                         id="search-results-address-{{ loop.index }}">{{ result.address }}</span>
                 </li>
