@@ -13,6 +13,8 @@ from response_operations_ui.logger_config import logger_initial_config
 from response_operations_ui.user import User
 from response_operations_ui.views import setup_blueprints
 
+cf = ONSCloudFoundry()
+
 
 def create_app(config_name=None):
     app = Flask(__name__)
@@ -26,8 +28,7 @@ def create_app(config_name=None):
     js_min = Bundle('js/*', filters='jsmin', output='minimised/all.min.js')
     assets.register('js_all', js_min)
 
-    config_name = config_name or os.environ.get("APP_SETTINGS", "Config")
-    app_config = f'config.{config_name}'
+    app_config = f'config.{config_name or os.environ.get("APP_SETTINGS", "Config")}'
     app.config.from_object(app_config)
 
     app.url_map.strict_slashes = False
@@ -45,20 +46,19 @@ def create_app(config_name=None):
     def user_loader(user_id):
         return User(user_id)
 
-    if app.config['SESSION_TYPE'] == 'redis':
-        cf = ONSCloudFoundry()
-        # If deploying in cloudfoundry set config to use cf redis instance
-        if cf:
-            redis_service_name = app.config['REDIS_SERVICE']
+    if cf.detected:
+        with app.app_context():
+            # If deploying in cloudfoundry set config to use cf redis instance
             logger.info('Cloudfoundry detected, setting service configurations')
-            redis_service = cf.redis(redis_service_name)
-            app.config['REDIS_HOST'] = redis_service.credentials['host']
-            app.config['REDIS_PORT'] = redis_service.credentials['port']
 
-        # wrap in the flask server side session manager and back it by redis
-        app.config['SESSION_REDIS'] = redis.StrictRedis(host=app.config['REDIS_HOST'],
-                                                        port=app.config['REDIS_PORT'],
-                                                        db=app.config['REDIS_DB'])
+            service = cf.redis
+            app.config['REDIS_HOST'] = service.credentials['host']
+            app.config['REDIS_PORT'] = service.credentials['port']
+
+            # wrap in the flask server side session manager and back it by redis
+            app.config['SESSION_REDIS'] = redis.StrictRedis(host=app.config['REDIS_HOST'],
+                                                            port=app.config['REDIS_PORT'],
+                                                            db=app.config['REDIS_DB'])
 
     if app.config['DEBUG']:
         app.jinja_env.auto_reload = True
@@ -66,7 +66,5 @@ def create_app(config_name=None):
     Session(app)
 
     setup_blueprints(app)
-
-    logger.info("App setup complete", config=config_name)
 
     return app
