@@ -48,12 +48,12 @@ def create_app(config_name=None):
         return User(user_id)
 
     if cf.detected:
-        # If deploying in cloudfoundry set config to use cf redis instance
-        logger.info('Cloudfoundry detected, setting service configurations')
-
-        service = cf.redis
-        app.config['REDIS_HOST'] = service.credentials['host']
-        app.config['REDIS_PORT'] = service.credentials['port']
+        with app.app_context():
+            # If deploying in cloudfoundry set config to use cf redis instance
+            logger.info('Cloudfoundry detected, setting service configurations')
+            service = cf.redis
+            app.config['REDIS_HOST'] = service.credentials['host']
+            app.config['REDIS_PORT'] = service.credentials['port']
 
     # wrap in the flask server side session manager and back it by redis
     app.config['SESSION_REDIS'] = redis.StrictRedis(host=app.config['REDIS_HOST'],
