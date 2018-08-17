@@ -23,7 +23,7 @@ def create_app(config_name=None):
     # Load css and js assets
     assets = Environment(app)
     assets.url = app.static_url_path
-    scss_min = Bundle('css/*', 'css/fonts/*', 'css/components/*',
+    scss_min = Bundle('css/*', 'css/components/*',
                       filters=['cssmin'], output='minimised/all.min.css')
     assets.register('scss_all', scss_min)
     js_min = Bundle('js/*', filters='jsmin', output='minimised/all.min.js')

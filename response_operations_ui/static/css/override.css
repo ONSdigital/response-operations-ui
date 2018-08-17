@@ -1,6 +1,6 @@
 /* Override styles - temporary for prototype */
 
-@import "/css/components/breadcrumb.css";
+/* @import "/css/components/breadcrumb.css";
 @import "/css/components/data-panel.css";
 @import "/css/components/file-picker.css";
 @import "/css/components/footer.css";
@@ -13,7 +13,7 @@
 @import "/css/components/pagination.css";
 @import "/css/components/pills.css";
 @import "/css/components/spoke.css";
-@import "/css/components/table.css";
+@import "/css/components/table.css"; */
 /* @import "/css/components/utilities.css"; */
 
 
@@ -93,16 +93,6 @@ footer{
 .not-mvp {
   display: none;
 }
-
-
-/* Does this active style need to go into CDN? */
-
-a:active{
-  color: white;
-  background: #4263c2;
-  outline: 3px solid white;
-}
-
 
 /* new button icon for copy from material design icon library */
 
@@ -364,15 +354,6 @@ input[type="file"] {
   color: #D0021B;
 }
 
-button{
-     background:none;
-     color: #4263c2;
-     border:none;
-     padding:0;
-     font: inherit;
-     border-bottom:1px solid #4263c2;
-     cursor: pointer;
-}
 
 /* Social */
 

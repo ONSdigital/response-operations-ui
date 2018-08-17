@@ -1,13 +1,11 @@
-<ol id="breadcrumbs" class="breadcrumb">
-  <li id="breadcrumb-1" class="breadcrumb--item mercury">
-    <a href="/">Home</a>
-  </li>
-  {% for breadcrumb in breadcrumbs[:-1] %}
-  <li id="breadcrumb-{{loop.index+1}}" class="breadcrumb--item mercury">
-    <a href={{breadcrumb.link}}>{{breadcrumb.title}}</a>
-  </li>
-  {% endfor %}
-  <li id="breadcrumb-{{breadcrumbs | length + 1}}" class="breadcrumb--item__current mercury">
-    {{breadcrumbs[-1].title}}
-  </li>
-</ol>
+<nav class="breadcrumb" aria-label="Breadcrumb">
+    <ol class="breadcrumb__items">
+        <li id="breadcrumb-1" class="breadcrumb__item icon--breadcrumb"><a href="/" class="breadcrumb__link pluto">Home</a></li>
+        {% for breadcrumb in breadcrumbs[:-1] %}
+        <li id="breadcrumb-{{loop.index+1}}" class="breadcrumb__item icon--breadcrumb">
+          <a href={{breadcrumb.link}} class="breadcrumb__link pluto">{{breadcrumb.title}}</a>
+        </li>
+        {% endfor %}
+        <li id="breadcrumb-{{breadcrumbs | length + 1}}" class="breadcrumb__item breadcrumb__item--current pluto" aria-current="page">{{breadcrumbs[-1].title}}</li>
+    </ol>
+</nav>
