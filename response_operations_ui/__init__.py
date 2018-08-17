@@ -55,10 +55,10 @@ def create_app(config_name=None):
             app.config['REDIS_HOST'] = redis_service.credentials['host']
             app.config['REDIS_PORT'] = redis_service.credentials['port']
 
-        # wrap in the flask server side session manager and back it by redis
-        app.config['SESSION_REDIS'] = redis.StrictRedis(host=app.config['REDIS_HOST'],
-                                                        port=app.config['REDIS_PORT'],
-                                                        db=app.config['REDIS_DB'])
+    # wrap in the flask server side session manager and back it by redis
+    app.config['SESSION_REDIS'] = redis.StrictRedis(host=app.config['REDIS_HOST'],
+                                                    port=app.config['REDIS_PORT'],
+                                                    db=app.config['REDIS_DB'])
 
     if app.config['DEBUG']:
         app.jinja_env.auto_reload = True
