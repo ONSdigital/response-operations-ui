@@ -17,6 +17,7 @@ def view_social_case_details(case_id):
     sample_attributes = sample_controllers.get_sample_attributes(social_case['sampleUnitId'])
 
     mapped_status = map_social_case_status(social_case['caseGroup']['caseGroupStatus'])
+    complete_reference = sample_attributes['attributes']['TLA'] + sample_attributes['attributes']['REFERENCE']
 
     return render_template('social-view-case-details.html', attributes=sample_attributes['attributes'],
-                           status=mapped_status)
+                           status=mapped_status, case_reference=complete_reference)
