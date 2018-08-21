@@ -84,7 +84,7 @@
     <div>
     {% if show_set_live_button %}
       <form id="form-ready-for-live" action="" class="form" method="post" enctype="multipart/form-data">
-        <button id="btn-ready-for-live" onclick="return confirm('There\'s no going back...')" name="ready-for-live" class="btn btn--primary" type="submit">Set as ready for live</button>
+        <button id="btn-ready-for-live" onclick="return confirm('There\'s no going back...')" name="ready-for-live" class="btn " type="submit">Set as ready for live</button>
       </form>
     {% endif %}
     </div>
@@ -340,8 +340,8 @@
 
               <div id="sample-preview" class="u-mb-s"></div>
 
-              <button id="btn-check-sample-contents" class="btn btn--primary unready" type="button" disabled="">Check sample contents</button>
-              <button id="btn-load-sample" name="load-sample" class="btn btn--primary hidden" type="submit">Load sample</button>
+              <button id="btn-check-sample-contents" class="btn  unready" type="button" disabled="">Check sample contents</button>
+              <button id="btn-load-sample" name="load-sample" class="btn  hidden" type="submit">Load sample</button>
               <button id="btn-cancel-load-sample" class="btn btn--secondary hidden" type="button" onclick="cancelLoadSample()">Cancel</button>
             </form>
           </div>
@@ -403,7 +403,7 @@
                 </div>
                 {% endfor %}
                 <div>
-                  <button id="btn-add-ci" name="select-ci" class="btn btn--primary unready" type="submit">Add</button>
+                  <button id="btn-add-ci" name="select-ci" class="btn  unready" type="submit">Add</button>
                 </div>
               </div>
             </div>
@@ -423,7 +423,7 @@
                 <input type="file" class="u-mb-s" name="ciFile" id="ciFile" required accept=".xlsx" onchange="checkSelectedCI(this.files)" />
               </div>
             </div>
-            <button id="btn-load-ci" name="load-ci" class="btn btn--primary unready">Add CI</button>
+            <button id="btn-load-ci" name="load-ci" class="btn  unready">Add CI</button>
           </form>
           {% endif %}
         </div>

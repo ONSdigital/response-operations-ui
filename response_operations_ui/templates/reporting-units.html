@@ -18,14 +18,14 @@
                     </div>
 
                     <div>
-                        <button id="btn-search-ru" type="submit" class="btn btn--primary">Search</button>
+                        <button id="btn-search-ru" type="submit" class="btn ">Search</button>
                     </div>
                 </form>
 
             </div>
 
             {% if business_list is not none and business_list|length==0 %}
-            No results found
+            <div class="u-mt-m">No results found</div>
             {% endif %}
 
             {% if business_list %}

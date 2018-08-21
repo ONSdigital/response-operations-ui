@@ -28,13 +28,19 @@
   {% endif %}
   <div class="grid">
     <div class="grid__col col-12@m">
-      <nav class="sm-nav u-mb-l">
-        <h2 class="u-vh">Messages navigation</h2>
-          <ul class="nav-pills">
-            <li class="nav-pills__pill{% if not is_closed %}--active {% endif %}"><a class="pill-label" href="{{ url_for('messages_bp.view_selected_survey', selected_survey=selected_survey) }}">Open</a></li>
-            <li class="nav-pills__pill{% if is_closed %}--active {% endif %}"><a class="pill-label" href="{{ url_for('messages_bp.view_selected_survey', selected_survey=selected_survey, is_closed='true') }}">Closed</a></li>
-          </ul>
-      </nav>
+      <nav class="nav nav--horizontal nav--sub nav--dark u-mb-l u-pt-s" role="menu">
+        <div class="container container--wide">
+            <ul class="nav__list" aria-label="Section navigation menu">
+                <li class="nav__item pluto {% if not is_closed %}nav__item--current{% endif %}">
+                    <a class="nav__link" href="{{ url_for('messages_bp.view_selected_survey', selected_survey=selected_survey) }}" aria-current="{% if not is_closed %}location{% endif %}" role="menuitem">Open</a>
+                </li>
+                <li class="nav__item pluto {% if is_closed %}nav__item--current{% endif %}">
+                    <a class="nav__link" href="{{ url_for('messages_bp.view_selected_survey', selected_survey=selected_survey, is_closed='true') }}" aria-current="{% if is_closed %}location{% endif %}" role="menuitem">Closed</a>
+                </li>
+            </ul>
+        </div>
+    </nav>
+
       <div class="messages-list">
         {% if response_error %}
         <div class="container page__container">

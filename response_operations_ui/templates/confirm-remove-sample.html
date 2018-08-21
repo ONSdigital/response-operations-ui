@@ -11,7 +11,7 @@
     <form action="" method="post">
       {{ form.csrf_token }}
       <div>Remove sample from {{short_name}} {{period}}?</div>
-      <button class="btn btn--primary u-mt-l" id="remove-sample-btn">Remove sample</button>
+      <button class="btn  u-mt-l" id="remove-sample-btn">Remove sample</button>
       <div>
         <a id="cancel-btn" href="{{ url_for('collection_exercise_bp.view_collection_exercise', short_name=short_name, period=period) }}">Cancel</a>
       </div>
