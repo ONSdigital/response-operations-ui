@@ -20,4 +20,5 @@ def view_social_case_details(case_id):
     complete_reference = sample_attributes['attributes']['TLA'] + sample_attributes['attributes']['REFERENCE']
 
     return render_template('social-view-case-details.html', attributes=sample_attributes['attributes'],
+                           displayed_attributes=['ADDRESS_LINE1', 'ADDRESS_LINE2', 'LOCALITY', 'TOWN_NAME', 'POSTCODE'],
                            status=mapped_status, case_reference=complete_reference)

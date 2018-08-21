@@ -16,31 +16,11 @@
         <section class="social-case-section u-mt-l">
             <h2 class="neptune">Property address</h2>
             <dl class="survey-info info-panel" id="case-attributes">
-                {% if attributes.ADDRESS_LINE1 %}
-                <dt class="case-address__prem" id="case-address-line-1">
-                    {{attributes.ADDRESS_LINE1}}
-                </dt>
-                {% endif %}
-                {% if attributes.ADDRESS_LINE2 %}
-                <dt class="case-address__prem" id="case-address-line-2">
-                    {{attributes.ADDRESS_LINE2}}
-                </dt>
-                {% endif %}
-                {% if attributes.LOCALITY %}
-                <dt class="case-address__prem" id="case-locality">
-                    {{attributes.LOCALITY}}
-                </dt>
-                {% endif %}
-                {% if attributes.TOWN_NAME %}
-                <dt class="case-address__prem" id="case-town-name">
-                    {{attributes.TOWN_NAME}}
-                </dt>
-                {% endif %}
-                {% if attributes.POSTCODE %}
-                <dt class="case-address__prem postcode" id="case-postcode">
-                    {{attributes.POSTCODE}}
-                </dt>
-                {% endif %}
+            {% for name in displayed_attributes %}
+              <dt class="case-address__{{ name|lower }}" id="case-{{ name|lower|replace('_', '-') }}">
+                {{ attributes[name] }}
+              </dt>
+            {% endfor %}
             </dl>
         </section>
     </div>
