@@ -1,133 +1,95 @@
+{% extends "layouts/spoke.html" %}
+{% block page_title %} Edit survey details {% endblock %}
+{% block main %}
 
-<html dir="ltr" lang="en-gb">
-<head>
-
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, shrink-to-fit=no">
-
-  <title>Edit contact details</title>
-
-  <link rel=stylesheet type=text/css href="https://cdn.ons.gov.uk/sdc/322aece/css/styles.css">
-  {% assets "scss_all" %}
-    <link rel=stylesheet type=text/css href="{{ ASSET_URL }}">
-  {% endassets %}
-
-  <link href="/static/images/favicon.ico" rel="Shortcut Icon" />
-
-</head>
-
-<body class="spoke">
-
-  <div class="page">
-
-    <div class="page__content">
-
-      <div class="container page__container">
-
-        <div class="grid">
-          <div class="grid__col col-3@l">
-          </div>
-
-          <div class="grid__col col-6@l">
-
-            <div role="main" id="main" class="page__main">
+<div role="main" id="main" class="page__main">
 
 
-              <div class="spoke__header">
+  <div class="spoke__header">
 
-                <div class="spoke__header__title">
+    <div class="spoke__header__title">
 
-                  <h1 class="jupiter">Edit contact details</h1>
+      <h1 class="jupiter">Edit contact details</h1>
 
-                </div>
+    </div>
 
-              </div>
+  </div>
 
-              <div class="spoke__body">
+  <div class="spoke__body">
 
-                <form action="{{ url_for('reporting_unit_bp.edit_contact_details', ru_ref=ru_ref, respondent_id=respondent_details.id) }}" method="post">
-                {{ form.csrf_token }}
-                {% if error_type == 'api error' %}
-                <div class="panel panel--simple panel--error u-mb-l">
-                  <div class="panel__body" id="save-error">
-                    <h2 id='error-saving-message' class="venus">Connection error</h2>
-                    <p class="mars">Please try saving your changes again.</p>
-                  </div>
-                </div>
-                {% endif %}
-
-                {% if error_type == 'email conflict' %}
-                <div class="panel panel--simple panel--error u-mb-l">
-                  <div class="panel__body" id="save-email-error">
-                    <h2 id='error-saving-email' class="venus">Error - email address already exists</h2>
-                    <p class="mars">Please enter a different email address.</p>
-                  </div>
-                </div>
-                {% endif %}
-
-                <div class="field u-mb-l">
-                    <label class="label" for="lastName">
-                      Last name
-                      <span class="secondary-info current-value">
-                        <span class="u-vh">Current value: </span>
-                        {{ respondent_details.lastName }}
-                      </span>
-                    </label>
-                  {{ form.last_name(class_="input input--text", id='lastName', required=required, maxlength=254) }}
-                </div>
-
-                <div class="field u-mb-l">
-                    <label class="label" for="firstName">
-                      First name
-                      <span class="secondary-info current-value">
-                        <span class="u-vh">Current value: </span>
-                        {{ respondent_details.firstName }}
-                      </span>
-                    </label>
-                  {{ form.first_name(class_="input input--text", id='firstName', required=required, maxlength=254) }}
-                </div>
-
-                <div class="field u-mb-l">
-                    <label class="label" for="email">
-                      Email address
-                      <span class="secondary-info current-value">
-                        <span class="u-vh">Current value: </span>
-                        {{ respondent_details.emailAddress }}
-                      </span>
-                      <span class="label__description pluto">ONS will send a verification email to the new address</span>
-                    </label>
-                  {{ form.email(class_="input input--text", id='email', required=required, maxlength=254, type="email") }}
-                    <input type="hidden" name="hidden_email" value={{ respondent_details.emailAddress }}>
-                </div>
-
-                <div class="field u-mb-m">
-                    <label class="label" for="telephone">
-                      Phone number
-                      <span class="secondary-info current-value">
-                        <span class="u-vh">Current value: </span>
-                        {{ respondent_details.telephone }}
-                      </span>
-                    </label>
-                  {{ form.telephone(class_="input input--text", id='telephone', required=required, maxlength=254) }}
-                </div>
-
-                <button class="btn btn--primary u-mt-s" id="save-btn">Save changes</button>
-                </form>
-
-                <div>
-                  <a id="cancel-btn" href="{{ url_for('reporting_unit_bp.view_reporting_unit', ru_ref=ru_ref) }}">Cancel</a>
-                </div>
-
-
-              </div>
-            </div>
-          </div>
-
-          <div class="grid__col col-3@l">
-          </div>
+    <form action="{{ url_for('reporting_unit_bp.edit_contact_details', ru_ref=ru_ref, respondent_id=respondent_details.id) }}" method="post">
+      {{ form.csrf_token }}
+      {% if error_type == 'api error' %}
+      <div class="panel panel--simple panel--error u-mb-l">
+        <div class="panel__body" id="save-error">
+          <h2 id='error-saving-message' class="venus">Connection error</h2>
+          <p class="mars">Please try saving your changes again.</p>
         </div>
       </div>
+      {% endif %}
+
+      {% if error_type == 'email conflict' %}
+      <div class="panel panel--simple panel--error u-mb-l">
+        <div class="panel__body" id="save-email-error">
+          <h2 id='error-saving-email' class="venus">Error - email address already exists</h2>
+          <p class="mars">Please enter a different email address.</p>
+        </div>
+      </div>
+      {% endif %}
+
+      <div class="field u-mb-l">
+          <label class="label" for="lastName">
+            Last name
+            <span class="secondary-info current-value">
+              <span class="u-vh">Current value: </span>
+              {{ respondent_details.lastName }}
+            </span>
+          </label>
+        {{ form.last_name(class_="input input--text", id='lastName', required=required, maxlength=254) }}
+      </div>
+
+      <div class="field u-mb-l">
+          <label class="label" for="firstName">
+            First name
+            <span class="secondary-info current-value">
+              <span class="u-vh">Current value: </span>
+              {{ respondent_details.firstName }}
+            </span>
+          </label>
+        {{ form.first_name(class_="input input--text", id='firstName', required=required, maxlength=254) }}
+      </div>
+
+      <div class="field u-mb-l">
+          <label class="label" for="email">
+            Email address
+            <span class="secondary-info current-value">
+              <span class="u-vh">Current value: </span>
+              {{ respondent_details.emailAddress }}
+            </span>
+            <span class="label__description pluto">ONS will send a verification email to the new address</span>
+          </label>
+        {{ form.email(class_="input input--text", id='email', required=required, maxlength=254, type="email") }}
+          <input type="hidden" name="hidden_email" value={{ respondent_details.emailAddress }}>
+      </div>
+
+      <div class="field u-mb-m">
+          <label class="label" for="telephone">
+            Phone number
+            <span class="secondary-info current-value">
+              <span class="u-vh">Current value: </span>
+              {{ respondent_details.telephone }}
+            </span>
+          </label>
+        {{ form.telephone(class_="input input--text", id='telephone', required=required, maxlength=254) }}
+      </div>
+
+      <button class="btn u-mb-s" id="save-btn">Save changes</button>
+    </form>
+    <div>
+      <a id="cancel-btn" href="{{ url_for('reporting_unit_bp.view_reporting_unit', ru_ref=ru_ref) }}">Cancel</a>
     </div>
   </div>
-</body>
-</html>
+</div>
+
+{% endblock %}
+
