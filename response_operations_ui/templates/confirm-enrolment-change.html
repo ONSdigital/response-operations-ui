@@ -10,8 +10,9 @@
     </div>
   </div>
   <div class="spoke__body">
-    <form method="post" action="{{ url_for('reporting_unit_bp.change_enrolment_status', ru_ref=ru_ref, business_id=business_id,
-                                           survey_id=survey_id, respondent_id=respondent_id, change_flag=change_flag)}}" class="u-mt-l">
+    <form method="post" action="{{ url_for('reporting_unit_bp.change_enrolment_status', ru_ref=ru_ref,
+                                           business_id=business_id, survey_id=survey_id, respondent_id=respondent_id,
+                                           change_flag=change_flag)}}" class="u-mt-l">
       <dl class="description-list description-list-8 u-pb-m">
         <dt class="">
           Reference:
@@ -50,7 +51,7 @@
       </dl>
 
       <button type="submit" id="confirm-btn" class="btn btn--primary u-mt-s">
-        {% if change_flag == 'DISABLED' %}Disable{% else %}Enable{% endif %} enrolment?
+        {% if change_flag == 'DISABLED' %}Disable{% else %}Enable{% endif %} enrolment
       </button>
 
       <div class="u-mt-xs">
