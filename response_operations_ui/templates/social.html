@@ -17,7 +17,7 @@
                   <span class="results-list-ref" id="search-results-ref-{{ loop.index }}"><a
                           id="search-results-case-link-{{ loop.index }}"
                           href="{{ url_for('social_bp.view_social_case_details', case_id=result.case.id) }}">
-                          {{ result.attributes.TLA }}{{ result.attributes.REFERENCE }}</a></span>
+                          {{ result.case.caseGroup.sampleUnitRef }}</a></span>
                   <span class="results-list-postcode"
                         id="search-results-postcode-{{ loop.index }}">{{ result.attributes.POSTCODE }}</span>
                   <span class="results-list-address"
