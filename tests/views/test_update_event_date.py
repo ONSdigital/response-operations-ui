@@ -47,7 +47,7 @@ class TestUpdateEventDate(ViewTestCase):
         self.update_event_form = {
             "day": "01",
             "month": "01",
-            "year": "2018",
+            "year": "2030",
             "hour": "01",
             "minute": "00"
         }
