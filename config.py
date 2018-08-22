@@ -19,11 +19,6 @@ class Config(object):
     ADD_EVENT_DATES_ENABLED = strtobool(os.getenv('ADD_EVENT_DATES_ENABLED', 'False'))
     USE_SESSION_FOR_NEXT = True
 
-    # Zipkin
-    ZIPKIN_DISABLE = bool(strtobool(os.getenv("ZIPKIN_DISABLE", "False")))
-    ZIPKIN_DSN = os.getenv("ZIPKIN_DSN", None)
-    ZIPKIN_SAMPLE_RATE = int(os.getenv("ZIPKIN_SAMPLE_RATE", 0))
-
     # Service Configs
     CASE_URL = os.getenv('CASE_URL')
     CASE_USERNAME = os.getenv('CASE_USERNAME')
