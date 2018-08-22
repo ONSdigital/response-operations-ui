@@ -30,8 +30,7 @@ cfenv = "==0.5.3"
 cryptography = "==2.3"
 flask-paginate = "*"
 python-dateutil = "*"
-requestsdefaulter = {git = "https://github.com/ONSdigital/requestsdefaulter.git", editable = true}
-flask-zipkin = "*"
+
 
 [dev-packages]
 

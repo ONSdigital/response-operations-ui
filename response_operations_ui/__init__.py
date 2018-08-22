@@ -1,13 +1,11 @@
 import logging
 import os
-import requestsdefaulter
 
 import redis
 from flask import Flask
 from flask_assets import Bundle, Environment
 from flask_login import LoginManager
 from flask_session import Session
-from flask_zipkin import Zipkin
 from structlog import wrap_logger
 
 from response_operations_ui.cloud.cloudfoundry import ONSCloudFoundry
@@ -21,7 +19,6 @@ cf = ONSCloudFoundry()
 
 def create_app(config_name=None):
     app = Flask(__name__)
-    app.name = "response_operations_ui"
 
     # Load css and js assets
     assets = Environment(app)
@@ -37,10 +34,6 @@ def create_app(config_name=None):
 
     app.url_map.strict_slashes = False
     app.secret_key = app.config['RESPONSE_OPERATIONS_UI_SECRET']
-
-    # Zipkin
-    zipkin = Zipkin(app=app, sample_rate=app.config.get("ZIPKIN_SAMPLE_RATE"))
-    requestsdefaulter.default_headers(zipkin.create_http_headers_for_new_span)
 
     logger_initial_config(service_name='response-operations-ui', log_level=app.config['LOGGING_LEVEL'])
     logger = wrap_logger(logging.getLogger(__name__))
