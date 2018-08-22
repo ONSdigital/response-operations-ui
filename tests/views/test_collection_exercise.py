@@ -1,10 +1,10 @@
 import copy
 import json
-import mock
 from io import BytesIO
 from unittest.mock import patch
 from urllib.parse import urlencode, urlparse
 
+import mock
 import requests_mock
 
 from config import TestingConfig

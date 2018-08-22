@@ -1,7 +1,7 @@
-from datetime import datetime
-from distutils.util import strtobool
 import json
 import logging
+from datetime import datetime
+from distutils.util import strtobool
 
 from flask import Blueprint, current_app as app, flash, g, Markup, render_template, request, redirect, session, url_for
 from flask_login import login_required, current_user
