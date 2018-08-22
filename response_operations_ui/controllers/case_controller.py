@@ -127,3 +127,41 @@ def get_cases_by_sample_unit_id(sample_unit_ids):
         raise ApiError(response)
 
     return response.json()
+
+
+def get_iac_url(case_id):
+    return f'{app.config["CASE_URL"]}/cases/{case_id}/iac'
+
+
+def generate_iac(case_id):
+    url = get_iac_url(case_id)
+    logger.info('Generating new IAC', case_id=case_id, url=url)
+
+    response = requests.post(url=url,
+                             auth=app.config['CASE_AUTH'])
+
+    try:
+        response.raise_for_status()
+    except requests.HTTPError:
+        logger.exception('Error generating IAC', case_id=case_id)
+        raise ApiError(response)
+
+    return response.json()['iac']
+
+
+def get_iac_count_for_case(case_id):
+    url = get_iac_url(case_id)
+
+    response = requests.get(url=url, auth=app.config['CASE_AUTH'])
+
+    try:
+        response.raise_for_status()
+    except requests.HTTPError:
+        logger.exception('Error getting IAC count', case_id=case_id, url=url)
+        raise ApiError(response)
+
+    iac_count = len(response.json())
+
+    logger.debug("IAC count for case", case_id=case_id, url=url, iac_count=iac_count)
+
+    return iac_count
