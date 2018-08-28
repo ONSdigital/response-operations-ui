@@ -18,7 +18,7 @@ def api_error(error):
                  status_code=500,
                  api_url=error.url,
                  api_status_code=error.status_code)
-    return render_template('errors/500-error.html')
+    return render_template('errors/500-error.html'), 500
 
 
 @error_bp.app_errorhandler(UpdateContactDetailsException)

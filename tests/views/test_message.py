@@ -95,13 +95,13 @@ class TestMessage(ViewTestCase):
     @patch('response_operations_ui.controllers.message_controllers._get_jwt')
     def test_survey_short_name_failure(self, mock_request, mock_get_jwt):
         mock_get_jwt.return_value = "blah"
-        mock_request.get(url_get_threads_list, json=thread_list)
-        mock_request.get(url_get_surveys_list, json=self.surveys_list_json)
         mock_request.get(shortname_url + "/ASHE", status_code=500)
 
-        self.client.get("/messages/ASHE", follow_redirects=True)
+        response = self.client.get("/messages/ASHE", follow_redirects=True)
 
-        self.assertApiError(shortname_url + "/ASHE", 500)
+        request_history = mock_request.request_history
+        self.assertEqual(len(request_history), 1)
+        self.assertEqual(response.status_code, 500)
 
     @requests_mock.mock()
     @patch('response_operations_ui.controllers.message_controllers._get_jwt')
@@ -213,9 +213,11 @@ class TestMessage(ViewTestCase):
         mock_request.get(url_get_threads_list, status_code=500)
         mock_request.get(shortname_url + "/ASHE", json=ashe_info['survey'])
 
-        self.client.get("/messages/ASHE", follow_redirects=True)
+        response = self.client.get("/messages/ASHE", follow_redirects=True)
 
-        self.assertApiError(f'{url_get_threads_list}{params}&is_closed=false', 500)
+        request_history = mock_request.request_history
+        self.assertEqual(len(request_history), 3)
+        self.assertEqual(response.status_code, 500)
 
     @requests_mock.mock()
     @patch('response_operations_ui.controllers.message_controllers._get_jwt')
@@ -237,14 +239,14 @@ class TestMessage(ViewTestCase):
     @patch('response_operations_ui.controllers.message_controllers._get_jwt')
     def test_conversation_count_response_error(self, mock_request, mock_get_jwt):
         mock_get_jwt.return_value = "blah"
-        mock_request.get(url_send_message + '/count', json={"total": 1}, status_code=500)
-        mock_request.get(url_get_surveys_list, json=self.surveys_list_json)
-        mock_request.get(url_get_threads_list + params, json=threads_unread_list)
         mock_request.get(shortname_url + "/ASHE", json=ashe_info['survey'])
+        mock_request.get(url_send_message + '/count', json={"total": 1}, status_code=500)
 
-        self.client.get("/messages/ASHE", follow_redirects=True)
+        response = self.client.get("/messages/ASHE", follow_redirects=True)
 
-        self.assertApiError(f'{url_send_message}/count?survey={survey_id}&is_closed=false', 500)
+        request_history = mock_request.request_history
+        self.assertEqual(len(request_history), 2)
+        self.assertEqual(response.status_code, 500)
 
     @requests_mock.mock()
     def test_read_messages_are_displayed_correctly(self, mock_request):
@@ -444,12 +446,13 @@ class TestMessage(ViewTestCase):
     def test_conversation_reply_fail_500(self, mock_request, mock_get_jwt):
         mock_get_jwt.return_value = "blah"
         mock_request.get(url_get_thread, json=thread_json, status_code=500)
-        mock_request.get(url_get_surveys_list, json=survey_list)
 
-        self.client.post("/messages/threads/fb0e79bd-e132-4f4f-a7fd-5e8c6b41b9af",
-                         follow_redirects=True)
+        response = self.client.post("/messages/threads/fb0e79bd-e132-4f4f-a7fd-5e8c6b41b9af",
+                                    follow_redirects=True)
 
-        self.assertApiError(url_get_thread, 500)
+        request_history = mock_request.request_history
+        self.assertEqual(len(request_history), 1)
+        self.assertEqual(response.status_code, 500)
 
     @requests_mock.mock()
     @patch('response_operations_ui.controllers.message_controllers._get_jwt')
@@ -479,27 +482,32 @@ class TestMessage(ViewTestCase):
     def test_conversation_fail(self, mock_request, mock_get_jwt):
         mock_get_jwt.return_value = "blah"
         mock_request.get(url_get_thread, status_code=500)
-        mock_request.get(url_get_surveys_list, json=survey_list)
 
-        self.client.get("/messages/threads/fb0e79bd-e132-4f4f-a7fd-5e8c6b41b9af", follow_redirects=True)
+        response = self.client.get("/messages/threads/fb0e79bd-e132-4f4f-a7fd-5e8c6b41b9af", follow_redirects=True)
 
-        self.assertApiError(url_get_thread, 500)
+        request_history = mock_request.request_history
+        self.assertEqual(len(request_history), 1)
+        self.assertEqual(response.status_code, 500)
 
     @requests_mock.mock()
     def test_conversation_decode_error(self, mock_request):
         mock_request.get(url_get_thread)
-        with self.assertRaises(Exception) as raises:
-            response = self.client.get("/messages/threads/fb0e79bd-e132-4f4f-a7fd-5e8c6b41b9af")
-            self.assertEqual(response.status_code, 500)
-            self.assertEqual(raises.exception.message, "the response could not be decoded")
+
+        response = self.client.get("/messages/threads/fb0e79bd-e132-4f4f-a7fd-5e8c6b41b9af")
+
+        request_history = mock_request.request_history
+        self.assertEqual(len(request_history), 1)
+        self.assertEqual(response.status_code, 500)
 
     @requests_mock.mock()
     def test_conversation_key_error(self, mock_request):
         mock_request.get(url_get_thread, json={})
-        with self.assertRaises(Exception) as raises:
-            response = self.client.get("/messages/threads/fb0e79bd-e132-4f4f-a7fd-5e8c6b41b9af")
-            self.assertEqual(response.status_code, 500)
-            self.assertEqual(raises.exception.message, "A key error occurred")
+
+        response = self.client.get("/messages/threads/fb0e79bd-e132-4f4f-a7fd-5e8c6b41b9af")
+
+        request_history = mock_request.request_history
+        self.assertEqual(len(request_history), 1)
+        self.assertEqual(response.status_code, 500)
 
     def test_get_radio_buttons(self):
         response = self.client.get("/messages/select-survey")
@@ -527,6 +535,8 @@ class TestMessage(ViewTestCase):
 
         response = self.client.get("/messages/this-survey", follow_redirects=True)
 
+        request_history = mock_request.request_history
+        self.assertEqual(len(request_history), 1)
         self.assertEqual(response.status_code, 500)
         self.assertIn("Error 500 - Server error".encode(), response.data)
 
@@ -615,10 +625,12 @@ class TestMessage(ViewTestCase):
         mock_get_jwt.return_value = "blah"
         mock_request.patch(url_get_thread, json=thread_json, status_code=500)
 
-        self.client.post("/messages/threads/fb0e79bd-e132-4f4f-a7fd-5e8c6b41b9af/close-conversation",
-                         follow_redirects=True)
+        response = self.client.post("/messages/threads/fb0e79bd-e132-4f4f-a7fd-5e8c6b41b9af/close-conversation",
+                                    follow_redirects=True)
 
-        self.assertApiError(url_get_thread, 500)
+        request_history = mock_request.request_history
+        self.assertEqual(len(request_history), 1)
+        self.assertEqual(response.status_code, 500)
 
     @requests_mock.mock()
     @patch('response_operations_ui.controllers.message_controllers._get_jwt')
