@@ -122,9 +122,11 @@ class TestSurvey(ViewTestCase):
     def test_survey_list_fail(self, mock_request):
         mock_request.get(url_get_survey_list, status_code=500)
 
-        self.client.get("/surveys")
+        response = self.client.get("/surveys")
 
-        self.assertApiError(url_get_survey_list, 500)
+        request_history = mock_request.request_history
+        self.assertEqual(len(request_history), 1)
+        self.assertEqual(response.status_code, 500)
 
     @requests_mock.mock()
     def test_survey_list_connection_error(self, mock_request):
@@ -132,6 +134,8 @@ class TestSurvey(ViewTestCase):
 
         response = self.client.get("/surveys", follow_redirects=True)
 
+        request_history = mock_request.request_history
+        self.assertEqual(len(request_history), 1)
         self.assertEqual(response.status_code, 500)
 
     @requests_mock.mock()
@@ -150,9 +154,11 @@ class TestSurvey(ViewTestCase):
     def test_survey_view_fail(self, mock_request):
         mock_request.get(url_get_survey_by_short_name, status_code=500)
 
-        self.client.get("/surveys/bres")
+        response = self.client.get("/surveys/bres")
 
-        self.assertApiError(url_get_survey_by_short_name, 500)
+        request_history = mock_request.request_history
+        self.assertEqual(len(request_history), 1)
+        self.assertEqual(response.status_code, 500)
 
     @requests_mock.mock()
     def test_survey_state_mapping(self, mock_request):
@@ -260,13 +266,13 @@ class TestSurvey(ViewTestCase):
             "long_name": 'New Survey Long Name',
             "short_name": 'QBX'
         }
-        mock_request.get(url_get_survey_list, json=survey_list)
         mock_request.put(url_update_survey_details, status_code=500)
-        mock_request.get(url_get_survey_list, json=updated_survey_list)
 
-        self.client.post(f"/surveys/edit-survey-details/QBS", data=changed_survey_details)
+        response = self.client.post(f"/surveys/edit-survey-details/QBS", data=changed_survey_details)
 
-        self.assertApiError(url_update_survey_details, 500)
+        request_history = mock_request.request_history
+        self.assertEqual(len(request_history), 1)
+        self.assertEqual(response.status_code, 500)
 
     @requests_mock.mock()
     def test_update_survey_details_failed_validation(self, mock_request):
@@ -429,9 +435,11 @@ class TestSurvey(ViewTestCase):
         mock_request.get(url_get_legal_basis_list, json=legal_basis_list)
         mock_request.post(url_create_survey, text="Internal server error", status_code=500)
 
-        self.client.post(f"surveys/create", data=create_survey_request)
+        response = self.client.post(f"surveys/create", data=create_survey_request)
 
-        self.assertApiError(url_create_survey, 500)
+        request_history = mock_request.request_history
+        self.assertEqual(len(request_history), 2)
+        self.assertEqual(response.status_code, 500)
 
     @requests_mock.mock()
     def test_update_survey_details_failed_validation_short_name_has_spaces(self, mock_request):

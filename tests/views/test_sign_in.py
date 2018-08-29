@@ -54,6 +54,8 @@ class TestSignIn(unittest.TestCase):
         response = self.client.post("/sign-in", follow_redirects=True,
                                     data={"username": "user", "password": "pass"})
 
+        request_history = mock_request.request_history
+        self.assertEqual(len(request_history), 1)
         self.assertEqual(response.status_code, 500)
         self.assertIn(b'Error 500 - Server error', response.data)
 
@@ -86,6 +88,8 @@ class TestSignIn(unittest.TestCase):
         response = self.client.post("/sign-in", follow_redirects=True,
                                     data={"username": "user", "password": "pass"})
 
+        request_history = mock_request.request_history
+        self.assertEqual(len(request_history), 1)
         self.assertEqual(response.status_code, 500)
         self.assertIn(b'Error 500 - Server error', response.data)
 

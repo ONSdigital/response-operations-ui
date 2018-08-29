@@ -32,7 +32,7 @@ class TestSocialCase(ViewTestCase):
 
         self.assertEqual(response.status_code, 200)
         self.assertIn("LMS0001".encode(), response.data)
-        self.assertIn("TS184QG".encode(), response.data)
+        self.assertIn("NV184QG".encode(), response.data)
         self.assertIn("In progress".encode(), response.data)
 
     @requests_mock.mock()
@@ -40,6 +40,8 @@ class TestSocialCase(ViewTestCase):
         mock_request.get(get_case_by_id_url, json=mocked_case_details)
         mock_request.get(get_sample_by_id_url, status_code=500)
 
-        self.client.get(f'/social/case/{case_id}', follow_redirects=True)
+        response = self.client.get(f'/social/case/{case_id}', follow_redirects=True)
 
-        self.assertApiError(get_sample_by_id_url, 500)
+        request_history = mock_request.request_history
+        self.assertEqual(len(request_history), 2)
+        self.assertEqual(response.status_code, 500)

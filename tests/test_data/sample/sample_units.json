@@ -10,14 +10,13 @@
     "sampleAttributes": {
       "id": "3eff4678-a8d1-41fd-b986-4e497de9bbda",
       "attributes": {
-        "Prem1": "7 BARKER CLOSE",
-        "Prem2": "",
-        "Prem3": "",
-        "Prem4": "",
-        "District": "",
-        "PostTown": "RICHMOND",
-        "Postcode": "{postcode}",
-        "Reference": "LMS100016",
+        "ADDRESS_LINE_1": "Tredegar House",
+        "ADDRESS_LINE_2": "123 Garden Path",
+        "LOCALITY": "Risca",
+        "TOWN_NAME": "Newport",
+        "POSTCODE": "{postcode}",
+        "TLA": "LMS",
+        "REFERENCE": "100016",
         "CountryCode": "E"
       }
     }
