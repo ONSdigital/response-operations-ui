@@ -1,7 +1,8 @@
-import jwt
 import logging
 
+import jwt
 from structlog import wrap_logger
+
 from response_operations_ui.common.uaa import get_uaa_public_key
 
 
