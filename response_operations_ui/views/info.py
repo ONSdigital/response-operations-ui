@@ -1,5 +1,5 @@
-from json import JSONDecodeError, loads
 import logging
+from json import JSONDecodeError, loads
 from pathlib import Path
 
 from flask import Blueprint, make_response, jsonify, session

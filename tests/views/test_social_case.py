@@ -1,4 +1,5 @@
 import json
+
 import requests_mock
 
 from config import TestingConfig

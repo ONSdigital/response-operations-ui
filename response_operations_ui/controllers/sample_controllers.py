@@ -1,7 +1,6 @@
 import logging
 
 import requests
-
 from flask import current_app as app
 from requests.exceptions import HTTPError, RequestException
 from structlog import wrap_logger

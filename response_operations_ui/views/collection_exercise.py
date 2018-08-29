@@ -1,11 +1,10 @@
-import iso8601
 import json
 import logging
 
-
+import iso8601
 from flask import Blueprint, abort, render_template, request, redirect, session, url_for
-from flask_login import login_required
 from flask import jsonify, make_response
+from flask_login import login_required
 from structlog import wrap_logger
 
 from response_operations_ui.common.filters import get_collection_exercise_by_period
@@ -16,6 +15,7 @@ from response_operations_ui.controllers import collection_instrument_controllers
 from response_operations_ui.exceptions.exceptions import ApiError
 from response_operations_ui.forms import EditCollectionExerciseDetailsForm, CreateCollectionExerciseDetailsForm, \
     EventDateForm, RemoveLoadedSample
+
 
 logger = wrap_logger(logging.getLogger(__name__))
 

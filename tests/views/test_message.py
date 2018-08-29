@@ -5,9 +5,9 @@ import jwt
 import requests_mock
 
 from config import TestingConfig
-from response_operations_ui.views.messages import _get_to_id
 from response_operations_ui.controllers.message_controllers import get_conversation, send_message
 from response_operations_ui.exceptions.exceptions import InternalError
+from response_operations_ui.views.messages import _get_to_id
 from response_operations_ui.views.messages import _get_unread_status
 from tests.views import ViewTestCase
 

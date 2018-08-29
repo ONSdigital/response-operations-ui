@@ -5,11 +5,11 @@ from flask import Blueprint, render_template, request, redirect, url_for
 from flask_login import login_required
 from structlog import wrap_logger
 
-from response_operations_ui.controllers import survey_controllers, collection_exercise_controllers
-from response_operations_ui.forms import EditSurveyDetailsForm
-from response_operations_ui.forms import CreateSurveyDetailsForm
 from response_operations_ui.common.mappers import map_collection_exercise_state, convert_events_to_new_format
+from response_operations_ui.controllers import survey_controllers, collection_exercise_controllers
 from response_operations_ui.exceptions.exceptions import ApiError
+from response_operations_ui.forms import CreateSurveyDetailsForm
+from response_operations_ui.forms import EditSurveyDetailsForm
 
 
 logger = wrap_logger(logging.getLogger(__name__))
