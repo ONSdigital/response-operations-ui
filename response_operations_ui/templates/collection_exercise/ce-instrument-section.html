@@ -1,0 +1,81 @@
+<section class="ce-section {{'panel panel--simple panel--error' if missing_ci else ''}}">
+  <h2 class="venus u-pt-m">Collection instruments</h2>
+
+  {% if collection_instruments %}
+  <div>
+    <table id="collection-instruments-table" class="table table__dense" summary="Sample details for this collection exercise">
+      <thead class="table--head u-vh">
+        <tr class="table--row">
+          <th scope="col" class="table--header--cell tbl-ce-value">
+            Collection instrument
+          </th>
+        </tr>
+      </thead>
+
+      <tbody>
+      {% for collection_instrument in collection_instruments %}
+        <tr class="table--row">
+          <td class="table--cell tbl-ce-value">
+            {{collection_instrument.file_name}}
+          </td>
+          {% if not locked %}
+          <td class="table--cell tbl-ce-status tbl-ce-action">
+            <form id="form-unselect-ci-{{loop.index}}" action="" method="post">
+              <a class="remove-icon" href=# id="unlink-ci-{{loop.index}}" onclick="this.parentNode.submit()"></a>
+              <input type="hidden" name="ce_id" value="{{ ce.id }}">
+              <input type="hidden" name="ci_id" value="{{ collection_instrument.id }}">
+              <input type="hidden" name="unselect-ci">
+            </form>
+          </td>
+          {% endif %}
+        </tr>
+      {% endfor %}
+      </tbody>
+    </table>
+  </div>
+  {% endif %}
+
+  {% if not locked %}
+  <div class="u-mb-m">
+
+    {% if eq_ci_selectors %}
+    <form id="form-select-ci" action="" class="form" method="post" enctype="multipart/form-data">
+          <div class="u-mb-s">
+            eQ collection instruments available:
+          </div>
+      <div id="ciSelectErrorPanel" class="{{'panel panel--simple panel--error' if error.section == 'ciSelect' else ''}}">
+        <div id="ciSelectErrorPanelBody" class="{{'panel__body' if error.section == 'ciSelect' else ''}}">
+          <input type="hidden" name="ce_id" value="{{ ce.id }}">
+          {% for ci in eq_ci_selectors %}
+          <div class="field__item js-focusable-box">
+            <input class="input input--checkbox js-focusable" name="checkbox-answer" value="{{ci.id}}" id="{{ci.id}}" type="checkbox">
+            <label class="label label--inline venus " for="{{ci.id}}">{{survey.surveyRef}} {{ci.file_name}} eQ </label>
+          </div>
+          {% endfor %}
+          <div>
+            <button id="btn-add-ci" name="select-ci" class="btn btn--primary unready" type="submit">Add</button>
+          </div>
+        </div>
+      </div>
+
+    </form>
+    {% else %}
+    <form id="form-load-ci" action="" class="form" method="post" enctype="multipart/form-data">
+      <p>
+        Add {{'another' if collection_instruments else 'a'}} collection instrument. Must be XLSX
+      </p>
+      <div id="ciFileErrorPanel" class="{{'panel panel--simple panel--error' if error.section == 'ciFile' else ''}}">
+        <div id="ciFileErrorPanelBody" class="{{'panel__body' if error.section == 'ciFile' else ''}}">
+          <p id="ciFileErrorText" class="hidden">
+            Incorrect file type. Please choose a file type XLSX
+          </p>
+          <label class="upload-file u-vh" for="ciFile">Choose CI file</label>
+          <input type="file" class="u-mb-s" name="ciFile" id="ciFile" required accept=".xlsx" onchange="checkSelectedCI(this.files)" />
+        </div>
+      </div>
+      <button id="btn-load-ci" name="load-ci" class="btn btn--primary unready">Add CI</button>
+    </form>
+    {% endif %}
+  </div>
+  {% endif %}
+</section>

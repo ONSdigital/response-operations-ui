@@ -1,0 +1,71 @@
+<section id="section-sample" class="ce-section">
+  <h2 class="venus u-pt-m">Sample</h2>
+  {% if sample %}
+    {% if 'ACTIVE' == sample.state %}
+    <table id="sample-table" class="table table__dense" summary="Loaded sample summary">
+      <tbody>
+        <tr class="table--row">
+          <td class="table--cell tbl-ce-label">
+            Total businesses
+          </td>
+          <td class="table--cell tbl-ce-value" name="total-businesses">
+            {{sample.totalSampleUnits}}
+          </td>
+        </tr>
+
+        <tr class="table--row">
+          <td class="table--cell tbl-ce-">
+            Collection instruments
+          </td>
+          <td class="table--cell tbl-ce-" name="total-ci">
+            {{sample.expectedCollectionInstruments}}
+          </td>
+        </tr>
+      </tbody>
+    </table>
+    <p>Sample loaded: {{sample.ingestDateTime}}
+      {% if not locked %}
+      <a class="u-ml-xs" id="remove_sample_btn_1" href="{{ url_for('collection_exercise_bp.get_confirm_remove_sample', short_name=survey.shortName, period=ce.exerciseRef) }}">Remove</a>
+      {% endif %}
+    </p>
+    {% elif 'INIT' == sample.state %}
+        <div class="u-mb-xl">
+            <div class="mars">
+                Loading&hellip; <span class="u-ml-xs"><a href="/surveys/{{survey.shortName}}/{{ce.exerciseRef}}?show_msg=true">Refresh to see progress</a></span>
+             </div>
+        </div>
+    {% elif 'FAILED' == sample.state %}
+         <div class="u-mb-xl">
+             <div class="panel panel--simple panel--error u-mb-l">
+                 <div class="panel__body">
+                     {{ sample.notes }}
+                 </div>
+             </div>
+           {% if not locked %}
+           <a class="u-ml-xs" id="remove_sample_btn_2" href="{{ url_for('collection_exercise_bp.get_confirm_remove_sample', short_name=survey.shortName, period=ce.exerciseRef) }}">Remove</a>
+           {% endif %}
+         </div>
+    {% endif %}
+  {% elif not locked %}
+    <div class="u-mb-m">
+      <form id="form-load-sample"
+            method="post"
+            action=""
+            class="form"
+            enctype="multipart/form-data">
+        <p>
+          Choose a sample file to check details before loading
+        </p>
+        <label class="upload-file u-vh" for="sampleFile">Choose file</label>
+        <input type="file" class="" name="sampleFile" id="sampleFile" onchange="handleFiles(this.files, {{ ci_classifiers }})"
+        accept=".csv">
+
+        <div id="sample-preview" class="u-mb-s"></div>
+
+        <button id="btn-check-sample-contents" class="btn btn--primary unready" type="button" disabled="">Check sample contents</button>
+        <button id="btn-load-sample" name="load-sample" class="btn btn--primary hidden" type="submit">Load sample</button>
+        <button id="btn-cancel-load-sample" class="btn btn--secondary hidden" type="button" onclick="cancelLoadSample()">Cancel</button>
+      </form>
+    </div>
+  {% endif %}
+</section>

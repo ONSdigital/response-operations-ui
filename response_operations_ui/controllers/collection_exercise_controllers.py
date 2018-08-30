@@ -98,6 +98,11 @@ def create_collection_exercise_event(collection_exercise_id, tag, timestamp):
     try:
         response.raise_for_status()
     except HTTPError:
+        if response.status_code == 400:
+            logger.warning('Bad request creating event', collection_exercise_id=collection_exercise_id,
+                           tag=tag, timestamp=formatted_timestamp, status=response.status_code)
+            return False
+
         logger.error("Failed to create collection exercise event",
                      collection_exercise_id=collection_exercise_id,
                      tag=tag)
@@ -105,6 +110,7 @@ def create_collection_exercise_event(collection_exercise_id, tag, timestamp):
 
     logger.debug("Successfully created collection exercise event", collection_exercise_id=collection_exercise_id,
                  tag=tag)
+    return True
 
 
 def execute_collection_exercise(collection_exercise_id):
