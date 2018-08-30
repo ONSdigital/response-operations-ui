@@ -2,6 +2,7 @@ import logging
 
 from flask import Blueprint, flash, redirect, render_template, url_for, request
 from structlog import wrap_logger
+
 from response_operations_ui.exceptions.exceptions import ApiError, UpdateContactDetailsException
 
 

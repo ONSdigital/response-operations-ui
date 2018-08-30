@@ -1,15 +1,15 @@
 import logging
 
+import iso8601
 from flask import abort, redirect, render_template, request, url_for
 from flask_login import login_required
-import iso8601
 from structlog import wrap_logger
 
 from response_operations_ui.common.filters import get_collection_exercise_by_period
 from response_operations_ui.common.mappers import convert_events_to_new_format
-from response_operations_ui.views.collection_exercise import collection_exercise_bp, get_event_name
 from response_operations_ui.controllers import collection_exercise_controllers, survey_controllers
 from response_operations_ui.forms import EventDateForm
+from response_operations_ui.views.collection_exercise import collection_exercise_bp, get_event_name
 
 
 logger = wrap_logger(logging.getLogger(__name__))

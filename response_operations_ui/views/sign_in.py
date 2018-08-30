@@ -6,8 +6,8 @@ from flask_login import current_user, login_user
 from jwt import DecodeError
 from structlog import wrap_logger
 
-from response_operations_ui.controllers import uaa_controller
 from response_operations_ui.common import token_decoder
+from response_operations_ui.controllers import uaa_controller
 from response_operations_ui.forms import LoginForm
 from response_operations_ui.user import User
 

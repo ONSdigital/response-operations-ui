@@ -1,9 +1,9 @@
-from contextlib import suppress
 import json
+from contextlib import suppress
 from unittest.mock import MagicMock
 
-from requests import RequestException
 import requests_mock
+from requests import RequestException
 
 from config import TestingConfig
 from response_operations_ui.controllers.survey_controllers import get_survey_short_name_by_id
