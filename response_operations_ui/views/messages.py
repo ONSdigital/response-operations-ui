@@ -8,11 +8,13 @@ from flask_login import login_required, current_user
 from flask_paginate import get_parameter, Pagination
 from structlog import wrap_logger
 
+from config import Config
 from response_operations_ui.common.dates import get_formatted_date, convert_to_bst
 from response_operations_ui.common.mappers import format_short_name
-from response_operations_ui.common.surveys import Surveys, FDISurveys
+from response_operations_ui.common.surveys import Surveys
 from response_operations_ui.controllers import message_controllers, survey_controllers
-from response_operations_ui.controllers.survey_controllers import get_survey_short_name_by_id, get_survey_ref_by_id
+from response_operations_ui.controllers.survey_controllers import get_survey_short_name_by_id, get_survey_ref_by_id, \
+    get_surveys_list_grouped
 from response_operations_ui.exceptions.exceptions import ApiError, InternalError, NoMessagesError
 from response_operations_ui.forms import SecureMessageForm
 
@@ -142,7 +144,8 @@ def view_select_survey():
 def select_survey():
     breadcrumbs = [{"title": "Messages", "link": "/messages"},
                    {"title": "Filter by survey"}]
-    survey_list = [survey.value for survey in Surveys]
+
+    survey_list = get_surveys_list_grouped()
 
     if request.method == 'POST':
         selected_survey = request.form.get('select-survey')
@@ -345,7 +348,7 @@ def _get_survey_id(selected_survey):
 
 
 def _get_FDI_survey_id():
-    return [survey_controllers.get_survey_id_by_short_name(fdi_survey.value) for fdi_survey in FDISurveys]
+    return [survey_controllers.get_survey_id_by_short_name(fdi_survey) for fdi_survey in Config.FDI_LIST]
 
 
 def _get_user_summary_for_message(message):
