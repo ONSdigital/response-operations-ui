@@ -28,24 +28,23 @@
 
     <h2 class="saturn u-mt-l">{{event_name}}</h2>
 
-    {% for text in date_restriction_text %}
-    <div>
-      {{ text }}
-    </div>
-    {% endfor %}
+    {% if errors %}
+        <div class="panel panel--simple panel--error u-mb-l">
+          <div class="panel__body" id="save-error">
+            <h2 id='error-saving-message' class="venus">Error updating {{event_name}} date</h2>
+    {% endif %}
+
+    {% if date_restriction_text %}
+      {% for text in date_restriction_text %}
+      <div>
+        {{ text }}
+      </div>
+      {% endfor %}
+    {% endif %}
 
     <form method="POST" class="">
       <div class="date-time-editor u-mb-l">
         {{ form.csrf_token }}
-
-        {% if errors %}
-        <div class="panel panel--simple panel--error u-mb-l">
-          <div class="panel__body" id="save-error">
-            <h2 id='error-saving-message' class="venus">Error updating {{event_name}} date</h2>
-            <p class="mars">Please try saving your changes again</p>
-          </div>
-        </div>
-        {% endif %}
 
         <fieldset class="fieldgroup fieldgroup--date u-mt-l" data-qa="widget-date">
           <legend class="fieldgroup__title venus">Date</legend>
@@ -89,6 +88,11 @@
         <a href="#" onclick="history.back(); return false;">Cancel</a>
       </div>
     </form>
+
+    {% if errors %}
+        </div>
+      </div>
+    {% endif %}
 
   </div>
 </div>
