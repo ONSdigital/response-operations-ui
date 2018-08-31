@@ -8,10 +8,9 @@ from flask_login import login_required, current_user
 from flask_paginate import get_parameter, Pagination
 from structlog import wrap_logger
 
-from config import Config
+from config import FDI_LIST
 from response_operations_ui.common.dates import get_formatted_date, convert_to_bst
 from response_operations_ui.common.mappers import format_short_name
-from response_operations_ui.common.surveys import Surveys
 from response_operations_ui.controllers import message_controllers, survey_controllers
 from response_operations_ui.controllers.survey_controllers import get_survey_short_name_by_id, get_survey_ref_by_id, \
     get_surveys_list_grouped
@@ -171,7 +170,7 @@ def view_selected_survey(selected_survey):
     session['messages_survey_selection'] = selected_survey
     breadcrumbs = [{"title": formatted_survey + " Messages"}]
     try:
-        if selected_survey == Surveys.FDI.value:
+        if selected_survey == 'FDI':
             survey_id = _get_FDI_survey_id()
         else:
             survey_id = _get_survey_id(selected_survey)
@@ -348,7 +347,7 @@ def _get_survey_id(selected_survey):
 
 
 def _get_FDI_survey_id():
-    return [survey_controllers.get_survey_id_by_short_name(fdi_survey) for fdi_survey in Config.FDI_LIST]
+    return [survey_controllers.get_survey_id_by_short_name(fdi_survey) for fdi_survey in FDI_LIST]
 
 
 def _get_user_summary_for_message(message):
