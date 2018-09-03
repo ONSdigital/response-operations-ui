@@ -37,9 +37,6 @@ with open('tests/test_data/survey/survey_list.json') as json_data:
 with open('tests/test_data/survey/ashe_response.json') as json_data:
     ashe_info = json.load(json_data)
 
-with open('tests/test_data/survey/fdi_response.json') as json_data:
-    FDI_info = json.load(json_data)
-
 with open('tests/test_data/message/threads_no_unread.json') as json_data:
     threads_no_unread_list = json.load(json_data)
 
@@ -330,7 +327,6 @@ class TestMessage(ViewTestCase):
           "ru_id": "c614e64e-d981-4eba-b016-d9822f09a4fb"
         }
         '''
-
 
     @requests_mock.mock()
     @patch('response_operations_ui.controllers.message_controllers._get_jwt')
@@ -648,7 +644,7 @@ class TestMessage(ViewTestCase):
                                     follow_redirects=True,
                                     data={"select-survey": "FDI"})
         self.assertEqual(response.status_code, 200)
-        self.assertIn("ASHE Messages".encode(), response.data)
+        self.assertIn("FDI Messages".encode(), response.data)
 
         response = self.client.get("/messages", follow_redirects=True)
 
