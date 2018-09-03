@@ -134,7 +134,7 @@ def get_surveys_dictionary():
             for survey in surveys_list}
 
 
-def get_surveys_list_grouped():
+def get_grouped_surveys_list():
     survey_set = {convert_specific_fdi_survey_to_fdi(survey['shortName']) for survey in get_surveys_list()}
     return sorted(survey_set)
 

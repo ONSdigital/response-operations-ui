@@ -13,7 +13,7 @@ from response_operations_ui.common.dates import get_formatted_date, convert_to_b
 from response_operations_ui.common.mappers import format_short_name
 from response_operations_ui.controllers import message_controllers, survey_controllers
 from response_operations_ui.controllers.survey_controllers import get_survey_short_name_by_id, get_survey_ref_by_id, \
-    get_surveys_list_grouped
+    get_grouped_surveys_list
 from response_operations_ui.exceptions.exceptions import ApiError, InternalError, NoMessagesError
 from response_operations_ui.forms import SecureMessageForm
 
@@ -144,7 +144,7 @@ def select_survey():
     breadcrumbs = [{"title": "Messages", "link": "/messages"},
                    {"title": "Filter by survey"}]
 
-    survey_list = get_surveys_list_grouped()
+    survey_list = get_grouped_surveys_list()
 
     if request.method == 'POST':
         selected_survey = request.form.get('select-survey')
