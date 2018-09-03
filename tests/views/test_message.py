@@ -568,13 +568,16 @@ class TestMessage(ViewTestCase):
         self.assertEqual(len(request_history), 1)
         self.assertEqual(response.status_code, 500)
 
-    def test_get_radio_buttons(self):
+    @requests_mock.mock()
+    def test_get_radio_buttons(self, mock_request):
+        mock_request.get(url_get_surveys_list, json=survey_list)
         response = self.client.get("/messages/select-survey")
 
         self.assertEqual(200, response.status_code)
         self.assertIn("Filter messages by survey".encode(), response.data)
         self.assertIn("ASHE".encode(), response.data)
-        self.assertIn("Bricks".encode(), response.data)
+        self.assertIn("BRES".encode(), response.data)
+        self.assertIn("FDI".encode(), response.data)
 
     @requests_mock.mock()
     def test_dropdown_post_nothing_selected(self, mock_request):
@@ -599,7 +602,10 @@ class TestMessage(ViewTestCase):
         self.assertEqual(response.status_code, 500)
         self.assertIn("Error 500 - Server error".encode(), response.data)
 
-    def test_get_messages_page_without_survey(self):
+    @requests_mock.mock()
+    def test_get_messages_page_without_survey(self, mock_request):
+        mock_request.get(url_get_surveys_list, json=survey_list)
+
         response = self.client.get("/messages", follow_redirects=True)
 
         self.assertEqual(response.status_code, 200)
