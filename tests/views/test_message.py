@@ -11,7 +11,6 @@ from response_operations_ui.views.messages import _get_to_id
 from response_operations_ui.views.messages import _get_unread_status
 from tests.views import ViewTestCase
 
-
 shortname_url = f'{TestingConfig.SURVEY_URL}/surveys/shortname'
 url_sign_in_data = f'{TestingConfig.UAA_SERVICE_URL}/oauth/token'
 url_get_surveys_list = f'{TestingConfig.SURVEY_URL}/surveys'
@@ -37,6 +36,9 @@ with open('tests/test_data/survey/survey_list.json') as json_data:
 
 with open('tests/test_data/survey/ashe_response.json') as json_data:
     ashe_info = json.load(json_data)
+
+with open('tests/test_data/survey/fdi_response.json') as json_data:
+    FDI_info = json.load(json_data)
 
 with open('tests/test_data/message/threads_no_unread.json') as json_data:
     threads_no_unread_list = json.load(json_data)
@@ -329,6 +331,7 @@ class TestMessage(ViewTestCase):
         }
         '''
 
+
     @requests_mock.mock()
     @patch('response_operations_ui.controllers.message_controllers._get_jwt')
     def test_request_response_malformed(self, mock_request, mock_get_jwt):
@@ -377,6 +380,45 @@ class TestMessage(ViewTestCase):
     message_form = {'body': "TEST BODY",
                     'subject': "TEST SUBJECT",
                     'hidden_survey': "ASHE"}
+    FDI_message = {'body': "AIFDI BODY",
+                   'subject': "AIFDI SUBJECT",
+                   'hidden_survey': "AIFDI"}
+    AIFDI_response = {
+        "id": "41320b22-b425-4fba-a90e-718898f718ce",
+        "shortName": "AIFDI",
+        "longName": "Annual Inward Foreign Direct Investment Survey",
+        "surveyRef": "062",
+        "legalBasis": "Statistics of Trade Act 1947",
+        "surveyType": "Business",
+        "legalBasisRef": "STA1947"
+    }
+    AOFDI_response = {
+        "id": "04dbb407-4438-4f89-acc4-53445d75330c",
+        "shortName": "AOFDI",
+        "longName": "Annual Outward Foreign Direct Investment Survey",
+        "surveyRef": "063",
+        "legalBasis": "Statistics of Trade Act 1947",
+        "surveyType": "Business",
+        "legalBasisRef": "STA1947"
+    }
+    QIFDI_response = {
+        "id": "c3eaeff3-d570-475d-9859-32c3bf87800d",
+        "shortName": "QIFDI",
+        "longName": "Quarterly Inward Foreign Direct Investment Survey",
+        "surveyRef": "064",
+        "legalBasis": "Statistics of Trade Act 1947",
+        "surveyType": "Business",
+        "legalBasisRef": "STA1947"
+    }
+    QOFDI_response = {
+        "id": "57a43c94-9f81-4f33-bad8-f94800a66503",
+        "shortName": "QOFDI",
+        "longName": "Quarterly Outward Foreign Direct Investment Survey",
+        "surveyRef": "065",
+        "legalBasis": "Statistics of Trade Act 1947",
+        "surveyType": "Business",
+        "legalBasisRef": "STA1947"
+    }
 
     @requests_mock.mock()
     @patch('response_operations_ui.controllers.message_controllers._get_jwt')
@@ -390,6 +432,27 @@ class TestMessage(ViewTestCase):
 
         with self.app.app_context():
             response = self.client.post("/messages/create-message", data=self.message_form, follow_redirects=True)
+
+        self.assertIn("Message sent.".encode(), response.data)
+        self.assertIn("Messages".encode(), response.data)
+
+    @requests_mock.mock()
+    @patch('response_operations_ui.controllers.message_controllers._get_jwt')
+    def test_form_submit_with_FDI_data(self, mock_request, mock_get_jwt):
+        mock_get_jwt.return_value = "blah"
+        mock_request.post(url_send_message, json=threads_no_unread_list, status_code=201)
+        mock_request.get(url_send_message + '/count', json={"total": 1}, status_code=200)
+        mock_request.get(url_get_threads_list, json=thread_list, status_code=200)
+        mock_request.get(url_get_surveys_list, json=self.surveys_list_json)
+
+        # Mocking FDI responses
+        mock_request.get(shortname_url + "/QIFDI", json=self.QIFDI_response)
+        mock_request.get(shortname_url + "/QOFDI", json=self.QOFDI_response)
+        mock_request.get(shortname_url + "/AIFDI", json=self.AIFDI_response)
+        mock_request.get(shortname_url + "/AOFDI", json=self.AOFDI_response)
+
+        with self.app.app_context():
+            response = self.client.post("/messages/create-message", data=self.FDI_message, follow_redirects=True)
 
         self.assertIn("Message sent.".encode(), response.data)
         self.assertIn("Messages".encode(), response.data)
@@ -566,6 +629,31 @@ class TestMessage(ViewTestCase):
 
         self.assertEqual(response.status_code, 200)
         self.assertIn("ASHE Messages".encode(), response.data)
+
+    @requests_mock.mock()
+    @patch('response_operations_ui.controllers.message_controllers._get_jwt')
+    def test_get_messages_page_with_FDI_survey(self, mock_request, mock_get_jwt):
+        mock_get_jwt.return_value = "blah"
+        mock_request.get(url_send_message + '/count', json={"total": 1}, status_code=200)
+        mock_request.get(url_get_threads_list, json=thread_list)
+        mock_request.get(url_get_surveys_list, json=survey_list)
+
+        # Mocking FDI responses
+        mock_request.get(shortname_url + "/QIFDI", json=self.QIFDI_response)
+        mock_request.get(shortname_url + "/QOFDI", json=self.QOFDI_response)
+        mock_request.get(shortname_url + "/AIFDI", json=self.AIFDI_response)
+        mock_request.get(shortname_url + "/AOFDI", json=self.AOFDI_response)
+
+        response = self.client.post("/messages/select-survey",
+                                    follow_redirects=True,
+                                    data={"select-survey": "FDI"})
+        self.assertEqual(response.status_code, 200)
+        self.assertIn("ASHE Messages".encode(), response.data)
+
+        response = self.client.get("/messages", follow_redirects=True)
+
+        self.assertEqual(response.status_code, 200)
+        self.assertIn("FDI Messages".encode(), response.data)
 
     def test_get_to_id(self):
         with open('tests/test_data/message/threads.json') as fp:

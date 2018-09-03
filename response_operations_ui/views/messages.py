@@ -46,6 +46,8 @@ def create_message():
         try:
             message_controllers.send_message(_get_message_json(form))
             survey = request.form.get("hidden_survey")
+            if survey in FDI_LIST:
+                survey = 'FDI'
             flash("Message sent.")
             return redirect(url_for('messages_bp.view_selected_survey', selected_survey=survey))
         except (ApiError, InternalError):
