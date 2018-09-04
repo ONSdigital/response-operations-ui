@@ -19,7 +19,7 @@ collection_exercise_id = '14fb3e68-4dca-46db-bf49-04b84e07e77c'
 collection_instrument_id = 'a32800c5-5dc1-459d-9932-0da6c21d2ed2'
 period = '000000'
 sample_summary_id = '1a11543f-eb19-41f5-825f-e41aca15e724'
-short_name = 'ashortname'
+short_name = 'MBS'
 survey_id = 'cb0711c3-0ac8-41d3-ae0e-567e5ea1ef87'
 survey_ref = '141'
 
@@ -58,6 +58,15 @@ with open('tests/test_data/survey/classifier_types.json') as json_data:
 
 with open('tests/test_data/collection_exercise/formatted_collection_exercise_details.json') as fp:
     formatted_collection_exercise_details = json.load(fp)
+
+with open('tests/test_data/collection_exercise/collection_exercise.json') as json_data:
+    collection_exercise = json.load(json_data)
+
+with open('tests/test_data/survey/single_survey.json') as json_data:
+    survey = json.load(json_data)
+
+with open('tests/test_data/collection_exercise/events.json') as json_data:
+    events = json.load(json_data)
 
 """Define URLS"""
 url_ce_by_id = (
@@ -1146,10 +1155,13 @@ class TestCollectionExercise(ViewTestCase):
         self.assertEquals(response.status_code, 200)
         self.assertIn("Remove sample from test 000000".encode(), response.data)
 
-    @mock.patch("response_operations_ui.controllers.survey_controllers.get_survey", return_value=survey_by_id)
-    def test_get_create_ce_event_form_success(self, _):
+    @requests_mock.mock()
+    def test_get_create_ce_event_form_success(self, mock_request):
+        mock_request.get(url_survey_shortname, json=survey)
+        mock_request.get(url_collection_exercise_survey_id, json=[collection_exercise])
+        mock_request.get(url_get_collection_exercise_events, json=events)
 
-        response = self.client.get(f"/surveys/MBS/201901/{collection_exercise_id}/confirm-create-event/mps",
+        response = self.client.get(f"/surveys/MBS/201801/{collection_exercise_id}/confirm-create-event/mps",
                                    follow_redirects=True)
 
         self.assertEquals(response.status_code, 200)
@@ -1166,7 +1178,7 @@ class TestCollectionExercise(ViewTestCase):
         create_ce_event_form = {
             "day": "01",
             "month": "01",
-            "year": "2018",
+            "year": "2030",
             "hour": "01",
             "minute": "00"
         }
@@ -1177,8 +1189,12 @@ class TestCollectionExercise(ViewTestCase):
         self.assertEqual(response.status_code, 200)
         self.assertIn("Event date added.".encode(), response.data)
 
-    @mock.patch("response_operations_ui.controllers.survey_controllers.get_survey", return_value=survey_by_id)
-    def test_create_collection_exercise_invalid_form(self, _):
+    @requests_mock.mock()
+    def test_create_collection_exercise_invalid_form(self, mock_request):
+        mock_request.get(url_survey_shortname, json=survey)
+        mock_request.get(url_collection_exercise_survey_id, json=[collection_exercise])
+        mock_request.get(url_get_collection_exercise_events, json=events)
+
         create_ce_event_form = {
             "day": "50",
             "month": "01",
@@ -1187,11 +1203,11 @@ class TestCollectionExercise(ViewTestCase):
             "minute": "00"
         }
 
-        response = self.client.post(f"/surveys/MBS/201901/{collection_exercise_id}/create-event/mps",
+        response = self.client.post(f"/surveys/MBS/201801/{collection_exercise_id}/create-event/mps",
                                     data=create_ce_event_form, follow_redirects=True)
 
         self.assertEqual(response.status_code, 200)
-        self.assertIn("Please try saving your changes again".encode(), response.data)
+        self.assertIn("Error creating".encode(), response.data)
 
     def test_get_collection_exercises_with_events_and_samples_by_survey_id(self):
         name_space = 'response_operations_ui.controllers.collection_exercise_controllers.'
