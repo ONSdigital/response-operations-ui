@@ -24,5 +24,22 @@
             </dl>
         </section>
     </div>
+    <section class="social-case-section u-mt-l">
+        <h2 class="neptune">Unique access code</h2>
+        <dt class="new-iac__count" id="new-iac-count">
+            There have been {{iac_count}} unique access codes issued for this case.
+        </dt>
+            <form action="{{ url_for('social_bp.generate_iac') }}" method='POST'>
+                <input type="hidden" name="case_id" value="{{case_id}}"/>
+                <button type="submit" class="btn btn--secondary btn--small generate-iac-submit" id="generate-iac-submit">Generate UAC</button>
+            </form>
+        {% if new_iac %}
+        <dl class="survey-info info-panel" id="new-iac-iac">
+            <dt class="new-iac__iac" id="new-iac">
+               {{new_iac}}
+            </dt>
+        </dl>
+        {% endif %}
+    </section>
 </div>
 {% endblock %}
