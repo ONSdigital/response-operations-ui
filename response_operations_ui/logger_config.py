@@ -3,7 +3,7 @@ import os
 import sys
 
 import flask
-from flask g
+from flask import g
 from structlog import configure
 from structlog.processors import format_exc_info, JSONRenderer, TimeStamper
 from structlog.stdlib import add_log_level, filter_by_level
