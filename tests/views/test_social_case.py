@@ -5,16 +5,19 @@ import requests_mock
 from config import TestingConfig
 from tests.views import ViewTestCase
 
-
 case_id = "8849c299-5014-4637-bd2b-fc866aeccdf5"
 sample_unit_id = "519bb700-1bd9-432d-9db7-d34ea1727415"
 
 get_case_by_id_url = f'{TestingConfig.CASE_URL}/cases/{case_id}?iac=true'
+iac_url = f'{TestingConfig.CASE_URL}/cases/{case_id}/iac'
 get_sample_by_id_url = f'{TestingConfig.SAMPLE_URL}/samples/{sample_unit_id}/attributes'
-
 
 with open('tests/test_data/case/social_case.json') as fp:
     mocked_case_details = json.load(fp)
+with open('tests/test_data/case/iacs.json') as fp:
+    mocked_iacs = json.load(fp)
+with open('tests/test_data/case/iac.json') as fp:
+    mocked_iac = json.load(fp)
 with open('tests/test_data/sample/sample_attributes.json') as fp:
     mocked_sample_attributes = json.load(fp)
 
@@ -28,6 +31,7 @@ class TestSocialCase(ViewTestCase):
     def test_get_social_case(self, mock_request):
         mock_request.get(get_case_by_id_url, json=mocked_case_details)
         mock_request.get(get_sample_by_id_url, json=mocked_sample_attributes)
+        mock_request.get(iac_url, json=mocked_iacs)
 
         response = self.client.get(f'/social/case/{case_id}', follow_redirects=True)
 
@@ -40,9 +44,24 @@ class TestSocialCase(ViewTestCase):
     def test_get_social_sample_attributes_fail(self, mock_request):
         mock_request.get(get_case_by_id_url, json=mocked_case_details)
         mock_request.get(get_sample_by_id_url, status_code=500)
+        mock_request.get(iac_url, json=mocked_iacs)
 
         response = self.client.get(f'/social/case/{case_id}', follow_redirects=True)
 
         request_history = mock_request.request_history
         self.assertEqual(len(request_history), 2)
         self.assertEqual(response.status_code, 500)
+
+    @requests_mock.mock()
+    def test_generate_iac(self, mock_request):
+        post_data = {"case_id": case_id}
+
+        mock_request.post(iac_url, json=mocked_iac)
+        mock_request.get(iac_url, json=mocked_iacs)
+        mock_request.get(get_case_by_id_url, json=mocked_case_details)
+        mock_request.get(get_sample_by_id_url, json=mocked_sample_attributes)
+
+        response = self.client.post(f'/social/iac', follow_redirects=True, data=post_data)
+
+        self.assertIn("k7j6n7pffg8g".encode(), response.data)
+        self.assertIn("16 unique".encode(), response.data)
