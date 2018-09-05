@@ -29,7 +29,8 @@ class TestLoggerConfig(unittest.TestCase):
         logger = wrap_logger(logging.getLogger())
         logger.error('Test')
         message = l.records[0].msg
-        self.assertIn('{"event": "Test", "level": "error", "service": "response-operations-ui"',
+        self.assertIn('{"event": "Test", "zipkin_trace_id" : "", "zipkin_span_id" : "",' \
+                      ' "level": "error", "service": "response-operations-ui"',
                       message)
 
     @log_capture()
