@@ -12,6 +12,9 @@
             <dd class="description-list__value" id="case-group-status">
                 {{status}}
             </dd>
+            <form action="{{ url_for('social_bp.get_case_response_statuses', case_id=case_id.id) }}" method='GET'>
+              <button type="submit" class="btn btn--secondary btn--small change-status-submit" id="change-status-submit">Change Status</button>
+            </form>
         </dl>
         <section class="social-case-section u-mt-l">
             <h2 class="neptune">Property address</h2>
