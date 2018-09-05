@@ -576,6 +576,7 @@ class TestMessage(ViewTestCase):
         self.assertEqual(200, response.status_code)
         self.assertIn("Filter messages by survey".encode(), response.data)
         self.assertIn("ASHE".encode(), response.data)
+        self.assertIn("Bricks".encode(), response.data)
         self.assertIn("BRES".encode(), response.data)
         self.assertIn("FDI".encode(), response.data)
 

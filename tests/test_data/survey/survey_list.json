@@ -12,6 +12,12 @@
     "surveyRef": "222"
   },
   {
+    "id": "cb8accda-6118-4d3b-85a3-149e28960c54",
+    "shortName": "Bricks",
+    "longName": "Monthly Survey of Building Materials Bricks",
+    "surveyRef": "074"
+  },
+  {
     "id": "6aa8896f-ced5-4694-800c-6cd661b0c8b2",
     "legalBasis": "Statistics of Trade Act 1947",
     "longName": "Annual Survey of Hours and Earnings",
