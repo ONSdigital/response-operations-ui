@@ -15,6 +15,7 @@ class Surveys(Enum):
     OFATS = "OFATS"
     PCS = "PCS"
     QBS = "QBS"
+    QCAS = "QCAS"
     RSI = "RSI"
     SANDANDGRAVEL = "Sand & Gravel"
 
