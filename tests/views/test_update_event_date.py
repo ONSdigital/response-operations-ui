@@ -69,8 +69,8 @@ class TestUpdateEventDate(ViewTestCase):
 
         self.assertEqual(response.status_code, 200)
         self.assertIn("Go Live".encode(), response.data)
-        self.assertIn("Must be after MPS Thursday 11 Oct 2018 23:00 GMT".encode(), response.data)
-        self.assertIn("Must be before Return by Thursday 11 Oct 2018 23:00 GMT".encode(), response.data)
+        self.assertIn("Must be after MPS Thursday 11 Oct 2018 23:00".encode(), response.data)
+        self.assertIn("Must be before Return by Thursday 11 Oct 2018 23:00".encode(), response.data)
 
     @requests_mock.mock()
     def test_update_event_no_collection_exercise(self, mock_request):
@@ -128,7 +128,7 @@ class TestUpdateEventDate(ViewTestCase):
                                     data=self.invalid_update_event_form, follow_redirects=True)
 
         self.assertEqual(response.status_code, 200)
-        self.assertIn("Must be after MPS Thursday 11 Oct 2018 23:00 GMT".encode(), response.data)
+        self.assertIn("Must be after MPS Thursday 11 Oct 2018 23:00".encode(), response.data)
         self.assertIn("Error updating Go Live date".encode(), response.data)
 
     @requests_mock.mock()
@@ -142,7 +142,7 @@ class TestUpdateEventDate(ViewTestCase):
                                     data=self.update_event_form, follow_redirects=True)
 
         self.assertEqual(response.status_code, 200)
-        self.assertIn("Must be after MPS Thursday 11 Oct 2018 23:00 GMT".encode(), response.data)
+        self.assertIn("Must be after MPS Thursday 11 Oct 2018 23:00".encode(), response.data)
         self.assertIn("Error updating Go Live date".encode(), response.data)
 
     @requests_mock.mock()

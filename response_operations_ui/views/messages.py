@@ -9,7 +9,7 @@ from flask_paginate import get_parameter, Pagination
 from structlog import wrap_logger
 
 from config import FDI_LIST
-from response_operations_ui.common.dates import get_formatted_date, convert_to_bst
+from response_operations_ui.common.dates import get_formatted_date, localise_datetime
 from response_operations_ui.common.mappers import format_short_name
 from response_operations_ui.controllers import message_controllers, survey_controllers
 from response_operations_ui.controllers.survey_controllers import get_survey_short_name_by_id, get_survey_ref_by_id, \
@@ -75,7 +75,7 @@ def view_conversation(thread_id):
     refined_thread = [_refine(message) for message in reversed(thread_conversation['messages'])]
 
     try:
-        closed_time = convert_to_bst(datetime.strptime(thread_conversation['closed_at'], "%Y-%m-%dT%H:%M:%S.%f"))
+        closed_time = localise_datetime(datetime.strptime(thread_conversation['closed_at'], "%Y-%m-%dT%H:%M:%S.%f"))
         closed_at = closed_time.strftime("%d/%m/%Y" + " at %H:%M")
     except KeyError:
         closed_at = None
