@@ -13,7 +13,7 @@ def logger_initial_config(service_name=None,
                           log_level=None,
                           logger_format=None,
                           logger_date_format=None):
-
+    # pylint: skip-file
     if not logger_date_format:
         logger_date_format = os.getenv('LOGGING_DATE_FORMAT', "%Y-%m-%dT%H:%M%s")
     if not log_level:
