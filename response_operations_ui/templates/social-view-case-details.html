@@ -31,7 +31,7 @@
         </dt>
             <form action="{{ url_for('social_bp.generate_iac') }}" method='POST'>
                 <input type="hidden" name="case_id" value="{{case_id}}"/>
-                <button type="submit" class="btn btn--primary generate-iac-submit" id="generate-iac-submit">Generate UAC</button>
+                <button type="submit" class="btn btn--secondary btn--small generate-iac-submit" id="generate-iac-submit">Generate UAC</button>
             </form>
         {% if new_iac %}
         <dl class="survey-info info-panel" id="new-iac-iac">
