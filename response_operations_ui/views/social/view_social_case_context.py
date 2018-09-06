@@ -19,6 +19,4 @@ def build_view_social_case_context(case_id):
     context['displayed_attributes'] = ['ADDRESS_LINE1', 'ADDRESS_LINE2', 'LOCALITY', 'TOWN_NAME', 'POSTCODE']
     context['case_reference'] = social_case['caseGroup']['sampleUnitRef']
 
-    logger.debug("View social case context", context=context)
-
     return context

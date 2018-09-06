@@ -16,7 +16,7 @@ def generate_iac():
 
     new_iac = case_controller.generate_iac(case_id)
     context = build_view_social_case_context(case_id)
-    logger.debug("generate_iac", case_id=case_id, new_iac=new_iac)
+    logger.debug("generate_iac", case_id=case_id)
 
     context['new_iac'] = new_iac
 
