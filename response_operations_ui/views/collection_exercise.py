@@ -1,7 +1,9 @@
 import json
 import logging
+from datetime import datetime
 
 import iso8601
+from dateutil import tz
 from flask import Blueprint, abort, render_template, request, redirect, session, url_for
 from flask import jsonify, make_response
 from flask_login import login_required
@@ -501,14 +503,17 @@ def create_collection_exercise_event(short_name, period, ce_id, tag):
             tag=tag,
             errors=form.errors)
 
-    day = form.day.data if not len(form.day.data) == 1 else f"0{form.day.data}"
-    timestamp_string = f"{form.year.data}{form.month.data}{day}T{form.hour.data}{form.minute.data}"
-    timestamp = iso8601.parse_date(timestamp_string)
+    submitted_dt = datetime(year=int(form.year.data),
+                            month=int(form.month.data),
+                            day=int(form.day.data),
+                            hour=int(form.hour.data),
+                            minute=int(form.minute.data),
+                            tzinfo=tz.gettz('Europe/London'))
 
     collection_exercise_created = collection_exercise_controllers.create_collection_exercise_event(
         collection_exercise_id=ce_id,
         tag=tag,
-        timestamp=timestamp)
+        timestamp=submitted_dt)
 
     if not collection_exercise_created:
         return redirect(url_for('collection_exercise_bp.get_create_collection_event_form',
