@@ -22,6 +22,8 @@ get_respondent_by_id_url = f'{TestingConfig.PARTY_URL}/party-api/v1/respondents/
 url_edit_contact_details = f'{TestingConfig.PARTY_URL}/party-api/v1/respondents/id/{respondent_party_id}'
 url_post_case_event = f'{TestingConfig.CASE_URL}/cases/{case_id}/events'
 url_change_enrolment_status = f'{TestingConfig.PARTY_URL}/party-api/v1/respondents/change_enrolment_status'
+url_change_respondent_status = f'{TestingConfig.PARTY_URL}/party-api/v1/respondents/edit-account-status/' \
+                               f'{respondent_party_id}'
 url_resend_verification_email = f'{TestingConfig.PARTY_URL}/party-api/v1/resend-verification-email' \
                                 f'/{respondent_party_id}'
 
@@ -426,6 +428,57 @@ class TestReportingUnits(ViewTestCase):
         request_history = mock_request.request_history
         self.assertEqual(len(request_history), 1)
         self.assertEqual(response.status_code, 500)
+
+    @requests_mock.mock()
+    def test_change_respondent_status(self, mock_request):
+        mock_request.put(url_change_respondent_status)
+        mock_request.get(url_get_party_by_ru_ref, json=business_reporting_unit)
+        mock_request.get(url_get_cases_by_business_party_id, json=cases_list)
+        mock_request.get(url_get_casegroups_by_business_party_id, json=case_groups)
+        mock_request.get(f'{url_get_collection_exercise_by_id}/{collection_exercise_id_1}', json=collection_exercise)
+        mock_request.get(f'{url_get_collection_exercise_by_id}/{collection_exercise_id_2}', json=collection_exercise)
+        mock_request.get(url_get_business_party_by_party_id, json=business_party)
+        mock_request.get(url_get_available_case_group_statuses_direct, json=case_group_statuses)
+        mock_request.get(url_get_survey_by_id, json=survey)
+        mock_request.get(url_get_respondent_party_by_party_id, json=respondent_party)
+        mock_request.get(f'{url_get_iac}/{iac_1}', json=iac)
+        mock_request.get(f'{url_get_iac}/{iac_2}', json=iac)
+
+        response = self.client.post(f"reporting-units/50012345678/change-respondent-status"
+                                    f"?respondent_id={respondent_party_id}&change_flag=ACTIVE",
+                                    follow_redirects=True)
+        self.assertEqual(response.status_code, 200)
+
+    @requests_mock.mock()
+    def test_change_respondent_status_fail(self, mock_request):
+        mock_request.put(url_change_respondent_status, status_code=500)
+
+        response = self.client.post(f"reporting-units/50012345678/change-respondent-status"
+                                    f"?respondent_id={respondent_party_id}&change_flag=ACTIVE",
+                                    follow_redirects=True)
+        request_history = mock_request.request_history
+        self.assertEqual(len(request_history), 1)
+        self.assertEqual(response.status_code, 500)
+
+    @requests_mock.mock()
+    def test_confirm_change_respondent_status(self, mock_request):
+        mock_request.get(get_respondent_by_id_url)
+        mock_request.put(url_change_respondent_status)
+        mock_request.get(url_get_cases_by_business_party_id, json=cases_list)
+        mock_request.get(url_get_casegroups_by_business_party_id, json=case_groups)
+        mock_request.get(f'{url_get_collection_exercise_by_id}/{collection_exercise_id_1}', json=collection_exercise)
+        mock_request.get(f'{url_get_collection_exercise_by_id}/{collection_exercise_id_2}', json=collection_exercise)
+        mock_request.get(url_get_business_party_by_party_id, json=business_party)
+        mock_request.get(url_get_available_case_group_statuses_direct, json=case_group_statuses)
+        mock_request.get(url_get_survey_by_id, json=survey)
+        mock_request.get(url_get_respondent_party_by_party_id, json=respondent_party)
+        mock_request.get(f'{url_get_iac}/{iac_1}', json=iac)
+        mock_request.get(f'{url_get_iac}/{iac_2}', json=iac)
+
+        response = self.client.get(f"reporting-units/50012345678/change-respondent-status"
+                                   f"?party_id={respondent_party_id}&change_flag=ACTIVE",
+                                   follow_redirects=True)
+        self.assertEqual(response.status_code, 200)
 
     @requests_mock.mock()
     def test_get_contact_details(self, mock_request):

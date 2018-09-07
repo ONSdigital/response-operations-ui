@@ -144,7 +144,7 @@
                 </dd>
                 {% if respondent.pendingEmailAddress %}
                 <dt>
-                  New Email
+                  New Emailenrolment_changed
                 </dt>
                 <dd name="tbl-respondent-pending-email">
                   {{ respondent.pendingEmailAddress }}
@@ -170,14 +170,18 @@
               </dl>
             </td>
             <td name="tbl-respondent-status" class="table--cell">
-              {{ respondent.status.title() }}
+              {% if respondent.status  == 'SUSPENDED' %} Locked {% else %} {{ respondent.status.title() }} {% endif %}
+              <div>
+                {% if respondent.status == 'SUSPENDED' %}
+                <a href="{{ url_for('reporting_unit_bp.confirm_change_respondent_status', ru_ref=ru_ref, party_id=respondent.id, change_flag='ACTIVE') }}">Unlock</a>
+                {% endif %}
+              </div>
             </td>
 
             <td name="tbl-enrolment-status" class="table--cell">
               <div id="enrolment-status">
                 {{ respondent.enrolmentStatus.title() }}
               </div>
-              
               <div>
                 {% if respondent.enrolmentStatus == 'ENABLED' %}
                 <a href="{{ url_for('reporting_unit_bp.confirm_change_enrolment_status', ru_ref=ru.sampleUnitRef, ru_name=ru.name, survey_id=survey.id,
