@@ -49,7 +49,7 @@ def change_enrolment_status(business_id, respondent_id, survey_id, change_flag):
                  business_id=business_id, respondent_id=respondent_id, survey_id=survey_id, change_flag=change_flag)
 
 
-def change_respondent_status(respondent_id,  change_flag):
+def change_respondent_status(respondent_id, change_flag):
     if change_flag == 'UNLOCKED':
         change_flag = 'ACTIVE'
         logger.debug('Changing respondent status', respondent_id=respondent_id, change_flag=change_flag)
