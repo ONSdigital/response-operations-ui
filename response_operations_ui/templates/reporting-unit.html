@@ -172,13 +172,8 @@
             <td name="tbl-respondent-status" class="table--cell">
               {% if respondent.status  == 'SUSPENDED' %} Locked {% else %} {{ respondent.status.title() }} {% endif %}
               <div>
-{#                {% if respondent.status == 'ACTIVE' %}#}
-{#                <a href="{{ url_for('reporting_unit_bp.confirm_change_respondent_status', ru_ref=ru.sampleUnitRef, respondent_first_name=respondent.firstName,#}
-{#                                    respondent_last_name=respondent.lastName, email_address=respondent.emailAddress, change_flag='LOCKED')}}"#}
-{#                   id="change-respondent-status">Lock</a>#}
                 {% if respondent.status == 'SUSPENDED' %}
-                <a href="{{ url_for('reporting_unit_bp.confirm_change_respondent_status', ru_ref=ru_ref, party_id=respondent.id, respondent_first_name=respondent.firstName,
-                                    respondent_last_name=respondent.lastName, email_address=respondent.emailAddress, change_flag='ACTIVE') }}">Unlock</a>
+                <a href="{{ url_for('reporting_unit_bp.confirm_change_respondent_status', ru_ref=ru_ref, party_id=respondent.id, change_flag='ACTIVE') }}">Unlock</a>
                 {% endif %}
               </div>
             </td>

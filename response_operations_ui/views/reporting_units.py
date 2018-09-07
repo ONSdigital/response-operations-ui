@@ -11,6 +11,7 @@ from response_operations_ui.controllers import case_controller, iac_controller, 
     reporting_units_controllers
 from response_operations_ui.controllers.collection_exercise_controllers import \
     get_case_group_status_by_collection_exercise, get_collection_exercise_by_id
+from response_operations_ui.controllers.party_controller import get_respondent_by_party_id
 from response_operations_ui.controllers.survey_controllers import get_survey_by_id
 from response_operations_ui.forms import EditContactDetailsForm, SearchForm
 
@@ -230,12 +231,13 @@ def confirm_change_enrolment_status(ru_ref):
 @reporting_unit_bp.route('/<ru_ref>/change-respondent-status', methods=['GET'])
 @login_required
 def confirm_change_respondent_status(ru_ref):
+    respondent = get_respondent_by_party_id(request.args['party_id'])
     return render_template('confirm-respondent-status-change.html',
                            ru_ref=ru_ref,
-                           respondent_id=request.args['party_id'],
-                           first_name=request.args['respondent_first_name'],
-                           last_name=request.args['respondent_last_name'],
-                           email_address=request.args['email_address'],
+                           respondent_id=respondent['id'],
+                           first_name=respondent['firstName'],
+                           last_name=respondent['lastName'],
+                           email_address=respondent['emailAddress'],
                            change_flag=request.args['change_flag'])
 
 
