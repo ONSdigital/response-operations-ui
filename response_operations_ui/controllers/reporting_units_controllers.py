@@ -2,6 +2,7 @@ import logging
 
 import requests
 from flask import current_app as app
+from requests import HTTPError
 from structlog import wrap_logger
 
 from response_operations_ui.exceptions.exceptions import ApiError
@@ -50,8 +51,7 @@ def change_enrolment_status(business_id, respondent_id, survey_id, change_flag):
 
 
 def change_respondent_status(respondent_id, change_flag):
-    if change_flag == 'UNLOCKED':
-        change_flag = 'ACTIVE'
+    if change_flag == 'ACTIVE':
         logger.debug('Changing respondent status', respondent_id=respondent_id, change_flag=change_flag)
         url = f'{app.config["PARTY_URL"]}/party-api/v1/respondents/edit-account-status/{respondent_id}'
         enrolment_json = {
@@ -62,11 +62,11 @@ def change_respondent_status(respondent_id, change_flag):
 
         try:
             response.raise_for_status()
-        except requests.exceptions.HTTPError:
+        except HTTPError:
             logger.error('Failed to change respondent status', respondent_id=respondent_id, change_flag=change_flag)
             raise ApiError(response)
 
-        logger.info('Successfully changed respondent status', respondent_id=respondent_id, change_flag=change_flag)
+        logger.debug('Successfully changed respondent status', respondent_id=respondent_id, change_flag=change_flag)
 
 
 def generate_new_enrolment_code(case_id):

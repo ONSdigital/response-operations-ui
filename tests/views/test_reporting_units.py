@@ -445,7 +445,7 @@ class TestReportingUnits(ViewTestCase):
         mock_request.get(f'{url_get_iac}/{iac_2}', json=iac)
 
         response = self.client.post(f"reporting-units/50012345678/change-respondent-status"
-                                    f"?respondent_id={respondent_party_id}&change_flag=UNLOCKED",
+                                    f"?respondent_id={respondent_party_id}&change_flag=ACTIVE",
                                     follow_redirects=True)
         self.assertEqual(response.status_code, 200)
 

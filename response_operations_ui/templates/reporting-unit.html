@@ -178,7 +178,7 @@
 {#                   id="change-respondent-status">Lock</a>#}
                 {% if respondent.status == 'SUSPENDED' %}
                 <a href="{{ url_for('reporting_unit_bp.confirm_change_respondent_status', ru_ref=ru_ref, party_id=respondent.id, respondent_first_name=respondent.firstName,
-                                    respondent_last_name=respondent.lastName, email_address=respondent.emailAddress, change_flag='UNLOCKED') }}">Unlock</a>
+                                    respondent_last_name=respondent.lastName, email_address=respondent.emailAddress, change_flag='ACTIVE') }}">Unlock</a>
                 {% endif %}
               </div>
             </td>
