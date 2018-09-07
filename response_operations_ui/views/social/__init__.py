@@ -1,8 +1,8 @@
 from flask import Blueprint
 
 from response_operations_ui.views.social.social_case_search import social_case_search
-from response_operations_ui.views.social.social_view_case_details import view_social_case_details
-from response_operations_ui.views.social.social_view_case_details import get_case_response_statuses
+from response_operations_ui.views.social.social_view_case_details import get_case_response_statuses, \
+    update_case_response_status, view_social_case_details
 
 
 social_bp = Blueprint('social_bp', __name__,
@@ -11,3 +11,4 @@ social_bp = Blueprint('social_bp', __name__,
 social_bp.add_url_rule('/', view_func=social_case_search, methods=['GET'])
 social_bp.add_url_rule('/case/<case_id>', view_func=view_social_case_details, methods=['GET'])
 social_bp.add_url_rule('/case/<case_id>/change-response-status', view_func=get_case_response_statuses, methods=['GET'])
+social_bp.add_url_rule('/case/<case_id>/change-response-status', view_func=update_case_response_status, methods=['POST'])

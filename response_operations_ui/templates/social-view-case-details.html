@@ -2,30 +2,39 @@
 {% block page_title %}Social | Survey Data Collection{% endblock %}
 {% block main %}
 
-<div class="container page__container">
+  <div class="container page__container">
+    {% if status_changed %}
+    <div class="panel panel--simple panel--success u-mt-l">
+      <div class="panel__body">
+        <h2 class="venus">Status changed successfully</h2>
+      </div>
+    </div>
+    {% endif %}
     <h1 class="jupiter u-mt-m" id="case_ref">{{case_reference}}</h1>
     <div class="case-details u-mt-m">
-        <dl class="description-list description-list-4" id="case-status">
-            <dt class="description-list__name">
-                Status:
-            </dt>
-            <dd class="description-list__value" id="case-group-status">
+      <dl class="description-list description-list-4" id="case-status">
+        <dt class="description-list__name">
+          Status:
+        </dt>
+        <span class="response-status-headline venus" id="case-group-status">
                 {{status}}
-            </dd>
-            <form action="{{ url_for('social_bp.get_case_response_statuses', case_id=case_id.id) }}" method='GET'>
-              <button type="submit" class="btn btn--secondary btn--small change-status-submit" id="change-status-submit">Change Status</button>
-            </form>
+            </span>
+        <form action="{{ url_for('social_bp.get_case_response_statuses', case_id=case_id.id) }}" method='GET'>
+              <span class="response-status-action u-mt-s u-db">
+                <button type="submit" class="btn btn--secondary btn--small" id="change-status-submit">Change Status</button>
+              </span>
+        </form>
+      </dl>
+      <section class="social-case-section u-mt-l">
+        <h2 class="neptune">Property address</h2>
+        <dl class="survey-info info-panel" id="case-attributes">
+          {% for name in displayed_attributes %}
+            <dt class="case-address__{{ name|lower }}" id="case-{{ name|lower|replace('_', '-') }}">
+              {{ attributes[name] }}
+            </dt>
+          {% endfor %}
         </dl>
-        <section class="social-case-section u-mt-l">
-            <h2 class="neptune">Property address</h2>
-            <dl class="survey-info info-panel" id="case-attributes">
-            {% for name in displayed_attributes %}
-              <dt class="case-address__{{ name|lower }}" id="case-{{ name|lower|replace('_', '-') }}">
-                {{ attributes[name] }}
-              </dt>
-            {% endfor %}
-            </dl>
-        </section>
+      </section>
     </div>
-</div>
+  </div>
 {% endblock %}

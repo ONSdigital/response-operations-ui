@@ -104,6 +104,16 @@ def is_allowed_status(status):
     return status in allowed_statuses
 
 
+def is_allowed_social_status(status):
+    allowed_social_statuses = {
+        'REFUSAL',
+        'OTHERNONRESPONSE',
+        'UNKNOWNELIGIBILITY',
+        'NOTELIGIBLE'
+    }
+    return status in allowed_social_statuses
+
+
 def get_case_group_status_by_collection_exercise(case_groups, collection_exercise_id):
     return next((case_group['caseGroupStatus'] for case_group in case_groups
                  if case_group['collectionExerciseId'] == collection_exercise_id), None)
