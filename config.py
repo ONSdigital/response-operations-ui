@@ -1,8 +1,11 @@
 import os
 from distutils.util import strtobool
 
+FDI_LIST = {'AOFDI', 'AIFDI', 'QIFDI', 'QOFDI'}
+
 
 class Config(object):
+
     DEBUG = os.getenv('DEBUG', False)
     TESTING = False
     PORT = os.getenv('PORT', 8085)

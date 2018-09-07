@@ -1,7 +1,9 @@
 import re
-from datetime import datetime
+from datetime import datetime, timezone
 
 import iso8601
+
+from response_operations_ui.common.dates import localise_datetime
 
 
 def format_short_name(short_name):
@@ -15,13 +17,14 @@ def format_short_name(short_name):
 def convert_events_to_new_format(events):
     formatted_events = {}
     for event in events:
-        date_time = iso8601.parse_date(event['timestamp'])
+        date_time_utc = iso8601.parse_date(event['timestamp'])
+        localised_datetime = localise_datetime(date_time_utc)
         formatted_events[event['tag']] = {
-            "day": date_time.strftime('%A'),
-            "date": date_time.strftime('%d %b %Y'),
-            "month": date_time.strftime('%m'),
-            "time": date_time.strftime('%H:%M GMT'),
-            "is_in_future": date_time > iso8601.parse_date(datetime.now().isoformat())
+            "day": localised_datetime.strftime('%A'),
+            "date": localised_datetime.strftime('%d %b %Y'),
+            "month": localised_datetime.strftime('%m'),
+            "time": localised_datetime.strftime('%H:%M'),
+            "is_in_future": date_time_utc > iso8601.parse_date(datetime.now(timezone.utc).isoformat())
         }
     return formatted_events
 

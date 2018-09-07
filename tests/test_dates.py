@@ -2,7 +2,7 @@ import unittest
 from datetime import datetime, timezone, date
 from unittest.mock import patch
 
-from response_operations_ui.common.dates import get_formatted_date, convert_to_bst
+from response_operations_ui.common.dates import get_formatted_date, localise_datetime
 
 
 class TestDates(unittest.TestCase):
@@ -40,13 +40,13 @@ class TestDates(unittest.TestCase):
     def test_convert_to_bst_from_utc_during_bst(self):
         # 13th Jun 2018 at 14.12 should return 13th Jun 2018 at 15.12
         datetime_parsed = datetime(2018, 6, 13, 14, 12, 0, tzinfo=timezone.utc)
-        returned_datetime = convert_to_bst(datetime_parsed)
+        returned_datetime = localise_datetime(datetime_parsed)
         # Check date returned is in BST format
         self.assertEqual(datetime.strftime(returned_datetime, '%Y-%m-%d %H:%M:%S'), '2018-06-13 15:12:00')
 
     def test_convert_to_bst_from_utc_during_gmt(self):
         # 13th Feb 2018 at 14.12 should return 13th Feb 2018 at 14.12
         datetime_parsed = datetime(2018, 2, 13, 14, 12, 0, tzinfo=timezone.utc)
-        returned_datetime = convert_to_bst(datetime_parsed)
+        returned_datetime = localise_datetime(datetime_parsed)
         # Check date returned is in BST format
         self.assertEqual(datetime.strftime(returned_datetime, '%Y-%m-%d %H:%M:%S'), '2018-02-13 14:12:00')

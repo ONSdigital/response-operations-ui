@@ -1,6 +1,7 @@
 import logging
+from datetime import datetime
 
-import iso8601
+from dateutil import tz
 from flask import abort, redirect, render_template, request, url_for
 from flask_login import login_required
 from structlog import wrap_logger
@@ -68,10 +69,13 @@ def update_event_date_submit(short_name, period, tag):
     if not form.validate() or not valid_date_for_event(tag, form):
         return update_event_date(short_name, period, tag, errors=form.errors)
 
-    day = form.day.data if not len(form.day.data) == 1 else f"0{form.day.data}"
-    timestamp_string = f"{form.year.data}{form.month.data}{day}T{form.hour.data}{form.minute.data}"
-    timestamp = iso8601.parse_date(timestamp_string)
-    if not collection_exercise_controllers.update_event(exercise['id'], tag, timestamp):
+    submitted_dt = datetime(year=int(form.year.data),
+                            month=int(form.month.data),
+                            day=int(form.day.data),
+                            hour=int(form.hour.data),
+                            minute=int(form.minute.data),
+                            tzinfo=tz.gettz('Europe/London'))
+    if not collection_exercise_controllers.update_event(exercise['id'], tag, submitted_dt):
         return redirect(url_for('collection_exercise_bp.update_event_date',
                                 short_name=short_name, period=period, tag=tag, errors=True))
 
