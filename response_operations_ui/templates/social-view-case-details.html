@@ -3,12 +3,12 @@
 {% block main %}
 
   <div class="container page__container">
-    {% if status_changed %}
-    <div class="panel panel--simple panel--success u-mt-l">
-      <div class="panel__body">
-        <h2 class="venus">Status changed successfully</h2>
+    {% if updated_status_message %}
+      <div class="panel panel--simple panel--success u-mt-l">
+        <div id="status_change_successful" class="panel__body">
+          <h2 class="venus">Status changed successfully</h2>
+        </div>
       </div>
-    </div>
     {% endif %}
     <h1 class="jupiter u-mt-m" id="case_ref">{{case_reference}}</h1>
     <div class="case-details u-mt-m">
@@ -16,14 +16,19 @@
         <dt class="description-list__name">
           Status:
         </dt>
-        <span class="response-status-headline venus" id="case-group-status">
-                {{status}}
-            </span>
-        <form action="{{ url_for('social_bp.get_case_response_statuses', case_id=case_id.id) }}" method='GET'>
-              <span class="response-status-action u-mt-s u-db">
+        <dd class="description-list__value">
+          <span class="response-status-headline venus" id="case-group-status">
+            {{status}}
+          </span>
+          <span class="response-status-detail u-mt-xs u-db">
+            {{ updated_status }}
+          </span>
+          <span class="response-status-action u-mt-s u-db">
+            <form action="{{ url_for('social_bp.get_case_response_statuses', case_id=case_id.id) }}" method='GET'>
                 <button type="submit" class="btn btn--secondary btn--small" id="change-status-submit">Change Status</button>
-              </span>
-        </form>
+            </form>
+          </span>
+        </dd>
       </dl>
       <section class="social-case-section u-mt-l">
         <h2 class="neptune">Property address</h2>

@@ -34,8 +34,12 @@
                     <label class="label mars u-mb-s" for="survey-list">Select new status code</label>
                     <select class="input input--select" id="survey-list" name="event" required>
                       <option selected disabled>Select a status code</option>
-                      {% for event, status in statuses.items() %}
-                        <option value="{{ event }}" id="state-{{loop.index}}"> {{ status }}</option>
+                      {% for group, group_statuses in statuses.items() %}
+                        <optgroup label={{ group }}>
+                        {% for event, status in group_statuses.items() %}
+                            <option value="{{ event }}" id="state-{{loop.index}}"> {{ status }}</option>
+                        {% endfor %}
+                        </optgroup>
                       {% endfor %}
                     </select>
                   </div>

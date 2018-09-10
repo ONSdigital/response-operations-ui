@@ -55,10 +55,20 @@ def map_social_case_status(case_response_status):
         'NOTSTARTED': "Not started",
         'INPROGRESS': "In progress",
         'COMPLETE': "Completed",
-        'COMPLETEDBYPHONE': 'Completed by phone',
-        'NOLONGERREQUIRED': 'No longer required',
         'REOPENED': 'Reopened',
-        'REFUSAL': 'Refusal'
+        'REFUSAL': 'Refusal',
+        'OTHERNONRESPONSE': 'Other Non-Response',
+        'UNKNOWNELIGIBILITY': 'Unknown Eligibility',
+        'NOTELIGIBLE': 'Not Eligible'
+    }.get(case_response_status, case_response_status)
+
+
+def map_social_case_status_by_number(case_response_status):
+    return {
+        'REFUSAL': '400 Refusal',
+        'OTHERNONRESPONSE': '500 Other Non-Response',
+        'UNKNOWNELIGIBILITY': '600 Unknown Eligibility',
+        'NOTELIGIBLE': '700 Not Eligible'
     }.get(case_response_status, case_response_status)
 
 
@@ -72,14 +82,14 @@ def map_social_case_event(case_response_status):
         'PHYSICALLY_OR_MENTALLY_UNABLE': '531 Physically or mentally unable/incompetent: notified to Head Office',
         'LANGUAGE_DIFFICULTIES': '541 Language difficulties: notified to Head Office',
         'FULL_INTERVIEW_REQUEST_DATA_DELETED': '561 Full interview achieved but respondent requested data be deleted',
-        'PARTIAL_INTERVIEW_REQUEST_DATA_DELETED': '562 Partial interview achieved but respondent requested data be deleted',
-        'FULL_INTERVIEW_REQUEST_DATA_DELETED_INCORRECT': '563 Full interview achieved but respondent requested data be deleted as it is incorrect',
-        'PARTIAL_INTERVIEW_REQUEST_DATA_DELETED_INCORRECT': '564 Partial interview achieved but respondent requested data be deleted as it is incorrect',
+        'PARTIAL_INTERVIEW_REQUEST_DATA_DELETED': '562 Partial interview achieved but respondent requested data be deleted',  # NOQA
+        'FULL_INTERVIEW_REQUEST_DATA_DELETED_INCORRECT': '563 Full interview achieved but respondent requested data be deleted as it is incorrect',  # NOQA
+        'PARTIAL_INTERVIEW_REQUEST_DATA_DELETED_INCORRECT': '564 Partial interview achieved but respondent requested data be deleted as it is incorrect',  # NOQA
         'LACK_OF_COMPUTER_INTERNET_ACCESS': '571 Lack of computer or internet access',
         'TOO_BUSY': '572 Too busy',
-        'OTHER_CIRCUMSTANTIAL_REFUSAL': '573 Other circumstantial refusal (Further detail to be provided in the notes field)',
+        'OTHER_CIRCUMSTANTIAL_REFUSAL': '573 Other circumstantial refusal (Further detail to be provided in the notes field)',  # NOQA
         'COMPLY_IN_DIFFERENT_COLLECTION_MODE': '581 Willing to comply in a different collection mode',
-        'REQUEST_TO_COMPLETE_IN_ALTERNATIVE_FORMAT': '582 Request to complete in an alternative format which is not currently available (e.g. telephone, paper). Refuses available modes',
+        'REQUEST_TO_COMPLETE_IN_ALTERNATIVE_FORMAT': '582 Request to complete in an alternative format which is not currently available (e.g. telephone, paper). Refuses available modes',  # NOQA
         'NO_TRACE_OF_ADDRESS': '632 No trace of address: returned mail to Head Office',
         'WRONG_ADDRESS': '633 Wrong Address',
         'VACANT_OR_EMPTY': '730 Vacant/empty',
