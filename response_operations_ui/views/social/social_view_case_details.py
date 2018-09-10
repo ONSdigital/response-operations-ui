@@ -1,4 +1,5 @@
 import logging
+from collections import OrderedDict
 
 from flask import render_template, request, redirect, url_for
 from flask_login import login_required
@@ -38,18 +39,28 @@ def get_case_response_statuses(case_id):
     collection_exercise_id = social_case['caseGroup']['collectionExerciseId']
 
     statuses = case_controller.get_available_case_group_statuses_direct(collection_exercise_id, sample_unit_reference)
-    available_events = {event: map_social_case_event(event)
-                        for event, status in statuses.items()
-                        if case_controller.is_allowed_social_status(status)}
-    grouped_statuses = {}
-    for k, v in available_events.items():
-        if grouped_statuses.get(map_social_case_status_by_number(statuses[k])):
-            grouped_statuses[map_social_case_status_by_number(statuses[k])][k] = v
-        else:
-            grouped_statuses[map_social_case_status_by_number(statuses[k])] = {k: v}
+    available_events = filter_to_available_events(statuses)
+
+    grouped_events = group_and_order_events(available_events, statuses)
 
     return render_template('social-change-response-status.html', current_status=current_status,
-                           reference=sample_unit_reference, statuses=grouped_statuses)
+                           reference=sample_unit_reference, statuses=grouped_events)
+
+
+def filter_to_available_events(statuses):
+    available_events = {event: map_social_case_event(event)
+                        for event, status in sorted(statuses.items())
+                        if case_controller.is_allowed_social_status(status)}
+    return available_events
+
+
+def group_and_order_events(available_events, statuses):
+    grouped_events = OrderedDict()
+    for event, formatted_event in sorted(available_events.items(), key=lambda pair: pair[1]):
+        if not grouped_events.get(map_social_case_status_by_number(statuses[event])):
+            grouped_events[map_social_case_status_by_number(statuses[event])] = OrderedDict()
+        grouped_events[map_social_case_status_by_number(statuses[event])][event] = formatted_event
+    return grouped_events
 
 
 @login_required
