@@ -11,6 +11,7 @@ from response_operations_ui.controllers import case_controller, iac_controller, 
     reporting_units_controllers
 from response_operations_ui.controllers.collection_exercise_controllers import \
     get_case_group_status_by_collection_exercise, get_collection_exercise_by_id
+from response_operations_ui.controllers.party_controller import get_respondent_by_party_id
 from response_operations_ui.controllers.survey_controllers import get_survey_by_id
 from response_operations_ui.forms import EditContactDetailsForm, SearchForm
 
@@ -77,6 +78,8 @@ def view_reporting_unit(ru_ref):
         info_message = info
     if request.args.get('enrolment_changed'):
         info_message = 'Enrolment status changed'
+    if request.args.get('account_status_changed'):
+        info_message = 'Account status changed'
 
     breadcrumbs = [
         {
@@ -89,7 +92,7 @@ def view_reporting_unit(ru_ref):
     ]
     return render_template('reporting-unit.html', ru_ref=ru_ref, ru=reporting_unit,
                            surveys=surveys_with_latest_case, breadcrumbs=breadcrumbs,
-                           info_message=info_message, enrolment_changed=request.args.get('enrolment_changed'))
+                           info_message=info_message)
 
 
 def add_collection_exercise_details(collection_exercise, reporting_unit, case_groups):
@@ -225,6 +228,19 @@ def confirm_change_enrolment_status(ru_ref):
                            change_flag=request.args['change_flag'])
 
 
+@reporting_unit_bp.route('/<ru_ref>/change-respondent-status', methods=['GET'])
+@login_required
+def confirm_change_respondent_status(ru_ref):
+    respondent = get_respondent_by_party_id(request.args['party_id'])
+    return render_template('confirm-respondent-status-change.html',
+                           ru_ref=ru_ref,
+                           respondent_id=respondent['id'],
+                           first_name=respondent['firstName'],
+                           last_name=respondent['lastName'],
+                           email_address=respondent['emailAddress'],
+                           change_flag=request.args['change_flag'])
+
+
 @reporting_unit_bp.route('/<ru_ref>/change-enrolment-status', methods=['POST'])
 @login_required
 def change_enrolment_status(ru_ref):
@@ -233,3 +249,11 @@ def change_enrolment_status(ru_ref):
                                                         survey_id=request.args['survey_id'],
                                                         change_flag=request.args['change_flag'])
     return redirect(url_for('reporting_unit_bp.view_reporting_unit', ru_ref=ru_ref, enrolment_changed='True'))
+
+
+@reporting_unit_bp.route('/<ru_ref>/change-respondent-status', methods=['POST'])
+@login_required
+def change_respondent_status(ru_ref):
+    reporting_units_controllers.change_respondent_status(respondent_id=request.args['respondent_id'],
+                                                         change_flag=request.args['change_flag'])
+    return redirect(url_for('reporting_unit_bp.view_reporting_unit', ru_ref=ru_ref, account_status_changed='True'))

@@ -3,13 +3,13 @@
 {% block main %}
 
   <div class="container page__container">
-    {% if updated_status_message %}
+    {% for msg in get_flashed_messages(category_filter=["success"]) %}
       <div class="panel panel--simple panel--success u-mt-l">
         <div id="status_change_successful" class="panel__body">
-          <h2 class="venus">Status changed successfully</h2>
+          <h2 class="venus">{{ msg }}</h2>
         </div>
       </div>
-    {% endif %}
+    {% endfor %}
     <h1 class="jupiter u-mt-m" id="case_ref">{{case_reference}}</h1>
     <div class="case-details u-mt-m">
       <dl class="description-list description-list-4" id="case-status">
@@ -24,7 +24,7 @@
             {{ updated_status }}
           </span>
           <span class="response-status-action u-mt-s u-db">
-            <form action="{{ url_for('social_bp.get_case_response_statuses', case_id=case_id.id) }}" method='GET'>
+            <form action="{{ url_for('social_bp.change_case_response_status', case_id=case_id) }}" method='GET'>
                 <button type="submit" class="btn btn--secondary btn--small" id="change-status-submit">Change Status</button>
             </form>
           </span>
@@ -39,6 +39,23 @@
             </dt>
           {% endfor %}
         </dl>
+      </section>
+      <section class="social-case-section u-mt-l">
+        <h2 class="neptune">Unique access code</h2>
+        <dt class="new-iac__count" id="new-iac-count">
+          There have been {{iac_count}} unique access codes issued for this case.
+        </dt>
+        <form action="{{ url_for('social_bp.generate_iac') }}" method='POST'>
+          <input type="hidden" name="case_id" value="{{case_id}}"/>
+          <button type="submit" class="btn btn--secondary btn--small generate-iac-submit" id="generate-iac-submit">Generate UAC</button>
+        </form>
+        {% if new_iac %}
+          <dl class="survey-info info-panel" id="new-iac-iac">
+            <dt class="new-iac__iac" id="new-iac">
+              {{new_iac}}
+            </dt>
+          </dl>
+        {% endif %}
       </section>
     </div>
   </div>

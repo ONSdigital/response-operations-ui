@@ -22,7 +22,7 @@ def get_formatted_date(datetime_string, string_format='%Y-%m-%d %H:%M:%S'):
 
     time_difference = datetime.date(datetime_parsed) - date.today()
 
-    time = convert_to_bst(datetime_parsed).strftime('%H:%M')
+    time = localise_datetime(datetime_parsed).strftime('%H:%M')
 
     if time_difference.days == 0:
         return f"Today at {time}"
@@ -31,7 +31,7 @@ def get_formatted_date(datetime_string, string_format='%Y-%m-%d %H:%M:%S'):
     return f"{datetime_parsed.strftime('%d %b %Y')} {time}"
 
 
-def convert_to_bst(datetime_parsed):
+def localise_datetime(datetime_parsed):
     """Takes a datetime and adjusts based on BST or GMT.
     Returns adjusted datetime
     """

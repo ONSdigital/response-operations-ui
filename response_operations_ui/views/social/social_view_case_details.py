@@ -1,7 +1,7 @@
 import logging
 from collections import OrderedDict
 
-from flask import render_template, request, redirect, url_for
+from flask import render_template, request, redirect, url_for, flash
 from flask_login import login_required
 from structlog import wrap_logger
 
@@ -9,30 +9,22 @@ from response_operations_ui.forms import ChangeGroupStatusForm
 from response_operations_ui.common.mappers import map_social_case_status, map_social_case_event, \
     map_social_case_status_by_number
 from response_operations_ui.controllers import case_controller, sample_controllers
+from response_operations_ui.views.social.view_social_case_context import build_view_social_case_context
 
 logger = wrap_logger(logging.getLogger(__name__))
 
 
 @login_required
 def view_social_case_details(case_id):
-    updated_status_message = None
-    if request.args.get('status_updated'):
-        updated_status_message = 'Status changed successfully'
+    context = build_view_social_case_context(case_id)
 
-    social_case = case_controller.get_case_by_id(case_id)
-    sample_attributes = sample_controllers.get_sample_attributes(social_case['sampleUnitId'])
+    logger.debug("view_social_case_details", case_id=case_id, status=context.get('status'))
 
-    mapped_status = map_social_case_status(social_case['caseGroup']['caseGroupStatus'])
-    sample_unit_reference = social_case['caseGroup']['sampleUnitRef']
-
-    return render_template('social-view-case-details.html', attributes=sample_attributes['attributes'],
-                           displayed_attributes=['ADDRESS_LINE1', 'ADDRESS_LINE2', 'LOCALITY', 'TOWN_NAME', 'POSTCODE'],
-                           status=mapped_status, case_reference=sample_unit_reference, case_id=social_case,
-                           updated_status_message=updated_status_message)
+    return render_template('social-view-case-details.html', **context)
 
 
 @login_required
-def get_case_response_statuses(case_id):
+def change_case_response_status(case_id):
     social_case = case_controller.get_case_by_id(case_id)
     current_status = map_social_case_status(social_case['caseGroup']['caseGroupStatus'])
     sample_unit_reference = social_case['caseGroup']['sampleUnitRef']
@@ -72,7 +64,7 @@ def update_case_response_status(case_id):
     collection_exercise_id = social_case['caseGroup']['collectionExerciseId']
 
     case_controller.update_case_group_status(collection_exercise_id, ru_ref, form.event.data)
-
+    flash('Status changed successfully', 'success')
     return redirect(url_for('social_bp.view_social_case_details', case_id=case_id,
                             status_updated=True,
                             updated_status=form.event.data))
