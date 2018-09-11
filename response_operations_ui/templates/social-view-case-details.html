@@ -23,6 +23,11 @@
           <span class="response-status-detail u-mt-xs u-db">
             {{ updated_status }}
           </span>
+          {% if latest_case_event_info is not none %}
+          <span class="response-status-detail u-mt-xs u-db">
+            {{ latest_case_event_info }}
+          </span>
+          {% endif %}
           <span class="response-status-action u-mt-s u-db">
             <form action="{{ url_for('social_bp.change_case_response_status', case_id=case_id) }}" method='GET'>
                 <button type="submit" class="btn btn--secondary btn--small" id="change-status-submit">Change Status</button>
@@ -40,14 +45,14 @@
           {% endfor %}
         </dl>
       </section>
-      <section class="social-case-section u-mt-l">
+      <section class="social-case-section u-mt-xl">
         <h2 class="neptune">Unique access code</h2>
-        <dt class="new-iac__count" id="new-iac-count">
+        <p class="mars" id="new-iac-count">
           There have been {{iac_count}} unique access codes issued for this case.
-        </dt>
+        </p>
         <form action="{{ url_for('social_bp.generate_iac') }}" method='POST'>
           <input type="hidden" name="case_id" value="{{case_id}}"/>
-          <button type="submit" class="btn btn--secondary btn--small generate-iac-submit" id="generate-iac-submit">Generate UAC</button>
+          <button type="submit" class="btn btn--secondary btn--small generate-iac-submit" id="generate-iac-submit">Generate new code</button>
         </form>
         {% if new_iac %}
           <dl class="survey-info info-panel" id="new-iac-iac">

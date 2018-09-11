@@ -6,7 +6,6 @@ from structlog import wrap_logger
 
 from response_operations_ui.exceptions.exceptions import ApiError
 
-
 logger = wrap_logger(logging.getLogger(__name__))
 
 
@@ -175,3 +174,22 @@ def get_iac_count_for_case(case_id):
     logger.debug("IAC count for case", case_id=case_id, url=url, iac_count=iac_count)
 
     return iac_count
+
+
+def get_case_events_by_case_id(case_id):
+    logger.debug('Retrieving cases', case_id=case_id)
+    url = f'{app.config["CASE_URL"]}/cases/{case_id}/events'
+    response = requests.get(url, auth=app.config['CASE_AUTH'])
+
+    try:
+        response.raise_for_status()
+    except requests.exceptions.HTTPError:
+        if response.status_code == 404:
+            logger.debug('No statuses found', case_id=case_id)
+            return {}
+        logger.exception('Error retrieving statuses', case_id=case_id)
+        raise ApiError(response)
+
+    logger.debug('Successfully retrieved statuses', case_id=case_id)
+    return response.json()
+

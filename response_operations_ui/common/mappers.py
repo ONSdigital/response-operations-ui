@@ -75,7 +75,7 @@ def map_social_case_status_by_number(case_response_status):
     }.get(case_response_status, case_response_status)
 
 
-def map_social_case_event(case_response_status):
+def map_social_case_event(case_response_status, default_to_none=False):
     return {
         'PRIVACY_DATA_CONFIDENTIALITY_CONCERNS': '411 Privacy Concerns/Data security/confidentiality concerns',
         'LEGITIMACY_CONCERNS': '412 Legitimacy concerns',
@@ -102,7 +102,7 @@ def map_social_case_event(case_response_status):
         'DWELLING_OF_FOREIGN_SERVICE_PERSONNEL_DIPLOMATS': '771 Dwelling of foreign service personnel/diplomats',
         'NO_PERSON_IN_ELIGIBLE_AGE_RANGE': '772 No person in eligible age range',
         'DECEASED': '792 Deceased'
-    }.get(case_response_status, case_response_status)
+    }.get(case_response_status, None if default_to_none else case_response_status)
 
 
 def map_region(region):

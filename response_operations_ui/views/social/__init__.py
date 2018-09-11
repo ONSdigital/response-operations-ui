@@ -13,6 +13,6 @@ social_bp = Blueprint('social_bp', __name__,
 social_bp.add_url_rule('/', view_func=social_case_search, methods=['GET'])
 social_bp.add_url_rule('/case/<case_id>', view_func=view_social_case_details, methods=['GET'])
 social_bp.add_url_rule('/case/<case_id>/change-response-status', view_func=change_case_response_status, methods=['GET'])
-social_bp.add_url_rule('/case/<case_id>/change-response-status', view_func=update_case_response_status,
-                       methods=['POST'])
+social_bp.add_url_rule('/case/<case_id>/change-response-status',
+                       view_func=update_case_response_status, methods=['POST'])
 social_bp.add_url_rule('/iac', view_func=generate_iac, methods=['POST'])
