@@ -35,9 +35,10 @@
                     <select class="input input--select" id="survey-list" name="event" required>
                       <option selected disabled>Select a status code</option>
                       {% for group, group_statuses in statuses.items() %}
+                        {% set outer_loop = loop %}
                         <optgroup label="{{ group }}">
-                        {% for event, status in group_statuses.items() %}
-                            <option value="{{ event }}" id="state-{{loop.index}}"> {{ status }}</option>
+                        {% for status, status_description in group_statuses.items() %}
+                            <option value="{{ status }}" id="status-group-{{ outer_loop.index }}-status-{{loop.index}}"> {{ status_description }}</option>
                         {% endfor %}
                         </optgroup>
                       {% endfor %}
