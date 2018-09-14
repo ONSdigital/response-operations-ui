@@ -38,7 +38,7 @@
                         {% set outer_loop = loop %}
                         <optgroup label="{{ group }}">
                         {% for status, status_description in group_statuses.items() %}
-                            <option value="{{ status }}" id="status-group-{{ outer_loop.index }}-status-{{loop.index}}"> {{ status_description }}</option>
+                            <option value="{{ status }}" id="status-group-{{ outer_loop.index }}-status-{{loop.index}}">{{ status_description }}</option>
                         {% endfor %}
                         </optgroup>
                       {% endfor %}
