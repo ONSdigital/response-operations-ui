@@ -31,8 +31,8 @@
                 </dl>
                 <form action="" method="post" class="u-mt-l">
                   <div class="field field--select">
-                    <label class="label mars u-mb-s" for="survey-list">Select new status code</label>
-                    <select class="input input--select" id="survey-list" name="event" required>
+                    <label class="label mars u-mb-s" for="status-list">Select new status code</label>
+                    <select class="input input--select" id="status-list" name="event" required>
                       <option selected disabled>Select a status code</option>
                       {% for group, group_statuses in statuses.items() %}
                         {% set outer_loop = loop %}
