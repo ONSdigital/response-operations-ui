@@ -6,10 +6,10 @@ from flask_login import login_required
 from structlog import wrap_logger
 
 from response_operations_ui.common.mappers import map_social_case_status, map_social_case_event, \
-    map_social_case_status_by_number
+    map_social_case_status_groups
 from response_operations_ui.controllers import case_controller
 from response_operations_ui.forms import ChangeGroupStatusForm
-from response_operations_ui.views.social.view_social_case_context import build_view_social_case_context
+from response_operations_ui.views.social.social_case_context import build_view_social_case_context
 
 logger = wrap_logger(logging.getLogger(__name__))
 
@@ -48,9 +48,9 @@ def filter_to_available_events(statuses):
 def group_and_order_events(available_events, statuses):
     grouped_events = OrderedDict()
     for event, formatted_event in sorted(available_events.items(), key=lambda pair: pair[1]):
-        if not grouped_events.get(map_social_case_status_by_number(statuses[event])):
-            grouped_events[map_social_case_status_by_number(statuses[event])] = OrderedDict()
-        grouped_events[map_social_case_status_by_number(statuses[event])][event] = formatted_event
+        if not grouped_events.get(map_social_case_status_groups(statuses[event])):
+            grouped_events[map_social_case_status_groups(statuses[event])] = OrderedDict()
+        grouped_events[map_social_case_status_groups(statuses[event])][event] = formatted_event
     return grouped_events
 
 

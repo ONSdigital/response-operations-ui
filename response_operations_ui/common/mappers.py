@@ -6,6 +6,36 @@ import iso8601
 from response_operations_ui.common.dates import localise_datetime
 
 
+# Mapping of social outcome events to descriptions and their corresponding status
+SOCIAL_OUTCOME_EVENTS = {
+    'PRIVACY_DATA_CONFIDENTIALITY_CONCERNS': ('411 Privacy Concerns/Data security/confidentiality concerns', 'REFUSAL'),
+    'LEGITIMACY_CONCERNS': ('412 Legitimacy concerns', 'REFUSAL'),
+    'OTHER_OUTRIGHT_REFUSAL': ('413 Other outright refusal (further detail in notes)', 'REFUSAL'),
+    'ILL_AT_HOME': ('511 Ill at home during survey period: notified to Head Office', 'OTHERNONRESPONSE'),
+    'IN_HOSPITAL': ('521 Away/In hospital throughout field period: notified to Head Office', 'OTHERNONRESPONSE'),
+    'PHYSICALLY_OR_MENTALLY_UNABLE': ('531 Physically or mentally unable/incompetent: notified to Head Office', 'OTHERNONRESPONSE'),  # NOQA
+    'LANGUAGE_DIFFICULTIES': ('541 Language difficulties: notified to Head Office', 'OTHERNONRESPONSE'),
+    'FULL_INTERVIEW_REQUEST_DATA_DELETED': ('561 Full interview achieved but respondent requested data be deleted', 'OTHERNONRESPONSE'),  # NOQA
+    'PARTIAL_INTERVIEW_REQUEST_DATA_DELETED': ('562 Partial interview achieved but respondent requested data be deleted', 'OTHERNONRESPONSE'),  # NOQA
+    'FULL_INTERVIEW_REQUEST_DATA_DELETED_INCORRECT': ('563 Full interview achieved but respondent requested data be deleted as it is incorrect', 'OTHERNONRESPONSE'),  # NOQA
+    'PARTIAL_INTERVIEW_REQUEST_DATA_DELETED_INCORRECT': ('564 Partial interview achieved but respondent requested data be deleted as it is incorrect', 'OTHERNONRESPONSE'),  # NOQA
+    'LACK_OF_COMPUTER_INTERNET_ACCESS': ('571 Lack of computer or internet access', 'OTHERNONRESPONSE'),
+    'TOO_BUSY': ('572 Too busy', 'OTHERNONRESPONSE'),
+    'OTHER_CIRCUMSTANTIAL_REFUSAL': ('573 Other circumstantial refusal (Further detail to be provided in the notes field)', 'OTHERNONRESPONSE'),  # NOQA
+    'COMPLY_IN_DIFFERENT_COLLECTION_MODE': ('581 Willing to comply in a different collection mode', 'OTHERNONRESPONSE'),
+    'REQUEST_TO_COMPLETE_IN_ALTERNATIVE_FORMAT': ('582 Request to complete in an alternative format which is not currently available (e.g. telephone, paper). Refuses available modes', 'OTHERNONRESPONSE'),  # NOQA
+    'NO_TRACE_OF_ADDRESS': ('632 No trace of address: returned mail to Head Office', 'UNKNOWNELIGIBILITY'),
+    'WRONG_ADDRESS': ('633 Wrong Address', 'UNKNOWNELIGIBILITY'),
+    'VACANT_OR_EMPTY': ('730 Vacant/empty', 'NOTELIGIBLE'),
+    'NON_RESIDENTIAL_ADDRESS': ('740 Non-residential address', 'NOTELIGIBLE'),
+    'ADDRESS_OCCUPIED_NO_RESIDENT': ('750 Address occupied, but no resident household/resident(s)', 'NOTELIGIBLE'),
+    'COMMUNAL_ESTABLISHMENT_INSTITUTION': ('760 Communal establishment/institution', 'NOTELIGIBLE'),
+    'DWELLING_OF_FOREIGN_SERVICE_PERSONNEL_DIPLOMATS': ('771 Dwelling of foreign service personnel/diplomats', 'NOTELIGIBLE'),  # NOQA
+    'NO_PERSON_IN_ELIGIBLE_AGE_RANGE': ('772 No person in eligible age range', 'NOTELIGIBLE'),
+    'DECEASED': ('792 Deceased', 'NOTELIGIBLE')
+}
+
+
 def format_short_name(short_name):
     """
     This regex function returns a short name value without spaces
@@ -58,7 +88,6 @@ def map_social_case_status(case_response_status):
         'NOTSTARTED': "Not started",
         'INPROGRESS': "In progress",
         'COMPLETE': "Completed",
-        'REOPENED': 'Reopened',
         'REFUSAL': 'Refusal',
         'OTHERNONRESPONSE': 'Other Non-Response',
         'UNKNOWNELIGIBILITY': 'Unknown Eligibility',
@@ -66,7 +95,7 @@ def map_social_case_status(case_response_status):
     }.get(case_response_status, case_response_status)
 
 
-def map_social_case_status_by_number(case_response_status):
+def map_social_case_status_groups(case_response_status):
     return {
         'REFUSAL': '400 Refusal',
         'OTHERNONRESPONSE': '500 Other Non-Response',
@@ -76,33 +105,17 @@ def map_social_case_status_by_number(case_response_status):
 
 
 def map_social_case_event(case_response_status, default_to_none=False):
-    return {
-        'PRIVACY_DATA_CONFIDENTIALITY_CONCERNS': '411 Privacy Concerns/Data security/confidentiality concerns',
-        'LEGITIMACY_CONCERNS': '412 Legitimacy concerns',
-        'OTHER_OUTRIGHT_REFUSAL': '413 Other outright refusal (further detail in notes)',
-        'ILL_AT_HOME': '511 Ill at home during survey period: notified to Head Office',
-        'IN_HOSPITAL': '521 Away/In hospital throughout field period: notified to Head Office',
-        'PHYSICALLY_OR_MENTALLY_UNABLE': '531 Physically or mentally unable/incompetent: notified to Head Office',
-        'LANGUAGE_DIFFICULTIES': '541 Language difficulties: notified to Head Office',
-        'FULL_INTERVIEW_REQUEST_DATA_DELETED': '561 Full interview achieved but respondent requested data be deleted',
-        'PARTIAL_INTERVIEW_REQUEST_DATA_DELETED': '562 Partial interview achieved but respondent requested data be deleted',  # NOQA
-        'FULL_INTERVIEW_REQUEST_DATA_DELETED_INCORRECT': '563 Full interview achieved but respondent requested data be deleted as it is incorrect',  # NOQA
-        'PARTIAL_INTERVIEW_REQUEST_DATA_DELETED_INCORRECT': '564 Partial interview achieved but respondent requested data be deleted as it is incorrect',  # NOQA
-        'LACK_OF_COMPUTER_INTERNET_ACCESS': '571 Lack of computer or internet access',
-        'TOO_BUSY': '572 Too busy',
-        'OTHER_CIRCUMSTANTIAL_REFUSAL': '573 Other circumstantial refusal (Further detail to be provided in the notes field)',  # NOQA
-        'COMPLY_IN_DIFFERENT_COLLECTION_MODE': '581 Willing to comply in a different collection mode',
-        'REQUEST_TO_COMPLETE_IN_ALTERNATIVE_FORMAT': '582 Request to complete in an alternative format which is not currently available (e.g. telephone, paper). Refuses available modes',  # NOQA
-        'NO_TRACE_OF_ADDRESS': '632 No trace of address: returned mail to Head Office',
-        'WRONG_ADDRESS': '633 Wrong Address',
-        'VACANT_OR_EMPTY': '730 Vacant/empty',
-        'NON_RESIDENTIAL_ADDRESS': '740 Non-residential address',
-        'ADDRESS_OCCUPIED_NO_RESIDENT': '750 Address occupied, but no resident household/resident(s)',
-        'COMMUNAL_ESTABLISHMENT_INSTITUTION': '760 Communal establishment/institution',
-        'DWELLING_OF_FOREIGN_SERVICE_PERSONNEL_DIPLOMATS': '771 Dwelling of foreign service personnel/diplomats',
-        'NO_PERSON_IN_ELIGIBLE_AGE_RANGE': '772 No person in eligible age range',
-        'DECEASED': '792 Deceased'
-    }.get(case_response_status, None if default_to_none else case_response_status)
+    try:
+        return SOCIAL_OUTCOME_EVENTS.get(case_response_status)[0]
+    except TypeError:
+        return None if default_to_none else case_response_status
+
+
+def get_social_status_from_event(social_case_event):
+    try:
+        return SOCIAL_OUTCOME_EVENTS.get(social_case_event)[1]
+    except TypeError:
+        return None
 
 
 def map_region(region):

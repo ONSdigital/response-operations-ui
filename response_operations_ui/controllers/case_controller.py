@@ -192,4 +192,3 @@ def get_case_events_by_case_id(case_id):
 
     logger.debug('Successfully retrieved statuses', case_id=case_id)
     return response.json()
-

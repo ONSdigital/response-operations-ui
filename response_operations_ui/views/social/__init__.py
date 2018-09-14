@@ -4,7 +4,6 @@ from response_operations_ui.views.social.social_case_search import social_case_s
 from response_operations_ui.views.social.social_view_case_details import change_case_response_status, \
     update_case_response_status, view_social_case_details
 
-from response_operations_ui.views.social.social_view_case_details import view_social_case_details
 from response_operations_ui.views.social.generate_iac import generate_iac
 
 social_bp = Blueprint('social_bp', __name__,
