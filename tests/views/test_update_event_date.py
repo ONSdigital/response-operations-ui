@@ -81,7 +81,7 @@ class TestUpdateEventDate(ViewTestCase):
 
         request_history = mock_request.request_history
         self.assertEqual(len(request_history), 2)
-        self.assertEqual(response.status_code, 500)
+        self.assertEqual(response.status_code, 404)
 
     @requests_mock.mock()
     def test_update_event_date_service_fail(self, mock_request):
@@ -115,7 +115,7 @@ class TestUpdateEventDate(ViewTestCase):
 
         request_history = mock_request.request_history
         self.assertEqual(len(request_history), 2)
-        self.assertEqual(response.status_code, 500)
+        self.assertEqual(response.status_code, 404)
 
     @requests_mock.mock()
     def test_put_update_event_date_invalid_form(self, mock_request):

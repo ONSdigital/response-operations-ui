@@ -259,7 +259,7 @@ class TestCollectionExercise(ViewTestCase):
 
         request_history = mock_request.request_history
         self.assertEqual(len(request_history), 2)
-        self.assertEqual(response.status_code, 500)
+        self.assertEqual(response.status_code, 404)
 
     @requests_mock.mock()
     def test_collection_exercise_view_empty_list(self, mock_request):
@@ -270,7 +270,7 @@ class TestCollectionExercise(ViewTestCase):
 
         request_history = mock_request.request_history
         self.assertEqual(len(request_history), 2)
-        self.assertEqual(response.status_code, 500)
+        self.assertEqual(response.status_code, 404)
 
     @requests_mock.mock()
     def test_collection_exercise_view_404_no_match(self, mock_request):
@@ -285,7 +285,7 @@ class TestCollectionExercise(ViewTestCase):
 
         request_history = mock_request.request_history
         self.assertEqual(len(request_history), 2)
-        self.assertEqual(response.status_code, 500)
+        self.assertEqual(response.status_code, 404)
 
     @requests_mock.mock()
     def test_collection_exercise_view_service_fail(self, mock_request):
