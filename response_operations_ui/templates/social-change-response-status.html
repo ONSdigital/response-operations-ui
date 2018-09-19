@@ -33,7 +33,7 @@
                   <div class="field field--select">
                     <label class="label mars u-mb-s" for="status-list">Select new status code</label>
                     <select class="input input--select" id="status-list" name="event" required>
-                      <option selected disabled>Select a status code</option>
+                      <option selected disabled hidden value="">Select a status code</option>
                       {% for group, group_statuses in statuses.items() %}
                         {% set outer_loop = loop %}
                         <optgroup label="{{ group }}">
