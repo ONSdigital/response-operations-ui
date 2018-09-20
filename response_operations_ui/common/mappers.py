@@ -95,7 +95,7 @@ def map_social_case_status(case_response_status):
     }.get(case_response_status, case_response_status)
 
 
-def map_social_case_status_groups(case_response_status):
+def map_social_outcome_groups(case_response_status):
     return {
         'REFUSAL': '400 Refusal',
         'OTHERNONRESPONSE': '500 Other Non-Response',
