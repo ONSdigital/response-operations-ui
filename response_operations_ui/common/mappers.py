@@ -21,7 +21,7 @@ SOCIAL_OUTCOME_EVENTS = {
     'PARTIAL_INTERVIEW_REQUEST_DATA_DELETED_INCORRECT': ('564 Partial interview achieved but respondent requested data be deleted as it is incorrect', 'OTHERNONRESPONSE'),  # NOQA
     'LACK_OF_COMPUTER_INTERNET_ACCESS': ('571 Lack of computer or internet access', 'OTHERNONRESPONSE'),
     'TOO_BUSY': ('572 Too busy', 'OTHERNONRESPONSE'),
-    'OTHER_CIRCUMSTANTIAL_REFUSAL': ('573 Other circumstantial refusal (Further detail to be provided in the notes field)', 'OTHERNONRESPONSE'),  # NOQA
+    'OTHER_CIRCUMSTANTIAL_REFUSAL': ('573 Other circumstantial refusal (further detail in notes)', 'OTHERNONRESPONSE'),
     'COMPLY_IN_DIFFERENT_COLLECTION_MODE': ('581 Willing to comply in a different collection mode', 'OTHERNONRESPONSE'),
     'REQUEST_TO_COMPLETE_IN_ALTERNATIVE_FORMAT': ('582 Request to complete in an alternative format which is not currently available (e.g. telephone, paper). Refuses available modes', 'OTHERNONRESPONSE'),  # NOQA
     'NO_TRACE_OF_ADDRESS': ('632 No trace of address: returned mail to Head Office', 'UNKNOWNELIGIBILITY'),
