@@ -43,6 +43,7 @@ class TestSocialCase(ViewTestCase):
         mock_request.get(get_sample_by_id_url, json=mocked_sample_attributes)
         mock_request.get(get_case_events_by_case_id, json=mocked_case_events)
         mock_request.get(iac_url, json=mocked_iacs)
+        mock_request.get(url_get_available_case_group_statuses_direct, json=case_group_statuses)
 
         response = self.client.get(f'/social/case/{case_id}', follow_redirects=True)
 
@@ -72,6 +73,7 @@ class TestSocialCase(ViewTestCase):
         mock_request.get(get_case_by_id_url, json=mocked_case_details)
         mock_request.get(get_sample_by_id_url, json=mocked_sample_attributes)
         mock_request.get(get_case_events_by_case_id, json=mocked_case_events)
+        mock_request.get(url_get_available_case_group_statuses_direct, json=case_group_statuses)
 
         response = self.client.post(f'/social/iac', follow_redirects=True, data=post_data)
 
