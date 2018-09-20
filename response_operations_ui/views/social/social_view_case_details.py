@@ -30,7 +30,7 @@ def change_case_response_status(case_id):
     collection_exercise_id = social_case['caseGroup']['collectionExerciseId']
 
     statuses = case_controller.get_available_case_group_statuses_direct(collection_exercise_id, sample_unit_reference)
-    available_events = filter_to_available_events(statuses)
+    available_events = filter_and_format_available_events(statuses)
 
     grouped_events = group_and_order_events(available_events, statuses)
 
@@ -38,14 +38,14 @@ def change_case_response_status(case_id):
                            reference=sample_unit_reference, statuses=grouped_events)
 
 
-def filter_to_available_events(statuses):
+def filter_and_format_available_events(statuses: dict) -> dict:
     available_events = {event: map_social_case_event(event)
-                        for event, status in sorted(statuses.items())
+                        for event, status in statuses.items()
                         if case_controller.is_allowed_change_social_status(status)}
     return available_events
 
 
-def group_and_order_events(available_events, statuses):
+def group_and_order_events(available_events: dict, statuses: dict) -> OrderedDict:
     grouped_events = OrderedDict()
     for event, formatted_event in sorted(available_events.items(), key=lambda pair: pair[1]):
         if not grouped_events.get(map_social_outcome_groups(statuses[event])):
