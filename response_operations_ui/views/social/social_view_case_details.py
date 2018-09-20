@@ -41,7 +41,7 @@ def change_case_response_status(case_id):
 def filter_to_available_events(statuses):
     available_events = {event: map_social_case_event(event)
                         for event, status in sorted(statuses.items())
-                        if case_controller.is_allowed_social_status(status)}
+                        if case_controller.is_allowed_change_social_status(status)}
     return available_events
 
 

@@ -103,7 +103,7 @@ def is_allowed_status(status):
     return status in allowed_statuses
 
 
-def is_allowed_social_status(status):
+def is_allowed_change_social_status(status):
     allowed_social_statuses = {
         'REFUSAL',
         'OTHERNONRESPONSE',

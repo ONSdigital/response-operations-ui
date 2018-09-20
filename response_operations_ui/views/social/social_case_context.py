@@ -22,6 +22,11 @@ def build_view_social_case_context(case_id):
     context['iac_count'] = case_controller.get_iac_count_for_case(case_id)
     context['displayed_attributes'] = ['ADDRESS_LINE1', 'ADDRESS_LINE2', 'LOCALITY', 'TOWN_NAME', 'POSTCODE']
     context['case_reference'] = social_case['caseGroup']['sampleUnitRef']
+    context['can_change_status'] = any(map(case_controller.is_allowed_change_social_status,
+                                           case_controller.get_available_case_group_statuses_direct(
+                                               social_case['caseGroup']['collectionExerciseId'],
+                                               social_case['caseGroup']['sampleUnitRef']
+                                           ).values()))
 
     if map_social_case_status(case_status):
         event_description = get_case_event_description(social_case['caseGroup']['caseGroupStatus'], case_events)

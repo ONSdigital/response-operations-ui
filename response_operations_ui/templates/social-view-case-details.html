@@ -28,11 +28,14 @@
             {{ latest_case_event_info }}
           </span>
           {% endif %}
+          {% if can_change_status %}
           <span class="response-status-action u-mt-s u-db">
             <form action="{{ url_for('social_bp.change_case_response_status', case_id=case_id) }}" method='GET'>
-                <button type="submit" class="btn btn--secondary btn--small" id="change-status-submit">Change Status</button>
+                <button type="submit" class="btn btn--secondary btn--small"
+                         id="change-status-submit">Change Status</button>
             </form>
           </span>
+          {% endif %}
         </dd>
       </dl>
       <section class="social-case-section u-mt-l">
