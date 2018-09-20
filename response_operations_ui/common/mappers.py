@@ -106,15 +106,15 @@ def map_social_outcome_groups(case_response_status):
 
 def map_social_case_event(case_response_status, default_to_none=False):
     try:
-        return SOCIAL_OUTCOME_EVENTS.get(case_response_status)[0]
-    except TypeError:
+        return SOCIAL_OUTCOME_EVENTS[case_response_status][0]
+    except KeyError:
         return None if default_to_none else case_response_status
 
 
 def get_social_status_from_event(social_case_event):
     try:
-        return SOCIAL_OUTCOME_EVENTS.get(social_case_event)[1]
-    except TypeError:
+        return SOCIAL_OUTCOME_EVENTS[social_case_event][1]
+    except KeyError:
         return None
 
 
