@@ -39,9 +39,9 @@ SOCIAL_OUTCOMES_MAP = {outcome.reference_string: outcome for outcome in _SOCIAL_
 
 def map_social_case_status(case_response_status):
     return {
-        'NOTSTARTED': "Not started",
-        'INPROGRESS': "In progress",
-        'COMPLETE': "Completed",
+        'NOTSTARTED': 'Not started',
+        'INPROGRESS': 'In progress',
+        'COMPLETE': 'Completed',
         'REFUSAL': 'Refusal',
         'OTHERNONRESPONSE': 'Other Non-Response',
         'UNKNOWNELIGIBILITY': 'Unknown Eligibility',

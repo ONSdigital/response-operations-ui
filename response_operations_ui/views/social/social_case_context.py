@@ -5,6 +5,7 @@ from structlog import wrap_logger
 from response_operations_ui.common.social_outcomes import map_social_case_status, get_formatted_social_outcome, \
     get_social_status_from_event
 from response_operations_ui.controllers import case_controller, sample_controllers
+from response_operations_ui.controllers.case_controller import is_allowed_change_social_status
 
 logger = wrap_logger(logging.getLogger(__name__))
 
@@ -28,12 +29,12 @@ def build_view_social_case_context(case_id):
                                                social_case['caseGroup']['sampleUnitRef']
                                            ).values()))
 
-    if map_social_case_status(case_status):
+    if is_allowed_change_social_status(social_case['caseGroup']['caseGroupStatus']):
         event_description = get_case_event_description(social_case['caseGroup']['caseGroupStatus'], case_events)
         if event_description is None:
             logger.error('Failed to find case event description', case_id=case_id, case_status=case_status)
         else:
-            context['latest_case_event_info'] = event_description
+            context['case_event_description'] = event_description
 
     return context
 
