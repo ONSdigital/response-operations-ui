@@ -5,8 +5,8 @@ from flask import render_template, request, redirect, url_for, flash
 from flask_login import login_required
 from structlog import wrap_logger
 
-from response_operations_ui.common.mappers import map_social_case_status, map_social_case_event, \
-    map_social_outcome_groups
+from response_operations_ui.common.social_outcomes import map_social_case_status, map_social_status_groups, \
+    get_formatted_social_outcome
 from response_operations_ui.controllers import case_controller
 from response_operations_ui.forms import ChangeGroupStatusForm
 from response_operations_ui.views.social.social_case_context import build_view_social_case_context
@@ -39,7 +39,7 @@ def change_case_response_status(case_id):
 
 
 def filter_and_format_available_events(statuses: dict) -> dict:
-    available_events = {event: map_social_case_event(event)
+    available_events = {event: get_formatted_social_outcome(event)
                         for event, status in statuses.items()
                         if case_controller.is_allowed_change_social_status(status)}
     return available_events
@@ -48,9 +48,9 @@ def filter_and_format_available_events(statuses: dict) -> dict:
 def group_and_order_events(available_events: dict, statuses: dict) -> OrderedDict:
     grouped_events = OrderedDict()
     for event, formatted_event in sorted(available_events.items(), key=lambda pair: pair[1]):
-        if not grouped_events.get(map_social_outcome_groups(statuses[event])):
-            grouped_events[map_social_outcome_groups(statuses[event])] = OrderedDict()
-        grouped_events[map_social_outcome_groups(statuses[event])][event] = formatted_event
+        if not grouped_events.get(map_social_status_groups(statuses[event])):
+            grouped_events[map_social_status_groups(statuses[event])] = OrderedDict()
+        grouped_events[map_social_status_groups(statuses[event])][event] = formatted_event
     return grouped_events
 
 

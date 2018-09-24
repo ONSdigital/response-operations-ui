@@ -2,7 +2,7 @@ import logging
 
 from structlog import wrap_logger
 
-from response_operations_ui.common.mappers import map_social_case_status, map_social_case_event, \
+from response_operations_ui.common.social_outcomes import map_social_case_status, get_formatted_social_outcome, \
     get_social_status_from_event
 from response_operations_ui.controllers import case_controller, sample_controllers
 
@@ -42,6 +42,6 @@ def get_case_event_description(case_status, case_events):
     try:
         last_matching_event = [case_event for case_event in case_events
                                if get_social_status_from_event(case_event.get('category')) == case_status][0]
-        return map_social_case_event(last_matching_event.get('category'), default_to_none=True)
+        return get_formatted_social_outcome(last_matching_event.get('category'), default_to_none=True)
     except IndexError:
         return None
