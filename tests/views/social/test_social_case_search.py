@@ -26,7 +26,7 @@ def mock_sample_units(postcode):
     return sample_units
 
 
-class TestSocial(ViewTestCase):
+class TestSocialCaseSearch(ViewTestCase):
 
     def setup_data(self):
         pass
