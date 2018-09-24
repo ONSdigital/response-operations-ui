@@ -1,9 +1,7 @@
-class SocialOutcome:
+from collections import namedtuple
 
-    def __init__(self, reference_string, formatted_string, status):
-        self.reference_string = reference_string
-        self.formatted_string = formatted_string
-        self.status = status
+
+SocialOutcome = namedtuple('SocialOutcome', 'reference_string formatted_string status')
 
 
 _SOCIAL_OUTCOMES = [
