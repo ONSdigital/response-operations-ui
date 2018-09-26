@@ -53,16 +53,5 @@ def map_ce_response_status(ce_response_status):
     }.get(ce_response_status, ce_response_status)
 
 
-def map_social_case_status(case_response_status):
-    return {
-        'NOTSTARTED': "Not started",
-        'INPROGRESS': "In progress",
-        'COMPLETE': "Completed",
-        'COMPLETEDBYPHONE': 'Completed by phone',
-        'NOLONGERREQUIRED': 'No longer required',
-        'REOPENED': 'Reopened'
-    }.get(case_response_status, case_response_status)
-
-
 def map_region(region):
     return "NI" if region == "YY" else "GB"

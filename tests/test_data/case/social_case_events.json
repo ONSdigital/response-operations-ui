@@ -1,0 +1,30 @@
+[
+  {
+    "createdDateTime": "2018-09-11T13:42:18.069Z",
+    "category": "EQ_LAUNCH",
+    "subCategory": null,
+    "createdBy": "RESPONDENT_HOME",
+    "description": "Instrument LMS launched for case 2b5528a3-d28a-44d1-a642-68ebb72d11a5"
+  },
+  {
+    "createdDateTime": "2018-09-10T08:02:44.274Z",
+    "category": "ACTION_CREATED",
+    "subCategory": "SOCIALPRENOT",
+    "createdBy": "SYSTEM",
+    "description": "Social Pre Notification Letter"
+  },
+  {
+    "createdDateTime": "2018-09-10T08:02:44.076Z",
+    "category": "ACTION_CREATED",
+    "subCategory": "SOCIALNOT",
+    "createdBy": "SYSTEM",
+    "description": "Enrolment Invitation Letter"
+  },
+  {
+    "createdDateTime": "2018-09-10T08:02:29.514Z",
+    "category": "CASE_CREATED",
+    "subCategory": null,
+    "createdBy": "SYSTEM",
+    "description": "Case created when Initial creation of case"
+  }
+]

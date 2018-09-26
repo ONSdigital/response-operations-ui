@@ -1,0 +1,63 @@
+{% extends "layouts/base.html" %}
+
+{% block page_title %} Change response status {% endblock %}
+{%- block body %}
+  <body class="spoke">
+  <div class="page">
+    <div class="page__content">
+      <div class="container page__container">
+        <div class="grid">
+          <div class="grid__col col-3@l">
+          </div>
+          <div class="grid__col col-6@l">
+            <div role="main" id="main" class="page__main">
+              <div class="spoke__header">
+                <div class="spoke__header__title">
+                  <h1 class="jupiter">Change response status</h1>
+                </div>
+              </div>
+              <div class="spoke__body" id="spoke__body">
+                <dl class="description-list description-list-8">
+                  <dt class="">Reference:
+                  </dt>
+                  <dd class="current-reference">
+                    {{ reference }}
+                  </dd>
+                  <dt class="">Current status:
+                  </dt>
+                  <dd class="" id="current-status">
+                    {{ current_status }}
+                  </dd>
+                </dl>
+                <form action="" method="post" class="u-mt-l">
+                  <div class="field field--select">
+                    <label class="label mars u-mb-s" for="status-list">Select new status code</label>
+                    <select class="input input--select" id="status-list" name="event" required>
+                      <option selected disabled hidden value="">Select a status code</option>
+                      {% for group, group_statuses in statuses.items() %}
+                        {% set outer_loop = loop %}
+                        <optgroup label="{{ group }}">
+                        {% for status, status_description in group_statuses.items() %}
+                            <option value="{{ status }}" id="status-group-{{ outer_loop.index }}-status-{{loop.index}}">{{ status_description }}</option>
+                        {% endfor %}
+                        </optgroup>
+                      {% endfor %}
+                    </select>
+                  </div>
+                  <div class="u-mt-s">
+                    <button type="submit" id="response-status-change-confirm-button" class="btn btn--primary">Set new status</button>
+                  </div>
+                  <div>
+                    <a href="" onclick="history.back(); return false;">Cancel</a>
+                  </div>
+                </form>
+              </div>
+            </div>
+          </div>
+          <div class="grid__col col-3@l">
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+{% endblock body -%}

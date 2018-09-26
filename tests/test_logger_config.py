@@ -17,7 +17,7 @@ class TestLoggerConfig(unittest.TestCase):
         logger = wrap_logger(logging.getLogger())
         logger.error('Test')
         message = l.records[0].msg
-        message_contents = '{\n "event": "Test",\n "zipkin_trace_id": "",\n "zipkin_span_id": "",' \
+        message_contents = '\n "event": "Test",\n "trace": "",\n "span": "",\n "parent": "",' \
                            '\n "level": "error",\n "service": "response-operations-ui"'
         self.assertIn(message_contents, message)
 
@@ -28,7 +28,7 @@ class TestLoggerConfig(unittest.TestCase):
         logger = wrap_logger(logging.getLogger())
         logger.error('Test')
         message = l.records[0].msg
-        self.assertIn('{"event": "Test", "zipkin_trace_id": "", "zipkin_span_id": "",'
+        self.assertIn('"event": "Test", "trace": "", "span": "", "parent": "",'
                       ' "level": "error", "service": "response-operations-ui"', message)
 
     @log_capture()
@@ -37,5 +37,5 @@ class TestLoggerConfig(unittest.TestCase):
         logger = wrap_logger(logging.getLogger())
         logger.error('Test')
         message = l.records[0].msg
-        self.assertIn('{"event": "Test", "zipkin_trace_id": "", "zipkin_span_id": "",'
+        self.assertIn('"event": "Test", "trace": "", "span": "", "parent": "",'
                       ' "level": "error", "service": "response-operations-ui"', message)
