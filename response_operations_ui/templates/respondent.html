@@ -32,7 +32,7 @@
                             Account
                         </dt>
                         <dd id="respondent-account-status">
-                            {{ respondent.status }}
+                            {% if respondent.status  == 'Suspended' %} Locked {% else %} {{ respondent.status }} {% endif %}
                         </dd>
                     </dl>
             </section>

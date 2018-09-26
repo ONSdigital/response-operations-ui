@@ -5,7 +5,7 @@ from flask_login import login_required
 from structlog import wrap_logger
 
 from response_operations_ui.controllers import case_controller
-from response_operations_ui.views.social.view_social_case_context import build_view_social_case_context
+from response_operations_ui.views.social.social_case_context import build_view_social_case_context
 
 logger = wrap_logger(logging.getLogger(__name__))
 
