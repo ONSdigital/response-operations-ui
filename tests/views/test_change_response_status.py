@@ -132,7 +132,8 @@ class TestChangeResponseStatus(TestCase):
         mock_request.get(url_get_case_by_case_group_id, json=[case])
         mock_request.post(url_post_case_event)
 
-        response = self.client.post(f'/case/{ru_ref}/change-response-status?survey={short_name}&period={period}&case_group_id={case_group_id}',
+        response = self.client.post(f'/case/{ru_ref}/change-response-status'
+                                    f'?survey={short_name}&period={period}&case_group_id={case_group_id}',
                                     data={'event': 'COMPLETEDBYPHONE'})
 
         self.assertEqual(response.status_code, 302)
@@ -142,7 +143,8 @@ class TestChangeResponseStatus(TestCase):
     def test_update_case_group_status_get_case_fail(self, mock_request):
         mock_request.get(url_get_case_by_case_group_id, json=[case], status_code=500)
 
-        response = self.client.post(f'/case/{ru_ref}/change-response-status?survey={short_name}&period={period}&case_group_id={case_group_id}',
+        response = self.client.post(f'/case/{ru_ref}/change-response-status'
+                                    f'?survey={short_name}&period={period}&case_group_id={case_group_id}',
                                     data={'event': 'COMPLETEDBYPHONE'}, follow_redirects=True)
 
         self.assertEqual(response.status_code, 500)
@@ -153,7 +155,8 @@ class TestChangeResponseStatus(TestCase):
         mock_request.get(url_get_case_by_case_group_id, json=[case])
         mock_request.post(url_post_case_event, status_code=500)
 
-        response = self.client.post(f'/case/{ru_ref}/change-response-status?survey={short_name}&period={period}&case_group_id={case_group_id}',
+        response = self.client.post(f'/case/{ru_ref}/change-response-status'
+                                    f'?survey={short_name}&period={period}&case_group_id={case_group_id}',
                                     data={'event': 'COMPLETEDBYPHONE'}, follow_redirects=True)
 
         self.assertEqual(response.status_code, 500)
@@ -163,7 +166,8 @@ class TestChangeResponseStatus(TestCase):
     def test_update_case_group_status_no_event(self, mock_request):
         mock_request.get(url_get_case_by_case_group_id, json=[case])
 
-        response = self.client.post(f'/case/{ru_ref}/change-response-status?survey={short_name}&period={period}&case_group_id={case_group_id}')
+        response = self.client.post(f'/case/{ru_ref}/change-response-status'
+                                    f'?survey={short_name}&period={period}&case_group_id={case_group_id}')
 
         self.assertEqual(response.status_code, 302)
         self.assertIn(f'case/{ru_ref}', response.location)
