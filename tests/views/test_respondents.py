@@ -59,9 +59,11 @@ class TestRespondents(ViewTestCase):
         email = 'Jacky.Turner@email.com'
         mock_request.get(get_respondent_by_email_url, status_code=500)
 
-        self.client.post("/respondents/", data={"email": email})
+        response = self.client.post("/respondents/", data={"email": email})
 
-        self.assertApiError(get_respondent_by_email_url, 500)
+        request_history = mock_request.request_history
+        self.assertEqual(len(request_history), 1)
+        self.assertEqual(response.status_code, 500)
 
     @requests_mock.mock()
     def test_search_respondent_by_email_success(self, mock_request):
@@ -92,30 +94,33 @@ class TestRespondents(ViewTestCase):
         mock_request.get(get_respondent_by_id_url, json=respondent, status_code=200)
         mock_request.get(get_survey_by_id_url, json=survey_by_id, status_code=500)
 
-        self.client.post("/respondents", data={"query": email}, follow_redirects=True)
+        response = self.client.post("/respondents", data={"query": email}, follow_redirects=True)
 
-        self.assertApiError(get_survey_by_id_url, 500)
+        request_history = mock_request.request_history
+        self.assertEqual(len(request_history), 4)
+        self.assertEqual(response.status_code, 500)
 
     @requests_mock.mock()
     def test_search_respondent_by_email_unable_to_get_respondent_details(self, mock_request):
         email = 'Jacky.Turner@email.com'
-        mock_request.get(get_business_by_id_url, json=reporting_unit, status_code=200)
         mock_request.get(get_respondent_by_email_url, json=respondent, status_code=200)
         mock_request.get(get_respondent_by_id_url, json=respondent, status_code=500)
-        mock_request.get(get_survey_by_id_url, json=survey_by_id, status_code=200)
 
-        self.client.post("/respondents", data={"query": email}, follow_redirects=True)
+        response = self.client.post("/respondents", data={"query": email}, follow_redirects=True)
 
-        self.assertApiError(get_respondent_by_id_url, 500)
+        request_history = mock_request.request_history
+        self.assertEqual(len(request_history), 2)
+        self.assertEqual(response.status_code, 500)
 
     @requests_mock.mock()
     def test_search_respondent_by_email_unable_to_get_business_details(self, mock_request):
         email = 'Jacky.Turner@email.com'
-        mock_request.get(get_business_by_id_url, json=reporting_unit, status_code=500)
         mock_request.get(get_respondent_by_email_url, json=respondent, status_code=200)
         mock_request.get(get_respondent_by_id_url, json=respondent, status_code=200)
-        mock_request.get(get_survey_by_id_url, json=survey_by_id, status_code=200)
+        mock_request.get(get_business_by_id_url, json=reporting_unit, status_code=500)
 
-        self.client.post("/respondents", data={"query": email}, follow_redirects=True)
+        response = self.client.post("/respondents", data={"query": email}, follow_redirects=True)
 
-        self.assertApiError(f'{get_business_by_id_url}?verbose=True', 500)
+        request_history = mock_request.request_history
+        self.assertEqual(len(request_history), 3)
+        self.assertEqual(response.status_code, 500)

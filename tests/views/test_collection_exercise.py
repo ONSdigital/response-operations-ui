@@ -1,10 +1,10 @@
 import copy
 import json
-import mock
 from io import BytesIO
 from unittest.mock import patch
 from urllib.parse import urlencode, urlparse
 
+import mock
 import requests_mock
 
 from config import TestingConfig
@@ -19,7 +19,7 @@ collection_exercise_id = '14fb3e68-4dca-46db-bf49-04b84e07e77c'
 collection_instrument_id = 'a32800c5-5dc1-459d-9932-0da6c21d2ed2'
 period = '000000'
 sample_summary_id = '1a11543f-eb19-41f5-825f-e41aca15e724'
-short_name = 'ashortname'
+short_name = 'MBS'
 survey_id = 'cb0711c3-0ac8-41d3-ae0e-567e5ea1ef87'
 survey_ref = '141'
 
@@ -58,6 +58,15 @@ with open('tests/test_data/survey/classifier_types.json') as json_data:
 
 with open('tests/test_data/collection_exercise/formatted_collection_exercise_details.json') as fp:
     formatted_collection_exercise_details = json.load(fp)
+
+with open('tests/test_data/collection_exercise/collection_exercise.json') as json_data:
+    collection_exercise = json.load(json_data)
+
+with open('tests/test_data/survey/single_survey.json') as json_data:
+    survey = json.load(json_data)
+
+with open('tests/test_data/collection_exercise/events.json') as json_data:
+    events = json.load(json_data)
 
 """Define URLS"""
 url_ce_by_id = (
@@ -248,7 +257,9 @@ class TestCollectionExercise(ViewTestCase):
 
         response = self.client.get(f'/surveys/{short_name}/{period}', follow_redirects=True)
 
-        self.assertEqual(response.status_code, 404)
+        request_history = mock_request.request_history
+        self.assertEqual(len(request_history), 2)
+        self.assertEqual(response.status_code, 500)
 
     @requests_mock.mock()
     def test_collection_exercise_view_empty_list(self, mock_request):
@@ -257,7 +268,9 @@ class TestCollectionExercise(ViewTestCase):
 
         response = self.client.get(f'/surveys/{short_name}/{period}', follow_redirects=True)
 
-        self.assertEqual(response.status_code, 404)
+        request_history = mock_request.request_history
+        self.assertEqual(len(request_history), 2)
+        self.assertEqual(response.status_code, 500)
 
     @requests_mock.mock()
     def test_collection_exercise_view_404_no_match(self, mock_request):
@@ -270,15 +283,19 @@ class TestCollectionExercise(ViewTestCase):
 
         response = self.client.get(f'/surveys/{short_name}/{period}', follow_redirects=True)
 
-        self.assertEqual(response.status_code, 404)
+        request_history = mock_request.request_history
+        self.assertEqual(len(request_history), 2)
+        self.assertEqual(response.status_code, 500)
 
     @requests_mock.mock()
     def test_collection_exercise_view_service_fail(self, mock_request):
         mock_request.get(url_get_survey_by_short_name, status_code=500)
 
-        self.client.get(f'/surveys/{short_name}/{period}')
+        response = self.client.get(f'/surveys/{short_name}/{period}')
 
-        self.assertApiError(url_get_survey_by_short_name, 500)
+        request_history = mock_request.request_history
+        self.assertEqual(len(request_history), 1)
+        self.assertEqual(response.status_code, 500)
 
     @requests_mock.mock()
     def test_collection_exercise_view_ci_fail(self, mock_request):
@@ -288,9 +305,11 @@ class TestCollectionExercise(ViewTestCase):
         mock_request.get(url_get_collection_exercise_events, json=self.collection_exercise_events)
         mock_request.get(f'{url_get_collection_instrument}?{ci_search_string}', status_code=400)
 
-        self.client.get(f'/surveys/{short_name}/{period}')
+        response = self.client.get(f'/surveys/{short_name}/{period}')
 
-        self.assertApiError(f'{url_get_collection_instrument}?{ci_search_string}', 400)
+        request_history = mock_request.request_history
+        self.assertEqual(len(request_history), 5)
+        self.assertEqual(response.status_code, 500)
 
     @requests_mock.mock()
     def test_collection_exercise_view_classifiers_fail(self, mock_request):
@@ -307,9 +326,11 @@ class TestCollectionExercise(ViewTestCase):
         mock_request.get(url_get_classifier_type_selectors, json=classifier_type_selectors)
         mock_request.get(url_get_classifier_type, status_code=400)
 
-        self.client.get(f'/surveys/{short_name}/{period}')
+        response = self.client.get(f'/surveys/{short_name}/{period}')
 
-        self.assertApiError(url_get_classifier_type, 400)
+        request_history = mock_request.request_history
+        self.assertEqual(len(request_history), 10)
+        self.assertEqual(response.status_code, 500)
 
     @requests_mock.mock()
     def test_collection_exercise_view_classifiers_204(self, mock_request):
@@ -324,11 +345,12 @@ class TestCollectionExercise(ViewTestCase):
         mock_request.get(url_link_sample, json=[sample_summary_id])
         mock_request.get(url_get_sample_summary, json=self.sample_summary)
         mock_request.get(url_get_classifier_type_selectors, status_code=204)
-        mock_request.get(url_get_classifier_type, json=classifier_types)
 
-        self.client.get(f'/surveys/{short_name}/{period}')
+        response = self.client.get(f'/surveys/{short_name}/{period}')
 
-        self.assertApiError(url_get_classifier_type_selectors, 204)
+        request_history = mock_request.request_history
+        self.assertEqual(len(request_history), 9)
+        self.assertEqual(response.status_code, 500)
 
     @requests_mock.mock()
     def test_collection_exercise_view_selectors_fail(self, mock_request):
@@ -344,9 +366,11 @@ class TestCollectionExercise(ViewTestCase):
         mock_request.get(url_get_sample_summary, json=self.sample_summary)
         mock_request.get(url_get_classifier_type_selectors, status_code=400)
 
-        self.client.get(f'/surveys/{short_name}/{period}')
+        response = self.client.get(f'/surveys/{short_name}/{period}')
 
-        self.assertApiError(url_get_classifier_type_selectors, 400)
+        request_history = mock_request.request_history
+        self.assertEqual(len(request_history), 9)
+        self.assertEqual(response.status_code, 500)
 
     @requests_mock.mock()
     @patch('response_operations_ui.views.collection_exercise.build_collection_exercise_details')
@@ -571,26 +595,28 @@ class TestCollectionExercise(ViewTestCase):
         mock_request.post(url_sample_service_upload, status_code=200, json=sample_data)
         mock_request.put(url_collection_exercise_link, status_code=500, json=collection_exercise_link)
 
-        self.client.post(f'/surveys/{short_name}/{period}', data=post_data)
+        response = self.client.post(f'/surveys/{short_name}/{period}', data=post_data)
 
-        self.assertApiError(url_collection_exercise_link, 500)
+        request_history = mock_request.request_history
+        self.assertEqual(len(request_history), 4)
+        self.assertEqual(response.status_code, 500)
 
     @requests_mock.mock()
     @patch('response_operations_ui.views.collection_exercise.build_collection_exercise_details')
     def test_upload_sample_exception(self, mock_request, mock_details):
         post_data = {"sampleFile": (BytesIO(b"data"), "test.csv"), "load-sample": ""}
         sample_data = {"id": sample_summary_id}
-        collection_exercise_link = {"id": ""}
 
         mock_details.return_value = formatted_collection_exercise_details
         mock_request.get(url_get_survey_by_short_name, status_code=200, json=self.survey_data)
         mock_request.get(url_ces_by_survey, status_code=200, json=exercise_data)
         mock_request.post(url_sample_service_upload, status_code=500, json=sample_data)
-        mock_request.put(url_collection_exercise_link, status_code=200, json=collection_exercise_link)
 
-        self.client.post(f'/surveys/{short_name}/{period}', data=post_data)
+        response = self.client.post(f'/surveys/{short_name}/{period}', data=post_data)
 
-        self.assertApiError(url_sample_service_upload, 500)
+        request_history = mock_request.request_history
+        self.assertEqual(len(request_history), 3)
+        self.assertEqual(response.status_code, 500)
 
     @requests_mock.mock()
     @patch('response_operations_ui.views.collection_exercise.build_collection_exercise_details')
@@ -602,9 +628,11 @@ class TestCollectionExercise(ViewTestCase):
         mock_request.post(url_sample_service_upload, status_code=500)
         mock_details.return_value = formatted_collection_exercise_details
 
-        self.client.post(f'/surveys/{short_name}/{period}', data=data)
+        response = self.client.post(f'/surveys/{short_name}/{period}', data=data)
 
-        self.assertApiError(url_sample_service_upload, 500)
+        request_history = mock_request.request_history
+        self.assertEqual(len(request_history), 3)
+        self.assertEqual(response.status_code, 500)
 
     @requests_mock.mock()
     @patch('response_operations_ui.views.collection_exercise.build_collection_exercise_details')
@@ -684,11 +712,13 @@ class TestCollectionExercise(ViewTestCase):
         post_data = {"ready-for-live": ""}
         mock_request.post(url_execute, status_code=404)
         mock_request.get(url_survey_shortname, status_code=200, json=self.survey_data)
-        mock_request.get(url_collection_exercise_survey_id, status_code=200, json=[])
+        mock_request.get(url_collection_exercise_survey_id, status_code=200, json=exercise_data)
 
-        response = self.client.post(f'/surveys/{short_name}/{period}', data=post_data)
+        response = self.client.post(f'/surveys/{short_name}/{period}', data=post_data, follow_redirects=True)
 
-        self.assertEqual(response.status_code, 404)
+        request_history = mock_request.request_history
+        self.assertEqual(len(request_history), 5)  # Redirect calls mocked requests 2 additional times
+        self.assertEqual(response.status_code, 500)
 
     @requests_mock.mock()
     @patch('response_operations_ui.views.collection_exercise.build_collection_exercise_details')
@@ -712,9 +742,11 @@ class TestCollectionExercise(ViewTestCase):
         mock_request.get(url_survey_shortname, status_code=200, json=self.survey_data)
         mock_request.get(url_collection_exercise_survey_id, status_code=500)
 
-        self.client.post(f'/surveys/{short_name}/{period}', data=post_data, follow_redirects=True)
+        response = self.client.post(f'/surveys/{short_name}/{period}', data=post_data, follow_redirects=True)
 
-        self.assertApiError(url_collection_exercise_survey_id, 500)
+        request_history = mock_request.request_history
+        self.assertEqual(len(request_history), 2)
+        self.assertEqual(response.status_code, 500)
 
     @requests_mock.mock()
     @patch('response_operations_ui.views.collection_exercise.build_collection_exercise_details')
@@ -805,12 +837,14 @@ class TestCollectionExercise(ViewTestCase):
         mock_request.get(url_ces_by_survey, json=updated_survey_info['collection_exercises'])
         mock_request.put(url_update_ce_user_details, status_code=500)
 
-        self.client.post(
+        response = self.client.post(
             f"/surveys/{short_name}/{period}/edit-collection-exercise-details",
             data=changed_ce_details
         )
 
-        self.assertApiError(url_update_ce_user_details, 500)
+        request_history = mock_request.request_history
+        self.assertEqual(len(request_history), 2)
+        self.assertEqual(response.status_code, 500)
 
     @requests_mock.mock()
     def test_update_collection_exercise_details_404(self, mock_request):
@@ -823,12 +857,14 @@ class TestCollectionExercise(ViewTestCase):
         mock_request.get(url_ces_by_survey, json=updated_survey_info['collection_exercises'])
         mock_request.put(url_update_ce_user_details, status_code=404)
 
-        self.client.post(
+        response = self.client.post(
             f"/surveys/{short_name}/{period}/edit-collection-exercise-details",
             data=changed_ce_details
         )
 
-        self.assertApiError(url_update_ce_user_details, 404)
+        request_history = mock_request.request_history
+        self.assertEqual(len(request_history), 2)
+        self.assertEqual(response.status_code, 500)
 
     @requests_mock.mock()
     def test_update_collection_exercise_period_fail(self, mock_request):
@@ -842,13 +878,15 @@ class TestCollectionExercise(ViewTestCase):
         mock_request.put(url_update_ce_user_details, status_code=200)
         mock_request.put(url_update_ce_period, status_code=500)
 
-        self.client.post(
+        response = self.client.post(
             f"/surveys/{short_name}/{period}/edit-collection-exercise-details",
             data=changed_ce_details,
             follow_redirects=True,
         )
 
-        self.assertApiError(url_update_ce_period, 500)
+        request_history = mock_request.request_history
+        self.assertEqual(len(request_history), 3)
+        self.assertEqual(response.status_code, 500)
 
     @requests_mock.mock()
     def test_update_collection_exercise_period_404(self, mock_request):
@@ -862,13 +900,15 @@ class TestCollectionExercise(ViewTestCase):
         mock_request.put(url_update_ce_user_details, status_code=200)
         mock_request.put(url_update_ce_period, status_code=404)
 
-        self.client.post(
+        response = self.client.post(
             f"/surveys/{short_name}/{period}/edit-collection-exercise-details",
             data=changed_ce_details,
             follow_redirects=True,
         )
 
-        self.assertApiError(url_update_ce_period, 404)
+        request_history = mock_request.request_history
+        self.assertEqual(len(request_history), 3)
+        self.assertEqual(response.status_code, 500)
 
     @requests_mock.mock()
     @patch('response_operations_ui.views.collection_exercise.build_collection_exercise_details')
@@ -949,14 +989,16 @@ class TestCollectionExercise(ViewTestCase):
             "period": "123456",
         }
         mock_request.get(url_ces_by_survey, json=self.collection_exercises)
-        mock_request.get(url_get_survey_by_short_name, json=self.survey)
         mock_request.post(url_create_collection_exercise, status_code=500)
 
-        self.client.post(
+        response = self.client.post(
             f"/surveys/{survey_ref}-{short_name}/create-collection-exercise",
             data=new_collection_exercise_details
         )
-        self.assertApiError(url_create_collection_exercise, 500)
+
+        request_history = mock_request.request_history
+        self.assertEqual(len(request_history), 2)
+        self.assertEqual(response.status_code, 500)
 
     @requests_mock.mock()
     def test_get_create_ce_form(self, mock_request):
@@ -1113,10 +1155,13 @@ class TestCollectionExercise(ViewTestCase):
         self.assertEquals(response.status_code, 200)
         self.assertIn("Remove sample from test 000000".encode(), response.data)
 
-    @mock.patch("response_operations_ui.controllers.survey_controllers.get_survey", return_value=survey_by_id)
-    def test_get_create_ce_event_form_success(self, _):
+    @requests_mock.mock()
+    def test_get_create_ce_event_form_success(self, mock_request):
+        mock_request.get(url_survey_shortname, json=survey)
+        mock_request.get(url_collection_exercise_survey_id, json=[collection_exercise])
+        mock_request.get(url_get_collection_exercise_events, json=events)
 
-        response = self.client.get(f"/surveys/MBS/201901/{collection_exercise_id}/confirm-create-event/mps",
+        response = self.client.get(f"/surveys/MBS/201801/{collection_exercise_id}/confirm-create-event/mps",
                                    follow_redirects=True)
 
         self.assertEquals(response.status_code, 200)
@@ -1133,7 +1178,7 @@ class TestCollectionExercise(ViewTestCase):
         create_ce_event_form = {
             "day": "01",
             "month": "01",
-            "year": "2018",
+            "year": "2030",
             "hour": "01",
             "minute": "00"
         }
@@ -1144,8 +1189,12 @@ class TestCollectionExercise(ViewTestCase):
         self.assertEqual(response.status_code, 200)
         self.assertIn("Event date added.".encode(), response.data)
 
-    @mock.patch("response_operations_ui.controllers.survey_controllers.get_survey", return_value=survey_by_id)
-    def test_create_collection_exercise_invalid_form(self, _):
+    @requests_mock.mock()
+    def test_create_collection_exercise_invalid_form(self, mock_request):
+        mock_request.get(url_survey_shortname, json=survey)
+        mock_request.get(url_collection_exercise_survey_id, json=[collection_exercise])
+        mock_request.get(url_get_collection_exercise_events, json=events)
+
         create_ce_event_form = {
             "day": "50",
             "month": "01",
@@ -1154,11 +1203,11 @@ class TestCollectionExercise(ViewTestCase):
             "minute": "00"
         }
 
-        response = self.client.post(f"/surveys/MBS/201901/{collection_exercise_id}/create-event/mps",
+        response = self.client.post(f"/surveys/MBS/201801/{collection_exercise_id}/create-event/mps",
                                     data=create_ce_event_form, follow_redirects=True)
 
         self.assertEqual(response.status_code, 200)
-        self.assertIn("Please try saving your changes again".encode(), response.data)
+        self.assertIn("Error creating".encode(), response.data)
 
     def test_get_collection_exercises_with_events_and_samples_by_survey_id(self):
         name_space = 'response_operations_ui.controllers.collection_exercise_controllers.'

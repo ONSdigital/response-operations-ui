@@ -1,8 +1,11 @@
 import os
 from distutils.util import strtobool
 
+FDI_LIST = {'AOFDI', 'AIFDI', 'QIFDI', 'QOFDI'}
+
 
 class Config(object):
+
     DEBUG = os.getenv('DEBUG', False)
     TESTING = False
     PORT = os.getenv('PORT', 8085)
@@ -18,6 +21,11 @@ class Config(object):
     EDIT_EVENT_DATES_ENABLED = strtobool(os.getenv('EDIT_EVENT_DATES_ENABLED', 'False'))
     ADD_EVENT_DATES_ENABLED = strtobool(os.getenv('ADD_EVENT_DATES_ENABLED', 'False'))
     USE_SESSION_FOR_NEXT = True
+
+    # Zipkin
+    ZIPKIN_DISABLE = bool(strtobool(os.getenv("ZIPKIN_DISABLE", "False")))
+    ZIPKIN_DSN = os.getenv("ZIPKIN_DSN", None)
+    ZIPKIN_SAMPLE_RATE = int(os.getenv("ZIPKIN_SAMPLE_RATE", 0))
 
     # Service Configs
     CASE_URL = os.getenv('CASE_URL')

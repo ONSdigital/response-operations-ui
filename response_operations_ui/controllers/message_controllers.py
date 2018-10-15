@@ -1,15 +1,15 @@
-from json import JSONDecodeError
 import logging
-import jwt
+from json import JSONDecodeError
 
+import jwt
+import requests
 from flask import current_app, session
 from flask_login import current_user
-import requests
 from requests.exceptions import HTTPError, RequestException
 from structlog import wrap_logger
 
-from response_operations_ui.exceptions.exceptions import ApiError, NoMessagesError, InternalError
 from response_operations_ui.common import token_decoder
+from response_operations_ui.exceptions.exceptions import ApiError, NoMessagesError, InternalError
 
 
 logger = wrap_logger(logging.getLogger(__name__))

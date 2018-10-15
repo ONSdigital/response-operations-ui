@@ -64,7 +64,7 @@ def get_collection_exercise_events_by_id(ce_id):
 def update_event(collection_exercise_id, tag, timestamp):
     logger.debug('Updating collection exercise event date', collection_exercise_id=collection_exercise_id, tag=tag)
 
-    formatted_timestamp = timestamp.strftime("%Y-%m-%dT%H:%M:00.000+0000")
+    formatted_timestamp = timestamp.isoformat(timespec='milliseconds')
     url = f'{app.config["COLLECTION_EXERCISE_URL"]}/collectionexercises/{collection_exercise_id}/events/{tag}'
     response = requests.put(url, auth=app.config['COLLECTION_EXERCISE_AUTH'],
                             headers={'content-type': 'text/plain'}, data=formatted_timestamp)
@@ -91,13 +91,18 @@ def create_collection_exercise_event(collection_exercise_id, tag, timestamp):
                  tag=tag)
 
     url = f'{app.config["COLLECTION_EXERCISE_URL"]}/collectionexercises/{collection_exercise_id}/events'
-    formatted_timestamp = timestamp.strftime('%Y-%m-%dT%H:%M:00.000+0000')
+    formatted_timestamp = timestamp.isoformat(timespec='milliseconds')
     response = requests.Session().post(url=url, auth=app.config['COLLECTION_EXERCISE_AUTH'],
                                        json={'tag': tag, 'timestamp': formatted_timestamp})
 
     try:
         response.raise_for_status()
     except HTTPError:
+        if response.status_code == 400:
+            logger.warning('Bad request creating event', collection_exercise_id=collection_exercise_id,
+                           tag=tag, timestamp=formatted_timestamp, status=response.status_code)
+            return False
+
         logger.error("Failed to create collection exercise event",
                      collection_exercise_id=collection_exercise_id,
                      tag=tag)
@@ -105,6 +110,7 @@ def create_collection_exercise_event(collection_exercise_id, tag, timestamp):
 
     logger.debug("Successfully created collection exercise event", collection_exercise_id=collection_exercise_id,
                  tag=tag)
+    return True
 
 
 def execute_collection_exercise(collection_exercise_id):

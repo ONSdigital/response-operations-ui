@@ -17,9 +17,8 @@ class TestLoggerConfig(unittest.TestCase):
         logger = wrap_logger(logging.getLogger())
         logger.error('Test')
         message = l.records[0].msg
-
-        message_contents = '{\n "event": "Test",\n "level": "error",\n ' \
-                           '"service": "response-operations-ui"'
+        message_contents = '\n "event": "Test",\n "trace": "",\n "span": "",\n "parent": "",' \
+                           '\n "level": "error",\n "service": "response-operations-ui"'
         self.assertIn(message_contents, message)
 
     @log_capture()
@@ -29,8 +28,8 @@ class TestLoggerConfig(unittest.TestCase):
         logger = wrap_logger(logging.getLogger())
         logger.error('Test')
         message = l.records[0].msg
-        self.assertIn('{"event": "Test", "level": "error", "service": "response-operations-ui"',
-                      message)
+        self.assertIn('"event": "Test", "trace": "", "span": "", "parent": "",'
+                      ' "level": "error", "service": "response-operations-ui"', message)
 
     @log_capture()
     def test_indent_value_error(self, l):
@@ -38,5 +37,5 @@ class TestLoggerConfig(unittest.TestCase):
         logger = wrap_logger(logging.getLogger())
         logger.error('Test')
         message = l.records[0].msg
-        self.assertIn('{"event": "Test", "level": "error", "service": "response-operations-ui"',
-                      message)
+        self.assertIn('"event": "Test", "trace": "", "span": "", "parent": "",'
+                      ' "level": "error", "service": "response-operations-ui"', message)

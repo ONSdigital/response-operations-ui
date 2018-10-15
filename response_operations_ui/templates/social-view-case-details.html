@@ -2,57 +2,69 @@
 {% block page_title %}Social | Survey Data Collection{% endblock %}
 {% block main %}
 
-<div class="container page__container">
-    <h1 class="jupiter u-mt-m" id="case_ref">{{attributes.Reference}}</h1>
+  <div class="container page__container">
+    {% for msg in get_flashed_messages(category_filter=["success"]) %}
+      <div class="panel panel--simple panel--success u-mt-l">
+        <div id="status_change_successful" class="panel__body">
+          <h2 class="venus">{{ msg }}</h2>
+        </div>
+      </div>
+    {% endfor %}
+    <h1 class="jupiter u-mt-m" id="case_ref">{{case_reference}}</h1>
     <div class="case-details u-mt-m">
-        <dl class="description-list description-list-4" id="case-status">
-            <dt class="description-list__name">
-                Status:
+      <dl class="description-list description-list-4" id="case-status">
+        <dt class="description-list__name">
+          Status:
+        </dt>
+        <dd class="description-list__value">
+          <span class="response-status-headline venus" id="case-group-status">
+            {{status}}
+          </span>
+          <span class="response-status-detail u-mt-xs u-db">
+            {{ updated_status }}
+          </span>
+          {% if case_event_description is not none %}
+          <span class="response-status-detail u-mt-xs u-db" id="case-group-status-detailed">
+            {{ case_event_description }}
+          </span>
+          {% endif %}
+          {% if can_change_status %}
+          <span class="response-status-action u-mt-s u-db">
+            <form action="{{ url_for('social_bp.change_case_response_status', case_id=case_id) }}" method='GET'>
+                <button type="submit" class="btn btn--secondary btn--small"
+                         id="change-status-submit">Change Status</button>
+            </form>
+          </span>
+          {% endif %}
+        </dd>
+      </dl>
+      <section class="social-case-section u-mt-l">
+        <h2 class="neptune">Property address</h2>
+        <dl class="survey-info info-panel" id="case-attributes">
+          {% for name in displayed_attributes %}
+            <dt class="case-address__{{ name|lower }}" id="case-{{ name|lower|replace('_', '-') }}">
+              {{ attributes[name] }}
             </dt>
-            <dd class="description-list__value" id="case-group-status">
-                {{status}}
-            </dd>
+          {% endfor %}
         </dl>
-        <section class="social-case-section u-mt-l">
-            <h2 class="neptune">Property address</h2>
-            <dl class="survey-info info-panel" id="case-attributes">
-                {% if attributes.Prem1 %}
-                <dt class="case-address__prem" id="case-prem1">
-                    {{attributes.Prem1}}
-                </dt>
-                {% endif %}
-                {% if attributes.Prem2 %}
-                <dt class="case-address__prem" id="case-prem2">
-                    {{attributes.Prem2}}
-                </dt>
-                {% endif %}
-                {% if attributes.Prem3 %}
-                <dt class="case-address__prem" id="case-prem3">
-                    {{attributes.Prem3}}
-                </dt>
-                {% endif %}
-                {% if attributes.Prem4 %}
-                <dt class="case-address__prem" id="case-prem4">
-                    {{attributes.Prem4}}
-                </dt>
-                {% endif %}
-                {% if attributes.District %}
-                <dt class="case-address__prem" id="case-district">
-                    {{attributes.District}}
-                </dt>
-                {% endif %}
-                {% if attributes.PostTown %}
-                <dt class="case-address__prem" id="case-post_town">
-                    {{attributes.PostTown}}
-                </dt>
-                {% endif %}
-                {% if attributes.Postcode %}
-                <dt class="case-address__prem postcode" id="case-postcode">
-                    {{attributes.Postcode}}
-                </dt>
-                {% endif %}
-            </dl>
-        </section>
+      </section>
+      <section class="social-case-section u-mt-xl">
+        <h2 class="neptune">Unique access code</h2>
+        <p class="mars" id="new-iac-count">
+          There have been {{iac_count}} unique access codes issued for this case.
+        </p>
+        <form action="{{ url_for('social_bp.generate_iac') }}" method='POST'>
+          <input type="hidden" name="case_id" value="{{case_id}}"/>
+          <button type="submit" class="btn btn--secondary btn--small generate-iac-submit" id="generate-iac-submit">Generate new code</button>
+        </form>
+        {% if new_iac %}
+          <dl class="survey-info info-panel" id="new-iac-iac">
+            <dt class="new-iac__iac" id="new-iac">
+              {{new_iac}}
+            </dt>
+          </dl>
+        {% endif %}
+      </section>
     </div>
-</div>
+  </div>
 {% endblock %}

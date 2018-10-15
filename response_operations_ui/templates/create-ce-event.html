@@ -28,18 +28,24 @@
 
     <h2 class="saturn u-mt-l">{{event_name}}</h2>
 
-    <form method="POST" action="{{ url_for('collection_exercise_bp.create_collection_exercise_event', short_name=short_name, period=period, ce_id=ce_id, tag=tag)}}" class="">
-      <div class="date-time-editor u-mb-l">
-        {{ form.csrf_token }}
-
-        {% if form.errors %}
+    {% if errors %}
         <div class="panel panel--simple panel--error u-mb-l">
           <div class="panel__body" id="save-error">
             <h2 id='error-saving-message' class="venus">Error creating {{event_name}} date</h2>
-            <p class="mars">Please try saving your changes again</p>
-          </div>
-        </div>
-        {% endif %}
+    {% endif %}
+
+
+    {% if date_restriction_text %}
+      {% for text in date_restriction_text %}
+      <div>
+        {{ text }}
+      </div>
+      {% endfor %}
+    {% endif %}
+
+    <form method="POST" action="{{ url_for('collection_exercise_bp.create_collection_exercise_event', short_name=short_name, period=period, ce_id=ce_id, tag=tag)}}" class="">
+      <div class="date-time-editor u-mb-l">
+        {{ form.csrf_token }}
 
         <fieldset class="fieldgroup fieldgroup--date u-mt-l" data-qa="widget-date">
           <legend class="fieldgroup__title venus">Date</legend>
@@ -83,6 +89,11 @@
         <a href=" {{ url_for('collection_exercise_bp.view_collection_exercise', short_name=survey.shortName, period=period) }}" onclick="history.back(); return false;">Cancel</a>
       </div>
     </form>
+
+    {% if errors %}
+      </div>
+    </div>
+    {% endif %}
 
   </div>
 </div>

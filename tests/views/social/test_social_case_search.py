@@ -22,11 +22,11 @@ def get_postcode_search_url(postcode):
 def mock_sample_units(postcode):
     with open('tests/test_data/sample/sample_units.json') as f:
         sample_units = json.load(f)
-        sample_units[0]['sampleAttributes']['attributes']['Postcode'] = postcode
+        sample_units[0]['sampleAttributes']['attributes']['POSTCODE'] = postcode
     return sample_units
 
 
-class TestSocial(ViewTestCase):
+class TestSocialCaseSearch(ViewTestCase):
 
     def setup_data(self):
         pass
@@ -64,26 +64,24 @@ class TestSocial(ViewTestCase):
 
     def test_format_result_address_all_fields_present(self):
         sample_unit_attributes = {
-            'Prem1': '1',
-            'Prem2': '2',
-            'Prem3': '3',
-            'Prem4': '4',
-            'District': 'district',
-            'PostTown': 'posttown'
+            'ADDRESS_LINE1': '1',
+            'ADDRESS_LINE2': '2',
+            'LOCALITY': 'locality',
+            'TOWN_NAME': 'town_name'
         }
 
         formatted_address = format_address_for_results(sample_unit_attributes)
-        self.assertEqual('1, 2, 3, 4, district, posttown',
+        self.assertEqual('1, 2, locality, town_name',
                          formatted_address,
                          'Formatted address with all fields does not match requirement')
 
     def test_format_result_address_missing_fields(self):
         sample_unit_attributes = {
-            'Prem1': '1',
-            'PostTown': 'posttown'
+            'ADDRESS_LINE1': '1',
+            'TOWN_NAME': 'town_name'
         }
 
         formatted_address = format_address_for_results(sample_unit_attributes)
-        self.assertEqual('1, posttown',
+        self.assertEqual('1, town_name',
                          formatted_address,
                          'Formatted address with missing fields does not match requirement')
