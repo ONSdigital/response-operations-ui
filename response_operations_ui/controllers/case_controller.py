@@ -37,7 +37,7 @@ def post_case_event(case_id, category, description):
     try:
         response.raise_for_status()
     except requests.exceptions.HTTPError:
-        logger.exception('Error updating case group status', case_id=case_id, category=category)
+        logger.exception('Error posting case event', case_id=case_id, category=category)
         raise ApiError(response)
 
     logger.debug('Successfully posted case event', case_id=case_id, category=category)
