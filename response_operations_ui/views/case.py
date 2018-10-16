@@ -30,13 +30,15 @@ def get_response_statuses(ru_ref, error=None):
                           if case_controller.is_allowed_status(status)}
 
     case_groups = case_controller.get_case_groups_by_business_party_id(reporting_unit['id'])
-    current_status = case_controller.get_case_group_status_by_collection_exercise(case_groups, exercise['id'])
+    case_group = case_controller.get_case_group_by_collection_exercise(case_groups, exercise['id'])
 
     return render_template('change-response-status.html',
                            ru_ref=ru_ref, ru_name=reporting_unit['name'], trading_as=reporting_unit['trading_as'],
                            survey_short_name=format_short_name(survey['shortName']), survey_ref=survey['surveyRef'],
                            ce_period=period,
-                           statuses=available_statuses, case_group_status=map_ce_response_status(current_status),
+                           statuses=available_statuses,
+                           case_group_status=map_ce_response_status(case_group['caseGroupStatus']),
+                           case_group_id=case_group['id'],
                            error=error)
 
 
@@ -45,6 +47,7 @@ def get_response_statuses(ru_ref, error=None):
 def update_response_status(ru_ref):
     short_name = request.args.get('survey')
     period = request.args.get('period')
+    case_group_id = request.args['case_group_id']
     form = ChangeGroupStatusForm(request.form)
 
     if not form.event.data:
@@ -53,10 +56,8 @@ def update_response_status(ru_ref):
                                 error="Please select one of these options"))
 
     # Retrieve the correct collection exercise and update case group status
-    survey_id = survey_controllers.get_survey_id_by_short_name(short_name)
-    exercises = collection_exercise_controllers.get_collection_exercises_by_survey(survey_id)
-    exercise = collection_exercise_controllers.get_collection_exercise_from_list(exercises, period)
-    case_controller.update_case_group_status(exercise['id'], ru_ref, form.event.data)
+    case = case_controller.get_case_by_case_group_id(case_group_id)
+    case_controller.post_case_event(case['id'], form.event.data, "Transition case group status")
 
     return redirect(url_for('reporting_unit_bp.view_reporting_unit', ru_ref=ru_ref,
                     survey=short_name, period=period))

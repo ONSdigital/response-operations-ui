@@ -56,7 +56,7 @@
                                     {{ case_group_status }}
                                 </dd>
                             </dl>
-                            <form action="" method="post" class="u-mt-l">
+                            <form action="{{ request.url }}&case_group_id={{ case_group_id }}" method="post" class="u-mt-l">
                                 <div class="field field--radio field--multiplechoice">
                                     <fieldset>
                                         <legend class="field__legend mars">Choose new response status</legend>
