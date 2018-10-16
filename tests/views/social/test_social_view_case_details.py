@@ -19,6 +19,7 @@ get_case_events_by_case_id_url = f'{TestingConfig.CASE_URL}/cases/{case_id}/even
 get_available_case_group_statuses_direct_url = f'{TestingConfig.CASE_URL}/casegroups/transitions' \
                                                f'/{collection_exercise_id}/{ru_ref}'
 update_case_group_status_url = f'{TestingConfig.CASE_URL}/casegroups/transitions/{collection_exercise_id}/{ru_ref}'
+url_post_case_event = f'{TestingConfig.CASE_URL}/cases/{case_id}/events'
 
 with open('tests/test_data/case/social_case.json') as fp:
     mocked_case_details = json.load(fp)
@@ -81,7 +82,7 @@ class TestSocialViewCaseDetails(ViewTestCase):
     @requests_mock.mock()
     def test_change_response_status(self, mock_request):
         mock_request.get(get_case_by_id_url, json=mocked_case_details)
-        mock_request.put(update_case_group_status_url)
+        mock_request.post(url_post_case_event)
 
         response = self.client.post(f'/social/case/{case_id}/change-response-status?status_updated=True&updated_'
                                     f'status=PRIVACY_DATA_CONFIDENTIALITY_CONCERNS',

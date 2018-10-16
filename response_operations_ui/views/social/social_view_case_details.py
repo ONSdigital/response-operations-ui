@@ -57,12 +57,8 @@ def group_and_order_events(available_events: dict, statuses: dict) -> OrderedDic
 @login_required
 def update_case_response_status(case_id):
     form = ChangeGroupStatusForm(request.form)
-
     social_case = case_controller.get_case_by_id(case_id)
-    ru_ref = social_case['caseGroup']['sampleUnitRef']
-    collection_exercise_id = social_case['caseGroup']['collectionExerciseId']
-
-    case_controller.update_case_group_status(collection_exercise_id, ru_ref, form.event.data)
+    case_controller.post_case_event(social_case['id'], form.event.data, "Transition case group status")
     flash('Status changed successfully', 'success')
     return redirect(url_for('social_bp.view_social_case_details', case_id=case_id,
                             status_updated=True,

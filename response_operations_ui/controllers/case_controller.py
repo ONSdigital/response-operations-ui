@@ -24,21 +24,38 @@ def get_case_by_id(case_id):
     return response.json()
 
 
-def update_case_group_status(collection_exercise_id, ru_ref, case_group_event):
-    logger.debug('Updating status', collection_exercise_id=collection_exercise_id, ru_ref=ru_ref,
-                 case_group_event=case_group_event)
-    url = f'{app.config["CASE_URL"]}/casegroups/transitions/{collection_exercise_id}/{ru_ref}'
-    response = requests.put(url, auth=app.config['CASE_AUTH'], json={'event': case_group_event})
+def post_case_event(case_id, category, description):
+    logger.debug("Posting case event", case_id=case_id, category=category)
+    url = f'{app.config["CASE_URL"]}/cases/{case_id}/events'
+    case_event = {
+        "category": category,
+        "description": description,
+        "createdBy": "ROPS"
+    }
+    response = requests.post(url, auth=app.config['CASE_AUTH'], json=case_event)
 
     try:
         response.raise_for_status()
     except requests.exceptions.HTTPError:
-        logger.exception('Error updating case group status', collection_exercise_id=collection_exercise_id,
-                         ru_ref=ru_ref, case_group_event=case_group_event)
+        logger.exception('Error posting case event', case_id=case_id, category=category)
         raise ApiError(response)
 
-    logger.debug('Successfully updated case group status', collection_exercise_id=collection_exercise_id,
-                 ru_ref=ru_ref, case_group_event=case_group_event)
+    logger.debug('Successfully posted case event', case_id=case_id, category=category)
+
+
+def get_case_by_case_group_id(case_group_id):
+    logger.debug('Retrieving case by case group id', case_group_id=case_group_id)
+    url = f'{app.config["CASE_URL"]}/cases/casegroupid/{case_group_id}'
+    response = requests.get(url, auth=app.config['CASE_AUTH'])
+
+    try:
+        response.raise_for_status()
+    except requests.exceptions.HTTPError:
+        logger.exception('Error getting case by case group id', case_group_id=case_group_id)
+        raise ApiError(response)
+
+    logger.debug('Successfully retrieved case by case group id', case_group_id=case_group_id)
+    return response.json()[0]
 
 
 def get_available_case_group_statuses_direct(collection_exercise_id, ru_ref):
@@ -113,8 +130,8 @@ def is_allowed_change_social_status(status):
     return status in allowed_social_statuses
 
 
-def get_case_group_status_by_collection_exercise(case_groups, collection_exercise_id):
-    return next((case_group['caseGroupStatus'] for case_group in case_groups
+def get_case_group_by_collection_exercise(case_groups, collection_exercise_id):
+    return next((case_group for case_group in case_groups
                  if case_group['collectionExerciseId'] == collection_exercise_id), None)
 
 
