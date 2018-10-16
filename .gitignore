@@ -3,6 +3,7 @@ node_modules/
 allure-results
 coverage
 docs
+.nyc_output
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
