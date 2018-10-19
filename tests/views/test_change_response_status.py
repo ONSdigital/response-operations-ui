@@ -62,7 +62,7 @@ class TestChangeResponseStatus(TestCase):
         mock_request.get(url_get_available_case_group_statuses, json=self.statuses)
         mock_request.get(url_get_case_groups_by_business_party_id, json=case_groups)
 
-        response = self.client.get(f'/case/{ru_ref}/change-response-status?survey={short_name}&period={period}')
+        response = self.client.get(f'/case/{ru_ref}/response-status?survey={short_name}&period={period}')
 
         data = response.data
         self.assertEqual(response.status_code, 200)
@@ -76,7 +76,7 @@ class TestChangeResponseStatus(TestCase):
     def test_get_available_status_survey_fail(self, mock_request):
         mock_request.get(url_get_survey_by_short_name, status_code=500)
 
-        response = self.client.get(f'/case/{ru_ref}/change-response-status?survey={short_name}&period={period}',
+        response = self.client.get(f'/case/{ru_ref}/response-status?survey={short_name}&period={period}',
                                    follow_redirects=True)
 
         self.assertIn("Server error (Error 500)".encode(), response.data)
@@ -86,7 +86,7 @@ class TestChangeResponseStatus(TestCase):
         mock_request.get(url_get_survey_by_short_name, json=survey)
         mock_request.get(url_get_collection_exercises_by_survey, status_code=500)
 
-        response = self.client.get(f'/case/{ru_ref}/change-response-status?survey={short_name}&period={period}',
+        response = self.client.get(f'/case/{ru_ref}/response-status?survey={short_name}&period={period}',
                                    follow_redirects=True)
 
         self.assertIn("Server error (Error 500)".encode(), response.data)
@@ -97,7 +97,7 @@ class TestChangeResponseStatus(TestCase):
         mock_request.get(url_get_collection_exercises_by_survey, json=collection_exercise_list)
         mock_request.get(url_get_party_by_ru_ref, status_code=500)
 
-        response = self.client.get(f'/case/{ru_ref}/change-response-status?survey={short_name}&period={period}',
+        response = self.client.get(f'/case/{ru_ref}/response-status?survey={short_name}&period={period}',
                                    follow_redirects=True)
 
         self.assertIn("Server error (Error 500)".encode(), response.data)
@@ -109,7 +109,7 @@ class TestChangeResponseStatus(TestCase):
         mock_request.get(url_get_party_by_ru_ref, json=business_reporting_unit)
         mock_request.get(url_get_available_case_group_statuses, status_code=500)
 
-        response = self.client.get(f'/case/{ru_ref}/change-response-status?survey={short_name}&period={period}',
+        response = self.client.get(f'/case/{ru_ref}/response-status?survey={short_name}&period={period}',
                                    follow_redirects=True)
 
         self.assertIn("Server error (Error 500)".encode(), response.data)
@@ -122,7 +122,7 @@ class TestChangeResponseStatus(TestCase):
         mock_request.get(url_get_available_case_group_statuses, json=self.statuses)
         mock_request.get(url_get_case_groups_by_business_party_id, status_code=500)
 
-        response = self.client.get(f'/case/{ru_ref}/change-response-status?survey={short_name}&period={period}',
+        response = self.client.get(f'/case/{ru_ref}/response-status?survey={short_name}&period={period}',
                                    follow_redirects=True)
 
         self.assertIn("Server error (Error 500)".encode(), response.data)
@@ -132,7 +132,7 @@ class TestChangeResponseStatus(TestCase):
         mock_request.get(url_get_case_by_case_group_id, json=[case])
         mock_request.post(url_post_case_event)
 
-        response = self.client.post(f'/case/{ru_ref}/change-response-status'
+        response = self.client.post(f'/case/{ru_ref}/response-status'
                                     f'?survey={short_name}&period={period}&case_group_id={case_group_id}',
                                     data={'event': 'COMPLETEDBYPHONE'})
 
@@ -143,7 +143,7 @@ class TestChangeResponseStatus(TestCase):
     def test_update_case_group_status_get_case_fail(self, mock_request):
         mock_request.get(url_get_case_by_case_group_id, json=[case], status_code=500)
 
-        response = self.client.post(f'/case/{ru_ref}/change-response-status'
+        response = self.client.post(f'/case/{ru_ref}/response-status'
                                     f'?survey={short_name}&period={period}&case_group_id={case_group_id}',
                                     data={'event': 'COMPLETEDBYPHONE'}, follow_redirects=True)
 
@@ -155,7 +155,7 @@ class TestChangeResponseStatus(TestCase):
         mock_request.get(url_get_case_by_case_group_id, json=[case])
         mock_request.post(url_post_case_event, status_code=500)
 
-        response = self.client.post(f'/case/{ru_ref}/change-response-status'
+        response = self.client.post(f'/case/{ru_ref}/response-status'
                                     f'?survey={short_name}&period={period}&case_group_id={case_group_id}',
                                     data={'event': 'COMPLETEDBYPHONE'}, follow_redirects=True)
 
@@ -166,7 +166,7 @@ class TestChangeResponseStatus(TestCase):
     def test_update_case_group_status_no_event(self, mock_request):
         mock_request.get(url_get_case_by_case_group_id, json=[case])
 
-        response = self.client.post(f'/case/{ru_ref}/change-response-status'
+        response = self.client.post(f'/case/{ru_ref}/response-status'
                                     f'?survey={short_name}&period={period}&case_group_id={case_group_id}')
 
         self.assertEqual(response.status_code, 302)
@@ -178,7 +178,7 @@ class TestChangeResponseStatus(TestCase):
         mock_request.get(url_get_collection_exercises_by_survey, json=collection_exercise_list)
         mock_request.put(url_update_case_group_status, status_code=500)
 
-        response = self.client.post(f'/case/{ru_ref}/change-response-status?survey={short_name}&period={period}',
+        response = self.client.post(f'/case/{ru_ref}/response-status?survey={short_name}&period={period}',
                                     data={'event': 'COMPLETEDBYPHONE'}, follow_redirects=True)
 
         self.assertIn("Server error (Error 500)".encode(), response.data)

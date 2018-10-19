@@ -13,12 +13,16 @@
                     <div role="main" id="main" class="page__main">
                         <div class="spoke__header">
                             <div class="spoke__header__title">
-                                <h1 class="jupiter">Change response status</h1>
+                                {% if is_complete %}
+                                    <h1 class="jupiter">Response status</h1>
+                                {% else %}
+                                    <h1 class="jupiter">Change response status</h1>
+                                {% endif %}
                             </div>
                         </div>
 
                         <div class="spoke__body" id="spoke__body">
-                            <dl class="description-list description-list-8 u-mb-m">
+                            <dl class="description-list description-list-8">
                                 <dt class="">
                                     Reference:
                                 </dt>

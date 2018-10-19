@@ -6,14 +6,15 @@ from response_operations_ui.common.dates import get_formatted_date
 from response_operations_ui.common.mappers import format_short_name, map_ce_response_status
 from response_operations_ui.controllers import case_controller, collection_exercise_controllers, \
     party_controller, survey_controllers
-from response_operations_ui.controllers.case_controller import get_case_events_by_case_id
+from response_operations_ui.controllers.case_controller import get_case_events_by_case_id_and_optional_category, \
+    get_case_by_case_group_id
 from response_operations_ui.forms import ChangeGroupStatusForm
 
 COMPLETE_STATE = ['COMPLETEDBYPHONE', 'COMPLETE']
 case_bp = Blueprint('case_bp', __name__, static_folder='static', template_folder='templates')
 
 
-@case_bp.route('/<ru_ref>/change-response-status', methods=['GET'])
+@case_bp.route('/<ru_ref>/response-status', methods=['GET'])
 @login_required
 def get_response_statuses(ru_ref, error=None):
     short_name = request.args.get('survey')
@@ -34,13 +35,14 @@ def get_response_statuses(ru_ref, error=None):
     case_groups = case_controller.get_case_groups_by_business_party_id(reporting_unit['id'])
     case_group = case_controller.get_case_group_by_collection_exercise(case_groups, exercise['id'])
     case_group_status = case_group['caseGroupStatus']
+    case_id = get_case_by_case_group_id(case_group['id']).get('id')
     is_complete = False
     completed_timestamp = None
     if case_group_status in COMPLETE_STATE:
         is_complete = True
-        completed_timestamp = get_timestamp_for_completed_case_event(case_id=request.args.get('case_id'))
+        completed_timestamp = get_timestamp_for_completed_case_event(case_id)
 
-    return render_template('change-response-status.html',
+    return render_template('response-status.html',
                            ru_ref=ru_ref, ru_name=reporting_unit['name'], trading_as=reporting_unit['trading_as'],
                            survey_short_name=format_short_name(survey['shortName']), survey_ref=survey['surveyRef'],
                            ce_period=period,
@@ -52,7 +54,7 @@ def get_response_statuses(ru_ref, error=None):
                            completed_timestamp=completed_timestamp)
 
 
-@case_bp.route('/<ru_ref>/change-response-status', methods=['POST'])
+@case_bp.route('/<ru_ref>/response-status', methods=['POST'])
 @login_required
 def update_response_status(ru_ref):
     short_name = request.args.get('survey')
@@ -75,7 +77,7 @@ def update_response_status(ru_ref):
 
 def get_timestamp_for_completed_case_event(case_id):
     complete_categories = ['OFFLINE_RESPONSE_PROCESSED', 'SUCCESSFUL_RESPONSE_UPLOAD', 'COMPLETED_BY_PHONE']
-    case_events = get_case_events_by_case_id(case_id, complete_categories)
+    case_events = get_case_events_by_case_id_and_optional_category(case_id, complete_categories)
     timestamp = case_events[0]['createdDateTime'].replace("T", " ").split('.')[0]
 
     return get_formatted_date(timestamp)
