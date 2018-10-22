@@ -27,7 +27,7 @@ url_change_respondent_status = f'{TestingConfig.PARTY_URL}/party-api/v1/responde
 url_resend_verification_email = f'{TestingConfig.PARTY_URL}/party-api/v1/resend-verification-email' \
                                 f'/{respondent_party_id}'
 
-url_get_party_by_ru_ref = f'{TestingConfig.PARTY_URL}/party-api/v1/parties/type/B/ref/{ru_ref}'
+url_get_party_by_ru_ref = f'{TestingConfig.PARTY_URL}/party-api/v1/parties/ref/{ru_ref}'
 url_get_cases_by_business_party_id = f'{TestingConfig.CASE_URL}/cases/partyid/{business_party_id}'
 url_get_casegroups_by_business_party_id = f'{TestingConfig.CASE_URL}/casegroups/partyid/{business_party_id}'
 url_get_collection_exercise_by_id = f'{TestingConfig.COLLECTION_EXERCISE_URL}/collectionexercises'

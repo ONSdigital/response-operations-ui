@@ -15,7 +15,7 @@ logger = wrap_logger(logging.getLogger(__name__))
 
 def get_party_by_ru_ref(ru_ref):
     logger.debug('Retrieving reporting unit', ru_ref=ru_ref)
-    url = f'{app.config["PARTY_URL"]}/party-api/v1/parties/type/B/ref/{ru_ref}'
+    url = f'{app.config["PARTY_URL"]}/party-api/v1/parties/ref/{ru_ref}'
     response = requests.get(url, auth=app.config['PARTY_AUTH'])
 
     try:
