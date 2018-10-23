@@ -143,3 +143,19 @@ def generate_iac(case_id):
         raise ApiError(response)
 
     return response.json()['iac']
+
+
+def get_case_events_by_case_id(case_id):
+    logger.debug('Retrieving cases', case_id=case_id)
+    url = f'{app.config["CASE_URL"]}/cases/{case_id}/events'
+    response = requests.get(url, auth=app.config['CASE_AUTH'])
+    try:
+        response.raise_for_status()
+    except requests.exceptions.HTTPError:
+        if response.status_code == 404:
+            logger.debug('No statuses found', case_id=case_id)
+            return {}
+        logger.exception('Error retrieving statuses', case_id=case_id)
+        raise ApiError(response)
+    logger.debug('Successfully retrieved statuses', case_id=case_id)
+    return response.json()
