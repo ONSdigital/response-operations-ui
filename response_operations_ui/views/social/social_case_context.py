@@ -12,7 +12,7 @@ logger = wrap_logger(logging.getLogger(__name__))
 
 def build_view_social_case_context(case_id):
     social_case = case_controller.get_case_by_id(case_id)
-    case_events = case_controller.get_case_events_by_case_id_and_optional_category(case_id)
+    case_events = case_controller.get_case_events_by_case_id(case_id)
     case_status = map_social_case_status(social_case['caseGroup']['caseGroupStatus'])
 
     context = dict()
