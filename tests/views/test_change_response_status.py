@@ -61,6 +61,7 @@ class TestChangeResponseStatus(TestCase):
         mock_request.get(url_get_party_by_ru_ref, json=business_reporting_unit)
         mock_request.get(url_get_available_case_group_statuses, json=self.statuses)
         mock_request.get(url_get_case_groups_by_business_party_id, json=case_groups)
+        mock_request.get(url_get_case_by_case_group_id, json=[case])
 
         response = self.client.get(f'/case/{ru_ref}/response-status?survey={short_name}&period={period}')
 
