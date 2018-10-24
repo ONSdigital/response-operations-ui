@@ -26,6 +26,8 @@ url_get_case_groups_by_business_party_id = f'{TestingConfig.CASE_URL}/casegroups
 url_update_case_group_status = f'{TestingConfig.CASE_URL}/casegroups/transitions/{collection_exercise_id}/{ru_ref}'
 url_post_case_event = f'{TestingConfig.CASE_URL}/cases/{case_id}/events'
 url_get_case_by_case_group_id = f'{TestingConfig.CASE_URL}/cases/casegroupid/{case_group_id}'
+url_get_case_events = f"{TestingConfig.CASE_URL}/cases/{case_id}/events"
+
 
 with open('tests/test_data/survey/single_survey.json') as fp:
     survey = json.load(fp)
@@ -37,6 +39,10 @@ with open('tests/test_data/case/case.json') as fp:
     case = json.load(fp)
 with open('tests/test_data/case/case_groups_list.json') as fp:
     case_groups = json.load(fp)
+with open('tests/test_data/case/case_groups_list_completed.json') as fp:
+    case_groups_completed = json.load(fp)
+with open('tests/test_data/case/case_events.json') as fp:
+    case_events = json.load(fp)
 
 
 class TestChangeResponseStatus(TestCase):
@@ -183,3 +189,22 @@ class TestChangeResponseStatus(TestCase):
                                     data={'event': 'COMPLETEDBYPHONE'}, follow_redirects=True)
 
         self.assertIn("Server error (Error 500)".encode(), response.data)
+
+    @requests_mock.mock()
+    def test_get_timestamp_for_completed_case_event(self, mock_request):
+        mock_request.get(url_get_survey_by_short_name, json=survey)
+        mock_request.get(url_get_collection_exercises_by_survey, json=collection_exercise_list)
+        mock_request.get(url_get_party_by_ru_ref, json=business_reporting_unit)
+        mock_request.get(url_get_available_case_group_statuses, json=self.statuses)
+        mock_request.get(url_get_case_groups_by_business_party_id, json=case_groups_completed)
+        mock_request.get(url_get_case_by_case_group_id, json=[case])
+        mock_request.get(url_get_case_events, json=case_events)
+
+        response = self.client.get(f'/case/{ru_ref}/response-status?survey={short_name}&period={period}')
+
+        data = response.data
+        self.assertEqual(response.status_code, 200)
+        self.assertIn(b'19000001', data)
+        self.assertIn(b'Bolts and Ratchets', data)
+        self.assertIn(b'221 &nbsp; BLOCKS', data)
+        self.assertIn(b'Completed', data)
