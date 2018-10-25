@@ -10,7 +10,7 @@ from response_operations_ui.exceptions.exceptions import ApiError
 case_id = '10b04906-f478-47f9-a985-783400dd8482'
 with open('tests/test_data/case/case_events.json') as fp:
     case_events = json.load(fp)
-url_get_case_events = f"{TestingConfig.CASE_URL}/cases/{case_id}/events"
+url_get_case_events = f'{TestingConfig.CASE_URL}/cases/{case_id}/events'
 
 
 class TestCaseControllers(unittest.TestCase):
