@@ -170,7 +170,18 @@
                 </dl>
               </td>
               <td name="tbl-respondent-status" class="table--cell">
-                {{ respondent.status.title() }}
+                <div id="account-status">	
+                  {% if respondent.status  == 'SUSPENDED' %}	
+                    Locked	
+                  {% else %}	
+                    {{ respondent.status.title() }}	
+                  {% endif %}	
+                </div>	
+                <div>	
+                  {% if respondent.status == 'SUSPENDED' %}	
+                  <a id="respondent-unlock-link" href="{{ url_for('reporting_unit_bp.confirm_change_respondent_status', ru_ref=ru_ref, party_id=respondent.id, change_flag='ACTIVE') }}">Unlock</a>	
+                  {% endif %}	
+                </div>
               </td>
 
               <td name="tbl-enrolment-status" class="table--cell">
