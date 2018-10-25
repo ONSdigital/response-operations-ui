@@ -42,7 +42,7 @@ class TestRespondents(ViewTestCase):
         with self.app.app_context():
             response = search_respondent_by_email(email)
 
-        self.assertEquals(response['firstName'], 'Jacky')
+        self.assertEqual(response['firstName'], 'Jacky')
 
     @requests_mock.mock()
     def test_get_respondent_by_email_no_respondent(self, mock_request):
