@@ -3,7 +3,7 @@ import logging
 from datetime import datetime
 from distutils.util import strtobool
 
-from flask import Blueprint, current_app as app, flash, g, Markup, render_template, request, redirect, session, url_for
+from flask import Blueprint, flash, g, Markup, render_template, request, redirect, session, url_for
 from flask_login import login_required, current_user
 from flask_paginate import get_parameter, Pagination
 from structlog import wrap_logger
@@ -124,8 +124,7 @@ def view_conversation(thread_id):
                            selected_survey=refined_thread[0]['survey'],
                            page=page,
                            closed_at=closed_at,
-                           thread_data=thread_conversation,
-                           close_feature_enabled=app.config['FEATURE_ENABLE_CLOSE_CONVERSATION'])
+                           thread_data=thread_conversation)
 
 
 @messages_bp.route('/', methods=['GET'])
