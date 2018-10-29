@@ -78,8 +78,10 @@
               </td>
               <td name="tbl-ce-status" class="table--cell">
                 {{ ce.responseStatus }}
-                {% if ce.statuses|length > 0 and (ce.responseStatus == 'Not started' or ce.responseStatus == 'In progress')  %}
-                &nbsp;<a href="{{ url_for('case_bp.get_response_statuses', ru_ref=ru.sampleUnitRef, survey=survey.shortName, period=ce.exerciseRef) }}">Change</a>
+                {% if ce.responseStatus in ['Not started', 'In progress']  %}
+              &nbsp;   <a href="{{ url_for('case_bp.get_response_statuses', ru_ref=ru.sampleUnitRef, survey=survey.shortName, period=ce.exerciseRef) }}">Change</a>
+                {% elif ce.responseStatus in ['Completed', 'Completed by phone'] %}
+                  <a href="{{ url_for('case_bp.get_response_statuses', ru_ref=ru.sampleUnitRef, survey=survey.shortName, period=ce.exerciseRef) }}">View</a>
                 {% endif %}
               </td>
             </tr>

@@ -74,7 +74,7 @@ class TestSocialViewCaseDetails(ViewTestCase):
         mock_request.get(get_case_events_by_case_id_url, json=mocked_case_events)
         mock_request.get(get_available_case_group_statuses_direct_url, json=case_group_statuses)
 
-        response = self.client.get(f'/social/case/{case_id}/change-response-status', follow_redirects=True)
+        response = self.client.get(f'/social/case/{case_id}/response-status', follow_redirects=True)
 
         self.assertEqual(response.status_code, 200)
         self.assertIn("In progress".encode(), response.data)
@@ -84,7 +84,7 @@ class TestSocialViewCaseDetails(ViewTestCase):
         mock_request.get(get_case_by_id_url, json=mocked_case_details)
         mock_request.post(url_post_case_event)
 
-        response = self.client.post(f'/social/case/{case_id}/change-response-status?status_updated=True&updated_'
+        response = self.client.post(f'/social/case/{case_id}/response-status?status_updated=True&updated_'
                                     f'status=PRIVACY_DATA_CONFIDENTIALITY_CONCERNS',
                                     data={'event': 'LEGITIMACY_CONCERNS'})
 

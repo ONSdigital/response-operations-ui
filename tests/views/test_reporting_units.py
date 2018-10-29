@@ -349,7 +349,7 @@ class TestReportingUnits(ViewTestCase):
     def test_get_reporting_unit_hides_change_link_when_no_available_statuses(self, mock_request):
         mock_request.get(url_get_party_by_ru_ref, json=business_reporting_unit)
         mock_request.get(url_get_cases_by_business_party_id, json=cases_list)
-        mock_request.get(url_get_casegroups_by_business_party_id, json=case_groups)
+        mock_request.get(url_get_casegroups_by_business_party_id, json=case_groups_completed)
         mock_request.get(f'{url_get_collection_exercise_by_id}/{collection_exercise_id_1}', json=collection_exercise)
         mock_request.get(f'{url_get_collection_exercise_by_id}/{collection_exercise_id_2}', json=collection_exercise)
         mock_request.get(url_get_business_party_by_party_id, json=business_party)
