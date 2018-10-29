@@ -75,6 +75,7 @@ def update_response_status(ru_ref):
 
 def get_timestamp_for_completed_case_event(case_id):
     case_events = get_case_events_by_case_id(case_id, COMPLETED_CASE_EVENTS)
-    timestamp = case_events[0]['createdDateTime'].replace("T", " ").split('.')[0]
+    last_index = len(case_events) - 1
+    timestamp = case_events[last_index]['createdDateTime'].replace("T", " ").split('.')[0]
 
     return get_formatted_date(timestamp)
