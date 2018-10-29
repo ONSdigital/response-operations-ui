@@ -1,105 +1,88 @@
 {% extends "layouts/spoke.html" %}
 
 {% block page_title %} Change response status for {{ ru_name }} ({{ ru_ref }}) for survey {{ survey_id }} {{ survey_name }} period {{ ce_period }} {% endblock %}
-{%- block body %}
-<body class="spoke">
-<div class="page">
-    <div class="page__content">
-        <div class="container page__container">
-            <div class="grid">
-                <div class="grid__col col-3@l">
-                </div>
-                <div class="grid__col col-6@l">
-                    <div role="main" id="main" class="page__main">
-                        <div class="spoke__header">
-                            <div class="spoke__header__title">
-                                {% if is_complete %}
-                                    <h1 class="jupiter">Response status</h1>
-                                {% else %}
-                                    <h1 class="jupiter">Change response status</h1>
-                                {% endif %}
-                            </div>
-                        </div>
-
-                        <div class="spoke__body" id="spoke__body">
-                            <dl class="description-list description-list-8">
-                                <dt class="">
-                                    Reference:
-                                </dt>
-                                <dd class="">
-                                    {{ ru_ref }}
-                                </dd>
-                                <dt class="">
-                                    Name:
-                                </dt>
-                                <dd class="">
-                                    {{ ru_name }}
-                                </dd>
-                                <dt class="">
-                                    Trading as:
-                                </dt>
-                                <dd class="">
-                                    {{ trading_as }} &#160;
-                                </dd>
-                                <dt class="">
-                                    Survey:
-                                </dt>
-                                <dd class="" id="survey">
-                                    {{ survey_ref }} &nbsp; {{survey_short_name}}
-                                </dd>
-                                <dt class="">
-                                    Period:
-                                </dt>
-                                <dd class="" id="period">
-                                    {{ ce_period }}
-                                </dd>
-                                <dt class="">
-                                    Current status:
-                                </dt>
-                                <dd class="" id="current-status">
-                                    {{ case_group_status }}
-                                </dd>
-                                {% if is_complete %}
-                                  <dt class="">
-                                      Date and time:
-                                  </dt>
-                                  <dd class="" id="date-and-time">
-                                      {{ completed_timestamp }}
-                                  </dd>
-                                {%  endif %}
-                            </dl>
-                            {% if is_complete %}
-                              <div>
-                                <a href="{{ request.referrer }}" onclick="history.back(); return false;" class="u-d-b u-mt-s">Close</a>
-                              </div>
-                            {% else %}
-                              <form action="{{ request.url }}&case_group_id={{ case_group_id }}" method="post" class="u-mt-s">
-                                  <div class="field field--radio field--multiplechoice">
-                                      <fieldset>
-                                          <legend class="field__legend mars">Choose new response status</legend>
-                                          {% for event, status in statuses.items() %}
-                                          <div class="field__item js-focusable-box">
-                                              <input required class="input input--radio js-focusable" name="event"
-                                                 value="{{ event }}" id="state-{{loop.index}}" type="radio">
-                                              <label class="label label--inline venus " for="state-{{loop.index}}">{{ status }}</label>
-                                          </div>
-                                          {% endfor %}
-                                      </fieldset>
-                                  </div>
-                                  <button type="submit" id="response-status-change-confirm-button" class="btn btn--primary u-mt-m">Confirm</button>
-                                  <div>
-                                      <a href="{{ request.referrer }}" onclick="history.back(); return false;">Cancel</a>
-                                  </div>
-                              </form>
-                            {% endif %}
-                        </div>
-                    </div>
-                </div>
-                <div class="grid__col col-3@l">
-                </div>
-            </div>
+{%- block main %}
+<div role="main" id="main" class="page__main">
+    <div class="spoke__header">
+        <div class="spoke__header__title">
+            {% if is_complete %}
+                <h1 class="jupiter">Response status</h1>
+            {% else %}
+                <h1 class="jupiter">Change response status</h1>
+            {% endif %}
         </div>
     </div>
+      <div class="spoke__body" id="spoke__body">
+          <dl class="description-list description-list-8">
+              <dt class="">
+                  Reference:
+              </dt>
+              <dd class="">
+                  {{ ru_ref }}
+              </dd>
+              <dt class="">
+                  Name:
+              </dt>
+              <dd class="">
+                  {{ ru_name }}
+              </dd>
+              <dt class="">
+                  Trading as:
+              </dt>
+              <dd class="">
+                  {{ trading_as }} &#160;
+              </dd>
+              <dt class="">
+                  Survey:
+              </dt>
+              <dd class="" id="survey">
+                  {{ survey_ref }} &nbsp; {{survey_short_name}}
+              </dd>
+              <dt class="">
+                  Period:
+              </dt>
+              <dd class="" id="period">
+                  {{ ce_period }}
+              </dd>
+              <dt class="">
+                  Current status:
+              </dt>
+              <dd class="" id="current-status">
+                  {{ case_group_status }}
+              </dd>
+              {% if is_complete %}
+                <dt class="">
+                    Date and time:
+                </dt>
+                <dd class="" id="date-and-time">
+                    {{ completed_timestamp }}
+                </dd>
+              {%  endif %}
+          </dl>
+          {% if is_complete %}
+            <div>
+              <a href="{{ request.referrer }}" onclick="history.back(); return false;" class="u-d-b u-mt-s">Close</a>
+            </div>
+          {% else %}
+            <form action="{{ request.url }}&case_group_id={{ case_group_id }}" method="post" class="u-mt-s">
+                <div class="field field--radio field--multiplechoice">
+                    <fieldset>
+                  <legend class="field__legend mars">Choose new response status</legend>
+                  {% for event, status in statuses.items() %}
+                  <div class="field__item js-focusable-box">
+                    <input required class="input input--radio js-focusable" name="event"
+                       value="{{ event }}" id="state-{{loop.index}}" type="radio">
+                  <label class="label label--inline venus " for="state-{{loop.index}}">{{ status }}</label>
+                  </div>
+                    {% endfor %}
+                </fieldset>
+              </div>
+              <button type="submit" id="response-status-change-confirm-button" class="btn btn--primary u-mt-m">Confirm</button>
+              <div>
+                <a href="{{ request.referrer }}" onclick="history.back(); return false;">Cancel</a>
+              </div>
+          </form>
+        {% endif %}
+    </div>
 </div>
-
 {% endblock main -%}
