@@ -73,20 +73,22 @@
                   {{ ce.trading_as }} &#160;
                 </td>
 
-                <td name="tbl-ce-company-region" class="table--cell">
-                  {{ ce.companyRegion }}
-                </td>
-                <td name="tbl-ce-status" class="table--cell">
-                  {{ ce.responseStatus }}
-                  {% if ce.statuses|length > 0 %}
-                  &nbsp;<a href="{{ url_for('case_bp.get_response_statuses', ru_ref=ru.sampleUnitRef, survey=survey.shortName, period=ce.exerciseRef) }}">Change</a>
-                  {% endif %}
-                </td>
-              </tr>
-              {% endfor %}
-            </tbody>
-          </table>
-        </div>
+              <td name="tbl-ce-company-region" class="table--cell">
+                {{ ce.companyRegion }}
+              </td>
+              <td name="tbl-ce-status" class="table--cell">
+                {{ ce.responseStatus }}
+                {% if ce.responseStatus in ['Not started', 'In progress']  %}
+              &nbsp;   <a href="{{ url_for('case_bp.get_response_statuses', ru_ref=ru.sampleUnitRef, survey=survey.shortName, period=ce.exerciseRef) }}">Change</a>
+                {% elif ce.responseStatus in ['Completed', 'Completed by phone'] %}
+                  <a href="{{ url_for('case_bp.get_response_statuses', ru_ref=ru.sampleUnitRef, survey=survey.shortName, period=ce.exerciseRef) }}">View</a>
+                {% endif %}
+              </td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
 
         <div class="ru-survey-respondents u-pt-s">
           <h4 class="neptune">Respondents</h4>
@@ -170,17 +172,17 @@
                 </dl>
               </td>
               <td name="tbl-respondent-status" class="table--cell">
-                <div id="account-status">	
-                  {% if respondent.status  == 'SUSPENDED' %}	
-                    Locked	
-                  {% else %}	
-                    {{ respondent.status.title() }}	
-                  {% endif %}	
-                </div>	
-                <div>	
-                  {% if respondent.status == 'SUSPENDED' %}	
-                  <a id="respondent-unlock-link" href="{{ url_for('reporting_unit_bp.confirm_change_respondent_status', ru_ref=ru_ref, party_id=respondent.id, change_flag='ACTIVE') }}">Unlock</a>	
-                  {% endif %}	
+                <div id="account-status">
+                  {% if respondent.status  == 'SUSPENDED' %}
+                    Locked
+                  {% else %}
+                    {{ respondent.status.title() }}
+                  {% endif %}
+                </div>
+                <div>
+                  {% if respondent.status == 'SUSPENDED' %}
+                  <a id="respondent-unlock-link" href="{{ url_for('reporting_unit_bp.confirm_change_respondent_status', ru_ref=ru_ref, party_id=respondent.id, change_flag='ACTIVE') }}">Unlock</a>
+                  {% endif %}
                 </div>
               </td>
 
@@ -188,7 +190,7 @@
                 <div id="enrolment-status">
                   {{ respondent.enrolmentStatus.title() }}
                 </div>
-                
+
                 <div>
                   {% if respondent.enrolmentStatus == 'ENABLED' %}
                   <a href="{{ url_for('reporting_unit_bp.confirm_change_enrolment_status', ru_ref=ru.sampleUnitRef, ru_name=ru.name, survey_id=survey.id,

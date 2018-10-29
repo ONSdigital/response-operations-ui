@@ -148,6 +148,9 @@ def generate_iac(case_id):
 def get_case_events_by_case_id(case_id):
     logger.debug('Retrieving cases', case_id=case_id)
     url = f'{app.config["CASE_URL"]}/cases/{case_id}/events'
+    if categories:
+        url = url + '?category=' + ','.join(categories)
+
     response = requests.get(url, auth=app.config['CASE_AUTH'])
     try:
         response.raise_for_status()
