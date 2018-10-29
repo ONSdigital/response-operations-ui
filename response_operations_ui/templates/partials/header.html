@@ -47,7 +47,7 @@
                     <li class="nav__item {% if request.path.startswith('/surveys') %} nav__item--active{% endif %}" role="menuitem"><a href="/surveys/" class="nav__link">Surveys</a></li>
                     <li class="nav__item {% if request.path.startswith('/reporting-units') %} nav__item--active{% endif %}" role="menuitem"><a href="/reporting-units/" class="nav__link">Reporting units</a></li>
                     <li class="nav__item {% if request.path.startswith('/respondents') %} nav__item--active{% endif %}" role="menuitem"><a href="/respondents/" class="nav__link">Respondents</a></li>
-                    <li class="nav__item {% if request.path.startswith('/messages') %} nav__item--active{% endif %}" role="menuitem"><a href="/messages/" class="nav__link">Messages</a></li>
+                    <li class="nav__item {% if request.path.startswith('/messages') %} nav__item--active{% endif %}" role="menuitem"><a href="/messages/" class="nav__link" id="messages-link">Messages</a></li>
                     <li class="nav__item nav__item--secondary u-d-no--@s" role="menuitem">
                       {% if current_user.is_authenticated %}
                       <a id="sign-out-btn" href="/logout" class="nav__link sign-out">Sign out</a>
