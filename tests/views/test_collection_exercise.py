@@ -1133,7 +1133,7 @@ class TestCollectionExercise(ViewTestCase):
             f"/surveys/{short_name}/{period}/confirm-remove-sample", follow_redirects=True
         )
 
-        self.assertEquals(response.status_code, 200)
+        self.assertEqual(response.status_code, 200)
         self.assertIn("Sample removed".encode(), response.data)
 
     @requests_mock.mock()
@@ -1145,14 +1145,14 @@ class TestCollectionExercise(ViewTestCase):
             f"/surveys/{short_name}/{period}/confirm-remove-sample", follow_redirects=True
         )
 
-        self.assertEquals(response.status_code, 200)
+        self.assertEqual(response.status_code, 200)
         self.assertIn('Error: Failed to remove sample'.encode(), response.data)
 
     def test_get_confirm_remove_sample(self):
         response = self.client.get(f"/surveys/test/000000/confirm-remove-sample",
                                    follow_redirects=True)
 
-        self.assertEquals(response.status_code, 200)
+        self.assertEqual(response.status_code, 200)
         self.assertIn("Remove sample from test 000000".encode(), response.data)
 
     @requests_mock.mock()
@@ -1164,7 +1164,7 @@ class TestCollectionExercise(ViewTestCase):
         response = self.client.get(f"/surveys/MBS/201801/{collection_exercise_id}/confirm-create-event/mps",
                                    follow_redirects=True)
 
-        self.assertEquals(response.status_code, 200)
+        self.assertEqual(response.status_code, 200)
         self.assertIn("MBS".encode(), response.data)
         self.assertIn("Main print selection".encode(), response.data)
 
@@ -1225,4 +1225,4 @@ class TestCollectionExercise(ViewTestCase):
         expected_ce_list = copy.deepcopy(self.collection_exercises)
         expected_ce_list[0]['events'] = self.collection_exercise_events
         expected_ce_list[0]['sample_summary'] = self.sample_summary
-        self.assertEquals(ce_list, expected_ce_list)
+        self.assertEqual(ce_list, expected_ce_list)
