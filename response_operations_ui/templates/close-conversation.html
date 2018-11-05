@@ -38,7 +38,7 @@
 
       <form action="{{ url_for('messages_bp.close_conversation', thread_id=thread_id) }}" method="post">
         <input type="hidden" name="closed" value="True" />
-        <button class="btn btn--primary u-mt-m">Close conversation</button>
+        <button class="btn u-mt-m">Close conversation</button>
       </form>
       <a href="{{ url_for('messages_bp.view_conversation', thread_id=thread_id, page=page) }}#latest-message">Cancel</a>
     </div>

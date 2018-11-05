@@ -1,33 +1,60 @@
 <div class="skip">
   <a class="skip__link" href="#main">Skip to content</a>
 </div>
-
-<header class="page__header">
-
-  {% include 'partials/header-logo.html' %}
-  {% include 'partials/banner.html' %}
-
-  <div class="bar bar__sitenavigation" role="banner">
-    <div class="bar__inner container">
-      <div class="sitenavigation">
-        <ul class="sitenavigation__list">
-          <li class="sitenavigation__listitem {% if request.path == '/' %} sitenavigation__listitem--active{% endif %}">
-            <a href="/">Home</a>
-          </li>
-          <li class="sitenavigation__listitem{% if request.path.startswith('/surveys') %} sitenavigation__listitem--active{% endif %}">
-            <a href="/surveys/">Surveys</a>
-          </li>
-          <li class="sitenavigation__listitem{% if request.path.startswith('/reporting-units') %} sitenavigation__listitem--active{% endif %}">
-            <a href="/reporting-units/">Reporting units</a>
-          </li>
-          <li class="sitenavigation__listitem{% if request.path.startswith('/respondents') %} sitenavigation__listitem--active{% endif %}">
-            <a href="/respondents/">Respondents</a>
-          </li>
-          <li class="sitenavigation__listitem{% if request.path.startswith('/messages') %} sitenavigation__listitem--active{% endif %}">
-            <a href="/messages/" id="messages-link">Messages</a>
-          </li>
-        </ul>
+<header class="header header--internal header--thin u-mb-no">
+  <div class="header__top" role="banner">
+    <div class="container container--wide">
+      <div class="grid grid--gutterless">
+        <div class="grid__col col-6@s">
+          <div class="logo">
+            {% set logo_print_cdn = cdn_url_prefix~"/img/ons-logo-black.svg" %}
+            <img src="{{ logo_print_cdn }}" alt="Office for National Statistics" class="logo__img header__logo--print">
+            <a href="/">
+              {% set logo_cdn = cdn_url_prefix~"/img/ons-logo-white.svg" %}
+              <img src="{{ logo_cdn }}" alt="Office for National Statistics" class="logo__img header__logo">
+            </a>
+          </div>
+        </div>
+        {% if current_user.is_authenticated %}
+        <div class="grid__col col-6@s">
+          <nav class="nav nav--horizontal nav--light u-d-no--@xs@s u-fr" aria-label="Site services menu">
+            <ul class="nav__list" role="menubar" aria-label="Site services menu">
+              <li class="nav__item" role="menuitem">
+                  <a id="sign-out-btn" href="/logout" class="nav__link sign-out">Sign out</a>
+              </li>
+            </ul>
+          </nav>
+        </div>
+        {% endif %}
       </div>
     </div>
   </div>
+  <div class="header__main">
+    <div class="container container--wide">
+      <div class="grid grid--gutterless grid--align-mid u-cf">
+        <div class="grid__col col-10@xs col-6@s col-8@m">
+          <h1 class="header__title">Survey Data Collection</h1>
+        </div>
+        <button class="btn btn--mobile js-nav-btn u-fr u-d-no--@s" type="button" id="menu-btn" aria-expanded="false" aria-controls="main-nav" aria-label="Toggle main navigation" aria-haspopup="true"><span class="btn--mobile__label"></span></button>
+      </div>
+    </div>
+  </div>
+  <div class="header__nav">
+        <div class="container container--wide">
+            <nav class="nav nav--horizontal nav--light nav--main js-main-nav nav--h-m" aria-label="Main menu" id="main-nav" aria-hidden="true">
+                <ul class="nav__list" aria-label="Navigation menu" role="menubar">
+                    <li class="nav__item {% if request.path == '/' %} nav__item--active{% endif %}" role="menuitem"><a href="/" class="nav__link">Home</a></li>
+                    <li class="nav__item {% if request.path.startswith('/surveys') %} nav__item--active{% endif %}" role="menuitem"><a href="/surveys/" class="nav__link">Surveys</a></li>
+                    <li class="nav__item {% if request.path.startswith('/reporting-units') %} nav__item--active{% endif %}" role="menuitem"><a href="/reporting-units/" class="nav__link">Reporting units</a></li>
+                    <li class="nav__item {% if request.path.startswith('/respondents') %} nav__item--active{% endif %}" role="menuitem"><a href="/respondents/" class="nav__link">Respondents</a></li>
+                    <li class="nav__item {% if request.path.startswith('/messages') %} nav__item--active{% endif %}" role="menuitem"><a href="/messages/" class="nav__link" id="messages-link">Messages</a></li>
+                    <li class="nav__item nav__item--secondary u-d-no--@s" role="menuitem">
+                      {% if current_user.is_authenticated %}
+                      <a id="sign-out-btn" href="/logout" class="nav__link sign-out">Sign out</a>
+                      {% endif %}
+                    </li>
+                </ul>
+            </nav>
+        </div>
+    </div>
 </header>

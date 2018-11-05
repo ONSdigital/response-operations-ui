@@ -50,7 +50,7 @@
           {{ form.hidden_survey_name(value=survey_name, id='survey_name') }}
         </div>
       </div>
-      <button class="btn btn--primary u-mt-s" id="save-btn">Save</button>
+      <button class="btn u-mb-s" id="save-btn">Save</button>
       <div>
         <a id="cancel-btn" href="{{ url_for('surveys_bp.view_survey', short_name=short_name, period=period) }}">Cancel</a>
       </div>

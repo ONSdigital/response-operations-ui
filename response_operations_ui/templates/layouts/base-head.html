@@ -1,5 +1,10 @@
 <!DOCTYPE html>
-<html lang="en">
+{% set cdn_hash = "v1.5.3" %}
+{% set cdn_url_prefix = "https://cdn.ons.gov.uk/sdc/"~cdn_hash %}
+{% set css_responsive_cdn = cdn_url_prefix~"/css/responsive.css" %}
+{% set scripts_cdn = cdn_url_prefix~"/scripts/bundle.js" %}
+
+<html lang="en" class="no-js">
 
   <head>
     <meta charset="utf-8">
@@ -8,8 +13,10 @@
     <meta name="description" content="ONS Business Surveys" />
 
     <title>{% block page_title %}{{ _('Survey Data Collection') }}{% endblock page_title %}</title>
-
-    <link rel=stylesheet type=text/css href="//cdn.ons.gov.uk/sdc/322aece/css/styles.css">
+    <!--[if gt IE 8]><!-->
+      <script>document.documentElement.className = document.documentElement.className.replace('no-js','has-js')</script>
+    <!--<![endif]-->
+    <link rel=stylesheet type=text/css href="{{ css_responsive_cdn }}">
     {% assets "scss_all" %}
     <link rel=stylesheet type=text/css href="{{ ASSET_URL }}">
     {% endassets %}

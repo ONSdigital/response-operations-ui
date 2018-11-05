@@ -8,7 +8,6 @@ from response_operations_ui.views.messages import messages_bp
 from response_operations_ui.views.reporting_units import reporting_unit_bp
 from response_operations_ui.views.respondents import respondent_bp
 from response_operations_ui.views.sign_in import sign_in_bp
-from response_operations_ui.views.social import social_bp
 from response_operations_ui.views.surveys import surveys_bp
 
 
@@ -27,5 +26,4 @@ def setup_blueprints(app):
     app.register_blueprint(sign_in_bp, url_prefix='/sign-in')
     app.register_blueprint(surveys_bp, url_prefix='/surveys')
     app.register_blueprint(case_bp, url_prefix='/case')
-    app.register_blueprint(social_bp, url_prefix='/social')
     return app
