@@ -4,34 +4,9 @@
 {% block main %}
 
 <div role="main" id="main" class="page__main">
-    {% if success_panel %}
-    <div class="panel panel--simple panel--success">
-      <div class="panel__body" id="success-panel">
-        {{ success_panel }}
-      </div>
-    </div>
-    {% endif %}
-    {% if error %}
-
-    {% endif %}
-    {% if processing %}
-      <div class="panel panel--simple panel--info">
-        <div id="processing-info" class="panel__body">
-          Processing collection exercise – <a id="a-processing-refresh" href="">refresh to see progress</a>
-        </div>
-      </div>
-    {% elif validation_failed %}
-      <div class="panel panel--simple panel--error">
-        <div id="validation-error" class="panel__body">
-          Error processing collection exercise
-          {% if missing_ci %}
-          <div id="collection-instrument-error">
-            <a href="#ciFile">Check collection instruments</a>
-          </div>
-          {% endif %}
-        </div>
-      </div>
-    {% endif %}
+    {% include 'collection_exercise/ce-success-panel.html' %}
+    {% include 'collection_exercise/ce-handle-errors.html' %}
+    
     {% if error['section'] == 'head' %}
       <div class="panel panel--error u-mb-s" data-qa="error">
         <div class="panel__header">

@@ -1,0 +1,13 @@
+{#- Display processing or error panel if validation failed #}
+{% if processing %}
+    {% call panel.info('processing-info') %}Processing collection exercise – <a id="a-processing-refresh" href="">refresh to see progress</a>{% endcall %}
+{% elif validation_failed %}
+    {% call panel.error('validation-error') %}
+        Error processing collection exercise
+        {% if missing_ci %}
+        <div id="collection-instrument-error">
+        <a href="#ciFile">Check collection instruments</a>
+        </div>
+        {% endif %}
+    {% endcall %}
+{% endif %}
