@@ -4,6 +4,12 @@
 {% block main %}
 
 <div role="main" id="main" class="page__main">
+
+    {% call panel.info() %}error{% endcall %}
+    {% call panel.warn() %}error{% endcall %}
+    {% call panel.success() %}error{% endcall %}
+    {% call panel.error() %}error{% endcall %}
+
     {% include 'collection_exercise/ce-success-panel.html' %}
     {% include 'collection_exercise/ce-handle-errors.html' %}
     

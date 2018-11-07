@@ -1,30 +1,35 @@
-{# Panels #}
-{% macro info(id='', class='', header='', font_size='venus') -%}
-{% call _panel('info', header, id, class, font_size) %} {{ caller() }} {% endcall %}
-{% endmacro %}
-
-{% macro success(id='', class='', header='', font_size='venus') -%}
-{% call _panel('success', header, id, class, font_size) %} {{ caller() }} {% endcall %}
-{% endmacro %}
-
-{% macro warn(id='', class='', header='', font_size='venus') -%}
-{% call _panel('warn', header, id, class, font_size) %} {{ caller() }} {% endcall %}
-{% endmacro %}
-
-{% macro error(id='', class='', header='', font_size='venus') -%}
-{% call _panel('error', header, id, class, font_size) %} {{ caller() }} {% endcall %}
-{% endmacro %}
-
 {# Non-exported supermacro #}
-{% macro _panel(type, header='', id='', class='', font_size='venus') -%}
-<div class="panel{% if header != '' %} panel--simple{% endif %} panel--{{ type }} {{ class }}">
-    {% if header != '' %}
+{% macro _panel() -%}
+<pre>{{ kwargs }}</pre>
+<div class="panel{% if 'header' in kwargs %} panel--simple{% endif %}">
+    {% if 'header' in kwargs %}
     <div class="panel__header">
-        <div class="{{ font_size }}">{{ header }}</div>
+        <div class="{% if 'font_size' in kwargs %}{{ kwargs['font_size'] }}{% else %%}venus{% endif %}%">{{ kwargs['header'] }}</div>
     </div>
     {% endif %}
-    <div id="{{ id }}" class="panel__body">
+    <div {% if 'id' in kwargs %}id="{{ kwargs['id'] }}" {% endif %}class="panel__body">
         {{ caller() }}
     </div>
 </div>
+{% endmacro %}
+
+{# Panels #}
+{% macro info() -%}
+{% set super_caller = caller %}
+{% call _panel('info') %} {{ super_caller() }} {% endcall %}
+{% endmacro %}
+
+{% macro success() -%}
+{% set super_caller = caller %}
+{% call _panel('success') %} {{ super_caller() }} {% endcall %}
+{% endmacro %}
+
+{% macro warn() -%}
+{% set super_caller = caller %}
+{% call _panel('warn') %} {{ super_caller() }} {% endcall %}
+{% endmacro %}
+
+{% macro error() -%}
+{% set super_caller = caller %}
+{% call _panel('error') %} {{ super_caller() }} {% endcall %}
 {% endmacro %}
