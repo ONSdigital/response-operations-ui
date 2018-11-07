@@ -13,7 +13,7 @@ from tests.views import ViewTestCase
 
 shortname_url = f'{TestingConfig.SURVEY_URL}/surveys/shortname'
 url_sign_in_data = f'{TestingConfig.UAA_SERVICE_URL}/oauth/token'
-url_get_surveys_list = f'{TestingConfig.SURVEY_URL}/surveys'
+url_get_surveys_list = f'{TestingConfig.SURVEY_URL}/surveys/surveytype/Business'
 url_get_thread = f'{TestingConfig.SECURE_MESSAGE_URL}/v2/threads/fb0e79bd-e132-4f4f-a7fd-5e8c6b41b9af'
 url_get_threads_list = f'{TestingConfig.SECURE_MESSAGE_URL}/threads'
 url_send_message = f'{TestingConfig.SECURE_MESSAGE_URL}/v2/messages'

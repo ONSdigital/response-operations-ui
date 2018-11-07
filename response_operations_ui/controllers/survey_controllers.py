@@ -87,7 +87,7 @@ def get_survey_ci_classifier(survey_id):
 
 def get_surveys_list():
     logger.debug('Retrieving surveys list')
-    url = f'{app.config["SURVEY_URL"]}/surveys'
+    url = f'{app.config["SURVEY_URL"]}/surveys/surveytype/Business'
     response = requests.get(url, auth=app.config['SURVEY_AUTH'])
 
     if response.status_code == 204:
