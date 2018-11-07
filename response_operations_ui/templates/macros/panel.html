@@ -1,17 +1,17 @@
 {# Panels #}
-{% macro panel_info(header='', id='', class='', font_size='venus') -%}
+{% macro info(header='', id='', class='', font_size='venus') -%}
 {% call _panel('info', header, id, class, font_size) %}
 {% endmacro %}
 
-{% macro panel_success(header='', id='', class='', font_size='venus') -%}
+{% macro success(header='', id='', class='', font_size='venus') -%}
 {% call _panel('success', header, id, class, font_size) %}
 {% endmacro %}
 
-{% macro panel_warn(header='', id='', class='', font_size='venus') -%}
+{% macro warn(header='', id='', class='', font_size='venus') -%}
 {% call _panel('warn', header, id, class, font_size) %}
 {% endmacro %}
 
-{% macro panel_error(header='', id='', class='', font_size='venus') -%}
+{% macro error(header='', id='', class='', font_size='venus') -%}
 {% call _panel('error', header, id, class, font_size) %}
 {% endmacro %}
 
