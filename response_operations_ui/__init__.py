@@ -28,7 +28,11 @@ def create_app(config_name=None):
 
     # Load css and js assets
     assets = Environment(app)
-    assets.cache = False if app_config.TESTING or app_config.DEBUG else True
+
+    if app.config['DEBUG'] or app.config['DEBUG']:
+        assets.cache = False
+        assets.manifest = None
+
     assets.url = app.static_url_path
     scss_min = Bundle('css/*', 'css/components/*',
                       filters=['cssmin'], output='minimised/all.min.css')
