@@ -29,7 +29,7 @@ def create_app(config_name=None):
     # Load css and js assets
     assets = Environment(app)
 
-    if app.config['DEBUG'] or app.config['DEBUG']:
+    if app.config['DEBUG'] or app.config['TESTING']:
         assets.cache = False
         assets.manifest = None
 
