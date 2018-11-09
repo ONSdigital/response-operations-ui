@@ -1,35 +1,13 @@
 {# Non-exported supermacro #}
-{% macro _panel() -%}
-<pre>{{ kwargs }}</pre>
-<div class="panel{% if 'header' in kwargs %} panel--simple{% endif %}">
+{% macro render() -%}
+<div class="panel{% if not 'header' in kwargs %} panel--simple{% endif %} panel--{{ 'info' if not 'type' in kwargs else kwargs['type'] }} {{ if 'class' in kwargs kwargs['class'] }}">
     {% if 'header' in kwargs %}
     <div class="panel__header">
-        <div class="{% if 'font_size' in kwargs %}{{ kwargs['font_size'] }}{% else %%}venus{% endif %}%">{{ kwargs['header'] }}</div>
+        <div class="{{ 'venus' if not 'font_size' in kwards else kwargs['font_size'] }}">{{ kwargs['header'] }}</div>
     </div>
     {% endif %}
-    <div {% if 'id' in kwargs %}id="{{ kwargs['id'] }}" {% endif %}class="panel__body">
+    <div {% if 'id' in kwargs %}id="{{ kwargs['id'] }}" {% endif %}class="panel__body"{% if data_qa in kwargs %} data-qa="{{ kwargs['data-qa'] }}"{% endif %}>
         {{ caller() }}
     </div>
 </div>
-{% endmacro %}
-
-{# Panels #}
-{% macro info() -%}
-{% set super_caller = caller %}
-{% call _panel('info') %} {{ super_caller() }} {% endcall %}
-{% endmacro %}
-
-{% macro success() -%}
-{% set super_caller = caller %}
-{% call _panel('success') %} {{ super_caller() }} {% endcall %}
-{% endmacro %}
-
-{% macro warn() -%}
-{% set super_caller = caller %}
-{% call _panel('warn') %} {{ super_caller() }} {% endcall %}
-{% endmacro %}
-
-{% macro error() -%}
-{% set super_caller = caller %}
-{% call _panel('error') %} {{ super_caller() }} {% endcall %}
 {% endmacro %}

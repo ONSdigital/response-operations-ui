@@ -5,45 +5,10 @@
 
 <div role="main" id="main" class="page__main">
 
-    {% call panel.info() %}error{% endcall %}
-    {% call panel.warn() %}error{% endcall %}
-    {% call panel.success() %}error{% endcall %}
-    {% call panel.error() %}error{% endcall %}
-
     {% include 'collection_exercise/ce-success-panel.html' %}
     {% include 'collection_exercise/ce-handle-errors.html' %}
+
     
-    {% if error['section'] == 'head' %}
-      <div class="panel panel--error u-mb-s" data-qa="error">
-        <div class="panel__header">
-          <h1 class="panel__title venus">{{ error['header'] }}</h1>
-        </div>
-        <div class="panel__body" data-qa="error-body">
-           {{ error['message'] }}
-        </div>
-      </div>
-    {% endif %}
-    {% if sample and show_msg == 'true' %}
-      {% if sample.state == 'INIT' %}
-        <div class="panel panel--simple panel--info u-mb-l">
-            <div class="panel__body">
-            Loading sample&hellip; <span class="u-ml-xs"><a href="/surveys/{{survey.shortName}}/{{ce.exerciseRef}}?show_msg=true">Refresh to see progress</a></span>
-            </div>
-        </div>
-      {% elif sample.state == 'ACTIVE' %}
-        <div class="panel panel--simple panel--success u-mb-l" id="sample-success">
-          <div class="panel__body" >
-            Sample loaded successfully
-          </div>
-        </div>
-      {% elif sample.state == 'FAILED' %}
-        <div class="panel panel--simple panel--error u-mb-l">
-          <div class="panel__body">
-           Error loading sample <span class="u-ml-xs"><a href="#section-sample">See error details</a></span>
-          </div>
-        </div>
-      {% endif %}
-    {% endif %}
     <h1 class="jupiter" name="page-ce-title">{{survey.shortName}} {{ce.exerciseRef}}</h1>
     <dl class="ce-info" id="ce-attributes">
       <dt class="ce-status__title item-headlines-term ce-status">
