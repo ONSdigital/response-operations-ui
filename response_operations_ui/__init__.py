@@ -23,17 +23,18 @@ def create_app(config_name=None):
     app = Flask(__name__)
     app.name = "response_operations_ui"
 
+    app_config = f'config.{config_name or os.environ.get("APP_SETTINGS", "Config")}'
+    app.config.from_object(app_config)
+
     # Load css and js assets
     assets = Environment(app)
+    assets.cache = False if app_config.TESTING or app_config.DEBUG else True
     assets.url = app.static_url_path
     scss_min = Bundle('css/*', 'css/components/*',
                       filters=['cssmin'], output='minimised/all.min.css')
     assets.register('scss_all', scss_min)
     js_min = Bundle('js/*', filters='jsmin', output='minimised/all.min.js')
     assets.register('js_all', js_min)
-
-    app_config = f'config.{config_name or os.environ.get("APP_SETTINGS", "Config")}'
-    app.config.from_object(app_config)
 
     app.url_map.strict_slashes = False
     app.secret_key = app.config['RESPONSE_OPERATIONS_UI_SECRET']
