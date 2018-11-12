@@ -1,13 +1,25 @@
 {# Non-exported supermacro #}
 {% macro render() -%}
-<div class="panel{% if not 'header' in kwargs %} panel--simple{% endif %} panel--{{ 'info' if not 'type' in kwargs else kwargs['type'] }} {{ if 'class' in kwargs kwargs['class'] }}">
-    {% if 'header' in kwargs %}
+{% with %}
+{# Establishing variables #}
+{% set simple_class = ' panel--simple' if not 'header' in kwargs %}
+{% set type_class = ' panel--' + kwargs.get('type', 'info') %}
+{% set custom_classes = kwargs.get('class', '') %}
+{% set header = kwargs.get('header', False) %}
+{% set font_size = kwargs.get('font_size', 'venus') %}
+{% set id = kwargs.get('id', '') %}
+{% set data_qa = kwargs.get('data-qa', '') %}
+
+{# Render component #}
+<div class="panel{{ simple_class }}{{ type_class }} {{ custom_classes }}">
+    {% if header %}
     <div class="panel__header">
-        <div class="{{ 'venus' if not 'font_size' in kwards else kwargs['font_size'] }}">{{ kwargs['header'] }}</div>
+        <div class="{{ font_size }}">{{ header }}</div>
     </div>
     {% endif %}
-    <div {% if 'id' in kwargs %}id="{{ kwargs['id'] }}" {% endif %}class="panel__body"{% if data_qa in kwargs %} data-qa="{{ kwargs['data-qa'] }}"{% endif %}>
+    <div id="{{ id }}" class="panel__body" data-qa="{{ data_qa }}">
         {{ caller() }}
     </div>
 </div>
+{% endwith %}
 {% endmacro %}
