@@ -9,20 +9,19 @@
 
     {% include 'collection_exercise/ce-header-section.html' %}
 
-    {% call grid() %}
-        <div class="grid__col col-6@l">
+    {% call grid.container() %}
+        {% call grid.column(['col-6@l']) %}
         {% include 'partials/error-box.html' %}
         {% include 'collection_exercise/ce-dates-section.html' %}
         {% include 'collection_exercise/ce-sample-section.html' %}
         {% include 'collection_exercise/ce-instrument-section.html' %}
-        </div>
+        {% endcall %}
 
-        <div class="grid__col col-1@l">
-        </div>
+        {% call grid.column(['col-1@l']) %}{% endcall %}
 
-        <div class="grid__col col-5@l">
+        {% call grid.column(['col-6@l']) %}
         {% include 'collection_exercise/ce-reference-information.html' %}
-        </div>
+        {% endcall %}
     {% endcall %}
 </div>
 {% endblock %}
