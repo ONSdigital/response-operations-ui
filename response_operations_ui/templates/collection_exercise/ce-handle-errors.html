@@ -22,7 +22,7 @@
     {% if sample.state == 'INIT' %}
     {% call panel.render(class='u-mb-l') %}Loading sample&hellip; <span class="u-ml-xs"><a href="/surveys/{{survey.shortName}}/{{ce.exerciseRef}}?show_msg=true">Refresh to see progress</a></span>{% endcall %}
     {% elif sample.state == 'ACTIVE' %}
-    {% call panel.render(class='u-mb-l', type='success') %}Sample loaded successfully{% endcall %}
+    {% call panel.render(class='u-mb-l', type='success', id='sample-success') %}Sample loaded successfully{% endcall %}
     {% elif sample.state == 'FAILED' %}
     {% call panel.render(class='u-mb-l', type='error') %}Error loading sample <span class="u-ml-xs"><a href="#section-sample">See error details</a></span>{% endcall %}
     {% endif %}
