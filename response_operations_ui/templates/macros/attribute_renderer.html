@@ -1,0 +1,5 @@
+{% macro attribs() -%}
+{% with -%}
+{%- for arg in kwargs %}{% if arg != 'caller' %} {{ arg }}="{{ kwargs[arg]}}"{% endif %}{% endfor -%}
+{%- endwith %}
+{%- endmacro %}
