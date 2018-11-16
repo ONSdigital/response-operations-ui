@@ -9,14 +9,11 @@
 {% set id = kwargs.get('id', '') %}
 {% set data_qa = kwargs.get('data-qa', '') %}
 {% set custom_attribs = kwargs.get('custom_attribs') %}
-{% set attrib_string = attribs(custom_attribs) if custom_attribs else '' %}
 {% set header_custom_attribs = kwargs.get('header_custom_attribs') %}
-{% set header_attrib_string = attribs(custom_attribs) if header_custom_attribs else '' %}
 {% set body_custom_attribs = kwargs.get('body_custom_attribs') %}
-{% set body_attrib_string = attribs(custom_attribs) if body_custom_attribs else '' %}
 
 {# Render component #}
-<div class="panel{{ simple_class }}{{ type_class }} {{ custom_classes }}"{{ attrib_string }}>
+<div class="panel{{ simple_class }}{{ type_class }} {{ custom_classes }}"{% if custom_attribs %}{% call attribs(custom_attribs) %}{% endcall %}{% endif %}>
     {% if header %}
     <div class="panel__header"{{ header_attrib_string }}>
         <div class="{{ font_size }}">{{ header }}</div>

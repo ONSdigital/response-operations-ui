@@ -23,7 +23,7 @@
 {% set custom_attribs = kwargs.get('custom_attribs') %}
 {% set attrib_string = attribs(custom_attribs) if custom_attribs else '' %}
 {% set all_classes = ['grid__col'] + class_list %}
-<div class="{{ all_classes | join(' ') }}"{% if id %} id="{{ id }}"{{ attrib_string | default('') }}>
+<div class="{{ all_classes | join(' ') }}"{% if id %} id="{{ id }}"{% endif %}{{ attrib_string | default('') }}>
     {{ caller() }}
 </div>
 {% endwith %}

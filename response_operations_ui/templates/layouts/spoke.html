@@ -1,6 +1,7 @@
 <!DOCTYPE html>
-{% include 'macros/macro_includes.html '%}
-{% call includes_list() %}{% endcall %}
+{% import 'macros/grid.html' as grid %}
+{% from 'macros/panel.html' import panel %}
+{% from 'macros/attribute_renderer.html' import attribs %}
 
 {% set cdn_hash = "v1.5.2" %}
 {% set cdn_url_prefix = "https://cdn.ons.gov.uk/sdc/"~cdn_hash %}
