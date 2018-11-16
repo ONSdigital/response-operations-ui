@@ -1,4 +1,4 @@
-{% macro render() -%}
+{% macro panel() -%}
 {% with %}
 {# Establishing variables #}
 {% set simple_class = ' panel--simple' if not 'header' in kwargs %}
@@ -8,15 +8,21 @@
 {% set font_size = kwargs.get('font_size', 'venus') %}
 {% set id = kwargs.get('id', '') %}
 {% set data_qa = kwargs.get('data-qa', '') %}
+{% set custom_attribs = kwargs.get('custom_attribs') %}
+{% set attrib_string = attribs(custom_attribs) if custom_attribs else '' %}
+{% set header_custom_attribs = kwargs.get('header_custom_attribs') %}
+{% set header_attrib_string = attribs(custom_attribs) if header_custom_attribs else '' %}
+{% set body_custom_attribs = kwargs.get('body_custom_attribs') %}
+{% set body_attrib_string = attribs(custom_attribs) if body_custom_attribs else '' %}
 
 {# Render component #}
-<div class="panel{{ simple_class }}{{ type_class }} {{ custom_classes }}">
+<div class="panel{{ simple_class }}{{ type_class }} {{ custom_classes }}"{{ attrib_string }}>
     {% if header %}
-    <div class="panel__header">
+    <div class="panel__header"{{ header_attrib_string }}>
         <div class="{{ font_size }}">{{ header }}</div>
     </div>
     {% endif %}
-    <div id="{{ id }}" class="panel__body" data-qa="{{ data_qa }}">
+    <div id="{{ id }}" class="panel__body" data-qa="{{ data_qa }}"{{ body_attrib_string }}>
         {{ caller() }}
     </div>
 </div>
