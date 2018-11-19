@@ -8,6 +8,7 @@ from response_operations_ui.controllers import case_controller, collection_exerc
     party_controller, survey_controllers
 from response_operations_ui.controllers.case_controller import get_case_events_by_case_id, \
     get_case_by_case_group_id
+from response_operations_ui.controllers.party_controller import get_respondent_by_party_id
 from response_operations_ui.forms import ChangeGroupStatusForm
 
 COMPLETE_STATE = ['COMPLETEDBYPHONE', 'COMPLETE']
@@ -20,6 +21,8 @@ case_bp = Blueprint('case_bp', __name__, static_folder='static', template_folder
 def get_response_statuses(ru_ref, error=None):
     short_name = request.args.get('survey')
     period = request.args.get('period')
+
+    completed_respondent = None
 
     survey = survey_controllers.get_survey_by_shortname(short_name)
 
@@ -39,6 +42,10 @@ def get_response_statuses(ru_ref, error=None):
     case_id = get_case_by_case_group_id(case_group['id']).get('id')
     is_complete = case_group_status in COMPLETE_STATE
     completed_timestamp = get_timestamp_for_completed_case_event(case_id) if is_complete else None
+    if case_group_status == 'COMPLETE':
+        case_events = get_case_events_by_case_id(case_id=case_id,
+                                                 categories='SUCCESSFUL_RESPONSE_UPLOAD')
+        completed_respondent = get_user_from_case_events(case_events)
 
     return render_template('response-status.html',
                            ru_ref=ru_ref, ru_name=reporting_unit['name'], trading_as=reporting_unit['trading_as'],
@@ -49,7 +56,8 @@ def get_response_statuses(ru_ref, error=None):
                            case_group_id=case_group['id'],
                            error=error,
                            is_complete=is_complete,
-                           completed_timestamp=completed_timestamp)
+                           completed_timestamp=completed_timestamp,
+                           completed_respondent=completed_respondent)
 
 
 @case_bp.route('/<ru_ref>/response-status', methods=['POST'])
@@ -79,3 +87,13 @@ def get_timestamp_for_completed_case_event(case_id):
     timestamp = case_events[last_index]['createdDateTime'].replace("T", " ").split('.')[0]
 
     return get_formatted_date(timestamp)
+
+
+def get_user_from_case_events(case_events):
+    first_case_event = len(case_events) - 1
+    if case_events[first_case_event]['metadata']:
+        respondent = get_respondent_by_party_id(case_events[first_case_event]['metadata']['partyId'])
+        respondent_name = respondent.get('firstName') + ' ' + respondent.get('lastName')
+        return respondent_name
+    else:
+        return None
