@@ -8,18 +8,15 @@
 {% set font_size = kwargs.get('font_size', 'venus') %}
 {% set id = kwargs.get('id', '') %}
 {% set data_qa = kwargs.get('data-qa', '') %}
-{% set custom_attribs = kwargs.get('custom_attribs', '') %}
-{% set header_custom_attribs = kwargs.get('header_custom_attribs', '') %}
-{% set body_custom_attribs = kwargs.get('body_custom_attribs', '') %}
 
 {# Render component #}
-<div class="panel{{ simple_class }}{{ type_class }} {{ custom_classes }}" {{ custom_attribs | safe }}>
+<div class="panel{{ simple_class }}{{ type_class }} {{ custom_classes }}">
     {% if header %}
-    <div class="panel__header"{{ header_custom_attribs }}>
+    <div class="panel__header">
         <div class="{{ font_size }}">{{ header }}</div>
     </div>
     {% endif %}
-    <div id="{{ id }}" class="panel__body" data-qa="{{ data_qa }}" {{ body_custom_attribs | safe }}>
+    <div id="{{ id }}" class="panel__body" data-qa="{{ data_qa }}">
         {{ caller() }}
     </div>
 </div>
