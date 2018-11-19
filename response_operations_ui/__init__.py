@@ -72,14 +72,6 @@ def create_app(config_name=None):
     if app.config['DEBUG'] or os.environ.get('JINJA_RELOAD'):
         app.jinja_env.auto_reload = True
 
-    # Jinja custom filters
-    @app.template_filter('attribs')
-    def attribs(attributes):
-        if not type(attributes) is dict:
-            raise('Attributes filter passed non dict type')
-        
-        
-
     Session(app)
 
     setup_blueprints(app)
