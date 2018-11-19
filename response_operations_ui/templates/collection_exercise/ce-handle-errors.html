@@ -1,5 +1,5 @@
 {#- Display processing or error panel if validation failed #}
-{% if True %}
+{% if processing %}
     {% call panel(id='processing-info', class='u-mb-s', custom_attribs={cheese: 'wensleydale', hotdog: 'hot'}) %}Processing collection exercise – <a id="a-processing-refresh" href="">refresh to see progress</a>{% endcall %}
 {% elif validation_failed %}
     {% call panel(id='validation-error', type='error', class='u-mb-s') %}
