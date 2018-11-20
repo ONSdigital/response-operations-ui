@@ -22,7 +22,7 @@ def get_response_statuses(ru_ref, error=None):
     short_name = request.args.get('survey')
     period = request.args.get('period')
 
-    completed_respondent = None
+    completed_respondent = ""
 
     survey = survey_controllers.get_survey_by_shortname(short_name)
 
@@ -78,7 +78,7 @@ def update_response_status(ru_ref):
     case_controller.post_case_event(case['id'], form.event.data, "Transition case group status")
 
     return redirect(url_for('reporting_unit_bp.view_reporting_unit', ru_ref=ru_ref,
-                    survey=short_name, period=period))
+                            survey=short_name, period=period))
 
 
 def get_timestamp_for_completed_case_event(case_id):
@@ -96,4 +96,4 @@ def get_user_from_case_events(case_events):
         respondent_name = respondent.get('firstName') + ' ' + respondent.get('lastName')
         return respondent_name
     else:
-        return None
+        return

@@ -15,6 +15,7 @@ ru_ref = '19000001'
 business_party_id = 'b3ba864b-7cbc-4f44-84fe-88dc018a1a4c'
 case_id = '10b04906-f478-47f9-a985-783400dd8482'
 case_group_id = '612f5c34-7e11-4740-8e24-cb321a86a917'
+party_id = 'cd592e0f-8d07-407b-b75d-e01fbdae8233'
 
 url_get_survey_by_short_name = f'{TestingConfig.SURVEY_URL}/surveys/shortname/{short_name}'
 url_get_collection_exercises_by_survey = f'{TestingConfig.COLLECTION_EXERCISE_URL}' \
@@ -27,6 +28,7 @@ url_update_case_group_status = f'{TestingConfig.CASE_URL}/casegroups/transitions
 url_post_case_event = f'{TestingConfig.CASE_URL}/cases/{case_id}/events'
 url_get_case_by_case_group_id = f'{TestingConfig.CASE_URL}/cases/casegroupid/{case_group_id}'
 url_get_case_events = f"{TestingConfig.CASE_URL}/cases/{case_id}/events"
+get_respondent_by_id_url = f'{TestingConfig.PARTY_URL}/party-api/v1/respondents/id/{party_id}'
 
 
 with open('tests/test_data/survey/single_survey.json') as fp:
@@ -43,6 +45,10 @@ with open('tests/test_data/case/case_groups_list_completed.json') as fp:
     case_groups_completed = json.load(fp)
 with open('tests/test_data/case/case_events.json') as fp:
     case_events = json.load(fp)
+with open('tests/test_data/case/case_events_without_metadata.json') as fp:
+    case_events_without_metadata = json.load(fp)
+with open('tests/test_data/reporting_units/respondent.json') as json_data:
+    respondent = json.load(json_data)
 
 
 class TestChangeResponseStatus(TestCase):
@@ -199,6 +205,7 @@ class TestChangeResponseStatus(TestCase):
         mock_request.get(url_get_case_groups_by_business_party_id, json=case_groups_completed)
         mock_request.get(url_get_case_by_case_group_id, json=[case])
         mock_request.get(url_get_case_events, json=case_events)
+        mock_request.get(get_respondent_by_id_url, json=respondent)
 
         response = self.client.get(f'/case/{ru_ref}/response-status?survey={short_name}&period={period}')
 
@@ -208,3 +215,43 @@ class TestChangeResponseStatus(TestCase):
         self.assertIn(b'Bolts and Ratchets', data)
         self.assertIn(b'221 &nbsp; BLOCKS', data)
         self.assertIn(b'Completed', data)
+
+    @requests_mock.mock()
+    def test_get_respondent_name_for_completed_case_event(self, mock_request):
+        mock_request.get(url_get_survey_by_short_name, json=survey)
+        mock_request.get(url_get_collection_exercises_by_survey, json=collection_exercise_list)
+        mock_request.get(url_get_party_by_ru_ref, json=business_reporting_unit)
+        mock_request.get(url_get_available_case_group_statuses, json=self.statuses)
+        mock_request.get(url_get_case_groups_by_business_party_id, json=case_groups_completed)
+        mock_request.get(url_get_case_by_case_group_id, json=[case])
+        mock_request.get(url_get_case_events, json=case_events)
+        mock_request.get(get_respondent_by_id_url, json=respondent)
+
+        response = self.client.get(f'/case/{ru_ref}/response-status?survey={short_name}&period={period}')
+        data = response.data
+        self.assertEqual(response.status_code, 200)
+        self.assertIn(b'19000001', data)
+        self.assertIn(b'Bolts and Ratchets', data)
+        self.assertIn(b'221 &nbsp; BLOCKS', data)
+        self.assertIn(b'Completed', data)
+        self.assertIn(b'Jacky Turner', data)
+
+    @requests_mock.mock()
+    def test_respondent_name_unavailable_for_completed_case_event(self, mock_request):
+        mock_request.get(url_get_survey_by_short_name, json=survey)
+        mock_request.get(url_get_collection_exercises_by_survey, json=collection_exercise_list)
+        mock_request.get(url_get_party_by_ru_ref, json=business_reporting_unit)
+        mock_request.get(url_get_available_case_group_statuses, json=self.statuses)
+        mock_request.get(url_get_case_groups_by_business_party_id, json=case_groups_completed)
+        mock_request.get(url_get_case_by_case_group_id, json=[case])
+        mock_request.get(url_get_case_events, json=case_events_without_metadata)
+        mock_request.get(get_respondent_by_id_url, json=respondent)
+
+        response = self.client.get(f'/case/{ru_ref}/response-status?survey={short_name}&period={period}')
+        data = response.data
+        self.assertEqual(response.status_code, 200)
+        self.assertIn(b'19000001', data)
+        self.assertIn(b'Bolts and Ratchets', data)
+        self.assertIn(b'221 &nbsp; BLOCKS', data)
+        self.assertIn(b'Completed', data)
+        self.assertNotIn(b'Jacky Turner', data)
