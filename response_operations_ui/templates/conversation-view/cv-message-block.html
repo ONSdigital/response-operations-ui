@@ -1,3 +1,4 @@
+{% for message in messages %}
 <div class="secure-message-sent-message">
     {% if message.get('internal') == True %}
         <div name="sm-from-ons" id="sm-from-ons-{{ loop.index }}" class="secure-message-sent-message-meta sm-from-ons">
@@ -18,3 +19,4 @@
         <span style="white-space:pre-line" id="conversation-message-body-{{ loop.index }}" name="conversation-message-body">{{ message.get('body') }}</span>
     </div>
 </div>
+{% endfor %}
