@@ -1,7 +1,7 @@
 {% if form.errors %}
     {% set error_count = form.errors | length %}
     {% set plural_suffix = 's' if error_count > 1 else '' %}
-    {% set header_text = 'This page has' ~ error_count ~ 'error' ~ plural_suffix %}
+    {% set header_text = 'This page has ' ~ error_count ~ ' error' ~ plural_suffix %}
     {% call panel(header=header_text, type='error', custom_classes='u-mb-s col-7@m') %}
     <ol>
         {% if form.subject.errors %}
