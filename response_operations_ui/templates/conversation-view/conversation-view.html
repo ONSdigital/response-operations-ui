@@ -20,16 +20,13 @@
     <div class="secure-message-conversation block">
         {% include 'conversation-view/cv-message-info.html' %}
 
-        {% for message in messages %}
-            {% include 'conversation-view/cv-message-block.html' %}
-        {% endfor %}
+        {% include 'conversation-view/cv-message-block.html' %}
 
         {% if not thread_data.is_closed %}
             {% include 'conversation-view/cv-reply-form.html' %}
         {% else %}
             {% include 'conversation-view/cv-reopen-form.html' %}
         {% endif %}
-
 
         {% if thread_data.is_closed %}
         <a href="{{ url_for('messages_bp.view_selected_survey', selected_survey=selected_survey, page=page, is_closed='true') }}" class="u-mb-s">< Back</a>
