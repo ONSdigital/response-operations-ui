@@ -1,0 +1,22 @@
+{% for message in messages %}
+<div class="secure-message-sent-message">
+    {% if message.get('internal') == True %}
+        <div name="sm-from-ons" id="sm-from-ons-{{ loop.index }}" class="secure-message-sent-message-meta sm-from-ons">
+    {% else %}
+        <div name="sm-from-respondent" id="sm-from-respondent-{{ loop.index }}" class="secure-message-sent-message-meta sm-from-respondent">
+    {% endif %}
+    {% if loop.last %}<div name="latest-message" id="latest-message"></div>{% endif %}
+        <span class="secure-message-sent-message-meta-from venus">
+            From:
+            <span name="sm-from-user" id="sm-from-user-{{ loop.index }}" style="display:inline;">{{ message.get('username') }}</span>
+        </span>
+        <span class="secure-message-sent-message-meta-from mercury">
+            Sent:
+            <span name="sm-sent-date" id="sm-sent-date-{{ loop.index }}" style="display:inline;">{{ message.get('sent_date') }}</span>
+        </span>
+    </div>
+    <div class="secure-message-sent-message-body mars">
+        <span style="white-space:pre-line" id="conversation-message-body-{{ loop.index }}" name="conversation-message-body">{{ message.get('body') }}</span>
+    </div>
+</div>
+{% endfor %}

@@ -1,0 +1,37 @@
+{% extends "layouts/base.html" %}
+
+{% set subject = messages[0]["subject"] or "No Subject" %}
+{% set survey_ref = messages[0]['survey_ref'] %}
+{% if messages[0]['internal'] %}
+    {% set to_uuid = messages[0]['to_id'] %}
+{% else %}
+    {% set to_uuid = messages[0]['from_id'] %}
+{% endif %}
+{% set ru_id = messages[0]['ru_id'] %}
+{% set survey = messages[0]['survey_id'] %}
+{% block page_title %} {{ subject }} | Survey Data Collection {% endblock %}
+
+{% block main %}
+
+    {% include 'conversation-view/cv-handle-errors.html' %}
+    {% include 'conversation-view/cv-back-link.html' %}
+
+    <h1 class="saturn u-mt-s" name="page-messages-title">{{ subject }}</h1>
+    <div class="secure-message-conversation block">
+        {% include 'conversation-view/cv-message-info.html' %}
+
+        {% include 'conversation-view/cv-message-block.html' %}
+
+        {% if not thread_data.is_closed %}
+            {% include 'conversation-view/cv-reply-form.html' %}
+        {% else %}
+            {% include 'conversation-view/cv-reopen-form.html' %}
+        {% endif %}
+
+        {% if thread_data.is_closed %}
+        <a href="{{ url_for('messages_bp.view_selected_survey', selected_survey=selected_survey, page=page, is_closed='true') }}" class="u-mb-s">< Back</a>
+        {% else %}
+        <a href="{{ url_for('messages_bp.view_selected_survey', selected_survey=selected_survey, page=page) }}" class="u-mb-s">< Back</a>
+        {% endif %}
+    </div>
+{% endblock %}

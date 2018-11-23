@@ -1,0 +1,4 @@
+{% call panel() %}<p class="mars">This conversation was closed on {{ closed_at }} by {{ thread_data.closed_by }}</p>{% endcall %}
+<form action="{{ url_for('messages_bp.view_conversation', thread_id=messages[0].thread_id) }}" method="post">
+    <input class="btn u-mt-s" id="btn-reopen-conversation" name="reopen" type="submit" value="Re-open conversation" />
+</form>
