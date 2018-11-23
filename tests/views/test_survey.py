@@ -16,7 +16,7 @@ collection_exercise_event_id = 'b4a36392-a21f-485b-9dc4-d151a8fcd565'
 sample_summary_id = 'b9487b59-2ac7-4fbf-b734-5a4c260ff235'
 survey_id = 'cb0711c3-0ac8-41d3-ae0e-567e5ea1ef87'
 
-url_get_survey_list = f'{TestingConfig.SURVEY_URL}/surveys'
+url_get_survey_list = f'{TestingConfig.SURVEY_URL}/surveys/surveytype/Business'
 url_get_legal_basis_list = f'{TestingConfig.SURVEY_URL}/legal-bases'
 url_create_survey = f'{TestingConfig.SURVEY_URL}/surveys'
 

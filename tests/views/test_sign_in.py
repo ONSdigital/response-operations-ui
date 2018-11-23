@@ -8,7 +8,7 @@ from response_operations_ui import create_app
 
 
 url_sign_in_data = f'{TestingConfig.UAA_SERVICE_URL}/oauth/token'
-url_surveys = f'{TestingConfig.SURVEY_URL}/surveys'
+url_surveys = f'{TestingConfig.SURVEY_URL}/surveys/surveytype/Business'
 
 
 class TestSignIn(unittest.TestCase):
