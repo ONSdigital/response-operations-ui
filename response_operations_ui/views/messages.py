@@ -111,13 +111,13 @@ def view_conversation(thread_id):
         except (ApiError, InternalError):
             form = _repopulate_form_with_submitted_data(form)
             form.errors['sending'] = ["Message failed to send, something has gone wrong with the website."]
-            return render_template('conversation-view.html',
+            return render_template('conversation-view/conversation-view.html',
                                    form=form,
                                    breadcrumbs=breadcrumbs,
                                    messages=refined_thread,
                                    error="Message send failed")
 
-    return render_template("conversation-view.html",
+    return render_template("conversation-view/conversation-view.html",
                            breadcrumbs=breadcrumbs,
                            messages=refined_thread,
                            form=form,

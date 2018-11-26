@@ -1,0 +1,22 @@
+{% if form.errors %}
+    {% set error_count = form.errors | length %}
+    {% set plural_suffix = 's' if error_count > 1 else '' %}
+    {% set header_text = 'This page has ' ~ error_count ~ ' error' ~ plural_suffix %}
+    {% call panel(header=header_text, type='error', custom_classes='u-mb-s col-7@m') %}
+    <ol>
+        {% if form.subject.errors %}
+        {% for error in form.subject.errors %}
+            <li class="panel__title venus"><a href='#secure-message-subject'>{{ error }}</a></li>
+        {% endfor %}
+        {% endif %}
+        {% if form.body.errors %}
+        {% for error in form.body.errors %}
+            <li class="panel__title venus"><a href='#secure-message-body'>{{ error }}</a></li>
+        {% endfor %}
+        {% endif %}
+        {% if form.errors['sending'] %}
+            <p class="panel__title venus">{{ form.errors['sending'][0] }}</p>
+        {% endif %}
+    </ol>
+    {% endcall %}
+{% endif %}
