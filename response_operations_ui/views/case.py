@@ -1,5 +1,8 @@
+import logging
+
 from flask import Blueprint, request, render_template, url_for
 from flask_login import login_required
+from structlog import wrap_logger
 from werkzeug.utils import redirect
 
 from response_operations_ui.common.dates import get_formatted_date
@@ -16,24 +19,7 @@ COMPLETED_CASE_EVENTS = ['OFFLINE_RESPONSE_PROCESSED', 'SUCCESSFUL_RESPONSE_UPLO
 SUCCESSFUL_CASE_EVENTS = ['OFFLINE_RESPONSE_PROCESSED', 'SUCCESSFUL_RESPONSE_UPLOAD']
 case_bp = Blueprint('case_bp', __name__, static_folder='static', template_folder='templates')
 
-# TODO REMOVE SEFT_SURVEYS
-# This is temporary until eQ has sent a partyid back when its collex completed. Once its been done,
-# there's no need for it and it can go through with just an id
-SEFT_SURVEYS = {
-    'cb8accda-6118-4d3b-85a3-149e28960c54',  # Bricks
-    '9b6872eb-28ee-4c09-b705-c3ab1bb0f9ec',  # Blocks
-    'c48d6646-eb6f-4c7c-9f37-f7b41c8d2bc6',  # Sand & Gravel
-    '57a43c94-9f81-4f33-bad8-f94800a66503',  # QOFDI
-    'c3eaeff3-d570-475d-9859-32c3bf87800d',  # QIFDI
-    '04dbb407-4438-4f89-acc4-53445d75330c',  # AOFDI
-    '41320b22-b425-4fba-a90e-718898f718ce',  # AIFDI
-    '6aa8896f-ced5-4694-800c-6cd661b0c8b2',  # ASHE
-    'cb0711c3-0ac8-41d3-ae0e-567e5ea1ef87',  # BRES
-    '0fc6fa22-8938-43b6-81c5-f1ccca5a5494',  # OFATS
-    '7a2c9d6c-9aaf-4cf0-a68c-1d50b3f1b296',  # NBS
-    '416b8a82-2031-4f41-b59b-95482d916ca3',  # PCS
-    'a81f8a72-47e1-4fcf-a88b-0c175829e02b'   # GoVERD
-}
+logger = wrap_logger(logging.getLogger(__name__))
 
 
 @case_bp.route('/<ru_ref>/response-status', methods=['GET'])
@@ -64,8 +50,7 @@ def get_response_statuses(ru_ref, error=None):
     completed_timestamp = get_timestamp_for_completed_case_event(case_id) if is_complete else None
     case_events = get_case_events_by_case_id(case_id=case_id)
 
-    # if statement currently goes through seft surveys only, once eQ sends us the partyId, SEFT_SURVEYS can be removed.
-    if case_group_status == 'COMPLETE' and survey['id'] in SEFT_SURVEYS:
+    if case_group_status == 'COMPLETE':
         case_event = get_case_event_for_seft_or_eq(case_events)
         completed_respondent = get_user_from_case_events(case_event)
 
@@ -119,7 +104,11 @@ def get_case_event_for_seft_or_eq(case_events):
 def get_user_from_case_events(case_events):
     first_case_event = len(case_events) - 1
     if case_events[first_case_event]['metadata']:
-        respondent = get_respondent_by_party_id(case_events[first_case_event]['metadata']['partyId'])
+        try:
+            respondent = get_respondent_by_party_id(case_events[first_case_event]['metadata']['partyId'])
+        except KeyError:
+            logger.info('There was no partyId in case event', case_event=first_case_event)
+            return ''
         respondent_name = respondent.get('firstName') + ' ' + respondent.get('lastName')
         return respondent_name
     else:

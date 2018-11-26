@@ -47,6 +47,10 @@ with open('tests/test_data/case/case_events.json') as fp:
     case_events = json.load(fp)
 with open('tests/test_data/case/case_events_without_metadata.json') as fp:
     case_events_without_metadata = json.load(fp)
+
+with open('tests/test_data/case/case_events_without_partyId_in_metadata.json') as fp:
+    case_events_without_partyId_in_metadata = json.load(fp)
+
 with open('tests/test_data/reporting_units/respondent.json') as json_data:
     respondent = json.load(json_data)
 
@@ -246,6 +250,26 @@ class TestChangeResponseStatus(TestCase):
         mock_request.get(url_get_case_groups_by_business_party_id, json=case_groups_completed)
         mock_request.get(url_get_case_by_case_group_id, json=[case])
         mock_request.get(url_get_case_events, json=case_events_without_metadata)
+        mock_request.get(get_respondent_by_id_url, json=respondent)
+
+        response = self.client.get(f'/case/{ru_ref}/response-status?survey={short_name}&period={period}')
+        data = response.data
+        self.assertEqual(response.status_code, 200)
+        self.assertIn(b'19000001', data)
+        self.assertIn(b'Bolts and Ratchets', data)
+        self.assertIn(b'221 &nbsp; BLOCKS', data)
+        self.assertIn(b'Completed', data)
+        self.assertNotIn(b'Jacky Turner', data)
+
+    @requests_mock.mock()
+    def test_respondent_name_not_in_metadata_for_completed_case_event(self, mock_request):
+        mock_request.get(url_get_survey_by_short_name, json=survey)
+        mock_request.get(url_get_collection_exercises_by_survey, json=collection_exercise_list)
+        mock_request.get(url_get_party_by_ru_ref, json=business_reporting_unit)
+        mock_request.get(url_get_available_case_group_statuses, json=self.statuses)
+        mock_request.get(url_get_case_groups_by_business_party_id, json=case_groups_completed)
+        mock_request.get(url_get_case_by_case_group_id, json=[case])
+        mock_request.get(url_get_case_events, json=case_events_without_partyId_in_metadata)
         mock_request.get(get_respondent_by_id_url, json=respondent)
 
         response = self.client.get(f'/case/{ru_ref}/response-status?survey={short_name}&period={period}')
