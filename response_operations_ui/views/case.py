@@ -107,7 +107,7 @@ def get_user_from_case_events(case_events):
         try:
             respondent = get_respondent_by_party_id(case_events[first_case_event]['metadata']['partyId'])
         except KeyError:
-            logger.info('There was no partyId in case event', case_event=first_case_event)
+            logger.info('There was no partyId in case event', case_event=case_events[first_case_event])
             return ''
         respondent_name = respondent.get('firstName') + ' ' + respondent.get('lastName')
         return respondent_name
