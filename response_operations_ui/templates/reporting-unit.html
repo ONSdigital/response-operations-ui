@@ -199,6 +199,11 @@
                     id="change-enrolment-status">Disable</a>
                   {% elif respondent.enrolmentStatus == 'PENDING' %}
                   <a href="{{ url_for('reporting_unit_bp.view_resend_verification', ru_ref=ru_ref, party_id=respondent.id) }}">Re-send verification email</a>
+                  {% elif respondent.enrolmentStatus == 'DISABLED' %}
+                  <a href="{{ url_for('reporting_unit_bp.confirm_change_enrolment_status', ru_ref=ru.sampleUnitRef, ru_name=ru.name, survey_id=survey.id,
+                                      survey_name=survey.shortName, respondent_id=respondent.id, respondent_first_name=respondent.firstName,
+                                      respondent_last_name=respondent.lastName, business_id=ru.id, trading_as=ru.trading_as, change_flag='ENABLED')}}"
+                    id="change-enrolment-status">Re-enable</a>
                   {% endif %}
                 </div>
               </td>
