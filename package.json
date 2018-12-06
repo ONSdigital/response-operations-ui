@@ -1,0 +1,33 @@
+{
+    "name": "response-operations-ui",
+    "version": "1.0.0",
+    "description": "The response operations user interface",
+    "directories": {
+        "test": "tests"
+    },
+    "scripts": {
+        "watch": "gulp watch",
+        "build": "gulp build"
+    },
+    "repository": {
+        "type": "git",
+        "url": "git+https://github.com/ONSdigital/response-operations-ui.git"
+    },
+    "author": "Office for National Statistics",
+    "license": "",
+    "bugs": {
+        "url": "https://github.com/ONSdigital/response-operations-ui/issues"
+    },
+    "homepage": "https://github.com/ONSdigital/response-operations-ui#readme",
+    "dependencies": {
+        "@babel/core": "^7.2.0",
+        "eslint": "^5.9.0",
+        "gulp": "^3.9.1",
+        "gulp-autoprefixer": "^6.0.0",
+        "gulp-babel": "^8.0.0",
+        "gulp-eslint": "^5.0.0",
+        "gulp-mocha": "^6.0.0",
+        "gulp-sass": "^4.0.2",
+        "chalk": "^2.4.1"
+    }
+}
