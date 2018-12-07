@@ -21,6 +21,7 @@
     "homepage": "https://github.com/ONSdigital/response-operations-ui#readme",
     "dependencies": {
         "@babel/core": "^7.2.0",
+        "chalk": "^2.4.1",
         "eslint": "^5.9.0",
         "gulp": "^3.9.1",
         "gulp-autoprefixer": "^6.0.0",
@@ -28,6 +29,8 @@
         "gulp-eslint": "^5.0.0",
         "gulp-mocha": "^6.0.0",
         "gulp-sass": "^4.0.2",
-        "chalk": "^2.4.1"
+        "gulp-stylelint": "^8.0.0",
+        "stylelint": "^9.9.0",
+        "stylelint-config-standard": "^18.2.0"
     }
 }
