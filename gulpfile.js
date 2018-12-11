@@ -1,5 +1,16 @@
-import 'gulp'
-import 'chalk'
+const gulp = require('gulp')
+const chalk = require('chalk')
+const _ = require('lodash')
+
+const package = require('./package.json')
+const config = _.get(package, 'config.gulp', {})
+
+const PROJECT_ROOT = __dirname
+
+const SCSS_DIR =    _.get(config, 'SCSS_DIR').replace('$ROOT', PROJECT_ROOT)
+const CSS_DIR =     _.get(config, 'CSS_DIR').replace('$ROOT', PROJECT_ROOT)
+const JS_SRC_DIR =  _.get(config, 'JS_SRC_DIR').replace('$ROOT', PROJECT_ROOT)
+const JS_DEST_DIR = _.get(config, 'JS_DEST_DIR').replace('$ROOT', PROJECT_ROOT)
 
 // Default task
 gulp.task('default', () => {
@@ -13,10 +24,28 @@ gulp.task('default', () => {
 
 // Main functions
 
-gulp.task('test', [])
+function returnNotImplemented() {
+    console.warn('function not implemented')
+}
 
-gulp.task('build')
+gulp.task('test', returnNotImplemented)
 
-gulp.task('watch')
+gulp.task('build', returnNotImplemented)
 
-// Tasks used by other tasks
+gulp.task('watch', returnNotImplemented)
+
+gulp.task('lint', returnNotImplemented)
+
+// Sub tasks
+
+gulp.task('_csslint', () => {
+
+})
+
+gulp.task('_jslint', returnNotImplemented)
+
+gulp.task('_bundlejs', returnNotImplemented)
+
+gulp.task('_scsscompile', returnNotImplemented)
+
+gulp.task('_stylelint', returnNotImplemented)
