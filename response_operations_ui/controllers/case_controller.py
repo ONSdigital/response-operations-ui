@@ -148,8 +148,10 @@ def generate_iac(case_id):
 def get_case_events_by_case_id(case_id, categories=None):
     logger.debug('Retrieving cases', case_id=case_id)
     url = f'{app.config["CASE_URL"]}/cases/{case_id}/events'
-    if categories:
+    if isinstance(categories, list):
         url = url + '?category=' + ','.join(categories)
+    elif categories:
+        url = url + '?category=' + categories
 
     response = requests.get(url, auth=app.config['CASE_AUTH'])
     try:
