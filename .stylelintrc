@@ -23,7 +23,6 @@
         "rule-empty-line-before": "always",
         "selector-pseudo-element-colon-notation": "double",
         "selector-no-vendor-prefix": true,
-        "selector-no-universal": true,
         "media-feature-range-operator-space-before": "always",
         "media-feature-range-operator-space-after": "always",
         "media-feature-parentheses-space-inside": "never",
