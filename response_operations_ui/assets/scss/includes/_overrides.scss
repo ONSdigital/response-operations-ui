@@ -1,0 +1,343 @@
+html{
+    height: 100%;
+  }
+  
+  body{
+    min-height: 100%;
+    display: grid;
+    grid-template: 1fr auto;
+  }
+  
+  footer{
+    grid-row-start: 2;
+    grid-row-end: 3;
+  }
+  
+  .fieldgroup--date .field--day{
+    max-width: 3rem;
+  }
+  
+  .fieldgroup--date .field--month{
+    max-width: 10rem;
+  }
+  
+  .fieldgroup--date .field--year{
+    max-width: 4rem;
+  }
+  
+  .fieldgroup--time .fieldgroup__fields{
+    display: flex;
+  }
+  
+  .fieldgroup--time .fieldgroup__title{
+    margin: 0 0 0.5rem 0;
+  }
+  
+  .input--select__time-hrs{
+    max-width: 4rem;
+    margin-right: 1rem;
+  }
+  
+  .input--select__time-mins{
+    max-width: 4rem;
+  }
+  
+  
+  /* For when we really do want not to display something! */
+  
+  .hidden {
+    display: none;
+  }
+  
+  .not-mvp {
+    display: none;
+  }
+  
+  /* new button icon for copy from material design icon library */
+  
+  .btn__icon--copy-link{
+    background-image: url("/s/img/icons/ic_content_copy_black_18px.svg");
+    width: 1.2rem;
+  }
+  
+  
+  /* Survey page */
+  
+  .in-the-past {
+    color: #6a6a6a;
+  }
+  
+  
+  .download{
+    padding-left: 18px;
+    background-image: url("/s/img/icons/ic_file_download_black_18px.svg");
+    background-repeat: no-repeat;
+    background-position: 0 2px;
+  }
+  
+  
+  /* Collection exercise page START */
+  #output .panel{
+    margin-top: 1rem;
+  }
+  
+  #output h3{
+    margin-bottom: 0;
+  }
+  
+  button.unready,
+  button.unready:hover,
+  button.unready:focus{
+    border: none;
+    background:#6a6a6a;
+    cursor: not-allowed;
+  }
+  
+  button.cancel{
+   padding: 0.6rem 1rem !important;
+   margin-left: 0.5rem;
+  }
+  
+  button.hidden{
+    display: none;
+  }
+  
+  #btn-check-sample-contents,
+  #btn-load-sample,
+  #btn-cancel-load-sample,
+  #btn-add-ci,
+  #btn-load-ci,
+  #btn-send-message,
+  #btn-close-conversation,
+  #continue{
+    margin-top: 0.6rem;
+  }
+  
+  .list__item--ci{
+    list-style-type: square;
+  }
+  
+  
+  /* used on CE page */
+  
+  .btn--light.btn--border {
+      font-weight: 600;
+      background: transparent;
+      border: 2px solid #033e58;
+      color: #033e58;
+      padding: 8px 32px;
+      padding: 0.5rem 2rem;
+  }
+  .btn--light.btn--border:hover, .btn--light.btn--border:focus {
+      background: #033e58;
+      color: #fff;
+  }
+  
+  
+  .ce-ci-info-list__item{
+    list-style: square;
+  }
+  
+  .ce-ci-info-list__item.success{
+    list-style: none;
+    background-image: url("/s/img/tick-green.png");
+    background-size: 20px 20px;
+    background-repeat: no-repeat;
+    background-position: left center;
+    padding-left: 24px;
+    margin-left: -20px;
+  }
+  
+  .btn--secondary.btn--border.btn--small{
+    margin: 0 0.5rem;
+    padding: 0.25rem 1rem;
+    width: auto;
+  }
+  
+  .lock:before {
+    background: #fff url(/s/img/icons/icons--lock.svg) no-repeat center center;
+  }
+  
+  .page__content{
+    overflow-x: visible;
+  }
+  
+  
+  /* RU page Reporting unit page*/
+  
+  .ru-survey{
+    margin: 1rem 0;
+    /* padding: 1.5rem 1.5rem 0.5rem 1.5rem; */
+    border: 0.5rem solid #eeecec;
+  }
+  
+  .ru-survey h3{
+    font-weight: 500;
+  }
+  
+  .response__changed{
+    background-color: #edf4f0;
+  }
+  
+  
+  /* Collection exercise views */
+  
+  .ce-section h2{
+    border-bottom: 2px solid #222;
+    padding-top: 9px;
+    margin-bottom: 0.3rem;
+    padding-bottom: 0.4rem;
+  }
+  
+  .ce-event-date{
+    color: #666;
+    font-weight: 400;
+  }
+  
+  .ce-event-date em{
+    color: #222;
+    font-weight: 500;
+  }
+  
+  table.ce-cis .tbl-ce-label{
+    vertical-align: middle;
+  }
+  
+  .ci-info-panel{
+    margin: 2rem 0;
+  }
+  
+  .ce-events__list{
+    width: 100%;
+    border-collapse: collapse;
+    margin: 1.3rem 0 0.3rem auto;
+  }
+  
+  .ce-events__list th, .ce-events__list td{
+    text-align: left;
+    vertical-align: top;
+    padding: 0.5rem 0;
+    border-bottom: 1px solid #ccc;
+  }
+  
+  .ce-events__list th{
+    font-weight: 700;
+    border-bottom: 1px solid #222;
+  }
+  
+  .action-area{
+    margin-top: 1rem;
+    margin-bottom: 3rem;
+  }
+  
+  #upload legend{
+    display: none;
+  }
+  
+  #filedrag {
+      display: none;
+      font-weight: bold;
+      text-align: center;
+      padding: 1em 0;
+      margin: 1em 0;
+      color: #555;
+      border: 2px dashed #555;
+      border-radius: 7px;
+      cursor: default;
+  }
+  
+  #filedrag.hover {
+    color: #0f8243;
+    border-color: #0f8243;
+    border-style: solid;
+    box-shadow: inset 0 3px 4px #888;
+  }
+  
+  .ci-list{
+    border-collapse: collapse;
+    width: 100%;
+  }
+  
+  .ci-list th, .ci-list td{
+    text-align: left;
+    padding: 0.5rem;
+  }
+  
+  .ci-list th{
+    border-bottom: 1px solid #222;
+  }
+  
+  
+  /* Collection exercise - Reporting unit styles */
+  
+  .ceru-headline{
+    background: #f5f6ff;
+    padding: 1rem;
+    margin: 1rem 0;
+  }
+  
+  
+  .tempHack{
+    width: 2.5rem;
+    display: inline-block;
+  }
+  
+  
+  .error-message {
+    color: #D0021B;
+  }
+  
+  
+  /* Social */
+  
+  .cosy{
+    display: inline-block;
+  }
+  
+  .case-search{
+    background-color: #e4e8eb;
+  }
+  
+  .case-search-input2{
+    width: 8rem;
+  }
+  
+  .case-search-submit2{
+    padding: 0.5rem 1rem;
+    margin-left: 0.5rem;
+  }
+  
+  .case-search-results-info{
+    margin: 1rem 0 2rem 0;
+  }
+  
+  .case-search-results-list{
+    list-style: none;
+    padding-left: 0;
+  }
+  
+  .case-search-results-list__item{
+    margin-bottom: 1rem;
+  }
+  
+  .results-list-ref{
+    margin-right: 1rem;
+  }
+  
+  .results-list-postcode{
+    margin-right: 1rem;
+  }
+  
+  .results-list-survey{
+    display: none;
+  }
+  
+  .results-list-status{
+    display: none;
+  }
+  
+  /* temporary styles for social */
+  
+  .case-address__prem{
+    display: block;
+  }

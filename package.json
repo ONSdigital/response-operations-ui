@@ -19,26 +19,33 @@
         "url": "https://github.com/ONSdigital/response-operations-ui/issues"
     },
     "homepage": "https://github.com/ONSdigital/response-operations-ui#readme",
-    "dependencies": {
+    "config": {
+        "gulp": {
+            "SCSS_DIR": "$ROOT/response_operations_ui/assets/scss",
+            "CSS_DIR": "$ROOT/response_operations_ui/static",
+            "JS_SRC_DIR": "$ROOT/response_operations_ui/assets/js",
+            "JS_DEST_DIR": "$ROOT/response_operations_ui/static/js"
+        }
+    },
+    "devDependencies": {
         "@babel/core": "^7.2.0",
         "browserify": "^16.2.3",
         "chalk": "^2.4.1",
-        "eslint": "^5.9.0",
+        "eslint": "^5.10.0",
+        "eslint-config-google": "^0.11.0",
         "gulp": "^3.9.1",
         "gulp-autoprefixer": "^6.0.0",
         "gulp-babel": "^8.0.0",
+        "gulp-clean-css": "^4.0.0",
         "gulp-eslint": "^5.0.0",
         "gulp-mocha": "^6.0.0",
         "gulp-sass": "^4.0.2",
+        "gulp-sourcemaps": "^2.6.4",
         "gulp-stylelint": "^8.0.0",
         "lodash": "^4.17.11",
         "stylelint": "^9.9.0",
         "stylelint-config-standard": "^18.2.0",
         "uglify": "^0.1.5",
         "vinyl-transform": "^1.0.0"
-    },
-    "config": {
-        "SCSS_DIRECTORY": "",
-        "CSS_DIRECTORY": ""
     }
 }
