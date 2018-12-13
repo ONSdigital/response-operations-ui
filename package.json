@@ -47,5 +47,9 @@
         "stylelint-config-standard": "^18.2.0",
         "uglify": "^0.1.5",
         "vinyl-transform": "^1.0.0"
+    },
+    "dependencies": {
+        "gulp-plumber": "^1.2.1",
+        "gulp-util": "^3.0.8"
     }
 }

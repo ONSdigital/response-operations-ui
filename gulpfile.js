@@ -1,5 +1,6 @@
 
 const gulp = require('gulp');
+const gutil = require('gulp-util');
 // const gulpStyleLint = require('gulp-stylelint');
 // const gulpAutoPrefixer = require('gulp-autoprefixer');
 // const gulpSourcemaps = require('gulp-sourcemaps');
@@ -14,16 +15,16 @@ const gulp = require('gulp');
 const chalk = require('chalk');
 const _ = require('lodash');
 const { join } = require('path');
-const { readdir } = require('fs');
-const { promisify } = require('util');
+const { readdirSync } = require('fs');
 
 const { GulpError } = require('./gulp/GulpError');
+const { addErrorHandlingToGulpSrc } = require('./gulp/gulpHelper');
 
 const packageJson = require('./package.json');
 const config = _.get(packageJson, 'config.gulp', {});
 
 const PROJECT_ROOT = __dirname;
-const CONFIG = {
+const CONSTANTS = {
     SCSS_DIR:        _.get(config, 'SCSS_DIR', '').replace('$ROOT', PROJECT_ROOT),
     CSS_DIR:         _.get(config, 'CSS_DIR', '').replace('$ROOT', PROJECT_ROOT),
     JS_SRC_DIR:      _.get(config, 'JS_SRC_DIR', '').replace('$ROOT', PROJECT_ROOT),
@@ -32,47 +33,43 @@ const CONFIG = {
     IS_DEBUG:        Boolean(process.env.DEBUG),
 };
 
-console.log('Loading Gulp Tasks');
-
-const readDirAsync = promisify(readdir);
-const initialiseTask = fileName => {
-    const Task = require(fileName);
-
-    console.log(Task);
-    const task = new Task();
-    console.log(task);
-    const taskRunner = task.run.bind(Task, CONFIG);
-    console.log(`Trying to register tasks ${task.names.join('/')}`);
-    task.names.forEach(name => gulp.task(name, taskRunner));
-    console.log(`Registered Gulp Task ${names.join('/')}`);
+const context = {
+    config: CONSTANTS,
+    gulp,
+    GulpError,
+    logger: gutil.log
 };
 
-readDirAsync(CONFIG.TASKS_DIR)
-    .then(files => {
-        const jsFiles = files.filter(fileName => fileName.endsWith('.js'));
-        if (jsFiles.length === 0) {
-            throw new GulpError('No Gulp tasks found');
-        }
+context.logger('Loading Gulp Tasks');
 
-        jsFiles
-            .map(fileName => join(CONFIG.TASKS_DIR, fileName))
-            .map(initialiseTask);
-    })
-    .catch(error => {
-        throw error; // Only serves to avoid throwing a process.uncaughtException
-    });
+addErrorHandlingToGulpSrc(context);
+let tasksAdded = 0;
+const initialiseTask = fileName => {
+    const taskInitialiser = require(fileName);
+    taskInitialiser(context);
+    tasksAdded++;
+};
+
+const taskFiles = readdirSync(CONSTANTS.TASKS_DIR)
+    .filter(fileName => fileName.endsWith('.js'))
+    .map(fileName => join(CONSTANTS.TASKS_DIR, fileName));
+
+if (taskFiles.length === 0) {
+    throw new GulpError('No tasks found');
+}
+
+taskFiles.map(initialiseTask);
+
+context.logger(`Added ${tasksAdded} tasks`);
 
 gulp.task('default', () => {
     console.log(`
     Usage:
-        npm test       ${chalk.blue('Run the tests through the test harness')}
-        npm build      ${chalk.blue('Run the frontend build')}
-        npm run watch  ${chalk.blue('Run the watcher - actively recompile frontend during development')}
-    `);
-});
+        gulp                 ${chalk.blue('Display this message')}
+        gulp [taskname]      ${chalk.blue('Run the named gulp task')}
 
-process.on('UnhandledPromiseRejectionWarning', function (...args) {
-    console.log(args);
+    Available tasks: ${Object.keys(context.gulp.tasks).join(', ')}
+    `);
 });
 
 // Main functions
