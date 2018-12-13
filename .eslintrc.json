@@ -11,6 +11,8 @@
         "max-len": 0,
         "require-jsdoc": 0,
         "object-curly-spacing": "off",
-        "comma-dangle": "off"
+        "comma-dangle": "off",
+        "arrow-parens": "off",
+        "key-spacing": "off"
     }
 }
