@@ -22,5 +22,6 @@ function addErrorHandlingToGulpSrc(context) {
 
 module.exports = {
     returnNotImplemented,
-    registerTask
+    registerTask,
+    addErrorHandlingToGulpSrc
 };
