@@ -1,9 +1,9 @@
 const { returnNotImplemented, registerTask } = require('../gulpHelper');
 
 function taskFunction() {
-    returnNotImplemented();
+    callback(returnNotImplemented());
 }
 
 module.exports = (context) => {
-    registerTask(context, ['build'], taskFunction.bind(context.gulp, context));
+    registerTask(context, ['build'], taskFunction.bind(context));
 };

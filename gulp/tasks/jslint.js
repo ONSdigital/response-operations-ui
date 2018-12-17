@@ -6,9 +6,9 @@ const { join } = require('path');
 const { registerTask } = require('../gulpHelper');
 const GulpError = require('../GulpError');
 
-function taskFunction(context) {
-    const config = context.config;
-    const gulp = context.gulp;
+function taskFunction(callback) {
+    const config = this.config;
+    const gulp = this.gulp;
 
     const JS_SRC_DIR = _.get(config, 'JS_SRC_DIR');
     const IS_DEBUG = _.get(config, 'IS_DEBUG');
@@ -29,17 +29,22 @@ function taskFunction(context) {
         .pipe(gulpEslint(eslintConfig));
 
     if (IS_DEBUG) {
-        return output
+        callback(output
             .pipe(gulpEslint.failAfterError())
-            .pipe(gulpEslint.formatEach('codeframe'));
+            .pipe(gulpEslint.formatEach('codeframe')));
     }
 
     const logFile = createWriteStream(join(PROJECT_ROOT, 'eslint.log'));
-    return output
+    output
         .pipe(gulpEslint.failOnError())
-        .pipe(gulpEslint.format('unix', logFile));
+        .pipe(gulpEslint.format('unix', logFile))
+        .on('error', error => {
+            return callback(error);
+        });
+    callback();
 }
 
+
 module.exports = (context) => {
-    registerTask(context, ['jslint', 'eslint'], taskFunction.bind(context.gulp, context));
+    registerTask(context, ['jslint', 'eslint'], taskFunction.bind(context));
 };

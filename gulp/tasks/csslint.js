@@ -8,7 +8,7 @@ function taskFunction(context) {
     const SCSS_DIR = _.get(config, 'SCSS_DIR');
     const IS_DEBUG = _.get(config, 'IS_DEBUG');
 
-    if (SCSS_DIR === '') {
+    if (!SCSS_DIR) {
         throw (new GulpError('SCSS_DIR config setting not found'));
     }
 
@@ -30,9 +30,14 @@ function taskFunction(context) {
         );
     }
 
-    return gulp
+    gulp
         .src(`${SCSS_DIR}/**/*.{scss,css}`)
-        .pipe(gulpStyleLint(styleLintSettings));
+        .pipe(gulpStyleLint(styleLintSettings))
+        .on('error', error => {
+            return callback(error);
+        });
+
+    callback();
 }
 
 module.exports = (context) => {
