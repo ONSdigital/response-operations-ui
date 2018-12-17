@@ -22,7 +22,7 @@
     "config": {
         "gulp": {
             "SCSS_DIR": "$ROOT/response_operations_ui/assets/scss",
-            "CSS_DIR": "$ROOT/response_operations_ui/static",
+            "CSS_DIR": "$ROOT/response_operations_ui/static/css",
             "JS_SRC_DIR": "$ROOT/response_operations_ui/assets/js",
             "JS_DEST_DIR": "$ROOT/response_operations_ui/static/js"
         }

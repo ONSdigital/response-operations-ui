@@ -94,12 +94,4 @@ gulp.task('default', () => {
 
 // gulp.task('bundlejs', returnNotImplemented);
 
-// gulp.task('scsscompile', () => {
-//     gulp.src(`${SCSS_DIR}/main.scss`)
-//         .pipe(gulpSourcemaps.init())
-//         .pipe(gulpSass())
-//         .pipe(gulpAutoPrefixer())
-//         .pipe(gulpCleanCss())
-//         .pipe(gulpSourcemaps.write(CSS_DIR))
-//         .dest(CSS_DIR + '/main.css');
-// });
+
