@@ -5,5 +5,5 @@ function taskFunction() {
 }
 
 module.exports = (context) => {
-    registerTask(context, ['jslint', 'eslint'], taskFunction);
+    registerTask(context, ['jslint', 'eslint'], taskFunction.bind(context.gulp, context));
 };

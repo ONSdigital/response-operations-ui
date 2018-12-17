@@ -5,5 +5,5 @@ function taskFunction() {
 }
 
 module.exports = (context) => {
-    registerTask(context, ['bundlejs', 'bundle'], taskFunction);
+    registerTask(context, ['bundlejs', 'bundle'], taskFunction.bind(context.gulp, context));
 };

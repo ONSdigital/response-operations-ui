@@ -1,4 +1,7 @@
 const { GulpError } = require('./GulpError');
+const plumber = require('gulp-plumber');
+const chalk = require('chalk');
+const _ = require('lodash');
 
 function returnNotImplemented() {
     throw new GulpError('This function is not yet implemented!');
@@ -14,10 +17,25 @@ function addErrorHandlingToGulpSrc(context) {
     context.gulp.src = function(...args) {
         return gulpSrcCopy.apply(context.gulp, args)
             .pipe(plumber(error => {
-                context.logger(error.message);
+                _formatErrorMessage(error);
                 this.emit('end');
             }));
     };
+}
+
+function _formatErrorMessage(error, title = 'Error') {
+    const erroredPlugin = _.get(error, 'plugin', false);
+    let outputString = '';
+
+    outputString += `${chalk.bgRed.white(title)} `;
+
+    if (erroredPlugin) {
+        outputString += `${chalk.blue('[PLUGIN: ' + erroredPlugin + '] ')}`;
+    }
+
+    outputString += error.message;
+
+    return outputString;
 }
 
 module.exports = {

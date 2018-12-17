@@ -5,5 +5,5 @@ function taskFunction() {
 }
 
 module.exports = (context) => {
-    registerTask(context, ['scss', 'scsscompile'], taskFunction);
+    registerTask(context, ['scss', 'scsscompile'], taskFunction.bind(context.gulp, context));
 };

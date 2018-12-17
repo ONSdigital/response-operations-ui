@@ -84,25 +84,7 @@ gulp.task('default', () => {
 // gulp.task('lint', ['jslint', 'csslint']);
 
 // // Sub tasks
-// gulp.task('csslint', () => {
-//     if (SCSS_DIR === '') {
-//         throw (new GulpError('SCSS_DIR config setting not found'));
-//     }
 
-//     const styleLintSettings = {
-//         failAfterError: true,
-//         debug: IS_DEBUG,
-//         reporters: [
-//             {formatter: 'verbose', console: true}
-//         ]
-//     };
-
-//     console.log(SCSS_DIR);
-
-//     return gulp
-//         .src(`${SCSS_DIR}/**/*.{scss,css}`)
-//         .pipe(gulpStyleLint(styleLintSettings));
-// });
 
 // gulp.task('jslint', () => {
 

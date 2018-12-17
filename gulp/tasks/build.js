@@ -5,5 +5,5 @@ function taskFunction() {
 }
 
 module.exports = (context) => {
-    registerTask(context, ['build'], taskFunction);
+    registerTask(context, ['build'], taskFunction.bind(context.gulp, context));
 };
