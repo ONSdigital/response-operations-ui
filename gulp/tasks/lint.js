@@ -1,9 +1,5 @@
-const { returnNotImplemented, registerTask } = require('../gulpHelper');
-
-function taskFunction() {
-    returnNotImplemented();
-}
+const { registerTask } = require('../gulpHelper');
 
 module.exports = (context) => {
-    registerTask(context, ['lint'], taskFunction.bind(context.gulp, context));
+    registerTask(context, ['lint'], ['csslint', 'jslint']);
 };

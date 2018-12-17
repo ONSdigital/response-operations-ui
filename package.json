@@ -23,7 +23,7 @@
         "gulp": {
             "SCSS_DIR": "$ROOT/response_operations_ui/assets/scss",
             "CSS_DIR": "$ROOT/response_operations_ui/static/css",
-            "JS_SRC_DIR": "$ROOT/response_operations_ui/assets/js",
+            "JS_SRC_DIR": "$ROOT/response_operations_ui/static/js",
             "JS_DEST_DIR": "$ROOT/response_operations_ui/static/js"
         }
     },
@@ -46,9 +46,7 @@
         "stylelint": "^9.9.0",
         "stylelint-config-standard": "^18.2.0",
         "uglify": "^0.1.5",
-        "vinyl-transform": "^1.0.0"
-    },
-    "dependencies": {
+        "vinyl-transform": "^1.0.0",
         "gulp-plumber": "^1.2.1",
         "gulp-util": "^3.0.8"
     }
