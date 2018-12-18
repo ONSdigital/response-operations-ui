@@ -1,10 +1,10 @@
-const { registerTask } = require('../gulpHelper');
+const { registerTask, finishedTaskHandler } = require('../gulpHelper');
 const gulpStyleLint = require('gulp-stylelint');
 const _ = require('lodash');
 
-function taskFunction(context) {
-    const config = context.config;
-    const gulp = context.gulp;
+function taskFunction(callback) {
+    const config = this.config;
+    const gulp = this.gulp;
     const SCSS_DIR = _.get(config, 'SCSS_DIR');
     const IS_DEBUG = _.get(config, 'IS_DEBUG');
 
@@ -30,16 +30,10 @@ function taskFunction(context) {
         );
     }
 
-    gulp
-        .src(`${SCSS_DIR}/**/*.{scss,css}`)
-        .pipe(gulpStyleLint(styleLintSettings))
-        .on('error', error => {
-            return callback(error);
-        });
-
-    callback();
+    return gulp.src(`${SCSS_DIR}/**/*.{scss,css}`)
+        .pipe(gulpStyleLint(styleLintSettings));
 }
 
 module.exports = (context) => {
-    registerTask(context, ['csslint', 'stylelint'], taskFunction.bind(context.gulp, context));
+    registerTask(context, ['csslint', 'stylelint'], taskFunction.bind(context));
 };

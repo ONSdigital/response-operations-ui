@@ -13,15 +13,20 @@ function registerTask(context, names, taskFunction) {
 
 function addErrorHandlingToGulpSrc(context) {
     const gulpSrcCopy = context.gulp.src;
-
     context.gulp.src = function(...args) {
         return gulpSrcCopy.apply(context.gulp, args)
             .pipe(plumber(error => {
-                _formatErrorMessage(error);
+                context.logger(_formatErrorMessage(error));
                 this.emit('end');
             }));
     };
 }
+
+const finishedTaskHandler = (stream, callback) => {
+    stream.on('error', (...args) => callback)
+    stream.on('end', (...args) => callback)
+    stream.on('finish', (...args) => callback);
+};
 
 function _formatErrorMessage(error, title = 'Error') {
     const erroredPlugin = _.get(error, 'plugin', false);
@@ -41,5 +46,6 @@ function _formatErrorMessage(error, title = 'Error') {
 module.exports = {
     returnNotImplemented,
     registerTask,
-    addErrorHandlingToGulpSrc
+    addErrorHandlingToGulpSrc,
+    finishedTaskHandler
 };

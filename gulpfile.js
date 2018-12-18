@@ -1,16 +1,6 @@
 
 const gulp = require('gulp');
 const gutil = require('gulp-util');
-// const gulpStyleLint = require('gulp-stylelint');
-// const gulpAutoPrefixer = require('gulp-autoprefixer');
-// const gulpSourcemaps = require('gulp-sourcemaps');
-// const gulpCleanCss = require('gulp-clean-css');
-// const gulpBabel = require('gulp-babel');
-// const gulpEsLint = require('gulp-eslint');
-// const gulpSass = require('gulp-sass');
-// const gulpMocha = require('gulp-mocha');
-
-// const transform = require('vinyl-transform');
 
 const chalk = require('chalk');
 const _ = require('lodash');
@@ -18,7 +8,7 @@ const { join } = require('path');
 const { readdirSync } = require('fs');
 
 const { GulpError } = require('./gulp/GulpError');
-const { addErrorHandlingToGulpSrc } = require('./gulp/gulpHelper');
+const { addErrorHandlingToGulpSrc, finishedTaskHandler } = require('./gulp/gulpHelper');
 
 const packageJson = require('./package.json');
 const config = _.get(packageJson, 'config.gulp', {});
@@ -38,12 +28,14 @@ const context = {
     config: CONSTANTS,
     gulp,
     GulpError,
-    logger: gutil.log
+    logger: gutil.log,
+    finishedTaskHandler
 };
 
 context.logger('Loading Gulp Tasks');
 
 addErrorHandlingToGulpSrc(context);
+
 let tasksAdded = 0;
 const initialiseTask = fileName => {
     const taskInitialiser = require(fileName);
@@ -63,36 +55,13 @@ taskFiles.map(initialiseTask);
 
 context.logger(`Added ${tasksAdded} tasks`);
 
-gulp.task('default', () => {
+gulp.task('default', (callback) => {
     console.log(`
     Usage:
         gulp                 ${chalk.blue('Display this message')}
         gulp [taskname]      ${chalk.blue('Run the named gulp task')}
 
-    Available tasks: ${Object.keys(context.gulp.tasks).join(', ')}
+    Available tasks: ${Object.keys(context.gulp._registry._tasks).join(', ')}
     `);
+    finishedTaskHandler(callback);
 });
-
-// Main functions
-// gulp.task('test', returnNotImplemented);
-
-// gulp.task('build', returnNotImplemented);
-
-// gulp.task('watch', () => {
-//     gulp.watch(`${SCSS_DIR}/**/*.{css,scss}`, ['csslint', 'scsscompile']);
-// });
-
-// gulp.task('lint', ['jslint', 'csslint']);
-
-// // Sub tasks
-
-
-// gulp.task('jslint', () => {
-
-// });
-
-// gulp.task('mocha', returnNotImplemented);
-
-// gulp.task('bundlejs', returnNotImplemented);
-
-

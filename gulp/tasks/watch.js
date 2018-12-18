@@ -27,8 +27,6 @@ function taskFunction(context, callback) {
         throw (new GulpError('JS_DEST_DIR config setting not found'));
     }
 
-    console.log(series);
-
     gulp.watch(SCSS_DIR + '**/*.{css, scss}', series('csslint', 'scsscompile', () => callback()));
     gulp.watch([JS_SRC_DIR + '/**/*.js', PROJECT_ROOT + '/gulpfile.js', PROJECT_ROOT + '/gulp/**/*.js'], series('jslint', () => callback()));
 }

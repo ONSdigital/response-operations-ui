@@ -5,7 +5,7 @@ const gulpAutoPrefixer = require('gulp-autoprefixer');
 const gulpCleanCss = require('gulp-clean-css');
 const gulpSourcemaps = require('gulp-sourcemaps');
 
-function taskFunction(callback) {
+function taskFunction() {
     const gulp = this.gulp;
     const SCSS_DIR = this.config['SCSS_DIR'];
     const CSS_DIR = this.config['CSS_DIR'];
@@ -18,18 +18,13 @@ function taskFunction(callback) {
         throw new GulpError('CSS_DIR config setting not set.');
     }
 
-    gulp.src(`${SCSS_DIR}/main.scss`)
+    return gulp.src(`${SCSS_DIR}/main.scss`)
         .pipe(gulpSourcemaps.init())
         .pipe(gulpSass())
         .pipe(gulpAutoPrefixer())
         .pipe(gulpCleanCss())
         .pipe(gulpSourcemaps.write('.'))
-        .pipe(gulp.dest(CSS_DIR))
-        .on('error', error => {
-            return callback(error);
-        });
-
-    callback();
+        .pipe(gulp.dest(CSS_DIR));
 }
 
 module.exports = (context) => {
