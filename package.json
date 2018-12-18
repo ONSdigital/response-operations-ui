@@ -23,7 +23,7 @@
         "gulp": {
             "SCSS_DIR": "$ROOT/response_operations_ui/assets/scss",
             "CSS_DIR": "$ROOT/response_operations_ui/static/css",
-            "JS_SRC_DIR": "$ROOT/response_operations_ui/static/js",
+            "JS_SRC_DIR": "$ROOT/response_operations_ui/assets/js",
             "JS_DEST_DIR": "$ROOT/response_operations_ui/static/js"
         }
     },
@@ -36,18 +36,20 @@
         "gulp": ">=4.0.0",
         "gulp-autoprefixer": "^6.0.0",
         "gulp-babel": "^8.0.0",
+        "gulp-babel-minify": "^0.5.0",
         "gulp-clean-css": "^4.0.0",
         "gulp-eslint": "^5.0.0",
         "gulp-mocha": "^6.0.0",
+        "gulp-plumber": "^1.2.1",
         "gulp-sass": "^4.0.2",
         "gulp-sourcemaps": "^2.6.4",
         "gulp-stylelint": "^8.0.0",
+        "gulp-util": "^3.0.8",
         "lodash": "^4.17.11",
         "stylelint": "^9.9.0",
         "stylelint-config-standard": "^18.2.0",
-        "uglify": "^0.1.5",
-        "vinyl-transform": "^1.0.0",
-        "gulp-plumber": "^1.2.1",
-        "gulp-util": "^3.0.8"
+        "vinyl-buffer": "^1.0.1",
+        "vinyl-source-stream": "^2.0.0",
+        "vinyl-transform": "^1.0.0"
     }
 }

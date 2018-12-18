@@ -1,0 +1,8 @@
+{
+  "presets": ["es2015", "es2016", "es2017", "env"],
+  "env": {
+    "development": { "presets": ["es2015", "es2016", "es2017", "env"] },
+    "production": { "presets": ["es2015", "es2016", "es2017", "env"], "comments": false },
+    "test": { "presets": ["es2015", "es2016", "es2017", "env"], "comments": false }
+  }
+}
