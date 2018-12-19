@@ -20,6 +20,10 @@ from response_operations_ui.views import setup_blueprints
 cf = ONSCloudFoundry()
 
 
+def run_gulp_task(task_name):
+    call('gulp ' + task_name)
+
+
 def create_app(config_name=None):
     app = Flask(__name__)
     app.name = "response_operations_ui"
@@ -29,11 +33,12 @@ def create_app(config_name=None):
 
     # Load css and js assets
     assets = Environment(app)
+    run_gulp_task('scss_compile')
 
     if app.config['DEBUG'] or app.config['TESTING']:
         assets.cache = False
         assets.manifest = None
-        
+        run_gulp_task('watch')  # automatically recompiles css as we go.
 
     assets.url = app.static_url_path
     js_min = Bundle('js/*', filters='jsmin', output='minimised/all.min.js')
@@ -49,8 +54,6 @@ def create_app(config_name=None):
     logger_initial_config(service_name='response-operations-ui', log_level=app.config['LOGGING_LEVEL'])
     logger = wrap_logger(logging.getLogger(__name__))
     logger.info('Logger created', log_level=app.config['LOGGING_LEVEL'])
-
-    logger.info('here' + os.getcwd())
 
     login_manager = LoginManager(app)
     login_manager.init_app(app)
