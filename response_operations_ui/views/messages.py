@@ -1,5 +1,6 @@
 import json
 import logging
+import math
 from datetime import datetime
 from distutils.util import strtobool
 
@@ -136,7 +137,7 @@ def view_select_survey():
         return redirect(url_for("messages_bp.select_survey"))
 
     return redirect(url_for("messages_bp.view_selected_survey",
-                            selected_survey=selected_survey))
+                            selected_survey=selected_survey, page=request.args.get('page')))
 
 
 @messages_bp.route('/select-survey', methods=['GET', 'POST'])
@@ -181,6 +182,15 @@ def view_selected_survey(selected_survey):
 
         is_closed = request.args.get('is_closed', default='false')
 
+        thread_count = message_controllers.get_conversation_count({'survey': survey_id,
+                                                                   'is_closed': is_closed})
+
+        recalculated_page = _calculate_page(page, limit, thread_count)
+
+        if recalculated_page != page:
+            return redirect(url_for("messages_bp.view_selected_survey",
+                                    selected_survey=selected_survey, page=recalculated_page))
+
         params = {
             'survey': survey_id,
             'page': page,
@@ -188,8 +198,6 @@ def view_selected_survey(selected_survey):
             'is_closed': is_closed
         }
 
-        thread_count = message_controllers.get_conversation_count({'survey': survey_id,
-                                                                   'is_closed': is_closed})
         messages = [_refine(message) for message in message_controllers.get_thread_list(params)]
 
         pagination = Pagination(page=page,
@@ -231,7 +239,7 @@ def close_conversation(thread_id):
         message_controllers.update_close_conversation_status(thread_id=thread_id, status=True)
         thread_url = url_for("messages_bp.view_conversation", thread_id=thread_id) + "#latest-message"
         flash(Markup(f'Conversation closed. <a href={thread_url}>View conversation</a>'))
-        return redirect(url_for('messages_bp.view_select_survey'))
+        return redirect(url_for('messages_bp.view_select_survey', page=request.args.get('page')))
 
     thread_conversation = message_controllers.get_conversation(thread_id)
     refined_thread = [_refine(message) for message in reversed(thread_conversation['messages'])]
@@ -414,3 +422,14 @@ def disable_caching(response):
     for k, v in CACHE_HEADERS.items():
         response.headers[k] = v
     return response
+
+
+def _calculate_page(requested_page, limit, thread_count):
+    page = requested_page
+
+    if thread_count == 0:
+        page = 1
+    elif page * limit > thread_count:
+        page = math.ceil(thread_count / limit)
+
+    return page
