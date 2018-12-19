@@ -1,4 +1,4 @@
-const { returnNotImplemented } = require('../gulpHelper');
+const { returnNotImplemented, registerTask } = require('../gulpHelper');
 
 function taskFunction(callback) {
     return returnNotImplemented();

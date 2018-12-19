@@ -46,4 +46,5 @@
         "lodash": "^4.17.11",
         "stylelint": "^9.9.0",
         "stylelint-config-standard": "^18.2.0"
+    }
 }
