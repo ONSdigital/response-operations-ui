@@ -7,7 +7,7 @@ import requests_mock
 from config import TestingConfig
 from response_operations_ui.controllers.message_controllers import get_conversation, send_message
 from response_operations_ui.exceptions.exceptions import InternalError
-from response_operations_ui.views.messages import _get_to_id
+from response_operations_ui.views.messages import _get_to_id, _calculate_page
 from response_operations_ui.views.messages import _get_unread_status
 from tests.views import ViewTestCase
 
@@ -744,3 +744,15 @@ class TestMessage(ViewTestCase):
         self.assertEqual(200, response.status_code)
         self.assertIn("Conversation re-opened.".encode(), response.data)
         self.assertIn("Ashe Messages".encode(), response.data)
+
+    def test_calculate_page_change(self):
+        result = _calculate_page(3, 10, 15)
+        self.assertEqual(2, result)
+
+    def test_calculate_page_no_change(self):
+        result = _calculate_page(1, 10, 15)
+        self.assertEqual(1, result)
+
+    def test_calculate_page_zero_threads(self):
+        result = _calculate_page(1, 10, 0)
+        self.assertEqual(1, result)
