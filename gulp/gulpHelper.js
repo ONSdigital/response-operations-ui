@@ -22,12 +22,6 @@ function addErrorHandlingToGulpSrc(context) {
     };
 }
 
-const finishedTaskHandler = (stream, callback) => {
-    stream.on('error', (...args) => callback)
-    stream.on('end', (...args) => callback)
-    stream.on('finish', (...args) => callback);
-};
-
 function _formatErrorMessage(error, title = 'Error') {
     const erroredPlugin = _.get(error, 'plugin', false);
     let outputString = '';
@@ -46,6 +40,5 @@ function _formatErrorMessage(error, title = 'Error') {
 module.exports = {
     returnNotImplemented,
     registerTask,
-    addErrorHandlingToGulpSrc,
-    finishedTaskHandler
+    addErrorHandlingToGulpSrc
 };

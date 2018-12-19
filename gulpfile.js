@@ -8,7 +8,7 @@ const { join } = require('path');
 const { readdirSync } = require('fs');
 
 const { GulpError } = require('./gulp/GulpError');
-const { addErrorHandlingToGulpSrc, finishedTaskHandler } = require('./gulp/gulpHelper');
+const { addErrorHandlingToGulpSrc } = require('./gulp/gulpHelper');
 
 const packageJson = require('./package.json');
 const config = _.get(packageJson, 'config.gulp', {});
@@ -28,8 +28,7 @@ const context = {
     config: CONSTANTS,
     gulp,
     GulpError,
-    logger: gutil.log,
-    finishedTaskHandler
+    logger: gutil.log
 };
 
 context.logger('Loading Gulp Tasks');
@@ -63,5 +62,6 @@ gulp.task('default', (callback) => {
 
     Available tasks: ${Object.keys(context.gulp._registry._tasks).join(', ')}
     `);
-    finishedTaskHandler(callback);
+
+    callback();
 });

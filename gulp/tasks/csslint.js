@@ -1,4 +1,4 @@
-const { registerTask, finishedTaskHandler } = require('../gulpHelper');
+const { registerTask } = require('../gulpHelper');
 const gulpStyleLint = require('gulp-stylelint');
 const _ = require('lodash');
 
