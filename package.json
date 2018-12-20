@@ -6,7 +6,7 @@
         "test": "tests"
     },
     "scripts": {
-        "gulp": "node node_modules/gulp/gulp.js"
+        "gulp": "./node_modules/gulp/gulp.js"
     },
     "repository": {
         "type": "git",
