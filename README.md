@@ -32,6 +32,8 @@ npm install
 ```
 ...and the task runner will be installed
 
+You can run gulp tasks using `npm run gulp <taskname>`, or just `gulp` if you have `gulp` globally installed (`npm i -g gulpjs`)
+
 Once these have been installed the app can be run from the root directory using the following
 ```
 pipenv run python run.py
