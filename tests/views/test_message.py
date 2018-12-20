@@ -1,3 +1,4 @@
+import copy
 import json
 from unittest.mock import patch
 
@@ -18,6 +19,7 @@ url_get_thread = f'{TestingConfig.SECURE_MESSAGE_URL}/v2/threads/fb0e79bd-e132-4
 url_get_threads_list = f'{TestingConfig.SECURE_MESSAGE_URL}/threads'
 url_send_message = f'{TestingConfig.SECURE_MESSAGE_URL}/v2/messages'
 url_update_label = f'{TestingConfig.SECURE_MESSAGE_URL}/v2/messages/modify/ae46748b-c6e6-4859-a57a-86e01db2dcbc'
+url_modify_label_base = f'{TestingConfig.SECURE_MESSAGE_URL}/v2/messages/modify/'
 
 survey_id = '6aa8896f-ced5-4694-800c-6cd661b0c8b2'
 params = f'?survey={survey_id}&page=1&limit=10'
@@ -295,6 +297,46 @@ class TestMessage(ViewTestCase):
         response = self.client.get('/messages/threads/fb0e79bd-e132-4f4f-a7fd-5e8c6b41b9af')
 
         self.assertIn("Unread Message Subject".encode(), response.data)
+
+    @requests_mock.mock()
+    @patch('response_operations_ui.controllers.message_controllers._get_jwt')
+    def test_get_thread_sent_to_GROUP_mark_unread_displayed(self, mock_request, mock_get_jwt):
+        mock_get_jwt.return_value = "blah"
+        mock_request.get(url_get_thread, json=thread_unread_json)
+        mock_request.put(url_update_label)
+        mock_request.get(url_get_surveys_list, json=survey_list)
+
+        response = self.client.get('/messages/threads/fb0e79bd-e132-4f4f-a7fd-5e8c6b41b9af')
+
+        self.assertIn("Mark as unread".encode(), response.data)
+
+    @requests_mock.mock()
+    @patch('response_operations_ui.controllers.message_controllers._get_jwt')
+    def test_get_thread_sent_to_different_user_mark_unread_not_displayed(self, mock_request, mock_get_jwt):
+        mock_get_jwt.return_value = "blah"
+        test_data = copy.deepcopy(thread_unread_json)
+        test_data["messages"][0]["msg_to"] = ["SomeoneElse"]
+        mock_request.get(url_get_thread, json=test_data)
+        mock_request.put(url_update_label)
+        mock_request.get(url_get_surveys_list, json=survey_list)
+
+        response = self.client.get('/messages/threads/fb0e79bd-e132-4f4f-a7fd-5e8c6b41b9af')
+
+        self.assertNotIn("Mark as unread".encode(), response.data)
+
+    @requests_mock.mock()
+    @patch('response_operations_ui.controllers.message_controllers._get_jwt')
+    def test_get_read_thread_sent_to_same_user_mark_unread_displayed(self, mock_request, mock_get_jwt):
+        mock_get_jwt.return_value = "blah"
+        test_data = copy.deepcopy(thread_unread_json)
+        test_data["messages"][0]["msg_to"] = ["test-id"]
+        mock_request.get(url_get_thread, json=test_data)
+        mock_request.put(url_update_label)
+        mock_request.get(url_get_surveys_list, json=survey_list)
+
+        response = self.client.get('/messages/threads/fb0e79bd-e132-4f4f-a7fd-5e8c6b41b9af')
+
+        self.assertIn("Mark as unread".encode(), response.data)
 
     @requests_mock.mock()
     @patch('response_operations_ui.controllers.message_controllers._get_jwt')
@@ -756,3 +798,19 @@ class TestMessage(ViewTestCase):
     def test_calculate_page_zero_threads(self):
         result = _calculate_page(1, 10, 0)
         self.assertEqual(1, result)
+
+    @requests_mock.mock()
+    @patch('response_operations_ui.controllers.message_controllers._get_jwt')
+    def test_mark_unread_returns_expected_flash_message(self, mock_request, mock_get_jwt):
+        mock_get_jwt.return_value = "blah"
+
+        with self.client.session_transaction() as session:
+            session['messages_survey_selection'] = 'QBS'
+
+        mock_request.get(url_get_thread, json=thread_unread_json)
+        mock_request.put(f"{url_modify_label_base}9ecfad50-2ff5-4bea-a997-d73c4faa73ae")
+        mock_request.get(url_get_surveys_list, json=survey_list)
+
+        response = self.client.get('/messages/mark_unread/9ecfad50-2ff5-4bea-a997-d73c4faa73ae?from=GROUP&to=ONS+User')
+
+        self.assertIn(f"flash_message=Message+from+GROUP+to+ONS+User+marked+unread".encode(), response.data)

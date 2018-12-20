@@ -74,6 +74,7 @@ def view_conversation(thread_id):
 
     thread_conversation = message_controllers.get_conversation(thread_id)
     refined_thread = [_refine(message) for message in reversed(thread_conversation['messages'])]
+    latest_message = refined_thread[-1]
 
     try:
         closed_time = localise_datetime(datetime.strptime(thread_conversation['closed_at'], "%Y-%m-%dT%H:%M:%S.%f"))
@@ -89,8 +90,8 @@ def view_conversation(thread_id):
             {"title": "Unavailable"}
         ]
 
-    if refined_thread[-1]['unread']:
-        message_controllers.remove_unread_label(refined_thread[-1]['message_id'])
+    if latest_message['unread']:
+        message_controllers.remove_unread_label(latest_message['message_id'])
 
     page = request.args.get('page')
     form = SecureMessageForm(request.form)
@@ -125,19 +126,39 @@ def view_conversation(thread_id):
                            selected_survey=refined_thread[0]['survey'],
                            page=page,
                            closed_at=closed_at,
-                           thread_data=thread_conversation)
+                           thread_data=thread_conversation,
+                           show_mark_unread=_can_mark_as_unread(latest_message))
+
+
+@messages_bp.route('/mark_unread/<message_id>', methods=['GET'])
+@login_required
+def mark_message_unread(message_id):
+
+    msg_from = request.args.get(get_parameter('from'), type=str, default="")
+    msg_to = request.args.get(get_parameter('to'), type=str, default="")
+
+    message_controllers.add_unread_label(message_id)
+
+    marked_unread_message = f"Message from {msg_from} to {msg_to} marked unread"
+
+    return _view_select_survey(marked_unread_message)
 
 
 @messages_bp.route('/', methods=['GET'])
 @login_required
 def view_select_survey():
+    return _view_select_survey()
+
+
+def _view_select_survey(marked_unread_message=""):
     try:
         selected_survey = session["messages_survey_selection"]
     except KeyError:
         return redirect(url_for("messages_bp.select_survey"))
 
     return redirect(url_for("messages_bp.view_selected_survey",
-                            selected_survey=selected_survey, page=request.args.get('page')))
+                            selected_survey=selected_survey, page=request.args.get('page'),
+                            flash_message=marked_unread_message))
 
 
 @messages_bp.route('/select-survey', methods=['GET', 'POST'])
@@ -179,6 +200,7 @@ def view_selected_survey(selected_survey):
 
         page = request.args.get(get_parameter('page'), type=int, default=1)
         limit = request.args.get(get_parameter('limit'), type=int, default=10)
+        flash_message = request.args.get(get_parameter('flash_message'), type=str, default="")
 
         is_closed = request.args.get('is_closed', default='false')
 
@@ -210,6 +232,9 @@ def view_selected_survey(selected_survey):
                                 format_total=True,
                                 format_number=True,
                                 show_single_page=False)
+
+        if flash_message:
+            flash(flash_message)
 
         return render_template("messages.html",
                                page=page,
@@ -433,3 +458,7 @@ def _calculate_page(requested_page, limit, thread_count):
         page = math.ceil(thread_count / limit)
 
     return page
+
+
+def _can_mark_as_unread(message):
+    return message['to_id'] == 'GROUP' or message['to_id'] == session['user_id']
