@@ -9,7 +9,7 @@ from flask_login import LoginManager
 from flask_session import Session
 from flask_zipkin import Zipkin
 from structlog import wrap_logger
-from subprocess import call, Popen, STDOUT
+from subprocess import check_call, check_output, STDOUT
 from calendar import timegm
 from time import gmtime
 
@@ -31,11 +31,11 @@ def run_gulp_task(task_name, blocking=True, output=STDOUT):
 
     gulp_executable = os.path.join(os.getcwd(), 'node_modules', 'gulp', 'bin', 'gulp.js')
     gulp_args = [gulp_executable, task_name]
-    
+
     if blocking:
-        Popen(gulp_args, stdout=output, stderr=output)
+        check_output(gulp_args, stdout=output, stderr=output, shell=True)
     else:
-        call(gulp_args, stdout=output, stderr=output)
+        check_call(gulp_args, stdout=output, stderr=output, shell=True)
 
 
 def create_app(config_name=None):
