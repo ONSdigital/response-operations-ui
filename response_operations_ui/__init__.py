@@ -9,7 +9,6 @@ from flask_login import LoginManager
 from flask_session import Session
 from flask_zipkin import Zipkin
 from structlog import wrap_logger
-from subprocess import call, Popen, STDOUT
 from calendar import timegm
 from time import gmtime
 
@@ -20,22 +19,6 @@ from response_operations_ui.views import setup_blueprints
 
 
 cf = ONSCloudFoundry()
-
-
-def run_gulp_task(task_name, output=STDOUT):
-    if not task_name:
-        raise('Gulp should not be called from internal subprocess with no task')
-
-    if output != STDOUT:
-        output = open(output, "w+")
-
-    gulp_executable = os.path.join(os.getcwd(), 'node_modules', 'gulp', 'bin', 'gulp.js')
-
-    if task_name == 'watch':
-        Popen([gulp_executable, 'watch'], stdout=output, stderr=output, shell=False)
-
-    if task_name == 'scss_compile':
-        call([gulp_executable, 'scss_compile'], stdout=output, stderr=output, shell=False)
 
 
 def create_app(config_name=None):
@@ -52,14 +35,9 @@ def create_app(config_name=None):
     # Load css and js assets
     assets = Environment(app)
 
-    run_gulp_task('scsscompile', gulp_log)
-
     if app.config['DEBUG'] or app.config['TESTING']:
         assets.cache = False
         assets.manifest = None
-
-    if app.config['WATCH_FRONTEND'] or os.environ('WATCH_FRONTEND'):
-        run_gulp_task('watch', 'gulp.log')  # automatically recompiles css as we go.
 
     assets.url = app.static_url_path
     js_min = Bundle('js/*', filters='jsmin', output='minimised/all.min.js')

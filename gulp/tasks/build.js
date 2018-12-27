@@ -1,7 +1,7 @@
-const { returnNotImplemented, registerTask } = require('../gulpHelper');
+const { registerTask } = require('../gulpHelper');
 
 function taskFunction() {
-    return returnNotImplemented();
+    return context.gulp.series(['lint', 'scss_compile']);
 }
 
 module.exports = (context) => {

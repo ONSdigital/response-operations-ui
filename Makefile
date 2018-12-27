@@ -6,9 +6,11 @@ lint:
 	pipenv check ./response_operations_ui ./tests
 
 test: lint
+	node_modules/gulp/bin/gulp.js lint
 	pipenv run python run_tests.py
 
 start:
+	node_modules/gulp/bin/gulp.js build
 	pipenv run python run.py
 
 docker: test
