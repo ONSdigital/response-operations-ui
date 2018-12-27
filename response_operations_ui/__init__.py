@@ -9,8 +9,6 @@ from flask_login import LoginManager
 from flask_session import Session
 from flask_zipkin import Zipkin
 from structlog import wrap_logger
-from calendar import timegm
-from time import gmtime
 
 from response_operations_ui.cloud.cloudfoundry import ONSCloudFoundry
 from response_operations_ui.logger_config import logger_initial_config
@@ -24,10 +22,6 @@ cf = ONSCloudFoundry()
 def create_app(config_name=None):
     app = Flask(__name__)
     app.name = "response_operations_ui"
-
-    working_directory = os.getcwd()
-    timestamp = timegm(gmtime())
-    gulp_log = os.path.join(working_directory, 'gulp', 'logs', f'{timestamp}.log')
 
     app_config = f'config.{config_name or os.environ.get("APP_SETTINGS", "Config")}'
     app.config.from_object(app_config)
