@@ -29,9 +29,9 @@
         {% endif %}
 
         {% if thread_data.is_closed %}
-        <a href="{{ url_for('messages_bp.view_selected_survey', selected_survey=selected_survey, page=page, is_closed='true') }}" class="u-mb-s">< Back</a>
+        <a href="{{ url_for('messages_bp.view_selected_survey', selected_survey=selected_survey, page=page, is_closed='true') }}" class="u-mb-s" id="back-link">< Back</a>
         {% else %}
-        <a href="{{ url_for('messages_bp.view_selected_survey', selected_survey=selected_survey, page=page) }}" class="u-mb-s">< Back</a>
+        <a href="{{ url_for('messages_bp.view_selected_survey', selected_survey=selected_survey, page=page) }}" class="u-mb-s" id="back-link">< Back</a>
         {% endif %}
     </div>
 {% endblock %}
