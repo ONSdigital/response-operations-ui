@@ -36,7 +36,7 @@
         </dd>
       </dl>
 
-      <form action="{{ url_for('messages_bp.close_conversation', thread_id=thread_id) }}" method="post">
+      <form action="{{ url_for('messages_bp.close_conversation', thread_id=thread_id, page=page) }}" method="post">
         <input type="hidden" name="closed" value="True" />
         <button class="btn u-mt-m">Close conversation</button>
       </form>

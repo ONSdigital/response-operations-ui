@@ -61,3 +61,14 @@ class TestCaseControllers(unittest.TestCase):
             with self.app.app_context():
                 with self.assertRaises(ApiError):
                     case_controller.get_case_events_by_case_id(case_id, category)
+
+    def test_get_case_events_by_case_id_and_one_category_returns_success(self):
+        category = 'SUCCESSFUL_RESPONSE_UPLOAD'
+
+        with responses.RequestsMock() as rsps:
+            rsps.add(rsps.GET, url_get_case_events, json=[case_events[1], case_events[2]], status=200,
+                     content_type='application/json')
+            with self.app.app_context():
+                get_case_events = case_controller.get_case_events_by_case_id(case_id, category)
+
+                self.assertEqual(len(get_case_events), 2)
