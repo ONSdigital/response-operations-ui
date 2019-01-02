@@ -194,6 +194,7 @@ background: #eee;
   border-top-right-radius: 0.2rem;
   padding-top: 0.333rem;
   padding-bottom: 0.333rem;
+  position: relative;
 }
 
 .secure-message-sent-message-meta__label {
@@ -214,3 +215,14 @@ background: #eee;
   display: block;
   color: #fff;
 }
+
+.secure-message-mark-unread {
+  position: absolute;
+  top: 0;
+  right: 0;
+  display: block;
+  color: #fff;
+  margin-right: 0.5em;
+  margin-top: 0.2em;
+}
+.secure-message-mark-unread:hover { color: #fff;}

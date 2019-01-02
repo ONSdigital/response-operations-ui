@@ -107,6 +107,20 @@ def remove_unread_label(message_id):
         logger.exception("Failed to remove unread label", message_id=message_id)
 
 
+def add_unread_label(message_id):
+    url = f"{current_app.config['SECURE_MESSAGE_URL']}/v2/messages/modify/{message_id}"
+    data = {"label": "UNREAD", "action": "add"}
+
+    logger.debug("Adding message unread label", message_id=message_id)
+    response = requests.put(url, headers={"Authorization": _get_jwt(), "Content-Type": "application/json"}, json=data)
+
+    try:
+        response.raise_for_status()
+        logger.debug("Successfully added unread label", message_id=message_id)
+    except HTTPError:
+        logger.exception("Failed to add unread label", message_id=message_id)
+
+
 def update_close_conversation_status(thread_id, status):
     url = f"{current_app.config['SECURE_MESSAGE_URL']}/v2/threads/{thread_id}"
     data = {"is_closed": status}
