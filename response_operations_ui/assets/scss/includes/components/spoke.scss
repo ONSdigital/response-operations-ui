@@ -1,0 +1,30 @@
+/* Spoke styles for hub and spoke patterns and modals */
+
+.spoke {
+    margin: 2rem 0;
+    background-color: #999;
+
+    &__header {
+        background-color: #eeecec;
+    }
+
+    &__header-title {
+        margin: 0;
+        padding: 1.5rem 2rem 0.5rem 2rem;
+    }
+
+    &__body {
+        margin: 0 0 2rem 0;
+        padding: 2rem 2rem 2rem 2rem;
+        background-color: white;
+    }
+}
+
+.secondary-info {
+    color: #595959;
+    font-weight: 400;
+}
+
+.current-value::before {
+    content: "-";
+}

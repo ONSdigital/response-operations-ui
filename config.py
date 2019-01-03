@@ -21,6 +21,7 @@ class Config(object):
     EDIT_EVENT_DATES_ENABLED = strtobool(os.getenv('EDIT_EVENT_DATES_ENABLED', 'False'))
     ADD_EVENT_DATES_ENABLED = strtobool(os.getenv('ADD_EVENT_DATES_ENABLED', 'False'))
     USE_SESSION_FOR_NEXT = True
+    WATCH_FRONTEND = False
 
     # Zipkin
     ZIPKIN_DISABLE = bool(strtobool(os.getenv("ZIPKIN_DISABLE", "False")))
@@ -82,6 +83,7 @@ class DevelopmentConfig(Config):
     SECURE_COOKIES = strtobool(os.getenv('SECURE_COOKIES', 'False'))
     EDIT_EVENT_DATES_ENABLED = True
     ADD_EVENT_DATES_ENABLED = True
+    WATCH_FRONTEND = True
 
     # Service Config
     CASE_URL = os.getenv('CASE_URL', 'http://localhost:8171')
