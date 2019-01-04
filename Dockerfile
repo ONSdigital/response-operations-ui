@@ -17,6 +17,7 @@ RUN apt-get install -y curl \
         && apt-get install -y nodejs \
         && apt-get install -y build-essential
 RUN node -v && npm -v
+RUN npm install
 
 # Run the app
 ENTRYPOINT ["python3"]

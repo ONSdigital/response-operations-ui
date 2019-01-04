@@ -2,7 +2,7 @@ const { registerTask } = require('../gulpHelper');
 const gulpStyleLint = require('gulp-stylelint');
 const _ = require('lodash');
 
-function taskFunction(callback) {
+function taskFunction() {
     const config = this.config;
     const gulp = this.gulp;
     const SCSS_DIR = _.get(config, 'SCSS_DIR');

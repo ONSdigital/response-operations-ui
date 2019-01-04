@@ -8,7 +8,7 @@ const { join } = require('path');
 const { readdirSync } = require('fs');
 
 const { GulpError } = require('./gulp/GulpError');
-const { addErrorHandlingToGulpSrc } = require('./gulp/gulpHelper');
+const { addErrorHandlingToGulpSrc, registerTask } = require('./gulp/gulpHelper');
 
 const packageJson = require('./package.json');
 const config = _.get(packageJson, 'config.gulp', {});
@@ -51,6 +51,8 @@ if (taskFiles.length === 0) {
 }
 
 taskFiles.map(initialiseTask);
+
+registerTask(context, ['build'], context.gulp.series(['csslint', 'scss_compile']));
 
 context.logger(`Added ${tasksAdded} tasks`);
 
