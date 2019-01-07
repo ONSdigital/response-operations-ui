@@ -2,6 +2,7 @@ FROM python:3.6-slim
 
 WORKDIR /app
 RUN rm -rf node_modules
+RUN ls
 COPY . /app
 EXPOSE 8085
 
@@ -18,7 +19,8 @@ RUN apt-get install -y curl \
         && apt-get install -y nodejs \
         && apt-get install -y build-essential
 RUN node -v && npm -v
-RUN npm install
+RUN npm install --unsafe-perms
+RUN npm rebuild node-sass
 RUN npm run gulp build
 
 # Run the app
