@@ -1,6 +1,7 @@
 FROM python:3.6-slim
 
 WORKDIR /app
+RUN rm -rf node_modules
 COPY . /app
 EXPOSE 8085
 
@@ -18,6 +19,7 @@ RUN apt-get install -y curl \
         && apt-get install -y build-essential
 RUN node -v && npm -v
 RUN npm install
+RUN npm run gulp build
 
 # Run the app
 ENTRYPOINT ["python3"]
