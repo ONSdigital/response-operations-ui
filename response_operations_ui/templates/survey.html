@@ -57,7 +57,7 @@
       <div class="ce-list">
         <h2 class="saturn u-pt-m">Collection exercises for {{survey.shortName}}</h2>
         <div class="u-mb-l">
-          <a href="/surveys/{{survey.surveyRef}}/{{survey.shortName.replace(' ', '')}}/create-collection-exercise"
+          <a href="{{ url_for('collection_exercise_bp.get_create_collection_exercise_form', survey_ref=survey.surveyRef, short_name=survey.shortName.replace(' ', '')) }}"
              name="create-collection-exercise-link" id="create-collection-exercise">Create collection exercise</a>
         </div>
         <table class="table__dense" summary="Collection exercises for the survey" id="tbl-collection-exercise">
