@@ -8,8 +8,8 @@ from response_operations_ui.common.dates import localise_datetime
 
 def format_short_name(short_name):
     """
-    This regex function returns a short name value without spaces
-    e.g. Sand & Gravel -> Sand&Gravel
+    This regex function returns a pretty-printed short name value WITH spaces
+    e.g. Sand&Gravel -> Sand & Gravel
     """
     return re.sub('(&)', r' \1 ', short_name)
 
