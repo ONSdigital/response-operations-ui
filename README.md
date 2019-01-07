@@ -15,25 +15,6 @@ Use pipenv to create a virtualenv and install dependencies
 pipenv install
 ```
 
-Ensure you have Node.js version >=10 installed.  The recommended way to do this is to use Creationix Node Version Manager, which works on Linux and MacOSX systems:
-```
-curl -o- https://raw.githubusercontent.com/creationix/nvm/v0.33.11/install.sh | bash
-```
-
-After this, run
-```
-nvm use
-```
-...and the node version specified in `.nvmrc` will be selected.
-
-Then, you only need run
-```
-npm install
-```
-...and the task runner will be installed
-
-You can run gulp tasks using `npm run gulp <taskname>`, or just `gulp` if you have `gulp` globally installed (`npm i -g gulpjs`)
-
 Once these have been installed the app can be run from the root directory using the following
 ```
 pipenv run python run.py
