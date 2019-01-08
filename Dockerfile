@@ -2,11 +2,8 @@ FROM python:3.6-slim
 
 WORKDIR /app
 RUN rm -rf node_modules
-RUN ls
 COPY . /app
 EXPOSE 8085
-
-# Python install
 RUN apt-get update -y && apt-get install -y python-pip && apt-get update -y && apt-get install -y curl
 RUN pip3 install pipenv && pipenv install --deploy --system
 

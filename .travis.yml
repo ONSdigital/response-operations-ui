@@ -2,7 +2,6 @@ language: python
 sudo: required
 dist: trusty
 python: '3.6'
-node: '10'
 
 cache:
   - pip
@@ -11,7 +10,6 @@ env:
   - APP_SETTINGS=TestingConfig
 
 install:
-  - npm install
   - pip install pipenv
   - pipenv install --dev --deploy
 

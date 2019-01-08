@@ -1,10 +1,11 @@
 <!DOCTYPE html>
-{%- import 'macros/grid.html' as grid -%}
-{%- from 'macros/panel.html' import panel -%}
-{%- set cdn_hash = "v1.5.2" -%}
-{%- set cdn_url_prefix = "https://cdn.ons.gov.uk/sdc/"~cdn_hash -%}
-{%- set css_responsive_cdn = cdn_url_prefix~"/css/responsive.css" -%}
-{%- set scripts_cdn = cdn_url_prefix~"/scripts/bundle.js" -%}
+{% import 'macros/grid.html' as grid %}
+{% from 'macros/panel.html' import panel %}
+
+{% set cdn_hash = "v1.5.2" %}
+{% set cdn_url_prefix = "https://cdn.ons.gov.uk/sdc/"~cdn_hash %}
+{% set css_responsive_cdn = cdn_url_prefix~"/css/responsive.css" %}
+{% set scripts_cdn = cdn_url_prefix~"/scripts/bundle.js" %}
 <html lang="en" class="no-js">
 
   <head>
@@ -19,7 +20,7 @@
     <!--<![endif]-->
     <link rel=stylesheet type=text/css href="{{ css_responsive_cdn }}">
     {% assets "scss_all" %}
-    <link rel=stylesheet type=text/css href="{{ url_for('static', filename='css/main.css') }}">
+    <link rel=stylesheet type=text/css href="{{ ASSET_URL }}">
     {% endassets %}
     <script type="text/javascript" src="//code.jquery.com/jquery-3.3.1.min.js"></script>
     {% assets "js_all" %}
