@@ -31,8 +31,11 @@
       <nav class="nav nav--horizontal nav--sub nav--dark u-mb-l u-pt-s" role="menu">
         <div class="container container--wide">
             <ul class="nav__list" aria-label="Section navigation menu">
-                <li class="nav__item pluto {% if not is_closed %}nav__item--current{% endif %}">
-                    <a class="nav__link" href="{{ url_for('messages_bp.view_selected_survey', selected_survey=selected_survey) }}" aria-current="{% if not is_closed %}location{% endif %}" role="menuitem">Open</a>
+                <li class="nav__item pluto {% if my_conversations %}nav__item--current{% endif %}">
+                    <a class="nav__link" href="{{ url_for('messages_bp.view_selected_survey', selected_survey=selected_survey, my_conversations='true') }}" aria-current="{% if my_conversations %}location{% endif %}" role="menuitem">My Messages</a>
+                </li>
+                <li class="nav__item pluto {% if not is_closed and not my_conversations %}nav__item--current{% endif %}">
+                    <a class="nav__link" href="{{ url_for('messages_bp.view_selected_survey', selected_survey=selected_survey) }}" aria-current="{% if not is_closed and not my_conversations %}location{% endif %}" role="menuitem">Open</a>
                 </li>
                 <li class="nav__item pluto {% if is_closed %}nav__item--current{% endif %}">
                     <a class="nav__link" href="{{ url_for('messages_bp.view_selected_survey', selected_survey=selected_survey, is_closed='true') }}" aria-current="{% if is_closed %}location{% endif %}" role="menuitem">Closed</a>
@@ -40,7 +43,6 @@
             </ul>
         </div>
       </nav>
-
       <div class="messages-list">
         {% if response_error %}
         <div class="container page__container">
@@ -62,6 +64,8 @@
         {% if not messages %}
           {% if is_closed %}
           <p>No closed conversations</p>
+          {% elif my_conversations %}
+          <p>There are currently no messages</p>
           {% else %}
           <p>No new conversations</p>
           {% endif %}

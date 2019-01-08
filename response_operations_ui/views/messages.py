@@ -203,9 +203,11 @@ def view_selected_survey(selected_survey):
         flash_message = request.args.get(get_parameter('flash_message'), type=str, default="")
 
         is_closed = request.args.get('is_closed', default='false')
+        my_conversations = request.args.get('my_conversations', default='false')
 
         thread_count = message_controllers.get_conversation_count({'survey': survey_id,
-                                                                   'is_closed': is_closed})
+                                                                   'is_closed': is_closed,
+                                                                   'my_conversations': my_conversations})
 
         recalculated_page = _calculate_page(page, limit, thread_count)
 
@@ -217,7 +219,8 @@ def view_selected_survey(selected_survey):
             'survey': survey_id,
             'page': page,
             'limit': limit,
-            'is_closed': is_closed
+            'is_closed': is_closed,
+            'my_conversations': my_conversations
         }
 
         messages = [_refine(message) for message in message_controllers.get_thread_list(params)]
@@ -243,7 +246,8 @@ def view_selected_survey(selected_survey):
                                selected_survey=formatted_survey,
                                pagination=pagination,
                                change_survey=True,
-                               is_closed=strtobool(is_closed))
+                               is_closed=strtobool(is_closed),
+                               my_conversations=strtobool(my_conversations))
 
     except TypeError:
         logger.exception("Failed to retrieve survey id")
