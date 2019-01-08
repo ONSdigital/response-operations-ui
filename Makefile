@@ -7,10 +7,10 @@ build:
 lint:
 	pipenv run flake8 --exclude ./response_operations_ui/logger_config.py ./response_operations_ui ./tests
 	pipenv check ./response_operations_ui ./tests
+	node_modules/gulp/bin/gulp.js lint
 
 test: lint
 	pipenv run python run_tests.py
-	node_modules/gulp/bin/gulp.js lint
 
 start:
 	node_modules/gulp/bin/gulp.js build
