@@ -10,6 +10,7 @@ lint:
 
 test: lint
 	pipenv run python run_tests.py
+	node_modules/gulp/bin/gulp.js lint
 
 start:
 	node_modules/gulp/bin/gulp.js build
