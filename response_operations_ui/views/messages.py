@@ -75,6 +75,7 @@ def view_conversation(thread_id):
     thread_conversation = message_controllers.get_conversation(thread_id)
     refined_thread = [_refine(message) for message in reversed(thread_conversation['messages'])]
     latest_message = refined_thread[-1]
+    my_conversations = request.args.get('my_conversations', default='false')
 
     try:
         closed_time = localise_datetime(datetime.strptime(thread_conversation['closed_at'], "%Y-%m-%dT%H:%M:%S.%f"))
@@ -127,7 +128,8 @@ def view_conversation(thread_id):
                            page=page,
                            closed_at=closed_at,
                            thread_data=thread_conversation,
-                           show_mark_unread=_can_mark_as_unread(latest_message))
+                           show_mark_unread=_can_mark_as_unread(latest_message),
+                           my_conversations=my_conversations)
 
 
 @messages_bp.route('/mark_unread/<message_id>', methods=['GET'])
@@ -247,7 +249,7 @@ def view_selected_survey(selected_survey):
                                pagination=pagination,
                                change_survey=True,
                                is_closed=strtobool(is_closed),
-                               my_conversations=strtobool(my_conversations))
+                               my_conversations=my_conversations)
 
     except TypeError:
         logger.exception("Failed to retrieve survey id")
