@@ -16,5 +16,13 @@ start:
 	node_modules/gulp/bin/gulp.js build
 	pipenv run python run.py
 
+watch:
+	node_modules/gulp/bin/gulp.js watch
+
+watch_and_start:
+	node_modules/gulp/bin/gulp.js build
+	node_modules/gulp/bin/gulp.js watch
+	pipenv run python run.py
+
 docker: test
 	docker build -t sdcplatform/response-operations-ui:latest .
