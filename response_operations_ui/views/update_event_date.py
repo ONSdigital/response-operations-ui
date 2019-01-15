@@ -13,7 +13,7 @@ from response_operations_ui.common.validators import valid_date_for_event
 from response_operations_ui.controllers import collection_exercise_controllers, survey_controllers
 from response_operations_ui.forms import EventDateForm
 from response_operations_ui.views.collection_exercise import collection_exercise_bp, get_event_name
-from response_operations_ui.views.messages import remove_whitespace_from_survey_name
+from response_operations_ui.common.remove_whitespace_from_survey import remove_whitespace_from_survey_name
 
 logger = wrap_logger(logging.getLogger(__name__))
 

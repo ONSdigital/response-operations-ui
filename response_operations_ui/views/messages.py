@@ -12,6 +12,7 @@ from structlog import wrap_logger
 from config import FDI_LIST
 from response_operations_ui.common.dates import get_formatted_date, localise_datetime
 from response_operations_ui.common.mappers import format_short_name
+from response_operations_ui.common.remove_whitespace_from_survey import remove_whitespace_from_survey_name
 from response_operations_ui.controllers import message_controllers, survey_controllers
 from response_operations_ui.controllers.survey_controllers import get_survey_short_name_by_id, get_survey_ref_by_id, \
     get_grouped_surveys_list
@@ -159,10 +160,6 @@ def _view_select_survey(marked_unread_message=""):
     return redirect(url_for("messages_bp.view_selected_survey",
                             selected_survey=selected_survey, page=request.args.get('page'),
                             flash_message=marked_unread_message))
-
-
-def remove_whitespace_from_survey_name(survey):
-    return survey.replace(' ', '')
 
 
 @messages_bp.route('/select-survey', methods=['GET', 'POST'])

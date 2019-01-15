@@ -19,7 +19,7 @@ from response_operations_ui.controllers import collection_instrument_controllers
 from response_operations_ui.exceptions.exceptions import ApiError
 from response_operations_ui.forms import EditCollectionExerciseDetailsForm, CreateCollectionExerciseDetailsForm, \
     EventDateForm, RemoveLoadedSample
-from response_operations_ui.views.messages import remove_whitespace_from_survey_name
+from response_operations_ui.common.remove_whitespace_from_survey import remove_whitespace_from_survey_name
 
 logger = wrap_logger(logging.getLogger(__name__))
 
