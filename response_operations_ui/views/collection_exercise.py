@@ -227,6 +227,7 @@ def _select_collection_instrument(short_name, period):
 
 
 def _upload_collection_instrument(short_name, period):
+    short_name = remove_whitespace_from_survey_name(short_name)
     success_panel = None
     error = _validate_collection_instrument()
 
