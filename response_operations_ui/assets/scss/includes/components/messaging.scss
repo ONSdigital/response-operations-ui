@@ -61,99 +61,100 @@ textarea.secure-message--message {
     margin-top: 1.5rem;
     margin-bottom: 1rem;
     width: 100%;
-}
 
-.message-list thead tr {
-    border-bottom: 2px solid #666;
-}
+    thead,
+    tbody {
 
-.message-list tbody tr {
-    border-bottom: 1px solid #ccc;
-}
+        tr {
+            border-bottom: 2px solid #666;
+        }
+    }
 
-.message-list tbody tr:hover {
-    cursor: pointer;
-    background: #e4d8eb;
-    background: #eee;
-}
+    tbody tr {
+        border-width: 1px;
 
-.message-list th,
-.message-list td {
-    text-align: left;
-    padding: 0.5rem 0 0.5rem 1rem;
-}
+        &:hover {
+            cursor: pointer;
+            background: #e4d8eb;
+            background: #eee;
+        }
+    }
 
-.message-list th {
-    padding-bottom: 0.25rem;
-    background: #e4e8eb;
-    background: white;
-}
+    th,
+    td {
+        text-align: left;
+        padding: 0.5rem 0 0.5rem 1rem;
+    }
 
-.message-list__date-time {
-    width: 10rem;
-    white-space: nowrap;
-}
+    th {
+        padding-bottom: 0.25rem;
+        background: white;
+    }
 
-.message-list__ru-ref {
-    width: 8rem;
-    white-space: nowrap;
-}
+    &__date-time,
+    &__ru-ref,
+    &__ru-name,
+    &__subject,
+    &__from,
+    &__to {
+        white-space: nowrap;
+    }
 
-.message-list__ru-name {
-    max-width: 16rem;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-}
+    &__date-time {
+        width: 10rem;
+    }
 
-.message-list__subject {
-    max-width: 200px;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-}
+    &__ru-ref {
+        width: 8rem;
+    }
 
-.message-list__from {
-    width: 10rem;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-}
+    &__ru-name {
+        max-width: 16rem;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
 
-.message-list__to {
-    padding: 0.5rem 1rem 0.5rem 1rem;
-    width: 8rem;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-}
+    &__subject {
+        max-width: 200px;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
 
-.message-list__item--unread {
-    font-weight: 800;
+    &__from {
+        width: 10rem;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+
+    &__to {
+        padding: 0.5rem 1rem 0.5rem 1rem;
+        width: 8rem;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+
+    &__item--unread {
+        font-weight: 800;
+    }
 }
 
 @media only screen and (min-width : 740px) {
 
-    .message-list__date-time {
-        padding-right: 2rem;
-    }
-
-    .message-list__ru-ref {
-        padding-right: 2rem;
-    }
-
-    .message-list__ru-name {
+    .message-list__date-time,
+    .message-list__ru-ref,
+    .message-list__ru-name,
+    .message-list__subject,
+    .message-list__from,
+    .message-list__to {
         padding-right: 2rem;
     }
 
     .message-list__subject {
         min-width: 250px;
-        padding-right: 2rem;
     }
 
     .message-list__from {
         min-width: 150px;
-        padding-right: 2rem;
     }
 
     .message-list__to {
@@ -204,16 +205,8 @@ textarea.secure-message--message {
     display: none;
 }
 
-.secure-message-sent-message-meta-datetime {
-    display: block;
-    color: white;
-}
-
-.secure-message-sent-message-meta-from {
-    display: block;
-    color: white;
-}
-
+.secure-message-sent-message-meta-datetime,
+.secure-message-sent-message-meta-from,
 .secure-message-sent-message-meta-to {
     display: block;
     color: white;
