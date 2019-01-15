@@ -91,7 +91,7 @@ def view_conversation(thread_id):
             {"title": "Unavailable"}
         ]
 
-    if latest_message['unread']:
+    if latest_message['unread'] and _can_mark_as_unread(latest_message):
         message_controllers.remove_unread_label(latest_message['message_id'])
 
     page = request.args.get('page')
@@ -136,8 +136,8 @@ def view_conversation(thread_id):
 @login_required
 def mark_message_unread(message_id):
 
-    msg_from = request.args.get(get_parameter('from'), type=str, default="")
-    msg_to = request.args.get(get_parameter('to'), type=str, default="")
+    msg_from = request.args.get(get_parameter('from'), default="", type=str)
+    msg_to = request.args.get(get_parameter('to'), default="", type=str )
 
     message_controllers.add_unread_label(message_id)
 
@@ -200,9 +200,9 @@ def view_selected_survey(selected_survey):
         else:
             survey_id = _get_survey_id(selected_survey)
 
-        page = request.args.get(get_parameter('page'), type=int, default=1)
-        limit = request.args.get(get_parameter('limit'), type=int, default=10)
-        flash_message = request.args.get(get_parameter('flash_message'), type=str, default="")
+        page = request.args.get(get_parameter('page'), default=1, type=int)
+        limit = request.args.get(get_parameter('limit'), default=10, type=int)
+        flash_message = request.args.get(get_parameter('flash_message'), default="", type=str)
 
         is_closed = request.args.get('is_closed', default='false')
         my_conversations = request.args.get('my_conversations', default='false')
