@@ -109,7 +109,7 @@ def view_conversation(thread_id):
             thread_url = url_for("messages_bp.view_conversation", thread_id=thread_id) + "#latest-message"
             flash(Markup(f'Message sent. <a href={thread_url}>View Message</a>'))
             return redirect(url_for('messages_bp.view_selected_survey',
-                                    selected_survey=refined_thread[0]['survey']))
+                                    selected_survey=refined_thread[0]['survey'].replace(' ', '')))
         except (ApiError, InternalError):
             form = _repopulate_form_with_submitted_data(form)
             form.errors['sending'] = ["Message failed to send, something has gone wrong with the website."]
@@ -161,6 +161,10 @@ def _view_select_survey(marked_unread_message=""):
                             flash_message=marked_unread_message))
 
 
+def remove_whitespace_from_survey_name(survey):
+    return survey.replace(' ', '')
+
+
 @messages_bp.route('/select-survey', methods=['GET', 'POST'])
 @login_required
 def select_survey():
@@ -189,6 +193,7 @@ def select_survey():
 @messages_bp.route('/<selected_survey>', methods=['GET'])
 @login_required
 def view_selected_survey(selected_survey):
+    selected_survey = remove_whitespace_from_survey_name(selected_survey)
     formatted_survey = format_short_name(selected_survey)
     session['messages_survey_selection'] = selected_survey
     breadcrumbs = [{"title": formatted_survey + " Messages"}]
@@ -240,7 +245,8 @@ def view_selected_survey(selected_survey):
                                page=page,
                                breadcrumbs=breadcrumbs,
                                messages=messages,
-                               selected_survey=formatted_survey,
+                               selected_survey=selected_survey,
+                               formatted_survey=formatted_survey,
                                pagination=pagination,
                                change_survey=True,
                                is_closed=strtobool(is_closed))
@@ -249,12 +255,16 @@ def view_selected_survey(selected_survey):
         logger.exception("Failed to retrieve survey id")
         return render_template("messages.html",
                                breadcrumbs=breadcrumbs,
+                               selected_survey=selected_survey,
+                               formatted_survey=formatted_survey,
                                response_error=True)
     except NoMessagesError:
         logger.exception("Failed to retrieve messages")
         return render_template("messages.html",
                                breadcrumbs=breadcrumbs,
-                               response_error=True)
+                               response_error=True,
+                               selected_survey=selected_survey,
+                               formatted_survey=formatted_survey,)
 
 
 @messages_bp.route('/threads/<thread_id>/close-conversation', methods=['GET', 'POST'])

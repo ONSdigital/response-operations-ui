@@ -13,6 +13,7 @@ from response_operations_ui.common.validators import valid_date_for_event
 from response_operations_ui.controllers import collection_exercise_controllers, survey_controllers
 from response_operations_ui.forms import EventDateForm
 from response_operations_ui.views.collection_exercise import collection_exercise_bp, get_event_name
+from response_operations_ui.views.messages import remove_whitespace_from_survey_name
 
 logger = wrap_logger(logging.getLogger(__name__))
 
@@ -20,6 +21,7 @@ logger = wrap_logger(logging.getLogger(__name__))
 @collection_exercise_bp.route('/<short_name>/<period>/event/<tag>', methods=['GET'])
 @login_required
 def update_event_date(short_name, period, tag, errors=None):
+    short_name = remove_whitespace_from_survey_name(short_name)
     errors = request.args.get('errors') if not errors else errors
     survey = survey_controllers.get_survey_by_shortname(short_name)
     exercises = collection_exercise_controllers.get_collection_exercises_by_survey(survey['id'])
@@ -57,7 +59,7 @@ def update_event_date(short_name, period, tag, errors=None):
 @login_required
 def update_event_date_submit(short_name, period, tag):
     form = EventDateForm(form=request.form)
-
+    short_name = remove_whitespace_from_survey_name(short_name)
     survey_id = survey_controllers.get_survey_id_by_short_name(short_name)
     exercises = collection_exercise_controllers.get_collection_exercises_by_survey(survey_id)
     exercise = get_collection_exercise_by_period(exercises, period)

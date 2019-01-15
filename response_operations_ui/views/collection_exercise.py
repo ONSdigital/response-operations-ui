@@ -19,7 +19,7 @@ from response_operations_ui.controllers import collection_instrument_controllers
 from response_operations_ui.exceptions.exceptions import ApiError
 from response_operations_ui.forms import EditCollectionExerciseDetailsForm, CreateCollectionExerciseDetailsForm, \
     EventDateForm, RemoveLoadedSample
-
+from response_operations_ui.views.messages import remove_whitespace_from_survey_name
 
 logger = wrap_logger(logging.getLogger(__name__))
 
@@ -66,6 +66,7 @@ def build_collection_exercise_details(short_name, period):
 @collection_exercise_bp.route('/<short_name>/<period>', methods=['GET'])
 @login_required
 def view_collection_exercise(short_name, period):
+    short_name = remove_whitespace_from_survey_name(short_name)
     ce_details = build_collection_exercise_details(short_name, period)
     breadcrumbs = [
         {
@@ -346,6 +347,7 @@ def _get_form_type(file_name):
 @login_required
 def view_collection_exercise_details(short_name, period):
     logger.info("Retrieving collection exercise data for form", short_name=short_name, period=period)
+    short_name = remove_whitespace_from_survey_name(short_name)
     ce_details = build_collection_exercise_details(short_name, period)
     form = EditCollectionExerciseDetailsForm(form=request.form)
     survey_details = survey_controllers.get_survey(short_name)
@@ -364,6 +366,7 @@ def view_collection_exercise_details(short_name, period):
 @login_required
 def edit_collection_exercise_details(short_name, period):
     form = EditCollectionExerciseDetailsForm(form=request.form)
+    short_name = remove_whitespace_from_survey_name(short_name)
     if not form.validate():
         logger.info("Failed validation, retrieving collection exercise data for form",
                     short_name=short_name, period=period)
@@ -450,6 +453,7 @@ def create_collection_exercise(survey_ref, short_name):
 @collection_exercise_bp.route('/<short_name>/<period>/<ce_id>/confirm-create-event/<tag>', methods=['GET'])
 @login_required
 def get_create_collection_event_form(short_name, period, ce_id, tag, errors=None):
+    short_name = remove_whitespace_from_survey_name(short_name)
     logger.info("Retrieving form for create collection exercise event", short_name=short_name, period=period,
                 ce_id=ce_id, tag=tag)
     errors = request.args.get('errors') if not errors else errors
@@ -554,6 +558,7 @@ def get_confirm_remove_sample(short_name, period):
 @collection_exercise_bp.route('/<short_name>/<period>/confirm-remove-sample', methods=['POST'])
 @login_required
 def remove_loaded_sample(short_name, period):
+    short_name = remove_whitespace_from_survey_name(short_name)
     ce_details = build_collection_exercise_details(short_name, period)
     sample_summary_id = ce_details['sample_summary']['id']
     collection_exercise_id = ce_details['collection_exercise']['id']
