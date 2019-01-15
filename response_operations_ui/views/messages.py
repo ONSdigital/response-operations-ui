@@ -137,7 +137,7 @@ def view_conversation(thread_id):
 def mark_message_unread(message_id):
 
     msg_from = request.args.get(get_parameter('from'), default="", type=str)
-    msg_to = request.args.get(get_parameter('to'), default="", type=str )
+    msg_to = request.args.get(get_parameter('to'), default="", type=str)
 
     message_controllers.add_unread_label(message_id)
 
