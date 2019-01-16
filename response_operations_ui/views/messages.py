@@ -12,7 +12,6 @@ from structlog import wrap_logger
 from config import FDI_LIST
 from response_operations_ui.common.dates import get_formatted_date, localise_datetime
 from response_operations_ui.common.mappers import format_short_name
-from response_operations_ui.common.remove_whitespace_from_survey import remove_whitespace_from_survey_name
 from response_operations_ui.controllers import message_controllers, survey_controllers
 from response_operations_ui.controllers.survey_controllers import get_survey_short_name_by_id, get_survey_ref_by_id, \
     get_grouped_surveys_list
@@ -110,7 +109,7 @@ def view_conversation(thread_id):
             thread_url = url_for("messages_bp.view_conversation", thread_id=thread_id) + "#latest-message"
             flash(Markup(f'Message sent. <a href={thread_url}>View Message</a>'))
             return redirect(url_for('messages_bp.view_selected_survey',
-                                    selected_survey=refined_thread[0]['survey'].replace(' ', '')))
+                                    selected_survey=refined_thread[0]['survey']))
         except (ApiError, InternalError):
             form = _repopulate_form_with_submitted_data(form)
             form.errors['sending'] = ["Message failed to send, something has gone wrong with the website."]
@@ -190,7 +189,6 @@ def select_survey():
 @messages_bp.route('/<selected_survey>', methods=['GET'])
 @login_required
 def view_selected_survey(selected_survey):
-    selected_survey = remove_whitespace_from_survey_name(selected_survey)
     formatted_survey = format_short_name(selected_survey)
     session['messages_survey_selection'] = selected_survey
     breadcrumbs = [{"title": formatted_survey + " Messages"}]
