@@ -3,9 +3,7 @@
 .upload-file::before {
     content: " ";
     background-size: 1.6rem;
-    min-width: 27px;
     min-width: 1.5rem;
-    height: 27px;
     height: 1.5rem;
     margin-left: 0.5em;
     float: right;
@@ -27,7 +25,6 @@ input[type = "file"] {
     border-radius: 4px;
     width: 100%;
     display: block;
-    margin-bottom: 1rem;
     margin-bottom: 0;
     background: white;
 }

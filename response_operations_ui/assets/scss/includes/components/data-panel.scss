@@ -23,14 +23,14 @@
             content: "\2796"; /* Unicode character for "minus" sign (-) */
         }
     }
-}
 
-.data-panel-header__title {
-    border: 0;
-    background: none;
-    color: #4263c2;
-    padding: 0;
-    display: none;
+    &__title {
+        border: 0;
+        background: none;
+        color: #4263c2;
+        padding: 0;
+        display: none;
+    }
 }
 
 .data-panel-body {
