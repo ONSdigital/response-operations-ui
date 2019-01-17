@@ -75,6 +75,7 @@ def view_conversation(thread_id):
     thread_conversation = message_controllers.get_conversation(thread_id)
     refined_thread = [_refine(message) for message in reversed(thread_conversation['messages'])]
     latest_message = refined_thread[-1]
+    my_conversations = request.args.get('my_conversations', default='false')
 
     try:
         closed_time = localise_datetime(datetime.strptime(thread_conversation['closed_at'], "%Y-%m-%dT%H:%M:%S.%f"))
@@ -90,7 +91,7 @@ def view_conversation(thread_id):
             {"title": "Unavailable"}
         ]
 
-    if latest_message['unread']:
+    if latest_message['unread'] and _can_mark_as_unread(latest_message):
         message_controllers.remove_unread_label(latest_message['message_id'])
 
     page = request.args.get('page')
@@ -127,15 +128,16 @@ def view_conversation(thread_id):
                            page=page,
                            closed_at=closed_at,
                            thread_data=thread_conversation,
-                           show_mark_unread=_can_mark_as_unread(latest_message))
+                           show_mark_unread=_can_mark_as_unread(latest_message),
+                           my_conversations=my_conversations)
 
 
 @messages_bp.route('/mark_unread/<message_id>', methods=['GET'])
 @login_required
 def mark_message_unread(message_id):
 
-    msg_from = request.args.get(get_parameter('from'), type=str, default="")
-    msg_to = request.args.get(get_parameter('to'), type=str, default="")
+    msg_from = request.args.get(get_parameter('from'), default="", type=str)
+    msg_to = request.args.get(get_parameter('to'), default="", type=str)
 
     message_controllers.add_unread_label(message_id)
 
@@ -198,14 +200,16 @@ def view_selected_survey(selected_survey):
         else:
             survey_id = _get_survey_id(selected_survey)
 
-        page = request.args.get(get_parameter('page'), type=int, default=1)
-        limit = request.args.get(get_parameter('limit'), type=int, default=10)
-        flash_message = request.args.get(get_parameter('flash_message'), type=str, default="")
+        page = request.args.get(get_parameter('page'), default=1, type=int)
+        limit = request.args.get(get_parameter('limit'), default=10, type=int)
+        flash_message = request.args.get(get_parameter('flash_message'), default="", type=str)
 
         is_closed = request.args.get('is_closed', default='false')
+        my_conversations = request.args.get('my_conversations', default='false')
 
         thread_count = message_controllers.get_conversation_count({'survey': survey_id,
-                                                                   'is_closed': is_closed})
+                                                                   'is_closed': is_closed,
+                                                                   'my_conversations': my_conversations})
 
         recalculated_page = _calculate_page(page, limit, thread_count)
 
@@ -217,7 +221,8 @@ def view_selected_survey(selected_survey):
             'survey': survey_id,
             'page': page,
             'limit': limit,
-            'is_closed': is_closed
+            'is_closed': is_closed,
+            'my_conversations': my_conversations
         }
 
         messages = [_refine(message) for message in message_controllers.get_thread_list(params)]
@@ -244,7 +249,8 @@ def view_selected_survey(selected_survey):
                                displayed_short_name=displayed_short_name,
                                pagination=pagination,
                                change_survey=True,
-                               is_closed=strtobool(is_closed))
+                               is_closed=strtobool(is_closed),
+                               my_conversations=my_conversations)
 
     except TypeError:
         logger.exception("Failed to retrieve survey id")
