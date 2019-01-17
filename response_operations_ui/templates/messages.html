@@ -17,7 +17,7 @@
         {% endwith %}
 
   {% if change_survey %}
-    <h1 class="saturn u-mb-xs" name="page-messages-title">{{ selected_survey }} Messages
+    <h1 class="saturn u-mb-xs" name="page-messages-title">{{ displayed_short_name }} Messages
 
       <span class="mars">(<a id="change-survey" href="{{ url_for('messages_bp.select_survey') }}">Change survey</a>)</span>
 
