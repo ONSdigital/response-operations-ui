@@ -31,8 +31,11 @@
       <nav class="nav nav--horizontal nav--sub nav--dark u-mb-l u-pt-s" role="menu">
         <div class="container container--wide">
             <ul class="nav__list" aria-label="Section navigation menu">
-                <li class="nav__item pluto {% if not is_closed %}nav__item--current{% endif %}">
-                    <a class="nav__link" href="{{ url_for('messages_bp.view_selected_survey', selected_survey=selected_survey) }}" aria-current="{% if not is_closed %}location{% endif %}" role="menuitem">Open</a>
+                <li class="nav__item pluto {% if my_conversations =='true' %}nav__item--current{% endif %}">
+                    <a class="nav__link" href="{{ url_for('messages_bp.view_selected_survey', selected_survey=selected_survey, my_conversations='true') }}" aria-current="{% if my_conversations %}location{% endif %}" role="menuitem">My Messages</a>
+                </li>
+                <li class="nav__item pluto {% if not is_closed and not my_conversations == 'true' %}nav__item--current{% endif %}">
+                    <a class="nav__link" href="{{ url_for('messages_bp.view_selected_survey', selected_survey=selected_survey) }}" aria-current="{% if not is_closed and not my_conversations %}location{% endif %}" role="menuitem">Open</a>
                 </li>
                 <li class="nav__item pluto {% if is_closed %}nav__item--current{% endif %}">
                     <a class="nav__link" href="{{ url_for('messages_bp.view_selected_survey', selected_survey=selected_survey, is_closed='true') }}" aria-current="{% if is_closed %}location{% endif %}" role="menuitem">Closed</a>
@@ -40,7 +43,6 @@
             </ul>
         </div>
       </nav>
-
       <div class="messages-list">
         {% if response_error %}
         <div class="container page__container">
@@ -62,6 +64,8 @@
         {% if not messages %}
           {% if is_closed %}
           <p>No closed conversations</p>
+          {% elif my_conversations == true %}
+          <p>There are currently no messages</p>
           {% else %}
           <p>No new conversations</p>
           {% endif %}
@@ -104,7 +108,7 @@
                     {{ message.business_name or 'Unavailable' }}
                 </td>
                 <td name="tbl-messages-subject" class="message-list__subject">
-                    <a href="{{ url_for('messages_bp.view_conversation', thread_id=message.thread_id, page=page) }}#latest-message" id="message-link-{{ loop.index }}">{{ message.subject }}</a>
+                    <a href="{{ url_for('messages_bp.view_conversation', thread_id=message.thread_id, page=page, my_conversations=my_conversations) }}#latest-message" id="message-link-{{ loop.index }}">{{ message.subject }}</a>
                 </td>
                 <td name="tbl-messages-from" class="message-list__from" id="message-from-{{ loop.index }}">
                     {{ message.from or 'Unavailable' }}
