@@ -7,7 +7,6 @@ from structlog import wrap_logger
 
 from config import FDI_LIST
 from response_operations_ui.common.mappers import format_short_name
-from response_operations_ui.common.remove_whitespace_from_survey import remove_whitespace_from_survey_name
 from response_operations_ui.exceptions.exceptions import ApiError
 
 
@@ -31,7 +30,7 @@ def get_survey_by_id(survey_id):
 
 
 def get_survey_by_shortname(short_name):
-    short_name = remove_whitespace_from_survey_name(short_name)
+    short_name = ''.join(short_name.split())
     logger.debug('Retrieving survey', short_name=short_name)
     url = f'{app.config["SURVEY_URL"]}/surveys/shortname/{short_name}'
     response = requests.get(url, auth=app.config['SURVEY_AUTH'])
