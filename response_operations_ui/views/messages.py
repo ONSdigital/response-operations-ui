@@ -138,12 +138,13 @@ def mark_message_unread(message_id):
 
     msg_from = request.args.get(get_parameter('from'), default="", type=str)
     msg_to = request.args.get(get_parameter('to'), default="", type=str)
+    my_conversations = request.args.get(get_parameter('my_conversations', default='false'))
 
     message_controllers.add_unread_label(message_id)
 
     marked_unread_message = f"Message from {msg_from} to {msg_to} marked unread"
 
-    return _view_select_survey(marked_unread_message)
+    return _view_select_survey(marked_unread_message, my_conversations)
 
 
 @messages_bp.route('/', methods=['GET'])
@@ -152,7 +153,7 @@ def view_select_survey():
     return _view_select_survey()
 
 
-def _view_select_survey(marked_unread_message=""):
+def _view_select_survey(marked_unread_message="", my_conversations="false"):
     try:
         selected_survey = session["messages_survey_selection"]
     except KeyError:
@@ -160,7 +161,7 @@ def _view_select_survey(marked_unread_message=""):
 
     return redirect(url_for("messages_bp.view_selected_survey",
                             selected_survey=selected_survey, page=request.args.get('page'),
-                            flash_message=marked_unread_message))
+                            flash_message=marked_unread_message, my_conversations=my_conversations))
 
 
 @messages_bp.route('/select-survey', methods=['GET', 'POST'])
