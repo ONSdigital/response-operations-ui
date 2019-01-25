@@ -136,9 +136,9 @@ def view_conversation(thread_id):
 @login_required
 def mark_message_unread(message_id):
 
-    msg_from = request.args.get(get_parameter('from'), default="", type=str)
-    msg_to = request.args.get(get_parameter('to'), default="", type=str)
-    my_conversations = request.args.get(get_parameter('my_conversations', default='false'))
+    msg_from = request.args.get('from', default="", type=str)
+    msg_to = request.args.get('to', default="", type=str)
+    my_conversations = request.args.get('my_conversations', default='false')
 
     message_controllers.add_unread_label(message_id)
 
@@ -201,9 +201,9 @@ def view_selected_survey(selected_survey):
         else:
             survey_id = _get_survey_id(selected_survey)
 
-        page = request.args.get(get_parameter('page'), default=1, type=int)
-        limit = request.args.get(get_parameter('limit'), default=10, type=int)
-        flash_message = request.args.get(get_parameter('flash_message'), default="", type=str)
+        page = request.args.get('page', default=1, type=int)
+        limit = request.args.get('limit', default=10, type=int)
+        flash_message = request.args.get('flash_message', default="", type=str)
 
         is_closed = request.args.get('is_closed', default='false')
         my_conversations = request.args.get('my_conversations', default='false')
