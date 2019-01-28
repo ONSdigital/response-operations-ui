@@ -6,7 +6,7 @@ from distutils.util import strtobool
 
 from flask import Blueprint, flash, g, Markup, render_template, request, redirect, session, url_for
 from flask_login import login_required, current_user
-from flask_paginate import get_parameter, Pagination
+from flask_paginate import Pagination
 from structlog import wrap_logger
 
 from config import FDI_LIST
