@@ -6,7 +6,7 @@ from distutils.util import strtobool
 
 from flask import Blueprint, flash, g, Markup, render_template, request, redirect, session, url_for
 from flask_login import login_required, current_user
-from flask_paginate import get_parameter, Pagination
+from flask_paginate import Pagination
 from structlog import wrap_logger
 
 from config import FDI_LIST
@@ -136,14 +136,15 @@ def view_conversation(thread_id):
 @login_required
 def mark_message_unread(message_id):
 
-    msg_from = request.args.get(get_parameter('from'), default="", type=str)
-    msg_to = request.args.get(get_parameter('to'), default="", type=str)
+    msg_from = request.args.get('from', default="", type=str)
+    msg_to = request.args.get('to', default="", type=str)
+    my_conversations = request.args.get('my_conversations', default='false')
 
     message_controllers.add_unread_label(message_id)
 
     marked_unread_message = f"Message from {msg_from} to {msg_to} marked unread"
 
-    return _view_select_survey(marked_unread_message)
+    return _view_select_survey(marked_unread_message, my_conversations)
 
 
 @messages_bp.route('/', methods=['GET'])
@@ -152,7 +153,7 @@ def view_select_survey():
     return _view_select_survey()
 
 
-def _view_select_survey(marked_unread_message=""):
+def _view_select_survey(marked_unread_message="", my_conversations="false"):
     try:
         selected_survey = session["messages_survey_selection"]
     except KeyError:
@@ -160,7 +161,7 @@ def _view_select_survey(marked_unread_message=""):
 
     return redirect(url_for("messages_bp.view_selected_survey",
                             selected_survey=selected_survey, page=request.args.get('page'),
-                            flash_message=marked_unread_message))
+                            flash_message=marked_unread_message, my_conversations=my_conversations))
 
 
 @messages_bp.route('/select-survey', methods=['GET', 'POST'])
@@ -200,9 +201,9 @@ def view_selected_survey(selected_survey):
         else:
             survey_id = _get_survey_id(selected_survey)
 
-        page = request.args.get(get_parameter('page'), default=1, type=int)
-        limit = request.args.get(get_parameter('limit'), default=10, type=int)
-        flash_message = request.args.get(get_parameter('flash_message'), default="", type=str)
+        page = request.args.get('page', default=1, type=int)
+        limit = request.args.get('limit', default=10, type=int)
+        flash_message = request.args.get('flash_message', default="", type=str)
 
         is_closed = request.args.get('is_closed', default='false')
         my_conversations = request.args.get('my_conversations', default='false')
