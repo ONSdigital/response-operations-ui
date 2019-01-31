@@ -10,9 +10,15 @@
     </div>
   </div>
   <div class="spoke__body">
-    <form method="post" action="{{ url_for('reporting_unit_bp.change_enrolment_status', ru_ref=ru_ref,
+    <form method="post" {% if tab=='respondents' %}
+          action="{{ url_for('respondent_bp.change_enrolment_status', ru_ref=ru_ref,
                                            business_id=business_id, survey_id=survey_id, respondent_id=respondent_id,
-                                           change_flag=change_flag)}}" class="u-mt-l">
+                                           change_flag=change_flag)}}"
+          {% else %}
+          action="{{ url_for('reporting_unit_bp.change_enrolment_status', ru_ref=ru_ref,
+                                           business_id=business_id, survey_id=survey_id, respondent_id=respondent_id,
+                                           change_flag=change_flag)}}"
+          {% endif %} class="u-mt-l">
       <dl class="description-list description-list-8 u-pb-m">
         <dt class="">
           Reference:
@@ -55,8 +61,13 @@
       </button>
 
       <div class="u-mt-xs">
-        <a href="{{ url_for('reporting_unit_bp.view_reporting_unit', ru_ref=ru_ref, survey_id=survey_id,
-                            respondent_id=respondent_id, business_id=business_id, change_flag=change_flag)}}">Cancel</a>
+        <a {% if tab=='respondents' %}
+           href="{{ url_for('respondent_bp.respondent_details', ru_ref=ru_ref, survey_id=survey_id,
+                            respondent_id=respondent_id, business_id=business_id, change_flag=change_flag)}}"
+           {% else %}
+           href="{{ url_for('reporting_unit_bp.view_reporting_unit', ru_ref=ru_ref, survey_id=survey_id,
+                            respondent_id=respondent_id, business_id=business_id, change_flag=change_flag)}}"
+           {% endif %}>Cancel</a>
       </div>
     </form>
   </div>

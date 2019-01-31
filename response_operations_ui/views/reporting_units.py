@@ -148,14 +148,14 @@ def view_contact_details(ru_ref, respondent_id):
     form = EditContactDetailsForm(form=request.form, default_values=respondent_details)
 
     return render_template('edit-contact-details.html', ru_ref=ru_ref, respondent_details=respondent_details,
-                           form=form)
+                           form=form, tab='reporting_units')
 
 
 @reporting_unit_bp.route('/<ru_ref>/edit-contact-details/<respondent_id>', methods=['POST'])
 @login_required
 def edit_contact_details(ru_ref, respondent_id):
     form = request.form
-    contact_details_changed = party_controller.update_contact_details(ru_ref, respondent_id, form)
+    contact_details_changed = party_controller.update_contact_details(respondent_id, form, ru_ref)
 
     ui_message = 'No updates were necessary'
     if 'emailAddress' in contact_details_changed:
@@ -189,7 +189,7 @@ def view_resend_verification(ru_ref, party_id):
     email = respondent['pendingEmailAddress'] if 'pendingEmailAddress' in respondent \
         else respondent['emailAddress']
 
-    return render_template('re-send-verification-email.html', ru_ref=ru_ref, email=email)
+    return render_template('re-send-verification-email.html', ru_ref=ru_ref, email=email, tab='reporting_units')
 
 
 @reporting_unit_bp.route('/resend_verification/<ru_ref>/<party_id>', methods=['POST'])
@@ -225,7 +225,8 @@ def confirm_change_enrolment_status(ru_ref):
                            survey_name=request.args['survey_name'], respondent_id=request.args['respondent_id'],
                            first_name=request.args['respondent_first_name'],
                            last_name=request.args['respondent_last_name'],
-                           change_flag=request.args['change_flag'])
+                           change_flag=request.args['change_flag'],
+                           tab='reporting_units')
 
 
 @reporting_unit_bp.route('/<ru_ref>/change-respondent-status', methods=['GET'])

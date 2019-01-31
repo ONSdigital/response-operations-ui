@@ -125,7 +125,7 @@ def search_respondent_by_email(email):
     return response.json()
 
 
-def update_contact_details(ru_ref, respondent_id, form):
+def update_contact_details(respondent_id, form, ru_ref='NOT DEFINED'):
     logger.debug('Updating respondent details', respondent_id=respondent_id)
 
     new_contact_details = {
