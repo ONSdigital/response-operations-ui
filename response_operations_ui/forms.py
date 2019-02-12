@@ -46,8 +46,18 @@ class SecureMessageForm(FlaskForm):
 
 
 class SearchForm(FlaskForm):
-    query = StringField('Query')
+    first_name = StringField('first_name')
+    last_name = StringField('last_name')
+    email_address = StringField('email_address')
     submit = SubmitField('Search')
+
+    def validate(form):
+        first_name = form.first_name.data.strip()
+        last_name = form.last_name.data.strip()
+        email_address = form.email_address.data.strip()
+
+        if first_name != '' or last_name != '' or email_address != '':
+            return True
 
 
 class EditContactDetailsForm(FlaskForm):

@@ -1,6 +1,6 @@
 import logging
 
-from flask import Blueprint, redirect, render_template, request, url_for
+from flask import Blueprint, render_template, request
 from flask_login import login_required
 from structlog import wrap_logger
 
@@ -21,15 +21,21 @@ def respondent_search():
     breadcrumbs = [{"title": "Respondents"}]
     response = None
 
-    if form.validate_on_submit():
-        email = request.form.get('query')
-        # NB: requires exact email to be entered
-        respondent = party_controller.search_respondent_by_email(email)
-        if respondent:
-            return redirect(url_for('respondent_bp.respondent_details', respondent_id=respondent['id']))
-        response = 'No Respondent found for ' + email
+    if request.method == 'POST':
+        email_address = request.form.get('email_address')
+        first_name = request.form.get('first_name')
+        last_name = request.form.get('last_name')
 
-    return render_template('search-respondent.html', response=response, form=form, breadcrumbs=breadcrumbs)
+        if not form.validate():
+            return render_template('respondent-search/search-respondents.html', validation_error='At least one input should be filled', response=response, form=form, breadcrumbs=breadcrumbs)
+
+        respondents = party_controller.search_respondents(email_address, first_name, last_name)
+        if respondents:
+            return render_template('respondent-search/search-respondents-results.html', respondents=respondents, respondent_count=len(respondents))
+        else:
+            return render_template('respondent-search/search-respondents-results.html', respondents=[], respondent_count=0)
+
+    return render_template('respondent-search/search-respondents.html', response=response, form=form, breadcrumbs=breadcrumbs)
 
 
 @respondent_bp.route('/respondent-details/<respondent_id>', methods=['GET'])

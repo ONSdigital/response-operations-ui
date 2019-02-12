@@ -1,0 +1,51 @@
+{% extends "layouts/base.html" %}
+{% block page_title %}Respondents | Survey Data Collection{% endblock %}
+
+{% block main %}
+<div role="main" id="main" class="page__main">
+    <h1 class="jupiter">Respondents</h1>
+    <div class="grid">
+        <div class="grid__col col-12@l">
+
+            <h1>Find a respondent</h1>
+
+            {# TODO: Add form #}
+
+                <h2>{{ respondent_count }} respondents found.</h2>
+                {# TODO: Pagination task #}
+                {#<p>Displaying <strong>{{ start }}-{{ end }} of {{ total }}</strong> </p>#}
+
+                {% if respondents %}
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Name</th>
+                            <th>Email Address</th>
+                            <th>Status</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                    {% for respondent in respondents %}
+                        <tr>
+                            <td>
+                                <a href="{# TODO #}">{{ respondent.first_name }} {{ respondent.last_name }}</a>
+                            </td>
+                            <td>
+                                {{ respondent.email }}
+                            </td>
+                            <td>
+                                <span class="status-icon--{{ respondent.state | lower }}">{{ respondent.state | title }}</span>
+                            </td>
+                        </tr>
+                    {% endfor %}
+                    </tbody>
+                </table>
+            {% endif %}
+
+            {% if response %}
+            <div class="u-mt-m">{{ response }}</div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %}

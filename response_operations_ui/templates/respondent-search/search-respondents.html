@@ -9,12 +9,26 @@
 
                 <div class="ru-search">
 
+                {% if validation_error %}
+                {# TODO: Proper styling of validation #}
+                <div>{{ validation_error }}</div>
+                {% endif %}
+
                     <form action="" method="post">
                         {{ form.csrf_token }}
+                        <div class="field u-mb-s">
+                            <label class="label">First name</label>
+                            {{ form.first_name(size=20, class_="respondent-search-box input input--text")}}
+                        </div>
 
                         <div class="field u-mb-s">
-                            <label class="label">Enter an email address</label>
-                            {{ form.query(size=20, class_="respondent-search-box input input--text")}}
+                            <label class="label">Last name</label>
+                            {{ form.last_name(size=20, class_="respondent-search-box input input--text")}}
+                        </div>
+
+                        <div class="field u-mb-s">
+                            <label class="label">Email address</label>
+                            {{ form.email_address(size=20, class_="respondent-search-box input input--text")}}
                         </div>
 
                         <div>
