@@ -10,7 +10,7 @@
     </div>
   </div>
   <div class="spoke__body">
-    <form method="post" {% if tab=='respondents' %}
+      <form method="post" {% if tab=='respondents' %}
           action="{{ url_for('respondent_bp.change_enrolment_status', ru_ref=ru_ref,
                                            business_id=business_id, survey_id=survey_id, respondent_id=respondent_id,
                                            change_flag=change_flag)}}"
@@ -61,7 +61,8 @@
       </button>
 
       <div class="u-mt-xs">
-        <a {% if tab=='respondents' %}
+        <a id="cancel"
+          {% if tab=='respondents' %}
            href="{{ url_for('respondent_bp.respondent_details', ru_ref=ru_ref, survey_id=survey_id,
                             respondent_id=respondent_id, business_id=business_id, change_flag=change_flag)}}"
            {% else %}

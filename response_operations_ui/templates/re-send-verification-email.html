@@ -25,12 +25,8 @@
       <button  id="confirm" type="submit" class="btn u-mb-s">Confirm</button>
 
       <div class="u-mt-xs">
-        <a id="cancel" {% if tab=='respondents' %}
-           href="{{ url_for('respondent_bp.respondent_details', respondent_id=respondent_id) }}"
-           {% else %}
-           href="{{ url_for('reporting_unit_bp.view_reporting_unit', ru_ref=ru_ref) }}"
-           {% endif %}
-        >Cancel</a>
+        {%- set href = url_for('respondent_bp.respondent_details', respondent_id=respondent_id) if tab=='respondents' else url_for('reporting_unit_bp.view_reporting_unit', ru_ref=ru_ref) -%}
+        <a id="cancel" href="{{ href }}" >Cancel</a>
       </div>
 
     </form>

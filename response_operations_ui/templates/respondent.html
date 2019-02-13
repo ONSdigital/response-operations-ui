@@ -40,8 +40,7 @@
                         <dd id="respondent-account-status">
                             {% if respondent.status  == 'Suspended' %} Locked {% else %} {{ respondent.status }} {% endif %}
                           <br>
-                          <a id="resend-verification-email-btn" href="{{ url_for('respondent_bp.view_resend_verification', respondent_id=respondent.id) }}">Re-send verification email</a>
-                          </br>
+                          {% if respondent.status == 'Suspended' %}<a id="resend-verification-email-btn" href="{{ url_for('respondent_bp.view_resend_verification', respondent_id=respondent.id) }}">Re-send verification email</a> {% endif %}
                         </dd>
                     </dl>
             </section>
