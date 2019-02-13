@@ -31,9 +31,9 @@ def respondent_search():
 
         respondents = party_controller.search_respondents(email_address, first_name, last_name)
         if respondents:
-            return render_template('respondent-search/search-respondents-results.html', respondents=respondents, respondent_count=len(respondents))
+            return render_template('respondent-search/search-respondents-results.html', respondents=respondents, respondent_count=len(respondents), form=form, breadcrumbs=breadcrumbs)
         else:
-            return render_template('respondent-search/search-respondents-results.html', respondents=[], respondent_count=0)
+            return render_template('respondent-search/search-respondents-results.html', respondents=[], respondent_count=0, form=form, breadcrumbs=breadcrumbs)
 
     return render_template('respondent-search/search-respondents.html', response=response, form=form, breadcrumbs=breadcrumbs)
 
