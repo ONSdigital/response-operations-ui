@@ -8,8 +8,7 @@
             {% include 'respondent-search/_inline-form.html' %}
     
             <h2 class="u-fs-l">{{ respondent_count }} respondents found.</h2>
-            {# TODO: Pagination task #}
-            {#<p>Displaying <strong>{{ start }}-{{ end }} of {{ total }}</strong> </p>#}
+            <h3 class="u-mb-m">Displaying <strong>1 - 25</strong> of <strong>100</strong> </h3>
     
             {% if respondents %}{% include 'respondent-search/_table.html' %}{% endif %}
         </div>

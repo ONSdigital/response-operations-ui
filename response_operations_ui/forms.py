@@ -49,6 +49,7 @@ class SearchForm(FlaskForm):
     first_name = StringField('first_name')
     last_name = StringField('last_name')
     email_address = StringField('email_address')
+    page = HiddenField('page')
     submit = SubmitField('Search')
 
     def validate(form):
