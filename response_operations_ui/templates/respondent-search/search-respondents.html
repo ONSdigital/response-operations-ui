@@ -2,45 +2,38 @@
 {% block page_title %}Respondents | Survey Data Collection{% endblock %}
 
 {% block main %}
-    <div role="main" id="main" class="page__main">
-        <h1 class="jupiter">Respondents</h1>
-        <div class="grid">
-            <div class="grid__col col-12@l">
+<div role="main" id="main" class="page__main">
+    <h1 class="u-fs-xl">Find a respondent</h1>
+    <div class="grid">
+        <div class="grid__col col-12@l">
 
-                <div class="ru-search">
+            <div class="ru-search">
 
-                {% if validation_error %}
-                {# TODO: Proper styling of validation #}
-                <div>{{ validation_error }}</div>
-                {% endif %}
+                {% if validation_error %}{% call panel(id='validation-error', type='error', class='u-mb-s') %}{{ validation_error }}{% endcall %}{% endif %}
 
-                    <form action="" method="post">
-                        {{ form.csrf_token }}
-                        <div class="field u-mb-s">
-                            <label class="label">First name</label>
-                            {{ form.first_name(size=20, class_="respondent-search-box input input--text")}}
-                        </div>
+                <form action="" method="post">
+                    {{ form.csrf_token }}
+                    <div class="field u-mb-s">
+                        <label class="label">First name</label>
+                        {{ form.first_name(size=20, class_="respondent-search-box input input--text")}}
+                    </div>
 
-                        <div class="field u-mb-s">
-                            <label class="label">Last name</label>
-                            {{ form.last_name(size=20, class_="respondent-search-box input input--text")}}
-                        </div>
+                    <div class="field u-mb-s">
+                        <label class="label">Last name</label>
+                        {{ form.last_name(size=20, class_="respondent-search-box input input--text")}}
+                    </div>
 
-                        <div class="field u-mb-s">
-                            <label class="label">Email address</label>
-                            {{ form.email_address(size=20, class_="respondent-search-box input input--text")}}
-                        </div>
+                    <div class="field u-mb-s">
+                        <label class="label">Email address</label>
+                        {{ form.email_address(size=20, class_="respondent-search-box input input--text")}}
+                    </div>
 
-                        <div>
-                            <button id="btn-search-respondent" type="submit" class="btn">Search</button>
-                        </div>
-                    </form>
-
-                </div>
-                {% if response %}
-                    <div class="u-mt-m">{{ response }}</div>
-                {% endif %}
+                    <div>
+                        <button id="btn-search-respondent" type="submit" class="btn">Search</button>
+                    </div>
+                </form>
             </div>
         </div>
     </div>
+</div>
 {% endblock %}

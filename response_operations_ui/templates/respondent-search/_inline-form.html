@@ -1,0 +1,20 @@
+<form action="" method="post">
+    <fieldset class="fieldgroup fieldgroup--inline u-mb-l">
+        <legend class="fieldgroup__title u-fs-xl">Find a respondent</legend>
+
+            <div class="fieldgroup__fields">
+                <div class="field field--input">
+                    <label for="" class="label u-fs--b">First name</label>
+                    {{ form.first_name(size=20, class_="input input--text")}}
+                </div>
+                <div class="field field--input">
+                    <label for="" class="label u-fs--b">Last name</label>
+                    {{ form.last_name(size=20, class_="input input--text")}}
+                </div>
+                <div class="field field--input">
+                    <label for="" class="label u-fs--b">Email Address</label>
+                    {{ form.email_address(size=30, class_="input input--text")}}
+                </div>
+            </div>
+    </fieldset>
+</form>

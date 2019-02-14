@@ -3,65 +3,16 @@
 
 {% block main %}
 <div role="main" id="main" class="page__main">
-  <h1 class="jupiter">Respondents</h1>
-  <div class="grid">
-    <div class="grid__col col-12@l">
-      <form action="" method="post"></form>
-        <fieldset class="fieldgroup fieldgroup--inline">
-          <legend class="fieldgroup__title">Find a respondent</legend>
-          
-          <div class="fieldgroup__fields">
-            <div class="field field--input">
-              <label for="" class="label u-fs--b">First name</label>
-              {{ form.first_name(size=20, class_="input input--text")}}
-            </div>
-            <div class="field field--input">
-              <label for="" class="label u-fs--b">Last name</label>
-              {{ form.last_name(size=20, class_="input input--text")}}
-            </div>
-            <div class="field field--input">
-              <label for="" class="label u-fs--b">Email Address</label>
-              {{ form.email_address(size=20, class_="input input--text")}}
-            </div>
-          </div>
-        </fieldset>
-      </form>
+    <div class="grid">
+        <div class="grid__col col-12@l">
+            {% include 'respondent-search/_inline-form.html' %}
     
-    <h2>{{ respondent_count }} respondents found.</h2>
-    {# TODO: Pagination task #}
-    {#<p>Displaying <strong>{{ start }}-{{ end }} of {{ total }}</strong> </p>#}
+            <h2 class="u-fs-l">{{ respondent_count }} respondents found.</h2>
+            {# TODO: Pagination task #}
+            {#<p>Displaying <strong>{{ start }}-{{ end }} of {{ total }}</strong> </p>#}
     
-    {% if respondents %}
-    <table>
-      <thead>
-        <tr>
-          <th>Name</th>
-          <th>Email Address</th>
-          <th>Status</th>
-        </tr>
-      </thead>
-      <tbody>
-        {% for respondent in respondents %}
-        <tr>
-          <td>
-            <a href="{# TODO #}">{{ respondent.first_name }} {{ respondent.last_name }}</a>
-          </td>
-          <td>
-            {{ respondent.email }}
-          </td>
-          <td>
-            <span class="status status--small status--dead status-icon--{{ respondent.state_class | lower }}">{{ respondent.state | title }}</span>
-          </td>
-        </tr>
-        {% endfor %}
-      </tbody>
-    </table>
-    {% endif %}
-    
-    {% if response %}
-    <div class="u-mt-m">{{ response }}</div>
-    {% endif %}
-  </div>
-</div>
+            {% if respondents %}{% include 'respondent-search/_table.html' %}{% endif %}
+        </div>
+    </div>
 </div>
 {% endblock %}

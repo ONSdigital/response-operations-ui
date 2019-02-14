@@ -1,0 +1,24 @@
+<table>
+    <thead>
+        <tr>
+            <th class="table--header--cell">Name</th>
+            <th class="table--header--cell">Email Address</th>
+            <th class="table--header--cell">Status</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for respondent in respondents %}
+        <tr>
+            <td>
+                <a href="{# TODO #}">{{ respondent.first_name }} {{ respondent.last_name }}</a>
+            </td>
+            <td>
+                {{ respondent.email }}
+            </td>
+            <td>
+                <span class="status status--small status--dead status-icon--{{ respondent.state_class | lower }}">{{ respondent.state | title }}</span>
+            </td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
