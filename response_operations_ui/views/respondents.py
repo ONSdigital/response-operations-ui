@@ -1,9 +1,9 @@
 import logging
 
-from flask import Blueprint, render_template, request, redirect
+from flask import Blueprint, render_template, request, redirect, flash, url_for
 from flask_login import login_required
 from structlog import wrap_logger
-from urllib.parse import urlencode
+from urllib.parse import urlencode, urljoin, parse_qs
 
 from response_operations_ui.controllers import party_controller
 from response_operations_ui.forms import SearchForm
@@ -16,44 +16,62 @@ respondent_bp = Blueprint('respondent_bp', __name__,
                           static_folder='static', template_folder='templates')
 
 
-@respondent_bp.route('/', methods=['GET', 'POST'])
+@respondent_bp.route('/', methods=['GET'])
 @login_required
 def respondent_home():
-    form = SearchForm()
-    breadcrumbs = [{"title": "Respondents"}]
-
     return render_template('respondent-search/search-respondents.html',
-                           form=form,
-                           breadcrumbs=breadcrumbs)
+                           form=SearchForm(),
+                           breadcrumbs=[{"title": "Respondents"}])
 
 
-@respondent_bp.route('/search', methods=['GET'])
+@respondent_bp.route('/search', methods=['POST'])
 @login_required
-def respondent_search():
+def search_redirect():
+    form = SearchForm()
+    form_valid = form.validate()
+
+    if not form_valid:
+        flash('At least one input should be filled')
+
+    source = form.source.data or 'home'
+    page = request.args.get('page', 1)
+    
+    query_string = urlencode({
+        'email_address': form.email_address.data or '',
+        'first_name': form.first_name.data or '',
+        'last_name': form.last_name.data or '',
+        'source': source
+    })
+
+    if not form_valid and source == 'home':
+        redirect_url = url_for('respondent_bp.respondent_home')
+    else:
+        redirect_url = urljoin(url_for('respondent_bp.respondent_search', page=page), '?' + query_string)
+
+    return redirect(redirect_url)
+
+
+@respondent_bp.route('/search')
+@respondent_bp.route('/search/')
+@login_required
+def alias_search_routes():
+    return redirect(urljoin(url_for('respondent_bp.respondent_search'), '1'))
+
+
+@respondent_bp.route('/search/<page>', methods=['GET'])
+@login_required
+def respondent_search(page):
     form = SearchForm()
     breadcrumbs = [{"title": "Respondents"}, {"title": "Search"}]
 
-    email_address = request.args.get('email_address', ''),
-    first_name = request.args.get('first_name', ''),
-    last_name = request.args.get('last_name', ''),
-    page = request.args.get('page', 1)
+    qs = parse_qs(request.query_string)
 
-    form.email_address.data = email_address
-    form.first_name.data = first_name
-    form.last_name.data = last_name
-    form.page.data = page
-
-    if not form.validate():
-        return render_template( # swap for redirect.
-            # TODO: Replace with a flash message
-            'respondent-search/search-respondents.html',
-            validation_error='At least one input should be filled',
-            form=form,
-            breadcrumbs=breadcrumbs)
-
-    respondents = party_controller.search_respondents(email_address, first_name, last_name, page)
+    respondents = party_controller.search_respondents(qs.get('email_address'), qs.get('first_name'), qs.get('last_name'), page)
+    filtered_respondents = filter_respondents(respondents)
     
-    render_template('respondent-search', form=form, breadcrumb=breadcrumb, filter_respondents(respondents))
+    render_template('respondent-search-results.html',
+                    form=form, breadcrumb=breadcrumbs,
+                    respondents=filtered_respondents)
 
 
 @respondent_bp.route('/respondent-details/<respondent_id>', methods=['GET'])

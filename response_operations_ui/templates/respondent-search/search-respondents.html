@@ -9,9 +9,20 @@
 
             <div class="ru-search">
 
-                {% if validation_error %}{% call panel(id='validation-error', type='error', class='u-mb-s') %}{{ validation_error }}{% endcall %}{% endif %}
+                {% with messages = get_flashed_messages() %}
+                    {% if messages %}
+                    {% call panel(id='validation-error', type='error', class='u-mb-s') %}
+                        <ul>
+                        {% for message in messages %}
+                            <li>{{ message }}</li>
+                        {% endfor %}
+                        </ul>
+                    {% endcall %}
+                    {% endif %}
+                {% endwith %}
 
-                <form action="" method="post">
+                <form action="{{ url_for('respondent_bp.search_redirect') }}" method="post">
+                    {{ form.source(value='home') }}
                     {{ form.csrf_token }}
                     <div class="field u-mb-s">
                         <label class="label">First name</label>

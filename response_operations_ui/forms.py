@@ -49,13 +49,21 @@ class SearchForm(FlaskForm):
     first_name = StringField('first_name')
     last_name = StringField('last_name')
     email_address = StringField('email_address')
+    source = HiddenField('source')
     page = HiddenField('page')
     submit = SubmitField('Search')
 
     def validate(form):
-        first_name = form.first_name.data.strip()
-        last_name = form.last_name.data.strip()
-        email_address = form.email_address.data.strip()
+        first_name = form.first_name.data
+        last_name = form.last_name.data
+        email_address = form.email_address.data
+        source = form.source.data
+
+        if len(first_name) > 1 or len(last_name) > 0 or len(email_address) > 0:
+            return False
+
+        if source != 'home' and source != 'results':
+            return False
 
         if first_name != '' or last_name != '' or email_address != '':
             return True
