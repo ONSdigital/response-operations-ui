@@ -181,7 +181,7 @@
                 </div>
                 <div>
                   {% if respondent.status == 'SUSPENDED' %}
-                  <a id="respondent-unlock-link" href="{{ url_for('reporting_unit_bp.confirm_change_respondent_status', ru_ref=ru_ref, party_id=respondent.id, change_flag='ACTIVE') }}">Unlock</a>
+                  <a id="respondent-unlock-link" href="{{ url_for('reporting_unit_bp.confirm_change_respondent_status', ru_ref=ru_ref, party_id=respondent.id, tab='reporting_units', change_flag='ACTIVE') }}">Unlock</a>
                   {% endif %}
                 </div>
               </td>

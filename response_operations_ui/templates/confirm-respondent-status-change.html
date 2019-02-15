@@ -10,8 +10,6 @@
     </div>
   </div>
   <div class="spoke__body">
-    <form method="post" action="{{ url_for('reporting_unit_bp.change_respondent_status', ru_ref=ru_ref,
-                                            respondent_id=respondent_id, change_flag=change_flag)}}" class="u-mt-l">
       <form method="post" {% if tab=='respondents' %}
           action="{{ url_for('respondent_bp.change_respondent_status',
                                             respondent_id=respondent_id, change_flag=change_flag)}}"

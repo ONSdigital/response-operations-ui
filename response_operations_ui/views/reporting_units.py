@@ -240,7 +240,7 @@ def confirm_change_respondent_status(ru_ref):
                            last_name=respondent['lastName'],
                            email_address=respondent['emailAddress'],
                            change_flag=request.args['change_flag'],
-                           tab='respondents')
+                           tab=request.args['tab'])
 
 
 @reporting_unit_bp.route('/<ru_ref>/change-enrolment-status', methods=['POST'])

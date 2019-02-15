@@ -67,6 +67,10 @@ def change_respondent_status(respondent_id, change_flag):
             raise ApiError(response)
 
         logger.debug('Successfully changed respondent status', respondent_id=respondent_id, change_flag=change_flag)
+    else:
+        error = 'Incorrect change_flag given'
+        logger.error(error)
+        raise ValueError(error)
 
 
 def generate_new_enrolment_code(case_id):
