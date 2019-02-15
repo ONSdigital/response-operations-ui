@@ -118,7 +118,7 @@ def change_enrolment_status(respondent_id):
                                                         respondent_id=respondent_id,
                                                         survey_id=request.args['survey_id'],
                                                         change_flag=request.args['change_flag'])
-    return redirect(url_for('respondent_bp.respondent_details', respondent_id=respondent_id,  enrolment_changed='True'))
+    return redirect(url_for('respondent_bp.respondent_details', respondent_id=respondent_id, enrolment_changed='True'))
 
 
 @respondent_bp.route('/<respondent_id>/change-respondent-status', methods=['POST'])
