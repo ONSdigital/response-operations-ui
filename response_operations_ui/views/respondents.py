@@ -119,12 +119,11 @@ def resend_verification(party_id):
 @respondent_bp.route('<respondent_id>/change-enrolment-status', methods=['POST'])
 @login_required
 def change_enrolment_status(respondent_id):
-
     reporting_units_controllers.change_enrolment_status(business_id=request.args['business_id'],
                                                         respondent_id=respondent_id,
                                                         survey_id=request.args['survey_id'],
                                                         change_flag=request.args['change_flag'])
-    return redirect(url_for('respondent_bp.respondent_details', respondent_id=respondent_id,  enrolment_changed='True'))
+    return redirect(url_for('respondent_bp.respondent_details', respondent_id=respondent_id, enrolment_changed='True'))
 
 
 @respondent_bp.route('/<ru_ref>/change-enrolment-status', methods=['GET'])
