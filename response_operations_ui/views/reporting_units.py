@@ -1,7 +1,7 @@
 import logging
 from datetime import datetime, timezone
 
-from flask import Blueprint, render_template, request, redirect, url_for
+from flask import Blueprint, render_template, request, redirect, url_for, flash
 from flask_login import login_required
 from iso8601 import parse_date
 from structlog import wrap_logger
@@ -65,21 +65,20 @@ def view_reporting_unit(ru_ref):
     # TODO Standardise how the info messages are generated
     survey_arg = request.args.get('survey')
     period_arg = request.args.get('period')
-    info_message = None
     if survey_arg and period_arg:
         survey = next(filter(lambda s: s['shortName'] == survey_arg, sorted_linked_surveys))
         collection_exercise = next(filter(lambda s: s['exerciseRef'] == period_arg, survey['collection_exercises']))
         new_status = collection_exercise['responseStatus']
-        info_message = f'Response status for {survey["surveyRef"]} {survey["shortName"]}' \
-                       f' period {period_arg} changed to {new_status}'
+        flash(f'Response status for {survey["surveyRef"]} {survey["shortName"]}'
+              f' period {period_arg} changed to {new_status}')
 
     info = request.args.get('info')
-    if info:
-        info_message = info
     if request.args.get('enrolment_changed'):
-        info_message = 'Enrolment status changed'
+        flash('Enrolment status changed', 'information')
     if request.args.get('account_status_changed'):
-        info_message = 'Account status changed'
+        flash('Account status changed', 'information')
+    elif info:
+        flash(info, 'information')
 
     breadcrumbs = [
         {
@@ -91,8 +90,7 @@ def view_reporting_unit(ru_ref):
         }
     ]
     return render_template('reporting-unit.html', ru_ref=ru_ref, ru=reporting_unit,
-                           surveys=surveys_with_latest_case, breadcrumbs=breadcrumbs,
-                           info_message=info_message)
+                           surveys=surveys_with_latest_case, breadcrumbs=breadcrumbs)
 
 
 def add_collection_exercise_details(collection_exercise, reporting_unit, case_groups):
@@ -157,13 +155,14 @@ def edit_contact_details(ru_ref, respondent_id):
     form = request.form
     contact_details_changed = party_controller.update_contact_details(respondent_id, form, ru_ref)
 
-    ui_message = 'No updates were necessary'
     if 'emailAddress' in contact_details_changed:
-        ui_message = f'Contact details changed and verification email sent to {form.get("email")}'
+        flash(f'Contact details changed and verification email sent to {form.get("email")}')
     elif len(contact_details_changed) > 0:
-        ui_message = 'Contact details changed'
+        flash('Contact details changed')
+    else:
+        flash('No updates were necessary')
 
-    return redirect(url_for('reporting_unit_bp.view_reporting_unit', ru_ref=ru_ref, info=ui_message))
+    return redirect(url_for('reporting_unit_bp.view_reporting_unit', ru_ref=ru_ref))
 
 
 @reporting_unit_bp.route('/', methods=['GET', 'POST'])
@@ -197,8 +196,8 @@ def view_resend_verification(ru_ref, party_id):
 def resend_verification(ru_ref, party_id):
     reporting_units_controllers.resend_verification_email(party_id)
     logger.info("Re-sent verification email.", party_id=party_id)
-    return redirect(url_for('reporting_unit_bp.view_reporting_unit', ru_ref=ru_ref,
-                            info='Verification email re-sent'))
+    flash('Verification email re-sent')
+    return redirect(url_for('reporting_unit_bp.view_reporting_unit', ru_ref=ru_ref))
 
 
 @reporting_unit_bp.route('/<ru_ref>/new_enrolment_code', methods=['GET'])

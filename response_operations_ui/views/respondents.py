@@ -1,6 +1,6 @@
 import logging
 
-from flask import Blueprint, redirect, render_template, request, url_for
+from flask import Blueprint, redirect, render_template, request, url_for, flash
 from flask_login import login_required
 from structlog import wrap_logger
 from response_operations_ui.controllers import party_controller, reporting_units_controllers
@@ -51,18 +51,15 @@ def respondent_details(respondent_id):
 
     respondent['status'] = respondent['status'].title()
 
-    info_message = None
-
     info = request.args.get('info')
-    if info:
-        info_message = info
     if request.args.get('enrolment_changed'):
-        info_message = 'Enrolment status changed'
+        flash('Enrolment status changed', 'information')
     if request.args.get('account_status_changed'):
-        info_message = 'Account status changed'
+        flash('Account status changed', 'information')
+    elif info:
+        flash(info, 'information')
 
-    return render_template('respondent.html', respondent=respondent, enrolments=enrolments, breadcrumbs=breadcrumbs,
-                           info_message=info_message)
+    return render_template('respondent.html', respondent=respondent, enrolments=enrolments, breadcrumbs=breadcrumbs)
 
 
 @respondent_bp.route('/edit-contact-details/<respondent_id>', methods=['GET'])
@@ -82,13 +79,14 @@ def edit_contact_details(respondent_id):
     form = request.form
     contact_details_changed = party_controller.update_contact_details(respondent_id, form)
 
-    ui_message = 'No updates were necessary'
     if 'emailAddress' in contact_details_changed:
-        ui_message = f'Contact details changed and verification email sent to {form.get("email")}'
+        flash(f'Contact details changed and verification email sent to {form.get("email")}')
     elif len(contact_details_changed) > 0:
-        ui_message = 'Contact details changed'
+        flash('Contact details changed')
+    else:
+        flash('No updates were necessary')
 
-    return redirect(url_for('respondent_bp.respondent_details', respondent_id=respondent_id, info=ui_message))
+    return redirect(url_for('respondent_bp.respondent_details', respondent_id=respondent_id))
 
 
 @respondent_bp.route('/resend_verification/<respondent_id>', methods=['GET'])
@@ -107,8 +105,8 @@ def view_resend_verification(respondent_id):
 def resend_verification(party_id):
     reporting_units_controllers.resend_verification_email(party_id)
     logger.info("Re-sent verification email.", party_id=party_id)
-    return redirect(url_for('respondent_bp.respondent_details', respondent_id=party_id,
-                            info='Verification email re-sent'))
+    flash('Verification email re-sent')
+    return redirect(url_for('respondent_bp.respondent_details', respondent_id=party_id,))
 
 
 @respondent_bp.route('<respondent_id>/change-enrolment-status', methods=['POST'])
@@ -126,7 +124,8 @@ def change_enrolment_status(respondent_id):
 def change_respondent_status(respondent_id):
     reporting_units_controllers.change_respondent_status(respondent_id=respondent_id,
                                                          change_flag=request.args['change_flag']),
-    return redirect(url_for('respondent_bp.respondent_details', respondent_id=respondent_id, account_status_changed='True'))
+    return redirect(url_for('respondent_bp.respondent_details', respondent_id=respondent_id,
+                            account_status_changed='True'))
 
 
 @respondent_bp.route('/<party_id>/change-respondent-status', methods=['GET'])
