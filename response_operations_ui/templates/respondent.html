@@ -41,7 +41,7 @@
                         <dd id="respondent-account-status">
                             {% if respondent.status  == 'Suspended' %} Locked {% else %} {{ respondent.status }} {% endif %}
                           <br>
-                          {% if respondent.status == 'Pending' %}<a id="resend-verification-email-btn" href="{{ url_for('respondent_bp.view_resend_verification', respondent_id=respondent.id) }}">Re-send verification email</a>
+                          {% if respondent.status == 'Pending' or 'Created' %}<a id="resend-verification-email-btn" href="{{ url_for('respondent_bp.view_resend_verification', respondent_id=respondent.id) }}">Re-send verification email</a>
                           {% elif respondent.status == 'Suspended' %}<a id="respondent-unlock-link" href="{{ url_for('respondent_bp.confirm_change_respondent_status', party_id=respondent.id, tab='respondents', change_flag='ACTIVE') }}">Unlock</a>
                           {% endif %}
                         </dd>
