@@ -18,6 +18,10 @@
         padding-bottom: 4px;
         display: inline;
 
+        a {
+            padding: 8px 16px;
+        }
+
         &.active {
             margin: 0 6px;
             background-color: #033e58;

@@ -20,7 +20,6 @@ from response_operations_ui.exceptions.exceptions import ApiError
 from response_operations_ui.forms import EditCollectionExerciseDetailsForm, CreateCollectionExerciseDetailsForm, \
     EventDateForm, RemoveLoadedSample
 
-
 logger = wrap_logger(logging.getLogger(__name__))
 
 collection_exercise_bp = Blueprint('collection_exercise_bp', __name__,

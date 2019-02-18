@@ -107,5 +107,8 @@ minimised/
 *.floo
 *.flooignore
 
-response_operations_ui/static/css/main.css
-response_operations_ui/static/css/main.css.map
+*.css
+*.map
+
+!main.css
+!main.css.map
