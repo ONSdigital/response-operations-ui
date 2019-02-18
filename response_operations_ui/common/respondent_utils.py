@@ -1,3 +1,5 @@
+from urllib.parse import parse_qsl
+
 def status_enum_to_string(status):
     dict = {
         'ACTIVE': 'Active',
@@ -16,6 +18,19 @@ def status_enum_to_class(status):
         'LOCKED': 'Locked'
     }
     return dict.get(status, None)
+
+
+def get_controller_args_from_request(request):
+    try:
+        values = request.values
+    except AttributeError:
+        return False
+
+    return {
+        'email_address': values.get('email_address', ''),
+        'first_name': values.get('email_address', ''),
+        'last_name': values.get('email_address', '')
+    }
 
 
 def filter_respondents(respondents):

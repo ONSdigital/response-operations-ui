@@ -3,11 +3,11 @@ import logging
 from flask import Blueprint, render_template, request, redirect, flash, url_for
 from flask_login import login_required
 from structlog import wrap_logger
-from urllib.parse import urlencode, urljoin, parse_qs
+from urllib.parse import urlencode, urljoin
 
 from response_operations_ui.controllers import party_controller
 from response_operations_ui.forms import SearchForm
-from response_operations_ui.common.respondent_utils import filter_respondents
+from response_operations_ui.common.respondent_utils import filter_respondents, get_controller_args_from_request
 
 
 logger = wrap_logger(logging.getLogger(__name__))
@@ -64,11 +64,11 @@ def respondent_search(page):
     form = SearchForm()
     breadcrumbs = [{"title": "Respondents"}, {"title": "Search"}]
 
-    qs = parse_qs(request.query_string)
+    args = get_controller_args_from_request(request)
 
-    respondents = party_controller.search_respondents(qs.get('email_address'), qs.get('first_name'), qs.get('last_name'), page)
+    respondents = party_controller.search_respondents(args['email_address'], args['first_name'], args['last_name'], page)
     filtered_respondents = filter_respondents(respondents)
-    
+  
     render_template('respondent-search-results.html',
                     form=form, breadcrumb=breadcrumbs,
                     respondents=filtered_respondents)
