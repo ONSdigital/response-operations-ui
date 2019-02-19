@@ -1,6 +1,6 @@
 import logging
 
-from flask import Blueprint, redirect, render_template, request, url_for, flash
+from flask import Blueprint, flash, redirect, render_template, request, url_for
 from flask_login import login_required
 from structlog import wrap_logger
 from response_operations_ui.controllers import party_controller, reporting_units_controllers
