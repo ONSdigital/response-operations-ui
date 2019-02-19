@@ -123,7 +123,7 @@ def change_enrolment_status(respondent_id):
 @login_required
 def change_respondent_status(respondent_id):
     reporting_units_controllers.change_respondent_status(respondent_id=respondent_id,
-                                                         change_flag=request.args['change_flag']),
+                                                         change_flag=request.args['change_flag'])
     return redirect(url_for('respondent_bp.respondent_details', respondent_id=respondent_id,
                             account_status_changed='True'))
 
