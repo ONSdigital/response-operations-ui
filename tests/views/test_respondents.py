@@ -5,9 +5,10 @@ import requests_mock
 from config import TestingConfig
 from response_operations_ui.controllers.party_controller import search_respondent_by_email
 from tests.views import ViewTestCase
-from tests.views.test_reporting_units import url_edit_contact_details, url_get_party_by_ru_ref, url_get_casegroups_by_business_party_id, \
-    url_get_cases_by_business_party_id, url_get_business_party_by_party_id, url_get_available_case_group_statuses_direct, \
-    url_get_survey_by_id, url_get_respondent_party_by_party_id, url_get_collection_exercise_by_id, url_get_iac
+from tests.views.test_reporting_units import url_edit_contact_details, url_get_party_by_ru_ref, \
+    url_get_casegroups_by_business_party_id, url_get_cases_by_business_party_id, url_get_business_party_by_party_id, \
+    url_get_available_case_group_statuses_direct, url_get_survey_by_id, url_get_respondent_party_by_party_id, \
+    url_get_collection_exercise_by_id, url_get_iac
 
 respondent_party_id = "cd592e0f-8d07-407b-b75d-e01fbdae8233"
 business_party_id = "b3ba864b-7cbc-4f44-84fe-88dc018a1a4c"
