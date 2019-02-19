@@ -8,7 +8,7 @@ from tests.views import ViewTestCase
 from tests.views.test_reporting_units import url_edit_contact_details, url_get_party_by_ru_ref, \
     url_get_casegroups_by_business_party_id, url_get_cases_by_business_party_id, url_get_business_party_by_party_id, \
     url_get_available_case_group_statuses_direct, url_get_survey_by_id, url_get_respondent_party_by_party_id, \
-    url_get_collection_exercise_by_id, url_get_iac
+    url_get_collection_exercise_by_id, url_get_iac, url_change_respondent_status
 
 respondent_party_id = "cd592e0f-8d07-407b-b75d-e01fbdae8233"
 business_party_id = "b3ba864b-7cbc-4f44-84fe-88dc018a1a4c"
@@ -180,4 +180,24 @@ class TestRespondents(ViewTestCase):
             "telephone": '7971161867'}
         response = self.mock_for_change_details(changed_details, mock_request)
 
+        self.assertEqual(response.status_code, 200)
+
+    @requests_mock.mock()
+    def test_change_respondent_status(self, mock_request):
+        mock_request.put(url_change_respondent_status)
+        mock_request.get(url_get_party_by_ru_ref, json=business_reporting_unit)
+        mock_request.get(url_get_cases_by_business_party_id, json=cases_list)
+        mock_request.get(url_get_casegroups_by_business_party_id, json=case_groups)
+        mock_request.get(f'{url_get_collection_exercise_by_id}/{collection_exercise_id_1}', json=collection_exercise)
+        mock_request.get(f'{url_get_collection_exercise_by_id}/{collection_exercise_id_2}', json=collection_exercise)
+        mock_request.get(url_get_business_party_by_party_id, json=business_party)
+        mock_request.get(url_get_available_case_group_statuses_direct, json=case_group_statuses)
+        mock_request.get(url_get_survey_by_id, json=survey)
+        mock_request.get(url_get_respondent_party_by_party_id, json=respondent_party)
+        mock_request.get(f'{url_get_iac}/{iac_1}', json=iac)
+        mock_request.get(f'{url_get_iac}/{iac_2}', json=iac)
+
+        response = self.client.post(f"respondents/{respondent_party_id}/change-respondent-status"
+                                    f"?tab=respondents&change_flag=ACTIVE",
+                                    follow_redirects=True)
         self.assertEqual(response.status_code, 200)
