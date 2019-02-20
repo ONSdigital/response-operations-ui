@@ -17,7 +17,8 @@
 
   <div class="spoke__body">
 
-    <form action="{{ url_for('reporting_unit_bp.edit_contact_details', ru_ref=ru_ref, respondent_id=respondent_details.id) }}" method="post">
+    {%- set href = url_for('respondent_bp.edit_contact_details', ru_ref=ru_ref, respondent_id=respondent_details.id) if tab=='respondents' else url_for('reporting_unit_bp.edit_contact_details', ru_ref=ru_ref, respondent_id=respondent_details.id) -%}
+    <form action="{{ href }}" method="post">
       {{ form.csrf_token }}
       {% if error_type == 'api error' %}
       <div class="panel panel--simple panel--error u-mb-l">
@@ -86,7 +87,8 @@
       <button class="btn u-mb-s" id="save-btn">Save changes</button>
     </form>
     <div>
-      <a id="cancel-btn" href="{{ url_for('reporting_unit_bp.view_reporting_unit', ru_ref=ru_ref) }}">Cancel</a>
+      {%- set href = url_for('respondent_bp.respondent_details', respondent_id=respondent_details.id) if tab=='respondents' else url_for('reporting_unit_bp.view_reporting_unit', ru_ref=ru_ref) -%}
+      <a id="cancel-btn" href="{{ href }}" >Cancel</a>
     </div>
   </div>
 </div>
