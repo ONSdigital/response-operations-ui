@@ -28,11 +28,11 @@
       </td>
 
       <td class="table--cell tbl-ce-status tbl-ce-action">
-        {% if not events.mps and config.ADD_EVENT_DATES_ENABLED %}
+        {% if not events.mps %}
           <form action="{{ url_for('collection_exercise_bp.get_create_collection_event_form', short_name=survey.shortName, period=ce.exerciseRef, ce_id=ce.id, tag='mps')}}" method="get">
               <button class="btn btn--secondary btn--small btn__table-row" id="create-event-date-mps" type="submit">Add</button>
           </form>
-        {% elif not locked and config.EDIT_EVENT_DATES_ENABLED %}
+        {% elif not locked %}
           <form action="{{ url_for('collection_exercise_bp.update_event_date', short_name=survey.shortName, period=ce.exerciseRef, tag='mps')}}" method="get">
             <a class="edit-icon" href=# id="edit-event-date-mps" onclick="this.parentNode.submit()"></a>
           </form>
@@ -52,11 +52,11 @@
       </td>
 
       <td class="table--cell tbl-ce-status tbl-ce-action">
-        {% if not events.go_live and config.ADD_EVENT_DATES_ENABLED %}
+        {% if not events.go_live %}
           <form action="{{ url_for('collection_exercise_bp.get_create_collection_event_form', short_name=survey.shortName, period=ce.exerciseRef, ce_id=ce.id, tag='go_live')}}" method="get">
             <button class="btn btn--secondary btn--small btn__table-row" id="create-event-date-go-live" type="submit">Add</button>
           </form>
-        {% elif not locked and config.EDIT_EVENT_DATES_ENABLED %}
+        {% elif not locked %}
           <form action="{{ url_for('collection_exercise_bp.update_event_date', short_name=survey.shortName, period=ce.exerciseRef, tag='go_live')}}" method="get">
             <a class="edit-icon" href=# id="edit-event-date-go-live" onclick="this.parentNode.submit()"></a>
           </form>
@@ -76,11 +76,11 @@
       </td>
 
       <td class="table--cell tbl-ce-status tbl-ce-action">
-        {% if not events.return_by and config.ADD_EVENT_DATES_ENABLED %}
+        {% if not events.return_by %}
           <form action="{{ url_for('collection_exercise_bp.get_create_collection_event_form', short_name=survey.shortName, period=ce.exerciseRef, ce_id=ce.id, tag='return_by')}}" method="get">
             <button class="btn btn--secondary btn--small btn__table-row" id="create-event-date-return-by" type="submit">Add</button>
           </form>
-        {% elif not locked and config.EDIT_EVENT_DATES_ENABLED %}
+        {% elif not locked %}
           <form action="{{ url_for('collection_exercise_bp.update_event_date', short_name=survey.shortName, period=ce.exerciseRef, tag='return_by')}}" method="get">
             <a class="edit-icon" href=# id="edit-event-date-return-by" onclick="this.parentNode.submit()"></a>
           </form>
@@ -100,11 +100,11 @@
       </td>
 
       <td class="table--cell tbl-ce-status tbl-ce-action">
-        {% if not events.reminder and config.ADD_EVENT_DATES_ENABLED %}
+        {% if not events.reminder %}
           <form action="{{ url_for('collection_exercise_bp.get_create_collection_event_form', short_name=survey.shortName, period=ce.exerciseRef, ce_id=ce.id, tag='reminder')}}" method="get">
             <button class="btn btn--secondary btn--small btn__table-row" id="create-event-date-reminder" type="submit">Add</button>
           </form>
-        {% elif events.reminder and (not locked or events.reminder.is_in_future) and config.EDIT_EVENT_DATES_ENABLED %}
+        {% elif events.reminder and (not locked or events.reminder.is_in_future) %}
           <form action="{{ url_for('collection_exercise_bp.update_event_date', short_name=survey.shortName, period=ce.exerciseRef, tag='reminder')}}" method="get">
             <a class="edit-icon" href=# id="edit-event-date-reminder" onclick="this.parentNode.submit()"></a>
           </form>
@@ -125,11 +125,11 @@
       </td>
 
       <td class="table--cell tbl-ce-status tbl-ce-action">
-        {% if not events.reminder2 and config.ADD_EVENT_DATES_ENABLED %}
+        {% if not events.reminder2 %}
           <form action="{{ url_for('collection_exercise_bp.get_create_collection_event_form', short_name=survey.shortName, period=ce.exerciseRef, ce_id=ce.id, tag='reminder2')}}" method="get">
             <button class="btn btn--secondary btn--small btn__table-row" id="create-event-date-reminder2" type="submit">Add</button>
           </form>
-        {% elif events.reminder2 and (not locked or events.reminder2.is_in_future) and config.EDIT_EVENT_DATES_ENABLED %}
+        {% elif events.reminder2 and (not locked or events.reminder2.is_in_future) %}
           <form action="{{ url_for('collection_exercise_bp.update_event_date', short_name=survey.shortName, period=ce.exerciseRef, tag='reminder2')}}" method="get">
             <a class="edit-icon" href=# id="edit-event-date-reminder2" onclick="this.parentNode.submit()"></a>
           </form>
@@ -151,11 +151,11 @@
       </td>
 
       <td class="table--cell tbl-ce-status tbl-ce-action">
-        {% if not events.reminder3 and config.ADD_EVENT_DATES_ENABLED %}
+        {% if not events.reminder3 %}
           <form action="{{ url_for('collection_exercise_bp.get_create_collection_event_form', short_name=survey.shortName, period=ce.exerciseRef, ce_id=ce.id, tag='reminder3')}}" method="get">
             <button class="btn btn--secondary btn--small btn__table-row" id="create-event-date-reminder3" type="submit">Add</button>
           </form>
-        {% elif events.reminder3 and (not locked or events.reminder3.is_in_future) and config.EDIT_EVENT_DATES_ENABLED %}
+        {% elif events.reminder3 and (not locked or events.reminder3.is_in_future) %}
           <form action="{{ url_for('collection_exercise_bp.update_event_date', short_name=survey.shortName, period=ce.exerciseRef, tag='reminder3')}}" method="get">
             <a class="edit-icon" href=# id="edit-event-date-reminder3" onclick="this.parentNode.submit()"></a>
           </form>
@@ -176,11 +176,11 @@
       </td>
 
       <td class="table--cell tbl-ce-status tbl-ce-action">
-        {% if not events.exercise_end and config.ADD_EVENT_DATES_ENABLED %}
+        {% if not events.exercise_end %}
           <form action="{{ url_for('collection_exercise_bp.get_create_collection_event_form', short_name=survey.shortName, ce_id=ce.id, period=ce.exerciseRef, tag='exercise_end')}}" method="get">
             <button class="btn btn--secondary btn--small btn__table-row" id="create-event-date-exercise-end" type="submit">Add</button>
           </form>
-        {% elif not locked and config.EDIT_EVENT_DATES_ENABLED %}
+        {% elif not locked %}
           <form action="{{ url_for('collection_exercise_bp.update_event_date', short_name=survey.shortName, period=ce.exerciseRef, tag='exercise_end')}}" method="get">
             <a class="edit-icon" href=# id="edit-event-date-exercise-end" onclick="this.parentNode.submit()"></a>
           </form>
