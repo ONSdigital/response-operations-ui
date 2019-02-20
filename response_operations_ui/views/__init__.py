@@ -9,7 +9,7 @@ from response_operations_ui.views.reporting_units import reporting_unit_bp
 from response_operations_ui.views.respondents import respondent_bp
 from response_operations_ui.views.sign_in import sign_in_bp
 from response_operations_ui.views.surveys import surveys_bp
-from response_operations_ui.views import update_event_date
+from response_operations_ui.views import update_event_date  # NOQA
 
 
 def setup_blueprints(app):
