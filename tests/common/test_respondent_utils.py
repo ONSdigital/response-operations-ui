@@ -1,6 +1,7 @@
 import unittest
 
-from response_operations_ui.common.respondent_utils import status_enum_to_string, status_enum_to_class, get_controller_args_from_request, filter_respondents
+from response_operations_ui.common.respondent_utils import status_enum_to_string, \
+    status_enum_to_class, get_controller_args_from_request, filter_respondents
 
 
 valid_statuses = [
@@ -26,7 +27,6 @@ class TestRespondentUtils(unittest.TestCase):
             self.assertIsInstance(v, str, f'Input {k} returned a non-string object (type received {type(v)})')
             self.Greater(len(v), 0, f'Input {k} returned a zero-length string.')
 
-
     def test_status_enum_to_string_returns_none_for_invalid_enum_key(self):
         invalid_key_outputs = status_enum_to_string('INVALIDKEY')
         self.assertEqual(invalid_key_outputs, None)
@@ -40,7 +40,7 @@ class TestRespondentUtils(unittest.TestCase):
 
         for k, v in valid_key_outputs:
             self.assertIsInstance(v, str, f'Input {k} returned a non-string object (type received {type(v)})')
-            self.Greater(len(v), 0, f'Input {k} returned a zero-length string.')
+            self.assertGreater(len(v), 0, f'Input {k} returned a zero-length string.')
 
 
     def test_status_enum_to_class_returns_none_for_invalid_enum_key(self):
@@ -111,14 +111,11 @@ class TestRespondentUtils(unittest.TestCase):
         output = filter_respondents(list_with_spurious_item)
         self.assertDictEqual(output[0].get('something_we_dont_need'), None)
     
-
     def test_filter_respondents_assembles_href(self):
         pass
 
-    
     def test_filter_respondents_assembles_name(self):
         pass
-
-
+        
     def test_filter_respondents_includes_email_address(self):
         pass

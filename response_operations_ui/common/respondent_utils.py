@@ -1,5 +1,3 @@
-from urllib.parse import parse_qsl
-
 def status_enum_to_string(status):
     dict = {
         'ACTIVE': 'Active',
@@ -36,11 +34,14 @@ def get_controller_args_from_request(request):
 def filter_respondents(respondents):
     filtered_respondents = []
     for respondent in respondents:
-        filtered_respondents.append({
-            'href': '/respondent-details/' + respondent.id,
-            'name': respondent.firstname + ' ' + respondent.lastname,
-            'email': respondent.emailAddress,
-            'status': status_enum_to_string(respondent.status),
-            'status_class': status_enum_to_class(respondent.status)
-        })
+        try:
+            filtered_respondents.append({
+                'href': '/respondent-details/' + respondent['id'],
+                'name': respondent['firstName'] + ' ' + respondent['lastName'],
+                'email': respondent['emailAddress'],
+                'status': status_enum_to_string(respondent['status']),
+                'status_class': status_enum_to_class(respondent['status'])
+            })
+        except KeyError:
+            return []
     return filtered_respondents
