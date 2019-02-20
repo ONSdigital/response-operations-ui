@@ -68,10 +68,10 @@ def respondent_search(page):
 
     respondents = party_controller.search_respondents(args['email_address'], args['first_name'], args['last_name'], page)
     filtered_respondents = filter_respondents(respondents)
-  
-    render_template('respondent-search-results.html',
-                    form=form, breadcrumb=breadcrumbs,
-                    respondents=filtered_respondents)
+
+    return render_template('respondent-search/search-respondents-results.html',
+                           form=form, breadcrumb=breadcrumbs,
+                           respondents=filtered_respondents)
 
 
 @respondent_bp.route('/respondent-details/<respondent_id>', methods=['GET'])

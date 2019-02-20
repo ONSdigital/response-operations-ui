@@ -10,7 +10,7 @@
         {% for respondent in respondents %}
         <tr>
             <td>
-                <a href="{# TODO #}">{{ respondent.first_name }} {{ respondent.last_name }}</a>
+                <a href="{{ respondent.href }}">{{ respondent.name }}</a>
             </td>
             <td>
                 {{ respondent.email }}
