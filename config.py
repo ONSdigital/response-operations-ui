@@ -78,7 +78,6 @@ class DevelopmentConfig(Config):
     REDIS_PORT = os.getenv('REDIS_PORT', 7379)
     REDIS_DB = os.getenv('REDIS_DB', 0)
     SECURE_COOKIES = strtobool(os.getenv('SECURE_COOKIES', 'False'))
-    WATCH_FRONTEND = True
 
     # Service Config
     CASE_URL = os.getenv('CASE_URL', 'http://localhost:8171')
