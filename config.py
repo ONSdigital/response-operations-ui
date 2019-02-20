@@ -19,7 +19,6 @@ class Config(object):
     REDIS_DB = os.getenv('REDIS_DB', 0)
     SECURE_COOKIES = strtobool(os.getenv('SECURE_COOKIES', 'True'))
     USE_SESSION_FOR_NEXT = True
-    WATCH_FRONTEND = False
 
     # Zipkin
     ZIPKIN_DISABLE = bool(strtobool(os.getenv("ZIPKIN_DISABLE", "False")))

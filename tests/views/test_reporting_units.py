@@ -476,7 +476,7 @@ class TestReportingUnits(ViewTestCase):
         mock_request.get(f'{url_get_iac}/{iac_2}', json=iac)
 
         response = self.client.get(f"reporting-units/50012345678/change-respondent-status"
-                                   f"?party_id={respondent_party_id}&change_flag=ACTIVE",
+                                   f"?party_id={respondent_party_id}&change_flag=ACTIVE&tab=reporting_units",
                                    follow_redirects=True)
         self.assertEqual(response.status_code, 200)
 
@@ -679,7 +679,8 @@ class TestReportingUnits(ViewTestCase):
                                    "?survey_id=test_id&survey_name=test_survey_name&respondent_id=test_id"
                                    "&respondent_first_name=first_name&respondent_last_name=last_name"
                                    "&business_id=test_id"
-                                   "&trading_as=test_name&change_flag=DISABLED&ru_name=test_ru_name")
+                                   "&trading_as=test_name&change_flag=DISABLED"
+                                   "&ru_name=test_ru_name&tab=reporting_units")
 
         self.assertEqual(response.status_code, 200)
         self.assertIn("test_ru_name".encode(), response.data)

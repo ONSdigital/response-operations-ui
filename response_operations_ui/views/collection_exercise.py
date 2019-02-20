@@ -20,7 +20,6 @@ from response_operations_ui.exceptions.exceptions import ApiError
 from response_operations_ui.forms import EditCollectionExerciseDetailsForm, CreateCollectionExerciseDetailsForm, \
     EventDateForm, RemoveLoadedSample
 
-
 logger = wrap_logger(logging.getLogger(__name__))
 
 collection_exercise_bp = Blueprint('collection_exercise_bp', __name__,
@@ -392,7 +391,7 @@ def edit_collection_exercise_details(short_name, period):
         return redirect(url_for('surveys_bp.view_survey', short_name=short_name, ce_updated='True'))
 
 
-@collection_exercise_bp.route('/<survey_ref>-<short_name>/create-collection-exercise', methods=['GET'])
+@collection_exercise_bp.route('/<survey_ref>/<short_name>/create-collection-exercise', methods=['GET'])
 @login_required
 def get_create_collection_exercise_form(survey_ref, short_name):
     logger.info("Retrieving survey data for form", short_name=short_name, survey_ref=survey_ref)
@@ -403,7 +402,7 @@ def get_create_collection_exercise_form(survey_ref, short_name):
                            survey_name=survey_details['shortName'])
 
 
-@collection_exercise_bp.route('/<survey_ref>-<short_name>/create-collection-exercise', methods=['POST'])
+@collection_exercise_bp.route('/<survey_ref>/<short_name>/create-collection-exercise', methods=['POST'])
 @login_required
 def create_collection_exercise(survey_ref, short_name):
     logger.info("Attempting to create collection exercise", survey_ref=survey_ref, survey=short_name)

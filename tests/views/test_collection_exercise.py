@@ -973,7 +973,7 @@ class TestCollectionExercise(ViewTestCase):
         mock_request.post(url_create_collection_exercise, status_code=200)
 
         response = self.client.post(
-            f"/surveys/{survey_ref}-{short_name}/create-collection-exercise",
+            f"/surveys/{survey_ref}/{short_name}/create-collection-exercise",
             data=new_collection_exercise_details,
             follow_redirects=True,
         )
@@ -992,7 +992,7 @@ class TestCollectionExercise(ViewTestCase):
         mock_request.post(url_create_collection_exercise, status_code=500)
 
         response = self.client.post(
-            f"/surveys/{survey_ref}-{short_name}/create-collection-exercise",
+            f"/surveys/{survey_ref}/{short_name}/create-collection-exercise",
             data=new_collection_exercise_details
         )
 
@@ -1005,7 +1005,7 @@ class TestCollectionExercise(ViewTestCase):
         mock_request.get(url_ces_by_survey, json=self.collection_exercises)
         mock_request.get(url_get_survey_by_short_name, json=self.survey)
         response = self.client.get(
-            f"/surveys/{survey_ref}-{short_name}/create-collection-exercise", follow_redirects=True
+            f"/surveys/{survey_ref}/{short_name}/create-collection-exercise", follow_redirects=True
         )
 
         self.assertEqual(response.status_code, 200)
@@ -1027,7 +1027,7 @@ class TestCollectionExercise(ViewTestCase):
         mock_request.post(url_create_collection_exercise, status_code=200)
 
         response = self.client.post(
-            f"/surveys/{survey_ref}-{short_name}/create-collection-exercise",
+            f"/surveys/{survey_ref}/{short_name}/create-collection-exercise",
             data=new_collection_exercise_details,
             follow_redirects=True,
         )
@@ -1050,7 +1050,7 @@ class TestCollectionExercise(ViewTestCase):
         mock_request.post(url_create_collection_exercise, status_code=200)
 
         response = self.client.post(
-            f"/surveys/{survey_ref}-{short_name}/create-collection-exercise",
+            f"/surveys/{survey_ref}/{short_name}/create-collection-exercise",
             data=new_collection_exercise_details,
             follow_redirects=True,
         )

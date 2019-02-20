@@ -30,6 +30,7 @@ def get_survey_by_id(survey_id):
 
 
 def get_survey_by_shortname(short_name):
+    short_name = ''.join(short_name.split())
     logger.debug('Retrieving survey', short_name=short_name)
     url = f'{app.config["SURVEY_URL"]}/surveys/shortname/{short_name}'
     response = requests.get(url, auth=app.config['SURVEY_AUTH'])
@@ -50,7 +51,7 @@ def get_survey_ci_classifier(survey_id):
     url = f'{app.config["SURVEY_URL"]}/surveys/{survey_id}/classifiertypeselectors'
     response = requests.get(url, auth=app.config['SURVEY_AUTH'])
 
-    if response.status_code is 204:
+    if response.status_code == 204:
         logger.error('classifiers missing for survey', survey_id=survey_id)
         raise ApiError(response)
     try:
