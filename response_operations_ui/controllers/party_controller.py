@@ -6,7 +6,9 @@ from requests.exceptions import HTTPError, RequestException
 from structlog import wrap_logger
 
 from response_operations_ui.controllers.survey_controllers import get_survey_by_id
-from response_operations_ui.exceptions.exceptions import ApiError, UpdateContactDetailsException
+from response_operations_ui.exceptions.exceptions import ApiError
+from response_operations_ui.exceptions.exceptions import UpdateContactDetailsException
+from response_operations_ui.exceptions.exceptions import SearchRespondentsException
 from response_operations_ui.forms import EditContactDetailsForm
 from response_operations_ui.controllers.mock_party_controller import mock_search_respondents
 
@@ -131,9 +133,41 @@ def search_respondents(first_name, last_name, email_address, page=0):
         logger.debug('Respondent Search: Using fake data for controller')
         data = mock_search_respondents(first_name, last_name, email_address, page)
     else:
-        data = []  # TODO implement this.
+        url = _get_search_respondents_url(first_name=first_name,
+                                          last_name=last_name,
+                                          email_address=email_address,
+                                          page=page)
+        response = requests.get(url, auth=app.config['PARTY_AUTH'])
+        if response.status_code != 200:
+            raise SearchRespondentsException(response,
+                                             first_name=first_name,
+                                             last_name=last_name,
+                                             email_address=email_address,
+                                             page=page)
+        data = response.json()
 
     return data
+
+
+def _get_search_respondents_url(**kwargs):
+    url = f'{app.config["PARTY_URL"]}/party-api/v1/respondents?'
+
+    # Dict provides translation of variable names in response ops to url param names in party
+    kw_to_url_params = {
+        'first_name': 'firstName',
+        'last_name': 'lastName',
+        'email_address': 'email',
+        'page': 'page'
+    }
+
+    for resops_name, party_name in kw_to_url_params:
+        arg = kwargs.get(resops_name)
+        if arg and arg != '':
+            url += f'{party_name}={arg}&'
+
+    url += f'limit={app.config["PARTY_RESPONDENTS_PER_PAGE"]}'
+
+    return url
 
 
 def update_contact_details(ru_ref, respondent_id, form):
