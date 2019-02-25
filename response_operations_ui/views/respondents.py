@@ -2,6 +2,7 @@ import logging
 
 from flask import Blueprint, render_template, request, redirect, flash, url_for
 from flask_login import login_required
+from flask_paginate import Pagination
 from structlog import wrap_logger
 from urllib.parse import urlencode, urljoin
 
@@ -35,43 +36,76 @@ def search_redirect():
 
     source = form.source.data or 'home'
     page = request.args.get('page', 1)
-    
+
     query_string = urlencode({
         'email_address': form.email_address.data or '',
         'first_name': form.first_name.data or '',
         'last_name': form.last_name.data or '',
-        'source': source
+        'source': source,
+        'page': page
     })
 
     if not form_valid and source == 'home':
         redirect_url = url_for('respondent_bp.respondent_home')
     else:
-        redirect_url = urljoin(url_for('respondent_bp.respondent_search', page=page), '?' + query_string)
+        redirect_url = urljoin(url_for('respondent_bp.respondent_search'), '?' + query_string)
 
     return redirect(redirect_url)
 
 
 @respondent_bp.route('/search')
-@respondent_bp.route('/search/')
+@respondent_bp.route('/search/', methods=['GET'])
 @login_required
-def alias_search_routes():
-    return redirect(urljoin(url_for('respondent_bp.respondent_search'), '1'))
-
-
-@respondent_bp.route('/search/<page>', methods=['GET'])
-@login_required
-def respondent_search(page):
-    form = SearchForm()
+def respondent_search():
     breadcrumbs = [{"title": "Respondents"}, {"title": "Search"}]
 
     args = get_controller_args_from_request(request)
 
-    respondents = party_controller.search_respondents(args['email_address'], args['first_name'], args['last_name'], page)
+    first_name = args['first_name']
+    last_name = args['last_name']
+    email_address = args['email_address']
+    page = args['page']
+
+    form = SearchForm()
+
+    form.first_name.data = first_name
+    form.last_name.data = last_name
+    form.email_address.data = email_address
+
+    party_response = party_controller.search_respondents(email_address, first_name, last_name, page)
+
+    respondents = party_response.get('data', [])
+    total_respondents_available = party_response.get('total', 0)
+
     filtered_respondents = filter_respondents(respondents)
+
+    RESULTS_PER_PAGE = 25
+
+    offset = (int(page) - 1) * RESULTS_PER_PAGE
+
+    first_index = 1 + offset
+    last_index = RESULTS_PER_PAGE + offset
+
+    pagination = Pagination(page=int(page),
+                            per_page=RESULTS_PER_PAGE,
+                            total=total_respondents_available,
+                            record_name='respondents',
+                            prev_label='Previous',
+                            next_label='Next',
+                            outer_window=0,
+                            format_total=True,
+                            format_number=True,
+                            show_single_page=False)
+
+    # TODO need to get total pages
 
     return render_template('respondent-search/search-respondents-results.html',
                            form=form, breadcrumb=breadcrumbs,
-                           respondents=filtered_respondents)
+                           respondents=filtered_respondents,
+                           respondent_count=total_respondents_available,
+                           first_index=first_index,
+                           last_index=last_index,
+                           pagination=pagination)
 
 
 @respondent_bp.route('/respondent-details/<respondent_id>', methods=['GET'])

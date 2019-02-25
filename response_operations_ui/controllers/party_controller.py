@@ -128,9 +128,10 @@ def search_respondent_by_email(email):
 
 def search_respondents(first_name, last_name, email_address, page=0):
     if app.config['PARTY_FAKE_DATA']:
+        logger.debug('Respondent Search: Using fake data for controller')
         data = mock_search_respondents(first_name, last_name, email_address, page)
     else:
-        data = [] # TODO implement this.
+        data = []  # TODO implement this.
 
     return data
 
