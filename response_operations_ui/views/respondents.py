@@ -1,6 +1,7 @@
 import logging
 
 from flask import Blueprint, render_template, request, redirect, flash, url_for
+from flask import current_app as app
 from flask_login import login_required
 from flask_paginate import Pagination
 from structlog import wrap_logger
@@ -79,7 +80,7 @@ def respondent_search():
 
     filtered_respondents = filter_respondents(respondents)
 
-    RESULTS_PER_PAGE = 25
+    RESULTS_PER_PAGE = app.config["PARTY_RESPONDENTS_PER_PAGE"]
 
     offset = (int(page) - 1) * RESULTS_PER_PAGE
 
