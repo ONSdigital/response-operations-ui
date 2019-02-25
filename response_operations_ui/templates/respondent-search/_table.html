@@ -16,7 +16,7 @@
                 {{ respondent.email }}
             </td>
             <td>
-                <span class="status status--small status--dead status-icon--{{ respondent.state_class | lower }}">{{ respondent.state | title }}</span>
+                <span class="status status--small {{ respondent.status_class }}">{{ respondent.status | title }}</span>
             </td>
         </tr>
         {% endfor %}
