@@ -10,10 +10,10 @@ def status_enum_to_string(status):
 
 def status_enum_to_class(status):
     dict = {
-        'ACTIVE': 'Active',
-        'CREATED': 'Created',
-        'SUSPENDED': 'Suspended',
-        'LOCKED': 'Locked'
+        'ACTIVE': 'status--success',
+        'CREATED': 'status--info',
+        'SUSPENDED': 'status--warning',
+        'LOCKED': 'status--dead'
     }
     return dict.get(status, None)
 
@@ -26,8 +26,9 @@ def get_controller_args_from_request(request):
 
     return {
         'email_address': values.get('email_address', ''),
-        'first_name': values.get('email_address', ''),
-        'last_name': values.get('email_address', '')
+        'first_name': values.get('first_name', ''),
+        'last_name': values.get('last_name', ''),
+        'page': values.get('page', 1)
     }
 
 
@@ -36,7 +37,7 @@ def filter_respondents(respondents):
     for respondent in respondents:
         try:
             filtered_respondents.append({
-                'href': '/respondent-details/' + respondent['id'],
+                'href': '/respondent-details/' + str(respondent['id']),
                 'name': respondent['firstName'] + ' ' + respondent['lastName'],
                 'email': respondent['emailAddress'],
                 'status': status_enum_to_string(respondent['status']),
