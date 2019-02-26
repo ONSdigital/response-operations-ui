@@ -73,7 +73,7 @@ def respondent_search():
     form.last_name.data = last_name
     form.email_address.data = email_address
 
-    party_response = party_controller.search_respondents(email_address, first_name, last_name, page)
+    party_response = party_controller.search_respondents(first_name, last_name, email_address, page)
 
     respondents = party_response.get('data', [])
     total_respondents_available = party_response.get('total', 0)
@@ -97,8 +97,6 @@ def respondent_search():
                             format_total=True,
                             format_number=True,
                             show_single_page=False)
-
-    # TODO need to get total pages
 
     return render_template('respondent-search/search-respondents-results.html',
                            form=form, breadcrumb=breadcrumbs,
