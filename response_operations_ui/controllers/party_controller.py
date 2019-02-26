@@ -1,3 +1,5 @@
+import os
+
 import logging
 
 import requests
@@ -129,7 +131,7 @@ def search_respondent_by_email(email):
 
 
 def search_respondents(first_name, last_name, email_address, page=0):
-    if app.config['PARTY_FAKE_DATA']:
+    if bool(os.environ.get('FAKE_PARTY_DATA', False)):
         logger.debug('Respondent Search: Using fake data for controller')
         data = mock_search_respondents(first_name, last_name, email_address, page)
     else:
