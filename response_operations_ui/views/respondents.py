@@ -46,7 +46,7 @@ def search_redirect():
         'page': page
     })
 
-    if not form_valid and source == 'home':
+    if not form_valid:
         redirect_url = url_for('respondent_bp.respondent_home')
     else:
         redirect_url = urljoin(url_for('respondent_bp.respondent_search'), '?' + query_string)
