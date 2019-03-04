@@ -22,10 +22,11 @@
         Re-send email to {{ email }}?
       </div>
 
-      <button type="submit" class="btn u-mb-s">Confirm</button>
+      <button  id="confirm" type="submit" class="btn u-mb-s">Confirm</button>
 
       <div class="u-mt-xs">
-        <a href="{{ url_for('reporting_unit_bp.view_reporting_unit', ru_ref=ru_ref) }}">Cancel</a>
+        {%- set href = url_for('respondent_bp.respondent_details', respondent_id=respondent_id) if tab=='respondents' else url_for('reporting_unit_bp.view_reporting_unit', ru_ref=ru_ref) -%}
+        <a id="cancel" href="{{ href }}" >Cancel</a>
       </div>
 
     </form>

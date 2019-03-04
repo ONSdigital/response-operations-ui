@@ -18,8 +18,6 @@ class Config(object):
     REDIS_PORT = os.getenv('REDIS_PORT')
     REDIS_DB = os.getenv('REDIS_DB', 0)
     SECURE_COOKIES = strtobool(os.getenv('SECURE_COOKIES', 'True'))
-    EDIT_EVENT_DATES_ENABLED = strtobool(os.getenv('EDIT_EVENT_DATES_ENABLED', 'False'))
-    ADD_EVENT_DATES_ENABLED = strtobool(os.getenv('ADD_EVENT_DATES_ENABLED', 'False'))
     USE_SESSION_FOR_NEXT = True
 
     # Zipkin
@@ -81,8 +79,6 @@ class DevelopmentConfig(Config):
     REDIS_PORT = os.getenv('REDIS_PORT', 7379)
     REDIS_DB = os.getenv('REDIS_DB', 0)
     SECURE_COOKIES = strtobool(os.getenv('SECURE_COOKIES', 'False'))
-    EDIT_EVENT_DATES_ENABLED = True
-    ADD_EVENT_DATES_ENABLED = True
 
     # Service Config
     CASE_URL = os.getenv('CASE_URL', 'http://localhost:8171')

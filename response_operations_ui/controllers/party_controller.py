@@ -122,7 +122,7 @@ def search_respondent_by_email(email):
     try:
         response.raise_for_status()
     except (HTTPError, RequestException):
-        log_level = logger.warning if response.status_code is 400 else logger.exception
+        log_level = logger.warning if response.status_code == 400 else logger.exception
         log_level("Respondent retrieval failed")
         raise ApiError(response)
     logger.debug("Respondent retrieved successfully")
@@ -172,7 +172,7 @@ def _get_search_respondents_url(**kwargs):
     return url
 
 
-def update_contact_details(ru_ref, respondent_id, form):
+def update_contact_details(respondent_id, form, ru_ref='NOT DEFINED'):
     logger.debug('Updating respondent details', respondent_id=respondent_id)
 
     new_contact_details = {
