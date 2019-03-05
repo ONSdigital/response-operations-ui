@@ -45,7 +45,7 @@ class SecureMessageForm(FlaskForm):
     hidden_to_ru_id = HiddenField('hidden_to_ru_id')
 
 
-class SearchForm(FlaskForm):
+class RespondentSearchForm(FlaskForm):
     first_name = StringField('first_name')
     last_name = StringField('last_name')
     email_address = StringField('email_address')
@@ -67,6 +67,11 @@ class SearchForm(FlaskForm):
 
         if first_name != '' or last_name != '' or email_address != '':
             return True
+
+
+class SearchForm(FlaskForm):
+    query = StringField('Query')
+    submit = SubmitField('Search')
 
 
 class EditContactDetailsForm(FlaskForm):

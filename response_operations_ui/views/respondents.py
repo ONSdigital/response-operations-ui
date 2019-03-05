@@ -9,7 +9,7 @@ from urllib.parse import urlencode, urljoin
 
 from response_operations_ui.common.respondent_utils import filter_respondents, get_controller_args_from_request
 from response_operations_ui.controllers import party_controller, reporting_units_controllers
-from response_operations_ui.forms import SearchForm, EditContactDetailsForm
+from response_operations_ui.forms import RespondentSearchForm, EditContactDetailsForm
 
 
 logger = wrap_logger(logging.getLogger(__name__))
@@ -22,14 +22,14 @@ respondent_bp = Blueprint('respondent_bp', __name__,
 @login_required
 def respondent_home():
     return render_template('respondent-search/search-respondents.html',
-                           form=SearchForm(),
+                           form=RespondentSearchForm(),
                            breadcrumbs=[{"title": "Respondents"}])
 
 
 @respondent_bp.route('/search', methods=['POST'])
 @login_required
 def search_redirect():
-    form = SearchForm()
+    form = RespondentSearchForm()
     form_valid = form.validate()
 
     if not form_valid:
@@ -67,7 +67,7 @@ def respondent_search():
     email_address = args['email_address']
     page = args['page']
 
-    form = SearchForm()
+    form = RespondentSearchForm()
 
     form.first_name.data = first_name
     form.last_name.data = last_name
