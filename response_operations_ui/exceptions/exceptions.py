@@ -39,5 +39,5 @@ class SearchRespondentsException(Exception):
         self.response = response
         self.status_code = response.status_code
 
-        for k, v in kwargs:
-            self[k] = v
+        for k, v in kwargs.items():
+            self.__setattr__(k, v)
