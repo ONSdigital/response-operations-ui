@@ -5,7 +5,7 @@ from response_operations_ui.controllers import mock_party_controller
 example_data = [
     {'firstName': 'Jillayne', 'lastName': 'Tran', 'emailAddress': 'jtran0@simplemachines.org'},
     {'firstName': 'Virgie', 'lastName': 'Wiley', 'emailAddress': 'vwiley2@bing.com'},
-    {'firstName': 'Alikee',  'lastName': 'Banton', 'emailAddress': 'abanton1@dell.com'},
+    {'firstName': 'Alikee', 'lastName': 'Banton', 'emailAddress': 'abanton1@dell.com'},
     {'firstName': 'Tulley', 'lastName': 'Butts', 'emailAddress': 'tbutts3@google.pl'},
     {'firstName': 'Mollie', 'lastName': 'Singyard', 'emailAddress': 'msingyard4@cargocollective.com'},
     {'firstName': 'Mead', 'lastName': 'Wakefield', 'emailAddress': 'mwakefield5@ucoz.com'},
@@ -48,12 +48,12 @@ class TestMockPartyController(unittest.TestCase):
         output = mock_party_controller.filter_json_by_passed_parameters(example_data, 'Zelda', '', '')
 
         self.assertListEqual(output, [
-                                {
-                                    'firstName': 'Zelda',
-                                    'lastName': 'Hale',
-                                    'emailAddress': 'zhaleg@paginegialle.it'
-                                }
-                            ],
+                             {
+                                 'firstName': 'Zelda',
+                                 'lastName': 'Hale',
+                                 'emailAddress': 'zhaleg@paginegialle.it'
+                             }
+                             ],
                              'Filtering by complete first name did not return correct entry')
 
     # Matches many outputs by specifying only an uppercase M in first name.  Should match 4, as 4 start with m.
@@ -62,7 +62,8 @@ class TestMockPartyController(unittest.TestCase):
 
         self.assertListEqual(output,
                              [
-                                 {'firstName': 'Mollie', 'lastName': 'Singyard', 'emailAddress': 'msingyard4@cargocollective.com'},
+                                 {'firstName': 'Mollie', 'lastName': 'Singyard',
+                                  'emailAddress': 'msingyard4@cargocollective.com'},
                                  {'firstName': 'Mead', 'lastName': 'Wakefield', 'emailAddress': 'mwakefield5@ucoz.com'},
                                  {'firstName': 'Magda', 'lastName': 'Hussey', 'emailAddress': 'mhusseyj@imgur.com'},
                                  {'firstName': 'Malinde', 'lastName': 'Featley', 'emailAddress': 'mfeatleyo@oakley.com'}
@@ -75,12 +76,13 @@ class TestMockPartyController(unittest.TestCase):
 
         self.assertListEqual(output,
                              [
-                                {'firstName': 'Mollie', 'lastName': 'Singyard', 'emailAddress': 'msingyard4@cargocollective.com'},
-                                {'firstName': 'Mead', 'lastName': 'Wakefield', 'emailAddress': 'mwakefield5@ucoz.com'},
-                                {'firstName': 'Magda', 'lastName': 'Hussey', 'emailAddress': 'mhusseyj@imgur.com'},
-                                {'firstName': 'Malinde', 'lastName': 'Featley', 'emailAddress': 'mfeatleyo@oakley.com'}
-                            ],
-                            'Did not return correct output for a lowercase partial input')
+                                 {'firstName': 'Mollie', 'lastName': 'Singyard',
+                                  'emailAddress': 'msingyard4@cargocollective.com'},
+                                 {'firstName': 'Mead', 'lastName': 'Wakefield', 'emailAddress': 'mwakefield5@ucoz.com'},
+                                 {'firstName': 'Magda', 'lastName': 'Hussey', 'emailAddress': 'mhusseyj@imgur.com'},
+                                 {'firstName': 'Malinde', 'lastName': 'Featley', 'emailAddress': 'mfeatleyo@oakley.com'}
+                             ],
+                             'Did not return correct output for a lowercase partial input')
 
     # Matches no one, should return empty list.
     def test_filter_by_first_name_with_invalid_input(self):
@@ -92,12 +94,12 @@ class TestMockPartyController(unittest.TestCase):
         output = mock_party_controller.filter_json_by_passed_parameters(example_data, '', 'Wakefield', '')
 
         self.assertListEqual(output, [
-                                {
-                                    'firstName': 'Mead',
-                                    'lastName': 'Wakefield',
-                                    'emailAddress': 'mwakefield5@ucoz.com'
-                                }
-                            ],
+                             {
+                                 'firstName': 'Mead',
+                                 'lastName': 'Wakefield',
+                                 'emailAddress': 'mwakefield5@ucoz.com'
+                             }
+                             ],
                              'Filtering by complete last name did not return correct entry')
 
     # Matches many outputs by specifying only an uppercase T in last name.  Should match 4, as 4 start with m.
@@ -106,8 +108,10 @@ class TestMockPartyController(unittest.TestCase):
 
         self.assertListEqual(output,
                              [
-                                 {'firstName': 'Jillayne', 'lastName': 'Tran', 'emailAddress': 'jtran0@simplemachines.org'},
-                                 {'firstName': 'Gerry', 'lastName': 'Tidbold', 'emailAddress': 'gtidbolda@bluehost.com'},
+                                 {'firstName': 'Jillayne', 'lastName': 'Tran',
+                                  'emailAddress': 'jtran0@simplemachines.org'},
+                                 {'firstName': 'Gerry', 'lastName': 'Tidbold',
+                                  'emailAddress': 'gtidbolda@bluehost.com'},
                                  {'firstName': 'Chico', 'lastName': 'Thrasher', 'emailAddress': 'cthrasherp@cbc.ca'},
                              ],
                              'Did not return correct output for a uppercase partial input')
@@ -118,11 +122,14 @@ class TestMockPartyController(unittest.TestCase):
 
         self.assertListEqual(output,
                              [
-                                 {'firstName': 'Jillayne', 'lastName': 'Tran', 'emailAddress': 'jtran0@simplemachines.org'},
-                                 {'firstName': 'Gerry', 'lastName': 'Tidbold', 'emailAddress': 'gtidbolda@bluehost.com'},
-                                 {'firstName': 'Chico', 'lastName': 'Thrasher', 'emailAddress': 'cthrasherp@cbc.ca'},
-                            ],
-                            'Did not return correct output for a lowercase partial input')
+                                 {'firstName': 'Jillayne', 'lastName': 'Tran',
+                                  'emailAddress': 'jtran0@simplemachines.org'},
+                                 {'firstName': 'Gerry', 'lastName': 'Tidbold',
+                                  'emailAddress': 'gtidbolda@bluehost.com'},
+                                 {'firstName': 'Chico', 'lastName': 'Thrasher',
+                                  'emailAddress': 'cthrasherp@cbc.ca'},
+                             ],
+                             'Did not return correct output for a lowercase partial input')
 
     # Matches no one, should return empty list.
     def test_filter_by_last_name_with_invalid_input(self):
@@ -131,7 +138,8 @@ class TestMockPartyController(unittest.TestCase):
 
     def test_filter_by_email_with_complete_match(self):
         output = mock_party_controller.filter_json_by_passed_parameters(example_data, '', '', 'kgooseh@tmall.com')
-        self.assertListEqual(output, [{'firstName': 'Kathryn', 'lastName': 'Goose', 'emailAddress': 'kgooseh@tmall.com'}],
+        self.assertListEqual(output,
+                             [{'firstName': 'Kathryn', 'lastName': 'Goose', 'emailAddress': 'kgooseh@tmall.com'}],
                              'Did not return correct match for exact email address')
 
     def test_filter_by_email_with_partial_lowercase_match(self):
