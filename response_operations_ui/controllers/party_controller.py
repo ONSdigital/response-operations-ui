@@ -162,7 +162,7 @@ def _get_search_respondents_url(**kwargs):
         'page': 'page'
     }
 
-    for resops_name, party_name in kw_to_url_params:
+    for resops_name, party_name in kw_to_url_params.items():
         arg = kwargs.get(resops_name)
         if arg and arg != '':
             url += f'{party_name}={arg}&'
