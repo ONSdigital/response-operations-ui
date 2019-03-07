@@ -105,10 +105,37 @@ class TestRespondentUtils(unittest.TestCase):
         self.assertEqual(output[0].get('something_we_dont_need'), None)
 
     def test_filter_respondents_assembles_href(self):
-        pass
+        correct_item = [{
+            'id': 515,
+            'firstName': '',
+            'lastName': '',
+            'emailAddress': '',
+            'status': 'ACTIVE',
+            'status_class': 'ACTIVE'
+        }]
+        output = filter_respondents(correct_item)
+        self.assertEqual(output[0]['href'], '/respondent-details/515')
 
     def test_filter_respondents_assembles_name(self):
-        pass
+        correct_item = [{
+            'id': 515,
+            'firstName': 'Bob',
+            'lastName': 'Martin',
+            'emailAddress': '',
+            'status': 'ACTIVE',
+            'status_class': 'ACTIVE'
+        }]
+        output = filter_respondents(correct_item)
+        self.assertEqual(output[0]['name'], 'Bob Martin')
 
     def test_filter_respondents_includes_email_address(self):
-        pass
+        correct_item = [{
+            'id': 515,
+            'firstName': '',
+            'lastName': '',
+            'emailAddress': 'abc@cdefg.com',
+            'status': 'ACTIVE',
+            'status_class': 'ACTIVE'
+        }]
+        output = filter_respondents(correct_item)
+        self.assertEqual(output[0]['email'], 'abc@cdefg.com')
