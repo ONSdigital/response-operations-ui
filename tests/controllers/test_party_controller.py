@@ -80,8 +80,8 @@ class TestPartyController(unittest.TestCase):
             party_url = self.app.config.get('PARTY_URL', 'PARTYURL')
             limit = self.app.config.get('PARTY_RESPONDENTS_PER_PAGE', 25)
 
-            expectation = (f'{party_url}/party-api/v1/respondents?firstName=Bill&lastName=Gates&' +
-                           f'email=bill@microsoft.com&page=1337&limit={limit}')
+            expectation = f'{party_url}/party-api/v1/respondents?firstName=Bill&lastName=Gates&' \
+                          f'email=bill@microsoft.com&page=1337&limit={limit}'
             url = _get_search_respondents_url(first_name="Bill", last_name="Gates", email_address="bill@microsoft.com",
                                               page=1337)
             self.assertEqual(url, expectation)
@@ -92,6 +92,3 @@ class TestPartyController(unittest.TestCase):
             url = _get_search_respondents_url(first_name="Bill", last_name="Gates", email_address="bill@microsoft.com",
                                               page=1337, spurious_arg='spuriousness')
             self.assertFalse('spurious_arg=spuriousness' in url)
-
-
-

@@ -1,4 +1,6 @@
 import json
+import mock
+from bs4 import BeautifulSoup
 
 import requests_mock
 
@@ -21,6 +23,9 @@ get_respondent_by_id_url = f'{TestingConfig.PARTY_URL}/party-api/v1/respondents/
 get_survey_by_id_url = f'{TestingConfig.SURVEY_URL}/surveys/{survey_id}'
 iac_1 = 'jkbvyklkwj88'
 iac_2 = 'ljbgg3kgstr4'
+
+get_respondent_root = f'http://localhost:8085/party-api/v1/respondents/'
+get_respondent_root_with_trailing_slash = f'{TestingConfig.PARTY_URL}/party-api/v1/respondents/'
 
 with open('tests/test_data/reporting_units/respondent.json') as json_data:
     respondent = json.load(json_data)
@@ -103,3 +108,74 @@ class TestRespondents(ViewTestCase):
                                     f"?tab=respondents&change_flag=ACTIVE",
                                     follow_redirects=True)
         self.assertEqual(response.status_code, 200)
+
+    # Respondent Search UI Testing
+
+    # Landing Page
+    def test_search_respondents_root_view_renders_form_without_trailing_slash(self):
+        response = self.client.get('/respondents')
+        self.assertEqual(response.status_code, 200, 'Loading respondent landing page failed')
+
+        soup = BeautifulSoup(response.data)
+        page_titles = [h1.text for h1 in soup.findAll('h1')]
+
+        self.assertTrue('Find a respondent' in page_titles, 'Could not find respondent landing page title')
+
+    def test_search_respondents_root_view_renders_form_with_trailing_slash(self):
+        response = self.client.get('/respondents/')
+        self.assertEqual(response.status_code, 200, 'Loading respondent landing page failed')
+
+        soup = BeautifulSoup(response.data, features='html.parser')
+        elements = [el.text for el in soup.findAll('h1')]
+
+        self.assertTrue('Find a respondent' in elements, 'Could not find respondent landing page title')
+
+    @mock.patch('response_operations_ui.os.environ.get')
+    def test_search_respondents_posting_invalid_form_shows_landing_page_with_error(self, environ_mock):
+        environ_mock.return_value = True
+
+        response = self.client.post('/respondents/search', data={}, follow_redirects=True)
+        self.assertEqual(response.status_code, 200, 'Sending search form failed')
+
+        soup = BeautifulSoup(response.data, features='html.parser')
+        elements_text = [el.text for el in soup.findAll('li')]
+
+        self.assertTrue('At least one input should be filled' in elements_text, 'Could not find expected error message')
+
+    @mock.patch('response_operations_ui.os.environ.get')
+    def test_search_respondents_posting_form_with_valid_input_goes_to_results_page(self, environ_mock):
+        environ_mock.return_value = True
+
+        response = self.client.post('/respondents/search', data={'first_name': 'a'}, follow_redirects=True)
+        self.assertEqual(response.status_code, 200, 'Sending search form failed')
+
+        self.assertTrue(b'respondents found' in response.data, 'Could not find expected error message')
+
+    # Results page
+    @mock.patch('response_operations_ui.os.environ.get')
+    def test_search_respondents_results_page_shows_correct_number_of_results(self, environ_mock):
+        environ_mock.return_value = True
+
+        response = self.client.post('/respondents/search', data={'first_name': 'sophey'}, follow_redirects=True)
+        self.assertEqual(response.status_code, 200, 'Sending search form failed')
+
+        self.assertTrue(b'1 respondents found.' in response.data, 'Could not find required page element')
+
+    @mock.patch('response_operations_ui.os.environ.get')
+    def test_search_respondents_results_page_shows_pagination_if_needed(self, environ_mock):
+        environ_mock.return_value = True
+
+        response = self.client.post('/respondents/search', data={'first_name': 'e'}, follow_redirects=True)
+        self.assertEqual(response.status_code, 200, 'Sending search form failed')
+
+        self.assertTrue(b'pagination' in response.data, 'Could not find expected pagination block')
+
+    @mock.patch('response_operations_ui.os.environ.get')
+    def test_search_respondents_results_page_doesnt_show_pagination_when_not_needed(self, environ_mock):
+        environ_mock.return_value = True
+
+        response = self.client.post('/respondents/search', data={'first_name': 'wallis'}, follow_redirects=True)
+        self.assertEqual(response.status_code, 200, 'Sending search form failed')
+
+        self.assertFalse(b'pagination' in response.data, 'Found unexpected pagination block')
+        pass

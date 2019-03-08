@@ -20,8 +20,8 @@ def status_enum_to_class(status):
 
 def get_controller_args_from_request(request):
     try:
-        values = request['values']
-    except KeyError:
+        values = request.values
+    except AttributeError:
         return False
 
     return {
