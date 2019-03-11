@@ -6,13 +6,13 @@
     <div class="grid">
         <div class="grid__col col-12@l">
             {% include 'respondent-search/_inline-form.html' %}
-    
+
             <h2 class="u-fs-l">{{ respondent_count }} respondents found.</h2>
             <h3 class="u-mb-m">Displaying <strong>{{ first_index }} - {{ last_index }}</strong> of <strong>{{ respondent_count }}</strong> </h3>
-    
+
             {% if respondents %}{% include 'respondent-search/_table.html' %}{% endif %}
 
-            {% if respondent_count > 25 %}{% include 'respondent-search/_pagination.html' %}{% endif %}
+            {% if show_pagination %}{% include 'respondent-search/_pagination.html' %}{% endif %}
         </div>
     </div>
 </div>

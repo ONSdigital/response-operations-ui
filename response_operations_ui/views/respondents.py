@@ -104,7 +104,8 @@ def respondent_search():
                            respondent_count=total_respondents_available,
                            first_index=first_index,
                            last_index=last_index,
-                           pagination=pagination)
+                           pagination=pagination,
+                           show_pagination=bool(total_respondents_available > RESULTS_PER_PAGE))
 
 
 @respondent_bp.route('/respondent-details/<respondent_id>', methods=['GET'])
