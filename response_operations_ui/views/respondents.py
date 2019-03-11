@@ -20,7 +20,7 @@ respondent_bp = Blueprint('respondent_bp', __name__,
 @respondent_bp.route('/', methods=['GET'])
 @login_required
 def respondent_home():
-    return render_template('respondent-search/search-respondents.html',
+    return render_template('respondent-search/respondent-search.html',
                            form=RespondentSearchForm(),
                            breadcrumbs=[{"title": "Respondents"}])
 
@@ -87,7 +87,7 @@ def respondent_search():
                             format_number=True,
                             show_single_page=False)
 
-    return render_template('respondent-search/search-respondents-results.html',
+    return render_template('respondent-search/respondent-search-results.html',
                            form=form, breadcrumb=breadcrumbs,
                            respondents=filtered_respondents,
                            respondent_count=total_respondents_available,
