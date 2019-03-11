@@ -1,7 +1,7 @@
 import unittest
 
 from response_operations_ui.common.respondent_utils import status_enum_to_string, \
-    status_enum_to_class, get_controller_args_from_request, filter_respondents
+    status_enum_to_class, filter_respondents
 
 from collections import namedtuple
 
@@ -49,31 +49,6 @@ class TestRespondentUtils(unittest.TestCase):
     def test_status_enum_to_class_returns_none_for_invalid_enum_key(self):
         invalid_key_outputs = status_enum_to_class('INVALIDKEY')
         self.assertEqual(invalid_key_outputs, None)
-
-    def test_get_controller_args_from_request_returns_false_if_sent_request_object_without_expected_values(self):
-        args = get_controller_args_from_request(fake_response_no_values())
-        self.assertFalse(args)
-
-    def test_get_controller_args_from_request_returns_args_if_passed_valid_request(self):
-        request = fake_response(values={
-                                'email_address': 'email@email.com',
-                                'first_name': 'Bob',
-                                'last_name': 'Cheese',
-                                'page': 5
-                                })
-        expectation = request.values
-        args = get_controller_args_from_request(request)
-        self.assertDictEqual(args, expectation)
-
-    def test_get_controller_args_from_request_returns_only_the_args_we_need(self):
-        request = fake_response(values={
-                                'email_address': 'email@email.com',
-                                'first_name': 'Bob',
-                                'last_name': 'Cheese',
-                                'spurious_value': 'value'
-                                })
-        args = get_controller_args_from_request(request)
-        self.assertIsNone(args.get('spurious_value'))
 
     def test_filter_respondents_returns_empty_list_if_given_no_results(self):
         self.assertEqual(filter_respondents([]), [])

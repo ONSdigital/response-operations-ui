@@ -6,7 +6,7 @@ from flask_login import login_required
 from flask_paginate import Pagination
 from structlog import wrap_logger
 
-from response_operations_ui.common.respondent_utils import filter_respondents, get_controller_args_from_request
+from response_operations_ui.common.respondent_utils import filter_respondents
 from response_operations_ui.controllers import party_controller, reporting_units_controllers
 from response_operations_ui.forms import RespondentSearchForm, EditContactDetailsForm
 
@@ -54,12 +54,10 @@ def search_redirect():
 def respondent_search():
     breadcrumbs = [{"title": "Respondents"}, {"title": "Search"}]
 
-    args = get_controller_args_from_request(request)
-
-    first_name = args['first_name']
-    last_name = args['last_name']
-    email_address = args['email_address']
-    page = args['page']
+    first_name = request.values.get('first_name', '')
+    last_name = request.values.get('last_name', '')
+    email_address = request.values.get('email_address', '')
+    page = request.values.get('page', '')
 
     form = RespondentSearchForm()
 
@@ -78,9 +76,6 @@ def respondent_search():
 
     offset = (int(page) - 1) * RESULTS_PER_PAGE
 
-    first_index = 1 + offset
-    last_index = RESULTS_PER_PAGE + offset
-
     pagination = Pagination(page=int(page),
                             per_page=RESULTS_PER_PAGE,
                             total=total_respondents_available,
@@ -96,8 +91,8 @@ def respondent_search():
                            form=form, breadcrumb=breadcrumbs,
                            respondents=filtered_respondents,
                            respondent_count=total_respondents_available,
-                           first_index=first_index,
-                           last_index=last_index,
+                           first_index=1 + offset,
+                           last_index=RESULTS_PER_PAGE + offset,
                            pagination=pagination,
                            show_pagination=bool(total_respondents_available > RESULTS_PER_PAGE))
 
