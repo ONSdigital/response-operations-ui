@@ -5,7 +5,6 @@ from flask import current_app as app
 from flask_login import login_required
 from flask_paginate import Pagination
 from structlog import wrap_logger
-from urllib.parse import urlencode, urljoin
 
 from response_operations_ui.common.respondent_utils import filter_respondents, get_controller_args_from_request
 from response_operations_ui.controllers import party_controller, reporting_units_controllers
@@ -39,14 +38,14 @@ def search_redirect():
     page = request.args.get('page', 1)
 
     if not form_valid:
-        redirect(url_for('respondent_bp.respondent_home'))
+        return redirect(url_for('respondent_bp.respondent_home'))
 
     return redirect(url_for('respondent_bp.respondent_search',
                             email_address=form.email_address.data or '',
                             first_name=form.first_name.data or '',
                             last_name=form.last_name.data or '',
                             source=source,
-                            page=page)
+                            page=page))
 
 
 @respondent_bp.route('/search')
