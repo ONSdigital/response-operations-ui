@@ -1,21 +1,21 @@
 def status_enum_to_string(status):
-    dict = {
+    enum_lookup = {
         'ACTIVE': 'Active',
         'CREATED': 'Created',
         'SUSPENDED': 'Suspended',
         'LOCKED': 'Locked'
     }
-    return dict.get(status, None)
+    return enum_lookup.get(status, None)
 
 
 def status_enum_to_class(status):
-    dict = {
+    enum_lookup = {
         'ACTIVE': 'status--success',
         'CREATED': 'status--info',
         'SUSPENDED': 'status--warning',
         'LOCKED': 'status--dead'
     }
-    return dict.get(status, None)
+    return enum_lookup.get(status, None)
 
 
 def filter_respondents(respondents):
