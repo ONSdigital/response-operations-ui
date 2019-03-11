@@ -1,11 +1,2 @@
-coverage:
-  status:
-    project:
-      default:
-        target: 95%
-        threshold: null
-        base: auto
-        round: up
-
 ignore:
   - "response_operations_ui/tests/"
