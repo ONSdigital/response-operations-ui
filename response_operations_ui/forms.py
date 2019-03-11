@@ -59,14 +59,13 @@ class RespondentSearchForm(FlaskForm):
         email_address = form.email_address.data or ''
         source = form.source.data or 'home'
 
-        if not (len(first_name) > 0 or len(last_name) > 0 or len(email_address) > 0):
+        if not (first_name or last_name or email_address):
             return False
 
         if source != 'home' and source != 'results':
             return False
 
-        if first_name != '' or last_name != '' or email_address != '':
-            return True
+        return True
 
 
 class SearchForm(FlaskForm):

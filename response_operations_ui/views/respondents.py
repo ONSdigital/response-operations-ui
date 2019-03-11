@@ -38,20 +38,15 @@ def search_redirect():
     source = form.source.data or 'home'
     page = request.args.get('page', 1)
 
-    query_string = urlencode({
-        'email_address': form.email_address.data or '',
-        'first_name': form.first_name.data or '',
-        'last_name': form.last_name.data or '',
-        'source': source,
-        'page': page
-    })
-
     if not form_valid:
-        redirect_url = url_for('respondent_bp.respondent_home')
-    else:
-        redirect_url = urljoin(url_for('respondent_bp.respondent_search'), '?' + query_string)
+        redirect(url_for('respondent_bp.respondent_home'))
 
-    return redirect(redirect_url)
+    return redirect(url_for('respondent_bp.respondent_search',
+                            email_address=form.email_address.data or '',
+                            first_name=form.first_name.data or '',
+                            last_name=form.last_name.data or '',
+                            source=source,
+                            page=page)
 
 
 @respondent_bp.route('/search')

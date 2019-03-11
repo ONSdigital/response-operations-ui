@@ -157,7 +157,7 @@ def _get_search_respondents_url(**kwargs):
 
     for resops_name, party_name in kw_to_url_params.items():
         arg = kwargs.get(resops_name)
-        if arg and arg != '':
+        if arg:
             url += f'{party_name}={arg}&'
 
     url += f'limit={app.config["PARTY_RESPONDENTS_PER_PAGE"]}'
