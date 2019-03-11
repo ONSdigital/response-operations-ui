@@ -1,5 +1,3 @@
-import os
-
 import logging
 
 import requests
@@ -12,7 +10,6 @@ from response_operations_ui.exceptions.exceptions import ApiError
 from response_operations_ui.exceptions.exceptions import UpdateContactDetailsException
 from response_operations_ui.exceptions.exceptions import SearchRespondentsException
 from response_operations_ui.forms import EditContactDetailsForm
-from response_operations_ui.controllers.mock_party_controller import mock_search_respondents
 
 
 logger = wrap_logger(logging.getLogger(__name__))
@@ -131,22 +128,18 @@ def search_respondent_by_email(email):
 
 
 def search_respondents(first_name, last_name, email_address, page=0):
-    if bool(os.environ.get('FAKE_PARTY_DATA', False)):
-        logger.debug('Respondent Search: Using fake data for controller')
-        data = mock_search_respondents(first_name, last_name, email_address, page)
-    else:
-        url = _get_search_respondents_url(first_name=first_name,
-                                          last_name=last_name,
-                                          email_address=email_address,
-                                          page=page)
-        response = requests.get(url, auth=app.config['PARTY_AUTH'])
-        if response.status_code != 200:
-            raise SearchRespondentsException(response,
-                                             first_name=first_name,
-                                             last_name=last_name,
-                                             email_address=email_address,
-                                             page=page)
-        data = response.json()
+    url = _get_search_respondents_url(first_name=first_name,
+                                      last_name=last_name,
+                                      email_address=email_address,
+                                      page=page)
+    response = requests.get(url, auth=app.config['PARTY_AUTH'])
+    if response.status_code != 200:
+        raise SearchRespondentsException(response,
+                                         first_name=first_name,
+                                         last_name=last_name,
+                                         email_address=email_address,
+                                         page=page)
+    data = response.json()
 
     return data
 
@@ -158,7 +151,7 @@ def _get_search_respondents_url(**kwargs):
     kw_to_url_params = {
         'first_name': 'firstName',
         'last_name': 'lastName',
-        'email_address': 'email',
+        'email_address': 'emailAddress',
         'page': 'page'
     }
 

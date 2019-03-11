@@ -111,8 +111,20 @@ class TestRespondents(ViewTestCase):
 
     # Respondent Search UI Testing
 
+    def mock_party_data(self, search_respondents_mock, total=1000):
+        with open('tests/test_data/party/mock_search_respondents_data.json', 'r') as json_file:
+
+            data = json.load(json_file)
+            search_respondents_mock.return_value = {
+                'data': data,
+                'total': total
+            }
+
     # Landing Page
-    def test_search_respondents_root_view_renders_form_without_trailing_slash(self):
+    @mock.patch('response_operations_ui.controllers.party_controller.search_respondents')
+    def test_search_respondents_root_view_renders_form_without_trailing_slash(self, search_respondents_mock):
+        self.mock_party_data(search_respondents_mock)
+
         response = self.client.get('/respondents')
         self.assertEqual(response.status_code, 200, 'Loading respondent landing page failed')
 
@@ -121,7 +133,10 @@ class TestRespondents(ViewTestCase):
 
         self.assertTrue('Find a respondent' in page_titles, 'Could not find respondent landing page title')
 
-    def test_search_respondents_root_view_renders_form_with_trailing_slash(self):
+    @mock.patch('response_operations_ui.controllers.party_controller.search_respondents')
+    def test_search_respondents_root_view_renders_form_with_trailing_slash(self, search_respondents_mock):
+        self.mock_party_data(search_respondents_mock)
+
         response = self.client.get('/respondents/')
         self.assertEqual(response.status_code, 200, 'Loading respondent landing page failed')
 
@@ -130,9 +145,9 @@ class TestRespondents(ViewTestCase):
 
         self.assertTrue('Find a respondent' in elements, 'Could not find respondent landing page title')
 
-    @mock.patch('response_operations_ui.os.environ.get')
-    def test_search_respondents_posting_invalid_form_shows_landing_page_with_error(self, environ_mock):
-        environ_mock.return_value = True
+    @mock.patch('response_operations_ui.controllers.party_controller.search_respondents')
+    def test_search_respondents_posting_invalid_form_shows_landing_page_with_error(self, search_respondents_mock):
+        self.mock_party_data(search_respondents_mock)
 
         response = self.client.post('/respondents/search', data={}, follow_redirects=True)
         self.assertEqual(response.status_code, 200, 'Sending search form failed')
@@ -142,9 +157,9 @@ class TestRespondents(ViewTestCase):
 
         self.assertTrue('At least one input should be filled' in elements_text, 'Could not find expected error message')
 
-    @mock.patch('response_operations_ui.os.environ.get')
-    def test_search_respondents_posting_form_with_valid_input_goes_to_results_page(self, environ_mock):
-        environ_mock.return_value = True
+    @mock.patch('response_operations_ui.controllers.party_controller.search_respondents')
+    def test_search_respondents_posting_form_with_valid_input_goes_to_results_page(self, search_respondents_mock):
+        self.mock_party_data(search_respondents_mock)
 
         response = self.client.post('/respondents/search', data={'first_name': 'a'}, follow_redirects=True)
         self.assertEqual(response.status_code, 200, 'Sending search form failed')
@@ -152,28 +167,25 @@ class TestRespondents(ViewTestCase):
         self.assertTrue(b'respondents found' in response.data, 'Could not find expected error message')
 
     # Results page
-    @mock.patch('response_operations_ui.os.environ.get')
-    def test_search_respondents_results_page_shows_correct_number_of_results(self, environ_mock):
-        environ_mock.return_value = True
-
+    @mock.patch('response_operations_ui.controllers.party_controller.search_respondents')
+    def test_search_respondents_results_page_shows_correct_number_of_results(self, search_respondents_mock):
+        self.mock_party_data(search_respondents_mock, 1)
         response = self.client.post('/respondents/search', data={'first_name': 'sophey'}, follow_redirects=True)
         self.assertEqual(response.status_code, 200, 'Sending search form failed')
 
         self.assertTrue(b'1 respondents found.' in response.data, 'Could not find required page element')
 
-    @mock.patch('response_operations_ui.os.environ.get')
-    def test_search_respondents_results_page_shows_pagination_if_needed(self, environ_mock):
-        environ_mock.return_value = True
-
+    @mock.patch('response_operations_ui.controllers.party_controller.search_respondents')
+    def test_search_respondents_results_page_shows_pagination_if_needed(self, search_respondents_mock):
+        self.mock_party_data(search_respondents_mock)
         response = self.client.post('/respondents/search', data={'first_name': 'e'}, follow_redirects=True)
         self.assertEqual(response.status_code, 200, 'Sending search form failed')
 
         self.assertTrue(b'pagination' in response.data, 'Could not find expected pagination block')
 
-    @mock.patch('response_operations_ui.os.environ.get')
-    def test_search_respondents_results_page_doesnt_show_pagination_when_not_needed(self, environ_mock):
-        environ_mock.return_value = True
-
+    @mock.patch('response_operations_ui.controllers.party_controller.search_respondents')
+    def test_search_respondents_results_page_doesnt_show_pagination_when_not_needed(self, search_respondents_mock):
+        self.mock_party_data(search_respondents_mock, 10)
         response = self.client.post('/respondents/search', data={'first_name': 'wallis'}, follow_redirects=True)
         self.assertEqual(response.status_code, 200, 'Sending search form failed')
 

@@ -110,7 +110,6 @@ class DevelopmentConfig(Config):
     PARTY_USERNAME = os.getenv('PARTY_USERNAME', 'admin')
     PARTY_PASSWORD = os.getenv('PARTY_PASSWORD', 'secret')
     PARTY_AUTH = (PARTY_USERNAME, PARTY_PASSWORD)
-    PARTY_FAKE_DATA = bool(os.getenv('FAKE_PARTY_DATA', False))
     PARTY_RESPONDENTS_PER_PAGE = os.getenv('PARTY_RESPONDENTS_PER_PAGE', 25)
 
     SAMPLE_URL = os.getenv('SAMPLE_URL', 'http://localhost:8125')
