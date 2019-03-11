@@ -128,41 +128,22 @@ def search_respondent_by_email(email):
 
 
 def search_respondents(first_name, last_name, email_address, page=0):
-    url = _get_search_respondents_url(first_name=first_name,
-                                      last_name=last_name,
-                                      email_address=email_address,
-                                      page=page)
-    response = requests.get(url, auth=app.config['PARTY_AUTH'])
+    response = requests.get(f'{app.config["PARTY_URL"]}/party-api/v1/respondents',
+                            auth=app.config['PARTY_AUTH'],
+                            firstName=first_name,
+                            lastName=last_name,
+                            emailAddress=email_address,
+                            page=page,
+                            limit=app.config["PARTY_RESPONDENTS_PER_PAGE"])
+
     if response.status_code != 200:
         raise SearchRespondentsException(response,
                                          first_name=first_name,
                                          last_name=last_name,
                                          email_address=email_address,
                                          page=page)
-    data = response.json()
 
-    return data
-
-
-def _get_search_respondents_url(**kwargs):
-    url = f'{app.config["PARTY_URL"]}/party-api/v1/respondents?'
-
-    # Dict provides translation of variable names in response ops to url param names in party
-    kw_to_url_params = {
-        'first_name': 'firstName',
-        'last_name': 'lastName',
-        'email_address': 'emailAddress',
-        'page': 'page'
-    }
-
-    for resops_name, party_name in kw_to_url_params.items():
-        arg = kwargs.get(resops_name)
-        if arg:
-            url += f'{party_name}={arg}&'
-
-    url += f'limit={app.config["PARTY_RESPONDENTS_PER_PAGE"]}'
-
-    return url
+    return response.json()
 
 
 def update_contact_details(respondent_id, form, ru_ref='NOT DEFINED'):

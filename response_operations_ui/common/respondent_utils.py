@@ -11,7 +11,7 @@ def status_enum_to_string(status):
         'SUSPENDED': 'Suspended',
         'LOCKED': 'Locked'
     }
-    return enum_lookup.get(status, None)
+    return enum_lookup.get(status)
 
 
 def status_enum_to_class(status):
@@ -21,7 +21,7 @@ def status_enum_to_class(status):
         'SUSPENDED': 'status--warning',
         'LOCKED': 'status--dead'
     }
-    return enum_lookup.get(status, None)
+    return enum_lookup.get(status)
 
 
 def filter_respondents(respondents):
