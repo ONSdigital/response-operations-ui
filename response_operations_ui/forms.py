@@ -62,7 +62,7 @@ class RespondentSearchForm(FlaskForm):
         if not (first_name or last_name or email_address):
             return False
 
-        if source != 'home' and source != 'results':
+        if source not in ['home', 'results']:
             return False
 
         return True
