@@ -1,3 +1,9 @@
+import logging
+from structlog import wrap_logger
+
+logger = wrap_logger(logging.getLogger(__name__))
+
+
 def status_enum_to_string(status):
     enum_lookup = {
         'ACTIVE': 'Active',
@@ -30,5 +36,6 @@ def filter_respondents(respondents):
                 'status_class': status_enum_to_class(respondent['status'])
             })
         except KeyError:
-            logger.debug(f'Could not add respondent to retrieved list, as data structure was not that expected.', respondent)
+            logger.debug(f'Could not add respondent to retrieved list, as data structure was not that expected.',
+                         respondent)
     return filtered_respondents
