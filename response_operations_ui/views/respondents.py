@@ -33,19 +33,13 @@ def search_redirect():
 
     if not form_valid:
         flash('At least one input should be filled')
-
-    source = form.source.data or 'home'
-    page = request.args.get('page', 1)
-
-    if not form_valid:
         return redirect(url_for('respondent_bp.respondent_home'))
 
     return redirect(url_for('respondent_bp.respondent_search',
                             email_address=form.email_address.data or '',
                             first_name=form.first_name.data or '',
                             last_name=form.last_name.data or '',
-                            source=source,
-                            page=page))
+                            page=request.args.get('page', 1)))
 
 
 @respondent_bp.route('/search')

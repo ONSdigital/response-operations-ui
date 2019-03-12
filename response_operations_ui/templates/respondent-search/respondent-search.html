@@ -22,7 +22,6 @@
                 {% endwith %}
 
                 <form action="{{ url_for('respondent_bp.search_redirect') }}" method="post">
-                    {{ form.source(value='home') }}
                     {{ form.csrf_token }}
                     <div class="field u-mb-s">
                         <label class="label">First name</label>

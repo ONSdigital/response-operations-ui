@@ -49,7 +49,6 @@ class RespondentSearchForm(FlaskForm):
     first_name = StringField('first_name')
     last_name = StringField('last_name')
     email_address = StringField('email_address')
-    source = HiddenField('source')
     page = HiddenField('page')
     submit = SubmitField('Search')
 
@@ -57,14 +56,9 @@ class RespondentSearchForm(FlaskForm):
         first_name = form.first_name.data or ''
         last_name = form.last_name.data or ''
         email_address = form.email_address.data or ''
-        source = form.source.data or 'home'
 
         if not (first_name or last_name or email_address):
             return False
-
-        if source not in ['home', 'results']:
-            return False
-
         return True
 
 
