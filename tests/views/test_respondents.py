@@ -128,7 +128,7 @@ class TestRespondents(ViewTestCase):
         response = self.client.get('/respondents')
         self.assertEqual(response.status_code, 200, 'Loading respondent landing page failed')
 
-        soup = BeautifulSoup(response.data)
+        soup = BeautifulSoup(response.data, features='html.parser')
         page_titles = [h1.text for h1 in soup.findAll('h1')]
 
         self.assertTrue('Find a respondent' in page_titles, 'Could not find respondent landing page title')
