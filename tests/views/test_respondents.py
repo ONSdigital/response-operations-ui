@@ -190,4 +190,3 @@ class TestRespondents(ViewTestCase):
         self.assertEqual(response.status_code, 200, 'Sending search form failed')
 
         self.assertFalse(b'pagination' in response.data, 'Found unexpected pagination block')
-        pass

@@ -42,8 +42,7 @@ def search_redirect():
                             page=request.args.get('page', 1)))
 
 
-@respondent_bp.route('/search')
-@respondent_bp.route('/search/', methods=['GET'])
+@respondent_bp.route('/search', methods=['GET'])
 @login_required
 def respondent_search():
     breadcrumbs = [{"title": "Respondents"}, {"title": "Search"}]
@@ -66,12 +65,12 @@ def respondent_search():
 
     filtered_respondents = filter_respondents(respondents)
 
-    RESULTS_PER_PAGE = app.config["PARTY_RESPONDENTS_PER_PAGE"]
+    results_per_page = app.config["PARTY_RESPONDENTS_PER_PAGE"]
 
-    offset = (int(page) - 1) * RESULTS_PER_PAGE
+    offset = (int(page) - 1) * results_per_page
 
     pagination = Pagination(page=int(page),
-                            per_page=RESULTS_PER_PAGE,
+                            per_page=results_per_page,
                             total=total_respondents_available,
                             record_name='respondents',
                             prev_label='Previous',
@@ -86,9 +85,9 @@ def respondent_search():
                            respondents=filtered_respondents,
                            respondent_count=total_respondents_available,
                            first_index=1 + offset,
-                           last_index=RESULTS_PER_PAGE + offset,
+                           last_index=results_per_page + offset,
                            pagination=pagination,
-                           show_pagination=bool(total_respondents_available > RESULTS_PER_PAGE))
+                           show_pagination=bool(total_respondents_available > results_per_page))
 
 
 @respondent_bp.route('/respondent-details/<respondent_id>', methods=['GET'])
