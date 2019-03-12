@@ -128,13 +128,16 @@ def search_respondent_by_email(email):
 
 
 def search_respondents(first_name, last_name, email_address, page=0):
+    params = {
+        'firstName': first_name,
+        'lastName': last_name,
+        'emailAddress': email_address,
+        'page': page,
+        'limit': app.config["PARTY_RESPONDENTS_PER_PAGE"]
+    }
     response = requests.get(f'{app.config["PARTY_URL"]}/party-api/v1/respondents',
                             auth=app.config['PARTY_AUTH'],
-                            firstName=first_name,
-                            lastName=last_name,
-                            emailAddress=email_address,
-                            page=page,
-                            limit=app.config["PARTY_RESPONDENTS_PER_PAGE"])
+                            params=params)
 
     if response.status_code != 200:
         raise SearchRespondentsException(response,
