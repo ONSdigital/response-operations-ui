@@ -9,7 +9,7 @@
 
     <div class="spoke__header-title">
 
-      <h1 class="jupiter">Edit contact details</h1>
+      <h1 class="u-fs-xl">Edit contact details</h1>
 
     </div>
 
@@ -24,7 +24,7 @@
       <div class="panel panel--simple panel--error u-mb-l">
         <div class="panel__body" id="save-error">
           <h2 id='error-saving-message' class="venus">Connection error</h2>
-          <p class="mars">Please try saving your changes again.</p>
+          <p class="u-fs-r">Please try saving your changes again.</p>
         </div>
       </div>
       {% endif %}
@@ -33,7 +33,7 @@
       <div class="panel panel--simple panel--error u-mb-l">
         <div class="panel__body" id="save-email-error">
           <h2 id='error-saving-email' class="venus">Error - email address already exists</h2>
-          <p class="mars">Please enter a different email address.</p>
+          <p class="u-fs-r">Please enter a different email address.</p>
         </div>
       </div>
       {% endif %}
@@ -67,7 +67,7 @@
               <span class="u-vh">Current value: </span>
               {{ respondent_details.emailAddress }}
             </span>
-            <span class="label__description pluto">ONS will send a verification email to the new address</span>
+            <span class="label__description u-fs-s">ONS will send a verification email to the new address</span>
           </label>
         {{ form.email(class_="input input--text", id='email', required=required, maxlength=254, type="email") }}
           <input type="hidden" name="hidden_email" value={{ respondent_details.emailAddress }}>
