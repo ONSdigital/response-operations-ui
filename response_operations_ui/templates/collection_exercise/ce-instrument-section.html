@@ -1,5 +1,5 @@
 <section class="ce-section {{'panel panel--simple panel--error' if missing_ci else ''}}">
-  <h2 class="venus u-pt-m">Collection instruments</h2>
+  <h2 class="u-fs-r--b u-pt-m">Collection instruments</h2>
 
   {% if collection_instruments %}
   <div>
@@ -49,7 +49,7 @@
           {% for ci in eq_ci_selectors %}
           <div class="field__item js-focusable-box">
             <input class="input input--checkbox js-focusable" name="checkbox-answer" value="{{ci.id}}" id="{{ci.id}}" type="checkbox">
-            <label class="label label--inline venus " for="{{ci.id}}">{{survey.surveyRef}} {{ci.file_name}} eQ </label>
+            <label class="label label--inline u-fs-r--b " for="{{ci.id}}">{{survey.surveyRef}} {{ci.file_name}} eQ </label>
           </div>
           {% endfor %}
           <div>

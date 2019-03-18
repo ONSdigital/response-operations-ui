@@ -31,7 +31,7 @@
     {% if errors %}
         <div class="panel panel--simple panel--error u-mb-l">
           <div class="panel__body" id="save-error">
-            <h2 id='error-saving-message' class="venus">Error updating {{event_name}} date</h2>
+            <h2 id='error-saving-message' class="u-fs-r--b">Error updating {{event_name}} date</h2>
     {% endif %}
 
     {% if date_restriction_text %}
@@ -47,7 +47,7 @@
         {{ form.csrf_token }}
 
         <fieldset class="fieldgroup fieldgroup--date u-mt-l" data-qa="widget-date">
-          <legend class="fieldgroup__title venus">Date</legend>
+          <legend class="fieldgroup__title u-fs-r--b">Date</legend>
           <div class="fieldgroup__fields">
             <div class="field field--input field--day">
               <label class="label u-fs-s--b" id="label-date-range-from-day">Day</label>
@@ -67,7 +67,7 @@
         </fieldset>
 
         <fieldset class="fieldgroup fieldgroup--time u-mt-l" data-qa="widget-time">
-          <legend class="fieldgroup__title venus">Time (Newport)</legend>
+          <legend class="fieldgroup__title u-fs-r--b">Time (Newport)</legend>
           <div class="fieldgroup__fields">
             <div class="field field--select field--hrs">
               <label class="label u-fs-s--b" id="time-hrs">Hrs</label>

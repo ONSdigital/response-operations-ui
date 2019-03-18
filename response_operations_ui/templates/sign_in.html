@@ -13,7 +13,7 @@
                         {% if category == "failed_authentication" %}
                         <div class="panel panel--error u-mt-s">
                             <div class="panel__header">
-                                <h1 class="panel__title venus">{{ message }}</h1>
+                                <h1 class="panel__title u-fs-r--b">{{ message }}</h1>
                             </div>
                             <div class="panel__body" data-qa="error-body">
                                 <p class="u-fs-r"><a href="#username" id="try-again-link" class="js-inpagelink">Please try again</a></p>
@@ -38,18 +38,18 @@
                         <div class="panel panel--error u-mb-m">
                             <div class="panel__header">
                                 {% if form.errors|length == 1 %}
-                                <h1 id="error-count" class="panel__title venus">There is 1 error on this page</h1>
+                                <h1 id="error-count" class="panel__title u-fs-r--b">There is 1 error on this page</h1>
                                 {% else %}
-                                <h1 id="error-count" class="panel__title venus">There are {{ form.errors|length }} errors on this page</h1>
+                                <h1 id="error-count" class="panel__title u-fs-r--b">There are {{ form.errors|length }} errors on this page</h1>
                                 {% endif %}
                             </div>
                             <div class="panel__body">
                                 <ol>
                                   {% for error in form.username.errors %}
-                                    <li class="panel__title venus"><a href='#username'>{{ error }}</a></li>
+                                    <li class="panel__title u-fs-r--b"><a href='#username'>{{ error }}</a></li>
                                   {% endfor %}
                                   {% for error in form.password.errors %}
-                                    <li class="panel__title venus"><a href='#password'>{{ error }}</a></li>
+                                    <li class="panel__title u-fs-r--b"><a href='#password'>{{ error }}</a></li>
                                   {% endfor %}
                                 </ol>
                             </div>

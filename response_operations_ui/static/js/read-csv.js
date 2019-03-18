@@ -7,7 +7,7 @@ function drawOutput(businessCount, ciCount){
 	var preview = "";
 	preview = preview + "<div class='panel panel--info'>";
 	preview = preview + "  <div class='panel__header'>";
-	preview = preview + "    <h3 class='venus'>Sample contents</h3>";
+	preview = preview + "    <h3 class='u-fs-r--b'>Sample contents</h3>";
 	preview = preview + "  </div>";
 	preview = preview + "  <div class='panel__body'>";
 	preview = preview + "    <div id='sample-preview-businesses'>Number of businesses: " + businessCount + "</div>";
