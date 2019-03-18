@@ -4,6 +4,7 @@ import requests
 from flask import current_app as app
 from requests.exceptions import HTTPError
 from structlog import wrap_logger
+import json
 
 from response_operations_ui.controllers.sample_controllers import get_sample_summary
 from response_operations_ui.exceptions.exceptions import ApiError
@@ -75,7 +76,11 @@ def update_event(collection_exercise_id, tag, timestamp):
         if response.status_code == 400:
             logger.warning('Bad request updating event', collection_exercise_id=collection_exercise_id,
                            tag=tag, timestamp=formatted_timestamp, status=response.status_code)
-            return False
+            response_content = response.content.decode("utf-8")
+            response_json = json.loads(response_content)
+            logger.error('got error', message=response_json['error']['message'])
+
+            return response_json['error']['message']
         else:
             logger.error('Failed to update collection exercise event', collection_exercise_id=collection_exercise_id,
                          tag=tag, timestamp=formatted_timestamp, status=response.status_code)
@@ -83,7 +88,7 @@ def update_event(collection_exercise_id, tag, timestamp):
 
     logger.debug('Successfully updated event date', collection_exercise_id=collection_exercise_id,
                  tag=tag, timestamp=formatted_timestamp)
-    return True
+    return None
 
 
 def create_collection_exercise_event(collection_exercise_id, tag, timestamp):
@@ -101,7 +106,11 @@ def create_collection_exercise_event(collection_exercise_id, tag, timestamp):
         if response.status_code == 400:
             logger.warning('Bad request creating event', collection_exercise_id=collection_exercise_id,
                            tag=tag, timestamp=formatted_timestamp, status=response.status_code)
-            return False
+            response_content = response.content.decode("utf-8")
+            response_json = json.loads(response_content)
+            logger.error('got error', message=response_json['error']['message'])
+
+            return response_json['error']['message']
 
         logger.error("Failed to create collection exercise event",
                      collection_exercise_id=collection_exercise_id,
@@ -110,7 +119,7 @@ def create_collection_exercise_event(collection_exercise_id, tag, timestamp):
 
     logger.debug("Successfully created collection exercise event", collection_exercise_id=collection_exercise_id,
                  tag=tag)
-    return True
+    return None
 
 
 def execute_collection_exercise(collection_exercise_id):

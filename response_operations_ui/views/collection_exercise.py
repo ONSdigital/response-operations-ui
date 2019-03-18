@@ -448,7 +448,7 @@ def create_collection_exercise(survey_ref, short_name):
 
 @collection_exercise_bp.route('/<short_name>/<period>/<ce_id>/confirm-create-event/<tag>', methods=['GET'])
 @login_required
-def get_create_collection_event_form(short_name, period, ce_id, tag, errors=None):
+def get_create_collection_event_form(short_name, period, ce_id, tag, errors=None, error_message=None):
     logger.info("Retrieving form for create collection exercise event", short_name=short_name, period=period,
                 ce_id=ce_id, tag=tag)
     errors = request.args.get('errors') if not errors else errors
@@ -480,7 +480,8 @@ def get_create_collection_event_form(short_name, period, ce_id, tag, errors=None
                            date_restriction_text=date_restriction_text,
                            tag=tag,
                            form=form,
-                           errors=errors)
+                           errors=errors,
+                           error_message=error_message)
 
 
 @collection_exercise_bp.route('/<short_name>/<period>/<ce_id>/create-event/<tag>', methods=['POST'])
@@ -493,30 +494,30 @@ def create_collection_exercise_event(short_name, period, ce_id, tag):
                 tag=tag)
 
     form = EventDateForm(request.form)
+    error_message = None
+    try:
+        submitted_dt = datetime(year=int(form.year.data),
+                                month=int(form.month.data),
+                                day=int(form.day.data),
+                                hour=int(form.hour.data),
+                                minute=int(form.minute.data),
+                                tzinfo=tz.gettz('Europe/London'))
+    except ValueError as exc:
+        error_message = str(exc)
 
-    if not form.validate() or not valid_date_for_event(tag, form):
+    error_message = error_message if error_message else \
+        collection_exercise_controllers.create_collection_exercise_event(
+            collection_exercise_id=ce_id, tag=tag, timestamp=submitted_dt)
+
+    if not form.validate() or not valid_date_for_event(tag, form) or error_message:
+        error_message = form.errors if not error_message else error_message
         return get_create_collection_event_form(
             short_name=short_name,
             period=period,
             ce_id=ce_id,
             tag=tag,
-            errors=form.errors)
-
-    submitted_dt = datetime(year=int(form.year.data),
-                            month=int(form.month.data),
-                            day=int(form.day.data),
-                            hour=int(form.hour.data),
-                            minute=int(form.minute.data),
-                            tzinfo=tz.gettz('Europe/London'))
-
-    collection_exercise_created = collection_exercise_controllers.create_collection_exercise_event(
-        collection_exercise_id=ce_id,
-        tag=tag,
-        timestamp=submitted_dt)
-
-    if not collection_exercise_created:
-        return redirect(url_for('collection_exercise_bp.get_create_collection_event_form',
-                                short_name=short_name, period=period, ce_id=ce_id, tag=tag, errors=True))
+            errors=form.errors,
+            error_message=error_message)
 
     success_panel = "Event date added."
 

@@ -105,7 +105,7 @@
             <button class="btn btn--secondary btn--small btn__table-row" id="create-event-date-reminder" type="submit">Add</button>
           </form>
         {% elif events.reminder and (not locked or events.reminder.is_in_future) %}
-          <form action="{{ url_for('collection_exercise_bp.update_event_date', short_name=survey.shortName, period=ce.exerciseRef, tag='reminder')}}" method="get">
+          <form action="{{ url_for('collection_exercise_bp.update_event_date', short_name=survey.shortName, period=ce.exerciseRef, tag='reminder',errors=None)}}" method="get">
             <a class="edit-icon" href=# id="edit-event-date-reminder" onclick="this.parentNode.submit()"></a>
           </form>
         {% endif %}

@@ -20,6 +20,7 @@ logger = wrap_logger(logging.getLogger(__name__))
 @collection_exercise_bp.route('/<short_name>/<period>/event/<tag>', methods=['GET'])
 @login_required
 def update_event_date(short_name, period, tag, errors=None):
+    error_message = request.args.get('error_message')
     errors = request.args.get('errors') if not errors else errors
     survey = survey_controllers.get_survey_by_shortname(short_name)
     exercises = collection_exercise_controllers.get_collection_exercises_by_survey(survey['id'])
@@ -35,22 +36,25 @@ def update_event_date(short_name, period, tag, errors=None):
 
     try:
         event = formatted_events[tag]
-    except KeyError:
-        form = EventDateForm()
-    else:
+
         form = EventDateForm(day=event['date'][:2],
                              month=event['month'],
                              year=event['date'][-4:],
                              hour=event['time'][:2],
-                             minute=event['time'][2:4])
+                             minute=event['time'][3:5])
+
+    except KeyError:
+        form = EventDateForm()
 
     return render_template('update-event-date.html',
                            form=form,
                            ce=exercise,
+                           period=period,
                            survey=survey,
                            event_name=event_name,
                            date_restriction_text=date_restriction_text,
-                           errors=errors)
+                           errors=errors,
+                           error_message=error_message)
 
 
 @collection_exercise_bp.route('/<short_name>/<period>/event/<tag>', methods=['POST'])
@@ -66,17 +70,25 @@ def update_event_date_submit(short_name, period, tag):
         abort(404)
 
     if not form.validate() or not valid_date_for_event(tag, form):
-        return update_event_date(short_name, period, tag, errors=form.errors)
+        return update_event_date(short_name, period, tag, error_message=form.errors)
 
-    submitted_dt = datetime(year=int(form.year.data),
-                            month=int(form.month.data),
-                            day=int(form.day.data),
-                            hour=int(form.hour.data),
-                            minute=int(form.minute.data),
-                            tzinfo=tz.gettz('Europe/London'))
-    if not collection_exercise_controllers.update_event(exercise['id'], tag, submitted_dt):
+    try:
+        submitted_dt = datetime(year=int(form.year.data),
+                                month=int(form.month.data),
+                                day=int(form.day.data),
+                                hour=int(form.hour.data),
+                                minute=int(form.minute.data),
+                                tzinfo=tz.gettz('Europe/London'))
+
+        error_message = collection_exercise_controllers.update_event(
+            collection_exercise_id=exercise['id'], tag=tag, timestamp=submitted_dt)
+
+    except ValueError as exc:
+        error_message = str(exc)
+
+    if error_message:
         return redirect(url_for('collection_exercise_bp.update_event_date',
-                                short_name=short_name, period=period, tag=tag, errors=True))
-
+                                short_name=short_name, period=period, tag=tag, error_message=error_message))
+    success_panel = "Event date updated."
     return redirect(url_for('collection_exercise_bp.view_collection_exercise',
-                            short_name=short_name, period=period))
+                            short_name=short_name, period=period, success_panel=success_panel))

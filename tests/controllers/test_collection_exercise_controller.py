@@ -60,9 +60,9 @@ class TestCollectionExerciseController(unittest.TestCase):
                                                    "%Y-%m-%d %H:%M:%S%z")
 
             with self.app.app_context():
-                self.assertTrue(collection_exercise_controllers.create_collection_exercise_event(ce_id,
-                                                                                                 'mps',
-                                                                                                 timestamp))
+                self.assertFalse(collection_exercise_controllers.create_collection_exercise_event(ce_id,
+                                                                                                  'mps',
+                                                                                                  timestamp))
 
     def test_create_ce_event_bad_request_return_false(self):
         with responses.RequestsMock() as rsps:
