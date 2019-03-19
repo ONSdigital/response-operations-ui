@@ -31,3 +31,13 @@ class UpdateContactDetailsException(Exception):
         self.form = form
         self.respondent_details = respondent_details
         self.status_code = status_code
+
+
+class SearchRespondentsException(Exception):
+
+    def __init__(self, response, **kwargs):
+        self.response = response
+        self.status_code = response.status_code
+
+        for k, v in kwargs.items():
+            self.__setattr__(k, v)

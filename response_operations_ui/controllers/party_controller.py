@@ -6,7 +6,9 @@ from requests.exceptions import HTTPError, RequestException
 from structlog import wrap_logger
 
 from response_operations_ui.controllers.survey_controllers import get_survey_by_id
-from response_operations_ui.exceptions.exceptions import ApiError, UpdateContactDetailsException
+from response_operations_ui.exceptions.exceptions import ApiError
+from response_operations_ui.exceptions.exceptions import UpdateContactDetailsException
+from response_operations_ui.exceptions.exceptions import SearchRespondentsException
 from response_operations_ui.forms import EditContactDetailsForm
 
 
@@ -121,6 +123,28 @@ def search_respondent_by_email(email):
         log_level("Respondent retrieval failed")
         raise ApiError(response)
     logger.debug("Respondent retrieved successfully")
+
+    return response.json()
+
+
+def search_respondents(first_name, last_name, email_address, page=0):
+    params = {
+        'firstName': first_name,
+        'lastName': last_name,
+        'emailAddress': email_address,
+        'page': page,
+        'limit': app.config["PARTY_RESPONDENTS_PER_PAGE"]
+    }
+    response = requests.get(f'{app.config["PARTY_URL"]}/party-api/v1/respondents',
+                            auth=app.config['PARTY_AUTH'],
+                            params=params)
+
+    if response.status_code != 200:
+        raise SearchRespondentsException(response,
+                                         first_name=first_name,
+                                         last_name=last_name,
+                                         email_address=email_address,
+                                         page=page)
 
     return response.json()
 

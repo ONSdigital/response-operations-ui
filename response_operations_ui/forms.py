@@ -45,6 +45,23 @@ class SecureMessageForm(FlaskForm):
     hidden_to_ru_id = HiddenField('hidden_to_ru_id')
 
 
+class RespondentSearchForm(FlaskForm):
+    first_name = StringField('first_name')
+    last_name = StringField('last_name')
+    email_address = StringField('email_address')
+    page = HiddenField('page')
+    submit = SubmitField('Search')
+
+    def validate(form):
+        first_name = form.first_name.data or ''
+        last_name = form.last_name.data or ''
+        email_address = form.email_address.data or ''
+
+        if not (first_name or last_name or email_address):
+            return False
+        return True
+
+
 class SearchForm(FlaskForm):
     query = StringField('Query')
     submit = SubmitField('Search')
