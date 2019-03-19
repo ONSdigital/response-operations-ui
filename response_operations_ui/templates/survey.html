@@ -14,15 +14,15 @@
 {% if created_ce_message %}
   <div class="panel panel--simple panel--success">
     <div id="created_ce_message" class="panel__body">
-      <h1 class="venus">Collection exercise created</h1>
-      <p class="mars">
+      <h1 class="u-fs-r--b">Collection exercise created</h1>
+      <p class="u-fs-r">
         <a href="{{ url_for('collection_exercise_bp.view_collection_exercise', short_name=survey.shortName.replace(' ', ''), period=newly_created_period) }}" id="newly_created_ce_link">View/edit {{survey.shortName}} {{newly_created_period}}</a>
       </p>
     </div>
   </div>
   <br>
 {% endif %}
-<h1 class="jupiter" name="page-survey-title">{{survey.longName}}</h1>
+<h1 class="u-fs-xl" name="page-survey-title">{{survey.longName}}</h1>
 
   <div class="grid">
     <div class="grid__col col-12@l">
@@ -55,7 +55,7 @@
         </dl>
       </div>
       <div class="ce-list">
-        <h2 class="saturn u-pt-m">Collection exercises for {{survey.shortName}}</h2>
+        <h2 class="u-fs-l u-pt-m">Collection exercises for {{survey.shortName}}</h2>
         <div class="u-mb-l">
           <a href="{{ url_for('collection_exercise_bp.get_create_collection_exercise_form', survey_ref=survey.surveyRef, short_name=survey.shortName.replace(' ', '')) }}"
              name="create-collection-exercise-link" id="create-collection-exercise">Create collection exercise</a>
