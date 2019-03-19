@@ -6,9 +6,9 @@
     <div class="spoke__header">
         <div class="spoke__header-title">
             {% if is_complete %}
-                <h1 class="jupiter">Response status</h1>
+                <h1 class="u-fs-xl">Response status</h1>
             {% else %}
-                <h1 class="jupiter">Change response status</h1>
+                <h1 class="u-fs-xl">Change response status</h1>
             {% endif %}
         </div>
     </div>
@@ -73,12 +73,12 @@
             <form action="{{ request.url }}&case_group_id={{ case_group_id }}" method="post" class="u-mt-s">
                 <div class="field field--radio field--multiplechoice">
                     <fieldset>
-                  <legend class="field__legend mars">Choose new response status</legend>
+                  <legend class="field__legend u-fs-r">Choose new response status</legend>
                   {% for event, status in statuses.items() %}
                   <div class="field__item js-focusable-box">
                     <input required class="input input--radio js-focusable" name="event"
                        value="{{ event }}" id="state-{{loop.index}}" type="radio">
-                  <label class="label label--inline venus " for="state-{{loop.index}}">{{ status }}</label>
+                  <label class="label label--inline u-fs-r " for="state-{{loop.index}}">{{ status }}</label>
                   </div>
                     {% endfor %}
                 </fieldset>

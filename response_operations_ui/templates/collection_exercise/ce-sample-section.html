@@ -1,5 +1,5 @@
 <section id="section-sample" class="ce-section">
-  <h2 class="venus u-pt-m">Sample</h2>
+  <h2 class="u-fs-r--b u-pt-m">Sample</h2>
   {% if sample %}
     {% if 'ACTIVE' == sample.state %}
     <table id="sample-table" class="table table__dense" summary="Loaded sample summary">
@@ -30,7 +30,7 @@
     </p>
     {% elif 'INIT' == sample.state %}
         <div class="u-mb-xl">
-            <div class="mars">
+            <div class="u-fs-r">
                 Loading&hellip; <span class="u-ml-xs"><a href="/surveys/{{survey.shortName}}/{{ce.exerciseRef}}?show_msg=true">Refresh to see progress</a></span>
              </div>
         </div>

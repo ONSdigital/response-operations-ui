@@ -6,11 +6,11 @@
         <div name="sm-from-respondent" id="sm-from-respondent-{{ loop.index }}" class="secure-message-sent-message-meta sm-from-respondent">
     {% endif %}
     {% if loop.last %}<div name="latest-message" id="latest-message"></div>{% endif %}
-        <span class="secure-message-sent-message-meta-from venus">
+        <span class="secure-message-sent-message-meta-from u-fs-r--b">
             From:
             <span name="sm-from-user" id="sm-from-user-{{ loop.index }}" style="display:inline;">{{ message.get('username') }}</span>
         </span>
-        <span class="secure-message-sent-message-meta-from mercury">
+        <span class="secure-message-sent-message-meta-from u-fs-s--b">
             Sent:
             <span name="sm-sent-date" id="sm-sent-date-{{ loop.index }}" style="display:inline;">{{ message.get('sent_date') }}</span>
         </span>
@@ -22,7 +22,7 @@
           {% endif %}
         {% endif %}
     </div>
-    <div class="secure-message-sent-message-body mars">
+    <div class="secure-message-sent-message-body u-fs-r">
         <span style="white-space:pre-line" id="conversation-message-body-{{ loop.index }}" name="conversation-message-body">{{ message.get('body') }}</span>
     </div>
 </div>
