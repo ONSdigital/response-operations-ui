@@ -1,24 +1,14 @@
 const { registerTask } = require('../gulpHelper');
-const { GulpError } = require('../GulpError');
-const mocha = require('gulp-spawn-mocha');
+const jest = require('gulp-jest').default;
 const _ = require('lodash');
+const { join } = require('path');
 
 function taskFunction() {
     const config = this.config;
-    const gulp = this.gulp;
+    const jestConf = require(join(config.PROJECT_ROOT, 'package.json')).jest;
+    const testMatchGlobs = jestConf.testMatch.map(match => `${config.PROJECT_ROOT}/${match}`);
 
-    const TESTS_DIR = _.get(config, 'TESTS_DIR');
-
-    if (!TESTS_DIR) {
-        throw (new GulpError('TESTS_DIR config setting found.'));
-    }
-
-    const TESTS_SPLAT = `${TESTS_DIR}/**/*.test.js`;
-
-    return gulp.src(TESTS_SPLAT)
-        .pipe(mocha({
-            bin: `${config.PROJECT_ROOT}/node_modules/mocha/bin/mocha`
-        }));
+    return this.gulp.src(testMatchGlobs).pipe(jest(jestConf));
 }
 
 module.exports = (context) => {
