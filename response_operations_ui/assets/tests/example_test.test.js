@@ -94,35 +94,41 @@ context(' Our example tests', () => {
      *
      * Testing a callback function:
      */
-    describe('#asynchronousFunctionCallback', (done) => {
+    describe('#asynchronousFunctionCallback', () => {
         // We've used the 'done' argument in this function, and the test will wait until it is called, or it times out.
-        asynchronousFunctionCallback(callback => {
-            // assertions would go here
-            done();
+        it('should callback', (done) => {
+            asynchronousFunctionCallback(callback => {
+                // assertions would go here
+                done();
+            });
         });
     });
 
     /**
      * Testing a promise function:
      */
-    describe('#asynchronousFunctionPromise', (done) => {
+    describe('#asynchronousFunctionPromise', () => {
         // We've used the 'done' argument in this function, and the test will wait until it is called, or it times out.
-        asynchronousFunctionPromise()
-            .then(() => {
-                // assertions would go here
-                done();
-            });
+        it('should resolve a promise', done => {
+            asynchronousFunctionPromise()
+                .then(() => {
+                    // assertions would go here
+                    done();
+                });
+        });
     });
 
     /**
      * Testing a promise function:
      */
-    describe('#asynchronousFunctionPromiseRejects', (done) => {
+    describe('#asynchronousFunctionPromiseRejects', () => {
         // We've used the 'done' argument in this function, and the test will wait until it is called, or it times out.
-        asynchronousFunctionPromiseRejects()
-            .catch(() => {
-                // assertions would go here
-                done();
-            });
+        it('should reject a promise', () => {
+            asynchronousFunctionPromiseRejects()
+                .catch(() => {
+                    // assertions would go here
+                    done();
+                });
+        });
     });
 });
