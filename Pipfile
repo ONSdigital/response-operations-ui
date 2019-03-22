@@ -1,17 +1,12 @@
 [[source]]
-
 name = "pypi"
 verify_ssl = true
 url = "https://pypi.python.org/simple"
 
-
 [requires]
-
 python_version = "3.6"
 
-
 [packages]
-
 flask = "*"
 flask-login = "==0.4.1"
 flask-wtf = "==0.14.2"
@@ -32,9 +27,9 @@ flask-paginate = "*"
 python-dateutil = "*"
 requestsdefaulter = "*"
 flask-zipkin = "*"
+bs4 = "*"
 
 [dev-packages]
-
 codecov = "==2.0.9"
 "flake8" = "*"
 pytest = "*"

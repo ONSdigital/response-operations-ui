@@ -4,7 +4,7 @@
 <div role="main" id="main" class="page__main">
   <div class="spoke__header">
     <div class="spoke__header-title">
-      <h1 class="jupiter">Edit collection exercise details</h1>
+      <h1 class="u-fs-xl">Edit collection exercise details</h1>
     </div>
   </div>
   <div class="spoke__body">
@@ -14,7 +14,7 @@
         <label class="label" for="Survey">
           Survey:
           <span class="u-vh">Current value: </span>
-          <span class="mars">
+          <span class="u-fs-r">
                 {{ survey_ref }} {{ short_name }}
               </span>
         </label>
@@ -22,11 +22,11 @@
         {% if errors %}
         <div class="panel panel--simple panel--error u-mb-l">
           <div class="panel__body" id="save-error">
-            <h2 id='error-editing-ce-message' class="venus">Error editing collection exercise</h2>
+            <h2 id='error-editing-ce-message' class="u-fs-r--b">Error editing collection exercise</h2>
             {% if form.errors.period[1] == 'Please enter numbers only for the period' %}
-            <p class="mars">{{form.period.errors[1]}}</p>
+            <p class="u-fs-r">{{form.period.errors[1]}}</p>
             {% else %}
-            <p class="mars">Please use a period that is not in use by any collection exercise for this survey</p>
+            <p class="u-fs-r">Please use a period that is not in use by any collection exercise for this survey</p>
             {% endif %}
         </div>
       </div>

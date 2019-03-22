@@ -1,11 +1,14 @@
 import logging
 
-from flask import Blueprint, flash, redirect, render_template, request, url_for
+from flask import Blueprint, render_template, request, redirect, flash, url_for
+from flask import current_app as app
 from flask_login import login_required
+from flask_paginate import Pagination
 from structlog import wrap_logger
+
+from response_operations_ui.common.respondent_utils import filter_respondents
 from response_operations_ui.controllers import party_controller, reporting_units_controllers
-from response_operations_ui.forms import SearchForm, EditContactDetailsForm
-from response_operations_ui.controllers.party_controller import get_respondent_by_party_id
+from response_operations_ui.forms import RespondentSearchForm, EditContactDetailsForm
 
 
 logger = wrap_logger(logging.getLogger(__name__))
@@ -14,22 +17,77 @@ respondent_bp = Blueprint('respondent_bp', __name__,
                           static_folder='static', template_folder='templates')
 
 
-@respondent_bp.route('/', methods=['GET', 'POST'])
+@respondent_bp.route('/', methods=['GET'])
+@login_required
+def respondent_home():
+    return render_template('respondent-search/respondent-search.html',
+                           form=RespondentSearchForm(),
+                           breadcrumbs=[{"title": "Respondents"}])
+
+
+@respondent_bp.route('/search', methods=['POST'])
+@login_required
+def search_redirect():
+    form = RespondentSearchForm()
+    form_valid = form.validate()
+
+    if not form_valid:
+        flash('At least one input should be filled')
+        return redirect(url_for('respondent_bp.respondent_home'))
+
+    return redirect(url_for('respondent_bp.respondent_search',
+                            email_address=form.email_address.data or '',
+                            first_name=form.first_name.data or '',
+                            last_name=form.last_name.data or '',
+                            page=request.args.get('page', 1)))
+
+
+@respondent_bp.route('/search', methods=['GET'])
 @login_required
 def respondent_search():
-    form = SearchForm()
-    breadcrumbs = [{"title": "Respondents"}]
-    response = None
+    breadcrumbs = [{"title": "Respondents"}, {"title": "Search"}]
 
-    if form.validate_on_submit():
-        email = request.form.get('query')
-        # NB: requires exact email to be entered
-        respondent = party_controller.search_respondent_by_email(email)
-        if respondent:
-            return redirect(url_for('respondent_bp.respondent_details', respondent_id=respondent['id']))
-        response = 'No Respondent found for ' + email
+    first_name = request.values.get('first_name', '')
+    last_name = request.values.get('last_name', '')
+    email_address = request.values.get('email_address', '')
+    page = request.values.get('page', '')
 
-    return render_template('search-respondent.html', response=response, form=form, breadcrumbs=breadcrumbs)
+    form = RespondentSearchForm()
+
+    form.first_name.data = first_name
+    form.last_name.data = last_name
+    form.email_address.data = email_address
+
+    party_response = party_controller.search_respondents(first_name, last_name, email_address, page)
+
+    respondents = party_response.get('data', [])
+    total_respondents_available = party_response.get('total', 0)
+
+    filtered_respondents = filter_respondents(respondents)
+
+    results_per_page = app.config["PARTY_RESPONDENTS_PER_PAGE"]
+
+    offset = (int(page) - 1) * results_per_page
+
+    pagination = Pagination(page=int(page),
+                            per_page=results_per_page,
+                            total=total_respondents_available,
+                            record_name='respondents',
+                            prev_label='Previous',
+                            next_label='Next',
+                            outer_window=0,
+                            format_total=True,
+                            format_number=True,
+                            show_single_page=False)
+
+    return render_template('respondent-search/respondent-search-results.html',
+                           form=form, breadcrumb=breadcrumbs,
+                           respondents=filtered_respondents,
+                           respondent_count=total_respondents_available,
+                           first_index=1 + offset,
+                           last_index=results_per_page + offset,
+                           pagination=pagination,
+                           show_pagination=bool(total_respondents_available > results_per_page))
 
 
 @respondent_bp.route('/respondent-details/<respondent_id>', methods=['GET'])
@@ -131,7 +189,7 @@ def change_respondent_status(respondent_id):
 @respondent_bp.route('/<party_id>/change-respondent-status', methods=['GET'])
 @login_required
 def confirm_change_respondent_status(party_id):
-    respondent = get_respondent_by_party_id(party_id)
+    respondent = party_controller.get_respondent_by_party_id(party_id)
     return render_template('confirm-respondent-status-change.html',
                            respondent_id=respondent['id'],
                            first_name=respondent['firstName'],
