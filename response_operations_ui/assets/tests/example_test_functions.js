@@ -13,19 +13,26 @@ module.exports = {
     multiplyByThree: i => i*3,
 
     asynchronousFunctionCallback: (callback) => {
-        setTimeout(() => callback(), 10);
+        setTimeout(() => callback(), 1);
     },
 
-    asynchronousFunctionPromise: (callback) => {
+    asynchronousFunctionPromise: () => {
         return new Promise((resolve) => {
-            setTimeout(() => resolve(), 10);
+            setTimeout(() => resolve(), 1);
         });
     },
 
-    asynchronousFunctionPromiseRejects: (callback) => {
+    asynchronousFunctionPromiseRejects: () => {
         return new Promise((_, reject) => {
-            setTimeout(() => reject(), 10);
+            setTimeout(() => reject(), 1);
         });
-    }
+    },
 
-}
+    timerFunctionThatTakesALongTime: (callback) => {
+        const ONE_MINUTE = 60000;
+        setTimeout(() => {
+            callback('done');
+        }, ONE_MINUTE * 30);
+    }
+};
+

@@ -1,134 +1,164 @@
 /*
 
     A highly commented example of the JS testing framework, not to be run.
-    Note that the containing 'context' is using 'skip' to avoid these tests being run
+    Note that the containing 'describe' is using 'skip' to avoid these tests being run
 
 */
 
-// External libraries
-const _ = require('lodash');
+// include the functions we want to test:
+const {
+    isEven,
+    alwaysReturnsTwo,
+    multiplyByThree,
+    asynchronousFunctionCallback,
+    asynchronousFunctionPromise,
+    asynchronousFunctionPromiseRejects,
+    timerFunctionThatTakesALongTime,
+    makingAMockeryOfFunctions
+} = require('./example_test_functions'); // We include our own function here, for test
+
+let { getValueA, getValueB }  = require('./example_test_functions'); // These included using let so they can be mocked.
 
 /**
- * Chai.js is an assertion library that provides us with ways to assert what the outcome
- * of a test should be
+ * 'describe' blocks allow you to section off tests into separate parts - this is then reflected in the output from test runners, and from the jest command line tool
  *
- * assert provides traditional assert style statements, similar to those in many languages
- * should provides a plain english interface that allows you to form english-like sentences
- * to explain the test
- * expect is also an english style assertion API, that allows you to write sentence-like
- * assertions beginning with 'expect', rather than 'should'
+ * You can put describe blocks within describe blocks, to nest a 'tree' of tests, for organisation
  *
- * NB: All assertion types take an error message as a final argument, which will be shown if the test fails
- *
- * See below for examples of each
+ * Conventionally, when tests refer to a single function, you should put those tests in a describe block in the form 'describe('#functionName')'
  */
-const { assert, expect } = require('chai');
-require('chai').should();
-
-const { isEven, alwaysReturnsTwo, multiplyByThree, asynchronousFunctionCallback, asynchronousFunctionPromise, asynchronousFunctionPromiseRejects } = require('./example_test_functions') // We include our own function here, for test
-
-/**
- * Tests are written in sections, using 'context', 'describe', and 'it'
- *
- * describe - typically describes a particular aspect of testing, often an actual function - 'multiplyByTwo'
- * it - denotes the block that will contain actual assertions
- *
- * NB: All of these can be embedded within each other to organise tests: a describe block can contain other
- * describe blocks, it blocks etc. In test runners, this leads to very organised output
- */
-context(' Our example tests', () => {
+describe(' Our example tests', () => {
     /**
-     * This tests will use classic asserts as examples of this
+     * These tests are testing basic pure functions, and this is how the ideal test looks.
      *
-     * The assert API has many functions to test different types of criteria
-     * https://www.chaijs.com/api/assert/
+     * The functions themselves are sectioned into a 'describe' block, and this contains a number of 'test' blocks.
+     * The test block can contain multiple expectations, but it's best to minimise the number of expectations per
+     * block, so that when a test fails, it's clear which part of the expectation failed.
+     *
+     * E.g. If the test that fails is called "function should return a string", it's clear that if it fails, it didn't
+     * return a string. If it's called "function should return correct output", and has multiple expectations, we don't
+     * know immediately which failed.
+     *
+     * NB: Opinion is divided on this idea, and some people prefer multiple expectations.
      */
-    describe('#isEven', () => {
-        it('should throw an error if not passed a number', () => {
-            // Assert that the function throws an error when passed a non number (a specific error if you want)
-            assert.throws(isEven.bind(null, 'not a number'), TypeError, 'Expected an integer input');
+    describe('Simple functional testing', () => {
+        describe('#isEven', () => {
+            test('should throw an error if not passed a number', () => {
+                // Assert that the function throws an error when passed a non number (a specific error if you want)
+                expect(isEven.bind(null, 'not a number')).toThrow();
+            });
+
+            test('should throw and error if passed a non-integer number', () => {
+                // Assert that the function throws an error when passed an non-integer number
+                expect(isEven.bind(null, 'not a number')).toThrow();
+            });
+
+            test('should return true for an even number', () => {
+                expect(isEven(2)).toBe(true);
+            });
+
+            test('should return true for an odd number', () => {
+                expect(isEven(3)).toBe(false);
+            });
         });
 
-        it('should throw and error if passed a non-integer number', () => {
-            // Assert that the function throws an error when passed an non-integer number
-            assert.throws(isEven.bind(null, 'not a number'), TypeError, 'Expected an integer input');
+        describe('#alwaysReturnsTwo', () => {
+            test('should return a number', () => {
+                expect(typeof alwaysReturnsTwo()).toBe('number');
+            });
+
+            test('should not return a string', () => {
+                expect(alwaysReturnsTwo()).not.toBe('string');
+            });
+
+            test('should return 2', () => {
+                expect(alwaysReturnsTwo()).toBe(2);
+            });
         });
 
-        it('should return true for an even number', () => {
-            assert.isTrue(isEven(2), `isEven didn't return true for an even number`);
-        });
-
-        it('should return true for an odd number', () => {
-            assert.isFalse(isEven(3), `isEven didn't return false for an of odd number`);
-        });
-    });
-
-    /**
-     * Tests using should asserts now - a plain-english style assertion
-     */
-    describe('#alwaysReturnsTwo', () => {
-        it('should return a number', () => {
-            alwaysReturnsTwo().should.be.a('number');
-        });
-
-        it('should not return a string', () => {
-            alwaysReturnsTwo().should.not.be.a('string');
-        });
-
-        it('should return 2', () => {
-            alwaysReturnsTwo().should.equal(2);
-        });
-    });
-
-    /**
-     * Tests using expect API
-     */
-    describe('#multiplyByThree', () => {
-        it('should return input multiplied by three', () => {
-            [0, 3, 3.141].forEach(n => expect(multiplyByThree(n)).to.equal(n*3));
+        describe('#multiplyByThree', () => {
+            test('should return input multiplied by three', () => {
+                [0, 3, 3.141].forEach(n => expect(multiplyByThree(n)).toBe(n*3));
+            });
         });
     });
 
     /**
      * Asynchronous function testing examples:
      *
-     * Testing a callback function:
+     * Famously, many functions in Javascript are asynchronous, and there are many types of asynchronous function completion:
+     *
+     *  - Callback-based functions: Passed a function when invoked, and call it when finished.
+     *  - Promise-based functions: Return a 'Promise' object when invoked, and then call 'then' or 'catch' functions when it finishes, 'then' called on success, 'catch' called on failure
+     *  - Native async functions: Largely not supported in browsers, these are syntactic sugar for promises that allow them to be written in a synchronous style.
      */
-    describe('#asynchronousFunctionCallback', () => {
-        // We've used the 'done' argument in this function, and the test will wait until it is called, or it times out.
-        it('should callback', (done) => {
-            asynchronousFunctionCallback(callback => {
-                // assertions would go here
-                done();
+    describe('Testing various asynchronous functions', () => {
+        /**
+         * Testing a callback based function:
+         */
+        describe('#asynchronousFunctionCallback', () => {
+            // We've used the 'done' argument in this function, and the test will wait until it is called, or it times out.
+            test('should callback', (done) => {
+                asynchronousFunctionCallback(callback => {
+                    expect(true);
+                    done();
+                });
+            });
+        });
+
+        /**
+         * Testing a promise function:
+         */
+        describe('#asynchronousFunctionPromise', () => {
+            // We've used the 'done' argument in this function, and the test will wait until it is called, or it times out.
+            test('should resolve a promise', done => {
+                asynchronousFunctionPromise()
+                    .then(() => {
+                        expect(true);
+                        done();
+                    });
+            });
+        });
+
+        /**
+         * Testing a promise function:
+         */
+        describe('#asynchronousFunctionPromiseRejects', () => {
+            // We've used the 'done' argument in this function, and the test will wait until it is called, or it times out.
+            test('should reject a promise', () => {
+                asynchronousFunctionPromiseRejects()
+                    .catch(() => {
+                        expect(true);
+                        done();
+                    });
             });
         });
     });
 
     /**
-     * Testing a promise function:
+     * Mocking in Jest testing framework
+     *
+     * When testing functions that call other functions, you should mock the output of those functions, so that you are testing only the function under test (the unit)
+     * Jest has multiple mock styles and assistants for this:
      */
-    describe('#asynchronousFunctionPromise', () => {
-        // We've used the 'done' argument in this function, and the test will wait until it is called, or it times out.
-        it('should resolve a promise', done => {
-            asynchronousFunctionPromise()
-                .then(() => {
-                    // assertions would go here
-                    done();
-                });
-        });
-    });
+    describe('Testing using mocks', () => {
+        /**
+         * Mocking timers
+         *
+         * Sometimes, functions have timers in them for applications like regularly updating output etc.  These needlessly slow down the testing.
+         * See example below for a function that times for 30 minutes, but can be tested immediately.
+         */
+        describe('#timerFunctionThatTakesALongTime', () => {
+            beforeAll(() => {
+                jest.useFakeTimers();
+            });
 
-    /**
-     * Testing a promise function:
-     */
-    describe('#asynchronousFunctionPromiseRejects', () => {
-        // We've used the 'done' argument in this function, and the test will wait until it is called, or it times out.
-        it('should reject a promise', () => {
-            asynchronousFunctionPromiseRejects()
-                .catch(() => {
-                    // assertions would go here
-                    done();
-                });
+            test(`should callback 'done'`, () => {
+                const callback = jest.fn();
+                timerFunctionThatTakesALongTime(callback);
+                expect(callback).not.toBeCalled();
+                jest.runAllTimers();
+                expect(callback).toBeCalledWith('done');
+            });
         });
     });
 });
