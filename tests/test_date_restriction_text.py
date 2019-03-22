@@ -31,7 +31,6 @@ class TestDateRestrictionGenerator(unittest.TestCase):
         return formatted_events
 
     def test_with_no_reminders(self):
-
         date_text = get_date_restriction_text('reminder', self.generate_test_ce_events(reminder_one=False,
                                                                                        reminder_two=False,
                                                                                        reminder_three=False))

@@ -1,9 +1,46 @@
 import unittest
+import requests_mock
+import json
+
+from config import TestingConfig
+from tests.views import ViewTestCase
+from datetime import datetime
+
 
 from response_operations_ui import create_app
 from response_operations_ui.common.validators import valid_date_for_event
 from response_operations_ui.forms import EventDateForm
+from response_operations_ui.controllers.collection_exercise_controllers import update_event
+from response_operations_ui.views.update_event_date import update_event_date_submit
+from response_operations_ui.exceptions.exceptions import ApiError
 
+collection_exercise_id = '14fb3e68-4dca-46db-bf49-04b84e07e77c'
+survey_id = 'cb0711c3-0ac8-41d3-ae0e-567e5ea1ef87'
+survey_short_name = 'BRES'
+period = '201801'
+tag = 'go_live'
+
+with open('tests/test_data/collection_exercise/collection_exercise.json') as json_data:
+    collection_exercise = json.load(json_data)
+with open('tests/test_data/collection_exercise/collection_exercise_details.json') as json_data:
+    collection_exercise_details = json.load(json_data)
+with open('tests/test_data/survey/single_survey.json') as json_data:
+    survey = json.load(json_data)
+with open('tests/test_data/collection_exercise/events.json') as json_data:
+    events = json.load(json_data)
+url_put_update_event_date = (
+    f'{TestingConfig.COLLECTION_EXERCISE_URL}/collectionexercises'
+    f'/{collection_exercise_id}/events/{tag}'
+)
+url_survey_shortname = f'{TestingConfig.SURVEY_URL}/surveys/shortname/{survey_short_name}'
+url_collection_exercise_survey_id = (
+    f'{TestingConfig.COLLECTION_EXERCISE_URL}/collectionexercises/survey'
+    f'/{survey_id}'
+)
+url_get_collection_exercise_events = (
+    f'{TestingConfig.COLLECTION_EXERCISE_URL}'
+    f'/collectionexercises/{collection_exercise_id}/events'
+)
 
 class TestValidators(unittest.TestCase):
 
@@ -56,3 +93,28 @@ class TestValidators(unittest.TestCase):
         form.minute.data = "00"
 
         return form
+
+
+class TestValidationErrorMessages(ViewTestCase):
+
+    def setup_data(self):
+        self.reminder1_after_reminder2 = {"error": {"code":"BAD_REQUEST","timestamp":"20190321131255986",
+                                                    "message": "Collection exercise events must be set sequentially"}}
+
+    @requests_mock.mock()
+    def test_update_event_error_when_reminder1_after_reminder2(self, mock_request):
+        with self.app.app_context():
+            mock_request.put(url_put_update_event_date, status_code=400, json=self.reminder1_after_reminder2)
+
+            error_expected = update_event(collection_exercise_id, tag, datetime.utcnow())
+
+            self.assertIn("Collection exercise events must be set sequentially", error_expected)
+
+    @requests_mock.mock()
+    def test_update_event_HTTPerror_not_400(self, mock_request):
+        with self.app.app_context():
+            mock_request.put(url_put_update_event_date, status_code=500)
+
+            with self.assertRaises(ApiError):
+                update_event(collection_exercise_id, tag, datetime.utcnow())
+

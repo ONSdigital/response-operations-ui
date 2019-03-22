@@ -3,6 +3,7 @@ import json
 from io import BytesIO
 from unittest.mock import patch
 from urllib.parse import urlencode, urlparse
+from flask import message_flashed, get_flashed_messages
 
 import mock
 import requests_mock
@@ -1170,11 +1171,12 @@ class TestCollectionExercise(ViewTestCase):
 
     @mock.patch("response_operations_ui.views.collection_exercise.build_collection_exercise_details")
     @mock.patch("response_operations_ui.controllers.collection_exercise_controllers.create_collection_exercise_event")
-    def test_create_collection_exercise_event_success(self, _, mock_get_ce_details):
+    def test_create_collection_exercise_event_success(self, mock_ce_events, mock_get_ce_details):
         with open(
             "tests/test_data/collection_exercise/formatted_collection_exercise_details_no_events.json"
         ) as collection_exercise:
             mock_get_ce_details.return_value = json.load(collection_exercise)
+            mock_ce_events.return_value = None
         create_ce_event_form = {
             "day": "01",
             "month": "01",
@@ -1207,7 +1209,6 @@ class TestCollectionExercise(ViewTestCase):
                                     data=create_ce_event_form, follow_redirects=True)
 
         self.assertEqual(response.status_code, 200)
-        self.assertIn("Error creating".encode(), response.data)
 
     def test_get_collection_exercises_with_events_and_samples_by_survey_id(self):
         name_space = 'response_operations_ui.controllers.collection_exercise_controllers.'
