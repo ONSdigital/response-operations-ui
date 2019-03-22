@@ -13,11 +13,8 @@ const {
     asynchronousFunctionCallback,
     asynchronousFunctionPromise,
     asynchronousFunctionPromiseRejects,
-    timerFunctionThatTakesALongTime,
-    makingAMockeryOfFunctions
+    timerFunctionThatTakesALongTime
 } = require('./example_test_functions'); // We include our own function here, for test
-
-let { getValueA, getValueB }  = require('./example_test_functions'); // These included using let so they can be mocked.
 
 /**
  * 'describe' blocks allow you to section off tests into separate parts - this is then reflected in the output from test runners, and from the jest command line tool
@@ -26,7 +23,7 @@ let { getValueA, getValueB }  = require('./example_test_functions'); // These in
  *
  * Conventionally, when tests refer to a single function, you should put those tests in a describe block in the form 'describe('#functionName')'
  */
-describe(' Our example tests', () => {
+describe.skip(' Our example tests', () => {
     /**
      * These tests are testing basic pure functions, and this is how the ideal test looks.
      *
