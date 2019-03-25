@@ -82,7 +82,7 @@ def update_event_date_submit(short_name, period, tag):
         error_message = collection_exercise_controllers.update_event(
             collection_exercise_id=exercise['id'], tag=tag, timestamp=submitted_dt)
         if error_message is not None:
-            form.errors['validation_error'] = error_message
+            flash(error_message, 'error')
 
     except ValueError as exc:
         error_message = str(exc)

@@ -511,7 +511,7 @@ def create_collection_exercise_event(short_name, period, ce_id, tag):
         collection_exercise_controllers.create_collection_exercise_event(
             collection_exercise_id=ce_id, tag=tag, timestamp=submitted_dt)
     if error_message is not None:
-        form.errors['validation_error'] = error_message
+        flash(error_message, 'error')
 
     if not form.validate() or not valid_date_for_event(tag, form) or error_message:
         for error in form.errors.values():
