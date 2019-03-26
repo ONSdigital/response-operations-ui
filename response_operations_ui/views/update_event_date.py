@@ -65,11 +65,7 @@ def update_event_date_submit(short_name, period, tag):
                      short_name=short_name, period=period)
         abort(404)
 
-    if not form.validate() or not valid_date_for_event(tag, form):
-        for error in form.errors.values():
-            flash(error, 'error')
-        return redirect(url_for('collection_exercise_bp.update_event_date',
-                                short_name=short_name, period=period, tag=tag))
+
 
     try:
         submitted_dt = datetime(year=int(form.year.data),
@@ -81,16 +77,17 @@ def update_event_date_submit(short_name, period, tag):
 
         error_message = collection_exercise_controllers.update_event(
             collection_exercise_id=exercise['id'], tag=tag, timestamp=submitted_dt)
-        if error_message is not None:
+        if error_message:
             flash(error_message, 'error')
 
-    except ValueError as exc:
-        error_message = str(exc)
+    except ValueError:
+        flash('Please enter a valid value', 'error')
+        return redirect(url_for('collection_exercise_bp.update_event_date',
+                                short_name=short_name, period=period, tag=tag))
 
-    if error_message:
+    if not form.validate() or not valid_date_for_event(tag, form):
         for error in form.errors.values():
-            if error is not None:
-                flash(error, 'error')
+            flash(error, 'error')
         return redirect(url_for('collection_exercise_bp.update_event_date',
                                 short_name=short_name, period=period, tag=tag))
     success_panel = "Event date updated."

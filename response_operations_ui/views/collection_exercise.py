@@ -502,20 +502,25 @@ def create_collection_exercise_event(short_name, period, ce_id, tag):
                                 hour=int(form.hour.data),
                                 minute=int(form.minute.data),
                                 tzinfo=tz.gettz('Europe/London'))
-    except ValueError as exc:
-        error_message = str(exc)
+    except ValueError:
+        flash('Please enter a valid value', 'error')
+        return get_create_collection_event_form(
+            short_name=short_name,
+            period=period,
+            ce_id=ce_id,
+            tag=tag)
 
     """Attempts to create the event, returns None if success or returns an error message upon failure. If error message
         is already set, skips the create event step as we have already determined a failure."""
     error_message = error_message if error_message else \
         collection_exercise_controllers.create_collection_exercise_event(
             collection_exercise_id=ce_id, tag=tag, timestamp=submitted_dt)
-    if error_message is not None:
+    if error_message:
         flash(error_message, 'error')
 
     if not form.validate() or not valid_date_for_event(tag, form) or error_message:
         for error in form.errors.values():
-            if error is not None:
+            if error is not None or 'True':
                 flash(error, 'error')
         return get_create_collection_event_form(
             short_name=short_name,

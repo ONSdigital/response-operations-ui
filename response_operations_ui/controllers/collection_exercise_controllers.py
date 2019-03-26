@@ -78,7 +78,7 @@ def update_event(collection_exercise_id, tag, timestamp):
                            tag=tag, timestamp=formatted_timestamp, status=response.status_code)
             response_content = response.content.decode("utf-8")
             response_json = json.loads(response_content)
-            logger.error('got error', message=response_json['error']['message'])
+            logger.error('Validation Failed:', message=response_json['error']['message'])
 
             return response_json['error']['message']
         else:
