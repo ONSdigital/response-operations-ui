@@ -1,18 +1,18 @@
-(function($, window) {
+(function(window) {
     function drawOutput(businessCount, ciCount) {
         // Clear previous data
         document.getElementById('sample-preview').innerHTML = '';
 
         let preview = '';
-        preview = preview + '<div class=\'panel panel--info\'>';
-        preview = preview + '  <div class=\'panel__header\'>';
-        preview = preview + '    <h3 class=\'u-fs-r--b\'>Sample contents</h3>';
-        preview = preview + '  </div>';
-        preview = preview + '  <div class=\'panel__body\'>';
-        preview = preview + '    <div id=\'sample-preview-businesses\'>Number of businesses: ' + businessCount + '</div>';
-        preview = preview + '    <div id=\'sample-preview-ci\'>Collection instruments: ' + ciCount + '</div>';
-        preview = preview + '  </div>';
-        preview = preview + '</div>';
+        preview += '<div class=\'panel panel--info\'>';
+        preview += '  <div class=\'panel__header\'>';
+        preview += '    <h3 class=\'u-fs-r--b\'>Sample contents</h3>';
+        preview += '  </div>';
+        preview += '  <div class=\'panel__body\'>';
+        preview += '    <div id=\'sample-preview-businesses\'>Number of businesses: ' + businessCount + '</div>';
+        preview += '    <div id=\'sample-preview-ci\'>Collection instruments: ' + ciCount + '</div>';
+        preview += '  </div>';
+        preview += '</div>';
 
         document.getElementById('sample-preview').innerHTML = preview;
         document.getElementById('btn-check-sample-contents').style.display = 'none';
@@ -86,4 +86,4 @@
 
     window.handleFiles = handleFiles;
     window.cancelLoadSample = cancelLoadSample;
-}(window.jQuery, window));
+}(window));

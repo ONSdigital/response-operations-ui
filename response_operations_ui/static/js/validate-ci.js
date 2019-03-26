@@ -1,25 +1,35 @@
-(function($, window) {
+(function(window) {
     function checkCI(file) {
         const type = file.type;
+        const errorPanel = document.getElementById('ciFileErrorPanel');
+        const errorPanelBody = document.getElementById('ciFileErrorPanelBody');
 
         if ( type === 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' ) {
-            $('#ciFileErrorPanel').removeClass('panel');
-            $('#ciFileErrorPanel').removeClass('panel--simple');
-            $('#ciFileErrorPanel').removeClass('panel--error');
+            errorPanel.classList.remove('panel');
+            errorPanel.classList.remove('panel--simple');
+            errorPanel.classList.remove('panel--error');
 
-            $('#ciFileErrorPanelBody').removeClass('panel__body');
-            $('#ciFileErrorPanelBody p').addClass('hidden');
+            errorPanelBody.classList.remove('panel__body');
+            paragraphsToRemoveClassFrom = [].prototype.slice.call(errorPanelBody.querySelectorAll('p'));
 
-            $('#btn-load-ci').removeClass('unready');
+            paragraphsToRemoveClassFrom.forEach(function(element) {
+                element.classList.remove('hidden');
+            });
+
+            document.getElementById('btn-load-ci').classList.remove('unready');
         } else {
-            $('#ciFileErrorPanel').addClass('panel');
-            $('#ciFileErrorPanel').addClass('panel--simple');
-            $('#ciFileErrorPanel').addClass('panel--error');
+            errorPanel.classList.add('panel');
+            errorPanel.classList.add('panel--simple');
+            errorPanel.classList.add('panel--error');
 
-            $('#ciFileErrorPanelBody').addClass('panel__body');
-            $('#ciFileErrorPanelBody p').removeClass('hidden');
+            errorPanelBody.classList.add('panel__body');
+            paragraphsToAddClassTo = [].prototype.slice.call(errorPanelBody.querySelectorAll('p'));
 
-            $('#btn-load-ci').addClass('unready');
+            paragraphsToAddClassTo.forEach(function(element) {
+                element.classList.add('hidden');
+            });
+
+            document.getElementById('btn-load-ci').classList.add('unready');
         }
     }
 
@@ -33,5 +43,5 @@
 
     window.checkCI = checkCI;
     window.checkSelectedCI = checkSelectedCI;
-}(window.jQuery, window));
+}(window));
 

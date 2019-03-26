@@ -1,8 +1,6 @@
-(function($, window) {
-    $(document).ready(function() {
-        $('#create-message-form').submit(function() {
-            $('#btn-send-message').prop('disabled', true);
-        });
+(function(window) {
+    document.getElementById('create-message-form').addEventListener('submit', function(event) {
+        document.getElementById('btn-send-message').attributes.disabled = 'disabled';
     });
-}(window.jQuery, window));
+}(window));
 

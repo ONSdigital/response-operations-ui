@@ -1,4 +1,4 @@
-(function($, window) {
+(function(window) {
     function initDataPanels() {
         const acc = document.getElementsByClassName('data-panel-header');
         for (let i = 0; i < acc.length; i++) {
@@ -19,14 +19,14 @@
     }
 
     function openPanel() {
-        const panelToOpen = window.location.hash;
-        if ( panelToOpen !== '') {
-            $( panelToOpen + '.data-panel-header').addClass('active');
-            $( panelToOpen + '.data-panel-body').css( 'display', 'block' );
+        const panelName = window.location.hash;
+        if (panelName) {
+            document.querySelectorAll('.data-panel-header').classList.addClass('active');
+            document.querySelectorAll('.data-panel-body').style.display = 'block';
         }
     }
 
     window.initDataPanels = initDataPanels;
     window.openPanel = openPanel;
-}(window.jQuery, window));
+}(window));
 
