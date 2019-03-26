@@ -65,8 +65,6 @@ def update_event_date_submit(short_name, period, tag):
                      short_name=short_name, period=period)
         abort(404)
 
-
-
     try:
         submitted_dt = datetime(year=int(form.year.data),
                                 month=int(form.month.data),
