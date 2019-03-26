@@ -11,7 +11,6 @@ from response_operations_ui import create_app
 from response_operations_ui.common.validators import valid_date_for_event
 from response_operations_ui.forms import EventDateForm
 from response_operations_ui.controllers.collection_exercise_controllers import update_event
-from response_operations_ui.views.update_event_date import update_event_date_submit
 from response_operations_ui.exceptions.exceptions import ApiError
 
 collection_exercise_id = '14fb3e68-4dca-46db-bf49-04b84e07e77c'
@@ -41,6 +40,7 @@ url_get_collection_exercise_events = (
     f'{TestingConfig.COLLECTION_EXERCISE_URL}'
     f'/collectionexercises/{collection_exercise_id}/events'
 )
+
 
 class TestValidators(unittest.TestCase):
 
@@ -98,7 +98,7 @@ class TestValidators(unittest.TestCase):
 class TestValidationErrorMessages(ViewTestCase):
 
     def setup_data(self):
-        self.reminder1_after_reminder2 = {"error": {"code":"BAD_REQUEST","timestamp":"20190321131255986",
+        self.reminder1_after_reminder2 = {"error": {"code": "BAD_REQUEST", "timestamp": "20190321131255986",
                                                     "message": "Collection exercise events must be set sequentially"}}
 
     @requests_mock.mock()
@@ -117,4 +117,3 @@ class TestValidationErrorMessages(ViewTestCase):
 
             with self.assertRaises(ApiError):
                 update_event(collection_exercise_id, tag, datetime.utcnow())
-

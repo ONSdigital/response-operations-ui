@@ -3,7 +3,6 @@ import json
 from io import BytesIO
 from unittest.mock import patch
 from urllib.parse import urlencode, urlparse
-from flask import message_flashed, get_flashed_messages
 
 import mock
 import requests_mock
