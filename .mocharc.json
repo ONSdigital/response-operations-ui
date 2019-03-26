@@ -1,0 +1,9 @@
+{
+    "diff": true,
+    "extension": ["test.js"],
+    "package": "./package.json",
+    "reporter": "nyan",
+    "slow": 75,
+    "timeout": 2000,
+    "ui": "tdd"
+}

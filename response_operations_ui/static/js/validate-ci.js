@@ -1,40 +1,37 @@
-function checkCI(file){
+(function($, window) {
+    function checkCI(file) {
+        const type = file.type;
 
-	var type = file.type;
+        if ( type === 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' ) {
+            $('#ciFileErrorPanel').removeClass('panel');
+            $('#ciFileErrorPanel').removeClass('panel--simple');
+            $('#ciFileErrorPanel').removeClass('panel--error');
 
-	if( type === "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" ){
+            $('#ciFileErrorPanelBody').removeClass('panel__body');
+            $('#ciFileErrorPanelBody p').addClass('hidden');
 
-		$("#ciFileErrorPanel").removeClass("panel");
-		$("#ciFileErrorPanel").removeClass("panel--simple");
-		$("#ciFileErrorPanel").removeClass("panel--error");
+            $('#btn-load-ci').removeClass('unready');
+        } else {
+            $('#ciFileErrorPanel').addClass('panel');
+            $('#ciFileErrorPanel').addClass('panel--simple');
+            $('#ciFileErrorPanel').addClass('panel--error');
 
-		$("#ciFileErrorPanelBody").removeClass("panel__body");
-		$("#ciFileErrorPanelBody p").addClass("hidden");
+            $('#ciFileErrorPanelBody').addClass('panel__body');
+            $('#ciFileErrorPanelBody p').removeClass('hidden');
 
-		$("#btn-load-ci").removeClass("unready");
+            $('#btn-load-ci').addClass('unready');
+        }
+    }
 
-	} else{
+    function checkSelectedCI(files) {
+        // Check for the various File API support.
+        if (window.FileReader) {
+            // FileReader are supported.
+            checkCI(files[0]);
+        }
+    }
 
-		$("#ciFileErrorPanel").addClass("panel");
-		$("#ciFileErrorPanel").addClass("panel--simple");
-		$("#ciFileErrorPanel").addClass("panel--error");
+    window.checkCI = checkCI;
+    window.checkSelectedCI = checkSelectedCI;
+}(window.jQuery, window));
 
-		$("#ciFileErrorPanelBody").addClass("panel__body");
-		$("#ciFileErrorPanelBody p").removeClass("hidden");
-
-		$("#btn-load-ci").addClass("unready");
-
-	}
-
-
-}
-
-function checkSelectedCI(files){
-
-	// Check for the various File API support.
-	if (window.FileReader) {
-		// FileReader are supported.
-		checkCI(files[0]);
-	}
-
-}
