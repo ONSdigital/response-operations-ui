@@ -1,5 +1,7 @@
 const { registerTask } = require('../gulpHelper');
 const gulpStyleLint = require('gulp-stylelint');
+const { GulpError } = require('../GulpError');
+const { join } = require('path');
 const _ = require('lodash');
 
 function taskFunction() {

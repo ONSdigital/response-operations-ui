@@ -19,6 +19,7 @@ const CONSTANTS = {
     CSS_DIR:         _.get(config, 'CSS_DIR', '').replace('$ROOT', PROJECT_ROOT),
     JS_SRC_DIR:      _.get(config, 'JS_SRC_DIR', '').replace('$ROOT', PROJECT_ROOT),
     JS_DEST_DIR:     _.get(config, 'JS_DEST_DIR', '').replace('$ROOT', PROJECT_ROOT),
+    TESTS_DIR:     _.get(config, 'TESTS_DIR', '').replace('$ROOT', PROJECT_ROOT),
     TASKS_DIR:       join(PROJECT_ROOT, 'gulp', 'tasks'),
     IS_DEBUG:        !Boolean(process.env.node_env === 'production'),
     PROJECT_ROOT
