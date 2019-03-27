@@ -495,20 +495,21 @@ def create_collection_exercise_event(short_name, period, ce_id, tag):
 
     form = EventDateForm(request.form)
     error_message = None
-    try:
-        submitted_dt = datetime(year=int(form.year.data),
-                                month=int(form.month.data),
-                                day=int(form.day.data),
-                                hour=int(form.hour.data),
-                                minute=int(form.minute.data),
-                                tzinfo=tz.gettz('Europe/London'))
-    except ValueError:
+
+    if not form.validate():
         flash('Please enter a valid value', 'error')
         return get_create_collection_event_form(
             short_name=short_name,
             period=period,
             ce_id=ce_id,
             tag=tag)
+
+    submitted_dt = datetime(year=int(form.year.data),
+                            month=int(form.month.data),
+                            day=int(form.day.data),
+                            hour=int(form.hour.data),
+                            minute=int(form.minute.data),
+                            tzinfo=tz.gettz('Europe/London'))
 
     """Attempts to create the event, returns None if success or returns an error message upon failure. If error message
         is already set, skips the create event step as we have already determined a failure."""
@@ -518,7 +519,7 @@ def create_collection_exercise_event(short_name, period, ce_id, tag):
     if error_message:
         flash(error_message, 'error')
 
-    if not form.validate() or not valid_date_for_event(tag, form) or error_message:
+    if not valid_date_for_event(tag, form) or error_message:
         for error in form.errors.values():
             if error is not None or 'True':
                 flash(error, 'error')
