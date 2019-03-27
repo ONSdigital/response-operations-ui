@@ -77,6 +77,8 @@ def update_event_date_submit(short_name, period, tag):
             collection_exercise_id=exercise['id'], tag=tag, timestamp=submitted_dt)
         if error_message:
             flash(error_message, 'error')
+            return redirect(url_for('collection_exercise_bp.update_event_date',
+                                    short_name=short_name, period=period, tag=tag))
 
     except ValueError:
         flash('Please enter a valid value', 'error')
