@@ -27,20 +27,18 @@
     }
 
     function handleFiles(files, classifiers) {
-        // Check for the various File API support.
-        if (window.FileReader) {
-            // FileReader are supported.
+        if (_browserHasFileLoaderCapability()) {
             const reader = new FileReader();
 
-            // Handle errors load
             reader.onload = function(evt) {
                 processFile(evt, classifiers);
             };
+
             reader.onerror = errorHandler;
 
-            // Read file into memory as UTF-8
             reader.readAsText(files[0]);
         } else {
+            // @TODO: Implement better way to handle this
             alert('FileReader is not supported in this browser.');
         }
     }
@@ -82,6 +80,10 @@
         document.getElementById('btn-load-sample').style.display = 'none';
         document.getElementById('btn-cancel-load-sample').style.display = 'none';
         $('#file').focus();
+    }
+
+    function _browserHasFileLoaderCapability() {
+        return window.hasOwnProperty('FileReader');
     }
 
     window.handleFiles = handleFiles;
