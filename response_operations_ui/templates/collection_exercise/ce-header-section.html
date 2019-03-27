@@ -18,7 +18,8 @@
 {% if show_set_live_button %}
 <div>
     <form id="form-ready-for-live" action="" class="form" method="post" enctype="multipart/form-data">
-        <button id="btn-ready-for-live" onclick="return confirm('There\'s no going back...')" name="ready-for-live" class="btn" type="submit">Set as ready for live</button>
+
+        <button id="btn-ready-for-live" onclick="return confirm('This action cannot be undone.  Press \'OK\' to continue, or \'Cancel\' to go back.')" name="ready-for-live" class="btn" type="submit">Set as ready for live</button>
     </form>
 </div>
 {% endif %}
