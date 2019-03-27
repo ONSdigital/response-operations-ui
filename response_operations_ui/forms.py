@@ -1,6 +1,7 @@
 import calendar
 import logging
 import re
+from datetime import datetime
 
 from flask_wtf import FlaskForm
 from structlog import wrap_logger
@@ -135,6 +136,17 @@ class EventDateForm(FlaskForm):
         days_in_month = calendar.monthrange(int(form.year.data), int(form.month.data))[1]
         if int(field.data) < 1 or int(field.data) > days_in_month:
             raise ValidationError('Day out of range for month')
+
+    def validate_date_for_event(form, tag):
+        form_datetime = datetime(int(form.year.data),
+                                 int(form.month.data),
+                                 int(form.day.data),
+                                 int(form.hour.data),
+                                 int(form.minute.data))
+        tags_can_be_in_past = ("ref_period_start", "ref_period_end", "employment")
+
+        if tag not in tags_can_be_in_past and form_datetime < datetime.now():
+            raise ValidationError('Selected date can not be in the past')
 
 
 class CreateCollectionExerciseDetailsForm(FlaskForm):

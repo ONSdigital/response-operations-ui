@@ -8,6 +8,7 @@ from flask import Blueprint, abort, render_template, request, redirect, session,
 from flask import jsonify, make_response, flash
 from flask_login import login_required
 from structlog import wrap_logger
+from wtforms import ValidationError
 
 from response_operations_ui.common.date_restriction_generator import get_date_restriction_text
 from response_operations_ui.common.filters import get_collection_exercise_by_period
@@ -494,10 +495,19 @@ def create_collection_exercise_event(short_name, period, ce_id, tag):
                 tag=tag)
 
     form = EventDateForm(request.form)
-    error_message = None
 
     if not form.validate():
         flash('Please enter a valid value', 'error')
+        return get_create_collection_event_form(
+            short_name=short_name,
+            period=period,
+            ce_id=ce_id,
+            tag=tag)
+
+    try:
+        form.validate_date_for_event(tag=tag)
+    except ValidationError as exec:
+        flash(exec, 'error')
         return get_create_collection_event_form(
             short_name=short_name,
             period=period,
@@ -513,28 +523,21 @@ def create_collection_exercise_event(short_name, period, ce_id, tag):
 
     """Attempts to create the event, returns None if success or returns an error message upon failure. If error message
         is already set, skips the create event step as we have already determined a failure."""
-    error_message = error_message if error_message else \
-        collection_exercise_controllers.create_collection_exercise_event(
-            collection_exercise_id=ce_id, tag=tag, timestamp=submitted_dt)
+    error_message = collection_exercise_controllers.create_collection_exercise_event(
+        collection_exercise_id=ce_id, tag=tag, timestamp=submitted_dt)
+
     if error_message:
         flash(error_message, 'error')
-
-    if not valid_date_for_event(tag, form) or error_message:
-        for error in form.errors.values():
-            if error is not None or 'True':
-                flash(error, 'error')
         return get_create_collection_event_form(
             short_name=short_name,
             period=period,
             ce_id=ce_id,
             tag=tag)
 
-    success_panel = "Event date added."
-
     return redirect(url_for('collection_exercise_bp.view_collection_exercise',
                             period=period,
                             short_name=short_name,
-                            success_panel=success_panel))
+                            success_panel='Event date added.'))
 
 
 def get_event_name(tag):
