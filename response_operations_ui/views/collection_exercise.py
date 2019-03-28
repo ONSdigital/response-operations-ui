@@ -505,9 +505,9 @@ def create_collection_exercise_event(short_name, period, ce_id, tag):
             tag=tag)
 
     try:
-        form.validate_date_for_event(tag=tag)
-    except ValidationError as exec:
-        flash(exec, 'error')
+        valid_date_for_event(tag, form)
+    except ValidationError as exception:
+        flash(exception, 'error')
         return get_create_collection_event_form(
             short_name=short_name,
             period=period,
