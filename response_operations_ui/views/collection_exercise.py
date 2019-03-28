@@ -479,7 +479,7 @@ def get_create_collection_event_form(short_name, period, ce_id, tag):
                            event_name=event_name,
                            date_restriction_text=date_restriction_text,
                            tag=tag,
-                           form=form,)
+                           form=form)
 
 
 @collection_exercise_bp.route('/<short_name>/<period>/<ce_id>/create-event/<tag>', methods=['POST'])

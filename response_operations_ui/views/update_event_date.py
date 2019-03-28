@@ -87,8 +87,8 @@ def update_event_date_submit(short_name, period, tag):
                             tzinfo=tz.gettz('Europe/London'))
 
     """Attempts to create the event, returns None if success or returns an error message upon failure."""
-    error_message = collection_exercise_controllers.create_collection_exercise_event(
-            collection_exercise_id=exercise['id'], tag=tag, timestamp=submitted_dt)
+    error_message = collection_exercise_controllers.update_event(
+        collection_exercise_id=exercise['id'], tag=tag, timestamp=submitted_dt)
 
     if error_message:
         flash(error_message, 'error')
@@ -97,4 +97,3 @@ def update_event_date_submit(short_name, period, tag):
 
     return redirect(url_for('collection_exercise_bp.view_collection_exercise',
                             short_name=short_name, period=period, success_panel='Event date updated.'))
-

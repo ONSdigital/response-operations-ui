@@ -133,7 +133,10 @@ class TestUpdateEventDate(ViewTestCase):
 
     @requests_mock.mock()
     def test_put_update_event_date_update_bad_request(self, mock_request):
-        mock_request.put(url_put_update_event_date, status_code=400)
+        mock_request.put(url_put_update_event_date, status_code=400, text='{"error":{"code":"BAD_REQUEST","timestamp":'
+                                                                          ' "20190328133054682","message":'
+                                                                          '"Collection exercise events must be set '
+                                                                          'sequentially"}}')
         mock_request.get(url_survey_shortname, json=survey)
         mock_request.get(url_collection_exercise_survey_id, json=[collection_exercise])
         mock_request.get(url_get_collection_exercise_events, json=events)
@@ -142,6 +145,7 @@ class TestUpdateEventDate(ViewTestCase):
                                     data=self.update_event_form, follow_redirects=True)
 
         self.assertEqual(response.status_code, 200)
+        self.assertIn('Collection exercise events must be set sequentially'.encode(), response.data)
 
     @requests_mock.mock()
     def test_put_update_event_date_update_service_fail(self, mock_request):

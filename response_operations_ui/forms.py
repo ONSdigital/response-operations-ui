@@ -1,7 +1,6 @@
 import calendar
 import logging
 import re
-from datetime import datetime
 
 from flask_wtf import FlaskForm
 from structlog import wrap_logger

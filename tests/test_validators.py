@@ -5,6 +5,7 @@ import json
 from config import TestingConfig
 from tests.views import ViewTestCase
 from datetime import datetime
+from wtforms import ValidationError
 
 
 from response_operations_ui import create_app
@@ -50,38 +51,41 @@ class TestValidators(unittest.TestCase):
     def test_date_can_be_past_for_reference_period_end_tag(self):
         with self.app.app_context():
             form = self._create_form_with_past_date()
-            self.assertEqual(valid_date_for_event('ref_period_end', form), True)
-            self.assertTrue("invalid_date" not in form.errors)
+            self.assertEqual(valid_date_for_event('ref_period_end', form), None)
 
     def test_date_can_be_past_for_reference_period_start_tag(self):
         with self.app.app_context():
             form = self._create_form_with_past_date()
-            self.assertEqual(valid_date_for_event('ref_period_start', form), True)
-            self.assertTrue("invalid_date" not in form.errors)
+            self.assertEqual(valid_date_for_event('ref_period_start', form), None)
 
     def test_date_can_be_past_for_employment_tag(self):
         with self.app.app_context():
             form = self._create_form_with_past_date()
-            self.assertEqual(valid_date_for_event('employment', form), True)
-            self.assertTrue("invalid_date" not in form.errors)
+            self.assertEqual(valid_date_for_event('employment', form), None)
 
     def test_date_can_not_be_past_for_mps_tag(self):
         with self.app.app_context():
             form = self._create_form_with_past_date()
-            self.assertEqual(valid_date_for_event('mps', form), False)
-            self.assertTrue("invalid_date" in form.errors)
+            with self.assertRaises(ValidationError) as exc:
+                valid_date_for_event('mps', form)
+            exception = exc.exception
+            self.assertEqual(exception.args[0], 'Selected date can not be in the past')
 
     def test_date_can_not_be_past_for_go_live_tag(self):
         with self.app.app_context():
             form = self._create_form_with_past_date()
-            self.assertEqual(valid_date_for_event('go_live', form), False)
-            self.assertTrue("invalid_date" in form.errors)
+            with self.assertRaises(ValidationError) as exc:
+                valid_date_for_event('go_live', form)
+            exception = exc.exception
+            self.assertEqual(exception.args[0], 'Selected date can not be in the past')
 
     def test_date_can_not_be_past_for_reminder_tag(self):
         with self.app.app_context():
             form = self._create_form_with_past_date()
-            self.assertEqual(valid_date_for_event('reminder', form), False)
-            self.assertTrue("invalid_date" in form.errors)
+            with self.assertRaises(ValidationError) as exc:
+                valid_date_for_event('reminder', form)
+            exception = exc.exception
+            self.assertEqual(exception.args[0], 'Selected date can not be in the past')
 
     @staticmethod
     def _create_form_with_past_date():
