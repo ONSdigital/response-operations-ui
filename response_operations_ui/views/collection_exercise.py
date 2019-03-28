@@ -518,8 +518,7 @@ def create_collection_exercise_event(short_name, period, ce_id, tag):
                             minute=int(form.minute.data),
                             tzinfo=tz.gettz('Europe/London'))
 
-    """Attempts to create the event, returns None if success or returns an error message upon failure. If error message
-        is already set, skips the create event step as we have already determined a failure."""
+    """Attempts to create the event, returns None if success or returns an error message upon failure."""
     error_message = collection_exercise_controllers.create_collection_exercise_event(
         collection_exercise_id=ce_id, tag=tag, timestamp=submitted_dt)
 

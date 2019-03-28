@@ -68,6 +68,9 @@ with open('tests/test_data/survey/single_survey.json') as json_data:
 with open('tests/test_data/collection_exercise/events.json') as json_data:
     events = json.load(json_data)
 
+with open('tests/test_data/collection_exercise/events_2030.json') as json_data:
+    events_2030 = json.load(json_data)
+
 """Define URLS"""
 url_ce_by_id = (
     f'{TestingConfig.COLLECTION_EXERCISE_URL}/collectionexercises/{collection_exercise_id}'
@@ -1208,6 +1211,48 @@ class TestCollectionExercise(ViewTestCase):
                                     data=create_ce_event_form, follow_redirects=True)
 
         self.assertEqual(response.status_code, 200)
+
+    @requests_mock.mock()
+    def test_create_collection_exercise_date_in_past(self, mock_request):
+        mock_request.get(url_survey_shortname, json=survey)
+        mock_request.get(url_collection_exercise_survey_id, json=[collection_exercise])
+        mock_request.get(url_get_collection_exercise_events, json=events)
+
+        create_ce_event_form = {
+            "day": "01",
+            "month": "01",
+            "year": "2018",
+            "hour": "01",
+            "minute": "00"
+        }
+
+        response = self.client.post(f"/surveys/MBS/201801/{collection_exercise_id}/create-event/mps",
+                                    data=create_ce_event_form, follow_redirects=True)
+
+        self.assertIn("Selected date can not be in the past".encode(), response.data)
+        self.assertEqual(response.status_code, 200)
+
+    @requests_mock.mock()
+    @mock.patch("response_operations_ui.controllers.collection_exercise_controllers.create_collection_exercise_event")
+    def test_create_collection_events_not_set_sequentially(self, mock_request, mock_ce_event):
+        mock_request.get(url_survey_shortname, json=survey)
+        mock_request.get(url_collection_exercise_survey_id, json=[collection_exercise])
+        mock_request.get(url_get_collection_exercise_events, json=events_2030)
+        mock_ce_event.return_value = 'Collection exercise events must be set sequentially'
+
+        create_ce_event_form = {
+            "day": "01",
+            "month": "01",
+            "year": "2029",
+            "hour": "01",
+            "minute": "00"
+        }
+
+        response = self.client.post(f"/surveys/MBS/201801/{collection_exercise_id}/create-event/reminder2",
+                                    data=create_ce_event_form, follow_redirects=True)
+
+        self.assertEqual(response.status_code, 200)
+        self.assertIn("Collection exercise events must be set sequentially".encode(), response.data)
 
     def test_get_collection_exercises_with_events_and_samples_by_survey_id(self):
         name_space = 'response_operations_ui.controllers.collection_exercise_controllers.'

@@ -59,6 +59,14 @@ class TestUpdateEventDate(ViewTestCase):
             "minute": "00"
         }
 
+        self.past_update_event_form = {
+            "day": "01",
+            "month": "01",
+            "year": "2018",
+            "hour": "01",
+            "minute": "00"
+        }
+
     @requests_mock.mock()
     def test_update_event_date_view(self, mock_request):
         mock_request.get(url_survey_shortname, json=survey)
@@ -159,3 +167,17 @@ class TestUpdateEventDate(ViewTestCase):
         request_history = mock_request.request_history
         self.assertEqual(len(request_history), 3)
         self.assertEqual(response.status_code, 500)
+
+    @requests_mock.mock()
+    def test_put_update_event_date_in_past(self, mock_request):
+        mock_request.put(url_put_update_event_date, status_code=201)
+        mock_request.get(url_survey_shortname, json=survey)
+        mock_request.get(url_collection_exercise_survey_id, json=[collection_exercise])
+        mock_request.get(url_get_collection_exercise_events, json=events)
+
+        response = self.client.post(f"/surveys/{survey_short_name}/{period}/event/go_live",
+                                    data=self.past_update_event_form, follow_redirects=True)
+
+        self.assertEqual(response.status_code, 200)
+        self.assertIn("Selected date can not be in the past".encode(), response.data)
+        self.assertIn("Error updating Go Live date".encode(), response.data)
