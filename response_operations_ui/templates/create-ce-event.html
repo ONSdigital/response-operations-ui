@@ -4,102 +4,102 @@
 
 <div role="main" id="main" class="page__main">
 
-  <div class="spoke__header">
-    <div class="spoke__header-title">
-      <h1 class="u-fs-xl">Create business event</h1>
+    <div class="spoke__header">
+        <div class="spoke__header-title">
+            <h1 class="u-fs-xl">Create business event</h1>
+        </div>
     </div>
-  </div>
 
-  <div class="spoke__body" id="spoke__body">
-    <dl class="description-list description-list">
-      <dt class="">
-        Survey:
-      </dt>
-      <dd class="">
-        {{survey.surveyRef}} {{short_name}}
-      </dd>
-      <dt class="">
-        Period:
-      </dt>
-      <dd class="" id="period">
-        {{period}}
-      </dd>
-    </dl>
+    <div class="spoke__body" id="spoke__body">
+        <dl class="description-list description-list">
+            <dt class="">
+                Survey:
+            </dt>
+            <dd class="">
+                {{survey.surveyRef}} {{short_name}}
+            </dd>
+            <dt class="">
+                Period:
+            </dt>
+            <dd class="" id="period">
+                {{period}}
+            </dd>
+        </dl>
 
-    <h2 class="u-fs-l u-mt-l">{{event_name}}</h2>
+        <h2 class="u-fs-l u-mt-l">{{event_name}}</h2>
 
-    {%- with errors = get_flashed_messages(category_filter=["error"]) -%}
-        {%- if errors -%}
-            <div class="panel panel--simple panel--error u-mb-l">
-              <div class="panel__body" id="save-error">
-                <h2 id='error-saving-message' class="venus">Error updating {{event_name}} date </h2>
-                <div id='error-text'>
-                  {%- for message in errors -%}
-                  <p>{{ message }}</p>
-                  {%- endfor -%}
-                </div>
-              </div>
-        {%- endif -%}
-    {%- endwith -%}
+        {%- with errors = get_flashed_messages(category_filter=["error"]) -%}
+                {%- if errors -%}
+                        <div class="panel panel--simple panel--error u-mb-l">
+                            <div class="panel__body" id="save-error">
+                                <h2 id='error-saving-message' class="venus">Error updating {{event_name}} date </h2>
+                                <div id='error-text'>
+                                    {%- for message in errors -%}
+                                    <p>{{ message }}</p>
+                                    {%- endfor -%}
+                                </div>
+                            </div>
+                {%- endif -%}
+        {%- endwith -%}
 
 
-    {% if date_restriction_text %}
-      {% for text in date_restriction_text %}
-      <div>
-       {{ text }}
-      </div>
-      {% endfor %}
-    {% endif %}
+        {% if date_restriction_text %}
+            {% for text in date_restriction_text %}
+            <div>
+             {{ text }}
+            </div>
+            {% endfor %}
+        {% endif %}
 
-    <form method="POST" action="{{ url_for('collection_exercise_bp.create_collection_exercise_event', short_name=short_name, period=period, ce_id=ce_id, tag=tag)}}" class="">
-      <div class="date-time-editor u-mb-l">
-        {{ form.csrf_token }}
+        <form method="POST" action="{{ url_for('collection_exercise_bp.create_collection_exercise_event', short_name=short_name, period=period, ce_id=ce_id, tag=tag)}}" class="">
+            <div class="date-time-editor u-mb-l">
+                {{ form.csrf_token }}
 
-        <fieldset class="fieldgroup fieldgroup--date u-mt-l" data-qa="widget-date">
-          <legend class="fieldgroup__title u-fs-r--b">Date</legend>
-          <div class="fieldgroup__fields">
-            <div class="field field--input field--day">
-              <label class="label u-fs-s--b" id="label-date-range-from-day">Day</label>
-              {{ form.day(size=2, class_="input input--StringField") }}
+                <fieldset class="fieldgroup fieldgroup--date u-mt-l" data-qa="widget-date">
+                    <legend class="fieldgroup__title u-fs-r--b">Date</legend>
+                    <div class="fieldgroup__fields">
+                        <div class="field field--input field--day">
+                            <label class="label u-fs-s--b" id="label-date-range-from-day">Day</label>
+                            {{ form.day(size=2, class_="input input--StringField") }}
+                        </div>
+
+                        <div class="field field--select field--month">
+                            <label class="label u-fs-s--b" id="label-date-range-from-month">Month</label>
+                            {{ form.month(class_="input input--select") }}
+                        </div>
+
+                        <div class="field field--input field--year">
+                            <label class="label u-fs-s--b" id="label-date-range-from-year">Year</label>
+                            {{ form.year(class="input input--StringField") }}
+                        </div>
+                    </div>
+                </fieldset>
+
+                <fieldset class="fieldgroup fieldgroup--time u-mt-l" data-qa="widget-time">
+                    <legend class="fieldgroup__title u-fs-r--b">Time (Newport)</legend>
+                    <div class="fieldgroup__fields">
+                        <div class="field field--select field--hrs">
+                            <label class="label u-fs-s--b" id="time-hrs">Hrs</label>
+                            {{ form.hour(class_="input input--select input--select__time-hrs") }}
+                        </div>
+
+                        <div class="field field--select field--mins">
+                            <label class="label u-fs-s--b" id="time-mins">Mins</label>
+                            {{ form.minute(class_="input input--select input--select__time-mins") }}
+                        </div>
+                    </div>
+                </fieldset>
             </div>
 
-            <div class="field field--select field--month">
-              <label class="label u-fs-s--b" id="label-date-range-from-month">Month</label>
-              {{ form.month(class_="input input--select") }}
+            {{ form.submit(class_="btn u-mb-s") }}
+
+            <div>
+                <a href=" {{ url_for('collection_exercise_bp.view_collection_exercise', short_name=survey.shortName, period=period) }}">Cancel</a>
             </div>
-
-            <div class="field field--input field--year">
-              <label class="label u-fs-s--b" id="label-date-range-from-year">Year</label>
-              {{ form.year(class="input input--StringField") }}
-            </div>
-          </div>
-        </fieldset>
-
-        <fieldset class="fieldgroup fieldgroup--time u-mt-l" data-qa="widget-time">
-          <legend class="fieldgroup__title u-fs-r--b">Time (Newport)</legend>
-          <div class="fieldgroup__fields">
-            <div class="field field--select field--hrs">
-              <label class="label u-fs-s--b" id="time-hrs">Hrs</label>
-              {{ form.hour(class_="input input--select input--select__time-hrs") }}
-            </div>
-
-            <div class="field field--select field--mins">
-              <label class="label u-fs-s--b" id="time-mins">Mins</label>
-              {{ form.minute(class_="input input--select input--select__time-mins") }}
-            </div>
-          </div>
-        </fieldset>
-      </div>
-
-      {{ form.submit(class_="btn u-mb-s") }}
-
-      <div>
-        <a href=" {{ url_for('collection_exercise_bp.view_collection_exercise', short_name=survey.shortName, period=period) }}">Cancel</a>
-      </div>
-    </form>
+        </form>
 
 
-  </div>
+    </div>
 </div>
 </div>
 {% endblock main %}

@@ -449,10 +449,9 @@ def create_collection_exercise(survey_ref, short_name):
 
 @collection_exercise_bp.route('/<short_name>/<period>/<ce_id>/confirm-create-event/<tag>', methods=['GET'])
 @login_required
-def get_create_collection_event_form(short_name, period, ce_id, tag, errors=None, error_message=None):
+def get_create_collection_event_form(short_name, period, ce_id, tag):
     logger.info("Retrieving form for create collection exercise event", short_name=short_name, period=period,
                 ce_id=ce_id, tag=tag)
-    errors = request.args.get('errors') if not errors else errors
     survey = survey_controllers.get_survey(short_name)
     exercises = collection_exercise_controllers.get_collection_exercises_by_survey(survey['id'])
     exercise = get_collection_exercise_by_period(exercises, period)
@@ -480,9 +479,7 @@ def get_create_collection_event_form(short_name, period, ce_id, tag, errors=None
                            event_name=event_name,
                            date_restriction_text=date_restriction_text,
                            tag=tag,
-                           form=form,
-                           errors=errors,
-                           error_message=error_message)
+                           form=form,)
 
 
 @collection_exercise_bp.route('/<short_name>/<period>/<ce_id>/create-event/<tag>', methods=['POST'])

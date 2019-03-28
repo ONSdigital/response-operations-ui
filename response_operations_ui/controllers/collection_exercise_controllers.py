@@ -1,14 +1,12 @@
 import logging
-
+import json
 import requests
 from flask import current_app as app
 from requests.exceptions import HTTPError
 from structlog import wrap_logger
-import json
 
 from response_operations_ui.controllers.sample_controllers import get_sample_summary
 from response_operations_ui.exceptions.exceptions import ApiError
-
 
 logger = wrap_logger(logging.getLogger(__name__))
 
@@ -74,11 +72,11 @@ def update_event(collection_exercise_id, tag, timestamp):
         response.raise_for_status()
     except HTTPError:
         if response.status_code == 400:
-            logger.warning('Bad request updating event', collection_exercise_id=collection_exercise_id,
-                           tag=tag, timestamp=formatted_timestamp, status=response.status_code)
-            response_content = response.content.decode("utf-8")
+            response_content = response.content.decode()
             response_json = json.loads(response_content)
-            logger.error('Validation Failed:', message=response_json['error']['message'])
+            logger.error('Bad request updating event', message=response_json['error']['message'],
+                         collection_exercise_id=collection_exercise_id,
+                         tag=tag, timestamp=formatted_timestamp, status=response.status_code)
 
             return response_json['error']['message']
         else:
@@ -104,11 +102,11 @@ def create_collection_exercise_event(collection_exercise_id, tag, timestamp):
         response.raise_for_status()
     except HTTPError:
         if response.status_code == 400:
-            logger.warning('Bad request creating event', collection_exercise_id=collection_exercise_id,
-                           tag=tag, timestamp=formatted_timestamp, status=response.status_code)
-            response_content = response.content.decode("utf-8")
+            response_content = response.content.decode()
             response_json = json.loads(response_content)
-            logger.error('got error', message=response_json['error']['message'])
+            logger.error('Bad request creating event', message=response_json['error']['message'],
+                         collection_exercise_id=collection_exercise_id,
+                         tag=tag, timestamp=formatted_timestamp, status=response.status_code)
 
             return response_json['error']['message']
 
