@@ -1,5 +1,8 @@
 def get_date_restriction_text(tag, events):
 
+    """Generates the text that tells the user the dates that the event they are adding/updating must be in between,
+    this text changes based on which events already exist, hence the if statements for when reminders are present."""
+
     date_text_dict = {
         "mps": [f"Must be before Go Live {_get_event_date_string('go_live', events)}"],
         "go_live": [f"Must be after MPS {_get_event_date_string('mps', events)}",
