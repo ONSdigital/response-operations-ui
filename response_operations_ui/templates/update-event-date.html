@@ -45,23 +45,20 @@
     <form method="POST" class="">
       <div class="date-time-editor u-mb-l">
         {{ form.csrf_token }}
-
-        <fieldset class="fieldgroup fieldgroup--date u-mt-l" data-qa="widget-date">
+        <fieldset class="fieldgroup fieldgroup--inline fieldgroup--date" data-qa="widget-date" role="group">
           <legend class="fieldgroup__title u-fs-r--b">Date</legend>
           <div class="fieldgroup__fields">
-            <div class="field field--input field--day">
-              <label class="label u-fs-s--b" id="label-date-range-from-day">Day</label>
-              {{ form.day(size=2, class_="input input--StringField") }}
+            <div class="field field--input">
+              <label class="label u-fs-r" for="date-en-gb-day" id="label-date-range-from-day" data-qa="label-day">Day</label>
+              {{ form.day(id="date-en-gb-day", size=2, class_="input input--text input--StringField input--w-2", type="number") }}
             </div>
-
-            <div class="field field--select field--month">
-              <label class="label u-fs-s--b" id="label-date-range-from-month">Month</label>
-              {{ form.month(class_="input input--select") }}
+            <div class="field field--select">
+              <label class="label u-fs-r" for="date-en-gb-month" id="label-date-range-from-month" data-qa="label-month">Month</label>
+              {{ form.month(id="date-en-gb-month", class_="input input--select input--w-auto") }}
             </div>
-
-            <div class="field field--input field--year">
-              <label class="label u-fs-s--b" id="label-date-range-from-year">Year</label>
-              {{ form.year(class="input input--StringField") }}
+            <div class="field field--input">
+              <label class="label u-fs-r" for="date-en-gb-year" id="label-date-range-from-year" data-qa="label-year">Year</label>
+              {{ form.year(id="date-en-gb-year", class="input input--text input--StringField input--w-4", type="number") }}
             </div>
           </div>
         </fieldset>
@@ -70,13 +67,13 @@
           <legend class="fieldgroup__title u-fs-r--b">Time (Newport)</legend>
           <div class="fieldgroup__fields">
             <div class="field field--select field--hrs">
-              <label class="label u-fs-s--b" id="time-hrs">Hrs</label>
-              {{ form.hour(class_="input input--select input--select__time-hrs") }}
+              <label class="label u-fs-s--b" for="time-select-hrs" id="time-hrs">Hrs</label>
+              {{ form.hour(id="time-select-hrs", class_="input input--select input--select__time-hrs") }}
             </div>
 
             <div class="field field--select field--mins">
-              <label class="label u-fs-s--b" id="time-mins">Mins</label>
-              {{ form.minute(class_="input input--select input--select__time-mins") }}
+              <label class="label u-fs-s--b" for="time-select-mins" id="time-mins">Mins</label>
+              {{ form.minute(id="time-select-mins", class_="input input--select input--select__time-mins") }}
             </div>
           </div>
         </fieldset>
