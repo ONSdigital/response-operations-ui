@@ -22,7 +22,7 @@
 
     function errorHandler(evt) {
         if (evt.target.error.name == 'NotReadableError') {
-            alert('Cannot read file :(');
+            alerts.error('Error Uploading file', 'The selected file was not readable.');
         }
     }
 
@@ -39,7 +39,7 @@
             reader.readAsText(files[0]);
         } else {
             // @TODO: Implement better way to handle this
-            alert('FileReader is not supported in this browser.');
+            alerts.warn('Your browser does not support file uploading.  Uploading of samples will not be possible.');
         }
     }
 
