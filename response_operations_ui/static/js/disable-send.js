@@ -1,6 +1,11 @@
 (function(window) {
-    document.getElementById('create-message-form').addEventListener('submit', function(event) {
-        document.getElementById('btn-send-message').attributes.disabled = 'disabled';
-    });
+    const createMessageForm = document.getElementById('create-message-form');
+    const buttonSendMessage = document.getElementById('btn-send-message');
+
+    if (createMessageForm && buttonSendMessage) {
+        createMessageForm.addEventListener('submit', function(event) {
+            buttonSendMessage.attributes.disabled = 'disabled';
+        });
+    }
 }(window));
 

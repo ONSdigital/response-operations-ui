@@ -10,7 +10,7 @@
             errorPanel.classList.remove('panel--error');
 
             errorPanelBody.classList.remove('panel__body');
-            paragraphsToRemoveClassFrom = [].prototype.slice.call(errorPanelBody.querySelectorAll('p'));
+            paragraphsToRemoveClassFrom = Array.prototype.slice.call(errorPanelBody.querySelectorAll('p'));
 
             paragraphsToRemoveClassFrom.forEach(function(element) {
                 element.classList.remove('hidden');
@@ -23,7 +23,7 @@
             errorPanel.classList.add('panel--error');
 
             errorPanelBody.classList.add('panel__body');
-            paragraphsToAddClassTo = [].prototype.slice.call(errorPanelBody.querySelectorAll('p'));
+            paragraphsToAddClassTo = Array.prototype.slice.call(errorPanelBody.querySelectorAll('p'));
 
             paragraphsToAddClassTo.forEach(function(element) {
                 element.classList.add('hidden');
