@@ -14,6 +14,7 @@
         "object-curly-spacing": "off",
         "comma-dangle": "off",
         "arrow-parens": "off",
-        "key-spacing": "off"
+        "key-spacing": "off",
+        "no-alert": "error"
     }
 }
