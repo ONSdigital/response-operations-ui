@@ -38,7 +38,6 @@
 
             reader.readAsText(files[0]);
         } else {
-            // @TODO: Implement better way to handle this
             alerts.warn('Your browser does not support file uploading.  Uploading of samples will not be possible.');
         }
     }

@@ -10,8 +10,11 @@
             errorPanel.classList.remove('panel--error');
 
             errorPanelBody.classList.remove('panel__body');
+
+            // Create array from NodeList
             paragraphsToRemoveClassFrom = Array.prototype.slice.call(errorPanelBody.querySelectorAll('p'));
 
+            // Iterate array of DOM elements to remove hidden class from child paragraphs
             paragraphsToRemoveClassFrom.forEach(function(element) {
                 element.classList.remove('hidden');
             });
