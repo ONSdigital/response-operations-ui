@@ -28,6 +28,15 @@
             "JS_DEST_DIR": "$ROOT/response_operations_ui/static/js"
         }
     },
+    "jest": {
+        "testMatch": [
+            "**/*.test.js"
+        ],
+        "testPathIgnorePatterns": [
+            "./node_modules/",
+            "./gulp/"
+        ]
+    },
     "devDependencies": {
         "@babel/core": "^7.2.0",
         "browserify": "^16.2.3",
@@ -38,6 +47,7 @@
         "gulp-autoprefixer": "^6.0.0",
         "gulp-clean-css": "^4.0.0",
         "gulp-eslint": "^5.0.0",
+        "gulp-jest": "^4.0.2",
         "gulp-plumber": "^1.2.1",
         "gulp-sass": "^4.0.2",
         "gulp-sourcemaps": "^2.6.4",
