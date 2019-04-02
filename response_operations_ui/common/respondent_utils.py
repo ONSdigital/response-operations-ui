@@ -29,7 +29,7 @@ def filter_respondents(respondents):
     for respondent in respondents:
         try:
             filtered_respondents.append({
-                'href': '/respondents'+'/respondent-details/' + str(respondent['id']),
+                'href': '/respondents' + '/respondent-details/' + str(respondent['id']),
                 'name': respondent['firstName'] + ' ' + respondent['lastName'],
                 'email': respondent['emailAddress'],
                 'status': status_enum_to_string(respondent['status']),
