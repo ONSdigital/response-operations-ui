@@ -2,9 +2,10 @@ import logging
 from datetime import datetime
 
 from dateutil import tz
-from flask import abort, redirect, render_template, request, url_for
+from flask import abort, redirect, render_template, request, url_for, flash
 from flask_login import login_required
 from structlog import wrap_logger
+from wtforms import ValidationError
 
 from response_operations_ui.common.date_restriction_generator import get_date_restriction_text
 from response_operations_ui.common.filters import get_collection_exercise_by_period
@@ -19,8 +20,7 @@ logger = wrap_logger(logging.getLogger(__name__))
 
 @collection_exercise_bp.route('/<short_name>/<period>/event/<tag>', methods=['GET'])
 @login_required
-def update_event_date(short_name, period, tag, errors=None):
-    errors = request.args.get('errors') if not errors else errors
+def update_event_date(short_name, period, tag):
     survey = survey_controllers.get_survey_by_shortname(short_name)
     exercises = collection_exercise_controllers.get_collection_exercises_by_survey(survey['id'])
     exercise = get_collection_exercise_by_period(exercises, period)
@@ -35,28 +35,42 @@ def update_event_date(short_name, period, tag, errors=None):
 
     try:
         event = formatted_events[tag]
-    except KeyError:
-        form = EventDateForm()
-    else:
+
         form = EventDateForm(day=event['date'][:2],
                              month=event['month'],
                              year=event['date'][-4:],
                              hour=event['time'][:2],
-                             minute=event['time'][2:4])
+                             minute=event['time'][3:5])
+
+    except KeyError:
+        form = EventDateForm()
 
     return render_template('update-event-date.html',
                            form=form,
                            ce=exercise,
+                           period=period,
                            survey=survey,
                            event_name=event_name,
-                           date_restriction_text=date_restriction_text,
-                           errors=errors)
+                           date_restriction_text=date_restriction_text)
 
 
 @collection_exercise_bp.route('/<short_name>/<period>/event/<tag>', methods=['POST'])
 @login_required
 def update_event_date_submit(short_name, period, tag):
     form = EventDateForm(form=request.form)
+
+    if not form.validate():
+        flash('Please enter a valid value', 'error')
+        return redirect(url_for('collection_exercise_bp.update_event_date',
+                                short_name=short_name, period=period, tag=tag))
+
+    try:
+        valid_date_for_event(tag, form)
+    except ValidationError as exception:
+        flash(exception, 'error')
+        return redirect(url_for('collection_exercise_bp.update_event_date',
+                                short_name=short_name, period=period, tag=tag))
+
     survey_id = survey_controllers.get_survey_id_by_short_name(short_name)
     exercises = collection_exercise_controllers.get_collection_exercises_by_survey(survey_id)
     exercise = get_collection_exercise_by_period(exercises, period)
@@ -65,18 +79,21 @@ def update_event_date_submit(short_name, period, tag):
                      short_name=short_name, period=period)
         abort(404)
 
-    if not form.validate() or not valid_date_for_event(tag, form):
-        return update_event_date(short_name, period, tag, errors=form.errors)
-
     submitted_dt = datetime(year=int(form.year.data),
                             month=int(form.month.data),
                             day=int(form.day.data),
                             hour=int(form.hour.data),
                             minute=int(form.minute.data),
                             tzinfo=tz.gettz('Europe/London'))
-    if not collection_exercise_controllers.update_event(exercise['id'], tag, submitted_dt):
+
+    """Attempts to create the event, returns None if success or returns an error message upon failure."""
+    error_message = collection_exercise_controllers.update_event(
+        collection_exercise_id=exercise['id'], tag=tag, timestamp=submitted_dt)
+
+    if error_message:
+        flash(error_message, 'error')
         return redirect(url_for('collection_exercise_bp.update_event_date',
-                                short_name=short_name, period=period, tag=tag, errors=True))
+                                short_name=short_name, period=period, tag=tag))
 
     return redirect(url_for('collection_exercise_bp.view_collection_exercise',
-                            short_name=short_name, period=period))
+                            short_name=short_name, period=period, success_panel='Event date updated.'))
