@@ -28,11 +28,19 @@
 
     <h2 class="u-fs-l u-mt-l">{{event_name}}</h2>
 
-    {% if errors %}
-        <div class="panel panel--simple panel--error u-mb-l">
-          <div class="panel__body" id="save-error">
-            <h2 id='error-saving-message' class="u-fs-r--b">Error creating {{event_name}} date</h2>
-    {% endif %}
+    {%- with errors = get_flashed_messages(category_filter=["error"]) -%}
+    {%- if errors -%}
+    <div class="panel panel--simple panel--error u-mb-l">
+      <div class="panel__body" id="save-error">
+        <h2 id='error-saving-message' class="venus">Error updating {{event_name}} date </h2>
+        <div id='error-text'>
+          {%- for message in errors -%}
+          <p>{{ message }}</p>
+          {%- endfor -%}
+        </div>
+      </div>
+      {%- endif -%}
+      {%- endwith -%}
 
     {% if date_restriction_text %}
       {% for text in date_restriction_text %}
@@ -80,16 +88,13 @@
 
       {{ form.submit(class_="btn u-mb-s") }}
 
-      <div>
-        <a href=" {{ url_for('collection_exercise_bp.view_collection_exercise', short_name=survey.shortName, period=period) }}" onclick="history.back(); return false;">Cancel</a>
-      </div>
-    </form>
+        <div>
+          <a href=" {{ url_for('collection_exercise_bp.view_collection_exercise', short_name=survey.shortName, period=period) }}">Cancel</a>
+        </div>
+      </form>
 
-    {% if errors %}
-      </div>
+
     </div>
-    {% endif %}
-
   </div>
 </div>
 {% endblock main %}

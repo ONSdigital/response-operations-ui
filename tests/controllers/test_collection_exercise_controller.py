@@ -60,18 +60,18 @@ class TestCollectionExerciseController(unittest.TestCase):
                                                    "%Y-%m-%d %H:%M:%S%z")
 
             with self.app.app_context():
-                self.assertTrue(collection_exercise_controllers.create_collection_exercise_event(ce_id,
-                                                                                                 'mps',
-                                                                                                 timestamp))
+                self.assertFalse(collection_exercise_controllers.create_collection_exercise_event(ce_id,
+                                                                                                  'mps',
+                                                                                                  timestamp))
 
     def test_create_ce_event_bad_request_return_false(self):
         with responses.RequestsMock() as rsps:
-            rsps.add(rsps.POST, ce_events_by_id_url, status=400)
+            rsps.add(rsps.POST, ce_events_by_id_url, body='{"error":{"message": "some message"}}', status=400)
 
             timestamp = datetime.datetime.strptime(''.join("2020-01-27 07:00:00+00:00".rsplit(':', 1)),
                                                    "%Y-%m-%d %H:%M:%S%z")
 
             with self.app.app_context():
-                self.assertFalse(collection_exercise_controllers.create_collection_exercise_event(ce_id,
-                                                                                                  'mps',
-                                                                                                  timestamp))
+                self.assertTrue(collection_exercise_controllers.create_collection_exercise_event(ce_id,
+                                                                                                 'mps',
+                                                                                                 timestamp))

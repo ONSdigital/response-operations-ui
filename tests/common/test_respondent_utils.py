@@ -90,7 +90,7 @@ class TestRespondentUtils(unittest.TestCase):
             'status_class': 'ACTIVE'
         }]
         output = filter_respondents(correct_item)
-        self.assertEqual(output[0]['href'], '/respondent-details/515')
+        self.assertEqual(output[0]['href'], '/respondents/respondent-details/515')
 
     def test_filter_respondents_assembles_name(self):
         correct_item = [{

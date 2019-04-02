@@ -5,9 +5,10 @@ from datetime import datetime
 import iso8601
 from dateutil import tz
 from flask import Blueprint, abort, render_template, request, redirect, session, url_for
-from flask import jsonify, make_response
+from flask import jsonify, make_response, flash
 from flask_login import login_required
 from structlog import wrap_logger
+from wtforms import ValidationError
 
 from response_operations_ui.common.date_restriction_generator import get_date_restriction_text
 from response_operations_ui.common.filters import get_collection_exercise_by_period
@@ -448,10 +449,9 @@ def create_collection_exercise(survey_ref, short_name):
 
 @collection_exercise_bp.route('/<short_name>/<period>/<ce_id>/confirm-create-event/<tag>', methods=['GET'])
 @login_required
-def get_create_collection_event_form(short_name, period, ce_id, tag, errors=None):
+def get_create_collection_event_form(short_name, period, ce_id, tag):
     logger.info("Retrieving form for create collection exercise event", short_name=short_name, period=period,
                 ce_id=ce_id, tag=tag)
-    errors = request.args.get('errors') if not errors else errors
     survey = survey_controllers.get_survey(short_name)
     exercises = collection_exercise_controllers.get_collection_exercises_by_survey(survey['id'])
     exercise = get_collection_exercise_by_period(exercises, period)
@@ -479,8 +479,7 @@ def get_create_collection_event_form(short_name, period, ce_id, tag, errors=None
                            event_name=event_name,
                            date_restriction_text=date_restriction_text,
                            tag=tag,
-                           form=form,
-                           errors=errors)
+                           form=form)
 
 
 @collection_exercise_bp.route('/<short_name>/<period>/<ce_id>/create-event/<tag>', methods=['POST'])
@@ -494,13 +493,23 @@ def create_collection_exercise_event(short_name, period, ce_id, tag):
 
     form = EventDateForm(request.form)
 
-    if not form.validate() or not valid_date_for_event(tag, form):
+    if not form.validate():
+        flash('Please enter a valid value', 'error')
         return get_create_collection_event_form(
             short_name=short_name,
             period=period,
             ce_id=ce_id,
-            tag=tag,
-            errors=form.errors)
+            tag=tag)
+
+    try:
+        valid_date_for_event(tag, form)
+    except ValidationError as exception:
+        flash(exception, 'error')
+        return get_create_collection_event_form(
+            short_name=short_name,
+            period=period,
+            ce_id=ce_id,
+            tag=tag)
 
     submitted_dt = datetime(year=int(form.year.data),
                             month=int(form.month.data),
@@ -509,21 +518,22 @@ def create_collection_exercise_event(short_name, period, ce_id, tag):
                             minute=int(form.minute.data),
                             tzinfo=tz.gettz('Europe/London'))
 
-    collection_exercise_created = collection_exercise_controllers.create_collection_exercise_event(
-        collection_exercise_id=ce_id,
-        tag=tag,
-        timestamp=submitted_dt)
+    """Attempts to create the event, returns None if success or returns an error message upon failure."""
+    error_message = collection_exercise_controllers.create_collection_exercise_event(
+        collection_exercise_id=ce_id, tag=tag, timestamp=submitted_dt)
 
-    if not collection_exercise_created:
-        return redirect(url_for('collection_exercise_bp.get_create_collection_event_form',
-                                short_name=short_name, period=period, ce_id=ce_id, tag=tag, errors=True))
-
-    success_panel = "Event date added."
+    if error_message:
+        flash(error_message, 'error')
+        return get_create_collection_event_form(
+            short_name=short_name,
+            period=period,
+            ce_id=ce_id,
+            tag=tag)
 
     return redirect(url_for('collection_exercise_bp.view_collection_exercise',
                             period=period,
                             short_name=short_name,
-                            success_panel=success_panel))
+                            success_panel='Event date added.'))
 
 
 def get_event_name(tag):
