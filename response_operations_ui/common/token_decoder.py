@@ -14,6 +14,7 @@ def decode_access_token(access_token):
     decoded_jwt = jwt.decode(
         access_token,
         key=uaa_public_key,
+        algorithms=['RS256'],
         audience='response_operations',
         leeway=10
     )
