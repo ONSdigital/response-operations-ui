@@ -28,7 +28,6 @@ const CONSTANTS = {
 const context = {
     config: CONSTANTS,
     gulp,
-    GulpError,
     logger: gutil.log
 };
 

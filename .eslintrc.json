@@ -4,7 +4,8 @@
         "ecmaVersion": 2018
     },
     "env": {
-        "es6": true
+        "es6": true,
+        "browser": true
     },
     "rules": {
         "indent": ["error", 4],
@@ -13,6 +14,7 @@
         "object-curly-spacing": "off",
         "comma-dangle": "off",
         "arrow-parens": "off",
-        "key-spacing": "off"
+        "key-spacing": "off",
+        "no-alert": "error"
     }
 }

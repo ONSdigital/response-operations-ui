@@ -8,8 +8,8 @@
     },
     "private": true,
     "scripts": {
-        "gulp": "./node_modules/gulp/bin/gulp.js",
-        "test": "jest"
+        "gulp": "npx gulp",
+        "test": "npx jest"
     },
     "repository": {
         "type": "git",

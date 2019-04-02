@@ -1,5 +1,11 @@
-$(document).ready(function() {
-  $("#create-message-form").submit(function() {
-    $("#btn-send-message").prop("disabled", true);
-  });
-});
+(function(window) {
+    const createMessageForm = document.getElementById('create-message-form');
+    const buttonSendMessage = document.getElementById('btn-send-message');
+
+    if (createMessageForm && buttonSendMessage) {
+        createMessageForm.addEventListener('submit', function(event) {
+            buttonSendMessage.attributes.disabled = 'disabled';
+        });
+    }
+}(window));
+

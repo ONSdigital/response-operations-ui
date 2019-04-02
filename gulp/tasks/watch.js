@@ -1,5 +1,6 @@
 const { series } = require('gulp');
 const _ = require('lodash');
+const { GulpError } = require('../GulpError');
 
 function taskFunction(context, callback) {
     const { config } = context;
