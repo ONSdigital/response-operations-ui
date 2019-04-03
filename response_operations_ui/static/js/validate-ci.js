@@ -16,7 +16,7 @@
 
             // Iterate array of DOM elements to remove hidden class from child paragraphs
             paragraphsToRemoveClassFrom.forEach(function(element) {
-                element.classList.remove('hidden');
+                element.classList.add('hidden');
             });
 
             document.getElementById('btn-load-ci').classList.remove('unready');
@@ -29,7 +29,7 @@
             paragraphsToAddClassTo = Array.prototype.slice.call(errorPanelBody.querySelectorAll('p'));
 
             paragraphsToAddClassTo.forEach(function(element) {
-                element.classList.add('hidden');
+                element.classList.remove('hidden');
             });
 
             document.getElementById('btn-load-ci').classList.add('unready');
