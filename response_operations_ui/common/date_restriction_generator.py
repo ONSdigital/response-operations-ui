@@ -17,7 +17,9 @@ def get_date_restriction_text(tag, events):
         "reminder3": [f"Must be after Second Reminder {_get_event_date_string('reminder2', events)}",
                       f"Must be before Exercise end {_get_event_date_string('exercise_end', events)}"],
         "ref_period_start": [f"Must be before Reference Period end {_get_event_date_string('ref_period_end', events)}"],
-        "ref_period_end": [f"Must be after Reference Period start {_get_event_date_string('ref_period_start', events)}"]
+        "ref_period_end": [f"Must be after Reference Period start "
+                           f"{_get_event_date_string('ref_period_start', events)}"],
+        "employment": None
     }
 
     if _get_event_date_string('reminder2', events):
