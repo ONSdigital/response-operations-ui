@@ -18,6 +18,7 @@
 {% endif %}
 
 {# Show state message panels #}
+{{ sample }}
 {% if sample and show_msg == 'true' %}
     {% if sample.state == 'INIT' %}
     {% call panel(class='u-mb-l') %}Loading sample&hellip; <span class="u-ml-xs"><a href="/surveys/{{survey.shortName}}/{{ce.exerciseRef}}?show_msg=true">Refresh to see progress</a></span>{% endcall %}

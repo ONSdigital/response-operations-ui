@@ -1,3 +1,8 @@
+{% if error %}
+<div class="panel panel--error panel--simple" data-qa="error">
+    <div class="panel__body">
+{% endif %}
+<a name="sample-upload" ></a>
 <section id="section-sample" class="ce-section">
   <h2 class="u-fs-r--b u-pt-m">Sample</h2>
   {% if sample %}
@@ -69,3 +74,7 @@
     </div>
   {% endif %}
 </section>
+{% if error %}
+    </div>
+</div>
+{% endif %}

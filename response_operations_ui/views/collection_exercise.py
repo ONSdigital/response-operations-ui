@@ -97,12 +97,19 @@ def view_collection_exercise(short_name, period):
 
     success_panel = request.args.get('success_panel')
 
+    if request.args.get('error'):
+        error = {'message': request.args.get('error'),
+                 'section': 'sample-upload',
+                 'header': 'Sample upload error'}
+    else:
+        error = None
+
     return render_template('collection_exercise/collection-exercise.html',
                            breadcrumbs=breadcrumbs,
                            ce=ce_details['collection_exercise'],
                            collection_instruments=ce_details['collection_instruments'],
                            eq_ci_selectors=ce_details['eq_ci_selectors'],
-                           error=json.loads(session.get('error')) if session.get('error') else None,
+                           error=error,
                            events=ce_details['events'],
                            locked=locked,
                            missing_ci=missing_ci,
