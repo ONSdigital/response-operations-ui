@@ -127,6 +127,9 @@ class DevelopmentConfig(Config):
 
 
 class TestingConfig(DevelopmentConfig):
+    """Configuration used for testing.  The uaa public and private keys in this block are used ONLY for
+    the unit tests when testing the jwt and aren't used at all for anything else.
+    """
     DEBUG = False
     TESTING = True
     LOGIN_DISABLED = True
