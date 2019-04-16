@@ -68,7 +68,7 @@ class TestMessage(ViewTestCase):
         payload = {'user_id': 'test-id',
                    'aud': 'response_operations'}
 
-        access_token = jwt.encode(payload, key='Test')
+        access_token = jwt.encode(payload, TestingConfig.UAA_PRIVATE_KEY, algorithm='RS256')
         mock_request.post(url_sign_in_data, json={"access_token": access_token.decode()}, status_code=201)
         # sign-in to setup the user in the session
         self.client.post("/sign-in", follow_redirects=True, data={"username": "user", "password": "pass"})

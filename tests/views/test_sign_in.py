@@ -18,9 +18,7 @@ class TestSignIn(unittest.TestCase):
                    'aud': 'response_operations'}
 
         app = create_app('TestingConfig')
-        key = app.config['UAA_PUBLIC_KEY']
-
-        self.access_token = jwt.encode(payload, key=key)
+        self.access_token = jwt.encode(payload, app.config['UAA_PRIVATE_KEY'], algorithm='RS256')
         self.client = app.test_client()
 
     def test_sign_in_page(self):

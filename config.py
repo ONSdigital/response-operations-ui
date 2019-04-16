@@ -127,12 +127,27 @@ class DevelopmentConfig(Config):
 
 
 class TestingConfig(DevelopmentConfig):
+    """Configuration used for testing.  The uaa public and private keys in this block are used ONLY for
+    the unit tests when testing the jwt and aren't used at all for anything else.
+    """
     DEBUG = False
     TESTING = True
     LOGIN_DISABLED = True
     WTF_CSRF_ENABLED = False
     SESSION_TYPE = "filesystem"
     SESSION_PERMANENT = False
-    UAA_PUBLIC_KEY = 'Test'
+    UAA_PUBLIC_KEY = '''-----BEGIN PUBLIC KEY-----
+MFswDQYJKoZIhvcNAQEBBQADSgAwRwJAeeLysb2I2n86Ya+W3vqCxUM1j5sRdlFN
+U9yf2b38ppt3rf2xHJYTfjSvezXOMEJusFbhH9LeH4V8kr4k4ZmdewIDAQAB
+-----END PUBLIC KEY-----'''
+    UAA_PRIVATE_KEY = '''-----BEGIN RSA PRIVATE KEY-----
+MIIBOQIBAAJAeeLysb2I2n86Ya+W3vqCxUM1j5sRdlFNU9yf2b38ppt3rf2xHJYT
+fjSvezXOMEJusFbhH9LeH4V8kr4k4ZmdewIDAQABAkBmg8QeTEybgWDIIpghaM+u
+PC4DX6hbPFxuiWSFDe8+7N/dWO6xV3zDjzM6L8lXb5J2woEZ0JUVeS/BQB1xykOh
+AiEAvdS9ocmimlGUTHaH+t0N92ZJBuGc5RdrQjdVMc5bZ0sCIQCkX0qHKjzxBC8S
+IYBrirWvgd/bEXbV/81BprpF6p7UkQIhAJ0mNu5urAuwqWI7ZgrJYTyEEsR9lZMZ
+thOVFxQqTwTNAiAFBhCODwFr0Ffr8vAs2UFySsLfvCnoonfQgNsClggisQIgIGEJ
+Z5VVFymXN2n+A6UeWAnuO8/E1inhk99dBzKEGdw=
+-----END RSA PRIVATE KEY-----'''
     SECRET_KEY = 'sekrit!'
 
