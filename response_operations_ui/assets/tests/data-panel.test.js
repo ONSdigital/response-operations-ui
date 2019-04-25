@@ -58,7 +58,7 @@ describe('Data panel tests', () => {
         test('Clicking panel contents twice hides panel contents', () => {
             clickElement(dataPanelHeader);
             clickElement(dataPanelHeader);
-            expect(dataPanelBody.style.display).toBe('block');
+            expect(dataPanelBody.style.display).toBe('none');
         });
     });
 });
