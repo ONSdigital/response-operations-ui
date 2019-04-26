@@ -1,5 +1,5 @@
 require('../../static/js/data-panel');
-const { clickElement } = require('./test-utils');
+const { defer } = require('lodash');
 
 describe('Data panel tests', () => {
     let dataPanelContainer;
@@ -51,14 +51,21 @@ describe('Data panel tests', () => {
         });
 
         test('Clicking panel toggle first time shows panel contents', () => {
-            clickElement(dataPanelHeader);
-            expect(dataPanelBody.style.display).toBe('block');
+            dataPanelBody.click();
+            defer(() => {
+                expect(dataPanelBody.style.display).toBe('block');
+            });
         });
 
         test('Clicking panel contents twice hides panel contents', () => {
-            clickElement(dataPanelHeader);
-            clickElement(dataPanelHeader);
-            expect(dataPanelBody.style.display).toBe('none');
+            dataPanelBody.click();
+            defer(() => {
+                dataPanelBody.click();
+                expect(dataPanelBody.style.display).toBe('block');
+                defer(() => {
+                    expect(dataPanelBody.style.display).toBe('none');
+                });
+            });
         });
     });
 });
