@@ -36,7 +36,7 @@ describe('Data panel tests', () => {
         });
 
         test('Content visible after clicking panel toggle', () => {
-            clickElement(dataPanelHeader);
+            dataPanelHeader.click();
             expect(dataPanelBody.style.display).toBe('');
         });
     });
