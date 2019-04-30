@@ -57,7 +57,7 @@ describe('Data panel tests', () => {
             });
         });
 
-        test('Clicking panel contents twice hides panel contents', () => {
+        test('Clicking panel contents twice hides panel contents', (done) => {
             dataPanelBody.click();
             defer(() => {
                 dataPanelBody.click();
