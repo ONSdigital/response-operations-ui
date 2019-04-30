@@ -1,16 +1,13 @@
 require('../../static/js/data-panel');
 const { defer } = require('lodash');
 
-// Form submit polyfill
-window.HTMLFormElement.prototype.submit = () => {};
-
 describe('Disable send button on submit', () => {
     let container;
     let button;
 
     beforeEach(() => {
         container = document.createElement('div');
-        container.innerHTML = `<form id='create-message-form'><button id='btn-send-message'>Send</button></form>`;
+        container.innerHTML = `<div id='create-message-form'><button id='btn-send-message'>Send</button></div>`;
 
         document.body.appendChild(container);
 
@@ -42,7 +39,7 @@ describe('Disable send button on submit', () => {
     test('clicking button second time does not fire button click event', (done) => {
         let count = 0;
         const clickHandler = event => {
-            if (event.originalEvent.target.attributes.disabled !== 'disabled') {
+            if (event.target.attributes.disabled !== 'disabled') {
                 count++;
             }
         };
