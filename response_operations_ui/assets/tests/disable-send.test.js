@@ -8,10 +8,14 @@ const getElementByIdMock = id => {
     }
 };
 
-const addEventListenerMock = (eventName, callback) => {
-    this[`fire${eventName.toTitleCase()}`] = () => {
+const addEventListenerMock = function(eventName, callback) {
+    const titleCaseEventName = eventName.substr(0, 1).toUpperCase() + eventName.substr(1);
+    this[`fire${titleCaseEventName}`] = () => {
         const event = new Event(eventName);
-        callback(event.fire());
+        const domEl = document.createElement('div');
+
+        domEl.dispatchEvent(event);
+        callback(event);
     };
 };
 
@@ -34,7 +38,7 @@ describe('Disable send button on submit', () => {
     });
 
     test('it should be disabled after form submits', () => {
-        createMessageFormMock.addEventListener.fireSubmit();
+        createMessageFormMock.fireSubmit();
         expect(buttonSendMessageMock.attributes.disabled).toBe('disabled');
     });
 });
