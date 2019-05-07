@@ -1,5 +1,4 @@
 require('../../static/js/data-panel');
-const { defer } = require('lodash');
 
 describe('Data panel tests', () => {
     let dataPanelContainer;
@@ -13,8 +12,13 @@ describe('Data panel tests', () => {
         <div class="data-panel-body">
             <p>Some content</p>
         </div>
-    </div>
-    `;
+    </div>`;
+
+    const defer = fn => setTimeout(fn, 0);
+
+    beforeAll(() => {
+        jest.useRealTimers();
+    });
 
     beforeEach(() => {
         dataPanelContainer = document.createElement('div');
