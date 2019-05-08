@@ -1,9 +1,0 @@
-<!DOCTYPE html>
-<html>
-    <head>
-        <title>Title</title>
-    </head>
-    <body>
-        <!-- markup under test goes here -->
-    </body>
-</html>
