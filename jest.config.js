@@ -6,7 +6,7 @@ module.exports = {
         'node_modules',
         'gulp'
     ],
-    automock: true,
+    automock: false,
     globals: {
         __DEV__: true
     },

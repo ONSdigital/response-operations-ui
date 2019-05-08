@@ -1,5 +1,4 @@
 require('../../static/js/data-panel');
-const { defer } = require('lodash');
 
 describe('Data panel tests', () => {
     let dataPanelContainer;
@@ -13,8 +12,10 @@ describe('Data panel tests', () => {
         <div class="data-panel-body">
             <p>Some content</p>
         </div>
-    </div>
-    `;
+    </div>`;
+
+    const defer = fn => setTimeout(fn, 1);
+    jest.useRealTimers();
 
     beforeEach(() => {
         dataPanelContainer = document.createElement('div');
@@ -50,20 +51,22 @@ describe('Data panel tests', () => {
             expect(dataPanelBody.style.display).toBe('none');
         });
 
-        test('Clicking panel toggle first time shows panel contents', () => {
-            dataPanelBody.click();
+        test('Clicking panel toggle first time shows panel contents', (done) => {
+            dataPanelHeader.click();
             defer(() => {
                 expect(dataPanelBody.style.display).toBe('block');
+                done();
             });
         });
 
-        test('Clicking panel contents twice hides panel contents', () => {
-            dataPanelBody.click();
+        test('Clicking panel contents twice hides panel contents', (done) => {
+            dataPanelHeader.click();
             defer(() => {
-                dataPanelBody.click();
                 expect(dataPanelBody.style.display).toBe('block');
+                dataPanelHeader.click();
                 defer(() => {
                     expect(dataPanelBody.style.display).toBe('none');
+                    done();
                 });
             });
         });

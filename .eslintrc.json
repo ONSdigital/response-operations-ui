@@ -1,7 +1,8 @@
 {
     "extends": "google",
     "parserOptions": {
-        "ecmaVersion": 2018
+        "ecmaVersion": 2018,
+        "sourceType": "script"
     },
     "env": {
         "es6": true,
@@ -16,5 +17,14 @@
         "arrow-parens": "off",
         "key-spacing": "off",
         "no-alert": "error"
-    }
+    },
+    "overrides": [
+        {
+            "files": "**/*.module.js",
+            "parserOptions": {
+                "sourceType": "module",
+                "ecmaVersion": 2018
+            }
+        }
+    ]
 }
