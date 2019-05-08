@@ -14,11 +14,8 @@ describe('Data panel tests', () => {
         </div>
     </div>`;
 
-    const defer = fn => setTimeout(fn, 0);
-
-    beforeAll(() => {
-        jest.useRealTimers();
-    });
+    const defer = fn => setTimeout(fn, 1);
+    jest.useRealTimers();
 
     beforeEach(() => {
         dataPanelContainer = document.createElement('div');
@@ -54,20 +51,22 @@ describe('Data panel tests', () => {
             expect(dataPanelBody.style.display).toBe('none');
         });
 
-        test('Clicking panel toggle first time shows panel contents', () => {
-            dataPanelBody.click();
+        test('Clicking panel toggle first time shows panel contents', (done) => {
+            dataPanelHeader.click();
             defer(() => {
                 expect(dataPanelBody.style.display).toBe('block');
+                done();
             });
         });
 
         test('Clicking panel contents twice hides panel contents', (done) => {
-            dataPanelBody.click();
+            dataPanelHeader.click();
             defer(() => {
-                dataPanelBody.click();
                 expect(dataPanelBody.style.display).toBe('block');
+                dataPanelHeader.click();
                 defer(() => {
                     expect(dataPanelBody.style.display).toBe('none');
+                    done();
                 });
             });
         });
