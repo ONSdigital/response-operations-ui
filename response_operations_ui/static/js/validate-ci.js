@@ -1,4 +1,8 @@
 (function(window) {
+    function nodeClassesRemove(node, classes) {
+
+    }
+
     function checkCI(file) {
         const type = file.type;
         const errorPanel = document.getElementById('ciFileErrorPanel');
@@ -46,5 +50,6 @@
 
     window.checkCI = checkCI;
     window.checkSelectedCI = checkSelectedCI;
+    window.nodeClassesRemove = nodeClassesRemove;
 }(window));
 
