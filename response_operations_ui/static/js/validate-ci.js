@@ -1,6 +1,12 @@
 (function(window) {
-    function nodeClassesRemove(node, classes) {
+    function nodeClassesChange(node, classes, action) {
+        if (!(node instanceof HTMLElement)) throw new Error('Expected HTMLElement as first argument');
 
+        if (!Array.isArray(classes)) throw new Error('Expected Array as second argument');
+
+        if (!['add', 'remove'].includes(action)) throw new Error('Expected add or remove as third parameter');
+
+        classes.map(c => node.classList[action](c));
     }
 
     function checkCI(file) {
@@ -8,26 +14,23 @@
         const errorPanel = document.getElementById('ciFileErrorPanel');
         const errorPanelBody = document.getElementById('ciFileErrorPanelBody');
 
+        const action = (type === 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet') ? 'remove' : 'add';
+//TODO pick up here
         if ( type === 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' ) {
-            errorPanel.classList.remove('panel');
-            errorPanel.classList.remove('panel--simple');
-            errorPanel.classList.remove('panel--error');
-
-            errorPanelBody.classList.remove('panel__body');
+            nodeClassesRemove(errorPanel, ['panel', 'panel--simple', 'panel--error']);
+            nodeClassesRemove(errorPanelBody, ['panel__body']);
 
             // Create array from NodeList
             paragraphsToRemoveClassFrom = Array.prototype.slice.call(errorPanelBody.querySelectorAll('p'));
 
             // Iterate array of DOM elements to remove hidden class from child paragraphs
             paragraphsToRemoveClassFrom.forEach(function(element) {
-                element.classList.add('hidden');
+                nodeClassesAdd(element, ['hidden']);
             });
 
-            document.getElementById('btn-load-ci').classList.remove('unready');
+            nodeClassesRemove(document.getElementById('btn-load-ci'), ['unready']);
         } else {
-            errorPanel.classList.add('panel');
-            errorPanel.classList.add('panel--simple');
-            errorPanel.classList.add('panel--error');
+            nodeClassesAdd(errorPanel, ['panel', 'panel--simple', 'panel--error']);
 
             errorPanelBody.classList.add('panel__body');
             paragraphsToAddClassTo = Array.prototype.slice.call(errorPanelBody.querySelectorAll('p'));
@@ -50,6 +53,8 @@
 
     window.checkCI = checkCI;
     window.checkSelectedCI = checkSelectedCI;
-    window.nodeClassesRemove = nodeClassesRemove;
+    window.__private__ = {
+        nodeClassesRemove: nodeClassesChange
+    };
 }(window));
 
