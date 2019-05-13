@@ -9,38 +9,29 @@
         classes.map(c => node.classList[action](c));
     }
 
+    function arrayLikeToArray(arrayLike) {
+        if (!arrayLike.hasOwnProperty('length') && !arrayLike.hasOwnProperty('size')) throw new Error('Expected array like object');
+
+        return Array.prototype.slice.call(arrayLike);
+    }
+
     function checkCI(file) {
         const type = file.type;
         const errorPanel = document.getElementById('ciFileErrorPanel');
         const errorPanelBody = document.getElementById('ciFileErrorPanelBody');
+        const button = document.getElementById('btn-load-ci');
 
-        const action = (type === 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet') ? 'remove' : 'add';
-//TODO pick up here
-        if ( type === 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' ) {
-            nodeClassesRemove(errorPanel, ['panel', 'panel--simple', 'panel--error']);
-            nodeClassesRemove(errorPanelBody, ['panel__body']);
+        const fileIsODS = type === 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet';
+        const mainAction = fileIsODS ? 'remove' : 'add';
+        const buttonAction = fileIsODS ? 'remove' : 'add';
 
-            // Create array from NodeList
-            paragraphsToRemoveClassFrom = Array.prototype.slice.call(errorPanelBody.querySelectorAll('p'));
+        nodeClassesChange(errorPanel, ['panel', 'panel--simple', 'panel--error'], mainAction);
+        nodeClassesChange(errorPanelBody, ['panel', 'panel--simple', 'panel--error'], mainAction);
+        nodeClassesChange(button, ['unready'], buttonAction);
 
-            // Iterate array of DOM elements to remove hidden class from child paragraphs
-            paragraphsToRemoveClassFrom.forEach(function(element) {
-                nodeClassesAdd(element, ['hidden']);
-            });
-
-            nodeClassesRemove(document.getElementById('btn-load-ci'), ['unready']);
-        } else {
-            nodeClassesAdd(errorPanel, ['panel', 'panel--simple', 'panel--error']);
-
-            errorPanelBody.classList.add('panel__body');
-            paragraphsToAddClassTo = Array.prototype.slice.call(errorPanelBody.querySelectorAll('p'));
-
-            paragraphsToAddClassTo.forEach(function(element) {
-                element.classList.remove('hidden');
-            });
-
-            document.getElementById('btn-load-ci').classList.add('unready');
-        }
+        arrayLikeToArray(errorPanelBody.querySelectorAll('p')).forEach(el => {
+            nodeClassesChange(el, ['hidden'], mainAction);
+        });
     }
 
     function checkSelectedCI(files) {
@@ -54,7 +45,8 @@
     window.checkCI = checkCI;
     window.checkSelectedCI = checkSelectedCI;
     window.__private__ = {
-        nodeClassesRemove: nodeClassesChange
+        nodeClassesRemove: nodeClassesChange,
+        arrayLikeToArray: arrayLikeToArray
     };
 }(window));
 

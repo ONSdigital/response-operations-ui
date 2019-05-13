@@ -1,7 +1,6 @@
 require('../../static/js/validate-ci');
 jest.dontMock('lodash');
-const { range } = require('lodash');
-
+const { range, isArray } = require('lodash');
 
 describe('Collection Instrument File Validation', () => {
     describe('#nodeClassesRemove', () => {
@@ -38,7 +37,7 @@ describe('Collection Instrument File Validation', () => {
 
             nodeClasses.forEach(className => node.classList.add(className));
 
-            nodeClassesRemove(node, nodeClassesToRemove, 'remove');
+            nodeClassesChange(node, nodeClassesToRemove, 'remove');
 
             expect(Object.values(node.classList)).toEqual(expectedRemainingClasses);
         });
@@ -53,6 +52,25 @@ describe('Collection Instrument File Validation', () => {
             nodeClassesRemove(node, nodeClassesToRemove, 'remove');
 
             expect(Object.values(node.classList)).toEqual(expectedRemainingClasses);
+        });
+    });
+
+    describe('#arrayLikeToArray', () => {
+        const arrayLikeToArray = window.__private__.arrayLikeToArray;
+
+        test('it should throw an error if not passed an array like type', () => {
+            const fn = arrayLikeToArray.bind(null, 12);
+
+            expect(fn).toThrow();
+        });
+
+        test('it should return an array if passed an array like type', () => {
+            const arrayLike = new Set();
+
+            range(0, 5).forEach(i => arrayLike.add(i));
+
+            expect(isArray(arrayLike)).toEqual(false);
+            expect(isArray(arrayLikeToArray(arrayLike))).toBeTrue();
         });
     });
 });
