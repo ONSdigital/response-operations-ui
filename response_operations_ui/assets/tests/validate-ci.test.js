@@ -26,8 +26,17 @@ describe('Collection Instrument File Validation', () => {
         });
 
         test('it should throw an error if not passed a valid action', () => {
-            const fn = nodeClassesChange.bind(null, node, [], 'remove');
+            const fn = nodeClassesChange.bind(null, node, [], 'cheese');
             expect(fn).toThrow();
+        });
+
+        test('it should accept a string in place of an array and still remove it', () => {
+            node.classList.add('testClass');
+            node.classList.add('testClass2');
+            nodeClassesChange(node, 'testClass2', 'remove');
+
+            expect(node.className.indexOf('testClass')).not.toBe(-1);
+            expect(node.className.indexOf('testClass2')).toBe(-1);
         });
 
         test('it should remove classes from the classList of the node', () => {
@@ -49,7 +58,7 @@ describe('Collection Instrument File Validation', () => {
 
             nodeClasses.forEach(className => node.classList.add(className));
 
-            nodeClassesRemove(node, nodeClassesToRemove, 'remove');
+            nodeClassesChange(node, nodeClassesToRemove, 'remove');
 
             expect(Object.values(node.classList)).toEqual(expectedRemainingClasses);
         });
@@ -69,8 +78,42 @@ describe('Collection Instrument File Validation', () => {
 
             range(0, 5).forEach(i => arrayLike.add(i));
 
-            expect(isArray(arrayLike)).toEqual(false);
-            expect(isArray(arrayLikeToArray(arrayLike))).toBeTrue();
+            expect(isArray(arrayLike)).toBe(false);
+            expect(isArray(arrayLikeToArray(arrayLike))).toBe(true);
+        });
+    });
+
+    describe('#checkCI', () => {
+
+    });
+
+    describe('#checkSelectedCI', () => {
+        let originalCheckCi;
+        beforeAll(() => {
+            originalCheckCi = window.checkCI;
+            window.checkCI = jest.fn();
+        });
+
+        afterAll(() => {
+            window.checkCI = originalCheckCi;
+        });
+
+        afterEach(() => {
+            window.checkCI.reset();
+        });
+
+        test('it should try to process selected if window supports File API', () => {
+            window.FileReader = {};
+            checkSelectedCI({});
+
+            expect(checkCI.calls.length).toEqual(1);
+        });
+
+        test('it should not try to process selected if window does not support File API', () => {
+            delete window.FileReader;
+            checkSelectedCI({});
+
+            expect(checkCI.calls.length).toEqual(1);
         });
     });
 });

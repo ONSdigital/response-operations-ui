@@ -1,16 +1,18 @@
 (function(window) {
     function nodeClassesChange(node, classes, action) {
+        if (typeof classes === 'string') classes = [classes];
+
         if (!(node instanceof HTMLElement)) throw new Error('Expected HTMLElement as first argument');
 
         if (!Array.isArray(classes)) throw new Error('Expected Array as second argument');
 
-        if (!['add', 'remove'].includes(action)) throw new Error('Expected add or remove as third parameter');
+        if (['add', 'remove'].indexOf(action) === -1) throw new Error('Expected add or remove as third parameter');
 
         classes.map(c => node.classList[action](c));
     }
 
     function arrayLikeToArray(arrayLike) {
-        if (!arrayLike.hasOwnProperty('length') && !arrayLike.hasOwnProperty('size')) throw new Error('Expected array like object');
+        if (!('length' in arrayLike) && !('size' in arrayLike)) throw new Error('Expected array-like object as argument');
 
         return Array.prototype.slice.call(arrayLike);
     }
@@ -45,7 +47,7 @@
     window.checkCI = checkCI;
     window.checkSelectedCI = checkSelectedCI;
     window.__private__ = {
-        nodeClassesRemove: nodeClassesChange,
+        nodeClassesChange: nodeClassesChange,
         arrayLikeToArray: arrayLikeToArray
     };
 }(window));
