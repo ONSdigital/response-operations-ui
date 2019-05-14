@@ -58,6 +58,11 @@ This page documents the response operations ui endpoints that can be hit.
 `/info`
 * GET request to this endpoint displays the info of the response operations ui.
 
+## Logout Endpoints
+
+`/logout`
+* GET request to this endpoint signs the user out.
+
 ## Message Endpoints
 
 `messages`
