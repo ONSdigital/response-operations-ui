@@ -4,6 +4,11 @@ const gulpSass = require('gulp-sass');
 const gulpAutoPrefixer = require('gulp-autoprefixer');
 const gulpCleanCss = require('gulp-clean-css');
 const gulpSourcemaps = require('gulp-sourcemaps');
+const dartSass = require('sass');
+const Fiber = require('fibers');
+
+// Forces gulp-sass to use installed node sass instead of dependency
+gulpSass.compiler = dartSass;
 
 function taskFunction() {
     const gulp = this.gulp;
@@ -20,7 +25,11 @@ function taskFunction() {
 
     return gulp.src(`${SCSS_DIR}/main.scss`)
         .pipe(gulpSourcemaps.init())
-        .pipe(gulpSass())
+        .pipe(
+            gulpSass({
+                fiber: Fiber
+            }).on('error', gulpSass.logError)
+        )
         .pipe(gulpAutoPrefixer())
         .pipe(gulpCleanCss())
         .pipe(gulpSourcemaps.write('.'))

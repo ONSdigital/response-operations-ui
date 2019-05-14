@@ -10,6 +10,7 @@ lint:
 	npx gulp lint
 
 test: lint
+	npm test
 	pipenv run python run_tests.py
 
 start:
