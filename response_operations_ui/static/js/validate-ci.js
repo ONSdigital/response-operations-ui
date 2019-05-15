@@ -1,23 +1,25 @@
-(function(window) {
-    function nodeClassesChange(node, classes, action) {
-        if (typeof classes === 'string') classes = [classes];
+window.validateCI = {
+    __private__: {
+        nodeClassesChange: function nodeClassesChange(node, classes, action) {
+            if (typeof classes === 'string') classes = [classes];
 
-        if (!(node instanceof HTMLElement)) throw new Error('Expected HTMLElement as first argument');
+            if (!(node instanceof HTMLElement)) throw new Error('Expected HTMLElement as first argument');
 
-        if (!Array.isArray(classes)) throw new Error('Expected Array as second argument');
+            if (!Array.isArray(classes)) throw new Error('Expected Array as second argument');
 
-        if (['add', 'remove'].indexOf(action) === -1) throw new Error('Expected add or remove as third parameter');
+            if (['add', 'remove'].indexOf(action) === -1) throw new Error('Expected add or remove as third parameter');
 
-        classes.map(c => node.classList[action](c));
-    }
+            classes.map(c => node.classList[action](c));
+        },
 
-    function arrayLikeToArray(arrayLike) {
-        if (!('length' in arrayLike) && !('size' in arrayLike)) throw new Error('Expected array-like object as argument');
+        arrayLikeToArray: function arrayLikeToArray(arrayLike) {
+            if (!('length' in arrayLike) && !('size' in arrayLike)) throw new Error('Expected array-like object as argument');
 
-        return Array.prototype.slice.call(arrayLike);
-    }
+            return Array.prototype.slice.call(arrayLike);
+        },
+    },
 
-    function checkCI(file) {
+    checkCI: function checkCI(file) {
         const type = file.type;
         const errorPanel = document.getElementById('ciFileErrorPanel');
         const errorPanelBody = document.getElementById('ciFileErrorPanelBody');
@@ -34,21 +36,13 @@
         arrayLikeToArray(errorPanelBody.querySelectorAll('p')).forEach(el => {
             nodeClassesChange(el, ['hidden'], mainAction);
         });
-    }
+    },
 
-    function checkSelectedCI(files) {
+    checkSelectedCI: function checkSelectedCI(files) {
         // Check for the various File API support.
         if (window.FileReader) {
-            // FileReader are supported.
-            checkCI(files[0]);
+            // FileReader is supported.
+            validateCI.checkCI(files[0]);
         }
     }
-
-    window.checkCI = checkCI;
-    window.checkSelectedCI = checkSelectedCI;
-    window.__private__ = {
-        nodeClassesChange: nodeClassesChange,
-        arrayLikeToArray: arrayLikeToArray
-    };
-}(window));
-
+};

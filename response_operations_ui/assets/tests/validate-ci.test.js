@@ -2,10 +2,11 @@ require('../../static/js/validate-ci');
 jest.dontMock('lodash');
 const { range, isArray } = require('lodash');
 
+const { nodeClassesChange, arrayLikeToArray } = validateCI.__private__;
+
 describe('Collection Instrument File Validation', () => {
-    describe('#nodeClassesRemove', () => {
+    describe('#nodeClassesChange', () => {
         let node;
-        const nodeClassesChange = window.__private__.nodeClassesChange;
 
         beforeEach(() => {
             node = document.createElement('div');
@@ -65,8 +66,6 @@ describe('Collection Instrument File Validation', () => {
     });
 
     describe('#arrayLikeToArray', () => {
-        const arrayLikeToArray = window.__private__.arrayLikeToArray;
-
         test('it should throw an error if not passed an array like type', () => {
             const fn = arrayLikeToArray.bind(null, 12);
 
@@ -90,30 +89,30 @@ describe('Collection Instrument File Validation', () => {
     describe('#checkSelectedCI', () => {
         let originalCheckCi;
         beforeAll(() => {
-            originalCheckCi = window.checkCI;
-            window.checkCI = jest.fn();
+            originalCheckCi = validateCI.checkCI;
+            validateCI.checkCI = jest.fn(() => {});
         });
 
         afterAll(() => {
-            window.checkCI = originalCheckCi;
+            validateCI.checkCI = originalCheckCi;
         });
 
         afterEach(() => {
-            window.checkCI.reset();
+            validateCI.checkCI.mockReset();
         });
 
         test('it should try to process selected if window supports File API', () => {
             window.FileReader = {};
-            checkSelectedCI({});
+            validateCI.checkSelectedCI([{ type: ''}]);
 
-            expect(checkCI.calls.length).toEqual(1);
+            expect(validateCI.checkCI.mock.calls.length).toEqual(1);
         });
 
         test('it should not try to process selected if window does not support File API', () => {
-            delete window.FileReader;
-            checkSelectedCI({});
+            window.FileReader = false;
+            validateCI.checkSelectedCI({});
 
-            expect(checkCI.calls.length).toEqual(1);
+            expect(validateCI.checkCI.mock.calls.length).toEqual(0);
         });
     });
 });
