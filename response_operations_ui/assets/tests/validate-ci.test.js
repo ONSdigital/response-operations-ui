@@ -106,7 +106,7 @@ describe('Collection Instrument File Validation', () => {
 
             document.getElementById = jest.fn(getElementByIdMock);
             validateCI.__private__.nodeClassesChange = jest.fn();
-            validateCI.__private__.arrayLikeToArray = jest.fn();
+            validateCI.__private__.arrayLikeToArray = jest.fn(() => [{}, {}, {}]);
         });
 
         afterAll(() => {
@@ -116,7 +116,6 @@ describe('Collection Instrument File Validation', () => {
         });
 
         afterEach(() => {
-            document.getElementById.mockReset();
             validateCI.__private__.nodeClassesChange.mockReset();
             validateCI.__private__.arrayLikeToArray.mockReset();
         });
@@ -126,11 +125,17 @@ describe('Collection Instrument File Validation', () => {
                 type: 'invalid file type'
             });
 
-            expect(validateCI.__private__.nodeClassesChange.calls.length).toEqual(0)
+            expect(validateCI.__private__.nodeClassesChange.mock.calls.length).toEqual(6);
+            expect(validateCI.__private__.nodeClassesChange.mock.calls.map(i => i[2])).toEqual(['add', 'add', 'remove', 'add', 'add', 'add']);
         });
 
         test('it should hide panel if file type is correct', () => {
+            validateCI.checkCI({
+                type: 'invalid file type'
+            });
 
+            expect(validateCI.__private__.nodeClassesChange.mock.calls.length).toEqual(6);
+            expect(validateCI.__private__.nodeClassesChange.mock.calls.map(i => i[2])).toEqual(['remove', 'remove', 'add', 'remove', 'remove', 'remove']);
         })
     });
 

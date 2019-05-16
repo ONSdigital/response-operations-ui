@@ -27,7 +27,7 @@ window.validateCI = {
 
         const fileIsODS = type === 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet';
         const mainAction = fileIsODS ? 'remove' : 'add';
-        const buttonAction = fileIsODS ? 'remove' : 'add';
+        const buttonAction = fileIsODS ? 'add' : 'remove';
 
         this.__private__.nodeClassesChange(errorPanel, ['panel', 'panel--simple', 'panel--error'], mainAction);
         this.__private__.nodeClassesChange(errorPanelBody, ['panel', 'panel--simple', 'panel--error'], mainAction);
