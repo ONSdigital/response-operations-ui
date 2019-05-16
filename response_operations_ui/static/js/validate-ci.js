@@ -29,12 +29,12 @@ window.validateCI = {
         const mainAction = fileIsODS ? 'remove' : 'add';
         const buttonAction = fileIsODS ? 'remove' : 'add';
 
-        nodeClassesChange(errorPanel, ['panel', 'panel--simple', 'panel--error'], mainAction);
-        nodeClassesChange(errorPanelBody, ['panel', 'panel--simple', 'panel--error'], mainAction);
-        nodeClassesChange(button, ['unready'], buttonAction);
+        this.__private__.nodeClassesChange(errorPanel, ['panel', 'panel--simple', 'panel--error'], mainAction);
+        this.__private__.nodeClassesChange(errorPanelBody, ['panel', 'panel--simple', 'panel--error'], mainAction);
+        this.__private__.nodeClassesChange(button, ['unready'], buttonAction);
 
-        arrayLikeToArray(errorPanelBody.querySelectorAll('p')).forEach(el => {
-            nodeClassesChange(el, ['hidden'], mainAction);
+        this.__private__.arrayLikeToArray(errorPanelBody.querySelectorAll('p')).forEach(el => {
+            this.__private__.nodeClassesChange(el, ['hidden'], mainAction);
         });
     },
 

@@ -1,8 +1,14 @@
 require('../../static/js/validate-ci');
 jest.dontMock('lodash');
-const { range, isArray } = require('lodash');
+const {
+    range,
+    isArray
+} = require('lodash');
 
-const { nodeClassesChange, arrayLikeToArray } = validateCI.__private__;
+let {
+    nodeClassesChange,
+    arrayLikeToArray
+} = validateCI.__private__;
 
 describe('Collection Instrument File Validation', () => {
     describe('#nodeClassesChange', () => {
@@ -83,7 +89,49 @@ describe('Collection Instrument File Validation', () => {
     });
 
     describe('#checkCI', () => {
+        let originalGetElementById;
+        let originalNodeClassesChange;
+        let originalArrayLikeToArray;
 
+        const getElementByIdMock = (id) => {
+            return {
+                querySelectorAll: () => ( [{}, {}, {}] )
+            };
+        };
+
+        beforeAll(() => {
+            originalGetElementById = document.getElementById;
+            originalNodeClassesChange = validateCI.__private__.nodeClassesChange;
+            originalArrayLikeToArray = validateCI.__private__.arrayLikeToArray;
+
+            document.getElementById = jest.fn(getElementByIdMock);
+            validateCI.__private__.nodeClassesChange = jest.fn();
+            validateCI.__private__.arrayLikeToArray = jest.fn();
+        });
+
+        afterAll(() => {
+            document.getElementById = originalGetElementById;
+            validateCI.__private__.nodeClassesChange = originalNodeClassesChange;
+            validateCI.__private__.arrayLikeToArray = originalArrayLikeToArray;
+        });
+
+        afterEach(() => {
+            document.getElementById.mockReset();
+            validateCI.__private__.nodeClassesChange.mockReset();
+            validateCI.__private__.arrayLikeToArray.mockReset();
+        });
+
+        test('it should show panel if file type is wrong', () => {
+            validateCI.checkCI({
+                type: 'invalid file type'
+            });
+
+            expect(validateCI.__private__.nodeClassesChange.calls.length).toEqual(0)
+        });
+
+        test('it should hide panel if file type is correct', () => {
+
+        })
     });
 
     describe('#checkSelectedCI', () => {
@@ -103,7 +151,9 @@ describe('Collection Instrument File Validation', () => {
 
         test('it should try to process selected if window supports File API', () => {
             window.FileReader = {};
-            validateCI.checkSelectedCI([{ type: ''}]);
+            validateCI.checkSelectedCI([{
+                type: ''
+            }]);
 
             expect(validateCI.checkCI.mock.calls.length).toEqual(1);
         });
