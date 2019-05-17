@@ -117,7 +117,6 @@ describe('Collection Instrument File Validation', () => {
 
         afterEach(() => {
             validateCI.__private__.nodeClassesChange.mockReset();
-            validateCI.__private__.arrayLikeToArray.mockReset();
         });
 
         test('it should show panel if file type is wrong', () => {
@@ -131,12 +130,12 @@ describe('Collection Instrument File Validation', () => {
 
         test('it should hide panel if file type is correct', () => {
             validateCI.checkCI({
-                type: 'invalid file type'
+                type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
             });
 
             expect(validateCI.__private__.nodeClassesChange.mock.calls.length).toEqual(6);
             expect(validateCI.__private__.nodeClassesChange.mock.calls.map(i => i[2])).toEqual(['remove', 'remove', 'add', 'remove', 'remove', 'remove']);
-        })
+        });
     });
 
     describe('#checkSelectedCI', () => {
