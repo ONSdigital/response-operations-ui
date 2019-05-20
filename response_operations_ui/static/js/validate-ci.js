@@ -1,50 +1,48 @@
-(function(window) {
-    function checkCI(file) {
+window.validateCI = {
+    __private__: {
+        nodeClassesChange: function nodeClassesChange(node, classes, action) {
+            if (typeof classes === 'string') classes = [classes];
+
+            if (!(node instanceof HTMLElement)) throw new Error('Expected HTMLElement as first argument');
+
+            if (!Array.isArray(classes)) throw new Error('Expected Array as second argument');
+
+            if (['add', 'remove'].indexOf(action) === -1) throw new Error('Expected add or remove as third parameter');
+
+            classes.map(c => node.classList[action](c));
+        },
+
+        arrayLikeToArray: function arrayLikeToArray(arrayLike) {
+            if (!('length' in arrayLike) && !('size' in arrayLike)) throw new Error('Expected array-like object as argument');
+
+            return Array.prototype.slice.call(arrayLike);
+        },
+    },
+
+    checkCI: function checkCI(file) {
         const type = file.type;
         const errorPanel = document.getElementById('ciFileErrorPanel');
         const errorPanelBody = document.getElementById('ciFileErrorPanelBody');
+        const button = document.getElementById('btn-load-ci');
 
-        if ( type === 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' ) {
-            errorPanel.classList.remove('panel');
-            errorPanel.classList.remove('panel--simple');
-            errorPanel.classList.remove('panel--error');
+        const fileIsODS = type === 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet';
+        const mainAction = fileIsODS ? 'remove' : 'add';
+        const contraAction = fileIsODS ? 'add' : 'remove';
 
-            errorPanelBody.classList.remove('panel__body');
+        this.__private__.nodeClassesChange(errorPanel, ['panel', 'panel--simple', 'panel--error'], mainAction);
+        this.__private__.nodeClassesChange(errorPanelBody, ['panel__body'], mainAction);
+        this.__private__.nodeClassesChange(button, ['unready'], contraAction);
 
-            // Create array from NodeList
-            paragraphsToRemoveClassFrom = Array.prototype.slice.call(errorPanelBody.querySelectorAll('p'));
+        this.__private__.arrayLikeToArray(errorPanelBody.querySelectorAll('p')).forEach(el => {
+            this.__private__.nodeClassesChange(el, ['hidden'], contraAction);
+        });
+    },
 
-            // Iterate array of DOM elements to remove hidden class from child paragraphs
-            paragraphsToRemoveClassFrom.forEach(function(element) {
-                element.classList.add('hidden');
-            });
-
-            document.getElementById('btn-load-ci').classList.remove('unready');
-        } else {
-            errorPanel.classList.add('panel');
-            errorPanel.classList.add('panel--simple');
-            errorPanel.classList.add('panel--error');
-
-            errorPanelBody.classList.add('panel__body');
-            paragraphsToAddClassTo = Array.prototype.slice.call(errorPanelBody.querySelectorAll('p'));
-
-            paragraphsToAddClassTo.forEach(function(element) {
-                element.classList.remove('hidden');
-            });
-
-            document.getElementById('btn-load-ci').classList.add('unready');
-        }
-    }
-
-    function checkSelectedCI(files) {
+    checkSelectedCI: function checkSelectedCI(files) {
         // Check for the various File API support.
         if (window.FileReader) {
-            // FileReader are supported.
-            checkCI(files[0]);
+            // FileReader is supported.
+            validateCI.checkCI(files[0]);
         }
     }
-
-    window.checkCI = checkCI;
-    window.checkSelectedCI = checkSelectedCI;
-}(window));
-
+};

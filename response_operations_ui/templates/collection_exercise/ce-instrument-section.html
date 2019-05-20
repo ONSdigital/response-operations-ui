@@ -70,7 +70,7 @@
             Incorrect file type. Please choose a file type XLSX
           </p>
           <label class="upload-file u-vh" for="ciFile">Choose CI file</label>
-          <input type="file" class="u-mb-s" name="ciFile" id="ciFile" required accept=".xlsx" onchange="checkSelectedCI(this.files)" />
+          <input type="file" class="u-mb-s" name="ciFile" id="ciFile" required accept=".xlsx" onchange="validateCI.checkSelectedCI(this.files)" />
         </div>
       </div>
       <button id="btn-load-ci" name="load-ci" class="btn unready">Add CI</button>
