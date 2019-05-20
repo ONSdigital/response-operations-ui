@@ -125,7 +125,7 @@ describe('Collection Instrument File Validation', () => {
             });
 
             expect(validateCI.__private__.nodeClassesChange.mock.calls.length).toEqual(6);
-            expect(validateCI.__private__.nodeClassesChange.mock.calls.map(i => i[2])).toEqual(['add', 'add', 'remove', 'add', 'add', 'add']);
+            expect(validateCI.__private__.nodeClassesChange.mock.calls.map(i => i[2])).toEqual(['add', 'add', 'remove', 'remove', 'remove', 'remove']);  
         });
 
         test('it should hide panel if file type is correct', () => {
@@ -134,7 +134,7 @@ describe('Collection Instrument File Validation', () => {
             });
 
             expect(validateCI.__private__.nodeClassesChange.mock.calls.length).toEqual(6);
-            expect(validateCI.__private__.nodeClassesChange.mock.calls.map(i => i[2])).toEqual(['remove', 'remove', 'add', 'remove', 'remove', 'remove']);
+            expect(validateCI.__private__.nodeClassesChange.mock.calls.map(i => i[2])).toEqual(['remove', 'remove', 'add', 'add', 'add', 'add']);
         });
     });
 
