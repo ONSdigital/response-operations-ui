@@ -7,7 +7,7 @@ describe('CSV Reader tests', () => {
             beforeAll(() => {
                 panelContainer = document.createElement('div');
                 panelContainer.innerHTML = window.readCSV.__private__.getOutputTemplate(45, 900);
-                
+
                 panel = panelContainer.querySelector('div');
             });
 
@@ -31,6 +31,29 @@ describe('CSV Reader tests', () => {
             it('should include the CI count in the body', () => {
                 const textInBody = panel.querySelector('#sample-preview-ci').textContent;
                 expect(textInBody).toBe('Collection instruments: 900');
+            });
+        });
+
+        describe('#renderUi', () => {
+            let samplePreview;
+            let buttonCheckSampleContents;
+            let buttonLoadSample;
+            let buttonCancelLoadSample;
+
+            beforeAll(() => {
+                const container = document.createElement('div');
+
+                samplePreview = document.createElement('div');
+                buttonCheckSampleContents = document.createElement('button');
+                buttonLoadSample = document.createElement('button');
+                buttonCancelLoadSample = document.createElement('button');
+
+                samplePreview.id = 'sample-preview';
+                buttonCheckSampleContents.id = 'btn-check-sample-contents';
+                buttonLoadSample.id = 'btn-load-sample';
+                buttonCancelLoadSample.id = 'btn-load-sample';
+
+                [samplePreview, buttonCheckSampleContents, buttonLoadSample, buttonCancelLoadSample].forEach(container.appendChild);
             });
         });
     });

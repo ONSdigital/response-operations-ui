@@ -18,7 +18,7 @@ window.readCSV.__private__.getOutputTemplate = function(businessCount, ciCount) 
     return preview;
 };
 
-window.readCSV.__private__.drawOutput = function(businessCount, ciCount) {
+window.readCSV.__private__.renderUI = function(businessCount, ciCount) {
     document.getElementById('sample-preview').innerHTML = window.readCSV.__private__.getOutputTemplate(businessCount, ciCount);
     document.getElementById('btn-check-sample-contents').style.display = 'none';
     document.getElementById('btn-load-sample').style.display = 'inline-block';
