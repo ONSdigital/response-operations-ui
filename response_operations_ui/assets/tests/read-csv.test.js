@@ -34,15 +34,16 @@ describe('CSV Reader tests', () => {
             });
         });
 
-        describe('#renderUi', () => {
+        describe('#renderUI', () => {
             let samplePreview;
             let buttonCheckSampleContents;
             let buttonLoadSample;
             let buttonCancelLoadSample;
 
-            beforeAll(() => {
-                const container = document.createElement('div');
+            let originalGetOutputTemplate;
 
+            beforeAll(() => {
+                // Setup DOM Elements
                 samplePreview = document.createElement('div');
                 buttonCheckSampleContents = document.createElement('button');
                 buttonLoadSample = document.createElement('button');
@@ -51,9 +52,63 @@ describe('CSV Reader tests', () => {
                 samplePreview.id = 'sample-preview';
                 buttonCheckSampleContents.id = 'btn-check-sample-contents';
                 buttonLoadSample.id = 'btn-load-sample';
-                buttonCancelLoadSample.id = 'btn-load-sample';
+                buttonCancelLoadSample.id = 'btn-cancel-load-sample';
 
-                [samplePreview, buttonCheckSampleContents, buttonLoadSample, buttonCancelLoadSample].forEach(container.appendChild);
+                [
+                    samplePreview,
+                    buttonCheckSampleContents,
+                    buttonLoadSample,
+                    buttonCancelLoadSample
+                ].forEach(el => document.body.appendChild(el));
+
+                // Patch getOutputTemplate
+                originalGetOutputTemplate = window.readCSV.__private__.getOutputTemplate;
+                window.readCSV.__private__.getOutputTemplate = jest.fn(() => 'TEST OUTPUT');
+            });
+
+            beforeEach(() => {
+                buttonCancelLoadSample.style.display = '';
+                buttonLoadSample.style.display = '';
+                buttonCancelLoadSample.style.display = '';
+
+                window.readCSV.__private__.getOutputTemplate.mockReset();
+            });
+
+            afterAll(() => {
+                window.readCSV.__private__.getOutputTemplate = originalGetOutputTemplate;
+            });
+
+            it('should call the getOutputTemplate renderer only once', () => {
+                window.readCSV.__private__.renderUI(1, 2);
+                expect(window.readCSV.__private__.getOutputTemplate.mock.calls.length).toBe(1);
+            });
+
+            it('should pass the business and collection instrument counts to the getOutputTemplate renderer', () => {
+                window.readCSV.__private__.renderUI(1, 2);
+                expect(window.readCSV.__private__.getOutputTemplate.mock.calls).toBe([1, 2]);
+            });
+
+            it('should set the content of the sample preview to the value returned by template renderer', () => {
+                window.readCSV.__private__.renderUI(1, 2);
+                expect(samplePreview.textContent).toBe('TEST OUTPUT');
+            });
+            
+            it('should hide the check sample contents button', () => {
+                expect(buttonCheckSampleContents.style.display).not.toBe('none');
+                window.readCSV.__private__.renderUI(1, 2);
+                expect(buttonCheckSampleContents.style.display).toBe('none');
+            });
+
+            it('should show the load sample button', () => {
+                expect(buttonLoadSample.style.display).not.toBe('inline-block');
+                window.readCSV.__private__.renderUI(1, 2);
+                expect(buttonLoadSample.style.display).toBe('inline-block');
+            });
+
+            it('should show the cancel load sample button', () => {
+                expect(buttonCancelLoadSample.style.display).not.toBe('inline-block');
+                window.readCSV.__private__.renderUI(1, 2);
+                expect(buttonCancelLoadSample.style.display).toBe('inline-block');
             });
         });
     });
