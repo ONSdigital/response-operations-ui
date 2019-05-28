@@ -112,6 +112,55 @@ describe('CSV Reader tests', () => {
                 expect(buttonCancelLoadSample.style.display).toBe('inline-block');
             });
         });
+
+        describe('#errorHandler', () => {
+            let originalAlertsError;
+            beforeAll(() => {
+                if (!window.alerts) {
+                    window.alerts = {
+                        error: () => {}
+                    };
+                }
+                originalAlertsError = window.alerts.error;
+                window.alerts.error = jest.fn();
+            });
+
+            beforeEach(() => {
+                window.alerts.error.mockClear();
+            });
+
+            afterAll(() => {
+                window.alerts.error = originalAlertsError;
+            });
+
+            it('should call alerts.error if the error was a NotReadableError', () => {
+                const fakeError = {
+                    target: {
+                        error: {
+                            name: 'NotReadableError'
+                        }
+                    }
+                };
+
+                window.readCSV.__private__.errorHandler(fakeError);
+
+                expect(window.alerts.error.mock.calls.length).toBe(1);
+            });
+
+            it('should not call alerts.error if the error was not a NotReadableError', () => {
+                const fakeError = {
+                    target: {
+                        error: {
+                            name: 'TotallyDifferentError'
+                        }
+                    }
+                };
+
+                window.readCSV.__private__.errorHandler(fakeError);
+
+                expect(window.alerts.error.mock.calls.length).toBe(0);
+            });
+        });
     });
 
     describe('Public Functions', () => {
