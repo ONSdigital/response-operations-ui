@@ -63,15 +63,16 @@ describe('CSV Reader tests', () => {
 
                 // Patch getOutputTemplate
                 originalGetOutputTemplate = window.readCSV.__private__.getOutputTemplate;
-                window.readCSV.__private__.getOutputTemplate = jest.fn(() => 'TEST OUTPUT');
+                window.readCSV.__private__.getOutputTemplate = jest.fn();
+                window.readCSV.__private__.getOutputTemplate.mockReturnValue('TEST OUTPUT');
             });
 
             beforeEach(() => {
                 buttonCancelLoadSample.style.display = '';
                 buttonLoadSample.style.display = '';
-                buttonCancelLoadSample.style.display = '';
+                buttonCheckSampleContents.style.display = '';
 
-                window.readCSV.__private__.getOutputTemplate.mockReset();
+                window.readCSV.__private__.getOutputTemplate.mockClear();
             });
 
             afterAll(() => {
@@ -85,14 +86,14 @@ describe('CSV Reader tests', () => {
 
             it('should pass the business and collection instrument counts to the getOutputTemplate renderer', () => {
                 window.readCSV.__private__.renderUI(1, 2);
-                expect(window.readCSV.__private__.getOutputTemplate.mock.calls).toBe([1, 2]);
+                expect(window.readCSV.__private__.getOutputTemplate.mock.calls[0]).toEqual([1, 2]);
             });
 
             it('should set the content of the sample preview to the value returned by template renderer', () => {
                 window.readCSV.__private__.renderUI(1, 2);
-                expect(samplePreview.textContent).toBe('TEST OUTPUT');
+                expect(samplePreview.innerHTML).toBe('TEST OUTPUT');
             });
-            
+
             it('should hide the check sample contents button', () => {
                 expect(buttonCheckSampleContents.style.display).not.toBe('none');
                 window.readCSV.__private__.renderUI(1, 2);
