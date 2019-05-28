@@ -161,6 +161,23 @@ describe('CSV Reader tests', () => {
                 expect(window.alerts.error.mock.calls.length).toBe(0);
             });
         });
+
+        describe('#browserHasFileLoaderCapability', () => {
+            let originalFileReader = window.FileReader;
+            afterAll(() => {
+                window.FileReader = originalFileReader;
+            });
+
+            it('should return true if browser has FileReaderAPI', () => {
+                window.FileReader = () => {};
+                expect(window.readCSV.__private__.browserHasFileLoaderCapability()).toBe(true);
+            });
+
+            it('should return false if browser doesn\'t have FileReaderAPI', () => {
+                delete window.FileReader;
+                expect(window.readCSV.__private__.browserHasFileLoaderCapability()).toBe(false);
+            });
+        });
     });
 
     describe('Public Functions', () => {
