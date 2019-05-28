@@ -41,7 +41,7 @@ window.readCSV.__private__.cancelLoadSample = function() {
     document.getElementById('btn-check-sample-contents').style.display = 'block';
     document.getElementById('btn-load-sample').style.display = 'none';
     document.getElementById('btn-cancel-load-sample').style.display = 'none';
-    $('#file').focus();
+    document.getElementById('file').focus();
 };
 
 window.readCSV.__private__.processFile = function(event, classifiers) {
