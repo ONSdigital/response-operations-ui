@@ -163,7 +163,7 @@ describe('CSV Reader tests', () => {
         });
 
         describe('#browserHasFileLoaderCapability', () => {
-            let originalFileReader = window.FileReader;
+            const originalFileReader = window.FileReader;
             afterAll(() => {
                 window.FileReader = originalFileReader;
             });
