@@ -309,6 +309,14 @@ describe('CSV Reader tests', () => {
         describe('#handleFiles', () => {
             let originalbrowserHasFileLoaderCapability;
             let originalAlertsWarn;
+            const readAsTextMock = jest.fn();
+
+            const mockFileReader = jest.fn();
+            mockFileReader.mockReturnValue({
+                onload: null,
+                onerror: null,
+                readAsText: readAsTextMock
+            });
 
             beforeAll(() => {
                 originalbrowserHasFileLoaderCapability = window.readCSV.__private__.browserHasFileLoaderCapability;
@@ -335,6 +343,8 @@ describe('CSV Reader tests', () => {
 
                 expect(window.alerts.warn.mock.calls.length).toEqual(1);
             });
+
+
         });
     });
 });
