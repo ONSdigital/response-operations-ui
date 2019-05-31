@@ -75,7 +75,7 @@ window.readCSV.__private__.processFile = function(event, classifiers) {
 };
 
 window.readCSV.handleFiles = function(files, classifiers) {
-    if (_browserHasFileLoaderCapability()) {
+    if (window.readCSV.__private__.browserHasFileLoaderCapability()) {
         const reader = new FileReader();
 
         reader.onload = function(evt) {

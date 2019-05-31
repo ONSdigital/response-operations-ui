@@ -306,6 +306,35 @@ describe('CSV Reader tests', () => {
     });
 
     describe('Public Functions', () => {
+        describe('#handleFiles', () => {
+            let originalbrowserHasFileLoaderCapability;
+            let originalAlertsWarn;
 
+            beforeAll(() => {
+                originalbrowserHasFileLoaderCapability = window.readCSV.__private__.browserHasFileLoaderCapability;
+                window.readCSV.__private__.browserHasFileLoaderCapability = jest.fn();
+                originalAlertsWarn = window.alerts.warn;
+                window.alerts.warn = jest.fn();
+
+                window.readCSV.__private__.browserHasFileLoaderCapability.mockReturnValue(true);
+            });
+
+            beforeEach(() => {
+                window.readCSV.__private__.browserHasFileLoaderCapability.mockClear();
+                window.alerts.warn.mockClear();
+            });
+
+            afterAll(() => {
+                window.readCSV.__private__.browserHasFileLoaderCapability = originalbrowserHasFileLoaderCapability;
+                window.alerts.warn = originalAlertsWarn;
+            });
+
+            it('should fire an alert if FileReader support check fails', () => {
+                window.readCSV.__private__.browserHasFileLoaderCapability.mockReturnValue(false);
+                window.readCSV.handleFiles([], []);
+
+                expect(window.alerts.warn.mock.calls.length).toEqual(1);
+            });
+        });
     });
 });
