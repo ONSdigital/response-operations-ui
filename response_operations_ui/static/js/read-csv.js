@@ -71,10 +71,10 @@ window.readCSV.__private__.processFile = function(event, classifiers) {
         }).length;
     }
 
-    drawOutput(lines.length, ciCount);
+    window.readCSV.__private__.renderUI(lines.length, ciCount);
 };
 
-window.readCSV.handleFiles = function(files, clasifiers) {
+window.readCSV.handleFiles = function(files, classifiers) {
     if (_browserHasFileLoaderCapability()) {
         const reader = new FileReader();
 

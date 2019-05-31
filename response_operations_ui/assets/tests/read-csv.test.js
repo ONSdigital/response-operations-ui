@@ -1,3 +1,5 @@
+const { range } = require('lodash');
+
 require('../../static/js/read-csv');
 
 describe('CSV Reader tests', () => {
@@ -180,9 +182,13 @@ describe('CSV Reader tests', () => {
         });
 
         describe('#cancelLoadSample', () => {
+            const UNCHANGED = 'UNCHANGED';
+
             let originalGetElementById;
             let resetMock;
             let focusMock;
+            let styleDisplay = UNCHANGED;
+            let innerHTML = UNCHANGED;
             beforeAll(() => {
                 resetMock = jest.fn();
                 focusMock = jest.fn();
@@ -190,10 +196,10 @@ describe('CSV Reader tests', () => {
                 originalGetElementById = document.getElementById;
                 document.getElementById = jest.fn();
                 document.getElementById.mockReturnValue({
-                    innerHTML: '',
+                    innerHTML: innerHTML,
                     reset: resetMock,
                     style: {
-                        display: ''
+                        display: styleDisplay
                     },
                     focus: focusMock
                 });
@@ -203,6 +209,8 @@ describe('CSV Reader tests', () => {
                 document.getElementById.mockClear();
                 resetMock.mockClear();
                 focusMock.mockClear();
+                styleDisplay = UNCHANGED;
+                innerHTML = UNCHANGED;
             });
 
             afterAll(() => {
@@ -220,9 +228,79 @@ describe('CSV Reader tests', () => {
                 expect(resetMock.mock.calls.length).toEqual(1);
             });
 
+            it('should hide the load sample button', () => {
+                window.readCSV.__private__.cancelLoadSample();
+                expect(document.getElementById('btn-load-sample').style.display).toEqual('none');
+            });
+
+            it('should hide the load cancel button', () => {
+                window.readCSV.__private__.cancelLoadSample();
+                expect(document.getElementById('btn-cancel-load-sample').style.display).toEqual('none');
+            });
+
             it('should focus the file input', () => {
                 window.readCSV.__private__.cancelLoadSample();
                 expect(focusMock.mock.calls.length).toEqual(1);
+            });
+        });
+
+        describe('#processFile', () => {
+            let originalRenderUI = window.readCSV.__private__.renderUI;
+            const getFakeEvent = () => {
+                return {
+                    target: {
+                        result: ''
+                    }
+                };
+            };
+
+            beforeAll(() => {
+                originalRenderUI = window.readCSV.__private__.renderUI;
+                window.readCSV.__private__.renderUI = jest.fn();
+            });
+
+            beforeEach(() => {
+                window.readCSV.__private__.renderUI.mockClear();
+            });
+
+            afterAll(() => {
+                window.readCSV.__private__.renderUI = originalRenderUI;
+            });
+
+            it('should return the correct CI count for an RU_REF based classifier', () => {
+                const event = getFakeEvent();
+                range(0, 100).forEach(() => event.target.result += 'line\n');
+
+                window.readCSV.__private__.processFile(event, ['RU_REF']);
+
+                expect(window.readCSV.__private__.renderUI.mock.calls[0][1]).toEqual(100);
+            });
+
+            it('should return the correct CI count for a FORM_TYPE based classifier', () => {
+                const event = getFakeEvent();
+                range(0, 100).forEach(() => event.target.result += 'line\n');
+
+                window.readCSV.__private__.processFile(event, ['FORM_TYPE']);
+
+                expect(window.readCSV.__private__.renderUI.mock.calls[0][1]).toEqual(1);
+            });
+
+            it('should return the correct business count for a csv split by newlines', () => {
+                const event = getFakeEvent();
+                range(0, 100).forEach(() => event.target.result += 'line\n');
+
+                window.readCSV.__private__.processFile(event, ['RU_REF']);
+
+                expect(window.readCSV.__private__.renderUI.mock.calls[0][0]).toEqual(100);
+            });
+
+            it('should return the correct business count for a csv split by carriage returns', () => {
+                const event = getFakeEvent();
+                range(0, 100).forEach(() => event.target.result += 'line\r\n');
+
+                window.readCSV.__private__.processFile(event, ['RU_REF']);
+
+                expect(window.readCSV.__private__.renderUI.mock.calls[0][0]).toEqual(100);
             });
         });
     });
