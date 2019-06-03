@@ -309,42 +309,74 @@ describe('CSV Reader tests', () => {
         describe('#handleFiles', () => {
             let originalbrowserHasFileLoaderCapability;
             let originalAlertsWarn;
+            let originalFileReader;
             const readAsTextMock = jest.fn();
-
-            const mockFileReader = jest.fn();
-            mockFileReader.mockReturnValue({
+            const mfrMockReturn = {
                 onload: null,
                 onerror: null,
                 readAsText: readAsTextMock
-            });
+            };
+
+            const mockFileReader = jest.fn();
+            mockFileReader.mockImplementation(() => mfrMockReturn);
 
             beforeAll(() => {
                 originalbrowserHasFileLoaderCapability = window.readCSV.__private__.browserHasFileLoaderCapability;
                 window.readCSV.__private__.browserHasFileLoaderCapability = jest.fn();
                 originalAlertsWarn = window.alerts.warn;
                 window.alerts.warn = jest.fn();
-
-                window.readCSV.__private__.browserHasFileLoaderCapability.mockReturnValue(true);
+                originalFileReader = window.FileReader;
+                window.FileReader = mockFileReader;
             });
 
             beforeEach(() => {
                 window.readCSV.__private__.browserHasFileLoaderCapability.mockClear();
+                window.readCSV.__private__.browserHasFileLoaderCapability.mockReturnValue(true);
                 window.alerts.warn.mockClear();
+
+                mockFileReader.mockClear();
+                mockFileReader.mockImplementation(() => mfrMockReturn);
+                readAsTextMock.mockClear();
             });
 
             afterAll(() => {
                 window.readCSV.__private__.browserHasFileLoaderCapability = originalbrowserHasFileLoaderCapability;
                 window.alerts.warn = originalAlertsWarn;
+                window.FileReader = originalFileReader;
             });
 
-            it('should fire an alert if FileReader support check fails', () => {
-                window.readCSV.__private__.browserHasFileLoaderCapability.mockReturnValue(false);
-                window.readCSV.handleFiles([], []);
+            describe('Without FileReaderAPI supported', () => {
+                it('should fire an alert if FileReader support check fails', () => {
+                    window.readCSV.__private__.browserHasFileLoaderCapability.mockReturnValue(false);
+                    window.readCSV.handleFiles([], []);
 
-                expect(window.alerts.warn.mock.calls.length).toEqual(1);
+                    expect(window.alerts.warn.mock.calls.length).toEqual(1);
+                });
             });
 
+            describe('With FileReader API supported', () => {
+                const fileArgs = ['SOMEFILE'];
+                beforeEach(() => {
+                    window.readCSV.handleFiles(fileArgs, []);
+                });
 
+                it('should instantiate a new FileReader ', () => {
+                    expect(mockFileReader.mock.calls.length).toEqual(1);
+                });
+
+                it('should add an onload listener', () => {
+                    expect(typeof mfrMockReturn.onload).toEqual('function');
+                });
+
+                it('should add an onerror listerner', () => {
+                    expect(typeof mfrMockReturn.onerror).toEqual('function');
+                });
+
+                it('should read the file selected', () => {
+                    expect(readAsTextMock.mock.calls.length).toEqual(1)
+                    expect(readAsTextMock.mock.calls[0]).toEqual(fileArgs)
+                });
+            });
         });
     });
 });

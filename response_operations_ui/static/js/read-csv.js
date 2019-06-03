@@ -82,7 +82,7 @@ window.readCSV.handleFiles = function(files, classifiers) {
             processFile(evt, classifiers);
         };
 
-        reader.onerror = errorHandler;
+        reader.onerror = window.readCSV.__private__.errorHandler;
 
         reader.readAsText(files[0]);
     } else {
