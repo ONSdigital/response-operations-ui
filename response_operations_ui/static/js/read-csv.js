@@ -79,7 +79,7 @@ window.readCSV.handleFiles = function(files, classifiers) {
         const reader = new FileReader();
 
         reader.onload = function(evt) {
-            processFile(evt, classifiers);
+            window.readCSV.__private__.processFile(evt, classifiers);
         };
 
         reader.onerror = window.readCSV.__private__.errorHandler;
