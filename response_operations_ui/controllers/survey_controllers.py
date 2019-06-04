@@ -222,7 +222,11 @@ def create_survey(survey_ref, short_name, long_name, legal_basis):
         "shortName": short_name,
         "longName": long_name,
         "legalBasisRef": legal_basis,
-        "surveyType": "Business"
+        "surveyType": "Business",
+        "classifiers": [
+            {"name": "COLLECTION_INSTRUMENT", "classifierTypes": ["FORM_TYPE"]},
+            {"name": "COMMUNICATION_TEMPLATE", "classifierTypes": ["LEGAL_BASIS", "REGION"]}
+        ]
     }
 
     response = requests.post(url, json=survey_details, auth=app.config['SURVEY_AUTH'])
