@@ -373,8 +373,8 @@ describe('CSV Reader tests', () => {
                 });
 
                 it('should read the file selected', () => {
-                    expect(readAsTextMock.mock.calls.length).toEqual(1)
-                    expect(readAsTextMock.mock.calls[0]).toEqual(fileArgs)
+                    expect(readAsTextMock.mock.calls.length).toEqual(1);
+                    expect(readAsTextMock.mock.calls[0]).toEqual(fileArgs);
                 });
             });
         });
