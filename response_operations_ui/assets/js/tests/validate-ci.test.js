@@ -1,4 +1,4 @@
-require('../../static/js/validate-ci');
+require('../includes/validate-ci');
 jest.dontMock('lodash');
 const {
     range,
