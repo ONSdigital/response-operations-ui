@@ -7,6 +7,8 @@ function taskFunction() {
     const JS_SRC_DIR = get(this, 'config.JS_SRC_DIR');
     const JS_DEST_DIR = get(this, 'config.JS_DEST_DIR');
 
+    const webpackConfig = join(this.config.PROJECT_ROOT, 'webpack.config.js');
+
     if (!JS_SRC_DIR) {
         throw (new GulpError('JS_SRC_DIR config setting not found'));
     }
@@ -16,7 +18,7 @@ function taskFunction() {
     }
 
     return this.gulp.src(join(JS_SRC_DIR, '*.js'))
-        .pipe(webpack())
+        .pipe(webpack(require(webpackConfig)))
         .pipe(this.gulp.dest(join(JS_DEST_DIR)));
 }
 

@@ -1,17 +1,12 @@
-const { resolve } = require('path');
-
-const UglifyJsPlugin = require('uglifyjs-webpack-plugin');
+const { join } = require('path');
 
 module.exports = {
-    entry: resolve(__dirname, 'response_operations_ui', 'assets', 'assets', 'js', 'main.js'),
+    entry: './response_operations_ui/assets/js/main.js',
     output: {
-        path: resolve(__dirname, 'response_operations_ui', 'static', 'js'),
-        filename: '[name].min.js'
+        path: join(__dirname, 'response_operations_ui', 'static', 'js'),
+        filename: 'main.min.js'
     },
     devtool: 'source-map',
-    optimization: {
-        minimizer: [new UglifyJsPlugin()],
-    },
     module: {
         rules: [{
             test: /\.m?js$/,
