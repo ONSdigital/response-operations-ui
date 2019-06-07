@@ -53,7 +53,6 @@
         "gulp-eslint": "^5.0.0",
         "gulp-jest": "^4.0.2",
         "gulp-plumber": "^1.2.1",
-        "gulp-prettier": "^2.1.0",
         "gulp-sass": "^4.0.2",
         "gulp-sourcemaps": "^2.6.4",
         "gulp-stylelint": "^8.0.0",

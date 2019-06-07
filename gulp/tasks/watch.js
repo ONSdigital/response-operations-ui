@@ -29,7 +29,7 @@ function taskFunction(context, callback) {
     }
 
     gulp.watch(SCSS_DIR + '/**/*.scss', series('csslint', 'scsscompile'));
-    gulp.watch([JS_SRC_DIR + '/**/*.js', PROJECT_ROOT + '/gulpfile.js', PROJECT_ROOT + '/gulp/**/*.js'], series('fixjs', 'jslint', 'test', 'bundlejs'));
+    gulp.watch([JS_SRC_DIR + '/**/*.js', PROJECT_ROOT + '/gulpfile.js', PROJECT_ROOT + '/gulp/**/*.js'], series('jslint', 'test', 'bundlejs'));
 }
 
 module.exports = (context) => {
