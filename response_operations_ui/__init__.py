@@ -34,7 +34,7 @@ def create_app(config_name=None):
         assets.manifest = None
 
     assets.url = app.static_url_path
-    js_min = Bundle('js/*', filters='jsmin', output='minimised/all.min.js')
+    js_min = Bundle('js/*.js', filters='jsmin', output='minimised/all.min.js')
     assets.register('js_all', js_min)
 
     app.url_map.strict_slashes = False

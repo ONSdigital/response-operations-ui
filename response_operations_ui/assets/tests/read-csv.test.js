@@ -181,69 +181,6 @@ describe('CSV Reader tests', () => {
             });
         });
 
-        describe('#cancelLoadSample', () => {
-            const UNCHANGED = 'UNCHANGED';
-
-            let originalGetElementById;
-            let resetMock;
-            let focusMock;
-            let styleDisplay = UNCHANGED;
-            let innerHTML = UNCHANGED;
-            beforeAll(() => {
-                resetMock = jest.fn();
-                focusMock = jest.fn();
-
-                originalGetElementById = document.getElementById;
-                document.getElementById = jest.fn();
-                document.getElementById.mockReturnValue({
-                    innerHTML: innerHTML,
-                    reset: resetMock,
-                    style: {
-                        display: styleDisplay
-                    },
-                    focus: focusMock
-                });
-            });
-
-            beforeEach(() => {
-                document.getElementById.mockClear();
-                resetMock.mockClear();
-                focusMock.mockClear();
-                styleDisplay = UNCHANGED;
-                innerHTML = UNCHANGED;
-            });
-
-            afterAll(() => {
-                document.getElementById = originalGetElementById;
-            });
-
-            it('should clear load sample box', () => {
-                document.getElementById('sample-preview').innerHTML = 'SOMETHING';
-                window.readCSV.__private__.cancelLoadSample();
-                expect(document.getElementById('sample-preview').innerHTML).toEqual('');
-            });
-
-            it('should reset the form', () => {
-                window.readCSV.__private__.cancelLoadSample();
-                expect(resetMock.mock.calls.length).toEqual(1);
-            });
-
-            it('should hide the load sample button', () => {
-                window.readCSV.__private__.cancelLoadSample();
-                expect(document.getElementById('btn-load-sample').style.display).toEqual('none');
-            });
-
-            it('should hide the load cancel button', () => {
-                window.readCSV.__private__.cancelLoadSample();
-                expect(document.getElementById('btn-cancel-load-sample').style.display).toEqual('none');
-            });
-
-            it('should focus the file input', () => {
-                window.readCSV.__private__.cancelLoadSample();
-                expect(focusMock.mock.calls.length).toEqual(1);
-            });
-        });
-
         describe('#processFile', () => {
             let originalRenderUI = window.readCSV.__private__.renderUI;
             const getFakeEvent = () => {
@@ -306,6 +243,69 @@ describe('CSV Reader tests', () => {
     });
 
     describe('Public Functions', () => {
+        describe('#cancelLoadSample', () => {
+            const UNCHANGED = 'UNCHANGED';
+
+            let originalGetElementById;
+            let resetMock;
+            let focusMock;
+            let styleDisplay = UNCHANGED;
+            let innerHTML = UNCHANGED;
+            beforeAll(() => {
+                resetMock = jest.fn();
+                focusMock = jest.fn();
+
+                originalGetElementById = document.getElementById;
+                document.getElementById = jest.fn();
+                document.getElementById.mockReturnValue({
+                    innerHTML: innerHTML,
+                    reset: resetMock,
+                    style: {
+                        display: styleDisplay
+                    },
+                    focus: focusMock
+                });
+            });
+
+            beforeEach(() => {
+                document.getElementById.mockClear();
+                resetMock.mockClear();
+                focusMock.mockClear();
+                styleDisplay = UNCHANGED;
+                innerHTML = UNCHANGED;
+            });
+
+            afterAll(() => {
+                document.getElementById = originalGetElementById;
+            });
+
+            it('should clear load sample box', () => {
+                document.getElementById('sample-preview').innerHTML = 'SOMETHING';
+                window.readCSV.cancelLoadSample();
+                expect(document.getElementById('sample-preview').innerHTML).toEqual('');
+            });
+
+            it('should reset the form', () => {
+                window.readCSV.cancelLoadSample();
+                expect(resetMock.mock.calls.length).toEqual(1);
+            });
+
+            it('should hide the load sample button', () => {
+                window.readCSV.cancelLoadSample();
+                expect(document.getElementById('btn-load-sample').style.display).toEqual('none');
+            });
+
+            it('should hide the load cancel button', () => {
+                window.readCSV.cancelLoadSample();
+                expect(document.getElementById('btn-cancel-load-sample').style.display).toEqual('none');
+            });
+
+            it('should focus the file input', () => {
+                window.readCSV.cancelLoadSample();
+                expect(focusMock.mock.calls.length).toEqual(1);
+            });
+        });
+
         describe('#handleFiles', () => {
             let originalbrowserHasFileLoaderCapability;
             let originalAlertsWarn;
