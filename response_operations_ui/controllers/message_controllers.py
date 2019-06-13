@@ -39,7 +39,7 @@ def get_conversation(thread_id):
 def get_conversation_count(params):
     logger.debug("Retrieving count of threads")
 
-    url = f'{current_app.config["SECURE_MESSAGE_URL"]}/v2/messages/count'
+    url = f'{current_app.config["SECURE_MESSAGE_URL"]}/messages/count'
 
     response = requests.get(url, headers={'Authorization': _get_jwt()}, params=params)
 
