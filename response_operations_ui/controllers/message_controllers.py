@@ -137,7 +137,7 @@ def update_close_conversation_status(thread_id, status):
 
 
 def _post_new_message(message):
-    url = f'{current_app.config["SECURE_MESSAGE_URL"]}/v2/messages'
+    url = f'{current_app.config["SECURE_MESSAGE_URL"]}/messages'
     return requests.post(url, headers={'Authorization': _get_jwt(), 'Content-Type': 'application/json',
                                        'Accept': 'application/json'}, data=message)
 
