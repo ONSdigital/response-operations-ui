@@ -15,9 +15,10 @@ from tests.views import ViewTestCase
 shortname_url = f'{TestingConfig.SURVEY_URL}/surveys/shortname'
 url_sign_in_data = f'{TestingConfig.UAA_SERVICE_URL}/oauth/token'
 url_get_surveys_list = f'{TestingConfig.SURVEY_URL}/surveys/surveytype/Business'
-url_get_thread = f'{TestingConfig.SECURE_MESSAGE_URL}/v2/threads/fb0e79bd-e132-4f4f-a7fd-5e8c6b41b9af'
+url_get_thread = f'{TestingConfig.SECURE_MESSAGE_URL}/threads/fb0e79bd-e132-4f4f-a7fd-5e8c6b41b9af'
 url_get_threads_list = f'{TestingConfig.SECURE_MESSAGE_URL}/threads'
 url_send_message = f'{TestingConfig.SECURE_MESSAGE_URL}/v2/messages'
+url_messages = f'{TestingConfig.SECURE_MESSAGE_URL}/messages'
 url_update_label = f'{TestingConfig.SECURE_MESSAGE_URL}/v2/messages/modify/ae46748b-c6e6-4859-a57a-86e01db2dcbc'
 url_modify_label_base = f'{TestingConfig.SECURE_MESSAGE_URL}/v2/messages/modify/'
 
@@ -77,7 +78,7 @@ class TestMessage(ViewTestCase):
     @patch('response_operations_ui.controllers.message_controllers._get_jwt')
     def test_threads_list(self, mock_request, mock_get_jwt):
         mock_get_jwt.return_value = "blah"
-        mock_request.get(url_send_message + '/count', json={"total": 1}, status_code=200)
+        mock_request.get(url_messages + '/count', json={"total": 1}, status_code=200)
         mock_request.get(url_get_threads_list, json=thread_list)
         mock_request.get(url_get_surveys_list, json=self.surveys_list_json)
         mock_request.get(shortname_url + "/ASHE", json=ashe_info['survey'])
@@ -110,7 +111,7 @@ class TestMessage(ViewTestCase):
         mock_get_jwt.return_value = "blah"
         with open('tests/test_data/message/threads_missing_atmsg_to.json') as thread_json:
             malformed_thread_list = json.load(thread_json)
-        mock_request.get(url_send_message + '/count', json={"total": 1}, status_code=200)
+        mock_request.get(url_messages + '/count', json={"total": 1}, status_code=200)
         mock_request.get(url_get_threads_list, json=malformed_thread_list)
         mock_request.get(url_get_surveys_list, json=self.surveys_list_json)
         mock_request.get(shortname_url + "/ASHE", json=ashe_info['survey'])
@@ -127,7 +128,7 @@ class TestMessage(ViewTestCase):
         mock_get_jwt.return_value = "blah"
         with open('tests/test_data/message/threads_missing_atmsg_from.json') as thread_json:
             malformed_thread_list = json.load(thread_json)
-        mock_request.get(url_send_message + '/count', json={"total": 1}, status_code=200)
+        mock_request.get(url_messages + '/count', json={"total": 1}, status_code=200)
         mock_request.get(url_get_threads_list, json=malformed_thread_list)
         mock_request.get(url_get_surveys_list, json=self.surveys_list_json)
         mock_request.get(shortname_url + "/ASHE", json=ashe_info['survey'])
@@ -144,7 +145,7 @@ class TestMessage(ViewTestCase):
         mock_get_jwt.return_value = "blah"
         with open('tests/test_data/message/threads_missing_msg_to.json') as thread_json:
             malformed_thread_list = json.load(thread_json)
-        mock_request.get(url_send_message + '/count', json={"total": 1}, status_code=200)
+        mock_request.get(url_messages + '/count', json={"total": 1}, status_code=200)
         mock_request.get(url_get_threads_list, json=malformed_thread_list)
         mock_request.get(url_get_surveys_list, json=self.surveys_list_json)
         mock_request.get(shortname_url + "/ASHE", json=ashe_info['survey'])
@@ -161,7 +162,7 @@ class TestMessage(ViewTestCase):
         mock_get_jwt.return_value = "blah"
         with open('tests/test_data/message/threads_missing_sent_date.json') as thread_json:
             malformed_thread_list = json.load(thread_json)
-        mock_request.get(url_send_message + '/count', json={"total": 1}, status_code=200)
+        mock_request.get(url_messages + '/count', json={"total": 1}, status_code=200)
         mock_request.get(url_get_threads_list, json=malformed_thread_list)
         mock_request.get(url_get_surveys_list, json=self.surveys_list_json)
         mock_request.get(shortname_url + "/ASHE", json=ashe_info['survey'])
@@ -178,7 +179,7 @@ class TestMessage(ViewTestCase):
         mock_get_jwt.return_value = "blah"
         with open('tests/test_data/message/threads_missing_ru_ref.json') as thread_json:
             malformed_thread_list = json.load(thread_json)
-        mock_request.get(url_send_message + '/count', json={"total": 1}, status_code=200)
+        mock_request.get(url_messages + '/count', json={"total": 1}, status_code=200)
         mock_request.get(url_get_threads_list, json=malformed_thread_list)
         mock_request.get(url_get_surveys_list, json=self.surveys_list_json)
         mock_request.get(shortname_url + "/ASHE", json=ashe_info['survey'])
@@ -195,7 +196,7 @@ class TestMessage(ViewTestCase):
         mock_get_jwt.return_value = "blah"
         with open('tests/test_data/message/threads_missing_business_name.json') as thread_json:
             malformed_thread_list = json.load(thread_json)
-        mock_request.get(url_send_message + '/count', json={"total": 1}, status_code=200)
+        mock_request.get(url_messages + '/count', json={"total": 1}, status_code=200)
         mock_request.get(url_get_threads_list, json=malformed_thread_list)
         mock_request.get(url_get_surveys_list, json=self.surveys_list_json)
         mock_request.get(shortname_url + "/ASHE", json=ashe_info['survey'])
@@ -210,7 +211,7 @@ class TestMessage(ViewTestCase):
     @patch('response_operations_ui.controllers.message_controllers._get_jwt')
     def test_threads_list_fail(self, mock_request, mock_get_jwt):
         mock_get_jwt.return_value = "blah"
-        mock_request.get(url_send_message + '/count', json={"total": 1}, status_code=200)
+        mock_request.get(url_messages + '/count', json={"total": 1}, status_code=200)
         mock_request.get(url_get_threads_list, status_code=500)
         mock_request.get(shortname_url + "/ASHE", json=ashe_info['survey'])
 
@@ -227,7 +228,7 @@ class TestMessage(ViewTestCase):
         # If response doesn't have a messages key then it shouldn't give a server error,
         # but instead log the problem and display an empty inbox to the user.
 
-        mock_request.get(url_send_message + '/count', json={"total": 1}, status_code=200)
+        mock_request.get(url_messages + '/count', json={"total": 1}, status_code=200)
         mock_request.get(url_get_threads_list, json={"messages": []})
         mock_request.get(shortname_url + "/ASHE", json=ashe_info['survey'])
 
@@ -241,7 +242,7 @@ class TestMessage(ViewTestCase):
     def test_conversation_count_response_error(self, mock_request, mock_get_jwt):
         mock_get_jwt.return_value = "blah"
         mock_request.get(shortname_url + "/ASHE", json=ashe_info['survey'])
-        mock_request.get(url_send_message + '/count', json={"total": 1}, status_code=500)
+        mock_request.get(url_messages + '/count', json={"total": 1}, status_code=500)
 
         response = self.client.get("/messages/ASHE", follow_redirects=True)
 
@@ -251,7 +252,7 @@ class TestMessage(ViewTestCase):
 
     @requests_mock.mock()
     def test_read_messages_are_displayed_correctly(self, mock_request):
-        mock_request.get(url_send_message + '/count', json={"total": 1}, status_code=200)
+        mock_request.get(url_messages + '/count', json={"total": 1}, status_code=200)
         mock_request.get(url_get_surveys_list, json=self.surveys_list_json)
         mock_request.get(url_get_threads_list, json=threads_no_unread_list)
         mock_request.get(shortname_url + "/ASHE", json=ashe_info['survey'])
@@ -265,7 +266,7 @@ class TestMessage(ViewTestCase):
     @patch('response_operations_ui.controllers.message_controllers._get_jwt')
     def test_unread_messages_are_displayed_correctly(self, mock_request, mock_get_jwt):
         mock_get_jwt.return_value = "blah"
-        mock_request.get(url_send_message + '/count', json={"total": 1}, status_code=200)
+        mock_request.get(url_messages + '/count', json={"total": 1}, status_code=200)
         mock_request.get(url_get_surveys_list, json=self.surveys_list_json)
         mock_request.get(url_get_threads_list + params, json=threads_unread_list)
         mock_request.get(shortname_url + "/ASHE", json=ashe_info['survey'])
@@ -375,7 +376,7 @@ class TestMessage(ViewTestCase):
     def test_request_response_malformed(self, mock_request, mock_get_jwt):
         mock_get_jwt.return_value = "blah"
         mock_request.get(url_get_threads_list, json={})
-        mock_request.get(url_send_message + '/count', json={"total": 1}, status_code=200)
+        mock_request.get(url_messages + '/count', json={"total": 1}, status_code=200)
         mock_request.get(shortname_url + "/ASHE", json=ashe_info['survey'])
         response = self.client.get("/messages/ASHE")
 
@@ -463,7 +464,7 @@ class TestMessage(ViewTestCase):
     def test_form_submit_with_valid_data(self, mock_request, mock_get_jwt):
         mock_get_jwt.return_value = "blah"
         mock_request.post(url_send_message, json=threads_no_unread_list, status_code=201)
-        mock_request.get(url_send_message + '/count', json={"total": 1}, status_code=200)
+        mock_request.get(url_messages + '/count', json={"total": 1}, status_code=200)
         mock_request.get(url_get_threads_list, json=thread_list, status_code=200)
         mock_request.get(url_get_surveys_list, json=self.surveys_list_json)
         mock_request.get(shortname_url + "/ASHE", json=ashe_info['survey'])
@@ -479,7 +480,7 @@ class TestMessage(ViewTestCase):
     def test_form_submit_with_FDI_data(self, mock_request, mock_get_jwt):
         mock_get_jwt.return_value = "blah"
         mock_request.post(url_send_message, json=threads_no_unread_list, status_code=201)
-        mock_request.get(url_send_message + '/count', json={"total": 1}, status_code=200)
+        mock_request.get(url_messages + '/count', json={"total": 1}, status_code=200)
         mock_request.get(url_get_threads_list, json=thread_list, status_code=200)
         mock_request.get(url_get_surveys_list, json=self.surveys_list_json)
 
@@ -567,7 +568,7 @@ class TestMessage(ViewTestCase):
         mock_request.get(shortname_url + "/ASHE", json=ashe_info['survey'])
         mock_request.get(url_get_threads_list, json=thread_list)
         mock_request.get(url_get_surveys_list, json=survey_list)
-        mock_request.get(url_send_message + '/count', json={"total": 1}, status_code=200)
+        mock_request.get(url_messages + '/count', json={"total": 1}, status_code=200)
 
         response = self.client.post("/messages/threads/fb0e79bd-e132-4f4f-a7fd-5e8c6b41b9af",
                                     data=self.message_form,
@@ -658,7 +659,7 @@ class TestMessage(ViewTestCase):
     @patch('response_operations_ui.controllers.message_controllers._get_jwt')
     def test_get_messages_page_with_survey(self, mock_request, mock_get_jwt):
         mock_get_jwt.return_value = "blah"
-        mock_request.get(url_send_message + '/count', json={"total": 1}, status_code=200)
+        mock_request.get(url_messages + '/count', json={"total": 1}, status_code=200)
         mock_request.get(url_get_threads_list, json=thread_list)
         mock_request.get(url_get_surveys_list, json=self.surveys_list_json)
         mock_request.get(shortname_url + "/ASHE", json=ashe_info['survey'])
@@ -679,7 +680,7 @@ class TestMessage(ViewTestCase):
     @patch('response_operations_ui.controllers.message_controllers._get_jwt')
     def test_get_messages_page_with_FDI_survey(self, mock_request, mock_get_jwt):
         mock_get_jwt.return_value = "blah"
-        mock_request.get(url_send_message + '/count', json={"total": 1}, status_code=200)
+        mock_request.get(url_messages + '/count', json={"total": 1}, status_code=200)
         mock_request.get(url_get_threads_list, json=thread_list)
         mock_request.get(url_get_surveys_list, json=survey_list)
 
@@ -740,7 +741,7 @@ class TestMessage(ViewTestCase):
         mock_request.get(url_get_surveys_list, json=survey_list)
         mock_request.patch(url_get_thread, json=thread_json)
         mock_request.get(shortname_url + "/ASHE", json=ashe_info['survey'])
-        mock_request.get(url_send_message + '/count', json={"total": 1}, status_code=200)
+        mock_request.get(url_messages + '/count', json={"total": 1}, status_code=200)
         mock_request.get(url_get_threads_list, json=thread_list)
 
         response = self.client.post("/messages/threads/fb0e79bd-e132-4f4f-a7fd-5e8c6b41b9af/close-conversation",
@@ -775,7 +776,7 @@ class TestMessage(ViewTestCase):
         mock_request.get(url_get_surveys_list, json=survey_list)
         mock_request.patch(url_get_thread, json=thread_json)
         mock_request.get(shortname_url + "/ASHE", json=ashe_info['survey'])
-        mock_request.get(url_send_message + '/count', json={"total": 1}, status_code=200)
+        mock_request.get(url_messages + '/count', json={"total": 1}, status_code=200)
         mock_request.get(url_get_threads_list, json=thread_list)
 
         with self.app.app_context():

@@ -18,7 +18,7 @@ logger = wrap_logger(logging.getLogger(__name__))
 def get_conversation(thread_id):
     logger.debug("Retrieving thread")
 
-    url = f'{current_app.config["SECURE_MESSAGE_URL"]}/v2/threads/{thread_id}'
+    url = f'{current_app.config["SECURE_MESSAGE_URL"]}/threads/{thread_id}'
 
     response = requests.get(url, headers={'Authorization': _get_jwt()})
 
@@ -122,7 +122,7 @@ def add_unread_label(message_id):
 
 
 def update_close_conversation_status(thread_id, status):
-    url = f"{current_app.config['SECURE_MESSAGE_URL']}/v2/threads/{thread_id}"
+    url = f"{current_app.config['SECURE_MESSAGE_URL']}/threads/{thread_id}"
     data = {"is_closed": status}
 
     logger.debug("Updating close conversation status", thread_id=thread_id)
