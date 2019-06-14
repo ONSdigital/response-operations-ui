@@ -19,8 +19,8 @@ url_get_thread = f'{TestingConfig.SECURE_MESSAGE_URL}/threads/fb0e79bd-e132-4f4f
 url_get_threads_list = f'{TestingConfig.SECURE_MESSAGE_URL}/threads'
 url_send_message = f'{TestingConfig.SECURE_MESSAGE_URL}/v2/messages'
 url_messages = f'{TestingConfig.SECURE_MESSAGE_URL}/messages'
-url_update_label = f'{TestingConfig.SECURE_MESSAGE_URL}/v2/messages/modify/ae46748b-c6e6-4859-a57a-86e01db2dcbc'
-url_modify_label_base = f'{TestingConfig.SECURE_MESSAGE_URL}/v2/messages/modify/'
+url_update_label = f'{TestingConfig.SECURE_MESSAGE_URL}/messages/modify/ae46748b-c6e6-4859-a57a-86e01db2dcbc'
+url_modify_label_base = f'{TestingConfig.SECURE_MESSAGE_URL}/messages/modify/'
 
 survey_id = '6aa8896f-ced5-4694-800c-6cd661b0c8b2'
 params = f'?survey={survey_id}&page=1&limit=10'

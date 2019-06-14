@@ -94,7 +94,7 @@ def send_message(message_json):
 
 
 def remove_unread_label(message_id):
-    url = f"{current_app.config['SECURE_MESSAGE_URL']}/v2/messages/modify/{message_id}"
+    url = f"{current_app.config['SECURE_MESSAGE_URL']}/messages/modify/{message_id}"
     data = {"label": "UNREAD", "action": "remove"}
 
     logger.debug("Removing message unread label", message_id=message_id)
@@ -108,7 +108,7 @@ def remove_unread_label(message_id):
 
 
 def add_unread_label(message_id):
-    url = f"{current_app.config['SECURE_MESSAGE_URL']}/v2/messages/modify/{message_id}"
+    url = f"{current_app.config['SECURE_MESSAGE_URL']}/messages/modify/{message_id}"
     data = {"label": "UNREAD", "action": "add"}
 
     logger.debug("Adding message unread label", message_id=message_id)
