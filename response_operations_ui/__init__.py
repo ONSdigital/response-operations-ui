@@ -4,7 +4,7 @@ import requestsdefaulter
 
 import redis
 from flask import Flask
-from flask_assets import Bundle, Environment
+from flask_assets import Environment
 from flask_login import LoginManager
 from flask_session import Session
 from flask_zipkin import Zipkin
