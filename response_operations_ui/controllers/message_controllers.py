@@ -18,7 +18,7 @@ logger = wrap_logger(logging.getLogger(__name__))
 def get_conversation(thread_id):
     logger.debug("Retrieving thread")
 
-    url = f'{current_app.config["SECURE_MESSAGE_URL"]}/v2/threads/{thread_id}'
+    url = f'{current_app.config["SECURE_MESSAGE_URL"]}/threads/{thread_id}'
 
     response = requests.get(url, headers={'Authorization': _get_jwt()})
 
@@ -39,7 +39,7 @@ def get_conversation(thread_id):
 def get_conversation_count(params):
     logger.debug("Retrieving count of threads")
 
-    url = f'{current_app.config["SECURE_MESSAGE_URL"]}/v2/messages/count'
+    url = f'{current_app.config["SECURE_MESSAGE_URL"]}/messages/count'
 
     response = requests.get(url, headers={'Authorization': _get_jwt()}, params=params)
 
@@ -94,7 +94,7 @@ def send_message(message_json):
 
 
 def remove_unread_label(message_id):
-    url = f"{current_app.config['SECURE_MESSAGE_URL']}/v2/messages/modify/{message_id}"
+    url = f"{current_app.config['SECURE_MESSAGE_URL']}/messages/modify/{message_id}"
     data = {"label": "UNREAD", "action": "remove"}
 
     logger.debug("Removing message unread label", message_id=message_id)
@@ -108,7 +108,7 @@ def remove_unread_label(message_id):
 
 
 def add_unread_label(message_id):
-    url = f"{current_app.config['SECURE_MESSAGE_URL']}/v2/messages/modify/{message_id}"
+    url = f"{current_app.config['SECURE_MESSAGE_URL']}/messages/modify/{message_id}"
     data = {"label": "UNREAD", "action": "add"}
 
     logger.debug("Adding message unread label", message_id=message_id)
@@ -122,7 +122,7 @@ def add_unread_label(message_id):
 
 
 def update_close_conversation_status(thread_id, status):
-    url = f"{current_app.config['SECURE_MESSAGE_URL']}/v2/threads/{thread_id}"
+    url = f"{current_app.config['SECURE_MESSAGE_URL']}/threads/{thread_id}"
     data = {"is_closed": status}
 
     logger.debug("Updating close conversation status", thread_id=thread_id)
@@ -137,7 +137,7 @@ def update_close_conversation_status(thread_id, status):
 
 
 def _post_new_message(message):
-    url = f'{current_app.config["SECURE_MESSAGE_URL"]}/v2/messages'
+    url = f'{current_app.config["SECURE_MESSAGE_URL"]}/messages'
     return requests.post(url, headers={'Authorization': _get_jwt(), 'Content-Type': 'application/json',
                                        'Accept': 'application/json'}, data=message)
 
