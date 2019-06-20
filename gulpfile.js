@@ -52,7 +52,7 @@ if (taskFiles.length === 0) {
 
 taskFiles.map(initialiseTask);
 
-registerTask(context, ['build'], context.gulp.series(['csslint', 'scss_compile']));
+registerTask(context, ['build'], context.gulp.series(['csslint', 'scss_compile', 'jslint', 'bundle']));
 
 context.logger(`Added ${tasksAdded} tasks`);
 

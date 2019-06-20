@@ -30,7 +30,7 @@ const buttonSendMessageMock = {
 };
 
 document.getElementById = getElementByIdMock;
-require('../../static/js/disable-send');
+require('../includes/disable-send');
 
 describe('Disable send button on submit', () => {
     test('Button disabled setting is not set before click', () => {

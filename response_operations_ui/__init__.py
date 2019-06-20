@@ -4,7 +4,7 @@ import requestsdefaulter
 
 import redis
 from flask import Flask
-from flask_assets import Bundle, Environment
+from flask_assets import Environment
 from flask_login import LoginManager
 from flask_session import Session
 from flask_zipkin import Zipkin
@@ -34,8 +34,6 @@ def create_app(config_name=None):
         assets.manifest = None
 
     assets.url = app.static_url_path
-    js_min = Bundle('js/*.js', filters='jsmin', output='minimised/all.min.js')
-    assets.register('js_all', js_min)
 
     app.url_map.strict_slashes = False
     app.secret_key = app.config['RESPONSE_OPERATIONS_UI_SECRET']

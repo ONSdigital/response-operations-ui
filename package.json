@@ -24,7 +24,7 @@
         "gulp": {
             "SCSS_DIR": "$ROOT/response_operations_ui/assets/scss",
             "CSS_DIR": "$ROOT/response_operations_ui/static/css",
-            "JS_SRC_DIR": "$ROOT/response_operations_ui/static/js",
+            "JS_SRC_DIR": "$ROOT/response_operations_ui/assets/js",
             "JS_DEST_DIR": "$ROOT/response_operations_ui/static/js"
         }
     },
@@ -38,7 +38,10 @@
         ]
     },
     "devDependencies": {
-        "@babel/core": "^7.2.0",
+        "@babel/core": "^7.4.5",
+        "@babel/preset-env": "^7.4.5",
+        "ajv": "^6.10.0",
+        "babel-loader": "^8.0.6",
         "browserify": "^16.2.3",
         "chalk": "^2.4.1",
         "eslint": "^5.10.0",
@@ -57,9 +60,15 @@
         "jest": "^24.5.0",
         "jest-cli": "^24.5.0",
         "lodash": "^4.17.11",
+        "prettier": "1.17.1",
         "sass": "^1.20.1",
         "stylelint": "^9.9.0",
-        "stylelint-config-standard": "^18.2.0"
+        "stylelint-config-standard": "^18.2.0",
+        "terser-webpack-plugin": "^1.3.0",
+        "uglifyjs-webpack-plugin": "^2.1.3",
+        "webpack": "^4.33.0",
+        "webpack-cli": "^3.3.3",
+        "webpack-stream": "^5.2.1"
     },
     "dependencies": {
         "install": "^0.12.2",

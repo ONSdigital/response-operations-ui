@@ -1,11 +1,11 @@
-require('../../static/js/validate-ci');
+require('../includes/validate-ci');
 jest.dontMock('lodash');
 const {
     range,
     isArray
 } = require('lodash');
 
-let {
+const {
     nodeClassesChange,
     arrayLikeToArray
 } = validateCI.__private__;

@@ -21,9 +21,7 @@
     {% assets "scss_all" %}
     <link rel=stylesheet type=text/css href="{{ url_for('static', filename='css/main.css') }}">
     {% endassets %}
-    {% assets "js_all" %}
-    <script type="text/javascript" src="{{ ASSET_URL }}"></script>
-    {% endassets %}
+    <script type="text/javascript" src="{{ url_for('static', filename='js/main.min.js') }}"></script>
     <link href="/static/images/favicon.ico" rel="Shortcut Icon" />
   </head>
 

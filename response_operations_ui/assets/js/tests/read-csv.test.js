@@ -1,6 +1,6 @@
 const { range } = require('lodash');
 
-require('../../static/js/read-csv');
+require('../includes/read-csv');
 
 describe('CSV Reader tests', () => {
     describe('Private functions', () => {
