@@ -124,8 +124,8 @@ describe('Collection Instrument File Validation', () => {
                 type: 'invalid file type'
             });
 
-            expect(validateCI.__private__.nodeClassesChange.mock.calls.length).toEqual(6);
-            expect(validateCI.__private__.nodeClassesChange.mock.calls.map(i => i[2])).toEqual(['add', 'add', 'remove', 'remove', 'remove', 'remove']);
+            expect(validateCI.__private__.nodeClassesChange.mock.calls.length).toEqual(9);
+            expect(validateCI.__private__.nodeClassesChange.mock.calls.map(i => i[2])).toEqual(['add', 'add', 'remove', 'remove', 'add', 'remove', 'add', 'remove', 'add']);
         });
 
         test('it should hide panel if file type is correct', () => {
@@ -133,8 +133,8 @@ describe('Collection Instrument File Validation', () => {
                 type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
             });
 
-            expect(validateCI.__private__.nodeClassesChange.mock.calls.length).toEqual(6);
-            expect(validateCI.__private__.nodeClassesChange.mock.calls.map(i => i[2])).toEqual(['remove', 'remove', 'add', 'add', 'add', 'add']);
+            expect(validateCI.__private__.nodeClassesChange.mock.calls.length).toEqual(9);
+            expect(validateCI.__private__.nodeClassesChange.mock.calls.map(i => i[2])).toEqual(['remove', 'remove', 'add', 'add', 'remove', 'add', 'remove', 'add', 'remove']);
         });
     });
 
