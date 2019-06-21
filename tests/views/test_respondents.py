@@ -190,3 +190,12 @@ class TestRespondents(ViewTestCase):
         self.assertEqual(response.status_code, 200, 'Sending search form failed')
 
         self.assertFalse(b'pagination' in response.data, 'Found unexpected pagination block')
+
+    @mock.patch('response_operations_ui.controllers.party_controller.search_respondents')
+    def test_search_respondents_page_defaults_to_1(self, search_respondents_mock):
+        """Asert that page 1 passed to party controller even though no page specified in passed in params"""
+        self._mock_party_data(search_respondents_mock)
+
+        self.client.post('/respondents/search', data={'email_address': '@'}, follow_redirects=True)  # All
+
+        search_respondents_mock.assert_called_with('', '', '@', '1')
