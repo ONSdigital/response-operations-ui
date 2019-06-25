@@ -50,7 +50,7 @@ def respondent_search():
     first_name = request.values.get('first_name', '')
     last_name = request.values.get('last_name', '')
     email_address = request.values.get('email_address', '')
-    page = request.values.get('page', '')
+    page = request.values.get('page', '1')
 
     form = RespondentSearchForm()
 

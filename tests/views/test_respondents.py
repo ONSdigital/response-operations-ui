@@ -110,8 +110,8 @@ class TestRespondents(ViewTestCase):
         self.assertEqual(response.status_code, 200)
 
     # Respondent Search UI Testing
-
-    def mock_party_data(self, search_respondents_mock, total=1000):
+    @staticmethod
+    def _mock_party_data(search_respondents_mock, total=1000):
         with open('tests/test_data/party/mock_search_respondents_data.json', 'r') as json_file:
 
             data = json.load(json_file)
@@ -123,7 +123,7 @@ class TestRespondents(ViewTestCase):
     # Landing Page
     @mock.patch('response_operations_ui.controllers.party_controller.search_respondents')
     def test_search_respondents_root_view_renders_form_without_trailing_slash(self, search_respondents_mock):
-        self.mock_party_data(search_respondents_mock)
+        self._mock_party_data(search_respondents_mock)
 
         response = self.client.get('/respondents')
         self.assertEqual(response.status_code, 200, 'Loading respondent landing page failed')
@@ -135,7 +135,7 @@ class TestRespondents(ViewTestCase):
 
     @mock.patch('response_operations_ui.controllers.party_controller.search_respondents')
     def test_search_respondents_root_view_renders_form_with_trailing_slash(self, search_respondents_mock):
-        self.mock_party_data(search_respondents_mock)
+        self._mock_party_data(search_respondents_mock)
 
         response = self.client.get('/respondents/')
         self.assertEqual(response.status_code, 200, 'Loading respondent landing page failed')
@@ -147,7 +147,7 @@ class TestRespondents(ViewTestCase):
 
     @mock.patch('response_operations_ui.controllers.party_controller.search_respondents')
     def test_search_respondents_posting_invalid_form_shows_landing_page_with_error(self, search_respondents_mock):
-        self.mock_party_data(search_respondents_mock)
+        self._mock_party_data(search_respondents_mock)
 
         response = self.client.post('/respondents/search', data={}, follow_redirects=True)
         self.assertEqual(response.status_code, 200, 'Sending search form failed')
@@ -159,7 +159,7 @@ class TestRespondents(ViewTestCase):
 
     @mock.patch('response_operations_ui.controllers.party_controller.search_respondents')
     def test_search_respondents_posting_form_with_valid_input_goes_to_results_page(self, search_respondents_mock):
-        self.mock_party_data(search_respondents_mock)
+        self._mock_party_data(search_respondents_mock)
 
         response = self.client.post('/respondents/search', data={'first_name': 'a'}, follow_redirects=True)
         self.assertEqual(response.status_code, 200, 'Sending search form failed')
@@ -169,7 +169,7 @@ class TestRespondents(ViewTestCase):
     # Results page
     @mock.patch('response_operations_ui.controllers.party_controller.search_respondents')
     def test_search_respondents_results_page_shows_correct_number_of_results(self, search_respondents_mock):
-        self.mock_party_data(search_respondents_mock, 1)
+        self._mock_party_data(search_respondents_mock, 1)
         response = self.client.post('/respondents/search', data={'first_name': 'sophey'}, follow_redirects=True)
         self.assertEqual(response.status_code, 200, 'Sending search form failed')
 
@@ -177,7 +177,7 @@ class TestRespondents(ViewTestCase):
 
     @mock.patch('response_operations_ui.controllers.party_controller.search_respondents')
     def test_search_respondents_results_page_shows_pagination_if_needed(self, search_respondents_mock):
-        self.mock_party_data(search_respondents_mock)
+        self._mock_party_data(search_respondents_mock)
         response = self.client.post('/respondents/search', data={'first_name': 'e'}, follow_redirects=True)
         self.assertEqual(response.status_code, 200, 'Sending search form failed')
 
@@ -185,8 +185,17 @@ class TestRespondents(ViewTestCase):
 
     @mock.patch('response_operations_ui.controllers.party_controller.search_respondents')
     def test_search_respondents_results_page_doesnt_show_pagination_when_not_needed(self, search_respondents_mock):
-        self.mock_party_data(search_respondents_mock, 10)
+        self._mock_party_data(search_respondents_mock, 10)
         response = self.client.post('/respondents/search', data={'first_name': 'wallis'}, follow_redirects=True)
         self.assertEqual(response.status_code, 200, 'Sending search form failed')
 
         self.assertFalse(b'pagination' in response.data, 'Found unexpected pagination block')
+
+    @mock.patch('response_operations_ui.controllers.party_controller.search_respondents')
+    def test_search_respondents_page_defaults_to_1(self, search_respondents_mock):
+        """Asert that page 1 passed to party controller even though no page specified in passed in params"""
+        self._mock_party_data(search_respondents_mock)
+
+        self.client.post('/respondents/search', data={'email_address': '@'}, follow_redirects=True)  # All
+
+        search_respondents_mock.assert_called_with('', '', '@', '1')

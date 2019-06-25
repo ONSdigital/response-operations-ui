@@ -127,7 +127,7 @@ def search_respondent_by_email(email):
     return response.json()
 
 
-def search_respondents(first_name, last_name, email_address, page=0):
+def search_respondents(first_name, last_name, email_address, page):
     params = {
         'firstName': first_name,
         'lastName': last_name,
