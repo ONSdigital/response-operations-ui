@@ -39,14 +39,13 @@
           {{ form.period(class_="input input--text", id='period', required=required, maxlength=6, value=period) }}
         </div>
         {% endif %}
-          {{ form.user_description(value=user_description, id='user_description') }}
-          {{ form.collection_exercise_id(value=collection_exercise_id, id='collection_exercise_id') }}
-          {{ form.hidden_survey_id(value=survey_id, id='survey_id') }}
+        {{ form.user_description(value=user_description, id='user_description') }}
+        {{ form.collection_exercise_id(value=collection_exercise_id, id='collection_exercise_id') }}
+        {{ form.hidden_survey_id(value=survey_id, id='survey_id') }}
+        <button class="btn u-mb-s" id="save-btn">Save</button>
+        <div>
+          <a id="cancel-btn" href="{{ url_for('collection_exercise_bp.view_collection_exercise', short_name=short_name, period=period) }}">Cancel</a>
         </div>
-      </div>
-      <button class="btn u-mb-s" id="save-btn">Save</button>
-      <div>
-        <a id="cancel-btn" href="{{ url_for('collection_exercise_bp.view_collection_exercise', short_name=short_name, period=period) }}">Cancel</a>
       </div>
     </form>
   </div>
