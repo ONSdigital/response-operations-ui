@@ -84,7 +84,7 @@ class EditContactDetailsForm(FlaskForm):
 
 
 class EditCollectionExerciseDetailsForm(FlaskForm):
-    user_description = StringField('user_description')
+    user_description = HiddenField('user_description')
     period = IntegerField('period')
     collection_exercise_id = HiddenField('collection_exercise_id')
     hidden_survey_id = HiddenField('hidden_survey_id')

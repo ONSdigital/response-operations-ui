@@ -39,14 +39,8 @@
           {{ form.period(class_="input input--text", id='period', required=required, maxlength=6, value=period) }}
         </div>
         {% endif %}
-        <div class="field u-mb-l">
-          <span class="u-vh">Current value: </span>
-          </span>
+          {{ form.user_description(value=user_description, id='user_description') }}
           {{ form.collection_exercise_id(value=collection_exercise_id, id='collection_exercise_id') }}
-        </div>
-        <div class="field u-mb-l">
-          <span class="u-vh">Current value: </span>
-          </span>
           {{ form.hidden_survey_id(value=survey_id, id='survey_id') }}
         </div>
       </div>
