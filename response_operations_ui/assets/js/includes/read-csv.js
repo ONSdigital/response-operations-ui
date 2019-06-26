@@ -87,5 +87,5 @@ window.readCSV.cancelLoadSample = function() {
     document.getElementById('btn-check-sample-contents').style.display = 'block';
     document.getElementById('btn-load-sample').style.display = 'none';
     document.getElementById('btn-cancel-load-sample').style.display = 'none';
-    document.getElementById('file').focus();
+    document.getElementById('sampleFile').focus();
 };

@@ -1,7 +1,25 @@
-const { returnNotImplemented, registerTask } = require('../gulpHelper');
+const { registerTask } = require('../gulpHelper');
+const webpack = require('webpack-stream');
+const { join } = require('path');
+const { get } = require('lodash');
 
 function taskFunction() {
-    return returnNotImplemented();
+    const JS_SRC_DIR = get(this, 'config.JS_SRC_DIR');
+    const JS_DEST_DIR = get(this, 'config.JS_DEST_DIR');
+
+    const webpackConfig = join(this.config.PROJECT_ROOT, 'webpack.config.js');
+
+    if (!JS_SRC_DIR) {
+        throw (new GulpError('JS_SRC_DIR config setting not found'));
+    }
+
+    if (!JS_DEST_DIR) {
+        throw (new GulpError('JS_DEST_DIR config setting not found'));
+    }
+
+    return this.gulp.src(join(JS_SRC_DIR, '*.js'))
+        .pipe(webpack(require(webpackConfig)))
+        .pipe(this.gulp.dest(join(JS_DEST_DIR)));
 }
 
 module.exports = (context) => {

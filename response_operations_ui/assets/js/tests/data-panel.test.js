@@ -1,4 +1,4 @@
-require('../../static/js/data-panel');
+require('../includes/data-panel');
 
 describe('Data panel tests', () => {
     let dataPanelContainer;

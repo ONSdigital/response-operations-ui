@@ -1,4 +1,4 @@
-require('../../static/js/alert-library');
+require('../includes/alert-library');
 
 describe('Alert library tests', () => {
     describe('Private functions', () => {
