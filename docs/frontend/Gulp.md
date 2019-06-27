@@ -3,12 +3,16 @@
 
 - [Introduction to Gulp](#Introduction-to-Gulp)
 - [Tasks](#Tasks)
+  - [Tasks running tasks](#Tasks-running-tasks)
   - [Structure of tasks in `response-operations-ui`](#Structure-of-tasks-in-response-operations-ui)
     - [Dissecting the task in our format:](#Dissecting-the-task-in-our-format)
     - [The advantage of our format of task](#The-advantage-of-our-format-of-task)
 - [Reading files](#Reading-files)
   - [Examples](#Examples)
   - [Outputs of a `gulp.src`](#Outputs-of-a-gulpsrc)
+- [Writing Files](#Writing-Files)
+- [Watching files](#Watching-files)
+- [Plugins](#Plugins)
 
 ### Introduction to Gulp
 Gulp.js is self-referred to as 'The Streaming Build System', and this is because it uses an approach of creating streams of assets to create
@@ -65,6 +69,51 @@ $ npx gulp compile_scss
 You can use either approach, but the `npx` approach is better, because it will run the version of Gulp that is installed in the `node_modules` of the repo, meaning you have no need to globally install any tooling, and won't face any issues with version incompatibility.
 
 Running `npx gulp` is roughly equivalent to running `node node_modules/.bin/gulp`, which is installed in the repo directory after install is run, so you should already have it.
+
+#### Tasks running tasks
+On many occasions, you may need to make a task that just runs other tasks.  For example, your build task may run tests, linters, and then asset compilers.  Rather than reuse code, just write tasks that do each of these steps, that can then be reused in other tasks.
+
+A task that runs others can either run them in series of parallel, using `gulp.series` and `gulp.parallel`:
+
+```javascript
+gulp.task('build', gulp.series(['lint', 'test', 'compile_scss', 'bundle', 'minify']));
+```
+
+This runs the lint, test, compile_scss, bundle, and minify tasks, one after the other.  If any fail, an error will throw, and the series execution will stop.
+
+Doing the same in parallel will run all of the tasks at once:
+
+```javascript
+gulp.task('build', gulp.parallel(['lint', 'test', 'compile_scss', 'bundle', 'minify']));
+```
+
+In this instance, if any fail, the others will still execute, but the exit code of the gulp task will be non-zero to highlight that something failed.
+
+If you need to, you could have complex combination of parallel and series execution:
+
+```javascript
+gulp.task('build', gulp.parallel([
+    gulp.series(['css_lint', 'scss_compile']),
+    gulp.series(['js_lint', 'jsbundle')
+]));
+```
+
+The above would start two parallel tasks, each running two tasks in series.  This could be useful for more quickly assembling the different types of assets in your app, say CSS, Javascript, Images, etc.; but it has some downsides:
+
+* Pipelines can become needlessly complex, making finding issues harder
+* A non-zero exit code means a series execution failed, but doesn't indicate which
+* Whilst you can split things into seperate parallel queues of series tasks, it's harder to then combine the results at the end, say in order to minify all of them at once.  It can be done by wrapping the parallel tasks in a series task set, and then making the final task in the set perform the major final functions, but it looks messy, and isn't easy to understand at a glance.
+
+Generally speaking, I'd recommend avoiding mixing parallel and series operations, unless your separate them out into other values to make the code cleaner, e.g.:
+
+```javascript
+const cssPipeline = gulp.series(['css_lint', 'scss_compile']);
+const jsPipeline = gulp.series(['js_lint', 'jsbundle']);
+const parallelPipeline = gulp.parallel([cssPipeline, jsPipeline]);
+
+const wholePipeline = gulp.series([parallelPipeline, 'minify']); // Where 'minify' is a named task setup elsewhere.
+```
+This is easier to read, but it does lack the usefulness of piped streams - minify doesn't receive the output of `parallelPipeline`, it would have to be written to find it.
 
 #### Structure of tasks in `response-operations-ui`
 Tasks in `response-operations-ui` have a similar structure, but they have been written slightly differently to separate the tasks into their own files, which Gulp loads into memory in advance of trying to run tasks.
@@ -175,7 +224,7 @@ gulp.src('*.js')            // Matches every file ending with '.js' in the curre
 ```
 
 ```javascript
-gulp.src('**/*.js')         // Marches every file ending with '.js' in any directory including current directory or a descendent (but not a parent)
+gulp.src('**/*.js')         // Matches every file ending with '.js' in any directory including current directory or a descendent (but not a parent)
 ```
 
 ```javascript
@@ -204,3 +253,66 @@ The chain above takes the files that match 'glob', pipes them into `thing1` whic
 The `thing*`s may take the input, and change it to something else, or they may just be used to assess it somehow.  A test system will likely not change the output, but rather change the exit code to block the pipeline if it was broken.  A compiler or transpiler will take the input and change it - passing the changed version down to the next.
 
 This can be confusing as a concept, but when thought of as a 'pipeline' in the build system sense, it makes more sense.  Each stage is like a stage in a system like Jenkins, or another CI system.  Gulp could be used as a CI system, but it's usually not, because CI systems like Travis, Jenkins and Circle have many more features, and provide a server to deploy from, where Gulp does not.  Gulp is best used as a tool run by the developer and the CI, to run certain tasks.
+
+### Writing Files
+
+If your task outputs to a file, you pipe the output to `gulp.dest` and pass this arguments to specify where the file should write to:
+
+```javascript
+gulp.src('glob')
+    .pipe(aPlugin)
+    .pipe(gulp.dest('a file location'))
+```
+
+The above follows these steps:
+
+1. Read all the files that match 'glob'.  This could be something like `*.css` or `*.js`.
+2. Convert those files to a stream, and pipe it to `aPlugin` function - this could be a minifier, a compiler etc.
+3. `aPlugin` takes the input and makes whatever changes it needs, and outputs a stream of the modified data.
+4. Stream is piped to `gulp.dest` which writes it to 'a file location', which is typically a directory, but can as specific as a file.
+
+### Watching files
+
+Like `gulp.src`, `gulp.watch` can take a glob to match files, and also takes a function to run upon a change to those files.  This is handy for writing tasks that can run during development, and run tests, linters, and asset compilers.
+
+A watch function takes this form:
+
+```javascript
+gulp.watch('glob', functionToCallWhenFilesInGlobChange);
+```
+Where `functionToCallWhenFilesInGlobChange` is a function that would be called on the file changes, and is typically just a separately defined task.
+
+The example below shows the running of the task we used as example in [the tasks section of this guide](#tasks), written as a watcher.
+
+```javascript
+const gulpSass = require('gulp-sass');
+const { registerTask } = require('../gulpHelper');
+
+function taskFunction() {
+    const gulp = this.gulp;
+
+    gulp.watch('**/*.scss', () => {
+        return gulp.src(`main.scss`)
+            .pipe(gulpSass())
+            .pipe(gulp.dest('./css'));
+    })
+
+}
+
+module.exports = (context) => registerTask(context, 'watch_scss', taskFunction.bind(context));
+```
+
+Worthy of note, though, is that a watcher would normally run pre-existing tasks, rather than implement them in-function.  This allows better code reuse.  For example, our earlier example, creating the `compile_scss` task could be added to a watcher like this:
+
+```javascript
+const { registerTask } = require('../gulpHelper');
+
+module.exports = (context) => registerTask(context, 'watch_scss', context.gulp.watch('**/*.scss', 'scss_compile'));
+```
+
+You can pass either a task function or a string name of a task to `gulp.watch`.  If you need to run several tasks, to you run them in parallel or series, see [Tasks running tasks](#tasks-running-tasks)
+
+### Plugins
+One of the central facets of Gulp is the ability to add plugins to achieve the tasks you want to acheive.  Out of the box, Gulp can read 
+
+@TODO WIP
