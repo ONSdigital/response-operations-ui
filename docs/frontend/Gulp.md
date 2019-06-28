@@ -13,6 +13,8 @@
 - [Writing Files](#Writing-Files)
 - [Watching files](#Watching-files)
 - [Plugins](#Plugins)
+  - [Notes on choosing plugins](#Notes-on-choosing-plugins)
+  - [Writing plugins](#Writing-plugins)
 
 ### Introduction to Gulp
 Gulp.js is self-referred to as 'The Streaming Build System', and this is because it uses an approach of creating streams of assets to create
@@ -313,6 +315,34 @@ module.exports = (context) => registerTask(context, 'watch_scss', context.gulp.w
 You can pass either a task function or a string name of a task to `gulp.watch`.  If you need to run several tasks, to you run them in parallel or series, see [Tasks running tasks](#tasks-running-tasks)
 
 ### Plugins
-One of the central facets of Gulp is the ability to add plugins to achieve the tasks you want to acheive.  Out of the box, Gulp can read 
+One of the central facets of Gulp is the ability to add plugins to achieve the tasks you want to acheive.  Out of the box, Gulp can [read files to a stream](#Reading-files), [pipe them to other functions, and write them to outputs](#Writing-Files) - it doesn't have any built-in processors to achieve the build changes you might need.
 
-@TODO WIP
+If you want, you can write custom functions that manipulate Gulp streams coming through, or you can use plugins, of which there are thousands.  Our system, at time of writing uses:
+
+* [gulp-autoprefixer](https://www.npmjs.com/package/gulp-autoprefixer) - Adds css prefixes for legacy browser support
+* [gulp-clean-css](https://www.npmjs.com/package/gulp-clean-css) - 'Cleans up' CSS - a formatter.
+* [gulp-eslint](https://www.npmjs.com/package/gulp-eslint) - Allows us to run our ECMAScript linter in gulp tasks
+* [gulp-jest](https://www.npmjs.com/package/gulp-jest) - Allows us to run the Jest test framework that we use for unit testing javascript
+* [gulp-plumber](https://www.npmjs.com/package/gulp-plumber) - Allows us to pass gulp outputs to functions that _aren't_ gulp plugins.
+* [gulp-sass](https://www.npmjs.com/package/gulp-sass) - Allows us to compile SASS/SCSS to CSS
+* [gulp-sourcemaps](https://www.npmjs.com/package/gulp-sass) - Allows us to create sourcemaps, to allow debugging of decompiled code, whilst running compiled code.
+* [gulp-stylelint](https://www.npmjs.com/package/gulp-stylelint) - Allows us to run Stylelint - a linter for CSS.
+* [gulp-util](https://www.npmjs.com/package/gulp-util) - A collection of useful extra utilities for Gulp.
+
+#### Notes on choosing plugins
+Because anyone could write and publish a Gulp plugin, and because they are vital to our frontend builds, it is important to choose plugins carefully, considering the popularity and maintenance of them.  Below are useful tips, and these can apply to choosing any external dependency for any project:
+
+* Look at how recently, and how frequently, the library is released.  If it's not been released recently, it may not be under active development, and may be problematic; if it isn't release often, it may take a long time for fixes to occur.
+* Look at the repository for the library and see what - and how many - issues are reported.  If there are lots for a relatively young library, or there are many of the same type, you may end up having to maintain the library yourself, and that's a consideration
+
+Finally, when adding libraries, `npm` will give you audit data of known issues, run `npm audit` for very detailed info, and assess problems, act as required.
+
+#### Writing plugins
+If you want or need to, you can write your own Gulp plugins.  At it's heart, a gulp plugin is a function that takes a `vinyl` object, and returns another `vinyl` object.  `vinyl` objects are objects that describe a number of files, and you can take the files, change them, and output a new set of files in a new `vinyl` object.
+
+From there, everything is relatively straightforward.
+
+Further reading:
+
+* [Using Gulp Plugins](https://gulpjs.com/docs/en/getting-started/using-plugins)
+* [Vinyl](https://gulpjs.com/docs/en/api/vinyl)
