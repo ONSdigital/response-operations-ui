@@ -2,7 +2,6 @@ node_modules/
 .idea
 allure-results
 coverage
-docs
 .nyc_output
 
 # Byte-compiled / optimized / DLL files
