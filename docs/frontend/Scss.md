@@ -176,12 +176,12 @@ Mixins in SCSS are small chunks of reusable code that can be added to styling ru
 }
 ```
 
-### Variables
+#### Variables
 A recent addition to CSS also, SCSS supports variables that you can use to represent virtually anything you need to.  These are useful for reuse of values that you can then change only once.
 
 Variables are set using this syntax:
 ```scss
-$variable-name: "value" // doesn\'t have to be a string
+$variable-name: "value" // does not have to be a string
 ```
 
 Common uses include setting font sizes, colours, and image locations:
@@ -191,9 +191,48 @@ background-image: $background-img-url;
 ```
 
 ```scss
-color: $global-text-colour
+color: $global-text-colour;
 ```
 
 ```scss
 font-size: $font-size-xl;
 ```
+
+### SCSS Compiiler
+The gulp task runner will compile the styles, as well as running stylelint to help you spot mistakes in your styles.
+
+The tasks below are all equivalent, and will compile your styles:
+
+```bash
+$ npx gulp scss
+$ npx gulp scsscompile
+$ npx gulp scss_compile
+```
+
+The tasks below will run the style linter to give you feedback on you css formatting:
+
+```bash
+$ npx gulp stylelint
+$ npx gulp csslint
+```
+
+The task `npx gulp build` runs several processes to compile all frontend assets, including both the style linter and SCSS compiler
+
+> Note:
+> The SCSS 'compiler' isn't really a compiler, but a _transpiler_.  It takes SCSS and reformats it to CSS, but it doesn't perform any tokenisation, optimisation etc., so it's not truly a compiler in the sense something like `gcc` is.
+
+### Watcher
+When developing, and changing the SCSS, there is a gulp task you can run that will compile any changes you make when you save.  This same task runs module bundlers for JS.  Usage as below:
+
+```bash
+$ npx gulp watch
+```
+
+This will run until stopped by an error, or manual using CTRL+C.  When you save an SCSS file, it will rewrite the CSS files used by the system.
+
+### CSS Assets
+When you make changes to SCSS, you need to make sure that you:
+
+* Check the styles with the linter (linter errors will block the travis pipeline)
+* Convert the SCSS to CSS
+* Commit the changed CSS file, as it's currently not done in the build pipeline.
