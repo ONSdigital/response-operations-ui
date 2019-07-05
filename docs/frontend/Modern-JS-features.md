@@ -192,8 +192,79 @@ myFunction();
 This behaviour of arrow functions makes them ideal for writing functions within functions that can access the same `this` value.
 
 #### String interpolation
+ECMAScript recently introduced template strings, which are a form of string interpolation similar to Python's string interpolation.  See below an example of old string concatenation followed by a template string version.
+
+```javascript
+const name = 'Owen';
+const age = 36;
+
+console.log('Hi, ' + name + ', you are ' + age + ' years old');
+console.log(`Hi, ${name}, you are ${age} years old`);
+```
+
+In addition to this, strings defined using the `\`` character, have other useful properties:
+* Can be written containing quote marks easily, without escaping `\`I guess that "works"\``
+* Can be multiline, which quote delimited strings can't.
 
 #### Classes
+Classes are now available in Javascript, as they are in many languages, however there is a key difference in Javascript.  Javascript classes are not a separate entity, or type, but are syntactic sugar for creating a constructor object with a prototype for building it.  This doesn't mean too much when writing the, but understanding the `prototype` object is important to writing Javascript overall.
+
+A class in JS looks like this:
+```javascript
+class myClass {
+    constructor(args) {
+        // constructor actions here
+    }
+
+    publicFunction() {
+        // function that will become part of the constructed instance
+    }
+
+    static publicFunction() {
+        // a static public function.
+    }
+}
+```
+
+Like in other languages, classes can be extended from others:
+
+```javascript
+class Animal {
+    // class stuff
+}
+
+class Dog extends Animal {
+    // Dog class stuff
+}
+```
+
+Unlike function constructed instances, classes can only directly inherit from one other class, whereas functions can inherit from the prototypes of many others.  Whilst possible, this probably isn't a good idea, as it could allow some ridiculous combinations, that contradict each other, and essentially break.
+
+You could for example, make a custom array using `class` in order to add functions you find handy:
+
+```javascript
+class BetterArray extends Array {
+    lengthIsEven() {
+        return this.length % 2 === 0;
+    }
+}
+```
+
+and that would work fine.
+
+Using prototypal inheritance, you can extend multiple prototypes, and create _monsters_ of objects:
+
+```javascript
+function StringArray() {
+
+}
+
+Object.assign(StringArray, String, Array);
+```
+
+At this point, you have a String/Array hybrid, with functions for both strings and arrays.  Instantiating it with any value will fail, because if it's a string, the array constructor will throw, and if an array, the string constructor will fail.  If it had a value, the array functions would fail if it were a string, and vice versa.
+
+In short, whilst multiple inheritance can be done, it's _best avoided_!
 
 #### `async` and `await`
 
