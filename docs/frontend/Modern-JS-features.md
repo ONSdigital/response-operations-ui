@@ -18,6 +18,8 @@
       - [Promises](#Promises)
       - [`async` and `await` syntactic sugar](#async-and-await-syntactic-sugar)
   - [Modules](#Modules)
+    - [CommonJS](#CommonJS)
+    - [AMD - Asynchronous Module Definition](#AMD---Asynchronous-Module-Definition)
 
 ### Introduction
 Javscript, correctly known as ECMAScript, has advanced at a fast pace in recent years, adding features like:
@@ -419,3 +421,38 @@ await showNewPage();
 ```
 
 #### Modules
+
+Modules are a core feature of many languages. Modularisation allows seperation of scope and code, into organised and reusable chunks.
+
+Many languages have this baked-in, but Javascript was originally intended to be written directly into HTML markup, and after that into singular files.  For a long while, the use of single files was consider close enough to a module system.
+
+Over the years, many attempts were made to create modules, of which the most popular became:
+
+##### CommonJS
+```javascript
+// Module definition
+module.exports = function () {
+    // This is the module - this one is a function, but it can be any structure with Javascript.
+}
+```
+
+```javascript
+// Module usage
+const module = require('path/to/module');
+```
+
+Node.js used a CommonJS styled system for its modules for a long time, but in the very latest version has started to natively support an ECMA standard style
+
+##### AMD - Asynchronous Module Definition
+```javascript
+// Module definition - AMD modules must be functions.
+define('module', () => {
+    // This is the module
+});
+```
+
+```javascript
+require('module', () => {
+    //do stuff with module
+})
+```
