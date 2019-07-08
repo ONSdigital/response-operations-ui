@@ -13,6 +13,10 @@
   - [`async` and `await`](#async-and-await)
     - [Basic asynchronous functions](#Basic-asynchronous-functions)
     - [Blocking vs non-blocking functions](#Blocking-vs-non-blocking-functions)
+    - [Using `async` and `await` to write more concise code](#Using-async-and-await-to-write-more-concise-code)
+      - [Asynchronicity libraries (Like async.js)](#Asynchronicity-libraries-Like-asyncjs)
+      - [Promises](#Promises)
+      - [`async` and `await` syntactic sugar](#async-and-await-syntactic-sugar)
   - [Modules](#Modules)
 
 ### Introduction
@@ -261,10 +265,10 @@ function StringArray() {
 
 }
 
-Object.assign(StringArray, String, Array);
+Object.assign(StringArray.prototype, String.prototype, Array.prototype);
 ```
 
-At this point, you have a String/Array hybrid, with functions for both strings and arrays.  Instantiating it with any value will fail, because if it's a string, the array constructor will throw, and if an array, the string constructor will fail.  If it had a value, the array functions would fail if it were a string, and vice versa.
+At this point, you have a String/Array hybrid, with functions for both strings and arrays.  Instantiating it with any value should not work, and any members that have common names will essentially be destroyed.
 
 In short, whilst multiple inheritance can be done, it's _best avoided_!
 
@@ -312,5 +316,106 @@ The order of invoking the functions, in this case, makes no difference - they wo
 
 > NB: It's important to note, the example we've used is completely predictable, but usually when using asynchronous functions, you are not using timers, but waiting on the actions of unpredictable systems
 
+##### Using `async` and `await` to write more concise code
+
+Because the asynchornicity of code is a _useful_ feature of Javascript, but the code created is not easy to read, many approaches have been used to make it simpler.  Below are some examples:
+
+###### Asynchronicity libraries (Like async.js)
+This runs `functionOne`, `functionTwo`, `functionThree` in order, despite their asynchronicity.
+```javascript
+import async from 'async'
+
+// Functions look somewhat like this:
+function functionOne(callback) {
+    doAsyncThingOfSomeSort('parameter', (error, data) => callback(error, data));
+}
+
+async.series([
+    functionOne,
+    functionTwo,
+    functionThree
+], (error, output) => {
+    // Handle errors and output here
+})
+```
+> This is a somewhat older styled way of approaching this, but it is clearer, and functions well.
+
+###### Promises
+Functions can be written to use Promises, a structure to return from a function immediately, and write code that is very clear, because of its use of plain English function names makes flow clear:
+
+```javascript
+function promiseFunction() {
+    return new Promise((resolve, reject) => {
+        doAsyncThingOfSomeSort('parameter', (error, data) => {
+            if (error) return reject(error);
+
+            resolve(data);
+        })
+    })
+}
+
+promiseFunction
+    .then(data => {
+        // Do stuff with data
+    })
+    .catch(error => {
+        // Do stuff with error
+    })
+```
+Multiple promises can be run and resolved by using `Promise.all`:
+```javascript
+Promise.all([
+    promiseOne,
+    promiseTwo,
+    promiseThree
+])
+    .then(data => {
+        // do stuff with output
+    })
+    .catch(error => {
+        // do stuff with error
+    })
+```
+Various utility libraries offer more complex control over Promises, to offer features like:
+* Series running of promises
+* Parallel running with maximum concurrency
+
+###### `async` and `await` syntactic sugar
+Promises improved the situation, and were easier to understand and write than embedded callbacks, async.js, etc, but they posed problems to do with handling errors, and sharing variables in scope (How do you know which async function fails in a promises array, for instance?).  The syntax is improved, and more verbose and clear to read, but there's still room for improvement.  This is where `async` and `await` come into play.
+
+The first thing to understand is that `async` is just syntactic sugar.  You can write a function that works the same way, and that would interact with `await` in the same way.
+
+An `async` function:
+* Is declared using `async` in front of the function, e.g. `async function functionName(...args) {}`
+* Is the same as a function that immediately returns a Promise - it's a wrapper for a Promise.
+* Resolves the promise if it returns a value
+* Rejects the promise if it throws an error
+
+To illustrate the point, the two below functions equivalent:
+
+```javascript
+async function getData() {
+    const data = await request.get('url/to/stuff');
+    return data;
+}
+```
+```javascript
+function getData() {
+    return new Promise((resolve, reject) => {
+        request.get('url/to/stuff')
+            .then(data => resolve(data))
+            .catch(error => reject(error));
+    });
+}
+```
+But the top function is clearer to read, and is written in a synchronous fashion, whilst still actually being run in an asynchronous way.
+
+When you have to make calls to many asynchronous functions in a row, `await` really comes into it's own:
+
+```javascript
+const data = await request.get('url/to/stuff');
+await loadDataIntoUI(data);
+await showNewPage();
+```
 
 #### Modules
