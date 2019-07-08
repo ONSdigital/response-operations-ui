@@ -11,6 +11,8 @@
   - [String interpolation](#String-interpolation)
   - [Classes](#Classes)
   - [`async` and `await`](#async-and-await)
+    - [Basic asynchronous functions](#Basic-asynchronous-functions)
+    - [Blocking vs non-blocking functions](#Blocking-vs-non-blocking-functions)
   - [Modules](#Modules)
 
 ### Introduction
@@ -267,5 +269,48 @@ At this point, you have a String/Array hybrid, with functions for both strings a
 In short, whilst multiple inheritance can be done, it's _best avoided_!
 
 #### `async` and `await`
+
+Javascript is famous for the fact that it is an _asynchronously_ written language in many cases.  This often leads to confusion, as commands may execute in a different order to that in which they are written - in massive difference to most other languages.
+
+##### Basic asynchronous functions
+
+Below is an example of execution in unexpected order:
+
+```javascript
+function asyncFunc1() {
+    setTimeout(() => {
+        console.log('1');
+    }, 10)
+}
+
+function asyncFunc2() {
+    setTimeout(() => {
+        console.log('2');
+    }, 5)
+}
+
+asyncFunc1();
+asyncFunc2();
+```
+
+Although the functions are called in order of `asyncFunc1` and then `asyncFunc2`, the output will be:
+
+```
+2
+1
+```
+
+##### Blocking vs non-blocking functions
+
+The functions in the example log in the order they do because javascript functions are _non-blocking_ unless they use a blocking keyword within themselves, like `while`, or `for`.  Non-blocking functions start, and run their code, but don't stop the program from continuing.
+
+The two `asyncFunc*` functions above invoke `setTimeout` which just tells the interpreter to run a function after `n` milliseconds, so these are non-blocking, and the functions will be invoked only a 'tick' apart.
+
+Once invoked, the functions invoke `setTimeout`, and because the `asyncFunc1` is set to wait 10 milliseconds before logging '1', and the `asyncFunc2` is set to wait only 5, `asyncFunc2` logs '2' 5 milliseconds before.
+
+The order of invoking the functions, in this case, makes no difference - they would log in the same order even if you reversed the invocation.  This isn't always true, because asynchronous function are invoked a tick before a following function, so if they asynchronous function had _no delay_ the order they were called in would make a difference - but this will rarely be the case.
+
+> NB: It's important to note, the example we've used is completely predictable, but usually when using asynchronous functions, you are not using timers, but waiting on the actions of unpredictable systems
+
 
 #### Modules
