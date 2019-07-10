@@ -23,14 +23,15 @@
     - [ECMAScript modules](#ECMAScript-modules)
 
 ### Introduction
+
 Javscript, correctly known as ECMAScript, has advanced at a fast pace in recent years, adding features like:
 
-* Native promises
-* `async`/`await` syntactic sugar to allow synchronous-style asynchronous programming
-* Lambda-type, 'arrow functions' similar to delegates in C#, and lambdas in Python or Java
-* Native classes - syntactic sugar to write classes rather than prototype objects.
-* Modules - to separate out code into manageable chunks.
-* `const` and `let` variable declarators to declare at block, rather than global, level
+- Native promises
+- `async`/`await` syntactic sugar to allow synchronous-style asynchronous programming
+- Lambda-type, 'arrow functions' similar to delegates in C#, and lambdas in Python or Java
+- Native classes - syntactic sugar to write classes rather than prototype objects.
+- Modules - to separate out code into manageable chunks.
+- `const` and `let` variable declarators to declare at block, rather than global, level
 
 These features allow quicker writing of Javascript, and writing of more understandable and readable code.
 
@@ -39,6 +40,7 @@ These features allow quicker writing of Javascript, and writing of more understa
 Because Javascript has introduced new features at such a fast pace in recent years, the support for new features in both Node and browsers is behind the current specification.  This means that, before we use features, we have to convert them into other code that performs the same task, but that doesn't use the modern syntax where it wouldn't be supported.
 
 #### Webpack
+
 Webpack is a bundling system that allows us to take separate javascript files, and use them as modules to create one overarching javascript application for the front end of the system.
 
 Webpack is run by Gulp using 'build', 'bundle', or 'watch' tasks - the 'watch' task will only run Webpack when the Javascript files are changed
@@ -46,6 +48,7 @@ Webpack is run by Gulp using 'build', 'bundle', or 'watch' tasks - the 'watch' t
 _Javascript files in the `gulp` directory do not bundle, however Gulp does support module use anyway, because it isn't browser-based_
 
 #### Babel
+
 Babel is a language translator for Javascript that can be set up to translate new syntax into old syntax equivalents.  For example, Babel will take a Javascript class, and covert it into a function with prototype:
 
 ```javascript
@@ -81,24 +84,28 @@ myDog.greet();
 ```
 
 You can see that the above has done the following steps:
-* Replaced the class with a function - a function called with `new` in Javascript is a constructor.
-* Replaced the greet function with a similar function that is a member of `Animal.prototype` - `prototype` is an object used to create new objects.
-* Removed the string interpolation in `greet` and replaced it with concatenated strings
-* Change the use of `const` to `var`.  Some older browsers don't support `const`.
+
+- Replaced the class with a function - a function called with `new` in Javascript is a constructor.
+- Replaced the greet function with a similar function that is a member of `Animal.prototype` - `prototype` is an object used to create new objects.
+- Removed the string interpolation in `greet` and replaced it with concatenated strings
+- Change the use of `const` to `var`.  Some older browsers don't support `const`.
 
 > **Side note**: The above shows why `this` in Javascript behaves differently than expected.  Although in a class, you expect `this` to refer to an instance of a class, the way that objects are created with constructors is only _emulating_ classes - the functions are actually separate functions, so the reference to `this` which in Javascript refers to the scope the function exists within is not a reference to the class.
 
 Babel will behave differently depending on its settings, which in our repo are passed in the `webpack.config.js` file.  We use `babel/preset-env` to dictate which environments we support, and therefore need translated
 
 ### ECMAScript modern features
+
 The use of Webpack and Babel to process our Javascript means we can use modern JS features expained in the following sections.
 
 #### Arrow functions
+
 Many languages have the concept of something similar to arrow functions.  Python, for example, has lambda functions, C# and Java have predicate functions, and PHP and old-style Javascript have 'inline' or 'anonymous' functions.
 
 Arrow functions are handy for a number of things, but they also behave slightly differently to standard functions.  See some examples below
 
 ##### Passing functions as predicates
+
 A predicate is a function passed as an argument to be called by the function it's being passed to when something happens.  One common Javascript example is a _callback_, which is passed to be called on completion:
 
 ```javascript
@@ -170,7 +177,9 @@ function showArgs() {
 
 showArgs(1,2,3) // logs the arguments to the console
 ```
+
 vs.
+
 ```javascript
 const showArgs = () => console.log(arguments);
 
@@ -201,6 +210,7 @@ myFunction();
 This behaviour of arrow functions makes them ideal for writing functions within functions that can access the same `this` value.
 
 #### String interpolation
+
 ECMAScript recently introduced template strings, which are a form of string interpolation similar to Python's string interpolation.  See below an example of old string concatenation followed by a template string version.
 
 ```javascript
@@ -212,13 +222,16 @@ console.log(`Hi, ${name}, you are ${age} years old`);
 ```
 
 In addition to this, strings defined using the `\`` character, have other useful properties:
-* Can be written containing quote marks easily, without escaping `\`I guess that "works"\``
-* Can be multiline, which quote delimited strings can't.
+
+- Can be written containing quote marks easily, without escaping `\`I guess that "works"\``
+- Can be multiline, which quote delimited strings can't.
 
 #### Classes
+
 Classes are now available in Javascript, as they are in many languages, however there is a key difference in Javascript.  Javascript classes are not a separate entity, or type, but are syntactic sugar for creating a constructor object with a prototype for building it.  This doesn't mean too much when writing the, but understanding the `prototype` object is important to writing Javascript overall.
 
 A class in JS looks like this:
+
 ```javascript
 class myClass {
     constructor(args) {
@@ -302,7 +315,7 @@ asyncFunc2();
 
 Although the functions are called in order of `asyncFunc1` and then `asyncFunc2`, the output will be:
 
-```
+```javascript
 2
 1
 ```
@@ -324,7 +337,9 @@ The order of invoking the functions, in this case, makes no difference - they wo
 Because the asynchornicity of code is a _useful_ feature of Javascript, but the code created is not easy to read, many approaches have been used to make it simpler.  Below are some examples:
 
 ###### Asynchronicity libraries (Like async.js)
+
 This runs `functionOne`, `functionTwo`, `functionThree` in order, despite their asynchronicity.
+
 ```javascript
 import async from 'async'
 
@@ -341,9 +356,11 @@ async.series([
     // Handle errors and output here
 })
 ```
+
 > This is a somewhat older styled way of approaching this, but it is clearer, and functions well.
 
 ###### Promises
+
 Functions can be written to use Promises, a structure to return from a function immediately, and write code that is very clear, because of its use of plain English function names makes flow clear:
 
 ```javascript
@@ -365,7 +382,9 @@ promiseFunction
         // Do stuff with error
     })
 ```
+
 Multiple promises can be run and resolved by using `Promise.all`:
+
 ```javascript
 Promise.all([
     promiseOne,
@@ -379,20 +398,24 @@ Promise.all([
         // do stuff with error
     })
 ```
+
 Various utility libraries offer more complex control over Promises, to offer features like:
-* Series running of promises
-* Parallel running with maximum concurrency
+
+- Series running of promises
+- Parallel running with maximum concurrency
 
 ###### `async` and `await` syntactic sugar
+
 Promises improved the situation, and were easier to understand and write than embedded callbacks, async.js, etc, but they posed problems to do with handling errors, and sharing variables in scope (How do you know which async function fails in a promises array, for instance?).  The syntax is improved, and more verbose and clear to read, but there's still room for improvement.  This is where `async` and `await` come into play.
 
 The first thing to understand is that `async` is just syntactic sugar.  You can write a function that works the same way, and that would interact with `await` in the same way.
 
 An `async` function:
-* Is declared using `async` in front of the function, e.g. `async function functionName(...args) {}`
-* Is the same as a function that immediately returns a Promise - it's a wrapper for a Promise.
-* Resolves the promise if it returns a value
-* Rejects the promise if it throws an error
+
+- Is declared using `async` in front of the function, e.g. `async function functionName(...args) {}`
+- Is the same as a function that immediately returns a Promise - it's a wrapper for a Promise.
+- Resolves the promise if it returns a value
+- Rejects the promise if it throws an error
 
 To illustrate the point, the two below functions equivalent:
 
@@ -402,6 +425,7 @@ async function getData() {
     return data;
 }
 ```
+
 ```javascript
 function getData() {
     return new Promise((resolve, reject) => {
@@ -411,6 +435,7 @@ function getData() {
     });
 }
 ```
+
 But the top function is clearer to read, and is written in a synchronous fashion, whilst still actually being run in an asynchronous way.
 
 When you have to make calls to many asynchronous functions in a row, `await` really comes into it's own:
@@ -430,6 +455,7 @@ Many languages have this baked-in, but Javascript was originally intended to be 
 Over the years, many attempts were made to create modules, of which the most popular became:
 
 ##### CommonJS
+
 ```javascript
 // Module definition
 module.exports = function () {
@@ -445,6 +471,7 @@ const module = require('path/to/module');
 Node.js used a CommonJS styled system for its modules for a long time, but in the very latest version has started to natively support an ECMA standard style
 
 ##### AMD - Asynchronous Module Definition
+
 ```javascript
 // Module definition - AMD modules must be functions.
 define('module', () => {
@@ -461,6 +488,7 @@ require(['module'], () => {
 AMD modules incorporate dependency injection - the `require` function receives an array of module names, and a predicate function that runs once the modules are available.
 
 ##### ECMAScript modules
+
 The most recent addition, and a style most similar to that of many other languages is ECMA Modules.
 
 ```javascript
