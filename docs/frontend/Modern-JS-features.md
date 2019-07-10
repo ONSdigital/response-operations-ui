@@ -20,6 +20,7 @@
   - [Modules](#Modules)
     - [CommonJS](#CommonJS)
     - [AMD - Asynchronous Module Definition](#AMD---Asynchronous-Module-Definition)
+    - [ECMAScript modules](#ECMAScript-modules)
 
 ### Introduction
 Javscript, correctly known as ECMAScript, has advanced at a fast pace in recent years, adding features like:
@@ -452,7 +453,46 @@ define('module', () => {
 ```
 
 ```javascript
-require('module', () => {
+require(['module'], () => {
     //do stuff with module
 })
 ```
+
+AMD modules incorporate dependency injection - the `require` function receives an array of module names, and a predicate function that runs once the modules are available.
+
+##### ECMAScript modules
+The most recent addition, and a style most similar to that of many other languages is ECMA Modules.
+
+```javascript
+// Module definitions
+
+const thing = // ... something, a function etc.
+const thing2 = // ...another something
+const default = // ... Final something
+
+export thing;
+export thing2;
+export default default;
+// Module can now export a default item, or one of several named things
+```
+
+```javascript
+import { thing } from 'path/to/module';
+import { thing2 } from 'path/to/module';
+import aDefaultThing from 'path/to/module';
+```
+
+You can also use this syntax:
+
+```javascript
+from 'path/to/module' import { thing }
+```
+
+If several modules you import have clashing names, you can rename the imports as you import them using `as`
+
+```javascript
+import namedModule from 'path/to/module';
+import namedModule as alternativelyNamedModule from 'path/to/module'
+```
+
+The ECMA module syntax is the most recent incarnation of modules, and alongside CommonJS, is one of the most popular.  It has a few features that make it clearer to understand, and can be used in a wider variety of ways that CommonJS.  The latest changes to `response-operations-ui` mean that it's now possible to use CommonJS or ECMAScript module syntax in scripts that we write.  AMD has not been implemented because it's more convoluted, and less useful in the cases we face.
