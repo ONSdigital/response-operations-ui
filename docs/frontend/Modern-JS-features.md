@@ -1,4 +1,5 @@
 # Modern Javascript Features                                            <!-- omit in toc -->
+
 ## Allowing frontend development using up to date Javascript features   <!-- omit in toc -->
 
 - [Introduction](#Introduction)
