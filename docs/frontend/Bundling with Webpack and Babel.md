@@ -92,6 +92,7 @@ Webpack is our bundler.  Of the currently popular bundler systems, it is the mos
 
 - Rollup.js
 - Bundle.js
+- Browserify
 
 Webpack, out of the box, takes Javascript written in modules, and bundles it together into a single file for consumption in the frontend.  We've written a Webpack config that introduces a Javascript transpiler tool called [Babel](#Babel) to turn the modern JS we write into older fashioned, better supported Javascript.
 
@@ -99,5 +100,21 @@ Webpack can also do many other things, and has thousands of available plugins, b
 
 ### Babel
 
+Babel is a 'translator' or transpiler that takes the Javascript you write, and re-writes it to make avoid using newer, unsupported features.  Use of Babel can allow you to write cutting edge Javascript, and have Babel convert it its into older, widely supported equivalent.
+
+Babel can be setup by use of a `.babelrc` file that makes alterations to it's settings.  Things that can be changed include:
+
+- Which environments Babel is setup to support
+- Which Babel plugins are used
+
+Babel previously supported importing modules, but now works inline with other tools to do this.
+
 ### Our own use of Webpack and Babel
+
+Our use of Webpack and Babel is implemented through the existing [Gulp](Gulp.md) task runner:
+
+- Webpack runs and imports included modules, and executes Babel to transpile them
+- Gulp's `build` task runs webpack via a Gulp plugin
+- Gulp's `bundle` task also runs webpack
+- Gulp's `watch` task runs webpack only when the Javascript assets need recompiling - so it's useful during development
 
