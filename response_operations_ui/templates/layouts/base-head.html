@@ -24,8 +24,6 @@
     <script type="text/javascript" src="{{ url_for('static', filename='js/main.min.js') }}"></script>
     <link href="/static/images/favicon.ico" rel="Shortcut Icon" />
 
-    {{ analytics }}
-
     {% if config.GOOGLE_ANALYTICS %}
       <!-- Global site tag (gtag.js) - Google Analytics -->
       <script async src="https://www.googletagmanager.com/gtag/js?id={{ config.GOOGLE_ANALYTICS }}"></script>
