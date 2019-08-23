@@ -37,5 +37,5 @@ def filter_respondents(respondents):
                 'status_class': status_enum_to_class(respondent['status'])
             })
         except KeyError:
-            logger.info(f'Could not add respondent to retrieved list, as data structure was not as expected.')
+            logger.info('Could not add respondent to retrieved list, as data structure was not as expected.')
     return filtered_respondents
