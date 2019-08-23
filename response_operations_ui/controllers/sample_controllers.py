@@ -12,7 +12,7 @@ logger = wrap_logger(logging.getLogger(__name__))
 
 
 def get_sample_summary(sample_summary_id):
-    logger.debug('Retrieving sample summary', sample_summary_id=sample_summary_id)
+    logger.info('Retrieving sample summary', sample_summary_id=sample_summary_id)
     url = f'{app.config["SAMPLE_URL"]}/samples/samplesummary/{sample_summary_id}'
 
     response = requests.get(url, auth=app.config['SAMPLE_AUTH'])
@@ -25,12 +25,12 @@ def get_sample_summary(sample_summary_id):
                      status_code=response.status_code)
         raise ApiError(response)
 
-    logger.debug('Successfully retrieved sample summary', sample_summary_id=sample_summary_id)
+    logger.info('Successfully retrieved sample summary', sample_summary_id=sample_summary_id)
     return response.json()
 
 
 def upload_sample(short_name, period, file):
-    logger.debug('Uploading sample', short_name=short_name, period=period, filename=file.filename)
+    logger.info('Uploading sample', short_name=short_name, period=period, filename=file.filename)
 
     survey_type = 'B'
     url = f'{app.config["SAMPLE_URL"]}/samples/{survey_type}/fileupload'
@@ -45,9 +45,9 @@ def upload_sample(short_name, period, file):
 
     sample_summary = response.json()
 
-    logger.debug('Successfully uploaded sample file',
-                 response_json=sample_summary,
-                 survey_type=survey_type,
-                 sample_id=sample_summary['id'])
+    logger.info('Successfully uploaded sample file',
+                response_json=sample_summary,
+                survey_type=survey_type,
+                sample_id=sample_summary['id'])
 
     return sample_summary
