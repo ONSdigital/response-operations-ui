@@ -10,7 +10,7 @@ logger = wrap_logger(logging.getLogger(__name__))
 
 
 def get_case_by_id(case_id):
-    logger.debug('Retrieving case', case_id=case_id)
+    logger.info('Retrieving case', case_id=case_id)
     url = f'{app.config["CASE_URL"]}/cases/{case_id}?iac=true'
     response = requests.get(url, auth=app.config['CASE_AUTH'])
 
@@ -20,12 +20,12 @@ def get_case_by_id(case_id):
         logger.exception('Error retrieving case', case_id=case_id)
         raise ApiError(response)
 
-    logger.debug('Successfully retrieved case', case_id=case_id)
+    logger.info('Successfully retrieved case', case_id=case_id)
     return response.json()
 
 
 def post_case_event(case_id, category, description):
-    logger.debug("Posting case event", case_id=case_id, category=category)
+    logger.info("Posting case event", case_id=case_id, category=category)
     url = f'{app.config["CASE_URL"]}/cases/{case_id}/events'
     case_event = {
         "category": category,
@@ -40,11 +40,11 @@ def post_case_event(case_id, category, description):
         logger.exception('Error posting case event', case_id=case_id, category=category)
         raise ApiError(response)
 
-    logger.debug('Successfully posted case event', case_id=case_id, category=category)
+    logger.info('Successfully posted case event', case_id=case_id, category=category)
 
 
 def get_case_by_case_group_id(case_group_id):
-    logger.debug('Retrieving case by case group id', case_group_id=case_group_id)
+    logger.info('Retrieving case by case group id', case_group_id=case_group_id)
     url = f'{app.config["CASE_URL"]}/cases/casegroupid/{case_group_id}'
     response = requests.get(url, auth=app.config['CASE_AUTH'])
 
@@ -54,12 +54,12 @@ def get_case_by_case_group_id(case_group_id):
         logger.exception('Error getting case by case group id', case_group_id=case_group_id)
         raise ApiError(response)
 
-    logger.debug('Successfully retrieved case by case group id', case_group_id=case_group_id)
+    logger.info('Successfully retrieved case by case group id', case_group_id=case_group_id)
     return response.json()[0]
 
 
 def get_available_case_group_statuses_direct(collection_exercise_id, ru_ref):
-    logger.debug('Retrieving statuses', collection_exercise_id=collection_exercise_id, ru_ref=ru_ref)
+    logger.info('Retrieving statuses', collection_exercise_id=collection_exercise_id, ru_ref=ru_ref)
     url = f'{app.config["CASE_URL"]}/casegroups/transitions/{collection_exercise_id}/{ru_ref}'
     response = requests.get(url, auth=app.config['CASE_AUTH'])
 
@@ -67,17 +67,17 @@ def get_available_case_group_statuses_direct(collection_exercise_id, ru_ref):
         response.raise_for_status()
     except requests.exceptions.HTTPError:
         if response.status_code == 404:
-            logger.debug('No statuses found', collection_exercise_id=collection_exercise_id, ru_ref=ru_ref)
+            logger.info('No statuses found', collection_exercise_id=collection_exercise_id, ru_ref=ru_ref)
             return {}
         logger.exception('Error retrieving statuses', collection_exercise_id=collection_exercise_id, ru_ref=ru_ref)
         raise ApiError(response)
 
-    logger.debug('Successfully retrieved statuses', collection_exercise_id=collection_exercise_id, ru_ref=ru_ref)
+    logger.info('Successfully retrieved statuses', collection_exercise_id=collection_exercise_id, ru_ref=ru_ref)
     return response.json()
 
 
 def get_case_groups_by_business_party_id(business_party_id):
-    logger.debug('Retrieving case groups', party_id=business_party_id)
+    logger.info('Retrieving case groups', party_id=business_party_id)
     url = f'{app.config["CASE_URL"]}/casegroups/partyid/{business_party_id}'
     response = requests.get(url, auth=app.config["CASE_AUTH"])
 
@@ -85,17 +85,17 @@ def get_case_groups_by_business_party_id(business_party_id):
         response.raise_for_status()
     except requests.exceptions.HTTPError:
         if response.status_code == 204:
-            logger.debug('No case groups found for business', party_id=business_party_id)
+            logger.info('No case groups found for business', party_id=business_party_id)
             return []
         logger.exception('Failed to retrieve case groups', business_party_id=business_party_id)
         raise ApiError(response)
 
-    logger.debug('Successfully retrieved case groups', business_party_id=business_party_id)
+    logger.info('Successfully retrieved case groups', business_party_id=business_party_id)
     return response.json()
 
 
 def get_cases_by_business_party_id(business_party_id):
-    logger.debug('Retrieving cases', business_party_id=business_party_id)
+    logger.info('Retrieving cases', business_party_id=business_party_id)
     url = f'{app.config["CASE_URL"]}/cases/partyid/{business_party_id}'
     response = requests.get(url, auth=app.config['CASE_AUTH'], params={"iac": "True"})
 
@@ -103,12 +103,12 @@ def get_cases_by_business_party_id(business_party_id):
         response.raise_for_status()
     except requests.exceptions.HTTPError:
         if response.status_code == 404 or response.status_code == 204:
-            logger.debug('No cases found for business', business_party_id=business_party_id)
+            logger.info('No cases found for business', business_party_id=business_party_id)
             return []
         logger.exception('Error retrieving cases', business_party_id=business_party_id)
         raise ApiError(response)
 
-    logger.debug('Successfully retrieved cases', business_party_id=business_party_id)
+    logger.info('Successfully retrieved cases', business_party_id=business_party_id)
     return response.json()
 
 
@@ -146,7 +146,7 @@ def generate_iac(case_id):
 
 
 def get_case_events_by_case_id(case_id, categories=None):
-    logger.debug('Retrieving cases', case_id=case_id)
+    logger.info('Retrieving cases', case_id=case_id)
     url = f'{app.config["CASE_URL"]}/cases/{case_id}/events'
     if isinstance(categories, list):
         url = url + '?category=' + ','.join(categories)
@@ -158,9 +158,9 @@ def get_case_events_by_case_id(case_id, categories=None):
         response.raise_for_status()
     except requests.exceptions.HTTPError:
         if response.status_code == 404:
-            logger.debug('No statuses found', case_id=case_id)
+            logger.info('No statuses found', case_id=case_id)
             return {}
         logger.exception('Error retrieving statuses', case_id=case_id)
         raise ApiError(response)
-    logger.debug('Successfully retrieved statuses', case_id=case_id)
+    logger.info('Successfully retrieved statuses', case_id=case_id)
     return response.json()

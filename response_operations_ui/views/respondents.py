@@ -150,7 +150,7 @@ def edit_contact_details(respondent_id):
 @respondent_bp.route('/resend_verification/<respondent_id>', methods=['GET'])
 @login_required
 def view_resend_verification(respondent_id):
-    logger.debug("Re-send verification email requested", respondent_id=respondent_id)
+    logger.info("Re-send verification email requested", respondent_id=respondent_id)
     respondent = party_controller.get_respondent_by_party_id(respondent_id)
     email = respondent['pendingEmailAddress'] if 'pendingEmailAddress' in respondent else respondent['emailAddress']
 

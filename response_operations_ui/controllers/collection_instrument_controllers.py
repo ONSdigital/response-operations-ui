@@ -12,7 +12,7 @@ logger = wrap_logger(logging.getLogger(__name__))
 
 
 def upload_collection_instrument(collection_exercise_id, file, form_type=None):
-    logger.debug('Uploading collection instrument', collection_exercise_id=collection_exercise_id, form_type=form_type)
+    logger.info('Uploading collection instrument', collection_exercise_id=collection_exercise_id, form_type=form_type)
     url = f'{app.config["COLLECTION_INSTRUMENT_URL"]}' \
           f'/collection-instrument-api/1.0.2/upload/{collection_exercise_id}'
 
@@ -33,14 +33,14 @@ def upload_collection_instrument(collection_exercise_id, file, form_type=None):
                          form_type=form_type, status=response.status_code)
         return False
 
-    logger.debug('Successfully uploaded collection instrument', collection_exercise_id=collection_exercise_id,
-                 form_type=form_type)
+    logger.info('Successfully uploaded collection instrument', collection_exercise_id=collection_exercise_id,
+                form_type=form_type)
     return True
 
 
 def link_collection_instrument(ce_id, ci_id):
-    logger.debug('Linking collection instrument to collection exercise',
-                 collection_exercise_id=ce_id, collection_instrument_id=ci_id)
+    logger.info('Linking collection instrument to collection exercise',
+                collection_exercise_id=ce_id, collection_instrument_id=ci_id)
     url = f'{app.config["COLLECTION_INSTRUMENT_URL"]}' \
           f'/collection-instrument-api/1.0.2/link-exercise/{ci_id}/{ce_id}'
 
@@ -52,14 +52,14 @@ def link_collection_instrument(ce_id, ci_id):
                      collection_exercise_id=ce_id, collection_instrument_id=ci_id, status=response.status_code)
         return False
 
-    logger.debug('Successfully linked collection instrument to collection exercise',
-                 collection_exercise_id=ce_id, collection_instrument_id=ci_id)
+    logger.info('Successfully linked collection instrument to collection exercise',
+                collection_exercise_id=ce_id, collection_instrument_id=ci_id)
     return True
 
 
 def unlink_collection_instrument(ce_id, ci_id):
-    logger.debug('Unlinking collection instrument and collection exercise',
-                 collection_exercise_id=ce_id, collection_instrument_id=ci_id)
+    logger.info('Unlinking collection instrument and collection exercise',
+                collection_exercise_id=ce_id, collection_instrument_id=ci_id)
     url = f'{app.config["COLLECTION_INSTRUMENT_URL"]}' \
           f'/collection-instrument-api/1.0.2/unlink-exercise/{ci_id}/{ce_id}'
 
@@ -71,14 +71,14 @@ def unlink_collection_instrument(ce_id, ci_id):
                      collection_exercise_id=ce_id, collection_instrument_id=ci_id, status=response.status_code)
         return False
 
-    logger.debug('Successfully unlinked collection instrument and collection exercise',
-                 collection_exercise_id=ce_id, collection_instrument_id=ci_id)
+    logger.info('Successfully unlinked collection instrument and collection exercise',
+                collection_exercise_id=ce_id, collection_instrument_id=ci_id)
     return True
 
 
 def get_collection_instruments_by_classifier(survey_id=None, collection_exercise_id=None, ci_type=None):
-    logger.debug('Retrieving collection instruments', survey_id=survey_id,
-                 collection_exercise_id=collection_exercise_id, ci_type=ci_type)
+    logger.info('Retrieving collection instruments', survey_id=survey_id,
+                collection_exercise_id=collection_exercise_id, ci_type=ci_type)
     url = (
         f'{app.config["COLLECTION_INSTRUMENT_URL"]}'
         f'/collection-instrument-api/1.0.2/collectioninstrument'
@@ -94,8 +94,8 @@ def get_collection_instruments_by_classifier(survey_id=None, collection_exercise
         logger.error('Error retrieving collection instruments')
         raise ApiError(response)
 
-    logger.debug('Successfully retrieved collection instruments', survey_id=survey_id,
-                 collection_exercise_id=collection_exercise_id, ci_type=ci_type)
+    logger.info('Successfully retrieved collection instruments', survey_id=survey_id,
+                collection_exercise_id=collection_exercise_id, ci_type=ci_type)
     return response.json()
 
 

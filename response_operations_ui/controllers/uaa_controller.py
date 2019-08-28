@@ -11,7 +11,7 @@ logger = wrap_logger(logging.getLogger(__name__))
 
 
 def sign_in(username, password):
-    logger.debug('Retrieving OAuth2 token for sign-in')
+    logger.info('Retrieving OAuth2 token for sign-in')
     url = f'{app.config["UAA_SERVICE_URL"]}/oauth/token'
 
     data = {
@@ -40,7 +40,7 @@ def sign_in(username, password):
         raise
 
     try:
-        logger.debug('Successfully retrieved UAA token')
+        logger.info('Successfully retrieved UAA token')
         token = response.json()
         access_token = token['access_token']
         return access_token

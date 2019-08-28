@@ -135,7 +135,7 @@ def post_collection_exercise(short_name, period):
 @collection_exercise_bp.route('response_chasing/<ce_id>/<survey_id>', methods=['GET'])
 @login_required
 def response_chasing(ce_id, survey_id):
-    logger.debug('Response chasing', ce_id=ce_id, survey_id=survey_id)
+    logger.info('Response chasing', ce_id=ce_id, survey_id=survey_id)
     response = collection_exercise_controllers.download_report(ce_id, survey_id)
     return response.content, response.status_code, response.headers.items()
 
@@ -282,7 +282,7 @@ def _validate_collection_instrument():
     if 'ciFile' in request.files:
         file = request.files['ciFile']
         if not str.endswith(file.filename, '.xlsx'):
-            logger.debug('Invalid file format uploaded', filename=file.filename)
+            logger.info('Invalid file format uploaded', filename=file.filename)
             error = {
                 "section": "ciFile",
                 "header": "Error: wrong file type for collection instrument",
@@ -292,14 +292,14 @@ def _validate_collection_instrument():
             # file name format is surveyId_period_formType
             form_type = _get_form_type(file.filename) if file.filename.count('_') == 2 else ''
             if not form_type.isdigit() or len(form_type) != 4:
-                logger.debug('Invalid file format uploaded', filename=file.filename)
+                logger.info('Invalid file format uploaded', filename=file.filename)
                 error = {
                     "section": "ciFile",
                     "header": "Error: invalid file name format for collection instrument",
                     "message": "Please provide file with correct form type in file name"
                 }
     else:
-        logger.debug('No file uploaded')
+        logger.info('No file uploaded')
         error = {
             "section": "ciFile",
             "header": "Error: No collection instrument supplied",
@@ -313,10 +313,10 @@ def _validate_sample():
     if 'sampleFile' in request.files:
         file = request.files['sampleFile']
         if not str.endswith(file.filename, '.csv'):
-            logger.debug('Invalid file format uploaded', filename=file.filename)
+            logger.info('Invalid file format uploaded', filename=file.filename)
             error = 'Invalid file format'
     else:
-        logger.debug('No file uploaded')
+        logger.info('No file uploaded')
         error = 'File not uploaded'
 
     return error

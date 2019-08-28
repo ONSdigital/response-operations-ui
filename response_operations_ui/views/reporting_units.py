@@ -183,7 +183,7 @@ def search_reporting_units():
 @reporting_unit_bp.route('/resend_verification/<ru_ref>/<party_id>', methods=['GET'])
 @login_required
 def view_resend_verification(ru_ref, party_id):
-    logger.debug("Re-send verification email requested", ru_ref=ru_ref, party_id=party_id)
+    logger.info("Re-send verification email requested", ru_ref=ru_ref, party_id=party_id)
     respondent = party_controller.get_respondent_by_party_id(party_id)
     email = respondent['pendingEmailAddress'] if 'pendingEmailAddress' in respondent \
         else respondent['emailAddress']
