@@ -31,7 +31,7 @@ def view_reporting_unit(ru_ref):
     cases = case_controller.get_cases_by_business_party_id(reporting_unit['id'],
                                                            app.config['MAX_CASES_RETRIEVED_PER_SURVEY'])
 
-    case_groups = _get_case_groups(cases)   # extract case groups from cases
+    case_groups = case_controller.get_case_groups_by_business_party_id(reporting_unit['id'])
 
     # Get all collection exercises for retrieved case groups
     collection_exercise_ids = {case_group['collectionExerciseId'] for case_group in case_groups}
@@ -95,17 +95,6 @@ def view_reporting_unit(ru_ref):
     ]
     return render_template('reporting-unit.html', ru_ref=ru_ref, ru=reporting_unit,
                            surveys=surveys_with_latest_case, breadcrumbs=breadcrumbs)
-
-
-def _get_case_groups(cases):
-    """extract a list of unique case groups from the returned cases """
-    case_groups = {}
-    case_groups = {
-        case["caseGroup"]["id"]: case["caseGroup"]
-        for case in cases
-        if case["caseGroup"]["id"] not in case_groups.keys()
-    }
-    return list(case_groups.values())
 
 
 def add_collection_exercise_details(collection_exercise, reporting_unit, case_groups):
