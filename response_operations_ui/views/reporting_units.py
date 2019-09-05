@@ -101,10 +101,10 @@ def _get_case_groups(cases):
     """extract a list of unique case groups from the returned cases """
     case_groups = {}
     case_groups = {
-                        case["caseGroup"]["id"]: case["caseGroup"]
-                        for case in cases
-                        if case["caseGroup"]["id"] not in case_groups.keys()
-                   }
+        case["caseGroup"]["id"]: case["caseGroup"]
+        for case in cases
+        if case["caseGroup"]["id"] not in case_groups.keys()
+    }
     return list(case_groups.values())
 
 
