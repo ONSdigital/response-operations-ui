@@ -94,11 +94,12 @@ def get_case_groups_by_business_party_id(business_party_id):
     return response.json()
 
 
-def get_cases_by_business_party_id(business_party_id, max_case_per_survey):
+def get_cases_by_business_party_id(business_party_id):
     logger.info('Retrieving cases', business_party_id=business_party_id)
     url = f'{app.config["CASE_URL"]}/cases/partyid/{business_party_id}'
     response = requests.get(url, auth=app.config['CASE_AUTH'],
-                            params={"iac": "True", "max_cases_per_survey": max_case_per_survey})
+                            params={"iac": "True",
+                                    "max_cases_per_survey": app.config['MAX_CASES_RETRIEVED_PER_SURVEY']})
 
     try:
         response.raise_for_status()

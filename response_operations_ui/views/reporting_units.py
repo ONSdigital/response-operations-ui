@@ -28,8 +28,7 @@ def view_reporting_unit(ru_ref):
     # Make some initial calls to retrieve some data we'll need
     reporting_unit = party_controller.get_party_by_ru_ref(ru_ref)
 
-    cases = case_controller.get_cases_by_business_party_id(reporting_unit['id'],
-                                                           app.config['MAX_CASES_RETRIEVED_PER_SURVEY'])
+    cases = case_controller.get_cases_by_business_party_id(reporting_unit['id'])
 
     case_groups = case_controller.get_case_groups_by_business_party_id(reporting_unit['id'])
 
