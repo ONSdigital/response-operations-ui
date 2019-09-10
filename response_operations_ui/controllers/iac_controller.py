@@ -11,7 +11,7 @@ logger = wrap_logger(logging.getLogger(__name__))
 
 
 def get_iac_details(iac):
-    logger.debug('Retrieving iac')
+    logger.info('Retrieving iac')
     if not iac:
         logger.warning('No iac provided')
         return None
@@ -28,7 +28,7 @@ def get_iac_details(iac):
         logger.error('Error retrieving iac')
         raise ApiError(response)
 
-    logger.debug('Successfully retrieved iac')
+    logger.info('Successfully retrieved iac')
     return response.json()
 
 
