@@ -2,7 +2,6 @@ import logging
 from datetime import datetime, timezone
 
 from flask import Blueprint, flash, render_template, request, redirect, url_for
-from flask import current_app as app
 from flask_login import login_required
 from iso8601 import parse_date
 from structlog import wrap_logger
