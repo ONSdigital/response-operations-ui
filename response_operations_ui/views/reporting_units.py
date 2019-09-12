@@ -26,7 +26,9 @@ reporting_unit_bp = Blueprint('reporting_unit_bp', __name__, static_folder='stat
 def view_reporting_unit(ru_ref):
     # Make some initial calls to retrieve some data we'll need
     reporting_unit = party_controller.get_party_by_ru_ref(ru_ref)
+
     cases = case_controller.get_cases_by_business_party_id(reporting_unit['id'])
+
     case_groups = case_controller.get_case_groups_by_business_party_id(reporting_unit['id'])
 
     # Get all collection exercises for retrieved case groups
