@@ -6,7 +6,7 @@ from flask_wtf import FlaskForm
 from structlog import wrap_logger
 from wtforms import HiddenField, Label, PasswordField, StringField, \
     SubmitField, TextAreaField, SelectField, IntegerField
-from wtforms.validators import InputRequired, Length, ValidationError
+from wtforms.validators import InputRequired, Length, ValidationError, Email
 
 from response_operations_ui.controllers import collection_exercise_controllers
 from response_operations_ui.controllers import survey_controllers
@@ -194,3 +194,34 @@ class CreateSurveyDetailsForm(FlaskForm):
 class RemoveLoadedSample(FlaskForm):
     period = StringField('period')
     short_name = StringField('short_name')
+
+
+class ForgotPasswordForm(FlaskForm):
+    email_address = StringField('Enter your email address',
+                                validators=[InputRequired('Email address is required'),
+                                            Email(message='Invalid email address'),
+                                            Length(max=254,
+                                                   message='Your email must be less than 254 characters')])
+
+    @staticmethod
+    def validate_email_address(_, field):
+        email = field.data
+        return _validate_email_address(email)
+
+
+def _validate_email_address(email):
+    """
+    Validates an email address, using regex to conform to GDS standards.
+
+    :param field:
+        Field containing email address for validation.
+    """
+    local_part, domain_part = email.rsplit('@', 1)
+    logger.info('Checking if the email address contains a space or quotes in the local part')
+    # this extends the email validator to check if there is whitespace in the email or quotes surrounding local part
+    if ' ' in email:
+        logger.info('Space found in email address')
+        raise ValidationError('Invalid email address')
+    if local_part.startswith('"') and local_part.endswith('"'):
+        logger.info('Quotes found in local part of email')
+        raise ValidationError('Invalid email address')
