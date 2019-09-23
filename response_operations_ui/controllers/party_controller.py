@@ -85,7 +85,6 @@ def add_enrolment_status_to_respondent(respondent, ru_ref, survey_id):
 
 
 def get_respondent_enrolments(respondent, enrolment_status=None):
-
     enrolments = []
     for association in respondent['associations']:
         business_party = get_business_by_party_id(association['partyId'])
@@ -150,7 +149,7 @@ def search_respondents(first_name, last_name, email_address, page):
 
 
 def update_contact_details(respondent_id, form, ru_ref='NOT DEFINED'):
-    logger.info('Updating respondent details', respondent_id=respondent_id)
+    logger.info('Updating respondent details', respondent_id=respondent_id, ru_ref=ru_ref)
 
     new_contact_details = {
         "firstName": form.get('first_name'),
