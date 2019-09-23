@@ -53,13 +53,11 @@ def create_app(config_name=None):
     @app.context_processor
     def inject_availability_message():
 
-        redis_n = redis.StrictRedis(host=app.config['REDIS_HOST'],
-                              port=app.config['REDIS_PORT'],
-                              db=app.config['REDIS_DB'])
+        redis_avail_msg= app.config['SESSION_REDIS']
 
-        if len(redis_n.keys('AVAILABILITY_MESSAGE_RES_OPS')) == 1:
+        if len(redis_avail_msg.keys('AVAILABILITY_MESSAGE_RES_OPS')) == 1:
             return {
-                "availability_message": redis_n.get('AVAILABILITY_MESSAGE_RES_OPS').decode('utf-8')
+                "availability_message": redis_avail_msg.get('AVAILABILITY_MESSAGE_RES_OPS').decode('utf-8')
             }
         return {}
 
