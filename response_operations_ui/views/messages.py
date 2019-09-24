@@ -208,9 +208,13 @@ def view_selected_survey(selected_survey):
         is_closed = request.args.get('is_closed', default='false')
         my_conversations = request.args.get('my_conversations', default='false')
 
-        thread_count = message_controllers.get_conversation_count({'survey': survey_id,
-                                                                   'is_closed': is_closed,
-                                                                   'my_conversations': my_conversations})
+        new_respondent_conversations = request.args.get('new_respondent_conversations', default='false')
+
+        thread_count = message_controllers.get_conversation_count(
+            {'survey': survey_id,
+             'is_closed': is_closed,
+             'my_conversations': my_conversations,
+             'new_respondent_conversations': new_respondent_conversations})
 
         recalculated_page = _calculate_page(page, limit, thread_count)
 
@@ -223,7 +227,8 @@ def view_selected_survey(selected_survey):
             'page': page,
             'limit': limit,
             'is_closed': is_closed,
-            'my_conversations': my_conversations
+            'my_conversations': my_conversations,
+            'new_respondent_conversations': new_respondent_conversations
         }
 
         messages = [_refine(message) for message in message_controllers.get_thread_list(params)]
@@ -251,7 +256,8 @@ def view_selected_survey(selected_survey):
                                pagination=pagination,
                                change_survey=True,
                                is_closed=strtobool(is_closed),
-                               my_conversations=my_conversations)
+                               my_conversations=my_conversations,
+                               new_respondent_conversations=new_respondent_conversations)
 
     except TypeError:
         logger.exception("Failed to retrieve survey id")

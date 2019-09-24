@@ -24,9 +24,12 @@ reporting_unit_bp = Blueprint('reporting_unit_bp', __name__, static_folder='stat
 @reporting_unit_bp.route('/<ru_ref>', methods=['GET'])
 @login_required
 def view_reporting_unit(ru_ref):
+    logger.info("Gathering data to view reporting unit", ru_ref=ru_ref)
     # Make some initial calls to retrieve some data we'll need
     reporting_unit = party_controller.get_party_by_ru_ref(ru_ref)
+
     cases = case_controller.get_cases_by_business_party_id(reporting_unit['id'])
+
     case_groups = case_controller.get_case_groups_by_business_party_id(reporting_unit['id'])
 
     # Get all collection exercises for retrieved case groups
@@ -89,6 +92,7 @@ def view_reporting_unit(ru_ref):
             "title": f"{ru_ref}"
         }
     ]
+    logger.info("Successfully gathered data to view reporting unit", ru_ref=ru_ref)
     return render_template('reporting-unit.html', ru_ref=ru_ref, ru=reporting_unit,
                            surveys=surveys_with_latest_case, breadcrumbs=breadcrumbs)
 

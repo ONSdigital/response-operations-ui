@@ -34,11 +34,14 @@
                 <li class="nav__item u-fs-s {% if my_conversations =='true' %}nav__item--current{% endif %}">
                     <a class="nav__link" href="{{ url_for('messages_bp.view_selected_survey', selected_survey=selected_survey, my_conversations='true') }}" aria-current="{% if my_conversations %}location{% endif %}" role="menuitem">My Messages</a>
                 </li>
-                <li class="nav__item u-fs-s {% if not is_closed and not my_conversations == 'true' %}nav__item--current{% endif %}">
+                <li class="nav__item u-fs-s {% if not is_closed and not my_conversations == 'true' and not new_respondent_conversations == 'true'%}nav__item--current{% endif %}">
                     <a class="nav__link" href="{{ url_for('messages_bp.view_selected_survey', selected_survey=selected_survey) }}" aria-current="{% if not is_closed and not my_conversations %}location{% endif %}" role="menuitem">Open</a>
                 </li>
                 <li class="nav__item u-fs-s {% if is_closed %}nav__item--current{% endif %}">
                     <a class="nav__link" href="{{ url_for('messages_bp.view_selected_survey', selected_survey=selected_survey, is_closed='true') }}" aria-current="{% if is_closed %}location{% endif %}" role="menuitem">Closed</a>
+                </li>
+                <li class="nav__item u-fs-s {% if new_respondent_conversations == 'true' %}nav__item--current{% endif %}">
+                    <a class="nav__link" href="{{ url_for('messages_bp.view_selected_survey', selected_survey=selected_survey, new_respondent_conversations='true') }}" aria-current="{% if new_respondent_conversations %}location{% endif %}" role="menuitem">Initial</a>
                 </li>
             </ul>
         </div>
