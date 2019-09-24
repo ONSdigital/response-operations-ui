@@ -58,10 +58,10 @@ def login_admin():
     payload = {'grant_type': 'client_credentials',
                'response_type': 'token',
                'token_format': 'opaque'}
-    try: 
-        response = requests.post('{}/oauth/token'.format(app.config['UAA_SERVICE_URL']), headers=headers,
-                             params=payload,
-                             auth=(app.config['UAA_CLIENT_ID'], app.config['UAA_CLIENT_SECRET']))
+    try:
+        url = '{}/oauth/token'.format(app.config['UAA_SERVICE_URL'])
+        response = requests.post(url, headers=headers, params=payload,
+                                 auth=(app.config['UAA_CLIENT_ID'], app.config['UAA_CLIENT_SECRET']))
         resp_json = response.json()
         return resp_json.get('access_token')
     except HTTPError:
@@ -72,17 +72,19 @@ def login_admin():
 def get_user_by_email(email):
     headers = {'Content-Type': 'application/json',
                'Accept': 'application/json',
-               'Authorization': 'Bearer {}'.format(login_admin()) }
-    
-    response = requests.get('{0}/Users?filter=email+eq+%22{1}%22'.format(app.config['UAA_SERVICE_URL'], email), headers=headers)
+               'Authorization': 'Bearer {}'.format(login_admin())}
+
+    url = '{0}/Users?filter=email+eq+%22{1}%22'.format(app.config['UAA_SERVICE_URL'], email)
+    response = requests.get(url, headers=headers)
     if response.status_code != 200 or response.json()['totalResults'] == 0:
         pass
 
     return response.json()
 
+
 def get_first_name_by_email(email):
     response = get_user_by_email(email)
-    if response != None:
+    if response is not None:
         return response['resources'][0]['name']['givenName']
     return ""
 
@@ -94,14 +96,15 @@ def user_exists_by_email(email):
 def change_user_password(email, password):
     headers = {'Content-Type': 'application/json',
                'Accept': 'application/json',
-               'Authorization': 'Bearer {}'.format(login_admin()) }
+               'Authorization': 'Bearer {}'.format(login_admin())}
 
     user_response = get_user_by_email(email)
-    if user_response == None:
+    if user_response is None:
         return False
     user_id = user_response['resources'][0]['id']
 
     payload = {'password': password}
-    reset_response = requests.get('{0}/Users/{1}/password'.format(app.config['UAA_SERVICE_URL'], user_id), headers=headers, data=payload)
+    url = '{0}/Users/{1}/password'.format(app.config['UAA_SERVICE_URL'], user_id)
+    reset_response = requests.get(url, headers=headers, data=payload)
 
-    return response.status_code == 200
+    return reset_response.status_code == 200

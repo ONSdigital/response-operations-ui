@@ -48,7 +48,7 @@ class NotifyController:
         except Exception as e:
             ref = reference if reference else 'reference_unknown'
             raise NotifyError("There was a problem sending a notification to Notify-Gateway to GOV.UK Notify",
-                                 error=e, reference=ref)
+                              error=e, reference=ref)
 
     def request_to_notify(self, email, template_name, personalisation=None, reference=None):
         template_id = self._get_template_id(template_name)
