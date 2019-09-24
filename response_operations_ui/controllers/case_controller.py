@@ -97,7 +97,9 @@ def get_case_groups_by_business_party_id(business_party_id):
 def get_cases_by_business_party_id(business_party_id):
     logger.info('Retrieving cases', business_party_id=business_party_id)
     url = f'{app.config["CASE_URL"]}/cases/partyid/{business_party_id}'
-    response = requests.get(url, auth=app.config['CASE_AUTH'], params={"iac": "True"})
+    response = requests.get(url, auth=app.config['CASE_AUTH'],
+                            params={"iac": "True",
+                                    "max_cases_per_survey": app.config['MAX_CASES_RETRIEVED_PER_SURVEY']})
 
     try:
         response.raise_for_status()
@@ -133,8 +135,7 @@ def generate_iac(case_id):
     url = get_iac_url(case_id)
     logger.info('Generating new IAC', case_id=case_id, url=url)
 
-    response = requests.post(url=url,
-                             auth=app.config['CASE_AUTH'])
+    response = requests.post(url=url, auth=app.config['CASE_AUTH'])
 
     try:
         response.raise_for_status()

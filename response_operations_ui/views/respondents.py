@@ -69,6 +69,9 @@ def respondent_search():
 
     offset = (int(page) - 1) * results_per_page
 
+    last_index = (results_per_page + offset) if total_respondents_available >= results_per_page \
+        else total_respondents_available
+
     pagination = Pagination(page=int(page),
                             per_page=results_per_page,
                             total=total_respondents_available,
@@ -85,7 +88,7 @@ def respondent_search():
                            respondents=filtered_respondents,
                            respondent_count=total_respondents_available,
                            first_index=1 + offset,
-                           last_index=results_per_page + offset,
+                           last_index=last_index,
                            pagination=pagination,
                            show_pagination=bool(total_respondents_available > results_per_page))
 
