@@ -136,6 +136,7 @@ class TestingConfig(DevelopmentConfig):
     TESTING = True
     LOGIN_DISABLED = True
     WTF_CSRF_ENABLED = False
+    REDIS_PORT = os.getenv('REDIS_PORT', 6379)
     SESSION_TYPE = "filesystem"
     SESSION_PERMANENT = False
     UAA_PUBLIC_KEY = '''-----BEGIN PUBLIC KEY-----
