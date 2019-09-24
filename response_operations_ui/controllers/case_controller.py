@@ -135,8 +135,7 @@ def generate_iac(case_id):
     url = get_iac_url(case_id)
     logger.info('Generating new IAC', case_id=case_id, url=url)
 
-    response = requests.post(url=url,
-                             auth=app.config['CASE_AUTH'])
+    response = requests.post(url=url, auth=app.config['CASE_AUTH'])
 
     try:
         response.raise_for_status()

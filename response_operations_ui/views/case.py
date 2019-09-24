@@ -25,6 +25,7 @@ logger = wrap_logger(logging.getLogger(__name__))
 @case_bp.route('/<ru_ref>/response-status', methods=['GET'])
 @login_required
 def get_response_statuses(ru_ref, error=None):
+    logger.info("Retrieving response statuses", ru_ref=ru_ref)
     short_name = request.args.get('survey')
     period = request.args.get('period')
 
