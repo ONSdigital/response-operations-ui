@@ -7,6 +7,9 @@ node: '10'
 cache:
   - pip
 
+services:
+    - redis-server
+
 env:
    global:
      - APP_SETTINGS=TestingConfig
