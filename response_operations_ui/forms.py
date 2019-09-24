@@ -2,7 +2,6 @@ import calendar
 import logging
 import re
 
-from flask import current_app as app
 from flask_wtf import FlaskForm
 from structlog import wrap_logger
 from wtforms import HiddenField, Label, PasswordField, StringField, \
