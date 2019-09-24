@@ -53,7 +53,7 @@ def create_app(config_name=None):
     @app.context_processor
     def inject_availability_message():
 
-        redis_avail_msg= app.config['SESSION_REDIS']
+        redis_avail_msg = app.config['SESSION_REDIS']
 
         if len(redis_avail_msg.keys('AVAILABILITY_MESSAGE_RES_OPS')) == 1:
             return {
