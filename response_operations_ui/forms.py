@@ -2,11 +2,12 @@ import calendar
 import logging
 import re
 
+from flask import current_app as app
 from flask_wtf import FlaskForm
 from structlog import wrap_logger
 from wtforms import HiddenField, Label, PasswordField, StringField, \
     SubmitField, TextAreaField, SelectField, IntegerField
-from wtforms.validators import InputRequired, Length, ValidationError, Email
+from wtforms.validators import InputRequired, Length, ValidationError, Email, DataRequired, EqualTo
 
 from response_operations_ui.controllers import collection_exercise_controllers
 from response_operations_ui.controllers import survey_controllers
@@ -225,3 +226,20 @@ def _validate_email_address(email):
     if local_part.startswith('"') and local_part.endswith('"'):
         logger.info('Quotes found in local part of email')
         raise ValidationError('Invalid email address')
+
+
+class ResetPasswordForm(FlaskForm):
+    password = PasswordField('New password',
+                             validators=[DataRequired('Password is required'),
+                                         EqualTo('password_confirm', message=app.config['PASSWORD_MATCH_ERROR_TEXT']),
+                                         Length(min=app.config['PASSWORD_MIN_LENGTH'],
+                                                max=app.config['PASSWORD_MAX_LENGTH'],
+                                                message=app.config['PASSWORD_CRITERIA_ERROR_TEXT'])])
+    password_confirm = PasswordField('Re-type new password')
+
+    @staticmethod
+    def validate_password(form, field):
+        password = field.data
+        if password.isalnum() or not any(char.isupper() for char in password) or not any(char.isdigit() for char in
+                                                                                         password):
+            raise ValidationError(app.config['PASSWORD_CRITERIA_ERROR_TEXT'])

@@ -1,10 +1,10 @@
 import logging
 
 from flask import abort, redirect, render_template, request, url_for, Blueprint, current_app as app
-from itsdangerous import URLSafeSerializer, BadSignature
+from itsdangerous import URLSafeSerializer, BadSignature, SignatureExpired, BadData
 from structlog import wrap_logger
 
-from response_operations_ui.forms import ForgotPasswordForm
+from response_operations_ui.forms import ForgotPasswordForm, ResetPasswordForm
 from response_operations_ui.controllers import party_controller, uaa_controller
 from response_operations_ui.controllers.notify_controller import NotifyController
 from response_operations_ui.exceptions.exceptions import UserDoesNotExist, NotifyError
@@ -28,34 +28,8 @@ def post_forgot_password():
     form.email_address.data = form.email_address.data.strip()
     email = form.data.get('email_address')
 
-    encoded_email = URLSafeSerializer(app.config['SECRET_KEY']).dumps(email)
-
     if form.validate():
-        first_name = uaa_controller.get_first_name_by_email(email)
-        if (first_name != ""):
-            internal_url = app.config['RAS_INTERNAL_WEBSITE_URL']
-            verification_url = f'{internal_url}/passwords/reset-password/{token_decoder.generate_email_token(email)}'
-
-            personalisation = {
-                'RESET_PASSWORD_URL': verification_url,
-                'FIRST_NAME': first_name
-            }
-
-            try:
-                NotifyController(app.config).request_to_notify(email=email,
-                                                               template_name='confirm_password_change',
-                                                               personalisation=personalisation)
-            except NotifyError:
-                logger.error('Error sending password change request email to Notify Gateway')
-                return render_template('forgot-password-error.html')
-
-            logger.info('Successfully sent password change request email')
-        else:
-            # We stil want to render the template for an email without an account to avoid 
-            # people fishing for valid emails
-            logger.info('Requested password reset for email not in UAA', email=encoded_email)
-
-        return redirect(url_for('passwords_bp.forgot_password_check_email', email=encoded_email))
+        return send_password_change_email(email)
 
     return render_template('forgot-password.html', form=form, email=email)
 
@@ -75,3 +49,87 @@ def forgot_password_check_email():
         abort(404)
     
     return render_template('forgot-password-check-email.html', email=email)
+
+
+@passwords_bp.route('/reset-password/<token>', methods=['GET'])
+def get_reset_password(token, form_errors=None):
+    form = ResetPasswordForm(request.form)
+
+    try:
+        duration = app.config['EMAIL_TOKEN_EXPIRY']
+        token_decoder.decode_email_token(token, duration)
+    except SignatureExpired:
+        logger.warning('Token expired for Response Operations password reset', token=token)
+        return render_template('reset-password-expired.html', token=token)
+    except (BadSignature, BadData):
+        logger.warning('Invalid token sent to Response Operations password reset', token=token)
+        return render_template('reset-password-expired.html', token=token)
+
+    template_data = {
+        "error": {
+            "type": form_errors
+        },
+        'token': token
+    }
+    return render_template('reset-password.html', form=form, data=template_data)
+
+
+@passwords_bp.route('/reset-password/<token>', methods=['POST'])
+def post_reset_password(token):
+    form = ResetPasswordForm(request.form)
+
+    if not form.validate():
+        return get_reset_password(token, form_errors=form.errors)
+
+    password = request.form.get('password')
+
+    try:
+        duration = app.config['EMAIL_TOKEN_EXPIRY']
+        email = token_decoder.decode_email_token(token, duration)
+    except SignatureExpired:
+        logger.warning('Token expired for Response Operations password reset', token=token)
+        return render_template('reset-password-expired.html', token=token)
+    except (BadSignature, BadData):
+        logger.warning('Invalid token sent to Response Operations password reset', token=token)
+        return render_template('reset-password-expired.html', token=token)
+
+    if (uaa_controller.change_user_password(email, password)):
+        logger.info('Successfully changed user password', token=token)
+        return redirect(url_for('passwords_bp.reset_password_confirmation'))
+    
+    logger.warning('Error changing password in UAA', token=token)
+    return render_template('reset-password-error.html')
+
+
+@passwords_bp.route('/resend-password-email-expired-token/<token>', methods=['GET'])
+def resend_password_email_expired_token(token):
+    email = token_decoder.decode_email_token(token)
+    return send_password_change_email(email)
+
+
+def send_password_change_email(email):
+    first_name = uaa_controller.get_first_name_by_email(email)
+    if (first_name != ""):
+        internal_url = app.config['RAS_INTERNAL_WEBSITE_URL']
+        verification_url = f'{internal_url}/passwords/reset-password/{token_decoder.generate_email_token(email)}'
+
+        personalisation = {
+            'RESET_PASSWORD_URL': verification_url,
+            'FIRST_NAME': first_name
+        }
+
+        try:
+            NotifyController(app.config).request_to_notify(email=email,
+                                                               template_name='confirm_password_change',
+                                                               personalisation=personalisation)
+        except NotifyError:
+            logger.error('Error sending password change request email to Notify Gateway')
+            return render_template('forgot-password-error.html')
+
+        logger.info('Successfully sent password change request email')
+    else:
+        # We stil want to render the template for an email without an account to avoid 
+        # people fishing for valid emails
+        logger.info('Requested password reset for email not in UAA')
+
+    return redirect(url_for('passwords_bp.forgot_password_check_email'))

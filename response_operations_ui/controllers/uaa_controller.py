@@ -69,16 +69,39 @@ def login_admin():
         abort(response.status_code)
 
 
-def get_first_name_by_email(email):
+def get_user_by_email(email):
     headers = {'Content-Type': 'application/json',
                'Accept': 'application/json',
                'Authorization': 'Bearer {}'.format(login_admin()) }
     
     response = requests.get('{0}/Users?filter=email+eq+%22{1}%22'.format(app.config['UAA_SERVICE_URL'], email), headers=headers)
     if response.status_code != 200 or response.json()['totalResults'] == 0:
-        return ""
-    return response.json()['resources'][0]['name']['givenName']
+        pass
+
+    return response.json()
+
+def get_first_name_by_email(email):
+    response = get_user_by_email(email)
+    if response != None:
+        return response['resources'][0]['name']['givenName']
+    return ""
 
 
 def user_exists_by_email(email):
     return get_first_name_by_email(email) != ""
+
+
+def change_user_password(email, password):
+    headers = {'Content-Type': 'application/json',
+               'Accept': 'application/json',
+               'Authorization': 'Bearer {}'.format(login_admin()) }
+
+    user_response = get_user_by_email(email)
+    if user_response == None:
+        return False
+    user_id = user_response['resources'][0]['id']
+
+    payload = {'password': password}
+    reset_response = requests.get('{0}/Users/{1}/password'.format(app.config['UAA_SERVICE_URL'], user_id), headers=headers, data=payload)
+
+    return response.status_code == 200
