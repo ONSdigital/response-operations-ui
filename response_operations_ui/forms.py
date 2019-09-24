@@ -231,10 +231,10 @@ def _validate_email_address(email):
 class ResetPasswordForm(FlaskForm):
     password = PasswordField('New password',
                              validators=[DataRequired('Password is required'),
-                                         EqualTo('password_confirm', message=app.config['PASSWORD_MATCH_ERROR_TEXT']),
-                                         Length(min=app.config['PASSWORD_MIN_LENGTH'],
-                                                max=app.config['PASSWORD_MAX_LENGTH'],
-                                                message=app.config['PASSWORD_CRITERIA_ERROR_TEXT'])])
+                                         EqualTo('password_confirm', message='Your passwords do not match',
+                                         Length(min=8,
+                                                max=160,
+                                                message='Your password doesn\'t meet the requirements')
     password_confirm = PasswordField('Re-type new password')
 
     @staticmethod
@@ -242,4 +242,4 @@ class ResetPasswordForm(FlaskForm):
         password = field.data
         if password.isalnum() or not any(char.isupper() for char in password) or not any(char.isdigit() for char in
                                                                                          password):
-            raise ValidationError(app.config['PASSWORD_CRITERIA_ERROR_TEXT'])
+            raise ValidationError('Your password doesn\'t meet the requirements')
