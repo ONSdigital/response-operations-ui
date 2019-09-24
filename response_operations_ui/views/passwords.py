@@ -101,6 +101,11 @@ def post_reset_password(token):
     return render_template('reset-password-error.html')
 
 
+@passwords_bp.route('/reset-password/confirmation', methods=['GET'])
+def reset_password_confirmation():
+    return render_template('passwords/reset-password-confirmation.html')
+
+
 @passwords_bp.route('/resend-password-email-expired-token/<token>', methods=['GET'])
 def resend_password_email_expired_token(token):
     email = token_decoder.decode_email_token(token)
