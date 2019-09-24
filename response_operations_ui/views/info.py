@@ -35,6 +35,6 @@ def get_info():
 def clear_session(response):
     # the info endpoint will be hit by CF to confirm app status
     # we don't want lots of sessions in REDIS for this so clear
-    # the session after each request
+    # the session after each request 
     session.clear()
     return response
