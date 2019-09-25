@@ -230,10 +230,10 @@ def _validate_email_address(email):
 class ResetPasswordForm(FlaskForm):
     password = PasswordField('New password',
                              validators=[DataRequired('Password is required'),
-                                         EqualTo('password_confirm', message='Your passwords do not match',
-                                         Length(min=8,
-                                                max=160,
-                                                message='Your password doesn\'t meet the requirements')
+                                         EqualTo('password_confirm', message='Your passwords do not match'),
+                                         Length(min=8, max=160,
+                                                message='Your password doesn\'t meet the requirements')])
+
     password_confirm = PasswordField('Re-type new password')
 
     @staticmethod
