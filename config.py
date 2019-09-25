@@ -20,6 +20,8 @@ class Config(object):
     REDIS_DB = os.getenv('REDIS_DB', 0)
     SECURE_COOKIES = strtobool(os.getenv('SECURE_COOKIES', 'True'))
     USE_SESSION_FOR_NEXT = True
+    
+    INTERNAL_WEBSITE_URL = os.getenv('INTERNAL_WEBSITE_URL', f'http://localhost:{PORT}')
 
     # Zipkin
     ZIPKIN_DISABLE = bool(strtobool(os.getenv("ZIPKIN_DISABLE", "False")))
@@ -57,6 +59,13 @@ class Config(object):
     PARTY_AUTH = (PARTY_USERNAME, PARTY_PASSWORD)
     PARTY_RESPONDENTS_PER_PAGE = os.getenv('PARTY_RESPONDENTS_PER_PAGE', 25)
 
+    RAS_NOTIFY_SERVICE_URL = os.getenv('RAS_NOTIFY_SERVICE_URL', 'http://notify-gateway-service/emails/')
+    RAS_NOTIFY_REQUEST_PASSWORD_CHANGE_TEMPLATE = os.getenv('RAS_NOTIFY_REQUEST_PASSWORD_CHANGE_TEMPLATE',
+                                                            'request_password_change_id')
+    RAS_NOTIFY_CONFIRM_PASSWORD_CHANGE_TEMPLATE = os.getenv('RAS_NOTIFY_CONFIRM_PASSWORD_CHANGE_TEMPLATE',
+                                                            'confirm_password_change_id')
+    SEND_EMAIL_TO_GOV_NOTIFY = _is_true(os.getenv('SEND_EMAIL_TO_GOV_NOTIFY', False))
+
     REPORT_URL = os.getenv('REPORT_URL')
 
     SAMPLE_URL = os.getenv('SAMPLE_URL')
@@ -72,6 +81,9 @@ class Config(object):
     UAA_SERVICE_URL = os.getenv('UAA_SERVICE_URL')
     UAA_CLIENT_ID = os.getenv('UAA_CLIENT_ID')
     UAA_CLIENT_SECRET = os.getenv('UAA_CLIENT_SECRET')
+
+    EMAIL_TOKEN_SALT = os.getenv('EMAIL_TOKEN_SALT', 'aardvark')
+    EMAIL_TOKEN_EXPIRY = int(os.getenv('EMAIL_TOKEN_EXPIRY', '306000'))
 
 
 class DevelopmentConfig(Config):
@@ -153,3 +165,9 @@ Z5VVFymXN2n+A6UeWAnuO8/E1inhk99dBzKEGdw=
 -----END RSA PRIVATE KEY-----'''
     SECRET_KEY = 'sekrit!'
 
+
+def _is_true(value):
+    try:
+        return value.lower() in ('true', 't', 'yes', 'y', '1')
+    except AttributeError:
+        return value is True
