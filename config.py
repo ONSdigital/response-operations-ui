@@ -28,7 +28,9 @@ class Config(object):
     SECURE_COOKIES = strtobool(os.getenv('SECURE_COOKIES', 'True'))
     USE_SESSION_FOR_NEXT = True
 
-    INTERNAL_WEBSITE_URL = os.getenv('INTERNAL_WEBSITE_URL', f'http://localhost:{PORT}')
+    RESPONSE_OPERATIONS_UI_HOST = os.getenv('RESPONSE_OPERATIONS_UI_HOST', "http://localhost")
+    RESPONSE_OPERATIONS_UI_PORT = os.getenv('RESPONSE_OPERATIONS_UI_PORT', "8085")
+    INTERNAL_WEBSITE_URL = os.getenv('INTERNAL_WEBSITE_URL', f'{RESPONSE_OPERATIONS_UI_HOST}:{RESPONSE_OPERATIONS_UI_PORT}')
 
     # Zipkin
     ZIPKIN_DISABLE = bool(strtobool(os.getenv("ZIPKIN_DISABLE", "False")))
