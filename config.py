@@ -4,6 +4,13 @@ from distutils.util import strtobool
 FDI_LIST = {'AOFDI', 'AIFDI', 'QIFDI', 'QOFDI'}
 
 
+def _is_true(value):
+    try:
+        return value.lower() in ('true', 't', 'yes', 'y', '1')
+    except AttributeError:
+        return value is True
+
+
 class Config(object):
 
     DEBUG = os.getenv('DEBUG', False)
@@ -20,7 +27,7 @@ class Config(object):
     REDIS_DB = os.getenv('REDIS_DB', 0)
     SECURE_COOKIES = strtobool(os.getenv('SECURE_COOKIES', 'True'))
     USE_SESSION_FOR_NEXT = True
-    
+
     INTERNAL_WEBSITE_URL = os.getenv('INTERNAL_WEBSITE_URL', f'http://localhost:{PORT}')
 
     # Zipkin
@@ -164,10 +171,3 @@ thOVFxQqTwTNAiAFBhCODwFr0Ffr8vAs2UFySsLfvCnoonfQgNsClggisQIgIGEJ
 Z5VVFymXN2n+A6UeWAnuO8/E1inhk99dBzKEGdw=
 -----END RSA PRIVATE KEY-----'''
     SECRET_KEY = 'sekrit!'
-
-
-def _is_true(value):
-    try:
-        return value.lower() in ('true', 't', 'yes', 'y', '1')
-    except AttributeError:
-        return value is True
