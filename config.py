@@ -68,10 +68,10 @@ class Config(object):
     PARTY_AUTH = (PARTY_USERNAME, PARTY_PASSWORD)
     PARTY_RESPONDENTS_PER_PAGE = os.getenv('PARTY_RESPONDENTS_PER_PAGE', 25)
 
-    RAS_NOTIFY_SERVICE_URL = os.getenv('RAS_NOTIFY_SERVICE_URL', 'http://notify-gateway-service/emails/')
-    RAS_NOTIFY_REQUEST_PASSWORD_CHANGE_TEMPLATE = os.getenv('RAS_NOTIFY_REQUEST_PASSWORD_CHANGE_TEMPLATE',
+    NOTIFY_SERVICE_URL = os.getenv('NOTIFY_SERVICE_URL', 'http://notify-gateway-service/emails/')
+    NOTIFY_REQUEST_PASSWORD_CHANGE_TEMPLATE = os.getenv('NOTIFY_REQUEST_PASSWORD_CHANGE_TEMPLATE',
                                                             'request_password_change_id')
-    RAS_NOTIFY_CONFIRM_PASSWORD_CHANGE_TEMPLATE = os.getenv('RAS_NOTIFY_CONFIRM_PASSWORD_CHANGE_TEMPLATE',
+    NOTIFY_CONFIRM_PASSWORD_CHANGE_TEMPLATE = os.getenv('NOTIFY_CONFIRM_PASSWORD_CHANGE_TEMPLATE',
                                                             'confirm_password_change_id')
     SEND_EMAIL_TO_GOV_NOTIFY = _is_true(os.getenv('SEND_EMAIL_TO_GOV_NOTIFY', False))
 

@@ -12,9 +12,9 @@ logger = structlog.wrap_logger(logging.getLogger(__name__))
 class NotifyController:
     def __init__(self, config):
         self.config = config
-        self.notify_url = config['RAS_NOTIFY_SERVICE_URL']
-        self.request_password_change_template = config['RAS_NOTIFY_REQUEST_PASSWORD_CHANGE_TEMPLATE']
-        self.confirm_password_change_template = config['RAS_NOTIFY_CONFIRM_PASSWORD_CHANGE_TEMPLATE']
+        self.notify_url = config['NOTIFY_SERVICE_URL']
+        self.request_password_change_template = config['NOTIFY_REQUEST_PASSWORD_CHANGE_TEMPLATE']
+        self.confirm_password_change_template = config['NOTIFY_CONFIRM_PASSWORD_CHANGE_TEMPLATE']
 
     def _send_message(self, email, template_id, personalisation=None, reference=None):
         """
