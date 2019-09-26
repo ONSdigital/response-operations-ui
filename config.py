@@ -92,7 +92,7 @@ class Config(object):
     UAA_CLIENT_SECRET = os.getenv('UAA_CLIENT_SECRET')
 
     EMAIL_TOKEN_SALT = os.getenv('EMAIL_TOKEN_SALT', 'aardvark')
-    EMAIL_TOKEN_EXPIRY = int(os.getenv('EMAIL_TOKEN_EXPIRY', 24*60))
+    EMAIL_TOKEN_EXPIRY = int(os.getenv('EMAIL_TOKEN_EXPIRY', 24*60*60))
 
 
 class DevelopmentConfig(Config):
