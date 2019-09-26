@@ -70,7 +70,7 @@ class Config(object):
                                                             'request_password_change_id')
     NOTIFY_CONFIRM_PASSWORD_CHANGE_TEMPLATE = os.getenv('NOTIFY_CONFIRM_PASSWORD_CHANGE_TEMPLATE',
                                                             'confirm_password_change_id')
-    SEND_EMAIL_TO_GOV_NOTIFY = _is_true(os.getenv('SEND_EMAIL_TO_GOV_NOTIFY', False))
+    SEND_EMAIL_TO_GOV_NOTIFY = _is_true(os.getenv('SEND_EMAIL_TO_GOV_NOTIFY', "False"))
 
     REPORT_URL = os.getenv('REPORT_URL')
 
