@@ -5,10 +5,7 @@ FDI_LIST = {'AOFDI', 'AIFDI', 'QIFDI', 'QOFDI'}
 
 
 def _is_true(value):
-    try:
-        return value.lower() in ('true', 't', 'yes', 'y', '1')
-    except AttributeError:
-        return value is True
+    return value.lower() in ('true', 't', 'yes', 'y', '1')
 
 
 class Config(object):

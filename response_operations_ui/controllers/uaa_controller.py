@@ -59,7 +59,7 @@ def login_admin():
                'response_type': 'token',
                'token_format': 'opaque'}
     try:
-        url = '{}/oauth/token'.format(app.config['UAA_SERVICE_URL'])
+        url = f"{app.config['UAA_SERVICE_URL']}/oauth/token"
         response = requests.post(url, headers=headers, params=payload,
                                  auth=(app.config['UAA_CLIENT_ID'], app.config['UAA_CLIENT_SECRET']))
         resp_json = response.json()
@@ -74,10 +74,10 @@ def get_user_by_email(email):
                'Accept': 'application/json',
                'Authorization': 'Bearer {}'.format(login_admin())}
 
-    url = '{0}/Users?filter=email+eq+%22{1}%22'.format(app.config['UAA_SERVICE_URL'], email)
+    url = f"{app.config['UAA_SERVICE_URL']}/Users?filter=email+eq+%22{email}%22"
     response = requests.get(url, headers=headers)
     if response.status_code != 200 or response.json()['totalResults'] == 0:
-        pass
+        return
 
     return response.json()
 
@@ -106,5 +106,8 @@ def change_user_password(email, password):
     payload = {'password': password}
     url = '{0}/Users/{1}/password'.format(app.config['UAA_SERVICE_URL'], user_id)
     reset_response = requests.get(url, headers=headers, data=payload)
+
+    if reset_response.status_code != 200:
+        logger.error('Error received from UAA on change password', status_code=reset_response.status_code)
 
     return reset_response.status_code == 200

@@ -1,5 +1,4 @@
 import logging
-from urllib import parse as urlparse
 
 import structlog
 import requests
@@ -30,25 +29,23 @@ class NotifyController:
             logger.info("Notification not sent. Notify is disabled.")
             return
 
-        try:
-            notification = {
-                "emailAddress": email,
-            }
-            if personalisation:
-                notification.update({"personalisation": personalisation})
-            if reference:
-                notification.update({"reference": reference})
+        notification = {
+            "emailAddress": email,
+        }
+        if personalisation:
+            notification.update({"personalisation": personalisation})
+        if reference:
+            notification.update({"reference": reference})
 
-            url = urlparse.urljoin(self.notify_url, str(template_id))
+        url = f'{self.notify_url}{str(template_id)}'
 
-            response = requests.post(url, json=notification)
-
+        response = requests.post(url, json=notification)
+        if response.status_code == 201:
             logger.info('Notification id sent via Notify-Gateway to GOV.UK Notify.', id=response.json()["id"])
-
-        except Exception as e:
+        else:
             ref = reference if reference else 'reference_unknown'
             raise NotifyError("There was a problem sending a notification to Notify-Gateway to GOV.UK Notify",
-                              error=e, reference=ref)
+                              reference=ref)
 
     def request_to_notify(self, email, template_name, personalisation=None, reference=None):
         template_id = self._get_template_id(template_name)
