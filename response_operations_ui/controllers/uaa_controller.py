@@ -89,10 +89,6 @@ def get_first_name_by_email(email):
     return ""
 
 
-def user_exists_by_email(email):
-    return get_first_name_by_email(email) != ""
-
-
 def change_user_password(email, password):
     headers = {'Content-Type': 'application/json',
                'Accept': 'application/json',
