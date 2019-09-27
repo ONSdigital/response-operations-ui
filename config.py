@@ -4,10 +4,6 @@ from distutils.util import strtobool
 FDI_LIST = {'AOFDI', 'AIFDI', 'QIFDI', 'QOFDI'}
 
 
-def _is_true(value):
-    return value.lower() in ('true', 't', 'yes', 'y', '1')
-
-
 class Config(object):
 
     DEBUG = os.getenv('DEBUG', False)
@@ -70,7 +66,7 @@ class Config(object):
                                                             'request_password_change_id')
     NOTIFY_CONFIRM_PASSWORD_CHANGE_TEMPLATE = os.getenv('NOTIFY_CONFIRM_PASSWORD_CHANGE_TEMPLATE',
                                                             'confirm_password_change_id')
-    SEND_EMAIL_TO_GOV_NOTIFY = _is_true(os.getenv('SEND_EMAIL_TO_GOV_NOTIFY', "False"))
+    SEND_EMAIL_TO_GOV_NOTIFY = os.getenv('SEND_EMAIL_TO_GOV_NOTIFY', False)
 
     REPORT_URL = os.getenv('REPORT_URL')
 
@@ -89,7 +85,8 @@ class Config(object):
     UAA_CLIENT_SECRET = os.getenv('UAA_CLIENT_SECRET')
 
     EMAIL_TOKEN_SALT = os.getenv('EMAIL_TOKEN_SALT', 'aardvark')
-    EMAIL_TOKEN_EXPIRY = int(os.getenv('EMAIL_TOKEN_EXPIRY', 24*60*60))
+    # 24 hours in seconds
+    EMAIL_TOKEN_EXPIRY = int(os.getenv('EMAIL_TOKEN_EXPIRY', '86400'))
 
 
 class DevelopmentConfig(Config):
@@ -146,7 +143,8 @@ class DevelopmentConfig(Config):
     UAA_CLIENT_SECRET = os.getenv('UAA_CLIENT_SECRET', 'password')
 
     EMAIL_TOKEN_SALT = os.getenv('EMAIL_TOKEN_SALT', 'aardvark')
-    EMAIL_TOKEN_EXPIRY = int(os.getenv('EMAIL_TOKEN_EXPIRY', 24*60*60))
+    # 24 hours in seconds
+    EMAIL_TOKEN_EXPIRY = int(os.getenv('EMAIL_TOKEN_EXPIRY', '86400'))
 
 
 class TestingConfig(DevelopmentConfig):

@@ -104,7 +104,7 @@ def change_user_password(email, password):
     user_id = user_response['resources'][0]['id']
 
     payload = {'password': password}
-    url = '{0}/Users/{1}/password'.format(app.config['UAA_SERVICE_URL'], user_id)
+    url = f'{app.config["UAA_SERVICE_URL"]}/Users/{user_id}/password'
     reset_response = requests.get(url, headers=headers, data=payload)
 
     if reset_response.status_code != 200:
