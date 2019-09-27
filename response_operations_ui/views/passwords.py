@@ -115,8 +115,8 @@ def resend_password_email_expired_token(token):
 
 def send_password_change_email(email):
     first_name = uaa_controller.get_first_name_by_email(email)
-    if (first_name != ""):
-        internal_url = app.config['RAS_INTERNAL_WEBSITE_URL']
+    if first_name != "":
+        internal_url = app.config['INTERNAL_WEBSITE_URL']
         verification_url = f'{internal_url}/passwords/reset-password/{token_decoder.generate_email_token(email)}'
 
         personalisation = {
