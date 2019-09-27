@@ -16,6 +16,8 @@ BAD_AUTH_ERROR = 'Unauthorized user credentials'
 
 passwords_bp = Blueprint('passwords_bp', __name__, static_folder='static', template_folder='templates')
 
+url_safe_serializer = URLSafeSerializer(app.config['SECRET_KEY'])
+
 
 @passwords_bp.route('/forgot-password', methods=['GET'])
 def get_forgot_password():
@@ -58,7 +60,7 @@ def get_reset_password(token, form_errors=None):
 
     try:
         duration = app.config['EMAIL_TOKEN_EXPIRY']
-        token_decoder.decode_email_token(token, duration)
+        _ = token_decoder.decode_email_token(token, duration)
     except SignatureExpired:
         logger.warning('Token expired for Response Operations password reset', token=token)
         return render_template('reset-password-expired.html', token=token)
@@ -119,23 +121,25 @@ def send_password_change_email(email):
         internal_url = app.config['INTERNAL_WEBSITE_URL']
         verification_url = f'{internal_url}/passwords/reset-password/{token_decoder.generate_email_token(email)}'
 
+        logger.info('Sending password change email', verification_url=verification_url)
+
         personalisation = {
             'RESET_PASSWORD_URL': verification_url,
             'FIRST_NAME': first_name
         }
 
         try:
-            NotifyController(app.config).request_to_notify(email=email,
-                                                           template_name='confirm_password_change',
-                                                           personalisation=personalisation)
-        except NotifyError:
-            logger.error('Error sending password change request email to Notify Gateway')
+            NotifyController().request_to_notify(email=email,
+                                                 template_name='confirm_password_change',
+                                                 personalisation=personalisation)
+        except NotifyError as e:
+            logger.error('Error sending password change request email to Notify Gateway', msg=e.description)
             return render_template('forgot-password-error.html')
 
-        logger.info('Successfully sent password change request email')
+        logger.info('Successfully sent password change request email', email=url_safe_serializer.dumps(email))
     else:
-        # We stil want to render the template for an email without an account to avoid
+        # We still want to render the template for an email without an account to avoid
         # people fishing for valid emails
-        logger.info('Requested password reset for email not in UAA')
+        logger.info('Requested password reset for email not in UAA', email=url_safe_serializer.dumps(email))
 
     return redirect(url_for('passwords_bp.forgot_password_check_email'))
