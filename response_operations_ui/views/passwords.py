@@ -16,8 +16,6 @@ BAD_AUTH_ERROR = 'Unauthorized user credentials'
 
 passwords_bp = Blueprint('passwords_bp', __name__, static_folder='static', template_folder='templates')
 
-url_safe_serializer = URLSafeSerializer(app.config['SECRET_KEY'])
-
 
 @passwords_bp.route('/forgot-password', methods=['GET'])
 def get_forgot_password():
@@ -116,6 +114,8 @@ def resend_password_email_expired_token(token):
 
 
 def send_password_change_email(email):
+    url_safe_serializer = URLSafeSerializer(app.config['SECRET_KEY'])
+
     first_name = uaa_controller.get_first_name_by_email(email)
     if first_name != "":
         internal_url = app.config['INTERNAL_WEBSITE_URL']
