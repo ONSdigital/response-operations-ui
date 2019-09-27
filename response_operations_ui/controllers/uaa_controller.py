@@ -104,6 +104,7 @@ def change_user_password(email, password):
     reset_response = requests.get(url, headers=headers, data=payload)
 
     if reset_response.status_code != 200:
-        logger.error('Error received from UAA on change password', status_code=reset_response.status_code)
+        logger.error('Error received from UAA on change password', status_code=reset_response.status_code, 
+                                                                   message=reset_response.json().get('message'))
 
     return reset_response.status_code == 200
