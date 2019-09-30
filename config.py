@@ -78,7 +78,7 @@ class DevelopmentConfig(Config):
     DEBUG = os.getenv('DEBUG', True)
     LOGGING_LEVEL = os.getenv('LOGGING_LEVEL', 'DEBUG')
     REDIS_HOST = os.getenv('REDIS_HOST', "localhost")
-    REDIS_PORT = os.getenv('REDIS_PORT', 7379)
+    REDIS_PORT = os.getenv('REDIS_PORT', 6379)
     REDIS_DB = os.getenv('REDIS_DB', 0)
     SECURE_COOKIES = strtobool(os.getenv('SECURE_COOKIES', 'False'))
 

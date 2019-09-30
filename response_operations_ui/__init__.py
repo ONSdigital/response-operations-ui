@@ -50,6 +50,17 @@ def create_app(config_name=None):
     login_manager.init_app(app)
     login_manager.login_view = "sign_in_bp.sign_in"
 
+    @app.context_processor
+    def inject_availability_message():
+
+        redis_avail_msg = app.config['SESSION_REDIS']
+
+        if len(redis_avail_msg.keys('AVAILABILITY_MESSAGE_RES_OPS')) == 1:
+            return {
+                "availability_message": redis_avail_msg.get('AVAILABILITY_MESSAGE_RES_OPS').decode('utf-8')
+            }
+        return {}
+
     @login_manager.user_loader
     def user_loader(user_id):
         return User(user_id)

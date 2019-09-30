@@ -1,9 +1,9 @@
 <div class="skip">
   <a class="skip__link" href="#main">Skip to content</a>
 </div>
-<header class="header header--internal header--thin u-mb-no">
+<header class="header header--internal header--thin u-mb-l">
   <div class="header__top" role="banner">
-    <div class="container container--wide">
+    <div class="container">
       <div class="grid grid--gutterless">
         <div class="grid__col col-6@s">
           <div class="logo">
@@ -30,7 +30,7 @@
     </div>
   </div>
   <div class="header__main">
-    <div class="container container--wide">
+    <div class="container">
       <div class="grid grid--gutterless grid--align-mid u-cf">
         <div class="grid__col col-10@xs col-6@s col-8@m">
           <h1 class="header__title">Survey Data Collection</h1>
@@ -40,7 +40,7 @@
     </div>
   </div>
   <div class="header__nav">
-        <div class="container container--wide">
+        <div class="container">
             <nav class="nav nav--horizontal nav--light nav--main js-main-nav nav--h-m" aria-label="Main menu" id="main-nav" aria-hidden="true">
                 <ul class="nav__list" aria-label="Navigation menu" role="menubar">
                     <li class="nav__item {% if request.path == '/' %} nav__item--active{% endif %}" role="menuitem"><a href="/" class="nav__link">Home</a></li>
@@ -58,3 +58,6 @@
         </div>
     </div>
 </header>
+{% if availability_message %}
+<div class="panel panel--simple panel--warn u-mb-l container">{{ availability_message }}</div>
+{% endif %}
