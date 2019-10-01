@@ -21,6 +21,10 @@ class Config(object):
     SECURE_COOKIES = strtobool(os.getenv('SECURE_COOKIES', 'True'))
     USE_SESSION_FOR_NEXT = True
 
+    RESPONSE_OPERATIONS_UI_HOST = os.getenv('RESPONSE_OPERATIONS_UI_HOST', "http://localhost")
+    RESPONSE_OPERATIONS_UI_PORT = os.getenv('RESPONSE_OPERATIONS_UI_PORT', "8085")
+    INTERNAL_WEBSITE_URL = os.getenv('INTERNAL_WEBSITE_URL', f'{RESPONSE_OPERATIONS_UI_HOST}:{RESPONSE_OPERATIONS_UI_PORT}')
+
     # Zipkin
     ZIPKIN_DISABLE = bool(strtobool(os.getenv("ZIPKIN_DISABLE", "False")))
     ZIPKIN_DSN = os.getenv("ZIPKIN_DSN", None)
@@ -57,6 +61,13 @@ class Config(object):
     PARTY_AUTH = (PARTY_USERNAME, PARTY_PASSWORD)
     PARTY_RESPONDENTS_PER_PAGE = os.getenv('PARTY_RESPONDENTS_PER_PAGE', 25)
 
+    NOTIFY_SERVICE_URL = os.getenv('NOTIFY_SERVICE_URL', 'http://notify-gateway-service/emails/')
+    NOTIFY_REQUEST_PASSWORD_CHANGE_TEMPLATE = os.getenv('NOTIFY_REQUEST_PASSWORD_CHANGE_TEMPLATE',
+                                                            'request_password_change_id')
+    NOTIFY_CONFIRM_PASSWORD_CHANGE_TEMPLATE = os.getenv('NOTIFY_CONFIRM_PASSWORD_CHANGE_TEMPLATE',
+                                                            'confirm_password_change_id')
+    SEND_EMAIL_TO_GOV_NOTIFY = os.getenv('SEND_EMAIL_TO_GOV_NOTIFY', False)
+
     REPORT_URL = os.getenv('REPORT_URL')
 
     SAMPLE_URL = os.getenv('SAMPLE_URL')
@@ -72,6 +83,10 @@ class Config(object):
     UAA_SERVICE_URL = os.getenv('UAA_SERVICE_URL')
     UAA_CLIENT_ID = os.getenv('UAA_CLIENT_ID')
     UAA_CLIENT_SECRET = os.getenv('UAA_CLIENT_SECRET')
+
+    EMAIL_TOKEN_SALT = os.getenv('EMAIL_TOKEN_SALT', 'aardvark')
+    # 24 hours in seconds
+    EMAIL_TOKEN_EXPIRY = int(os.getenv('EMAIL_TOKEN_EXPIRY', '86400'))
 
 
 class DevelopmentConfig(Config):
@@ -127,6 +142,10 @@ class DevelopmentConfig(Config):
     UAA_CLIENT_ID = os.getenv('UAA_CLIENT_ID', 'response_operations')
     UAA_CLIENT_SECRET = os.getenv('UAA_CLIENT_SECRET', 'password')
 
+    EMAIL_TOKEN_SALT = os.getenv('EMAIL_TOKEN_SALT', 'aardvark')
+    # 24 hours in seconds
+    EMAIL_TOKEN_EXPIRY = int(os.getenv('EMAIL_TOKEN_EXPIRY', '86400'))
+
 
 class TestingConfig(DevelopmentConfig):
     """Configuration used for testing.  The uaa public and private keys in this block are used ONLY for
@@ -138,6 +157,7 @@ class TestingConfig(DevelopmentConfig):
     WTF_CSRF_ENABLED = False
     SESSION_TYPE = "filesystem"
     SESSION_PERMANENT = False
+    SEND_EMAIL_TO_GOV_NOTIFY = True
     UAA_PUBLIC_KEY = '''-----BEGIN PUBLIC KEY-----
 MFswDQYJKoZIhvcNAQEBBQADSgAwRwJAeeLysb2I2n86Ya+W3vqCxUM1j5sRdlFN
 U9yf2b38ppt3rf2xHJYTfjSvezXOMEJusFbhH9LeH4V8kr4k4ZmdewIDAQAB
@@ -152,4 +172,5 @@ thOVFxQqTwTNAiAFBhCODwFr0Ffr8vAs2UFySsLfvCnoonfQgNsClggisQIgIGEJ
 Z5VVFymXN2n+A6UeWAnuO8/E1inhk99dBzKEGdw=
 -----END RSA PRIVATE KEY-----'''
     SECRET_KEY = 'sekrit!'
-
+    SECURITY_USER_NAME = 'admin'
+    SECURITY_USER_PASSWORD = 'secret'
