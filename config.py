@@ -172,5 +172,5 @@ thOVFxQqTwTNAiAFBhCODwFr0Ffr8vAs2UFySsLfvCnoonfQgNsClggisQIgIGEJ
 Z5VVFymXN2n+A6UeWAnuO8/E1inhk99dBzKEGdw=
 -----END RSA PRIVATE KEY-----'''
     SECRET_KEY = 'sekrit!'
-    SECURITY_USER_NAME = 'username'
-    SECURITY_USER_PASSWORD = 'password'
+    SECURITY_USER_NAME = 'admin'
+    SECURITY_USER_PASSWORD = 'secret'
