@@ -26,8 +26,8 @@ class TestTokenDecoder(unittest.TestCase):
 
             time.sleep(2)
 
-            with(self.assertRaises(SignatureExpired)):
+            with self.assertRaises(SignatureExpired):
                 decode_email_token(email_token, 1)
 
-            with(self.assertRaises(BadSignature)):
+            with self.assertRaises(BadSignature):
                 decode_email_token("absoluterubbish")

@@ -37,7 +37,7 @@ def post_forgot_password():
 
 @passwords_bp.route('/forgot-password/check-email', methods=['GET'])
 def forgot_password_check_email():
-    encoded_email = request.args.get('email', None)
+    encoded_email = request.args.get('email')
 
     if encoded_email is None:
         logger.error('No email parameter supplied')

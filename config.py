@@ -157,6 +157,7 @@ class TestingConfig(DevelopmentConfig):
     WTF_CSRF_ENABLED = False
     SESSION_TYPE = "filesystem"
     SESSION_PERMANENT = False
+    SEND_EMAIL_TO_GOV_NOTIFY = True
     UAA_PUBLIC_KEY = '''-----BEGIN PUBLIC KEY-----
 MFswDQYJKoZIhvcNAQEBBQADSgAwRwJAeeLysb2I2n86Ya+W3vqCxUM1j5sRdlFN
 U9yf2b38ppt3rf2xHJYTfjSvezXOMEJusFbhH9LeH4V8kr4k4ZmdewIDAQAB
@@ -171,3 +172,5 @@ thOVFxQqTwTNAiAFBhCODwFr0Ffr8vAs2UFySsLfvCnoonfQgNsClggisQIgIGEJ
 Z5VVFymXN2n+A6UeWAnuO8/E1inhk99dBzKEGdw=
 -----END RSA PRIVATE KEY-----'''
     SECRET_KEY = 'sekrit!'
+    SECURITY_USER_NAME = 'username'
+    SECURITY_USER_PASSWORD = 'password'
