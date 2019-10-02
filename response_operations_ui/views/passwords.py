@@ -142,4 +142,4 @@ def send_password_change_email(email):
         # people fishing for valid emails
         logger.info('Requested password reset for email not in UAA', email=url_safe_serializer.dumps(email))
 
-    return redirect(url_for('passwords_bp.forgot_password_check_email'))
+    return redirect(url_for('passwords_bp.forgot_password_check_email', email=url_safe_serializer.dumps(email)))
