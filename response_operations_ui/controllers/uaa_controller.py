@@ -75,7 +75,7 @@ def get_user_by_email(email, access_token=None):
 
     headers = {'Content-Type': 'application/json',
                'Accept': 'application/json',
-               'Authorization': 'Bearer {}'.format(access_token)}
+               'Authorization': f'Bearer {access_token}'}
 
     url = f"{app.config['UAA_SERVICE_URL']}/Users?filter=email+eq+%22{email}%22"
     response = requests.get(url, headers=headers)
@@ -95,7 +95,7 @@ def get_first_name_by_email(email):
 def retrieve_user_code(access_token, username):
     headers = {'Content-Type': 'application/json',
                'Accept': 'application/json',
-               'Authorization': 'Bearer {}'.format(access_token)}
+               'Authorization': f'Bearer {access_token}'}
 
     url = f"{app.config['UAA_SERVICE_URL']}/password_resets"
     response = requests.post(url, headers=headers, data=username)
@@ -111,7 +111,7 @@ def retrieve_user_code(access_token, username):
 def change_password(access_token, user_code, new_password):
     headers = {'Content-Type': 'application/json',
                'Accept': 'application/json',
-               'Authorization': 'Bearer {}'.format(access_token)}
+               'Authorization': f'Bearer {access_token}'}
 
     payload = {
         "code": user_code,
