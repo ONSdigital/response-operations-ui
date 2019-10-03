@@ -69,10 +69,13 @@ def login_admin():
         abort(response.status_code)
 
 
-def get_user_by_email(email):
+def get_user_by_email(email, access_token=None):
+    if access_token is None:
+        access_token = login_admin()
+
     headers = {'Content-Type': 'application/json',
                'Accept': 'application/json',
-               'Authorization': 'Bearer {}'.format(login_admin())}
+               'Authorization': 'Bearer {}'.format(access_token)}
 
     url = f"{app.config['UAA_SERVICE_URL']}/Users?filter=email+eq+%22{email}%22"
     response = requests.get(url, headers=headers)
@@ -109,7 +112,7 @@ def change_password(access_token, user_code, new_password):
     headers = {'Content-Type': 'application/json',
                'Accept': 'application/json',
                'Authorization': 'Bearer {}'.format(access_token)}
-    
+
     payload = {
         "code": user_code,
         "new_password": new_password
@@ -121,11 +124,8 @@ def change_password(access_token, user_code, new_password):
 
 def change_user_password(email, password):
     access_token = login_admin()
-    headers = {'Content-Type': 'application/json',
-               'Accept': 'application/json',
-               'Authorization': 'Bearer {}'.format(access_token)}
 
-    user_response = get_user_by_email(email)
+    user_response = get_user_by_email(email, access_token)
     if user_response is None:
         return False
     username = user_response['resources'][0]['userName']
