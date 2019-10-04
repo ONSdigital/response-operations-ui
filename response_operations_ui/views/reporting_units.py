@@ -80,11 +80,11 @@ def view_reporting_unit(ru_ref):
 
     breadcrumbs = [
         {
-            "title": "Reporting units",
-            "link": "/reporting-units"
+            "text": "Reporting units",
+            "url": "/reporting-units"
         },
         {
-            "title": f"{ru_ref}"
+            "text": f"{ru_ref}"
         }
     ]
     return render_template('reporting-unit.html', ru_ref=ru_ref, ru=reporting_unit,
@@ -167,7 +167,7 @@ def edit_contact_details(ru_ref, respondent_id):
 @login_required
 def search_reporting_units():
     form = SearchForm(request.form)
-    breadcrumbs = [{"title": "Reporting units"}]
+    breadcrumbs = [{"text": "Reporting units"}]
     business_list = None
 
     if form.validate_on_submit():

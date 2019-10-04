@@ -106,3 +106,6 @@ minimised/
 *.floo
 *.flooignore
 
+# Ignore Design-System templates
+templates/components
+templates/layout

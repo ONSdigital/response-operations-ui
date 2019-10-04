@@ -18,7 +18,7 @@ respondent_bp = Blueprint('respondent_bp', __name__,
 @login_required
 def respondent_search():
     form = SearchForm()
-    breadcrumbs = [{"title": "Respondents"}]
+    breadcrumbs = [{"text": "Respondents"}]
     response = None
 
     if form.validate_on_submit():
@@ -41,11 +41,11 @@ def respondent_details(respondent_id):
 
     breadcrumbs = [
         {
-            "title": "Respondents",
-            "link": "/respondents"
+            "text": "Respondents",
+            "url": "/respondents"
         },
         {
-            "title": f"{respondent['emailAddress']}"
+            "text": f"{respondent['emailAddress']}"
         }
     ]
 

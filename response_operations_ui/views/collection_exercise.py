@@ -65,15 +65,15 @@ def view_collection_exercise(short_name, period):
     ce_details = build_collection_exercise_details(short_name, period)
     breadcrumbs = [
         {
-            "title": "Surveys",
-            "link": "/surveys"
+            "text": "Surveys",
+            "url": "/surveys"
         },
         {
-            "title": f"{ce_details['survey']['surveyRef']} {ce_details['survey']['shortName']}",
-            "link": f"/surveys/{ce_details['survey']['shortName'].replace(' ', '')}"
+            "text": f"{ce_details['survey']['surveyRef']} {ce_details['survey']['shortName']}",
+            "url": f"/surveys/{ce_details['survey']['shortName'].replace(' ', '')}"
         },
         {
-            "title": f"{ce_details['collection_exercise']['exerciseRef']}"
+            "text": f"{ce_details['collection_exercise']['exerciseRef']}"
         }
     ]
 
