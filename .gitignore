@@ -107,5 +107,5 @@ minimised/
 *.flooignore
 
 # Ignore Design-System templates
-templates/components
-templates/layout
+response_operations_ui/templates/components
+response_operations_ui/templates/layout
