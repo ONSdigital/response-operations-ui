@@ -104,7 +104,7 @@ def post_reset_password(token):
 
 @passwords_bp.route('/reset-password/confirmation', methods=['GET'])
 def reset_password_confirmation():
-    return render_template('passwords/reset-password-confirmation.html')
+    return render_template('reset-password-confirmation.html')
 
 
 @passwords_bp.route('/resend-password-email-expired-token/<token>', methods=['GET'])
@@ -142,4 +142,4 @@ def send_password_change_email(email):
         # people fishing for valid emails
         logger.info('Requested password reset for email not in UAA', email=url_safe_serializer.dumps(email))
 
-    return redirect(url_for('passwords_bp.forgot_password_check_email'))
+    return redirect(url_for('passwords_bp.forgot_password_check_email', email=url_safe_serializer.dumps(email)))

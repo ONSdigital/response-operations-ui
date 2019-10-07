@@ -1,5 +1,5 @@
 import logging
-from json import JSONDecodeError
+from json import JSONDecodeError, dumps
 
 import requests
 from flask import abort, current_app as app
@@ -69,10 +69,13 @@ def login_admin():
         abort(response.status_code)
 
 
-def get_user_by_email(email):
+def get_user_by_email(email, access_token=None):
+    if access_token is None:
+        access_token = login_admin()
+
     headers = {'Content-Type': 'application/json',
                'Accept': 'application/json',
-               'Authorization': 'Bearer {}'.format(login_admin())}
+               'Authorization': f'Bearer {access_token}'}
 
     url = f"{app.config['UAA_SERVICE_URL']}/Users?filter=email+eq+%22{email}%22"
     response = requests.get(url, headers=headers)
@@ -89,19 +92,50 @@ def get_first_name_by_email(email):
     return ""
 
 
-def change_user_password(email, password):
+def retrieve_user_code(access_token, username):
     headers = {'Content-Type': 'application/json',
                'Accept': 'application/json',
-               'Authorization': 'Bearer {}'.format(login_admin())}
+               'Authorization': f'Bearer {access_token}'}
 
-    user_response = get_user_by_email(email)
+    url = f"{app.config['UAA_SERVICE_URL']}/password_resets"
+    response = requests.post(url, headers=headers, data=username)
+
+    if response.status_code != 201:
+        logger.error('Error received when asking UAA for a password reset code',
+                     status_code=response.status_code)
+        return
+
+    return response.json().get('code')
+
+
+def change_password(access_token, user_code, new_password):
+    headers = {'Content-Type': 'application/json',
+               'Accept': 'application/json',
+               'Authorization': f'Bearer {access_token}'}
+
+    payload = {
+        "code": user_code,
+        "new_password": new_password
+    }
+
+    url = f"{app.config['UAA_SERVICE_URL']}/password_change"
+    return requests.post(url, data=dumps(payload), headers=headers)
+
+
+def change_user_password(email, password):
+    access_token = login_admin()
+
+    user_response = get_user_by_email(email, access_token)
     if user_response is None:
         return False
-    user_id = user_response['resources'][0]['id']
+    username = user_response['resources'][0]['userName']
 
-    payload = {'password': password}
-    url = f'{app.config["UAA_SERVICE_URL"]}/Users/{user_id}/password'
-    reset_response = requests.get(url, headers=headers, data=payload)
+    password_reset_code = retrieve_user_code(access_token=access_token, username=username)
+    if password_reset_code is None:
+        return False
+
+    reset_response = change_password(access_token=access_token, user_code=password_reset_code,
+                                     new_password=password)
 
     if reset_response.status_code != 200:
         logger.error('Error received from UAA on change password', status_code=reset_response.status_code,
