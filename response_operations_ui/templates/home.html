@@ -1,17 +1,21 @@
 {% extends "layouts/base.html" %}
+{% from "components/lists/_macro.njk" import onsList %}
 
-{% block page_title %} Home | Survey Data Collection {% endblock %}
+{% set page_title = "Home" %}
 
 {% block main %}
-
-<div class="grid">
-  <div class="grid__col col-12@m">
-    <div role="main" id="main" class="page__main">
-      <ul class="u-pt-l">
-        <li><a name="surveys-link" href="/surveys/">View list of business surveys</a></li>
-      </ul>
+  <div class="grid">
+    <div class="grid__col col-8@m u-mt-xl">
+      {{
+        onsList({
+            "itemsList": [
+              {
+                "url": "/surveys/",
+                "text": "View list of business surveys"
+              }
+            ]
+        }) 
+      }}
     </div>
   </div>
-</div>
-
 {% endblock main %}

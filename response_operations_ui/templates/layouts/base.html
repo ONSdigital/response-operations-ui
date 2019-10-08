@@ -12,16 +12,18 @@
     {% endassets %}
 {% endblock %}
 
+{# {% set containerClasses = "container--wide" %} #}
 {% set page = { 
-    "header": {
-      "title": "Survey Data Collection",
-      "classes": "header--internal header--thin",
-      "logo": "ons-logo-white"
-    },
-    "toggleButton": {
-      "text": "Menu",
-      "ariaLabel": "Toggle main navigation"
-    }
+  "title": page_title + " | Survey Data Collection" if page_title else "Survey Data Collection",
+  "header": {
+    "title": "Survey Data Collection",
+    "classes": "header--internal header--thin",
+    "logo": "ons-logo-white"
+  },
+  "toggleButton": {
+    "text": "Menu",
+    "ariaLabel": "Toggle main navigation"
+  }
 } %}
 
 {% include 'layouts/configs/navigation.html' %}

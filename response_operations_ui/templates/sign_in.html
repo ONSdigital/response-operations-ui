@@ -1,5 +1,4 @@
 {% extends "layouts/base.html" %}
-
 {% from "components/fieldset/_macro.njk" import onsFieldset %}
 {% from "components/input/_macro.njk" import onsInput %}
 {% from "components/panel/_macro.njk" import onsPanel %}
@@ -7,12 +6,11 @@
 {% from "components/lists/_macro.njk" import onsList %}
 {% from "components/button/_macro.njk" import onsButton %}
 
-{% block page_title %} Sign-In | Survey Data Collection {% endblock %}
+{% set page_title = "Sign-In" %}
 
 {% block main %}
-
     <div class="grid">
-        <div class="grid__col col-6@m u-mt-l">
+        <div class="grid__col col-8@m u-mt-l">
             {% with messages = get_flashed_messages(with_categories=true) %}
                 {% if messages %}
                     {% for category, message in messages %}
@@ -79,10 +77,10 @@
                     {% if failed_authentication or form.username.errors | length > 0 %}
                         {% set error = { "text": "Username is required" } %}
                     {% endif %}
-                        {%- call onsFieldset({
-                            "legend": "Sign in",
-                            "legendClasses": "u-vh"
-                        }) -%}
+                    {%- call onsFieldset({
+                        "legend": "Sign in",
+                        "legendClasses": "u-vh"
+                    }) -%}
                         {{
                             onsInput({
                                 "id": "username",
@@ -133,5 +131,4 @@
             </section>
         </div>
     </div>
-
 {% endblock main %}
