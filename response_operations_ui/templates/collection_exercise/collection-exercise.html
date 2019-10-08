@@ -1,0 +1,27 @@
+{% extends "layouts/base.html" %}
+{% block page_title %}{{survey.surveyRef}} {{survey.shortName}} {{ce.exerciseRef}} | Surveys | Survey Data Collection{% endblock %}
+
+{% block main %}
+<div role="main" id="main" class="page__main">
+
+    {% include 'collection_exercise/ce-success-panel.html' %}
+    {% include 'collection_exercise/ce-handle-errors.html' %}
+
+    {% include 'collection_exercise/ce-header-section.html' %}
+
+    {% call grid.container() %}
+        {% call grid.column(['col-6@l']) %}
+        {% include 'partials/error-box.html' %}
+        {% include 'collection_exercise/ce-dates-section.html' %}
+        {% include 'collection_exercise/ce-sample-section.html' %}
+        {% include 'collection_exercise/ce-instrument-section.html' %}
+        {% endcall %}
+
+        {% call grid.column(['col-1@l']) %}{% endcall %}
+
+        {% call grid.column(['col-5@l']) %}
+        {% include 'collection_exercise/ce-reference-information.html' %}
+        {% endcall %}
+    {% endcall %}
+</div>
+{% endblock %}

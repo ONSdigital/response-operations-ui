@@ -4,9 +4,9 @@
 {% block main %}
 
 
-{% include 'partials/info-box.html' %}
+{% include 'partials/flashed-messages.html' %}
 
-<h1 id="RU_NAME" class="jupiter">{{ ru.name }}</h1>
+<h1 id="RU_NAME" class="u-fs-xl">{{ ru.name }}</h1>
 
 <dl id="RU_DETAILS" class="item-headlines">
   <dt class="item-headlines-term">
@@ -25,12 +25,12 @@
   {% endif %}
 </dl>
 
-<h2 class="saturn">Surveys</h2>
+<h2 class="u-fs-l">Surveys</h2>
 <div class="grid">
   <section class="grid__col col-12@l ru-surveys">
     {% for survey in surveys %}
     <div class="ru-survey data-panel" id="survey-{{survey.shortName}}" name="associated-surveys">
-      <h3 name="survey-titles" class="saturn data-panel-header">
+      <h3 name="survey-titles" class="u-fs-l data-panel-header">
         <button class='data-panel-header__title'></button>
         {{ survey.surveyRef }} {{ survey.shortName }}
       </h3>
@@ -38,7 +38,7 @@
       <div class="data-panel-body">
         <div class="ru-survey-ces">
 
-          <h4 class="neptune">Collection exercises</h4>
+          <h4 class="u-fs-m">Collection exercises</h4>
 
           <table name="tbl-ce-for-survey" class="table table__dense" summary="Collection exercises for {{survey.shortName}} for {{ ru.sampleUnitRef }}">
             <thead class="table--head u-vhx">
@@ -61,7 +61,7 @@
               </tr>
             </thead>
             <tbody>
-              {% for ce in survey.collection_exercises[:4] %}
+              {% for ce in survey.collection_exercises[:12] %}
               <tr class="table--row">
                 <td name="tbl-ce-period" class="table--cell">
                   {{ ce.exerciseRef }}
@@ -73,36 +73,38 @@
                   {{ ce.trading_as }} &#160;
                 </td>
 
-                <td name="tbl-ce-company-region" class="table--cell">
-                  {{ ce.companyRegion }}
-                </td>
-                <td name="tbl-ce-status" class="table--cell">
-                  {{ ce.responseStatus }}
-                  {% if ce.statuses|length > 0 %}
-                  &nbsp;<a href="{{ url_for('case_bp.get_response_statuses', ru_ref=ru.sampleUnitRef, survey=survey.shortName, period=ce.exerciseRef) }}">Change</a>
-                  {% endif %}
-                </td>
-              </tr>
-              {% endfor %}
-            </tbody>
-          </table>
-        </div>
+              <td name="tbl-ce-company-region" class="table--cell">
+                {{ ce.companyRegion }}
+              </td>
+              <td name="tbl-ce-status" class="table--cell">
+                {{ ce.responseStatus }}
+                {% if ce.responseStatus in ['Not started', 'In progress']  %}
+              &nbsp;   <a href="{{ url_for('case_bp.get_response_statuses', ru_ref=ru.sampleUnitRef, survey=survey.shortName, period=ce.exerciseRef) }}">Change</a>
+                {% elif ce.responseStatus in ['Completed', 'Completed by phone'] %}
+                  <a href="{{ url_for('case_bp.get_response_statuses', ru_ref=ru.sampleUnitRef, survey=survey.shortName, period=ce.exerciseRef) }}">View</a>
+                {% endif %}
+              </td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
 
         <div class="ru-survey-respondents u-pt-s">
-          <h4 class="neptune">Respondents</h4>
+          <h4 class="u-fs-m">Respondents</h4>
 
           <div class="ru-survey-enrolment-code u-pb-s" name="enrolment-code">
             {% if survey.case.activeIAC %}
             <div id="unused-enrolment-code">
               Unused enrolment code:
-              <code class="mars u-ml-s" id="unused-enrolment-code-{{survey.shortName}}">{{ survey.case.iac }}</code>
+              <code class="u-fs-r u-ml-s" id="unused-enrolment-code-{{survey.shortName}}">{{ survey.case.iac }}</code>
             </div>
             {% else %}
             <a href="{{ url_for('reporting_unit_bp.generate_new_enrolment_code', case_id=survey.case.id,
                                 collection_exercise_id=survey.collection_exercises[-1]['id'], ru_name=ru.name,
                                 ru_ref=ru.sampleUnitRef, trading_as=ru.trading_as, survey_ref=survey.surveyRef,
                                 survey_name=survey.shortName) }}"
-              id="generate-new-code">
+              id="generate-new-code-{{survey.shortName}}">
               Generate new enrolment code
             </a>
             {% endif %}
@@ -170,22 +172,37 @@
                 </dl>
               </td>
               <td name="tbl-respondent-status" class="table--cell">
-                {{ respondent.status.title() }}
+                <div id="account-status">
+                  {% if respondent.status  == 'SUSPENDED' %}
+                    Locked
+                  {% else %}
+                    {{ respondent.status.title() }}
+                  {% endif %}
+                </div>
+                <div>
+                  {% if respondent.status == 'SUSPENDED' %}
+                  <a id="respondent-unlock-link" href="{{ url_for('reporting_unit_bp.confirm_change_respondent_status', ru_ref=ru_ref, party_id=respondent.id, tab='reporting_units', change_flag='ACTIVE') }}">Unlock</a>
+                  {% endif %}
+                </div>
               </td>
 
               <td name="tbl-enrolment-status" class="table--cell">
                 <div id="enrolment-status">
                   {{ respondent.enrolmentStatus.title() }}
                 </div>
-                
                 <div>
                   {% if respondent.enrolmentStatus == 'ENABLED' %}
                   <a href="{{ url_for('reporting_unit_bp.confirm_change_enrolment_status', ru_ref=ru.sampleUnitRef, ru_name=ru.name, survey_id=survey.id,
                                       survey_name=survey.shortName, respondent_id=respondent.id, respondent_first_name=respondent.firstName,
-                                      respondent_last_name=respondent.lastName, business_id=ru.id, trading_as=ru.trading_as, change_flag='DISABLED')}}"
+                                      respondent_last_name=respondent.lastName, business_id=ru.id, trading_as=ru.trading_as, change_flag='DISABLED', tab='reporting_units')}}"
                     id="change-enrolment-status">Disable</a>
                   {% elif respondent.enrolmentStatus == 'PENDING' %}
                   <a href="{{ url_for('reporting_unit_bp.view_resend_verification', ru_ref=ru_ref, party_id=respondent.id) }}">Re-send verification email</a>
+                  {% elif respondent.enrolmentStatus == 'DISABLED' %}
+                  <a href="{{ url_for('reporting_unit_bp.confirm_change_enrolment_status', ru_ref=ru.sampleUnitRef, ru_name=ru.name, survey_id=survey.id,
+                                      survey_name=survey.shortName, respondent_id=respondent.id, respondent_first_name=respondent.firstName,
+                                      respondent_last_name=respondent.lastName, business_id=ru.id, trading_as=ru.trading_as, change_flag='ENABLED', tab='reporting_units')}}"
+                    id="change-enrolment-status">Re-enable</a>
                   {% endif %}
                 </div>
               </td>

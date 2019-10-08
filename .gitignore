@@ -2,7 +2,7 @@ node_modules/
 .idea
 allure-results
 coverage
-docs
+.nyc_output
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
@@ -109,3 +109,8 @@ minimised/
 # Ignore Design-System templates
 response_operations_ui/templates/components
 response_operations_ui/templates/layout
+*.css
+*.map
+
+!main.css
+!main.css.map

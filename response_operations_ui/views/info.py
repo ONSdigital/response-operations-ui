@@ -1,5 +1,5 @@
-from json import JSONDecodeError, loads
 import logging
+from json import JSONDecodeError, loads
 from pathlib import Path
 
 from flask import Blueprint, make_response, jsonify, session
@@ -24,7 +24,7 @@ def get_info():
 
     info = {
         "name": 'response-operations-ui',
-        "version": '0.7.2',
+        "version": '1.1.0',
     }
     info = {**_health_check, **info}
 

@@ -2,11 +2,14 @@
 {% block page_title %}Respondents | Survey Data Collection{% endblock %}
 
 {% block main %}
+
+{% include 'partials/flashed-messages.html' %}
+
     <div role="main" id="main" class="page__main">
         <div class="grid">
             <section class="grid__col col-12@l u-mb-xl respondent-account-details">
 
-                    <h1 class="jupiter" id="respondent-name">{{ respondent.firstName }} {{ respondent.lastName }}</h1>
+                    <h1 class="u-fs-xl" id="respondent-name">{{ respondent.firstName }} {{ respondent.lastName }}</h1>
                     <dl class="description-list">
                         <dt>
                             Email
@@ -19,7 +22,8 @@
                             New Email
                         </dt>
                         <dd id="respondent-pending-email" name="tbl-respondent-pending-email">
-                            {{ respondent.pendingEmailAddress }}
+                            {{ respondent.pendingEmailAddress }} <br>
+                          <a id="resend-verification-email-btn" href="{{ url_for('respondent_bp.view_resend_verification', respondent_id=respondent.id) }}">Re-send verification email</a>
                         </dd>
                         {% endif %}
                         <dt>
@@ -28,11 +32,18 @@
                         <dd id="respondent-telephone" name="tbl-respondent-phone">
                             {{ respondent.telephone }}
                         </dd>
+                        <dd>
+                          <a id="edit-contact-details" href="{{ url_for('respondent_bp.view_contact_details', respondent_id=respondent.id)}}">Edit Contact Details</a>
+                        </dd>
                         <dt>
                             Account
                         </dt>
                         <dd id="respondent-account-status">
-                            {{ respondent.status }}
+                            {% if respondent.status  == 'Suspended' %} Locked {% else %} {{ respondent.status }} {% endif %}
+                          <br>
+                          {% if respondent.status == 'Created' %}<a id="resend-verification-email-btn" href="{{ url_for('respondent_bp.view_resend_verification', respondent_id=respondent.id) }}">Re-send verification email</a>
+                          {% elif respondent.status == 'Suspended' %}<a id="respondent-unlock-link" href="{{ url_for('respondent_bp.confirm_change_respondent_status', party_id=respondent.id, tab='respondents', change_flag='ACTIVE') }}">Unlock</a>
+                          {% endif %}
                         </dd>
                     </dl>
             </section>
@@ -41,7 +52,7 @@
             <div class="grid">
             <section class="grid__col col-12@l respondent-account-enrolments">
 
-                <h2 class="saturn">Enrolments</h2>
+                <h2 class="u-fs-l">Enrolments</h2>
 
                 <div class="respondent-account-enrolment data-panelx">
 
@@ -85,6 +96,17 @@
                                       </td>
                                       <td class="table--cell">
                                         {{ enrolment['status'].title() }}
+                                        {% if enrolment['status'] == 'ENABLED' %}
+                                        <a href="{{ url_for('reporting_unit_bp.confirm_change_enrolment_status', ru_ref=enrolment['business']['sampleUnitRef'], ru_name=enrolment['business']['name'], survey_id=enrolment['survey']['id'],
+                                                            survey_name=enrolment['survey']['shortName'], respondent_id=respondent.id, respondent_first_name=respondent.firstName,
+                                                            respondent_last_name=respondent.lastName, business_id=enrolment['business']['id'], trading_as=enrolment['business']['trading_as'], change_flag='DISABLED', tab='respondents')}}"
+                                           id="change-enrolment-status">Disable</a>
+                                        {% elif enrolment['status'] == 'DISABLED' %}
+                                        <a href="{{ url_for('reporting_unit_bp.confirm_change_enrolment_status', ru_ref=enrolment['business']['sampleUnitRef'], ru_name=enrolment['business']['name'], survey_id=enrolment['survey']['id'],
+                                                            survey_name=enrolment['survey']['shortName'], respondent_id=respondent.id, respondent_first_name=respondent.firstName,
+                                                            respondent_last_name=respondent.lastName, business_id=enrolment['business']['id'], trading_as=enrolment['business']['trading_as'], change_flag='ENABLED', tab='respondents')}}"
+                                          id="change-enrolment-status">Re-enable</a>
+                                        {% endif %}
                                       </td>
                                     </tr>
                                 {% endfor %}

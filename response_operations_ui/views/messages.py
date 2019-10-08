@@ -1,18 +1,20 @@
-from datetime import datetime
-from distutils.util import strtobool
 import json
 import logging
+import math
+from datetime import datetime
+from distutils.util import strtobool
 
-from flask import Blueprint, current_app as app, flash, g, Markup, render_template, request, redirect, session, url_for
+from flask import Blueprint, flash, g, Markup, render_template, request, redirect, session, url_for
 from flask_login import login_required, current_user
-from flask_paginate import get_parameter, Pagination
+from flask_paginate import Pagination
 from structlog import wrap_logger
 
-from response_operations_ui.common.dates import get_formatted_date, convert_to_bst
+from config import FDI_LIST
+from response_operations_ui.common.dates import get_formatted_date, localise_datetime
 from response_operations_ui.common.mappers import format_short_name
-from response_operations_ui.common.surveys import Surveys, FDISurveys
 from response_operations_ui.controllers import message_controllers, survey_controllers
-from response_operations_ui.controllers.survey_controllers import get_survey_short_name_by_id, get_survey_ref_by_id
+from response_operations_ui.controllers.survey_controllers import get_survey_short_name_by_id, get_survey_ref_by_id, \
+    get_grouped_surveys_list
 from response_operations_ui.exceptions.exceptions import ApiError, InternalError, NoMessagesError
 from response_operations_ui.forms import SecureMessageForm
 
@@ -45,6 +47,8 @@ def create_message():
         try:
             message_controllers.send_message(_get_message_json(form))
             survey = request.form.get("hidden_survey")
+            if survey in FDI_LIST:
+                survey = 'FDI'
             flash("Message sent.")
             return redirect(url_for('messages_bp.view_selected_survey', selected_survey=survey))
         except (ApiError, InternalError):
@@ -70,9 +74,11 @@ def view_conversation(thread_id):
 
     thread_conversation = message_controllers.get_conversation(thread_id)
     refined_thread = [_refine(message) for message in reversed(thread_conversation['messages'])]
+    latest_message = refined_thread[-1]
+    my_conversations = request.args.get('my_conversations', default='false')
 
     try:
-        closed_time = convert_to_bst(datetime.strptime(thread_conversation['closed_at'], "%Y-%m-%dT%H:%M:%S.%f"))
+        closed_time = localise_datetime(datetime.strptime(thread_conversation['closed_at'], "%Y-%m-%dT%H:%M:%S.%f"))
         closed_at = closed_time.strftime("%d/%m/%Y" + " at %H:%M")
     except KeyError:
         closed_at = None
@@ -85,8 +91,8 @@ def view_conversation(thread_id):
             {"text": "Unavailable"}
         ]
 
-    if refined_thread[-1]['unread']:
-        message_controllers.remove_unread_label(refined_thread[-1]['message_id'])
+    if latest_message['unread'] and _can_mark_as_unread(latest_message):
+        message_controllers.remove_unread_label(latest_message['message_id'])
 
     page = request.args.get('page')
     form = SecureMessageForm(request.form)
@@ -108,13 +114,13 @@ def view_conversation(thread_id):
         except (ApiError, InternalError):
             form = _repopulate_form_with_submitted_data(form)
             form.errors['sending'] = ["Message failed to send, something has gone wrong with the website."]
-            return render_template('conversation-view.html',
+            return render_template('conversation-view/conversation-view.html',
                                    form=form,
                                    breadcrumbs=breadcrumbs,
                                    messages=refined_thread,
                                    error="Message send failed")
 
-    return render_template("conversation-view.html",
+    return render_template("conversation-view/conversation-view.html",
                            breadcrumbs=breadcrumbs,
                            messages=refined_thread,
                            form=form,
@@ -122,19 +128,40 @@ def view_conversation(thread_id):
                            page=page,
                            closed_at=closed_at,
                            thread_data=thread_conversation,
-                           close_feature_enabled=app.config['FEATURE_ENABLE_CLOSE_CONVERSATION'])
+                           show_mark_unread=_can_mark_as_unread(latest_message),
+                           my_conversations=my_conversations)
+
+
+@messages_bp.route('/mark_unread/<message_id>', methods=['GET'])
+@login_required
+def mark_message_unread(message_id):
+
+    msg_from = request.args.get('from', default="", type=str)
+    msg_to = request.args.get('to', default="", type=str)
+    my_conversations = request.args.get('my_conversations', default='false')
+
+    message_controllers.add_unread_label(message_id)
+
+    marked_unread_message = f"Message from {msg_from} to {msg_to} marked unread"
+
+    return _view_select_survey(marked_unread_message, my_conversations)
 
 
 @messages_bp.route('/', methods=['GET'])
 @login_required
 def view_select_survey():
+    return _view_select_survey()
+
+
+def _view_select_survey(marked_unread_message="", my_conversations="false"):
     try:
         selected_survey = session["messages_survey_selection"]
     except KeyError:
         return redirect(url_for("messages_bp.select_survey"))
 
     return redirect(url_for("messages_bp.view_selected_survey",
-                            selected_survey=selected_survey))
+                            selected_survey=selected_survey, page=request.args.get('page'),
+                            flash_message=marked_unread_message, my_conversations=my_conversations))
 
 
 @messages_bp.route('/select-survey', methods=['GET', 'POST'])
@@ -164,29 +191,45 @@ def select_survey():
 @messages_bp.route('/<selected_survey>', methods=['GET'])
 @login_required
 def view_selected_survey(selected_survey):
-    formatted_survey = format_short_name(selected_survey)
+    displayed_short_name = format_short_name(selected_survey)
     session['messages_survey_selection'] = selected_survey
     breadcrumbs = [{"text": formatted_survey + " Messages"}]
     try:
-        if selected_survey == Surveys.FDI.value:
+        if selected_survey == 'FDI':
             survey_id = _get_FDI_survey_id()
         else:
             survey_id = _get_survey_id(selected_survey)
 
-        page = request.args.get(get_parameter('page'), type=int, default=1)
-        limit = request.args.get(get_parameter('limit'), type=int, default=10)
+        page = request.args.get('page', default=1, type=int)
+        limit = request.args.get('limit', default=10, type=int)
+        flash_message = request.args.get('flash_message', default="", type=str)
 
         is_closed = request.args.get('is_closed', default='false')
+        my_conversations = request.args.get('my_conversations', default='false')
+
+        new_respondent_conversations = request.args.get('new_respondent_conversations', default='false')
+
+        thread_count = message_controllers.get_conversation_count(
+            {'survey': survey_id,
+             'is_closed': is_closed,
+             'my_conversations': my_conversations,
+             'new_respondent_conversations': new_respondent_conversations})
+
+        recalculated_page = _calculate_page(page, limit, thread_count)
+
+        if recalculated_page != page:
+            return redirect(url_for("messages_bp.view_selected_survey",
+                                    selected_survey=selected_survey, page=recalculated_page))
 
         params = {
             'survey': survey_id,
             'page': page,
             'limit': limit,
-            'is_closed': is_closed
+            'is_closed': is_closed,
+            'my_conversations': my_conversations,
+            'new_respondent_conversations': new_respondent_conversations
         }
 
-        thread_count = message_controllers.get_conversation_count({'survey': survey_id,
-                                                                   'is_closed': is_closed})
         messages = [_refine(message) for message in message_controllers.get_thread_list(params)]
 
         pagination = Pagination(page=page,
@@ -200,25 +243,35 @@ def view_selected_survey(selected_survey):
                                 format_number=True,
                                 show_single_page=False)
 
+        if flash_message:
+            flash(flash_message)
+
         return render_template("messages.html",
                                page=page,
                                breadcrumbs=breadcrumbs,
                                messages=messages,
-                               selected_survey=formatted_survey,
+                               selected_survey=selected_survey,
+                               displayed_short_name=displayed_short_name,
                                pagination=pagination,
                                change_survey=True,
-                               is_closed=strtobool(is_closed))
+                               is_closed=strtobool(is_closed),
+                               my_conversations=my_conversations,
+                               new_respondent_conversations=new_respondent_conversations)
 
     except TypeError:
         logger.exception("Failed to retrieve survey id")
         return render_template("messages.html",
                                breadcrumbs=breadcrumbs,
+                               selected_survey=selected_survey,
+                               displayed_short_name=displayed_short_name,
                                response_error=True)
     except NoMessagesError:
         logger.exception("Failed to retrieve messages")
         return render_template("messages.html",
                                breadcrumbs=breadcrumbs,
-                               response_error=True)
+                               response_error=True,
+                               selected_survey=selected_survey,
+                               displayed_short_name=displayed_short_name,)
 
 
 @messages_bp.route('/threads/<thread_id>/close-conversation', methods=['GET', 'POST'])
@@ -228,7 +281,7 @@ def close_conversation(thread_id):
         message_controllers.update_close_conversation_status(thread_id=thread_id, status=True)
         thread_url = url_for("messages_bp.view_conversation", thread_id=thread_id) + "#latest-message"
         flash(Markup(f'Conversation closed. <a href={thread_url}>View conversation</a>'))
-        return redirect(url_for('messages_bp.view_select_survey'))
+        return redirect(url_for('messages_bp.view_select_survey', page=request.args.get('page')))
 
     thread_conversation = message_controllers.get_conversation(thread_id)
     refined_thread = [_refine(message) for message in reversed(thread_conversation['messages'])]
@@ -345,7 +398,7 @@ def _get_survey_id(selected_survey):
 
 
 def _get_FDI_survey_id():
-    return [survey_controllers.get_survey_id_by_short_name(fdi_survey.value) for fdi_survey in FDISurveys]
+    return [survey_controllers.get_survey_id_by_short_name(fdi_survey) for fdi_survey in FDI_LIST]
 
 
 def _get_user_summary_for_message(message):
@@ -411,3 +464,18 @@ def disable_caching(response):
     for k, v in CACHE_HEADERS.items():
         response.headers[k] = v
     return response
+
+
+def _calculate_page(requested_page, limit, thread_count):
+    page = requested_page
+
+    if thread_count == 0:
+        page = 1
+    elif page * limit > thread_count:
+        page = math.ceil(thread_count / limit)
+
+    return page
+
+
+def _can_mark_as_unread(message):
+    return message['to_id'] == 'GROUP' or message['to_id'] == session['user_id']

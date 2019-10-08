@@ -1,17 +1,18 @@
-from datetime import datetime, timezone
 import logging
+from datetime import datetime, timezone
 
-from flask import Blueprint, render_template, request, redirect, url_for
+from flask import Blueprint, flash, render_template, request, redirect, url_for
 from flask_login import login_required
 from iso8601 import parse_date
 from structlog import wrap_logger
 
 from response_operations_ui.common.mappers import map_ce_response_status, map_region
-from response_operations_ui.controllers.collection_exercise_controllers import \
-    get_case_group_status_by_collection_exercise, get_collection_exercise_by_id
-from response_operations_ui.controllers.survey_controllers import get_survey_by_id
 from response_operations_ui.controllers import case_controller, iac_controller, party_controller, \
     reporting_units_controllers
+from response_operations_ui.controllers.collection_exercise_controllers import \
+    get_case_group_status_by_collection_exercise, get_collection_exercise_by_id
+from response_operations_ui.controllers.party_controller import get_respondent_by_party_id
+from response_operations_ui.controllers.survey_controllers import get_survey_by_id
 from response_operations_ui.forms import EditContactDetailsForm, SearchForm
 
 
@@ -23,9 +24,12 @@ reporting_unit_bp = Blueprint('reporting_unit_bp', __name__, static_folder='stat
 @reporting_unit_bp.route('/<ru_ref>', methods=['GET'])
 @login_required
 def view_reporting_unit(ru_ref):
+    logger.info("Gathering data to view reporting unit", ru_ref=ru_ref)
     # Make some initial calls to retrieve some data we'll need
     reporting_unit = party_controller.get_party_by_ru_ref(ru_ref)
+
     cases = case_controller.get_cases_by_business_party_id(reporting_unit['id'])
+
     case_groups = case_controller.get_case_groups_by_business_party_id(reporting_unit['id'])
 
     # Get all collection exercises for retrieved case groups
@@ -64,19 +68,20 @@ def view_reporting_unit(ru_ref):
     # TODO Standardise how the info messages are generated
     survey_arg = request.args.get('survey')
     period_arg = request.args.get('period')
-    info_message = None
     if survey_arg and period_arg:
         survey = next(filter(lambda s: s['shortName'] == survey_arg, sorted_linked_surveys))
         collection_exercise = next(filter(lambda s: s['exerciseRef'] == period_arg, survey['collection_exercises']))
         new_status = collection_exercise['responseStatus']
-        info_message = f'Response status for {survey["surveyRef"]} {survey["shortName"]}' \
-                       f' period {period_arg} changed to {new_status}'
+        flash(f'Response status for {survey["surveyRef"]} {survey["shortName"]}'
+              f' period {period_arg} changed to {new_status}')
 
     info = request.args.get('info')
-    if info:
-        info_message = info
     if request.args.get('enrolment_changed'):
-        info_message = 'Enrolment status changed'
+        flash('Enrolment status changed', 'information')
+    if request.args.get('account_status_changed'):
+        flash('Account status changed', 'information')
+    elif info:
+        flash(info, 'information')
 
     breadcrumbs = [
         {
@@ -87,9 +92,9 @@ def view_reporting_unit(ru_ref):
             "text": f"{ru_ref}"
         }
     ]
+    logger.info("Successfully gathered data to view reporting unit", ru_ref=ru_ref)
     return render_template('reporting-unit.html', ru_ref=ru_ref, ru=reporting_unit,
-                           surveys=surveys_with_latest_case, breadcrumbs=breadcrumbs,
-                           info_message=info_message, enrolment_changed=request.args.get('enrolment_changed'))
+                           surveys=surveys_with_latest_case, breadcrumbs=breadcrumbs)
 
 
 def add_collection_exercise_details(collection_exercise, reporting_unit, case_groups):
@@ -145,22 +150,23 @@ def view_contact_details(ru_ref, respondent_id):
     form = EditContactDetailsForm(form=request.form, default_values=respondent_details)
 
     return render_template('edit-contact-details.html', ru_ref=ru_ref, respondent_details=respondent_details,
-                           form=form)
+                           form=form, tab='reporting_units')
 
 
 @reporting_unit_bp.route('/<ru_ref>/edit-contact-details/<respondent_id>', methods=['POST'])
 @login_required
 def edit_contact_details(ru_ref, respondent_id):
     form = request.form
-    contact_details_changed = party_controller.update_contact_details(ru_ref, respondent_id, form)
+    contact_details_changed = party_controller.update_contact_details(respondent_id, form, ru_ref)
 
-    ui_message = 'No updates were necessary'
     if 'emailAddress' in contact_details_changed:
-        ui_message = f'Contact details changed and verification email sent to {form.get("email")}'
+        flash(f'Contact details changed and verification email sent to {form.get("email")}')
     elif len(contact_details_changed) > 0:
-        ui_message = 'Contact details changed'
+        flash('Contact details changed')
+    else:
+        flash('No updates were necessary')
 
-    return redirect(url_for('reporting_unit_bp.view_reporting_unit', ru_ref=ru_ref, info=ui_message))
+    return redirect(url_for('reporting_unit_bp.view_reporting_unit', ru_ref=ru_ref))
 
 
 @reporting_unit_bp.route('/', methods=['GET', 'POST'])
@@ -181,12 +187,12 @@ def search_reporting_units():
 @reporting_unit_bp.route('/resend_verification/<ru_ref>/<party_id>', methods=['GET'])
 @login_required
 def view_resend_verification(ru_ref, party_id):
-    logger.debug("Re-send verification email requested", ru_ref=ru_ref, party_id=party_id)
+    logger.info("Re-send verification email requested", ru_ref=ru_ref, party_id=party_id)
     respondent = party_controller.get_respondent_by_party_id(party_id)
     email = respondent['pendingEmailAddress'] if 'pendingEmailAddress' in respondent \
         else respondent['emailAddress']
 
-    return render_template('re-send-verification-email.html', ru_ref=ru_ref, email=email)
+    return render_template('re-send-verification-email.html', ru_ref=ru_ref, email=email, tab='reporting_units')
 
 
 @reporting_unit_bp.route('/resend_verification/<ru_ref>/<party_id>', methods=['POST'])
@@ -194,8 +200,8 @@ def view_resend_verification(ru_ref, party_id):
 def resend_verification(ru_ref, party_id):
     reporting_units_controllers.resend_verification_email(party_id)
     logger.info("Re-sent verification email.", party_id=party_id)
-    return redirect(url_for('reporting_unit_bp.view_reporting_unit', ru_ref=ru_ref,
-                            info='Verification email re-sent'))
+    flash('Verification email re-sent')
+    return redirect(url_for('reporting_unit_bp.view_reporting_unit', ru_ref=ru_ref))
 
 
 @reporting_unit_bp.route('/<ru_ref>/new_enrolment_code', methods=['GET'])
@@ -222,7 +228,22 @@ def confirm_change_enrolment_status(ru_ref):
                            survey_name=request.args['survey_name'], respondent_id=request.args['respondent_id'],
                            first_name=request.args['respondent_first_name'],
                            last_name=request.args['respondent_last_name'],
-                           change_flag=request.args['change_flag'])
+                           change_flag=request.args['change_flag'],
+                           tab=request.args['tab'])
+
+
+@reporting_unit_bp.route('/<ru_ref>/change-respondent-status', methods=['GET'])
+@login_required
+def confirm_change_respondent_status(ru_ref):
+    respondent = get_respondent_by_party_id(request.args['party_id'])
+    return render_template('confirm-respondent-status-change.html',
+                           ru_ref=ru_ref,
+                           respondent_id=respondent['id'],
+                           first_name=respondent['firstName'],
+                           last_name=respondent['lastName'],
+                           email_address=respondent['emailAddress'],
+                           change_flag=request.args['change_flag'],
+                           tab=request.args['tab'])
 
 
 @reporting_unit_bp.route('/<ru_ref>/change-enrolment-status', methods=['POST'])
@@ -233,3 +254,11 @@ def change_enrolment_status(ru_ref):
                                                         survey_id=request.args['survey_id'],
                                                         change_flag=request.args['change_flag'])
     return redirect(url_for('reporting_unit_bp.view_reporting_unit', ru_ref=ru_ref, enrolment_changed='True'))
+
+
+@reporting_unit_bp.route('/<ru_ref>/change-respondent-status', methods=['POST'])
+@login_required
+def change_respondent_status(ru_ref):
+    reporting_units_controllers.change_respondent_status(respondent_id=request.args['respondent_id'],
+                                                         change_flag=request.args['change_flag'])
+    return redirect(url_for('reporting_unit_bp.view_reporting_unit', ru_ref=ru_ref, account_status_changed='True'))

@@ -1,9 +1,10 @@
 import os
-
 import unittest
 from unittest.mock import patch
-from response_operations_ui import create_app
+
 from flask import app
+
+from response_operations_ui import create_app
 
 
 class TestCreateApp(unittest.TestCase):

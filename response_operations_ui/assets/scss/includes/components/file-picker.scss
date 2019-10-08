@@ -1,0 +1,35 @@
+/* Styles for non-js file-picker */
+
+.upload-file::before {
+    content: " ";
+    background-size: 1.6rem;
+    min-width: 1.5rem;
+    height: 1.5rem;
+    margin-left: 0.5em;
+    float: right;
+    font-size: 0.8rem;
+}
+
+input[type = "file"]::-webkit-file-upload-button {
+    font-size: 1.25rem;
+    font-size: 1rem;
+    border: none;
+    border-right: 2px solid #033e58;
+    padding: 0.5rem 1rem;
+    background: #f5f6ff;
+    color: #033e58;
+}
+
+input[type = "file"] {
+    border: 2px solid #033e58;
+    border-radius: 4px;
+    width: 100%;
+    display: block;
+    margin-bottom: 0;
+    background: white;
+}
+
+input[type = "file"]:hover,
+input[type = "file"]::-webkit-file-upload-button:hover {
+    cursor: pointer;
+}

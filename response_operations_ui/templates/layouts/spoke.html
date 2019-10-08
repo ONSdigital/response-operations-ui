@@ -1,8 +1,10 @@
 <!DOCTYPE html>
-{% set cdn_hash = "v1.5.2" %}
-{% set cdn_url_prefix = "https://cdn.ons.gov.uk/sdc/"~cdn_hash %}
-{% set css_responsive_cdn = cdn_url_prefix~"/css/responsive.css" %}
-{% set scripts_cdn = cdn_url_prefix~"/scripts/bundle.js" %}
+{%- import 'macros/grid.html' as grid -%}
+{%- from 'macros/panel.html' import panel -%}
+{%- set cdn_hash = "v2.0.0" -%}
+{%- set cdn_url_prefix = "https://cdn.ons.gov.uk/sdc/"~cdn_hash -%}
+{%- set css_responsive_cdn = cdn_url_prefix~"/css/responsive.css" -%}
+{%- set scripts_cdn = cdn_url_prefix~"/scripts/bundle.js" -%}
 <html lang="en" class="no-js">
 
   <head>
@@ -17,12 +19,9 @@
     <!--<![endif]-->
     <link rel=stylesheet type=text/css href="{{ css_responsive_cdn }}">
     {% assets "scss_all" %}
-    <link rel=stylesheet type=text/css href="{{ ASSET_URL }}">
+    <link rel=stylesheet type=text/css href="{{ url_for('static', filename='css/main.css') }}">
     {% endassets %}
-    <script type="text/javascript" src="http://code.jquery.com/jquery-3.3.1.min.js"></script>
-    {% assets "js_all" %}
-    <script type="text/javascript" src="{{ ASSET_URL }}"></script>
-    {% endassets %}
+    <script type="text/javascript" src="{{ url_for('static', filename='js/main.min.js') }}"></script>
     <link href="/static/images/favicon.ico" rel="Shortcut Icon" />
   </head>
 
@@ -36,6 +35,7 @@
             <div class="grid__col col-3@l"></div>
 
             <div class="grid__col col-6@l">
+              <div id="error-alerts"></div>
               {%- block main %}{% endblock main -%}
             </div>
 

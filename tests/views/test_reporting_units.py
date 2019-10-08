@@ -22,6 +22,8 @@ get_respondent_by_id_url = f'{TestingConfig.PARTY_URL}/party-api/v1/respondents/
 url_edit_contact_details = f'{TestingConfig.PARTY_URL}/party-api/v1/respondents/id/{respondent_party_id}'
 url_post_case_event = f'{TestingConfig.CASE_URL}/cases/{case_id}/events'
 url_change_enrolment_status = f'{TestingConfig.PARTY_URL}/party-api/v1/respondents/change_enrolment_status'
+url_change_respondent_status = f'{TestingConfig.PARTY_URL}/party-api/v1/respondents/edit-account-status/' \
+                               f'{respondent_party_id}'
 url_resend_verification_email = f'{TestingConfig.PARTY_URL}/party-api/v1/resend-verification-email' \
                                 f'/{respondent_party_id}'
 
@@ -111,18 +113,22 @@ class TestReportingUnits(ViewTestCase):
     def test_get_reporting_unit_party_ru_fail(self, mock_request):
         mock_request.get(url_get_party_by_ru_ref, status_code=500)
 
-        self.client.get("/reporting-units/50012345678", follow_redirects=True)
+        response = self.client.get("/reporting-units/50012345678", follow_redirects=True)
 
-        self.assertApiError(url_get_party_by_ru_ref, 500)
+        request_history = mock_request.request_history
+        self.assertEqual(len(request_history), 1)
+        self.assertEqual(response.status_code, 500)
 
     @requests_mock.mock()
     def test_get_reporting_unit_cases_fail(self, mock_request):
         mock_request.get(url_get_party_by_ru_ref, json=business_reporting_unit)
         mock_request.get(url_get_cases_by_business_party_id, status_code=500)
 
-        self.client.get("/reporting-units/50012345678", follow_redirects=True)
+        response = self.client.get("/reporting-units/50012345678", follow_redirects=True)
 
-        self.assertApiError(f'{url_get_cases_by_business_party_id}?iac=True', 500)
+        request_history = mock_request.request_history
+        self.assertEqual(len(request_history), 2)
+        self.assertEqual(response.status_code, 500)
 
     @requests_mock.mock()
     def test_get_reporting_unit_cases_404(self, mock_request):
@@ -141,32 +147,37 @@ class TestReportingUnits(ViewTestCase):
         mock_request.get(url_get_cases_by_business_party_id, json=cases_list)
         mock_request.get(url_get_casegroups_by_business_party_id, status_code=500)
 
-        self.client.get("/reporting-units/50012345678", follow_redirects=True)
+        response = self.client.get("/reporting-units/50012345678", follow_redirects=True)
 
-        self.assertApiError(url_get_casegroups_by_business_party_id, 500)
+        request_history = mock_request.request_history
+        self.assertEqual(len(request_history), 3)
+        self.assertEqual(response.status_code, 500)
 
     @requests_mock.mock()
     def test_get_reporting_unit_casegroups_404(self, mock_request):
         mock_request.get(url_get_party_by_ru_ref, json=business_reporting_unit)
         mock_request.get(url_get_cases_by_business_party_id, json=[])
         mock_request.get(url_get_casegroups_by_business_party_id, status_code=404)
-        mock_request.get(url_get_respondent_party_by_party_id, json=[])
 
         response = self.client.get("/reporting-units/50012345678", follow_redirects=True)
 
-        self.assertEqual(response.status_code, 200)
+        request_history = mock_request.request_history
+        self.assertEqual(len(request_history), 3)
+        self.assertEqual(response.status_code, 500)
 
     @requests_mock.mock()
     def test_get_reporting_unit_collection_exercise_fail(self, mock_request):
         mock_request.get(url_get_party_by_ru_ref, json=business_reporting_unit)
         mock_request.get(url_get_cases_by_business_party_id, json=cases_list)
         mock_request.get(url_get_casegroups_by_business_party_id, json=case_groups)
-        mock_request.get(f'{url_get_collection_exercise_by_id}/{collection_exercise_id_1}', json=[])
+        mock_request.get(f'{url_get_collection_exercise_by_id}/{collection_exercise_id_1}', status_code=500)
         mock_request.get(f'{url_get_collection_exercise_by_id}/{collection_exercise_id_2}', status_code=500)
 
-        self.client.get("/reporting-units/50012345678", follow_redirects=True)
+        response = self.client.get("/reporting-units/50012345678", follow_redirects=True)
 
-        self.assertApiError(f'{url_get_collection_exercise_by_id}/{collection_exercise_id_2}', 500)
+        request_history = mock_request.request_history
+        self.assertEqual(len(request_history), 4)
+        self.assertEqual(response.status_code, 500)
 
     @requests_mock.mock()
     def test_get_reporting_unit_party_id_fail(self, mock_request):
@@ -177,10 +188,11 @@ class TestReportingUnits(ViewTestCase):
         mock_request.get(f'{url_get_collection_exercise_by_id}/{collection_exercise_id_2}', json=collection_exercise)
         mock_request.get(url_get_business_party_by_party_id, status_code=500)
 
-        self.client.get("/reporting-units/50012345678", follow_redirects=True)
+        response = self.client.get("/reporting-units/50012345678", follow_redirects=True)
 
-        params = f'?collection_exercise_id={collection_exercise_id_1}&verbose=True'
-        self.assertApiError(f'{url_get_business_party_by_party_id}{params}', 500)
+        request_history = mock_request.request_history
+        self.assertEqual(len(request_history), 6)
+        self.assertEqual(response.status_code, 500)
 
     @requests_mock.mock()
     def test_get_reporting_unit_casegroup_status_fail(self, mock_request):
@@ -192,9 +204,11 @@ class TestReportingUnits(ViewTestCase):
         mock_request.get(url_get_business_party_by_party_id, json=business_party)
         mock_request.get(url_get_available_case_group_statuses_direct, status_code=500)
 
-        self.client.get("/reporting-units/50012345678", follow_redirects=True)
+        response = self.client.get("/reporting-units/50012345678", follow_redirects=True)
 
-        self.assertApiError(url_get_available_case_group_statuses_direct, 500)
+        request_history = mock_request.request_history
+        self.assertEqual(len(request_history), 7)
+        self.assertEqual(response.status_code, 500)
 
     @requests_mock.mock()
     def test_get_reporting_unit_casegroup_status_404(self, mock_request):
@@ -225,9 +239,13 @@ class TestReportingUnits(ViewTestCase):
         mock_request.get(url_get_available_case_group_statuses_direct, json=case_group_statuses)
         mock_request.get(url_get_survey_by_id, status_code=500)
 
-        self.client.get("/reporting-units/50012345678", follow_redirects=True)
+        response = self.client.get("/reporting-units/50012345678", follow_redirects=True)
 
-        self.assertApiError(url_get_survey_by_id, 500)
+        request_history = mock_request.request_history
+        # TODO: url_get_business_party_by_party_id and url_get_available_case_group_statuses_direct are called twice
+        # duplicated calls should probably be refactored out
+        self.assertEqual(len(request_history), 10)
+        self.assertEqual(response.status_code, 500)
 
     @requests_mock.mock()
     def test_get_reporting_unit_respondent_party_fail(self, mock_request):
@@ -241,9 +259,13 @@ class TestReportingUnits(ViewTestCase):
         mock_request.get(url_get_survey_by_id, json=survey)
         mock_request.get(url_get_respondent_party_by_party_id, status_code=500)
 
-        self.client.get("/reporting-units/50012345678", follow_redirects=True)
+        response = self.client.get("/reporting-units/50012345678", follow_redirects=True)
 
-        self.assertApiError(url_get_respondent_party_by_party_id, 500)
+        request_history = mock_request.request_history
+        # TODO: url_get_business_party_by_party_id and url_get_available_case_group_statuses_direct are called twice
+        # duplicated calls should probably be refactored out
+        self.assertEqual(len(request_history), 11)
+        self.assertEqual(response.status_code, 500)
 
     @requests_mock.mock()
     def test_get_reporting_unit_iac_fail(self, mock_request):
@@ -258,9 +280,13 @@ class TestReportingUnits(ViewTestCase):
         mock_request.get(url_get_respondent_party_by_party_id, json=respondent_party)
         mock_request.get(f'{url_get_iac}/{iac_1}', status_code=500)
 
-        self.client.get("/reporting-units/50012345678", follow_redirects=True)
+        response = self.client.get("/reporting-units/50012345678", follow_redirects=True)
 
-        self.assertApiError(f'{url_get_iac}/{iac_1}', 500)
+        request_history = mock_request.request_history
+        # TODO: url_get_business_party_by_party_id and url_get_available_case_group_statuses_direct are called twice
+        # duplicated calls should probably be refactored out
+        self.assertEqual(len(request_history), 12)
+        self.assertEqual(response.status_code, 500)
 
     @requests_mock.mock()
     def test_get_reporting_unit_iac_404(self, mock_request):
@@ -323,7 +349,7 @@ class TestReportingUnits(ViewTestCase):
     def test_get_reporting_unit_hides_change_link_when_no_available_statuses(self, mock_request):
         mock_request.get(url_get_party_by_ru_ref, json=business_reporting_unit)
         mock_request.get(url_get_cases_by_business_party_id, json=cases_list)
-        mock_request.get(url_get_casegroups_by_business_party_id, json=case_groups)
+        mock_request.get(url_get_casegroups_by_business_party_id, json=case_groups_completed)
         mock_request.get(f'{url_get_collection_exercise_by_id}/{collection_exercise_id_1}', json=collection_exercise)
         mock_request.get(f'{url_get_collection_exercise_by_id}/{collection_exercise_id_2}', json=collection_exercise)
         mock_request.get(url_get_business_party_by_party_id, json=business_party)
@@ -353,9 +379,11 @@ class TestReportingUnits(ViewTestCase):
     def test_search_reporting_units_fail(self, mock_request):
         mock_request.get(url_search_reporting_units, status_code=500)
 
-        self.client.post("/reporting-units", follow_redirects=True)
+        response = self.client.post("/reporting-units", follow_redirects=True)
 
-        self.assertApiError(url_search_reporting_units, 500)
+        request_history = mock_request.request_history
+        self.assertEqual(len(request_history), 1)
+        self.assertEqual(response.status_code, 500)
 
     @requests_mock.mock()
     def test_resend_verification_email(self, mock_request):
@@ -373,7 +401,7 @@ class TestReportingUnits(ViewTestCase):
 
     @requests_mock.mock()
     def test_resent_verification_email(self, mock_request):
-        mock_request.get(url_resend_verification_email)
+        mock_request.post(url_resend_verification_email)
         mock_request.get(url_get_party_by_ru_ref, json=business_reporting_unit)
         mock_request.get(url_get_cases_by_business_party_id, json=cases_list)
         mock_request.get(url_get_casegroups_by_business_party_id, json=case_groups)
@@ -394,9 +422,63 @@ class TestReportingUnits(ViewTestCase):
     @requests_mock.mock()
     def test_fail_resent_verification_email(self, mock_request):
         mock_request.get(url_resend_verification_email, status_code=500)
-        self.client.post(f"reporting-units/resend_verification/50012345678/{respondent_party_id}",
-                         follow_redirects=True)
-        self.assertApiError(url_resend_verification_email, 500)
+        response = self.client.post(f"reporting-units/resend_verification/50012345678/{respondent_party_id}",
+                                    follow_redirects=True)
+
+        request_history = mock_request.request_history
+        self.assertEqual(len(request_history), 1)
+        self.assertEqual(response.status_code, 500)
+
+    @requests_mock.mock()
+    def test_change_respondent_status(self, mock_request):
+        mock_request.put(url_change_respondent_status)
+        mock_request.get(url_get_party_by_ru_ref, json=business_reporting_unit)
+        mock_request.get(url_get_cases_by_business_party_id, json=cases_list)
+        mock_request.get(url_get_casegroups_by_business_party_id, json=case_groups)
+        mock_request.get(f'{url_get_collection_exercise_by_id}/{collection_exercise_id_1}', json=collection_exercise)
+        mock_request.get(f'{url_get_collection_exercise_by_id}/{collection_exercise_id_2}', json=collection_exercise)
+        mock_request.get(url_get_business_party_by_party_id, json=business_party)
+        mock_request.get(url_get_available_case_group_statuses_direct, json=case_group_statuses)
+        mock_request.get(url_get_survey_by_id, json=survey)
+        mock_request.get(url_get_respondent_party_by_party_id, json=respondent_party)
+        mock_request.get(f'{url_get_iac}/{iac_1}', json=iac)
+        mock_request.get(f'{url_get_iac}/{iac_2}', json=iac)
+
+        response = self.client.post(f"reporting-units/50012345678/change-respondent-status"
+                                    f"?respondent_id={respondent_party_id}&change_flag=ACTIVE",
+                                    follow_redirects=True)
+        self.assertEqual(response.status_code, 200)
+
+    @requests_mock.mock()
+    def test_change_respondent_status_fail(self, mock_request):
+        mock_request.put(url_change_respondent_status, status_code=500)
+
+        response = self.client.post(f"reporting-units/50012345678/change-respondent-status"
+                                    f"?respondent_id={respondent_party_id}&change_flag=ACTIVE",
+                                    follow_redirects=True)
+        request_history = mock_request.request_history
+        self.assertEqual(len(request_history), 1)
+        self.assertEqual(response.status_code, 500)
+
+    @requests_mock.mock()
+    def test_confirm_change_respondent_status(self, mock_request):
+        mock_request.get(get_respondent_by_id_url)
+        mock_request.put(url_change_respondent_status)
+        mock_request.get(url_get_cases_by_business_party_id, json=cases_list)
+        mock_request.get(url_get_casegroups_by_business_party_id, json=case_groups)
+        mock_request.get(f'{url_get_collection_exercise_by_id}/{collection_exercise_id_1}', json=collection_exercise)
+        mock_request.get(f'{url_get_collection_exercise_by_id}/{collection_exercise_id_2}', json=collection_exercise)
+        mock_request.get(url_get_business_party_by_party_id, json=business_party)
+        mock_request.get(url_get_available_case_group_statuses_direct, json=case_group_statuses)
+        mock_request.get(url_get_survey_by_id, json=survey)
+        mock_request.get(url_get_respondent_party_by_party_id, json=respondent_party)
+        mock_request.get(f'{url_get_iac}/{iac_1}', json=iac)
+        mock_request.get(f'{url_get_iac}/{iac_2}', json=iac)
+
+        response = self.client.get(f"reporting-units/50012345678/change-respondent-status"
+                                   f"?party_id={respondent_party_id}&change_flag=ACTIVE&tab=reporting_units",
+                                   follow_redirects=True)
+        self.assertEqual(response.status_code, 200)
 
     @requests_mock.mock()
     def test_get_contact_details(self, mock_request):
@@ -413,10 +495,12 @@ class TestReportingUnits(ViewTestCase):
     def test_get_contact_details_fail(self, mock_request):
         mock_request.get(get_respondent_by_id_url, status_code=500)
 
-        self.client.get(f"/reporting-units/50012345678/edit-contact-details/{respondent_party_id}",
-                        follow_redirects=True)
+        response = self.client.get(f"/reporting-units/50012345678/edit-contact-details/{respondent_party_id}",
+                                   follow_redirects=True)
 
-        self.assertApiError(get_respondent_by_id_url, 500)
+        request_history = mock_request.request_history
+        self.assertEqual(len(request_history), 1)
+        self.assertEqual(response.status_code, 500)
 
     @requests_mock.mock()
     def test_edit_contact_details(self, mock_request):
@@ -570,28 +654,33 @@ class TestReportingUnits(ViewTestCase):
     def test_reporting_unit_generate_new_code_event_fail(self, mock_request):
         mock_request.post(url_post_case_event, status_code=500)
 
-        self.client.get(f"/reporting-units/{ru_ref}/new_enrolment_code?case_id={case['id']}",
-                        follow_redirects=True)
+        response = self.client.get(f"/reporting-units/{ru_ref}/new_enrolment_code?case_id={case['id']}",
+                                   follow_redirects=True)
 
-        self.assertApiError(url_post_case_event, 500)
+        request_history = mock_request.request_history
+        self.assertEqual(len(request_history), 1)
+        self.assertEqual(response.status_code, 500)
 
     @requests_mock.mock()
     def test_reporting_unit_generate_new_code_case_fail(self, mock_request):
         mock_request.post(url_post_case_event)
         mock_request.get(url_get_case, status_code=500)
 
-        self.client.get(f"/reporting-units/{ru_ref}/new_enrolment_code?case_id={case['id']}&"
-                        "survey_name=test_survey_name&trading_as=trading_name&ru_name=test_ru_name",
-                        follow_redirects=True)
+        response = self.client.get(f"/reporting-units/{ru_ref}/new_enrolment_code?case_id={case['id']}&"
+                                   "survey_name=test_survey_name&trading_as=trading_name&ru_name=test_ru_name",
+                                   follow_redirects=True)
 
-        self.assertApiError(url_get_case, 500)
+        request_history = mock_request.request_history
+        self.assertEqual(len(request_history), 2)
+        self.assertEqual(response.status_code, 500)
 
     def test_disable_enrolment_view(self):
         response = self.client.get("/reporting-units/ru_ref/change-enrolment-status"
                                    "?survey_id=test_id&survey_name=test_survey_name&respondent_id=test_id"
                                    "&respondent_first_name=first_name&respondent_last_name=last_name"
                                    "&business_id=test_id"
-                                   "&trading_as=test_name&change_flag=DISABLED&ru_name=test_ru_name")
+                                   "&trading_as=test_name&change_flag=DISABLED"
+                                   "&ru_name=test_ru_name&tab=reporting_units")
 
         self.assertEqual(response.status_code, 200)
         self.assertIn("test_ru_name".encode(), response.data)
@@ -626,8 +715,10 @@ class TestReportingUnits(ViewTestCase):
     def test_disable_enrolment_post_fail(self, mock_request):
         mock_request.put(url_change_enrolment_status, status_code=500)
 
-        self.client.post("/reporting-units/50012345678/change-enrolment-status"
-                         "?survey_id=test_id&respondent_id=test_id&business_id=test_id&change_flag=DISABLED",
-                         follow_redirects=True)
+        response = self.client.post("/reporting-units/50012345678/change-enrolment-status"
+                                    "?survey_id=test_id&respondent_id=test_id&business_id=test_id&change_flag=DISABLED",
+                                    follow_redirects=True)
 
-        self.assertApiError(url_change_enrolment_status, 500)
+        request_history = mock_request.request_history
+        self.assertEqual(len(request_history), 1)
+        self.assertEqual(response.status_code, 500)

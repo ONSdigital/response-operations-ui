@@ -2,14 +2,21 @@ language: python
 sudo: required
 dist: trusty
 python: '3.6'
+node: '10'
 
 cache:
   - pip
 
+services:
+    - redis-server
+
 env:
-  - APP_SETTINGS=TestingConfig
+   global:
+     - APP_SETTINGS=TestingConfig
+     - PIPENV_IGNORE_VIRTUALENVS=1
 
 install:
+  - npm install
   - pip install pipenv
   - pipenv install --dev --deploy
 

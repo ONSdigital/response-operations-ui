@@ -4,10 +4,9 @@ import re
 
 from flask_wtf import FlaskForm
 from structlog import wrap_logger
-
-from wtforms import HiddenField, Label, PasswordField, StringField,\
+from wtforms import HiddenField, Label, PasswordField, StringField, \
     SubmitField, TextAreaField, SelectField, IntegerField
-from wtforms.validators import InputRequired, Length, ValidationError
+from wtforms.validators import InputRequired, Length, ValidationError, Email, DataRequired, EqualTo
 
 from response_operations_ui.controllers import collection_exercise_controllers
 from response_operations_ui.controllers import survey_controllers
@@ -46,6 +45,23 @@ class SecureMessageForm(FlaskForm):
     hidden_to_ru_id = HiddenField('hidden_to_ru_id')
 
 
+class RespondentSearchForm(FlaskForm):
+    first_name = StringField('first_name')
+    last_name = StringField('last_name')
+    email_address = StringField('email_address')
+    page = HiddenField('page')
+    submit = SubmitField('Search')
+
+    def validate(form):
+        first_name = form.first_name.data or ''
+        last_name = form.last_name.data or ''
+        email_address = form.email_address.data or ''
+
+        if not (first_name or last_name or email_address):
+            return False
+        return True
+
+
 class SearchForm(FlaskForm):
     query = StringField('Query')
     submit = SubmitField('Search')
@@ -68,7 +84,7 @@ class EditContactDetailsForm(FlaskForm):
 
 
 class EditCollectionExerciseDetailsForm(FlaskForm):
-    user_description = StringField('user_description')
+    user_description = HiddenField('user_description')
     period = IntegerField('period')
     collection_exercise_id = HiddenField('collection_exercise_id')
     hidden_survey_id = HiddenField('hidden_survey_id')
@@ -178,3 +194,51 @@ class CreateSurveyDetailsForm(FlaskForm):
 class RemoveLoadedSample(FlaskForm):
     period = StringField('period')
     short_name = StringField('short_name')
+
+
+class ForgotPasswordForm(FlaskForm):
+    email_address = StringField('Enter your email address',
+                                validators=[InputRequired('Email address is required'),
+                                            Email(message='Invalid email address'),
+                                            Length(max=254,
+                                                   message='Your email must be less than 254 characters')])
+
+    @staticmethod
+    def validate_email_address(_, field):
+        email = field.data
+        return _validate_email_address(email)
+
+
+def _validate_email_address(email):
+    """
+    Validates an email address, using regex to conform to GDS standards.
+
+    :param field:
+        Field containing email address for validation.
+    """
+    local_part, domain_part = email.rsplit('@', 1)
+    logger.info('Checking if the email address contains a space or quotes in the local part')
+    # this extends the email validator to check if there is whitespace in the email or quotes surrounding local part
+    if ' ' in email:
+        logger.info('Space found in email address')
+        raise ValidationError('Invalid email address')
+    if local_part.startswith('"') and local_part.endswith('"'):
+        logger.info('Quotes found in local part of email')
+        raise ValidationError('Invalid email address')
+
+
+class ResetPasswordForm(FlaskForm):
+    password = PasswordField('New password',
+                             validators=[DataRequired('Password is required'),
+                                         EqualTo('password_confirm', message='Your passwords do not match'),
+                                         Length(min=8, max=160,
+                                                message='Your password doesn\'t meet the requirements')])
+
+    password_confirm = PasswordField('Re-type new password')
+
+    @staticmethod
+    def validate_password(form, field):
+        password = field.data
+        if password.isalnum() or not any(char.isupper() for char in password) or not any(char.isdigit() for char in
+                                                                                         password):
+            raise ValidationError('Your password doesn\'t meet the requirements')

@@ -1,16 +1,20 @@
-import iso8601
 import json
 import logging
+from datetime import datetime
 
-
+import iso8601
+from dateutil import tz
 from flask import Blueprint, abort, render_template, request, redirect, session, url_for
+from flask import jsonify, make_response, flash
 from flask_login import login_required
-from flask import jsonify, make_response
 from structlog import wrap_logger
+from wtforms import ValidationError
 
+from response_operations_ui.common.date_restriction_generator import get_date_restriction_text
 from response_operations_ui.common.filters import get_collection_exercise_by_period
 from response_operations_ui.common.mappers import convert_events_to_new_format, format_short_name, \
     map_collection_exercise_state
+from response_operations_ui.common.validators import valid_date_for_event
 from response_operations_ui.controllers import collection_instrument_controllers, sample_controllers, \
     collection_exercise_controllers, survey_controllers
 from response_operations_ui.exceptions.exceptions import ApiError
@@ -89,18 +93,11 @@ def view_collection_exercise(short_name, period):
     ce_details['collection_exercise']['state'] = map_collection_exercise_state(ce_state)  # NOQA
     _format_ci_file_name(ce_details['collection_instruments'], ce_details['survey'])
 
-    events = {'mps', 'go_live', 'return_by', 'exercise_end'}
-    event_keys = set(ce_details['events'].keys())
-    if events.difference(event_keys):  # difference will be truthy if any of events are not in _keys
-        editable_events = False
-    else:
-        editable_events = True  # all expected keys are present
-
     show_msg = request.args.get('show_msg')
 
     success_panel = request.args.get('success_panel')
 
-    return render_template('collection-exercise.html',
+    return render_template('collection_exercise/collection-exercise.html',
                            breadcrumbs=breadcrumbs,
                            ce=ce_details['collection_exercise'],
                            collection_instruments=ce_details['collection_instruments'],
@@ -116,8 +113,7 @@ def view_collection_exercise(short_name, period):
                            success_panel=success_panel,
                            validation_failed=validation_failed,
                            show_msg=show_msg,
-                           ci_classifiers=ce_details['ci_classifiers']['classifierTypes'],
-                           editable_events=editable_events)
+                           ci_classifiers=ce_details['ci_classifiers']['classifierTypes'])
 
 
 @collection_exercise_bp.route('/<short_name>/<period>', methods=['POST'])
@@ -139,7 +135,7 @@ def post_collection_exercise(short_name, period):
 @collection_exercise_bp.route('response_chasing/<ce_id>/<survey_id>', methods=['GET'])
 @login_required
 def response_chasing(ce_id, survey_id):
-    logger.debug('Response chasing', ce_id=ce_id, survey_id=survey_id)
+    logger.info('Response chasing', ce_id=ce_id, survey_id=survey_id)
     response = collection_exercise_controllers.download_report(ce_id, survey_id)
     return response.content, response.status_code, response.headers.items()
 
@@ -286,7 +282,7 @@ def _validate_collection_instrument():
     if 'ciFile' in request.files:
         file = request.files['ciFile']
         if not str.endswith(file.filename, '.xlsx'):
-            logger.debug('Invalid file format uploaded', filename=file.filename)
+            logger.info('Invalid file format uploaded', filename=file.filename)
             error = {
                 "section": "ciFile",
                 "header": "Error: wrong file type for collection instrument",
@@ -296,14 +292,14 @@ def _validate_collection_instrument():
             # file name format is surveyId_period_formType
             form_type = _get_form_type(file.filename) if file.filename.count('_') == 2 else ''
             if not form_type.isdigit() or len(form_type) != 4:
-                logger.debug('Invalid file format uploaded', filename=file.filename)
+                logger.info('Invalid file format uploaded', filename=file.filename)
                 error = {
                     "section": "ciFile",
                     "header": "Error: invalid file name format for collection instrument",
                     "message": "Please provide file with correct form type in file name"
                 }
     else:
-        logger.debug('No file uploaded')
+        logger.info('No file uploaded')
         error = {
             "section": "ciFile",
             "header": "Error: No collection instrument supplied",
@@ -317,10 +313,10 @@ def _validate_sample():
     if 'sampleFile' in request.files:
         file = request.files['sampleFile']
         if not str.endswith(file.filename, '.csv'):
-            logger.debug('Invalid file format uploaded', filename=file.filename)
+            logger.info('Invalid file format uploaded', filename=file.filename)
             error = 'Invalid file format'
     else:
-        logger.debug('No file uploaded')
+        logger.info('No file uploaded')
         error = 'File not uploaded'
 
     return error
@@ -396,7 +392,7 @@ def edit_collection_exercise_details(short_name, period):
         return redirect(url_for('surveys_bp.view_survey', short_name=short_name, ce_updated='True'))
 
 
-@collection_exercise_bp.route('/<survey_ref>-<short_name>/create-collection-exercise', methods=['GET'])
+@collection_exercise_bp.route('/<survey_ref>/<short_name>/create-collection-exercise', methods=['GET'])
 @login_required
 def get_create_collection_exercise_form(survey_ref, short_name):
     logger.info("Retrieving survey data for form", short_name=short_name, survey_ref=survey_ref)
@@ -407,7 +403,7 @@ def get_create_collection_exercise_form(survey_ref, short_name):
                            survey_name=survey_details['shortName'])
 
 
-@collection_exercise_bp.route('/<survey_ref>-<short_name>/create-collection-exercise', methods=['POST'])
+@collection_exercise_bp.route('/<survey_ref>/<short_name>/create-collection-exercise', methods=['POST'])
 @login_required
 def create_collection_exercise(survey_ref, short_name):
     logger.info("Attempting to create collection exercise", survey_ref=survey_ref, survey=short_name)
@@ -456,11 +452,19 @@ def create_collection_exercise(survey_ref, short_name):
 def get_create_collection_event_form(short_name, period, ce_id, tag):
     logger.info("Retrieving form for create collection exercise event", short_name=short_name, period=period,
                 ce_id=ce_id, tag=tag)
-
     survey = survey_controllers.get_survey(short_name)
+    exercises = collection_exercise_controllers.get_collection_exercises_by_survey(survey['id'])
+    exercise = get_collection_exercise_by_period(exercises, period)
+    if not exercise:
+        logger.error('Failed to find collection exercise by period',
+                     short_name=short_name, period=period)
+        abort(404)
 
+    events = collection_exercise_controllers.get_collection_exercise_events_by_id(exercise['id'])
     form = EventDateForm()
     event_name = get_event_name(tag)
+    formatted_events = convert_events_to_new_format(events)
+    date_restriction_text = get_date_restriction_text(tag, formatted_events)
 
     logger.info("Successfully retrieved form for create collection exercise event",
                 short_name=short_name,
@@ -473,6 +477,7 @@ def get_create_collection_event_form(short_name, period, ce_id, tag):
                            period=period,
                            survey=survey,
                            event_name=event_name,
+                           date_restriction_text=date_restriction_text,
                            tag=tag,
                            form=form)
 
@@ -489,30 +494,46 @@ def create_collection_exercise_event(short_name, period, ce_id, tag):
     form = EventDateForm(request.form)
 
     if not form.validate():
-        return render_template('create-ce-event.html',
-                               ce_id=ce_id,
-                               short_name=short_name,
-                               period=period,
-                               survey=survey_controllers.get_survey(short_name),
-                               tag=tag,
-                               event_name=get_event_name(tag),
-                               form=form)
+        flash('Please enter a valid value', 'error')
+        return get_create_collection_event_form(
+            short_name=short_name,
+            period=period,
+            ce_id=ce_id,
+            tag=tag)
 
-    day = form.day.data if not len(form.day.data) == 1 else f"0{form.day.data}"
-    timestamp_string = f"{form.year.data}{form.month.data}{day}T{form.hour.data}{form.minute.data}"
-    timestamp = iso8601.parse_date(timestamp_string)
+    try:
+        valid_date_for_event(tag, form)
+    except ValidationError as exception:
+        flash(exception, 'error')
+        return get_create_collection_event_form(
+            short_name=short_name,
+            period=period,
+            ce_id=ce_id,
+            tag=tag)
 
-    collection_exercise_controllers.create_collection_exercise_event(
-        collection_exercise_id=ce_id,
-        tag=tag,
-        timestamp=timestamp)
+    submitted_dt = datetime(year=int(form.year.data),
+                            month=int(form.month.data),
+                            day=int(form.day.data),
+                            hour=int(form.hour.data),
+                            minute=int(form.minute.data),
+                            tzinfo=tz.gettz('Europe/London'))
 
-    success_panel = "Event date added."
+    """Attempts to create the event, returns None if success or returns an error message upon failure."""
+    error_message = collection_exercise_controllers.create_collection_exercise_event(
+        collection_exercise_id=ce_id, tag=tag, timestamp=submitted_dt)
+
+    if error_message:
+        flash(error_message, 'error')
+        return get_create_collection_event_form(
+            short_name=short_name,
+            period=period,
+            ce_id=ce_id,
+            tag=tag)
 
     return redirect(url_for('collection_exercise_bp.view_collection_exercise',
                             period=period,
                             short_name=short_name,
-                            success_panel=success_panel))
+                            success_panel='Event date added.'))
 
 
 def get_event_name(tag):
@@ -525,7 +546,8 @@ def get_event_name(tag):
         "reminder2": "Second reminder",
         "reminder3": "Third reminder",
         "ref_period_start": "Reference period start date",
-        "ref_period_end": "Reference period end date"
+        "ref_period_end": "Reference period end date",
+        "employment": "Employment date"
     }
     return event_names.get(tag)
 

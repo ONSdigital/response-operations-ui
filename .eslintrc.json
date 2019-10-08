@@ -1,0 +1,30 @@
+{
+    "extends": "google",
+    "parserOptions": {
+        "ecmaVersion": 2018,
+        "sourceType": "script"
+    },
+    "env": {
+        "es6": true,
+        "browser": true
+    },
+    "rules": {
+        "indent": ["error", 4],
+        "max-len": 0,
+        "require-jsdoc": 0,
+        "object-curly-spacing": "off",
+        "comma-dangle": "off",
+        "arrow-parens": "off",
+        "key-spacing": "off",
+        "no-alert": "error"
+    },
+    "overrides": [
+        {
+            "files": "**/*.module.js",
+            "parserOptions": {
+                "sourceType": "module",
+                "ecmaVersion": 2018
+            }
+        }
+    ]
+}

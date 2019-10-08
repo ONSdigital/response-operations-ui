@@ -6,7 +6,9 @@ from requests.exceptions import HTTPError, RequestException
 from structlog import wrap_logger
 
 from response_operations_ui.controllers.survey_controllers import get_survey_by_id
-from response_operations_ui.exceptions.exceptions import ApiError, UpdateContactDetailsException
+from response_operations_ui.exceptions.exceptions import ApiError
+from response_operations_ui.exceptions.exceptions import UpdateContactDetailsException
+from response_operations_ui.exceptions.exceptions import SearchRespondentsException
 from response_operations_ui.forms import EditContactDetailsForm
 
 
@@ -14,7 +16,7 @@ logger = wrap_logger(logging.getLogger(__name__))
 
 
 def get_party_by_ru_ref(ru_ref):
-    logger.debug('Retrieving reporting unit', ru_ref=ru_ref)
+    logger.info('Retrieving reporting unit', ru_ref=ru_ref)
     url = f'{app.config["PARTY_URL"]}/party-api/v1/parties/type/B/ref/{ru_ref}'
     response = requests.get(url, auth=app.config['PARTY_AUTH'])
 
@@ -25,13 +27,13 @@ def get_party_by_ru_ref(ru_ref):
         log_level('Failed to retrieve reporting unit', ru_ref=ru_ref)
         raise ApiError(response)
 
-    logger.debug('Successfully retrieved reporting unit', ru_ref=ru_ref)
+    logger.info('Successfully retrieved reporting unit', ru_ref=ru_ref)
     return response.json()
 
 
 def get_business_by_party_id(business_party_id, collection_exercise_id=None):
-    logger.debug('Retrieving business party',
-                 business_party_id=business_party_id, collection_exercise_id=collection_exercise_id)
+    logger.info('Retrieving business party',
+                business_party_id=business_party_id, collection_exercise_id=collection_exercise_id)
     url = f'{app.config["PARTY_URL"]}/party-api/v1/businesses/id/{business_party_id}'
     params = {"collection_exercise_id": collection_exercise_id, "verbose": True}
     response = requests.get(url, params=params, auth=app.config['PARTY_AUTH'])
@@ -44,13 +46,13 @@ def get_business_by_party_id(business_party_id, collection_exercise_id=None):
                   business_party_id=business_party_id, collection_exercise_id=collection_exercise_id)
         raise ApiError(response)
 
-    logger.debug('Successfully retrieved business party',
-                 business_party_id=business_party_id, collection_exercise_id=collection_exercise_id)
+    logger.info('Successfully retrieved business party',
+                business_party_id=business_party_id, collection_exercise_id=collection_exercise_id)
     return response.json()
 
 
 def get_respondent_by_party_id(respondent_party_id):
-    logger.debug('Retrieving respondent party', respondent_party_id=respondent_party_id)
+    logger.info('Retrieving respondent party', respondent_party_id=respondent_party_id)
     url = f'{app.config["PARTY_URL"]}/party-api/v1/respondents/id/{respondent_party_id}'
     response = requests.get(url, auth=app.config['PARTY_AUTH'])
 
@@ -61,7 +63,7 @@ def get_respondent_by_party_id(respondent_party_id):
         log_level('Error retrieving respondent party', respondent_party_id=respondent_party_id)
         raise ApiError(response)
 
-    logger.debug('Successfully retrieved respondent party', respondent_party_id=respondent_party_id)
+    logger.info('Successfully retrieved respondent party', respondent_party_id=respondent_party_id)
     return response.json()
 
 
@@ -83,7 +85,6 @@ def add_enrolment_status_to_respondent(respondent, ru_ref, survey_id):
 
 
 def get_respondent_enrolments(respondent, enrolment_status=None):
-
     enrolments = []
     for association in respondent['associations']:
         business_party = get_business_by_party_id(association['partyId'])
@@ -103,7 +104,7 @@ def get_respondent_enrolments(respondent, enrolment_status=None):
 
 
 def search_respondent_by_email(email):
-    logger.debug('Search respondent via email')
+    logger.info('Search respondent via email')
 
     request_json = {
         'email': email
@@ -117,16 +118,38 @@ def search_respondent_by_email(email):
     try:
         response.raise_for_status()
     except (HTTPError, RequestException):
-        log_level = logger.warning if response.status_code is 400 else logger.exception
+        log_level = logger.warning if response.status_code == 400 else logger.exception
         log_level("Respondent retrieval failed")
         raise ApiError(response)
-    logger.debug("Respondent retrieved successfully")
+    logger.info("Respondent retrieved successfully")
 
     return response.json()
 
 
-def update_contact_details(ru_ref, respondent_id, form):
-    logger.debug('Updating respondent details', respondent_id=respondent_id)
+def search_respondents(first_name, last_name, email_address, page):
+    params = {
+        'firstName': first_name,
+        'lastName': last_name,
+        'emailAddress': email_address,
+        'page': page,
+        'limit': app.config["PARTY_RESPONDENTS_PER_PAGE"]
+    }
+    response = requests.get(f'{app.config["PARTY_URL"]}/party-api/v1/respondents',
+                            auth=app.config['PARTY_AUTH'],
+                            params=params)
+
+    if response.status_code != 200:
+        raise SearchRespondentsException(response,
+                                         first_name=first_name,
+                                         last_name=last_name,
+                                         email_address=email_address,
+                                         page=page)
+
+    return response.json()
+
+
+def update_contact_details(respondent_id, form, ru_ref='NOT DEFINED'):
+    logger.info('Updating respondent details', respondent_id=respondent_id, ru_ref=ru_ref)
 
     new_contact_details = {
         "firstName": form.get('first_name'),
@@ -147,7 +170,7 @@ def update_contact_details(ru_ref, respondent_id, form):
             raise UpdateContactDetailsException(ru_ref, EditContactDetailsForm(form),
                                                 old_contact_details, response.status_code)
 
-        logger.debug('Respondent details updated', respondent_id=respondent_id, status_code=response.status_code)
+        logger.info('Respondent details updated', respondent_id=respondent_id, status_code=response.status_code)
 
     return contact_details_changed
 

@@ -5,11 +5,11 @@ from flask import Blueprint, render_template, request, redirect, url_for
 from flask_login import login_required
 from structlog import wrap_logger
 
-from response_operations_ui.controllers import survey_controllers, collection_exercise_controllers
-from response_operations_ui.forms import EditSurveyDetailsForm
-from response_operations_ui.forms import CreateSurveyDetailsForm
 from response_operations_ui.common.mappers import map_collection_exercise_state, convert_events_to_new_format
+from response_operations_ui.controllers import survey_controllers, collection_exercise_controllers
 from response_operations_ui.exceptions.exceptions import ApiError
+from response_operations_ui.forms import CreateSurveyDetailsForm
+from response_operations_ui.forms import EditSurveyDetailsForm
 
 
 logger = wrap_logger(logging.getLogger(__name__))
@@ -135,7 +135,7 @@ def create_survey():
                                short_name=request.form.get('short_name'),
                                legal_basis=request.form.get('legal_basis'))
     else:
-        logger.debug('create-survey form', form=form)
+        logger.info('create-survey form', form=form)
         try:
             survey_controllers.create_survey(request.form.get('survey_ref'),
                                              request.form.get('short_name'),

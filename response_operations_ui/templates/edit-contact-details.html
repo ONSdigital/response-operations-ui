@@ -1,5 +1,5 @@
 {% extends "layouts/spoke.html" %}
-{% block page_title %} Edit survey details {% endblock %}
+{% block page_title %} Edit contact details {% endblock %}
 {% block main %}
 
 <div role="main" id="main" class="page__main">
@@ -7,9 +7,9 @@
 
   <div class="spoke__header">
 
-    <div class="spoke__header__title">
+    <div class="spoke__header-title">
 
-      <h1 class="jupiter">Edit contact details</h1>
+      <h1 class="u-fs-xl">Edit contact details</h1>
 
     </div>
 
@@ -17,13 +17,14 @@
 
   <div class="spoke__body">
 
-    <form action="{{ url_for('reporting_unit_bp.edit_contact_details', ru_ref=ru_ref, respondent_id=respondent_details.id) }}" method="post">
+    {%- set href = url_for('respondent_bp.edit_contact_details', ru_ref=ru_ref, respondent_id=respondent_details.id) if tab=='respondents' else url_for('reporting_unit_bp.edit_contact_details', ru_ref=ru_ref, respondent_id=respondent_details.id) -%}
+    <form action="{{ href }}" method="post">
       {{ form.csrf_token }}
       {% if error_type == 'api error' %}
       <div class="panel panel--simple panel--error u-mb-l">
         <div class="panel__body" id="save-error">
-          <h2 id='error-saving-message' class="venus">Connection error</h2>
-          <p class="mars">Please try saving your changes again.</p>
+          <h2 id='error-saving-message' class="u-fs-r--b">Connection error</h2>
+          <p class="u-fs-r">Please try saving your changes again.</p>
         </div>
       </div>
       {% endif %}
@@ -31,8 +32,8 @@
       {% if error_type == 'email conflict' %}
       <div class="panel panel--simple panel--error u-mb-l">
         <div class="panel__body" id="save-email-error">
-          <h2 id='error-saving-email' class="venus">Error - email address already exists</h2>
-          <p class="mars">Please enter a different email address.</p>
+          <h2 id='error-saving-email' class="u-fs-r--b">Error - email address already exists</h2>
+          <p class="u-fs-r">Please enter a different email address.</p>
         </div>
       </div>
       {% endif %}
@@ -66,7 +67,7 @@
               <span class="u-vh">Current value: </span>
               {{ respondent_details.emailAddress }}
             </span>
-            <span class="label__description pluto">ONS will send a verification email to the new address</span>
+            <span class="label__description u-fs-s">ONS will send a verification email to the new address</span>
           </label>
         {{ form.email(class_="input input--text", id='email', required=required, maxlength=254, type="email") }}
           <input type="hidden" name="hidden_email" value={{ respondent_details.emailAddress }}>
@@ -86,7 +87,8 @@
       <button class="btn u-mb-s" id="save-btn">Save changes</button>
     </form>
     <div>
-      <a id="cancel-btn" href="{{ url_for('reporting_unit_bp.view_reporting_unit', ru_ref=ru_ref) }}">Cancel</a>
+      {%- set href = url_for('respondent_bp.respondent_details', respondent_id=respondent_details.id) if tab=='respondents' else url_for('reporting_unit_bp.view_reporting_unit', ru_ref=ru_ref) -%}
+      <a id="cancel-btn" href="{{ href }}" >Cancel</a>
     </div>
   </div>
 </div>

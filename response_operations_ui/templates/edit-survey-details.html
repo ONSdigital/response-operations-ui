@@ -3,8 +3,8 @@
 {% block main %}
 <div role="main" id="main" class="page__main">
   <div class="spoke__header">
-    <div class="spoke__header__title">
-      <h1 class="jupiter">Edit survey details</h1>
+    <div class="spoke__header-title">
+      <h1 class="u-fs-xl">Edit survey details</h1>
     </div>
   </div>
   <div class="spoke__body">
@@ -14,14 +14,14 @@
         <label class="label" for="survey_id">
           Survey ID:
           <span class="u-vh">Current value: </span>
-          <span class="mars">
+          <span class="u-fs-r">
               {{ survey_ref }}
               </span>
         </label>
         <label class="label" for="legal_basis">
           Legal Basis:
           <span class="u-vh">Current value: </span>
-          <span class="mars">
+          <span class="u-fs-r">
               {{ legal_basis }}
               </span>
         </label>
@@ -29,8 +29,8 @@
       {% if errors %}
       <div class="panel panel--simple panel--error u-mb-l">
         <div class="panel__body" id="save-error">
-          <h2 id='error-saving-message' class="venus">Error updating survey details</h2>
-          <p class="mars">Please remove any spaces in the short name and try saving your changes again</p>
+          <h2 id='error-saving-message' class="u-fs-r--b">Error updating survey details</h2>
+          <p class="u-fs-r">Please remove any spaces in the short name and try saving your changes again</p>
         </div>
       </div>
       {% endif %}

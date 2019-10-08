@@ -47,12 +47,20 @@ class TestUpdateEventDate(ViewTestCase):
         self.update_event_form = {
             "day": "01",
             "month": "01",
-            "year": "2018",
+            "year": "2030",
             "hour": "01",
             "minute": "00"
         }
         self.invalid_update_event_form = {
             "day": "50",
+            "month": "01",
+            "year": "2018",
+            "hour": "01",
+            "minute": "00"
+        }
+
+        self.past_update_event_form = {
+            "day": "01",
             "month": "01",
             "year": "2018",
             "hour": "01",
@@ -69,26 +77,29 @@ class TestUpdateEventDate(ViewTestCase):
 
         self.assertEqual(response.status_code, 200)
         self.assertIn("Go Live".encode(), response.data)
-        self.assertIn("Must be after MPS Thursday 11 Oct 2018 23:00 GMT".encode(), response.data)
-        self.assertIn("Must be before Return by Thursday 11 Oct 2018 23:00 GMT".encode(), response.data)
+        self.assertIn("Must be after MPS Thursday 11 Oct 2018 23:00".encode(), response.data)
+        self.assertIn("Must be before Return by Thursday 11 Oct 2018 23:00".encode(), response.data)
 
     @requests_mock.mock()
     def test_update_event_no_collection_exercise(self, mock_request):
         mock_request.get(url_survey_shortname, json=survey)
         mock_request.get(url_collection_exercise_survey_id, json=[])
-        mock_request.get(url_get_collection_exercise_events, json=events)
 
         response = self.client.get(f"/surveys/{survey_short_name}/{period}/event/go_live")
 
-        self.assertEqual(response.status_code, 404)
+        request_history = mock_request.request_history
+        self.assertEqual(len(request_history), 2)
+        self.assertEqual(response.status_code, 500)
 
     @requests_mock.mock()
     def test_update_event_date_service_fail(self, mock_request):
         mock_request.get(url_survey_shortname, status_code=500)
 
-        self.client.get(f"/surveys/{survey_short_name}/{period}/event/go_live", follow_redirects=True)
+        response = self.client.get(f"/surveys/{survey_short_name}/{period}/event/go_live", follow_redirects=True)
 
-        self.assertApiError(url_survey_shortname, 500)
+        request_history = mock_request.request_history
+        self.assertEqual(len(request_history), 1)
+        self.assertEqual(response.status_code, 500)
 
     @requests_mock.mock()
     def test_put_update_event_date(self, mock_request):
@@ -106,12 +117,13 @@ class TestUpdateEventDate(ViewTestCase):
     def test_put_update_event_date_no_collection_exercise(self, mock_request):
         mock_request.get(url_survey_shortname, json=survey)
         mock_request.get(url_collection_exercise_survey_id, json=[])
-        mock_request.get(url_get_collection_exercise_events, json=events)
 
         response = self.client.post(f"/surveys/{survey_short_name}/{period}/event/go_live",
                                     data=self.update_event_form, follow_redirects=True)
 
-        self.assertEqual(response.status_code, 404)
+        request_history = mock_request.request_history
+        self.assertEqual(len(request_history), 2)
+        self.assertEqual(response.status_code, 500)
 
     @requests_mock.mock()
     def test_put_update_event_date_invalid_form(self, mock_request):
@@ -124,12 +136,15 @@ class TestUpdateEventDate(ViewTestCase):
                                     data=self.invalid_update_event_form, follow_redirects=True)
 
         self.assertEqual(response.status_code, 200)
-        self.assertIn("Must be after MPS Thursday 11 Oct 2018 23:00 GMT".encode(), response.data)
+        self.assertIn("Must be after MPS Thursday 11 Oct 2018 23:00".encode(), response.data)
         self.assertIn("Error updating Go Live date".encode(), response.data)
 
     @requests_mock.mock()
     def test_put_update_event_date_update_bad_request(self, mock_request):
-        mock_request.put(url_put_update_event_date, status_code=400)
+        mock_request.put(url_put_update_event_date, status_code=400, text='{"error":{"code":"BAD_REQUEST","timestamp":'
+                                                                          ' "20190328133054682","message":'
+                                                                          '"Collection exercise events must be set '
+                                                                          'sequentially"}}')
         mock_request.get(url_survey_shortname, json=survey)
         mock_request.get(url_collection_exercise_survey_id, json=[collection_exercise])
         mock_request.get(url_get_collection_exercise_events, json=events)
@@ -138,17 +153,31 @@ class TestUpdateEventDate(ViewTestCase):
                                     data=self.update_event_form, follow_redirects=True)
 
         self.assertEqual(response.status_code, 200)
-        self.assertIn("Must be after MPS Thursday 11 Oct 2018 23:00 GMT".encode(), response.data)
-        self.assertIn("Error updating Go Live date".encode(), response.data)
+        self.assertIn('Collection exercise events must be set sequentially'.encode(), response.data)
 
     @requests_mock.mock()
     def test_put_update_event_date_update_service_fail(self, mock_request):
         mock_request.get(url_survey_shortname, json=survey)
         mock_request.get(url_collection_exercise_survey_id, json=[collection_exercise])
-        mock_request.get(url_get_collection_exercise_events, json=events)
         mock_request.put(url_put_update_event_date, status_code=500)
 
-        self.client.post(f"/surveys/{survey_short_name}/{period}/event/go_live",
-                         data=self.update_event_form, follow_redirects=True)
+        response = self.client.post(f"/surveys/{survey_short_name}/{period}/event/go_live",
+                                    data=self.update_event_form, follow_redirects=True)
 
-        self.assertApiError(url_put_update_event_date, 500)
+        request_history = mock_request.request_history
+        self.assertEqual(len(request_history), 3)
+        self.assertEqual(response.status_code, 500)
+
+    @requests_mock.mock()
+    def test_put_update_event_date_in_past(self, mock_request):
+        mock_request.put(url_put_update_event_date, status_code=201)
+        mock_request.get(url_survey_shortname, json=survey)
+        mock_request.get(url_collection_exercise_survey_id, json=[collection_exercise])
+        mock_request.get(url_get_collection_exercise_events, json=events)
+
+        response = self.client.post(f"/surveys/{survey_short_name}/{period}/event/go_live",
+                                    data=self.past_update_event_form, follow_redirects=True)
+
+        self.assertEqual(response.status_code, 200)
+        self.assertIn("Selected date can not be in the past".encode(), response.data)
+        self.assertIn("Error updating Go Live date".encode(), response.data)

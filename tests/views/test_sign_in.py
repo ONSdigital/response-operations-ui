@@ -8,7 +8,7 @@ from response_operations_ui import create_app
 
 
 url_sign_in_data = f'{TestingConfig.UAA_SERVICE_URL}/oauth/token'
-url_surveys = f'{TestingConfig.SURVEY_URL}/surveys'
+url_surveys = f'{TestingConfig.SURVEY_URL}/surveys/surveytype/Business'
 
 
 class TestSignIn(unittest.TestCase):
@@ -18,9 +18,7 @@ class TestSignIn(unittest.TestCase):
                    'aud': 'response_operations'}
 
         app = create_app('TestingConfig')
-        key = app.config['UAA_PUBLIC_KEY']
-
-        self.access_token = jwt.encode(payload, key=key)
+        self.access_token = jwt.encode(payload, app.config['UAA_PRIVATE_KEY'], algorithm='RS256')
         self.client = app.test_client()
 
     def test_sign_in_page(self):
@@ -54,6 +52,8 @@ class TestSignIn(unittest.TestCase):
         response = self.client.post("/sign-in", follow_redirects=True,
                                     data={"username": "user", "password": "pass"})
 
+        request_history = mock_request.request_history
+        self.assertEqual(len(request_history), 1)
         self.assertEqual(response.status_code, 500)
         self.assertIn(b'Error 500 - Server error', response.data)
 
@@ -86,6 +86,8 @@ class TestSignIn(unittest.TestCase):
         response = self.client.post("/sign-in", follow_redirects=True,
                                     data={"username": "user", "password": "pass"})
 
+        request_history = mock_request.request_history
+        self.assertEqual(len(request_history), 1)
         self.assertEqual(response.status_code, 500)
         self.assertIn(b'Error 500 - Server error', response.data)
 

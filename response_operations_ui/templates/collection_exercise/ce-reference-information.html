@@ -1,0 +1,124 @@
+<section class="ce-section ce-details">
+  <h2 class="u-fs-r--b u-pt-m">Reference information for this collection exercise</h2>
+  <table class="table table__dense" id="tbl-ce-details" summary="Collection exercise details">
+    <tr class="table--row">
+      <td class="table--cell tbl-ce-">
+        Period
+      </td>
+      <td class="table--cell tbl-ce-" name="period">
+        {{ce.exerciseRef}}
+      </td>
+      <td class="table--cell tbl-ce-">
+        <form action="{{ url_for('collection_exercise_bp.view_collection_exercise_details', short_name=survey.shortName, period=ce.exerciseRef, surveyRef=survey.surveyRef)}}" method="get">
+        {% if not locked %}
+          <a class="edit-icon" href=# id="edit-collection-exercise-period" onclick="this.parentNode.submit()"></a>
+        {% endif %}
+        </form>
+      </td>
+    </tr>
+
+    <tr class="table--row">
+      <td class="table--cell tbl-ce-">
+        Shown to respondent as
+      </td>
+      <td class="table--cell tbl-ce-" name="user-description" colspan="2">
+        {{ce.userDescription}}
+      </td>
+    </tr>
+
+    <tr class="table--row">
+      <td class="table--cell tbl-ce-label">
+        Survey ID and Abbreviation
+      </td>
+      <td class="table--cell tbl-ce-value" name="survey-info">
+        {{survey.surveyRef}} {{survey.shortName}}
+      </td>
+      <td class="table--cell tbl-ce-">
+      </td>
+    </tr>
+
+    <tr class="table--row">
+      <td class="table--cell tbl-ce-">
+        Survey title
+      </td>
+      <td class="table--cell tbl-ce-" name="survey-title">
+        {{survey.longName}}
+      </td>
+      <td class="table--cell tbl-ce-">
+      </td>
+    </tr>
+
+    <tr class="table--row">
+      <td class="table--cell tbl-ce-label">
+        Reference period start date
+      </td>
+
+      <td class="table--cell tbl-ce-value ce-event-date" name="period-start-date">
+        {% if events.ref_period_start %}
+          {{events.ref_period_start.day}} {{events.ref_period_start.date}}
+        {% endif %}
+      </td>
+
+      <td class="table--cell tbl-ce-status tbl-ce-action">
+        {% if not events.ref_period_start %}
+          <form action="{{ url_for('collection_exercise_bp.get_create_collection_event_form', short_name=survey.shortName, period=ce.exerciseRef, ce_id=ce.id, tag='ref_period_start')}}" method="get">
+            <button class="btn btn--secondary btn--small btn__table-row" id="create-event-date-ref-period-start" type="submit">Add</button>
+          </form>
+        {% else %}
+          <form action="{{ url_for('collection_exercise_bp.update_event_date', short_name=survey.shortName, period=ce.exerciseRef, tag='ref_period_start')}}" method="get">
+            <a class="edit-icon" href=# id="edit-event-date-ref-period-start" onclick="this.parentNode.submit()"></a>
+          </form>
+        {% endif %}
+      </td>
+    </tr>
+
+    <tr class="table--row">
+      <td class="table--cell tbl-ce-label">
+        Reference period end date
+      </td>
+
+      <td class="table--cell tbl-ce-value ce-event-date" name="period-end-date">
+        {% if events.ref_period_end %}
+          {{events.ref_period_end.day}} {{events.ref_period_end.date}}
+        {% endif %}
+      </td>
+
+      <td class="table--cell tbl-ce-status tbl-ce-action">
+        {% if not events.ref_period_end %}
+          <form action="{{ url_for('collection_exercise_bp.get_create_collection_event_form', short_name=survey.shortName, period=ce.exerciseRef, ce_id=ce.id, tag='ref_period_end')}}" method="get">
+            <button class="btn btn--secondary btn--small btn__table-row" id="create-event-date-ref-period-end" type="submit">Add</button>
+          </form>
+        {% else %}
+          <form action="{{ url_for('collection_exercise_bp.update_event_date', short_name=survey.shortName, period=ce.exerciseRef, tag='ref_period_end')}}" method="get">
+            <a class="edit-icon" href=# id="edit-event-date-ref-period-end" onclick="this.parentNode.submit()"></a>
+          </form>
+        {% endif %}
+      </td>
+    </tr>
+
+    <tr class="table--row">
+      <td class="table--cell tbl-ce-label">
+        Employment date
+      </td>
+
+      <td class="table--cell tbl-ce-value ce-event-date" name="employment-date">
+        {% if events.employment %}
+          {{events.employment.day}} {{events.employment.date}}
+        {% endif %}
+      </td>
+
+      <td class="table--cell tbl-ce-status tbl-ce-action">
+        {% if not events.employment %}
+          <form action="{{ url_for('collection_exercise_bp.get_create_collection_event_form', short_name=survey.shortName, period=ce.exerciseRef, ce_id=ce.id, tag='employment')}}" method="get">
+            <button class="btn btn--secondary btn--small btn__table-row" id="create-event-date-employment" type="submit">Add</button>
+          </form>
+        {% else %}
+          <form action="{{ url_for('collection_exercise_bp.update_event_date', short_name=survey.shortName, period=ce.exerciseRef, tag='employment')}}" method="get">
+            <a class="edit-icon" href=# id="edit-event-date-employment" onclick="this.parentNode.submit()"></a>
+          </form>
+        {% endif %}
+      </td>
+    </tr>
+
+  </table>
+</section>
