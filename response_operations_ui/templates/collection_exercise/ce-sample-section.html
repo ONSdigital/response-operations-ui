@@ -61,10 +61,33 @@
         accept=".csv">
 
         <div id="sample-preview" class="u-mb-s"></div>
-
-        <button id="btn-check-sample-contents" class="btn unready" type="button" disabled="">Check sample contents</button>
-        <button id="btn-load-sample" name="load-sample" class="btn hidden" type="submit">Load sample</button>
-        <button id="btn-cancel-load-sample" class="btn btn--secondary hidden" type="button" onclick="readCSV.cancelLoadSample()">Cancel</button>
+          {{
+            onsButton({
+                "text": "Check sample contents",
+                "id": "btn-check-sample-contents",
+                "classes": "btn--small",
+                "attributes": {
+                  "disabled": "true"
+                }
+            })
+          }}   
+          {{
+            onsButton({
+                "text": "Load sample",
+                "id": "btn-load-sample",
+                "classes": "hidden btn--small"
+            })
+          }}   
+          {{
+            onsButton({
+                "text": "Cancel",
+                "classes": "hidden btn--secondary btn--small",
+                "id": "btn-cancel-load-sample",
+                "attributes": {
+                  "onclick": "readCSV.cancelLoadSample()"
+                }
+            })
+          }}   
       </form>
     </div>
   {% endif %}
