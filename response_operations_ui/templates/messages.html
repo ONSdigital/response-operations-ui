@@ -1,9 +1,8 @@
 {% extends "layouts/base.html" %}
-{% block page_title %}Messages | Survey Data Collection{% endblock %}
+{% set page_title = "Messages" %}
 
 {% block main %}
 
-<div role="main" id="main" class="page__main">
   {% with messages = get_flashed_messages() %}
           {% if messages %}
           <div class="panel panel--simple panel--success col-6@m u-mb-m">
@@ -28,8 +27,7 @@
   {% endif %}
   <div class="grid">
     <div class="grid__col col-12@m">
-      <nav class="nav nav--horizontal nav--sub nav--dark u-mb-l u-pt-s" role="menu">
-        <div class="container container--wide">
+      <nav class="nav nav--horizontal nav--sub nav--dark u-mb-l u-mt-s" role="menu">
             <ul class="nav__list" aria-label="Section navigation menu">
                 <li class="nav__item u-fs-s {% if my_conversations =='true' %}nav__item--current{% endif %}">
                     <a class="nav__link" href="{{ url_for('messages_bp.view_selected_survey', selected_survey=selected_survey, my_conversations='true') }}" aria-current="{% if my_conversations %}location{% endif %}" role="menuitem">My Messages</a>
@@ -44,7 +42,6 @@
                     <a class="nav__link" href="{{ url_for('messages_bp.view_selected_survey', selected_survey=selected_survey, new_respondent_conversations='true') }}" aria-current="{% if new_respondent_conversations %}location{% endif %}" role="menuitem">Initial</a>
                 </li>
             </ul>
-        </div>
       </nav>
       <div class="messages-list">
         {% if response_error %}
@@ -134,5 +131,4 @@
       </div>
     </div>
   </div>
-</div>
 {% endblock %}

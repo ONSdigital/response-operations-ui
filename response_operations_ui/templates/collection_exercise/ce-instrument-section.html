@@ -52,9 +52,12 @@
             <label class="label label--inline u-fs-r--b " for="{{ci.id}}">{{survey.surveyRef}} {{ci.file_name}} eQ </label>
           </div>
           {% endfor %}
-          <div>
-            <button id="btn-add-ci" name="select-ci" class="btn unready" type="submit">Add</button>
-          </div>
+          {{
+            onsButton({
+              "text": "Add",
+              "id": "btn-add-ci"
+            })
+          }}   
         </div>
       </div>
 
@@ -73,7 +76,13 @@
           <input type="file" class="u-mb-s" name="ciFile" id="ciFile" required accept=".xlsx" onchange="validateCI.checkSelectedCI(this.files)" />
         </div>
       </div>
-      <button id="btn-load-ci" name="load-ci" class="btn unready">Add CI</button>
+      {{
+        onsButton({
+          "text": "Add CI",
+          "id": "btn-load-ci",
+          "classes": "btn--small"
+        })
+      }}   
     </form>
     {% endif %}
   </div>

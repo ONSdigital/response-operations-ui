@@ -62,7 +62,13 @@
       <td class="table__cell tbl-ce-status tbl-ce-action">
         {% if not events.ref_period_start %}
           <form action="{{ url_for('collection_exercise_bp.get_create_collection_event_form', short_name=survey.shortName, period=ce.exerciseRef, ce_id=ce.id, tag='ref_period_start')}}" method="get">
-            <button class="btn btn--secondary btn--small btn__table-row" id="create-event-date-ref-period-start" type="submit">Add</button>
+            {{
+              onsButton({
+                  "text": "Add",
+                  "classes": "btn--secondary btn--small",
+                  "id": "create-event-date-ref-period-start"
+              })
+            }}   
           </form>
         {% else %}
           <form action="{{ url_for('collection_exercise_bp.update_event_date', short_name=survey.shortName, period=ce.exerciseRef, tag='ref_period_start')}}" method="get">
@@ -86,7 +92,13 @@
       <td class="table__cell tbl-ce-status tbl-ce-action">
         {% if not events.ref_period_end %}
           <form action="{{ url_for('collection_exercise_bp.get_create_collection_event_form', short_name=survey.shortName, period=ce.exerciseRef, ce_id=ce.id, tag='ref_period_end')}}" method="get">
-            <button class="btn btn--secondary btn--small btn__table-row" id="create-event-date-ref-period-end" type="submit">Add</button>
+            {{
+              onsButton({
+                  "text": "Add",
+                  "classes": "btn--secondary btn--small",
+                  "id": "create-event-date-ref-period-end"
+              })
+            }}   
           </form>
         {% else %}
           <form action="{{ url_for('collection_exercise_bp.update_event_date', short_name=survey.shortName, period=ce.exerciseRef, tag='ref_period_end')}}" method="get">
@@ -110,7 +122,13 @@
       <td class="table__cell tbl-ce-status tbl-ce-action">
         {% if not events.employment %}
           <form action="{{ url_for('collection_exercise_bp.get_create_collection_event_form', short_name=survey.shortName, period=ce.exerciseRef, ce_id=ce.id, tag='employment')}}" method="get">
-            <button class="btn btn--secondary btn--small btn__table-row" id="create-event-date-employment" type="submit">Add</button>
+            {{
+              onsButton({
+                  "text": "Add",
+                  "classes": "btn--secondary btn--small",
+                  "id": "create-event-date-employment"
+              })
+            }}   
           </form>
         {% else %}
           <form action="{{ url_for('collection_exercise_bp.update_event_date', short_name=survey.shortName, period=ce.exerciseRef, tag='employment')}}" method="get">
