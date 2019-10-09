@@ -134,11 +134,5 @@ def change_user_password(email, password):
     if password_reset_code is None:
         return False
 
-    reset_response = change_password(access_token=access_token, user_code=password_reset_code,
+    return change_password(access_token=access_token, user_code=password_reset_code,
                                      new_password=password)
-
-    if reset_response.status_code != 200:
-        logger.error('Error received from UAA on change password', status_code=reset_response.status_code,
-                     message=reset_response.json().get('message'))
-
-    return reset_response.status_code == 200

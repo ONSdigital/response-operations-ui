@@ -94,9 +94,18 @@ def post_reset_password(token):
         logger.warning('Invalid token sent to Response Operations password reset', token=token)
         return render_template('reset-password-expired.html', token=token)
 
-    if (uaa_controller.change_user_password(email, password)):
+    response = uaa_controller.change_user_password(email, password)
+    if response.status_code == 200:
+        # 200 == All good
         logger.info('Successfully changed user password', token=token)
         return redirect(url_for('passwords_bp.reset_password_confirmation'))
+
+
+    if response.status_code == 422:
+        # 422 == New password same as old password
+        logger.info('New password same as old password', token=token)
+        errors = {'password': ['Please choose a different password or login with the old password']}
+        return get_reset_password(token, form_errors=errors)
 
     logger.warning('Error changing password in UAA', token=token)
     return render_template('reset-password-error.html')
