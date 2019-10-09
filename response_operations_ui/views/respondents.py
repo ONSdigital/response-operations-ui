@@ -22,7 +22,7 @@ respondent_bp = Blueprint('respondent_bp', __name__,
 def respondent_home():
     return render_template('respondent-search/respondent-search.html',
                            form=RespondentSearchForm(),
-                           breadcrumbs=[{"title": "Respondents"}])
+                           breadcrumbs=[{"text": "Respondents"}])
 
 
 @respondent_bp.route('/search', methods=['POST'])

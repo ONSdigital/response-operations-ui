@@ -169,7 +169,8 @@ def _view_select_survey(marked_unread_message="", my_conversations="false"):
 def select_survey():
     breadcrumbs = [{"text": "Messages", "url": "/messages"},
                    {"text": "Filter by survey"}]
-    survey_list = [survey.value for survey in Surveys]
+
+    survey_list = get_grouped_surveys_list()
 
     if request.method == 'POST':
         selected_survey = request.form.get('select-survey')
@@ -193,7 +194,7 @@ def select_survey():
 def view_selected_survey(selected_survey):
     displayed_short_name = format_short_name(selected_survey)
     session['messages_survey_selection'] = selected_survey
-    breadcrumbs = [{"text": formatted_survey + " Messages"}]
+    breadcrumbs = [{"text": displayed_short_name + " Messages"}]
     try:
         if selected_survey == 'FDI':
             survey_id = _get_FDI_survey_id()
