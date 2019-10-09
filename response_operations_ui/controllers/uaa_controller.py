@@ -135,4 +135,4 @@ def change_user_password(email, password):
         return False
 
     return change_password(access_token=access_token, user_code=password_reset_code,
-                                     new_password=password)
+                           new_password=password)

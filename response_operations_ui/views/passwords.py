@@ -100,7 +100,6 @@ def post_reset_password(token):
         logger.info('Successfully changed user password', token=token)
         return redirect(url_for('passwords_bp.reset_password_confirmation'))
 
-
     if response.status_code == 422:
         # 422 == New password same as old password
         logger.info('New password same as old password', token=token)
