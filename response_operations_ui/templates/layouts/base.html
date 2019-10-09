@@ -1,15 +1,25 @@
 {% extends "layout/_template.njk" %}
 {% block head %}
     {% assets "scss_all" %}
-    <link rel=stylesheet type=text/css href="{{ ASSET_URL }}">
+     <link rel=stylesheet type=text/css href="{{ url_for('static', filename='css/main.css') }}">
     {% endassets %}
     <script type="text/javascript" src="http://code.jquery.com/jquery-3.3.1.min.js"></script>
 {% endblock %}
 
 {% block scripts %}
     {% assets "js_all" %}
-      <script type="text/javascript" src="{{ ASSET_URL }}"></script>
+      <script type="text/javascript" src="{{ url_for('static', filename='js/main.min.js') }}"></script>
     {% endassets %}
+    {% if config.GOOGLE_ANALYTICS_ID %}
+      <!-- Global site tag (gtag.js) - Google Analytics -->
+      <script async src="https://www.googletagmanager.com/gtag/js?id={{ config.GOOGLE_ANALYTICS_ID }}"></script>
+      <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+      gtag('config', '{{ config.GOOGLE_ANALYTICS_ID }}');
+      </script>
+    {% endif %}
 {% endblock %}
 
 {# {% set containerClasses = "container--wide" %} #}
@@ -29,10 +39,22 @@
 {% include 'layouts/configs/navigation.html' %}
 {% include 'layouts/configs/signout-button.html' %}
 {% include 'layouts/configs/footer.html' %}
+{% from "components/panel/_macro.njk" import onsPanel %}
+
+{# To be removed when refactor complete #}
+{% import 'macros/grid.html' as grid %}
+{%- from 'macros/panel.html' import panel -%}
 
 {%- block page %}
   <div class="page__container container {{ containerClasses }}">
     {% block preMain %}
+      {% if availability_message %}
+        {{ 
+            onsPanel({
+                body: availability_message
+            }) 
+        }}
+      {% endif %}
       {% if breadcrumbs %}
         {% include 'layouts/configs/breadcrumbs.html' %}
       {% endif %}
