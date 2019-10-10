@@ -98,6 +98,7 @@ def post_reset_password(token):
     if response.status_code == 200:
         # 200 == All good
         logger.info('Successfully changed user password', token=token)
+        send_confirm_change_email(email)
         return redirect(url_for('passwords_bp.reset_password_confirmation'))
 
     if response.status_code == 422:
@@ -138,7 +139,7 @@ def send_password_change_email(email):
 
         try:
             NotifyController().request_to_notify(email=email,
-                                                 template_name='confirm_password_change',
+                                                 template_name='request_password_change',
                                                  personalisation=personalisation)
         except NotifyError as e:
             logger.error('Error sending password change request email to Notify Gateway', msg=e.description)
@@ -151,3 +152,20 @@ def send_password_change_email(email):
         logger.info('Requested password reset for email not in UAA', email=url_safe_serializer.dumps(email))
 
     return redirect(url_for('passwords_bp.forgot_password_check_email', email=url_safe_serializer.dumps(email)))
+
+
+def send_confirm_change_email(email):
+    first_name = uaa_controller.get_first_name_by_email(email)
+    if first_name != "":
+        personalisation = {
+            'FIRST_NAME': first_name
+        }
+
+        try:
+            NotifyController().request_to_notify(email=email,
+                                                 template_name='confirm_password_change',
+                                                 personalisation=personalisation)
+        except NotifyError as e:
+            # This shouldn't show the client an error - the password change was still successful.
+            # They just won't get a confirmation email
+            logger.error('Error sending password change confirmation email to Notify Gateway', msg=e.description)
