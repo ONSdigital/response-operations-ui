@@ -127,12 +127,12 @@ def change_user_password(email, password):
 
     user_response = get_user_by_email(email, access_token)
     if user_response is None:
-        return False
+        return
     username = user_response['resources'][0]['userName']
 
     password_reset_code = retrieve_user_code(access_token=access_token, username=username)
     if password_reset_code is None:
-        return False
+        return
 
     return change_password(access_token=access_token, user_code=password_reset_code,
                            new_password=password)
