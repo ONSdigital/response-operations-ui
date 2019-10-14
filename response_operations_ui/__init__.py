@@ -37,7 +37,7 @@ def create_app(config_name=None):
     assets.url = app.static_url_path
 
     app.jinja_env.add_extension('jinja2.ext.do')
-    
+
     app.register_blueprint(filter_blueprint)
 
     app.url_map.strict_slashes = False

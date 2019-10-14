@@ -4,12 +4,13 @@
      <link rel=stylesheet type=text/css href="{{ url_for('static', filename='css/main.css') }}">
     {% endassets %}
     <script type="text/javascript" src="http://code.jquery.com/jquery-3.3.1.min.js"></script>
-{% endblock %}
-
-{% block scripts %}
     {% assets "js_all" %}
       <script type="text/javascript" src="{{ url_for('static', filename='js/main.min.js') }}"></script>
     {% endassets %}
+
+{% endblock %}
+
+{% block scripts %}
     {% if config.GOOGLE_ANALYTICS_ID %}
       <!-- Global site tag (gtag.js) - Google Analytics -->
       <script async src="https://www.googletagmanager.com/gtag/js?id={{ config.GOOGLE_ANALYTICS_ID }}"></script>
@@ -22,7 +23,6 @@
     {% endif %}
 {% endblock %}
 
-{# {% set containerClasses = "container--wide" %} #}
 {% set page = { 
   "title": page_title + " | Survey Data Collection" if page_title else "Survey Data Collection",
   "header": {

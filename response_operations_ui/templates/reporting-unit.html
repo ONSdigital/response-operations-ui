@@ -1,4 +1,5 @@
 {% extends "layouts/base.html" %}
+{% from "components/button/_macro.njk" import onsButton %}
 
 {% set page_title = ru.name + " | Reporting units" %}
 
@@ -41,7 +42,7 @@
 
           <h4 class="u-fs-m">Collection exercises</h4>
 
-          <table name="tbl-ce-for-survey" class="table table__dense" summary="Collection exercises for {{survey.shortName}} for {{ ru.sampleUnitRef }}">
+          <table name="tbl-ce-for-survey" class="table table--dense" summary="Collection exercises for {{survey.shortName}} for {{ ru.sampleUnitRef }}">
             <thead class="table__head u-vhx">
               <tr class="table__row">
                 <th scope="col" class="table__header">
@@ -111,7 +112,7 @@
             {% endif %}
           </div>
 
-          <table name="tbl-respondents-for-survey" class="table table__dense tbl-ru-survey-respondents" summary="Respondents for {{survey.shortName}} for {{ ru.sampleUnitRef }}">
+          <table name="tbl-respondents-for-survey" class="table table--dense tbl-ru-survey-respondents" summary="Respondents for {{survey.shortName}} for {{ ru.sampleUnitRef }}">
             <thead class="table__head">
             <tr class="table__row">
               <th scope="col" class="table__header">
@@ -210,7 +211,13 @@
 
               <td class="table__cell">
                 <form action="{{ url_for('messages_bp.create_message')}}" method="post" id="create-message-view">
-                  <button type="submit" name="create-message" id="create-message-button-{{ loop.index }}" value="create-message-view" class="btn btn--small btn--secondary">Create message</button>
+                    {{
+                        onsButton({
+                            "text": "Create message",
+                            "classes": "btn btn--small btn--secondary",
+                            "id": "create-message-button-" + loop.index|string
+                        })
+                    }}
                   <input type="hidden" name="ru_ref" value="{{ ru.sampleUnitRef }}">
                   <input type="hidden" name="ru_id" value="{{ ru.id }}">
                   <input type="hidden" name="business" value="{{ ru.name }}">

@@ -4,68 +4,64 @@
 {% set page_title = "Reporting units" %}
 
 {% block main %}
-    <div class="grid">
-        <div class="grid__col col-8@m">
-            <h1>Reporting units</h1>
-            <div class="ru-search">
+    <h1>Reporting units</h1>
+    <div class="ru-search">
 
-                <form action="" method="post">
-                    {{ form.csrf_token }}
+        <form action="" method="post">
+            {{ form.csrf_token }}
 
-                    <div class="field u-mb-s">
-                        <label class="label">Type a reference or company name</label>
-                        {{ form.query(size=20, class_="ru-search-box input input--text")}}
-                    </div>
-                    {{
-                        onsButton({
-                            "text": "Search",
-                            "id": "btn-search-ru"
-                        })
-                    }}
-                </form>
-
+            <div class="field u-mb-s">
+                <label class="label">Type a reference or company name</label>
+                {{ form.query(size=20, class_="ru-search-box input input--text")}}
             </div>
+            {{
+                onsButton({
+                    "text": "Search",
+                    "id": "btn-search-ru"
+                })
+            }}
+        </form>
 
-            {% if business_list is not none and business_list|length==0 %}
-            <div class="u-mt-m">No results found</div>
-            {% endif %}
-
-            {% if business_list %}
-            <div class="u-pt-m">
-
-                <table id="tbl-businesses" class="table__dense" summary="Businesses in the system">
-                    <thead class="table__head">
-                    <tr class="table__row">
-                        <th scope="col" class="table__header">
-                            RU reference
-                        </th>
-                        <th scope="col" class="table__header">
-                            Name
-                        </th>
-                        <th scope="col" class="table__header">
-                            Trading as
-                        </th>
-                    </tr>
-                    </thead>
-
-                    <tbody class="table__body">
-                    {% for business in business_list %}
-                    <tr class="table__row table__row__selectable">
-                        <td class="table__cell ">
-                            <a href="/reporting-units/{{ business.ruref }}" name="details-link-{{ business.ruref }}">{{ business.ruref }}</a>
-                        </td>
-                        <td class="table__cell">
-                            {{ business.name }}
-                        </td>
-                        <td class="table__cell">
-                            {{ business.trading_as }}
-                        </td>
-                    </tr>
-                    {% endfor %}
-                    </tbody>
-                </table>
-            </div>
-            {% endif %}
-        </div>
     </div>
+
+    {% if business_list is not none and business_list|length==0 %}
+    <div class="u-mt-m">No results found</div>
+    {% endif %}
+
+    {% if business_list %}
+    <div class="u-pt-m">
+
+        <table id="tbl-businesses" class="table table--dense" summary="Businesses in the system">
+            <thead class="table__head">
+            <tr class="table__row">
+                <th scope="col" class="table__header">
+                    RU reference
+                </th>
+                <th scope="col" class="table__header">
+                    Name
+                </th>
+                <th scope="col" class="table__header">
+                    Trading as
+                </th>
+            </tr>
+            </thead>
+
+            <tbody class="table__body">
+            {% for business in business_list %}
+            <tr class="table__row table__row__selectable">
+                <td class="table__cell ">
+                    <a href="/reporting-units/{{ business.ruref }}" name="details-link-{{ business.ruref }}">{{ business.ruref }}</a>
+                </td>
+                <td class="table__cell">
+                    {{ business.name }}
+                </td>
+                <td class="table__cell">
+                    {{ business.trading_as }}
+                </td>
+            </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    {% endif %}
 {% endblock %}

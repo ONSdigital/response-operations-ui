@@ -1,4 +1,5 @@
 {% extends "layouts/base.html" %}
+{% from "components/button/_macro.njk" import onsButton %}
 
 {% set subject = messages[0]["subject"] or "No Subject" %}
 {% set survey_ref = messages[0]['survey_ref'] %}
