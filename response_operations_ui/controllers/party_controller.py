@@ -68,7 +68,6 @@ def get_respondent_by_party_id(respondent_party_id):
 
 
 def survey_ids_for_respondent(respondent, ru_ref):
-    logger.info('Survey ids for respondent', ru_ref=ru_ref)
     enrolments = [association.get('enrolments')
                   for association in respondent.get('associations')
                   if association['sampleUnitRef'] == ru_ref][0]
