@@ -68,6 +68,7 @@ def get_respondent_by_party_id(respondent_party_id):
 
 
 def survey_ids_for_respondent(respondent, ru_ref):
+    logger.info('Survey ids for respondent', ru_ref=ru_ref)
     enrolments = [association.get('enrolments')
                   for association in respondent.get('associations')
                   if association['sampleUnitRef'] == ru_ref][0]
@@ -75,6 +76,7 @@ def survey_ids_for_respondent(respondent, ru_ref):
 
 
 def add_enrolment_status_to_respondent(respondent, ru_ref, survey_id):
+    logger.info('Adding enrolment status to respondent', ru_ref=ru_ref)
     association = next((association
                         for association in respondent.get('associations')
                         if association['sampleUnitRef'] == ru_ref), None)
@@ -170,7 +172,8 @@ def update_contact_details(respondent_id, form, ru_ref='NOT DEFINED'):
             raise UpdateContactDetailsException(ru_ref, EditContactDetailsForm(form),
                                                 old_contact_details, response.status_code)
 
-        logger.info('Respondent details updated', respondent_id=respondent_id, status_code=response.status_code)
+        logger.info('Respondent details updated', respondent_id=respondent_id,
+                    status_code=response.status_code, ru_ref=ru_ref)
 
     return contact_details_changed
 
