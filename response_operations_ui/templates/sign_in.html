@@ -10,7 +10,7 @@
 
 {% block main %}
     <div class="grid">
-        <div class="grid__col col-8@m u-mt-l">
+        <div class="grid__col col-8@m">
             {% with messages = get_flashed_messages(with_categories=true) %}
                 {% if messages %}
                     {% for category, message in messages %}
@@ -122,6 +122,7 @@
                     {{
                         onsButton({
                             "text": "Sign in",
+                            "type": "submit",
                             "classes": "u-mt-l",
                             "id": "SIGN_IN_BUTTON"
                         })
