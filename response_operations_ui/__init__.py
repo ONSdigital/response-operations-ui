@@ -14,7 +14,7 @@ from response_operations_ui.cloud.cloudfoundry import ONSCloudFoundry
 from response_operations_ui.logger_config import logger_initial_config
 from response_operations_ui.user import User
 from response_operations_ui.views import setup_blueprints
-from response_operations_ui.common.jinja_filters import blueprint as filter_blueprint
+from response_operations_ui.common.jinja_filters import filter_blueprint
 
 
 cf = ONSCloudFoundry()

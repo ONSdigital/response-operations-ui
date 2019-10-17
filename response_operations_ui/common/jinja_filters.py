@@ -1,10 +1,10 @@
 # coding: utf-8
 import flask
 
-blueprint = flask.Blueprint('filters', __name__)
+filter_blueprint = flask.Blueprint('filters', __name__)
 
 
-@blueprint.app_template_filter()
+@filter_blueprint.app_template_filter()
 def setAttribute(dictionary, key, value):
     dictionary[key] = value
     return dictionary
