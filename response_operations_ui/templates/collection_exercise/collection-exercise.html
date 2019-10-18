@@ -8,19 +8,17 @@
     {% include 'collection_exercise/ce-handle-errors.html' %}
 
     {% include 'collection_exercise/ce-header-section.html' %}
+    <div class="grid grid--flex grid--between grid--gutterless">
+        <div class="grid__col">
+            {% include 'partials/error-box.html' %}
+            {% include 'collection_exercise/ce-dates-section.html' %}
+            {% include 'collection_exercise/ce-sample-section.html' %}
+            {% include 'collection_exercise/ce-instrument-section.html' %}
+        </div>
 
-    {% call grid.container() %}
-        {% call grid.column(['col-6@l']) %}
-        {% include 'partials/error-box.html' %}
-        {% include 'collection_exercise/ce-dates-section.html' %}
-        {% include 'collection_exercise/ce-sample-section.html' %}
-        {% include 'collection_exercise/ce-instrument-section.html' %}
-        {% endcall %}
+        <div class="grid__col">
+            {% include 'collection_exercise/ce-reference-information.html' %}
+        </div>
+    </div>
 
-        {% call grid.column(['col-1@l']) %}{% endcall %}
-
-        {% call grid.column(['col-5@l']) %}
-        {% include 'collection_exercise/ce-reference-information.html' %}
-        {% endcall %}
-    {% endcall %}
 {% endblock %}
