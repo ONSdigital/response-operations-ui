@@ -83,7 +83,8 @@
 
     {% set surveyTableData = {
         "table_class": 'table--responsive table--dense',
-        "aria_label": "There are 9 columns in this table. Some of the table may be off screen. Scroll or drag horizontally to bring into view."
+        "caption": 'The table shows collection exercise data for ' + survey.longName,
+        "hideCaption": true
       }
     %}
 
@@ -124,7 +125,7 @@
 
       {% do surveyTableDataRows.append(
         {
-          "hideCaption": true if newly_created_period == exercise.exerciseRef,
+          "highlight": true if newly_created_period == exercise.exerciseRef,
           "tds": [
             {
               "value": '<a href="/surveys/' + survey.shortName.replace(' ', '') + "/" + exercise.exerciseRef + '"
