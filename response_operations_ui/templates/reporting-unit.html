@@ -215,7 +215,9 @@
                         onsButton({
                             "text": "Create message",
                             "classes": "btn btn--small btn--secondary",
-                            "id": "create-message-button-" + loop.index|string
+                            "id": "create-message-button-" + loop.index|string,
+                            "value": "create-message-view",
+                            "name": "create-message"
                         })
                     }}
                   <input type="hidden" name="ru_ref" value="{{ ru.sampleUnitRef }}">
