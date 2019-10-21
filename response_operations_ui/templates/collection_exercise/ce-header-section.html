@@ -1,21 +1,30 @@
 
 <h1 name="page-ce-title">{{survey.shortName}} {{ce.exerciseRef}}</h1>
-<dl class="ce-info" id="ce-attributes">
-    <dt class="ce-status__title item-headlines-term ce-status">
-        Status:
-    </dt>
-    <dd class="ce-status__data item-headlines-definition ce-status" id="ce_status">
-        {{ ce.state }}
-    </dd>
-    {% if ce.state|upper == "LIVE" %}
-    <dt class="ce-status__title item-headlines-term ce-status">
-        Report:
-    </dt>
-    <dd class="ce-status__data item-headlines-definition ce-status" id="ce_status">
-        <a class="download" href="{{ url_for('collection_exercise_bp.response_chasing', ce_id=ce.id, survey_id=survey.id) }}">Response chasing</a>
-    </dd>
-    {% endif %}
-</dl>
+{{ 
+    onsMetadata({
+    "metadataLabel": survey.longName + "information",
+    "termCol": "1",
+    "descriptionCol": "11",
+    "itemsList": [
+        {
+            "term": "Status:",
+            "descriptions": [ 
+                {
+                    "description": ce.state
+                }
+            ]
+        },
+        {
+        "term": "Report:" if ce.state|upper == "LIVE",
+        "descriptions": [ 
+            {
+                "description": '<a class="download" href="' + url_for('collection_exercise_bp.response_chasing', ce_id=ce.id, survey_id=survey.id) + '">Response chasing</a>' if ce.state|upper == "LIVE"
+            }                
+        ]
+        }                                                    
+    ]
+    }) 
+}}
 {% if show_set_live_button %}
     <form id="form-ready-for-live" action="" class="form" method="post" enctype="multipart/form-data">
         {{
