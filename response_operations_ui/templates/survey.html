@@ -120,16 +120,17 @@
 
 
     {% for exercise in collection_exercises %}
+      {% set exerciseRef = exercise.exerciseRef if exercise.exerciseRef else "" %}
 
       {% set surveyTableReport = '<a class="download" href="'+ url_for('collection_exercise_bp.response_chasing', ce_id=exercise.id, survey_id=survey.id) +'" target="_blank">Response chasing</a>' if exercise.state|upper == "LIVE" %}
 
       {% do surveyTableDataRows.append(
         {
-          "highlight": true if newly_created_period == exercise.exerciseRef,
+          "highlight": true if newly_created_period == exerciseRef,
           "tds": [
             {
-              "value": '<a href="/surveys/' + survey.shortName.replace(' ', '') + "/" + exercise.exerciseRef + '"
-                   name="ce-link-' + exercise.exerciseRef + '">' + exercise.exerciseRef + '</a>' ,
+              "value": '<a href="/surveys/' + survey.shortName.replace(' ', '') + "/" + exerciseRef + '"
+                   name="ce-link-' + exerciseRef + '">' + exerciseRef + '</a>' ,
               "data": "Period"
             },
             {
