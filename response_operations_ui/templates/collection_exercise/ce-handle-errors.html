@@ -1,12 +1,25 @@
 {#- Display processing or error panel if validation failed #}
 {% if processing %}
-    {% call panel(id='processing-info', class='u-mb-s') %}Processing collection exercise – <a id="a-processing-refresh" href="">refresh to see progress</a>{% endcall %}
+    {% call
+        onsPanel({
+            "classes": "u-mb-s",
+            "id": "processing-info"
+        })
+    %}
+        Processing collection exercise – <a id="a-processing-refresh" href="">refresh to see progress</a>
+    {% endcall %}
 {% elif validation_failed %}
-    {% call panel(id='validation-error', type='error', class='u-mb-s') %}
+    {% call
+        onsPanel({
+            "type": "error",
+            "classes": "u-mb-s",
+            "id": "validation-error"
+        })
+    %}
         Error processing collection exercise
         {% if missing_ci %}
-        <div id="collection-instrument-error">
-        <a href="#ciFile">Check collection instruments</a>
+            <div id="collection-instrument-error">
+            <a href="#ciFile">Check collection instruments</a>
         </div>
         {% endif %}
     {% endcall %}
@@ -14,16 +27,46 @@
 
 {# Display header message if section header #}
 {% if error['section'] == 'head' %}
-    {% call panel(id='validation-error', type='error', header=error['header'], class='u-mb-s') %} {{ error['message'] }} {% endcall %}
+    {% call
+        onsPanel({
+            "type": "error",
+            "classes": "u-mb-s",
+            "id": "validation-error",
+            "title": error['header']
+        })
+    %}
+        {{ error['message'] }}
+    {% endcall %}
 {% endif %}
 
 {# Show state message panels #}
 {% if sample and show_msg == 'true' %}
     {% if sample.state == 'INIT' %}
-    {% call panel(class='u-mb-l') %}Loading sample&hellip; <span class="u-ml-xs"><a href="/surveys/{{survey.shortName}}/{{ce.exerciseRef}}?show_msg=true">Refresh to see progress</a></span>{% endcall %}
+        {% call
+            onsPanel({
+                "classes": "u-mb-s"
+            })
+        %}
+            Loading sample&hellip; <span class="u-ml-xs"><a href="/surveys/{{survey.shortName}}/{{ce.exerciseRef}}?show_msg=true">Refresh to see progress</a>
+        {% endcall %}
     {% elif sample.state == 'ACTIVE' %}
-    {% call panel(class='u-mb-l', type='success', id='sample-success') %}Sample loaded successfully{% endcall %}
+        {% call
+            onsPanel({
+                "type": "success",
+                "classes": "u-mb-s",
+                "id": "sample-succes"
+            })
+        %}
+            Sample loaded successfully
+        {% endcall %}
     {% elif sample.state == 'FAILED' %}
-    {% call panel(class='u-mb-l', type='error') %}Error loading sample <span class="u-ml-xs"><a href="#section-sample">See error details</a></span>{% endcall %}
+        {% call
+            onsPanel({
+                "type": "error",
+                "classes": "u-mb-s"
+            })
+        %}
+            Error loading sample <span class="u-ml-xs"><a href="#section-sample">See error details</a></span>
+        {% endcall %}
     {% endif %}
 {% endif %}
