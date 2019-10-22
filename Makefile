@@ -1,4 +1,4 @@
-build:
+build: load-templates
 	pipenv install --dev
 	rm -rf node_modules
 	npm install
