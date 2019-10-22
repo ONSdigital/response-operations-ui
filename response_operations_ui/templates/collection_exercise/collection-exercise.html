@@ -1,9 +1,9 @@
 {% extends "layouts/base.html" %}
-{% block page_title %}{{survey.surveyRef}} {{survey.shortName}} {{ce.exerciseRef}} | Surveys | Survey Data Collection{% endblock %}
+{% from "components/button/_macro.njk" import onsButton %}
+
+{% set page_title = survey.surveyRef + " " + survey.shortName + " " + ce.exerciseRef + " | Surveys" %}
 
 {% block main %}
-<div role="main" id="main" class="page__main">
-
     {% include 'collection_exercise/ce-success-panel.html' %}
     {% include 'collection_exercise/ce-handle-errors.html' %}
 
@@ -23,5 +23,4 @@
         {% include 'collection_exercise/ce-reference-information.html' %}
         {% endcall %}
     {% endcall %}
-</div>
 {% endblock %}

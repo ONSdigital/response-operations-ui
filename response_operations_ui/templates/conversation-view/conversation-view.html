@@ -1,4 +1,5 @@
 {% extends "layouts/base.html" %}
+{% from "components/button/_macro.njk" import onsButton %}
 
 {% set subject = messages[0]["subject"] or "No Subject" %}
 {% set survey_ref = messages[0]['survey_ref'] %}
@@ -9,7 +10,7 @@
 {% endif %}
 {% set ru_id = messages[0]['ru_id'] %}
 {% set survey = messages[0]['survey_id'] %}
-{% block page_title %} {{ subject }} | Survey Data Collection {% endblock %}
+{% set page_title = subject %}
 
 {% block main %}
 

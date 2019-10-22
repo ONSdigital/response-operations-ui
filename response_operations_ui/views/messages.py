@@ -88,8 +88,8 @@ def view_conversation(thread_id):
         breadcrumbs = _get_conversation_breadcrumbs(thread_conversation['messages'])
     except IndexError:
         breadcrumbs = [
-            {"title": "Messages", "link": "/messages"},
-            {"title": "Unavailable"}
+            {"text": "Messages", "url": "/messages"},
+            {"text": "Unavailable"}
         ]
 
     if latest_message['unread'] and _can_mark_as_unread(latest_message):
@@ -169,8 +169,8 @@ def _view_select_survey(marked_unread_message, conversation_tab):
 @messages_bp.route('/select-survey', methods=['GET', 'POST'])
 @login_required
 def select_survey():
-    breadcrumbs = [{"title": "Messages", "link": "/messages"},
-                   {"title": "Filter by survey"}]
+    breadcrumbs = [{"text": "Messages", "url": "/messages"},
+                   {"text": "Filter by survey"}]
 
     survey_list = get_grouped_surveys_list()
 
@@ -196,7 +196,7 @@ def select_survey():
 def view_selected_survey(selected_survey):
     displayed_short_name = format_short_name(selected_survey)
     session['messages_survey_selection'] = selected_survey
-    breadcrumbs = [{"title": displayed_short_name + " Messages"}]
+    breadcrumbs = [{"text": displayed_short_name + " Messages"}]
     try:
         if selected_survey == 'FDI':
             survey_id = _get_FDI_survey_id()
@@ -302,15 +302,15 @@ def close_conversation(thread_id):
 
 def _build_create_message_breadcrumbs():
     return [
-        {"title": "Messages", "link": "/messages"},
-        {"title": "Create Message"}
+        {"text": "Messages", "url": "/messages"},
+        {"text": "Create Message"}
     ]
 
 
 def _get_conversation_breadcrumbs(messages):
     return [
-        {"title": "Messages", "link": "/messages"},
-        {"title": messages[-1].get('subject', 'No Subject')}
+        {"text": "Messages", "url": "/messages"},
+        {"text": messages[-1].get('subject', 'No Subject')}
     ]
 
 

@@ -2,22 +2,22 @@
   <h2 class="u-fs-r--b u-pt-m">Sample</h2>
   {% if sample %}
     {% if 'ACTIVE' == sample.state %}
-    <table id="sample-table" class="table table__dense" summary="Loaded sample summary">
-      <tbody>
-        <tr class="table--row">
-          <td class="table--cell tbl-ce-label">
+    <table id="sample-table" class="table table--dense" summary="Loaded sample summary">
+      <tbody class="table__body">
+        <tr class="table__row">
+          <td class="table__cell tbl-ce-label">
             Total businesses
           </td>
-          <td class="table--cell tbl-ce-value" name="total-businesses">
+          <td class="table__cell tbl-ce-value" name="total-businesses">
             {{sample.totalSampleUnits}}
           </td>
         </tr>
 
-        <tr class="table--row">
-          <td class="table--cell tbl-ce-">
+        <tr class="table__row">
+          <td class="table__cell tbl-ce-">
             Collection instruments
           </td>
-          <td class="table--cell tbl-ce-" name="total-ci">
+          <td class="table__cell tbl-ce-" name="total-ci">
             {{sample.expectedCollectionInstruments}}
           </td>
         </tr>
@@ -61,10 +61,33 @@
         accept=".csv">
 
         <div id="sample-preview" class="u-mb-s"></div>
-
-        <button id="btn-check-sample-contents" class="btn unready" type="button" disabled="">Check sample contents</button>
-        <button id="btn-load-sample" name="load-sample" class="btn hidden" type="submit">Load sample</button>
-        <button id="btn-cancel-load-sample" class="btn btn--secondary hidden" type="button" onclick="readCSV.cancelLoadSample()">Cancel</button>
+          {{
+            onsButton({
+                "text": "Check sample contents",
+                "id": "btn-check-sample-contents",
+                "classes": "btn--small btn--disabled",
+                "attributes": {
+                  "disabled": "true"
+                }
+            })
+          }}   
+          {{
+            onsButton({
+                "text": "Load sample",
+                "id": "btn-load-sample",
+                "classes": "hidden btn--small"
+            })
+          }}   
+          {{
+            onsButton({
+                "text": "Cancel",
+                "classes": "hidden btn--secondary btn--small",
+                "id": "btn-cancel-load-sample",
+                "attributes": {
+                  "onclick": "readCSV.cancelLoadSample()"
+                }
+            })
+          }}   
       </form>
     </div>
   {% endif %}

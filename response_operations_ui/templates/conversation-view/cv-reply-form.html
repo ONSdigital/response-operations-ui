@@ -19,8 +19,20 @@
                             maxlength='10000',
                             cols=80) }}
         </div>
-        <input class="btn u-mt-s" id="btn-send-message" name="send" type="submit" value="Send" />
-        <a href="{{ url_for('messages_bp.close_conversation', thread_id=messages[0].thread_id, page=page, conversation_tab=conversation_tab) }}"
-            class="btn btn--secondary btn--border u-mt-s u-ml-xs" id="btn-close-conversation" >Close conversation</a>
+        {{
+            onsButton({
+                "text": "Send",
+                "classes": 'u-mt-s',
+                "id": "btn-send-message"
+            })
+        }}   
+        {{
+            onsButton({
+                "type": 'button',
+                "text": 'Close conversation',
+                "classes": 'btn--secondary u-mt-s',
+                "url": url_for('messages_bp.close_conversation', thread_id=messages[0].thread_id, page=page, conversation_tab=conversation_tab)
+            }) 
+        }}
     </form>
 </div>

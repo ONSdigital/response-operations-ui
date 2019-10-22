@@ -1,4 +1,4 @@
-build:
+build: load-templates
 	pipenv install --dev
 	rm -rf node_modules
 	npm install
@@ -27,3 +27,6 @@ watch_and_start:
 
 docker: test
 	docker build -t sdcplatform/response-operations-ui:latest .
+
+load-templates:
+	pipenv run ./scripts/load_templates.sh

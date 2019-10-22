@@ -1,4 +1,5 @@
-<h1 class="u-fs-xl" name="page-ce-title">{{survey.shortName}} {{ce.exerciseRef}}</h1>
+
+<h1 name="page-ce-title">{{survey.shortName}} {{ce.exerciseRef}}</h1>
 <dl class="ce-info" id="ce-attributes">
     <dt class="ce-status__title item-headlines-term ce-status">
         Status:
@@ -16,9 +17,15 @@
     {% endif %}
 </dl>
 {% if show_set_live_button %}
-<div>
     <form id="form-ready-for-live" action="" class="form" method="post" enctype="multipart/form-data">
-        <button id="btn-ready-for-live" onclick="return confirm('This action cannot be undone.  Press \'OK\' to continue, or \'Cancel\' to go back.')" name="ready-for-live" class="btn" type="submit">Set as ready for live</button>
+        {{
+            onsButton({
+                "text": "Set as ready for live",
+                "id": "btn-ready-for-live",
+                "attributes": {
+                    "onclick": "return confirm('This action cannot be undone.  Press OK to continue, or Cancel to go back.')"
+                }
+            })
+        }}    
     </form>
-</div>
 {% endif %}
