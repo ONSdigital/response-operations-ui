@@ -1,67 +1,83 @@
 {% extends "layouts/base.html" %}
-{% block page_title %}Surveys | Survey Data Collection{% endblock %}
+{% from "components/panel/_macro.njk" import onsPanel %}
+{% from "components/table/_macro.njk" import onsTable %}
+
+{% set page_title = "Surveys" %}
 
 {% block main %}
-<div role="main" id="main" class="page__main">
-{% if info_message %}
-  <div class="panel panel--simple panel--success">
-    <div id="collection-instrument-success" class="panel__body">
+  {% if info_message %}
+    {% call
+      onsPanel({
+          "type": "success",
+          "classes": "u-mb-s",
+          "id": "collection-instrument-success"
+      })
+    %}
       {{ info_message }}
-    </div>
-  </div>
-{% endif %}
-  <h1 class="u-fs-xl" name="page-surveys-title">Surveys</h1>
-  <div class="grid">
-    <div class="grid__col col-12@l">
-      <div class="survey-list">
+    {% endcall %}
+  {% endif %}
 
-        <table id="tbl-surveys" class="table__dense" summary="Surveys in the system">
-          <thead class="table--head">
-            <tr class="table--row">
-              <th scope="col" class="table--header--cell tbl-surveys-id">
-                ID
-              </th>
-              <th scope="col" class="table--header--cell tbl-surveys-title">
-                Title
-              </th>
-              <th scope="col" class="table--header--cell tbl-surveys-abbreviation">
-                Abbreviation
-              </th>
-              <th scope="col" class="table--header--cell tbl-surveys-legal-basis">
-                Legal basis
-              </th>
-              <th scope="col" class="table--header--cell tbl-edit-survey-details">
-              </th>
-            </tr>
-          </thead>
+  <h1 name="page-surveys-title">Surveys</h1>
+  
+  {% set surveyTableData = {
+      "table_class": 'table--responsive table--dense',
+      "aria_label": "There are 7 columns in this table. Some of the table may be off screen. Scroll or drag horizontally to bring into view."
+    }
+  %}
 
-          <tbody>
-            {% for survey in survey_list %}
-            <tr class="table--row table--row__selectable">
-              <td name="tbl-surveys-id" class="table--cell tbl-surveys-id">
-                {{ survey.surveyRef }}
-              </td>
-              <td name="tbl-surveys-title" class="table--cell tbl-surveys-title">
-                <a href="/surveys/{{ survey.shortName.replace(' ', '') }}" name="survey-link-{{survey.shortName}}">{{ survey.longName }}</a>
-              </td>
-              <td name="tbl-surveys-abbreviation" class="table--cell tbl-surveys-abbreviation">
-                {{ survey.shortName }}
-              </td>
-              <td name="tbl-surveys-legal-basis" class="table--cell tbl-surveys-legal-basis">
-                {{ survey.legalBasis }}
-              </td>
-              <td class="table--cell tbl-edit-survey">
-                <form action="{{ url_for('surveys_bp.view_survey_details', short_name=survey.shortName, long_name=survey.longName, legal_basis=survey.legalBasis, survey_ref=survey.surveyRef)}}" method="get">
-                  <a class="edit-icon" href=# id="edit-survey-details-{{survey.surveyRef}}" onclick="this.parentNode.submit()"></a>
-                </form>
-              </td>
-            </tr>
-            {% endfor %}
-          </tbody>
-        </table>
+  {% do surveyTableData | setAttribute("ths", [
+      { 
+          "value": "ID"
+      },
+      { 
+          "value": "Title"
+      },
+      { 
+          "value": "Abbreviation"
+      },
+      { 
+          "value": "Legal basis"
+      },
+      { 
+          "value": ""
+      }
+    ]) 
+  %}
 
-      </div>
-    </div>
-  </div>
-</div>
+  {% set surveyTableDataRows = [] %}
+
+  {% for survey in survey_list %}
+    {% do surveyTableDataRows.append(
+      {
+        "tds": [
+          {
+            "value": survey.surveyRef,
+            "data": "ID"
+          },
+          {
+            "value": '<a href="/surveys/' + survey.shortName.replace(' ', '') + '" name="survey-link-' + survey.shortName + '}">' + survey.longName + '</a>',
+            "data": "Title"
+          },
+          {
+            "value": survey.shortName,
+            "data": "Abbreviation"
+          },
+          {
+            "value": survey.legalBasis,
+            "data": "Legal basis"
+          },
+          {
+            "value": '<form action="' + url_for("surveys_bp.view_survey_details", short_name=survey.shortName, long_name=survey.longName, legal_basis=survey.legalBasis, survey_ref=survey.surveyRef) + '" method="get"><a class="edit-icon" href=# id="edit-survey-details-' + survey.surveyRef + '" onclick="this.parentNode.submit()"></a></form>',
+            "data": "Edit"
+          }
+        ]
+      }
+    ) %}
+  {% endfor %}
+  
+  {% do surveyTableData | setAttribute("trs", surveyTableDataRows) %}
+  
+  {{
+    onsTable(surveyTableData)
+  }}
 {% endblock %}

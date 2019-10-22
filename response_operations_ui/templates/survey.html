@@ -1,8 +1,7 @@
 {% extends "layouts/base.html" %}
-{% block page_title %}{{survey.shortName}} | Surveys | Survey Data Collection{% endblock %}
+{% set page_title = survey.shortName + " | Surveys" %}
 
 {% block main %}
-<div role="main" id="main" class="page__main">
 {% if updated_ce_message %}
   <div class="panel panel--simple panel--success">
     <div id="updated_ce_message" class="panel__body">
@@ -22,11 +21,10 @@
   </div>
   <br>
 {% endif %}
-<h1 class="u-fs-xl" name="page-survey-title">{{survey.longName}}</h1>
+<h1 name="page-survey-title">{{survey.longName}}</h1>
 
   <div class="grid">
     <div class="grid__col col-12@l">
-      <div class="">
         <dl class="survey-info info-panel" id="survey-attributes">
           <dt class="survey-info__title">
             Survey ID:
@@ -53,75 +51,74 @@
             {{survey.legalBasis}}
           </dd>
         </dl>
-      </div>
       <div class="ce-list">
-        <h2 class="u-fs-l u-pt-m">Collection exercises for {{survey.shortName}}</h2>
+        <h2 class="u-pt-m">Collection exercises for {{survey.shortName}}</h2>
         <div class="u-mb-l">
           <a href="{{ url_for('collection_exercise_bp.get_create_collection_exercise_form', survey_ref=survey.surveyRef, short_name=survey.shortName.replace(' ', '')) }}"
              name="create-collection-exercise-link" id="create-collection-exercise">Create collection exercise</a>
         </div>
-        <table class="table__dense" summary="Collection exercises for the survey" id="tbl-collection-exercise">
-          <thead class="table--head">
-            <tr class="table--row">
-              <th scope="col" class="table--header--cell tbl-ce-period">
+        <table class="table table--dense" summary="Collection exercises for the survey" id="tbl-collection-exercise">
+          <thead class="table__head">
+            <tr class="table__row">
+              <th scope="col" class="table__header tbl-ce-period">
                 Period
               </th>
-              <th scope="col" class="table--header--cell tbl-ce-respondent-info">
+              <th scope="col" class="table__header tbl-ce-respondent-info">
                 Respondent sees
               </th>
-              <th scope="col" class="table--header--cell tbl-ce-status">
+              <th scope="col" class="table__header tbl-ce-status">
                 Status
               </th>
-              <th scope="col" class="table--header--cell tbl-ce-status">
+              <th scope="col" class="table__header tbl-ce-status">
                 Sample
               </th>
-              <th scope="col" class="table--header--cell tbl-ce-status">
+              <th scope="col" class="table__header tbl-ce-status">
                 Report (CSV)
               </th>
-              <th scope="col" class="table--header--cell tbl-ce-status">
+              <th scope="col" class="table__header tbl-ce-status">
                 MPS
               </th>
-              <th scope="col" class="table--header--cell tbl-ce-status">
+              <th scope="col" class="table__header tbl-ce-status">
                 Go live
               </th>
-              <th scope="col" class="table--header--cell tbl-ce-status">
+              <th scope="col" class="table__header tbl-ce-status">
                 Return by
               </th>
             </tr>
           </thead>
-          <tbody>
+          <tbody class="table__body">
             {% for exercise in collection_exercises %}
             {% if newly_created_period == exercise.exerciseRef%}
-            <tr style="background-color:#edf4f0;" class="table--row  table--row__editable">
+            <tr style="background-color:#edf4f0;" class="table__row">
               {% else %}
               {% endif %}
-              <td class="table--cell tbl-ce-period" name="tbl-ce-period">
+              <td class="table__cell tbl-ce-period" name="tbl-ce-period">
                 <a href="/surveys/{{ survey.shortName.replace(' ', '') }}/{{ exercise.exerciseRef }}"
                    name="ce-link-{{exercise.exerciseRef}}">
                   {{exercise.exerciseRef}}
                 </a>
               </td>
-              <td class="table--cell tbl-ce-respondent-info" name="tbl-ce-shown-as">
+              <td class="table__cell tbl-ce-respondent-info" name="tbl-ce-shown-as">
                 {{exercise.userDescription}}
               </td>
-              <td class="table--cell tbl-ce-status" name="tbl-ce-status">
+              <td class="table__cell tbl-ce-status" name="tbl-ce-status">
                 {{exercise.state}}
               </td>
-              <td class="table--cell tbl-ce-status" name="tbl-ce-status">
+              <td class="table__cell tbl-ce-status" name="tbl-ce-status">
                 {{ exercise.sample_summary and exercise.sample_summary.totalSampleUnits or "" }}
               </td>
-              <td class="table--cell tbl-ce-status" name="tbl-ce-report">
+              <td class="table__cell tbl-ce-status" name="tbl-ce-report">
                 {% if exercise.state|upper == "LIVE" %}
                   <a class="download" href="{{ url_for('collection_exercise_bp.response_chasing', ce_id=exercise.id, survey_id=survey.id) }}" target="_blank">Response chasing</a>
                 {% endif %}
               </td>
-              <td class="table--cell tbl-ce-status" name="tbl-ce-status">
+              <td class="table__cell tbl-ce-status" name="tbl-ce-status">
                 {{ exercise.events.mps and exercise.events.mps.date or "" }}
               </td>
-              <td class="table--cell tbl-ce-status" name="tbl-ce-status">
+              <td class="table__cell tbl-ce-status" name="tbl-ce-status">
                 {{ exercise.events.go_live and exercise.events.go_live.date or "" }}
               </td>
-              <td class="table--cell tbl-ce-status" name="tbl-ce-status">
+              <td class="table__cell tbl-ce-status" name="tbl-ce-status">
                 {{ exercise.events.return_by and exercise.events.return_by.date or "" }}
               </td>
             </tr>
@@ -131,5 +128,4 @@
       </div>
     </div>
   </div>
-</div>
 {% endblock %}

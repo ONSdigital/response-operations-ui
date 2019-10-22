@@ -29,7 +29,7 @@ def get_info_message(message_key):
 @login_required
 def view_surveys():
     survey_list = survey_controllers.get_surveys_list()
-    breadcrumbs = [{"title": "Surveys"}]
+    breadcrumbs = [{"text": "Surveys"}]
 
     message_key = request.args.get('message_key')
 
@@ -49,11 +49,11 @@ def view_survey(short_name):
     survey = survey_controllers.get_survey(short_name)
     breadcrumbs = [
         {
-            "title": "Surveys",
-            "link": "/surveys"
+            "text": "Surveys",
+            "url": "/surveys"
         },
         {
-            "title": f"{survey['surveyRef']} {survey['shortName']}",
+            "text": f"{survey['surveyRef']} {survey['shortName']}",
         }
     ]
 

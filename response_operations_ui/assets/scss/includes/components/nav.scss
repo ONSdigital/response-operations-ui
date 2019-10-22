@@ -1,117 +1,59 @@
-/* need to separate out */
-
-.bar__sitenavigation {
-    border-top: 1px solid rgba(128, 158, 171, 1);
+.nav {
+    display: block;
+    padding: 0;
 }
 
-.sitenavigation {
-    margin: 0;
-    padding: 0;
+.nav--sub {
+    border-bottom: 1px solid #888;
 
-    &__list {
-        display: inline-block;
-        padding: 0;
-        margin: 0;
-        border: 0;
-    }
+    .nav__item {
+        padding: 0 0.667rem 0.3rem;
 
-    &__listitem {
-        display: inline-block;
-        margin: 0 1.5rem 0 0;
-        padding: 0;
-
-        a {
-            text-decoration: none;
-            padding: 0.5rem 0 0.3rem 0;
-            margin: 0;
-            color: white;
-            border-bottom: 0.2rem solid #033e58;
-
-            &:hover,
-            &:focus {
-                border-bottom: 0.2rem solid #ccc;
-            }
-
-            &:link,
-            &:visited {
-                font-weight: 800;
-                border-bottom: 0.2rem solid white;
-            }
+        &--current,
+        &--current:first-child {
+            border-bottom: 4px solid #033e58;
+            padding-left: 0.667rem;
         }
     }
 }
 
-/* Tabbed navigation */
-
-.nav-tabs {
-    list-style: none;
-    padding: 0;
-    border-bottom: 1px solid #666;
-
-    &__tab,
-    &__tab--active {
-        display: inline-block;
-        list-style: none;
-        padding: 0;
-        margin: 0;
-        border: none;
-    }
-}
-
-.tab-label {
-    display: inline-block;
-    padding: 0.3rem 1rem;
+.nav--horizontal {
+    font-size: 0;
     margin: 0;
-    margin-bottom: -2px;
-    border: 1px solid white;
-    border-top-left-radius: 0.2rem;
-    border-top-right-radius: 0.2rem;
-    border-bottom: 0;
-    color: #222;
-    font-weight: 400;
-}
 
-.nav-tabs__tab--active .tab-label {
-    font-weight: 600;
-    border: 1px solid #666;
-    background: white;
-    border-bottom: 1px solid white;
-}
+    .nav__list {
+        list-style: none;
+        margin: 0;
+        padding: 0;
+    }
 
-.nav-tabs__tab .tab-label {
-    text-decoration: none;
-}
+    .nav__item {
+        font-size: 1rem;
+        display: inline-block;
+        margin: 0 0 0 0.8rem;
+        position: relative;
+        text-align: center;
 
-.nav-tabs__tab .tab-label:hover,
-.nav-tabs__tab .tab-label:focus {
-    text-decoration: underline;
-    border: 1px solid #666;
-    background-color: #4263c2;
-}
+        &:first-child {
+            margin-left: 0;
+        }
 
-.nav-tabs__tab .tab-label:hover {
-    text-decoration: underline;
-    background-color: #4263c2;
-    color: white;
-}
+        + .nav__item--secondary {
+            border-top: 1px solid lighten(#033e58, 15%);
+            margin: 0.5rem 0 0;
+        }
+    }
 
-.nav-tabs__tab.create {
-    float: right;
-}
+    .nav__link {
+        display: inline-block;
+        margin: 0;
+        text-align: center;
+    }
 
-.tab-label.create-new-message {
-    text-decoration: underline;
-    color: #4263c2;
-}
+    .nav__item--active {
 
-.tab-label.create-new-message:active,
-.tab-label.create-new-message:focus {
-    background-color: #4263c2;
-    color: white;
-}
-
-.tab-label.create-new-message:hover {
-    text-decoration: underline;
-    background-color: #4263c2;
-    color: white;
+        .nav__link {
+            font-weight: bold;
+        }
+    }
 }

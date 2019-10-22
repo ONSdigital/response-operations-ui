@@ -1,11 +1,10 @@
 {% extends "layouts/base.html" %}
-{% block page_title %}Respondents | Survey Data Collection{% endblock %}
+{% set page_title = "Respondents" %}
 
 {% block main %}
 
 {% include 'partials/flashed-messages.html' %}
 
-    <div role="main" id="main" class="page__main">
         <div class="grid">
             <section class="grid__col col-12@l u-mb-xl respondent-account-details">
 
@@ -57,44 +56,44 @@
                 <div class="respondent-account-enrolment data-panelx">
 
 
-                    <table class="table table__dense" summary="Enrolments">
-                        <thead class="table--head">
-                            <tr class="table--row">
-                                  <th scope="col" class="table--header--cell">
+                    <table class="table table--dense" summary="Enrolments">
+                        <thead class="table__head">
+                            <tr class="table__row">
+                                  <th scope="col" class="table__header">
                                     RU Reference
                                   </th>
-                                  <th scope="col" class="table--header--cell">
+                                  <th scope="col" class="table__header">
                                     Reporting unit name
                                   </th>
-                                  <th scope="col" class="table--header--cell">
+                                  <th scope="col" class="table__header">
                                     Trading as
                                   </th>
-                                  <th scope="col" class="table--header--cell">
+                                  <th scope="col" class="table__header">
                                     Survey
                                   </th>
-                                  <th scope="col" class="table--header--cell">
+                                  <th scope="col" class="table__header">
                                     Enrolment status
                                   </th>
                                 </tr>
                               </thead>
-                              <tbody>
+                              <tbody class="table__body">
                                 {% for enrolment in enrolments %}
-                                    <tr class="table--row">
-                                      <td class="table--cell">
+                                    <tr class="table__row">
+                                      <td class="table__cell">
                                           <a href=" {{ url_for('reporting_unit_bp.view_reporting_unit', ru_ref=enrolment['business']['sampleUnitRef'], _anchor='survey-'+enrolment['survey']['shortName'] )}}">{{ enrolment['business']['sampleUnitRef'] }}</a>
                                       </td>
-                                      <td class="table--cell">
+                                      <td class="table__cell">
                                         {{ enrolment['business']['name'] }}
                                       </td>
-                                      <td class="table--cell">
+                                      <td class="table__cell">
                                         {% if enrolment['business']['trading_as'] %}
                                           {{ enrolment['business']['trading_as'] }}
                                         {% endif %}
                                       </td>
-                                      <td class="table--cell">
+                                      <td class="table__cell">
                                         {{ enrolment['survey']['surveyRef'] }} {{ enrolment['survey']['shortName'] }}
                                       </td>
-                                      <td class="table--cell">
+                                      <td class="table__cell">
                                         {{ enrolment['status'].title() }}
                                         {% if enrolment['status'] == 'ENABLED' %}
                                         <a href="{{ url_for('reporting_unit_bp.confirm_change_enrolment_status', ru_ref=enrolment['business']['sampleUnitRef'], ru_name=enrolment['business']['name'], survey_id=enrolment['survey']['id'],
@@ -116,6 +115,5 @@
 
             </section>
         </div>
-    </div>
     </div>
 {% endblock %}

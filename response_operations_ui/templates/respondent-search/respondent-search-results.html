@@ -1,8 +1,9 @@
 {% extends "layouts/base.html" %}
-{% block page_title %}Respondents | Survey Data Collection{% endblock %}
+{% from "components/button/_macro.njk" import onsButton %}
+
+{% set page_title = "Respondents" %}
 
 {% block main %}
-<div role="main" id="main" class="page__main">
     <div class="grid">
         <div class="grid__col col-12@l">
             {% include 'respondent-search/rs-inline-form.html' %}
@@ -15,5 +16,4 @@
             {% if show_pagination %}{% include 'respondent-search/rs-pagination.html' %}{% endif %}
         </div>
     </div>
-</div>
 {% endblock %}

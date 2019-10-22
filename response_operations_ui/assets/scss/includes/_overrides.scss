@@ -81,12 +81,15 @@ footer {
     margin-bottom: 0;
 }
 
-button.unready,
-button.unready:hover,
-button.unready:focus {
-    border: none;
-    background: #6a6a6a;
-    cursor: not-allowed;
+.btn.btn--disabled,
+.btn.btn--disabled:hover,
+.btn.btn--disabled:focus {
+
+    .btn__inner {
+        border: none;
+        background: #6a6a6a;
+        cursor: not-allowed;
+    }
 }
 
 button.cancel {
