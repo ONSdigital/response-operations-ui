@@ -1,10 +1,11 @@
 {% if error %}
-<div class="panel panel--error u-mb-s" data-qa="error">
-    <div class="panel__header">
-        <h1 id="error-header" class="panel__title u-fs-r--b">{{ error.header }}</h1>
-    </div>
-    <div class="panel__body" data-qa="error-body">
+    {% call
+        onsPanel({
+            "type": "error",
+            "classes": "u-mb-s",
+            "title": error.header
+        })
+    %}
         <a href="#{{error.section}}">{{ error.message }}</a>
-    </div>
-</div>
+    {% endcall %}
 {% endif %}

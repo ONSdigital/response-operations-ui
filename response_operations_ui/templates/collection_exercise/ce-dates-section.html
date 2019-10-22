@@ -1,5 +1,80 @@
 <section class="ce-section ce-events">
   <h2 class="u-fs-r--b u-pt-m">Dates</h2>
+  
+  {% set mpsData = {} %}
+
+  {% if not events.mps %}
+    {% set mpsData = {
+      "action": url_for('collection_exercise_bp.get_create_collection_event_form', short_name=survey.shortName, period=ce.exerciseRef, ce_id=ce.id, tag='mps'),
+      "method": 'get',
+      "button": {
+        "text": 'Add',
+        "id": 'create-event-date-mps',
+        "classes": 'btn--secondary btn--small'
+      }
+    } %}
+  {% elif not locked %}
+    {% set mpsData = {
+      "action": url_for('collection_exercise_bp.update_event_date', short_name=survey.shortName, period=ce.exerciseRef, tag='mps'),
+      "method": 'get',
+      "button": {
+        "text": 'Edit',
+        "id": 'create-event-date-mps',
+        "classes": 'edit-icon',
+        "url": '#'
+      }
+    } %}
+  {% endif %}
+
+  {% set surveyTableData = {
+      "table_class": 'table--dense',
+      "caption": 'Dates for this collection exercise',
+      "hideCaption": true
+    }
+  %}
+
+  {% do surveyTableData | setAttribute("ths", [
+      { 
+          "value": "Event",
+          "class": "u-vh"
+      },
+      { 
+          "value": "Date",
+          "class": "u-vh"
+      },
+      { 
+          "value": "Status",
+          "class": "u-vh"
+      }
+    ]) 
+  %}
+
+  {% set surveyTableDataRows = [] %}
+  
+  {% do surveyTableDataRows.append(
+    {
+      "tds": [
+        {
+          "value": 'MPS (Main print selection)',
+          "data": "Event"
+        },
+        {
+          "value": events.mps.day + ' <em>' + events.mps.date + '</em> ' + events.mps.time if events.mps,
+          "data": "Date"
+        },
+        {
+          "form": mpsData,
+          "data": "Status"  
+        }
+      ]
+    }
+    ) %}
+
+  {% do surveyTableData | setAttribute("trs", surveyTableDataRows) %}
+
+  {{
+    onsTable(surveyTableData)
+  }}
 
   <table class="table table--dense" summary="Dates for this collection exercise">
     <thead class="table__head u-vh">
