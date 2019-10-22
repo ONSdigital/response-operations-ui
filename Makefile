@@ -3,7 +3,6 @@ build: load-templates
 	rm -rf node_modules
 	npm install
 	npx gulp build
-	load-templates
 
 lint:
 	pipenv run flake8 --exclude=./node_modules,./response_operations_ui/logger_config.py ./response_operations_ui ./tests
