@@ -19,62 +19,86 @@
       "method": 'get',
       "button": {
         "text": 'Edit',
-        "id": 'create-event-date-mps',
-        "classes": 'edit-icon',
-        "url": '#'
+        "id": 'edit-event-date-mps',
+        "classes": 'btn--secondary btn--small'
       }
     } %}
   {% endif %}
 
-  {% set surveyTableData = {
-      "table_class": 'table--dense',
-      "caption": 'Dates for this collection exercise',
-      "hideCaption": true
-    }
-  %}
+  {% set goLiveData = {} %}
 
-  {% do surveyTableData | setAttribute("ths", [
-      { 
-          "value": "Event",
-          "class": "u-vh"
-      },
-      { 
-          "value": "Date",
-          "class": "u-vh"
-      },
-      { 
-          "value": "Status",
-          "class": "u-vh"
+  {% if not events.go_live %}
+    {% set goLiveData = {
+      "action": url_for('collection_exercise_bp.get_create_collection_event_form', short_name=survey.shortName, period=ce.exerciseRef, ce_id=ce.id, tag='go_live'),
+      "method": 'get',
+      "button": {
+        "text": 'Add',
+        "id": 'create-event-date-go_live',
+        "classes": 'btn--secondary btn--small'
       }
-    ]) 
-  %}
-
-  {% set surveyTableDataRows = [] %}
-  
-  {% do surveyTableDataRows.append(
-    {
-      "tds": [
-        {
-          "value": 'MPS (Main print selection)',
-          "data": "Event"
-        },
-        {
-          "value": events.mps.day + ' <em>' + events.mps.date + '</em> ' + events.mps.time if events.mps,
-          "data": "Date"
-        },
-        {
-          "form": mpsData,
-          "data": "Status"  
-        }
-      ]
-    }
-    ) %}
-
-  {% do surveyTableData | setAttribute("trs", surveyTableDataRows) %}
+    } %}
+  {% elif not locked %}
+    {% set goLiveData = {
+      "action": url_for('collection_exercise_bp.update_event_date', short_name=survey.shortName, period=ce.exerciseRef, tag='go_live'),
+      "method": 'get',
+      "button": {
+        "text": 'Edit',
+        "id": 'edit-event-date-go_live',
+        "classes": 'btn--secondary btn--small'
+      }
+    } %}
+  {% endif %}
 
   {{
-    onsTable(surveyTableData)
+    onsTable({
+      "table_class": 'table--dense',
+      "caption": 'Dates for this collection exercise',
+      "hideCaption": true,
+      "ths": [
+        { 
+            "value": "Event",
+            "class": "u-vh"
+        },
+        { 
+            "value": "Date",
+            "class": "u-vh"
+        },
+        { 
+            "value": "Status",
+            "class": "u-vh"
+        }
+      ],
+      "trs": [
+        {
+          "tds": [
+            {
+              "value": 'MPS (Main print selection)'
+            },
+            {
+              "value": events.mps.day + ' <em>' + events.mps.date + '</em> ' + events.mps.time if events.mps
+            },
+            {
+              "form": mpsData 
+            }
+          ]
+        },
+        {
+          "tds": [    
+            {
+              "value": 'Go live'
+            },
+            {
+              "value": events.go_live.day + ' <em>' + events.go_live.date + '</em> ' + events.go_live.time if events.go_live
+            },
+            {
+              "form": goLiveData 
+            }
+          ]
+        }
+      ]  
+    }) 
   }}
+
 
   <table class="table table--dense" summary="Dates for this collection exercise">
     <thead class="table__head u-vh">
