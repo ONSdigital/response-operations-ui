@@ -7,9 +7,6 @@ EXPOSE 8085
 RUN apt-get update -y && apt-get install -y python-pip unzip curl
 RUN pip3 install pipenv && pipenv install --deploy --system
 
-# Loads design system templates
-RUN pipenv run ./scripts/load_templates.sh
-
 # Node Install
 # Installs cUrl, uses cUrl to grab and run install script to add deb repos, installs node from this, installs build essentials to allow node-gyp
 # to compile C++ bindings, runs node -v and npm -v to ensure they actually run.
