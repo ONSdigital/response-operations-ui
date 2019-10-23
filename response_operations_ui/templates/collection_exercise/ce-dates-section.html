@@ -1,104 +1,100 @@
 <section class="ce-section ce-events">
   <h2 class="u-fs-r--b u-pt-m">Dates</h2>
   
-  {% set mpsData = {} %}
-
-  {% if not events.mps %}
-    {% set mpsData = {
-      "action": url_for('collection_exercise_bp.get_create_collection_event_form', short_name=survey.shortName, period=ce.exerciseRef, ce_id=ce.id, tag='mps'),
-      "method": 'get',
-      "button": {
-        "text": 'Add',
-        "id": 'create-event-date-mps',
-        "classes": 'btn--secondary btn--small'
-      }
-    } %}
-  {% elif not locked %}
-    {% set mpsData = {
-      "action": url_for('collection_exercise_bp.update_event_date', short_name=survey.shortName, period=ce.exerciseRef, tag='mps'),
-      "method": 'get',
-      "button": {
-        "text": 'Edit',
-        "id": 'edit-event-date-mps',
-        "classes": 'btn--secondary btn--small'
-      }
-    } %}
-  {% endif %}
-
-  {% set goLiveData = {} %}
-
-  {% if not events.go_live %}
-    {% set goLiveData = {
-      "action": url_for('collection_exercise_bp.get_create_collection_event_form', short_name=survey.shortName, period=ce.exerciseRef, ce_id=ce.id, tag='go_live'),
-      "method": 'get',
-      "button": {
-        "text": 'Add',
-        "id": 'create-event-date-go_live',
-        "classes": 'btn--secondary btn--small'
-      }
-    } %}
-  {% elif not locked %}
-    {% set goLiveData = {
-      "action": url_for('collection_exercise_bp.update_event_date', short_name=survey.shortName, period=ce.exerciseRef, tag='go_live'),
-      "method": 'get',
-      "button": {
-        "text": 'Edit',
-        "id": 'edit-event-date-go_live',
-        "classes": 'btn--secondary btn--small'
-      }
-    } %}
-  {% endif %}
-
-  {{
-    onsTable({
+  {% set surveyTableData = {
       "table_class": 'table--dense',
       "caption": 'Dates for this collection exercise',
-      "hideCaption": true,
-      "ths": [
-        { 
-            "value": "Event",
-            "class": "u-vh"
-        },
-        { 
-            "value": "Date",
-            "class": "u-vh"
-        },
-        { 
-            "value": "Status",
-            "class": "u-vh"
-        }
-      ],
-      "trs": [
-        {
-          "tds": [
-            {
-              "value": 'MPS (Main print selection)'
-            },
-            {
-              "value": events.mps.day + ' <em>' + events.mps.date + '</em> ' + events.mps.time if events.mps
-            },
-            {
-              "form": mpsData 
-            }
-          ]
-        },
-        {
-          "tds": [    
-            {
-              "value": 'Go live'
-            },
-            {
-              "value": events.go_live.day + ' <em>' + events.go_live.date + '</em> ' + events.go_live.time if events.go_live
-            },
-            {
-              "form": goLiveData 
-            }
-          ]
-        }
-      ]  
-    }) 
-  }}
+      "hideCaption": true
+    }
+  %}
 
+  {% do surveyTableData | setAttribute("ths", [
+      { 
+          "value": "Event",
+          "class": "u-vh"
+      },
+      { 
+          "value": "Date",
+          "class": "u-vh"
+      },
+      { 
+          "value": "Status",
+          "class": "u-vh"
+      }
+    ]) 
+  %}
+
+  {% set dateGroups = ['mps', 'go_live', 'return_by'] %}
+  {% set surveyTableDataRows = [] %}
+
+  {% for dateGroup in dateGroups %}
+
+    {% if dateGroup == 'mps' %}
+      {% set label = 'MPS (Main print selection)' %}
+      {% set event = events.mps %}
+      {% set eventDay = events.mps.day %}
+      {% set eventDate = events.mps.date %}
+      {% set eventTime = events.mps.time %}
+    {% elif dateGroup == 'go_live' %}
+      {% set label = 'Go live' %}
+      {% set event = events.go_live %}
+      {% set eventDay = events.go_live.day %}
+      {% set eventDate = events.go_live.date %}
+      {% set eventTime = events.go_live.time %}
+    {% elif dateGroup == 'return_by' %}
+      {% set label = 'Return by' %}
+      {% set event = events.return_by %}
+      {% set eventDay = events.return_by.day %}
+      {% set eventDate = events.return_by.date %}
+      {% set eventTime = events.return_by.time %}
+    {% endif %}
+
+    {% if not event %}
+      {% set formData = {
+        "action": url_for('collection_exercise_bp.get_create_collection_event_form', short_name=survey.shortName, period=ce.exerciseRef, ce_id=ce.id, tag=dateGroup),
+        "method": 'get',
+        "button": {
+          "text": 'Add',
+          "id": 'create-event-date' + dateGroup,
+          "classes": 'btn--secondary btn--small'
+        }
+      } %}
+
+    {% elif not locked %}
+      {% set formData = {
+        "action": url_for('collection_exercise_bp.update_event_date', short_name=survey.shortName, period=ce.exerciseRef, tag=dateGroup),
+        "method": 'get',
+        "button": {
+          "text": 'Edit',
+          "id": 'edit-event-date' + dateGroup,
+          "classes": 'btn--secondary btn--small'
+        }
+      } %}
+
+    {% endif %}
+
+    {% do surveyTableDataRows.append(
+      {
+        "tds": [
+          {
+            "value": label
+          },
+          {
+            "value": eventDay + ' <em>' + eventDate + '</em> ' + eventTime if event
+          },
+          {
+            "form": formData 
+          }
+        ]
+      }
+    ) %}
+  {% endfor %}
+
+  {% do surveyTableData | setAttribute("trs", surveyTableDataRows) %}
+
+  {{
+    onsTable(surveyTableData)
+  }}
 
   <table class="table table--dense" summary="Dates for this collection exercise">
     <thead class="table__head u-vh">
