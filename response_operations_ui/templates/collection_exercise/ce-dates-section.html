@@ -24,7 +24,7 @@
     ]) 
   %}
 
-  {% set dateGroups = ['mps', 'go_live', 'return_by'] %}
+  {% set dateGroups = ['mps', 'go_live', 'return_by', 'reminder', 'reminder2'] %}
   {% set surveyTableDataRows = [] %}
 
   {% for dateGroup in dateGroups %}
@@ -47,6 +47,20 @@
       {% set eventDay = events.return_by.day %}
       {% set eventDate = events.return_by.date %}
       {% set eventTime = events.return_by.time %}
+    {% elif dateGroup == 'reminder' %}
+      {% set label = 'First reminder' %}
+      {% set event = events.reminder %}
+      {% set eventDay = events.reminder.day %}
+      {% set eventDate = events.reminder.date %}
+      {% set eventTime = events.reminder.time %}
+      {% set eventIsInFuture = events.reminder.is_in_future %}
+    {% elif dateGroup == 'reminder2' %}
+      {% set label = 'Second reminder' %}
+      {% set event = events.reminder2 %}
+      {% set eventDay = events.reminder2.day %}
+      {% set eventDate = events.reminder2.date %}
+      {% set eventTime = events.reminder2.time %}
+      {% set eventIsInFuture = events.reminder2.is_in_future %}
     {% endif %}
 
     {% if not event %}
@@ -60,7 +74,7 @@
         }
       } %}
 
-    {% elif not locked %}
+    {% elif not locked or (eventIsInFuture if eventIsInFuture) %}
       {% set formData = {
         "action": url_for('collection_exercise_bp.update_event_date', short_name=survey.shortName, period=ce.exerciseRef, tag=dateGroup),
         "method": 'get',
@@ -70,7 +84,6 @@
           "classes": 'btn--secondary btn--small'
         }
       } %}
-
     {% endif %}
 
     {% do surveyTableDataRows.append(
