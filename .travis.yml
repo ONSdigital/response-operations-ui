@@ -21,7 +21,6 @@ install:
   - pipenv install --dev --deploy
 
 script:
-  - make load-templates
   - make test
 
 after_success:
