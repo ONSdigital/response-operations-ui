@@ -84,40 +84,37 @@
     {% set surveyTableData = {
         "table_class": 'table--responsive table--dense',
         "caption": 'The table shows collection exercise data for ' + survey.longName,
-        "hideCaption": true
+        "hideCaption": true,
+        "ths": [
+          { 
+              "value": "Period"
+          },
+          { 
+              "value": "Respondent sees"
+          },
+          { 
+              "value": "Status"
+          },
+          { 
+              "value": "Sample"
+          },
+          { 
+              "value": "Report (CSV)"
+          },
+          { 
+              "value": "MPS"
+          },
+          { 
+              "value": "Go live"
+          },
+          { 
+              "value": "Return by"
+          }
+        ]
       }
     %}
 
-    {% do surveyTableData | setAttribute("ths", [
-        { 
-            "value": "Period"
-        },
-        { 
-            "value": "Respondent sees"
-        },
-        { 
-            "value": "Status"
-        },
-        { 
-            "value": "Sample"
-        },
-        { 
-            "value": "Report (CSV)"
-        },
-        { 
-            "value": "MPS"
-        },
-        { 
-            "value": "Go live"
-        },
-        { 
-            "value": "Return by"
-        }
-      ]) 
-    %}
-
     {% set surveyTableDataRows = [] %}
-
 
     {% for exercise in collection_exercises %}
       {% set exerciseRef = exercise.exerciseRef if exercise.exerciseRef else "" %}

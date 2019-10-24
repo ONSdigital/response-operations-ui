@@ -20,27 +20,25 @@
   <h1 name="page-surveys-title">Surveys</h1>
   
   {% set surveyTableData = {
-      "table_class": 'table--responsive table--dense'
+      "table_class": 'table--responsive table--dense',
+      "ths": [
+        { 
+            "value": "ID"
+        },
+        { 
+            "value": "Title"
+        },
+        { 
+            "value": "Abbreviation"
+        },
+        { 
+            "value": "Legal basis"
+        },
+        { 
+            "value": ""
+        }
+      ]
     }
-  %}
-
-  {% do surveyTableData | setAttribute("ths", [
-      { 
-          "value": "ID"
-      },
-      { 
-          "value": "Title"
-      },
-      { 
-          "value": "Abbreviation"
-      },
-      { 
-          "value": "Legal basis"
-      },
-      { 
-          "value": ""
-      }
-    ]) 
   %}
 
   {% set surveyTableDataRows = [] %}
