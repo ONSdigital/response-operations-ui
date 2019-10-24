@@ -1,7 +1,5 @@
 <section class="ce-section ce-events">
   <h2 class="u-fs-r--b u-pt-m">Dates</h2>
-  
-  {% set dateGroups = ['mps', 'go_live', 'return_by', 'reminder', 'reminder2', 'reminder3'] %}
 
   {% set surveyTableData = {
       "table_class": 'table--dense',
@@ -25,6 +23,7 @@
   %}
 
   {% set surveyTableDataRows = [] %}
+  {% set dateGroups = ['mps', 'go_live', 'return_by', 'reminder', 'reminder2', 'reminder3', 'exercise_end'] %}
 
   {% for dateGroup in dateGroups %}
     {% if dateGroup == 'mps' %}
@@ -84,6 +83,14 @@
         {% set eventTime = events.reminder3.time %}
         {% set eventIsInFuture = events.reminder3.is_in_future %}
       {% endif %}
+    {% elif dateGroup == 'exercise_end' %}
+      {% set label = 'Exercise end' %}
+      {% set event = events.exercise_end %}
+      {% if event %}
+        {% set eventDay = events.exercise_end.day %}
+        {% set eventDate = events.exercise_end.date %}
+        {% set eventTime = events.exercise_end.time %}
+      {% endif %}
     {% endif %}
 
     {% if not event %}
@@ -99,7 +106,7 @@
 
     {% elif not locked or (eventIsInFuture if eventIsInFuture) %}
       {% set formData = {
-        "action": url_for('collection_exercise_bp.update_event_date', short_name=survey.shortName, period=ce.exerciseRef, tag=dateGroup),
+        "action": url_for('collection_exercise_bp.update_event_date', short_name=survey.shortName, period=ce.exerciseRef, tag=dateGroup, errors=None if event == events.reminder),
         "method": 'get',
         "button": {
           "text": 'Edit',
@@ -133,234 +140,4 @@
     onsTable(surveyTableData)
   }}
 
-  <table class="table table--dense" summary="Dates for this collection exercise">
-    <thead class="table__head u-vh">
-    <tr class="table__row">
-      <th scope="col" class="table__header tbl-ce-label">
-        Event
-      </th>
-      <th scope="col" class="table__header tbl-ce-value">
-        Date
-      </th>
-      <th scope="col" class="table__header tbl-ce-status">
-        Status
-      </th>
-    </tr>
-    </thead>
-    <tbody class="table__body">
-    <tr class="table__row">
-      <td class="table__cell tbl-ce-label">
-        MPS (Main print selection)
-      </td>
-
-      <td class="table__cell tbl-ce-value ce-event-date" name="mps-date">
-        {% if events.mps %}
-        {{events.mps.day}} <em>{{events.mps.date}}</em> {{events.mps.time}}
-        {% endif %}
-      </td>
-
-      <td class="table__cell tbl-ce-status tbl-ce-action">
-        {% if not events.mps %}
-        <form action="{{ url_for('collection_exercise_bp.get_create_collection_event_form', short_name=survey.shortName, period=ce.exerciseRef, ce_id=ce.id, tag='mps')}}" method="get">
-          {{
-            onsButton({
-                "text": "Add",
-                "id": "create-event-date-mps",
-                "classes": "btn--secondary btn--small"
-            })
-          }}   
-        </form>
-        {% elif not locked %}
-        <form action="{{ url_for('collection_exercise_bp.update_event_date', short_name=survey.shortName, period=ce.exerciseRef, tag='mps')}}" method="get">
-          <a class="edit-icon" href=# id="edit-event-date-mps" onclick="this.parentNode.submit()"></a>
-        </form>
-        {% endif %}
-      </td>
-    </tr>
-
-    <tr class="table__row">
-      <td class="table__cell tbl-ce-label">
-        Go live
-      </td>
-
-      <td class="table__cell tbl-ce-value ce-event-date" name="go-live-date">
-        {% if events.go_live %}
-        {{events.go_live.day}} <em>{{events.go_live.date}}</em> {{events.go_live.time}}
-        {% endif %}
-      </td>
-
-      <td class="table__cell tbl-ce-status tbl-ce-action">
-        {% if not events.go_live %}
-        <form action="{{ url_for('collection_exercise_bp.get_create_collection_event_form', short_name=survey.shortName, period=ce.exerciseRef, ce_id=ce.id, tag='go_live')}}" method="get">
-          {{
-            onsButton({
-                "text": "Add",
-                "id": "create-event-date-go-live",
-                "classes": "btn--secondary btn--small"
-            })
-          }}   
-        </form>
-        {% elif not locked %}
-        <form action="{{ url_for('collection_exercise_bp.update_event_date', short_name=survey.shortName, period=ce.exerciseRef, tag='go_live')}}" method="get">
-          <a class="edit-icon" href=# id="edit-event-date-go-live" onclick="this.parentNode.submit()"></a>
-        </form>
-        {% endif %}
-      </td>
-    </tr>
-
-    <tr class="table__row">
-      <td class="table__cell tbl-ce-label">
-        Return by
-      </td>
-
-      <td class="table__cell tbl-ce-value ce-event-date" name="return-by-date">
-        {% if events.return_by %}
-        {{events.return_by.day}} <em>{{events.return_by.date}}</em> {{events.return_by.time}}
-        {% endif %}
-      </td>
-
-      <td class="table__cell tbl-ce-status tbl-ce-action">
-        {% if not events.return_by %}
-        <form action="{{ url_for('collection_exercise_bp.get_create_collection_event_form', short_name=survey.shortName, period=ce.exerciseRef, ce_id=ce.id, tag='return_by')}}" method="get">
-          {{
-            onsButton({
-                "text": "Add",
-                "id": "create-event-date-return-by",
-                "classes": "btn--secondary btn--small"
-            })
-          }}   
-        </form>
-        {% elif not locked %}
-        <form action="{{ url_for('collection_exercise_bp.update_event_date', short_name=survey.shortName, period=ce.exerciseRef, tag='return_by')}}" method="get">
-          <a class="edit-icon" href=# id="edit-event-date-return-by" onclick="this.parentNode.submit()"></a>
-        </form>
-        {% endif %}
-      </td>
-    </tr>
-
-    <tr class="table__row">
-      <td class="table__cell tbl-ce-label">
-        First reminder
-      </td>
-
-      <td class="table__cell tbl-ce-value ce-event-date" name="first-reminder-date">
-        {% if events.reminder %}
-        {{events.reminder.day}} <em>{{events.reminder.date}}</em> {{events.reminder.time}}
-        {% endif %}
-      </td>
-
-      <td class="table__cell tbl-ce-status tbl-ce-action">
-        {% if not events.reminder %}
-        <form action="{{ url_for('collection_exercise_bp.get_create_collection_event_form', short_name=survey.shortName, period=ce.exerciseRef, ce_id=ce.id, tag='reminder')}}" method="get">
-          {{
-            onsButton({
-                "text": "Add",
-                "id": "create-event-date-reminder",
-                "classes": "btn--secondary btn--small"
-            })
-          }}   
-        </form>
-        {% elif events.reminder and (not locked or events.reminder.is_in_future) %}
-        <form action="{{ url_for('collection_exercise_bp.update_event_date', short_name=survey.shortName, period=ce.exerciseRef, tag='reminder', errors=None)}}" method="get">
-          <a class="edit-icon" href=# id="edit-event-date-reminder" onclick="this.parentNode.submit()"></a>
-        </form>
-        {% endif %}
-      </td>
-    </tr>
-
-    {% if events.reminder %}
-    <tr class="table__row">
-      <td class="table__cell tbl-ce-label">
-        Second reminder
-      </td>
-
-      <td class="table__cell tbl-ce-value ce-event-date" name="second-reminder-date">
-        {% if events.reminder2 %}
-        {{events.reminder2.day}} <em>{{events.reminder2.date}}</em> {{events.reminder2.time}}
-        {% endif %}
-      </td>
-
-      <td class="table__cell tbl-ce-status tbl-ce-action">
-        {% if not events.reminder2 %}
-        <form action="{{ url_for('collection_exercise_bp.get_create_collection_event_form', short_name=survey.shortName, period=ce.exerciseRef, ce_id=ce.id, tag='reminder2')}}" method="get">
-          {{
-            onsButton({
-                "text": "Add",
-                "id": "create-event-date-reminder2",
-                "classes": "btn--secondary btn--small"
-            })
-          }}   
-        </form>
-        {% elif events.reminder2 and (not locked or events.reminder2.is_in_future) %}
-        <form action="{{ url_for('collection_exercise_bp.update_event_date', short_name=survey.shortName, period=ce.exerciseRef, tag='reminder2')}}" method="get">
-          <a class="edit-icon" href=# id="edit-event-date-reminder2" onclick="this.parentNode.submit()"></a>
-        </form>
-        {% endif %}
-      </td>
-    </tr>
-    {% endif %}
-
-    {% if events.reminder2 %}
-    <tr class="table__row">
-      <td class="table__cell tbl-ce-label">
-        Third reminder
-      </td>
-
-      <td class="table__cell tbl-ce-value ce-event-date" name="third-reminder-date">
-        {% if events.reminder3 %}
-        {{events.reminder3.day}} <em>{{events.reminder3.date}}</em> {{events.reminder3.time}}
-        {% endif %}
-      </td>
-
-      <td class="table__cell tbl-ce-status tbl-ce-action">
-        {% if not events.reminder3 %}
-        <form action="{{ url_for('collection_exercise_bp.get_create_collection_event_form', short_name=survey.shortName, period=ce.exerciseRef, ce_id=ce.id, tag='reminder3')}}" method="get">
-          {{
-            onsButton({
-                "text": "Add",
-                "id": "create-event-date-reminder3",
-                "classes": "btn--secondary btn--small"
-            })
-          }} 
-        </form>
-        {% elif events.reminder3 and (not locked or events.reminder3.is_in_future) %}
-        <form action="{{ url_for('collection_exercise_bp.update_event_date', short_name=survey.shortName, period=ce.exerciseRef, tag='reminder3')}}" method="get">
-          <a class="edit-icon" href=# id="edit-event-date-reminder3" onclick="this.parentNode.submit()"></a>
-        </form>
-        {% endif %}
-      </td>
-    </tr>
-    {% endif %}
-
-    <tr class="table__row">
-      <td class="table__cell tbl-ce-label">
-        Exercise end
-      </td>
-
-      <td class="table__cell tbl-ce-value ce-event-date" name="exercise-end-date">
-        {% if events.exercise_end %}
-        {{events.exercise_end.day}} <em>{{events.exercise_end.date}}</em> {{events.exercise_end.time}}
-        {% endif %}
-      </td>
-
-      <td class="table__cell tbl-ce-status tbl-ce-action">
-        {% if not events.exercise_end %}
-        <form action="{{ url_for('collection_exercise_bp.get_create_collection_event_form', short_name=survey.shortName, ce_id=ce.id, period=ce.exerciseRef, tag='exercise_end')}}" method="get">
-          {{
-            onsButton({
-                "text": "Add",
-                "id": "create-event-date-exercise-end",
-                "classes": "btn--secondary btn--small"
-            })
-          }} 
-        </form>
-        {% elif not locked %}
-        <form action="{{ url_for('collection_exercise_bp.update_event_date', short_name=survey.shortName, period=ce.exerciseRef, tag='exercise_end')}}" method="get">
-          <a class="edit-icon" href=# id="edit-event-date-exercise-end" onclick="this.parentNode.submit()"></a>
-        </form>
-        {% endif %}
-      </td>
-    </tr>
-    </tbody>
-  </table>
 </section>
