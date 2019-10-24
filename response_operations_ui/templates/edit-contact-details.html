@@ -28,7 +28,6 @@
         </div>
       </div>
       {% endif %}
-
       {% if error_type == 'email conflict' %}
       <div class="panel panel--simple panel--error u-mb-l">
         <div class="panel__body" id="save-email-error">
@@ -37,6 +36,26 @@
         </div>
       </div>
       {% endif %}
+    {{errors}}
+      {% if errors %}
+      <div class="panel panel--simple panel--error u-mb-l">
+        <div class="panel__body" id="save-errors">
+          <h2 id='error-saving-messages' class="u-fs-r--b">Error updating contact details</h2>
+          <p class="u-fs-r">{{ errors }}</p>
+        </div>
+      </div>
+      {% endif %}
+<!--
+      {% if errors %}
+      <div class="panel panel--simple panel--error u-mb-l">
+        {% for field, error_list in errors %}
+        <div class="panel__body" id="save-errors">
+         <h2 id='error-saving-first-name' class="u-fs-r--b">Error updating contact details</h2>
+          <p class="u-fs-r">{{ ', '.join(error_list) }}</p>
+        </div>
+        {% endfor %}
+      </div>
+      {% endif %} -->
 
       <div class="field u-mb-l">
           <label class="label" for="lastName">
@@ -73,7 +92,7 @@
           <input type="hidden" name="hidden_email" value={{ respondent_details.emailAddress }}>
       </div>
 
-      <div class="field u-mb-m">
+      <div class="field u-mb-l">
           <label class="label" for="telephone">
             Phone number
             <span class="secondary-info current-value">
@@ -94,4 +113,3 @@
 </div>
 
 {% endblock %}
-
