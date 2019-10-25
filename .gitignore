@@ -106,10 +106,6 @@ minimised/
 *.floo
 *.flooignore
 
-# Ignore Design-System templates
-response_operations_ui/templates/components
-response_operations_ui/templates/layout
-
 *.css
 *.map
 
