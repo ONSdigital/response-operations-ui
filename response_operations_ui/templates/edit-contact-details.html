@@ -28,6 +28,7 @@
         </div>
       </div>
       {% endif %}
+
       {% if error_type == 'email conflict' %}
       <div class="panel panel--simple panel--error u-mb-l">
         <div class="panel__body" id="save-email-error">
@@ -36,7 +37,7 @@
         </div>
       </div>
       {% endif %}
-    {{errors}}
+
       {% if errors %}
       <div class="panel panel--simple panel--error u-mb-l">
         <div class="panel__body" id="save-errors">
@@ -65,7 +66,7 @@
               {{ respondent_details.lastName }}
             </span>
           </label>
-        {{ form.last_name(class_="input input--text", id='lastName', required=required, maxlength=254) }}
+        {{ form.last_name(class_="input input--text", id='lastName', maxlength=254) }}
       </div>
 
       <div class="field u-mb-l">
@@ -76,7 +77,7 @@
               {{ respondent_details.firstName }}
             </span>
           </label>
-        {{ form.first_name(class_="input input--text", id='firstName', required=required, maxlength=254) }}
+        {{ form.first_name(class_="input input--text", id='firstName', maxlength=254) }}
       </div>
 
       <div class="field u-mb-l">
@@ -88,7 +89,7 @@
             </span>
             <span class="label__description u-fs-s">ONS will send a verification email to the new address</span>
           </label>
-        {{ form.email(class_="input input--text", id='email', required=required, maxlength=254, type="email") }}
+        {{ form.email(class_="input input--text", id='email', maxlength=254, type="email") }}
           <input type="hidden" name="hidden_email" value={{ respondent_details.emailAddress }}>
       </div>
 
@@ -100,7 +101,7 @@
               {{ respondent_details.telephone }}
             </span>
           </label>
-        {{ form.telephone(class_="input input--text", id='telephone', required=required, maxlength=254) }}
+        {{ form.telephone(class_="input input--text", id='telephone', maxlength=254) }}
       </div>
 
       <button class="btn u-mb-s" id="save-btn">Save changes</button>
