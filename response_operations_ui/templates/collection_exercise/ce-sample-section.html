@@ -56,9 +56,20 @@
         <p>
           Choose a sample file to check details before loading
         </p>
-        <label class="upload-file u-vh" for="sampleFile">Choose file</label>
-        <input type="file" class="" name="sampleFile" id="sampleFile" onchange="readCSV.handleFiles(this.files, {{ ci_classifiers }})"
-        accept=".csv">
+        {{-
+            onsUpload({
+                "id": "sampleFile",
+                "name": "sampleFile",
+                "attributes": {
+                  "onchange": "readCSV.handleFiles(this.files, ['FORM_TYPE'])"
+                },
+                "accept": ".csv",
+                "label": {
+                    "classes": "u-vh",
+                    "text": "Choose file"
+                }
+            })
+        -}}
 
         <div id="sample-preview" class="u-mb-s"></div>
           {{
