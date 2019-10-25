@@ -2,28 +2,50 @@
   <h2 class="u-fs-r--b u-pt-m">Sample</h2>
   {% if sample %}
     {% if 'ACTIVE' == sample.state %}
-    <table id="sample-table" class="table table--dense" summary="Loaded sample summary">
-      <tbody class="table__body">
-        <tr class="table__row">
-          <td class="table__cell tbl-ce-label">
-            Total businesses
-          </td>
-          <td class="table__cell tbl-ce-value" name="total-businesses">
-            {{sample.totalSampleUnits}}
-          </td>
-        </tr>
+      {{
+        onsTable({
+          "table_class": 'table--dense',
+          "id": "sample-table",
+          "caption": 'Loaded sample summary',
+          "hideCaption": true,
+          "ths": [
+            { 
+                "value": "Sample label",
+                "class": "u-vh"
+            },
+            { 
+                "value": "Sample number",
+                "class": "u-vh"
+            }
+          ],
+          "trs": [
+            {
+              "tds": [
+                {
+                  "value": "Total businesses"
+                },
+                {
+                  "value": sample.totalSampleUnits,
+                  "name": "total-businesses"
+                }
+              ]
+            },
+            {
+              "tds": [
+                {
+                  "value": "Collection instruments"
+                },
+                {
+                  "value": sample.expectedCollectionInstruments,
+                  "name": "total-ci"
+                }
+              ]
+            }
+          ]
+        })
+    }}
 
-        <tr class="table__row">
-          <td class="table__cell tbl-ce-">
-            Collection instruments
-          </td>
-          <td class="table__cell tbl-ce-" name="total-ci">
-            {{sample.expectedCollectionInstruments}}
-          </td>
-        </tr>
-      </tbody>
-    </table>
-    <p>Sample loaded: {{sample.ingestDateTime}}
+    <p>Sample loaded: {{ sample.ingestDateTime }}
       {% if not locked %}
       <a class="u-ml-xs" id="remove_sample_btn_1" href="{{ url_for('collection_exercise_bp.get_confirm_remove_sample', short_name=survey.shortName, period=ce.exerciseRef) }}">Remove</a>
       {% endif %}
@@ -36,11 +58,14 @@
         </div>
     {% elif 'FAILED' == sample.state %}
          <div class="u-mb-xl">
-             <div class="panel panel--simple panel--error u-mb-l">
-                 <div class="panel__body">
-                     {{ sample.notes }}
-                 </div>
-             </div>
+             {% call
+                onsPanel({
+                    "type": "error",
+                    "classes": "u-mb-l"
+                })
+            %}
+                {{ sample.notes }}
+            {% endcall %}
            {% if not locked %}
            <a class="u-ml-xs" id="remove_sample_btn_2" href="{{ url_for('collection_exercise_bp.get_confirm_remove_sample', short_name=survey.shortName, period=ce.exerciseRef) }}">Remove</a>
            {% endif %}
@@ -70,7 +95,6 @@
                 }
             })
         -}}
-
         <div id="sample-preview" class="u-mb-s"></div>
           {{
             onsButton({
