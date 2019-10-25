@@ -52,19 +52,23 @@
         "tds": [
           {
             "value": survey.surveyRef,
-            "data": "ID"
+            "data": "ID",
+            "name": "tbl-surveys-id"
           },
           {
             "value": '<a href="/surveys/' + survey.shortName.replace(' ', '') + '" name="survey-link-' + survey.shortName + '}">' + survey.longName + '</a>',
-            "data": "Title"
+            "data": "Title",
+            "name": "tbl-surveys-title"
           },
           {
             "value": survey.shortName,
-            "data": "Abbreviation"
+            "data": "Abbreviation",
+            "name": "tbl-surveys-abbreviation"
           },
           {
             "value": survey.legalBasis,
-            "data": "Legal basis"
+            "data": "Legal basis",
+            "name": "tbl-surveys-legal-basis"
           },
           {
             "value": '<form action="' + url_for("surveys_bp.view_survey_details", short_name=survey.shortName, long_name=survey.longName, legal_basis=survey.legalBasis, survey_ref=survey.surveyRef) + '" method="get"><a class="edit-icon" href=# id="edit-survey-details-' + survey.surveyRef + '" onclick="this.parentNode.submit()"></a></form>',
