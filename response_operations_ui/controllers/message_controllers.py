@@ -39,9 +39,9 @@ def get_conversation(thread_id):
 def get_conversation_count(params):
     logger.info("Retrieving count of threads")
 
-    params['is_closed'] = 'true' if params['is_closed'] else 'false'
-    params['my_conversations'] = 'true' if params['my_conversations'] else 'false'
-    params['new_respondent_conversations'] = 'true' if params['new_respondent_conversations'] else 'false'
+    params['is_closed'] = 'true' if params.get('is_closed') else 'false'
+    params['my_conversations'] = 'true' if params.get('my_conversations') else 'false'
+    params['new_respondent_conversations'] = 'true' if params.get('new_respondent_conversations') else 'false'
 
     url = f'{current_app.config["SECURE_MESSAGE_URL"]}/messages/count'
 
@@ -64,9 +64,9 @@ def get_conversation_count(params):
 def get_thread_list(params):
     logger.info("Retrieving threads list")
 
-    params['is_closed'] = 'true' if params['is_closed'] else 'false'
-    params['my_conversations'] = 'true' if params['my_conversations'] else 'false'
-    params['new_respondent_conversations'] = 'true' if params['new_respondent_conversations'] else 'false'
+    params['is_closed'] = 'true' if params.get('is_closed') else 'false'
+    params['my_conversations'] = 'true' if params.get('my_conversations') else 'false'
+    params['new_respondent_conversations'] = 'true' if params.get('new_respondent_conversations') else 'false'
 
     url = f'{current_app.config["SECURE_MESSAGE_URL"]}/threads'
     # This will be removed once UAA is completed.  For now we need the call to sm to include

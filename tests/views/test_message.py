@@ -910,7 +910,6 @@ class TestMessage(ViewTestCase):
         mock_request.get(url_get_thread, json=thread_json)
         mock_request.get(url_get_surveys_list, json=survey_list)
         mock_request.patch(url_get_thread, json=thread_json)
-        mock_request.patch(url_get_thread, json=thread_json)
         mock_request.get(shortname_url + "/ASHE", json=ashe_info['survey'])
         mock_request.get(url_messages + '/count', json={"total": 1}, status_code=200)
         mock_request.get(url_get_threads_list, json=thread_list)
