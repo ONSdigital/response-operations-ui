@@ -18,7 +18,7 @@
           {% if show_mark_unread == True %}
             <a class="secure-message-mark-unread" id="sm-mark-as-unread"
                href="{{ url_for('messages_bp.mark_message_unread',
-               message_id=message.message_id, from=message.from, to=message.to, page=page, my_conversations=my_conversations) }}">Mark as unread</a>
+               message_id=message.message_id, from=message.from, to=message.to, page=page, conversation_tab=conversation_tab) }}">Mark as unread</a>
           {% endif %}
         {% endif %}
     </div>
