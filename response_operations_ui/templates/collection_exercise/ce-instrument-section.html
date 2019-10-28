@@ -2,7 +2,6 @@
   <h2 class="u-fs-r--b u-pt-m">Collection instruments</h2>
 
   {% if collection_instruments %}
-
     {% set surveyTableData = {
         "table_class": 'table--dense',
         "caption": 'Sample details for this collection exercise',
@@ -42,36 +41,6 @@
     {{
       onsTable(surveyTableData)
     }}
-
-    <table id="collection-instruments-table" class="table table--dense" summary="Sample details for this collection exercise">
-      <thead class="table__head u-vh">
-        <tr class="table__row">
-          <th scope="col" class="table__header tbl-ce-value">
-            Collection instrument
-          </th>
-        </tr>
-      </thead>
-
-      <tbody class="table__body">
-      {% for collection_instrument in collection_instruments %}
-        <tr class="table__row">
-          <td class="table__cell tbl-ce-value">
-            {{collection_instrument.file_name}}
-          </td>
-          {% if not locked %}
-          <td class="table__cell tbl-ce-status tbl-ce-action">
-            <form id="form-unselect-ci-{{loop.index}}" action="" method="post">
-              <a class="remove-icon" href=# id="unlink-ci-{{loop.index}}" onclick="this.parentNode.submit()"></a>
-              <input type="hidden" name="ce_id" value="{{ ce.id }}">
-              <input type="hidden" name="ci_id" value="{{ collection_instrument.id }}">
-              <input type="hidden" name="unselect-ci">
-            </form>
-          </td>
-          {% endif %}
-        </tr>
-      {% endfor %}
-      </tbody>
-    </table>
   {% endif %}
 
   {% if not locked %}
