@@ -161,6 +161,8 @@ def update_contact_details(respondent_id, form, ru_ref='NOT DEFINED'):
     }
 
     old_contact_details = get_respondent_by_party_id(respondent_id)
+    logger.info("new details", new_details=new_contact_details)
+    logger.info("old details", old_details=old_contact_details)
     contact_details_changed = _compare_contact_details(new_contact_details, old_contact_details)
 
     if len(contact_details_changed) > 0:

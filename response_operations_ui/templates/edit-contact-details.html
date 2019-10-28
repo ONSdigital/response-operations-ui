@@ -46,17 +46,6 @@
         </div>
       </div>
       {% endif %}
-<!--
-      {% if errors %}
-      <div class="panel panel--simple panel--error u-mb-l">
-        {% for field, error_list in errors %}
-        <div class="panel__body" id="save-errors">
-         <h2 id='error-saving-first-name' class="u-fs-r--b">Error updating contact details</h2>
-          <p class="u-fs-r">{{ ', '.join(error_list) }}</p>
-        </div>
-        {% endfor %}
-      </div>
-      {% endif %} -->
 
       <div class="field u-mb-l">
           <label class="label" for="lastName">
@@ -89,7 +78,7 @@
             </span>
             <span class="label__description u-fs-s">ONS will send a verification email to the new address</span>
           </label>
-        {{ form.email(class_="input input--text", id='email', maxlength=254, type="email") }}
+        {{ form.email(class_="input input--text", id='email', type="email") }}
           <input type="hidden" name="hidden_email" value={{ respondent_details.emailAddress }}>
       </div>
 
@@ -101,7 +90,7 @@
               {{ respondent_details.telephone }}
             </span>
           </label>
-        {{ form.telephone(class_="input input--text", id='telephone', maxlength=254) }}
+        {{ form.telephone(class_="input input--text", id='telephone') }}
       </div>
 
       <button class="btn u-mb-s" id="save-btn">Save changes</button>
