@@ -21,6 +21,7 @@
   
   {% set surveyTableData = {
       "table_class": 'table--responsive table--dense',
+      "id": 'tbl-surveys',
       "ths": [
         { 
             "value": "ID"
@@ -53,7 +54,7 @@
             "name": "tbl-surveys-id"
           },
           {
-            "value": '<a href="/surveys/' + survey.shortName.replace(' ', '') + '" name="survey-link-' + survey.shortName + '}">' + survey.longName + '</a>',
+            "value": '<a href="/surveys/' + survey.shortName.replace(' ', '') + '" name="survey-link-' + survey.shortName + '">' + survey.longName + '</a>',
             "data": "Title",
             "name": "tbl-surveys-title"
           },
