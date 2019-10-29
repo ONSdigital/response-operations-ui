@@ -122,7 +122,7 @@
     {% for exercise in collection_exercises %}
       {% set exerciseRef = exercise.exerciseRef if exercise.exerciseRef else "" %}
 
-      {% set surveyTableReport = '<a class="download" href="'+ url_for('collection_exercise_bp.response_chasing', ce_id=exercise.id, survey_id=survey.id) +'" target="_blank">Response chasing</a>' if exercise.state|upper == "LIVE" %}
+      {% set surveyTableReport = '<a class="download-csv" href="'+ url_for('collection_exercise_bp.response_chasing', ce_id=exercise.id, survey_id=survey.id) +'" target="_blank">Response chasing</a>' if exercise.state|upper == "LIVE" %}
 
       {% do surveyTableDataRows.append(
         {
