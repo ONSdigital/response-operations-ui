@@ -8,7 +8,8 @@
         "hideCaption": true,
         "ths": [
           { 
-              "value": "Collection instrument"
+              "value": "Collection instrument",
+              "class": "u-vh"
           }
         ]
       }
@@ -16,12 +17,13 @@
     {% set surveyTableDataRows = [] %}
     {% for collection_instrument in collection_instruments %}
       {% if not locked %}
-        {% set formData = '<form id="form-unselect-ci-{{loop.index}}" action="" method="post">
-              <a class="remove-icon" href=# id="unlink-ci-{{loop.index}}" onclick="this.parentNode.submit()"></a>
-              <input type="hidden" name="ce_id" value="{{ ce.id }}">
-              <input type="hidden" name="ci_id" value="{{ collection_instrument.id }}">
-              <input type="hidden" name="unselect-ci">
-            </form>'
+        {% set formData = 
+          '<form id="form-unselect-ci-' + loop.index|string + '" action="" method="post">' +
+          '<a class="remove-icon" href=# id="unlink-ci' + loop.index|string + '" onclick="this.parentNode.submit()"></a>' +
+          '<input type="hidden" name="ce_id" value="' + ce.id + '">' +
+          '<input type="hidden" name="ci_id" value="' + collection_instrument.id + '">' +
+          '<input type="hidden" name="unselect-ci">' +
+          '</form>'
        %}
       {% endif %}
       {% do surveyTableDataRows.append(
@@ -31,7 +33,8 @@
               "value": collection_instrument.file_name
             },
             {
-              "form": formData
+              "value": formData,
+              "class": "u-ta-right"
             }
           ]
         }
@@ -46,7 +49,6 @@
   {% if not locked %}
   <div class="u-mb-m">
     {% if eq_ci_selectors %}
-
       {% set checkboxesData = {
         "name": "checkbox-answer",
         "legend": "eQ collection instruments available:"
@@ -54,38 +56,39 @@
 
       {% set checkboxData = [] %}
 
-    <form id="form-select-ci" action="" class="form" method="post" enctype="multipart/form-data">
-      <div id="ciSelectErrorPanel" class="{{'panel panel--simple panel--error' if error.section == 'ciSelect' else ''}}">
-        <div id="ciSelectErrorPanelBody" class="{{'panel__body' if error.section == 'ciSelect' else ''}}">
-          <input type="hidden" name="ce_id" value="{{ ce.id }}">
-          {% for ci in eq_ci_selectors %}
-            {% do checkboxData.append(
-              {
-                "id": ci.id,
-                "label": {
-                    "text": survey.surveyRef + ' ' + ci.file_name + ' eQ'
-                },
-                "value": ci.id
-              }
-            ) %}
-          {% endfor %}
+      <form id="form-select-ci" action="" class="form" method="post" enctype="multipart/form-data">
+        <div id="ciSelectErrorPanel" class="{{'panel panel--simple panel--error' if error.section == 'ciSelect' else ''}}">
+          <div id="ciSelectErrorPanelBody" class="{{'panel__body' if error.section == 'ciSelect' else ''}}">
+            <input type="hidden" name="ce_id" value="{{ ce.id }}">
+            {% for ci in eq_ci_selectors %}
+              {% do checkboxData.append(
+                {
+                  "id": ci.id,
+                  "name": "checkbox-answer",
+                  "label": {
+                      "text": survey.surveyRef + ' ' + ci.file_name|string + ' eQ'
+                  },
+                  "value": ci.id
+                }
+              ) %}
+            {% endfor %}
 
-          {% do checkboxesData | setAttribute("checkboxes", checkboxData) %}
-          {{ 
-            onsCheckboxes(checkboxesData) 
-          }}
+            {% do checkboxesData | setAttribute("checkboxes", checkboxData) %}
+            {{ 
+              onsCheckboxes(checkboxesData) 
+            }}
 
-          {{
-            onsButton({
-              "text": "Add",
-              "id": "btn-add-ci",
-              "name": "select-ci"
-            })
-          }}   
+            {{
+              onsButton({
+                "text": "Add",
+                "id": "btn-add-ci",
+                "name": "select-ci"
+              })
+            }}   
+          </div>
         </div>
-      </div>
 
-    </form>
+      </form>
     {% else %}
     <form id="form-load-ci" action="" class="form" method="post" enctype="multipart/form-data">
       <p>
@@ -98,8 +101,8 @@
           </p>
           {{-
             onsUpload({
-                "id": "sampleFile",
-                "name": "sampleFile",
+                "id": "ciFile",
+                "name": "ciFile",
                 "attributes": {
                   "onchange": "validateCI.checkSelectedCI(this.files)"
                 },
