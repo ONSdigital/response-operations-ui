@@ -1,131 +1,176 @@
 {% extends "layouts/base.html" %}
 {% set page_title = survey.shortName + " | Surveys" %}
+{% from "components/panel/_macro.njk" import onsPanel %}
+{% from "components/table/_macro.njk" import onsTable %}
+{% from "components/metadata/_macro.njk" import onsMetadata %}
 
 {% block main %}
-{% if updated_ce_message %}
-  <div class="panel panel--simple panel--success">
-    <div id="updated_ce_message" class="panel__body">
-      Collection exercise details updated
-    </div>
-  </div>
-  <br>
-{% endif %}
-{% if created_ce_message %}
-  <div class="panel panel--simple panel--success">
-    <div id="created_ce_message" class="panel__body">
-      <h1 class="u-fs-r--b">Collection exercise created</h1>
-      <p class="u-fs-r">
-        <a href="{{ url_for('collection_exercise_bp.view_collection_exercise', short_name=survey.shortName.replace(' ', ''), period=newly_created_period) }}" id="newly_created_ce_link">View/edit {{survey.shortName}} {{newly_created_period}}</a>
-      </p>
-    </div>
-  </div>
-  <br>
-{% endif %}
-<h1 name="page-survey-title">{{survey.longName}}</h1>
+  {% if updated_ce_message %}
+    {{      
+      onsPanel({
+          "type": "success",
+          "classes": "u-mb-s",
+          "id": "updated_ce_message",
+          "body": "Collection exercise details updated"
+      })
+    }}
+  {% endif %}
+  {% if created_ce_message %}
+      {% call
+        onsPanel({
+            "type": "success",
+            "classes": "u-mb-s",
+            "id": "created_ce_message"
+        })
+      %}
+        <h1 class="u-fs-r--b">Collection exercise created</h1>
+        <p class="u-fs-r">
+          <a href="{{ url_for('collection_exercise_bp.view_collection_exercise', short_name=survey.shortName.replace(' ', ''), period=newly_created_period) }}" id="newly_created_ce_link">View/edit {{survey.shortName}} {{newly_created_period}}</a>
+        </p>
+      {% endcall %}
+  {% endif %}
 
-  <div class="grid">
-    <div class="grid__col col-12@l">
-        <dl class="survey-info info-panel" id="survey-attributes">
-          <dt class="survey-info__title">
-            Survey ID:
-          </dt>
-          <dd class="survey-info__data" name="survey-id">
-            {{survey.surveyRef}}
-          </dd>
-          <dt class="survey-info__title">
-            Survey title:
-          </dt>
-          <dd class="survey-info__data" name="survey-title">
-            {{survey.longName}}
-          </dd>
-          <dt class="survey-info__title">
-            Abbreviation:
-          </dt>
-          <dd class="survey-info__data" name="survey-abbreviation">
-            {{survey.shortName}}
-          </dd>
-          <dt class="survey-info__title">
-            Legal basis:
-          </dt>
-          <dd class="survey-info__data" name="survey-legal-basis">
-            {{survey.legalBasis}}
-          </dd>
-        </dl>
-      <div class="ce-list">
-        <h2 class="u-pt-m">Collection exercises for {{survey.shortName}}</h2>
-        <div class="u-mb-l">
-          <a href="{{ url_for('collection_exercise_bp.get_create_collection_exercise_form', survey_ref=survey.surveyRef, short_name=survey.shortName.replace(' ', '')) }}"
-             name="create-collection-exercise-link" id="create-collection-exercise">Create collection exercise</a>
-        </div>
-        <table class="table table--dense" summary="Collection exercises for the survey" id="tbl-collection-exercise">
-          <thead class="table__head">
-            <tr class="table__row">
-              <th scope="col" class="table__header tbl-ce-period">
-                Period
-              </th>
-              <th scope="col" class="table__header tbl-ce-respondent-info">
-                Respondent sees
-              </th>
-              <th scope="col" class="table__header tbl-ce-status">
-                Status
-              </th>
-              <th scope="col" class="table__header tbl-ce-status">
-                Sample
-              </th>
-              <th scope="col" class="table__header tbl-ce-status">
-                Report (CSV)
-              </th>
-              <th scope="col" class="table__header tbl-ce-status">
-                MPS
-              </th>
-              <th scope="col" class="table__header tbl-ce-status">
-                Go live
-              </th>
-              <th scope="col" class="table__header tbl-ce-status">
-                Return by
-              </th>
-            </tr>
-          </thead>
-          <tbody class="table__body">
-            {% for exercise in collection_exercises %}
-            {% if newly_created_period == exercise.exerciseRef%}
-            <tr style="background-color:#edf4f0;" class="table__row">
-              {% else %}
-              {% endif %}
-              <td class="table__cell tbl-ce-period" name="tbl-ce-period">
-                <a href="/surveys/{{ survey.shortName.replace(' ', '') }}/{{ exercise.exerciseRef }}"
-                   name="ce-link-{{exercise.exerciseRef}}">
-                  {{exercise.exerciseRef}}
-                </a>
-              </td>
-              <td class="table__cell tbl-ce-respondent-info" name="tbl-ce-shown-as">
-                {{exercise.userDescription}}
-              </td>
-              <td class="table__cell tbl-ce-status" name="tbl-ce-status">
-                {{exercise.state}}
-              </td>
-              <td class="table__cell tbl-ce-status" name="tbl-ce-status">
-                {{ exercise.sample_summary and exercise.sample_summary.totalSampleUnits or "" }}
-              </td>
-              <td class="table__cell tbl-ce-status" name="tbl-ce-report">
-                {% if exercise.state|upper == "LIVE" %}
-                  <a class="download" href="{{ url_for('collection_exercise_bp.response_chasing', ce_id=exercise.id, survey_id=survey.id) }}" target="_blank">Response chasing</a>
-                {% endif %}
-              </td>
-              <td class="table__cell tbl-ce-status" name="tbl-ce-status">
-                {{ exercise.events.mps and exercise.events.mps.date or "" }}
-              </td>
-              <td class="table__cell tbl-ce-status" name="tbl-ce-status">
-                {{ exercise.events.go_live and exercise.events.go_live.date or "" }}
-              </td>
-              <td class="table__cell tbl-ce-status" name="tbl-ce-status">
-                {{ exercise.events.return_by and exercise.events.return_by.date or "" }}
-              </td>
-            </tr>
-            {% endfor %}
-          </tbody>
-        </table>
-      </div>
+  <h1 name="page-survey-title" class="u-mb-l">{{survey.longName}}</h1>
+  <section class="u-cf u-mb-l">
+    {{ 
+      onsMetadata({
+        "metadataLabel": survey.longName + "information",
+        "termCol": "2",
+        "descriptionCol": "10",
+        "itemsList": [
+          {
+            "term": "Survey ID:",
+            "descriptions": [ 
+              {
+                  "description": survey.surveyRef
+              }
+            ]
+          },
+          {
+            "term": "Survey title:",
+            "descriptions": [ 
+              {
+                  "description": survey.longName
+              }                
+            ]
+          },
+          {
+            "term": "Abbreviation:",
+            "descriptions": [ 
+              {
+                  "description": survey.shortName
+              }                                     
+            ]
+          },
+          {
+            "term": "Legal basis:",
+            "descriptions": [ 
+              {
+                  "description": survey.legalBasis
+              }
+            ]
+          }                                                           
+        ]
+      }) 
+    }}
+  </section>
+  <section class="ce-list">
+    <h2>Collection exercises for {{survey.shortName}}</h2>
+    <div class="u-mb-l">
+      <a href="{{ url_for('collection_exercise_bp.get_create_collection_exercise_form', survey_ref=survey.surveyRef, short_name=survey.shortName.replace(' ', '')) }}"
+          name="create-collection-exercise-link" id="create-collection-exercise">Create collection exercise</a>
     </div>
-  </div>
+
+    {% set surveyTableData = {
+        "table_class": 'table--responsive table--dense',
+        "caption": 'The table shows collection exercise data for ' + survey.longName,
+        "hideCaption": true
+      }
+    %}
+
+    {% do surveyTableData | setAttribute("ths", [
+        { 
+            "value": "Period"
+        },
+        { 
+            "value": "Respondent sees"
+        },
+        { 
+            "value": "Status"
+        },
+        { 
+            "value": "Sample"
+        },
+        { 
+            "value": "Report (CSV)"
+        },
+        { 
+            "value": "MPS"
+        },
+        { 
+            "value": "Go live"
+        },
+        { 
+            "value": "Return by"
+        }
+      ]) 
+    %}
+
+    {% set surveyTableDataRows = [] %}
+
+
+    {% for exercise in collection_exercises %}
+      {% set exerciseRef = exercise.exerciseRef if exercise.exerciseRef else "" %}
+
+      {% set surveyTableReport = '<a class="download" href="'+ url_for('collection_exercise_bp.response_chasing', ce_id=exercise.id, survey_id=survey.id) +'" target="_blank">Response chasing</a>' if exercise.state|upper == "LIVE" %}
+
+      {% do surveyTableDataRows.append(
+        {
+          "highlight": true if newly_created_period == exerciseRef,
+          "tds": [
+            {
+              "value": '<a href="/surveys/' + survey.shortName.replace(' ', '') + "/" + exerciseRef + '"
+                   name="ce-link-' + exerciseRef + '">' + exerciseRef + '</a>' ,
+              "data": "Period"
+            },
+            {
+              "value": exercise.userDescription,
+              "data": "Respondent sees"
+            },
+            {
+              "value": exercise.state,
+              "data": "Status"
+            },
+            {
+              "value": exercise.sample_summary and exercise.sample_summary.totalSampleUnits or "",
+              "data": "Sample"
+            },
+            {
+              "value": surveyTableReport,
+              "data": "Report (CSV)"
+            },
+            {
+              "value": exercise.events.mps and exercise.events.mps.date or "",
+              "data": "MPS"
+            },
+            {
+              "value": exercise.events.go_live and exercise.events.go_live.date or "",
+              "data": "Go live"
+            },
+            {
+              "value": exercise.events.return_by and exercise.events.return_by.date or "",
+              "data": "Return by"
+            }
+          ]
+        }
+      ) %}
+    {% endfor %}
+  
+    {% do surveyTableData | setAttribute("trs", surveyTableDataRows) %}
+  
+    {{
+      onsTable(surveyTableData)
+    }}
+
+  </section>
 {% endblock %}
