@@ -1,5 +1,5 @@
 <div class="secure-message-form">
-    <form action="{{ url_for('messages_bp.view_conversation', thread_id=messages[0].thread_id, page=page) }}" method="post" id="create-message-form" class="u-mb-m">
+    <form action="{{ url_for('messages_bp.view_conversation', thread_id=messages[0].thread_id, page=page, conversation_tab=conversation_tab) }}" method="post" id="create-message-form" class="u-mb-m">
         {{ form.csrf_token }}
         {{ form.subject(id='secure-message-subject', type='hidden', value=subject) }}
         {{ form.hidden_to_ru_id(type='hidden', value=ru_id) }}
@@ -28,10 +28,11 @@
         }}   
         {{
             onsButton({
+                "id": "btn-close-conversation",
                 "type": 'button',
                 "text": 'Close conversation',
                 "classes": 'btn--secondary u-mt-s',
-                "url": url_for('messages_bp.close_conversation', thread_id=messages[0].thread_id, page=page)
+                "url": url_for('messages_bp.close_conversation', thread_id=messages[0].thread_id, page=page, conversation_tab=conversation_tab)
             }) 
         }}
     </form>

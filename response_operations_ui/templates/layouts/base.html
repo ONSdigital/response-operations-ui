@@ -23,8 +23,9 @@
     {% endif %}
 {% endblock %}
 
-{% set page = { 
+{% set pageConfig = { 
   "title": page_title + " | Survey Data Collection" if page_title else "Survey Data Collection",
+  "wide": true,
   "header": {
     "title": "Survey Data Collection",
     "classes": "header--internal header--thin",
@@ -45,8 +46,8 @@
 {% import 'macros/grid.html' as grid %}
 {%- from 'macros/panel.html' import panel -%}
 
-{%- block page %}
-  <div class="page__container container {{ containerClasses }}">
+{%- block pageContent %}
+  <div class="page__container container container--wide">
     {% block preMain %}
       {% if availability_message %}
         {{ 
@@ -67,4 +68,4 @@
       </div>
     </div>
   </div>  
-{% endblock page -%}
+{% endblock pageContent -%}
