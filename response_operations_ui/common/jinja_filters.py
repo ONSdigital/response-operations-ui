@@ -9,9 +9,9 @@ def setAttribute(dictionary, key, value):
     dictionary[key] = value
     return dictionary
 
+
 @filter_blueprint.app_template_filter()
 def setAttributes(dictionary, attributes):
     for key in attributes:
         dictionary[key] = attributes[key]
     return dictionary
-
