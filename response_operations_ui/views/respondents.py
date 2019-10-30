@@ -142,7 +142,7 @@ def edit_contact_details(respondent_id):
         logger.info('Failed validation')
         contact_details = party_controller.get_respondent_by_party_id(respondent_id)
 
-        return render_template('edit-contact-details.html', form=form,
+        return render_template('edit-contact-details.html', form=form, tab='respondents',
                                respondent_id=respondent_id, errors=form.errors,
                                respondent_details=contact_details)
 
