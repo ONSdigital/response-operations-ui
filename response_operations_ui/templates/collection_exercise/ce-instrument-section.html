@@ -39,26 +39,44 @@
   <div class="u-mb-m">
 
     {% if eq_ci_selectors %}
+      {% set checkboxesData = {
+        "name": "checkbox-answer",
+        "legend": "eQ collection instruments available:"
+      } %}
+
+      {% set checkboxData = [] %}
     <form id="form-select-ci" action="" class="form" method="post" enctype="multipart/form-data">
-          <div class="u-mb-s">
-            eQ collection instruments available:
-          </div>
+
+
+
       <div id="ciSelectErrorPanel" class="{{'panel panel--simple panel--error' if error.section == 'ciSelect' else ''}}">
         <div id="ciSelectErrorPanelBody" class="{{'panel__body' if error.section == 'ciSelect' else ''}}">
           <input type="hidden" name="ce_id" value="{{ ce.id }}">
           {% for ci in eq_ci_selectors %}
-          <div class="field__item js-focusable-box">
-            <input class="input input--checkbox js-focusable" name="checkbox-answer" value="{{ci.id}}" id="{{ci.id}}" type="checkbox">
-            <label class="label label--inline u-fs-r--b " for="{{ci.id}}">{{survey.surveyRef}} {{ci.file_name}} eQ </label>
-          </div>
-          {% endfor %}
-          {{
-            onsButton({
-              "text": "Add",
-              "id": "btn-add-ci",
-              "name": "select-ci"
-            })
-          }}   
+              {% do checkboxData.append(
+                {
+                  "id": ci.id,
+                  "name": "checkbox-answer",
+                  "label": {
+                      "text": survey.surveyRef + ' ' + ci.file_name|string + ' eQ'
+                  },
+                  "value": ci.id
+                }
+              ) %}
+            {% endfor %}
+
+            {% do checkboxesData | setAttribute("checkboxes", checkboxData) %}
+            {{ 
+              onsCheckboxes(checkboxesData) 
+            }}
+
+            {{
+              onsButton({
+                "text": "Add",
+                "id": "btn-add-ci",
+                "name": "select-ci"
+              })
+            }}   
         </div>
       </div>
 
