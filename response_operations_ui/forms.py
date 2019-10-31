@@ -70,10 +70,10 @@ class SearchForm(FlaskForm):
 class EditContactDetailsForm(FlaskForm):
     last_name = StringField('last_name', validators=[InputRequired(message="Enter a last name"),
                                                      Length(max=254,
-                                                            message="Enter a last name less than 254 characters")])
+                                                            message="Last name must be fewer than 254 characters")])
     first_name = StringField('first_name', validators=[InputRequired(message="Enter a first name"),
                                                        Length(max=254,
-                                                              message="Enter a first name less than 254 characters")])
+                                                              message="First name must be fewer than 254 characters")])
     email = StringField('emailAddress', validators=[InputRequired("The email address must be in the correct format"),
                                                     Email(message='The email address must be in the correct format'),
                                                     Length(max=254,
