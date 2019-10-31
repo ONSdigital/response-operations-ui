@@ -104,7 +104,7 @@ class EditContactDetailsForm(FlaskForm):
             raise ValidationError("Last name must be fewer than 254 characters")
 
     @staticmethod
-    def validate_email_address(form, field):
+    def validate_email(form, field):
         email = field.data
         return _validate_email_address(email)
 
