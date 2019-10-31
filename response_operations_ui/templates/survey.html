@@ -129,35 +129,43 @@
             {
               "value": '<a href="/surveys/' + survey.shortName.replace(' ', '') + "/" + exerciseRef + '"
                    name="ce-link-' + exerciseRef + '">' + exerciseRef + '</a>' ,
-              "data": "Period"
+              "data": "Period",
+              "name" : "tbl-ce-period"
             },
             {
               "value": exercise.userDescription,
-              "data": "Respondent sees"
+              "data": "Respondent sees",
+              "name" : "tbl-ce-shown-as"
             },
             {
               "value": exercise.state,
-              "data": "Status"
+              "data": "Status",
+              "name" : "tbl-ce-status"
             },
             {
               "value": exercise.sample_summary and exercise.sample_summary.totalSampleUnits or "",
-              "data": "Sample"
+              "data": "Sample",
+              "name" : "tbl-ce-status"
             },
             {
               "value": surveyTableReport,
-              "data": "Report (CSV)"
+              "data": "Report (CSV)",
+              "name" : "tbl-ce-report"
             },
             {
               "value": exercise.events.mps and exercise.events.mps.date or "",
-              "data": "MPS"
+              "data": "MPS",
+              "name" : "tbl-ce-status"
             },
             {
               "value": exercise.events.go_live and exercise.events.go_live.date or "",
-              "data": "Go live"
+              "data": "Go live",
+              "name" : "tbl-ce-status"
             },
             {
               "value": exercise.events.return_by and exercise.events.return_by.date or "",
-              "data": "Return by"
+              "data": "Return by",
+              "name" : "tbl-ce-status"
             }
           ]
         }
