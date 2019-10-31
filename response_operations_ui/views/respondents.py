@@ -151,7 +151,8 @@ def edit_contact_details(respondent_id):
         form = request.form
         party_controller.update_contact_details(respondent_id, form)
 
-        return redirect(url_for('respondent_bp.respondent_details', respondent_id=respondent_id, message_key='details_changed'))
+        return redirect(url_for('respondent_bp.respondent_details', respondent_id=respondent_id,
+                                message_key='details_changed'))
 
 
 @respondent_bp.route('/resend_verification/<respondent_id>', methods=['GET'])
