@@ -35,6 +35,7 @@
     {{ 
       onsMetadata({
         "metadataLabel": survey.longName + "information",
+        "id": "survey-attributes",
         "termCol": "2",
         "descriptionCol": "10",
         "itemsList": [
@@ -42,7 +43,8 @@
             "term": "Survey ID:",
             "descriptions": [ 
               {
-                  "description": survey.surveyRef
+                  "description": survey.surveyRef,
+                  "id": "survey-id"
               }
             ]
           },
@@ -50,7 +52,8 @@
             "term": "Survey title:",
             "descriptions": [ 
               {
-                  "description": survey.longName
+                  "description": survey.longName,
+                  "id": "survey-title"
               }                
             ]
           },
@@ -58,7 +61,8 @@
             "term": "Abbreviation:",
             "descriptions": [ 
               {
-                  "description": survey.shortName
+                  "description": survey.shortName,
+                  "id": "survey-abbreviation"
               }                                     
             ]
           },
@@ -66,7 +70,8 @@
             "term": "Legal basis:",
             "descriptions": [ 
               {
-                  "description": survey.legalBasis
+                  "description": survey.legalBasis,
+                  "id": "survey-legal-basis"
               }
             ]
           }                                                           
