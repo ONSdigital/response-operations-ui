@@ -1,25 +1,71 @@
-{% extends 'layouts/base-head.html' %}
-{% block base %}
-  {%- block body %}
-    <body style="position: relative; height: auto; min-height: 100%;">
-    <div class="page account">
-      <div class="page__content">
-        {% include 'partials/header.html' %}
+{% extends "layout/_template.njk" %}
+{% block head %}
+    {% assets "scss_all" %}
+     <link rel=stylesheet type=text/css href="{{ url_for('static', filename='css/main.css') }}">
+    {% endassets %}
+    <script type="text/javascript" src="http://code.jquery.com/jquery-3.3.1.min.js"></script>
+    {% assets "js_all" %}
+      <script type="text/javascript" src="{{ url_for('static', filename='js/main.min.js') }}"></script>
+    {% endassets %}
 
-        <div class="container page__container">
-          {% if availability_message %}
-            <div class="panel panel--simple panel--warn u-mb-l container">{{ availability_message }}</div>
-          {% endif %}
-          {% if breadcrumbs %}
-            {% include 'partials/breadcrumbs.html' %}
-          {% endif %}
-          <div id="error-alerts"></div>
-          {%- block main %}{% endblock main -%}
-        </div>
-      </div>
-    </div>
-    {% include 'partials/footer.html' %}
-    </body>
-  {% endblock body -%}
 {% endblock %}
 
+{% block scripts %}
+    {% if config.GOOGLE_ANALYTICS_ID %}
+      <!-- Global site tag (gtag.js) - Google Analytics -->
+      <script async src="https://www.googletagmanager.com/gtag/js?id={{ config.GOOGLE_ANALYTICS_ID }}"></script>
+      <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+      gtag('config', '{{ config.GOOGLE_ANALYTICS_ID }}');
+      </script>
+    {% endif %}
+{% endblock %}
+
+{% set pageConfig = { 
+  "title": page_title + " | Survey Data Collection" if page_title else "Survey Data Collection",
+  "wide": true,
+  "header": {
+    "title": "Survey Data Collection",
+    "classes": "header--internal header--thin",
+    "logo": "ons-logo-white"
+  },
+  "toggleButton": {
+    "text": "Menu",
+    "ariaLabel": "Toggle main navigation"
+  }
+} %}
+
+{% include 'layouts/configs/navigation.html' %}
+{% include 'layouts/configs/signout-button.html' %}
+{% include 'layouts/configs/footer.html' %}
+{% from "components/panel/_macro.njk" import onsPanel %}
+
+{# To be removed when refactor complete #}
+{% import 'macros/grid.html' as grid %}
+{%- from 'macros/panel.html' import panel -%}
+
+{%- block pageContent %}
+  <div class="page__container container container--wide">
+    {% block preMain %}
+      {% if availability_message %}
+        {{ 
+            onsPanel({
+                body: availability_message
+            }) 
+        }}
+      {% endif %}
+      {% if breadcrumbs %}
+        {% include 'layouts/configs/breadcrumbs.html' %}
+      {% endif %}
+    {% endblock %}
+    <div class="grid">
+      <div class="grid__col col-12@m">
+        <main id="main-content" class="page__main {{ pageClasses }}">
+          {%- block main %}{% endblock main -%}
+        </main>
+      </div>
+    </div>
+  </div>  
+{% endblock pageContent -%}

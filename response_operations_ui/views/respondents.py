@@ -22,7 +22,7 @@ respondent_bp = Blueprint('respondent_bp', __name__,
 def respondent_home():
     return render_template('respondent-search/respondent-search.html',
                            form=RespondentSearchForm(),
-                           breadcrumbs=[{"title": "Respondents"}])
+                           breadcrumbs=[{"text": "Respondents"}])
 
 
 @respondent_bp.route('/search', methods=['POST'])
@@ -45,7 +45,7 @@ def search_redirect():
 @respondent_bp.route('/search', methods=['GET'])
 @login_required
 def respondent_search():
-    breadcrumbs = [{"title": "Respondents"}, {"title": "Search"}]
+    breadcrumbs = [{"text": "Respondents"}, {"text": "Search"}]
 
     first_name = request.values.get('first_name', '')
     last_name = request.values.get('last_name', '')
@@ -102,11 +102,11 @@ def respondent_details(respondent_id):
 
     breadcrumbs = [
         {
-            "title": "Respondents",
-            "link": "/respondents"
+            "text": "Respondents",
+            "url": "/respondents"
         },
         {
-            "title": f"{respondent['emailAddress']}"
+            "text": f"{respondent['emailAddress']}"
         }
     ]
 

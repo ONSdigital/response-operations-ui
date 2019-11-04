@@ -1,6 +1,7 @@
 {% extends "layouts/base.html" %}
+{% from "components/button/_macro.njk" import onsButton %}
 
-{% block page_title %} Create Message | Survey Data Collection {% endblock %}
+{% set page_title = "Create Message" %}
 
 {% block main %}
 
@@ -62,7 +63,14 @@
         class_='secure-message--message input input--textarea',
         rows='10', maxlength='10000', cols=80, required=required) }}
     </div>
-    <button id="btn-send-message" name="send-message" class="btn secure-message--send-btn u-mb-s" type="submit">Send</button>
+    {{
+        onsButton({
+            "text": "Send",
+            "id": "btn-send-message",
+            "type": "submit",
+            "name": "send-message"
+        })
+    }}   
 </form></div>
 {% if form.hidden_ru_ref.data %}
 <p><a href="{{ url_for('reporting_unit_bp.view_reporting_unit', ru_ref=form.hidden_ru_ref.data) }}" id="btn-cancel">Cancel</a></p>

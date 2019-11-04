@@ -14,6 +14,7 @@ from response_operations_ui.cloud.cloudfoundry import ONSCloudFoundry
 from response_operations_ui.logger_config import logger_initial_config
 from response_operations_ui.user import User
 from response_operations_ui.views import setup_blueprints
+from response_operations_ui.common.jinja_filters import filter_blueprint
 
 
 cf = ONSCloudFoundry()
@@ -34,6 +35,10 @@ def create_app(config_name=None):
         assets.manifest = None
 
     assets.url = app.static_url_path
+
+    app.jinja_env.add_extension('jinja2.ext.do')
+
+    app.register_blueprint(filter_blueprint)
 
     app.url_map.strict_slashes = False
     app.secret_key = app.config['RESPONSE_OPERATIONS_UI_SECRET']
