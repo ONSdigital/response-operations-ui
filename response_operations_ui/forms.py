@@ -68,9 +68,16 @@ class SearchForm(FlaskForm):
 
 
 class EditContactDetailsForm(FlaskForm):
-    first_name = StringField('first_name')
-    last_name = StringField('last_name')
-    email = StringField('emailAddress')
+    last_name = StringField('last_name', validators=[InputRequired(message="Enter a last name"),
+                                                     Length(max=254,
+                                                            message="Last name must be fewer than 254 characters")])
+    first_name = StringField('first_name', validators=[InputRequired(message="Enter a first name"),
+                                                       Length(max=254,
+                                                              message="First name must be fewer than 254 characters")])
+    email = StringField('emailAddress', validators=[InputRequired("The email address must be in the correct format"),
+                                                    Email(message='The email address must be in the correct format'),
+                                                    Length(max=254,
+                                                           message='Your email must be less than 254 characters')])
     telephone = StringField('telephone')
     hidden_email = HiddenField('hidden_email')
 
@@ -81,6 +88,31 @@ class EditContactDetailsForm(FlaskForm):
             self.last_name.data = default_values.get('lastName')
             self.email.data = default_values.get('emailAddress')
             self.telephone.data = default_values.get('telephone')
+
+    @staticmethod
+    def validate_first_name(form, field):
+        first_name = field.data
+        if first_name is None:
+            raise ValidationError('Enter a fist name')
+
+    @staticmethod
+    def validate_last_name(form, field):
+        last_name = field.data
+        if last_name is None:
+            raise ValidationError('Enter a last name')
+        if len(last_name) >= 254:
+            raise ValidationError("Last name must be fewer than 254 characters")
+
+    @staticmethod
+    def validate_email(form, field):
+        email = field.data
+        return _validate_email_address(email)
+
+    @staticmethod
+    def validate_telephone(form, field):
+        telephone = field.data
+        if telephone is None:
+            raise ValidationError('Enter a telephone number')
 
 
 class EditCollectionExerciseDetailsForm(FlaskForm):
