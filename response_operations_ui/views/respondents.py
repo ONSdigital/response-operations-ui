@@ -144,7 +144,7 @@ def edit_contact_details(respondent_id):
         return render_template('edit-contact-details.html', form=edit_contact_details_form, tab='respondents',
                                respondent_id=respondent_id, errors=edit_contact_details_form.errors,
                                respondent_details=contact_details)
-    
+
     logger.info('Updating respondent details', respondent_id=respondent_id)
     form = request.form
     contact_details_changed = party_controller.update_contact_details(respondent_id, form)
@@ -157,7 +157,7 @@ def edit_contact_details(respondent_id):
         flash('No updates were necessary')
 
     return redirect(url_for('respondent_bp.respondent_details', respondent_id=respondent_id,
-                                message_key='details_changed'))
+                            message_key='details_changed'))
 
 
 @respondent_bp.route('/resend_verification/<respondent_id>', methods=['GET'])
