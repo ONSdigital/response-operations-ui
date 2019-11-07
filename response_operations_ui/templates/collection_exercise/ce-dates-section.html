@@ -68,6 +68,7 @@
       {% if events.reminder %}
         {% set showReminder = true %}
         {% set label = 'Second reminder' %}
+        {% set name = 'second-reminder-date' %}
       {% endif %}
       {% if event %}
         {% set eventDay = events.reminder2.day %}
@@ -80,6 +81,7 @@
       {% if events.reminder2 %}
         {% set showReminder = true %}
         {% set label = 'Third reminder' %}
+        {% set name = 'third-reminder-date' %}
       {% endif %}
       {% if event %}
         {% set eventDay = events.reminder3.day %}
