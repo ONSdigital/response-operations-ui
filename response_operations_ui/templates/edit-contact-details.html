@@ -78,7 +78,7 @@
             </span>
           </label>
           {% if errors %}<p class="u-vh">Last Name is required</p>{% endif %}
-           {{ form.last_name(class_="input input--text", id='lastName', maxlength=254) }}
+           {{ form.last_name(class_="input input--text", id='lastName', required=required, maxlength=254) }}
         </div>
 
         {% if failed_authentication %}
@@ -94,7 +94,7 @@
             </span>
           </label>
           {% if errors %}<p class="u-vh">First Name is required</p>{% endif %}
-          {{ form.first_name(class_="input input--text", id='firstName', maxlength=254) }}
+          {{ form.first_name(class_="input input--text", id='firstName', required=required, maxlength=254) }}
         </div>
 
         {% if failed_authentication %}
@@ -111,7 +111,7 @@
             <span class="label__description u-fs-s">ONS will send a verification email to the new address</span>
           </label>
           {% if errors %}<p class="u-vh">Email Address is required</p>{% endif %}
-          {{ form.email(class_="input input--text", id='email', maxlength=254) }}
+          {{ form.email(class_="input input--text", required=required, id='email', maxlength=254) }}
           <input type="hidden" name="hidden_email" value={{ respondent_details.emailAddress }}>
         </div>
 
@@ -128,7 +128,7 @@
             </span>
           </label>
           {% if errors %}<p class="u-vh">Telephone number is required</p>{% endif %}
-          {{ form.telephone(class_="input input--text", id='email', maxlength=254) }}
+          {{ form.telephone(class_="input input--text", id='telephone', required=required, maxlength=254) }}
         </div>
 
         <button class="btn u-mb-m" id="save-btn">Save changes</button>
