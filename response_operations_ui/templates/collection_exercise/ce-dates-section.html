@@ -29,6 +29,7 @@
     {% if dateGroup == 'mps' %}
       {% set label = 'MPS (Main print selection)' %}
       {% set event = events.mps %}
+      {% set name = 'mps-date' %}
       {% if event %}
         {% set eventDay = events.mps.day %}
         {% set eventDate = events.mps.date %}
@@ -37,6 +38,7 @@
     {% elif dateGroup == 'go_live' %}
       {% set label = 'Go live' %}
       {% set event = events.go_live %}
+      {% set name = 'go-live-date' %}
       {% if event %}
         {% set eventDay = events.go_live.day %}
         {% set eventDate = events.go_live.date %}
@@ -45,6 +47,7 @@
     {% elif dateGroup == 'return_by' %}
       {% set label = 'Return by' %}
       {% set event = events.return_by %}
+      {% set name = 'return-by-date' %}
       {% if event %}
         {% set eventDay = events.return_by.day %}
         {% set eventDate = events.return_by.date %}
@@ -53,6 +56,7 @@
     {% elif dateGroup == 'reminder' %}
       {% set label = 'First reminder' %}
       {% set event = events.reminder %}
+      {% set name = 'first-reminder-date' %}
       {% if event %}
         {% set eventDay = events.reminder.day %}
         {% set eventDate = events.reminder.date %}
@@ -86,6 +90,7 @@
     {% elif dateGroup == 'exercise_end' %}
       {% set label = 'Exercise end' %}
       {% set event = events.exercise_end %}
+      {% set name = 'exercise-end-date' %}
       {% if event %}
         {% set eventDay = events.exercise_end.day %}
         {% set eventDate = events.exercise_end.date %}
@@ -124,7 +129,8 @@
             },
             {
               "value": eventDay + ' <em>' + eventDate + '</em> ' + eventTime if event,
-              "class": "u-ta-right"
+              "class": "u-ta-right",
+              "name": name
             },
             {
               "form": formData,
