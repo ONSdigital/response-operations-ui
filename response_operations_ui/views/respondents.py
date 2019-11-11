@@ -137,27 +137,21 @@ def view_contact_details(respondent_id):
 @respondent_bp.route('/edit-contact-details/<respondent_id>', methods=['POST'])
 @login_required
 def edit_contact_details(respondent_id):
-    edit_contact_details_form = EditContactDetailsForm(form=request.form)
-    if not edit_contact_details_form.validate():
+    form = EditContactDetailsForm(form=request.form)
+    if not form.validate():
         contact_details = party_controller.get_respondent_by_party_id(respondent_id)
 
-        return render_template('edit-contact-details.html', form=edit_contact_details_form, tab='respondents',
-                               respondent_id=respondent_id, errors=edit_contact_details_form.errors,
+        return render_template('edit-contact-details.html', form=form, tab='respondents',
+                               respondent_id=respondent_id, errors=form.errors,
                                respondent_details=contact_details)
 
-    logger.info('Updating respondent details', respondent_id=respondent_id)
-    form = request.form
-    contact_details_changed = party_controller.update_contact_details(respondent_id, form)
-
-    if 'emailAddress' in contact_details_changed:
-        flash(f'Contact details changed and verification email sent to {form.get("email")}')
-    elif len(contact_details_changed) > 0:
-        flash('Contact details changed')
     else:
-        flash('No updates were necessary')
+        logger.info('Updating respondent details', respondent_id=respondent_id)
+        form = request.form
+        party_controller.update_contact_details(respondent_id, form)
 
-    return redirect(url_for('respondent_bp.respondent_details', respondent_id=respondent_id,
-                            message_key='details_changed'))
+        return redirect(url_for('respondent_bp.respondent_details', respondent_id=respondent_id,
+                                message_key='details_changed'))
 
 
 @respondent_bp.route('/resend_verification/<respondent_id>', methods=['GET'])

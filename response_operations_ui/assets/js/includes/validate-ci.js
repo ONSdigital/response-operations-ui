@@ -33,7 +33,7 @@ window.validateCI = {
         this.__private__.nodeClassesChange(errorPanelBody, ['panel__body'], mainAction);
         this.__private__.nodeClassesChange(button, ['btn--disabled'], contraAction);
 
-        this.__private__.arrayLikeToArray(errorPanelBody.querySelectorAll('p:not(.field)')).forEach(el => {
+        this.__private__.arrayLikeToArray(errorPanelBody.querySelectorAll('p')).forEach(el => {
             this.__private__.nodeClassesChange(el, ['hidden'], contraAction);
             this.__private__.nodeClassesChange(button, ['btn--disabled'], mainAction);
         });

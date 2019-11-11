@@ -35,7 +35,6 @@
     {{ 
       onsMetadata({
         "metadataLabel": survey.longName + "information",
-        "id": "survey-attributes",
         "termCol": "2",
         "descriptionCol": "10",
         "itemsList": [
@@ -43,8 +42,7 @@
             "term": "Survey ID:",
             "descriptions": [ 
               {
-                  "description": survey.surveyRef,
-                  "id": "survey-id"
+                  "description": survey.surveyRef
               }
             ]
           },
@@ -52,8 +50,7 @@
             "term": "Survey title:",
             "descriptions": [ 
               {
-                  "description": survey.longName,
-                  "id": "survey-title"
+                  "description": survey.longName
               }                
             ]
           },
@@ -61,8 +58,7 @@
             "term": "Abbreviation:",
             "descriptions": [ 
               {
-                  "description": survey.shortName,
-                  "id": "survey-abbreviation"
+                  "description": survey.shortName
               }                                     
             ]
           },
@@ -70,8 +66,7 @@
             "term": "Legal basis:",
             "descriptions": [ 
               {
-                  "description": survey.legalBasis,
-                  "id": "survey-legal-basis"
+                  "description": survey.legalBasis
               }
             ]
           }                                                           
@@ -88,39 +83,41 @@
 
     {% set surveyTableData = {
         "table_class": 'table--responsive table--dense',
-        "id": 'tbl-collection-exercise',
         "caption": 'The table shows collection exercise data for ' + survey.longName,
-        "hideCaption": true,
-        "ths": [
-          { 
-              "value": "Period"
-          },
-          { 
-              "value": "Respondent sees"
-          },
-          { 
-              "value": "Status"
-          },
-          { 
-              "value": "Sample"
-          },
-          { 
-              "value": "Report (CSV)"
-          },
-          { 
-              "value": "MPS"
-          },
-          { 
-              "value": "Go live"
-          },
-          { 
-              "value": "Return by"
-          }
-        ]
+        "hideCaption": true
       }
     %}
 
+    {% do surveyTableData | setAttribute("ths", [
+        { 
+            "value": "Period"
+        },
+        { 
+            "value": "Respondent sees"
+        },
+        { 
+            "value": "Status"
+        },
+        { 
+            "value": "Sample"
+        },
+        { 
+            "value": "Report (CSV)"
+        },
+        { 
+            "value": "MPS"
+        },
+        { 
+            "value": "Go live"
+        },
+        { 
+            "value": "Return by"
+        }
+      ]) 
+    %}
+
     {% set surveyTableDataRows = [] %}
+
 
     {% for exercise in collection_exercises %}
       {% set exerciseRef = exercise.exerciseRef if exercise.exerciseRef else "" %}
@@ -134,43 +131,35 @@
             {
               "value": '<a href="/surveys/' + survey.shortName.replace(' ', '') + "/" + exerciseRef + '"
                    name="ce-link-' + exerciseRef + '">' + exerciseRef + '</a>' ,
-              "data": "Period",
-              "name" : "tbl-ce-period"
+              "data": "Period"
             },
             {
               "value": exercise.userDescription,
-              "data": "Respondent sees",
-              "name" : "tbl-ce-shown-as"
+              "data": "Respondent sees"
             },
             {
               "value": exercise.state,
-              "data": "Status",
-              "name" : "tbl-ce-status"
+              "data": "Status"
             },
             {
               "value": exercise.sample_summary and exercise.sample_summary.totalSampleUnits or "",
-              "data": "Sample",
-              "name" : "tbl-ce-status"
+              "data": "Sample"
             },
             {
               "value": surveyTableReport,
-              "data": "Report (CSV)",
-              "name" : "tbl-ce-report"
+              "data": "Report (CSV)"
             },
             {
               "value": exercise.events.mps and exercise.events.mps.date or "",
-              "data": "MPS",
-              "name" : "tbl-ce-status"
+              "data": "MPS"
             },
             {
               "value": exercise.events.go_live and exercise.events.go_live.date or "",
-              "data": "Go live",
-              "name" : "tbl-ce-status"
+              "data": "Go live"
             },
             {
               "value": exercise.events.return_by and exercise.events.return_by.date or "",
-              "data": "Return by",
-              "name" : "tbl-ce-status"
+              "data": "Return by"
             }
           ]
         }
