@@ -5,9 +5,10 @@
 
 {% block main %}
     <h1>Reporting units</h1>
-    <div class="ru-search">
+    
+        <div class="ru-search">
 
-        <form action="" method="post">
+        <form action="{{ url_for('reporting_unit_bp.search_redirect') }}" method="post">
             {{ form.csrf_token }}
 
             <div class="field u-mb-s">
@@ -24,11 +25,11 @@
 
     </div>
 
-    {% if business_list is not none and business_list|length==0 %}
-    <div class="u-mt-m">No results found</div>
-    {% endif %}
 
     {% if business_list %}
+        {% if business_list|length==0 %}
+            <div class="u-mt-m">No results found</div>
+        {% endif %}
     <div class="u-pt-m">
 
         <table id="tbl-businesses" class="table table--dense" summary="Businesses in the system">
@@ -63,7 +64,11 @@
             </tbody>
         </table>
     </div>
-    <h2 class="u-fs-l">{{ total_business_count }} business records found.</h2>
+        {% if total_business_count == 1  %}
+            <h2 class="u-fs-l">{{ total_business_count }} Record found.</h2>
+        {%  else %}    
+            <h2 class="u-fs-l">{{ total_business_count }} Records found.</h2>
+        {% endif %}
     <h3 class="u-mb-m">Displaying <strong>{{ first_index }} - {{ last_index }}</strong> of <strong>{{ total_business_count }}</strong> </h3>
     {% if show_pagination %}{% include 'respondent-search/rs-pagination.html' %}{% endif %}
     {% endif %}

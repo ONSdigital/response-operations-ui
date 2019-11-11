@@ -1,3 +1,4 @@
+import datetime
 import logging
 
 import requests
@@ -11,19 +12,22 @@ from response_operations_ui.exceptions.exceptions import ApiError
 logger = wrap_logger(logging.getLogger(__name__))
 
 
-def search_reporting_units(query):
+def search_reporting_units(query, limit, page):
+    start = datetime.datetime.utcnow()
     logger.info('Retrieving reporting units by search query', query=query)
     url = f'{app.config["PARTY_URL"]}/party-api/v1/businesses/search'
-    response = requests.get(url, params={'query': query}, auth=app.config['PARTY_AUTH'])
+    response = requests.get(url, params={'query': query, 'page': page, 'limit': limit}, auth=app.config['PARTY_AUTH'])
 
     try:
         response.raise_for_status()
     except requests.exceptions.HTTPError:
-        logger.error('Error retrieving reporting units by search query', query=query)
+        logger.error('Error retrieving reporting units by search query', query=query, page=page, limit=limit)
         raise ApiError(response)
 
-    logger.info('Successfully retrieved reporting units by search', query=query)
-
+    elapsed_time = datetime.datetime.now()-start
+    logger.info('Successfully retrieved reporting units by search', 
+                query=query, page=page, limit=limit, elapsed_time=elapsed_time)
+    
     return response.json()
 
 

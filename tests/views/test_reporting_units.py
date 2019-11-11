@@ -366,8 +366,8 @@ class TestReportingUnits(ViewTestCase):
 
     @requests_mock.mock()
     def test_search_reporting_units(self, mock_request):
-        businesses = [{'name': 'test', 'ruref': '123456'}]
-        mock_request.get(url_search_reporting_units, json=businesses)
+        mock_business_search_response = {'businesses': [{'name': 'test', 'ruref': '123456'}], 'total_business_count': 2}
+        mock_request.get(url_search_reporting_units, json=mock_business_search_response)
 
         response = self.client.post("/reporting-units")
 
