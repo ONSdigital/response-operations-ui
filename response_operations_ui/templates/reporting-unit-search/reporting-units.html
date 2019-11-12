@@ -25,51 +25,49 @@
 
     </div>
 
-
-    {% if business_list %}
-        {% if business_list|length==0 %}
-            <div class="u-mt-m">No results found</div>
-        {% endif %}
-    <div class="u-pt-m">
-
-        <table id="tbl-businesses" class="table table--dense" summary="Businesses in the system">
-            <thead class="table__head">
-            <tr class="table__row">
-                <th scope="col" class="table__header">
-                    RU reference
-                </th>
-                <th scope="col" class="table__header">
-                    Name
-                </th>
-                <th scope="col" class="table__header">
-                    Trading as
-                </th>
-            </tr>
-            </thead>
-
-            <tbody class="table__body">
-            {% for business in business_list %}
-            <tr class="table__row table__row__selectable">
-                <td class="table__cell ">
-                    <a href="/reporting-units/{{ business.ruref }}" name="details-link-{{ business.ruref }}">{{ business.ruref }}</a>
-                </td>
-                <td class="table__cell">
-                    {{ business.name }}
-                </td>
-                <td class="table__cell">
-                    {{ business.trading_as }}
-                </td>
-            </tr>
-            {% endfor %}
-            </tbody>
-        </table>
-    </div>
-        {% if total_business_count == 1  %}
-            <h2 class="u-fs-l">{{ total_business_count }} Record found.</h2>
-        {%  else %}    
-            <h2 class="u-fs-l">{{ total_business_count }} Records found.</h2>
-        {% endif %}
-    <h3 class="u-mb-m">Displaying <strong>{{ first_index }} - {{ last_index }}</strong> of <strong>{{ total_business_count }}</strong> </h3>
-    {% if show_pagination %}{% include 'respondent-search/rs-pagination.html' %}{% endif %}
-    {% endif %}
+    {% if not total_business_count %}
+        <h3 class="u-fs-l">No results found</h3>
+    {% else %}
+        <div class="u-pt-m">
+    
+            <table id="tbl-businesses" class="table table--dense" summary="Businesses in the system">
+                <thead class="table__head">
+                <tr class="table__row">
+                    <th scope="col" class="table__header">
+                        RU reference
+                    </th>
+                    <th scope="col" class="table__header">
+                        Name
+                    </th>
+                    <th scope="col" class="table__header">
+                        Trading as
+                    </th>
+                </tr>
+                </thead>
+    
+                <tbody class="table__body">
+                {% for business in business_list %}
+                <tr class="table__row table__row__selectable">
+                    <td class="table__cell ">
+                        <a href="/reporting-units/{{ business.ruref }}" name="details-link-{{ business.ruref }}">{{ business.ruref }}</a>
+                    </td>
+                    <td class="table__cell">
+                        {{ business.name }}
+                    </td>
+                    <td class="table__cell">
+                        {{ business.trading_as }}
+                    </td>
+                </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+        </div>
+            {% if total_business_count == 1  %}
+                <h2 class="u-fs-l">{{ total_business_count }} Result found</h2>
+            {%  else %}    
+                <h2 class="u-fs-l">{{ total_business_count }} Results found</h2>
+            {% endif %}
+        <h3 class="u-mb-m">Displaying <strong>{{ first_index }} - {{ last_index }}</strong> of <strong>{{ total_business_count }}</strong> </h3>
+        {% if show_pagination %}{% include 'respondent-search/rs-pagination.html' %}{% endif %}
+    {%  endif %}
 {% endblock %}

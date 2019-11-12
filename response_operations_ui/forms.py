@@ -62,7 +62,7 @@ class RespondentSearchForm(FlaskForm):
         return True
 
 
-class SearchForm(FlaskForm):
+class RuSearchForm(FlaskForm):
     query = StringField('Query')
     submit = SubmitField('Search')
 

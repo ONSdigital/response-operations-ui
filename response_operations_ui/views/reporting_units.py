@@ -15,7 +15,7 @@ from response_operations_ui.controllers.collection_exercise_controllers import \
     get_case_group_status_by_collection_exercise, get_collection_exercise_by_id
 from response_operations_ui.controllers.party_controller import get_respondent_by_party_id
 from response_operations_ui.controllers.survey_controllers import get_survey_by_id
-from response_operations_ui.forms import EditContactDetailsForm, SearchForm
+from response_operations_ui.forms import EditContactDetailsForm, RuSearchForm
 
 
 logger = wrap_logger(logging.getLogger(__name__))
@@ -175,14 +175,14 @@ def edit_contact_details(ru_ref, respondent_id):
 @login_required
 def search_reporting_unit_home():
     return render_template('reporting-unit-search/reporting-units-search.html',
-                           form=SearchForm(),
+                           form=RuSearchForm(),
                            breadcrumbs=[{"text": "Reporting units"}])
 
 
 @reporting_unit_bp.route('/', methods=['POST'])
 @login_required
 def search_redirect():
-    form = SearchForm(request.form)
+    form = RuSearchForm(request.form)
 
     if form.validate_on_submit():
         query = request.form.get('query')
@@ -197,7 +197,7 @@ def search_reporting_units():
     page = request.values.get('page', '1')
     limit = app.config["PARTY_BUSINESS_RESULTS_PER_PAGE"]
     breadcrumbs = [{"text": "Reporting units"}]
-    form = SearchForm()
+    form = RuSearchForm()
     form.query.data = search_key_words
     
     response_data = reporting_units_controllers.search_reporting_units(search_key_words, limit, page)
