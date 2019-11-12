@@ -24,10 +24,10 @@ def search_reporting_units(query, limit, page):
         logger.error('Error retrieving reporting units by search query', query=query, page=page, limit=limit)
         raise ApiError(response)
 
-    elapsed_time = datetime.datetime.now()-start
-    logger.info('Successfully retrieved reporting units by search', 
+    elapsed_time = datetime.datetime.now() - start
+    logger.info('Successfully retrieved reporting units by search',
                 query=query, page=page, limit=limit, elapsed_time=elapsed_time)
-    
+
     return response.json()
 
 

@@ -375,7 +375,7 @@ class TestReportingUnits(ViewTestCase):
         self.assertEqual(response.status_code, 200)
         self.assertIn("test".encode(), response.data)
         self.assertIn("123456".encode(), response.data)
-        
+
     @requests_mock.mock()
     def test_search_reporting_units_fail(self, mock_request):
         mock_request.get(url_search_reporting_units, status_code=500)
@@ -394,12 +394,12 @@ class TestReportingUnits(ViewTestCase):
 
         form_data = {'query': ''}
         response = self.client.post("/reporting-units", data=form_data, follow_redirects=True)
-        
+
         self.assertEqual(response.status_code, 200)
-        data = re.sub('<[^<]+?>', '', response.data.decode())        # Strip out html tags from the response data 
-        self.assertIn("75 Records found.", data)                     
+        data = re.sub('<[^<]+?>', '', response.data.decode())        # Strip out html tags from the response data
+        self.assertIn("75 Results found", data)
         self.assertIn("Displaying 1 - 25 of 75", data)
-        self.assertIn("Page 1 of 3", data)                           # Validates the page count is correct 
+        self.assertIn("Page 1 of 3", data)                           # Validates the page count is correct
         self.assertIn("Previous 123Next", data)                      # Validates Pagination controls displayed
 
     @requests_mock.mock()
@@ -412,8 +412,26 @@ class TestReportingUnits(ViewTestCase):
         response = self.client.post("/reporting-units", data=form_data, follow_redirects=True)
 
         self.assertEqual(response.status_code, 200)
-        data = re.sub('<[^<]+?>', '', response.data.decode())  # Strip out html tags from the response data 
+        data = re.sub('<[^<]+?>', '', response.data.decode())  # Strip out html tags from the response data
         self.assertIn("No results found", data)
+
+    @requests_mock.mock()
+    def test_search_reporting_units_for_specific_name_displays_correctly(self, mock_request):
+        ru_ref_num = '12345678901'                            # named so as to not clash with outer definition of ru_ref
+        mock_response = {'businesses': [{'name': 'SomeName', 'ruref': ru_ref_num}], 'total_business_count': 1}
+
+        mock_request.get(url_search_reporting_units, json=mock_response)
+
+        form_data = {'query': 'SomeName'}
+        response = self.client.post("/reporting-units", data=form_data, follow_redirects=True)
+
+        self.assertEqual(response.status_code, 200)
+        data = response.data.decode()
+        self.assertIn("1 Result found", data)
+        self.assertIn('value="SomeName"', data)          # Validates that search term is displayed in text entry box
+
+        # now validate that the ru is displayed as an href
+        self.assertIn(f'href="/reporting-units/{ru_ref_num}" name="details-link-{ru_ref_num}">{ru_ref_num}', data)
 
     @requests_mock.mock()
     def test_resend_verification_email(self, mock_request):

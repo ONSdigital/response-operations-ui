@@ -199,14 +199,14 @@ def search_reporting_units():
     breadcrumbs = [{"text": "Reporting units"}]
     form = RuSearchForm()
     form.query.data = search_key_words
-    
+
     response_data = reporting_units_controllers.search_reporting_units(search_key_words, limit, page)
     business_list = response_data['businesses']
     total_business_count = response_data['total_business_count']
-        
+
     offset = (int(page) - 1) * limit
     last_index = (limit + offset) if total_business_count >= limit else total_business_count
-    
+
     pagination = Pagination(page=int(page),
                             per_page=limit,
                             total=total_business_count,
@@ -217,15 +217,15 @@ def search_reporting_units():
                             format_total=True,
                             format_number=True,
                             show_single_page=False)
-    
-    return render_template('reporting-unit-search/reporting-units.html', 
+
+    return render_template('reporting-unit-search/reporting-units.html',
                            form=form,
-                           business_list=business_list, 
+                           business_list=business_list,
                            total_business_count=total_business_count,
                            breadcrumbs=breadcrumbs,
                            first_index=1 + offset,
                            last_index=last_index,
-                           pagination=pagination, 
+                           pagination=pagination,
                            show_pagination=bool(total_business_count > limit))
 
 
