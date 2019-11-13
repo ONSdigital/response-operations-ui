@@ -283,7 +283,7 @@ def close_conversation(thread_id):
 
         flash(Markup(f'Conversation closed. <a href={thread_url}>View conversation</a>'))
         return redirect(url_for('messages_bp.view_select_survey', page=request.args.get('page'),
-                            conversation_tab=conversation_tab))
+                        conversation_tab=conversation_tab))
 
     thread_conversation = message_controllers.get_conversation(thread_id)
     refined_thread = [_refine(message) for message in reversed(thread_conversation['messages'])]
@@ -308,6 +308,7 @@ def _format_closed_at(thread_conversation):
     except KeyError:
         return None
 
+
 def _build_create_message_breadcrumbs():
     return [
         {"text": "Messages", "url": "/messages"},
@@ -316,7 +317,7 @@ def _build_create_message_breadcrumbs():
 
 
 def _get_conversation_breadcrumbs(messages):
-    try :
+    try:
         return [
             {"text": "Messages", "url": "/messages"},
             {"text": messages[-1].get('subject', 'No Subject')}
