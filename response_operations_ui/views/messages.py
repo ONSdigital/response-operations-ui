@@ -79,12 +79,12 @@ def view_conversation(thread_id):
     latest_message = refined_thread[-1]
     closed_at = _format_closed_at(thread_conversation)
     breadcrumbs = _get_conversation_breadcrumbs(thread_conversation['messages'])
-    deleted_user = False
+    respondent_is_deleted = False
 
     for message in refined_thread:
         # This needs to change once we figure out what the name of a missing/deleted user is going to be.
         if 'None - ' in message['username']:
-            deleted_user = True
+            respondent_is_deleted = True
 
     if latest_message['unread'] and _can_mark_as_unread(latest_message):
         message_controllers.remove_unread_label(latest_message['message_id'])
@@ -118,12 +118,13 @@ def view_conversation(thread_id):
                                    form=form,
                                    breadcrumbs=breadcrumbs,
                                    messages=refined_thread,
+                                   respondent_is_deleted=respondent_is_deleted,
                                    thread_data=thread_conversation)
 
     return render_template("conversation-view/conversation-view.html",
                            breadcrumbs=breadcrumbs,
                            messages=refined_thread,
-                           deleted_user=deleted_user,
+                           respondent_is_deleted=respondent_is_deleted,
                            form=form,
                            selected_survey=refined_thread[0]['survey'],
                            page=page,
@@ -139,10 +140,8 @@ def mark_message_unread(message_id):
     msg_from = request.args.get('from', default="", type=str)
     msg_to = request.args.get('to', default="", type=str)
     conversation_tab = request.args.get('conversation_tab')
-
-    message_controllers.add_unread_label(message_id)
-
     marked_unread_message = f"Message from {msg_from} to {msg_to} marked unread"
+    message_controllers.add_unread_label(message_id)
 
     return _view_select_survey(marked_unread_message, conversation_tab)
 
@@ -150,11 +149,14 @@ def mark_message_unread(message_id):
 @messages_bp.route('/', methods=['GET'])
 @login_required
 def view_select_survey():
-    conversation_tab = request.args.get('conversation_tab')
-    return _view_select_survey("", conversation_tab)
+    return _view_select_survey("", request.args.get('conversation_tab'))
 
 
 def _view_select_survey(marked_unread_message, conversation_tab):
+    """
+    Redirects to either a survey stored in the session under the 'messages_survey_selection'
+    key or to the survey selection screen if the key isn't present in the session
+    """
     try:
         selected_survey = session["messages_survey_selection"]
     except KeyError:
@@ -471,6 +473,10 @@ def _get_business_name_from_message(message):
 
 
 def _get_human_readable_date(sent_date):
+    """
+    Converts a datetime date (e.g., 2019-11-13 13:25:19.093378) and converts it into something
+    easily read (e.g., Today at 13:25)
+    """
     try:
         formatted_date = get_formatted_date(sent_date.split('.')[0])
         return formatted_date
