@@ -22,12 +22,16 @@
         {% include 'conversation-view/cv-message-info.html' %}
 
         {% include 'conversation-view/cv-message-block.html' %}
-
-        {% if not thread_data.is_closed %}
-            {% include 'conversation-view/cv-reply-form.html' %}
+        {% if not deleted_user %}
+            {% if not thread_data.is_closed %}
+                {% include 'conversation-view/cv-reply-form.html' %}
+            {% else %}
+                {% include 'conversation-view/cv-reopen-form.html' %}
+            {% endif %}
         {% else %}
-            {% include 'conversation-view/cv-reopen-form.html' %}
-        {% endif %}
+            <span>Cannot reply or modify conversation as the respondent has been deleted</span>
+            <br>
+        {% endif%}
 
         {% include 'conversation-view/cv-back-link.html' %}
     </div>
