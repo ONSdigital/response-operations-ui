@@ -77,7 +77,7 @@ def view_conversation(thread_id):
     thread_conversation = message_controllers.get_conversation(thread_id)
     refined_thread = [_refine(message) for message in reversed(thread_conversation['messages'])]
     latest_message = refined_thread[-1]
-    closed_at = _format_closed_at(thread_conversation['closed_at'])
+    closed_at = _format_closed_at(thread_conversation)
     breadcrumbs = _get_conversation_breadcrumbs(thread_conversation['messages'])
     deleted_user = False
 
@@ -107,18 +107,18 @@ def view_conversation(thread_id):
                                     page=page, conversation_tab=conversation_tab))
 
         except (ApiError, InternalError) as e:
-            error = "Message send failed"
+            error = "Message failed to send, something has gone wrong with the website."
             if e.__class__ == ApiError:
                 if e.status_code == 404 and "Respondent not found" in e.message:
-                    error = "Respondent not found, maybe they've been deleted?"
+                    error = "Cannot send message to respondent as they have been deleted"
 
             form = _repopulate_form_with_submitted_data(form)
-            form.errors['sending'] = ["Message failed to send, something has gone wrong with the website."]
+            form.errors['sending'] = [error]
             return render_template('conversation-view/conversation-view.html',
                                    form=form,
                                    breadcrumbs=breadcrumbs,
                                    messages=refined_thread,
-                                   error=error)
+                                   thread_data=thread_conversation)
 
     return render_template("conversation-view/conversation-view.html",
                            breadcrumbs=breadcrumbs,
@@ -205,7 +205,6 @@ def view_selected_survey(selected_survey):
         page = request.args.get('page', default=1, type=int)
         limit = request.args.get('limit', default=10, type=int)
         flash_message = request.args.get('flash_message', default="", type=str)
-
         conversation_tab = request.args.get('conversation_tab', default='open')
 
         thread_count = message_controllers.get_conversation_count(
@@ -256,26 +255,35 @@ def view_selected_survey(selected_survey):
                                conversation_tab=conversation_tab)
 
     except TypeError:
-        logger.exception("Failed to retrieve survey id")
+        logger.error("Failed to retrieve survey id", exc_info=True)
         return render_template("messages.html",
                                breadcrumbs=breadcrumbs,
                                selected_survey=selected_survey,
                                displayed_short_name=displayed_short_name,
                                response_error=True)
     except NoMessagesError:
-        logger.exception("Failed to retrieve messages")
+        logger.error("Failed to retrieve messages", exc_info=True)
         return render_template("messages.html",
                                breadcrumbs=breadcrumbs,
                                response_error=True,
                                selected_survey=selected_survey,
-                               displayed_short_name=displayed_short_name, )
+                               displayed_short_name=displayed_short_name)
 
 
-@messages_bp.route('/threads/<thread_id>/close-conversation', methods=['GET'])
+@messages_bp.route('/threads/<thread_id>/close-conversation', methods=['GET', 'POST'])
 @login_required
-def close_conversation_get(thread_id):
+def close_conversation(thread_id):
     conversation_tab = request.args.get('conversation_tab')
     page = request.args.get('page')
+
+    if request.method == 'POST':
+        message_controllers.update_close_conversation_status(thread_id=thread_id, status=True)
+        thread_url = url_for("messages_bp.view_conversation", thread_id=thread_id, conversation_tab=conversation_tab,
+                             page=page) + "#latest-message"
+
+        flash(Markup(f'Conversation closed. <a href={thread_url}>View conversation</a>'))
+        return redirect(url_for('messages_bp.view_select_survey', page=request.args.get('page'),
+                            conversation_tab=conversation_tab))
 
     thread_conversation = message_controllers.get_conversation(thread_id)
     refined_thread = [_refine(message) for message in reversed(thread_conversation['messages'])]
@@ -289,27 +297,13 @@ def close_conversation_get(thread_id):
                            page=page,
                            conversation_tab=conversation_tab)
 
-@messages_bp.route('/threads/<thread_id>/close-conversation', methods=['POST'])
-@login_required
-def close_conversation_post(thread_id):
-    conversation_tab = request.args.get('conversation_tab')
-    page = request.args.get('page')
 
-    message_controllers.update_close_conversation_status(thread_id=thread_id, status=True)
-    thread_url = url_for("messages_bp.view_conversation", thread_id=thread_id, conversation_tab=conversation_tab,
-                         page=page) + "#latest-message"
-
-    flash(Markup(f'Conversation closed. <a href={thread_url}>View conversation</a>'))
-    return redirect(url_for('messages_bp.view_select_survey', page=request.args.get('page'),
-                            conversation_tab=conversation_tab))
-
-
-def _format_closed_at(closed_at):
+def _format_closed_at(thread_conversation):
     """
     Takes a date and formats converts it into the string 'dd/mm/yyyy at HH:MM'
     """
     try:
-        closed_time = localise_datetime(datetime.strptime(closed_at, "%Y-%m-%dT%H:%M:%S.%f"))
+        closed_time = localise_datetime(datetime.strptime(thread_conversation['closed_at'], "%Y-%m-%dT%H:%M:%S.%f"))
         return closed_time.strftime("%d/%m/%Y" + " at %H:%M")
     except KeyError:
         return None
@@ -447,7 +441,7 @@ def _get_to_id(message):
     try:
         return message.get('msg_to')[0]
     except (IndexError, TypeError):
-        logger.exception("No 'msg_to' in message.", message_id=message.get('msg_id'))
+        logger.error("No 'msg_to' in message.", message_id=message.get('msg_id'), exc_info=True)
 
 
 def _get_to_name(message):
@@ -458,14 +452,14 @@ def _get_to_name(message):
             return "ONS"
         return f"{message.get('@msg_to')[0].get('firstName')} {message.get('@msg_to')[0].get('lastName')}"
     except (IndexError, TypeError):
-        logger.exception("Failed to retrieve message to name ", message_id=message.get('msg_id'))
+        logger.info("Failed to retrieve message to name", message_id=message.get('msg_id'), exc_info=True)
 
 
 def _get_ru_ref_from_message(message):
     try:
         return message['@ru_id']['sampleUnitRef']
     except (KeyError, TypeError):
-        logger.exception("Failed to retrieve RU ref from message", message_id=message.get('msg_id'))
+        logger.error("Failed to retrieve RU ref from message", message_id=message.get('msg_id'), exc_info=True)
 
 
 def _get_business_name_from_message(message):

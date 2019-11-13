@@ -22,15 +22,11 @@
         {% include 'conversation-view/cv-message-info.html' %}
 
         {% include 'conversation-view/cv-message-block.html' %}
-        {% if not deleted_user %}
-            {% if not thread_data.is_closed %}
-                {% include 'conversation-view/cv-reply-form.html' %}
-            {% else %}
-                {% include 'conversation-view/cv-reopen-form.html' %}
-            {% endif %}
+
+        {% if not thread_data.is_closed %}
+            {% include 'conversation-view/cv-reply-form.html' %}
         {% else %}
-            <span>Replies and reopening conversation are disabled as the respondent has been deleted</span>
-            <br>
+            {% include 'conversation-view/cv-reopen-form.html' %}
         {% endif %}
 
         {% include 'conversation-view/cv-back-link.html' %}
