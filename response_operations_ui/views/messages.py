@@ -82,8 +82,7 @@ def view_conversation(thread_id):
     respondent_is_deleted = False
 
     for message in refined_thread:
-        # This needs to change once we figure out what the name of a missing/deleted user is going to be.
-        if 'None - ' in message['username']:
+        if 'Deleted respondent' in message['username']:
             respondent_is_deleted = True
 
     if latest_message['unread'] and _can_mark_as_unread(latest_message):
@@ -433,11 +432,21 @@ def _get_user_summary_for_message(message):
 
 
 def _get_from_name(message):
+    """
+    Constructs a name from the @msg_from key of a message.  The value of the key needs to be a dict that contains
+    a 'firstName' and 'lastName' key in order to have a name that isn't 'None None'.
+
+    If the @msg_from key is missing, this will return the string 'Deleted respondent'
+
+    :param message: A dict that represents a message
+    :rtype: string
+    """
     try:
         msg_from = message['@msg_from']
         return f"{msg_from.get('firstName')} {msg_from.get('lastName')}"
     except KeyError:
-        logger.info("Failed to retrieve message from name", message_id=message.get('msg_id'), exc_info=True)
+        logger.info("Failed to retrieve message from name", message_id=message.get('msg_id'))
+        return "Deleted respondent"
 
 
 def _get_to_id(message):
@@ -455,7 +464,7 @@ def _get_to_name(message):
             return "ONS"
         return f"{message.get('@msg_to')[0].get('firstName')} {message.get('@msg_to')[0].get('lastName')}"
     except (IndexError, TypeError):
-        logger.info("Failed to retrieve message to name", message_id=message.get('msg_id'), exc_info=True)
+        logger.info("Failed to retrieve message to name", message_id=message.get('msg_id'))
 
 
 def _get_ru_ref_from_message(message):
