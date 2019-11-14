@@ -139,7 +139,7 @@ class TestMessage(ViewTestCase):
         response = self.client.get("/messages/ASHE")
 
         self.assertEqual(response.status_code, 200)
-        self.assertIn("Unavailable".encode(), response.data)
+        self.assertIn("Deleted respondent".encode(), response.data)
         self.assertIn("Example message subject".encode(), response.data)
 
     @requests_mock.mock()
