@@ -1,0 +1,97 @@
+{% extends "layouts/base.html" %}
+
+{% set errorType = data['error']['type'] %}
+
+{% block page_title %} Request New Account | Survey Data Collection {% endblock %}
+
+{% block main %}
+
+<form
+    method="post"
+    action="{{ url_for('account_bp.post_create_account', token=data.token) }}"
+    class="form"
+    role="form">
+    {{ form.csrf_token }}
+
+    <h1 class="u-fs-l">Create your account</h1>
+
+    <p>Consider using your ONS username</p>
+    {% if errorType.user_name %}
+    <div class="panel panel--simple panel--error">
+        <p class="error-message">{{ errorType['user_name'][0] }}</p>
+    {% endif %}
+        <div class="field" id="user_name_field">
+            {{ form.user_name.label(class_='label') }}
+            {{ form.user_name(id='inputUserName', class_='input input--text input-type__input, autocomplete="off"', **{'aria-describedby':'inputUserNameLabel'}) }}
+        </div>
+    {% if errorType.user_name %}
+    </div>
+    {% endif %}
+
+    {% if errorType.first_name %}
+    <div class="panel panel--simple panel--error">
+        <p class="error-message">{{ errorType['first_name'][0] }}</p>
+    {% endif %}
+        <div class="field" id="first_name_field">
+            {{ form.first_name.label(class_='label') }}
+            {{ form.first_name(id='inputFirstName', class_='input input--text input-type__input, autocomplete="off"', **{'aria-describedby':'inputFirstNameLabel'}) }}
+        </div>
+    {% if errorType.first_name %}
+    </div>
+    {% endif %}
+
+    {% if errorType.last_name %}
+    <div class="panel panel--simple panel--error">
+        <p class="error-message">{{ errorType['last_name'][0] }}</p>
+    {% endif %}
+        <div class="field" id="last_name_field">
+            {{ form.last_name.label(class_='label') }}
+            {{ form.last_name(id='inputLastName', class_='input input--text input-type__input, autocomplete="off"', **{'aria-describedby':'inputLastNameLabel'}) }}
+        </div>
+    {% if errorType.last_name %}
+    </div>
+    {% endif %}
+
+    <p>Your password must have:</p>
+    <ul>
+        <li>at least 8 characters</li>
+        <li>at least one capital letter</li>
+        <li>at least one symbol (eg ?!£%)</li>
+        <li>at least one number</li>
+    </ul>
+
+    <fieldset id="password-details">
+      <div class="js-new-password-group js-password-obfuscation-group">
+
+        {% if errorType.password %}
+
+        <div class="panel panel--simple panel--error">
+            <p class="error-message">{{ errorType['password'][0] }}</p>
+        {% endif %}
+            <div class="hide-if-no-js field--toggle">
+              <label class="label label--inline u-fs-r--b field__label" for="showPasswordToggle">Show password</label>
+              <input id="showPasswordToggle" class="field__input input input--checkbox" type="checkbox">
+            </div>
+            <div class="field" id="password_field">
+                {{ form.password.label(class_='label') }}
+                {{ form.password(id='inputPassword', class_='input input--text input-type__input, autocomplete="off"', **{'aria-describedby':'inputPasswordLabel'}) }}
+            </div>
+            <br/>
+            <div class="field">
+                {{ form.password_confirm.label(class_='label') }}
+                {{ form.password_confirm(class_='input input--text input-type__input js-confirm-new-password js-password-obfuscation-field', autocomplete="off") }}
+            </div>
+        {% if errorType.password %}
+        </div>
+        {% endif %}
+      </div>
+    </fieldset>
+    <br/>
+
+    <button class="btn u-mb-s u-fs-r--b" id="confirm_password_button" type="submit">Confirm</button>
+
+    <p><a href="{{ url_for('sign_in_bp.sign_in') }}">Cancel</a></p>
+
+</form>
+
+{% endblock main %}
