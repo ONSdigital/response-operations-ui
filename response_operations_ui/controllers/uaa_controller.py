@@ -78,18 +78,7 @@ def get_user_by_email(email, access_token=None):
                'Authorization': f'Bearer {access_token}'}
 
     url = f"{app.config['UAA_SERVICE_URL']}/Users?filter=email+eq+%22{email}%22"
-    response = requests.get(url, headers=headers)
-    if response.status_code != 200 or response.json()['totalResults'] == 0:
-        return
-
-    return response.json()
-
-
-def get_first_name_by_email(email):
-    response = get_user_by_email(email)
-    if response is not None:
-        return response['resources'][0]['name']['givenName']
-    return ""
+    return requests.get(url, headers=headers)
 
 
 def retrieve_user_code(access_token, username):

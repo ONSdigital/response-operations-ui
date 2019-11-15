@@ -69,6 +69,10 @@ class Config(object):
                                                             'request_password_change_id')
     NOTIFY_CONFIRM_PASSWORD_CHANGE_TEMPLATE = os.getenv('NOTIFY_CONFIRM_PASSWORD_CHANGE_TEMPLATE',
                                                             'confirm_password_change_id')
+    NOTIFY_REQUEST_CREATE_ACCOUNT_TEMPLATE = os.getenv('NOTIFY_REQUEST_CREATE_ACCOUNT_TEMPLATE',
+                                                            'request_create_account_id')
+    NOTIFY_CONFIRM_CREATE_ACCOUNT_TEMPLATE = os.getenv('NOTIFY_CONFIRM_CREATE_ACCOUNT_TEMPLATE',
+                                                            'confirm_create_account_id')
     SEND_EMAIL_TO_GOV_NOTIFY = os.getenv('SEND_EMAIL_TO_GOV_NOTIFY', False)
 
     REPORT_URL = os.getenv('REPORT_URL')
@@ -90,6 +94,10 @@ class Config(object):
     EMAIL_TOKEN_SALT = os.getenv('EMAIL_TOKEN_SALT', 'aardvark')
     # 24 hours in seconds
     EMAIL_TOKEN_EXPIRY = int(os.getenv('EMAIL_TOKEN_EXPIRY', '86400'))
+    # 72 hours in seconds
+    CREATE_ACCOUNT_EMAIL_TOKEN_EXPIRY = int(os.getenv('CREATE_ACCOUNT_EMAIL_TOKEN_EXPIRY', '259200'))
+    CREATE_ACCOUNT_ADMIN_PASSWORD = os.getenv('CREATE_ACCOUNT_ADMIN_PASSWORD')
+
 
 
 class DevelopmentConfig(Config):
@@ -148,6 +156,9 @@ class DevelopmentConfig(Config):
     EMAIL_TOKEN_SALT = os.getenv('EMAIL_TOKEN_SALT', 'aardvark')
     # 24 hours in seconds
     EMAIL_TOKEN_EXPIRY = int(os.getenv('EMAIL_TOKEN_EXPIRY', '86400'))
+    # 72 hours in seconds
+    CREATE_ACCOUNT_EMAIL_TOKEN_EXPIRY = int(os.getenv('CREATE_ACCOUNT_EMAIL_TOKEN_EXPIRY', '259200'))
+    CREATE_ACCOUNT_ADMIN_PASSWORD = os.getenv('CREATE_ACCOUNT_ADMIN_PASSWORD', 'secret')
 
 
 class TestingConfig(DevelopmentConfig):
@@ -177,3 +188,4 @@ Z5VVFymXN2n+A6UeWAnuO8/E1inhk99dBzKEGdw=
     SECRET_KEY = 'sekrit!'
     SECURITY_USER_NAME = 'admin'
     SECURITY_USER_PASSWORD = 'secret'
+    CREATE_ACCOUNT_ADMIN_PASSWORD = 'secret'

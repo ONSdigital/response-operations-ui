@@ -1,0 +1,12 @@
+{% extends "layouts/base.html" %}
+
+{% block page_title %} Request New Account | Survey Data Collection {% endblock %}
+
+{% block main %}
+    <h1 class="u-fs-l">Account already exists</h1>
+
+    <p class="u-mb-l">An account already exists for the email {{ email }}<br/>
+    If you have forgotten your password, you can <a href="/forgot-password">request a password reset</a>.</br/>
+    Otherwise, please <a href="/sign-in">sign in to your account.</a></p>
+
+{% endblock main %}

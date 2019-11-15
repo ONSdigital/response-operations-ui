@@ -1,0 +1,53 @@
+{% extends "layouts/base.html" %}
+
+{% set errorType = data['error']['type'] %}
+
+{% block page_title %} Request New Account | Survey Data Collection {% endblock %}
+
+{% block main %}
+<div role="main" id="main" class="page__main">
+    <a href="/sign-in">Back to sign in</a><br>
+    <form
+        method="post"
+        action="{{ url_for('account_bp.post_request_new_account') }}"
+        class="form"
+        role="form">
+
+        <h1 class="u-fs-l u-mt-m">Verify your email</h1>
+        <br />
+        {{ form.csrf_token }}
+
+        <fieldset id="forgot-details">
+            {% if errorType.email_address %}
+            <div class="panel panel--simple panel--error">
+                <p class="error-message">{{ errorType['email_address'][0] }}</p>
+            {% endif %}
+                <div class="field">
+
+                    {{ form.email_address.label(class_='label') }}
+
+                    {{ form.email_address(class_='input input--text input-type__input') }}
+
+                </div>
+            {% if errorType.email_address %}
+            </div>
+            {% endif %}
+            <br />
+            {% if errorType.password %}
+            <div class="panel panel--simple panel--error">
+                <p class="error-message">{{ errorType['password'][0] }}</p>
+            {% endif %}
+                <div class="field" id="password_field">
+                {{ form.password.label(class_='label') }}
+                {{ form.password(id='inputPassword', class_='input input--text input-type__input, autocomplete="off"', **{'aria-describedby':'inputPasswordLabel'}) }}
+            </div>
+            {% if errorType.password %}
+            </div>
+            {% endif %}
+        </fieldset>
+        <br />
+
+        <button class="btn u-fs-r--b u-mb-s" id="request-account-btn" type="submit">Continue</button>
+    </form>
+</div>
+{% endblock main %}
