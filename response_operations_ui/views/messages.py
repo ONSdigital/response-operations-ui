@@ -107,9 +107,8 @@ def view_conversation(thread_id):
 
         except (ApiError, InternalError) as e:
             error = "Message failed to send, something has gone wrong with the website."
-            if e.__class__ == ApiError:
-                if e.status_code == 404 and "Respondent not found" in e.message:
-                    error = "Cannot send message to respondent as they have been deleted"
+            if e.status_code == 404 and "Respondent not found" in e.message:
+                error = "Cannot send message to respondent as they have been deleted"
 
             form = _repopulate_form_with_submitted_data(form)
             form.errors['sending'] = [error]
