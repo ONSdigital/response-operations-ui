@@ -23,7 +23,7 @@ class TestPartyController(unittest.TestCase):
         with self.app.app_context():
             # Mock setups
             requests_mock.return_value = fake_response(status_code=400, json=lambda: [])
-
+            limit = self.app.config["PARTY_RESPONDENTS_PER_PAGE"]
             # Test and assert
             with self.assertRaises(SearchRespondentsException):
-                search_respondents('firstname', 'lastname', 'name@email.com', 1)
+                search_respondents('firstname', 'lastname', 'name@email.com', page=1, limit=limit)
