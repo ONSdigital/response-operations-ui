@@ -52,13 +52,13 @@ def respondent_search():
     email_address = request.values.get('email_address', '')
     page = request.values.get('page', '1')
     limit = app.config["PARTY_RESPONDENTS_PER_PAGE"]
-    
+
     form = RespondentSearchForm()
 
     form.first_name.data = first_name
     form.last_name.data = last_name
     form.email_address.data = email_address
-    
+ 
     party_response = party_controller.search_respondents(first_name, last_name, email_address, page, limit)
 
     respondents = party_response.get('data', [])
