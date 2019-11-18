@@ -1,7 +1,8 @@
 import json
+import re
 
 import requests_mock
-
+from random import randint
 from config import TestingConfig
 from tests.views import ViewTestCase
 
@@ -365,11 +366,11 @@ class TestReportingUnits(ViewTestCase):
         self.assertNotIn("Change</a>".encode(), response.data)
 
     @requests_mock.mock()
-    def test_search_reporting_units(self, mock_request):
-        businesses = [{'name': 'test', 'ruref': '123456'}]
-        mock_request.get(url_search_reporting_units, json=businesses)
+    def test_search_reporting_units_for_1_business_redirects_and_holds_correct_data(self, mock_request):
+        mock_business_search_response = {'businesses': [{'name': 'test', 'ruref': '123456'}], 'total_business_count': 2}
+        mock_request.get(url_search_reporting_units, json=mock_business_search_response)
 
-        response = self.client.post("/reporting-units")
+        response = self.client.post("/reporting-units", follow_redirects=True)
 
         self.assertEqual(response.status_code, 200)
         self.assertIn("test".encode(), response.data)
@@ -384,6 +385,53 @@ class TestReportingUnits(ViewTestCase):
         request_history = mock_request.request_history
         self.assertEqual(len(request_history), 1)
         self.assertEqual(response.status_code, 500)
+
+    @requests_mock.mock()
+    def test_search_reporting_units_show_correct_pagination_data(self, mock_request):
+        mock_business_search_response = TestReportingUnits._build_test_ru_search_response_data(75)
+
+        mock_request.get(url_search_reporting_units, json=mock_business_search_response)
+
+        form_data = {'query': ''}
+        response = self.client.post("/reporting-units", data=form_data, follow_redirects=True)
+
+        self.assertEqual(response.status_code, 200)
+        data = re.sub('<[^<]+?>', '', response.data.decode())        # Strip out html tags from the response data
+        self.assertIn("75 Results found", data)
+        self.assertIn("Displaying 1 - 25 of 75", data)
+        self.assertIn("Page 1 of 3", data)                           # Validates the page count is correct
+        self.assertIn("Previous 123Next", data)                      # Validates Pagination controls displayed
+
+    @requests_mock.mock()
+    def test_search_reporting_units_no_results_displays_correctly(self, mock_request):
+        mock_business_search_response = {'businesses': [], 'total_business_count': 0}
+
+        mock_request.get(url_search_reporting_units, json=mock_business_search_response)
+
+        form_data = {'query': ''}
+        response = self.client.post("/reporting-units", data=form_data, follow_redirects=True)
+
+        self.assertEqual(response.status_code, 200)
+        data = re.sub('<[^<]+?>', '', response.data.decode())  # Strip out html tags from the response data
+        self.assertIn("No results found", data)
+
+    @requests_mock.mock()
+    def test_search_reporting_units_for_specific_name_displays_correctly(self, mock_request):
+        ru_ref_num = '12345678901'                            # named so as to not clash with outer definition of ru_ref
+        mock_response = {'businesses': [{'name': 'SomeName', 'ruref': ru_ref_num}], 'total_business_count': 1}
+
+        mock_request.get(url_search_reporting_units, json=mock_response)
+
+        form_data = {'query': 'SomeName'}
+        response = self.client.post("/reporting-units", data=form_data, follow_redirects=True)
+
+        self.assertEqual(response.status_code, 200)
+        data = response.data.decode()
+        self.assertIn("1 Result found", data)
+        self.assertIn('value="SomeName"', data)          # Validates that search term is displayed in text entry box
+
+        # now validate that the ru is displayed as an href
+        self.assertIn(f'href="/reporting-units/{ru_ref_num}" name="details-link-{ru_ref_num}">{ru_ref_num}', data)
 
     @requests_mock.mock()
     def test_resend_verification_email(self, mock_request):
@@ -722,3 +770,8 @@ class TestReportingUnits(ViewTestCase):
         request_history = mock_request.request_history
         self.assertEqual(len(request_history), 1)
         self.assertEqual(response.status_code, 500)
+
+    @staticmethod
+    def _build_test_ru_search_response_data(count):
+        businesses = [{'name': f'{i}_name', 'ruref': f'{randint(0, 100000000000)}'} for i in range(count)]
+        return {'businesses': businesses, 'total_business_count': count}
