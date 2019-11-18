@@ -24,44 +24,45 @@
 
   {% set surveyTableDataRows = [] %}
   {% set dateGroups = ['mps', 'go_live', 'return_by', 'reminder', 'reminder2', 'reminder3', 'exercise_end'] %}
-
   {% for dateGroup in dateGroups %}
+    {% set label = '' %}
+    {% set eventIsInFuture = False %}  
     {% if dateGroup == 'mps' %}
       {% set label = 'MPS (Main print selection)' %}
       {% set event = events.mps %}
       {% set name = 'mps-date' %}
       {% if event %}
-        {% set eventDay = events.mps.day %}
-        {% set eventDate = events.mps.date %}
-        {% set eventTime = events.mps.time %}
+        {% set eventDay = event.day %}
+        {% set eventDate = event.date %}
+        {% set eventTime = event.time %}
       {% endif %}
     {% elif dateGroup == 'go_live' %}
       {% set label = 'Go live' %}
       {% set event = events.go_live %}
       {% set name = 'go-live-date' %}
       {% if event %}
-        {% set eventDay = events.go_live.day %}
-        {% set eventDate = events.go_live.date %}
-        {% set eventTime = events.go_live.time %}
+        {% set eventDay = event.day %}
+        {% set eventDate = event.date %}
+        {% set eventTime = event.time %}
       {% endif %}
     {% elif dateGroup == 'return_by' %}
       {% set label = 'Return by' %}
       {% set event = events.return_by %}
       {% set name = 'return-by-date' %}
       {% if event %}
-        {% set eventDay = events.return_by.day %}
-        {% set eventDate = events.return_by.date %}
-        {% set eventTime = events.return_by.time %}
+        {% set eventDay = event.day %}
+        {% set eventDate = event.date %}
+        {% set eventTime = event.time %}
       {% endif %}
     {% elif dateGroup == 'reminder' %}
       {% set label = 'First reminder' %}
       {% set event = events.reminder %}
       {% set name = 'first-reminder-date' %}
       {% if event %}
-        {% set eventDay = events.reminder.day %}
-        {% set eventDate = events.reminder.date %}
-        {% set eventTime = events.reminder.time %}
-        {% set eventIsInFuture = events.reminder.is_in_future %}
+        {% set eventDay = event.day %}
+        {% set eventDate = event.date %}
+        {% set eventTime = event.time %}
+        {% set eventIsInFuture = event.is_in_future %}
       {% endif %}
     {% elif dateGroup == 'reminder2' %}
       {% set event = events.reminder2 %}
@@ -71,10 +72,10 @@
         {% set name = 'second-reminder-date' %}
       {% endif %}
       {% if event %}
-        {% set eventDay = events.reminder2.day %}
-        {% set eventDate = events.reminder2.date %}
-        {% set eventTime = events.reminder2.time %}
-        {% set eventIsInFuture = events.reminder2.is_in_future %}
+        {% set eventDay = event.day %}
+        {% set eventDate = event.date %}
+        {% set eventTime = event.time %}
+        {% set eventIsInFuture = event.is_in_future %}
       {% endif %}
     {% elif dateGroup == 'reminder3' %}
       {% set event = events.reminder3 %}
@@ -84,19 +85,19 @@
         {% set name = 'third-reminder-date' %}
       {% endif %}
       {% if event %}
-        {% set eventDay = events.reminder3.day %}
-        {% set eventDate = events.reminder3.date %}
-        {% set eventTime = events.reminder3.time %}
-        {% set eventIsInFuture = events.reminder3.is_in_future %}
+        {% set eventDay = event.day %}
+        {% set eventDate = event.date %}
+        {% set eventTime = event.time %}
+        {% set eventIsInFuture = event.is_in_future %}
       {% endif %}
     {% elif dateGroup == 'exercise_end' %}
       {% set label = 'Exercise end' %}
       {% set event = events.exercise_end %}
       {% set name = 'exercise-end-date' %}
       {% if event %}
-        {% set eventDay = events.exercise_end.day %}
-        {% set eventDate = events.exercise_end.date %}
-        {% set eventTime = events.exercise_end.time %}
+        {% set eventDay = event.day %}
+        {% set eventDate = event.date %}
+        {% set eventTime = event.time %}
       {% endif %}
     {% endif %}
 
@@ -106,23 +107,22 @@
         "method": 'get',
         "button": {
           "text": 'Add',
-          "id": 'create-event-date' + dateGroup,
+          "id": 'create-event-date-' + dateGroup,
           "classes": 'btn--secondary btn--small'
         }
       } %}
-
-    {% elif not locked or (eventIsInFuture if eventIsInFuture) %}
+    {% elif not locked or eventIsInFuture %}
       {% set formData = {
         "action": url_for('collection_exercise_bp.update_event_date', short_name=survey.shortName, period=ce.exerciseRef, tag=dateGroup, errors=None if event == events.reminder),
         "method": 'get',
         "button": {
           "text": 'Edit',
-          "id": 'edit-event-date' + dateGroup,
+          "id": 'edit-event-date-' + dateGroup,
           "classes": 'btn--secondary btn--small'
         }
       } %}
     {% endif %}
-    {% if event or showReminder %}
+    {% if label %}
       {% do surveyTableDataRows.append(
         {
           "tds": [

@@ -198,4 +198,4 @@ class TestRespondents(ViewTestCase):
 
         self.client.post('/respondents/search', data={'email_address': '@'}, follow_redirects=True)  # All
 
-        search_respondents_mock.assert_called_with('', '', '@', '1')
+        search_respondents_mock.assert_called_with('', '', '@', '1', self.app.config["PARTY_RESPONDENTS_PER_PAGE"])
