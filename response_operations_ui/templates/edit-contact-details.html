@@ -58,7 +58,10 @@
                 <li class="list__item"><a href='#firstName'>{{ error }}</a></li>
               {% endfor %}
               {% for error in form.email.errors %}
-                <li class="list__item"><a href='#email'> c</a></li>
+                <li class="list__item"><a href='#email'>{{ error }}</a></li>
+              {% endfor %}
+              {% for error in form.telephone.errors %}
+                <li class="list__item"><a href='#telephone'>{{ error }}</a></li>
               {% endfor %}
             </ol>
            </div>
