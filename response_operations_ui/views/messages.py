@@ -468,14 +468,14 @@ def _get_to_name(message):
 
 def _get_ru_ref_from_message(message):
     try:
-        return message['@ru_id']['sampleUnitRef']
+        return message['@business_details']['sampleUnitRef']
     except (KeyError, TypeError):
         logger.error("Failed to retrieve RU ref from message", message_id=message.get('msg_id'), exc_info=True)
 
 
 def _get_business_name_from_message(message):
     try:
-        return message['@ru_id']['name']
+        return message['@business_details']['name']
     except (KeyError, TypeError):
         logger.exception("Failed to retrieve business name from message", message_id=message.get('msg_id'))
 
