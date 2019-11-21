@@ -23,7 +23,7 @@
         "id": "ff4537df-2097-4a73-a530-e98dba7bf28f",
         "lastName": "Employee"
       },
-      "@ru_id": {
+      "@business_details": {
         "id": "f1a5e99c-8edf-489a-9c72-6cabe6c387fc",
         "name": "Apple",
         "sampleUnitRef": "50012345678"

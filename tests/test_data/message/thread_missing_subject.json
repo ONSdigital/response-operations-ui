@@ -31,7 +31,7 @@
                             "sampleUnitType": "BI",
                             "status": "CREATED",
                             "telephone": "0987654321"}],
-               "@ru_id": {"associations": [{"enrolments": [{"enrolmentStatus": "ENABLED",
+               "@business_details": {"associations": [{"enrolments": [{"enrolmentStatus": "ENABLED",
                                                             "name": "Monthly Survey of Building MaterialsBricks",
                                                             "surveyId": "cb8accda-6118-4d3b-85a3-149e28960c54"}],
                                             "partyId": "633330a6-aa84-4d1e-8e5d-2bafa9e3dac5"}],
