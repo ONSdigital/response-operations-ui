@@ -2,42 +2,53 @@
   <h2 class="u-fs-r--b u-pt-m">Collection instruments</h2>
 
   {% if collection_instruments %}
-  <div>
-    <table id="collection-instruments-table" class="table table--dense" summary="Sample details for this collection exercise">
-      <thead class="table__head u-vh">
-        <tr class="table__row">
-          <th scope="col" class="table__header tbl-ce-value">
-            Collection instrument
-          </th>
-        </tr>
-      </thead>
-
-      <tbody class="table__body">
-      {% for collection_instrument in collection_instruments %}
-        <tr class="table__row">
-          <td class="table__cell tbl-ce-value">
-            {{collection_instrument.file_name}}
-          </td>
-          {% if not locked %}
-          <td class="table__cell tbl-ce-status tbl-ce-action">
-            <form id="form-unselect-ci-{{loop.index}}" action="" method="post">
-              <a class="remove-icon" href=# id="unlink-ci-{{loop.index}}" onclick="this.parentNode.submit()"></a>
-              <input type="hidden" name="ce_id" value="{{ ce.id }}">
-              <input type="hidden" name="ci_id" value="{{ collection_instrument.id }}">
-              <input type="hidden" name="unselect-ci">
-            </form>
-          </td>
-          {% endif %}
-        </tr>
-      {% endfor %}
-      </tbody>
-    </table>
-  </div>
+    {% set surveyTableData = {
+        "table_class": 'table--dense',
+        "id": "collection-instruments-table",
+        "caption": 'Sample details for this collection exercise',
+        "hideCaption": true,
+        "ths": [
+          { 
+              "value": "Collection instrument",
+              "class": "u-vh"
+          }
+        ]
+      }
+    %}
+    {% set surveyTableDataRows = [] %}
+    {% for collection_instrument in collection_instruments %}
+      {% if not locked %}
+        {% set formData = 
+          '<form id="form-unselect-ci-' + loop.index|string + '" action="" method="post">' +
+          '<a class="remove-icon" href=# id="unlink-ci-' + loop.index|string + '" onclick="this.parentNode.submit()"></a>' +
+          '<input type="hidden" name="ce_id" value="' + ce.id + '">' +
+          '<input type="hidden" name="ci_id" value="' + collection_instrument.id + '">' +
+          '<input type="hidden" name="unselect-ci">' +
+          '</form>'
+       %}
+      {% endif %}
+      {% do surveyTableDataRows.append(
+        {
+          "tds": [
+            {
+              "value": collection_instrument.file_name
+            },
+            {
+              "value": formData,
+              "class": "u-ta-right"
+            }
+          ]
+        }
+      ) %}
+    {% endfor %}
+    {% do surveyTableData | setAttribute("trs", surveyTableDataRows) %}
+    {{
+      onsTable(surveyTableData)
+    }}
   {% endif %}
 
   {% if not locked %}
   <div class="u-mb-m">
-
     {% if eq_ci_selectors %}
       {% set checkboxesData = {
         "name": "checkbox-answer",
@@ -45,14 +56,12 @@
       } %}
 
       {% set checkboxData = [] %}
-    <form id="form-select-ci" action="" class="form" method="post" enctype="multipart/form-data">
 
-
-
-      <div id="ciSelectErrorPanel" class="{{'panel panel--simple panel--error' if error.section == 'ciSelect' else ''}}">
-        <div id="ciSelectErrorPanelBody" class="{{'panel__body' if error.section == 'ciSelect' else ''}}">
-          <input type="hidden" name="ce_id" value="{{ ce.id }}">
-          {% for ci in eq_ci_selectors %}
+      <form id="form-select-ci" action="" class="form" method="post" enctype="multipart/form-data">
+        <div id="ciSelectErrorPanel" class="{{'panel panel--simple panel--error' if error.section == 'ciSelect' else ''}}">
+          <div id="ciSelectErrorPanelBody" class="{{'panel__body' if error.section == 'ciSelect' else ''}}">
+            <input type="hidden" name="ce_id" value="{{ ce.id }}">
+            {% for ci in eq_ci_selectors %}
               {% do checkboxData.append(
                 {
                   "id": ci.id,
@@ -77,10 +86,10 @@
                 "name": "select-ci"
               })
             }}   
+          </div>
         </div>
-      </div>
 
-    </form>
+      </form>
     {% else %}
     <form id="form-load-ci" action="" class="form" method="post" enctype="multipart/form-data">
       <p>
@@ -91,15 +100,27 @@
           <p id="ciFileErrorText" class="hidden">
             Incorrect file type. Please choose a file type XLSX
           </p>
-          <label class="upload-file u-vh" for="ciFile">Choose CI file</label>
-          <input type="file" class="u-mb-s" name="ciFile" id="ciFile" required accept=".xlsx" onchange="validateCI.checkSelectedCI(this.files)" />
+          {{-
+            onsUpload({
+                "id": "ciFile",
+                "name": "ciFile",
+                "attributes": {
+                  "onchange": "validateCI.checkSelectedCI(this.files)"
+                },
+                "accept": ".xlsx",
+                "label": {
+                    "classes": "u-vh",
+                    "text": "Choose CI file"
+                }
+            })
+        -}}
         </div>
       </div>
       {{
         onsButton({
           "text": "Add CI",
           "id": "btn-load-ci",
-          "classes": "btn--small",
+          "classes": "btn--small btn--disabled",
           "name": "load-ci"
         })
       }}   
