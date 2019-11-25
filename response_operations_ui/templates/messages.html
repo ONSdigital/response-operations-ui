@@ -25,21 +25,26 @@
   {% else %}
     <h1 class="u-fs-xl" name="page-messages-title">Messages</h1>
   {% endif %}
+  {% if True %}
+      <p id="clear_ru_ref" classes="clear hidden">Filtered by RU ref: {{ hidden_ru_ref }}
+        <a href="{{ url_for('messages_bp.clear_filter', selected_survey=selected_survey, conversation_tab=conversation_tab) }}">Clear filter</a>
+      </p>
+  {% endif %}  
   <div class="grid">
     <div class="grid__col col-12@m">
       <nav class="nav nav--horizontal nav--sub nav--dark u-mb-l u-mt-s" role="menu">
             <ul class="nav__list" aria-label="Section navigation menu">
                 <li class="nav__item u-fs-s {% if conversation_tab =='my messages' %}nav__item--current{% endif %}">
-                    <a class="nav__link" href="{{ url_for('messages_bp.view_selected_survey', selected_survey=selected_survey, conversation_tab='my messages') }}" aria-current="{% if conversation_tab == 'my messages' %}location{% endif %}" role="menuitem">My Messages</a>
+                    <a class="nav__link" href="{{ url_for('messages_bp.view_selected_survey', selected_survey=selected_survey, conversation_tab='my messages', hidden_ru_ref=hidden_ru_ref, hidden_business_id=hidden_business_id) }}" aria-current="{% if conversation_tab == 'my messages' %}location{% endif %}" role="menuitem">My Messages</a>
                 </li>
                 <li class="nav__item u-fs-s {% if conversation_tab == 'open' %}nav__item--current{% endif %}">
-                    <a class="nav__link" href="{{ url_for('messages_bp.view_selected_survey', selected_survey=selected_survey, conversation_tab = 'open') }}" aria-current="{% if conversation_tab == 'open' %}location{% endif %}" role="menuitem">Open</a>
+                    <a class="nav__link" href="{{ url_for('messages_bp.view_selected_survey', selected_survey=selected_survey, conversation_tab = 'open', hidden_ru_ref=hidden_ru_ref, hidden_business_id=hidden_business_id) }}" aria-current="{% if conversation_tab == 'open' %}location{% endif %}" role="menuitem">Open</a>
                 </li>
                 <li class="nav__item u-fs-s {% if conversation_tab == 'closed' %}nav__item--current{% endif %}">
-                    <a class="nav__link" href="{{ url_for('messages_bp.view_selected_survey', selected_survey=selected_survey, conversation_tab = 'closed') }}" aria-current="{% if conversation_tab == 'closed' %}location{% endif %}" role="menuitem">Closed</a>
+                    <a class="nav__link" href="{{ url_for('messages_bp.view_selected_survey', selected_survey=selected_survey, conversation_tab = 'closed', hidden_ru_ref=hidden_ru_ref, hidden_business_id=hidden_business_id) }}" aria-current="{% if conversation_tab == 'closed' %}location{% endif %}" role="menuitem">Closed</a>
                 </li>
                 <li class="nav__item u-fs-s {% if conversation_tab == 'initial' %}nav__item--current{% endif %}">
-                    <a class="nav__link" href="{{ url_for('messages_bp.view_selected_survey', selected_survey=selected_survey, conversation_tab = 'initial') }}" aria-current="{% if conversation_tab == 'initial' %}location{% endif %}" role="menuitem">Initial</a>
+                    <a class="nav__link" href="{{ url_for('messages_bp.view_selected_survey', selected_survey=selected_survey, conversation_tab = 'initial', hidden_ru_ref=hidden_ru_ref, hidden_business_id=hidden_business_id) }}" aria-current="{% if conversation_tab == 'initial' %}location{% endif %}" role="menuitem">Initial</a>
                 </li>
             </ul>
       </nav>

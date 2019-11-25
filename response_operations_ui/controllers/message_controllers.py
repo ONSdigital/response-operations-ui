@@ -42,7 +42,7 @@ def get_conversation_count(params):
     params['is_closed'] = 'true' if params.get('is_closed') else 'false'
     params['my_conversations'] = 'true' if params.get('my_conversations') else 'false'
     params['new_respondent_conversations'] = 'true' if params.get('new_respondent_conversations') else 'false'
-
+    
     url = f'{current_app.config["SECURE_MESSAGE_URL"]}/messages/count'
 
     response = requests.get(url, headers={'Authorization': _get_jwt()}, params=params)
@@ -67,7 +67,7 @@ def get_thread_list(params):
     params['is_closed'] = 'true' if params.get('is_closed') else 'false'
     params['my_conversations'] = 'true' if params.get('my_conversations') else 'false'
     params['new_respondent_conversations'] = 'true' if params.get('new_respondent_conversations') else 'false'
-
+    
     url = f'{current_app.config["SECURE_MESSAGE_URL"]}/threads'
     # This will be removed once UAA is completed.  For now we need the call to sm to include
     # an Authorization in its header a JWT that includes party_id and role.
@@ -142,7 +142,6 @@ def update_close_conversation_status(thread_id, status):
     except HTTPError:
         logger.error("Failed to update close conversation status", thread_id=thread_id, status=status, exc_info=True)
         raise ApiError(response)
-
 
 def _post_new_message(message):
     url = f'{current_app.config["SECURE_MESSAGE_URL"]}/messages'

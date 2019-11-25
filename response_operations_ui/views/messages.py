@@ -11,11 +11,11 @@ from structlog import wrap_logger
 from config import FDI_LIST
 from response_operations_ui.common.dates import get_formatted_date, localise_datetime
 from response_operations_ui.common.mappers import format_short_name
-from response_operations_ui.controllers import message_controllers, survey_controllers
+from response_operations_ui.controllers import message_controllers, party_controller, survey_controllers
 from response_operations_ui.controllers.survey_controllers import get_survey_short_name_by_id, get_survey_ref_by_id, \
     get_grouped_surveys_list
 from response_operations_ui.exceptions.exceptions import ApiError, InternalError, NoMessagesError
-from response_operations_ui.forms import SecureMessageForm
+from response_operations_ui.forms import SecureMessageForm, SecureMessageRuFilterForm
 
 logger = wrap_logger(logging.getLogger(__name__))
 
@@ -190,9 +190,20 @@ def select_survey():
                            survey_list=survey_list)
 
 
-@messages_bp.route('/<selected_survey>', methods=['GET'])
+@messages_bp.route('/clear_filter/<selected_survey>', methods=['GET'])
+@login_required
+def clear_filter(selected_survey):
+    return redirect(url_for("messages_bp.view_selected_survey",
+                            selected_survey=selected_survey, 
+                            page=request.args.get('page'), 
+                            conversation_tab=request.args['conversation_tab'],
+                            clear_filter='true'))
+
+
+@messages_bp.route('/<selected_survey>', methods=['GET', 'POST'])
 @login_required
 def view_selected_survey(selected_survey):
+
     displayed_short_name = format_short_name(selected_survey)
     session['messages_survey_selection'] = selected_survey
     breadcrumbs = [{"text": displayed_short_name + " Messages"}]
@@ -206,18 +217,36 @@ def view_selected_survey(selected_survey):
         limit = request.args.get('limit', default=10, type=int)
         flash_message = request.args.get('flash_message', default="", type=str)
         conversation_tab = request.args.get('conversation_tab', default='open')
+   
+        form = SecureMessageRuFilterForm()
 
+        hidden_ru_ref = form.hidden_ru_ref
+        hidden_business_id = form.hidden_business_id
+        
+        if request.args.get('clear_filter') == 'true':
+            hidden_business_id = hidden_ru_ref = ''
+        
+        if form.validate_on_submit():
+            new_ru_ref = request.form.get('ru_ref').strip()
+            if new_ru_ref and new_ru_ref != hidden_ru_ref:
+                hidden_business_id = party_controller.try_get_party_id_by_ru_ref(new_ru_ref)
+                hidden_ru_ref = new_ru_ref
+        
         thread_count = message_controllers.get_conversation_count(
             {'survey': survey_id,
              'is_closed': conversation_tab == 'closed',
              'my_conversations': conversation_tab == 'my messages',
-             'new_respondent_conversations': conversation_tab == 'initial'})
+             'new_respondent_conversations': conversation_tab == 'initial',
+             "business_id": hidden_business_id})
 
         recalculated_page = _calculate_page(page, limit, thread_count)
 
         if recalculated_page != page:
             return redirect(url_for("messages_bp.view_selected_survey", conversation_tab=conversation_tab,
-                                    selected_survey=selected_survey, page=recalculated_page))
+                                    selected_survey=selected_survey, 
+                                    page=recalculated_page, 
+                                    hidden_ru_ref=hidden_ru_ref, 
+                                    hidden_business_id=hidden_business_id))
 
         params = {
             'survey': survey_id,
@@ -225,7 +254,8 @@ def view_selected_survey(selected_survey):
             'limit': limit,
             'is_closed': conversation_tab == 'closed',
             'my_conversations': conversation_tab == 'my messages',
-            'new_respondent_conversations': conversation_tab == 'initial'
+            'new_respondent_conversations': conversation_tab == 'initial',
+            "business_id": hidden_business_id
         }
 
         messages = [_refine(message) for message in message_controllers.get_thread_list(params)]
@@ -252,7 +282,9 @@ def view_selected_survey(selected_survey):
                                displayed_short_name=displayed_short_name,
                                pagination=pagination,
                                change_survey=True,
-                               conversation_tab=conversation_tab)
+                               conversation_tab=conversation_tab,
+                               hidden_business_id=hidden_business_id,
+                               hidden_ru_ref=hidden_ru_ref)
 
     except TypeError:
         logger.error("Failed to retrieve survey id", exc_info=True)
