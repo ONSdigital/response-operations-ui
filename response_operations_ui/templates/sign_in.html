@@ -27,6 +27,13 @@
                             </div>
                         </div>
                         {% endif %}
+                        {% if category == "account_created" %}
+                        <div class="panel panel--simple panel--success u-mt-s">
+                            <div class="panel__body" data-qa="success-body">
+                                <p class="u-fs-r" id="successfully-created-account">{{ message }}</p>
+                            </div>
+                        </div>
+                        {% endif %}
                     {% endfor %}
                 {% endif %}
             {% endwith %}

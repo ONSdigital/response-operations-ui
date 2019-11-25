@@ -1,6 +1,6 @@
 import logging
 from structlog import wrap_logger
-from flask import Blueprint, request, render_template, redirect, url_for, abort, current_app as app
+from flask import Blueprint, request, render_template, redirect, url_for, abort, flash, current_app as app
 from itsdangerous import URLSafeSerializer, BadSignature, BadData, SignatureExpired
 
 from response_operations_ui.forms import RequestAccountForm, CreateAccountForm
@@ -149,3 +149,56 @@ def get_create_account(token, form_errors=None):
         'token': token
     }
     return render_template('create-new-account.html', form=form, data=template_data)
+
+
+@account_bp.route('/create-account/<token>', methods=['POST'])
+def post_create_account(token):
+    form = CreateAccountForm(request.form)
+
+    if not form.validate():
+        return get_create_account(token, form_errors=form.errors)
+    
+    try:
+        duration = app.config['EMAIL_TOKEN_EXPIRY']
+        email = token_decoder.decode_email_token(token, duration)
+    except SignatureExpired:
+        logger.warning('Token expired for Response Operations create account', token=token)
+        return render_template('request-new-account-expired.html', token=token)
+    except (BadSignature, BadData):
+        logger.warning('Invalid token sent to Response Operations create account', token=token)
+        return render_template('request-new-account-expired.html', token=token)
+    
+    password = request.form.get('password')
+    user_name = request.form.get('user_name')
+    first_name = request.form.get('first_name')
+    last_name = request.form.get('last_name')
+
+    response = uaa_controller.create_user_account(email, password, user_name, first_name, last_name)
+
+    if response is not None:
+        if response.status_code == 201:
+            logger.info('Successfully created user account', token=token)
+            send_confirm_created_email(email, first_name)
+            flash('Account successfully created', category='account_created')
+            return redirect(url_for('sign_in_bp.sign_in'))
+        if response.status_code == 409:
+            # Username already exists
+            form_errors = {'user_name': ["Username already in use; please choose another"]}
+            return get_create_account(form_errors=form_errors, token=token)
+
+    return render_template('create-new-account-error.html')
+
+
+def send_confirm_created_email(email, first_name):
+    personalisation = {
+        'FIRST_NAME': first_name
+    }
+
+    try:
+        NotifyController().request_to_notify(email=email,
+                                             template_name='confirm_create_account',
+                                             personalisation=personalisation)
+    except NotifyError as e:
+        # This shouldn't show the client an error - the account creation was still successful.
+        # They just won't get a confirmation email
+        logger.error('Error sending account creation confirmation email to Notify Gateway', msg=e.description)

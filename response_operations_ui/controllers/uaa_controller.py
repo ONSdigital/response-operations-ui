@@ -125,3 +125,30 @@ def change_user_password(email, password):
 
     return change_password(access_token=access_token, user_code=password_reset_code,
                            new_password=password)
+
+
+def create_user_account(email, password, user_name, first_name, last_name):
+    access_token = login_admin()
+
+    headers = {'Content-Type': 'application/json',
+               'Accept': 'application/json',
+               'Authorization': f'Bearer {access_token}'}
+    
+    payload = {
+        "userName": user_name,
+        "name": {
+            "formatted": f"{first_name} {last_name}",
+            "givenName": first_name,
+            "familyName": last_name
+        },
+        "emails": [{
+            "value": email,
+            "primary": True
+        }],
+        "active": True,
+        "verified": True,
+        "password": password
+    }
+
+    url = f"{app.config['UAA_SERVICE_URL']}/Users"
+    return requests.post(url, data=dumps(payload), headers=headers)
