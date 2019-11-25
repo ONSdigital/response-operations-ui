@@ -348,7 +348,7 @@ def _get_message_json(form, thread_id=""):
         'thread_id': thread_id,
         'collection_case': "",
         'survey': form.hidden_survey_id.data,
-        'ru_id': form.hidden_to_ru_id.data})
+        'business_id': form.hidden_to_business_id.data})
 
 
 def _populate_hidden_form_fields_from_post(current_view_form, calling_form):
@@ -364,7 +364,7 @@ def _populate_hidden_form_fields_from_post(current_view_form, calling_form):
         current_view_form.hidden_business.data = calling_form['business']
         current_view_form.hidden_to_uuid.data = calling_form['msg_to']
         current_view_form.hidden_to.data = calling_form['msg_to_name']
-        current_view_form.hidden_to_ru_id.data = calling_form['ru_id']
+        current_view_form.hidden_to_business_id.data = calling_form['business_id']
     except KeyError as ex:
         logger.exception("Failed to load create message page")
         raise InternalError(ex)
@@ -412,7 +412,7 @@ def _refine(message):
         'sent_date': _get_human_readable_date(message.get('sent_date')),
         'unread': _get_unread_status(message),
         'message_id': message.get('msg_id'),
-        'ru_id': message.get('ru_id'),
+        'business_id': message.get('business_id'),
     }
 
 
