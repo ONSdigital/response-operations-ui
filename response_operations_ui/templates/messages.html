@@ -121,7 +121,11 @@
                    <tr name="message" class="table__row table__row__selectable" id="message-{{ loop.index }}">
                     <td name="tbl-messages-RU_Ref" class="message-list__ru-ref" id="ru-ref-{{ loop.index }}">
                 {% endif %}
-                    {{ message.ru_ref or 'Unavailable' }}
+                {% if message.ru_ref %}
+                    <a href="{{ url_for('messages_bp.set_filter', selected_survey=selected_survey, page=page, conversation_tab=conversation_tab, ru_ref=message.ru_ref) }}#latest-message">{{ message.ru_ref }}</a>
+                {% else %}
+                    {{ 'Unavailable' }}
+                {% endif %}
                 </td>
                 <td name="tbl-messages-business" class="message-list__ru-name" id="business-name-{{ loop.index }}">
                     {{ message.business_name or 'Unavailable' }}
