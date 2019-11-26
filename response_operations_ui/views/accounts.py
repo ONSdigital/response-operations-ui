@@ -38,7 +38,7 @@ def post_request_new_account():
             logger.info('Account requested for non-ONS email address')
             errors = {'email_address': ['Not a valid ONS email address']}
             return get_request_new_account(form_errors=errors, email=email)
-    
+
         password = form.data.get('password')
         admin_password = app.config['CREATE_ACCOUNT_ADMIN_PASSWORD']
         if password != admin_password:
@@ -117,7 +117,8 @@ def send_create_account_email(email):
         logger.info('Successfully sent create account request email', email=url_safe_serializer.dumps(email))
     else:
         logger.info('Requested account creation for email already in UAA', email=url_safe_serializer.dumps(email))
-        return redirect(url_for('account_bp.request_new_account_account_exists', email=url_safe_serializer.dumps(email)))
+        return redirect(url_for('account_bp.request_new_account_account_exists',
+                                email=url_safe_serializer.dumps(email)))
 
     return redirect(url_for('account_bp.request_new_account_check_email', email=url_safe_serializer.dumps(email)))
 
@@ -157,7 +158,7 @@ def post_create_account(token):
 
     if not form.validate():
         return get_create_account(token, form_errors=form.errors)
-    
+
     try:
         duration = app.config['EMAIL_TOKEN_EXPIRY']
         email = token_decoder.decode_email_token(token, duration)
@@ -167,7 +168,7 @@ def post_create_account(token):
     except (BadSignature, BadData):
         logger.warning('Invalid token sent to Response Operations create account', token=token)
         return render_template('request-new-account-expired.html', token=token)
-    
+
     password = request.form.get('password')
     user_name = request.form.get('user_name')
     first_name = request.form.get('first_name')

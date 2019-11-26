@@ -133,7 +133,7 @@ def create_user_account(email, password, user_name, first_name, last_name):
     headers = {'Content-Type': 'application/json',
                'Accept': 'application/json',
                'Authorization': f'Bearer {access_token}'}
-    
+
     payload = {
         "userName": user_name,
         "name": {
