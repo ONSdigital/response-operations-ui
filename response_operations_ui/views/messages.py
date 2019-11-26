@@ -213,14 +213,6 @@ def clear_filter(selected_survey):
                             conversation_tab=request.args['conversation_tab'],
                             clear_filter='true'))
 
-@messages_bp.route('/set_filter/<selected_survey>', methods=['GET'])
-@login_required
-def clear_filter(selected_survey):
-    return redirect(url_for("messages_bp.view_selected_survey",
-                            selected_survey=selected_survey, 
-                            page=request.args.get('page'), 
-                            conversation_tab=request.args['conversation_tab'],
-                            clear_filter='true'))
 
 @messages_bp.route('/<selected_survey>', methods=['GET', 'POST'])
 @login_required
