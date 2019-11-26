@@ -49,8 +49,6 @@ class SecureMessageRuFilterForm(FlaskForm):
     
     ru_ref = StringField('ru_ref', validators=[Length(min=11, max=11, message="Ru ref must be 11 characters")])
     submit = SubmitField('Filter')
-    hidden_business_id = HiddenField('hidden_business_id')
-    hidden_ru_ref = HiddenField('hidden_ru_ref')
     
     
 class RespondentSearchForm(FlaskForm):

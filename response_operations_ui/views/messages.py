@@ -66,13 +66,16 @@ def create_message():
 def view_conversation(thread_id):
     conversation_tab = request.args.get('conversation_tab')
     page = request.args.get('page')
-
+    ru_ref = request.args.get('ru_ref')
+    business_id = request.args.get('business_id')
+    
     if request.method == 'POST' and request.form.get('reopen'):
         message_controllers.update_close_conversation_status(thread_id=thread_id, status=False)
-        thread_url = url_for("messages_bp.view_conversation", thread_id=thread_id,
-                             conversation_tab=conversation_tab, page=page) + "#latest-message"
+        thread_url = url_for("messages_bp.view_conversation", thread_id=thread_id, conversation_tab=conversation_tab, 
+                             page=page, ru_ref=ru_ref, business_id=business_id) + "#latest-message"
         flash(Markup(f'Conversation re-opened. <a href={thread_url}>View conversation</a>'))
-        return redirect(url_for('messages_bp.view_select_survey', conversation_tab=conversation_tab, page=page))
+        return redirect(url_for('messages_bp.view_select_survey', conversation_tab=conversation_tab, page=page, 
+                                ru_ref=ru_ref, business_id=business_id))
 
     thread_conversation = message_controllers.get_conversation(thread_id)
     refined_thread = [_refine(message) for message in reversed(thread_conversation['messages'])]
@@ -99,11 +102,17 @@ def view_conversation(thread_id):
             message_controllers.send_message(
                 _get_message_json(form, thread_id=refined_thread[0]['thread_id'])
             )
-            thread_url = url_for("messages_bp.view_conversation", thread_id=thread_id, page=page,
-                                 conversation_tab=conversation_tab) + "#latest-message"
+            thread_url = url_for("messages_bp.view_conversation", thread_id=thread_id, 
+                                 page=page,
+                                 conversation_tab=conversation_tab, 
+                                 ru_ref=ru_ref, 
+                                 business_id=business_id) + "#latest-message"
             flash(Markup(f'Message sent. <a href={thread_url}>View Message</a>'))
-            return redirect(url_for('messages_bp.view_selected_survey', selected_survey=refined_thread[0]['survey'],
-                                    page=page, conversation_tab=conversation_tab))
+            return redirect(url_for('messages_bp.view_selected_survey', 
+                                    selected_survey=refined_thread[0]['survey'],
+                                    page=page, conversation_tab=conversation_tab, 
+                                    ru_ref=ru_ref, 
+                                    business_id=business_id))
 
         except (ApiError, InternalError) as e:
             error = "Message failed to send, something has gone wrong with the website."
@@ -129,7 +138,9 @@ def view_conversation(thread_id):
                            closed_at=closed_at,
                            thread_data=thread_conversation,
                            show_mark_unread=_can_mark_as_unread(latest_message),
-                           conversation_tab=conversation_tab)
+                           conversation_tab=conversation_tab, 
+                           ru_ref=ru_ref,
+                           business_id=business_id)
 
 
 @messages_bp.route('/mark_unread/<message_id>', methods=['GET'])
@@ -138,19 +149,21 @@ def mark_message_unread(message_id):
     msg_from = request.args.get('from', default="", type=str)
     msg_to = request.args.get('to', default="", type=str)
     conversation_tab = request.args.get('conversation_tab')
+    ru_ref = request.args.get('ru_ref')
+    business_id = request.args.get('business_id')
     marked_unread_message = f"Message from {msg_from} to {msg_to} marked unread"
     message_controllers.add_unread_label(message_id)
 
-    return _view_select_survey(marked_unread_message, conversation_tab)
+    return _view_select_survey(marked_unread_message, conversation_tab, ru_ref, business_id)
 
 
 @messages_bp.route('/', methods=['GET'])
 @login_required
 def view_select_survey():
-    return _view_select_survey("", request.args.get('conversation_tab'))
+    return _view_select_survey("", request.args.get('conversation_tab'), request.args.get('ru_ref'), request.args.get('business_id'))
 
 
-def _view_select_survey(marked_unread_message, conversation_tab):
+def _view_select_survey(marked_unread_message, conversation_tab, ru_ref, business_id):
     """
     Redirects to either a survey stored in the session under the 'messages_survey_selection'
     key or to the survey selection screen if the key isn't present in the session
@@ -162,7 +175,8 @@ def _view_select_survey(marked_unread_message, conversation_tab):
 
     return redirect(url_for("messages_bp.view_selected_survey",
                             selected_survey=selected_survey, page=request.args.get('page'),
-                            flash_message=marked_unread_message, conversation_tab=conversation_tab))
+                            flash_message=marked_unread_message, conversation_tab=conversation_tab,
+                            ru_ref=ru_ref, business_id=business_id))
 
 
 @messages_bp.route('/select-survey', methods=['GET', 'POST'])
@@ -199,6 +213,14 @@ def clear_filter(selected_survey):
                             conversation_tab=request.args['conversation_tab'],
                             clear_filter='true'))
 
+@messages_bp.route('/set_filter/<selected_survey>', methods=['GET'])
+@login_required
+def clear_filter(selected_survey):
+    return redirect(url_for("messages_bp.view_selected_survey",
+                            selected_survey=selected_survey, 
+                            page=request.args.get('page'), 
+                            conversation_tab=request.args['conversation_tab'],
+                            clear_filter='true'))
 
 @messages_bp.route('/<selected_survey>', methods=['GET', 'POST'])
 @login_required
@@ -217,27 +239,21 @@ def view_selected_survey(selected_survey):
         limit = request.args.get('limit', default=10, type=int)
         flash_message = request.args.get('flash_message', default="", type=str)
         conversation_tab = request.args.get('conversation_tab', default='open')
-   
-        form = SecureMessageRuFilterForm()
-
-        hidden_ru_ref = form.hidden_ru_ref
-        hidden_business_id = form.hidden_business_id
+        ru_ref = request.args.get('ru_ref', default='')
+        business_id = request.args.get('business_id', default='')
         
-        if request.args.get('clear_filter') == 'true':
-            hidden_business_id = hidden_ru_ref = ''
+        form = SecureMessageRuFilterForm()
         
         if form.validate_on_submit():
-            new_ru_ref = request.form.get('ru_ref').strip()
-            if new_ru_ref and new_ru_ref != hidden_ru_ref:
-                hidden_business_id = party_controller.try_get_party_id_by_ru_ref(new_ru_ref)
-                hidden_ru_ref = new_ru_ref
-        
-        thread_count = message_controllers.get_conversation_count(
-            {'survey': survey_id,
-             'is_closed': conversation_tab == 'closed',
-             'my_conversations': conversation_tab == 'my messages',
-             'new_respondent_conversations': conversation_tab == 'initial',
-             "business_id": hidden_business_id})
+            new_ru_ref = form.ru_ref.data
+            if new_ru_ref and new_ru_ref != ru_ref:
+                business_id = party_controller.try_get_party_id_by_ru_ref(new_ru_ref)
+                ru_ref = new_ru_ref
+                
+        form.ru_ref.data = ru_ref
+        thread_count = message_controllers.get_conversation_count(survey_id=survey_id,
+                                                                  business_id=business_id,
+                                                                  conversation_tab=conversation_tab)
 
         recalculated_page = _calculate_page(page, limit, thread_count)
 
@@ -245,20 +261,11 @@ def view_selected_survey(selected_survey):
             return redirect(url_for("messages_bp.view_selected_survey", conversation_tab=conversation_tab,
                                     selected_survey=selected_survey, 
                                     page=recalculated_page, 
-                                    hidden_ru_ref=hidden_ru_ref, 
-                                    hidden_business_id=hidden_business_id))
+                                    ru_ref=ru_ref, 
+                                    business_id=business_id))
 
-        params = {
-            'survey': survey_id,
-            'page': page,
-            'limit': limit,
-            'is_closed': conversation_tab == 'closed',
-            'my_conversations': conversation_tab == 'my messages',
-            'new_respondent_conversations': conversation_tab == 'initial',
-            "business_id": hidden_business_id
-        }
-
-        messages = [_refine(message) for message in message_controllers.get_thread_list(params)]
+        messages = [_refine(message) for message in message_controllers.get_thread_list(survey_id, business_id, 
+                                                                                        conversation_tab, page, limit)]
 
         pagination = Pagination(page=page,
                                 per_page=limit,
@@ -275,6 +282,7 @@ def view_selected_survey(selected_survey):
             flash(flash_message)
 
         return render_template("messages.html",
+                               form=form,
                                page=page,
                                breadcrumbs=breadcrumbs,
                                messages=messages,
@@ -283,12 +291,13 @@ def view_selected_survey(selected_survey):
                                pagination=pagination,
                                change_survey=True,
                                conversation_tab=conversation_tab,
-                               hidden_business_id=hidden_business_id,
-                               hidden_ru_ref=hidden_ru_ref)
+                               business_id=business_id,
+                               ru_ref=ru_ref)
 
     except TypeError:
         logger.error("Failed to retrieve survey id", exc_info=True)
         return render_template("messages.html",
+                               form=form,
                                breadcrumbs=breadcrumbs,
                                selected_survey=selected_survey,
                                displayed_short_name=displayed_short_name,
@@ -296,6 +305,7 @@ def view_selected_survey(selected_survey):
     except NoMessagesError:
         logger.error("Failed to retrieve messages", exc_info=True)
         return render_template("messages.html",
+                               form=form,
                                breadcrumbs=breadcrumbs,
                                response_error=True,
                                selected_survey=selected_survey,
@@ -307,15 +317,17 @@ def view_selected_survey(selected_survey):
 def close_conversation(thread_id):
     conversation_tab = request.args.get('conversation_tab')
     page = request.args.get('page')
+    ru_ref = request.args.get('ru_ref')
+    business_id = request.args.get('business_id')
 
     if request.method == 'POST':
         message_controllers.update_close_conversation_status(thread_id=thread_id, status=True)
         thread_url = url_for("messages_bp.view_conversation", thread_id=thread_id, conversation_tab=conversation_tab,
-                             page=page) + "#latest-message"
+                             page=page, ru_ref=ru_ref, business_id=business_id) + "#latest-message"
 
         flash(Markup(f'Conversation closed. <a href={thread_url}>View conversation</a>'))
         return redirect(url_for('messages_bp.view_select_survey', page=request.args.get('page'),
-                        conversation_tab=conversation_tab))
+                        conversation_tab=conversation_tab, ru_ref=ru_ref, business_id=business_id))
 
     thread_conversation = message_controllers.get_conversation(thread_id)
     refined_thread = [_refine(message) for message in reversed(thread_conversation['messages'])]
@@ -323,11 +335,13 @@ def close_conversation(thread_id):
     return render_template('close-conversation.html',
                            subject=refined_thread[0]['subject'],
                            business=refined_thread[0]['business_name'],
-                           ru_ref=refined_thread[0]['ru_ref'],
+                           display_ru_ref=refined_thread[0]['ru_ref'],
                            respondent=refined_thread[0]['to'],
                            thread_id=thread_id,
                            page=page,
-                           conversation_tab=conversation_tab)
+                           conversation_tab=conversation_tab,
+                           ru_ref=ru_ref,
+                           business_id=business_id)
 
 
 def _format_closed_at(thread_conversation):
