@@ -207,22 +207,12 @@ def select_survey():
 @messages_bp.route('/clear_filter/<selected_survey>', methods=['GET'])
 @login_required
 def clear_filter(selected_survey):
+    """Clear ru_ref filter by not passing it to view selected survey"""
     return redirect(url_for("messages_bp.view_selected_survey",
                             selected_survey=selected_survey, 
                             page=request.args.get('page'), 
                             conversation_tab=request.args['conversation_tab'],
                             clear_filter='true'))
-
-
-@messages_bp.route('/set_filter/<selected_survey>', methods=['GET'])
-@login_required
-def set_filter(selected_survey):
-    return redirect(url_for("messages_bp.view_selected_survey",
-                            selected_survey=selected_survey, 
-                            page=request.args.get('page'), 
-                            conversation_tab=request.args['conversation_tab'],
-                            set_filter='true',
-                            ru_ref=request.args.get('ru_ref')))
 
 
 @messages_bp.route('/<selected_survey>', methods=['GET', 'POST'])
@@ -232,6 +222,7 @@ def view_selected_survey(selected_survey):
     displayed_short_name = format_short_name(selected_survey)
     session['messages_survey_selection'] = selected_survey
     breadcrumbs = [{"text": displayed_short_name + " Messages"}]
+    
     try:
         if selected_survey == 'FDI':
             survey_id = _get_FDI_survey_id()
@@ -244,9 +235,6 @@ def view_selected_survey(selected_survey):
         conversation_tab = request.args.get('conversation_tab', default='open')
         ru_ref = request.args.get('ru_ref', default='')
         business_id = request.args.get('business_id', default='')
-        
-        if request.args.get('set_filter'):  # Only set via a redirect from set_filter
-            business_id = party_controller.try_get_party_id_by_ru_ref(ru_ref)
             
         form = SecureMessageRuFilterForm()
                
@@ -254,7 +242,11 @@ def view_selected_survey(selected_survey):
             new_ru_ref = form.ru_ref.data
             if new_ru_ref and new_ru_ref != ru_ref:
                 business_id = party_controller.try_get_party_id_by_ru_ref(new_ru_ref)
-                ru_ref = new_ru_ref
+                if business_id:
+                    ru_ref = new_ru_ref
+                else:
+                    ru_ref = ''
+                    flash_message = f"No filter applied: {new_ru_ref} is an unknown RU ref"
                 
         form.ru_ref.data = ru_ref
         thread_count = message_controllers.get_conversation_count(survey_id=survey_id,
