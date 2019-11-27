@@ -139,7 +139,7 @@ class TestMessage(ViewTestCase):
         response = self.client.get("/messages/ASHE")
 
         self.assertEqual(response.status_code, 200)
-        self.assertIn("Unavailable".encode(), response.data)
+        self.assertIn("Deleted respondent".encode(), response.data)
         self.assertIn("Example message subject".encode(), response.data)
 
     @requests_mock.mock()
@@ -316,6 +316,20 @@ class TestMessage(ViewTestCase):
 
     @requests_mock.mock()
     @patch('response_operations_ui.controllers.message_controllers._get_jwt')
+    def test_get_thread_with_deleted_user_cannot_be_replied_to(self, mock_request, mock_get_jwt):
+        mock_get_jwt.return_value = "blah"
+        with open('tests/test_data/message/thread_missing_respondent.json') as thread_json:
+            missing_user_json = json.load(thread_json)
+        mock_request.get(url_get_thread, json=missing_user_json)
+        mock_request.put(url_update_label)
+        mock_request.get(url_get_surveys_list, json=survey_list)
+
+        response = self.client.get('/messages/threads/fb0e79bd-e132-4f4f-a7fd-5e8c6b41b9af')
+
+        self.assertIn("Cannot reply or modify conversation as the respondent has been deleted".encode(), response.data)
+
+    @requests_mock.mock()
+    @patch('response_operations_ui.controllers.message_controllers._get_jwt')
     def test_get_thread_sent_to_different_user_mark_unread_not_displayed(self, mock_request, mock_get_jwt):
         mock_get_jwt.return_value = "blah"
         test_data = copy.deepcopy(thread_unread_json)
@@ -370,7 +384,7 @@ class TestMessage(ViewTestCase):
           "thread_id": "",
           "collection_case": "",
           "survey": "BRES2017",
-          "ru_id": "c614e64e-d981-4eba-b016-d9822f09a4fb"
+          "business_id": "c614e64e-d981-4eba-b016-d9822f09a4fb"
         }
         '''
 
@@ -403,7 +417,7 @@ class TestMessage(ViewTestCase):
                   'business': 'Bolts & Rachets Ltd',
                   'msg_to_name': 'Jacky Turner',
                   'msg_to': 'f62dfda8-73b0-4e0e-97cf-1b06327a6712',
-                  'ru_id': 'c614e64e-d981-4eba-b016-d9822f09a4fb'}
+                  'business_id': 'c614e64e-d981-4eba-b016-d9822f09a4fb'}
 
     def test_details_fields_prepopulated(self):
         response = self.client.post("/messages/create-message", data=self.ru_details)

@@ -127,13 +127,13 @@ def search_respondent_by_email(email):
     return response.json()
 
 
-def search_respondents(first_name, last_name, email_address, page):
+def search_respondents(first_name, last_name, email_address, page, limit):
     params = {
         'firstName': first_name,
         'lastName': last_name,
         'emailAddress': email_address,
         'page': page,
-        'limit': app.config["PARTY_RESPONDENTS_PER_PAGE"]
+        'limit': limit
     }
     response = requests.get(f'{app.config["PARTY_URL"]}/party-api/v1/respondents',
                             auth=app.config['PARTY_AUTH'],
