@@ -42,7 +42,7 @@ class SecureMessageForm(FlaskForm):
     hidden_business = HiddenField('hidden_business')
     hidden_to = HiddenField('hidden_to')
     hidden_to_uuid = HiddenField('hidden_to_uuid')
-    hidden_to_ru_id = HiddenField('hidden_to_ru_id')
+    hidden_to_business_id = HiddenField('hidden_to_business_id')
 
 
 class RespondentSearchForm(FlaskForm):

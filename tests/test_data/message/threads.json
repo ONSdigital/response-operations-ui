@@ -18,7 +18,7 @@
           "lastName": ""
         }
       ],
-      "@ru_id": {
+      "@business_details": {
         "id": "f1a5e99c-8edf-489a-9c72-6cabe6c387fc",
         "name": "Apple",
         "sampleUnitRef": "50012345678"
@@ -36,7 +36,7 @@
       "msg_from": "ff4537df-2097-4a73-a530-e98dba7bf28f",
       "msg_id": "ae46748b-c6e6-4859-a57a-86e01db2dcbc",
       "msg_to": ["GROUP"],
-      "ru_id": "f1a5e99c-8edf-489a-9c72-6cabe6c387fc",
+      "business_id": "f1a5e99c-8edf-489a-9c72-6cabe6c387fc",
       "subject": "Message from respondent",
       "survey": "f235e99c-8edf-489a-9c72-6cabe6c387fc",
       "thread_id": "ae46748b-c6e6-4859-a57a-86e01db2dcbc"
@@ -72,7 +72,7 @@
           "telephone": "07832323234"
         }
       ],
-      "@ru_id": {
+      "@business_details": {
         "id": "f1a5e99c-8edf-489a-9c72-6cabe6c387fc",
         "name": "Apple",
         "sampleUnitRef": "50012345678"
@@ -90,7 +90,7 @@
       "msg_from": "633330a6-aa84-4d1e-8e5d-2bafa9e3dac5",
       "msg_id": "9ecfad50-2ff5-4bea-a997-d73c4faa73ae",
       "msg_to": ["ff4537df-2097-4a73-a530-e98dba7bf28f"],
-      "ru_id": "f1a5e99c-8edf-489a-9c72-6cabe6c387fc",
+      "business_id": "f1a5e99c-8edf-489a-9c72-6cabe6c387fc",
       "subject": "Message from ONS",
       "survey": "f235e99c-8edf-489a-9c72-6cabe6c387fc",
       "thread_id": "9ecfad50-2ff5-4bea-a997-d73c4faa73ae"
@@ -107,7 +107,7 @@
       "telephone": ""
      }
     ],
-    "@ru_id": {
+    "@business_details": {
      "associations": [
       {
        "enrolments": [
@@ -144,7 +144,7 @@
     "msg_to": [
      "Bricks"
     ],
-    "ru_id": "18e05f84-651e-4959-9de6-1b65c22a9be5",
+    "business_id": "18e05f84-651e-4959-9de6-1b65c22a9be5",
     "sent_date": "2018-02-08 09:26:11.303877",
     "subject": "Q3 Bricks",
     "survey": "cb8accda-6118-4d3b-85a3-149e28960c54",

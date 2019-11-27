@@ -384,7 +384,7 @@ class TestMessage(ViewTestCase):
           "thread_id": "",
           "collection_case": "",
           "survey": "BRES2017",
-          "ru_id": "c614e64e-d981-4eba-b016-d9822f09a4fb"
+          "business_id": "c614e64e-d981-4eba-b016-d9822f09a4fb"
         }
         '''
 
@@ -417,7 +417,7 @@ class TestMessage(ViewTestCase):
                   'business': 'Bolts & Rachets Ltd',
                   'msg_to_name': 'Jacky Turner',
                   'msg_to': 'f62dfda8-73b0-4e0e-97cf-1b06327a6712',
-                  'ru_id': 'c614e64e-d981-4eba-b016-d9822f09a4fb'}
+                  'business_id': 'c614e64e-d981-4eba-b016-d9822f09a4fb'}
 
     def test_details_fields_prepopulated(self):
         response = self.client.post("/messages/create-message", data=self.ru_details)
