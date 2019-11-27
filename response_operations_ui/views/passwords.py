@@ -128,12 +128,10 @@ def send_password_change_email(email):
     url_safe_serializer = URLSafeSerializer(app.config['SECRET_KEY'])
 
     response = uaa_controller.get_user_by_email(email)
-    if response.status_code != 200:
-        logger.error('Error retrieving user from UAA', status_code=response.status_code,
-                     email=url_safe_serializer.dumps(email))
+    if response is None:
         return render_template('forgot-password-error.html')
 
-    if response.json()['totalResults'] > 0:
+    if response['totalResults'] > 0:
         first_name = response['resources'][0]['name']['givenName']
         internal_url = app.config['INTERNAL_WEBSITE_URL']
         verification_url = f'{internal_url}/passwords/reset-password/{token_decoder.generate_email_token(email)}'

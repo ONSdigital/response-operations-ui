@@ -5,6 +5,7 @@ import requests
 from flask import abort, current_app as app
 from requests import HTTPError
 from structlog import wrap_logger
+from itsdangerous import URLSafeSerializer
 
 
 logger = wrap_logger(logging.getLogger(__name__))
@@ -78,7 +79,16 @@ def get_user_by_email(email, access_token=None):
                'Authorization': f'Bearer {access_token}'}
 
     url = f"{app.config['UAA_SERVICE_URL']}/Users?filter=email+eq+%22{email}%22"
-    return requests.get(url, headers=headers)
+    response = requests.get(url, headers=headers)
+    try:
+        response.raise_for_status()
+    except HTTPError:
+        url_safe_serializer = URLSafeSerializer(app.config['SECRET_KEY'])
+        logger.error('Error retrieving user from UAA', status_code=response.status_code,
+                     email=url_safe_serializer.dumps(email))
+        return
+
+    return response.json()
 
 
 def retrieve_user_code(access_token, username):
@@ -151,4 +161,17 @@ def create_user_account(email, password, user_name, first_name, last_name):
     }
 
     url = f"{app.config['UAA_SERVICE_URL']}/Users"
-    return requests.post(url, data=dumps(payload), headers=headers)
+    response = requests.post(url, data=dumps(payload), headers=headers)
+    try:
+        response.raise_for_status()
+        return
+    except HTTPError:
+        if response.status_code == 409:
+            # Username already exists
+            errors = {'user_name': ["Username already in use; please choose another"]}
+        else:
+            errors = {'status_code': response.status_code, 'message': response.reason}
+            logger.error('Received an error when creating an account in UAA',
+                         status_code=response.status_code)
+
+    return errors

@@ -245,6 +245,7 @@ class ResetPasswordForm(FlaskForm):
 
 
 class RequestAccountForm(FlaskForm):
+    '''The form used by request-new-account.html'''
     email_address = StringField('Enter the ONS email address to create an account for',
                                 validators=[InputRequired('Enter an email address'),
                                             Email(message='Invalid email address'),
@@ -257,6 +258,10 @@ class RequestAccountForm(FlaskForm):
     def validate_email_address(_, field):
         email = field.data
         _validate_email_address(email)
+        local_part, domain_part = email.rsplit('@', 1)
+        if domain_part != 'ons.gov.uk' and domain_part != 'ext.ons.gov.uk' and domain_part != 'ons.fake':
+            logger.info('Account requested for non-ONS email address')
+            raise ValidationError('Not a valid ONS email address')
 
 
 class CreateAccountForm(FlaskForm):
