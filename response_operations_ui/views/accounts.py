@@ -75,9 +75,10 @@ def send_create_account_email(email):
             logger.error('Error sending create account request email to Notify Gateway', msg=e.description)
             return render_template('request-new-account-error.html')
 
-        logger.info('Successfully sent create account request email', email=url_safe_serializer.dumps(email))
+        logger.info('Successfully sent create account request email', encoded_email=url_safe_serializer.dumps(email))
     else:
-        logger.info('Requested account creation for email already in UAA', email=url_safe_serializer.dumps(email))
+        logger.info('Requested account creation for email already in UAA',
+                    encoded_email=url_safe_serializer.dumps(email))
         return render_template('request-new-account-exists.html', email=email)
 
     return render_template('request-new-account-check-email.html', email=email)
