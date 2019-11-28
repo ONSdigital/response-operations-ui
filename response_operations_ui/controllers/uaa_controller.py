@@ -85,7 +85,7 @@ def get_user_by_email(email, access_token=None):
     except HTTPError:
         url_safe_serializer = URLSafeSerializer(app.config['SECRET_KEY'])
         logger.error('Error retrieving user from UAA', status_code=response.status_code,
-                     email=url_safe_serializer.dumps(email))
+                     encoded_email=url_safe_serializer.dumps(email))
         return
 
     return response.json()
