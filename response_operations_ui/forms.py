@@ -42,7 +42,7 @@ class SecureMessageForm(FlaskForm):
     hidden_business = HiddenField('hidden_business')
     hidden_to = HiddenField('hidden_to')
     hidden_to_uuid = HiddenField('hidden_to_uuid')
-    hidden_to_ru_id = HiddenField('hidden_to_ru_id')
+    hidden_to_business_id = HiddenField('hidden_to_business_id')
 
 
 class RespondentSearchForm(FlaskForm):
@@ -62,7 +62,7 @@ class RespondentSearchForm(FlaskForm):
         return True
 
 
-class SearchForm(FlaskForm):
+class RuSearchForm(FlaskForm):
     query = StringField('Query')
     submit = SubmitField('Search')
 
@@ -74,11 +74,11 @@ class EditContactDetailsForm(FlaskForm):
     first_name = StringField('first_name', validators=[InputRequired(message="Enter a first name"),
                                                        Length(max=254,
                                                               message="First name must be fewer than 254 characters")])
-    email = StringField('emailAddress', validators=[InputRequired("The email address must be in the correct format"),
+    email = StringField('emailAddress', validators=[InputRequired("Enter an email address"),
                                                     Email(message='The email address must be in the correct format'),
                                                     Length(max=254,
                                                            message='Your email must be less than 254 characters')])
-    telephone = StringField('telephone')
+    telephone = StringField('telephone', validators=[InputRequired(message="Enter a phone number")])
     hidden_email = HiddenField('hidden_email')
 
     def __init__(self, form, default_values=None):
@@ -88,31 +88,6 @@ class EditContactDetailsForm(FlaskForm):
             self.last_name.data = default_values.get('lastName')
             self.email.data = default_values.get('emailAddress')
             self.telephone.data = default_values.get('telephone')
-
-    @staticmethod
-    def validate_first_name(form, field):
-        first_name = field.data
-        if first_name is None:
-            raise ValidationError('Enter a fist name')
-
-    @staticmethod
-    def validate_last_name(form, field):
-        last_name = field.data
-        if last_name is None:
-            raise ValidationError('Enter a last name')
-        if len(last_name) >= 254:
-            raise ValidationError("Last name must be fewer than 254 characters")
-
-    @staticmethod
-    def validate_email(form, field):
-        email = field.data
-        return _validate_email_address(email)
-
-    @staticmethod
-    def validate_telephone(form, field):
-        telephone = field.data
-        if telephone is None:
-            raise ValidationError('Enter a telephone number')
 
 
 class EditCollectionExerciseDetailsForm(FlaskForm):

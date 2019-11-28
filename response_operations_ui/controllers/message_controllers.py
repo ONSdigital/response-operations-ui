@@ -94,10 +94,10 @@ def send_message(message_json):
         response = _post_new_message(message_json).raise_for_status()
         logger.info("new message has been sent with response ", response=response)
     except KeyError as ex:
-        logger.exception("Message sending failed due to internal error")
+        logger.error("Message sending failed due to internal error", exc_info=True)
         raise InternalError(ex)
     except HTTPError as ex:
-        logger.exception("Message sending failed due to API Error")
+        logger.error("Message sending failed due to API Error", exc_info=True)
         raise ApiError(ex.response)
 
 
@@ -140,7 +140,7 @@ def update_close_conversation_status(thread_id, status):
         response.raise_for_status()
         logger.info("Successfully updated close conversation status", thread_id=thread_id, status=status)
     except HTTPError:
-        logger.exception("Failed to update close conversation status", thread_id=thread_id, status=status)
+        logger.error("Failed to update close conversation status", thread_id=thread_id, status=status, exc_info=True)
         raise ApiError(response)
 
 

@@ -1,0 +1,27 @@
+{% extends "layouts/base.html" %}
+{% from "components/button/_macro.njk" import onsButton %}
+
+{% set page_title = "Reporting units" %}
+
+{% block main %}
+    <h1>Reporting units</h1>
+    <div class="ru-search">
+
+        <form action="" method="post">
+            {{ form.csrf_token }}
+
+            <div class="field u-mb-s">
+                <label class="label">Type a reference or company name</label>
+                {{ form.query(size=20, class_="ru-search-box input input--text")}}
+            </div>
+            {{
+                onsButton({
+                    "text": "Search",
+                    "id": "btn-search-ru"
+                })
+            }}
+        </form>
+
+    </div>
+
+{% endblock %}

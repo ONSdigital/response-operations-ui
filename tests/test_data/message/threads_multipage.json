@@ -18,7 +18,7 @@
           "lastName": ""
         }
       ],
-      "@ru_id": {
+      "@business_details": {
         "id": "f1a5e99c-8edf-489a-9c72-6cabe6c387fc",
         "name": "Apple",
         "sampleUnitRef": "50012345678"
@@ -36,7 +36,7 @@
       "msg_from": "ff4537df-2097-4a73-a530-e98dba7bf28f",
       "msg_id": "fb0e79bd-e132-4f4f-a7fd-5e8c6b41b9af",
       "msg_to": ["GROUP"],
-      "ru_id": "f1a5e99c-8edf-489a-9c72-6cabe6c387fc",
+      "business_id": "f1a5e99c-8edf-489a-9c72-6cabe6c387fc",
       "subject": "1",
       "survey": "f235e99c-8edf-489a-9c72-6cabe6c387fc",
       "thread_id": "fb0e79bd-e132-4f4f-a7fd-5e8c6b41b9af"
@@ -59,7 +59,7 @@
           "lastName": ""
         }
       ],
-      "@ru_id": {
+      "@business_details": {
         "id": "f1a5e99c-8edf-489a-9c72-6cabe6c387fc",
         "name": "Apple",
         "sampleUnitRef": "50012345678"
@@ -77,7 +77,7 @@
       "msg_from": "ff4537df-2097-4a73-a530-e98dba7bf28f",
       "msg_id": "ae46748b-c6e6-4859-a57a-86e01db2dcbc",
       "msg_to": ["GROUP"],
-      "ru_id": "f1a5e99c-8edf-489a-9c72-6cabe6c387fc",
+      "business_id": "f1a5e99c-8edf-489a-9c72-6cabe6c387fc",
       "subject": "2",
       "survey": "f235e99c-8edf-489a-9c72-6cabe6c387fc",
       "thread_id": "fb0e79bd-e132-4f4f-a7fd-5e8c6b41b9af"
@@ -100,7 +100,7 @@
           "lastName": ""
         }
       ],
-      "@ru_id": {
+      "@business_details": {
         "id": "f1a5e99c-8edf-489a-9c72-6cabe6c387fc",
         "name": "Apple",
         "sampleUnitRef": "50012345678"
@@ -118,7 +118,7 @@
       "msg_from": "ff4537df-2097-4a73-a530-e98dba7bf28f",
       "msg_id": "ae46748b-c6e6-4859-a57a-86e01db2dcbc",
       "msg_to": ["GROUP"],
-      "ru_id": "f1a5e99c-8edf-489a-9c72-6cabe6c387fc",
+      "business_id": "f1a5e99c-8edf-489a-9c72-6cabe6c387fc",
       "subject": "3",
       "survey": "f235e99c-8edf-489a-9c72-6cabe6c387fc",
       "thread_id": "fb0e79bd-e132-4f4f-a7fd-5e8c6b41b9af"
@@ -141,7 +141,7 @@
           "lastName": ""
         }
       ],
-      "@ru_id": {
+      "@business_details": {
         "id": "f1a5e99c-8edf-489a-9c72-6cabe6c387fc",
         "name": "Apple",
         "sampleUnitRef": "50012345678"
@@ -159,7 +159,7 @@
       "msg_from": "ff4537df-2097-4a73-a530-e98dba7bf28f",
       "msg_id": "ae46748b-c6e6-4859-a57a-86e01db2dcbc",
       "msg_to": ["GROUP"],
-      "ru_id": "f1a5e99c-8edf-489a-9c72-6cabe6c387fc",
+      "business_id": "f1a5e99c-8edf-489a-9c72-6cabe6c387fc",
       "subject": "4",
       "survey": "f235e99c-8edf-489a-9c72-6cabe6c387fc",
       "thread_id": "fb0e79bd-e132-4f4f-a7fd-5e8c6b41b9af"
@@ -182,7 +182,7 @@
           "lastName": ""
         }
       ],
-      "@ru_id": {
+      "@business_details": {
         "id": "f1a5e99c-8edf-489a-9c72-6cabe6c387fc",
         "name": "Apple",
         "sampleUnitRef": "50012345678"
@@ -200,7 +200,7 @@
       "msg_from": "ff4537df-2097-4a73-a530-e98dba7bf28f",
       "msg_id": "ae46748b-c6e6-4859-a57a-86e01db2dcbc",
       "msg_to": ["GROUP"],
-      "ru_id": "f1a5e99c-8edf-489a-9c72-6cabe6c387fc",
+      "business_id": "f1a5e99c-8edf-489a-9c72-6cabe6c387fc",
       "subject": "5",
       "survey": "f235e99c-8edf-489a-9c72-6cabe6c387fc",
       "thread_id": "fb0e79bd-e132-4f4f-a7fd-5e8c6b41b9af"
@@ -223,7 +223,7 @@
           "lastName": ""
         }
       ],
-      "@ru_id": {
+      "@business_details": {
         "id": "f1a5e99c-8edf-489a-9c72-6cabe6c387fc",
         "name": "Apple",
         "sampleUnitRef": "50012345678"
@@ -241,7 +241,7 @@
       "msg_from": "ff4537df-2097-4a73-a530-e98dba7bf28f",
       "msg_id": "ae46748b-c6e6-4859-a57a-86e01db2dcbc",
       "msg_to": ["GROUP"],
-      "ru_id": "f1a5e99c-8edf-489a-9c72-6cabe6c387fc",
+      "business_id": "f1a5e99c-8edf-489a-9c72-6cabe6c387fc",
       "subject": "6",
       "survey": "f235e99c-8edf-489a-9c72-6cabe6c387fc",
       "thread_id": "fb0e79bd-e132-4f4f-a7fd-5e8c6b41b9af"
@@ -264,7 +264,7 @@
           "lastName": ""
         }
       ],
-      "@ru_id": {
+      "@business_details": {
         "id": "f1a5e99c-8edf-489a-9c72-6cabe6c387fc",
         "name": "Apple",
         "sampleUnitRef": "50012345678"
@@ -282,7 +282,7 @@
       "msg_from": "ff4537df-2097-4a73-a530-e98dba7bf28f",
       "msg_id": "ae46748b-c6e6-4859-a57a-86e01db2dcbc",
       "msg_to": ["GROUP"],
-      "ru_id": "f1a5e99c-8edf-489a-9c72-6cabe6c387fc",
+      "business_id": "f1a5e99c-8edf-489a-9c72-6cabe6c387fc",
       "subject": "7",
       "survey": "f235e99c-8edf-489a-9c72-6cabe6c387fc",
       "thread_id": "fb0e79bd-e132-4f4f-a7fd-5e8c6b41b9af"
@@ -305,7 +305,7 @@
           "lastName": ""
         }
       ],
-      "@ru_id": {
+      "@business_details": {
         "id": "f1a5e99c-8edf-489a-9c72-6cabe6c387fc",
         "name": "Apple",
         "sampleUnitRef": "50012345678"
@@ -323,7 +323,7 @@
       "msg_from": "ff4537df-2097-4a73-a530-e98dba7bf28f",
       "msg_id": "ae46748b-c6e6-4859-a57a-86e01db2dcbc",
       "msg_to": ["GROUP"],
-      "ru_id": "f1a5e99c-8edf-489a-9c72-6cabe6c387fc",
+      "business_id": "f1a5e99c-8edf-489a-9c72-6cabe6c387fc",
       "subject": "8",
       "survey": "f235e99c-8edf-489a-9c72-6cabe6c387fc",
       "thread_id": "fb0e79bd-e132-4f4f-a7fd-5e8c6b41b9af"
@@ -346,7 +346,7 @@
           "lastName": ""
         }
       ],
-      "@ru_id": {
+      "@business_details": {
         "id": "f1a5e99c-8edf-489a-9c72-6cabe6c387fc",
         "name": "Apple",
         "sampleUnitRef": "50012345678"
@@ -364,7 +364,7 @@
       "msg_from": "ff4537df-2097-4a73-a530-e98dba7bf28f",
       "msg_id": "ae46748b-c6e6-4859-a57a-86e01db2dcbc",
       "msg_to": ["GROUP"],
-      "ru_id": "f1a5e99c-8edf-489a-9c72-6cabe6c387fc",
+      "business_id": "f1a5e99c-8edf-489a-9c72-6cabe6c387fc",
       "subject": "9",
       "survey": "f235e99c-8edf-489a-9c72-6cabe6c387fc",
       "thread_id": "fb0e79bd-e132-4f4f-a7fd-5e8c6b41b9af"
@@ -387,7 +387,7 @@
           "lastName": ""
         }
       ],
-      "@ru_id": {
+      "@business_details": {
         "id": "f1a5e99c-8edf-489a-9c72-6cabe6c387fc",
         "name": "Apple",
         "sampleUnitRef": "50012345678"
@@ -405,7 +405,7 @@
       "msg_from": "ff4537df-2097-4a73-a530-e98dba7bf28f",
       "msg_id": "ae46748b-c6e6-4859-a57a-86e01db2dcbc",
       "msg_to": ["GROUP"],
-      "ru_id": "f1a5e99c-8edf-489a-9c72-6cabe6c387fc",
+      "business_id": "f1a5e99c-8edf-489a-9c72-6cabe6c387fc",
       "subject": "10",
       "survey": "f235e99c-8edf-489a-9c72-6cabe6c387fc",
       "thread_id": "fb0e79bd-e132-4f4f-a7fd-5e8c6b41b9af"

@@ -1,8 +1,10 @@
 import logging
 from datetime import datetime, timezone
 
+from flask import current_app as app
 from flask import Blueprint, flash, render_template, request, redirect, url_for
 from flask_login import login_required
+from flask_paginate import Pagination
 from iso8601 import parse_date
 from structlog import wrap_logger
 
@@ -13,7 +15,7 @@ from response_operations_ui.controllers.collection_exercise_controllers import \
     get_case_group_status_by_collection_exercise, get_collection_exercise_by_id
 from response_operations_ui.controllers.party_controller import get_respondent_by_party_id
 from response_operations_ui.controllers.survey_controllers import get_survey_by_id
-from response_operations_ui.forms import EditContactDetailsForm, SearchForm
+from response_operations_ui.forms import EditContactDetailsForm, RuSearchForm
 
 
 logger = wrap_logger(logging.getLogger(__name__))
@@ -169,19 +171,62 @@ def edit_contact_details(ru_ref, respondent_id):
     return redirect(url_for('reporting_unit_bp.view_reporting_unit', ru_ref=ru_ref))
 
 
-@reporting_unit_bp.route('/', methods=['GET', 'POST'])
+@reporting_unit_bp.route('/', methods=['GET'])
 @login_required
-def search_reporting_units():
-    form = SearchForm(request.form)
-    breadcrumbs = [{"text": "Reporting units"}]
-    business_list = None
+def search_reporting_unit_home():
+    return render_template('reporting-unit-search/reporting-units-search.html',
+                           form=RuSearchForm(),
+                           breadcrumbs=[{"text": "Reporting units"}])
+
+
+@reporting_unit_bp.route('/', methods=['POST'])
+@login_required
+def search_redirect():
+    form = RuSearchForm(request.form)
 
     if form.validate_on_submit():
         query = request.form.get('query')
 
-        business_list = reporting_units_controllers.search_reporting_units(query)
+        return redirect(url_for('reporting_unit_bp.search_reporting_units', query=query))
 
-    return render_template('reporting-units.html', business_list=business_list, form=form, breadcrumbs=breadcrumbs)
+
+@reporting_unit_bp.route('/search', methods=['GET'])
+@login_required
+def search_reporting_units():
+    search_key_words = request.values.get('query', '')
+    page = request.values.get('page', '1')
+    limit = app.config["PARTY_BUSINESS_RESULTS_PER_PAGE"]
+    breadcrumbs = [{"text": "Reporting units"}]
+    form = RuSearchForm()
+    form.query.data = search_key_words
+
+    response_data = reporting_units_controllers.search_reporting_units(search_key_words, limit, page)
+    business_list = response_data['businesses']
+    total_business_count = response_data['total_business_count']
+
+    offset = (int(page) - 1) * limit
+    last_index = (limit + offset) if total_business_count >= limit else total_business_count
+
+    pagination = Pagination(page=int(page),
+                            per_page=limit,
+                            total=total_business_count,
+                            record_name='Business',
+                            prev_label='Previous',
+                            next_label='Next',
+                            outer_window=0,
+                            format_total=True,
+                            format_number=True,
+                            show_single_page=False)
+
+    return render_template('reporting-unit-search/reporting-units.html',
+                           form=form,
+                           business_list=business_list,
+                           total_business_count=total_business_count,
+                           breadcrumbs=breadcrumbs,
+                           first_index=1 + offset,
+                           last_index=last_index,
+                           pagination=pagination,
+                           show_pagination=bool(total_business_count > limit))
 
 
 @reporting_unit_bp.route('/resend_verification/<ru_ref>/<party_id>', methods=['GET'])
