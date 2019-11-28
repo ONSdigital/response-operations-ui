@@ -36,13 +36,23 @@ def post_request_new_account():
         admin_password = app.config['CREATE_ACCOUNT_ADMIN_PASSWORD']
         if password != admin_password:
             logger.info('Invalid password provided for create account')
-            errors = {'password': ['Incorrect admin secret']}
-            return get_request_new_account(form_errors=errors, email=email)
+            template_data = {
+                "error": {
+                    "type": {'password': ['Incorrect admin secret']}
+                }
+            }
+            return render_template('request-new-account.html',
+                                   form=form, data=template_data, email=email)
 
         return send_create_account_email(email)
 
-    errors = {'email_address': ['Not a valid ONS email address']}
-    return get_request_new_account(form_errors=errors, email=email)
+    template_data = {
+        "error": {
+            "type": {'email_address': ['Not a valid ONS email address']}
+        }
+    }
+    return render_template('request-new-account.html',
+                           form=form, data=template_data, email=email)
 
 
 def send_create_account_email(email):
@@ -57,7 +67,7 @@ def send_create_account_email(email):
         return render_template('forgot-password-error.html')
 
     if response['totalResults'] == 0:
-        internal_url = app.config['INTERNAL_WEBSITE_URL']
+        internal_url = app.config['RESPONSE_OPERATIONS_UI_URL']
         verification_url = f'{internal_url}/account/create-account/{token_decoder.generate_email_token(email)}'
 
         logger.info('Sending create account email', verification_url=verification_url)
@@ -144,7 +154,14 @@ def post_create_account(token):
         return redirect(url_for('sign_in_bp.sign_in'))
     else:
         if 'user_name' in errors:
-            return get_create_account(form_errors=errors, token=token)
+            template_data = {
+                "error": {
+                    "type": errors
+                },
+                'token': token
+            }
+            return render_template('request-new-account.html',
+                                   form=form, data=template_data, email=email)
 
         return render_template('create-new-account-error.html')
 
