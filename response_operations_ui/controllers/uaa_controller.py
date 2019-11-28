@@ -172,6 +172,6 @@ def create_user_account(email, password, user_name, first_name, last_name):
         else:
             errors = {'status_code': response.status_code, 'message': response.reason}
             logger.error('Received an error when creating an account in UAA',
-                         status_code=response.status_code)
+                         status_code=response.status_code, reason=response.reason)
 
     return errors

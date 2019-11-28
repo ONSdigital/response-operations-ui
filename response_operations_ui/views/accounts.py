@@ -128,7 +128,13 @@ def post_create_account(token):
     form = CreateAccountForm(request.form)
 
     if not form.validate():
-        return get_create_account(token, form_errors=form.errors)
+        template_data = {
+            "error": {
+                "type": form.errors
+            },
+            'token': token
+        }
+        return render_template('create-new-account.html', form=form, data=template_data)
 
     try:
         duration = app.config['EMAIL_TOKEN_EXPIRY']
@@ -160,8 +166,7 @@ def post_create_account(token):
                 },
                 'token': token
             }
-            return render_template('request-new-account.html',
-                                   form=form, data=template_data, email=email)
+            return render_template('create-new-account.html', form=form, data=template_data)
 
         return render_template('create-new-account-error.html')
 
