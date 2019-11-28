@@ -1,5 +1,7 @@
 {% extends "layouts/base.html" %}
-{% block page_title %}{{ru.name}} | Reporting units | Survey Data Collection{% endblock %}
+{% from "components/button/_macro.njk" import onsButton %}
+
+{% set page_title = ru.name + " | Reporting units" %}
 
 {% block main %}
 
@@ -40,43 +42,43 @@
 
           <h4 class="u-fs-m">Collection exercises</h4>
 
-          <table name="tbl-ce-for-survey" class="table table__dense" summary="Collection exercises for {{survey.shortName}} for {{ ru.sampleUnitRef }}">
-            <thead class="table--head u-vhx">
-              <tr class="table--row">
-                <th scope="col" class="table--header--cell">
+          <table name="tbl-ce-for-survey" class="table table--dense" summary="Collection exercises for {{survey.shortName}} for {{ ru.sampleUnitRef }}">
+            <thead class="table__head u-vhx">
+              <tr class="table__row">
+                <th scope="col" class="table__header">
                   Period
                 </th>
-                <th scope="col" class="table--header--cell">
+                <th scope="col" class="table__header">
                   Reporting unit name
                 </th>
-                <th scope="col" class="table--header--cell">
+                <th scope="col" class="table__header">
                   Trading as
                 </th>
-                <th scope="col" class="table--header--cell">
+                <th scope="col" class="table__header">
                   Region
                 </th>
-                <th scope="col" class="table--header--cell">
+                <th scope="col" class="table__header">
                   Status
                 </th>
               </tr>
             </thead>
-            <tbody>
+            <tbody class="table__body">
               {% for ce in survey.collection_exercises[:12] %}
-              <tr class="table--row">
-                <td name="tbl-ce-period" class="table--cell">
+              <tr class="table__row">
+                <td name="tbl-ce-period" class="table__cell">
                   {{ ce.exerciseRef }}
                 </td>
-                <td name="tbl-ce-company-name" class="table--cell">
+                <td name="tbl-ce-company-name" class="table__cell">
                   {{ ce.companyName }}
                 </td>
-                <td name="tbl-ce-company-name" class="table--cell">
+                <td name="tbl-ce-company-name" class="table__cell">
                   {{ ce.trading_as }} &#160;
                 </td>
 
-              <td name="tbl-ce-company-region" class="table--cell">
+              <td name="tbl-ce-company-region" class="table__cell">
                 {{ ce.companyRegion }}
               </td>
-              <td name="tbl-ce-status" class="table--cell">
+              <td name="tbl-ce-status" class="table__cell">
                 {{ ce.responseStatus }}
                 {% if ce.responseStatus in ['Not started', 'In progress']  %}
               &nbsp;   <a href="{{ url_for('case_bp.get_response_statuses', ru_ref=ru.sampleUnitRef, survey=survey.shortName, period=ce.exerciseRef) }}">Change</a>
@@ -110,27 +112,27 @@
             {% endif %}
           </div>
 
-          <table name="tbl-respondents-for-survey" class="table table__dense tbl-ru-survey-respondents" summary="Respondents for {{survey.shortName}} for {{ ru.sampleUnitRef }}">
-            <thead class="table--head">
-            <tr class="table--row">
-              <th scope="col" class="table--header--cell">
+          <table name="tbl-respondents-for-survey" class="table table--dense tbl-ru-survey-respondents" summary="Respondents for {{survey.shortName}} for {{ ru.sampleUnitRef }}">
+            <thead class="table__head">
+            <tr class="table__row">
+              <th scope="col" class="table__header">
                 Contact details
               </th>
-              <th scope="col" class="table--header--cell">
+              <th scope="col" class="table__header">
                 Account status
               </th>
-              <th scope="col" class="table--header--cell">
+              <th scope="col" class="table__header">
                 Enrolment status
               </th>
-              <th scope="col" class="table--header--cell">
+              <th scope="col" class="table__header">
                 Messages
               </th>
             </tr>
             </thead>
-            <tbody>
+            <tbody class="table__body">
             {% for respondent in survey.respondents %}
-            <tr class="table--row">
-              <td name="tbl-respondent-details" class="table--cell">
+            <tr class="table__row">
+              <td name="tbl-respondent-details" class="table__cell">
                 <dl class="description-list">
                   <dt>
                     Name
@@ -171,7 +173,7 @@
                   </div>
                 </dl>
               </td>
-              <td name="tbl-respondent-status" class="table--cell">
+              <td name="tbl-respondent-status" class="table__cell">
                 <div id="account-status">
                   {% if respondent.status  == 'SUSPENDED' %}
                     Locked
@@ -186,11 +188,10 @@
                 </div>
               </td>
 
-              <td name="tbl-enrolment-status" class="table--cell">
+              <td name="tbl-enrolment-status" class="table__cell">
                 <div id="enrolment-status">
                   {{ respondent.enrolmentStatus.title() }}
                 </div>
-
                 <div>
                   {% if respondent.enrolmentStatus == 'ENABLED' %}
                   <a href="{{ url_for('reporting_unit_bp.confirm_change_enrolment_status', ru_ref=ru.sampleUnitRef, ru_name=ru.name, survey_id=survey.id,
@@ -208,11 +209,19 @@
                 </div>
               </td>
 
-              <td class="table--cell">
+              <td class="table__cell">
                 <form action="{{ url_for('messages_bp.create_message')}}" method="post" id="create-message-view">
-                  <button type="submit" name="create-message" id="create-message-button-{{ loop.index }}" value="create-message-view" class="btn btn--small btn--secondary">Create message</button>
+                    {{
+                        onsButton({
+                            "text": "Create message",
+                            "classes": "btn btn--small btn--secondary",
+                            "id": "create-message-button-" + loop.index|string,
+                            "value": "create-message-view",
+                            "name": "create-message"
+                        })
+                    }}
                   <input type="hidden" name="ru_ref" value="{{ ru.sampleUnitRef }}">
-                  <input type="hidden" name="ru_id" value="{{ ru.id }}">
+                  <input type="hidden" name="business_id" value="{{ ru.id }}">
                   <input type="hidden" name="business" value="{{ ru.name }}">
                   <input type="hidden" name="survey" value="{{ survey.shortName }}">
                   <input type="hidden" name="survey_id" value="{{ survey.id }}">

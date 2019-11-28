@@ -1,27 +1,29 @@
 {% extends "layouts/base.html" %}
-{% block page_title %}{{survey.surveyRef}} {{survey.shortName}} {{ce.exerciseRef}} | Surveys | Survey Data Collection{% endblock %}
+{% from "components/button/_macro.njk" import onsButton %}
+{% from "components/panel/_macro.njk" import onsPanel %}
+{% from "components/metadata/_macro.njk" import onsMetadata %}
+{% from "components/table/_macro.njk" import onsTable %}
+{% from "components/upload/_macro.njk" import onsUpload %}
+{% from "components/checkboxes/_macro.njk" import onsCheckboxes %}
+
+{% set page_title = survey.surveyRef + " " + survey.shortName + " " + ce.exerciseRef + " | Surveys" %}
 
 {% block main %}
-<div role="main" id="main" class="page__main">
-
     {% include 'collection_exercise/ce-success-panel.html' %}
     {% include 'collection_exercise/ce-handle-errors.html' %}
 
     {% include 'collection_exercise/ce-header-section.html' %}
+    <div class="grid grid--gutterless">
+        <div class="grid__col col-6@l">
+            {% include 'partials/error-box.html' %}
+            {% include 'collection_exercise/ce-dates-section.html' %}
+            {% include 'collection_exercise/ce-sample-section.html' %}
+            {% include 'collection_exercise/ce-instrument-section.html' %}
+        </div>
 
-    {% call grid.container() %}
-        {% call grid.column(['col-6@l']) %}
-        {% include 'partials/error-box.html' %}
-        {% include 'collection_exercise/ce-dates-section.html' %}
-        {% include 'collection_exercise/ce-sample-section.html' %}
-        {% include 'collection_exercise/ce-instrument-section.html' %}
-        {% endcall %}
+        <div class="grid__col col-5@l push-1@l">
+            {% include 'collection_exercise/ce-reference-information.html' %}
+        </div>
+    </div>
 
-        {% call grid.column(['col-1@l']) %}{% endcall %}
-
-        {% call grid.column(['col-5@l']) %}
-        {% include 'collection_exercise/ce-reference-information.html' %}
-        {% endcall %}
-    {% endcall %}
-</div>
 {% endblock %}

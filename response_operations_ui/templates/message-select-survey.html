@@ -1,9 +1,9 @@
 {% extends "layouts/base.html" %}
-{% block page_title %}Messages | Survey Data Collection{% endblock %}
+{% from "components/button/_macro.njk" import onsButton %}
+
+{% set page_title = "Messages" %}
 
 {% block main %}
-
-<div role="main" id="main" class="page__main">
 
   <div class="grid">
     <div class="grid__col col-12@m">
@@ -37,14 +37,17 @@
             </div>
         </div>
       </div>
-
-      <button class="btn u-mt-m" type="submit" id="continue">Continue</button>
-
-          {% else %}
-            <p> Unable to retrieve list of surveys </p>
-          {% endif %}
-        </form>
+      {{
+          onsButton({
+              "classes": "u-mt-m",
+              "text": "Continue",
+              "id": "continue"
+          })
+      }}   
+        {% else %}
+          <p> Unable to retrieve list of surveys </p>
+        {% endif %}
+      </form>
     </div>
   </div>
-</div>
 {% endblock %}

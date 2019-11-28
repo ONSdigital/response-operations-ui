@@ -1,9 +1,8 @@
 {% extends "layouts/base.html" %}
-{% block page_title %}Messages | Survey Data Collection{% endblock %}
+{% set page_title = "Messages" %}
 
 {% block main %}
 
-<div role="main" id="main" class="page__main">
   {% with messages = get_flashed_messages() %}
           {% if messages %}
           <div class="panel panel--simple panel--success col-6@m u-mb-m">
@@ -28,23 +27,21 @@
   {% endif %}
   <div class="grid">
     <div class="grid__col col-12@m">
-      <nav class="nav nav--horizontal nav--sub nav--dark u-mb-l u-pt-s" role="menu">
-        <div class="container container--wide">
+      <nav class="nav nav--horizontal nav--sub nav--dark u-mb-l u-mt-s" role="menu">
             <ul class="nav__list" aria-label="Section navigation menu">
-                <li class="nav__item u-fs-s {% if my_conversations =='true' %}nav__item--current{% endif %}">
-                    <a class="nav__link" href="{{ url_for('messages_bp.view_selected_survey', selected_survey=selected_survey, my_conversations='true') }}" aria-current="{% if my_conversations %}location{% endif %}" role="menuitem">My Messages</a>
+                <li class="nav__item u-fs-s {% if conversation_tab =='my messages' %}nav__item--current{% endif %}">
+                    <a class="nav__link" href="{{ url_for('messages_bp.view_selected_survey', selected_survey=selected_survey, conversation_tab='my messages') }}" aria-current="{% if conversation_tab == 'my messages' %}location{% endif %}" role="menuitem">My Messages</a>
                 </li>
-                <li class="nav__item u-fs-s {% if not is_closed and not my_conversations == 'true' and not new_respondent_conversations == 'true'%}nav__item--current{% endif %}">
-                    <a class="nav__link" href="{{ url_for('messages_bp.view_selected_survey', selected_survey=selected_survey) }}" aria-current="{% if not is_closed and not my_conversations %}location{% endif %}" role="menuitem">Open</a>
+                <li class="nav__item u-fs-s {% if conversation_tab == 'open' %}nav__item--current{% endif %}">
+                    <a class="nav__link" href="{{ url_for('messages_bp.view_selected_survey', selected_survey=selected_survey, conversation_tab = 'open') }}" aria-current="{% if conversation_tab == 'open' %}location{% endif %}" role="menuitem">Open</a>
                 </li>
-                <li class="nav__item u-fs-s {% if is_closed %}nav__item--current{% endif %}">
-                    <a class="nav__link" href="{{ url_for('messages_bp.view_selected_survey', selected_survey=selected_survey, is_closed='true') }}" aria-current="{% if is_closed %}location{% endif %}" role="menuitem">Closed</a>
+                <li class="nav__item u-fs-s {% if conversation_tab == 'closed' %}nav__item--current{% endif %}">
+                    <a class="nav__link" href="{{ url_for('messages_bp.view_selected_survey', selected_survey=selected_survey, conversation_tab = 'closed') }}" aria-current="{% if conversation_tab == 'closed' %}location{% endif %}" role="menuitem">Closed</a>
                 </li>
-                <li class="nav__item u-fs-s {% if new_respondent_conversations == 'true' %}nav__item--current{% endif %}">
-                    <a class="nav__link" href="{{ url_for('messages_bp.view_selected_survey', selected_survey=selected_survey, new_respondent_conversations='true') }}" aria-current="{% if new_respondent_conversations %}location{% endif %}" role="menuitem">Initial</a>
+                <li class="nav__item u-fs-s {% if conversation_tab == 'initial' %}nav__item--current{% endif %}">
+                    <a class="nav__link" href="{{ url_for('messages_bp.view_selected_survey', selected_survey=selected_survey, conversation_tab = 'initial') }}" aria-current="{% if conversation_tab == 'initial' %}location{% endif %}" role="menuitem">Initial</a>
                 </li>
             </ul>
-        </div>
       </nav>
       <div class="messages-list">
         {% if response_error %}
@@ -65,17 +62,17 @@
         </div>
         {% else %}
         {% if not messages %}
-          {% if is_closed %}
+          {% if conversation_tab == 'closed' %}
           <p>No closed conversations</p>
-          {% elif my_conversations == 'true' %}
+          {% elif conversation_tab == 'my messages' %}
           <p>There are currently no messages</p>
           {% else %}
           <p>No new conversations</p>
           {% endif %}
         {% else %}
-        <table id="tbl-messages" class="message-list sortable" summary="messages in the system">
-          <thead class="table--head">
-            <tr class="table--row">
+        <table id="tbl-messages" class="table table--dense message-list sortable" summary="messages in the system">
+          <thead class="table__head">
+            <tr class="table__row">
               <th scope="col" class="message-list__ru-ref sortable-column">
                 RU Ref
               </th>
@@ -96,13 +93,13 @@
               </th>
             </tr>
           </thead>
-              <tbody>
+              <tbody class="table__body">
               {% for message in messages %}
                 {% if message.unread %}
-                   <tr name="message-unread" class="table--row table--row__selectable message-list__item--unread" id="message-{{ loop.index }}">
+                   <tr name="message-unread" class="table__row table__row__selectable message-list__item--unread" id="message-{{ loop.index }}">
                     <td name="tbl-messages-RU_Ref" class="message-list__ru-ref circle-icon" id="ru-ref-{{ loop.index }}">
                 {% else %}
-                   <tr name="message" class="table--row table--row__selectable" id="message-{{ loop.index }}">
+                   <tr name="message" class="table__row table__row__selectable" id="message-{{ loop.index }}">
                     <td name="tbl-messages-RU_Ref" class="message-list__ru-ref" id="ru-ref-{{ loop.index }}">
                 {% endif %}
                     {{ message.ru_ref or 'Unavailable' }}
@@ -111,7 +108,7 @@
                     {{ message.business_name or 'Unavailable' }}
                 </td>
                 <td name="tbl-messages-subject" class="message-list__subject">
-                    <a href="{{ url_for('messages_bp.view_conversation', thread_id=message.thread_id, page=page, my_conversations=my_conversations) }}#latest-message" id="message-link-{{ loop.index }}">{{ message.subject }}</a>
+                    <a href="{{ url_for('messages_bp.view_conversation', thread_id=message.thread_id, page=page, conversation_tab=conversation_tab) }}#latest-message" id="message-link-{{ loop.index }}">{{ message.subject }}</a>
                 </td>
                 <td name="tbl-messages-from" class="message-list__from" id="message-from-{{ loop.index }}">
                     {{ message.from or 'Unavailable' }}
@@ -134,5 +131,4 @@
       </div>
     </div>
   </div>
-</div>
 {% endblock %}

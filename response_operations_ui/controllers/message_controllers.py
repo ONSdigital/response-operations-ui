@@ -39,6 +39,10 @@ def get_conversation(thread_id):
 def get_conversation_count(params):
     logger.info("Retrieving count of threads")
 
+    params['is_closed'] = 'true' if params.get('is_closed') else 'false'
+    params['my_conversations'] = 'true' if params.get('my_conversations') else 'false'
+    params['new_respondent_conversations'] = 'true' if params.get('new_respondent_conversations') else 'false'
+
     url = f'{current_app.config["SECURE_MESSAGE_URL"]}/messages/count'
 
     response = requests.get(url, headers={'Authorization': _get_jwt()}, params=params)
@@ -59,6 +63,10 @@ def get_conversation_count(params):
 
 def get_thread_list(params):
     logger.info("Retrieving threads list")
+
+    params['is_closed'] = 'true' if params.get('is_closed') else 'false'
+    params['my_conversations'] = 'true' if params.get('my_conversations') else 'false'
+    params['new_respondent_conversations'] = 'true' if params.get('new_respondent_conversations') else 'false'
 
     url = f'{current_app.config["SECURE_MESSAGE_URL"]}/threads'
     # This will be removed once UAA is completed.  For now we need the call to sm to include
@@ -86,10 +94,10 @@ def send_message(message_json):
         response = _post_new_message(message_json).raise_for_status()
         logger.info("new message has been sent with response ", response=response)
     except KeyError as ex:
-        logger.exception("Message sending failed due to internal error")
+        logger.error("Message sending failed due to internal error", exc_info=True)
         raise InternalError(ex)
     except HTTPError as ex:
-        logger.exception("Message sending failed due to API Error")
+        logger.error("Message sending failed due to API Error", exc_info=True)
         raise ApiError(ex.response)
 
 
@@ -132,7 +140,7 @@ def update_close_conversation_status(thread_id, status):
         response.raise_for_status()
         logger.info("Successfully updated close conversation status", thread_id=thread_id, status=status)
     except HTTPError:
-        logger.exception("Failed to update close conversation status", thread_id=thread_id, status=status)
+        logger.error("Failed to update close conversation status", thread_id=thread_id, status=status, exc_info=True)
         raise ApiError(response)
 
 

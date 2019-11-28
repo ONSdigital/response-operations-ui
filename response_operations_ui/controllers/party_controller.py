@@ -75,6 +75,7 @@ def survey_ids_for_respondent(respondent, ru_ref):
 
 
 def add_enrolment_status_to_respondent(respondent, ru_ref, survey_id):
+    logger.info('Adding enrolment status to respondent', ru_ref=ru_ref)
     association = next((association
                         for association in respondent.get('associations')
                         if association['sampleUnitRef'] == ru_ref), None)
@@ -126,13 +127,13 @@ def search_respondent_by_email(email):
     return response.json()
 
 
-def search_respondents(first_name, last_name, email_address, page):
+def search_respondents(first_name, last_name, email_address, page, limit):
     params = {
         'firstName': first_name,
         'lastName': last_name,
         'emailAddress': email_address,
         'page': page,
-        'limit': app.config["PARTY_RESPONDENTS_PER_PAGE"]
+        'limit': limit
     }
     response = requests.get(f'{app.config["PARTY_URL"]}/party-api/v1/respondents',
                             auth=app.config['PARTY_AUTH'],
@@ -170,7 +171,8 @@ def update_contact_details(respondent_id, form, ru_ref='NOT DEFINED'):
             raise UpdateContactDetailsException(ru_ref, EditContactDetailsForm(form),
                                                 old_contact_details, response.status_code)
 
-        logger.info('Respondent details updated', respondent_id=respondent_id, status_code=response.status_code)
+        logger.info('Respondent details updated', respondent_id=respondent_id,
+                    status_code=response.status_code, ru_ref=ru_ref)
 
     return contact_details_changed
 

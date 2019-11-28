@@ -2,7 +2,6 @@ import json
 import logging
 import math
 from datetime import datetime
-from distutils.util import strtobool
 
 from flask import Blueprint, flash, g, Markup, render_template, request, redirect, session, url_for
 from flask_login import login_required, current_user
@@ -17,7 +16,6 @@ from response_operations_ui.controllers.survey_controllers import get_survey_sho
     get_grouped_surveys_list
 from response_operations_ui.exceptions.exceptions import ApiError, InternalError, NoMessagesError
 from response_operations_ui.forms import SecureMessageForm
-
 
 logger = wrap_logger(logging.getLogger(__name__))
 
@@ -66,35 +64,30 @@ def create_message():
 @messages_bp.route('/threads/<thread_id>', methods=['GET', 'POST'])
 @login_required
 def view_conversation(thread_id):
+    conversation_tab = request.args.get('conversation_tab')
+    page = request.args.get('page')
+
     if request.method == 'POST' and request.form.get('reopen'):
         message_controllers.update_close_conversation_status(thread_id=thread_id, status=False)
-        thread_url = url_for("messages_bp.view_conversation", thread_id=thread_id) + "#latest-message"
+        thread_url = url_for("messages_bp.view_conversation", thread_id=thread_id,
+                             conversation_tab=conversation_tab, page=page) + "#latest-message"
         flash(Markup(f'Conversation re-opened. <a href={thread_url}>View conversation</a>'))
-        return redirect(url_for('messages_bp.view_select_survey'))
+        return redirect(url_for('messages_bp.view_select_survey', conversation_tab=conversation_tab, page=page))
 
     thread_conversation = message_controllers.get_conversation(thread_id)
     refined_thread = [_refine(message) for message in reversed(thread_conversation['messages'])]
     latest_message = refined_thread[-1]
-    my_conversations = request.args.get('my_conversations', default='false')
+    closed_at = _format_closed_at(thread_conversation)
+    breadcrumbs = _get_conversation_breadcrumbs(thread_conversation['messages'])
+    respondent_is_deleted = False
 
-    try:
-        closed_time = localise_datetime(datetime.strptime(thread_conversation['closed_at'], "%Y-%m-%dT%H:%M:%S.%f"))
-        closed_at = closed_time.strftime("%d/%m/%Y" + " at %H:%M")
-    except KeyError:
-        closed_at = None
-
-    try:
-        breadcrumbs = _get_conversation_breadcrumbs(thread_conversation['messages'])
-    except IndexError:
-        breadcrumbs = [
-            {"title": "Messages", "link": "/messages"},
-            {"title": "Unavailable"}
-        ]
+    for message in refined_thread:
+        if 'Deleted respondent' in message['username']:
+            respondent_is_deleted = True
 
     if latest_message['unread'] and _can_mark_as_unread(latest_message):
         message_controllers.remove_unread_label(latest_message['message_id'])
 
-    page = request.args.get('page')
     form = SecureMessageForm(request.form)
 
     if form.validate_on_submit():
@@ -104,56 +97,64 @@ def view_conversation(thread_id):
 
         try:
             message_controllers.send_message(
-                _get_message_json(form,
-                                  thread_id=refined_thread[0]['thread_id'])
+                _get_message_json(form, thread_id=refined_thread[0]['thread_id'])
             )
-            thread_url = url_for("messages_bp.view_conversation", thread_id=thread_id) + "#latest-message"
+            thread_url = url_for("messages_bp.view_conversation", thread_id=thread_id, page=page,
+                                 conversation_tab=conversation_tab) + "#latest-message"
             flash(Markup(f'Message sent. <a href={thread_url}>View Message</a>'))
-            return redirect(url_for('messages_bp.view_selected_survey',
-                                    selected_survey=refined_thread[0]['survey']))
-        except (ApiError, InternalError):
+            return redirect(url_for('messages_bp.view_selected_survey', selected_survey=refined_thread[0]['survey'],
+                                    page=page, conversation_tab=conversation_tab))
+
+        except (ApiError, InternalError) as e:
+            error = "Message failed to send, something has gone wrong with the website."
+            if e.status_code == 404 and "Respondent not found" in e.message:
+                error = "Cannot send message to respondent as they have been deleted"
+
             form = _repopulate_form_with_submitted_data(form)
-            form.errors['sending'] = ["Message failed to send, something has gone wrong with the website."]
+            form.errors['sending'] = [error]
             return render_template('conversation-view/conversation-view.html',
                                    form=form,
                                    breadcrumbs=breadcrumbs,
                                    messages=refined_thread,
-                                   error="Message send failed")
+                                   respondent_is_deleted=respondent_is_deleted,
+                                   thread_data=thread_conversation)
 
     return render_template("conversation-view/conversation-view.html",
                            breadcrumbs=breadcrumbs,
                            messages=refined_thread,
+                           respondent_is_deleted=respondent_is_deleted,
                            form=form,
                            selected_survey=refined_thread[0]['survey'],
                            page=page,
                            closed_at=closed_at,
                            thread_data=thread_conversation,
                            show_mark_unread=_can_mark_as_unread(latest_message),
-                           my_conversations=my_conversations)
+                           conversation_tab=conversation_tab)
 
 
 @messages_bp.route('/mark_unread/<message_id>', methods=['GET'])
 @login_required
 def mark_message_unread(message_id):
-
     msg_from = request.args.get('from', default="", type=str)
     msg_to = request.args.get('to', default="", type=str)
-    my_conversations = request.args.get('my_conversations', default='false')
-
+    conversation_tab = request.args.get('conversation_tab')
+    marked_unread_message = f"Message from {msg_from} to {msg_to} marked unread"
     message_controllers.add_unread_label(message_id)
 
-    marked_unread_message = f"Message from {msg_from} to {msg_to} marked unread"
-
-    return _view_select_survey(marked_unread_message, my_conversations)
+    return _view_select_survey(marked_unread_message, conversation_tab)
 
 
 @messages_bp.route('/', methods=['GET'])
 @login_required
 def view_select_survey():
-    return _view_select_survey()
+    return _view_select_survey("", request.args.get('conversation_tab'))
 
 
-def _view_select_survey(marked_unread_message="", my_conversations="false"):
+def _view_select_survey(marked_unread_message, conversation_tab):
+    """
+    Redirects to either a survey stored in the session under the 'messages_survey_selection'
+    key or to the survey selection screen if the key isn't present in the session
+    """
     try:
         selected_survey = session["messages_survey_selection"]
     except KeyError:
@@ -161,14 +162,14 @@ def _view_select_survey(marked_unread_message="", my_conversations="false"):
 
     return redirect(url_for("messages_bp.view_selected_survey",
                             selected_survey=selected_survey, page=request.args.get('page'),
-                            flash_message=marked_unread_message, my_conversations=my_conversations))
+                            flash_message=marked_unread_message, conversation_tab=conversation_tab))
 
 
 @messages_bp.route('/select-survey', methods=['GET', 'POST'])
 @login_required
 def select_survey():
-    breadcrumbs = [{"title": "Messages", "link": "/messages"},
-                   {"title": "Filter by survey"}]
+    breadcrumbs = [{"text": "Messages", "url": "/messages"},
+                   {"text": "Filter by survey"}]
 
     survey_list = get_grouped_surveys_list()
 
@@ -194,7 +195,7 @@ def select_survey():
 def view_selected_survey(selected_survey):
     displayed_short_name = format_short_name(selected_survey)
     session['messages_survey_selection'] = selected_survey
-    breadcrumbs = [{"title": displayed_short_name + " Messages"}]
+    breadcrumbs = [{"text": displayed_short_name + " Messages"}]
     try:
         if selected_survey == 'FDI':
             survey_id = _get_FDI_survey_id()
@@ -204,31 +205,27 @@ def view_selected_survey(selected_survey):
         page = request.args.get('page', default=1, type=int)
         limit = request.args.get('limit', default=10, type=int)
         flash_message = request.args.get('flash_message', default="", type=str)
-
-        is_closed = request.args.get('is_closed', default='false')
-        my_conversations = request.args.get('my_conversations', default='false')
-
-        new_respondent_conversations = request.args.get('new_respondent_conversations', default='false')
+        conversation_tab = request.args.get('conversation_tab', default='open')
 
         thread_count = message_controllers.get_conversation_count(
             {'survey': survey_id,
-             'is_closed': is_closed,
-             'my_conversations': my_conversations,
-             'new_respondent_conversations': new_respondent_conversations})
+             'is_closed': conversation_tab == 'closed',
+             'my_conversations': conversation_tab == 'my messages',
+             'new_respondent_conversations': conversation_tab == 'initial'})
 
         recalculated_page = _calculate_page(page, limit, thread_count)
 
         if recalculated_page != page:
-            return redirect(url_for("messages_bp.view_selected_survey",
+            return redirect(url_for("messages_bp.view_selected_survey", conversation_tab=conversation_tab,
                                     selected_survey=selected_survey, page=recalculated_page))
 
         params = {
             'survey': survey_id,
             'page': page,
             'limit': limit,
-            'is_closed': is_closed,
-            'my_conversations': my_conversations,
-            'new_respondent_conversations': new_respondent_conversations
+            'is_closed': conversation_tab == 'closed',
+            'my_conversations': conversation_tab == 'my messages',
+            'new_respondent_conversations': conversation_tab == 'initial'
         }
 
         messages = [_refine(message) for message in message_controllers.get_thread_list(params)]
@@ -255,38 +252,41 @@ def view_selected_survey(selected_survey):
                                displayed_short_name=displayed_short_name,
                                pagination=pagination,
                                change_survey=True,
-                               is_closed=strtobool(is_closed),
-                               my_conversations=my_conversations,
-                               new_respondent_conversations=new_respondent_conversations)
+                               conversation_tab=conversation_tab)
 
     except TypeError:
-        logger.exception("Failed to retrieve survey id")
+        logger.error("Failed to retrieve survey id", exc_info=True)
         return render_template("messages.html",
                                breadcrumbs=breadcrumbs,
                                selected_survey=selected_survey,
                                displayed_short_name=displayed_short_name,
                                response_error=True)
     except NoMessagesError:
-        logger.exception("Failed to retrieve messages")
+        logger.error("Failed to retrieve messages", exc_info=True)
         return render_template("messages.html",
                                breadcrumbs=breadcrumbs,
                                response_error=True,
                                selected_survey=selected_survey,
-                               displayed_short_name=displayed_short_name,)
+                               displayed_short_name=displayed_short_name)
 
 
 @messages_bp.route('/threads/<thread_id>/close-conversation', methods=['GET', 'POST'])
 @login_required
 def close_conversation(thread_id):
+    conversation_tab = request.args.get('conversation_tab')
+    page = request.args.get('page')
+
     if request.method == 'POST':
         message_controllers.update_close_conversation_status(thread_id=thread_id, status=True)
-        thread_url = url_for("messages_bp.view_conversation", thread_id=thread_id) + "#latest-message"
+        thread_url = url_for("messages_bp.view_conversation", thread_id=thread_id, conversation_tab=conversation_tab,
+                             page=page) + "#latest-message"
+
         flash(Markup(f'Conversation closed. <a href={thread_url}>View conversation</a>'))
-        return redirect(url_for('messages_bp.view_select_survey', page=request.args.get('page')))
+        return redirect(url_for('messages_bp.view_select_survey', page=request.args.get('page'),
+                        conversation_tab=conversation_tab))
 
     thread_conversation = message_controllers.get_conversation(thread_id)
     refined_thread = [_refine(message) for message in reversed(thread_conversation['messages'])]
-    page = request.args.get('page')
 
     return render_template('close-conversation.html',
                            subject=refined_thread[0]['subject'],
@@ -294,21 +294,39 @@ def close_conversation(thread_id):
                            ru_ref=refined_thread[0]['ru_ref'],
                            respondent=refined_thread[0]['to'],
                            thread_id=thread_id,
-                           page=page)
+                           page=page,
+                           conversation_tab=conversation_tab)
+
+
+def _format_closed_at(thread_conversation):
+    """
+    Takes a date and formats converts it into the string 'dd/mm/yyyy at HH:MM'
+    """
+    try:
+        closed_time = localise_datetime(datetime.strptime(thread_conversation['closed_at'], "%Y-%m-%dT%H:%M:%S.%f"))
+        return closed_time.strftime("%d/%m/%Y" + " at %H:%M")
+    except KeyError:
+        return None
 
 
 def _build_create_message_breadcrumbs():
     return [
-        {"title": "Messages", "link": "/messages"},
-        {"title": "Create Message"}
+        {"text": "Messages", "url": "/messages"},
+        {"text": "Create Message"}
     ]
 
 
 def _get_conversation_breadcrumbs(messages):
-    return [
-        {"title": "Messages", "link": "/messages"},
-        {"title": messages[-1].get('subject', 'No Subject')}
-    ]
+    try:
+        return [
+            {"text": "Messages", "url": "/messages"},
+            {"text": messages[-1].get('subject', 'No Subject')}
+        ]
+    except IndexError:
+        return [
+            {"text": "Messages", "url": "/messages"},
+            {"text": "Unavailable"}
+        ]
 
 
 def _repopulate_form_with_submitted_data(form):
@@ -329,9 +347,8 @@ def _get_message_json(form, thread_id=""):
         'body': form.body.data,
         'thread_id': thread_id,
         'collection_case': "",
-        # TODO Make this UUID for v2 api
         'survey': form.hidden_survey_id.data,
-        'ru_id': form.hidden_to_ru_id.data})
+        'business_id': form.hidden_to_business_id.data})
 
 
 def _populate_hidden_form_fields_from_post(current_view_form, calling_form):
@@ -347,7 +364,7 @@ def _populate_hidden_form_fields_from_post(current_view_form, calling_form):
         current_view_form.hidden_business.data = calling_form['business']
         current_view_form.hidden_to_uuid.data = calling_form['msg_to']
         current_view_form.hidden_to.data = calling_form['msg_to_name']
-        current_view_form.hidden_to_ru_id.data = calling_form['ru_id']
+        current_view_form.hidden_to_business_id.data = calling_form['business_id']
     except KeyError as ex:
         logger.exception("Failed to load create message page")
         raise InternalError(ex)
@@ -372,6 +389,11 @@ def _get_message_subject(thread):
 
 
 def _refine(message):
+    """
+    Refine a message into a cleaner version that can be more easily used by the display layer
+    :param message: A message from secure-message
+    :rtype: dict
+    """
     return {
         'thread_id': message.get('thread_id'),
         'subject': _get_message_subject(message),
@@ -390,7 +412,7 @@ def _refine(message):
         'sent_date': _get_human_readable_date(message.get('sent_date')),
         'unread': _get_unread_status(message),
         'message_id': message.get('msg_id'),
-        'ru_id': message.get('ru_id'),
+        'business_id': message.get('business_id'),
     }
 
 
@@ -409,18 +431,28 @@ def _get_user_summary_for_message(message):
 
 
 def _get_from_name(message):
+    """
+    Constructs a name from the @msg_from key of a message.  The value of the key needs to be a dict that contains
+    a 'firstName' and 'lastName' key in order to have a name that isn't 'None None'.
+
+    If the @msg_from key is missing, this will return the string 'Deleted respondent'
+
+    :param message: A dict that represents a message
+    :rtype: string
+    """
     try:
         msg_from = message['@msg_from']
         return f"{msg_from.get('firstName')} {msg_from.get('lastName')}"
     except KeyError:
-        logger.exception("Failed to retrieve message from name", message_id=message.get('msg_id'))
+        logger.info("Failed to retrieve message from name", message_id=message.get('msg_id'))
+        return "Deleted respondent"
 
 
 def _get_to_id(message):
     try:
         return message.get('msg_to')[0]
     except (IndexError, TypeError):
-        logger.exception("No 'msg_to' in message.", message_id=message.get('msg_id'))
+        logger.error("No 'msg_to' in message.", message_id=message.get('msg_id'), exc_info=True)
 
 
 def _get_to_name(message):
@@ -431,24 +463,28 @@ def _get_to_name(message):
             return "ONS"
         return f"{message.get('@msg_to')[0].get('firstName')} {message.get('@msg_to')[0].get('lastName')}"
     except (IndexError, TypeError):
-        logger.exception("Failed to retrieve message to name ", message_id=message.get('msg_id'))
+        logger.info("Failed to retrieve message to name", message_id=message.get('msg_id'))
 
 
 def _get_ru_ref_from_message(message):
     try:
-        return message['@ru_id']['sampleUnitRef']
+        return message['@business_details']['sampleUnitRef']
     except (KeyError, TypeError):
-        logger.exception("Failed to retrieve RU ref from message", message_id=message.get('msg_id'))
+        logger.error("Failed to retrieve RU ref from message", message_id=message.get('msg_id'), exc_info=True)
 
 
 def _get_business_name_from_message(message):
     try:
-        return message['@ru_id']['name']
+        return message['@business_details']['name']
     except (KeyError, TypeError):
         logger.exception("Failed to retrieve business name from message", message_id=message.get('msg_id'))
 
 
 def _get_human_readable_date(sent_date):
+    """
+    Converts a datetime date (e.g., 2019-11-13 13:25:19.093378) and converts it into something
+    easily read (e.g., Today at 13:25)
+    """
     try:
         formatted_date = get_formatted_date(sent_date.split('.')[0])
         return formatted_date

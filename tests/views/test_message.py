@@ -34,6 +34,9 @@ with open('tests/test_data/message/thread_missing_subject.json') as json_data:
 with open('tests/test_data/message/threads.json') as json_data:
     thread_list = json.load(json_data)
 
+with open('tests/test_data/message/threads_multipage.json') as json_data:
+    thread_list_multi_page = json.load(json_data)
+
 with open('tests/test_data/survey/survey_list.json') as json_data:
     survey_list = json.load(json_data)
 
@@ -136,7 +139,7 @@ class TestMessage(ViewTestCase):
         response = self.client.get("/messages/ASHE")
 
         self.assertEqual(response.status_code, 200)
-        self.assertIn("Unavailable".encode(), response.data)
+        self.assertIn("Deleted respondent".encode(), response.data)
         self.assertIn("Example message subject".encode(), response.data)
 
     @requests_mock.mock()
@@ -313,6 +316,20 @@ class TestMessage(ViewTestCase):
 
     @requests_mock.mock()
     @patch('response_operations_ui.controllers.message_controllers._get_jwt')
+    def test_get_thread_with_deleted_user_cannot_be_replied_to(self, mock_request, mock_get_jwt):
+        mock_get_jwt.return_value = "blah"
+        with open('tests/test_data/message/thread_missing_respondent.json') as thread_json:
+            missing_user_json = json.load(thread_json)
+        mock_request.get(url_get_thread, json=missing_user_json)
+        mock_request.put(url_update_label)
+        mock_request.get(url_get_surveys_list, json=survey_list)
+
+        response = self.client.get('/messages/threads/fb0e79bd-e132-4f4f-a7fd-5e8c6b41b9af')
+
+        self.assertIn("Cannot reply or modify conversation as the respondent has been deleted".encode(), response.data)
+
+    @requests_mock.mock()
+    @patch('response_operations_ui.controllers.message_controllers._get_jwt')
     def test_get_thread_sent_to_different_user_mark_unread_not_displayed(self, mock_request, mock_get_jwt):
         mock_get_jwt.return_value = "blah"
         test_data = copy.deepcopy(thread_unread_json)
@@ -367,7 +384,7 @@ class TestMessage(ViewTestCase):
           "thread_id": "",
           "collection_case": "",
           "survey": "BRES2017",
-          "ru_id": "c614e64e-d981-4eba-b016-d9822f09a4fb"
+          "business_id": "c614e64e-d981-4eba-b016-d9822f09a4fb"
         }
         '''
 
@@ -400,7 +417,7 @@ class TestMessage(ViewTestCase):
                   'business': 'Bolts & Rachets Ltd',
                   'msg_to_name': 'Jacky Turner',
                   'msg_to': 'f62dfda8-73b0-4e0e-97cf-1b06327a6712',
-                  'ru_id': 'c614e64e-d981-4eba-b016-d9822f09a4fb'}
+                  'business_id': 'c614e64e-d981-4eba-b016-d9822f09a4fb'}
 
     def test_details_fields_prepopulated(self):
         response = self.client.post("/messages/create-message", data=self.ru_details)
@@ -815,3 +832,107 @@ class TestMessage(ViewTestCase):
         response = self.client.get('/messages/mark_unread/9ecfad50-2ff5-4bea-a997-d73c4faa73ae?from=GROUP&to=ONS+User')
 
         self.assertIn(f"flash_message=Message+from+GROUP+to+ONS+User+marked+unread".encode(), response.data)
+
+    @requests_mock.mock()
+    @patch('response_operations_ui.controllers.message_controllers._get_jwt')
+    def test_closeing_conversation_returns_to_correct_tab_and_page(self, mock_request, mock_get_jwt):
+        """
+            For each tab check that if a conversation is closed then return to the same tab at the same page
+        """
+        limit = 10
+        page = 2
+        thread_id = 'fb0e79bd-e132-4f4f-a7fd-5e8c6b41b9af'
+
+        with self.client.session_transaction() as session:
+            session['messages_survey_selection'] = 'Ashe'
+        mock_get_jwt.return_value = "blah"
+        mock_request.get(url_get_thread, json=thread_json)
+        mock_request.get(url_get_surveys_list, json=survey_list)
+        mock_request.patch(url_get_thread, json=thread_json)
+        mock_request.get(shortname_url + "/ASHE", json=ashe_info['survey'])
+        mock_request.get(url_messages + '/count', json={"total": limit + 3}, status_code=200)
+        mock_request.get(url_get_threads_list, json=thread_list_multi_page)
+
+        conversation_tabs = ['my messages', 'open', 'closed', 'initial']
+        for conversation_tab in conversation_tabs:
+            with self.subTest(conversation_tab=conversation_tab):
+
+                # issue same call as when closing a conversation whilst on page 2 of the selected tab
+                url = f"{thread_id}/close-conversation?conversation_tab={conversation_tab}&page={page}&limit={limit}"
+                response = self.client.post("/messages/threads/" + url, follow_redirects=True)
+
+                response_body = response.data.decode("utf-8")
+
+                self.assertEqual(200, response.status_code)
+
+                # validate that the currently selected tab is as expected (i.e aria-current="location")
+                match = f'"/messages/Ashe?conversation_tab={conversation_tab.replace(" ","+")}" aria-current="location"'
+                self.assertIn(match, response_body)
+
+                # and that page 2 is selected
+                self.assertIn('<li class="active"><a>2</a></li>', response_body)
+
+    @requests_mock.mock()
+    @patch('response_operations_ui.controllers.message_controllers._get_jwt')
+    def test_closeing_conversation_returns_to_previous_tab_if_page_is_now_too_high(self, mock_request, mock_get_jwt):
+        """if a conversation is closed then it will dissapear from some tabs. That could mean that the page number
+        specified is now too high, this test validates that if that is the case then the previous page is used """
+
+        limit = 10
+        page = 4
+        thread_id = 'fb0e79bd-e132-4f4f-a7fd-5e8c6b41b9af'
+
+        with self.client.session_transaction() as session:
+            session['messages_survey_selection'] = 'Ashe'
+        mock_get_jwt.return_value = "blah"
+        mock_request.get(url_get_thread, json=thread_json)
+        mock_request.get(url_get_surveys_list, json=survey_list)
+        mock_request.patch(url_get_thread, json=thread_json)
+        mock_request.get(shortname_url + "/ASHE", json=ashe_info['survey'])
+        # Returned count is less than 4 pages worth
+        mock_request.get(url_messages + '/count', json={"total": (limit * (page - 1)) - 1}, status_code=200)
+        mock_request.get(url_get_threads_list, json=thread_list_multi_page)
+
+        conversation_tabs = ['my messages', 'open', 'initial']          # Cant close a thread in the closed tab
+        for conversation_tab in conversation_tabs:
+            with self.subTest(conversation_tab=conversation_tab):
+                # issue same call as when closing a conversation whilst on page 4 of the selected tab
+                url = f"{thread_id}/close-conversation?conversation_tab={conversation_tab}&page={page}&limit={limit}"
+                response = self.client.post("/messages/threads/" + url, follow_redirects=True)
+
+                response_body = response.data.decode("utf-8")
+
+                self.assertEqual(200, response.status_code)
+
+                # validate that the currently selected tab is as expected (i.e aria-current="location")
+                match = f'"/messages/Ashe?conversation_tab={conversation_tab.replace(" ","+")}" aria-current="location"'
+                self.assertIn(match, response_body)
+
+                # and that page 3 is selected
+                self.assertIn('<li class="active"><a>3</a></li>', response_body)
+
+    @requests_mock.mock()
+    @patch('response_operations_ui.controllers.message_controllers._get_jwt')
+    def test_reopening_conversation_returns_to_closed_tab(self, mock_request, mock_get_jwt):
+        limit = 10
+        page = 4
+        thread_id = 'fb0e79bd-e132-4f4f-a7fd-5e8c6b41b9af'
+
+        with self.client.session_transaction() as session:
+            session['messages_survey_selection'] = 'Ashe'
+        mock_get_jwt.return_value = "blah"
+        mock_request.get(url_get_thread, json=thread_json)
+        mock_request.get(url_get_surveys_list, json=survey_list)
+        mock_request.patch(url_get_thread, json=thread_json)
+        mock_request.get(shortname_url + "/ASHE", json=ashe_info['survey'])
+        mock_request.get(url_messages + '/count', json={"total": 1}, status_code=200)
+        mock_request.get(url_get_threads_list, json=thread_list)
+
+        url = f"/messages/threads/{thread_id}?page={page}&limit={limit}&conversation_tab=closed"
+        response = self.client.post(url, data={'reopen': 'Re-open conversation'}, follow_redirects=True)
+
+        response_body = response.data.decode("utf-8")
+
+        # validate that the currently selected tab is as expected (i.e aria-current="location")
+        match_str = f'"/messages/Ashe?conversation_tab=closed" aria-current="location"'
+        self.assertIn(match_str, response_body)

@@ -1,31 +1,33 @@
 {% extends "layouts/base.html" %}
+{% from "components/fieldset/_macro.njk" import onsFieldset %}
+{% from "components/input/_macro.njk" import onsInput %}
+{% from "components/panel/_macro.njk" import onsPanel %}
+{% from "components/error/_macro.njk" import onsError %}
+{% from "components/lists/_macro.njk" import onsList %}
+{% from "components/button/_macro.njk" import onsButton %}
 
-{% block page_title %} Sign-In | Survey Data Collection {% endblock %}
+{% set page_title = "Sign-In" %}
 
 {% block main %}
-
-<div class="grid">
-    <div class="grid__col col-12@m">
-        <div role="main" class="page__main col-6@m">
+    <div class="grid">
+        <div class="grid__col col-8@m u-mt-l">
             {% with messages = get_flashed_messages(with_categories=true) %}
                 {% if messages %}
                     {% for category, message in messages %}
-                        {% if category == "failed_authentication" %}
-                        <div class="panel panel--error u-mt-s">
-                            <div class="panel__header">
-                                <h1 class="panel__title u-fs-r--b">{{ message }}</h1>
-                            </div>
-                            <div class="panel__body" data-qa="error-body">
-                                <p class="u-fs-r"><a href="#username" id="try-again-link" class="js-inpagelink">Please try again</a></p>
-                            </div>
-                        </div>
-                        {% endif %}
-                        {% if category == "successful_signout" %}
-                        <div class="panel panel--simple panel--success u-mt-s">
-                            <div class="panel__body" data-qa="success-body">
-                                <p class="u-fs-r" id="successfully-signed-out">{{ message }}</p>
-                            </div>
-                        </div>
+                        {% if category == "failed_authentication" or category == "successful_signout" %}
+                            {% call
+                                onsPanel({
+                                    "type": "error" if category == "failed_authentication" else "success",
+                                    "classes": "u-mb-s",
+                                    "title":  message if category == "failed_authentication"
+                                })
+                            %}
+                            {% if category == "failed_authentication" %}
+                                <p><a href="#username" id="try-again-link" class="js-inpagelink">Please try again</a></p>
+                            {% else %}
+                                <p id="successfully-signed-out">{{ message }}</p>
+                            {% endif %}
+                            {% endcall %}
                         {% endif %}
                         {% if category == "account_created" %}
                         <div class="panel panel--simple panel--success u-mt-s">
@@ -40,55 +42,100 @@
             <section>
                 <form method="post" class="form u-mt-m">
                     {{ form.csrf_token }}
-                    <div>
-                        {% if form.errors %}
-                        <div class="panel panel--error u-mb-m">
-                            <div class="panel__header">
-                                {% if form.errors|length == 1 %}
-                                <h1 id="error-count" class="panel__title u-fs-r--b">There is 1 error on this page</h1>
-                                {% else %}
-                                <h1 id="error-count" class="panel__title u-fs-r--b">There are {{ form.errors|length }} errors on this page</h1>
-                                {% endif %}
-                            </div>
-                            <div class="panel__body">
-                                <ol>
-                                  {% for error in form.username.errors %}
-                                    <li class="panel__title u-fs-r--b"><a href='#username'>{{ error }}</a></li>
-                                  {% endfor %}
-                                  {% for error in form.password.errors %}
-                                    <li class="panel__title u-fs-r--b"><a href='#password'>{{ error }}</a></li>
-                                  {% endfor %}
-                                </ol>
-                            </div>
-                        </div>
+                    {% if form.errors %}
+                        {% call
+                            onsPanel({
+                                title: "This page has 1 error" if form.errors|length == 1 else "There are {{ form.errors|length }} errors on this page",
+                                type: "error"
+                            })
+                        %}
+                        <p>These <strong>must be corrected</strong> to continue.</p>
+                        {% for error in form.username.errors %}
+                            {% do errorData.append(
+                                {
+                                    "text": error,
+                                    "index": true,
+                                    "url": "#username",
+                                    "classes": "js-inpagelink"
+                                }
+                            ) %}
+                        {% endfor %}
+                        {% for error in form.password.errors %}
+                            {% do errorData.append(
+                                {
+                                    "text": error,
+                                    "index": true,
+                                    "url": "#password",
+                                    "classes": "js-inpagelink"
+                                }
+                            ) %}
+                        {% endfor %}
+                        {{
+                            onsList({
+                                "classes": "list--bare",
+                                "itemsList": errorData
+                            }) 
+                        }}
+                        {% endcall %}
+                    {% endif %}
+
+                    <h1>Sign in</h1>
+                    <a href="/account/request-new-account">Create an account</a><br><br>
+
+                    {% if failed_authentication or form.username.errors | length > 0 %}
+                        {% set error = { "text": "Username is required" } %}
+                    {% endif %}
+                    {%- call onsFieldset({
+                        "legend": "Sign in",
+                        "legendClasses": "u-vh"
+                    }) -%}
+                        {{
+                            onsInput({
+                                "id": "username",
+                                "name": "username",
+                                "type": "text",
+                                "label": {
+                                    "text": "Username"
+                                },
+                                "attributes": {
+                                    "required": true
+                                },
+                                "error": error
+                            })
+                        }}
+
+                        {% if failed_authentication or form.password.errors | length > 0 %}
+                            {% set error = { "text": "Password is required" } %}
                         {% endif %}
-                        <h1 class="u-fs-l">Sign in</h1>
-                        <a href="/account/request-new-account">Create an account</a><br><br>
-                        {% if failed_authentication %}
-                        <div id="username-panel" class="field panel panel--simple panel--error">
-                        {% else %}
-                        <div id="username-panel" class="field{% if form.username.errors %} panel panel--simple panel--error{% endif %}">
-                        {% endif %}
-                            <label for="username" class="label">Username</label>
-                            {% if form.username.errors %}<p class="u-vh">Username is required</p>{% endif %}
-                            {{ form.username(id='username', class='input input--text input-type__input', required=True, size=20) }} <br>
-                        </div>
-                        {% if failed_authentication %}
-                        <div id="password-panel" class="field panel panel--simple panel--error u-mb-s">
-                        {% else %}
-                        <div id="password-panel" class="field{% if form.password.errors %} panel panel--simple panel--error u-mb-s{% endif %}">
-                        {% endif %}
-                            {% if form.password.errors %}<p class="u-vh">Password is required</p>{% endif %}
-                            <label for="password" class="label">Password</label>
-                            {{ form.password(id='password', class='input input--text', required=True, size=20) }} <br>
-                            <a href="/passwords/forgot-password">Forgot password?</a> <br>
-                        </div>
-                    </div>
-                    <input type="submit" class="btn " value="Sign in" id="SIGN_IN_BUTTON">
+
+                        {{
+                            onsInput({
+                                "id": "password",
+                                "name": "password",
+                                "type": "password",
+                                "label": {
+                                    "text": "Password"
+                                },
+                                "attributes": {
+                                    "required": true
+                                },
+                                "error": error
+                            })
+                        }}  
+                    {%- endcall -%}
+                    {{
+                        onsButton({
+                            "text": "Sign in",
+                            "type": "submit",
+                            "classes": "u-mt-l",
+                            "id": "SIGN_IN_BUTTON"
+                        })
+                    }}
                 </form>
+                <div class="u-mt-m">
+                    <a href="/passwords/forgot-password">Forgot password?</a>
+                </div>
             </section>
         </div>
     </div>
-</div>
-
 {% endblock main %}

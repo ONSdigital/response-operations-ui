@@ -1,5 +1,11 @@
 {% if success_panel %}
-    {% call panel(id='success-panel', type='success') %}
+    {% call
+        onsPanel({
+            "type": "success",
+            "classes": "u-mb-s",
+            "id": "success-panel"
+        })
+    %}
         {{ success_panel }}
     {% endcall %}
 {% endif %}

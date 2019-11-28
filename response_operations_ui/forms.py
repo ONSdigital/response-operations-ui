@@ -42,7 +42,7 @@ class SecureMessageForm(FlaskForm):
     hidden_business = HiddenField('hidden_business')
     hidden_to = HiddenField('hidden_to')
     hidden_to_uuid = HiddenField('hidden_to_uuid')
-    hidden_to_ru_id = HiddenField('hidden_to_ru_id')
+    hidden_to_business_id = HiddenField('hidden_to_business_id')
 
 
 class RespondentSearchForm(FlaskForm):
@@ -62,16 +62,23 @@ class RespondentSearchForm(FlaskForm):
         return True
 
 
-class SearchForm(FlaskForm):
+class RuSearchForm(FlaskForm):
     query = StringField('Query')
     submit = SubmitField('Search')
 
 
 class EditContactDetailsForm(FlaskForm):
-    first_name = StringField('first_name')
-    last_name = StringField('last_name')
-    email = StringField('emailAddress')
-    telephone = StringField('telephone')
+    last_name = StringField('last_name', validators=[InputRequired(message="Enter a last name"),
+                                                     Length(max=254,
+                                                            message="Last name must be fewer than 254 characters")])
+    first_name = StringField('first_name', validators=[InputRequired(message="Enter a first name"),
+                                                       Length(max=254,
+                                                              message="First name must be fewer than 254 characters")])
+    email = StringField('emailAddress', validators=[InputRequired("Enter an email address"),
+                                                    Email(message='The email address must be in the correct format'),
+                                                    Length(max=254,
+                                                           message='Your email must be less than 254 characters')])
+    telephone = StringField('telephone', validators=[InputRequired(message="Enter a phone number")])
     hidden_email = HiddenField('hidden_email')
 
     def __init__(self, form, default_values=None):
