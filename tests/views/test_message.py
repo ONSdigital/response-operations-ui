@@ -37,6 +37,9 @@ with open('tests/test_data/message/threads.json') as json_data:
 with open('tests/test_data/message/threads_multipage.json') as json_data:
     thread_list_multi_page = json.load(json_data)
 
+with open('tests/test_data/message/threads_multipage_multi_ru.json') as json_data:
+    thread_list_multi_page_multi_ru = json.load(json_data)
+
 with open('tests/test_data/survey/survey_list.json') as json_data:
     survey_list = json.load(json_data)
 
@@ -936,3 +939,44 @@ class TestMessage(ViewTestCase):
         # validate that the currently selected tab is as expected (i.e aria-current="location")
         match_str = f'"/messages/Ashe?conversation_tab=closed" aria-current="location"'
         self.assertIn(match_str, response_body)
+
+    @requests_mock.mock()
+    @patch('response_operations_ui.controllers.message_controllers._get_jwt')
+    @patch('response_operations_ui.controllers.message_controllers.get_conversation_count')
+    def test_filter_threads_limits_by_ru(self, mock_request, mock_get_count, mock_get_jwt):
+        """Validate that business_id is passed as a parameter to get count and get messages
+        It is a function of secure message to actually return the correct messages"""
+        limit = 15
+        page = 1
+        business_id = '123'
+        conversation_tab = 'closed'
+        
+        with self.client.session_transaction() as session:
+            session['messages_survey_selection'] = 'Ashe'
+        mock_get_jwt.return_value = "blah"
+
+        mock_request.get(shortname_url + "/ASHE", json=ashe_info['survey'])
+
+        mock_request.get(url_get_surveys_list, json=self.surveys_list_json)
+        mock_request.get(url_get_threads_list, json=thread_list_multi_page_multi_ru)
+        mock_get_count.return_value = 10
+        
+        # view survey with filter of business_id
+        url = f"/messages/Ashe?page={page}&limit={limit}&conversation_tab={conversation_tab}&business_id={business_id}"
+        response = self.client.post(url, follow_redirects=True, json={'ru_ref': '12345678901'})
+
+        self.assertEqual(200, response.status_code)
+        mock_get_count.assert_called_with(survey_id=['6aa8896f-ced5-4694-800c-6cd661b0c8b2'], business_id=business_id, 
+                                          conversation_tab=conversation_tab)
+        
+        query = f'survey_id={survey_id}&is_closed=true&my_conversations=false&new_respondent_conversations=false&' \
+            f'ru_id={business_id}&page={page}&limit={limit}'
+        assert self._mock_request_called_with_expected_query(mock_request, query)
+
+    @staticmethod
+    def _mock_request_called_with_expected_query(mock_instance, query):
+        for element in mock_instance.request_history:
+            if element.query == query:
+                return True
+            
+        return False    
