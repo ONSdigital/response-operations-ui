@@ -1,97 +1,181 @@
 {% extends "layouts/base.html" %}
+{% from "components/button/_macro.njk" import onsButton %}
+{% from "components/lists/_macro.njk" import onsList %}
+{% from "components/password/_macro.njk" import onsPassword %}
+{% from "components/input/_macro.njk" import onsInput %}
+{% from "components/fieldset/_macro.njk" import onsFieldset %}
 
 {% set errorType = data['error']['type'] %}
 
 {% set page_title = 'Request New Account' %}
 
 {% block main %}
+    <div class="grid">
+        <div class="grid__col col-8@m u-mt-m">
 
-<form
-    method="post"
-    action="{{ url_for('account_bp.post_create_account', token=data.token) }}"
-    class="form"
-    role="form">
-    {{ form.csrf_token }}
+        {% if errorType %}
+            {% set error_count = data['error'] | length %}
+            {% set plural_suffix = 's' if error_count > 1 else '' %}
+            {% set header_text = 'This page has ' ~ error_count ~ ' error' ~ plural_suffix %}
 
-    <h1 class="u-fs-l">Create your account</h1>
+            {% if errorType.user_name %}
+                {% set id = "#inputUserName" %}
+                {% set error = errorType['user_name'][0] %}
+            {% elif errorType.first_name %}
+                {% set id = "#inputFirstName" %}
+                {% set error = errorType['first_name'][0] %}
+            {% elif errorType.last_name %}
+                {% set id = "#inputLastName" %}
+                {% set error = errorType['last_name'][0] %}
+            {% elif errorType.password %}
+                {% set id = "#inputPassword" %}
+                {% set error = errorType['password'][0] %}
+            {% endif %}
 
-    <p>Consider using your ONS username</p>
-    {% if errorType.user_name %}
-    <div class="panel panel--simple panel--error">
-        <p class="error-message">{{ errorType['user_name'][0] }}</p>
-    {% endif %}
-        <div class="field" id="user_name_field">
-            {{ form.user_name.label(class_='label') }}
-            {{ form.user_name(id='inputUserName', class_='input input--text input-type__input, autocomplete="off"', **{'aria-describedby':'inputUserNameLabel'}) }}
-        </div>
-    {% if errorType.user_name %}
-    </div>
-    {% endif %}
-
-    {% if errorType.first_name %}
-    <div class="panel panel--simple panel--error">
-        <p class="error-message">{{ errorType['first_name'][0] }}</p>
-    {% endif %}
-        <div class="field" id="first_name_field">
-            {{ form.first_name.label(class_='label') }}
-            {{ form.first_name(id='inputFirstName', class_='input input--text input-type__input, autocomplete="off"', **{'aria-describedby':'inputFirstNameLabel'}) }}
-        </div>
-    {% if errorType.first_name %}
-    </div>
-    {% endif %}
-
-    {% if errorType.last_name %}
-    <div class="panel panel--simple panel--error">
-        <p class="error-message">{{ errorType['last_name'][0] }}</p>
-    {% endif %}
-        <div class="field" id="last_name_field">
-            {{ form.last_name.label(class_='label') }}
-            {{ form.last_name(id='inputLastName', class_='input input--text input-type__input, autocomplete="off"', **{'aria-describedby':'inputLastNameLabel'}) }}
-        </div>
-    {% if errorType.last_name %}
-    </div>
-    {% endif %}
-    <br /><br />
-    <p>Your password must have:</p>
-    <ul>
-        <li>at least 8 characters</li>
-        <li>at least one capital letter</li>
-        <li>at least one symbol (eg ?!£%)</li>
-        <li>at least one number</li>
-    </ul>
-
-    <fieldset id="password-details">
-      <div class="js-new-password-group js-password-obfuscation-group">
-
-        {% if errorType.password %}
-
-        <div class="panel panel--simple panel--error">
-            <p class="error-message">{{ errorType['password'][0] }}</p>
+            {% call
+                onsPanel({
+                    "type": "error",
+                    "classes": "u-mb-s",
+                    "title": header_text
+                })
+            %}
+                <p>This <strong>must be corrected</strong> to continue.</p>
+                <a href="{{ id }}" class="js-inpagelink">{{ error }}</a>
+            {% endcall %}
         {% endif %}
-            <div class="hide-if-no-js field--toggle">
-              <label class="label label--inline u-fs-r--b field__label" for="showPasswordToggle">Show password</label>
-              <input id="showPasswordToggle" class="field__input input input--checkbox" type="checkbox">
-            </div>
-            <div class="field" id="password_field">
-                {{ form.password.label(class_='label') }}
-                {{ form.password(id='inputPassword', class_='input input--text input-type__input, autocomplete="off"', **{'aria-describedby':'inputPasswordLabel'}) }}
-            </div>
-            <br/>
-            <div class="field">
-                {{ form.password_confirm.label(class_='label') }}
-                {{ form.password_confirm(class_='input input--text input-type__input js-confirm-new-password js-password-obfuscation-field', autocomplete="off") }}
-            </div>
-        {% if errorType.password %}
-        </div>
-        {% endif %}
-      </div>
-    </fieldset>
-    <br/>
 
-    <button class="btn u-mb-s u-fs-r--b" id="confirm_password_button" type="submit">Confirm</button>
+        <form
+            method="post"
+            action="{{ url_for('account_bp.post_create_account', token=data.token) }}"
+            class="form"
+            role="form">
+            {{ form.csrf_token }}
 
-    <p><a href="{{ url_for('sign_in_bp.sign_in') }}">Cancel</a></p>
+            <h1 class="u-mt-l">Create your account</h1>
 
-</form>
+            {%- call onsFieldset({
+                "legend": "Complete the form to create your account",
+                "legendClasses": "u-vh"
+                }) -%}
+                {% if errorType.user_name %}
+                    {% set usernameError = { "text": errorType['user_name'][0] } %}
+                {% endif %}
 
+                {{
+                    onsInput({
+                        "id": "inputUserName",
+                        
+                        "name": "user_name",
+                        "type": "text",
+                        "label": {
+                            "description": "Consider using your ONS username",
+                            "text": "Username"
+                        },
+                        "attributes": {
+                            "required": true
+                        },
+                        "error": usernameError
+                    })
+                }} 
+                {% if errorType.first_name %}
+                    {% set firstNameError = { "text": errorType['first_name'][0] } %}
+                {% endif %}
+                {{
+                    onsInput({
+                        "id": "inputFirstName",
+                        
+                        "name": "first_name",
+                        "type": "text",
+                        "label": {
+                            "text": "First name"
+                        },
+                        "attributes": {
+                            "required": true
+                        },
+                        "error": firstNameError
+                    })
+                }} 
+                {% if errorType.last_name %}
+                    {% set lastNameError = { "text": errorType['last_name'][0] } %}
+                {% endif %}
+                {{
+                    onsInput({
+                        "id": "inputLastName",
+                        
+                        "name": "last_name",
+                        "type": "text",
+                        "label": {
+                            "text": "Last name"
+                        },
+                        "attributes": {
+                            "required": true
+                        },
+                        "error": lastNameError
+                    })
+                }} 
+                <p class="u-mt-l">Your password must have:</p>
+                {{
+                    onsList({
+                        "itemsList": [
+                            {
+                                "text": "at least 8 characters"
+                            },
+                            {
+                                "text": "at least one capital letter"
+                            },
+                            {
+                                "text": "at least one symbol (eg ?!£%)"
+                            },
+                            {
+                                "text": "at least one number"
+                            }
+                        ]
+                    }) 
+                }}
+
+                {% if errorType.password %}
+                    {% set passwordError = { "text": errorType['password'][0] } %}
+                {% endif %}
+                {{
+                    onsPassword({
+                        "id": "inputPassword",
+                        "name": "password",
+                        "label": {
+                            "text": 'New password'
+                        },
+                        "attributes": {
+                            "autocomplete": 'off'
+                        },
+                        "showPasswordText": "Show password",
+                        "error": passwordError
+                    })
+                }}
+                {{
+                    onsInput({
+                        "id": "password_confirm",
+                        "name": "password_confirm",
+                        "type": "password",
+                        "label": {
+                            "text": "Re-type new password"
+                        },
+                        "attributes": {
+                            "autocomplete": 'off'
+                        },
+                        "error": passwordError
+                    })
+                }}
+            {%- endcall -%}
+
+            {{
+                onsButton({
+                    "classes": "u-mb-s u-mt-s",
+                    "text": "Confirm",
+                    "id": "confirm_password_button"
+                })
+            }}   
+            <p><a href="{{ url_for('sign_in_bp.sign_in') }}">Cancel</a></p>
+
+        </form>
+    </div>
+</div>
 {% endblock main %}

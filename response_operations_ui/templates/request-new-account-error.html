@@ -1,11 +1,15 @@
 {% extends "layouts/base.html" %}
 
-{% block page_title %} Request New Account | Survey Data Collection {% endblock %}
+{% set page_title = "Request New Account" %}
 
 {% block main %}
-    <h1 class="u-fs-l">Something went wrong</h1>
+    <div class="grid">
+        <div class="grid__col col-8@m u-mt-m">
 
-    <p class="u-mb-l">There was a problem trying to send you an email to create an account.<br/>
-    Please try again later or raise a ServiceNow call with SDC RM.</p>
+            <h1 class="u-mt-l">Something went wrong</h1>
 
+            <p class="u-mb-l">There was a problem trying to send you an email to create an account.<br/>
+            Please try again later or raise a ServiceNow call with SDC RM.</p>
+        </div>
+    </div>
 {% endblock main %}
