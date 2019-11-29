@@ -7,7 +7,7 @@
 
 {% set errorType = data['error']['type'] %}
 
-{% set page_title = 'Request New Account' %}
+{% set page_title = 'Create New Account' %}
 
 {% block main %}
     <div class="grid">
@@ -40,7 +40,23 @@
                 })
             %}
                 <p>This <strong>must be corrected</strong> to continue.</p>
-                <a href="{{ id }}" class="js-inpagelink">{{ error }}</a>
+                {% set errorData = [] %}
+                {% for errors in data['error'] %}
+                    {% do errorData.append(
+                        {
+                            "text": error,
+                            "index": id,
+                            "url": "#username",
+                            "classes": "js-inpagelink"
+                        }
+                    ) %}
+                {% endfor %}
+                {{
+                    onsList({
+                        "classes": "list--bare",
+                        "itemsList": errorData
+                    }) 
+                }}
             {% endcall %}
         {% endif %}
 
