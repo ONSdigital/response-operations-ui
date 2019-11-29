@@ -1,53 +1,99 @@
 {% extends "layouts/base.html" %}
+{% from "components/fieldset/_macro.njk" import onsFieldset %}
+{% from "components/input/_macro.njk" import onsInput %}
+{% from "components/panel/_macro.njk" import onsPanel %}
+{% from "components/error/_macro.njk" import onsError %}
+{% from "components/lists/_macro.njk" import onsList %}
+{% from "components/button/_macro.njk" import onsButton %}
 
 {% set errorType = data['error']['type'] %}
 
-{% block page_title %} Request New Account | Survey Data Collection {% endblock %}
+{% set page_title = 'Request New Account' %}
 
 {% block main %}
-<div role="main" id="main" class="page__main">
-    <a href="/sign-in">Back to sign in</a><br>
-    <form
-        method="post"
-        action="{{ url_for('account_bp.post_request_new_account') }}"
-        class="form"
-        role="form">
+    <div class="grid">
+        <div class="grid__col col-8@m u-mt-s">
+            <a href="/sign-in">Back to sign in</a><br>
 
-        <h1 class="u-fs-l u-mt-m">Verify your email</h1>
-        <br />
-        {{ form.csrf_token }}
-
-        <fieldset id="forgot-details">
-            {% if errorType.email_address %}
-            <div class="panel panel--simple panel--error">
-                <p class="error-message">{{ errorType['email_address'][0] }}</p>
+            {% if errorType.email_address or errorType.password %}
+                {% call
+                    onsPanel({
+                        "type": "error",
+                        "classes": "u-mb-s u-mt-m",
+                        "title":  "This page has an error"
+                    })
+                %}
+                <p>This <strong>must be corrected</strong> to continue.</p>
+                {% if errorType.email_address %}
+                    <p><a href="#email_address" class="js-inpagelink">{{ errorType['email_address'][0] }}</a></p>
+                {% elif errorType.password %}
+                    <p><a href="#password" class="js-inpagelink">{{ errorType['password'][0] }}</a></p>
+                {% endif %}
+                {% endcall %}
             {% endif %}
-                <div class="field">
 
-                    {{ form.email_address.label(class_='label') }}
+            <form
+                method="post"
+                action="{{ url_for('account_bp.post_request_new_account') }}"
+                class="form"
+                role="form">
 
-                    {{ form.email_address(class_='input input--text input-type__input') }}
+                <h1 class="u-mt-l">Verify your email</h1>
+                <br />
+                {{ form.csrf_token }}
 
-                </div>
-            {% if errorType.email_address %}
-            </div>
-            {% endif %}
-            <br />
-            {% if errorType.password %}
-            <div class="panel panel--simple panel--error">
-                <p class="error-message">{{ errorType['password'][0] }}</p>
-            {% endif %}
-                <div class="field" id="password_field">
-                {{ form.password.label(class_='label') }}
-                {{ form.password(id='inputPassword', class_='input input--text input-type__input, autocomplete="off"', **{'aria-describedby':'inputPasswordLabel'}) }}
-            </div>
-            {% if errorType.password %}
-            </div>
-            {% endif %}
-        </fieldset>
-        <br />
-
-        <button class="btn u-fs-r--b u-mb-s" id="request-account-btn" type="submit">Continue</button>
-    </form>
-</div>
+                {% if errorType.email_address %}
+                    {% set emailError = { "text": errorType['email_address'][0] } %}
+                {% endif %}
+                {%- call onsFieldset({
+                    "legend": "Enter your details to verify your email",
+                    "legendClasses": "u-vh"
+                    }) -%}
+                        {{
+                            onsInput({
+                                "id": "email_address",
+                                "name": "email_address",
+                                "type": "email",
+                                "autocomplete": "email",                                
+                                "label": {
+                                    "text": "Enter the ONS email address to create an account for"
+                                },
+                                "attributes": {
+                                    "required": true
+                                },
+                                "error": emailError
+                            })
+                        }} 
+                        {% if errorType.password %}
+                            {% set passwordError = { "text": errorType['password'][0] } %}
+                        {% endif %}
+ 
+                        {{
+                            onsInput({
+                                "id": "inputPassword",
+                                "name": "password",
+                                "type": "password",
+                                "autocomplete": "off",                                
+                                "label": {
+                                    "text": "Enter the admin password"
+                                },
+                                "attributes": {
+                                    "required": true
+                                },
+                                "error": passwordError
+                            })
+                        }}  
+                {%- endcall -%}
+                {{
+                    onsButton({
+                        "text": "Continue",
+                        "type": "submit",
+                        "classes": "u-mt-l",
+                        "id": "request-account-btn",
+                        "submitType": "timer"
+                    })
+                }}
+            </form>
+        </div>
+    </div>
 {% endblock main %}
