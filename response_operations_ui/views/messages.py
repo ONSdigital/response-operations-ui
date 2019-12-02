@@ -457,7 +457,7 @@ def _refine(message):
         'sent_date': _get_human_readable_date(message.get('sent_date')),
         'unread': _get_unread_status(message),
         'message_id': message.get('msg_id'),
-        'ru_id': message.get('ru_id'),
+        'ru_id': message.get('business_id'),
     }
 
 
