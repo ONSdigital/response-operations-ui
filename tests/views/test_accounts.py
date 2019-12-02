@@ -8,6 +8,7 @@ from config import TestingConfig
 test_email = "fake@ons.gov.uk"
 url_uaa_token = f"{TestingConfig.UAA_SERVICE_URL}/oauth/token"
 url_uaa_get_accounts = f"{TestingConfig.UAA_SERVICE_URL}/Users?filter=email+eq+%22{test_email}%22"
+url_send_notify = f'{TestingConfig().NOTIFY_SERVICE_URL}{TestingConfig().NOTIFY_REQUEST_CREATE_ACCOUNT_TEMPLATE}'
 
 
 class TestAccounts(unittest.TestCase):
@@ -27,6 +28,7 @@ class TestAccounts(unittest.TestCase):
 
     @requests_mock.mock()
     def test_request_account(self, mock_request):
+        mock_request.post(url_send_notify, json={'emailAddress': test_email}, status=201)
         mock_request.post(url_uaa_token, json={"access_token": self.access_token.decode()}, status_code=201)
         mock_request.get(url_uaa_get_accounts, json={"totalResults": 0}, status_code=200)
         response = self.client.post("/account/request-new-account", follow_redirects=True,
