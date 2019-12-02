@@ -20,7 +20,7 @@ class TestAccounts(unittest.TestCase):
         self.client = app.test_client()
 
     def test_request_account_page(self):
-        response = self.client.get('/request-new-account')
+        response = self.client.get('/account/request-new-account')
         self.assertIn(b'ONS email address', response.data)
         self.assertIn(b'admin password', response.data)
         self.assertEqual(response.status_code, 200)
@@ -29,7 +29,7 @@ class TestAccounts(unittest.TestCase):
     def test_request_account(self, mock_request):
         mock_request.post(url_uaa_token, json={"access_token": self.access_token.decode()}, status_code=201)
         mock_request.get(url_uaa_get_accounts, json={"totalResults": 0}, status_code=200)
-        response = self.client.post("/request-new-account", follow_redirects=True,
+        response = self.client.post("/account/request-new-account", follow_redirects=True,
                                     data={"email_address": test_email,
                                           "password": TestingConfig.CREATE_ACCOUNT_ADMIN_PASSWORD})
         self.assertIn(b'We have sent an email to fake@ons.gov.uk', response.data)
