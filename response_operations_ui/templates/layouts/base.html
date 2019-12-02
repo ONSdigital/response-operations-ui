@@ -20,10 +20,12 @@
     {% endif %}
 {% endblock %}
 {% block bodyStart %}	
-  <!-- Google Tag Manager (noscript) -->	
-  <noscript><iframe src="https://www.googletagmanager.com/ns.html?id={{ config.GOOGLE_TAG_MANAGER }}&gtm_auth={{ config.GOOGLE_TAG_MANAGER_PROP }}&gtm_cookies_win=x"	
-  height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>	
-  <!-- End Google Tag Manager (noscript) -->	
+  {% if config.GOOGLE_TAG_MANAGER %}
+    <!-- Google Tag Manager (noscript) -->	
+    <noscript><iframe src="https://www.googletagmanager.com/ns.html?id={{ config.GOOGLE_TAG_MANAGER }}&gtm_auth={{ config.GOOGLE_TAG_MANAGER_PROP }}&gtm_cookies_win=x"	
+    height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>	
+    <!-- End Google Tag Manager (noscript) -->	
+   {% endif %}
 {% endblock %}
 
 {% set pageConfig = { 
