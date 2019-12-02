@@ -60,23 +60,23 @@ def get_conversation_count(survey_id, conversation_tab, business_id):
 
 
 def _get_secure_message_threads_params(survey_id, business_id, conversation_tab):
-    """creates a params dictionary based on data passed in"""
-    params = {'survey_id': survey_id,
+    """creates a params dictionary"""
+    params = {'survey': survey_id,
               'is_closed': 'true' if conversation_tab == 'closed' else 'false',
               'my_conversations': 'true' if conversation_tab == 'my messages' else 'false',
               'new_respondent_conversations': 'true' if conversation_tab == 'initial' else 'false'}
     if business_id:
-        params['ru_id'] = business_id   #TODO: Change me to business_id
+        params['business_id'] = business_id
     return params
 
 
-def get_thread_list(survey_id, business_id, conversation_tab,  page, limit):
+def get_thread_list(survey_id, business_id, conversation_tab, page, limit):
 
     logger.info("Retrieving threads list")
     params = _get_secure_message_threads_params(survey_id, business_id, conversation_tab)
     params['page'] = page
     params['limit'] = limit
-       
+
     url = f'{current_app.config["SECURE_MESSAGE_URL"]}/threads'
     # This will be removed once UAA is completed.  For now we need the call to sm to include
     # an Authorization in its header a JWT that includes party_id and role.
@@ -151,6 +151,7 @@ def update_close_conversation_status(thread_id, status):
     except HTTPError:
         logger.error("Failed to update close conversation status", thread_id=thread_id, status=status, exc_info=True)
         raise ApiError(response)
+
 
 def _post_new_message(message):
     url = f'{current_app.config["SECURE_MESSAGE_URL"]}/messages'

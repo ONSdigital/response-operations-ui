@@ -18,7 +18,7 @@
           "lastName": ""
         }
       ],
-      "@ru_id": {
+      "@business_details": {
         "id": "f1a5e99c-8edf-489a-9c72-6cabe6c387f1",
         "name": "Apple",
         "sampleUnitRef": "50012345671"
@@ -59,7 +59,7 @@
           "lastName": ""
         }
       ],
-      "@ru_id": {
+      "@business_details": {
         "id": "f1a5e99c-8edf-489a-9c72-6cabe6c387f2",
         "name": "Apple",
         "sampleUnitRef": "50012345672"
@@ -100,7 +100,7 @@
           "lastName": ""
         }
       ],
-      "@ru_id": {
+      "@business_details": {
         "id": "f1a5e99c-8edf-489a-9c72-6cabe6c387f3",
         "name": "Apple",
         "sampleUnitRef": "50012345673"
@@ -141,7 +141,7 @@
           "lastName": ""
         }
       ],
-      "@ru_id": {
+      "@business_details": {
         "id": "f1a5e99c-8edf-489a-9c72-6cabe6c387f4",
         "name": "Apple",
         "sampleUnitRef": "50012345674"
@@ -182,7 +182,7 @@
           "lastName": ""
         }
       ],
-      "@ru_id": {
+      "@business_details": {
         "id": "f1a5e99c-8edf-489a-9c72-6cabe6c387f5",
         "name": "Apple",
         "sampleUnitRef": "50012345675"
@@ -223,7 +223,7 @@
           "lastName": ""
         }
       ],
-      "@ru_id": {
+      "@business_details": {
         "id": "f1a5e99c-8edf-489a-9c72-6cabe6c387f6",
         "name": "Apple",
         "sampleUnitRef": "50012345676"
@@ -264,7 +264,7 @@
           "lastName": ""
         }
       ],
-      "@ru_id": {
+      "@business_details": {
         "id": "f1a5e99c-8edf-489a-9c72-6cabe6c387f7",
         "name": "Apple",
         "sampleUnitRef": "50012345677"
@@ -305,7 +305,7 @@
           "lastName": ""
         }
       ],
-      "@ru_id": {
+      "@business_details": {
         "id": "f1a5e99c-8edf-489a-9c72-6cabe6c387f8",
         "name": "Apple",
         "sampleUnitRef": "50012345678"
@@ -346,7 +346,7 @@
           "lastName": ""
         }
       ],
-      "@ru_id": {
+      "@business_details": {
         "id": "f1a5e99c-8edf-489a-9c72-6cabe6c387f9",
         "name": "Apple",
         "sampleUnitRef": "50012345679"
@@ -387,7 +387,7 @@
           "lastName": ""
         }
       ],
-      "@ru_id": {
+      "@business_details": {
         "id": "f1a5e99c-8edf-489a-9c72-6cabe6c387f1",
         "name": "Apple",
         "sampleUnitRef": "50012345671"

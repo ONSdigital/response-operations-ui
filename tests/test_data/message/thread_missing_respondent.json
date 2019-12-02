@@ -8,7 +8,7 @@
                 "id": "688da990-8e33-471f-ae26-e253df4bb759",
                 "lastName": "User"
             },
-            "@ru_id": null,
+            "@business_details": null,
             "_links": "",
             "body": "fifth message",
             "collection_case": "",
@@ -35,7 +35,7 @@
                 "id": "688da990-8e33-471f-ae26-e253df4bb759",
                 "lastName": "User"
             },
-            "@ru_id": null,
+            "@business_details": null,
             "_links": "",
             "body": "fourth message!!!",
             "collection_case": "",
@@ -62,7 +62,7 @@
                 "id": "688da990-8e33-471f-ae26-e253df4bb759",
                 "lastName": "User"
             },
-            "@ru_id": null,
+            "@business_details": null,
             "_links": "",
             "body": "another one",
             "collection_case": "",
@@ -89,7 +89,7 @@
                 "id": "688da990-8e33-471f-ae26-e253df4bb759",
                 "lastName": "User"
             },
-            "@ru_id": null,
+            "@business_details": null,
             "_links": "",
             "body": "another message",
             "collection_case": "",
@@ -116,7 +116,7 @@
                 "id": "688da990-8e33-471f-ae26-e253df4bb759",
                 "lastName": "User"
             },
-            "@ru_id": null,
+            "@business_details": null,
             "_links": "",
             "body": "more messages",
             "collection_case": "",
@@ -145,7 +145,7 @@
                     "lastName": "User"
                 }
             ],
-            "@ru_id": null,
+            "@business_details": null,
             "_links": "",
             "body": "another message",
             "collection_case": "",
@@ -173,7 +173,7 @@
                 "id": "688da990-8e33-471f-ae26-e253df4bb759",
                 "lastName": "User"
             },
-            "@ru_id": null,
+            "@business_details": null,
             "_links": "",
             "body": "this is another message",
             "collection_case": "",
