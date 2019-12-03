@@ -9,7 +9,8 @@ class Config(object):
     DEBUG = os.getenv('DEBUG', False)
     TESTING = False
     PORT = os.getenv('PORT', 8085)
-    GOOGLE_ANALYTICS_ID = os.getenv('GOOGLE_ANALYTICS_ID', None)
+    GOOGLE_TAG_MANAGER = os.getenv('GOOGLE_TAG_MANAGER', None)
+    GOOGLE_TAG_MANAGER_PROP = os.getenv('GOOGLE_TAG_MANAGER_PROP', None)
     LOGGING_LEVEL = os.getenv('LOGGING_LEVEL', 'INFO')
     RESPONSE_OPERATIONS_UI_SECRET = os.getenv('RESPONSE_OPERATIONS_UI_SECRET', "secret")
     SESSION_TYPE = "redis"
