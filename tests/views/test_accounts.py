@@ -19,9 +19,9 @@ class TestAccounts(unittest.TestCase):
     def setUp(self):
         payload = {'user_id': 'test-id',
                    'aud': 'response_operations'}
-        app = create_app('TestingConfig')
+        self.app = create_app('TestingConfig')
         self.access_token = jwt.encode(payload, app.config['UAA_PRIVATE_KEY'], algorithm='RS256')
-        self.client = app.test_client()
+        self.client = self.app.test_client()
 
     def test_request_account_page(self):
         response = self.client.get('/account/request-new-account')
