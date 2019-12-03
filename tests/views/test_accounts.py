@@ -61,28 +61,30 @@ class TestAccounts(unittest.TestCase):
         self.assertEqual(response.status_code, 200)
 
     def test_create_account_page(self):
-        token = token_decoder.generate_email_token(test_email)
-        response = self.client.get(f'/account/create-account/{token}')
-        self.assertIn(b'Consider using your ONS username', response.data)
-        self.assertIn(b'at least one capital letter', response.data)
-        self.assertEqual(response.status_code, 200)
+        with self.app.app_context():
+            token = token_decoder.generate_email_token(test_email)
+            response = self.client.get(f'/account/create-account/{token}')
+            self.assertIn(b'Consider using your ONS username', response.data)
+            self.assertIn(b'at least one capital letter', response.data)
+            self.assertEqual(response.status_code, 200)
 
     def test_create_account_page_dodgy_token(self):
-        response = self.cleint.get(f'/account/create-account/dodgy-token')
+        response = self.client.get(f'/account/create-account/dodgy-token')
         self.assertIn(b'Your link has expired', response.data)
         self.assertEqual(response.status_code, 200)
 
     @requests_mock.mock()
     def test_create_account(self, mock_request):
-        token = token_decoder.generate_email_token(test_email)
-        mock_request.post(url_send_cre_notify, json={'emailAddress': test_email}, status_code=201)
-        mock_request.post(url_uaa_token, json={"access_token": self.access_token.decode()}, status_code=201)
-        mock_request.post(url_uaa_create_account, json={}, status_code=201)
-        response = self.client.post(f"/account/create-account/{token}", follow_redirects=True,
-                                    data={"password": 'TestPassword1!',
-                                          "user_name": 'testname',
-                                          "first_name": 'Test',
-                                          "last_name": 'Account'})
-        self.assertIn(b'Account successfully created', response.data)
-        self.assertIn(b'Sign in', response.data)
-        self.assertEqual(response.status_code, 200)
+        with self.app.app_context():
+            token = token_decoder.generate_email_token(test_email)
+            mock_request.post(url_send_cre_notify, json={'emailAddress': test_email}, status_code=201)
+            mock_request.post(url_uaa_token, json={"access_token": self.access_token.decode()}, status_code=201)
+            mock_request.post(url_uaa_create_account, json={}, status_code=201)
+            response = self.client.post(f"/account/create-account/{token}", follow_redirects=True,
+                                        data={"password": 'TestPassword1!',
+                                              "user_name": 'testname',
+                                              "first_name": 'Test',
+                                              "last_name": 'Account'})
+            self.assertIn(b'Account successfully created', response.data)
+            self.assertIn(b'Sign in', response.data)
+            self.assertEqual(response.status_code, 200)
