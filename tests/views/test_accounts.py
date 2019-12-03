@@ -36,3 +36,23 @@ class TestAccounts(unittest.TestCase):
                                           "password": TestingConfig.CREATE_ACCOUNT_ADMIN_PASSWORD})
         self.assertIn(b'We have sent an email to fake@ons.gov.uk', response.data)
         self.assertEqual(response.status_code, 200)
+
+    @requests_mock.mock()
+    def test_request_account_fails(self, mock_request):
+        mock_request.post(url_uaa_token, json={"access_token": self.access_token.decode()}, status_code=201)
+        mock_request.get(url_uaa_get_accounts, json={"totalResults": 0}, status_code=403)
+        response = self.client.post("/account/request-new-account", follow_redirects=True,
+                                    data={"email_address": test_email,
+                                          "password": TestingConfig.CREATE_ACCOUNT_ADMIN_PASSWORD})
+        self.assertIn(b'problem trying to send you a password reset email', response.data)
+        self.assertEqual(response.status_code, 200)
+
+    @requests_mock.mock()
+    def test_request_account_already_exists(self, mock_request):
+        mock_request.post(url_uaa_token, json={"access_token": self.access_token.decode()}, status_code=201)
+        mock_request.get(url_uaa_get_accounts, json={"totalResults": 1}, status_code=200)
+        response = self.client.post("/account/request-new-account", follow_redirects=True,
+                                    data={"email_address": test_email,
+                                          "password": TestingConfig.CREATE_ACCOUNT_ADMIN_PASSWORD})
+        self.assertIn(b'An account already exists for the email fake@ons.gov.uk', response.data)
+        self.assertEqual(response.status_code, 200)
