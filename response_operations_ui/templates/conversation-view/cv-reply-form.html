@@ -23,7 +23,8 @@
             onsButton({
                 "text": "Send",
                 "classes": 'u-mt-s',
-                "id": "btn-send-message"
+                "id": "btn-send-message",
+                "submitType": "timer"
             })
         }}   
         {{
@@ -32,7 +33,8 @@
                 "type": 'button',
                 "text": 'Close conversation',
                 "classes": 'btn--secondary u-mt-s',
-                "url": url_for('messages_bp.close_conversation', thread_id=messages[0].thread_id, page=page, conversation_tab=conversation_tab, business_id=business_id, ru_ref_filter=ru_ref_filter, business_id_filter=business_id_filter)
+                "url": url_for('messages_bp.close_conversation', thread_id=messages[0].thread_id, page=page, conversation_tab=conversation_tab, business_id=business_id, ru_ref_filter=ru_ref_filter, business_id_filter=business_id_filter),
+                "submitType": "timer"
             }) 
         }}
     </form>

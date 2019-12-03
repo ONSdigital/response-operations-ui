@@ -129,7 +129,7 @@ def send_password_change_email(email):
 
     first_name = uaa_controller.get_first_name_by_email(email)
     if first_name != "":
-        internal_url = app.config['INTERNAL_WEBSITE_URL']
+        internal_url = app.config['RESPONSE_OPERATIONS_UI_URL']
         verification_url = f'{internal_url}/passwords/reset-password/{token_decoder.generate_email_token(email)}'
 
         logger.info('Sending password change email', verification_url=verification_url)

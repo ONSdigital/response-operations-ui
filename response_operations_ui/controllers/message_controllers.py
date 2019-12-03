@@ -163,7 +163,7 @@ def _get_jwt():
     token = session.get('token')
     decoded_token = token_decoder.decode_access_token(token)
     user_id = decoded_token.get('user_id')
-    secret = current_app.config['RAS_SECURE_MESSAGING_JWT_SECRET']
+    secret = current_app.config['SECURE_MESSAGE_JWT_SECRET']
     sm_token = jwt.encode({'party_id': user_id, 'role': 'internal'}, secret, algorithm='HS256')
     logger.info("Retrieving current token for user", user_id=current_user.id)
     return sm_token

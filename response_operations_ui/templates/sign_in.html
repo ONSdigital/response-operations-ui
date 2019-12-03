@@ -1,7 +1,6 @@
 {% extends "layouts/base.html" %}
 {% from "components/fieldset/_macro.njk" import onsFieldset %}
 {% from "components/input/_macro.njk" import onsInput %}
-{% from "components/panel/_macro.njk" import onsPanel %}
 {% from "components/error/_macro.njk" import onsError %}
 {% from "components/lists/_macro.njk" import onsList %}
 {% from "components/button/_macro.njk" import onsButton %}
@@ -9,125 +8,120 @@
 {% set page_title = "Sign-In" %}
 
 {% block main %}
-    <div class="grid">
-        <div class="grid__col col-8@m u-mt-l">
-            {% with messages = get_flashed_messages(with_categories=true) %}
-                {% if messages %}
-                    {% for category, message in messages %}
-                        {% if category == "failed_authentication" or category == "successful_signout" %}
-                            {% call
-                                onsPanel({
-                                    "type": "error" if category == "failed_authentication" else "success",
-                                    "classes": "u-mb-s",
-                                    "title":  message if category == "failed_authentication"
-                                })
-                            %}
-                            {% if category == "failed_authentication" %}
-                                <p><a href="#username" id="try-again-link" class="js-inpagelink">Please try again</a></p>
-                            {% else %}
-                                <p id="successfully-signed-out">{{ message }}</p>
-                            {% endif %}
-                            {% endcall %}
-                        {% endif %}
-                    {% endfor %}
-                {% endif %}
-            {% endwith %}
-            <section>
-                <form method="post" class="form u-mt-m">
-                    {{ form.csrf_token }}
-                    {% if form.errors %}
-                        {% call
-                            onsPanel({
-                                title: "This page has 1 error" if form.errors|length == 1 else "There are {{ form.errors|length }} errors on this page",
-                                type: "error"
-                            })
-                        %}
-                        <p>These <strong>must be corrected</strong> to continue.</p>
-                        {% for error in form.username.errors %}
-                            {% do errorData.append(
-                                {
-                                    "text": error,
-                                    "index": true,
-                                    "url": "#username",
-                                    "classes": "js-inpagelink"
-                                }
-                            ) %}
-                        {% endfor %}
-                        {% for error in form.password.errors %}
-                            {% do errorData.append(
-                                {
-                                    "text": error,
-                                    "index": true,
-                                    "url": "#password",
-                                    "classes": "js-inpagelink"
-                                }
-                            ) %}
-                        {% endfor %}
-                        {{
-                            onsList({
-                                "classes": "list--bare",
-                                "itemsList": errorData
-                            }) 
-                        }}
-                        {% endcall %}
-                    {% endif %}
-
-                    <h1>Sign in</h1>
-
-                    {% if failed_authentication or form.username.errors | length > 0 %}
-                        {% set error = { "text": "Username is required" } %}
-                    {% endif %}
-                    {%- call onsFieldset({
-                        "legend": "Sign in",
-                        "legendClasses": "u-vh"
-                    }) -%}
-                        {{
-                            onsInput({
-                                "id": "username",
-                                "name": "username",
-                                "type": "text",
-                                "label": {
-                                    "text": "Username"
-                                },
-                                "attributes": {
-                                    "required": true
-                                },
-                                "error": error
-                            })
-                        }}
-
-                        {% if failed_authentication or form.password.errors | length > 0 %}
-                            {% set error = { "text": "Password is required" } %}
-                        {% endif %}
-
-                        {{
-                            onsInput({
-                                "id": "password",
-                                "name": "password",
-                                "type": "password",
-                                "label": {
-                                    "text": "Password"
-                                },
-                                "attributes": {
-                                    "required": true
-                                },
-                                "error": error
-                            })
-                        }}  
-                    {%- endcall -%}
-                    {{
-                        onsButton({
-                            "text": "Sign in",
-                            "type": "submit",
-                            "classes": "u-mt-l",
-                            "id": "SIGN_IN_BUTTON"
+    {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+            {% for category, message in messages %}
+                {% if category == "failed_authentication" or category == "successful_signout" %}
+                    {% call
+                        onsPanel({
+                            "type": "error" if category == "failed_authentication" else "success",
+                            "classes": "u-mb-s",
+                            "title":  message if category == "failed_authentication"
                         })
-                    }}
-                </form>
-                <div class="u-mt-m">
-                    <a href="/passwords/forgot-password">Forgot password?</a>
-                </div>
-            </section>
+                    %}
+                    {% if category == "failed_authentication" %}
+                        <p><a href="#username" id="try-again-link" class="js-inpagelink">Please try again</a></p>
+                    {% else %}
+                        <p id="successfully-signed-out">{{ message }}</p>
+                    {% endif %}
+                    {% endcall %}
+                {% endif %}
+            {% endfor %}
+        {% endif %}
+    {% endwith %}
+        <form method="post" class="form u-mt-xl">
+            {{ form.csrf_token }}
+            {% if form.errors %}
+                {% call
+                    onsPanel({
+                        title: "This page has 1 error" if form.errors|length == 1 else "There are {{ form.errors|length }} errors on this page",
+                        type: "error"
+                    })
+                %}
+                <p>These <strong>must be corrected</strong> to continue.</p>
+                {% for error in form.username.errors %}
+                    {% do errorData.append(
+                        {
+                            "text": error,
+                            "index": true,
+                            "url": "#username",
+                            "classes": "js-inpagelink"
+                        }
+                    ) %}
+                {% endfor %}
+                {% for error in form.password.errors %}
+                    {% do errorData.append(
+                        {
+                            "text": error,
+                            "index": true,
+                            "url": "#password",
+                            "classes": "js-inpagelink"
+                        }
+                    ) %}
+                {% endfor %}
+                {{
+                    onsList({
+                        "classes": "list--bare",
+                        "itemsList": errorData
+                    }) 
+                }}
+                {% endcall %}
+            {% endif %}
+
+            <h1>Sign in</h1>
+
+            {% if failed_authentication or form.username.errors | length > 0 %}
+                {% set error = { "text": "Username is required" } %}
+            {% endif %}
+            {%- call onsFieldset({
+                "legend": "Sign in",
+                "legendClasses": "u-vh"
+            }) -%}
+                {{
+                    onsInput({
+                        "id": "username",
+                        "name": "username",
+                        "type": "text",
+                        "label": {
+                            "text": "Username"
+                        },
+                        "attributes": {
+                            "required": true
+                        },
+                        "error": error
+                    })
+                }}
+
+                {% if failed_authentication or form.password.errors | length > 0 %}
+                    {% set error = { "text": "Password is required" } %}
+                {% endif %}
+
+                {{
+                    onsInput({
+                        "id": "password",
+                        "name": "password",
+                        "type": "password",
+                        "label": {
+                            "text": "Password"
+                        },
+                        "attributes": {
+                            "required": true
+                        },
+                        "error": error
+                    })
+                }}  
+            {%- endcall -%}
+            {{
+                onsButton({
+                    "text": "Sign in",
+                    "type": "submit",
+                    "classes": "u-mt-l",
+                    "id": "SIGN_IN_BUTTON",
+                    "submitType": "timer"
+                })
+            }}
+        </form>
+        <div class="u-mt-m">
+            <a href="/passwords/forgot-password">Forgot password?</a>
         </div>
-    </div>
 {% endblock main %}

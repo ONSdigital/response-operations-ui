@@ -389,7 +389,7 @@ class TestMessage(ViewTestCase):
           "thread_id": "",
           "collection_case": "",
           "survey": "BRES2017",
-          "ru_id": "c614e64e-d981-4eba-b016-d9822f09a4fb"
+          "business_id": "c614e64e-d981-4eba-b016-d9822f09a4fb"
         }
         '''
 
