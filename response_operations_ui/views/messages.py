@@ -67,8 +67,6 @@ def view_conversation(thread_id):
     conversation_tab = request.args.get('conversation_tab')
     page = request.args.get('page')
     
-    ru_ref = request.args.get('ru_ref')
-    
     ru_ref_filter = request.args.get('ru_ref_filter')
     business_id_filter = request.args.get('business_id_filter')
 
@@ -78,14 +76,12 @@ def view_conversation(thread_id):
                              thread_id=thread_id, 
                              conversation_tab=conversation_tab,
                              page=page,
-                             ru_ref=ru_ref,
                              ru_ref_filter=ru_ref_filter, 
                              business_id_filter=business_id_filter) + "#latest-message"
         flash(Markup(f'Conversation re-opened. <a href={thread_url}>View conversation</a>'))
         return redirect(url_for('messages_bp.view_select_survey', 
                                 conversation_tab=conversation_tab, 
                                 page=page,
-                                ru_ref=ru_ref,
                                 ru_ref_filter=ru_ref_filter, 
                                 business_id_filter=business_id_filter))
 
@@ -117,7 +113,6 @@ def view_conversation(thread_id):
             thread_url = url_for("messages_bp.view_conversation", thread_id=thread_id,
                                  page=page,
                                  conversation_tab=conversation_tab,
-                                 ru_ref=ru_ref,
                                  ru_ref_filter=ru_ref_filter,
                                  business_id_filter=business_id_filter) + "#latest-message"
             flash(Markup(f'Message sent. <a href={thread_url}>View Message</a>'))
@@ -152,7 +147,6 @@ def view_conversation(thread_id):
                            thread_data=thread_conversation,
                            show_mark_unread=_can_mark_as_unread(latest_message),
                            conversation_tab=conversation_tab,
-                           ru_ref=ru_ref,
                            ru_ref_filter=ru_ref_filter,
                            business_id_filter=business_id_filter)
 
