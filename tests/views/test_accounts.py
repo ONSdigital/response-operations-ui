@@ -82,6 +82,7 @@ class TestAccounts(unittest.TestCase):
             mock_request.post(url_uaa_create_account, json={}, status_code=201)
             response = self.client.post(f"/account/create-account/{token}", follow_redirects=True,
                                         data={"password": 'TestPassword1!',
+                                              "password_confirm": 'TestPassword1!',
                                               "user_name": 'testname',
                                               "first_name": 'Test',
                                               "last_name": 'Account'})
