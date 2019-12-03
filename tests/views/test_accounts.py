@@ -20,7 +20,6 @@ class TestAccounts(unittest.TestCase):
         payload = {'user_id': 'test-id',
                    'aud': 'response_operations'}
         app = create_app('TestingConfig')
-        self.token = token_decoder.generate_email_token(test_email)
         self.access_token = jwt.encode(payload, app.config['UAA_PRIVATE_KEY'], algorithm='RS256')
         self.client = app.test_client()
 
@@ -62,7 +61,8 @@ class TestAccounts(unittest.TestCase):
         self.assertEqual(response.status_code, 200)
 
     def test_create_account_page(self):
-        response = self.client.get(f'/account/create-account/{self.token}')
+        token = token_decoder.generate_email_token(test_email)
+        response = self.client.get(f'/account/create-account/{token}')
         self.assertIn(b'Consider using your ONS username', response.data)
         self.assertIn(b'at least one capital letter', response.data)
         self.assertEqual(response.status_code, 200)
@@ -74,10 +74,11 @@ class TestAccounts(unittest.TestCase):
 
     @requests_mock.mock()
     def test_create_account(self, mock_request):
+        token = token_decoder.generate_email_token(test_email)
         mock_request.post(url_send_cre_notify, json={'emailAddress': test_email}, status_code=201)
         mock_request.post(url_uaa_token, json={"access_token": self.access_token.decode()}, status_code=201)
         mock_request.post(url_uaa_create_account, json={}, status_code=201)
-        response = self.client.post(f"/account/create-account/{self.token}", follow_redirects=True,
+        response = self.client.post(f"/account/create-account/{token}", follow_redirects=True,
                                     data={"password": 'TestPassword1!',
                                           "user_name": 'testname',
                                           "first_name": 'Test',
