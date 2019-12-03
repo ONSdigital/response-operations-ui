@@ -42,12 +42,12 @@ class SecureMessageForm(FlaskForm):
     hidden_business = HiddenField('hidden_business')
     hidden_to = HiddenField('hidden_to')
     hidden_to_uuid = HiddenField('hidden_to_uuid')
-    hidden_to_ru_id = HiddenField('hidden_to_ru_id')
+    hidden_to_business_id = HiddenField('hidden_to_business_id')
 
 
 class SecureMessageRuFilterForm(FlaskForm):
 
-    ru_ref = StringField('ru_ref', validators=[Length(min=11, max=11, message="Ru ref must be 11 characters")])
+    ru_ref_filter = StringField('ru_ref_filter', validators=[Length(min=11, max=11, message="Ru ref must be 11 characters")])
     submit = SubmitField('Filter')
 
 

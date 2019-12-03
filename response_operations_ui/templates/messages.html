@@ -30,14 +30,14 @@
         <h1 class="u-fs-xl" name="page-messages-title">Messages</h1>
       {% endif %}
         
-      {% if ru_ref %}
-          <p id="clear_ru_ref" class="u-fs-s">Filtered by RU ref: {{ ru_ref }}
+      {% if ru_ref_filter %}
+          <p id="clear_ru_ref" class="u-fs-s">Filtered by RU ref: {{ ru_ref_filter }}
             <a href="{{ url_for('messages_bp.clear_filter', selected_survey=selected_survey, conversation_tab=conversation_tab) }}">Clear filter</a>
           </p>
       {% endif %}  
     </div>
     <div class="grid__col u-mt-s@s"> 
-      <form action="{{ url_for('messages_bp.view_selected_survey',selected_survey=selected_survey, conversation_tab=conversation_tab, ru_ref=ru_ref, business_id=business_id, page=page, limit=limit) }}" method="post">
+      <form action="{{ url_for('messages_bp.view_selected_survey',selected_survey=selected_survey, conversation_tab=conversation_tab, ru_ref_filter=ru_ref_filter, business_id_filter=business_id_filter, page=page, limit=limit) }}" method="post">
         {{ form.csrf_token }}
         {{
           onsSearch({
@@ -46,8 +46,8 @@
                   "type": 'number',
                   "width": '6',
                   "label": 'Filter RU ref',
-                  "name": 'ru_ref',
-                  "value": ru_ref
+                  "name": 'ru_ref_filter',
+                  "value": ru_ref_filter
               },
               "button": {
                   "text": 'Filter',
@@ -69,16 +69,16 @@
       <nav class="nav nav--horizontal nav--sub nav--dark u-mb-l u-mt-s" role="menu">
             <ul class="nav__list" aria-label="Section navigation menu">
                 <li class="nav__item u-fs-s {% if conversation_tab =='my messages' %}nav__item--current{% endif %}">
-                    <a class="nav__link" href="{{ url_for('messages_bp.view_selected_survey', selected_survey=selected_survey, conversation_tab='my messages', ru_ref=ru_ref, business_id=business_id) }}" aria-current="{% if conversation_tab == 'my messages' %}location{% endif %}" role="menuitem">My Messages</a>
+                    <a class="nav__link" href="{{ url_for('messages_bp.view_selected_survey', selected_survey=selected_survey, conversation_tab='my messages', ru_ref_filter=ru_ref_filter, business_id_filter=business_id_filter) }}" aria-current="{% if conversation_tab == 'my messages' %}location{% endif %}" role="menuitem">My Messages</a>
                 </li>
                 <li class="nav__item u-fs-s {% if conversation_tab == 'open' %}nav__item--current{% endif %}">
-                    <a class="nav__link" href="{{ url_for('messages_bp.view_selected_survey', selected_survey=selected_survey, conversation_tab = 'open', ru_ref=ru_ref, business_id=business_id) }}" aria-current="{% if conversation_tab == 'open' %}location{% endif %}" role="menuitem">Open</a>
+                    <a class="nav__link" href="{{ url_for('messages_bp.view_selected_survey', selected_survey=selected_survey, conversation_tab = 'open', ru_ref_filter=ru_ref_filter, business_id_filter=business_id_filter) }}" aria-current="{% if conversation_tab == 'open' %}location{% endif %}" role="menuitem">Open</a>
                 </li>
                 <li class="nav__item u-fs-s {% if conversation_tab == 'closed' %}nav__item--current{% endif %}">
-                    <a class="nav__link" href="{{ url_for('messages_bp.view_selected_survey', selected_survey=selected_survey, conversation_tab = 'closed', ru_ref=ru_ref, business_id=business_id) }}" aria-current="{% if conversation_tab == 'closed' %}location{% endif %}" role="menuitem">Closed</a>
+                    <a class="nav__link" href="{{ url_for('messages_bp.view_selected_survey', selected_survey=selected_survey, conversation_tab = 'closed', ru_ref_filter=ru_ref_filter, business_id_filter=business_id_filter) }}" aria-current="{% if conversation_tab == 'closed' %}location{% endif %}" role="menuitem">Closed</a>
                 </li>
                 <li class="nav__item u-fs-s {% if conversation_tab == 'initial' %}nav__item--current{% endif %}">
-                    <a class="nav__link" href="{{ url_for('messages_bp.view_selected_survey', selected_survey=selected_survey, conversation_tab = 'initial', ru_ref=ru_ref, business_id=business_id) }}" aria-current="{% if conversation_tab == 'initial' %}location{% endif %}" role="menuitem">Initial</a>
+                    <a class="nav__link" href="{{ url_for('messages_bp.view_selected_survey', selected_survey=selected_survey, conversation_tab = 'initial', ru_ref_filter=ru_ref_filter, business_id_filter=business_id_filter) }}" aria-current="{% if conversation_tab == 'initial' %}location{% endif %}" role="menuitem">Initial</a>
                 </li>
             </ul>
       </nav>
@@ -151,7 +151,7 @@
                     {{ message.business_name or 'Unavailable' }}
                 </td>
                 <td name="tbl-messages-subject" class="message-list__subject">
-                    <a href="{{ url_for('messages_bp.view_conversation', thread_id=message.thread_id, page=page, conversation_tab=conversation_tab, ru_ref=ru_ref, business_id=business_id) }}#latest-message" id="message-link-{{ loop.index }}">{{ message.subject }}</a>
+                    <a href="{{ url_for('messages_bp.view_conversation', thread_id=message.thread_id, page=page, conversation_tab=conversation_tab, ru_ref=ru_ref, ru_ref_filter=ru_ref_filter, business_id_filter=business_id_filter) }}#latest-message" id="message-link-{{ loop.index }}">{{ message.subject }}</a>
                 </td>
                 <td name="tbl-messages-from" class="message-list__from" id="message-from-{{ loop.index }}">
                     {{ message.from or 'Unavailable' }}
