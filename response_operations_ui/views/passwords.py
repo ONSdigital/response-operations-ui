@@ -161,8 +161,8 @@ def send_password_change_email(email):
 
 
 def send_confirm_change_email(email):
-    first_name = uaa_controller.get_first_name_by_email(email)
-    if first_name != "":
+    user = uaa_controller.get_user_by_email(email)
+    if user['resources'][0]['name']['givenName'] != "":
         personalisation = {
             'FIRST_NAME': first_name
         }
