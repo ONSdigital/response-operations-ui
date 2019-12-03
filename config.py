@@ -9,7 +9,8 @@ class Config(object):
     DEBUG = os.getenv('DEBUG', False)
     TESTING = False
     PORT = os.getenv('PORT', 8085)
-    GOOGLE_ANALYTICS_ID = os.getenv('GOOGLE_ANALYTICS_ID', None)
+    GOOGLE_TAG_MANAGER = os.getenv('GOOGLE_TAG_MANAGER', None)
+    GOOGLE_TAG_MANAGER_PROP = os.getenv('GOOGLE_TAG_MANAGER_PROP', None)
     LOGGING_LEVEL = os.getenv('LOGGING_LEVEL', 'INFO')
     RESPONSE_OPERATIONS_UI_SECRET = os.getenv('RESPONSE_OPERATIONS_UI_SECRET', "secret")
     SESSION_TYPE = "redis"
@@ -56,7 +57,7 @@ class Config(object):
     IAC_AUTH = (IAC_USERNAME, IAC_PASSWORD)
 
     SECURE_MESSAGE_URL = os.getenv('SECURE_MESSAGE_URL')
-    RAS_SECURE_MESSAGING_JWT_SECRET = os.getenv('RAS_SECURE_MESSAGING_JWT_SECRET')
+    SECURE_MESSAGE_JWT_SECRET = os.getenv('SECURE_MESSAGE_JWT_SECRET')
 
     PARTY_URL = os.getenv('PARTY_URL')
     PARTY_USERNAME = os.getenv('PARTY_USERNAME')
@@ -131,7 +132,7 @@ class DevelopmentConfig(Config):
     IAC_AUTH = (IAC_USERNAME, IAC_PASSWORD)
 
     SECURE_MESSAGE_URL = os.getenv('SECURE_MESSAGE_URL', 'http://localhost:5050')
-    RAS_SECURE_MESSAGING_JWT_SECRET = os.getenv('RAS_SECURE_MESSAGING_JWT_SECRET', 'testsecret')
+    SECURE_MESSAGE_JWT_SECRET = os.getenv('SECURE_MESSAGE_JWT_SECRET', 'testsecret')
 
     REPORT_URL = os.getenv('REPORT_URL', 'http://localhost:8084')
 
