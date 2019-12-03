@@ -47,7 +47,7 @@ class TestAccounts(unittest.TestCase):
         response = self.client.post("/account/request-new-account", follow_redirects=True,
                                     data={"email_address": test_email,
                                           "password": TestingConfig.CREATE_ACCOUNT_ADMIN_PASSWORD})
-        self.assertIn(b'problem trying to send you a password reset email', response.data)
+        self.assertIn(b'problem trying to send you an email to create an account.', response.data)
         self.assertEqual(response.status_code, 200)
 
     @requests_mock.mock()

@@ -64,7 +64,7 @@ def send_create_account_email(email):
 
     response = uaa_controller.get_user_by_email(email)
     if response is None:
-        return render_template('forgot-password-error.html')
+        return render_template('request-new-account-error.html')
 
     if response['totalResults'] == 0:
         internal_url = app.config['RESPONSE_OPERATIONS_UI_URL']
