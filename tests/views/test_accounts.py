@@ -20,7 +20,7 @@ class TestAccounts(unittest.TestCase):
         payload = {'user_id': 'test-id',
                    'aud': 'response_operations'}
         app = create_app('TestingConfig')
-        self.token = token_decoder.generate_email_token(email)
+        self.token = token_decoder.generate_email_token(test_email)
         self.access_token = jwt.encode(payload, app.config['UAA_PRIVATE_KEY'], algorithm='RS256')
         self.client = app.test_client()
 
