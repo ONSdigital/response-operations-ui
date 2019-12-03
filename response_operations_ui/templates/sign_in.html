@@ -21,7 +21,7 @@
                     %}
                     {% if category == "failed_authentication" %}
                         <p><a href="#username" id="try-again-link" class="js-inpagelink">Please try again</a></p>
-                    {% else if category == "successful_signout" %}
+                    {% elif category == "successful_signout" %}
                         <p id="successfully-signed-out">{{ message }}</p>
                     {% else if category == "account_created" %}
                         <p id="successfully-created-account">{{ message }}</p>
