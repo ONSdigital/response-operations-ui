@@ -89,3 +89,46 @@ class TestAccounts(unittest.TestCase):
             self.assertIn(b'Account successfully created', response.data)
             self.assertIn(b'Sign in', response.data)
             self.assertEqual(response.status_code, 200)
+
+    @requests_mock.mock()
+    def test_create_account_different_passwords(self, mock_request):
+        with self.app.app_context():
+            token = token_decoder.generate_email_token(test_email)
+            response = self.client.post(f"/account/create-account/{token}", follow_redirects=True,
+                                        data={"password": 'TestPassword1!',
+                                              "password_confirm": 'WrongPassword!',
+                                              "user_name": 'testname',
+                                              "first_name": 'Test',
+                                              "last_name": 'Account'})
+            self.assertIn(b'Your passwords do not match', response.data)
+            self.assertEqual(response.status_code, 200)
+
+    @requests_mock.mock()
+    def test_create_account_fails(self, mock_request):
+        with self.app.app_context():
+            token = token_decoder.generate_email_token(test_email)
+            mock_request.post(url_uaa_token, json={"access_token": self.access_token.decode()}, status_code=201)
+            mock_request.post(url_uaa_create_account, json={}, status_code=403)
+            response = self.client.post(f"/account/create-account/{token}", follow_redirects=True,
+                                        data={"password": 'TestPassword1!',
+                                              "password_confirm": 'TestPassword1!',
+                                              "user_name": 'testname',
+                                              "first_name": 'Test',
+                                              "last_name": 'Account'})
+            self.assertIn(b'problem trying to create your account.', response.data)
+            self.assertEqual(response.status_code, 200)
+
+    @requests_mock.mock()
+    def test_create_account_username_taken(self, mock_request):
+        with self.app.app_context():
+            token = token_decoder.generate_email_token(test_email)
+            mock_request.post(url_uaa_token, json={"access_token": self.access_token.decode()}, status_code=201)
+            mock_request.post(url_uaa_create_account, json={}, status_code=409)
+            response = self.client.post(f"/account/create-account/{token}", follow_redirects=True,
+                                        data={"password": 'TestPassword1!',
+                                              "password_confirm": 'TestPassword1!',
+                                              "user_name": 'testname',
+                                              "first_name": 'Test',
+                                              "last_name": 'Account'})
+            self.assertIn(b'Username already in use; please choose another', response.data)
+            self.assertEqual(response.status_code, 200)
