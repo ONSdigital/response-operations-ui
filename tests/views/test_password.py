@@ -82,7 +82,8 @@ class TestPasswords(unittest.TestCase):
             mock_request.post(url_uaa_reset_pw, status_code=200)
             mock_request.get(url_uaa_get_accounts,
                              json={"totalResults": 1,
-                                   "resources": [{"userName": "testuser"}]}, status_code=200)
+                                   "resources": [{"userName": "testuser",
+                                                  "name": {"givenName": "Test"}}]}, status_code=200)
             response = self.client.post(f"/passwords/reset-password/{token}", follow_redirects=True,
                                         data={"password": 'TestPassword1!',
                                               "password_confirm": 'TestPassword1!'})
