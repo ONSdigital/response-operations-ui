@@ -14,6 +14,8 @@ class NotifyController:
         self.notify_url = app.config['NOTIFY_SERVICE_URL']
         self.request_password_change_template = app.config['NOTIFY_REQUEST_PASSWORD_CHANGE_TEMPLATE']
         self.confirm_password_change_template = app.config['NOTIFY_CONFIRM_PASSWORD_CHANGE_TEMPLATE']
+        self.request_create_account_template = app.config['NOTIFY_REQUEST_CREATE_ACCOUNT_TEMPLATE']
+        self.confirm_create_account_template = app.config['NOTIFY_CONFIRM_CREATE_ACCOUNT_TEMPLATE']
 
     def _send_message(self, email, template_id, personalisation=None, reference=None):
         """
@@ -53,7 +55,9 @@ class NotifyController:
 
     def _get_template_id(self, template_name):
         templates = {'confirm_password_change': self.confirm_password_change_template,
-                     'request_password_change': self.request_password_change_template}
+                     'request_password_change': self.request_password_change_template,
+                     'confirm_create_account': self.confirm_create_account_template,
+                     'request_create_account': self.request_create_account_template}
         if template_name in templates:
             return templates[template_name]
         else:
