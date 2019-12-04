@@ -10,6 +10,7 @@ from response_operations_ui.views.respondents import respondent_bp
 from response_operations_ui.views.sign_in import sign_in_bp
 from response_operations_ui.views.surveys import surveys_bp
 from response_operations_ui.views.passwords import passwords_bp
+from response_operations_ui.views.accounts import account_bp
 from response_operations_ui.views import update_event_date  # NOQA
 
 
@@ -26,4 +27,5 @@ def setup_blueprints(app):
     app.register_blueprint(surveys_bp, url_prefix='/surveys')
     app.register_blueprint(case_bp, url_prefix='/case')
     app.register_blueprint(passwords_bp, url_prefix='/passwords')
+    app.register_blueprint(account_bp, url_prefix='/account')
     return app

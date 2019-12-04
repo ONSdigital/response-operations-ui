@@ -11,7 +11,7 @@
     {% with messages = get_flashed_messages(with_categories=true) %}
         {% if messages %}
             {% for category, message in messages %}
-                {% if category == "failed_authentication" or category == "successful_signout" %}
+                {% if category == "failed_authentication" or category == "successful_signout" or category == "account_created" %}
                     {% call
                         onsPanel({
                             "type": "error" if category == "failed_authentication" else "success",
@@ -68,7 +68,8 @@
                 {% endcall %}
             {% endif %}
 
-            <h1>Sign in</h1>
+                    <h1>Sign in</h1>
+                    <a href="/account/request-new-account">Create an account</a><br><br>
 
             {% if failed_authentication or form.username.errors | length > 0 %}
                 {% set error = { "text": "Username is required" } %}

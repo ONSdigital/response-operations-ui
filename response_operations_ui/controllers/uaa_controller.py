@@ -5,6 +5,7 @@ import requests
 from flask import abort, current_app as app
 from requests import HTTPError
 from structlog import wrap_logger
+from itsdangerous import URLSafeSerializer
 
 
 logger = wrap_logger(logging.getLogger(__name__))
@@ -79,17 +80,15 @@ def get_user_by_email(email, access_token=None):
 
     url = f"{app.config['UAA_SERVICE_URL']}/Users?filter=email+eq+%22{email}%22"
     response = requests.get(url, headers=headers)
-    if response.status_code != 200 or response.json()['totalResults'] == 0:
+    try:
+        response.raise_for_status()
+    except HTTPError:
+        url_safe_serializer = URLSafeSerializer(app.config['SECRET_KEY'])
+        logger.error('Error retrieving user from UAA', status_code=response.status_code,
+                     encoded_email=url_safe_serializer.dumps(email))
         return
 
     return response.json()
-
-
-def get_first_name_by_email(email):
-    response = get_user_by_email(email)
-    if response is not None:
-        return response['resources'][0]['name']['givenName']
-    return ""
 
 
 def retrieve_user_code(access_token, username):
@@ -136,3 +135,43 @@ def change_user_password(email, password):
 
     return change_password(access_token=access_token, user_code=password_reset_code,
                            new_password=password)
+
+
+def create_user_account(email, password, user_name, first_name, last_name):
+    access_token = login_admin()
+
+    headers = {'Content-Type': 'application/json',
+               'Accept': 'application/json',
+               'Authorization': f'Bearer {access_token}'}
+
+    payload = {
+        "userName": user_name,
+        "name": {
+            "formatted": f"{first_name} {last_name}",
+            "givenName": first_name,
+            "familyName": last_name
+        },
+        "emails": [{
+            "value": email,
+            "primary": True
+        }],
+        "active": True,
+        "verified": True,
+        "password": password
+    }
+
+    url = f"{app.config['UAA_SERVICE_URL']}/Users"
+    response = requests.post(url, data=dumps(payload), headers=headers)
+    try:
+        response.raise_for_status()
+        return
+    except HTTPError:
+        if response.status_code == 409:
+            # Username already exists
+            errors = {'user_name': ["Username already in use; please choose another"]}
+        else:
+            errors = {'status_code': response.status_code, 'message': response.reason}
+            logger.error('Received an error when creating an account in UAA',
+                         status_code=response.status_code, reason=response.reason)
+
+    return errors
