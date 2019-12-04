@@ -32,7 +32,7 @@ def get_party_by_ru_ref(ru_ref):
 
 
 def try_get_party_id_by_ru_ref(ru_ref):
-    """Attempts to get party id from ru_ref, does not error if not found"""
+    """Attempts to get party id from ru_ref, returns empty string if not found"""
     logger.info('Retrieving reporting unit party id', ru_ref=ru_ref)
     url = f'{app.config["PARTY_URL"]}/party-api/v1/parties/type/B/ref/{ru_ref}'
     response = requests.get(url, auth=app.config['PARTY_AUTH'])

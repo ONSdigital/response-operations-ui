@@ -1019,7 +1019,7 @@ class TestMessage(ViewTestCase):
         response_body = response.data.decode("utf-8").replace(' ', '')
 
         self.assertEqual(200, response.status_code)
-        mock_get_count.assert_called_with(survey_id=['6aa8896f-ced5-4694-800c-6cd661b0c8b2'], 
+        mock_get_count.assert_called_with(survey_id=['6aa8896f-ced5-4694-800c-6cd661b0c8b2'],
                                           business_id=business_id_filter,
                                           conversation_tab=conversation_tab)
 

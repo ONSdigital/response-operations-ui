@@ -47,7 +47,8 @@ class SecureMessageForm(FlaskForm):
 
 class SecureMessageRuFilterForm(FlaskForm):
 
-    ru_ref_filter = StringField('ru_ref_filter', validators=[Length(min=11, max=11, message="Ru ref must be 11 characters")])
+    ru_ref_filter = StringField('ru_ref_filter',
+                                validators=[Length(min=11, max=11, message="Ru ref must be 11 characters")])
     submit = SubmitField('Filter')
 
 

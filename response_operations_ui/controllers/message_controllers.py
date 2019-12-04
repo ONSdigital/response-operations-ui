@@ -72,7 +72,8 @@ def _get_secure_message_threads_params(survey_id, business_id, conversation_tab)
 
 def get_thread_list(survey_id, business_id, conversation_tab, page, limit):
 
-    logger.info("Retrieving threads list")
+    logger.info("Retrieving threads list", survey_id=survey_id, conversation_tab=conversation_tab,
+                business_id=business_id)
     params = _get_secure_message_threads_params(survey_id, business_id, conversation_tab)
     params['page'] = page
     params['limit'] = limit

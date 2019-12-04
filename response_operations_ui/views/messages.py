@@ -66,23 +66,23 @@ def create_message():
 def view_conversation(thread_id):
     conversation_tab = request.args.get('conversation_tab')
     page = request.args.get('page')
-    
+
     ru_ref_filter = request.args.get('ru_ref_filter')
     business_id_filter = request.args.get('business_id_filter')
 
     if request.method == 'POST' and request.form.get('reopen'):
         message_controllers.update_close_conversation_status(thread_id=thread_id, status=False)
-        thread_url = url_for("messages_bp.view_conversation", 
-                             thread_id=thread_id, 
+        thread_url = url_for("messages_bp.view_conversation",
+                             thread_id=thread_id,
                              conversation_tab=conversation_tab,
                              page=page,
-                             ru_ref_filter=ru_ref_filter, 
+                             ru_ref_filter=ru_ref_filter,
                              business_id_filter=business_id_filter) + "#latest-message"
         flash(Markup(f'Conversation re-opened. <a href={thread_url}>View conversation</a>'))
-        return redirect(url_for('messages_bp.view_select_survey', 
-                                conversation_tab=conversation_tab, 
+        return redirect(url_for('messages_bp.view_select_survey',
+                                conversation_tab=conversation_tab,
                                 page=page,
-                                ru_ref_filter=ru_ref_filter, 
+                                ru_ref_filter=ru_ref_filter,
                                 business_id_filter=business_id_filter))
 
     thread_conversation = message_controllers.get_conversation(thread_id)
@@ -242,11 +242,9 @@ def view_selected_survey(selected_survey):
         limit = request.args.get('limit', default=10, type=int)
         flash_message = request.args.get('flash_message', default="", type=str)
         conversation_tab = request.args.get('conversation_tab', default='open')
-        # ru_ref = request.args.get('ru_ref', default='')
         ru_ref_filter = request.args.get('ru_ref_filter', default='')
-        # business_id = request.args.get('business_id', default='')
         business_id_filter = request.args.get('business_id_filter', default='')
-        
+
         form = SecureMessageRuFilterForm()
 
         if form.validate_on_submit():
@@ -333,16 +331,16 @@ def close_conversation(thread_id):
 
     if request.method == 'POST':
         message_controllers.update_close_conversation_status(thread_id=thread_id, status=True)
-        thread_url = url_for("messages_bp.view_conversation", thread_id=thread_id, 
+        thread_url = url_for("messages_bp.view_conversation", thread_id=thread_id,
                              conversation_tab=conversation_tab,
-                             page=page, 
-                             ru_ref_filter=ru_ref_filter, 
+                             page=page,
+                             ru_ref_filter=ru_ref_filter,
                              business_id_filter=business_id_filter) + "#latest-message"
 
         flash(Markup(f'Conversation closed. <a href={thread_url}>View conversation</a>'))
         return redirect(url_for('messages_bp.view_select_survey', page=request.args.get('page'),
-                                conversation_tab=conversation_tab, 
-                                ru_ref_filter=ru_ref_filter, 
+                                conversation_tab=conversation_tab,
+                                ru_ref_filter=ru_ref_filter,
                                 business_id_filter=business_id_filter))
 
     thread_conversation = message_controllers.get_conversation(thread_id)
@@ -351,7 +349,7 @@ def close_conversation(thread_id):
     return render_template('close-conversation.html',
                            subject=refined_thread[0]['subject'],
                            business=refined_thread[0]['business_name'],
-                           display_ru_ref=refined_thread[0]['ru_ref'],
+                           ru_ref=refined_thread[0]['ru_ref'],
                            respondent=refined_thread[0]['to'],
                            thread_id=thread_id,
                            page=page,
