@@ -250,12 +250,12 @@ def view_selected_survey(selected_survey):
         if form.validate_on_submit():
             new_ru_ref = form.ru_ref_filter.data
             if new_ru_ref and new_ru_ref != ru_ref_filter:
-                business_id_filter = party_controller.try_get_party_id_by_ru_ref(new_ru_ref)
+                business_id_filter, ru_resolution_error = _try_get_party_id_from_filter_ru(new_ru_ref)
                 if business_id_filter:
                     ru_ref_filter = new_ru_ref
                 else:
                     ru_ref_filter = ''
-                    flash_message = f"Filter not applied: {new_ru_ref} is an unknown RU ref"
+                    flash_message = ru_resolution_error
 
         form.ru_ref_filter.data = ru_ref_filter
         thread_count = message_controllers.get_conversation_count(survey_id=survey_id,
@@ -356,6 +356,26 @@ def close_conversation(thread_id):
                            conversation_tab=conversation_tab,
                            ru_ref_filter=ru_ref_filter,
                            business_id_filter=business_id_filter)
+
+
+def _try_get_party_id_from_filter_ru(ru_ref):
+    """Attempts to get party by the ru_ref entered in the UI as an ru to filter by.
+    Not finding a party is not an error, since the user may have entered anything.
+    If party returns a 404 it returns an unknown ru message, else returns a message assuming party unresponsive 
+    or erroring. No exceptions raised in this case since get_by_party_ref logs errors, and raising another error to the 
+    user adds no value, so we display a message on the UI and carry on.
+    """
+    try:
+        response = party_controller.get_party_by_ru_ref(ru_ref)
+        return response.json()['id'], ''
+    
+    except ApiError as api_error:   # If error, select a message for the UI
+        if api_error.status_code.status_code == 404:
+            ru_resolution_error = f"Filter not applied: {ru_ref} is an unknown RU ref"
+        else:
+            ru_resolution_error = "Could not resolve RU ref, please try again later"
+    
+    return '', ru_resolution_error
 
 
 def _format_closed_at(thread_conversation):

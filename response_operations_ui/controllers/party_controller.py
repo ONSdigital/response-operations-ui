@@ -16,6 +16,7 @@ logger = wrap_logger(logging.getLogger(__name__))
 
 
 def get_party_by_ru_ref(ru_ref):
+    """get party by ru_ref """
     logger.info('Retrieving reporting unit', ru_ref=ru_ref)
     url = f'{app.config["PARTY_URL"]}/party-api/v1/parties/type/B/ref/{ru_ref}'
     response = requests.get(url, auth=app.config['PARTY_AUTH'])
@@ -29,15 +30,6 @@ def get_party_by_ru_ref(ru_ref):
 
     logger.info('Successfully retrieved reporting unit', ru_ref=ru_ref)
     return response.json()
-
-
-def try_get_party_id_by_ru_ref(ru_ref):
-    """Attempts to get party id from ru_ref, returns empty string if not found"""
-    logger.info('Retrieving reporting unit party id', ru_ref=ru_ref)
-    url = f'{app.config["PARTY_URL"]}/party-api/v1/parties/type/B/ref/{ru_ref}'
-    response = requests.get(url, auth=app.config['PARTY_AUTH'])
-
-    return response.json()['id'] if response.status_code == 200 else ''
 
 
 def get_business_by_party_id(business_party_id, collection_exercise_id=None):
