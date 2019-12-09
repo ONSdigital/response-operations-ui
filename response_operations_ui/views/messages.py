@@ -361,20 +361,20 @@ def close_conversation(thread_id):
 def _try_get_party_id_from_filter_ru(ru_ref):
     """Attempts to get party by the ru_ref entered in the UI as an ru to filter by.
     Not finding a party is not an error, since the user may have entered anything.
-    If party returns a 404 it returns an unknown ru message, else returns a message assuming party unresponsive 
-    or erroring. No exceptions raised in this case since get_by_party_ref logs errors, and raising another error to the 
+    If party returns a 404 it returns an unknown ru message, else returns a message assuming party unresponsive
+    or erroring. No exceptions raised in this case since get_by_party_ref logs errors, and raising another error to the
     user adds no value, so we display a message on the UI and carry on.
     """
     try:
         response = party_controller.get_party_by_ru_ref(ru_ref)
-        return response.json()['id'], ''
-    
+        return response['id'], ''
+
     except ApiError as api_error:   # If error, select a message for the UI
-        if api_error.status_code.status_code == 404:
+        if api_error.status_code == 404:
             ru_resolution_error = f"Filter not applied: {ru_ref} is an unknown RU ref"
         else:
             ru_resolution_error = "Could not resolve RU ref, please try again later"
-    
+
     return '', ru_resolution_error
 
 

@@ -1112,7 +1112,7 @@ class TestMessage(ViewTestCase):
 
         mock_request.get(shortname_url + "/ASHE", json=ashe_info['survey'])
         party_get_by_ru_ref = f'{url_get_party_by_ru_ref}{ru_ref_filter}'
-        mock_request.get(party_get_by_ru_ref, json={'id': ''})  # Party returns no data so flash should display later
+        mock_request.get(party_get_by_ru_ref, status_code=404)
         mock_request.get(url_get_surveys_list, json=self.surveys_list_json)
         mock_request.get(url_get_threads_list, json=thread_list_multi_page_multi_ru)
         mock_get_count.return_value = 10
@@ -1128,6 +1128,40 @@ class TestMessage(ViewTestCase):
         assert f'id="flashed-message-1' in response_body
 
         assert f'Filter not applied: {ru_ref_filter} is an unknown RU ref' in response_body
+
+    @requests_mock.mock()
+    @patch('response_operations_ui.controllers.message_controllers._get_jwt')
+    @patch('response_operations_ui.controllers.message_controllers.get_conversation_count')
+    def test_filter_threads_display_flash_if_party_errors(self, mock_request, mock_get_count, mock_get_jwt):
+        """Validate that flash message is displayed when ru ref is not known and filter applied"""
+        limit = 15
+        page = 1
+        business_id_filter = '123'
+        ru_ref_filter = '12345678901'
+        conversation_tab = 'closed'
+
+        with self.client.session_transaction() as session:
+            session['messages_survey_selection'] = 'Ashe'
+        mock_get_jwt.return_value = "blah"
+
+        mock_request.get(shortname_url + "/ASHE", json=ashe_info['survey'])
+        party_get_by_ru_ref = f'{url_get_party_by_ru_ref}{ru_ref_filter}'
+        mock_request.get(party_get_by_ru_ref, status_code=500)
+        mock_request.get(url_get_surveys_list, json=self.surveys_list_json)
+        mock_request.get(url_get_threads_list, json=thread_list_multi_page_multi_ru)
+        mock_get_count.return_value = 10
+
+        # view survey with filter of business_id
+        url = f"/messages/Ashe?page={page}&limit={limit}&conversation_tab={conversation_tab}" \
+            f"&business_id_filter={business_id_filter}"
+        response = self.client.post(url, follow_redirects=True, json={'ru_ref_filter': ru_ref_filter})
+        response_body = response.data.decode("utf-8")
+
+        self.assertEqual(200, response.status_code)
+
+        assert f'id="flashed-message-1' in response_body
+
+        assert 'Could not resolve RU ref, please try again later' in response_body
 
     def test_message_no_new_conversations_displayed_on_empty_open_tab(self):
         """Validate that No new conversations displayed on empty open tab"""
