@@ -37,7 +37,8 @@ def get_conversation(thread_id):
 
 
 def get_conversation_count(survey_id, conversation_tab, business_id):
-    logger.info("Retrieving count of threads")
+    logger.info("Retrieving count of threads",
+                survey_id=survey_id, conversation_tab=conversation_tab, business_id=business_id)
 
     params = _get_secure_message_threads_params(survey_id, business_id, conversation_tab)
 
