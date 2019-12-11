@@ -1,50 +1,66 @@
 {% extends "layouts/base.html" %}
 {% from "components/button/_macro.njk" import onsButton %}
+{% from "components/select/_macro.njk" import onsSelect %}
 
 {% set page_title = "Messages" %}
 
 {% block main %}
-
   <div class="grid">
-    <div class="grid__col col-12@m">
-      {% if response_error %}
-      <div class="panel panel--error col-6@m u-mb-m">
-        <div class="panel__header">
-          <h1 class="panel__title u-fs-r--b">Select a survey</h1>
-        </div>
-        <div class="panel__body">
-          <p class="u-fs-r"><a href="#survey-list" id="survey-select-link" class="js-inpagelink">Please select a survey</a> to filter your messages</p>
-        </div>
-      </div>
-      {% endif %}
-      <h1 class="u-fs-xl">Filter messages by survey</h1>
+      <div class="grid__col col-8@m">
+        {% if response_error %}
+          {% call
+            onsPanel({
+                "type": "error",
+                "classes": "u-mb-s",
+                "title":  "This page has 1 error"
+            })
+          %}
+            <p><a href="#survey-list" id="survey-select-link" class="js-inpagelink">Select a survey</a></p>
+          {% endcall %}
+        {% endif %}
 
-      {% if response_error %}
-      <div class="panel panel--simple panel--error col-6@m">
-        <div class="panel__body">
-      {% endif %}
+        <h1>Filter messages by survey</h1>
         <form method="POST">
           {% if survey_list %}
-            <div class="field field--select">
-              <label class="label u-fs-r u-mb-s" for="survey-list">Please select a survey to see messages for your team</label>
-              <select class="input input--select" id="survey-list" name="select-survey" required>
-                <option selected disabled>Select a survey</option>
-
-                {% for survey in survey_list %}
-                <option value="{{ survey.replace(' ', '') }}" id="{{ survey.replace(' ', '') }}"> {{ survey }}  </option>
-                {% endfor %}
-              </select>
-            </div>
-        </div>
-      </div>
-      {{
-          onsButton({
-              "classes": "u-mt-m",
-              "text": "Continue",
-              "id": "continue",
-              "submitType": "timer"
-          })
-      }}   
+            {% set error = {
+              "text": "Select a survey"
+            } %}         
+            {% set surveys = [            
+              {
+                "value": "",
+                "text": "Select a survey",
+                "disabled": true,
+                "selected": true
+              }
+            ] %}
+            {% for survey in survey_list %}
+              {% do surveys.append(
+                {
+                  "value": survey.replace(' ', ''),
+                  "text": survey,
+                  "id": survey.replace(' ', '')
+                }
+              ) %}
+            {% endfor %}
+            {{ 
+              onsSelect({
+                "id": "survey-list",
+                "name": "select-survey",
+                "label": {
+                    "text": "Select a survey to display messages for your team"
+                },
+                "options": surveys,
+                "error": error if response_error
+              })
+            }}
+            {{
+                onsButton({
+                    "classes": "u-mt-m",
+                    "text": "Continue",
+                    "id": "continue",
+                    "submitType": "timer"
+                })
+            }}   
         {% else %}
           <p> Unable to retrieve list of surveys </p>
         {% endif %}
