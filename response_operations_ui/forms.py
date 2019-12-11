@@ -4,9 +4,9 @@ import re
 
 from flask_wtf import FlaskForm
 from structlog import wrap_logger
-from wtforms import HiddenField, Label, PasswordField, StringField, \
-    SubmitField, TextAreaField, SelectField, IntegerField
-from wtforms.validators import InputRequired, Length, ValidationError, Email, DataRequired, EqualTo
+from wtforms import HiddenField, IntegerField, Label, PasswordField, SelectField, StringField, SubmitField, \
+    TextAreaField
+from wtforms.validators import DataRequired, Email, EqualTo, Length, InputRequired, ValidationError
 
 from response_operations_ui.controllers import collection_exercise_controllers
 from response_operations_ui.controllers import survey_controllers
@@ -43,6 +43,13 @@ class SecureMessageForm(FlaskForm):
     hidden_to = HiddenField('hidden_to')
     hidden_to_uuid = HiddenField('hidden_to_uuid')
     hidden_to_business_id = HiddenField('hidden_to_business_id')
+
+
+class SecureMessageRuFilterForm(FlaskForm):
+
+    ru_ref_filter = StringField('ru_ref_filter',
+                                validators=[Length(min=11, max=11, message="Ru ref must be 11 characters")])
+    submit = SubmitField('Filter')
 
 
 class RespondentSearchForm(FlaskForm):

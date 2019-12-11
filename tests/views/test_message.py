@@ -12,6 +12,7 @@ from response_operations_ui.views.messages import _get_to_id, _calculate_page
 from response_operations_ui.views.messages import _get_unread_status
 from tests.views import ViewTestCase
 
+url_get_party_by_ru_ref = f'{TestingConfig.PARTY_URL}/party-api/v1/parties/type/B/ref/'
 shortname_url = f'{TestingConfig.SURVEY_URL}/surveys/shortname'
 url_sign_in_data = f'{TestingConfig.UAA_SERVICE_URL}/oauth/token'
 url_get_surveys_list = f'{TestingConfig.SURVEY_URL}/surveys/surveytype/Business'
@@ -21,6 +22,7 @@ url_send_message = f'{TestingConfig.SECURE_MESSAGE_URL}/messages'
 url_messages = f'{TestingConfig.SECURE_MESSAGE_URL}/messages'
 url_update_label = f'{TestingConfig.SECURE_MESSAGE_URL}/messages/modify/ae46748b-c6e6-4859-a57a-86e01db2dcbc'
 url_modify_label_base = f'{TestingConfig.SECURE_MESSAGE_URL}/messages/modify/'
+url_select_survey = f'{TestingConfig.SECURE_MESSAGE_URL}/messages/select-survey'
 
 survey_id = '6aa8896f-ced5-4694-800c-6cd661b0c8b2'
 params = f'?survey={survey_id}&page=1&limit=10'
@@ -36,6 +38,9 @@ with open('tests/test_data/message/threads.json') as json_data:
 
 with open('tests/test_data/message/threads_multipage.json') as json_data:
     thread_list_multi_page = json.load(json_data)
+
+with open('tests/test_data/message/threads_multipage_multi_ru.json') as json_data:
+    thread_list_multi_page_multi_ru = json.load(json_data)
 
 with open('tests/test_data/survey/survey_list.json') as json_data:
     survey_list = json.load(json_data)
@@ -271,7 +276,7 @@ class TestMessage(ViewTestCase):
         mock_get_jwt.return_value = "blah"
         mock_request.get(url_messages + '/count', json={"total": 1}, status_code=200)
         mock_request.get(url_get_surveys_list, json=self.surveys_list_json)
-        mock_request.get(url_get_threads_list + params, json=threads_unread_list)
+        mock_request.get(url_get_threads_list, json=threads_unread_list)
         mock_request.get(shortname_url + "/ASHE", json=ashe_info['survey'])
 
         response = self.client.get("/messages/ASHE")
@@ -861,16 +866,18 @@ class TestMessage(ViewTestCase):
                 url = f"{thread_id}/close-conversation?conversation_tab={conversation_tab}&page={page}&limit={limit}"
                 response = self.client.post("/messages/threads/" + url, follow_redirects=True)
 
-                response_body = response.data.decode("utf-8")
+                response_body = response.data.decode("utf-8").replace(' ', '')
 
                 self.assertEqual(200, response.status_code)
 
                 # validate that the currently selected tab is as expected (i.e aria-current="location")
-                match = f'"/messages/Ashe?conversation_tab={conversation_tab.replace(" ","+")}" aria-current="location"'
-                self.assertIn(match, response_body)
+                match = f'"/messages/Ashe?conversation_tab={conversation_tab.replace(" ","+")}' \
+                    f'&ru_ref_filter=&business_id_filter="aria-current="location"'
+
+                self.assertIn(match, response_body.replace('amp;', ''))
 
                 # and that page 2 is selected
-                self.assertIn('<li class="active"><a>2</a></li>', response_body)
+                self.assertIn('<liclass="active"><a>2</a></li>', response_body)
 
     @requests_mock.mock()
     @patch('response_operations_ui.controllers.message_controllers._get_jwt')
@@ -900,16 +907,17 @@ class TestMessage(ViewTestCase):
                 url = f"{thread_id}/close-conversation?conversation_tab={conversation_tab}&page={page}&limit={limit}"
                 response = self.client.post("/messages/threads/" + url, follow_redirects=True)
 
-                response_body = response.data.decode("utf-8")
+                response_body = response.data.decode("utf-8").replace(' ', '')
 
                 self.assertEqual(200, response.status_code)
 
                 # validate that the currently selected tab is as expected (i.e aria-current="location")
-                match = f'"/messages/Ashe?conversation_tab={conversation_tab.replace(" ","+")}" aria-current="location"'
-                self.assertIn(match, response_body)
+                match = f'"/messages/Ashe?conversation_tab={conversation_tab.replace(" ","+")}' \
+                    f'&ru_ref_filter=&business_id_filter="aria-current="location"'
+                self.assertIn(match, response_body.replace('amp;', ''))
 
                 # and that page 3 is selected
-                self.assertIn('<li class="active"><a>3</a></li>', response_body)
+                self.assertIn('<liclass="active"><a>3</a></li>', response_body)
 
     @requests_mock.mock()
     @patch('response_operations_ui.controllers.message_controllers._get_jwt')
@@ -931,8 +939,333 @@ class TestMessage(ViewTestCase):
         url = f"/messages/threads/{thread_id}?page={page}&limit={limit}&conversation_tab=closed"
         response = self.client.post(url, data={'reopen': 'Re-open conversation'}, follow_redirects=True)
 
-        response_body = response.data.decode("utf-8")
+        response_body = response.data.decode("utf-8").replace(' ', '')
 
         # validate that the currently selected tab is as expected (i.e aria-current="location")
-        match_str = f'"/messages/Ashe?conversation_tab=closed" aria-current="location"'
+        match_str = 'aria-current="location"role="menuitem">Closed'
         self.assertIn(match_str, response_body)
+
+    @requests_mock.mock()
+    @patch('response_operations_ui.controllers.message_controllers._get_jwt')
+    @patch('response_operations_ui.controllers.message_controllers.get_conversation_count')
+    def test_filter_threads_limits_by_ru_on_post(self, mock_request, mock_get_count, mock_get_jwt):
+        """Validate that business_id_filter is passed as a parameter to get count and get messages
+        And that the expected call to get by ru_ref from party is called after passing validation
+        and that ru_ref_filter and business_id_filter parameters are present
+        It is a function of secure message to actually return the correct messages"""
+        limit = 15
+        page = 1
+        business_id_filter = '123'
+        ru_ref_filter = '12345678901'
+        conversation_tab = 'closed'
+
+        with self.client.session_transaction() as session:
+            session['messages_survey_selection'] = 'Ashe'
+        mock_get_jwt.return_value = "blah"
+
+        mock_request.get(shortname_url + "/ASHE", json=ashe_info['survey'])
+        party_get_by_ru_ref = f'{url_get_party_by_ru_ref}{ru_ref_filter}'
+        mock_request.get(party_get_by_ru_ref, json={'id': business_id_filter})
+        mock_request.get(url_get_surveys_list, json=self.surveys_list_json)
+        mock_request.get(url_get_threads_list, json=thread_list_multi_page_multi_ru)
+        mock_get_count.return_value = 10
+
+        # view survey with filter of business_id
+        url = f"/messages/Ashe?page={page}&limit={limit}&conversation_tab={conversation_tab}" \
+            f"&business_id_filter={business_id_filter}"
+        response = self.client.post(url, follow_redirects=True, json={'ru_ref_filter': ru_ref_filter})
+        response_body = response.data.decode("utf-8").replace(' ', '')
+
+        self.assertEqual(200, response.status_code)
+        mock_get_count.assert_called_with(survey_id=['6aa8896f-ced5-4694-800c-6cd661b0c8b2'],
+                                          business_id=business_id_filter,
+                                          conversation_tab=conversation_tab)
+
+        query = f'survey={survey_id}&is_closed=true&my_conversations=false&new_respondent_conversations=false&' \
+            f'business_id={business_id_filter}&page={page}&limit={limit}'
+        assert self._mock_request_called_with_expected_query(mock_request, query)
+
+        assert self._mock_request_called_with_expected_path(mock_request, party_get_by_ru_ref)
+
+        assert 'ru_ref_filter' in response_body
+        assert 'business_id' in response_body
+
+    @requests_mock.mock()
+    @patch('response_operations_ui.controllers.message_controllers._get_jwt')
+    @patch('response_operations_ui.controllers.message_controllers.get_conversation_count')
+    def test_filter_threads_limits_by_ru_on_get(self, mock_request, mock_get_count, mock_get_jwt):
+        """Validate that business_id_filter is passed as a parameter to get count and get messages
+        and that ru_ref_filter and business_id_filter parameters are present
+        It is a function of secure message to actually return the correct messages"""
+        limit = 15
+        page = 1
+        business_id_filter = '123'
+        conversation_tab = 'closed'
+
+        with self.client.session_transaction() as session:
+            session['messages_survey_selection'] = 'Ashe'
+        mock_get_jwt.return_value = "blah"
+
+        mock_request.get(shortname_url + "/ASHE", json=ashe_info['survey'])
+
+        mock_request.get(url_get_surveys_list, json=self.surveys_list_json)
+        mock_request.get(url_get_threads_list, json=thread_list_multi_page_multi_ru)
+        mock_get_count.return_value = 10
+
+        # view survey with filter of business_id
+        url = f"/messages/Ashe?page={page}&limit={limit}&conversation_tab={conversation_tab}" \
+            f"&business_id_filter={business_id_filter}"
+        response = self.client.get(url, follow_redirects=True)
+        response_body = response.data.decode("utf-8").replace(' ', '')
+
+        self.assertEqual(200, response.status_code)
+        mock_get_count.assert_called_with(survey_id=['6aa8896f-ced5-4694-800c-6cd661b0c8b2'],
+                                          business_id=business_id_filter,
+                                          conversation_tab=conversation_tab)
+
+        query = f'survey={survey_id}&is_closed=true&my_conversations=false&new_respondent_conversations=false&' \
+            f'business_id={business_id_filter}&page={page}&limit={limit}'
+        assert self._mock_request_called_with_expected_query(mock_request, query)
+
+        assert 'ru_ref_filter' in response_body
+        assert 'business_id_filter' in response_body
+
+    @requests_mock.mock()
+    @patch('response_operations_ui.controllers.message_controllers._get_jwt')
+    @patch('response_operations_ui.controllers.message_controllers.get_conversation_count')
+    def test_filter_threads_clear_filter_displayed_when_filter_active(self, mock_request, mock_get_count, mock_get_jwt):
+        """Validate that when the filter is in operation the clear filter is displayed"""
+        limit = 15
+        page = 1
+        business_id_filter = '123'
+        ru_ref_filter = '12345678901'
+        conversation_tab = 'closed'
+
+        with self.client.session_transaction() as session:
+            session['messages_survey_selection'] = 'Ashe'
+        mock_get_jwt.return_value = "blah"
+
+        mock_request.get(shortname_url + "/ASHE", json=ashe_info['survey'])
+        party_get_by_ru_ref = f'{url_get_party_by_ru_ref}{ru_ref_filter}'
+        mock_request.get(party_get_by_ru_ref, json={'id': business_id_filter})
+        mock_request.get(url_get_surveys_list, json=self.surveys_list_json)
+        mock_request.get(url_get_threads_list, json=thread_list_multi_page_multi_ru)
+        mock_get_count.return_value = 10
+
+        # view survey with filter of business_id
+        url = f"/messages/Ashe?page={page}&limit={limit}&conversation_tab={conversation_tab}" \
+            f"&business_id_filter={business_id_filter}"
+        response = self.client.post(url, follow_redirects=True, json={'ru_ref_filter': ru_ref_filter})
+        response_body = response.data.decode("utf-8")
+
+        self.assertEqual(200, response.status_code)
+
+        assert f'Filtered by RU ref: {ru_ref_filter}' in response_body
+
+    @requests_mock.mock()
+    @patch('response_operations_ui.controllers.message_controllers._get_jwt')
+    @patch('response_operations_ui.controllers.message_controllers.get_conversation_count')
+    def test_filter_threads_no_clear_filter_when_filter_not_active(self, mock_request, mock_get_count, mock_get_jwt):
+        """Validate that when the filter is cleared via the clear filter link then the
+        clear filter link is removed"""
+        limit = 15
+        page = 1
+        business_id_filter = '123'
+        ru_ref = '12345678901'
+        conversation_tab = 'closed'
+
+        with self.client.session_transaction() as session:
+            session['messages_survey_selection'] = 'Ashe'
+        mock_get_jwt.return_value = "blah"
+
+        mock_request.get(shortname_url + "/ASHE", json=ashe_info['survey'])
+        party_get_by_ru_ref = f'{url_get_party_by_ru_ref}{ru_ref}'
+        mock_request.get(party_get_by_ru_ref, json={'id': business_id_filter})
+        mock_request.get(url_get_surveys_list, json=self.surveys_list_json)
+        mock_request.get(url_get_threads_list, json=thread_list_multi_page_multi_ru)
+        mock_get_count.return_value = 10
+
+        # Call clear filter endpoint , passing in ru ref and business id
+        url = f"/messages/clear_filter/Ashe?page={page}&limit={limit}&" \
+            f"conversation_tab={conversation_tab}&business_id_filter={business_id_filter}&ru_ref={ru_ref}"
+        response = self.client.get(url, follow_redirects=True)
+        response_body = response.data.decode("utf-8")
+
+        self.assertEqual(200, response.status_code)
+
+        assert f'Filtered by RU ref' not in response_body
+
+    @requests_mock.mock()
+    @patch('response_operations_ui.controllers.message_controllers._get_jwt')
+    @patch('response_operations_ui.controllers.message_controllers.get_conversation_count')
+    def test_filter_threads_display_flash_if_ru_ref_unknown(self, mock_request, mock_get_count, mock_get_jwt):
+        """Validate that flash message is displayed when ru ref is not known and filter applied"""
+        limit = 15
+        page = 1
+        business_id_filter = '123'
+        ru_ref_filter = '12345678901'
+        conversation_tab = 'closed'
+
+        with self.client.session_transaction() as session:
+            session['messages_survey_selection'] = 'Ashe'
+        mock_get_jwt.return_value = "blah"
+
+        mock_request.get(shortname_url + "/ASHE", json=ashe_info['survey'])
+        party_get_by_ru_ref = f'{url_get_party_by_ru_ref}{ru_ref_filter}'
+        mock_request.get(party_get_by_ru_ref, status_code=404)
+        mock_request.get(url_get_surveys_list, json=self.surveys_list_json)
+        mock_request.get(url_get_threads_list, json=thread_list_multi_page_multi_ru)
+        mock_get_count.return_value = 10
+
+        # view survey with filter of business_id
+        url = f"/messages/Ashe?page={page}&limit={limit}&conversation_tab={conversation_tab}" \
+            f"&business_id_filter={business_id_filter}"
+        response = self.client.post(url, follow_redirects=True, json={'ru_ref_filter': ru_ref_filter})
+        response_body = response.data.decode("utf-8")
+
+        self.assertEqual(200, response.status_code)
+
+        assert f'id="flashed-message-1' in response_body
+
+        assert f'Filter not applied: {ru_ref_filter} is an unknown RU ref' in response_body
+
+    @requests_mock.mock()
+    @patch('response_operations_ui.controllers.message_controllers._get_jwt')
+    @patch('response_operations_ui.controllers.message_controllers.get_conversation_count')
+    def test_filter_threads_display_flash_if_party_errors(self, mock_request, mock_get_count, mock_get_jwt):
+        """Validate that flash message is displayed when ru ref is not known and filter applied"""
+        limit = 15
+        page = 1
+        business_id_filter = '123'
+        ru_ref_filter = '12345678901'
+        conversation_tab = 'closed'
+
+        with self.client.session_transaction() as session:
+            session['messages_survey_selection'] = 'Ashe'
+        mock_get_jwt.return_value = "blah"
+
+        mock_request.get(shortname_url + "/ASHE", json=ashe_info['survey'])
+        party_get_by_ru_ref = f'{url_get_party_by_ru_ref}{ru_ref_filter}'
+        mock_request.get(party_get_by_ru_ref, status_code=500)
+        mock_request.get(url_get_surveys_list, json=self.surveys_list_json)
+        mock_request.get(url_get_threads_list, json=thread_list_multi_page_multi_ru)
+        mock_get_count.return_value = 10
+
+        # view survey with filter of business_id
+        url = f"/messages/Ashe?page={page}&limit={limit}&conversation_tab={conversation_tab}" \
+            f"&business_id_filter={business_id_filter}"
+        response = self.client.post(url, follow_redirects=True, json={'ru_ref_filter': ru_ref_filter})
+        response_body = response.data.decode("utf-8")
+
+        self.assertEqual(200, response.status_code)
+
+        assert f'id="flashed-message-1' in response_body
+
+        assert 'Could not resolve RU ref, please try again later' in response_body
+
+    def test_message_no_new_conversations_displayed_on_empty_open_tab(self):
+        """Validate that No new conversations displayed on empty open tab"""
+        self._validate_no_messages_text('open', 'No new conversations')
+
+    def test_message_no_new_conversations_displayed_on_empty_closed_tab(self):
+        """Validate that No closed conversations displayed on empty closed tab"""
+        self._validate_no_messages_text('closed', 'No closed conversations')
+
+    def test_message_no_new_conversations_displayed_on_empty_my_conversations_tab(self):
+        """Validate that No closed conversations displayed on empty my conversations tab"""
+        self._validate_no_messages_text('my messages', 'There are currently no messages')
+
+    @requests_mock.mock()
+    @patch('response_operations_ui.controllers.message_controllers._get_jwt')
+    @patch('response_operations_ui.controllers.message_controllers.get_conversation_count')
+    def _validate_no_messages_text(self, conversation_tab, expected_text, mock_request, mock_get_count, mock_get_jwt):
+        limit = 15
+        page = 1
+        business_id_filter = '123'
+        ru_ref_filter = '12345678901'
+
+        with self.client.session_transaction() as session:
+            session['messages_survey_selection'] = 'Ashe'
+        mock_get_jwt.return_value = "blah"
+        mock_request.get(shortname_url + "/ASHE", json=ashe_info['survey'])
+        party_get_by_ru_ref = f'{url_get_party_by_ru_ref}{ru_ref_filter}'
+        mock_request.get(party_get_by_ru_ref, json={'id': ''})  # Party returns no data so flash should display later
+        mock_request.get(url_get_surveys_list, json=self.surveys_list_json)
+        mock_request.get(url_get_threads_list, json={'messages': []})
+        mock_get_count.return_value = 0
+        # view survey with filter of business_id
+        url = f"/messages/Ashe?page={page}&limit={limit}&conversation_tab={conversation_tab}" \
+            f"&business_id_filter={business_id_filter}&ru_ref={ru_ref_filter}"
+        response = self.client.get(url, follow_redirects=True)
+        response_body = response.data.decode("utf-8")
+
+        self.assertEqual(200, response.status_code)
+        self.assertIn(expected_text, response_body)
+
+    @requests_mock.mock()
+    @patch('response_operations_ui.controllers.message_controllers._get_jwt')
+    @patch('response_operations_ui.controllers.message_controllers.get_conversation_count')
+    def test_messages_tabs_are_displayed(self, mock_request, mock_get_count, mock_get_jwt):
+        """Validate that the expected tabs are in the returned html"""
+        limit = 15
+        page = 1
+        business_id_filter = '123'
+        conversation_tab = 'closed'
+
+        with self.client.session_transaction() as session:
+            session['messages_survey_selection'] = 'Ashe'
+        mock_get_jwt.return_value = "blah"
+
+        mock_request.get(shortname_url + "/ASHE", json=ashe_info['survey'])
+
+        mock_request.get(url_get_surveys_list, json=self.surveys_list_json)
+        mock_request.get(url_get_threads_list, json=thread_list_multi_page_multi_ru)
+        mock_get_count.return_value = 10
+
+        # view survey with filter of business_id
+        url = f"/messages/Ashe?page={page}&limit={limit}&conversation_tab={conversation_tab}" \
+            f"&business_id_filter={business_id_filter}"
+        response = self.client.get(url, follow_redirects=True)
+        response_body = response.data.decode("utf-8")
+
+        self.assertEqual(200, response.status_code)
+        self.assertIn('href="/messages/Ashe?conversation_tab=my+messages', response_body)
+        self.assertIn('href="/messages/Ashe?conversation_tab=open', response_body)
+        self.assertIn('href="/messages/Ashe?conversation_tab=closed', response_body)
+        self.assertIn('href="/messages/Ashe?conversation_tab=initial', response_body)
+
+    @requests_mock.mock()
+    @patch('response_operations_ui.controllers.message_controllers._get_jwt')
+    def test_messages_survey_dropdown_displayed_on_select_survey_page(self, mock_request, mock_get_jwt):
+        """Validate that the survey drop down is in the returned """
+
+        with self.client.session_transaction() as session:
+            session['messages_survey_selection'] = 'Ashe'
+        mock_get_jwt.return_value = "blah"
+
+        mock_request.get(shortname_url + "/ASHE", json=ashe_info['survey'])
+
+        mock_request.get(url_get_surveys_list, json=self.surveys_list_json)
+        mock_request.get(url_get_threads_list, json=thread_list_multi_page_multi_ru)
+
+        response = self.client.get(url_select_survey, follow_redirects=True)
+        response_body = response.data.decode("utf-8")
+
+        self.assertEqual(200, response.status_code)
+        self.assertIn('id="survey-list"', response_body)
+
+    @staticmethod
+    def _mock_request_called_with_expected_query(mock_instance, query):
+        for element in mock_instance.request_history:
+            if element.query == query:
+                return True
+
+        return False
+
+    @staticmethod
+    def _mock_request_called_with_expected_path(mock_instance, path):
+        for element in mock_instance.request_history:
+            if element.path.lower() in path.lower():
+                return True
+
+        return False

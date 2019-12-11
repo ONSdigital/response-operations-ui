@@ -1,5 +1,5 @@
 {% call panel() %}<p class="u-fs-r">This conversation was closed on {{ closed_at }} by {{ thread_data.closed_by }}</p>{% endcall %}
-<form action="{{ url_for('messages_bp.view_conversation', thread_id=messages[0].thread_id) }}" method="post">
+<form action="{{ url_for('messages_bp.view_conversation', thread_id=messages[0].thread_id, ru_ref_filter=ru_ref_filter, business_id_filter=business_id_filter) }}" method="post">
     <input name="reopen" type="hidden" value="Re-open conversation" />
     {{
         onsButton({

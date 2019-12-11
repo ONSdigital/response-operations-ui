@@ -61,7 +61,7 @@
             }) 
         }}
       {% endif %}
-      {% if breadcrumbs %}
+      {% if breadcrumbs and hide_breadcrumbs != true %}
         {% include 'layouts/configs/breadcrumbs.html' %}
       {% endif %}
     {% endblock %}
