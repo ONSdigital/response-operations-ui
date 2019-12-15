@@ -1,30 +1,47 @@
+{% from "components/message/_macro.njk" import onsMessage %}
 {% for message in messages %}
-<div class="secure-message-sent-message">
     {% if message.get('internal') == True %}
-        <div name="sm-from-ons" id="sm-from-ons-{{ loop.index }}" class="secure-message-sent-message-meta sm-from-ons">
+        {% set msgType = 'sent' %}
+        {% set msgId = 'sm-from-ons-' %}
+        {% set msgName = 'sm-from-ons' %}
     {% else %}
-        <div name="sm-from-respondent" id="sm-from-respondent-{{ loop.index }}" class="secure-message-sent-message-meta sm-from-respondent">
+        {% set msgType = 'received' %}
+        {% set msgId = 'sm-from-respondent-' %}
+        {% set msgName = 'sm-from-respondent' %}
     {% endif %}
-    {% if loop.last %}<div name="latest-message" id="latest-message"></div>{% endif %}
-        <span class="secure-message-sent-message-meta-from u-fs-r--b">
-            From:
-            <span name="sm-from-user" id="sm-from-user-{{ loop.index }}" style="display:inline;">{{ message.get('username') }}</span>
-        </span>
-        <span class="secure-message-sent-message-meta-from u-fs-s--b">
-            Sent:
-            <span name="sm-sent-date" id="sm-sent-date-{{ loop.index }}" style="display:inline;">{{ message.get('sent_date') }}</span>
-        </span>
-        {% if loop.last %}
-          {% if show_mark_unread == True %}
-            <a class="secure-message-mark-unread" id="sm-mark-as-unread"
-               href="{{ url_for('messages_bp.mark_message_unread',
+    {% if loop.last %}
+        {% if show_mark_unread == True %}
+        {% set unreadLink = url_for('messages_bp.mark_message_unread',
                message_id=message.message_id, from=message.from, to=message.to, page=page, 
-                       conversation_tab=conversation_tab, ru_ref_filter=ru_ref_filter, business_id_filter=business_id_filter) }}">Mark as unread</a>
-          {% endif %}
+                       conversation_tab=conversation_tab, ru_ref_filter=ru_ref_filter, business_id_filter=business_id_filter) %}
+        {% set unreadLinkId = 'sm-mark-as-unread' %}
+        {% set unreadLinkText = 'Mark as unread' %}
         {% endif %}
-    </div>
-    <div class="secure-message-sent-message-body u-fs-r">
-        <span style="white-space:pre-line" id="conversation-message-body-{{ loop.index }}" name="conversation-message-body">{{ message.get('body') }}</span>
-    </div>
-</div>
+        <div name="latest-message" id="latest-message">
+    {% endif %}
+
+    {% call onsMessage({
+            "type": msgType,
+            "id": msgId + loop.index|string,
+            "name": msgName + loop.index|string,
+            "fromLabel": 'From',
+            "fromName": 'sm-from-user',
+            "fromId": 'sm-from-user-' + loop.index|string,
+            "fromValue": message.get('username'),
+            "sentLabel": 'Sent',
+            "sentValue": message.get('sent_date'),
+            "sentName": 'sm-from-date',
+            "sentId": 'sm-from-date-' + loop.index|string,
+            "unreadLink": unreadLink,
+            "unreadLinkId": unreadLinkId,
+            "unreadLinkText": unreadLinkText,
+            "messageID": 'conversation-message-body-' + loop.index|string,
+            "messageName": 'conversation-message-body'
+        })
+    %}
+        {{ message.get('body') }}
+    {% endcall %}
+    {% if loop.last %}
+        </div>
+    {% endif %}
 {% endfor %}
