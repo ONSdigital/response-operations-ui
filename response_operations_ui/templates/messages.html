@@ -101,13 +101,15 @@
           </p>
         {% else %}
         {% if not messages %}
-          {% if conversation_tab == 'closed' %}
-          <p>No closed conversations</p>
-          {% elif conversation_tab == 'my messages' %}
-          <p>There are currently no messages</p>
-          {% else %}
-          <p>No new conversations</p>
-          {% endif %}
+          <div class="u-mt-l">
+            {% if conversation_tab == 'closed' %}
+            <p>No closed conversations</p>
+            {% elif conversation_tab == 'my messages' %}
+            <p>There are currently no messages</p>
+            {% else %}
+            <p>No new conversations</p>
+            {% endif %}
+          </div>
         {% else %}
 
         {% set surveyTableData = {
