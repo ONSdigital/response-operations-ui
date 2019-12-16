@@ -75,7 +75,7 @@
                                 "term": "Survey:",
                                 "descriptions": [ 
                                     {
-                                        "description": form.survey(id="survey-label"),
+                                        "description": form.survey(id="survey-label") if form.survey(id="survey-label") else "",
                                         "id": "survey"
                                     }
                                 ]
@@ -84,7 +84,7 @@
                                 "term": "RU Ref:",
                                 "descriptions": [ 
                                     {
-                                        "description": form.ru_ref(id="ru-ref-label"),
+                                        "description": form.ru_ref(id="ru-ref-label") if form.ru_ref(id="ru-ref-label") else "",
                                         "id": "ruref"
                                     }                
                                 ]
@@ -93,7 +93,7 @@
                                 "term": "Business:",
                                 "descriptions": [ 
                                     {
-                                        "description": form.business(id="business-label"),
+                                        "description": form.business(id="business-label") if form.business(id="business-label") else "",
                                         "id": "ru"
                                     }                                     
                                 ]
@@ -102,7 +102,7 @@
                                 "term": "To:",
                                 "descriptions": [ 
                                     {
-                                        "description": form.to(id="to-label"),
+                                        "description": form.to(id="to-label") if form.to(id="to-label") else "",
                                         "id": "recipient"
                                     }
                                 ]
