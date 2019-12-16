@@ -10,6 +10,7 @@
 
 {% block main %}
     {% if form.errors %}
+        {% set errorData = [] %}
 
         {% call
             onsPanel({
@@ -20,31 +21,28 @@
         %}
         <p>These <strong>must be corrected</strong> to continue.</p>
         {% if form.subject.errors or form.body.errors %}
-            {% set errorData = [] %}
-            {% if form.subject.errors %}
-                {% for error in form.subject.errors %}
-                    {% do errorData.append(
-                        {
-                            "text": error,
-                            "index": true,
-                            "url": "#secure-message-subject",
-                            "classes": "js-inpagelink"
-                        }
-                    ) %}
-                {% endfor %}
-            {% endif %}
-            {% if form.body.errors %}
-                {% for error in form.body.errors %}
-                    {% do errorData.append(
-                        {
-                            "text": error,
-                            "index": true,
-                            "url": "#secure-message-body",
-                            "classes": "js-inpagelink"
-                        }
-                    ) %}
-                {% endfor %}
-            {% endif %}
+            {% for error in form.subject.errors %}
+                {% do errorData.append(
+                    {
+                        "text": error,
+                        "index": true,
+                        "url": "#secure-message-subject",
+                        "classes": "js-inpagelink"
+                    }
+                ) %}
+            {% endfor %}
+        {% endif %}
+        {% if form.body.errors %}
+            {% for error in form.body.errors %}
+                {% do errorData.append(
+                    {
+                        "text": error,
+                        "index": true,
+                        "url": "#secure-message-body",
+                        "classes": "js-inpagelink"
+                    }
+                ) %}
+            {% endfor %}
         {% endif %}
         {% if form.errors['sending'] %}
             {% do errorData.append(

@@ -32,7 +32,7 @@
         <form method="post" class="form u-mt-xl">
             {{ form.csrf_token }}
             {% if form.errors %}
-            {% set errorData = [] %}
+                {% set errorData = [] %}
                 {% call
                     onsPanel({
                         title: "This page has 1 error" if form.errors|length == 1 else "There are {{ form.errors|length }} errors on this page",
