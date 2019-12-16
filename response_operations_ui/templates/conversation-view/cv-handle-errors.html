@@ -2,7 +2,7 @@
     {% set error_count = form.errors | length %}
     {% set plural_suffix = 's' if error_count > 1 else '' %}
     {% set header_text = 'This page has ' ~ error_count ~ ' error' ~ plural_suffix %}
-
+    {% set errorData = [] %}
     {% call
         onsPanel({
             "title": header_text,
