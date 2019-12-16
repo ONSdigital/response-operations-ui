@@ -10,7 +10,6 @@
 
 {% block main %}
     {% if form.errors %}
-        {% set errorData = [] %}
 
         {% call
             onsPanel({
@@ -20,7 +19,8 @@
             })
         %}
         <p>These <strong>must be corrected</strong> to continue.</p>
-        {% if form.subject.errors %}
+        {% if form.subject.errors or form.body.errors %}
+            {% set errorData = [] %}
             {% for error in form.subject.errors %}
                 {% do errorData.append(
                     {
@@ -31,8 +31,6 @@
                     }
                 ) %}
             {% endfor %}
-        {% endif %}
-        {% if form.body.errors %}
             {% for error in form.body.errors %}
                 {% do errorData.append(
                     {
@@ -115,7 +113,7 @@
                     "legend": "Complete the form to send a message",
                     "legendClasses": "u-vh"
                     }) -%}
-                    {# {% if form.subject.errors %}
+                    {% if form.subject.errors %}
                         {% set subjectError = {} %}
                         {% for error in form.subject.errors %}
                             {% do subjectError | setAttribute("text", error) %}
@@ -126,27 +124,9 @@
                         {% for error in form.body.errors %}
                             {% do bodyError | setAttribute("text", error) %}
                         {% endfor %}
-                    {% endif %} #}
-                    <div id="subject-field"{% if form.subject.errors %} class="panel panel--simple panel--error u-mt-s"{% endif %}>
-                        {% for error in form.subject.errors %}
-                            <p id="subject-error-{{ loop.index }}" class="error-message u-fw-b">{{ error }}</p>
-                        {% endfor %}
-                        <label class="label" for="secure-message-subject">Subject</label>
-                        {{ form.subject(id='secure-message-subject',
-                        class_='input input--text input-type__input input--w-50',
-                        maxlength='96', size=80, required=required) }}
-                    </div>
-
-                    <div id="body-field"{% if form.body.errors %} class="panel panel--simple panel--error u-mb-m"{% endif %}>
-                        {% for error in form.body.errors %}
-                            <p id="body-error-{{ loop.index }}" class="error-message u-fw-b">{{ error }}</p>
-                        {% endfor %}
-                        <label class="label" for="secure-message-body">Message</label>
-                        {{ form.body(id='secure-message-body',
-                        class_='input input--textarea',
-                        rows='10', maxlength='10000', cols=80, required=required) }}
-                    </div>
-                    {# {{
+                    {% endif %}
+                    
+                    {{
                         onsInput({
                             "id": "secure-message-subject",
                             "classes": "input--w-50",
@@ -175,7 +155,7 @@
                             },
                             "error": bodyError
                         })
-                    }} #}
+                    }}
                 {%- endcall -%}
 
                 {{
