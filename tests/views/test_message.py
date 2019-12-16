@@ -870,8 +870,8 @@ class TestMessage(ViewTestCase):
                 self.assertEqual(200, response.status_code)
 
                 # validate that the currently selected tab is as expected (i.e aria-current="location")
-                match = f'aria-current="location""/messages/Ashe?conversation_tab={conversation_tab.replace(" ","+")}' \
-                    f'&ru_ref_filter=&business_id_filter="'
+                match = f'"/messages/Ashe?conversation_tab={conversation_tab.replace(" ","+")}' \
+                    f'&ru_ref_filter=&business_id_filter="aria-current="location"'
 
                 self.assertIn(match, response_body.replace('amp;', ''))
 
