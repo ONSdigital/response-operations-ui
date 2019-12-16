@@ -84,13 +84,13 @@
       {% endfor %}
       {{ 
         onsSectionNavigation({
+            "id": "message-menu",
             "ariaLabel": "Messages menu",
             "ariraListLabel": "Navigation menu",
-            "currentPath": request.url,
+            "tabQuery": request.args.get('conversation_tab'),
             "itemsList": nav
         })
       }}
-
         {% if response_error %}
           <h1 class="u-fs-l u-mt-l">Oops! Something went wrong</h1>
           <p>
@@ -141,14 +141,20 @@
         {% set surveyTableDataRows = [] %}
 
         {% for message in messages %}
-
+          {% if message.ru_ref and message.unread %}
+            {% set ruRef = '<span class="status status--info status--small u-fw-b">' + message.ru_ref + '</span>' %}
+          {% elif message.ru_ref %}
+            {% set ruRef = message.ru_ref %}
+          {% else %}
+            {% set ruRef = 'Unavailable' %}
+          {% endif %}
           {% do surveyTableDataRows.append(
             {
               "name": 'message-unread' if message.unread else 'message',
               "id": 'message-' + loop.index|string,
               "tds": [
                 {
-                  "value": '<span class="status status--info status--small u-fw-b">' + message.ru_ref + '</span>' if (message.ru_ref and message.unread) else message.ru_ref,
+                  "value": ruRef,
                   "data": "RU Ref",
                   "name": "tbl-messages-RU_Ref",
                   "id": 'ru-ref-' + loop.index|string
