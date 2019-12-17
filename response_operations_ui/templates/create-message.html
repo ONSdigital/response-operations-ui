@@ -20,7 +20,7 @@
             })
         %}
         <p>These <strong>must be corrected</strong> to continue.</p>
-        {% if form.subject.errors or form.body.errors %}
+        {% if form.subject.errors %}
             {% for error in form.subject.errors %}
                 {% do errorData.append(
                     {
@@ -127,7 +127,6 @@
                             {% do bodyError | setAttribute("text", error) %}
                         {% endfor %}
                     {% endif %}
-                    
                     {{
                         onsInput({
                             "id": "secure-message-subject",
