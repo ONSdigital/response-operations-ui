@@ -231,7 +231,8 @@ def view_selected_survey(selected_survey):
     displayed_short_name = format_short_name(selected_survey)
     session['messages_survey_selection'] = selected_survey
     breadcrumbs = [{"text": displayed_short_name + " Messages"}]
-
+    session['totals'] = {}
+    
     try:
         if selected_survey == 'FDI':
             survey_id = _get_FDI_survey_id()
@@ -258,9 +259,21 @@ def view_selected_survey(selected_survey):
                     flash_message = ru_resolution_error
 
         form.ru_ref_filter.data = ru_ref_filter
-        thread_count = message_controllers.get_conversation_count(survey_id=survey_id,
-                                                                  business_id=business_id_filter,
-                                                                  conversation_tab=conversation_tab)
+        
+        all_conversation_types = True if ru_ref_filter else False
+        
+        # TODO: Decide if getting all_conversation_type_counts is too slow if not then possibly use it always ?
+        
+        if not all_conversation_types:  # When no ru_ref_filter in use then do not get counts for other tabs
+            thread_count = message_controllers.get_conversation_count(survey_id=survey_id,
+                                                                      business_id=business_id_filter,
+                                                                      conversation_tab=conversation_tab)
+        else:
+            thread_count, all_conversation_type_counts = message_controllers.\
+                get_all_conversation_type_counts(survey_id=survey_id, 
+                                                 conversation_tab=conversation_tab, 
+                                                 business_id=business_id_filter)
+            session['tab_totals'] = all_conversation_type_counts
 
         recalculated_page = _calculate_page(page, limit, thread_count)
 
@@ -299,7 +312,7 @@ def view_selected_survey(selected_survey):
                                change_survey=True,
                                conversation_tab=conversation_tab,
                                business_id_filter=business_id_filter,
-                               ru_ref_filter=ru_ref_filter)
+                               ru_ref_filter=ru_ref_filter,)
 
     except TypeError:
         logger.error("Failed to retrieve survey id", exc_info=True)

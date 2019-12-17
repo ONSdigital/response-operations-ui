@@ -34,18 +34,13 @@ def get_conversation(thread_id):
     except JSONDecodeError:
         logger.exception("Response could not be decoded", thread_id=thread_id)
         raise ApiError(response)
-
+    
 
 def get_conversation_count(survey_id, conversation_tab, business_id):
     logger.info("Retrieving count of threads",
                 survey_id=survey_id, conversation_tab=conversation_tab, business_id=business_id)
 
-    params = _get_secure_message_threads_params(survey_id, business_id, conversation_tab)
-
-    url = f'{current_app.config["SECURE_MESSAGE_URL"]}/messages/count'
-
-    response = requests.get(url, headers={'Authorization': _get_jwt()}, params=params)
-
+    response = _get_conversation_counts(business_id, conversation_tab, survey_id, all_conversation_types=False)
     try:
         response.raise_for_status()
     except HTTPError:
@@ -60,12 +55,56 @@ def get_conversation_count(survey_id, conversation_tab, business_id):
         raise NoMessagesError
 
 
-def _get_secure_message_threads_params(survey_id, business_id, conversation_tab):
+def get_all_conversation_type_counts(survey_id, conversation_tab, business_id):
+    """gets the count for teh current tab and the count for the  conversations in all 4 tabs"""
+    logger.info("Retrieving count of threads for all conversation tabs",
+                survey_id=survey_id, conversation_tab=conversation_tab, business_id=business_id)
+
+    response = _get_conversation_counts(business_id, conversation_tab, survey_id, all_conversation_types=True)
+
+    try:
+        response.raise_for_status()
+    except HTTPError:
+        logger.exception("Thread count failed")
+        raise ApiError(response)
+
+    logger.info("Count successful")
+
+    try:
+        totals = response.json()['totals']
+        current_tab_total = _get_current_tab_total(conversation_tab, totals)
+        return current_tab_total, totals
+    except KeyError:
+        logger.exception("Response was successful but didn't contain a 'totals' key")
+        raise NoMessagesError
+  
+  
+def _get_current_tab_total(conversation_tab, totals):
+    """Look inside the 4 counts to get the current tabs"""
+    if conversation_tab == 'initial':
+        return totals['new_respondent_conversations']
+    if conversation_tab == 'my messages':
+        return totals['my_conversations']
+    if conversation_tab == 'closed':
+        return totals['closed']
+    return totals['open']
+
+
+def _get_conversation_counts(business_id, conversation_tab, survey_id, all_conversation_types):
+    """Gets the count of conversations based on the params """
+    params = _get_secure_message_threads_params(survey_id, business_id, conversation_tab, all_conversation_types)
+    url = f'{current_app.config["SECURE_MESSAGE_URL"]}/messages/count'
+    response = requests.get(url, headers={'Authorization': _get_jwt()}, params=params)
+    return response
+
+
+def _get_secure_message_threads_params(survey_id, business_id, conversation_tab, all_conversation_types):
     """creates a params dictionary"""
     params = {'survey': survey_id,
               'is_closed': 'true' if conversation_tab == 'closed' else 'false',
               'my_conversations': 'true' if conversation_tab == 'my messages' else 'false',
-              'new_respondent_conversations': 'true' if conversation_tab == 'initial' else 'false'}
+              'new_respondent_conversations': 'true' if conversation_tab == 'initial' else 'false',
+              'all_conversation_types': 'true' if all_conversation_types else 'false'}
     if business_id:
         params['business_id'] = business_id
     return params
