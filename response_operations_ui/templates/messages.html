@@ -87,7 +87,7 @@
             "id": "message-menu",
             "ariaLabel": "Messages menu",
             "ariraListLabel": "Navigation menu",
-            "tabQuery": request.args.get('conversation_tab'),
+            "tabQuery": request.args.get('conversation_tab') if request.args.get('conversation_tab') else 'open',
             "itemsList": nav
         })
       }}
