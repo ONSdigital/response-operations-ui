@@ -11,7 +11,7 @@
                         "term": "Survey:",
                         "descriptions": [ 
                             {
-                                "description": messages[0].get('survey') + ' ' + messages[0].get('survey_ref'),
+                                "description": messages[0].get('survey') + ' ' + messages[0].get('survey_ref') if messages[0].get('survey') else "",
                                 "id": "survey"
                             }
                         ]
@@ -20,7 +20,7 @@
                         "term": "RU Ref:",
                         "descriptions": [ 
                             {
-                                "description": messages[0].get('ru_ref'),
+                                "description": messages[0].get('ru_ref') if messages[0].get('ru_ref') else "",
                                 "id": "ruref"
                             }                  
                         ]
@@ -29,7 +29,7 @@
                         "term": "Business:",
                         "descriptions": [ 
                             {
-                                "description": messages[0].get('business_name'),
+                                "description": messages[0].get('business_name') if messages[0].get('business_name') else "",
                                 "id": "ru"
                             }                                     
                         ]

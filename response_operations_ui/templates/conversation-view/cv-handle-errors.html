@@ -39,7 +39,7 @@
         {% if form.errors['sending'] %}
             {% do errorData.append(
                 {
-                    "text": form.errors['sending'],
+                    "text": form.errors['sending'][0],
                     "index": true
                 }
             ) %}

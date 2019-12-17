@@ -115,48 +115,25 @@
                     "legend": "Complete the form to send a message",
                     "legendClasses": "u-vh"
                     }) -%}
-                    {% if form.subject.errors %}
-                        {% set subjectError = {} %}
+                    <div id="subject-field"{% if form.subject.errors %} class="panel panel--simple panel--error u-mt-s{% endif %}">
                         {% for error in form.subject.errors %}
-                            {% do subjectError | setAttribute("text", error) %}
+                            <p id="subject-error-{{ loop.index }}" class="error-message">{{ error }}</p>
                         {% endfor %}
-                    {% endif %}
-                    {% if form.body.errors %}
-                        {% set bodyError = {} %}
+                        <label class="label" for="secure-message-subject">Subject</label>
+                        {{ form.subject(id='secure-message-subject',
+                        class_='input input--text u-mb-m input--w-50',
+                        maxlength='96', size=80, required=required) }}
+                    </div>
+
+                    <div id="body-field"{% if form.body.errors %} class="panel panel--simple panel--error u-mb-m{% endif %}">
                         {% for error in form.body.errors %}
-                            {% do bodyError | setAttribute("text", error) %}
+                            <p id="body-error-{{ loop.index }}" class="error-message">{{ error }}</p>
                         {% endfor %}
-                    {% endif %}
-                    {{
-                        onsInput({
-                            "id": "secure-message-subject",
-                            "classes": "input--w-50",
-                            "name": "subject",
-                            "type": "text",
-                            "label": {
-                                "text": "Subject"
-                            },
-                            "maxlength": '96',
-                            "attributes": {
-                                "required": true
-                            },
-                            "error": subjectError
-                        })
-                    }}
-                    {{
-                        onsTextarea({
-                            "id": "secure-message-body",
-                            "name": "body",
-                            "label": {
-                                "text": "Message"
-                            },
-                            "maxlength": '10000',
-                            "attributes": {
-                                "required": true
-                            },
-                            "error": bodyError
-                        })
-                    }}
+                        <label class="label" for="secure-message-body">Message</label>
+                        {{ form.body(id='secure-message-body',
+                        class_='input input--textarea u-mb-m',
+                        rows='10', maxlength='10000', cols=80, required=required) }}
+                    </div>
                 {%- endcall -%}
 
                 {{
