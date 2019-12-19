@@ -13,7 +13,10 @@
           {% call
           onsPanel({
               "type":"success",
-              "classes": "u-mb-s"
+              "classes": "u-mb-s",
+              "bodyAttributes": {
+                 "data-qa": "success-body"
+              }
           })
       %}
         {% for message in messages %}
