@@ -1,5 +1,8 @@
 {% extends "layouts/base.html" %}
 {% from "components/search/_macro.njk" import onsSearch %}
+{% from "components/section-navigation/_macro.njk" import onsSectionNavigation %}
+{% from "components/table/_macro.njk" import onsTable %}
+{% from "components/status/_macro.njk" import onsStatus %}
 
 {% set page_title = "Messages" %}
 {% set hide_breadcrumbs = true %}
@@ -7,13 +10,19 @@
 
   {% with messages = get_flashed_messages() %}
     {% if messages %}
-      <div class="panel panel--simple panel--success col-6@m u-mb-m">
-          <div class="panel__body" data-qa="success-body">
-            {% for message in messages %}
-            <p class="u-fs-r" id="flashed-message-{{ loop.index }}">{{ message }}</p>
-            {% endfor %}
-          </div>
-      </div>
+          {% call
+          onsPanel({
+              "type":"success",
+              "classes": "u-mb-s",
+              "bodyAttributes": {
+                 "data-qa": "success-body"
+              }
+          })
+      %}
+        {% for message in messages %}
+          <p id="flashed-message-{{ loop.index }}">{{ message }}</p>
+        {% endfor %}
+      {% endcall %}
     {% endif %}
   {% endwith %}
   <div class="grid grid--flex grid--between">
@@ -65,113 +74,138 @@
     </div>
   </div>
   <div class="grid">
-    <div class="grid__col col-12@m">
-      <nav class="nav nav--horizontal nav--sub nav--dark u-mb-l u-mt-s" role="menu">
-            <ul class="nav__list" aria-label="Section navigation menu">
-                <li class="nav__item u-fs-s {% if conversation_tab =='my messages' %}nav__item--current{% endif %}">
-                    <a class="nav__link" href="{{ url_for('messages_bp.view_selected_survey', selected_survey=selected_survey, conversation_tab='my messages', ru_ref_filter=ru_ref_filter, business_id_filter=business_id_filter) }}" aria-current="{% if conversation_tab == 'my messages' %}location{% endif %}" role="menuitem">My Messages</a>
-                </li>
-                <li class="nav__item u-fs-s {% if conversation_tab == 'open' %}nav__item--current{% endif %}">
-                    <a class="nav__link" href="{{ url_for('messages_bp.view_selected_survey', selected_survey=selected_survey, conversation_tab = 'open', ru_ref_filter=ru_ref_filter, business_id_filter=business_id_filter) }}" aria-current="{% if conversation_tab == 'open' %}location{% endif %}" role="menuitem">Open</a>
-                </li>
-                <li class="nav__item u-fs-s {% if conversation_tab == 'closed' %}nav__item--current{% endif %}">
-                    <a class="nav__link" href="{{ url_for('messages_bp.view_selected_survey', selected_survey=selected_survey, conversation_tab = 'closed', ru_ref_filter=ru_ref_filter, business_id_filter=business_id_filter) }}" aria-current="{% if conversation_tab == 'closed' %}location{% endif %}" role="menuitem">Closed</a>
-                </li>
-                <li class="nav__item u-fs-s {% if conversation_tab == 'initial' %}nav__item--current{% endif %}">
-                    <a class="nav__link" href="{{ url_for('messages_bp.view_selected_survey', selected_survey=selected_survey, conversation_tab = 'initial', ru_ref_filter=ru_ref_filter, business_id_filter=business_id_filter) }}" aria-current="{% if conversation_tab == 'initial' %}location{% endif %}" role="menuitem">Initial</a>
-                </li>
-            </ul>
-      </nav>
-      <div class="messages-list">
+    <div class="grid__col col-12@m u-mt-s">
+      {% set tabs = ['My messages', 'Open', 'Closed', 'Initial'] %}
+      {% set nav = [] %}
+      {% for tab in tabs %}
+        {% do nav.append(
+          {
+            "title": tab,
+            "url": url_for('messages_bp.view_selected_survey', selected_survey=selected_survey, conversation_tab=tab|lower, ru_ref_filter=ru_ref_filter, business_id_filter=business_id_filter)
+          }
+        ) %}
+      {% endfor %}
+      {{ 
+        onsSectionNavigation({
+            "id": "message-menu",
+            "ariaLabel": "Messages menu",
+            "ariraListLabel": "Navigation menu",
+            "tabQuery": request.args.get('conversation_tab') if request.args.get('conversation_tab') else 'open',
+            "itemsList": nav
+        })
+      }}
         {% if response_error %}
-        <div class="container page__container">
-          <div class="grid">
-            <div class="grid__col col-12@m">
-              <div role="main" id="mains" class="page__main">
-                <h1 class="u-fs-l u-mt-l">Oops! Something went wrong</h1>
-                <p>
-                  There's an issue with the messaging service, please try again later.
-                </p>
-                <p>
-                  Until then you can still use other parts of the system.
-                </p>
-              </div>
-            </div>
-          </div>
-        </div>
+          <h1 class="u-fs-l u-mt-l">Oops! Something went wrong</h1>
+          <p>
+            There's an issue with the messaging service, please try again later.
+          </p>
+          <p>
+            Until then you can still use other parts of the system.
+          </p>
         {% else %}
         {% if not messages %}
-          {% if conversation_tab == 'closed' %}
-          <p>No closed conversations</p>
-          {% elif conversation_tab == 'my messages' %}
-          <p>There are currently no messages</p>
-          {% else %}
-          <p>No new conversations</p>
-          {% endif %}
+          <div class="u-mt-l">
+            {% if conversation_tab == 'closed' %}
+            <p>No closed conversations</p>
+            {% elif conversation_tab == 'my messages' %}
+            <p>There are currently no messages</p>
+            {% else %}
+            <p>No new conversations</p>
+            {% endif %}
+          </div>
         {% else %}
-        <table id="tbl-messages" class="table table--dense message-list sortable" summary="messages in the system">
-          <thead class="table__head">
-            <tr class="table__row">
-              <th scope="col" class="message-list__ru-ref sortable-column">
-                RU Ref
-              </th>
-              <th scope="col" class="message-list__ru-name sortable-column">
-                Business name
-              </th>
-              <th scope="col" class="message-list__subject sortable-column">
-                Subject
-              </th>
-              <th scope="col" class="message-list__from sortable-column">
-                From
-              </th>
-              <th scope="col" class="message-list__to sortable-column">
-                To
-              </th>
-              <th scope="col" class="message-list__date-time sortable-column">
-                Date and time
-              </th>
-            </tr>
-          </thead>
-              <tbody class="table__body">
-              {% for message in messages %}
-                {% if message.unread %}
-                   <tr name="message-unread" class="table__row table__row__selectable message-list__item--unread" id="message-{{ loop.index }}">
-                    <td name="tbl-messages-RU_Ref" class="message-list__ru-ref circle-icon" id="ru-ref-{{ loop.index }}">
-                {% else %}
-                   <tr name="message" class="table__row table__row__selectable" id="message-{{ loop.index }}">
-                    <td name="tbl-messages-RU_Ref" class="message-list__ru-ref" id="ru-ref-{{ loop.index }}">
-                {% endif %}
-                {% if message.ru_ref %}
-                    {{ message.ru_ref }} 
-                {% else %}
-                    {{ 'Unavailable' }}
-                {% endif %}
-                </td>
-                <td name="tbl-messages-business" class="message-list__ru-name" id="business-name-{{ loop.index }}">
-                    {{ message.business_name or 'Unavailable' }}
-                </td>
-                <td name="tbl-messages-subject" class="message-list__subject">
-                    <a href="{{ url_for('messages_bp.view_conversation', thread_id=message.thread_id, page=page, conversation_tab=conversation_tab, ru_ref_filter=ru_ref_filter, business_id_filter=business_id_filter) }}#latest-message" id="message-link-{{ loop.index }}">{{ message.subject }}</a>
-                </td>
-                <td name="tbl-messages-from" class="message-list__from" id="message-from-{{ loop.index }}">
-                    {{ message.from or 'Unavailable' }}
-                </td>
-                <td name="tbl-messages-to" class="message-list__to" id="message-to-{{ loop.index }}">
-                    {{ message.to or 'Unavailable' }}
-                </td>
-                <td name="tbl-messages-received" class="message-list__date-time" id="received-time-{{ loop.index }}">
-                   {{ message.sent_date or 'Unavailable' }}
-                </td>
-               </tr>
-              {% endfor %}
-              {% endif %}
-          </tbody>
-        </table>
 
+        {% set surveyTableData = {
+            "table_class": 'table--dense table--row-hover u-mt-m',
+            "id": 'tbl-messages',
+            "ths": [
+              { 
+                  "value": "RU Ref"
+              },
+              { 
+                  "value": "Business name"
+              },
+              { 
+                  "value": "Subject"
+              },
+              { 
+                  "value": "From"
+              },
+              { 
+                  "value": "To"
+              },
+              { 
+                  "value": "Date and time"
+              }
+            ]
+          }
+        %}
+
+        {% set surveyTableDataRows = [] %}
+
+        {% for message in messages %}
+          {% if message.ru_ref and message.unread %}
+            {% set ruRef = '<span class="status status--info status--small u-fw-b">' + message.ru_ref + '</span>' %}
+          {% elif message.ru_ref %}
+            {% set ruRef = message.ru_ref %}
+          {% else %}
+            {% set ruRef = 'Unavailable' %}
+          {% endif %}
+          {% do surveyTableDataRows.append(
+            {
+              "name": 'message-unread' if message.unread else 'message',
+              "id": 'message-' + loop.index|string,
+              "tds": [
+                {
+                  "value": ruRef,
+                  "data": "RU Ref",
+                  "name": "tbl-messages-RU_Ref",
+                  "id": 'ru-ref-' + loop.index|string
+                },
+                {
+                  "value": message.business_name if message.business_name else 'Unavailable',
+                  "data": "Business name",
+                  "name": "tbl-messages-business",
+                  "id": 'business-name-' + loop.index|string
+                },
+                {
+                  "value": '<a href="' + url_for('messages_bp.view_conversation', thread_id=message.thread_id, page=page, conversation_tab=conversation_tab, ru_ref_filter=ru_ref_filter, business_id_filter=business_id_filter) +'#latest-message" id="message-link-' + loop.index|string + '">' + message.subject + '</a>',
+                  "data": "Subject",
+                  "name": "tbl-messages-subject"
+                },
+                {
+                  "value": message.from if message.from else 'Unavailable',
+                  "data": "From",
+                  "name": "tbl-messages-from",
+                  "id": 'messages-from-' + loop.index|string
+                },
+                {
+                  "value": message.to if message.to else 'Unavailable',
+                  "data": "To",
+                  "name": "tbl-messages-to",
+                  "id": 'messages-to-' + loop.index|string
+                },
+                {
+                  "value": message.sent_date if message.sent_date else 'Unavailable',
+                  "data": "Date and time",
+                  "name": "tbl-messages-received",
+                  "id": 'messages-time-' + loop.index|string
+                }
+              ]
+            }
+          ) %}
+        {% endfor %}
+
+        {% do surveyTableData | setAttribute("trs", surveyTableDataRows) %}
+
+        {{
+          onsTable(surveyTableData)
+        }}
+
+        {% endif %}
         {{ pagination.links }}
 
         {% endif %}
       </div>
     </div>
-  </div>
 {% endblock %}
