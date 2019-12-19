@@ -23,7 +23,7 @@
     {% call onsMessage({
             "type": msgType,
             "id": msgId + loop.index|string,
-            "name": msgName + loop.index|string,
+            "name": msgName,
             "fromLabel": 'From',
             "fromName": 'sm-from-user',
             "fromId": 'sm-from-user-' + loop.index|string,
