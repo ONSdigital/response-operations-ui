@@ -282,8 +282,7 @@ class TestMessage(ViewTestCase):
         response = self.client.get("/messages/ASHE")
 
         self.assertIn('name="message-unread"'.encode(), response.data)
-        self.assertIn("message-list__item--unread".encode(), response.data)
-        self.assertIn("circle-icon".encode(), response.data)
+        self.assertIn("status".encode(), response.data)
 
     def test_get_message_unread_status(self):
         unread_message = {"labels": ["INBOX", "UNREAD"]}
@@ -654,8 +653,8 @@ class TestMessage(ViewTestCase):
 
         self.assertEqual(200, response.status_code)
         self.assertIn("Home".encode(), response.data)
-        self.assertIn("filter your messages".encode(), response.data)
-        self.assertIn("Please select a survey to see messages for your team".encode(), response.data)
+        self.assertIn("Filter messages by survey".encode(), response.data)
+        self.assertIn("Select a survey to display messages for your team".encode(), response.data)
 
     @requests_mock.mock()
     def test_get_messages_survey_does_not_exist(self, mock_request):
@@ -942,7 +941,7 @@ class TestMessage(ViewTestCase):
         response_body = response.data.decode("utf-8").replace(' ', '')
 
         # validate that the currently selected tab is as expected (i.e aria-current="location")
-        match_str = 'aria-current="location"role="menuitem">Closed'
+        match_str = '"aria-current="location">Closed'
         self.assertIn(match_str, response_body)
 
     @requests_mock.mock()

@@ -1,3 +1,6 @@
+{% from "components/textarea/_macro.njk" import onsTextarea %}
+{% from "components/input/_macro.njk" import onsInput %}
+
 <div class="secure-message-form">
     <form action="{{ url_for('messages_bp.view_conversation', thread_id=messages[0].thread_id, page=page, conversation_tab=conversation_tab, ru_ref_filter=ru_ref_filter, business_id_filter=business_id_filter) }}" method="post" id="create-message-form" class="u-mb-m">
         {{ form.csrf_token }}
@@ -5,37 +8,49 @@
         {{ form.hidden_to_business_id(type='hidden', value=business_id) }}
         {{ form.hidden_survey_id(type='hidden', value=survey) }}
         {{ form.hidden_to_uuid(type='hidden', value=to_uuid)}}
-        <div id="body-field"{% if form.body.errors %} class="panel panel--simple panel--error{% endif %}">
-            {% for error in form.body.errors %}
-                <p id="body-error-{{ loop.index }}" class="error-message">{{ error }}</p>
+        
+        {% set errorData = {} %}
+        {% if form.subject.errors %}
+            {% for error in form.subject.errors %}
+                {% do errorData | setAttribute("text", error) %}
             {% endfor %}
-            {% if form.errors['sending'] %}
-                <p class="panel__title u-fs-r--b">{{ form.errors['sending'][0] }}</p>
-            {% endif %}
-            <label class="secure-message--message u-fs-r--b" for="message-text">Reply</label>
-            {{ form.body(id='secure-message-body',
-                            class_='input input--textarea input--textarea-message',
-                            rows='10',
-                            maxlength='10000',
-                            cols=80) }}
-        </div>
+        {% endif %}
+        {% if form.errors['sending'] %}
+            {% do errorData.append(
+                {
+                    "text": form.errors['sending'][0]
+                }
+            ) %}
+        {% endif %}
+
         {{
-            onsButton({
-                "text": "Send",
-                "classes": 'u-mt-s',
-                "id": "btn-send-message",
-                "submitType": "timer"
+            onsTextarea({
+                "id": "secure-message-body",
+                "name": "body",
+                "label": {
+                    "text": "Reply"
+                },
+                "maxlength": '10000',
+                "attributes": {
+                    "required": true
+                },
+                "error": errorData if errorData
             })
-        }}   
-        {{
-            onsButton({
-                "id": "btn-close-conversation",
-                "type": 'button',
-                "text": 'Close conversation',
-                "classes": 'btn--secondary u-mt-s',
-                "url": url_for('messages_bp.close_conversation', thread_id=messages[0].thread_id, page=page, conversation_tab=conversation_tab, business_id=business_id, ru_ref_filter=ru_ref_filter, business_id_filter=business_id_filter),
-                "submitType": "timer"
-            }) 
         }}
+        <div class="grid grid--flex grid--gutterless grid--vertical-center grid--no-wrap@s u-mt-m u-mb-m">
+            <div class="grid__col">
+                {{ 
+                    onsButton({
+                        "type": 'submit',
+                        "text": 'Send message',
+                        "id": "btn-send-message",
+                        "submitType": "timer"
+                    }) 
+                }}
+                </div>
+                <div class="grid__col u-ml-m">
+                    <a id="btn-close-conversation" href="{{ url_for('messages_bp.close_conversation', thread_id=messages[0].thread_id, page=page, conversation_tab=conversation_tab, business_id=business_id, ru_ref_filter=ru_ref_filter, business_id_filter=business_id_filter) }}">Close conversation</a>
+                </div>
+            </div>
     </form>
 </div>
