@@ -1,73 +1,85 @@
 {% extends "layouts/base.html" %}
 {% from "components/button/_macro.njk" import onsButton %}
+{% from "components/input/_macro.njk" import onsInput %}
+{% from "components/table/_macro.njk" import onsTable %}
 
 {% set page_title = "Reporting units" %}
 
 {% block main %}
     <h1>Reporting units</h1>
-    
-        <div class="ru-search">
+    <form action="{{ url_for('reporting_unit_bp.search_redirect') }}" method="post">
+        {{ form.csrf_token }}
 
-        <form action="{{ url_for('reporting_unit_bp.search_redirect') }}" method="post">
-            {{ form.csrf_token }}
-
-            <div class="field u-mb-s">
-                <label class="label">Type a reference or company name</label>
-                {{ form.query(size=20, class_="ru-search-box input input--text")}}
-            </div>
-            {{
-                onsButton({
-                    "text": "Search",
-                    "id": "btn-search-ru",
-                    "submitType": "timer"
-                })
-            }}
-        </form>
-
-    </div>
-
+        {{
+            onsInput({
+                "id": "query",
+                "name": "query",
+                "type": "text",
+                "classes": "u-mb-m",
+                "label": {
+                    "text": "Type a reference or company name"
+                }
+            })
+        }} 
+        {{
+            onsButton({
+                "text": "Search",
+                "id": "btn-search-ru",
+                "submitType": "timer"
+            })
+        }}
+    </form>
     {% if not total_business_count %}
-        <div class="u-mt-m">No results found</div>
+        <p class="u-mt-m">No results found</p>
     {% else %}
-        <div class="u-pt-m">
-    
-            <table id="tbl-businesses" class="table table--dense" summary="Businesses in the system">
-                <thead class="table__head">
-                <tr class="table__row">
-                    <th scope="col" class="table__header">
-                        RU reference
-                    </th>
-                    <th scope="col" class="table__header">
-                        Name
-                    </th>
-                    <th scope="col" class="table__header">
-                        Trading as
-                    </th>
-                </tr>
-                </thead>
-    
-                <tbody class="table__body">
-                {% for business in business_list %}
-                <tr class="table__row table__row__selectable">
-                    <td class="table__cell ">
-                        <a href="/reporting-units/{{ business.ruref }}" name="details-link-{{ business.ruref }}">{{ business.ruref }}</a>
-                    </td>
-                    <td class="table__cell">
-                        {{ business.name }}
-                    </td>
-                    <td class="table__cell">
-                        {{ business.trading_as }}
-                    </td>
-                </tr>
-                {% endfor %}
-                </tbody>
-            </table>
-        </div>
-            {% if total_business_count == 1  %}
-                <h2 class="u-fs-l">{{ total_business_count }} Result found</h2>
-            {%  else %}    
-                <h2 class="u-fs-l">{{ total_business_count }} Results found</h2>
-            {% endif %}
+        <section class="u-mt-m">
+            {% set surveyTableData = {
+                "table_class": 'table--dense',
+                "id": 'tbl-businesses',
+                "ths": [
+                    { 
+                        "value": "RU reference"
+                    },
+                    { 
+                        "value": "Name"
+                    },
+                    { 
+                        "value": "Trading as"
+                    }
+                ]
+                }
+            %}
+
+            {% set surveyTableDataRows = [] %}
+            {% for business in business_list %}
+                {% do surveyTableDataRows.append(
+                    {
+                        "tds": [
+                        {
+                            "value": '<a href="/reporting-units/' + business.ruref + '" name="details-link-' + business.ruref + '">' + business.ruref + '</a>'
+                        },
+                        {
+                            "value": business.name
+                        },
+                        {
+                            "value": business.trading_as
+                        }
+                        ]
+                    }
+                    ) %}
+
+            {% endfor %}
+
+            {% do surveyTableData | setAttribute("trs", surveyTableDataRows) %}
+            {{
+                onsTable(surveyTableData)
+            }}
+        </section>
+        {% if total_business_count == 1  %}
+            <h2 class="u-fs-l">{{ total_business_count }} Result found</h2>
+        {%  else %}    
+            <h2 class="u-fs-l">{{ total_business_count }} Results found</h2>
+        {% endif %}
         <h3 class="u-mb-m">Displaying <strong>{{ first_index }} - {{ last_index }}</strong> of <strong>{{ total_business_count }}</strong> </h3>
         {% if show_pagination %}{% include 'respondent-search/rs-pagination.html' %}{% endif %}
     {%  endif %}
