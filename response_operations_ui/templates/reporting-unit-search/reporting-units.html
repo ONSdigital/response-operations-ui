@@ -9,18 +9,11 @@
     <h1>Reporting units</h1>
     <form action="{{ url_for('reporting_unit_bp.search_redirect') }}" method="post">
         {{ form.csrf_token }}
+        <p class="field u-mb-s">
+            <label for="query" class="label">Type a reference or company name</label>
+            {{ form.query(size=20, class_="ru-search-box input input--text", id="query")}}
+        </p>
 
-        {{
-            onsInput({
-                "id": "query",
-                "name": "query",
-                "type": "text",
-                "classes": "u-mb-m",
-                "label": {
-                    "text": "Type a reference or company name"
-                }
-            })
-        }} 
         {{
             onsButton({
                 "text": "Search",
