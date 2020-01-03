@@ -21,7 +21,7 @@ class TestDates(unittest.TestCase):
 
     def test_get_formatted_date_full_dates(self):
         self.assertEqual(get_formatted_date('2000-01-01 00:00:00'), '01 Jan 2000 00:00')
-        self.assertEqual(get_formatted_date('2020-01-01 00:00:00'), '01 Jan 2020 00:00')
+        self.assertEqual(get_formatted_date('2019-01-01 00:00:00'), '01 Jan 2019 00:00')
         self.assertEqual(get_formatted_date('3000-01-01 00:00:00'), '01 Jan 3000 00:00')
         self.assertEqual(get_formatted_date('1999-12-31 23:59:59'), '31 Dec 1999 23:59')
         self.assertEqual(get_formatted_date('2000-01-01 00:00:00'), '01 Jan 2000 00:00')
