@@ -35,29 +35,14 @@ def search_redirect():
         flash('At least one input should be filled')
         return redirect(url_for('respondent_bp.respondent_home'))
 
-    return redirect(url_for('respondent_bp.respondent_search',
-                            email_address=form.email_address.data or '',
-                            first_name=form.first_name.data or '',
-                            last_name=form.last_name.data or '',
-                            page=request.args.get('page', 1)))
+    email_address = form.email_address.data or ''
+    first_name = form.first_name.data or ''
+    last_name = form.last_name.data or ''
 
-
-@respondent_bp.route('/search', methods=['GET'])
-@login_required
-def respondent_search():
     breadcrumbs = [{"text": "Respondents"}, {"text": "Search"}]
 
-    first_name = request.values.get('first_name', '')
-    last_name = request.values.get('last_name', '')
-    email_address = request.values.get('email_address', '')
     page = request.values.get('page', '1')
     limit = app.config["PARTY_RESPONDENTS_PER_PAGE"]
-
-    form = RespondentSearchForm()
-
-    form.first_name.data = first_name
-    form.last_name.data = last_name
-    form.email_address.data = email_address
 
     party_response = party_controller.search_respondents(first_name, last_name, email_address, page, limit)
 
