@@ -34,7 +34,7 @@ def get_conversation(thread_id):
     except JSONDecodeError:
         logger.exception("Response could not be decoded", thread_id=thread_id)
         raise ApiError(response)
-    
+
 
 def get_conversation_count(survey_id, conversation_tab, business_id):
     logger.info("Retrieving count of threads",
@@ -72,22 +72,16 @@ def get_all_conversation_type_counts(survey_id, conversation_tab, business_id):
 
     try:
         totals = response.json()['totals']
-        current_tab_total = _get_current_tab_total(conversation_tab, totals)
+
+        # Secure Message uses different identifiers to the tab names used in the ui, this translates the names
+        totals['initial'] = totals.pop('new_respondent_conversations')
+        totals['my messages'] = totals.pop('my_conversations')
+
+        current_tab_total = totals[conversation_tab]
         return current_tab_total, totals
     except KeyError:
         logger.exception("Response was successful but didn't contain a 'totals' key")
         raise NoMessagesError
-  
-  
-def _get_current_tab_total(conversation_tab, totals):
-    """Look inside the 4 counts to get the current tabs"""
-    if conversation_tab == 'initial':
-        return totals['new_respondent_conversations']
-    if conversation_tab == 'my messages':
-        return totals['my_conversations']
-    if conversation_tab == 'closed':
-        return totals['closed']
-    return totals['open']
 
 
 def _get_conversation_counts(business_id, conversation_tab, survey_id, all_conversation_types):
@@ -98,7 +92,7 @@ def _get_conversation_counts(business_id, conversation_tab, survey_id, all_conve
     return response
 
 
-def _get_secure_message_threads_params(survey_id, business_id, conversation_tab, all_conversation_types):
+def _get_secure_message_threads_params(survey_id, business_id, conversation_tab, all_conversation_types=False):
     """creates a params dictionary"""
     params = {'survey': survey_id,
               'is_closed': 'true' if conversation_tab == 'closed' else 'false',
