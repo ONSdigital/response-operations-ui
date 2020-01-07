@@ -1,52 +1,84 @@
 {% extends "layouts/base.html" %}
 {% from "components/button/_macro.njk" import onsButton %}
+{% from "components/lists/_macro.njk" import onsList %}
+{% from "components/fieldset/_macro.njk" import onsFieldset %}
+{% from "components/input/_macro.njk" import onsInput %}
 
 {% set page_title = "Respondents" %}
 
 {% block main %}
-    <h1 class="u-fs-xl">Find a respondent</h1>
-    <div class="grid">
-        <div class="grid__col col-12@l">
+    <h1>Find a respondent</h1>
+    {% with messages = get_flashed_messages() %}
+        {% if messages %}
+            {% call
+                onsPanel({
+                    "type":"error",
+                    "classes": "u-mb-s",
+                    "id": "validation-error"
+                })
+            %}
+                {% set errorData = [] %}
+                {% for message in messages %}
+                    {% do errorData.append(
+                        {
+                            "text": message
+                        }
+                    ) %}
+                {% endfor %}
+                {{
+                    onsList({
+                        "classes": "list--bare",
+                        "itemsList": errorData
+                    }) 
+                }}
+            {% endcall %}
+        {% endif %}
+    {% endwith %}
 
-            <div class="ru-search">
-
-                {% with messages = get_flashed_messages() %}
-                    {% if messages %}
-                    {% call panel(id='validation-error', type='error', class='u-mb-s') %}
-                        <ul>
-                        {% for message in messages %}
-                            <li>{{ message }}</li>
-                        {% endfor %}
-                        </ul>
-                    {% endcall %}
-                    {% endif %}
-                {% endwith %}
-
-                <form action="{{ url_for('respondent_bp.search_redirect') }}" method="post">
-                    {{ form.csrf_token }}
-                    <div class="field u-mb-s">
-                        <label class="label">First name</label>
-                        {{ form.first_name(size=20, class_="respondent-search-box input input--text")}}
-                    </div>
-
-                    <div class="field u-mb-s">
-                        <label class="label">Last name</label>
-                        {{ form.last_name(size=20, class_="respondent-search-box input input--text")}}
-                    </div>
-
-                    <div class="field u-mb-s">
-                        <label class="label">Email address</label>
-                        {{ form.email_address(size=20, class_="respondent-search-box input input--text")}}
-                    </div>
-                    {{
-                        onsButton({
-                            "text": "Search",
-                            "id": "btn-search-respondent",
-                            "submitType": "timer"
-                        })
-                    }}   
-                </form>
-            </div>
-        </div>
-    </div>
+    <form action="{{ url_for('respondent_bp.search_redirect') }}" method="post">
+        {{ form.csrf_token }}
+        {%- call onsFieldset({
+            "legend": "Enter respondent information to search",
+            "legendClasses": "u-vh"
+        }) -%}
+            {{
+                onsInput({
+                    "id": "first_name",
+                    "name": "first_name",
+                    "type": "text",
+                    "label": {
+                        "text": "First name"
+                    }
+                })
+            }}
+            {{
+                onsInput({
+                    "id": "last_name",
+                    "name": "last_name",
+                    "type": "text",
+                    "label": {
+                        "text": "Last name"
+                    }
+                })
+            }}        
+            {{
+                onsInput({
+                    "id": "email_address",
+                    "name": "email_address",
+                    "type": "text",
+                    "label": {
+                        "text": "Email address"
+                    }
+                })
+            }}      
+        {%- endcall -%}  
+        {{
+            onsButton({
+                "text": "Search",
+                "id": "btn-search-respondent",
+                "classes": "u-mt-m",
+                "submitType": "timer"
+            })
+        }}   
+    </form>
 {% endblock %}

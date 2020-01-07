@@ -1,5 +1,6 @@
 {% extends "layouts/base.html" %}
 {% from "components/button/_macro.njk" import onsButton %}
+{% from "components/input/_macro.njk" import onsInput %}
 
 {% set page_title = "Reporting units" %}
 
@@ -9,11 +10,17 @@
 
         <form action="" method="post">
             {{ form.csrf_token }}
-
-            <div class="field u-mb-s">
-                <label class="label">Type a reference or company name</label>
-                {{ form.query(size=20, class_="ru-search-box input input--text")}}
-            </div>
+            {{
+                onsInput({
+                    "id": "query",
+                    "name": "query",
+                    "type": "text",
+                    "classes": "u-mb-m",
+                    "label": {
+                        "text": "Type a reference or company name"
+                    }
+                })
+            }} 
             {{
                 onsButton({
                     "text": "Search",
