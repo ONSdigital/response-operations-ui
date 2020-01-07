@@ -77,8 +77,9 @@ def get_all_conversation_type_counts(survey_id, conversation_tab, business_id):
         totals['initial'] = totals.pop('new_respondent_conversations')
         totals['my messages'] = totals.pop('my_conversations')
 
-        current_tab_total = totals[conversation_tab]
-        return current_tab_total, totals
+        totals['current'] = totals[conversation_tab]
+
+        return totals
     except KeyError:
         logger.exception("Response was successful but didn't contain a 'totals' key")
         raise NoMessagesError

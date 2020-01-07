@@ -972,7 +972,7 @@ class TestMessage(ViewTestCase):
         mock_request.get(party_get_by_ru_ref, json={'id': business_id_filter})
         mock_request.get(url_get_surveys_list, json=self.surveys_list_json)
         mock_request.get(url_get_threads_list, json=thread_list_multi_page_multi_ru)
-        mock_get_count.return_value = 10, {'Open': 0, 'Closed': 10, "Initial": 0, "My messages": 0}
+        mock_get_count.return_value = {'current': 2, 'open': 1, 'closed': 2, "initial": 3, "my messages": 4}
 
         # view survey with filter of business_id
         url = f"/messages/Ashe?page={page}&limit={limit}&conversation_tab={conversation_tab}" \
@@ -1059,7 +1059,7 @@ class TestMessage(ViewTestCase):
         mock_request.get(party_get_by_ru_ref, json={'id': business_id_filter})
         mock_request.get(url_get_surveys_list, json=self.surveys_list_json)
         mock_request.get(url_get_threads_list, json=thread_list_multi_page_multi_ru)
-        mock_get_count.return_value = 10, {'Open': 0, 'Closed': 10, "Initial": 0, "My messages": 0}
+        mock_get_count.return_value = {'current': 2, 'open': 1, 'closed': 2, "initial": 3, "my messages": 4}
 
         # view survey with filter of business_id
         url = f"/messages/Ashe?page={page}&limit={limit}&conversation_tab={conversation_tab}" \
@@ -1284,7 +1284,7 @@ class TestMessage(ViewTestCase):
 
         mock_request.get(url_get_surveys_list, json=self.surveys_list_json)
         mock_request.get(url_get_threads_list, json=thread_list_multi_page_multi_ru)
-        mock_get_count.return_value = 10, {'open': 1, 'closed': 2, "initial": 3, "my messages": 4}
+        mock_get_count.return_value = {'current': 2, 'open': 1, 'closed': 2, "initial": 3, "my messages": 4}
 
         for conversation_tab in tabs:
             with self.subTest(conversation_tab=conversation_tab):
