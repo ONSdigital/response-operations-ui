@@ -231,7 +231,6 @@ def view_selected_survey(selected_survey):
     displayed_short_name = format_short_name(selected_survey)
     session['messages_survey_selection'] = selected_survey
     breadcrumbs = [{"text": displayed_short_name + " Messages"}]
-    session['totals'] = {}
 
     try:
         if selected_survey == 'FDI':

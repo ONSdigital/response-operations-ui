@@ -56,7 +56,7 @@ def get_conversation_count(survey_id, conversation_tab, business_id):
 
 
 def get_all_conversation_type_counts(survey_id, conversation_tab, business_id):
-    """gets the count for teh current tab and the count for the  conversations in all 4 tabs"""
+    """Gets the count for the current tab and the count for the conversations in all 4 tabs"""
     logger.info("Retrieving count of threads for all conversation tabs",
                 survey_id=survey_id, conversation_tab=conversation_tab, business_id=business_id)
 
@@ -74,8 +74,10 @@ def get_all_conversation_type_counts(survey_id, conversation_tab, business_id):
         totals = response.json()['totals']
 
         # Secure Message uses different identifiers to the tab names used in the ui, this translates the names
-        totals['initial'] = totals.pop('new_respondent_conversations')
-        totals['my messages'] = totals.pop('my_conversations')
+        if totals['new_respondent_conversations']:
+            totals['initial'] = totals.pop('new_respondent_conversations')
+        if totals['my_conversations']:
+            totals['my messages'] = totals.pop('my_conversations')
 
         totals['current'] = totals[conversation_tab]
 
