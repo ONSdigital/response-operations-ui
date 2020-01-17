@@ -155,6 +155,7 @@
             {
               "name": 'message-unread' if message.unread else 'message',
               "id": 'message-' + loop.index|string,
+              "classes": 'u-fw-b' if message.unread else '',
               "tds": [
                 {
                   "value": ruRef,
