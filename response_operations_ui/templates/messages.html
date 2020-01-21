@@ -75,25 +75,26 @@
   </div>
   <div class="grid">
     <div class="grid__col col-12@m u-mt-s">
-      {% set tabs = ['My messages', 'Open', 'Closed', 'Initial'] %}
-      {% set nav = [] %}
-      {% for tab in tabs %}
-        {% do nav.append(
-          {
-            "title": tab,
-            "url": url_for('messages_bp.view_selected_survey', selected_survey=selected_survey, conversation_tab=tab|lower, ru_ref_filter=ru_ref_filter, business_id_filter=business_id_filter)
-          }
-        ) %}
-      {% endfor %}
-      {{ 
-        onsSectionNavigation({
-            "id": "message-menu",
-            "ariaLabel": "Messages menu",
-            "ariraListLabel": "Navigation menu",
-            "tabQuery": request.args.get('conversation_tab') if request.args.get('conversation_tab') else 'open',
-            "itemsList": nav
-        })
-      }}
+        {% set nav = [] %}
+        {% for tab_key, tab_value in tab_titles.items() %}
+            {% do nav.append(
+              {
+                "title": tab_value,
+                "url": url_for('messages_bp.view_selected_survey', selected_survey=selected_survey, conversation_tab=tab_key, ru_ref_filter=ru_ref_filter, business_id_filter=business_id_filter)
+              }
+            ) %}
+        {% endfor %}
+        {{ 
+          onsSectionNavigation({
+              "id": "message-menu",
+              "ariaLabel": "Messages menu",
+              "ariraListLabel": "Navigation menu",
+              "tabQuery": tab_titles[conversation_tab]|lower if request.args.get('conversation_tab') else tab_titles['open']|lower,
+              "itemsList": nav
+          })
+        }}
+
+
         {% if response_error %}
           <h1 class="u-fs-l u-mt-l">Oops! Something went wrong</h1>
           <p>
