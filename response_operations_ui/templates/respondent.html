@@ -1,117 +1,149 @@
 {% extends "layouts/base.html" %}
+{% from "components/metadata/_macro.njk" import onsMetadata %}
 {% set page_title = "Respondents" %}
 
 {% block main %}
 
 {% include 'partials/flashed-messages.html' %}
 
-            <section class="u-mb-xl respondent-account-details">
+<section>
+  <h1 id="respondent-name">{{ respondent.firstName }} {{ respondent.lastName }}</h1>
+  <div class="grid grid--gutterless">
+      <div class="grid__col col-10@m">
+          {% set accountStatus %}
+              {% if respondent.status  == 'Suspended' %} Locked {% else %} {{ respondent.status }} {% endif %}
+              <br>
+              {% if respondent.status == 'Created' %}<a id="resend-verification-email-btn" href="{{ url_for('respondent_bp.view_resend_verification', respondent_id=respondent.id) }}">Re-send verification email</a>
+              {% elif respondent.status == 'Suspended' %}<a id="respondent-unlock-link" href="{{ url_for('respondent_bp.confirm_change_respondent_status', party_id=respondent.id, tab='respondents', change_flag='ACTIVE') }}">Unlock</a>
+              {% endif %}
+          {% endset %}
+          {{ 
+              onsMetadata({
+                  "metadataLabel": "Information about the respondant",
+                  "termCol": "3",
+                  "descriptionCol": "9",
+                  "itemsList": [
+                      {
+                          "term": "Email:",
+                          "descriptions": [ 
+                              {
+                                  "description": respondent.emailAddress,
+                                  "id": "respondent-email",
+                                  "name": "tbl-respondent-email"
+                              }
+                          ]
+                      },
+                      {
+                          "term": "New Email:" if respondent.pendingEmailAddress else "",
+                          "descriptions": [ 
+                              {
+                                  "description": respondent.pendingEmailAddress + '<br>
+                          <a id="resend-verification-email-btn" href="' + url_for('respondent_bp.view_resend_verification', respondent_id=respondent.id) + '">Re-send verification email</a>' if respondent.pendingEmailAddress else "",
+                                  "id": "respondent-email" if respondent.pendingEmailAddress else "",
+                                  "name": "tbl-respondent-pending-email" if respondent.pendingEmailAddress else ""
+                              }                  
+                          ]
+                      },
+                      {
+                          "term": "Tel:",
+                          "descriptions": [ 
+                              {
+                                  "description": respondent.telephone,
+                                  "id": "respondent-phone",
+                                  "name": "tbl-respondent-phone"
+                              },
+                              {
+                                "description": '<a id="edit-contact-details" href="' + url_for('respondent_bp.view_contact_details', respondent_id=respondent.id) + '">Edit Contact Details</a>'
+                              }                                     
+                          ]
+                      },
+                      {
+                          "term": "Account:",
+                          "descriptions": [ 
+                              {
+                                  "description": accountStatus,
+                                  "id": "respondent-account-status"
+                              }                                     
+                          ]
+                      }
+                  ]
+              }) 
+          }}
 
-                    <h1 class="u-fs-xl" id="respondent-name">{{ respondent.firstName }} {{ respondent.lastName }}</h1>
-                    <dl class="description-list">
-                        <dt>
-                            Email
-                        </dt>
-                        <dd id="respondent-email" name="tbl-respondent-email">
-                            {{ respondent.emailAddress }}
-                        </dd>
-                        {% if respondent.pendingEmailAddress %}
-                        <dt>
-                            New Email
-                        </dt>
-                        <dd id="respondent-pending-email" name="tbl-respondent-pending-email">
-                            {{ respondent.pendingEmailAddress }} <br>
-                          <a id="resend-verification-email-btn" href="{{ url_for('respondent_bp.view_resend_verification', respondent_id=respondent.id) }}">Re-send verification email</a>
-                        </dd>
-                        {% endif %}
-                        <dt>
-                            Tel
-                        </dt>
-                        <dd id="respondent-telephone" name="tbl-respondent-phone">
-                            {{ respondent.telephone }}
-                        </dd>
-                        <dd>
-                          <a id="edit-contact-details" href="{{ url_for('respondent_bp.view_contact_details', respondent_id=respondent.id)}}">Edit Contact Details</a>
-                        </dd>
-                        <dt>
-                            Account
-                        </dt>
-                        <dd id="respondent-account-status">
-                            {% if respondent.status  == 'Suspended' %} Locked {% else %} {{ respondent.status }} {% endif %}
-                          <br>
-                          {% if respondent.status == 'Created' %}<a id="resend-verification-email-btn" href="{{ url_for('respondent_bp.view_resend_verification', respondent_id=respondent.id) }}">Re-send verification email</a>
-                          {% elif respondent.status == 'Suspended' %}<a id="respondent-unlock-link" href="{{ url_for('respondent_bp.confirm_change_respondent_status', party_id=respondent.id, tab='respondents', change_flag='ACTIVE') }}">Unlock</a>
-                          {% endif %}
-                        </dd>
-                    </dl>
-            </section>
+      </div>
+  </div>
+</section>
 
 
-            <div class="grid">
-            <section class="grid__col col-12@l respondent-account-enrolments">
+<section>
+  <h2>Enrolments</h2>
 
-                <h2 class="u-fs-l">Enrolments</h2>
+  {% from "components/table/_macro.njk" import onsTable %}
+  {% set surveyTableData = {
+      "table_class": 'table--dense',
+      "ths": [
+          { 
+              "value": "RU Reference"
+          },
+          { 
+              "value": "Reporting unit name"
+          },
+          { 
+              "value": "Trading as"
+          },
+          { 
+              "value": "Survey"
+          },
+          { 
+              "value": "Enrolment status"
+          }
+      ]
+      }
+  %}
 
-                <div class="respondent-account-enrolment data-panelx">
+  {% set surveyTableDataRows = [] %}
+  {% for enrolment in enrolments %}
+      {% set enrolmentData %}
+        {{ enrolment['status'].title() }}
+        {% if enrolment['status'] == 'ENABLED' %}
+        <a href="{{ url_for('reporting_unit_bp.confirm_change_enrolment_status', ru_ref=enrolment['business']['sampleUnitRef'], ru_name=enrolment['business']['name'], survey_id=enrolment['survey']['id'],
+                            survey_name=enrolment['survey']['shortName'], respondent_id=respondent.id, respondent_first_name=respondent.firstName,
+                            respondent_last_name=respondent.lastName, business_id=enrolment['business']['id'], trading_as=enrolment['business']['trading_as'], change_flag='DISABLED', tab='respondents')}}"
+            id="change-enrolment-status">Disable</a>
+        {% elif enrolment['status'] == 'DISABLED' %}
+        <a href="{{ url_for('reporting_unit_bp.confirm_change_enrolment_status', ru_ref=enrolment['business']['sampleUnitRef'], ru_name=enrolment['business']['name'], survey_id=enrolment['survey']['id'],
+                            survey_name=enrolment['survey']['shortName'], respondent_id=respondent.id, respondent_first_name=respondent.firstName,
+                            respondent_last_name=respondent.lastName, business_id=enrolment['business']['id'], trading_as=enrolment['business']['trading_as'], change_flag='ENABLED', tab='respondents')}}"
+          id="change-enrolment-status">Re-enable</a>
+        {% endif %}
+      {% endset %}
+      {% do surveyTableDataRows.append(
+          {
+              "tds": [
+              {
+                  "value": '<a href="' + url_for('reporting_unit_bp.view_reporting_unit', ru_ref=enrolment['business']['sampleUnitRef'], _anchor='survey-'+enrolment['survey']['shortName'] ) + '">' + enrolment['business']['sampleUnitRef'] + '</a>'
+              },
+              {
+                  "value": enrolment['business']['name']
+              },
+              {
+                  "value": enrolment['business']['trading_as'] if enrolment['business']['trading_as'] else ""
+              },
+              {
+                  "value": enrolment['survey']['surveyRef'] + ' ' + enrolment['survey']['shortName'] 
+              },
+              {
+                  "value": enrolmentData 
+              }
+              ]
+          }
+          ) %}
 
+  {% endfor %}
 
-                    <table class="table table--dense" summary="Enrolments">
-                        <thead class="table__head">
-                            <tr class="table__row">
-                                  <th scope="col" class="table__header">
-                                    RU Reference
-                                  </th>
-                                  <th scope="col" class="table__header">
-                                    Reporting unit name
-                                  </th>
-                                  <th scope="col" class="table__header">
-                                    Trading as
-                                  </th>
-                                  <th scope="col" class="table__header">
-                                    Survey
-                                  </th>
-                                  <th scope="col" class="table__header">
-                                    Enrolment status
-                                  </th>
-                                </tr>
-                              </thead>
-                              <tbody class="table__body">
-                                {% for enrolment in enrolments %}
-                                    <tr class="table__row">
-                                      <td class="table__cell">
-                                          <a href=" {{ url_for('reporting_unit_bp.view_reporting_unit', ru_ref=enrolment['business']['sampleUnitRef'], _anchor='survey-'+enrolment['survey']['shortName'] )}}">{{ enrolment['business']['sampleUnitRef'] }}</a>
-                                      </td>
-                                      <td class="table__cell">
-                                        {{ enrolment['business']['name'] }}
-                                      </td>
-                                      <td class="table__cell">
-                                        {% if enrolment['business']['trading_as'] %}
-                                          {{ enrolment['business']['trading_as'] }}
-                                        {% endif %}
-                                      </td>
-                                      <td class="table__cell">
-                                        {{ enrolment['survey']['surveyRef'] }} {{ enrolment['survey']['shortName'] }}
-                                      </td>
-                                      <td class="table__cell">
-                                        {{ enrolment['status'].title() }}
-                                        {% if enrolment['status'] == 'ENABLED' %}
-                                        <a href="{{ url_for('reporting_unit_bp.confirm_change_enrolment_status', ru_ref=enrolment['business']['sampleUnitRef'], ru_name=enrolment['business']['name'], survey_id=enrolment['survey']['id'],
-                                                            survey_name=enrolment['survey']['shortName'], respondent_id=respondent.id, respondent_first_name=respondent.firstName,
-                                                            respondent_last_name=respondent.lastName, business_id=enrolment['business']['id'], trading_as=enrolment['business']['trading_as'], change_flag='DISABLED', tab='respondents')}}"
-                                           id="change-enrolment-status">Disable</a>
-                                        {% elif enrolment['status'] == 'DISABLED' %}
-                                        <a href="{{ url_for('reporting_unit_bp.confirm_change_enrolment_status', ru_ref=enrolment['business']['sampleUnitRef'], ru_name=enrolment['business']['name'], survey_id=enrolment['survey']['id'],
-                                                            survey_name=enrolment['survey']['shortName'], respondent_id=respondent.id, respondent_first_name=respondent.firstName,
-                                                            respondent_last_name=respondent.lastName, business_id=enrolment['business']['id'], trading_as=enrolment['business']['trading_as'], change_flag='ENABLED', tab='respondents')}}"
-                                          id="change-enrolment-status">Re-enable</a>
-                                        {% endif %}
-                                      </td>
-                                    </tr>
-                                {% endfor %}
-                              </tbody>
-                            </table>
-                          </div>
-
-            </section>
-        </div>
+  {% do surveyTableData | setAttribute("trs", surveyTableDataRows) %}
+  {{
+      onsTable(surveyTableData)
+  }}
+</section>
 {% endblock %}
