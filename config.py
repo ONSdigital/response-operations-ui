@@ -96,8 +96,8 @@ class Config(object):
     EMAIL_TOKEN_SALT = os.getenv('EMAIL_TOKEN_SALT', 'aardvark')
     # 24 hours in seconds
     EMAIL_TOKEN_EXPIRY = int(os.getenv('EMAIL_TOKEN_EXPIRY', '86400'))
-    # 72 hours in seconds
-    CREATE_ACCOUNT_EMAIL_TOKEN_EXPIRY = int(os.getenv('CREATE_ACCOUNT_EMAIL_TOKEN_EXPIRY', '259200'))
+    # 6 weeks in seconds
+    CREATE_ACCOUNT_EMAIL_TOKEN_EXPIRY = int(os.getenv('CREATE_ACCOUNT_EMAIL_TOKEN_EXPIRY', '3628800'))
     CREATE_ACCOUNT_ADMIN_PASSWORD = os.getenv('CREATE_ACCOUNT_ADMIN_PASSWORD')
 
 
@@ -158,8 +158,8 @@ class DevelopmentConfig(Config):
     EMAIL_TOKEN_SALT = os.getenv('EMAIL_TOKEN_SALT', 'aardvark')
     # 24 hours in seconds
     EMAIL_TOKEN_EXPIRY = int(os.getenv('EMAIL_TOKEN_EXPIRY', '86400'))
-    # 72 hours in seconds
-    CREATE_ACCOUNT_EMAIL_TOKEN_EXPIRY = int(os.getenv('CREATE_ACCOUNT_EMAIL_TOKEN_EXPIRY', '259200'))
+    # 6 weeks in seconds
+    CREATE_ACCOUNT_EMAIL_TOKEN_EXPIRY = int(os.getenv('CREATE_ACCOUNT_EMAIL_TOKEN_EXPIRY', '3628800'))
     CREATE_ACCOUNT_ADMIN_PASSWORD = os.getenv('CREATE_ACCOUNT_ADMIN_PASSWORD', 'secret')
 
 
