@@ -258,11 +258,10 @@ def view_selected_survey(selected_survey):
                     flash_message = ru_resolution_error
 
         form.ru_ref_filter.data = ru_ref_filter
-        thread_count = message_controllers.get_conversation_count(survey_id=survey_id,
-                                                                  business_id=business_id_filter,
-                                                                  conversation_tab=conversation_tab)
 
-        recalculated_page = _calculate_page(page, limit, thread_count)
+        tab_counts = _get_tab_counts(business_id_filter, conversation_tab, ru_ref_filter, survey_id)
+
+        recalculated_page = _calculate_page(page, limit, tab_counts['current'])
 
         if recalculated_page != page:
             return redirect(url_for("messages_bp.view_selected_survey", conversation_tab=conversation_tab,
@@ -276,7 +275,7 @@ def view_selected_survey(selected_survey):
 
         pagination = Pagination(page=page,
                                 per_page=limit,
-                                total=thread_count,
+                                total=tab_counts['current'],
                                 record_name='messages',
                                 prev_label='Previous',
                                 next_label='Next',
@@ -299,7 +298,8 @@ def view_selected_survey(selected_survey):
                                change_survey=True,
                                conversation_tab=conversation_tab,
                                business_id_filter=business_id_filter,
-                               ru_ref_filter=ru_ref_filter)
+                               ru_ref_filter=ru_ref_filter,
+                               tab_titles=_get_tab_titles(tab_counts, ru_ref_filter))
 
     except TypeError:
         logger.error("Failed to retrieve survey id", exc_info=True)
@@ -308,7 +308,8 @@ def view_selected_survey(selected_survey):
                                breadcrumbs=breadcrumbs,
                                selected_survey=selected_survey,
                                displayed_short_name=displayed_short_name,
-                               response_error=True)
+                               response_error=True,
+                               tab_titles=_get_tab_titles())
     except NoMessagesError:
         logger.error("Failed to retrieve messages", exc_info=True)
         return render_template("messages.html",
@@ -316,7 +317,37 @@ def view_selected_survey(selected_survey):
                                breadcrumbs=breadcrumbs,
                                response_error=True,
                                selected_survey=selected_survey,
-                               displayed_short_name=displayed_short_name)
+                               displayed_short_name=displayed_short_name,
+                               tab_titles=_get_tab_titles())
+
+
+def _get_tab_titles(all_tab_titles=None, ru_ref_filter=None):
+    """Populates a dictionary of tab titles for display. Needed because the titles can vary by message count.
+    The name of the title (open, closed etc) is used as a key to a dictionary that looks up the displayed title
+    which may include counts. This simplifies selection of the highlighted tab in the html"""
+
+    tab_titles = {'my messages': 'My messages', 'open': 'Open', 'closed': 'Closed', 'initial': 'Initial'}
+
+    if ru_ref_filter:
+        for key, value in tab_titles.items():
+            tab_titles[key] = f"{value} ({all_tab_titles[key]})"
+    return tab_titles
+
+
+def _get_tab_counts(business_id_filter, conversation_tab, ru_ref_filter, survey_id):
+    """gets the thread count for either the current conversation tab, or, if the ru_ref_filter is active it returns
+    the current conversation tab and all other tabs. i.e the value for the 'current' tab is always populated.
+    Calls two different secure message endpoints depending on if ru_ref_filter is set
+    as the get all is more expensive"""
+    if ru_ref_filter:
+        return message_controllers.get_all_conversation_type_counts(survey_id=survey_id,
+                                                                    conversation_tab=conversation_tab,
+                                                                    business_id=business_id_filter)
+
+    thread_count = message_controllers.get_conversation_count(survey_id=survey_id,
+                                                              business_id=business_id_filter,
+                                                              conversation_tab=conversation_tab)
+    return {'current': thread_count}
 
 
 @messages_bp.route('/threads/<thread_id>/close-conversation', methods=['GET', 'POST'])

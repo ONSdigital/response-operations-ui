@@ -10,6 +10,10 @@ td {
     border-bottom: thin solid #e4e8eb;
 }
 
+#tbl-messages td:first-child {
+    min-width: 7rem;
+}
+
 .tbl-ce-label {
     width: 40%;
 }
