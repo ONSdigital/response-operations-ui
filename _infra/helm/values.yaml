@@ -1,12 +1,9 @@
 replicaCount: 1
 
 env: "dev"
-version: "v1.2"
 
 image:
   tag: 191219
-  repository: eu.gcr.io/rm-ras-sandbox
-  pullPolicy: Always
 
 service:
   port: 8094
