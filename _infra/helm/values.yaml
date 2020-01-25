@@ -1,0 +1,18 @@
+replicaCount: 1
+
+env: "dev"
+
+image:
+  tag: 191219
+
+service:
+  port: 8094
+  type: NodePort
+
+resources:
+  requests:
+    cpu: "500m"
+    memory: "256Mi"
+  limits:
+    cpu: "1000m"
+    memory: "512Mi"

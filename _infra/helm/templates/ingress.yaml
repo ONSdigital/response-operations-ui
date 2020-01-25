@@ -1,0 +1,10 @@
+apiVersion: networking.k8s.io/v1beta1
+kind: Ingress
+metadata:
+    name: response-operations-ui-ingress
+    annotations:
+        kubernetes.io/ingress.global-static-ip-name: "responseoperations"
+spec:
+    backend:
+        serviceName: response-operations-ui
+        servicePort: 80
