@@ -83,10 +83,10 @@ def get_case_groups_by_business_party_id(business_party_id):
 
     try:
         response.raise_for_status()
-    except requests.exceptions.HTTPError:
         if response.status_code == 204:
             logger.info('No case groups found for business', party_id=business_party_id)
             return []
+    except requests.exceptions.HTTPError:
         logger.exception('Failed to retrieve case groups', business_party_id=business_party_id)
         raise ApiError(response)
 
@@ -103,8 +103,11 @@ def get_cases_by_business_party_id(business_party_id):
 
     try:
         response.raise_for_status()
+        if response.status_code == 204:
+            logger.info('No cases found for business', business_party_id=business_party_id)
+            return []
     except requests.exceptions.HTTPError:
-        if response.status_code == 404 or response.status_code == 204:
+        if response.status_code == 404:
             logger.info('No cases found for business', business_party_id=business_party_id)
             return []
         logger.exception('Error retrieving cases', business_party_id=business_party_id)
