@@ -76,8 +76,6 @@ class TestCaseControllers(unittest.TestCase):
                 self.assertEqual(len(get_case_events), 2)
 
     def test_empty_response_if_no_enrolements_case_groups(self):
-        category = 'SUCCESSFUL_RESPONSE_UPLOAD'
-
         with responses.RequestsMock() as rsps:
             rsps.add(rsps.GET, url_get_case_groups, json=[], status=204,
                      content_type='application/json')
@@ -86,8 +84,6 @@ class TestCaseControllers(unittest.TestCase):
                 self.assertEqual(get_case_events, [])
 
     def test_empty_response_if_no_enrolements_cases(self):
-        category = 'SUCCESSFUL_RESPONSE_UPLOAD'
-
         with responses.RequestsMock() as rsps:
             rsps.add(rsps.GET, url_get_cases, json=[], status=204,
                      content_type='application/json')
