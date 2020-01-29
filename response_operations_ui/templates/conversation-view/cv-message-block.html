@@ -39,7 +39,7 @@
             "messageName": 'conversation-message-body'
         })
     %}
-        {{ message.get('body') }}
+        <span style="white-space:pre-line">{{ message.get('body') }}</span>
     {% endcall %}
     {% if loop.last %}
         </div>
