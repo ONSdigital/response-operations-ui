@@ -1,9 +1,13 @@
 replicaCount: 1
 
-env: "dev"
+env: "minikube"
 
 image:
   tag: 191219
+
+uaa:
+  client_id: a-client-id
+  client_secret: supersecret
 
 service:
   port: 8094
