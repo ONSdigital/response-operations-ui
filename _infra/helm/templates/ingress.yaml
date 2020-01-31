@@ -8,4 +8,4 @@ spec:
     backend:
         serviceName: response-operations-ui
         servicePort: 80
-~
+

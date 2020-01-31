@@ -1,12 +1,13 @@
 replicaCount: 1
 
-env: "dev"
-version: "v1.2"
+env: "minikube"
 
 image:
   tag: 191219
-  repository: eu.gcr.io/rm-ras-sandbox
-  pullPolicy: Always
+
+uaa:
+  client_id: a-client-id
+  client_secret: supersecret
 
 service:
   port: 8094
@@ -15,7 +16,7 @@ service:
 resources:
   requests:
     cpu: "500m"
-    memory: "500Mi"
+    memory: "256Mi"
   limits:
     cpu: "1000m"
-    memory: "1000Mi"
+    memory: "512Mi"

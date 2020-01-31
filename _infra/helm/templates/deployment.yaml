@@ -6,25 +6,23 @@ spec:
   replicas: 1
   strategy:
     rollingUpdate:
-      maxSurge:
-      maxUnavailable:
+      maxSurge: 1
+      maxUnavailable: 1
     type: RollingUpdate
   selector:
     matchLabels:
       app: {{ .Chart.Name }}
       env: "{{ .Values.env }}"
-      version: "v1.2"
   template:
     metadata:
       labels:
         app: {{ .Chart.Name }}
         env: "{{ .Values.env }}"
-        version: "v1.2"
     spec:
       containers:
         - name: {{ .Chart.Name }}
-          image: "eu.gcr.io/rm-ras-sandbox/{{ .Values.image.repositoryName }}:{{ .Values.image.tag }}"
-          imagePullPolicy: Always
+          image: "eu.gcr.io/ons-rasrmbs-management/{{ .Chart.Name }}:{{ .Chart.AppVersion }}"
+          imagePullPolicy: IfPresent
           ports:
             - name: http-server
               containerPort: 8094
@@ -82,31 +80,31 @@ spec:
           - name: PORT
             value: "8094"
           - name: CASE_URL
-            value: "http://$(CASESVC_SERVICE_HOST):$(CASESVC_SERVICE_PORT)"
+            value: "http://$(CASE_SERVICE_HOST):$(CASE_SERVICE_PORT)"
           - name: CASE_USERNAME
             value: "$(SECURITY_USER_NAME)"
           - name: CASE_PASSWORD
             value: "$(SECURITY_USER_PASSWORD)"
           - name: COLLECTION_EXERCISE_URL
-            value: "http://$(COLLECTIONEXERCISESVC_SERVICE_HOST):$(COLLECTIONEXERCISESVC_SERVICE_PORT)"
+            value: "http://$(COLLECTION_EXERCISE_SERVICE_HOST):$(COLLECTION_EXERCISE_SERVICE_PORT)"
           - name: COLLECTION_EXERCISE_USERNAME
             value: "$(SECURITY_USER_NAME)"
           - name: COLLECTION_EXERCISE_PASSWORD
             value: "$(SECURITY_USER_PASSWORD)"
           - name: COLLECTION_INSTRUMENT_URL
-            value: "http://$(RAS_COLLECTION_INSTRUMENT_SERVICE_HOST):$(RAS_COLLECTION_INSTRUMENT_SERVICE_PORT)"
+            value: "http://$(COLLECTION_INSTRUMENT_SERVICE_HOST):$(COLLECTION_INSTRUMENT_SERVICE_PORT)"
           - name: COLLECTION_INSTRUMENT_USERNAME
             value: "$(SECURITY_USER_NAME)"
           - name: COLLECTION_INSTRUMENT_PASSWORD
             value: "$(SECURITY_USER_PASSWORD)"
           - name: IAC_URL
-            value: "http://$(IACSVC_SERVICE_HOST):$(IACSVC_SERVICE_PORT)"
+            value: "http://$(IAC_SERVICE_HOST):$(IAC_SERVICE_PORT)"
           - name: IAC_USERNAME
             value: "$(SECURITY_USER_NAME)"
           - name: IAC_PASSWORD
             value: "$(SECURITY_USER_PASSWORD)"
           - name: PARTY_URL
-            value: "http://$(RAS_PARTY_SERVICE_HOST):$(RAS_PARTY_SERVICE_PORT)"
+            value: "http://$(PARTY_SERVICE_HOST):$(PARTY_SERVICE_PORT)"
           - name: PARTY_USERNAME
             value: "$(SECURITY_USER_NAME)"
           - name: PARTY_PASSWORD
@@ -118,21 +116,21 @@ spec:
           - name: REDIS_DB
             value: "3"
           - name: REPORT_URL
-            value: "http://$(RM_REPORTING_SERVICE_HOST):$(RM_REPORTING_SERVICE_PORT)"
+            value: "http://$(REPORTING_SERVICE_HOST):$(REPORTING_SERVICE_PORT)"
           - name: SAMPLE_URL
-            value: "http://$(SAMPLESVC_SERVICE_HOST):$(SAMPLESVC_SERVICE_PORT)"
+            value: "http://$(SAMPLE_SERVICE_HOST):$(SAMPLE_SERVICE_PORT)"
           - name: SAMPLE_USERNAME
             value: "$(SECURITY_USER_NAME)"
           - name: SAMPLE_PASSWORD
             value: "$(SECURITY_USER_PASSWORD)"
           - name: SURVEY_URL
-            value: "http://$(SURVEYSVC_SERVICE_HOST):$(SURVEYSVC_SERVICE_PORT)"
+            value: "http://$(SURVEY_SERVICE_HOST):$(SURVEY_SERVICE_PORT)"
           - name: SURVEY_USERNAME
             value: "$(SECURITY_USER_NAME)"
           - name: SURVEY_PASSWORD
             value: "$(SECURITY_USER_PASSWORD)"
           - name: SECURE_MESSAGE_URL
-            value: "http://$(RAS_SECURE_MESSAGE_SERVICE_HOST):$(RAS_SECURE_MESSAGE_SERVICE_PORT)"
+            value: "http://$(SECURE_MESSAGE_SERVICE_HOST):$(SECURE_MESSAGE_SERVICE_PORT)"
           - name: RAS_SECURE_MESSAGING_JWT_SECRET
             valueFrom:
               secretKeyRef:
@@ -141,17 +139,12 @@ spec:
           - name: UAA_SERVICE_URL
             value: "http://$(UAA_SERVICE_HOST):$(UAA_SERVICE_PORT)"
           - name: UAA_CLIENT_ID
-            value: "response_operations"
+            value: "{{ .Values.uaa.client_id }}"
           - name: UAA_CLIENT_SECRET
-            value: "password"
+            value: "{{ .Values.uaa.client_secret }}"
           - name: ZIPKIN_DSN
             value: "http://$(ZIPKIN_SERVICE_HOST):$(ZIPKIN_SERVICE_PORT)/api/v1/spans"
           - name: ZIPKIN_SAMPLE_RATE
             value: "100"
           resources:
-            limits:
-              cpu: 1000m
-              memory: 512Mi
-            requests:
-              cpu: 500m
-              memory: 256Mi
+            {{ toYaml .Values.resources | nindent 12 }}
