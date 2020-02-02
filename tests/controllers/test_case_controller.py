@@ -11,6 +11,8 @@ case_id = '10b04906-f478-47f9-a985-783400dd8482'
 with open('tests/test_data/case/case_events.json') as fp:
     case_events = json.load(fp)
 url_get_case_events = f'{TestingConfig.CASE_URL}/cases/{case_id}/events'
+url_get_case_groups = f'{TestingConfig.CASE_URL}/casegroups/partyid/{case_id}'
+url_get_cases = f'{TestingConfig.CASE_URL}/cases/partyid/{case_id}'
 
 
 class TestCaseControllers(unittest.TestCase):
@@ -72,3 +74,19 @@ class TestCaseControllers(unittest.TestCase):
                 get_case_events = case_controller.get_case_events_by_case_id(case_id, category)
 
                 self.assertEqual(len(get_case_events), 2)
+
+    def test_empty_response_if_no_enrolements_case_groups(self):
+        with responses.RequestsMock() as rsps:
+            rsps.add(rsps.GET, url_get_case_groups, json=[], status=204,
+                     content_type='application/json')
+            with self.app.app_context():
+                get_case_events = case_controller.get_case_groups_by_business_party_id(case_id)
+                self.assertEqual(get_case_events, [])
+
+    def test_empty_response_if_no_enrolements_cases(self):
+        with responses.RequestsMock() as rsps:
+            rsps.add(rsps.GET, url_get_cases, json=[], status=204,
+                     content_type='application/json')
+            with self.app.app_context():
+                get_case_events = case_controller.get_cases_by_business_party_id(case_id)
+                self.assertEqual(get_case_events, [])

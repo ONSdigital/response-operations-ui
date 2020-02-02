@@ -74,9 +74,9 @@ def get_all_conversation_type_counts(survey_id, conversation_tab, business_id):
         totals = response.json()['totals']
 
         # Secure Message uses different identifiers to the tab names used in the ui, this translates the names
-        if totals['new_respondent_conversations']:
+        if 'new_respondent_conversations' in totals:
             totals['initial'] = totals.pop('new_respondent_conversations')
-        if totals['my_conversations']:
+        if 'my_conversations' in totals:
             totals['my messages'] = totals.pop('my_conversations')
 
         totals['current'] = totals[conversation_tab]
