@@ -1,17 +1,21 @@
 replicaCount: 1
 
-env: "minikube"
-
-image:
-  tag: 191219
-
-uaa:
-  client_id: a-client-id
-  client_secret: supersecret
+namespace: minikube
 
 service:
   port: 8094
-  type: NodePort
+  type: ClusterIp
+
+ingress:
+  enabled: false
+  host: rops.example.com
+  certName: frontstage-cert
+
+networkPolicy:
+  egress: |
+    - {}
+  ingress: |
+    - {}
 
 resources:
   requests:
