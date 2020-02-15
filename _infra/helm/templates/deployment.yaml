@@ -76,7 +76,7 @@ spec:
             valueFrom:
               secretKeyRef:
                 name: security-credentials
-                key: security-passwor
+                key: security-password
           - name: PORT
             value: "8094"
           - name: CASE_URL
