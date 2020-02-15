@@ -77,6 +77,16 @@ spec:
               secretKeyRef:
                 name: security-credentials
                 key: security-password
+          - name: OAUTH_CLIENT_ID
+            valueFrom:
+              secretKeyRef:
+                name: oauth-secret
+                key: oauth-client-id
+          - name: OAUTH_CLIENT_SECRET
+            valueFrom:
+              secretKeyRef:
+                name: oauth-secret
+                key: oauth-client-secret
           - name: PORT
             value: "8094"
           - name: CASE_URL
@@ -139,9 +149,9 @@ spec:
           - name: UAA_SERVICE_URL
             value: "http://$(UAA_SERVICE_HOST):$(UAA_SERVICE_PORT)"
           - name: UAA_CLIENT_ID
-            value: "{{ .Values.uaa.client_id }}"
+            value: "$(OAUTH_CLIENT_ID)"
           - name: UAA_CLIENT_SECRET
-            value: "{{ .Values.uaa.client_secret }}"
+            value: "$(OAUTH_CLIENT_SECRET)"
           - name: ZIPKIN_DSN
             value: "http://$(ZIPKIN_SERVICE_HOST):$(ZIPKIN_SERVICE_PORT)/api/v1/spans"
           - name: ZIPKIN_SAMPLE_RATE
