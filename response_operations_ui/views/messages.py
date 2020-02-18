@@ -8,7 +8,7 @@ from flask_login import login_required, current_user
 from flask_paginate import Pagination
 from structlog import wrap_logger
 
-from config import FDI_LIST
+from config import FDI_LIST, VACANCIES_LIST
 from response_operations_ui.common.dates import get_formatted_date, localise_datetime
 from response_operations_ui.common.mappers import format_short_name
 from response_operations_ui.controllers import message_controllers, party_controller, survey_controllers
@@ -47,6 +47,8 @@ def create_message():
             survey = request.form.get("hidden_survey")
             if survey in FDI_LIST:
                 survey = 'FDI'
+            if survey in VACANCIES_LIST:
+                survey = 'Vacancies'
             flash("Message sent.")
             return redirect(url_for('messages_bp.view_selected_survey', selected_survey=survey))
         except (ApiError, InternalError):
@@ -235,6 +237,8 @@ def view_selected_survey(selected_survey):
     try:
         if selected_survey == 'FDI':
             survey_id = _get_FDI_survey_id()
+        elif selected_survey == 'Vacancies':
+            survey_id = _get_vacancies_survey_ids
         else:
             survey_id = _get_survey_id(selected_survey)
 
@@ -528,11 +532,31 @@ def _refine(message):
 
 
 def _get_survey_id(selected_survey):
+    """
+    Returns a survey_id from a survey shortname. 
+
+    :param selected_survey: A survey shortname (MBS, ASHE, etc)
+    :returns: A list containing the single survey_id of the selected_survey.
+    """
+    
     return [survey_controllers.get_survey_id_by_short_name(selected_survey)]
 
 
 def _get_FDI_survey_id():
+    """
+    Returns a list of FDI survey ids.   This list is defined in the config
+
+    :returns: A list of FDI survey_id's
+    """
     return [survey_controllers.get_survey_id_by_short_name(fdi_survey) for fdi_survey in FDI_LIST]
+
+def _get_vacancies_survey_ids():
+    """
+    Returns a list of vacancies survey id's.   This list is defined in the config
+
+    :returns: A list of vacancies survey_id's
+    """
+    return [survey_controllers.get_survey_id_by_short_name(vacancies_survey) for vacancies_survey in VACANCIES_LIST]
 
 
 def _get_user_summary_for_message(message):
