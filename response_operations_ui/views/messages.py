@@ -238,7 +238,7 @@ def view_selected_survey(selected_survey):
         if selected_survey == 'FDI':
             survey_id = _get_FDI_survey_id()
         elif selected_survey == 'Vacancies':
-            survey_id = _get_vacancies_survey_ids
+            survey_id = _get_vacancies_survey_ids()
         else:
             survey_id = _get_survey_id(selected_survey)
 
