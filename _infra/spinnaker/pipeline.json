@@ -1,0 +1,21 @@
+{
+  "schema": "v2",
+  "application": "response-operations-ui",
+  "name": "response-operations-ui",
+  "template": {
+    "artifactAccount": "front50ArtifactCredentials",
+    "reference": "spinnaker://rasrmApplicationTemplate",
+    "type": "front50/pipelineTemplate"
+  },
+  "variables": {
+    "name": "response-operations-ui",
+    "defaultHelmChart": "response-operations-ui-0.1.0.tgz",
+    "helmChartMatcher": "response-operations-ui-.*\\.tgz"
+  },
+  "exclude": [],
+  "triggers": [],
+  "parameters": [],
+  "notifications": [],
+  "description": "",
+  "stages": []
+}
