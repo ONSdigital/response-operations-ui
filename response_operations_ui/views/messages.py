@@ -226,7 +226,7 @@ def clear_filter(selected_survey):
                             clear_filter='true'))
 
 
-@messages_bp.route('/<selected_survey>', methods=['GET', 'POST'])
+@messages_bp.route('/<selected_survey>', methods=['GET', 'POST'])  # noqa: C901
 @login_required
 def view_selected_survey(selected_survey):
 
@@ -533,12 +533,12 @@ def _refine(message):
 
 def _get_survey_id(selected_survey):
     """
-    Returns a survey_id from a survey shortname. 
+    Returns a survey_id from a survey shortname.
 
     :param selected_survey: A survey shortname (MBS, ASHE, etc)
     :returns: A list containing the single survey_id of the selected_survey.
     """
-    
+
     return [survey_controllers.get_survey_id_by_short_name(selected_survey)]
 
 
@@ -549,6 +549,7 @@ def _get_FDI_survey_id():
     :returns: A list of FDI survey_id's
     """
     return [survey_controllers.get_survey_id_by_short_name(fdi_survey) for fdi_survey in FDI_LIST]
+
 
 def _get_vacancies_survey_ids():
     """
