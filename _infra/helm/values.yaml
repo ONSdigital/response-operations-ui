@@ -11,6 +11,10 @@ ingress:
   host: rops.example.com
   certName: frontstage-cert
 
+uaa:
+  client_id: response_operations
+  client_secret: password
+
 networkPolicy:
   egress: |
     - {}

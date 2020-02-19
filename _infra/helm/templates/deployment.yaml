@@ -139,9 +139,9 @@ spec:
           - name: UAA_SERVICE_URL
             value: "http://$(UAA_SERVICE_HOST):$(UAA_SERVICE_PORT)"
           - name: UAA_CLIENT_ID
-            value: "response_operations"
+            value: "{{ .Values.uaa.client_id }}"
           - name: UAA_CLIENT_SECRET
-            value: "password"
+            value: "{{ .Values.uaa.client_secret }}"
           - name: ZIPKIN_DSN
             value: "http://$(ZIPKIN_SERVICE_HOST):$(ZIPKIN_SERVICE_PORT)/api/v1/spans"
           - name: ZIPKIN_SAMPLE_RATE
