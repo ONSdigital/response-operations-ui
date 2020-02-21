@@ -1,6 +1,10 @@
 replicaCount: 1
+rollingUpdate:
+  maxSurge: 1
+  maxUnavailable: 1
 
 namespace: minikube
+env: minikube
 
 container:
   port: 80
@@ -15,7 +19,7 @@ image:
 
 databaseConfig: |
   - name: DB_HOST
-    value: $(POSTGRES_SERVICE_HOST)
+    value: "${POSTGRES_SERVICE_HOST}"
   - name: DB_PORT
     valueFrom:
       secretKeyRef:
