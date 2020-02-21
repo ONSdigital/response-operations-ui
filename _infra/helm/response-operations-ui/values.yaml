@@ -2,9 +2,16 @@ replicaCount: 1
 
 namespace: minikube
 
+container:
+  port: 80
+
 service:
-  port: 8094
+  port: 80
   type: ClusterIP
+
+image:
+  name: eu.gcr.io/ons-rasrmbs-management
+  pullPolicy: Always
 
 ingress:
   enabled: false
