@@ -16,4 +16,4 @@ RUN npm install --unsafe-perms
 RUN npm rebuild node-sass
 RUN npm run gulp build
 
-CMD ["gunicorn", "-b", "0.0.0.0:80", "--workers", "4", "--timeout", "60", "'response_operations_ui:create_app()'"]
+CMD ["gunicorn", "-b", "0.0.0.0:80", "--workers", "4", "--timeout", "60", "response_operations_ui:create_app()"]
