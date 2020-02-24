@@ -11,7 +11,7 @@ image:
   pullPolicy: Always
 
 container:
-  port: 80
+  port: 8080
 service:
   type: ClusterIP
   port: 80
@@ -28,6 +28,10 @@ ingress:
 uaa:
   client_id: response_operations
   client_secret: password
+
+
+database:
+   managedRedis: false
 
 networkPolicy:
   egress: |
