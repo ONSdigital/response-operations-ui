@@ -93,3 +93,6 @@ def create_app(config_name=None):
     setup_blueprints(app)
 
     return app
+
+
+app = create_app()
