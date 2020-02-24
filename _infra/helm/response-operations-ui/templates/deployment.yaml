@@ -88,9 +88,23 @@ spec:
           - name: PARTY_PASSWORD
             value: "$(SECURITY_USER_PASSWORD)"
           - name: REDIS_HOST
+            {{- if .Values.database.managedRedis }}
+            valueFrom:
+                configMapKeyRef:
+                    name: redis-config
+                    key: redis-host
+            {{- else }}
             value: "$(REDIS_MASTER_SERVICE_HOST)"
+            {{- end }}
           - name: REDIS_PORT
+            {{- if .Values.database.managedRedis }}
+            valueFrom:
+                configMapKeyRef:
+                    name: redis-config
+                    key: redis-port
+            {{- else }}
             value: "$(REDIS_MASTER_SERVICE_PORT)"
+            {{- end}}
           - name: REDIS_DB
             value: "3"
           - name: REPORT_URL
