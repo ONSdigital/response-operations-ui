@@ -5,7 +5,7 @@ from flask import current_app as app
 from requests.exceptions import HTTPError, RequestException
 from structlog import wrap_logger
 
-from config import FDI_LIST
+from config import FDI_LIST, VACANCIES_LIST
 from response_operations_ui.common.mappers import format_short_name
 from response_operations_ui.exceptions.exceptions import ApiError
 
@@ -121,22 +121,25 @@ def get_survey(short_name):
     return survey
 
 
-def convert_specific_fdi_survey_to_fdi(survey_short_name):
+def convert_specific_surveys_to_specific_shortnames(survey_short_name):
     for fdi_survey in FDI_LIST:
         if survey_short_name == fdi_survey:
             return "FDI"
+    for vacancies_survey in VACANCIES_LIST:
+        if survey_short_name == vacancies_survey:
+            return "Vacancies"
     return survey_short_name
 
 
 def get_surveys_dictionary():
     surveys_list = get_surveys_list()
-    return {survey['id']: {'shortName': convert_specific_fdi_survey_to_fdi(survey.get('shortName')),
+    return {survey['id']: {'shortName': convert_specific_surveys_to_specific_shortnames(survey.get('shortName')),
                            'surveyRef': survey.get('surveyRef')}
             for survey in surveys_list}
 
 
 def get_grouped_surveys_list():
-    survey_set = {convert_specific_fdi_survey_to_fdi(survey['shortName']) for survey in get_surveys_list()}
+    survey_set = {convert_specific_surveys_to_specific_shortnames(survey['shortName']) for survey in get_surveys_list()}
     return sorted(survey_set)
 
 

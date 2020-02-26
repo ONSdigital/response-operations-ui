@@ -2,6 +2,7 @@ import os
 from distutils.util import strtobool
 
 FDI_LIST = {'AOFDI', 'AIFDI', 'QIFDI', 'QOFDI'}
+VACANCIES_LIST = {'VACS2', 'VACS3', 'VACS4', 'VACS5'}
 
 
 class Config(object):
