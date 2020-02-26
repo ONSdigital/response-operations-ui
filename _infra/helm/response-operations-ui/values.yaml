@@ -1,0 +1,40 @@
+env: minikube
+namespace: minikube
+
+replicas: 1
+rollingUpdate:
+  maxSurge: 1
+  maxUnavailable: 1
+
+image:
+  name: eu.gcr.io/ons-rasrmbs-management
+  pullPolicy: Always
+
+container:
+  port: 8080
+service:
+  type: ClusterIP
+  port: 80
+
+resources:
+  requests:
+    memory: "256Mi"
+
+ingress:
+  enabled: false
+  host: rops.example.com
+  certName: frontstage-cert
+
+uaa:
+  client_id: response_operations
+  client_secret: password
+
+
+database:
+   managedRedis: false
+
+networkPolicy:
+  egress: |
+    - {}
+  ingress: |
+    - {}

@@ -3,33 +3,33 @@ kind: Deployment
 metadata:
   name: {{ .Chart.Name }}
 spec:
-  replicas: 1
+  replicas: {{ .Values.replicas }}
   strategy:
     rollingUpdate:
-      maxSurge: 1
-      maxUnavailable: 1
+      maxSurge: {{ .Values.rollingUpdate.maxSurge }}
+      maxUnavailable: {{ .Values.rollingUpdate.maxUnavailable }}
     type: RollingUpdate
   selector:
     matchLabels:
       app: {{ .Chart.Name }}
-      env: "{{ .Values.env }}"
+      env: {{ .Values.env }}
   template:
     metadata:
       labels:
         app: {{ .Chart.Name }}
-        env: "{{ .Values.env }}"
+        env: {{ .Values.env }}
     spec:
       containers:
         - name: {{ .Chart.Name }}
-          image: "eu.gcr.io/ons-rasrmbs-management/{{ .Chart.Name }}:{{ .Chart.AppVersion }}"
-          imagePullPolicy: IfPresent
+          image: "{{ .Values.image.name }}/{{ .Chart.Name }}:{{ .Chart.AppVersion }}"
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
           ports:
             - name: http-server
-              containerPort: 8094
+              containerPort: {{ .Values.container.port }}
           readinessProbe:
             httpGet:
               path: /info
-              port: 8094
+              port: {{ .Values.container.port }}
             initialDelaySeconds: 1
             periodSeconds: 20
             failureThreshold: 5
@@ -38,35 +38,13 @@ spec:
           livenessProbe:
             httpGet:
               path: /info
-              port: 8094
+              port: {{ .Values.container.port }}
             initialDelaySeconds: 1
             periodSeconds: 20
             failureThreshold: 5
             successThreshold: 1
             timeoutSeconds: 5
           env:
-          - name: DB_HOST
-            value: $(POSTGRES_SERVICE_HOST)
-          - name: DB_PORT
-            valueFrom:
-              secretKeyRef:
-                name: db-config
-                key: db-port
-          - name: DB_NAME
-            valueFrom:
-              secretKeyRef:
-                name: db-config
-                key: db-name
-          - name: DB_USERNAME
-            valueFrom:
-              secretKeyRef:
-                name: db-credentials
-                key: username
-          - name: DB_PASSWORD
-            valueFrom:
-              secretKeyRef:
-                name: db-credentials
-                key: password
           - name: SECURITY_USER_NAME
             valueFrom:
               secretKeyRef:
@@ -78,7 +56,7 @@ spec:
                 name: security-credentials
                 key: security-password
           - name: PORT
-            value: "8094"
+            value: "{{ .Values.container.port }}"
           - name: CASE_URL
             value: "http://$(CASE_SERVICE_HOST):$(CASE_SERVICE_PORT)"
           - name: CASE_USERNAME
@@ -110,9 +88,23 @@ spec:
           - name: PARTY_PASSWORD
             value: "$(SECURITY_USER_PASSWORD)"
           - name: REDIS_HOST
+            {{- if .Values.database.managedRedis }}
+            valueFrom:
+                configMapKeyRef:
+                    name: redis-config
+                    key: redis-host
+            {{- else }}
             value: "$(REDIS_MASTER_SERVICE_HOST)"
+            {{- end }}
           - name: REDIS_PORT
+            {{- if .Values.database.managedRedis }}
+            valueFrom:
+                configMapKeyRef:
+                    name: redis-config
+                    key: redis-port
+            {{- else }}
             value: "$(REDIS_MASTER_SERVICE_PORT)"
+            {{- end}}
           - name: REDIS_DB
             value: "3"
           - name: REPORT_URL
