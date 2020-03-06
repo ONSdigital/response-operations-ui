@@ -75,6 +75,18 @@ spec:
             value: "$(SECURITY_USER_NAME)"
           - name: COLLECTION_INSTRUMENT_PASSWORD
             value: "$(SECURITY_USER_PASSWORD)"
+          - name: CREATE_ACCOUNT_ADMIN_PASSWORD
+            value: {{ .Values.admin.createAccountPassword }}
+          - name: CREATE_ACCOUNT_EMAIL_TOKEN_EXPIRY
+            value: {{ .Values.admin.createccountEmailExpiry }}
+          {{ if .Values.analytics.enabled }}
+          - name: GOOGLE_ANALYTICS_ID
+            value: {{ .Values.analytics.id }}
+          - name: GOOGLE_TAG_MANAGER
+            value: {{ .Values.analytics.tagManager }}
+          - name: GOOGLE_TAG_MANAGER_PROP
+            value: {{ .Values.analytics.tagManagerProp }}
+          {{- end }}
           - name: IAC_URL
             value: "http://$(IAC_SERVICE_HOST):$(IAC_SERVICE_PORT)"
           - name: IAC_USERNAME
@@ -115,6 +127,8 @@ spec:
             value: "$(SECURITY_USER_NAME)"
           - name: SAMPLE_PASSWORD
             value: "$(SECURITY_USER_PASSWORD)"
+          - name: SEND_EMAIL_TO_GOV_NOTIFY
+            value: {{ .Values.sendEmailToGovNotify }}
           - name: SURVEY_URL
             value: "http://$(SURVEY_SERVICE_HOST):$(SURVEY_SERVICE_PORT)"
           - name: SURVEY_USERNAME
