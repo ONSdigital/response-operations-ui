@@ -6,6 +6,10 @@ rollingUpdate:
   maxSurge: 1
   maxUnavailable: 1
 
+admin:
+  createAccountPassword: password
+  createccountEmailExpiry: 3628800
+
 image:
   name: eu.gcr.io/ons-rasrmbs-management
   pullPolicy: Always
