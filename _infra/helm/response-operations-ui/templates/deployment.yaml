@@ -137,7 +137,7 @@ spec:
             value: "$(SECURITY_USER_PASSWORD)"
           - name: SECURE_MESSAGE_URL
             value: "http://$(SECURE_MESSAGE_SERVICE_HOST):$(SECURE_MESSAGE_SERVICE_PORT)"
-          - name: RAS_SECURE_MESSAGING_JWT_SECRET
+          - name: SECURE_MESSAGE_JWT_SECRET
             valueFrom:
               secretKeyRef:
                 name: jwt-secret
