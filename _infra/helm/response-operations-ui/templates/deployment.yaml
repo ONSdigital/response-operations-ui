@@ -79,6 +79,14 @@ spec:
             value: {{ .Values.admin.createAccountPassword }}
           - name: CREATE_ACCOUNT_EMAIL_TOKEN_EXPIRY
             value: {{ .Values.admin.createccountEmailExpiry }}
+          {{ if .Values.analytics.enabled }}
+          - name: GOOGLE_ANALYTICS_ID
+            value: {{ .Values.analytics.id }}
+          - name: GOOGLE_TAG_MANAGER
+            value: {{ .Values.analytics.tagManager }}
+          - name: GOOGLE_TAG_MANAGER_PROP
+            value: {{ .Values.analytics.tagManagerProp }}
+          {{- end }}
           - name: IAC_URL
             value: "http://$(IAC_SERVICE_HOST):$(IAC_SERVICE_PORT)"
           - name: IAC_USERNAME
