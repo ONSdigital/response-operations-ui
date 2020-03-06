@@ -16,7 +16,10 @@
                         onsPanel({
                             "type": "error" if category == "failed_authentication" else "success",
                             "classes": "u-mb-s",
-                            "title":  message if category == "failed_authentication"
+                            "title":  message if category == "failed_authentication",
+                            "attributes": {
+                                "data-ga-category": "Error" if category == "failed_authentication" else "Password Success"
+                            }
                         })
                     %}
                     {% if category == "failed_authentication" %}
