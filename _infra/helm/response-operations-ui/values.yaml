@@ -10,7 +10,7 @@ rollingUpdate:
 
 admin:
   createAccountPassword: password
-  createccountEmailExpiry: 3628800
+  createccountEmailExpiry: "3628800"
 
 analytics:
   enabled: false
