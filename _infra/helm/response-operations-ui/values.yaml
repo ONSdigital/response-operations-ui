@@ -23,7 +23,7 @@ resources:
 ingress:
   enabled: false
   host: rops.example.com
-  certName: frontstage-cert
+  certName: response-operations-cert
 
 uaa:
   client_id: response_operations
