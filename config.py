@@ -6,12 +6,12 @@ VACANCIES_LIST = {'VACS2', 'VACS3', 'VACS4', 'VACS5'}
 
 
 class Config(object):
-
     DEBUG = os.getenv('DEBUG', False)
     TESTING = False
     PORT = os.getenv('PORT', 8085)
     GOOGLE_TAG_MANAGER = os.getenv('GOOGLE_TAG_MANAGER', None)
     GOOGLE_TAG_MANAGER_PROP = os.getenv('GOOGLE_TAG_MANAGER_PROP', None)
+    PREFERRED_URL_SCHEME = 'https'
     LOGGING_LEVEL = os.getenv('LOGGING_LEVEL', 'INFO')
     RESPONSE_OPERATIONS_UI_SECRET = os.getenv('RESPONSE_OPERATIONS_UI_SECRET', "secret")
     SESSION_TYPE = "redis"
@@ -102,10 +102,10 @@ class Config(object):
     CREATE_ACCOUNT_ADMIN_PASSWORD = os.getenv('CREATE_ACCOUNT_ADMIN_PASSWORD')
 
 
-
 class DevelopmentConfig(Config):
     DEBUG = os.getenv('DEBUG', True)
     LOGGING_LEVEL = os.getenv('LOGGING_LEVEL', 'DEBUG')
+    PREFERRED_URL_SCHEME = 'http'
     REDIS_HOST = os.getenv('REDIS_HOST', "localhost")
     REDIS_PORT = os.getenv('REDIS_PORT', 6379)
     REDIS_DB = os.getenv('REDIS_DB', 0)
