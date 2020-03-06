@@ -1,6 +1,8 @@
 env: minikube
 namespace: minikube
 
+sendEmailToGovNotify: false
+
 replicas: 1
 rollingUpdate:
   maxSurge: 1
