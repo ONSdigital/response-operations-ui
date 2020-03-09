@@ -12,7 +12,8 @@ build-kubernetes:
 
 lint:
 	pipenv run flake8 --exclude=./node_modules,./response_operations_ui/logger_config.py ./response_operations_ui ./tests
-	pipenv check ./response_operations_ui ./tests
+# TEMPORARILY disable pipenv check, pending resolution of pipenv bugs 2412 and 4147
+#	pipenv check ./response_operations_ui ./tests
 	npx gulp lint
 
 test: lint
