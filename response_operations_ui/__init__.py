@@ -3,7 +3,7 @@ import os
 import requestsdefaulter
 
 import redis
-from flask import Flask, request
+from flask import Flask
 from flask_assets import Environment
 from flask_login import LoginManager
 from flask_session import Session
