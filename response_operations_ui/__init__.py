@@ -16,8 +16,19 @@ from response_operations_ui.user import User
 from response_operations_ui.views import setup_blueprints
 from response_operations_ui.common.jinja_filters import filter_blueprint
 
-
 cf = ONSCloudFoundry()
+
+
+class GCPLoadBalancer:
+
+    def __init__(self, app):
+        self.app = app
+
+    def __call__(self, environ, start_response):
+        scheme = environ.get("HTTP_X_FORWARDED_PROTO", "http")
+        if scheme:
+            environ["wsgi.url_scheme"] = scheme
+        return self.app(environ, start_response)
 
 
 def create_app(config_name=None):
@@ -33,6 +44,9 @@ def create_app(config_name=None):
     if app.config['DEBUG'] or app.config['TESTING']:
         assets.cache = False
         assets.manifest = None
+
+    if not app.config['DEBUG'] and not cf.detected:
+        app.wsgi_app = GCPLoadBalancer(app.wsgi_app)
 
     assets.url = app.static_url_path
 
