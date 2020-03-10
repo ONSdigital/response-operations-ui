@@ -3,7 +3,7 @@ import os
 import requestsdefaulter
 
 import redis
-from flask import Flask
+from flask import Flask, request
 from flask_assets import Environment
 from flask_login import LoginManager
 from flask_session import Session
@@ -20,11 +20,12 @@ cf = ONSCloudFoundry()
 
 
 class GCPLoadBalancer:
+
     def __init__(self, app):
         self.app = app
 
     def __call__(self, environ, start_response):
-        scheme = environ.get("HTTP_X_FORWARDED_PROTO", "https")
+        scheme = environ.get("HTTP_X_FORWARDED_PROTO", "http")
         if scheme:
             environ["wsgi.url_scheme"] = scheme
         return self.app(environ, start_response)
@@ -44,7 +45,7 @@ def create_app(config_name=None):
         assets.cache = False
         assets.manifest = None
 
-    if not app.config['DEBUG']:
+    if not app.config['DEBUG'] and not cf.detected:
         app.wsgi_app = GCPLoadBalancer(app.wsgi_app)
 
     assets.url = app.static_url_path
