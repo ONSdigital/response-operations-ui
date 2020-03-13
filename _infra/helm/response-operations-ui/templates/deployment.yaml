@@ -123,6 +123,12 @@ spec:
             value: "3"
           - name: REPORT_URL
             value: "http://$(REPORTING_SERVICE_HOST):$(REPORTING_SERVICE_PORT)"
+          - name: RESPONSE_OPERATIONS_UI_URL
+            {{- if .Values.ingress.enabled }}
+            value: "https://{{ .Values.ingress.host }}"
+            {{- else }}
+            value: "http://localhost:{{.Values.service.port}}"
+            {{- end }}
           - name: SAMPLE_URL
             value: "http://$(SAMPLE_SERVICE_HOST):$(SAMPLE_SERVICE_PORT)"
           - name: SAMPLE_USERNAME
