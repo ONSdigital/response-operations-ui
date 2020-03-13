@@ -93,6 +93,8 @@ spec:
             value: "$(SECURITY_USER_NAME)"
           - name: IAC_PASSWORD
             value: "$(SECURITY_USER_PASSWORD)"
+          - name: NOTIFY_SERVICE_URL
+            value: "http://$(NOTIFY_GATEWAY_SERVICE_HOST):$(NOTIFY_GATEWAY_SERVICE_PORT)/emails/"
           - name: PARTY_URL
             value: "http://$(PARTY_SERVICE_HOST):$(PARTY_SERVICE_PORT)"
           - name: PARTY_USERNAME
