@@ -93,6 +93,14 @@ spec:
             value: "$(SECURITY_USER_NAME)"
           - name: IAC_PASSWORD
             value: "$(SECURITY_USER_PASSWORD)"
+          - name: NOTIFY_CONFIRM_CREATE_ACCOUNT_TEMPLATE
+            value: {{ .Values.notify.confirmCreateAccountTemplate }}
+          - name: NOTIFY_CONFIRM_PASSWORD_CHANGE_TEMPLATE
+            value: {{ .Values.notify.confirmPasswordChangeTemplate }}
+          - name: NOTIFY_REQUEST_CREATE_ACCOUNT_TEMPLATE
+            value: {{ .Values.notify.requestCreateAccountTemplate }}
+          - name: NOTIFY_REQUEST_PASSWORD_CHANGE_TEMPLATE
+            value: {{ .Values.notify.requestPasswordChangeTemplate }}
           - name: NOTIFY_SERVICE_URL
             value: "http://$(NOTIFY_GATEWAY_SERVICE_HOST):$(NOTIFY_GATEWAY_SERVICE_PORT)/emails/"
           - name: PARTY_URL

@@ -39,6 +39,11 @@ uaa:
   client_id: response_operations
   client_secret: password
 
+notify:
+  confirmCreateAccountTemplate: confirm_create_account_id
+  confirmPasswordChangeTemplate: confirm_password_change_id
+  requestCreateAccountTemplate: request_create_account_id
+  requestPasswordChangeTemplate: request_password_change_id
 
 database:
    managedRedis: false
