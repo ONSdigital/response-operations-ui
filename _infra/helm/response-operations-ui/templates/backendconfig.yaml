@@ -5,7 +5,7 @@ metadata:
   name: rops-backend-config
 spec:
   securityPolicy:
-    name: "ras-cloud-armor-policy"
+    name: "ras-cloud-armour-policy"
   customRequestHeaders:
     X-Forwarded-Proto: https
   sessionAffinity: ClientIP
