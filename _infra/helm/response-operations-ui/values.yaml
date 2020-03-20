@@ -53,3 +53,7 @@ networkPolicy:
     - {}
   ingress: |
     - {}
+
+dns:
+  enabled: false
+  wellKnownPort: 8080
