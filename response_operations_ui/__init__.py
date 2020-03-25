@@ -7,11 +7,11 @@ import redis
 from flask import Flask
 from flask_assets import Environment
 from flask_login import LoginManager
-from flask_session import Session
 from flask_talisman import Talisman
-# from flask_wtf.csrf import CSRFProtect
+from flask_wtf.csrf import CSRFProtect
 from flask_zipkin import Zipkin
 from structlog import wrap_logger
+from flask_session import Session
 
 from response_operations_ui.cloud.cloudfoundry import ONSCloudFoundry
 from response_operations_ui.logger_config import logger_initial_config
@@ -50,6 +50,8 @@ class GCPLoadBalancer:
 def create_app(config_name=None):
     csp_policy = copy.deepcopy(CSP_POLICY)
     app = Flask(__name__)
+    csrf = CSRFProtect(app)
+    csrf.init_app(app)
     Talisman(
         app,
         content_security_policy=csp_policy,

@@ -1,6 +1,8 @@
 import logging
 
 from flask import Blueprint, flash, redirect, render_template, url_for, request
+# TODO: implement customised error responses for failed CSRF validation
+# from flask_wtf.csrf import CSRFError
 from structlog import wrap_logger
 
 from response_operations_ui.exceptions.exceptions import ApiError, UpdateContactDetailsException
