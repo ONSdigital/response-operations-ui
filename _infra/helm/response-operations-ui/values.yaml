@@ -18,6 +18,7 @@ analytics:
 
 image:
   name: eu.gcr.io/ons-rasrmbs-management
+  tag: latest
   pullPolicy: Always
 
 container:
