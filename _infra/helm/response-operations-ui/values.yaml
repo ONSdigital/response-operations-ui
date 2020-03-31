@@ -33,8 +33,10 @@ resources:
 
 ingress:
   enabled: false
-  host: rops.example.com
-  certName: response-operations-cert
+  awsHost: rops.example.com
+  awsCertName: response-operations-cert
+  gcpHost: rpos-gcp.example.com
+  gcpCertName: response-operations-gcp-cert
 
 uaa:
   client_id: response_operations
