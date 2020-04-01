@@ -16,7 +16,7 @@ from flask_session import Session
 from response_operations_ui.cloud.cloudfoundry import ONSCloudFoundry
 from response_operations_ui.logger_config import logger_initial_config
 from response_operations_ui.user import User
-from response_operations_ui.views import setup_blueprints
+from response_operations_ui.views import setup_blueprints, reporting_unit_bp, messages_bp
 from response_operations_ui.common.jinja_filters import filter_blueprint
 
 cf = ONSCloudFoundry()
@@ -132,5 +132,7 @@ def create_app(config_name=None):
     Session(app)
 
     setup_blueprints(app)
+    csrf.exempt(reporting_unit_bp)
+    csrf.exempt(messages_bp)
 
     return app
