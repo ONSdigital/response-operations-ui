@@ -29,6 +29,7 @@ python-dateutil = "*"
 requestsdefaulter = "*"
 flask-zipkin = "*"
 bs4 = "*"
+werkzeug = "~=0.16"
 
 [dev-packages]
 codecov = "*"
