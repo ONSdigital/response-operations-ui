@@ -112,3 +112,5 @@ If you get a `Too many open files` error, then run the following to fix it
 ```bash
 ulimit -Sn 10000
 ```
+
+``addition for the travis build``
