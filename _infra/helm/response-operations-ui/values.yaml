@@ -33,6 +33,7 @@ resources:
 
 ingress:
   enabled: false
+  timeoutSec: 60
   awsHost: rops.example.com
   awsCertName: response-operations-cert
   gcpHost: rpos-gcp.example.com

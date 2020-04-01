@@ -10,4 +10,5 @@ spec:
     X-Forwarded-Proto: https
   sessionAffinity: 
     affinityType: CLIENT_IP
+  timeoutSec: {{ .Values.ingress.timeoutSec }}
 {{- end }}
