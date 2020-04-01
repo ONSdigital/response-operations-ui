@@ -18,6 +18,7 @@ analytics:
 
 image:
   name: eu.gcr.io/ons-rasrmbs-management
+  tag: latest
   pullPolicy: Always
 
 container:
@@ -32,8 +33,11 @@ resources:
 
 ingress:
   enabled: false
-  host: rops.example.com
-  certName: response-operations-cert
+  timeoutSec: 60
+  awsHost: rops.example.com
+  awsCertName: response-operations-cert
+  gcpHost: rpos-gcp.example.com
+  gcpCertName: response-operations-gcp-cert
 
 uaa:
   client_id: response_operations
