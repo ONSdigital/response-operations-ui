@@ -1,0 +1,22 @@
+{
+  "schema": "v2",
+  "application": "response-operations-ui",
+  "name": "deployment",
+  "template": {
+    "artifactAccount": "front50ArtifactCredentials",
+    "reference": "spinnaker://fullDeploymentTemplate",
+    "type": "front50/pipelineTemplate"
+  },
+  "variables": {
+    "service": "response-operations-ui",
+    "defaultVersion": "1.0.0",
+    "devDeploymentCluster": "dev",
+    "devDeploymentNamespace": "dev"
+  },
+  "exclude": [],
+  "triggers": [],
+  "parameters": [],
+  "notifications": [],
+  "description": "",
+  "stages": []
+}

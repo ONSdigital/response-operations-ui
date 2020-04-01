@@ -24,7 +24,7 @@ def get_info():
 
     info = {
         "name": 'response-operations-ui',
-        "version": '1.9.0',
+        "version": '1.9.1',
     }
     info = {**_health_check, **info}
 
