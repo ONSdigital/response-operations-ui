@@ -36,7 +36,7 @@ ingress:
   timeoutSec: 60
   awsHost: rops.example.com
   awsCertName: response-operations-cert
-  gcpHost: rpos-gcp.example.com
+  gcpHost: rops-gcp.example.com
   gcpCertName: response-operations-gcp-cert
 
 uaa:
