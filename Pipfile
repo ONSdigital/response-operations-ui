@@ -8,7 +8,7 @@ python_version = "3.6"
 
 [packages]
 flask = "*"
-flask-login = "*"
+flask-login = "==0.4.1"
 flask-wtf = "*"
 structlog = "*"
 flask-assets = "*"
