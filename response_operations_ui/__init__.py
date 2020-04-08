@@ -21,7 +21,6 @@ from response_operations_ui.common.jinja_filters import filter_blueprint
 
 cf = ONSCloudFoundry()
 
-# TODO: review https://content-security-policy.com/, remove this comment if we're covered.
 CSP_POLICY = {
     'default-src': ["'self'", 'https://cdn.ons.gov.uk'],
     'font-src': ["'self'", 'data:', 'https://fonts.gstatic.com', 'https://cdn.ons.gov.uk'],
