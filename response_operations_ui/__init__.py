@@ -49,8 +49,7 @@ class GCPLoadBalancer:
 def create_app(config_name=None):
     csp_policy = copy.deepcopy(CSP_POLICY)
     app = Flask(__name__)
-    csrf = CSRFProtect(app)
-    csrf.init_app(app)
+
     Talisman(
         app,
         content_security_policy=csp_policy,
@@ -60,6 +59,8 @@ def create_app(config_name=None):
         strict_transport_security_max_age=31536000,
         frame_options='DENY')
     app.name = "response_operations_ui"
+
+    CSRFProtect(app)
 
     app_config = f'config.{config_name or os.environ.get("APP_SETTINGS", "Config")}'
     app.config.from_object(app_config)
@@ -131,7 +132,5 @@ def create_app(config_name=None):
     Session(app)
 
     setup_blueprints(app)
-    csrf.exempt(reporting_unit_bp)
-    csrf.exempt(messages_bp)
 
     return app
