@@ -21,6 +21,7 @@
 
         <h1>Filter messages by survey</h1>
         <form method="POST">
+          <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
           {% if survey_list %}
             {% set error = {
               "text": "Select a survey"
