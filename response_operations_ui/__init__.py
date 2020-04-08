@@ -56,7 +56,7 @@ def create_app(config_name=None):
         app,
         content_security_policy=csp_policy,
         content_security_policy_nonce_in=['script-src'],
-        force_https=False,  # this is handled at the firewall
+        force_https=False,  # this is handled at the load balancer
         strict_transport_security=True,
         strict_transport_security_max_age=31536000,
         frame_options='DENY')
