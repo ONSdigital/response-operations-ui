@@ -24,7 +24,7 @@ spec:
           {{- if eq .Values.image.tag "latest"}}
           image: "{{ .Values.image.name }}/{{ .Chart.Name }}:{{ .Chart.AppVersion }}"
           {{- else}}
-          image: "{{ .Values.image.name }}/{{ .Chart.Name }}:{{ .Values.image.tag }}"
+          image: "{{ .Values.image.devRepo }}/{{ .Chart.Name }}:{{ .Values.image.tag }}"
           {{- end}}
           imagePullPolicy: {{ .Values.image.pullPolicy }}
           ports:
@@ -123,9 +123,9 @@ spec:
             value: {{ .Values.notify.requestPasswordChangeTemplate }}
           - name: NOTIFY_SERVICE_URL
             {{- if .Values.dns.enabled }}
-            value: "http://notify-gateway.{{ .Values.namespace }}.svc.cluster.local:{{ .Values.dns.wellKnownPort }}/emails"
+            value: "http://notify-gateway.{{ .Values.namespace }}.svc.cluster.local:{{ .Values.dns.wellKnownPort }}/emails/"
             {{- else }}
-            value: "http://$(NOTIFY_GATEWAY_SERVICE_HOST):$(NOTIFY_GATEWAY_SERVICE_PORT)/emails"
+            value: "http://$(NOTIFY_GATEWAY_SERVICE_HOST):$(NOTIFY_GATEWAY_SERVICE_PORT)/emails/"
             {{- end }}
           - name: PARTY_URL
             {{- if .Values.dns.enabled }}
