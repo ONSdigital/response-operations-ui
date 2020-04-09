@@ -19,6 +19,7 @@
                                            business_id=business_id, survey_id=survey_id, respondent_id=respondent_id,
                                            change_flag=change_flag)}}"
           {% endif %} class="u-mt-l">
+      <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
       <dl class="description-list description-list-8 u-pb-m">
         <dt class="">
           Reference:
