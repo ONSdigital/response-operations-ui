@@ -65,7 +65,7 @@
             action="{{ url_for('account_bp.post_create_account', token=data.token) }}"
             class="form"
             role="form">
-            {{ form.csrf_token }}
+            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
 
             <h1 class="u-mt-l">Create your account</h1>
 
