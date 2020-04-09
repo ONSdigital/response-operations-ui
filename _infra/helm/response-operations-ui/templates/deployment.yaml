@@ -202,14 +202,16 @@ spec:
               secretKeyRef:
                 name: jwt-secret
                 key: jwt-secret
-          - name: TEST_MODE
-            value: "{{- if .Values.test.enabled -}}True{{- else -}}False{{- end -}}"
           - name: UAA_SERVICE_URL
             value: "http://$(UAA_SERVICE_HOST):$(UAA_SERVICE_PORT)"
           - name: UAA_CLIENT_ID
             value: "{{ .Values.uaa.client_id }}"
           - name: UAA_CLIENT_SECRET
             value: "{{ .Values.uaa.client_secret }}"
+          - name: TEST_MODE
+            value: "{{- if .Values.test.enabled -}}True{{- else -}}False{{- end -}}"
+          - name: SECURE_COOKIES
+            value: "{{- if .Values.test.enabled -}}False{{- else -}}True{{- end -}}"
           - name: ZIPKIN_DSN
             value: "http://$(ZIPKIN_SERVICE_HOST):$(ZIPKIN_SERVICE_PORT)/api/v1/spans"
           - name: ZIPKIN_SAMPLE_RATE
