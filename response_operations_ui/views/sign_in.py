@@ -38,14 +38,14 @@ def sign_in():
         except DecodeError:
             logger.error("Unable to decode token - confirm the UAA public key is correct", access_token=access_token)
             abort(500)
-        else:
-            # store the token in the session (it's server side and stored in redis)
-            session['token'] = access_token
-            user = User(user_id)
-            login_user(user)
-            if 'next' in session:
-                return redirect(session['next'])
-            return redirect(url_for('home_bp.home'))
+    else:
+        # store the token in the session (it's server side and stored in redis)
+        session['token'] = access_token
+        user = User(user_id)
+        login_user(user)
+        if 'next' in session:
+            return redirect(session['next'])
+        return redirect(url_for('home_bp.home'))
 
     for message in get_flashed_messages(with_categories=True):
         if "failed_authentication" in message:
