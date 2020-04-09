@@ -71,6 +71,7 @@
             </div>
           {% else %}
             <form action="{{ request.url }}&case_group_id={{ case_group_id }}" method="post" class="u-mt-s">
+                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
                 <div class="field field--radio field--multiplechoice">
                     <fieldset>
                   <legend class="field__legend u-fs-r">Choose new response status</legend>
