@@ -51,7 +51,6 @@
     {% endif %}
 
     <form method="POST" action="{{ url_for('collection_exercise_bp.create_collection_exercise_event', short_name=short_name, period=period, ce_id=ce_id, tag=tag)}}" class="">
-      <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
       <div class="date-time-editor u-mb-l">
         {{ form.csrf_token }}
         <fieldset class="fieldgroup fieldgroup--inline fieldgroup--date" data-qa="widget-date" role="group">
