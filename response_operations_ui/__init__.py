@@ -1,3 +1,4 @@
+import copy
 import logging
 import os
 import requestsdefaulter
@@ -6,9 +7,11 @@ import redis
 from flask import Flask
 from flask_assets import Environment
 from flask_login import LoginManager
-from flask_session import Session
+from flask_talisman import Talisman
+from flask_wtf.csrf import CSRFProtect
 from flask_zipkin import Zipkin
 from structlog import wrap_logger
+from flask_session import Session
 
 from response_operations_ui.cloud.cloudfoundry import ONSCloudFoundry
 from response_operations_ui.logger_config import logger_initial_config
@@ -17,6 +20,18 @@ from response_operations_ui.views import setup_blueprints
 from response_operations_ui.common.jinja_filters import filter_blueprint
 
 cf = ONSCloudFoundry()
+
+CSP_POLICY = {
+    'default-src': ["'self'", 'https://cdn.ons.gov.uk'],
+    'font-src': ["'self'", 'data:', 'https://fonts.gstatic.com', 'https://cdn.ons.gov.uk'],
+    'script-src': ["'self'", 'https://www.googletagmanager.com', 'https://cdn.ons.gov.uk'],
+    'connect-src': ["'self'", 'https://www.googletagmanager.com', 'https://tagmanager.google.com',
+                    'https://cdn.ons.gov.uk'],
+    'img-src': ["'self'", 'data:', 'https://www.gstatic.com', 'https://www.google-analytics.com',
+                'https://www.googletagmanager.com', 'https://ssl.gstatic.com', 'https://cdn.ons.gov.uk'],
+    'style-src': ["'self'", 'https://cdn.ons.gov.uk', "'unsafe-inline'", 'https://tagmanager.google.com',
+                  'https://fonts.googleapis.com'],
+}
 
 
 class GCPLoadBalancer:
@@ -32,8 +47,20 @@ class GCPLoadBalancer:
 
 
 def create_app(config_name=None):
+    csp_policy = copy.deepcopy(CSP_POLICY)
     app = Flask(__name__)
+
+    Talisman(
+        app,
+        content_security_policy=csp_policy,
+        content_security_policy_nonce_in=['script-src'],
+        force_https=False,  # this is handled at the load balancer
+        strict_transport_security=True,
+        strict_transport_security_max_age=31536000,
+        frame_options='DENY')
     app.name = "response_operations_ui"
+
+    CSRFProtect(app)
 
     app_config = f'config.{config_name or os.environ.get("APP_SETTINGS", "Config")}'
     app.config.from_object(app_config)
