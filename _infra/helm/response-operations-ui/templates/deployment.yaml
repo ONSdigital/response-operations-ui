@@ -202,6 +202,8 @@ spec:
               secretKeyRef:
                 name: jwt-secret
                 key: jwt-secret
+          - name: TEST_MODE
+            value: "{{- if .Values.test.enabled -}}True{{- else -}}False{{- end -}}"
           - name: UAA_SERVICE_URL
             value: "http://$(UAA_SERVICE_HOST):$(UAA_SERVICE_PORT)"
           - name: UAA_CLIENT_ID
