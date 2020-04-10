@@ -101,6 +101,8 @@ class Config(object):
     CREATE_ACCOUNT_EMAIL_TOKEN_EXPIRY = int(os.getenv('CREATE_ACCOUNT_EMAIL_TOKEN_EXPIRY', '3628800'))
     CREATE_ACCOUNT_ADMIN_PASSWORD = os.getenv('CREATE_ACCOUNT_ADMIN_PASSWORD')
 
+    WTF_CSRF_ENABLED = False
+
 
 class DevelopmentConfig(Config):
     DEBUG = os.getenv('DEBUG', True)
