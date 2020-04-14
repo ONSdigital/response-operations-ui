@@ -49,6 +49,7 @@
 
       <form action="/reporting-units/{{ru_ref}}">
         <input type="hidden" name="s" value="073" />
+        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>  
         <button class="btn" id="ok-button">Ok</button>
       </form>
     </div>
