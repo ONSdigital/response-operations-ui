@@ -37,6 +37,7 @@ CSP_POLICY = {
 ONE_YEAR_IN_SECONDS = 31536000
 DEFAULT_REFERRER_POLICY = 'strict-origin-when-cross-origin'
 
+
 class GCPLoadBalancer:
 
     def __init__(self, app):
