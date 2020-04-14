@@ -112,3 +112,14 @@ If you get a `Too many open files` error, then run the following to fix it
 ```bash
 ulimit -Sn 10000
 ```
+
+## Acceptance tests and Incognito mode
+This app seems to have a problem working locally in incognito mode and through selenium tests. The problem can be traced to Talisman, disabling talisman allows the app to run locally in incognito and also allows acceptance tests to run without strange errors.
+
+The helm chart makes `test.enabled` available which does the following:
+- disables WTF csrf
+- disables Flask Talisman
+- disables the restrcition on not being able to create collection exercise dates in the past
+By default this config is set to False giving us the full security that Talisman and CSRFProtect offers. NB. the issue with testing only appears when running on a local setup, there is no such issue in preprod. It doesnt seem to work locally even if you change your /etc/hosts to simulate a FQDN with a standard TLD.
+
+The combination of this config change for testing allows us to run the app for local development and also allows us to run acceptance tests through selenium.
