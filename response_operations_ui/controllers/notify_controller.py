@@ -1,5 +1,4 @@
 import logging
-
 import structlog
 import requests
 
@@ -25,10 +24,9 @@ class NotifyController:
         :param personalisation: placeholder values in the template
         :param reference: reference to be generated if not using Notify's id
         """
-
-        if not app.config['SEND_EMAIL_TO_GOV_NOTIFY']:
-            logger.info("Notification not sent. Notify is disabled.")
-            return
+        # if not app.config['SEND_EMAIL_TO_GOV_NOTIFY']:
+        #     logger.info("Notification not sent. Notify is disabled.")
+        #     return
 
         notification = {
             "emailAddress": email,
@@ -39,15 +37,17 @@ class NotifyController:
             notification.update({"reference": reference})
 
         url = f'{self.notify_url}{template_id}'
-
         auth = app.config['SECURITY_USER_NAME'], app.config['SECURITY_USER_PASSWORD']
         response = requests.post(url, auth=auth, json=notification)
-        if response.status_code == 201:
+        status_number = response.status_code
+
+        if status_number == 201:
             logger.info('Notification id sent via Notify-Gateway to GOV.UK Notify.', id=response.json().get("id"))
         else:
             ref = reference if reference else 'reference_unknown'
-            raise NotifyError("There was a problem sending a notification to Notify-Gateway to GOV.UK Notify",
-                              reference=ref)
+            logger.error(f'STATUS CODE: {status_number}')
+            logger.error(f'URL: {url}')
+            raise NotifyError(f'FAILED TO SEND EMAIL TO: {notification["emailAddress"]}', reference=ref)
 
     def request_to_notify(self, email, template_name, personalisation=None, reference=None):
         template_id = self._get_template_id(template_name)
