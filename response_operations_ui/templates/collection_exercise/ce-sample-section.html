@@ -86,8 +86,8 @@
             onsUpload({
                 "id": "sampleFile",
                 "name": "sampleFile",
-                "attributes": {
-                  "onchange": "readCSV.handleFiles(this.files, ['FORM_TYPE'])"
+                "listeners": {
+                  "change": "readCSV.handleFiles(this.files, ['FORM_TYPE'])"
                 },
                 "accept": ".csv",
                 "label": {
@@ -123,8 +123,8 @@
                 "classes": "hidden btn--secondary btn--small",
                 "id": "btn-cancel-load-sample",
                 "submitType": "timer",
-                "attributes": {
-                  "onclick": "readCSV.cancelLoadSample()"
+                "listeners": {
+                  "click": "readCSV.cancelLoadSample()"
                 }
             })
           }}   
