@@ -1,5 +1,7 @@
 <section id="section-sample" class="ce-section">
   <h2 class="u-fs-r--b u-pt-m">Sample</h2>
+
+
   {% if sample %}
     {% if 'ACTIVE' == sample.state %}
       {{
@@ -86,9 +88,6 @@
             onsUpload({
                 "id": "sampleFile",
                 "name": "sampleFile",
-                "attributes": {
-                  "onchange": "readCSV.handleFiles(this.files, ['FORM_TYPE'])"
-                },
                 "accept": ".csv",
                 "label": {
                     "classes": "u-vh",
@@ -129,6 +128,14 @@
             })
           }}   
       </form>
+      <script {% if csp_nonce %} nonce="{{ csp_nonce() }}"{% endif %}>
+        document.getElementById("sampleFile").addEventListener('change', function() {
+            window.readCSV.handleFiles(this.files, ['FORM_TYPE'])
+        });
+        document.getElementById("btn-cancel-load-sample").addEventListener('click', function() {
+            window.readCSV.readCSV.cancelLoadSample()
+        });
+     </script>
     </div>
   {% endif %}
 </section>
