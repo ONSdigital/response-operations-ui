@@ -59,7 +59,11 @@
       {% set checkboxData = [] %}
 
       <form id="form-select-ci" action="" class="form" method="post" enctype="multipart/form-data">
+<<<<<<< HEAD
       <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
+=======
+        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
+>>>>>>> origin/master
         <div id="ciSelectErrorPanel" class="{{'panel panel--simple panel--error' if error.section == 'ciSelect' else ''}}">
           <div id="ciSelectErrorPanelBody" class="{{'panel__body' if error.section == 'ciSelect' else ''}}">
             <input type="hidden" name="ce_id" value="{{ ce.id }}">
@@ -95,7 +99,7 @@
       </form>
     {% else %}
     <form id="form-load-ci" action="" class="form" method="post" enctype="multipart/form-data">
-    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
+      <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
       <p>
         Add {{'another' if collection_instruments else 'a'}} collection instrument. Must be XLSX
       </p>
