@@ -239,7 +239,7 @@
       </div>
     </div>
     {% endfor %}
-    <script>
+    <script{% if csp_nonce %} nonce="{{ csp_nonce() }}"{% endif %}>
         initDataPanels();
         openPanel();
     </script>
