@@ -24,5 +24,12 @@
       {% if params.buttonContext %}
         <span class="btn__context u-vh">{{ params.buttonContext }}</span>
       {% endif %}
+      {% if params.listeners %}
+        <script{% if csp_nonce %} nonce="{{ csp_nonce() }}"{% endif %}>
+        {% for listener, value in params.listeners %}
+          document.getElementById("{{ params.id }}").addEventListener('{{ listener }}', function({{ value }}));
+        {% endfor %}
+        </script>
+      {% endif %}
   </{{ tag }}>
 {% endmacro %}

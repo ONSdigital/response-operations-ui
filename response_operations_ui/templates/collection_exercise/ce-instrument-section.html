@@ -107,8 +107,8 @@
             onsUpload({
                 "id": "ciFile",
                 "name": "ciFile",
-                "attributes": {
-                  "onchange": "validateCI.checkSelectedCI(this.files)"
+                "listeners": {
+                  "change": "validateCI.checkSelectedCI(this.files)"
                 },
                 "accept": ".xlsx",
                 "label": {
