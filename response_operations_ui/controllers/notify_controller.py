@@ -24,9 +24,9 @@ class NotifyController:
         :param personalisation: placeholder values in the template
         :param reference: reference to be generated if not using Notify's id
         """
-        # if not app.config['SEND_EMAIL_TO_GOV_NOTIFY']:
-        #     logger.info("Notification not sent. Notify is disabled.")
-        #     return
+        if not app.config['SEND_EMAIL_TO_GOV_NOTIFY']:
+            logger.info("Notification not sent. Notify is disabled.")
+            return
 
         notification = {
             "emailAddress": email,
