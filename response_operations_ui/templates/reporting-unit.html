@@ -169,7 +169,7 @@
                   <div>
                     <form action="{{ url_for('reporting_unit_bp.view_contact_details', respondent_id=respondent.id, ru_ref=ru.sampleUnitRef)}}" method="get">
                     <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>    
-                    <a{% if csp_nonce %} nonce="{{ csp_nonce() }}"{% endif %} href=# id="edit-contact-details-btn-{{ survey.shortName }}" onclick="this.parentNode.submit()"> Edit contact details </a>
+                    <a href=# id="edit-contact-details-btn-{{ survey.shortName }}" onclick="this.parentNode.submit()"> Edit contact details </a>
                     </form>
                   </div>
                 </dl>
