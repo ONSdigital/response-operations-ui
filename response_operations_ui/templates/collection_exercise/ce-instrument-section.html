@@ -20,12 +20,13 @@
       {% if not locked %}
         {% set formData = 
           '<form id="form-unselect-ci-' + loop.index|string + '" action="" method="post">' +
-          '<a{% if csp_nonce %} nonce="{{ csp_nonce() }}"{% endif %} class="remove-icon" href=# id="unlink-ci-' + loop.index|string + '" onclick="this.parentNode.submit()"></a>' +
+          '<a class="remove-icon" href=# id="unlink-ci-' + loop.index|string + '"></a>' +
           '<input type="hidden" name="ce_id" value="' + ce.id + '">' +
           '<input type="hidden" name="ci_id" value="' + collection_instrument.id + '">' +
           '<input type="hidden" name="unselect-ci">' +
           '<input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>' +
-          '</form>'
+          '</form>' + 
+          '<script{% if csp_nonce %} nonce="{{ csp_nonce() }}"{% endif %}>document.getElementById("unlink-ci-' + loop.index|string + '").addEventListener('click', function() {this.parentNode.submit()});</script>'
        %}
       {% endif %}
       {% do surveyTableDataRows.append(
