@@ -67,7 +67,7 @@
           </dl>
           {% if is_complete %}
             <div>
-              <a href="{{ request.referrer }}" onclick="history.back(); return false;" class="u-d-b u-mt-s">Close</a>
+              <a{% if csp_nonce %} nonce="{{ csp_nonce() }}"{% endif %} href="{{ request.referrer }}" onclick="history.back(); return false;" class="u-d-b u-mt-s">Close</a>
             </div>
           {% else %}
             <form action="{{ request.url }}&case_group_id={{ case_group_id }}" method="post" class="u-mt-s">
@@ -86,7 +86,7 @@
               </div>
               <button type="submit" id="response-status-change-confirm-button" class="btn btn--primary u-mt-m">Confirm</button>
               <div>
-                <a href="{{ request.referrer }}" onclick="history.back(); return false;">Cancel</a>
+                <a{% if csp_nonce %} nonce="{{ csp_nonce() }}"{% endif %} href="{{ request.referrer }}" onclick="history.back(); return false;">Cancel</a>
               </div>
           </form>
         {% endif %}
