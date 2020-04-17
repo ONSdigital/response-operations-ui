@@ -15,7 +15,7 @@
     <div class="spoke__body">
 
     <form action="" method="post" class="u-mt-l">
-
+      <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
       <input type="hidden" name="change" value="verification-email-sent" />
 
       <div>

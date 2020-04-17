@@ -37,6 +37,13 @@
             {% if params.charcheck %}data-char-check-ref="{{ params.id }}-check-remaining" data-char-check-num="{{ params.charcheck }}"{% endif %}
             {% if params.attributes %}{% for attribute, value in (params.attributes.items() if params.attributes is mapping and params.attributes.items else params.attributes) %}{{ attribute }}{% if value %}="{{ value }}"{% endif %} {% endfor %}{% endif %}
         />
+        {% if params.listeners %}
+            <script{% if csp_nonce %} nonce="{{ csp_nonce() }}"{% endif %}>
+            {% for listener, value in (params.listeners.items() if params.listeners is mapping and params.listeners.items else params.listeners) %}
+                document.getElementById("{{ params.id }}").addEventListener('{{ listener }}', function(){ {{ value }} });
+            {% endfor %}
+            </script>
+        {% endif %}
     {% endset %}
 
     {% set field %}
