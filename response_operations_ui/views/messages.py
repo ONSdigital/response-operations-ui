@@ -1,6 +1,8 @@
 import json
 import logging
 import math
+import html
+
 from datetime import datetime
 
 from flask import Blueprint, flash, g, Markup, render_template, request, redirect, session, url_for
@@ -497,6 +499,7 @@ def _populate_form_details_from_hidden_fields(form):
 def _get_message_subject(thread):
     try:
         subject = thread["subject"]
+        subject = html.escape(subject)
         return subject
     except KeyError:
         logger.exception("Failed to retrieve Subject from thread")
