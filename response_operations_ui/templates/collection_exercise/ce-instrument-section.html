@@ -17,10 +17,11 @@
     %}
     {% set surveyTableDataRows = [] %}
     {% for collection_instrument in collection_instruments %}
+      {% set i = loop.index|string %}
       {% if not locked %}
         {% set formData = 
-          '<form id="form-unselect-ci-' + loop.index|string + '" action="" method="post">' +
-          '<a class="remove-icon" href=# id="unlink-ci-' + loop.index|string + '"></a>' +
+          '<form id="form-unselect-ci-{{ i }}" action="" method="post">' +
+          '<a class="remove-icon" href=# id="unlink-ci-{{ i }}"></a>' +
           '<input type="hidden" name="ce_id" value="' + ce.id + '">' +
           '<input type="hidden" name="ci_id" value="' + collection_instrument.id + '">' +
           '<input type="hidden" name="unselect-ci">' +
@@ -28,7 +29,7 @@
           '</form>'
        %}
        <script{% if csp_nonce %} nonce="{{ csp_nonce() }}"{% endif %}>
-        document.getElementById("unlink-ci-" + loop.index|string).addEventListener('click', function() {
+        document.getElementById("unlink-ci-{{ i }}").addEventListener('click', function() {
           this.parentNode.submit()
         });</script>
       {% endif %}
