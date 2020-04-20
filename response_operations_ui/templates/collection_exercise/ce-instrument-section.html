@@ -17,21 +17,16 @@
     %}
     {% set surveyTableDataRows = [] %}
     {% for collection_instrument in collection_instruments %}
-      {% set i = loop.index|string %}
       {% if not locked %}
         {% set formData = 
-          '<form id="form-unselect-ci-{{ i }}" action="" method="post">' +
-          '<a class="remove-icon" href=# id="unlink-ci-{{ i }}"></a>' +
+          '<form id="form-unselect-ci-' + loop.index|string + '" action="" method="post">' +
+          '<a class="remove-icon" href=# id="unlink-ci-' + loop.index|string + '"></a>' +
           '<input type="hidden" name="ce_id" value="' + ce.id + '">' +
           '<input type="hidden" name="ci_id" value="' + collection_instrument.id + '">' +
           '<input type="hidden" name="unselect-ci">' +
           '<input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>' +
           '</form>'
        %}
-       <script{% if csp_nonce %} nonce="{{ csp_nonce() }}"{% endif %}>
-        document.getElementById("unlink-ci-{{ i }}").addEventListener('click', function() {
-          this.parentNode.submit()
-        });</script>
       {% endif %}
       {% do surveyTableDataRows.append(
         {
@@ -51,6 +46,13 @@
     {{
       onsTable(surveyTableData)
     }}
+    {% for i in range(surveyTableDataRows | length) %}
+      {% set j = i + 1 %}
+      <script{% if csp_nonce %} nonce="{{ csp_nonce() }}"{% endif %}>
+        document.getElementById("unlink-ci-{{ j }}").addEventListener('click', function() {
+        this.parentNode.submit()
+      });</script>
+    {% endfor %}
   {% endif %}
 
   {% if not locked %}
