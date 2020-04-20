@@ -165,7 +165,7 @@ spec:
             {{- end }}
           - name: RESPONSE_OPERATIONS_UI_URL
             {{- if .Values.ingress.enabled }}
-            value: "https://{{ .Values.ingress.awsHost }}"
+            value: "https://{{ .Values.ingress.gcpHost }}"
             {{- else }}
             value: "http://localhost:{{.Values.service.port}}"
             {{- end }}
