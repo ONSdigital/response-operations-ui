@@ -24,13 +24,9 @@
           '<input type="hidden" name="ce_id" value="' + ce.id + '">' +
           '<input type="hidden" name="ci_id" value="' + collection_instrument.id + '">' +
           '<input type="hidden" name="unselect-ci">' +
-          '<input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>' +
+          '<input type="hidden" name="csrf_token" value="' + csrf_token() + '"/>' +
           '</form>'
        %}
-       <script{% if csp_nonce %} nonce="{{ csp_nonce() }}"{% endif %}>
-        document.getElementById("unlink-ci-" + loop.index|string).addEventListener('click', function() {
-          this.parentNode.submit()
-        });</script>
       {% endif %}
       {% do surveyTableDataRows.append(
         {
@@ -50,6 +46,13 @@
     {{
       onsTable(surveyTableData)
     }}
+    {% for i in range(surveyTableDataRows | length) %}
+      {% set j = i + 1 %}
+      <script{% if csp_nonce %} nonce="{{ csp_nonce() }}"{% endif %}>
+        document.getElementById("unlink-ci-{{ j }}").addEventListener('click', function() {
+        this.parentNode.submit()
+      });</script>
+    {% endfor %}
   {% endif %}
 
   {% if not locked %}
