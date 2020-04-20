@@ -3,6 +3,7 @@ import logging
 import re
 
 from flask_wtf import FlaskForm
+from flask import Markup
 from structlog import wrap_logger
 from wtforms import HiddenField, IntegerField, Label, PasswordField, SelectField, StringField, SubmitField, \
     TextAreaField
@@ -165,8 +166,9 @@ class CreateCollectionExerciseDetailsForm(FlaskForm):
 
 
 class EditSurveyDetailsForm(FlaskForm):
-    long_name = StringField('long_name')
-    short_name = StringField('short_name', validators=[InputRequired(message="Please remove spaces in short name")])
+    long_name = StringField(Markup('long_name').striptags)
+    short_name = StringField(Markup('short_name').striptags, validators=[InputRequired(
+        message="Please remove spaces in short name")])
     hidden_survey_ref = HiddenField('hidden_survey_ref')
 
     @staticmethod
@@ -177,8 +179,9 @@ class EditSurveyDetailsForm(FlaskForm):
 
 
 class CreateSurveyDetailsForm(FlaskForm):
-    long_name = StringField('long_name')
-    short_name = StringField('short_name', validators=[InputRequired(message="Please remove spaces in Abbreviation")])
+    long_name = StringField(Markup('long_name').striptags)
+    short_name = StringField(Markup('short_name').striptags, validators=[InputRequired(
+        message="Please remove spaces in Abbreviation")])
     survey_ref = StringField('survey_ref', validators=[InputRequired(message="Please remove spaces in Survey ID")])
     legal_basis = SelectField('legal_basis', choices=[('', 'Select an option')])
 
