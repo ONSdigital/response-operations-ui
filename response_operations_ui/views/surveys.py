@@ -6,9 +6,10 @@ from flask_login import login_required
 from structlog import wrap_logger
 
 from response_operations_ui.common.mappers import map_collection_exercise_state, convert_events_to_new_format
-from response_operations_ui.controllers import survey_controllers, collection_exercise_controllers
+from response_operations_ui.controllers import survey_controllers, collection_exercise_controllers, \
+    collection_instrument_controllers
 from response_operations_ui.exceptions.exceptions import ApiError
-from response_operations_ui.forms import CreateSurveyDetailsForm
+from response_operations_ui.forms import CreateSurveyDetailsForm, LinkCollectionInstrumentForm
 from response_operations_ui.forms import EditSurveyDetailsForm
 
 
@@ -17,12 +18,11 @@ logger = wrap_logger(logging.getLogger(__name__))
 surveys_bp = Blueprint('surveys_bp', __name__,
                        static_folder='static', template_folder='templates/surveys')
 
-
-def get_info_message(message_key):
-    return {
-        'survey_changed': "Survey details changed",
-        'survey_created': "Survey created successfully"
-    }[message_key]
+INFO_MESSAGES = {
+    'survey_changed': "Survey details changed",
+    'survey_created': "Survey created successfully",
+    'instrument_linked': "Collection exercise linked to survey successfully"
+}
 
 
 @surveys_bp.route('/', methods=['GET'])
@@ -30,13 +30,7 @@ def get_info_message(message_key):
 def view_surveys():
     survey_list = survey_controllers.get_surveys_list()
     breadcrumbs = [{"text": "Surveys"}]
-
-    message_key = request.args.get('message_key')
-
-    if message_key:
-        info_message = get_info_message(message_key)
-    else:
-        info_message = None
+    info_message = INFO_MESSAGES.get(request.args.get('message_key'))
 
     return render_template('surveys.html', info_message=info_message,
                            survey_list=survey_list, breadcrumbs=breadcrumbs)
@@ -113,7 +107,7 @@ def edit_survey_details(short_name):
         survey_controllers.update_survey_details(form.get('hidden_survey_ref'),
                                                  form.get('short_name'),
                                                  form.get('long_name'))
-        return redirect(url_for('surveys_bp.view_surveys', short_name=short_name, message_key='survey_changed'))
+        return redirect(url_for('surveys_bp.view_surveys', message_key='survey_changed'))
 
 
 @surveys_bp.route('/create', methods=['GET'])
@@ -129,32 +123,47 @@ def show_create_survey():
 def create_survey():
     form = CreateSurveyDetailsForm(form=request.form)
     if not form.validate():
-        return render_template('create-survey.html', form=form, errors=form.errors.items(),
-                               survey_ref=request.form.get('survey_ref'),
-                               long_name=request.form.get('long_name'),
-                               short_name=request.form.get('short_name'),
-                               legal_basis=request.form.get('legal_basis'))
-    else:
-        logger.info('create-survey form', form=form)
-        try:
-            survey_controllers.create_survey(request.form.get('survey_ref'),
-                                             request.form.get('short_name'),
-                                             request.form.get('long_name'),
-                                             request.form.get('legal_basis'))
+        return render_template('create-survey.html', form=form, errors=form.errors.items())
 
-            return redirect(url_for('surveys_bp.view_surveys', short_name=request.form.get('short_name'),
-                                    message_key='survey_created'))
-        except ApiError as err:
-            # If it's conflict or bad request assume the service has returned a useful error
-            # message as the body of the response
-            if err.status_code == 409 or err.status_code == 400:
-                return render_template('create-survey.html', form=form, errors=[("", [err.message])],
-                                       survey_ref=request.form.get('survey_ref'),
-                                       long_name=request.form.get('long_name'),
-                                       short_name=request.form.get('short_name'),
-                                       legal_basis=request.form.get('legal_basis'))
-            else:
-                raise
+    try:
+        survey_controllers.create_survey(request.form.get('survey_ref'),
+                                         request.form.get('short_name'),
+                                         request.form.get('long_name'),
+                                         request.form.get('legal_basis'))
+
+        return redirect(url_for('surveys_bp.view_surveys', message_key='survey_created'))
+    except ApiError as err:
+        # If it's conflict or bad request assume the service has returned a useful error
+        # message as the body of the response
+        if err.status_code == 409 or err.status_code == 400:
+            return render_template('create-survey.html', form=form, errors=[("", [err.message])])
+        else:
+            raise
+
+
+@surveys_bp.route('/link-collection-instrument', methods=['GET'])
+@login_required
+def get_link_collection_instrument():
+    form = LinkCollectionInstrumentForm(form=request.form)
+    return render_template('link-collection-instrument.html', form=form)
+
+
+@surveys_bp.route('/link-collection-instrument', methods=['POST'])
+@login_required
+def post_link_collection_instrument():
+    form = LinkCollectionInstrumentForm(form=request.form)
+    if not form.validate():
+        return render_template('link-collection-instrument.html', form=form, errors=form.errors.items())
+
+    try:
+        survey_uuid = survey_controllers.get_survey_by_ref(form.survey_id.data)['id']
+        collection_instrument_controllers.link_collection_instrument_to_survey(survey_uuid, form.eq_id.data,
+                                                                               form.formtype.data)
+    except ApiError as err:
+        # err.message might contain json or be the text of the error.  We'll just render it and hope that it's useful
+        return render_template('link-collection-instrument.html', form=form, errors=[("", [err.message])])
+
+    return redirect(url_for('surveys_bp.view_surveys', message_key='instrument_linked'))
 
 
 def _sort_collection_exercise(collection_exercises):
