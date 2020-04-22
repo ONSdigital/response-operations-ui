@@ -25,7 +25,7 @@ def process_file(params):
             try:
                 enrolment_code = print_file_dict[str(row[0].value)]
             except KeyError:
-                print(f"ru_ref [{row[0].value}] does not have a value in both print file and excel file.  Skipping")
+                print(f"ru_ref [{row[0].value}] is present in the input file but absent in the printfile.  Skipping.")
                 continue
 
             email_address = row[50].value
@@ -40,7 +40,7 @@ def process_file(params):
                 writer.writerow(csv_line)
             if alternate_email_address:
                 csv_line = [alternate_email_address, ru_name, trading_style, params['survey_name'],
-                            params['respondent_period'],params['return_by_date'], enrolment_code,
+                            params['respondent_period'], params['return_by_date'], enrolment_code,
                             params['survey_phone_number']]
                 writer.writerow(csv_line)
 
@@ -59,7 +59,8 @@ def create_print_file_dictionary(print_file):
 
 if __name__ == "__main__":
     if len(sys.argv) != 6:  # First argument is the name of the script
-        sys.exit("Not enough arguments")
+        length = len(sys.argv)
+        sys.exit(f"Exactly 6 arguments expected. Number provided [{length}]")
  
     survey = sys.argv[3]
     if not survey_mapping[survey.lower()]:
