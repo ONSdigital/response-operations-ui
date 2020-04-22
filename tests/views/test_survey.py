@@ -411,11 +411,47 @@ class TestSurvey(ViewTestCase):
         self.assertIn("id=\"save-error\"".encode(), response.data)
 
     @requests_mock.mock()
-    def test_create_survey_bad_shortname(self, mock_request):
+    def test_create_survey_spaces_shortname(self, mock_request):
         create_survey_request = {
             "survey_ref": "999",
             "long_name": "Test Survey",
             "short_name": "TE ST",
+            "legal_basis": "STA1947"
+        }
+        mock_request.get(url_get_legal_basis_list, json=legal_basis_list)
+        mock_request.post(url_create_survey, json=create_survey_response, status_code=201)
+
+        response = self.client.post(f"surveys/create", data=create_survey_request)
+
+        self.assertEqual(response.status_code, 200)
+
+        # Check error div is present
+        self.assertIn("id=\"save-error\"".encode(), response.data)
+
+    @requests_mock.mock()
+    def test_create_survey_html_shortname(self, mock_request):
+        create_survey_request = {
+            "survey_ref": "999",
+            "long_name": "Test Survey",
+            "short_name": "<b>TEST</b>",
+            "legal_basis": "STA1947"
+        }
+        mock_request.get(url_get_legal_basis_list, json=legal_basis_list)
+        mock_request.post(url_create_survey, json=create_survey_response, status_code=201)
+
+        response = self.client.post(f"surveys/create", data=create_survey_request)
+
+        self.assertEqual(response.status_code, 200)
+
+        # Check error div is present
+        self.assertIn("id=\"save-error\"".encode(), response.data)
+
+    @requests_mock.mock()
+    def test_create_survey_html_longname(self, mock_request):
+        create_survey_request = {
+            "survey_ref": "999",
+            "long_name": "<b>Test Survey</b>",
+            "short_name": "TEST",
             "legal_basis": "STA1947"
         }
         mock_request.get(url_get_legal_basis_list, json=legal_basis_list)
