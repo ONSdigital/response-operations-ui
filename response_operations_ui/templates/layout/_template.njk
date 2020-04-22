@@ -198,7 +198,7 @@
         </script>
 
         {% if devMode %}
-            <script>document.write('<script src="//' + (location.hostname || 'localhost').split(':')[0] + ':35729/livereload.js" defer><\/script>');</script>
+            <script{% if csp_nonce %} nonce="{{ csp_nonce() }}"{% endif %}>document.write('<script{% if csp_nonce %} nonce="{{ csp_nonce() }}"{% endif %} src="//' + (location.hostname || 'localhost').split(':')[0] + ':35729/livereload.js" defer><\/script>');</script>
         {% endif %}
 
         {% block scripts %}{% endblock %}
