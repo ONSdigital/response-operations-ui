@@ -15,7 +15,7 @@
 
     <title>{% block page_title %}{{ _('Survey Data Collection') }}{% endblock page_title %}</title>
     <!--[if gt IE 8]><!-->
-      <script>document.documentElement.className = document.documentElement.className.replace('no-js','has-js')</script>
+      <script{% if csp_nonce %} nonce="{{ csp_nonce() }}"{% endif %}>document.documentElement.className = document.documentElement.className.replace('no-js','has-js')</script>
     <!--<![endif]-->
     <link rel=stylesheet type=text/css href="{{ css_responsive_cdn }}">
     {% assets "scss_all" %}
@@ -25,7 +25,7 @@
     <link href="/static/images/favicon.ico" rel="Shortcut Icon" />
     {% if config.GOOGLE_TAG_MANAGER %}
       <!-- Google Tag Manager -->	
-      <script>
+      <script{% if csp_nonce %} nonce="{{ csp_nonce() }}"{% endif %}>
         (function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':	
         new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],	
         j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=	
