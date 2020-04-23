@@ -10,8 +10,8 @@ This script is used to take input from the following 2 files:
 In addition, the script takes a number of arguments:
 - Survey name.  Currently only 'construction' is valid but more will be in the future.  This name links to a mapping
 with the proper survey name and phone number for the survey.
-- Respondent period (Takes the form of XXX)
-- Return by date (Takes the form of YYY)
+- Respondent period (Takes the form of "<Month> <Year>" e.g., "April 2020")
+- Return by date (Takes the form of "<Day> <Month> <Year>" e.g., "07 May 2020")
 
 
 A csv file is generated from these that will be uploaded to gov.notify(https://www.notifications.service.gov.uk/)
@@ -22,7 +22,7 @@ address.
 To run the script, do the following:
 ```bash
 cd scripts
-pipenv run python generate_csv_for_emails.py <business_filename> <print_filename> construction XXX YYY
+pipenv run python generate_csv_for_emails.py <business_filename> <print_filename> construction "April 2020" "07 May 2020"
 ```
 
 This will generate a file called `enrolment_email_details.csv` which can be uploaded to gov notify via the
