@@ -22,7 +22,7 @@ address.
 To run the script, do the following:
 ```bash
 cd scripts
-pipenv run python generate_csv_for_emails.py <business_filename> <print_filename> construction XXX YYY
+pipenv run python generate_csv_for_emails.py <business_filename> <print_filename> construction "April 2020" "07 May 2020"
 ```
 
 This will generate a file called `enrolment_email_details.csv` which can be uploaded to gov notify via the

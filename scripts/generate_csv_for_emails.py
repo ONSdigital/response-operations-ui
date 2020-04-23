@@ -6,7 +6,7 @@ from openpyxl import load_workbook
 
 survey_mapping = {"construction": {
     "phone_number": "0300 1234 910",
-    "survey_name": "Construction"
+    "survey_name": "Monthly Business Survey - Construction and Allied Trades"
 }}
 
 
