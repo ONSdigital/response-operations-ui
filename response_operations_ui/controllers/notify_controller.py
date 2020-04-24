@@ -4,6 +4,8 @@ import requests
 
 from response_operations_ui.exceptions.exceptions import NotifyError
 from flask import current_app as app
+from requests.exceptions import HTTPError
+
 
 logger = structlog.wrap_logger(logging.getLogger(__name__))
 
@@ -36,19 +38,17 @@ class NotifyController:
         if reference:
             notification.update({"reference": reference})
 
-        url = f'{self.notify_url}{template_id}'
         auth = app.config['SECURITY_USER_NAME'], app.config['SECURITY_USER_PASSWORD']
+        url = f'{self.notify_url}{template_id}'
         response = requests.post(url, auth=auth, json=notification)
-        status_code = response.status_code
 
-        if 201 <= status_code <= 399:
-            logger.info('Notification id sent via Notify-Gateway to GOV.UK Notify.', id=response.json().get("id"))
-        else:
+        try:
+            response.raise_for_status()
+        except HTTPError:
             ref = reference if reference else 'reference_unknown'
-            raise NotifyError(f'There was a problem sending a notification to Notify-Gateway. URL = {url},'
-                              f' STATUS CODE = {status_code}, MESSAGE = {response.text}',
-                              reference=ref)
-
+            raise NotifyError('TESTING There was a problem sending a notification to Notify-Gateway', reference=ref)
+        
+        
     def request_to_notify(self, email, template_name, personalisation=None, reference=None):
         template_id = self._get_template_id(template_name)
         self._send_message(email, template_id, personalisation, reference)
