@@ -169,7 +169,12 @@
                   <div>
                     <form action="{{ url_for('reporting_unit_bp.view_contact_details', respondent_id=respondent.id, ru_ref=ru.sampleUnitRef)}}" method="get">
                     <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>    
-                    <a{% if csp_nonce %} nonce="{{ csp_nonce() }}"{% endif %} href=# id="edit-contact-details-btn-{{ survey.shortName }}" onclick="this.parentNode.submit()"> Edit contact details </a>
+                    <a href=# id="edit-contact-details-btn-{{ survey.shortName }}-{{ loop.index }}"> Edit contact details </a>
+                    <script{% if csp_nonce %} nonce="{{ csp_nonce() }}"{% endif %}>
+                      document.getElementById("edit-contact-details-btn-{{ survey.shortName }}-{{ loop.index }}").addEventListener('click', function() {
+                        this.parentNode.submit()
+                      });
+                    </script>
                     </form>
                   </div>
                 </dl>
