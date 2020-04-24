@@ -2,14 +2,6 @@
 apiVersion: networking.gke.io/v1beta1
 kind: ManagedCertificate
 metadata:
-  name: {{ .Values.ingress.awsCertName }}
-spec:
-  domains:
-    - {{ .Values.ingress.awsHost }}
----
-apiVersion: networking.gke.io/v1beta1
-kind: ManagedCertificate
-metadata:
   name: {{ .Values.ingress.gcpCertName }}
 spec:
   domains:
