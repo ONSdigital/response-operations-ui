@@ -18,7 +18,7 @@ def process_file(params):
 
     with open('enrolment_email_details.csv', 'w', newline='') as f:
         writer = csv.writer(f)
-        writer.writerow(['email address', 'RU_NAME', 'TRADING_STYLE', 'SURVEY_NAME',
+        writer.writerow(['email address', 'RU_NAME', 'SURVEY_NAME',
                          'RESPONDENT_PERIOD', 'RETURN_BY_DATE', 'ENROLMENT_CODE', 'SURVEY_PHONELINE'])
 
         for row in sheet.iter_rows(min_row=2):
@@ -31,17 +31,14 @@ def process_file(params):
             email_address = row[50].value
             alternate_email_address = row[51].value
             ru_name = row[29].value
-            trading_style = row[38].value
 
             if email_address:
-                csv_line = [email_address, ru_name, trading_style, params['survey_name'],
-                            params['respondent_period'], params['return_by_date'], enrolment_code,
-                            params['survey_phone_number']]
+                csv_line = [email_address, ru_name, params['survey_name'], params['respondent_period'],
+                            params['return_by_date'], enrolment_code, params['survey_phone_number']]
                 writer.writerow(csv_line)
             if alternate_email_address:
-                csv_line = [alternate_email_address, ru_name, trading_style, params['survey_name'],
-                            params['respondent_period'], params['return_by_date'], enrolment_code,
-                            params['survey_phone_number']]
+                csv_line = [alternate_email_address, ru_name, params['survey_name'], params['respondent_period'],
+                            params['return_by_date'], enrolment_code, params['survey_phone_number']]
                 writer.writerow(csv_line)
 
 
