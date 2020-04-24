@@ -38,15 +38,19 @@ class NotifyController:
         if reference:
             notification.update({"reference": reference})
 
-        auth = app.config['SECURITY_USER_NAME'], app.config['SECURITY_USER_PASSWORD']
         url = f'{self.notify_url}{template_id}'
+        auth = app.config['SECURITY_USER_NAME'], app.config['SECURITY_USER_PASSWORD']
         response = requests.post(url, auth=auth, json=notification)
+        status_code = response.status_code
 
         try:
             response.raise_for_status()
+            logger.info('Notification id sent via Notify-Gateway to GOV.UK Notify.', id=response.json().get("id"))
         except HTTPError:
             ref = reference if reference else 'reference_unknown'
-            raise NotifyError('There was a problem sending a notification to Notify-Gateway', reference=ref)
+            logger.error('There was a problem sending a notification to Notify-Gateway', 
+                         ref=ref, status_code=status_code, message=response.text)
+            raise NotifyError()        
         
     def request_to_notify(self, email, template_name, personalisation=None, reference=None):
         template_id = self._get_template_id(template_name)
