@@ -166,8 +166,9 @@ class CreateCollectionExerciseDetailsForm(FlaskForm):
 
 class EditSurveyDetailsForm(FlaskForm):
     long_name = StringField('long_name',
-                            validators=[Regexp(regex=r'^[a-zA-Z0-9 \-]+$',
-                                               message='Please use alphanumeric characters only.')])
+                            # Letters, numbers, and (escaped) dash, apostrophe, parentheses, and colon
+                            validators=[Regexp(regex=r'^[a-zA-Z0-9 \-\'\(\)\:]+$',
+                                               message='Please use alphanumeric characters.')])
     short_name = StringField('short_name',
                              validators=[InputRequired(message="Please remove spaces in short name"),
                                          Regexp(regex=r'^[a-zA-Z0-9]+$',
