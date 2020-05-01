@@ -41,7 +41,7 @@ class NotifyController:
         url = f'{self.notify_url}{template_id}'
         auth = app.config['SECURITY_USER_NAME'], app.config['SECURITY_USER_PASSWORD']
         response = requests.post(url, auth=auth, json=notification)
-        
+
         try:
             logger.info('Notification id sent via Notify-Gateway to GOV.UK Notify.', id=response.json().get("id"))
             response.raise_for_status()
@@ -49,8 +49,8 @@ class NotifyController:
             ref = reference if reference else 'reference_unknown'
             raise NotifyError('There was a problem sending a notification via Notify-Gateway to GOV.UK Notify',
                               url=url, status_code=response.status_code,
-                              message=response.text, reference=ref, error=e) 
-                              
+                              message=response.text, reference=ref, error=e)
+
     def request_to_notify(self, email, template_name, personalisation=None, reference=None):
         template_id = self._get_template_id(template_name)
         self._send_message(email, template_id, personalisation, reference)
