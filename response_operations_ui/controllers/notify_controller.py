@@ -1,11 +1,13 @@
 import logging
-
 from structlog import wrap_logger
 from structlog.processors import JSONRenderer
+
 import requests
 
 from response_operations_ui.exceptions.exceptions import NotifyError
 from flask import current_app as app
+from requests.exceptions import HTTPError
+
 
 logger = wrap_logger(logging.getLogger(__name__),
                      processors=[JSONRenderer(indent=1, sort_keys=True)])
@@ -27,7 +29,6 @@ class NotifyController:
         :param personalisation: placeholder values in the template
         :param reference: reference to be generated if not using Notify's id
         """
-
         if not app.config['SEND_EMAIL_TO_GOV_NOTIFY']:
             logger.info("Notification not sent. Notify is disabled.")
             return
@@ -41,15 +42,17 @@ class NotifyController:
             notification.update({"reference": reference})
 
         url = f'{self.notify_url}{template_id}'
-
         auth = app.config['SECURITY_USER_NAME'], app.config['SECURITY_USER_PASSWORD']
         response = requests.post(url, auth=auth, json=notification)
-        if response.status_code == 201:
+
+        try:
             logger.info('Notification id sent via Notify-Gateway to GOV.UK Notify.', id=response.json().get("id"))
-        else:
+            response.raise_for_status()
+        except HTTPError as e:
             ref = reference if reference else 'reference_unknown'
-            raise NotifyError("There was a problem sending a notification to Notify-Gateway to GOV.UK Notify",
-                              reference=ref)
+            raise NotifyError('There was a problem sending a notification via Notify-Gateway to GOV.UK Notify',
+                              url=url, status_code=response.status_code,
+                              message=response.text, reference=ref, error=e)
 
     def request_to_notify(self, email, template_name, personalisation=None, reference=None):
         template_id = self._get_template_id(template_name)
