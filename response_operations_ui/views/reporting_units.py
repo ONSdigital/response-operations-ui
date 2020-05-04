@@ -7,6 +7,7 @@ from flask_login import login_required
 from flask_paginate import Pagination
 from iso8601 import parse_date
 from structlog import wrap_logger
+from structlog.processors import JSONRenderer
 
 from response_operations_ui.common.mappers import map_ce_response_status, map_region
 from response_operations_ui.controllers import case_controller, iac_controller, party_controller, \
@@ -18,7 +19,9 @@ from response_operations_ui.controllers.survey_controllers import get_survey_by_
 from response_operations_ui.forms import EditContactDetailsForm, RuSearchForm
 
 
-logger = wrap_logger(logging.getLogger(__name__))
+logger = wrap_logger(logging.getLogger(__name__),
+                     processors=[JSONRenderer(indent=1, sort_keys=True)])
+
 
 reporting_unit_bp = Blueprint('reporting_unit_bp', __name__, static_folder='static', template_folder='templates')
 

@@ -3,16 +3,18 @@ import logging
 import re
 
 from flask_wtf import FlaskForm
-from structlog import wrap_logger
 from wtforms import HiddenField, IntegerField, Label, PasswordField, SelectField, StringField, SubmitField, \
     TextAreaField
 from wtforms.validators import DataRequired, Email, EqualTo, Length, InputRequired, ValidationError, Regexp
+from structlog import wrap_logger
+from structlog.processors import JSONRenderer
 
 from response_operations_ui.controllers import collection_exercise_controllers
 from response_operations_ui.controllers import survey_controllers
 
 
-logger = wrap_logger(logging.getLogger(__name__))
+logger = wrap_logger(logging.getLogger(__name__),
+                     processors=[JSONRenderer(indent=1, sort_keys=True)])
 
 survey_ref_validation = re.compile("^[0-9]{1,6}$")
 

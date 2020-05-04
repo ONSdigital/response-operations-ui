@@ -1,7 +1,10 @@
 import logging
-from structlog import wrap_logger
+
 from flask import Blueprint, request, render_template, redirect, url_for, flash, current_app as app
 from itsdangerous import URLSafeSerializer, BadSignature, BadData, SignatureExpired
+
+from structlog import wrap_logger
+from structlog.processors import JSONRenderer
 
 from response_operations_ui.forms import RequestAccountForm, CreateAccountForm
 from response_operations_ui.controllers import uaa_controller
@@ -9,7 +12,8 @@ from response_operations_ui.controllers.notify_controller import NotifyControlle
 from response_operations_ui.common import token_decoder
 from response_operations_ui.exceptions.exceptions import NotifyError
 
-logger = wrap_logger(logging.getLogger(__name__))
+logger = wrap_logger(logging.getLogger(__name__),
+                     processors=[JSONRenderer(indent=1, sort_keys=True)])
 
 account_bp = Blueprint('account_bp', __name__, static_folder='static', template_folder='templates')
 

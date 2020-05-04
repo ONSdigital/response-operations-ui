@@ -2,11 +2,13 @@ import logging
 
 from flask import Blueprint, flash, redirect, render_template, url_for, request
 from structlog import wrap_logger
+from structlog.processors import JSONRenderer
 
 from response_operations_ui.exceptions.exceptions import ApiError, UpdateContactDetailsException
 
 
-logger = wrap_logger(logging.getLogger(__name__))
+logger = wrap_logger(logging.getLogger(__name__),
+                     processors=[JSONRenderer(indent=1, sort_keys=True)])
 
 error_bp = Blueprint('error_bp', __name__, template_folder='templates/errors')
 

@@ -5,10 +5,12 @@ import requests
 from flask import abort, current_app as app
 from requests import HTTPError
 from structlog import wrap_logger
+from structlog.processors import JSONRenderer
 from itsdangerous import URLSafeSerializer
 
 
-logger = wrap_logger(logging.getLogger(__name__))
+logger = wrap_logger(logging.getLogger(__name__),
+                     processors=[JSONRenderer(indent=1, sort_keys=True)])
 
 
 def sign_in(username, password):

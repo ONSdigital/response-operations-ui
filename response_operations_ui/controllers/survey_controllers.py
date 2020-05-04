@@ -4,13 +4,15 @@ import requests
 from flask import current_app as app
 from requests.exceptions import HTTPError, RequestException
 from structlog import wrap_logger
+from structlog.processors import JSONRenderer
 
 from config import FDI_LIST, VACANCIES_LIST
 from response_operations_ui.common.mappers import format_short_name
 from response_operations_ui.exceptions.exceptions import ApiError
 
 
-logger = wrap_logger(logging.getLogger(__name__))
+logger = wrap_logger(logging.getLogger(__name__),
+                     processors=[JSONRenderer(indent=1, sort_keys=True)])
 
 
 def get_survey_by_id(survey_id):

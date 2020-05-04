@@ -4,9 +4,11 @@ from pathlib import Path
 
 from flask import Blueprint, make_response, jsonify, session
 from structlog import wrap_logger
+from structlog.processors import JSONRenderer
 
 
-logger = wrap_logger(logging.getLogger(__name__))
+logger = wrap_logger(logging.getLogger(__name__),
+                     processors=[JSONRenderer(indent=1, sort_keys=True)])
 
 info_bp = Blueprint('info_bp', __name__, static_folder='static', template_folder='templates')
 

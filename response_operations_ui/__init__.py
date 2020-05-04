@@ -10,9 +10,10 @@ from flask_login import LoginManager
 from flask_talisman import Talisman
 from flask_wtf.csrf import CSRFProtect
 from flask_zipkin import Zipkin
-from structlog import wrap_logger
 from flask_session import Session
 from config import Config
+from structlog import wrap_logger
+from structlog.processors import JSONRenderer
 
 from response_operations_ui.cloud.cloudfoundry import ONSCloudFoundry
 from response_operations_ui.logger_config import logger_initial_config
@@ -99,7 +100,8 @@ def create_app(config_name=None):
     requestsdefaulter.default_headers(zipkin.create_http_headers_for_new_span)
 
     logger_initial_config(service_name='response-operations-ui', log_level=app.config['LOGGING_LEVEL'])
-    logger = wrap_logger(logging.getLogger(__name__))
+    logger = wrap_logger(logging.getLogger(__name__),
+                         processors=[JSONRenderer(indent=1, sort_keys=True)])
     logger.info('Logger created', log_level=app.config['LOGGING_LEVEL'])
 
     login_manager = LoginManager(app)

@@ -2,6 +2,7 @@ import logging
 
 import jwt
 from structlog import wrap_logger
+from structlog.processors import JSONRenderer
 
 from flask import current_app
 from itsdangerous import URLSafeTimedSerializer
@@ -9,7 +10,8 @@ from werkzeug.exceptions import InternalServerError
 from response_operations_ui.common.uaa import get_uaa_public_key
 
 
-logger = wrap_logger(logging.getLogger(__name__))
+logger = wrap_logger(logging.getLogger(__name__),
+                     processors=[JSONRenderer(indent=1, sort_keys=True)])
 
 
 def decode_access_token(access_token):

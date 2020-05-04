@@ -5,13 +5,15 @@ from flask import current_app as app
 from flask_login import login_required
 from flask_paginate import Pagination
 from structlog import wrap_logger
+from structlog.processors import JSONRenderer
 
 from response_operations_ui.common.respondent_utils import filter_respondents
 from response_operations_ui.controllers import party_controller, reporting_units_controllers
 from response_operations_ui.forms import RespondentSearchForm, EditContactDetailsForm
 
 
-logger = wrap_logger(logging.getLogger(__name__))
+logger = wrap_logger(logging.getLogger(__name__),
+                     processors=[JSONRenderer(indent=1, sort_keys=True)])
 
 respondent_bp = Blueprint('respondent_bp', __name__,
                           static_folder='static', template_folder='templates')

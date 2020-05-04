@@ -1,7 +1,9 @@
 import logging
 from structlog import wrap_logger
+from structlog.processors import JSONRenderer
 
-logger = wrap_logger(logging.getLogger(__name__))
+logger = wrap_logger(logging.getLogger(__name__),
+                     processors=[JSONRenderer(indent=1, sort_keys=True)])
 
 
 def status_enum_to_string(status):

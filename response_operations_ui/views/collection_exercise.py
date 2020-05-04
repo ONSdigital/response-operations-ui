@@ -7,8 +7,10 @@ from dateutil import tz
 from flask import Blueprint, abort, render_template, request, redirect, session, url_for
 from flask import jsonify, make_response, flash
 from flask_login import login_required
-from structlog import wrap_logger
 from wtforms import ValidationError
+from structlog import wrap_logger
+from structlog.processors import JSONRenderer
+
 
 from response_operations_ui.common.date_restriction_generator import get_date_restriction_text
 from response_operations_ui.common.filters import get_collection_exercise_by_period
@@ -21,7 +23,8 @@ from response_operations_ui.exceptions.exceptions import ApiError
 from response_operations_ui.forms import EditCollectionExerciseDetailsForm, CreateCollectionExerciseDetailsForm, \
     EventDateForm, RemoveLoadedSample
 
-logger = wrap_logger(logging.getLogger(__name__))
+logger = wrap_logger(logging.getLogger(__name__),
+                     processors=[JSONRenderer(indent=1, sort_keys=True)])
 
 collection_exercise_bp = Blueprint('collection_exercise_bp', __name__,
                                    static_folder='static', template_folder='templates')

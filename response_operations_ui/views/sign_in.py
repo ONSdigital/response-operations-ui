@@ -5,6 +5,7 @@ from flask import get_flashed_messages
 from flask_login import current_user, login_user
 from jwt import DecodeError
 from structlog import wrap_logger
+from structlog.processors import JSONRenderer
 
 from response_operations_ui.common import token_decoder
 from response_operations_ui.controllers import uaa_controller
@@ -12,7 +13,8 @@ from response_operations_ui.forms import LoginForm
 from response_operations_ui.user import User
 
 
-logger = wrap_logger(logging.getLogger(__name__))
+logger = wrap_logger(logging.getLogger(__name__),
+                     processors=[JSONRenderer(indent=1, sort_keys=True)])
 
 sign_in_bp = Blueprint('sign_in_bp', __name__, static_folder='static', template_folder='templates')
 

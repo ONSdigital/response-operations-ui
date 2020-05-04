@@ -9,6 +9,7 @@ from flask import Blueprint, flash, g, Markup, render_template, request, redirec
 from flask_login import login_required, current_user
 from flask_paginate import Pagination
 from structlog import wrap_logger
+from structlog.processors import JSONRenderer
 
 from config import FDI_LIST, VACANCIES_LIST
 from response_operations_ui.common.dates import get_formatted_date, localise_datetime
@@ -19,7 +20,8 @@ from response_operations_ui.controllers.survey_controllers import get_survey_sho
 from response_operations_ui.exceptions.exceptions import ApiError, InternalError, NoMessagesError
 from response_operations_ui.forms import SecureMessageForm, SecureMessageRuFilterForm
 
-logger = wrap_logger(logging.getLogger(__name__))
+logger = wrap_logger(logging.getLogger(__name__),
+                     processors=[JSONRenderer(indent=1, sort_keys=True)])
 
 messages_bp = Blueprint('messages_bp', __name__,
                         static_folder='static', template_folder='templates')

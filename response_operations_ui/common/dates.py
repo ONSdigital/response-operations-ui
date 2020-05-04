@@ -3,9 +3,11 @@ from datetime import datetime, date
 
 from dateutil import tz
 from structlog import wrap_logger
+from structlog.processors import JSONRenderer
 
 
-logger = wrap_logger(logging.getLogger(__name__))
+logger = wrap_logger(logging.getLogger(__name__),
+                     processors=[JSONRenderer(indent=1, sort_keys=True)])
 
 
 def get_formatted_date(datetime_string, string_format='%Y-%m-%d %H:%M:%S'):

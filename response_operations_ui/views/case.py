@@ -2,8 +2,9 @@ import logging
 
 from flask import Blueprint, request, render_template, url_for
 from flask_login import login_required
-from structlog import wrap_logger
 from werkzeug.utils import redirect
+from structlog import wrap_logger
+from structlog.processors import JSONRenderer
 
 from response_operations_ui.common.dates import get_formatted_date
 from response_operations_ui.common.mappers import format_short_name, map_ce_response_status
@@ -19,7 +20,8 @@ COMPLETED_CASE_EVENTS = ['OFFLINE_RESPONSE_PROCESSED', 'SUCCESSFUL_RESPONSE_UPLO
 SUCCESSFUL_CASE_EVENTS = ['OFFLINE_RESPONSE_PROCESSED', 'SUCCESSFUL_RESPONSE_UPLOAD', 'ONLINE_QUESTIONNAIRE_RESPONSE']
 case_bp = Blueprint('case_bp', __name__, static_folder='static', template_folder='templates')
 
-logger = wrap_logger(logging.getLogger(__name__))
+logger = wrap_logger(logging.getLogger(__name__),
+                     processors=[JSONRenderer(indent=1, sort_keys=True)])
 
 
 @case_bp.route('/<ru_ref>/response-status', methods=['GET'])

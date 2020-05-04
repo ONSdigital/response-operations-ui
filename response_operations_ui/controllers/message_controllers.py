@@ -7,12 +7,14 @@ from flask import current_app, session
 from flask_login import current_user
 from requests.exceptions import HTTPError, RequestException
 from structlog import wrap_logger
+from structlog.processors import JSONRenderer
 
 from response_operations_ui.common import token_decoder
 from response_operations_ui.exceptions.exceptions import ApiError, NoMessagesError, InternalError
 
 
-logger = wrap_logger(logging.getLogger(__name__))
+logger = wrap_logger(logging.getLogger(__name__),
+                     processors=[JSONRenderer(indent=1, sort_keys=True)])
 
 
 def get_conversation(thread_id):

@@ -4,6 +4,7 @@ import requests
 from flask import current_app as app
 from requests.exceptions import HTTPError, RequestException
 from structlog import wrap_logger
+from structlog.processors import JSONRenderer
 
 from response_operations_ui.controllers.survey_controllers import get_survey_by_id
 from response_operations_ui.exceptions.exceptions import ApiError
@@ -12,7 +13,8 @@ from response_operations_ui.exceptions.exceptions import SearchRespondentsExcept
 from response_operations_ui.forms import EditContactDetailsForm
 
 
-logger = wrap_logger(logging.getLogger(__name__))
+logger = wrap_logger(logging.getLogger(__name__),
+                     processors=[JSONRenderer(indent=1, sort_keys=True)])
 
 
 def get_party_by_ru_ref(ru_ref):

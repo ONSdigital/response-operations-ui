@@ -4,8 +4,10 @@ from datetime import datetime
 from dateutil import tz
 from flask import abort, redirect, render_template, request, url_for, flash
 from flask_login import login_required
-from structlog import wrap_logger
 from wtforms import ValidationError
+
+from structlog import wrap_logger
+from structlog.processors import JSONRenderer
 
 from response_operations_ui.common.date_restriction_generator import get_date_restriction_text
 from response_operations_ui.common.filters import get_collection_exercise_by_period
@@ -15,7 +17,8 @@ from response_operations_ui.controllers import collection_exercise_controllers, 
 from response_operations_ui.forms import EventDateForm
 from response_operations_ui.views.collection_exercise import collection_exercise_bp, get_event_name
 
-logger = wrap_logger(logging.getLogger(__name__))
+logger = wrap_logger(logging.getLogger(__name__),
+                     processors=[JSONRenderer(indent=1, sort_keys=True)])
 
 
 @collection_exercise_bp.route('/<short_name>/<period>/event/<tag>', methods=['GET'])
