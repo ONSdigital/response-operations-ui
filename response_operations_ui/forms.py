@@ -6,7 +6,7 @@ from flask_wtf import FlaskForm
 from structlog import wrap_logger
 from wtforms import HiddenField, IntegerField, Label, PasswordField, SelectField, StringField, SubmitField, \
     TextAreaField
-from wtforms.validators import DataRequired, Email, EqualTo, Length, InputRequired, ValidationError
+from wtforms.validators import DataRequired, Email, EqualTo, Length, InputRequired, ValidationError, Regexp
 
 from response_operations_ui.controllers import collection_exercise_controllers
 from response_operations_ui.controllers import survey_controllers
@@ -165,8 +165,14 @@ class CreateCollectionExerciseDetailsForm(FlaskForm):
 
 
 class EditSurveyDetailsForm(FlaskForm):
-    long_name = StringField('long_name')
-    short_name = StringField('short_name', validators=[InputRequired(message="Please remove spaces in short name")])
+    long_name = StringField('long_name',
+                            # Letters, numbers, and (escaped) dash, apostrophe, parentheses, and colon
+                            validators=[Regexp(regex=r'^[a-zA-Z0-9 \-\'\(\):]+$',
+                                               message='Please use alphanumeric characters.')])
+    short_name = StringField('short_name',
+                             validators=[InputRequired(message="Please remove spaces in short name"),
+                                         Regexp(regex=r'^[a-zA-Z0-9]+$',
+                                                message='Please use alphanumeric characters only.')])
     hidden_survey_ref = HiddenField('hidden_survey_ref')
 
     @staticmethod
@@ -177,8 +183,13 @@ class EditSurveyDetailsForm(FlaskForm):
 
 
 class CreateSurveyDetailsForm(FlaskForm):
-    long_name = StringField('long_name')
-    short_name = StringField('short_name', validators=[InputRequired(message="Please remove spaces in Abbreviation")])
+    long_name = StringField('long_name',
+                            validators=[Regexp(regex=r'^[a-zA-Z0-9 \-]+$',
+                                               message='Please use alphanumeric characters only.')])
+    short_name = StringField('short_name',
+                             validators=[InputRequired(message="Please remove spaces in Abbreviation"),
+                                         Regexp(regex=r'^[a-zA-Z0-9]+$',
+                                                message='Please use alphanumeric characters only.')])
     survey_ref = StringField('survey_ref', validators=[InputRequired(message="Please remove spaces in Survey ID")])
     legal_basis = SelectField('legal_basis', choices=[('', 'Select an option')])
 
