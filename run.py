@@ -1,5 +1,6 @@
 import logging
 import os
+import google.cloud.logging
 
 from structlog import wrap_logger
 from structlog.processors import JSONRenderer
@@ -7,6 +8,8 @@ from structlog.processors import JSONRenderer
 from response_operations_ui import create_app
 
 
+client = google.cloud.logging.Client()
+client.setup_logging()
 logger = wrap_logger(logging.getLogger(__name__),
                      processors=[JSONRenderer(indent=1, sort_keys=True)])
 
