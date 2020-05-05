@@ -1,10 +1,10 @@
 {% extends "layouts/spoke.html" %}
-{% block page_title %} Create survey {% endblock %}
+{% block page_title %} Link collection instrument {% endblock %}
 {% block main %}
 <div role="main" id="main" class="page__main">
     <div class="spoke__header">
     <div class="spoke__header-title">
-        <h1 class="u-fs-xl">Create survey</h1>
+        <h1 class="u-fs-xl">Link collection instrument</h1>
     </div>
     </div>
     <div class="spoke__body" id="spoke__body">
@@ -20,30 +20,25 @@
         </div>
         {% endif %}
         <div class="field u-mt-l u-mb-l">
+            <p>Survey ID is a number (e.g., 009 for MBS, 134 MWSS, etc)</p>
         <label class="label" for="ce-period">
             Survey ID
         </label>
-        {{ form.survey_ref(class_="input input--text", id='survey_ref', required=required, maxlength=20) }}
+        {{ form.survey_id(class_="input input--text", id='survey_id', required=required, maxlength=20) }}
         </div>
         <div class="field u-mt-l u-mb-l">
         <label class="label" for="ce-period">
-            Survey name
+            Eq id
         </label>
-        {{ form.long_name(class_="input input--text", id='long_name', required=required, maxlength=100) }}
+        {{ form.eq_id(class_="input input--text", id='eq_id', required=required, maxlength=100) }}
         </div>
         <div class="field u-mt-l u-mb-l">
         <label class="label" for="respondent-period">
-            Abbreviation
+            Formtype
         </label>
-        {{ form.short_name(class_="input input--text", id='short_name', required=required, maxlength=20) }}
+        {{ form.formtype(class_="input input--text", id='formtype', required=required, maxlength=20) }}
         </div>
-        <div class="field field--select u-mb-m">
-        <label class="label u-fs-r--b " for="select">
-            Legal basis
-        </label>
-        {{ form.legal_basis(class_="input input--select", id='legal_basis', required=required) }}
-        </div>
-        <button id="save-btn" type="submit" class="btn u-mb-s">Create</button>
+        <button id="save-btn" type="submit" class="btn u-mb-s">Link collection instrument</button>
         <div>
         <a id="cancel-btn" href="{{ url_for('surveys_bp.view_surveys') }}">Cancel</a>
         </div>

@@ -14,8 +14,28 @@ logger = wrap_logger(logging.getLogger(__name__))
 
 
 def get_survey_by_id(survey_id):
-    logger.info("Retrieve survey using survey id", survey_id=survey_id)
+    """Gets a survey from the survey service by its uuid.  This uuid is the one assigned
+    to the survey when it was created"""
+    logger.info("Retrieve survey using survey uuid", survey_id=survey_id)
     url = f'{app.config["SURVEY_URL"]}/surveys/{survey_id}'
+    response = requests.get(url, auth=app.config['SURVEY_AUTH'])
+
+    try:
+        response.raise_for_status()
+    except (HTTPError, RequestException):
+        log_level = logger.warning if response.status_code in (400, 404) else logger.exception
+        log_level("Survey retrieval failed", survey_id=survey_id)
+        raise ApiError(response)
+
+    logger.info("Successfully retrieved survey", survey_id=survey_id)
+    return response.json()
+
+
+def get_survey_by_ref(survey_id):
+    """Gets a survey from the service service by its id.  This id is the one the ONS refers to the survey
+    by (e.g., MBS = 009, RSI = 023)"""
+    logger.info("Retrieve survey using survey id", survey_id=survey_id)
+    url = f'{app.config["SURVEY_URL"]}/surveys/ref/{survey_id}'
     response = requests.get(url, auth=app.config['SURVEY_AUTH'])
 
     try:
@@ -215,8 +235,7 @@ def get_legal_basis_list():
 
 
 def create_survey(survey_ref, short_name, long_name, legal_basis):
-    logger.info('Creating new survey',
-                survey_ref=survey_ref, short_name=short_name,
+    logger.info('Creating new survey', survey_ref=survey_ref, short_name=short_name,
                 long_name=long_name, legal_basis=legal_basis)
     url = f'{app.config["SURVEY_URL"]}/surveys'
 
@@ -237,10 +256,8 @@ def create_survey(survey_ref, short_name, long_name, legal_basis):
     try:
         response.raise_for_status()
     except HTTPError:
-        logger.error('Error creating new survey',
-                     survey_ref=survey_ref, short_name=short_name,
-                     long_name=long_name, legal_basis=legal_basis,
-                     status_code=response.status_code)
+        logger.error('Error creating new survey', survey_ref=survey_ref, short_name=short_name,
+                     long_name=long_name, legal_basis=legal_basis, status_code=response.status_code)
         raise ApiError(response)
 
     logger.info('Successfully created new survey', survey_ref=survey_ref)
