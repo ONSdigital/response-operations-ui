@@ -218,6 +218,12 @@ class CreateSurveyDetailsForm(FlaskForm):
             raise ValidationError('Please select a legal basis')
 
 
+class LinkCollectionInstrumentForm(FlaskForm):
+    survey_id = StringField('survey_id', validators=[InputRequired(message="Please enter a survey_id")])
+    eq_id = StringField('eq_id', validators=[InputRequired(message="Please enter an eq_id")])
+    formtype = StringField('formtype', validators=[InputRequired(message="Please enter a formtype")])
+
+
 class RemoveLoadedSample(FlaskForm):
     period = StringField('period')
     short_name = StringField('short_name')
