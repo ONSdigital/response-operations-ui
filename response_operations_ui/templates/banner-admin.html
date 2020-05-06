@@ -1,0 +1,39 @@
+{% extends "layouts/spoke.html" %}
+{% block page_title %} Banner Admin {% endblock %}
+{% block main %}
+<div role="main" id="main" class="page__main">
+    <div class="spoke__header">
+    <div class="spoke__header-title">
+        <h1 class="u-fs-xl">Banner Admin</h1>
+    </div>
+    </div>
+    <div class="spoke__body" id="spoke__body">
+    <form action="" method="post">
+        {{ form.csrf_token }}
+        {% if errors %}
+        <div class="panel panel--simple panel--error u-mb-l">
+            {% for field, error_list in errors %}
+            <div class="panel__body" id="save-error">
+                <p class="u-fs-r">{{ ', '.join(error_list) }}</p>
+            </div>
+            {% endfor %}
+        </div>
+        {% endif %}
+        <div class="field u-mt-l u-mb-l">
+        <label class="label" for="ce-period">
+            Current Banner
+        </label>
+        {{ current_banner }}
+        </div>
+    
+        <div class="field u-mt-l u-mb-l">
+        <label class="label" for="ce-period">
+            Banner Text
+        </label>
+        {{ form.banner(class_="input input--text", id='banner', required=required, maxlength=200) }}
+        </div>
+        <button id="save-btn" type="submit" class="btn u-mb-s">Create</button>
+    </form>
+    </div>
+</div>
+{% endblock %}

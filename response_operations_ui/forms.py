@@ -313,3 +313,8 @@ class CreateAccountForm(FlaskForm):
         if password.isalnum() or not any(char.isupper() for char in password) or not any(char.isdigit() for char in
                                                                                          password):
             raise ValidationError('Your password doesn\'t meet the requirements')
+
+
+class BannerAdminForm(FlaskForm):
+    banner = StringField('Banner text')
+    
