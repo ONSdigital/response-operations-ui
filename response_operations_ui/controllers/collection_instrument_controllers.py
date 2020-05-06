@@ -38,7 +38,33 @@ def upload_collection_instrument(collection_exercise_id, file, form_type=None):
     return True
 
 
+def link_collection_instrument_to_survey(survey_uuid, eq_id, form_type):
+    """This links an eq_id and formtype to a survey so they can be used by a collection exercise
+    """
+    logger.info('Linking collection instrument to survey', survey_uuid=survey_uuid, eq_id=eq_id, form_type=form_type)
+    url = f'{app.config["COLLECTION_INSTRUMENT_URL"]}/collection-instrument-api/1.0.2/upload'
+    payload = {
+        "survey_id": survey_uuid,
+        "classifiers": f'{{"form_type":"{form_type}","eq_id":"{eq_id}"}}',
+    }
+    response = requests.post(url, params=payload, auth=app.config['COLLECTION_INSTRUMENT_AUTH'])
+    try:
+        response.raise_for_status()
+    except requests.exceptions.HTTPError:
+        logger.error('Failed to link collection instrument to survey',
+                     survey_uuid=survey_uuid, eq_id=eq_id, form_type=form_type,
+                     status=response.status_code, exc_info=True)
+        raise ApiError(response)
+
+    logger.info('Successfully linked collection instrument to survey',
+                survey_uuid=survey_uuid, eq_id=eq_id, form_type=form_type)
+
+
 def link_collection_instrument(ce_id, ci_id):
+    """Links a collection instrument to a collection exercise
+    :returns: True on success.  False on failure
+    :rtype: bool
+    """
     logger.info('Linking collection instrument to collection exercise',
                 collection_exercise_id=ce_id, collection_instrument_id=ci_id)
     url = f'{app.config["COLLECTION_INSTRUMENT_URL"]}' \
