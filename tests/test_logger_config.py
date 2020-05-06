@@ -36,7 +36,7 @@ class TestLoggerConfig(unittest.TestCase):
         logger = wrap_logger(logging.getLogger())
         logger.error('Test')
         message = l.records[0].msg
-        self.assertIn('"event": "Test", "severity": "error", "level": "error",'\
+        self.assertIn('"event": "Test", "severity": "error", "level": "error",'
                       ' "service": "response-operations-ui"', message)
 
     @pytest.mark.filterwarnings(f"ignore:{testfixtures_warning}")
@@ -46,5 +46,5 @@ class TestLoggerConfig(unittest.TestCase):
         logger = wrap_logger(logging.getLogger())
         logger.error('Test')
         message = l.records[0].msg
-        self.assertIn('"event": "Test", "severity": "error", "level": "error",'\
+        self.assertIn('"event": "Test", "severity": "error", "level": "error",'
                       ' "service": "response-operations-ui"', message)
