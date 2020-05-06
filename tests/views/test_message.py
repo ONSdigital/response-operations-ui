@@ -428,7 +428,7 @@ class TestMessage(ViewTestCase):
 
         self.assertIn("BRES 2017".encode(), response.data)
         self.assertIn("49900000280".encode(), response.data)
-        self.assertIn("Bolts & Rachets Ltd".encode(), response.data)
+        self.assertIn("Bolts &amp; Rachets Ltd".encode(), response.data)
         self.assertIn("Jacky Turner".encode(), response.data)
 
     def test_empty_subject_and_body_rejected(self):
