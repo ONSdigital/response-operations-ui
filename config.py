@@ -64,11 +64,7 @@ class Config(object):
 
     REPORT_URL = os.getenv('REPORT_URL')
     SAMPLE_URL = os.getenv('SAMPLE_URL')
-
     SURVEY_URL = os.getenv('SURVEY_URL')
-    SURVEY_USERNAME = os.getenv('SURVEY_USERNAME')
-    SURVEY_PASSWORD = os.getenv('SURVEY_PASSWORD')
-    SURVEY_AUTH = (SURVEY_USERNAME, SURVEY_PASSWORD)
 
     UAA_SERVICE_URL = os.getenv('UAA_SERVICE_URL')
     UAA_CLIENT_ID = os.getenv('UAA_CLIENT_ID')
@@ -110,11 +106,7 @@ class DevelopmentConfig(Config):
     REPORT_URL = os.getenv('REPORT_URL', 'http://localhost:8084')
     PARTY_URL = os.getenv('PARTY_URL', 'http://localhost:8081')
     SAMPLE_URL = os.getenv('SAMPLE_URL', 'http://localhost:8125')
-
     SURVEY_URL = os.getenv('SURVEY_URL', 'http://localhost:8080')
-    SURVEY_USERNAME = os.getenv('SURVEY_USERNAME', 'admin')
-    SURVEY_PASSWORD = os.getenv('SURVEY_PASSWORD', 'secret')
-    SURVEY_AUTH = (SURVEY_USERNAME, SURVEY_PASSWORD)
 
     UAA_SERVICE_URL = os.getenv('UAA_SERVICE_URL', 'http://localhost:9080')
     UAA_CLIENT_ID = os.getenv('UAA_CLIENT_ID', 'response_operations')
