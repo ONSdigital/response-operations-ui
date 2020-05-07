@@ -15,7 +15,7 @@ def get_sample_summary(sample_summary_id):
     logger.info('Retrieving sample summary', sample_summary_id=sample_summary_id)
     url = f'{app.config["SAMPLE_URL"]}/samples/samplesummary/{sample_summary_id}'
 
-    response = requests.get(url, auth=app.config['SAMPLE_AUTH'])
+    response = requests.get(url, auth=app.config['BASIC_AUTH'])
 
     try:
         response.raise_for_status()
@@ -34,7 +34,7 @@ def upload_sample(short_name, period, file):
 
     survey_type = 'B'
     url = f'{app.config["SAMPLE_URL"]}/samples/{survey_type}/fileupload'
-    response = requests.post(url=url, auth=app.config['SAMPLE_AUTH'], files={'file': file})
+    response = requests.post(url=url, auth=app.config['BASIC_AUTH'], files={'file': file})
 
     try:
         response.raise_for_status()

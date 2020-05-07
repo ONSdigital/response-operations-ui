@@ -25,7 +25,7 @@ def upload_collection_instrument(collection_exercise_id, file, form_type=None):
         params['classifiers'] = json.dumps(classifiers)
 
     files = {"file": (file.filename, file.stream, file.mimetype)}
-    response = requests.post(url, files=files, params=params, auth=app.config['COLLECTION_INSTRUMENT_AUTH'])
+    response = requests.post(url, files=files, params=params, auth=app.config['BASIC_AUTH'])
     try:
         response.raise_for_status()
     except requests.exceptions.HTTPError:
@@ -47,7 +47,7 @@ def link_collection_instrument_to_survey(survey_uuid, eq_id, form_type):
         "survey_id": survey_uuid,
         "classifiers": f'{{"form_type":"{form_type}","eq_id":"{eq_id}"}}',
     }
-    response = requests.post(url, params=payload, auth=app.config['COLLECTION_INSTRUMENT_AUTH'])
+    response = requests.post(url, params=payload, auth=app.config['BASIC_AUTH'])
     try:
         response.raise_for_status()
     except requests.exceptions.HTTPError:
@@ -70,7 +70,7 @@ def link_collection_instrument(ce_id, ci_id):
     url = f'{app.config["COLLECTION_INSTRUMENT_URL"]}' \
           f'/collection-instrument-api/1.0.2/link-exercise/{ci_id}/{ce_id}'
 
-    response = requests.post(url, auth=app.config['COLLECTION_INSTRUMENT_AUTH'])
+    response = requests.post(url, auth=app.config['BASIC_AUTH'])
     try:
         response.raise_for_status()
     except requests.exceptions.HTTPError:
@@ -89,7 +89,7 @@ def unlink_collection_instrument(ce_id, ci_id):
     url = f'{app.config["COLLECTION_INSTRUMENT_URL"]}' \
           f'/collection-instrument-api/1.0.2/unlink-exercise/{ci_id}/{ce_id}'
 
-    response = requests.put(url, auth=app.config['COLLECTION_INSTRUMENT_AUTH'])
+    response = requests.put(url, auth=app.config['BASIC_AUTH'])
     try:
         response.raise_for_status()
     except requests.exceptions.HTTPError:
@@ -111,8 +111,7 @@ def get_collection_instruments_by_classifier(survey_id=None, collection_exercise
     )
 
     classifiers = _build_classifiers(collection_exercise_id, survey_id, ci_type)
-    response = requests.get(url, auth=app.config['COLLECTION_INSTRUMENT_AUTH'],
-                            params={'searchString': json.dumps(classifiers)})
+    response = requests.get(url, auth=app.config['BASIC_AUTH'], params={'searchString': json.dumps(classifiers)})
 
     try:
         response.raise_for_status()
