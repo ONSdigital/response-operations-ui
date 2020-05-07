@@ -48,9 +48,6 @@ class Config(object):
     SECURE_MESSAGE_JWT_SECRET = os.getenv('SECURE_MESSAGE_JWT_SECRET')
 
     PARTY_URL = os.getenv('PARTY_URL')
-    PARTY_USERNAME = os.getenv('PARTY_USERNAME')
-    PARTY_PASSWORD = os.getenv('PARTY_PASSWORD')
-    PARTY_AUTH = (PARTY_USERNAME, PARTY_PASSWORD)
     PARTY_RESPONDENTS_PER_PAGE = os.getenv('PARTY_RESPONDENTS_PER_PAGE', 25)
     PARTY_BUSINESS_RESULTS_PER_PAGE = os.getenv('PARTY_BUSINESS_RESULTS_PER_PAGE', 25)
 
@@ -111,12 +108,7 @@ class DevelopmentConfig(Config):
     SECURE_MESSAGE_JWT_SECRET = os.getenv('SECURE_MESSAGE_JWT_SECRET', 'testsecret')
 
     REPORT_URL = os.getenv('REPORT_URL', 'http://localhost:8084')
-
     PARTY_URL = os.getenv('PARTY_URL', 'http://localhost:8081')
-    PARTY_USERNAME = os.getenv('PARTY_USERNAME', 'admin')
-    PARTY_PASSWORD = os.getenv('PARTY_PASSWORD', 'secret')
-    PARTY_AUTH = (PARTY_USERNAME, PARTY_PASSWORD)
-
     SAMPLE_URL = os.getenv('SAMPLE_URL', 'http://localhost:8125')
 
     SURVEY_URL = os.getenv('SURVEY_URL', 'http://localhost:8080')

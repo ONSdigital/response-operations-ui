@@ -14,7 +14,7 @@ logger = wrap_logger(logging.getLogger(__name__))
 def search_reporting_units(query, limit, page):
 
     url = f'{app.config["PARTY_URL"]}/party-api/v1/businesses/search'
-    response = requests.get(url, params={'query': query, 'page': page, 'limit': limit}, auth=app.config['PARTY_AUTH'])
+    response = requests.get(url, params={'query': query, 'page': page, 'limit': limit}, auth=app.config['BASIC_AUTH'])
 
     try:
         response.raise_for_status()
@@ -35,7 +35,7 @@ def change_enrolment_status(business_id, respondent_id, survey_id, change_flag):
         'survey_id': survey_id,
         'change_flag': change_flag
     }
-    response = requests.put(url, json=enrolment_json, auth=app.config['PARTY_AUTH'])
+    response = requests.put(url, json=enrolment_json, auth=app.config['BASIC_AUTH'])
 
     try:
         response.raise_for_status()
@@ -56,7 +56,7 @@ def change_respondent_status(respondent_id, change_flag):
             'respondent_id': respondent_id,
             'status_change': change_flag
         }
-        response = requests.put(url, json=enrolment_json, auth=app.config['PARTY_AUTH'])
+        response = requests.put(url, json=enrolment_json, auth=app.config['BASIC_AUTH'])
 
         try:
             response.raise_for_status()
@@ -102,7 +102,7 @@ def resend_verification_email(party_id):
     """
     logger.info('Re-sending verification email', party_id=party_id)
     url = f'{app.config["PARTY_URL"]}/party-api/v1/resend-verification-email/{party_id}'
-    response = requests.post(url, auth=app.config['PARTY_AUTH'])
+    response = requests.post(url, auth=app.config['BASIC_AUTH'])
 
     try:
         response.raise_for_status()
