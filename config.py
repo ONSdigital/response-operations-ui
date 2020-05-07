@@ -21,10 +21,11 @@ class Config(object):
     REDIS_PORT = os.getenv('REDIS_PORT')
     REDIS_DB = os.getenv('REDIS_DB', 0)
     SECURE_COOKIES = strtobool(os.getenv('SECURE_COOKIES', 'True'))
-    USE_SESSION_FOR_NEXT = True
+    USE_SESSION_FOR_NEXT = True  # Used by flask-login
 
     SECURITY_USER_NAME = os.getenv('SECURITY_USER_NAME')
     SECURITY_USER_PASSWORD = os.getenv('SECURITY_USER_PASSWORD')
+    BASIC_AUTH = (SECURITY_USER_NAME, SECURITY_USER_PASSWORD)
 
     RESPONSE_OPERATIONS_UI_HOST = os.getenv('RESPONSE_OPERATIONS_UI_HOST', "http://localhost")
     RESPONSE_OPERATIONS_UI_PORT = os.getenv('RESPONSE_OPERATIONS_UI_PORT', "8085")
@@ -37,9 +38,6 @@ class Config(object):
 
     # Service Configs
     CASE_URL = os.getenv('CASE_URL')
-    CASE_USERNAME = os.getenv('CASE_USERNAME')
-    CASE_PASSWORD = os.getenv('CASE_PASSWORD')
-    CASE_AUTH = (CASE_USERNAME, CASE_PASSWORD)
     MAX_CASES_RETRIEVED_PER_SURVEY = os.getenv('MAX_CASES_RETRIEVED_PER_SURVEY', 12)
 
     COLLECTION_EXERCISE_URL = os.getenv('COLLECTION_EXERCISE_URL')
@@ -116,9 +114,6 @@ class DevelopmentConfig(Config):
 
     # Service Config
     CASE_URL = os.getenv('CASE_URL', 'http://localhost:8171')
-    CASE_USERNAME = os.getenv('CASE_USERNAME', 'admin')
-    CASE_PASSWORD = os.getenv('CASE_PASSWORD', 'secret')
-    CASE_AUTH = (CASE_USERNAME, CASE_PASSWORD)
 
     COLLECTION_EXERCISE_URL = os.getenv('COLLECTION_EXERCISE_URL', 'http://localhost:8145')
     COLLECTION_EXERCISE_USERNAME = os.getenv('COLLECTION_EXERCISE_USERNAME', 'admin')

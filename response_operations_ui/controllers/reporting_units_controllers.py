@@ -84,7 +84,7 @@ def generate_new_enrolment_code(case_id):
         "createdBy": "ROPS"
     }
 
-    response = requests.post(url, json=case_event, auth=app.config['CASE_AUTH'])
+    response = requests.post(url, json=case_event, auth=app.config['BASIC_AUTH'])
 
     try:
         response.raise_for_status()
