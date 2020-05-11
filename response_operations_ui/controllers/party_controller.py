@@ -19,7 +19,7 @@ def get_party_by_ru_ref(ru_ref):
     """get party by ru_ref """
     logger.info('Retrieving reporting unit', ru_ref=ru_ref)
     url = f'{app.config["PARTY_URL"]}/party-api/v1/parties/type/B/ref/{ru_ref}'
-    response = requests.get(url, auth=app.config['PARTY_AUTH'])
+    response = requests.get(url, auth=app.config['BASIC_AUTH'])
 
     try:
         response.raise_for_status()
@@ -37,7 +37,7 @@ def get_business_by_party_id(business_party_id, collection_exercise_id=None):
                 business_party_id=business_party_id, collection_exercise_id=collection_exercise_id)
     url = f'{app.config["PARTY_URL"]}/party-api/v1/businesses/id/{business_party_id}'
     params = {"collection_exercise_id": collection_exercise_id, "verbose": True}
-    response = requests.get(url, params=params, auth=app.config['PARTY_AUTH'])
+    response = requests.get(url, params=params, auth=app.config['BASIC_AUTH'])
 
     try:
         response.raise_for_status()
@@ -55,7 +55,7 @@ def get_business_by_party_id(business_party_id, collection_exercise_id=None):
 def get_respondent_by_party_id(respondent_party_id):
     logger.info('Retrieving respondent party', respondent_party_id=respondent_party_id)
     url = f'{app.config["PARTY_URL"]}/party-api/v1/respondents/id/{respondent_party_id}'
-    response = requests.get(url, auth=app.config['PARTY_AUTH'])
+    response = requests.get(url, auth=app.config['BASIC_AUTH'])
 
     try:
         response.raise_for_status()
@@ -112,7 +112,7 @@ def search_respondent_by_email(email):
         'email': email
     }
     url = f'{app.config["PARTY_URL"]}/party-api/v1/respondents/email'
-    response = requests.get(url, json=request_json, auth=app.config['PARTY_AUTH'])
+    response = requests.get(url, json=request_json, auth=app.config['BASIC_AUTH'])
 
     if response.status_code == 404:
         return
@@ -137,7 +137,7 @@ def search_respondents(first_name, last_name, email_address, page, limit):
         'limit': limit
     }
     response = requests.get(f'{app.config["PARTY_URL"]}/party-api/v1/respondents',
-                            auth=app.config['PARTY_AUTH'],
+                            auth=app.config['BASIC_AUTH'],
                             params=params)
 
     if response.status_code != 200:
@@ -166,7 +166,7 @@ def update_contact_details(respondent_id, form, ru_ref='NOT DEFINED'):
 
     if len(contact_details_changed) > 0:
         url = f'{app.config["PARTY_URL"]}/party-api/v1/respondents/id/{respondent_id}'
-        response = requests.put(url, json=new_contact_details, auth=app.config['PARTY_AUTH'])
+        response = requests.put(url, json=new_contact_details, auth=app.config['BASIC_AUTH'])
 
         if response.status_code != 200:
             raise UpdateContactDetailsException(ru_ref, EditContactDetailsForm(form),
