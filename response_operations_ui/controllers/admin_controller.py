@@ -22,8 +22,8 @@ def set_banner(banner):
         logger.debug("Setting availability message", banner=banner)
     except redis.RedisError:
         logger.exception("Unable to updated banner")
-        
-        
+
+
 def remove_banner():
     try:
         r = _get_redis()

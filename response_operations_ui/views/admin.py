@@ -10,8 +10,7 @@ from response_operations_ui.forms import BannerAdminForm
 
 logger = wrap_logger(logging.getLogger(__name__))
 
-admin_bp = Blueprint('admin_bp', __name__,
-                       static_folder='static', template_folder='templates')
+admin_bp = Blueprint('admin_bp', __name__, static_folder='static', template_folder='templates')
 
 INFO_MESSAGES = {
     'survey_changed': "Survey details changed",
@@ -43,11 +42,11 @@ def update_banner():
         logger.debug("Banner deleted", user=current_user.username)
         admin_controller.remove_banner()
     else:
-        logger.debug("Banner update", user=current_user.username,  banner=banner)
+        logger.debug("Banner update", user=current_user.username, banner=banner)
         admin_controller.set_banner(form.banner.data)
     return redirect(url_for("admin_bp.banner_admin"))
 
 
 def remove_banner():
     admin_controller.remove_banner()
-    return redirect(url_for("admin_bp.banner_admin")) 
+    return redirect(url_for("admin_bp.banner_admin"))
