@@ -835,7 +835,7 @@ class TestMessage(ViewTestCase):
 
         response = self.client.get('/messages/mark_unread/9ecfad50-2ff5-4bea-a997-d73c4faa73ae?from=GROUP&to=ONS+User')
 
-        self.assertIn(f"flash_message=Message+from+GROUP+to+ONS+User+marked+unread".encode(), response.data)
+        self.assertIn("flash_message=Message+from+GROUP+to+ONS+User+marked+unread".encode(), response.data)
 
     @requests_mock.mock()
     @patch('response_operations_ui.controllers.message_controllers._get_jwt')
@@ -1103,7 +1103,7 @@ class TestMessage(ViewTestCase):
 
         self.assertEqual(200, response.status_code)
 
-        assert f'Filtered by RU ref' not in response_body
+        assert 'Filtered by RU ref' not in response_body
 
     @requests_mock.mock()
     @patch('response_operations_ui.controllers.message_controllers._get_jwt')
@@ -1135,7 +1135,7 @@ class TestMessage(ViewTestCase):
 
         self.assertEqual(200, response.status_code)
 
-        assert f'id="flashed-message-1' in response_body
+        assert 'id="flashed-message-1' in response_body
 
         assert f'Filter not applied: {ru_ref_filter} is an unknown RU ref' in response_body
 
@@ -1169,7 +1169,7 @@ class TestMessage(ViewTestCase):
 
         self.assertEqual(200, response.status_code)
 
-        assert f'id="flashed-message-1' in response_body
+        assert 'id="flashed-message-1' in response_body
 
         assert 'Could not resolve RU ref, please try again later' in response_body
 

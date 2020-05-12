@@ -253,7 +253,7 @@ class TestSurvey(ViewTestCase):
         mock_request.get(url_get_survey_list, json=survey_list)
         mock_request.put(url_update_survey_details)
         mock_request.get(url_get_survey_list, json=updated_survey_list)
-        response = self.client.post(f"/surveys/edit-survey-details/QBS", data=changed_survey_details,
+        response = self.client.post("/surveys/edit-survey-details/QBS", data=changed_survey_details,
                                     follow_redirects=True)
         self.assertEqual(response.status_code, 200)
         self.assertIn('New Survey Long Name'.encode(), response.data)
@@ -268,7 +268,7 @@ class TestSurvey(ViewTestCase):
         }
         mock_request.put(url_update_survey_details, status_code=500)
 
-        response = self.client.post(f"/surveys/edit-survey-details/QBS", data=changed_survey_details)
+        response = self.client.post("/surveys/edit-survey-details/QBS", data=changed_survey_details)
 
         request_history = mock_request.request_history
         self.assertEqual(len(request_history), 1)
@@ -290,7 +290,7 @@ class TestSurvey(ViewTestCase):
         mock_request.get(url_get_sample_summary, json=self.sample_summary)
         mock_request.get(url_get_survey_by_qbs, json=survey_info['survey'])
 
-        response = self.client.post(f"/surveys/edit-survey-details/QBS", data=changed_survey_details,
+        response = self.client.post("/surveys/edit-survey-details/QBS", data=changed_survey_details,
                                     follow_redirects=True)
         self.assertIn("Error updating survey details".encode(), response.data)
         self.assertEqual(response.status_code, 200)
@@ -300,7 +300,7 @@ class TestSurvey(ViewTestCase):
         mock_request.get(url_get_survey_list, json=survey_list)
         mock_request.get(url_get_survey_by_short_name, json=survey_info['survey'])
 
-        response = self.client.get(f"surveys/edit-survey-details/bres", follow_redirects=True)
+        response = self.client.get("surveys/edit-survey-details/bres", follow_redirects=True)
 
         self.assertEqual(response.status_code, 200)
         self.assertIn("221".encode(), response.data)
@@ -309,7 +309,7 @@ class TestSurvey(ViewTestCase):
     def test_get_survey_create(self, mock_request):
         mock_request.get(url_get_legal_basis_list, json=legal_basis_list)
 
-        response = self.client.get(f"surveys/create")
+        response = self.client.get("surveys/create")
 
         self.assertEqual(response.status_code, 200)
 
@@ -350,7 +350,7 @@ class TestSurvey(ViewTestCase):
                           status_code=201)
         mock_request.get(url_get_survey_list, json=updated_survey_list)
 
-        response = self.client.post(f"surveys/create", data=create_survey_request, follow_redirects=True)
+        response = self.client.post("surveys/create", data=create_survey_request, follow_redirects=True)
 
         self.assertEqual(response.status_code, 200)
 
@@ -366,7 +366,7 @@ class TestSurvey(ViewTestCase):
         mock_request.get(url_get_legal_basis_list, json=legal_basis_list)
         mock_request.post(url_create_survey, text=error_message, status_code=409)
 
-        response = self.client.post(f"surveys/create", data=create_survey_request)
+        response = self.client.post("surveys/create", data=create_survey_request)
 
         self.assertEqual(response.status_code, 200)
 
@@ -385,7 +385,7 @@ class TestSurvey(ViewTestCase):
         mock_request.get(url_get_legal_basis_list, json=legal_basis_list)
         mock_request.post(url_create_survey, text=error_message, status_code=400)
 
-        response = self.client.post(f"surveys/create", data=create_survey_request)
+        response = self.client.post("surveys/create", data=create_survey_request)
 
         self.assertEqual(response.status_code, 200)
 
@@ -403,7 +403,7 @@ class TestSurvey(ViewTestCase):
         mock_request.get(url_get_legal_basis_list, json=legal_basis_list)
         mock_request.post(url_create_survey, json=create_survey_response, status_code=201)
 
-        response = self.client.post(f"surveys/create", data=create_survey_request)
+        response = self.client.post("surveys/create", data=create_survey_request)
 
         self.assertEqual(response.status_code, 200)
 
@@ -421,7 +421,7 @@ class TestSurvey(ViewTestCase):
         mock_request.get(url_get_legal_basis_list, json=legal_basis_list)
         mock_request.post(url_create_survey, json=create_survey_response, status_code=201)
 
-        response = self.client.post(f"surveys/create", data=create_survey_request)
+        response = self.client.post("surveys/create", data=create_survey_request)
 
         self.assertEqual(response.status_code, 200)
 
@@ -439,7 +439,7 @@ class TestSurvey(ViewTestCase):
         mock_request.get(url_get_legal_basis_list, json=legal_basis_list)
         mock_request.post(url_create_survey, json=create_survey_response, status_code=201)
 
-        response = self.client.post(f"surveys/create", data=create_survey_request)
+        response = self.client.post("surveys/create", data=create_survey_request)
 
         self.assertEqual(response.status_code, 200)
 
@@ -457,7 +457,7 @@ class TestSurvey(ViewTestCase):
         mock_request.get(url_get_legal_basis_list, json=legal_basis_list)
         mock_request.post(url_create_survey, json=create_survey_response, status_code=201)
 
-        response = self.client.post(f"surveys/create", data=create_survey_request)
+        response = self.client.post("surveys/create", data=create_survey_request)
 
         self.assertEqual(response.status_code, 200)
 
@@ -475,7 +475,7 @@ class TestSurvey(ViewTestCase):
         mock_request.get(url_get_legal_basis_list, json=legal_basis_list)
         mock_request.post(url_create_survey, text="Internal server error", status_code=500)
 
-        response = self.client.post(f"surveys/create", data=create_survey_request)
+        response = self.client.post("surveys/create", data=create_survey_request)
 
         request_history = mock_request.request_history
         self.assertEqual(len(request_history), 2)
@@ -493,7 +493,7 @@ class TestSurvey(ViewTestCase):
         mock_request.get(url_get_survey_list, json=updated_survey_list)
         mock_request.get(url_get_survey_by_short_name, json=survey_info['survey'])
 
-        response = self.client.post(f"/surveys/edit-survey-details/bres", data=changed_survey_details,
+        response = self.client.post("/surveys/edit-survey-details/bres", data=changed_survey_details,
                                     follow_redirects=True)
 
         self.assertEqual(response.status_code, 200)

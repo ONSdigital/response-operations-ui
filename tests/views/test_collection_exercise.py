@@ -1152,7 +1152,7 @@ class TestCollectionExercise(ViewTestCase):
         self.assertIn('Error: Failed to remove sample'.encode(), response.data)
 
     def test_get_confirm_remove_sample(self):
-        response = self.client.get(f"/surveys/test/000000/confirm-remove-sample",
+        response = self.client.get("/surveys/test/000000/confirm-remove-sample",
                                    follow_redirects=True)
 
         self.assertEqual(response.status_code, 200)
