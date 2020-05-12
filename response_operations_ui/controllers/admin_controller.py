@@ -2,8 +2,9 @@ import redis
 import logging
 
 from flask import current_app
+from structlog import wrap_logger
 
-logger = logging.getLogger(__name__)
+logger = wrap_logger(logging.getLogger(__name__))
 
 
 def _get_redis():
@@ -18,7 +19,7 @@ def add_banner(banner):
     try:
         r = _get_redis()
         r.set('AVAILABILITY_MESSAGE', banner)
-        logger.debug(f"Setting availability message {banner}")
+        logger.debug("Setting availability message", banner=banner)
     except redis.RedisError:
         logger.exception("Unable to updated banner")
         
@@ -36,7 +37,7 @@ def current_banner():
     try:
         r = _get_redis()
         banner = r.get('AVAILABILITY_MESSAGE')
-        logger.debug(f"Getting availability message {banner}")
+        logger.debug("Getting availability message", banner=banner)
         return banner
     except redis.RedisError:
         logger.exception("Unable to retrieve current banners")

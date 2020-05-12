@@ -3,7 +3,7 @@ import logging
 import os
 
 import redis
-from flask import Flask
+from flask import Flask, session
 from flask_assets import Environment
 from flask_login import LoginManager
 from flask_talisman import Talisman
@@ -113,7 +113,8 @@ def create_app(config_name=None):
 
     @login_manager.user_loader
     def user_loader(user_id):
-        return User(user_id)
+        username = session.get('username')
+        return User(user_id, username)
 
     if cf.detected:
         with app.app_context():
