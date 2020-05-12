@@ -1,7 +1,6 @@
 import copy
 import logging
 import os
-import requestsdefaulter
 
 import redis
 from flask import Flask
