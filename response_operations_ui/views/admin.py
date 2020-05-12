@@ -44,7 +44,7 @@ def update_banner():
         admin_controller.remove_banner()
     else:
         logger.debug("Banner update", user=current_user.username,  banner=banner)
-        admin_controller.add_banner(form.banner.data)
+        admin_controller.set_banner(form.banner.data)
     return redirect(url_for("admin_bp.banner_admin"))
 
 

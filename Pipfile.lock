@@ -495,6 +495,14 @@
             ],
             "version": "==5.1"
         },
+        "fakeredis": {
+            "hashes": [
+                "sha256:4d170886865a91dbc8b7f8cbd4e5d488f4c5f2f25dfae127f001617bbe9e8f97",
+                "sha256:647b2593d349d9d4e566c8dadb2e4c71ba35be5bdc4f1f7ac2d565a12a965053"
+            ],
+            "index": "pypi",
+            "version": "==1.4.1"
+        },
         "entrypoints": {
             "hashes": [
                 "sha256:589f874b313739ad35be6e0cd7efde2a4e9b6fea91edcc34e58ecbb8dbe56d19",
