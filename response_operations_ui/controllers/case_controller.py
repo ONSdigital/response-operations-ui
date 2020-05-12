@@ -12,7 +12,7 @@ logger = wrap_logger(logging.getLogger(__name__))
 def get_case_by_id(case_id):
     logger.info('Retrieving case', case_id=case_id)
     url = f'{app.config["CASE_URL"]}/cases/{case_id}?iac=true'
-    response = requests.get(url, auth=app.config['CASE_AUTH'])
+    response = requests.get(url, auth=app.config['BASIC_AUTH'])
 
     try:
         response.raise_for_status()
@@ -32,7 +32,7 @@ def post_case_event(case_id, category, description):
         "description": description,
         "createdBy": "ROPS"
     }
-    response = requests.post(url, auth=app.config['CASE_AUTH'], json=case_event)
+    response = requests.post(url, auth=app.config['BASIC_AUTH'], json=case_event)
 
     try:
         response.raise_for_status()
@@ -46,7 +46,7 @@ def post_case_event(case_id, category, description):
 def get_case_by_case_group_id(case_group_id):
     logger.info('Retrieving case by case group id', case_group_id=case_group_id)
     url = f'{app.config["CASE_URL"]}/cases/casegroupid/{case_group_id}'
-    response = requests.get(url, auth=app.config['CASE_AUTH'])
+    response = requests.get(url, auth=app.config['BASIC_AUTH'])
 
     try:
         response.raise_for_status()
@@ -61,7 +61,7 @@ def get_case_by_case_group_id(case_group_id):
 def get_available_case_group_statuses_direct(collection_exercise_id, ru_ref):
     logger.info('Retrieving statuses', collection_exercise_id=collection_exercise_id, ru_ref=ru_ref)
     url = f'{app.config["CASE_URL"]}/casegroups/transitions/{collection_exercise_id}/{ru_ref}'
-    response = requests.get(url, auth=app.config['CASE_AUTH'])
+    response = requests.get(url, auth=app.config['BASIC_AUTH'])
 
     try:
         response.raise_for_status()
@@ -79,7 +79,7 @@ def get_available_case_group_statuses_direct(collection_exercise_id, ru_ref):
 def get_case_groups_by_business_party_id(business_party_id):
     logger.info('Retrieving case groups', party_id=business_party_id)
     url = f'{app.config["CASE_URL"]}/casegroups/partyid/{business_party_id}'
-    response = requests.get(url, auth=app.config["CASE_AUTH"])
+    response = requests.get(url, auth=app.config["BASIC_AUTH"])
 
     try:
         response.raise_for_status()
@@ -97,7 +97,7 @@ def get_case_groups_by_business_party_id(business_party_id):
 def get_cases_by_business_party_id(business_party_id):
     logger.info('Retrieving cases', business_party_id=business_party_id)
     url = f'{app.config["CASE_URL"]}/cases/partyid/{business_party_id}'
-    response = requests.get(url, auth=app.config['CASE_AUTH'],
+    response = requests.get(url, auth=app.config['BASIC_AUTH'],
                             params={"iac": "True",
                                     "max_cases_per_survey": app.config['MAX_CASES_RETRIEVED_PER_SURVEY']})
 
@@ -138,7 +138,7 @@ def generate_iac(case_id):
     url = get_iac_url(case_id)
     logger.info('Generating new IAC', case_id=case_id, url=url)
 
-    response = requests.post(url=url, auth=app.config['CASE_AUTH'])
+    response = requests.post(url=url, auth=app.config['BASIC_AUTH'])
 
     try:
         response.raise_for_status()
@@ -157,7 +157,7 @@ def get_case_events_by_case_id(case_id, categories=None):
     elif categories:
         url = url + '?category=' + categories
 
-    response = requests.get(url, auth=app.config['CASE_AUTH'])
+    response = requests.get(url, auth=app.config['BASIC_AUTH'])
     try:
         response.raise_for_status()
     except requests.exceptions.HTTPError:
