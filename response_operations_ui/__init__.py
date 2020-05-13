@@ -1,7 +1,6 @@
 import copy
 import logging
 import os
-import requestsdefaulter
 
 import redis
 from flask import Flask
@@ -9,7 +8,6 @@ from flask_assets import Environment
 from flask_login import LoginManager
 from flask_talisman import Talisman
 from flask_wtf.csrf import CSRFProtect
-from flask_zipkin import Zipkin
 from structlog import wrap_logger
 from flask_session import Session
 from config import Config
@@ -93,10 +91,6 @@ def create_app(config_name=None):
 
     app.url_map.strict_slashes = False
     app.secret_key = app.config['RESPONSE_OPERATIONS_UI_SECRET']
-
-    # Zipkin
-    zipkin = Zipkin(app=app, sample_rate=app.config.get("ZIPKIN_SAMPLE_RATE"))
-    requestsdefaulter.default_headers(zipkin.create_http_headers_for_new_span)
 
     logger_initial_config(service_name='response-operations-ui', log_level=app.config['LOGGING_LEVEL'])
     logger = wrap_logger(logging.getLogger(__name__))

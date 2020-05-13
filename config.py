@@ -31,11 +31,6 @@ class Config(object):
     RESPONSE_OPERATIONS_UI_PORT = os.getenv('RESPONSE_OPERATIONS_UI_PORT', "8085")
     RESPONSE_OPERATIONS_UI_URL = os.getenv('RESPONSE_OPERATIONS_UI_URL', f'{RESPONSE_OPERATIONS_UI_HOST}:{RESPONSE_OPERATIONS_UI_PORT}')
 
-    # Zipkin
-    ZIPKIN_DISABLE = bool(strtobool(os.getenv("ZIPKIN_DISABLE", "False")))
-    ZIPKIN_DSN = os.getenv("ZIPKIN_DSN", None)
-    ZIPKIN_SAMPLE_RATE = int(os.getenv("ZIPKIN_SAMPLE_RATE", 0))
-
     # Service Configs
     CASE_URL = os.getenv('CASE_URL')
     MAX_CASES_RETRIEVED_PER_SURVEY = os.getenv('MAX_CASES_RETRIEVED_PER_SURVEY', 12)
