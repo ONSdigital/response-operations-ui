@@ -31,6 +31,7 @@ flask-zipkin = "*"
 bs4 = "*"
 werkzeug = "==0.16.1"
 openpyxl = "*"
+email-validator = "*"
 
 [dev-packages]
 codecov = "*"
