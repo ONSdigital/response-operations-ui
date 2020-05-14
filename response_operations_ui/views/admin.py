@@ -22,7 +22,7 @@ INFO_MESSAGES = {
 @admin_bp.route('/banner', methods=['GET'])
 @login_required
 def banner_admin():
-    logger.debug("Banner page accessed", user=current_user.username)
+    logger.debug("Banner page accessed", user=current_username())
     form = BannerAdminForm(form=request.form)
 
     current_banner = admin_controller.current_banner()
@@ -32,17 +32,24 @@ def banner_admin():
     return render_template('banner-admin.html', current_banner=current_banner, form=form)
 
 
+def current_username():
+    if hasattr(current_user, 'username'):
+        return current_user.username
+    else:
+        return "unknown"
+
+
 @admin_bp.route('/banner', methods=['POST'])
 @login_required
 def update_banner():
-    logger.debug("Updating banner", user=current_user.username)
+    logger.debug("Updating banner", user=current_username())
     form = BannerAdminForm(form=request.form)
     banner = form.banner.data
     if form.delete.data or not banner:
-        logger.debug("Banner deleted", user=current_user.username)
+        logger.debug("Banner deleted", user=current_username())
         admin_controller.remove_banner()
     else:
-        logger.debug("Banner update", user=current_user.username, banner=banner)
+        logger.debug("Banner update", user=current_username(), banner=banner)
         admin_controller.set_banner(form.banner.data)
     return redirect(url_for("admin_bp.banner_admin"))
 
