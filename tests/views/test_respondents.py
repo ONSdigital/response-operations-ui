@@ -24,7 +24,7 @@ get_survey_by_id_url = f'{TestingConfig.SURVEY_URL}/surveys/{survey_id}'
 iac_1 = 'jkbvyklkwj88'
 iac_2 = 'ljbgg3kgstr4'
 
-get_respondent_root = f'http://localhost:8085/party-api/v1/respondents/'
+get_respondent_root = 'http://localhost:8085/party-api/v1/respondents/'
 get_respondent_root_with_trailing_slash = f'{TestingConfig.PARTY_URL}/party-api/v1/respondents/'
 
 with open('tests/test_data/reporting_units/respondent.json') as json_data:

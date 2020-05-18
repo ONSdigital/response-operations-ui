@@ -4,8 +4,8 @@ import re
 
 from flask_wtf import FlaskForm
 from structlog import wrap_logger
-from wtforms import HiddenField, IntegerField, Label, PasswordField, SelectField, StringField, SubmitField, \
-    TextAreaField
+from wtforms import BooleanField, HiddenField, IntegerField, Label, PasswordField, SelectField, StringField, \
+    SubmitField, TextAreaField
 from wtforms.validators import DataRequired, Email, EqualTo, Length, InputRequired, ValidationError, Regexp
 
 from response_operations_ui.controllers import collection_exercise_controllers
@@ -313,3 +313,8 @@ class CreateAccountForm(FlaskForm):
         if password.isalnum() or not any(char.isupper() for char in password) or not any(char.isdigit() for char in
                                                                                          password):
             raise ValidationError('Your password doesn\'t meet the requirements')
+
+
+class BannerAdminForm(FlaskForm):
+    banner = StringField('Banner text')
+    delete = BooleanField('Delete banner', default=False)
