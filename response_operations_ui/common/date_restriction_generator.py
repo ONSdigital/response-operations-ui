@@ -1,5 +1,4 @@
 def get_date_restriction_text(tag, events):
-
     """Generates the text that tells the user the dates that the event they are adding/updating must be in between,
     this text changes based on which events already exist, hence the if statements for when reminders are present."""
 
@@ -19,6 +18,21 @@ def get_date_restriction_text(tag, events):
         "ref_period_start": [f"Must be before Reference Period end {_get_event_date_string('ref_period_end', events)}"],
         "ref_period_end": [f"Must be after Reference Period start "
                            f"{_get_event_date_string('ref_period_start', events)}"],
+        "nudge_email_0": ["Maximum of five nudge email allowed",
+                          f"Must be after Go Live {_get_event_date_string('go_live', events)}",
+                          f"Must be before Return by {_get_event_date_string('return_by', events)}"],
+        "nudge_email_1": ["Maximum of five nudge email allowed",
+                          f"Must be after Go Live {_get_event_date_string('go_live', events)}",
+                          f"Must be before Return by {_get_event_date_string('return_by', events)}"],
+        "nudge_email_2": ["Maximum of five nudge email allowed",
+                          f"Must be after Go Live {_get_event_date_string('go_live', events)}",
+                          f"Must be before Return by {_get_event_date_string('return_by', events)}"],
+        "nudge_email_3": ["Maximum of five nudge email allowed",
+                          f"Must be after Go Live {_get_event_date_string('go_live', events)}",
+                          f"Must be before Return by {_get_event_date_string('return_by', events)}"],
+        "nudge_email_4": ["Maximum of five nudge email allowed",
+                          f"Must be after Go Live {_get_event_date_string('go_live', events)}",
+                          f"Must be before Return by {_get_event_date_string('return_by', events)}"],
         "employment": None
     }
 
