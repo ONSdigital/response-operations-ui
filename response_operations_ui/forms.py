@@ -5,7 +5,7 @@ import re
 from flask_wtf import FlaskForm
 from structlog import wrap_logger
 from wtforms import HiddenField, IntegerField, Label, PasswordField, SelectField, StringField, SubmitField, \
-    TextAreaField
+    TextAreaField, BooleanField
 from wtforms.validators import DataRequired, Email, EqualTo, Length, InputRequired, ValidationError, Regexp
 
 from response_operations_ui.controllers import collection_exercise_controllers
@@ -143,6 +143,7 @@ class EventDateForm(FlaskForm):
 
     MINUTES = [('00', '00'), ('15', '15'), ('30', '30'), ('45', '45')]
     minute = SelectField('minutes', choices=MINUTES, default='00')
+    checkbox = BooleanField('Agree?')
     submit = SubmitField('Save')
 
     def validate_day(form, field):

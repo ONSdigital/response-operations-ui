@@ -19,7 +19,7 @@
       ]
     }
   %} 
-  {% if events.nudge_email_0%}
+  {% if (events.nudge_email_0) or (events.nudge_email_1) or (events.nudge_email_2) or (events.nudge_email_3) or (events.nudge_email_4) or (events.nudge_email_5) %}
     <h2 class="u-fs-r--b u-pt-m">Nudge emails</h2>
   {% endif %}   
   {% set surveyTableDataRows = [] %}
@@ -116,8 +116,7 @@
       ) %}
     {% endif %}
   {% endfor %}
-  {% if ( (events.go_live) and (events.return_by) and not (events.nudge_email_4) ) %} 
-    {% set nudge = '' %}
+  {% set nudge = '' %}
     {% if not events.nudge_email_0 %}
       {% set nudge = 'nudge_email_0' %}
     {% elif not events.nudge_email_1 %}
@@ -129,6 +128,7 @@
     {% elif not events.nudge_email_4%}
         {% set nudge = 'nudge_email_4' %}
     {% endif %}
+  {% if ( (events.go_live) and (events.return_by) and (nudge) ) %} 
     {% set formData = {
         "action": url_for('collection_exercise_bp.get_create_collection_event_form', short_name=survey.shortName, period=ce.exerciseRef, ce_id=ce.id, tag=nudge),
         "method": 'get',
@@ -150,7 +150,7 @@
         }
       ) %}
     {% endif %}
-  {% elif ( (events.go_live) and (events.return_by) and (events.nudge_email_4) ) %}
+  {% elif ( (events.go_live) and (events.return_by) ) %}
     {% call
         onsPanel({
             "type": "info",

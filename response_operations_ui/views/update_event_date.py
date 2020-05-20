@@ -14,6 +14,7 @@ from response_operations_ui.common.validators import valid_date_for_event
 from response_operations_ui.controllers import collection_exercise_controllers, survey_controllers
 from response_operations_ui.forms import EventDateForm
 from response_operations_ui.views.collection_exercise import collection_exercise_bp, get_event_name
+from response_operations_ui.views.delete_event import delete_event
 
 logger = wrap_logger(logging.getLogger(__name__))
 
@@ -58,7 +59,29 @@ def update_event_date(short_name, period, tag):
 @login_required
 def update_event_date_submit(short_name, period, tag):
     form = EventDateForm(form=request.form)
+    
+    if str(form.checkbox.data) == 'True':
+        survey_id = survey_controllers.get_survey_id_by_short_name(short_name)
+        exercises = collection_exercise_controllers.get_collection_exercises_by_survey(survey_id)
+        exercise = get_collection_exercise_by_period(exercises, period)
 
+        if not exercise:
+            logger.error('Failed to find collection exercise to delete',
+                         short_name=short_name, period=period)
+            abort(404)
+
+        """Attempts to create the event, returns None if success or returns an error message upon failure."""
+        error_message = collection_exercise_controllers.delete_event(
+            collection_exercise_id=exercise['id'], tag=tag)
+
+        if error_message:
+            flash(error_message, 'error')
+            return redirect(url_for('collection_exercise_bp.update_event_date',
+                                    short_name=short_name, period=period, tag=tag))
+
+        return redirect(url_for('collection_exercise_bp.view_collection_exercise',
+                                short_name=short_name, period=period, success_panel='Event deleted.'))
+    
     if not form.validate():
         flash('Please enter a valid value', 'error')
         return redirect(url_for('collection_exercise_bp.update_event_date',
