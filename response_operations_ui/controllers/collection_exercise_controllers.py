@@ -41,7 +41,7 @@ def get_collection_exercise_events_by_id(ce_id):
     logger.info('Retrieving collection exercise events by id', collection_exercise_id=ce_id)
 
     url = f'{app.config["COLLECTION_EXERCISE_URL"]}/collectionexercises/{ce_id}/events'
-    response = requests.Session().get(url=url, auth=app.config['COLLECTION_EXERCISE_AUTH'])
+    response = requests.Session().get(url=url, auth=app.config['BASIC_AUTH'])
 
     try:
         response.raise_for_status()
@@ -58,7 +58,7 @@ def update_event(collection_exercise_id, tag, timestamp):
 
     formatted_timestamp = timestamp.isoformat(timespec='milliseconds')
     url = f'{app.config["COLLECTION_EXERCISE_URL"]}/collectionexercises/{collection_exercise_id}/events/{tag}'
-    response = requests.put(url, auth=app.config['COLLECTION_EXERCISE_AUTH'],
+    response = requests.put(url, auth=app.config['BASIC_AUTH'],
                             headers={'content-type': 'text/plain'}, data=formatted_timestamp)
 
     try:
@@ -100,7 +100,7 @@ def create_collection_exercise_event(collection_exercise_id, tag, timestamp):
 
     url = f'{app.config["COLLECTION_EXERCISE_URL"]}/collectionexercises/{collection_exercise_id}/events'
     formatted_timestamp = timestamp.isoformat(timespec='milliseconds')
-    response = requests.Session().post(url=url, auth=app.config['COLLECTION_EXERCISE_AUTH'],
+    response = requests.Session().post(url=url, auth=app.config['BASIC_AUTH'],
                                        json={'tag': tag, 'timestamp': formatted_timestamp})
 
     try:
@@ -128,7 +128,7 @@ def create_collection_exercise_event(collection_exercise_id, tag, timestamp):
 def execute_collection_exercise(collection_exercise_id):
     logger.info("Executing collection exercise", collection_exercise_id=collection_exercise_id)
     url = f'{app.config["COLLECTION_EXERCISE_URL"]}/collectionexerciseexecution/{collection_exercise_id}'
-    response = requests.post(url, auth=app.config['COLLECTION_EXERCISE_AUTH'])
+    response = requests.post(url, auth=app.config['BASIC_AUTH'])
     try:
         response.raise_for_status()
     except HTTPError:
@@ -146,7 +146,7 @@ def update_collection_exercise_user_description(collection_exercise_id, user_des
 
     header = {'Content-Type': "text/plain"}
     url = f'{app.config["COLLECTION_EXERCISE_URL"]}/collectionexercises/{collection_exercise_id}/userDescription'
-    response = requests.put(url, headers=header, data=user_description, auth=app.config['COLLECTION_EXERCISE_AUTH'])
+    response = requests.put(url, headers=header, data=user_description, auth=app.config['BASIC_AUTH'])
 
     try:
         response.raise_for_status()
@@ -167,7 +167,7 @@ def update_collection_exercise_period(collection_exercise_id, period):
 
     header = {'Content-Type': "text/plain"}
     url = f'{app.config["COLLECTION_EXERCISE_URL"]}/collectionexercises/{collection_exercise_id}/exerciseRef'
-    response = requests.put(url, headers=header, data=period, auth=app.config['COLLECTION_EXERCISE_AUTH'])
+    response = requests.put(url, headers=header, data=period, auth=app.config['BASIC_AUTH'])
 
     try:
         response.raise_for_status()
@@ -187,7 +187,7 @@ def update_collection_exercise_period(collection_exercise_id, period):
 def get_collection_exercise_by_id(collection_exercise_id):
     logger.info('Retrieving collection exercise', collection_exercise_id=collection_exercise_id)
     url = f'{app.config["COLLECTION_EXERCISE_URL"]}/collectionexercises/{collection_exercise_id}'
-    response = requests.get(url=url, auth=app.config['COLLECTION_EXERCISE_AUTH'])
+    response = requests.get(url=url, auth=app.config['BASIC_AUTH'])
 
     try:
         response.raise_for_status()
@@ -219,7 +219,7 @@ def create_collection_exercise(survey_id, survey_name, user_description, period)
         url,
         json=collection_exercise_details,
         headers=header,
-        auth=app.config["COLLECTION_EXERCISE_AUTH"],
+        auth=app.config["BASIC_AUTH"],
     )
     try:
         response.raise_for_status()
@@ -233,7 +233,7 @@ def create_collection_exercise(survey_id, survey_name, user_description, period)
 def get_collection_exercises_by_survey(survey_id):
     logger.info("Retrieving collection exercises", survey_id=survey_id)
     url = f'{app.config["COLLECTION_EXERCISE_URL"]}/collectionexercises/survey/{survey_id}'
-    response = requests.get(url, auth=app.config["COLLECTION_EXERCISE_AUTH"])
+    response = requests.get(url, auth=app.config["BASIC_AUTH"])
 
     if response.status_code == 204:
         return []
@@ -265,7 +265,7 @@ def unlink_sample_summary(collection_exercise_id, sample_summary_id):
         f"{collection_exercise_id}/sample/{sample_summary_id}"
     )
 
-    response = requests.delete(url, auth=app.config["COLLECTION_EXERCISE_AUTH"])
+    response = requests.delete(url, auth=app.config["BASIC_AUTH"])
 
     try:
         response.raise_for_status()
@@ -288,7 +288,7 @@ def get_collection_exercise_from_list(exercises, period):
 def get_linked_sample_summary_id(collection_exercise_id):
     logger.info('Retrieving sample linked to collection exercise', collection_exercise_id=collection_exercise_id)
     url = f'{app.config["COLLECTION_EXERCISE_URL"]}/collectionexercises/link/{collection_exercise_id}'
-    response = requests.get(url, auth=app.config['COLLECTION_EXERCISE_AUTH'])
+    response = requests.get(url, auth=app.config['BASIC_AUTH'])
 
     if response.status_code == 204:
         logger.info('No samples linked to collection exercise', collection_exercise_id=collection_exercise_id)
@@ -315,7 +315,7 @@ def link_sample_summary_to_collection_exercise(collection_exercise_id, sample_su
 
     # Currently we only need to link a single sample to a single collection exercise
     payload = {"sampleSummaryIds": [str(sample_summary_id)]}
-    response = requests.put(url, auth=app.config["COLLECTION_EXERCISE_AUTH"], json=payload)
+    response = requests.put(url, auth=app.config["BASIC_AUTH"], json=payload)
 
     try:
         response.raise_for_status()

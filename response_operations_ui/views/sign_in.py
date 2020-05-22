@@ -41,7 +41,8 @@ def sign_in():
         else:
             # store the token in the session (it's server side and stored in redis)
             session['token'] = access_token
-            user = User(user_id)
+            session['username'] = username
+            user = User(user_id, username)
             login_user(user)
             if 'next' in session:
                 return redirect(session['next'])

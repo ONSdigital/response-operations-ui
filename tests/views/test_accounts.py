@@ -69,7 +69,7 @@ class TestAccounts(unittest.TestCase):
             self.assertEqual(response.status_code, 200)
 
     def test_create_account_page_dodgy_token(self):
-        response = self.client.get(f'/account/create-account/dodgy-token')
+        response = self.client.get('/account/create-account/dodgy-token')
         self.assertIn(b'Your link has expired', response.data)
         self.assertEqual(response.status_code, 200)
 

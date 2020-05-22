@@ -18,7 +18,7 @@ def get_survey_by_id(survey_id):
     to the survey when it was created"""
     logger.info("Retrieve survey using survey uuid", survey_id=survey_id)
     url = f'{app.config["SURVEY_URL"]}/surveys/{survey_id}'
-    response = requests.get(url, auth=app.config['SURVEY_AUTH'])
+    response = requests.get(url, auth=app.config['BASIC_AUTH'])
 
     try:
         response.raise_for_status()
@@ -36,7 +36,7 @@ def get_survey_by_ref(survey_id):
     by (e.g., MBS = 009, RSI = 023)"""
     logger.info("Retrieve survey using survey id", survey_id=survey_id)
     url = f'{app.config["SURVEY_URL"]}/surveys/ref/{survey_id}'
-    response = requests.get(url, auth=app.config['SURVEY_AUTH'])
+    response = requests.get(url, auth=app.config['BASIC_AUTH'])
 
     try:
         response.raise_for_status()
@@ -53,7 +53,7 @@ def get_survey_by_shortname(short_name):
     short_name = ''.join(short_name.split())
     logger.info('Retrieving survey', short_name=short_name)
     url = f'{app.config["SURVEY_URL"]}/surveys/shortname/{short_name}'
-    response = requests.get(url, auth=app.config['SURVEY_AUTH'])
+    response = requests.get(url, auth=app.config['BASIC_AUTH'])
 
     try:
         response.raise_for_status()
@@ -69,7 +69,7 @@ def get_survey_by_shortname(short_name):
 def get_survey_ci_classifier(survey_id):
     logger.info('Retrieving classifier type selectors', survey_id=survey_id)
     url = f'{app.config["SURVEY_URL"]}/surveys/{survey_id}/classifiertypeselectors'
-    response = requests.get(url, auth=app.config['SURVEY_AUTH'])
+    response = requests.get(url, auth=app.config['BASIC_AUTH'])
 
     if response.status_code == 204:
         logger.error('classifiers missing for survey', survey_id=survey_id)
@@ -91,7 +91,7 @@ def get_survey_ci_classifier(survey_id):
 
     logger.info('Retrieving classifiers for CI selector type', survey_id=survey_id, ci_selector=ci_selector['id'])
     url = f'{app.config["SURVEY_URL"]}/surveys/{survey_id}/classifiertypeselectors/{ci_selector["id"]}'
-    response = requests.get(url, auth=app.config['SURVEY_AUTH'])
+    response = requests.get(url, auth=app.config['BASIC_AUTH'])
 
     try:
         response.raise_for_status()
@@ -109,7 +109,7 @@ def get_survey_ci_classifier(survey_id):
 def get_surveys_list():
     logger.info('Retrieving surveys list')
     url = f'{app.config["SURVEY_URL"]}/surveys/surveytype/Business'
-    response = requests.get(url, auth=app.config['SURVEY_AUTH'])
+    response = requests.get(url, auth=app.config['BASIC_AUTH'])
 
     if response.status_code == 204:
         logger.info('No surveys found in survey service')
@@ -204,7 +204,7 @@ def update_survey_details(survey_ref, short_name, long_name):
         "LongName": long_name
     }
 
-    response = requests.put(url, json=survey_details, auth=app.config['SURVEY_AUTH'])
+    response = requests.put(url, json=survey_details, auth=app.config['BASIC_AUTH'])
 
     if response.status_code == 404:
         logger.warning('Error retrieving survey details', survey_ref=survey_ref)
@@ -221,7 +221,7 @@ def update_survey_details(survey_ref, short_name, long_name):
 def get_legal_basis_list():
     logger.info('Retrieving legal basis list')
     url = f'{app.config["SURVEY_URL"]}/legal-bases'
-    response = requests.get(url, auth=app.config['SURVEY_AUTH'])
+    response = requests.get(url, auth=app.config['BASIC_AUTH'])
 
     try:
         response.raise_for_status()
@@ -251,7 +251,7 @@ def create_survey(survey_ref, short_name, long_name, legal_basis):
         ]
     }
 
-    response = requests.post(url, json=survey_details, auth=app.config['SURVEY_AUTH'])
+    response = requests.post(url, json=survey_details, auth=app.config['BASIC_AUTH'])
 
     try:
         response.raise_for_status()

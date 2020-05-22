@@ -37,7 +37,7 @@ def sign_in(username, password):
     except HTTPError:
         if response.status_code == 401:
             abort(401)
-        logger.exception(f'Failed to retrieve access token', status_code=response.status_code)
+        logger.exception('Failed to retrieve access token', status_code=response.status_code)
         raise
 
     try:
@@ -66,7 +66,7 @@ def login_admin():
         resp_json = response.json()
         return resp_json.get('access_token')
     except HTTPError:
-        logger.exception(f'Failed to log into UAA', status_code=response.status_code)
+        logger.exception('Failed to log into UAA', status_code=response.status_code)
         abort(response.status_code)
 
 

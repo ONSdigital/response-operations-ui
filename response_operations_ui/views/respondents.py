@@ -25,7 +25,7 @@ def respondent_home():
                            breadcrumbs=[{"text": "Respondents"}])
 
 
-@respondent_bp.route('/search', methods=['POST'])
+@respondent_bp.route('/search', methods=['GET', 'POST'])
 @login_required
 def search_redirect():
     form = RespondentSearchForm()

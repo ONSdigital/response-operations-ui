@@ -51,12 +51,6 @@ notify:
 database:
    managedRedis: false
 
-networkPolicy:
-  egress: |
-    - {}
-  ingress: |
-    - {}
-
 dns:
   enabled: false
   wellKnownPort: 8080

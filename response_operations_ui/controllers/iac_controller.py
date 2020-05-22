@@ -17,7 +17,7 @@ def get_iac_details(iac):
         return None
 
     url = f'{app.config["IAC_URL"]}/iacs/{iac}'
-    response = requests.get(url, auth=app.config['IAC_AUTH'])
+    response = requests.get(url, auth=app.config['BASIC_AUTH'])
 
     try:
         response.raise_for_status()

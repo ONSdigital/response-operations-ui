@@ -67,30 +67,18 @@ spec:
             {{- else }}
             value: "http://$(CASE_SERVICE_HOST):$(CASE_SERVICE_PORT)"
             {{- end }}
-          - name: CASE_USERNAME
-            value: "$(SECURITY_USER_NAME)"
-          - name: CASE_PASSWORD
-            value: "$(SECURITY_USER_PASSWORD)"
           - name: COLLECTION_EXERCISE_URL
             {{- if .Values.dns.enabled }}
             value: "http://collection-exercise.{{ .Values.namespace }}.svc.cluster.local:{{ .Values.dns.wellKnownPort }}"
             {{- else }}
             value: "http://$(COLLECTION_EXERCISE_SERVICE_HOST):$(COLLECTION_EXERCISE_SERVICE_PORT)"
             {{- end }}
-          - name: COLLECTION_EXERCISE_USERNAME
-            value: "$(SECURITY_USER_NAME)"
-          - name: COLLECTION_EXERCISE_PASSWORD
-            value: "$(SECURITY_USER_PASSWORD)"
           - name: COLLECTION_INSTRUMENT_URL
             {{- if .Values.dns.enabled }}
             value: "http://collection-instrument.{{ .Values.namespace }}.svc.cluster.local:{{ .Values.dns.wellKnownPort }}"
             {{- else }}
             value: "http://$(COLLECTION_INSTRUMENT_SERVICE_HOST):$(COLLECTION_INSTRUMENT_SERVICE_PORT)"
             {{- end }}
-          - name: COLLECTION_INSTRUMENT_USERNAME
-            value: "$(SECURITY_USER_NAME)"
-          - name: COLLECTION_INSTRUMENT_PASSWORD
-            value: "$(SECURITY_USER_PASSWORD)"
           - name: CREATE_ACCOUNT_ADMIN_PASSWORD
             value: "{{ .Values.admin.createAccountPassword }}"
           - name: CREATE_ACCOUNT_EMAIL_TOKEN_EXPIRY
@@ -109,10 +97,6 @@ spec:
             {{- else }}
             value: "http://$(IAC_SERVICE_HOST):$(IAC_SERVICE_PORT)"
             {{- end }}
-          - name: IAC_USERNAME
-            value: "$(SECURITY_USER_NAME)"
-          - name: IAC_PASSWORD
-            value: "$(SECURITY_USER_PASSWORD)"
           - name: NOTIFY_CONFIRM_CREATE_ACCOUNT_TEMPLATE
             value: {{ .Values.notify.confirmCreateAccountTemplate }}
           - name: NOTIFY_CONFIRM_PASSWORD_CHANGE_TEMPLATE
@@ -133,10 +117,6 @@ spec:
             {{- else }}
             value: "http://$(PARTY_SERVICE_HOST):$(PARTY_SERVICE_PORT)"
             {{- end }}
-          - name: PARTY_USERNAME
-            value: "$(SECURITY_USER_NAME)"
-          - name: PARTY_PASSWORD
-            value: "$(SECURITY_USER_PASSWORD)"
           - name: REDIS_HOST
             {{- if .Values.database.managedRedis }}
             valueFrom:
@@ -175,10 +155,6 @@ spec:
             {{- else }}
             value: "http://$(SAMPLE_SERVICE_HOST):$(SAMPLE_SERVICE_PORT)"
             {{- end }}
-          - name: SAMPLE_USERNAME
-            value: "$(SECURITY_USER_NAME)"
-          - name: SAMPLE_PASSWORD
-            value: "$(SECURITY_USER_PASSWORD)"
           - name: SEND_EMAIL_TO_GOV_NOTIFY
             value: "{{ .Values.sendEmailToGovNotify }}"
           - name: SURVEY_URL
@@ -187,10 +163,6 @@ spec:
             {{- else }}
             value: "http://$(SURVEY_SERVICE_HOST):$(SURVEY_SERVICE_PORT)"
             {{- end }}
-          - name: SURVEY_USERNAME
-            value: "$(SECURITY_USER_NAME)"
-          - name: SURVEY_PASSWORD
-            value: "$(SECURITY_USER_PASSWORD)"
           - name: SECURE_MESSAGE_URL
             {{- if .Values.dns.enabled }}
             value: "http://secure-message.{{ .Values.namespace }}.svc.cluster.local:{{ .Values.dns.wellKnownPort }}"
@@ -212,9 +184,5 @@ spec:
             value: "{{- if .Values.test.enabled -}}True{{- else -}}False{{- end -}}"
           - name: WTF_CSRF_ENABLED
             value: "{{- if .Values.test.enabled -}}False{{- else -}}True{{- end -}}"
-          - name: ZIPKIN_DSN
-            value: "http://$(ZIPKIN_SERVICE_HOST):$(ZIPKIN_SERVICE_PORT)/api/v1/spans"
-          - name: ZIPKIN_SAMPLE_RATE
-            value: "100"
           resources:
             {{ toYaml .Values.resources | nindent 12 }}
