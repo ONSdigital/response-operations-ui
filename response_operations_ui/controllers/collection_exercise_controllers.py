@@ -83,10 +83,10 @@ def update_event(collection_exercise_id, tag, timestamp):
 
 
 def delete_event(collection_exercise_id, tag):
-    logger.info('Updating collection exercise event date', collection_exercise_id=collection_exercise_id, tag=tag)
+    logger.info('Deleting collection exercise event', collection_exercise_id=collection_exercise_id, tag=tag)
 
     url = f'{app.config["COLLECTION_EXERCISE_URL"]}/collectionexercises/{collection_exercise_id}/events/{tag}'
-    response = requests.Session().post(url=url, auth=app.config['COLLECTION_EXERCISE_AUTH'])
+    response = requests.Session().post(url=url, auth=app.config['BASIC_AUTH'])
 
     response.raise_for_status()
 

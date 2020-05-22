@@ -14,7 +14,6 @@ from response_operations_ui.common.validators import valid_date_for_event
 from response_operations_ui.controllers import collection_exercise_controllers, survey_controllers
 from response_operations_ui.forms import EventDateForm
 from response_operations_ui.views.collection_exercise import collection_exercise_bp, get_event_name
-from response_operations_ui.views.delete_event import delete_event
 
 logger = wrap_logger(logging.getLogger(__name__))
 

@@ -4,7 +4,7 @@
     {% from "components/checkboxes/_checkbox-macro.njk" import onsCheckbox %}
     {% set fields %}
         <p class="checkboxes__label">{{ params.checkboxesLabel }}</p>
-        <div class="checkboxes__items">
+        <span class="checkboxes__items">
             {% for checkbox in params.checkboxes %}
                 {% set labelHTML = checkbox.label.text %}
                 {% if params.mutuallyExclusive %}  
@@ -47,7 +47,7 @@
                     <br>
                 {% endif %}
             {% endfor %}
-        </div>
+        </span>
     {% endset %}
     {% if params.mutuallyExclusive %}
         {% call onsMutuallyExclusive({
