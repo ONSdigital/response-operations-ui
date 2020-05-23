@@ -1262,12 +1262,12 @@ class TestCollectionExercise(ViewTestCase):
         name_space = 'response_operations_ui.controllers.collection_exercise_controllers.'
         with mock.patch(
                 name_space + "get_collection_exercises_by_survey", return_value=self.collection_exercises), \
-             mock.patch(
-                 name_space + "get_collection_exercise_events_by_id", return_value=self.collection_exercise_events), \
-             mock.patch(
-                 name_space + "get_linked_sample_summary_id", return_value=self.sample_summary['id']), \
-             mock.patch(
-                 name_space + "get_sample_summary", return_value=self.sample_summary):
+            mock.patch(
+                name_space + "get_collection_exercise_events_by_id", return_value=self.collection_exercise_events), \
+            mock.patch(
+                name_space + "get_linked_sample_summary_id", return_value=self.sample_summary['id']), \
+            mock.patch(
+                name_space + "get_sample_summary", return_value=self.sample_summary):
             ce_list = get_collection_exercises_with_events_and_samples_by_survey_id(self.survey['id'])
 
         expected_ce_list = copy.deepcopy(self.collection_exercises)

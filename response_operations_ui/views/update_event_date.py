@@ -41,7 +41,6 @@ def update_event_date(short_name, period, tag):
                              year=event['date'][-4:],
                              hour=event['time'][:2],
                              minute=event['time'][3:5])
-
     except KeyError:
         form = EventDateForm()
 
@@ -58,7 +57,6 @@ def update_event_date(short_name, period, tag):
 @login_required
 def update_event_date_submit(short_name, period, tag):
     form = EventDateForm(form=request.form)
-    
     if str(form.checkbox.data) == 'True':
         survey_id = survey_controllers.get_survey_id_by_short_name(short_name)
         exercises = collection_exercise_controllers.get_collection_exercises_by_survey(survey_id)
@@ -80,7 +78,6 @@ def update_event_date_submit(short_name, period, tag):
 
         return redirect(url_for('collection_exercise_bp.view_collection_exercise',
                                 short_name=short_name, period=period, success_panel='Event deleted.'))
-    
     if not form.validate():
         flash('Please enter a valid value', 'error')
         return redirect(url_for('collection_exercise_bp.update_event_date',
@@ -100,7 +97,6 @@ def update_event_date_submit(short_name, period, tag):
         logger.error('Failed to find collection exercise by period',
                      short_name=short_name, period=period)
         abort(404)
-
     submitted_dt = datetime(year=int(form.year.data),
                             month=int(form.month.data),
                             day=int(form.day.data),
@@ -111,7 +107,6 @@ def update_event_date_submit(short_name, period, tag):
     """Attempts to create the event, returns None if success or returns an error message upon failure."""
     error_message = collection_exercise_controllers.update_event(
         collection_exercise_id=exercise['id'], tag=tag, timestamp=submitted_dt)
-    
     if error_message:
         flash(error_message, 'error')
         return redirect(url_for('collection_exercise_bp.update_event_date',

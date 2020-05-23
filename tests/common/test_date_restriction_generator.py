@@ -67,15 +67,15 @@ class TestDateRestrictionGenerator(unittest.TestCase):
     def test_exercise_end_date_restriction(self):
         self.assertEqual(get_date_restriction_text('exercise_end', self.events),
                          self.restriction_texts['exercise_end_restriction_text'])
-        
+
     def test_return_by_date_restriction(self):
         self.assertEqual(get_date_restriction_text('return_by', self.events),
                          self.restriction_texts['return_by_restriction_text'])
-        
+
     def test_go_live_date_restriction(self):
         self.assertEqual(get_date_restriction_text('go_live', self.events),
                          self.restriction_texts['go_live_restriction_text'])
-    
+
     def test_mps_date_restriction(self):
         self.assertEqual(get_date_restriction_text('mps', self.events),
                          self.restriction_texts['mps_restriction_text'])
