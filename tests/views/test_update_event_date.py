@@ -4,7 +4,6 @@ from urllib.parse import urlparse
 import requests_mock
 
 from config import TestingConfig
-from response_operations_ui.forms import EventDateForm
 from tests.views import ViewTestCase
 
 collection_exercise_id = '14fb3e68-4dca-46db-bf49-04b84e07e77c'
@@ -28,6 +27,10 @@ with open('tests/test_data/collection_exercise/events_2030.json') as json_data:
 url_put_update_event_date = (
     f'{TestingConfig.COLLECTION_EXERCISE_URL}/collectionexercises'
     f'/{collection_exercise_id}/events/{tag}'
+)
+url_put_update_nudge_event_date = (
+    f'{TestingConfig.COLLECTION_EXERCISE_URL}/collectionexercises'
+    f'/{collection_exercise_id}/events/nudge_email_4'
 )
 url_delete_event = (
     f'{TestingConfig.COLLECTION_EXERCISE_URL}/collectionexercises'
@@ -74,7 +77,7 @@ class TestUpdateEventDate(ViewTestCase):
             "hour": "01",
             "minute": "00"
         }
-        
+
         self.delete_nudge_email_form = {
             "day": "01",
             "month": "01",
@@ -169,7 +172,7 @@ class TestUpdateEventDate(ViewTestCase):
         self.assertEqual(response.status_code, 302)
 
     @requests_mock.mock()
-    def test_put_update_event_date_invalid_form(self, mock_request):
+    def test_nudge_email_event_date_invalid_form(self, mock_request):
         mock_request.put(url_put_update_event_date, status_code=201)
         mock_request.get(url_survey_shortname, json=survey)
         mock_request.get(url_collection_exercise_survey_id, json=[collection_exercise])
@@ -189,6 +192,29 @@ class TestUpdateEventDate(ViewTestCase):
         self.assertIn("Maximum of five nudge email allowed".encode(), response.data)
         self.assertIn("Must be after Go Live Thursday 11 Oct 2018 23:00".encode(), response.data)
         self.assertIn("Must be before Return by Tuesday 30 Oct 2018 22:00".encode(), response.data)
+
+    @requests_mock.mock()
+    def test_remove_event_is_not_present(self, mock_request):
+        mock_request.get(url_survey_shortname, json=survey)
+        mock_request.get(url_collection_exercise_survey_id, json=[collection_exercise])
+        mock_request.get(url_get_collection_exercise_events, json=events)
+
+        response = self.client.get(f"/surveys/{survey_short_name}/{period}/event/go_live")
+
+        self.assertEqual(response.status_code, 200)
+        self.assertNotIn("Remove Event".encode(), response.data)
+
+    @requests_mock.mock()
+    def test_remove_event_is_present(self, mock_request):
+        mock_request.get(url_survey_shortname, json=survey)
+        mock_request.get(url_collection_exercise_survey_id, json=[collection_exercise])
+        mock_request.get(url_get_collection_exercise_events, json=events_2030)
+
+        response = self.client.get(f"/surveys/{survey_short_name}/{period}/event/nudge_email_0",
+                                   data=self.delete_nudge_email_form)
+
+        self.assertEqual(response.status_code, 200)
+        self.assertIn("Remove Event".encode(), response.data)
 
     @requests_mock.mock()
     def test_put_update_event_date_update_bad_request(self, mock_request):
