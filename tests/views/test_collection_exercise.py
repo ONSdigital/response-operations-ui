@@ -1336,6 +1336,7 @@ class TestCollectionExercise(ViewTestCase):
         self.assertIn("You cannot schedule any new nudge emails".encode(), response.data)
         self.assertNotIn("Schedule nudge email".encode(), response.data)
 
+    @requests_mock.mock()
     def test_can_create_up_to_five_nude_email(self, mock_request):
         mock_request.get(url_get_survey_by_short_name, json=self.survey)
         mock_request.get(url_ces_by_survey, json=self.collection_exercises)

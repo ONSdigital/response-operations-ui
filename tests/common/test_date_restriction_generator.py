@@ -64,14 +64,6 @@ class TestDateRestrictionGenerator(unittest.TestCase):
         self.assertEqual(get_date_restriction_text('reminder', self.events),
                          self.restriction_texts['reminder_email_restriction_text'])
 
-    def test_reminder2_date_restriction(self):
-        self.assertEqual(get_date_restriction_text('reminder2', self.events),
-                         self.restriction_texts['reminder_email_restriction_text'])
-
-    def test_reminder3_date_restriction(self):
-        self.assertEqual(get_date_restriction_text('reminder3', self.events),
-                         self.restriction_texts['reminder_email_restriction_text'])
-
     def test_exercise_end_date_restriction(self):
         self.assertEqual(get_date_restriction_text('exercise_end', self.events),
                          self.restriction_texts['exercise_end_restriction_text'])
