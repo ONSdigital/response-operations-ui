@@ -4,8 +4,8 @@ from urllib.parse import urlparse
 import requests_mock
 
 from config import TestingConfig
+from response_operations_ui.forms import EventDateForm
 from tests.views import ViewTestCase
-
 
 collection_exercise_id = '14fb3e68-4dca-46db-bf49-04b84e07e77c'
 survey_id = 'cb0711c3-0ac8-41d3-ae0e-567e5ea1ef87'
@@ -21,9 +21,17 @@ with open('tests/test_data/survey/single_survey.json') as json_data:
     survey = json.load(json_data)
 with open('tests/test_data/collection_exercise/events.json') as json_data:
     events = json.load(json_data)
+with open('tests/test_data/collection_exercise/nudge_events_two.json') as json_data:
+    nudge_events_two = json.load(json_data)
+with open('tests/test_data/collection_exercise/events_2030.json') as json_data:
+    events_2030 = json.load(json_data)
 url_put_update_event_date = (
     f'{TestingConfig.COLLECTION_EXERCISE_URL}/collectionexercises'
     f'/{collection_exercise_id}/events/{tag}'
+)
+url_delete_event = (
+    f'{TestingConfig.COLLECTION_EXERCISE_URL}/collectionexercises'
+    f'/{collection_exercise_id}/events/nudge_email_0'
 )
 url_survey_shortname = f'{TestingConfig.SURVEY_URL}/surveys/shortname/{survey_short_name}'
 url_collection_exercise_survey_id = (
@@ -65,6 +73,15 @@ class TestUpdateEventDate(ViewTestCase):
             "year": "2018",
             "hour": "01",
             "minute": "00"
+        }
+        
+        self.delete_nudge_email_form = {
+            "day": "01",
+            "month": "01",
+            "year": "2030",
+            "hour": "01",
+            "minute": "00",
+            "checkbox": "True"
         }
 
     @requests_mock.mock()
@@ -138,6 +155,40 @@ class TestUpdateEventDate(ViewTestCase):
         self.assertEqual(response.status_code, 200)
         self.assertIn("Must be after MPS Thursday 11 Oct 2018 23:00".encode(), response.data)
         self.assertIn("Error updating Go Live date".encode(), response.data)
+
+    @requests_mock.mock()
+    def test_delete_nudge_email_form(self, mock_request):
+        mock_request.post(url_delete_event, status_code=201)
+        mock_request.get(url_survey_shortname, json=survey)
+        mock_request.get(url_collection_exercise_survey_id, json=[collection_exercise])
+        mock_request.get(url_get_collection_exercise_events, json=events_2030)
+
+        response = self.client.post(f"/surveys/{survey_short_name}/{period}/event/nudge_email_0",
+                                    data=self.delete_nudge_email_form)
+
+        self.assertEqual(response.status_code, 302)
+
+    @requests_mock.mock()
+    def test_put_update_event_date_invalid_form(self, mock_request):
+        mock_request.put(url_put_update_event_date, status_code=201)
+        mock_request.get(url_survey_shortname, json=survey)
+        mock_request.get(url_collection_exercise_survey_id, json=[collection_exercise])
+        mock_request.get(url_get_collection_exercise_events, json=nudge_events_two)
+        create_ce_event_form = {
+            "day": "15",
+            "month": "10",
+            "year": "2018",
+            "hour": "01",
+            "minute": "00"
+        }
+
+        response = self.client.post(f"/surveys/{survey_short_name}/{period}/event/nudge_email_4",
+                                    data=create_ce_event_form, follow_redirects=True)
+
+        self.assertEqual(response.status_code, 200)
+        self.assertIn("Maximum of five nudge email allowed".encode(), response.data)
+        self.assertIn("Must be after Go Live Thursday 11 Oct 2018 23:00".encode(), response.data)
+        self.assertIn("Must be before Return by Tuesday 30 Oct 2018 22:00".encode(), response.data)
 
     @requests_mock.mock()
     def test_put_update_event_date_update_bad_request(self, mock_request):
