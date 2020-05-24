@@ -5,16 +5,16 @@ from response_operations_ui.common.date_restriction_generator import get_date_re
 class TestDateRestrictionGenerator(unittest.TestCase):
     restriction_texts = {
         "nudge_email_restriction_text": ["Maximum of five nudge email allowed",
-                                         f"Must be after Go Live Tuesday 02 Jun 2020 07:00",
-                                         f"Must be before Return by Tuesday 30 Jun 2020 07:00"],
-        "reminder_email_restriction_text": [f"Must be after Go Live Tuesday 02 Jun 2020 07:00",
-                                            f"Must be before Exercise end Tuesday 30 Jun 2020 07:00"],
-        "exercise_end_restriction_text": [f"Must be after Return by Tuesday 30 Jun 2020 07:00"],
-        "return_by_restriction_text": [f"Must be after Go Live Tuesday 02 Jun 2020 07:00",
-                                       f"Must be before Exercise end Tuesday 30 Jun 2020 07:00"],
-        "go_live_restriction_text": [f"Must be after MPS Monday 01 Jun 2020 07:00",
-                                     f"Must be before Return by Tuesday 30 Jun 2020 07:00"],
-        "mps_restriction_text": [f"Must be before Go Live Tuesday 02 Jun 2020 07:00"]
+                                         "Must be after Go Live Tuesday 02 Jun 2020 07:00",
+                                         "Must be before Return by Tuesday 30 Jun 2020 07:00"],
+        "reminder_email_restriction_text": ["Must be after Go Live Tuesday 02 Jun 2020 07:00",
+                                            "Must be before Exercise end Tuesday 30 Jun 2020 07:00"],
+        "exercise_end_restriction_text": ["Must be after Return by Tuesday 30 Jun 2020 07:00"],
+        "return_by_restriction_text": ["Must be after Go Live Tuesday 02 Jun 2020 07:00",
+                                       "Must be before Exercise end Tuesday 30 Jun 2020 07:00"],
+        "go_live_restriction_text": ["Must be after MPS Monday 01 Jun 2020 07:00",
+                                     "Must be before Return by Tuesday 30 Jun 2020 07:00"],
+        "mps_restriction_text": ["Must be before Go Live Tuesday 02 Jun 2020 07:00"]
     }
 
     events = {
