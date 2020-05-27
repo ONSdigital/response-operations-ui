@@ -111,8 +111,13 @@ def update_event_date_submit(short_name, period, tag):
         flash(error_message, 'error')
         return redirect(url_for('collection_exercise_bp.update_event_date',
                                 short_name=short_name, period=period, tag=tag))
-    success_message = 'Event date updated.' if tag != 'return_by' else 'Event date updated. Nudge emails that were ' \
-                                                                       'scheduled after the return by date will be ' \
-                                                                       'removed. '
-    return redirect(url_for('collection_exercise_bp.view_collection_exercise',
-                            short_name=short_name, period=period, success_panel=success_message))
+
+    if tag != 'return_by':
+        return redirect(url_for('collection_exercise_bp.view_collection_exercise',
+                                short_name=short_name, period=period, success_panel='Event date updated.'))
+    else:
+        return redirect(url_for('collection_exercise_bp.view_collection_exercise',
+                                short_name=short_name, period=period,
+                                success_panel='Event date updated. Nudge emails that were ' \
+                                              'scheduled after the return by date will be ' \
+                                              'removed. '))

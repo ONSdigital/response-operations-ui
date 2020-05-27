@@ -540,7 +540,7 @@ class TestCollectionExercise(ViewTestCase):
     @patch('response_operations_ui.views.collection_exercise.build_collection_exercise_details')
     def test_choose_collection_instrument_when_first(self, mock_request, mock_details):
         with open(
-                "tests/test_data/collection_exercise/formatted_collection_exercise_details_no_ci.json"
+            "tests/test_data/collection_exercise/formatted_collection_exercise_details_no_ci.json"
         ) as collection_exercise:
             mock_details.return_value = json.load(collection_exercise)
 
@@ -1276,7 +1276,7 @@ class TestCollectionExercise(ViewTestCase):
         self.assertEqual(ce_list, expected_ce_list)
 
     @requests_mock.mock()
-    def test_schedule_nude_email_option_not_present(self, mock_request):
+    def test_schedule_nudge_email_option_not_present(self, mock_request):
         mock_request.get(url_get_survey_by_short_name, json=self.survey)
         mock_request.get(url_ces_by_survey, json=self.collection_exercises)
         mock_request.get(url_ce_by_id, json=collection_exercise_details['collection_exercise'])
@@ -1296,7 +1296,7 @@ class TestCollectionExercise(ViewTestCase):
         self.assertNotIn("Schedule nudge email".encode(), response.data)
 
     @requests_mock.mock()
-    def test_schedule_nude_email_option_present(self, mock_request):
+    def test_schedule_nudge_email_option_present(self, mock_request):
         mock_request.get(url_get_survey_by_short_name, json=self.survey)
         mock_request.get(url_ces_by_survey, json=self.collection_exercises)
         mock_request.get(url_ce_by_id, json=collection_exercise_details['collection_exercise'])
@@ -1337,7 +1337,7 @@ class TestCollectionExercise(ViewTestCase):
         self.assertNotIn("Schedule nudge email".encode(), response.data)
 
     @requests_mock.mock()
-    def test_can_create_up_to_five_nude_email(self, mock_request):
+    def test_can_create_up_to_five_nudge_email(self, mock_request):
         mock_request.get(url_get_survey_by_short_name, json=self.survey)
         mock_request.get(url_ces_by_survey, json=self.collection_exercises)
         mock_request.get(url_ce_by_id, json=collection_exercise_details['collection_exercise'])

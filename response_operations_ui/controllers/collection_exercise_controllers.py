@@ -91,7 +91,7 @@ def delete_event(collection_exercise_id, tag):
     response.raise_for_status()
 
     logger.info('Successfully deleted event', collection_exercise_id=collection_exercise_id,
-                tag=tag, )
+                tag=tag)
     return None
 
 
