@@ -118,6 +118,6 @@ def update_event_date_submit(short_name, period, tag):
     else:
         return redirect(url_for('collection_exercise_bp.view_collection_exercise',
                                 short_name=short_name, period=period,
-                                success_panel='Event date updated. Nudge emails that were ' \
-                                              'scheduled after the return by date will be ' \
+                                success_panel='Event date updated. Nudge emails that were '
+                                              'scheduled after the return by date will be '
                                               'removed. '))
