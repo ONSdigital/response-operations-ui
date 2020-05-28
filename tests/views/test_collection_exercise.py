@@ -12,7 +12,6 @@ from response_operations_ui.controllers.collection_exercise_controllers import \
     get_collection_exercises_with_events_and_samples_by_survey_id
 from tests.views import ViewTestCase
 
-
 ci_selector_id = 'efa868fb-fb80-44c7-9f33-d6800a17c4da'
 collection_exercise_event_id = 'b4a36392-a21f-485b-9dc4-d151a8fcd565'
 collection_exercise_id = '14fb3e68-4dca-46db-bf49-04b84e07e77c'
@@ -67,6 +66,12 @@ with open('tests/test_data/survey/single_survey.json') as json_data:
 
 with open('tests/test_data/collection_exercise/events.json') as json_data:
     events = json.load(json_data)
+
+with open('tests/test_data/collection_exercise/nudge_events_one.json') as json_data:
+    nudge_events_one = json.load(json_data)
+
+with open('tests/test_data/collection_exercise/nudge_events_two.json') as json_data:
+    nudge_events_two = json.load(json_data)
 
 with open('tests/test_data/collection_exercise/events_2030.json') as json_data:
     events_2030 = json.load(json_data)
@@ -146,7 +151,6 @@ url_get_collection_exercises_link = (
     f'{TestingConfig.COLLECTION_EXERCISE_URL}'
     f'/collectionexercises/link/{collection_exercise_id}'
 )
-
 
 ci_search_string = urlencode({'searchString': json.dumps({
     "SURVEY_ID": survey_id,
@@ -642,7 +646,7 @@ class TestCollectionExercise(ViewTestCase):
     def test_no_upload_sample_when_bad_extension(self, mock_request, mock_details):
         data = {"sampleFile": (BytesIO(b"data"), "test.html"), "load-sample": ""}
         with open(
-            "tests/test_data/collection_exercise/formatted_collection_exercise_details_no_sample.json"
+                "tests/test_data/collection_exercise/formatted_collection_exercise_details_no_sample.json"
         ) as collection_exercise:
             mock_details.return_value = json.load(collection_exercise)
         mock_request.get(url_get_survey_by_short_name, status_code=200, json=self.survey_data)
@@ -661,7 +665,7 @@ class TestCollectionExercise(ViewTestCase):
     def test_no_upload_sample_when_no_file(self, mock_request, mock_details):
         data = {"load-sample": ""}
         with open(
-            "tests/test_data/collection_exercise/formatted_collection_exercise_details_no_sample.json"
+                "tests/test_data/collection_exercise/formatted_collection_exercise_details_no_sample.json"
         ) as collection_exercise:
             mock_details.return_value = json.load(collection_exercise)
         mock_request.get(url_get_survey_by_short_name, status_code=200, json=self.survey_data)
@@ -767,7 +771,7 @@ class TestCollectionExercise(ViewTestCase):
     @patch('response_operations_ui.views.collection_exercise.build_collection_exercise_details')
     def test_failed_execution(self, mock_request, mock_details):
         with open(
-            "tests/test_data/collection_exercise/formatted_collection_exercise_details_failedvalidation.json"
+                "tests/test_data/collection_exercise/formatted_collection_exercise_details_failedvalidation.json"
         ) as collection_exercise:
             mock_details.return_value = json.load(collection_exercise)
 
@@ -1175,7 +1179,7 @@ class TestCollectionExercise(ViewTestCase):
     @mock.patch("response_operations_ui.controllers.collection_exercise_controllers.create_collection_exercise_event")
     def test_create_collection_exercise_event_success(self, mock_ce_events, mock_get_ce_details):
         with open(
-            "tests/test_data/collection_exercise/formatted_collection_exercise_details_no_events.json"
+                "tests/test_data/collection_exercise/formatted_collection_exercise_details_no_events.json"
         ) as collection_exercise:
             mock_get_ce_details.return_value = json.load(collection_exercise)
             mock_ce_events.return_value = None
@@ -1257,17 +1261,121 @@ class TestCollectionExercise(ViewTestCase):
     def test_get_collection_exercises_with_events_and_samples_by_survey_id(self):
         name_space = 'response_operations_ui.controllers.collection_exercise_controllers.'
         with mock.patch(
-                name_space + "get_collection_exercises_by_survey", return_value=self.collection_exercises),\
+                name_space + "get_collection_exercises_by_survey", return_value=self.collection_exercises), \
             mock.patch(
-                name_space + "get_collection_exercise_events_by_id", return_value=self.collection_exercise_events),\
+                name_space + "get_collection_exercise_events_by_id", return_value=self.collection_exercise_events), \
             mock.patch(
-                name_space + "get_linked_sample_summary_id", return_value=self.sample_summary['id']),\
+                name_space + "get_linked_sample_summary_id", return_value=self.sample_summary['id']), \
             mock.patch(
                 name_space + "get_sample_summary", return_value=self.sample_summary):
-
             ce_list = get_collection_exercises_with_events_and_samples_by_survey_id(self.survey['id'])
 
         expected_ce_list = copy.deepcopy(self.collection_exercises)
         expected_ce_list[0]['events'] = self.collection_exercise_events
         expected_ce_list[0]['sample_summary'] = self.sample_summary
         self.assertEqual(ce_list, expected_ce_list)
+
+    @requests_mock.mock()
+    def test_schedule_nudge_email_option_not_present(self, mock_request):
+        mock_request.get(url_get_survey_by_short_name, json=self.survey)
+        mock_request.get(url_ces_by_survey, json=self.collection_exercises)
+        mock_request.get(url_ce_by_id, json=collection_exercise_details['collection_exercise'])
+        mock_request.get(url_get_collection_exercise_events, json=self.collection_exercise_events)
+        mock_request.get(f'{url_get_collection_instrument}?{ci_search_string}', json=self.collection_instruments,
+                         complete_qs=True)
+        mock_request.get(f'{url_get_collection_instrument}?{ci_type_search_string}', json=self.eq_ci_selectors,
+                         complete_qs=True)
+        mock_request.get(url_link_sample, json=[sample_summary_id])
+        mock_request.get(url_get_sample_summary, json=self.sample_summary)
+        mock_request.get(url_get_classifier_type_selectors, json=classifier_type_selectors)
+        mock_request.get(url_get_classifier_type, json=classifier_types)
+
+        response = self.client.get(f'/surveys/{short_name}/{period}', follow_redirects=True)
+
+        self.assertEqual(response.status_code, 200)
+        self.assertNotIn("Schedule nudge email".encode(), response.data)
+
+    @requests_mock.mock()
+    def test_schedule_nudge_email_option_present(self, mock_request):
+        mock_request.get(url_get_survey_by_short_name, json=self.survey)
+        mock_request.get(url_ces_by_survey, json=self.collection_exercises)
+        mock_request.get(url_ce_by_id, json=collection_exercise_details['collection_exercise'])
+        mock_request.get(url_get_collection_exercise_events, json=events)
+        mock_request.get(f'{url_get_collection_instrument}?{ci_search_string}', json=self.collection_instruments,
+                         complete_qs=True)
+        mock_request.get(f'{url_get_collection_instrument}?{ci_type_search_string}', json=self.eq_ci_selectors,
+                         complete_qs=True)
+        mock_request.get(url_link_sample, json=[sample_summary_id])
+        mock_request.get(url_get_sample_summary, json=self.sample_summary)
+        mock_request.get(url_get_classifier_type_selectors, json=classifier_type_selectors)
+        mock_request.get(url_get_classifier_type, json=classifier_types)
+
+        response = self.client.get(f'/surveys/{short_name}/{period}', follow_redirects=True)
+
+        self.assertEqual(response.status_code, 200)
+        self.assertIn("Schedule nudge email".encode(), response.data)
+
+    @requests_mock.mock()
+    def test_you_cannot_schedule_any_new_nudge_emails_info_pannel(self, mock_request):
+        mock_request.get(url_get_survey_by_short_name, json=self.survey)
+        mock_request.get(url_ces_by_survey, json=self.collection_exercises)
+        mock_request.get(url_ce_by_id, json=collection_exercise_details['collection_exercise'])
+        mock_request.get(url_get_collection_exercise_events, json=nudge_events_one)
+        mock_request.get(f'{url_get_collection_instrument}?{ci_search_string}', json=self.collection_instruments,
+                         complete_qs=True)
+        mock_request.get(f'{url_get_collection_instrument}?{ci_type_search_string}', json=self.eq_ci_selectors,
+                         complete_qs=True)
+        mock_request.get(url_link_sample, json=[sample_summary_id])
+        mock_request.get(url_get_sample_summary, json=self.sample_summary)
+        mock_request.get(url_get_classifier_type_selectors, json=classifier_type_selectors)
+        mock_request.get(url_get_classifier_type, json=classifier_types)
+
+        response = self.client.get(f'/surveys/{short_name}/{period}', follow_redirects=True)
+
+        self.assertEqual(response.status_code, 200)
+        self.assertIn("You cannot schedule any new nudge emails".encode(), response.data)
+        self.assertNotIn("Schedule nudge email".encode(), response.data)
+
+    @requests_mock.mock()
+    def test_can_create_up_to_five_nudge_email(self, mock_request):
+        mock_request.get(url_get_survey_by_short_name, json=self.survey)
+        mock_request.get(url_ces_by_survey, json=self.collection_exercises)
+        mock_request.get(url_ce_by_id, json=collection_exercise_details['collection_exercise'])
+        mock_request.get(url_get_collection_exercise_events, json=nudge_events_two)
+        mock_request.get(f'{url_get_collection_instrument}?{ci_search_string}', json=self.collection_instruments,
+                         complete_qs=True)
+        mock_request.get(f'{url_get_collection_instrument}?{ci_type_search_string}', json=self.eq_ci_selectors,
+                         complete_qs=True)
+        mock_request.get(url_link_sample, json=[sample_summary_id])
+        mock_request.get(url_get_sample_summary, json=self.sample_summary)
+        mock_request.get(url_get_classifier_type_selectors, json=classifier_type_selectors)
+        mock_request.get(url_get_classifier_type, json=classifier_types)
+
+        response = self.client.get(f'/surveys/{short_name}/{period}', follow_redirects=True)
+
+        self.assertEqual(response.status_code, 200)
+        self.assertNotIn("You cannot schedule any new nudge emails".encode(), response.data)
+        self.assertIn("Schedule nudge email".encode(), response.data)
+
+        @requests_mock.mock()
+        @mock.patch(
+            "response_operations_ui.controllers.collection_exercise_controllers.create_collection_exercise_event")
+        def test_create_collection_events_not_set_sequentially(self, mock_request, mock_ce_event):
+            mock_request.get(url_survey_shortname, json=survey)
+            mock_request.get(url_collection_exercise_survey_id, json=[collection_exercise])
+            mock_request.get(url_get_collection_exercise_events, json=nudge_events_two)
+            mock_ce_event.return_value = 'Collection exercise events must be set sequentially'
+
+            create_ce_event_form = {
+                "day": "15",
+                "month": "10",
+                "year": "2018",
+                "hour": "01",
+                "minute": "00"
+            }
+
+            response = self.client.post(f"/surveys/MBS/201801/{collection_exercise_id}/create-event/nudge_email_4",
+                                        data=create_ce_event_form, follow_redirects=True)
+
+            self.assertEqual(response.status_code, 200)
+            self.assertIn("Nudge email must be set sequentially".encode(), response.data)

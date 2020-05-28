@@ -18,5 +18,9 @@
   {
     "tag": "exercise_end",
     "timestamp": "2030-10-11T22:00:00.000+0000"
+  },
+  {
+    "tag": "nudge_email_0",
+    "timestamp": "2030-10-11T22:00:00.000+0000"
   }
 ]

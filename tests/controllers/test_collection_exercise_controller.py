@@ -9,9 +9,9 @@ from response_operations_ui import create_app
 from response_operations_ui.controllers import collection_exercise_controllers
 from response_operations_ui.exceptions.exceptions import ApiError
 
-
 ce_id = "4a084bc0-130f-4aee-ae48-1a9f9e50178f"
 ce_events_by_id_url = f'{TestingConfig.COLLECTION_EXERCISE_URL}/collectionexercises/{ce_id}/events'
+ce_nudge_events_by_id_url = f'{TestingConfig.COLLECTION_EXERCISE_URL}/collectionexercises/{ce_id}/events/nudge'
 
 with open('tests/test_data/collection_exercise/ce_events_by_id.json') as fp:
     ce_events = json.load(fp)
@@ -63,6 +63,13 @@ class TestCollectionExerciseController(unittest.TestCase):
                 self.assertFalse(collection_exercise_controllers.create_collection_exercise_event(ce_id,
                                                                                                   'mps',
                                                                                                   timestamp))
+
+    def test_delete_ce_event_accepted(self):
+        with responses.RequestsMock() as rsps:
+            rsps.add(rsps.POST, ce_nudge_events_by_id_url, status=200)
+
+            with self.app.app_context():
+                self.assertFalse(collection_exercise_controllers.delete_event(ce_id, 'nudge'))
 
     def test_create_ce_event_bad_request_return_false(self):
         with responses.RequestsMock() as rsps:

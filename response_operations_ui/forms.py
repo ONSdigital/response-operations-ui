@@ -143,6 +143,7 @@ class EventDateForm(FlaskForm):
 
     MINUTES = [('00', '00'), ('15', '15'), ('30', '30'), ('45', '45')]
     minute = SelectField('minutes', choices=MINUTES, default='00')
+    checkbox = BooleanField('Agree?')
     submit = SubmitField('Save')
 
     def validate_day(form, field):

@@ -82,6 +82,19 @@ def update_event(collection_exercise_id, tag, timestamp):
     return None
 
 
+def delete_event(collection_exercise_id, tag):
+    logger.info('Deleting collection exercise event', collection_exercise_id=collection_exercise_id, tag=tag)
+
+    url = f'{app.config["COLLECTION_EXERCISE_URL"]}/collectionexercises/{collection_exercise_id}/events/{tag}'
+    response = requests.Session().post(url=url, auth=app.config['BASIC_AUTH'])
+
+    response.raise_for_status()
+
+    logger.info('Successfully deleted event', collection_exercise_id=collection_exercise_id,
+                tag=tag)
+    return None
+
+
 def create_collection_exercise_event(collection_exercise_id, tag, timestamp):
     logger.info('Creating event date', collection_exercise_id=collection_exercise_id, tag=tag)
 

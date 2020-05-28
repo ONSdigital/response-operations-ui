@@ -86,7 +86,20 @@
           </div>
         </fieldset>
       </div>
-
+      {% if 'nudge' in event_name %}
+        <div class="u-mb-s">
+          <fieldset class="fieldset">
+              <div class="checkboxes__items">
+                  <p class="checkboxes__item">
+                    <span class="checkbox ">
+                        {{ form.checkbox(class="checkbox__input js-checkbox ") }}
+                        <label class="checkbox__label">Remove Event</label>
+                    </span>
+                  </p>
+              </div>
+          </fieldset>
+        </div>
+        {% endif %}  
       {{ form.submit(class_="btn u-mb-s") }}
 
         <div>

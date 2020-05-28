@@ -547,7 +547,12 @@ def get_event_name(tag):
         "reminder3": "Third reminder",
         "ref_period_start": "Reference period start date",
         "ref_period_end": "Reference period end date",
-        "employment": "Employment date"
+        "employment": "Employment date",
+        "nudge_email_0": "Schedule first nudge email",
+        "nudge_email_1": "Schedule second nudge email",
+        "nudge_email_2": "Schedule third nudge email",
+        "nudge_email_3": "Schedule fourth nudge email",
+        "nudge_email_4": "Schedule fifth nudge email"
     }
     return event_names.get(tag)
 

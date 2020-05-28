@@ -2,7 +2,6 @@
     {% from "components/fieldset/_macro.njk" import onsFieldset %}
     {% from "components/mutually-exclusive/_macro.njk" import onsMutuallyExclusive %}
     {% from "components/checkboxes/_checkbox-macro.njk" import onsCheckbox %}
-
     {% set fields %}
         <p class="checkboxes__label">{{ params.checkboxesLabel }}</p>
         <span class="checkboxes__items">
@@ -27,7 +26,6 @@
                         },
                         "attributes": checkbox.attributes
                     } %}
-
                     {% if checkbox.other %}
                         {% set config = config | setAttributes({
                             "other": {
@@ -51,7 +49,6 @@
             {% endfor %}
         </span>
     {% endset %}
-
     {% if params.mutuallyExclusive %}
         {% call onsMutuallyExclusive({
             "id": params.id,
