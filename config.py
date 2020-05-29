@@ -9,8 +9,8 @@ class Config(object):
     DEBUG = os.getenv('DEBUG', False)
     TESTING = False
     PORT = os.getenv('PORT', 8085)
-    GOOGLE_TAG_MANAGER = os.getenv('GOOGLE_TAG_MANAGER', None)
-    GOOGLE_TAG_MANAGER_PROP = os.getenv('GOOGLE_TAG_MANAGER_PROP', None)
+    GOOGLE_TAG_MANAGER = os.getenv('GOOGLE_TAG_MANAGER')
+    GOOGLE_TAG_MANAGER_PROP = os.getenv('GOOGLE_TAG_MANAGER_PROP')
     PREFERRED_URL_SCHEME = 'https'
     LOGGING_LEVEL = os.getenv('LOGGING_LEVEL', 'INFO')
     RESPONSE_OPERATIONS_UI_SECRET = os.getenv('RESPONSE_OPERATIONS_UI_SECRET', "secret")
