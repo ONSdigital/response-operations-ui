@@ -16,7 +16,7 @@ class TestAdminController(unittest.TestCase):
 
     def test_set_banner(self):
         admin_controller.set_banner("test")
-        self.assertEquals("test", admin_controller.current_banner())
+        self.assertEqual("test", admin_controller.current_banner())
 
     def test_remove_banner(self):
         admin_controller.set_banner("test")

@@ -228,9 +228,9 @@ def clear_filter(selected_survey):
                             clear_filter='true'))
 
 
-@messages_bp.route('/<selected_survey>', methods=['GET', 'POST'])  # noqa: C901
+@messages_bp.route('/<selected_survey>', methods=['GET', 'POST'])
 @login_required
-def view_selected_survey(selected_survey):
+def view_selected_survey(selected_survey):  # noqa: C901
 
     displayed_short_name = format_short_name(selected_survey)
     session['messages_survey_selection'] = selected_survey
