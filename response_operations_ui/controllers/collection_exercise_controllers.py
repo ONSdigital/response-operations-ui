@@ -63,6 +63,7 @@ def update_event(collection_exercise_id, tag, timestamp):
 
     try:
         response.raise_for_status()
+        response_content = response.content.decode()
     except HTTPError:
         if response.status_code == 400:
             response_content = response.content.decode()
@@ -71,7 +72,7 @@ def update_event(collection_exercise_id, tag, timestamp):
                          collection_exercise_id=collection_exercise_id,
                          tag=tag, timestamp=formatted_timestamp, status=response.status_code)
 
-            return response_json['error']['message']
+            return response_json
         else:
             logger.error('Failed to update collection exercise event', collection_exercise_id=collection_exercise_id,
                          tag=tag, timestamp=formatted_timestamp, status=response.status_code)
@@ -79,7 +80,7 @@ def update_event(collection_exercise_id, tag, timestamp):
 
     logger.info('Successfully updated event date', collection_exercise_id=collection_exercise_id,
                 tag=tag, timestamp=formatted_timestamp)
-    return None
+    return json.loads(response_content)
 
 
 def delete_event(collection_exercise_id, tag):

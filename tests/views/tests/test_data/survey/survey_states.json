@@ -1,0 +1,64 @@
+{
+  "collection_exercises": [
+    {
+      "id": "14fb3e68-4dca-46db-bf49-04b84e07e77c",
+      "name": "BRES_2017",
+      "scheduledExecutionDateTime": "2017-09-10T23:00:00.000+0000",
+      "state": "CREATED",
+      "events": [{"collectionExerciseId": "92d436aa-1251-4ae3-bad1-f3ae950f87be",
+        "id": "fe11ebe1-01b5-4458-aa0e-3df1a290048d", "tag": "go_live", "timestamp": "2018-03-21T00:00:00.000Z"}]
+
+    },
+    {
+      "id": "14fb3e68-4dca-46db-bf49-04b84e07e77c",
+      "name": "BRES_2017",
+      "scheduledExecutionDateTime": "2017-09-10T23:00:00.000+0000",
+      "state": "SCHEDULED",
+      "events": [{"collectionExerciseId": "92d436aa-1251-4ae3-bad1-f3ae950f87be",
+        "id": "fe11ebe1-01b5-4458-aa0e-3df1a290048d", "tag": "go_live", "timestamp": "2018-03-21T00:00:00.000Z"}]
+
+    },
+    {
+      "id": "14fb3e68-4dca-46db-bf49-04b84e07e77c",
+      "name": "BRES_2017",
+      "scheduledExecutionDateTime": "2017-09-10T23:00:00.000+0000",
+      "state": "READY_FOR_REVIEW",
+      "events": [{"collectionExerciseId": "92d436aa-1251-4ae3-bad1-f3ae950f87be",
+        "id": "fe11ebe1-01b5-4458-aa0e-3df1a290048d", "tag": "go_live", "timestamp": "2018-03-21T00:00:00.000Z"}]
+
+    },
+    {
+      "id": "14fb3e68-4dca-46db-bf49-04b84e07e77c",
+      "name": "BRES_2017",
+      "scheduledExecutionDateTime": "2017-09-10T23:00:00.000+0000",
+      "state": "EXECUTION_STARTED",
+      "events": [{"collectionExerciseId": "92d436aa-1251-4ae3-bad1-f3ae950f87be",
+        "id": "fe11ebe1-01b5-4458-aa0e-3df1a290048d", "tag": "go_live", "timestamp": "2018-03-21T00:00:00.000Z"}]
+
+    },
+    {
+      "id": "14fb3e68-4dca-46db-bf49-04b84e07e77c",
+      "name": "BRES_2017",
+      "scheduledExecutionDateTime": "2017-09-10T23:00:00.000+0000",
+      "state": "READY_FOR_LIVE",
+      "events": [{"collectionExerciseId": "92d436aa-1251-4ae3-bad1-f3ae950f87be",
+        "id": "fe11ebe1-01b5-4458-aa0e-3df1a290048d", "tag": "go_live", "timestamp": "2018-03-21T00:00:00.000Z"}]
+
+    },
+    {
+      "id": "14fb3e68-4dca-46db-bf49-04b84e07e77c",
+      "name": "BRES_2017",
+      "scheduledExecutionDateTime": "2017-09-10T23:00:00.000+0000",
+      "state": "LIVE",
+      "events": [{"collectionExerciseId": "92d436aa-1251-4ae3-bad1-f3ae950f87be",
+        "id": "fe11ebe1-01b5-4458-aa0e-3df1a290048d", "tag": "go_live", "timestamp": "2018-03-21T00:00:00.000Z"}]
+
+    }
+  ],
+  "survey": {
+    "id": "cb0711c3-0ac8-41d3-ae0e-567e5ea1ef87",
+    "longName": "Business Register and Employment Survey",
+    "shortName": "BRES",
+    "surveyRef": "221"
+  }
+}

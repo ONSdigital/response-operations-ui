@@ -97,6 +97,7 @@ def view_collection_exercise(short_name, period):
     show_msg = request.args.get('show_msg')
 
     success_panel = request.args.get('success_panel')
+    info_panel = request.args.get('info_panel')
     sorted_nudge_list = get_existing_sorted_nudge_events(ce_details['events'])
 
     return render_template('collection_exercise/collection-exercise.html',
@@ -116,7 +117,7 @@ def view_collection_exercise(short_name, period):
                            validation_failed=validation_failed,
                            show_msg=show_msg,
                            ci_classifiers=ce_details['ci_classifiers']['classifierTypes'],
-                           info_panel=None,
+                           info_panel=info_panel,
                            existing_nudge=sorted_nudge_list if len(sorted_nudge_list) > 0 else [])
 
 

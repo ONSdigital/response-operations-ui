@@ -112,7 +112,7 @@ class TestValidationErrorMessages(ViewTestCase):
 
             error_expected = update_event(collection_exercise_id, tag, datetime.utcnow())
 
-            self.assertIn("Collection exercise events must be set sequentially", error_expected)
+            self.assertIn("Collection exercise events must be set sequentially", error_expected['error']['message'])
 
     @requests_mock.mock()
     def test_update_event_HTTPerror_not_400(self, mock_request):
