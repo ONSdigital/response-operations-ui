@@ -1,6 +1,7 @@
 import json
 import logging
 from datetime import datetime
+from dateutil.parser import parse
 
 import iso8601
 from dateutil import tz
@@ -96,6 +97,7 @@ def view_collection_exercise(short_name, period):
     show_msg = request.args.get('show_msg')
 
     success_panel = request.args.get('success_panel')
+    sorted_nudge_list = get_existing_sorted_nudge_events(ce_details['events'])
 
     return render_template('collection_exercise/collection-exercise.html',
                            breadcrumbs=breadcrumbs,
@@ -113,7 +115,26 @@ def view_collection_exercise(short_name, period):
                            success_panel=success_panel,
                            validation_failed=validation_failed,
                            show_msg=show_msg,
-                           ci_classifiers=ce_details['ci_classifiers']['classifierTypes'])
+                           ci_classifiers=ce_details['ci_classifiers']['classifierTypes'],
+                           info_panel=None,
+                           existing_nudge=sorted_nudge_list if len(sorted_nudge_list) > 0 else [])
+
+
+def get_existing_sorted_nudge_events(events):
+    sorted_nudge_list = []
+    nudge_tags = ['nudge_email_0', 'nudge_email_1', 'nudge_email_2', 'nudge_email_3', 'nudge_email_4']
+    nudge_events = {}
+    for nudge in nudge_tags:
+        if nudge in events:
+            nudge_events[nudge] = events[nudge]
+    for key, val in nudge_events.items():
+        for k, v in val.items():
+            if k == 'date':
+                nudge_events[key][k] = str(parse(v, fuzzy=True).year)
+    nudge_events = sorted(nudge_events.items(), key=lambda x: (x[1]['month'], x[1]['time'], x[1]['date'],))
+    for k, v in nudge_events:
+        sorted_nudge_list.append(k)
+    return sorted_nudge_list
 
 
 @collection_exercise_bp.route('/<short_name>/<period>', methods=['POST'])
@@ -548,11 +569,11 @@ def get_event_name(tag):
         "ref_period_start": "Reference period start date",
         "ref_period_end": "Reference period end date",
         "employment": "Employment date",
-        "nudge_email_0": "Schedule first nudge email",
-        "nudge_email_1": "Schedule second nudge email",
-        "nudge_email_2": "Schedule third nudge email",
-        "nudge_email_3": "Schedule fourth nudge email",
-        "nudge_email_4": "Schedule fifth nudge email"
+        "nudge_email_0": "Schedule nudge email",
+        "nudge_email_1": "Schedule nudge email",
+        "nudge_email_2": "Schedule nudge email",
+        "nudge_email_3": "Schedule nudge email",
+        "nudge_email_4": "Schedule nudge email"
     }
     return event_names.get(tag)
 

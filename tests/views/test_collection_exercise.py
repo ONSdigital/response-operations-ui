@@ -10,6 +10,7 @@ import requests_mock
 from config import TestingConfig
 from response_operations_ui.controllers.collection_exercise_controllers import \
     get_collection_exercises_with_events_and_samples_by_survey_id
+from response_operations_ui.views.collection_exercise import get_existing_sorted_nudge_events
 from tests.views import ViewTestCase
 
 ci_selector_id = 'efa868fb-fb80-44c7-9f33-d6800a17c4da'
@@ -540,7 +541,7 @@ class TestCollectionExercise(ViewTestCase):
     @patch('response_operations_ui.views.collection_exercise.build_collection_exercise_details')
     def test_choose_collection_instrument_when_first(self, mock_request, mock_details):
         with open(
-            "tests/test_data/collection_exercise/formatted_collection_exercise_details_no_ci.json"
+                "tests/test_data/collection_exercise/formatted_collection_exercise_details_no_ci.json"
         ) as collection_exercise:
             mock_details.return_value = json.load(collection_exercise)
 
@@ -1262,12 +1263,12 @@ class TestCollectionExercise(ViewTestCase):
         name_space = 'response_operations_ui.controllers.collection_exercise_controllers.'
         with mock.patch(
                 name_space + "get_collection_exercises_by_survey", return_value=self.collection_exercises), \
-            mock.patch(
-                name_space + "get_collection_exercise_events_by_id", return_value=self.collection_exercise_events), \
-            mock.patch(
-                name_space + "get_linked_sample_summary_id", return_value=self.sample_summary['id']), \
-            mock.patch(
-                name_space + "get_sample_summary", return_value=self.sample_summary):
+             mock.patch(
+                 name_space + "get_collection_exercise_events_by_id", return_value=self.collection_exercise_events), \
+             mock.patch(
+                 name_space + "get_linked_sample_summary_id", return_value=self.sample_summary['id']), \
+             mock.patch(
+                 name_space + "get_sample_summary", return_value=self.sample_summary):
             ce_list = get_collection_exercises_with_events_and_samples_by_survey_id(self.survey['id'])
 
         expected_ce_list = copy.deepcopy(self.collection_exercises)
@@ -1374,8 +1375,37 @@ class TestCollectionExercise(ViewTestCase):
                 "minute": "00"
             }
 
-            response = self.client.post(f"/surveys/MBS/201801/{collection_exercise_id}/create-event/nudge_email_4",
-                                        data=create_ce_event_form, follow_redirects=True)
+            res = self.client.post(f"/surveys/MBS/201801/{collection_exercise_id}/create-event/nudge_email_4",
+                                   data=create_ce_event_form, follow_redirects=True)
 
-            self.assertEqual(response.status_code, 200)
-            self.assertIn("Nudge email must be set sequentially".encode(), response.data)
+            self.assertEqual(res.status_code, 200)
+            self.assertIn("Nudge email must be set sequentially".encode(), res.data)
+
+    def test_get_existing_sorted_nudge_events_for_no_nudge(self):
+        res = get_existing_sorted_nudge_events([])
+        self.assertEqual(res, [])
+
+    def test_get_existing_sorted_nudge_events_for_sequential_nudge(self):
+        nudge = {'nudge_email_0': {
+            'day': 'Saturday',
+            'date': '06 Jun 2020',
+            'month': '06',
+            'time': '11:00',
+            'is_in_future': True
+        },
+            'nudge_email_3': {
+                'day': 'Saturday',
+                'date': '06 Jun 2020',
+                'month': '06',
+                'time': '08:00',
+                'is_in_future': True
+        },
+            'nudge_email_4': {
+                'day': 'Saturday',
+                'date': '06 Jun 2019',
+                'month': '06',
+                'time': '08:00',
+                'is_in_future': True
+        }}
+        res = get_existing_sorted_nudge_events(nudge)
+        self.assertEqual(res, ['nudge_email_4', 'nudge_email_3', 'nudge_email_0'])
