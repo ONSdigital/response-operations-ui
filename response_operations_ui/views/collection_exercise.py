@@ -126,7 +126,7 @@ def get_existing_sorted_nudge_events(events):
     nudge_events = {}
     for nudge in nudge_tags:
         if nudge in events:
-            nudge_events[nudge] = events[nudge]
+            nudge_events[nudge] = events[nudge].copy()
     for key, val in nudge_events.items():
         for k, v in val.items():
             if k == 'date':
