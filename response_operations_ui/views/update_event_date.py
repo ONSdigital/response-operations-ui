@@ -108,7 +108,7 @@ def update_event_date_submit(short_name, period, tag):
     message = collection_exercise_controllers.update_event(
         collection_exercise_id=exercise['id'], tag=tag, timestamp=submitted_dt)
     if 'error' in message:
-        flash(message, 'error')
+        flash(message['error']['message'], 'error')
         return redirect(url_for('collection_exercise_bp.update_event_date',
                                 short_name=short_name, period=period, tag=tag))
 
