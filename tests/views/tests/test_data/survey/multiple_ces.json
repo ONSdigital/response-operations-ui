@@ -1,0 +1,213 @@
+[
+  {
+    "actualExecutionDateTime": null,
+    "actualPublishDateTime": null,
+    "caseTypes": [],
+    "created": "2018-05-11T13:12:18.315Z",
+    "deleted": null,
+    "events": {
+      "mps": {
+        "day": "Wednesday",
+        "date": "19 Sep 2018",
+        "time": "00:00 GMT"
+      },
+      "go_live": {
+        "day": "Monday",
+        "date": "24 Sep 2018",
+        "time": "00:00 GMT"
+      },
+      "ref_period_start": {
+        "day": "Saturday",
+        "date": "01 Sep 2018",
+        "time": "00:00 GMT"
+      },
+      "ref_period_end": {
+        "day": "Sunday",
+        "date": "30 Sep 2018",
+        "time": "00:00 GMT"
+      },
+      "return_by": {
+        "day": "Sunday",
+        "date": "07 Oct 2018",
+        "time": "00:00 GMT"
+      },
+      "reminder": {
+        "day": "Tuesday",
+        "date": "09 Oct 2018",
+        "time": "00:00 GMT"
+      },
+      "employment": {
+        "day": "Friday",
+        "date": "14 Sep 2018",
+        "time": "00:00 GMT"
+      },
+      "exercise_end": {
+        "day": "Monday",
+        "date": "30 Nov 2020",
+        "time": "00:00 GMT"
+      }
+    },
+    "executedBy": null,
+    "exerciseRef": "201809",
+    "id": "23a83a62-87dd-4c6c-97e2-4b207f7e57f5",
+    "name": "Monthly Business Sur",
+    "periodEndDateTime": "2020-11-30T00:00:00.000Z",
+    "periodStartDateTime": "2018-09-19T00:00:00.000Z",
+    "scheduledEndDateTime": "2020-11-30T00:00:00.000Z",
+    "scheduledExecutionDateTime": "2018-09-19T00:00:00.000Z",
+    "scheduledReturnDateTime": "2018-10-07T00:00:00.000Z",
+    "scheduledStartDateTime": "2018-09-19T00:00:00.000Z",
+    "state": "Scheduled",
+    "surveyId": "0b1f8376-28e9-4884-bea5-acf9d709464e",
+    "updated": "2018-05-11T13:12:22.047Z",
+    "userDescription": "September 2018",
+    "validationErrors": null
+  },
+  {
+    "actualExecutionDateTime": null,
+    "actualPublishDateTime": null,
+    "caseTypes": [],
+    "created": "2018-05-11T13:12:18.324Z",
+    "deleted": null,
+    "events": {
+      "mps": {
+        "day": "Friday",
+        "date": "19 Oct 2018",
+        "time": "00:00 GMT"
+      },
+      "go_live": {
+        "day": "Thursday",
+        "date": "25 Oct 2018",
+        "time": "00:00 GMT"
+      },
+      "ref_period_start": {
+        "day": "Monday",
+        "date": "01 Oct 2018",
+        "time": "00:00 GMT"
+      },
+      "ref_period_end": {
+        "day": "Wednesday",
+        "date": "31 Oct 2018",
+        "time": "00:00 GMT"
+      },
+      "return_by": {
+        "day": "Wednesday",
+        "date": "07 Nov 2018",
+        "time": "00:00 GMT"
+      },
+      "reminder": {
+        "day": "Tuesday",
+        "date": "13 Nov 2018",
+        "time": "00:00 GMT"
+      },
+      "exercise_end": {
+        "day": "Thursday",
+        "date": "31 Dec 2020",
+        "time": "00:00 GMT"
+      }
+    },
+    "executedBy": null,
+    "exerciseRef": "201810",
+    "id": "9f9d28c6-d010-47cc-832c-6ab9b741ee96",
+    "name": "Monthly Business Sur",
+    "periodEndDateTime": "2020-12-31T00:00:00.000Z",
+    "periodStartDateTime": "2018-10-19T00:00:00.000Z",
+    "scheduledEndDateTime": "2020-12-31T00:00:00.000Z",
+    "scheduledExecutionDateTime": "2018-10-19T00:00:00.000Z",
+    "scheduledReturnDateTime": "2018-11-07T00:00:00.000Z",
+    "scheduledStartDateTime": "2018-10-19T00:00:00.000Z",
+    "state": "Scheduled",
+    "surveyId": "0b1f8376-28e9-4884-bea5-acf9d709464e",
+    "updated": "2018-05-11T13:12:22.146Z",
+    "userDescription": "October 2018",
+    "validationErrors": null
+  },
+  {
+    "actualExecutionDateTime": null,
+    "actualPublishDateTime": null,
+    "caseTypes": [],
+    "created": "2018-05-11T13:12:18.300Z",
+    "deleted": null,
+    "events": {
+      "mps": {
+        "day": "Friday",
+        "date": "20 Jul 2018",
+        "time": "00:00 GMT"
+      },
+      "go_live": {
+        "day": "Wednesday",
+        "date": "25 Jul 2018",
+        "time": "00:00 GMT"
+      },
+      "ref_period_start": {
+        "day": "Sunday",
+        "date": "01 Jul 2018",
+        "time": "00:00 GMT"
+      },
+      "ref_period_end": {
+        "day": "Tuesday",
+        "date": "31 Jul 2018",
+        "time": "00:00 GMT"
+      },
+      "return_by": {
+        "day": "Tuesday",
+        "date": "07 Aug 2018",
+        "time": "00:00 GMT"
+      },
+      "reminder": {
+        "day": "Thursday",
+        "date": "09 Aug 2018",
+        "time": "00:00 GMT"
+      },
+      "exercise_end": {
+        "day": "Wednesday",
+        "date": "30 Sep 2020",
+        "time": "00:00 GMT"
+      }
+    },
+    "executedBy": null,
+    "exerciseRef": "201807",
+    "id": "bd4d2bec-28d3-421c-a399-b2840e52e36e",
+    "name": "Monthly Business Sur",
+    "periodEndDateTime": "2020-09-30T00:00:00.000Z",
+    "periodStartDateTime": "2018-07-20T00:00:00.000Z",
+    "scheduledEndDateTime": "2020-09-30T00:00:00.000Z",
+    "scheduledExecutionDateTime": "2018-07-20T00:00:00.000Z",
+    "scheduledReturnDateTime": "2018-08-07T00:00:00.000Z",
+    "scheduledStartDateTime": "2018-07-20T00:00:00.000Z",
+    "state": "Scheduled",
+    "surveyId": "0b1f8376-28e9-4884-bea5-acf9d709464e",
+    "updated": "2018-05-11T13:12:21.848Z",
+    "userDescription": "July 2018",
+    "validationErrors": null
+  },
+  {
+    "actualExecutionDateTime": null,
+    "actualPublishDateTime": null,
+    "caseTypes": [],
+    "created": "2018-05-11T13:12:18.339Z",
+    "deleted": null,
+    "events": {
+      "go_live": {
+        "day": "Thursday",
+        "date": "13 Dec 2018",
+        "time": "00:00 GMT"
+      }
+    },
+    "executedBy": null,
+    "exerciseRef": "201812",
+    "id": "48b6c58a-bf5b-4bb3-8d7d-5e205ff3a0fd",
+    "name": "Monthly Business Sur",
+    "periodEndDateTime": "2021-02-28T00:00:00.000Z",
+    "periodStartDateTime": "2018-12-12T00:00:00.000Z",
+    "scheduledEndDateTime": "2021-02-28T00:00:00.000Z",
+    "scheduledExecutionDateTime": "2018-12-12T00:00:00.000Z",
+    "scheduledReturnDateTime": "2019-01-07T00:00:00.000Z",
+    "scheduledStartDateTime": "2018-12-12T00:00:00.000Z",
+    "state": "Scheduled",
+    "surveyId": "0b1f8376-28e9-4884-bea5-acf9d709464e",
+    "updated": "2018-05-11T13:12:22.335Z",
+    "userDescription": "December 2018",
+    "validationErrors": null
+  }
+]

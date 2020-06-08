@@ -1,0 +1,35 @@
+{
+  "messages": [
+    {
+      "msg_id": "9ecfad50-2ff5-4bea-a997-d73c4faa73ae",
+      "thread_id": "9ecfad50-2ff5-4bea-a997-d73c4faa73ae",
+      "msg_to": [],
+      "msg_from": "GROUP",
+      "body": "body",
+      "subject": "Example message subject",
+      "@msg_to": [],
+      "@msg_from": {
+        "emailAddress": "",
+        "firstName": "ONS",
+        "id": "ff4537df-2097-4a73-a530-e98dba7bf28f",
+        "lastName": "Employee"
+      },
+      "@business_details": {},
+      "sent_date": "2017-10-03 15:51:32.961321"
+    },
+    {
+      "msg_id": "9ecfad50-2ff5-4bea-a997-d73c4faa73ae",
+      "thread_id": "9ecfad50-2ff5-4bea-a997-d73c4faa73ae",
+      "msg_from": "GROUP",
+      "body": "body",
+      "subject": "Example message subject",
+      "@msg_from": {
+        "emailAddress": "",
+        "firstName": "ONS",
+        "id": "ff4537df-2097-4a73-a530-e98dba7bf28f",
+        "lastName": "Employee"
+      },
+      "sent_date": "2017-10-03 15:51:32.961321"
+    }
+  ]
+}
