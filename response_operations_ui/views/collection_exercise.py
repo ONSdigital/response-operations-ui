@@ -130,7 +130,7 @@ def get_existing_sorted_nudge_events(events):
     for key, val in nudge_events.items():
         for k, v in val.items():
             if k == 'date':
-                nudge_events[key]['date'] = str(parse(v, fuzzy=True).date())
+                nudge_events[key][k] = str(parse(v, fuzzy=True).date())
     nudge_events = sorted(nudge_events.items(), key=lambda x: (x[1]['date'], x[1]['time'],))
     for k, v in nudge_events:
         sorted_nudge_list.append(k)
