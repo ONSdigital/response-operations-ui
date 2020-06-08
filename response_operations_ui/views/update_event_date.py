@@ -68,11 +68,11 @@ def update_event_date_submit(short_name, period, tag):
             abort(404)
 
         """Attempts to create the event, returns None if success or returns an error message upon failure."""
-        error_message = collection_exercise_controllers.delete_event(
+        message = collection_exercise_controllers.delete_event(
             collection_exercise_id=exercise['id'], tag=tag)
 
-        if error_message:
-            flash(error_message, 'error')
+        if message:
+            flash(message, 'error')
             return redirect(url_for('collection_exercise_bp.update_event_date',
                                     short_name=short_name, period=period, tag=tag))
 
@@ -105,19 +105,21 @@ def update_event_date_submit(short_name, period, tag):
                             tzinfo=tz.gettz('Europe/London'))
 
     """Attempts to create the event, returns None if success or returns an error message upon failure."""
-    error_message = collection_exercise_controllers.update_event(
+    message = collection_exercise_controllers.update_event(
         collection_exercise_id=exercise['id'], tag=tag, timestamp=submitted_dt)
-    if error_message:
-        flash(error_message, 'error')
+    if 'error' in message:
+        flash(message['error']['message'], 'error')
         return redirect(url_for('collection_exercise_bp.update_event_date',
                                 short_name=short_name, period=period, tag=tag))
 
-    if tag != 'return_by':
+    if 'info' in message:
         return redirect(url_for('collection_exercise_bp.view_collection_exercise',
-                                short_name=short_name, period=period, success_panel='Event date updated.'))
+                                short_name=short_name,
+                                period=period,
+                                success_panel='Event date updated.',
+                                info_panel=message['info']))
     else:
         return redirect(url_for('collection_exercise_bp.view_collection_exercise',
-                                short_name=short_name, period=period,
-                                success_panel='Event date updated. Nudge emails that were '
-                                              'scheduled after the return by date will be '
-                                              'removed. '))
+                                short_name=short_name,
+                                period=period,
+                                success_panel='Event date updated.'))

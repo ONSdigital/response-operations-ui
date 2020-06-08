@@ -123,9 +123,26 @@ class TestUpdateEventDate(ViewTestCase):
 
     @requests_mock.mock()
     def test_put_update_event_date(self, mock_request):
+        event = {'event': {'id': '528424f3-aa43-48e9-b7ba-a4c59fde9984',
+                           'eventPK': 18, 'tag': 'return_by', 'timestamp': '2020-06-12T11:00:00.000Z',
+                           'collectionExercise': {'id': '658a305b-1947-40f7-abf1-f99399be36e6',
+                                                  'exercisePK': 7, 'actualExecutionDateTime': None,
+                                                  'scheduledExecutionDateTime': '2020-06-10T06:00:00.000Z',
+                                                  'scheduledStartDateTime': '2020-06-10T06:00:00.000Z',
+                                                  'actualPublishDateTime': None,
+                                                  'periodStartDateTime': '2020-06-10T06:00:00.000Z',
+                                                  'periodEndDateTime': None,
+                                                  'scheduledReturnDateTime': '2020-06-12T11:00:00.000Z',
+                                                  'scheduledEndDateTime': None, 'executedBy': None,
+                                                  'state': 'CREATED', 'sampleSize': None, 'exerciseRef': '011',
+                                                  'userDescription': 'May 2020', 'created': '2020-06-05T13:21:31.361Z',
+                                                  'updated': '2020-06-05T21:39:21.073Z', 'deleted': None,
+                                                  'surveyId': '02b9c366-7397-42f7-942a-76dc5876d86d'},
+                           'created': '2020-06-05T13:22:31.448Z', 'updated': None, 'deleted': False,
+                           'messageSent': None}, 'info': 'This is a test'}
         mock_request.get(url_survey_shortname, json=survey)
         mock_request.get(url_collection_exercise_survey_id, json=[collection_exercise])
-        mock_request.put(url_put_update_event_date, status_code=201)
+        mock_request.put(url_put_update_event_date, status_code=200, json=event)
 
         response = self.client.post(f"/surveys/{survey_short_name}/{period}/event/go_live",
                                     data=self.update_event_form)

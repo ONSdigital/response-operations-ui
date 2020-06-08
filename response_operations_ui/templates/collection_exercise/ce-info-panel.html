@@ -1,0 +1,11 @@
+{% if info_panel %}
+    {% call
+        onsPanel({
+            "type": "info",
+            "classes": "u-mb-s",
+            "id": "info-panel"
+        })
+    %}
+        {{ info_panel }}
+    {% endcall %}
+{% endif %}
