@@ -17,8 +17,7 @@ def download_report(collection_exercise_id, survey_id):
 
     url = (
         f"{app.config['REPORT_URL']}"
-        f"/reporting-api/v1/response-chasing/download-report/"
-        f"{collection_exercise_id}/{survey_id}"
+        f"/reporting-api/v1/response-chasing/download-report/{collection_exercise_id}/{survey_id}"
     )
 
     response = requests.get(url)
@@ -32,6 +31,40 @@ def download_report(collection_exercise_id, survey_id):
         raise ApiError(response)
 
     logger.info("Successfully downloaded response chasing report",
+                collection_exercise_id=collection_exercise_id,
+                survey_id=survey_id)
+    return response
+
+
+def download_dashboard_data(collection_exercise_id, survey_id):
+    """
+    This goes to the reporting api and retrieves a set of data that is used for the dashboard.  This is
+    the easiest way to get high level information about the sample for a collection instrument.
+    :param collection_exercise_id: A uuid representing the collection exercise
+    :param survey_id: A uuid representing the survey
+    :raises ApiError: Raised when the reporting api returns a 4xx or 5xx response
+    :raises ConnectionError: Raised when a connection to the reporting api cannot be made
+    :return: A json representation of the data.
+    """
+    logger.info("Downloading dashboard data for collection exercise", collection_exercise_id=collection_exercise_id,
+                survey_id=survey_id)
+
+    url = (
+        f"{app.config['REPORT_URL']}"
+        f"/reporting-api/v1/response-dashboard/survey/{survey_id}/collection-exercise/{collection_exercise_id}"
+    )
+
+    response = requests.get(url)
+
+    try:
+        response.raise_for_status()
+    except HTTPError:
+        logger.error("Error retrieving dashboard data",
+                     collection_exercise_id=collection_exercise_id,
+                     survey_id=survey_id)
+        raise ApiError(response)
+
+    logger.info("Successfully downloaded dashboard data",
                 collection_exercise_id=collection_exercise_id,
                 survey_id=survey_id)
     return response
@@ -232,6 +265,13 @@ def create_collection_exercise(survey_id, survey_name, user_description, period)
 
 
 def get_collection_exercises_by_survey(survey_id):
+    """
+    Gets all the collection exercises for an individual survey
+    :param survey_id: A uuid that represents the survey in the survey service.
+    :type survey_id: str
+    :raises ApiError: Raised when collection exercise services returns a 4xx or 5xx status.
+    :return: A list of collection exercises for the survey
+    """
     logger.info("Retrieving collection exercises", survey_id=survey_id)
     url = f'{app.config["COLLECTION_EXERCISE_URL"]}/collectionexercises/survey/{survey_id}'
     response = requests.get(url, auth=app.config["BASIC_AUTH"])

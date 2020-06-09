@@ -83,6 +83,12 @@ spec:
             value: "{{ .Values.admin.createAccountPassword }}"
           - name: CREATE_ACCOUNT_EMAIL_TOKEN_EXPIRY
             value: "{{ .Values.admin.createccountEmailExpiry }}"
+          - name: DASHBOARD_URL
+            {{- if .Values.dns.enabled }}
+            value: "http://responses-dashboard.{{ .Values.namespace }}.svc.cluster.local:{{ .Values.dns.wellKnownPort }}"
+            {{- else }}
+            value: "http://$(RESPONSES_DASHBOARD_SERVICE_HOST):$(RESPONSES_DASHBOARD_SERVICE_PORT)"
+            {{- end }}
           {{- if .Values.analytics.enabled }}
           - name: GOOGLE_ANALYTICS_ID
             value: "{{ .Values.analytics.id }}"

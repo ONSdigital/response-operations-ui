@@ -1,0 +1,19 @@
+{% extends "layouts/base.html" %}
+{% from "components/button/_macro.njk" import onsButton %}
+{% from "components/panel/_macro.njk" import onsPanel %}
+{% from "components/metadata/_macro.njk" import onsMetadata %}
+{% from "components/table/_macro.njk" import onsTable %}
+{% from "components/checkboxes/_macro.njk" import onsCheckboxes %}
+
+{% set page_title = survey + " | Surveys" %}
+
+{% block main %}
+    <div class="grid overview">
+        <div class="grid__col col-12@m">
+            <h1 name="page-surveys-title" class="u-fs-xxl u-mt-m">{{ survey }}<span class="u-fs-r">
+              <a href="{{ url_for('home_bp.get_overview_survey') }}">Change survey</a></span></h1>
+            <p>There are no collection exercises for this survey</p>
+        </div>
+        
+    </div>
+{% endblock %}

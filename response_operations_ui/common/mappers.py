@@ -29,6 +29,22 @@ def convert_events_to_new_format(events):
     return formatted_events
 
 
+def convert_event_list_to_dictionary(events):
+    """
+    This function converts a list of events, which are dicts, for a collection exercise into a dictionary where
+    the key is the name of the event and the value is the timestamp.
+    This can aid in finding the exact event you want without having to loop through the
+    entire list to find the one you want.
+
+    :param events: A list of events for a collection exercise
+    :raises KeyError: If the 'tag' or 'timestamp' keys aren't present in the list of dicts
+    :return: A dictionary of events where the name of the events are the keys and the values are the timestamps
+    """
+    if events is None:
+        return {}
+    return {event['tag']: event['timestamp'] for event in events}
+
+
 def map_collection_exercise_state(ce_state):
     return {
         'CREATED': 'Created',

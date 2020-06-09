@@ -1,0 +1,27 @@
+{% from "components/metadata/_macro.njk" import onsMetadata %}
+
+{% block main %}
+    
+  <section class="u-cf u-mb-l">
+    {{ 
+      onsMetadata({
+        "metadataLabel": data.longName + "information",
+        "id": "survey-attributes",
+        "termCol": "4",
+        "descriptionCol": "8",
+        "itemsList": [
+          {
+            "term": "Current period:",
+            "descriptions": [ 
+              {
+                  "description": data.userDescription,
+                  "id": "current-period"
+              }
+            ]
+          }
+        ]
+      }) 
+    }}
+  </section>
+
+{% endblock %}
