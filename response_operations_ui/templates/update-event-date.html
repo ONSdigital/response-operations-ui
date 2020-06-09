@@ -86,7 +86,7 @@
           </div>
         </fieldset>
       </div>
-      {% if 'nudge' in event_name %}
+      {% if ('nudge' in event_name) or (show is true) %}
         <div class="u-mb-s">
           <fieldset class="fieldset">
               <div class="checkboxes__items">
@@ -99,7 +99,21 @@
               </div>
           </fieldset>
         </div>
-        {% endif %}  
+        {% endif %} 
+        {% if show is false %}
+        <div class="u-mb-s">
+          <fieldset class="fieldset" disabled>
+              <div class="checkboxes__items">
+                  <p class="checkboxes__item">
+                    <span class="checkbox ">
+                        {{ form.checkbox(class="checkbox__input js-checkbox ") }}
+                        <label class="checkbox__label">To remove this event, delete more recent reminders first.</label>
+                    </span>
+                  </p>
+              </div>
+          </fieldset>
+        </div>
+        {% endif %}
       {{ form.submit(class_="btn u-mb-s") }}
 
         <div>

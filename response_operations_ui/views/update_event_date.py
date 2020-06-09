@@ -29,6 +29,7 @@ def update_event_date(short_name, period, tag):
                      short_name=short_name, period=period)
         abort(404)
     events = collection_exercise_controllers.get_collection_exercise_events_by_id(exercise['id'])
+    show = get_reminder_del_visibility(events, None, tag)
     event_name = get_event_name(tag)
     formatted_events = convert_events_to_new_format(events)
     date_restriction_text = get_date_restriction_text(tag, formatted_events)
@@ -50,7 +51,20 @@ def update_event_date(short_name, period, tag):
                            period=period,
                            survey=survey,
                            event_name=event_name,
-                           date_restriction_text=date_restriction_text)
+                           date_restriction_text=date_restriction_text,
+                           show=show)
+
+
+def get_reminder_del_visibility(events, show, tag):
+    sorted_reminder = ['reminder', 'reminder2', 'reminder3']
+    if tag in sorted_reminder:
+        existing_reminders = []
+        for event in events:
+            for reminder in sorted_reminder:
+                if reminder == event['tag']:
+                    existing_reminders.append(event['tag'])
+        show = existing_reminders[-1] == tag
+    return show
 
 
 @collection_exercise_bp.route('/<short_name>/<period>/event/<tag>', methods=['POST'])
@@ -67,7 +81,7 @@ def update_event_date_submit(short_name, period, tag):
                          short_name=short_name, period=period)
             abort(404)
 
-        """Attempts to create the event, returns None if success or returns an error message upon failure."""
+        """Attempts to delete the event, returns None if success or returns an error message upon failure."""
         message = collection_exercise_controllers.delete_event(
             collection_exercise_id=exercise['id'], tag=tag)
 

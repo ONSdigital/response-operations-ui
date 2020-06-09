@@ -4,6 +4,7 @@ from urllib.parse import urlparse
 import requests_mock
 
 from config import TestingConfig
+from response_operations_ui.views.update_event_date import get_reminder_del_visibility
 from tests.views import ViewTestCase
 
 collection_exercise_id = '14fb3e68-4dca-46db-bf49-04b84e07e77c'
@@ -222,7 +223,7 @@ class TestUpdateEventDate(ViewTestCase):
         self.assertNotIn("Remove Event".encode(), response.data)
 
     @requests_mock.mock()
-    def test_remove_event_is_present(self, mock_request):
+    def test_remove_event_is_present_for_nudge_email(self, mock_request):
         mock_request.get(url_survey_shortname, json=survey)
         mock_request.get(url_collection_exercise_survey_id, json=[collection_exercise])
         mock_request.get(url_get_collection_exercise_events, json=events_2030)
@@ -232,6 +233,30 @@ class TestUpdateEventDate(ViewTestCase):
 
         self.assertEqual(response.status_code, 200)
         self.assertIn("Remove Event".encode(), response.data)
+
+    @requests_mock.mock()
+    def test_remove_event_is_present_for_reminder_email(self, mock_request):
+        mock_request.get(url_survey_shortname, json=survey)
+        mock_request.get(url_collection_exercise_survey_id, json=[collection_exercise])
+        mock_request.get(url_get_collection_exercise_events, json=events_2030)
+
+        response = self.client.get(f"/surveys/{survey_short_name}/{period}/event/reminder2",
+                                   data=self.delete_nudge_email_form)
+
+        self.assertEqual(response.status_code, 200)
+        self.assertIn("Remove Event".encode(), response.data)
+
+    @requests_mock.mock()
+    def test_remove_event_is_disabled_for_reminder_email(self, mock_request):
+        mock_request.get(url_survey_shortname, json=survey)
+        mock_request.get(url_collection_exercise_survey_id, json=[collection_exercise])
+        mock_request.get(url_get_collection_exercise_events, json=events_2030)
+
+        response = self.client.get(f"/surveys/{survey_short_name}/{period}/event/reminder",
+                                   data=self.delete_nudge_email_form)
+
+        self.assertEqual(response.status_code, 200)
+        self.assertIn("To remove this event, delete more recent reminders first.".encode(), response.data)
 
     @requests_mock.mock()
     def test_put_update_event_date_update_bad_request(self, mock_request):
@@ -275,3 +300,54 @@ class TestUpdateEventDate(ViewTestCase):
         self.assertEqual(response.status_code, 200)
         self.assertIn("Selected date can not be in the past".encode(), response.data)
         self.assertIn("Error updating Go Live date".encode(), response.data)
+
+    def test_get_reminder_del_visibility_for_non_reminder_tag(self):
+        existing_events = [{'id': '1edcb763-608d-4c18-bf07-85cf09e9d0a6',
+                            'collectionExerciseId': 'd46b1fb1-da30-4624-aee1-2fe51eb87d08',
+                            'tag': 'mps', 'timestamp': '2020-08-01T06:00:00.000Z'},
+                           {'id': '90df0b3f-cbd0-4107-90b1-30f351fec0af',
+                            'collectionExerciseId': 'd46b1fb1-da30-4624-aee1-2fe51eb87d08',
+                            'tag': 'go_live', 'timestamp': '2020-08-02T06:00:00.000Z'},
+                           {'id': '116db676-9b4a-417b-90f2-8d44e2f78b77',
+                            'collectionExerciseId': 'd46b1fb1-da30-4624-aee1-2fe51eb87d08',
+                            'tag': 'return_by', 'timestamp': '2020-08-30T06:00:00.000Z'}]
+        res = get_reminder_del_visibility(existing_events, None, 'mps')
+        self.assertEqual(res, None)
+
+    def test_get_reminder_del_visibility_for_reminder_tag_when_reminder2_exists(self):
+        existing_events = [{'id': '1edcb763-608d-4c18-bf07-85cf09e9d0a6',
+                            'collectionExerciseId': 'd46b1fb1-da30-4624-aee1-2fe51eb87d08',
+                            'tag': 'mps', 'timestamp': '2020-08-01T06:00:00.000Z'},
+                           {'id': '90df0b3f-cbd0-4107-90b1-30f351fec0af',
+                            'collectionExerciseId': 'd46b1fb1-da30-4624-aee1-2fe51eb87d08',
+                            'tag': 'go_live', 'timestamp': '2020-08-02T06:00:00.000Z'},
+                           {'id': '116db676-9b4a-417b-90f2-8d44e2f78b77',
+                            'collectionExerciseId': 'd46b1fb1-da30-4624-aee1-2fe51eb87d08',
+                            'tag': 'return_by', 'timestamp': '2020-08-30T06:00:00.000Z'},
+                           {'id': '29f16e05-c275-4563-8a89-01393448e0c8',
+                            'collectionExerciseId': 'd46b1fb1-da30-4624-aee1-2fe51eb87d08',
+                            'tag': 'reminder', 'timestamp': '2020-08-30T06:00:00.000Z'},
+                           {'id': 'b15964d5-10e7-4ddc-a95a-a97d76ed3836',
+                            'collectionExerciseId': 'd46b1fb1-da30-4624-aee1-2fe51eb87d08',
+                            'tag': 'reminder2', 'timestamp': '2020-09-01T06:00:00.000Z'}]
+        res = get_reminder_del_visibility(existing_events, None, 'reminder')
+        self.assertEqual(res, False)
+
+    def test_get_reminder_del_visibility_for_reminder2_tag_when_reminder_exists(self):
+        existing_events = [{'id': '1edcb763-608d-4c18-bf07-85cf09e9d0a6',
+                            'collectionExerciseId': 'd46b1fb1-da30-4624-aee1-2fe51eb87d08',
+                            'tag': 'mps', 'timestamp': '2020-08-01T06:00:00.000Z'},
+                           {'id': '90df0b3f-cbd0-4107-90b1-30f351fec0af',
+                            'collectionExerciseId': 'd46b1fb1-da30-4624-aee1-2fe51eb87d08',
+                            'tag': 'go_live', 'timestamp': '2020-08-02T06:00:00.000Z'},
+                           {'id': '116db676-9b4a-417b-90f2-8d44e2f78b77',
+                            'collectionExerciseId': 'd46b1fb1-da30-4624-aee1-2fe51eb87d08',
+                            'tag': 'return_by', 'timestamp': '2020-08-30T06:00:00.000Z'},
+                           {'id': '29f16e05-c275-4563-8a89-01393448e0c8',
+                            'collectionExerciseId': 'd46b1fb1-da30-4624-aee1-2fe51eb87d08',
+                            'tag': 'reminder', 'timestamp': '2020-08-30T06:00:00.000Z'},
+                           {'id': 'b15964d5-10e7-4ddc-a95a-a97d76ed3836',
+                            'collectionExerciseId': 'd46b1fb1-da30-4624-aee1-2fe51eb87d08',
+                            'tag': 'reminder2', 'timestamp': '2020-09-01T06:00:00.000Z'}]
+        res = get_reminder_del_visibility(existing_events, None, 'reminder2')
+        self.assertEqual(res, True)
