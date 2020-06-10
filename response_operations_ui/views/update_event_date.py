@@ -62,7 +62,7 @@ def is_viewed_reminder_last_in_sequence(events, tag):
     if tag being viewed is the last item in the sorted existing reminders it returns show=true else false.
     Args:
         param1: existing events
-        param3: tag being viewed.
+        param2: tag being viewed.
     Retrns:
         None: if the viewed tag is not a reminder
         True: if the viewed tag is the last in existing sorted reminder list.
