@@ -29,7 +29,7 @@ def update_event_date(short_name, period, tag):
                      short_name=short_name, period=period)
         abort(404)
     events = collection_exercise_controllers.get_collection_exercise_events_by_id(exercise['id'])
-    show = get_reminder_del_visibility(events, None, tag)
+    show = is_viewed_reminder_last_in_sequence(events, None, tag)
     event_name = get_event_name(tag)
     formatted_events = convert_events_to_new_format(events)
     date_restriction_text = get_date_restriction_text(tag, formatted_events)
@@ -55,7 +55,20 @@ def update_event_date(short_name, period, tag):
                            show=show)
 
 
-def get_reminder_del_visibility(events, show, tag):
+def is_viewed_reminder_last_in_sequence(events, show, tag):
+    """This function checks if the tag being viewed is a reminder.
+    If No it returns show=None.
+    If yes it creates a list of existing reminders in sequence,
+    if tag being viewed is the last item in the sorted existing reminders it returns show=true else false.
+    Args:
+        param1: existing events,
+        param2: None,
+        param3: tag being viewed.
+    Retrns:
+        None: if the viewed tag is not a reminder
+        True: if the viewed tag is the last in existing sorted reminder list.
+        False: if the viewed tag is not the last in existing sorted reminder list.
+    """
     sorted_reminder = ['reminder', 'reminder2', 'reminder3']
     if tag in sorted_reminder:
         existing_reminders = []
