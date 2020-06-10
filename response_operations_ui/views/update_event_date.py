@@ -29,6 +29,7 @@ def update_event_date(short_name, period, tag):
                      short_name=short_name, period=period)
         abort(404)
     events = collection_exercise_controllers.get_collection_exercise_events_by_id(exercise['id'])
+    show = is_viewed_reminder_last_in_sequence(events, tag)
     event_name = get_event_name(tag)
     formatted_events = convert_events_to_new_format(events)
     date_restriction_text = get_date_restriction_text(tag, formatted_events)
@@ -50,7 +51,32 @@ def update_event_date(short_name, period, tag):
                            period=period,
                            survey=survey,
                            event_name=event_name,
-                           date_restriction_text=date_restriction_text)
+                           date_restriction_text=date_restriction_text,
+                           show=show)
+
+
+def is_viewed_reminder_last_in_sequence(events, tag):
+    """This function checks if the tag being viewed is a reminder.
+    If No it returns show=None.
+    If yes it creates a list of existing reminders in sequence,
+    if tag being viewed is the last item in the sorted existing reminders it returns show=true else false.
+    Args:
+        param1: existing events
+        param2: tag being viewed.
+    Retrns:
+        None: if the viewed tag is not a reminder
+        True: if the viewed tag is the last in existing sorted reminder list.
+        False: if the viewed tag is not the last in existing sorted reminder list.
+    """
+    sorted_reminder = ['reminder', 'reminder2', 'reminder3']
+    if tag in sorted_reminder:
+        existing_reminders = []
+        for event in events:
+            for reminder in sorted_reminder:
+                if reminder == event['tag']:
+                    existing_reminders.append(event['tag'])
+        return existing_reminders[-1] == tag
+    return None
 
 
 @collection_exercise_bp.route('/<short_name>/<period>/event/<tag>', methods=['POST'])
@@ -67,7 +93,7 @@ def update_event_date_submit(short_name, period, tag):
                          short_name=short_name, period=period)
             abort(404)
 
-        """Attempts to create the event, returns None if success or returns an error message upon failure."""
+        """Attempts to delete the event, returns None if success or returns an error message upon failure."""
         message = collection_exercise_controllers.delete_event(
             collection_exercise_id=exercise['id'], tag=tag)
 

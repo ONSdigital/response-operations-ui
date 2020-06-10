@@ -12,7 +12,11 @@
     "timestamp": "2030-10-11T22:00:00.000+0000"
   },
   {
-    "tag": "first_reminder",
+    "tag": "reminder",
+    "timestamp": "2030-10-10T22:00:00.000+0000"
+  },
+  {
+    "tag": "reminder2",
     "timestamp": "2030-10-11T22:00:00.000+0000"
   },
   {

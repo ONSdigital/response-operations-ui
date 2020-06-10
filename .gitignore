@@ -106,6 +106,9 @@ minimised/
 *.floo
 *.flooignore
 
+# For local testing
+/tests/views/tests
+
 *.css
 *.map
 
