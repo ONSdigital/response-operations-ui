@@ -311,7 +311,7 @@ class TestUpdateEventDate(ViewTestCase):
                            {'id': '116db676-9b4a-417b-90f2-8d44e2f78b77',
                             'collectionExerciseId': 'd46b1fb1-da30-4624-aee1-2fe51eb87d08',
                             'tag': 'return_by', 'timestamp': '2020-08-30T06:00:00.000Z'}]
-        res = is_viewed_reminder_last_in_sequence(existing_events, None, 'mps')
+        res = is_viewed_reminder_last_in_sequence(existing_events, 'mps')
         self.assertEqual(res, None)
 
     def test_get_reminder_del_visibility_for_reminder_tag_when_reminder2_exists(self):
@@ -330,7 +330,7 @@ class TestUpdateEventDate(ViewTestCase):
                            {'id': 'b15964d5-10e7-4ddc-a95a-a97d76ed3836',
                             'collectionExerciseId': 'd46b1fb1-da30-4624-aee1-2fe51eb87d08',
                             'tag': 'reminder2', 'timestamp': '2020-09-01T06:00:00.000Z'}]
-        res = is_viewed_reminder_last_in_sequence(existing_events, None, 'reminder')
+        res = is_viewed_reminder_last_in_sequence(existing_events, 'reminder')
         self.assertEqual(res, False)
 
     def test_get_reminder_del_visibility_for_reminder2_tag_when_reminder_exists(self):
@@ -349,5 +349,5 @@ class TestUpdateEventDate(ViewTestCase):
                            {'id': 'b15964d5-10e7-4ddc-a95a-a97d76ed3836',
                             'collectionExerciseId': 'd46b1fb1-da30-4624-aee1-2fe51eb87d08',
                             'tag': 'reminder2', 'timestamp': '2020-09-01T06:00:00.000Z'}]
-        res = is_viewed_reminder_last_in_sequence(existing_events, None, 'reminder2')
+        res = is_viewed_reminder_last_in_sequence(existing_events, 'reminder2')
         self.assertEqual(res, True)
