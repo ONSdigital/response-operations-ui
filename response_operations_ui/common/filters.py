@@ -28,7 +28,6 @@ def get_current_collection_exercise(collection_exercises):  # noqa: C901
     :return: A dictionary with the most 'current' collection exercise
     :rtype: dict
     """
-    logger.info(collection_exercises)
     if len(collection_exercises) == 0:
         return {}
 
