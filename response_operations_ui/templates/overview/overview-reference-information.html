@@ -1,10 +1,12 @@
+{% from "components/table/_macro.njk" import onsTable %}
+
 <section class="ce-section ce-details">
   <h2 class="u-fs-r--b u-pt-m">Reference information for this collection exercise</h2>
 
   {% set surveyTableData = {
       "table_class": 'table--dense',
       "id": 'tbl-ce-details',
-      "caption": 'Dates for this collection exercise',
+      "caption": 'Reference information for this collection exercise',
       "hideCaption": true,
       "ths": [
         { 
@@ -13,10 +15,6 @@
         },
         { 
             "value": "Date",
-            "class": "u-vh"
-        },
-        { 
-            "value": "Status",
             "class": "u-vh"
         }
       ]
