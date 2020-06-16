@@ -53,6 +53,7 @@ def post_overview_survey():
 def format_data_for_template(collection_exercise, survey):
     """
     Takes various sets of data and formats them into an easy format for the template to display
+
     :param collection_exercise: A dictionary containing information on the most recent collection exercise
     :type collection_exercise: dict
     :param survey: A dictionary containing information on the survey
@@ -84,8 +85,11 @@ def format_data_for_template(collection_exercise, survey):
 def get_sample_data(collection_exercise, survey):
     """
     Generates a dict for the template so it's easy to display the data on the screen.
+
     :param collection_exercise: A dict containing data for the collection exercise.
+    :type collection_exercise: dict
     :param survey: A dict containing data on the survey.
+    :type survey: dict
     :return: A dict with the sample data in an easy to digest format.
     :rtype: dict
     """
