@@ -38,7 +38,7 @@ def home():
 @login_required
 def get_overview_survey():
     survey_list = survey_controllers.get_surveys_list()
-    breadcrumbs = [{"text": "Overview"}]
+    breadcrumbs = [{"text": "Choose overview survey"}]
     return render_template('choose-overview-survey.html', survey_list=survey_list, breadcrumbs=breadcrumbs)
 
 
@@ -54,8 +54,11 @@ def format_data_for_template(collection_exercise, survey):
     """
     Takes various sets of data and formats them into an easy format for the template to display
     :param collection_exercise: A dictionary containing information on the most recent collection exercise
+    :type collection_exercise: dict
     :param survey: A dictionary containing information on the survey
+    :type survey: dict
     :return: A dictionary containing all the data needed for the overview template.
+    :rtype: dict
     """
     sample_data = get_sample_data(collection_exercise, survey)
 

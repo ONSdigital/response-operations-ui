@@ -25,6 +25,7 @@ def get_current_collection_exercise(collection_exercises):  # noqa: C901
     Note:  If there are 2 collection exercises scheduled to start at the same time then it will display the first one
     it comes across.
     :param collection_exercises: A dictionary containing collection exercises for a survey
+    :type collection_exercises: list
     :return: A dictionary with the most 'current' collection exercise
     :rtype: dict
     """
