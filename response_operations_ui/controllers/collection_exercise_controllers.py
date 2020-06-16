@@ -40,6 +40,7 @@ def download_dashboard_data(collection_exercise_id, survey_id):
     """
     This goes to the reporting api and retrieves a set of data that is used for the dashboard.  This is
     the easiest way to get high level information about the sample for a collection instrument.
+
     :param collection_exercise_id: A uuid representing the collection exercise
     :param survey_id: A uuid representing the survey
     :raises ApiError: Raised when the reporting api returns a 4xx or 5xx response
