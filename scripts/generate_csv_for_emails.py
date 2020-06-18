@@ -39,7 +39,6 @@ def process_file(params):
                 continue
 
             email_address = row[50].value
-            alternate_email_address = row[51].value
             ru_name = row[29].value
 
             if email_address:
@@ -49,14 +48,6 @@ def process_file(params):
                     writer.writerow(csv_line)
                 else:
                     print(f"Email address {email_address} isn't a valid email address. Skipping")
-                    continue
-            if alternate_email_address:
-                if "@" in alternate_email_address:
-                    csv_line = [alternate_email_address, ru_name, params['survey_name'], params['respondent_period'],
-                                params['return_by_date'], enrolment_code, params['survey_phone_number']]
-                    writer.writerow(csv_line)
-                else:
-                    print(f"Alternate email address {alternate_email_address} isn't a valid email address. Skipping")
                     continue
 
 
