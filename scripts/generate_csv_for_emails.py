@@ -4,10 +4,20 @@ import csv
 
 from openpyxl import load_workbook
 
-survey_mapping = {"construction": {
-    "phone_number": "0300 1234 910",
-    "survey_name": "Monthly Business Survey - Construction and Allied Trades"
-}}
+survey_mapping = {
+    "construction": {
+        "phone_number": "0300 1234 910",
+        "survey_name": "Monthly Business Survey - Construction and Allied Trades"
+    },
+    "qifdi": {
+        "phone_number": "0300 1234 931",
+        "survey_name": "Quarterly Inward Foreign Direct Investment Survey"
+    },
+    "qofdi": {
+        "phone_number": "0300 1234 931",
+        "survey_name": "Quarterly Outward Foreign Direct Investment Survey"
+    }
+}
 
 
 def process_file(params):
