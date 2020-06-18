@@ -61,25 +61,23 @@ def format_data_for_template(collection_exercise, survey):
     :return: A dictionary containing all the data needed for the overview template.
     :rtype: dict
     """
-    sample_data = get_sample_data(collection_exercise, survey)
+    formatted_data = get_sample_data(collection_exercise, survey)
 
-    reference_info = {
-        'exerciseRef': collection_exercise.get('exerciseRef'),
-        'userDescription': collection_exercise.get('userDescription'),
-        'survey_id': survey['surveyRef'],
-        'shortName': survey['shortName'],
-        'longName': survey['longName'],
-    }
-    formatted_dict = {**sample_data, **reference_info}
+    formatted_data['exerciseRef'] = collection_exercise.get('exerciseRef', 'N/A'),
+    formatted_data['userDescription'] = collection_exercise.get('userDescription', 'N/A'),
+    formatted_data['survey_id'] = survey['surveyRef'],
+    formatted_data['shortName'] = survey['shortName'],
+    formatted_data['longName'] = survey['longName'],
 
-    # We can't be certain of what events are present so we need to handle it a little differently
-    event_dict = convert_event_list_to_dictionary(collection_exercise.get('events'))
-    variable_list = ['mps', 'go_live', 'return_by', 'exercise_end',
-                     'period_start_date', 'period_end_date', 'employment_date']
-    for item in variable_list:
-        formatted_dict[item] = event_dict.get(item, 'N/A')
+    # We can't be certain of what events are present so we need to add the ones that are present and put a sensible
+    # blank value to the ones that are absent.
+    events = convert_event_list_to_dictionary(collection_exercise.get('events'))
+    possible_events_list = ['mps', 'go_live', 'return_by', 'exercise_end',
+                            'period_start_date', 'period_end_date', 'employment_date']
+    for event in possible_events_list:
+        formatted_data[event] = events.get(event, 'N/A')
 
-    return formatted_dict
+    return formatted_data
 
 
 def get_sample_data(collection_exercise, survey):
@@ -99,7 +97,7 @@ def get_sample_data(collection_exercise, survey):
         dashboard_url = 'N/A'
     try:
         dashboard_data = collection_exercise_controllers.download_dashboard_data(
-            collection_exercise['id'], survey['id'])
+            collection_exercise['id'], survey['id'])['report']
         sample_data = {
             'completed': dashboard_data.get('completed', 'N/A'),
             'sample_size': dashboard_data.get('sampleSize', 'N/A'),

@@ -68,7 +68,7 @@ def download_dashboard_data(collection_exercise_id, survey_id):
     logger.info("Successfully downloaded dashboard data",
                 collection_exercise_id=collection_exercise_id,
                 survey_id=survey_id)
-    return response
+    return response.json()
 
 
 def get_collection_exercise_events_by_id(ce_id):
