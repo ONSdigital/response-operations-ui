@@ -65,12 +65,13 @@ def format_data_for_template(collection_exercise, survey):
 
     formatted_data['exerciseRef'] = collection_exercise.get('exerciseRef', 'N/A'),
     formatted_data['userDescription'] = collection_exercise.get('userDescription', 'N/A'),
-    formatted_data['survey_id'] = survey['surveyRef'],
-    formatted_data['shortName'] = survey['shortName'],
-    formatted_data['longName'] = survey['longName'],
+    formatted_data["survey_id"] = survey['surveyRef']
+    formatted_data['shortName'] = survey['shortName']
+    formatted_data['longName'] = survey['longName']
 
     # We can't be certain of what events are present so we need to add the ones that are present and put a sensible
-    # blank value to the ones that are absent.
+    # blank value to the ones that are absent. 'period_start_date', 'period_end_date' and 'employment_date' are
+    # returned to us as events, even though they're really metadata for the collection exercise...
     events = convert_event_list_to_dictionary(collection_exercise.get('events'))
     possible_events_list = ['mps', 'go_live', 'return_by', 'exercise_end',
                             'period_start_date', 'period_end_date', 'employment_date']
