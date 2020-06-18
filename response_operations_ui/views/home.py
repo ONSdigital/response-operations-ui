@@ -63,8 +63,8 @@ def format_data_for_template(collection_exercise, survey):
     """
     formatted_data = get_sample_data(collection_exercise, survey)
 
-    formatted_data['exerciseRef'] = collection_exercise.get('exerciseRef', 'N/A'),
-    formatted_data['userDescription'] = collection_exercise.get('userDescription', 'N/A'),
+    formatted_data['exerciseRef'] = collection_exercise.get('exerciseRef', 'N/A')
+    formatted_data['userDescription'] = collection_exercise.get('userDescription', 'N/A')
     formatted_data["survey_id"] = survey['surveyRef']
     formatted_data['shortName'] = survey['shortName']
     formatted_data['longName'] = survey['longName']
