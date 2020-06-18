@@ -41,11 +41,11 @@ class TestSignIn(unittest.TestCase):
     def test_get_sample_data(self, mock_request):
         """Tests getting sample data when everything is working as expected"""
         mock_request.get(url_dashboard, json=reporting_json, status_code=200)
-        
+
         file_paths = ['test_data/closest_past_collection_exercise.json',
                       'tests/test_data/collection_exercise/closest_past_collection_exercise.json']
         collection_exercise = self.load_file(file_paths)
-        
+
         expected_url = 'http://localhost:8078/dashboard/collection-exercise/aec41b04-a177-4994-b385-a16136242d05'
         expected_output = {'completed': 700,
                            'dashboard_url': expected_url,
@@ -58,7 +58,7 @@ class TestSignIn(unittest.TestCase):
 
     @requests_mock.mock()
     def test_get_sample_data_collection_exercise_or_survey_not_found(self, mock_request):
-        """If the survey or collection exercise are invalid, a 404 will be returned and the sample data section 
+        """If the survey or collection exercise are invalid, a 404 will be returned and the sample data section
         will return mostly 'N/A'.  The dashboard url will still present with the info available."""
         mock_request.get(url_dashboard, json={'message': 'Invalid collection exercise or survey ID'}, status_code=404)
 
@@ -91,7 +91,3 @@ class TestSignIn(unittest.TestCase):
             with open(file_paths[1]) as fp:
                 file_data = json.load(fp)
         return file_data
-
-
-
-
