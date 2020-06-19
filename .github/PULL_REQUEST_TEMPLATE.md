@@ -15,5 +15,3 @@
 <!--- Add any links to issues (trello, github issues) -->
 <!--- Links to any documentation -->
 <!--- Links to any related PRs -->
-
-# Screenshots (if appropriate):
