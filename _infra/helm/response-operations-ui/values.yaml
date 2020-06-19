@@ -48,6 +48,10 @@ notify:
   requestCreateAccountTemplate: request_create_account_id
   requestPasswordChangeTemplate: request_password_change_id
 
+dashboard:
+  hasIngress: false
+  address: https://dashboard.example.com
+
 database:
    managedRedis: false
 
