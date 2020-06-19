@@ -84,7 +84,9 @@ spec:
           - name: CREATE_ACCOUNT_EMAIL_TOKEN_EXPIRY
             value: "{{ .Values.admin.createccountEmailExpiry }}"
           - name: DASHBOARD_URL
-            {{- if .Values.dns.enabled }}
+            {{- if .Values.dashboard.hasIngress }}
+            value: {{ .Values.dashboard.address }}
+            {{- else if .Values.dns.enabled }}
             value: "http://responses-dashboard.{{ .Values.namespace }}.svc.cluster.local:{{ .Values.dns.wellKnownPort }}"
             {{- else }}
             value: "http://$(RESPONSES_DASHBOARD_SERVICE_HOST):$(RESPONSES_DASHBOARD_SERVICE_PORT)"
