@@ -10,6 +10,12 @@ from response_operations_ui import create_app
 url_sign_in_data = f'{TestingConfig.UAA_SERVICE_URL}/oauth/token'
 url_surveys = f'{TestingConfig.SURVEY_URL}/surveys/surveytype/Business'
 
+surveys_list_json = [{"id": "75b19ea0-69a4-4c58-8d7f-4458c8f43f5c",
+                      "legalBasis": "Statistics of Trade Act 1947",
+                      "longName": "Monthly Business Survey - Retail Sales Index",
+                      "shortName": "RSI",
+                      "surveyRef": "023"}]
+
 
 class TestSignIn(unittest.TestCase):
 
@@ -37,12 +43,13 @@ class TestSignIn(unittest.TestCase):
     @requests_mock.mock()
     def test_sign_in(self, mock_request):
         mock_request.post(url_sign_in_data, json={"access_token": self.access_token.decode()}, status_code=201)
+        mock_request.get(url_surveys, json=surveys_list_json, status_code=200)
 
         response = self.client.post("/sign-in", follow_redirects=True,
                                     data={"username": "user", "password": "pass"})
 
         self.assertEqual(response.status_code, 200)
-        self.assertIn("View list of business surveys".encode(), response.data)
+        self.assertIn("Choose a survey".encode(), response.data)
         self.assertIn("Sign out".encode(), response.data)
 
     @requests_mock.mock()
@@ -65,7 +72,6 @@ class TestSignIn(unittest.TestCase):
                                     data={"username": "user", "password": "wrong"})
 
         self.assertEqual(response.status_code, 200)
-
         self.assertIn(b'Incorrect username or password', response.data)
 
     @requests_mock.mock()
@@ -94,11 +100,12 @@ class TestSignIn(unittest.TestCase):
     @requests_mock.mock()
     def test_sign_in_redirect_while_authenticated(self, mock_request):
         mock_request.post(url_sign_in_data, json={"access_token": self.access_token.decode()}, status_code=201)
+        mock_request.get(url_surveys, json=surveys_list_json, status_code=200)
 
         response = self.client.post("/sign-in", follow_redirects=True,
                                     data={"username": "user", "password": "pass"})
 
-        self.assertIn("View list of business surveys".encode(), response.data)
+        self.assertIn("Choose a survey".encode(), response.data)
 
         # First test that we hit a redirect
         response = self.client.get('/sign-in')
@@ -107,20 +114,14 @@ class TestSignIn(unittest.TestCase):
         # Then test that the redirect takes you to the home page.
         response = self.client.get('/sign-in', follow_redirects=True)
         self.assertEqual(response.status_code, 200)
-        self.assertIn("View list of business surveys".encode(), response.data)
+        self.assertIn("Choose a survey".encode(), response.data)
 
     @requests_mock.mock()
     def test_sign_in_next_url(self, mock_request):
         with self.client.session_transaction() as session:
             session['next'] = '/surveys'
         mock_request.post(url_sign_in_data, json={"access_token": self.access_token.decode()}, status_code=201)
-        mock_request.get(url_surveys, json=[{
-            "id": "75b19ea0-69a4-4c58-8d7f-4458c8f43f5c",
-            "legalBasis": "Statistics of Trade Act 1947",
-            "longName": "Monthly Business Survey - Retail Sales Index",
-            "shortName": "RSI",
-            "surveyRef": "023"}],
-            status_code=200)
+        mock_request.get(url_surveys, json=surveys_list_json, status_code=200)
 
         response = self.client.post("/sign-in", follow_redirects=True,
                                     data={"username": "user", "password": "pass"})

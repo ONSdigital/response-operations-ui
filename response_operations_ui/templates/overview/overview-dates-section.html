@@ -1,0 +1,69 @@
+{% from "components/table/_macro.njk" import onsTable %}
+
+<section class="ce-section ce-events">
+  <h2 class="u-fs-r--b u-pt-m">Dates</h2>
+
+  {% set surveyTableData = {
+      "table_class": 'table--dense',
+      "caption": 'Dates for this collection exercise',
+      "hideCaption": true,
+      "ths": [
+        { 
+            "value": "Event",
+            "class": "u-vh"
+        },
+        { 
+            "value": "Date",
+            "class": "u-vh"
+        }
+      ]
+    }
+  %}
+
+  {% set surveyTableDataRows = [] %}
+  {% set dateGroups = ['mps', 'go_live', 'return_by', 'exercise_end'] %}
+  {% for dateGroup in dateGroups %}
+    {% set label = '' %}
+    {% if dateGroup == 'mps' %}
+      {% set label = 'MPS (Main print selection)' %}
+      {% set event = data.mps %}
+      {% set name = 'mps-date' %}
+    {% elif dateGroup == 'go_live' %}
+      {% set label = 'Go live' %}
+      {% set event = data.go_live %}
+      {% set name = 'go-live-date' %}
+    {% elif dateGroup == 'return_by' %}
+      {% set label = 'Return by' %}
+      {% set event = data.return_by %}
+      {% set name = 'return-by-date' %}
+    {% elif dateGroup == 'exercise_end' %}
+      {% set label = 'Exercise end' %}
+      {% set event = data.exercise_end %}
+      {% set name = 'exercise-end-date' %}
+    {% endif %}
+      
+    {% if label %}
+      {% do surveyTableDataRows.append(
+        {
+          "tds": [
+            {
+              "value": label
+            },
+            {
+              "value": event,
+              "class": "u-ta-right",
+              "name": name
+            }
+          ]
+        }
+      ) %}
+    {% endif %}
+  {% endfor %}
+
+  {% do surveyTableData | setAttribute("trs", surveyTableDataRows) %}
+
+  {{
+    onsTable(surveyTableData)
+  }}
+
+</section>

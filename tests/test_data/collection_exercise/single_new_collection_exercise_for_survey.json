@@ -1,0 +1,34 @@
+[
+  {
+    "id": "f056a0ad-f0d9-4bff-b02e-78d6a2479165",
+    "surveyId": "0b1f8376-28e9-4884-bea5-acf9d709464e",
+    "name": null,
+    "actualExecutionDateTime": null,
+    "scheduledExecutionDateTime": null,
+    "scheduledStartDateTime": null,
+    "actualPublishDateTime": null,
+    "periodStartDateTime": null,
+    "periodEndDateTime": null,
+    "scheduledReturnDateTime": null,
+    "scheduledEndDateTime": null,
+    "executedBy": null,
+    "state": "CREATED",
+    "caseTypes": [
+      {
+        "actionPlanId": "53445b48-f05e-4dee-837a-d643869e93fe",
+        "sampleUnitType": "B"
+      },
+      {
+        "actionPlanId": "7f778cb9-e4c6-4906-b816-6b3928b0f9c1",
+        "sampleUnitType": "BI"
+      }
+    ],
+    "exerciseRef": "2005",
+    "userDescription": "May 2020",
+    "created": "2020-06-15T16:11:41.072Z",
+    "updated": null,
+    "deleted": null,
+    "validationErrors": null,
+    "events": []
+  }
+]

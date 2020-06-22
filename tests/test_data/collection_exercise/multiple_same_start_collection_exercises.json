@@ -1,0 +1,302 @@
+[
+  {
+    "id": "6327160f-d7a8-4fcc-8551-a69c50b33e5f",
+    "surveyId": "0b1f8376-28e9-4884-bea5-acf9d709464e",
+    "name": null,
+    "actualExecutionDateTime": null,
+    "scheduledExecutionDateTime": "2020-08-01T06:00:00.000Z",
+    "scheduledStartDateTime": "2020-08-01T06:00:00.000Z",
+    "actualPublishDateTime": null,
+    "periodStartDateTime": "2020-08-01T06:00:00.000Z",
+    "periodEndDateTime": "2020-08-31T06:00:00.000Z",
+    "scheduledReturnDateTime": "2020-08-20T06:00:00.000Z",
+    "scheduledEndDateTime": "2020-08-31T06:00:00.000Z",
+    "executedBy": null,
+    "state": "SCHEDULED",
+    "caseTypes": [
+      {
+        "actionPlanId": "5a60b310-d2b2-445a-9f9e-0efed04b757d",
+        "sampleUnitType": "B"
+      },
+      {
+        "actionPlanId": "c01b19b8-f91b-42ef-8887-a88c7fe52bb6",
+        "sampleUnitType": "BI"
+      }
+    ],
+    "exerciseRef": "2008",
+    "userDescription": "August 2020",
+    "created": "2020-06-16T10:19:13.152Z",
+    "updated": "2020-06-16T10:20:21.342Z",
+    "deleted": null,
+    "validationErrors": null,
+    "events": [
+      {
+        "id": "cd3fdc36-f060-41e4-bc75-624f6f31e111",
+        "collectionExerciseId": "6327160f-d7a8-4fcc-8551-a69c50b33e5f",
+        "tag": "mps",
+        "timestamp": "2020-08-01T06:00:00.000Z"
+      },
+      {
+        "id": "d950c192-e58d-4dcb-9a38-76658dbea6dc",
+        "collectionExerciseId": "6327160f-d7a8-4fcc-8551-a69c50b33e5f",
+        "tag": "go_live",
+        "timestamp": "2020-08-02T06:00:00.000Z"
+      },
+      {
+        "id": "380eba4a-7a4a-4e5c-b108-14cf0de2e877",
+        "collectionExerciseId": "6327160f-d7a8-4fcc-8551-a69c50b33e5f",
+        "tag": "return_by",
+        "timestamp": "2020-08-20T06:00:00.000Z"
+      },
+      {
+        "id": "9622e3f9-5ad0-4a77-978f-e29967314eb2",
+        "collectionExerciseId": "6327160f-d7a8-4fcc-8551-a69c50b33e5f",
+        "tag": "reminder",
+        "timestamp": "2020-08-21T06:00:00.000Z"
+      },
+      {
+        "id": "fedc5374-5d66-4390-bf47-6be268404b5c",
+        "collectionExerciseId": "6327160f-d7a8-4fcc-8551-a69c50b33e5f",
+        "tag": "exercise_end",
+        "timestamp": "2020-08-31T06:00:00.000Z"
+      },
+      {
+        "id": "1ca67320-97c8-48e8-bd0b-fb45cfa11a39",
+        "collectionExerciseId": "6327160f-d7a8-4fcc-8551-a69c50b33e5f",
+        "tag": "ref_period_start",
+        "timestamp": "2020-07-01T06:00:00.000Z"
+      },
+      {
+        "id": "fc0e52f5-8b18-44a9-a546-b62d43c6e09c",
+        "collectionExerciseId": "6327160f-d7a8-4fcc-8551-a69c50b33e5f",
+        "tag": "ref_period_end",
+        "timestamp": "2020-07-30T06:00:00.000Z"
+      }
+    ]
+  },
+  {
+    "id": "aec41b04-a177-4994-b385-a16136242d05",
+    "surveyId": "0b1f8376-28e9-4884-bea5-acf9d709464e",
+    "name": null,
+    "actualExecutionDateTime": null,
+    "scheduledExecutionDateTime": "2020-07-01T06:00:00.000Z",
+    "scheduledStartDateTime": "2020-07-01T06:00:00.000Z",
+    "actualPublishDateTime": null,
+    "periodStartDateTime": "2020-07-01T06:00:00.000Z",
+    "periodEndDateTime": "2020-07-30T06:00:00.000Z",
+    "scheduledReturnDateTime": "2020-07-20T06:00:00.000Z",
+    "scheduledEndDateTime": "2020-07-30T06:00:00.000Z",
+    "executedBy": null,
+    "state": "SCHEDULED",
+    "caseTypes": [
+      {
+        "actionPlanId": "4772718c-c1bb-4509-94f3-dca1177ca580",
+        "sampleUnitType": "B"
+      },
+      {
+        "actionPlanId": "748704c6-0445-41eb-9b78-1b334f81b2ad",
+        "sampleUnitType": "BI"
+      }
+    ],
+    "exerciseRef": "2007",
+    "userDescription": "July 2020",
+    "created": "2020-06-16T10:15:47.985Z",
+    "updated": "2020-06-16T10:18:58.839Z",
+    "deleted": null,
+    "validationErrors": null,
+    "events": [
+      {
+        "id": "573e60ce-4041-4cd6-8d09-9048457db0af",
+        "collectionExerciseId": "aec41b04-a177-4994-b385-a16136242d05",
+        "tag": "mps",
+        "timestamp": "2020-07-01T06:00:00.000Z"
+      },
+      {
+        "id": "bfd78cbe-5144-4f9d-9e6e-45a733ca244e",
+        "collectionExerciseId": "aec41b04-a177-4994-b385-a16136242d05",
+        "tag": "go_live",
+        "timestamp": "2020-07-02T06:00:00.000Z"
+      },
+      {
+        "id": "1092eca6-3ff3-41a6-8557-ccd6d539262e",
+        "collectionExerciseId": "aec41b04-a177-4994-b385-a16136242d05",
+        "tag": "return_by",
+        "timestamp": "2020-07-20T06:00:00.000Z"
+      },
+      {
+        "id": "dca2e26c-6d0e-4ea5-a55d-a80ea00f636c",
+        "collectionExerciseId": "aec41b04-a177-4994-b385-a16136242d05",
+        "tag": "reminder",
+        "timestamp": "2020-07-21T06:00:00.000Z"
+      },
+      {
+        "id": "494323a1-1832-4db0-b52f-5c75303458d5",
+        "collectionExerciseId": "aec41b04-a177-4994-b385-a16136242d05",
+        "tag": "exercise_end",
+        "timestamp": "2020-07-30T06:00:00.000Z"
+      },
+      {
+        "id": "598b2487-5ffe-4508-b43a-4999cccb3006",
+        "collectionExerciseId": "aec41b04-a177-4994-b385-a16136242d05",
+        "tag": "ref_period_start",
+        "timestamp": "2020-06-01T06:00:00.000Z"
+      },
+      {
+        "id": "a73570e1-70c9-4427-9886-a643140d3996",
+        "collectionExerciseId": "aec41b04-a177-4994-b385-a16136242d05",
+        "tag": "ref_period_end",
+        "timestamp": "2020-06-30T06:00:00.000Z"
+      }
+    ]
+  },
+  {
+    "id": "aec41b04-a177-4994-b385-a16136242d05",
+    "surveyId": "0b1f8376-28e9-4884-bea5-acf9d709464e",
+    "name": null,
+    "actualExecutionDateTime": null,
+    "scheduledExecutionDateTime": "2020-04-01T06:00:00.000Z",
+    "scheduledStartDateTime": "2020-04-01T06:00:00.000Z",
+    "actualPublishDateTime": null,
+    "periodStartDateTime": "2020-04-01T06:00:00.000Z",
+    "periodEndDateTime": "2020-04-30T06:00:00.000Z",
+    "scheduledReturnDateTime": "2020-04-20T06:00:00.000Z",
+    "scheduledEndDateTime": "2020-04-30T06:00:00.000Z",
+    "executedBy": null,
+    "state": "SCHEDULED",
+    "caseTypes": [
+      {
+        "actionPlanId": "4772718c-c1bb-4509-94f3-dca1177ca580",
+        "sampleUnitType": "B"
+      },
+      {
+        "actionPlanId": "748704c6-0445-41eb-9b78-1b334f81b2ad",
+        "sampleUnitType": "BI"
+      }
+    ],
+    "exerciseRef": "2004",
+    "userDescription": "April 2020",
+    "created": "2020-06-16T10:15:47.985Z",
+    "updated": "2020-06-16T10:18:58.839Z",
+    "deleted": null,
+    "validationErrors": null,
+    "events": [
+      {
+        "id": "573e60ce-4041-4cd6-8d09-9048457db0af",
+        "collectionExerciseId": "aec41b04-a177-4994-b385-a16136242d05",
+        "tag": "mps",
+        "timestamp": "2020-04-01T06:00:00.000Z"
+      },
+      {
+        "id": "bfd78cbe-5144-4f9d-9e6e-45a733ca244e",
+        "collectionExerciseId": "aec41b04-a177-4994-b385-a16136242d05",
+        "tag": "go_live",
+        "timestamp": "2020-04-02T06:00:00.000Z"
+      },
+      {
+        "id": "1092eca6-3ff3-41a6-8557-ccd6d539262e",
+        "collectionExerciseId": "aec41b04-a177-4994-b385-a16136242d05",
+        "tag": "return_by",
+        "timestamp": "2020-04-20T06:00:00.000Z"
+      },
+      {
+        "id": "dca2e26c-6d0e-4ea5-a55d-a80ea00f636c",
+        "collectionExerciseId": "aec41b04-a177-4994-b385-a16136242d05",
+        "tag": "reminder",
+        "timestamp": "2020-04-21T06:00:00.000Z"
+      },
+      {
+        "id": "494323a1-1832-4db0-b52f-5c75303458d5",
+        "collectionExerciseId": "aec41b04-a177-4994-b385-a16136242d05",
+        "tag": "exercise_end",
+        "timestamp": "2020-04-30T06:00:00.000Z"
+      },
+      {
+        "id": "598b2487-5ffe-4508-b43a-4999cccb3006",
+        "collectionExerciseId": "aec41b04-a177-4994-b385-a16136242d05",
+        "tag": "ref_period_start",
+        "timestamp": "2020-03-01T06:00:00.000Z"
+      },
+      {
+        "id": "a73570e1-70c9-4427-9886-a643140d3996",
+        "collectionExerciseId": "aec41b04-a177-4994-b385-a16136242d05",
+        "tag": "ref_period_end",
+        "timestamp": "2020-03-30T06:00:00.000Z"
+      }
+    ]
+  },
+  {
+    "id": "aec41b04-a177-4994-b385-a16136242d05",
+    "surveyId": "0b1f8376-28e9-4884-bea5-acf9d709464e",
+    "name": null,
+    "actualExecutionDateTime": null,
+    "scheduledExecutionDateTime": "2020-04-01T06:00:00.000Z",
+    "scheduledStartDateTime": "2020-04-01T06:00:00.000Z",
+    "actualPublishDateTime": null,
+    "periodStartDateTime": "2020-04-01T06:00:00.000Z",
+    "periodEndDateTime": "2020-04-30T06:00:00.000Z",
+    "scheduledReturnDateTime": "2020-04-20T06:00:00.000Z",
+    "scheduledEndDateTime": "2020-04-30T06:00:00.000Z",
+    "executedBy": null,
+    "state": "SCHEDULED",
+    "caseTypes": [
+      {
+        "actionPlanId": "4772718c-c1bb-4509-94f3-dca1177ca580",
+        "sampleUnitType": "B"
+      },
+      {
+        "actionPlanId": "748704c6-0445-41eb-9b78-1b334f81b2ad",
+        "sampleUnitType": "BI"
+      }
+    ],
+    "exerciseRef": "20042004",
+    "userDescription": "Duplicate April 2020",
+    "created": "2020-06-16T10:15:47.985Z",
+    "updated": "2020-06-16T10:18:58.839Z",
+    "deleted": null,
+    "validationErrors": null,
+    "events": [
+      {
+        "id": "573e60ce-4041-4cd6-8d09-9048457db0af",
+        "collectionExerciseId": "aec41b04-a177-4994-b385-a16136242d05",
+        "tag": "mps",
+        "timestamp": "2020-04-01T06:00:00.000Z"
+      },
+      {
+        "id": "bfd78cbe-5144-4f9d-9e6e-45a733ca244e",
+        "collectionExerciseId": "aec41b04-a177-4994-b385-a16136242d05",
+        "tag": "go_live",
+        "timestamp": "2020-04-02T06:00:00.000Z"
+      },
+      {
+        "id": "1092eca6-3ff3-41a6-8557-ccd6d539262e",
+        "collectionExerciseId": "aec41b04-a177-4994-b385-a16136242d05",
+        "tag": "return_by",
+        "timestamp": "2020-04-20T06:00:00.000Z"
+      },
+      {
+        "id": "dca2e26c-6d0e-4ea5-a55d-a80ea00f636c",
+        "collectionExerciseId": "aec41b04-a177-4994-b385-a16136242d05",
+        "tag": "reminder",
+        "timestamp": "2020-04-21T06:00:00.000Z"
+      },
+      {
+        "id": "494323a1-1832-4db0-b52f-5c75303458d5",
+        "collectionExerciseId": "aec41b04-a177-4994-b385-a16136242d05",
+        "tag": "exercise_end",
+        "timestamp": "2020-04-30T06:00:00.000Z"
+      },
+      {
+        "id": "598b2487-5ffe-4508-b43a-4999cccb3006",
+        "collectionExerciseId": "aec41b04-a177-4994-b385-a16136242d05",
+        "tag": "ref_period_start",
+        "timestamp": "2020-03-01T06:00:00.000Z"
+      },
+      {
+        "id": "a73570e1-70c9-4427-9886-a643140d3996",
+        "collectionExerciseId": "aec41b04-a177-4994-b385-a16136242d05",
+        "tag": "ref_period_end",
+        "timestamp": "2020-03-30T06:00:00.000Z"
+      }
+    ]
+  }
+]

@@ -37,6 +37,7 @@ class Config(object):
 
     COLLECTION_EXERCISE_URL = os.getenv('COLLECTION_EXERCISE_URL')
     COLLECTION_INSTRUMENT_URL = os.getenv('COLLECTION_INSTRUMENT_URL')
+    DASHBOARD_URL = os.getenv('DASHBOARD_URL')
     IAC_URL = os.getenv('IAC_URL')
 
     SECURE_MESSAGE_URL = os.getenv('SECURE_MESSAGE_URL')
@@ -93,6 +94,7 @@ class DevelopmentConfig(Config):
     CASE_URL = os.getenv('CASE_URL', 'http://localhost:8171')
     COLLECTION_EXERCISE_URL = os.getenv('COLLECTION_EXERCISE_URL', 'http://localhost:8145')
     COLLECTION_INSTRUMENT_URL = os.getenv('COLLECTION_INSTRUMENT_URL', 'http://localhost:8002')
+    DASHBOARD_URL = os.getenv('DASHBOARD_URL', 'http://localhost:8078')
     IAC_URL = os.getenv('IAC_URL', 'http://localhost:8121')
 
     SECURE_MESSAGE_URL = os.getenv('SECURE_MESSAGE_URL', 'http://localhost:5050')
