@@ -46,6 +46,7 @@ def get_overview_survey():
 @login_required
 def post_overview_survey():
     survey_shortname = request.form.get('overview-survey-choice')
+    logger.info("Adding overview survey choice to session", survey_shortname=survey_shortname)
     session['overview_survey'] = survey_shortname
     return redirect(url_for('home_bp.home'))
 
@@ -78,6 +79,9 @@ def format_data_for_template(collection_exercise, survey):
     for event in possible_events_list:
         formatted_data[event] = events.get(event, 'N/A')
 
+    logger.info("Successfully formatted data for overview page",
+                collection_exercise=collection_exercise['id'],
+                survey=survey['id'])
     return formatted_data
 
 
@@ -99,11 +103,13 @@ def get_sample_data(collection_exercise, survey):
     try:
         dashboard_data = collection_exercise_controllers.download_dashboard_data(
             collection_exercise['id'], survey['id'])['report']
+        logger.info("Successfully retrieved sample data. Now formatting data for overview page",
+                    collection_exercise_id=collection_exercise.get('id'))
         sample_data = {
-            'completed': dashboard_data.get('completed', 'N/A'),
-            'sample_size': dashboard_data.get('sampleSize', 'N/A'),
-            'not_started': dashboard_data.get('notStarted', 'N/A'),
-            'in_progress': dashboard_data.get('inProgress', 'N/A'),
+            'completed': str(dashboard_data.get('completed', 'N/A')),
+            'sample_size': str(dashboard_data.get('sampleSize', 'N/A')),
+            'not_started': str(dashboard_data.get('notStarted', 'N/A')),
+            'in_progress': str(dashboard_data.get('inProgress', 'N/A')),
             'dashboard_url': dashboard_url
         }
     except (ApiError, ConnectionError, HTTPError, KeyError):
