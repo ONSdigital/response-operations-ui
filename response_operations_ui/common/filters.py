@@ -65,5 +65,7 @@ def get_current_collection_exercise(collection_exercises):  # noqa: C901
         return {}
 
     logger.info("About to return most current collection exercise",
-                collection_exercise_id=closest_collection_exercise['id'])
+                collection_exercise_id=closest_collection_exercise['id'],
+                exercise_ref=closest_collection_exercise.get('exerciseRef'),
+                user_description=closest_collection_exercise.get('userDescription'))
     return closest_collection_exercise

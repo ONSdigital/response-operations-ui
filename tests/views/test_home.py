@@ -47,11 +47,11 @@ class TestSignIn(unittest.TestCase):
         collection_exercise = self.load_file(file_paths)
 
         expected_url = 'http://localhost:8078/dashboard/collection-exercise/aec41b04-a177-4994-b385-a16136242d05'
-        expected_output = {'completed': 700,
+        expected_output = {'completed': '700',
                            'dashboard_url': expected_url,
-                           'in_progress': 600,
-                           'not_started': 100,
-                           'sample_size': 1000}
+                           'in_progress': '600',
+                           'not_started': '100',
+                           'sample_size': '1000'}
         with self.app.app_context():
             output = get_sample_data(collection_exercise, surveys_json)
             self.assertEqual(output, expected_output)
