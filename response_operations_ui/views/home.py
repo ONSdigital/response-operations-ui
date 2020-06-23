@@ -8,7 +8,8 @@ from requests.exceptions import ConnectionError, HTTPError
 from structlog import wrap_logger
 
 from response_operations_ui.controllers import collection_exercise_controllers, survey_controllers
-from response_operations_ui.common.filters import get_current_collection_exercise
+from response_operations_ui.common.dates import format_datetime_to_string
+from response_operations_ui.common.filters import get_current_collection_exercise, get_nearest_future_key_date
 from response_operations_ui.common.mappers import convert_event_list_to_dictionary
 from response_operations_ui.exceptions.exceptions import ApiError
 
@@ -55,29 +56,35 @@ def format_data_for_template(collection_exercise, survey):
     """
     Takes various sets of data and formats them into an easy format for the template to display
 
-    :param collection_exercise: A dictionary containing information on the most recent collection exercise
+    :param collection_exercise: A dictionary containing information a collection exercise
     :type collection_exercise: dict
-    :param survey: A dictionary containing information on the survey
+    :param survey: A dictionary containing information on a survey
     :type survey: dict
     :return: A dictionary containing all the data needed for the overview template.
     :rtype: dict
     """
     formatted_data = get_sample_data(collection_exercise, survey)
 
+    next_key_date = get_nearest_future_key_date(collection_exercise.get('events'))
+    key_date_timestamp = format_datetime_to_string(next_key_date['timestamp']) if next_key_date else 'N/A'
+
+    formatted_data['next_key_date_tag'] = next_key_date['tag'] if next_key_date else 'N/A'
+    formatted_data['next_key_date_timestamp'] = key_date_timestamp
+
     formatted_data['exerciseRef'] = collection_exercise.get('exerciseRef', 'N/A')
     formatted_data['userDescription'] = collection_exercise.get('userDescription', 'N/A')
-    formatted_data["survey_id"] = survey['surveyRef']
+    formatted_data['survey_id'] = survey['surveyRef']
     formatted_data['shortName'] = survey['shortName']
     formatted_data['longName'] = survey['longName']
 
     # We can't be certain of what events are present so we need to add the ones that are present and put a sensible
-    # blank value to the ones that are absent. 'period_start_date', 'period_end_date' and 'employment_date' are
+    # blank value to the ones that are absent. 'ref_period_start', 'ref_period_end' and 'employment' are
     # returned to us as events, even though they're really metadata for the collection exercise...
     events = convert_event_list_to_dictionary(collection_exercise.get('events'))
     possible_events_list = ['mps', 'go_live', 'return_by', 'exercise_end',
-                            'period_start_date', 'period_end_date', 'employment_date']
+                            'ref_period_start', 'ref_period_end', 'employment']
     for event in possible_events_list:
-        formatted_data[event] = events.get(event, 'N/A')
+        formatted_data[event] = format_datetime_to_string(events.get(event), '%A %d %b %Y %H:%M')
 
     logger.info("Successfully formatted data for overview page",
                 collection_exercise=collection_exercise['id'],
@@ -104,16 +111,23 @@ def get_sample_data(collection_exercise, survey):
         dashboard_data = collection_exercise_controllers.download_dashboard_data(
             collection_exercise['id'], survey['id'])['report']
         logger.info("Successfully retrieved sample data. Now formatting data for overview page",
-                    collection_exercise_id=collection_exercise.get('id'))
+                    collection_exercise=collection_exercise.get('id'))
+
+        if dashboard_data.get('completed') and dashboard_data.get('sampleSize'):
+            completed_percent = round((dashboard_data.get('completed') / dashboard_data.get('sampleSize')) * 100, 1)
+            completed_text = f"{dashboard_data.get('completed')} ({completed_percent}%)"
+        else:
+            completed_text = 'N/A'
+
         sample_data = {
-            'completed': str(dashboard_data.get('completed', 'N/A')),
+            'completed': completed_text,
             'sample_size': str(dashboard_data.get('sampleSize', 'N/A')),
             'not_started': str(dashboard_data.get('notStarted', 'N/A')),
             'in_progress': str(dashboard_data.get('inProgress', 'N/A')),
             'dashboard_url': dashboard_url
         }
     except (ApiError, ConnectionError, HTTPError, KeyError):
-        logger.error("Failed to get dashboard data", collection_exercise_id=collection_exercise.get('id'))
+        logger.error("Failed to get dashboard data", collection_exercise=collection_exercise.get('id'))
         sample_data = {
             'completed': 'N/A',
             'sample_size': 'N/A',

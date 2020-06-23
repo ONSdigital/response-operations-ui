@@ -2,7 +2,7 @@ import unittest
 from datetime import datetime, timezone, date
 from unittest.mock import patch
 
-from response_operations_ui.common.dates import get_formatted_date, localise_datetime
+from response_operations_ui.common.dates import get_formatted_date, localise_datetime, format_datetime_to_string
 
 
 class TestDates(unittest.TestCase):
@@ -48,3 +48,22 @@ class TestDates(unittest.TestCase):
         returned_datetime = localise_datetime(datetime_parsed)
         # Check date returned is in BST format
         self.assertEqual(datetime.strftime(returned_datetime, '%Y-%m-%d %H:%M:%S'), '2018-02-13 14:12:00')
+
+    def test_format_datetime_to_string(self):
+        tests = [
+            ['2020-06-22T06:00:00.000Z', 'Monday 22 Jun 2020'],
+            ['2020-01-01T15:30:00.000Z', 'Wednesday 01 Jan 2020'],
+            ['2020-06-22T06:00:00.000Z', '%A %d %b %Y %H:%M', 'Monday 22 Jun 2020 06:00'],
+            ['2020-03-16T15:59:00.000Z', '%A %d %b %Y %H:%M', 'Monday 16 Mar 2020 15:59'],
+            ['bad date', 'N/A'],
+            [None, 'N/A'],
+        ]
+        for test in tests:
+            if len(test) == 3:
+                output = format_datetime_to_string(test[0], test[1])
+                expected_output = test[2]
+            else:
+                output = format_datetime_to_string(test[0])
+                expected_output = test[1]
+
+            self.assertEqual(output, expected_output)
