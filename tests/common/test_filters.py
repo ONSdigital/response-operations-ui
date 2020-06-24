@@ -11,7 +11,7 @@ class TestFilters(unittest.TestCase):
     def test_get_nearest_future_key_date_empty_list(self):
         """Tests a  survey with no collection exercises will return an empty list.  This can occur when only the survey
         has been created but no collection exercises created for it yet."""
-        function_input = {}
+        function_input = []
         expected_output = {}
         output = get_nearest_future_key_date(function_input)
         self.assertEqual(output, expected_output)
