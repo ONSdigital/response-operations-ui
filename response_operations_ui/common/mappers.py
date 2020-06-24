@@ -85,9 +85,9 @@ def get_display_text_for_event(event):
     :return: A version of that event that can be displayed to the user
     """
     mapping = {
-        'mps': "MPS (Main print selection)",
-        'go_live': "Go live",
-        'return_by': "Return by",
+        'mps': 'MPS (Main print selection)',
+        'go_live': 'Go live',
+        'return_by': 'Return by',
         'reminder': 'First reminder',
         'reminder2': 'Second reminder',
         'reminder3': 'Third reminder',
