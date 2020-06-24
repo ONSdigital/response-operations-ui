@@ -37,8 +37,10 @@ def convert_event_list_to_dictionary(events):
     entire list to find the one you want.
 
     :param events: A list of events for a collection exercise
+    :type events: list
     :raises KeyError: If the 'tag' or 'timestamp' keys aren't present in the list of dicts
     :return: A dictionary of events where the name of the events are the keys and the values are the timestamps
+    :rtype: dict
     """
     if events is None:
         return {}
@@ -71,3 +73,29 @@ def map_ce_response_status(ce_response_status):
 
 def map_region(region):
     return "NI" if region == "YY" else "GB"
+
+
+def get_display_text_for_event(event):
+    """
+    Takes an event from a collection exercise and returns a version of it that can be displayed to the user.
+    If the string isn't found in the map, it just returns the string the function was given.
+
+    :param event: A name of an event from a collection exercise
+    :type event: str
+    :return: A version of that event that can be displayed to the user
+    """
+    mapping = {
+        'mps': 'MPS (Main print selection)',
+        'go_live': 'Go live',
+        'return_by': 'Return by',
+        'reminder': 'First reminder',
+        'reminder2': 'Second reminder',
+        'reminder3': 'Third reminder',
+        'nudge_email_0': 'First nudge email',
+        'nudge_email_1': 'Second nudge email',
+        'nudge_email_2': 'Third nudge email',
+        'nudge_email_3': 'Fourth nudge email',
+        'nudge_email_4': 'Fifth nudge email',
+        'exercise_end': 'Exercise end',
+    }
+    return mapping.get(event, event)

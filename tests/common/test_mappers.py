@@ -1,7 +1,7 @@
 import json
 import unittest
 
-from response_operations_ui.common.mappers import convert_event_list_to_dictionary
+from response_operations_ui.common.mappers import convert_event_list_to_dictionary, get_display_text_for_event
 
 
 class TestMappers(unittest.TestCase):
@@ -45,6 +45,22 @@ class TestMappers(unittest.TestCase):
         ]
         with self.assertRaises(KeyError):
             convert_event_list_to_dictionary(function_input)
+
+    def test_get_display_text_for_event(self):
+        tests = [
+            ['mps', 'MPS (Main print selection)'],
+            ['go_live', 'Go live'],
+            ['return_by', 'Return by'],
+            ['reminder', 'First reminder'],
+            ['fake_event', 'fake_event'],
+            ['', ''],
+            [None, None],
+            [1, 1]
+        ]
+        for test in tests:
+            output = get_display_text_for_event(test[0])
+            expected_output = test[1]
+            self.assertEqual(output, expected_output)
 
     @staticmethod
     def load_file(file_paths):

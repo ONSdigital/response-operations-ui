@@ -69,3 +69,40 @@ def get_current_collection_exercise(collection_exercises):  # noqa: C901
                 exercise_ref=closest_collection_exercise.get('exerciseRef'),
                 user_description=closest_collection_exercise.get('userDescription'))
     return closest_collection_exercise
+
+
+def get_nearest_future_key_date(events):
+    """
+    Takes a list of events (key dates) from a collection exercise and returns the nearest future event.
+
+    :param events: A list of dictionaries representing events for a collection exercise
+    :type events: list
+    :return: The dictionary with the event in the future closest to today
+    :rtype: dict
+    """
+    if not events:
+        return {}
+
+    # These are returned as events in a collection exercise, but aren't key dates.
+    excluded_events = ['ref_period_start', 'ref_period_end', 'employment']
+    now = datetime.now(timezone.utc)
+    closest_time_delta = 0
+    closest_key_date = {}
+
+    for event in events:
+        if event['tag'] in excluded_events:
+            continue
+        timestamp = event.get('timestamp')
+        if timestamp is None:
+            continue
+        delta = (parse_date(timestamp) - now).total_seconds()
+        # A delta greater than 0 indicates a future date
+        if delta > 0:
+            # If the delta is 0 (it's the first one) or if this one is smaller then the closest one we've found so far
+            # (smaller delta indicates a date closer to today) then we say this is the new nearest event
+            if closest_time_delta == 0 or delta < closest_time_delta:
+                closest_time_delta = delta
+                closest_key_date = event
+
+    # We either found one, or there were none in the future, so we return an empty dict.
+    return closest_key_date
