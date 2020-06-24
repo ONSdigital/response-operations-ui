@@ -10,7 +10,7 @@ from structlog import wrap_logger
 from response_operations_ui.controllers import collection_exercise_controllers, survey_controllers
 from response_operations_ui.common.dates import format_datetime_to_string
 from response_operations_ui.common.filters import get_current_collection_exercise, get_nearest_future_key_date
-from response_operations_ui.common.mappers import convert_event_list_to_dictionary
+from response_operations_ui.common.mappers import convert_event_list_to_dictionary, get_display_text_for_event
 from response_operations_ui.exceptions.exceptions import ApiError
 
 logger = wrap_logger(logging.getLogger(__name__))
@@ -67,11 +67,15 @@ def format_data_for_template(collection_exercise, survey):
     formatted_data = get_sample_data(collection_exercise, survey)
 
     next_key_date = get_nearest_future_key_date(collection_exercise.get('events'))
-    key_date_timestamp = format_datetime_to_string(next_key_date['timestamp']) if next_key_date else 'N/A'
+    if next_key_date:
+        key_date_tag = get_display_text_for_event(next_key_date['tag'])
+        key_date_timestamp = format_datetime_to_string(next_key_date['timestamp'])
+    else:
+        key_date_tag = 'N/A'
+        key_date_timestamp = 'N/A'
 
-    formatted_data['next_key_date_tag'] = next_key_date['tag'] if next_key_date else 'N/A'
+    formatted_data['next_key_date_tag'] = key_date_tag
     formatted_data['next_key_date_timestamp'] = key_date_timestamp
-
     formatted_data['exerciseRef'] = collection_exercise.get('exerciseRef', 'N/A')
     formatted_data['userDescription'] = collection_exercise.get('userDescription', 'N/A')
     formatted_data['survey_id'] = survey['surveyRef']
