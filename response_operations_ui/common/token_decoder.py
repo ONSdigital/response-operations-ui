@@ -29,6 +29,7 @@ def decode_access_token(access_token):
 
 def generate_email_token(email):
     """Creates a token based on a provided email address
+
     :param email: email address of the respondent
     :return: A serialised string containing the email address
     """
@@ -47,6 +48,7 @@ def generate_email_token(email):
 
 def decode_email_token(token, duration=None):
     """Decodes a token and returns the result
+
     :param token: A serialised string
     :param duration: The amount of time in seconds the token is valid for.  If the token is older
     then this number, an exception will be thrown. Default is None.
