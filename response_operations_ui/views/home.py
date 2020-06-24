@@ -54,7 +54,8 @@ def post_overview_survey():
 
 def format_data_for_template(collection_exercise, survey):
     """
-    Takes various sets of data and formats them into an easy format for the template to display
+    Takes a collection exercise and a survey and formats them into an format the overview template can use to display
+    the data.
 
     :param collection_exercise: A dictionary containing information a collection exercise
     :type collection_exercise: dict

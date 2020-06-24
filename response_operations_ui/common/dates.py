@@ -57,7 +57,7 @@ def format_datetime_to_string(timestamp, date_format='%A %d %b %Y'):
     but this will take any valid strftime string and convert it.
 
     :param timestamp: An iso8601 datetime string
-    :type  timestamp: str
+    :type timestamp: str
     :param date_format: A strftime string representing the format the datetime will be converted to.
     :type date_format: str
     :return: A string representation of the datetime object based on either the default or provided strftime format.  If
