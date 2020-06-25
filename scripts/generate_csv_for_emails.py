@@ -16,6 +16,10 @@ survey_mapping = {
     "qofdi": {
         "phone_number": "0300 1234 931",
         "survey_name": "Quarterly Outward Foreign Direct Investment Survey"
+    },
+    "qitis": {
+        "phone_number": "0300 1234 930",
+        "survey_name": "Quarterly Survey of International Trade in Services"
     }
 }
 
