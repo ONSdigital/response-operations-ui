@@ -116,23 +116,27 @@ def get_sample_data(collection_exercise, survey):
         dashboard_data = collection_exercise_controllers.download_dashboard_data(
             collection_exercise['id'], survey['id'])['report']
         logger.info("Successfully retrieved sample data. Now formatting data for overview page",
-                    collection_exercise=collection_exercise.get('id'))
+                    collection_exercise=collection_exercise.get('id'), data=dashboard_data)
 
-        if dashboard_data.get('completed') and dashboard_data.get('sampleSize'):
-            completed_percent = round((dashboard_data.get('completed') / dashboard_data.get('sampleSize')) * 100, 1)
-            completed_text = f"{dashboard_data.get('completed')} ({completed_percent}%)"
-        else:
-            completed_text = 'N/A'
+        # Note:  With the way the dashboard endpoint is written, we always get the same set of keys in the data,
+        # and those keys are always populated with a number.  This code is written with that assumption in mind.
+        if dashboard_data['sampleSize'] > 0:
+            completed_percent = round((dashboard_data['completed'] / dashboard_data['sampleSize']) * 100, 1)
+            completed_text = f"{dashboard_data['completed']} ({completed_percent}%)"
+        elif dashboard_data['sampleSize'] == 0:
+            completed_text = '0 (0.0%)'
 
         sample_data = {
             'completed': completed_text,
-            'sample_size': str(dashboard_data.get('sampleSize', 'N/A')),
-            'not_started': str(dashboard_data.get('notStarted', 'N/A')),
-            'in_progress': str(dashboard_data.get('inProgress', 'N/A')),
+            'sample_size': str(dashboard_data['sampleSize']),
+            'not_started': str(dashboard_data['notStarted']),
+            'in_progress': str(dashboard_data['inProgress']),
             'dashboard_url': dashboard_url
         }
     except (ApiError, ConnectionError, HTTPError, KeyError):
-        logger.error("Failed to get dashboard data", collection_exercise=collection_exercise.get('id'))
+        logger.error("Failed to get dashboard data",
+                     collection_exercise=collection_exercise.get('id'),
+                     survey_id=survey.get('id'))
         sample_data = {
             'completed': 'N/A',
             'sample_size': 'N/A',
