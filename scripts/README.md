@@ -8,8 +8,7 @@ This script is used to take input from the following 2 files:
  addresses we're sending to)
 
 In addition, the script takes a number of arguments:
-- Survey name.  Currently only 'construction' is valid but more will be in the future.  This name links to a mapping
-with the proper survey name and phone number for the survey.
+- Survey name.  This relates to a map in the script that contains the survey name and phone number.
 - Respondent period (Takes the form of "<Month> <Year>" e.g., "April 2020")
 - Return by date (Takes the form of "<Day> <Month> <Year>" e.g., "07 May 2020")
 
