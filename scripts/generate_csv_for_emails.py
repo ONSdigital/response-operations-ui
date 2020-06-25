@@ -38,8 +38,8 @@ def process_file(params):
                 print(f"ru_ref [{row[0].value}] is present in the input file but absent in the printfile.  Skipping.")
                 continue
 
-            email_address = row[50].value
-            ru_name = row[29].value
+            ru_name = row[1].value
+            email_address = row[2].value
 
             if email_address:
                 if "@" in email_address:
