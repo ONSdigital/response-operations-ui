@@ -78,11 +78,11 @@ class TestSignIn(unittest.TestCase):
             self.assertEqual(output, expected_output)
 
     @requests_mock.mock()
-    def test_get_sample_data_missing_completed(self, mock_request):
-        """Tests getting sample data when one of the fields in the response is missing.  This isn't likely to happen in
-        practice but we should be able to handle malformed data sensibly"""
+    def test_get_sample_data_zero_sample_size(self, mock_request):
+        """Tests getting sample data and the sample size is 0.  This should display the hardcoded 0 for completed.
+        We hardcode it because if we tried to divide by 0 then we'd get an exception."""
         copied_dashboard_response = deepcopy(reporting_json)
-        del copied_dashboard_response['report']['completed']
+        copied_dashboard_response['report']['sampleSize'] = 0
         mock_request.get(url_dashboard, json=copied_dashboard_response, status_code=200)
 
         file_paths = ['test_data/closest_past_collection_exercise.json',
@@ -90,11 +90,11 @@ class TestSignIn(unittest.TestCase):
         collection_exercise = self.load_file(file_paths)
 
         expected_url = 'http://localhost:8078/dashboard/collection-exercise/aec41b04-a177-4994-b385-a16136242d05'
-        expected_output = {'completed': 'N/A',
+        expected_output = {'completed': '0 (0.0%)',
                            'dashboard_url': expected_url,
                            'in_progress': '600',
                            'not_started': '100',
-                           'sample_size': '1000'}
+                           'sample_size': '0'}
         with self.app.app_context():
             output = get_sample_data(collection_exercise, surveys_json)
             self.assertEqual(output, expected_output)
