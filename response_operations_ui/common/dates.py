@@ -65,6 +65,7 @@ def format_datetime_to_string(timestamp, date_format='%A %d %b %Y'):
     """
     try:
         datetime_obj = parse_date(timestamp)
+        datetime_obj = localise_datetime(datetime_obj)
         return datetime_obj.strftime(date_format)
     except ParseError:
         return 'N/A'
