@@ -115,6 +115,7 @@ class DevelopmentConfig(Config):
     # 6 weeks in seconds
     CREATE_ACCOUNT_EMAIL_TOKEN_EXPIRY = int(os.getenv('CREATE_ACCOUNT_EMAIL_TOKEN_EXPIRY', '3628800'))
     CREATE_ACCOUNT_ADMIN_PASSWORD = os.getenv('CREATE_ACCOUNT_ADMIN_PASSWORD', 'secret')
+    WTF_CSRF_ENABLED = strtobool(os.getenv('WTF_CSRF_ENABLED', 'False'))
 
 
 class TestingConfig(DevelopmentConfig):
