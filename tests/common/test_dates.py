@@ -60,10 +60,24 @@ class TestDates(unittest.TestCase):
         ]
         for test in tests:
             if len(test) == 3:
-                output = format_datetime_to_string(test[0], test[1])
+                output = format_datetime_to_string(test[0], test[1], False)
                 expected_output = test[2]
             else:
-                output = format_datetime_to_string(test[0])
+                output = format_datetime_to_string(test[0], localise=True)
                 expected_output = test[1]
 
             self.assertEqual(output, expected_output)
+
+    def test_format_datetime_to_string_localised_bst(self):
+        datetime = '2020-06-22T06:00:00.000Z'
+        dateformat = '%A %d %b %Y %H:%M'
+        expected = 'Monday 22 Jun 2020 07:00'
+        output = format_datetime_to_string(datetime, dateformat, True)
+        self.assertEqual(output, expected)
+
+    def test_format_datetime_to_string_localised_gmt(self):
+        datetime = '2020-01-22T06:00:00.000Z'
+        dateformat = '%A %d %b %Y %H:%M'
+        expected = 'Wednesday 22 Jan 2020 06:00'
+        output = format_datetime_to_string(datetime, dateformat, True)
+        self.assertEqual(output, expected)

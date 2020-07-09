@@ -50,13 +50,14 @@ def localise_datetime(datetime_parsed):
     return datetime_parsed.replace(tzinfo=tz.gettz('UTC')).astimezone(tz.gettz('Europe/London'))
 
 
-def format_datetime_to_string(timestamp, date_format='%A %d %b %Y'):
+def format_datetime_to_string(timestamp, date_format='%A %d %b %Y', localise=True):
     """
     Converts a iso8601 datetime string into a user friendly datetime string.
     By default this will turn the datetime representation of '2020-06-22T06:00:00.000Z' into 'Monday 22 Jun 2020'
     but this will take any valid strftime string and convert it.
 
     :param timestamp: An iso8601 datetime string
+    :param localise: adjust for any daylight savings, defaults to true
     :type timestamp: str
     :param date_format: A strftime string representing the format the datetime will be converted to.
     :type date_format: str
@@ -65,7 +66,8 @@ def format_datetime_to_string(timestamp, date_format='%A %d %b %Y'):
     """
     try:
         datetime_obj = parse_date(timestamp)
-        datetime_obj = localise_datetime(datetime_obj)
+        if localise:
+            datetime_obj = localise_datetime(datetime_obj)
         return datetime_obj.strftime(date_format)
     except ParseError:
         return 'N/A'
