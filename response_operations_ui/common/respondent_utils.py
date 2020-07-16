@@ -44,17 +44,17 @@ def filter_respondents(respondents):
     return filtered_respondents
 
 
-def edit_contact(respondent_id):
+def edit_contact(respondent_id, ru_ref='NOT DEFINED'):
     edit_contact_details_form = EditContactDetailsForm(form=request.form)
     if not edit_contact_details_form.validate():
         contact_details = party_controller.get_respondent_by_party_id(respondent_id)
         return render_template('edit-contact-details.html', form=edit_contact_details_form, tab='respondents',
-                               respondent_id=respondent_id, errors=edit_contact_details_form.errors,
+                               ru_ref=ru_ref, respondent_id=respondent_id, errors=edit_contact_details_form.errors,
                                respondent_details=contact_details)
 
     logger.info('Updating respondent details', respondent_id=respondent_id)
     form = request.form
-    contact_details_changed = party_controller.update_contact_details(respondent_id, form)
+    contact_details_changed = party_controller.update_contact_details(respondent_id, form, ru_ref)
 
     if 'emailAddress' in contact_details_changed:
         flash(f'Contact details changed and verification email sent to {form.get("email")}')
