@@ -5,6 +5,7 @@ from flask import current_app as app
 from flask_login import login_required
 from flask_paginate import Pagination
 from structlog import wrap_logger
+
 from response_operations_ui.common.respondent_utils import filter_respondents
 from response_operations_ui.controllers import party_controller, reporting_units_controllers
 from response_operations_ui.forms import RespondentSearchForm, EditContactDetailsForm
@@ -139,7 +140,8 @@ def edit_contact_details(respondent_id):
     elif len(contact_details_changed) > 0:
         flash('Contact details changed')
     else:
-        flash('No updates were necessary') 
+        flash('No updates were necessary')
+
     return redirect(url_for('respondent_bp.respondent_details', respondent_id=respondent_id,
                             message_key='details_changed'))
 

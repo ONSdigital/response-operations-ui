@@ -179,6 +179,7 @@ def edit_contact_details(ru_ref, respondent_id):
 
     return redirect(url_for('reporting_unit_bp.view_reporting_unit', ru_ref=ru_ref))
 
+
 @reporting_unit_bp.route('/', methods=['GET'])
 @login_required
 def search_reporting_unit_home():
