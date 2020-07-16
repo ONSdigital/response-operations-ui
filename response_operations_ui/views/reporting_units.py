@@ -9,7 +9,6 @@ from iso8601 import parse_date
 from structlog import wrap_logger
 
 from response_operations_ui.common.mappers import map_ce_response_status, map_region
-from response_operations_ui.common.respondent_utils import edit_contact
 from response_operations_ui.controllers import case_controller, iac_controller, party_controller, \
     reporting_units_controllers
 from response_operations_ui.controllers.collection_exercise_controllers import \
@@ -158,10 +157,27 @@ def view_contact_details(ru_ref, respondent_id):
 
 @reporting_unit_bp.route('/<ru_ref>/edit-contact-details/<respondent_id>', methods=['POST'])
 @login_required
-def edit_contact_details(respondent_id, ru_ref):
-    edit_contact(respondent_id)
-    return redirect(url_for('reporting_unit_bp.view_reporting_unit', ru_ref=ru_ref))
+def edit_contact_details(ru_ref, respondent_id):
+    edit_contact_details_form = EditContactDetailsForm(form=request.form)
+    if not edit_contact_details_form.validate():
+        contact_details = party_controller.get_respondent_by_party_id(respondent_id)
 
+        return render_template('edit-contact-details.html', form=edit_contact_details_form, tab='reporting_units',
+                               ru_ref=ru_ref, respondent_id=respondent_id,
+                               errors=edit_contact_details_form.errors, respondent_details=contact_details)
+
+    logger.info('Updating respondent details', ru_ref=ru_ref, respondent_id=respondent_id)
+    form = request.form
+    contact_details_changed = party_controller.update_contact_details(respondent_id, form, ru_ref)
+
+    if 'emailAddress' in contact_details_changed:
+        flash(f'Contact details changed and verification email sent to {form.get("email")}')
+    elif len(contact_details_changed) > 0:
+        flash('Contact details changed')
+    else:
+        flash('No updates were necessary')
+
+    return redirect(url_for('reporting_unit_bp.view_reporting_unit', ru_ref=ru_ref))
 
 @reporting_unit_bp.route('/', methods=['GET'])
 @login_required
