@@ -82,9 +82,9 @@ class EditContactDetailsForm(FlaskForm):
                                                        Length(max=254,
                                                               message="First name must be fewer than 254 characters")])
     email = StringField('emailAddress', validators=[InputRequired("Enter an email address"),
-                                                   Email(message='The email address must be in the correct format'),
-                                                   Length(max=254,
-                                                          message='Your email must be less than 254 characters')])
+                                                    Email(message='The email address must be in the correct format'),
+                                                    Length(max=254,
+                                                           message='Your email must be less than 254 characters')])
     telephone = StringField('telephone', validators=[InputRequired(message="Enter a phone number")])
     hidden_email = HiddenField('hidden_email')
 
