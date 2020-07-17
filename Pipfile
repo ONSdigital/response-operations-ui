@@ -50,7 +50,7 @@ Werkzeug = "==0.16.1"
 et_xmlfile = "*"
 Jinja2 = "*"
 MarkupSafe = "*"
-WTForms = "==2.3.0"
+WTForms = "==2.3.1"
 
 [dev-packages]
 codecov = "*"
