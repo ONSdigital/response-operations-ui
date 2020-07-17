@@ -129,8 +129,9 @@ def create_app(config_name=None):
                                                     port=app.config['REDIS_PORT'],
                                                     db=app.config['REDIS_DB'])
 
+    app.jinja_environment.trim_blocks = True
     app.jinja_environment.lstrip_blocks = True
-
+    
     if app.config['DEBUG'] or os.environ.get('JINJA_RELOAD'):
         app.jinja_env.auto_reload = True
 
