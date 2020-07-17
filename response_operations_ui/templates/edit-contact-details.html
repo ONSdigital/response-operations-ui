@@ -115,7 +115,7 @@
           </label>
           {% if errors %}<p class="u-vh">Email Address is required</p>{% endif %}
           {{ form.email(class_="input input--text", required=required, id='email', maxlength=254) }}
-          <input type="hidden" name="hidden_email" value={{- respondent_details.emailAddress -}}>
+          <input type="hidden" name="hidden_email" value={{ respondent_details.emailAddress }}>
         </div>
 
         {% if failed_authentication %}

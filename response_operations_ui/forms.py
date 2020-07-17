@@ -6,6 +6,7 @@ from flask_wtf import FlaskForm
 from structlog import wrap_logger
 from wtforms import BooleanField, HiddenField, IntegerField, Label, PasswordField, SelectField, StringField, \
     SubmitField, TextAreaField
+from wtforms.fields.html5 import EmailField
 from wtforms.validators import DataRequired, Email, EqualTo, Length, InputRequired, ValidationError, Regexp
 
 from response_operations_ui.controllers import collection_exercise_controllers
@@ -81,10 +82,10 @@ class EditContactDetailsForm(FlaskForm):
     first_name = StringField('first_name', validators=[InputRequired(message="Enter a first name"),
                                                        Length(max=254,
                                                               message="First name must be fewer than 254 characters")])
-    email = StringField('emailAddress', validators=[InputRequired("Enter an email address"),
-                                                    Email(message='The email address must be in the correct format'),
-                                                    Length(max=254,
-                                                           message='Your email must be less than 254 characters')])
+    email = EmailField('emailAddress', validators=[InputRequired("Enter an email address"),
+                                                   Email(message='The email address must be in the correct format'),
+                                                   Length(max=254,
+                                                          message='Your email must be less than 254 characters')])
     telephone = StringField('telephone', validators=[InputRequired(message="Enter a phone number")])
     hidden_email = HiddenField('hidden_email')
 
