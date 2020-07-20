@@ -418,7 +418,7 @@ class TestMessage(ViewTestCase):
                   'survey': 'BRES 2017',
                   'survey_id': 'cb0711c3-0ac8-41d3-ae0e-567e5ea1ef87',
                   'ru_ref': '49900000280',
-                  'business': 'Bolts & Rachets Ltd',
+                  'business': 'Bolts and Rachets Ltd',
                   'msg_to_name': 'Jacky Turner',
                   'msg_to': 'f62dfda8-73b0-4e0e-97cf-1b06327a6712',
                   'business_id': 'c614e64e-d981-4eba-b016-d9822f09a4fb'}
@@ -428,7 +428,7 @@ class TestMessage(ViewTestCase):
 
         self.assertIn("BRES 2017".encode(), response.data)
         self.assertIn("49900000280".encode(), response.data)
-        self.assertIn("Bolts & Rachets Ltd".encode(), response.data)
+        self.assertIn("Bolts and Rachets Ltd".encode(), response.data)
         self.assertIn("Jacky Turner".encode(), response.data)
 
     def test_empty_subject_and_body_rejected(self):
