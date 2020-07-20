@@ -51,6 +51,7 @@ et_xmlfile = "*"
 Jinja2 = "*"
 MarkupSafe = "*"
 WTForms = "*"
+email_validator = "*"
 
 [dev-packages]
 codecov = "*"
