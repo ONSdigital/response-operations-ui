@@ -50,8 +50,7 @@ Werkzeug = "==0.16.1"
 et_xmlfile = "*"
 Jinja2 = "*"
 MarkupSafe = "*"
-WTForms = "*"
-email_validator = "*"
+WTForms = "==2.2.1"
 
 [dev-packages]
 codecov = "*"
