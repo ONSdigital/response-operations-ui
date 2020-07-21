@@ -1,60 +1,118 @@
-{% extends "layouts/spoke.html" %}
-{% block page_title %} Create collection exercise {% endblock %}
+{% extends "layouts/base.html" %}
+{% from "components/button/_macro.njk" import onsButton %}
+{% from "components/metadata/_macro.njk" import onsMetadata %}
+{% from "components/fieldset/_macro.njk" import onsFieldset %}
+{% from "components/input/_macro.njk" import onsInput %}
+
+{% set page_title = 'Create collection exercise'  %}
 {% block main %}
-<div role="main" id="main" class="page__main">
-  <div class="spoke__header">
-    <div class="spoke__header-title">
-      <h1 class="u-fs-xl">Create collection exercise</h1>
-    </div>
-  </div>
-  <div class="spoke__body">
-    <form action="" method="post">
-      {{ form.csrf_token }}
-      <div class="field u-mb-l">
-        <label class="label" for="Survey">
-          Survey:
-          <span class="u-vh">Current value: </span>
-          <span class="u-fs-r">
-                {{ survey_ref }} {{ short_name }}
-              </span>
-        </label>
-        <br>
+  <div class="grid grid--gutterless">
+    <div class="grid__col col-8@m">
       {% if errors %}
-      <div class="panel panel--simple panel--error u-mb-l">
-        <div class="panel__body" id="save-error">
+        {% call
+          onsPanel({
+              "type":"error",
+              "title": "This page has 1 error",
+              "classes": "u-mb-s",
+              "id": "save-error"
+          })
+        %}
           <h2 id='error-creating-ce-message' class="u-fs-r--b">Error creating collection exercise</h2>
           <p class="u-fs-r">{{ errors }}</p>
-        </div>
-      </div>
+        {% endcall %}
       {% endif %}
-        <div class="field u-mb-l">
-          <label class="label" for="period">
-            Period
-          </label>
-          {{ form.period(class_="input input--text", id='period', required=required, maxlength=6, value=period) }}
-        </div>
-        <div class="field u-mb-l">
-          <label class="label" for="user_description">
-            Period as shown to respondent
-          </label>
-          {{ form.user_description(class_="input input--text", id='user_description', required=required, maxlength=50, value=user_description) }}
-        </div>
-        <div class="field u-mb-l">
-          <span class="u-vh">Current value: </span>
-          </span>
-          {{ form.hidden_survey_id(value=survey_id, id='survey_id') }}
-        </div>
-        <div class="field u-mb-l">
-          <span class="u-vh">Current value: </span>
-          </span>
-          {{ form.hidden_survey_name(value=survey_name, id='survey_name') }}
-        </div>
+      <h1 class="u-fs-xl u-mt-m">Create collection exercise</h1>
+      <form action="" method="post">
+        {{ form.csrf_token }}
+        {{ 
+          onsMetadata({
+          "termCol": "1",
+          "descriptionCol": "11",
+          "itemsList": [
+            {
+                "term": "Survey:",
+                "descriptions": [ 
+                    {
+                        "description": survey_ref ~ ' ' ~ short_name
+                    }
+                ]
+            }                                                   
+          ]
+        }) 
+      }}
+
+          {%- call onsFieldset({
+              "legend": "Create collection exercise",
+              "legendClasses": "u-vh"
+              }) -%}
+              {{
+                  onsInput({
+                      "id": "period",
+                      "name": "period",
+                      "type": "text",
+                      "label": {
+                          "text": 'Period'
+                      },
+                      "maxLength": 6,
+                      "value": period,
+                      "attributes": {
+                          "required": true
+                      }
+                  })
+              }} 
+              {{
+                  onsInput({
+                      "id": "user_description",
+                      "name": "user_description",
+                      "type": "text",
+                      "label": {
+                          "text": 'Period as shown to respondent'
+                      },
+                      "maxLength": 50,
+                      "value": user_description,
+                      "attributes": {
+                          "required": true
+                      }
+                  })
+              }} 
+              {{
+                  onsInput({
+                      "id": "survey_id",
+                      "name": "hidden_survey_id",
+                      "type": "hidden",
+                      "value": survey_id,
+                      "label": {
+                          "text": 'Survey id',
+                          "classes": "u-vh"
+                      }
+                  })
+              }} 
+              {{
+                  onsInput({
+                      "id": "survey_name",
+                      "name": "hidden_survey_name",
+                      "type": "hidden",
+                      "value": survey_name,
+                      "label": {
+                          "text": 'Survey name',
+                          "classes": "u-vh"
+                      }
+                  })
+              }} 
+
+          {% endcall %}
+          {{
+              onsButton({
+                  "classes": "u-mb-s u-mt-l",
+                  "text": "Save",
+                  "id": "save-btn"
+              })
+          }}   
+
+          <p>
+            <a id="cancel-btn" href="{{ url_for('surveys_bp.view_survey', short_name=short_name, period=period) }}">Cancel</a>
+          </p>
+        </form>
       </div>
-      <button class="btn u-mb-s" id="save-btn">Save</button>
-      <div>
-        <a id="cancel-btn" href="{{ url_for('surveys_bp.view_survey', short_name=short_name, period=period) }}">Cancel</a>
-      </div>
-    </form>
   </div>
-</div>
 {% endblock %}

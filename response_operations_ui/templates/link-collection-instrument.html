@@ -1,13 +1,11 @@
-{% extends "layouts/spoke.html" %}
-{% block page_title %} Link collection instrument {% endblock %}
+{% extends "layouts/base.html" %}
+{% set page_title = ' Link collection instrument'  %}
 {% block main %}
 <div role="main" id="main" class="page__main">
     <div class="spoke__header">
     <div class="spoke__header-title">
         <h1 class="u-fs-xl">Link collection instrument</h1>
-    </div>
-    </div>
-    <div class="spoke__body" id="spoke__body">
+
     <form action="" method="post">
         {{ form.csrf_token }}
         {% if errors %}

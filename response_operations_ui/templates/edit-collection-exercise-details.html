@@ -1,13 +1,9 @@
-{% extends "layouts/spoke.html" %}
-{% block page_title %} Edit collection exercise details {% endblock %}
+{% extends "layouts/base.html" %}
+{% set page_title = ' Edit collection exercise details'  %}
 {% block main %}
-<div role="main" id="main" class="page__main">
-  <div class="spoke__header">
-    <div class="spoke__header-title">
+
       <h1 class="u-fs-xl">Edit collection exercise details</h1>
-    </div>
-  </div>
-  <div class="spoke__body">
+
     <form action="" method="post">
       {{ form.csrf_token }}
       <div class="field u-mb-l">
@@ -47,7 +43,5 @@
           <a id="cancel-btn" href="{{ url_for('collection_exercise_bp.view_collection_exercise', short_name=short_name, period=period) }}">Cancel</a>
         </div>
       </div>
-    </form>
-  </div>
-</div>
+</form>
 {% endblock %}
