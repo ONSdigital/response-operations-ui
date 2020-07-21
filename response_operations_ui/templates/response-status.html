@@ -1,95 +1,139 @@
 {% extends "layouts/base.html" %}
+{% from "components/button/_macro.njk" import onsButton %}
+{% from "components/metadata/_macro.njk" import onsMetadata %}
+{% from "components/fieldset/_macro.njk" import onsFieldset %}
+{% from "components/input/_macro.njk" import onsInput %}
+{% from "components/radios/_macro.njk" import onsRadios %}
 
-{% block page_title %} Change response status for {{ ru_name }} ({{ ru_ref }}) for survey {{ survey_id }} {{ survey_name }} period {{ ce_period }} {% endblock %}
+{% set page_title = 'Change response status for ' ~ ru_name ~ ' ('~ru_ref~') for survey ' ~  survey_id ~ ' ' ~ survey_name ~ ' period ' ~ ce_period %}
 {%- block main %}
-<div role="main" id="main" class="page__main">
-    <div class="spoke__header">
-        <div class="spoke__header-title">
+
+  <div class="grid grid--gutterless">
+      <div class="grid__col col-8@m">
             {% if is_complete %}
                 <h1 class="u-fs-xl">Response status</h1>
             {% else %}
                 <h1 class="u-fs-xl">Change response status</h1>
             {% endif %}
-        </div>
-    </div>
-      <div class="spoke__body" id="spoke__body">
-          <dl class="description-list description-list-8">
-              <dt class="">
-                  Reference:
-              </dt>
-              <dd class="">
-                  {{ ru_ref }}
-              </dd>
-              <dt class="">
-                  Name:
-              </dt>
-              <dd class="">
-                  {{ ru_name }}
-              </dd>
-              <dt class="">
-                  Trading as:
-              </dt>
-              <dd class="">
-                  {{ trading_as }} &#160;
-              </dd>
-              <dt class="">
-                  Survey:
-              </dt>
-              <dd class="" id="survey">
-                  {{ survey_ref }} &nbsp; {{survey_short_name}}
-              </dd>
-              <dt class="">
-                  Period:
-              </dt>
-              <dd class="" id="period">
-                  {{ ce_period }}
-              </dd>
-              <dt class="">
-                  Current status:
-              </dt>
-              <dd class="" id="current-status">
-                  {{ case_group_status }}
-              </dd>
-              {% if is_complete %}
-                <dt class="">
-                    Date and time:
-                </dt>
-                <dd class="" id="date-and-time">
-                    {{ completed_timestamp }}
-                </dd>
-              {%  endif %}
-              <dt>
-                  Respondent:
-              </dt>
-              <dd id="completed-respondent">
-                  {{ completed_respondent }}
-              </dd>
-          </dl>
+          {{ 
+              onsMetadata({
+              "termCol": "3",
+              "descriptionCol": "9",
+              "itemsList": [
+                  {
+                      "term": "Reference:",
+                      "descriptions": [ 
+                          {
+                              "description": ru_ref
+                          }
+                      ]
+                  },
+                  {
+                      "term": "Name:",
+                      "descriptions": [ 
+                          {
+                              "description": ru_name
+                          }                
+                      ]
+                  },
+                  {
+                      "term": "Trading as:",
+                      "descriptions": [ 
+                          {
+                              "description": trading_as
+                          }                
+                      ]
+                  },
+                  {
+                      "term": "Survey:",
+                      "descriptions": [ 
+                          {
+                              "description": survey_ref ~ ' ' ~ survey_short_name,
+                              "id": "survey"
+                          }                
+                      ]
+                  },
+                  {
+                      "term": "Period:",
+                      "descriptions": [ 
+                          {
+                              "description": ce_period,
+                              "id": "period"
+                          }                
+                      ]
+                  },
+                  {
+                      "term": "Current status:",
+                      "descriptions": [ 
+                          {
+                              "description": case_group_status,
+                              "id": "current-status"
+                          }                
+                      ]
+                  },
+                  {
+                      "term": "Date and time:" if is_complete,
+                      "descriptions": [ 
+                          {
+                              "description": completed_timestamp if is_complete,
+                              "id": "date-and-time"
+                          }                
+                      ]
+                  },
+                  {
+                      "term": "Respondent:",
+                      "descriptions": [ 
+                          {
+                              "description": completed_respondent,
+                              "id": "completed-respondent"
+                          }                
+                      ]
+                  }                                                 
+              ]
+              }) 
+          }}
           {% if is_complete %}
-            <div>
               <a href="{{ request.referrer }}" id="close-response" class="u-d-b u-mt-s">Close</a>
-            </div>
           {% else %}
             <form action="{{ request.url }}&case_group_id={{ case_group_id }}" method="post" class="u-mt-s">
                 <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
-                <div class="field field--radio field--multiplechoice">
-                    <fieldset>
-                  <legend class="field__legend u-fs-r">Choose new response status</legend>
-                  {% for event, status in statuses.items() %}
-                  <div class="field__item js-focusable-box">
-                    <input required class="input input--radio js-focusable" name="event"
-                       value="{{ event }}" id="state-{{loop.index}}" type="radio">
-                  <label class="label label--inline u-fs-r " for="state-{{loop.index}}">{{ status }}</label>
-                  </div>
-                    {% endfor %}
-                </fieldset>
-              </div>
-              <button type="submit" id="response-status-change-confirm-button" class="btn btn--primary u-mt-m">Confirm</button>
-              <div>
+                {% set radioComponent = {
+                    "legend": "Change response status",
+                    "name": "event"
+                } %}
+
+                {% set radios = [] %}                
+                {% for event, status in statuses.items() %}
+                    {% do radios.append(
+                        {
+                            "id": 'state-' ~ loop.index,
+                            "label": {
+                                "text": status
+                            },
+                            "value": event
+                        }
+                    ) %}
+                {% endfor %}
+
+                {% do radioComponent | setAttribute("radios", radios) %}
+            
+                {{
+                    onsRadios(radioComponent)
+                }}
+
+                {{
+                    onsButton({
+                        "classes": "u-mb-s u-mt-l",
+                        "text": "Confirm",
+                        "id": "response-status-change-confirm-button"
+                    })
+                }}   
+              <p>
                 <a href="{{ request.referrer }}" id="cancel-change">Cancel</a>
-              </div>
+              </p>
           </form>
         {% endif %}
+        </div>
     </div>
     <script{% if csp_nonce %} nonce="{{ csp_nonce() }}"{% endif %}>
         document.getElementById("close-response").addEventListener('click', function() {
@@ -101,5 +145,4 @@
             return false;
         });
     </script>
-</div>
 {% endblock main -%}
