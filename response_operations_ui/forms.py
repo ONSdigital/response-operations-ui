@@ -75,16 +75,22 @@ class RuSearchForm(FlaskForm):
 
 
 class EditContactDetailsForm(FlaskForm):
+    def strip_whitespace(s):
+        if isinstance(s, str):
+            s = s.strip()
+        return s
+
     last_name = StringField('last_name', validators=[InputRequired(message="Enter a last name"),
                                                      Length(max=254,
                                                             message="Last name must be fewer than 254 characters")])
     first_name = StringField('first_name', validators=[InputRequired(message="Enter a first name"),
                                                        Length(max=254,
                                                               message="First name must be fewer than 254 characters")])
-    email = StringField('emailAddress', validators=[InputRequired("Enter an email address"),
-                                                    Email(message='The email address must be in the correct format'),
-                                                    Length(max=254,
-                                                           message='Your email must be less than 254 characters')])
+    email = StringField('emailAddress',
+                        validators=[InputRequired("Enter an email address"),
+                                    Email(message='The email address must be in the correct format'),
+                                    Length(max=254, message='Your email must be less than 254 characters')],
+                        filters=[strip_whitespace])
     telephone = StringField('telephone', validators=[InputRequired(message="Enter a phone number")])
     hidden_email = HiddenField('hidden_email')
 
