@@ -471,7 +471,7 @@ class TestCollectionExercise(ViewTestCase):
 
         self.assertEqual(response.status_code, 200)
         self.assertNotIn("Collection instrument loaded".encode(), response.data)
-        self.assertIn("Error: wrong file type for collection instrument".encode(), response.data)
+        self.assertIn("Error: Wrong file type for collection instrument".encode(), response.data)
 
     @requests_mock.mock()
     @patch('response_operations_ui.views.collection_exercise.build_collection_exercise_details')
@@ -484,7 +484,7 @@ class TestCollectionExercise(ViewTestCase):
         self.assertEqual(response.status_code, 200)
         self.assertNotIn("Collection instrument loaded".encode(), response.data)
         self.assertIn(
-            "Error: invalid file name format for collection instrument".encode(), response.data
+            "Error: Invalid file name format for collection instrument".encode(), response.data
         )
 
     @requests_mock.mock()
@@ -498,7 +498,7 @@ class TestCollectionExercise(ViewTestCase):
         self.assertEqual(response.status_code, 200)
         self.assertNotIn("Collection instrument loaded".encode(), response.data)
         self.assertIn(
-            "Error: invalid file name format for collection instrument".encode(), response.data
+            "Error: Invalid file name format for collection instrument".encode(), response.data
         )
 
     @requests_mock.mock()
@@ -512,7 +512,7 @@ class TestCollectionExercise(ViewTestCase):
         self.assertEqual(response.status_code, 200)
         self.assertNotIn("Collection instrument loaded".encode(), response.data)
         self.assertIn(
-            "Error: invalid file name format for collection instrument".encode(), response.data
+            "Error: Invalid file name format for collection instrument".encode(), response.data
         )
 
     @requests_mock.mock()
