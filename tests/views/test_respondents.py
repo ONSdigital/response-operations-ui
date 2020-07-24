@@ -90,6 +90,17 @@ class TestRespondents(ViewTestCase):
         self.assertEqual(response.status_code, 200)
 
     @requests_mock.mock()
+    def test_edit_contact_details_email_change_with_trailing_space(self, mock_request):
+        changed_details = {
+            "first_name": 'Jacky',
+            "last_name": 'Turner',
+            "email": r'Jacky.Turner@thisemail.com\ ',
+            "telephone": '7971161867'}
+        response = self.mock_for_change_details(changed_details, mock_request)
+
+        self.assertEqual(response.status_code, 200)
+
+    @requests_mock.mock()
     def test_change_respondent_status(self, mock_request):
         mock_request.put(url_change_respondent_status)
         mock_request.get(url_get_party_by_ru_ref, json=business_reporting_unit)
