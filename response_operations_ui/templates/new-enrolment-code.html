@@ -1,40 +1,54 @@
 {% extends "layouts/base.html" %}
-{% set page_title = 'New enrolment code for {{trading_as}} ({{ru_ref}}) for survey {{survey_ref}} {{survey_name}}' %}
-{% block main %}
-  <div role="main" id="main" class="page__main">
-    <div class="spoke__header">
-      <div class="spoke__header-title">
-        <h1 class="u-fs-xl">New enrolment code</h1>
-      </div>
-    </div>
+{% from "components/button/_macro.njk" import onsButton %}
+{% from "components/metadata/_macro.njk" import onsMetadata %}
 
-    <div class="spoke__body">
-      <dl class="description-list description-list-8">
-        <dt class="">
-          Reference:
-        </dt>
-        <dd class="">
-          {{ru_ref}}
-        </dd>
-        <dt class="">
-          Name:
-        </dt>
-        <dd class="">
-          {{ru_name}}
-        </dd>
-        <dt class="">
-          Trading as:
-        </dt>
-        <dd class="">
-          {{trading_as}} &#160;
-        </dd>
-        <dt class="">
-          Survey:
-        </dt>
-        <dd class="">
-          {{survey_ref}} {{survey_name}}
-        </dd>
-      </dl>
+{% set page_title = 'New enrolment code for ' ~ trading_as ~ ' ' ~ '(' ~ ru_ref ~ ') for survey ' ~ survey_ref ~ ' ' ~ survey_name %}
+{% block main %}
+  <div class="grid grid--gutterless">
+    <div class="grid__col col-8@m">
+      <h1 class="u-fs-xl u-mt-m">New enrolment code</h1>
+        {{ 
+            onsMetadata({
+            "termCol": "2",
+            "descriptionCol": "10",
+            "itemsList": [
+                {
+                    "term": "Reference:",
+                    "descriptions": [ 
+                        {
+                            "description": ru_ref
+                        }
+                    ]
+                },
+                {
+                    "term": "Name:",
+                    "descriptions": [ 
+                        {
+                            "description": ru_name,
+                            "id": "ru_name"
+                        }                
+                    ]
+                },
+                {
+                    "term": "Trading as:",
+                    "descriptions": [ 
+                        {
+                            "description": trading_as
+                        }                
+                    ]
+                },
+                {
+                    "term": "Survey:",
+                    "descriptions": [ 
+                        {
+                            "description": survey_name,
+                            "id": "survey"
+                        }                
+                    ]
+                }                                       
+            ]
+          }) 
+        }}
 
       <div class="u-mt-l u-mb-m">
         <div class="u-fs-r">New enrolment code:</div>
@@ -49,9 +63,15 @@
 
       <form action="/reporting-units/{{ru_ref}}">
         <input type="hidden" name="s" value="073" />
-        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>  
-        <button class="btn" id="ok-button">Ok</button>
-      </form>
+        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/> 
+        {{
+            onsButton({
+                "classes": "u-mb-s",
+                "text": 'Ok',
+                "id": "ok-button"
+            })
+        }}   
+       </form>
     </div>
   </div>
 {% endblock %}
