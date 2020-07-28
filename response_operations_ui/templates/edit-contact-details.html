@@ -4,7 +4,7 @@
 {% from "components/fieldset/_macro.njk" import onsFieldset %}
 {% from "components/input/_macro.njk" import onsInput %}
 
-{% set page_title = ' Edit contact details'  %}
+{% set page_title = 'Edit contact details'  %}
 {% block main %}
   <div class="grid grid--gutterless">
     <div class="grid__col col-8@m">
@@ -37,7 +37,7 @@
       <form action="{{ href }}" method="post">
         {{ form.csrf_token }}
         {%- call onsFieldset({
-          "legend": "Complete the form to create your account",
+          "legend": "Edit contact details",
           "legendClasses": "u-vh"
           }) -%}
           {% if failed_authentication or form.last_name.errors or errors %}
