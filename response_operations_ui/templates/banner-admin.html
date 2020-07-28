@@ -19,6 +19,7 @@
                     {% call
                         onsPanel({
                             "type":"error",
+                            "id": "save-error",
                             "classes": "u-mb-s",
                             "title": "This page has 1 error" if errors|length == 1 else "There are " + errors|length|string + " errors on this page"
 
