@@ -22,6 +22,17 @@
               })
             %}
             {% set errorData = [] %}
+              {% for message in errors %}
+                  {% do errorData.append(
+                    {
+                        "text": message,
+                        "index": true,
+                        "url": "#",
+                        "classes": "js-inpagelink"
+                    }
+                ) %}
+
+              {% endfor %}
             {% if date_restriction_text %}
               {% for text in date_restriction_text %}
                   {% do errorData.append(
