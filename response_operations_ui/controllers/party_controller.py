@@ -157,7 +157,7 @@ def update_contact_details(respondent_id, form, ru_ref='NOT DEFINED'):
         "firstName": form.get('first_name'),
         "lastName": form.get('last_name'),
         "email_address": form.get('hidden_email'),
-        "new_email_address": form.get('email'),
+        "new_email_address": form.get('email').strip(),
         "telephone": form.get('telephone')
     }
 
@@ -184,7 +184,7 @@ def _compare_contact_details(new_contact_details, old_contact_details):
         "firstName": "firstName",
         "lastName": "lastName",
         "telephone": "telephone",
-        "emailAddress": "new_email_address".strip()}
+        "emailAddress": "new_email_address"}
 
     return {old_key for old_key, new_key in contact_details_map.items()
             if old_contact_details[old_key] != new_contact_details[new_key]}
