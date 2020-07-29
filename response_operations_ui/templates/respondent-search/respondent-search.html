@@ -9,30 +9,30 @@
 {% block main %}
     <h1>Find a respondent</h1>
     {% with messages = get_flashed_messages() %}
-        {% if messages %}
-            {% call
+        {%- if messages -%}
+            {%- call
                 onsPanel({
                     "type":"error",
                     "classes": "u-mb-s",
                     "id": "validation-error"
                 })
-            %}
-                {% set errorData = [] %}
-                {% for message in messages %}
-                    {% do errorData.append(
+            -%}
+                {%- set errorData = [] -%}
+                {%- for message in messages -%}
+                    {%- do errorData.append(
                         {
                             "text": message
                         }
-                    ) %}
-                {% endfor %}
-                {{
+                    ) -%}
+                {%- endfor -%}
+                {{-
                     onsList({
                         "classes": "list--bare",
                         "itemsList": errorData
                     }) 
-                }}
-            {% endcall %}
-        {% endif %}
+                -}}
+            {%- endcall -%}
+        {%- endif -%}
     {% endwith %}
 
     <form action="{{ url_for('respondent_bp.search_redirect') }}" method="post">
