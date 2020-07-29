@@ -164,7 +164,7 @@ class TestRespondents(ViewTestCase):
         self.assertEqual(response.status_code, 200, 'Sending search form failed')
 
         soup = BeautifulSoup(response.data, features='html.parser')
-        elements_text = [el.text for el in soup.findAll('li')]
+        elements_text = [el.text for el in soup.findAll('div')]
 
         self.assertTrue('At least one input should be filled' in elements_text, 'Could not find expected error message')
 
