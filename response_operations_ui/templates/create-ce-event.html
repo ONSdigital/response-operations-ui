@@ -13,10 +13,15 @@
     <div class="grid__col col-8@m">
       {%- with errors = get_flashed_messages(category_filter=["error"]) -%}
         {%- if errors -%}
+            {% if date_restriction_text %}
+              {% set errorLength = errors|length + date_restriction_text|length %}
+            {% else %}
+              {% set errorLength = errors|length %}
+            {% endif %}
             {% call
               onsPanel({
                   "type":"error",
-                  "title": "This page has 1 error",
+                  "title": "This page has 1 error" if errorLength == 1 else "There are " ~ errorLength ~ " errors on this page",
                   "classes": "u-mb-s",
                   "id": "save-error"
               })
