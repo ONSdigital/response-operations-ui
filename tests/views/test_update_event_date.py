@@ -220,7 +220,7 @@ class TestUpdateEventDate(ViewTestCase):
         response = self.client.get(f"/surveys/{survey_short_name}/{period}/event/go_live")
 
         self.assertEqual(response.status_code, 200)
-        self.assertNotIn("Remove Event?".encode(), response.data)
+        self.assertNotIn("Yes".encode(), response.data)
 
     @requests_mock.mock()
     def test_remove_event_is_present_for_nudge_email(self, mock_request):
@@ -232,7 +232,7 @@ class TestUpdateEventDate(ViewTestCase):
                                    data=self.delete_nudge_email_form)
 
         self.assertEqual(response.status_code, 200)
-        self.assertIn("Remove Event?".encode(), response.data)
+        self.assertIn("Yes".encode(), response.data)
 
     @requests_mock.mock()
     def test_remove_event_is_present_for_reminder_email(self, mock_request):
@@ -244,7 +244,7 @@ class TestUpdateEventDate(ViewTestCase):
                                    data=self.delete_nudge_email_form)
 
         self.assertEqual(response.status_code, 200)
-        self.assertIn("Remove Event?".encode(), response.data)
+        self.assertIn("Yes".encode(), response.data)
 
     @requests_mock.mock()
     def test_remove_event_is_disabled_for_reminder_email(self, mock_request):
