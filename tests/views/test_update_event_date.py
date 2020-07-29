@@ -175,7 +175,6 @@ class TestUpdateEventDate(ViewTestCase):
 
         self.assertEqual(response.status_code, 200)
         self.assertIn("Must be after MPS Thursday 11 Oct 2018 23:00".encode(), response.data)
-        self.assertIn("Error updating Go Live date".encode(), response.data)
 
     @requests_mock.mock()
     def test_delete_nudge_email_form(self, mock_request):
