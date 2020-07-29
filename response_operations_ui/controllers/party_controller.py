@@ -184,7 +184,7 @@ def _compare_contact_details(new_contact_details, old_contact_details):
         "firstName": "firstName",
         "lastName": "lastName",
         "telephone": "telephone",
-        "emailAddress": "new_email_address"}
+        "emailAddress": "new_email_address".strip()}
 
     return {old_key for old_key, new_key in contact_details_map.items()
             if old_contact_details[old_key] != new_contact_details[new_key]}
