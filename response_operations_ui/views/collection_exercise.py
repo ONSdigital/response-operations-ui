@@ -99,13 +99,7 @@ def view_collection_exercise(short_name, period):
     success_panel = request.args.get('success_panel')
     info_panel = request.args.get('info_panel')
     sorted_nudge_list = get_existing_sorted_nudge_events(ce_details['events'])
-
-    # This is an ugly fix for errors being written to the permanently to the session. This guarantees that an error will
-    # be displayed once and then removed. If errors are ever tidied up (using flash for instance) then this code can go.
-    error_json = None
-    if session.get('error'):
-        error_json = json.loads(session.get('error'))
-        session.pop('error')
+    error_json = _get_error_from_session()
 
     return render_template('collection_exercise/collection-exercise.html',
                            breadcrumbs=breadcrumbs,
@@ -126,6 +120,19 @@ def view_collection_exercise(short_name, period):
                            ci_classifiers=ce_details['ci_classifiers']['classifierTypes'],
                            info_panel=info_panel,
                            existing_nudge=sorted_nudge_list if len(sorted_nudge_list) > 0 else [])
+
+
+def _get_error_from_session():
+    """
+    This is an ugly fix for errors being written to the permanently to the session. This guarantees that an error
+    will be displayed once and then removed. If errors are ever tidied up (using flash for instance) then this code
+    can go.
+    """
+    if session.get('error'):
+        error_json = json.loads(session.get('error'))
+        session.pop('error')
+        return error_json
+    return None
 
 
 def get_existing_sorted_nudge_events(events):
