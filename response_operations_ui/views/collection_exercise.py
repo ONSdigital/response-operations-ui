@@ -338,9 +338,10 @@ def _validate_collection_instrument():
                 "message": "Please use XLSX file only"
             }
         else:
-            if file.filename.split(".")[0].isdigit():
+            ci_name = file.filename.split(".")[0]
+            if ci_name.isdigit():
                 logger.info("BRES collection instrument detected", filename=file.filename)
-                if len(file.filename.split(".")[0]) != 11:
+                if len(ci_name) != 11:
                     logger.info('Invalid BRES file format uploaded', filename=file.filename)
                     error = {
                         "section": "ciFile",
