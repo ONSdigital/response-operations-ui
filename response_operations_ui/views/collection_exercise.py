@@ -331,12 +331,12 @@ def _validate_collection_instrument():
     if 'ciFile' in request.files:
         file = request.files['ciFile']
 
-        error = _validate_file_extension_is_correct(file)
+        error = validate_file_extension_is_correct(file)
 
         if error is None:
             ci_name = file.filename.split(".")[0]
             if ci_name.isdigit():
-                error = _validate_ru_specific_collection_instrument(file, ci_name)
+                error = validate_ru_specific_collection_instrument(file, ci_name)
             else:
                 # file name format is surveyId_period_formType
                 form_type = _get_form_type(file.filename) if file.filename.count('_') == 2 else ''
@@ -357,7 +357,7 @@ def _validate_collection_instrument():
     return error
 
 
-def _validate_ru_specific_collection_instrument(file, ci_name):
+def validate_ru_specific_collection_instrument(file, ci_name):
     logger.info("Ru specific collection instrument detected", filename=file.filename)
     if len(ci_name) == 11:
         return None
@@ -371,7 +371,7 @@ def _validate_ru_specific_collection_instrument(file, ci_name):
     return error
 
 
-def _validate_file_extension_is_correct(file):
+def validate_file_extension_is_correct(file):
     if str.endswith(file.filename, '.xlsx'):
         return None
 
