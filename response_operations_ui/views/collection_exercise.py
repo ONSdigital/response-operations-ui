@@ -260,9 +260,9 @@ def _upload_collection_instrument(short_name, period):
 
     if not error:
         file = request.files['ciFile']
-        is_bres_instrument = False
+        is_ru_specific_instrument = False
         if file.filename.split(".")[0].isdigit():
-            is_bres_instrument = True
+            is_ru_specific_instrument = True
 
         logger.info("Collection instrument about to be uploaded", filename=file.filename)
         survey_id = survey_controllers.get_survey_id_by_short_name(short_name)
@@ -273,10 +273,10 @@ def _upload_collection_instrument(short_name, period):
         if not exercise:
             return make_response(jsonify({'message': 'Collection exercise not found'}), 404)
 
-        if is_bres_instrument:
+        if is_ru_specific_instrument:
             ru_ref = file.filename.split(".")[0]
-            upload_success = collection_instrument_controllers.upload_bres_collection_instrument(exercise['id'],
-                                                                                                 file, ru_ref)
+            upload_success = collection_instrument_controllers.upload_ru_specific_collection_instrument(exercise['id'],
+                                                                                                        file, ru_ref)
         else:
             form_type = _get_form_type(file.filename)
             upload_success = collection_instrument_controllers.upload_collection_instrument(exercise['id'],

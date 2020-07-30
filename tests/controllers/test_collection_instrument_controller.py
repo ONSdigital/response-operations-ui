@@ -5,7 +5,7 @@ import responses
 from config import TestingConfig
 from response_operations_ui import create_app
 from response_operations_ui.controllers.collection_instrument_controllers import \
-    link_collection_instrument_to_survey, link_collection_instrument, upload_bres_collection_instrument, \
+    link_collection_instrument_to_survey, link_collection_instrument, upload_ru_specific_collection_instrument, \
     upload_collection_instrument
 from response_operations_ui.exceptions.exceptions import ApiError
 
@@ -59,29 +59,29 @@ class TestCollectionInstrumentController(unittest.TestCase):
                 with self.assertRaises(ApiError):
                     link_collection_instrument_to_survey(survey_uuid, eq_id, form_type)
 
-    def test_upload_bres_collection_instrument(self):
+    def test_upload_ru_specific_collection_instrument(self):
         """Tests on success (200) True is returned"""
         with responses.RequestsMock() as rsps:
             rsps.add(rsps.POST, ci_bres_upload_url, status=200)
             with self.app.app_context():
                 file = self.create_test_file()
-                self.assertTrue(upload_bres_collection_instrument(collection_exercise_id, file, ru_ref))
+                self.assertTrue(upload_ru_specific_collection_instrument(collection_exercise_id, file, ru_ref))
 
-    def test_upload_bres_collection_instrument_unauthorised(self):
+    def test_upload_ru_specific_collection_instrument_unauthorised(self):
         """Tests on unauthorised (401) False is returned"""
         with responses.RequestsMock() as rsps:
             rsps.add(rsps.POST, ci_bres_upload_url, status=401)
             with self.app.app_context():
                 file = self.create_test_file()
-                self.assertFalse(upload_bres_collection_instrument(collection_exercise_id, file, ru_ref))
+                self.assertFalse(upload_ru_specific_collection_instrument(collection_exercise_id, file, ru_ref))
 
-    def test_upload_bres_collection_instrument_failure(self):
+    def test_upload_ru_specific_collection_instrument_failure(self):
         """Tests on failure (500) False is returned"""
         with responses.RequestsMock() as rsps:
             rsps.add(rsps.POST, ci_bres_upload_url, status=500, json={'errors': ['Failed to publish upload message']})
             with self.app.app_context():
                 file = self.create_test_file()
-                self.assertFalse(upload_bres_collection_instrument(collection_exercise_id, file, ru_ref))
+                self.assertFalse(upload_ru_specific_collection_instrument(collection_exercise_id, file, ru_ref))
 
     def test_upload_collection_instrument(self):
         """Tests on success (200) True is returned"""

@@ -47,11 +47,11 @@ def upload_collection_instrument(collection_exercise_id, file, form_type=None):
     return True
 
 
-def upload_bres_collection_instrument(collection_exercise_id, file, ru_ref):
+def upload_ru_specific_collection_instrument(collection_exercise_id, file, ru_ref):
     """
-    Uploads a BRES collection instrument. This is different to a standard SEFT as we supply an ru_ref to link the
-    instrument to both a reporting unit AND a collection exercise where a standard SEFT is linked ONLY to a
-    collection exercise.
+    Uploads an reporting unit specific collection instrument. This is different to a standard SEFT as we supply an
+    ru_ref to link the instrument to both a reporting unit AND a collection exercise where a standard SEFT is linked
+    ONLY to a collection exercise.  An example of a survey that uses ru specific collection instruments is BRES.
 
     :param collection_exercise_id: The collection exercise this instrument will be linked to
     :type collection_exercise_id: str
