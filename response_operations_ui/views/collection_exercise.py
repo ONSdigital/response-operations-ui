@@ -330,24 +330,13 @@ def _validate_collection_instrument():
     error = None
     if 'ciFile' in request.files:
         file = request.files['ciFile']
-        if not str.endswith(file.filename, '.xlsx'):
-            logger.info('Invalid file format uploaded', filename=file.filename)
-            error = {
-                "section": "ciFile",
-                "header": "Error: Wrong file type for collection instrument",
-                "message": "Please use XLSX file only"
-            }
-        else:
+
+        error = _validate_file_extension_is_correct(file)
+
+        if error is None:
             ci_name = file.filename.split(".")[0]
             if ci_name.isdigit():
-                logger.info("BRES collection instrument detected", filename=file.filename)
-                if len(ci_name) != 11:
-                    logger.info('Invalid BRES file format uploaded', filename=file.filename)
-                    error = {
-                        "section": "ciFile",
-                        "header": "Error: Invalid file name format for BRES collection instrument",
-                        "message": "Please provide a file with a valid 11 digit ru ref in the file name"
-                    }
+                error = _validate_ru_specific_collection_instrument(file, ci_name)
             else:
                 # file name format is surveyId_period_formType
                 form_type = _get_form_type(file.filename) if file.filename.count('_') == 2 else ''
@@ -365,6 +354,33 @@ def _validate_collection_instrument():
             "header": "Error: No collection instrument supplied",
             "message": "Please provide a collection instrument"
         }
+    return error
+
+
+def _validate_ru_specific_collection_instrument(file, ci_name):
+    logger.info("Ru specific collection instrument detected", filename=file.filename)
+    if len(ci_name) == 11:
+        return None
+
+    logger.info('Invalid ru specific file format uploaded', filename=file.filename)
+    error = {
+        "section": "ciFile",
+        "header": "Error: Invalid file name format for BRES collection instrument",
+        "message": "Please provide a file with a valid 11 digit ru ref in the file name"
+    }
+    return error
+
+
+def _validate_file_extension_is_correct(file):
+    if str.endswith(file.filename, '.xlsx'):
+        return None
+
+    logger.info('Invalid file format uploaded', filename=file.filename)
+    error = {
+        "section": "ciFile",
+        "header": "Error: Wrong file type for collection instrument",
+        "message": "Please use XLSX file only"
+    }
     return error
 
 
