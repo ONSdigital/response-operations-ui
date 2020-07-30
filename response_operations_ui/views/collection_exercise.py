@@ -365,7 +365,7 @@ def validate_ru_specific_collection_instrument(file, ci_name):
     logger.info('Invalid ru specific file format uploaded', filename=file.filename)
     error = {
         "section": "ciFile",
-        "header": "Error: Invalid file name format for BRES collection instrument",
+        "header": "Error: Invalid file name format for ru specific collection instrument",
         "message": "Please provide a file with a valid 11 digit ru ref in the file name"
     }
     return error

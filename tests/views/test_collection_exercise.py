@@ -1443,5 +1443,5 @@ class TestCollectionExercise(ViewTestCase):
         file.filename = '1234567890.xlsx'
         error = validate_ru_specific_collection_instrument(file, '1234567890')
         self.assertEqual(error['section'], 'ciFile')
-        self.assertEqual(error['header'], 'Error: Invalid file name format for BRES collection instrument')
+        self.assertEqual(error['header'], 'Error: Invalid file name format for ru specific collection instrument')
         self.assertEqual(error['message'], 'Please provide a file with a valid 11 digit ru ref in the file name')
