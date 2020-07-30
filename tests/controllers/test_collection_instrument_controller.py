@@ -5,16 +5,29 @@ import responses
 from config import TestingConfig
 from response_operations_ui import create_app
 from response_operations_ui.controllers.collection_instrument_controllers import \
-    link_collection_instrument_to_survey
+    link_collection_instrument_to_survey, link_collection_instrument, upload_ru_specific_collection_instrument, \
+    upload_collection_instrument
 from response_operations_ui.exceptions.exceptions import ApiError
 
-test_survey_uuid = 'b2dd0330-09c7-408f-a7c4-fa1a2bb3bfdd'
-test_eq_id = 'vacancies'
-test_form_type = '0001'
+survey_uuid = 'b2dd0330-09c7-408f-a7c4-fa1a2bb3bfdd'
+eq_id = 'vacancies'
+form_type = '0001'
+collection_exercise_id = 'e76e8c11-88c5-4d4b-a2c8-2ba923806e3c'
+collection_instrument_id = '02ef3fde-919a-4b36-8c38-066336a6a3a4'
+ru_ref = '12345678901'
 
-ci_link_url = f'{TestingConfig.COLLECTION_INSTRUMENT_URL}/collection-instrument-api/1.0.2/' \
-              f'upload?survey_id={test_survey_uuid}' \
-              f'&classifiers=%7B%22form_type%22%3A%22{test_form_type}%22%2C%22eq_id%22%3A%22{test_eq_id}%22%7D'
+collection_instrument_url_base = f'{TestingConfig.COLLECTION_INSTRUMENT_URL}/collection-instrument-api/1.0.2'
+
+ci_link_to_survey_url = f'{collection_instrument_url_base}/upload?survey_id={survey_uuid}' \
+                        f'&classifiers=%7B%22form_type%22%3A%22{form_type}%22%2C%22eq_id%22%3A%22{eq_id}%22%7D'
+ci_link_url = f'{collection_instrument_url_base}/link-exercise/{collection_instrument_id}/{collection_exercise_id}'
+ci_bres_upload_url = f'{collection_instrument_url_base}/upload/{collection_exercise_id}/{ru_ref}'
+ci_upload_url = f'{collection_instrument_url_base}/upload/{collection_exercise_id}'
+
+
+class File:
+    """Used to imitate a file being uploaded"""
+    pass
 
 
 class TestCollectionInstrumentController(unittest.TestCase):
@@ -23,17 +36,94 @@ class TestCollectionInstrumentController(unittest.TestCase):
         self.app = create_app('TestingConfig')
         self.client = self.app.test_client()
 
+    @staticmethod
+    def create_test_file():
+        file = File()
+        file.filename = 'filename'
+        file.stream = 'stream'
+        file.mimetype = 'mimetype'
+        return file
+
     def test_link_collection_instrument_to_survey_success(self):
         """Tests on success (200) nothing is returned"""
         with responses.RequestsMock() as rsps:
-            rsps.add(rsps.POST, ci_link_url, status=200)
+            rsps.add(rsps.POST, ci_link_to_survey_url, status=200)
             with self.app.app_context():
-                self.assertIsNone(link_collection_instrument_to_survey(test_survey_uuid, test_eq_id, test_form_type))
+                self.assertIsNone(link_collection_instrument_to_survey(survey_uuid, eq_id, form_type))
 
     def test_link_collection_instrument_to_survey_unauthorised(self):
-        """Tests on unauthorised (403) an APIError is raised"""
+        """Tests on unauthorised (401) an APIError is raised"""
         with responses.RequestsMock() as rsps:
-            rsps.add(rsps.POST, ci_link_url, status=403)
+            rsps.add(rsps.POST, ci_link_to_survey_url, status=401)
             with self.app.app_context():
                 with self.assertRaises(ApiError):
-                    link_collection_instrument_to_survey(test_survey_uuid, test_eq_id, test_form_type)
+                    link_collection_instrument_to_survey(survey_uuid, eq_id, form_type)
+
+    def test_upload_ru_specific_collection_instrument(self):
+        """Tests on success (200) True is returned"""
+        with responses.RequestsMock() as rsps:
+            rsps.add(rsps.POST, ci_bres_upload_url, status=200)
+            with self.app.app_context():
+                file = self.create_test_file()
+                self.assertTrue(upload_ru_specific_collection_instrument(collection_exercise_id, file, ru_ref))
+
+    def test_upload_ru_specific_collection_instrument_unauthorised(self):
+        """Tests on unauthorised (401) False is returned"""
+        with responses.RequestsMock() as rsps:
+            rsps.add(rsps.POST, ci_bres_upload_url, status=401)
+            with self.app.app_context():
+                file = self.create_test_file()
+                self.assertFalse(upload_ru_specific_collection_instrument(collection_exercise_id, file, ru_ref))
+
+    def test_upload_ru_specific_collection_instrument_failure(self):
+        """Tests on failure (500) False is returned"""
+        with responses.RequestsMock() as rsps:
+            rsps.add(rsps.POST, ci_bres_upload_url, status=500, json={'errors': ['Failed to publish upload message']})
+            with self.app.app_context():
+                file = self.create_test_file()
+                self.assertFalse(upload_ru_specific_collection_instrument(collection_exercise_id, file, ru_ref))
+
+    def test_upload_collection_instrument(self):
+        """Tests on success (200) True is returned"""
+        with responses.RequestsMock() as rsps:
+            rsps.add(rsps.POST, ci_upload_url, status=200)
+            with self.app.app_context():
+                file = self.create_test_file()
+                self.assertTrue(upload_collection_instrument(collection_exercise_id, file))
+
+    def test_upload_collection_instrument_unauthorised(self):
+        """Tests on unauthorised (401) False is returned"""
+        with responses.RequestsMock() as rsps:
+            rsps.add(rsps.POST, ci_upload_url, status=401)
+            with self.app.app_context():
+                file = self.create_test_file()
+                self.assertFalse(upload_collection_instrument(collection_exercise_id, file))
+
+    def test_upload_collection_instrument_failure(self):
+        """Tests on failure (500) False is returned"""
+        with responses.RequestsMock() as rsps:
+            rsps.add(rsps.POST, ci_upload_url, status=500, json={'errors': ['Failed to publish upload message']})
+            with self.app.app_context():
+                file = self.create_test_file()
+                self.assertFalse(upload_collection_instrument(collection_exercise_id, file))
+
+    def test_link_collection_instrument(self):
+        """Tests on success (200) True is returned"""
+        with responses.RequestsMock() as rsps:
+            rsps.add(rsps.POST, ci_link_url, status=200)
+            with self.app.app_context():
+                self.assertTrue(link_collection_instrument(collection_exercise_id, collection_instrument_id))
+
+    def test_link_collection_instrument_unauthorised(self):
+        """Tests on unauthorised (401) False is returned"""
+        with responses.RequestsMock() as rsps:
+            rsps.add(rsps.POST, ci_link_url, status=401)
+            with self.app.app_context():
+                self.assertFalse(link_collection_instrument(collection_exercise_id, collection_instrument_id))
+
+    def test_link_collection_instrument_failure(self):
+        """Tests on failure (500) False is returned"""
+        with responses.RequestsMock() as rsps:
+            rsps.add(rsps.POST, ci_link_url, status=500, json={'errors': ['Failed to publish upload message']})
+            with self.app.app_context():
+                self.assertFalse(link_collection_instrument(collection_exercise_id, collection_instrument_id))

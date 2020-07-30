@@ -10,7 +10,8 @@ import requests_mock
 from config import TestingConfig
 from response_operations_ui.controllers.collection_exercise_controllers import \
     get_collection_exercises_with_events_and_samples_by_survey_id
-from response_operations_ui.views.collection_exercise import get_existing_sorted_nudge_events
+from response_operations_ui.views.collection_exercise import get_existing_sorted_nudge_events,\
+    validate_file_extension_is_correct, validate_ru_specific_collection_instrument
 from tests.views import ViewTestCase
 
 ci_selector_id = 'efa868fb-fb80-44c7-9f33-d6800a17c4da'
@@ -162,6 +163,11 @@ ci_type_search_string = urlencode({'searchString': json.dumps({
     "SURVEY_ID": survey_id,
     "TYPE": "EQ"
 })})
+
+
+class File:
+    """Used to imitate a file being uploaded"""
+    pass
 
 
 class TestCollectionExercise(ViewTestCase):
@@ -471,7 +477,7 @@ class TestCollectionExercise(ViewTestCase):
 
         self.assertEqual(response.status_code, 200)
         self.assertNotIn("Collection instrument loaded".encode(), response.data)
-        self.assertIn("Error: wrong file type for collection instrument".encode(), response.data)
+        self.assertIn("Error: Wrong file type for collection instrument".encode(), response.data)
 
     @requests_mock.mock()
     @patch('response_operations_ui.views.collection_exercise.build_collection_exercise_details')
@@ -484,7 +490,7 @@ class TestCollectionExercise(ViewTestCase):
         self.assertEqual(response.status_code, 200)
         self.assertNotIn("Collection instrument loaded".encode(), response.data)
         self.assertIn(
-            "Error: invalid file name format for collection instrument".encode(), response.data
+            "Error: Invalid file name format for collection instrument".encode(), response.data
         )
 
     @requests_mock.mock()
@@ -498,7 +504,7 @@ class TestCollectionExercise(ViewTestCase):
         self.assertEqual(response.status_code, 200)
         self.assertNotIn("Collection instrument loaded".encode(), response.data)
         self.assertIn(
-            "Error: invalid file name format for collection instrument".encode(), response.data
+            "Error: Invalid file name format for collection instrument".encode(), response.data
         )
 
     @requests_mock.mock()
@@ -512,7 +518,7 @@ class TestCollectionExercise(ViewTestCase):
         self.assertEqual(response.status_code, 200)
         self.assertNotIn("Collection instrument loaded".encode(), response.data)
         self.assertIn(
-            "Error: invalid file name format for collection instrument".encode(), response.data
+            "Error: Invalid file name format for collection instrument".encode(), response.data
         )
 
     @requests_mock.mock()
@@ -1409,3 +1415,33 @@ class TestCollectionExercise(ViewTestCase):
         }}
         res = get_existing_sorted_nudge_events(nudge)
         self.assertEqual(res, ['nudge_email_4', 'nudge_email_3', 'nudge_email_0'])
+
+    @staticmethod
+    def create_test_file():
+        file = File()
+        file.filename = '12345678901.xlsx'
+        file.stream = 'stream'
+        file.mimetype = 'mimetype'
+        return file
+
+    def test_validate_file_extension(self):
+        """Test validation returns None when file extension is valid and an error dict when invalid"""
+        file = self.create_test_file()
+        self.assertIsNone(validate_file_extension_is_correct(file))
+
+        file.filename = '12345678901.badext'
+        error = validate_file_extension_is_correct(file)
+        self.assertEqual(error['section'], 'ciFile')
+        self.assertEqual(error['header'], 'Error: Wrong file type for collection instrument')
+        self.assertEqual(error['message'], 'Please use XLSX file only')
+
+    def test_validate_ru_specific_collection_instrument(self):
+        """Test validation returns None when file is correct and error dict if ru ref is not 11 digits"""
+        file = self.create_test_file()
+        self.assertIsNone(validate_ru_specific_collection_instrument(file, '12345678901'))
+
+        file.filename = '1234567890.xlsx'
+        error = validate_ru_specific_collection_instrument(file, '1234567890')
+        self.assertEqual(error['section'], 'ciFile')
+        self.assertEqual(error['header'], 'Error: Invalid file name format for ru specific collection instrument')
+        self.assertEqual(error['message'], 'Please provide a file with a valid 11 digit ru ref in the file name')
