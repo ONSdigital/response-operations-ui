@@ -94,11 +94,12 @@ class TestRespondents(ViewTestCase):
         changed_details = {
             "first_name": 'Jacky',
             "last_name": 'Turner',
-            "email": r'Jacky.Turner@thisemail.com\ ',
+            "email": r'Jacky.Turner@thisemail.com ',
             "telephone": '7971161867'}
         response = self.mock_for_change_details(changed_details, mock_request)
 
         self.assertEqual(response.status_code, 200)
+        self.assertIsNot(r'Jacky.Turner@thisemail.com '.encode(), response.data)
 
     @requests_mock.mock()
     def test_change_respondent_status(self, mock_request):
