@@ -18,6 +18,7 @@
   {% endif %}
 
   <h1 name="page-surveys-title">Surveys</h1>
+  <p><a href="{{ url_for('surveys_bp.create_survey') }}"> Create new survey </a></p>
   
   {% set surveyTableData = {
       "table_class": 'table--responsive table--dense',
