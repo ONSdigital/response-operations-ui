@@ -16,6 +16,19 @@
       {{ info_message }}
     {% endcall %}
   {% endif %}
+  
+  {% if new_survey %}
+    {% call
+      onsPanel({
+            "type": "success",
+            "classes": "u-mb-s",
+            "id": "collection-instrument-success"
+      })
+    %}
+      <a href= {{ url_for("surveys_bp.view_survey", short_name=new_survey.short_name) }} id="created_survey_link">
+        {{ new_survey.long_name }}</a> has been added.
+    {% endcall %}
+  {% endif %}
 
   <h1 name="page-surveys-title">Surveys</h1>
   <p><a href="{{url_for('surveys_bp.create_survey')}}">Create new survey</a></p>
