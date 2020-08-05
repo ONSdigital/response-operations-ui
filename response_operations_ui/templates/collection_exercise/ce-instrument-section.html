@@ -1,5 +1,6 @@
 <section class="ce-section {{'panel panel--simple panel--error' if missing_ci else ''}}">
-  <h2 class="u-fs-r--b u-pt-m">Collection instruments</h2>
+
+  <h2 class="u-fs-r--b u-pt-m">Collection instruments ({{ collection_instruments | length }})</h2>
 
   {% if collection_instruments %}
     {% set surveyTableData = {
