@@ -32,7 +32,11 @@ def get_sample_summary(sample_summary_id):
 def upload_sample(short_name, period, file):
     logger.info('Uploading sample', short_name=short_name, period=period, filename=file.filename)
 
-    url = f'{app.config["SAMPLE_FILE_UPLOADER_URL"]}/samples/fileupload'
+    if app.config["SAMPLE_FILE_UPLOADER_URL_ENABLED"]:
+        url = f'{app.config["SAMPLE_FILE_UPLOADER_URL"]}/samples/fileupload'
+    else:
+        url = f'{app.config["SAMPLE_URL"]}/samples/B/fileupload'
+
     response = requests.post(url=url, auth=app.config['BASIC_AUTH'], files={'file': file})
 
     try:
