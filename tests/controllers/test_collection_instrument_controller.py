@@ -65,7 +65,20 @@ class TestCollectionInstrumentController(unittest.TestCase):
             rsps.add(rsps.POST, ci_bres_upload_url, status=200)
             with self.app.app_context():
                 file = self.create_test_file()
-                self.assertTrue(upload_ru_specific_collection_instrument(collection_exercise_id, file, ru_ref))
+                success, error_text = upload_ru_specific_collection_instrument(collection_exercise_id, file, ru_ref)
+                self.assertTrue(success)
+                self.assertIsNone(error_text)
+
+    def test_upload_ru_specific_collection_instrument_validation_failure(self):
+        """Tests on validation failure (400) False is returned"""
+        with responses.RequestsMock() as rsps:
+            error = 'Reporting unit 12345678901 already has an instrument uploaded for this collection exercise'
+            rsps.add(rsps.POST, ci_bres_upload_url, status=500, json={'errors': [error]})
+            with self.app.app_context():
+                file = self.create_test_file()
+                success, error_text = upload_ru_specific_collection_instrument(collection_exercise_id, file, ru_ref)
+                self.assertFalse(success)
+                self.assertEqual(error_text, error)
 
     def test_upload_ru_specific_collection_instrument_unauthorised(self):
         """Tests on unauthorised (401) False is returned"""
@@ -73,7 +86,9 @@ class TestCollectionInstrumentController(unittest.TestCase):
             rsps.add(rsps.POST, ci_bres_upload_url, status=401)
             with self.app.app_context():
                 file = self.create_test_file()
-                self.assertFalse(upload_ru_specific_collection_instrument(collection_exercise_id, file, ru_ref))
+                success, error_text = upload_ru_specific_collection_instrument(collection_exercise_id, file, ru_ref)
+                self.assertFalse(success)
+                self.assertIsNone(error_text)
 
     def test_upload_ru_specific_collection_instrument_failure(self):
         """Tests on failure (500) False is returned"""
@@ -81,7 +96,9 @@ class TestCollectionInstrumentController(unittest.TestCase):
             rsps.add(rsps.POST, ci_bres_upload_url, status=500, json={'errors': ['Failed to publish upload message']})
             with self.app.app_context():
                 file = self.create_test_file()
-                self.assertFalse(upload_ru_specific_collection_instrument(collection_exercise_id, file, ru_ref))
+                success, error_text = upload_ru_specific_collection_instrument(collection_exercise_id, file, ru_ref)
+                self.assertFalse(success)
+                self.assertEqual(error_text, 'Failed to publish upload message')
 
     def test_upload_collection_instrument(self):
         """Tests on success (200) True is returned"""
