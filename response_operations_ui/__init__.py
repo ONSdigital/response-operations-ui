@@ -12,13 +12,10 @@ from structlog import wrap_logger
 from flask_session import Session
 from config import Config
 
-from response_operations_ui.cloud.cloudfoundry import ONSCloudFoundry
 from response_operations_ui.logger_config import logger_initial_config
 from response_operations_ui.user import User
 from response_operations_ui.views import setup_blueprints
 from response_operations_ui.common.jinja_filters import filter_blueprint
-
-cf = ONSCloudFoundry()
 
 CSP_POLICY = {
     'default-src': ["'self'", 'https://cdn.ons.gov.uk'],
@@ -80,7 +77,7 @@ def create_app(config_name=None):
         assets.cache = False
         assets.manifest = None
 
-    if not app.config['DEBUG'] and not cf.detected:
+    if not app.config['DEBUG']:
         app.wsgi_app = GCPLoadBalancer(app.wsgi_app)
 
     assets.url = app.static_url_path
@@ -115,14 +112,6 @@ def create_app(config_name=None):
     def user_loader(user_id):
         username = session.get('username')
         return User(user_id, username)
-
-    if cf.detected:
-        with app.app_context():
-            # If deploying in cloudfoundry set config to use cf redis instance
-            logger.info('Cloudfoundry detected, setting service configurations')
-            service = cf.redis
-            app.config['REDIS_HOST'] = service.credentials['host']
-            app.config['REDIS_PORT'] = service.credentials['port']
 
     # wrap in the flask server side session manager and back it by redis
     app.config['SESSION_REDIS'] = redis.StrictRedis(host=app.config['REDIS_HOST'],
