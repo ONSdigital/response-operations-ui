@@ -164,7 +164,7 @@ spec:
             value: "http://$(SAMPLE_SERVICE_HOST):$(SAMPLE_SERVICE_PORT)"
             {{- end }}
           - name: SAMPLE_FILE_UPLOADER_URL_ENABLED
-            value: {{ .Values.sample.file.uploader.enabled }}
+            value: "{{- if .Values.sample.file.uploader.enabled -}}True{{- else -}}False{{- end -}}"
           - name: SAMPLE_FILE_UPLOADER_URL
             {{- if .Values.dns.enabled }}
             value: "http://sample-file-uploader.{{ .Values.namespace }}.svc.cluster.local:{{ .Values.dns.wellKnownPort }}"
