@@ -1,6 +1,5 @@
 import os
 import unittest
-from unittest.mock import patch
 
 from flask import app
 
