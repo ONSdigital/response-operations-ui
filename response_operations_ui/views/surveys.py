@@ -20,7 +20,6 @@ surveys_bp = Blueprint('surveys_bp', __name__,
 
 INFO_MESSAGES = {
     'survey_changed': "Survey details changed",
-    'survey_created': "Survey created successfully",
     'instrument_linked': "Collection exercise linked to survey successfully"
 }
 
@@ -31,10 +30,7 @@ def view_surveys():
     survey_list = survey_controllers.get_surveys_list()
     breadcrumbs = [{"text": "Surveys"}]
     info_message = INFO_MESSAGES.get(request.args.get('message_key'))
-    new_survey = None
-    if session.get('new_survey'):
-        new_survey = session.get('new_survey')
-        session.pop('new_survey')
+    new_survey = session.pop('new_survey', None)
 
     return render_template('surveys.html', info_message=info_message,
                            survey_list=survey_list, breadcrumbs=breadcrumbs,
@@ -135,11 +131,9 @@ def create_survey():
                                          request.form.get('short_name'),
                                          request.form.get('long_name'),
                                          request.form.get('legal_basis'))
-
         session['new_survey'] = {
             'short_name': request.form.get('short_name'),
             'long_name': request.form.get('long_name')
-        
         }
         return redirect(url_for('surveys_bp.view_surveys'))
     except ApiError as err:
