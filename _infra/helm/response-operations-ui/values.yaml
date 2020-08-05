@@ -61,3 +61,8 @@ dns:
 
 test:
   enabled: false
+
+sample:
+  file:
+    uploader:
+      enabled: false
