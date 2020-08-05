@@ -58,7 +58,9 @@ def upload_ru_specific_collection_instrument(collection_exercise_id, file, ru_re
     :param file: The collection instrument (spreadsheet) to be uploaded
     :param ru_ref: The ru_ref to link the collection instrument to.
     :type ru_ref: str
-    :return: True on success, False on failure.
+    :return: True, None on success. False, error text on failure (if the response is in json format) and False, None
+             otherwise.
+    :rtype: tuple
     """
     bound_logger = logger.bind(collection_exercise_id=collection_exercise_id, ru_ref=ru_ref)
     bound_logger.info('Uploading BRES collection instrument')
@@ -71,10 +73,12 @@ def upload_ru_specific_collection_instrument(collection_exercise_id, file, ru_re
         response.raise_for_status()
     except requests.exceptions.HTTPError:
         bound_logger.error('Failed to upload BRES collection instrument', status=response.status_code, exc_info=True)
-        return False
+        if response.headers['Content-Type'] == 'application/json':
+            return False, response.json().get('errors')[0]
+        return False, None
 
     bound_logger.info('Successfully uploaded BRES collection instrument')
-    return True
+    return True, None
 
 
 def link_collection_instrument_to_survey(survey_uuid, eq_id, form_type):
