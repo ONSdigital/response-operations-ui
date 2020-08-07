@@ -5,17 +5,24 @@
 {% set page_title = "Surveys" %}
 
 {% block main %}
-  {% if info_message %}
+  {% if info_message or new_survey %}
     {% call
       onsPanel({
           "type": "success",
           "classes": "u-mb-s",
-          "id": "collection-instrument-success"
+          "id": "success-panel"
       })
     %}
-      {{ info_message }}
+      {% if info_message %}
+        {{ info_message }}
+      {% endif %}
+      {% if new_survey %}
+        <a href= {{ url_for("surveys_bp.view_survey", short_name=new_survey.short_name) }} id="created_survey_link">
+          {{ new_survey.long_name }}</a> has been added.
+      {% endif %}
     {% endcall %}
   {% endif %}
+
 
   <h1 name="page-surveys-title">Surveys</h1>
   <p><a href="{{url_for('surveys_bp.create_survey')}}">Create new survey</a></p>

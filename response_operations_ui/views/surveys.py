@@ -1,7 +1,7 @@
 import logging
 from datetime import datetime
 
-from flask import Blueprint, render_template, request, redirect, url_for
+from flask import Blueprint, render_template, request, redirect, session, url_for
 from flask_login import login_required
 from structlog import wrap_logger
 
@@ -20,7 +20,6 @@ surveys_bp = Blueprint('surveys_bp', __name__,
 
 INFO_MESSAGES = {
     'survey_changed': "Survey details changed",
-    'survey_created': "Survey created successfully",
     'instrument_linked': "Collection exercise linked to survey successfully"
 }
 
@@ -31,9 +30,11 @@ def view_surveys():
     survey_list = survey_controllers.get_surveys_list()
     breadcrumbs = [{"text": "Surveys"}]
     info_message = INFO_MESSAGES.get(request.args.get('message_key'))
+    new_survey = session.pop('new_survey', None)
 
     return render_template('surveys.html', info_message=info_message,
-                           survey_list=survey_list, breadcrumbs=breadcrumbs)
+                           survey_list=survey_list, breadcrumbs=breadcrumbs,
+                           new_survey=new_survey)
 
 
 @surveys_bp.route('/<short_name>', methods=['GET'])
@@ -130,8 +131,11 @@ def create_survey():
                                          request.form.get('short_name'),
                                          request.form.get('long_name'),
                                          request.form.get('legal_basis'))
-
-        return redirect(url_for('surveys_bp.view_surveys', message_key='survey_created'))
+        session['new_survey'] = {
+            'short_name': request.form.get('short_name'),
+            'long_name': request.form.get('long_name')
+        }
+        return redirect(url_for('surveys_bp.view_surveys'))
     except ApiError as err:
         # If it's conflict or bad request assume the service has returned a useful error
         # message as the body of the response
