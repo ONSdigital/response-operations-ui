@@ -145,6 +145,33 @@ def create_survey():
             raise
 
 
+# -------- New link page
+@surveys_bp.route('/link-collection-instrument-v2', methods=['GET'])
+@login_required
+def get_link_collection_instrument_v2():
+    form = LinkCollectionInstrumentForm(form=request.form)
+    return render_template('link-collection-instrument.html', form=form)
+
+
+@surveys_bp.route('/link-collection-instrument-v2', methods=['POST'])
+@login_required
+def post_link_collection_instrument_v2():
+    form = LinkCollectionInstrumentForm(form=request.form)
+    if not form.validate():
+        return render_template('link-collection-instrument.html', form=form, errors=form.errors.items())
+
+    try:
+        survey_uuid = survey_controllers.get_survey_by_ref(form.survey_id.data)['id']
+        collection_instrument_controllers.link_collection_instrument_to_survey(survey_uuid, form.eq_id.data,
+                                                                               form.formtype.data)
+    except ApiError as err:
+        # err.message might contain json or be the text of the error.  We'll just render it and hope that it's useful
+        return render_template('link-collection-instrument.html', form=form, errors=[("", [err.message])])
+
+    return redirect(url_for('surveys_bp.view_surveys', message_key='instrument_linked'))
+
+
+# ------ Current link page
 @surveys_bp.route('/link-collection-instrument', methods=['GET'])
 @login_required
 def get_link_collection_instrument():

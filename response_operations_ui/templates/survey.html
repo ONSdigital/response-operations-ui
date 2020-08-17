@@ -82,6 +82,10 @@
   <section class="ce-list">
     <h2>Collection exercises for {{survey.shortName}}</h2>
     <div class="u-mb-l">
+      <a href="{{ url_for('surveys_bp.get_link_collection_instrument') }}"
+          name="load-collection-instruments-link" id="load-collection-instruments">Load collection instruments</a>
+    </div>
+    <div class="u-mb-l">
       <a href="{{ url_for('collection_exercise_bp.get_create_collection_exercise_form', survey_ref=survey.surveyRef, short_name=survey.shortName.replace(' ', '')) }}"
           name="create-collection-exercise-link" id="create-collection-exercise">Create collection exercise</a>
     </div>

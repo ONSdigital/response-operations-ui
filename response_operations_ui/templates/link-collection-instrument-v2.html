@@ -1,0 +1,52 @@
+{% extends "layouts/base.html" %}
+{% from "components/button/_macro.njk" import onsButton %}
+{% block page_title %} Link collection instrument {% endblock %}
+{% block main %}
+<div role="main" id="main" class="page__main">
+
+    <h1 class="u-fs-xl">Link collection instrument</h1>
+    <form action="" method="post">
+        {{ form.csrf_token }}
+        {% if errors %}
+        <div class="panel panel--simple panel--error u-mb-l">
+            {% for field, error_list in errors %}
+            <div class="panel__body" id="save-error">
+                <p class="u-fs-r">{{ ', '.join(error_list) }}</p>
+            </div>
+            {% endfor %}
+        </div>
+        {% endif %}
+        <div class="field u-mt-l u-mb-l">
+            <p>Survey ID is a number (e.g., 009 for MBS, 134 MWSS, etc)</p>
+        <label class="label" for="ce-period">
+            Survey ID
+        </label>
+        {{ form.survey_id(class_="input input--text", id='survey_id', required=required, maxlength=20) }}
+        </div>
+        <div class="field u-mt-l u-mb-l">
+        <label class="label" for="ce-period">
+            Eq id
+        </label>
+        {{ form.eq_id(class_="input input--text", id='eq_id', required=required, maxlength=100) }}
+        </div>
+        <div class="field u-mt-l u-mb-l">
+        <label class="label" for="respondent-period">
+            Formtype
+        </label>
+        {{ form.formtype(class_="input input--text", id='formtype', required=required, maxlength=20) }}
+        </div>
+            {{
+            onsButton({
+                "text": "Link collection instrument",
+                "type": "submit",
+                "classes": "u-mt-l",
+                "id": "save-btn",
+                "submitType": "timer"
+            })
+        }}
+        <div>
+        <a id="cancel-btn" href="{{ url_for('surveys_bp.view_surveys') }}">Cancel</a>
+        </div>
+    </form>
+    </div>
+{% endblock %}
