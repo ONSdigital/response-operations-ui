@@ -116,3 +116,5 @@ minimised/
 !main.css.map
 /scripts/enrolment_email_details.csv
 /scripts/~$example_business_file.xlsx
+
+.history

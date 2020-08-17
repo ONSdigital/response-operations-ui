@@ -1,6 +1,7 @@
 {% extends "layouts/base.html" %}
 {% from "components/panel/_macro.njk" import onsPanel %}
 {% from "components/table/_macro.njk" import onsTable %}
+{% from "components/button/_macro.njk" import onsButton %}
 
 {% set page_title = "Surveys" %}
 
@@ -25,6 +26,17 @@
 
 
   <h1 name="page-surveys-title">Surveys</h1>
+  <div class="u-mb-l">
+      <form id="form-create-new-survey" action="{{url_for('surveys_bp.create_survey')}}" class="form u-mb-l">
+        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
+            {{
+                onsButton({
+                    "text": "Create new survey",
+                    "id": "create-new-survey",
+                    "name": "create-new-survey"
+                })
+            }}    
+    </form>
   <p><a href="{{url_for('surveys_bp.create_survey')}}">Create new survey</a></p>
   
   {% set surveyTableData = {
