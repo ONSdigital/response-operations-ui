@@ -1,14 +1,15 @@
-{% extends "layouts/base.html" %}
-{% from "components/button/_macro.njk" import onsButton %}
-{% from "components/metadata/_macro.njk" import onsMetadata %}
-{% set page_title = 'Edit collection exercise details'  %}
+{% extends "layouts/spoke.html" %}
+{% block page_title %} Edit collection exercise details {% endblock %}
 {% block main %}
-  <div class="grid grid--gutterless">
-    <div class="grid__col col-8@m">
-      <h1 class="u-fs-xl u-mt-m">
+<div role="main" id="main" class="page__main">
+  <div class="spoke__header">
+    <div class="spoke__header-title">
+      <h1 class="u-fs-xl">
         {% if change_flag == 'Active' %}Lock{% else %}Unlock{% endif %} account
       </h1>
-
+    </div>
+  </div>
+  <div class="spoke__body">
       <form method="post" {% if tab=='respondents' %}
           action="{{ url_for('respondent_bp.change_respondent_status',
                                             respondent_id=respondent_id, change_flag=change_flag)}}"
@@ -17,39 +18,26 @@
                                             respondent_id=respondent_id, change_flag=change_flag)}}"
           {% endif %} class="u-mt-l">
           <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
-          {{ 
-            onsMetadata({
-              "termCol": "2",
-              "descriptionCol": "10",
-              "itemsList": [
-                {
-                  "term": "Respondent:",
-                  "descriptions": [ 
-                      {
-                          "description": first_name ~ ' ' ~ last_name
-                      }
-                  ]
-                },
-                {
-                  "term": "Email:",
-                  "descriptions": [ 
-                      {
-                          "description": email_address
-                      }
-                  ]
-                }
-              ]
-            })
-          }}
-        {{
-            onsButton({
-                "classes": "u-mb-s u-mt-l",
-                "text": "Lock" if change_flag == 'LOCKED' else "Unlock" ~ " account",
-                "id": "confirm-btn",
-                "name": "confirm-btn"
-            })
-        }}   
-      <p>
+      <dl class="description-list description-list-8 u-pb-m">
+        <dt class="">
+          Respondent:
+        </dt>
+        <dd class="" id="period">
+          {{ first_name }} {{ last_name }}
+        </dd>
+        <dt class="">
+          Email:
+        </dt>
+        <dd class="">
+          {{ email_address }}
+        </dd>
+      </dl>
+
+      <button type="submit" id="confirm-btn" class="btn u-mt-s">
+        {% if change_flag == 'LOCKED' %}Lock{% else %}Unlock{% endif %} account
+      </button>
+
+      <div class="u-mt-xs">
         <a id="cancel"
           {% if tab=='respondents' %}
            href="{{ url_for('respondent_bp.respondent_details', ru_ref=ru_ref, survey_id=survey_id,
@@ -58,6 +46,8 @@
            href="{{ url_for('reporting_unit_bp.view_reporting_unit', ru_ref=ru_ref, survey_id=survey_id,
                             respondent_id=respondent_id, business_id=business_id, change_flag=change_flag)}}"
            {% endif %}>Cancel</a>
-      </p>
-</form>
+      </div>
+    </form>
+  </div>
+</div>
 {% endblock %}

@@ -1,17 +1,15 @@
-{% extends "layouts/base.html" %}
-{% from "components/button/_macro.njk" import onsButton %}
-{% from "components/metadata/_macro.njk" import onsMetadata %}
-{% from "components/fieldset/_macro.njk" import onsFieldset %}
-{% from "components/input/_macro.njk" import onsInput %}
-
-{% set page_title = 'Edit collection exercise details'  %}
+{% extends "layouts/spoke.html" %}
+{% block page_title %} Edit collection exercise details {% endblock %}
 {% block main %}
-  <div class="grid grid--gutterless">
-    <div class="grid__col col-8@m">
-      <h1 class="u-fs-xl u-mt-m">
+<div role="main" id="main" class="page__main">
+  <div class="spoke__header">
+    <div class="spoke__header-title">
+      <h1 class="u-fs-xl">
         {% if change_flag == 'DISABLED' %}Disable{% else %}Re-enable{% endif %} enrolment
       </h1>
-
+    </div>
+  </div>
+  <div class="spoke__body">
       <form method="post" {% if tab=='respondents' %}
           action="{{ url_for('respondent_bp.change_enrolment_status', ru_ref=ru_ref,
                                            business_id=business_id, survey_id=survey_id, respondent_id=respondent_id,
@@ -21,74 +19,59 @@
                                            business_id=business_id, survey_id=survey_id, respondent_id=respondent_id,
                                            change_flag=change_flag)}}"
           {% endif %} class="u-mt-l">
-        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
-        {{ 
-            onsMetadata({
-            "termCol": "2",
-            "descriptionCol": "10",
-            "itemsList": [
-                {
-                    "term": "Reference:",
-                    "descriptions": [ 
-                        {
-                            "description": ru_ref
-                        }
-                    ]
-                },
-                {
-                    "term": "Name:",
-                    "descriptions": [ 
-                        {
-                            "description": ru_name,
-                            "id": "ru_name"
-                        }                
-                    ]
-                },
-                {
-                    "term": "Trading as:",
-                    "descriptions": [ 
-                        {
-                            "description": trading_as
-                        }                
-                    ]
-                },
-                {
-                    "term": "Survey:",
-                    "descriptions": [ 
-                        {
-                            "description": survey_name,
-                            "id": "survey"
-                        }                
-                    ]
-                },
-                {
-                    "term": "Respondent:",
-                    "descriptions": [ 
-                        {
-                            "description": first_name ~ ' ' ~ last_name,
-                            "id": "period"
-                        }                
-                    ]
-                }                                        
-            ]
-          }) 
-        }}
-        {{
-            onsButton({
-                "classes": "u-mb-s u-mt-l",
-                "text": ('Disable' if change_flag == 'DISABLED' else 'Re-enable') ~ ' enrolment',
-                "id": "confirm-btn"
-            })
-        }}   
-        <p><a id="cancel"
-        {% if tab=='respondents' %}
-          href="{{ url_for('respondent_bp.respondent_details', ru_ref=ru_ref, survey_id=survey_id,
-                          respondent_id=respondent_id, business_id=business_id, change_flag=change_flag)}}"
-          {% else %}
-          href="{{ url_for('reporting_unit_bp.view_reporting_unit', ru_ref=ru_ref, survey_id=survey_id,
-                          respondent_id=respondent_id, business_id=business_id, change_flag=change_flag)}}"
-          {% endif %}>Cancel</a></p>
-      </form>
-    </div>
+      <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
+      <dl class="description-list description-list-8 u-pb-m">
+        <dt class="">
+          Reference:
+        </dt>
+        <dd class="">
+          {{ ru_ref }}
+        </dd>
+
+        <dt class="">
+          Name:
+        </dt>
+        <dd class="" id="ru_name">
+          {{ ru_name }}
+        </dd>
+
+        <dt class="">
+          Trading as:
+        </dt>
+        <dd class="">
+          {{ trading_as }} &#160;
+        </dd>
+
+        <dt class="">
+          Survey:
+        </dt>
+        <dd class="" id="survey">
+          {{ survey_name }}
+        </dd>
+
+        <dt class="">
+          Respondent:
+        </dt>
+        <dd class="" id="period">
+          {{ first_name }} {{ last_name }}
+        </dd>
+      </dl>
+
+      <button type="submit" id="confirm-btn" class="btn u-mb-s">
+        {% if change_flag == 'DISABLED' %}Disable{% else %}Re-enable{% endif %} enrolment
+      </button>
+
+      <div class="u-mt-xs">
+        <a id="cancel"
+          {% if tab=='respondents' %}
+           href="{{ url_for('respondent_bp.respondent_details', ru_ref=ru_ref, survey_id=survey_id,
+                            respondent_id=respondent_id, business_id=business_id, change_flag=change_flag)}}"
+           {% else %}
+           href="{{ url_for('reporting_unit_bp.view_reporting_unit', ru_ref=ru_ref, survey_id=survey_id,
+                            respondent_id=respondent_id, business_id=business_id, change_flag=change_flag)}}"
+           {% endif %}>Cancel</a>
+      </div>
+    </form>
   </div>
+</div>
 {% endblock %}

@@ -175,6 +175,7 @@ class TestUpdateEventDate(ViewTestCase):
 
         self.assertEqual(response.status_code, 200)
         self.assertIn("Must be after MPS Thursday 11 Oct 2018 23:00".encode(), response.data)
+        self.assertIn("Error updating Go Live date".encode(), response.data)
 
     @requests_mock.mock()
     def test_delete_nudge_email_form(self, mock_request):
@@ -219,7 +220,7 @@ class TestUpdateEventDate(ViewTestCase):
         response = self.client.get(f"/surveys/{survey_short_name}/{period}/event/go_live")
 
         self.assertEqual(response.status_code, 200)
-        self.assertNotIn("Yes".encode(), response.data)
+        self.assertNotIn("Remove Event".encode(), response.data)
 
     @requests_mock.mock()
     def test_remove_event_is_present_for_nudge_email(self, mock_request):
@@ -231,7 +232,7 @@ class TestUpdateEventDate(ViewTestCase):
                                    data=self.delete_nudge_email_form)
 
         self.assertEqual(response.status_code, 200)
-        self.assertIn("Yes".encode(), response.data)
+        self.assertIn("Remove Event".encode(), response.data)
 
     @requests_mock.mock()
     def test_remove_event_is_present_for_reminder_email(self, mock_request):
@@ -243,7 +244,7 @@ class TestUpdateEventDate(ViewTestCase):
                                    data=self.delete_nudge_email_form)
 
         self.assertEqual(response.status_code, 200)
-        self.assertIn("Yes".encode(), response.data)
+        self.assertIn("Remove Event".encode(), response.data)
 
     @requests_mock.mock()
     def test_remove_event_is_disabled_for_reminder_email(self, mock_request):
@@ -298,6 +299,7 @@ class TestUpdateEventDate(ViewTestCase):
 
         self.assertEqual(response.status_code, 200)
         self.assertIn("Selected date can not be in the past".encode(), response.data)
+        self.assertIn("Error updating Go Live date".encode(), response.data)
 
     def test_get_reminder_del_visibility_for_non_reminder_tag(self):
         existing_events = [{'id': '1edcb763-608d-4c18-bf07-85cf09e9d0a6',

@@ -1,111 +1,53 @@
-{% extends "layouts/base.html" %}
-{% from "components/button/_macro.njk" import onsButton %}
-{% from "components/fieldset/_macro.njk" import onsFieldset %}
-{% from "components/input/_macro.njk" import onsInput %}
-{% from "components/lists/_macro.njk" import onsList %}
-
-{% set page_title = 'Create survey'  %}
+{% extends "layouts/spoke.html" %}
+{% block page_title %} Create survey {% endblock %}
 {% block main %}
-  <div class="grid grid--gutterless">
-    <div class="grid__col col-8@m">
-        <h1 class="u-fs-xl u-mt-m">Create survey</h1>
-            <form action="" method="post">
-                {{ form.csrf_token }}
-                {% if errors %}
-                    {% set errorData = [] %}
-
-                {% call
-                    onsPanel({
-                        "type":"error",
-                        "id": "save-error",
-                        "classes": "u-mb-s",
-                        "title": "This page has 1 error" if errors|length == 1 else "There are " + errors|length|string + " errors on this page"
-
-                    })
-                %}
-                    {% for field, error_list in errors %}
-                        {% do errorData.append(
-                            {
-                                "text": ', '.join(error_list),
-                                "index": true
-                            }
-                        ) %}
-                    {% endfor %}
-                    {{
-                        onsList({
-                            "classes": "list--bare",
-                            "itemsList": errorData
-                        }) 
-                    }}
-                {% endcall %}
-            {% endif %}
-
-            {%- call onsFieldset({
-                "legend": "Create survey",
-                "legendClasses": "u-vh"
-                }) -%}
-                {{
-                    onsInput({
-                        "id": "survey_ref",
-                        "name": "survey_ref",
-                        "type": "text",
-                        "maxLength": 20,
-                        "value": survey_ref,
-                        "attributes": {
-                            "required": true
-                        },
-                        "label": {
-                            "text": 'Survey ID'
-                        }
-                    })
-                }} 
-                {{
-                    onsInput({
-                        "id": "long_name",
-                        "name": "long_name",
-                        "type": "text",
-                        "maxLength": 100,
-                        "attributes": {
-                            "required": true
-                        },
-                        "label": {
-                            "text": 'Survey name'
-                        }
-                    })
-                }} 
-                {{
-                    onsInput({
-                        "id": "short_name",
-                        "name": "short_name",
-                        "type": "text",
-                        "maxLength": 20,
-                        "attributes": {
-                            "required": true
-                        },
-                        "label": {
-                            "text": 'Abbreviation'
-                        }
-                    })
-                }} 
-            {% endcall %}
-            <p class="field">
-                <label class="label u-fs-r--b " for="legal_basis">
-                    Legal basis
-                </label>
-                {{ form.legal_basis(class_="input input--select", id='legal_basis', required=required) }}
-            </p>
-            {{
-                onsButton({
-                    "classes": "u-mb-s u-mt-l",
-                    "text": "Create",
-                    "id": "save-btn"
-                })
-            }}   
-
-            <p>
-                <a id="cancel-btn" href="{{ url_for('surveys_bp.view_surveys') }}">Cancel</a>
-            </p>
-        </form>
+<div role="main" id="main" class="page__main">
+    <div class="spoke__header">
+    <div class="spoke__header-title">
+        <h1 class="u-fs-xl">Create survey</h1>
+    </div>
+    </div>
+    <div class="spoke__body" id="spoke__body">
+    <form action="" method="post">
+        {{ form.csrf_token }}
+        {% if errors %}
+        <div class="panel panel--simple panel--error u-mb-l">
+            {% for field, error_list in errors %}
+            <div class="panel__body" id="save-error">
+                <p class="u-fs-r">{{ ', '.join(error_list) }}</p>
+            </div>
+            {% endfor %}
+        </div>
+        {% endif %}
+        <div class="field u-mt-l u-mb-l">
+        <label class="label" for="ce-period">
+            Survey ID
+        </label>
+        {{ form.survey_ref(class_="input input--text", id='survey_ref', required=required, maxlength=20) }}
+        </div>
+        <div class="field u-mt-l u-mb-l">
+        <label class="label" for="ce-period">
+            Survey name
+        </label>
+        {{ form.long_name(class_="input input--text", id='long_name', required=required, maxlength=100) }}
+        </div>
+        <div class="field u-mt-l u-mb-l">
+        <label class="label" for="respondent-period">
+            Abbreviation
+        </label>
+        {{ form.short_name(class_="input input--text", id='short_name', required=required, maxlength=20) }}
+        </div>
+        <div class="field field--select u-mb-m">
+        <label class="label u-fs-r--b " for="select">
+            Legal basis
+        </label>
+        {{ form.legal_basis(class_="input input--select", id='legal_basis', required=required) }}
+        </div>
+        <button id="save-btn" type="submit" class="btn u-mb-s">Create</button>
+        <div>
+        <a id="cancel-btn" href="{{ url_for('surveys_bp.view_surveys') }}">Cancel</a>
+        </div>
+    </form>
     </div>
 </div>
 {% endblock %}

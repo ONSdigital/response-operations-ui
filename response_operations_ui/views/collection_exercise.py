@@ -507,7 +507,7 @@ def create_collection_exercise(survey_ref, short_name):
 
     for ce in ce_details:
         if ce['exerciseRef'] == str(created_period):
-            error = "Use a period that is not in use by any collection exercise for this survey."
+            error = "Please use a period that is not in use by any collection exercise for this survey."
             return render_template('create-collection-exercise.html', form=ce_form, short_name=short_name,
                                    errors=error,
                                    survey_ref=survey_ref, survey_id=survey_id,

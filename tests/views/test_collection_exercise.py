@@ -1051,7 +1051,7 @@ class TestCollectionExercise(ViewTestCase):
         )
         self.assertEqual(response.status_code, 200)
         self.assertIn(
-            "Use a period that is not in use by any collection exercise for this survey".encode(),
+            "Please use a period that is not in use by any collection exercise for this survey".encode(),
             response.data,
         )
 
@@ -1109,7 +1109,7 @@ class TestCollectionExercise(ViewTestCase):
 
         self.assertEqual(response.status_code, 200)
         self.assertIn(
-            "Use a period that is not in use by any collection exercise for this survey".encode(),
+            "Please use a period that is not in use by any collection exercise for this survey".encode(),
             response.data,
         )
 
