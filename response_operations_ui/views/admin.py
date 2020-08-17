@@ -14,7 +14,6 @@ admin_bp = Blueprint('admin_bp', __name__, static_folder='static', template_fold
 
 INFO_MESSAGES = {
     'survey_changed': "Survey details changed",
-    'survey_created': "Survey created successfully",
     'instrument_linked': "Collection exercise linked to survey successfully"
 }
 

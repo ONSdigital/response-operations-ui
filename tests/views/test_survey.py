@@ -100,6 +100,7 @@ class TestSurvey(ViewTestCase):
         self.assertEqual(response.status_code, 200)
         self.assertIn("BRES".encode(), response.data)
         self.assertIn("BRUS".encode(), response.data)
+        self.assertIn("Create new survey".encode(), response.data)
 
     @requests_mock.mock()
     def test_survey_list_no_surveys(self, mock_request):
@@ -344,6 +345,7 @@ class TestSurvey(ViewTestCase):
         response = self.client.post("surveys/create", data=create_survey_request, follow_redirects=True)
 
         self.assertEqual(response.status_code, 200)
+        self.assertIn("Test Survey</a> has been added".encode(), response.data)
 
     @requests_mock.mock()
     def test_create_survey_conflict(self, mock_request):

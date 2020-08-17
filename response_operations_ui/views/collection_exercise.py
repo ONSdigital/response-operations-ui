@@ -99,13 +99,14 @@ def view_collection_exercise(short_name, period):
     success_panel = request.args.get('success_panel')
     info_panel = request.args.get('info_panel')
     sorted_nudge_list = get_existing_sorted_nudge_events(ce_details['events'])
+    error_json = _get_error_from_session()
 
     return render_template('collection_exercise/collection-exercise.html',
                            breadcrumbs=breadcrumbs,
                            ce=ce_details['collection_exercise'],
                            collection_instruments=ce_details['collection_instruments'],
                            eq_ci_selectors=ce_details['eq_ci_selectors'],
-                           error=json.loads(session.get('error')) if session.get('error') else None,
+                           error=error_json,
                            events=ce_details['events'],
                            locked=locked,
                            missing_ci=missing_ci,
@@ -119,6 +120,19 @@ def view_collection_exercise(short_name, period):
                            ci_classifiers=ce_details['ci_classifiers']['classifierTypes'],
                            info_panel=info_panel,
                            existing_nudge=sorted_nudge_list if len(sorted_nudge_list) > 0 else [])
+
+
+def _get_error_from_session():
+    """
+    This is an ugly fix for errors being written to the permanently to the session. This guarantees that an error
+    will be displayed once and then removed. If errors are ever tidied up (using flash for instance) then this code
+    can go.
+    """
+    if session.get('error'):
+        error_json = json.loads(session.get('error'))
+        session.pop('error')
+        return error_json
+    return None
 
 
 def get_existing_sorted_nudge_events(events):
@@ -253,7 +267,11 @@ def _upload_collection_instrument(short_name, period):
 
     if not error:
         file = request.files['ciFile']
-        form_type = _get_form_type(file.filename)
+        is_ru_specific_instrument = False
+        if file.filename.split(".")[0].isdigit():
+            is_ru_specific_instrument = True
+
+        logger.info("Collection instrument about to be uploaded", filename=file.filename)
         survey_id = survey_controllers.get_survey_id_by_short_name(short_name)
         exercises = collection_exercise_controllers.get_collection_exercises_by_survey(survey_id)
 
@@ -262,13 +280,24 @@ def _upload_collection_instrument(short_name, period):
         if not exercise:
             return make_response(jsonify({'message': 'Collection exercise not found'}), 404)
 
-        if collection_instrument_controllers.upload_collection_instrument(exercise['id'], file, form_type):
+        error_text = None
+        if is_ru_specific_instrument:
+            ru_ref = file.filename.split(".")[0]
+            upload_success, error_text = collection_instrument_controllers.\
+                upload_ru_specific_collection_instrument(exercise['id'], file, ru_ref)
+        else:
+            form_type = _get_form_type(file.filename)
+            upload_success = collection_instrument_controllers.upload_collection_instrument(exercise['id'],
+                                                                                            file, form_type)
+
+        if upload_success:
             success_panel = "Collection instrument loaded"
         else:
+            message = error_text if error_text else "Please try again"
             session['error'] = json.dumps({
                 "section": "ciFile",
                 "header": "Error: Failed to upload collection instrument",
-                "message": "Please try again"
+                "message": message
             })
     else:
         session['error'] = json.dumps(error)
@@ -303,23 +332,23 @@ def _validate_collection_instrument():
     error = None
     if 'ciFile' in request.files:
         file = request.files['ciFile']
-        if not str.endswith(file.filename, '.xlsx'):
-            logger.info('Invalid file format uploaded', filename=file.filename)
-            error = {
-                "section": "ciFile",
-                "header": "Error: wrong file type for collection instrument",
-                "message": "Please use XLSX file only"
-            }
-        else:
-            # file name format is surveyId_period_formType
-            form_type = _get_form_type(file.filename) if file.filename.count('_') == 2 else ''
-            if not form_type.isdigit() or len(form_type) != 4:
-                logger.info('Invalid file format uploaded', filename=file.filename)
-                error = {
-                    "section": "ciFile",
-                    "header": "Error: invalid file name format for collection instrument",
-                    "message": "Please provide file with correct form type in file name"
-                }
+
+        error = validate_file_extension_is_correct(file)
+
+        if error is None:
+            ci_name = file.filename.split(".")[0]
+            if ci_name.isdigit():
+                error = validate_ru_specific_collection_instrument(file, ci_name)
+            else:
+                # file name format is surveyId_period_formType
+                form_type = _get_form_type(file.filename) if file.filename.count('_') == 2 else ''
+                if not form_type.isdigit() or len(form_type) != 4:
+                    logger.info('Invalid file format uploaded', filename=file.filename)
+                    error = {
+                        "section": "ciFile",
+                        "header": "Error: Invalid file name format for collection instrument",
+                        "message": "Please provide file with correct form type in file name"
+                    }
     else:
         logger.info('No file uploaded')
         error = {
@@ -327,6 +356,33 @@ def _validate_collection_instrument():
             "header": "Error: No collection instrument supplied",
             "message": "Please provide a collection instrument"
         }
+    return error
+
+
+def validate_ru_specific_collection_instrument(file, ci_name):
+    logger.info("Ru specific collection instrument detected", filename=file.filename)
+    if len(ci_name) == 11:
+        return None
+
+    logger.info('Invalid ru specific file format uploaded', filename=file.filename)
+    error = {
+        "section": "ciFile",
+        "header": "Error: Invalid file name format for ru specific collection instrument",
+        "message": "Please provide a file with a valid 11 digit ru ref in the file name"
+    }
+    return error
+
+
+def validate_file_extension_is_correct(file):
+    if str.endswith(file.filename, '.xlsx'):
+        return None
+
+    logger.info('Invalid file format uploaded', filename=file.filename)
+    error = {
+        "section": "ciFile",
+        "header": "Error: Wrong file type for collection instrument",
+        "message": "Please use XLSX file only"
+    }
     return error
 
 
