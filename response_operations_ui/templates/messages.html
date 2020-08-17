@@ -2,7 +2,7 @@
 {% from "components/search/_macro.njk" import onsSearch %}
 {% from "components/section-navigation/_macro.njk" import onsSectionNavigation %}
 {% from "components/table/_macro.njk" import onsTable %}
-{% from "components/status/_macro.njk" import onsStatus %}
+{% from "components/input/_macro.njk" import onsInput %}
 
 {% set page_title = "Messages" %}
 {% set hide_breadcrumbs = true %}
@@ -49,25 +49,26 @@
       <form action="{{ url_for('messages_bp.view_selected_survey',selected_survey=selected_survey, conversation_tab=conversation_tab, ru_ref_filter=ru_ref_filter, business_id_filter=business_id_filter, page=page, limit=limit) }}" method="post">
         {{ form.csrf_token }}
         {{
-          onsSearch({
-              "input": {
-                  "id": 'search-field',
-                  "type": 'number',
-                  "width": '6',
-                  "label": 'Filter RU ref',
-                  "name": 'ru_ref_filter',
-                  "value": ru_ref_filter
-              },
-              "button": {
-                  "text": 'Filter',
-                  "id": 'btn-filter-ru',
-                  "type": 'submit'
-              },
-              "charcheck": 11,
-              "charCountSingular": "{x} more number needed",
-              "charCountPlural": "{x} more numbers needed",
-              "charCountOverLimitSingular": "{x} number too many",
-              "charCountOverLimitPlural": "{x} numbers too many"
+          onsInput({
+            "id": 'search-field',
+            "type": 'number',
+            "width": '6',
+            "label": 'Filter RU ref',
+            "name": 'ru_ref_filter',
+            "value": ru_ref_filter,
+            "searchButton": {
+                "text": 'Filter',
+                "id": 'btn-filter-ru',
+                "type": 'submit'
+            },
+            "charCheck": {
+                "charcheckCountdown": true,
+                "limit": 11,
+                "charCountSingular": "{x} more character needed",
+                "charCountPlural": "{x} more characters needed",
+                "charCountOverLimitSingular": "{x} character too many",
+                "charCountOverLimitPlural": "{x} characters too many"
+            }
           })
         }}
       </form>  
