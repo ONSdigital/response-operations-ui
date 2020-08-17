@@ -1,68 +1,112 @@
-{% extends "layouts/spoke.html" %}
-{% block page_title %} Edit survey details {% endblock %}
+{% extends "layouts/base.html" %}
+{% from "components/button/_macro.njk" import onsButton %}
+{% from "components/metadata/_macro.njk" import onsMetadata %}
+{% from "components/fieldset/_macro.njk" import onsFieldset %}
+{% from "components/input/_macro.njk" import onsInput %}
+
+{% set page_title = 'Edit survey details' %}
 {% block main %}
-<div role="main" id="main" class="page__main">
-  <div class="spoke__header">
-    <div class="spoke__header-title">
-      <h1 class="u-fs-xl">Edit survey details</h1>
-    </div>
-  </div>
-  <div class="spoke__body">
-    <form action="" method="post">
-      {{ form.csrf_token }}
-      <div class="field u-mb-l">
-        <label class="label" for="survey_id">
-          Survey ID:
-          <span class="u-vh">Current value: </span>
-          <span class="u-fs-r">
-              {{ survey_ref }}
-              </span>
-        </label>
-        <label class="label" for="legal_basis">
-          Legal Basis:
-          <span class="u-vh">Current value: </span>
-          <span class="u-fs-r">
-              {{ legal_basis }}
-              </span>
-        </label>
-      </div>
-      {% if errors %}
-      <div class="panel panel--simple panel--error u-mb-l">
-        <div class="panel__body" id="save-error">
-          <h2 id='error-saving-message' class="u-fs-r--b">Error updating survey details</h2>
-          <p class="u-fs-r">Please remove any spaces or special characters from the name and try saving your changes again.</p>
-        </div>
-      </div>
-      {% endif %}
-        <div class="field u-mb-s">
-          <label class="label" for="short_name">
-            Short Name
-            <span class="secondary-info current-value">
-            <span class="u-vh">Current value: </span>
-                {{ short_name }}
-            </span>
-          </label>
-          {{ form.short_name(class_="input input--text", id='short_name', required=required, maxlength=254, value=short_name) }}
-        </div>
-        <div class="field u-mb-l">
-          <label class="label" for="long_name">
-            Long Name
-            <span class="secondary-info current-value">
-            <span class="u-vh">Current value: </span>
-                {{ long_name }}
-            </span>
-          </label>
-          {{ form.long_name(class_="input input--text", id='long_name', required=required, maxlength=254, value=long_name) }}
-          <div class="field u-mb-l">
-            <span class="u-vh">Current value: </span>
-            </span>
-            {{ form.hidden_survey_ref(value=survey_ref, id='survey_ref') }}
-          </div>
-        </div>
-      <button class="btn u-mb-s" id="save-btn">Save</button>
-      <div>
-        <a id="cancel-btn" href="{{ url_for('surveys_bp.view_surveys') }}">Cancel</a>
-      </div>
+  <div class="grid grid--gutterless">
+      <div class="grid__col col-8@m">
+          {% if errors %}
+            {% call
+              onsPanel({
+                  "type":"error",
+                  "title": "This page has 1 error",
+                  "classes": "u-mb-s",
+                  "id": "save-error"
+              })
+            %}
+              <h2 id='error-saving-message' class="u-fs-r--b">Error updating survey details</h2>
+              <p>Please remove any spaces or special characters from the name and try saving your changes again.</p>
+            {% endcall %}
+          {% endif %}
+        <h1 class="u-fs-xl u-mt-m">Edit survey details</h1>
+        <form action="" method="post">
+          {{ form.csrf_token }}
+
+          {{ 
+              onsMetadata({
+              "termCol": "2",
+              "descriptionCol": "10",
+              "itemsList": [
+                  {
+                      "term": "Survey ID:",
+                      "descriptions": [ 
+                          {
+                              "description": survey_ref
+                          }
+                      ]
+                  },
+                  {
+                      "term": "Legal Basis:",
+                      "descriptions": [ 
+                          {
+                              "description": legal_basis
+                          }                
+                      ]
+                  }                                                    
+              ]
+              }) 
+          }}
+
+          {%- call onsFieldset({
+              "legend": "Edit survey details",
+              "legendClasses": "u-vh"
+              }) -%}
+              {{
+                  onsInput({
+                      "id": "short_name",
+                      "name": "short_name",
+                      "type": "text",
+                      "label": {
+                          "text": 'Short Name - <span class="u-lighter u-fw-n">' ~ short_name ~ '</span>'
+                      },
+                      "maxLength": 254,
+                      "value": short_name,
+                      "attributes": {
+                          "required": true
+                      }
+                  })
+              }} 
+              {{
+                  onsInput({
+                      "id": "long_name",
+                      "name": "long_name",
+                      "type": "text",
+                      "label": {
+                          "text": 'Long Name - <span class="u-lighter u-fw-n">' ~ long_name ~ '</span>'
+                      },
+                      "maxLength": 254,
+                      "value": long_name,
+                      "attributes": {
+                          "required": true
+                      }
+                  })
+              }} 
+              {{
+                  onsInput({
+                      "id": "survey_ref",
+                      "name": "hidden_survey_ref",
+                      "type": "hidden",
+                      "value": survey_ref,
+                      "label": {
+                          "text": 'Survey ref',
+                          "classes": "u-vh"
+                      }
+                  })
+              }} 
+
+          {% endcall %}
+
+          {{
+              onsButton({
+                  "classes": "u-mb-s u-mt-l",
+                  "text": "Save",
+                  "id": "save-btn"
+              })
+          }}   
+          <p><a id="cancel-btn" href="{{ url_for('surveys_bp.view_surveys') }}">Cancel</a></p>
     </form>
   </div>
 </div>

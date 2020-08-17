@@ -1,11 +1,15 @@
 {% from "components/breadcrumb/_macro.njk" import onsBreadcrumb %}
 
-{% set breadcrumbsData = [
-  {
-    "text": "Home",
-    "url": "/"
-  }
-] %}
+{% if request.path == "/choose-overview-survey" %}
+  {% set breadcrumbsData = [] %}
+{% else %}
+  {% set breadcrumbsData = [
+    {
+      "text": "Home",
+      "url": "/choose-overview-survey"
+    }
+  ] %}
+{% endif %}
 
 {% for breadcrumb in breadcrumbs[:-1] %}
   {% do breadcrumbsData.append(breadcrumb) %}
