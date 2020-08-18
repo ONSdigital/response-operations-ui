@@ -42,6 +42,13 @@
             {% if params.attributes %}{% for attribute, value in (params.attributes.items() if params.attributes is mapping and params.attributes.items else params.attributes) %}{{ attribute }}{% if value %}="{{ value }}"{% endif %} {% endfor %}{% endif %}
             {% if params.label is defined and params.label.description is defined %}{% if params.label.id %}aria-describedby="{{params.id}}-description-hint"{% else %}aria-describedby="description-hint"{% endif %}{% endif %}
         />
+        {% if params.listeners %}
+            <script{% if csp_nonce %} nonce="{{ csp_nonce() }}"{% endif %}>
+            {% for listener, value in (params.listeners.items() if params.listeners is mapping and params.listeners.items else params.listeners) %}
+                document.getElementById("{{ params.id }}").addEventListener('{{ listener }}', function(){ {{ value }} });
+            {% endfor %}
+            </script>
+            {% endif %}
         {% if params.postTextboxLinkText %}
             <a class="u-fs-s" href="{{ params.postTextboxLinkUrl }}">{{ params.postTextboxLinkText }}</a>
         {% endif %}
