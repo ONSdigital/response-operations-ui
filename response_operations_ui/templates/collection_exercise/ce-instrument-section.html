@@ -129,7 +129,7 @@
       </div>
       {{
         onsButton({
-          "text": "Add CI",
+          "text": "Add CI-TEST",
           "id": "btn-load-ci",
           "classes": "btn--small btn--disabled",
           "name": "load-ci",
@@ -137,6 +137,10 @@
         })
       }}   
     </form>
+    <div class="u-mb-l">
+      <a href="{{ url_for('collection_exercise_bp.get_seft_collection_instrument', period=ce.exerciseRef, short_name=survey.shortName.replace(' ', '')) }}"
+          name="load-collection-instruments" id="load-collection-instruments">Load collection instruments</a>
+    </div>
     {% endif %}
   </div>
   {% endif %}

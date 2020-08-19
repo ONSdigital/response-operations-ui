@@ -283,7 +283,7 @@ def _upload_collection_instrument(short_name, period):
         error_text = None
         if is_ru_specific_instrument:
             ru_ref = file.filename.split(".")[0]
-            upload_success, error_text = collection_instrument_controllers.\
+            upload_success, error_text = collection_instrument_controllers. \
                 upload_ru_specific_collection_instrument(exercise['id'], file, ru_ref)
         else:
             form_type = _get_form_type(file.filename)
@@ -675,3 +675,22 @@ def remove_loaded_sample(short_name, period):
         return redirect(url_for('collection_exercise_bp.view_collection_exercise',
                                 short_name=short_name,
                                 period=period))
+
+
+@collection_exercise_bp.route('/<short_name>/<period>/load-collection-instruments', methods=['GET'])
+@login_required
+def get_seft_collection_instrument(short_name, period):
+    ce_details = build_collection_exercise_details(short_name, period)
+    show_msg = request.args.get('show_msg')
+    success_panel = request.args.get('success_panel')
+    info_panel = request.args.get('info_panel')
+    error_json = _get_error_from_session()
+    return render_template('ce-seft-instrument.html', 
+                           survey=ce_details['survey'], 
+                           ce=ce_details['collection_exercise'],
+                           collection_instruments=ce_details['collection_instruments'],
+                           success_panel=success_panel,
+                           error=error_json,
+                           info_panel=info_panel,
+                           show_msg=show_msg,
+                           period=period)

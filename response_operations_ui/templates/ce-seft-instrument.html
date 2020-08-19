@@ -1,0 +1,74 @@
+{% extends "layouts/base.html" %}
+{% from "components/button/_macro.njk" import onsButton %}
+{% from "components/panel/_macro.njk" import onsPanel %}
+{% from "components/metadata/_macro.njk" import onsMetadata %}
+{% from "components/table/_macro.njk" import onsTable %}
+{% from "components/upload/_macro.njk" import onsUpload %}
+{% from "components/checkboxes/_macro.njk" import onsCheckboxes %}
+
+{% block main %}
+  <h1 name="page-survey-title" class="u-mb-l">Load Collection instruments for {{survey.shortName}} {{period}}</h1>
+  <form id="form-load-ci" action="" class="form" method="post" enctype="multipart/form-data">
+    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
+    <div id="ciFileErrorPanel" class="{{'panel panel--simple panel--error' if error.section == 'ciFile' else ''}}">
+      <span class="label__description">File types accepted are .xls and .xlsx</span>
+      <div id="ciFileErrorPanelBody" class="{{'panel__body' if error.section == 'ciFile' else ''}}">
+        <p id="ciFileErrorText" class="hidden">
+          Incorrect file type. Please choose a file type XLSX or XLS
+        </p>
+        {{-
+          onsUpload({
+              "id": "ciFile",
+              "name": "ciFile",
+              "listeners": {
+                "change": "validateCI.checkSelectedCI(this.files)"
+              },
+              "accept": ".xlsx, .xls",
+              "label": {
+                  "classes": "u-vh",
+                  "text": "Choose file"
+              }
+          })
+      -}}
+      </div>
+    </div>
+    <div>
+      {{
+        onsButton({
+          "text": "Upload",
+          "id": "btn-load-ci",
+          "classes": "btn--secondary btn--small btn--disabled",
+          "name": "load-ci",
+          "submitType": "timer"
+        })
+      }}
+    </div> 
+  </form>
+  <div>
+    <div>
+      <form id="cancel-seft-instrument" action="{{ url_for('collection_exercise_bp.get_create_collection_exercise_form', survey_ref=survey.surveyRef, short_name=survey.shortName.replace(' ', '')) }}" class="form u-mb-l">
+        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
+            {{
+                onsButton({
+                    "text": "Cancel",
+                    "id": "create-collection-exercise",
+                    "name": "create-collection-exercise-link"
+                })
+            }}    
+      </form>
+    </div>
+    {{
+      onsButton({
+        "text": "Upload",
+        "id": "btn-load-ci",
+        "classes": "btn--secondary btn--small",
+        "name": "load-ci",
+        "submitType": "timer"
+      })
+    }}
+    
+    <p>
+                <a id="cancel-btn" href="{{ url_for('surveys_bp.view_surveys') }}">Cancel</a>
+            </p>
+  </div>
+{% endblock %}
