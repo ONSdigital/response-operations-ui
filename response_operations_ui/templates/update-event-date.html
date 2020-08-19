@@ -4,8 +4,6 @@
 {% from "components/fieldset/_macro.njk" import onsFieldset %}
 {% from "components/input/_macro.njk" import onsInput %}
 {% from "components/lists/_macro.njk" import onsList %}
-{% from "components/date-input/_macro.njk" import onsDateInput %}
-{% from "components/duration/_macro.njk" import onsDuration %}
 {% from "components/checkboxes/_macro.njk" import onsCheckboxes %}
 {% from "components/field/_macro.njk" import onsField %}
 
@@ -88,65 +86,39 @@
     <form method="post" class="">
       <div class="date-time-editor u-mb-l">
         {{ form.csrf_token }}
-        {{
-            onsDateInput({
-                "id": "date",
-                "legend": "Enter a date",
-                "day": {
-                    "label": {
-                        "text": "Day"
-                    },
-                    "name": "day",
-                    "value": form.day.data,
-                    "attributes": {
-                        "autocomplete": "date-day"
-                    }
-                },
-                "month": {
-                    "label": {
-                        "text": "Month"
-                    },
-                    "name": "month",
-                    "value": form.month.data,
-                    "attributes": {
-                        "autocomplete": "date-month"
-                    }
-                },
-                "year": {
-                    "label": {
-                        "text": "Year"
-                    },
-                    "name": "year",
-                    "value": form.year.data,
-                    "attributes": {
-                        "autocomplete": "date-year"
-                    }
-                }
-            })
-        }}
-        {{ onsDuration({
-            "legend": "Time (Newport)",
-            "field1": {
-                "id": "time-select-hrs",
-                "name": "hour",
-                "label": "Hours",
-                "value": form.hour.data,
-                "attributes": {
-                    "min": 0,
-                    "max": 23
-                }
-            },
-            "field2": {
-                "id": "time-select-mins",
-                "name": "minute",
-                "label": "Minutes",
-                "value": form.minute.data,
-                "attributes": {
-                    "min": 0,
-                    "max": 59
-                }
-            }
-        }) }}
+
+        <fieldset class="fieldgroup fieldgroup--inline fieldgroup--date" data-qa="widget-date" role="group">
+          <legend class="fieldgroup__title u-fs-r--b u-mb-xs">Date</legend>
+          <div class="field-group">
+            <div class="field field--input">
+              <label class="label u-fs-s--b" for="date-en-gb-day" id="label-date-range-from-day" data-qa="label-day">Day</label>
+              {{ form.day(id="date-en-gb-day", size=2, class_="input input--text input--StringField input--w-2", type="number") }}
+            </div>
+            <div class="field field--select">
+              <label class="label u-fs-s--b" for="date-en-gb-month" id="label-date-range-from-month" data-qa="label-month">Month</label>
+              {{ form.month(id="date-en-gb-month", class_="input input--select input--w-auto") }}
+            </div>
+            <div class="field field--input">
+              <label class="label u-fs-s--b" for="date-en-gb-year" id="label-date-range-from-year" data-qa="label-year">Year</label>
+              {{ form.year(id="date-en-gb-year", class="input input--text input--StringField input--w-4", type="number") }}
+            </div>
+          </div>
+        </fieldset>
+        <fieldset class="fieldgroup fieldgroup--time u-mt-l" data-qa="widget-time">
+          <legend class="fieldgroup__title u-fs-r--b">Time (Newport)</legend>
+          <div class="field-group">
+            <div class="field field--select field--hrs">
+              <label class="label u-fs-s--b" for="time-select-hrs" id="time-hrs">Hrs</label>
+              {{ form.hour(id="time-select-hrs", class_="input input--select input--select__time-hrs") }}
+            </div>
+
+            <div class="field field--select field--mins">
+              <label class="label u-fs-s--b" for="time-select-mins" id="time-mins">Mins</label>
+              {{ form.minute(id="time-select-mins", class_="input input--select input--select__time-mins") }}
+            </div>
+          </div>
+        </fieldset>
+      </div>
       {% if ('nudge' in event_name) or (show is true) %}
         {%- call onsField({                    
           }) -%}
