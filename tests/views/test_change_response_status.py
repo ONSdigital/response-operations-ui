@@ -86,7 +86,7 @@ class TestChangeResponseStatus(TestCase):
         self.assertEqual(response.status_code, 200)
         self.assertIn(b'19000001', data)
         self.assertIn(b'Bolts and Ratchets', data)
-        self.assertIn(b'221 &nbsp; BLOCKS', data)
+        self.assertIn(b'221 BLOCKS', data)
         self.assertIn(b'Not started', data)
         self.assertIn(b'Completed by phone', data)
 
@@ -218,7 +218,7 @@ class TestChangeResponseStatus(TestCase):
         self.assertEqual(response.status_code, 200)
         self.assertIn(b'19000001', data)
         self.assertIn(b'Bolts and Ratchets', data)
-        self.assertIn(b'221 &nbsp; BLOCKS', data)
+        self.assertIn(b'221 BLOCKS', data)
         self.assertIn(b'Completed', data)
 
     @requests_mock.mock()
@@ -237,7 +237,7 @@ class TestChangeResponseStatus(TestCase):
         self.assertEqual(response.status_code, 200)
         self.assertIn(b'19000001', data)
         self.assertIn(b'Bolts and Ratchets', data)
-        self.assertIn(b'221 &nbsp; BLOCKS', data)
+        self.assertIn(b'221 BLOCKS', data)
         self.assertIn(b'Completed', data)
         self.assertIn(b'Jacky Turner', data)
 
@@ -257,7 +257,7 @@ class TestChangeResponseStatus(TestCase):
         self.assertEqual(response.status_code, 200)
         self.assertIn(b'19000001', data)
         self.assertIn(b'Bolts and Ratchets', data)
-        self.assertIn(b'221 &nbsp; BLOCKS', data)
+        self.assertIn(b'221 BLOCKS', data)
         self.assertIn(b'Completed', data)
         self.assertNotIn(b'Jacky Turner', data)
 
@@ -277,6 +277,6 @@ class TestChangeResponseStatus(TestCase):
         self.assertEqual(response.status_code, 200)
         self.assertIn(b'19000001', data)
         self.assertIn(b'Bolts and Ratchets', data)
-        self.assertIn(b'221 &nbsp; BLOCKS', data)
+        self.assertIn(b'221 BLOCKS', data)
         self.assertIn(b'Completed', data)
         self.assertNotIn(b'Jacky Turner', data)

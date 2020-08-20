@@ -3,6 +3,7 @@
 {% from "components/panel/_macro.njk" import onsPanel %}
 {% from "components/table/_macro.njk" import onsTable %}
 {% from "components/metadata/_macro.njk" import onsMetadata %}
+{% from "components/button/_macro.njk" import onsButton %}
 
 {% block main %}
   {% if updated_ce_message %}
@@ -82,12 +83,16 @@
   <section class="ce-list">
     <h2>Collection exercises for {{survey.shortName}}</h2>
     <div class="u-mb-l">
-      <a href="{{ url_for('surveys_bp.get_link_collection_instrument') }}"
-          name="load-collection-instruments-link" id="load-collection-instruments">Load collection instruments</a>
-    </div>
-    <div class="u-mb-l">
-      <a href="{{ url_for('collection_exercise_bp.get_create_collection_exercise_form', survey_ref=survey.surveyRef, short_name=survey.shortName.replace(' ', '')) }}"
-          name="create-collection-exercise-link" id="create-collection-exercise">Create collection exercise</a>
+      <form id="form-create-collection-exercise" action="{{ url_for('collection_exercise_bp.get_create_collection_exercise_form', survey_ref=survey.surveyRef, short_name=survey.shortName.replace(' ', '')) }}" class="form u-mb-l">
+        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
+            {{
+                onsButton({
+                    "text": "Create collection exercise",
+                    "id": "create-collection-exercise",
+                    "name": "create-collection-exercise-link"
+                })
+            }}    
+    </form>
     </div>
 
     {% set surveyTableData = {

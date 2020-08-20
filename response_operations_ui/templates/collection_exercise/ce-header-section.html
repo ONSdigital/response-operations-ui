@@ -28,16 +28,13 @@
     }) 
 }}
 {% if show_set_live_button %}
-    <form id="form-ready-for-live" action="" class="form u-mb-l" method="post" enctype="multipart/form-data">
+    <form id="form-ready-for-live" action="" class="form u-mb-l" method="post" enctype="multipart/form-data" onsubmit="return confirm('This action cannot be undone.  Press OK to continue\, or Cancel to go back.')">
     <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
         {{
             onsButton({
                 "text": "Set as ready for live",
                 "id": "btn-ready-for-live",
-                "name": "ready-for-live",
-                "listeners": {
-                    "click": "return confirm('This action cannot be undone.  Press OK to continue\, or Cancel to go back.')"
-                }
+                "name": "ready-for-live"
             })
         }}    
     </form>
