@@ -199,6 +199,7 @@ class CreateSurveyDetailsForm(FlaskForm):
                                                 message='Please use alphanumeric characters only.')])
     survey_ref = StringField('survey_ref', validators=[InputRequired(message="Please remove spaces in Survey ID")])
     legal_basis = SelectField('legal_basis', choices=[('', 'Select an option')])
+    survey_modes = SelectField('survey_mode', choices=[('', 'Select an option'), ('eq', 'eQ'), ('seft', 'SEFT')])
 
     def __init__(self, form):
         super().__init__(form)

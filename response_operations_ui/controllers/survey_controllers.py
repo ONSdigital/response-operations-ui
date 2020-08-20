@@ -233,8 +233,24 @@ def get_legal_basis_list():
     logger.info('Successfully retrieved legal basis list')
     return lbs
 
+# 
+# def get_survey_mode_list():
+#     logger.info('Retrieving legal basis list')
+#     url = f'{app.config["SURVEY_URL"]}/survey-modes'
+#     response = requests.get(url, auth=app.config['BASIC_AUTH'])
+# 
+#     try:
+#         response.raise_for_status()
+#     except HTTPError:
+#         logger.error('Failed retrieving survey modes')
+#         raise ApiError(response)
+# 
+#     lbs = [(lb['ref'], lb['longName']) for lb in response.json()]
+#     logger.info('Successfully retrieved survey modes')
+#     return lbs
 
-def create_survey(survey_ref, short_name, long_name, legal_basis):
+
+def create_survey(survey_ref, short_name, long_name, legal_basis, survey_mode):
     logger.info('Creating new survey', survey_ref=survey_ref, short_name=short_name,
                 long_name=long_name, legal_basis=legal_basis)
     url = f'{app.config["SURVEY_URL"]}/surveys'
@@ -245,6 +261,7 @@ def create_survey(survey_ref, short_name, long_name, legal_basis):
         "longName": long_name,
         "legalBasisRef": legal_basis,
         "surveyType": "Business",
+        "surveyMode": survey_mode,
         "classifiers": [
             {"name": "COLLECTION_INSTRUMENT", "classifierTypes": ["FORM_TYPE"]},
             {"name": "COMMUNICATION_TEMPLATE", "classifierTypes": ["LEGAL_BASIS", "REGION"]}
@@ -257,7 +274,7 @@ def create_survey(survey_ref, short_name, long_name, legal_basis):
         response.raise_for_status()
     except HTTPError:
         logger.error('Error creating new survey', survey_ref=survey_ref, short_name=short_name,
-                     long_name=long_name, legal_basis=legal_basis, status_code=response.status_code)
+                     long_name=long_name, legal_basis=legal_basis, survey_mode=survey_mode, status_code=response.status_code)
         raise ApiError(response)
 
     logger.info('Successfully created new survey', survey_ref=survey_ref)

@@ -130,7 +130,8 @@ def create_survey():
         survey_controllers.create_survey(request.form.get('survey_ref'),
                                          request.form.get('short_name'),
                                          request.form.get('long_name'),
-                                         request.form.get('legal_basis'))
+                                         request.form.get('legal_basis'),
+                                         request.form.get('survey_mode'))
         session['new_survey'] = {
             'short_name': request.form.get('short_name'),
             'long_name': request.form.get('long_name')
