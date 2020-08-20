@@ -125,13 +125,13 @@
   {% if collection_instruments %}
   <p class="field u-mt-l">
     <a href="{{ url_for('collection_exercise_bp.view_collection_exercise', period=period, short_name=survey.shortName.replace(' ', '')) }}"
-      role="button" class="btn"><span class="btn__inner">Done</span></a>
+      role="button" class="btn" id="btn-upload-ci-done"><span class="btn__inner">Done</span></a>
   </p>
   {% elif not collection_instruments %}
   <p class="field u-mt-l">
     <a href="" role="button" class="btn btn--disabled"><span class="btn__inner">Done</span></a>
     <a href="{{ url_for('collection_exercise_bp.view_collection_exercise', period=period, short_name=survey.shortName.replace(' ', '')) }}"
-      role="button" class="btn btn--secondary"><span class="btn__inner">Cancel</span></a>
+      role="button" class="btn btn--secondary" id="btn-upload-ci-cancel"><span class="btn__inner">Cancel</span></a>
   </p>
   {% endif %}
 </div>
