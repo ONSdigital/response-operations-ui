@@ -309,19 +309,7 @@ def _upload_collection_instrument(short_name, period):
 
 
 def _unselect_collection_instrument(short_name, period):
-    success_panel = None
-    ci_id = request.form.get('ci_id')
-    ce_id = request.form.get('ce_id')
-
-    ci_unlinked = collection_instrument_controllers.unlink_collection_instrument(ce_id, ci_id)
-
-    if ci_unlinked:
-        success_panel = "Collection instrument removed"
-    else:
-        session['error'] = json.dumps({"section": "head",
-                                       "header": "Error: Failed to remove collection instrument",
-                                       "message": "Please try again"})
-
+    success_panel = _unlink_collection_instrument()
     return redirect(url_for('collection_exercise_bp.view_collection_exercise',
                             short_name=short_name,
                             period=period,
@@ -707,23 +695,26 @@ def post_seft_collection_instrument(short_name, period):
 
 
 def _unselect_seft_collection_instrument(short_name, period):
+    success_panel = _unlink_collection_instrument()
+
+    return redirect(url_for('collection_exercise_bp.get_seft_collection_instrument',
+                            short_name=short_name,
+                            period=period,
+                            success_panel=success_panel))
+
+
+def _unlink_collection_instrument():
     success_panel = None
     ci_id = request.form.get('ci_id')
     ce_id = request.form.get('ce_id')
-
     ci_unlinked = collection_instrument_controllers.unlink_collection_instrument(ce_id, ci_id)
-
     if ci_unlinked:
         success_panel = "Collection instrument removed"
     else:
         session['error'] = json.dumps({"section": "head",
                                        "header": "Error: Failed to remove collection instrument",
                                        "message": "Please try again"})
-
-    return redirect(url_for('collection_exercise_bp.get_seft_collection_instrument',
-                            short_name=short_name,
-                            period=period,
-                            success_panel=success_panel))
+    return success_panel
 
 
 def _upload_seft_collection_instrument(short_name, period):
