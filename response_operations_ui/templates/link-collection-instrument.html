@@ -45,39 +45,11 @@
                     }) -%}
                     {{
                         onsInput({
-                            "id": "survey_id",
-                            "name": "survey_id",
-                            "type": "text",
-                            "maxLength": 20,
-                            "attributes": {
-                                "required": true
-                            },
-                            "label": {
-                                "text": 'Survey ID',
-                                "description": "Survey ID is a number (e.g., 009 for MBS, 134 MWSS, etc)"
-                            }
-                        })
-                    }} 
-                    {{
-                        onsInput({
-                            "id": "eq_id",
-                            "name": "eq_id",
-                            "type": "text",
-                            "maxLength": 100,
-                            "attributes": {
-                                "required": true
-                            },
-                            "label": {
-                                "text": 'Eq id'
-                            }
-                        })
-                    }} 
-                    {{
-                        onsInput({
                             "id": "formtype",
                             "name": "formtype",
                             "type": "text",
                             "maxLength": 20,
+                            "value": form.formtype.data,
                             "attributes": {
                                 "required": true
                             },

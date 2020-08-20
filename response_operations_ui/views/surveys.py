@@ -146,49 +146,27 @@ def create_survey():
 
 
 # -------- New link page
-@surveys_bp.route('/link-collection-instrument-v2', methods=['GET'])
+@surveys_bp.route('/<short_name>/link-collection-instrument', methods=['GET'])
 @login_required
-def get_link_collection_instrument_v2():
+def get_link_collection_instrument(short_name):
     form = LinkCollectionInstrumentForm(form=request.form)
+    # TODO get list of current linked collection instruments and render it
     return render_template('link-collection-instrument.html', form=form)
 
 
-@surveys_bp.route('/link-collection-instrument-v2', methods=['POST'])
+@surveys_bp.route('/<short_name>/link-collection-instrument', methods=['POST'])
 @login_required
-def post_link_collection_instrument_v2():
+def post_link_collection_instrument(short_name):
     form = LinkCollectionInstrumentForm(form=request.form)
     if not form.validate():
         return render_template('link-collection-instrument.html', form=form, errors=form.errors.items())
 
     try:
-        survey_uuid = survey_controllers.get_survey_by_ref(form.survey_id.data)['id']
-        collection_instrument_controllers.link_collection_instrument_to_survey(survey_uuid, form.eq_id.data,
-                                                                               form.formtype.data)
-    except ApiError as err:
-        # err.message might contain json or be the text of the error.  We'll just render it and hope that it's useful
-        return render_template('link-collection-instrument.html', form=form, errors=[("", [err.message])])
-
-    return redirect(url_for('surveys_bp.view_surveys', message_key='instrument_linked'))
-
-
-# ------ Current link page
-@surveys_bp.route('/link-collection-instrument', methods=['GET'])
-@login_required
-def get_link_collection_instrument():
-    form = LinkCollectionInstrumentForm(form=request.form)
-    return render_template('link-collection-instrument.html', form=form)
-
-
-@surveys_bp.route('/link-collection-instrument', methods=['POST'])
-@login_required
-def post_link_collection_instrument():
-    form = LinkCollectionInstrumentForm(form=request.form)
-    if not form.validate():
-        return render_template('link-collection-instrument.html', form=form, errors=form.errors.items())
-
-    try:
-        survey_uuid = survey_controllers.get_survey_by_ref(form.survey_id.data)['id']
-        collection_instrument_controllers.link_collection_instrument_to_survey(survey_uuid, form.eq_id.data,
+        # TODO We need to verify that it's okay for the eq_id of a collection instrument will ALWAYS be its shortname
+        # if a single one wants to be different then it'll cause pain down the line.
+        short_name_lower = str(short_name).lower()
+        survey_uuid = survey_controllers.get_survey_by_shortname(short_name_lower)['id']
+        collection_instrument_controllers.link_collection_instrument_to_survey(survey_uuid, short_name_lower,
                                                                                form.formtype.data)
     except ApiError as err:
         # err.message might contain json or be the text of the error.  We'll just render it and hope that it's useful

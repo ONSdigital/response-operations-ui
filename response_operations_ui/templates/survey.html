@@ -83,6 +83,14 @@
   <section class="ce-list">
     <h2>Collection exercises for {{survey.shortName}}</h2>
     <div class="u-mb-l">
+      <form id="form-link-collection-instrument" action="{{ url_for('surveys_bp.get_link_collection_instrument', short_name=survey.shortName) }}" class="form u-mb-l">
+            {{
+                onsButton({
+                    "text": "Link collection instrument",
+                    "id": "link-collection-instrument"
+                })
+            }}
+      </form>
       <form id="form-create-collection-exercise" action="{{ url_for('collection_exercise_bp.get_create_collection_exercise_form', survey_ref=survey.surveyRef, short_name=survey.shortName.replace(' ', '')) }}" class="form u-mb-l">
         <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
             {{
@@ -92,7 +100,7 @@
                     "name": "create-collection-exercise-link"
                 })
             }}    
-    </form>
+      </form>
     </div>
 
     {% set surveyTableData = {
