@@ -1,8 +1,21 @@
 <section class="ce-section {{'panel panel--simple panel--error' if missing_ci else ''}}">
-  <h2 class="u-fs-r--b u-pt-m">Collection instruments ({{ collection_instruments | length }})</h2>
 
-  {% if collection_instruments %}
-    {% set surveyTableData = {
+  {# 
+    This section needs to be updated once RAS-117 is completed.
+    Create new survey should provide an attribute, whether the survey is SEFT or EQ  
+  #}
+  {% set short_name = survey.shortName %}
+  {% set ns = namespace(isSEFT=false) %} 
+  {% set seftGroups = ['ASHE', 'BRES', 'Blocks', 'Bricks', 'FDI', 'FSPS', 'GovERD', 'NBS', 'OFATS', 'PCS', 'QITIS', 'Sand & Gravel'] %}
+  {% for seftGroup in seftGroups %}
+    {% if short_name == seftGroup %}
+      {% set ns.isSEFT = True %}
+    {% endif %}
+  {% endfor %}
+  <h2 class="u-fs-r--b u-pt-m">Collection instruments ({{ collection_instruments | length }})</h2>
+  {% if ns.isSEFT %}
+      {% if collection_instruments %}
+      {% set surveyTableData = {
         "table_class": 'table--dense',
         "id": "collection-instruments-table",
         "caption": 'Sample details for this collection exercise',
@@ -15,10 +28,60 @@
         ]
       }
     %}
-    {% set surveyTableDataRows = [] %}
-    {% for collection_instrument in collection_instruments %}
-      {% if not locked %}
-        {% set formData = 
+      {% set surveyTableDataRows = [] %}
+      {% for collection_instrument in collection_instruments %}
+      {% do surveyTableDataRows.append(
+        {
+          "tds": [
+            {
+              "value": collection_instrument.file_name
+            }
+          ]
+        }
+      ) %}
+      {% endfor %}
+      {% do surveyTableData | setAttribute("trs", surveyTableDataRows) %}
+      {{
+      onsTable(surveyTableData)
+    }}
+      {% for i in range(surveyTableDataRows | length) %}
+      {% set j = i + 1 %}
+      <script{% if csp_nonce %} nonce="{{ csp_nonce() }}" {% endif %}>
+        document.getElementById("unlink-ci-{{ j }}").addEventListener('click', function () {
+          this.parentNode.submit()
+        });</script>
+        {% endfor %}
+      <p class="field u-mt-l">
+        <a href="{{ url_for('collection_exercise_bp.get_seft_collection_instrument', period=ce.exerciseRef, short_name=survey.shortName.replace(' ', '')) }}"
+          role="button" class="btn btn--secondary"><span class="btn__inner">Manage collection instruments</span></a>
+      </p>
+      {% elif not collection_instruments %}
+      <p class="field u-mt-l">
+        <a href="{{ url_for('collection_exercise_bp.get_seft_collection_instrument', period=ce.exerciseRef, short_name=survey.shortName.replace(' ', '')) }}"
+          role="button" class="btn btn--secondary"><span class="btn__inner">Load collection instruments</span></a>
+      </p>
+      {% endif %}
+  {% endif %}
+
+  {% if not ns.isSEFT %}
+  {% if collection_instruments %}
+  {% set surveyTableData = {
+        "table_class": 'table--dense',
+        "id": "collection-instruments-table",
+        "caption": 'Sample details for this collection exercise',
+        "hideCaption": true,
+        "ths": [
+          { 
+              "value": "Collection instrument",
+              "class": "u-vh"
+          }
+        ]
+      }
+    %}
+  {% set surveyTableDataRows = [] %}
+  {% for collection_instrument in collection_instruments %}
+  {% if not locked %}
+  {% set formData = 
           '<form id="form-unselect-ci-' + loop.index|string + '" action="" method="post">' +
           '<a class="remove-icon" href=# id="unlink-ci-' + loop.index|string + '"></a>' +
           '<input type="hidden" name="ce_id" value="' + ce.id + '">' +
@@ -27,8 +90,8 @@
           '<input type="hidden" name="csrf_token" value="' + csrf_token() + '"/>' +
           '</form>'
        %}
-      {% endif %}
-      {% do surveyTableDataRows.append(
+  {% endif %}
+  {% do surveyTableDataRows.append(
         {
           "tds": [
             {
@@ -41,23 +104,23 @@
           ]
         }
       ) %}
-    {% endfor %}
-    {% do surveyTableData | setAttribute("trs", surveyTableDataRows) %}
-    {{
+  {% endfor %}
+  {% do surveyTableData | setAttribute("trs", surveyTableDataRows) %}
+  {{
       onsTable(surveyTableData)
     }}
-    {% for i in range(surveyTableDataRows | length) %}
-      {% set j = i + 1 %}
-      <script{% if csp_nonce %} nonce="{{ csp_nonce() }}"{% endif %}>
-        document.getElementById("unlink-ci-{{ j }}").addEventListener('click', function() {
-        this.parentNode.submit()
-      });</script>
+  {% for i in range(surveyTableDataRows | length) %}
+  {% set j = i + 1 %}
+  <script{% if csp_nonce %} nonce="{{ csp_nonce() }}" {% endif %}>
+    document.getElementById("unlink-ci-{{ j }}").addEventListener('click', function () {
+      this.parentNode.submit()
+    });</script>
     {% endfor %}
-  {% endif %}
+    {% endif %}
 
-  {% if not locked %}
-  <div class="u-mb-m">
-    {% if eq_ci_selectors %}
+    {% if not locked %}
+    <div class="u-mb-m">
+      {% if eq_ci_selectors %}
       {% set checkboxesData = {
         "name": "checkbox-answer",
         "legend": "eQ collection instruments available:"
@@ -66,12 +129,13 @@
       {% set checkboxData = [] %}
 
       <form id="form-select-ci" action="" class="form" method="post" enctype="multipart/form-data">
-        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
-        <div id="ciSelectErrorPanel" class="{{'panel panel--simple panel--error' if error.section == 'ciSelect' else ''}}">
+        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}" />
+        <div id="ciSelectErrorPanel"
+          class="{{'panel panel--simple panel--error' if error.section == 'ciSelect' else ''}}">
           <div id="ciSelectErrorPanelBody" class="{{'panel__body' if error.section == 'ciSelect' else ''}}">
             <input type="hidden" name="ce_id" value="{{ ce.id }}">
             {% for ci in eq_ci_selectors %}
-              {% do checkboxData.append(
+            {% do checkboxData.append(
                 {
                   "id": ci.id,
                   "name": "checkbox-answer",
@@ -95,23 +159,23 @@
                 "name": "select-ci",
                 "submitType": "timer"
               })
-            }}   
+            }}
           </div>
         </div>
 
       </form>
-    {% else %}
-    <form id="form-load-ci" action="" class="form" method="post" enctype="multipart/form-data">
-      <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
-      <p>
-        Add {{'another' if collection_instruments else 'a'}} collection instrument. Must be XLSX
-      </p>
-      <div id="ciFileErrorPanel" class="{{'panel panel--simple panel--error' if error.section == 'ciFile' else ''}}">
-        <div id="ciFileErrorPanelBody" class="{{'panel__body' if error.section == 'ciFile' else ''}}">
-          <p id="ciFileErrorText" class="hidden">
-            Incorrect file type. Please choose a file type XLSX
-          </p>
-          {{-
+      {% else %}
+      <form id="form-load-ci" action="" class="form" method="post" enctype="multipart/form-data">
+        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}" />
+        <p>
+          Add {{'another' if collection_instruments else 'a'}} collection instrument. Must be XLSX
+        </p>
+        <div id="ciFileErrorPanel" class="{{'panel panel--simple panel--error' if error.section == 'ciFile' else ''}}">
+          <div id="ciFileErrorPanelBody" class="{{'panel__body' if error.section == 'ciFile' else ''}}">
+            <p id="ciFileErrorText" class="hidden">
+              Incorrect file type. Please choose a file type XLSX
+            </p>
+            {{-
             onsUpload({
                 "id": "ciFile",
                 "name": "ciFile",
@@ -125,23 +189,20 @@
                 }
             })
         -}}
+          </div>
         </div>
-      </div>
-      {{
+        {{
         onsButton({
-          "text": "Add CI-TEST",
+          "text": "Add CI",
           "id": "btn-load-ci",
           "classes": "btn--small btn--disabled",
           "name": "load-ci",
           "submitType": "timer"
         })
-      }}   
-    </form>
-    <div class="u-mb-l">
-      <a href="{{ url_for('collection_exercise_bp.get_seft_collection_instrument', period=ce.exerciseRef, short_name=survey.shortName.replace(' ', '')) }}"
-          name="load-collection-instruments" id="load-collection-instruments">Load collection instruments</a>
+      }}
+      </form>
+      {% endif %}
     </div>
     {% endif %}
-  </div>
   {% endif %}
 </section>

@@ -376,6 +376,8 @@ def validate_ru_specific_collection_instrument(file, ci_name):
 def validate_file_extension_is_correct(file):
     if str.endswith(file.filename, '.xlsx'):
         return None
+    if str.endswith(file.filename, '.xls'):
+        return None
 
     logger.info('Invalid file format uploaded', filename=file.filename)
     error = {
@@ -685,8 +687,8 @@ def get_seft_collection_instrument(short_name, period):
     success_panel = request.args.get('success_panel')
     info_panel = request.args.get('info_panel')
     error_json = _get_error_from_session()
-    return render_template('ce-seft-instrument.html', 
-                           survey=ce_details['survey'], 
+    return render_template('ce-seft-instrument.html',
+                           survey=ce_details['survey'],
                            ce=ce_details['collection_exercise'],
                            collection_instruments=ce_details['collection_instruments'],
                            success_panel=success_panel,
@@ -694,3 +696,78 @@ def get_seft_collection_instrument(short_name, period):
                            info_panel=info_panel,
                            show_msg=show_msg,
                            period=period)
+
+
+@collection_exercise_bp.route('/<short_name>/<period>/load-collection-instruments', methods=['POST'])
+@login_required
+def post_seft_collection_instrument(short_name, period):
+    if 'unselect-ci' in request.form:
+        return _unselect_seft_collection_instrument(short_name, period)
+    return _upload_seft_collection_instrument(short_name, period)
+
+
+def _unselect_seft_collection_instrument(short_name, period):
+    success_panel = None
+    ci_id = request.form.get('ci_id')
+    ce_id = request.form.get('ce_id')
+
+    ci_unlinked = collection_instrument_controllers.unlink_collection_instrument(ce_id, ci_id)
+
+    if ci_unlinked:
+        success_panel = "Collection instrument removed"
+    else:
+        session['error'] = json.dumps({"section": "head",
+                                       "header": "Error: Failed to remove collection instrument",
+                                       "message": "Please try again"})
+
+    return redirect(url_for('collection_exercise_bp.get_seft_collection_instrument',
+                            short_name=short_name,
+                            period=period,
+                            success_panel=success_panel))
+
+
+def _upload_seft_collection_instrument(short_name, period):
+    success_panel = None
+    error = _validate_collection_instrument()
+
+    if not error:
+        file = request.files['ciFile']
+        is_ru_specific_instrument = False
+        if file.filename.split(".")[0].isdigit():
+            is_ru_specific_instrument = True
+
+        logger.info("Collection instrument about to be uploaded", filename=file.filename)
+        survey_id = survey_controllers.get_survey_id_by_short_name(short_name)
+        exercises = collection_exercise_controllers.get_collection_exercises_by_survey(survey_id)
+
+        # Find the collection exercise for the given period
+        exercise = get_collection_exercise_by_period(exercises, period)
+        if not exercise:
+            return make_response(jsonify({'message': 'Collection exercise not found'}), 404)
+
+        error_text = None
+        if is_ru_specific_instrument:
+            ru_ref = file.filename.split(".")[0]
+            upload_success, error_text = collection_instrument_controllers. \
+                upload_ru_specific_collection_instrument(exercise['id'], file, ru_ref)
+        else:
+            form_type = _get_form_type(file.filename)
+            upload_success = collection_instrument_controllers.upload_collection_instrument(exercise['id'],
+                                                                                            file, form_type)
+
+        if upload_success:
+            success_panel = "Collection instrument loaded"
+        else:
+            message = error_text if error_text else "Please try again"
+            session['error'] = json.dumps({
+                "section": "ciFile",
+                "header": "Error: Failed to upload collection instrument",
+                "message": message
+            })
+    else:
+        session['error'] = json.dumps(error)
+
+    return redirect(url_for('collection_exercise_bp.get_seft_collection_instrument',
+                            short_name=short_name,
+                            period=period,
+                            success_panel=success_panel))
