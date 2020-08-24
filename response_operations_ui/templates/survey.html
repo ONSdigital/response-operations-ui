@@ -91,16 +91,10 @@
                 })
             }}
       </form>
-      <form id="form-create-collection-exercise" action="{{ url_for('collection_exercise_bp.get_create_collection_exercise_form', survey_ref=survey.surveyRef, short_name=survey.shortName.replace(' ', '')) }}" class="form u-mb-l">
-        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
-            {{
-                onsButton({
-                    "text": "Create collection exercise",
-                    "id": "create-collection-exercise",
-                    "name": "create-collection-exercise-link"
-                })
-            }}    
-      </form>
+      <p class="field u-mt-l">
+        <a href="{{ url_for('collection_exercise_bp.get_create_collection_exercise_form', survey_ref=survey.surveyRef, short_name=survey.shortName.replace(' ', '')) }}"
+          role="button" class="btn" id="create-collection-exercise" name="create-collection-exercise-link"><span class="btn__inner">Create collection exercise</span></a>
+      </p>
     </div>
 
     {% set surveyTableData = {
