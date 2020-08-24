@@ -23,7 +23,7 @@
       "scheduledReturnDateTime": "2018-07-08T09:19:09.000Z",
       "scheduledEndDateTime": "2018-07-09T09:19:09.000Z",
       "executedBy": null,
-      "state": "Live",
+      "state": "Scheduled",
       "caseTypes": [
         {
           "actionPlanId": "cb255845-63c2-4e9b-891b-c2c89208856f",
