@@ -25,7 +25,7 @@ window.validateCI = {
         const errorPanelBody = document.getElementById('ciFileErrorPanelBody');
         const button = document.getElementById('btn-load-ci');
 
-        const fileIsODS = type === 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet';
+        const fileIsODS = (type === 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet') || (type === 'application/vnd.ms-excel');
         const mainAction = fileIsODS ? 'remove' : 'add';
         const contraAction = fileIsODS ? 'add' : 'remove';
 

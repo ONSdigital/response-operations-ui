@@ -27,16 +27,10 @@
 
   <h1 name="page-surveys-title">Surveys</h1>
   <div class="u-mb-l">
-      <form id="form-create-new-survey" action="{{url_for('surveys_bp.create_survey')}}" class="form u-mb-l">
-        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
-            {{
-                onsButton({
-                    "text": "Create new survey",
-                    "id": "create-new-survey",
-                    "name": "create-new-survey"
-                })
-            }}    
-    </form>
+    <p class="field u-mt-l">
+      <a href="{{url_for('surveys_bp.create_survey')}}"
+        role="button" class="btn" id="create-new-survey" name="create-new-survey"><span class="btn__inner">Create new survey</span></a>
+    </p>
   
   {% set surveyTableData = {
       "table_class": 'table--responsive table--dense',
