@@ -567,6 +567,7 @@ class TestCollectionExercise(ViewTestCase):
         response = self.client.get(f'/surveys/{short_name}/{period}', follow_redirects=True)
 
         self.assertEqual(response.status_code, 200)
+        self.assertIn("Load collection instruments".encode(), response.data, response.data)
         self.assertNotIn("Add a collection instrument. Must be XLSX".encode(), response.data)
 
     @requests_mock.mock()
@@ -577,6 +578,7 @@ class TestCollectionExercise(ViewTestCase):
         response = self.client.get(f'/surveys/{short_name}/{period}', follow_redirects=True)
 
         self.assertEqual(response.status_code, 200)
+        self.assertIn("Manage collection instruments".encode(), response.data, response.data)
         self.assertNotIn("Add another collection instrument. Must be XLSX".encode(), response.data)
 
     @requests_mock.mock()

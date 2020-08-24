@@ -1,19 +1,6 @@
 <section class="ce-section {{'panel panel--simple panel--error' if missing_ci else ''}}">
-
-  {# 
-    This section needs to be updated once RAS-117 is completed.
-    Create new survey should provide an attribute, whether the survey is SEFT or EQ  
-  #}
-  {% set short_name = survey.shortName %}
-  {% set ns = namespace(isSEFT=false) %} 
-  {% set seftGroups = ['ASHE', 'BRES', 'Blocks', 'Bricks', 'FDI', 'FSPS', 'GovERD', 'NBS', 'OFATS', 'PCS', 'QITIS', 'Sand & Gravel'] %}
-  {% for seftGroup in seftGroups %}
-    {% if short_name == seftGroup %}
-      {% set ns.isSEFT = True %}
-    {% endif %}
-  {% endfor %}
   <h2 class="u-fs-r--b u-pt-m">Collection instruments ({{ collection_instruments | length }})</h2>
-  {% if ns.isSEFT %}
+  {% if is_seft %}
       {% if collection_instruments %}
       {% set surveyTableData = {
         "table_class": 'table--dense',
@@ -63,7 +50,7 @@
       {% endif %}
   {% endif %}
 
-  {% if not ns.isSEFT %}
+  {% if not is_seft %}
   {% if collection_instruments %}
   {% set surveyTableData = {
         "table_class": 'table--dense',
