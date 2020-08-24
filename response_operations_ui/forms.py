@@ -224,7 +224,11 @@ class CreateSurveyDetailsForm(FlaskForm):
 
 
 class LinkCollectionInstrumentForm(FlaskForm):
-    formtype = StringField('formtype', default='', validators=[InputRequired(message="Please enter a formtype")])
+    formtype = StringField('formtype',
+                           default='',
+                           validators=[InputRequired(message="Please enter a formtype"),
+                                       Regexp(regex=r'^[0-9]+$',
+                                              message='Please use numeric characters only.')])
 
 
 class RemoveLoadedSample(FlaskForm):
