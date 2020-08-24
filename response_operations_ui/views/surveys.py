@@ -145,34 +145,44 @@ def create_survey():
             raise
 
 
-# -------- New link page
 @surveys_bp.route('/<short_name>/link-collection-instrument', methods=['GET'])
 @login_required
 def get_link_collection_instrument(short_name):
     form = LinkCollectionInstrumentForm(form=request.form)
-    # TODO get list of current linked collection instruments and render it
-    return render_template('link-collection-instrument.html', form=form)
+    short_name_lower = str(short_name).lower()
+    survey_id = survey_controllers.get_survey_by_shortname(short_name_lower)['id']
+    eq_ci_selectors = collection_instrument_controllers.get_collection_instruments_by_classifier(
+        ci_type='EQ',
+        survey_id=survey_id)
+    return render_template('link-collection-instrument.html', form=form, eq_ci_selectors=eq_ci_selectors)
 
 
 @surveys_bp.route('/<short_name>/link-collection-instrument', methods=['POST'])
 @login_required
 def post_link_collection_instrument(short_name):
     form = LinkCollectionInstrumentForm(form=request.form)
-    if not form.validate():
-        return render_template('link-collection-instrument.html', form=form, errors=form.errors.items())
-
+    eq_ci_selectors = []
     try:
-        # TODO We need to verify that it's okay for the eq_id of a collection instrument will ALWAYS be its shortname
-        # if a single one wants to be different then it'll cause pain down the line.
+        # The eq_id of a collection instrument will ALWAYS be its shortname.
         short_name_lower = str(short_name).lower()
         survey_uuid = survey_controllers.get_survey_by_shortname(short_name_lower)['id']
+        if not form.validate():
+            eq_ci_selectors = collection_instrument_controllers.get_collection_instruments_by_classifier(
+                ci_type='EQ',
+                survey_id=survey_uuid)
+            return render_template('link-collection-instrument.html', form=form, errors=form.errors.items(),
+                                   eq_ci_selectors=eq_ci_selectors)
         collection_instrument_controllers.link_collection_instrument_to_survey(survey_uuid, short_name_lower,
                                                                                form.formtype.data)
+        eq_ci_selectors = collection_instrument_controllers.get_collection_instruments_by_classifier(
+            ci_type='EQ',
+            survey_id=survey_uuid)
     except ApiError as err:
         # err.message might contain json or be the text of the error.  We'll just render it and hope that it's useful
-        return render_template('link-collection-instrument.html', form=form, errors=[("", [err.message])])
+        return render_template('link-collection-instrument.html', form=form, eq_ci_selectors=eq_ci_selectors,
+                               errors=[("", [err.message])])
 
-    return redirect(url_for('surveys_bp.view_surveys', message_key='instrument_linked'))
+    return render_template('link-collection-instrument.html', form=form, eq_ci_selectors=eq_ci_selectors)
 
 
 def _sort_collection_exercise(collection_exercises):
