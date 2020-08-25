@@ -83,14 +83,12 @@
   <section class="ce-list">
     <h2>Collection exercises for {{survey.shortName}}</h2>
     <div class="u-mb-l">
-      <form id="form-link-collection-instrument" action="{{ url_for('surveys_bp.get_link_collection_instrument', short_name=survey.shortName) }}" class="form u-mb-l">
-            {{
-                onsButton({
-                    "text": "Link collection instrument",
-                    "id": "link-collection-instrument"
-                })
-            }}
-      </form>
+      {% if is_eq_survey %}
+        <p class="field u-mt-l">
+          <a href="{{ url_for('surveys_bp.get_link_collection_instrument', short_name=survey.shortName) }}"
+            role="button" class="btn" id="link-collection-instrument" name="link-collection-instrument-link"><span class="btn__inner">Link collection instrument</span></a>
+        </p>
+      {% endif %}
       <p class="field u-mt-l">
         <a href="{{ url_for('collection_exercise_bp.get_create_collection_exercise_form', survey_ref=survey.surveyRef, short_name=survey.shortName.replace(' ', '')) }}"
           role="button" class="btn" id="create-collection-exercise" name="create-collection-exercise-link"><span class="btn__inner">Create collection exercise</span></a>

@@ -72,11 +72,17 @@ def view_survey(short_name):
 
     _sort_collection_exercise(collection_exercises)
 
+    eq_surveys = ['MBS', 'QSS', 'QCAS', 'RSI', 'MWSS', 'VACS2', 'VACS3', 'VACS4', 'VACS5', 'Ecommerce', 'COVID']
+    is_eq_survey = False
+    if short_name in eq_surveys:
+        is_eq_survey = True
+
     return render_template('survey.html',
                            survey=survey,
                            collection_exercises=collection_exercises,
                            breadcrumbs=breadcrumbs, updated_ce_message=updated_ce_message,
-                           created_ce_message=created_ce_message, newly_created_period=newly_created_period)
+                           created_ce_message=created_ce_message, newly_created_period=newly_created_period,
+                           is_eq_survey=is_eq_survey)
 
 
 @surveys_bp.route('/edit-survey-details/<short_name>', methods=['GET'])
@@ -154,7 +160,9 @@ def get_link_collection_instrument(short_name):
     eq_ci_selectors = collection_instrument_controllers.get_collection_instruments_by_classifier(
         ci_type='EQ',
         survey_id=survey_id)
-    return render_template('link-collection-instrument.html', form=form, eq_ci_selectors=eq_ci_selectors)
+    return render_template('link-collection-instrument.html',
+                           short_name=short_name,
+                           form=form, eq_ci_selectors=eq_ci_selectors)
 
 
 @surveys_bp.route('/<short_name>/link-collection-instrument', methods=['POST'])
@@ -170,7 +178,9 @@ def post_link_collection_instrument(short_name):
             eq_ci_selectors = collection_instrument_controllers.get_collection_instruments_by_classifier(
                 ci_type='EQ',
                 survey_id=survey_uuid)
-            return render_template('link-collection-instrument.html', form=form, errors=form.errors.items(),
+            return render_template('link-collection-instrument.html',
+                                   short_name=short_name,
+                                   form=form, errors=form.errors.items(),
                                    eq_ci_selectors=eq_ci_selectors)
         collection_instrument_controllers.link_collection_instrument_to_survey(survey_uuid, short_name_lower,
                                                                                form.formtype.data)

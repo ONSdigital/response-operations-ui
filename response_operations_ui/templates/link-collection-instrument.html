@@ -9,7 +9,7 @@
 {% block main %}
   <div class="grid grid--gutterless">
     <div class="grid__col col-8@m">
-      <h1 class="u-fs-xl u-mt-m">Link collection instrument</h1>
+      <h1 class="u-fs-xl u-mt-m">Load collection instruments for {{ short_name }}</h1>
       <form action="" method="post">
         {{ form.csrf_token }}
         {% if errors %}
@@ -60,8 +60,8 @@
         {% endcall %}
         {{
           onsButton({
-              "classes": "u-mb-s u-mt-l",
-              "text": "Link collection instrument",
+              "classes": "u-mb-s u-mt-l btn btn--secondary",
+              "text": "Upload",
               "id": "save-btn"
           })
         }}
@@ -95,7 +95,8 @@
           {{ onsTable(surveyTableData) }}
         </section>
         <p>
-          <a id="cancel-btn" href="{{ url_for('surveys_bp.view_surveys') }}">Cancel</a>
+          <a href="{{ url_for('surveys_bp.view_survey', short_name=short_name) }}"
+            role="button" class="btn" id="done-link" name="done-link"><span class="btn__inner">Done</span></a>
         </p>
       </form>
     </div>
