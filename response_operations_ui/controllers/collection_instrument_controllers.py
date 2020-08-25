@@ -123,8 +123,8 @@ def link_collection_instrument(ce_id, ci_id):
     :return: True on success.  False on failure
     :rtype: bool
     """
-    logger.info('Linking collection instrument to collection exercise',
-                collection_exercise_id=ce_id, collection_instrument_id=ci_id)
+    bound_logger = logger.bind(collection_exercise_id=ce_id, collection_instrument_id=ci_id)
+    bound_logger.info('Linking collection instrument to collection exercise')
     url = f'{app.config["COLLECTION_INSTRUMENT_URL"]}' \
           f'/collection-instrument-api/1.0.2/link-exercise/{ci_id}/{ce_id}'
 
@@ -132,18 +132,25 @@ def link_collection_instrument(ce_id, ci_id):
     try:
         response.raise_for_status()
     except requests.exceptions.HTTPError:
-        logger.error('Failed to link collection instrument to collection exercise',
-                     collection_exercise_id=ce_id, collection_instrument_id=ci_id, status=response.status_code)
+        bound_logger.error('Failed to link collection instrument to collection exercise', status=response.status_code)
         return False
 
-    logger.info('Successfully linked collection instrument to collection exercise',
-                collection_exercise_id=ce_id, collection_instrument_id=ci_id)
+    bound_logger.info('Successfully linked collection instrument to collection exercise')
     return True
 
 
 def unlink_collection_instrument(ce_id, ci_id):
-    logger.info('Unlinking collection instrument and collection exercise',
-                collection_exercise_id=ce_id, collection_instrument_id=ci_id)
+    """Unlinks a collection instrument from a collection exercise
+
+    :param ce_id: A uuid of a collection exercise
+    :type ce_id: str
+    :param ci_id: A uuid of a collection instrument
+    :type ci_id: str
+    :return: True on success.  False on failure
+    :rtype: bool
+    """
+    bound_logger = logger.bind(collection_exercise_id=ce_id, collection_instrument_id=ci_id)
+    bound_logger.info('Unlinking collection instrument and collection exercise')
     url = f'{app.config["COLLECTION_INSTRUMENT_URL"]}' \
           f'/collection-instrument-api/1.0.2/unlink-exercise/{ci_id}/{ce_id}'
 
@@ -151,12 +158,11 @@ def unlink_collection_instrument(ce_id, ci_id):
     try:
         response.raise_for_status()
     except requests.exceptions.HTTPError:
-        logger.error('Failed to unlink collection instrument and collection exercise',
-                     collection_exercise_id=ce_id, collection_instrument_id=ci_id, status=response.status_code)
+        bound_logger.error('Failed to unlink collection instrument and collection exercise',
+                           status=response.status_code)
         return False
 
-    logger.info('Successfully unlinked collection instrument and collection exercise',
-                collection_exercise_id=ce_id, collection_instrument_id=ci_id)
+    bound_logger.info('Successfully unlinked collection instrument and collection exercise')
     return True
 
 

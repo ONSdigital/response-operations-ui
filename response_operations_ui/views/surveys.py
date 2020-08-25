@@ -1,5 +1,6 @@
 import logging
 from datetime import datetime
+from json import loads, JSONDecodeError
 
 from flask import Blueprint, render_template, request, redirect, session, url_for
 from flask_login import login_required
@@ -9,9 +10,7 @@ from response_operations_ui.common.mappers import map_collection_exercise_state,
 from response_operations_ui.controllers import survey_controllers, collection_exercise_controllers, \
     collection_instrument_controllers
 from response_operations_ui.exceptions.exceptions import ApiError
-from response_operations_ui.forms import CreateSurveyDetailsForm, LinkCollectionInstrumentForm
-from response_operations_ui.forms import EditSurveyDetailsForm
-
+from response_operations_ui.forms import CreateSurveyDetailsForm, LinkCollectionInstrumentForm, EditSurveyDetailsForm
 
 logger = wrap_logger(logging.getLogger(__name__))
 
@@ -174,25 +173,35 @@ def post_link_collection_instrument(short_name):
         # The eq_id of a collection instrument will ALWAYS be its shortname.
         short_name_lower = str(short_name).lower()
         survey_uuid = survey_controllers.get_survey_by_shortname(short_name_lower)['id']
+        eq_ci_selectors = collection_instrument_controllers.get_collection_instruments_by_classifier(
+            ci_type='EQ',
+            survey_id=survey_uuid)
         if not form.validate():
-            eq_ci_selectors = collection_instrument_controllers.get_collection_instruments_by_classifier(
-                ci_type='EQ',
-                survey_id=survey_uuid)
             return render_template('link-collection-instrument.html',
                                    short_name=short_name,
                                    form=form, errors=form.errors.items(),
                                    eq_ci_selectors=eq_ci_selectors)
         collection_instrument_controllers.link_collection_instrument_to_survey(survey_uuid, short_name_lower,
                                                                                form.formtype.data)
+        # Need to get selectors a second time as we just added one and the list from before is outdated.
         eq_ci_selectors = collection_instrument_controllers.get_collection_instruments_by_classifier(
             ci_type='EQ',
             survey_id=survey_uuid)
     except ApiError as err:
-        # err.message might contain json or be the text of the error.  We'll just render it and hope that it's useful
-        return render_template('link-collection-instrument.html', form=form, eq_ci_selectors=eq_ci_selectors,
-                               errors=[("", [err.message])])
+        try:
+            error_dict = loads(err.message)
+            errors = [("formtype", [error_dict['errors'][0]])]
+        except (JSONDecodeError, KeyError):
+            # If the message isn't JSON, or the 'errors' key doesn't exist, we'll render the message anyway as it
+            # might still be helpful.
+            errors = [("", [err.message])]
 
-    return render_template('link-collection-instrument.html', form=form, eq_ci_selectors=eq_ci_selectors)
+        return render_template('link-collection-instrument.html', form=form, eq_ci_selectors=eq_ci_selectors,
+                               errors=errors, short_name=short_name)
+
+    form.formtype.data = ""  # Reset the value on successful submission
+    return render_template('link-collection-instrument.html', form=form,
+                           eq_ci_selectors=eq_ci_selectors, short_name=short_name)
 
 
 def _sort_collection_exercise(collection_exercises):
