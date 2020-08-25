@@ -38,15 +38,19 @@
           this.parentNode.submit()
         });</script>
         {% endfor %}
-      <p class="field u-mt-l">
-        <a href="{{ url_for('collection_exercise_bp.get_seft_collection_instrument', period=ce.exerciseRef, short_name=survey.shortName.replace(' ', '')) }}"
-          role="button" class="btn btn--secondary" id="btn-mng-seft-ci"><span class="btn__inner">Manage collection instruments</span></a>
-      </p>
+        {% if not ce.state|upper == "LIVE" %}  
+          <p class="field u-mt-l">
+            <a href="{{ url_for('collection_exercise_bp.get_seft_collection_instrument', period=ce.exerciseRef, short_name=survey.shortName.replace(' ', '')) }}"
+              role="button" class="btn btn--secondary" id="btn-mng-seft-ci"><span class="btn__inner">Manage collection instruments</span></a>
+          </p>
+        {% endif %}
       {% elif not collection_instruments %}
-      <p class="field u-mt-l">
-        <a href="{{ url_for('collection_exercise_bp.get_seft_collection_instrument', period=ce.exerciseRef, short_name=survey.shortName.replace(' ', '')) }}"
-          role="button" class="btn btn--secondary" id="btn-load-seft-ci"><span class="btn__inner">Load collection instruments</span></a>
-      </p>
+        {% if not ce.state|upper == "LIVE" %}  
+          <p class="field u-mt-l">
+            <a href="{{ url_for('collection_exercise_bp.get_seft_collection_instrument', period=ce.exerciseRef, short_name=survey.shortName.replace(' ', '')) }}"
+              role="button" class="btn btn--secondary" id="btn-load-seft-ci"><span class="btn__inner">Load collection instruments</span></a>
+          </p>
+        {% endif %}
       {% endif %}
   {% endif %}
 
