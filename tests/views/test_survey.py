@@ -53,6 +53,20 @@ url_get_sample_summary = (
     f'/samples/samplesummary/{sample_summary_id}'
 )
 
+# TODO fix this
+url_get_eq_ci_selectors = (
+    f'{TestingConfig.COLLECTION_INSTRUMENT_URL}'
+    f'/collection-instrument-api/1.0.2/collectioninstrument?'
+    f'searchString=%7B%22SURVEY_ID%22%3A+%22{survey_info["survey"]["id"]}%22%2C+%22TYPE%22%3A+%22EQ%22%7D'
+)
+
+url_post_instrument_link = (
+    f'{TestingConfig.COLLECTION_INSTRUMENT_URL}'
+    f'/collection-instrument-api/1.0.2/upload?'
+    f'survey_id={survey_info["survey"]["id"]}&'
+    f'classifiers=%7B%22form_type%22%3A%220001%22%2C%22eq_id%22%3A%22qbs%22%7D'
+)
+
 
 class TestSurvey(ViewTestCase):
 
@@ -513,3 +527,37 @@ class TestSurvey(ViewTestCase):
 
         self.assertEqual(format_short_name('QBS'), 'QBS')
         self.assertEqual(format_short_name('Sand&Gravel'), 'Sand & Gravel')
+
+    @requests_mock.mock()
+    def test_link_collection_instrument_success(self, mock_request):
+        changed_survey_details = {
+            "formtype": '0001'
+        }
+        data = [{"classifiers": {"COLLECTION_EXERCISE": [], "RU_REF": [], "eq_id": "qbs", "form_type": "0001"},
+                 "file_name": "0001", "id": "dde9cab1-b5bd-42a2-8ff7-80e3ddb8c11e",
+                 "surveyId": "cb0711c3-0ac8-41d3-ae0e-567e5ea1ef87"}]
+        mock_request.get(url_get_survey_by_qbs, json=survey_info['survey'])
+        mock_request.get(url_get_eq_ci_selectors, json=data)  # TODO figure out what real data looks like
+        mock_request.post(url_post_instrument_link)
+        response = self.client.post("/surveys/QBS/link-collection-instrument", data=changed_survey_details)
+        self.assertEqual(response.status_code, 200)
+        self.assertIn('0001'.encode(), response.data)
+
+    @requests_mock.mock()
+    def test_link_collection_instrument_duplicate(self, mock_request):
+        changed_survey_details = {
+            "formtype": '0001'
+        }
+        data = [{"classifiers": {"COLLECTION_EXERCISE": [], "RU_REF": [], "eq_id": "qbs", "form_type": "0001"},
+                 "file_name": "0001", "id": "dde9cab1-b5bd-42a2-8ff7-80e3ddb8c11e",
+                 "surveyId": "cb0711c3-0ac8-41d3-ae0e-567e5ea1ef87"}]
+        error_data = {
+            "errors": ["Cannot upload an instrument with an identical set of classifiers"]
+        }
+        mock_request.get(url_get_survey_by_qbs, json=survey_info['survey'])
+        mock_request.get(url_get_eq_ci_selectors, json=data)
+        mock_request.post(url_post_instrument_link, status_code=400, json=error_data)
+        response = self.client.post("/surveys/QBS/link-collection-instrument", data=changed_survey_details)
+        self.assertEqual(response.status_code, 200)
+        self.assertIn('This page has 1 error'.encode(), response.data)
+        self.assertIn('Cannot upload an instrument with an identical set of classifiers'.encode(), response.data)

@@ -71,7 +71,10 @@ def view_survey(short_name):
 
     _sort_collection_exercise(collection_exercises)
 
-    eq_surveys = ['MBS', 'QSS', 'QCAS', 'RSI', 'MWSS', 'VACS2', 'VACS3', 'VACS4', 'VACS5', 'Ecommerce', 'COVID']
+    # This is temporary until the survey data includes whether it's an EQ or SEFT.  Until then we'll define the list
+    # so we can make the 'link collection instrument' button appear only on EQ surveys.
+    eq_surveys = ['MBS', 'QSS', 'QCAS', 'RSI', 'MWSS', 'QBS', 'UKIS', 'QPSESLA', 'QPSESPB', 'QPSESCS',
+                  'VACS2', 'VACS3', 'VACS4', 'VACS5', 'Ecommerce', 'CAT', 'COVID']
     is_eq_survey = False
     if short_name in eq_surveys:
         is_eq_survey = True
@@ -159,6 +162,7 @@ def get_link_collection_instrument(short_name):
     eq_ci_selectors = collection_instrument_controllers.get_collection_instruments_by_classifier(
         ci_type='EQ',
         survey_id=survey_id)
+    logger.info(eq_ci_selectors)
     return render_template('link-collection-instrument.html',
                            short_name=short_name,
                            form=form, eq_ci_selectors=eq_ci_selectors)
@@ -176,6 +180,7 @@ def post_link_collection_instrument(short_name):
         eq_ci_selectors = collection_instrument_controllers.get_collection_instruments_by_classifier(
             ci_type='EQ',
             survey_id=survey_uuid)
+        logger.info(eq_ci_selectors)
         if not form.validate():
             return render_template('link-collection-instrument.html',
                                    short_name=short_name,
