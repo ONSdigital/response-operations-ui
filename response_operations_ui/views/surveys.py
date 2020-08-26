@@ -180,7 +180,6 @@ def post_link_collection_instrument(short_name):
         eq_ci_selectors = collection_instrument_controllers.get_collection_instruments_by_classifier(
             ci_type='EQ',
             survey_id=survey_uuid)
-        logger.info(eq_ci_selectors)
         if not form.validate():
             return render_template('link-collection-instrument.html',
                                    short_name=short_name,

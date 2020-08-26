@@ -53,7 +53,6 @@ url_get_sample_summary = (
     f'/samples/samplesummary/{sample_summary_id}'
 )
 
-# TODO fix this
 url_get_eq_ci_selectors = (
     f'{TestingConfig.COLLECTION_INSTRUMENT_URL}'
     f'/collection-instrument-api/1.0.2/collectioninstrument?'
@@ -62,8 +61,7 @@ url_get_eq_ci_selectors = (
 
 url_post_instrument_link = (
     f'{TestingConfig.COLLECTION_INSTRUMENT_URL}'
-    f'/collection-instrument-api/1.0.2/upload?'
-    f'survey_id={survey_info["survey"]["id"]}&'
+    f'/collection-instrument-api/1.0.2/upload?survey_id={survey_info["survey"]["id"]}&'
     f'classifiers=%7B%22form_type%22%3A%220001%22%2C%22eq_id%22%3A%22qbs%22%7D'
 )
 
