@@ -1,5 +1,25 @@
 # Helper script documentation
 
+## flush_eq_data.py
+
+This script is used to flush partial data submissions out of EQ and send them downstream to SDX.  This script allows
+you to flush a single response as long as you know 4 bits of information, the eq_id, formtype, collection_exercise_id
+and ru_ref (with checkletter)
+
+In order to run it, you'll need to have a file named eq-keys.json (though the script will allow you to change the file
+with the --keys flag) that contains the EQ keys in json format.  This can be retrieved by looking at the frontstage
+secrets.
+
+Once you have that, you'll be able to run the script, here is an example of how to run it:
+```bash
+cd scripts
+pipenv run python flush_eq_data.py preprod "rsi" "0203" "c3b0aa25-c626-4e2c-b39e-84aa695d7f71" "19021417983n"
+```
+
+This should print out the status code.  It's possible for it to 'fail' with a 404 and that not be a bad thing.  EQ looks
+in its answerstore for a submission that matches the criteria.  It's possible the details you gave it were correct but
+EQ just doesn't have it in its answer store.
+
 ## generate_csv_for_emails.py
 
 This script is used to take input from the following 2 files:
