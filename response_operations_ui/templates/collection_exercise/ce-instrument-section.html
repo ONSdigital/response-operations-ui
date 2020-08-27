@@ -31,13 +31,6 @@
       {{
       onsTable(surveyTableData)
     }}
-      {% for i in range(surveyTableDataRows | length) %}
-      {% set j = i + 1 %}
-      <script{% if csp_nonce %} nonce="{{ csp_nonce() }}" {% endif %}>
-        document.getElementById("unlink-ci-{{ j }}").addEventListener('click', function () {
-          this.parentNode.submit()
-        });</script>
-        {% endfor %}
         {% if not ce.state|upper == "LIVE" %}  
           <p class="field u-mt-l">
             <a href="{{ url_for('collection_exercise_bp.get_seft_collection_instrument', period=ce.exerciseRef, short_name=survey.shortName.replace(' ', '')) }}"
@@ -102,10 +95,12 @@
     }}
   {% for i in range(surveyTableDataRows | length) %}
   {% set j = i + 1 %}
-  <script{% if csp_nonce %} nonce="{{ csp_nonce() }}" {% endif %}>
+  {% if not locked %}
+    <script{% if csp_nonce %} nonce="{{ csp_nonce() }}" {% endif %}>
     document.getElementById("unlink-ci-{{ j }}").addEventListener('click', function () {
       this.parentNode.submit()
     });</script>
+  {% endif %}
     {% endfor %}
     {% endif %}
 
