@@ -28,7 +28,7 @@
     }) 
 }}
 {% if show_set_live_button %}
-    <form id="form-ready-for-live" action="" class="form u-mb-l" method="post" enctype="multipart/form-data" onsubmit="return confirm('This action cannot be undone.  Press OK to continue\, or Cancel to go back.')">
+    <form id="form-ready-for-live" action="" class="form u-mb-l" method="post" enctype="multipart/form-data">
     <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
         {{
             onsButton({
@@ -38,4 +38,10 @@
             })
         }}    
     </form>
+    <script{% if csp_nonce %} nonce="{{ csp_nonce() }}" {% endif %}>
+    document.getElementById("form-ready-for-live").addEventListener('submit', function () {
+      if(!confirm('This action cannot be undone.  Press OK to continue\, or Cancel to go back.')) {
+        event.preventDefault();
+      }
+    });</script>
 {% endif %}
