@@ -3,102 +3,102 @@
 {% from "components/fieldset/_macro.njk" import onsFieldset %}
 {% from "components/input/_macro.njk" import onsInput %}
 {% from "components/lists/_macro.njk" import onsList %}
+{% from "components/table/_macro.njk" import onsTable %}
 
 {% set page_title = 'Link collection instrument'  %}
 {% block main %}
-    <div class="grid grid--gutterless">
-        <div class="grid__col col-8@m">
-            <h1 class="u-fs-xl u-mt-m">Link collection instrument</h1>
-            <form action="" method="post">
-                {{ form.csrf_token }}
-                {% if errors %}
-                    {% set errorData = [] %}
+  <div class="grid grid--gutterless">
+    <div class="grid__col col-8@m">
+      <h1 class="u-fs-xl u-mt-m">Load collection instruments for {{ short_name }}</h1>
+      <form action="" method="post">
+        {{ form.csrf_token }}
+        {% if errors %}
+          {% set errorData = [] %}
+          {% call
+            onsPanel({
+                "type":"error",
+                "id": "save-error",
+                "classes": "u-mb-s",
+                "title": "This page has 1 error" if errors|length == 1 else "There are " + errors|length|string + " errors on this page"
+            })
+          %}
+          {% for field, error_list in errors %}
+            {% do errorData.append(
+                {
+                    "text": ', '.join(error_list),
+                    "index": true
+                })
+            %}
+          {% endfor %}
+          {{
+            onsList({
+                "classes": "list--bare",
+                "itemsList": errorData
+            })
+          }}
+        {% endcall %}
+        {% endif %}
+        {%- call onsFieldset({
+          "legend": "Link collection instrument",
+          "legendClasses": "u-vh" })
+        -%}
+        {{
+          onsInput({
+              "id": "formtype",
+              "name": "formtype",
+              "type": "text",
+              "maxLength": 20,
+              "value": form.formtype.data,
+              "attributes": {
+                  "required": true
+              },
+              "label": {
+                  "text": 'Formtype'
+              }
+          })
+        }}
+        {% endcall %}
+        {{
+          onsButton({
+              "classes": "u-mb-s u-mt-l btn btn--secondary",
+              "text": "Upload",
+              "id": "save-btn"
+          })
+        }}
 
-                    {% call
-                        onsPanel({
-                            "type":"error",
-                            "id": "save-error",
-                            "classes": "u-mb-s",
-                            "title": "This page has 1 error" if errors|length == 1 else "There are " + errors|length|string + " errors on this page"
-
-                        })
-                    %}
-                        {% for field, error_list in errors %}
-                            {% do errorData.append(
-                                {
-                                    "text": ', '.join(error_list),
-                                    "index": true
-                                }
-                            ) %}
-                        {% endfor %}
-                        {{
-                            onsList({
-                                "classes": "list--bare",
-                                "itemsList": errorData
-                            }) 
-                        }}
-                    {% endcall %}
-                {% endif %}
-                {%- call onsFieldset({
-                    "legend": "Link collection instrument",
-                    "legendClasses": "u-vh"
-                    }) -%}
-                    {{
-                        onsInput({
-                            "id": "survey_id",
-                            "name": "survey_id",
-                            "type": "text",
-                            "maxLength": 20,
-                            "attributes": {
-                                "required": true
-                            },
-                            "label": {
-                                "text": 'Survey ID',
-                                "description": "Survey ID is a number (e.g., 009 for MBS, 134 MWSS, etc)"
-                            }
-                        })
-                    }} 
-                    {{
-                        onsInput({
-                            "id": "eq_id",
-                            "name": "eq_id",
-                            "type": "text",
-                            "maxLength": 100,
-                            "attributes": {
-                                "required": true
-                            },
-                            "label": {
-                                "text": 'Eq id'
-                            }
-                        })
-                    }} 
-                    {{
-                        onsInput({
-                            "id": "formtype",
-                            "name": "formtype",
-                            "type": "text",
-                            "maxLength": 20,
-                            "attributes": {
-                                "required": true
-                            },
-                            "label": {
-                                "text": 'Formtype'
-                            }
-                        })
-                    }} 
-                {% endcall %}
-                {{
-                    onsButton({
-                        "classes": "u-mb-s u-mt-l",
-                        "text": "Link collection instrument",
-                        "id": "save-btn"
-                    })
-                }}   
-
-                <p>
-                    <a id="cancel-btn" href="{{ url_for('surveys_bp.view_surveys') }}">Cancel</a>
-                </p>
-            </form>
-        </div>
+        <section class="ce-section">
+          <label class="label u-fs-m">{{ eq_ci_selectors | length }} Collection instruments</label>
+          {% set surveyTableData = {
+            "table_class": 'table table--responsive',
+            "id": "collection-instruments-table",
+            "caption": 'Sample details for this collection exercise',
+            "hideCaption": true,
+            "ths": [
+              {
+                  "value": "Linked collection instruments",
+              },
+            ]}
+          %}
+          {% set surveyTableDataRows = [] %}
+          {% for ci in eq_ci_selectors %}
+            {% do surveyTableDataRows.append(
+              {
+                "tds": [
+                  {
+                    "value": ci.file_name|string
+                  }
+                ]
+              }
+            ) %}
+          {% endfor %}
+          {% do surveyTableData | setAttribute("trs", surveyTableDataRows) %}
+          {{ onsTable(surveyTableData) }}
+        </section>
+        <p>
+          <a href="{{ url_for('surveys_bp.view_survey', short_name=short_name) }}"
+            role="button" class="btn" id="done-link" name="done-link"><span class="btn__inner">Done</span></a>
+        </p>
+      </form>
     </div>
+  </div>
 {% endblock %}
