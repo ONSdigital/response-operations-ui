@@ -108,7 +108,7 @@ def view_collection_exercise(short_name, period):
                    'AIFDI',
                    'AOFDI',
                    'QIFDI',
-                   'QOFDI'
+                   'QOFDI',
                    'FSPS',
                    'GovERD',
                    'NBS',
