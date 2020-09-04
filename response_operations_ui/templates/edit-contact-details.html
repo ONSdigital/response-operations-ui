@@ -8,6 +8,7 @@
 {% block main %}
   <div class="grid grid--gutterless">
     <div class="grid__col col-8@m">
+    {{ error_type }}
       {% if error_type == 'api error' %}
           {% call
             onsPanel({
@@ -32,6 +33,36 @@
           <p class="u-fs-r">Please enter a different email address.</p>
           {% endcall %}
       {% endif %}
+    {% if errors %}
+        <div class="panel panel--error u-mb-m">
+          <div class="panel__header">
+            {% if errors|length > 1 %}
+            <h1 id="error-count" class="panel__title u-fs-r--b">This page has {{ errors|length }} errors</h1>
+            {% else %}
+            <h1 id="error-count" class="panel__title u-fs-r--b">This page has an error</h1>
+            {% endif %}
+          </div>
+          <div class="panel__body">
+            These must be corrected to continue.
+            <ol class="list u-ml-s u-mt-xs">
+              {% for error in form.last_name.errors %}
+                <li class="list__item"><a href='#lastName'>{{ error }}</a></li>
+              {% endfor %}
+              {% for error in form.first_name.errors %}
+                <li class="list__item"><a href='#firstName'>{{ error }}</a></li>
+              {% endfor %}
+              {% for error in form.email.errors %}
+                <li class="list__item"><a href='#email'>{{ error }}</a></li>
+              {% endfor %}
+              {% for error in form.telephone.errors %}
+                <li class="list__item"><a href='#telephone'>{{ error }}</a></li>
+              {% endfor %}
+            </ol>
+           </div>
+          </div>
+          {% endif %}
+
+
       <h1 class="u-fs-xl u-mt-m">Edit contact details</h1>
       {%- set href = url_for('respondent_bp.edit_contact_details', ru_ref=ru_ref, respondent_id=respondent_details.id) if tab=='respondents' else url_for('reporting_unit_bp.edit_contact_details', ru_ref=ru_ref, respondent_id=respondent_details.id) -%}
       <form action="{{ href }}" method="post">
@@ -97,7 +128,8 @@
                   "error": emailError
               })
           }} 
-        
+          
+
           {% if failed_authentication or form.telephone.errors or errors %}
               {% set telephoneError = { "text": "Telephone number is required", "id": "telephone-panel" } %}
           {% endif %}
@@ -118,8 +150,9 @@
                   "error": telephoneError
               })
           }} 
+          <input type="hidden" name="hidden_email" value="{{ respondent_details.emailAddress }}">
+
         {%- endcall -%}
-        <input type="hidden" name="hidden_email" value="{{ respondent_details.telephone }}">
         {{
             onsButton({
                 "classes": "u-mb-s u-mt-l",
