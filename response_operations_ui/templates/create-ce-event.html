@@ -11,11 +11,7 @@
     <div class="grid__col col-8@m">
       {%- with errors = get_flashed_messages(category_filter=["error"]) -%}
         {%- if errors -%}
-            {% if date_restriction_text %}
-              {% set errorLength = errors|length + date_restriction_text|length %}
-            {% else %}
-              {% set errorLength = errors|length %}
-            {% endif %}
+            {% set errorLength = errors|length %}
             {% call
               onsPanel({
                   "type":"error",
@@ -36,25 +32,13 @@
                 ) %}
 
               {% endfor %}
-            {% if date_restriction_text %}
-              {% for text in date_restriction_text %}
-                  {% do errorData.append(
-                    {
-                        "text": text,
-                        "index": true,
-                        "url": "#",
-                        "classes": "js-inpagelink"
-                    }
-                ) %}
-
-              {% endfor %}
+              
               {{
                   onsList({
                       "classes": "list--bare",
                       "itemsList": errorData
                   }) 
               }}
-            {% endif %}
           {% endcall %}
         {% endif %}
       {%- endwith -%}
@@ -86,6 +70,28 @@
       }}
 
       <h2 class="u-fs-l u-mt-l">{{event_name}}</h2>
+      {% if date_restriction_text %}
+          {% set listData = [] %}
+          {% for text in date_restriction_text %}
+
+            {% do listData.append(
+                {
+                    "text": text
+                }
+            ) %}
+          {% endfor %}
+          {% call
+            onsPanel({
+                "classes": "u-mb-m"
+            })
+          %}
+            {{
+                onsList({
+                    "itemsList": listData
+                }) 
+            }}           
+        {% endcall %}
+      {% endif %}
       <form method="post" action="{{ url_for('collection_exercise_bp.create_collection_exercise_event', short_name=short_name, period=period, ce_id=ce_id, tag=tag)}}" class="">
         <div class="date-time-editor u-mb-l">
         {{ form.csrf_token }}
