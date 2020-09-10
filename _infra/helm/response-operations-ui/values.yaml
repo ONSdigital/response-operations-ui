@@ -66,3 +66,7 @@ sample:
   file:
     uploader:
       enabled: false
+
+gcp:
+  project: ras-rm-test
+  topic: ras-rm-notify-test
