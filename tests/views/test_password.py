@@ -1,4 +1,7 @@
 import unittest
+from unittest import mock
+from unittest.mock import patch
+
 import jwt
 import requests_mock
 
@@ -11,8 +14,6 @@ url_uaa_token = f"{TestingConfig.UAA_SERVICE_URL}/oauth/token"
 url_uaa_get_accounts = f"{TestingConfig.UAA_SERVICE_URL}/Users?filter=email+eq+%22{test_email}%22"
 url_uaa_reset_code = f"{TestingConfig.UAA_SERVICE_URL}/password_resets"
 url_uaa_reset_pw = f"{TestingConfig.UAA_SERVICE_URL}/password_change"
-url_send_req_notify = f'{TestingConfig().NOTIFY_SERVICE_URL}{TestingConfig().NOTIFY_REQUEST_PASSWORD_CHANGE_TEMPLATE}'
-url_send_cre_notify = f'{TestingConfig().NOTIFY_SERVICE_URL}{TestingConfig().NOTIFY_CONFIRM_PASSWORD_CHANGE_TEMPLATE}'
 
 
 class TestPasswords(unittest.TestCase):
@@ -31,15 +32,16 @@ class TestPasswords(unittest.TestCase):
 
     @requests_mock.mock()
     def test_request_reset(self, mock_request):
-        mock_request.post(url_send_req_notify, json={'emailAddress': test_email}, status_code=201)
-        mock_request.post(url_uaa_token, json={"access_token": self.access_token.decode()}, status_code=201)
-        mock_request.get(url_uaa_get_accounts,
-                         json={"totalResults": 1,
-                               "resources": [{"name": {"givenName": "Test"}}]}, status_code=200)
-        response = self.client.post("/passwords/forgot-password", follow_redirects=True,
-                                    data={"email_address": test_email})
-        self.assertIn(b'If fake@ons.gov.uk is registered to an account', response.data)
-        self.assertEqual(response.status_code, 200)
+        with patch('response_operations_ui.views.passwords.NotifyController') as mock_notify:
+            mock_notify()._send_message.return_value = mock.Mock()
+            mock_request.post(url_uaa_token, json={"access_token": self.access_token.decode()}, status_code=201)
+            mock_request.get(url_uaa_get_accounts,
+                             json={"totalResults": 1,
+                                   "resources": [{"name": {"givenName": "Test"}}]}, status_code=200)
+            response = self.client.post("/passwords/forgot-password", follow_redirects=True,
+                                        data={"email_address": test_email})
+            self.assertIn(b'If fake@ons.gov.uk is registered to an account', response.data)
+            self.assertEqual(response.status_code, 200)
 
     @requests_mock.mock()
     def test_request_reset_fails(self, mock_request):
@@ -75,20 +77,21 @@ class TestPasswords(unittest.TestCase):
     @requests_mock.mock()
     def test_reset_password(self, mock_request):
         with self.app.app_context():
-            token = token_decoder.generate_email_token(test_email)
-            mock_request.post(url_send_cre_notify, json={'emailAddress': test_email}, status_code=201)
-            mock_request.post(url_uaa_token, json={"access_token": self.access_token.decode()}, status_code=201)
-            mock_request.post(url_uaa_reset_code, json={"code": "testcode"}, status_code=201)
-            mock_request.post(url_uaa_reset_pw, status_code=200)
-            mock_request.get(url_uaa_get_accounts,
-                             json={"totalResults": 1,
-                                   "resources": [{"userName": "testuser",
-                                                  "name": {"givenName": "Test"}}]}, status_code=200)
-            response = self.client.post(f"/passwords/reset-password/{token}", follow_redirects=True,
-                                        data={"password": 'TestPassword1!',
-                                              "password_confirm": 'TestPassword1!'})
-            self.assertIn(b'Your password has been changed', response.data)
-            self.assertEqual(response.status_code, 200)
+            with patch('response_operations_ui.views.passwords.NotifyController') as mock_notify:
+                mock_notify()._send_message.return_value = mock.Mock()
+                token = token_decoder.generate_email_token(test_email)
+                mock_request.post(url_uaa_token, json={"access_token": self.access_token.decode()}, status_code=201)
+                mock_request.post(url_uaa_reset_code, json={"code": "testcode"}, status_code=201)
+                mock_request.post(url_uaa_reset_pw, status_code=200)
+                mock_request.get(url_uaa_get_accounts,
+                                 json={"totalResults": 1,
+                                       "resources": [{"userName": "testuser",
+                                                      "name": {"givenName": "Test"}}]}, status_code=200)
+                response = self.client.post(f"/passwords/reset-password/{token}", follow_redirects=True,
+                                            data={"password": 'TestPassword1!',
+                                                  "password_confirm": 'TestPassword1!'})
+                self.assertIn(b'Your password has been changed', response.data)
+                self.assertEqual(response.status_code, 200)
 
     @requests_mock.mock()
     def test_reset_password_different_passwords(self, mock_request):

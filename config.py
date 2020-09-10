@@ -29,7 +29,8 @@ class Config(object):
 
     RESPONSE_OPERATIONS_UI_HOST = os.getenv('RESPONSE_OPERATIONS_UI_HOST', "http://localhost")
     RESPONSE_OPERATIONS_UI_PORT = os.getenv('RESPONSE_OPERATIONS_UI_PORT', "8085")
-    RESPONSE_OPERATIONS_UI_URL = os.getenv('RESPONSE_OPERATIONS_UI_URL', f'{RESPONSE_OPERATIONS_UI_HOST}:{RESPONSE_OPERATIONS_UI_PORT}')
+    RESPONSE_OPERATIONS_UI_URL = os.getenv('RESPONSE_OPERATIONS_UI_URL',
+                                           f'{RESPONSE_OPERATIONS_UI_HOST}:{RESPONSE_OPERATIONS_UI_PORT}')
 
     # Service Configs
     CASE_URL = os.getenv('CASE_URL')
@@ -47,16 +48,17 @@ class Config(object):
     PARTY_RESPONDENTS_PER_PAGE = os.getenv('PARTY_RESPONDENTS_PER_PAGE', 25)
     PARTY_BUSINESS_RESULTS_PER_PAGE = os.getenv('PARTY_BUSINESS_RESULTS_PER_PAGE', 25)
 
-    NOTIFY_SERVICE_URL = os.getenv('NOTIFY_SERVICE_URL', 'http://localhost:8181/emails/')
+    GOOGLE_CLOUD_PROJECT = os.getenv('GOOGLE_CLOUD_PROJECT', 'test-project-id')
+    PUBSUB_TOPIC = os.getenv('PUBSUB_TOPIC', 'ras-rm-notify-test')
     NOTIFY_REQUEST_PASSWORD_CHANGE_TEMPLATE = os.getenv('NOTIFY_REQUEST_PASSWORD_CHANGE_TEMPLATE',
-                                                            'request_password_change_id')
+                                                        'request_password_change_id')
     NOTIFY_CONFIRM_PASSWORD_CHANGE_TEMPLATE = os.getenv('NOTIFY_CONFIRM_PASSWORD_CHANGE_TEMPLATE',
-                                                            'confirm_password_change_id')
+                                                        'confirm_password_change_id')
     NOTIFY_REQUEST_CREATE_ACCOUNT_TEMPLATE = os.getenv('NOTIFY_REQUEST_CREATE_ACCOUNT_TEMPLATE',
-                                                            'request_create_account_id')
+                                                       'request_create_account_id')
     NOTIFY_CONFIRM_CREATE_ACCOUNT_TEMPLATE = os.getenv('NOTIFY_CONFIRM_CREATE_ACCOUNT_TEMPLATE',
-                                                            'confirm_create_account_id')
-    SEND_EMAIL_TO_GOV_NOTIFY = os.getenv('SEND_EMAIL_TO_GOV_NOTIFY', False)
+                                                       'confirm_create_account_id')
+    SEND_EMAIL_TO_GOV_NOTIFY = os.getenv('SEND_EMAIL_TO_GOV_NOTIFY', True)
 
     REPORT_URL = os.getenv('REPORT_URL')
     SAMPLE_URL = os.getenv('SAMPLE_URL')
@@ -74,7 +76,7 @@ class Config(object):
     # 6 weeks in seconds
     CREATE_ACCOUNT_EMAIL_TOKEN_EXPIRY = int(os.getenv('CREATE_ACCOUNT_EMAIL_TOKEN_EXPIRY', '3628800'))
     CREATE_ACCOUNT_ADMIN_PASSWORD = os.getenv('CREATE_ACCOUNT_ADMIN_PASSWORD')
-    
+
     TEST_MODE = strtobool(os.getenv('TEST_MODE', 'False'))
     WTF_CSRF_ENABLED = strtobool(os.getenv('WTF_CSRF_ENABLED', 'True'))
 
