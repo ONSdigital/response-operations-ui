@@ -59,7 +59,7 @@ def call_flush_endpoint(eq_url, token):
         print("Flush succeeded")
     except HTTPError as e:
         print(e)
-        print("Flush failed.  A 404 might indicate that the was correct, but EQ doesn't have a record of "
+        print("Flush failed.  A 404 might indicate that the payload was correct, but EQ doesn't have a record of "
               "the submission")
 
 
