@@ -144,10 +144,8 @@
       </form>
       {% else %}
         <div>
-            <ul>
-              <li>This survey type is an EQ but no collection instruments set up for it.</li>
-              <li>or, this survey hasn't had its survey mode set to either EQ or SEFT.</li>
-            </ul>
+          <p>This survey type is an EQ but no collection instruments have been set up for it yet.</p>
+          <p><a href="{{ url_for('surveys_bp.get_link_collection_instrument', short_name=survey.shortName) }}">Go here to link instruments</a></p>
         </div>
       {% endif %}
     </div>
