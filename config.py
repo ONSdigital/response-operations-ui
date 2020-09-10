@@ -58,7 +58,7 @@ class Config(object):
                                                        'request_create_account_id')
     NOTIFY_CONFIRM_CREATE_ACCOUNT_TEMPLATE = os.getenv('NOTIFY_CONFIRM_CREATE_ACCOUNT_TEMPLATE',
                                                        'confirm_create_account_id')
-    SEND_EMAIL_TO_GOV_NOTIFY = os.getenv('SEND_EMAIL_TO_GOV_NOTIFY', True)
+    SEND_EMAIL_TO_GOV_NOTIFY = os.getenv('SEND_EMAIL_TO_GOV_NOTIFY', False)
 
     REPORT_URL = os.getenv('REPORT_URL')
     SAMPLE_URL = os.getenv('SAMPLE_URL')
