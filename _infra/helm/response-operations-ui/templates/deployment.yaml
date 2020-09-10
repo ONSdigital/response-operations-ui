@@ -65,6 +65,12 @@ spec:
                 key: security-password
           - name: PORT
             value: "{{ .Values.container.port }}"
+          - name: GOOGLE_CLOUD_PROJECT
+            value: "{{ .Values.gcp.project }}"
+          - name: GOOGLE_APPLICATION_CREDENTIALS
+            value: /var/secrets/google/credentials.json
+          - name: PUBSUB_TOPIC
+            value: "{{ .Values.gcp.topic }}"
           - name: CASE_URL
             {{- if .Values.dns.enabled }}
             value: "http://case.{{ .Values.namespace }}.svc.cluster.local:{{ .Values.dns.wellKnownPort }}"
@@ -117,12 +123,6 @@ spec:
             value: {{ .Values.notify.requestCreateAccountTemplate }}
           - name: NOTIFY_REQUEST_PASSWORD_CHANGE_TEMPLATE
             value: {{ .Values.notify.requestPasswordChangeTemplate }}
-          - name: GOOGLE_CLOUD_PROJECT
-              value: "{{ .Values.gcp.project }}"
-          - name: GOOGLE_APPLICATION_CREDENTIALS
-            value: /var/secrets/google/credentials.json
-          - name: PUBSUB_TOPIC
-              value: "{{ .Values.gcp.topic }}"
           - name: PARTY_URL
             {{- if .Values.dns.enabled }}
             value: "http://party.{{ .Values.namespace }}.svc.cluster.local:{{ .Values.dns.wellKnownPort }}"

@@ -16,6 +16,10 @@ admin:
 analytics:
   enabled: false
 
+gcp:
+  project: ras-rm-sandbox
+  topic: ras-rm-notify-test
+
 image:
   devRepo: eu.gcr.io/ons-rasrmbs-management
   name: eu.gcr.io/ons-rasrmbs-management
@@ -66,7 +70,3 @@ sample:
   file:
     uploader:
       enabled: false
-
-gcp:
-  project: ras-rm-test
-  topic: ras-rm-notify-test
