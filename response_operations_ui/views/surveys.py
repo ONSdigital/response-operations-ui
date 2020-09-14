@@ -74,7 +74,7 @@ def view_survey(short_name):
     # This is temporary until the survey data includes whether it's an EQ or SEFT.  Until then we'll define the list
     # so we can make the 'link collection instrument' button appear only on EQ surveys.
     eq_surveys = ['MBS', 'QSS', 'QCAS', 'RSI', 'MWSS', 'QBS', 'UKIS', 'QPSESLA', 'QPSESPB', 'QPSESCS',
-                  'VACS2', 'VACS3', 'VACS4', 'VACS5', 'Ecommerce', 'CAT', 'COVID']
+                  'VACS2', 'VACS3', 'VACS4', 'VACS5', 'Ecommerce', 'CAT', 'COVID', 'EPE']
     is_eq_survey = False
     if short_name in eq_surveys:
         is_eq_survey = True
