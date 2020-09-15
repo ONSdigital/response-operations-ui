@@ -30,7 +30,7 @@ class SecureMessageForm(FlaskForm):
                                       Length(max=96, message="Please enter a subject less than 100 characters")])
     body = TextAreaField('Message',
                          validators=[InputRequired(message="Please enter a message"),
-                                     Length(max=10000, message="Please enter a subject less than 10000 characters")])
+                                     Length(max=50000, message="Please enter a message less than 50000 characters")])
     survey = Label('Survey', text="")
     ru_ref = Label('RU ref', text="")
     business = Label('Business', text="")
@@ -225,9 +225,11 @@ class CreateSurveyDetailsForm(FlaskForm):
 
 
 class LinkCollectionInstrumentForm(FlaskForm):
-    survey_id = StringField('survey_id', validators=[InputRequired(message="Please enter a survey_id")])
-    eq_id = StringField('eq_id', validators=[InputRequired(message="Please enter an eq_id")])
-    formtype = StringField('formtype', validators=[InputRequired(message="Please enter a formtype")])
+    formtype = StringField('formtype',
+                           default='',
+                           validators=[InputRequired(message="Please enter a formtype"),
+                                       Regexp(regex=r'^[0-9]+$',
+                                              message='Please use numeric characters only.')])
 
 
 class RemoveLoadedSample(FlaskForm):

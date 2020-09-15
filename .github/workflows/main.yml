@@ -5,8 +5,12 @@ name: Build
 on:
   push:
     branches: [ master ]
+    paths-ignore:
+      - _infra/spinnaker/**
   pull_request:
     branches: [ master ]
+    paths-ignore:
+      - _infra/spinnaker/**
 
 env:
   IMAGE: response-operations-ui
@@ -50,7 +54,6 @@ jobs:
         run: |
           python -m pip install --upgrade pip
           pip install pipenv
-          npm install
           pipenv install --dev --deploy
       - name: Test
         run: make test

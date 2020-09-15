@@ -1,4 +1,4 @@
-{% set release_version = '14.4.0' %}
+{% set release_version = '19.3.1' %}
 {% from "components/skip-to-content/_macro.njk" import onsSkipToContent %}
 {% from "components/header/_macro.njk" import onsHeader %}
 {% from "components/feedback/_macro.njk" import onsFeedback %}
@@ -9,11 +9,15 @@
 {% if pageConfig and pageConfig.language and pageConfig.language.languages %}
     {% set currentLanguage = pageConfig.language.languages | selectattr("current") | first %}
     {% set currentLanguageISOCode = currentLanguage.ISOCode %}
+    {% set otherLanguage = pageConfig.language.languages | rejectattr("current") | first %}
+    {% set otherLanguageISOCode = otherLanguage.ISOCode %}
 {% endif %}
 
 {% if pageConfig.cdn or release_version %}
     {# Production #}
-    {% set assetsURL = "https://cdn.ons.gov.uk/sdc/design-system/" + (pageConfig.cdn or release_version) %}
+    {% set cdn_url = (pageConfig.cdn.url if pageConfig.cdn is defined) or "https://cdn.ons.gov.uk/sdc/design-system" %}
+    {% set slash = "" if cdn_url | last == "/" else "/" %}
+    {% set assetsURL = cdn_url + slash + ((pageConfig.cdn.version  if pageConfig.cdn is defined) or release_version) %}
 {% elif data and data.version %}
     {# Prototype kits #}
     {% set assetsURL = "/" + data.version %}
@@ -46,10 +50,19 @@
             <meta property="og:url" content="{{ pageConfig.absoluteUrl }}">
             <meta property="og:type" content="article">
             <meta property="og:site_name" content="{{ pageConfig.header.title | default(pageConfig.title) }}">
-            <meta property="og:image" content="{{ assetsURL }}{{ pageConfig.header.titleLogo | default(pageConfig.header.logo) }}">
+            <meta property="og:image" content="{{ pageConfig.headMeta.image | default(pageConfig.header.logo) }}">
+            <meta property="og:locale" content="{{ currentLanguageISOCode }}" />
+            {% if otherLanguageISOCode %}
+                <meta property="og:locale:alternate" content="{{ otherLanguageISOCode }}" /> 
+            {% endif %}
             <meta name="twitter:card" content="summary">
             <meta name="description" content="{{ pageConfig.headMeta.description }}">
             <link rel="canonical" href="{{ pageConfig.headMeta.canonicalUrl | default(pageConfig.absoluteUrl) }}">
+            {% if pageConfig.headMeta.hreflangs %}
+                {% for item in pageConfig.headMeta.hreflangs %}
+                    <link rel="alternate" href="{{ item.url }}" hreflang="{{ item.lang }}" />
+                {% endfor %}
+            {% endif %}
         {% endif %}
         {% block headIcons %}
             <meta name="msapplication-config" content="{{ assetsURL }}/favicons/browserconfig.json">
@@ -99,17 +112,19 @@
                                 "assetsURL": assetsURL,
                                 "serviceLinks": pageConfig.serviceLinks,
                                 "logo": pageConfig.header.logo,
+                                "mobilelogo": pageConfig.header.mobilelogo,
                                 "logoAlt": pageConfig.header.logoAlt,
                                 "logoHref": pageConfig.header.logoHref,
                                 "titleLogo": pageConfig.header.titleLogo,
                                 "titleLogoAlt": pageConfig.header.titleLogoAlt,
-                                "titleLogoHref": pageConfig.header.titleLogoHref
+                                "titleLogoHref": pageConfig.header.titleLogoHref,
+                                "customHeaderLogo": pageConfig.header.customHeaderLogo
                             })
                         }}
                     {% endblock %}
                     {% block pageContent %}
-                        {% block preMain %}{% endblock %}
                         <div class="page__container container {{ containerClasses }}">
+                            {% block preMain %}{% endblock %}
                             <div class="grid">
                                 <div class="grid__col col-8@m">
                                     <main id="main-content" class="page__main {{ pageClasses }}">
@@ -125,7 +140,7 @@
                     {% endif %}
                 </div>
                 {% block preFooter %}
-                    {% if pageConfig.feedback %}            
+                    {% if pageConfig.feedback %}
                         {{
                             onsFeedback({
                                 "id": pageConfig.feedback.id | default("feedback"),
@@ -142,8 +157,8 @@
                                 "errorMessage": pageConfig.feedback.errorMessage,
                                 "summaryAttributes": pageConfig.feedback.summaryAttributes
                             })
-                        }}     
-                    {% endif %}             
+                        }}
+                    {% endif %}
                 {% endblock %}
                 {% block footer %}
                     {% if pageConfig.footer %}
@@ -198,7 +213,7 @@
         </script>
 
         {% if devMode %}
-            <script{% if csp_nonce %} nonce="{{ csp_nonce() }}"{% endif %}>document.write('<script{% if csp_nonce %} nonce="{{ csp_nonce() }}"{% endif %} src="//' + (location.hostname || 'localhost').split(':')[0] + ':35729/livereload.js" defer><\/script>');</script>
+            <script>document.write('<script src="//' + (location.hostname || 'localhost').split(':')[0] + ':35729/livereload.js" defer><\/script>');</script>
         {% endif %}
 
         {% block scripts %}{% endblock %}
