@@ -120,7 +120,7 @@ class TestSurvey(ViewTestCase):
         request_history = mock_request.request_history
         self.assertEqual(len(request_history), 1)
         self.assertEqual(response.status_code, 500)
- 
+
     @requests_mock.mock()
     def test_survey_list_connection_error(self, mock_request):
         mock_request.get(url_get_survey_list, exc=RequestException(request=MagicMock()))
