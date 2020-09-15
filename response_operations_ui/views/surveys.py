@@ -88,7 +88,8 @@ def view_survey_details(short_name):
     return render_template('edit-survey-details.html', form=form, short_name=short_name,
                            legal_basis=survey_details['legalBasis'],
                            long_name=survey_details['longName'],
-                           survey_ref=survey_details['surveyRef'])
+                           survey_ref=survey_details['surveyRef'],
+                           survey_mode=survey_details['surveyMode'])
 
 
 @surveys_bp.route('/edit-survey-details/<short_name>', methods=['POST', 'GET'])
