@@ -2,7 +2,7 @@
 {% from "components/search/_macro.njk" import onsSearch %}
 {% from "components/section-navigation/_macro.njk" import onsSectionNavigation %}
 {% from "components/table/_macro.njk" import onsTable %}
-{% from "components/status/_macro.njk" import onsStatus %}
+{% from "components/input/_macro.njk" import onsInput %}
 
 {% set page_title = "Messages" %}
 {% set hide_breadcrumbs = true %}
@@ -49,25 +49,26 @@
       <form action="{{ url_for('messages_bp.view_selected_survey',selected_survey=selected_survey, conversation_tab=conversation_tab, ru_ref_filter=ru_ref_filter, business_id_filter=business_id_filter, page=page, limit=limit) }}" method="post">
         {{ form.csrf_token }}
         {{
-          onsSearch({
-              "input": {
-                  "id": 'search-field',
-                  "type": 'number',
-                  "width": '6',
-                  "label": 'Filter RU ref',
-                  "name": 'ru_ref_filter',
-                  "value": ru_ref_filter
-              },
-              "button": {
-                  "text": 'Filter',
-                  "id": 'btn-filter-ru',
-                  "type": 'submit'
-              },
-              "charcheck": 11,
-              "charCountSingular": "{x} more number needed",
-              "charCountPlural": "{x} more numbers needed",
-              "charCountOverLimitSingular": "{x} number too many",
-              "charCountOverLimitPlural": "{x} numbers too many"
+          onsInput({
+            "id": 'search-field',
+            "type": 'number',
+            "width": '6',
+            "label": 'Filter RU ref',
+            "name": 'ru_ref_filter',
+            "value": ru_ref_filter,
+            "searchButton": {
+                "text": 'Filter',
+                "id": 'btn-filter-ru',
+                "type": 'submit'
+            },
+            "charCheck": {
+                "charcheckCountdown": true,
+                "limit": 11,
+                "charCountSingular": "{x} more character needed",
+                "charCountPlural": "{x} more characters needed",
+                "charCountOverLimitSingular": "{x} character too many",
+                "charCountOverLimitPlural": "{x} characters too many"
+            }
           })
         }}
       </form>  
@@ -152,6 +153,35 @@
           {% else %}
             {% set ruRef = 'Unavailable' %}
           {% endif %}
+          {% if message.business_name and message.unread %}
+            {% set businessName = '<span class="u-fw-b">' + message.business_name + '</span>' %}
+          {% elif message.business_name %}
+            {% set businessName = message.business_name %}
+          {% else %}
+            {% set businessName = 'Unavailable' %}
+          {% endif %}
+          {% if message.from and message.unread %}
+            {% set fromValue = '<span class="u-fw-b">' + message.from + '</span>' %}
+          {% elif message.from %}
+            {% set fromValue = message.from %}
+          {% else %}
+            {% set fromValue = 'Unavailable' %}
+          {% endif %}
+          {% if message.to and message.unread %}
+            {% set toValue = '<span class="u-fw-b">' + message.to + '</span>' %}
+          {% elif message.to %}
+            {% set toValue = message.to %}
+          {% else %}
+            {% set toValue = 'Unavailable' %}
+          {% endif %}
+          {% if message.sent_date and message.unread %}
+            {% set sentDate = '<span class="u-fw-b">' + message.sent_date + '</span>' %}
+          {% elif message.sent_date %}
+            {% set sentDate = message.sent_date %}
+          {% else %}
+            {% set sentDate = 'Unavailable' %}
+          {% endif %}
+
           {% do surveyTableDataRows.append(
             {
               "name": 'message-unread' if message.unread else 'message',
@@ -165,30 +195,30 @@
                   "id": 'ru-ref-' + loop.index|string
                 },
                 {
-                  "value": message.business_name if message.business_name else 'Unavailable',
+                  "value": businessName,
                   "data": "Business name",
                   "name": "tbl-messages-business",
                   "id": 'business-name-' + loop.index|string
                 },
                 {
-                  "value": '<a href="' + url_for('messages_bp.view_conversation', thread_id=message.thread_id, page=page, conversation_tab=conversation_tab, ru_ref_filter=ru_ref_filter, business_id_filter=business_id_filter) +'#latest-message" id="message-link-' + loop.index|string + '">' + message.subject + '</a>',
+                  "value": '<span class="u-fw-b"><a href="' + url_for('messages_bp.view_conversation', thread_id=message.thread_id, page=page, conversation_tab=conversation_tab, ru_ref_filter=ru_ref_filter, business_id_filter=business_id_filter) +'#latest-message" id="message-link-' + loop.index|string + '">' + message.subject + '</a></span>' if message.unread else '<a href="' + url_for('messages_bp.view_conversation', thread_id=message.thread_id, page=page, conversation_tab=conversation_tab, ru_ref_filter=ru_ref_filter, business_id_filter=business_id_filter) +'#latest-message" id="message-link-' + loop.index|string + '">' + message.subject + '</a>',
                   "data": "Subject",
                   "name": "tbl-messages-subject"
                 },
                 {
-                  "value": message.from if message.from else 'Unavailable',
+                  "value": fromValue if message.from else 'Unavailable',
                   "data": "From",
                   "name": "tbl-messages-from",
                   "id": 'messages-from-' + loop.index|string
                 },
                 {
-                  "value": message.to if message.to else 'Unavailable',
+                  "value": toValue if message.to else 'Unavailable',
                   "data": "To",
                   "name": "tbl-messages-to",
                   "id": 'messages-to-' + loop.index|string
                 },
                 {
-                  "value": message.sent_date if message.sent_date else 'Unavailable',
+                  "value": sentDate if message.sent_date else 'Unavailable',
                   "data": "Date and time",
                   "name": "tbl-messages-received",
                   "id": 'messages-time-' + loop.index|string

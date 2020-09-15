@@ -19,6 +19,10 @@ spec:
         app: {{ .Chart.Name }}
         env: {{ .Values.env }}
     spec:
+      volumes:
+        - name: google-cloud-key
+          secret:
+            secretName: google-application-credentials
       containers:
         - name: {{ .Chart.Name }}
           {{- if eq .Values.image.tag "latest"}}
@@ -27,6 +31,9 @@ spec:
           image: "{{ .Values.image.devRepo }}/{{ .Chart.Name }}:{{ .Values.image.tag }}"
           {{- end}}
           imagePullPolicy: {{ .Values.image.pullPolicy }}
+          volumeMounts:
+          - name: google-cloud-key
+            mountPath: /var/secrets/google
           ports:
             - name: http-server
               containerPort: {{ .Values.container.port }}
@@ -61,6 +68,12 @@ spec:
                 key: security-password
           - name: PORT
             value: "{{ .Values.container.port }}"
+          - name: GOOGLE_CLOUD_PROJECT
+            value: "{{ .Values.gcp.project }}"
+          - name: GOOGLE_APPLICATION_CREDENTIALS
+            value: /var/secrets/google/credentials.json
+          - name: PUBSUB_TOPIC
+            value: "{{ .Values.gcp.topic }}"
           - name: CASE_URL
             {{- if .Values.dns.enabled }}
             value: "http://case.{{ .Values.namespace }}.svc.cluster.local:{{ .Values.dns.wellKnownPort }}"
@@ -113,12 +126,6 @@ spec:
             value: {{ .Values.notify.requestCreateAccountTemplate }}
           - name: NOTIFY_REQUEST_PASSWORD_CHANGE_TEMPLATE
             value: {{ .Values.notify.requestPasswordChangeTemplate }}
-          - name: NOTIFY_SERVICE_URL
-            {{- if .Values.dns.enabled }}
-            value: "http://notify-gateway.{{ .Values.namespace }}.svc.cluster.local:{{ .Values.dns.wellKnownPort }}/emails/"
-            {{- else }}
-            value: "http://$(NOTIFY_GATEWAY_SERVICE_HOST):$(NOTIFY_GATEWAY_SERVICE_PORT)/emails/"
-            {{- end }}
           - name: PARTY_URL
             {{- if .Values.dns.enabled }}
             value: "http://party.{{ .Values.namespace }}.svc.cluster.local:{{ .Values.dns.wellKnownPort }}"
@@ -160,6 +167,14 @@ spec:
           - name: SAMPLE_URL
             {{- if .Values.dns.enabled }}
             value: "http://sample.{{ .Values.namespace }}.svc.cluster.local:{{ .Values.dns.wellKnownPort }}"
+            {{- else }}
+            value: "http://$(SAMPLE_SERVICE_HOST):$(SAMPLE_SERVICE_PORT)"
+            {{- end }}
+          - name: SAMPLE_FILE_UPLOADER_URL_ENABLED
+            value: "{{- if .Values.sample.file.uploader.enabled -}}True{{- else -}}False{{- end -}}"
+          - name: SAMPLE_FILE_UPLOADER_URL
+            {{- if .Values.dns.enabled }}
+            value: "http://sample-file-uploader.{{ .Values.namespace }}.svc.cluster.local:{{ .Values.dns.wellKnownPort }}"
             {{- else }}
             value: "http://$(SAMPLE_SERVICE_HOST):$(SAMPLE_SERVICE_PORT)"
             {{- end }}

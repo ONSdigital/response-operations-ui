@@ -1,42 +1,77 @@
 import unittest
-import responses
+from unittest.mock import MagicMock
 
-from config import TestingConfig
 from response_operations_ui import create_app
 from response_operations_ui.controllers.notify_controller import NotifyController
 from response_operations_ui.exceptions.exceptions import NotifyError
 
-url_send_notify = f'{TestingConfig().NOTIFY_SERVICE_URL}{TestingConfig().NOTIFY_REQUEST_PASSWORD_CHANGE_TEMPLATE}'
-
 
 class TestNotifyController(unittest.TestCase):
-    '''
+    """
     Tests that the notify controller is working as expected
-    '''
+    """
+
     def setUp(self):
         self.app = create_app('TestingConfig')
 
     def test_an_invalid_template_id(self):
         with self.app.app_context():
             with self.assertRaises(KeyError):
-                NotifyController().request_to_notify(email='test@test.test', template_name='fake-template-name')
+                notify = NotifyController()
+                notify._get_template_id(template_name='invalid_template')
 
-    def test_a_successful_send(self):
-        with responses.RequestsMock() as rsps:
-            rsps.add(rsps.POST, url_send_notify, json={'emailAddress': 'test@test.test'}, status=201)
-            with self.app.app_context():
-                try:
-                    NotifyController().request_to_notify(email='test@test.test',
-                                                         template_name='request_password_change')
-                except NotifyError:
-                    self.fail('NotifyController didnt properly handle a 201')
-                except KeyError:
-                    self.fail('NotifyController couldnt find the template ID request_password_change')
+    def test_a_successful_send_to_pub_sub(self):
+        with self.app.app_context():
+            publisher = MagicMock()
+            publisher.topic_path.return_value = 'projects/test-project-id/topics/ras-rm-notify-test'
+            notify = NotifyController()
+            notify.publisher = publisher
+            result = notify.request_to_notify(email='test@test.test',
+                                              template_name='request_password_change', personalisation=None)
+            data = b'{"notify": {"email_address": "test@test.test", ' \
+                   b'"template_id": "request_password_change_id", "personalisation": {}}}'
 
-    def test_an_unsuccessful_send(self):
-        with responses.RequestsMock() as rsps:
-            rsps.add(rsps.POST, url_send_notify, json={'emailAddress': 'test@test.test'}, status=500)
-            with self.app.app_context():
-                with self.assertRaises(NotifyError):
-                    NotifyController().request_to_notify(email='test@test.test',
-                                                         template_name='request_password_change')
+            publisher.publish.assert_called()
+            publisher.publish.assert_called_with('projects/test-project-id/topics/ras-rm-notify-test', data=data)
+            self.assertIsNone(result)
+
+    def test_a_successful_send_to_pub_sub_with_personalisation(self):
+        with self.app.app_context():
+            publisher = MagicMock()
+            publisher.topic_path.return_value = 'projects/test-project-id/topics/ras-rm-notify-test'
+            notify = NotifyController()
+            notify.publisher = publisher
+            personalisation = {"first_name": "firstname", "last_name": "surname"}
+            result = notify.request_to_notify(email='test@test.test',
+                                              template_name='request_password_change', personalisation=personalisation)
+            data = b'{"notify": {"email_address": "test@test.test", ' \
+                   b'"template_id": "request_password_change_id", "personalisation": {"first_name": "firstname", ' \
+                   b'"last_name": "surname"}}}'
+
+            publisher.publish.assert_called()
+            publisher.publish.assert_called_with('projects/test-project-id/topics/ras-rm-notify-test', data=data)
+            self.assertIsNone(result)
+
+    def test_a_unsuccessful_send_to_pub_sub(self):
+        with self.app.app_context():
+            future = MagicMock()
+            future.result.side_effect = TimeoutError("bad")
+            publisher = MagicMock()
+            publisher.publish.return_value = future
+            notify = NotifyController()
+            notify.publisher = publisher
+            with self.assertRaises(NotifyError):
+                notify.request_to_notify(email='test@test.test',
+                                         template_name='request_password_change', personalisation=None)
+
+    def test_a_unsuccessful_send_to_pub_sub_with_exception(self):
+        with self.app.app_context():
+            future = MagicMock()
+            future.result.side_effect = Exception("bad")
+            publisher = MagicMock()
+            publisher.publish.return_value = future
+            notify = NotifyController()
+            notify.publisher = publisher
+            with self.assertRaises(NotifyError):
+                notify.request_to_notify(email='test@test.test',
+                                         template_name='request_password_change', personalisation=None)

@@ -1,4 +1,7 @@
 import unittest
+from unittest import mock
+from unittest.mock import patch
+
 import jwt
 import requests_mock
 
@@ -10,8 +13,6 @@ test_email = "fake@ons.gov.uk"
 url_uaa_token = f"{TestingConfig.UAA_SERVICE_URL}/oauth/token"
 url_uaa_get_accounts = f"{TestingConfig.UAA_SERVICE_URL}/Users?filter=email+eq+%22{test_email}%22"
 url_uaa_create_account = f"{TestingConfig.UAA_SERVICE_URL}/Users"
-url_send_req_notify = f'{TestingConfig().NOTIFY_SERVICE_URL}{TestingConfig().NOTIFY_REQUEST_CREATE_ACCOUNT_TEMPLATE}'
-url_send_cre_notify = f'{TestingConfig().NOTIFY_SERVICE_URL}{TestingConfig().NOTIFY_CONFIRM_CREATE_ACCOUNT_TEMPLATE}'
 
 
 class TestAccounts(unittest.TestCase):
@@ -31,14 +32,15 @@ class TestAccounts(unittest.TestCase):
 
     @requests_mock.mock()
     def test_request_account(self, mock_request):
-        mock_request.post(url_send_req_notify, json={'emailAddress': test_email}, status_code=201)
-        mock_request.post(url_uaa_token, json={"access_token": self.access_token.decode()}, status_code=201)
-        mock_request.get(url_uaa_get_accounts, json={"totalResults": 0}, status_code=200)
-        response = self.client.post("/account/request-new-account", follow_redirects=True,
-                                    data={"email_address": test_email,
-                                          "password": TestingConfig.CREATE_ACCOUNT_ADMIN_PASSWORD})
-        self.assertIn(b'We have sent an email to fake@ons.gov.uk', response.data)
-        self.assertEqual(response.status_code, 200)
+        with patch('response_operations_ui.views.accounts.NotifyController') as mock_notify:
+            mock_notify()._send_message.return_value = mock.Mock()
+            mock_request.post(url_uaa_token, json={"access_token": self.access_token.decode()}, status_code=201)
+            mock_request.get(url_uaa_get_accounts, json={"totalResults": 0}, status_code=200)
+            response = self.client.post("/account/request-new-account", follow_redirects=True,
+                                        data={"email_address": test_email,
+                                              "password": TestingConfig.CREATE_ACCOUNT_ADMIN_PASSWORD})
+            self.assertIn(b'We have sent an email to fake@ons.gov.uk', response.data)
+            self.assertEqual(response.status_code, 200)
 
     @requests_mock.mock()
     def test_request_account_fails(self, mock_request):
@@ -76,19 +78,20 @@ class TestAccounts(unittest.TestCase):
     @requests_mock.mock()
     def test_create_account(self, mock_request):
         with self.app.app_context():
-            token = token_decoder.generate_email_token(test_email)
-            mock_request.post(url_send_cre_notify, json={'emailAddress': test_email}, status_code=201)
-            mock_request.post(url_uaa_token, json={"access_token": self.access_token.decode()}, status_code=201)
-            mock_request.post(url_uaa_create_account, json={}, status_code=201)
-            response = self.client.post(f"/account/create-account/{token}", follow_redirects=True,
-                                        data={"password": 'TestPassword1!',
-                                              "password_confirm": 'TestPassword1!',
-                                              "user_name": 'testname',
-                                              "first_name": 'Test',
-                                              "last_name": 'Account'})
-            self.assertIn(b'Account successfully created', response.data)
-            self.assertIn(b'Sign in', response.data)
-            self.assertEqual(response.status_code, 200)
+            with patch('response_operations_ui.views.accounts.NotifyController') as mock_notify:
+                mock_notify()._send_message.return_value = mock.Mock()
+                token = token_decoder.generate_email_token(test_email)
+                mock_request.post(url_uaa_token, json={"access_token": self.access_token.decode()}, status_code=201)
+                mock_request.post(url_uaa_create_account, json={}, status_code=201)
+                response = self.client.post(f"/account/create-account/{token}", follow_redirects=True,
+                                            data={"password": 'TestPassword1!',
+                                                  "password_confirm": 'TestPassword1!',
+                                                  "user_name": 'testname',
+                                                  "first_name": 'Test',
+                                                  "last_name": 'Account'})
+                self.assertIn(b'Account successfully created', response.data)
+                self.assertIn(b'Sign in', response.data)
+                self.assertEqual(response.status_code, 200)
 
     @requests_mock.mock()
     def test_create_account_different_passwords(self, mock_request):
