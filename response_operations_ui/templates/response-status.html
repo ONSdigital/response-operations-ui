@@ -136,13 +136,18 @@
         </div>
     </div>
     <script{% if csp_nonce %} nonce="{{ csp_nonce() }}"{% endif %}>
-        document.getElementById("close-response").addEventListener('click', function() {
-            history.back();
-            return false;
+
+        // GTM - Push selected radio to the dataLayer
+        window.dataLayer = window.dataLayer || [];
+        $('form').submit(function() {
+            const selected = $('.radio__input:checked').val();
+            const dataLayerEvent = {
+                'event': 'changeOfStatus',
+                'selected': selected
+            };
+            dataLayer.push(dataLayerEvent);
         });
-        document.getElementById("cancel-change").addEventListener('click', function() {
-            history.back();
-            return false;
-        });
+        // End
+
     </script>
 {% endblock main -%}

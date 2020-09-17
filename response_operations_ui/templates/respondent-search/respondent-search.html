@@ -81,4 +81,25 @@
             })
         }}   
     </form>
+
+    <script{% if csp_nonce %} nonce="{{ csp_nonce() }}"{% endif %}>
+
+        // GTM - Test if fields have values and push true/false to dataLayer
+        window.dataLayer = window.dataLayer || [];
+        $('form').submit(function() {
+            function checkForm() {
+                return $('input[type=text]').filter(function () {
+                    return $(this).val().length === 0;
+                }).length;
+            }
+            const dataLayerEvent = {
+                'event': 'fieldValues',
+                'result': checkForm() < 3 ? true : false
+            };
+            dataLayer.push(dataLayerEvent);
+        });
+        // End
+
+    </script>
+
 {% endblock %}

@@ -16,7 +16,11 @@
                         onsPanel({
                             "type": "error" if category == "failed_authentication" else "success",
                             "classes": "u-mb-s",
-                            "title":  message if category == "failed_authentication"
+                            "title":  message if category == "failed_authentication",
+                            "attributes": {
+                                "data-gtm-error": message if category == "failed_authentication" else null,
+                                "data-gtm-success": message if category == "successful_signout" or category == "account_created" else null,
+                            },
                         })
                     %}
                     {% if category == "failed_authentication" %}
