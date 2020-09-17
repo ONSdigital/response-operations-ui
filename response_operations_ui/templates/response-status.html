@@ -148,6 +148,16 @@
             dataLayer.push(dataLayerEvent);
         });
         // End
-
+        {% if is_complete %}
+            document.getElementById("close-response").addEventListener('click', function() {
+                history.back();
+                return false;
+            });
+         {% else %}
+            document.getElementById("cancel-change").addEventListener('click', function() {
+                history.back();
+                return false;
+            });
+        {% endif %}
     </script>
 {% endblock main -%}
