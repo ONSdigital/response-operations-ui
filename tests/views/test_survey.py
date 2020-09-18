@@ -73,7 +73,8 @@ class TestSurvey(ViewTestCase):
             "id": survey_id,
             "longName": "Business Register and Employment Survey",
             "shortName": "BRES",
-            "surveyRef": "221"
+            "surveyRef": "221",
+            "surveyMode": "SEFT"
         }
         self.collection_exercises = [
             {
@@ -336,7 +337,8 @@ class TestSurvey(ViewTestCase):
             "survey_ref": "999",
             "long_name": "Test Survey",
             "short_name": "TEST",
-            "legal_basis": "STA1947"
+            "legal_basis": "STA1947",
+            "survey_mode": "SEFT"
         }
         mock_request.get(url_get_legal_basis_list, json=legal_basis_list)
         expected_survey_request = {
@@ -345,6 +347,7 @@ class TestSurvey(ViewTestCase):
             "longName": "Test Survey",
             "legalBasisRef": "STA1947",
             "surveyType": 'Business',
+            "surveyMode": "SEFT",
             "classifiers": [
                 {"name": "COLLECTION_INSTRUMENT", "classifierTypes": ["FORM_TYPE"]},
                 {"name": "COMMUNICATION_TEMPLATE", "classifierTypes": ["LEGAL_BASIS", "REGION"]}
@@ -366,7 +369,8 @@ class TestSurvey(ViewTestCase):
             "survey_ref": "999",
             "long_name": "Test Survey",
             "short_name": "TEST",
-            "legal_basis": "STA1947"
+            "legal_basis": "STA1947",
+            "survey_mode": "SEFT"
         }
         mock_request.get(url_get_legal_basis_list, json=legal_basis_list)
         mock_request.post(url_create_survey, text=error_message, status_code=409)
@@ -385,7 +389,8 @@ class TestSurvey(ViewTestCase):
             "survey_ref": "999",
             "long_name": "Test Survey",
             "short_name": "TEST",
-            "legal_basis": "STA1947"
+            "legal_basis": "STA1947",
+            "survey_mode": "SEFT"
         }
         mock_request.get(url_get_legal_basis_list, json=legal_basis_list)
         mock_request.post(url_create_survey, text=error_message, status_code=400)
@@ -403,7 +408,8 @@ class TestSurvey(ViewTestCase):
             "survey_ref": "BAD!",
             "long_name": "Test Survey",
             "short_name": "TEST",
-            "legal_basis": "STA1947"
+            "legal_basis": "STA1947",
+            "surveyMode": "SEFT"
         }
         mock_request.get(url_get_legal_basis_list, json=legal_basis_list)
         mock_request.post(url_create_survey, json=create_survey_response, status_code=201)
@@ -421,7 +427,8 @@ class TestSurvey(ViewTestCase):
             "survey_ref": "999",
             "long_name": "Test Survey",
             "short_name": "TE ST",
-            "legal_basis": "STA1947"
+            "legal_basis": "STA1947",
+            "surveyMode": "SEFT"
         }
         mock_request.get(url_get_legal_basis_list, json=legal_basis_list)
         mock_request.post(url_create_survey, json=create_survey_response, status_code=201)
@@ -439,7 +446,8 @@ class TestSurvey(ViewTestCase):
             "survey_ref": "999",
             "long_name": "Test Survey",
             "short_name": "<b>TEST</b>",
-            "legal_basis": "STA1947"
+            "legal_basis": "STA1947",
+            "surveyMode": "SEFT"
         }
         mock_request.get(url_get_legal_basis_list, json=legal_basis_list)
         mock_request.post(url_create_survey, json=create_survey_response, status_code=201)
@@ -457,7 +465,8 @@ class TestSurvey(ViewTestCase):
             "survey_ref": "999",
             "long_name": "<b>Test Survey</b>",
             "short_name": "TEST",
-            "legal_basis": "STA1947"
+            "legal_basis": "STA1947",
+            "surveyMode": "SEFT"
         }
         mock_request.get(url_get_legal_basis_list, json=legal_basis_list)
         mock_request.post(url_create_survey, json=create_survey_response, status_code=201)
@@ -475,7 +484,8 @@ class TestSurvey(ViewTestCase):
             "survey_ref": "999",
             "long_name": "Test Survey",
             "short_name": "TEST",
-            "legal_basis": "STA1947"
+            "legal_basis": "STA1947",
+            "survey_mode": "SEFT"
         }
         mock_request.get(url_get_legal_basis_list, json=legal_basis_list)
         mock_request.post(url_create_survey, text="Internal server error", status_code=500)

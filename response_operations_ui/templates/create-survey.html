@@ -6,6 +6,7 @@
 
 {% set page_title = 'Create survey'  %}
 {% block main %}
+
   <div class="grid grid--gutterless">
     <div class="grid__col col-8@m">
         <h1 class="u-fs-xl u-mt-m">Create survey</h1>
@@ -94,6 +95,12 @@
                 </label>
                 {{ form.legal_basis(class_="input input--select", id='legal_basis', required=required) }}
             </p>
+            <div class="field field--select u-mb-m">
+                <label class="label u-fs-r--b " for="select">
+                    Survey Mode
+                </label>
+                {{ form.survey_mode(class_="input input--select", id='survey_mode', required=required) }}
+            </div> 
             {{
                 onsButton({
                     "classes": "u-mb-s u-mt-l",
