@@ -223,6 +223,12 @@ class CreateSurveyDetailsForm(FlaskForm):
         if not legal_basis:
             raise ValidationError('Please select a legal basis')
 
+    @staticmethod
+    def validate_survey_mode(form, field):
+        survey_mode = field.data
+        if not survey_mode:
+            raise ValidationError('Please select eQ or SEFT')
+
 
 class LinkCollectionInstrumentForm(FlaskForm):
     formtype = StringField('formtype',
