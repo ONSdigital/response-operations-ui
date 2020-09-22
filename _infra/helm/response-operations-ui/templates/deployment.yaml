@@ -15,12 +15,16 @@ spec:
     type: RollingUpdate
   selector:
     matchLabels:
+      {{- if .Values.canary.enabled }}
+      name: "{{ .Chart.Name }}-{{ .Values.canary.name }}"
+      {{- else }}
       app: {{ .Chart.Name }}
+      {{- end }}
       env: {{ .Values.env }}
   template:
     metadata:
       labels:
-        app: {{ .Chart.Name }}
+        app: "{{ .Chart.Name }}-{{ .Values.canary.name }}"
         env: {{ .Values.env }}
         {{- if .Values.canary.enabled }}
         type: {{ .Values.canary.name }}
