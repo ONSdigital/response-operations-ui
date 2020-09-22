@@ -70,3 +70,7 @@ sample:
   file:
     uploader:
       enabled: false
+
+canary:
+  enabled: true
+  name: canary
