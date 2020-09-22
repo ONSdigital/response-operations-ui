@@ -3,6 +3,7 @@ kind: Deployment
 metadata:
   {{- if .Values.canary.enabled }}
   name: "{{ .Chart.Name }}-{{ .Values.canary.name }}"
+  type: {{ .Values.canary.name }}
   {{- else }}
   name: {{ .Chart.Name }}
   {{- end }}
@@ -22,9 +23,6 @@ spec:
       labels:
         app: {{ .Chart.Name }}
         env: {{ .Values.env }}
-        {{- if .Values.canary.enabled }}
-        type: {{ .Values.canary.name }}
-        {{- end }}
     spec:
       volumes:
         - name: google-cloud-key
