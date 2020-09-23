@@ -19,6 +19,7 @@ sign_in_bp = Blueprint('sign_in_bp', __name__, static_folder='static', template_
 
 @sign_in_bp.route('/', methods=['GET', 'POST'])
 def sign_in():
+    logger.error("problem signing in", status=500)
     form = LoginForm(request.form)
     if current_user.is_authenticated:
         return redirect(url_for('home_bp.home'))
