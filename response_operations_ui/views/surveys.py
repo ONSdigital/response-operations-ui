@@ -71,20 +71,11 @@ def view_survey(short_name):
 
     _sort_collection_exercise(collection_exercises)
 
-    # This is temporary until the survey data includes whether it's an EQ or SEFT.  Until then we'll define the list
-    # so we can make the 'link collection instrument' button appear only on EQ surveys.
-    eq_surveys = ['MBS', 'QSS', 'QCAS', 'RSI', 'MWSS', 'QBS', 'UKIS', 'QPSESLA', 'QPSESPB', 'QPSESCS',
-                  'VACS2', 'VACS3', 'VACS4', 'VACS5', 'Ecommerce', 'CAT', 'COVID', 'EPE']
-    is_eq_survey = False
-    if short_name in eq_surveys:
-        is_eq_survey = True
-
     return render_template('survey.html',
                            survey=survey,
                            collection_exercises=collection_exercises,
                            breadcrumbs=breadcrumbs, updated_ce_message=updated_ce_message,
-                           created_ce_message=created_ce_message, newly_created_period=newly_created_period,
-                           is_eq_survey=is_eq_survey)
+                           created_ce_message=created_ce_message, newly_created_period=newly_created_period)
 
 
 @surveys_bp.route('/edit-survey-details/<short_name>', methods=['GET'])

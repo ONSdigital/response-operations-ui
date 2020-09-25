@@ -4,5 +4,6 @@
     "longName": "Business Register and Employment Survey",
     "surveyRef": "221",
     "legalBasis": "Statistics of Trade Act 1947",
-    "legalBasisRef": "STA1947"
+    "legalBasisRef": "STA1947",
+    "surveyMode": "SEFT"
 }

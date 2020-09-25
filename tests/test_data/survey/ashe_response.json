@@ -28,6 +28,7 @@
     "legalBasis": "Statistics of Trade Act 1947",
     "longName": "Annual Survey of Hours and Earnings",
     "shortName": "ASHE",
-    "surveyRef": "141"
+    "surveyRef": "141",
+    "surveyMode": "SEFT"
   }
 }

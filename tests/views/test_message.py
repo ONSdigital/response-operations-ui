@@ -450,7 +450,8 @@ class TestMessage(ViewTestCase):
         "surveyRef": "062",
         "legalBasis": "Statistics of Trade Act 1947",
         "surveyType": "Business",
-        "legalBasisRef": "STA1947"
+        "legalBasisRef": "STA1947",
+        "surveyMode": "SEFT",
     }
     AOFDI_response = {
         "id": "04dbb407-4438-4f89-acc4-53445d75330c",
@@ -459,7 +460,8 @@ class TestMessage(ViewTestCase):
         "surveyRef": "063",
         "legalBasis": "Statistics of Trade Act 1947",
         "surveyType": "Business",
-        "legalBasisRef": "STA1947"
+        "legalBasisRef": "STA1947",
+        "surveyMode": "SEFT"
     }
     QIFDI_response = {
         "id": "c3eaeff3-d570-475d-9859-32c3bf87800d",
@@ -468,7 +470,8 @@ class TestMessage(ViewTestCase):
         "surveyRef": "064",
         "legalBasis": "Statistics of Trade Act 1947",
         "surveyType": "Business",
-        "legalBasisRef": "STA1947"
+        "legalBasisRef": "STA1947",
+        "surveyMode": "SEFT"
     }
     QOFDI_response = {
         "id": "57a43c94-9f81-4f33-bad8-f94800a66503",
@@ -477,7 +480,8 @@ class TestMessage(ViewTestCase):
         "surveyRef": "065",
         "legalBasis": "Statistics of Trade Act 1947",
         "surveyType": "Business",
-        "legalBasisRef": "STA1947"
+        "legalBasisRef": "STA1947",
+        "surveyMode": "SEFT"
     }
 
     @requests_mock.mock()

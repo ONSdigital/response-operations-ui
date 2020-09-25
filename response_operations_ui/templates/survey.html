@@ -92,7 +92,7 @@
   <section class="ce-list">
     <h2>Collection exercises for {{survey.shortName}}</h2>
     <div class="u-mb-l">
-      {% if is_eq_survey %}
+      {% if survey.surveyMode == 'EQ' %}
         <p class="field u-mt-l">
           <a href="{{ url_for('surveys_bp.get_link_collection_instrument', short_name=survey.shortName) }}"
             role="button" class="btn" id="link-collection-instrument" name="link-collection-instrument-link"><span class="btn__inner">Link collection instrument</span></a>
