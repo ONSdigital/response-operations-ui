@@ -100,26 +100,6 @@ def view_collection_exercise(short_name, period):
     info_panel = request.args.get('info_panel')
     sorted_nudge_list = get_existing_sorted_nudge_events(ce_details['events'])
     error_json = _get_error_from_session()
-    # This logic needs to be changed once RAS-117 is done
-    seft_groups = ['ASHE',
-                   'BRES',
-                   'Blocks',
-                   'Bricks',
-                   'AIFDI',
-                   'AOFDI',
-                   'QIFDI',
-                   'QOFDI',
-                   'FSPS',
-                   'GovERD',
-                   'NBS',
-                   'OFATS',
-                   'PCS',
-                   'QITIS',
-                   'Sand & Gravel']
-    if ce_details['survey']['shortName'] in seft_groups:
-        is_seft = True
-    else:
-        is_seft = False
 
     return render_template('collection_exercise/collection-exercise.html',
                            breadcrumbs=breadcrumbs,
@@ -139,8 +119,7 @@ def view_collection_exercise(short_name, period):
                            show_msg=show_msg,
                            ci_classifiers=ce_details['ci_classifiers']['classifierTypes'],
                            info_panel=info_panel,
-                           existing_nudge=sorted_nudge_list if len(sorted_nudge_list) > 0 else [],
-                           is_seft=is_seft)
+                           existing_nudge=sorted_nudge_list if len(sorted_nudge_list) > 0 else [])
 
 
 def _get_error_from_session():
