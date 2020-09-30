@@ -111,10 +111,7 @@ url_collection_instrument_unlink = (
     f'/{collection_instrument_id}/{collection_exercise_id}'
 )
 url_survey_shortname = f'{TestingConfig.SURVEY_URL}/surveys/shortname/{short_name}'
-if TestingConfig.SAMPLE_FILE_UPLOADER_URL_ENABLED:
-    url_sample_service_upload = f'{TestingConfig.SAMPLE_FILE_UPLOADER_URL}/samples/fileupload'
-else:
-    url_sample_service_upload = f'{TestingConfig.SAMPLE_URL}/samples/B/fileupload'
+url_sample_service_upload = f'{TestingConfig.SAMPLE_FILE_UPLOADER_URL}/samples/fileupload'
 
 url_collection_exercise_survey_id = (
     f'{TestingConfig.COLLECTION_EXERCISE_URL}/collectionexercises/survey'
