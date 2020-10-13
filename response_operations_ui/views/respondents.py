@@ -91,7 +91,7 @@ def respondent_details(respondent_id):
         },
         {
             "text": f"{respondent['emailAddress']}"
-        },{}
+        }, {}
     ]
 
     respondent['status'] = respondent['status'].title()
