@@ -81,6 +81,7 @@ class TestRespondents(ViewTestCase):
 
     @requests_mock.mock()
     def test_edit_contact_details_and_email_change(self, mock_request):
+        mock_request.get(url_get_respondent_account_by_username, json={"mark_for_deletion": False})
         changed_details = {
             "first_name": 'Jacky',
             "last_name": 'Turner',
@@ -92,6 +93,7 @@ class TestRespondents(ViewTestCase):
 
     @requests_mock.mock()
     def test_edit_contact_details_email_change_with_trailing_space(self, mock_request):
+        mock_request.get(url_get_respondent_account_by_username, json={"mark_for_deletion": False})
         changed_details = {
             "first_name": 'Jacky',
             "last_name": 'Turner',
@@ -105,6 +107,7 @@ class TestRespondents(ViewTestCase):
     @requests_mock.mock()
     def test_change_respondent_status(self, mock_request):
         mock_request.put(url_change_respondent_status)
+        mock_request.get(url_get_respondent_account_by_username, json={"mark_for_deletion": False})
         mock_request.get(url_get_party_by_ru_ref, json=business_reporting_unit)
         mock_request.get(url_get_cases_by_business_party_id, json=cases_list)
         mock_request.get(url_get_casegroups_by_business_party_id, json=case_groups)
