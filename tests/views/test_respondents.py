@@ -9,7 +9,8 @@ from tests.views import ViewTestCase
 from tests.views.test_reporting_units import url_edit_contact_details, url_get_party_by_ru_ref, \
     url_get_casegroups_by_business_party_id, url_get_cases_by_business_party_id, url_get_business_party_by_party_id, \
     url_get_available_case_group_statuses_direct, url_get_survey_by_id, url_get_respondent_party_by_party_id, \
-    url_get_collection_exercise_by_id, url_get_iac, url_change_respondent_status
+    url_get_collection_exercise_by_id, url_get_iac, url_change_respondent_status, \
+    url_delete_respondent_account_by_username, url_get_respondent_account_by_username
 
 respondent_party_id = "cd592e0f-8d07-407b-b75d-e01fbdae8233"
 business_party_id = "b3ba864b-7cbc-4f44-84fe-88dc018a1a4c"
@@ -125,7 +126,6 @@ class TestRespondents(ViewTestCase):
     @staticmethod
     def _mock_party_data(search_respondents_mock, total=1000):
         with open('tests/test_data/party/mock_search_respondents_data.json', 'r') as json_file:
-
             data = json.load(json_file)
             search_respondents_mock.return_value = {
                 'data': data,
@@ -211,3 +211,61 @@ class TestRespondents(ViewTestCase):
         self.client.post('/respondents/search', data={'email_address': '@'}, follow_redirects=True)  # All
 
         search_respondents_mock.assert_called_with('', '', '@', '1', self.app.config["PARTY_RESPONDENTS_PER_PAGE"])
+
+    @requests_mock.mock()
+    def test_delete_respondent_template_for_delete(self, mock_request):
+        mock_request.put(url_change_respondent_status)
+        mock_request.delete(url_delete_respondent_account_by_username)
+        mock_request.get(url_get_respondent_account_by_username, json={"mark_for_deletion": True})
+        mock_request.get(url_get_party_by_ru_ref, json=business_reporting_unit)
+        mock_request.get(url_get_cases_by_business_party_id, json=cases_list)
+        mock_request.get(url_get_casegroups_by_business_party_id, json=case_groups)
+        mock_request.get(f'{url_get_collection_exercise_by_id}/{collection_exercise_id_1}', json=collection_exercise)
+        mock_request.get(f'{url_get_collection_exercise_by_id}/{collection_exercise_id_2}', json=collection_exercise)
+        mock_request.get(url_get_business_party_by_party_id, json=business_party)
+        mock_request.get(url_get_available_case_group_statuses_direct, json=case_group_statuses)
+        mock_request.get(url_get_survey_by_id, json=survey)
+        mock_request.get(url_get_respondent_party_by_party_id, json=respondent_party)
+        mock_request.get(f'{url_get_iac}/{iac_1}', json=iac)
+        mock_request.get(f'{url_get_iac}/{iac_2}', json=iac)
+
+        get_response = self.client.get(f"respondents/delete-respondent/{respondent_party_id}",
+                                       follow_redirects=True)
+        self.assertEqual(get_response.status_code, 200)
+        self.assertIn("All of the information about this person will be deleted".encode(), get_response.data)
+        self.assertIn("Once their data has been removed, it is unrecoverable".encode(), get_response.data)
+        self.assertIn("Allow 24 hours for this to be completed.".encode(), get_response.data)
+        self.assertIn("Delete respondent".encode(), get_response.data)
+        post_response = self.client.post(f"respondents/delete-respondent/{respondent_party_id}",
+                                         follow_redirects=True)
+        self.assertEqual(post_response.status_code, 200)
+        self.assertIn("Remove respondent for deletion".encode(), post_response.data)
+
+    @requests_mock.mock()
+    def test_delete_respondent_template_for_undo_delete(self, mock_request):
+        mock_request.put(url_change_respondent_status)
+        mock_request.patch(url_delete_respondent_account_by_username)
+        mock_request.get(url_get_respondent_account_by_username, json={"mark_for_deletion": False})
+        mock_request.get(url_get_party_by_ru_ref, json=business_reporting_unit)
+        mock_request.get(url_get_cases_by_business_party_id, json=cases_list)
+        mock_request.get(url_get_casegroups_by_business_party_id, json=case_groups)
+        mock_request.get(f'{url_get_collection_exercise_by_id}/{collection_exercise_id_1}', json=collection_exercise)
+        mock_request.get(f'{url_get_collection_exercise_by_id}/{collection_exercise_id_2}', json=collection_exercise)
+        mock_request.get(url_get_business_party_by_party_id, json=business_party)
+        mock_request.get(url_get_available_case_group_statuses_direct, json=case_group_statuses)
+        mock_request.get(url_get_survey_by_id, json=survey)
+        mock_request.get(url_get_respondent_party_by_party_id, json=respondent_party)
+        mock_request.get(f'{url_get_iac}/{iac_1}', json=iac)
+        mock_request.get(f'{url_get_iac}/{iac_2}', json=iac)
+
+        get_response = self.client.get(f"respondents/undo-delete-respondent/{respondent_party_id}",
+                                       follow_redirects=True)
+        self.assertEqual(get_response.status_code, 200)
+        self.assertIn("The account is pending deletion and will be deleted by the end of day processing".encode(),
+                      get_response.data)
+        self.assertIn("Once their data has been removed, it is unrecoverable".encode(), get_response.data)
+        self.assertIn("Remove respondent for deletion".encode(), get_response.data)
+        post_response = self.client.post(f"respondents/undo-delete-respondent/{respondent_party_id}",
+                                         follow_redirects=True)
+        self.assertEqual(post_response.status_code, 200)
+        self.assertIn("Delete respondent".encode(), post_response.data)

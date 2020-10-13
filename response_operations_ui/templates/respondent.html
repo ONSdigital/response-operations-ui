@@ -63,7 +63,14 @@
                               {
                                   "description": accountStatus,
                                   "id": "respondent-account-status"
-                              }                                     
+                              },
+                                {
+                                  "description": '<a id="delete-respondent" href="' + url_for('respondent_bp.delete_respondent', respondent_id=respondent.id) + '">Delete respondent</a>' if not mark_for_deletion else ""
+                              }  
+                              ,
+                                {
+                                  "description": '<a id="undo-delete-respondent" href="' + url_for('respondent_bp.undo_delete_respondent', respondent_id=respondent.id) + '">Remove respondent for deletion</a>' if mark_for_deletion else ""
+                              }                                
                           ]
                       }
                   ]

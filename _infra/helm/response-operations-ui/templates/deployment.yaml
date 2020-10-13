@@ -132,6 +132,12 @@ spec:
             {{- else }}
             value: "http://$(PARTY_SERVICE_HOST):$(PARTY_SERVICE_PORT)"
             {{- end }}
+          - name: AUTH_URL
+            {{- if .Values.dns.enabled }}
+            value: "http://auth.{{ .Values.namespace }}.svc.cluster.local:{{ .Values.dns.wellKnownPort }}"
+            {{- else }}
+            value: "http://$(AUTH_SERVICE_HOST):$(AUTH_SERVICE_PORT)"
+            {{- end }}
           - name: REDIS_HOST
             {{- if .Values.database.managedRedis }}
             valueFrom:
