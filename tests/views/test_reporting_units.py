@@ -39,8 +39,7 @@ url_get_survey_by_id = f'{TestingConfig.SURVEY_URL}/surveys/{survey_id}'
 url_get_respondent_party_by_party_id = f'{TestingConfig.PARTY_URL}/party-api/v1/respondents/id/{respondent_party_id}'
 url_get_iac = f'{TestingConfig.IAC_URL}/iacs'
 url_get_case = f'{TestingConfig.CASE_URL}/cases/{case_id}?iac=true'
-url_delete_respondent_account_by_username = f'{TestingConfig.AUTH_URL}/api/account/user'
-url_get_respondent_account_by_username = f'{TestingConfig.AUTH_URL}/api/account/users/username'
+url_auth_respondent_account = f'{TestingConfig.AUTH_URL}/api/account/user'
 
 
 with open('tests/test_data/reporting_units/respondent.json') as fp:

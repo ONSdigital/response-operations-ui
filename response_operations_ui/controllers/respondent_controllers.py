@@ -36,8 +36,8 @@ def find_respondent_account_by_username(username):
     headers = {
         'Authorization': 'Basic %s' % base64.b64encode(bytes(auth)).decode("ascii")
     }
-    url = f'{app.config["AUTH_URL"]}/api/account/users/username'
-    response = requests.get(url, json={"username": username}, headers=headers)
+    url = f'{app.config["AUTH_URL"]}/api/account/user/{username}'
+    response = requests.get(url, headers=headers)
     try:
         response.raise_for_status()
     except requests.exceptions.HTTPError:
@@ -70,8 +70,8 @@ def undo_delete_respondent_account_by_username(username):
     headers = {
         'Authorization': 'Basic %s' % base64.b64encode(bytes(auth)).decode("ascii")
     }
-    url = f'{app.config["AUTH_URL"]}/api/account/user'
-    form_data = {"username": username}
+    url = f'{app.config["AUTH_URL"]}/api/account/user/{username}'
+    form_data = {"mark_for_deletion": False}
     response = requests.patch(url, data=form_data, headers=headers)
     try:
         response.raise_for_status()

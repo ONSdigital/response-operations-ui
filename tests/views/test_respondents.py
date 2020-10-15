@@ -10,8 +10,7 @@ from tests.views.test_reporting_units import url_edit_contact_details, url_get_p
     url_get_casegroups_by_business_party_id, url_get_cases_by_business_party_id, url_get_business_party_by_party_id, \
     url_get_available_case_group_statuses_direct, url_get_survey_by_id, url_get_respondent_party_by_party_id, \
     url_get_collection_exercise_by_id, url_get_iac, url_change_respondent_status, \
-    url_delete_respondent_account_by_username, url_get_respondent_account_by_username
-
+    url_auth_respondent_account
 respondent_party_id = "cd592e0f-8d07-407b-b75d-e01fbdae8233"
 business_party_id = "b3ba864b-7cbc-4f44-84fe-88dc018a1a4c"
 party_id = "cd592e0f-8d07-407b-b75d-e01fbdae8233"
@@ -81,7 +80,7 @@ class TestRespondents(ViewTestCase):
 
     @requests_mock.mock()
     def test_edit_contact_details_and_email_change(self, mock_request):
-        mock_request.get(url_get_respondent_account_by_username, json={"mark_for_deletion": False})
+        mock_request.get(f'{url_auth_respondent_account}/Jacky.Turner@email.com', json={"mark_for_deletion": False})
         changed_details = {
             "first_name": 'Jacky',
             "last_name": 'Turner',
@@ -93,7 +92,7 @@ class TestRespondents(ViewTestCase):
 
     @requests_mock.mock()
     def test_edit_contact_details_email_change_with_trailing_space(self, mock_request):
-        mock_request.get(url_get_respondent_account_by_username, json={"mark_for_deletion": False})
+        mock_request.get(f'{url_auth_respondent_account}/Jacky.Turner@email.com', json={"mark_for_deletion": False})
         changed_details = {
             "first_name": 'Jacky',
             "last_name": 'Turner',
@@ -107,7 +106,7 @@ class TestRespondents(ViewTestCase):
     @requests_mock.mock()
     def test_change_respondent_status(self, mock_request):
         mock_request.put(url_change_respondent_status)
-        mock_request.get(url_get_respondent_account_by_username, json={"mark_for_deletion": False})
+        mock_request.get(f'{url_auth_respondent_account}/Jacky.Turner@email.com', json={"mark_for_deletion": False})
         mock_request.get(url_get_party_by_ru_ref, json=business_reporting_unit)
         mock_request.get(url_get_cases_by_business_party_id, json=cases_list)
         mock_request.get(url_get_casegroups_by_business_party_id, json=case_groups)
@@ -218,8 +217,8 @@ class TestRespondents(ViewTestCase):
     @requests_mock.mock()
     def test_delete_respondent_template_for_delete(self, mock_request):
         mock_request.put(url_change_respondent_status)
-        mock_request.delete(url_delete_respondent_account_by_username)
-        mock_request.get(url_get_respondent_account_by_username, json={"mark_for_deletion": True})
+        mock_request.delete(url_auth_respondent_account)
+        mock_request.get(f'{url_auth_respondent_account}/Jacky.Turner@email.com', json={"mark_for_deletion": True})
         mock_request.get(url_get_party_by_ru_ref, json=business_reporting_unit)
         mock_request.get(url_get_cases_by_business_party_id, json=cases_list)
         mock_request.get(url_get_casegroups_by_business_party_id, json=case_groups)
@@ -247,8 +246,8 @@ class TestRespondents(ViewTestCase):
     @requests_mock.mock()
     def test_delete_respondent_template_for_undo_delete(self, mock_request):
         mock_request.put(url_change_respondent_status)
-        mock_request.patch(url_delete_respondent_account_by_username)
-        mock_request.get(url_get_respondent_account_by_username, json={"mark_for_deletion": False})
+        mock_request.patch(f'{url_auth_respondent_account}/Jacky.Turner@email.com')
+        mock_request.get(f'{url_auth_respondent_account}/Jacky.Turner@email.com', json={"mark_for_deletion": False})
         mock_request.get(url_get_party_by_ru_ref, json=business_reporting_unit)
         mock_request.get(url_get_cases_by_business_party_id, json=cases_list)
         mock_request.get(url_get_casegroups_by_business_party_id, json=case_groups)
