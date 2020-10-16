@@ -7,9 +7,8 @@ from flask_paginate import Pagination
 from structlog import wrap_logger
 
 from response_operations_ui.common.respondent_utils import filter_respondents
-from response_operations_ui.controllers import party_controller, reporting_units_controllers
+from response_operations_ui.controllers import party_controller, reporting_units_controllers, respondent_controllers
 from response_operations_ui.forms import RespondentSearchForm, EditContactDetailsForm
-
 
 logger = wrap_logger(logging.getLogger(__name__))
 
@@ -22,7 +21,7 @@ respondent_bp = Blueprint('respondent_bp', __name__,
 def respondent_home():
     return render_template('respondent-search/respondent-search.html',
                            form=RespondentSearchForm(),
-                           breadcrumbs=[{"text": "Respondents"}])
+                           breadcrumbs=[{"text": "Respondents"}, {}])
 
 
 @respondent_bp.route('/search', methods=['GET', 'POST'])
@@ -82,10 +81,9 @@ def search_redirect():
 @respondent_bp.route('/respondent-details/<respondent_id>', methods=['GET'])
 @login_required
 def respondent_details(respondent_id):
-
     respondent = party_controller.get_respondent_by_party_id(respondent_id)
     enrolments = party_controller.get_respondent_enrolments(respondent)
-
+    account = respondent_controllers.find_respondent_account_by_username(respondent['emailAddress'])
     breadcrumbs = [
         {
             "text": "Respondents",
@@ -93,7 +91,7 @@ def respondent_details(respondent_id):
         },
         {
             "text": f"{respondent['emailAddress']}"
-        }
+        }, {}
     ]
 
     respondent['status'] = respondent['status'].title()
@@ -106,7 +104,11 @@ def respondent_details(respondent_id):
     elif info:
         flash(info, 'information')
 
-    return render_template('respondent.html', respondent=respondent, enrolments=enrolments, breadcrumbs=breadcrumbs)
+    return render_template('respondent.html',
+                           respondent=respondent,
+                           enrolments=enrolments,
+                           breadcrumbs=breadcrumbs,
+                           mark_for_deletion=account['mark_for_deletion'])
 
 
 @respondent_bp.route('/edit-contact-details/<respondent_id>', methods=['GET'])
@@ -163,7 +165,7 @@ def resend_verification(party_id):
     reporting_units_controllers.resend_verification_email(party_id)
     logger.info("Re-sent verification email.", party_id=party_id)
     flash('Verification email re-sent')
-    return redirect(url_for('respondent_bp.respondent_details', respondent_id=party_id,))
+    return redirect(url_for('respondent_bp.respondent_details', respondent_id=party_id, ))
 
 
 @respondent_bp.route('<respondent_id>/change-enrolment-status', methods=['POST'])
@@ -196,3 +198,52 @@ def confirm_change_respondent_status(party_id):
                            email_address=respondent['emailAddress'],
                            change_flag=request.args['change_flag'],
                            tab='respondents')
+
+
+@respondent_bp.route('/delete-respondent/<respondent_id>', methods=['GET', 'POST'])
+@login_required
+def delete_respondent(respondent_id):
+    respondent = party_controller.get_respondent_by_party_id(respondent_id)
+
+    if request.method == 'POST':
+        respondent_controllers.delete_respondent_account_by_username(respondent['emailAddress'])
+        flash('The account is pending deletion and will be deleted by the end of day processing.', 'success')
+        return redirect(url_for('respondent_bp.respondent_details', respondent_id=respondent_id, ))
+    breadcrumbs = [
+        {
+            "url": '/respondents',
+            "text": 'Respondents'
+        },
+        {
+            "text": f"{respondent['emailAddress']}",
+            "url": f"/respondents/respondent-details/{respondent_id}"
+        },
+        {"text": 'Delete'}, {}
+    ]
+
+    return render_template('delete-respondent.html', respondent_details=respondent,
+                           delete=True, breadcrumbs=breadcrumbs)
+
+
+@respondent_bp.route('/undo-delete-respondent/<respondent_id>', methods=['GET', 'POST'])
+@login_required
+def undo_delete_respondent(respondent_id):
+    respondent = party_controller.get_respondent_by_party_id(respondent_id)
+
+    if request.method == 'POST':
+        respondent_controllers.undo_delete_respondent_account_by_username(respondent['emailAddress'])
+        flash('Respondent for deletion removed', 'success')
+        return redirect(url_for('respondent_bp.respondent_details', respondent_id=respondent_id, ))
+    breadcrumbs = [
+        {
+            "url": '/respondents',
+            "text": 'Respondents'
+        },
+        {
+            "text": f"{respondent['emailAddress']}",
+            "url": f"/respondents/respondent-details/{respondent_id}"
+        },
+        {"text": 'Cancel Delete'}, {}
+    ]
+    return render_template('delete-respondent.html', respondent_details=respondent,
+                           delete=False, breadcrumbs=breadcrumbs)

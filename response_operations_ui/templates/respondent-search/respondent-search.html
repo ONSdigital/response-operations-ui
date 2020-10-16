@@ -3,10 +3,21 @@
 {% from "components/lists/_macro.njk" import onsList %}
 {% from "components/fieldset/_macro.njk" import onsFieldset %}
 {% from "components/input/_macro.njk" import onsInput %}
+{% from "components/panel/_macro.njk" import onsPanel %}
 
 {% set page_title = "Respondents" %}
-
 {% block main %}
+    {% if success_panel %}
+    {% call
+        onsPanel({
+            "type": "success",
+            "classes": "u-mb-s",
+            "id": "success-panel"
+        })
+    %}
+        {{ success_panel }}
+    {% endcall %}
+{% endif %}
     <h1>Find a respondent</h1>
     {% with messages = get_flashed_messages() %}
         {%- if messages -%}

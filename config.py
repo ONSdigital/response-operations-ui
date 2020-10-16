@@ -47,6 +47,8 @@ class Config(object):
     PARTY_URL = os.getenv('PARTY_URL')
     PARTY_RESPONDENTS_PER_PAGE = os.getenv('PARTY_RESPONDENTS_PER_PAGE', 25)
     PARTY_BUSINESS_RESULTS_PER_PAGE = os.getenv('PARTY_BUSINESS_RESULTS_PER_PAGE', 25)
+    
+    AUTH_URL = os.getenv('AUTH_URL')
 
     GOOGLE_CLOUD_PROJECT = os.getenv('GOOGLE_CLOUD_PROJECT', 'test-project-id')
     PUBSUB_TOPIC = os.getenv('PUBSUB_TOPIC', 'ras-rm-notify-test')
@@ -108,6 +110,7 @@ class DevelopmentConfig(Config):
     SAMPLE_URL = os.getenv('SAMPLE_URL', 'http://localhost:8125')
     SAMPLE_FILE_UPLOADER_URL = os.getenv('SAMPLE_FILE_UPLOADER_URL', 'http://localhost:8125')
     SURVEY_URL = os.getenv('SURVEY_URL', 'http://localhost:8080')
+    AUTH_URL = os.getenv('AUTH_URL', 'http://localhost:8041')
 
     UAA_SERVICE_URL = os.getenv('UAA_SERVICE_URL', 'http://localhost:9080')
     UAA_CLIENT_ID = os.getenv('UAA_CLIENT_ID', 'response_operations')
