@@ -182,6 +182,8 @@ spec:
             {{- else }}
             value: "http://$(SAMPLE_SERVICE_HOST):$(SAMPLE_SERVICE_PORT)"
             {{- end }}
+          - name: SCHEME
+            value: {{ .Values.scheme }}
           - name: SEND_EMAIL_TO_GOV_NOTIFY
             value: "{{ .Values.sendEmailToGovNotify }}"
           - name: SURVEY_URL

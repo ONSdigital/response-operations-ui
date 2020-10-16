@@ -20,6 +20,8 @@ gcp:
   project: ras-rm-sandbox
   topic: ras-rm-notify-test
 
+scheme: http
+
 image:
   devRepo: eu.gcr.io/ons-rasrmbs-management
   name: eu.gcr.io/ons-rasrmbs-management
