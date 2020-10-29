@@ -17,11 +17,12 @@
 
 {% set surveyTableDataRows = [] %}
 {% for respondent in respondents %}
+  {% if not respondent.mark_for_deletion %}
     {% do surveyTableDataRows.append(
         {
             "tds": [
             {
-                "value": '<a href="' + respondent.href + '">' + respondent.name + '</a>'
+               "value": '<a href="' + respondent.href + '">' + respondent.name + '</a>'
             },
             {
                 "value": respondent.email
@@ -32,6 +33,23 @@
             ]
         }
         ) %}
+  {% else %}
+    {% do surveyTableDataRows.append(
+        {
+            "tds": [
+            {
+               "value": respondent.name
+            },
+            {
+                "value": respondent.email
+            },
+            {
+                "value": '<span class="status status--small ' + respondent.status_class + '}">Deleted</span>'
+            }
+            ]
+        }
+        ) %}
+  {% endif %}
 
 {% endfor %}
 

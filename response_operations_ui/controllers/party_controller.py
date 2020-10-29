@@ -61,6 +61,8 @@ def get_respondent_by_party_id(respondent_party_id):
         response.raise_for_status()
     except requests.exceptions.HTTPError:
         log_level = logger.warning if response.status_code in (400, 404) else logger.exception
+        if response.status_code == 404:
+            return ''
         log_level('Error retrieving respondent party', respondent_party_id=respondent_party_id)
         raise ApiError(response)
 
