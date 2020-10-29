@@ -256,6 +256,7 @@ class TestUpdateEventDate(ViewTestCase):
 
         self.assertEqual(response.status_code, 200)
         self.assertIn("To remove this event, delete more recent reminders first.".encode(), response.data)
+        self.assertIn("Disabled".encode(), response.data)
 
     @requests_mock.mock()
     def test_put_update_event_date_update_bad_request(self, mock_request):
