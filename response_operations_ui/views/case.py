@@ -110,8 +110,8 @@ def get_user_from_case_events(case_events):
         except KeyError:
             logger.info('There was no partyId in case event', case_event=case_events[first_case_event])
             return ''
-        respondent_name = respondent.get('firstName') + ' ' + respondent.get('lastName') if respondent != '' \
-            else 'Respondent does not exists in the system. This may be due to the GDPR retention policy.'
-        return respondent_name
+        if not respondent:
+            return 'Respondent does not exists in the system. This may be due to the GDPR retention policy.'
+        return respondent.get('firstName') + ' ' + respondent.get('lastName')
     else:
         return ''
