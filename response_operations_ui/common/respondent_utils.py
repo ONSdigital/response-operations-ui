@@ -27,12 +27,15 @@ def status_enum_to_class(status):
 def filter_respondents(respondents):
     filtered_respondents = []
     for respondent in respondents:
+        # This additional logic is because partysvc filters out response
+        mark_for_deletion = respondent['markForDeletion'] if 'markForDeletion' in respondent else False
         try:
             respondent_id = str(respondent['id'])
             filtered_respondents.append({
                 'href': f'/respondents/respondent-details/{respondent_id}',
                 'name': respondent['firstName'] + ' ' + respondent['lastName'],
                 'email': respondent['emailAddress'],
+                'mark_for_deletion': mark_for_deletion,
                 'status': status_enum_to_string(respondent['status']),
                 'status_class': status_enum_to_class(respondent['status'])
             })
