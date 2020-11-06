@@ -15,7 +15,7 @@ def _get_redis():
     return r
 
 
-def set_banner(banner):
+def set_banner(banner='Hello World'):
     try:
         r = _get_redis()
         r.set('AVAILABILITY_MESSAGE', banner)
