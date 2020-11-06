@@ -36,6 +36,7 @@
       {% set label = 'Shown to respondent as' %}
       {% set id = 'user-description' %}
       {% set event = ce.userDescription %}
+      {% set editable = true %}
     {% elif dateGroup == 'surveyId' %}
       {% set id = 'survey-info' %}
       {% set label = 'Survey ID and Abbreviation' %}
@@ -67,7 +68,7 @@
       {% set editable = true %}
     {% endif %}
 
-    {% if not locked and dateGroup == 'period' %}
+    {% if (not locked) and (dateGroup == 'period') %}
       {% set formData = {
         "action": url_for('collection_exercise_bp.view_collection_exercise_details', short_name=survey.shortName, period=ce.exerciseRef, surveyRef=survey.surveyRef),
         "method": 'get',
@@ -78,8 +79,19 @@
         }
       } %}
     {% endif %}
-    
-    {% if not event and dateGroup != 'period' and editable %}
+    {% if (not locked) and (dateGroup == 'user') %}
+      {% set formData = {
+        "action": url_for('collection_exercise_bp.view_collection_exercise_details', short_name=survey.shortName, period=ce.exerciseRef, surveyRef=survey.surveyRef),
+        "method": 'get',
+        "button": {
+          "text": 'Edit',
+          "id": 'edit-collection-exercise-period',
+          "classes": 'btn--secondary btn--small'
+        }
+      } %}
+    {% endif %}  
+  
+    {% if not event and (dateGroup != 'period' and dateGroup != 'user') and editable %}
       {% set formData = {
         "action": url_for('collection_exercise_bp.get_create_collection_event_form', short_name=survey.shortName, ce_id=ce.id, period=ce.exerciseRef, tag=dateGroup),
         "method": 'get',
@@ -89,7 +101,7 @@
           "classes": 'btn--secondary btn--small'
         }
       } %}
-    {% elif editable and dateGroup != 'period' %}
+    {% elif editable and (dateGroup != 'period' and dateGroup != 'user') %}
       {% set formData = {
         "action": url_for('collection_exercise_bp.update_event_date', short_name=survey.shortName, period=ce.exerciseRef, tag=dateGroup),
         "method": 'get',
