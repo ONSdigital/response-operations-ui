@@ -1,4 +1,4 @@
-import pprint
+
 
 import redis
 import logging
@@ -56,5 +56,4 @@ def get_error_list():
     errors = [x['error'] for x in error_list]
     messages = [x['message'] for x in error_list]
     my_dict = dict(zip(errors, messages))
-    
     return my_dict
