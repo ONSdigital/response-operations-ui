@@ -5,6 +5,8 @@
 {% from "components/input/_macro.njk" import onsInput %}
 {% from "components/lists/_macro.njk" import onsList %}
 {% from "components/field/_macro.njk" import onsField %}
+{% from "components/textarea/_macro.njk" import onsTextarea %}
+{% from "components/select/_macro.njk" import onsSelect %}
 
 {% set page_title = 'Banner Admin'  %}
 {% block main %}
@@ -59,11 +61,11 @@
                                     "text": 'Set new banner'
                                 }
                             })
-                        }} 
+                        }}
+
                         {%- call onsField({                    
 
                         }) -%}
-
                         {{
                             onsCheckboxes({
                                 "dontWrap": true,
@@ -89,7 +91,48 @@
                             "text": "Save",
                             "id": "save-btn"
                         })
-                    }}   
+                    }}
+                    {% set errors = [            
+                        {
+                            "value": "",
+                            "text": "Select a survey",
+                            "disabled": true,
+                            "selected": true
+                        }
+                    ] %}
+                    {% for error in list_of_errors %}
+                        {% do errors.append (
+                            {
+                                "value": error.replace(' ', ''),
+                                "text": error,
+                                "id": error.replace(' ', '')
+                            }
+                        ) %}
+                    {% endfor %}
+                    {{ 
+                        onsSelect({
+                            "id": "error-list",
+                            "name": "select-error",
+                            "label": {
+                                "text": "Message Template (Optional)"
+                            },
+                            "options": errors,
+                        })
+                    }} 
+                    {{
+                        onsTextarea({
+                            "id": "secure-message-body",
+                            "name": "body",
+                            "label": {
+                                "text": "Message"
+                            },
+                            "maxlength": '50000',
+                            "attributes": {
+                                "required": true
+                            },
+                            "error": errorData if errorData
+                        })
+                    }}
              </form>
             <p>
                 <a id="cancel-btn" href="{{ url_for('surveys_bp.view_surveys') }}">Cancel</a>

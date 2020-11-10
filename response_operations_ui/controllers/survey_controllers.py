@@ -1,4 +1,5 @@
 import logging
+import pprint
 
 import requests
 from flask import current_app as app
@@ -7,6 +8,7 @@ from structlog import wrap_logger
 
 from config import FDI_LIST, VACANCIES_LIST
 from response_operations_ui.common.mappers import format_short_name
+from response_operations_ui.controllers.admin_controller import get_error_list
 from response_operations_ui.exceptions.exceptions import ApiError
 
 

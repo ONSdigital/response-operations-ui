@@ -1,5 +1,8 @@
+import pprint
+
 import redis
 import logging
+import json
 
 from flask import current_app
 from structlog import wrap_logger
@@ -15,7 +18,7 @@ def _get_redis():
     return r
 
 
-def set_banner(banner='Hello World'):
+def set_banner(banner):
     try:
         r = _get_redis()
         r.set('AVAILABILITY_MESSAGE', banner)
@@ -41,3 +44,17 @@ def current_banner():
         return banner
     except redis.RedisError:
         logger.exception("Unable to retrieve current banners")
+
+
+def get_error_list():
+    try:
+        with open('response_operations_ui/banner-admin-json.json', 'r') as f:
+            error_list = json.load(f)
+    except (OSError, IOError) as e:
+        logger.exception(e)
+
+    errors = [x['error'] for x in error_list]
+    messages = [x['message'] for x in error_list]
+    my_dict = dict(zip(errors, messages))
+    
+    return my_dict

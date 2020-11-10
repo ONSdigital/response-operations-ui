@@ -1,0 +1,18 @@
+[
+  {
+    "error": "Unexpected outage",
+    "message": "We are currently experiencing technical difficulties. Our engineers are investigating and hope to have the service back up shortly.Thank you for your patience"
+  },
+  {
+    "error": "System performance issues",
+    "message": "We are carrying out essential maintenance to the service. During this time there may be an impact on system performance. Please continue to use the system and submit data as normal. If you experience any issues, please try again after the maintenance is completed."
+  },
+  {
+    "error": "SDX is not working",
+    "message": "We are carrying out essential maintenance to the service. Please continue to use the system and submit data as normal. It will only affect your response status which may not display as completed until the maintenance has been completed."
+  }, 
+  {
+    "error": "Vacancies Survey",
+    "message": "The Quarterly Vacancy Survey is unavailable until Tuesday 7 July 2020, as we are currently experiencing some technical difficulties."
+  }
+]

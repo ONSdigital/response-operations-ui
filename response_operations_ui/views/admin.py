@@ -1,10 +1,12 @@
 import logging
+import pprint
 
 from flask import Blueprint, render_template, request, url_for, redirect
 from flask_login import login_required, current_user
 from structlog import wrap_logger
 
 from response_operations_ui.controllers import admin_controller
+from response_operations_ui.controllers.admin_controller import get_error_list
 from response_operations_ui.forms import BannerAdminForm
 
 
@@ -23,12 +25,19 @@ INFO_MESSAGES = {
 def banner_admin():
     logger.debug("Banner page accessed", user=current_username())
     form = BannerAdminForm(form=request.form)
-
+    
+    list_of_errors = get_error_list()
+    
     current_banner = admin_controller.current_banner()
     if current_banner:
         form.banner.data = current_banner
         logger.debug("Banner set to ", banner=current_banner)
-    return render_template('banner-admin.html', current_banner=current_banner, form=form)
+    
+    pprint.pprint(list_of_errors)
+    return render_template('banner-admin.html', 
+                           current_banner=current_banner, 
+                           form=form, 
+                           list_of_errors=list_of_errors)
 
 
 def current_username():
