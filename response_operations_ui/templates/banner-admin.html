@@ -95,7 +95,8 @@
                     {% for error, message in list_of_errors.items() %}
                         {% do errors.append (
                             {
-                                "text": error
+                                "text": error,
+                                "value": message
                             }
                         ) %}
                     {% endfor %}
@@ -104,16 +105,18 @@
                             "id": "error-list",
                             "name": "select-error",
                             "label": {
-                                "text": "Message Template (Optional)"
+                                "id": "error-list-label",
+                                "text": "Message Template (Optional)",
+                                "classes": "hidden"
                             },
                             "options": errors,
+                            "classes": "hidden"
                         })
                     }}
-                    {{
+                    {{ 
                         onsTextarea({
                             "id": "banner-text",
                             "name": "body",
-                            "value" : "{{ params.select-error.values()[0] }}",
                             "label": {
                                 "text": "Message"
                             },
@@ -123,7 +126,14 @@
                             },
                             "error": errorData if errorData
                         })
-                    }} 
+                    }}
+                    <script{% if csp_nonce %} nonce="{{ csp_nonce() }}"{% endif %}>
+                        document.getElementById("error-list").classList.remove("hidden");
+                        document.getElementById("error-list-label").classList.remove("hidden");
+                        document.getElementById("error-list").addEventListener('change', function(event) {
+                            document.getElementById("banner-text").value = event.target.value
+                        });
+                    </script>
                     {{
                         onsButton({
                             "classes": "u-mb-s u-mt-l",
