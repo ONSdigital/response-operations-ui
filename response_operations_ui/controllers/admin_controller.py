@@ -1,5 +1,4 @@
 
-
 import redis
 import logging
 import json
@@ -53,6 +52,7 @@ def get_error_list():
             error_list = json.load(f)
     except (OSError, IOError) as e:
         logger.exception(e)
+        
     for i in error_list:
         my_dict.update(i)
     return my_dict
