@@ -62,7 +62,6 @@
                                 }
                             })
                         }}
-
                         {%- call onsField({                    
 
                         }) -%}
@@ -85,27 +84,18 @@
                         }}
                         {% endcall %}
                     {% endcall %}
-                    {{
-                        onsButton({
-                            "classes": "u-mb-s u-mt-l",
-                            "text": "Save",
-                            "id": "save-btn"
-                        })
-                    }}
                     {% set errors = [            
                         {
                             "value": "",
-                            "text": "Select a survey",
+                            "text": "Select an option",
                             "disabled": true,
                             "selected": true
                         }
                     ] %}
-                    {% for error in list_of_errors %}
+                    {% for error, message in list_of_errors.items() %}
                         {% do errors.append (
                             {
-                                "value": error.replace(' ', ''),
-                                "text": error,
-                                "id": error.replace(' ', '')
+                                "text": error
                             }
                         ) %}
                     {% endfor %}
@@ -118,11 +108,12 @@
                             },
                             "options": errors,
                         })
-                    }} 
+                    }}
                     {{
                         onsTextarea({
-                            "id": "secure-message-body",
+                            "id": "banner-text",
                             "name": "body",
+                            "value" : "{{ params.select-error.values()[0] }}",
                             "label": {
                                 "text": "Message"
                             },
@@ -131,6 +122,13 @@
                                 "required": true
                             },
                             "error": errorData if errorData
+                        })
+                    }} 
+                    {{
+                        onsButton({
+                            "classes": "u-mb-s u-mt-l",
+                            "text": "Save",
+                            "id": "save-btn"
                         })
                     }}
              </form>
