@@ -133,6 +133,29 @@
                             "error": errorData if errorData
                         })
                     }}
+                    <!-- Delete alert logic starts here-->
+                    <h1>Alert banner</h1>
+                    
+                    {{
+                        onsPanel({
+                            "label": {
+                                "text": "Message" 
+                            },
+                            "body": current_banner,
+                            "classes": "u-mb-l"    
+                        })
+                
+                    }}
+                   
+                    {{
+                        onsButton({
+                            "classes": "u-mb-s u-mt-l",
+                            "text": "Remove alert",
+                            "id": "remove-btn"
+                        })
+                    }}
+                    <a href="{{url_for('admin_bp.remove_alert')}}"
+                    role="button" class="btn" id="Remove alert" name="Remove alert"><span class="btn__inner">Remove alert</span></a>
              </form>
             <p>
                 <a id="cancel-btn" href="{{ url_for('surveys_bp.view_surveys') }}">Cancel</a>

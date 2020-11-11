@@ -60,3 +60,12 @@ def update_banner():
 def remove_banner():
     admin_controller.remove_banner()
     return redirect(url_for("admin_bp.banner_admin"))
+
+@admin_bp.route('/banner/remove', methods=['GET', 'POST'])
+@login_required
+def remove_alert():
+    logger.debug("Deleting alert", user=current_username())
+    current_alert = admin_controller.current_banner()
+    return render_template('remove-alert.html', current_banner=current_alert)
+   
+    

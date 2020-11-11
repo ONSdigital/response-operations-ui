@@ -1,0 +1,42 @@
+{% extends "layouts/base.html" %}
+{% from "components/checkboxes/_macro.njk" import onsCheckboxes %}
+{% from "components/button/_macro.njk" import onsButton %}
+{% from "components/fieldset/_macro.njk" import onsFieldset %}
+{% from "components/input/_macro.njk" import onsInput %}
+{% from "components/lists/_macro.njk" import onsList %}
+{% from "components/field/_macro.njk" import onsField %}
+{% from "components/textarea/_macro.njk" import onsTextarea %}
+{% from "components/select/_macro.njk" import onsSelect %}
+
+{% set page_title = 'Banner Admin'  %}
+{% block main %}
+    <div class="grid grid--gutterless">
+        <div class="grid__col col-8@m">
+            <h1 class="u-fs-xl u-mt-m">Banner Admin</h1>
+            <form action="" method="get">
+                {{
+                    onsPanel({
+                        "label": {
+                            "text": "Message" 
+                        },
+                        "body": current_banner,
+                        "classes": "u-mb-l"    
+                    })
+                
+                }}
+                {{
+                    onsButton({
+                        "classes": "u-mb-s u-mt-l",
+                        "href": "{{url_for('admin_bp.banner_admin')}}",
+                        "text": "Remove alert",
+                        "id": "remove-btn"
+                    })
+                }}
+                <a href="{{url_for('admin_bp.banner_admin')}}"
+                role="button" class="btn" id="Remove alert" name="Remove alert"><span class="btn__inner">Remove alert</span></a>
+                
+             </form>
+            
+        </div>
+    </div>
+{% endblock %}
