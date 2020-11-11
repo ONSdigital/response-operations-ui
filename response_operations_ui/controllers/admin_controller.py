@@ -47,13 +47,12 @@ def current_banner():
 
 
 def get_error_list():
+    my_dict = {}
     try:
         with open('response_operations_ui/banner-admin-json.json', 'r') as f:
             error_list = json.load(f)
     except (OSError, IOError) as e:
         logger.exception(e)
-
-    errors = [x['error'] for x in error_list]
-    messages = [x['message'] for x in error_list]
-    my_dict = dict(zip(errors, messages))
+    for i in error_list:
+        my_dict.update(i)
     return my_dict
