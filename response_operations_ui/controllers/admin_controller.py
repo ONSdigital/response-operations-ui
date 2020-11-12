@@ -45,14 +45,14 @@ def current_banner():
         logger.exception("Unable to retrieve current banners")
 
 
-def get_error_list():
+def get_alert_list():
     my_dict = {}
     try:
         with open('response_operations_ui/banner-admin-json.json', 'r') as f:
-            error_list = json.load(f)
+            alert_list = json.load(f)
     except (OSError, IOError) as e:
         logger.exception(e)
         
-    for i in error_list:
+    for i in alert_list:
         my_dict.update(i)
     return my_dict

@@ -7,7 +7,7 @@
 {% from "components/field/_macro.njk" import onsField %}
 {% from "components/textarea/_macro.njk" import onsTextarea %}
 {% from "components/select/_macro.njk" import onsSelect %}
-
+<!-- The "name": "banner" field within the textarea specifies that is getting posted -->
 {% set page_title = 'Banner Admin'  %}
 {% block main %}
     <div class="grid grid--gutterless">
@@ -45,27 +45,77 @@
                 {% endif %}
                 {% if current_banner %}
                     <h2>Maintenance Banner</h2>
-                    {{ current_banner }}
+                    {% call
+                        onsPanel({
+                            "type":"error",
+                            "id": "alert-message",
+                            "classes": "u-mb-s",
+                            "title": "Maintenance Banner",
+                            "body": current_banner
+
+                        })
+                    %}
+                    {% endcall %}
                 {% endif %}
                     {%- call onsFieldset({
                         "legend": "Create a new banner",
                         "legendClasses": "u-vh",
                         "classes": "u-mt-m"
                         }) -%}
-                        {{
-                            onsInput({
-                                "id": "banner",
-                                "name": "banner",
-                                "type": "text",
-                                "label": {
-                                    "text": 'Set new banner'
+                        {% set alerts = [            
+                            {
+                                "value": "",
+                                "text": "Select an option",
+                                "disabled": true,
+                                "selected": true
+                            }
+                        ] %}
+                        {% for alert, message in list_of_alerts.items() %}
+                            {% do alerts.append (
+                                {
+                                    "text": alert,
+                                    "value": message
                                 }
+                            ) %}
+                        {% endfor %}
+                        {{ 
+                            onsSelect({
+                                "id": "alert-list",
+                                "name": "select-alert",
+                                "label": {
+                                    "id": "alert-list-label",
+                                    "text": "Message Template (Optional)",
+                                    "classes": "hidden"
+                                },
+                                "options": alerts,
+                                "classes": "hidden"
                             })
                         }}
+                        {{ 
+                            onsTextarea({
+                                "id": "banner-text",
+                                "name": "banner",
+                                "label": {
+                                    "text": "Message"
+                                },
+                                "maxlength": '50000',
+                                "attributes": {
+                                    "required": true
+                                },
+                                "error": errorData if errorData
+                            })
+                        }}
+                        <script{% if csp_nonce %} nonce="{{ csp_nonce() }}"{% endif %}>
+                            document.getElementById("alert-list").classList.remove("hidden");
+                            document.getElementById("alert-list-label").classList.remove("hidden");
+                            document.getElementById("alert-list").addEventListener('change', function(event) {
+                                document.getElementById("banner-text").value = event.target.value
+                            });
+                        </script>
                         {%- call onsField({                    
 
                         }) -%}
-                        {{
+                        {{    
                             onsCheckboxes({
                                 "dontWrap": true,
                                 "checkboxesLabel": "Remove banner?",
@@ -84,56 +134,6 @@
                         }}
                         {% endcall %}
                     {% endcall %}
-                    {% set errors = [            
-                        {
-                            "value": "",
-                            "text": "Select an option",
-                            "disabled": true,
-                            "selected": true
-                        }
-                    ] %}
-                    {% for error, message in list_of_errors.items() %}
-                        {% do errors.append (
-                            {
-                                "text": error,
-                                "value": message
-                            }
-                        ) %}
-                    {% endfor %}
-                    {{ 
-                        onsSelect({
-                            "id": "error-list",
-                            "name": "select-error",
-                            "label": {
-                                "id": "error-list-label",
-                                "text": "Message Template (Optional)",
-                                "classes": "hidden"
-                            },
-                            "options": errors,
-                            "classes": "hidden"
-                        })
-                    }}
-                    {{ 
-                        onsTextarea({
-                            "id": "banner-text",
-                            "name": "body",
-                            "label": {
-                                "text": "Message"
-                            },
-                            "maxlength": '50000',
-                            "attributes": {
-                                "required": true
-                            },
-                            "error": errorData if errorData
-                        })
-                    }}
-                    <script{% if csp_nonce %} nonce="{{ csp_nonce() }}"{% endif %}>
-                        document.getElementById("error-list").classList.remove("hidden");
-                        document.getElementById("error-list-label").classList.remove("hidden");
-                        document.getElementById("error-list").addEventListener('change', function(event) {
-                            document.getElementById("banner-text").value = event.target.value
-                        });
-                    </script>
                     {{
                         onsButton({
                             "classes": "u-mb-s u-mt-l",
