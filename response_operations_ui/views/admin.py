@@ -18,6 +18,15 @@ INFO_MESSAGES = {
     'instrument_linked': "Collection exercise linked to survey successfully"
 }
 
+# INFO_MESSAGES = {
+#     'survey_changed': "The alert has been removed",
+#     'instrument_linked': "Collection exercise linked to survey successfully"
+# }
+
+updated_removed_alert_message = None
+# if request.args.get('alert_removed'):
+#     updated_removed_alert_message = 'The alert has been removed'
+
 
 @admin_bp.route('/banner', methods=['GET'])
 @login_required
@@ -66,6 +75,8 @@ def remove_banner():
 def remove_alert():
     logger.debug("Deleting alert", user=current_username())
     current_alert = admin_controller.current_banner()
-    return render_template('remove-alert.html', current_banner=current_alert)
+    # return render_template('remove-alert.html', current_banner=current_alert)
+    return render_template('remove-alert.html', current_banner=current_alert,updated_removed_alert_message=updated_removed_alert_message, alert_removed='True')
+    # return render_template('remove-alert.html', current_banner=current_alert,alert_removed='True')
    
     
