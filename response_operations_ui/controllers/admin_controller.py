@@ -52,7 +52,7 @@ def get_alert_list():
             alert_list = json.load(f)
     except (OSError, IOError) as e:
         logger.exception(e)
-        
+
     for i in alert_list:
         my_dict.update(i)
     return my_dict

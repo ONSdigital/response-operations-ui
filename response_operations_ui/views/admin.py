@@ -1,5 +1,4 @@
 import logging
-import pprint
 
 from flask import Blueprint, render_template, request, url_for, redirect
 from flask_login import login_required, current_user
@@ -71,13 +70,15 @@ def remove_banner():
     admin_controller.remove_banner()
     return redirect(url_for("admin_bp.banner_admin"))
 
+
 @admin_bp.route('/banner/remove', methods=['GET', 'POST'])
 @login_required
 def remove_alert():
     logger.debug("Deleting alert", user=current_username())
     current_alert = admin_controller.current_banner()
     # return render_template('remove-alert.html', current_banner=current_alert)
-    return render_template('remove-alert.html', current_banner=current_alert,updated_removed_alert_message=updated_removed_alert_message, alert_removed='True')
+    return render_template('remove-alert.html',
+                           current_banner=current_alert,
+                           updated_removed_alert_message=updated_removed_alert_message,
+                           alert_removed='True')
     # return render_template('remove-alert.html', current_banner=current_alert,alert_removed='True')
-   
-    
