@@ -3,6 +3,7 @@ import logging
 from flask import Blueprint, render_template, request, url_for, redirect, session
 from flask_login import login_required, current_user
 from structlog import wrap_logger
+from datetime import datetime
 
 from response_operations_ui.controllers import admin_controller
 from response_operations_ui.controllers.admin_controller import get_alert_list
@@ -51,6 +52,9 @@ def update_banner():
     logger.debug("Updating banner", user=current_username())
     form = BannerAdminForm(form=request.form)
     banner = form.banner.data
+    time_banner_set = datetime.now().strftime('%d ' + '%B ' + '%Y ' + 'at %H' + ':%M')
+    print(type(time_banner_set))
+    session["time_banner_set"] = time_banner_set
     logger.debug("Banner update", user=current_username(), banner=banner)
     admin_controller.set_banner(form.banner.data)
     return redirect(url_for("admin_bp.remove_alert"))
@@ -61,13 +65,14 @@ def update_banner():
 def publish_alert():
     breadcrumbs = [{"text": "Banner Admin", "url": "/admin/banner"},
                    {"text": "Setting Banner", "url": ""}]
-
+    
     logger.debug("Deleting alert", user=current_username())
     current_banner = admin_controller.current_banner()
     if request.method == 'GET':
         return render_template('remove-alert.html',
                                current_banner=current_banner,
-                               breadcrumbs=breadcrumbs)
+                               breadcrumbs=breadcrumbs,
+                               time_banner_set=session['time_banner_set'])
 
 
 @admin_bp.route('/banner/remove', methods=['POST'])
