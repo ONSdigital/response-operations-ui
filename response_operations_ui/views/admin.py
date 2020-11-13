@@ -1,6 +1,4 @@
-import json
 import logging
-import pprint
 
 from flask import Blueprint, render_template, request, url_for, redirect, jsonify
 from flask_login import login_required, current_user
@@ -18,6 +16,8 @@ INFO_MESSAGES = {
     'survey_changed': "Survey details changed",
     'instrument_linked': "Collection exercise linked to survey successfully"
 }
+banner_removed = False
+
 
 
 @admin_bp.route('/banner', methods=['GET'])
@@ -30,6 +30,8 @@ def banner_admin():
     form = BannerAdminForm(form=request.form)
     dict_of_alerts = get_alert_list()
     current_banner = admin_controller.current_banner()
+    if banner_removed:
+        deleted = True
     if current_banner:
         form.banner.data = current_banner
         logger.debug("Banner set to ", banner=current_banner)
@@ -37,7 +39,8 @@ def banner_admin():
                            current_banner=current_banner,
                            form=form,
                            list_of_alerts=dict_of_alerts,
-                           breadcrumbs=breadcrumbs)
+                           breadcrumbs=breadcrumbs,
+                           variable=deleted)
 
 
 def current_username():
@@ -92,10 +95,8 @@ def remove_alert():
     logger.debug("Updating banner", user=current_username())
     form = BannerAdminForm(form=request.form)
     delete = form.delete.data
-    banner_removed = form.banner_removed.data
-
     if delete:
         logger.debug("Banner deleted", user=current_username())
         admin_controller.remove_banner()
-    return redirect(url_for("admin_bp.banner_admin",
-                            variable=json.dumps(banner_removed)))
+        banner_removed = True
+    return redirect(url_for("admin_bp.banner_admin"))
