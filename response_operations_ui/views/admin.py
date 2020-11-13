@@ -19,13 +19,12 @@ INFO_MESSAGES = {
 banner_removed = False
 
 
-
 @admin_bp.route('/banner', methods=['GET'])
 @login_required
 def banner_admin():
     breadcrumbs = [{"text": "Banner Admin", "url": "/banner"},
                    {"text": "Banner Removal"}]
-    
+
     logger.debug("Banner page accessed", user=current_username())
     form = BannerAdminForm(form=request.form)
     dict_of_alerts = get_alert_list()
@@ -55,7 +54,7 @@ def current_username():
 def update_banner():
     breadcrumbs = [{"text": "Banner Admin", "url": "/banner"},
                    {"text": "Banner Removal"}]
-    
+
     logger.debug("Updating banner", user=current_username())
     form = BannerAdminForm(form=request.form)
     banner = form.banner.data
@@ -80,11 +79,11 @@ def remove_banner():
 def publish_alert():
     breadcrumbs = [{"text": "Banner Removal", "url": "/banner/remove"},
                    {"text": "Banner Removal"}]
-    
+
     logger.debug("Deleting alert", user=current_username())
     current_banner = admin_controller.current_banner()
     if request.method == 'GET':
-        return render_template('remove-alert.html', 
+        return render_template('remove-alert.html',
                                current_banner=current_banner,
                                breadcrumbs=breadcrumbs)
 
@@ -98,5 +97,4 @@ def remove_alert():
     if delete:
         logger.debug("Banner deleted", user=current_username())
         admin_controller.remove_banner()
-        banner_removed = True
     return redirect(url_for("admin_bp.banner_admin"))
