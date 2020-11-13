@@ -16,32 +16,26 @@ INFO_MESSAGES = {
     'survey_changed': "Survey details changed",
     'instrument_linked': "Collection exercise linked to survey successfully"
 }
-banner_removed = False
 
 
 @admin_bp.route('/banner', methods=['GET'])
 @login_required
 def banner_admin():
-    breadcrumbs = [{"text": "Banner Admin", "url": "/banner"},
-                   {"text": "Banner Removal"}]
+    breadcrumbs = [{"text": "Banner Admin", "url": ""}]
     current_banner = admin_controller.current_banner()
     logger.debug("Banner page accessed", user=current_username())
     form = BannerAdminForm(form=request.form)
     dict_of_alerts = get_alert_list()
+    removed = False
     if 'banner_removed' in session:
         session.pop('banner_removed')
-        return render_template('banner-admin.html',
-                               form=form,
-                               list_of_alerts=dict_of_alerts,
-                               breadcrumbs=breadcrumbs,
-                               banner_removed=True,
-                               current_banner=current_banner)
-    else:
-        return render_template('banner-admin.html',
-                               form=form,
-                               list_of_alerts=dict_of_alerts,
-                               breadcrumbs=breadcrumbs,
-                               current_banner=current_banner)
+        removed = True
+    return render_template('banner-admin.html',
+                           form=form,
+                           list_of_alerts=dict_of_alerts,
+                           breadcrumbs=breadcrumbs,
+                           banner_removed=removed,
+                           current_banner=current_banner)
 
 
 def current_username():
@@ -54,33 +48,19 @@ def current_username():
 @admin_bp.route('/banner', methods=['POST'])
 @login_required
 def update_banner():
-    breadcrumbs = [{"text": "Banner Admin", "url": "/banner"},
-                   {"text": "Banner Removal"}]
-
     logger.debug("Updating banner", user=current_username())
     form = BannerAdminForm(form=request.form)
     banner = form.banner.data
-
-    if form.delete.data or not banner:
-        logger.debug("Banner deleted", user=current_username())
-        admin_controller.remove_banner()
-    else:
-        logger.debug("Banner update", user=current_username(), banner=banner)
-        admin_controller.set_banner(form.banner.data)
-    return redirect(url_for("admin_bp.remove_alert",
-                            breadcrumbs=breadcrumbs))
-
-
-def remove_banner():
-    admin_controller.remove_banner()
-    return redirect(url_for("admin_bp.banner_admin"))
+    logger.debug("Banner update", user=current_username(), banner=banner)
+    admin_controller.set_banner(form.banner.data)
+    return redirect(url_for("admin_bp.remove_alert"))
 
 
 @admin_bp.route('/banner/remove', methods=['GET'])
 @login_required
 def publish_alert():
-    breadcrumbs = [{"text": "Banner Removal", "url": "/banner/remove"},
-                   {"text": "Banner Removal"}]
+    breadcrumbs = [{"text": "Banner Admin", "url": "/admin/banner"},
+                   {"text": "Setting Banner", "url": ""}]
 
     logger.debug("Deleting alert", user=current_username())
     current_banner = admin_controller.current_banner()
@@ -95,6 +75,7 @@ def publish_alert():
 def remove_alert():
     logger.debug("Updating banner", user=current_username())
     form = BannerAdminForm(form=request.form)
+    banner_removed = ''
     delete = form.delete.data
     if delete:
         session['banner_removed'] = banner_removed

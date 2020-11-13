@@ -31,7 +31,7 @@ class TestAdmin(TestCase):
     def test_message_is_set(self, mock_redis_set, mock_redis_get):
         mock_redis_get.return_value = TESTMSG
         response = self.client.post('/admin/banner', data=dict(
-            delete="false",
+            delete="true",
             banner=TESTMSG,
         ), follow_redirects=True)
         self.assertEqual(response.status_code, 200)
@@ -42,7 +42,7 @@ class TestAdmin(TestCase):
     @patch('redis.Redis.delete')
     @patch('redis.Redis.get')
     def test_message_is_deleted(self, mock_redis_delete, mock_redis_get):
-        response = self.client.post('/admin/banner', data=dict(
+        response = self.client.post('/admin/banner/remove', data=dict(
             delete="true",
             banner="",
         ), follow_redirects=True)
