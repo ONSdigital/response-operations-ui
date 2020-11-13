@@ -1,6 +1,6 @@
 import logging
 
-from flask import Blueprint, render_template, request, url_for, redirect, jsonify
+from flask import Blueprint, render_template, request, url_for, redirect, session
 from flask_login import login_required, current_user
 from structlog import wrap_logger
 
@@ -24,22 +24,24 @@ banner_removed = False
 def banner_admin():
     breadcrumbs = [{"text": "Banner Admin", "url": "/banner"},
                    {"text": "Banner Removal"}]
-
+    current_banner = admin_controller.current_banner()
     logger.debug("Banner page accessed", user=current_username())
     form = BannerAdminForm(form=request.form)
     dict_of_alerts = get_alert_list()
-    current_banner = admin_controller.current_banner()
-    if banner_removed:
-        deleted = True
-    if current_banner:
-        form.banner.data = current_banner
-        logger.debug("Banner set to ", banner=current_banner)
-    return render_template('banner-admin.html',
-                           current_banner=current_banner,
-                           form=form,
-                           list_of_alerts=dict_of_alerts,
-                           breadcrumbs=breadcrumbs,
-                           variable=deleted)
+    if 'banner_removed' in session:
+        session.pop('banner_removed')
+        return render_template('banner-admin.html',
+                               form=form,
+                               list_of_alerts=dict_of_alerts,
+                               breadcrumbs=breadcrumbs,
+                               banner_removed=True,
+                               current_banner=current_banner)
+    else:
+        return render_template('banner-admin.html',
+                               form=form,
+                               list_of_alerts=dict_of_alerts,
+                               breadcrumbs=breadcrumbs,
+                               current_banner=current_banner)
 
 
 def current_username():
@@ -95,6 +97,7 @@ def remove_alert():
     form = BannerAdminForm(form=request.form)
     delete = form.delete.data
     if delete:
+        session['banner_removed'] = banner_removed
         logger.debug("Banner deleted", user=current_username())
         admin_controller.remove_banner()
     return redirect(url_for("admin_bp.banner_admin"))

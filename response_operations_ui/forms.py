@@ -334,4 +334,3 @@ class CreateAccountForm(FlaskForm):
 class BannerAdminForm(FlaskForm):
     banner = StringField('Banner text')
     delete = BooleanField('Delete banner', default=False)
-    banner_removed = BooleanField('Banner remove', default=False)

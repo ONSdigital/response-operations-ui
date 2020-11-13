@@ -43,11 +43,7 @@
                         }}
                     {% endcall %}
                 {% endif %}
-                <li> {{ variable }}</li>
-                {% if variable %}
-                    <h2>There is a banner </h2>
-                {% endif %}
-                {% if variable %}
+                {% if banner_removed %}
                     {{
                         onsPanel({
                             "type": "success",

@@ -21,7 +21,7 @@ class TestAdmin(TestCase):
     @patch('redis.Redis.get')
     def test_message_shows_correct_message_if__set(self, mock_redis):
         mock_redis.return_value = TESTMSG
-        response = self.client.get('/admin/banner', follow_redirects=True)
+        response = self.client.get('/admin/banner/remove', follow_redirects=True)
         self.assertEqual(response.status_code, 200)
         mock_redis.assert_called
         self.assertTrue(TESTMSG in response.data)
