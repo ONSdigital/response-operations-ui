@@ -31,7 +31,7 @@
   
       {% set surveyTableDataRows = [] %}
         {% for survey in survey_list %}
-          {% set buttonCell = '<form action="" method="POST">
+          {% set buttonCell = '<form action="" method="post">
           <input type="hidden" name="csrf_token" value="' + csrf_token() + '"/>
           <input type="hidden" name="overview-survey-choice" value="' + survey.shortName + '">
           <button type="submit" class="btn btn--secondary btn--small" id="choose-' + survey.shortName + '">

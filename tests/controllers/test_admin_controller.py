@@ -22,3 +22,11 @@ class TestAdminController(unittest.TestCase):
         admin_controller.set_banner("test")
         admin_controller.remove_banner()
         self.assertIsNone(admin_controller.current_banner())
+
+    # Placeholder test pending implementation of banner message storage:
+    def test_get_alert_list(self):
+        test_dict = admin_controller.get_alert_list()
+        self.assertIn("Unexpected outage", test_dict.keys())
+        self.assertIn("The Quarterly Vacancy Survey is unavailable until Tuesday 7 July 2020,"
+                      " as we are currently experiencing some technical difficulties.",
+                      test_dict.values())
