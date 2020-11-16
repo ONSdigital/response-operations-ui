@@ -53,7 +53,12 @@ def update_banner():
     logger.debug("Updating banner", user=current_username())
     form = BannerAdminForm(form=request.form)
     banner = form.banner.data
-    time_banner_set = datetime.now().strftime('%d ' + '%B ' + '%Y ' + 'at %H' + ':%M')
+    today = datetime.today().day
+    if 4 <= today <= 20 or 24 <= today <= 30:
+        suffix = "th"
+    else:
+        suffix = ["st", "nd", "rd"][today % 10 - 1]
+    time_banner_set = datetime.now().strftime('%d' + suffix + ' %B ' + '%Y ' + 'at %H' + ':%M')
     session['time_banner_set'] = time_banner_set
     logger.debug("Banner update", user=current_username(), banner=banner)
     admin_controller.set_banner(form.banner.data)
