@@ -30,7 +30,6 @@ def banner_admin():
     banner_removed = False
     if 'banner_removed' in session:
         session.pop('banner_removed')
-        session['time_banner_set'] = " "
         banner_removed = True
     return render_template('banner-admin.html',
                            form=form,
@@ -53,15 +52,9 @@ def update_banner():
     logger.debug("Updating banner", user=current_username())
     form = BannerAdminForm(form=request.form)
     banner = form.banner.data
-    today = datetime.today().day
-    if 4 <= today <= 20 or 24 <= today <= 30:
-        suffix = "th"
-    else:
-        suffix = ["st", "nd", "rd"][today % 10 - 1]
-    time_banner_set = datetime.now().strftime('%d' + suffix + ' %B ' + '%Y ' + 'at %H' + ':%M')
-    session['time_banner_set'] = time_banner_set
+    time_set = datetime.now().strftime('%d' + set_suffix(datetime.today().day) + ' %B ' + '%Y ' + 'at %H' + ':%M')
     logger.debug("Banner update", user=current_username(), banner=banner)
-    admin_controller.set_banner(form.banner.data)
+    admin_controller.set_banner_and_time(form.banner.data, time_set)
     return redirect(url_for("admin_bp.remove_alert"))
 
 
@@ -72,11 +65,12 @@ def publish_alert():
                    {"text": "Setting Banner", "url": ""}]
     logger.debug("Deleting alert", user=current_username())
     current_banner = admin_controller.current_banner()
-    if session.get('time_banner_set'):
+    time_banner_set = admin_controller.banner_time_get()
+    if current_banner:
         return render_template('remove-alert.html',
                                current_banner=current_banner,
                                breadcrumbs=breadcrumbs,
-                               time_banner_set=session['time_banner_set'])
+                               time_banner_set=time_banner_set)
     else:
         return redirect(url_for("admin_bp.banner_admin"))
 
@@ -93,3 +87,11 @@ def remove_alert():
         logger.debug("Banner deleted", user=current_username())
         admin_controller.remove_banner()
     return redirect(url_for("admin_bp.banner_admin"))
+
+
+def set_suffix(today):
+    if 4 <= today <= 20 or 24 <= today <= 30:
+        suffix = "th"
+    else:
+        suffix = ["st", "nd", "rd"][today % 10 - 1]
+    return suffix

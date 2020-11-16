@@ -15,13 +15,17 @@ class TestAdminController(unittest.TestCase):
         admin_controller._get_redis = get_fake_redis
 
     def test_set_banner(self):
-        admin_controller.set_banner("test")
+        admin_controller.set_banner_and_time('test', '16th November 2020 at 15:12')
         self.assertEqual("test", admin_controller.current_banner())
 
     def test_remove_banner(self):
-        admin_controller.set_banner("test")
+        admin_controller.set_banner_and_time("test", '16th November 2020 at 15:12')
         admin_controller.remove_banner()
         self.assertIsNone(admin_controller.current_banner())
+
+    def test_current_time_set(self):
+        admin_controller.set_banner_and_time("test", '16th November 2020 at 15:12')
+        self.assertEqual("16th November 2020 at 15:12", admin_controller.banner_time_get())
 
     # Placeholder test pending implementation of banner message storage:
     def test_get_alert_list(self):

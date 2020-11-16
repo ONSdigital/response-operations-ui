@@ -17,13 +17,14 @@ def _get_redis():
     return r
 
 
-def set_banner(banner):
+def set_banner_and_time(banner, time):
     try:
         r = _get_redis()
         r.set('AVAILABILITY_MESSAGE', banner)
+        r.set('AVAILABILITY_MESSAGE_TIME_SET', time)
         logger.debug("Setting availability message", banner=banner)
     except redis.RedisError:
-        logger.exception("Unable to updated banner")
+        logger.exception("Unable to updated banner and time")
 
 
 def remove_banner():
@@ -40,6 +41,16 @@ def current_banner():
         r = _get_redis()
         banner = r.get('AVAILABILITY_MESSAGE')
         logger.debug("Getting availability message", banner=banner)
+        return banner
+    except redis.RedisError:
+        logger.exception("Unable to retrieve current banners")
+
+
+def banner_time_get():
+    try:
+        r = _get_redis()
+        banner = r.get('AVAILABILITY_MESSAGE_TIME_SET')
+        logger.debug("Getting time availability message was set", banner=banner)
         return banner
     except redis.RedisError:
         logger.exception("Unable to retrieve current banners")
