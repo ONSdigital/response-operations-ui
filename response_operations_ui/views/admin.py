@@ -27,15 +27,16 @@ def banner_admin():
     logger.debug("Banner page accessed", user=current_username())
     form = BannerAdminForm(form=request.form)
     dict_of_alerts = get_alert_list()
-    removed = False
+    banner_removed = False
     if 'banner_removed' in session:
         session.pop('banner_removed')
-        removed = True
+        session['time_banner_set'] = " "
+        banner_removed = True
     return render_template('banner-admin.html',
                            form=form,
                            list_of_alerts=dict_of_alerts,
                            breadcrumbs=breadcrumbs,
-                           banner_removed=removed,
+                           banner_removed=banner_removed,
                            current_banner=current_banner)
 
 
@@ -53,7 +54,7 @@ def update_banner():
     form = BannerAdminForm(form=request.form)
     banner = form.banner.data
     time_banner_set = datetime.now().strftime('%d ' + '%B ' + '%Y ' + 'at %H' + ':%M')
-    session["time_banner_set"] = time_banner_set
+    session['time_banner_set'] = time_banner_set
     logger.debug("Banner update", user=current_username(), banner=banner)
     admin_controller.set_banner(form.banner.data)
     return redirect(url_for("admin_bp.remove_alert"))
@@ -64,14 +65,15 @@ def update_banner():
 def publish_alert():
     breadcrumbs = [{"text": "Banner Admin", "url": "/admin/banner"},
                    {"text": "Setting Banner", "url": ""}]
-    
     logger.debug("Deleting alert", user=current_username())
     current_banner = admin_controller.current_banner()
-    if request.method == 'GET':
+    if session.get('time_banner_set'):
         return render_template('remove-alert.html',
                                current_banner=current_banner,
                                breadcrumbs=breadcrumbs,
                                time_banner_set=session['time_banner_set'])
+    else:
+        return redirect(url_for("admin_bp.banner_admin"))
 
 
 @admin_bp.route('/banner/remove', methods=['POST'])
