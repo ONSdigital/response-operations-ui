@@ -53,7 +53,6 @@ def update_banner():
     form = BannerAdminForm(form=request.form)
     banner = form.banner.data
     time_banner_set = datetime.now().strftime('%d ' + '%B ' + '%Y ' + 'at %H' + ':%M')
-    print(type(time_banner_set))
     session["time_banner_set"] = time_banner_set
     logger.debug("Banner update", user=current_username(), banner=banner)
     admin_controller.set_banner(form.banner.data)
