@@ -64,7 +64,6 @@ def update_banner():
 def publish_alert():
     breadcrumbs = [{"text": "Banner Admin", "url": "/admin/banner"},
                    {"text": "Setting Banner", "url": ""}]
-    
     logger.debug("Deleting alert", user=current_username())
     current_banner = admin_controller.current_banner()
     if request.method == 'GET':
