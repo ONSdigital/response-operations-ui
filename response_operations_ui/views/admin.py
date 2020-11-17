@@ -1,9 +1,10 @@
 import logging
+from datetime import datetime
 
 from flask import Blueprint, render_template, request, url_for, redirect, session
 from flask_login import login_required, current_user
 from structlog import wrap_logger
-from datetime import datetime
+from dateutil import parser
 
 from response_operations_ui.controllers import admin_controller
 from response_operations_ui.controllers.admin_controller import get_alert_list
@@ -52,20 +53,22 @@ def update_banner():
     logger.debug("Updating banner", user=current_username())
     form = BannerAdminForm(form=request.form)
     banner = form.banner.data
-    time_set = datetime.now().strftime('%d' + set_suffix(datetime.today().day) + ' %B ' + '%Y ' + 'at %H' + ':%M')
     logger.debug("Banner update", user=current_username(), banner=banner)
-    admin_controller.set_banner_and_time(form.banner.data, time_set)
+    admin_controller.set_banner_and_time(form.banner.data)
     return redirect(url_for("admin_bp.remove_alert"))
 
 
+# Parser.parse allows the string returned from redis to be converted into a datetime object from string
 @admin_bp.route('/banner/remove', methods=['GET'])
 @login_required
-def publish_alert():
+def view_and_remove_current_banner():
     breadcrumbs = [{"text": "Banner Admin", "url": "/admin/banner"},
                    {"text": "Setting Banner", "url": ""}]
     logger.debug("Deleting alert", user=current_username())
     current_banner = admin_controller.current_banner()
     time_banner_set = admin_controller.banner_time_get()
+    time_banner_set = parser.parse(time_banner_set)\
+        .strftime('%d' + set_suffix(datetime.today().day) + ' %B ' + '%Y ' + 'at %H' + ':%M')
     if current_banner:
         return render_template('remove-alert.html',
                                current_banner=current_banner,

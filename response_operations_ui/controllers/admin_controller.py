@@ -1,3 +1,4 @@
+from datetime import datetime
 
 import redis
 import logging
@@ -17,7 +18,7 @@ def _get_redis():
     return r
 
 
-def set_banner_and_time(banner, time):
+def set_banner_and_time(banner, time=datetime.now()):
     try:
         r = _get_redis()
         r.set('AVAILABILITY_MESSAGE', banner)
@@ -25,6 +26,8 @@ def set_banner_and_time(banner, time):
         logger.debug("Setting availability message", banner=banner)
     except redis.RedisError:
         logger.exception("Unable to update banner and time")
+        logger.exception('Ensure time parameter is correct structure if not '
+                         'default. e.g. strftime does not work on string')
 
 
 def remove_banner():
@@ -63,7 +66,6 @@ def get_alert_list():
             alert_list = json.load(f)
     except (OSError, IOError) as e:
         logger.exception(e)
-
     for i in alert_list:
         my_dict.update(i)
     return my_dict

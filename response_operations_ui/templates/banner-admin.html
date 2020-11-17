@@ -53,7 +53,7 @@
                         })
                     }}
                 {% endif %} 
-                {% if not current_banner %} 
+                {% if not current_banner and not banner_removed %} 
                     {{
                         onsPanel({
                             "label": {
