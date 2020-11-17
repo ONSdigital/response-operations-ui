@@ -52,6 +52,17 @@
                             "body": "The alert has been removed"
                         })
                     }}
+                {% endif %} 
+                {% if not current_banner %} 
+                    {{
+                        onsPanel({
+                            "label": {
+                                "text": "Message" 
+                            },
+                            "body": "No banner currently active",
+                            "classes": "u-mb-l"    
+                        })
+                    }}
                 {% endif %}
                     {%- call onsFieldset({
                         "legend": "Create a new banner",
