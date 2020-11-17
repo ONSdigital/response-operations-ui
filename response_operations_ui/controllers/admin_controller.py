@@ -65,7 +65,7 @@ def get_alert_list():
         with open('response_operations_ui/banner-admin-json.json', 'r') as f:
             alert_list = json.load(f)
     except (OSError, IOError) as e:
-        logger.exception(e)
+        logger.exception(e, 'error opening JSON file containing the alert templates')
     for i in alert_list:
         my_dict.update(i)
     return my_dict
