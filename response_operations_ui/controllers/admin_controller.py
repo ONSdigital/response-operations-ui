@@ -24,7 +24,7 @@ def set_banner_and_time(banner, time):
         r.set('AVAILABILITY_MESSAGE_TIME_SET', time)
         logger.debug("Setting availability message", banner=banner)
     except redis.RedisError:
-        logger.exception("Unable to updated banner and time")
+        logger.exception("Unable to update banner and time")
 
 
 def remove_banner():
