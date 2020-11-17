@@ -17,7 +17,7 @@ jobs:
     steps:
       - name: set namespace
         run: |
-          echo HELM_VERSION=$(echo ${{ github.event.comment.body }} | cut -d' ' -f2) >> $GITHUB_ENV
+          echo NAMESPACE=$(echo ${{ github.event.comment.body }} | cut -d' ' -f2) >> $GITHUB_ENV
 
       - uses: GoogleCloudPlatform/github-actions/setup-gcloud@master
         with:
