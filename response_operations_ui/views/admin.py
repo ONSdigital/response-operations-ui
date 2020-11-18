@@ -67,7 +67,7 @@ def view_and_remove_current_banner():
     logger.debug("Deleting alert", user=current_username())
     current_banner = admin_controller.current_banner()
     time_banner_set = admin_controller.banner_time_get()
-    time_banner_set = parser.parse(time_banner_set)\
+    time_banner_set = parser.parse(time_banner_set) \
         .strftime('%d' + set_suffix(datetime.today().day) + ' %B ' + '%Y ' + 'at %H' + ':%M')
     if current_banner:
         return render_template('remove-alert.html',
@@ -100,3 +100,8 @@ def set_suffix(today):
     else:
         suffix = ["st", "nd", "rd"][today % 10 - 1]
     return suffix
+
+
+@admin_bp.route('/banner/manage', methods=['POST', 'GET'])
+def manage_alert_templates():
+    return 'hello world'
