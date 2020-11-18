@@ -1,6 +1,7 @@
 from unittest import TestCase
 from unittest.mock import patch
 from response_operations_ui import create_app
+from response_operations_ui.views import admin
 
 TESTMSG = b'RESPONSE UI TEST MESSAGE'
 
@@ -51,3 +52,13 @@ class TestAdmin(TestCase):
         mock_redis_delete.set.assert_called
         mock_redis_get.get.assert_called
         self.assertFalse(TESTMSG in response.data)
+
+    def test_set_suffix_th(self):
+        actual = admin.set_suffix(15)
+        expected = 'th'
+        self.assertEquals(actual, expected)
+
+    def test_set_suffix_other(self):
+        actual = admin.set_suffix(22)
+        expected = 'nd'
+        self.assertEquals(actual, expected)
