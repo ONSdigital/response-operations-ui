@@ -62,7 +62,7 @@ def banner_time_get():
 def get_alert_list():
     my_dict = {}
     try:
-        with open('response_operations_ui/banner-admin-json.json', 'r') as f:
+        with open('response_operations_ui/templates/banner-admin-json.json', 'r') as f:
             alert_list = json.load(f)
     except (OSError, IOError) as e:
         logger.exception(e, 'error opening JSON file containing the alert templates')

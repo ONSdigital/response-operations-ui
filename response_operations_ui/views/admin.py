@@ -92,6 +92,8 @@ def remove_alert():
     return redirect(url_for("admin_bp.banner_admin"))
 
 
+# Currently datetime.strftime does not support applying suffix's onto the date. 
+# Reference: https://stackoverflow.com/questions/5891555/display-the-date-like-may-5th-using-pythons-strftime
 def set_suffix(today):
     if 4 <= today <= 20 or 24 <= today <= 30:
         suffix = "th"
