@@ -1,7 +1,9 @@
 import logging
+import pprint
 from datetime import datetime
 
-from flask import Blueprint, render_template, request, url_for, redirect, session
+import psycopg2
+from flask import Blueprint, render_template, request, url_for, redirect, session, jsonify
 from flask_login import login_required, current_user
 from structlog import wrap_logger
 from dateutil import parser
@@ -9,6 +11,7 @@ from dateutil import parser
 from response_operations_ui.controllers import admin_controller
 from response_operations_ui.controllers.admin_controller import get_alert_list
 from response_operations_ui.forms import BannerAdminForm
+from response_operations_ui.models import db_connect
 
 logger = wrap_logger(logging.getLogger(__name__))
 
@@ -104,4 +107,19 @@ def set_suffix(today):
 
 @admin_bp.route('/banner/manage', methods=['POST', 'GET'])
 def manage_alert_templates():
-    return 'hello world'
+    query_result = db_connect.db_connect_and_query('SELECT * FROM banners')
+    form = BannerAdminForm(form=request.form)
+    pprint.pprint(query_result)
+    if request.method == 'GET':
+        return render_template('manage-alert-templates.html',
+                               form=form,
+                               alerts=query_result)
+    else:
+        selected_title = form.title.data
+        selected_banner = form.banner.data
+        return render_template('edit-alert-template.html',
+                               form=form,
+                               selected_title=selected_title,
+                               selected_banner=selected_banner)
+
+
