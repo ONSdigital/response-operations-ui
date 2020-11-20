@@ -42,21 +42,18 @@
                             }) 
                         }}
                     {% endcall %}
-                {% endif %}
-                    {%- call onsFieldset({
-                        "legend": "Create a new banner",
-                        "legendClasses": "u-vh",
-                        "classes": "u-mt-m"
-                        }) -%}
-                        {% set alerts = [            
-                            {
-                                "value": "",
-                                "text": "Select an option",
-                                "disabled": true,
-                                "selected": true
-                            }
-                        ] %}
-                        
+                    <li>{{ selected_title }}</li>
+                    {% endif %}
+                        {{
+                            onsInput({
+                                "id": "banner",
+                                "name": "banner",
+                                "type": "text",
+                                "label": {
+                                    "text": 'Set new banner'
+                                }
+                            })
+                        }} 
                         {{ 
                             onsTextarea({
                                 "id": "banner-text",
@@ -71,14 +68,6 @@
                                 "error": errorData if errorData
                             })
                         }}
-                        <script{% if csp_nonce %} nonce="{{ csp_nonce() }}"{% endif %}>
-                            document.getElementById("alert-list").classList.remove("hidden");
-                            document.getElementById("alert-list-label").classList.remove("hidden");
-                            document.getElementById("alert-list").addEventListener('change', function(event) {
-                                document.getElementById("banner-text").value = event.target.value
-                            });
-                        </script>
-                    {% endcall %}
                     {{
                         onsButton({
                             "classes": "u-mb-s u-mt-l",

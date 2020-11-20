@@ -36,14 +36,24 @@
                 {{
                     onsRadios(radioComponent)
                 }}
+                <p></p>
+                <p></p>
                 {{
                     onsButton({
-                        "classes": "u-mb-s u-mt-l",
+                        "classes": "btn-group__btn",
                         "text": "Continue",
                         "id": "save-btn"
                     })
+                }} 
+                {{
+                    onsButton({
+                        "type": "button",
+                        "classes": "btn--secondary btn-group__btn",
+                        "text": "Cancel",
+                        "id": "cancel-btn"
+                    })
                 }}
-             </form>
+            </form>
             <p>
                 <a id="cancel-btn" href="{{ url_for('surveys_bp.view_surveys') }}">Cancel</a>
             </p>

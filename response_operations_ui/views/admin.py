@@ -109,13 +109,15 @@ def set_suffix(today):
 def manage_alert_templates():
     query_result = db_connect.db_connect_and_query('SELECT * FROM banners')
     form = BannerAdminForm(form=request.form)
-    pprint.pprint(query_result)
     if request.method == 'GET':
+        print('hello')
         return render_template('manage-alert-templates.html',
                                form=form,
                                alerts=query_result)
     else:
+        print('goodbye')
         selected_title = form.title.data
+        print(selected_title)
         selected_banner = form.banner.data
         return render_template('edit-alert-template.html',
                                form=form,

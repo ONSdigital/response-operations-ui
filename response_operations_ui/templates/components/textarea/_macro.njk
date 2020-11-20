@@ -19,6 +19,7 @@
             class="input input--textarea {% if params.error %} input--error {% endif %}{% if params.maxlength %} js-charlimit-input{% endif %}{{ textareaExlusiveClass }} {{ params.classes }}"
             name="{{ params.name }}"
             rows="{{ params.rows | default(8) }}"
+            cols="{{ params.cols }}"
             {% if params.maxlength %}
             maxlength="{{ params.maxlength }}"
             data-char-limit-ref="{{ params.id }}-lim-remaining"
