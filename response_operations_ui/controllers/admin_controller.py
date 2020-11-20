@@ -23,9 +23,8 @@ def set_banner_and_time(banner, time):
         r.set('AVAILABILITY_MESSAGE_TIME_SET', time)
         logger.debug("Setting availability message", banner=banner)
     except redis.RedisError:
-        logger.exception("Unable to update banner and time")
-        logger.exception('Ensure time parameter is correct structure if not '
-                         'default. e.g. strftime does not work on string')
+        logger.exception("Unable to update banner and time. Ensure time parameter is correct structure if not\
+                         default. e.g. strftime does not work on string")
 
 
 def remove_banner():
