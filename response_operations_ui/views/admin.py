@@ -1,6 +1,5 @@
 import logging
 from datetime import datetime
-
 from flask import Blueprint, render_template, request, url_for, redirect, session
 from flask_login import login_required, current_user
 from structlog import wrap_logger
@@ -50,12 +49,22 @@ def current_username():
 @admin_bp.route('/banner', methods=['POST'])
 @login_required
 def update_banner():
+    breadcrumbs = [{"text": "Banner Admin", "url": ""}]
+    dict_of_alerts = get_alert_list()
+    # refactor line
     logger.debug("Updating banner", user=current_username())
     form = BannerAdminForm(form=request.form)
     banner = form.banner.data
     logger.debug("Banner update", user=current_username(), banner=banner)
-    admin_controller.set_banner_and_time(form.banner.data)
-    return redirect(url_for("admin_bp.remove_alert"))
+    if banner:
+        admin_controller.set_banner_and_time(form.banner.data)
+        return redirect(url_for("admin_bp.remove_alert"))
+    else:
+        response_error = True
+    return render_template('banner-admin.html',
+                           form=form,
+                           list_of_alerts=dict_of_alerts,
+                           response_error=response_error)
 
 
 # Parser.parse allows the string returned from redis to be converted into a datetime object from string
@@ -92,7 +101,7 @@ def remove_alert():
     return redirect(url_for("admin_bp.banner_admin"))
 
 
-# Currently datetime.strftime does not support applying suffix's onto the date.
+# Currently datetime.strftime does not support applying suffix's onto the date. 
 # Reference: https://stackoverflow.com/questions/5891555/display-the-date-like-may-5th-using-pythons-strftime
 def set_suffix(today):
     if 4 <= today <= 20 or 24 <= today <= 30:
