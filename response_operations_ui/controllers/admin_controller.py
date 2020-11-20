@@ -1,5 +1,3 @@
-from datetime import datetime
-
 import redis
 import logging
 import json
@@ -18,7 +16,7 @@ def _get_redis():
     return r
 
 
-def set_banner_and_time(banner, time=datetime.now()):
+def set_banner_and_time(banner, time):
     try:
         r = _get_redis()
         r.set('AVAILABILITY_MESSAGE', banner)

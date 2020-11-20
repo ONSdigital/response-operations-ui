@@ -56,9 +56,9 @@ class TestAdmin(TestCase):
     def test_set_suffix_th(self):
         actual = admin.set_suffix(15)
         expected = 'th'
-        self.assertEquals(actual, expected)
+        self.assertEqual(actual, expected)
 
     def test_set_suffix_other(self):
         actual = admin.set_suffix(22)
         expected = 'nd'
-        self.assertEquals(actual, expected)
+        self.assertEqual(actual, expected)

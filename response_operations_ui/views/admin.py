@@ -1,9 +1,8 @@
 import logging
-import pprint
 from datetime import datetime
 
-import psycopg2
-from flask import Blueprint, render_template, request, url_for, redirect, session, jsonify
+
+from flask import Blueprint, render_template, request, url_for, redirect, flash
 from flask_login import login_required, current_user
 from structlog import wrap_logger
 from dateutil import parser
@@ -11,7 +10,6 @@ from dateutil import parser
 from response_operations_ui.controllers import admin_controller
 from response_operations_ui.controllers.admin_controller import get_alert_list
 from response_operations_ui.forms import BannerAdminForm
-from response_operations_ui.models import db_connect
 
 logger = wrap_logger(logging.getLogger(__name__))
 
@@ -31,15 +29,10 @@ def banner_admin():
     logger.debug("Banner page accessed", user=current_username())
     form = BannerAdminForm(form=request.form)
     dict_of_alerts = get_alert_list()
-    banner_removed = False
-    if 'banner_removed' in session:
-        session.pop('banner_removed')
-        banner_removed = True
     return render_template('banner-admin.html',
                            form=form,
                            list_of_alerts=dict_of_alerts,
                            breadcrumbs=breadcrumbs,
-                           banner_removed=banner_removed,
                            current_banner=current_banner)
 
 
@@ -53,12 +46,24 @@ def current_username():
 @admin_bp.route('/banner', methods=['POST'])
 @login_required
 def update_banner():
+    breadcrumbs = [{"text": "Banner Admin", "url": ""}]
+    dict_of_alerts = get_alert_list()
+    current_banner = admin_controller.current_banner()
     logger.debug("Updating banner", user=current_username())
     form = BannerAdminForm(form=request.form)
     banner = form.banner.data
     logger.debug("Banner update", user=current_username(), banner=banner)
-    admin_controller.set_banner_and_time(form.banner.data)
-    return redirect(url_for("admin_bp.remove_alert"))
+    if banner:
+        admin_controller.set_banner_and_time(form.banner.data, datetime.now())
+        return redirect(url_for("admin_bp.remove_alert"))
+    else:
+        response_error = True
+    return render_template('banner-admin.html',
+                           form=form,
+                           list_of_alerts=dict_of_alerts,
+                           breadcrumbs=breadcrumbs,
+                           current_banner=current_banner,
+                           response_error=response_error)
 
 
 # Parser.parse allows the string returned from redis to be converted into a datetime object from string
@@ -86,10 +91,9 @@ def view_and_remove_current_banner():
 def remove_alert():
     logger.debug("Updating banner", user=current_username())
     form = BannerAdminForm(form=request.form)
-    banner_removed = ''
     delete = form.delete.data
     if delete:
-        session['banner_removed'] = banner_removed
+        flash('The alert has been removed')
         logger.debug("Banner deleted", user=current_username())
         admin_controller.remove_banner()
     return redirect(url_for("admin_bp.banner_admin"))
@@ -103,25 +107,3 @@ def set_suffix(today):
     else:
         suffix = ["st", "nd", "rd"][today % 10 - 1]
     return suffix
-
-
-@admin_bp.route('/banner/manage', methods=['POST', 'GET'])
-def manage_alert_templates():
-    query_result = db_connect.db_connect_and_query('SELECT * FROM banners')
-    form = BannerAdminForm(form=request.form)
-    if request.method == 'GET':
-        print('hello')
-        return render_template('manage-alert-templates.html',
-                               form=form,
-                               alerts=query_result)
-    else:
-        print('goodbye')
-        selected_title = form.title.data
-        print(selected_title)
-        selected_banner = form.banner.data
-        return render_template('edit-alert-template.html',
-                               form=form,
-                               selected_title=selected_title,
-                               selected_banner=selected_banner)
-
-
