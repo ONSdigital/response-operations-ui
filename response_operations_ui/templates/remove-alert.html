@@ -1,0 +1,54 @@
+{% extends "layouts/base.html" %}
+{% from "components/checkboxes/_macro.njk" import onsCheckboxes %}
+{% from "components/button/_macro.njk" import onsButton %}
+{% from "components/fieldset/_macro.njk" import onsFieldset %}
+{% from "components/input/_macro.njk" import onsInput %}
+{% from "components/lists/_macro.njk" import onsList %}
+{% from "components/field/_macro.njk" import onsField %}
+{% from "components/textarea/_macro.njk" import onsTextarea %}
+{% from "components/select/_macro.njk" import onsSelect %}
+
+{% set page_title = 'Banner Admin'  %}
+{% block main %}
+{% if updated_removed_alert_message %}
+{{      
+  onsPanel({
+      "type": "success",
+      "classes": "u-mb-s",
+      "id": "updated_removed_alert_message",
+      "body": "The alert has been removed"
+  })
+}}
+{% endif %}
+    <div class="grid grid--gutterless">
+        <div class="grid__col col-8@m">
+            <h1 class="u-fs-xl u-mt-m">Alert Banner</h1>
+            <form action="" method="POST">
+                <h2>Banner Published</h2>
+                <p>The following alert was published on <b>{{ time_banner_set }}</b></p>
+                {{
+                    onsPanel({
+                        "label": {
+                            "text": "Message" 
+                        },
+                        "body": current_banner,
+                        "title": "Current Banner",
+                        "classes": "u-mb-l"    
+                    })
+                
+                }}
+                {{
+                    onsButton({
+                        "id": "remove-btn",
+                        "classes": "u-mb-s u-mt-l",
+                        "text": "Remove alert",
+                        "name": "delete",
+                        "value": "banner_removed"
+                    })
+                }}
+                
+             </form>
+            
+        </div>
+    </div>
+{% endblock %}
