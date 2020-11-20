@@ -1,6 +1,8 @@
 import logging
 from datetime import datetime
-from flask import Blueprint, render_template, request, url_for, redirect, session
+
+
+from flask import Blueprint, render_template, request, url_for, redirect, flash
 from flask_login import login_required, current_user
 from structlog import wrap_logger
 from dateutil import parser
@@ -27,15 +29,10 @@ def banner_admin():
     logger.debug("Banner page accessed", user=current_username())
     form = BannerAdminForm(form=request.form)
     dict_of_alerts = get_alert_list()
-    banner_removed = False
-    if 'banner_removed' in session:
-        session.pop('banner_removed')
-        banner_removed = True
     return render_template('banner-admin.html',
                            form=form,
                            list_of_alerts=dict_of_alerts,
                            breadcrumbs=breadcrumbs,
-                           banner_removed=banner_removed,
                            current_banner=current_banner)
 
 
@@ -51,19 +48,21 @@ def current_username():
 def update_banner():
     breadcrumbs = [{"text": "Banner Admin", "url": ""}]
     dict_of_alerts = get_alert_list()
-    # refactor line
+    current_banner = admin_controller.current_banner()
     logger.debug("Updating banner", user=current_username())
     form = BannerAdminForm(form=request.form)
     banner = form.banner.data
     logger.debug("Banner update", user=current_username(), banner=banner)
     if banner:
-        admin_controller.set_banner_and_time(form.banner.data)
+        admin_controller.set_banner_and_time(form.banner.data, datetime.now())
         return redirect(url_for("admin_bp.remove_alert"))
     else:
         response_error = True
     return render_template('banner-admin.html',
                            form=form,
                            list_of_alerts=dict_of_alerts,
+                           breadcrumbs=breadcrumbs,
+                           current_banner=current_banner,
                            response_error=response_error)
 
 
@@ -92,10 +91,9 @@ def view_and_remove_current_banner():
 def remove_alert():
     logger.debug("Updating banner", user=current_username())
     form = BannerAdminForm(form=request.form)
-    banner_removed = ''
     delete = form.delete.data
     if delete:
-        session['banner_removed'] = banner_removed
+        flash('The alert has been removed')
         logger.debug("Banner deleted", user=current_username())
         admin_controller.remove_banner()
     return redirect(url_for("admin_bp.banner_admin"))

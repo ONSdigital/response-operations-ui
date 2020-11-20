@@ -16,11 +16,11 @@ class TestAdminController(unittest.TestCase):
         admin_controller._get_redis = get_fake_redis
 
     def test_set_banner(self):
-        admin_controller.set_banner_and_time('test')
+        admin_controller.set_banner_and_time('test', datetime.now())
         self.assertEqual("test", admin_controller.current_banner())
 
     def test_remove_banner(self):
-        admin_controller.set_banner_and_time("test")
+        admin_controller.set_banner_and_time("test", datetime.now())
         admin_controller.remove_banner()
         self.assertIsNone(admin_controller.current_banner())
 
