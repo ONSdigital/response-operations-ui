@@ -28,6 +28,7 @@ def banner_admin():
     current_banner = admin_controller.current_banner()
     logger.debug("Banner page accessed", user=current_username())
     form = BannerAdminForm(form=request.form)
+    print(form.delete)
     dict_of_alerts = get_alert_list()
     return render_template('banner-admin.html',
                            form=form,
@@ -73,12 +74,14 @@ def view_and_remove_current_banner():
     breadcrumbs = [{"text": "Banner Admin", "url": "/admin/banner"},
                    {"text": "Setting Banner", "url": ""}]
     logger.debug("Deleting alert", user=current_username())
+    form = BannerAdminForm(form=request.form)
     current_banner = admin_controller.current_banner()
     time_banner_set = admin_controller.banner_time_get()
     time_banner_set = parser.parse(time_banner_set)\
         .strftime('%d' + set_suffix(datetime.today().day) + ' %B ' + '%Y ' + 'at %H' + ':%M')
     if current_banner:
         return render_template('remove-alert.html',
+                               form=form,
                                current_banner=current_banner,
                                breadcrumbs=breadcrumbs,
                                time_banner_set=time_banner_set)
