@@ -28,7 +28,6 @@ def banner_admin():
     current_banner = admin_controller.current_banner()
     logger.debug("Banner page accessed", user=current_username())
     form = BannerAdminForm(form=request.form)
-    print(form.delete)
     dict_of_alerts = get_alert_list()
     return render_template('banner-admin.html',
                            form=form,
