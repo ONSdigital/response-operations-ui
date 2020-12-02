@@ -4,11 +4,6 @@ publicIP: false
 
 sendEmailToGovNotify: false
 
-replicas: 1
-rollingUpdate:
-  maxSurge: 1
-  maxUnavailable: 1
-
 admin:
   createAccountPassword: password
   createccountEmailExpiry: "3628800"
@@ -36,7 +31,21 @@ service:
 
 resources:
   requests:
-    memory: "256Mi"
+    memory: "125Mi"
+    cpu: "50m"
+  limits:
+    cpu: "200m"
+    memory: "500Mi"
+
+autoscaling: false
+scaleAt:
+  # These are expressed as a percentage of resources.requests, not resources.limits
+  memoryPercentage: 200
+  cpuPercentage: 200
+replicas: 1
+rollingUpdate:
+  maxSurge: 1
+  maxUnavailable: 1
 
 ingress:
   enabled: false
