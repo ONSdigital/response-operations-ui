@@ -1,17 +1,20 @@
 import redis
 import logging
 import json
+import requests
 
-from flask import current_app
+from flask import current_app as app
 from structlog import wrap_logger
+
+from response_operations_ui.exceptions.exceptions import ApiError
 
 logger = wrap_logger(logging.getLogger(__name__))
 
 
 def _get_redis():
-    r = redis.Redis(host=current_app.config['REDIS_HOST'],
-                    port=current_app.config['REDIS_PORT'],
-                    db=current_app.config['REDIS_DB'],
+    r = redis.Redis(host=app.config['REDIS_HOST'],
+                    port=app.config['REDIS_PORT'],
+                    db=app.config['REDIS_DB'],
                     decode_responses=True)
     return r
 
@@ -66,3 +69,22 @@ def get_alert_list():
     for i in alert_list:
         my_dict.update(i)
     return my_dict
+
+
+def get_all_banners():
+    logger.info('Attempting to retrieve banners from Datastore')
+    url = f"{app.config['BANNER_API_HOST']}:{app.config['BANNER_API_PORT']}/banner"
+    response = requests.get(url)
+    try:
+        response.raise_for_status()
+    except requests.exceptions.HTTPError:
+        logger.error('Failed to retrieve Banners from Datastore')
+        raise ApiError(response)
+
+    logger.info('Successfully retrieved banners from Datastore')
+    banners = response.json()
+    print(banners)
+    # if collection_exercise['events']:
+    #     collection_exercise['events'] = convert_events_to_new_format(collection_exercise['events'])
+
+    return banners
