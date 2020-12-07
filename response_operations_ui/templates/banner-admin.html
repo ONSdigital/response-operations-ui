@@ -106,11 +106,11 @@
                                 "selected": true
                             }
                         ] %}
-                        {% for alert, message in list_of_alerts.items() %}
+                        {% for banner in list_of_alerts %}
                             {% do alerts.append (
                                 {
-                                    "text": alert,
-                                    "value": message
+                                    "text":  banner['title'],
+                                    "value": banner['value']
                                 }
                             ) %}
                         {% endfor %}
@@ -127,6 +127,9 @@
                                 "classes": "hidden"
                             })
                         }}
+                        <p></p>
+                        <a href="#"> Manage message templates</a>
+                        <p></p>
                         {{ 
                             onsTextarea({
                                 "id": "banner-text",

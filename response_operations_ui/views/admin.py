@@ -1,6 +1,6 @@
 import logging
+import pprint
 from datetime import datetime
-
 
 from flask import Blueprint, render_template, request, url_for, redirect, flash
 from flask_login import login_required, current_user
@@ -8,7 +8,7 @@ from structlog import wrap_logger
 from dateutil import parser
 
 from response_operations_ui.controllers import admin_controller
-from response_operations_ui.controllers.admin_controller import get_alert_list
+from response_operations_ui.controllers.admin_controller import get_a_banner, get_all_banners
 from response_operations_ui.forms import BannerAdminForm
 
 logger = wrap_logger(logging.getLogger(__name__))
@@ -28,7 +28,7 @@ def banner_admin():
     current_banner = admin_controller.current_banner()
     logger.debug("Banner page accessed", user=current_username())
     form = BannerAdminForm(form=request.form)
-    dict_of_alerts = get_alert_list()
+    dict_of_alerts = get_all_banners()
     return render_template('banner-admin.html',
                            form=form,
                            list_of_alerts=dict_of_alerts,
