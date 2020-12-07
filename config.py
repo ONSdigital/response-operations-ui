@@ -22,8 +22,8 @@ class Config(object):
     REDIS_DB = os.getenv('REDIS_DB', 0)
     SECURE_COOKIES = strtobool(os.getenv('SECURE_COOKIES', 'True'))
     USE_SESSION_FOR_NEXT = True  # Used by flask-login
-    RAS_RM_BANNER_SERVICE_HOST = os.getenv('RAS_RM_BANNER_SERVICE_HOST')
-    RAS_RM_BANNER_SERVICE_PORT = os.getenv('RAS_RM_BANNER_SERVICE_PORT')
+    # RAS_RM_BANNER_SERVICE_HOST = os.getenv('RAS_RM_BANNER_SERVICE_HOST')
+    # RAS_RM_BANNER_SERVICE_PORT = os.getenv('RAS_RM_BANNER_SERVICE_PORT')
     
     SECURITY_USER_NAME = os.getenv('SECURITY_USER_NAME')
     SECURITY_USER_PASSWORD = os.getenv('SECURITY_USER_PASSWORD')

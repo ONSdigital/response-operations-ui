@@ -20,7 +20,7 @@
                 } %}
 
                 {% set radios = [] %}                
-                {% for alert, message in alerts.items() %}
+                {% for alert, message in list_of_alerts.items() %}
                     {% do radios.append(
                         {
                             "id": 'alert-' ~ loop.index,

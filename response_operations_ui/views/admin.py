@@ -79,7 +79,7 @@ def view_and_remove_current_banner():
     time_banner_set = parser.parse(time_banner_set)\
         .strftime('%d' + set_suffix(datetime.today().day) + ' %B ' + '%Y ' + 'at %H' + ':%M')
     if current_banner:
-        return render_template('remove-alert.html',
+        return render_template('admin-remove-alert.html',
                                form=form,
                                current_banner=current_banner,
                                breadcrumbs=breadcrumbs,
@@ -91,7 +91,7 @@ def view_and_remove_current_banner():
 @admin_bp.route('/banner/remove', methods=['POST'])
 @login_required
 def remove_alert():
-    logger.debug("Updating banner", user=current_username())
+    logger.debug("Removing banner", user=current_username())
     form = BannerAdminForm(form=request.form)
     delete = form.delete.data
     if delete:
@@ -99,6 +99,29 @@ def remove_alert():
         logger.debug("Banner deleted", user=current_username())
         admin_controller.remove_banner()
     return redirect(url_for("admin_bp.banner_admin"))
+
+@admin_bp.route('/banner/edit', methods=['GET'])
+@login_required
+def edit_alert():
+    logger.debug("Editing banner", user=current_username())
+    form = BannerAdminForm(form=request.form)
+    return render_template('admin-edit.html',form=form)
+
+
+@admin_bp.route('/banner/manage', methods=['GET'])
+@login_required
+def manage_alert():
+    logger.debug("Managing banner", user=current_username())
+    form = BannerAdminForm(form=request.form)
+    return render_template('admin-manage.html',form=form)
+
+@admin_bp.route('/banner/create', methods=['GET'])
+@login_required
+def create_template():
+    logger.debug("Creating template", user=current_username())
+    form = BannerAdminForm(form=request.form)
+    return render_template('admin-create-template.html',form=form)
+
 
 
 # Currently datetime.strftime does not support applying suffix's onto the date.

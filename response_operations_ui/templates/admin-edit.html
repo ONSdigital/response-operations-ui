@@ -1,6 +1,7 @@
 {% extends "layouts/base.html" %}
 {% from "components/checkboxes/_macro.njk" import onsCheckboxes %}
 {% from "components/button/_macro.njk" import onsButton %}
+{% from "components/fieldset/_macro.njk" import onsFieldset %}
 {% from "components/input/_macro.njk" import onsInput %}
 {% from "components/lists/_macro.njk" import onsList %}
 {% from "components/textarea/_macro.njk" import onsTextarea %}
@@ -47,7 +48,7 @@
                             "name": "banner",
                             "type": "text",
                             "label": {
-                                "text": 'Set new banner'
+                                "text": 'Message template title'
                             }
                         })
                     }}
@@ -75,24 +76,36 @@
                                     "id": "delete-banner",
                                     "name": "delete",
                                     "label": {
-                                        "text": "Yes"
+                                        "text": "Delete template"
                                     },
                                     "value": "y"
                                 }
                             ]
                         })
                     }}
-                    {{
-                        onsButton({
-                            "classes": "u-mb-s u-mt-l",
-                            "text": "Publish",
-                            "id": "save-btn"git"
-                        })
-                    }}
+                    {%- call onsFieldset({
+                        "legend": "Edit a banner",
+                        "legendClasses": "u-vh",
+                        "classes": "u-mt-m"
+                        }) -%}
+                        {{
+                            onsButton({
+                                "dontWrap": false,
+                                "classes": "btn-group__btn",
+                                "text": "Done",
+                                "id": "save-btn"
+                            })
+                        }} 
+                        {{
+                            onsButton({
+                                "dontWrap": false,
+                                "classes": "btn--secondary btn-group__btn",
+                                "text": "Cancel",
+                                "url": url_for('surveys_bp.view_surveys')
+                            })
+                        }}
+                    {% endcall %}
              </form>
-            <p>
-                <a id="cancel-btn" href="{{ url_for('surveys_bp.view_surveys') }}">Cancel</a>
-            </p>
         </div>
     </div>
 {% endblock %}
