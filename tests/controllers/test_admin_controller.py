@@ -29,10 +29,10 @@ class TestAdminController(unittest.TestCase):
         admin_controller.set_banner_and_time("test", test_time)
         self.assertEqual(str(test_time), admin_controller.banner_time_get())
 
-    # Placeholder test pending implementation of banner message storage:
-    def test_get_alert_list(self):
-        test_dict = admin_controller.get_alert_list()
-        self.assertIn("Unexpected outage", test_dict.keys())
-        self.assertIn("The Quarterly Vacancy Survey is unavailable until Tuesday 7 July 2020,"
-                      " as we are currently experiencing some technical difficulties.",
-                      test_dict.values())
+    # Change this to mock DB and call that instead of JSON file
+    # def test_get_alert_list(self):
+    #     test_dict = admin_controller.get_alert_list()
+    #     self.assertIn("Unexpected outage", test_dict.keys())
+    #     self.assertIn("The Quarterly Vacancy Survey is unavailable until Tuesday 7 July 2020,"
+    #                   " as we are currently experiencing some technical difficulties.",
+    #                   test_dict.values())

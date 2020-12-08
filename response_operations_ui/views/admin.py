@@ -1,5 +1,4 @@
 import logging
-import pprint
 from datetime import datetime
 
 from flask import Blueprint, render_template, request, url_for, redirect, flash
@@ -8,7 +7,7 @@ from structlog import wrap_logger
 from dateutil import parser
 
 from response_operations_ui.controllers import admin_controller
-from response_operations_ui.controllers.admin_controller import get_a_banner, get_all_banners, create_new_banner, Banner
+from response_operations_ui.controllers.admin_controller import get_all_banners, create_new_banner, Banner
 from response_operations_ui.forms import BannerAdminForm
 
 logger = wrap_logger(logging.getLogger(__name__))
@@ -107,7 +106,7 @@ def remove_alert():
 def manage_alert():
     logger.debug("Managing banner", user=current_username())
     form = BannerAdminForm(form=request.form)
-    title = form.title.data
+    # title = form.title.data
     list_of_alerts = get_all_banners()
     return render_template('admin-manage.html',
                            form=form,
@@ -121,7 +120,7 @@ def manage_alert_to_edit():
     form = BannerAdminForm(form=request.form)
     title = form.title.data
     banner = form.banner.data
-    banner_editing = get_a_banner(title)
+    # banner_editing = get_a_banner(title)
     return render_template('admin-edit.html',
                            form=form,
                            title=title,
