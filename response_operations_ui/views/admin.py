@@ -8,7 +8,7 @@ from structlog import wrap_logger
 from dateutil import parser
 
 from response_operations_ui.controllers import admin_controller
-from response_operations_ui.controllers.admin_controller import get_a_banner, get_all_banners
+from response_operations_ui.controllers.admin_controller import get_a_banner, get_all_banners, create_new_banner, Banner
 from response_operations_ui.forms import BannerAdminForm
 
 logger = wrap_logger(logging.getLogger(__name__))
@@ -19,6 +19,7 @@ INFO_MESSAGES = {
     'survey_changed': "Survey details changed",
     'instrument_linked': "Collection exercise linked to survey successfully"
 }
+title_to_edit = ""
 
 
 @admin_bp.route('/banner', methods=['GET'])
@@ -101,28 +102,85 @@ def remove_alert():
     return redirect(url_for("admin_bp.banner_admin"))
 
 
-@admin_bp.route('/banner/edit', methods=['GET'])
-@login_required
-def edit_alert():
-    logger.debug("Editing banner", user=current_username())
-    form = BannerAdminForm(form=request.form)
-    return render_template('admin-edit.html', form=form)
-
-
 @admin_bp.route('/banner/manage', methods=['GET'])
 @login_required
 def manage_alert():
     logger.debug("Managing banner", user=current_username())
     form = BannerAdminForm(form=request.form)
-    return render_template('admin-manage.html', form=form)
+    title = form.title.data
+    list_of_alerts = get_all_banners()
+    return render_template('admin-manage.html',
+                           form=form,
+                           list_of_alerts=list_of_alerts)
 
 
+@admin_bp.route('/banner/manage', methods=['POST'])
+@login_required
+def manage_alert_to_edit():
+    logger.debug("Managing banner", user=current_username())
+    form = BannerAdminForm(form=request.form)
+    title = form.title.data
+    banner = form.banner.data
+    banner_editing = get_a_banner(title)
+    return render_template('admin-edit.html',
+                           form=form,
+                           title=title,
+                           banner=banner)
+
+
+@admin_bp.route('/banner/edit', methods=['GET'])
+@login_required
+def edit_the_chosen_banner():
+    logger.debug("Editing banner", user=current_username())
+    form = BannerAdminForm(form=request.form)
+    title = form.title.data
+    banner = form.banner.data
+    return render_template('admin-edit.html',
+                           form=form,
+                           banner=banner,
+                           title=title)
+
+
+@admin_bp.route('/banner/edit', methods=['POST'])
+@login_required
+def save_edited_banner_in_datastore():
+    logger.debug("Editing banner", user=current_username())
+    form = BannerAdminForm(form=request.form)
+    banner = form.banner.data
+    title = form.title.data
+    new_banner = Banner(title, banner, False)
+    new_banner = new_banner.to_json()
+    try:
+        create_new_banner(new_banner)
+        return redirect(url_for("admin_bp.banner_admin"))
+    except ValueError:
+        logger.info("Failed to update banner")
+
+
+# Loads manage page
 @admin_bp.route('/banner/create', methods=['GET'])
 @login_required
-def create_template():
+def create_a_new_banner():
     logger.debug("Creating template", user=current_username())
     form = BannerAdminForm(form=request.form)
-    return render_template('admin-create-template.html', form=form)
+    return render_template('admin-create-template.html',
+                           form=form)
+
+
+@admin_bp.route('/banner/create', methods=['POST'])
+@login_required
+def put_new_banner_in_datastore():
+    logger.debug("Creating template", user=current_username())
+    form = BannerAdminForm(form=request.form)
+    title = form.title.data
+    banner = form.banner.data
+    new_banner = Banner(title, banner, False)
+    new_banner = new_banner.to_json()
+    try:
+        create_new_banner(new_banner)
+        return redirect(url_for("admin_bp.banner_admin"))
+    except ValueError:
+        raise ValueError
 
 
 # Currently datetime.strftime does not support applying suffix's onto the date.

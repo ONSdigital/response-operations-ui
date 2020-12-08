@@ -1,5 +1,3 @@
-import pprint
-
 import redis
 import logging
 import json
@@ -11,6 +9,17 @@ from structlog import wrap_logger
 from response_operations_ui.exceptions.exceptions import ApiError
 
 logger = wrap_logger(logging.getLogger(__name__))
+
+
+class Banner:
+    def __init__(self, title, value, banner_active):
+        self.title = title
+        self.value = value
+        self.banner_active = banner_active
+
+    def to_json(self):
+        return json.dumps(self, default=lambda o: o.__dict__,
+                          sort_keys=True, indent=4)
 
 
 def _get_redis():
@@ -61,26 +70,9 @@ def banner_time_get():
         logger.exception("Unable to retrieve current banners")
 
 
-'''
-Unused code
-'''
-
-
-# def get_alert_list():
-#     my_dict = {}
-#     try:
-#         with open('response_operations_ui/templates/banner-admin-json.json', 'r') as f:
-#             alert_list = json.load(f)
-#     except (OSError, IOError) as e:
-#         logger.exception(e, 'error opening JSON file containing the alert templates')
-#     for i in alert_list:
-#         my_dict.update(i)
-#     return my_dict
-
-
 def get_all_banners():
     logger.info('Attempting to retrieve banners from Datastore')
-    url = f"{app.config['RAS_RM_BANNER_SERVICE_URL']}/banner"
+    url = f"{app.config['BANNER_SERVICE_URL']}/banner"
     response = requests.get(url)
     try:
         response.raise_for_status()
@@ -97,8 +89,8 @@ def get_all_banners():
 
 def get_a_banner(banner):
     logger.info('Attempting to retrieve banners from Datastore')
-    url = f"{app.config['RAS_RM_BANNER_SERVICE_URL']}/banner/{banner}"
-    response = requests.get(url)
+    url = f"{app.config['BANNER_SERVICE_URL']}/banner"
+    response = requests.get(url, banner)
     try:
         response.raise_for_status()
     except requests.exceptions.HTTPError:
@@ -107,40 +99,34 @@ def get_a_banner(banner):
 
     logger.info('Successfully retrieved banners from Datastore')
     banner = response.json()
-    # if collection_exercise['events']:
-    #     collection_exercise['events'] = convert_events_to_new_format(collection_exercise['events'])
     return banner
 
 
-def create_new_banner(banner):
-    logger.info('Attempting to retrieve banners from Datastore')
-    url = f"{app.config['RAS_RM_BANNER_SERVICE_URL']}/banner/{banner}"
-    response = requests.get(url)
+def create_new_banner(banner: Banner):
+    logger.info('Attempting to store a banner banner in Datastore')
+    url = f"{app.config['BANNER_SERVICE_URL']}/banner"
+    response = requests.post(url, banner)
     try:
         response.raise_for_status()
     except requests.exceptions.HTTPError:
-        logger.error('Failed to retrieve Banners from Datastore')
+        logger.error('Failed to store the Banner into Datastore')
         raise ApiError(response)
 
-    logger.info('Successfully retrieved banners from Datastore')
+    logger.info('Successfully stored the new Banner into Datastore')
     banner = response.json()
-    # if collection_exercise['events']:
-    #     collection_exercise['events'] = convert_events_to_new_format(collection_exercise['events'])
     return banner
 
 
-def delete_a_banner(banner):
-    logger.info('Attempting to retrieve banners from Datastore')
-    url = f"{app.config['RAS_RM_BANNER_SERVICE_URL']}/banner/{banner}"
-    response = requests.get(url)
+def delete_a_banner(banner_title):
+    logger.info('Attempting to delete banner from Datastore')
+    url = f"{app.config['BANNER_SERVICE_URL']}/banner"
+    response = requests.delete(url, banner_title)
     try:
         response.raise_for_status()
     except requests.exceptions.HTTPError:
-        logger.error('Failed to retrieve Banners from Datastore')
+        logger.error('Failed to delete Banners from Datastore')
         raise ApiError(response)
 
-    logger.info('Successfully retrieved banners from Datastore')
+    logger.info('Successfully deleted banners from Datastore')
     banner = response.json()
-    # if collection_exercise['events']:
-    #     collection_exercise['events'] = convert_events_to_new_format(collection_exercise['events'])
     return banner

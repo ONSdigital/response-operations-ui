@@ -92,6 +92,12 @@ spec:
             {{- else }}
             value: "http://$(COLLECTION_INSTRUMENT_SERVICE_HOST):$(COLLECTION_INSTRUMENT_SERVICE_PORT)"
             {{- end }}
+          - name: BANNER_SERVICE_URL
+            {{- if .Values.dns.enabled }}
+            value: "http://banner-api.{{ .Values.namespace }}.svc.cluster.local:{{ .Values.dns.wellKnownPort }}"
+            {{- else }}
+            value: "http://$(BANNER_API_SERVICE_HOST):$(BANNER_API_SERVICE_PORT)"
+            {{- end }}
           - name: CREATE_ACCOUNT_ADMIN_PASSWORD
             value: "{{ .Values.admin.createAccountPassword }}"
           - name: CREATE_ACCOUNT_EMAIL_TOKEN_EXPIRY

@@ -5,7 +5,6 @@
 {% from "components/lists/_macro.njk" import onsList %}
 {% from "components/field/_macro.njk" import onsField %}
 {% from "components/textarea/_macro.njk" import onsTextarea %}
-{% from "components/select/_macro.njk" import onsSelect %}
 
 {% set page_title = 'Create message template'  %}
 {% block main %}
@@ -55,18 +54,10 @@
                                 "selected": true
                             }
                         ] %}
-                        <!-- {% for alert, message in list_of_alerts.items() %} -->
-                            {% do alerts.append (
-                                {
-                                    "text": alert,
-                                    "value": message
-                                }
-                            ) %}
-                        <!-- {% endfor %} -->
                         {{
                             onsInput({
                                 "id": "banner",
-                                "name": "banner",
+                                "name": "title",
                                 "type": "text",
                                 "label": {
                                     "text": 'Message template title'
@@ -84,13 +75,7 @@
                                 "error": error if response_error
                             })
                         }}
-                        <script{% if csp_nonce %} nonce="{{ csp_nonce() }}"{% endif %}>
-                            document.getElementById("alert-list").classList.remove("hidden");
-                            document.getElementById("alert-list-label").classList.remove("hidden");
-                            document.getElementById("alert-list").addEventListener('change', function(event) {
-                                document.getElementById("banner-text").value = event.target.value
-                            });
-                        </script>
+
                     {% endcall %}
                     {%- call onsFieldset({
                         "legend": "Create a new banner",
