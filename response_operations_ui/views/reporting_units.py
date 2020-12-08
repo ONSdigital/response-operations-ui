@@ -13,7 +13,6 @@ from response_operations_ui.controllers import case_controller, iac_controller, 
     reporting_units_controllers
 from response_operations_ui.controllers.collection_exercise_controllers import \
     get_case_group_status_by_collection_exercise, get_collection_exercise_by_id
-from response_operations_ui.controllers.party_controller import get_respondent_by_party_id
 from response_operations_ui.controllers.survey_controllers import get_survey_by_id
 from response_operations_ui.forms import EditContactDetailsForm, RuSearchForm
 
@@ -41,7 +40,7 @@ def view_reporting_unit(ru_ref):
     now = datetime.now(timezone.utc)
     live_collection_exercises = [add_collection_exercise_details(ce, reporting_unit, case_groups)
                                  for ce in collection_exercises
-                                 if parse_date(ce['scheduledStartDateTime']) < now]
+                                 if is_exercise_live(ce, now)]
 
     # Get all related surveys for gathered collection exercises
     survey_ids = {collection_exercise['surveyId'] for collection_exercise in live_collection_exercises}
@@ -98,6 +97,22 @@ def view_reporting_unit(ru_ref):
                            surveys=surveys_with_latest_case, breadcrumbs=breadcrumbs)
 
 
+def is_exercise_live(exercise, timestamp):
+    """
+    Tests if the timestamp is between the scheduledStartDateTime and scheduledEndDateTime
+    in the collection exercise.
+
+    :param exercise: A dict representing a collection exercise
+    :type exercise: dict
+    :param timestamp: A datetime object representing a time
+    :type timestamp: datetime
+    :return: True if the timestamp is between those two dates, false otherwise
+    """
+    has_exercise_started = parse_date(exercise['scheduledStartDateTime']) < timestamp
+    has_exercise_finished = parse_date(exercise['scheduledEndDateTime']) < timestamp
+    return has_exercise_started and not has_exercise_finished
+
+
 def add_collection_exercise_details(collection_exercise, reporting_unit, case_groups):
     """
     Creates a dict of formatted data.
@@ -146,7 +161,7 @@ def get_latest_case_with_ce(cases, collection_exercises):
                         for case in cases
                         if case.get('caseGroup', {}).get('collectionExerciseId') in ces_ids]
     cases_for_survey_ordered = sorted(cases_for_survey, key=lambda c: c['createdDateTime'], reverse=True)
-    case = next((case for case in cases_for_survey_ordered), None)
+    case = next(iter(cases_for_survey_ordered), None)
     case['activeIAC'] = iac_controller.is_iac_active(case['iac'])
     return case
 
@@ -296,7 +311,7 @@ def confirm_change_enrolment_status(ru_ref):
 @reporting_unit_bp.route('/<ru_ref>/change-respondent-status', methods=['GET'])
 @login_required
 def confirm_change_respondent_status(ru_ref):
-    respondent = get_respondent_by_party_id(request.args['party_id'])
+    respondent = party_controller.get_respondent_by_party_id(request.args['party_id'])
     return render_template('confirm-respondent-status-change.html',
                            ru_ref=ru_ref,
                            respondent_id=respondent['id'],
