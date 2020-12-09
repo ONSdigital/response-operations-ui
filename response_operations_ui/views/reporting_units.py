@@ -145,7 +145,7 @@ def get_latest_case_with_ce(cases, collection_exercises):
                         for case in cases
                         if case.get('caseGroup', {}).get('collectionExerciseId') in ces_ids]
     cases_for_survey_ordered = sorted(cases_for_survey, key=lambda c: c['createdDateTime'], reverse=True)
-    case = next(iter(cases_for_survey_ordered), None)
+    case = next((case for case in cases_for_survey_ordered), None)
     case['activeIAC'] = iac_controller.is_iac_active(case['iac'])
     return case
 
