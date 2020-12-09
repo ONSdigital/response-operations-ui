@@ -1,13 +1,13 @@
 import logging
 from datetime import datetime
-
+from flask import current_app as app
 from flask import Blueprint, render_template, request, url_for, redirect, flash
 from flask_login import login_required, current_user
 from structlog import wrap_logger
 from dateutil import parser
 
 from response_operations_ui.controllers import admin_controller
-from response_operations_ui.controllers.admin_controller import get_all_banners, create_new_banner, Banner
+from response_operations_ui.controllers.admin_controller import get_all_banners, create_new_banner, Banner, get_a_banner
 from response_operations_ui.forms import BannerAdminForm
 
 logger = wrap_logger(logging.getLogger(__name__))
@@ -106,28 +106,27 @@ def remove_alert():
 def manage_alert():
     logger.debug("Managing banner", user=current_username())
     form = BannerAdminForm(form=request.form)
-    # title = form.title.data
     list_of_alerts = get_all_banners()
     return render_template('admin-manage.html',
                            form=form,
                            list_of_alerts=list_of_alerts)
 
 
+# Nothing is being posted to this endpoint. I believe its something to do with the Radio buttons and setting
+# the "name" variable to "title" at the wrong point in admin-manage.html
 @admin_bp.route('/banner/manage', methods=['POST'])
 @login_required
 def manage_alert_to_edit():
     logger.debug("Managing banner", user=current_username())
     form = BannerAdminForm(form=request.form)
     title = form.title.data
-    banner = form.banner.data
-    # banner_editing = get_a_banner(title)
+    banner_to_edit = get_a_banner(title)
     return render_template('admin-edit.html',
                            form=form,
-                           title=title,
-                           banner=banner)
+                           banner_to_edit=banner_to_edit)
 
 
-@admin_bp.route('/banner/edit', methods=['GET'])
+@admin_bp.route('/banner/edit', methods=['POST'])
 @login_required
 def edit_the_chosen_banner():
     logger.debug("Editing banner", user=current_username())
@@ -138,22 +137,6 @@ def edit_the_chosen_banner():
                            form=form,
                            banner=banner,
                            title=title)
-
-
-@admin_bp.route('/banner/edit', methods=['POST'])
-@login_required
-def save_edited_banner_in_datastore():
-    logger.debug("Editing banner", user=current_username())
-    form = BannerAdminForm(form=request.form)
-    banner = form.banner.data
-    title = form.title.data
-    new_banner = Banner(title, banner, False)
-    new_banner = new_banner.to_json()
-    try:
-        create_new_banner(new_banner)
-        return redirect(url_for("admin_bp.banner_admin"))
-    except ValueError:
-        logger.info("Failed to update banner")
 
 
 # Loads manage page

@@ -23,11 +23,12 @@
                 {% for message in list_of_alerts %}
                     {% do radios.append(
                         {
-                            "id": 'message-' ~ loop.index,
+                            "id": 'banner-title',
                             "name": "title",
                             "label": {
                                 "text": message['title']
-                            }
+                            },
+                            "value": message['title']
                         }
                     ) %}
                 {% endfor %}
@@ -36,9 +37,8 @@
             
                 {{
                     onsRadios(radioComponent)
-                }}
-              
-              
+                }} 
+
                 {%- call onsFieldset({
                     "legend": "Edit a banner",
                     "legendClasses": "u-vh",

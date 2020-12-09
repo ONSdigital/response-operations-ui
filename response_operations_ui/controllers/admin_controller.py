@@ -82,8 +82,6 @@ def get_all_banners():
 
     logger.info('Successfully retrieved banners from Datastore')
     list_of_banners = response.json()
-    # if collection_exercise['events']:
-    #     collection_exercise['events'] = convert_events_to_new_format(collection_exercise['events'])
     return list_of_banners
 
 
@@ -130,3 +128,5 @@ def delete_a_banner(banner_title):
     logger.info('Successfully deleted banners from Datastore')
     banner = response.json()
     return banner
+
+
