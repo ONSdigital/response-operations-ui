@@ -40,7 +40,7 @@ def view_reporting_unit(ru_ref):
     now = datetime.now(timezone.utc)
     live_collection_exercises = [add_collection_exercise_details(ce, reporting_unit, case_groups)
                                  for ce in collection_exercises
-                                 if is_exercise_live(ce, now)]
+                                 if parse_date(ce['scheduledStartDateTime']) < now]
 
     # Get all related surveys for gathered collection exercises
     survey_ids = {collection_exercise['surveyId'] for collection_exercise in live_collection_exercises}
@@ -95,22 +95,6 @@ def view_reporting_unit(ru_ref):
     logger.info("Successfully gathered data to view reporting unit", ru_ref=ru_ref)
     return render_template('reporting-unit.html', ru_ref=ru_ref, ru=reporting_unit,
                            surveys=surveys_with_latest_case, breadcrumbs=breadcrumbs)
-
-
-def is_exercise_live(exercise, timestamp):
-    """
-    Tests if the timestamp is between the scheduledStartDateTime and scheduledEndDateTime
-    in the collection exercise.
-
-    :param exercise: A dict representing a collection exercise
-    :type exercise: dict
-    :param timestamp: A datetime object representing a time
-    :type timestamp: datetime
-    :return: True if the timestamp is between those two dates, false otherwise
-    """
-    has_exercise_started = parse_date(exercise['scheduledStartDateTime']) < timestamp
-    has_exercise_finished = parse_date(exercise['scheduledEndDateTime']) < timestamp
-    return has_exercise_started and not has_exercise_finished
 
 
 def add_collection_exercise_details(collection_exercise, reporting_unit, case_groups):
