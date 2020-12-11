@@ -13,7 +13,6 @@ from response_operations_ui.controllers import case_controller, iac_controller, 
     reporting_units_controllers
 from response_operations_ui.controllers.collection_exercise_controllers import \
     get_case_group_status_by_collection_exercise, get_collection_exercise_by_id
-from response_operations_ui.controllers.party_controller import get_respondent_by_party_id
 from response_operations_ui.controllers.survey_controllers import get_survey_by_id
 from response_operations_ui.forms import EditContactDetailsForm, RuSearchForm
 
@@ -31,7 +30,6 @@ def view_reporting_unit(ru_ref):
     reporting_unit = party_controller.get_party_by_ru_ref(ru_ref)
 
     cases = case_controller.get_cases_by_business_party_id(reporting_unit['id'])
-
     case_groups = case_controller.get_case_groups_by_business_party_id(reporting_unit['id'])
 
     # Get all collection exercises for retrieved case groups
@@ -100,19 +98,27 @@ def view_reporting_unit(ru_ref):
 
 
 def add_collection_exercise_details(collection_exercise, reporting_unit, case_groups):
+    """
+    Creates a dict of formatted data.
+
+    :param collection_exercise: A dict containing collection exercise data
+    :type collection_exercise: dict
+    :param reporting_unit: A dict containing reporting unit data (from party)
+    :type reporting_unit: dict
+    :param case_groups: A list of case group data
+    :return: A dict containing formatted data to be used by the template
+    :rtype: dict
+    """
     response_status = get_case_group_status_by_collection_exercise(case_groups, collection_exercise['id'])
     reporting_unit_ce = party_controller.get_business_by_party_id(reporting_unit['id'], collection_exercise['id'])
-    statuses = case_controller.get_available_case_group_statuses_direct(collection_exercise['id'],
-                                                                        reporting_unit['sampleUnitRef'])
-    ce_extra = {
+
+    return {
         **collection_exercise,
         'responseStatus': map_ce_response_status(response_status),
         'companyName': reporting_unit_ce['name'],
         'companyRegion': map_region(reporting_unit_ce['region']),
-        'trading_as': reporting_unit_ce['trading_as'],
-        'statuses': statuses.values()
+        'trading_as': reporting_unit_ce['trading_as']
     }
-    return ce_extra
 
 
 def survey_with_respondents_and_exercises(survey, respondents, collection_exercises, ru_ref):
@@ -132,14 +138,18 @@ def survey_with_respondents_and_exercises(survey, respondents, collection_exerci
 
 
 def get_latest_case_with_ce(cases, collection_exercises):
-    # Takes in a list of cases and a list of collection exercises and
-    # returns the latest case which is in one of the collection exercises
+    """
+    Creates a dict of formatted data.
+    Takes in a list of cases and a list of collection exercises
+
+    :return: The latest case which is in one of the collection exercises with activeIAC added to the case
+    """
     ces_ids = [ce['id'] for ce in collection_exercises]
     cases_for_survey = [case
                         for case in cases
                         if case.get('caseGroup', {}).get('collectionExerciseId') in ces_ids]
     cases_for_survey_ordered = sorted(cases_for_survey, key=lambda c: c['createdDateTime'], reverse=True)
-    case = next((case for case in cases_for_survey_ordered), None)
+    case = next(iter(cases_for_survey_ordered), None)
     case['activeIAC'] = iac_controller.is_iac_active(case['iac'])
     return case
 
@@ -289,7 +299,7 @@ def confirm_change_enrolment_status(ru_ref):
 @reporting_unit_bp.route('/<ru_ref>/change-respondent-status', methods=['GET'])
 @login_required
 def confirm_change_respondent_status(ru_ref):
-    respondent = get_respondent_by_party_id(request.args['party_id'])
+    respondent = party_controller.get_respondent_by_party_id(request.args['party_id'])
     return render_template('confirm-respondent-status-change.html',
                            ru_ref=ru_ref,
                            respondent_id=respondent['id'],

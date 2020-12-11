@@ -268,6 +268,7 @@ def create_collection_exercise(survey_id, survey_name, user_description, period)
 def get_collection_exercises_by_survey(survey_id):
     """
     Gets all the collection exercises for an individual survey
+
     :param survey_id: A uuid that represents the survey in the survey service.
     :type survey_id: str
     :raises ApiError: Raised when collection exercise services returns a 4xx or 5xx status.
@@ -290,6 +291,16 @@ def get_collection_exercises_by_survey(survey_id):
 
 
 def get_case_group_status_by_collection_exercise(case_groups, collection_exercise_id):
+    """
+    Gets the response status of a case for a collection exercise
+
+    :param case_groups: A list of case_groups
+    :type case_groups: list
+    :param collection_exercise_id: A collection exercise uuid
+    :type collection_exercise_id: str
+    :return: A string representing the status of the case
+    :rtype: str
+    """
     return next(
         case_group["caseGroupStatus"]
         for case_group in case_groups
