@@ -21,6 +21,7 @@ class NotifyController:
     def _send_message(self, email, template_id, personalisation):
         """
         Send message to gov.uk notify via pubsub topic
+
         :param email: str email address of recipient
         :param template_id: the template id on gov.uk notify to be used
         :param personalisation: personalisation if required

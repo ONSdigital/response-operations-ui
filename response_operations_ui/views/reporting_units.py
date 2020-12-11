@@ -138,8 +138,12 @@ def survey_with_respondents_and_exercises(survey, respondents, collection_exerci
 
 
 def get_latest_case_with_ce(cases, collection_exercises):
-    # Takes in a list of cases and a list of collection exercises and
-    # returns the latest case which is in one of the collection exercises
+    """
+    Creates a dict of formatted data.
+    Takes in a list of cases and a list of collection exercises
+
+    :return: The latest case which is in one of the collection exercises with activeIAC added to the case
+    """
     ces_ids = [ce['id'] for ce in collection_exercises]
     cases_for_survey = [case
                         for case in cases
