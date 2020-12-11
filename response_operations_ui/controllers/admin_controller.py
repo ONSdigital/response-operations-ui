@@ -128,5 +128,3 @@ def delete_a_banner(banner_title):
     logger.info('Successfully deleted banners from Datastore')
     banner = response.json()
     return banner
-
-

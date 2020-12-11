@@ -1,6 +1,5 @@
 import logging
 from datetime import datetime
-from flask import current_app as app
 from flask import Blueprint, render_template, request, url_for, redirect, flash
 from flask_login import login_required, current_user
 from structlog import wrap_logger
