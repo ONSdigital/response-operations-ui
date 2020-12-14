@@ -37,6 +37,7 @@ url_get_available_case_group_statuses_direct = f'{TestingConfig.CASE_URL}/casegr
                                                f'/{collection_exercise_id_1}/{ru_ref}'
 url_get_survey_by_id = f'{TestingConfig.SURVEY_URL}/surveys/{survey_id}'
 url_get_respondent_party_by_party_id = f'{TestingConfig.PARTY_URL}/party-api/v1/respondents/id/{respondent_party_id}'
+url_get_respondent_party_by_list = f'{TestingConfig.PARTY_URL}/party-api/v1/respondents?id={respondent_party_id}'
 url_get_iac = f'{TestingConfig.IAC_URL}/iacs'
 url_get_case = f'{TestingConfig.CASE_URL}/cases/{case_id}?iac=true'
 url_auth_respondent_account = f'{TestingConfig.AUTH_URL}/api/account/user'
@@ -67,6 +68,8 @@ with open('tests/test_data/survey/single_survey.json') as fp:
     survey = json.load(fp)
 with open('tests/test_data/party/respondent_party.json') as fp:
     respondent_party = json.load(fp)
+with open('tests/test_data/party/respondent_party_list.json') as fp:
+    respondent_party_list = json.load(fp)
 with open('tests/test_data/iac/iac.json') as fp:
     iac = json.load(fp)
 
@@ -96,7 +99,7 @@ class TestReportingUnits(ViewTestCase):
         mock_request.get(f'{url_get_collection_exercise_by_id}/{collection_exercise_id_2}', json=collection_exercise)
         mock_request.get(url_get_business_party_by_party_id, json=business_party)
         mock_request.get(url_get_survey_by_id, json=survey)
-        mock_request.get(url_get_respondent_party_by_party_id, json=respondent_party)
+        mock_request.get(url_get_respondent_party_by_list, json=respondent_party_list)
         mock_request.get(f'{url_get_iac}/{iac_1}', json=iac)
         mock_request.get(f'{url_get_iac}/{iac_2}', json=iac)
 
@@ -137,7 +140,7 @@ class TestReportingUnits(ViewTestCase):
         mock_request.get(url_get_party_by_ru_ref, json=business_reporting_unit)
         mock_request.get(url_get_cases_by_business_party_id, status_code=404)
         mock_request.get(url_get_casegroups_by_business_party_id, json=[])
-        mock_request.get(url_get_respondent_party_by_party_id, json=[])
+        mock_request.get(url_get_respondent_party_by_list, json=[])
 
         response = self.client.get("/reporting-units/50012345678")
 
@@ -242,7 +245,7 @@ class TestReportingUnits(ViewTestCase):
         mock_request.get(f'{url_get_collection_exercise_by_id}/{collection_exercise_id_2}', json=collection_exercise)
         mock_request.get(url_get_business_party_by_party_id, json=business_party)
         mock_request.get(url_get_survey_by_id, json=survey)
-        mock_request.get(url_get_respondent_party_by_party_id, json=respondent_party)
+        mock_request.get(url_get_respondent_party_by_list, json=respondent_party_list)
         mock_request.get(f'{url_get_iac}/{iac_1}', status_code=500)
 
         response = self.client.get("/reporting-units/50012345678", follow_redirects=True)
@@ -262,7 +265,7 @@ class TestReportingUnits(ViewTestCase):
         mock_request.get(f'{url_get_collection_exercise_by_id}/{collection_exercise_id_2}', json=collection_exercise)
         mock_request.get(url_get_business_party_by_party_id, json=business_party)
         mock_request.get(url_get_survey_by_id, json=survey)
-        mock_request.get(url_get_respondent_party_by_party_id, json=respondent_party)
+        mock_request.get(url_get_respondent_party_by_list, json=respondent_party_list)
         mock_request.get(f'{url_get_iac}/{iac_1}', status_code=404)
 
         response = self.client.get("/reporting-units/50012345678", follow_redirects=True)
@@ -280,7 +283,7 @@ class TestReportingUnits(ViewTestCase):
         mock_request.get(f'{url_get_collection_exercise_by_id}/{collection_exercise_id_2}', json=collection_exercise)
         mock_request.get(url_get_business_party_by_party_id, json=business_party)
         mock_request.get(url_get_survey_by_id, json=survey)
-        mock_request.get(url_get_respondent_party_by_party_id, json=respondent_party)
+        mock_request.get(url_get_respondent_party_by_list, json=respondent_party_list)
         mock_request.get(f'{url_get_iac}/{iac_1}', json=iac)
         mock_request.get(f'{url_get_iac}/{iac_2}', json=iac)
 
@@ -298,7 +301,7 @@ class TestReportingUnits(ViewTestCase):
         mock_request.get(f'{url_get_collection_exercise_by_id}/{collection_exercise_id_2}', json=collection_exercise)
         mock_request.get(url_get_business_party_by_party_id, json=business_party)
         mock_request.get(url_get_survey_by_id, json=survey)
-        mock_request.get(url_get_respondent_party_by_party_id, json=respondent_party)
+        mock_request.get(url_get_respondent_party_by_list, json=respondent_party_list)
         mock_request.get(f'{url_get_iac}/{iac_1}', json=iac)
         mock_request.get(f'{url_get_iac}/{iac_2}', json=iac)
 
@@ -316,7 +319,7 @@ class TestReportingUnits(ViewTestCase):
         mock_request.get(f'{url_get_collection_exercise_by_id}/{collection_exercise_id_2}', json=collection_exercise)
         mock_request.get(url_get_business_party_by_party_id, json=business_party)
         mock_request.get(url_get_survey_by_id, json=survey)
-        mock_request.get(url_get_respondent_party_by_party_id, json=respondent_party)
+        mock_request.get(url_get_respondent_party_by_list, json=respondent_party_list)
         mock_request.get(f'{url_get_iac}/{iac_1}', json=iac)
         mock_request.get(f'{url_get_iac}/{iac_2}', json=iac)
 
@@ -418,7 +421,7 @@ class TestReportingUnits(ViewTestCase):
         mock_request.get(url_get_business_party_by_party_id, json=business_party)
         mock_request.get(url_get_available_case_group_statuses_direct, json=case_group_statuses)
         mock_request.get(url_get_survey_by_id, json=survey)
-        mock_request.get(url_get_respondent_party_by_party_id, json=respondent_party)
+        mock_request.get(url_get_respondent_party_by_list, json=respondent_party_list)
         mock_request.get(f'{url_get_iac}/{iac_1}', json=iac)
         mock_request.get(f'{url_get_iac}/{iac_2}', json=iac)
 
@@ -448,7 +451,7 @@ class TestReportingUnits(ViewTestCase):
         mock_request.get(url_get_business_party_by_party_id, json=business_party)
         mock_request.get(url_get_available_case_group_statuses_direct, json=case_group_statuses)
         mock_request.get(url_get_survey_by_id, json=survey)
-        mock_request.get(url_get_respondent_party_by_party_id, json=respondent_party)
+        mock_request.get(url_get_respondent_party_by_list, json=respondent_party_list)
         mock_request.get(f'{url_get_iac}/{iac_1}', json=iac)
         mock_request.get(f'{url_get_iac}/{iac_2}', json=iac)
 
@@ -480,6 +483,7 @@ class TestReportingUnits(ViewTestCase):
         mock_request.get(url_get_available_case_group_statuses_direct, json=case_group_statuses)
         mock_request.get(url_get_survey_by_id, json=survey)
         mock_request.get(url_get_respondent_party_by_party_id, json=respondent_party)
+        mock_request.get(url_get_respondent_party_by_list, json=respondent_party_list)
         mock_request.get(f'{url_get_iac}/{iac_1}', json=iac)
         mock_request.get(f'{url_get_iac}/{iac_2}', json=iac)
 
@@ -603,7 +607,7 @@ class TestReportingUnits(ViewTestCase):
         mock_request.get(url_get_business_party_by_party_id, json=business_party)
         mock_request.get(url_get_available_case_group_statuses_direct, json=case_group_statuses)
         mock_request.get(url_get_survey_by_id, json=survey)
-        mock_request.get(url_get_respondent_party_by_party_id, json=respondent_party)
+        mock_request.get(url_get_respondent_party_by_list, json=respondent_party_list)
         mock_request.get(f'{url_get_iac}/{iac_1}', json=iac)
         mock_request.get(f'{url_get_iac}/{iac_2}', json=iac)
         response = self.client.post(f"/reporting-units/50012345678/edit-contact-details/{respondent_party_id}",
@@ -720,7 +724,7 @@ class TestReportingUnits(ViewTestCase):
         mock_request.get(url_get_business_party_by_party_id, json=business_party)
         mock_request.get(url_get_available_case_group_statuses_direct, json=case_group_statuses)
         mock_request.get(url_get_survey_by_id, json=survey)
-        mock_request.get(url_get_respondent_party_by_party_id, json=respondent_party)
+        mock_request.get(url_get_respondent_party_by_list, json=respondent_party_list)
         mock_request.get(f'{url_get_iac}/{iac_1}', json=iac)
         mock_request.get(f'{url_get_iac}/{iac_2}', json=iac)
 
