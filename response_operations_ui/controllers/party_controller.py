@@ -1,4 +1,5 @@
 import logging
+from urllib.parse import urlencode
 
 import requests
 from flask import current_app as app
@@ -67,6 +68,22 @@ def get_respondent_by_party_id(respondent_party_id):
         raise ApiError(response)
 
     logger.info('Successfully retrieved respondent party', respondent_party_id=respondent_party_id)
+    return response.json()
+
+
+def get_respondent_by_party_ids(uuids):
+    logger.info('Retrieving respondent data for multiple respondents', respondent_party_ids=uuids)
+    params = urlencode([("id", uuid) for uuid in uuids])
+    url = f'{app.config["PARTY_URL"]}/party-api/v1/respondents'
+    response = requests.get(url, auth=app.config['BASIC_AUTH'], params=params)
+
+    try:
+        response.raise_for_status()
+    except requests.exceptions.HTTPError:
+        logger.error('Error retrieving respondent data for multiple respondents', respondent_party_ids=uuids)
+        raise ApiError(response)
+
+    logger.info('Successfully retrieved respondent data for multiple respondents', respondent_party_ids=uuids)
     return response.json()
 
 
