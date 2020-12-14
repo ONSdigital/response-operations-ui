@@ -30,7 +30,7 @@ def view_reporting_unit(ru_ref):
     reporting_unit = party_controller.get_party_by_ru_ref(ru_ref)
 
     cases = case_controller.get_cases_by_business_party_id(reporting_unit['id'])
-    case_groups = case_controller.get_case_groups_by_business_party_id(reporting_unit['id'])
+    case_groups = [case['caseGroup'] for case in cases]
 
     # Get all collection exercises for retrieved case groups
     collection_exercise_ids = {case_group['collectionExerciseId'] for case_group in case_groups}

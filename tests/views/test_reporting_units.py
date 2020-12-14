@@ -30,11 +30,9 @@ url_resend_verification_email = f'{TestingConfig.PARTY_URL}/party-api/v1/resend-
 
 url_get_party_by_ru_ref = f'{TestingConfig.PARTY_URL}/party-api/v1/parties/type/B/ref/{ru_ref}'
 url_get_cases_by_business_party_id = f'{TestingConfig.CASE_URL}/cases/partyid/{business_party_id}'
-url_get_casegroups_by_business_party_id = f'{TestingConfig.CASE_URL}/casegroups/partyid/{business_party_id}'
+
 url_get_collection_exercise_by_id = f'{TestingConfig.COLLECTION_EXERCISE_URL}/collectionexercises'
 url_get_business_party_by_party_id = f'{TestingConfig.PARTY_URL}/party-api/v1/businesses/id/{business_party_id}'
-url_get_available_case_group_statuses_direct = f'{TestingConfig.CASE_URL}/casegroups/transitions' \
-                                               f'/{collection_exercise_id_1}/{ru_ref}'
 url_get_survey_by_id = f'{TestingConfig.SURVEY_URL}/surveys/{survey_id}'
 url_get_respondent_party_by_party_id = f'{TestingConfig.PARTY_URL}/party-api/v1/respondents/id/{respondent_party_id}'
 url_get_respondent_party_by_list = f'{TestingConfig.PARTY_URL}/party-api/v1/respondents?id={respondent_party_id}'
@@ -54,10 +52,10 @@ with open('tests/test_data/party/business_reporting_unit.json') as fp:
     business_reporting_unit = json.load(fp)
 with open('tests/test_data/case/cases_list.json') as fp:
     cases_list = json.load(fp)
+with open('tests/test_data/case/cases_list_completed.json') as fp:
+    cases_list_completed = json.load(fp)
 with open('tests/test_data/case/case_groups_list.json') as fp:
     case_groups = json.load(fp)
-with open('tests/test_data/case/case_groups_list_completed.json') as fp:
-    case_groups_completed = json.load(fp)
 with open('tests/test_data/collection_exercise/collection_exercise.json') as fp:
     collection_exercise = json.load(fp)
 with open('tests/test_data/party/business_party.json') as fp:
@@ -94,7 +92,6 @@ class TestReportingUnits(ViewTestCase):
     def test_get_reporting_unit(self, mock_request):
         mock_request.get(url_get_party_by_ru_ref, json=business_reporting_unit)
         mock_request.get(url_get_cases_by_business_party_id, json=cases_list)
-        mock_request.get(url_get_casegroups_by_business_party_id, json=case_groups)
         mock_request.get(f'{url_get_collection_exercise_by_id}/{collection_exercise_id_1}', json=collection_exercise)
         mock_request.get(f'{url_get_collection_exercise_by_id}/{collection_exercise_id_2}', json=collection_exercise)
         mock_request.get(url_get_business_party_by_party_id, json=business_party)
@@ -139,7 +136,6 @@ class TestReportingUnits(ViewTestCase):
     def test_get_reporting_unit_cases_404(self, mock_request):
         mock_request.get(url_get_party_by_ru_ref, json=business_reporting_unit)
         mock_request.get(url_get_cases_by_business_party_id, status_code=404)
-        mock_request.get(url_get_casegroups_by_business_party_id, json=[])
         mock_request.get(url_get_respondent_party_by_list, json=[])
 
         response = self.client.get("/reporting-units/50012345678")
@@ -147,48 +143,22 @@ class TestReportingUnits(ViewTestCase):
         self.assertEqual(response.status_code, 200)
 
     @requests_mock.mock()
-    def test_get_reporting_unit_casegroups_fail(self, mock_request):
-        mock_request.get(url_get_party_by_ru_ref, json=business_reporting_unit)
-        mock_request.get(url_get_cases_by_business_party_id, json=cases_list)
-        mock_request.get(url_get_casegroups_by_business_party_id, status_code=500)
-
-        response = self.client.get("/reporting-units/50012345678", follow_redirects=True)
-
-        request_history = mock_request.request_history
-        self.assertEqual(len(request_history), 3)
-        self.assertEqual(response.status_code, 500)
-
-    @requests_mock.mock()
-    def test_get_reporting_unit_casegroups_404(self, mock_request):
-        mock_request.get(url_get_party_by_ru_ref, json=business_reporting_unit)
-        mock_request.get(url_get_cases_by_business_party_id, json=[])
-        mock_request.get(url_get_casegroups_by_business_party_id, status_code=404)
-
-        response = self.client.get("/reporting-units/50012345678", follow_redirects=True)
-
-        request_history = mock_request.request_history
-        self.assertEqual(len(request_history), 3)
-        self.assertEqual(response.status_code, 500)
-
-    @requests_mock.mock()
     def test_get_reporting_unit_collection_exercise_fail(self, mock_request):
         mock_request.get(url_get_party_by_ru_ref, json=business_reporting_unit)
         mock_request.get(url_get_cases_by_business_party_id, json=cases_list)
-        mock_request.get(url_get_casegroups_by_business_party_id, json=case_groups)
         mock_request.get(f'{url_get_collection_exercise_by_id}/{collection_exercise_id_1}', status_code=500)
         mock_request.get(f'{url_get_collection_exercise_by_id}/{collection_exercise_id_2}', status_code=500)
 
         response = self.client.get("/reporting-units/50012345678", follow_redirects=True)
 
         request_history = mock_request.request_history
-        self.assertEqual(len(request_history), 4)
+        self.assertEqual(len(request_history), 3)
         self.assertEqual(response.status_code, 500)
 
     @requests_mock.mock()
     def test_get_reporting_unit_party_id_fail(self, mock_request):
         mock_request.get(url_get_party_by_ru_ref, json=business_reporting_unit)
         mock_request.get(url_get_cases_by_business_party_id, json=cases_list)
-        mock_request.get(url_get_casegroups_by_business_party_id, json=case_groups)
         mock_request.get(f'{url_get_collection_exercise_by_id}/{collection_exercise_id_1}', json=collection_exercise)
         mock_request.get(f'{url_get_collection_exercise_by_id}/{collection_exercise_id_2}', json=collection_exercise)
         mock_request.get(url_get_business_party_by_party_id, status_code=500)
@@ -196,14 +166,13 @@ class TestReportingUnits(ViewTestCase):
         response = self.client.get("/reporting-units/50012345678", follow_redirects=True)
 
         request_history = mock_request.request_history
-        self.assertEqual(len(request_history), 6)
+        self.assertEqual(len(request_history), 5)
         self.assertEqual(response.status_code, 500)
 
     @requests_mock.mock()
     def test_get_reporting_unit_survey_fail(self, mock_request):
         mock_request.get(url_get_party_by_ru_ref, json=business_reporting_unit)
         mock_request.get(url_get_cases_by_business_party_id, json=cases_list)
-        mock_request.get(url_get_casegroups_by_business_party_id, json=case_groups)
         mock_request.get(f'{url_get_collection_exercise_by_id}/{collection_exercise_id_1}', json=collection_exercise)
         mock_request.get(f'{url_get_collection_exercise_by_id}/{collection_exercise_id_2}', json=collection_exercise)
         mock_request.get(url_get_business_party_by_party_id, json=business_party)
@@ -214,14 +183,13 @@ class TestReportingUnits(ViewTestCase):
         request_history = mock_request.request_history
         # TODO: url_get_business_party_by_party_id and url_get_available_case_group_statuses_direct are called twice
         # duplicated calls should probably be refactored out
-        self.assertEqual(len(request_history), 8)
+        self.assertEqual(len(request_history), 7)
         self.assertEqual(response.status_code, 500)
 
     @requests_mock.mock()
     def test_get_reporting_unit_respondent_party_fail(self, mock_request):
         mock_request.get(url_get_party_by_ru_ref, json=business_reporting_unit)
         mock_request.get(url_get_cases_by_business_party_id, json=cases_list)
-        mock_request.get(url_get_casegroups_by_business_party_id, json=case_groups)
         mock_request.get(f'{url_get_collection_exercise_by_id}/{collection_exercise_id_1}', json=collection_exercise)
         mock_request.get(f'{url_get_collection_exercise_by_id}/{collection_exercise_id_2}', json=collection_exercise)
         mock_request.get(url_get_business_party_by_party_id, json=business_party)
@@ -231,16 +199,13 @@ class TestReportingUnits(ViewTestCase):
         response = self.client.get("/reporting-units/50012345678", follow_redirects=True)
 
         request_history = mock_request.request_history
-        # TODO: url_get_business_party_by_party_id and url_get_available_case_group_statuses_direct are called twice
-        # duplicated calls should probably be refactored out
-        self.assertEqual(len(request_history), 9)
+        self.assertEqual(len(request_history), 8)
         self.assertEqual(response.status_code, 500)
 
     @requests_mock.mock()
     def test_get_reporting_unit_iac_fail(self, mock_request):
         mock_request.get(url_get_party_by_ru_ref, json=business_reporting_unit)
         mock_request.get(url_get_cases_by_business_party_id, json=cases_list)
-        mock_request.get(url_get_casegroups_by_business_party_id, json=case_groups)
         mock_request.get(f'{url_get_collection_exercise_by_id}/{collection_exercise_id_1}', json=collection_exercise)
         mock_request.get(f'{url_get_collection_exercise_by_id}/{collection_exercise_id_2}', json=collection_exercise)
         mock_request.get(url_get_business_party_by_party_id, json=business_party)
@@ -253,14 +218,13 @@ class TestReportingUnits(ViewTestCase):
         request_history = mock_request.request_history
         # TODO: url_get_business_party_by_party_id and url_get_available_case_group_statuses_direct are called twice
         # duplicated calls should probably be refactored out
-        self.assertEqual(len(request_history), 10)
+        self.assertEqual(len(request_history), 9)
         self.assertEqual(response.status_code, 500)
 
     @requests_mock.mock()
     def test_get_reporting_unit_iac_404(self, mock_request):
         mock_request.get(url_get_party_by_ru_ref, json=business_reporting_unit)
         mock_request.get(url_get_cases_by_business_party_id, json=cases_list)
-        mock_request.get(url_get_casegroups_by_business_party_id, json=case_groups)
         mock_request.get(f'{url_get_collection_exercise_by_id}/{collection_exercise_id_1}', json=collection_exercise)
         mock_request.get(f'{url_get_collection_exercise_by_id}/{collection_exercise_id_2}', json=collection_exercise)
         mock_request.get(url_get_business_party_by_party_id, json=business_party)
@@ -277,8 +241,7 @@ class TestReportingUnits(ViewTestCase):
     @requests_mock.mock()
     def test_get_reporting_unit_when_changed_status_shows_new_status(self, mock_request):
         mock_request.get(url_get_party_by_ru_ref, json=business_reporting_unit)
-        mock_request.get(url_get_cases_by_business_party_id, json=cases_list)
-        mock_request.get(url_get_casegroups_by_business_party_id, json=case_groups_completed)
+        mock_request.get(url_get_cases_by_business_party_id, json=cases_list_completed)
         mock_request.get(f'{url_get_collection_exercise_by_id}/{collection_exercise_id_1}', json=collection_exercise)
         mock_request.get(f'{url_get_collection_exercise_by_id}/{collection_exercise_id_2}', json=collection_exercise)
         mock_request.get(url_get_business_party_by_party_id, json=business_party)
@@ -296,7 +259,6 @@ class TestReportingUnits(ViewTestCase):
     def test_get_reporting_unit_shows_change_link(self, mock_request):
         mock_request.get(url_get_party_by_ru_ref, json=business_reporting_unit)
         mock_request.get(url_get_cases_by_business_party_id, json=cases_list)
-        mock_request.get(url_get_casegroups_by_business_party_id, json=case_groups)
         mock_request.get(f'{url_get_collection_exercise_by_id}/{collection_exercise_id_1}', json=collection_exercise)
         mock_request.get(f'{url_get_collection_exercise_by_id}/{collection_exercise_id_2}', json=collection_exercise)
         mock_request.get(url_get_business_party_by_party_id, json=business_party)
@@ -313,8 +275,7 @@ class TestReportingUnits(ViewTestCase):
     @requests_mock.mock()
     def test_get_reporting_unit_hides_change_link_when_no_available_statuses(self, mock_request):
         mock_request.get(url_get_party_by_ru_ref, json=business_reporting_unit)
-        mock_request.get(url_get_cases_by_business_party_id, json=cases_list)
-        mock_request.get(url_get_casegroups_by_business_party_id, json=case_groups_completed)
+        mock_request.get(url_get_cases_by_business_party_id, json=cases_list_completed)
         mock_request.get(f'{url_get_collection_exercise_by_id}/{collection_exercise_id_1}', json=collection_exercise)
         mock_request.get(f'{url_get_collection_exercise_by_id}/{collection_exercise_id_2}', json=collection_exercise)
         mock_request.get(url_get_business_party_by_party_id, json=business_party)
@@ -326,7 +287,7 @@ class TestReportingUnits(ViewTestCase):
         response = self.client.get("/reporting-units/50012345678", follow_redirects=True)
 
         self.assertEqual(response.status_code, 200)
-        self.assertNotIn("Change</a>".encode(), response.data)
+        self.assertNotIn("ChaFnge</a>".encode(), response.data)
 
     @requests_mock.mock()
     def test_search_reporting_units_for_1_business_redirects_and_holds_correct_data(self, mock_request):
@@ -415,11 +376,9 @@ class TestReportingUnits(ViewTestCase):
         mock_request.post(url_resend_verification_email)
         mock_request.get(url_get_party_by_ru_ref, json=business_reporting_unit)
         mock_request.get(url_get_cases_by_business_party_id, json=cases_list)
-        mock_request.get(url_get_casegroups_by_business_party_id, json=case_groups)
         mock_request.get(f'{url_get_collection_exercise_by_id}/{collection_exercise_id_1}', json=collection_exercise)
         mock_request.get(f'{url_get_collection_exercise_by_id}/{collection_exercise_id_2}', json=collection_exercise)
         mock_request.get(url_get_business_party_by_party_id, json=business_party)
-        mock_request.get(url_get_available_case_group_statuses_direct, json=case_group_statuses)
         mock_request.get(url_get_survey_by_id, json=survey)
         mock_request.get(url_get_respondent_party_by_list, json=respondent_party_list)
         mock_request.get(f'{url_get_iac}/{iac_1}', json=iac)
@@ -445,11 +404,9 @@ class TestReportingUnits(ViewTestCase):
         mock_request.put(url_change_respondent_status)
         mock_request.get(url_get_party_by_ru_ref, json=business_reporting_unit)
         mock_request.get(url_get_cases_by_business_party_id, json=cases_list)
-        mock_request.get(url_get_casegroups_by_business_party_id, json=case_groups)
         mock_request.get(f'{url_get_collection_exercise_by_id}/{collection_exercise_id_1}', json=collection_exercise)
         mock_request.get(f'{url_get_collection_exercise_by_id}/{collection_exercise_id_2}', json=collection_exercise)
         mock_request.get(url_get_business_party_by_party_id, json=business_party)
-        mock_request.get(url_get_available_case_group_statuses_direct, json=case_group_statuses)
         mock_request.get(url_get_survey_by_id, json=survey)
         mock_request.get(url_get_respondent_party_by_list, json=respondent_party_list)
         mock_request.get(f'{url_get_iac}/{iac_1}', json=iac)
@@ -476,11 +433,9 @@ class TestReportingUnits(ViewTestCase):
         mock_request.get(get_respondent_by_id_url)
         mock_request.put(url_change_respondent_status)
         mock_request.get(url_get_cases_by_business_party_id, json=cases_list)
-        mock_request.get(url_get_casegroups_by_business_party_id, json=case_groups)
         mock_request.get(f'{url_get_collection_exercise_by_id}/{collection_exercise_id_1}', json=collection_exercise)
         mock_request.get(f'{url_get_collection_exercise_by_id}/{collection_exercise_id_2}', json=collection_exercise)
         mock_request.get(url_get_business_party_by_party_id, json=business_party)
-        mock_request.get(url_get_available_case_group_statuses_direct, json=case_group_statuses)
         mock_request.get(url_get_survey_by_id, json=survey)
         mock_request.get(url_get_respondent_party_by_party_id, json=respondent_party)
         mock_request.get(url_get_respondent_party_by_list, json=respondent_party_list)
@@ -601,11 +556,9 @@ class TestReportingUnits(ViewTestCase):
         mock_request.put(url_edit_contact_details)
         mock_request.get(url_get_party_by_ru_ref, json=business_reporting_unit)
         mock_request.get(url_get_cases_by_business_party_id, json=cases_list)
-        mock_request.get(url_get_casegroups_by_business_party_id, json=case_groups)
         mock_request.get(f'{url_get_collection_exercise_by_id}/{collection_exercise_id_1}', json=collection_exercise)
         mock_request.get(f'{url_get_collection_exercise_by_id}/{collection_exercise_id_2}', json=collection_exercise)
         mock_request.get(url_get_business_party_by_party_id, json=business_party)
-        mock_request.get(url_get_available_case_group_statuses_direct, json=case_group_statuses)
         mock_request.get(url_get_survey_by_id, json=survey)
         mock_request.get(url_get_respondent_party_by_list, json=respondent_party_list)
         mock_request.get(f'{url_get_iac}/{iac_1}', json=iac)
@@ -718,11 +671,9 @@ class TestReportingUnits(ViewTestCase):
         mock_request.put(url_change_enrolment_status)
         mock_request.get(url_get_party_by_ru_ref, json=business_reporting_unit)
         mock_request.get(url_get_cases_by_business_party_id, json=cases_list)
-        mock_request.get(url_get_casegroups_by_business_party_id, json=case_groups)
         mock_request.get(f'{url_get_collection_exercise_by_id}/{collection_exercise_id_1}', json=collection_exercise)
         mock_request.get(f'{url_get_collection_exercise_by_id}/{collection_exercise_id_2}', json=collection_exercise)
         mock_request.get(url_get_business_party_by_party_id, json=business_party)
-        mock_request.get(url_get_available_case_group_statuses_direct, json=case_group_statuses)
         mock_request.get(url_get_survey_by_id, json=survey)
         mock_request.get(url_get_respondent_party_by_list, json=respondent_party_list)
         mock_request.get(f'{url_get_iac}/{iac_1}', json=iac)
