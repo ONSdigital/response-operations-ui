@@ -130,5 +130,15 @@
           }}   
       </form>
     </div>
+    <script{% if csp_nonce %} nonce="{{ csp_nonce() }}"{% endif %}>
+      const createMessageForm = document.getElementById('create-message-form');
+      const buttonSendMessage = document.getElementById('btn-send-message');
+  
+      if (createMessageForm && buttonSendMessage) {
+        createMessageForm.addEventListener('submit', function(event) {
+          buttonSendMessage.attributes.disabled = 'disabled';
+        });
+      }
+    </script>
   {% endif %}
 </section>
