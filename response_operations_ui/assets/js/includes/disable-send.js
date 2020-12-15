@@ -9,3 +9,13 @@
     }
 }(window));
 
+(function(window) {
+    const loadSampleForm = document.getElementById('form-load-sample');
+    const buttonLoadSample = document.getElementById('btn-load-sample');
+
+    if (loadSampleForm && buttonLoadSample) {
+        loadSampleForm.addEventListener('submit', function(event) {
+            buttonLoadSample.attributes.disabled = 'disabled';
+        });
+    }
+}(window));
