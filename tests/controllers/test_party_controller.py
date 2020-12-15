@@ -3,7 +3,7 @@ import mock
 from collections import namedtuple
 
 from response_operations_ui import create_app
-from response_operations_ui.controllers.party_controller import search_respondents
+from response_operations_ui.controllers.party_controller import search_respondents, get_respondent_by_party_ids
 from response_operations_ui.exceptions.exceptions import SearchRespondentsException
 
 fake_response = namedtuple('Response', 'status_code json')
@@ -27,3 +27,9 @@ class TestPartyController(unittest.TestCase):
             # Test and assert
             with self.assertRaises(SearchRespondentsException):
                 search_respondents('firstname', 'lastname', 'name@email.com', page=1, limit=limit)
+
+    def test_get_respondent_by_party_ids_with_empty_list(self):
+        input_data = []
+        expected_output = []
+        output = get_respondent_by_party_ids(input_data)
+        self.assertEqual(output, expected_output)
