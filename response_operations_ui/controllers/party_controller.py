@@ -33,6 +33,37 @@ def get_party_by_ru_ref(ru_ref):
     return response.json()
 
 
+def get_business_attributes_by_party_id(business_party_id, collection_exercise_ids=None):
+    """
+    Gets the attributes for the business for each collection exercise.  The attributes are the data held
+    on the business at the point it was enrolled onto each collection exercise.  If no exercises are specified
+    then all attributes for the business will be returned
+
+    :param business_party_id: A business id
+    :param collection_exercise_ids: An (optional) list of collection exercise ids
+    :type collection_exercise_ids: list
+    :return: A dict of attributes with each collection exercise id as the keys.
+    :rtype: dict
+    """
+    bound_logger = logger.bind(business_id=business_party_id, collection_exercise_ids=collection_exercise_ids)
+    bound_logger.info('Retrieving business attributes')
+    if not collection_exercise_ids:
+        bound_logger.info('List is empty.  Returning empty dict')
+        return {}
+    url = f'{app.config["PARTY_URL"]}/party-api/v1/businesses/id/{business_party_id}/attributes'
+    params = urlencode([("collection_exercise_id", uuid) for uuid in collection_exercise_ids])
+    response = requests.get(url, params=params, auth=app.config['BASIC_AUTH'])
+
+    try:
+        response.raise_for_status()
+    except requests.exceptions.HTTPError:
+        bound_logger.error('Error retrieving business attributes')
+        raise ApiError(response)
+
+    bound_logger.info('Successfully retrieved business attributes')
+    return response.json()
+
+
 def get_business_by_party_id(business_party_id, collection_exercise_id=None):
     logger.info('Retrieving business party',
                 business_party_id=business_party_id, collection_exercise_id=collection_exercise_id)
