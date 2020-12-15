@@ -30,7 +30,7 @@ def view_reporting_unit(ru_ref):
     reporting_unit = party_controller.get_party_by_ru_ref(ru_ref)
 
     cases = case_controller.get_cases_by_business_party_id(reporting_unit['id'])
-    case_groups = case_controller.get_case_groups_by_business_party_id(reporting_unit['id'])
+    case_groups = [case['caseGroup'] for case in cases]
 
     # Get all collection exercises for retrieved case groups
     collection_exercise_ids = {case_group['collectionExerciseId'] for case_group in case_groups}
@@ -47,8 +47,8 @@ def view_reporting_unit(ru_ref):
     surveys = [get_survey_by_id(survey_id) for survey_id in survey_ids]
 
     # Get all respondents for the given ru
-    respondents = [party_controller.get_respondent_by_party_id(respondent['partyId'])
-                   for respondent in reporting_unit.get('associations')]
+    respondent_party_ids = [respondent['partyId'] for respondent in reporting_unit.get('associations')]
+    respondents = party_controller.get_respondent_by_party_ids(respondent_party_ids)
 
     # Link collection exercises and respondents to appropriate surveys
     linked_surveys = [survey_with_respondents_and_exercises(survey, respondents, live_collection_exercises, ru_ref)

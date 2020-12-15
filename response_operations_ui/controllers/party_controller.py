@@ -1,4 +1,5 @@
 import logging
+from urllib.parse import urlencode
 
 import requests
 from flask import current_app as app
@@ -67,6 +68,37 @@ def get_respondent_by_party_id(respondent_party_id):
         raise ApiError(response)
 
     logger.info('Successfully retrieved respondent party', respondent_party_id=respondent_party_id)
+    return response.json()
+
+
+def get_respondent_by_party_ids(uuids):
+    """
+    Gets data for multiple respondents from party.  If the list is empty, returns an empty
+    list without going to party.
+
+    This call will return as many parties as it can find.  If some are missing, no error will
+    be thrown.
+
+    :param uuids: A list of uuid strings of respondent party ids
+    :type uuids: list
+    :return: A list of dicts containing party data
+    """
+    logger.info('Retrieving respondent data for multiple respondents', respondent_party_ids=uuids)
+    if not uuids:
+        logger.info('List is empty.  Returning empty list', respondent_party_ids=uuids)
+        return []
+
+    params = urlencode([("id", uuid) for uuid in uuids])
+    url = f'{app.config["PARTY_URL"]}/party-api/v1/respondents'
+    response = requests.get(url, auth=app.config['BASIC_AUTH'], params=params)
+
+    try:
+        response.raise_for_status()
+    except requests.exceptions.HTTPError:
+        logger.error('Error retrieving respondent data for multiple respondents', respondent_party_ids=uuids)
+        raise ApiError(response)
+
+    logger.info('Successfully retrieved respondent data for multiple respondents', respondent_party_ids=uuids)
     return response.json()
 
 
