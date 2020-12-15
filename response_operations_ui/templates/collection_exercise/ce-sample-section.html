@@ -131,8 +131,9 @@
       </form>
     </div>
     <script{% if csp_nonce %} nonce="{{ csp_nonce() }}"{% endif %}>
-      document.getElementById('form-load-sample').addEventListener('submit', function(evt) {
+      document.getElementById('btn-load-sample').addEventListener('click', function(evt) {
         document.getElementById('btn-load-sample').disabled = true;
+        document.getElementById('form-load-sample').submit();
       })
     </script>
   {% endif %}
