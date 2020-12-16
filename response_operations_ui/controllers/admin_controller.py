@@ -12,10 +12,10 @@ logger = wrap_logger(logging.getLogger(__name__))
 
 
 class Banner:
-    def __init__(self, title, value, banner_active):
+    def __init__(self, title, content, active=False):
         self.title = title
-        self.value = value
-        self.banner_active = banner_active
+        self.content = content
+        self.active = active
 
     def to_json(self):
         return json.dumps(self, default=lambda o: o.__dict__,
@@ -85,25 +85,26 @@ def get_all_banners():
     return list_of_banners
 
 
-def get_a_banner(banner):
-    logger.info('Attempting to retrieve banners from Datastore')
-    url = f"{app.config['BANNER_SERVICE_URL']}/banner"
-    response = requests.get(url, banner)
+def get_a_banner(banner_id):
+    logger.info('Attempting to retrieve banner from Datastore', banner_id=banner_id)
+    url = f"{app.config['BANNER_SERVICE_URL']}/banner/{banner_id}"
+    response = requests.get(url)
     try:
         response.raise_for_status()
     except requests.exceptions.HTTPError:
-        logger.error('Failed to retrieve Banners from Datastore')
+        logger.error('Failed to retrieve Banner from api')
         raise ApiError(response)
 
-    logger.info('Successfully retrieved banners from Datastore')
+    logger.info('Successfully retrieved banner from api')
     banner = response.json()
     return banner
 
 
-def create_new_banner(banner: Banner):
-    logger.info('Attempting to store a banner banner in Datastore')
+def create_new_banner(banner):
+    logger.info('Attempting to store a banner banner', banner=banner)
     url = f"{app.config['BANNER_SERVICE_URL']}/banner"
-    response = requests.post(url, banner)
+    headers = {'Content-type': 'application/json'}
+    response = requests.post(url, banner, headers=headers)
     try:
         response.raise_for_status()
     except requests.exceptions.HTTPError:
@@ -111,6 +112,21 @@ def create_new_banner(banner: Banner):
         raise ApiError(response)
 
     logger.info('Successfully stored the new Banner into Datastore')
+    banner = response.json()
+    return banner
+
+def edit_banner(banner):
+    logger.info('Attempting to edit the banner', banner=banner)
+    url = f"{app.config['BANNER_SERVICE_URL']}/banner"
+    headers = {'Content-type': 'application/json'}
+    response = requests.put(url, banner, headers=headers)
+    try:
+        response.raise_for_status()
+    except requests.exceptions.HTTPError:
+        logger.error('Failed to edit banner via banner-api')
+        raise ApiError(response)
+
+    logger.info('Successfully edited the Banner')
     banner = response.json()
     return banner
 

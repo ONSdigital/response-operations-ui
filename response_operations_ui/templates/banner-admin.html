@@ -110,7 +110,7 @@
                             {% do alerts.append (
                                 {
                                     "text":  banner['title'],
-                                    "value": banner['value']
+                                    "value": banner['content']
                                 }
                             ) %}
                         {% endfor %}
@@ -133,7 +133,7 @@
                         {{ 
                             onsTextarea({
                                 "id": "banner-text",
-                                "name": "banner",
+                                "name": "content",
                                 "label": {
                                     "text": "Message"
                                 },

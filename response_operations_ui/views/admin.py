@@ -4,10 +4,11 @@ from flask import Blueprint, render_template, request, url_for, redirect, flash
 from flask_login import login_required, current_user
 from structlog import wrap_logger
 from dateutil import parser
+import json
 
 from response_operations_ui.controllers import admin_controller
-from response_operations_ui.controllers.admin_controller import get_all_banners, create_new_banner, Banner, get_a_banner
-from response_operations_ui.forms import BannerAdminForm
+from response_operations_ui.controllers.admin_controller import get_all_banners, create_new_banner, Banner, get_a_banner, edit_banner
+from response_operations_ui.forms import BannerAdminForm, BannerManageForm
 
 logger = wrap_logger(logging.getLogger(__name__))
 
@@ -117,25 +118,30 @@ def manage_alert():
 @login_required
 def manage_alert_to_edit():
     logger.debug("Managing banner", user=current_username())
+    id = request.form['event']
+    logger.info("form id", banner=id)
+    return redirect(url_for("admin_bp.get_banner_edit", banner_id=id))
+
+@admin_bp.route('/banner/edit/<banner_id>', methods=['GET'])
+@login_required
+def get_banner_edit(banner_id):
+    logger.info("searching for banner", id=banner_id)
+    banner = get_a_banner(banner_id)
+    logger.info("got banner", banner=banner)
     form = BannerAdminForm(form=request.form)
-    title = form.title.data
-    banner_to_edit = get_a_banner(title)
     return render_template('admin-edit.html',
                            form=form,
-                           banner_to_edit=banner_to_edit)
+                           banner=banner)
 
-
-@admin_bp.route('/banner/edit', methods=['POST'])
+@admin_bp.route('/banner/edit/<banner_id>', methods=['POST'])
 @login_required
-def edit_the_chosen_banner():
+def edit_the_chosen_banner(banner_id):
     logger.debug("Editing banner", user=current_username())
     form = BannerAdminForm(form=request.form)
     title = form.title.data
-    banner = form.banner.data
-    return render_template('admin-edit.html',
-                           form=form,
-                           banner=banner,
-                           title=title)
+    content = form.banner.data
+    banner = edit_banner(json.dumps({ "id": banner_id, "title": title, "content": content}))
+    return redirect(url_for("admin_bp.get_banner_edit", banner_id=banner_id))
 
 
 # Loads manage page
@@ -155,7 +161,7 @@ def put_new_banner_in_datastore():
     form = BannerAdminForm(form=request.form)
     title = form.title.data
     banner = form.banner.data
-    new_banner = Banner(title, banner, False)
+    new_banner = Banner(title, banner)
     new_banner = new_banner.to_json()
     try:
         create_new_banner(new_banner)

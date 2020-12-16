@@ -11,7 +11,7 @@
     <div class="grid grid--gutterless">
         <div class="grid__col col-8@m">
             <h1 class="u-fs-xl u-mt-m">Edit message template</h1>
-            <form action="url_for('admin_bp.edit_the_chosen_banner')" method="post">
+            <form action="{{ url_for('admin_bp.edit_the_chosen_banner', banner_id=banner.id) }}" method="post">
                 {{ form.csrf_token }}
                 {% if errors %}
                     {% set errorData = [] %}
@@ -50,7 +50,7 @@
                             "label": {
                                 "text": 'Message template title'
                             },
-                            "value": title
+                            "value": banner.title
                         })
                     }}
                     {{
@@ -65,7 +65,7 @@
                                 "required": true
                             },
                             "error": errorData if errorData,
-                            "value": banner
+                            "value": banner.content
                         })
                     }}
                     {{

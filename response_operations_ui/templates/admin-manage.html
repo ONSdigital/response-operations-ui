@@ -20,15 +20,15 @@
                 } %}
 
                 {% set radios = [] %}                
-                {% for message in list_of_alerts %}
+                {% for banner in list_of_alerts %}
                     {% do radios.append(
                         {
-                            "id": 'banner-title',
-                            "name": "title",
+                            "id": banner['id']|string,
+                            "name": "banner_id",
                             "label": {
-                                "text": message['title']
+                                "text": banner['title']
                             },
-                            "value": message['title']
+                            "value": banner['id']
                         }
                     ) %}
                 {% endfor %}
