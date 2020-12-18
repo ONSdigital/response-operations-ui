@@ -116,7 +116,7 @@
                 "classes": "hidden btn--small",
                 "submitType": "timer"
                 "listeners": {
-                  "click": "document.getElementById('btn-load-sample').disabled = true"
+                  "click": "disableSubmitButton()"
                 }
             })
           }}   
@@ -133,5 +133,10 @@
           }}   
       </form>
     </div>
+    <script{% if csp_nonce %} nonce="{{ csp_nonce() }}"{% endif %}>
+      function disableSubmitButton() {
+        document.getElementById('btn-load-sample').disabled = true;
+      }
+    </script>
   {% endif %}
 </section>
