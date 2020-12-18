@@ -115,9 +115,6 @@
                 "name": "load-sample",
                 "classes": "hidden btn--small",
                 "submitType": "timer"
-                "listeners": {
-                  "click": "disableSubmitButton()"
-                }
             })
           }}   
           {{
@@ -134,9 +131,11 @@
       </form>
     </div>
     <script{% if csp_nonce %} nonce="{{ csp_nonce() }}"{% endif %}>
-      function disableSubmitButton() {
+      document.getElementById('btn-load-sample').addEventListener('click', function(evt) {
         document.getElementById('btn-load-sample').disabled = true;
-      }
+        evt.preventDefault();
+        document.getElementById('form-load-sample').submit();
+      })
     </script>
   {% endif %}
 </section>
