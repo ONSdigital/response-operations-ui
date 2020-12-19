@@ -5,7 +5,6 @@ publicIP: false
 sendEmailToGovNotify: false
 
 admin:
-  createAccountPassword: password
   createccountEmailExpiry: "3628800"
 
 analytics:
@@ -52,10 +51,6 @@ ingress:
   timeoutSec: 60
   gcpHost: rops-gcp.example.com
   gcpCertName: response-operations-gcp-cert
-
-uaa:
-  client_id: response_operations
-  client_secret: password
 
 notify:
   confirmCreateAccountTemplate: confirm_create_account_id
