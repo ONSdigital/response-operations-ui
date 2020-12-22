@@ -217,7 +217,7 @@ spec:
             valueFrom:
               secretKeyRef:
                 name: rops
-                key: client-password
+                key: client-secret
           - name: TEST_MODE
             value: "{{- if .Values.test.enabled -}}True{{- else -}}False{{- end -}}"
           - name: WTF_CSRF_ENABLED
