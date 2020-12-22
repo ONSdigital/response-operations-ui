@@ -211,12 +211,12 @@ spec:
           - name: UAA_CLIENT_ID
             valueFrom:
               secretKeyRef:
-                name: uaa-secret
+                name: rops
                 key: client-id
           - name: UAA_CLIENT_SECRET
             valueFrom:
               secretKeyRef:
-                name: uaa-secret
+                name: rops
                 key: client-password
           - name: TEST_MODE
             value: "{{- if .Values.test.enabled -}}True{{- else -}}False{{- end -}}"
