@@ -99,7 +99,10 @@ spec:
             value: "http://$(BANNER_API_SERVICE_HOST):$(BANNER_API_SERVICE_PORT)"
             {{- end }}
           - name: CREATE_ACCOUNT_ADMIN_PASSWORD
-            value: "{{ .Values.admin.createAccountPassword }}"
+            valueFrom:
+              secretKeyRef:
+                name: rops
+                key: create-account-password
           - name: CREATE_ACCOUNT_EMAIL_TOKEN_EXPIRY
             value: "{{ .Values.admin.createccountEmailExpiry }}"
           - name: DASHBOARD_URL
@@ -147,18 +150,18 @@ spec:
           - name: REDIS_HOST
             {{- if .Values.database.managedRedis }}
             valueFrom:
-                configMapKeyRef:
-                    name: redis-config
-                    key: redis-host
+              configMapKeyRef:
+                name: redis-config
+                key: redis-host
             {{- else }}
             value: "$(REDIS_MASTER_SERVICE_HOST)"
             {{- end }}
           - name: REDIS_PORT
             {{- if .Values.database.managedRedis }}
             valueFrom:
-                configMapKeyRef:
-                    name: redis-config
-                    key: redis-port
+              configMapKeyRef:
+                name: redis-config
+                key: redis-port
             {{- else }}
             value: "$(REDIS_MASTER_SERVICE_PORT)"
             {{- end}}
@@ -212,9 +215,15 @@ spec:
           - name: UAA_SERVICE_URL
             value: "http://$(UAA_SERVICE_HOST):$(UAA_SERVICE_PORT)"
           - name: UAA_CLIENT_ID
-            value: "{{ .Values.uaa.client_id }}"
+            valueFrom:
+              secretKeyRef:
+                name: rops
+                key: client-id
           - name: UAA_CLIENT_SECRET
-            value: "{{ .Values.uaa.client_secret }}"
+            valueFrom:
+              secretKeyRef:
+                name: rops
+                key: client-secret
           - name: TEST_MODE
             value: "{{- if .Values.test.enabled -}}True{{- else -}}False{{- end -}}"
           - name: WTF_CSRF_ENABLED
