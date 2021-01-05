@@ -42,7 +42,7 @@ class TestSignIn(unittest.TestCase):
 
     @requests_mock.mock()
     def test_sign_in(self, mock_request):
-        mock_request.post(url_sign_in_data, json={"access_token": self.access_token.decode()}, status_code=201)
+        mock_request.post(url_sign_in_data, json={"access_token": self.access_token}, status_code=201)
         mock_request.get(url_surveys, json=surveys_list_json, status_code=200)
 
         response = self.client.post("/sign-in", follow_redirects=True,
@@ -99,7 +99,7 @@ class TestSignIn(unittest.TestCase):
 
     @requests_mock.mock()
     def test_sign_in_redirect_while_authenticated(self, mock_request):
-        mock_request.post(url_sign_in_data, json={"access_token": self.access_token.decode()}, status_code=201)
+        mock_request.post(url_sign_in_data, json={"access_token": self.access_token}, status_code=201)
         mock_request.get(url_surveys, json=surveys_list_json, status_code=200)
 
         response = self.client.post("/sign-in", follow_redirects=True,
@@ -120,7 +120,7 @@ class TestSignIn(unittest.TestCase):
     def test_sign_in_next_url(self, mock_request):
         with self.client.session_transaction() as session:
             session['next'] = '/surveys'
-        mock_request.post(url_sign_in_data, json={"access_token": self.access_token.decode()}, status_code=201)
+        mock_request.post(url_sign_in_data, json={"access_token": self.access_token}, status_code=201)
         mock_request.get(url_surveys, json=surveys_list_json, status_code=200)
 
         response = self.client.post("/sign-in", follow_redirects=True,
