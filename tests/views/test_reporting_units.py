@@ -1,10 +1,12 @@
 import json
 import re
+from unittest import TestCase
 
 import requests_mock
 from random import randint
 from config import TestingConfig
-from tests.views import ViewTestCase
+
+from response_operations_ui import create_app
 
 
 respondent_party_id = "cd592e0f-8d07-407b-b75d-e01fbdae8233"
@@ -78,21 +80,11 @@ with open('tests/test_data/iac/iac.json') as fp:
     iac = json.load(fp)
 
 
-class TestReportingUnits(ViewTestCase):
+class TestReportingUnits(TestCase):
 
-    def setup_data(self):
-        self.case_group_status = {
-            "ru_ref": "19000001",
-            "ru_name": "RU Name",
-            "trading_as": "Company Name",
-            "survey_id": "123",
-            "short_name": "MYSURVEY",
-            "current_status": "NOTSTARTED",
-            "available_statuses": {
-                "UPLOADED": "COMPLETE",
-                "COMPLETED_BY_PHONE": "COMPLETEDBYPHONE"
-            }
-        }
+    def setUp(self):
+        self.app = create_app('TestingConfig')
+        self.client = self.app.test_client()
 
     @requests_mock.mock()
     def test_get_reporting_unit(self, mock_request):

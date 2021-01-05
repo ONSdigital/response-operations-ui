@@ -47,9 +47,6 @@ def get_business_attributes_by_party_id(business_party_id, collection_exercise_i
     """
     bound_logger = logger.bind(business_id=business_party_id, collection_exercise_ids=collection_exercise_ids)
     bound_logger.info('Retrieving business attributes')
-    if not collection_exercise_ids:
-        bound_logger.info('List is empty.  Returning empty dict')
-        return {}
     url = f'{app.config["PARTY_URL"]}/party-api/v1/businesses/id/{business_party_id}/attributes'
     params = urlencode([("collection_exercise_id", uuid) for uuid in collection_exercise_ids])
     response = requests.get(url, params=params, auth=app.config['BASIC_AUTH'])
@@ -114,9 +111,10 @@ def get_respondent_by_party_ids(uuids):
     :type uuids: list
     :return: A list of dicts containing party data
     """
-    logger.info('Retrieving respondent data for multiple respondents', respondent_party_ids=uuids)
+    bound_logger = logger.bind(respondent_party_ids=uuids)
+    bound_logger.info('Retrieving respondent data for multiple respondents')
     if not uuids:
-        logger.info('List is empty.  Returning empty list', respondent_party_ids=uuids)
+        bound_logger.info('Successfully retrieved respondent data for multiple respondents')
         return []
 
     params = urlencode([("id", uuid) for uuid in uuids])
@@ -126,10 +124,10 @@ def get_respondent_by_party_ids(uuids):
     try:
         response.raise_for_status()
     except requests.exceptions.HTTPError:
-        logger.error('Error retrieving respondent data for multiple respondents', respondent_party_ids=uuids)
+        bound_logger.error('Error retrieving respondent data for multiple respondents')
         raise ApiError(response)
 
-    logger.info('Successfully retrieved respondent data for multiple respondents', respondent_party_ids=uuids)
+    bound_logger.info('Successfully retrieved respondent data for multiple respondents')
     return response.json()
 
 
