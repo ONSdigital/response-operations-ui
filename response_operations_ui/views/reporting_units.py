@@ -39,6 +39,8 @@ def view_reporting_unit(ru_ref):
     now = datetime.now(timezone.utc)
     live_collection_exercises = [ce for ce in collection_exercises if parse_date(ce['scheduledStartDateTime']) < now]
     live_collection_exercises_ids = [ce['id'] for ce in live_collection_exercises]
+
+    # Attributes represent the data for a reporting unit at the time they were enrolled onto each collection exercise.
     attributes = party_controller.get_business_attributes_by_party_id(reporting_unit['id'],
                                                                       live_collection_exercises_ids)
 
@@ -101,14 +103,14 @@ def view_reporting_unit(ru_ref):
                            surveys=surveys_with_latest_case, breadcrumbs=breadcrumbs)
 
 
-def add_collection_exercise_details(collection_exercise, attributes, case_groups):
+def add_collection_exercise_details(collection_exercise, reporting_unit, case_groups):
     """
     Creates a dict of formatted data.
 
     :param collection_exercise: A dict containing collection exercise data
     :type collection_exercise: dict
-    :param attributes: A dict containing reporting unit attributes
-    :type attributes: dict
+    :param reporting_unit: A dict containing reporting unit attribute data
+    :type reporting_unit: dict
     :param case_groups: A list of case group data
     :return: A dict containing formatted data to be used by the template
     :rtype: dict
@@ -118,9 +120,9 @@ def add_collection_exercise_details(collection_exercise, attributes, case_groups
     return {
         **collection_exercise,
         'responseStatus': map_ce_response_status(response_status),
-        'companyName': attributes['name'],
-        'companyRegion': map_region(attributes['region']),
-        'trading_as': attributes['trading_as']
+        'companyName': reporting_unit['name'],
+        'companyRegion': map_region(reporting_unit['attributes']['region']),
+        'trading_as': reporting_unit['trading_as']
     }
 
 
