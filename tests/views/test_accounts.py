@@ -34,7 +34,7 @@ class TestAccounts(unittest.TestCase):
     def test_request_account(self, mock_request):
         with patch('response_operations_ui.views.accounts.NotifyController') as mock_notify:
             mock_notify()._send_message.return_value = mock.Mock()
-            mock_request.post(url_uaa_token, json={"access_token": self.access_token.decode()}, status_code=201)
+            mock_request.post(url_uaa_token, json={"access_token": self.access_token}, status_code=201)
             mock_request.get(url_uaa_get_accounts, json={"totalResults": 0}, status_code=200)
             response = self.client.post("/account/request-new-account", follow_redirects=True,
                                         data={"email_address": test_email,
@@ -44,7 +44,7 @@ class TestAccounts(unittest.TestCase):
 
     @requests_mock.mock()
     def test_request_account_fails(self, mock_request):
-        mock_request.post(url_uaa_token, json={"access_token": self.access_token.decode()}, status_code=201)
+        mock_request.post(url_uaa_token, json={"access_token": self.access_token}, status_code=201)
         mock_request.get(url_uaa_get_accounts, json={"totalResults": 0}, status_code=403)
         response = self.client.post("/account/request-new-account", follow_redirects=True,
                                     data={"email_address": test_email,
@@ -54,7 +54,7 @@ class TestAccounts(unittest.TestCase):
 
     @requests_mock.mock()
     def test_request_account_already_exists(self, mock_request):
-        mock_request.post(url_uaa_token, json={"access_token": self.access_token.decode()}, status_code=201)
+        mock_request.post(url_uaa_token, json={"access_token": self.access_token}, status_code=201)
         mock_request.get(url_uaa_get_accounts, json={"totalResults": 1}, status_code=200)
         response = self.client.post("/account/request-new-account", follow_redirects=True,
                                     data={"email_address": test_email,
@@ -81,7 +81,7 @@ class TestAccounts(unittest.TestCase):
             with patch('response_operations_ui.views.accounts.NotifyController') as mock_notify:
                 mock_notify()._send_message.return_value = mock.Mock()
                 token = token_decoder.generate_email_token(test_email)
-                mock_request.post(url_uaa_token, json={"access_token": self.access_token.decode()}, status_code=201)
+                mock_request.post(url_uaa_token, json={"access_token": self.access_token}, status_code=201)
                 mock_request.post(url_uaa_create_account, json={}, status_code=201)
                 response = self.client.post(f"/account/create-account/{token}", follow_redirects=True,
                                             data={"password": 'TestPassword1!',
@@ -110,7 +110,7 @@ class TestAccounts(unittest.TestCase):
     def test_create_account_fails(self, mock_request):
         with self.app.app_context():
             token = token_decoder.generate_email_token(test_email)
-            mock_request.post(url_uaa_token, json={"access_token": self.access_token.decode()}, status_code=201)
+            mock_request.post(url_uaa_token, json={"access_token": self.access_token}, status_code=201)
             mock_request.post(url_uaa_create_account, json={}, status_code=403)
             response = self.client.post(f"/account/create-account/{token}", follow_redirects=True,
                                         data={"password": 'TestPassword1!',
@@ -125,7 +125,7 @@ class TestAccounts(unittest.TestCase):
     def test_create_account_username_taken(self, mock_request):
         with self.app.app_context():
             token = token_decoder.generate_email_token(test_email)
-            mock_request.post(url_uaa_token, json={"access_token": self.access_token.decode()}, status_code=201)
+            mock_request.post(url_uaa_token, json={"access_token": self.access_token}, status_code=201)
             mock_request.post(url_uaa_create_account, json={}, status_code=409)
             response = self.client.post(f"/account/create-account/{token}", follow_redirects=True,
                                         data={"password": 'TestPassword1!',
