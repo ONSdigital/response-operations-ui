@@ -54,7 +54,8 @@ def view_reporting_unit(ru_ref):
     respondents = party_controller.get_respondent_by_party_ids(respondent_party_ids)
 
     # Link collection exercises and respondents to appropriate surveys
-    linked_surveys = [survey_with_respondents_and_exercises(survey, respondents, refined_live_collection_exercises, ru_ref)
+    linked_surveys = [survey_with_respondents_and_exercises(survey, respondents, refined_live_collection_exercises,
+                                                            ru_ref)
                       for survey in surveys]
     sorted_linked_surveys = sorted(linked_surveys, key=lambda survey: survey['surveyRef'])
 
