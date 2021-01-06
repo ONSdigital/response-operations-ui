@@ -30,34 +30,47 @@ def _get_redis():
     return r
 
 
-def set_banner_and_time(banner, time):
+def set_live_banner(banner):
+    logger.info('Attempting to set banner to acitve', banner_id=banner_id)
+    url = f"{app.config['BANNER_SERVICE_URL']}/banner/{banner_id}/active"
+    response = requests.patch(url)
     try:
-        r = _get_redis()
-        r.set('AVAILABILITY_MESSAGE', banner)
-        r.set('AVAILABILITY_MESSAGE_TIME_SET', time)
-        logger.debug("Setting availability message", banner=banner)
-    except redis.RedisError:
-        logger.exception("Unable to update banner and time. Ensure time parameter is correct structure if not\
-                         default. e.g. strftime does not work on string")
+        response.raise_for_status()
+    except requests.exceptions.HTTPError:
+        logger.error('Failed to retrieve Banner from api')
+        raise ApiError(response)
+    
+    logger.info('Successfully retrieved current live banner from api')
+    banner = response.json()
+    return banner
 
 
-def remove_banner():
+def remove_banner(banner_id):
+    logger.info('Attempting to remove banner from Datastore', banner_id=banner_id)
+    url = f"{app.config['BANNER_SERVICE_URL']}/banner/{banner_id}"
+    response = requests.delete(url)
     try:
-        r = _get_redis()
-        r.delete('AVAILABILITY_MESSAGE')
-        logger.debug("Deleting availability message")
-    except redis.RedisError:
-        logger.exception("Unable to remove banner")
+        response.raise_for_status()
+    except requests.exceptions.HTTPError:
+        logger.error('Failed to remove Banner', banner_id=banner_id)
+        raise ApiError(response)
+
+    logger.info('Successfully removed banner from api', banner_id=banner_id)
 
 
 def current_banner():
+    logger.info('Attempting to retrieve the current live banner from Datastore')
+    url = f"{app.config['BANNER_SERVICE_URL']}/banner/active"
+    response = requests.get(url)
     try:
-        r = _get_redis()
-        banner = r.get('AVAILABILITY_MESSAGE')
-        logger.debug("Getting availability message", banner=banner)
-        return banner
-    except redis.RedisError:
-        logger.exception("Unable to retrieve current banners")
+        response.raise_for_status()
+    except requests.exceptions.HTTPError:
+        logger.error('Failed to retrieve Banner from api')
+        raise ApiError(response)
+    
+    logger.info('Successfully retrieved current live banner from api')
+    banner = response.json()
+    return banner
 
 
 def banner_time_get():
@@ -131,16 +144,14 @@ def edit_banner(banner):
     return banner
 
 
-def delete_a_banner(banner_title):
+def delete_banner(banner_id):
     logger.info('Attempting to delete banner from Datastore')
-    url = f"{app.config['BANNER_SERVICE_URL']}/banner"
-    response = requests.delete(url, banner_title)
+    url = f"{app.config['BANNER_SERVICE_URL']}/banner/{banner_id}"
+    response = requests.delete(url)
     try:
         response.raise_for_status()
     except requests.exceptions.HTTPError:
         logger.error('Failed to delete Banners from Datastore')
         raise ApiError(response)
 
-    logger.info('Successfully deleted banners from Datastore')
-    banner = response.json()
-    return banner
+    logger.info('Successfully deleted banner', banner_id=banner_id)

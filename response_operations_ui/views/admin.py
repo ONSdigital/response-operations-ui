@@ -7,7 +7,7 @@ from dateutil import parser
 import json
 
 from response_operations_ui.controllers import admin_controller
-from response_operations_ui.controllers.admin_controller import get_all_banners, create_new_banner, Banner, get_a_banner, edit_banner
+from response_operations_ui.controllers.admin_controller import get_all_banners, create_new_banner, Banner, get_a_banner, edit_banner, delete_banner
 from response_operations_ui.forms import BannerAdminForm, BannerManageForm
 
 logger = wrap_logger(logging.getLogger(__name__))
@@ -46,23 +46,19 @@ def current_username():
 @admin_bp.route('/banner', methods=['POST'])
 @login_required
 def update_banner():
-    breadcrumbs = [{"text": "Banner Admin", "url": ""}]
-    dict_of_alerts = get_all_banners()
-    current_banner = admin_controller.current_banner()
-    logger.debug("Updating banner", user=current_username())
     form = BannerAdminForm(form=request.form)
-    banner = form.banner.data
-    logger.debug("Banner update", user=current_username(), banner=banner)
-    if banner:
-        admin_controller.set_banner_and_time(form.banner.data, datetime.now())
-        return redirect(url_for("admin_bp.remove_alert"))
+    banner_id = form.banner_id.data
+    logger.info("Setting an active banner", user=current_username(), banner_id=banner_id)
+    if banner_id:
+        admin_controller.set_live_banner(banner_id)
+        return redirect(url_for("admin_bp.banner_admin"))
     else:
         response_error = True
     return render_template('banner-admin.html',
                            form=form,
-                           list_of_alerts=dict_of_alerts,
-                           breadcrumbs=breadcrumbs,
-                           current_banner=current_banner,
+                           list_of_alerts=get_all_banners(),
+                           breadcrumbs=[{"text": "Banner Admin", "url": ""}],
+                           current_banner=admin_controller.current_banner(),
                            response_error=response_error)
 
 
@@ -88,16 +84,9 @@ def view_and_remove_current_banner():
         return redirect(url_for("admin_bp.banner_admin"))
 
 
-@admin_bp.route('/banner/remove', methods=['POST'])
-@login_required
-def remove_alert():
+def remove_alert(banner_id):
     logger.debug("Removing banner", user=current_username())
-    form = BannerAdminForm(form=request.form)
-    delete = form.delete.data
-    if delete:
-        flash('The alert has been removed')
-        logger.debug("Banner deleted", user=current_username())
-        admin_controller.remove_banner()
+    delete_banner(banner_id)
     return redirect(url_for("admin_bp.banner_admin"))
 
 
@@ -138,6 +127,8 @@ def get_banner_edit(banner_id):
 def edit_the_chosen_banner(banner_id):
     logger.debug("Editing banner", user=current_username())
     form = BannerAdminForm(form=request.form)
+    if form.delete.data:
+        return remove_alert(banner_id)
     title = form.title.data
     content = form.banner.data
     banner = edit_banner(json.dumps({ "id": banner_id, "title": title, "content": content}))
