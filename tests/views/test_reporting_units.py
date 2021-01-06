@@ -34,6 +34,7 @@ url_get_party_by_ru_ref = f'{TestingConfig.PARTY_URL}/party-api/v1/parties/type/
 url_get_cases_by_business_party_id = f'{TestingConfig.CASE_URL}/cases/partyid/{business_party_id}'
 
 url_get_collection_exercise_by_id = f'{TestingConfig.COLLECTION_EXERCISE_URL}/collectionexercises'
+url_get_empty_attributes = f'{TestingConfig.PARTY_URL}/party-api/v1/businesses/id/{business_party_id}/attributes'
 url_get_business_attributes = f'{TestingConfig.PARTY_URL}/party-api/v1/businesses/id/{business_party_id}/' \
                               f'attributes?collection_exercise_id={collection_exercise_id_1}' \
                               f'&collection_exercise_id={collection_exercise_id_2}'
@@ -134,6 +135,7 @@ class TestReportingUnits(TestCase):
     def test_get_reporting_unit_cases_404(self, mock_request):
         mock_request.get(url_get_party_by_ru_ref, json=business_reporting_unit)
         mock_request.get(url_get_cases_by_business_party_id, status_code=404)
+        mock_request.get(url_get_empty_attributes, json={})
         mock_request.get(url_get_respondent_party_by_list, json=[])
 
         response = self.client.get("/reporting-units/50012345678")
