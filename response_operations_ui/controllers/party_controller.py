@@ -48,8 +48,11 @@ def get_business_attributes_by_party_id(business_party_id, collection_exercise_i
     bound_logger = logger.bind(business_id=business_party_id, collection_exercise_ids=collection_exercise_ids)
     bound_logger.info('Retrieving business attributes')
     url = f'{app.config["PARTY_URL"]}/party-api/v1/businesses/id/{business_party_id}/attributes'
-    params = urlencode([("collection_exercise_id", uuid) for uuid in collection_exercise_ids])
-    response = requests.get(url, params=params, auth=app.config['BASIC_AUTH'])
+    if collection_exercise_ids:
+        params = urlencode([("collection_exercise_id", uuid) for uuid in collection_exercise_ids])
+        response = requests.get(url, params=params, auth=app.config['BASIC_AUTH'])
+    else:
+        response = requests.get(url, auth=app.config['BASIC_AUTH'])
 
     try:
         response.raise_for_status()
