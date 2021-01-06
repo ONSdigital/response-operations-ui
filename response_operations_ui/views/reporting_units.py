@@ -43,7 +43,7 @@ def view_reporting_unit(ru_ref):
     # Attributes represent the data for a reporting unit at the time they were enrolled onto each collection exercise.
     all_attributes = party_controller.get_business_attributes_by_party_id(reporting_unit['id'])
 
-    # Copies and uses only the collection exercises that haven't gone live yet
+    # Copies and uses only the collection exercises that have gone live
     attributes = {k: v for k, v in all_attributes.items() if k in live_collection_exercises_ids}
 
     refined_live_collection_exercises = [add_collection_exercise_details(ce, attributes[ce['id']], case_groups)
