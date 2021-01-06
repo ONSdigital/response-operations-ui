@@ -114,7 +114,7 @@ def get_respondent_by_party_ids(uuids):
     bound_logger = logger.bind(respondent_party_ids=uuids)
     bound_logger.info('Retrieving respondent data for multiple respondents')
     if not uuids:
-        bound_logger.info('Successfully retrieved respondent data for multiple respondents')
+        bound_logger.info('No party uuids provided.  Returning empty list')
         return []
 
     params = urlencode([("id", uuid) for uuid in uuids])
