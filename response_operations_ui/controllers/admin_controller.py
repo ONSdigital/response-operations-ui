@@ -39,7 +39,7 @@ def set_live_banner(banner_id):
     except requests.exceptions.HTTPError:
         logger.error('Failed to retrieve Banner from api')
         raise ApiError(response)
-    
+
     logger.info('Successfully retrieved current live banner from api')
     banner = response.json()
     return banner
@@ -67,7 +67,7 @@ def current_banner():
     except requests.exceptions.HTTPError:
         logger.error('Failed to retrieve Banner from api')
         raise ApiError(response)
-    
+
     logger.info('Successfully retrieved current live banner from api')
     if response.status_code == 204:
         return {}
@@ -129,6 +129,7 @@ def create_new_banner(banner):
     logger.info('Successfully stored the new Banner into Datastore')
     banner = response.json()
     return banner
+
 
 def edit_banner(banner):
     logger.info('Attempting to edit the banner', banner=banner)

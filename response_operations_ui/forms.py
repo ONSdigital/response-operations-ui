@@ -338,5 +338,6 @@ class BannerAdminForm(FlaskForm):
     delete = BooleanField('Delete banner', default=False)
     delete_from_datastore = BooleanField('Delete banner from Datastore', default=False)
 
+
 class BannerManageForm(FlaskForm):
     banner_id = StringField('Banner title')
