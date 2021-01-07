@@ -30,7 +30,7 @@ def _get_redis():
     return r
 
 
-def set_live_banner(banner):
+def set_live_banner(banner_id):
     logger.info('Attempting to set banner to acitve', banner_id=banner_id)
     url = f"{app.config['BANNER_SERVICE_URL']}/banner/{banner_id}/active"
     response = requests.patch(url)
@@ -69,6 +69,8 @@ def current_banner():
         raise ApiError(response)
     
     logger.info('Successfully retrieved current live banner from api')
+    if response.status_code == 204:
+        return {}
     banner = response.json()
     return banner
 

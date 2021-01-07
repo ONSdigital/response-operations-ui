@@ -132,7 +132,7 @@ def edit_the_chosen_banner(banner_id):
     title = form.title.data
     content = form.banner.data
     banner = edit_banner(json.dumps({ "id": banner_id, "title": title, "content": content}))
-    return redirect(url_for("admin_bp.get_banner_edit", banner_id=banner_id))
+    return redirect(url_for("admin_bp.banner_admin"))
 
 
 # Loads manage page

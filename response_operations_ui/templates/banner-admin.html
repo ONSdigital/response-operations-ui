@@ -6,6 +6,7 @@
 {% from "components/field/_macro.njk" import onsField %}
 {% from "components/textarea/_macro.njk" import onsTextarea %}
 {% from "components/select/_macro.njk" import onsSelect %}
+{% from "components/radios/_macro.njk" import onsRadios %}
 <!-- The "name": "banner" field within the textarea specifies that is getting posted -->
 {% set page_title = 'Banner Admin'  %}
 {% block main %}
@@ -32,7 +33,7 @@
                             "text": "Message" 
                         },
                         "title": "Active Banner",
-                        "body": current_banner,
+                        "body": current_banner.content,
                         "classes": "u-mb-l"    
                     })
                 }}
@@ -98,33 +99,39 @@
                         "legendClasses": "u-vh",
                         "classes": "u-mt-m"
                         }) -%}
-                        {% set alerts = [            
-                            {
-                                "value": "",
-                                "text": "Select an option",
-                                "disabled": true,
-                                "selected": true
-                            }
-                        ] %}
+                        {% set radioComponent = {
+                            "legend": "Choose a template to publish",
+                            "name": "event"
+                        } %}
+        
+                        {% set radios = [] %}                
                         {% for banner in list_of_alerts %}
-                            {% do alerts.append (
+                            {% do radios.append(
                                 {
-                                    "text":  banner['title'],
-                                    "value": banner['content']
+                                    "id": banner['id']|string,
+                                    "name": "banner_id",
+                                    "label": {
+                                        "text": banner['title']
+                                    },
+                                    "value": banner['content'],
+                                    "attributes": {
+                                        "banner_id": banner['id']
+                                    }
                                 }
                             ) %}
                         {% endfor %}
-                        {{ 
-                            onsSelect({
-                                "id": "alert-list",
-                                "name": "select-alert",
-                                "label": {
-                                    "id": "alert-list-label",
-                                    "text": "Message Template (Optional)",
-                                    "classes": "hidden"
-                                },
-                                "options": alerts,
-                                "classes": "hidden"
+        
+                        {% do radioComponent | setAttribute("radios", radios) %}
+                    
+                        {{
+                            onsRadios(radioComponent)
+                        }} 
+                        {{
+                            onsInput({
+                                "id": "banner-input-id",
+                                "name": "banner_id",
+                                "type": "hidden",
+                                "value": ""
                             })
                         }}
                         <p></p>
@@ -142,10 +149,13 @@
                             })
                         }}
                         <script{% if csp_nonce %} nonce="{{ csp_nonce() }}"{% endif %}>
-                            document.getElementById("alert-list").classList.remove("hidden");
-                            document.getElementById("alert-list-label").classList.remove("hidden");
-                            document.getElementById("alert-list").addEventListener('change', function(event) {
-                                document.getElementById("banner-text").value = event.target.value
+                            // document.getElementById("alert-list").classList.remove("hidden");
+                            // document.getElementById("alert-list-label").classList.remove("hidden");
+                            document.getElementsByName("event").forEach(element => {
+                                element.addEventListener("change", function(event) {
+                                    document.getElementById("banner-text").value = event.target.value;
+                                    document.getElementById("banner-input-id").value = event.target.getAttribute("banner_id");
+                                })
                             });
                         </script>
                     {% endcall %}
