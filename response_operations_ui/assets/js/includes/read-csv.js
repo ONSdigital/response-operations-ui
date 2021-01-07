@@ -20,9 +20,9 @@ window.readCSV.__private__.getOutputTemplate = function(businessCount, ciCount) 
 
 window.readCSV.__private__.renderUI = function(businessCount, ciCount) {
     document.getElementById('sample-preview').innerHTML = window.readCSV.__private__.getOutputTemplate(businessCount, ciCount);
-    document.getElementById('btn-check-sample-contents').style.display = 'none';
-    document.getElementById('btn-load-sample').style.display = 'inline-block';
-    document.getElementById('btn-cancel-load-sample').style.display = 'inline-block';
+    document.getElementById('btn-check-sample-contents').classList.add('u-vh');
+    document.getElementById('btn-load-sample').classList.remove('u-vh');
+    document.getElementById('btn-cancel-load-sample').classList.remove('u-vh');
 };
 
 window.readCSV.__private__.errorHandler = function(evt) {
@@ -84,8 +84,8 @@ window.readCSV.handleFiles = function(files, classifiers) {
 window.readCSV.cancelLoadSample = function() {
     document.getElementById('sample-preview').innerHTML = '';
     document.getElementById('form-load-sample').reset();
-    document.getElementById('btn-check-sample-contents').style.display = 'block';
-    document.getElementById('btn-load-sample').style.display = 'none';
-    document.getElementById('btn-cancel-load-sample').style.display = 'none';
+    document.getElementById('btn-check-sample-contents').classList.remove('u-vh');
+    document.getElementById('btn-load-sample').classList.add('u-vh');
+    document.getElementById('btn-cancel-load-sample').classList.add('u-vh');
     document.getElementById('sampleFile').focus();
 };
