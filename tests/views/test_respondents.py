@@ -7,10 +7,8 @@ import requests_mock
 from config import TestingConfig
 from tests.views import ViewTestCase
 from tests.views.test_reporting_units import url_edit_contact_details, url_get_party_by_ru_ref, \
-    url_get_cases_by_business_party_id, url_get_business_party_by_party_id, \
-    url_get_survey_by_id, url_get_respondent_party_by_party_id, \
-    url_get_collection_exercise_by_id, url_get_iac, url_change_respondent_status, \
-    url_auth_respondent_account
+    url_get_cases_by_business_party_id, url_get_survey_by_id, url_get_respondent_party_by_party_id, \
+    url_get_collection_exercise_by_id, url_get_iac, url_change_respondent_status
 respondent_party_id = "cd592e0f-8d07-407b-b75d-e01fbdae8233"
 business_party_id = "b3ba864b-7cbc-4f44-84fe-88dc018a1a4c"
 party_id = "cd592e0f-8d07-407b-b75d-e01fbdae8233"
@@ -23,6 +21,8 @@ get_business_by_id_url = f'{TestingConfig.PARTY_URL}/party-api/v1/businesses/id/
 get_respondent_by_email_url = f'{TestingConfig.PARTY_URL}/party-api/v1/respondents/email'
 get_respondent_by_id_url = f'{TestingConfig.PARTY_URL}/party-api/v1/respondents/id/{party_id}'
 get_survey_by_id_url = f'{TestingConfig.SURVEY_URL}/surveys/{survey_id}'
+url_auth_respondent_account = f'{TestingConfig.AUTH_URL}/api/account/user'
+url_get_business_party_by_party_id = f'{TestingConfig.PARTY_URL}/party-api/v1/businesses/id/{business_party_id}'
 url_get_casegroups_by_business_party_id = f'{TestingConfig.CASE_URL}/casegroups/partyid/{business_party_id}'
 url_get_available_case_group_statuses_direct = f'{TestingConfig.CASE_URL}/casegroups/transitions' \
                                                f'/{collection_exercise_id_1}/{ru_ref}'
