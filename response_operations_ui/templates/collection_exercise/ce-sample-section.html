@@ -113,14 +113,14 @@
                 "text": "Load sample",
                 "id": "btn-load-sample",
                 "name": "load-sample",
-                "classes": "hidden btn--small",
+                "classes": "u-vh btn--small",
                 "submitType": "timer"
             })
           }}   
           {{
             onsButton({
                 "text": "Cancel",
-                "classes": "hidden btn--secondary btn--small",
+                "classes": "u-vh btn--secondary btn--small",
                 "id": "btn-cancel-load-sample",
                 "submitType": "timer",
                 "listeners": {
@@ -130,12 +130,5 @@
           }}   
       </form>
     </div>
-    <script{% if csp_nonce %} nonce="{{ csp_nonce() }}"{% endif %}>
-      document.getElementById('btn-load-sample').addEventListener('click', function(evt) {
-        document.getElementById('btn-load-sample').disabled = true;
-        evt.preventDefault();
-        document.getElementById('form-load-sample').submit();
-      });
-    </script>
   {% endif %}
 </section>
