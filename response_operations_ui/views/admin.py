@@ -1,9 +1,7 @@
 import logging
-from datetime import datetime
 from flask import Blueprint, render_template, request, url_for, redirect
 from flask_login import login_required, current_user
 from structlog import wrap_logger
-from dateutil import parser
 import json
 
 from response_operations_ui.controllers import admin_controller
@@ -63,7 +61,6 @@ def update_banner():
                            response_error=response_error)
 
 
-# Parser.parse allows the string returned from redis to be converted into a datetime object from string
 @admin_bp.route('/banner/remove', methods=['GET'])
 @login_required
 def view_and_remove_current_banner():
@@ -72,15 +69,11 @@ def view_and_remove_current_banner():
     logger.debug("Deleting alert", user=current_username())
     form = BannerAdminForm(form=request.form)
     current_banner = admin_controller.current_banner()
-    time_banner_set = admin_controller.banner_time_get()
-    time_banner_set = parser.parse(time_banner_set) \
-        .strftime('%d' + set_suffix(datetime.today().day) + ' %B ' + '%Y ' + 'at %H' + ':%M')
     if current_banner:
         return render_template('admin-remove-alert.html',
                                form=form,
                                current_banner=current_banner,
-                               breadcrumbs=breadcrumbs,
-                               time_banner_set=time_banner_set)
+                               breadcrumbs=breadcrumbs)
     else:
         return redirect(url_for("admin_bp.banner_admin"))
 
