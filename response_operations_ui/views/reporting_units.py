@@ -36,14 +36,21 @@ def view_reporting_unit(ru_ref):
     collection_exercise_ids = {case_group['collectionExerciseId'] for case_group in case_groups}
     collection_exercises = [get_collection_exercise_by_id(ce_id) for ce_id in collection_exercise_ids]
 
-    # Add extra collection exercise details and filter by live date
     now = datetime.now(timezone.utc)
-    live_collection_exercises = [add_collection_exercise_details(ce, reporting_unit, case_groups)
-                                 for ce in collection_exercises
-                                 if parse_date(ce['scheduledStartDateTime']) < now]
+    live_collection_exercises = [ce for ce in collection_exercises if parse_date(ce['scheduledStartDateTime']) < now]
+    live_collection_exercises_ids = [ce['id'] for ce in live_collection_exercises]
+
+    # Attributes represent the data for a reporting unit at the time they were enrolled onto each collection exercise.
+    all_attributes = party_controller.get_business_attributes_by_party_id(reporting_unit['id'])
+
+    # Copies and uses only the collection exercises that have gone live
+    attributes = {k: v for k, v in all_attributes.items() if k in live_collection_exercises_ids}
+
+    refined_live_collection_exercises = [add_collection_exercise_details(ce, attributes[ce['id']], case_groups)
+                                         for ce in live_collection_exercises]
 
     # Get all related surveys for gathered collection exercises
-    survey_ids = {collection_exercise['surveyId'] for collection_exercise in live_collection_exercises}
+    survey_ids = {collection_exercise['surveyId'] for collection_exercise in refined_live_collection_exercises}
     surveys = [get_survey_by_id(survey_id) for survey_id in survey_ids]
 
     # Get all respondents for the given ru
@@ -51,7 +58,8 @@ def view_reporting_unit(ru_ref):
     respondents = party_controller.get_respondent_by_party_ids(respondent_party_ids)
 
     # Link collection exercises and respondents to appropriate surveys
-    linked_surveys = [survey_with_respondents_and_exercises(survey, respondents, live_collection_exercises, ru_ref)
+    linked_surveys = [survey_with_respondents_and_exercises(survey, respondents, refined_live_collection_exercises,
+                                                            ru_ref)
                       for survey in surveys]
     sorted_linked_surveys = sorted(linked_surveys, key=lambda survey: survey['surveyRef'])
 
@@ -103,21 +111,20 @@ def add_collection_exercise_details(collection_exercise, reporting_unit, case_gr
 
     :param collection_exercise: A dict containing collection exercise data
     :type collection_exercise: dict
-    :param reporting_unit: A dict containing reporting unit data (from party)
+    :param reporting_unit: A dict containing reporting unit attribute data
     :type reporting_unit: dict
     :param case_groups: A list of case group data
     :return: A dict containing formatted data to be used by the template
     :rtype: dict
     """
     response_status = get_case_group_status_by_collection_exercise(case_groups, collection_exercise['id'])
-    reporting_unit_ce = party_controller.get_business_by_party_id(reporting_unit['id'], collection_exercise['id'])
 
     return {
         **collection_exercise,
         'responseStatus': map_ce_response_status(response_status),
-        'companyName': reporting_unit_ce['name'],
-        'companyRegion': map_region(reporting_unit_ce['region']),
-        'trading_as': reporting_unit_ce['trading_as']
+        'companyName': reporting_unit['name'],
+        'companyRegion': map_region(reporting_unit['attributes']['region']),
+        'trading_as': reporting_unit['trading_as']
     }
 
 
