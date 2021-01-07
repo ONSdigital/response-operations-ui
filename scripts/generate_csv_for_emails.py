@@ -5,6 +5,11 @@ import csv
 from openpyxl import load_workbook
 
 survey_mapping = {
+    "aitis": {
+        "phone_number": "0300 1234 931",
+        "survey_name": "Annual International Trade in Services",
+        "survey_id": "058"
+    },
     "construction": {
         "phone_number": "0300 1234 910",
         "survey_name": "Monthly Business Survey - Construction and Allied Trades",
