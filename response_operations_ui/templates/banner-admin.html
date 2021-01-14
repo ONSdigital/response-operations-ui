@@ -6,6 +6,7 @@
 {% from "components/field/_macro.njk" import onsField %}
 {% from "components/textarea/_macro.njk" import onsTextarea %}
 {% from "components/select/_macro.njk" import onsSelect %}
+{% from "components/radios/_macro.njk" import onsRadios %}
 <!-- The "name": "banner" field within the textarea specifies that is getting posted -->
 {% set page_title = 'Banner Admin'  %}
 {% block main %}
@@ -32,7 +33,7 @@
                             "text": "Message" 
                         },
                         "title": "Active Banner",
-                        "body": current_banner,
+                        "body": current_banner.content,
                         "classes": "u-mb-l"    
                     })
                 }}
@@ -63,7 +64,7 @@
                 {% endif %}
             {% endwith %}
             <h1 class="u-fs-xl u-mt-m">Banner Admin</h1>
-            <form action="" method="post">
+            <form action="{{ url_for('admin_bp.update_banner') }}" method="POST">
                 {{ form.csrf_token }}
                 {% if errors %}
                     {% set errorData = [] %}
@@ -98,39 +99,48 @@
                         "legendClasses": "u-vh",
                         "classes": "u-mt-m"
                         }) -%}
-                        {% set alerts = [            
-                            {
-                                "value": "",
-                                "text": "Select an option",
-                                "disabled": true,
-                                "selected": true
-                            }
-                        ] %}
-                        {% for alert, message in list_of_alerts.items() %}
-                            {% do alerts.append (
+                        {% set radioComponent = {
+                            "legend": "Choose a template to publish",
+                            "name": "event"
+                        } %}
+        
+                        {% set radios = [] %}                
+                        {% for banner in list_of_alerts %}
+                            {% do radios.append(
                                 {
-                                    "text": alert,
-                                    "value": message
+                                    "id": banner['id']|string,
+                                    "name": "banner_id",
+                                    "label": {
+                                        "text": banner['title']
+                                    },
+                                    "value": banner['content'],
+                                    "attributes": {
+                                        "banner_id": banner['id']
+                                    }
                                 }
                             ) %}
                         {% endfor %}
-                        {{ 
-                            onsSelect({
-                                "id": "alert-list",
-                                "name": "select-alert",
-                                "label": {
-                                    "id": "alert-list-label",
-                                    "text": "Message Template (Optional)",
-                                    "classes": "hidden"
-                                },
-                                "options": alerts,
-                                "classes": "hidden"
+        
+                        {% do radioComponent | setAttribute("radios", radios) %}
+                    
+                        {{
+                            onsRadios(radioComponent)
+                        }} 
+                        {{
+                            onsInput({
+                                "id": "banner-input-id",
+                                "name": "banner_id",
+                                "type": "hidden",
+                                "value": ""
                             })
                         }}
+                        <p></p>
+                        <a href="{{ url_for('admin_bp.manage_alert') }}"> Manage message templates</a>
+                        <p></p>
                         {{ 
                             onsTextarea({
                                 "id": "banner-text",
-                                "name": "banner",
+                                "name": "content",
                                 "label": {
                                     "text": "Message"
                                 },
@@ -139,10 +149,13 @@
                             })
                         }}
                         <script{% if csp_nonce %} nonce="{{ csp_nonce() }}"{% endif %}>
-                            document.getElementById("alert-list").classList.remove("hidden");
-                            document.getElementById("alert-list-label").classList.remove("hidden");
-                            document.getElementById("alert-list").addEventListener('change', function(event) {
-                                document.getElementById("banner-text").value = event.target.value
+                            // document.getElementById("alert-list").classList.remove("hidden");
+                            // document.getElementById("alert-list-label").classList.remove("hidden");
+                            document.getElementsByName("event").forEach(element => {
+                                element.addEventListener("change", function(event) {
+                                    document.getElementById("banner-text").value = event.target.value;
+                                    document.getElementById("banner-input-id").value = event.target.getAttribute("banner_id");
+                                })
                             });
                         </script>
                     {% endcall %}
