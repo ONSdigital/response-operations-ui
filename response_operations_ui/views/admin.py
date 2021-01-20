@@ -23,8 +23,20 @@ title_to_edit = ""
 @admin_bp.route('/banner', methods=['GET'])
 @login_required
 def banner_admin():
+    """
+    This endpoint, by design, renders one of two different screens.  Either a 'create' screen if
+    there isn't a banner set yet, or a 'remove' screen if there is one.
+    """
     breadcrumbs = [{"text": "Banner Admin", "url": ""}]
+    form = BannerAdminForm(form=request.form)
     current_banner = admin_controller.current_banner()
+    if current_banner:
+        # Display the currently set stuff
+        return render_template('admin-remove-alert.html',
+                               form=form,
+                               current_banner=current_banner,
+                               breadcrumbs=breadcrumbs)
+    # Display the not currently set stuff
     logger.debug("Banner page accessed", user=current_username())
     form = BannerAdminForm(form=request.form)
     dict_of_alerts = get_all_banners()
@@ -35,17 +47,15 @@ def banner_admin():
                            current_banner=current_banner)
 
 
-def current_username():
-    if hasattr(current_user, 'username'):
-        return current_user.username
-    else:
-        return "unknown"
-
-
 @admin_bp.route('/banner', methods=['POST'])
 @login_required
 def update_banner():
     form = BannerAdminForm(form=request.form)
+    if form.delete.data:
+        # Do delete actions
+        logger.info("Do delete stuff")
+    
+    # Validate and redirect to publish confirm screen
     banner_id = form.banner_id.data
     logger.info("Setting an active banner", user=current_username(), banner_id=banner_id)
     if banner_id:
@@ -61,28 +71,34 @@ def update_banner():
                            response_error=response_error)
 
 
-@admin_bp.route('/banner/remove', methods=['GET'])
+@admin_bp.route('/banner/confirm-publish', methods=['GET'])
 @login_required
-def view_and_remove_current_banner():
+def get_banner_confirm_publish():
     breadcrumbs = [{"text": "Banner Admin", "url": "/admin/banner"},
                    {"text": "Setting Banner", "url": ""}]
-    logger.debug("Deleting alert", user=current_username())
     form = BannerAdminForm(form=request.form)
-    current_banner = admin_controller.current_banner()
-    if current_banner:
-        return render_template('admin-remove-alert.html',
-                               form=form,
-                               current_banner=current_banner,
-                               breadcrumbs=breadcrumbs)
+    return render_template('admin/banner-confirm-publish.html',
+                           form=form,
+                           breadcrumbs=breadcrumbs)
+
+@admin_bp.route('/banner/confirm-publish', methods=['POST'])
+@login_required
+def post_banner_confirm_publish():
+    breadcrumbs = [{"text": "Banner Admin", "url": "/admin/banner"},
+                   {"text": "Setting Banner", "url": ""}]
+    form = BannerAdminForm(form=request.form)
+    banner_id = form.banner_id.data
+    logger.info("Setting an active banner", user=current_username(), banner_id=banner_id)
+    if banner_id:
+        admin_controller.set_live_banner(banner_id)
+        # TODO handle error if can't set banner live
+        # set green info message
+        return redirect(url_for("surveys_bp.view_surveys"))
     else:
+        logger.error("TODO, handle error")
         return redirect(url_for("admin_bp.banner_admin"))
 
-
-def remove_alert(banner_id):
-    logger.debug("Removing banner", user=current_username())
-    delete_banner(banner_id)
-    return redirect(url_for("admin_bp.banner_admin"))
-
+### Template management
 
 @admin_bp.route('/banner/manage', methods=['GET'])
 @login_required
@@ -104,31 +120,6 @@ def manage_alert_to_edit():
     id = request.form['event']
     logger.info("form id", banner=id)
     return redirect(url_for("admin_bp.get_banner_edit", banner_id=id))
-
-
-@admin_bp.route('/banner/edit/<banner_id>', methods=['GET'])
-@login_required
-def get_banner_edit(banner_id):
-    logger.info("searching for banner", id=banner_id)
-    banner = get_a_banner(banner_id)
-    logger.info("got banner", banner=banner)
-    form = BannerAdminForm(form=request.form)
-    return render_template('admin-edit.html',
-                           form=form,
-                           banner=banner)
-
-
-@admin_bp.route('/banner/edit/<banner_id>', methods=['POST'])
-@login_required
-def edit_the_chosen_banner(banner_id):
-    logger.debug("Editing banner", user=current_username())
-    form = BannerAdminForm(form=request.form)
-    if form.delete.data:
-        return remove_alert(banner_id)
-    title = form.title.data
-    content = form.banner.data
-    edit_banner(json.dumps({"id": banner_id, "title": title, "content": content}))
-    return redirect(url_for("admin_bp.banner_admin"))
 
 
 # Loads manage page
@@ -157,11 +148,36 @@ def put_new_banner_in_datastore():
         raise ValueError
 
 
-# Currently datetime.strftime does not support applying suffix's onto the date.
-# Reference: https://stackoverflow.com/questions/5891555/display-the-date-like-may-5th-using-pythons-strftime
-def set_suffix(today):
-    if 4 <= today <= 20 or 24 <= today <= 30:
-        suffix = "th"
+@admin_bp.route('/banner/edit/<banner_id>', methods=['GET'])
+@login_required
+def get_banner_edit(banner_id):
+    logger.info("searching for banner", id=banner_id)
+    banner = get_a_banner(banner_id)
+    logger.info("got banner", banner=banner)
+    form = BannerAdminForm(form=request.form)
+    return render_template('admin-edit.html',
+                           form=form,
+                           banner=banner)
+
+
+@admin_bp.route('/banner/edit/<banner_id>', methods=['POST'])
+@login_required
+def edit_the_chosen_banner(banner_id):
+    logger.debug("Editing banner", user=current_username())
+    form = BannerAdminForm(form=request.form)
+    if form.delete.data:
+        logger.debug("Removing banner", user=current_username())
+        delete_banner(banner_id)
+        return redirect(url_for("admin_bp.banner_admin"))
+    title = form.title.data
+    content = form.banner.data
+    edit_banner(json.dumps({"id": banner_id, "title": title, "content": content}))
+    return redirect(url_for("admin_bp.banner_admin"))
+
+
+def current_username():
+    if hasattr(current_user, 'username'):
+        return current_user.username
     else:
-        suffix = ["st", "nd", "rd"][today % 10 - 1]
-    return suffix
+        return "unknown"
+

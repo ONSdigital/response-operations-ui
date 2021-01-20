@@ -1,0 +1,48 @@
+{% extends "layouts/base.html" %}
+{% from "components/button/_macro.njk" import onsButton %}
+{% from "components/input/_macro.njk" import onsInput %}
+{% from "components/select/_macro.njk" import onsSelect %}
+
+{% set page_title = 'Remove Alert'  %}
+{% block main %}
+    <div class="grid grid--gutterless">
+        <div class="grid__col col-8@m">
+            <h1 class="u-fs-xl u-mt-m">Alert Banner</h1>
+            <form action="" method="post">
+                {{ form.csrf_token }}
+                <h2>Banner Published</h2>
+                <p>The following alert will be published immediately:</p>
+                {{
+                    onsPanel({
+                        "label": {
+                            "text": "Message" 
+                        },
+                        "body": current_banner,
+                        "title": "Current Banner",
+                        "classes": "u-mb-l"    
+                    })
+                
+                }}
+                {{
+                    onsButton({
+                        "id": "publish-btn",
+                        "classes": "u-mb-s u-mt-l",
+                        "text": "Publish",
+                        "name": "publish",
+                        "value": "publish"
+                    })
+                }}
+                {{
+                    onsButton({
+                        "id": "cancel-btn",
+                        "classes": "btn btn--secondary btn-group__btn btn--link",
+                        "text": "Cancel",
+                        "name": "cancel",
+                        "value": "cancel"
+                    })
+                }}
+              
+            </form>
+        </div>
+    </div>
+{% endblock %}
