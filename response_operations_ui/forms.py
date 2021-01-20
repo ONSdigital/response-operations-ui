@@ -27,10 +27,10 @@ class SecureMessageForm(FlaskForm):
     send = SubmitField(label='Send')
     subject = StringField('Subject',
                           validators=[InputRequired(message="Please enter a subject"),
-                                      Length(max=96, message="Please enter a subject less than 100 characters")])
+                                      Length(max=96, message="Please enter a subject fewer than 100 characters")])
     body = TextAreaField('Message',
                          validators=[InputRequired(message="Please enter a message"),
-                                     Length(max=50000, message="Please enter a message less than 50000 characters")])
+                                     Length(max=50000, message="Please enter a message fewer than 50000 characters")])
     survey = Label('Survey', text="")
     ru_ref = Label('RU ref', text="")
     business = Label('Business', text="")
