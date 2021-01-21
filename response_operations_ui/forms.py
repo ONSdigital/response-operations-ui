@@ -333,10 +333,14 @@ class CreateAccountForm(FlaskForm):
 
 class BannerAdminForm(FlaskForm):
     title = StringField('Banner title')
-    banner = StringField('Banner text')
+    banner_text = StringField('Banner text')
     banner_id = StringField('id')
     delete = BooleanField('Delete banner', default=False)
     delete_from_datastore = BooleanField('Delete banner from Datastore', default=False)
+
+
+class BannerPublishForm(FlaskForm):
+    banner_text = StringField('Banner text')
 
 
 class BannerManageForm(FlaskForm):

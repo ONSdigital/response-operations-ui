@@ -1,15 +1,14 @@
 import json
 import logging
 
-from flask import Blueprint, render_template, request, url_for, redirect
+from flask import Blueprint, render_template, request, url_for, redirect, session
 from flask_login import login_required, current_user
 from structlog import wrap_logger
 
 from response_operations_ui.controllers import admin_controller
 from response_operations_ui.controllers.admin_controller import get_a_banner, edit_banner, delete_banner
 from response_operations_ui.controllers.admin_controller import get_all_banners, create_new_banner, Banner
-from response_operations_ui.forms import BannerAdminForm
-
+from response_operations_ui.forms import BannerAdminForm, BannerPublishForm
 logger = wrap_logger(logging.getLogger(__name__))
 
 admin_bp = Blueprint('admin_bp', __name__, static_folder='static', template_folder='templates')
@@ -17,9 +16,9 @@ admin_bp = Blueprint('admin_bp', __name__, static_folder='static', template_fold
 
 @admin_bp.route('/banner', methods=['GET'])
 @login_required
-def banner_admin():
+def get_banner_admin():
     """
-    This endpoint, by design, renders one of two different screens.  Either a 'create' screen if
+    This endpoint, by the design we were given, renders one of two different screens.  Either a 'create' screen if
     there isn't a banner set yet, or a 'remove' screen if there is one.
     """
     breadcrumbs = [{"text": "Banner Admin", "url": ""}]
@@ -33,37 +32,37 @@ def banner_admin():
                                breadcrumbs=breadcrumbs)
     # Display the not currently set stuff
     logger.debug("Banner page accessed", user=current_username())
-    form = BannerAdminForm(form=request.form)
-    dict_of_alerts = get_all_banners()
+    form = BannerPublishForm(form=request.form)
+    all_banners = get_all_banners()
     return render_template('admin/banner-admin.html',
                            form=form,
-                           list_of_alerts=dict_of_alerts,
+                           list_of_alerts=all_banners,
                            breadcrumbs=breadcrumbs,
                            current_banner=current_banner)
 
 
 @admin_bp.route('/banner', methods=['POST'])
 @login_required
-def update_banner():
+def post_banner():
     form = BannerAdminForm(form=request.form)
+    banner_id = form.banner_id.data
     if form.delete.data:
         # Do delete actions
-        logger.info("Do delete stuff")
+        logger.info("Removing active status from banner", banner_id=banner_id)
+        admin_controller.toggle_banner_active_status(banner_id)
+        # TODO set green 'it's been removed' informational text
+        return redirect(url_for("admin_bp.get_banner_admin"))
     
     # Validate and redirect to publish confirm screen
-    banner_id = form.banner_id.data
-    logger.info("Setting an active banner", user=current_username(), banner_id=banner_id)
-    if banner_id:
-        admin_controller.set_live_banner(banner_id)
-        return redirect(url_for("admin_bp.banner_admin"))
-    else:
-        response_error = True
+    banner_text = form.banner_text.data
+    if banner_text:
+        # TODO Is writing to the session and redirecting the best way?
+        session['banner-text'] = banner_text
+        return redirect('admin_bp.get_banner_confirm_publish')
+    
+    # TODO handle the error if theres no text
     return render_template('admin/banner-admin.html',
-                           form=form,
-                           list_of_alerts=get_all_banners(),
-                           breadcrumbs=[{"text": "Banner Admin", "url": ""}],
-                           current_banner=admin_controller.current_banner(),
-                           response_error=response_error)
+                           form=form)
 
 
 @admin_bp.route('/banner/confirm-publish', methods=['GET'])
@@ -71,10 +70,13 @@ def update_banner():
 def get_banner_confirm_publish():
     breadcrumbs = [{"text": "Banner Admin", "url": "/admin/banner"},
                    {"text": "Setting Banner", "url": ""}]
+
     form = BannerAdminForm(form=request.form)
+    form.banner_text = session.pop('banner-text')
     return render_template('admin/banner-confirm-publish.html',
                            form=form,
                            breadcrumbs=breadcrumbs)
+
 
 @admin_bp.route('/banner/confirm-publish', methods=['POST'])
 @login_required
@@ -85,36 +87,35 @@ def post_banner_confirm_publish():
     banner_id = form.banner_id.data
     logger.info("Setting an active banner", user=current_username(), banner_id=banner_id)
     if banner_id:
-        admin_controller.set_live_banner(banner_id)
+        admin_controller.toggle_banner_active_status(banner_id)
         # TODO handle error if can't set banner live
         # set green info message
         return redirect(url_for("surveys_bp.view_surveys"))
     else:
         logger.error("TODO, handle error")
-        return redirect(url_for("admin_bp.banner_admin"))
+        return redirect(url_for("admin_bp.get_banner_admin"))
 
-### Template management
+
+# Template management
 
 @admin_bp.route('/banner/manage', methods=['GET'])
 @login_required
 def manage_alert():
     logger.debug("Managing banner", user=current_username())
     form = BannerAdminForm(form=request.form)
-    list_of_alerts = get_all_banners()
+    all_banners = get_all_banners()
     return render_template('admin/admin-manage.html',
                            form=form,
-                           list_of_alerts=list_of_alerts)
+                           list_of_alerts=all_banners)
 
 
-# Nothing is being posted to this endpoint. I believe its something to do with the Radio buttons and setting
-# the "name" variable to "title" at the wrong point in admin-manage.html
 @admin_bp.route('/banner/manage', methods=['POST'])
 @login_required
 def manage_alert_to_edit():
     logger.debug("Managing banner", user=current_username())
-    id = request.form['event']
-    logger.info("form id", banner=id)
-    return redirect(url_for("admin_bp.get_banner_edit", banner_id=id))
+    banner_id = request.form['event']
+    logger.info("form id", banner=banner_id)
+    return redirect(url_for("admin_bp.get_banner_edit", banner_id=banner_id))
 
 
 # Loads manage page
@@ -133,10 +134,10 @@ def put_new_banner_in_datastore():
     logger.debug("Creating template", user=current_username())
     form = BannerAdminForm(form=request.form)
     title = form.title.data
-    banner = form.banner.data
+    banner = form.banner_text.data
     new_banner = Banner(title, banner).to_json()
     create_new_banner(new_banner)
-    return redirect(url_for("admin_bp.banner_admin"))
+    return redirect(url_for("admin_bp.get_banner_admin"))
 
 
 @admin_bp.route('/banner/edit/<banner_id>', methods=['GET'])
@@ -159,11 +160,11 @@ def edit_the_chosen_banner(banner_id):
     if form.delete.data:
         logger.debug("Removing banner", user=current_username())
         delete_banner(banner_id)
-        return redirect(url_for("admin_bp.banner_admin"))
+        return redirect(url_for("admin_bp.get_banner_admin"))
     title = form.title.data
-    content = form.banner.data
+    content = form.banner_text.data
     edit_banner(json.dumps({"id": banner_id, "title": title, "content": content}))
-    return redirect(url_for("admin_bp.banner_admin"))
+    return redirect(url_for("admin_bp.get_banner_admin"))
 
 
 def current_username():

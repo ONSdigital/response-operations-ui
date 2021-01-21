@@ -21,8 +21,8 @@ class Banner:
                           sort_keys=True, indent=4)
 
 
-def set_live_banner(banner_id):
-    logger.info('Attempting to set banner to acitve', banner_id=banner_id)
+def toggle_banner_active_status(banner_id):
+    logger.info('Attempting to set banner to active', banner_id=banner_id)
     url = f"{app.config['BANNER_SERVICE_URL']}/banner/{banner_id}/active"
     response = requests.patch(url)
     try:
