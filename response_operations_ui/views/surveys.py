@@ -19,7 +19,8 @@ surveys_bp = Blueprint('surveys_bp', __name__,
 
 INFO_MESSAGES = {
     'survey_changed': "Survey details changed",
-    'instrument_linked': "Collection exercise linked to survey successfully"
+    'instrument_linked': "Collection exercise linked to survey successfully",
+    'alert_published': "The alert has been published"
 }
 
 

@@ -1,7 +1,7 @@
 import json
 import logging
 
-from flask import Blueprint, render_template, request, url_for, redirect, session
+from flask import Blueprint, flash, render_template, request, url_for, redirect, session
 from flask_login import login_required, current_user
 from structlog import wrap_logger
 
@@ -50,13 +50,12 @@ def post_banner():
         # Do delete actions
         logger.info("Removing active status from banner", banner_id=banner_id)
         admin_controller.toggle_banner_active_status(banner_id)
-        # TODO set green 'it's been removed' informational text
+        flash('The alert has been removed')
         return redirect(url_for("admin_bp.get_banner_admin"))
     
     # Validate and redirect to publish confirm screen
     banner_text = form.banner_text.data
     if banner_text:
-        # TODO Is writing to the session and redirecting the best way?
         session['banner-text'] = banner_text
         return redirect('admin_bp.get_banner_confirm_publish')
     
@@ -73,6 +72,7 @@ def get_banner_confirm_publish():
 
     form = BannerAdminForm(form=request.form)
     form.banner_text = session.pop('banner-text')
+    # TODO what happens if there isn't anything in the session?
     return render_template('admin/banner-confirm-publish.html',
                            form=form,
                            breadcrumbs=breadcrumbs)
@@ -81,16 +81,13 @@ def get_banner_confirm_publish():
 @admin_bp.route('/banner/confirm-publish', methods=['POST'])
 @login_required
 def post_banner_confirm_publish():
-    breadcrumbs = [{"text": "Banner Admin", "url": "/admin/banner"},
-                   {"text": "Setting Banner", "url": ""}]
     form = BannerAdminForm(form=request.form)
     banner_id = form.banner_id.data
     logger.info("Setting an active banner", user=current_username(), banner_id=banner_id)
     if banner_id:
         admin_controller.toggle_banner_active_status(banner_id)
         # TODO handle error if can't set banner live
-        # set green info message
-        return redirect(url_for("surveys_bp.view_surveys"))
+        return redirect(url_for("surveys_bp.view_surveys", message_key='alert-published'))
     else:
         logger.error("TODO, handle error")
         return redirect(url_for("admin_bp.get_banner_admin"))
