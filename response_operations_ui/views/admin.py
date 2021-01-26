@@ -6,8 +6,8 @@ from flask_login import login_required, current_user
 from structlog import wrap_logger
 
 from response_operations_ui.controllers import admin_controller
-from response_operations_ui.controllers.admin_controller import get_a_banner, edit_banner, delete_banner
-from response_operations_ui.controllers.admin_controller import get_all_banners, create_new_banner, Banner
+from response_operations_ui.controllers.admin_controller import get_template, edit_template, delete_template
+from response_operations_ui.controllers.admin_controller import get_templates, create_new_template, Banner
 from response_operations_ui.forms import BannerAdminForm, BannerPublishForm
 logger = wrap_logger(logging.getLogger(__name__))
 
@@ -33,7 +33,7 @@ def get_banner_admin():
     # Display the not currently set stuff
     logger.debug("Banner page accessed", user=current_username())
     form = BannerPublishForm(form=request.form)
-    all_banners = get_all_banners()
+    all_banners = get_templates()
     return render_template('admin/banner-admin.html',
                            form=form,
                            list_of_alerts=all_banners,
@@ -82,10 +82,10 @@ def get_banner_confirm_publish():
 @login_required
 def post_banner_confirm_publish():
     form = BannerAdminForm(form=request.form)
-    banner_id = form.banner_id.data
-    logger.info("Setting an active banner", user=current_username(), banner_id=banner_id)
-    if banner_id:
-        admin_controller.toggle_banner_active_status(banner_id)
+    banner_text = form.banner_id.data
+    logger.info("Setting an active banner", user=current_username(), banner_text=banner_text)
+    if banner_text:
+        admin_controller.set_banner(banner_text)
         # TODO handle error if can't set banner live
         return redirect(url_for("surveys_bp.view_surveys", message_key='alert-published'))
     else:
@@ -100,7 +100,7 @@ def post_banner_confirm_publish():
 def manage_alert():
     logger.debug("Managing banner", user=current_username())
     form = BannerAdminForm(form=request.form)
-    all_banners = get_all_banners()
+    all_banners = get_templates()
     return render_template('admin/admin-manage.html',
                            form=form,
                            list_of_alerts=all_banners)
@@ -133,7 +133,7 @@ def put_new_banner_in_datastore():
     title = form.title.data
     banner = form.banner_text.data
     new_banner = Banner(title, banner).to_json()
-    create_new_banner(new_banner)
+    create_new_template(new_banner)
     return redirect(url_for("admin_bp.get_banner_admin"))
 
 
@@ -141,7 +141,7 @@ def put_new_banner_in_datastore():
 @login_required
 def get_banner_edit(banner_id):
     logger.info("searching for banner", id=banner_id)
-    banner = get_a_banner(banner_id)
+    banner = get_template(banner_id)
     logger.info("got banner", banner=banner)
     form = BannerAdminForm(form=request.form)
     return render_template('admin/admin-edit.html',
@@ -156,11 +156,11 @@ def edit_the_chosen_banner(banner_id):
     form = BannerAdminForm(form=request.form)
     if form.delete.data:
         logger.debug("Removing banner", user=current_username())
-        delete_banner(banner_id)
+        delete_template(banner_id)
         return redirect(url_for("admin_bp.get_banner_admin"))
     title = form.title.data
     content = form.banner_text.data
-    edit_banner(json.dumps({"id": banner_id, "title": title, "content": content}))
+    edit_template(json.dumps({"id": banner_id, "title": title, "content": content}))
     return redirect(url_for("admin_bp.get_banner_admin"))
 
 

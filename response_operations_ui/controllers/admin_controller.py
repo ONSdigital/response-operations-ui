@@ -21,37 +21,9 @@ class Banner:
                           sort_keys=True, indent=4)
 
 
-def toggle_banner_active_status(banner_id):
-    logger.info('Attempting to set banner to active', banner_id=banner_id)
-    url = f"{app.config['BANNER_SERVICE_URL']}/banner/{banner_id}/active"
-    response = requests.patch(url)
-    try:
-        response.raise_for_status()
-    except requests.exceptions.HTTPError:
-        logger.error('Failed to retrieve Banner from api')
-        raise ApiError(response)
-
-    logger.info('Successfully retrieved current live banner from api')
-    banner = response.json()
-    return banner
-
-
-def remove_banner(banner_id):
-    logger.info('Attempting to remove banner', banner_id=banner_id)
-    url = f"{app.config['BANNER_SERVICE_URL']}/banner/{banner_id}"
-    response = requests.delete(url)
-    try:
-        response.raise_for_status()
-    except requests.exceptions.HTTPError:
-        logger.error('Failed to remove Banner', banner_id=banner_id)
-        raise ApiError(response)
-
-    logger.info('Successfully removed banner from api', banner_id=banner_id)
-
-
 def current_banner():
     logger.info('Attempting to retrieve the current live banner')
-    url = f"{app.config['BANNER_SERVICE_URL']}/banner/active"
+    url = f"{app.config['BANNER_SERVICE_URL']}/banner"
     response = requests.get(url)
     try:
         response.raise_for_status()
@@ -66,76 +38,103 @@ def current_banner():
     return banner
 
 
-def get_all_banners():
-    logger.info('Attempting to retrieve banners')
+def set_banner(banner_text):
+    logger.info('Attempting to set banner text', banner_text=banner_text)
     url = f"{app.config['BANNER_SERVICE_URL']}/banner"
-    response = requests.get(url)
-    try:
-        response.raise_for_status()
-    except requests.exceptions.HTTPError:
-        logger.error('Failed to retrieve Banners')
-        raise ApiError(response)
-
-    list_of_banners = response.json()
-    logger.info('Successfully retrieved banners', banners=list_of_banners)
-    return list_of_banners
-
-
-def get_a_banner(banner_id):
-    logger.info('Attempting to retrieve banner', banner_id=banner_id)
-    url = f"{app.config['BANNER_SERVICE_URL']}/banner/{banner_id}"
-    response = requests.get(url)
+    response = requests.post(url, json=banner_text)
     try:
         response.raise_for_status()
     except requests.exceptions.HTTPError:
         logger.error('Failed to retrieve Banner from api')
         raise ApiError(response)
 
+    logger.info('Successfully retrieved current live banner from api')
     banner = response.json()
-    logger.info('Successfully retrieved banner from api', banner=banner)
     return banner
 
 
-def create_new_banner(banner):
-    logger.info('Attempting to store a banner banner', banner=banner)
+def remove_banner():
+    logger.info('Attempting to remove banner')
     url = f"{app.config['BANNER_SERVICE_URL']}/banner"
-    headers = {'Content-type': 'application/json'}
-    response = requests.post(url, banner, headers=headers)
-    try:
-        response.raise_for_status()
-    except requests.exceptions.HTTPError:
-        logger.error('Failed to create Banner')
-        raise ApiError(response)
-
-    banner = response.json()
-    logger.info('Successfully created the new Banner', banner=banner)
-    return banner
-
-
-def edit_banner(banner):
-    logger.info('Attempting to edit the banner', banner=banner)
-    url = f"{app.config['BANNER_SERVICE_URL']}/banner"
-    headers = {'Content-type': 'application/json'}
-    response = requests.put(url, banner, headers=headers)
-    try:
-        response.raise_for_status()
-    except requests.exceptions.HTTPError:
-        logger.error('Failed to edit banner via banner-api')
-        raise ApiError(response)
-
-    banner = response.json()
-    logger.info('Successfully edited the Banner', banner=banner)
-    return banner
-
-
-def delete_banner(banner_id):
-    logger.info('Attempting to delete banner from Datastore')
-    url = f"{app.config['BANNER_SERVICE_URL']}/banner/{banner_id}"
     response = requests.delete(url)
     try:
         response.raise_for_status()
     except requests.exceptions.HTTPError:
-        logger.error('Failed to delete Banners from Datastore')
+        logger.error('Failed to remove Banner')
         raise ApiError(response)
 
-    logger.info('Successfully deleted banner', banner_id=banner_id)
+    logger.info('Successfully removed banner from api')
+
+
+def get_templates():
+    logger.info('Attempting to retrieve templates')
+    url = f"{app.config['BANNER_SERVICE_URL']}/template"
+    response = requests.get(url)
+    try:
+        response.raise_for_status()
+    except requests.exceptions.HTTPError:
+        logger.error('Failed to retrieve templates')
+        raise ApiError(response)
+
+    templates = response.json()
+    logger.info('Successfully retrieved templates', template_count=len(templates))
+    return templates
+
+
+def get_template(template_id):
+    logger.info('Attempting to retrieve template', template_id=template_id)
+    url = f"{app.config['BANNER_SERVICE_URL']}/template/{template_id}"
+    response = requests.get(url)
+    try:
+        response.raise_for_status()
+    except requests.exceptions.HTTPError:
+        logger.error('Failed to retrieve template from api', template_id=template_id)
+        raise ApiError(response)
+
+    template = response.json()
+    logger.info('Successfully retrieved template from api', template_id=template_id)
+    return template
+
+
+def create_new_template(template):
+    logger.info('Attempting to create a template', template=template)
+    url = f"{app.config['BANNER_SERVICE_URL']}/template"
+    headers = {'Content-type': 'application/json'}
+    response = requests.post(url, template, headers=headers)
+    try:
+        response.raise_for_status()
+    except requests.exceptions.HTTPError:
+        logger.error('Failed to create template', template=template)
+        raise ApiError(response)
+
+    banner = response.json()
+    logger.info('Successfully created a template', template=template)
+    return banner
+
+
+def edit_template(template):
+    logger.info('Attempting to edit the template', template=template)
+    url = f"{app.config['BANNER_SERVICE_URL']}/template"
+    response = requests.put(url, json=template)
+    try:
+        response.raise_for_status()
+    except requests.exceptions.HTTPError:
+        logger.error('Failed to edit template')
+        raise ApiError(response)
+
+    banner = response.json()
+    logger.info('Successfully edited the Banner', template=template)
+    return banner
+
+
+def delete_template(template_id):
+    logger.info('Attempting to delete template from Datastore', template_id)
+    url = f"{app.config['BANNER_SERVICE_URL']}/template/{template_id}"
+    response = requests.delete(url)
+    try:
+        response.raise_for_status()
+    except requests.exceptions.HTTPError:
+        logger.error('Failed to delete template from Datastore', template_id=template_id)
+        raise ApiError(response)
+
+    logger.info('Successfully deleted banner', template_id=template_id)
