@@ -28,14 +28,14 @@ def current_banner():
     try:
         response.raise_for_status()
     except requests.exceptions.HTTPError:
+        if response.status_code == 404:
+            logger.info('No banner currently active')
+            return {}
         logger.error('Failed to retrieve Banner from api')
         raise ApiError(response)
 
     logger.info('Successfully retrieved current live banner from api')
-    if response.status_code == 204:
-        return {}
-    banner = response.json()
-    return banner
+    return response.json()
 
 
 def set_banner(banner_text):
