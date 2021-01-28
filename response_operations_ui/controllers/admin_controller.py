@@ -10,11 +10,10 @@ from response_operations_ui.exceptions.exceptions import ApiError
 logger = wrap_logger(logging.getLogger(__name__))
 
 
-class Banner:
-    def __init__(self, title, content, active=False):
+class Template:
+    def __init__(self, title, content):
         self.title = title
         self.content = content
-        self.active = active
 
     def to_json(self):
         return json.dumps(self, default=lambda o: o.__dict__,
@@ -22,6 +21,13 @@ class Banner:
 
 
 def current_banner():
+    """
+    Gets the current banner, if it exists.
+
+    :return: A dict with the current text of the banner. Will be empty if there isn't one set
+    :rtype dict
+    :raises ApiError: Raised on any non-404 failure status code returned from the banner-api
+    """
     logger.info('Attempting to retrieve the current live banner')
     url = f"{app.config['BANNER_SERVICE_URL']}/banner"
     response = requests.get(url)
@@ -39,6 +45,16 @@ def current_banner():
 
 
 def set_banner(banner_text):
+    """
+    Sets the text of the banner.  If there was a banner already active then this will overwrite the text
+    that was previously there.
+
+    :param banner_text: The text the banner will display
+    :type banner_text: str
+    :return: A copy of what the banner-api has saved to the database
+    :rtype: dict
+    :raises ApiError: Raised on any 4XX or 5XX returned from the banner-api
+    """
     logger.info('Attempting to set banner text', banner_text=banner_text)
     url = f"{app.config['BANNER_SERVICE_URL']}/banner"
     response = requests.post(url, json=banner_text)
@@ -54,6 +70,12 @@ def set_banner(banner_text):
 
 
 def remove_banner():
+    """
+    Deletes the banner, if it exists.  If there was no active banner then a success is reported regardless.
+
+    :rtype: None
+    :raises ApiError: Raised on any 4XX or 5XX returned from the banner-api
+    """
     logger.info('Attempting to remove banner')
     url = f"{app.config['BANNER_SERVICE_URL']}/banner"
     response = requests.delete(url)
@@ -67,6 +89,13 @@ def remove_banner():
 
 
 def get_templates():
+    """
+    Gets all the templates stored in the banner-api service.
+
+    :return: A list of dicts containing the templates stored
+    :rtype: list of dict
+    :raises ApiError: Raised on any 4XX or 5XX returned from the banner-api
+    """
     logger.info('Attempting to retrieve templates')
     url = f"{app.config['BANNER_SERVICE_URL']}/template"
     response = requests.get(url)
@@ -82,6 +111,15 @@ def get_templates():
 
 
 def get_template(template_id):
+    """
+    Get a specific template, by id, from the banner-api service.
+
+    :param template_id: A string representation of the template_id
+    :type template_id: str
+    :return: A dict containing the data stored for the template
+    :rtype: dict
+    :raises ApiError: Raised on any 4XX or 5XX returned from the banner-api
+    """
     logger.info('Attempting to retrieve template', template_id=template_id)
     url = f"{app.config['BANNER_SERVICE_URL']}/template/{template_id}"
     response = requests.get(url)
@@ -97,6 +135,14 @@ def get_template(template_id):
 
 
 def create_new_template(template):
+    """
+    Creates a new template.
+
+    :param template: A dictionary containing all the data required for a new template
+    :type template: dict
+    :return: A copy of what the banner-api has saved to the database
+    :rtype: dict
+    """
     logger.info('Attempting to create a template', template=template)
     url = f"{app.config['BANNER_SERVICE_URL']}/template"
     headers = {'Content-type': 'application/json'}
@@ -113,6 +159,15 @@ def create_new_template(template):
 
 
 def edit_template(template):
+    """
+    Edits an existing template. The template that is provided will overwrite everything that was there
+    previously.
+
+    :param template: A dict containing all the fields for the template
+    :type template: dict
+    :return: A copy of what the banner-api has saved to the database
+    :rtype: dict
+    """
     logger.info('Attempting to edit the template', template=template)
     url = f"{app.config['BANNER_SERVICE_URL']}/template"
     response = requests.put(url, json=template)
@@ -123,11 +178,19 @@ def edit_template(template):
         raise ApiError(response)
 
     banner = response.json()
-    logger.info('Successfully edited the Banner', template=template)
+    logger.info('Successfully edited the template', template=template)
     return banner
 
 
 def delete_template(template_id):
+    """
+    Deletes a template, if it exists.  Will report success even if it didn't exist.
+
+    :param template_id: A string representation of the template_id
+    :type template_id: str
+    :rtype: None
+    :raises ApiError: Raised on any 4XX or 5XX returned from the banner-api
+    """
     logger.info('Attempting to delete template from Datastore', template_id=template_id)
     url = f"{app.config['BANNER_SERVICE_URL']}/template/{template_id}"
     response = requests.delete(url)

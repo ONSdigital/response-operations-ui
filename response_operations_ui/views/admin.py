@@ -7,7 +7,7 @@ from structlog import wrap_logger
 
 from response_operations_ui.controllers import admin_controller
 from response_operations_ui.controllers.admin_controller import get_template, edit_template, delete_template
-from response_operations_ui.controllers.admin_controller import get_templates, create_new_template, Banner
+from response_operations_ui.controllers.admin_controller import get_templates, create_new_template, Template
 from response_operations_ui.forms import BannerAdminForm, BannerPublishForm
 logger = wrap_logger(logging.getLogger(__name__))
 
@@ -132,7 +132,7 @@ def put_new_banner_in_datastore():
     form = BannerAdminForm(form=request.form)
     title = form.title.data
     banner = form.banner_text.data
-    new_banner = Banner(title, banner).to_json()
+    new_banner = Template(title, banner).to_json()
     create_new_template(new_banner)
     return redirect(url_for("admin_bp.get_banner_admin"))
 
