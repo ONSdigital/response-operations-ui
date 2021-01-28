@@ -52,13 +52,13 @@ def post_banner():
         admin_controller.toggle_banner_active_status(banner_id)
         flash('The alert has been removed')
         return redirect(url_for("admin_bp.get_banner_admin"))
-    
+
     # Validate and redirect to publish confirm screen
     banner_text = form.banner_text.data
     if banner_text:
         session['banner-text'] = banner_text
         return redirect('admin_bp.get_banner_confirm_publish')
-    
+
     # TODO handle the error if theres no text
     return render_template('admin/banner-admin.html',
                            form=form)
@@ -169,4 +169,3 @@ def current_username():
         return current_user.username
     else:
         return "unknown"
-

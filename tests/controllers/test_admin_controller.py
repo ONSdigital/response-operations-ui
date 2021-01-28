@@ -1,6 +1,6 @@
-import json
-import responses
 import unittest
+
+import responses
 
 from config import TestingConfig
 from response_operations_ui import create_app
