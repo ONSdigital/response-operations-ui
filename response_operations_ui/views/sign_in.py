@@ -28,7 +28,7 @@ def sign_in():
         username = request.form.get('username')
         password = request.form.get('password')
 
-        logger.info('Retrieving ksign-in details')
+        logger.info('Retrieving sign-in details')
         access_token = uaa_controller.sign_in(username, password)
 
         try:
