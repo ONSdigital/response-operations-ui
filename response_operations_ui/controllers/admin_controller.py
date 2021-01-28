@@ -128,7 +128,7 @@ def edit_template(template):
 
 
 def delete_template(template_id):
-    logger.info('Attempting to delete template from Datastore', template_id)
+    logger.info('Attempting to delete template from Datastore', template_id=template_id)
     url = f"{app.config['BANNER_SERVICE_URL']}/template/{template_id}"
     response = requests.delete(url)
     try:
