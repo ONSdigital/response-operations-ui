@@ -139,8 +139,8 @@
                         <p></p>
                         {{ 
                             onsTextarea({
-                                "id": "banner-text",
-                                "name": "content",
+                                "id": "banner_text",
+                                "name": "banner_text",
                                 "label": {
                                     "text": "Message"
                                 },
@@ -153,7 +153,7 @@
                             // document.getElementById("alert-list-label").classList.remove("hidden");
                             document.getElementsByName("event").forEach(element => {
                                 element.addEventListener("change", function(event) {
-                                    document.getElementById("banner-text").value = event.target.value;
+                                    document.getElementById("banner_text").value = event.target.value;
                                     document.getElementById("banner-input-id").value = event.target.getAttribute("banner_id");
                                 })
                             });

@@ -8,6 +8,7 @@ from structlog import wrap_logger
 from response_operations_ui.controllers import admin_controller
 from response_operations_ui.controllers.admin_controller import get_template, edit_template, delete_template
 from response_operations_ui.controllers.admin_controller import get_templates, create_new_template, Template
+from response_operations_ui.exceptions.exceptions import ApiError
 from response_operations_ui.forms import BannerAdminForm, BannerPublishForm
 logger = wrap_logger(logging.getLogger(__name__))
 
@@ -25,18 +26,19 @@ def get_banner_admin():
     form = BannerAdminForm(form=request.form)
     current_banner = admin_controller.current_banner()
     if current_banner:
+        current_banner_text = current_banner['content']
         # Display the currently set stuff
         return render_template('admin/admin-remove-alert.html',
                                form=form,
-                               current_banner=current_banner,
+                               current_banner=current_banner_text,
                                breadcrumbs=breadcrumbs)
     # Display the not currently set stuff
     logger.debug("Banner page accessed", user=current_username())
     form = BannerPublishForm(form=request.form)
-    all_banners = get_templates()
+    all_templates = get_templates()
     return render_template('admin/banner-admin.html',
                            form=form,
-                           list_of_alerts=all_banners,
+                           list_of_alerts=all_templates,
                            breadcrumbs=breadcrumbs,
                            current_banner=current_banner)
 
@@ -49,7 +51,7 @@ def post_banner():
     if form.delete.data:
         # Do delete actions
         logger.info("Removing active status from banner", banner_id=banner_id)
-        admin_controller.toggle_banner_active_status(banner_id)
+        admin_controller.remove_banner()
         flash('The alert has been removed')
         return redirect(url_for("admin_bp.get_banner_admin"))
 
@@ -57,9 +59,10 @@ def post_banner():
     banner_text = form.banner_text.data
     if banner_text:
         session['banner-text'] = banner_text
-        return redirect('admin_bp.get_banner_confirm_publish')
+        return redirect(url_for('admin_bp.get_banner_confirm_publish'))
 
     # TODO handle the error if theres no text
+    logger.error("No delete or text")
     return render_template('admin/banner-admin.html',
                            form=form)
 
@@ -71,9 +74,11 @@ def get_banner_confirm_publish():
                    {"text": "Setting Banner", "url": ""}]
 
     form = BannerAdminForm(form=request.form)
-    form.banner_text = session.pop('banner-text')
+    banner_text = session.pop('banner-text')
+    form.banner_text = banner_text
     # TODO what happens if there isn't anything in the session?
     return render_template('admin/banner-confirm-publish.html',
+                           current_banner=banner_text,
                            form=form,
                            breadcrumbs=breadcrumbs)
 
@@ -82,11 +87,17 @@ def get_banner_confirm_publish():
 @login_required
 def post_banner_confirm_publish():
     form = BannerAdminForm(form=request.form)
-    banner_text = form.banner_id.data
+    banner_text = form.banner_text.data
     logger.info("Setting an active banner", user=current_username(), banner_text=banner_text)
     if banner_text:
-        admin_controller.set_banner(banner_text)
-        # TODO handle error if can't set banner live
+        try:
+            payload = {
+                'content': banner_text
+            }
+            admin_controller.set_banner(payload)
+        except ApiError:
+            flash("Something went wrong setting the banner")
+            return redirect(url_for("admin_bp.get_banner_admin"))
         return redirect(url_for("surveys_bp.view_surveys", message_key='alert-published'))
     else:
         logger.error("TODO, handle error")
@@ -132,6 +143,7 @@ def put_new_banner_in_datastore():
     form = BannerAdminForm(form=request.form)
     title = form.title.data
     banner = form.banner_text.data
+    logger.info(form.banner_text)
     new_banner = Template(title, banner).to_json()
     create_new_template(new_banner)
     return redirect(url_for("admin_bp.get_banner_admin"))
