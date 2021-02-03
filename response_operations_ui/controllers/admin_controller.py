@@ -57,7 +57,7 @@ def set_banner(banner_text):
     """
     logger.info('Attempting to set banner text', banner_text=banner_text)
     url = f"{app.config['BANNER_SERVICE_URL']}/banner"
-    response = requests.post(url, json=banner_text)
+    response = requests.post(url, json={'content': banner_text})
     try:
         response.raise_for_status()
     except requests.exceptions.HTTPError:

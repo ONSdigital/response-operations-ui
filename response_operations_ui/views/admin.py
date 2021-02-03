@@ -23,34 +23,31 @@ def get_banner_admin():
     there isn't a banner set yet, or a 'remove' screen if there is one.
     """
     breadcrumbs = [{"text": "Banner Admin", "url": ""}]
-    form = BannerAdminForm(form=request.form)
-    current_banner = admin_controller.current_banner()
-    if current_banner:
-        current_banner_text = current_banner['content']
-        # Display the currently set stuff
+    form = BannerAdminForm()
+    current_banner_json = admin_controller.current_banner()
+    logger.info("Banner page accessed", user=current_username())
+    if current_banner_json:
+        # Handle remove scenario
         return render_template('admin/admin-remove-alert.html',
                                form=form,
-                               current_banner=current_banner_text,
+                               current_banner=current_banner_json['content'],
                                breadcrumbs=breadcrumbs)
-    # Display the not currently set stuff
-    logger.debug("Banner page accessed", user=current_username())
-    form = BannerPublishForm(form=request.form)
+    # Handle create scenario
+    form = BannerPublishForm()
     all_templates = get_templates()
     return render_template('admin/banner-admin.html',
                            form=form,
                            list_of_alerts=all_templates,
-                           breadcrumbs=breadcrumbs,
-                           current_banner=current_banner)
+                           breadcrumbs=breadcrumbs)
 
 
 @admin_bp.route('/banner', methods=['POST'])
 @login_required
 def post_banner():
     form = BannerAdminForm(form=request.form)
-    banner_id = form.banner_id.data
     if form.delete.data:
         # Do delete actions
-        logger.info("Removing active status from banner", banner_id=banner_id)
+        logger.info("Removing active status from banner")
         admin_controller.remove_banner()
         flash('The alert has been removed')
         return redirect(url_for("admin_bp.get_banner_admin"))
@@ -91,10 +88,7 @@ def post_banner_confirm_publish():
     logger.info("Setting an active banner", user=current_username(), banner_text=banner_text)
     if banner_text:
         try:
-            payload = {
-                'content': banner_text
-            }
-            admin_controller.set_banner(payload)
+            admin_controller.set_banner(banner_text)
         except ApiError:
             flash("Something went wrong setting the banner")
             return redirect(url_for("admin_bp.get_banner_admin"))

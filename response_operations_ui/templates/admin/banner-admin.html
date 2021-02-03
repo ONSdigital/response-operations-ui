@@ -141,16 +141,16 @@
                         }) -%}
                         {{
                             onsButton({
-                                "classes": "btn-group__btn",
                                 "text": "Publish",
                                 "id": "save-btn"
                             })
                         }} 
                         {{
                             onsButton({
-                                "classes": "btn--secondary btn-group__btn",
+                                "classes": "btn--secondary",
+                                "hideCaret": true,
                                 "text": "Cancel",
-                                "url": url_for('surveys_bp.view_surveys')
+                                "url": url_for('home_bp.home')
                             })
                         }}
                     {% endcall %}
