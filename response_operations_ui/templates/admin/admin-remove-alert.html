@@ -7,18 +7,16 @@
 {% block main %}
     <div class="grid grid--gutterless">
         <div class="grid__col col-8@m">
-            <h1 class="u-fs-xl u-mt-m">Alert Banner</h1>
+            <h1>Alert Banner</h1>
             <form action="" method="post">
                 {{ form.csrf_token }}
-                <h2>Banner Published</h2>
-                <p>The following alert was published on <b>{{ time_banner_set }}</b></p>
+                <p>The following alert is currently published</p>
                 {{
                     onsPanel({
                         "label": {
                             "text": "Message" 
                         },
                         "body": current_banner,
-                        "title": "Current Banner",
                         "classes": "u-mb-l"    
                     })
                 
@@ -26,7 +24,6 @@
                 {{
                     onsButton({
                         "id": "remove-btn",
-                        "classes": "u-mb-s u-mt-l",
                         "text": "Remove alert",
                         "name": "delete",
                         "value": "banner_removed"

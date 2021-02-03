@@ -3,11 +3,8 @@
 {% from "components/fieldset/_macro.njk" import onsFieldset %}
 {% from "components/input/_macro.njk" import onsInput %}
 {% from "components/lists/_macro.njk" import onsList %}
-{% from "components/field/_macro.njk" import onsField %}
 {% from "components/textarea/_macro.njk" import onsTextarea %}
-{% from "components/select/_macro.njk" import onsSelect %}
 {% from "components/radios/_macro.njk" import onsRadios %}
-<!-- The "name": "banner" field within the textarea specifies that is getting posted -->
 {% set page_title = 'Banner Admin'  %}
 {% block main %}
     <div class="grid grid--gutterless">
@@ -26,29 +23,6 @@
                     "text": "Please select a message template or enter a message"
                 } %}
             {% endif %}
-            {% if current_banner and not response_error %} 
-                {{
-                    onsPanel({
-                        "label": {
-                            "text": "Message" 
-                        },
-                        "title": "Active Banner",
-                        "body": current_banner.content,
-                        "classes": "u-mb-l"    
-                    })
-                }}
-            {% endif %}
-            {% if not current_banner and not response_error %} 
-                {{
-                    onsPanel({
-                        "label": {
-                            "text": "Message" 
-                        },
-                        "body": "No banner currently active",
-                        "classes": "u-mb-l"    
-                    })
-                }}
-            {% endif %}
             {% with messages = get_flashed_messages() %}
                 {% if messages %}
                     {% for message in messages %}
@@ -63,7 +37,8 @@
                     {% endfor %}
                 {% endif %}
             {% endwith %}
-            <h1 class="u-fs-xl u-mt-m">Banner Admin</h1>
+
+            <h1>Create a new alert</h1>
             <form action="{{ url_for('admin_bp.post_banner') }}" method="POST">
                 {{ form.csrf_token }}
                 {% if errors %}
@@ -100,7 +75,7 @@
                         "classes": "u-mt-m"
                         }) -%}
                         {% set radioComponent = {
-                            "legend": "Choose a template to publish",
+                            "legend": "Message template (optional)",
                             "name": "event"
                         } %}
         
@@ -166,7 +141,6 @@
                         }) -%}
                         {{
                             onsButton({
-                                "dontWrap": false,
                                 "classes": "btn-group__btn",
                                 "text": "Publish",
                                 "id": "save-btn"
@@ -174,7 +148,6 @@
                         }} 
                         {{
                             onsButton({
-                                "dontWrap": false,
                                 "classes": "btn--secondary btn-group__btn",
                                 "text": "Cancel",
                                 "url": url_for('surveys_bp.view_surveys')

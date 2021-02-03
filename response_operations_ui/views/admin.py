@@ -70,7 +70,7 @@ def post_banner():
 @admin_bp.route('/banner/confirm-publish', methods=['GET'])
 @login_required
 def get_banner_confirm_publish():
-    breadcrumbs = [{"text": "Banner Admin", "url": "/admin/banner"},
+    breadcrumbs = [{"text": "Create an alert", "url": "/admin/banner"},
                    {"text": "Setting Banner", "url": ""}]
 
     form = BannerAdminForm(form=request.form)
@@ -98,7 +98,7 @@ def post_banner_confirm_publish():
         except ApiError:
             flash("Something went wrong setting the banner")
             return redirect(url_for("admin_bp.get_banner_admin"))
-        return redirect(url_for("surveys_bp.view_surveys", message_key='alert-published'))
+        return redirect(url_for("surveys_bp.view_surveys", message_key='alert_published'))
     else:
         logger.error("TODO, handle error")
         return redirect(url_for("admin_bp.get_banner_admin"))
