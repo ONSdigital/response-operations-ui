@@ -47,7 +47,7 @@ def create_message():
         try:
             message_controllers.send_message(_get_message_json(form))
             survey = request.form.get("hidden_survey")
-            ruRef = request.form.get("hidden_ru_ref")
+            ruRef = request.form.get("ru_ref")
             if survey in FDI_LIST:
                 survey = 'FDI'
             if survey in VACANCIES_LIST:
