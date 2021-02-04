@@ -333,7 +333,10 @@ class CreateAccountForm(FlaskForm):
 
 class BannerCreateForm(FlaskForm):
     title = StringField('Banner title', validators=[InputRequired('Enter a banner title')])
-    banner_text = StringField('Banner text', validators=[InputRequired('Banner text is missing')])
+    banner_text = StringField('Banner text', validators=[InputRequired('Banner text is missing'),
+                                                         Length(max=50000,
+                                                                message='Text must be less than 50000 characters')
+                                                         ])
 
 
 class BannerDeleteForm(FlaskForm):
@@ -341,7 +344,10 @@ class BannerDeleteForm(FlaskForm):
 
 
 class BannerPublishForm(FlaskForm):
-    banner_text = StringField('Banner text', validators=[InputRequired('Banner text is missing')])
+    banner_text = StringField('Banner text', validators=[InputRequired('Banner text is missing'),
+                                                         Length(max=50000,
+                                                                message='Text must be less than 50000 characters')
+                                                         ])
 
 
 class BannerManageForm(FlaskForm):
