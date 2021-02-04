@@ -32,7 +32,7 @@ CACHE_HEADERS = {
 
 @messages_bp.route('/create-message', methods=['POST'])
 @login_required
-def create_message():
+def create_message(ru_ref):
     form = SecureMessageForm(request.form)
     breadcrumbs = _build_create_message_breadcrumbs()
 
