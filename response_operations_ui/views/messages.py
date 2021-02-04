@@ -52,7 +52,7 @@ def create_message():
             if survey in VACANCIES_LIST:
                 survey = 'Vacancies'
             flash("Message sent.")
-            return redirect(url_for('messages_bp.view_selected_survey', selected_survey=survey))
+            return redirect(url_for('reporting_unit_bp.view_reporting_unit', ru_ref=ru_ref))
         except (ApiError, InternalError):
             form = _repopulate_form_with_submitted_data(form)
             form.errors['sending'] = ["Message failed to send, something has gone wrong with the website."]
