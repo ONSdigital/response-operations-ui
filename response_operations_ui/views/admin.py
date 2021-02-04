@@ -28,14 +28,14 @@ def get_banner_admin():
     if current_banner_json:
         # Handle remove scenario
         form = BannerDeleteForm()
-        return render_template('admin/admin-remove-alert.html',
+        return render_template('admin/banner-remove.html',
                                form=form,
                                current_banner=current_banner_json['content'],
                                breadcrumbs=breadcrumbs)
     # Handle create scenario
     form = BannerPublishForm()
     all_templates = get_templates()
-    return render_template('admin/banner-admin.html',
+    return render_template('admin/banner-manage.html',
                            form=form,
                            list_of_alerts=all_templates,
                            breadcrumbs=breadcrumbs)
@@ -60,7 +60,7 @@ def post_banner():
 
     breadcrumbs = [{"text": "Banner Admin", "url": ""}]
     all_templates = get_templates()
-    return render_template('admin/banner-admin.html',
+    return render_template('admin/banner-manage.html',
                            form=form,
                            list_of_alerts=all_templates,
                            breadcrumbs=breadcrumbs,
@@ -120,7 +120,7 @@ def manage_alert():
         return redirect(url_for("admin_bp.edit_the_chosen_banner", banner_id=banner_id))
 
     all_banners = get_templates()
-    return render_template('admin/admin-manage.html',
+    return render_template('admin/template-manage.html',
                            form=form,
                            list_of_alerts=all_banners,
                            errors=form.errors.items())
@@ -139,7 +139,7 @@ def put_new_banner_in_datastore():
         create_new_template(new_banner)
         return redirect(url_for("admin_bp.get_banner_admin"))
 
-    return render_template('admin/admin-create-template.html',
+    return render_template('admin/template-create.html',
                            breadcrumbs=breadcrumbs,
                            form=form,
                            errors=form.errors.items())
@@ -165,7 +165,7 @@ def edit_the_chosen_banner(banner_id):
         return redirect(url_for("admin_bp.get_banner_admin"))
 
     banner = get_template(banner_id)
-    return render_template('admin/admin-edit.html',
+    return render_template('admin/template-edit.html',
                            breadcrumbs=breadcrumbs,
                            form=form,
                            banner=banner,
