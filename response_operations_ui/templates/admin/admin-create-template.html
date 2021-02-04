@@ -46,14 +46,6 @@
                         "legendClasses": "u-vh",
                         "classes": "u-mt-m"
                         }) -%}
-                        {% set alerts = [            
-                            {
-                                "value": "",
-                                "text": "Select an option",
-                                "disabled": true,
-                                "selected": true
-                            }
-                        ] %}
                         {{
                             onsInput({
                                 "id": "banner",
@@ -72,33 +64,25 @@
                                     "text": "Message"
                                 },
                                 "maxlength": '50000',
-                                "error": error if response_error
+                                "error": errors if errors
                             })
                         }}
 
                     {% endcall %}
-                    {%- call onsFieldset({
-                        "legend": "Create a new banner",
-                        "legendClasses": "u-vh",
-                        "classes": "u-mt-m"
-                        }) -%}
-                        {{
+              <div class="grid grid--flex grid--gutterless grid--vertical-center grid--no-wrap@s u-mt-m u-mb-m">
+                      <div class="grid__col">
+                          {{
                             onsButton({
-                                "dontWrap": false,
                                 "classes": "btn-group__btn",
                                 "text": "Done",
                                 "id": "save-btn"
                             })
                         }} 
-                        {{
-                            onsButton({
-                                "dontWrap": false,
-                                "classes": "btn--secondary btn-group__btn",
-                                "text": "Cancel",
-                                "url": url_for('surveys_bp.view_surveys')
-                            })
-                        }}
-                    {% endcall %}
+                      </div>
+                      <div class="grid__col u-ml-m">
+                        <a href="{{ url_for('admin_bp.manage_alert')}}">Cancel</a>
+                      </div>
+                    </div>
              </form>
         </div>
     </div>

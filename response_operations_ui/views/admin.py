@@ -10,7 +10,7 @@ from response_operations_ui.controllers.admin_controller import get_template, ed
 from response_operations_ui.controllers.admin_controller import get_templates, create_new_template, Template
 from response_operations_ui.exceptions.exceptions import ApiError
 from response_operations_ui.forms import BannerAdminForm, BannerPublishForm, BannerDeleteForm, BannerManageForm, \
-    BannerEditForm
+    BannerEditForm, BannerCreateForm
 logger = wrap_logger(logging.getLogger(__name__))
 
 admin_bp = Blueprint('admin_bp', __name__, static_folder='static', template_folder='templates')
@@ -87,7 +87,7 @@ def get_banner_confirm_publish():
 @admin_bp.route('/banner/confirm-publish', methods=['POST'])
 @login_required
 def post_banner_confirm_publish():
-    form = BannerAdminForm(form=request.form)
+    form = BannerPublishForm(form=request.form)
     banner_text = form.banner_text.data
     logger.info("Setting an active banner", user=current_username(), banner_text=banner_text)
     if banner_text:
@@ -113,7 +113,7 @@ def manage_alert():
     if form.validate_on_submit():
         banner_id = form.template_id.data
         logger.info("form id", banner=banner_id)
-        return redirect(url_for("admin_bp.get_banner_edit", banner_id=banner_id))
+        return redirect(url_for("admin_bp.edit_the_chosen_banner", banner_id=banner_id))
 
     all_banners = get_templates()
     return render_template('admin/admin-manage.html',
@@ -122,44 +122,30 @@ def manage_alert():
                            errors=form.errors.items())
 
 
-@admin_bp.route('/banner/create', methods=['GET'])
-@login_required
-def create_a_new_banner():
-    logger.debug("Creating template", user=current_username())
-    form = BannerAdminForm()
-    return render_template('admin/admin-create-template.html', form=form)
-
-
-@admin_bp.route('/banner/create', methods=['POST'])
+@admin_bp.route('/banner/create', methods=['GET', 'POST'])
 @login_required
 def put_new_banner_in_datastore():
     logger.debug("Creating template", user=current_username())
-    form = BannerAdminForm(form=request.form)
-    title = form.title.data
-    banner = form.banner_text.data
-    logger.info(form.banner_text)
-    new_banner = Template(title, banner).to_json()
-    create_new_template(new_banner)
-    return redirect(url_for("admin_bp.get_banner_admin"))
-
-
-@admin_bp.route('/banner/edit/<banner_id>', methods=['GET'])
-@login_required
-def get_banner_edit(banner_id):
-    logger.debug("Editing template", user=current_username())
-    template = get_template(banner_id)
-    form = BannerAdminForm()
-    return render_template('admin/admin-edit.html',
+    form = BannerCreateForm(form=request.form)
+    if form.validate_on_submit():
+        title = form.title.data
+        banner = form.banner_text.data
+        logger.info(form.banner_text)
+        new_banner = Template(title, banner).to_json()
+        create_new_template(new_banner)
+        return redirect(url_for("admin_bp.get_banner_admin"))
+    
+    return render_template('admin/admin-create-template.html',                       
                            form=form,
-                           banner=template)
+                           errors=form.errors.items())
 
 
-@admin_bp.route('/banner/edit/<banner_id>', methods=['POST'])
+@admin_bp.route('/banner/edit/<banner_id>', methods=['GET', 'POST'])
 @login_required
 def edit_the_chosen_banner(banner_id):
     logger.info("Editing template", user=current_username(), banner_id=banner_id)
     form = BannerEditForm(form=request.form)
-    if form.validate():
+    if form.validate_on_submit():
         if form.delete.data:
             logger.debug("Removing banner", user=current_username())
             delete_template(banner_id)

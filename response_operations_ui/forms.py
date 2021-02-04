@@ -339,6 +339,11 @@ class BannerAdminForm(FlaskForm):
     delete_from_datastore = BooleanField('Delete banner from Datastore', default=False)
 
 
+class BannerCreateForm(FlaskForm):
+    title = StringField('Banner title', validators=[InputRequired('Enter a banner title')])
+    banner_text = StringField('Banner text', validators=[InputRequired('Banner text is missing')])
+
+
 class BannerDeleteForm(FlaskForm):
     delete = BooleanField('Delete banner', default=False)
     delete_from_datastore = BooleanField('Delete banner from Datastore', default=False)
@@ -354,7 +359,7 @@ class BannerManageForm(FlaskForm):
 
 class BannerEditForm(FlaskForm):
     title = StringField('Banner title', validators=[InputRequired('Enter a banner title')])
-    banner = StringField('Banner text', validators=[InputRequired('Enter some banner text')])
+    banner = StringField('Banner text', validators=[InputRequired('Banner text is missing')])
     banner_id = StringField('id')
     delete = BooleanField('Delete banner', default=False)
     delete_from_datastore = BooleanField('Delete banner from Datastore', default=False)

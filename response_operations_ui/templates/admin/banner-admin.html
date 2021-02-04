@@ -9,20 +9,6 @@
 {% block main %}
     <div class="grid grid--gutterless">
         <div class="grid__col col-8@m">
-            {% if response_error %}
-                {% call
-                    onsPanel({
-                        "type": "error",
-                        "classes": "u-mb-s",
-                        "title":  "There is a problem"
-                    })
-                %}
-                <p><a href="#banner-text" id="alert-select-link" class="js-inpagelink">Select an alert</a></p>
-                {% endcall %}
-                {% set error = {
-                    "text": "Please select a message template or enter a message"
-                } %}
-            {% endif %}
             {% with messages = get_flashed_messages() %}
                 {% if messages %}
                     {% for message in messages %}
@@ -69,89 +55,89 @@
                         }}
                     {% endcall %}
                 {% endif %}
-                    {%- call onsFieldset({
-                        "legend": "Create a new banner",
-                        "legendClasses": "u-vh",
-                        "classes": "u-mt-m"
-                        }) -%}
-                        {% set radioComponent = {
-                            "legend": "Message template (optional)",
-                            "name": "event"
-                        } %}
-        
-                        {% set radios = [] %}                
-                        {% for banner in list_of_alerts %}
-                            {% do radios.append(
-                                {
-                                    "id": banner['id']|string,
-                                    "name": "banner_id",
-                                    "label": {
-                                        "text": banner['title']
-                                    },
-                                    "value": banner['content'],
-                                    "attributes": {
-                                        "banner_id": banner['id']
-                                    }
-                                }
-                            ) %}
-                        {% endfor %}
-        
-                        {% do radioComponent | setAttribute("radios", radios) %}
-                    
-                        {{
-                            onsRadios(radioComponent)
-                        }} 
-                        {{
-                            onsInput({
-                                "id": "banner-input-id",
+                {%- call onsFieldset({
+                    "legend": "Create a new banner",
+                    "legendClasses": "u-vh",
+                    "classes": "u-mt-m"
+                    }) -%}
+                    {% set radioComponent = {
+                        "legend": "Message template (optional)",
+                        "name": "event"
+                    } %}
+    
+                    {% set radios = [] %}                
+                    {% for banner in list_of_alerts %}
+                        {% do radios.append(
+                            {
+                                "id": banner['id']|string,
                                 "name": "banner_id",
-                                "type": "hidden",
-                                "value": ""
-                            })
-                        }}
-                        <p></p>
-                        <a href="{{ url_for('admin_bp.manage_alert') }}"> Manage message templates</a>
-                        <p></p>
-                        {{ 
-                            onsTextarea({
-                                "id": "banner_text",
-                                "name": "banner_text",
                                 "label": {
-                                    "text": "Message"
+                                    "text": banner['title']
                                 },
-                                "maxlength": '50000',
-                                "error": error if response_error
+                                "value": banner['content'],
+                                "attributes": {
+                                    "banner_id": banner['id']
+                                }
+                            }
+                        ) %}
+                    {% endfor %}
+    
+                    {% do radioComponent | setAttribute("radios", radios) %}
+                
+                    {{
+                        onsRadios(radioComponent)
+                    }} 
+                    {{
+                        onsInput({
+                            "id": "banner-input-id",
+                            "name": "banner_id",
+                            "type": "hidden",
+                            "value": ""
+                        })
+                    }}
+                    <p></p>
+                    <a href="{{ url_for('admin_bp.manage_alert') }}">Manage message templates</a>
+                    <p></p>
+                    {{ 
+                        onsTextarea({
+                            "id": "banner_text",
+                            "name": "banner_text",
+                            "label": {
+                                "text": "Message"
+                            },
+                            "maxlength": '50000',
+                            "error": errors if errors
+                        })
+                    }}
+                    <script{% if csp_nonce %} nonce="{{ csp_nonce() }}"{% endif %}>
+                        document.getElementsByName("event").forEach(element => {
+                            element.addEventListener("change", function(event) {
+                                document.getElementById("banner_text").value = event.target.value;
+                                document.getElementById("banner-input-id").value = event.target.getAttribute("banner_id");
                             })
-                        }}
-                        <script{% if csp_nonce %} nonce="{{ csp_nonce() }}"{% endif %}>
-                            document.getElementsByName("event").forEach(element => {
-                                element.addEventListener("change", function(event) {
-                                    document.getElementById("banner_text").value = event.target.value;
-                                    document.getElementById("banner-input-id").value = event.target.getAttribute("banner_id");
-                                })
-                            });
-                        </script>
-                    {% endcall %}
-                    {%- call onsFieldset({
-                        "legend": "Create a new banner",
-                        "legendClasses": "u-vh",
-                        "classes": "u-mt-m"
-                        }) -%}
-                        {{
-                            onsButton({
-                                "text": "Publish",
-                                "id": "save-btn"
-                            })
-                        }} 
-                        {{
-                            onsButton({
-                                "classes": "btn--secondary",
-                                "hideCaret": true,
-                                "text": "Cancel",
-                                "url": url_for('home_bp.home')
-                            })
-                        }}
-                    {% endcall %}
+                        });
+                    </script>
+                {% endcall %}
+                {%- call onsFieldset({
+                    "legend": "Create a new banner",
+                    "legendClasses": "u-vh",
+                    "classes": "u-mt-m"
+                    }) -%}
+                    {{
+                        onsButton({
+                            "text": "Publish",
+                            "id": "save-btn"
+                        })
+                    }} 
+                    {{
+                        onsButton({
+                            "classes": "btn--secondary",
+                            "hideCaret": true,
+                            "text": "Cancel",
+                            "url": url_for('home_bp.home')
+                        })
+                    }}
+                {% endcall %}
              </form>
         </div>
     </div>
