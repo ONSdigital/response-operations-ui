@@ -331,14 +331,6 @@ class CreateAccountForm(FlaskForm):
             raise ValidationError('Your password doesn\'t meet the requirements')
 
 
-class BannerAdminForm(FlaskForm):
-    title = StringField('Banner title')
-    banner_text = StringField('Banner text')
-    banner_id = StringField('id')
-    delete = BooleanField('Delete banner', default=False)
-    delete_from_datastore = BooleanField('Delete banner from Datastore', default=False)
-
-
 class BannerCreateForm(FlaskForm):
     title = StringField('Banner title', validators=[InputRequired('Enter a banner title')])
     banner_text = StringField('Banner text', validators=[InputRequired('Banner text is missing')])
@@ -346,11 +338,10 @@ class BannerCreateForm(FlaskForm):
 
 class BannerDeleteForm(FlaskForm):
     delete = BooleanField('Delete banner', default=False)
-    delete_from_datastore = BooleanField('Delete banner from Datastore', default=False)
 
 
 class BannerPublishForm(FlaskForm):
-    banner_text = StringField('Banner text', validators=[InputRequired('Enter some banner text')])
+    banner_text = StringField('Banner text', validators=[InputRequired('Banner text is missing')])
 
 
 class BannerManageForm(FlaskForm):
@@ -362,4 +353,3 @@ class BannerEditForm(FlaskForm):
     banner = StringField('Banner text', validators=[InputRequired('Banner text is missing')])
     banner_id = StringField('id')
     delete = BooleanField('Delete banner', default=False)
-    delete_from_datastore = BooleanField('Delete banner from Datastore', default=False)
