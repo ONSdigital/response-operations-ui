@@ -9,7 +9,8 @@ from response_operations_ui.controllers import admin_controller
 from response_operations_ui.controllers.admin_controller import get_template, edit_template, delete_template
 from response_operations_ui.controllers.admin_controller import get_templates, create_new_template, Template
 from response_operations_ui.exceptions.exceptions import ApiError
-from response_operations_ui.forms import BannerAdminForm, BannerPublishForm, BannerDeleteForm
+from response_operations_ui.forms import BannerAdminForm, BannerPublishForm, BannerDeleteForm, BannerManageForm, \
+    BannerEditForm
 logger = wrap_logger(logging.getLogger(__name__))
 
 admin_bp = Blueprint('admin_bp', __name__, static_folder='static', template_folder='templates')
@@ -45,13 +46,13 @@ def get_banner_admin():
 @login_required
 def post_banner():
     if request.form.get('delete'):
-        # Do delete actions
+        # Handle remove scenario
         logger.info("Removing active status from banner")
         admin_controller.remove_banner()
         flash('The alert has been removed')
         return redirect(url_for("admin_bp.get_banner_admin"))
 
-    # Validate and redirect to publish confirm screen
+    # Handle create scenario
     form = BannerPublishForm(form=request.form)
     if form.validate():
         banner_text = form.banner_text.data
@@ -97,40 +98,36 @@ def post_banner_confirm_publish():
             return redirect(url_for("admin_bp.get_banner_admin"))
         return redirect(url_for("surveys_bp.view_surveys", message_key='alert_published'))
     else:
-        logger.error("TODO, handle error")
+        logger.error("Banner text is somehow missing from the form")
+        flash("Something went wrong setting the banner")
         return redirect(url_for("admin_bp.get_banner_admin"))
 
 
 # Template management
 
-@admin_bp.route('/banner/manage', methods=['GET'])
+@admin_bp.route('/banner/manage', methods=['GET', 'POST'])
 @login_required
 def manage_alert():
-    logger.debug("Managing banner", user=current_username())
-    form = BannerAdminForm(form=request.form)
+    logger.debug("Managing banner templates", user=current_username())
+    form = BannerManageForm(form=request.form)
+    if form.validate_on_submit():
+        banner_id = form.template_id.data
+        logger.info("form id", banner=banner_id)
+        return redirect(url_for("admin_bp.get_banner_edit", banner_id=banner_id))
+
     all_banners = get_templates()
     return render_template('admin/admin-manage.html',
                            form=form,
-                           list_of_alerts=all_banners)
+                           list_of_alerts=all_banners,
+                           errors=form.errors.items())
 
 
-@admin_bp.route('/banner/manage', methods=['POST'])
-@login_required
-def manage_alert_to_edit():
-    logger.debug("Managing banner", user=current_username())
-    banner_id = request.form['event']
-    logger.info("form id", banner=banner_id)
-    return redirect(url_for("admin_bp.get_banner_edit", banner_id=banner_id))
-
-
-# Loads manage page
 @admin_bp.route('/banner/create', methods=['GET'])
 @login_required
 def create_a_new_banner():
     logger.debug("Creating template", user=current_username())
-    form = BannerAdminForm(form=request.form)
-    return render_template('admin/admin-create-template.html',
-                           form=form)
+    form = BannerAdminForm()
+    return render_template('admin/admin-create-template.html', form=form)
 
 
 @admin_bp.route('/banner/create', methods=['POST'])
@@ -149,28 +146,35 @@ def put_new_banner_in_datastore():
 @admin_bp.route('/banner/edit/<banner_id>', methods=['GET'])
 @login_required
 def get_banner_edit(banner_id):
-    logger.info("searching for banner", id=banner_id)
-    banner = get_template(banner_id)
-    logger.info("got banner", banner=banner)
-    form = BannerAdminForm(form=request.form)
+    logger.debug("Editing template", user=current_username())
+    template = get_template(banner_id)
+    form = BannerAdminForm()
     return render_template('admin/admin-edit.html',
                            form=form,
-                           banner=banner)
+                           banner=template)
 
 
 @admin_bp.route('/banner/edit/<banner_id>', methods=['POST'])
 @login_required
 def edit_the_chosen_banner(banner_id):
-    logger.debug("Editing banner", user=current_username())
-    form = BannerAdminForm(form=request.form)
-    if form.delete.data:
-        logger.debug("Removing banner", user=current_username())
-        delete_template(banner_id)
+    logger.info("Editing template", user=current_username(), banner_id=banner_id)
+    form = BannerEditForm(form=request.form)
+    if form.validate():
+        if form.delete.data:
+            logger.debug("Removing banner", user=current_username())
+            delete_template(banner_id)
+            return redirect(url_for("admin_bp.get_banner_admin"))
+
+        edit_template({"id": banner_id,
+                       "title": form.title.data,
+                       "content": form.banner.data})
         return redirect(url_for("admin_bp.get_banner_admin"))
-    title = form.title.data
-    content = form.banner_text.data
-    edit_template(json.dumps({"id": banner_id, "title": title, "content": content}))
-    return redirect(url_for("admin_bp.get_banner_admin"))
+
+    banner = get_template(banner_id)
+    return render_template('admin/admin-edit.html',
+                           form=form,
+                           banner=banner,
+                           errors=form.errors.items())
 
 
 def current_username():

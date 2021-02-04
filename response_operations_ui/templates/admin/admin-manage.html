@@ -3,6 +3,7 @@
 {% from "components/radios/_macro.njk" import onsRadios %}
 {% from "components/fieldset/_macro.njk" import onsFieldset %}
 {% from "components/checkboxes/_macro.njk" import onsCheckboxes %}
+{% from "components/lists/_macro.njk" import onsList %}
 
 {% set page_title = 'Manage Alert Templates'  %}
 {% block main %}
@@ -12,11 +13,39 @@
       <p>
         <a id="create_message" href="{{ url_for('admin_bp.create_a_new_banner') }}">Create a new message template</a>
       </p>
+      {% if errors %}
+        {% set errorData = [] %}
+
+        {% call
+            onsPanel({
+                "type":"error",
+                "id": "save-error",
+                "classes": "u-mb-s",
+                "title": "This page has 1 error" if errors|length == 1 else "There are " + errors|length|string + " errors on this page"
+
+            })
+        %}
+            {% for field, error_list in errors %}
+                {% do errorData.append(
+                    {
+                        "text": ', '.join(error_list),
+                        "index": true
+                    }
+                ) %}
+            {% endfor %}
+            {{
+                onsList({
+                    "classes": "list--bare",
+                    "itemsList": errorData
+                })
+            }}
+        {% endcall %}
+      {% endif %}
       <form action="" method="post">
         {{ form.csrf_token }}
         {% set radioComponent = {
             "legend": "Choose a template to edit",
-            "name": "event"
+            "name": "template_id"
         } %}
 
         {% set radios = [] %}

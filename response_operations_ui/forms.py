@@ -349,4 +349,12 @@ class BannerPublishForm(FlaskForm):
 
 
 class BannerManageForm(FlaskForm):
-    banner_id = StringField('Banner title')
+    template_id = StringField('Banner title', validators=[InputRequired("Please select a template")])
+
+
+class BannerEditForm(FlaskForm):
+    title = StringField('Banner title', validators=[InputRequired('Enter a banner title')])
+    banner = StringField('Banner text', validators=[InputRequired('Enter some banner text')])
+    banner_id = StringField('id')
+    delete = BooleanField('Delete banner', default=False)
+    delete_from_datastore = BooleanField('Delete banner from Datastore', default=False)
