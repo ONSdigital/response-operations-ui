@@ -32,7 +32,7 @@ CACHE_HEADERS = {
 
 @messages_bp.route('/create-message', methods=['POST'])
 @login_required
-def create_message(ru_ref):
+def create_message():
     form = SecureMessageForm(request.form)
     breadcrumbs = _build_create_message_breadcrumbs()
 
@@ -52,7 +52,7 @@ def create_message(ru_ref):
             if survey in VACANCIES_LIST:
                 survey = 'Vacancies'
             flash("Message sent.")
-            return redirect(url_for('reporting_unit_bp.view_reporting_unit', ru_ref=ru_ref))
+            return redirect(url_for('reporting_unit_bp.view_reporting_unit', ru_ref=form.ru_ref))
         except (ApiError, InternalError):
             form = _repopulate_form_with_submitted_data(form)
             form.errors['sending'] = ["Message failed to send, something has gone wrong with the website."]
