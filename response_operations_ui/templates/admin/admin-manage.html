@@ -6,64 +6,54 @@
 
 {% set page_title = 'Manage Alert Templates'  %}
 {% block main %}
-    <div class="grid grid--gutterless">
-        <div class="grid__col col-8@m">
-            <h1 class="u-fs-xl u-mt-m">Manage message templates</h1>
-            <p>
-                <a id="create_message" href="{{ url_for('admin_bp.create_a_new_banner') }}">Create a new message template</a>
-            </p>
-            <form action="" method="post">
-                {{ form.csrf_token }}
-                {% set radioComponent = {
-                    "legend": "Choose a template to edit",
-                    "name": "event"
-                } %}
+  <div class="grid grid--gutterless">
+    <div class="grid__col col-8@m">
+      <h1 class="u-fs-xl u-mt-m">Manage message templates</h1>
+      <p>
+        <a id="create_message" href="{{ url_for('admin_bp.create_a_new_banner') }}">Create a new message template</a>
+      </p>
+      <form action="" method="post">
+        {{ form.csrf_token }}
+        {% set radioComponent = {
+            "legend": "Choose a template to edit",
+            "name": "event"
+        } %}
 
-                {% set radios = [] %}                
-                {% for banner in list_of_alerts %}
-                    {% do radios.append(
-                        {
-                            "id": banner['id']|string,
-                            "name": "banner_id",
-                            "label": {
-                                "text": banner['title']
-                            },
-                            "value": banner['id']
-                        }
-                    ) %}
-                {% endfor %}
+        {% set radios = [] %}
+        {% for banner in list_of_alerts %}
+            {% do radios.append(
+                {
+                    "id": banner['id']|string,
+                    "name": "banner_id",
+                    "label": {
+                        "text": banner['title']
+                    },
+                    "value": banner['id']
+                }
+            ) %}
+        {% endfor %}
 
-                {% do radioComponent | setAttribute("radios", radios) %}
-            
-                {{
-                    onsRadios(radioComponent)
-                }} 
+        {% do radioComponent | setAttribute("radios", radios) %}
+        {{
+            onsRadios(radioComponent)
+        }}
 
-                {%- call onsFieldset({
-                    "legend": "Edit a banner",
-                    "legendClasses": "u-vh",
-                    "classes": "u-mt-m"
-                    }) -%}
-                    {{
-                        onsButton({
-                            "dontWrap": false,
-                            "classes": "btn-group__btn",
-                            "text": "Continue",
-                            "id": "save-btn"
-                        })
-                    }} 
-                    {{
-                        onsButton({
-                            "dontWrap": false,
-                            "classes": "btn--secondary btn-group__btn",
-                            "text": "Cancel",
-                            "id": "cancel-btn"
-                        })
-                    }}
-                {% endcall %}
-            </form>
-            <p>
-            </p>
+        <div class="grid grid--flex grid--gutterless grid--vertical-center grid--no-wrap@s u-mt-m u-mb-m">
+          <div class="grid__col">
+              {{
+                  onsButton({
+                      "dontWrap": false,
+                      "classes": "btn-group__btn",
+                      "text": "Continue",
+                      "id": "save-btn"
+                  })
+              }}
+          </div>
+          <div class="grid__col u-ml-m">
+            <a href="{{ url_for('admin_bp.get_banner_admin')}}">Cancel</a>
+          </div>
         </div>
+      </form>
     </div>
+  </div>
 {% endblock %}

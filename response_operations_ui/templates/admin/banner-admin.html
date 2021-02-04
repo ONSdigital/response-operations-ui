@@ -124,8 +124,6 @@
                             })
                         }}
                         <script{% if csp_nonce %} nonce="{{ csp_nonce() }}"{% endif %}>
-                            // document.getElementById("alert-list").classList.remove("hidden");
-                            // document.getElementById("alert-list-label").classList.remove("hidden");
                             document.getElementsByName("event").forEach(element => {
                                 element.addEventListener("change", function(event) {
                                     document.getElementById("banner_text").value = event.target.value;

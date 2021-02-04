@@ -9,7 +9,7 @@ from response_operations_ui.controllers import admin_controller
 from response_operations_ui.controllers.admin_controller import get_template, edit_template, delete_template
 from response_operations_ui.controllers.admin_controller import get_templates, create_new_template, Template
 from response_operations_ui.exceptions.exceptions import ApiError
-from response_operations_ui.forms import BannerAdminForm, BannerPublishForm
+from response_operations_ui.forms import BannerAdminForm, BannerPublishForm, BannerDeleteForm
 logger = wrap_logger(logging.getLogger(__name__))
 
 admin_bp = Blueprint('admin_bp', __name__, static_folder='static', template_folder='templates')
@@ -23,11 +23,11 @@ def get_banner_admin():
     there isn't a banner set yet, or a 'remove' screen if there is one.
     """
     breadcrumbs = [{"text": "Banner Admin", "url": ""}]
-    form = BannerAdminForm()
     current_banner_json = admin_controller.current_banner()
     logger.info("Banner page accessed", user=current_username())
     if current_banner_json:
         # Handle remove scenario
+        form = BannerDeleteForm()
         return render_template('admin/admin-remove-alert.html',
                                form=form,
                                current_banner=current_banner_json['content'],
@@ -44,8 +44,7 @@ def get_banner_admin():
 @admin_bp.route('/banner', methods=['POST'])
 @login_required
 def post_banner():
-    form = BannerAdminForm(form=request.form)
-    if form.delete.data:
+    if request.form.get('delete'):
         # Do delete actions
         logger.info("Removing active status from banner")
         admin_controller.remove_banner()
@@ -53,15 +52,19 @@ def post_banner():
         return redirect(url_for("admin_bp.get_banner_admin"))
 
     # Validate and redirect to publish confirm screen
-    banner_text = form.banner_text.data
-    if banner_text:
+    form = BannerPublishForm(form=request.form)
+    if form.validate():
+        banner_text = form.banner_text.data
         session['banner-text'] = banner_text
         return redirect(url_for('admin_bp.get_banner_confirm_publish'))
 
-    # TODO handle the error if theres no text
-    logger.error("No delete or text")
+    breadcrumbs = [{"text": "Banner Admin", "url": ""}]
+    all_templates = get_templates()
     return render_template('admin/banner-admin.html',
-                           form=form)
+                           form=form,
+                           list_of_alerts=all_templates,
+                           breadcrumbs=breadcrumbs,
+                           errors=form.errors.items())
 
 
 @admin_bp.route('/banner/confirm-publish', methods=['GET'])
@@ -70,7 +73,7 @@ def get_banner_confirm_publish():
     breadcrumbs = [{"text": "Create an alert", "url": "/admin/banner"},
                    {"text": "Setting Banner", "url": ""}]
 
-    form = BannerAdminForm(form=request.form)
+    form = BannerPublishForm(form=request.form)
     banner_text = session.pop('banner-text')
     form.banner_text = banner_text
     # TODO what happens if there isn't anything in the session?

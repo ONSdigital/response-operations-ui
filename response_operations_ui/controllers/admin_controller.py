@@ -64,7 +64,7 @@ def set_banner(banner_text):
         logger.error('Failed to retrieve Banner from api')
         raise ApiError(response)
 
-    logger.info('Successfully retrieved current live banner from api')
+    logger.info('Successfully set the banner text')
     banner = response.json()
     return banner
 
