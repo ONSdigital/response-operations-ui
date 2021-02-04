@@ -75,9 +75,13 @@ def get_banner_confirm_publish():
                    {"text": "Setting Banner", "url": ""}]
 
     form = BannerPublishForm(form=request.form)
-    banner_text = session.pop('banner-text')
+    try:
+        banner_text = session.pop('banner-text')
+    except KeyError:
+        flash("Something went wrong setting the banner")
+        return redirect(url_for("admin_bp.get_banner_admin"))
+
     form.banner_text = banner_text
-    # TODO what happens if there isn't anything in the session?
     return render_template('admin/banner-confirm-publish.html',
                            current_banner=banner_text,
                            form=form,
@@ -126,16 +130,17 @@ def manage_alert():
 @login_required
 def put_new_banner_in_datastore():
     logger.debug("Creating template", user=current_username())
+    breadcrumbs = [{"text": "Manage templates", "url": "/admin/banner/manage"},
+                   {"text": "Create alert template", "url": ""}]
     form = BannerCreateForm(form=request.form)
     if form.validate_on_submit():
-        title = form.title.data
-        banner = form.banner_text.data
-        logger.info(form.banner_text)
-        new_banner = Template(title, banner).to_json()
+        new_banner = Template(form.title.data,
+                              form.banner_text.data).to_json()
         create_new_template(new_banner)
         return redirect(url_for("admin_bp.get_banner_admin"))
     
-    return render_template('admin/admin-create-template.html',                       
+    return render_template('admin/admin-create-template.html',
+                           breadcrumbs=breadcrumbs,
                            form=form,
                            errors=form.errors.items())
 

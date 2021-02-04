@@ -6,41 +6,40 @@
 {% from "components/field/_macro.njk" import onsField %}
 {% from "components/textarea/_macro.njk" import onsTextarea %}
 
-{% set page_title = 'Create message template'  %}
+{% set page_title = 'Create message template' %}
 {% block main %}
     <div class="grid grid--gutterless">
         <div class="grid__col col-8@m">
-            <h1 class="u-fs-xl u-mt-m">Create message template</h1>
-            <form action="" method="post">
-                {{ form.csrf_token }}
-                {% if errors %}
-                    {% set errorData = [] %}
+            <h1>Create message template</h1>
+            {% if errors %}
+                {% set errorData = [] %}
+                {% call
+                    onsPanel({
+                        "type":"error",
+                        "id": "save-error",
+                        "classes": "u-mb-s",
+                        "title": "This page has 1 error" if errors|length == 1 else "There are " + errors|length|string + " errors on this page"
 
-                    {% call
-                        onsPanel({
-                            "type":"error",
-                            "id": "save-error",
-                            "classes": "u-mb-s",
-                            "title": "This page has 1 error" if errors|length == 1 else "There are " + errors|length|string + " errors on this page"
-
+                    })
+                %}
+                    {% for field, error_list in errors %}
+                        {% do errorData.append(
+                            {
+                                "text": ', '.join(error_list),
+                                "index": true
+                            }
+                        ) %}
+                    {% endfor %}
+                    {{
+                        onsList({
+                            "classes": "list--bare",
+                            "itemsList": errorData
                         })
-                    %}
-                        {% for field, error_list in errors %}
-                            {% do errorData.append(
-                                {
-                                    "text": ', '.join(error_list),
-                                    "index": true
-                                }
-                            ) %}
-                        {% endfor %}
-                        {{
-                            onsList({
-                                "classes": "list--bare",
-                                "itemsList": errorData
-                            }) 
-                        }}
-                    {% endcall %}
-                {% endif %}
+                    }}
+                {% endcall %}
+            {% endif %}
+        <form action="" method="post">
+                {{ form.csrf_token }}
                     {%- call onsFieldset({
                         "legend": "Create a new banner",
                         "legendClasses": "u-vh",
