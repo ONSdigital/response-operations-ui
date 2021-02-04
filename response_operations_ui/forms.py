@@ -344,7 +344,7 @@ class BannerDeleteForm(FlaskForm):
 
 
 class BannerPublishForm(FlaskForm):
-    banner_text = StringField('Banner text', validators=[InputRequired('Banner text is missing'))
+    banner_text = StringField('Banner text', validators=[InputRequired('Banner text is missing')])
 
 
 class BannerManageForm(FlaskForm):
