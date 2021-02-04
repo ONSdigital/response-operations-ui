@@ -45,6 +45,7 @@
                         "legendClasses": "u-vh",
                         "classes": "u-mt-m"
                         }) -%}
+                        {% set titleError = { "text": form.title.errors[0], "id": "title-panel" } %}
                         {{
                             onsInput({
                                 "id": "banner",
@@ -52,9 +53,11 @@
                                 "type": "text",
                                 "label": {
                                     "text": 'Message template title'
-                                }
+                                },
+                                "error": titleError if form.title.errors
                             })
                         }}
+                        {% set bannerTextError = { "text": form.banner_text.errors[0], "id": "bannertext-panel" } %}
                         {{ 
                             onsTextarea({
                                 "id": "banner_text",
@@ -63,7 +66,7 @@
                                     "text": "Message"
                                 },
                                 "maxlength": '50000',
-                                "error": errors if errors
+                                "error": bannerTextError if form.banner_text.errors
                             })
                         }}
 

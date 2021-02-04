@@ -38,6 +38,7 @@
                     }}
                 {% endcall %}
             {% endif %}
+            {% set titleError = { "text": form.title.errors[0], "id": "title-panel" } %}
             {{
                 onsInput({
                     "id": "banner",
@@ -46,9 +47,11 @@
                     "label": {
                         "text": 'Message template title'
                     },
+                    "error": titleError if form.title.errors,
                     "value": banner.title
                 })
             }}
+            {% set bannerError = { "text": form.banner.errors[0], "id": "banner-panel" } %}
             {{
                 onsTextarea({
                     "id": "banner-text",
@@ -57,7 +60,7 @@
                         "text": "Message"
                     },
                     "maxlength": '50000',
-                    "error": errorData if errorData,
+                    "error": bannerError if form.banner.errors,
                     "value": banner.content
                 })
             }}
