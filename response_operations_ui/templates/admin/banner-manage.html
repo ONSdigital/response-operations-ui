@@ -67,7 +67,7 @@
               } %}
 
               {% set radios = [] %}
-              {% for banner in list_of_alerts %}
+              {% for banner in list_of_templates %}
                   {% do radios.append(
                       {
                           "id": banner['id']|string,

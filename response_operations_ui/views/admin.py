@@ -37,7 +37,7 @@ def get_banner_admin():
     all_templates = get_templates()
     return render_template('admin/banner-manage.html',
                            form=form,
-                           list_of_alerts=all_templates,
+                           list_of_templates=all_templates,
                            breadcrumbs=breadcrumbs)
 
 
@@ -62,7 +62,7 @@ def post_banner():
     all_templates = get_templates()
     return render_template('admin/banner-manage.html',
                            form=form,
-                           list_of_alerts=all_templates,
+                           list_of_templates=all_templates,
                            breadcrumbs=breadcrumbs,
                            errors=form.errors.items())
 
@@ -95,15 +95,11 @@ def post_banner_confirm_publish():
     banner_text = form.banner_text.data
     logger.info("Setting an active banner", user=current_username(), banner_text=banner_text)
     if banner_text:
-        try:
-            admin_controller.set_banner(banner_text)
-        except ApiError:
-            flash("Something went wrong setting the banner")
-            return redirect(url_for("admin_bp.get_banner_admin"))
+        admin_controller.set_banner(banner_text)
         return redirect(url_for("surveys_bp.view_surveys", message_key='alert_published'))
     else:
         logger.error("Banner text is somehow missing from the form")
-        flash("Something went wrong setting the banner")
+        flash("Banner text somehow not found on publish.  Please try again.")
         return redirect(url_for("admin_bp.get_banner_admin"))
 
 
@@ -115,14 +111,13 @@ def manage_alert():
     logger.info("Managing banner templates", user=current_username())
     form = BannerManageForm(form=request.form)
     if form.validate_on_submit():
-        banner_id = form.template_id.data
-        logger.info("form id", banner=banner_id)
-        return redirect(url_for("admin_bp.edit_the_chosen_banner", banner_id=banner_id))
+        template_id = form.template_id.data
+        return redirect(url_for("admin_bp.edit_template", banner_id=template_id))
 
-    all_banners = get_templates()
+    all_templates = get_templates()
     return render_template('admin/template-manage.html',
                            form=form,
-                           list_of_alerts=all_banners,
+                           list_of_templates=all_templates,
                            errors=form.errors.items())
 
 
@@ -134,9 +129,9 @@ def put_new_banner_in_datastore():
                    {"text": "Create alert template", "url": ""}]
     form = BannerCreateForm(form=request.form)
     if form.validate_on_submit():
-        new_banner = Template(form.title.data,
-                              form.banner_text.data).to_json()
-        create_new_template(new_banner)
+        template = Template(form.title.data,
+                            form.banner_text.data).to_json()
+        create_new_template(template)
         return redirect(url_for("admin_bp.get_banner_admin"))
 
     return render_template('admin/template-create.html',
@@ -147,7 +142,7 @@ def put_new_banner_in_datastore():
 
 @admin_bp.route('/banner/edit/<banner_id>', methods=['GET', 'POST'])
 @login_required
-def edit_the_chosen_banner(banner_id):
+def edit_template(banner_id):
     logger.info("Editing template", user=current_username(), banner_id=banner_id)
     breadcrumbs = [{"text": "Manage templates", "url": "/admin/banner/manage"},
                    {"text": "Create alert template", "url": ""}]
