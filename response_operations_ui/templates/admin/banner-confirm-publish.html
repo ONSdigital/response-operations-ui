@@ -1,9 +1,8 @@
 {% extends "layouts/base.html" %}
 {% from "components/button/_macro.njk" import onsButton %}
 {% from "components/input/_macro.njk" import onsInput %}
-{% from "components/select/_macro.njk" import onsSelect %}
 
-{% set page_title = 'Remove Alert' %}
+{% set page_title = 'Banner Confirm Publish' %}
 {% block main %}
     <div class="grid grid--gutterless">
       <div class="grid__col col-8@m">
@@ -21,20 +20,21 @@
         <form action="" method="post">
           {{ form.csrf_token }}
           <div class="grid grid--flex grid--gutterless grid--vertical-center grid--no-wrap@s u-mt-m u-mb-m">
-          <div class="grid__col">
-            {{
-                onsButton({
-                    "id": "publish-btn",
-                    "text": "Publish",
-                    "name": "publish",
-                    "value": "publish"
-                })
-            }}
+            <div class="grid__col">
+              {{
+                  onsButton({
+                      "id": "publish-btn",
+                      "text": "Publish",
+                      "name": "publish",
+                      "value": "publish"
+                  })
+              }}
+            </div>
+            <div class="grid__col u-ml-m">
+              <a href="{{ url_for('admin_bp.get_banner_admin')}}">Cancel</a>
+            </div>
+            <input type="hidden" name="banner_text" value="{{ current_banner }}">
           </div>
-          <div class="grid__col u-ml-m">
-            <a href="{{ url_for('admin_bp.get_banner_admin')}}">Cancel</a>
-          </div>
-          <input type="hidden" name="banner_text" value="{{ current_banner }}">
         </form>
       </div>
     </div>

@@ -37,10 +37,10 @@ def current_banner():
         if response.status_code == 404:
             logger.info('No banner currently active')
             return {}
-        logger.error('Failed to retrieve Banner from api')
+        logger.error('Failed to retrieve current live banner')
         raise ApiError(response)
 
-    logger.info('Successfully retrieved current live banner from api')
+    logger.info('Successfully retrieved current live banner')
     return response.json()
 
 
@@ -61,10 +61,10 @@ def set_banner(banner_text):
     try:
         response.raise_for_status()
     except requests.exceptions.HTTPError:
-        logger.error('Failed to retrieve Banner from api')
+        logger.error('Failed to set banner text')
         raise ApiError(response)
 
-    logger.info('Successfully set the banner text')
+    logger.info('Successfully set banner text')
     banner = response.json()
     return banner
 
@@ -85,7 +85,7 @@ def remove_banner():
         logger.error('Failed to remove Banner')
         raise ApiError(response)
 
-    logger.info('Successfully removed banner from api')
+    logger.info('Successfully removed banner')
 
 
 def get_templates():
@@ -126,11 +126,11 @@ def get_template(template_id):
     try:
         response.raise_for_status()
     except requests.exceptions.HTTPError:
-        logger.error('Failed to retrieve template from api', template_id=template_id)
+        logger.error('Failed to retrieve template', template_id=template_id)
         raise ApiError(response)
 
     template = response.json()
-    logger.info('Successfully retrieved template from api', template_id=template_id)
+    logger.info('Successfully retrieved template', template_id=template_id)
     return template
 
 
@@ -142,6 +142,7 @@ def create_new_template(template):
     :type template: dict
     :return: A copy of what the banner-api has saved to the database
     :rtype: dict
+    :raises ApiError: Raised on any 4XX or 5XX returned from the banner-api
     """
     logger.info('Attempting to create a template', template=template)
     url = f"{app.config['BANNER_SERVICE_URL']}/template"
@@ -167,6 +168,7 @@ def edit_template(template):
     :type template: dict
     :return: A copy of what the banner-api has saved to the database
     :rtype: dict
+    :raises ApiError: Raised on any 4XX or 5XX returned from the banner-api
     """
     logger.info('Attempting to edit the template', template=template)
     url = f"{app.config['BANNER_SERVICE_URL']}/template"
@@ -174,7 +176,7 @@ def edit_template(template):
     try:
         response.raise_for_status()
     except requests.exceptions.HTTPError:
-        logger.error('Failed to edit template')
+        logger.error('Failed to edit the template')
         raise ApiError(response)
 
     banner = response.json()
@@ -191,13 +193,13 @@ def delete_template(template_id):
     :rtype: None
     :raises ApiError: Raised on any 4XX or 5XX returned from the banner-api
     """
-    logger.info('Attempting to delete template from Datastore', template_id=template_id)
+    logger.info('Attempting to delete template', template_id=template_id)
     url = f"{app.config['BANNER_SERVICE_URL']}/template/{template_id}"
     response = requests.delete(url)
     try:
         response.raise_for_status()
     except requests.exceptions.HTTPError:
-        logger.error('Failed to delete template from Datastore', template_id=template_id)
+        logger.error('Failed to delete template', template_id=template_id)
         raise ApiError(response)
 
-    logger.info('Successfully deleted banner', template_id=template_id)
+    logger.info('Successfully deleted template', template_id=template_id)
