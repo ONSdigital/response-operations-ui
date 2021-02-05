@@ -440,11 +440,13 @@ class TestMessage(ViewTestCase):
     message_form = {'body': "TEST BODY",
                     'subject': "TEST SUBJECT",
                     'hidden_survey': "ASHE",
-                    'ru_ref': "11110000019"}
+                    'ru_ref': "11110000019",
+                    'hidden_ru_ref': "11110000019"}
     FDI_message = {'body': "AIFDI BODY",
                    'subject': "AIFDI SUBJECT",
                    'hidden_survey': "AIFDI",
-                   'ru_ref': "11110000019"}
+                   'ru_ref': "11110000019",
+                   'hidden_ru_ref': "11110000019"}
     AIFDI_response = {
         "id": "41320b22-b425-4fba-a90e-718898f718ce",
         "shortName": "AIFDI",
