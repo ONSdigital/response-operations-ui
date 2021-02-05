@@ -57,7 +57,6 @@ def create_message():
             print("This is the value of ru_ref: " + ruRef)
             logger.debug("This is the value of hidden_survey: " + survey)
             print("This is the value of hidden_survey: " + survey)
-            
             return redirect(url_for('reporting_unit_bp.view_reporting_unit', ru_ref=ruRef))
         except (ApiError, InternalError):
             form = _repopulate_form_with_submitted_data(form)
