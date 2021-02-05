@@ -52,6 +52,7 @@ def create_message():
             if survey in VACANCIES_LIST:
                 survey = 'Vacancies'
             flash("Message sent.")
+            logger.info("This is the ru_ref" + form.ru_ref.text)
             return redirect(url_for('reporting_unit_bp.view_reporting_unit', ru_ref=form.ru_ref.text))
         except (ApiError, InternalError):
             form = _repopulate_form_with_submitted_data(form)
