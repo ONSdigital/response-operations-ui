@@ -437,12 +437,14 @@ class TestMessage(ViewTestCase):
         self.assertIn("Please enter a subject".encode(), response.data)
         self.assertIn("Please enter a message".encode(), response.data)
 
-    message_form = {'body': "TEST BODY",
+    message_form = {'create-message': 'create-message-view',
+                    'body': "TEST BODY",
                     'subject': "TEST SUBJECT",
                     'hidden_survey': "ASHE",
                     'ru_ref': "49900000280",
                     'hidden_ru_ref': "49900000280"}
-    FDI_message = {'body': "AIFDI BODY",
+    FDI_message = {'create-message': 'create-message-view',
+                   'body': "AIFDI BODY",
                    'subject': "AIFDI SUBJECT",
                    'hidden_survey': "AIFDI",
                    'ru_ref': "49900000280",
