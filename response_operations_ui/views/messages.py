@@ -48,8 +48,8 @@ def create_message():
             message_controllers.send_message(_get_message_json(form))
             ru_ref = request.form.get("ru_ref")
             flash("Message sent.")
-            logger.debug("This is the value of ru_ref: " + ruRef)
-            print("This is the value of ru_ref: " + ruRef)
+            logger.debug("This is the value of ru_ref: " + ru_ref)
+            print("This is the value of ru_ref: " + ru_ref)
             return redirect(url_for('reporting_unit_bp.view_reporting_unit', ru_ref=ru_ref))
         except (ApiError, InternalError):
             form = _repopulate_form_with_submitted_data(form)
