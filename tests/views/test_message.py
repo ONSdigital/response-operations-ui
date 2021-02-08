@@ -497,7 +497,7 @@ class TestMessage(ViewTestCase):
         mock_request.get(url_get_threads_list, json=thread_list, status_code=200)
         mock_request.get(url_get_surveys_list, json=self.surveys_list_json)
         mock_request.get(shortname_url + "/ASHE", json=ashe_info['survey'])
-        party_get_by_ru_ref = f'{url_get_party_by_ru_ref}{message_form.ru_ref}'
+        party_get_by_ru_ref = f'{url_get_party_by_ru_ref}{self.message_form["ru_ref"]}'
         mock_request.get(party_get_by_ru_ref, status_code=200)
 
         with self.app.app_context():
