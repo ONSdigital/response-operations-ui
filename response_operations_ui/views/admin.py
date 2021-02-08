@@ -7,7 +7,6 @@ from structlog import wrap_logger
 from response_operations_ui.controllers import admin_controller
 from response_operations_ui.controllers.admin_controller import get_template, edit_template, delete_template
 from response_operations_ui.controllers.admin_controller import get_templates, create_new_template, Template
-from response_operations_ui.exceptions.exceptions import ApiError
 from response_operations_ui.forms import BannerPublishForm, BannerDeleteForm, BannerManageForm, \
     BannerEditForm, BannerCreateForm
 logger = wrap_logger(logging.getLogger(__name__))
@@ -112,7 +111,7 @@ def manage_alert():
     form = BannerManageForm(form=request.form)
     if form.validate_on_submit():
         template_id = form.template_id.data
-        return redirect(url_for("admin_bp.edit_template", banner_id=template_id))
+        return redirect(url_for("admin_bp.get_post_edit_template", banner_id=template_id))
 
     all_templates = get_templates()
     return render_template('admin/template-manage.html',
@@ -142,7 +141,7 @@ def put_new_banner_in_datastore():
 
 @admin_bp.route('/banner/edit/<banner_id>', methods=['GET', 'POST'])
 @login_required
-def edit_template(banner_id):
+def get_post_edit_template(banner_id):
     logger.info("Editing template", user=current_username(), banner_id=banner_id)
     breadcrumbs = [{"text": "Manage templates", "url": "/admin/banner/manage"},
                    {"text": "Create alert template", "url": ""}]
