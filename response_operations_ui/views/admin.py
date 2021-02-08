@@ -45,7 +45,7 @@ def get_banner_admin():
 def post_banner():
     if request.form.get('delete'):
         # Handle remove scenario
-        logger.info("Removing active status from banner")
+        logger.info("Removing active status from banner", user=current_username())
         admin_controller.remove_banner()
         flash('The alert has been removed')
         return redirect(url_for("admin_bp.get_banner_admin"))
@@ -77,7 +77,7 @@ def get_banner_confirm_publish():
     try:
         banner_text = session.pop('banner-text')
     except KeyError:
-        flash("Something went wrong setting the banner")
+        flash("Error setting banner")
         return redirect(url_for("admin_bp.get_banner_admin"))
 
     form.banner_text = banner_text
@@ -97,8 +97,9 @@ def post_banner_confirm_publish():
         admin_controller.set_banner(banner_text)
         return redirect(url_for("surveys_bp.view_surveys", message_key='alert_published'))
     else:
+        # This is extremely unlikely to happen, but we need to handle it regardless.
         logger.error("Banner text is somehow missing from the form")
-        flash("Banner text somehow not found on publish.  Please try again.")
+        flash("Error setting banner")
         return redirect(url_for("admin_bp.get_banner_admin"))
 
 
