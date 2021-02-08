@@ -491,13 +491,14 @@ class TestMessage(ViewTestCase):
     @requests_mock.mock()
     @patch('response_operations_ui.controllers.message_controllers._get_jwt')
     def test_form_submit_with_valid_data(self, mock_request, mock_get_jwt):
+        ru_ref_value = self.message_form["ru_ref"]
         mock_get_jwt.return_value = "blah"
         mock_request.post(url_send_message, json=threads_no_unread_list, status_code=201)
         mock_request.get(url_messages + '/count', json={"total": 1}, status_code=200)
         mock_request.get(url_get_threads_list, json=thread_list, status_code=200)
         mock_request.get(url_get_surveys_list, json=self.surveys_list_json)
         mock_request.get(shortname_url + "/ASHE", json=ashe_info['survey'])
-        party_get_by_ru_ref = f'{url_get_party_by_ru_ref}{self.message_form["ru_ref"]}'
+        party_get_by_ru_ref = f'{url_get_party_by_ru_ref}{ru_ref_value}'
         mock_request.get(party_get_by_ru_ref, status_code=200)
 
         with self.app.app_context():
