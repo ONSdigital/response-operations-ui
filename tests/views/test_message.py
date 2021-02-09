@@ -508,7 +508,6 @@ class TestMessage(ViewTestCase):
         self.assertIn(f'reporting-units/{ru_ref_value}', response.location)
         self.assertIn("Message sent.".encode(), response.data)
         self.assertIn("Messages".encode(), response.data)
-        
 
     @requests_mock.mock()
     @patch('response_operations_ui.controllers.message_controllers._get_jwt')
