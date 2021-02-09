@@ -504,7 +504,6 @@ class TestMessage(ViewTestCase):
 
         with self.app.app_context():
             response = self.client.post("/messages/create-message", data=self.message_form, follow_redirects=True)
-            
         print("This is the location of the response: " + str(response.location))
 
         self.assertIn(f'reporting-units/{ru_ref_value}', response.location)
