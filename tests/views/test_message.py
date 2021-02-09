@@ -503,10 +503,11 @@ class TestMessage(ViewTestCase):
         mock_request.get(ru_ref_url, status_code=200)
 
         with self.app.app_context():
-            response = self.client.post("/messages/create-message", data=self.message_form)
+            response = self.client.post("/messages/create-message", data=self.message_form, follow_redirects=True)
 
         self.assertIn("Message sent.".encode(), response.data)
         self.assertIn("Messages".encode(), response.data)
+        self.assertIn(f'reporting-units/{ru_ref_value}', response.location)
 
     @requests_mock.mock()
     @patch('response_operations_ui.controllers.message_controllers._get_jwt')
