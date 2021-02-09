@@ -96,7 +96,7 @@ class TestReportingUnits(TestCase):
         mock_request.get(f'{url_get_iac}/{iac_1}', json=iac)
         mock_request.get(f'{url_get_iac}/{iac_2}', json=iac)
 
-        response = self.client.get("/reporting-units/50012345678")
+        response = self.client.get("/reporting-units/50012345678", follow_redirects=True)
 
         self.assertEqual(response.status_code, 200)
         self.assertIn("Bolts and Ratchets Ltd".encode(), response.data)
