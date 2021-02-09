@@ -23,6 +23,7 @@ url_messages = f'{TestingConfig.SECURE_MESSAGE_URL}/messages'
 url_update_label = f'{TestingConfig.SECURE_MESSAGE_URL}/messages/modify/ae46748b-c6e6-4859-a57a-86e01db2dcbc'
 url_modify_label_base = f'{TestingConfig.SECURE_MESSAGE_URL}/messages/modify/'
 url_select_survey = f'{TestingConfig.SECURE_MESSAGE_URL}/messages/select-survey'
+url_get_survey_by_ru_ref = f'{TestingConfig.REPORT_URL}/reporting-units/'
 
 survey_id = '6aa8896f-ced5-4694-800c-6cd661b0c8b2'
 params = f'?survey={survey_id}&page=1&limit=10'
@@ -498,8 +499,8 @@ class TestMessage(ViewTestCase):
         mock_request.get(url_get_threads_list, json=thread_list, status_code=200)
         mock_request.get(url_get_surveys_list, json=self.surveys_list_json)
         mock_request.get(shortname_url + "/ASHE", json=ashe_info['survey'])
-        party_get_by_ru_ref = f'{url_get_party_by_ru_ref}{ru_ref_value}'
-        mock_request.get(party_get_by_ru_ref, status_code=200)
+        ru_ref_url = f'{url_get_survey_by_ru_ref}{ru_ref_value}'
+        mock_request.get(ru_ref_url, status_code=200)
 
         with self.app.app_context():
             response = self.client.post("/messages/create-message", data=self.message_form, follow_redirects=True)
