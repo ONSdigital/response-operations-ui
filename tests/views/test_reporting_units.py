@@ -106,7 +106,6 @@ class TestReportingUnits(TestCase):
         self.assertIn("Jacky Turner".encode(), response.data)
         self.assertIn("Enabled".encode(), response.data)
         self.assertIn("Active".encode(), response.data)
-        self.assertIn("Message sent.".encode(), response.data)
 
     @requests_mock.mock()
     def test_get_reporting_unit_party_ru_fail(self, mock_request):
