@@ -115,10 +115,10 @@ class TestChangeResponseStatus(TestCase):
         mock_request.get(url_get_collection_exercises_by_survey, json=collection_exercise_list)
         mock_request.get(url_get_party_by_ru_ref, status_code=500)
 
-        response = self.client.get(f'/case/{ru_ref}/response-status?survey={short_name}&period={period}',
-                                   follow_redirects=True)
+        response = self.client.get(f'/case/{ru_ref}/response-status?survey={short_name}&period={period}')
 
         self.assertIn("Server error (Error 500)".encode(), response.data)
+        self.assertIn("Message sent.".encode(), response.data)
 
     @requests_mock.mock()
     def test_get_available_status_case_fail(self, mock_request):
