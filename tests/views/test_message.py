@@ -503,7 +503,7 @@ class TestMessage(ViewTestCase):
         mock_request.get(ru_ref_url, status_code=200)
 
         with self.app.app_context():
-            response = self.client.post("/messages/create-message", data=self.message_form, follow_redirects=True)
+            response = self.client.post("/messages/create-message", data=self.message_form)
 
         self.assertIn("Message sent.".encode(), response.data)
         self.assertIn("Messages".encode(), response.data)
