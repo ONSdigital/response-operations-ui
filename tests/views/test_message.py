@@ -495,10 +495,10 @@ class TestMessage(ViewTestCase):
         ru_ref_value = self.message_form["ru_ref"]
         mock_get_jwt.return_value = "blah"
         mock_request.post(url_send_message, json=threads_no_unread_list, status_code=201)
-        #mock_request.get(url_messages + '/count', json={"total": 1}, status_code=200)
-        #mock_request.get(url_get_threads_list, json=thread_list, status_code=200)
-        #mock_request.get(url_get_surveys_list, json=self.surveys_list_json)
-        #mock_request.get(shortname_url + "/ASHE", json=ashe_info['survey'])
+        # mock_request.get(url_messages + '/count', json={"total": 1}, status_code=200)
+        # mock_request.get(url_get_threads_list, json=thread_list, status_code=200)
+        # mock_request.get(url_get_surveys_list, json=self.surveys_list_json)
+        # mock_request.get(shortname_url + "/ASHE", json=ashe_info['survey'])
         ru_ref_url = f'{url_get_survey_by_ru_ref}{ru_ref_value}'
         mock_request.get(ru_ref_url, status_code=200)
 
