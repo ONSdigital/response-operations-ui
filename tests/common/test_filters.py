@@ -80,9 +80,9 @@ class TestFilters(unittest.TestCase):
     def test_get_current_collection_exercise_future_dates_only(self):
         """Tests that given set of collection exercises with only future dates, the closest date to 'today'
         will be picked"""
-        file_paths = ['test_data/only_future_collection_exercises.json',
-                      'tests/test_data/collection_exercise/only_future_collection_exercises.json']
-        collection_exercise_list = self.load_file(file_paths)
+        with open(f"{project_root}/test_data/collection_exercise/"
+                  f"only_future_collection_exercises.json") as json_data:
+            collection_exercise_list = json.load(json_data)
 
         with open(f"{project_root}/test_data/collection_exercise/"
                   f"closest_future_collection_exercise.json") as json_data:
@@ -95,13 +95,13 @@ class TestFilters(unittest.TestCase):
     def test_get_current_collection_exercise_past_dates_only(self):
         """Tests that given set of collection exercises with only past dates, the closest date to 'today'
         will be picked"""
-        file_paths = ['test_data/only_past_collection_exercises.json',
-                      'tests/test_data/collection_exercise/only_past_collection_exercises.json']
-        collection_exercise_list = self.load_file(file_paths)
+        with open(f"{project_root}/test_data/collection_exercise/"
+                  f"only_past_collection_exercises.json") as json_data:
+            collection_exercise_list = json.load(json_data)
 
-        file_paths = ['test_data/closest_past_collection_exercise.json',
-                      'tests/test_data/collection_exercise/closest_past_collection_exercise.json']
-        expected_output = self.load_file(file_paths)
+        with open(f"{project_root}/test_data/collection_exercise/"
+                  f"closest_past_collection_exercise.json") as json_data:
+            expected_output = json.load(json_data)
 
         output = get_current_collection_exercise(collection_exercise_list)
         self.assertEqual(output, expected_output)
@@ -110,13 +110,13 @@ class TestFilters(unittest.TestCase):
     def test_get_current_collection_exercise_past_and_future_dates(self):
         """Tests that given set of collection exercises with past and future dates, the closest date to 'today'
         will be picked"""
-        file_paths = ['test_data/mixed_past_and_future_collection_exercises.json',
-                      'tests/test_data/collection_exercise/mixed_past_and_future_collection_exercises.json']
-        collection_exercise_list = self.load_file(file_paths)
+        with open(f"{project_root}/test_data/collection_exercise/"
+                  f"mixed_past_and_future_collection_exercises.json") as json_data:
+            collection_exercise_list = json.load(json_data)
 
-        file_paths = ['test_data/closest_past_collection_exercise.json',
-                      'tests/test_data/collection_exercise/closest_past_collection_exercise.json']
-        expected_output = self.load_file(file_paths)
+        with open(f"{project_root}/test_data/collection_exercise/"
+                  f"closest_past_collection_exercise.json") as json_data:
+            expected_output = json.load(json_data)
 
         output = get_current_collection_exercise(collection_exercise_list)
         self.assertEqual(output, expected_output)
@@ -125,29 +125,13 @@ class TestFilters(unittest.TestCase):
     def test_get_current_collection_exercise_duplicate_start_dates(self):
         """Tests that when there are two collection exercises with the same start date, the one that was seen first
         will be the one returned."""
-        file_paths = ['test_data/multiple_same_start_collection_exercises.json',
-                      'tests/test_data/collection_exercise/multiple_same_start_collection_exercises.json']
-        collection_exercise_list = self.load_file(file_paths)
+        with open(f"{project_root}/test_data/collection_exercise/"
+                  f"multiple_same_start_collection_exercises.json") as json_data:
+            collection_exercise_list = json.load(json_data)
 
-        file_paths = ['test_data/closest_past_collection_exercise.json',
-                      'tests/test_data/collection_exercise/closest_past_collection_exercise.json']
-        expected_output = self.load_file(file_paths)
+        with open(f"{project_root}/test_data/collection_exercise/"
+                  f"closest_past_collection_exercise.json") as json_data:
+            expected_output = json.load(json_data)
 
         output = get_current_collection_exercise(collection_exercise_list)
         self.assertEqual(output, expected_output)
-
-    @staticmethod
-    def load_file(file_paths):
-        """
-        Facilitates running the tests either as a whole with run_tests.py or individually.  Both ways of running the
-        tests start from a different place so relative paths don't work.  Currently only accepts lists of 2.
-        :param file_paths: A list of file paths to test
-        :return: The contents of the file
-        """
-        try:
-            with open(file_paths[0]) as fp:
-                file_data = json.load(fp)
-        except FileNotFoundError:
-            with open(file_paths[1]) as fp:
-                file_data = json.load(fp)
-        return file_data

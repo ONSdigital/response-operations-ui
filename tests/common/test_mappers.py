@@ -64,19 +64,3 @@ class TestMappers(unittest.TestCase):
             output = get_display_text_for_event(test[0])
             expected_output = test[1]
             self.assertEqual(output, expected_output)
-
-    @staticmethod
-    def load_file(file_paths):
-        """
-        Facilitates running the tests either as a whole with run_tests.py or individually.  Both ways of running the
-        tests start from a different place so relative paths don't work.  Currently only accepts lists of 2.
-        :param file_paths: A list of file paths to test
-        :return: The contents of the file
-        """
-        try:
-            with open(file_paths[0]) as fp:
-                file_data = json.load(fp)
-        except FileNotFoundError:
-            with open(file_paths[1]) as fp:
-                file_data = json.load(fp)
-        return file_data
