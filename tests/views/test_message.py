@@ -1,3 +1,4 @@
+import os
 import copy
 import json
 from unittest.mock import patch
@@ -26,35 +27,36 @@ url_select_survey = f'{TestingConfig.SECURE_MESSAGE_URL}/messages/select-survey'
 
 survey_id = '6aa8896f-ced5-4694-800c-6cd661b0c8b2'
 params = f'?survey={survey_id}&page=1&limit=10'
+project_root = os.path.dirname(os.path.dirname(__file__))
 
-with open('tests/test_data/message/thread.json') as json_data:
+with open(f'{project_root}/test_data/message/thread.json') as json_data:
     thread_json = json.load(json_data)
 
-with open('tests/test_data/message/thread_missing_subject.json') as json_data:
+with open(f'{project_root}/test_data/message/thread_missing_subject.json') as json_data:
     thread_missing_subject = json.load(json_data)
 
-with open('tests/test_data/message/threads.json') as json_data:
+with open(f'{project_root}/test_data/message/threads.json') as json_data:
     thread_list = json.load(json_data)
 
-with open('tests/test_data/message/threads_multipage.json') as json_data:
+with open(f'{project_root}/test_data/message/threads_multipage.json') as json_data:
     thread_list_multi_page = json.load(json_data)
 
-with open('tests/test_data/message/threads_multipage_multi_ru.json') as json_data:
+with open(f'{project_root}/test_data/message/threads_multipage_multi_ru.json') as json_data:
     thread_list_multi_page_multi_ru = json.load(json_data)
 
-with open('tests/test_data/survey/survey_list.json') as json_data:
+with open(f'{project_root}/test_data/survey/survey_list.json') as json_data:
     survey_list = json.load(json_data)
 
-with open('tests/test_data/survey/ashe_response.json') as json_data:
+with open(f'{project_root}/test_data/survey/ashe_response.json') as json_data:
     ashe_info = json.load(json_data)
 
-with open('tests/test_data/message/threads_no_unread.json') as json_data:
+with open(f'{project_root}/test_data/message/threads_no_unread.json') as json_data:
     threads_no_unread_list = json.load(json_data)
 
-with open('tests/test_data/message/threads_unread.json') as json_data:
+with open(f'{project_root}/test_data/message/threads_unread.json') as json_data:
     threads_unread_list = json.load(json_data)
 
-with open('tests/test_data/message/thread_unread.json') as json_data:
+with open(f'{project_root}/test_data/message/thread_unread.json') as json_data:
     thread_unread_json = json.load(json_data)
 
 
@@ -117,7 +119,7 @@ class TestMessage(ViewTestCase):
     @patch('response_operations_ui.controllers.message_controllers._get_jwt')
     def test_threads_list_with_missing_atmsg_to(self, mock_request, mock_get_jwt):
         mock_get_jwt.return_value = "blah"
-        with open('tests/test_data/message/threads_missing_atmsg_to.json') as thread_json:
+        with open(f'{project_root}/test_data/message/threads_missing_atmsg_to.json') as thread_json:
             malformed_thread_list = json.load(thread_json)
         mock_request.get(url_messages + '/count', json={"total": 1}, status_code=200)
         mock_request.get(url_get_threads_list, json=malformed_thread_list)
@@ -134,7 +136,7 @@ class TestMessage(ViewTestCase):
     @patch('response_operations_ui.controllers.message_controllers._get_jwt')
     def test_threads_list_with_missing_atmsg_from(self, mock_request, mock_get_jwt):
         mock_get_jwt.return_value = "blah"
-        with open('tests/test_data/message/threads_missing_atmsg_from.json') as thread_json:
+        with open(f'{project_root}/test_data/message/threads_missing_atmsg_from.json') as thread_json:
             malformed_thread_list = json.load(thread_json)
         mock_request.get(url_messages + '/count', json={"total": 1}, status_code=200)
         mock_request.get(url_get_threads_list, json=malformed_thread_list)
@@ -151,7 +153,7 @@ class TestMessage(ViewTestCase):
     @patch('response_operations_ui.controllers.message_controllers._get_jwt')
     def test_threads_list_with_missing_msg_to(self, mock_request, mock_get_jwt):
         mock_get_jwt.return_value = "blah"
-        with open('tests/test_data/message/threads_missing_msg_to.json') as thread_json:
+        with open(f'{project_root}/test_data/message/threads_missing_msg_to.json') as thread_json:
             malformed_thread_list = json.load(thread_json)
         mock_request.get(url_messages + '/count', json={"total": 1}, status_code=200)
         mock_request.get(url_get_threads_list, json=malformed_thread_list)
@@ -168,7 +170,7 @@ class TestMessage(ViewTestCase):
     @patch('response_operations_ui.controllers.message_controllers._get_jwt')
     def test_threads_list_with_missing_date(self, mock_request, mock_get_jwt):
         mock_get_jwt.return_value = "blah"
-        with open('tests/test_data/message/threads_missing_sent_date.json') as thread_json:
+        with open(f'{project_root}/test_data/message/threads_missing_sent_date.json') as thread_json:
             malformed_thread_list = json.load(thread_json)
         mock_request.get(url_messages + '/count', json={"total": 1}, status_code=200)
         mock_request.get(url_get_threads_list, json=malformed_thread_list)
@@ -185,7 +187,7 @@ class TestMessage(ViewTestCase):
     @patch('response_operations_ui.controllers.message_controllers._get_jwt')
     def test_threads_list_with_missing_ru_ref(self, mock_request, mock_get_jwt):
         mock_get_jwt.return_value = "blah"
-        with open('tests/test_data/message/threads_missing_ru_ref.json') as thread_json:
+        with open(f'{project_root}/test_data/message/threads_missing_ru_ref.json') as thread_json:
             malformed_thread_list = json.load(thread_json)
         mock_request.get(url_messages + '/count', json={"total": 1}, status_code=200)
         mock_request.get(url_get_threads_list, json=malformed_thread_list)
@@ -202,7 +204,7 @@ class TestMessage(ViewTestCase):
     @patch('response_operations_ui.controllers.message_controllers._get_jwt')
     def test_threads_list_with_missing_business_name(self, mock_request, mock_get_jwt):
         mock_get_jwt.return_value = "blah"
-        with open('tests/test_data/message/threads_missing_business_name.json') as thread_json:
+        with open(f'{project_root}/test_data/message/threads_missing_business_name.json') as thread_json:
             malformed_thread_list = json.load(thread_json)
         mock_request.get(url_messages + '/count', json={"total": 1}, status_code=200)
         mock_request.get(url_get_threads_list, json=malformed_thread_list)
@@ -322,7 +324,7 @@ class TestMessage(ViewTestCase):
     @patch('response_operations_ui.controllers.message_controllers._get_jwt')
     def test_get_thread_with_deleted_user_cannot_be_replied_to(self, mock_request, mock_get_jwt):
         mock_get_jwt.return_value = "blah"
-        with open('tests/test_data/message/thread_missing_respondent.json') as thread_json:
+        with open(f'{project_root}/test_data/message/thread_missing_respondent.json') as thread_json:
             missing_user_json = json.load(thread_json)
         mock_request.get(url_get_thread, json=missing_user_json)
         mock_request.put(url_update_label)
@@ -727,13 +729,13 @@ class TestMessage(ViewTestCase):
         self.assertIn("FDI Messages".encode(), response.data)
 
     def test_get_to_id(self):
-        with open('tests/test_data/message/threads.json') as fp:
+        with open(f'{project_root}/test_data/message/threads.json') as fp:
             conversation = json.load(fp)
         self.assertEqual(conversation['messages'][0]['msg_to'][0],
                          _get_to_id(conversation['messages'][0]))
 
     def test_get_to_id_index_error(self):
-        with open('tests/test_data/message/threads.json') as fp:
+        with open(f'{project_root}/test_data/message/threads.json') as fp:
             conversation = json.load(fp)
         del conversation['messages'][0]['msg_to'][0]
         self.assertEqual(None, _get_to_id(conversation['messages'][0]))
