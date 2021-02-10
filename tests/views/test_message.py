@@ -13,6 +13,15 @@ from response_operations_ui.views.messages import _get_to_id, _calculate_page
 from response_operations_ui.views.messages import _get_unread_status
 from tests.views import ViewTestCase
 
+respondent_party_id = "cd592e0f-8d07-407b-b75d-e01fbdae8233"
+business_party_id = 'b3ba864b-7cbc-4f44-84fe-88dc018a1a4c'
+collection_exercise_id_1 = '14fb3e68-4dca-46db-bf49-04b84e07e77c'
+collection_exercise_id_2 = '9af403f8-5fc5-43b1-9fca-afbd9c65da5c'
+survey_id = 'cb0711c3-0ac8-41d3-ae0e-567e5ea1ef87'
+ru_ref = '50012345678'
+iac_1 = 'jkbvyklkwj88'
+iac_2 = 'ljbgg3kgstr4'
+
 url_get_party_by_ru_ref = f'{TestingConfig.PARTY_URL}/party-api/v1/parties/type/B/ref/'
 shortname_url = f'{TestingConfig.SURVEY_URL}/surveys/shortname'
 url_sign_in_data = f'{TestingConfig.UAA_SERVICE_URL}/oauth/token'
@@ -24,6 +33,14 @@ url_messages = f'{TestingConfig.SECURE_MESSAGE_URL}/messages'
 url_update_label = f'{TestingConfig.SECURE_MESSAGE_URL}/messages/modify/ae46748b-c6e6-4859-a57a-86e01db2dcbc'
 url_modify_label_base = f'{TestingConfig.SECURE_MESSAGE_URL}/messages/modify/'
 url_select_survey = f'{TestingConfig.SECURE_MESSAGE_URL}/messages/select-survey'
+
+url_get_case_groups_by_business_party_id = f'{TestingConfig.CASE_URL}/cases/partyid/{business_party_id}'
+url_get_collection_exercise_by_id = f'{TestingConfig.COLLECTION_EXERCISE_URL}/collectionexercises'
+url_get_business_attributes = f'{TestingConfig.PARTY_URL}/party-api/v1/businesses/id/{business_party_id}/attributes'
+url_get_survey_by_id = f'{TestingConfig.SURVEY_URL}/surveys/{survey_id}'
+url_get_respondent_party_by_list = f'{TestingConfig.PARTY_URL}/party-api/v1/respondents?id={respondent_party_id}'
+url_get_iac = f'{TestingConfig.IAC_URL}/iacs'
+
 
 survey_id = '6aa8896f-ced5-4694-800c-6cd661b0c8b2'
 params = f'?survey={survey_id}&page=1&limit=10'
@@ -58,6 +75,30 @@ with open(f'{project_root}/test_data/message/threads_unread.json') as json_data:
 
 with open(f'{project_root}/test_data/message/thread_unread.json') as json_data:
     thread_unread_json = json.load(json_data)
+
+with open('tests/test_data/party/business_reporting_unit.json') as fp:
+    business_reporting_unit = json.load(fp)
+
+with open('tests/test_data/case/cases_list.json') as fp:
+    cases_list = json.load(fp)
+
+with open('tests/test_data/collection_exercise/collection_exercise.json') as fp:
+    collection_exercise = json.load(fp)
+
+with open('tests/test_data/collection_exercise/collection_exercise_2.json') as fp:
+    collection_exercise_2 = json.load(fp)
+
+with open('tests/test_data/party/business_attributes.json') as fp:
+    business_attributes = json.load(fp)
+
+with open('tests/test_data/survey/single_survey.json') as fp:
+    survey = json.load(fp)
+
+with open('tests/test_data/party/respondent_party_list.json') as fp:
+    respondent_party_list = json.load(fp)
+
+with open('tests/test_data/iac/iac.json') as fp:
+    iac = json.load(fp)
 
 
 class TestMessage(ViewTestCase):
@@ -441,10 +482,12 @@ class TestMessage(ViewTestCase):
 
     message_form = {'body': "TEST BODY",
                     'subject': "TEST SUBJECT",
-                    'hidden_survey': "ASHE"}
+                    'hidden_survey': "ASHE",
+                    'ru_ref': ru_ref}
     FDI_message = {'body': "AIFDI BODY",
                    'subject': "AIFDI SUBJECT",
-                   'hidden_survey': "AIFDI"}
+                   'hidden_survey': "AIFDI",
+                   'ru_ref': ru_ref}
     AIFDI_response = {
         "id": "41320b22-b425-4fba-a90e-718898f718ce",
         "shortName": "AIFDI",
@@ -491,10 +534,16 @@ class TestMessage(ViewTestCase):
     def test_form_submit_with_valid_data(self, mock_request, mock_get_jwt):
         mock_get_jwt.return_value = "blah"
         mock_request.post(url_send_message, json=threads_no_unread_list, status_code=201)
-        mock_request.get(url_messages + '/count', json={"total": 1}, status_code=200)
-        mock_request.get(url_get_threads_list, json=thread_list, status_code=200)
         mock_request.get(url_get_surveys_list, json=self.surveys_list_json)
-        mock_request.get(shortname_url + "/ASHE", json=ashe_info['survey'])
+        mock_request.get(url_get_party_by_ru_ref + ru_ref, json=business_reporting_unit)
+        mock_request.get(url_get_case_groups_by_business_party_id, json=cases_list)
+        mock_request.get(f'{url_get_collection_exercise_by_id}/{collection_exercise_id_1}', json=collection_exercise)
+        mock_request.get(f'{url_get_collection_exercise_by_id}/{collection_exercise_id_2}', json=collection_exercise_2)
+        mock_request.get(url_get_business_attributes, json=business_attributes)
+        mock_request.get(url_get_survey_by_id, json=survey)
+        mock_request.get(url_get_respondent_party_by_list, json=respondent_party_list)
+        mock_request.get(f'{url_get_iac}/{iac_1}', json=iac)
+        mock_request.get(f'{url_get_iac}/{iac_2}', json=iac)
 
         with self.app.app_context():
             response = self.client.post("/messages/create-message", data=self.message_form, follow_redirects=True)
@@ -507,15 +556,16 @@ class TestMessage(ViewTestCase):
     def test_form_submit_with_FDI_data(self, mock_request, mock_get_jwt):
         mock_get_jwt.return_value = "blah"
         mock_request.post(url_send_message, json=threads_no_unread_list, status_code=201)
-        mock_request.get(url_messages + '/count', json={"total": 1}, status_code=200)
-        mock_request.get(url_get_threads_list, json=thread_list, status_code=200)
         mock_request.get(url_get_surveys_list, json=self.surveys_list_json)
-
-        # Mocking FDI responses
-        mock_request.get(shortname_url + "/QIFDI", json=self.QIFDI_response)
-        mock_request.get(shortname_url + "/QOFDI", json=self.QOFDI_response)
-        mock_request.get(shortname_url + "/AIFDI", json=self.AIFDI_response)
-        mock_request.get(shortname_url + "/AOFDI", json=self.AOFDI_response)
+        mock_request.get(url_get_party_by_ru_ref + ru_ref, json=business_reporting_unit)
+        mock_request.get(url_get_case_groups_by_business_party_id, json=cases_list)
+        mock_request.get(f'{url_get_collection_exercise_by_id}/{collection_exercise_id_1}', json=collection_exercise)
+        mock_request.get(f'{url_get_collection_exercise_by_id}/{collection_exercise_id_2}', json=collection_exercise_2)
+        mock_request.get(url_get_business_attributes, json=business_attributes)
+        mock_request.get(url_get_survey_by_id, json=survey)
+        mock_request.get(url_get_respondent_party_by_list, json=respondent_party_list)
+        mock_request.get(f'{url_get_iac}/{iac_1}', json=iac)
+        mock_request.get(f'{url_get_iac}/{iac_2}', json=iac)
 
         with self.app.app_context():
             response = self.client.post("/messages/create-message", data=self.FDI_message, follow_redirects=True)
