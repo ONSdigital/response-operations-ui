@@ -1,14 +1,17 @@
 import json
+import os
 import unittest
 
 from response_operations_ui.common.mappers import convert_event_list_to_dictionary, get_display_text_for_event
 
+project_root = os.path.dirname(os.path.dirname(__file__))
+
 
 class TestMappers(unittest.TestCase):
     def test_convert_event_list_to_dictionary(self):
-        file_paths = ['test_data/closest_future_collection_exercise.json',
-                      'tests/test_data/collection_exercise/closest_future_collection_exercise.json']
-        collection_exercise = self.load_file(file_paths)
+        with open(f"{project_root}/test_data/collection_exercise/"
+                  f"closest_future_collection_exercise.json") as json_data:
+            collection_exercise = json.load(json_data)
         function_input = collection_exercise['events']
         expected_output = {
             "mps": "2020-07-01T06:00:00.000Z",

@@ -1,5 +1,6 @@
 import datetime
 import json
+import os
 import unittest
 
 import responses
@@ -13,7 +14,9 @@ ce_id = "4a084bc0-130f-4aee-ae48-1a9f9e50178f"
 ce_events_by_id_url = f'{TestingConfig.COLLECTION_EXERCISE_URL}/collectionexercises/{ce_id}/events'
 ce_nudge_events_by_id_url = f'{TestingConfig.COLLECTION_EXERCISE_URL}/collectionexercises/{ce_id}/events/nudge'
 
-with open('tests/test_data/collection_exercise/ce_events_by_id.json') as fp:
+project_root = os.path.dirname(os.path.dirname(__file__))
+
+with open(f'{project_root}/test_data/collection_exercise/ce_events_by_id.json') as fp:
     ce_events = json.load(fp)
 
 

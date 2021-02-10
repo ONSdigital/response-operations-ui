@@ -1,9 +1,12 @@
 import json
+import os
 import unittest
 
 from freezegun import freeze_time
 
 from response_operations_ui.common.filters import get_current_collection_exercise, get_nearest_future_key_date
+
+project_root = os.path.dirname(os.path.dirname(__file__))
 
 
 class TestFilters(unittest.TestCase):
@@ -19,9 +22,9 @@ class TestFilters(unittest.TestCase):
     def test_get_nearest_future_key_date_with_blank_collection_exercise(self):
         """Tests a survey with a collection exercise that's in its most empty state will return an empty
         dict."""
-        file_paths = ['test_data/single_new_collection_exercise_for_survey.json',
-                      'tests/test_data/collection_exercise/single_new_collection_exercise_for_survey.json']
-        collection_exercise_list = self.load_file(file_paths)
+        with open(f"{project_root}/test_data/collection_exercise/"
+                  f"single_new_collection_exercise_for_survey.json") as json_data:
+            collection_exercise_list = json.load(json_data)
 
         expected_output = {}
         output = get_nearest_future_key_date(collection_exercise_list[0]['events'])
@@ -31,9 +34,9 @@ class TestFilters(unittest.TestCase):
     def test_get_nearest_future_key_date_future_dates_only(self):
         """Tests that given set of events with only future dates, the closest future event to 'today'
         will be picked"""
-        file_paths = ['test_data/closest_future_collection_exercise.json',
-                      'tests/test_data/collection_exercise/closest_future_collection_exercise.json']
-        collection_exercise = self.load_file(file_paths)
+        with open(f"{project_root}/test_data/collection_exercise/"
+                  f"closest_future_collection_exercise.json") as json_data:
+            collection_exercise = json.load(json_data)
 
         expected_output = {"id": "573e60ce-4041-4cd6-8d09-9048457db0af",
                            "collectionExerciseId": "aec41b04-a177-4994-b385-a16136242d05",
@@ -46,9 +49,9 @@ class TestFilters(unittest.TestCase):
     def test_get_nearest_future_key_date_past_dates_only(self):
         """Tests that given set of events with only past dates, the function will return an empty dict as it only
         works for events in the future"""
-        file_paths = ['test_data/closest_past_collection_exercise.json',
-                      'tests/test_data/collection_exercise/closest_past_collection_exercise.json']
-        collection_exercise = self.load_file(file_paths)
+        with open(f"{project_root}/test_data/collection_exercise/"
+                  f"closest_past_collection_exercise.json") as json_data:
+            collection_exercise = json.load(json_data)
 
         expected_output = {}
         output = get_nearest_future_key_date(collection_exercise['events'])
@@ -65,9 +68,9 @@ class TestFilters(unittest.TestCase):
     def test_get_current_collection_exercise_with_blank_collection_exercise(self):
         """Tests a survey with a collection exercise that's in its most empty state will return an empty
         dict."""
-        file_paths = ['test_data/single_new_collection_exercise_for_survey.json',
-                      'tests/test_data/collection_exercise/single_new_collection_exercise_for_survey.json']
-        collection_exercise_list = self.load_file(file_paths)
+        with open(f"{project_root}/test_data/collection_exercise/"
+                  f"single_new_collection_exercise_for_survey.json") as json_data:
+            collection_exercise_list = json.load(json_data)
 
         expected_output = {}
         output = get_current_collection_exercise(collection_exercise_list)
@@ -81,9 +84,9 @@ class TestFilters(unittest.TestCase):
                       'tests/test_data/collection_exercise/only_future_collection_exercises.json']
         collection_exercise_list = self.load_file(file_paths)
 
-        file_paths = ['test_data/closest_future_collection_exercise.json',
-                      'tests/test_data/collection_exercise/closest_future_collection_exercise.json']
-        expected_output = self.load_file(file_paths)
+        with open(f"{project_root}/test_data/collection_exercise/"
+                  f"closest_future_collection_exercise.json") as json_data:
+            expected_output = json.load(json_data)
 
         output = get_current_collection_exercise(collection_exercise_list)
         self.assertEqual(output, expected_output)
