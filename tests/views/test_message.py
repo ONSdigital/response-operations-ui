@@ -532,11 +532,7 @@ class TestMessage(ViewTestCase):
     def test_form_submit_with_valid_data(self, mock_request, mock_get_jwt):
         mock_get_jwt.return_value = "blah"
         mock_request.post(url_send_message, json=threads_no_unread_list, status_code=201)
-        mock_request.get(url_messages + '/count', json={"total": 1}, status_code=200)
-        mock_request.get(url_get_threads_list, json=thread_list, status_code=200)
         mock_request.get(url_get_surveys_list, json=self.surveys_list_json)
-        mock_request.get(shortname_url + "/ASHE", json=ashe_info['survey'])
-
         mock_request.get(url_get_party_by_ru_ref + ru_ref, json=business_reporting_unit)
         mock_request.get(url_get_case_groups_by_business_party_id, json=cases_list)
         mock_request.get(f'{url_get_collection_exercise_by_id}/{collection_exercise_id_1}', json=collection_exercise)
@@ -558,10 +554,7 @@ class TestMessage(ViewTestCase):
     def test_form_submit_with_FDI_data(self, mock_request, mock_get_jwt):
         mock_get_jwt.return_value = "blah"
         mock_request.post(url_send_message, json=threads_no_unread_list, status_code=201)
-        mock_request.get(url_messages + '/count', json={"total": 1}, status_code=200)
-        mock_request.get(url_get_threads_list, json=thread_list, status_code=200)
         mock_request.get(url_get_surveys_list, json=self.surveys_list_json)
-
         mock_request.get(url_get_party_by_ru_ref + ru_ref, json=business_reporting_unit)
         mock_request.get(url_get_case_groups_by_business_party_id, json=cases_list)
         mock_request.get(f'{url_get_collection_exercise_by_id}/{collection_exercise_id_1}', json=collection_exercise)
@@ -571,12 +564,6 @@ class TestMessage(ViewTestCase):
         mock_request.get(url_get_respondent_party_by_list, json=respondent_party_list)
         mock_request.get(f'{url_get_iac}/{iac_1}', json=iac)
         mock_request.get(f'{url_get_iac}/{iac_2}', json=iac)
-
-        # Mocking FDI responses
-        mock_request.get(shortname_url + "/QIFDI", json=self.QIFDI_response)
-        mock_request.get(shortname_url + "/QOFDI", json=self.QOFDI_response)
-        mock_request.get(shortname_url + "/AIFDI", json=self.AIFDI_response)
-        mock_request.get(shortname_url + "/AOFDI", json=self.AOFDI_response)
 
         with self.app.app_context():
             response = self.client.post("/messages/create-message", data=self.FDI_message, follow_redirects=True)
