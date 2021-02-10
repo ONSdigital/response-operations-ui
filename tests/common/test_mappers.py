@@ -9,8 +9,8 @@ project_root = os.path.dirname(os.path.dirname(__file__))
 
 class TestMappers(unittest.TestCase):
     def test_convert_event_list_to_dictionary(self):
-        with open(f"{project_root}/test_data/collection_exercise/"
-                  f"closest_future_collection_exercise.json") as json_data:
+        with open(f'{project_root}/test_data/collection_exercise/'
+                  f'closest_future_collection_exercise.json') as json_data:
             collection_exercise = json.load(json_data)
         function_input = collection_exercise['events']
         expected_output = {

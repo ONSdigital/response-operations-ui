@@ -17,15 +17,20 @@ respondent_party_id = "cd592e0f-8d07-407b-b75d-e01fbdae8233"
 business_party_id = 'b3ba864b-7cbc-4f44-84fe-88dc018a1a4c'
 collection_exercise_id_1 = '14fb3e68-4dca-46db-bf49-04b84e07e77c'
 collection_exercise_id_2 = '9af403f8-5fc5-43b1-9fca-afbd9c65da5c'
-survey_id = 'cb0711c3-0ac8-41d3-ae0e-567e5ea1ef87'
+survey_id_1 = 'cb0711c3-0ac8-41d3-ae0e-567e5ea1ef87'
+survey_id_2 = '6aa8896f-ced5-4694-800c-6cd661b0c8b2'
 ru_ref = '50012345678'
 iac_1 = 'jkbvyklkwj88'
 iac_2 = 'ljbgg3kgstr4'
 
 url_get_party_by_ru_ref = f'{TestingConfig.PARTY_URL}/party-api/v1/parties/type/B/ref/'
+url_get_respondent_party_by_list = f'{TestingConfig.PARTY_URL}/party-api/v1/respondents?id={respondent_party_id}'
+url_get_business_attributes = f'{TestingConfig.PARTY_URL}/party-api/v1/businesses/id/{business_party_id}/attributes'
+
 shortname_url = f'{TestingConfig.SURVEY_URL}/surveys/shortname'
-url_sign_in_data = f'{TestingConfig.UAA_SERVICE_URL}/oauth/token'
 url_get_surveys_list = f'{TestingConfig.SURVEY_URL}/surveys/surveytype/Business'
+url_get_survey_by_id = f'{TestingConfig.SURVEY_URL}/surveys/{survey_id_1}'
+
 url_get_thread = f'{TestingConfig.SECURE_MESSAGE_URL}/threads/fb0e79bd-e132-4f4f-a7fd-5e8c6b41b9af'
 url_get_threads_list = f'{TestingConfig.SECURE_MESSAGE_URL}/threads'
 url_send_message = f'{TestingConfig.SECURE_MESSAGE_URL}/messages'
@@ -34,16 +39,11 @@ url_update_label = f'{TestingConfig.SECURE_MESSAGE_URL}/messages/modify/ae46748b
 url_modify_label_base = f'{TestingConfig.SECURE_MESSAGE_URL}/messages/modify/'
 url_select_survey = f'{TestingConfig.SECURE_MESSAGE_URL}/messages/select-survey'
 
+url_sign_in_data = f'{TestingConfig.UAA_SERVICE_URL}/oauth/token'
 url_get_case_groups_by_business_party_id = f'{TestingConfig.CASE_URL}/cases/partyid/{business_party_id}'
 url_get_collection_exercise_by_id = f'{TestingConfig.COLLECTION_EXERCISE_URL}/collectionexercises'
-url_get_business_attributes = f'{TestingConfig.PARTY_URL}/party-api/v1/businesses/id/{business_party_id}/attributes'
-url_get_survey_by_id = f'{TestingConfig.SURVEY_URL}/surveys/{survey_id}'
-url_get_respondent_party_by_list = f'{TestingConfig.PARTY_URL}/party-api/v1/respondents?id={respondent_party_id}'
 url_get_iac = f'{TestingConfig.IAC_URL}/iacs'
 
-
-survey_id = '6aa8896f-ced5-4694-800c-6cd661b0c8b2'
-params = f'?survey={survey_id}&page=1&limit=10'
 project_root = os.path.dirname(os.path.dirname(__file__))
 
 with open(f'{project_root}/test_data/message/thread.json') as json_data:
@@ -76,28 +76,28 @@ with open(f'{project_root}/test_data/message/threads_unread.json') as json_data:
 with open(f'{project_root}/test_data/message/thread_unread.json') as json_data:
     thread_unread_json = json.load(json_data)
 
-with open('tests/test_data/party/business_reporting_unit.json') as fp:
+with open(f'{project_root}/test_data/party/business_reporting_unit.json') as fp:
     business_reporting_unit = json.load(fp)
 
-with open('tests/test_data/case/cases_list.json') as fp:
+with open(f'{project_root}/test_data/case/cases_list.json') as fp:
     cases_list = json.load(fp)
 
-with open('tests/test_data/collection_exercise/collection_exercise.json') as fp:
+with open(f'{project_root}/test_data/collection_exercise/collection_exercise.json') as fp:
     collection_exercise = json.load(fp)
 
-with open('tests/test_data/collection_exercise/collection_exercise_2.json') as fp:
+with open(f'{project_root}/test_data/collection_exercise/collection_exercise_2.json') as fp:
     collection_exercise_2 = json.load(fp)
 
-with open('tests/test_data/party/business_attributes.json') as fp:
+with open(f'{project_root}/test_data/party/business_attributes.json') as fp:
     business_attributes = json.load(fp)
 
-with open('tests/test_data/survey/single_survey.json') as fp:
+with open(f'{project_root}/test_data/survey/single_survey.json') as fp:
     survey = json.load(fp)
 
-with open('tests/test_data/party/respondent_party_list.json') as fp:
+with open(f'{project_root}/test_data/party/respondent_party_list.json') as fp:
     respondent_party_list = json.load(fp)
 
-with open('tests/test_data/iac/iac.json') as fp:
+with open(f'{project_root}/test_data/iac/iac.json') as fp:
     iac = json.load(fp)
 
 
@@ -1041,7 +1041,7 @@ class TestMessage(ViewTestCase):
                                           business_id=business_id_filter,
                                           conversation_tab=conversation_tab)
 
-        query = f'survey={survey_id}&is_closed=true&my_conversations=false&new_respondent_conversations=false&' \
+        query = f'survey={survey_id_2}&is_closed=true&my_conversations=false&new_respondent_conversations=false&' \
             f'all_conversation_types=false&business_id={business_id_filter}&page={page}&limit={limit}'
         assert self._mock_request_called_with_expected_query(mock_request, query)
 
@@ -1083,7 +1083,7 @@ class TestMessage(ViewTestCase):
                                           business_id=business_id_filter,
                                           conversation_tab=conversation_tab)
 
-        query = f'survey={survey_id}&is_closed=true&my_conversations=false&new_respondent_conversations=false&' \
+        query = f'survey={survey_id_2}&is_closed=true&my_conversations=false&new_respondent_conversations=false&' \
             f'all_conversation_types=false&business_id={business_id_filter}&page={page}&limit={limit}'
         assert self._mock_request_called_with_expected_query(mock_request, query)
 

@@ -44,8 +44,8 @@ class TestSignIn(unittest.TestCase):
     def test_get_sample_data(self, mock_request):
         """Tests getting sample data when everything is working as expected"""
         mock_request.get(url_dashboard, json=reporting_json, status_code=200)
-        
-        with open(f"{project_root}/test_data/collection_exercise/closest_past_collection_exercise.json") as json_data:
+
+        with open(f'{project_root}/test_data/collection_exercise/closest_past_collection_exercise.json') as json_data:
             collection_exercise = json.load(json_data)
 
         expected_url = 'http://localhost:8078/dashboard/collection-exercise/aec41b04-a177-4994-b385-a16136242d05'
@@ -64,7 +64,7 @@ class TestSignIn(unittest.TestCase):
         will return mostly 'N/A'.  The dashboard url will still present with the info available."""
         mock_request.get(url_dashboard, json={'message': 'Invalid collection exercise or survey ID'}, status_code=404)
 
-        with open(f"{project_root}/test_data/collection_exercise/closest_past_collection_exercise.json") as json_data:
+        with open(f'{project_root}/test_data/collection_exercise/closest_past_collection_exercise.json') as json_data:
             collection_exercise = json.load(json_data)
 
         expected_url = 'http://localhost:8078/dashboard/collection-exercise/aec41b04-a177-4994-b385-a16136242d05'
@@ -85,7 +85,7 @@ class TestSignIn(unittest.TestCase):
         copied_dashboard_response['report']['sampleSize'] = 0
         mock_request.get(url_dashboard, json=copied_dashboard_response, status_code=200)
 
-        with open(f"{project_root}/test_data/collection_exercise/closest_past_collection_exercise.json") as json_data:
+        with open(f'{project_root}/test_data/collection_exercise/closest_past_collection_exercise.json') as json_data:
             collection_exercise = json.load(json_data)
 
         expected_url = 'http://localhost:8078/dashboard/collection-exercise/aec41b04-a177-4994-b385-a16136242d05'

@@ -43,16 +43,16 @@ with open(no_sample) as json_data:
 with open(failed_validation) as json_data:
     collection_exercise_details_failedvalidation = json.load(json_data)
 
-with open(f"{project_root}/test_data/survey/edited_survey_ce_details.json") as json_data:
+with open(f'{project_root}/test_data/survey/edited_survey_ce_details.json') as json_data:
     updated_survey_info = json.load(json_data)
 
-with open(f"{project_root}/test_data/survey/survey_by_id.json") as fp:
+with open(f'{project_root}/test_data/survey/survey_by_id.json') as fp:
     survey_by_id = json.load(fp)
 
-with open(f"{project_root}/test_data/collection_exercise/exercise_data.json") as json_data:
+with open(f'{project_root}/test_data/collection_exercise/exercise_data.json') as json_data:
     exercise_data = json.load(json_data)
 
-with open(f"{project_root}/test_data/collection_exercise/ce_details_new_event.json") as fp:
+with open(f'{project_root}/test_data/collection_exercise/ce_details_new_event.json') as fp:
     ce_details_no_events = json.load(fp)
 
 with open(f'{project_root}/test_data/survey/classifier_type_selectors.json') as json_data:
@@ -86,81 +86,37 @@ with open(f'{project_root}/test_data/collection_exercise/events_2030.json') as j
     events_2030 = json.load(json_data)
 
 """Define URLS"""
-url_ce_by_id = (
-    f'{TestingConfig.COLLECTION_EXERCISE_URL}/collectionexercises/{collection_exercise_id}'
-)
-url_ce_remove_sample = (
-    f'{TestingConfig.COLLECTION_EXERCISE_URL}/collectionexercises/unlink/{collection_exercise_id}'
-    f'/sample/{sample_summary_id}'
-)
-url_ces_by_survey = (
-    f'{TestingConfig.COLLECTION_EXERCISE_URL}/collectionexercises/survey/{survey_id}'
-)
-url_collection_exercise_link = (
-    f'{TestingConfig.COLLECTION_EXERCISE_URL}/collectionexercises/link'
-    f'/{collection_exercise_id}'
-)
-url_collection_instrument = (
-    f'{TestingConfig.COLLECTION_INSTRUMENT_URL}'
-    f'/collection-instrument-api/1.0.2/upload/{collection_exercise_id}'
-)
-url_collection_instrument_link = (
-    f'{TestingConfig.COLLECTION_INSTRUMENT_URL}'
-    f'/collection-instrument-api/1.0.2/link-exercise'
-    f'/{collection_instrument_id}/{collection_exercise_id}'
-)
-url_collection_instrument_unlink = (
-    f'{TestingConfig.COLLECTION_INSTRUMENT_URL}'
-    f'/collection-instrument-api/1.0.2/unlink-exercise'
-    f'/{collection_instrument_id}/{collection_exercise_id}'
-)
+collection_exercise_root = f'{TestingConfig.COLLECTION_EXERCISE_URL}/collectionexercises'
+url_ce_by_id = f'{collection_exercise_root}/{collection_exercise_id}'
+url_ce_remove_sample = f'{collection_exercise_root}/unlink/{collection_exercise_id}/sample/{sample_summary_id}'
+url_ces_by_survey = f'{collection_exercise_root}/survey/{survey_id}'
+url_collection_exercise_link = f'{collection_exercise_root}/link/{collection_exercise_id}'
+url_get_collection_exercises_link = f'{collection_exercise_root}/link/{collection_exercise_id}'
+url_link_sample = f'{collection_exercise_root}/link/{collection_exercise_id}'
+url_collection_exercise_survey_id = f'{collection_exercise_root}/survey/{survey_id}'
+url_update_ce_user_details = f'{collection_exercise_root}/{collection_exercise_id}/userDescription'
+url_update_ce_period = f'{collection_exercise_root}/{collection_exercise_id}/exerciseRef'
+url_get_collection_exercise_events = f'{collection_exercise_root}/{collection_exercise_id}/events'
+url_create_collection_exercise = f'{TestingConfig.COLLECTION_EXERCISE_URL}/collectionexercises'
+url_execute = f'{TestingConfig.COLLECTION_EXERCISE_URL}/collectionexerciseexecution/{collection_exercise_id}'
+
+collection_instrument_root = f'{TestingConfig.COLLECTION_INSTRUMENT_URL}/collection-instrument-api/1.0.2'
+url_collection_instrument = f'{collection_instrument_root}/upload/{collection_exercise_id}'
+url_collection_instrument_link = \
+    f'{collection_instrument_root}/link-exercise/{collection_instrument_id}/{collection_exercise_id}'
+url_collection_instrument_unlink = \
+    f'{collection_instrument_root}/unlink-exercise/{collection_instrument_id}/{collection_exercise_id}'
+url_get_collection_instrument = f'{collection_instrument_root}/collectioninstrument'
+
 url_survey_shortname = f'{TestingConfig.SURVEY_URL}/surveys/shortname/{short_name}'
+url_get_survey_by_short_name = f'{TestingConfig.SURVEY_URL}/surveys/shortname/{short_name}'
+
+url_get_classifier_type_selectors = f'{TestingConfig.SURVEY_URL}/surveys/{survey_id}/classifiertypeselectors'
+url_get_classifier_type = f'{TestingConfig.SURVEY_URL}/surveys/{survey_id}/classifiertypeselectors/{ci_selector_id}'
+
 url_sample_service_upload = f'{TestingConfig.SAMPLE_FILE_UPLOADER_URL}/samples/fileupload'
 
-url_collection_exercise_survey_id = (
-    f'{TestingConfig.COLLECTION_EXERCISE_URL}/collectionexercises/survey'
-    f'/{survey_id}'
-)
-
-url_update_ce_user_details = (
-    f'{TestingConfig.COLLECTION_EXERCISE_URL}/collectionexercises'
-    f'/{collection_exercise_id}/userDescription'
-)
-url_update_ce_period = (
-    f'{TestingConfig.COLLECTION_EXERCISE_URL}/collectionexercises'
-    f'/{collection_exercise_id}/exerciseRef'
-)
-
-url_execute = f'{TestingConfig.COLLECTION_EXERCISE_URL}/collectionexerciseexecution/{collection_exercise_id}'
-url_create_collection_exercise = f'{TestingConfig.COLLECTION_EXERCISE_URL}/collectionexercises'
-url_get_classifier_type_selectors = (
-    f'{TestingConfig.SURVEY_URL}/surveys/{survey_id}/classifiertypeselectors'
-)
-url_get_classifier_type = (
-    f'{TestingConfig.SURVEY_URL}'
-    f'/surveys/{survey_id}/classifiertypeselectors/{ci_selector_id}'
-)
-url_get_collection_exercise_events = (
-    f'{TestingConfig.COLLECTION_EXERCISE_URL}'
-    f'/collectionexercises/{collection_exercise_id}/events'
-)
-url_get_collection_instrument = (
-    f'{TestingConfig.COLLECTION_INSTRUMENT_URL}'
-    f'/collection-instrument-api/1.0.2/collectioninstrument'
-)
-url_get_sample_summary = (
-    f'{TestingConfig.SAMPLE_URL}'
-    f'/samples/samplesummary/{sample_summary_id}'
-)
-url_get_survey_by_short_name = f'{TestingConfig.SURVEY_URL}/surveys/shortname/{short_name}'
-url_link_sample = (
-    f'{TestingConfig.COLLECTION_EXERCISE_URL}'
-    f'/collectionexercises/link/{collection_exercise_id}'
-)
-url_get_collection_exercises_link = (
-    f'{TestingConfig.COLLECTION_EXERCISE_URL}'
-    f'/collectionexercises/link/{collection_exercise_id}'
-)
+url_get_sample_summary = f'{TestingConfig.SAMPLE_URL}/samples/samplesummary/{sample_summary_id}'
 
 ci_search_string = urlencode({'searchString': json.dumps({
     "SURVEY_ID": survey_id,
