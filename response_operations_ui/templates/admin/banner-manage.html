@@ -5,7 +5,7 @@
 {% from "components/lists/_macro.njk" import onsList %}
 {% from "components/textarea/_macro.njk" import onsTextarea %}
 {% from "components/radios/_macro.njk" import onsRadios %}
-{% set page_title = 'Banner Admin'  %}
+{% set page_title = 'Alert Admin'  %}
 {% block main %}
   <div class="grid grid--gutterless">
     <div class="grid__col col-8@m">
@@ -57,7 +57,7 @@
       <form action="{{ url_for('admin_bp.post_banner') }}" method="POST">
           {{ form.csrf_token }}
           {%- call onsFieldset({
-              "legend": "Create a new banner",
+              "legend": "Create a new alert",
               "legendClasses": "u-vh",
               "classes": "u-mt-m"
               }) -%}
@@ -120,7 +120,7 @@
               </script>
           {% endcall %}
           {%- call onsFieldset({
-              "legend": "Create a new banner",
+              "legend": "Create a new alert",
               "legendClasses": "u-vh",
               "classes": "u-mt-m"
               }) -%}

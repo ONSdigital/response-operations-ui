@@ -21,7 +21,7 @@ def get_banner_admin():
     This endpoint, by the design we were given, renders one of two different screens.  Either a 'create' screen if
     there isn't a banner set yet, or a 'remove' screen if there is one.
     """
-    breadcrumbs = [{"text": "Banner Admin", "url": ""}]
+    breadcrumbs = [{"text": "Alert Admin", "url": ""}]
     current_banner_json = admin_controller.current_banner()
     logger.info("Banner page accessed", user=current_username())
     if current_banner_json:
@@ -71,13 +71,13 @@ def post_banner():
 def get_banner_confirm_publish():
     logger.info("About to confirm banner text to publish", user=current_username())
     breadcrumbs = [{"text": "Create an alert", "url": "/admin/banner"},
-                   {"text": "Setting Banner", "url": ""}]
+                   {"text": "Setting Alert", "url": ""}]
 
     form = BannerPublishForm(form=request.form)
     try:
         banner_text = session.pop('banner-text')
     except KeyError:
-        flash("Error setting banner")
+        flash("Error setting alert")
         return redirect(url_for("admin_bp.get_banner_admin"))
 
     form.banner_text = banner_text
@@ -99,7 +99,7 @@ def post_banner_confirm_publish():
     else:
         # This is extremely unlikely to happen, but we need to handle it regardless.
         logger.error("Banner text is somehow missing from the form")
-        flash("Error setting banner")
+        flash("Error setting alert")
         return redirect(url_for("admin_bp.get_banner_admin"))
 
 
