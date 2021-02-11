@@ -46,9 +46,12 @@ def create_message():
 
         try:
             message_controllers.send_message(_get_message_json(form))
-            ru_ref = request.form.get("ru_ref")
+            ru_ref = request.form.get("hidden_ru_ref")
             flash("Message sent.")
-            return redirect(url_for('reporting_unit_bp.view_reporting_unit', ru_ref=ru_ref))
+            if ru_ref:
+                return redirect(url_for('reporting_unit_bp.view_reporting_unit', ru_ref=ru_ref))
+            # Very unlikely for the ru_ref to not be present, but if not, redirect somewhere sensible.
+            return redirect(url_for('messages_bp.view_select_survey'))
         except (ApiError, InternalError):
             form = _repopulate_form_with_submitted_data(form)
             form.errors['sending'] = ["Message failed to send, something has gone wrong with the website."]
