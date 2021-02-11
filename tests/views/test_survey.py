@@ -1,3 +1,4 @@
+import os
 import json
 from contextlib import suppress
 from unittest.mock import MagicMock
@@ -19,22 +20,22 @@ survey_id = 'cb0711c3-0ac8-41d3-ae0e-567e5ea1ef87'
 url_get_survey_list = f'{TestingConfig.SURVEY_URL}/surveys/surveytype/Business'
 url_get_legal_basis_list = f'{TestingConfig.SURVEY_URL}/legal-bases'
 url_create_survey = f'{TestingConfig.SURVEY_URL}/surveys'
-
-with open('tests/test_data/survey/survey_list.json') as f:
-    survey_list = json.load(f)
-with open('tests/test_data/survey/legal_basis_list.json') as f:
-    legal_basis_list = json.load(f)
-
 url_get_survey_by_short_name = f'{TestingConfig.SURVEY_URL}/surveys/shortname/bres'
 url_get_survey_by_qbs = f'{TestingConfig.SURVEY_URL}/surveys/shortname/QBS'
-with open('tests/test_data/survey/survey.json') as f:
-    survey_info = json.load(f)
-with open('tests/test_data/survey/survey_states.json') as f:
-    survey_info_states = json.load(f)
 url_update_survey_details = f'{TestingConfig.SURVEY_URL}/surveys/ref/222'
-with open('tests/test_data/survey/updated_survey_list.json') as f:
+project_root = os.path.dirname(os.path.dirname(__file__))
+
+with open(f'{project_root}/test_data/survey/survey_list.json') as f:
+    survey_list = json.load(f)
+with open(f'{project_root}/test_data/survey/legal_basis_list.json') as f:
+    legal_basis_list = json.load(f)
+with open(f'{project_root}/test_data/survey/survey.json') as f:
+    survey_info = json.load(f)
+with open(f'{project_root}/test_data/survey/survey_states.json') as f:
+    survey_info_states = json.load(f)
+with open(f'{project_root}/test_data/survey/updated_survey_list.json') as f:
     updated_survey_list = json.load(f)
-with open('tests/test_data/survey/create_survey_response.json') as f:
+with open(f'{project_root}/test_data/survey/create_survey_response.json') as f:
     create_survey_response = json.load(f)
 url_get_collection_exercises = (
     f'{TestingConfig.COLLECTION_EXERCISE_URL}'
@@ -516,7 +517,7 @@ class TestSurvey(ViewTestCase):
 
     def test_sort_collection_exercise(self):
         # Given there are collection exercises loaded for a survey
-        with open('tests/test_data/survey/multiple_ces.json') as f:
+        with open(f'{project_root}/test_data/survey/multiple_ces.json') as f:
             collection_exercises = json.load(f)
 
         # When collection exercises are sorted

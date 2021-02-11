@@ -1,3 +1,4 @@
+import os
 import copy
 import json
 from io import BytesIO
@@ -24,10 +25,13 @@ short_name = 'MBS'
 survey_id = 'cb0711c3-0ac8-41d3-ae0e-567e5ea1ef87'
 survey_ref = '141'
 
-collex_root = "tests/test_data/collection_exercise/collection_exercise_details"
+project_root = os.path.dirname(os.path.dirname(__file__))
+
+collex_root = f"{project_root}/test_data/collection_exercise/collection_exercise_details"
 no_sample = collex_root + "_no_sample.json"
 failed_validation = collex_root + "_failedvalidation.json"
 collex_details = collex_root + ".json"
+
 
 """Load all the necessary test data"""
 with open(collex_details) as json_data:
@@ -39,124 +43,80 @@ with open(no_sample) as json_data:
 with open(failed_validation) as json_data:
     collection_exercise_details_failedvalidation = json.load(json_data)
 
-with open("tests/test_data/survey/edited_survey_ce_details.json") as json_data:
+with open(f'{project_root}/test_data/survey/edited_survey_ce_details.json') as json_data:
     updated_survey_info = json.load(json_data)
 
-with open("tests/test_data/survey/survey_by_id.json") as fp:
+with open(f'{project_root}/test_data/survey/survey_by_id.json') as fp:
     survey_by_id = json.load(fp)
 
-with open("tests/test_data/collection_exercise/exercise_data.json") as json_data:
+with open(f'{project_root}/test_data/collection_exercise/exercise_data.json') as json_data:
     exercise_data = json.load(json_data)
 
-with open("tests/test_data/collection_exercise/ce_details_new_event.json") as fp:
+with open(f'{project_root}/test_data/collection_exercise/ce_details_new_event.json') as fp:
     ce_details_no_events = json.load(fp)
 
-with open('tests/test_data/survey/classifier_type_selectors.json') as json_data:
+with open(f'{project_root}/test_data/survey/classifier_type_selectors.json') as json_data:
     classifier_type_selectors = json.load(json_data)
 
-with open('tests/test_data/survey/classifier_types.json') as json_data:
+with open(f'{project_root}/test_data/survey/classifier_types.json') as json_data:
     classifier_types = json.load(json_data)
 
-with open('tests/test_data/collection_exercise/formatted_collection_exercise_details.json') as fp:
+with open(f'{project_root}/test_data/collection_exercise/formatted_collection_exercise_details.json') as fp:
     formatted_collection_exercise_details = json.load(fp)
 
-with open('tests/test_data/collection_exercise/seft_collection_exercise_details.json') as seft:
+with open(f'{project_root}/test_data/collection_exercise/seft_collection_exercise_details.json') as seft:
     seft_collection_exercise_details = json.load(seft)
 
-with open('tests/test_data/collection_exercise/collection_exercise.json') as json_data:
+with open(f'{project_root}/test_data/collection_exercise/collection_exercise.json') as json_data:
     collection_exercise = json.load(json_data)
 
-with open('tests/test_data/survey/single_survey.json') as json_data:
+with open(f'{project_root}/test_data/survey/single_survey.json') as json_data:
     survey = json.load(json_data)
 
-with open('tests/test_data/collection_exercise/events.json') as json_data:
+with open(f'{project_root}/test_data/collection_exercise/events.json') as json_data:
     events = json.load(json_data)
 
-with open('tests/test_data/collection_exercise/nudge_events_one.json') as json_data:
+with open(f'{project_root}/test_data/collection_exercise/nudge_events_one.json') as json_data:
     nudge_events_one = json.load(json_data)
 
-with open('tests/test_data/collection_exercise/nudge_events_two.json') as json_data:
+with open(f'{project_root}/test_data/collection_exercise/nudge_events_two.json') as json_data:
     nudge_events_two = json.load(json_data)
 
-with open('tests/test_data/collection_exercise/events_2030.json') as json_data:
+with open(f'{project_root}/test_data/collection_exercise/events_2030.json') as json_data:
     events_2030 = json.load(json_data)
 
 """Define URLS"""
-url_ce_by_id = (
-    f'{TestingConfig.COLLECTION_EXERCISE_URL}/collectionexercises/{collection_exercise_id}'
-)
-url_ce_remove_sample = (
-    f'{TestingConfig.COLLECTION_EXERCISE_URL}/collectionexercises/unlink/{collection_exercise_id}'
-    f'/sample/{sample_summary_id}'
-)
-url_ces_by_survey = (
-    f'{TestingConfig.COLLECTION_EXERCISE_URL}/collectionexercises/survey/{survey_id}'
-)
-url_collection_exercise_link = (
-    f'{TestingConfig.COLLECTION_EXERCISE_URL}/collectionexercises/link'
-    f'/{collection_exercise_id}'
-)
-url_collection_instrument = (
-    f'{TestingConfig.COLLECTION_INSTRUMENT_URL}'
-    f'/collection-instrument-api/1.0.2/upload/{collection_exercise_id}'
-)
-url_collection_instrument_link = (
-    f'{TestingConfig.COLLECTION_INSTRUMENT_URL}'
-    f'/collection-instrument-api/1.0.2/link-exercise'
-    f'/{collection_instrument_id}/{collection_exercise_id}'
-)
-url_collection_instrument_unlink = (
-    f'{TestingConfig.COLLECTION_INSTRUMENT_URL}'
-    f'/collection-instrument-api/1.0.2/unlink-exercise'
-    f'/{collection_instrument_id}/{collection_exercise_id}'
-)
+collection_exercise_root = f'{TestingConfig.COLLECTION_EXERCISE_URL}/collectionexercises'
+url_ce_by_id = f'{collection_exercise_root}/{collection_exercise_id}'
+url_ce_remove_sample = f'{collection_exercise_root}/unlink/{collection_exercise_id}/sample/{sample_summary_id}'
+url_ces_by_survey = f'{collection_exercise_root}/survey/{survey_id}'
+url_collection_exercise_link = f'{collection_exercise_root}/link/{collection_exercise_id}'
+url_get_collection_exercises_link = f'{collection_exercise_root}/link/{collection_exercise_id}'
+url_link_sample = f'{collection_exercise_root}/link/{collection_exercise_id}'
+url_collection_exercise_survey_id = f'{collection_exercise_root}/survey/{survey_id}'
+url_update_ce_user_details = f'{collection_exercise_root}/{collection_exercise_id}/userDescription'
+url_update_ce_period = f'{collection_exercise_root}/{collection_exercise_id}/exerciseRef'
+url_get_collection_exercise_events = f'{collection_exercise_root}/{collection_exercise_id}/events'
+url_create_collection_exercise = f'{TestingConfig.COLLECTION_EXERCISE_URL}/collectionexercises'
+url_execute = f'{TestingConfig.COLLECTION_EXERCISE_URL}/collectionexerciseexecution/{collection_exercise_id}'
+
+collection_instrument_root = f'{TestingConfig.COLLECTION_INSTRUMENT_URL}/collection-instrument-api/1.0.2'
+url_collection_instrument = f'{collection_instrument_root}/upload/{collection_exercise_id}'
+url_collection_instrument_link = \
+    f'{collection_instrument_root}/link-exercise/{collection_instrument_id}/{collection_exercise_id}'
+url_collection_instrument_unlink = \
+    f'{collection_instrument_root}/unlink-exercise/{collection_instrument_id}/{collection_exercise_id}'
+url_get_collection_instrument = f'{collection_instrument_root}/collectioninstrument'
+
 url_survey_shortname = f'{TestingConfig.SURVEY_URL}/surveys/shortname/{short_name}'
+url_get_survey_by_short_name = f'{TestingConfig.SURVEY_URL}/surveys/shortname/{short_name}'
+
+url_get_classifier_type_selectors = f'{TestingConfig.SURVEY_URL}/surveys/{survey_id}/classifiertypeselectors'
+url_get_classifier_type = f'{TestingConfig.SURVEY_URL}/surveys/{survey_id}/classifiertypeselectors/{ci_selector_id}'
+
 url_sample_service_upload = f'{TestingConfig.SAMPLE_FILE_UPLOADER_URL}/samples/fileupload'
 
-url_collection_exercise_survey_id = (
-    f'{TestingConfig.COLLECTION_EXERCISE_URL}/collectionexercises/survey'
-    f'/{survey_id}'
-)
-
-url_update_ce_user_details = (
-    f'{TestingConfig.COLLECTION_EXERCISE_URL}/collectionexercises'
-    f'/{collection_exercise_id}/userDescription'
-)
-url_update_ce_period = (
-    f'{TestingConfig.COLLECTION_EXERCISE_URL}/collectionexercises'
-    f'/{collection_exercise_id}/exerciseRef'
-)
-
-url_execute = f'{TestingConfig.COLLECTION_EXERCISE_URL}/collectionexerciseexecution/{collection_exercise_id}'
-url_create_collection_exercise = f'{TestingConfig.COLLECTION_EXERCISE_URL}/collectionexercises'
-url_get_classifier_type_selectors = (
-    f'{TestingConfig.SURVEY_URL}/surveys/{survey_id}/classifiertypeselectors'
-)
-url_get_classifier_type = (
-    f'{TestingConfig.SURVEY_URL}'
-    f'/surveys/{survey_id}/classifiertypeselectors/{ci_selector_id}'
-)
-url_get_collection_exercise_events = (
-    f'{TestingConfig.COLLECTION_EXERCISE_URL}'
-    f'/collectionexercises/{collection_exercise_id}/events'
-)
-url_get_collection_instrument = (
-    f'{TestingConfig.COLLECTION_INSTRUMENT_URL}'
-    f'/collection-instrument-api/1.0.2/collectioninstrument'
-)
-url_get_sample_summary = (
-    f'{TestingConfig.SAMPLE_URL}'
-    f'/samples/samplesummary/{sample_summary_id}'
-)
-url_get_survey_by_short_name = f'{TestingConfig.SURVEY_URL}/surveys/shortname/{short_name}'
-url_link_sample = (
-    f'{TestingConfig.COLLECTION_EXERCISE_URL}'
-    f'/collectionexercises/link/{collection_exercise_id}'
-)
-url_get_collection_exercises_link = (
-    f'{TestingConfig.COLLECTION_EXERCISE_URL}'
-    f'/collectionexercises/link/{collection_exercise_id}'
-)
+url_get_sample_summary = f'{TestingConfig.SAMPLE_URL}/samples/samplesummary/{sample_summary_id}'
 
 ci_search_string = urlencode({'searchString': json.dumps({
     "SURVEY_ID": survey_id,
@@ -557,7 +517,7 @@ class TestCollectionExercise(ViewTestCase):
     @patch('response_operations_ui.views.collection_exercise.build_collection_exercise_details')
     def test_choose_collection_instrument_when_first(self, mock_request, mock_details):
         with open(
-                "tests/test_data/collection_exercise/formatted_collection_exercise_details_no_ci.json"
+                f'{project_root}/test_data/collection_exercise/formatted_collection_exercise_details_no_ci.json'
         ) as collection_exercise:
             mock_details.return_value = json.load(collection_exercise)
 
@@ -667,7 +627,7 @@ class TestCollectionExercise(ViewTestCase):
     def test_no_upload_sample_when_bad_extension(self, mock_request, mock_details):
         data = {"sampleFile": (BytesIO(b"data"), "test.html"), "load-sample": ""}
         with open(
-                "tests/test_data/collection_exercise/formatted_collection_exercise_details_no_sample.json"
+                f'{project_root}/test_data/collection_exercise/formatted_collection_exercise_details_no_sample.json'
         ) as collection_exercise:
             mock_details.return_value = json.load(collection_exercise)
         mock_request.get(url_get_survey_by_short_name, status_code=200, json=self.survey_data)
@@ -686,7 +646,7 @@ class TestCollectionExercise(ViewTestCase):
     def test_no_upload_sample_when_no_file(self, mock_request, mock_details):
         data = {"load-sample": ""}
         with open(
-                "tests/test_data/collection_exercise/formatted_collection_exercise_details_no_sample.json"
+                f'{project_root}/test_data/collection_exercise/formatted_collection_exercise_details_no_sample.json'
         ) as collection_exercise:
             mock_details.return_value = json.load(collection_exercise)
         mock_request.get(url_get_survey_by_short_name, status_code=200, json=self.survey_data)
@@ -792,7 +752,8 @@ class TestCollectionExercise(ViewTestCase):
     @patch('response_operations_ui.views.collection_exercise.build_collection_exercise_details')
     def test_failed_execution(self, mock_request, mock_details):
         with open(
-                "tests/test_data/collection_exercise/formatted_collection_exercise_details_failedvalidation.json"
+                f'{project_root}/test_data/collection_exercise/'
+                f'formatted_collection_exercise_details_failedvalidation.json'
         ) as collection_exercise:
             mock_details.return_value = json.load(collection_exercise)
 
@@ -1200,7 +1161,7 @@ class TestCollectionExercise(ViewTestCase):
     @mock.patch("response_operations_ui.controllers.collection_exercise_controllers.create_collection_exercise_event")
     def test_create_collection_exercise_event_success(self, mock_ce_events, mock_get_ce_details):
         with open(
-                "tests/test_data/collection_exercise/formatted_collection_exercise_details_no_events.json"
+                f'{project_root}/test_data/collection_exercise/formatted_collection_exercise_details_no_events.json'
         ) as collection_exercise:
             mock_get_ce_details.return_value = json.load(collection_exercise)
             mock_ce_events.return_value = None

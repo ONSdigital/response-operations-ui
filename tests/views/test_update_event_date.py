@@ -1,3 +1,4 @@
+import os
 import json
 from urllib.parse import urlparse
 
@@ -12,18 +13,19 @@ survey_id = 'cb0711c3-0ac8-41d3-ae0e-567e5ea1ef87'
 survey_short_name = 'BRES'
 period = '201801'
 tag = 'go_live'
+project_root = os.path.dirname(os.path.dirname(__file__))
 
-with open('tests/test_data/collection_exercise/collection_exercise.json') as json_data:
+with open(f'{project_root}/test_data/collection_exercise/collection_exercise.json') as json_data:
     collection_exercise = json.load(json_data)
-with open('tests/test_data/collection_exercise/collection_exercise_details.json') as json_data:
+with open(f'{project_root}/test_data/collection_exercise/collection_exercise_details.json') as json_data:
     collection_exercise_details = json.load(json_data)
-with open('tests/test_data/survey/single_survey.json') as json_data:
+with open(f'{project_root}/test_data/survey/single_survey.json') as json_data:
     survey = json.load(json_data)
-with open('tests/test_data/collection_exercise/events.json') as json_data:
+with open(f'{project_root}/test_data/collection_exercise/events.json') as json_data:
     events = json.load(json_data)
-with open('tests/test_data/collection_exercise/nudge_events_two.json') as json_data:
+with open(f'{project_root}/test_data/collection_exercise/nudge_events_two.json') as json_data:
     nudge_events_two = json.load(json_data)
-with open('tests/test_data/collection_exercise/events_2030.json') as json_data:
+with open(f'{project_root}/test_data/collection_exercise/events_2030.json') as json_data:
     events_2030 = json.load(json_data)
 url_put_update_event_date = (
     f'{TestingConfig.COLLECTION_EXERCISE_URL}/collectionexercises'

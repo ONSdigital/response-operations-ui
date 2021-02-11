@@ -1,3 +1,4 @@
+import os
 import json
 import re
 from unittest import TestCase
@@ -42,39 +43,40 @@ url_get_respondent_party_by_list = f'{TestingConfig.PARTY_URL}/party-api/v1/resp
 url_get_iac = f'{TestingConfig.IAC_URL}/iacs'
 url_get_case = f'{TestingConfig.CASE_URL}/cases/{case_id}?iac=true'
 
+project_root = os.path.dirname(os.path.dirname(__file__))
 
-with open('tests/test_data/reporting_units/respondent.json') as fp:
+with open(f'{project_root}/test_data/reporting_units/respondent.json') as fp:
     respondent = json.load(fp)
-with open('tests/test_data/reporting_units/respondent_with_pending_email.json') as fp:
+with open(f'{project_root}/test_data/reporting_units/respondent_with_pending_email.json') as fp:
     respondent_with_pending_email = json.load(fp)
-with open('tests/test_data/case/case.json') as fp:
+with open(f'{project_root}/test_data/case/case.json') as fp:
     case = json.load(fp)
 
-with open('tests/test_data/party/business_reporting_unit.json') as fp:
+with open(f'{project_root}/test_data/party/business_reporting_unit.json') as fp:
     business_reporting_unit = json.load(fp)
-with open('tests/test_data/case/cases_list.json') as fp:
+with open(f'{project_root}/test_data/case/cases_list.json') as fp:
     cases_list = json.load(fp)
-with open('tests/test_data/case/cases_list_completed.json') as fp:
+with open(f'{project_root}/test_data/case/cases_list_completed.json') as fp:
     cases_list_completed = json.load(fp)
-with open('tests/test_data/case/case_groups_list.json') as fp:
+with open(f'{project_root}/test_data/case/case_groups_list.json') as fp:
     case_groups = json.load(fp)
-with open('tests/test_data/collection_exercise/collection_exercise.json') as fp:
+with open(f'{project_root}/test_data/collection_exercise/collection_exercise.json') as fp:
     collection_exercise = json.load(fp)
-with open('tests/test_data/collection_exercise/collection_exercise_2.json') as fp:
+with open(f'{project_root}/test_data/collection_exercise/collection_exercise_2.json') as fp:
     collection_exercise_2 = json.load(fp)
-with open('tests/test_data/party/business_party.json') as fp:
+with open(f'{project_root}/test_data/party/business_party.json') as fp:
     business_party = json.load(fp)
-with open('tests/test_data/party/business_attributes.json') as fp:
+with open(f'{project_root}/test_data/party/business_attributes.json') as fp:
     business_attributes = json.load(fp)
-with open('tests/test_data/case/case_group_statuses.json') as fp:
+with open(f'{project_root}/test_data/case/case_group_statuses.json') as fp:
     case_group_statuses = json.load(fp)
-with open('tests/test_data/survey/single_survey.json') as fp:
+with open(f'{project_root}/test_data/survey/single_survey.json') as fp:
     survey = json.load(fp)
-with open('tests/test_data/party/respondent_party.json') as fp:
+with open(f'{project_root}/test_data/party/respondent_party.json') as fp:
     respondent_party = json.load(fp)
-with open('tests/test_data/party/respondent_party_list.json') as fp:
+with open(f'{project_root}/test_data/party/respondent_party_list.json') as fp:
     respondent_party_list = json.load(fp)
-with open('tests/test_data/iac/iac.json') as fp:
+with open(f'{project_root}/test_data/iac/iac.json') as fp:
     iac = json.load(fp)
 
 
