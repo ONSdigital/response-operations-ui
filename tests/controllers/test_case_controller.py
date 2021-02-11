@@ -1,4 +1,5 @@
 import json
+import os
 import responses
 import unittest
 
@@ -8,7 +9,9 @@ from response_operations_ui.controllers import case_controller
 from response_operations_ui.exceptions.exceptions import ApiError
 
 case_id = '10b04906-f478-47f9-a985-783400dd8482'
-with open('tests/test_data/case/case_events.json') as fp:
+project_root = os.path.dirname(os.path.dirname(__file__))
+
+with open(f'{project_root}/test_data/case/case_events.json') as fp:
     case_events = json.load(fp)
 url_get_case_events = f'{TestingConfig.CASE_URL}/cases/{case_id}/events'
 url_get_case_groups = f'{TestingConfig.CASE_URL}/casegroups/partyid/{case_id}'

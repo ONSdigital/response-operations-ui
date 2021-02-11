@@ -1,3 +1,4 @@
+import os
 import json
 from unittest import TestCase
 
@@ -29,29 +30,28 @@ url_post_case_event = f'{TestingConfig.CASE_URL}/cases/{case_id}/events'
 url_get_case_by_case_group_id = f'{TestingConfig.CASE_URL}/cases/casegroupid/{case_group_id}'
 url_get_case_events = f"{TestingConfig.CASE_URL}/cases/{case_id}/events"
 get_respondent_by_id_url = f'{TestingConfig.PARTY_URL}/party-api/v1/respondents/id/{party_id}'
+project_root = os.path.dirname(os.path.dirname(__file__))
 
 
-with open('tests/test_data/survey/single_survey.json') as fp:
+with open(f'{project_root}/test_data/survey/single_survey.json') as fp:
     survey = json.load(fp)
-with open('tests/test_data/collection_exercise/collection_exercise_list.json') as fp:
+with open(f'{project_root}/test_data/collection_exercise/collection_exercise_list.json') as fp:
     collection_exercise_list = json.load(fp)
-with open('tests/test_data/party/business_reporting_unit.json') as fp:
+with open(f'{project_root}/test_data/party/business_reporting_unit.json') as fp:
     business_reporting_unit = json.load(fp)
-with open('tests/test_data/case/case.json') as fp:
+with open(f'{project_root}/test_data/case/case.json') as fp:
     case = json.load(fp)
-with open('tests/test_data/case/case_groups_list.json') as fp:
+with open(f'{project_root}/test_data/case/case_groups_list.json') as fp:
     case_groups = json.load(fp)
-with open('tests/test_data/case/case_groups_list_completed.json') as fp:
+with open(f'{project_root}/test_data/case/case_groups_list_completed.json') as fp:
     case_groups_completed = json.load(fp)
-with open('tests/test_data/case/case_events.json') as fp:
+with open(f'{project_root}/test_data/case/case_events.json') as fp:
     case_events = json.load(fp)
-with open('tests/test_data/case/case_events_without_metadata.json') as fp:
+with open(f'{project_root}/test_data/case/case_events_without_metadata.json') as fp:
     case_events_without_metadata = json.load(fp)
-
-with open('tests/test_data/case/case_events_without_partyId_in_metadata.json') as fp:
+with open(f'{project_root}/test_data/case/case_events_without_partyId_in_metadata.json') as fp:
     case_events_without_partyId_in_metadata = json.load(fp)
-
-with open('tests/test_data/reporting_units/respondent.json') as json_data:
+with open(f'{project_root}/test_data/reporting_units/respondent.json') as json_data:
     respondent = json.load(json_data)
 
 

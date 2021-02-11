@@ -1,5 +1,6 @@
 import json
 import mock
+import os
 from bs4 import BeautifulSoup
 
 import requests_mock
@@ -9,6 +10,7 @@ from tests.views import ViewTestCase
 from tests.views.test_reporting_units import url_edit_contact_details, url_get_party_by_ru_ref, \
     url_get_cases_by_business_party_id, url_get_survey_by_id, url_get_respondent_party_by_party_id, \
     url_get_collection_exercise_by_id, url_get_iac, url_change_respondent_status
+
 respondent_party_id = "cd592e0f-8d07-407b-b75d-e01fbdae8233"
 business_party_id = "b3ba864b-7cbc-4f44-84fe-88dc018a1a4c"
 party_id = "cd592e0f-8d07-407b-b75d-e01fbdae8233"
@@ -32,31 +34,33 @@ iac_2 = 'ljbgg3kgstr4'
 get_respondent_root = 'http://localhost:8085/party-api/v1/respondents/'
 get_respondent_root_with_trailing_slash = f'{TestingConfig.PARTY_URL}/party-api/v1/respondents/'
 
-with open('tests/test_data/reporting_units/respondent.json') as json_data:
+project_root = os.path.dirname(os.path.dirname(__file__))
+
+with open(f'{project_root}/test_data/reporting_units/respondent.json') as json_data:
     respondent = json.load(json_data)
-with open('tests/test_data/reporting_units/reporting_unit.json') as json_data:
+with open(f'{project_root}/test_data/reporting_units/reporting_unit.json') as json_data:
     reporting_unit = json.load(json_data)
-with open('tests/test_data/survey/survey_by_id.json') as json_data:
+with open(f'{project_root}/test_data/survey/survey_by_id.json') as json_data:
     survey_by_id = json.load(json_data)
-with open('tests/test_data/party/business_reporting_unit.json') as fp:
+with open(f'{project_root}/test_data/party/business_reporting_unit.json') as fp:
     business_reporting_unit = json.load(fp)
-with open('tests/test_data/case/cases_list.json') as fp:
+with open(f'{project_root}/test_data/case/cases_list.json') as fp:
     cases_list = json.load(fp)
-with open('tests/test_data/case/case_groups_list.json') as fp:
+with open(f'{project_root}/test_data/case/case_groups_list.json') as fp:
     case_groups = json.load(fp)
-with open('tests/test_data/case/case_groups_list_completed.json') as fp:
+with open(f'{project_root}/test_data/case/case_groups_list_completed.json') as fp:
     case_groups_completed = json.load(fp)
-with open('tests/test_data/collection_exercise/collection_exercise.json') as fp:
+with open(f'{project_root}/test_data/collection_exercise/collection_exercise.json') as fp:
     collection_exercise = json.load(fp)
-with open('tests/test_data/party/business_party.json') as fp:
+with open(f'{project_root}/test_data/party/business_party.json') as fp:
     business_party = json.load(fp)
-with open('tests/test_data/case/case_group_statuses.json') as fp:
+with open(f'{project_root}/test_data/case/case_group_statuses.json') as fp:
     case_group_statuses = json.load(fp)
-with open('tests/test_data/survey/single_survey.json') as fp:
+with open(f'{project_root}/test_data/survey/single_survey.json') as fp:
     survey = json.load(fp)
-with open('tests/test_data/party/respondent_party.json') as fp:
+with open(f'{project_root}/test_data/party/respondent_party.json') as fp:
     respondent_party = json.load(fp)
-with open('tests/test_data/iac/iac.json') as fp:
+with open(f'{project_root}/test_data/iac/iac.json') as fp:
     iac = json.load(fp)
 
 
@@ -132,7 +136,7 @@ class TestRespondents(ViewTestCase):
     # Respondent Search UI Testing
     @staticmethod
     def _mock_party_data(search_respondents_mock, total=1000):
-        with open('tests/test_data/party/mock_search_respondents_data.json', 'r') as json_file:
+        with open(f'{project_root}/test_data/party/mock_search_respondents_data.json', 'r') as json_file:
             data = json.load(json_file)
             search_respondents_mock.return_value = {
                 'data': data,

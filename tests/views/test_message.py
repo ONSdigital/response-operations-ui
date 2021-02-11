@@ -1,3 +1,4 @@
+import os
 import copy
 import json
 from unittest.mock import patch
@@ -16,15 +17,20 @@ respondent_party_id = "cd592e0f-8d07-407b-b75d-e01fbdae8233"
 business_party_id = 'b3ba864b-7cbc-4f44-84fe-88dc018a1a4c'
 collection_exercise_id_1 = '14fb3e68-4dca-46db-bf49-04b84e07e77c'
 collection_exercise_id_2 = '9af403f8-5fc5-43b1-9fca-afbd9c65da5c'
-survey_id = 'cb0711c3-0ac8-41d3-ae0e-567e5ea1ef87'
+survey_id_1 = 'cb0711c3-0ac8-41d3-ae0e-567e5ea1ef87'
+survey_id_2 = '6aa8896f-ced5-4694-800c-6cd661b0c8b2'
 ru_ref = '50012345678'
 iac_1 = 'jkbvyklkwj88'
 iac_2 = 'ljbgg3kgstr4'
 
 url_get_party_by_ru_ref = f'{TestingConfig.PARTY_URL}/party-api/v1/parties/type/B/ref/'
+url_get_respondent_party_by_list = f'{TestingConfig.PARTY_URL}/party-api/v1/respondents?id={respondent_party_id}'
+url_get_business_attributes = f'{TestingConfig.PARTY_URL}/party-api/v1/businesses/id/{business_party_id}/attributes'
+
 shortname_url = f'{TestingConfig.SURVEY_URL}/surveys/shortname'
-url_sign_in_data = f'{TestingConfig.UAA_SERVICE_URL}/oauth/token'
 url_get_surveys_list = f'{TestingConfig.SURVEY_URL}/surveys/surveytype/Business'
+url_get_survey_by_id = f'{TestingConfig.SURVEY_URL}/surveys/{survey_id_1}'
+
 url_get_thread = f'{TestingConfig.SECURE_MESSAGE_URL}/threads/fb0e79bd-e132-4f4f-a7fd-5e8c6b41b9af'
 url_get_threads_list = f'{TestingConfig.SECURE_MESSAGE_URL}/threads'
 url_send_message = f'{TestingConfig.SECURE_MESSAGE_URL}/messages'
@@ -33,69 +39,65 @@ url_update_label = f'{TestingConfig.SECURE_MESSAGE_URL}/messages/modify/ae46748b
 url_modify_label_base = f'{TestingConfig.SECURE_MESSAGE_URL}/messages/modify/'
 url_select_survey = f'{TestingConfig.SECURE_MESSAGE_URL}/messages/select-survey'
 
+url_sign_in_data = f'{TestingConfig.UAA_SERVICE_URL}/oauth/token'
 url_get_case_groups_by_business_party_id = f'{TestingConfig.CASE_URL}/cases/partyid/{business_party_id}'
 url_get_collection_exercise_by_id = f'{TestingConfig.COLLECTION_EXERCISE_URL}/collectionexercises'
-url_get_business_attributes = f'{TestingConfig.PARTY_URL}/party-api/v1/businesses/id/{business_party_id}/attributes'
-url_get_survey_by_id = f'{TestingConfig.SURVEY_URL}/surveys/{survey_id}'
-url_get_respondent_party_by_list = f'{TestingConfig.PARTY_URL}/party-api/v1/respondents?id={respondent_party_id}'
 url_get_iac = f'{TestingConfig.IAC_URL}/iacs'
 
+project_root = os.path.dirname(os.path.dirname(__file__))
 
-survey_id = '6aa8896f-ced5-4694-800c-6cd661b0c8b2'
-params = f'?survey={survey_id}&page=1&limit=10'
-
-with open('tests/test_data/message/thread.json') as json_data:
+with open(f'{project_root}/test_data/message/thread.json') as json_data:
     thread_json = json.load(json_data)
 
-with open('tests/test_data/message/thread_missing_subject.json') as json_data:
+with open(f'{project_root}/test_data/message/thread_missing_subject.json') as json_data:
     thread_missing_subject = json.load(json_data)
 
-with open('tests/test_data/message/threads.json') as json_data:
+with open(f'{project_root}/test_data/message/threads.json') as json_data:
     thread_list = json.load(json_data)
 
-with open('tests/test_data/message/threads_multipage.json') as json_data:
+with open(f'{project_root}/test_data/message/threads_multipage.json') as json_data:
     thread_list_multi_page = json.load(json_data)
 
-with open('tests/test_data/message/threads_multipage_multi_ru.json') as json_data:
+with open(f'{project_root}/test_data/message/threads_multipage_multi_ru.json') as json_data:
     thread_list_multi_page_multi_ru = json.load(json_data)
 
-with open('tests/test_data/survey/survey_list.json') as json_data:
+with open(f'{project_root}/test_data/survey/survey_list.json') as json_data:
     survey_list = json.load(json_data)
 
-with open('tests/test_data/survey/ashe_response.json') as json_data:
+with open(f'{project_root}/test_data/survey/ashe_response.json') as json_data:
     ashe_info = json.load(json_data)
 
-with open('tests/test_data/message/threads_no_unread.json') as json_data:
+with open(f'{project_root}/test_data/message/threads_no_unread.json') as json_data:
     threads_no_unread_list = json.load(json_data)
 
-with open('tests/test_data/message/threads_unread.json') as json_data:
+with open(f'{project_root}/test_data/message/threads_unread.json') as json_data:
     threads_unread_list = json.load(json_data)
 
-with open('tests/test_data/message/thread_unread.json') as json_data:
+with open(f'{project_root}/test_data/message/thread_unread.json') as json_data:
     thread_unread_json = json.load(json_data)
 
-with open('tests/test_data/party/business_reporting_unit.json') as fp:
+with open(f'{project_root}/test_data/party/business_reporting_unit.json') as fp:
     business_reporting_unit = json.load(fp)
 
-with open('tests/test_data/case/cases_list.json') as fp:
+with open(f'{project_root}/test_data/case/cases_list.json') as fp:
     cases_list = json.load(fp)
 
-with open('tests/test_data/collection_exercise/collection_exercise.json') as fp:
+with open(f'{project_root}/test_data/collection_exercise/collection_exercise.json') as fp:
     collection_exercise = json.load(fp)
 
-with open('tests/test_data/collection_exercise/collection_exercise_2.json') as fp:
+with open(f'{project_root}/test_data/collection_exercise/collection_exercise_2.json') as fp:
     collection_exercise_2 = json.load(fp)
 
-with open('tests/test_data/party/business_attributes.json') as fp:
+with open(f'{project_root}/test_data/party/business_attributes.json') as fp:
     business_attributes = json.load(fp)
 
-with open('tests/test_data/survey/single_survey.json') as fp:
+with open(f'{project_root}/test_data/survey/single_survey.json') as fp:
     survey = json.load(fp)
 
-with open('tests/test_data/party/respondent_party_list.json') as fp:
+with open(f'{project_root}/test_data/party/respondent_party_list.json') as fp:
     respondent_party_list = json.load(fp)
 
-with open('tests/test_data/iac/iac.json') as fp:
+with open(f'{project_root}/test_data/iac/iac.json') as fp:
     iac = json.load(fp)
 
 
@@ -158,7 +160,7 @@ class TestMessage(ViewTestCase):
     @patch('response_operations_ui.controllers.message_controllers._get_jwt')
     def test_threads_list_with_missing_atmsg_to(self, mock_request, mock_get_jwt):
         mock_get_jwt.return_value = "blah"
-        with open('tests/test_data/message/threads_missing_atmsg_to.json') as thread_json:
+        with open(f'{project_root}/test_data/message/threads_missing_atmsg_to.json') as thread_json:
             malformed_thread_list = json.load(thread_json)
         mock_request.get(url_messages + '/count', json={"total": 1}, status_code=200)
         mock_request.get(url_get_threads_list, json=malformed_thread_list)
@@ -175,7 +177,7 @@ class TestMessage(ViewTestCase):
     @patch('response_operations_ui.controllers.message_controllers._get_jwt')
     def test_threads_list_with_missing_atmsg_from(self, mock_request, mock_get_jwt):
         mock_get_jwt.return_value = "blah"
-        with open('tests/test_data/message/threads_missing_atmsg_from.json') as thread_json:
+        with open(f'{project_root}/test_data/message/threads_missing_atmsg_from.json') as thread_json:
             malformed_thread_list = json.load(thread_json)
         mock_request.get(url_messages + '/count', json={"total": 1}, status_code=200)
         mock_request.get(url_get_threads_list, json=malformed_thread_list)
@@ -192,7 +194,7 @@ class TestMessage(ViewTestCase):
     @patch('response_operations_ui.controllers.message_controllers._get_jwt')
     def test_threads_list_with_missing_msg_to(self, mock_request, mock_get_jwt):
         mock_get_jwt.return_value = "blah"
-        with open('tests/test_data/message/threads_missing_msg_to.json') as thread_json:
+        with open(f'{project_root}/test_data/message/threads_missing_msg_to.json') as thread_json:
             malformed_thread_list = json.load(thread_json)
         mock_request.get(url_messages + '/count', json={"total": 1}, status_code=200)
         mock_request.get(url_get_threads_list, json=malformed_thread_list)
@@ -209,7 +211,7 @@ class TestMessage(ViewTestCase):
     @patch('response_operations_ui.controllers.message_controllers._get_jwt')
     def test_threads_list_with_missing_date(self, mock_request, mock_get_jwt):
         mock_get_jwt.return_value = "blah"
-        with open('tests/test_data/message/threads_missing_sent_date.json') as thread_json:
+        with open(f'{project_root}/test_data/message/threads_missing_sent_date.json') as thread_json:
             malformed_thread_list = json.load(thread_json)
         mock_request.get(url_messages + '/count', json={"total": 1}, status_code=200)
         mock_request.get(url_get_threads_list, json=malformed_thread_list)
@@ -226,7 +228,7 @@ class TestMessage(ViewTestCase):
     @patch('response_operations_ui.controllers.message_controllers._get_jwt')
     def test_threads_list_with_missing_ru_ref(self, mock_request, mock_get_jwt):
         mock_get_jwt.return_value = "blah"
-        with open('tests/test_data/message/threads_missing_ru_ref.json') as thread_json:
+        with open(f'{project_root}/test_data/message/threads_missing_ru_ref.json') as thread_json:
             malformed_thread_list = json.load(thread_json)
         mock_request.get(url_messages + '/count', json={"total": 1}, status_code=200)
         mock_request.get(url_get_threads_list, json=malformed_thread_list)
@@ -243,7 +245,7 @@ class TestMessage(ViewTestCase):
     @patch('response_operations_ui.controllers.message_controllers._get_jwt')
     def test_threads_list_with_missing_business_name(self, mock_request, mock_get_jwt):
         mock_get_jwt.return_value = "blah"
-        with open('tests/test_data/message/threads_missing_business_name.json') as thread_json:
+        with open(f'{project_root}/test_data/message/threads_missing_business_name.json') as thread_json:
             malformed_thread_list = json.load(thread_json)
         mock_request.get(url_messages + '/count', json={"total": 1}, status_code=200)
         mock_request.get(url_get_threads_list, json=malformed_thread_list)
@@ -363,7 +365,7 @@ class TestMessage(ViewTestCase):
     @patch('response_operations_ui.controllers.message_controllers._get_jwt')
     def test_get_thread_with_deleted_user_cannot_be_replied_to(self, mock_request, mock_get_jwt):
         mock_get_jwt.return_value = "blah"
-        with open('tests/test_data/message/thread_missing_respondent.json') as thread_json:
+        with open(f'{project_root}/test_data/message/thread_missing_respondent.json') as thread_json:
             missing_user_json = json.load(thread_json)
         mock_request.get(url_get_thread, json=missing_user_json)
         mock_request.put(url_update_label)
@@ -777,13 +779,13 @@ class TestMessage(ViewTestCase):
         self.assertIn("FDI Messages".encode(), response.data)
 
     def test_get_to_id(self):
-        with open('tests/test_data/message/threads.json') as fp:
+        with open(f'{project_root}/test_data/message/threads.json') as fp:
             conversation = json.load(fp)
         self.assertEqual(conversation['messages'][0]['msg_to'][0],
                          _get_to_id(conversation['messages'][0]))
 
     def test_get_to_id_index_error(self):
-        with open('tests/test_data/message/threads.json') as fp:
+        with open(f'{project_root}/test_data/message/threads.json') as fp:
             conversation = json.load(fp)
         del conversation['messages'][0]['msg_to'][0]
         self.assertEqual(None, _get_to_id(conversation['messages'][0]))
@@ -1039,7 +1041,7 @@ class TestMessage(ViewTestCase):
                                           business_id=business_id_filter,
                                           conversation_tab=conversation_tab)
 
-        query = f'survey={survey_id}&is_closed=true&my_conversations=false&new_respondent_conversations=false&' \
+        query = f'survey={survey_id_2}&is_closed=true&my_conversations=false&new_respondent_conversations=false&' \
             f'all_conversation_types=false&business_id={business_id_filter}&page={page}&limit={limit}'
         assert self._mock_request_called_with_expected_query(mock_request, query)
 
@@ -1081,7 +1083,7 @@ class TestMessage(ViewTestCase):
                                           business_id=business_id_filter,
                                           conversation_tab=conversation_tab)
 
-        query = f'survey={survey_id}&is_closed=true&my_conversations=false&new_respondent_conversations=false&' \
+        query = f'survey={survey_id_2}&is_closed=true&my_conversations=false&new_respondent_conversations=false&' \
             f'all_conversation_types=false&business_id={business_id_filter}&page={page}&limit={limit}'
         assert self._mock_request_called_with_expected_query(mock_request, query)
 
