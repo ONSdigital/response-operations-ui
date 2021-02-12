@@ -95,7 +95,7 @@
           {% if is_complete %}
               <a href="{{ request.referrer }}" id="close-response" class="u-d-b u-mt-s">Close</a>
           {% else %}
-            <form action="{{ request.url }}&case_group_id={{ case_group_id }}" method="post" class="u-mt-s">
+            <form action="{{ url_for('update_response_status', case_group_id={{ case_group_id }}) }}" method="post" class="u-mt-s">
                 <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
                 {% set radioComponent = {
                     "legend": "Change response status",
