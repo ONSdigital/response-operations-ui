@@ -24,6 +24,7 @@ iac_1 = 'jkbvyklkwj88'
 iac_2 = 'ljbgg3kgstr4'
 
 url_get_party_by_ru_ref = f'{TestingConfig.PARTY_URL}/party-api/v1/parties/type/B/ref/'
+url_get_business_by_ru_ref = f'{TestingConfig.PARTY_URL}/party-api/v1/businesses/ref/'
 url_get_respondent_party_by_list = f'{TestingConfig.PARTY_URL}/party-api/v1/respondents?id={respondent_party_id}'
 url_get_business_attributes = f'{TestingConfig.PARTY_URL}/party-api/v1/businesses/id/{business_party_id}/attributes'
 
@@ -78,6 +79,9 @@ with open(f'{project_root}/test_data/message/thread_unread.json') as json_data:
 
 with open(f'{project_root}/test_data/party/business_reporting_unit.json') as fp:
     business_reporting_unit = json.load(fp)
+
+with open(f'{project_root}/test_data/party/get_business_by_ru_ref.json') as fp:
+    business_by_ru_ref_json = json.load(fp)
 
 with open(f'{project_root}/test_data/case/cases_list.json') as fp:
     cases_list = json.load(fp)
@@ -535,6 +539,7 @@ class TestMessage(ViewTestCase):
         mock_get_jwt.return_value = "blah"
         mock_request.post(url_send_message, json=threads_no_unread_list, status_code=201)
         mock_request.get(url_get_surveys_list, json=self.surveys_list_json)
+        mock_request.get(url_get_business_by_ru_ref + ru_ref, json=business_by_ru_ref_json)
         mock_request.get(url_get_party_by_ru_ref + ru_ref, json=business_reporting_unit)
         mock_request.get(url_get_case_groups_by_business_party_id, json=cases_list)
         mock_request.get(f'{url_get_collection_exercise_by_id}/{collection_exercise_id_1}', json=collection_exercise)
@@ -557,6 +562,7 @@ class TestMessage(ViewTestCase):
         mock_get_jwt.return_value = "blah"
         mock_request.post(url_send_message, json=threads_no_unread_list, status_code=201)
         mock_request.get(url_get_surveys_list, json=self.surveys_list_json)
+        mock_request.get(url_get_business_by_ru_ref + ru_ref, json=business_by_ru_ref_json)
         mock_request.get(url_get_party_by_ru_ref + ru_ref, json=business_reporting_unit)
         mock_request.get(url_get_case_groups_by_business_party_id, json=cases_list)
         mock_request.get(f'{url_get_collection_exercise_by_id}/{collection_exercise_id_1}', json=collection_exercise)
@@ -1024,7 +1030,7 @@ class TestMessage(ViewTestCase):
                                         'closed': 'Closed',
                                         'initial': 'Initial'}
         mock_request.get(shortname_url + "/ASHE", json=ashe_info['survey'])
-        party_get_by_ru_ref = f'{url_get_party_by_ru_ref}{ru_ref_filter}'
+        party_get_by_ru_ref = f'{url_get_business_by_ru_ref}{ru_ref_filter}'
         mock_request.get(party_get_by_ru_ref, json={'id': business_id_filter})
         mock_request.get(url_get_surveys_list, json=self.surveys_list_json)
         mock_request.get(url_get_threads_list, json=thread_list_multi_page_multi_ru)
@@ -1111,7 +1117,7 @@ class TestMessage(ViewTestCase):
                                         'closed': 'Closed',
                                         'initial': 'Initial'}
         mock_request.get(shortname_url + "/ASHE", json=ashe_info['survey'])
-        party_get_by_ru_ref = f'{url_get_party_by_ru_ref}{ru_ref_filter}'
+        party_get_by_ru_ref = f'{url_get_business_by_ru_ref}{ru_ref_filter}'
         mock_request.get(party_get_by_ru_ref, json={'id': business_id_filter})
         mock_request.get(url_get_surveys_list, json=self.surveys_list_json)
         mock_request.get(url_get_threads_list, json=thread_list_multi_page_multi_ru)
@@ -1177,7 +1183,7 @@ class TestMessage(ViewTestCase):
         mock_get_jwt.return_value = "blah"
 
         mock_request.get(shortname_url + "/ASHE", json=ashe_info['survey'])
-        party_get_by_ru_ref = f'{url_get_party_by_ru_ref}{ru_ref_filter}'
+        party_get_by_ru_ref = f'{url_get_business_by_ru_ref}{ru_ref_filter}'
         mock_request.get(party_get_by_ru_ref, status_code=404)
         mock_request.get(url_get_surveys_list, json=self.surveys_list_json)
         mock_request.get(url_get_threads_list, json=thread_list_multi_page_multi_ru)
@@ -1211,7 +1217,7 @@ class TestMessage(ViewTestCase):
         mock_get_jwt.return_value = "blah"
 
         mock_request.get(shortname_url + "/ASHE", json=ashe_info['survey'])
-        party_get_by_ru_ref = f'{url_get_party_by_ru_ref}{ru_ref_filter}'
+        party_get_by_ru_ref = f'{url_get_business_by_ru_ref}{ru_ref_filter}'
         mock_request.get(party_get_by_ru_ref, status_code=500)
         mock_request.get(url_get_surveys_list, json=self.surveys_list_json)
         mock_request.get(url_get_threads_list, json=thread_list_multi_page_multi_ru)

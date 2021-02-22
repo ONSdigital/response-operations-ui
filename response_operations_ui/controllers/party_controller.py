@@ -33,6 +33,31 @@ def get_party_by_ru_ref(ru_ref):
     return response.json()
 
 
+def get_business_by_ru_ref(ru_ref):
+    """
+    Get business by ru_ref
+
+    :param ru_ref: The ru_ref of the business
+    :type ru_ref: str
+    :return: A dict of data about the business
+    :rtype: dict
+    :raises ApiError: Raised if party returns a 4XX or 5XX status code.
+    """
+    logger.info('Retrieving reporting unit', ru_ref=ru_ref)
+    url = f'{app.config["PARTY_URL"]}/party-api/v1/businesses/ref/{ru_ref}'
+    response = requests.get(url, auth=app.config['BASIC_AUTH'])
+
+    try:
+        response.raise_for_status()
+    except requests.exceptions.HTTPError:
+        log_level = logger.warning if response.status_code in (400, 404) else logger.exception
+        log_level('Failed to retrieve reporting unit', ru_ref=ru_ref)
+        raise ApiError(response)
+
+    logger.info('Successfully retrieved reporting unit', ru_ref=ru_ref)
+    return response.json()
+
+
 def get_business_attributes_by_party_id(business_party_id, collection_exercise_ids=None):
     """
     Gets the attributes for the business for each collection exercise.  The attributes are the data held
