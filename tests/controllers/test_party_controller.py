@@ -1,3 +1,5 @@
+import json
+import os
 import unittest
 import mock
 from collections import namedtuple
@@ -13,6 +15,10 @@ fake_response = namedtuple('Response', 'status_code json')
 
 ru_ref = '49900000001'
 get_business_by_ru_ref_url = f'{TestingConfig.PARTY_URL}/party-api/v1/businesses/ref/{ru_ref}'
+
+project_root = os.path.dirname(os.path.dirname(__file__))
+with open(f'{project_root}/test_data/party/get_business_by_ru_ref.json') as fp:
+    business_by_ru_ref_json = json.load(fp)
 
 
 class TestPartyController(unittest.TestCase):
@@ -39,6 +45,15 @@ class TestPartyController(unittest.TestCase):
         expected_output = []
         output = party_controller.get_respondent_by_party_ids(input_data)
         self.assertEqual(output, expected_output)
+
+    def test_get_business_by_ru_ref_success(self):
+        with responses.RequestsMock() as rsps:
+            rsps.add(rsps.GET, get_business_by_ru_ref_url, json=business_by_ru_ref_json, status=200)
+
+            with self.app.app_context():
+                expected = business_by_ru_ref_json
+                actual = party_controller.get_business_by_ru_ref(ru_ref)
+                self.assertEqual(expected, actual)
 
     def test_get_business_by_ru_ref_not_found(self):
         with responses.RequestsMock() as rsps:
