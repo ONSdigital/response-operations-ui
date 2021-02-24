@@ -43,7 +43,7 @@ def get_survey_by_ref(survey_id):
     Gets a survey from the service service by its id.  This id is the one the ONS refers to the survey
     by (e.g., MBS = 009, RSI = 023)
 
-    :param survey_id: A uuid for a survey
+    :param survey_id: A number representing the id of the survey
     :type survey_id: str
     :return: A dict containing the json describing the survey
     :rtype: dict
