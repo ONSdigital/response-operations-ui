@@ -14,8 +14,15 @@ logger = wrap_logger(logging.getLogger(__name__))
 
 
 def get_survey_by_id(survey_id):
-    """Gets a survey from the survey service by its uuid.  This uuid is the one assigned
-    to the survey when it was created"""
+    """
+    Gets a survey from the survey service by its uuid.  This uuid is the one assigned
+    to the survey when it was created
+
+    :param survey_id: A uuid for a survey
+    :type survey_id: str
+    :return: A dict containing the json describing the survey
+    :rtype: dict
+    """
     logger.info("Retrieve survey using survey uuid", survey_id=survey_id)
     url = f'{app.config["SURVEY_URL"]}/surveys/{survey_id}'
     response = requests.get(url, auth=app.config['BASIC_AUTH'])
@@ -32,8 +39,15 @@ def get_survey_by_id(survey_id):
 
 
 def get_survey_by_ref(survey_id):
-    """Gets a survey from the service service by its id.  This id is the one the ONS refers to the survey
-    by (e.g., MBS = 009, RSI = 023)"""
+    """
+    Gets a survey from the service service by its id.  This id is the one the ONS refers to the survey
+    by (e.g., MBS = 009, RSI = 023)
+
+    :param survey_id: A number representing the id of the survey
+    :type survey_id: str
+    :return: A dict containing the json describing the survey
+    :rtype: dict
+    """
     logger.info("Retrieve survey using survey id", survey_id=survey_id)
     url = f'{app.config["SURVEY_URL"]}/surveys/ref/{survey_id}'
     response = requests.get(url, auth=app.config['BASIC_AUTH'])
