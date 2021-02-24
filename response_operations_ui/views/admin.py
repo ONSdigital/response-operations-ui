@@ -151,6 +151,7 @@ def get_post_edit_template(banner_id):
         if form.delete.data:
             logger.info("Deleting template", user=current_username(), banner_id=banner_id)
             delete_template(banner_id)
+            flash("The template has been successfully deleted")
             return redirect(url_for("admin_bp.get_banner_admin"))
 
         logger.info("Editing template", user=current_username(), banner_id=banner_id)
