@@ -45,8 +45,7 @@ def get_banner_admin():
 @login_required
 def get_message_template():
     """
-    This endpoint, by the design we were given, renders one of two different screens.  Either a 'create' screen if
-    there isn't a banner set yet, or a 'remove' screen if there is one.
+    This endpoint, by the design we were given, renders message template view in text only mode.   
     """
     breadcrumbs = [{"text": "Alert Admin", "url": ""}]
     logger.info("Message template page accessed", user=current_username())
