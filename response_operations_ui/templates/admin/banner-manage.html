@@ -96,8 +96,14 @@
                   })
               }}
               <p class="field u-mt-s">
+                <noscript>
+                    <a href="{{ url_for('admin_bp.get_message_template') }}">View message templates</a>
+                </noscript>
+              </p>
+              <p class="field u-mt-s">
                 <a href="{{ url_for('admin_bp.manage_alert') }}">Manage message templates</a>
               </p>
+             
               {% set bannerTextError = { "text": form.banner_text.errors[0], "id": "bannertext-panel" } %}
               {{
                   onsTextarea({

@@ -9,6 +9,7 @@ from response_operations_ui.controllers.admin_controller import get_template, ed
 from response_operations_ui.controllers.admin_controller import get_templates, create_new_template, Template
 from response_operations_ui.forms import BannerPublishForm, BannerDeleteForm, BannerManageForm, \
     BannerEditForm, BannerCreateForm
+
 logger = wrap_logger(logging.getLogger(__name__))
 
 admin_bp = Blueprint('admin_bp', __name__, static_folder='static', template_folder='templates')
@@ -36,6 +37,21 @@ def get_banner_admin():
     all_templates = get_templates()
     return render_template('admin/banner-manage.html',
                            form=form,
+                           list_of_templates=all_templates,
+                           breadcrumbs=breadcrumbs)
+
+
+@admin_bp.route('/banner/message-template', methods=['GET'])
+@login_required
+def get_message_template():
+    """
+    This endpoint, by the design we were given, renders one of two different screens.  Either a 'create' screen if
+    there isn't a banner set yet, or a 'remove' screen if there is one.
+    """
+    breadcrumbs = [{"text": "Alert Admin", "url": ""}]
+    logger.info("Message template page accessed", user=current_username())
+    all_templates = get_templates()
+    return render_template('admin/banner-view-message-template.html',
                            list_of_templates=all_templates,
                            breadcrumbs=breadcrumbs)
 
