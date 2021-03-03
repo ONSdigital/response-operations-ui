@@ -23,6 +23,11 @@ class Config(object):
     SECURE_COOKIES = strtobool(os.getenv('SECURE_COOKIES', 'True'))
     USE_SESSION_FOR_NEXT = True  # Used by flask-login
 
+    BANNER_SERVICE_HOST = os.getenv('BANNER_API_SERVICE_HOST', "http://localhost")
+    BANNER_SERVICE_PORT = os.getenv('BANNER_API_SERVICE_PORT', "8000")
+    BANNER_SERVICE_URL = os.getenv('BANNER_SERVICE_URL',
+                                   f'{BANNER_SERVICE_HOST}:{BANNER_SERVICE_PORT}')
+
     SECURITY_USER_NAME = os.getenv('SECURITY_USER_NAME')
     SECURITY_USER_PASSWORD = os.getenv('SECURITY_USER_PASSWORD')
     BASIC_AUTH = (SECURITY_USER_NAME, SECURITY_USER_PASSWORD)
@@ -47,7 +52,7 @@ class Config(object):
     PARTY_URL = os.getenv('PARTY_URL')
     PARTY_RESPONDENTS_PER_PAGE = os.getenv('PARTY_RESPONDENTS_PER_PAGE', 25)
     PARTY_BUSINESS_RESULTS_PER_PAGE = os.getenv('PARTY_BUSINESS_RESULTS_PER_PAGE', 25)
-    
+
     AUTH_URL = os.getenv('AUTH_URL')
 
     GOOGLE_CLOUD_PROJECT = os.getenv('GOOGLE_CLOUD_PROJECT', 'test-project-id')
