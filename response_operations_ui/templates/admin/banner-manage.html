@@ -7,7 +7,7 @@
 {% from "components/radios/_macro.njk" import onsRadios %}
 {% set page_title = 'Alert Admin'  %}
 {% block main %}
-  <div class="grid grid--gutterless">
+<div class="grid grid--gutterless">
     <div class="grid__col col-8@m">
       {% with messages = get_flashed_messages() %}
           {% if messages %}
@@ -59,11 +59,15 @@
           {%- call onsFieldset({
               "legend": "Create a new alert",
               "legendClasses": "u-vh",
-              "classes": "u-mt-m"
+              "classes": "u-mt-m",
               }) -%}
+              <div id="message_template" hidden>
+                <script{% if csp_nonce %} nonce="{{ csp_nonce() }}"{% endif %}>
+                document.getElementById("message_template").removeAttribute("hidden");
+                </script>
               {% set radioComponent = {
                   "legend": "Message template (optional)",
-                  "name": "event"
+                  "name": "event",
               } %}
 
               {% set radios = [] %}
@@ -78,7 +82,7 @@
                           "value": banner['content'],
                           "attributes": {
                               "banner_id": banner['id']
-                          }
+                          },
                       }
                   ) %}
               {% endfor %}
@@ -95,9 +99,16 @@
                       "value": ""
                   })
               }}
+                </div>
+              <p class="field u-mt-s">
+                <noscript>
+                    <a href="{{ url_for('admin_bp.get_message_template') }}">View message templates</a>
+                </noscript>
+              </p>
               <p class="field u-mt-s">
                 <a href="{{ url_for('admin_bp.manage_alert') }}">Manage message templates</a>
               </p>
+             
               {% set bannerTextError = { "text": form.banner_text.errors[0], "id": "bannertext-panel" } %}
               {{
                   onsTextarea({
