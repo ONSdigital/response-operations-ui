@@ -402,7 +402,7 @@ def _try_get_party_id_from_filter_ru(ru_ref):
     user adds no value, so we display a message on the UI and carry on.
     """
     try:
-        response = party_controller.get_party_by_ru_ref(ru_ref)
+        response = party_controller.get_business_by_ru_ref(ru_ref)
         return response['id'], ''
 
     except ApiError as api_error:   # If error, select a message for the UI

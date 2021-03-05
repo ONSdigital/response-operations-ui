@@ -36,7 +36,7 @@ def get_response_statuses(ru_ref, error=None):
     exercises = collection_exercise_controllers.get_collection_exercises_by_survey(survey['id'])
     exercise = collection_exercise_controllers.get_collection_exercise_from_list(exercises, period)
 
-    reporting_unit = party_controller.get_party_by_ru_ref(ru_ref)
+    reporting_unit = party_controller.get_business_by_ru_ref(ru_ref)
 
     statuses = case_controller.get_available_case_group_statuses_direct(exercise['id'], ru_ref)
     available_statuses = {event: map_ce_response_status(status)

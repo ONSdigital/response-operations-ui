@@ -21,7 +21,7 @@ party_id = 'cd592e0f-8d07-407b-b75d-e01fbdae8233'
 url_get_survey_by_short_name = f'{TestingConfig.SURVEY_URL}/surveys/shortname/{short_name}'
 url_get_collection_exercises_by_survey = f'{TestingConfig.COLLECTION_EXERCISE_URL}' \
                                          f'/collectionexercises/survey/{survey_id}'
-url_get_party_by_ru_ref = f'{TestingConfig.PARTY_URL}/party-api/v1/parties/type/B/ref/{ru_ref}'
+url_get_business_by_ru_ref = f'{TestingConfig.PARTY_URL}/party-api/v1/businesses/ref/{ru_ref}'
 url_get_available_case_group_statuses = f'{TestingConfig.CASE_URL}' \
                                         f'/casegroups/transitions/{collection_exercise_id}/{ru_ref}'
 url_get_case_groups_by_business_party_id = f'{TestingConfig.CASE_URL}/casegroups/partyid/{business_party_id}'
@@ -37,7 +37,7 @@ with open(f'{project_root}/test_data/survey/single_survey.json') as fp:
     survey = json.load(fp)
 with open(f'{project_root}/test_data/collection_exercise/collection_exercise_list.json') as fp:
     collection_exercise_list = json.load(fp)
-with open(f'{project_root}/test_data/party/business_reporting_unit.json') as fp:
+with open(f'{project_root}/test_data/party/get_business_by_ru_ref.json') as fp:
     business_reporting_unit = json.load(fp)
 with open(f'{project_root}/test_data/case/case.json') as fp:
     case = json.load(fp)
@@ -74,7 +74,7 @@ class TestChangeResponseStatus(TestCase):
     def test_get_available_status(self, mock_request):
         mock_request.get(url_get_survey_by_short_name, json=survey)
         mock_request.get(url_get_collection_exercises_by_survey, json=collection_exercise_list)
-        mock_request.get(url_get_party_by_ru_ref, json=business_reporting_unit)
+        mock_request.get(url_get_business_by_ru_ref, json=business_reporting_unit)
         mock_request.get(url_get_available_case_group_statuses, json=self.statuses)
         mock_request.get(url_get_case_groups_by_business_party_id, json=case_groups)
         mock_request.get(url_get_case_events, json=case_events)
@@ -113,7 +113,7 @@ class TestChangeResponseStatus(TestCase):
     def test_get_available_status_party_fail(self, mock_request):
         mock_request.get(url_get_survey_by_short_name, json=survey)
         mock_request.get(url_get_collection_exercises_by_survey, json=collection_exercise_list)
-        mock_request.get(url_get_party_by_ru_ref, status_code=500)
+        mock_request.get(url_get_business_by_ru_ref, status_code=500)
 
         response = self.client.get(f'/case/{ru_ref}/response-status?survey={short_name}&period={period}',
                                    follow_redirects=True)
@@ -124,7 +124,7 @@ class TestChangeResponseStatus(TestCase):
     def test_get_available_status_case_fail(self, mock_request):
         mock_request.get(url_get_survey_by_short_name, json=survey)
         mock_request.get(url_get_collection_exercises_by_survey, json=collection_exercise_list)
-        mock_request.get(url_get_party_by_ru_ref, json=business_reporting_unit)
+        mock_request.get(url_get_business_by_ru_ref, json=business_reporting_unit)
         mock_request.get(url_get_available_case_group_statuses, status_code=500)
 
         response = self.client.get(f'/case/{ru_ref}/response-status?survey={short_name}&period={period}',
@@ -136,7 +136,7 @@ class TestChangeResponseStatus(TestCase):
     def test_get_available_status_case_group_fail(self, mock_request):
         mock_request.get(url_get_survey_by_short_name, json=survey)
         mock_request.get(url_get_collection_exercises_by_survey, json=collection_exercise_list)
-        mock_request.get(url_get_party_by_ru_ref, json=business_reporting_unit)
+        mock_request.get(url_get_business_by_ru_ref, json=business_reporting_unit)
         mock_request.get(url_get_available_case_group_statuses, json=self.statuses)
         mock_request.get(url_get_case_groups_by_business_party_id, status_code=500)
 
@@ -205,7 +205,7 @@ class TestChangeResponseStatus(TestCase):
     def test_get_timestamp_for_completed_case_event(self, mock_request):
         mock_request.get(url_get_survey_by_short_name, json=survey)
         mock_request.get(url_get_collection_exercises_by_survey, json=collection_exercise_list)
-        mock_request.get(url_get_party_by_ru_ref, json=business_reporting_unit)
+        mock_request.get(url_get_business_by_ru_ref, json=business_reporting_unit)
         mock_request.get(url_get_available_case_group_statuses, json=self.statuses)
         mock_request.get(url_get_case_groups_by_business_party_id, json=case_groups_completed)
         mock_request.get(url_get_case_by_case_group_id, json=[case])
@@ -225,7 +225,7 @@ class TestChangeResponseStatus(TestCase):
     def test_get_respondent_name_for_completed_case_event(self, mock_request):
         mock_request.get(url_get_survey_by_short_name, json=survey)
         mock_request.get(url_get_collection_exercises_by_survey, json=collection_exercise_list)
-        mock_request.get(url_get_party_by_ru_ref, json=business_reporting_unit)
+        mock_request.get(url_get_business_by_ru_ref, json=business_reporting_unit)
         mock_request.get(url_get_available_case_group_statuses, json=self.statuses)
         mock_request.get(url_get_case_groups_by_business_party_id, json=case_groups_completed)
         mock_request.get(url_get_case_by_case_group_id, json=[case])
@@ -245,7 +245,7 @@ class TestChangeResponseStatus(TestCase):
     def test_respondent_name_unavailable_for_completed_case_event(self, mock_request):
         mock_request.get(url_get_survey_by_short_name, json=survey)
         mock_request.get(url_get_collection_exercises_by_survey, json=collection_exercise_list)
-        mock_request.get(url_get_party_by_ru_ref, json=business_reporting_unit)
+        mock_request.get(url_get_business_by_ru_ref, json=business_reporting_unit)
         mock_request.get(url_get_available_case_group_statuses, json=self.statuses)
         mock_request.get(url_get_case_groups_by_business_party_id, json=case_groups_completed)
         mock_request.get(url_get_case_by_case_group_id, json=[case])
@@ -265,7 +265,7 @@ class TestChangeResponseStatus(TestCase):
     def test_respondent_name_not_in_metadata_for_completed_case_event(self, mock_request):
         mock_request.get(url_get_survey_by_short_name, json=survey)
         mock_request.get(url_get_collection_exercises_by_survey, json=collection_exercise_list)
-        mock_request.get(url_get_party_by_ru_ref, json=business_reporting_unit)
+        mock_request.get(url_get_business_by_ru_ref, json=business_reporting_unit)
         mock_request.get(url_get_available_case_group_statuses, json=self.statuses)
         mock_request.get(url_get_case_groups_by_business_party_id, json=case_groups_completed)
         mock_request.get(url_get_case_by_case_group_id, json=[case])
