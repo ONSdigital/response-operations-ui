@@ -60,7 +60,7 @@
            </div>
           </div>
           {% endif %}
-      <h1 class="u-fs-xl u-mt-m">Edit contact details</h1>
+      <h1 class="u-fs-xl">Edit contact details</h1>
       {%- set href = url_for('respondent_bp.edit_contact_details', ru_ref=ru_ref, respondent_id=respondent_details.id) if tab=='respondents' else url_for('reporting_unit_bp.edit_contact_details', ru_ref=ru_ref, respondent_id=respondent_details.id) -%}
       <form action="{{ href }}" method="post">
         {{ form.csrf_token }}
