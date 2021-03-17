@@ -1,4 +1,7 @@
 build:
+	npm init -y
+	npm install webpack webpack-cli --save-dev
+	npm install -D babel-loader @babel/core @babel/preset-env webpack
 	pipenv install --dev
 
 build-docker:
@@ -25,3 +28,6 @@ docker: test
 
 load-templates:
 	pipenv run ./scripts/load_templates.sh
+
+minify:
+	npx webpack
