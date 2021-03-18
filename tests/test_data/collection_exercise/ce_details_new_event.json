@@ -2,16 +2,6 @@
   "collection_exercise": {
     "actualExecutionDateTime": "2017-11-10T12:14:41.768+0000",
     "actualPublishDateTime": "2017-11-10T12:16:28.509+0000",
-    "caseTypes": [
-      {
-        "actionPlanId": "e71002ac-3575-47eb-b87f-cd9db92bf9a7",
-        "sampleUnitType": "B"
-      },
-      {
-        "actionPlanId": "0009e978-0932-463b-a2a1-b45cb3ffcb2a",
-        "sampleUnitType": "BI"
-      }
-    ],
     "executedBy": null,
     "exerciseRef": "221_201712",
     "id": "307737f0-8997-4f5d-8fa4-d6e13ecda335",

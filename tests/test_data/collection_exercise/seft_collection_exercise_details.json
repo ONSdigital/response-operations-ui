@@ -25,16 +25,6 @@
       "scheduledEndDateTime": "2018-07-09T09:19:09.000Z",
       "executedBy": null,
       "state": "Scheduled",
-      "caseTypes": [
-        {
-          "actionPlanId": "cb255845-63c2-4e9b-891b-c2c89208856f",
-          "sampleUnitType": "B"
-        },
-        {
-          "actionPlanId": "950b8baa-754c-4c95-8e56-cfd342975377",
-          "sampleUnitType": "BI"
-        }
-      ],
       "exerciseRef": "204901",
       "userDescription": "test_exercise",
       "created": "2018-06-28T09:19:13.363Z",

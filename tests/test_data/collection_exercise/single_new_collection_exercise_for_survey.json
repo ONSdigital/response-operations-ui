@@ -13,16 +13,6 @@
     "scheduledEndDateTime": null,
     "executedBy": null,
     "state": "CREATED",
-    "caseTypes": [
-      {
-        "actionPlanId": "53445b48-f05e-4dee-837a-d643869e93fe",
-        "sampleUnitType": "B"
-      },
-      {
-        "actionPlanId": "7f778cb9-e4c6-4906-b816-6b3928b0f9c1",
-        "sampleUnitType": "BI"
-      }
-    ],
     "exerciseRef": "2005",
     "userDescription": "May 2020",
     "created": "2020-06-15T16:11:41.072Z",

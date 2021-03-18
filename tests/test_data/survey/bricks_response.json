@@ -3,16 +3,6 @@
     {
       "actualExecutionDateTime": null,
       "actualPublishDateTime": null,
-      "caseTypes": [
-        {
-          "actionPlanId": "878c3462-766a-4cf6-8fb3-867d5124cc0f",
-          "sampleUnitType": "B"
-        },
-        {
-          "actionPlanId": "46a4cdc2-8995-4969-a02d-37f6be767ef4",
-          "sampleUnitType": "BI"
-        }
-      ],
       "created": "2018-03-09T13:03:45.827Z",
       "deleted": null,
       "executedBy": null,
@@ -34,16 +24,6 @@
     {
       "actualExecutionDateTime": null,
       "actualPublishDateTime": null,
-      "caseTypes": [
-        {
-          "actionPlanId": "878c3462-766a-4cf6-8fb3-867d5124cc0f",
-          "sampleUnitType": "B"
-        },
-        {
-          "actionPlanId": "46a4cdc2-8995-4969-a02d-37f6be767ef4",
-          "sampleUnitType": "BI"
-        }
-      ],
       "created": "2018-03-09T13:03:45.850Z",
       "deleted": null,
       "executedBy": null,
@@ -65,16 +45,6 @@
     {
       "actualExecutionDateTime": null,
       "actualPublishDateTime": null,
-      "caseTypes": [
-        {
-          "actionPlanId": "878c3462-766a-4cf6-8fb3-867d5124cc0f",
-          "sampleUnitType": "B"
-        },
-        {
-          "actionPlanId": "46a4cdc2-8995-4969-a02d-37f6be767ef4",
-          "sampleUnitType": "BI"
-        }
-      ],
       "created": "2018-03-09T13:03:45.900Z",
       "deleted": null,
       "executedBy": null,
@@ -96,16 +66,6 @@
     {
       "actualExecutionDateTime": null,
       "actualPublishDateTime": null,
-      "caseTypes": [
-        {
-          "actionPlanId": "878c3462-766a-4cf6-8fb3-867d5124cc0f",
-          "sampleUnitType": "B"
-        },
-        {
-          "actionPlanId": "46a4cdc2-8995-4969-a02d-37f6be767ef4",
-          "sampleUnitType": "BI"
-        }
-      ],
       "created": "2018-03-09T13:03:45.930Z",
       "deleted": null,
       "executedBy": null,
@@ -127,16 +87,6 @@
     {
       "actualExecutionDateTime": null,
       "actualPublishDateTime": null,
-      "caseTypes": [
-        {
-          "actionPlanId": "878c3462-766a-4cf6-8fb3-867d5124cc0f",
-          "sampleUnitType": "B"
-        },
-        {
-          "actionPlanId": "46a4cdc2-8995-4969-a02d-37f6be767ef4",
-          "sampleUnitType": "BI"
-        }
-      ],
       "created": "2018-03-09T13:03:45.976Z",
       "deleted": null,
       "executedBy": null,
@@ -158,16 +108,6 @@
     {
       "actualExecutionDateTime": null,
       "actualPublishDateTime": null,
-      "caseTypes": [
-        {
-          "actionPlanId": "878c3462-766a-4cf6-8fb3-867d5124cc0f",
-          "sampleUnitType": "B"
-        },
-        {
-          "actionPlanId": "46a4cdc2-8995-4969-a02d-37f6be767ef4",
-          "sampleUnitType": "BI"
-        }
-      ],
       "created": "2018-03-09T13:03:46.001Z",
       "deleted": null,
       "executedBy": null,
@@ -189,16 +129,6 @@
     {
       "actualExecutionDateTime": "2018-03-09T13:04:48.783Z",
       "actualPublishDateTime": "2018-03-09T13:04:50.692Z",
-      "caseTypes": [
-        {
-          "actionPlanId": "878c3462-766a-4cf6-8fb3-867d5124cc0f",
-          "sampleUnitType": "B"
-        },
-        {
-          "actionPlanId": "46a4cdc2-8995-4969-a02d-37f6be767ef4",
-          "sampleUnitType": "BI"
-        }
-      ],
       "created": "2018-03-09T13:03:46.056Z",
       "deleted": null,
       "executedBy": null,
@@ -220,16 +150,6 @@
     {
       "actualExecutionDateTime": null,
       "actualPublishDateTime": null,
-      "caseTypes": [
-        {
-          "actionPlanId": "878c3462-766a-4cf6-8fb3-867d5124cc0f",
-          "sampleUnitType": "B"
-        },
-        {
-          "actionPlanId": "46a4cdc2-8995-4969-a02d-37f6be767ef4",
-          "sampleUnitType": "BI"
-        }
-      ],
       "created": "2018-03-09T13:03:45.803Z",
       "deleted": null,
       "executedBy": null,
@@ -251,16 +171,6 @@
     {
       "actualExecutionDateTime": null,
       "actualPublishDateTime": null,
-      "caseTypes": [
-        {
-          "actionPlanId": "878c3462-766a-4cf6-8fb3-867d5124cc0f",
-          "sampleUnitType": "B"
-        },
-        {
-          "actionPlanId": "46a4cdc2-8995-4969-a02d-37f6be767ef4",
-          "sampleUnitType": "BI"
-        }
-      ],
       "created": "2018-03-09T13:03:45.876Z",
       "deleted": null,
       "executedBy": null,
@@ -282,16 +192,6 @@
     {
       "actualExecutionDateTime": null,
       "actualPublishDateTime": null,
-      "caseTypes": [
-        {
-          "actionPlanId": "878c3462-766a-4cf6-8fb3-867d5124cc0f",
-          "sampleUnitType": "B"
-        },
-        {
-          "actionPlanId": "46a4cdc2-8995-4969-a02d-37f6be767ef4",
-          "sampleUnitType": "BI"
-        }
-      ],
       "created": "2018-03-09T13:03:45.953Z",
       "deleted": null,
       "executedBy": null,
@@ -313,16 +213,6 @@
     {
       "actualExecutionDateTime": null,
       "actualPublishDateTime": null,
-      "caseTypes": [
-        {
-          "actionPlanId": "878c3462-766a-4cf6-8fb3-867d5124cc0f",
-          "sampleUnitType": "B"
-        },
-        {
-          "actionPlanId": "46a4cdc2-8995-4969-a02d-37f6be767ef4",
-          "sampleUnitType": "BI"
-        }
-      ],
       "created": "2018-03-09T13:03:46.033Z",
       "deleted": null,
       "executedBy": null,
@@ -344,16 +234,6 @@
     {
       "actualExecutionDateTime": "2018-03-09T13:04:48.654Z",
       "actualPublishDateTime": "2018-03-09T13:04:52.170Z",
-      "caseTypes": [
-        {
-          "actionPlanId": "878c3462-766a-4cf6-8fb3-867d5124cc0f",
-          "sampleUnitType": "B"
-        },
-        {
-          "actionPlanId": "46a4cdc2-8995-4969-a02d-37f6be767ef4",
-          "sampleUnitType": "BI"
-        }
-      ],
       "created": "2018-03-09T13:03:45.777Z",
       "deleted": null,
       "executedBy": null,

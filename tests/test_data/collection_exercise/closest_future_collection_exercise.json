@@ -12,16 +12,6 @@
   "scheduledEndDateTime": "2020-07-30T06:00:00.000Z",
   "executedBy": null,
   "state": "SCHEDULED",
-  "caseTypes": [
-    {
-      "actionPlanId": "4772718c-c1bb-4509-94f3-dca1177ca580",
-      "sampleUnitType": "B"
-    },
-    {
-      "actionPlanId": "748704c6-0445-41eb-9b78-1b334f81b2ad",
-      "sampleUnitType": "BI"
-    }
-  ],
   "exerciseRef": "2007",
   "userDescription": "July 2020",
   "created": "2020-06-16T10:15:47.985Z",
