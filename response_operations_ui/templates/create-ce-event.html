@@ -69,7 +69,7 @@
         })
       }}
 
-      <h2 class="u-fs-l u-mt-l">{{event_name}}</h2>
+      <h2 class="u-fs-l">{{event_name}}</h2>
       {% if date_restriction_text %}
           {% set listData = [] %}
           {% for text in date_restriction_text %}
@@ -93,7 +93,7 @@
         {% endcall %}
       {% endif %}
       <form method="post" action="{{ url_for('collection_exercise_bp.create_collection_exercise_event', short_name=short_name, period=period, ce_id=ce_id, tag=tag)}}" class="">
-        <div class="date-time-editor u-mb-l">
+        <div class="date-time-editor">
         {{ form.csrf_token }}
         <fieldset class="fieldgroup fieldgroup--inline fieldgroup--date" data-qa="widget-date" role="group">
           <legend class="fieldgroup__title u-fs-r--b u-mb-xs">Enter a date</legend>
@@ -112,7 +112,7 @@
             </div>
           </div>
         </fieldset>
-        <fieldset class="fieldgroup fieldgroup--time u-mt-l" data-qa="widget-time">
+        <fieldset class="fieldgroup fieldgroup--time" data-qa="widget-time">
           <legend class="fieldgroup__title u-fs-r--b u-mb-xs">Time (Newport)</legend>
           <div class="field-group">
             <div class="field field--select field--hrs">
@@ -128,7 +128,7 @@
       </div>
         {{
             onsButton({
-                "classes": "u-mb-s u-mt-l",
+                "classes": "u-mb-s",
                 "text": "Save",
                 "id": "submit",
                 "name": "submit"
