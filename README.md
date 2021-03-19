@@ -81,6 +81,14 @@ When the application is run the scss files are converted into css and they are m
 
 Similarly the js files are minimised into one file, `all.js.min`
 
+It is a manual step to minimise the JavaScript
+
+```bash
+make minify-install
+make minify
+```
+
+
 ## Test the application
 
 Ensure dev dependencies have been installed
