@@ -3,16 +3,6 @@
     "id": "14fb3e68-4dca-46db-bf49-04b84e07e77c",
     "actualExecutionDateTime": "2017-11-10T12:14:41.768+0000",
     "actualPublishDateTime": "2017-11-10T12:16:28.509+0000",
-    "caseTypes": [
-      {
-        "actionPlanId": "e71002ac-3575-47eb-b87f-cd9db92bf9a6",
-        "sampleUnitType": "B"
-      },
-      {
-        "actionPlanId": "0009e978-0932-463b-a2a1-b45cb3ffcb2a",
-        "sampleUnitType": "BI"
-      }
-    ],
     "executedBy": null,
     "exerciseRef": "201801",
     "name": "000000",
@@ -29,16 +19,6 @@
     "id": "14fb3e68-4dca-46db-bf49-04b84e07e77d",
     "actualExecutionDateTime": "2017-11-10T12:14:41.768+0000",
     "actualPublishDateTime": "2017-11-10T12:16:28.509+0000",
-    "caseTypes": [
-      {
-        "actionPlanId": "e71002ac-3575-47eb-b87f-cd9db92bf9a6",
-        "sampleUnitType": "B"
-      },
-      {
-        "actionPlanId": "0009e978-0932-463b-a2a1-b45cb3ffcb2a",
-        "sampleUnitType": "BI"
-      }
-    ],
     "executedBy": null,
     "exerciseRef": "201802",
     "name": "000000",

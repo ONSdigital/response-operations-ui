@@ -2,7 +2,6 @@
   {
     "actualExecutionDateTime": null,
     "actualPublishDateTime": null,
-    "caseTypes": [],
     "created": "2018-05-11T13:12:18.315Z",
     "deleted": null,
     "events": {
@@ -66,7 +65,6 @@
   {
     "actualExecutionDateTime": null,
     "actualPublishDateTime": null,
-    "caseTypes": [],
     "created": "2018-05-11T13:12:18.324Z",
     "deleted": null,
     "events": {
@@ -125,7 +123,6 @@
   {
     "actualExecutionDateTime": null,
     "actualPublishDateTime": null,
-    "caseTypes": [],
     "created": "2018-05-11T13:12:18.300Z",
     "deleted": null,
     "events": {
@@ -184,7 +181,6 @@
   {
     "actualExecutionDateTime": null,
     "actualPublishDateTime": null,
-    "caseTypes": [],
     "created": "2018-05-11T13:12:18.339Z",
     "deleted": null,
     "events": {

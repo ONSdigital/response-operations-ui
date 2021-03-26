@@ -13,16 +13,6 @@
     "scheduledEndDateTime": "2020-08-31T06:00:00.000Z",
     "executedBy": null,
     "state": "SCHEDULED",
-    "caseTypes": [
-      {
-        "actionPlanId": "5a60b310-d2b2-445a-9f9e-0efed04b757d",
-        "sampleUnitType": "B"
-      },
-      {
-        "actionPlanId": "c01b19b8-f91b-42ef-8887-a88c7fe52bb6",
-        "sampleUnitType": "BI"
-      }
-    ],
     "exerciseRef": "2008",
     "userDescription": "August 2020",
     "created": "2020-06-16T10:19:13.152Z",
@@ -88,16 +78,6 @@
     "scheduledEndDateTime": "2020-07-30T06:00:00.000Z",
     "executedBy": null,
     "state": "SCHEDULED",
-    "caseTypes": [
-      {
-        "actionPlanId": "4772718c-c1bb-4509-94f3-dca1177ca580",
-        "sampleUnitType": "B"
-      },
-      {
-        "actionPlanId": "748704c6-0445-41eb-9b78-1b334f81b2ad",
-        "sampleUnitType": "BI"
-      }
-    ],
     "exerciseRef": "2007",
     "userDescription": "July 2020",
     "created": "2020-06-16T10:15:47.985Z",
@@ -163,16 +143,6 @@
     "scheduledEndDateTime": "2020-04-30T06:00:00.000Z",
     "executedBy": null,
     "state": "SCHEDULED",
-    "caseTypes": [
-      {
-        "actionPlanId": "4772718c-c1bb-4509-94f3-dca1177ca580",
-        "sampleUnitType": "B"
-      },
-      {
-        "actionPlanId": "748704c6-0445-41eb-9b78-1b334f81b2ad",
-        "sampleUnitType": "BI"
-      }
-    ],
     "exerciseRef": "2004",
     "userDescription": "April 2020",
     "created": "2020-06-16T10:15:47.985Z",
@@ -238,16 +208,6 @@
     "scheduledEndDateTime": "2020-04-30T06:00:00.000Z",
     "executedBy": null,
     "state": "SCHEDULED",
-    "caseTypes": [
-      {
-        "actionPlanId": "4772718c-c1bb-4509-94f3-dca1177ca580",
-        "sampleUnitType": "B"
-      },
-      {
-        "actionPlanId": "748704c6-0445-41eb-9b78-1b334f81b2ad",
-        "sampleUnitType": "BI"
-      }
-    ],
     "exerciseRef": "20042004",
     "userDescription": "Duplicate April 2020",
     "created": "2020-06-16T10:15:47.985Z",
