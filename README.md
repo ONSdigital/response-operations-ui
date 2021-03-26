@@ -1,8 +1,6 @@
 # response-operations-ui
 
-[![Build Status](https://travis-ci.org/ONSdigital/response-operations-ui.svg?branch=main)](https://travis-ci.org/ONSdigital/response-operations-ui)
-[![Codacy Badge](https://api.codacy.com/project/badge/Grade/5c72e3cdb35b487ea0f462f8b3ee4606)](https://www.codacy.com/app/andrewmil/response-operations-ui?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=ONSdigital/response-operations-ui&amp;utm_campaign=Badge_Grade)
-[![codecov](https://codecov.io/gh/ONSdigital/response-operations-ui/branch/main/graph/badge.svg)](https://codecov.io/gh/ONSdigital/response-operations-ui)
+The frontend for the internal ONS users to administer collection exercises, messages to and from respondents, etc
 
 ## Run the application
 
@@ -80,6 +78,14 @@ Styling is implemented using scss and javascript. You can find the styling files
 When the application is run the scss files are converted into css and they are minimised into one file, `all.css.min`
 
 Similarly the js files are minimised into one file, `all.js.min`
+
+It is a manual step to minimise the JavaScript
+
+```bash
+make minify-install
+make minify
+```
+
 
 ## Test the application
 
