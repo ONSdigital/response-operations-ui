@@ -1,7 +1,7 @@
 {% from "components/breadcrumb/_macro.njk" import onsBreadcrumb %}
 
-  {% set breadcrumbsData = [] %}
-  {% if breadcrumbs|length > 1 %}
+{% set breadcrumbsData = [] %}
+{% if breadcrumbs|length > 1 %}
   {% for breadcrumb in breadcrumbs[:-2] %}
 
     {% do breadcrumbsData.append(breadcrumb) %}
@@ -15,11 +15,11 @@
   ) %}
   {{ 
 
-      onsBreadcrumb({
-          "ariaLabel": "Breadcrumbs",
-          "id": "breadcrumbs",
-          "itemsList": breadcrumbsData
-      })
+    onsBreadcrumb({
+        "ariaLabel": "Breadcrumbs",
+        "id": "breadcrumbs",
+        "itemsList": breadcrumbsData
+    })
   }}
 {% endif %}
 
