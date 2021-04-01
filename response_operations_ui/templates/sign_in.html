@@ -16,7 +16,8 @@
                         onsPanel({
                             "type": "error" if category == "failed_authentication" else "success",
                             "classes": "u-mb-s",
-                            "title":  message if category == "failed_authentication"
+                            "title":  message if category == "failed_authentication",
+                            "icon": null if category == "failed_authentication" else "check",
                         })
                     %}
                     {% if category == "failed_authentication" %}
