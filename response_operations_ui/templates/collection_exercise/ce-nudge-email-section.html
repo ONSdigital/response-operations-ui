@@ -28,15 +28,15 @@
   {% for nudgeGroup in existing_nudge %}
     {% set label = '' %}
     {% if ns.seqnum == 0 %}
-        {% set ns.seqlabel = 'first-nudge-email' %}
+        {% set ns.seqlabel = 'First nudge email' %}
     {% elif ns.seqnum == 1 %}
-        {% set ns.seqlabel = 'second-nudge-email' %}
+        {% set ns.seqlabel = 'Second nudge email' %}
     {% elif ns.seqnum == 2 %}
-        {% set ns.seqlabel = 'third-nudge-email' %}
+        {% set ns.seqlabel = 'Third nudge email' %}
     {% elif ns.seqnum == 3 %}
-        {% set ns.seqlabel = 'fourth-nudge-email' %}
+        {% set ns.seqlabel = 'Fourth nudge email' %}
     {% elif ns.seqnum == 4 %}
-        {% set ns.seqlabel = 'fifth-nudge-email' %}
+        {% set ns.seqlabel = 'Fifth nudge email' %}
     {% endif %}
     {% set eventIsInFuture = False %}
     {% if nudgeGroup == 'nudge_email_0' %}
