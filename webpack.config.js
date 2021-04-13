@@ -28,20 +28,10 @@ module.exports = {
                         options: { outputPath: 'css', name: 'main.css'}
                     },
                     {
-                        loader: "css-loader", options: {
-                            sourceMap: true
-                        }
+                        loader: "resolve-url-loader"
                     },
                     {
-                        loader: "resolve-url-loader",
-                        options: {
-                          sourceMap: true
-                        }
-                    },
-                    {
-                        loader: "sass-loader", options: {
-                            sourceMap: true
-                        }
+                        loader: "sass-loader"
                     }
                 ]
             }
