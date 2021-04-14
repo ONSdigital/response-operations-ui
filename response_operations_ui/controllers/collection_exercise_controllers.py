@@ -173,6 +173,15 @@ def execute_collection_exercise(collection_exercise_id):
             logger.error('Error executing collection exercise', collection_exercise_id=collection_exercise_id)
         raise ApiError(response)
 
+    url = f'{app.config["COLLECTION_EXERCISE_URL"]}/collectionexercises/sample-unit-distribution'
+    response = requests.get(url, auth=app.config['BASIC_AUTH'])
+    try:
+        response.raise_for_status()
+    except HTTPError:
+        logger.error('Failed to trigger sample unit distribution when setting for live',
+                     collection_exercise_id=collection_exercise_id)
+        raise ApiError(response)
+
     logger.info("Successfully began execution of collection exercise", collection_exercise_id=collection_exercise_id)
 
 

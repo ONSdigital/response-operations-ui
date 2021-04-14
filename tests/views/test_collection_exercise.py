@@ -99,6 +99,7 @@ url_update_ce_period = f'{collection_exercise_root}/{collection_exercise_id}/exe
 url_get_collection_exercise_events = f'{collection_exercise_root}/{collection_exercise_id}/events'
 url_create_collection_exercise = f'{TestingConfig.COLLECTION_EXERCISE_URL}/collectionexercises'
 url_execute = f'{TestingConfig.COLLECTION_EXERCISE_URL}/collectionexerciseexecution/{collection_exercise_id}'
+url_sample_distribution = f'{TestingConfig.COLLECTION_EXERCISE_URL}/collectionexercises/sample-unit-distribution'
 
 collection_instrument_root = f'{TestingConfig.COLLECTION_INSTRUMENT_URL}/collection-instrument-api/1.0.2'
 url_collection_instrument = f'{collection_instrument_root}/upload/{collection_exercise_id}'
@@ -668,6 +669,7 @@ class TestCollectionExercise(ViewTestCase):
         details = formatted_collection_exercise_details.copy()
         details['collection_exercise']['state'] = 'EXECUTION_STARTED'
         mock_request.post(url_execute, status_code=200)
+        mock_request.get(url_sample_distribution, status_code=200)
         mock_request.get(url_survey_shortname, status_code=200, json=self.survey_data)
         mock_request.get(url_collection_exercise_survey_id, status_code=200, json=exercise_data)
         mock_details.return_value = details
@@ -684,6 +686,23 @@ class TestCollectionExercise(ViewTestCase):
     def test_post_ready_for_live_404(self, mock_request, mock_details):
         post_data = {"ready-for-live": ""}
         mock_request.post(url_execute, status_code=404)
+        mock_request.get(url_survey_shortname, status_code=200, json=self.survey_data)
+        mock_request.get(url_collection_exercise_survey_id, status_code=200, json=exercise_data)
+        mock_details.return_value = formatted_collection_exercise_details
+
+        response = self.client.post(f'/surveys/{short_name}/{period}', data=post_data, follow_redirects=True)
+
+        self.assertEqual(response.status_code, 200)
+        self.assertNotIn("Sample loaded successfully".encode(), response.data)
+        self.assertNotIn("Collection exercise executed".encode(), response.data)
+        self.assertIn("Error: Failed to execute Collection Exercise".encode(), response.data)
+
+    @requests_mock.mock()
+    @patch('response_operations_ui.views.collection_exercise.build_collection_exercise_details')
+    def test_get_sample_distribution_404(self, mock_request, mock_details):
+        post_data = {"ready-for-live": ""}
+        mock_request.post(url_execute, status_code=200)
+        mock_request.get(url_sample_distribution, status_code=404)
         mock_request.get(url_survey_shortname, status_code=200, json=self.survey_data)
         mock_request.get(url_collection_exercise_survey_id, status_code=200, json=exercise_data)
         mock_details.return_value = formatted_collection_exercise_details
