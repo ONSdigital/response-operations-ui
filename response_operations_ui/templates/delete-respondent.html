@@ -36,7 +36,7 @@
       </form>
     </div>
   {% elif not delete %}
-    <h1 id="undo-respondent-data">Cancel deletion of {{ respondent_details.firstName[0]|upper }}{{ respondent_details.firstName[1:] }} {{ respondent_details.lastName[0]|upper }}{{ respondent_details.lastName[1:] }}'s data</h1>
+    <h1 id="undo-respondent-data">Reactivate {{ respondent_details.firstName[0]|upper }}{{ respondent_details.firstName[1:] }} {{ respondent_details.lastName[0]|upper }}{{ respondent_details.lastName[1:] }}'s account</h1>
     {% call
       onsPanel({
         "type":"warn",
@@ -53,7 +53,7 @@
         <p>
           {{
             onsButton({
-                "text": "Remove respondent for deletion",
+                "text": "Reactivate Respondent",
                 "id": "btn-undo-res-del",
                 "name": "undo-respondent-delete"
             })

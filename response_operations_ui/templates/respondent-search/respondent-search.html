@@ -18,40 +18,49 @@
         {{ success_panel }}
     {% endcall %}
 {% endif %}
-    <h1>Find a respondent</h1>
-    {% with messages = get_flashed_messages() %}
+{% set ns = namespace() %}
+{% set ns.optionError = false %}
+{% with messages = get_flashed_messages() %}
         {%- if messages -%}
-            {%- call
-                onsPanel({
-                    "type":"error",
-                    "classes": "u-mb-s",
-                    "id": "validation-error"
-                })
-            -%}
-                {%- set errorData = [] -%}
-                {%- for message in messages -%}
-                    {%- do errorData.append(
-                        {
-                            "text": message
-                        }
-                    ) -%}
-                {%- endfor -%}
-                {{-
+            {% for message in messages %}
+            {% set ns.optionError = true %}
+            {% set ns.errorMessage = message %}
+            {% set errorTitle = 'There is 1 error on this page' %}
+                {% call
+                    onsPanel({
+                        "type": "error",
+                        "classes": "u-mb-s",
+                        "title":  errorTitle
+                    })
+                  %}
+                  {{
                     onsList({
-                        "classes": "list--bare",
-                        "itemsList": errorData
-                    }) 
-                -}}
-            {%- endcall -%}
+                        "element": "ol",
+                        "itemsList": [
+                        {
+                            "text": message,
+                            "url": "#input_error",
+                            "classes": "js-inpagelink"
+                        }
+                        ]
+                    })
+                }}
+                {% endcall %}
+        {% endfor %}
         {%- endif -%}
     {% endwith %}
-
+    <h1>Find a respondent</h1>
     <form action="{{ url_for('respondent_bp.search_redirect') }}" method="post">
         {{ form.csrf_token }}
+        {% if ns.optionError %}
+                {% set errorOption = { "text": ns.errorMessage,  "id": 'input_error' } %}
+        {% endif %}
         {%- call onsFieldset({
             "legend": "Enter respondent information to search",
-            "legendClasses": "u-vh"
+            "legendClasses": "u-vh",
+            "error": errorOption
         }) -%}
+        
             {{
                 onsInput({
                     "id": "first_name",

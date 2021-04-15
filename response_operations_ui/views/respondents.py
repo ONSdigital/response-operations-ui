@@ -19,9 +19,10 @@ respondent_bp = Blueprint('respondent_bp', __name__,
 @respondent_bp.route('/', methods=['GET'])
 @login_required
 def respondent_home():
+    success_panel = request.args.get('success_panel')
     return render_template('respondent-search/respondent-search.html',
                            form=RespondentSearchForm(),
-                           breadcrumbs=[{"text": "Respondents"}, {}])
+                           breadcrumbs=[{"text": "Respondents"}, {}], success_panel=success_panel)
 
 
 @respondent_bp.route('/search', methods=['GET', 'POST'])
@@ -114,11 +115,11 @@ def respondent_details(respondent_id):
 @respondent_bp.route('/edit-contact-details/<respondent_id>', methods=['GET'])
 @login_required
 def view_contact_details(respondent_id):
-    respondent_details = party_controller.get_respondent_by_party_id(respondent_id)
+    respondent_detail = party_controller.get_respondent_by_party_id(respondent_id)
 
-    form = EditContactDetailsForm(form=request.form, default_values=respondent_details)
+    form = EditContactDetailsForm(form=request.form, default_values=respondent_detail)
 
-    return render_template('edit-contact-details.html', respondent_details=respondent_details, form=form,
+    return render_template('edit-contact-details.html', respondent_details=respondent_detail, form=form,
                            tab='respondents', respondent_id=respondent_id)
 
 
@@ -207,8 +208,9 @@ def delete_respondent(respondent_id):
 
     if request.method == 'POST':
         respondent_controllers.delete_respondent_account_by_username(respondent['emailAddress'])
-        flash('The account is pending deletion and will be deleted by the end of day processing.', 'success')
-        return redirect(url_for('respondent_bp.respondent_details', respondent_id=respondent_id, ))
+        return redirect(url_for('respondent_bp.respondent_home',
+                                success_panel='The account is pending deletion '
+                                              'and will be deleted by the end the day.'))
     breadcrumbs = [
         {
             "url": '/respondents',
@@ -232,7 +234,7 @@ def undo_delete_respondent(respondent_id):
 
     if request.method == 'POST':
         respondent_controllers.undo_delete_respondent_account_by_username(respondent['emailAddress'])
-        flash('Respondent for deletion removed', 'success')
+        flash('The respondent’s account has been reactivated.', 'success')
         return redirect(url_for('respondent_bp.respondent_details', respondent_id=respondent_id, ))
     breadcrumbs = [
         {

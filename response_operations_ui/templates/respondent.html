@@ -61,7 +61,7 @@
                           "term": "Account:",
                           "descriptions": [ 
                               {
-                                  "description": accountStatus,
+        "description": "Pending Deletion  <sub><small><i>The respondent will be deleted by the end of the day</i></small></sub>" if mark_for_deletion else accountStatus,
                                   "id": "respondent-account-status"
                               },
                                 {
@@ -69,7 +69,7 @@
                               }  
                               ,
                                 {
-                                  "description": '<a id="undo-delete-respondent" href="' + url_for('respondent_bp.undo_delete_respondent', respondent_id=respondent.id) + '">Remove respondent for deletion</a>' if mark_for_deletion else ""
+                                  "description": '<a id="undo-delete-respondent" href="' + url_for('respondent_bp.undo_delete_respondent', respondent_id=respondent.id) + '">Reactivate Respondent</a>' if mark_for_deletion else ""
                               }                                
                           ]
                       }
