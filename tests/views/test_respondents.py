@@ -244,8 +244,8 @@ class TestRespondents(ViewTestCase):
         get_response = self.client.get(f"respondents/delete-respondent/{respondent_party_id}",
                                        follow_redirects=True)
         self.assertEqual(get_response.status_code, 200)
-        self.assertIn("All of the information about this person will be deleted".encode(), get_response.data)
-        self.assertIn("Once their data has been removed, it is unrecoverable".encode(), get_response.data)
+        self.assertIn("All of the information about this person will be deleted.".encode(), get_response.data)
+        self.assertIn("Once their data has been removed, it is unrecoverable.".encode(), get_response.data)
         self.assertIn("Allow 24 hours for this to be completed.".encode(), get_response.data)
         self.assertIn("Delete respondent".encode(), get_response.data)
         post_response = self.client.post(f"respondents/delete-respondent/{respondent_party_id}",
