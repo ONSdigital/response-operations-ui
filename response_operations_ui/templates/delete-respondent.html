@@ -1,7 +1,7 @@
 {% from "components/panel/_macro.njk" import onsPanel %}
 {% from "components/button/_macro.njk" import onsButton %}
 {% extends "layouts/base.html" %}
-{% set page_title = "Delete Respondent" %}
+{% set page_title = "Delete respondent" %}
 {% block main %}
 {% include 'partials/flashed-messages.html' %}
 <section>
@@ -53,7 +53,7 @@
         <p>
           {{
             onsButton({
-                "text": "Reactivate Respondent",
+                "text": "Reactivate respondent",
                 "id": "btn-undo-res-del",
                 "name": "undo-respondent-delete"
             })
