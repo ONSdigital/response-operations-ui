@@ -274,9 +274,9 @@ class TestRespondents(ViewTestCase):
         get_response = self.client.get(f"respondents/undo-delete-respondent/{respondent_party_id}",
                                        follow_redirects=True)
         self.assertEqual(get_response.status_code, 200)
-        self.assertIn("The account is pending deletion and will be deleted by the end of day processing".encode(),
+        self.assertIn("The account is pending deletion and will be deleted by the end of day processing.".encode(),
                       get_response.data)
-        self.assertIn("Once their data has been removed, it is unrecoverable".encode(), get_response.data)
+        self.assertIn("Once their data has been removed, it is unrecoverable.".encode(), get_response.data)
         self.assertIn("Reactivate Respondent".encode(), get_response.data)
         post_response = self.client.post(f"respondents/undo-delete-respondent/{respondent_party_id}",
                                          follow_redirects=True)
