@@ -15,6 +15,17 @@ survey_mapping = {
         "survey_name": "Monthly Business Survey - Construction and Allied Trades",
         "survey_id": "228"
     },
+    "aifdi": {
+        "phone_number": "0300 1234 927",
+        "survey_name": "Annual Inward Foreign Direct Investment Survey",
+        "survey_id": "062"
+    },
+
+    "aofdi": {
+        "phone_number": "0300 1234 913",
+        "survey_name": "Annual Outward Foreign Direct Investment Survey",
+        "survey_id": "063"
+    },
     "qifdi": {
         "phone_number": "0300 1234 931",
         "survey_name": "Quarterly Inward Foreign Direct Investment Survey",
