@@ -20,7 +20,6 @@ survey_mapping = {
         "survey_name": "Annual Inward Foreign Direct Investment Survey",
         "survey_id": "062"
     },
-
     "aofdi": {
         "phone_number": "0300 1234 913",
         "survey_name": "Annual Outward Foreign Direct Investment Survey",
