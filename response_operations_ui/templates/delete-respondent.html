@@ -1,7 +1,7 @@
 {% from "components/panel/_macro.njk" import onsPanel %}
 {% from "components/button/_macro.njk" import onsButton %}
 {% extends "layouts/base.html" %}
-{% set page_title = "Delete Respondent" %}
+{% set page_title = "Delete respondent" %}
 {% block main %}
 {% include 'partials/flashed-messages.html' %}
 <section>
@@ -14,8 +14,8 @@
         "classes": "u-mb-m",
       })
     %}
-    <p>All of the information about this person will be deleted</p>
-    <p>Once their data has been removed, it is unrecoverable</p>
+    <p>All of the information about this person will be deleted.</p>
+    <p>Once their data has been removed, it is unrecoverable.</p>
     <p>Allow 24 hours for this to be completed.</p>
     {% endcall %}
     <div class="u-mb-l">
@@ -36,7 +36,7 @@
       </form>
     </div>
   {% elif not delete %}
-    <h1 id="undo-respondent-data">Cancel deletion of {{ respondent_details.firstName[0]|upper }}{{ respondent_details.firstName[1:] }} {{ respondent_details.lastName[0]|upper }}{{ respondent_details.lastName[1:] }}'s data</h1>
+    <h1 id="undo-respondent-data">Reactivate {{ respondent_details.firstName[0]|upper }}{{ respondent_details.firstName[1:] }} {{ respondent_details.lastName[0]|upper }}{{ respondent_details.lastName[1:] }}'s account</h1>
     {% call
       onsPanel({
         "type":"warn",
@@ -44,8 +44,8 @@
         "classes": "u-mb-m",
         })
     %}
-    <p>The account is pending deletion and will be deleted by the end of day processing</p>
-    <p>Once their data has been removed, it is unrecoverable</p>
+    <p>The account is pending deletion and will be deleted by the end of the day.</p>
+    <p>Once their data has been removed, it is unrecoverable.</p>
     {% endcall %}
     <div class="u-mb-l">
       <form id="undo-respondent-deletion" action="{{ url_for('respondent_bp.undo_delete_respondent', respondent_id=respondent_details.id) }}" class="form u-mb-l" method="post">
@@ -53,7 +53,7 @@
         <p>
           {{
             onsButton({
-                "text": "Remove respondent for deletion",
+                "text": "Reactivate respondent",
                 "id": "btn-undo-res-del",
                 "name": "undo-respondent-delete"
             })

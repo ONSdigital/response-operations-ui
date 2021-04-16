@@ -176,9 +176,10 @@ class TestRespondents(ViewTestCase):
         self.assertEqual(response.status_code, 200, 'Sending search form failed')
 
         soup = BeautifulSoup(response.data, features='html.parser')
-        elements_text = [el.text for el in soup.findAll('li')]
+        elements_text = [el.text for el in soup.findAll('a')]
 
-        self.assertTrue('At least one input should be filled' in elements_text, 'Could not find expected error message')
+        self.assertTrue('\n                        At least one input should be filled'
+                        in elements_text, 'Could not find expected error message')
 
     @mock.patch('response_operations_ui.controllers.party_controller.search_respondents')
     def test_search_respondents_posting_form_with_valid_input_goes_to_results_page(self, search_respondents_mock):
@@ -243,14 +244,15 @@ class TestRespondents(ViewTestCase):
         get_response = self.client.get(f"respondents/delete-respondent/{respondent_party_id}",
                                        follow_redirects=True)
         self.assertEqual(get_response.status_code, 200)
-        self.assertIn("All of the information about this person will be deleted".encode(), get_response.data)
-        self.assertIn("Once their data has been removed, it is unrecoverable".encode(), get_response.data)
+        self.assertIn("All of the information about this person will be deleted.".encode(), get_response.data)
+        self.assertIn("Once their data has been removed, it is unrecoverable.".encode(), get_response.data)
         self.assertIn("Allow 24 hours for this to be completed.".encode(), get_response.data)
         self.assertIn("Delete respondent".encode(), get_response.data)
         post_response = self.client.post(f"respondents/delete-respondent/{respondent_party_id}",
                                          follow_redirects=True)
         self.assertEqual(post_response.status_code, 200)
-        self.assertIn("Remove respondent for deletion".encode(), post_response.data)
+        self.assertIn("The account is pending deletion and will be deleted by the end the day.".encode(),
+                      post_response.data)
 
     @requests_mock.mock()
     def test_delete_respondent_template_for_undo_delete(self, mock_request):
@@ -272,10 +274,10 @@ class TestRespondents(ViewTestCase):
         get_response = self.client.get(f"respondents/undo-delete-respondent/{respondent_party_id}",
                                        follow_redirects=True)
         self.assertEqual(get_response.status_code, 200)
-        self.assertIn("The account is pending deletion and will be deleted by the end of day processing".encode(),
+        self.assertIn("The account is pending deletion and will be deleted by the end of the day.".encode(),
                       get_response.data)
-        self.assertIn("Once their data has been removed, it is unrecoverable".encode(), get_response.data)
-        self.assertIn("Remove respondent for deletion".encode(), get_response.data)
+        self.assertIn("Once their data has been removed, it is unrecoverable.".encode(), get_response.data)
+        self.assertIn("Reactivate respondent".encode(), get_response.data)
         post_response = self.client.post(f"respondents/undo-delete-respondent/{respondent_party_id}",
                                          follow_redirects=True)
         self.assertEqual(post_response.status_code, 200)
