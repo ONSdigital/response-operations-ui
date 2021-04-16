@@ -54,7 +54,8 @@ def delete_respondent_account_by_username(username):
         'Authorization': 'Basic %s' % base64.b64encode(bytes(auth)).decode("ascii")
     }
     url = f'{app.config["AUTH_URL"]}/api/account/user'
-    form_data = {"username": username}
+    # force_delete will always be true if deletion is initiated from response operations
+    form_data = {"username": username, "force_delete": True}
     response = requests.delete(url, data=form_data, headers=headers)
     try:
         response.raise_for_status()
@@ -71,7 +72,8 @@ def undo_delete_respondent_account_by_username(username):
         'Authorization': 'Basic %s' % base64.b64encode(bytes(auth)).decode("ascii")
     }
     url = f'{app.config["AUTH_URL"]}/api/account/user/{username}'
-    form_data = {"mark_for_deletion": False}
+    # force_delete will always be false if restore is initiated from response operations
+    form_data = {"mark_for_deletion": False, "force_delete": False}
     response = requests.patch(url, data=form_data, headers=headers)
     try:
         response.raise_for_status()
