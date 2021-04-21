@@ -29,7 +29,7 @@
     {% endfor %}
     {% do surveyTableData | setAttribute("trs", surveyTableDataRows) %}
     {{ onsTable(surveyTableData) }}
-    {% if not ce.state|upper == "LIVE" %}
+    {% if ce.state|upper != "LIVE" and ce.state|upper != "READY FOR LIVE" %}
       <p class="field u-mt-l">
         <a href="{{ url_for('collection_exercise_bp.get_seft_collection_instrument', period=ce.exerciseRef, short_name=survey.shortName.replace(' ', '')) }}"
           role="button" class="btn btn--secondary" id="btn-mng-seft-ci"><span class="btn__inner">Manage collection instruments</span></a>
