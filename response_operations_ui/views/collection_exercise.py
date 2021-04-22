@@ -1,6 +1,7 @@
 import json
 import logging
 from datetime import datetime
+from response_operations_ui.common.dates import localise_datetime
 from dateutil.parser import parse
 
 import iso8601
@@ -392,7 +393,7 @@ def _validate_sample():
 
 def _format_sample_summary(sample):
     if sample and sample.get('ingestDateTime'):
-        submission_datetime = iso8601.parse_date(sample['ingestDateTime'])
+        submission_datetime = localise_datetime(iso8601.parse_date(sample['ingestDateTime']))
         submission_time = submission_datetime.strftime("%I:%M%p on %B %d, %Y")
         sample["ingestDateTime"] = submission_time
 
