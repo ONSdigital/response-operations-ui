@@ -112,9 +112,12 @@
                 "text": "Load sample",
                 "id": "btn-load-sample",
                 "name": "load-sample",
-                "classes": "hidden btn--small"
+                "classes": "hidden btn--small button--loader",
+                "listeners": {
+                  "click": "readCSV.handleFileUpload()"
+                }
             })
-          }}   
+          }}
           {{
             onsButton({
                 "text": "Cancel",
