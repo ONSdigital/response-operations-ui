@@ -63,6 +63,8 @@ with open(f'{project_root}/test_data/survey/classifier_types.json') as json_data
 
 with open(f'{project_root}/test_data/collection_exercise/formatted_collection_exercise_details.json') as fp:
     formatted_collection_exercise_details = json.load(fp)
+with open(f'{project_root}/test_data/collection_exercise/formatted_new_collection_exercise_details.json') as fp:
+    formatted_new_collection_exercise_details = json.load(fp)
 
 with open(f'{project_root}/test_data/collection_exercise/seft_collection_exercise_details.json') as seft:
     seft_collection_exercise_details = json.load(seft)
@@ -1425,7 +1427,7 @@ class TestCollectionExercise(ViewTestCase):
     @requests_mock.mock()
     @patch('response_operations_ui.views.collection_exercise.build_collection_exercise_details')
     def test_manage_collection_instruments_is_present(self, mock_request, mock_details):
-        mock_details.return_value = formatted_collection_exercise_details
+        mock_details.return_value = formatted_new_collection_exercise_details
         mock_request.get(url_get_survey_by_short_name, json=updated_survey_info['survey'])
         mock_request.get(url_ces_by_survey, json=updated_survey_info['collection_exercises'])
         response = self.client.get(
@@ -1438,7 +1440,7 @@ class TestCollectionExercise(ViewTestCase):
 
     @requests_mock.mock()
     @patch('response_operations_ui.views.collection_exercise.build_collection_exercise_details')
-    def test_load_collection_instruments_is_present(self, mock_request, mock_details):
+    def test_load_collection_instruments_is_not_present(self, mock_request, mock_details):
         mock_details.return_value = seft_collection_exercise_details
         mock_request.get(url_get_survey_by_short_name, json=updated_survey_info['survey'])
         mock_request.get(url_ces_by_survey, json=updated_survey_info['collection_exercises'])
