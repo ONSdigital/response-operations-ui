@@ -54,7 +54,6 @@ MarkupSafe = "*"
 WTForms = "==2.2.1"
 
 [dev-packages]
-codecov = "*"
 flake8 = "*"
 fakeredis = "*"
 freezegun = "*"
