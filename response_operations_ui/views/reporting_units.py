@@ -21,6 +21,7 @@ logger = wrap_logger(logging.getLogger(__name__))
 
 reporting_unit_bp = Blueprint('reporting_unit_bp', __name__, static_folder='static', template_folder='templates')
 
+
 @reporting_unit_bp.route('/<ru_ref>', methods=['GET'])
 @login_required
 def view_reporting_unit(ru_ref):
@@ -37,7 +38,7 @@ def view_reporting_unit(ru_ref):
 
     now = datetime.now(timezone.utc)
     live_collection_exercises = [ce for ce in collection_exercises if parse_date(ce['scheduledStartDateTime']) < now]
-    
+
     survey_table_data = build_table_data_dict(live_collection_exercises, case_groups)
 
     breadcrumbs = [
@@ -54,19 +55,20 @@ def view_reporting_unit(ru_ref):
     return render_template('reporting-unit.html', ru_ref=ru_ref,
                            surveys=survey_table_data, breadcrumbs=breadcrumbs)
 
+
 def build_table_data_dict(collection_exercises, case_groups):
     table_data = {}
     for ce in collection_exercises:
         if ce['surveyId'] in table_data:
             # Keep the one with the later go-live date
-            if (parse_date(table_data['surveyId']['collectionExercise']['scheduledStartDateTime']) 
-               > parse_date(ce['scheduledStartDateTime'])):
+            if (parse_date(table_data['surveyId']['collectionExercise']['scheduledStartDateTime']) >
+                parse_date(ce['scheduledStartDateTime'])):
                continue
-        
-        table_data['surveyId'] = {"collectionExercise": ce, 
+
+        table_data['surveyId'] = {"collectionExercise": ce,
                                   "caseStatus": get_case_group_status_by_collection_exercise(
-                                                case_groups, ce['collectionExerciseId'])}
-    
+                                    case_groups, ce['collectionExerciseId'])}
+
     # Convert survey IDs to survey ref/name pairs ready for display
     for survey_id in table_data.keys():
         survey = get_survey_by_id(survey_id)
@@ -82,6 +84,7 @@ def build_table_data_dict(collection_exercises, case_groups):
         table_data[survey_display_name] = row_data
     
     return sorted(table_data.items(), key=lambda t: t[0])
+
 
 """
 @reporting_unit_bp.route('/<ru_ref>', methods=['GET'])
@@ -166,6 +169,7 @@ def view_reporting_unit(ru_ref):
     return render_template('reporting-unit.html', ru_ref=ru_ref, ru=reporting_unit,
                            surveys=surveys_with_latest_case, breadcrumbs=breadcrumbs)
 """
+
 
 def add_collection_exercise_details(collection_exercise, reporting_unit, case_groups):
     """
