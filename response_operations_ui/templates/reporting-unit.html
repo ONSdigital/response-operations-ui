@@ -1,33 +1,83 @@
 {% extends "layouts/base.html" %}
 {% from "components/button/_macro.njk" import onsButton %}
+{% from "components/table/_macro.njk" import onsTable %}
 
 {% set page_title = ru.name + " | Reporting units" %}
 
 {% block main %}
+  {% include 'partials/flashed-messages.html' %}
 
+  <h1 id="RU_NAME" class="u-fs-xl">{{ ru.name }}</h1>
 
-{% include 'partials/flashed-messages.html' %}
-
-<h1 id="RU_NAME" class="u-fs-xl">{{ ru.name }}</h1>
-
-<dl id="RU_DETAILS" class="item-headlines">
-  <dt class="item-headlines-term">
-    Reference:
-  </dt>
-  <dd id="RU_REF" class="item-headlines-definition">
-    {{ ru.sampleUnitRef }}
-  </dd>
-  {% if ru.trading_as %}
+  <dl id="RU_DETAILS" class="item-headlines">
     <dt class="item-headlines-term">
-        Trading as:
+      Reference:
     </dt>
-    <dd id="TRADING_AS" class="item-headlines-definition">
-        {{ ru.trading_as }} &#160;
+    <dd id="RU_REF" class="item-headlines-definition">
+      {{ ru.sampleUnitRef }}
     </dd>
-  {% endif %}
-</dl>
+    {% if ru.trading_as %}
+      <dt class="item-headlines-term">
+        Trading as:
+      </dt>
+      <dd id="TRADING_AS" class="item-headlines-definition">
+        {{ ru.trading_as }} &#160;
+      </dd>
+    {% endif %}
+  </dl>
 
-<h2 class="u-fs-l">Surveys</h2>
+  {% include 'partials/reporting-unit-tabs.html' %}
+
+  {% 
+    set surveyTableData = {
+      "table_class": 'table--responsive table--dense',
+      "id": 'tbl-surveys',
+      "ths": [
+        {
+          "value": "Survey"
+        },
+        {
+          "value": "Current period"
+        },
+        {
+          "value": "Status"
+        }
+      ]
+    }
+  %}
+
+  {% set surveyTableDataRows = [] %}
+
+  {% for survey_name, details in surveys.items() %}
+    {% do surveyTableDataRows.append( 
+      {
+        "tds": [
+          {
+            "value": survey_name,
+            "data": "Survey",
+            "name": "tbl-surveys-survey"
+          },
+          {
+            "value": details.collectionExercise,
+            "data": "Current period",
+            "name": "tbl-surveys-period"
+          },
+          {
+            "value": details.caseStatus,
+            "data": "Status",
+            "name": "tbl-surveys-status"
+          }
+        ]
+      }
+    ) %}
+  {% endfor %}
+
+  % do surveyTableData | setAttribute("trs", surveyTableDataRows) %
+  {{
+    onsTable(surveyTableData)
+  }}
+
+<!-- 
 <div class="grid">
   <section class="grid__col col-12@l ru-surveys">
     {% for survey in surveys %}
@@ -91,7 +141,6 @@
           </tbody>
         </table>
       </div>
-
         <div class="ru-survey-respondents u-pt-s">
           <h4 class="u-fs-m">Respondents</h4>
 
@@ -250,4 +299,5 @@
     </script>
   </section>
 </div>
+-->
 {% endblock %}
