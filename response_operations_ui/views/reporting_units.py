@@ -61,13 +61,14 @@ def build_table_data_dict(collection_exercises, case_groups):
     for ce in collection_exercises:
         if ce['surveyId'] in table_data:
             # Keep the one with the later go-live date
-            if (parse_date(table_data['surveyId']['collectionExercise']['scheduledStartDateTime']) >
-                parse_date(ce['scheduledStartDateTime'])):
-               continue
+            if (parse_date(table_data['surveyId']['collectionExercise']['scheduledStartDateTime']) 
+                    > parse_date(ce['scheduledStartDateTime'])):
+                continue
 
-        table_data['surveyId'] = {"collectionExercise": ce,
-                                  "caseStatus": get_case_group_status_by_collection_exercise(
-                                    case_groups, ce['collectionExerciseId'])}
+        table_data['surveyId'] = {
+                                    "collectionExercise": ce,
+                                    "caseStatus": get_case_group_status_by_collection_exercise(
+                                        case_groups, ce['collectionExerciseId'])}
 
     # Convert survey IDs to survey ref/name pairs ready for display
     for survey_id in table_data.keys():
@@ -82,7 +83,7 @@ def build_table_data_dict(collection_exercises, case_groups):
 
         # Reinsert with the new survey name key
         table_data[survey_display_name] = row_data
-    
+
     return sorted(table_data.items(), key=lambda t: t[0])
 
 
