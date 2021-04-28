@@ -39,6 +39,7 @@ def view_reporting_unit(ru_ref):
         ce['scheduledStartDateTime']) < datetime.now(timezone.utc)]
 
     survey_table_data = build_table_data_dict(live_collection_exercises, case_groups)
+    print(survey_table_data)
 
     breadcrumbs = [
         {
@@ -51,7 +52,7 @@ def view_reporting_unit(ru_ref):
     ]
 
     logger.info("Successfully gathered data to view reporting unit", ru_ref=ru_ref)
-    return render_template('reporting-unit.html', ru_ref=ru_ref,
+    return render_template('reporting-unit.html', ru=reporting_unit,
                            surveys=survey_table_data, breadcrumbs=breadcrumbs)
 
 
@@ -64,14 +65,14 @@ def build_table_data_dict(collection_exercises, case_groups):
                            ['scheduledStartDateTime']) > parse_date(ce['scheduledStartDateTime'])):
                 continue
 
-        table_data['surveyId'] = {
+        table_data[ce['surveyId']] = {
             "collectionExercise": ce,
-            "caseStatus": get_case_group_status_by_collection_exercise(
-                case_groups, ce['collectionExerciseId'])
+            "caseStatus": map_ce_response_status(get_case_group_status_by_collection_exercise(
+                case_groups, ce['id']))
         }
 
     # Convert survey IDs to survey ref/name pairs ready for display
-    for survey_id in table_data.keys():
+    for survey_id in list(table_data.keys()):
         survey = get_survey_by_id(survey_id)
         survey_display_name = f"{survey['surveyRef']} {survey['shortName']}"
 
