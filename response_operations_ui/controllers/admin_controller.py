@@ -44,7 +44,7 @@ def current_banner():
     return response.json()
 
 
-def set_banner(banner_text):
+def set_banner(banner_text: str):
     """
     Sets the text of the banner.  If there was a banner already active then this will overwrite the text
     that was previously there.
@@ -110,14 +110,12 @@ def get_templates():
     return templates
 
 
-def get_template(template_id):
+def get_template(template_id: str) -> dict:
     """
     Get a specific template, by id, from the banner-api service.
 
     :param template_id: A string representation of the template_id
-    :type template_id: str
     :return: A dict containing the data stored for the template
-    :rtype: dict
     :raises ApiError: Raised on any 4XX or 5XX returned from the banner-api
     """
     logger.info('Attempting to retrieve template', template_id=template_id)
@@ -134,14 +132,12 @@ def get_template(template_id):
     return template
 
 
-def create_new_template(template):
+def create_new_template(template: dict) -> dict:
     """
     Creates a new template.
 
     :param template: A dictionary containing all the data required for a new template
-    :type template: dict
     :return: A copy of what the banner-api has saved to the database
-    :rtype: dict
     :raises ApiError: Raised on any 4XX or 5XX returned from the banner-api
     """
     logger.info('Attempting to create a template', template=template)
@@ -159,15 +155,13 @@ def create_new_template(template):
     return banner
 
 
-def edit_template(template):
+def edit_template(template: dict) -> dict:
     """
     Edits an existing template. The template that is provided will overwrite everything that was there
     previously.
 
     :param template: A dict containing all the fields for the template
-    :type template: dict
     :return: A copy of what the banner-api has saved to the database
-    :rtype: dict
     :raises ApiError: Raised on any 4XX or 5XX returned from the banner-api
     """
     logger.info('Attempting to edit the template', template=template)
@@ -184,12 +178,11 @@ def edit_template(template):
     return banner
 
 
-def delete_template(template_id):
+def delete_template(template_id: str):
     """
     Deletes a template, if it exists.  Will report success even if it didn't exist.
 
     :param template_id: A string representation of the template_id
-    :type template_id: str
     :rtype: None
     :raises ApiError: Raised on any 4XX or 5XX returned from the banner-api
     """
