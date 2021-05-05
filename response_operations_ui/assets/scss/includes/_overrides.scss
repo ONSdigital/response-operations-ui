@@ -52,13 +52,6 @@ footer {
     display: none;
 }
 
-/* new button icon for copy from material design icon library */
-
-.btn__icon--copy-link {
-    background-image: url("/s/img/icons/ic_content_copy_black_18px.svg");
-    width: 1.2rem;
-}
-
 /* Survey page */
 
 .in-the-past {
@@ -128,7 +121,7 @@ button.hidden {
 
 .ce-ci-info-list__item.success {
     list-style: none;
-    background-image: url("/s/img/tick-green.png");
+    background-image: url("../images/tick-green.png");
     background-size: 20px 20px;
     background-repeat: no-repeat;
     background-position: left center;
@@ -140,10 +133,6 @@ button.hidden {
     margin: 0 0.5rem;
     padding: 0.25rem 1rem;
     width: auto;
-}
-
-.lock::before {
-    background: white url("/s/img/icons/icons--lock.svg") no-repeat center center;
 }
 
 .page__content {

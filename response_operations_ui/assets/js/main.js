@@ -1,5 +1,5 @@
-require('./includes/alert-library');
-require('./includes/data-panel');
-require('./includes/disable-send');
-require('./includes/read-csv');
-require('./includes/validate-ci');
+import './includes/alert-library';
+import './includes/data-panel';
+import './includes/disable-send';
+import './includes/read-csv';
+import './includes/validate-ci';

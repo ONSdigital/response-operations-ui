@@ -6,11 +6,14 @@
 {% from "components/panel/_macro.njk" import onsPanel %}
 
 {% set page_title = "Respondents" %}
+{% set hide_breadcrumbs = true %}
+
 {% block main %}
     {% if success_panel %}
     {% call
         onsPanel({
             "type": "success",
+            "icon": "check",
             "classes": "u-mb-s",
             "id": "success-panel"
         })

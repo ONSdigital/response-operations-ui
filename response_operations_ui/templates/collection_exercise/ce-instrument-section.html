@@ -130,12 +130,13 @@
             {% endfor %}
             {% do checkboxesData | setAttribute("checkboxes", checkboxData) %}
             {{ onsCheckboxes(checkboxesData) }}
+            <p class="field u-mt-s">
             {{
               onsButton({
                 "text": "Add",
                 "id": "btn-add-ci",
+                "classes": "btn--large",
                 "name": "select-ci",
-                "submitType": "timer"
               })
             }}
           </div>
@@ -145,7 +146,7 @@
       {% else %}
         <div>
           <p>This survey type is an EQ but no collection instruments have been set up for it yet.</p>
-          <p><a href="{{ url_for('surveys_bp.get_link_collection_instrument', short_name=survey.shortName) }}">Go here to link instruments</a></p>
+          <p><a href="{{ url_for('surveys_bp.get_link_collection_instrument', short_name=survey.shortName) }}" class="btn btn--secondary btn--small"><span class="btn__inner">Link collection instruments</span></a></p>
         </div>
       {% endif %}
     </div>

@@ -89,3 +89,10 @@ window.readCSV.cancelLoadSample = function() {
     document.getElementById('btn-cancel-load-sample').style.display = 'none';
     document.getElementById('sampleFile').focus();
 };
+
+
+window.readCSV.handleFileUpload = function() {
+    document.getElementById('btn-load-sample').classList.add('is-loading');
+    document.getElementById('btn-load-sample').style.pointerEvents = "none";
+
+};
