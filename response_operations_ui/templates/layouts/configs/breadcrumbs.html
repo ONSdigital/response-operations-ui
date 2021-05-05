@@ -1,31 +1,26 @@
 {% from "components/breadcrumb/_macro.njk" import onsBreadcrumb %}
 
-{% if request.path == "/choose-overview-survey" %}
-  {% set breadcrumbsData = [] %}
-{% else %}
-  {% set breadcrumbsData = [
-    {
-      "text": "Home",
-      "url": "/choose-overview-survey"
+{% set breadcrumbsData = [] %}
+{% if breadcrumbs|length > 1 %}
+  {% for breadcrumb in breadcrumbs[:-2] %}
+
+    {% do breadcrumbsData.append(breadcrumb) %}
+  {% endfor %}
+
+  {% do breadcrumbsData.append(
+    { 
+      "text": breadcrumbs[-2].text,
+      "url": breadcrumbs[-2].url
     }
-  ] %}
-{% endif %}
+  ) %}
+  {{ 
 
-{% for breadcrumb in breadcrumbs[:-1] %}
-  {% do breadcrumbsData.append(breadcrumb) %}
-{% endfor %}
-
-{% do breadcrumbsData.append(
-  { 
-    "text": breadcrumbs[-1].text,
-    "url": breadcrumbs[-1].url,
-    "current": true
-  }
-) %}
-{{ 
     onsBreadcrumb({
         "ariaLabel": "Breadcrumbs",
         "id": "breadcrumbs",
         "itemsList": breadcrumbsData
     })
-}}
+  }}
+{% endif %}
+
+

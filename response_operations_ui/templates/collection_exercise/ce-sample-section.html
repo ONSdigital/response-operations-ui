@@ -102,7 +102,6 @@
                 "text": "Check sample contents",
                 "id": "btn-check-sample-contents",
                 "classes": "btn--small btn--disabled",
-                "submitType": "timer",
                 "attributes": {
                   "disabled": "true"
                 }
@@ -113,16 +112,17 @@
                 "text": "Load sample",
                 "id": "btn-load-sample",
                 "name": "load-sample",
-                "classes": "hidden btn--small",
-                "submitType": "timer"
+                "classes": "hidden btn--small button--loader",
+                "listeners": {
+                  "click": "readCSV.handleFileUpload()"
+                }
             })
-          }}   
+          }}
           {{
             onsButton({
                 "text": "Cancel",
                 "classes": "hidden btn--secondary btn--small",
                 "id": "btn-cancel-load-sample",
-                "submitType": "timer",
                 "listeners": {
                   "click": "readCSV.cancelLoadSample()"
                 }

@@ -16,7 +16,8 @@
                         onsPanel({
                             "type": "error" if category == "failed_authentication" else "success",
                             "classes": "u-mb-s",
-                            "title":  message if category == "failed_authentication"
+                            "title":  message if category == "failed_authentication",
+                            "icon": null if category == "failed_authentication" else "check",
                         })
                     %}
                     {% if category == "failed_authentication" %}
@@ -29,7 +30,7 @@
             {% endfor %}
         {% endif %}
     {% endwith %}
-        <form method="post" class="form u-mt-xl">
+        <form method="post" class="form">
             {{ form.csrf_token }}
             {% if form.errors %}
                 {% set errorData = [] %}
@@ -68,9 +69,10 @@
                 }}
                 {% endcall %}
             {% endif %}
-
-                    <h1>Sign in</h1>
-                    <a href="/account/request-new-account">Create an account</a><br><br>
+            <p class="field">
+                <h1>Sign in</h1>
+                <a href="/account/request-new-account">Create an account</a>
+            </p>
 
             {% if failed_authentication or form.username.errors | length > 0 %}
                 {% set error = { "text": "Username is required" } %}
