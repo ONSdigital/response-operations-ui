@@ -113,7 +113,9 @@
                 "id": "btn-load-sample",
                 "name": "load-sample",
                 "classes": "hidden btn--small button--loader",
-                "submitType": "timer"
+                "listeners": {
+                  "click": "readCSV.handleFileUpload()"
+                }
             })
           }}
           {{
