@@ -9,7 +9,7 @@
 
   <div class="grid grid--gutterless">
     <div class="grid__col col-8@m">
-        <h1 class="u-fs-xl u-mt-m">Create survey</h1>
+        <h1 class="u-fs-xl">Create new survey</h1>
             <form action="" method="post">
                 {{ form.csrf_token }}
                 {% if errors %}
@@ -42,24 +42,9 @@
             {% endif %}
 
             {%- call onsFieldset({
-                "legend": "Create survey",
+                "legend": "Create new survey",
                 "legendClasses": "u-vh"
                 }) -%}
-                {{
-                    onsInput({
-                        "id": "survey_ref",
-                        "name": "survey_ref",
-                        "type": "text",
-                        "maxLength": 20,
-                        "value": survey_ref,
-                        "attributes": {
-                            "required": true
-                        },
-                        "label": {
-                            "text": 'Survey ID'
-                        }
-                    })
-                }} 
                 {{
                     onsInput({
                         "id": "long_name",
@@ -70,7 +55,25 @@
                             "required": true
                         },
                         "label": {
-                            "text": 'Survey name'
+                            "text": 'Survey name',
+                            "description": "For example: Monthly Business Survey"
+                        }
+                    })
+                }} 
+                {{
+                    onsInput({
+                        "id": "survey_ref",
+                        "name": "survey_ref",
+                        "type": "text",
+                        "maxLength": 20,
+                        "value": survey_ref,
+                        "classes": "input--w-5",
+                        "attributes": {
+                            "required": true
+                        },
+                        "label": {
+                            "text": 'Survey ID',
+                            "description": "For example: 001"
                         }
                     })
                 }} 
@@ -80,11 +83,13 @@
                         "name": "short_name",
                         "type": "text",
                         "maxLength": 20,
+                        "classes": "input--w-5",
                         "attributes": {
                             "required": true
                         },
                         "label": {
-                            "text": 'Abbreviation'
+                            "text": 'Abbreviation',
+                            "description": "For example: MBS"
                         }
                     })
                 }} 
@@ -101,17 +106,20 @@
                 </label>
                 {{ form.survey_mode(class_="input input--select", id='survey_mode', required=required) }}
             </div> 
-            {{
-                onsButton({
-                    "classes": "u-mb-s u-mt-l",
-                    "text": "Create",
-                    "id": "save-btn"
-                })
-            }}   
 
-            <p>
-                <a id="cancel-btn" href="{{ url_for('surveys_bp.view_surveys') }}">Cancel</a>
-            </p>
+            <div class="grid grid--flex grid--gutterless grid--vertical-center grid--no-wrap@s u-mt-m u-mb-m">
+                <div class="grid__col">
+                    {{
+                        onsButton({
+                            "text": "Save and continue",
+                            "id": "save-btn"
+                        })
+                    }} 
+                </div>
+                <div class="grid__col u-ml-m">
+                    <a id="cancel-btn" href="{{ url_for('surveys_bp.view_surveys') }}">Cancel</a>
+                </div>
+            </div>
         </form>
     </div>
 </div>

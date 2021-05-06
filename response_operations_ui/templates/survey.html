@@ -10,6 +10,7 @@
     {{      
       onsPanel({
           "type": "success",
+          "icon": "check",
           "classes": "u-mb-s",
           "id": "updated_ce_message",
           "body": "Collection exercise details updated"
@@ -20,6 +21,7 @@
       {% call
         onsPanel({
             "type": "success",
+            "icon": "check",
             "classes": "u-mb-s",
             "id": "created_ce_message"
         })
@@ -31,8 +33,8 @@
       {% endcall %}
   {% endif %}
 
-  <h1 name="page-survey-title" class="u-mb-l">{{survey.longName}}</h1>
-  <section class="u-cf u-mb-l">
+  <h1 name="page-survey-title">{{survey.longName}}</h1>
+  <section class="u-cf">
     {{ 
       onsMetadata({
         "metadataLabel": survey.longName + "information",
@@ -91,18 +93,16 @@
   </section>
   <section class="ce-list">
     <h2>Collection exercises for {{survey.shortName}}</h2>
-    <div class="u-mb-l">
-      {% if survey.surveyMode == 'EQ' %}
-        <p class="field u-mt-l">
-          <a href="{{ url_for('surveys_bp.get_link_collection_instrument', short_name=survey.shortName) }}"
-            role="button" class="btn" id="link-collection-instrument" name="link-collection-instrument-link"><span class="btn__inner">Link collection instrument</span></a>
-        </p>
-      {% endif %}
-      <p class="field u-mt-l">
-        <a href="{{ url_for('collection_exercise_bp.get_create_collection_exercise_form', survey_ref=survey.surveyRef, short_name=survey.shortName.replace(' ', '')) }}"
-          role="button" class="btn" id="create-collection-exercise" name="create-collection-exercise-link"><span class="btn__inner">Create collection exercise</span></a>
+    {% if survey.surveyMode == 'EQ' %}
+      <p class="field">
+        <a href="{{ url_for('surveys_bp.get_link_collection_instrument', short_name=survey.shortName) }}"
+          role="button" class="btn btn--secondary btn--small" id="link-collection-instrument" name="link-collection-instrument-link"><span class="btn__inner">Link collection instrument</span></a>
       </p>
-    </div>
+    {% endif %}
+    <p class="field">
+      <a href="{{ url_for('collection_exercise_bp.get_create_collection_exercise_form', survey_ref=survey.surveyRef, short_name=survey.shortName.replace(' ', '')) }}"
+        role="button" class="btn" id="create-collection-exercise" name="create-collection-exercise-link"><span class="btn__inner">Create collection exercise</span></a>
+    </p>
 
     {% set surveyTableData = {
         "table_class": 'table--responsive table--dense',

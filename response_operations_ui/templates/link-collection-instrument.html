@@ -5,11 +5,11 @@
 {% from "components/lists/_macro.njk" import onsList %}
 {% from "components/table/_macro.njk" import onsTable %}
 
-{% set page_title = 'Link collection instrument'  %}
+{% set page_title = 'Link collection instruments'  %}
 {% block main %}
   <div class="grid grid--gutterless">
     <div class="grid__col col-8@m">
-      <h1 class="u-fs-xl u-mt-m">Load collection instruments for {{ short_name }}</h1>
+      <h1 class="u-fs-xl">Link collection instruments for {{ short_name }}</h1>
       <form action="" method="post">
         {{ form.csrf_token }}
         {% if errors %}
@@ -39,7 +39,7 @@
         {% endcall %}
         {% endif %}
         {%- call onsFieldset({
-          "legend": "Link collection instrument",
+          "legend": "Link collection instruments",
           "legendClasses": "u-vh" })
         -%}
         {{
@@ -49,18 +49,20 @@
               "type": "text",
               "maxLength": 20,
               "value": form.formtype.data,
+              "classes": "input--w-5",
               "attributes": {
                   "required": true
               },
               "label": {
-                  "text": 'Formtype'
+                  "text": 'Add form type',
+                  "description": "For example: 0101"
               }
           })
         }}
         {% endcall %}
         {{
           onsButton({
-              "classes": "u-mb-s u-mt-l btn btn--secondary",
+              "classes": "u-mb-l u-mt-s btn btn--secondary btn--small",
               "text": "Upload",
               "id": "save-btn"
           })

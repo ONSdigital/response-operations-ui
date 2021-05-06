@@ -5,7 +5,7 @@
 {% block main %}
   <div class="grid grid--gutterless">
     <div class="grid__col col-8@m">
-      <h1 class="u-fs-xl u-mt-m">Re-send verification email</h1>
+      <h1 class="u-fs-xl">Re-send verification email</h1>
       <form action="" method="post" class="u-mt-l">
         <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
         <input type="hidden" name="change" value="verification-email-sent" />

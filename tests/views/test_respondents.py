@@ -178,7 +178,7 @@ class TestRespondents(ViewTestCase):
         soup = BeautifulSoup(response.data, features='html.parser')
         elements_text = [el.text for el in soup.findAll('a')]
 
-        self.assertTrue('\n                        At least one input should be filled'
+        self.assertTrue('At least one input should be filled'
                         in elements_text, 'Could not find expected error message')
 
     @mock.patch('response_operations_ui.controllers.party_controller.search_respondents')
