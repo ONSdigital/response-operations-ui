@@ -700,7 +700,7 @@ class TestMessage(ViewTestCase):
         response = self.client.get("/messages/select-survey")
 
         self.assertEqual(200, response.status_code)
-        self.assertIn("Filter messages by survey".encode(), response.data)
+        self.assertIn("Choose which messages to show".encode(), response.data)
         self.assertIn("ASHE".encode(), response.data)
         self.assertIn("Bricks".encode(), response.data)
         self.assertIn("BRES".encode(), response.data)
@@ -715,8 +715,8 @@ class TestMessage(ViewTestCase):
 
         self.assertEqual(200, response.status_code)
         self.assertIn("Home".encode(), response.data)
-        self.assertIn("Filter messages by survey".encode(), response.data)
-        self.assertIn("Select a survey to display messages for your team".encode(), response.data)
+        self.assertIn("Choose which messages to show".encode(), response.data)
+        self.assertIn("Surveys".encode(), response.data)
 
     @requests_mock.mock()
     def test_get_messages_survey_does_not_exist(self, mock_request):
@@ -736,7 +736,7 @@ class TestMessage(ViewTestCase):
         response = self.client.get("/messages", follow_redirects=True)
 
         self.assertEqual(response.status_code, 200)
-        self.assertIn("Filter messages by survey".encode(), response.data)
+        self.assertIn("Choose which messages to show    ".encode(), response.data)
 
     @requests_mock.mock()
     @patch('response_operations_ui.controllers.message_controllers._get_jwt')
