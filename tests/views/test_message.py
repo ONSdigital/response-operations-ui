@@ -434,7 +434,7 @@ class TestMessage(ViewTestCase):
           "body": "TEST MESSAGE",
           "thread_id": "",
           "collection_case": "",
-          "survey": "BRES2017",
+          "survey_id": "BRES2017",
           "business_id": "c614e64e-d981-4eba-b016-d9822f09a4fb"
         }
         '''

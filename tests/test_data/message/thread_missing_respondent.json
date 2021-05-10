@@ -25,7 +25,7 @@
             "business_id": "a9ae91cc-0acc-47c4-9433-27f9d629b532",
             "sent_date": "2019-11-13 13:27:40.190012",
             "subject": "message 1",
-            "survey": "cb8accda-6118-4d3b-85a3-149e28960c54",
+            "survey_id": "cb8accda-6118-4d3b-85a3-149e28960c54",
             "thread_id": "fb0e79bd-e132-4f4f-a7fd-5e8c6b41b9af"
         },
         {
@@ -52,7 +52,7 @@
             "business_id": "a9ae91cc-0acc-47c4-9433-27f9d629b532",
             "sent_date": "2019-11-13 13:25:43.411487",
             "subject": "message 1",
-            "survey": "cb8accda-6118-4d3b-85a3-149e28960c54",
+            "survey_id": "cb8accda-6118-4d3b-85a3-149e28960c54",
             "thread_id": "fb0e79bd-e132-4f4f-a7fd-5e8c6b41b9af"
         },
         {
@@ -79,7 +79,7 @@
             "business_id": "a9ae91cc-0acc-47c4-9433-27f9d629b532",
             "sent_date": "2019-11-13 13:25:19.093378",
             "subject": "message 1",
-            "survey": "cb8accda-6118-4d3b-85a3-149e28960c54",
+            "survey_id": "cb8accda-6118-4d3b-85a3-149e28960c54",
             "thread_id": "fb0e79bd-e132-4f4f-a7fd-5e8c6b41b9af"
         },
         {
@@ -106,7 +106,7 @@
             "business_id": "a9ae91cc-0acc-47c4-9433-27f9d629b532",
             "sent_date": "2019-11-13 13:23:16.915518",
             "subject": "message 1",
-            "survey": "cb8accda-6118-4d3b-85a3-149e28960c54",
+            "survey_id": "cb8accda-6118-4d3b-85a3-149e28960c54",
             "thread_id": "fb0e79bd-e132-4f4f-a7fd-5e8c6b41b9af"
         },
         {
@@ -133,7 +133,7 @@
             "business_id": "a9ae91cc-0acc-47c4-9433-27f9d629b532",
             "sent_date": "2019-11-12 15:50:07.090764",
             "subject": "message 1",
-            "survey": "cb8accda-6118-4d3b-85a3-149e28960c54",
+            "survey_id": "cb8accda-6118-4d3b-85a3-149e28960c54",
             "thread_id": "fb0e79bd-e132-4f4f-a7fd-5e8c6b41b9af"
         },
         {
@@ -163,7 +163,7 @@
             "business_id": "a9ae91cc-0acc-47c4-9433-27f9d629b532",
             "sent_date": "2019-11-12 15:49:54.247973",
             "subject": "message 1",
-            "survey": "cb8accda-6118-4d3b-85a3-149e28960c54",
+            "survey_id": "cb8accda-6118-4d3b-85a3-149e28960c54",
             "thread_id": "fb0e79bd-e132-4f4f-a7fd-5e8c6b41b9af"
         },
         {
@@ -191,7 +191,7 @@
             "business_id": "a9ae91cc-0acc-47c4-9433-27f9d629b532",
             "sent_date": "2019-11-12 15:49:34.906784",
             "subject": "message 1",
-            "survey": "cb8accda-6118-4d3b-85a3-149e28960c54",
+            "survey_id": "cb8accda-6118-4d3b-85a3-149e28960c54",
             "thread_id": "fb0e79bd-e132-4f4f-a7fd-5e8c6b41b9af"
         }
     ]

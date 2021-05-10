@@ -74,7 +74,7 @@ def view_reporting_unit(ru_ref):
 
     # Generate appropriate info message is necessary
     # TODO Standardise how the info messages are generated
-    survey_arg = request.args.get('survey')
+    survey_arg = request.args.get('survey'_id)
     period_arg = request.args.get('period')
     if survey_arg and period_arg:
         survey = next(filter(lambda s: s['shortName'] == survey_arg, sorted_linked_surveys))

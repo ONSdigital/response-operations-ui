@@ -26,7 +26,7 @@ logger = wrap_logger(logging.getLogger(__name__))
 @login_required
 def get_response_statuses(ru_ref, error=None):
     logger.info("Retrieving response statuses", ru_ref=ru_ref)
-    short_name = request.args.get('survey')
+    short_name = request.args.get('survey_id')
     period = request.args.get('period')
 
     completed_respondent = ''
@@ -71,7 +71,7 @@ def get_response_statuses(ru_ref, error=None):
 @case_bp.route('/<ru_ref>/response-status', methods=['POST'])
 @login_required
 def update_response_status(ru_ref):
-    short_name = request.args.get('survey')
+    short_name = request.args.get('survey_id')
     period = request.args.get('period')
     case_group_id = request.args['case_group_id']
     form = ChangeGroupStatusForm(request.form)
