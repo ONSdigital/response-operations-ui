@@ -174,7 +174,7 @@ def resend_verification(party_id):
 def change_enrolment_status(respondent_id):
     reporting_units_controllers.change_enrolment_status(business_id=request.args['business_id'],
                                                         respondent_id=respondent_id,
-                                                        survey_id=request.args['survey_id'],
+                                                        survey_id=request.args['survey'],
                                                         change_flag=request.args['change_flag'])
     return redirect(url_for('respondent_bp.respondent_details', respondent_id=respondent_id, enrolment_changed='True'))
 
