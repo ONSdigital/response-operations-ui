@@ -49,6 +49,13 @@
   {% set surveyTableDataRows = [] %}
 
   {% for survey in surveys %}
+    {% if survey[1].caseStatus == 'Not started' %}
+      {% set status_class = 'status--dead' %}
+    {% elif survey[1].caseStatus == 'In progress' or survey[1].caseStatus == 'Completed' or survey[1].caseStatus == 'Completed by phone' %}
+      {% set status_class = 'status--success' %}
+    {% else %}
+      {% set status_class = 'status--error' %}
+    {% endif %}
     {% do surveyTableDataRows.append( 
       {
         "tds": [
@@ -63,7 +70,7 @@
             "name": "tbl-surveys-period"
           },
           {
-            "value": survey[1].caseStatus,
+            "value": '<span class="status ' + status_class + '">' + survey[1].caseStatus + '</span>',
             "data": "Status",
             "name": "tbl-surveys-status"
           }
