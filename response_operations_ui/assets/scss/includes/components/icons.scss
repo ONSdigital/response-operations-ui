@@ -1,7 +1,6 @@
 .download-csv,
 .edit-icon,
-.add-icon,
-.remove-icon {
+.add-icon {
     padding-left: 18px;
     background-repeat: no-repeat;
     background-position: 0 2px;
@@ -17,8 +16,4 @@
 
 .add-icon {
     background-image: url("../../images/ic_add_circle_outline_black_18px.svg");
-}
-
-.remove-icon {
-    background-image: url("../../images/ic_remove_circle_outline_black_18px.svg");
 }
