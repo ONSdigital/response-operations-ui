@@ -101,8 +101,6 @@ def view_respondents(ru_ref):
 
     respondent_table_data = build_respondent_table_data_dict(respondents, ru_ref)
 
-    logger.info("HELP", data=respondent_table_data)
-
     breadcrumbs = [
         {
             "text": "Reporting units",
