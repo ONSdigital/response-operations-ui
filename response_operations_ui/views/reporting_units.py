@@ -295,7 +295,7 @@ def generate_new_enrolment_code(ru_ref):
 def confirm_change_enrolment_status(ru_ref):
     return render_template('confirm-enrolment-change.html', business_id=request.args['business_id'], ru_ref=ru_ref,
                            ru_name=request.args.get('ru_name'),
-                           trading_as=request.args['trading_as'], survey_id=request.args['survey_id'],
+                           trading_as=request.args['trading_as'], survey_id=request.args['survey'],
                            survey_name=request.args['survey_name'], respondent_id=request.args['respondent_id'],
                            first_name=request.args['respondent_first_name'],
                            last_name=request.args['respondent_last_name'],
@@ -322,7 +322,7 @@ def confirm_change_respondent_status(ru_ref):
 def change_enrolment_status(ru_ref):
     reporting_units_controllers.change_enrolment_status(business_id=request.args['business_id'],
                                                         respondent_id=request.args['respondent_id'],
-                                                        survey_id=request.args['survey_id'],
+                                                        survey_id=request.args['survey'],
                                                         change_flag=request.args['change_flag'])
     return redirect(url_for('reporting_unit_bp.view_reporting_unit', ru_ref=ru_ref, enrolment_changed='True'))
 
