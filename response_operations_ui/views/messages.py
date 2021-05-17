@@ -46,7 +46,7 @@ def create_message():
 
         try:
             message_controllers.send_message(_get_message_json(form))
-            ru_ref = request.form.get("hidden_ru_ref")
+            ru_ref = request.form.get("hid  den_ru_ref")
             flash("Message sent.")
             if ru_ref:
                 return redirect(url_for('reporting_unit_bp.view_reporting_unit', ru_ref=ru_ref))
@@ -446,7 +446,7 @@ def _get_conversation_breadcrumbs(messages):
 
 
 def _repopulate_form_with_submitted_data(form):
-    form.survey.text = form.hidden_survey.data
+    form.survey_id.text = form.hidden_survey.data
     form.ru_ref.text = form.hidden_ru_ref.data
     form.business.text = form.hidden_business.data
     form.to.text = form.hidden_to.data
@@ -463,7 +463,7 @@ def _get_message_json(form, thread_id=""):
         'body': form.body.data,
         'thread_id': thread_id,
         'collection_case': "",
-        'survey': form.hidden_survey_id.data,
+        'survey_id': form.hidden_survey_id.data,
         'business_id': form.hidden_to_business_id.data})
 
 
