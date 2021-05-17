@@ -5,13 +5,8 @@ name: Build
 on:
   push:
     branches: [ main ]
-    paths-ignore:
-      - _infra/spinnaker/**
   pull_request:
     branches: [ main ]
-    paths-ignore:
-      - _infra/spinnaker/**
-      - _infra/helm/response-operations-ui/Chart.yaml
 
 env:
   IMAGE: response-operations-ui
@@ -153,11 +148,12 @@ jobs:
       - name: Build Release Image
         if: github.ref == 'refs/heads/main'
         run: |
-          docker build -f _infra/docker/Dockerfile -t "$REGISTRY_HOSTNAME"/"$RELEASE_HOST"/"$IMAGE":${{ steps.release.outputs.version }} .
+          docker build -f _infra/docker/Dockerfile -t "$REGISTRY_HOSTNAME"/"$RELEASE_HOST"/"$IMAGE":latest -t "$REGISTRY_HOSTNAME"/"$RELEASE_HOST"/"$IMAGE":${{ steps.release.outputs.version }} .
       - name: Push Release image
         if: github.ref == 'refs/heads/main'
         run: |
           docker push "$REGISTRY_HOSTNAME"/"$RELEASE_HOST"/"$IMAGE":${{ steps.release.outputs.version }}
+          docker push "$REGISTRY_HOSTNAME"/"$RELEASE_HOST"/"$IMAGE":latest
       
       - name: Publish Charts
         if: github.ref == 'refs/heads/main'
