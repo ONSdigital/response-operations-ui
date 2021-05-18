@@ -136,10 +136,16 @@ def get_thread_list(survey_id, business_id, conversation_tab, page, limit):
         raise NoMessagesError
 
 
-def send_message(message_json):
+def send_message(message_json: dict):
     try:
-        response = _post_new_message(message_json).raise_for_status()
-        logger.info("new message has been sent with response ", response=response)
+        url = f'{current_app.config["SECURE_MESSAGE_URL"]}/messages'
+        response = requests.post(url,
+                                 headers={'Authorization': _get_jwt(),
+                                          'Content-Type': 'application/json',
+                                          'Accept': 'application/json'},
+                                 data=message_json)
+        response.raise_for_status()
+        logger.info("new message has been sent with response ", response=response.json())
     except KeyError as ex:
         logger.error("Message sending failed due to internal error", exc_info=True)
         raise InternalError(ex)
@@ -189,12 +195,6 @@ def update_close_conversation_status(thread_id, status):
     except HTTPError:
         logger.error("Failed to update close conversation status", thread_id=thread_id, status=status, exc_info=True)
         raise ApiError(response)
-
-
-def _post_new_message(message):
-    url = f'{current_app.config["SECURE_MESSAGE_URL"]}/messages'
-    return requests.post(url, headers={'Authorization': _get_jwt(), 'Content-Type': 'application/json',
-                                       'Accept': 'application/json'}, data=message)
 
 
 def _get_jwt():

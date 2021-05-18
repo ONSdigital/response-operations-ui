@@ -488,7 +488,7 @@ def _populate_hidden_form_fields_from_post(current_view_form, calling_form):
 
 
 def _populate_form_details_from_hidden_fields(form):
-    form.survey.text = form.hidden_survey.data
+    form.survey_id.text = form.hidden_survey.data
     form.ru_ref.text = form.hidden_ru_ref.data
     form.business.text = form.hidden_business.data
     form.to.text = form.hidden_to.data
