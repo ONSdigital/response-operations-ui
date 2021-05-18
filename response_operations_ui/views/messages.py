@@ -46,7 +46,7 @@ def create_message():
 
         try:
             message_controllers.send_message(_get_message_json(form))
-            ru_ref = request.form.get("hid  den_ru_ref")
+            ru_ref = request.form.get("hidden_ru_ref")
             flash("Message sent.")
             if ru_ref:
                 return redirect(url_for('reporting_unit_bp.view_reporting_unit', ru_ref=ru_ref))
