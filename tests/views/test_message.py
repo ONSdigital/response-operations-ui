@@ -736,7 +736,7 @@ class TestMessage(ViewTestCase):
         response = self.client.get("/messages", follow_redirects=True)
 
         self.assertEqual(response.status_code, 200)
-        self.assertIn("Choose which messages to show    ".encode(), response.data)
+        self.assertIn("Choose which messages to show".encode(), response.data)
 
     @requests_mock.mock()
     @patch('response_operations_ui.controllers.message_controllers._get_jwt')
@@ -1067,6 +1067,7 @@ class TestMessage(ViewTestCase):
         page = 1
         business_id_filter = '123'
         conversation_tab = 'closed'
+        category = 'SURVEY'
 
         with self.client.session_transaction() as session:
             session['messages_survey_selection'] = 'Ashe'
@@ -1087,7 +1088,8 @@ class TestMessage(ViewTestCase):
         self.assertEqual(200, response.status_code)
         mock_get_count.assert_called_with(survey_id=['6aa8896f-ced5-4694-800c-6cd661b0c8b2'],
                                           business_id=business_id_filter,
-                                          conversation_tab=conversation_tab)
+                                          conversation_tab=conversation_tab,
+                                          category=category)
 
         query = f'survey={survey_id_2}&is_closed=true&my_conversations=false&new_respondent_conversations=false&' \
             f'all_conversation_types=false&business_id={business_id_filter}&page={page}&limit={limit}'

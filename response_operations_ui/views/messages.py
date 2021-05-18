@@ -249,6 +249,7 @@ def view_selected_survey(selected_survey):  # noqa: C901
         conversation_tab = request.args.get('conversation_tab', default='open')
         ru_ref_filter = request.args.get('ru_ref_filter', default='')
         business_id_filter = request.args.get('business_id_filter', default='')
+        category = request.args.get('category', default='SURVEY', type=str)
 
         form = SecureMessageRuFilterForm()
 
@@ -264,7 +265,7 @@ def view_selected_survey(selected_survey):  # noqa: C901
 
         form.ru_ref_filter.data = ru_ref_filter
 
-        tab_counts = _get_tab_counts(business_id_filter, conversation_tab, ru_ref_filter, survey_id)
+        tab_counts = _get_tab_counts(business_id_filter, conversation_tab, ru_ref_filter, survey_id, category)
 
         recalculated_page = _calculate_page(page, limit, tab_counts['current'])
 
@@ -275,8 +276,12 @@ def view_selected_survey(selected_survey):  # noqa: C901
                                     ru_ref_filter=ru_ref_filter,
                                     business_id_filter=business_id_filter))
 
-        messages = [_refine(message) for message in message_controllers.get_thread_list(survey_id, business_id_filter,
-                                                                                        conversation_tab, page, limit)]
+        messages = [_refine(message) for message in message_controllers.get_thread_list_by_survey_id(survey_id,
+                                                                                                     business_id_filter,
+                                                                                                     conversation_tab,
+                                                                                                     page,
+                                                                                                     limit,
+                                                                                                     category)]
 
         pagination = Pagination(page=page,
                                 per_page=limit,
@@ -339,7 +344,7 @@ def _get_tab_titles(all_tab_titles=None, ru_ref_filter=None):
     return tab_titles
 
 
-def _get_tab_counts(business_id_filter, conversation_tab, ru_ref_filter, survey_id):
+def _get_tab_counts(business_id_filter, conversation_tab, ru_ref_filter, survey_id, category):
     """gets the thread count for either the current conversation tab, or, if the ru_ref_filter is active it returns
     the current conversation tab and all other tabs. i.e the value for the 'current' tab is always populated.
     Calls two different secure message endpoints depending on if ru_ref_filter is set
@@ -351,7 +356,8 @@ def _get_tab_counts(business_id_filter, conversation_tab, ru_ref_filter, survey_
 
     thread_count = message_controllers.get_conversation_count(survey_id=survey_id,
                                                               business_id=business_id_filter,
-                                                              conversation_tab=conversation_tab)
+                                                              conversation_tab=conversation_tab,
+                                                              category=category)
     return {'current': thread_count}
 
 

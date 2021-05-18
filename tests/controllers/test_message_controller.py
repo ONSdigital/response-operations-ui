@@ -27,7 +27,7 @@ class TestMessageController(unittest.TestCase):
         with responses.RequestsMock() as mock_request:
             mock_request.add(mock_request.GET, url_get_message_counts, json=mock_counts, status=200)
             with self.app.app_context():
-                totals = get_all_conversation_type_counts('ASurveyId', 'initial', 'a party id')
+                totals = get_all_conversation_type_counts('ASurveyId', 'initial', 'a party id', 'category')
 
             self.assertEqual(totals['initial'], 0)
             self.assertEqual(totals['my messages'], 0)
@@ -44,7 +44,7 @@ class TestMessageController(unittest.TestCase):
         with responses.RequestsMock() as mock_request:
             mock_request.add(mock_request.GET, url_get_message_counts, json=mock_counts, status=200)
             with self.app.app_context():
-                totals = get_all_conversation_type_counts('ASurveyId', 'initial', 'a party id')
+                totals = get_all_conversation_type_counts('ASurveyId', 'initial', 'a party id', 'category')
 
             self.assertEqual(totals['initial'], 2)
             self.assertEqual(totals['my messages'], 3)
