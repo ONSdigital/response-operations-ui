@@ -29,7 +29,7 @@
         }
       },
       "body": "Example message body",
-      "collection_case": "ACollectionCase",
+      "case_id": "ACollectionCase",
       "collection_exercise": "",
       "labels": [
         "INBOX",

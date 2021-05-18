@@ -29,7 +29,7 @@
         }
       },
       "body": "1",
-      "collection_case": "ACollectionCase",
+      "case_id": "ACollectionCase",
       "collection_exercise": "",
       "labels": ["INBOX"],
       "sent_date": "2017-10-03 15:51:32.961321",
@@ -70,7 +70,7 @@
         }
       },
       "body": "2",
-      "collection_case": "ACollectionCase",
+      "case_id": "ACollectionCase",
       "collection_exercise": "",
       "labels": ["INBOX"],
       "sent_date": "2017-10-03 15:51:32.961321",
@@ -111,7 +111,7 @@
         }
       },
       "body": "3",
-      "collection_case": "ACollectionCase",
+      "case_id": "ACollectionCase",
       "collection_exercise": "",
       "labels": ["INBOX"],
       "sent_date": "2017-10-03 15:51:32.961321",
@@ -152,7 +152,7 @@
         }
       },
       "body": "4",
-      "collection_case": "ACollectionCase",
+      "case_id": "ACollectionCase",
       "collection_exercise": "",
       "labels": ["INBOX"],
       "sent_date": "2017-10-03 15:51:32.961321",
@@ -193,7 +193,7 @@
         }
       },
       "body": "5",
-      "collection_case": "ACollectionCase",
+      "case_id": "ACollectionCase",
       "collection_exercise": "",
       "labels": ["INBOX"],
       "sent_date": "2017-10-03 15:51:32.961321",
@@ -234,7 +234,7 @@
         }
       },
       "body": "6",
-      "collection_case": "ACollectionCase",
+      "case_id": "ACollectionCase",
       "collection_exercise": "",
       "labels": ["INBOX"],
       "sent_date": "2017-10-03 15:51:32.961321",
@@ -275,7 +275,7 @@
         }
       },
       "body": "7",
-      "collection_case": "ACollectionCase",
+      "case_id": "ACollectionCase",
       "collection_exercise": "",
       "labels": ["INBOX"],
       "sent_date": "2017-10-03 15:51:32.961321",
@@ -316,7 +316,7 @@
         }
       },
       "body": "8",
-      "collection_case": "ACollectionCase",
+      "case_id": "ACollectionCase",
       "collection_exercise": "",
       "labels": ["INBOX"],
       "sent_date": "2017-10-03 15:51:32.961321",
@@ -357,7 +357,7 @@
         }
       },
       "body": "9",
-      "collection_case": "ACollectionCase",
+      "case_id": "ACollectionCase",
       "collection_exercise": "",
       "labels": ["INBOX"],
       "sent_date": "2017-10-03 15:51:32.961321",
@@ -398,7 +398,7 @@
         }
       },
       "body": "10",
-      "collection_case": "ACollectionCase",
+      "case_id": "ACollectionCase",
       "collection_exercise": "",
       "labels": ["INBOX"],
       "sent_date": "2017-10-03 15:51:32.961321",

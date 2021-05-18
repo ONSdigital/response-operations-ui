@@ -462,7 +462,7 @@ def _get_message_json(form, thread_id=""):
         'subject': form.subject.data,
         'body': form.body.data,
         'thread_id': thread_id,
-        'collection_case': "",
+        'case_id': "",
         'survey_id': form.hidden_survey_id.data,
         'business_id': form.hidden_to_business_id.data})
 

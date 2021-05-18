@@ -42,7 +42,7 @@
                           "sampleUnitType": "B"},
                "_links": {"self": {"href": "http://localhost:5050/message/fb0e79bd-e132-4f4f-a7fd-5e8c6b41b9af"}},
                "body": "Need more information on project",
-               "collection_case": "",
+               "case_id": "",
                "collection_exercise": "",
                "from_internal": "False",
                "labels": ["SENT"],

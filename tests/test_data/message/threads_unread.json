@@ -42,7 +42,7 @@
         }
       },
       "body": "message body",
-      "collection_case": "",
+      "case_id": "",
       "collection_exercise": "",
       "labels": ["SENT"],
       "sent_date": "2017-10-03 15:51:32.961321",
@@ -83,7 +83,7 @@
         }
       },
       "body": "Example message body",
-      "collection_case": "ACollectionCase",
+      "case_id": "ACollectionCase",
       "collection_exercise": "",
       "labels": ["INBOX", "UNREAD"],
       "sent_date": "2017-10-03 15:52:32.961321",
