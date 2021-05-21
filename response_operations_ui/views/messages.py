@@ -452,7 +452,7 @@ def _get_conversation_breadcrumbs(messages):
 
 
 def _repopulate_form_with_submitted_data(form):
-    form.survey.text = form.hidden_survey.data
+    form.survey_id.text = form.hidden_survey.data
     form.ru_ref.text = form.hidden_ru_ref.data
     form.business.text = form.hidden_business.data
     form.to.text = form.hidden_to.data
@@ -468,8 +468,8 @@ def _get_message_json(form, thread_id=""):
         'subject': form.subject.data,
         'body': form.body.data,
         'thread_id': thread_id,
-        'collection_case': "",
-        'survey': form.hidden_survey_id.data,
+        'case_id': "",
+        'survey_id': form.hidden_survey_id.data,
         'business_id': form.hidden_to_business_id.data})
 
 
@@ -494,7 +494,7 @@ def _populate_hidden_form_fields_from_post(current_view_form, calling_form):
 
 
 def _populate_form_details_from_hidden_fields(form):
-    form.survey.text = form.hidden_survey.data
+    form.survey_id.text = form.hidden_survey.data
     form.ru_ref.text = form.hidden_ru_ref.data
     form.business.text = form.hidden_business.data
     form.to.text = form.hidden_to.data
@@ -523,9 +523,9 @@ def _refine(message):
         'body': message.get('body'),
         'internal': message.get('from_internal'),
         'username': _get_user_summary_for_message(message),
-        'survey_ref': get_survey_ref_by_id(message.get('survey')),
-        'survey': get_survey_short_name_by_id(message.get('survey')),
-        'survey_id': message.get('survey'),
+        'survey_ref': get_survey_ref_by_id(message.get('survey_id')),
+        'survey': get_survey_short_name_by_id(message.get('survey_id')),
+        'survey_id': message.get('survey_id'),
         'ru_ref': _get_ru_ref_from_message(message),
         'to_id': _get_to_id(message),
         'from_id': message.get('msg_from'),
@@ -602,8 +602,8 @@ def _get_to_id(message):
 def _get_to_name(message):
     try:
         if message.get('msg_to')[0] == 'GROUP':
-            if get_survey_short_name_by_id(message.get('survey')):
-                return f"{get_survey_short_name_by_id(message.get('survey'))} Team"
+            if get_survey_short_name_by_id(message.get('survey_id')):
+                return f"{get_survey_short_name_by_id(message.get('survey_id'))} Team"
             return "ONS"
         return f"{message.get('@msg_to')[0].get('firstName')} {message.get('@msg_to')[0].get('lastName')}"
     except (IndexError, TypeError):
