@@ -31,7 +31,7 @@ class SecureMessageForm(FlaskForm):
     body = TextAreaField('Message',
                          validators=[InputRequired(message="Please enter a message"),
                                      Length(max=50000, message="Please enter a message less than 50000 characters")])
-    survey = Label('Survey', text="")
+    survey_id = Label('Survey', text="")
     ru_ref = Label('RU ref', text="")
     business = Label('Business', text="")
     to = Label('To', text="")

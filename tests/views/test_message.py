@@ -433,8 +433,8 @@ class TestMessage(ViewTestCase):
           "subject": "TEST SUBJECT",
           "body": "TEST MESSAGE",
           "thread_id": "",
-          "collection_case": "",
-          "survey": "BRES2017",
+          "case_id": "",
+          "survey_id": "BRES2017",
           "business_id": "c614e64e-d981-4eba-b016-d9822f09a4fb"
         }
         '''
