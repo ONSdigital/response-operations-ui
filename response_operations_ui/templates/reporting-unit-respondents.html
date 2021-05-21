@@ -51,8 +51,8 @@
     {% for respondent in respondents %}
       {% set survey_string = [] %}
       {% for survey in respondent.surveys %}
-        {% do survey_string.append(survey[0]) %}
-        {% if survey[1] == "DISABLED" %}
+        {% do survey_string.append('<a href="' + url_for("reporting_unit_bp.view_reporting_unit_survey", ru_ref=ru.sampleUnitRef, survey=survey[0]) + '">' + survey[1].name + '</a>') %}
+        {% if survey[1].status == "DISABLED" %}
           {% do survey_string.append(" (Account disabled)") %}
         {% endif %}
         {% do survey_string.append("<br/>") %}

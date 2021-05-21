@@ -1,0 +1,257 @@
+{% extends "layouts/base.html" %}
+{% from "components/button/_macro.njk" import onsButton %}
+{% from "components/table/_macro.njk" import onsTable %}
+
+{% set page_title = ru.name + " | " + survey[1] %}
+
+{% block main %}
+    <div class="grid">
+        <div id="main" class="grid__col col-10@m">
+            <form action="{{ url_for('reporting_unit_bp.view_reporting_unit', ru_ref=ru.sampleUnitRef) }}" method="get">
+                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
+                {{
+                    onsButton({
+                        "classes": "u-mb-s u-mt-l",
+                        "text": "Back to surveys"
+                    })
+                }}   
+            </form>
+
+            <h2 id="RU_NAME" class="u-fs-l">{{ ru.name }}</h2>
+    
+            <h1 id="SURVEY_NAME" class="u-fs-xl">{{ survey[1] }}</h1>
+        
+        </div>
+        <div class="grid__col col-12@m">
+            <div class="ru-survey-ces">
+                <h4 id="COLLECTION_EXERCISES" class="u-fs-m">Collection exercises</h2>
+
+                {% 
+                    set collectionExerciseTableData = {
+                        "table_class": 'table--responsive table--dense',
+                        "id": 'tbl-collection-exercises',
+                        "ths": [
+                            {
+                                "value": "Period"
+                            },
+                            {
+                                "value": "Reporting unit name"
+                            },
+                            {
+                                "value": "Trading as"
+                            },
+                            {
+                                "value": "Region"
+                            },
+                            {
+                                "value": "Status"
+                            }
+                        ]
+                    }
+                %}
+
+                {% set collectionExerciseTableDataRows = [] %}
+
+                {% for ce in collection_exercises %}
+                    {% if ce.responseStatus == 'Not started' %}
+                        {% set status_class = 'status--dead' %}
+                    {% elif ce.responseStatus == 'In progress' or ce.responseStatus == 'Completed' or ce.responseStatus == 'Completed by phone' %}
+                        {% set status_class = 'status--success' %}
+                    {% else %}
+                        {% set status_class = 'status--error' %}
+                    {% endif %}
+
+                    {% if ce.responseStatus in ['Not started', 'In progress']  %}
+                        {% set survey_link = '&nbsp;   <a href="' + url_for("case_bp.get_response_statuses", ru_ref=ru.sampleUnitRef, survey=survey[1][4:], period=ce.exerciseRef) + '">Change</a>' %}
+                    {% elif ce.responseStatus in ['Completed', 'Completed by phone'] %}
+                        {% set survey_link = '&nbsp;   <a href="' + url_for("case_bp.get_response_statuses", ru_ref=ru.sampleUnitRef, survey=survey[1][4:], period=ce.exerciseRef) + '">View</a>' %}
+                    {% endif %}
+                    {% do collectionExerciseTableDataRows.append( 
+                        {
+                            "tds": [
+                                {
+                                    "value": ce.exerciseRef,
+                                    "data": "Period",
+                                    "name": "tbl-collection-exercises-period"
+                                },
+                                {
+                                    "value": ce.companyName,
+                                    "data": "Reporting unit name",
+                                    "name": "tbl-collection-exercises-ru-name"
+                                },
+                                {
+                                    "value": ce.tradingAs,
+                                    "data": "Trading as",
+                                    "name": "tbl-collection-exercises-trading-as"
+                                },
+                                {
+                                    "value": ce.companyRegion,
+                                    "data": "Region",
+                                    "name": "tbl-collection-exercises-region"
+                                },
+                                {
+                                    "value": '<span class="status ' + status_class + '">' + ce.responseStatus + '</span>' + survey_link,
+                                    "data": "Status",
+                                    "name": "tbl-collection-exercises-status"
+                                },
+                            ]
+                        }
+                    ) %}
+                {% endfor %}
+
+                {% do collectionExerciseTableData | setAttribute("trs", collectionExerciseTableDataRows) %}
+                {{
+                onsTable(collectionExerciseTableData)
+                }}
+            </div>
+            <div class="ru-survey-respondents u-pt-s">
+                <h4 id="RESPONDENTS" class="u-fs-m">Respondents</h2>
+
+                {% if iac != "" %}
+                    <div id="unused-enrolment-code">Unused enrolment code:
+                        <code class="u-fs-r u-ml-s">{{ iac }}</code>
+                    </div>
+                {% endif %}
+                
+                {% 
+                    set respondentTableData = {
+                        "table_class": 'table--responsive table--dense',
+                        "id": 'tbl-respondents',
+                        "ths": [
+                            {
+                                "value": "Contact details"
+                            },
+                            {
+                                "value": "Account status"
+                            },
+                            {
+                                "value": "Enrolment status"
+                            },
+                            {
+                                "value": "Messages"
+                            }
+                        ]
+                    }
+                %}
+
+                {% set respondentTableDataRows = [] %}
+
+                {% for respondent in respondents %}
+                    {% if respondent.status == 'SUSPENDED' %}
+                        {% set account_status_class = 'status--error' %}
+                    {% else %}
+                        {% set account_status_class = 'status--success' %}
+                    {% endif %}
+
+                    {% if respondent.enrolmentStatus == 'ENABLED' %}
+                        {% set enrolment_status_class = 'status--success' %}
+                        {% set change_status_link = '<a href="' + url_for("reporting_unit_bp.confirm_change_enrolment_status", ru_ref=ru.sampleUnitRef, ru_name=ru.name, survey_id=survey[0],
+                            survey_name=survey[1][4:], respondent_id=respondent.id, respondent_first_name=respondent.firstName,
+                            respondent_last_name=respondent.lastName, business_id=ru.id, trading_as=ru.trading_as, change_flag="DISABLED", tab="reporting_units") + '" id="change-enrolment-status">Disable</a>' %}
+                    {% elif respondent.enrolmentStatus == 'PENDING' %}
+                        {% set enrolment_status_class = 'status--info' %}
+                        {% set change_status_link = '<a href="' + url_for("reporting_unit_bp.view_resend_verification", ru_ref=ru_ref, party_id=respondent.id) + '">Re-send verification email</a>' %}
+                    {% else %}
+                        {% set enrolment_status_class = 'status--dead' %}
+                        {% set change_status_link = '<a href="' + url_for("reporting_unit_bp.confirm_change_enrolment_status", ru_ref=ru.sampleUnitRef, ru_name=ru.name, survey_id=survey[0],
+                            survey_name=survey[1][4:], respondent_id=respondent.id, respondent_first_name=respondent.firstName,
+                            respondent_last_name=respondent.lastName, business_id=ru.id, trading_as=ru.trading_as, change_flag='ENABLED', tab="reporting_units") + '" id="change-enrolment-status">Re-enable</a>' %}
+                    {% endif %}
+
+                    {% set formData = {
+                        "action": url_for('messages_bp.create_message'),
+                        "button": {
+                            "text": "Create message",
+                            "id": 'create-message-' + respondent.id,
+                            "classes": 'btn--secondary btn-small',
+                            "value": 'create-message-view',
+                            "name": 'create-message'
+                        },
+                        "hidden": [
+                            {
+                                "name": "ru_ref",
+                                "value": ru.sampleUnitRef
+                            },
+                            {
+                                "name": "business_id",
+                                "value": ru.id
+                            },
+                            {
+                                "name": "business",
+                                "value": ru.name
+                            },
+                            {
+                                "name": "survey",
+                                "value": survey[1][4:]
+                            },
+                            {
+                                "name": "survey_id",
+                                "value": survey[0]
+                            },
+                            {
+                                "name": "msg_to_name",
+                                "value": respondent.firstName + ' ' + respondent.lastName
+                            },
+                            {
+                                "name": "msg_to",
+                                "value": respondent.id
+                            },
+                            {
+                                "name": "csrf_token",
+                                "value": csrf_token()
+                            }
+                        ]
+                    } %}
+                    {% do respondentTableDataRows.append(
+                        {
+                            "tds": [
+                                {
+                                    "value": '<dl class="description-list">
+                                                <dt>
+                                                    Name:
+                                                </dt>
+                                                <dd name="tbl-respondent-name">
+                                                    ' + respondent.firstName + ' ' + respondent.lastName + '
+                                                </dd>
+                                                <dt>
+                                                    Email:
+                                                </dt>
+                                                <dd name="tbl-respondent-email">
+                                                    ' + respondent.emailAddress + '
+                                                </dd>
+                                                <dt>
+                                                    Tel:
+                                                </dt>
+                                                <dd name="tbl-respondent-phone">
+                                                    ' + respondent.telephone + '
+                                                </dd>
+                                            </dl>',
+                                    "data": "Contact details",
+                                    "name": "tbl-respondents-contact-details"
+                                },
+                                {
+                                    "value": '<span class="status ' + account_status_class + '">' + respondent.status|title + '</span>',
+                                    "data": "Account status",
+                                    "name": "tbl-respondents-account-status"
+                                },
+                                {
+                                    "value": '<span class="status ' + enrolment_status_class + '">' + respondent.enrolmentStatus|title + '</span> <br/>' + change_status_link,
+                                    "data": "Enrolment status",
+                                    "name": "tbl-respondents-enrolment-status"
+                                },
+                                {
+                                    "form": formData
+                                }
+                            ]
+                        }
+                    ) %}
+                {% endfor %}
+
+                {% do respondentTableData | setAttribute("trs", respondentTableDataRows) %}
+                {{
+                onsTable(respondentTableData)
+                }}
+            </div>
+        </div>
+    </div>
+{% endblock %}

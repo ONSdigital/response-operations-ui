@@ -1,5 +1,4 @@
 {% extends "layouts/base.html" %}
-{% from "components/button/_macro.njk" import onsButton %}
 {% from "components/table/_macro.njk" import onsTable %}
 
 {% set page_title = ru.name + " | Reporting units" %}
@@ -60,12 +59,12 @@
       {
         "tds": [
           {
-            "value": survey[0],
+            "value": '<a href="' + url_for("reporting_unit_bp.view_reporting_unit_survey", ru_ref=ru.sampleUnitRef, survey=survey[0]) + '">' + survey[1].surveyName + '</a>',
             "data": "Survey",
             "name": "tbl-surveys-survey"
           },
           {
-            "value": survey[1].collectionExercise,
+            "value": survey[1].period,
             "data": "Current period",
             "name": "tbl-surveys-period"
           },

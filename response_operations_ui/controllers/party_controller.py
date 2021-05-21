@@ -166,7 +166,7 @@ def survey_ids_for_respondent(respondent, ru_ref):
     return [enrolment.get('surveyId') for enrolment in enrolments]
 
 
-def get_enrolment_status_for_respondent(respondent, ru_ref, survey_id):
+def add_enrolment_status_for_respondent(respondent, ru_ref, survey_id):
     logger.info('Adding enrolment status to respondent', ru_ref=ru_ref)
     association = next((association
                         for association in respondent.get('associations')
@@ -174,7 +174,7 @@ def get_enrolment_status_for_respondent(respondent, ru_ref, survey_id):
     enrolment_status = next((enrolment['enrolmentStatus']
                              for enrolment in association.get('enrolments')
                              if enrolment['surveyId'] == survey_id), None)
-    return enrolment_status
+    return {**respondent, 'enrolmentStatus': enrolment_status}
 
 
 def get_respondent_enrolments(respondent, enrolment_status=None):
