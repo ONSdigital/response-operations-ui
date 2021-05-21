@@ -200,6 +200,7 @@ def select_survey():
     survey_list = get_grouped_surveys_list()
 
     if request.method == 'POST':
+        inbox = request.form.get('inbox-radio')
         selected_survey = request.form.get('select-survey')
         if selected_survey:
             return redirect(url_for("messages_bp.view_selected_survey",
