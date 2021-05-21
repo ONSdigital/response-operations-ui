@@ -183,7 +183,7 @@ def _view_select_survey(marked_unread_message, conversation_tab, ru_ref_filter, 
     try:
         selected_survey = session["messages_survey_selection"]
     except KeyError:
-        return redirect(url_for("messages_bp.select_survey"))
+        return redirect(url_for("messages_bp.select_inbox"))
 
     return redirect(url_for("messages_bp.view_selected_survey",
                             selected_survey=selected_survey, page=request.args.get('page'),
@@ -193,18 +193,26 @@ def _view_select_survey(marked_unread_message, conversation_tab, ru_ref_filter, 
 
 @messages_bp.route('/select-survey', methods=['GET', 'POST'])
 @login_required
-def select_survey():
+def select_inbox():
     breadcrumbs = [{"text": "Messages", "url": "/messages"},
                    {"text": "Filter by survey"}]
 
     survey_list = get_grouped_surveys_list()
 
     if request.method == 'POST':
+        # TODO redo error logic
         inbox = request.form.get('inbox-radio')
-        selected_survey = request.form.get('select-survey')
-        if selected_survey:
-            return redirect(url_for("messages_bp.view_selected_survey",
-                                    selected_survey=selected_survey))
+        if inbox:
+            if inbox == 'technical':
+                return redirect(url_for("messages_bp.view_selected_survey",
+                                        selected_survey='ASHE'))
+                
+            selected_survey = request.form.get('select-survey')
+            if selected_survey:
+                return redirect(url_for("messages_bp.view_selected_survey",
+                                        selected_survey=selected_survey))
+            else:
+                response_error = True
         else:
             response_error = True
     else:
