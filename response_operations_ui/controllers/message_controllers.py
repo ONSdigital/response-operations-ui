@@ -108,10 +108,12 @@ def _get_secure_message_threads_params(survey_id, business_id, conversation_tab,
               'all_conversation_types': 'true' if all_conversation_types else 'false'}
     if business_id:
         params['business_id'] = business_id
+    if survey_id:
+        params['survey_id'] = survey_id
     return params
 
 
-def get_thread_list_by_survey_id(survey_id, business_id, conversation_tab, page, limit, category):
+def get_thread_list_by_survey_id(survey_id, business_id, conversation_tab, page, limit, category) -> dict:
 
     logger.info("Retrieving threads list", survey_id=survey_id, conversation_tab=conversation_tab,
                 business_id=business_id)

@@ -204,8 +204,7 @@ def select_inbox():
         inbox = request.form.get('inbox-radio')
         if inbox:
             if inbox == 'technical':
-                return redirect(url_for("messages_bp.view_selected_survey",
-                                        selected_survey='ASHE'))
+                return redirect(url_for("messages_bp.view_technical_inbox"))
                 
             selected_survey = request.form.get('select-survey')
             if selected_survey:
@@ -234,6 +233,103 @@ def clear_filter(selected_survey):
                             page=request.args.get('page'),
                             conversation_tab=request.args['conversation_tab'],
                             clear_filter='true'))
+
+
+@messages_bp.route('/technical', methods=['GET', 'POST'])
+@login_required
+def view_technical_inbox():  # noqa: C901
+
+    session['messages_survey_selection'] = "technical"
+    breadcrumbs = [{"text": "Technical" + " Messages"}]
+
+    try:
+        page = request.args.get('page', default=1, type=int)
+        limit = request.args.get('limit', default=10, type=int)
+        flash_message = request.args.get('flash_message', default="", type=str)
+        conversation_tab = request.args.get('conversation_tab', default='open')
+        ru_ref_filter = request.args.get('ru_ref_filter', default='')
+        business_id_filter = request.args.get('business_id_filter', default='')
+        category = "TECHNICAL"
+
+        form = SecureMessageRuFilterForm()
+
+        if form.validate_on_submit():
+            new_ru_ref = form.ru_ref_filter.data
+            if new_ru_ref and new_ru_ref != ru_ref_filter:
+                business_id_filter, ru_resolution_error = _try_get_party_id_from_filter_ru(new_ru_ref)
+                if business_id_filter:
+                    ru_ref_filter = new_ru_ref
+                else:
+                    ru_ref_filter = ''
+                    flash_message = ru_resolution_error
+
+        form.ru_ref_filter.data = ru_ref_filter
+
+        tab_counts = _get_tab_counts(business_id_filter, conversation_tab, ru_ref_filter, None, category)
+
+        recalculated_page = _calculate_page(page, limit, tab_counts['current'])
+
+        if recalculated_page != page:
+            return redirect(url_for("messages_bp.view_selected_survey", conversation_tab=conversation_tab,
+                                    selected_survey="technical",
+                                    page=recalculated_page,
+                                    ru_ref_filter=ru_ref_filter,
+                                    business_id_filter=business_id_filter))
+        
+        # TODO - Rename get_thread_list function to have more sensible name as survey_id isn't mandatory
+        messages = [_refine(message) for message in message_controllers.get_thread_list_by_survey_id(None,
+                                                                                                     business_id_filter,
+                                                                                                     conversation_tab,
+                                                                                                     page,
+                                                                                                     limit,
+                                                                                                     category)]
+
+        pagination = Pagination(page=page,
+                                per_page=limit,
+                                total=tab_counts['current'],
+                                record_name='messages',
+                                prev_label='Previous',
+                                next_label='Next',
+                                outer_window=0,
+                                format_total=True,
+                                format_number=True,
+                                show_single_page=False)
+
+        if flash_message:
+            flash(flash_message)
+
+        return render_template("secure-message/technical-inbox.html",
+                               form=form,
+                               page=page,
+                               breadcrumbs=breadcrumbs,
+                               messages=messages,
+                               selected_survey="Technical",
+                               displayed_short_name="Technical",
+                               pagination=pagination,
+                               change_survey=True,
+                               conversation_tab=conversation_tab,
+                               business_id_filter=business_id_filter,
+                               ru_ref_filter=ru_ref_filter,
+                               tab_titles=_get_tab_titles(tab_counts, ru_ref_filter))
+
+    except TypeError:
+        logger.error("Failed to retrieve survey id", exc_info=True)
+        return render_template("secure-message/technical-inbox.html",
+                               form=form,
+                               breadcrumbs=breadcrumbs,
+                               selected_survey="Technical",
+                               displayed_short_name="Technical",
+                               response_error=True,
+                               tab_titles=_get_tab_titles())
+    except NoMessagesError:
+        logger.error("Failed to retrieve messages", exc_info=True)
+        return render_template("secure-message/technical-inbox.html",
+                               form=form,
+                               breadcrumbs=breadcrumbs,
+                               response_error=True,
+                               selected_survey="Technical",
+                               displayed_short_name="Technical",
+                               tab_titles=_get_tab_titles())
 
 
 @messages_bp.route('/<selected_survey>', methods=['GET', 'POST'])
@@ -338,7 +434,7 @@ def view_selected_survey(selected_survey):  # noqa: C901
                                selected_survey=selected_survey,
                                displayed_short_name=displayed_short_name,
                                tab_titles=_get_tab_titles())
-
+ 
 
 def _get_tab_titles(all_tab_titles=None, ru_ref_filter=None):
     """Populates a dictionary of tab titles for display. Needed because the titles can vary by message count.
@@ -520,11 +616,10 @@ def _get_message_subject(thread):
         return None
 
 
-def _refine(message):
+def _refine(message: dict) -> dict:
     """
     Refine a message into a cleaner version that can be more easily used by the display layer
     :param message: A message from secure-message
-    :rtype: dict
     """
     return {
         'thread_id': message.get('thread_id'),
