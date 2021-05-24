@@ -105,7 +105,6 @@ class TestReportingUnits(TestCase):
         self.assertIn("50012345678".encode(), response.data)
         self.assertIn("221 BLOCKS".encode(), response.data)
         self.assertIn("Not started".encode(), response.data)
-        self.assertIn("201801".encode(), response.data)
 
     @requests_mock.mock()
     def test_get_reporting_unit_party_ru_fail(self, mock_request):
