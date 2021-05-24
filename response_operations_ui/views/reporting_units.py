@@ -61,7 +61,7 @@ def build_survey_table_data_dict(collection_exercises, case_groups):
     for ce in collection_exercises:
         if ce['surveyId'] in table_data:
             # Keep the one with the later go-live date
-            if (parse_date(table_data[ce['surveyId']]['collectionExercise']
+            if (parse_date(table_data[ce['surveyId']]['period']
                            ['scheduledStartDateTime']) > parse_date(ce['scheduledStartDateTime'])):
                 continue
 
