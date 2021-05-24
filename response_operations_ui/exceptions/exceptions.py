@@ -6,13 +6,6 @@ class ApiError(Exception):
         self.message = response.text
 
 
-class NoMessagesError(Exception):
-    """ Thrown when getting a list of messages but the response doesn't
-    contain a key named 'messages'.
-    """
-    pass
-
-
 class InternalError(Exception):
 
     def __init__(self, exception, url=None, status=500):

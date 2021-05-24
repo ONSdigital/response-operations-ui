@@ -9,7 +9,7 @@ from requests.exceptions import HTTPError, RequestException
 from structlog import wrap_logger
 
 from response_operations_ui.common import token_decoder
-from response_operations_ui.exceptions.exceptions import ApiError, NoMessagesError, InternalError
+from response_operations_ui.exceptions.exceptions import ApiError, InternalError
 
 
 logger = wrap_logger(logging.getLogger(__name__))
@@ -53,7 +53,7 @@ def get_conversation_count(survey_id, conversation_tab, business_id, category):
         return response.json()['total']
     except KeyError:
         logger.exception("Response was successful but didn't contain a 'total' key")
-        raise NoMessagesError
+        raise
 
 
 def get_all_conversation_type_counts(survey_id, conversation_tab, business_id, category):
@@ -85,7 +85,7 @@ def get_all_conversation_type_counts(survey_id, conversation_tab, business_id, c
         return totals
     except KeyError:
         logger.exception("Response was successful but didn't contain a 'totals' key")
-        raise NoMessagesError
+        raise
 
 
 def _get_conversation_counts(business_id, conversation_tab, survey_id, category, all_conversation_types):
@@ -139,7 +139,7 @@ def get_thread_list_by_survey_id(survey_id, business_id, conversation_tab, page,
         return messages
     except KeyError:
         logger.exception("Response was successful but didn't contain a 'messages' key")
-        raise NoMessagesError
+        raise
 
 
 def send_message(message_json: dict):
