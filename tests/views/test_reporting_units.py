@@ -177,7 +177,7 @@ class TestReportingUnits(TestCase):
         response = self.client.get("/reporting-units/50012345678", follow_redirects=True)
 
         request_history = mock_request.request_history
-        self.assertEqual(len(request_history), 6)
+        self.assertEqual(len(request_history), 5)
         self.assertEqual(response.status_code, 500)
 
     @requests_mock.mock()
@@ -193,7 +193,7 @@ class TestReportingUnits(TestCase):
         response = self.client.get("/reporting-units/50012345678", follow_redirects=True)
 
         request_history = mock_request.request_history
-        self.assertEqual(len(request_history), 7)
+        self.assertEqual(len(request_history), 6)
         self.assertEqual(response.status_code, 500)
 
     @requests_mock.mock()
@@ -231,24 +231,7 @@ class TestReportingUnits(TestCase):
         self.assertIn("50012345678".encode(), response.data)
 
     @requests_mock.mock()
-    def test_get_reporting_unit_when_changed_status_shows_new_status(self, mock_request):
-        mock_request.get(url_get_party_by_ru_ref, json=business_reporting_unit)
-        mock_request.get(url_get_cases_by_business_party_id, json=cases_list_completed)
-        mock_request.get(f'{url_get_collection_exercise_by_id}/{collection_exercise_id_1}', json=collection_exercise)
-        mock_request.get(f'{url_get_collection_exercise_by_id}/{collection_exercise_id_2}', json=collection_exercise_2)
-        mock_request.get(url_get_business_attributes, json=business_attributes)
-        mock_request.get(url_get_survey_by_id, json=survey)
-        mock_request.get(url_get_respondent_party_by_list, json=respondent_party_list)
-        mock_request.get(f'{url_get_iac}/{iac_1}', json=iac)
-        mock_request.get(f'{url_get_iac}/{iac_2}', json=iac)
-
-        response = self.client.get("/reporting-units/50012345678?survey=BLOCKS&period=201801", follow_redirects=True)
-
-        self.assertEqual(response.status_code, 200)
-        self.assertIn("Response status for 221 BLOCKS period 201801 changed to Completed".encode(), response.data)
-
-    @requests_mock.mock()
-    def test_get_reporting_unit_shows_change_link(self, mock_request):
+    def test_get_reporting_unit_survey_shows_change_link(self, mock_request):
         mock_request.get(url_get_party_by_ru_ref, json=business_reporting_unit)
         mock_request.get(url_get_cases_by_business_party_id, json=cases_list)
         mock_request.get(f'{url_get_collection_exercise_by_id}/{collection_exercise_id_1}', json=collection_exercise)
@@ -259,7 +242,7 @@ class TestReportingUnits(TestCase):
         mock_request.get(f'{url_get_iac}/{iac_1}', json=iac)
         mock_request.get(f'{url_get_iac}/{iac_2}', json=iac)
 
-        response = self.client.get("/reporting-units/50012345678")
+        response = self.client.get(f"/reporting-units/50012345678/{survey_id}")
 
         self.assertEqual(response.status_code, 200)
         self.assertIn("Change</a>".encode(), response.data)
