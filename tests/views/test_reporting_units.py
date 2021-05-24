@@ -103,11 +103,9 @@ class TestReportingUnits(TestCase):
         self.assertEqual(response.status_code, 200)
         self.assertIn("Bolts and Ratchets Ltd".encode(), response.data)
         self.assertIn("50012345678".encode(), response.data)
-        self.assertIn("BLOCKS".encode(), response.data)
-        self.assertIn("GB".encode(), response.data)
-        self.assertIn("Jacky Turner".encode(), response.data)
-        self.assertIn("Enabled".encode(), response.data)
-        self.assertIn("Active".encode(), response.data)
+        self.assertIn("221 BLOCKS".encode(), response.data)
+        self.assertIn("Not started".encode(), response.data)
+        self.assertIn("201802".encode(), response.data)
 
     @requests_mock.mock()
     def test_get_reporting_unit_party_ru_fail(self, mock_request):
