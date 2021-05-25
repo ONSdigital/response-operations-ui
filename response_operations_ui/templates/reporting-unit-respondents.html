@@ -25,7 +25,7 @@
       </dd>
     {% endif %}
   </dl>
-
+<div class="grid__col col-8@m u-pl-no">
   {% include 'partials/reporting-unit-tabs.html' %}
   {% 
     set respondentTableData = {
@@ -86,4 +86,5 @@
   {% else %}
     No respondents enrolled for this reporting unit
   {% endif %}
+</div>
 {% endblock %}
