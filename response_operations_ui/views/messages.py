@@ -162,20 +162,20 @@ def mark_message_unread(message_id):
     conversation_tab = request.args.get('conversation_tab')
     ru_ref_filter = request.args.get('ru_ref_filter')
     business_id_filter = request.args.get('business_id_filter')
-    marked_unread_message = f"Message from {msg_from} to {msg_to} marked unread"
+    flash(f"Message from {msg_from} to {msg_to} marked unread")
     message_controllers.add_unread_label(message_id)
 
-    return _view_select_survey(marked_unread_message, conversation_tab, ru_ref_filter, business_id_filter)
+    return _view_select_survey(conversation_tab, ru_ref_filter, business_id_filter)
 
 
 @messages_bp.route('/', methods=['GET'])
 @login_required
 def view_select_survey():
-    return _view_select_survey("", request.args.get('conversation_tab'), request.args.get('ru_ref_filter'),
+    return _view_select_survey(request.args.get('conversation_tab'), request.args.get('ru_ref_filter'),
                                request.args.get('business_id_filter'))
 
 
-def _view_select_survey(marked_unread_message, conversation_tab, ru_ref_filter, business_id_filter):
+def _view_select_survey(conversation_tab, ru_ref_filter, business_id_filter):
     """
     Redirects to either a survey stored in the session under the 'messages_survey_selection'
     key or to the survey selection screen if the key isn't present in the session
@@ -187,7 +187,7 @@ def _view_select_survey(marked_unread_message, conversation_tab, ru_ref_filter, 
 
     return redirect(url_for("messages_bp.view_selected_survey",
                             selected_survey=selected_survey, page=request.args.get('page'),
-                            flash_message=marked_unread_message, conversation_tab=conversation_tab,
+                            conversation_tab=conversation_tab,
                             ru_ref_filter=ru_ref_filter, business_id_filter=business_id_filter))
 
 
@@ -199,7 +199,7 @@ def select_inbox():
         inbox = request.form.get('inbox-radio')
         if inbox == 'technical':
             return redirect(url_for("messages_bp.view_technical_inbox"))
-        if inbox == 'survey':
+        if inbox == 'surveys':
             selected_survey = request.form.get('select-survey')
             if selected_survey:
                 return redirect(url_for("messages_bp.view_selected_survey",
@@ -239,7 +239,6 @@ def view_technical_inbox():  # noqa: C901
 
     page = request.args.get('page', default=1, type=int)
     limit = request.args.get('limit', default=10, type=int)
-    flash_message = request.args.get('flash_message', default="", type=str)
     conversation_tab = request.args.get('conversation_tab', default='open')
     ru_ref_filter = request.args.get('ru_ref_filter', default='')
     business_id_filter = request.args.get('business_id_filter', default='')
@@ -278,9 +277,6 @@ def view_technical_inbox():  # noqa: C901
                                                                                         category)]
 
         pagination = _get_pagination_object(page, limit, tab_counts)
-
-        if flash_message:
-            flash(flash_message)
 
         return render_template("secure-message/technical-inbox.html",
                                form=form,
@@ -325,7 +321,6 @@ def view_selected_survey(selected_survey):  # noqa: C901
 
         page = request.args.get('page', default=1, type=int)
         limit = request.args.get('limit', default=10, type=int)
-        flash_message = request.args.get('flash_message', default="", type=str)
         conversation_tab = request.args.get('conversation_tab', default='open')
         ru_ref_filter = request.args.get('ru_ref_filter', default='')
         business_id_filter = request.args.get('business_id_filter', default='')
@@ -341,7 +336,7 @@ def view_selected_survey(selected_survey):  # noqa: C901
                     ru_ref_filter = new_ru_ref
                 else:
                     ru_ref_filter = ''
-                    flash_message = ru_resolution_error
+                    flash(ru_resolution_error)
 
         form.ru_ref_filter.data = ru_ref_filter
 
@@ -364,9 +359,6 @@ def view_selected_survey(selected_survey):  # noqa: C901
                                                                                         category)]
 
         pagination = _get_pagination_object(page, limit, tab_counts)
-
-        if flash_message:
-            flash(flash_message)
 
         return render_template("messages.html",
                                form=form,

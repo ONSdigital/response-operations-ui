@@ -114,7 +114,6 @@ class TestMessage(ViewTestCase):
                 "shortName": "ASHE",
                 "longName": "ASHE long name",
                 "surveyRef": "123"
-
             }
         ]
         self.before()
@@ -749,7 +748,7 @@ class TestMessage(ViewTestCase):
 
         response = self.client.post("/messages/select-survey",
                                     follow_redirects=True,
-                                    data={"inbox-radio": "survey", "select-survey": "ASHE"})
+                                    data={"inbox-radio": "surveys", "select-survey": "ASHE"})
 
         self.assertEqual(response.status_code, 200)
         self.assertIn("ASHE Messages".encode(), response.data)
@@ -775,7 +774,7 @@ class TestMessage(ViewTestCase):
 
         response = self.client.post("/messages/select-survey",
                                     follow_redirects=True,
-                                    data={"inbox-radio": "survey", "select-survey": "FDI"})
+                                    data={"inbox-radio": "surveys", "select-survey": "FDI"})
         self.assertEqual(response.status_code, 200)
         self.assertIn("FDI Messages".encode(), response.data)
 
@@ -889,15 +888,19 @@ class TestMessage(ViewTestCase):
         mock_get_jwt.return_value = "blah"
 
         with self.client.session_transaction() as session:
-            session['messages_survey_selection'] = 'QBS'
+            session['messages_survey_selection'] = 'ASHE'
 
         mock_request.get(url_get_thread, json=thread_unread_json)
-        mock_request.put(f"{url_modify_label_base}9ecfad50-2ff5-4bea-a997-d73c4faa73ae")
+        mock_request.get(url_messages + '/count', json={"total": 1}, status_code=200)
+        mock_request.get(shortname_url + "/ASHE", json=ashe_info['survey'])
+        mock_request.get(url_get_threads_list, json=threads_no_unread_list)
         mock_request.get(url_get_surveys_list, json=survey_list)
+        mock_request.put(f"{url_modify_label_base}9ecfad50-2ff5-4bea-a997-d73c4faa73ae")
 
-        response = self.client.get('/messages/mark_unread/9ecfad50-2ff5-4bea-a997-d73c4faa73ae?from=GROUP&to=ONS+User')
+        response = self.client.get('/messages/mark_unread/9ecfad50-2ff5-4bea-a997-d73c4faa73ae?from=GROUP&to=ONS+User',
+                                   follow_redirects=True)
 
-        self.assertIn("flash_message=Message+from+GROUP+to+ONS+User+marked+unread".encode(), response.data)
+        self.assertIn("Message from GROUP to ONS User marked unread".encode(), response.data)
 
     @requests_mock.mock()
     @patch('response_operations_ui.controllers.message_controllers._get_jwt')
