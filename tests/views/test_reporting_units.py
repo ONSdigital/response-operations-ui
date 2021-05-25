@@ -193,7 +193,7 @@ class TestReportingUnits(TestCase):
         response = self.client.get("/reporting-units/50012345678/BLOCKS", follow_redirects=True)
 
         request_history = mock_request.request_history
-        self.assertEqual(len(request_history), 6)
+        self.assertEqual(len(request_history), 5)
         self.assertEqual(response.status_code, 500)
 
     @requests_mock.mock()
@@ -210,7 +210,7 @@ class TestReportingUnits(TestCase):
         response = self.client.get("/reporting-units/50012345678/BLOCKS", follow_redirects=True)
 
         request_history = mock_request.request_history
-        self.assertEqual(len(request_history), 6)
+        self.assertEqual(len(request_history), 7)
         self.assertEqual(response.status_code, 500)
 
     @requests_mock.mock()
