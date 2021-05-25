@@ -540,7 +540,7 @@ def _get_message_json(form, thread_id=""):
         'business_id': form.hidden_to_business_id.data})
 
 
-def _populate_hidden_form_fields_from_post(current_view_form, calling_form):
+def _populate_hidden_form_fields_from_post(current_view_form: SecureMessageForm, calling_form):
     """
     :param current_view_form: is the form just create when land in the view
     :param calling_form: is the form that is actually sent from the caller
@@ -560,7 +560,7 @@ def _populate_hidden_form_fields_from_post(current_view_form, calling_form):
     return current_view_form
 
 
-def _populate_form_details_from_hidden_fields(form):
+def _populate_form_details_from_hidden_fields(form: SecureMessageForm) -> SecureMessageForm:
     form.survey_id.text = form.hidden_survey.data
     form.ru_ref.text = form.hidden_ru_ref.data
     form.business.text = form.hidden_business.data
@@ -568,7 +568,7 @@ def _populate_form_details_from_hidden_fields(form):
     return form
 
 
-def _get_message_subject(thread):
+def _get_message_subject(thread: dict):
     try:
         subject = thread["subject"]
         subject = html.escape(subject)
@@ -605,7 +605,7 @@ def _refine(message: dict) -> dict:
     }
 
 
-def _get_survey_id(selected_survey):
+def _get_survey_id(selected_survey: str) -> list[str]:
     """
     Returns a survey_id from a survey shortname.
 
@@ -616,7 +616,7 @@ def _get_survey_id(selected_survey):
     return [survey_controllers.get_survey_id_by_short_name(selected_survey)]
 
 
-def _get_FDI_survey_id():
+def _get_FDI_survey_id() -> list[str]:
     """
     Returns a list of FDI survey ids.   This list is defined in the config
 
@@ -625,7 +625,7 @@ def _get_FDI_survey_id():
     return [survey_controllers.get_survey_id_by_short_name(fdi_survey) for fdi_survey in FDI_LIST]
 
 
-def _get_vacancies_survey_ids():
+def _get_vacancies_survey_ids() -> list[str]:
     """
     Returns a list of vacancies survey id's.   This list is defined in the config
 
@@ -634,7 +634,7 @@ def _get_vacancies_survey_ids():
     return [survey_controllers.get_survey_id_by_short_name(vacancies_survey) for vacancies_survey in VACANCIES_LIST]
 
 
-def _get_user_summary_for_message(message):
+def _get_user_summary_for_message(message: str) -> str:
     if message.get('from_internal'):
         return _get_from_name(message)
     return f'{_get_from_name(message)} - {_get_ru_ref_from_message(message)}'
