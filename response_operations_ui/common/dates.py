@@ -10,16 +10,13 @@ from iso8601.iso8601 import ParseError
 logger = wrap_logger(logging.getLogger(__name__))
 
 
-def get_formatted_date(datetime_string, string_format='%Y-%m-%d %H:%M:%S'):
+def get_formatted_date(datetime_string: str, string_format: str = '%Y-%m-%d %H:%M:%S') -> str:
     """Takes a string date in given format returns a string 'today', 'yesterday' at the time in format '%H:%M'
     if the given date is today or yesterday respectively otherwise returns the full date in the format '%b %d %Y %H:%M'.
     If datetime_string is not a valid date in the given format it is returned with no formatting.
 
     :param datetime_string: A string representing a datetime
-    :type datetime_string: str
     :param string_format: A strptime string that should match the format of the datetime string that is to be converted
-    :type string_format: str
-    :rtype: str
     """
     try:
         datetime_parsed = datetime.strptime(datetime_string, string_format)

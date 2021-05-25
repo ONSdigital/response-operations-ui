@@ -259,11 +259,10 @@ def view_technical_inbox():  # noqa: C901
 
         tab_counts = _get_tab_counts(business_id_filter, conversation_tab, ru_ref_filter, None, category)
 
-        recalculated_page = _calculate_page(page, limit, tab_counts['current'])
-
+        # If the page is higher then possible, redirect users to the highest possible page.
+        recalculated_page = _verify_requested_page_is_within_bounds(page, limit, tab_counts['current'])
         if recalculated_page != page:
-            return redirect(url_for("messages_bp.view_selected_survey", conversation_tab=conversation_tab,
-                                    selected_survey="technical",
+            return redirect(url_for("messages_bp.view_technical_inbox", conversation_tab=conversation_tab,
                                     page=recalculated_page,
                                     ru_ref_filter=ru_ref_filter,
                                     business_id_filter=business_id_filter))
@@ -284,7 +283,6 @@ def view_technical_inbox():  # noqa: C901
                                messages=messages,
                                selected_survey="Technical",
                                pagination=pagination,
-                               change_survey=True,
                                conversation_tab=conversation_tab,
                                business_id_filter=business_id_filter,
                                ru_ref_filter=ru_ref_filter,
@@ -340,8 +338,8 @@ def view_selected_survey(selected_survey):  # noqa: C901
 
         tab_counts = _get_tab_counts(business_id_filter, conversation_tab, ru_ref_filter, survey_id, category)
 
-        recalculated_page = _calculate_page(page, limit, tab_counts['current'])
-
+        # If the page is higher then possible, redirect users to the highest possible page.
+        recalculated_page = _verify_requested_page_is_within_bounds(page, limit, tab_counts['current'])
         if recalculated_page != page:
             return redirect(url_for("messages_bp.view_selected_survey", conversation_tab=conversation_tab,
                                     selected_survey=selected_survey,
@@ -418,9 +416,7 @@ def _get_tab_counts(business_id_filter, conversation_tab, ru_ref_filter, survey_
 def close_conversation(thread_id):
     conversation_tab = request.args.get('conversation_tab')
     page = request.args.get('page')
-
     ru_ref_filter = request.args.get('ru_ref_filter')
-
     business_id_filter = request.args.get('business_id_filter')
 
     if request.method == 'POST':
@@ -461,8 +457,7 @@ def _get_pagination_object(page, limit, tab_counts) -> Pagination:
                       next_label='Next',
                       outer_window=0,
                       format_total=True,
-                      format_number=True,
-                      show_single_page=False)
+                      format_number=True)
 
 
 def _try_get_party_id_from_filter_ru(ru_ref: str):
@@ -688,7 +683,7 @@ def _get_business_name_from_message(message: dict) -> str:
         logger.exception("Failed to retrieve business name from message", message_id=message.get('msg_id'))
 
 
-def _get_human_readable_date(sent_date):
+def _get_human_readable_date(sent_date: str) -> str:
     """
     Converts a datetime date (e.g., 2019-11-13 13:25:19.093378) and converts it into something
     easily read (e.g., Today at 13:25)
@@ -711,7 +706,18 @@ def disable_caching(response):
     return response
 
 
-def _calculate_page(requested_page, limit, thread_count):
+def _verify_requested_page_is_within_bounds(requested_page: int, limit: int, thread_count):
+    """
+    If the requested page number is too large in relation to number of threads per page (limit) and the total number
+    of threads (thread_count), this will return the largest acceptable page number that can be used.
+
+    If there are 0 total threads, this will return 1 as the first page is the only acceptable page.
+
+    :param requested_page: Page number that is being requested
+    :param limit: Number of threads per page
+    :param thread_count: Total number of threads
+    :return: The requested page number if it's within bounds, or the highest acceptable page number if it's too large
+    """
     page = requested_page
 
     if thread_count == 0:
@@ -722,5 +728,5 @@ def _calculate_page(requested_page, limit, thread_count):
     return page
 
 
-def _can_mark_as_unread(message):
+def _can_mark_as_unread(message: dict) -> bool:
     return message['to_id'] == 'GROUP' or message['to_id'] == session['user_id']
