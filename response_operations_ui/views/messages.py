@@ -194,32 +194,28 @@ def _view_select_survey(marked_unread_message, conversation_tab, ru_ref_filter, 
 @messages_bp.route('/select-survey', methods=['GET', 'POST'])
 @login_required
 def select_inbox():
-    breadcrumbs = [{"text": "Messages", "url": "/messages"},
-                   {"text": "Filter by survey"}]
-
-    survey_list = get_grouped_surveys_list()
-
+    response_error = None
     if request.method == 'POST':
-        # TODO redo error logic
         inbox = request.form.get('inbox-radio')
-        if inbox:
-            if inbox == 'technical':
-                return redirect(url_for("messages_bp.view_technical_inbox"))
-                
+        if inbox == 'technical':
+            return redirect(url_for("messages_bp.view_technical_inbox"))
+        if inbox == 'survey':
             selected_survey = request.form.get('select-survey')
             if selected_survey:
                 return redirect(url_for("messages_bp.view_selected_survey",
                                         selected_survey=selected_survey))
             else:
-                response_error = True
+                response_error = "Select a survey sub-selection for survey inbox"
         else:
-            response_error = True
-    else:
-        response_error = False
+            response_error = "Select an inbox"
+
+    breadcrumbs = [{"text": "Messages", "url": "/messages"},
+                   {"text": "Filter by survey"}]
+
+    survey_list = get_grouped_surveys_list()
 
     return render_template("message-select-survey.html",
                            breadcrumbs=breadcrumbs,
-                           selected_survey=None,
                            response_error=response_error,
                            survey_list=survey_list)
 
@@ -238,19 +234,17 @@ def clear_filter(selected_survey):
 @messages_bp.route('/technical', methods=['GET', 'POST'])
 @login_required
 def view_technical_inbox():  # noqa: C901
-
     session['messages_survey_selection'] = "technical"
     breadcrumbs = [{"text": "Technical" + " Messages"}]
 
+    page = request.args.get('page', default=1, type=int)
+    limit = request.args.get('limit', default=10, type=int)
+    flash_message = request.args.get('flash_message', default="", type=str)
+    conversation_tab = request.args.get('conversation_tab', default='open')
+    ru_ref_filter = request.args.get('ru_ref_filter', default='')
+    business_id_filter = request.args.get('business_id_filter', default='')
+    category = "TECHNICAL"
     try:
-        page = request.args.get('page', default=1, type=int)
-        limit = request.args.get('limit', default=10, type=int)
-        flash_message = request.args.get('flash_message', default="", type=str)
-        conversation_tab = request.args.get('conversation_tab', default='open')
-        ru_ref_filter = request.args.get('ru_ref_filter', default='')
-        business_id_filter = request.args.get('business_id_filter', default='')
-        category = "TECHNICAL"
-
         form = SecureMessageRuFilterForm()
 
         if form.validate_on_submit():
@@ -261,7 +255,7 @@ def view_technical_inbox():  # noqa: C901
                     ru_ref_filter = new_ru_ref
                 else:
                     ru_ref_filter = ''
-                    flash_message = ru_resolution_error
+                    flash(ru_resolution_error)
 
         form.ru_ref_filter.data = ru_ref_filter
 
@@ -275,25 +269,15 @@ def view_technical_inbox():  # noqa: C901
                                     page=recalculated_page,
                                     ru_ref_filter=ru_ref_filter,
                                     business_id_filter=business_id_filter))
-        
-        # TODO - Rename get_thread_list function to have more sensible name as survey_id isn't mandatory
-        messages = [_refine(message) for message in message_controllers.get_thread_list_by_survey_id(None,
-                                                                                                     business_id_filter,
-                                                                                                     conversation_tab,
-                                                                                                     page,
-                                                                                                     limit,
-                                                                                                     category)]
 
-        pagination = Pagination(page=page,
-                                per_page=limit,
-                                total=tab_counts['current'],
-                                record_name='messages',
-                                prev_label='Previous',
-                                next_label='Next',
-                                outer_window=0,
-                                format_total=True,
-                                format_number=True,
-                                show_single_page=False)
+        messages = [_refine(message) for message in message_controllers.get_thread_list(None,
+                                                                                        business_id_filter,
+                                                                                        conversation_tab,
+                                                                                        page,
+                                                                                        limit,
+                                                                                        category)]
+
+        pagination = _get_pagination_object(page, limit, tab_counts)
 
         if flash_message:
             flash(flash_message)
@@ -372,23 +356,14 @@ def view_selected_survey(selected_survey):  # noqa: C901
                                     ru_ref_filter=ru_ref_filter,
                                     business_id_filter=business_id_filter))
 
-        messages = [_refine(message) for message in message_controllers.get_thread_list_by_survey_id(survey_id,
-                                                                                                     business_id_filter,
-                                                                                                     conversation_tab,
-                                                                                                     page,
-                                                                                                     limit,
-                                                                                                     category)]
+        messages = [_refine(message) for message in message_controllers.get_thread_list(survey_id,
+                                                                                        business_id_filter,
+                                                                                        conversation_tab,
+                                                                                        page,
+                                                                                        limit,
+                                                                                        category)]
 
-        pagination = Pagination(page=page,
-                                per_page=limit,
-                                total=tab_counts['current'],
-                                record_name='messages',
-                                prev_label='Previous',
-                                next_label='Next',
-                                outer_window=0,
-                                format_total=True,
-                                format_number=True,
-                                show_single_page=False)
+        pagination = _get_pagination_object(page, limit, tab_counts)
 
         if flash_message:
             flash(flash_message)
@@ -416,7 +391,7 @@ def view_selected_survey(selected_survey):  # noqa: C901
                                displayed_short_name=displayed_short_name,
                                response_error=True,
                                tab_titles=_get_tab_titles())
- 
+
 
 def _get_tab_titles(all_tab_titles=None, ru_ref_filter=None):
     """Populates a dictionary of tab titles for display. Needed because the titles can vary by message count.
@@ -431,7 +406,7 @@ def _get_tab_titles(all_tab_titles=None, ru_ref_filter=None):
     return tab_titles
 
 
-def _get_tab_counts(business_id_filter, conversation_tab, ru_ref_filter, survey_id, category):
+def _get_tab_counts(business_id_filter, conversation_tab, ru_ref_filter, survey_id, category) -> dict:
     """gets the thread count for either the current conversation tab, or, if the ru_ref_filter is active it returns
     the current conversation tab and all other tabs. i.e the value for the 'current' tab is always populated.
     Calls two different secure message endpoints depending on if ru_ref_filter is set
@@ -485,6 +460,19 @@ def close_conversation(thread_id):
                            conversation_tab=conversation_tab,
                            ru_ref_filter=ru_ref_filter,
                            business_id_filter=business_id_filter)
+
+
+def _get_pagination_object(page, limit, tab_counts) -> Pagination:
+    return Pagination(page=page,
+                      per_page=limit,
+                      total=tab_counts['current'],
+                      record_name='messages',
+                      prev_label='Previous',
+                      next_label='Next',
+                      outer_window=0,
+                      format_total=True,
+                      format_number=True,
+                      show_single_page=False)
 
 
 def _try_get_party_id_from_filter_ru(ru_ref):
@@ -678,14 +666,14 @@ def _get_from_name(message):
         return "Deleted respondent"
 
 
-def _get_to_id(message):
+def _get_to_id(message: dict) -> str:
     try:
         return message.get('msg_to')[0]
     except (IndexError, TypeError):
         logger.error("No 'msg_to' in message.", message_id=message.get('msg_id'), exc_info=True)
 
 
-def _get_to_name(message):
+def _get_to_name(message: dict) -> str:
     try:
         if message.get('msg_to')[0] == 'GROUP':
             if get_survey_short_name_by_id(message.get('survey_id')):
@@ -696,14 +684,14 @@ def _get_to_name(message):
         logger.info("Failed to retrieve message to name", message_id=message.get('msg_id'))
 
 
-def _get_ru_ref_from_message(message):
+def _get_ru_ref_from_message(message: dict) -> str:
     try:
         return message['@business_details']['sampleUnitRef']
     except (KeyError, TypeError):
         logger.error("Failed to retrieve RU ref from message", message_id=message.get('msg_id'), exc_info=True)
 
 
-def _get_business_name_from_message(message):
+def _get_business_name_from_message(message: dict) -> str:
     try:
         return message['@business_details']['name']
     except (KeyError, TypeError):
@@ -722,7 +710,7 @@ def _get_human_readable_date(sent_date):
         logger.exception("Failed to parse sent date from message", sent_date=sent_date)
 
 
-def _get_unread_status(message):
+def _get_unread_status(message: dict) -> bool:
     return 'UNREAD' in message.get('labels', [])
 
 

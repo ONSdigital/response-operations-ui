@@ -749,7 +749,7 @@ class TestMessage(ViewTestCase):
 
         response = self.client.post("/messages/select-survey",
                                     follow_redirects=True,
-                                    data={"select-survey": "ASHE"})
+                                    data={"inbox-radio": "survey", "select-survey": "ASHE"})
 
         self.assertEqual(response.status_code, 200)
         self.assertIn("ASHE Messages".encode(), response.data)
@@ -775,7 +775,7 @@ class TestMessage(ViewTestCase):
 
         response = self.client.post("/messages/select-survey",
                                     follow_redirects=True,
-                                    data={"select-survey": "FDI"})
+                                    data={"inbox-radio": "survey", "select-survey": "FDI"})
         self.assertEqual(response.status_code, 200)
         self.assertIn("FDI Messages".encode(), response.data)
 
@@ -1047,8 +1047,9 @@ class TestMessage(ViewTestCase):
                                           business_id=business_id_filter,
                                           conversation_tab=conversation_tab)
 
-        query = f'survey={survey_id_2}&is_closed=true&my_conversations=false&new_respondent_conversations=false&' \
-            f'all_conversation_types=false&business_id={business_id_filter}&page={page}&limit={limit}'
+        query = f'is_closed=true&my_conversations=false&new_respondent_conversations=false&category=survey' \
+                f'&all_conversation_types=false&business_id={business_id_filter}&survey_id={survey_id_2}' \
+                f'&page={page}&limit={limit}'
         assert self._mock_request_called_with_expected_query(mock_request, query)
 
         assert self._mock_request_called_with_expected_path(mock_request, party_get_by_ru_ref)
@@ -1091,8 +1092,9 @@ class TestMessage(ViewTestCase):
                                           conversation_tab=conversation_tab,
                                           category=category)
 
-        query = f'survey={survey_id_2}&is_closed=true&my_conversations=false&new_respondent_conversations=false&' \
-            f'all_conversation_types=false&business_id={business_id_filter}&page={page}&limit={limit}'
+        query = f'is_closed=true&my_conversations=false&new_respondent_conversations=false&category=survey' \
+                f'&all_conversation_types=false&business_id={business_id_filter}&survey_id={survey_id_2}' \
+                f'&page={page}&limit={limit}'
         assert self._mock_request_called_with_expected_query(mock_request, query)
 
         assert 'ru_ref_filter' in response_body

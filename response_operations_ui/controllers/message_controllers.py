@@ -100,8 +100,7 @@ def _get_conversation_counts(business_id, conversation_tab, survey_id, category,
 def _get_secure_message_threads_params(survey_id, business_id, conversation_tab, category,
                                        all_conversation_types=False):
     """creates a params dictionary"""
-    params = {'survey': survey_id,
-              'is_closed': 'true' if conversation_tab == 'closed' else 'false',
+    params = {'is_closed': 'true' if conversation_tab == 'closed' else 'false',
               'my_conversations': 'true' if conversation_tab == 'my messages' else 'false',
               'new_respondent_conversations': 'true' if conversation_tab == 'initial' else 'false',
               'category': category,
@@ -113,7 +112,7 @@ def _get_secure_message_threads_params(survey_id, business_id, conversation_tab,
     return params
 
 
-def get_thread_list_by_survey_id(survey_id, business_id, conversation_tab, page, limit, category) -> dict:
+def get_thread_list(survey_id, business_id, conversation_tab, page, limit, category) -> dict:
 
     logger.info("Retrieving threads list", survey_id=survey_id, conversation_tab=conversation_tab,
                 business_id=business_id)
