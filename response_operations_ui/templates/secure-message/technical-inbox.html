@@ -33,7 +33,7 @@
       {% endif %}
 
       {% if change_survey %}
-        <h1 class="u-fs-l u-mb-xs" name="page-messages-title">{{ displayed_short_name }} Messages
+        <h1 class="u-fs-l u-mb-xs" name="page-messages-title">{{ selected_survey }} Messages
           <span class="u-fs-r">(<a id="change-survey" href="{{ url_for('messages_bp.select_inbox') }}">Change inbox</a>)</span>
         </h1>
       {% else %}

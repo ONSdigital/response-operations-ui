@@ -202,8 +202,7 @@ def select_inbox():
         if inbox == 'surveys':
             selected_survey = request.form.get('select-survey')
             if selected_survey:
-                return redirect(url_for("messages_bp.view_selected_survey",
-                                        selected_survey=selected_survey))
+                return redirect(url_for("messages_bp.view_selected_survey", selected_survey=selected_survey))
             else:
                 response_error = "Select a survey sub-selection for survey inbox"
         else:
@@ -227,8 +226,7 @@ def clear_filter(selected_survey):
     return redirect(url_for("messages_bp.view_selected_survey",
                             selected_survey=selected_survey,
                             page=request.args.get('page'),
-                            conversation_tab=request.args['conversation_tab'],
-                            clear_filter='true'))
+                            conversation_tab=request.args['conversation_tab']))
 
 
 @messages_bp.route('/technical', methods=['GET', 'POST'])
@@ -243,9 +241,10 @@ def view_technical_inbox():  # noqa: C901
     ru_ref_filter = request.args.get('ru_ref_filter', default='')
     business_id_filter = request.args.get('business_id_filter', default='')
     category = "TECHNICAL"
-    try:
-        form = SecureMessageRuFilterForm()
 
+    form = SecureMessageRuFilterForm()
+
+    try:
         if form.validate_on_submit():
             new_ru_ref = form.ru_ref_filter.data
             if new_ru_ref and new_ru_ref != ru_ref_filter:
@@ -284,7 +283,6 @@ def view_technical_inbox():  # noqa: C901
                                breadcrumbs=breadcrumbs,
                                messages=messages,
                                selected_survey="Technical",
-                               displayed_short_name="Technical",
                                pagination=pagination,
                                change_survey=True,
                                conversation_tab=conversation_tab,
@@ -311,6 +309,13 @@ def view_selected_survey(selected_survey):  # noqa: C901
     session['messages_survey_selection'] = selected_survey
     breadcrumbs = [{"text": displayed_short_name + " Messages"}]
 
+    page = request.args.get('page', default=1, type=int)
+    limit = request.args.get('limit', default=10, type=int)
+    conversation_tab = request.args.get('conversation_tab', default='open')
+    ru_ref_filter = request.args.get('ru_ref_filter', default='')
+    business_id_filter = request.args.get('business_id_filter', default='')
+    category = 'SURVEY'
+
     try:
         if selected_survey == 'FDI':
             survey_id = _get_FDI_survey_id()
@@ -318,13 +323,6 @@ def view_selected_survey(selected_survey):  # noqa: C901
             survey_id = _get_vacancies_survey_ids()
         else:
             survey_id = _get_survey_id(selected_survey)
-
-        page = request.args.get('page', default=1, type=int)
-        limit = request.args.get('limit', default=10, type=int)
-        conversation_tab = request.args.get('conversation_tab', default='open')
-        ru_ref_filter = request.args.get('ru_ref_filter', default='')
-        business_id_filter = request.args.get('business_id_filter', default='')
-        category = request.args.get('category', default='SURVEY', type=str)
 
         form = SecureMessageRuFilterForm()
 
@@ -467,7 +465,7 @@ def _get_pagination_object(page, limit, tab_counts) -> Pagination:
                       show_single_page=False)
 
 
-def _try_get_party_id_from_filter_ru(ru_ref):
+def _try_get_party_id_from_filter_ru(ru_ref: str):
     """Attempts to get party by the ru_ref entered in the UI as an ru to filter by.
     Not finding a party is not an error, since the user may have entered anything.
     If party returns a 404 it returns an unknown ru message, else returns a message assuming party unresponsive
