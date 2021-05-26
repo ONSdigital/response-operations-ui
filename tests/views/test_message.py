@@ -149,6 +149,32 @@ class TestMessage(ViewTestCase):
 
     @requests_mock.mock()
     @patch('response_operations_ui.controllers.message_controllers._get_jwt')
+    def test_technical_inbox_threads_list(self, mock_request, mock_get_jwt):
+        """
+        Tests if the right messages get displayed for the technical inbox.  This will look very similar to the
+        survey one for now until we have a way to create technical messages and/or be able to switch the categories
+        of the messages.  Once we do, we can know what the requirements are (i.e., will messages of certain categories
+        have survey, business and collection exercise information?)
+        """
+        mock_get_jwt.return_value = "blah"
+        mock_request.get(url_messages + '/count', json={"total": 1}, status_code=200)
+        mock_request.get(url_get_threads_list, json=thread_list)
+        mock_request.get(url_get_surveys_list, json=self.surveys_list_json)
+        mock_request.get(shortname_url + "/technical", json=ashe_info['survey'])
+
+        response = self.client.get("/messages/technical")
+
+        self.assertEqual(response.status_code, 200)
+        self.assertIn("Technical Messages".encode(), response.data)
+        self.assertIn("Apple".encode(), response.data)
+        self.assertIn("50012345678".encode(), response.data)
+        self.assertIn("John Example".encode(), response.data)
+        self.assertIn("ASHE Team".encode(), response.data)
+        self.assertIn("Message from respondent".encode(), response.data)
+        self.assertIn("Message from ONS".encode(), response.data)
+
+    @requests_mock.mock()
+    @patch('response_operations_ui.controllers.message_controllers._get_jwt')
     def test_survey_short_name_failure(self, mock_request, mock_get_jwt):
         mock_get_jwt.return_value = "blah"
         mock_request.get(shortname_url + "/ASHE", status_code=500)
