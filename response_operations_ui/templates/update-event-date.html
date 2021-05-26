@@ -104,7 +104,7 @@
             </div>
           </div>
         </fieldset>
-        {% if ('ref_period_start' not in event_name) and ('ref_period_end' not in event_name) %}
+        {% if event_tag not in ['ref_period_start', 'ref_period_end'] %}
         <fieldset class="fieldgroup fieldgroup--time u-mt-l" data-qa="widget-time">
           <legend class="fieldgroup__title u-fs-r--b">Time (Newport)</legend>
           <div class="field-group">

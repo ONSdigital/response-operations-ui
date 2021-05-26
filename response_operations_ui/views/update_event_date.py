@@ -52,7 +52,8 @@ def update_event_date(short_name, period, tag):
                            survey=survey,
                            event_name=event_name,
                            date_restriction_text=date_restriction_text,
-                           show=show)
+                           show=show,
+                           event_tag=tag)
 
 
 def is_viewed_reminder_last_in_sequence(events, tag):
