@@ -108,7 +108,7 @@ def _get_secure_message_threads_params(survey_id, business_id, conversation_tab,
     if business_id:
         params['business_id'] = business_id
     if survey_id:
-        params['survey_id'] = survey_id
+        params['survey'] = survey_id
     return params
 
 

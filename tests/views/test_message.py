@@ -1077,7 +1077,7 @@ class TestMessage(ViewTestCase):
                                           conversation_tab=conversation_tab)
 
         query = f'is_closed=true&my_conversations=false&new_respondent_conversations=false&category=survey' \
-                f'&all_conversation_types=false&business_id={business_id_filter}&survey_id={survey_id_2}' \
+                f'&all_conversation_types=false&business_id={business_id_filter}&survey={survey_id_2}' \
                 f'&page={page}&limit={limit}'
         assert self._mock_request_called_with_expected_query(mock_request, query)
 
@@ -1122,7 +1122,7 @@ class TestMessage(ViewTestCase):
                                           category=category)
 
         query = f'is_closed=true&my_conversations=false&new_respondent_conversations=false&category=survey' \
-                f'&all_conversation_types=false&business_id={business_id_filter}&survey_id={survey_id_2}' \
+                f'&all_conversation_types=false&business_id={business_id_filter}&survey={survey_id_2}' \
                 f'&page={page}&limit={limit}'
         assert self._mock_request_called_with_expected_query(mock_request, query)
 
