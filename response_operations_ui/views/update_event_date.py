@@ -128,8 +128,8 @@ def update_event_date_submit(short_name, period, tag):
     submitted_dt = datetime(year=int(form.year.data),
                             month=int(form.month.data),
                             day=int(form.day.data),
-                            hour=int(form.hour.data) if form.hour.data else 1,
-                            minute=int(form.minute.data) if form.minute.data else 0,
+                            hour=int(form.hour.data),
+                            minute=int(form.minute.data),
                             tzinfo=tz.gettz('Europe/London'))
 
     """Attempts to create the event, returns None if success or returns an error message upon failure."""
