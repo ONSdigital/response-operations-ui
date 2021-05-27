@@ -52,7 +52,8 @@ def update_event_date(short_name, period, tag):
                            survey=survey,
                            event_name=event_name,
                            date_restriction_text=date_restriction_text,
-                           show=show)
+                           show=show,
+                           tag=tag)
 
 
 def is_viewed_reminder_last_in_sequence(events, tag):
@@ -123,6 +124,7 @@ def update_event_date_submit(short_name, period, tag):
         logger.error('Failed to find collection exercise by period',
                      short_name=short_name, period=period)
         abort(404)
+
     submitted_dt = datetime(year=int(form.year.data),
                             month=int(form.month.data),
                             day=int(form.day.data),
