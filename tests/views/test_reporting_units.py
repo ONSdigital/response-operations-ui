@@ -228,23 +228,6 @@ class TestReportingUnits(TestCase):
         self.assertIn("50012345678".encode(), response.data)
 
     @requests_mock.mock()
-    def test_get_reporting_unit_survey_shows_change_link(self, mock_request):
-        mock_request.get(url_get_party_by_ru_ref, json=business_reporting_unit)
-        mock_request.get(url_get_cases_by_business_party_id, json=cases_list)
-        mock_request.get(f'{url_get_collection_exercise_by_id}/{collection_exercise_id_1}', json=collection_exercise)
-        mock_request.get(f'{url_get_collection_exercise_by_id}/{collection_exercise_id_2}', json=collection_exercise_2)
-        mock_request.get(url_get_business_attributes, json=business_attributes)
-        mock_request.get(url_get_survey_by_id, json=survey)
-        mock_request.get(url_get_respondent_party_by_list, json=respondent_party_list)
-        mock_request.get(f'{url_get_iac}/{iac_1}', json=iac)
-        mock_request.get(f'{url_get_iac}/{iac_2}', json=iac)
-
-        response = self.client.get(f"/reporting-units/50012345678/{survey_id}")
-
-        self.assertEqual(response.status_code, 200)
-        self.assertIn("Change</a>".encode(), response.data)
-
-    @requests_mock.mock()
     def test_get_reporting_unit_hides_change_link_when_no_available_statuses(self, mock_request):
         mock_request.get(url_get_party_by_ru_ref, json=business_reporting_unit)
         mock_request.get(url_get_cases_by_business_party_id, json=cases_list_completed)
