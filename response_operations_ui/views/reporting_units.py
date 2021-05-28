@@ -39,7 +39,6 @@ def view_reporting_unit(ru_ref):
         ce['scheduledStartDateTime']) < datetime.now(timezone.utc)]
 
     survey_table_data = build_survey_table_data_dict(live_collection_exercises, case_groups)
-    print(survey_table_data)
 
     breadcrumbs = [
         {
@@ -57,6 +56,15 @@ def view_reporting_unit(ru_ref):
 
 
 def build_survey_table_data_dict(collection_exercises, case_groups):
+    """
+    Creates the dictionary of survey & CE information for the front-end table to display
+    :param collection_exercises: A list of collection exercises to add to the table
+    :type collection_exercises: list
+    :param case_groups: A list of case groups for the reporting unit
+    :type case_groups: list
+    :return: A sorted dictionary of survey/CE information to provide to the front-end table
+    :rtype: OrderedDict
+    """
     table_data = {}
     for ce in collection_exercises:
         if ce['surveyId'] in table_data:
@@ -131,7 +139,7 @@ def build_respondent_table_data_dict(respondents, ru_ref):
     return table_data.values()
 
 
-@reporting_unit_bp.route('/<ru_ref>/<survey>', methods=['GET'])
+@reporting_unit_bp.route('/<ru_ref>/surveys/<survey>', methods=['GET'])
 @login_required
 def view_reporting_unit_survey(ru_ref, survey):
     logger.info("Gathering data to view reporting unit", ru_ref=ru_ref)
@@ -177,7 +185,7 @@ def view_reporting_unit_survey(ru_ref, survey):
 
     return render_template('reporting-unit-survey.html', ru=reporting_unit, survey=[survey, display_name],
                            respondents=survey_respondents, collection_exercises=collection_exercises_with_details,
-                           iac=unused_iac)
+                           iac=unused_iac, case=case)
 
 
 def add_collection_exercise_details(collection_exercise, reporting_unit, case_groups):

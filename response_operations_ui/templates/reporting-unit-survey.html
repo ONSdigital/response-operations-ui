@@ -8,10 +8,9 @@
     <div class="grid">
         <div id="main" class="grid__col col-10@m">
             <form action="{{ url_for('reporting_unit_bp.view_reporting_unit', ru_ref=ru.sampleUnitRef) }}" method="get">
-                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
                 {{
                     onsButton({
-                        "classes": "u-mb-s u-mt-l",
+                        "classes": "btn--secondary btn--small",
                         "text": "Back to surveys"
                     })
                 }}   
@@ -111,6 +110,12 @@
                     <div id="unused-enrolment-code">Unused enrolment code:
                         <code class="u-fs-r u-ml-s">{{ iac }}</code>
                     </div>
+                {% else %}
+                    <a href="{{ url_for('reporting_unit_bp.generate_new_enrolment_code', case_id=case.id,
+                    collection_exercise_id=collection_exercises[0].id, ru_name=ru.name,
+                    ru_ref=ru.sampleUnitRef, trading_as=collection_exercises[0].tradingAs, survey_ref=survey[1][:2],
+                    survey_name=survey[1][4:]) }}"
+                    id="generate-new-code-{{survey.shortName}}">
                 {% endif %}
                 
                 {% 
