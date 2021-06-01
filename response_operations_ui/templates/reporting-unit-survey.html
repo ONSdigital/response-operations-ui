@@ -2,7 +2,7 @@
 {% from "components/button/_macro.njk" import onsButton %}
 {% from "components/table/_macro.njk" import onsTable %}
 
-{% set page_title = ru.name + " | " + survey[1] %}
+{% set page_title = ru.name + " | " + survey.display_name %}
 
 {% block main %}
     <div class="grid">
@@ -18,12 +18,12 @@
 
             <h2 id="RU_NAME" class="u-fs-l">{{ ru.name }}</h2>
     
-            <h1 id="SURVEY_NAME" class="u-fs-xl">{{ survey[1] }}</h1>
+            <h1 id="SURVEY_NAME" class="u-fs-xl">{{ survey.display_name }}</h1>
         
         </div>
         <div class="grid__col col-12@m">
             <div class="ru-survey-ces">
-                <h4 id="COLLECTION_EXERCISES" class="u-fs-m">Collection exercises</h2>
+                <h4 id="COLLECTION_EXERCISES" class="u-fs-m">Collection exercises</h4>
 
                 {% 
                     set collectionExerciseTableData = {
@@ -61,9 +61,9 @@
                     {% endif %}
 
                     {% if ce.responseStatus in ['Not started', 'In progress']  %}
-                        {% set survey_link = '&nbsp;   <a href="' + url_for("case_bp.get_response_statuses", ru_ref=ru.sampleUnitRef, survey=survey[1][4:], period=ce.exerciseRef) + '">Change</a>' %}
+                        {% set survey_link = '&nbsp;   <a href="' + url_for("case_bp.get_response_statuses", ru_ref=ru.sampleUnitRef, survey=survey.shortName, period=ce.exerciseRef) + '">Change</a>' %}
                     {% elif ce.responseStatus in ['Completed', 'Completed by phone'] %}
-                        {% set survey_link = '&nbsp;   <a href="' + url_for("case_bp.get_response_statuses", ru_ref=ru.sampleUnitRef, survey=survey[1][4:], period=ce.exerciseRef) + '">View</a>' %}
+                        {% set survey_link = '&nbsp;   <a href="' + url_for("case_bp.get_response_statuses", ru_ref=ru.sampleUnitRef, survey=survey.shortName, period=ce.exerciseRef) + '">View</a>' %}
                     {% endif %}
                     {% do collectionExerciseTableDataRows.append( 
                         {
@@ -104,18 +104,18 @@
                 }}
             </div>
             <div class="ru-survey-respondents u-pt-s">
-                <h4 id="RESPONDENTS" class="u-fs-m">Respondents</h2>
+                <h4 id="RESPONDENTS" class="u-fs-m">Respondents</h4>
 
                 {% if iac != "" %}
-                    <div id="unused-enrolment-code">Unused enrolment code:
-                        <code class="u-fs-r u-ml-s">{{ iac }}</code>
+                    <div>Unused enrolment code:
+                        <code class="u-fs-r u-ml-s" id="unused-enrolment-code">{{ iac }}</code>
                     </div>
                 {% else %}
                     <a href="{{ url_for('reporting_unit_bp.generate_new_enrolment_code', case_id=case.id,
                     collection_exercise_id=collection_exercises[0].id, ru_name=ru.name,
-                    ru_ref=ru.sampleUnitRef, trading_as=collection_exercises[0].tradingAs, survey_ref=survey[1][:2],
-                    survey_name=survey[1][4:]) }}"
-                    id="generate-new-code-{{survey.shortName}}">
+                    ru_ref=ru.sampleUnitRef, trading_as=collection_exercises[0].tradingAs, survey_ref=survey.surveyRef,
+                    survey_name=survey.shortName) }}"
+                    id="generate-new-code-{{survey.shortName}}">Generate new enrolment code</a>
                 {% endif %}
                 
                 {% 
@@ -150,16 +150,16 @@
 
                     {% if respondent.enrolmentStatus == 'ENABLED' %}
                         {% set enrolment_status_class = 'status--success' %}
-                        {% set change_status_link = '<a href="' + url_for("reporting_unit_bp.confirm_change_enrolment_status", ru_ref=ru.sampleUnitRef, ru_name=ru.name, survey_id=survey[0],
-                            survey_name=survey[1][4:], respondent_id=respondent.id, respondent_first_name=respondent.firstName,
+                        {% set change_status_link = '<a href="' + url_for("reporting_unit_bp.confirm_change_enrolment_status", ru_ref=ru.sampleUnitRef, ru_name=ru.name, survey_id=survey.id,
+                            survey_name=survey.shortName, respondent_id=respondent.id, respondent_first_name=respondent.firstName,
                             respondent_last_name=respondent.lastName, business_id=ru.id, trading_as=ru.trading_as, change_flag="DISABLED", tab="reporting_units") + '" id="change-enrolment-status">Disable</a>' %}
                     {% elif respondent.enrolmentStatus == 'PENDING' %}
                         {% set enrolment_status_class = 'status--info' %}
                         {% set change_status_link = '<a href="' + url_for("reporting_unit_bp.view_resend_verification", ru_ref=ru_ref, party_id=respondent.id) + '">Re-send verification email</a>' %}
                     {% else %}
                         {% set enrolment_status_class = 'status--dead' %}
-                        {% set change_status_link = '<a href="' + url_for("reporting_unit_bp.confirm_change_enrolment_status", ru_ref=ru.sampleUnitRef, ru_name=ru.name, survey_id=survey[0],
-                            survey_name=survey[1][4:], respondent_id=respondent.id, respondent_first_name=respondent.firstName,
+                        {% set change_status_link = '<a href="' + url_for("reporting_unit_bp.confirm_change_enrolment_status", ru_ref=ru.sampleUnitRef, ru_name=ru.name, survey_id=survey.id,
+                            survey_name=survey.shortName, respondent_id=respondent.id, respondent_first_name=respondent.firstName,
                             respondent_last_name=respondent.lastName, business_id=ru.id, trading_as=ru.trading_as, change_flag='ENABLED', tab="reporting_units") + '" id="change-enrolment-status">Re-enable</a>' %}
                     {% endif %}
 
@@ -167,7 +167,7 @@
                         "action": url_for('messages_bp.create_message'),
                         "button": {
                             "text": "Create message",
-                            "id": 'create-message-' + respondent.id,
+                            "id": "create-message-button-" + loop.index|string,
                             "classes": 'btn--secondary btn-small',
                             "value": 'create-message-view',
                             "name": 'create-message'
@@ -187,11 +187,11 @@
                             },
                             {
                                 "name": "survey",
-                                "value": survey[1][4:]
+                                "value": survey.shortName
                             },
                             {
                                 "name": "survey_id",
-                                "value": survey[0]
+                                "value": survey.id
                             },
                             {
                                 "name": "msg_to_name",

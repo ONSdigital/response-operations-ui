@@ -60,7 +60,7 @@
       {
         "tds": [
           {
-            "value": '<a href="' + url_for("reporting_unit_bp.view_reporting_unit_survey", ru_ref=ru.sampleUnitRef, survey=survey[0]) + '">' + survey[1].surveyName + '</a>',
+            "value": '<a href="' + url_for("reporting_unit_bp.view_reporting_unit_survey", ru_ref=ru.sampleUnitRef, survey=survey[0]) + '" id="survey-' + survey[1].shortName + '" >' + survey[1].surveyName + '</a>',
             "data": "Survey",
             "name": "tbl-surveys-survey"
           },
