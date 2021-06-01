@@ -40,41 +40,31 @@ def view_reporting_unit(ru_ref):
 
     survey_table_data = build_survey_table_data_dict(live_collection_exercises, case_groups)
 
-    breadcrumbs = [
-        {
-            "text": "Reporting units",
-            "url": "/reporting-units"
-        },
-        {
-            "text": f"{ru_ref}"
-        }
-    ]
+    breadcrumbs = create_reporting_unit_breadcrumbs(ru_ref)
 
     logger.info("Successfully gathered data to view reporting unit", ru_ref=ru_ref)
     return render_template('reporting-unit.html', ru=reporting_unit,
                            surveys=survey_table_data, breadcrumbs=breadcrumbs)
 
 
-def build_survey_table_data_dict(collection_exercises, case_groups):
+def build_survey_table_data_dict(collection_exercises: list, case_groups: list) -> list:
     """
     Creates the dictionary of survey & CE information for the front-end table to display
     :param collection_exercises: A list of collection exercises to add to the table
-    :type collection_exercises: list
     :param case_groups: A list of case groups for the reporting unit
-    :type case_groups: list
-    :return: A sorted dictionary of survey/CE information to provide to the front-end table
-    :rtype: OrderedDict
+    :return: A sorted list of survey/CE information to provide to the front-end table
     """
     table_data = {}
     for ce in collection_exercises:
         if ce['surveyId'] in table_data:
             # Keep the one with the later go-live date
-            if (parse_date(table_data[ce['surveyId']]['goLive']) > parse_date(ce['scheduledStartDateTime'])):
+            if parse_date(table_data[ce['surveyId']]['goLive']) > parse_date(ce['scheduledStartDateTime']):
                 continue
 
         survey = get_survey_by_id(ce['surveyId'])
         table_data[ce['surveyId']] = {
             "surveyName": f"{survey['surveyRef']} {survey['shortName']}",
+            "shortName": survey['shortName'],
             "period": ce['exerciseRef'],
             "goLive": ce['scheduledStartDateTime'],
             "caseStatus": map_ce_response_status(get_case_group_status_by_collection_exercise(
@@ -85,7 +75,7 @@ def build_survey_table_data_dict(collection_exercises, case_groups):
 
 @reporting_unit_bp.route('/<ru_ref>/respondents', methods=['GET'])
 @login_required
-def view_respondents(ru_ref):
+def view_respondents(ru_ref: str):
     logger.info("Gathering data to view reporting unit", ru_ref=ru_ref)
     # Make some initial calls to retrieve some data we'll need
     reporting_unit = party_controller.get_party_by_ru_ref(ru_ref)
@@ -96,21 +86,13 @@ def view_respondents(ru_ref):
 
     respondent_table_data = build_respondent_table_data_dict(respondents, ru_ref)
 
-    breadcrumbs = [
-        {
-            "text": "Reporting units",
-            "url": "/reporting-units"
-        },
-        {
-            "text": f"{ru_ref}"
-        }
-    ]
+    breadcrumbs = create_reporting_unit_breadcrumbs(ru_ref)
 
     return render_template('reporting-unit-respondents.html', ru=reporting_unit,
                            respondents=respondent_table_data, breadcrumbs=breadcrumbs)
 
 
-def build_respondent_table_data_dict(respondents, ru_ref):
+def build_respondent_table_data_dict(respondents: list, ru_ref: str):
     table_data = {}
     survey_data = {}
     for respondent in respondents:
@@ -173,17 +155,18 @@ def view_reporting_unit_survey(ru_ref, survey):
         ce, attributes[ce['id']], case_groups) for ce in survey_collection_exercises]
 
     survey_details = get_survey_by_id(survey)
-    display_name = f"{survey_details['surveyRef']} {survey_details['shortName']}"
+    survey_details['display_name'] = f"{survey_details['surveyRef']} {survey_details['shortName']}"
 
     # If there's an active IAC on the newest case, return it to be displayed
+    collection_exercise_ids = [ce['id'] for ce in live_collection_exercises]
     valid_cases = [case for case in cases if case.get('caseGroup', {}).get('collectionExerciseId')
-                   in live_collection_exercises]
+                   in collection_exercise_ids]
     case = next(iter(sorted(valid_cases, key=lambda c: c['createdDateTime'], reverse=True)), None)
     unused_iac = ""
     if case is not None and iac_controller.is_iac_active(case['iac']):
         unused_iac = case['iac']
 
-    return render_template('reporting-unit-survey.html', ru=reporting_unit, survey=[survey, display_name],
+    return render_template('reporting-unit-survey.html', ru=reporting_unit, survey=survey_details,
                            respondents=survey_respondents, collection_exercises=collection_exercises_with_details,
                            iac=unused_iac, case=case)
 
@@ -370,3 +353,15 @@ def change_respondent_status(ru_ref):
     reporting_units_controllers.change_respondent_status(respondent_id=request.args['respondent_id'],
                                                          change_flag=request.args['change_flag'])
     return redirect(url_for('reporting_unit_bp.view_reporting_unit', ru_ref=ru_ref, account_status_changed='True'))
+
+
+def create_reporting_unit_breadcrumbs(ru_ref: str) -> list:
+    return [
+        {
+            "text": "Reporting units",
+            "url": "/reporting-units"
+        },
+        {
+            "text": f"{ru_ref}"
+        }
+    ]
