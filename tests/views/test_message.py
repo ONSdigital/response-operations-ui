@@ -9,7 +9,7 @@ import requests_mock
 from config import TestingConfig
 from response_operations_ui.controllers.message_controllers import get_conversation, send_message
 from response_operations_ui.exceptions.exceptions import InternalError
-from response_operations_ui.views.messages import _get_to_id, _calculate_page
+from response_operations_ui.views.messages import _get_to_id, _verify_requested_page_is_within_bounds
 from response_operations_ui.views.messages import _get_unread_status
 from tests.views import ViewTestCase
 
@@ -114,7 +114,6 @@ class TestMessage(ViewTestCase):
                 "shortName": "ASHE",
                 "longName": "ASHE long name",
                 "surveyRef": "123"
-
             }
         ]
         self.before()
@@ -141,6 +140,32 @@ class TestMessage(ViewTestCase):
         response = self.client.get("/messages/ASHE")
 
         self.assertEqual(response.status_code, 200)
+        self.assertIn("Apple".encode(), response.data)
+        self.assertIn("50012345678".encode(), response.data)
+        self.assertIn("John Example".encode(), response.data)
+        self.assertIn("ASHE Team".encode(), response.data)
+        self.assertIn("Message from respondent".encode(), response.data)
+        self.assertIn("Message from ONS".encode(), response.data)
+
+    @requests_mock.mock()
+    @patch('response_operations_ui.controllers.message_controllers._get_jwt')
+    def test_technical_inbox_threads_list(self, mock_request, mock_get_jwt):
+        """
+        Tests if the right messages get displayed for the technical inbox.  This will look very similar to the
+        survey one for now until we have a way to create technical messages and/or be able to switch the categories
+        of the messages.  Once we do, we can know what the requirements are (i.e., will messages of certain categories
+        have survey, business and collection exercise information?)
+        """
+        mock_get_jwt.return_value = "blah"
+        mock_request.get(url_messages + '/count', json={"total": 1}, status_code=200)
+        mock_request.get(url_get_threads_list, json=thread_list)
+        mock_request.get(url_get_surveys_list, json=self.surveys_list_json)
+        mock_request.get(shortname_url + "/technical", json=ashe_info['survey'])
+
+        response = self.client.get("/messages/technical")
+
+        self.assertEqual(response.status_code, 200)
+        self.assertIn("Technical Messages".encode(), response.data)
         self.assertIn("Apple".encode(), response.data)
         self.assertIn("50012345678".encode(), response.data)
         self.assertIn("John Example".encode(), response.data)
@@ -700,7 +725,7 @@ class TestMessage(ViewTestCase):
         response = self.client.get("/messages/select-survey")
 
         self.assertEqual(200, response.status_code)
-        self.assertIn("Filter messages by survey".encode(), response.data)
+        self.assertIn("Choose which messages to show".encode(), response.data)
         self.assertIn("ASHE".encode(), response.data)
         self.assertIn("Bricks".encode(), response.data)
         self.assertIn("BRES".encode(), response.data)
@@ -715,8 +740,8 @@ class TestMessage(ViewTestCase):
 
         self.assertEqual(200, response.status_code)
         self.assertIn("Home".encode(), response.data)
-        self.assertIn("Filter messages by survey".encode(), response.data)
-        self.assertIn("Select a survey to display messages for your team".encode(), response.data)
+        self.assertIn("Choose which messages to show".encode(), response.data)
+        self.assertIn("Surveys".encode(), response.data)
 
     @requests_mock.mock()
     def test_get_messages_survey_does_not_exist(self, mock_request):
@@ -736,7 +761,7 @@ class TestMessage(ViewTestCase):
         response = self.client.get("/messages", follow_redirects=True)
 
         self.assertEqual(response.status_code, 200)
-        self.assertIn("Filter messages by survey".encode(), response.data)
+        self.assertIn("Choose which messages to show".encode(), response.data)
 
     @requests_mock.mock()
     @patch('response_operations_ui.controllers.message_controllers._get_jwt')
@@ -749,7 +774,7 @@ class TestMessage(ViewTestCase):
 
         response = self.client.post("/messages/select-survey",
                                     follow_redirects=True,
-                                    data={"select-survey": "ASHE"})
+                                    data={"inbox-radio": "surveys", "select-survey": "ASHE"})
 
         self.assertEqual(response.status_code, 200)
         self.assertIn("ASHE Messages".encode(), response.data)
@@ -775,7 +800,7 @@ class TestMessage(ViewTestCase):
 
         response = self.client.post("/messages/select-survey",
                                     follow_redirects=True,
-                                    data={"select-survey": "FDI"})
+                                    data={"inbox-radio": "surveys", "select-survey": "FDI"})
         self.assertEqual(response.status_code, 200)
         self.assertIn("FDI Messages".encode(), response.data)
 
@@ -872,15 +897,15 @@ class TestMessage(ViewTestCase):
         self.assertIn("Ashe Messages".encode(), response.data)
 
     def test_calculate_page_change(self):
-        result = _calculate_page(3, 10, 15)
+        result = _verify_requested_page_is_within_bounds(3, 10, 15)
         self.assertEqual(2, result)
 
     def test_calculate_page_no_change(self):
-        result = _calculate_page(1, 10, 15)
+        result = _verify_requested_page_is_within_bounds(1, 10, 15)
         self.assertEqual(1, result)
 
     def test_calculate_page_zero_threads(self):
-        result = _calculate_page(1, 10, 0)
+        result = _verify_requested_page_is_within_bounds(1, 10, 0)
         self.assertEqual(1, result)
 
     @requests_mock.mock()
@@ -889,15 +914,19 @@ class TestMessage(ViewTestCase):
         mock_get_jwt.return_value = "blah"
 
         with self.client.session_transaction() as session:
-            session['messages_survey_selection'] = 'QBS'
+            session['messages_survey_selection'] = 'ASHE'
 
         mock_request.get(url_get_thread, json=thread_unread_json)
-        mock_request.put(f"{url_modify_label_base}9ecfad50-2ff5-4bea-a997-d73c4faa73ae")
+        mock_request.get(url_messages + '/count', json={"total": 1}, status_code=200)
+        mock_request.get(shortname_url + "/ASHE", json=ashe_info['survey'])
+        mock_request.get(url_get_threads_list, json=threads_no_unread_list)
         mock_request.get(url_get_surveys_list, json=survey_list)
+        mock_request.put(f"{url_modify_label_base}9ecfad50-2ff5-4bea-a997-d73c4faa73ae")
 
-        response = self.client.get('/messages/mark_unread/9ecfad50-2ff5-4bea-a997-d73c4faa73ae?from=GROUP&to=ONS+User')
+        response = self.client.get('/messages/mark_unread/9ecfad50-2ff5-4bea-a997-d73c4faa73ae?from=GROUP&to=ONS+User',
+                                   follow_redirects=True)
 
-        self.assertIn("flash_message=Message+from+GROUP+to+ONS+User+marked+unread".encode(), response.data)
+        self.assertIn("Message from GROUP to ONS User marked unread".encode(), response.data)
 
     @requests_mock.mock()
     @patch('response_operations_ui.controllers.message_controllers._get_jwt')
@@ -1047,8 +1076,9 @@ class TestMessage(ViewTestCase):
                                           business_id=business_id_filter,
                                           conversation_tab=conversation_tab)
 
-        query = f'survey={survey_id_2}&is_closed=true&my_conversations=false&new_respondent_conversations=false&' \
-            f'all_conversation_types=false&business_id={business_id_filter}&page={page}&limit={limit}'
+        query = f'is_closed=true&my_conversations=false&new_respondent_conversations=false&category=survey' \
+                f'&all_conversation_types=false&business_id={business_id_filter}&survey={survey_id_2}' \
+                f'&page={page}&limit={limit}'
         assert self._mock_request_called_with_expected_query(mock_request, query)
 
         assert self._mock_request_called_with_expected_path(mock_request, party_get_by_ru_ref)
@@ -1067,6 +1097,7 @@ class TestMessage(ViewTestCase):
         page = 1
         business_id_filter = '123'
         conversation_tab = 'closed'
+        category = 'SURVEY'
 
         with self.client.session_transaction() as session:
             session['messages_survey_selection'] = 'Ashe'
@@ -1087,10 +1118,12 @@ class TestMessage(ViewTestCase):
         self.assertEqual(200, response.status_code)
         mock_get_count.assert_called_with(survey_id=['6aa8896f-ced5-4694-800c-6cd661b0c8b2'],
                                           business_id=business_id_filter,
-                                          conversation_tab=conversation_tab)
+                                          conversation_tab=conversation_tab,
+                                          category=category)
 
-        query = f'survey={survey_id_2}&is_closed=true&my_conversations=false&new_respondent_conversations=false&' \
-            f'all_conversation_types=false&business_id={business_id_filter}&page={page}&limit={limit}'
+        query = f'is_closed=true&my_conversations=false&new_respondent_conversations=false&category=survey' \
+                f'&all_conversation_types=false&business_id={business_id_filter}&survey={survey_id_2}' \
+                f'&page={page}&limit={limit}'
         assert self._mock_request_called_with_expected_query(mock_request, query)
 
         assert 'ru_ref_filter' in response_body

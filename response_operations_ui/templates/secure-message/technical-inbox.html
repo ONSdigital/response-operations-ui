@@ -31,15 +31,9 @@
       {% if breadcrumbs %}
         {% include 'layouts/configs/breadcrumbs.html' %}
       {% endif %}
-
-      {% if change_survey %}
-        <h1 class="u-fs-l u-mb-xs" name="page-messages-title">{{ displayed_short_name }} Messages
-          <span class="u-fs-r">(<a id="change-survey" href="{{ url_for('messages_bp.select_inbox') }}">Change inbox</a>)</span>
-        </h1>
-      {% else %}
-        <h1 class="u-fs-xl" name="page-messages-title">Messages</h1>
-      {% endif %}
-        
+      <h1 class="u-fs-l u-mb-xs" name="page-messages-title">Technical Messages
+        <span class="u-fs-r">(<a id="change-survey" href="{{ url_for('messages_bp.select_inbox') }}">Change inbox</a>)</span>
+      </h1>
       {% if ru_ref_filter %}
           <p id="clear_ru_ref" class="u-fs-s">Filtered by RU ref: {{ ru_ref_filter }}
             <a href="{{ url_for('messages_bp.clear_filter', selected_survey=selected_survey, conversation_tab=conversation_tab) }}">Clear filter</a>
@@ -47,7 +41,7 @@
       {% endif %}  
     </div>
     <div class="grid__col u-mt-s@s"> 
-      <form action="{{ url_for('messages_bp.view_selected_survey',selected_survey=selected_survey, conversation_tab=conversation_tab, ru_ref_filter=ru_ref_filter, business_id_filter=business_id_filter, page=page, limit=limit) }}" method="post">
+      <form action="{{ url_for('messages_bp.view_technical_inbox', selected_survey=selected_survey, conversation_tab=conversation_tab, ru_ref_filter=ru_ref_filter, business_id_filter=business_id_filter, page=page, limit=limit) }}" method="post">
         {{ form.csrf_token }}
         {{
           onsInput({
@@ -82,7 +76,7 @@
             {% do nav.append(
               {
                 "title": tab_value,
-                "url": url_for('messages_bp.view_selected_survey', selected_survey=selected_survey, conversation_tab=tab_key, ru_ref_filter=ru_ref_filter, business_id_filter=business_id_filter)
+                "url": url_for('messages_bp.view_technical_inbox', selected_survey=selected_survey, conversation_tab=tab_key, ru_ref_filter=ru_ref_filter, business_id_filter=business_id_filter)
               }
             ) %}
         {% endfor %}

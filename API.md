@@ -79,8 +79,8 @@ This page documents the response operations ui endpoints that can be hit.
 * GET request to this endpoint allows you to mark a message as unread.
 * `message_id` is the ID of the message.
 
-`messages/select-survey`
-* GET and POST requests to this endpoint allow you to select a survey.
+`messages/select-inbox`
+* GET and POST requests to this endpoint allow you to select which inbox to view.
 
 `messages/<selected-survey>`
 * GET request to this endpoint allows you to view the selected survey.

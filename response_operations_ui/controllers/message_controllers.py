@@ -9,7 +9,7 @@ from requests.exceptions import HTTPError, RequestException
 from structlog import wrap_logger
 
 from response_operations_ui.common import token_decoder
-from response_operations_ui.exceptions.exceptions import ApiError, NoMessagesError, InternalError
+from response_operations_ui.exceptions.exceptions import ApiError, InternalError
 
 
 logger = wrap_logger(logging.getLogger(__name__))
@@ -36,11 +36,12 @@ def get_conversation(thread_id):
         raise ApiError(response)
 
 
-def get_conversation_count(survey_id, conversation_tab, business_id):
+def get_conversation_count(survey_id, conversation_tab, business_id, category):
     logger.info("Retrieving count of threads",
                 survey_id=survey_id, conversation_tab=conversation_tab, business_id=business_id)
 
-    response = _get_conversation_counts(business_id, conversation_tab, survey_id, all_conversation_types=False)
+    response = _get_conversation_counts(business_id, conversation_tab, survey_id, category,
+                                        all_conversation_types=False)
     try:
         response.raise_for_status()
     except HTTPError:
@@ -52,15 +53,15 @@ def get_conversation_count(survey_id, conversation_tab, business_id):
         return response.json()['total']
     except KeyError:
         logger.exception("Response was successful but didn't contain a 'total' key")
-        raise NoMessagesError
+        raise
 
 
-def get_all_conversation_type_counts(survey_id, conversation_tab, business_id):
+def get_all_conversation_type_counts(survey_id, conversation_tab, business_id, category):
     """Gets the count for the current tab and the count for the conversations in all 4 tabs"""
     logger.info("Retrieving count of threads for all conversation tabs",
-                survey_id=survey_id, conversation_tab=conversation_tab, business_id=business_id)
+                survey_id=survey_id, conversation_tab=conversation_tab, business_id=business_id, category=category)
 
-    response = _get_conversation_counts(business_id, conversation_tab, survey_id, all_conversation_types=True)
+    response = _get_conversation_counts(business_id, conversation_tab, survey_id, category, all_conversation_types=True)
 
     try:
         response.raise_for_status()
@@ -84,34 +85,38 @@ def get_all_conversation_type_counts(survey_id, conversation_tab, business_id):
         return totals
     except KeyError:
         logger.exception("Response was successful but didn't contain a 'totals' key")
-        raise NoMessagesError
+        raise
 
 
-def _get_conversation_counts(business_id, conversation_tab, survey_id, all_conversation_types):
+def _get_conversation_counts(business_id, conversation_tab, survey_id, category, all_conversation_types):
     """Gets the count of conversations based on the params """
-    params = _get_secure_message_threads_params(survey_id, business_id, conversation_tab, all_conversation_types)
+    params = _get_secure_message_threads_params(survey_id, business_id, conversation_tab, category,
+                                                all_conversation_types)
     url = f'{current_app.config["SECURE_MESSAGE_URL"]}/messages/count'
     response = requests.get(url, headers={'Authorization': _get_jwt()}, params=params)
     return response
 
 
-def _get_secure_message_threads_params(survey_id, business_id, conversation_tab, all_conversation_types=False):
+def _get_secure_message_threads_params(survey_id, business_id, conversation_tab, category,
+                                       all_conversation_types=False):
     """creates a params dictionary"""
-    params = {'survey': survey_id,
-              'is_closed': 'true' if conversation_tab == 'closed' else 'false',
+    params = {'is_closed': 'true' if conversation_tab == 'closed' else 'false',
               'my_conversations': 'true' if conversation_tab == 'my messages' else 'false',
               'new_respondent_conversations': 'true' if conversation_tab == 'initial' else 'false',
+              'category': category,
               'all_conversation_types': 'true' if all_conversation_types else 'false'}
     if business_id:
         params['business_id'] = business_id
+    if survey_id:
+        params['survey'] = survey_id
     return params
 
 
-def get_thread_list(survey_id, business_id, conversation_tab, page, limit):
+def get_thread_list(survey_id, business_id, conversation_tab, page, limit, category) -> dict:
 
     logger.info("Retrieving threads list", survey_id=survey_id, conversation_tab=conversation_tab,
                 business_id=business_id)
-    params = _get_secure_message_threads_params(survey_id, business_id, conversation_tab)
+    params = _get_secure_message_threads_params(survey_id, business_id, conversation_tab, category)
     params['page'] = page
     params['limit'] = limit
 
@@ -133,7 +138,7 @@ def get_thread_list(survey_id, business_id, conversation_tab, page, limit):
         return messages
     except KeyError:
         logger.exception("Response was successful but didn't contain a 'messages' key")
-        raise NoMessagesError
+        raise
 
 
 def send_message(message_json: dict):

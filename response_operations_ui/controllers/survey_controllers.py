@@ -190,9 +190,8 @@ def get_survey_short_name_by_id(survey_id):
             logger.exception("Failed to resolve survey short name", survey_id=survey_id)
 
 
-def get_survey_id_by_short_name(short_name):
+def get_survey_id_by_short_name(short_name: str) -> str:
     logger.info('Retrieving survey id by short name', short_name=short_name)
-
     return get_survey_by_shortname(short_name)['id']
 
 
