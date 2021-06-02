@@ -103,11 +103,8 @@ class TestReportingUnits(TestCase):
         self.assertEqual(response.status_code, 200)
         self.assertIn("Bolts and Ratchets Ltd".encode(), response.data)
         self.assertIn("50012345678".encode(), response.data)
-        self.assertIn("BLOCKS".encode(), response.data)
-        self.assertIn("GB".encode(), response.data)
-        self.assertIn("Jacky Turner".encode(), response.data)
-        self.assertIn("Enabled".encode(), response.data)
-        self.assertIn("Active".encode(), response.data)
+        self.assertIn("221 BLOCKS".encode(), response.data)
+        self.assertIn("Not started".encode(), response.data)
 
     @requests_mock.mock()
     def test_get_reporting_unit_party_ru_fail(self, mock_request):
@@ -174,13 +171,12 @@ class TestReportingUnits(TestCase):
         mock_request.get(url_get_cases_by_business_party_id, json=cases_list)
         mock_request.get(f'{url_get_collection_exercise_by_id}/{collection_exercise_id_1}', json=collection_exercise)
         mock_request.get(f'{url_get_collection_exercise_by_id}/{collection_exercise_id_2}', json=collection_exercise_2)
-        mock_request.get(url_get_business_attributes, json=business_attributes)
         mock_request.get(url_get_survey_by_id, status_code=500)
 
         response = self.client.get("/reporting-units/50012345678", follow_redirects=True)
 
         request_history = mock_request.request_history
-        self.assertEqual(len(request_history), 6)
+        self.assertEqual(len(request_history), 5)
         self.assertEqual(response.status_code, 500)
 
     @requests_mock.mock()
@@ -190,13 +186,12 @@ class TestReportingUnits(TestCase):
         mock_request.get(f'{url_get_collection_exercise_by_id}/{collection_exercise_id_1}', json=collection_exercise)
         mock_request.get(f'{url_get_collection_exercise_by_id}/{collection_exercise_id_2}', json=collection_exercise_2)
         mock_request.get(url_get_business_attributes, json=business_attributes)
-        mock_request.get(url_get_survey_by_id, json=survey)
         mock_request.get(url_get_respondent_party_by_party_id, status_code=500)
 
-        response = self.client.get("/reporting-units/50012345678", follow_redirects=True)
+        response = self.client.get("/reporting-units/50012345678/surveys/BLOCKS", follow_redirects=True)
 
         request_history = mock_request.request_history
-        self.assertEqual(len(request_history), 7)
+        self.assertEqual(len(request_history), 5)
         self.assertEqual(response.status_code, 500)
 
     @requests_mock.mock()
@@ -206,14 +201,13 @@ class TestReportingUnits(TestCase):
         mock_request.get(f'{url_get_collection_exercise_by_id}/{collection_exercise_id_1}', json=collection_exercise)
         mock_request.get(f'{url_get_collection_exercise_by_id}/{collection_exercise_id_2}', json=collection_exercise_2)
         mock_request.get(url_get_business_attributes, json=business_attributes)
-        mock_request.get(url_get_survey_by_id, json=survey)
         mock_request.get(url_get_respondent_party_by_list, json=respondent_party_list)
         mock_request.get(f'{url_get_iac}/{iac_1}', status_code=500)
 
-        response = self.client.get("/reporting-units/50012345678", follow_redirects=True)
+        response = self.client.get("/reporting-units/50012345678/surveys/BLOCKS", follow_redirects=True)
 
         request_history = mock_request.request_history
-        self.assertEqual(len(request_history), 8)
+        self.assertEqual(len(request_history), 7)
         self.assertEqual(response.status_code, 500)
 
     @requests_mock.mock()
@@ -232,40 +226,6 @@ class TestReportingUnits(TestCase):
         self.assertEqual(response.status_code, 200)
         self.assertIn("Bolts and Ratchets Ltd".encode(), response.data)
         self.assertIn("50012345678".encode(), response.data)
-
-    @requests_mock.mock()
-    def test_get_reporting_unit_when_changed_status_shows_new_status(self, mock_request):
-        mock_request.get(url_get_party_by_ru_ref, json=business_reporting_unit)
-        mock_request.get(url_get_cases_by_business_party_id, json=cases_list_completed)
-        mock_request.get(f'{url_get_collection_exercise_by_id}/{collection_exercise_id_1}', json=collection_exercise)
-        mock_request.get(f'{url_get_collection_exercise_by_id}/{collection_exercise_id_2}', json=collection_exercise_2)
-        mock_request.get(url_get_business_attributes, json=business_attributes)
-        mock_request.get(url_get_survey_by_id, json=survey)
-        mock_request.get(url_get_respondent_party_by_list, json=respondent_party_list)
-        mock_request.get(f'{url_get_iac}/{iac_1}', json=iac)
-        mock_request.get(f'{url_get_iac}/{iac_2}', json=iac)
-
-        response = self.client.get("/reporting-units/50012345678?survey=BLOCKS&period=201801", follow_redirects=True)
-
-        self.assertEqual(response.status_code, 200)
-        self.assertIn("Response status for 221 BLOCKS period 201801 changed to Completed".encode(), response.data)
-
-    @requests_mock.mock()
-    def test_get_reporting_unit_shows_change_link(self, mock_request):
-        mock_request.get(url_get_party_by_ru_ref, json=business_reporting_unit)
-        mock_request.get(url_get_cases_by_business_party_id, json=cases_list)
-        mock_request.get(f'{url_get_collection_exercise_by_id}/{collection_exercise_id_1}', json=collection_exercise)
-        mock_request.get(f'{url_get_collection_exercise_by_id}/{collection_exercise_id_2}', json=collection_exercise_2)
-        mock_request.get(url_get_business_attributes, json=business_attributes)
-        mock_request.get(url_get_survey_by_id, json=survey)
-        mock_request.get(url_get_respondent_party_by_list, json=respondent_party_list)
-        mock_request.get(f'{url_get_iac}/{iac_1}', json=iac)
-        mock_request.get(f'{url_get_iac}/{iac_2}', json=iac)
-
-        response = self.client.get("/reporting-units/50012345678")
-
-        self.assertEqual(response.status_code, 200)
-        self.assertIn("Change</a>".encode(), response.data)
 
     @requests_mock.mock()
     def test_get_reporting_unit_hides_change_link_when_no_available_statuses(self, mock_request):

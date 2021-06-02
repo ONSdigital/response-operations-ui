@@ -9,8 +9,8 @@ from iso8601 import parse_date
 from structlog import wrap_logger
 
 from response_operations_ui.common.mappers import map_ce_response_status, map_region
-from response_operations_ui.controllers import case_controller, iac_controller, party_controller, \
-    reporting_units_controllers
+from response_operations_ui.controllers import case_controller, party_controller, \
+    reporting_units_controllers, iac_controller
 from response_operations_ui.controllers.collection_exercise_controllers import \
     get_case_group_status_by_collection_exercise, get_collection_exercise_by_id
 from response_operations_ui.controllers.survey_controllers import get_survey_by_id
@@ -35,130 +35,150 @@ def view_reporting_unit(ru_ref):
     # Get all collection exercises for retrieved case groups
     collection_exercise_ids = {case_group['collectionExerciseId'] for case_group in case_groups}
     collection_exercises = [get_collection_exercise_by_id(ce_id) for ce_id in collection_exercise_ids]
+    live_collection_exercises = [ce for ce in collection_exercises if parse_date(
+        ce['scheduledStartDateTime']) < datetime.now(timezone.utc)]
 
-    now = datetime.now(timezone.utc)
-    live_collection_exercises = [ce for ce in collection_exercises if parse_date(ce['scheduledStartDateTime']) < now]
-    live_collection_exercises_ids = [ce['id'] for ce in live_collection_exercises]
+    survey_table_data = build_survey_table_data_dict(live_collection_exercises, case_groups)
 
-    # Attributes represent the data for a reporting unit at the time they were enrolled onto each collection exercise.
-    all_attributes = party_controller.get_business_attributes_by_party_id(reporting_unit['id'])
+    breadcrumbs = create_reporting_unit_breadcrumbs(ru_ref)
 
-    # Copies and uses only the collection exercises that have gone live
-    attributes = {k: v for k, v in all_attributes.items() if k in live_collection_exercises_ids}
+    logger.info("Successfully gathered data to view reporting unit", ru_ref=ru_ref)
+    return render_template('reporting-unit.html', ru=reporting_unit,
+                           surveys=survey_table_data, breadcrumbs=breadcrumbs)
 
-    refined_live_collection_exercises = [add_collection_exercise_details(ce, attributes[ce['id']], case_groups)
-                                         for ce in live_collection_exercises]
 
-    # Get all related surveys for gathered collection exercises
-    survey_ids = {collection_exercise['surveyId'] for collection_exercise in refined_live_collection_exercises}
-    surveys = [get_survey_by_id(survey_id) for survey_id in survey_ids]
+def build_survey_table_data_dict(collection_exercises: list, case_groups: list) -> list:
+    """
+    Creates the dictionary of survey & CE information for the front-end table to display
+    :param collection_exercises: A list of collection exercises to add to the table
+    :param case_groups: A list of case groups for the reporting unit
+    :return: A sorted list of survey/CE information to provide to the front-end table
+    """
+    table_data = {}
+    for ce in collection_exercises:
+        if ce['surveyId'] in table_data:
+            # Keep the one with the later go-live date
+            if parse_date(table_data[ce['surveyId']]['goLive']) > parse_date(ce['scheduledStartDateTime']):
+                continue
+
+        survey = get_survey_by_id(ce['surveyId'])
+        table_data[ce['surveyId']] = {
+            "surveyName": f"{survey['surveyRef']} {survey['shortName']}",
+            "shortName": survey['shortName'],
+            "period": ce['exerciseRef'],
+            "goLive": ce['scheduledStartDateTime'],
+            "caseStatus": map_ce_response_status(get_case_group_status_by_collection_exercise(
+                case_groups, ce['id']))
+        }
+    return sorted(table_data.items(), key=lambda t: t[0])
+
+
+@reporting_unit_bp.route('/<ru_ref>/respondents', methods=['GET'])
+@login_required
+def view_respondents(ru_ref: str):
+    logger.info("Gathering data to view reporting unit", ru_ref=ru_ref)
+    # Make some initial calls to retrieve some data we'll need
+    reporting_unit = party_controller.get_party_by_ru_ref(ru_ref)
 
     # Get all respondents for the given ru
     respondent_party_ids = [respondent['partyId'] for respondent in reporting_unit.get('associations')]
     respondents = party_controller.get_respondent_by_party_ids(respondent_party_ids)
 
-    # Link collection exercises and respondents to appropriate surveys
-    linked_surveys = [survey_with_respondents_and_exercises(survey, respondents, refined_live_collection_exercises,
-                                                            ru_ref)
-                      for survey in surveys]
-    sorted_linked_surveys = sorted(linked_surveys, key=lambda survey: survey['surveyRef'])
+    respondent_table_data = build_respondent_table_data_dict(respondents, ru_ref)
 
-    # Add latest active iac code to surveys
-    surveys_with_latest_case = [
-        {
-            **survey,
-            "case": get_latest_case_with_ce(cases, survey['collection_exercises'])
+    breadcrumbs = create_reporting_unit_breadcrumbs(ru_ref)
+
+    return render_template('reporting-unit-respondents.html', ru=reporting_unit,
+                           respondents=respondent_table_data, breadcrumbs=breadcrumbs)
+
+
+def build_respondent_table_data_dict(respondents: list, ru_ref: str):
+    table_data = {}
+    survey_data = {}
+    for respondent in respondents:
+        table_data[respondent['id']] = {
+            "respondent": f"{respondent['firstName']} {respondent['lastName']}",
+            "status": respondent['status'].title(),
+            "surveys": {}
         }
-        for survey in sorted_linked_surveys
-    ]
+        respondent_surveys = party_controller.survey_ids_for_respondent(respondent, ru_ref)
+        for survey_id in respondent_surveys:
+            # Build up a cache of survey ref/name pairs
+            if survey_id not in survey_data:
+                survey = get_survey_by_id(survey_id)
+                survey_data[survey_id] = f"{survey['surveyRef']} {survey['shortName']}"
 
-    # Generate appropriate info message is necessary
-    # TODO Standardise how the info messages are generated
-    survey_arg = request.args.get('survey')
-    period_arg = request.args.get('period')
-    if survey_arg and period_arg:
-        survey = next(filter(lambda s: s['shortName'] == survey_arg, sorted_linked_surveys))
-        collection_exercise = next(filter(lambda s: s['exerciseRef'] == period_arg, survey['collection_exercises']))
-        new_status = collection_exercise['responseStatus']
-        flash(f'Response status for {survey["surveyRef"]} {survey["shortName"]}'
-              f' period {period_arg} changed to {new_status}')
+            enrolment_status = next(
+                iter(party_controller.add_enrolment_status_for_respondent(respondent, ru_ref, survey_id)))
+            table_data[respondent['id']]['surveys'][survey_id] = {
+                "name": survey_data[survey_id],
+                "status": enrolment_status
+            }
 
-    info = request.args.get('info')
-    if request.args.get('enrolment_changed'):
-        flash('Enrolment status changed', 'information')
-    if request.args.get('account_status_changed'):
-        flash('Account status changed', 'information')
-    elif info:
-        flash(info, 'information')
+        table_data[respondent['id']]['surveys'] = sorted(
+            table_data[respondent['id']]['surveys'].items(), key=lambda t: t[1]['name'])
 
-    breadcrumbs = [
-        {
-            "text": "Reporting units",
-            "url": "/reporting-units"
-        },
-        {
-            "text": f"{ru_ref}"
-        }
-    ]
-    logger.info("Successfully gathered data to view reporting unit", ru_ref=ru_ref)
-    return render_template('reporting-unit.html', ru_ref=ru_ref, ru=reporting_unit,
-                           surveys=surveys_with_latest_case, breadcrumbs=breadcrumbs)
+    return table_data.values()
+
+
+@reporting_unit_bp.route('/<ru_ref>/surveys/<survey>', methods=['GET'])
+@login_required
+def view_reporting_unit_survey(ru_ref, survey):
+    logger.info("Gathering data to view reporting unit", ru_ref=ru_ref)
+    # Make some initial calls to retrieve some data we'll need
+    reporting_unit = party_controller.get_party_by_ru_ref(ru_ref)
+
+    cases = case_controller.get_cases_by_business_party_id(reporting_unit['id'])
+    case_groups = [case['caseGroup'] for case in cases]
+
+    # Get all collection exercises for retrieved case groups
+    collection_exercise_ids = {case_group['collectionExerciseId'] for case_group in case_groups}
+    collection_exercises = [get_collection_exercise_by_id(ce_id) for ce_id in collection_exercise_ids]
+    live_collection_exercises = [ce for ce in collection_exercises if parse_date(
+        ce['scheduledStartDateTime']) < datetime.now(timezone.utc)]
+
+    # Get all respondents for the given ru
+    respondent_party_ids = [respondent['partyId'] for respondent in reporting_unit.get('associations')]
+    respondents = party_controller.get_respondent_by_party_ids(respondent_party_ids)
+
+    survey_respondents = [party_controller.add_enrolment_status_for_respondent(respondent, ru_ref, survey)
+                          for respondent in respondents
+                          if survey in party_controller.survey_ids_for_respondent(respondent, ru_ref)]
+
+    survey_collection_exercises = sorted([collection_exercise
+                                          for collection_exercise in live_collection_exercises
+                                          if survey == collection_exercise['surveyId']],
+                                         key=lambda ce: ce['scheduledStartDateTime'], reverse=True)
+
+    attributes = party_controller.get_business_attributes_by_party_id(reporting_unit['id'])
+    collection_exercises_with_details = [add_collection_exercise_details(
+        ce, attributes[ce['id']], case_groups) for ce in survey_collection_exercises]
+
+    survey_details = get_survey_by_id(survey)
+    survey_details['display_name'] = f"{survey_details['surveyRef']} {survey_details['shortName']}"
+
+    # If there's an active IAC on the newest case, return it to be displayed
+    collection_exercise_ids = [ce['id'] for ce in live_collection_exercises]
+    valid_cases = [case for case in cases if case.get('caseGroup', {}).get('collectionExerciseId')
+                   in collection_exercise_ids]
+    case = next(iter(sorted(valid_cases, key=lambda c: c['createdDateTime'], reverse=True)), None)
+    unused_iac = ""
+    if case is not None and iac_controller.is_iac_active(case['iac']):
+        unused_iac = case['iac']
+
+    return render_template('reporting-unit-survey.html', ru=reporting_unit, survey=survey_details,
+                           respondents=survey_respondents, collection_exercises=collection_exercises_with_details,
+                           iac=unused_iac, case=case)
 
 
 def add_collection_exercise_details(collection_exercise, reporting_unit, case_groups):
-    """
-    Creates a dict of formatted data.
+    collection_exercise['responseStatus'] = map_ce_response_status(
+        get_case_group_status_by_collection_exercise(case_groups, collection_exercise['id']))
+    collection_exercise['companyName'] = reporting_unit['name']
+    collection_exercise['companyRegion'] = map_region(reporting_unit['attributes']['region'])
+    collection_exercise['tradingAs'] = reporting_unit['trading_as']
 
-    :param collection_exercise: A dict containing collection exercise data
-    :type collection_exercise: dict
-    :param reporting_unit: A dict containing reporting unit attribute data
-    :type reporting_unit: dict
-    :param case_groups: A list of case group data
-    :return: A dict containing formatted data to be used by the template
-    :rtype: dict
-    """
-    response_status = get_case_group_status_by_collection_exercise(case_groups, collection_exercise['id'])
-
-    return {
-        **collection_exercise,
-        'responseStatus': map_ce_response_status(response_status),
-        'companyName': reporting_unit['name'],
-        'companyRegion': map_region(reporting_unit['attributes']['region']),
-        'trading_as': reporting_unit['trading_as']
-    }
-
-
-def survey_with_respondents_and_exercises(survey, respondents, collection_exercises, ru_ref):
-    survey_respondents = [party_controller.add_enrolment_status_to_respondent(respondent, ru_ref, survey['id'])
-                          for respondent in respondents
-                          if survey['id'] in party_controller.survey_ids_for_respondent(respondent, ru_ref)]
-    survey_collection_exercises = [collection_exercise
-                                   for collection_exercise in collection_exercises
-                                   if survey['id'] == collection_exercise['surveyId']]
-    sorted_survey_exercises = sorted(survey_collection_exercises,
-                                     key=lambda ce: ce['scheduledStartDateTime'], reverse=True)
-    return {
-        **survey,
-        'respondents': survey_respondents,
-        'collection_exercises': sorted_survey_exercises
-    }
-
-
-def get_latest_case_with_ce(cases, collection_exercises):
-    """
-    Creates a dict of formatted data.
-    Takes in a list of cases and a list of collection exercises
-
-    :return: The latest case which is in one of the collection exercises with activeIAC added to the case
-    """
-    ces_ids = [ce['id'] for ce in collection_exercises]
-    cases_for_survey = [case
-                        for case in cases
-                        if case.get('caseGroup', {}).get('collectionExerciseId') in ces_ids]
-    cases_for_survey_ordered = sorted(cases_for_survey, key=lambda c: c['createdDateTime'], reverse=True)
-    case = next(iter(cases_for_survey_ordered), None)
-    case['activeIAC'] = iac_controller.is_iac_active(case['iac'])
-    return case
+    return collection_exercise
 
 
 @reporting_unit_bp.route('/<ru_ref>/edit-contact-details/<respondent_id>', methods=['GET'])
@@ -333,3 +353,15 @@ def change_respondent_status(ru_ref):
     reporting_units_controllers.change_respondent_status(respondent_id=request.args['respondent_id'],
                                                          change_flag=request.args['change_flag'])
     return redirect(url_for('reporting_unit_bp.view_reporting_unit', ru_ref=ru_ref, account_status_changed='True'))
+
+
+def create_reporting_unit_breadcrumbs(ru_ref: str) -> list:
+    return [
+        {
+            "text": "Reporting units",
+            "url": "/reporting-units"
+        },
+        {
+            "text": f"{ru_ref}"
+        }
+    ]
