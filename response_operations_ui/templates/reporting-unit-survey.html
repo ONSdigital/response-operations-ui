@@ -52,9 +52,9 @@
                 {% set collectionExerciseTableDataRows = [] %}
 
                 {% for ce in collection_exercises %}
-                    {% if ce.responseStatus == 'Not started' %}
+                    {% if ce.responseStatus == 'Not started' or ce.responseStatus == 'No longer required' %}
                         {% set status_class = 'status--dead' %}
-                    {% elif ce.responseStatus == 'In progress' or ce.responseStatus == 'Completed' or ce.responseStatus == 'Completed by phone' or ce.responseStatus == 'No longer required' %}
+                    {% elif ce.responseStatus == 'In progress' or ce.responseStatus == 'Completed' or ce.responseStatus == 'Completed by phone' %}
                         {% set status_class = 'status--success' %}
                     {% else %}
                         {% set status_class = 'status--error' %}
@@ -62,8 +62,10 @@
 
                     {% if ce.responseStatus in ['Not started', 'In progress']  %}
                         {% set survey_link = '&nbsp;   <a href="' + url_for("case_bp.get_response_statuses", ru_ref=ru.sampleUnitRef, survey=survey.shortName, period=ce.exerciseRef) + '">Change</a>' %}
-                    {% elif ce.responseStatus in ['Completed', 'Completed by phone', 'No longer required'] %}
+                    {% elif ce.responseStatus in ['Completed', 'Completed by phone'] %}
                         {% set survey_link = '&nbsp;   <a href="' + url_for("case_bp.get_response_statuses", ru_ref=ru.sampleUnitRef, survey=survey.shortName, period=ce.exerciseRef) + '">View</a>' %}
+                    {% else %}
+                        {% set survey_link = '' %}
                     {% endif %}
                     {% do collectionExerciseTableDataRows.append( 
                         {
