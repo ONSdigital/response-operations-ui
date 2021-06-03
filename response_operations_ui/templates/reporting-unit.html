@@ -49,7 +49,7 @@
   {% set surveyTableDataRows = [] %}
 
   {% for survey in surveys %}
-    {% if survey[1].caseStatus == 'Not started' %}
+    {% if survey[1].caseStatus == 'Not started' or survey[1].caseStatus == 'No longer required' %}
       {% set status_class = 'status--dead' %}
     {% elif survey[1].caseStatus == 'In progress' or survey[1].caseStatus == 'Completed' or survey[1].caseStatus == 'Completed by phone' %}
       {% set status_class = 'status--success' %}
