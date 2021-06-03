@@ -62,8 +62,9 @@ def build_survey_table_data_dict(collection_exercises: list, case_groups: list) 
                 continue
 
         survey = get_survey_by_id(ce['surveyId'])
-        table_data[ce['surveyId']] = {
+        table_data[survey['surveyRef']] = {
             "surveyName": f"{survey['surveyRef']} {survey['shortName']}",
+            "surveyId": ce['surveyId'],
             "shortName": survey['shortName'],
             "period": ce['exerciseRef'],
             "goLive": ce['scheduledStartDateTime'],
