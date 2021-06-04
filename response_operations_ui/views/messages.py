@@ -281,7 +281,7 @@ def view_technical_inbox():  # noqa: C901
                                page=page,
                                breadcrumbs=breadcrumbs,
                                messages=messages,
-                               selected_survey="Technical",
+                               selected_survey="technical",
                                pagination=pagination,
                                conversation_tab=conversation_tab,
                                business_id_filter=business_id_filter,
@@ -293,7 +293,7 @@ def view_technical_inbox():  # noqa: C901
         return render_template("secure-message/technical-inbox.html",
                                form=form,
                                breadcrumbs=breadcrumbs,
-                               selected_survey="Technical",
+                               selected_survey="technical",
                                displayed_short_name="Technical",
                                response_error=True,
                                tab_titles=_get_tab_titles())
@@ -402,7 +402,8 @@ def _get_tab_counts(business_id_filter, conversation_tab, ru_ref_filter, survey_
     if ru_ref_filter:
         return message_controllers.get_all_conversation_type_counts(survey_id=survey_id,
                                                                     conversation_tab=conversation_tab,
-                                                                    business_id=business_id_filter)
+                                                                    business_id=business_id_filter,
+                                                                    category=category)
 
     thread_count = message_controllers.get_conversation_count(survey_id=survey_id,
                                                               business_id=business_id_filter,

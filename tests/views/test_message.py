@@ -1074,7 +1074,8 @@ class TestMessage(ViewTestCase):
         self.assertEqual(200, response.status_code)
         mock_get_count.assert_called_with(survey_id=['6aa8896f-ced5-4694-800c-6cd661b0c8b2'],
                                           business_id=business_id_filter,
-                                          conversation_tab=conversation_tab)
+                                          conversation_tab=conversation_tab,
+                                          category='SURVEY')
 
         query = f'is_closed=true&my_conversations=false&new_respondent_conversations=false&category=survey' \
                 f'&all_conversation_types=false&business_id={business_id_filter}&survey={survey_id_2}' \
