@@ -157,7 +157,7 @@
                             respondent_last_name=respondent.lastName, business_id=ru.id, trading_as=ru.trading_as, change_flag="DISABLED", tab="reporting_units") + '" id="change-enrolment-status">Disable</a>' %}
                     {% elif respondent.enrolmentStatus == 'PENDING' %}
                         {% set enrolment_status_class = 'status--info' %}
-                        {% set change_status_link = '<a href="' + url_for("reporting_unit_bp.view_resend_verification", ru_ref=ru_ref, party_id=respondent.id) + '">Re-send verification email</a>' %}
+                        {% set change_status_link = '<a href="' + url_for("reporting_unit_bp.view_resend_verification", ru_ref=ru.sampleUnitRef, party_id=respondent.id) + '">Re-send verification email</a>' %}
                     {% else %}
                         {% set enrolment_status_class = 'status--dead' %}
                         {% set change_status_link = '<a href="' + url_for("reporting_unit_bp.confirm_change_enrolment_status", ru_ref=ru.sampleUnitRef, ru_name=ru.name, survey_id=survey.id,
