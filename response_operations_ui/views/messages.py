@@ -207,6 +207,8 @@ def select_inbox():
                 response_error = "Select a survey sub-selection for survey inbox"
         else:
             response_error = "Select an inbox"
+        if inbox == 'misc':
+            return redirect(url_for("messages_bp.view_misc_inbox"))
 
     breadcrumbs = [{"text": "Messages", "url": "/messages"},
                    {"text": "Filter by survey"}]
@@ -449,6 +451,76 @@ def close_conversation(thread_id):
                            business_id_filter=business_id_filter)
 
 
+@messages_bp.route('/miscellaneous', methods=['GET', 'POST'])
+@login_required
+def view_misc_inbox():  # noqa: C901
+    session['messages_survey_selection'] = "misc"
+    breadcrumbs = [{"text": "Miscellaneous" + " Messages"}]
+
+    page = request.args.get('page', default=1, type=int)
+    limit = request.args.get('limit', default=10, type=int)
+    conversation_tab = request.args.get('conversation_tab', default='open')
+    ru_ref_filter = request.args.get('ru_ref_filter', default='')
+    business_id_filter = request.args.get('business_id_filter', default='')
+    category = "MISC"
+
+    form = SecureMessageRuFilterForm()
+
+    try:
+        if form.validate_on_submit():
+            new_ru_ref = form.ru_ref_filter.data
+            if new_ru_ref and new_ru_ref != ru_ref_filter:
+                business_id_filter, ru_resolution_error = _try_get_party_id_from_filter_ru(new_ru_ref)
+                if business_id_filter:
+                    ru_ref_filter = new_ru_ref
+                else:
+                    ru_ref_filter = ''
+                    flash(ru_resolution_error)
+
+        form.ru_ref_filter.data = ru_ref_filter
+
+        tab_counts = _get_tab_counts(business_id_filter, conversation_tab, ru_ref_filter, None, category)
+
+        # If the page is higher then possible, redirect users to the highest possible page.
+        recalculated_page = _verify_requested_page_is_within_bounds(page, limit, tab_counts['current'])
+        if recalculated_page != page:
+            return redirect(url_for("messages_bp.view_misc_inbox", conversation_tab=conversation_tab,
+                                    page=recalculated_page,
+                                    ru_ref_filter=ru_ref_filter,
+                                    business_id_filter=business_id_filter))
+
+        messages = [_refine(message) for message in message_controllers.get_thread_list(None,
+                                                                                        business_id_filter,
+                                                                                        conversation_tab,
+                                                                                        page,
+                                                                                        limit,
+                                                                                        category)]
+
+        pagination = _get_pagination_object(page, limit, tab_counts)
+
+        return render_template("secure-message/misc-inbox.html",
+                               form=form,
+                               page=page,
+                               breadcrumbs=breadcrumbs,
+                               messages=messages,
+                               selected_survey="misc",
+                               pagination=pagination,
+                               conversation_tab=conversation_tab,
+                               business_id_filter=business_id_filter,
+                               ru_ref_filter=ru_ref_filter,
+                               tab_titles=_get_tab_titles(tab_counts, ru_ref_filter))
+
+    except (TypeError, KeyError):
+        logger.error("Failed to retrieve messages", exc_info=True)
+        return render_template("secure-message/misc-inbox.html",
+                               form=form,
+                               breadcrumbs=breadcrumbs,
+                               selected_survey="misc",
+                               displayed_short_name="Miscellaneous",
+                               response_error=True,
+                               tab_titles=_get_tab_titles())
+
+
 def _get_pagination_object(page, limit, tab_counts) -> Pagination:
     return Pagination(page=page,
                       per_page=limit,
@@ -472,7 +544,7 @@ def _try_get_party_id_from_filter_ru(ru_ref: str):
         response = party_controller.get_business_by_ru_ref(ru_ref)
         return response['id'], ''
 
-    except ApiError as api_error:   # If error, select a message for the UI
+    except ApiError as api_error:  # If error, select a message for the UI
         if api_error.status_code == 404:
             ru_resolution_error = f"Filter not applied: {ru_ref} is an unknown RU ref"
         else:
