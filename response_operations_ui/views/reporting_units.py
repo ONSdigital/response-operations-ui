@@ -56,12 +56,11 @@ def build_survey_table_data_dict(collection_exercises: list, case_groups: list) 
     """
     table_data = {}
     for ce in collection_exercises:
-        if ce['surveyId'] in table_data:
-            # Keep the one with the later go-live date
-            if parse_date(table_data[ce['surveyId']]['goLive']) > parse_date(ce['scheduledStartDateTime']):
-                continue
-
         survey = get_survey_by_id(ce['surveyId'])
+        if survey['surveyRef'] in table_data:
+            # Keep the one with the later go-live date
+            if parse_date(table_data[survey['surveyRef']]['goLive']) > parse_date(ce['scheduledStartDateTime']):
+                continue
         table_data[survey['surveyRef']] = {
             "surveyName": f"{survey['surveyRef']} {survey['shortName']}",
             "surveyId": ce['surveyId'],
