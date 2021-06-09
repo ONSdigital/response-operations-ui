@@ -154,6 +154,37 @@ def view_conversation(thread_id):
                            business_id_filter=business_id_filter)
 
 
+@messages_bp.route('/threads/<thread_id>/change-category', methods=['GET', 'POST'])
+@login_required
+def change_thread_category(thread_id):
+    thread = message_controllers.get_conversation(thread_id)
+    if request.method == 'POST':
+        category = request.form.get('category')
+        if category != thread['category']:  # TODO need any more validation then this?
+            payload = {'category': category}
+            message_controllers.patch_thread(thread_id, payload)
+
+            if category == 'survey':
+                selected_survey = request.form.get('select-survey')
+                for message in thread['messages']:
+                    message_id = message['id']
+                    survey = survey_controllers.get_survey_id_by_short_name(selected_survey)
+                    message_payload = {'survey_id': survey['id']}
+                    message_controllers.patch_message(message_id, message_payload)
+
+            flash('Category has been changed to {category}')
+            return redirect(url_for("messages_bp.view_conversation", thread_id=thread_id))
+
+    breadcrumbs = [{"text": "Messages", "url": "/messages"},
+                   {"text": "Filter by survey"}]
+
+    survey_list = get_grouped_surveys_list()
+
+    return render_template("secure-message/change-thread-category.html",
+                           breadcrumbs=breadcrumbs,
+                           survey_list=survey_list)
+
+
 @messages_bp.route('/mark_unread/<message_id>', methods=['GET'])
 @login_required
 def mark_message_unread(message_id):

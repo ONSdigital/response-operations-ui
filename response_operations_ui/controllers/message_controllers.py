@@ -157,9 +157,24 @@ def send_message(message_json: dict):
     except HTTPError as ex:
         logger.error("Message sending failed due to API Error", exc_info=True)
         raise ApiError(ex.response)
+    
+    
+def patch_message(message_id: str, payload: dict):
+    url = f"{current_app.config['SECURE_MESSAGE_URL']}/message/{message_id}"
+
+    logger.info("Patching message data", message_id=message_id, payload=payload)
+    response = requests.patch(url, headers={"Authorization": _get_jwt()}, json=payload)
+
+    try:
+        response.raise_for_status()
+        logger.info("Successfully patched message data", message_id=message_id)
+    except HTTPError:
+        logger.error("Failed to patch message data", message_id=message_id,
+                     status=response.status_code, exc_info=True)
+        raise ApiError(response)
 
 
-def remove_unread_label(message_id):
+def remove_unread_label(message_id: str):
     url = f"{current_app.config['SECURE_MESSAGE_URL']}/messages/modify/{message_id}"
     data = {"label": "UNREAD", "action": "remove"}
 
@@ -199,6 +214,21 @@ def update_close_conversation_status(thread_id, status):
         logger.info("Successfully updated close conversation status", thread_id=thread_id, status=status)
     except HTTPError:
         logger.error("Failed to update close conversation status", thread_id=thread_id, status=status, exc_info=True)
+        raise ApiError(response)
+
+
+def patch_thread(thread_id: str, payload: dict):
+    # TODO can we combine this and update_close_conversation_status? They're basically the same.
+    url = f"{current_app.config['SECURE_MESSAGE_URL']}/threads/{thread_id}"
+
+    logger.info("Patching thread data", thread_id=thread_id, payload=payload)
+    response = requests.patch(url, headers={"Authorization": _get_jwt()}, json=payload)
+
+    try:
+        response.raise_for_status()
+        logger.info("Successfully patched thread data", thread_id=thread_id)
+    except HTTPError:
+        logger.error("Failed to patch thread data", thread_id=thread_id, exc_info=True)
         raise ApiError(response)
 
 
