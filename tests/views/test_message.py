@@ -190,7 +190,7 @@ class TestMessage(ViewTestCase):
         response = self.client.post("/messages/select-survey", data=form, follow_redirects=True)
 
         self.assertEqual(response.status_code, 200)
-        self.assertIn("FDI Messages".encode(), response.data)
+        self.assertIn("RFT Messages".encode(), response.data)
         self.assertIn("Apple".encode(), response.data)
         self.assertIn("50012345678".encode(), response.data)
         self.assertIn("John Example".encode(), response.data)
@@ -213,7 +213,7 @@ class TestMessage(ViewTestCase):
         response = self.client.get("/messages/miscellaneous")
 
         self.assertEqual(response.status_code, 200)
-        self.assertIn("FDI Messages".encode(), response.data)
+        self.assertIn("RFT Messages".encode(), response.data)
         self.assertIn("Apple".encode(), response.data)
         self.assertIn("50012345678".encode(), response.data)
         self.assertIn("John Example".encode(), response.data)
