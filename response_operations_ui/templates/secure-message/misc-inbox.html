@@ -31,7 +31,7 @@
       {% if breadcrumbs %}
         {% include 'layouts/configs/breadcrumbs.html' %}
       {% endif %}
-      <h1 class="u-fs-l u-mb-xs" name="page-messages-title">FDI Messages
+      <h1 class="u-fs-l u-mb-xs" name="page-messages-title">RFT Messages
         <span class="u-fs-r">(<a id="change-survey" href="{{ url_for('messages_bp.select_inbox') }}">Change inbox</a>)</span>
       </h1>
       {% if ru_ref_filter %}
@@ -41,7 +41,7 @@
       {% endif %}  
     </div>
     <div class="grid__col u-mt-s@s"> 
-      <form action="{{ url_for('messages_bp.view_technical_inbox', selected_survey=selected_survey, conversation_tab=conversation_tab, ru_ref_filter=ru_ref_filter, business_id_filter=business_id_filter, page=page, limit=limit) }}" method="post">
+      <form action="{{ url_for('messages_bp.view_misc_inbox', selected_survey=selected_survey, conversation_tab=conversation_tab, ru_ref_filter=ru_ref_filter, business_id_filter=business_id_filter, page=page, limit=limit) }}" method="post">
         {{ form.csrf_token }}
         {{
           onsInput({
