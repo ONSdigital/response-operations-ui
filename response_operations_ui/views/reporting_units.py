@@ -159,7 +159,7 @@ def view_reporting_unit_survey(ru_ref, survey):
     survey_details['display_name'] = f"{survey_details['surveyRef']} {survey_details['shortName']}"
 
     # If there's an active IAC on the newest case, return it to be displayed
-    collection_exercise_ids = [ce['id'] for ce in live_collection_exercises]
+    collection_exercise_ids = [ce['id'] for ce in survey_collection_exercises]
     valid_cases = [case for case in cases if case.get('caseGroup', {}).get('collectionExerciseId')
                    in collection_exercise_ids]
     case = next(iter(sorted(valid_cases, key=lambda c: c['createdDateTime'], reverse=True)), None)
