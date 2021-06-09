@@ -699,18 +699,18 @@ def _process_category_page(render_html: str,
                            category: str):
     """
     This method processes message category selected and returns appropriate inbox.
-    :param render_html: 
-    :type render_html: 
-    :param redirect_url: 
-    :type redirect_url: 
-    :param selected_survey: 
-    :type selected_survey: 
-    :param displayed_short_name: 
-    :type displayed_short_name: 
-    :param breadcrumbs: 
-    :type breadcrumbs: 
-    :param category: 
-    :type category: 
+    :param render_html:
+    :type render_html:
+    :param redirect_url:
+    :type redirect_url:
+    :param selected_survey:
+    :type selected_survey:
+    :param displayed_short_name:
+    :type displayed_short_name:
+    :param breadcrumbs:
+    :type breadcrumbs:
+    :param category:
+    :type category:
     :return: Returns a response object
     :rtype: WSGI application
     """
