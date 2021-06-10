@@ -207,6 +207,8 @@ def select_inbox():
                 response_error = "Select a survey sub-selection for survey inbox"
         else:
             response_error = "Select an inbox"
+        if inbox == 'misc':
+            return redirect(url_for("messages_bp.view_misc_inbox"))
 
     breadcrumbs = [{"text": "Messages", "url": "/messages"},
                    {"text": "Filter by survey"}]
@@ -234,69 +236,12 @@ def clear_filter(selected_survey):
 def view_technical_inbox():  # noqa: C901
     session['messages_survey_selection'] = "technical"
     breadcrumbs = [{"text": "Technical" + " Messages"}]
-
-    page = request.args.get('page', default=1, type=int)
-    limit = request.args.get('limit', default=10, type=int)
-    conversation_tab = request.args.get('conversation_tab', default='open')
-    ru_ref_filter = request.args.get('ru_ref_filter', default='')
-    business_id_filter = request.args.get('business_id_filter', default='')
-    category = "TECHNICAL"
-
-    form = SecureMessageRuFilterForm()
-
-    try:
-        if form.validate_on_submit():
-            new_ru_ref = form.ru_ref_filter.data
-            if new_ru_ref and new_ru_ref != ru_ref_filter:
-                business_id_filter, ru_resolution_error = _try_get_party_id_from_filter_ru(new_ru_ref)
-                if business_id_filter:
-                    ru_ref_filter = new_ru_ref
-                else:
-                    ru_ref_filter = ''
-                    flash(ru_resolution_error)
-
-        form.ru_ref_filter.data = ru_ref_filter
-
-        tab_counts = _get_tab_counts(business_id_filter, conversation_tab, ru_ref_filter, None, category)
-
-        # If the page is higher then possible, redirect users to the highest possible page.
-        recalculated_page = _verify_requested_page_is_within_bounds(page, limit, tab_counts['current'])
-        if recalculated_page != page:
-            return redirect(url_for("messages_bp.view_technical_inbox", conversation_tab=conversation_tab,
-                                    page=recalculated_page,
-                                    ru_ref_filter=ru_ref_filter,
-                                    business_id_filter=business_id_filter))
-
-        messages = [_refine(message) for message in message_controllers.get_thread_list(None,
-                                                                                        business_id_filter,
-                                                                                        conversation_tab,
-                                                                                        page,
-                                                                                        limit,
-                                                                                        category)]
-
-        pagination = _get_pagination_object(page, limit, tab_counts)
-
-        return render_template("secure-message/technical-inbox.html",
-                               form=form,
-                               page=page,
-                               breadcrumbs=breadcrumbs,
-                               messages=messages,
-                               selected_survey="technical",
-                               pagination=pagination,
-                               conversation_tab=conversation_tab,
-                               business_id_filter=business_id_filter,
-                               ru_ref_filter=ru_ref_filter,
-                               tab_titles=_get_tab_titles(tab_counts, ru_ref_filter))
-
-    except (TypeError, KeyError):
-        logger.error("Failed to retrieve messages", exc_info=True)
-        return render_template("secure-message/technical-inbox.html",
-                               form=form,
-                               breadcrumbs=breadcrumbs,
-                               selected_survey="technical",
-                               displayed_short_name="Technical",
-                               response_error=True,
-                               tab_titles=_get_tab_titles())
+    return _process_category_page(render_html="secure-message/technical-inbox.html",
+                                  redirect_url="messages_bp.view_technical_inbox",
+                                  selected_survey="technical",
+                                  displayed_short_name="Technical",
+                                  breadcrumbs=breadcrumbs,
+                                  category="TECHNICAL")
 
 
 @messages_bp.route('/<selected_survey>', methods=['GET', 'POST'])
@@ -449,6 +394,19 @@ def close_conversation(thread_id):
                            business_id_filter=business_id_filter)
 
 
+@messages_bp.route('/miscellaneous', methods=['GET', 'POST'])
+@login_required
+def view_misc_inbox():  # noqa: C901
+    session['messages_survey_selection'] = "misc"
+    breadcrumbs = [{"text": "Miscellaneous" + " Messages"}]
+    return _process_category_page(render_html="secure-message/misc-inbox.html",
+                                  redirect_url="messages_bp.view_misc_inbox",
+                                  selected_survey="misc",
+                                  displayed_short_name="Miscellaneous",
+                                  breadcrumbs=breadcrumbs,
+                                  category="MISC")
+
+
 def _get_pagination_object(page, limit, tab_counts) -> Pagination:
     return Pagination(page=page,
                       per_page=limit,
@@ -472,7 +430,7 @@ def _try_get_party_id_from_filter_ru(ru_ref: str):
         response = party_controller.get_business_by_ru_ref(ru_ref)
         return response['id'], ''
 
-    except ApiError as api_error:   # If error, select a message for the UI
+    except ApiError as api_error:  # If error, select a message for the UI
         if api_error.status_code == 404:
             ru_resolution_error = f"Filter not applied: {ru_ref} is an unknown RU ref"
         else:
@@ -731,3 +689,88 @@ def _verify_requested_page_is_within_bounds(requested_page: int, limit: int, thr
 
 def _can_mark_as_unread(message: dict) -> bool:
     return message['to_id'] == 'GROUP' or message['to_id'] == session['user_id']
+
+
+def _process_category_page(render_html: str,
+                           redirect_url: str,
+                           selected_survey: str,
+                           displayed_short_name: str,
+                           breadcrumbs: list,
+                           category: str):
+    """
+    This method processes message category selected and returns appropriate inbox.
+    :param render_html:
+    :type render_html:
+    :param redirect_url:
+    :type redirect_url:
+    :param selected_survey:
+    :type selected_survey:
+    :param displayed_short_name:
+    :type displayed_short_name:
+    :param breadcrumbs:
+    :type breadcrumbs:
+    :param category:
+    :type category:
+    :return: Returns a response object
+    :rtype: WSGI application
+    """
+    page = request.args.get('page', default=1, type=int)
+    limit = request.args.get('limit', default=10, type=int)
+    conversation_tab = request.args.get('conversation_tab', default='open')
+    ru_ref_filter = request.args.get('ru_ref_filter', default='')
+    business_id_filter = request.args.get('business_id_filter', default='')
+    category = category
+    form = SecureMessageRuFilterForm()
+    try:
+        if form.validate_on_submit():
+            new_ru_ref = form.ru_ref_filter.data
+            if new_ru_ref and new_ru_ref != ru_ref_filter:
+                business_id_filter, ru_resolution_error = _try_get_party_id_from_filter_ru(new_ru_ref)
+                if business_id_filter:
+                    ru_ref_filter = new_ru_ref
+                else:
+                    ru_ref_filter = ''
+                    flash(ru_resolution_error)
+
+        form.ru_ref_filter.data = ru_ref_filter
+
+        tab_counts = _get_tab_counts(business_id_filter, conversation_tab, ru_ref_filter, None, category)
+
+        # If the page is higher then possible, redirect users to the highest possible page.
+        recalculated_page = _verify_requested_page_is_within_bounds(page, limit, tab_counts['current'])
+        if recalculated_page != page:
+            return redirect(url_for(redirect_url, conversation_tab=conversation_tab,
+                                    page=recalculated_page,
+                                    ru_ref_filter=ru_ref_filter,
+                                    business_id_filter=business_id_filter))
+
+        messages = [_refine(message) for message in message_controllers.get_thread_list(None,
+                                                                                        business_id_filter,
+                                                                                        conversation_tab,
+                                                                                        page,
+                                                                                        limit,
+                                                                                        category)]
+
+        pagination = _get_pagination_object(page, limit, tab_counts)
+
+        return render_template(render_html,
+                               form=form,
+                               page=page,
+                               breadcrumbs=breadcrumbs,
+                               messages=messages,
+                               selected_survey=selected_survey,
+                               pagination=pagination,
+                               conversation_tab=conversation_tab,
+                               business_id_filter=business_id_filter,
+                               ru_ref_filter=ru_ref_filter,
+                               tab_titles=_get_tab_titles(tab_counts, ru_ref_filter))
+
+    except (TypeError, KeyError):
+        logger.error("Failed to retrieve messages", exc_info=True)
+        return render_template(render_html,
+                               form=form,
+                               breadcrumbs=breadcrumbs,
+                               selected_survey=selected_survey,
+                               displayed_short_name=displayed_short_name,
+                               response_error=True,
+                               tab_titles=_get_tab_titles())
