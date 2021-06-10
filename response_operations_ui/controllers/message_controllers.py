@@ -160,7 +160,7 @@ def send_message(message_json: dict):
     
     
 def patch_message(message_id: str, payload: dict):
-    url = f"{current_app.config['SECURE_MESSAGE_URL']}/message/{message_id}"
+    url = f"{current_app.config['SECURE_MESSAGE_URL']}/messages/{message_id}"
 
     logger.info("Patching message data", message_id=message_id, payload=payload)
     response = requests.patch(url, headers={"Authorization": _get_jwt()}, json=payload)
@@ -202,7 +202,7 @@ def add_unread_label(message_id):
         logger.exception("Failed to add unread label", message_id=message_id)
 
 
-def update_close_conversation_status(thread_id, status):
+def update_close_conversation_status(thread_id: str, status: bool):
     url = f"{current_app.config['SECURE_MESSAGE_URL']}/threads/{thread_id}"
     data = {"is_closed": status}
 

@@ -159,20 +159,20 @@ def view_conversation(thread_id):
 def change_thread_category(thread_id):
     thread = message_controllers.get_conversation(thread_id)
     if request.method == 'POST':
-        category = request.form.get('category')
+        category = request.form.get('category-radio')
         if category != thread['category']:  # TODO need any more validation then this?
-            payload = {'category': category}
+            payload = {'category': category.upper()}
             message_controllers.patch_thread(thread_id, payload)
 
             if category == 'survey':
                 selected_survey = request.form.get('select-survey')
                 for message in thread['messages']:
-                    message_id = message['id']
+                    message_id = message['msg_id']
                     survey = survey_controllers.get_survey_id_by_short_name(selected_survey)
-                    message_payload = {'survey_id': survey['id']}
+                    message_payload = {'survey_id': survey}
                     message_controllers.patch_message(message_id, message_payload)
 
-            flash('Category has been changed to {category}')
+            flash(f'Category has been changed to {category}')
             return redirect(url_for("messages_bp.view_conversation", thread_id=thread_id))
 
     breadcrumbs = [{"text": "Messages", "url": "/messages"},
@@ -519,7 +519,7 @@ def _format_closed_at(thread_conversation):
     try:
         closed_time = localise_datetime(datetime.strptime(thread_conversation['closed_at'], "%Y-%m-%dT%H:%M:%S.%f"))
         return closed_time.strftime("%d/%m/%Y" + " at %H:%M")
-    except KeyError:
+    except (KeyError, TypeError):
         return None
 
 
