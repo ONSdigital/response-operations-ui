@@ -4,8 +4,8 @@ import re
 
 from flask_wtf import FlaskForm
 from structlog import wrap_logger
-from wtforms import BooleanField, HiddenField, IntegerField, Label, PasswordField, SelectField, StringField, \
-    SubmitField, TextAreaField
+from wtforms import BooleanField, HiddenField, IntegerField, Label, PasswordField, RadioField, SelectField, \
+    StringField, SubmitField, TextAreaField
 from wtforms.validators import DataRequired, Email, EqualTo, Length, InputRequired, ValidationError, Regexp
 
 from response_operations_ui.controllers import collection_exercise_controllers
@@ -187,6 +187,16 @@ class EditSurveyDetailsForm(FlaskForm):
         short_name = field.data
         if ' ' in short_name:
             raise ValidationError('Please remove spaces in short name')
+
+
+class ChangeThreadCategoryForm(FlaskForm):
+    category = RadioField(validators=InputRequired("Please select a category"))
+    select_survey = SelectField()
+
+    @staticmethod
+    def validate_select_survey(form, field):
+        if form.category == 'survey' and field is None:
+            raise ValidationError("Please select a specific survey for this thread")
 
 
 class CreateSurveyDetailsForm(FlaskForm):

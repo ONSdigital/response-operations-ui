@@ -188,7 +188,7 @@ def remove_unread_label(message_id: str):
         logger.exception("Failed to remove unread label", message_id=message_id)
 
 
-def add_unread_label(message_id):
+def add_unread_label(message_id: str):
     url = f"{current_app.config['SECURE_MESSAGE_URL']}/messages/modify/{message_id}"
     data = {"label": "UNREAD", "action": "add"}
 

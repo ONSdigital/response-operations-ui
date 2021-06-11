@@ -8,6 +8,37 @@
 {% block main %}
   <div class="grid">
       <div class="grid__col col-8@m">
+      {%- with errors = get_flashed_messages(category_filter=["error"]) -%}
+        {%- if errors -%}
+            {% set errorLength = errors|length %}
+            {% call
+              onsPanel({
+                  "type":"error",
+                  "title": "This page has 1 error" if errorLength == 1 else "There are " ~ errorLength ~ " errors on this page",
+                  "classes": "u-mb-s",
+                  "id": "save-error"
+              })
+            %}
+            {% set errorData = [] %}
+              {% for message in errors %}
+                  {% do errorData.append(
+                    {
+                        "text": message,
+                        "index": true,
+                        "url": "#",
+                        "classes": "js-inpagelink"
+                    }
+                ) %}
+              {% endfor %}
+              {{
+                  onsList({
+                      "classes": "list--bare",
+                      "itemsList": errorData
+                  })
+              }}
+          {% endcall %}
+        {% endif %}
+      {%- endwith -%}
         {% if response_error %}
           {% call
             onsPanel({

@@ -63,7 +63,7 @@ def get_survey_by_ref(survey_id):
     return response.json()
 
 
-def get_survey_by_shortname(short_name):
+def get_survey_by_shortname(short_name: str) -> dict:
     short_name = ''.join(short_name.split())
     logger.info('Retrieving survey', short_name=short_name)
     url = f'{app.config["SURVEY_URL"]}/surveys/shortname/{short_name}'
@@ -80,7 +80,7 @@ def get_survey_by_shortname(short_name):
     return response.json()
 
 
-def get_survey_ci_classifier(survey_id):
+def get_survey_ci_classifier(survey_id: str):
     logger.info('Retrieving classifier type selectors', survey_id=survey_id)
     url = f'{app.config["SURVEY_URL"]}/surveys/{survey_id}/classifiertypeselectors'
     response = requests.get(url, auth=app.config['BASIC_AUTH'])
@@ -144,7 +144,7 @@ def get_surveys_list():
     return sorted(survey_list, key=lambda k: k['surveyRef'])
 
 
-def get_survey(short_name):
+def get_survey(short_name: str) -> dict:
     survey = get_survey_by_shortname(short_name)
     logger.info('Getting survey details', short_name=short_name, survey_id=survey['id'])
 
@@ -177,7 +177,7 @@ def get_grouped_surveys_list():
     return sorted(survey_set)
 
 
-def get_survey_short_name_by_id(survey_id):
+def get_survey_short_name_by_id(survey_id: str) -> str:
     try:
         return app.surveys_dict[survey_id]['shortName']
     except (AttributeError, KeyError):
@@ -191,11 +191,16 @@ def get_survey_short_name_by_id(survey_id):
 
 
 def get_survey_id_by_short_name(short_name: str) -> str:
+    """
+    Returns the uuid of the survey by querying the survey service using the survey's shortname.
+    :param short_name: The survey's shortname
+    :return: The survey's uuid
+    """
     logger.info('Retrieving survey id by short name', short_name=short_name)
     return get_survey_by_shortname(short_name)['id']
 
 
-def get_survey_ref_by_id(survey_id):
+def get_survey_ref_by_id(survey_id: str):
     try:
         return app.surveys_dict[survey_id]['surveyRef']
     except (AttributeError, KeyError):
