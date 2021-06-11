@@ -39,17 +39,7 @@
           {% endcall %}
         {% endif %}
       {%- endwith -%}
-        {% if response_error %}
-          {% call
-            onsPanel({
-                "type": "error",
-                "classes": "u-mb-s",
-                "title":  "This page has 1 error"
-            })
-          %}
-            <p><a href="#inbox-radio" id="survey-select-link" class="js-inpagelink">{{ response_error }}</a></p>
-          {% endcall %}
-        {% endif %}
+      {% include 'secure-message/change-thread-category-errors.html' %}
         <h1>Assign a survey or category to the message</h1>
         <form method="post">
           <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
@@ -89,7 +79,7 @@
                 "other": {
                     "otherType": "select",
                     "id": "survey-list",
-                    "name": "select-survey",
+                    "name": "select_survey",
                     "label": {
                         "text": "Please specify the survey"
                     },

@@ -209,14 +209,14 @@ def post_change_thread_category(thread_id):
         flash(f'Category has been changed to {category}')
         return redirect(url_for("messages_bp.view_conversation", thread_id=thread_id))
 
-    # TODO form errors
     breadcrumbs = [{"text": "Messages", "url": "/messages"},
                    {"text": "Filter by survey"}]
     survey_list = get_grouped_surveys_list()
 
     return render_template("secure-message/change-thread-category.html",
                            breadcrumbs=breadcrumbs,
-                           survey_list=survey_list)
+                           survey_list=survey_list,
+                           form=form)
 
 
 @messages_bp.route('/mark_unread/<message_id>', methods=['GET'])
