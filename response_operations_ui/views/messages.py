@@ -158,6 +158,7 @@ def view_conversation(thread_id):
 @login_required
 def get_change_thread_category(thread_id):
     thread = message_controllers.get_conversation(thread_id)
+    form = ChangeThreadCategoryForm()
     breadcrumbs = [{"text": "Messages", "url": "/messages"},
                    {"text": "Filter by survey"}]
 
@@ -165,7 +166,8 @@ def get_change_thread_category(thread_id):
 
     return render_template("secure-message/change-thread-category.html",
                            breadcrumbs=breadcrumbs,
-                           survey_list=survey_list)
+                           survey_list=survey_list,
+                           form=form)
 
 
 @messages_bp.route('/threads/<thread_id>/change-category', methods=['POST'])
@@ -175,38 +177,39 @@ def post_change_thread_category(thread_id):
     form = ChangeThreadCategoryForm(request.form)
 
     if form.validate():
-        category = form.category
+        category = form.category.data
 
         if category != thread['category']:
-            payload = {'category': category.upper()}
+            payload = {'category': category}
             message_controllers.patch_thread(thread_id, payload)
+            flash(f'Category has been changed to {category}')
 
-            # When the category is survey, we need to add the survey_id to every message in the thread as the thread
-            # doesn't store that information.
-            if category == 'survey':
-                selected_survey = form.select_survey
-                for message in thread['messages']:
-                    message_id = message['msg_id']
-                    survey_id = survey_controllers.get_survey_id_by_short_name(selected_survey)
-                    try:
-                        message_payload = {'survey_id': survey_id}
-                        message_controllers.patch_message(message_id, message_payload)
-                    except ApiError:
-                        # If something goes wrong with any of these calls, we'll try and revert it to what it was as
-                        # we don't want to risk any threads getting lost (i.e., A technical message being changed to
-                        # survey but the survey_id not being present anywhere)
-                        logger.error("Something went wrong updating the survey_id in a message.  Reverting thread "
-                                     "category back to what it originally was to prevent data loss",
-                                     message_id=message_id,
-                                     original_category=thread['category'])
-                        payload = {'category': thread['category'].upper()}
-                        message_controllers.patch_thread(thread_id, payload)
-                        flash('Something went wrong updating the category.  The category of this thread has '
-                              'been reverted',
-                              category='error')
-                        return redirect(url_for("messages_bp.get_change_thread_category", thread_id=thread_id))
+        # When the category is survey, we need to add the survey_id to every message in the thread as the thread
+        # doesn't store that information.
+        if category == 'SURVEY':
+            selected_survey = form.select_survey.data
+            for message in thread['messages']:
+                message_id = message['msg_id']
+                survey_id = survey_controllers.get_survey_id_by_short_name(selected_survey)
+                try:
+                    message_payload = {'survey_id': survey_id}
+                    message_controllers.patch_message(message_id, message_payload)
+                except ApiError:
+                    # If something goes wrong with any of these calls, we'll try and revert it to what it was as
+                    # we don't want to risk any threads getting lost (i.e., A technical message being changed to
+                    # survey but the survey_id not being present anywhere)
+                    logger.error("Something went wrong updating the survey_id in a message.  Reverting thread "
+                                 "category back to what it originally was to prevent data loss",
+                                 message_id=message_id,
+                                 original_category=thread['category'])
+                    payload = {'category': thread['category']}
+                    message_controllers.patch_thread(thread_id, payload)
+                    flash('Something went wrong updating the category.  The category of this thread has '
+                          'been reverted',
+                          category='error')
+                    return redirect(url_for("messages_bp.get_change_thread_category", thread_id=thread_id))
+            flash(f'Survey has been changed to {selected_survey}')
 
-        flash(f'Category has been changed to {category}')
         return redirect(url_for("messages_bp.view_conversation", thread_id=thread_id))
 
     breadcrumbs = [{"text": "Messages", "url": "/messages"},

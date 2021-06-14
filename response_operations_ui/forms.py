@@ -190,12 +190,12 @@ class EditSurveyDetailsForm(FlaskForm):
 
 
 class ChangeThreadCategoryForm(FlaskForm):
-    category = RadioField(validators=InputRequired("Please select a category"))
-    select_survey = SelectField()
+    category = StringField(validators=[InputRequired("Please select a category")])
+    select_survey = StringField()
 
     @staticmethod
     def validate_select_survey(form, field):
-        if form.category == 'survey' and field is None:
+        if form.category.data == 'survey' and not field.data:
             raise ValidationError("Please select a specific survey for this thread")
 
 
