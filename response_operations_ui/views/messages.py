@@ -165,6 +165,8 @@ def get_change_thread_category(thread_id):
     survey_list = get_grouped_surveys_list()
 
     return render_template("secure-message/change-thread-category.html",
+                           thread=thread,
+                           thread_id=thread_id,
                            breadcrumbs=breadcrumbs,
                            survey_list=survey_list,
                            form=form)
@@ -182,7 +184,7 @@ def post_change_thread_category(thread_id):
         if category != thread['category']:
             payload = {'category': category}
             message_controllers.patch_thread(thread_id, payload)
-            flash(f'Category has been changed to {category}')
+            flash('The category has been successfully updated.')
 
         # When the category is survey, we need to add the survey_id to every message in the thread as the thread
         # doesn't store that information.
@@ -204,8 +206,7 @@ def post_change_thread_category(thread_id):
                                  original_category=thread['category'])
                     payload = {'category': thread['category']}
                     message_controllers.patch_thread(thread_id, payload)
-                    flash('Something went wrong updating the category.  The category of this thread has '
-                          'been reverted',
+                    flash('Something went wrong updating the category.  The category has been reverted.',
                           category='error')
                     return redirect(url_for("messages_bp.get_change_thread_category", thread_id=thread_id))
             flash(f'Survey has been changed to {selected_survey}')
@@ -217,6 +218,8 @@ def post_change_thread_category(thread_id):
     survey_list = get_grouped_surveys_list()
 
     return render_template("secure-message/change-thread-category.html",
+                           thread=thread,
+                           thread_id=thread_id,
                            breadcrumbs=breadcrumbs,
                            survey_list=survey_list,
                            form=form)

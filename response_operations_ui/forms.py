@@ -190,12 +190,13 @@ class EditSurveyDetailsForm(FlaskForm):
 
 
 class ChangeThreadCategoryForm(FlaskForm):
+    # These aren't string fields in the html form but the data this form populated with are strings
     category = StringField(validators=[InputRequired("Please select a category")])
     select_survey = StringField()
 
     @staticmethod
     def validate_select_survey(form, field):
-        if form.category.data == 'survey' and not field.data:
+        if form.category.data == 'SURVEY' and not field.data:
             raise ValidationError("Please select a specific survey for this thread")
 
 
