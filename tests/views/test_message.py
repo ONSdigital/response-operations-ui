@@ -175,6 +175,54 @@ class TestMessage(ViewTestCase):
 
     @requests_mock.mock()
     @patch('response_operations_ui.controllers.message_controllers._get_jwt')
+    def test_rft_inbox_selection(self, mock_request, mock_get_jwt):
+        """
+        Tests if the right messages get displayed for the RFT inbox.
+        """
+        mock_get_jwt.return_value = "blah"
+        mock_request.get(url_messages + '/count', json={"total": 1}, status_code=200)
+        mock_request.get(url_get_threads_list, json=thread_list)
+        mock_request.get(url_get_surveys_list, json=self.surveys_list_json)
+        mock_request.get(shortname_url + "/miscellaneous", json=ashe_info['survey'])
+        form = {
+            "inbox-radio": "misc"
+        }
+        response = self.client.post("/messages/select-survey", data=form, follow_redirects=True)
+
+        self.assertEqual(response.status_code, 200)
+        self.assertIn("RFT Messages".encode(), response.data)
+        self.assertIn("Apple".encode(), response.data)
+        self.assertIn("50012345678".encode(), response.data)
+        self.assertIn("John Example".encode(), response.data)
+        self.assertIn("ASHE Team".encode(), response.data)
+        self.assertIn("Message from respondent".encode(), response.data)
+        self.assertIn("Message from ONS".encode(), response.data)
+
+    @requests_mock.mock()
+    @patch('response_operations_ui.controllers.message_controllers._get_jwt')
+    def test_rft_inbox_threads_list(self, mock_request, mock_get_jwt):
+        """
+        Tests if the right messages get displayed for the RFT inbox.
+        """
+        mock_get_jwt.return_value = "blah"
+        mock_request.get(url_messages + '/count', json={"total": 1}, status_code=200)
+        mock_request.get(url_get_threads_list, json=thread_list)
+        mock_request.get(url_get_surveys_list, json=self.surveys_list_json)
+        mock_request.get(shortname_url + "/miscellaneous", json=ashe_info['survey'])
+
+        response = self.client.get("/messages/miscellaneous")
+
+        self.assertEqual(response.status_code, 200)
+        self.assertIn("RFT Messages".encode(), response.data)
+        self.assertIn("Apple".encode(), response.data)
+        self.assertIn("50012345678".encode(), response.data)
+        self.assertIn("John Example".encode(), response.data)
+        self.assertIn("ASHE Team".encode(), response.data)
+        self.assertIn("Message from respondent".encode(), response.data)
+        self.assertIn("Message from ONS".encode(), response.data)
+
+    @requests_mock.mock()
+    @patch('response_operations_ui.controllers.message_controllers._get_jwt')
     def test_survey_short_name_failure(self, mock_request, mock_get_jwt):
         mock_get_jwt.return_value = "blah"
         mock_request.get(shortname_url + "/ASHE", status_code=500)

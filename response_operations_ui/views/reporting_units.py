@@ -56,12 +56,11 @@ def build_survey_table_data_dict(collection_exercises: list, case_groups: list) 
     """
     table_data = {}
     for ce in collection_exercises:
-        if ce['surveyId'] in table_data:
-            # Keep the one with the later go-live date
-            if parse_date(table_data[ce['surveyId']]['goLive']) > parse_date(ce['scheduledStartDateTime']):
-                continue
-
         survey = get_survey_by_id(ce['surveyId'])
+        if survey['surveyRef'] in table_data:
+            # Keep the one with the later go-live date
+            if parse_date(table_data[survey['surveyRef']]['goLive']) > parse_date(ce['scheduledStartDateTime']):
+                continue
         table_data[survey['surveyRef']] = {
             "surveyName": f"{survey['surveyRef']} {survey['shortName']}",
             "surveyId": ce['surveyId'],
@@ -159,7 +158,7 @@ def view_reporting_unit_survey(ru_ref, survey):
     survey_details['display_name'] = f"{survey_details['surveyRef']} {survey_details['shortName']}"
 
     # If there's an active IAC on the newest case, return it to be displayed
-    collection_exercise_ids = [ce['id'] for ce in live_collection_exercises]
+    collection_exercise_ids = [ce['id'] for ce in survey_collection_exercises]
     valid_cases = [case for case in cases if case.get('caseGroup', {}).get('collectionExerciseId')
                    in collection_exercise_ids]
     case = next(iter(sorted(valid_cases, key=lambda c: c['createdDateTime'], reverse=True)), None)
