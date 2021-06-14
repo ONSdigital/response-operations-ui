@@ -157,8 +157,8 @@ def send_message(message_json: dict):
     except HTTPError as ex:
         logger.error("Message sending failed due to API Error", exc_info=True)
         raise ApiError(ex.response)
-    
-    
+
+
 def patch_message(message_id: str, payload: dict):
     url = f"{current_app.config['SECURE_MESSAGE_URL']}/messages/{message_id}"
 

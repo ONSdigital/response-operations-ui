@@ -4,7 +4,7 @@ import re
 
 from flask_wtf import FlaskForm
 from structlog import wrap_logger
-from wtforms import BooleanField, HiddenField, IntegerField, Label, PasswordField, RadioField, SelectField, \
+from wtforms import BooleanField, HiddenField, IntegerField, Label, PasswordField, SelectField, \
     StringField, SubmitField, TextAreaField
 from wtforms.validators import DataRequired, Email, EqualTo, Length, InputRequired, ValidationError, Regexp
 
