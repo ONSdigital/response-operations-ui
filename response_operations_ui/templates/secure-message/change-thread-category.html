@@ -8,45 +8,11 @@
 {% block main %}
   <div class="grid">
       <div class="grid__col col-8@m">
-      {%- with errors = get_flashed_messages(category_filter=["error"]) -%}
-        {%- if errors -%}
-            {% set errorLength = errors|length %}
-            {% call
-              onsPanel({
-                  "type":"error",
-                  "title": "This page has 1 error" if errorLength == 1 else "There are " ~ errorLength ~ " errors on this page",
-                  "classes": "u-mb-s",
-                  "id": "save-error"
-              })
-            %}
-            {% set errorData = [] %}
-              {% for message in errors %}
-                  {% do errorData.append(
-                    {
-                        "text": message,
-                        "index": true,
-                        "url": "#",
-                        "classes": "js-inpagelink"
-                    }
-                ) %}
-              {% endfor %}
-              {{
-                  onsList({
-                      "classes": "list--bare",
-                      "itemsList": errorData
-                  })
-              }}
-          {% endcall %}
-        {% endif %}
-      {%- endwith -%}
       {% include 'secure-message/change-thread-category-errors.html' %}
         <h1>Assign a survey or category to the message</h1>
         <form method="post">
           <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
           {% if survey_list %}
-            {% set error = {
-              "text": "Select a survey"
-            } %}         
             {% set surveys = [            
               {
                 "value": "",
@@ -69,6 +35,7 @@
         "legend": "Choose an option",
         "id": "category",
         "name": "category",
+        "error": form.errors,
         "radios": [
             {
                 "id": "surveys-other",
@@ -85,8 +52,6 @@
                         "text": "Please specify the survey"
                     },
                 "options": surveys,
-                "error": error if response_error
-                        
                 }
             },
             {

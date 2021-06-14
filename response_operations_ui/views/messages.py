@@ -185,7 +185,6 @@ def post_change_thread_category(thread_id):
         if category != thread['category']:
             payload = {'category': category}
             message_controllers.patch_thread(thread_id, payload)
-            flash('The category has been successfully updated.')
 
         # When the category is survey, we need to add the survey_id to every message in the thread as the thread
         # doesn't store that information.
@@ -212,6 +211,7 @@ def post_change_thread_category(thread_id):
                     return redirect(url_for("messages_bp.get_change_thread_category", thread_id=thread_id))
             flash(f'Survey has been changed to {selected_survey}')
 
+        flash('The category has been successfully updated.')
         return redirect(url_for("messages_bp.view_conversation", thread_id=thread_id))
 
     breadcrumbs = [{"text": "Messages", "url": "/messages"},
