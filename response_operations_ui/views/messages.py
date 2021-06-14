@@ -74,7 +74,8 @@ def view_conversation(thread_id):
     business_id_filter = request.args.get('business_id_filter')
 
     if request.method == 'POST' and request.form.get('reopen'):
-        message_controllers.update_close_conversation_status(thread_id=thread_id, status=False)
+        payload = {"is_closed": False}
+        message_controllers.patch_thread(thread_id, payload)
         thread_url = url_for("messages_bp.view_conversation",
                              thread_id=thread_id,
                              conversation_tab=conversation_tab,
@@ -437,7 +438,8 @@ def close_conversation(thread_id):
     business_id_filter = request.args.get('business_id_filter')
 
     if request.method == 'POST':
-        message_controllers.update_close_conversation_status(thread_id=thread_id, status=True)
+        payload = {"is_closed": True}
+        message_controllers.patch_thread(thread_id, payload)
         thread_url = url_for("messages_bp.view_conversation", thread_id=thread_id,
                              conversation_tab=conversation_tab,
                              page=page,

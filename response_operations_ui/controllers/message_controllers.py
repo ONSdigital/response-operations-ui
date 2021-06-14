@@ -202,23 +202,7 @@ def add_unread_label(message_id: str):
         logger.exception("Failed to add unread label", message_id=message_id)
 
 
-def update_close_conversation_status(thread_id: str, status: bool):
-    url = f"{current_app.config['SECURE_MESSAGE_URL']}/threads/{thread_id}"
-    data = {"is_closed": status}
-
-    logger.info("Updating close conversation status", thread_id=thread_id, status=status)
-    response = requests.patch(url, headers={"Authorization": _get_jwt(), "Content-Type": "application/json"}, json=data)
-
-    try:
-        response.raise_for_status()
-        logger.info("Successfully updated close conversation status", thread_id=thread_id, status=status)
-    except HTTPError:
-        logger.error("Failed to update close conversation status", thread_id=thread_id, status=status, exc_info=True)
-        raise ApiError(response)
-
-
 def patch_thread(thread_id: str, payload: dict):
-    # TODO can we combine this and update_close_conversation_status? They're basically the same.
     url = f"{current_app.config['SECURE_MESSAGE_URL']}/threads/{thread_id}"
 
     logger.info("Patching thread data", thread_id=thread_id, payload=payload)
@@ -232,7 +216,7 @@ def patch_thread(thread_id: str, payload: dict):
         raise ApiError(response)
 
 
-def _get_jwt():
+def _get_jwt() -> str:
     token = session.get('token')
     decoded_token = token_decoder.decode_access_token(token)
     user_id = decoded_token.get('user_id')
