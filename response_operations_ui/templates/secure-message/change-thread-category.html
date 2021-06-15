@@ -31,53 +31,52 @@
               ) %}
             {% endfor %}
             {{
-    onsRadios({
-        "legend": "Choose an option",
-        "id": "category",
-        "name": "category",
-        "error": form.errors,
-        "radios": [
-            {
-                "id": "surveys-other",
-                "label": {
-                    "text": "Survey"
-                },
-                "value": "SURVEY",
-                "checked": true if thread.category == "SURVEY",
-                "other": {
-                    "otherType": "select",
-                    "id": "survey-list",
-                    "name": "select_survey",
-                    "label": {
-                        "text": "Please specify the survey"
-                    },
-                "options": surveys,
-                }
-            },
-            {
-                "id": "technical-other",
-                "label": {
-                    "text": "Technical"
-                },
-                "checked": true if thread.category == "TECHNICAL",
-                "value": "TECHNICAL"
-            },
-            {
-                "id": "misc-other",
-                "label": {
-                    "text": "Respondent Feedback Team"
-                },
-                "checked": true if thread.category == "MISC",
-                "value": "MISC"
-            }
-        ]
-    })
-}}
+                onsRadios({
+                    "legend": "Choose an option",
+                    "id": "category",
+                    "name": "category",
+                    "error": form.errors,
+                    "radios": [
+                        {
+                            "id": "surveys-other",
+                            "label": {
+                                "text": "Survey"
+                            },
+                            "value": "SURVEY",
+                            "checked": true if thread.category == "SURVEY",
+                            "other": {
+                                "otherType": "select",
+                                "id": "survey-list",
+                                "name": "select_survey",
+                                "label": {
+                                    "text": "Please specify the survey"
+                                },
+                            "options": surveys,
+                            }
+                        },
+                        {
+                            "id": "technical-other",
+                            "label": {
+                                "text": "Technical"
+                            },
+                            "checked": true if thread.category == "TECHNICAL",
+                            "value": "TECHNICAL"
+                        },
+                        {
+                            "id": "misc-other",
+                            "label": {
+                                "text": "Respondent Feedback Team"
+                            },
+                            "checked": true if thread.category == "MISC",
+                            "value": "MISC"
+                        }
+                    ]
+                })
+            }}
             <div class="grid grid--flex grid--gutterless grid--vertical-center grid--no-wrap@s u-mt-m u-mb-m">
               <div class="grid__col">
                 {{
                 onsButton({
-                    "classes": "u-mt-m",
                     "text": "Continue",
                     "id": "continue",
                     "submitType": "timer"
