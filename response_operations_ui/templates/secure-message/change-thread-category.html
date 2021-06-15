@@ -7,8 +7,10 @@
 
 {% block main %}
   <div class="grid">
-      <div class="grid__col col-8@m">
+      <div class="grid__col col-12@m">
       {% include 'secure-message/change-thread-category-errors.html' %}
+      </div>
+      <div class="grid__col col-8@m">
         <h1>Assign a survey or category to the message</h1>
         <form method="post">
           <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
