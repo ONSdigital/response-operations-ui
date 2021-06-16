@@ -175,7 +175,7 @@ def get_change_thread_category(thread_id):
 
 @messages_bp.route('/threads/<thread_id>/change-category', methods=['POST'])
 @login_required
-def post_change_thread_category(thread_id):
+def post_change_thread_category(thread_id):  # noqa: C901
     thread = message_controllers.get_conversation(thread_id)
     form = ChangeThreadCategoryForm(request.form)
 
