@@ -118,7 +118,7 @@ def build_respondent_table_data_dict(respondents: list, ru_ref: str):
         table_data[respondent['id']]['surveys'] = sorted(
             table_data[respondent['id']]['surveys'].items(), key=lambda t: t[1]['name'])
 
-    return table_data.values()
+    return sorted(table_data.values(), key=lambda t: t[0])
 
 
 @reporting_unit_bp.route('/<ru_ref>/surveys/<survey>', methods=['GET'])
