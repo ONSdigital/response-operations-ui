@@ -183,10 +183,8 @@ def post_change_thread_category(thread_id):
         category = form.category.data
         update_survey_id_in_messages = False
 
-        # Do this test first as a failed survey-service call after the thread patch could leave us in a broken state
+        # Do this part first as a failed survey call after the thread patch could leave us in a broken state
         if category == 'SURVEY':
-            # Always report a successful survey change, regardless of whether we did anything or not.
-            flash('The survey has been successfully updated.')
             selected_survey = form.select_survey.data
             survey_id = survey_controllers.get_survey_id_by_short_name(selected_survey)
             if thread['messages'][0]['survey_id'] != survey_id:
@@ -220,6 +218,12 @@ def post_change_thread_category(thread_id):
                         flash('Something went wrong updating the category.  The category has been reverted.',
                               category='error')
                         return redirect(url_for("messages_bp.get_change_thread_category", thread_id=thread_id))
+
+        # Looks odd but we can't flash a success message before we attempt to patch the messages as one could possibly
+        # fail. This would result in 2 flashed messages, one reporting success and the other reporting failure.
+        if category == 'SURVEY':
+            # Always report a successful survey change, regardless of whether we did anything or not.
+            flash('The survey has been successfully updated.')
 
         flash('The category has been successfully updated.')
         return redirect(url_for("messages_bp.view_conversation", thread_id=thread_id))
