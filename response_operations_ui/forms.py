@@ -190,7 +190,7 @@ class EditSurveyDetailsForm(FlaskForm):
 
 
 class ChangeThreadCategoryForm(FlaskForm):
-    # These aren't string fields in the html form but the data this form populated with are strings
+    # These aren't string fields in the html form but the data this form is populated with are strings
     category = StringField(validators=[InputRequired("Please select a category")])
     select_survey = StringField()
 
