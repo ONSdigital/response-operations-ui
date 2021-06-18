@@ -177,6 +177,11 @@ def get_grouped_surveys_list():
     return sorted(survey_set)
 
 
+def get_full_grouped_surveys_list():
+    survey_set = {survey['shortName'] for survey in get_surveys_list()}
+    return sorted(survey_set)
+
+
 def get_survey_short_name_by_id(survey_id: str) -> str:
     try:
         return app.surveys_dict[survey_id]['shortName']

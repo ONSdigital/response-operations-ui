@@ -15,7 +15,7 @@ from response_operations_ui.common.dates import get_formatted_date, localise_dat
 from response_operations_ui.common.mappers import format_short_name
 from response_operations_ui.controllers import message_controllers, party_controller, survey_controllers
 from response_operations_ui.controllers.survey_controllers import get_survey_short_name_by_id, get_survey_ref_by_id, \
-    get_grouped_surveys_list
+    get_grouped_surveys_list, get_full_grouped_surveys_list
 from response_operations_ui.exceptions.exceptions import ApiError, InternalError
 from response_operations_ui.forms import ChangeThreadCategoryForm, SecureMessageForm, SecureMessageRuFilterForm
 
@@ -163,7 +163,7 @@ def get_change_thread_category(thread_id):
     breadcrumbs = [{"text": "Messages", "url": "/messages"},
                    {"text": "Filter by survey"}]
 
-    survey_list = get_grouped_surveys_list()
+    survey_list = get_full_grouped_surveys_list()
 
     return render_template("secure-message/change-thread-category.html",
                            thread=thread,
@@ -181,22 +181,9 @@ def post_change_thread_category(thread_id):  # noqa: C901
 
     if form.validate():
         category = form.category.data
-        update_survey_id_in_messages = False
 
-        # Do this part first as a failed survey call after the thread patch could leave us in a broken state
+        # Do this part first. It's the most 'risky' as it does multiple calls
         if category == 'SURVEY':
-            selected_survey = form.select_survey.data
-            survey_id = survey_controllers.get_survey_id_by_short_name(selected_survey)
-            if thread['messages'][0]['survey_id'] != survey_id:
-                update_survey_id_in_messages = True
-
-        if category != thread['category']:
-            payload = {'category': category}
-            message_controllers.patch_thread(thread_id, payload)
-
-        # When the category is survey and that survey is different from what is against the messages in the thread,
-        # we need to add the survey_id to every message in the thread as the thread doesn't store that information.
-        if category == 'SURVEY' and update_survey_id_in_messages:
             selected_survey = form.select_survey.data
             survey_id = survey_controllers.get_survey_id_by_short_name(selected_survey)
             if thread['messages'][0]['survey_id'] != survey_id:
@@ -206,31 +193,22 @@ def post_change_thread_category(thread_id):  # noqa: C901
                         message_payload = {'survey_id': survey_id}
                         message_controllers.patch_message(message_id, message_payload)
                     except ApiError:
-                        # If something goes wrong with any of these calls, we'll try and revert it to what it was as
-                        # we don't want to risk any threads getting lost (i.e., A technical message being changed to
-                        # survey but the survey_id not being present anywhere)
-                        logger.error("Something went wrong updating the survey_id in a message.  Reverting thread "
-                                     "category back to what it originally was to prevent data loss",
-                                     message_id=message_id,
-                                     original_category=thread['category'])
-                        payload = {'category': thread['category']}
-                        message_controllers.patch_thread(thread_id, payload)
-                        flash('Something went wrong updating the category.  The category has been reverted.',
-                              category='error')
+                        flash('Something went wrong updating the survey.  Please try again.', category='error')
                         return redirect(url_for("messages_bp.get_change_thread_category", thread_id=thread_id))
-
-        # Looks odd but we can't flash a success message before we attempt to patch the messages as one could possibly
-        # fail. This would result in 2 flashed messages, one reporting success and the other reporting failure.
-        if category == 'SURVEY':
-            # Always report a successful survey change, regardless of whether we did anything or not.
             flash('The survey has been successfully updated.')
 
-        flash('The category has been successfully updated.')
+        if category != thread['category']:
+            payload = {'category': category}
+            try:
+                message_controllers.patch_thread(thread_id, payload)
+            except ApiError:
+                flash('Something went wrong updating the category. Please try again.', category='error')
+                return redirect(url_for("messages_bp.get_change_thread_category", thread_id=thread_id))
         return redirect(url_for("messages_bp.view_conversation", thread_id=thread_id))
 
     breadcrumbs = [{"text": "Messages", "url": "/messages"},
                    {"text": "Filter by survey"}]
-    survey_list = get_grouped_surveys_list()
+    survey_list = get_full_grouped_surveys_list()
 
     return render_template("secure-message/change-thread-category.html",
                            thread=thread,
