@@ -58,7 +58,6 @@ def create_app(config_name=None):
             content_security_policy=csp_policy,
             content_security_policy_nonce_in=['script-src'],
             force_https=False,  # this is handled at the load balancer
-            legacy_content_security_policy_header=True,
             strict_transport_security=True,
             strict_transport_security_max_age=ONE_YEAR_IN_SECONDS,
             referrer_policy=DEFAULT_REFERRER_POLICY,
