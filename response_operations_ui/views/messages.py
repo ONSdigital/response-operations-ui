@@ -15,7 +15,7 @@ from response_operations_ui.common.dates import get_formatted_date, localise_dat
 from response_operations_ui.common.mappers import format_short_name
 from response_operations_ui.controllers import message_controllers, party_controller, survey_controllers
 from response_operations_ui.controllers.survey_controllers import get_survey_short_name_by_id, get_survey_ref_by_id, \
-    get_grouped_surveys_list, get_full_grouped_surveys_list
+    get_grouped_surveys_list, get_business_survey_shortname_list
 from response_operations_ui.exceptions.exceptions import ApiError, InternalError
 from response_operations_ui.forms import ChangeThreadCategoryForm, SecureMessageForm, SecureMessageRuFilterForm
 
@@ -163,7 +163,7 @@ def get_change_thread_category(thread_id):
     breadcrumbs = [{"text": "Messages", "url": "/messages"},
                    {"text": "Filter by survey"}]
 
-    survey_list = get_full_grouped_surveys_list()
+    survey_list = get_business_survey_shortname_list()
 
     return render_template("secure-message/change-thread-category.html",
                            thread=thread,
@@ -208,7 +208,7 @@ def post_change_thread_category(thread_id):  # noqa: C901
 
     breadcrumbs = [{"text": "Messages", "url": "/messages"},
                    {"text": "Filter by survey"}]
-    survey_list = get_full_grouped_surveys_list()
+    survey_list = get_business_survey_shortname_list()
 
     return render_template("secure-message/change-thread-category.html",
                            thread=thread,

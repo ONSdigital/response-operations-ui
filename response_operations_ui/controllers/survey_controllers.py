@@ -155,7 +155,7 @@ def get_survey(short_name: str) -> dict:
     return survey
 
 
-def convert_specific_surveys_to_specific_shortnames(survey_short_name):
+def convert_specific_surveys_to_specific_shortnames(survey_short_name: str) -> str:
     for fdi_survey in FDI_LIST:
         if survey_short_name == fdi_survey:
             return "FDI"
@@ -165,19 +165,31 @@ def convert_specific_surveys_to_specific_shortnames(survey_short_name):
     return survey_short_name
 
 
-def get_surveys_dictionary():
+def get_surveys_dictionary() -> dict:
     surveys_list = get_surveys_list()
     return {survey['id']: {'shortName': convert_specific_surveys_to_specific_shortnames(survey.get('shortName')),
                            'surveyRef': survey.get('surveyRef')}
             for survey in surveys_list}
 
 
-def get_grouped_surveys_list():
+def get_grouped_surveys_list() -> set:
+    """
+    Returns a set of survey names.  Certain groups of similar surveys will be grouped together under a single name
+    (i.e., AOFDI, AIFDI, QIFDI and QOFDI will be absent and instead there will be one FDI entry)
+
+    :return: A set of survey shortnames
+    """
     survey_set = {convert_specific_surveys_to_specific_shortnames(survey['shortName']) for survey in get_surveys_list()}
     return sorted(survey_set)
 
 
-def get_full_grouped_surveys_list():
+def get_business_survey_shortname_list() -> set:
+    """
+    Returns a set of survey names.  This is different from `get_grouped_surveys_list` as it gives you all of them
+    without any filtering.
+
+    :return: A set of survey shortnames
+    """
     survey_set = {survey['shortName'] for survey in get_surveys_list()}
     return sorted(survey_set)
 
@@ -198,6 +210,7 @@ def get_survey_short_name_by_id(survey_id: str) -> str:
 def get_survey_id_by_short_name(short_name: str) -> str:
     """
     Returns the uuid of the survey by querying the survey service using the survey's shortname.
+
     :param short_name: The survey's shortname
     :return: The survey's uuid
     """
