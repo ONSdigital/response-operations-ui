@@ -688,7 +688,7 @@ def _verify_requested_page_is_within_bounds(requested_page: int, limit: int, thr
 
 
 def _can_mark_as_unread(message: dict) -> bool:
-    return message['to_id'] == 'GROUP' or message['to_id'] == session.get('user_id')
+    return message['to_id'] == 'GROUP' or message['to_id'] == session['_user_id']
 
 
 def _process_category_page(render_html: str,
