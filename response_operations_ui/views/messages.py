@@ -15,9 +15,9 @@ from response_operations_ui.common.dates import get_formatted_date, localise_dat
 from response_operations_ui.common.mappers import format_short_name
 from response_operations_ui.controllers import message_controllers, party_controller, survey_controllers
 from response_operations_ui.controllers.survey_controllers import get_survey_short_name_by_id, get_survey_ref_by_id, \
-    get_grouped_surveys_list
+    get_grouped_surveys_list, get_business_survey_shortname_list
 from response_operations_ui.exceptions.exceptions import ApiError, InternalError
-from response_operations_ui.forms import SecureMessageForm, SecureMessageRuFilterForm
+from response_operations_ui.forms import ChangeThreadCategoryForm, SecureMessageForm, SecureMessageRuFilterForm
 
 logger = wrap_logger(logging.getLogger(__name__))
 
@@ -74,7 +74,8 @@ def view_conversation(thread_id):
     business_id_filter = request.args.get('business_id_filter')
 
     if request.method == 'POST' and request.form.get('reopen'):
-        message_controllers.update_close_conversation_status(thread_id=thread_id, status=False)
+        payload = {"is_closed": False}
+        message_controllers.patch_thread(thread_id, payload)
         thread_url = url_for("messages_bp.view_conversation",
                              thread_id=thread_id,
                              conversation_tab=conversation_tab,
@@ -152,6 +153,69 @@ def view_conversation(thread_id):
                            conversation_tab=conversation_tab,
                            ru_ref_filter=ru_ref_filter,
                            business_id_filter=business_id_filter)
+
+
+@messages_bp.route('/threads/<thread_id>/change-category', methods=['GET'])
+@login_required
+def get_change_thread_category(thread_id):
+    thread = message_controllers.get_conversation(thread_id)
+    form = ChangeThreadCategoryForm()
+    breadcrumbs = [{"text": "Messages", "url": "/messages"},
+                   {"text": "Filter by survey"}]
+
+    survey_list = get_business_survey_shortname_list()
+
+    return render_template("secure-message/change-thread-category.html",
+                           thread=thread,
+                           thread_id=thread_id,
+                           breadcrumbs=breadcrumbs,
+                           survey_list=survey_list,
+                           form=form)
+
+
+@messages_bp.route('/threads/<thread_id>/change-category', methods=['POST'])
+@login_required
+def post_change_thread_category(thread_id):  # noqa: C901
+    thread = message_controllers.get_conversation(thread_id)
+    form = ChangeThreadCategoryForm(request.form)
+
+    if form.validate():
+        category = form.category.data
+
+        # Do this part first. It's the most 'risky' as it does multiple calls
+        if category == 'SURVEY':
+            selected_survey = form.select_survey.data
+            survey_id = survey_controllers.get_survey_id_by_short_name(selected_survey)
+            if thread['messages'][0]['survey_id'] != survey_id:
+                for message in thread['messages']:
+                    message_id = message['msg_id']
+                    try:
+                        message_payload = {'survey_id': survey_id}
+                        message_controllers.patch_message(message_id, message_payload)
+                    except ApiError:
+                        flash('Something went wrong updating the survey.  Please try again.', category='error')
+                        return redirect(url_for("messages_bp.get_change_thread_category", thread_id=thread_id))
+            flash('The survey has been successfully updated.')
+
+        if category != thread['category']:
+            payload = {'category': category}
+            try:
+                message_controllers.patch_thread(thread_id, payload)
+            except ApiError:
+                flash('Something went wrong updating the category. Please try again.', category='error')
+                return redirect(url_for("messages_bp.get_change_thread_category", thread_id=thread_id))
+        return redirect(url_for("messages_bp.view_conversation", thread_id=thread_id))
+
+    breadcrumbs = [{"text": "Messages", "url": "/messages"},
+                   {"text": "Filter by survey"}]
+    survey_list = get_business_survey_shortname_list()
+
+    return render_template("secure-message/change-thread-category.html",
+                           thread=thread,
+                           thread_id=thread_id,
+                           breadcrumbs=breadcrumbs,
+                           survey_list=survey_list,
+                           form=form)
 
 
 @messages_bp.route('/mark_unread/<message_id>', methods=['GET'])
@@ -366,7 +430,8 @@ def close_conversation(thread_id):
     business_id_filter = request.args.get('business_id_filter')
 
     if request.method == 'POST':
-        message_controllers.update_close_conversation_status(thread_id=thread_id, status=True)
+        payload = {"is_closed": True}
+        message_controllers.patch_thread(thread_id, payload)
         thread_url = url_for("messages_bp.view_conversation", thread_id=thread_id,
                              conversation_tab=conversation_tab,
                              page=page,
@@ -446,7 +511,7 @@ def _format_closed_at(thread_conversation):
     try:
         closed_time = localise_datetime(datetime.strptime(thread_conversation['closed_at'], "%Y-%m-%dT%H:%M:%S.%f"))
         return closed_time.strftime("%d/%m/%Y" + " at %H:%M")
-    except KeyError:
+    except (KeyError, TypeError):
         return None
 
 

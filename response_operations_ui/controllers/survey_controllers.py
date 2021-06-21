@@ -63,7 +63,7 @@ def get_survey_by_ref(survey_id):
     return response.json()
 
 
-def get_survey_by_shortname(short_name):
+def get_survey_by_shortname(short_name: str) -> dict:
     short_name = ''.join(short_name.split())
     logger.info('Retrieving survey', short_name=short_name)
     url = f'{app.config["SURVEY_URL"]}/surveys/shortname/{short_name}'
@@ -80,7 +80,7 @@ def get_survey_by_shortname(short_name):
     return response.json()
 
 
-def get_survey_ci_classifier(survey_id):
+def get_survey_ci_classifier(survey_id: str):
     logger.info('Retrieving classifier type selectors', survey_id=survey_id)
     url = f'{app.config["SURVEY_URL"]}/surveys/{survey_id}/classifiertypeselectors'
     response = requests.get(url, auth=app.config['BASIC_AUTH'])
@@ -144,7 +144,7 @@ def get_surveys_list():
     return sorted(survey_list, key=lambda k: k['surveyRef'])
 
 
-def get_survey(short_name):
+def get_survey(short_name: str) -> dict:
     survey = get_survey_by_shortname(short_name)
     logger.info('Getting survey details', short_name=short_name, survey_id=survey['id'])
 
@@ -155,7 +155,7 @@ def get_survey(short_name):
     return survey
 
 
-def convert_specific_surveys_to_specific_shortnames(survey_short_name):
+def convert_specific_surveys_to_specific_shortnames(survey_short_name: str) -> str:
     for fdi_survey in FDI_LIST:
         if survey_short_name == fdi_survey:
             return "FDI"
@@ -165,19 +165,36 @@ def convert_specific_surveys_to_specific_shortnames(survey_short_name):
     return survey_short_name
 
 
-def get_surveys_dictionary():
+def get_surveys_dictionary() -> dict:
     surveys_list = get_surveys_list()
     return {survey['id']: {'shortName': convert_specific_surveys_to_specific_shortnames(survey.get('shortName')),
                            'surveyRef': survey.get('surveyRef')}
             for survey in surveys_list}
 
 
-def get_grouped_surveys_list():
+def get_grouped_surveys_list() -> set:
+    """
+    Returns a set of survey names.  Certain groups of similar surveys will be grouped together under a single name
+    (i.e., AOFDI, AIFDI, QIFDI and QOFDI will be absent and instead there will be one FDI entry)
+
+    :return: A set of survey shortnames
+    """
     survey_set = {convert_specific_surveys_to_specific_shortnames(survey['shortName']) for survey in get_surveys_list()}
     return sorted(survey_set)
 
 
-def get_survey_short_name_by_id(survey_id):
+def get_business_survey_shortname_list() -> set:
+    """
+    Returns a set of survey names.  This is different from `get_grouped_surveys_list` as it gives you all of them
+    without any filtering.
+
+    :return: A set of survey shortnames
+    """
+    survey_set = {survey['shortName'] for survey in get_surveys_list()}
+    return sorted(survey_set)
+
+
+def get_survey_short_name_by_id(survey_id: str) -> str:
     try:
         return app.surveys_dict[survey_id]['shortName']
     except (AttributeError, KeyError):
@@ -191,11 +208,17 @@ def get_survey_short_name_by_id(survey_id):
 
 
 def get_survey_id_by_short_name(short_name: str) -> str:
+    """
+    Returns the uuid of the survey by querying the survey service using the survey's shortname.
+
+    :param short_name: The survey's shortname
+    :return: The survey's uuid
+    """
     logger.info('Retrieving survey id by short name', short_name=short_name)
     return get_survey_by_shortname(short_name)['id']
 
 
-def get_survey_ref_by_id(survey_id):
+def get_survey_ref_by_id(survey_id: str):
     try:
         return app.surveys_dict[survey_id]['surveyRef']
     except (AttributeError, KeyError):

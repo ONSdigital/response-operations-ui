@@ -1,4 +1,7 @@
 {% from "components/metadata/_macro.njk" import onsMetadata %}
+{% set surveyDescription = messages[0].get('survey') + ' ' + messages[0].get('survey_ref') if messages[0].get('survey') %}
+{% set categoryDescription = ' (' + thread_data.category + ') ' if thread_data.category != 'SURVEY' else '' %}
+{% set description = surveyDescription + categoryDescription + ' <a href="' + url_for('messages_bp.get_change_thread_category', thread_id=messages[0]['thread_id']) + '">Assign a survey or category</a>' %}
 <div class="grid grid--gutterless">
     <div class="grid__col col-10@m">
         {{ 
@@ -11,7 +14,7 @@
                         "term": "Survey:",
                         "descriptions": [ 
                             {
-                                "description": messages[0].get('survey') + ' ' + messages[0].get('survey_ref') if messages[0].get('survey') else "",
+                                "description": description,
                                 "id": "survey"
                             }
                         ]

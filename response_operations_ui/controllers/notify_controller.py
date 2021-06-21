@@ -1,9 +1,11 @@
 import json
 import logging
+
 import structlog
-from response_operations_ui.exceptions.exceptions import NotifyError
 from flask import current_app as app
 from google.cloud import pubsub_v1
+
+from response_operations_ui.exceptions.exceptions import NotifyError
 
 logger = structlog.wrap_logger(logging.getLogger(__name__))
 

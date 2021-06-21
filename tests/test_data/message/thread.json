@@ -1,4 +1,10 @@
-{"_links": {"first": {"href": "http://localhost:5050/thread/fb0e79bd-e132-4f4f-a7fd-5e8c6b41b9af"},
+{
+  "category": "SURVEY",
+  "is_closed": false,
+  "closed_by": null,
+  "closed_by_uuid": null,
+  "closed_at": null,
+  "_links": {"first": {"href": "http://localhost:5050/thread/fb0e79bd-e132-4f4f-a7fd-5e8c6b41b9af"},
             "self": {"href": "http://localhost:5050/thread/fb0e79bd-e132-4f4f-a7fd-5e8c6b41b9af?page=1&limit=20"}},
  "messages": [{"@msg_from": {"emailAddress": "uaa_user",
                              "firstName": "",

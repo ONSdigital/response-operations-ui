@@ -159,7 +159,22 @@ def send_message(message_json: dict):
         raise ApiError(ex.response)
 
 
-def remove_unread_label(message_id):
+def patch_message(message_id: str, payload: dict):
+    url = f"{current_app.config['SECURE_MESSAGE_URL']}/messages/{message_id}"
+
+    logger.info("Patching message data", message_id=message_id, payload=payload)
+    response = requests.patch(url, headers={"Authorization": _get_jwt()}, json=payload)
+
+    try:
+        response.raise_for_status()
+        logger.info("Successfully patched message data", message_id=message_id)
+    except HTTPError:
+        logger.error("Failed to patch message data", message_id=message_id,
+                     status=response.status_code, exc_info=True)
+        raise ApiError(response)
+
+
+def remove_unread_label(message_id: str):
     url = f"{current_app.config['SECURE_MESSAGE_URL']}/messages/modify/{message_id}"
     data = {"label": "UNREAD", "action": "remove"}
 
@@ -173,7 +188,7 @@ def remove_unread_label(message_id):
         logger.exception("Failed to remove unread label", message_id=message_id)
 
 
-def add_unread_label(message_id):
+def add_unread_label(message_id: str):
     url = f"{current_app.config['SECURE_MESSAGE_URL']}/messages/modify/{message_id}"
     data = {"label": "UNREAD", "action": "add"}
 
@@ -187,22 +202,21 @@ def add_unread_label(message_id):
         logger.exception("Failed to add unread label", message_id=message_id)
 
 
-def update_close_conversation_status(thread_id, status):
+def patch_thread(thread_id: str, payload: dict):
     url = f"{current_app.config['SECURE_MESSAGE_URL']}/threads/{thread_id}"
-    data = {"is_closed": status}
 
-    logger.info("Updating close conversation status", thread_id=thread_id, status=status)
-    response = requests.patch(url, headers={"Authorization": _get_jwt(), "Content-Type": "application/json"}, json=data)
+    logger.info("Patching thread data", thread_id=thread_id, payload=payload)
+    response = requests.patch(url, headers={"Authorization": _get_jwt()}, json=payload)
 
     try:
         response.raise_for_status()
-        logger.info("Successfully updated close conversation status", thread_id=thread_id, status=status)
+        logger.info("Successfully patched thread data", thread_id=thread_id)
     except HTTPError:
-        logger.error("Failed to update close conversation status", thread_id=thread_id, status=status, exc_info=True)
+        logger.error("Failed to patch thread data", thread_id=thread_id, exc_info=True)
         raise ApiError(response)
 
 
-def _get_jwt():
+def _get_jwt() -> str:
     token = session.get('token')
     decoded_token = token_decoder.decode_access_token(token)
     user_id = decoded_token.get('user_id')

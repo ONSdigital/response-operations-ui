@@ -1,5 +1,9 @@
 {
+    "category": "SURVEY",
     "is_closed": false,
+    "closed_by": null,
+    "closed_by_uuid": null,
+    "closed_at": null,
     "messages": [
         {
             "@msg_from": {
