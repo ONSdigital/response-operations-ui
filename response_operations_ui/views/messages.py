@@ -197,14 +197,15 @@ def post_change_thread_category(thread_id):  # noqa: C901
                         return redirect(url_for("messages_bp.get_change_thread_category", thread_id=thread_id))
             flash('The survey has been successfully updated.')
 
-        if category != thread['category']:
-            payload = {'category': category}
-            try:
-                message_controllers.patch_thread(thread_id, payload)
-            except ApiError:
-                flash('Something went wrong updating the category. Please try again.', category='error')
-                return redirect(url_for("messages_bp.get_change_thread_category", thread_id=thread_id))
-        return redirect(url_for("messages_bp.view_conversation", thread_id=thread_id))
+        payload = {'category': category}
+        try:
+            message_controllers.patch_thread(thread_id, payload)
+        except ApiError:
+            flash('Something went wrong updating the category. Please try again.', category='error')
+            return redirect(url_for("messages_bp.get_change_thread_category", thread_id=thread_id))
+
+        flash('The category has been successfully updated')
+        return redirect(url_for("messages_bp.view_select_survey"))
 
     breadcrumbs = [{"text": "Messages", "url": "/messages"},
                    {"text": "Filter by survey"}]
@@ -249,10 +250,19 @@ def _view_select_survey(conversation_tab, ru_ref_filter, business_id_filter):
     except KeyError:
         return redirect(url_for("messages_bp.select_inbox"))
 
-    return redirect(url_for("messages_bp.view_selected_survey",
-                            selected_survey=selected_survey, page=request.args.get('page'),
-                            conversation_tab=conversation_tab,
-                            ru_ref_filter=ru_ref_filter, business_id_filter=business_id_filter))
+    if selected_survey == 'technical':
+        return redirect(url_for("messages_bp.view_technical_inbox",
+                                page=request.args.get('page'), conversation_tab=conversation_tab,
+                                ru_ref_filter=ru_ref_filter, business_id_filter=business_id_filter))
+    elif selected_survey == 'misc':
+        return redirect(url_for("messages_bp.view_misc_inbox",
+                                page=request.args.get('page'), conversation_tab=conversation_tab,
+                                ru_ref_filter=ru_ref_filter, business_id_filter=business_id_filter))
+    else:
+        return redirect(url_for("messages_bp.view_selected_survey",
+                                selected_survey=selected_survey, page=request.args.get('page'),
+                                conversation_tab=conversation_tab,
+                                ru_ref_filter=ru_ref_filter, business_id_filter=business_id_filter))
 
 
 @messages_bp.route('/select-survey', methods=['GET', 'POST'])
@@ -651,7 +661,7 @@ def _get_vacancies_survey_ids() -> list[str]:
     return [survey_controllers.get_survey_id_by_short_name(vacancies_survey) for vacancies_survey in VACANCIES_LIST]
 
 
-def _get_user_summary_for_message(message: str) -> str:
+def _get_user_summary_for_message(message: dict) -> str:
     if message.get('from_internal'):
         return _get_from_name(message)
     return f'{_get_from_name(message)} - {_get_ru_ref_from_message(message)}'
@@ -765,17 +775,11 @@ def _process_category_page(render_html: str,
     """
     This method processes message category selected and returns appropriate inbox.
     :param render_html:
-    :type render_html:
     :param redirect_url:
-    :type redirect_url:
     :param selected_survey:
-    :type selected_survey:
     :param displayed_short_name:
-    :type displayed_short_name:
     :param breadcrumbs:
-    :type breadcrumbs:
     :param category:
-    :type category:
     :return: Returns a response object
     :rtype: WSGI application
     """
