@@ -178,19 +178,20 @@ def add_enrolment_status_for_respondent(respondent, ru_ref, survey_id):
 
 def get_respondent_enrolments(respondent, enrolment_status=None):
     enrolments = []
-    for association in respondent['associations']:
-        business_party = get_business_by_party_id(association['partyId'])
-        for enrolment in association['enrolments']:
-            enrolment_data = {
-                "business": business_party,
-                "survey": get_survey_by_id(enrolment['surveyId']),
-                "status": enrolment['enrolmentStatus']
-            }
-            if enrolment_status:
-                if enrolment_data['status'] == enrolment_status:
+    if 'association' in respondent:
+        for association in respondent['associations']:
+            business_party = get_business_by_party_id(association['partyId'])
+            for enrolment in association['enrolments']:
+                enrolment_data = {
+                    "business": business_party,
+                    "survey": get_survey_by_id(enrolment['surveyId']),
+                    "status": enrolment['enrolmentStatus']
+                }
+                if enrolment_status:
+                    if enrolment_data['status'] == enrolment_status:
+                        enrolments.append(enrolment_data)
+                else:
                     enrolments.append(enrolment_data)
-            else:
-                enrolments.append(enrolment_data)
 
     return enrolments
 
