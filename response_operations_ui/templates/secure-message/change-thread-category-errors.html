@@ -1,4 +1,35 @@
 {% from "components/lists/_macro.njk" import onsList %}
+{%- with errors = get_flashed_messages(category_filter=["error"]) -%}
+  {%- if errors -%}
+      {% call
+        onsPanel({
+            "type":"error",
+            "title": "This page has 1 error",
+            "classes": "u-mb-s",
+            "id": "save-error"
+        })
+      %}
+      {% set errorData = [] %}
+      {% for message in errors %}
+          {% do errorData.append(
+            {
+                "text": message,
+                "index": true,
+                "url": "#category",
+                "classes": "js-inpagelink"
+            }
+        ) %}
+
+      {% endfor %}
+      {{
+          onsList({
+              "classes": "list--bare",
+              "itemsList": errorData
+          })
+      }}
+    {% endcall %}
+  {% endif %}
+{%- endwith -%}
 {% if form.errors %}
     {% set error_count = form.errors | length %}
     {% set plural_suffix = 's' if error_count > 1 else '' %}
