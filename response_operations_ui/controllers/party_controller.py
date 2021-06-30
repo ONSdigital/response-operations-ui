@@ -178,7 +178,7 @@ def add_enrolment_status_for_respondent(respondent, ru_ref, survey_id):
 
 def get_respondent_enrolments(respondent, enrolment_status=None):
     enrolments = []
-    if 'association' in respondent:
+    if 'associations' in respondent:
         for association in respondent['associations']:
             business_party = get_business_by_party_id(association['partyId'])
             for enrolment in association['enrolments']:
