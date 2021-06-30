@@ -83,73 +83,76 @@
 
 <section>
   <h2>Enrolments</h2>
-
-  {% from "components/table/_macro.njk" import onsTable %}
-  {% set surveyTableData = {
-      "table_class": 'table--dense',
-      "ths": [
-          { 
-              "value": "RU Reference"
-          },
-          { 
-              "value": "Reporting unit name"
-          },
-          { 
-              "value": "Trading as"
-          },
-          { 
-              "value": "Survey"
-          },
-          { 
-              "value": "Enrolment status"
-          }
-      ]
-      }
-  %}
-
-  {% set surveyTableDataRows = [] %}
-  {% for enrolment in enrolments %}
-      {% set enrolmentData %}
-        {{ enrolment['status'].title() }}
-        {% if enrolment['status'] == 'ENABLED' %}
-        <a href="{{ url_for('reporting_unit_bp.confirm_change_enrolment_status', ru_ref=enrolment['business']['sampleUnitRef'], ru_name=enrolment['business']['name'], survey_id=enrolment['survey']['id'],
-                            survey_name=enrolment['survey']['shortName'], respondent_id=respondent.id, respondent_first_name=respondent.firstName,
-                            respondent_last_name=respondent.lastName, business_id=enrolment['business']['id'], trading_as=enrolment['business']['trading_as'], change_flag='DISABLED', tab='respondents')}}"
-            id="change-enrolment-status">Disable</a>
-        {% elif enrolment['status'] == 'DISABLED' %}
-        <a href="{{ url_for('reporting_unit_bp.confirm_change_enrolment_status', ru_ref=enrolment['business']['sampleUnitRef'], ru_name=enrolment['business']['name'], survey_id=enrolment['survey']['id'],
-                            survey_name=enrolment['survey']['shortName'], respondent_id=respondent.id, respondent_first_name=respondent.firstName,
-                            respondent_last_name=respondent.lastName, business_id=enrolment['business']['id'], trading_as=enrolment['business']['trading_as'], change_flag='ENABLED', tab='respondents')}}"
-          id="change-enrolment-status">Re-enable</a>
-        {% endif %}
-      {% endset %}
-      {% do surveyTableDataRows.append(
-          {
-              "tds": [
-              {
-                  "value": '<a href="' + url_for('reporting_unit_bp.view_reporting_unit', ru_ref=enrolment['business']['sampleUnitRef'], _anchor='survey-'+enrolment['survey']['shortName'] ) + '">' + enrolment['business']['sampleUnitRef'] + '</a>'
-              },
-              {
-                  "value": enrolment['business']['name']
-              },
-              {
-                  "value": enrolment['business']['trading_as'] if enrolment['business']['trading_as'] else ""
-              },
-              {
-                  "value": enrolment['survey']['surveyRef'] + ' ' + enrolment['survey']['shortName'] 
-              },
-              {
-                  "value": enrolmentData 
-              }
-              ]
-          }
-          ) %}
-
-  {% endfor %}
-
-  {% do surveyTableData | setAttribute("trs", surveyTableDataRows) %}
-  {{
-      onsTable(surveyTableData)
-  }}
+  {% if enrolments|length > 1 %}
+    {% from "components/table/_macro.njk" import onsTable %}
+    {% set surveyTableData = {
+        "table_class": 'table--dense',
+        "ths": [
+            { 
+                "value": "RU Reference"
+            },
+            { 
+                "value": "Reporting unit name"
+            },
+            { 
+                "value": "Trading as"
+            },
+            { 
+                "value": "Survey"
+            },
+            { 
+                "value": "Enrolment status"
+            }
+        ]
+        }
+    %}
+  
+    {% set surveyTableDataRows = [] %}
+    {% for enrolment in enrolments %}
+        {% set enrolmentData %}
+          {{ enrolment['status'].title() }}
+          {% if enrolment['status'] == 'ENABLED' %}
+          <a href="{{ url_for('reporting_unit_bp.confirm_change_enrolment_status', ru_ref=enrolment['business']['sampleUnitRef'], ru_name=enrolment['business']['name'], survey_id=enrolment['survey']['id'],
+                              survey_name=enrolment['survey']['shortName'], respondent_id=respondent.id, respondent_first_name=respondent.firstName,
+                              respondent_last_name=respondent.lastName, business_id=enrolment['business']['id'], trading_as=enrolment['business']['trading_as'], change_flag='DISABLED', tab='respondents')}}"
+              id="change-enrolment-status">Disable</a>
+          {% elif enrolment['status'] == 'DISABLED' %}
+          <a href="{{ url_for('reporting_unit_bp.confirm_change_enrolment_status', ru_ref=enrolment['business']['sampleUnitRef'], ru_name=enrolment['business']['name'], survey_id=enrolment['survey']['id'],
+                              survey_name=enrolment['survey']['shortName'], respondent_id=respondent.id, respondent_first_name=respondent.firstName,
+                              respondent_last_name=respondent.lastName, business_id=enrolment['business']['id'], trading_as=enrolment['business']['trading_as'], change_flag='ENABLED', tab='respondents')}}"
+            id="change-enrolment-status">Re-enable</a>
+          {% endif %}
+        {% endset %}
+        {% do surveyTableDataRows.append(
+            {
+                "tds": [
+                {
+                    "value": '<a href="' + url_for('reporting_unit_bp.view_reporting_unit', ru_ref=enrolment['business']['sampleUnitRef'], _anchor='survey-'+enrolment['survey']['shortName'] ) + '">' + enrolment['business']['sampleUnitRef'] + '</a>'
+                },
+                {
+                    "value": enrolment['business']['name']
+                },
+                {
+                    "value": enrolment['business']['trading_as'] if enrolment['business']['trading_as'] else ""
+                },
+                {
+                    "value": enrolment['survey']['surveyRef'] + ' ' + enrolment['survey']['shortName'] 
+                },
+                {
+                    "value": enrolmentData 
+                }
+                ]
+            }
+            ) %}
+  
+    {% endfor %}
+  
+    {% do surveyTableData | setAttribute("trs", surveyTableDataRows) %}
+    {{
+        onsTable(surveyTableData)
+    }}
+  {% else %}
+  <p><i>There are no surveys assigned to this respondent.</i></p>
+  {% endif %}
 </section>
 {% endblock %}
