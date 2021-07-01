@@ -120,8 +120,7 @@ def view_conversation(thread_id):
                                  ru_ref_filter=ru_ref_filter,
                                  business_id_filter=business_id_filter) + "#latest-message"
             flash(Markup(f'Message sent. <a href={thread_url}>View Message</a>'))
-            return redirect(url_for('messages_bp.view_selected_survey',
-                                    selected_survey=refined_thread[0]['survey'],
+            return redirect(url_for('messages_bp.view_select_survey',
                                     page=page, conversation_tab=conversation_tab,
                                     ru_ref_filter=ru_ref_filter,
                                     business_id_filter=business_id_filter))
