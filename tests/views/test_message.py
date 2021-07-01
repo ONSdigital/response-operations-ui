@@ -715,6 +715,8 @@ class TestMessage(ViewTestCase):
     @requests_mock.mock()
     @patch('response_operations_ui.controllers.message_controllers._get_jwt')
     def test_conversation_reply(self, mock_request, mock_get_jwt):
+        with self.client.session_transaction() as session:
+            session['messages_survey_selection'] = 'ASHE'
         mock_get_jwt.return_value = "blah"
         # Post message on reply
         mock_request.get(url_get_thread, json=thread_json)
