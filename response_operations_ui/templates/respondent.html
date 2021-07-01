@@ -83,7 +83,7 @@
 
 <section>
   <h2>Enrolments</h2>
-  {% if enrolments|length > 1 %}
+  {% if enrolments|length > 0 %}
     {% from "components/table/_macro.njk" import onsTable %}
     {% set surveyTableData = {
         "table_class": 'table--dense',
