@@ -120,8 +120,7 @@ def view_conversation(thread_id):
                                  ru_ref_filter=ru_ref_filter,
                                  business_id_filter=business_id_filter) + "#latest-message"
             flash(Markup(f'Message sent. <a href={thread_url}>View Message</a>'))
-            return redirect(url_for('messages_bp.view_selected_survey',
-                                    selected_survey=refined_thread[0]['survey'],
+            return redirect(url_for('messages_bp.view_select_survey',
                                     page=page, conversation_tab=conversation_tab,
                                     ru_ref_filter=ru_ref_filter,
                                     business_id_filter=business_id_filter))
@@ -610,14 +609,12 @@ def _refine(message: dict) -> dict:
     Refine a message into a cleaner version that can be more easily used by the display layer
     :param message: A message from secure-message
     """
-    return {
+    refined_message = {
         'thread_id': message.get('thread_id'),
         'subject': _get_message_subject(message),
         'body': message.get('body'),
         'internal': message.get('from_internal'),
         'username': _get_user_summary_for_message(message),
-        'survey_ref': get_survey_ref_by_id(message.get('survey_id')),
-        'survey': get_survey_short_name_by_id(message.get('survey_id')),
         'survey_id': message.get('survey_id'),
         'ru_ref': _get_ru_ref_from_message(message),
         'to_id': _get_to_id(message),
@@ -630,6 +627,15 @@ def _refine(message: dict) -> dict:
         'message_id': message.get('msg_id'),
         'business_id': message.get('business_id'),
     }
+
+    if message.get('survey_id'):
+        refined_message['survey'] = get_survey_short_name_by_id(message.get('survey_id'))
+        refined_message['survey_ref'] = get_survey_ref_by_id(message.get('survey_id'))
+    else:
+        refined_message['survey'] = ''
+        refined_message['survey_ref'] = ''
+
+    return refined_message
 
 
 def _get_survey_id(selected_survey: str) -> list[str]:
@@ -707,14 +713,14 @@ def _get_ru_ref_from_message(message: dict) -> str:
     try:
         return message['@business_details']['sampleUnitRef']
     except (KeyError, TypeError):
-        logger.error("Failed to retrieve RU ref from message", message_id=message.get('msg_id'), exc_info=True)
+        return ''
 
 
 def _get_business_name_from_message(message: dict) -> str:
     try:
         return message['@business_details']['name']
     except (KeyError, TypeError):
-        logger.exception("Failed to retrieve business name from message", message_id=message.get('msg_id'))
+        return ''
 
 
 def _get_human_readable_date(sent_date: str) -> str:
