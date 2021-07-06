@@ -95,7 +95,7 @@ if __name__ == "__main__":
 
     try:
         json_secret_keys = open(key_file).read()
-    except FileNotFoundError as e:
+    except FileNotFoundError:
         sys.exit(f"Must have a file named {key_file} in the same folder this script is run from")
 
     try:
