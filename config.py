@@ -48,6 +48,7 @@ class Config(object):
 
     SECURE_MESSAGE_URL = os.getenv('SECURE_MESSAGE_URL')
     SECURE_MESSAGE_JWT_SECRET = os.getenv('SECURE_MESSAGE_JWT_SECRET')
+    CHANGE_CATEGORY_ENABLED = bool(strtobool(os.getenv('CHANGE_CATEGORY_ENABLED', "True")))
 
     PARTY_URL = os.getenv('PARTY_URL')
     PARTY_RESPONDENTS_PER_PAGE = os.getenv('PARTY_RESPONDENTS_PER_PAGE', 25)

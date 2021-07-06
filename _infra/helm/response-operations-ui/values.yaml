@@ -3,6 +3,7 @@ namespace: minikube
 publicIP: false
 
 sendEmailToGovNotify: false
+changeCategoryEnabled: false
 
 admin:
   createccountEmailExpiry: "3628800"
