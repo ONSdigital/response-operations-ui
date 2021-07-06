@@ -7,7 +7,6 @@ from structlog import wrap_logger
 
 from response_operations_ui.exceptions.exceptions import ApiError
 
-
 logger = wrap_logger(logging.getLogger(__name__))
 
 
@@ -21,9 +20,10 @@ def upload_collection_instrument(collection_exercise_id, file, form_type=None):
     :param form_type: A formtype to act as metadata for the instrument
     :return: True on success, False on failure.
     """
-    logger.info('Uploading collection instrument', collection_exercise_id=collection_exercise_id, form_type=form_type)
-    url = f'{app.config["COLLECTION_INSTRUMENT_URL"]}' \
-          f'/collection-instrument-api/1.0.2/upload/{collection_exercise_id}'
+    logger.info("Uploading collection instrument", collection_exercise_id=collection_exercise_id, form_type=form_type)
+    url = (
+        f'{app.config["COLLECTION_INSTRUMENT_URL"]}' f"/collection-instrument-api/1.0.2/upload/{collection_exercise_id}"
+    )
 
     params = dict()
 
@@ -31,19 +31,26 @@ def upload_collection_instrument(collection_exercise_id, file, form_type=None):
         classifiers = {
             "form_type": form_type,
         }
-        params['classifiers'] = json.dumps(classifiers)
+        params["classifiers"] = json.dumps(classifiers)
 
     files = {"file": (file.filename, file.stream, file.mimetype)}
-    response = requests.post(url, files=files, params=params, auth=app.config['BASIC_AUTH'])
+    response = requests.post(url, files=files, params=params, auth=app.config["BASIC_AUTH"])
     try:
         response.raise_for_status()
     except requests.exceptions.HTTPError:
-        logger.exception('Failed to upload collection instrument', collection_exercise_id=collection_exercise_id,
-                         form_type=form_type, status=response.status_code)
+        logger.exception(
+            "Failed to upload collection instrument",
+            collection_exercise_id=collection_exercise_id,
+            form_type=form_type,
+            status=response.status_code,
+        )
         return False
 
-    logger.info('Successfully uploaded collection instrument', collection_exercise_id=collection_exercise_id,
-                form_type=form_type)
+    logger.info(
+        "Successfully uploaded collection instrument",
+        collection_exercise_id=collection_exercise_id,
+        form_type=form_type,
+    )
     return True
 
 
@@ -63,21 +70,23 @@ def upload_ru_specific_collection_instrument(collection_exercise_id, file, ru_re
     :rtype: tuple
     """
     bound_logger = logger.bind(collection_exercise_id=collection_exercise_id, ru_ref=ru_ref)
-    bound_logger.info('Uploading BRES collection instrument')
-    url = f'{app.config["COLLECTION_INSTRUMENT_URL"]}' \
-          f'/collection-instrument-api/1.0.2/upload/{collection_exercise_id}/{ru_ref}'
+    bound_logger.info("Uploading BRES collection instrument")
+    url = (
+        f'{app.config["COLLECTION_INSTRUMENT_URL"]}'
+        f"/collection-instrument-api/1.0.2/upload/{collection_exercise_id}/{ru_ref}"
+    )
 
     files = {"file": (file.filename, file.stream, file.mimetype)}
-    response = requests.post(url, files=files, auth=app.config['BASIC_AUTH'])
+    response = requests.post(url, files=files, auth=app.config["BASIC_AUTH"])
     try:
         response.raise_for_status()
     except requests.exceptions.HTTPError:
-        bound_logger.error('Failed to upload BRES collection instrument', status=response.status_code, exc_info=True)
-        if response.headers['Content-Type'] == 'application/json':
-            return False, response.json().get('errors')[0]
+        bound_logger.error("Failed to upload BRES collection instrument", status=response.status_code, exc_info=True)
+        if response.headers["Content-Type"] == "application/json":
+            return False, response.json().get("errors")[0]
         return False, None
 
-    bound_logger.info('Successfully uploaded BRES collection instrument')
+    bound_logger.info("Successfully uploaded BRES collection instrument")
     return True, None
 
 
@@ -94,23 +103,29 @@ def link_collection_instrument_to_survey(survey_uuid, eq_id, form_type):
     :param form_type: The formtype of the collection instrument and the second part of the eq filename
     :type form_type: str
     """
-    logger.info('Linking collection instrument to survey', survey_uuid=survey_uuid, eq_id=eq_id, form_type=form_type)
+    logger.info("Linking collection instrument to survey", survey_uuid=survey_uuid, eq_id=eq_id, form_type=form_type)
     url = f'{app.config["COLLECTION_INSTRUMENT_URL"]}/collection-instrument-api/1.0.2/upload'
     payload = {
         "survey_id": survey_uuid,
         "classifiers": f'{{"form_type":"{form_type}","eq_id":"{eq_id}"}}',
     }
-    response = requests.post(url, params=payload, auth=app.config['BASIC_AUTH'])
+    response = requests.post(url, params=payload, auth=app.config["BASIC_AUTH"])
     try:
         response.raise_for_status()
     except requests.exceptions.HTTPError:
-        logger.error('Failed to link collection instrument to survey',
-                     survey_uuid=survey_uuid, eq_id=eq_id, form_type=form_type,
-                     status=response.status_code, exc_info=True)
+        logger.error(
+            "Failed to link collection instrument to survey",
+            survey_uuid=survey_uuid,
+            eq_id=eq_id,
+            form_type=form_type,
+            status=response.status_code,
+            exc_info=True,
+        )
         raise ApiError(response)
 
-    logger.info('Successfully linked collection instrument to survey',
-                survey_uuid=survey_uuid, eq_id=eq_id, form_type=form_type)
+    logger.info(
+        "Successfully linked collection instrument to survey", survey_uuid=survey_uuid, eq_id=eq_id, form_type=form_type
+    )
 
 
 def link_collection_instrument(ce_id, ci_id):
@@ -124,18 +139,17 @@ def link_collection_instrument(ce_id, ci_id):
     :rtype: bool
     """
     bound_logger = logger.bind(collection_exercise_id=ce_id, collection_instrument_id=ci_id)
-    bound_logger.info('Linking collection instrument to collection exercise')
-    url = f'{app.config["COLLECTION_INSTRUMENT_URL"]}' \
-          f'/collection-instrument-api/1.0.2/link-exercise/{ci_id}/{ce_id}'
+    bound_logger.info("Linking collection instrument to collection exercise")
+    url = f'{app.config["COLLECTION_INSTRUMENT_URL"]}' f"/collection-instrument-api/1.0.2/link-exercise/{ci_id}/{ce_id}"
 
-    response = requests.post(url, auth=app.config['BASIC_AUTH'])
+    response = requests.post(url, auth=app.config["BASIC_AUTH"])
     try:
         response.raise_for_status()
     except requests.exceptions.HTTPError:
-        bound_logger.error('Failed to link collection instrument to collection exercise', status=response.status_code)
+        bound_logger.error("Failed to link collection instrument to collection exercise", status=response.status_code)
         return False
 
-    bound_logger.info('Successfully linked collection instrument to collection exercise')
+    bound_logger.info("Successfully linked collection instrument to collection exercise")
     return True
 
 
@@ -150,47 +164,57 @@ def unlink_collection_instrument(ce_id, ci_id):
     :rtype: bool
     """
     bound_logger = logger.bind(collection_exercise_id=ce_id, collection_instrument_id=ci_id)
-    bound_logger.info('Unlinking collection instrument and collection exercise')
-    url = f'{app.config["COLLECTION_INSTRUMENT_URL"]}' \
-          f'/collection-instrument-api/1.0.2/unlink-exercise/{ci_id}/{ce_id}'
+    bound_logger.info("Unlinking collection instrument and collection exercise")
+    url = (
+        f'{app.config["COLLECTION_INSTRUMENT_URL"]}' f"/collection-instrument-api/1.0.2/unlink-exercise/{ci_id}/{ce_id}"
+    )
 
-    response = requests.put(url, auth=app.config['BASIC_AUTH'])
+    response = requests.put(url, auth=app.config["BASIC_AUTH"])
     try:
         response.raise_for_status()
     except requests.exceptions.HTTPError:
-        bound_logger.error('Failed to unlink collection instrument and collection exercise',
-                           status=response.status_code)
+        bound_logger.error(
+            "Failed to unlink collection instrument and collection exercise", status=response.status_code
+        )
         return False
 
-    bound_logger.info('Successfully unlinked collection instrument and collection exercise')
+    bound_logger.info("Successfully unlinked collection instrument and collection exercise")
     return True
 
 
 def get_collection_instruments_by_classifier(survey_id=None, collection_exercise_id=None, ci_type=None):
-    logger.info('Retrieving collection instruments', survey_id=survey_id,
-                collection_exercise_id=collection_exercise_id, ci_type=ci_type)
+    logger.info(
+        "Retrieving collection instruments",
+        survey_id=survey_id,
+        collection_exercise_id=collection_exercise_id,
+        ci_type=ci_type,
+    )
 
     url = f'{app.config["COLLECTION_INSTRUMENT_URL"]}/collection-instrument-api/1.0.2/collectioninstrument'
     classifiers = _build_classifiers(collection_exercise_id, survey_id, ci_type)
-    response = requests.get(url, auth=app.config['BASIC_AUTH'], params={'searchString': json.dumps(classifiers)})
+    response = requests.get(url, auth=app.config["BASIC_AUTH"], params={"searchString": json.dumps(classifiers)})
 
     try:
         response.raise_for_status()
     except requests.exceptions.HTTPError:
-        logger.error('Error retrieving collection instruments')
+        logger.error("Error retrieving collection instruments")
         raise ApiError(response)
 
-    logger.info('Successfully retrieved collection instruments', survey_id=survey_id,
-                collection_exercise_id=collection_exercise_id, ci_type=ci_type)
+    logger.info(
+        "Successfully retrieved collection instruments",
+        survey_id=survey_id,
+        collection_exercise_id=collection_exercise_id,
+        ci_type=ci_type,
+    )
     return response.json()
 
 
 def _build_classifiers(collection_exercise_id=None, survey_id=None, ci_type=None):
     classifiers = {}
     if survey_id:
-        classifiers['SURVEY_ID'] = survey_id
+        classifiers["SURVEY_ID"] = survey_id
     if collection_exercise_id:
-        classifiers['COLLECTION_EXERCISE'] = collection_exercise_id
+        classifiers["COLLECTION_EXERCISE"] = collection_exercise_id
     if ci_type:
-        classifiers['TYPE'] = ci_type
+        classifiers["TYPE"] = ci_type
     return classifiers

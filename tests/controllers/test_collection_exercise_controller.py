@@ -11,42 +11,42 @@ from response_operations_ui.controllers import collection_exercise_controllers
 from response_operations_ui.exceptions.exceptions import ApiError
 
 ce_id = "4a084bc0-130f-4aee-ae48-1a9f9e50178f"
-ce_events_by_id_url = f'{TestingConfig.COLLECTION_EXERCISE_URL}/collectionexercises/{ce_id}/events'
-ce_nudge_events_by_id_url = f'{TestingConfig.COLLECTION_EXERCISE_URL}/collectionexercises/{ce_id}/events/nudge'
+ce_events_by_id_url = f"{TestingConfig.COLLECTION_EXERCISE_URL}/collectionexercises/{ce_id}/events"
+ce_nudge_events_by_id_url = f"{TestingConfig.COLLECTION_EXERCISE_URL}/collectionexercises/{ce_id}/events/nudge"
 
 project_root = os.path.dirname(os.path.dirname(__file__))
 
-with open(f'{project_root}/test_data/collection_exercise/ce_events_by_id.json') as fp:
+with open(f"{project_root}/test_data/collection_exercise/ce_events_by_id.json") as fp:
     ce_events = json.load(fp)
 
 
 class TestCollectionExerciseController(unittest.TestCase):
-
     def setUp(self):
-        self.app = create_app('TestingConfig')
+        self.app = create_app("TestingConfig")
         self.client = self.app.test_client()
 
     def test_get_ce_events_by_id_all_events(self):
         with responses.RequestsMock() as rsps:
-            rsps.add(rsps.GET, ce_events_by_id_url, json=ce_events, status=200, content_type='applicaton/json')
+            rsps.add(rsps.GET, ce_events_by_id_url, json=ce_events, status=200, content_type="applicaton/json")
 
             with self.app.app_context():
                 collection_exercise = collection_exercise_controllers.get_collection_exercise_events_by_id(ce_id)
 
-            self.assertIn('mps', collection_exercise[0]['tag'], 'MPS not in collection exercise events')
-            self.assertIn('go_live', collection_exercise[1]['tag'], 'Go live not in collection exercise events')
-            self.assertIn('return_by', collection_exercise[2]['tag'], 'Return by not in collection exercise events')
-            self.assertIn('exercise_end', collection_exercise[3]['tag'],
-                          'Exercise end not in collection exercise events')
+            self.assertIn("mps", collection_exercise[0]["tag"], "MPS not in collection exercise events")
+            self.assertIn("go_live", collection_exercise[1]["tag"], "Go live not in collection exercise events")
+            self.assertIn("return_by", collection_exercise[2]["tag"], "Return by not in collection exercise events")
+            self.assertIn(
+                "exercise_end", collection_exercise[3]["tag"], "Exercise end not in collection exercise events"
+            )
 
     def test_get_ce_events_by_id_no_events(self):
         with responses.RequestsMock() as rsps:
-            rsps.add(rsps.GET, ce_events_by_id_url, json=[], status=200, content_type='applicaton/json')
+            rsps.add(rsps.GET, ce_events_by_id_url, json=[], status=200, content_type="applicaton/json")
 
             with self.app.app_context():
                 collection_exercise = collection_exercise_controllers.get_collection_exercise_events_by_id(ce_id)
 
-            self.assertEqual(len(collection_exercise), 0, 'Unexpected collection exercise event returned.')
+            self.assertEqual(len(collection_exercise), 0, "Unexpected collection exercise event returned.")
 
     def test_get_ce_events_by_id_http_error(self):
         with responses.RequestsMock() as rsps:
@@ -59,29 +59,31 @@ class TestCollectionExerciseController(unittest.TestCase):
         with responses.RequestsMock() as rsps:
             rsps.add(rsps.POST, ce_events_by_id_url, status=200)
 
-            timestamp = datetime.datetime.strptime(''.join("2020-01-27 07:00:00+00:00".rsplit(':', 1)),
-                                                   "%Y-%m-%d %H:%M:%S%z")
+            timestamp = datetime.datetime.strptime(
+                "".join("2020-01-27 07:00:00+00:00".rsplit(":", 1)), "%Y-%m-%d %H:%M:%S%z"
+            )
 
             with self.app.app_context():
-                self.assertFalse(collection_exercise_controllers.create_collection_exercise_event(ce_id,
-                                                                                                  'mps',
-                                                                                                  timestamp))
+                self.assertFalse(
+                    collection_exercise_controllers.create_collection_exercise_event(ce_id, "mps", timestamp)
+                )
 
     def test_delete_ce_event_accepted(self):
         with responses.RequestsMock() as rsps:
             rsps.add(rsps.POST, ce_nudge_events_by_id_url, status=200)
 
             with self.app.app_context():
-                self.assertFalse(collection_exercise_controllers.delete_event(ce_id, 'nudge'))
+                self.assertFalse(collection_exercise_controllers.delete_event(ce_id, "nudge"))
 
     def test_create_ce_event_bad_request_return_false(self):
         with responses.RequestsMock() as rsps:
             rsps.add(rsps.POST, ce_events_by_id_url, body='{"error":{"message": "some message"}}', status=400)
 
-            timestamp = datetime.datetime.strptime(''.join("2020-01-27 07:00:00+00:00".rsplit(':', 1)),
-                                                   "%Y-%m-%d %H:%M:%S%z")
+            timestamp = datetime.datetime.strptime(
+                "".join("2020-01-27 07:00:00+00:00".rsplit(":", 1)), "%Y-%m-%d %H:%M:%S%z"
+            )
 
             with self.app.app_context():
-                self.assertTrue(collection_exercise_controllers.create_collection_exercise_event(ce_id,
-                                                                                                 'mps',
-                                                                                                 timestamp))
+                self.assertTrue(
+                    collection_exercise_controllers.create_collection_exercise_event(ce_id, "mps", timestamp)
+                )

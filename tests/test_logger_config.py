@@ -15,36 +15,38 @@ testfixtures_warning = "inspect.getargspec()"
 
 
 class TestLoggerConfig(unittest.TestCase):
-
     @pytest.mark.filterwarnings(f"ignore:{testfixtures_warning}")
     @log_capture()
     def test_success(self, log):
-        os.environ['JSON_INDENT_LOGGING'] = '1'
-        logger_initial_config(service_name='response-operations-ui')
+        os.environ["JSON_INDENT_LOGGING"] = "1"
+        logger_initial_config(service_name="response-operations-ui")
         logger = wrap_logger(logging.getLogger())
-        logger.error('Test')
+        logger.error("Test")
         message = log.records[0].msg
-        message_contents = '\n "event": "Test",\n "severity": "error",'\
-                           '\n "level": "error",\n "service": "response-operations-ui"'
+        message_contents = (
+            '\n "event": "Test",\n "severity": "error",' '\n "level": "error",\n "service": "response-operations-ui"'
+        )
         self.assertIn(message_contents, message)
 
     @pytest.mark.filterwarnings(f"ignore:{testfixtures_warning}")
     @log_capture()
     def test_indent_type_error(self, log):
-        os.environ['JSON_INDENT_LOGGING'] = 'abc'
-        logger_initial_config(service_name='response-operations-ui')
+        os.environ["JSON_INDENT_LOGGING"] = "abc"
+        logger_initial_config(service_name="response-operations-ui")
         logger = wrap_logger(logging.getLogger())
-        logger.error('Test')
+        logger.error("Test")
         message = log.records[0].msg
-        self.assertIn('"event": "Test", "severity": "error", "level": "error",'
-                      ' "service": "response-operations-ui"', message)
+        self.assertIn(
+            '"event": "Test", "severity": "error", "level": "error",' ' "service": "response-operations-ui"', message
+        )
 
     @pytest.mark.filterwarnings(f"ignore:{testfixtures_warning}")
     @log_capture()
     def test_indent_value_error(self, log):
-        logger_initial_config(service_name='response-operations-ui')
+        logger_initial_config(service_name="response-operations-ui")
         logger = wrap_logger(logging.getLogger())
-        logger.error('Test')
+        logger.error("Test")
         message = log.records[0].msg
-        self.assertIn('"event": "Test", "severity": "error", "level": "error",'
-                      ' "service": "response-operations-ui"', message)
+        self.assertIn(
+            '"event": "Test", "severity": "error", "level": "error",' ' "service": "response-operations-ui"', message
+        )

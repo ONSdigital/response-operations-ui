@@ -1,6 +1,6 @@
 #!/usr/bin/python
-import sys
 import csv
+import sys
 
 from openpyxl import load_workbook
 
@@ -8,46 +8,57 @@ survey_mapping = {
     "aitis": {
         "phone_number": "0300 1234 931",
         "survey_name": "Annual International Trade in Services",
-        "survey_id": "058"
+        "survey_id": "058",
     },
     "construction": {
         "phone_number": "0300 1234 910",
         "survey_name": "Monthly Business Survey - Construction and Allied Trades",
-        "survey_id": "228"
+        "survey_id": "228",
     },
     "aifdi": {
         "phone_number": "0300 1234 927",
         "survey_name": "Annual Inward Foreign Direct Investment Survey",
-        "survey_id": "062"
+        "survey_id": "062",
     },
     "aofdi": {
         "phone_number": "0300 1234 913",
         "survey_name": "Annual Outward Foreign Direct Investment Survey",
-        "survey_id": "063"
+        "survey_id": "063",
     },
     "qifdi": {
         "phone_number": "0300 1234 931",
         "survey_name": "Quarterly Inward Foreign Direct Investment Survey",
-        "survey_id": "064"
+        "survey_id": "064",
     },
     "qofdi": {
         "phone_number": "0300 1234 931",
         "survey_name": "Quarterly Outward Foreign Direct Investment Survey",
-        "survey_id": "065"
-    }
+        "survey_id": "065",
+    },
 }
 
 
 def process_file(params):
-    wb = load_workbook(filename=params['input_file'])
+    wb = load_workbook(filename=params["input_file"])
     sheet = wb.active
 
-    print_file_dict = create_print_file_dictionary(params['print_file'])
+    print_file_dict = create_print_file_dictionary(params["print_file"])
 
-    with open('enrolment_email_details.csv', 'w', newline='') as f:
+    with open("enrolment_email_details.csv", "w", newline="") as f:
         writer = csv.writer(f)
-        writer.writerow(['email address', 'RU_NAME', 'RU_REFERENCE', 'SURVEY_NAME', 'SURVEY_ID',
-                         'RESPONDENT_PERIOD', 'RETURN_BY_DATE', 'ENROLMENT_CODE', 'SURVEY_PHONELINE'])
+        writer.writerow(
+            [
+                "email address",
+                "RU_NAME",
+                "RU_REFERENCE",
+                "SURVEY_NAME",
+                "SURVEY_ID",
+                "RESPONDENT_PERIOD",
+                "RETURN_BY_DATE",
+                "ENROLMENT_CODE",
+                "SURVEY_PHONELINE",
+            ]
+        )
 
         for row in sheet.iter_rows(min_row=2):
             try:
@@ -62,9 +73,17 @@ def process_file(params):
 
             if email_address:
                 if "@" in email_address:
-                    csv_line = [email_address, ru_name, ru_ref, params['survey_name'],  params['survey_id'],
-                                params['respondent_period'], params['return_by_date'], enrolment_code,
-                                params['survey_phone_number']]
+                    csv_line = [
+                        email_address,
+                        ru_name,
+                        ru_ref,
+                        params["survey_name"],
+                        params["survey_id"],
+                        params["respondent_period"],
+                        params["return_by_date"],
+                        enrolment_code,
+                        params["survey_phone_number"],
+                    ]
                     writer.writerow(csv_line)
                 else:
                     print(f"Email address {email_address} isn't a valid email address. Skipping")
@@ -76,8 +95,8 @@ def create_print_file_dictionary(print_file):
     are the enrolment codes
     """
     print_file_dict = {}
-    with open(params['print_file'], newline='') as csvfile:
-        reader = csv.reader(csvfile, delimiter=':')
+    with open(params["print_file"], newline="") as csvfile:
+        reader = csv.reader(csvfile, delimiter=":")
         for row in reader:
             print_file_dict[row[0]] = row[1]
     return print_file_dict
@@ -87,22 +106,22 @@ if __name__ == "__main__":
     if len(sys.argv) != 6:  # First argument is the name of the script
         length = len(sys.argv)
         sys.exit(f"Exactly 6 arguments expected. Number provided [{length}]")
- 
+
     survey = sys.argv[3]
     if not survey_mapping[survey.lower()]:
         sys.exit(f"Survey [{survey}] not supported by this script")
-        
+
     params = {
-        'input_file': sys.argv[1],
-        'print_file': sys.argv[2],
-        'survey_name': survey_mapping[survey.lower()]['survey_name'],
-        'survey_id': survey_mapping[survey.lower()]['survey_id'],
-        'respondent_period': sys.argv[4],
-        'return_by_date': sys.argv[5],
-        'survey_phone_number': survey_mapping[survey]['phone_number']
+        "input_file": sys.argv[1],
+        "print_file": sys.argv[2],
+        "survey_name": survey_mapping[survey.lower()]["survey_name"],
+        "survey_id": survey_mapping[survey.lower()]["survey_id"],
+        "respondent_period": sys.argv[4],
+        "return_by_date": sys.argv[5],
+        "survey_phone_number": survey_mapping[survey]["phone_number"],
     }
 
     print(f"Input file is {params['input_file']}")
     print(f"Print file is {params['print_file']}")
-    
+
     process_file(params)

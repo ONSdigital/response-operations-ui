@@ -1,5 +1,4 @@
 class ApiError(Exception):
-
     def __init__(self, response):
         self.url = response.url
         self.status_code = response.status_code
@@ -7,18 +6,16 @@ class ApiError(Exception):
 
 
 class InternalError(Exception):
-
     def __init__(self, exception, url=None, status=500):
         self.exception = exception
         self.url = url
         self.status = status
 
     def __str__(self):
-        return f'url: {self.url} status:{self.status} exception:{self.exception}'
+        return f"url: {self.url} status:{self.status} exception:{self.exception}"
 
 
 class UpdateContactDetailsException(Exception):
-
     def __init__(self, ru_ref, form, respondent_details, status_code):
         self.ru_ref = ru_ref
         self.form = form
@@ -27,7 +24,6 @@ class UpdateContactDetailsException(Exception):
 
 
 class SearchRespondentsException(Exception):
-
     def __init__(self, response, **kwargs):
         self.response = response
         self.status_code = response.status_code

@@ -1,13 +1,12 @@
 import logging
 
 import jwt
-from structlog import wrap_logger
-
 from flask import current_app
 from itsdangerous import URLSafeTimedSerializer
+from structlog import wrap_logger
 from werkzeug.exceptions import InternalServerError
-from response_operations_ui.common.uaa import get_uaa_public_key
 
+from response_operations_ui.common.uaa import get_uaa_public_key
 
 logger = wrap_logger(logging.getLogger(__name__))
 
@@ -18,11 +17,7 @@ def decode_access_token(access_token):
     """
     uaa_public_key = get_uaa_public_key()
     decoded_jwt = jwt.decode(
-        access_token,
-        key=uaa_public_key,
-        algorithms=['RS256'],
-        audience='response_operations',
-        leeway=10
+        access_token, key=uaa_public_key, algorithms=["RS256"], audience="response_operations", leeway=10
     )
     return decoded_jwt
 
@@ -54,11 +49,11 @@ def decode_email_token(token, duration=None):
     then this number, an exception will be thrown. Default is None.
     :return: The contents of the deserialised token
     """
-    logger.info('Decoding email verification token', token=token)
+    logger.info("Decoding email verification token", token=token)
 
     timed_serializer = URLSafeTimedSerializer(current_app.config["SECRET_KEY"])
     email_token_salt = current_app.config["EMAIL_TOKEN_SALT"]
 
     result = timed_serializer.loads(token, salt=email_token_salt, max_age=duration)
-    logger.info('Successfully decoded email verification token', token=token)
+    logger.info("Successfully decoded email verification token", token=token)
     return result
