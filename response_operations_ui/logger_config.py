@@ -8,7 +8,6 @@ from structlog.stdlib import add_log_level, filter_by_level
 
 
 def logger_initial_config(service_name=None, log_level=None, logger_format=None, logger_date_format=None):
-    # pylint: skip-file
     if not logger_date_format:
         logger_date_format = os.getenv("LOGGING_DATE_FORMAT", "%Y-%m-%dT%H:%M%s")
     if not log_level:
@@ -22,7 +21,7 @@ def logger_initial_config(service_name=None, log_level=None, logger_format=None,
     except ValueError:
         indent = None
 
-    def add_service(logger, method_name, event_dict):  # pylint: disable=unused-argument
+    def add_service(logger, method_name, event_dict):
         """
         Add the service name to the event dict.
         """
