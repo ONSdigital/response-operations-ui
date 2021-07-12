@@ -1,14 +1,14 @@
 #!/usr/bin/python
 import argparse
 import datetime
-import requests
 from os import abort
 
+import requests
 from dateutil import tz
 
 
 def parse_args():
-    parser = argparse.ArgumentParser(description='Align collection exercise events and rules')
+    parser = argparse.ArgumentParser(description="Align collection exercise events and rules")
     parser.add_argument("url", help="Collection exercise service URL")
     parser.add_argument("user", help="Basic auth user")
     parser.add_argument("password", help="Basic auth password")
@@ -17,10 +17,7 @@ def parse_args():
 
 def update_event(collex_id, event_tag, date, url, user, password):
     path = "/collectionexercises/{id}/events/{tag}".format(id=collex_id, tag=event_tag)
-    response = requests.put(url+path,
-                            data=date,
-                            auth=(user, password),
-                            headers={'content-type': 'text/plain'})
+    response = requests.put(url + path, data=date, auth=(user, password), headers={"content-type": "text/plain"})
 
     status_code = response.status_code
 
@@ -45,45 +42,52 @@ def get_collection_exercises(user, password, url):
 
 
 def is_mandatory_event(event):
-    mandatory_events = ['mps', 'go_live', 'reminder', 'reminder1', 'reminder2']
-    return event['tag'] in mandatory_events
+    mandatory_events = ["mps", "go_live", "reminder", "reminder1", "reminder2"]
+    return event["tag"] in mandatory_events
 
 
 def align_events_and_rules(collection_exercises, user, password, url):
     for collection_exercise in collection_exercises:
-        print("\nPROCESSING COLLECTION_EXERCISE: {} {} {} {}".format(collection_exercise['name'],
-                                                                     collection_exercise['exerciseRef'],
-                                                                     collection_exercise['state'],
-                                                                     collection_exercise['id']))
+        print(
+            "\nPROCESSING COLLECTION_EXERCISE: {} {} {} {}".format(
+                collection_exercise["name"],
+                collection_exercise["exerciseRef"],
+                collection_exercise["state"],
+                collection_exercise["id"],
+            )
+        )
 
-        for event in collection_exercise['events']:
+        for event in collection_exercise["events"]:
             if not is_mandatory_event(event):
                 continue
 
-            formatted_new_date = change_time_to_9_am(event['timestamp'])
+            formatted_new_date = change_time_to_9_am(event["timestamp"])
 
-            print("EVENT: {} {} currently: {} changing to: {}".format(event['tag'],
-                                                                      event['id'],
-                                                                      event['timestamp'],
-                                                                      formatted_new_date))
+            print(
+                "EVENT: {} {} currently: {} changing to: {}".format(
+                    event["tag"], event["id"], event["timestamp"], formatted_new_date
+                )
+            )
 
-            update_event(collex_id=collection_exercise['id'],
-                         event_tag=event['tag'],
-                         date=formatted_new_date,
-                         url=url,
-                         user=user,
-                         password=password)
+            update_event(
+                collex_id=collection_exercise["id"],
+                event_tag=event["tag"],
+                date=formatted_new_date,
+                url=url,
+                user=user,
+                password=password,
+            )
 
 
 def change_time_to_9_am(event_timestamp):
-    date_format = '%Y-%m-%dT%H:%M:%S.%f'
+    date_format = "%Y-%m-%dT%H:%M:%S.%f"
     date = datetime.datetime.strptime(event_timestamp[:-1], date_format)
-    london_timezone = tz.gettz('Europe/London')
+    london_timezone = tz.gettz("Europe/London")
     new_date = date.replace(hour=9, minute=0, second=0, microsecond=0, tzinfo=london_timezone)
-    return new_date.isoformat(timespec='milliseconds')
+    return new_date.isoformat(timespec="milliseconds")
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     args = parse_args()
 
     url = args.url

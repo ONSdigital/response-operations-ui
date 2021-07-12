@@ -1,5 +1,5 @@
-from datetime import datetime, timezone
 import logging
+from datetime import datetime, timezone
 
 from iso8601 import parse_date
 from structlog import wrap_logger
@@ -9,7 +9,7 @@ logger = wrap_logger(logging.getLogger(__name__))
 
 def get_collection_exercise_by_period(exercises, period):
     for exercise in exercises:
-        if exercise['exerciseRef'] == period:
+        if exercise["exerciseRef"] == period:
             return exercise
 
 
@@ -38,7 +38,7 @@ def get_current_collection_exercise(collection_exercises):  # noqa: C901
     closest_time_delta = 0
     closest_collection_exercise = None
     for collection_exercise in collection_exercises:
-        start_date = collection_exercise.get('scheduledStartDateTime')
+        start_date = collection_exercise.get("scheduledStartDateTime")
         if start_date is None:
             continue
         delta = (parse_date(start_date) - now).total_seconds()
@@ -50,7 +50,7 @@ def get_current_collection_exercise(collection_exercises):  # noqa: C901
     # If it's empty then there aren't any in progress and we find the nearest one that's going to start
     if not closest_collection_exercise:
         for collection_exercise in collection_exercises:
-            start_date = collection_exercise.get('scheduledStartDateTime')
+            start_date = collection_exercise.get("scheduledStartDateTime")
             if start_date is None:
                 continue
             delta = (parse_date(start_date) - now).total_seconds()
@@ -64,10 +64,12 @@ def get_current_collection_exercise(collection_exercises):  # noqa: C901
     if not closest_collection_exercise:
         return {}
 
-    logger.info("About to return most current collection exercise",
-                collection_exercise_id=closest_collection_exercise['id'],
-                exercise_ref=closest_collection_exercise.get('exerciseRef'),
-                user_description=closest_collection_exercise.get('userDescription'))
+    logger.info(
+        "About to return most current collection exercise",
+        collection_exercise_id=closest_collection_exercise["id"],
+        exercise_ref=closest_collection_exercise.get("exerciseRef"),
+        user_description=closest_collection_exercise.get("userDescription"),
+    )
     return closest_collection_exercise
 
 
@@ -84,15 +86,15 @@ def get_nearest_future_key_date(events):
         return {}
 
     # These are returned as events in a collection exercise, but aren't key dates.
-    excluded_events = ['ref_period_start', 'ref_period_end', 'employment']
+    excluded_events = ["ref_period_start", "ref_period_end", "employment"]
     now = datetime.now(timezone.utc)
     closest_time_delta = 0
     closest_key_date = {}
 
     for event in events:
-        if event['tag'] in excluded_events:
+        if event["tag"] in excluded_events:
             continue
-        timestamp = event.get('timestamp')
+        timestamp = event.get("timestamp")
         if timestamp is None:
             continue
         delta = (parse_date(timestamp) - now).total_seconds()

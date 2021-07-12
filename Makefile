@@ -8,10 +8,18 @@ build-kubernetes:
 	docker build -f _infra/docker/Dockerfile .
 
 lint:
-	pipenv run flake8 --exclude=./node_modules,./response_operations_ui/logger_config.py ./response_operations_ui ./tests
+	pipenv run flake8
 	pipenv check ./response_operations_ui ./tests
+	pipenv run isort .
+	pipenv run black --line-length 120 .
 
-test: lint
+lint-check:
+	pipenv run flake8
+	pipenv check ./response_operations_ui ./tests
+	pipenv run isort . --check-only
+	pipenv run black --line-length 120 --check .
+
+test: lint-check
 	pipenv run python run_tests.py
 
 start:

@@ -2,17 +2,21 @@ import json
 import os
 import unittest
 
-from response_operations_ui.common.mappers import convert_event_list_to_dictionary, get_display_text_for_event
+from response_operations_ui.common.mappers import (
+    convert_event_list_to_dictionary,
+    get_display_text_for_event,
+)
 
 project_root = os.path.dirname(os.path.dirname(__file__))
 
 
 class TestMappers(unittest.TestCase):
     def test_convert_event_list_to_dictionary(self):
-        with open(f'{project_root}/test_data/collection_exercise/'
-                  f'closest_future_collection_exercise.json') as json_data:
+        with open(
+            f"{project_root}/test_data/collection_exercise/" f"closest_future_collection_exercise.json"
+        ) as json_data:
             collection_exercise = json.load(json_data)
-        function_input = collection_exercise['events']
+        function_input = collection_exercise["events"]
         expected_output = {
             "mps": "2020-07-01T06:00:00.000Z",
             "go_live": "2020-07-02T06:00:00.000Z",
@@ -20,7 +24,7 @@ class TestMappers(unittest.TestCase):
             "reminder": "2020-07-21T06:00:00.000Z",
             "exercise_end": "2020-07-30T06:00:00.000Z",
             "ref_period_start": "2020-06-01T06:00:00.000Z",
-            "ref_period_end": "2020-06-30T06:00:00.000Z"
+            "ref_period_end": "2020-06-30T06:00:00.000Z",
         }
         output = convert_event_list_to_dictionary(function_input)
         self.assertEqual(output, expected_output)
@@ -43,7 +47,7 @@ class TestMappers(unittest.TestCase):
                 "id": "d950c192-e58d-4dcb-9a38-76658dbea6dc",
                 "collectionExerciseId": "6327160f-d7a8-4fcc-8551-a69c50b33e5f",
                 "tag": "go_live",
-                "timestamp": "2020-03-01T06:00:00.000Z"
+                "timestamp": "2020-03-01T06:00:00.000Z",
             },
         ]
         with self.assertRaises(KeyError):
@@ -51,14 +55,14 @@ class TestMappers(unittest.TestCase):
 
     def test_get_display_text_for_event(self):
         tests = [
-            ['mps', 'MPS (Main print selection)'],
-            ['go_live', 'Go live'],
-            ['return_by', 'Return by'],
-            ['reminder', 'First reminder'],
-            ['fake_event', 'fake_event'],
-            ['', ''],
+            ["mps", "MPS (Main print selection)"],
+            ["go_live", "Go live"],
+            ["return_by", "Return by"],
+            ["reminder", "First reminder"],
+            ["fake_event", "fake_event"],
+            ["", ""],
             [None, None],
-            [1, 1]
+            [1, 1],
         ]
         for test in tests:
             output = get_display_text_for_event(test[0])
