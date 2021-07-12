@@ -29,7 +29,6 @@ ru_ref = "50012345678"
 iac_1 = "jkbvyklkwj88"
 iac_2 = "ljbgg3kgstr4"
 
-url_get_party_by_ru_ref = f"{TestingConfig.PARTY_URL}/party-api/v1/parties/type/B/ref/"
 url_get_business_by_ru_ref = f"{TestingConfig.PARTY_URL}/party-api/v1/businesses/ref/"
 url_get_respondent_party_by_list = f"{TestingConfig.PARTY_URL}/party-api/v1/respondents?id={respondent_party_id}"
 url_get_business_attributes = f"{TestingConfig.PARTY_URL}/party-api/v1/businesses/id/{business_party_id}/attributes"
@@ -611,7 +610,6 @@ class TestMessage(ViewTestCase):
         mock_request.post(url_send_message, json=threads_no_unread_list, status_code=201)
         mock_request.get(url_get_surveys_list, json=self.surveys_list_json)
         mock_request.get(url_get_business_by_ru_ref + ru_ref, json=business_by_ru_ref_json)
-        mock_request.get(url_get_party_by_ru_ref + ru_ref, json=business_reporting_unit)
         mock_request.get(url_get_case_groups_by_business_party_id, json=cases_list)
         mock_request.get(f"{url_get_collection_exercise_by_id}/{collection_exercise_id_1}", json=collection_exercise)
         mock_request.get(f"{url_get_collection_exercise_by_id}/{collection_exercise_id_2}", json=collection_exercise_2)
@@ -634,7 +632,6 @@ class TestMessage(ViewTestCase):
         mock_request.post(url_send_message, json=threads_no_unread_list, status_code=201)
         mock_request.get(url_get_surveys_list, json=self.surveys_list_json)
         mock_request.get(url_get_business_by_ru_ref + ru_ref, json=business_by_ru_ref_json)
-        mock_request.get(url_get_party_by_ru_ref + ru_ref, json=business_reporting_unit)
         mock_request.get(url_get_case_groups_by_business_party_id, json=cases_list)
         mock_request.get(f"{url_get_collection_exercise_by_id}/{collection_exercise_id_1}", json=collection_exercise)
         mock_request.get(f"{url_get_collection_exercise_by_id}/{collection_exercise_id_2}", json=collection_exercise_2)
@@ -1258,8 +1255,7 @@ class TestMessage(ViewTestCase):
         mock_get_jwt.return_value = "blah"
 
         mock_request.get(shortname_url + "/ASHE", json=ashe_info["survey"])
-        party_get_by_ru_ref = f"{url_get_party_by_ru_ref}{ru_ref}"
-        mock_request.get(party_get_by_ru_ref, json={"id": business_id_filter})
+        mock_request.get(url_get_business_by_ru_ref + ru_ref, json={"id": business_id_filter})
         mock_request.get(url_get_surveys_list, json=self.surveys_list_json)
         mock_request.get(url_get_threads_list, json=thread_list_multi_page_multi_ru)
         mock_get_count.return_value = 10
@@ -1373,8 +1369,8 @@ class TestMessage(ViewTestCase):
             session["messages_survey_selection"] = "Ashe"
         mock_get_jwt.return_value = "blah"
         mock_request.get(shortname_url + "/ASHE", json=ashe_info["survey"])
-        party_get_by_ru_ref = f"{url_get_party_by_ru_ref}{ru_ref_filter}"
-        mock_request.get(party_get_by_ru_ref, json={"id": ""})  # Party returns no data so flash should display later
+        # Party returns no data so flash should display later
+        mock_request.get(url_get_business_by_ru_ref + ru_ref_filter, json={"id": ""})
         mock_request.get(url_get_surveys_list, json=self.surveys_list_json)
         mock_request.get(url_get_threads_list, json={"messages": []})
         mock_get_count.return_value = 0
