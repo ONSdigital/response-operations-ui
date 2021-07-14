@@ -229,6 +229,8 @@ def post_change_thread_category(thread_id):  # noqa: C901
 
         # Do this part first. It's the most 'risky' as it does multiple calls
         if category == "SURVEY":
+            # Write survey shortname to the session
+            # Redirect to reporting unit selection page
             selected_survey = form.select_survey.data
             survey_id = survey_controllers.get_survey_id_by_short_name(selected_survey)
             if thread["messages"][0]["survey_id"] != survey_id:
@@ -262,6 +264,76 @@ def post_change_thread_category(thread_id):  # noqa: C901
         breadcrumbs=breadcrumbs,
         survey_list=survey_list,
         form=form,
+    )
+
+
+@messages_bp.route("/threads/<thread_id>/change-reporting-unit", methods=["GET"])
+@login_required
+def get_change_reporting_unit(thread_id):
+    if not current_app.config["CHANGE_CATEGORY_ENABLED"]:
+        logger.error("Change category page accessed while disabled.  Aborting")
+        abort(404)
+    thread = message_controllers.get_conversation(thread_id)
+    # Get the respondent data from party
+    # Loop over the associations section to get all the reporting units the person is part of
+    # render template
+    breadcrumbs = [{"text": "Messages", "url": "/messages"}, {"text": "Filter by survey"}]
+
+    return render_template(
+        "secure-message/change-reporting-unit.html",
+        thread=thread,
+        thread_id=thread_id,
+        breadcrumbs=breadcrumbs
+    )
+
+
+@messages_bp.route("/threads/<thread_id>/change-reporting-unit", methods=["POST"])
+@login_required
+def post_change_reporting_unit(thread_id):  # noqa: C901
+    if not current_app.config["CHANGE_CATEGORY_ENABLED"]:
+        logger.error("Change category page accessed while disabled.  Aborting")
+        abort(404)
+    thread = message_controllers.get_conversation(thread_id)
+    reporting_unit = request.form.get("reporting-unit")
+    if reporting_unit:
+        message_payload = {"business_id": reporting_unit}
+
+        # TODO Read survey data from the session
+        if "survey-data-from-session":
+            survey_id = survey_controllers.get_survey_id_by_short_name("survey-data-from-session")
+            message_payload['survey_id'] = survey_id
+
+        # Patch messages first. It's the most 'risky' as it does multiple calls
+        for message in thread["messages"]:
+            message_id = message["msg_id"]
+            try:
+                message_controllers.patch_message(message_id, message_payload)
+            except ApiError:
+                flash("Something went wrong updating the survey.  Please try again.", category="error")
+                return redirect(url_for("messages_bp.get_change_reporting_unit", thread_id=thread_id))
+        flash("The survey has been successfully updated.")
+
+        # Next, if there a survey_id in the session, patch the category
+        if "survey-data-from-session":
+            payload = {"category": "SURVEY"}
+            try:
+                message_controllers.patch_thread(thread_id, payload)
+            except ApiError:
+                flash("Something went wrong updating the category. Please try again.", category="error")
+                return redirect(url_for("messages_bp.get_change_thread_category", thread_id=thread_id))
+            flash("The category has been successfully updated")
+            
+        return redirect(url_for("messages_bp.view_select_survey"))
+
+    error = "An option must be selected"
+    breadcrumbs = [{"text": "Messages", "url": "/messages"}, {"text": "Filter by survey"}]
+
+    return render_template(
+        "secure-message/change-reporting-unit.html",
+        thread=thread,
+        thread_id=thread_id,
+        breadcrumbs=breadcrumbs,
+        error=error
     )
 
 

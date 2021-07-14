@@ -372,12 +372,11 @@ class ForgotPasswordForm(FlaskForm):
         return _validate_email_address(email)
 
 
-def _validate_email_address(email):
+def _validate_email_address(email: str):
     """
     Validates an email address, using regex to conform to GDS standards.
 
-    :param field:
-        Field containing email address for validation.
+    :param field:  Field containing email address for validation.
     """
     local_part, domain_part = email.rsplit("@", 1)
     logger.info("Checking if the email address contains a space or quotes in the local part")
