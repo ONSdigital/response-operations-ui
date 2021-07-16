@@ -17,23 +17,6 @@ from response_operations_ui.forms import EditContactDetailsForm
 logger = wrap_logger(logging.getLogger(__name__))
 
 
-def get_party_by_ru_ref(ru_ref):
-    """get party by ru_ref"""
-    logger.info("Retrieving reporting unit", ru_ref=ru_ref)
-    url = f'{app.config["PARTY_URL"]}/party-api/v1/parties/type/B/ref/{ru_ref}'
-    response = requests.get(url, auth=app.config["BASIC_AUTH"])
-
-    try:
-        response.raise_for_status()
-    except requests.exceptions.HTTPError:
-        log_level = logger.warning if response.status_code in (400, 404) else logger.exception
-        log_level("Failed to retrieve reporting unit", ru_ref=ru_ref)
-        raise ApiError(response)
-
-    logger.info("Successfully retrieved reporting unit", ru_ref=ru_ref)
-    return response.json()
-
-
 def get_business_by_ru_ref(ru_ref):
     """
     Get business by ru_ref
