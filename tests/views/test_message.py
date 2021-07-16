@@ -863,27 +863,6 @@ class TestMessage(ViewTestCase):
 
     @requests_mock.mock()
     @patch("response_operations_ui.controllers.message_controllers._get_jwt")
-    def test_get_messages_page_with_survey(self, mock_request, mock_get_jwt):
-        mock_get_jwt.return_value = "blah"
-        mock_request.get(url_messages + "/count", json={"total": 1}, status_code=200)
-        mock_request.get(url_get_threads_list, json=thread_list)
-        mock_request.get(url_get_surveys_list, json=self.surveys_list_json)
-        mock_request.get(shortname_url + "/ASHE", json=ashe_info["survey"])
-
-        response = self.client.post(
-            "/messages/select-survey", follow_redirects=True, data={"inbox-radio": "surveys", "select-survey": "ASHE"}
-        )
-
-        self.assertEqual(response.status_code, 200)
-        self.assertIn("ASHE Messages".encode(), response.data)
-
-        response = self.client.get("/messages", follow_redirects=True)
-
-        self.assertEqual(response.status_code, 200)
-        self.assertIn("ASHE Messages".encode(), response.data)
-
-    @requests_mock.mock()
-    @patch("response_operations_ui.controllers.message_controllers._get_jwt")
     def test_get_messages_page_with_FDI_survey(self, mock_request, mock_get_jwt):
         mock_get_jwt.return_value = "blah"
         mock_request.get(url_messages + "/count", json={"total": 1}, status_code=200)
