@@ -39,7 +39,8 @@
       "ru_id": "f1a5e99c-8edf-489a-9c72-6cabe6c387fc",
       "subject": "1",
       "survey_id": "f235e99c-8edf-489a-9c72-6cabe6c387fc",
-      "thread_id": "fb0e79bd-e132-4f4f-a7fd-5e8c6b41b9af"
+      "thread_id": "fb0e79bd-e132-4f4f-a7fd-5e8c6b41b9af",
+      "from_internal": false
     },
     {
       "@msg_from": {
@@ -80,7 +81,8 @@
       "ru_id": "f1a5e99c-8edf-489a-9c72-6cabe6c387fc",
       "subject": "2",
       "survey_id": "f235e99c-8edf-489a-9c72-6cabe6c387fc",
-      "thread_id": "ae46748b-c6e6-4859-a57a-86e01db2dcbc"
+      "thread_id": "ae46748b-c6e6-4859-a57a-86e01db2dcbc",
+      "from_internal": false
     },
     {
       "@msg_from": {
@@ -121,7 +123,8 @@
       "ru_id": "f1a5e99c-8edf-489a-9c72-6cabe6c387fc",
       "subject": "3",
       "survey_id": "f235e99c-8edf-489a-9c72-6cabe6c387fc",
-      "thread_id": "ae46748b-c6e6-4859-a57a-86e01db2dc4"
+      "thread_id": "ae46748b-c6e6-4859-a57a-86e01db2dc4",
+      "from_internal": false
     },
     {
       "@msg_from": {
@@ -162,7 +165,8 @@
       "ru_id": "f1a5e99c-8edf-489a-9c72-6cabe6c387fc",
       "subject": "4",
       "survey_id": "f235e99c-8edf-489a-9c72-6cabe6c387fc",
-      "thread_id": "ae46748b-c6e6-4859-a57a-86e01db2dcb5"
+      "thread_id": "ae46748b-c6e6-4859-a57a-86e01db2dcb5",
+      "from_internal": false
     },
     {
       "@msg_from": {
@@ -203,7 +207,8 @@
       "ru_id": "f1a5e99c-8edf-489a-9c72-6cabe6c387fc",
       "subject": "5",
       "survey_id": "f235e99c-8edf-489a-9c72-6cabe6c387fc",
-      "thread_id": "fb0e79bd-e132-4f4f-a7fd-5e8c6b41b9a6"
+      "thread_id": "fb0e79bd-e132-4f4f-a7fd-5e8c6b41b9a6",
+      "from_internal": false
     },
     {
       "@msg_from": {
@@ -244,7 +249,8 @@
       "ru_id": "f1a5e99c-8edf-489a-9c72-6cabe6c387fc",
       "subject": "6",
       "survey_id": "f235e99c-8edf-489a-9c72-6cabe6c387fc",
-      "thread_id": "ae46748b-c6e6-4859-a57a-86e01db2dcb7"
+      "thread_id": "ae46748b-c6e6-4859-a57a-86e01db2dcb7",
+      "from_internal": false
     },
     {
       "@msg_from": {
@@ -285,7 +291,8 @@
       "ru_id": "f1a5e99c-8edf-489a-9c72-6cabe6c387fc",
       "subject": "7",
       "survey_id": "f235e99c-8edf-489a-9c72-6cabe6c387fc",
-      "thread_id": "ae46748b-c6e6-4859-a57a-86e01db2dcb8"
+      "thread_id": "ae46748b-c6e6-4859-a57a-86e01db2dcb8",
+      "from_internal": false
     },
     {
       "@msg_from": {
@@ -326,7 +333,8 @@
       "ru_id": "f1a5e99c-8edf-489a-9c72-6cabe6c387fc",
       "subject": "8",
       "survey_id": "f235e99c-8edf-489a-9c72-6cabe6c387fc",
-      "thread_id": "ae46748b-c6e6-4859-a57a-86e01db2dcb9"
+      "thread_id": "ae46748b-c6e6-4859-a57a-86e01db2dcb9",
+      "from_internal": false
     },
     {
       "@msg_from": {
@@ -367,7 +375,8 @@
       "ru_id": "f1a5e99c-8edf-489a-9c72-6cabe6c387fc",
       "subject": "9",
       "survey_id": "f235e99c-8edf-489a-9c72-6cabe6c387fc",
-      "thread_id": "ae46748b-c6e6-4859-a57a-86e01db2dcb0"
+      "thread_id": "ae46748b-c6e6-4859-a57a-86e01db2dcb0",
+      "from_internal": false
     },
     {
       "@msg_from": {
@@ -408,7 +417,8 @@
       "ru_id": "f1a5e99c-8edf-489a-9c72-6cabe6c387fc",
       "subject": "10",
       "survey_id": "f235e99c-8edf-489a-9c72-6cabe6c387fc",
-      "thread_id": "ae46748b-c6e6-4859-a57a-86e01db2dc00"
+      "thread_id": "ae46748b-c6e6-4859-a57a-86e01db2dc00",
+      "from_internal": false
     }
   ]
 }

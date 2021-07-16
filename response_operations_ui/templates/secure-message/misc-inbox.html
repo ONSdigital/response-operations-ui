@@ -34,39 +34,6 @@
       <h1 class="u-fs-l u-mb-xs" name="page-messages-title">RFT Messages
         <span class="u-fs-r">(<a id="change-survey" href="{{ url_for('messages_bp.select_inbox') }}">Change inbox</a>)</span>
       </h1>
-      {% if ru_ref_filter %}
-          <p id="clear_ru_ref" class="u-fs-s">Filtered by RU ref: {{ ru_ref_filter }}
-            <a href="{{ url_for('messages_bp.clear_filter', selected_survey=selected_survey, conversation_tab=conversation_tab) }}">Clear filter</a>
-          </p>
-      {% endif %}  
-    </div>
-    <div class="grid__col u-mt-s@s"> 
-      <form action="{{ url_for('messages_bp.view_misc_inbox', selected_survey=selected_survey, conversation_tab=conversation_tab, ru_ref_filter=ru_ref_filter, business_id_filter=business_id_filter, page=page, limit=limit) }}" method="post">
-        {{ form.csrf_token }}
-        {{
-          onsInput({
-            "id": 'search-field',
-            "type": 'number',
-            "width": '6',
-            "label": 'Filter RU ref',
-            "name": 'ru_ref_filter',
-            "value": ru_ref_filter,
-            "searchButton": {
-                "text": 'Filter',
-                "id": 'btn-filter-ru',
-                "type": 'submit'
-            },
-            "charCheck": {
-                "charcheckCountdown": true,
-                "limit": 11,
-                "charCountSingular": "{x} more character needed",
-                "charCountPlural": "{x} more characters needed",
-                "charCountOverLimitSingular": "{x} character too many",
-                "charCountOverLimitPlural": "{x} characters too many"
-            }
-          })
-        }}
-      </form>  
     </div>
   </div>
   <div class="grid">
@@ -117,16 +84,13 @@
             "id": 'tbl-messages',
             "ths": [
               { 
-                  "value": "RU Ref"
+                  "value": "From"
               },
               { 
-                  "value": "Business name"
+                  "value": "Email address"
               },
               { 
                   "value": "Subject"
-              },
-              { 
-                  "value": "From"
               },
               { 
                   "value": "To"
@@ -141,26 +105,28 @@
         {% set surveyTableDataRows = [] %}
 
         {% for message in messages %}
-          {% if message.ru_ref and message.unread %}
-            {% set ruRef = '<span class="status status--info status--small u-fw-b">' + message.ru_ref + '</span>' %}
-          {% elif message.ru_ref %}
-            {% set ruRef = message.ru_ref %}
-          {% else %}
-            {% set ruRef = 'Unavailable' %}
-          {% endif %}
-          {% if message.business_name and message.unread %}
-            {% set businessName = '<span class="u-fw-b">' + message.business_name + '</span>' %}
-          {% elif message.business_name %}
-            {% set businessName = message.business_name %}
-          {% else %}
-            {% set businessName = 'Unavailable' %}
-          {% endif %}
           {% if message.from and message.unread %}
             {% set fromValue = '<span class="u-fw-b">' + message.from + '</span>' %}
           {% elif message.from %}
             {% set fromValue = message.from %}
           {% else %}
             {% set fromValue = 'Unavailable' %}
+          {% endif %}
+          {% if message.from_email and message.unread %}
+            {% if not message.from_internal %}
+              {% set emailAddress = '<span class="u-fw-b">' + message.from_email + '</span>' %}
+            {% else %}
+              {% set emailAddress = '<span class="u-fw-b">' + message.to_email + '</span>' %}
+            {% endif %}
+          {% elif message.from_email %}
+            {% set emailAddress = message.from_email %}
+            {% if not message.from_internal %}
+              {% set emailAddress = message.from_email %}
+            {% else %}
+              {% set emailAddress = message.to_email %}
+            {% endif %}
+          {% else %}
+            {% set emailAddress = 'Unavailable' %}
           {% endif %}
           {% if message.to and message.unread %}
             {% set toValue = '<span class="u-fw-b">' + message.to + '</span>' %}
@@ -184,27 +150,21 @@
               "classes": 'u-fw-b' if message.unread else '',
               "tds": [
                 {
-                  "value": ruRef,
-                  "data": "RU Ref",
-                  "name": "tbl-messages-RU_Ref",
-                  "id": 'ru-ref-' + loop.index|string
+                  "value": fromValue if message.from else 'Unavailable',
+                  "data": "From",
+                  "name": "tbl-messages-from",
+                  "id": 'messages-from-' + loop.index|string
                 },
                 {
-                  "value": businessName,
-                  "data": "Business name",
-                  "name": "tbl-messages-business",
-                  "id": 'business-name-' + loop.index|string
+                  "value": emailAddress,
+                  "data": "Email address",
+                  "name": "tbl-email-address",
+                  "id": 'email-address-' + loop.index|string
                 },
                 {
                   "value": '<span class="u-fw-b"><a href="' + url_for('messages_bp.view_conversation', thread_id=message.thread_id, page=page, conversation_tab=conversation_tab, ru_ref_filter=ru_ref_filter, business_id_filter=business_id_filter) +'#latest-message" id="message-link-' + loop.index|string + '">' + message.subject + '</a></span>' if message.unread else '<a href="' + url_for('messages_bp.view_conversation', thread_id=message.thread_id, page=page, conversation_tab=conversation_tab, ru_ref_filter=ru_ref_filter, business_id_filter=business_id_filter) +'#latest-message" id="message-link-' + loop.index|string + '">' + message.subject + '</a>',
                   "data": "Subject",
                   "name": "tbl-messages-subject"
-                },
-                {
-                  "value": fromValue if message.from else 'Unavailable',
-                  "data": "From",
-                  "name": "tbl-messages-from",
-                  "id": 'messages-from-' + loop.index|string
                 },
                 {
                   "value": toValue if message.to else 'Unavailable',

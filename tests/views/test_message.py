@@ -83,6 +83,12 @@ with open(f"{project_root}/test_data/message/threads_unread.json") as json_data:
 with open(f"{project_root}/test_data/message/thread_unread.json") as json_data:
     thread_unread_json = json.load(json_data)
 
+with open(f"{project_root}/test_data/message/thread_unread_technical.json") as json_data:
+    thread_unread_technical_json = json.load(json_data)
+
+with open(f"{project_root}/test_data/message/thread_unread_rft.json") as json_data:
+    thread_unread_rft_json = json.load(json_data)
+
 with open(f"{project_root}/test_data/party/business_reporting_unit.json") as fp:
     business_reporting_unit = json.load(fp)
 
@@ -170,12 +176,10 @@ class TestMessage(ViewTestCase):
 
         self.assertEqual(response.status_code, 200)
         self.assertIn("Technical Messages".encode(), response.data)
-        self.assertIn("Apple".encode(), response.data)
-        self.assertIn("50012345678".encode(), response.data)
+        self.assertIn("Change inbox".encode(), response.data)
+        self.assertIn("johnexample@example.com".encode(), response.data)
         self.assertIn("John Example".encode(), response.data)
-        self.assertIn("ASHE Team".encode(), response.data)
         self.assertIn("Message from respondent".encode(), response.data)
-        self.assertIn("Message from ONS".encode(), response.data)
 
     @requests_mock.mock()
     @patch("response_operations_ui.controllers.message_controllers._get_jwt")
@@ -193,12 +197,11 @@ class TestMessage(ViewTestCase):
 
         self.assertEqual(response.status_code, 200)
         self.assertIn("RFT Messages".encode(), response.data)
-        self.assertIn("Apple".encode(), response.data)
-        self.assertIn("50012345678".encode(), response.data)
+        self.assertNotIn("Apple".encode(), response.data)
+        self.assertNotIn("50012345678".encode(), response.data)
         self.assertIn("John Example".encode(), response.data)
-        self.assertIn("ASHE Team".encode(), response.data)
         self.assertIn("Message from respondent".encode(), response.data)
-        self.assertIn("Message from ONS".encode(), response.data)
+        self.assertIn("johnexample@example.com".encode(), response.data)
 
     @requests_mock.mock()
     @patch("response_operations_ui.controllers.message_controllers._get_jwt")
@@ -216,8 +219,8 @@ class TestMessage(ViewTestCase):
 
         self.assertEqual(response.status_code, 200)
         self.assertIn("RFT Messages".encode(), response.data)
-        self.assertIn("Apple".encode(), response.data)
-        self.assertIn("50012345678".encode(), response.data)
+        self.assertNotIn("Apple".encode(), response.data)
+        self.assertNotIn("50012345678".encode(), response.data)
         self.assertIn("John Example".encode(), response.data)
         self.assertIn("ASHE Team".encode(), response.data)
         self.assertIn("Message from respondent".encode(), response.data)
@@ -427,6 +430,34 @@ class TestMessage(ViewTestCase):
         response = self.client.get("/messages/threads/fb0e79bd-e132-4f4f-a7fd-5e8c6b41b9af")
 
         self.assertIn("Unread Message Subject".encode(), response.data)
+
+    @requests_mock.mock()
+    @patch("response_operations_ui.controllers.message_controllers._get_jwt")
+    def test_get_thread_for_technical_messages(self, mock_request, mock_get_jwt):
+        mock_get_jwt.return_value = "blah"
+        mock_request.get(url_get_thread, json=thread_unread_technical_json)
+        mock_request.put(url_update_label)
+        mock_request.get(url_get_surveys_list, json=survey_list)
+
+        response = self.client.get("/messages/threads/fb0e79bd-e132-4f4f-a7fd-5e8c6b41b9af")
+
+        self.assertIn("Unread Message Subject".encode(), response.data)
+        self.assertIn("Category".encode(), response.data)
+        self.assertIn("TECHNICAL".encode(), response.data)
+
+    @requests_mock.mock()
+    @patch("response_operations_ui.controllers.message_controllers._get_jwt")
+    def test_get_thread_for_rft_messages(self, mock_request, mock_get_jwt):
+        mock_get_jwt.return_value = "blah"
+        mock_request.get(url_get_thread, json=thread_unread_rft_json)
+        mock_request.put(url_update_label)
+        mock_request.get(url_get_surveys_list, json=survey_list)
+
+        response = self.client.get("/messages/threads/fb0e79bd-e132-4f4f-a7fd-5e8c6b41b9af")
+
+        self.assertIn("Unread Message Subject".encode(), response.data)
+        self.assertIn("Category".encode(), response.data)
+        self.assertIn("MISC".encode(), response.data)
 
     @requests_mock.mock()
     @patch("response_operations_ui.controllers.message_controllers._get_jwt")
@@ -832,6 +863,27 @@ class TestMessage(ViewTestCase):
 
     @requests_mock.mock()
     @patch("response_operations_ui.controllers.message_controllers._get_jwt")
+    def test_get_messages_page_with_survey(self, mock_request, mock_get_jwt):
+        mock_get_jwt.return_value = "blah"
+        mock_request.get(url_messages + "/count", json={"total": 1}, status_code=200)
+        mock_request.get(url_get_threads_list, json=thread_list)
+        mock_request.get(url_get_surveys_list, json=self.surveys_list_json)
+        mock_request.get(shortname_url + "/ASHE", json=ashe_info["survey"])
+
+        response = self.client.post(
+            "/messages/select-survey", follow_redirects=True, data={"inbox-radio": "surveys", "select-survey": "ASHE"}
+        )
+
+        self.assertEqual(response.status_code, 200)
+        self.assertIn("ASHE Messages".encode(), response.data)
+
+        response = self.client.get("/messages", follow_redirects=True)
+
+        self.assertEqual(response.status_code, 200)
+        self.assertIn("ASHE Messages".encode(), response.data)
+
+    @requests_mock.mock()
+    @patch("response_operations_ui.controllers.message_controllers._get_jwt")
     def test_get_messages_page_with_FDI_survey(self, mock_request, mock_get_jwt):
         mock_get_jwt.return_value = "blah"
         mock_request.get(url_messages + "/count", json={"total": 1}, status_code=200)
@@ -868,7 +920,7 @@ class TestMessage(ViewTestCase):
 
     @requests_mock.mock()
     @patch("response_operations_ui.controllers.message_controllers._get_jwt")
-    def test_get_close_conversation_speedbump(self, mock_request, mock_get_jwt):
+    def test_get_close_conversation_confirmation_page_for_survey(self, mock_request, mock_get_jwt):
         with self.client.session_transaction() as session:
             session["messages_survey_selection"] = "QBS"
         mock_get_jwt.return_value = "blah"
@@ -876,13 +928,54 @@ class TestMessage(ViewTestCase):
         mock_request.get(url_get_surveys_list, json=survey_list)
 
         response = self.client.get(
-            "/messages/threads/fb0e79bd-e132-4f4f-a7fd-5e8c6b41b9af/close-conversation", follow_redirects=True
+            "/messages/threads/fb0e79bd-e132-4f4f-a7fd-5e8c6b41b9af/close-conversation?category=SURVEY",
+            follow_redirects=True,
         )
 
         self.assertEqual(200, response.status_code)
         self.assertIn("Subject".encode(), response.data)
         self.assertIn("Business".encode(), response.data)
         self.assertIn("Reference".encode(), response.data)
+        self.assertIn("Respondent".encode(), response.data)
+
+    @requests_mock.mock()
+    @patch("response_operations_ui.controllers.message_controllers._get_jwt")
+    def test_get_close_conversation_confirmation_page_for_technical(self, mock_request, mock_get_jwt):
+        with self.client.session_transaction() as session:
+            session["messages_survey_selection"] = ""
+        mock_get_jwt.return_value = "blah"
+        mock_request.get(url_get_thread, json=thread_json)
+        mock_request.get(url_get_surveys_list, json=survey_list)
+
+        response = self.client.get(
+            "/messages/threads/fb0e79bd-e132-4f4f-a7fd-5e8c6b41b9af/close-conversation?category=TECHNICAL",
+            follow_redirects=True,
+        )
+
+        self.assertEqual(200, response.status_code)
+        self.assertIn("Category".encode(), response.data)
+        self.assertNotIn("Business".encode(), response.data)
+        self.assertNotIn("Reference".encode(), response.data)
+        self.assertIn("Respondent".encode(), response.data)
+
+    @requests_mock.mock()
+    @patch("response_operations_ui.controllers.message_controllers._get_jwt")
+    def test_get_close_conversation_confirmation_page_for_misc(self, mock_request, mock_get_jwt):
+        with self.client.session_transaction() as session:
+            session["messages_survey_selection"] = ""
+        mock_get_jwt.return_value = "blah"
+        mock_request.get(url_get_thread, json=thread_json)
+        mock_request.get(url_get_surveys_list, json=survey_list)
+
+        response = self.client.get(
+            "/messages/threads/fb0e79bd-e132-4f4f-a7fd-5e8c6b41b9af/close-conversation?category=MISC",
+            follow_redirects=True,
+        )
+
+        self.assertEqual(200, response.status_code)
+        self.assertIn("Category".encode(), response.data)
+        self.assertNotIn("Business".encode(), response.data)
+        self.assertNotIn("Reference".encode(), response.data)
         self.assertIn("Respondent".encode(), response.data)
 
     @requests_mock.mock()
@@ -1002,7 +1095,6 @@ class TestMessage(ViewTestCase):
         conversation_tabs = ["my messages", "open", "closed", "initial"]
         for conversation_tab in conversation_tabs:
             with self.subTest(conversation_tab=conversation_tab):
-
                 # issue same call as when closing a conversation whilst on page 2 of the selected tab
                 url = f"{thread_id}/close-conversation?conversation_tab={conversation_tab}&page={page}&limit={limit}"
                 response = self.client.post("/messages/threads/" + url, follow_redirects=True)
@@ -1013,7 +1105,7 @@ class TestMessage(ViewTestCase):
 
                 # validate that the currently selected tab is as expected (i.e aria-current="location")
                 match = (
-                    f'"/messages/Ashe?conversation_tab={conversation_tab.replace(" ","+")}'
+                    f'"/messages/Ashe?conversation_tab={conversation_tab.replace(" ", "+")}'
                     f'&ru_ref_filter=&business_id_filter="aria-current="location"'
                 )
 
@@ -1056,7 +1148,7 @@ class TestMessage(ViewTestCase):
 
                 # validate that the currently selected tab is as expected (i.e aria-current="location")
                 match = (
-                    f'"/messages/Ashe?conversation_tab={conversation_tab.replace(" ","+")}'
+                    f'"/messages/Ashe?conversation_tab={conversation_tab.replace(" ", "+")}'
                     f'&ru_ref_filter=&business_id_filter="aria-current="location"'
                 )
                 self.assertIn(match, response_body.replace("amp;", ""))
@@ -1468,7 +1560,6 @@ class TestMessage(ViewTestCase):
 
         for conversation_tab in tabs:
             with self.subTest(conversation_tab=conversation_tab):
-
                 # view survey with filter of business_id
 
                 url = (

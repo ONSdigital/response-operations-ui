@@ -39,7 +39,8 @@
       "business_id": "f1a5e99c-8edf-489a-9c72-6cabe6c387fc",
       "subject": "Message from respondent",
       "survey_id": "f235e99c-8edf-489a-9c72-6cabe6c387fc",
-      "thread_id": "ae46748b-c6e6-4859-a57a-86e01db2dcbc"
+      "thread_id": "ae46748b-c6e6-4859-a57a-86e01db2dcbc",
+      "from_internal": false
     },
     {
       "@msg_from": {
@@ -93,7 +94,8 @@
       "business_id": "f1a5e99c-8edf-489a-9c72-6cabe6c387fc",
       "subject": "Message from ONS",
       "survey_id": "f235e99c-8edf-489a-9c72-6cabe6c387fc",
-      "thread_id": "9ecfad50-2ff5-4bea-a997-d73c4faa73ae"
+      "thread_id": "9ecfad50-2ff5-4bea-a997-d73c4faa73ae",
+      "from_internal": true
     },
     {
     "@msg_to": [
@@ -151,7 +153,8 @@
     "thread_id": "53d80894-7d55-4cc4-b3fb-f23e33b9e13e",
    "level": "info",
    "service": "response-operations-ui",
-   "created_at": "2018-02-08T15:311518017501"
+   "created_at": "2018-02-08T15:311518017501", 
+      "from_internal": true
   }
   ]
 }
