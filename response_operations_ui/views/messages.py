@@ -227,22 +227,10 @@ def post_change_thread_category(thread_id):  # noqa: C901
     if form.validate():
         category = form.category.data
 
-        # Do this part first. It's the most 'risky' as it does multiple calls
+        # If the category is SURVEY then we need to go to another page to set the business_id for the thread also.
         if category == "SURVEY":
-            # Write survey shortname to the session
-            # Redirect to reporting unit selection page
-            selected_survey = form.select_survey.data
-            survey_id = survey_controllers.get_survey_id_by_short_name(selected_survey)
-            if thread["messages"][0]["survey_id"] != survey_id:
-                for message in thread["messages"]:
-                    message_id = message["msg_id"]
-                    try:
-                        message_payload = {"survey_id": survey_id}
-                        message_controllers.patch_message(message_id, message_payload)
-                    except ApiError:
-                        flash("Something went wrong updating the survey.  Please try again.", category="error")
-                        return redirect(url_for("messages_bp.get_change_thread_category", thread_id=thread_id))
-            flash("The survey has been successfully updated.")
+            session["secure-message-change-survey-shortname"] = form.select_survey.data
+            return redirect(url_for("messages_bp.get_change_reporting_unit", thread_id=thread_id))
 
         payload = {"category": category}
         try:
@@ -274,8 +262,17 @@ def get_change_reporting_unit(thread_id):
         logger.error("Change category page accessed while disabled.  Aborting")
         abort(404)
     thread = message_controllers.get_conversation(thread_id)
-    # Get the respondent data from party
-    # Loop over the associations section to get all the reporting units the person is part of
+
+    # If the first message is from an internal user, then the respondent has to be who the message was going to
+    if thread["messages"][0]["from_internal"]:
+        party_id = thread["messages"][0]["msg_to"][0]
+    else:
+        party_id = thread["messages"][0]["msg_from"][0]
+
+    respondent_data = party_controller.get_respondent_by_party_id(party_id)
+    enrolments = respondent_data["associations"]["enrolments"]
+    reporting_unit_list = [ru_name for ru_name in enrolments]
+
     # render template
     breadcrumbs = [{"text": "Messages", "url": "/messages"}, {"text": "Filter by survey"}]
 
@@ -283,7 +280,8 @@ def get_change_reporting_unit(thread_id):
         "secure-message/change-reporting-unit.html",
         thread=thread,
         thread_id=thread_id,
-        breadcrumbs=breadcrumbs
+        breadcrumbs=breadcrumbs,
+        reporting_unit_list=reporting_unit_list
     )
 
 
@@ -296,25 +294,29 @@ def post_change_reporting_unit(thread_id):  # noqa: C901
     thread = message_controllers.get_conversation(thread_id)
     reporting_unit = request.form.get("reporting-unit")
     if reporting_unit:
-        message_payload = {"business_id": reporting_unit}
+        message_patch_payload = {"business_id": reporting_unit}
 
-        # TODO Read survey data from the session
-        if "survey-data-from-session":
-            survey_id = survey_controllers.get_survey_id_by_short_name("survey-data-from-session")
-            message_payload['survey_id'] = survey_id
+        # You can come to this page after changing a thread category to SURVEY, so we'll add the survey_id to
+        # the message patch
+        survey_shortname = session.get("secure-message-change-survey-shortname")
+        if survey_shortname:
+            survey_id = survey_controllers.get_survey_id_by_short_name(survey_shortname)
+            message_patch_payload['survey_id'] = survey_id
 
         # Patch messages first. It's the most 'risky' as it does multiple calls
         for message in thread["messages"]:
             message_id = message["msg_id"]
             try:
-                message_controllers.patch_message(message_id, message_payload)
+                message_controllers.patch_message(message_id, message_patch_payload)
             except ApiError:
                 flash("Something went wrong updating the survey.  Please try again.", category="error")
                 return redirect(url_for("messages_bp.get_change_reporting_unit", thread_id=thread_id))
+
         flash("The survey has been successfully updated.")
 
-        # Next, if there a survey_id in the session, patch the category
-        if "survey-data-from-session":
+        # Next, if there a survey_id in the session, patch the category to SURVEY as that's the only thing
+        # it can be
+        if survey_shortname:
             payload = {"category": "SURVEY"}
             try:
                 message_controllers.patch_thread(thread_id, payload)
@@ -322,7 +324,10 @@ def post_change_reporting_unit(thread_id):  # noqa: C901
                 flash("Something went wrong updating the category. Please try again.", category="error")
                 return redirect(url_for("messages_bp.get_change_thread_category", thread_id=thread_id))
             flash("The category has been successfully updated")
-            
+        
+        # TODO is there a one line way to remove a key without throwing an error if it's not there?
+        if survey_shortname:
+            del session["secure-message-change-survey-shortname"]
         return redirect(url_for("messages_bp.view_select_survey"))
 
     error = "An option must be selected"

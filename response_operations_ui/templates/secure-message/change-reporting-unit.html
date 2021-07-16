@@ -12,24 +12,9 @@
       </div>
       <div class="grid__col col-8@m">
         <h1>Assign a reporting unit to the thread</h1>
+        {% if reporting_unit_list %}
         <form method="post">
           <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
-            {% if reporting_unit_list %}
-              {% if form.errors %}
-                {% set errorData = [] %}
-                {% for field in form.errors %}
-                  {% for error in form.errors[field] %}
-                    {% do errorData.append(
-                        {
-                            "text": error
-                        }
-                    ) %}
-                  {% endfor %}
-                {% endfor %}
-                {# A onsRadios only takes one error.  We can't pick a random key so we gather all the 
-                errors up then just pick whatever is at the first #}
-                {% set error = errorData[0] %}
-            {% endif %}
             {% set reporting_units = [] %}
             {% for reporting_unit in reporting_unit_list %}
               {% do reporting_units.append(
@@ -64,7 +49,7 @@
               </div>
             </div>
         {% else %}
-          <p>Survey list failed to load.  Please try again.</p>
+          <p>Reporting unit list failed to load.  Please try again.</p>
         {% endif %}
       </form>
     </div>
