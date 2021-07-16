@@ -33,7 +33,7 @@ reporting_unit_bp = Blueprint("reporting_unit_bp", __name__, static_folder="stat
 def view_reporting_unit(ru_ref):
     logger.info("Gathering data to view reporting unit", ru_ref=ru_ref)
     # Make some initial calls to retrieve some data we'll need
-    reporting_unit = party_controller.get_party_by_ru_ref(ru_ref)
+    reporting_unit = party_controller.get_business_by_ru_ref(ru_ref)
 
     cases = case_controller.get_cases_by_business_party_id(reporting_unit["id"])
     case_groups = [case["caseGroup"] for case in cases]
@@ -83,7 +83,7 @@ def build_survey_table_data_dict(collection_exercises: list, case_groups: list) 
 def view_respondents(ru_ref: str):
     logger.info("Gathering data to view reporting unit", ru_ref=ru_ref)
     # Make some initial calls to retrieve some data we'll need
-    reporting_unit = party_controller.get_party_by_ru_ref(ru_ref)
+    reporting_unit = party_controller.get_business_by_ru_ref(ru_ref)
 
     # Get all respondents for the given ru
     respondent_party_ids = [respondent["partyId"] for respondent in reporting_unit.get("associations")]
@@ -134,7 +134,7 @@ def build_respondent_table_data_dict(respondents: list, ru_ref: str):
 def view_reporting_unit_survey(ru_ref, survey):
     logger.info("Gathering data to view reporting unit", ru_ref=ru_ref)
     # Make some initial calls to retrieve some data we'll need
-    reporting_unit = party_controller.get_party_by_ru_ref(ru_ref)
+    reporting_unit = party_controller.get_business_by_ru_ref(ru_ref)
 
     cases = case_controller.get_cases_by_business_party_id(reporting_unit["id"])
     case_groups = [case["caseGroup"] for case in cases]
