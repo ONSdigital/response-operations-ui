@@ -262,16 +262,7 @@ def get_change_reporting_unit(thread_id):
         logger.error("Change category page accessed while disabled.  Aborting")
         abort(404)
     thread = message_controllers.get_conversation(thread_id)
-
-    # If the first message is from an internal user, then the respondent has to be who the message was going to
-    if thread["messages"][0]["from_internal"]:
-        party_id = thread["messages"][0]["msg_to"][0]
-    else:
-        party_id = thread["messages"][0]["msg_from"][0]
-
-    respondent = party_controller.get_respondent_by_party_id(party_id)
-    enrolments = party_controller.get_respondent_enrolments(respondent)
-    reporting_units = [enrolment["business"] for enrolment in enrolments]
+    reporting_units = get_respondent_enrolments_from_thread(thread)
 
     breadcrumbs = [{"text": "Messages", "url": "/messages"}, {"text": "Filter by survey"}]
 
@@ -280,7 +271,7 @@ def get_change_reporting_unit(thread_id):
         thread=thread,
         thread_id=thread_id,
         breadcrumbs=breadcrumbs,
-        reporting_units=reporting_units
+        reporting_units=reporting_units,
     )
 
 
@@ -300,7 +291,7 @@ def post_change_reporting_unit(thread_id):  # noqa: C901
         survey_shortname = session.get("secure-message-change-survey-shortname")
         if survey_shortname:
             survey_id = survey_controllers.get_survey_id_by_short_name(survey_shortname)
-            message_patch_payload['survey_id'] = survey_id
+            message_patch_payload["survey_id"] = survey_id
 
         # Patch messages first. It's the most 'risky' as it does multiple calls
         for message in thread["messages"]:
@@ -323,23 +314,12 @@ def post_change_reporting_unit(thread_id):  # noqa: C901
                 flash("Something went wrong updating the category. Please try again.", category="error")
                 return redirect(url_for("messages_bp.get_change_thread_category", thread_id=thread_id))
             flash("The category has been successfully updated")
-        
-        # TODO is there a one line way to remove a key without throwing an error if it's not there?
-        if survey_shortname:
             del session["secure-message-change-survey-shortname"]
+
         return redirect(url_for("messages_bp.view_select_survey"))
 
     flash("An option must be selected", category="error")
-    # TODO make this bit into a common function between both GET and POST
-    # If the first message is from an internal user, then the respondent has to be who the message was going to
-    if thread["messages"][0]["from_internal"]:
-        party_id = thread["messages"][0]["msg_to"][0]
-    else:
-        party_id = thread["messages"][0]["msg_from"][0]
-
-    respondent = party_controller.get_respondent_by_party_id(party_id)
-    enrolments = party_controller.get_respondent_enrolments(respondent)
-    reporting_units = [enrolment["business"] for enrolment in enrolments]
+    reporting_units = get_respondent_enrolments_from_thread(thread)
     breadcrumbs = [{"text": "Messages", "url": "/messages"}, {"text": "Filter by survey"}]
 
     return render_template(
@@ -347,8 +327,19 @@ def post_change_reporting_unit(thread_id):  # noqa: C901
         thread=thread,
         thread_id=thread_id,
         breadcrumbs=breadcrumbs,
-        reporting_units=reporting_units
+        reporting_units=reporting_units,
     )
+
+
+def get_respondent_enrolments_from_thread(thread: dict) -> list[dict]:
+    if thread["messages"][0]["from_internal"]:
+        party_id = thread["messages"][0]["msg_to"][0]
+    else:
+        party_id = thread["messages"][0]["msg_from"][0]
+    respondent = party_controller.get_respondent_by_party_id(party_id)
+    enrolments = party_controller.get_respondent_enrolments(respondent)
+    reporting_units = [enrolment["business"] for enrolment in enrolments]
+    return reporting_units
 
 
 @messages_bp.route("/mark_unread/<message_id>", methods=["GET"])
