@@ -25,7 +25,7 @@
                   {
                       "text": message,
                       "index": true,
-                      "url": "#category",
+                      "url": "#reporting-units",
                       "classes": "js-inpagelink"
                   }
               ) %}
@@ -85,6 +85,9 @@
             </div>
         {% else %}
           <p>Reporting unit list failed to load.  Please try again.</p>
+          <div class="grid__col u-ml-m">
+            <a href=" {{ url_for('messages_bp.view_conversation', thread_id=thread_id) }}">Cancel</a>
+          </div>
         {% endif %}
       </form>
     </div>

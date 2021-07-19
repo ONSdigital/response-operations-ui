@@ -330,13 +330,24 @@ def post_change_reporting_unit(thread_id):  # noqa: C901
         return redirect(url_for("messages_bp.view_select_survey"))
 
     flash("An option must be selected", category="error")
+    # TODO make this bit into a common function between both GET and POST
+    # If the first message is from an internal user, then the respondent has to be who the message was going to
+    if thread["messages"][0]["from_internal"]:
+        party_id = thread["messages"][0]["msg_to"][0]
+    else:
+        party_id = thread["messages"][0]["msg_from"][0]
+
+    respondent = party_controller.get_respondent_by_party_id(party_id)
+    enrolments = party_controller.get_respondent_enrolments(respondent)
+    reporting_units = [enrolment["business"] for enrolment in enrolments]
     breadcrumbs = [{"text": "Messages", "url": "/messages"}, {"text": "Filter by survey"}]
 
     return render_template(
         "secure-message/change-reporting-unit.html",
         thread=thread,
         thread_id=thread_id,
-        breadcrumbs=breadcrumbs
+        breadcrumbs=breadcrumbs,
+        reporting_units=reporting_units
     )
 
 
