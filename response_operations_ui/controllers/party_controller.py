@@ -17,7 +17,7 @@ from response_operations_ui.forms import EditContactDetailsForm
 logger = wrap_logger(logging.getLogger(__name__))
 
 
-def get_business_by_ru_ref(ru_ref):
+def get_business_by_ru_ref(ru_ref: str):
     """
     Get business by ru_ref
 
@@ -42,7 +42,7 @@ def get_business_by_ru_ref(ru_ref):
     return response.json()
 
 
-def get_business_attributes_by_party_id(business_party_id, collection_exercise_ids=None):
+def get_business_attributes_by_party_id(business_party_id: str, collection_exercise_ids=None):
     """
     Gets the attributes for the business for each collection exercise.  The attributes are the data held
     on the business at the point it was enrolled onto each collection exercise.  If no exercises are specified
@@ -73,7 +73,7 @@ def get_business_attributes_by_party_id(business_party_id, collection_exercise_i
     return response.json()
 
 
-def get_business_by_party_id(business_party_id, collection_exercise_id=None):
+def get_business_by_party_id(business_party_id: str, collection_exercise_id=None):
     logger.info(
         "Retrieving business party", business_party_id=business_party_id, collection_exercise_id=collection_exercise_id
     )
@@ -175,7 +175,7 @@ def add_enrolment_status_for_respondent(respondent, ru_ref, survey_id):
     return {**respondent, "enrolmentStatus": enrolment_status}
 
 
-def get_respondent_enrolments(respondent, enrolment_status=None):
+def get_respondent_enrolments(respondent: dict, enrolment_status=None) -> list:
     enrolments = []
     if "associations" in respondent:
         for association in respondent["associations"]:

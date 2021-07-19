@@ -269,11 +269,10 @@ def get_change_reporting_unit(thread_id):
     else:
         party_id = thread["messages"][0]["msg_from"][0]
 
-    respondent_data = party_controller.get_respondent_by_party_id(party_id)
-    enrolments = respondent_data["associations"]["enrolments"]
-    reporting_unit_list = [ru_name for ru_name in enrolments]
+    respondent = party_controller.get_respondent_by_party_id(party_id)
+    enrolments = party_controller.get_respondent_enrolments(respondent)
+    reporting_units = [enrolment["business"] for enrolment in enrolments]
 
-    # render template
     breadcrumbs = [{"text": "Messages", "url": "/messages"}, {"text": "Filter by survey"}]
 
     return render_template(
@@ -281,7 +280,7 @@ def get_change_reporting_unit(thread_id):
         thread=thread,
         thread_id=thread_id,
         breadcrumbs=breadcrumbs,
-        reporting_unit_list=reporting_unit_list
+        reporting_units=reporting_units
     )
 
 
@@ -292,7 +291,7 @@ def post_change_reporting_unit(thread_id):  # noqa: C901
         logger.error("Change category page accessed while disabled.  Aborting")
         abort(404)
     thread = message_controllers.get_conversation(thread_id)
-    reporting_unit = request.form.get("reporting-unit")
+    reporting_unit = request.form.get("reporting-units")
     if reporting_unit:
         message_patch_payload = {"business_id": reporting_unit}
 
@@ -330,15 +329,14 @@ def post_change_reporting_unit(thread_id):  # noqa: C901
             del session["secure-message-change-survey-shortname"]
         return redirect(url_for("messages_bp.view_select_survey"))
 
-    error = "An option must be selected"
+    flash("An option must be selected", category="error")
     breadcrumbs = [{"text": "Messages", "url": "/messages"}, {"text": "Filter by survey"}]
 
     return render_template(
         "secure-message/change-reporting-unit.html",
         thread=thread,
         thread_id=thread_id,
-        breadcrumbs=breadcrumbs,
-        error=error
+        breadcrumbs=breadcrumbs
     )
 
 
