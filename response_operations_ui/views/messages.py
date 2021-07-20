@@ -1034,7 +1034,6 @@ def _process_non_survey_category_page(
             _refine(message)
             for message in message_controllers.get_thread_list(None, "", conversation_tab, page, limit, category)
         ]
-        print(messages)
         pagination = _get_pagination_object(page, limit, tab_counts)
 
         return render_template(
