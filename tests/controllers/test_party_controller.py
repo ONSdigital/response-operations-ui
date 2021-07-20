@@ -17,11 +17,29 @@ from response_operations_ui.exceptions.exceptions import (
 fake_response = namedtuple("Response", "status_code json")
 
 ru_ref = "49900000001"
+business_id = "b3ba864b-7cbc-4f44-84fe-88dc018a1a4c"
+business_id_2 = "cf3e316a-6644-43b0-a31f-c92b35132b94"
+survey_id = "cb0711c3-0ac8-41d3-ae0e-567e5ea1ef87"
+survey_id_2 = "06cad526-1b1b-41b8-b56b-032e637f0fbd"
 get_business_by_ru_ref_url = f"{TestingConfig.PARTY_URL}/party-api/v1/businesses/ref/{ru_ref}"
+get_business_by_id_url = f"{TestingConfig.PARTY_URL}/party-api/v1/businesses/id/"
+get_survey_by_id_url = f"{TestingConfig.SURVEY_URL}/surveys/"
 
 project_root = os.path.dirname(os.path.dirname(__file__))
 with open(f"{project_root}/test_data/party/get_business_by_ru_ref.json") as fp:
     business_by_ru_ref_json = json.load(fp)
+with open(f"{project_root}/test_data/party/business_party.json") as fp:
+    business_by_id_json = json.load(fp)
+with open(f"{project_root}/test_data/party/business_party_cf3e316a.json") as fp:
+    business_by_id_cf3e316a_json = json.load(fp)
+with open(f"{project_root}/test_data/party/respondent_party_multiple_associations.json") as fp:
+    respondent_json = json.load(fp)
+with open(f"{project_root}/test_data/party/get_respondent_enrolments_output.json") as fp:
+    expected_enrolments_output = json.load(fp)
+with open(f"{project_root}/test_data/survey/survey.json") as fp:
+    survey_json = json.load(fp)
+with open(f"{project_root}/test_data/survey/survey_06cad526.json") as fp:
+    survey_06cad526_json = json.load(fp)
 
 
 class TestPartyController(unittest.TestCase):
@@ -31,6 +49,17 @@ class TestPartyController(unittest.TestCase):
 
     def tearDown(self):
         pass
+
+    def test_get_respondent_enrolments(self):
+        with responses.RequestsMock() as rsps:
+            rsps.add(rsps.GET, get_business_by_id_url + business_id, json=business_by_id_json)
+            rsps.add(rsps.GET, get_business_by_id_url + business_id_2, json=business_by_id_cf3e316a_json)
+            rsps.add(rsps.GET, get_survey_by_id_url + survey_id, json=survey_json)
+            rsps.add(rsps.GET, get_survey_by_id_url + survey_id_2, json=survey_06cad526_json)
+
+            with self.app.app_context():
+                output = party_controller.get_respondent_enrolments(respondent_json)
+            self.assertEqual(output, expected_enrolments_output)
 
     @mock.patch("requests.get")
     def test_import_search_respondents_raises_error_when_request_to_party_fails(self, requests_mock):
