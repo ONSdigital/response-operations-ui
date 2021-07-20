@@ -113,8 +113,7 @@ def view_conversation(thread_id):
         )
 
     thread_conversation = message_controllers.get_conversation(thread_id)
-    category = thread_conversation["category"]
-    refined_thread = [_refine(message, category) for message in reversed(thread_conversation["messages"])]
+    refined_thread = [_refine(message) for message in reversed(thread_conversation["messages"])]
     latest_message = refined_thread[-1]
     closed_at = _format_closed_at(thread_conversation)
     breadcrumbs = _get_conversation_breadcrumbs(thread_conversation["messages"])
@@ -123,6 +122,7 @@ def view_conversation(thread_id):
     for message in refined_thread:
         if "Deleted respondent" in message["username"]:
             respondent_is_deleted = True
+
     if latest_message["unread"] and _can_mark_as_unread(latest_message):
         message_controllers.remove_unread_label(latest_message["message_id"])
 
@@ -134,7 +134,7 @@ def view_conversation(thread_id):
         g.form_body_data = form.body.data
 
         try:
-            if category != "SURVEY":
+            if thread_conversation["category"] != "SURVEY":
                 message_controllers.send_message(
                     _get_non_survey_message_json(
                         form, thread_id=refined_thread[0]["thread_id"], category=thread_conversation["category"]
@@ -709,7 +709,7 @@ def _get_message_subject(thread: dict):
         return None
 
 
-def _refine(message: dict, category: str = "SURVEY") -> dict:
+def _refine(message: dict) -> dict:
     """
     Refine a message into a cleaner version that can be more easily used by the display layer
     :param message: A message from secure-message
@@ -719,7 +719,7 @@ def _refine(message: dict, category: str = "SURVEY") -> dict:
         "subject": _get_message_subject(message),
         "body": message.get("body"),
         "internal": message.get("from_internal"),
-        "username": _get_user_summary_for_message(message, category),
+        "username": _get_user_summary_for_message(message),
         "survey_id": message.get("survey_id"),
         "ru_ref": _get_ru_ref_from_message(message),
         "to_id": _get_to_id(message),
@@ -785,26 +785,10 @@ def _get_vacancies_survey_ids() -> list[str]:
     return [survey_controllers.get_survey_id_by_short_name(vacancies_survey) for vacancies_survey in VACANCIES_LIST]
 
 
-def _get_user_summary_for_message(message: dict, category: str) -> str:
+def _get_user_summary_for_message(message: dict) -> str:
     if message.get("from_internal"):
         return _get_from_name(message)
-    elif category == "SURVEY":
-        return f"{_get_from_name(message)} - {_get_ru_ref_from_message(message)}"
-    else:
-        return f"{_get_from_name(message)} - {_get_from_email_(message)}"
-
-
-def _get_from_email_(message: dict) -> str:
-    """
-    Returns the email address of the from message
-    :param message: a dict that represents a message
-    :return: an string containing the email or an empty string
-    """
-    if message.get("@msg_from"):
-        email = message["@msg_from"].get("emailAddress")
-    else:
-        email = ""
-    return email
+    return f"{_get_from_name(message)} - {_get_ru_ref_from_message(message)}"
 
 
 def _get_from_name(message):
@@ -1034,7 +1018,6 @@ def _process_non_survey_category_page(
             _refine(message)
             for message in message_controllers.get_thread_list(None, "", conversation_tab, page, limit, category)
         ]
-        print(messages)
         pagination = _get_pagination_object(page, limit, tab_counts)
 
         return render_template(
