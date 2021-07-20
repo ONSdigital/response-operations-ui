@@ -835,7 +835,7 @@ def _get_to_id(message: dict) -> str:
 def _get_to_name(message: dict) -> str:
     try:
         if message.get("msg_to")[0] == "GROUP":
-            if get_survey_short_name_by_id(message.get("survey_id")):
+            if message.get("survey_id") and get_survey_short_name_by_id(message.get("survey_id")):
                 return f"{get_survey_short_name_by_id(message.get('survey_id'))} Team"
             return "ONS"
         return f"{message.get('@msg_to')[0].get('firstName')} {message.get('@msg_to')[0].get('lastName')}"
