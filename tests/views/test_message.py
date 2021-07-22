@@ -33,7 +33,7 @@ iac_2 = "ljbgg3kgstr4"
 url_get_business_by_ru_ref = f"{TestingConfig.PARTY_URL}/party-api/v1/businesses/ref/"
 url_get_business_by_id = f"{TestingConfig.PARTY_URL}/party-api/v1/businesses/id/"
 url_get_respondent_party_by_list = f"{TestingConfig.PARTY_URL}/party-api/v1/respondents?id={respondent_party_id}"
-url_get_respondent_party_by_id = f"{TestingConfig.PARTY_URL}/party-api/v1/respondents/id/{respondent_party_id}"
+url_get_respondent_party_by_id = f"{TestingConfig.PARTY_URL}/party-api/v1/respondents/id/"
 url_get_business_attributes = f"{TestingConfig.PARTY_URL}/party-api/v1/businesses/id/{business_party_id}/attributes"
 
 shortname_url = f"{TestingConfig.SURVEY_URL}/surveys/shortname"
@@ -115,6 +115,9 @@ with open(f"{project_root}/test_data/party/business_party.json") as fp:
 
 with open(f"{project_root}/test_data/survey/single_survey.json") as fp:
     survey = json.load(fp)
+
+with open(f"{project_root}/test_data/survey/survey_02b9c366.json") as fp:
+    survey_02b9c366 = json.load(fp)
 
 with open(f"{project_root}/test_data/party/respondent_party.json") as fp:
     respondent_party = json.load(fp)
@@ -712,16 +715,7 @@ class TestMessage(ViewTestCase):
     def test_change_reporting_unit(self, mock_request, mock_get_jwt):
         mock_get_jwt.return_value = "blah"
         mock_request.get(url_get_thread, json=thread_json)
-        survey_response = {
-            "id": "02b9c366-7397-42f7-942a-76dc5876d86d",
-            "shortName": "BRES",
-            "longName": "Business Register and Employment Survey",
-            "surveyRef": "221",
-            "legalBasis": "Statistics of Trade Act 1947",
-            "legalBasisRef": "STA1947",
-            "surveyMode": "SEFT",
-        }
-        mock_request.get(url_get_survey_by_id_3, json=survey_response)
+        mock_request.get(url_get_survey_by_id_3, json=survey_02b9c366)
         party_response = {
             "associations": [
                 {
@@ -733,13 +727,14 @@ class TestMessage(ViewTestCase):
             ],
             "emailAddress": "example@example.com",
             "firstName": "john",
-            "id": "cd592e0f-8d07-407b-b75d-e01fbdae8233",
+            "id": "0d7b3e2e-4c0c-4479-a002-09f8328f7292",
             "lastName": "doe",
             "sampleUnitType": "BI",
             "status": "ACTIVE",
             "telephone": "07772257772",
         }
-        mock_request.get(url_get_respondent_party_by_id, json=party_response)
+        respondent_id = "0d7b3e2e-4c0c-4479-a002-09f8328f7292"
+        mock_request.get(url_get_respondent_party_by_id + respondent_id, json=party_response)
         mock_request.get(url_get_business_by_id + business_party_id, json=business_party)
 
         response = self.client.get("/messages/threads/fb0e79bd-e132-4f4f-a7fd-5e8c6b41b9af/change-reporting-unit")

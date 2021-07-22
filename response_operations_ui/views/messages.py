@@ -341,7 +341,7 @@ def get_respondent_enrolments_from_thread(thread: dict) -> list[dict]:
     if thread["messages"][0]["from_internal"]:
         party_id = thread["messages"][0]["msg_to"][0]
     else:
-        party_id = thread["messages"][0]["msg_from"][0]
+        party_id = thread["messages"][0]["msg_from"]
     respondent = party_controller.get_respondent_by_party_id(party_id)
     enrolments = party_controller.get_respondent_enrolments(respondent)
     reporting_units = [enrolment["business"] for enrolment in enrolments]
