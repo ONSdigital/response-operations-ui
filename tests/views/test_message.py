@@ -25,17 +25,21 @@ collection_exercise_id_1 = "14fb3e68-4dca-46db-bf49-04b84e07e77c"
 collection_exercise_id_2 = "9af403f8-5fc5-43b1-9fca-afbd9c65da5c"
 survey_id_1 = "cb0711c3-0ac8-41d3-ae0e-567e5ea1ef87"
 survey_id_2 = "6aa8896f-ced5-4694-800c-6cd661b0c8b2"
+survey_id_3 = "02b9c366-7397-42f7-942a-76dc5876d86d"
 ru_ref = "50012345678"
 iac_1 = "jkbvyklkwj88"
 iac_2 = "ljbgg3kgstr4"
 
 url_get_business_by_ru_ref = f"{TestingConfig.PARTY_URL}/party-api/v1/businesses/ref/"
+url_get_business_by_id = f"{TestingConfig.PARTY_URL}/party-api/v1/businesses/id/"
 url_get_respondent_party_by_list = f"{TestingConfig.PARTY_URL}/party-api/v1/respondents?id={respondent_party_id}"
+url_get_respondent_party_by_id = f"{TestingConfig.PARTY_URL}/party-api/v1/respondents/id/"
 url_get_business_attributes = f"{TestingConfig.PARTY_URL}/party-api/v1/businesses/id/{business_party_id}/attributes"
 
 shortname_url = f"{TestingConfig.SURVEY_URL}/surveys/shortname"
 url_get_surveys_list = f"{TestingConfig.SURVEY_URL}/surveys/surveytype/Business"
 url_get_survey_by_id = f"{TestingConfig.SURVEY_URL}/surveys/{survey_id_1}"
+url_get_survey_by_id_3 = f"{TestingConfig.SURVEY_URL}/surveys/{survey_id_3}"
 
 url_get_thread = f"{TestingConfig.SECURE_MESSAGE_URL}/threads/fb0e79bd-e132-4f4f-a7fd-5e8c6b41b9af"
 url_get_threads_list = f"{TestingConfig.SECURE_MESSAGE_URL}/threads"
@@ -106,8 +110,17 @@ with open(f"{project_root}/test_data/collection_exercise/collection_exercise_2.j
 with open(f"{project_root}/test_data/party/business_attributes.json") as fp:
     business_attributes = json.load(fp)
 
+with open(f"{project_root}/test_data/party/business_party.json") as fp:
+    business_party = json.load(fp)
+
 with open(f"{project_root}/test_data/survey/single_survey.json") as fp:
     survey = json.load(fp)
+
+with open(f"{project_root}/test_data/survey/survey_02b9c366.json") as fp:
+    survey_02b9c366 = json.load(fp)
+
+with open(f"{project_root}/test_data/party/respondent_party.json") as fp:
+    respondent_party = json.load(fp)
 
 with open(f"{project_root}/test_data/party/respondent_party_list.json") as fp:
     respondent_party_list = json.load(fp)
@@ -696,6 +709,39 @@ class TestMessage(ViewTestCase):
         with self.assertRaises(Exception) as raises:
             self.client.post("/messages/create-message", data=malformed_ru_details)
             self.assertEqual(raises.exception.message, "Failed to load create message page")
+
+    @requests_mock.mock()
+    @patch("response_operations_ui.controllers.message_controllers._get_jwt")
+    def test_change_reporting_unit(self, mock_request, mock_get_jwt):
+        mock_get_jwt.return_value = "blah"
+        mock_request.get(url_get_thread, json=thread_json)
+        mock_request.get(url_get_survey_by_id_3, json=survey_02b9c366)
+        party_response = {
+            "associations": [
+                {
+                    "businessRespondentStatus": "ACTIVE",
+                    "enrolments": [{"enrolmentStatus": "ENABLED", "surveyId": "02b9c366-7397-42f7-942a-76dc5876d86d"}],
+                    "partyId": "b3ba864b-7cbc-4f44-84fe-88dc018a1a4c",
+                    "sampleUnitRef": "49900000001",
+                },
+            ],
+            "emailAddress": "example@example.com",
+            "firstName": "john",
+            "id": "0d7b3e2e-4c0c-4479-a002-09f8328f7292",
+            "lastName": "doe",
+            "sampleUnitType": "BI",
+            "status": "ACTIVE",
+            "telephone": "07772257772",
+        }
+        respondent_id = "0d7b3e2e-4c0c-4479-a002-09f8328f7292"
+        mock_request.get(url_get_respondent_party_by_id + respondent_id, json=party_response)
+        mock_request.get(url_get_business_by_id + business_party_id, json=business_party)
+
+        response = self.client.get("/messages/threads/fb0e79bd-e132-4f4f-a7fd-5e8c6b41b9af/change-reporting-unit")
+
+        self.assertEqual(response.status_code, 200)
+        self.assertIn("Assign a reporting unit to the thread".encode(), response.data)
+        self.assertIn("Bolts and Ratchets Ltd".encode(), response.data)
 
     @requests_mock.mock()
     @patch("response_operations_ui.controllers.message_controllers._get_jwt")

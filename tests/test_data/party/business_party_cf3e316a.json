@@ -1,0 +1,24 @@
+{
+    "associations": [
+        {
+            "businessRespondentStatus": "ACTIVE",
+            "enrolments": [
+                  {
+                      "enrolmentStatus": "ENABLED",
+                      "surveyId": "cb0711c3-0ac8-41d3-ae0e-567e5ea1ef87"
+                  },
+                  {
+                      "enrolmentStatus": "ENABLED",
+                      "surveyId": "06cad526-1b1b-41b8-b56b-032e637f0fbd"
+                  }
+            ],
+            "partyId": "cd592e0f-8d07-407b-b75d-e01fbdae8233"
+        }
+    ],
+    "id": "cf3e316a-6644-43b0-a31f-c92b35132b94",
+    "name": "RUNAME1_COMPANY1 RUNNAME2_COMPANY1",
+    "sampleSummaryId": "5913ef77-1632-421f-baa0-b0e881aa7752",
+    "sampleUnitRef": "60098765432",
+    "sampleUnitType": "B",
+    "trading_as": "TOTAL UK ACTIVITY"
+}
