@@ -27,7 +27,8 @@
         "id": "f1a5e99c-8edf-489a-9c72-6cabe6c387fc",
         "name": "Apple",
         "sampleUnitRef": "50012345678"
-      }
+      },
+      "from_internal": false
     }
   ]
 }
