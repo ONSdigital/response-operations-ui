@@ -113,17 +113,16 @@ def view_conversation(thread_id):
         )
 
     thread_conversation = message_controllers.get_conversation(thread_id)
-    refined_thread = [_refine(message) for message in reversed(thread_conversation["messages"])]
+    category = thread_conversation["category"]
+    refined_thread = [_refine(message, category) for message in reversed(thread_conversation["messages"])]
     latest_message = refined_thread[-1]
     closed_at = _format_closed_at(thread_conversation)
     breadcrumbs = _get_conversation_breadcrumbs(thread_conversation["messages"])
     respondent_is_deleted = False
     change_category_enabled = current_app.config["CHANGE_CATEGORY_ENABLED"]
-
     for message in refined_thread:
         if "Deleted respondent" in message["username"]:
             respondent_is_deleted = True
-
     if latest_message["unread"] and _can_mark_as_unread(latest_message):
         message_controllers.remove_unread_label(latest_message["message_id"])
 
@@ -135,7 +134,14 @@ def view_conversation(thread_id):
         g.form_body_data = form.body.data
 
         try:
-            message_controllers.send_message(_get_message_json(form, thread_id=refined_thread[0]["thread_id"]))
+            if category != "SURVEY":
+                message_controllers.send_message(
+                    _get_non_survey_message_json(
+                        form, thread_id=refined_thread[0]["thread_id"], category=thread_conversation["category"]
+                    )
+                )
+            else:
+                message_controllers.send_message(_get_message_json(form, thread_id=refined_thread[0]["thread_id"]))
             thread_url = (
                 url_for(
                     "messages_bp.view_conversation",
@@ -454,11 +460,9 @@ def clear_filter(selected_survey):
 def view_technical_inbox():  # noqa: C901
     session["messages_survey_selection"] = "technical"
     breadcrumbs = [{"text": "Technical" + " Messages"}]
-    return _process_category_page(
+    return _process_non_survey_category_page(
         render_html="secure-message/technical-inbox.html",
         redirect_url="messages_bp.view_technical_inbox",
-        selected_survey="technical",
-        displayed_short_name="Technical",
         breadcrumbs=breadcrumbs,
         category="TECHNICAL",
     )
@@ -591,6 +595,7 @@ def close_conversation(thread_id):
     page = request.args.get("page")
     ru_ref_filter = request.args.get("ru_ref_filter")
     business_id_filter = request.args.get("business_id_filter")
+    category = request.args.get("category")
 
     if request.method == "POST":
         payload = {"is_closed": True}
@@ -632,6 +637,7 @@ def close_conversation(thread_id):
         conversation_tab=conversation_tab,
         ru_ref_filter=ru_ref_filter,
         business_id_filter=business_id_filter,
+        category=category,
     )
 
 
@@ -640,11 +646,9 @@ def close_conversation(thread_id):
 def view_misc_inbox():  # noqa: C901
     session["messages_survey_selection"] = "misc"
     breadcrumbs = [{"text": "Miscellaneous" + " Messages"}]
-    return _process_category_page(
+    return _process_non_survey_category_page(
         render_html="secure-message/misc-inbox.html",
         redirect_url="messages_bp.view_misc_inbox",
-        selected_survey="misc",
-        displayed_short_name="Miscellaneous",
         breadcrumbs=breadcrumbs,
         category="MISC",
     )
@@ -731,6 +735,19 @@ def _get_message_json(form, thread_id=""):
     )
 
 
+def _get_non_survey_message_json(form, thread_id="", category=""):
+    return json.dumps(
+        {
+            "msg_from": current_user.id,
+            "msg_to": [form.hidden_to_uuid.data],
+            "subject": form.subject.data,
+            "body": form.body.data,
+            "thread_id": thread_id,
+            "category": category,
+        }
+    )
+
+
 def _populate_hidden_form_fields_from_post(current_view_form: SecureMessageForm, calling_form):
     """
     :param current_view_form: is the form just create when land in the view
@@ -769,7 +786,7 @@ def _get_message_subject(thread: dict):
         return None
 
 
-def _refine(message: dict) -> dict:
+def _refine(message: dict, category: str = "SURVEY") -> dict:
     """
     Refine a message into a cleaner version that can be more easily used by the display layer
     :param message: A message from secure-message
@@ -779,7 +796,7 @@ def _refine(message: dict) -> dict:
         "subject": _get_message_subject(message),
         "body": message.get("body"),
         "internal": message.get("from_internal"),
-        "username": _get_user_summary_for_message(message),
+        "username": _get_user_summary_for_message(message, category),
         "survey_id": message.get("survey_id"),
         "ru_ref": _get_ru_ref_from_message(message),
         "to_id": _get_to_id(message),
@@ -792,6 +809,19 @@ def _refine(message: dict) -> dict:
         "message_id": message.get("msg_id"),
         "business_id": message.get("business_id"),
     }
+    if message.get("@msg_from"):
+        refined_message["from_email"] = message["@msg_from"].get("emailAddress")
+    else:
+        refined_message["from_email"] = ""
+    if message.get("@msg_to"):
+        refined_message["to_email"] = message["@msg_to"][0].get("emailAddress")
+    else:
+        refined_message["to_email"] = ""
+
+    if message.get("from_internal"):
+        refined_message["from_internal"] = message["from_internal"]
+    else:
+        refined_message["from_internal"] = False
 
     if message.get("survey_id"):
         refined_message["survey"] = get_survey_short_name_by_id(message.get("survey_id"))
@@ -832,10 +862,26 @@ def _get_vacancies_survey_ids() -> list[str]:
     return [survey_controllers.get_survey_id_by_short_name(vacancies_survey) for vacancies_survey in VACANCIES_LIST]
 
 
-def _get_user_summary_for_message(message: dict) -> str:
+def _get_user_summary_for_message(message: dict, category: str) -> str:
     if message.get("from_internal"):
         return _get_from_name(message)
-    return f"{_get_from_name(message)} - {_get_ru_ref_from_message(message)}"
+    elif category == "SURVEY":
+        return f"{_get_from_name(message)} - {_get_ru_ref_from_message(message)}"
+    else:
+        return f"{_get_from_name(message)} - {_get_from_email_(message)}"
+
+
+def _get_from_email_(message: dict) -> str:
+    """
+    Returns the email address of the from message
+    :param message: a dict that represents a message
+    :return: an string containing the email or an empty string
+    """
+    if message.get("@msg_from"):
+        email = message["@msg_from"].get("emailAddress")
+    else:
+        email = ""
+    return email
 
 
 def _get_from_name(message):
@@ -866,7 +912,7 @@ def _get_to_id(message: dict) -> str:
 def _get_to_name(message: dict) -> str:
     try:
         if message.get("msg_to")[0] == "GROUP":
-            if get_survey_short_name_by_id(message.get("survey_id")):
+            if message.get("survey_id") and get_survey_short_name_by_id(message.get("survey_id")):
                 return f"{get_survey_short_name_by_id(message.get('survey_id'))} Team"
             return "ONS"
         return f"{message.get('@msg_to')[0].get('firstName')} {message.get('@msg_to')[0].get('lastName')}"
@@ -1022,6 +1068,66 @@ def _process_category_page(
             breadcrumbs=breadcrumbs,
             selected_survey=selected_survey,
             displayed_short_name=displayed_short_name,
+            response_error=True,
+            tab_titles=_get_tab_titles(),
+        )
+
+
+def _process_non_survey_category_page(
+    render_html: str,
+    redirect_url: str,
+    breadcrumbs: list,
+    category: str,
+):
+    """
+    This method processes message category selected and returns appropriate inbox.
+    :param render_html:
+    :param redirect_url:
+    :param breadcrumbs:
+    :param category:
+    :return: Returns a response object
+    :rtype: WSGI application
+    """
+    page = request.args.get("page", default=1, type=int)
+    limit = request.args.get("limit", default=10, type=int)
+    conversation_tab = request.args.get("conversation_tab", default="open")
+    category = category
+    try:
+
+        tab_counts = _get_tab_counts("", conversation_tab, "", None, category)
+
+        # If the page is higher then possible, redirect users to the highest possible page.
+        recalculated_page = _verify_requested_page_is_within_bounds(page, limit, tab_counts["current"])
+        if recalculated_page != page:
+            return redirect(
+                url_for(
+                    redirect_url,
+                    conversation_tab=conversation_tab,
+                    page=recalculated_page,
+                )
+            )
+
+        messages = [
+            _refine(message)
+            for message in message_controllers.get_thread_list(None, "", conversation_tab, page, limit, category)
+        ]
+        pagination = _get_pagination_object(page, limit, tab_counts)
+
+        return render_template(
+            render_html,
+            page=page,
+            breadcrumbs=breadcrumbs,
+            messages=messages,
+            pagination=pagination,
+            conversation_tab=conversation_tab,
+            tab_titles=_get_tab_titles(tab_counts, ""),
+        )
+
+    except (TypeError, KeyError):
+        logger.error("Failed to retrieve messages", exc_info=True)
+        return render_template(
+            render_html,
+            breadcrumbs=breadcrumbs,
             response_error=True,
             tab_titles=_get_tab_titles(),
         )

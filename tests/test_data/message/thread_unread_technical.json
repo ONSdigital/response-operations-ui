@@ -1,5 +1,5 @@
 {
-  "category": "SURVEY",
+  "category": "TECHNICAL",
   "is_closed": false,
   "closed_by": null,
   "closed_by_uuid": null,
@@ -23,11 +23,6 @@
           "lastName": ""
         }
       ],
-      "@business_details": {
-        "id": "f1a5e99c-8edf-489a-9c72-6cabe6c387fc",
-        "name": "Apple",
-        "sampleUnitRef": "50012345678"
-      },
       "_links": {
         "self": {
           "href": "http://localhost:5050/message/ae46748b-c6e6-4859-a57a-86e01db2dcbc"
@@ -46,9 +41,7 @@
       "msg_to": [
         "GROUP"
       ],
-      "business_id": "f1a5e99c-8edf-489a-9c72-6cabe6c387fc",
       "subject": "Unread Message Subject",
-      "survey_id": "6aa8896f-ced5-4694-800c-6cd661b0c8b2",
       "thread_id": "ae46748b-c6e6-4859-a57a-86e01db2dcbc",
       "from_internal": false
     }
