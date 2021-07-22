@@ -233,20 +233,10 @@ def post_change_thread_category(thread_id):  # noqa: C901
     if form.validate():
         category = form.category.data
 
-        # Do this part first. It's the most 'risky' as it does multiple calls
+        # If the category is SURVEY then we need to go to another page to set the business_id for the thread also.
         if category == "SURVEY":
-            selected_survey = form.select_survey.data
-            survey_id = survey_controllers.get_survey_id_by_short_name(selected_survey)
-            if thread["messages"][0]["survey_id"] != survey_id:
-                for message in thread["messages"]:
-                    message_id = message["msg_id"]
-                    try:
-                        message_payload = {"survey_id": survey_id}
-                        message_controllers.patch_message(message_id, message_payload)
-                    except ApiError:
-                        flash("Something went wrong updating the survey.  Please try again.", category="error")
-                        return redirect(url_for("messages_bp.get_change_thread_category", thread_id=thread_id))
-            flash("The survey has been successfully updated.")
+            session["secure-message-change-survey-shortname"] = form.select_survey.data
+            return redirect(url_for("messages_bp.get_change_reporting_unit", thread_id=thread_id))
 
         payload = {"category": category}
         try:
@@ -269,6 +259,93 @@ def post_change_thread_category(thread_id):  # noqa: C901
         survey_list=survey_list,
         form=form,
     )
+
+
+@messages_bp.route("/threads/<thread_id>/change-reporting-unit", methods=["GET"])
+@login_required
+def get_change_reporting_unit(thread_id):
+    if not current_app.config["CHANGE_CATEGORY_ENABLED"]:
+        logger.error("Change category page accessed while disabled.  Aborting")
+        abort(404)
+    thread = message_controllers.get_conversation(thread_id)
+    reporting_units = get_respondent_enrolments_from_thread(thread)
+
+    breadcrumbs = [{"text": "Messages", "url": "/messages"}, {"text": "Filter by survey"}]
+
+    return render_template(
+        "secure-message/change-reporting-unit.html",
+        thread=thread,
+        thread_id=thread_id,
+        breadcrumbs=breadcrumbs,
+        reporting_units=reporting_units,
+    )
+
+
+@messages_bp.route("/threads/<thread_id>/change-reporting-unit", methods=["POST"])
+@login_required
+def post_change_reporting_unit(thread_id):  # noqa: C901
+    if not current_app.config["CHANGE_CATEGORY_ENABLED"]:
+        logger.error("Change category page accessed while disabled.  Aborting")
+        abort(404)
+    thread = message_controllers.get_conversation(thread_id)
+    reporting_unit = request.form.get("reporting-units")
+    if reporting_unit:
+        message_patch_payload = {"business_id": reporting_unit}
+
+        # You can come to this page after changing a thread category to SURVEY, so we'll add the survey_id to
+        # the message patch
+        survey_shortname = session.get("secure-message-change-survey-shortname")
+        if survey_shortname:
+            survey_id = survey_controllers.get_survey_id_by_short_name(survey_shortname)
+            message_patch_payload["survey_id"] = survey_id
+
+        # Patch messages first. It's the most 'risky' as it does multiple calls
+        for message in thread["messages"]:
+            message_id = message["msg_id"]
+            try:
+                message_controllers.patch_message(message_id, message_patch_payload)
+            except ApiError:
+                flash("Something went wrong updating the survey.  Please try again.", category="error")
+                return redirect(url_for("messages_bp.get_change_reporting_unit", thread_id=thread_id))
+
+        flash("The survey has been successfully updated.")
+
+        # Next, if there a survey_id in the session, patch the category to SURVEY as that's the only thing
+        # it can be
+        if survey_shortname:
+            payload = {"category": "SURVEY"}
+            try:
+                message_controllers.patch_thread(thread_id, payload)
+            except ApiError:
+                flash("Something went wrong updating the category. Please try again.", category="error")
+                return redirect(url_for("messages_bp.get_change_thread_category", thread_id=thread_id))
+            flash("The category has been successfully updated")
+            del session["secure-message-change-survey-shortname"]
+
+        return redirect(url_for("messages_bp.view_select_survey"))
+
+    flash("An option must be selected", category="error")
+    reporting_units = get_respondent_enrolments_from_thread(thread)
+    breadcrumbs = [{"text": "Messages", "url": "/messages"}, {"text": "Filter by survey"}]
+
+    return render_template(
+        "secure-message/change-reporting-unit.html",
+        thread=thread,
+        thread_id=thread_id,
+        breadcrumbs=breadcrumbs,
+        reporting_units=reporting_units,
+    )
+
+
+def get_respondent_enrolments_from_thread(thread: dict) -> list[dict]:
+    if thread["messages"][0]["from_internal"]:
+        party_id = thread["messages"][0]["msg_to"][0]
+    else:
+        party_id = thread["messages"][0]["msg_from"]
+    respondent = party_controller.get_respondent_by_party_id(party_id)
+    enrolments = party_controller.get_respondent_enrolments(respondent)
+    reporting_units = [enrolment["business"] for enrolment in enrolments]
+    return reporting_units
 
 
 @messages_bp.route("/mark_unread/<message_id>", methods=["GET"])
