@@ -22,7 +22,8 @@
         "name": "Apple",
         "sampleUnitRef": "50012345678"
       },
-      "sent_date": "2017-10-03 15:51:32.961321"
+      "sent_date": "2017-10-03 15:51:32.961321",
+      "from_internal": false
     }
   ]
 }

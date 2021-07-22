@@ -1,12 +1,37 @@
 {% from "components/metadata/_macro.njk" import onsMetadata %}
-{% set surveyDescription = messages[0].get('survey') + ' ' + messages[0].get('survey_ref') if messages[0].get('survey') %}
+{% set surveyDescription = messages[0].get('survey') + ' ' + messages[0].get('survey_ref') if messages[0].get('survey') else '' %}
 {% set categoryDescription = ' (' + thread_data.category + ') ' if thread_data.category != 'SURVEY' else '' %}
 {% if change_category_enabled %}
   {% set description = surveyDescription + categoryDescription + ' <a href="' + url_for('messages_bp.get_change_thread_category', thread_id=messages[0]['thread_id']) + '">Assign a survey or category</a>' %}
 {% else %}
   {% set description = surveyDescription + categoryDescription %}
 {% endif %}
-<div class="grid grid--gutterless">
+{% if thread_data.category != 'SURVEY' %}
+  <div class="grid grid--gutterless">
+    <div class="grid__col col-10@m">
+        {{ 
+            onsMetadata({
+                "metadataLabel": "Information about the category",
+                "termCol": "3",
+                "descriptionCol": "9",
+                "itemsList": [
+                    {
+                        "term": "Category:",
+                        "descriptions": [ 
+                            {
+                                "description": description,
+                                "id": "survey"
+                            }
+                        ]
+                    }
+                ]
+            }) 
+        }}
+
+    </div>
+</div>
+{% else %}
+  <div class="grid grid--gutterless">
     <div class="grid__col col-10@m">
         {{ 
             onsMetadata({
@@ -47,3 +72,5 @@
 
     </div>
 </div>
+{% endif %}
+

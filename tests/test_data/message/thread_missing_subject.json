@@ -50,7 +50,7 @@
                "body": "Need more information on project",
                "case_id": "",
                "collection_exercise": "",
-               "from_internal": "False",
+               "from_internal": false,
                "labels": ["SENT"],
                "msg_from": "0d7b3e2e-4c0c-4479-a002-09f8328f7292",
                "msg_id": "fb0e79bd-e132-4f4f-a7fd-5e8c6b41b9af",
