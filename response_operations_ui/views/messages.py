@@ -631,7 +631,7 @@ def close_conversation(thread_id):
         subject=refined_thread[0]["subject"],
         business=refined_thread[0]["business_name"],
         ru_ref=refined_thread[0]["ru_ref"],
-        respondent=refined_thread[0]["to"],
+        respondent=refined_thread[0]["to"] if refined_thread[0]["internal"] is True else refined_thread[0]["from"],
         thread_id=thread_id,
         page=page,
         conversation_tab=conversation_tab,

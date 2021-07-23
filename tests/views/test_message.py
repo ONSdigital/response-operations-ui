@@ -1020,6 +1020,7 @@ class TestMessage(ViewTestCase):
         self.assertEqual(200, response.status_code)
         self.assertIn("Conversation closed".encode(), response.data)
         self.assertIn("Ashe Messages".encode(), response.data)
+        self.assertIn("John Example".encode(), response.data)
 
     @requests_mock.mock()
     @patch("response_operations_ui.controllers.message_controllers._get_jwt")
@@ -1139,7 +1140,7 @@ class TestMessage(ViewTestCase):
     @requests_mock.mock()
     @patch("response_operations_ui.controllers.message_controllers._get_jwt")
     def test_closeing_conversation_returns_to_previous_tab_if_page_is_now_too_high(self, mock_request, mock_get_jwt):
-        """if a conversation is closed then it will dissapear from some tabs. That could mean that the page number
+        """if a conversation is closed then it will disappear from some tabs. That could mean that the page number
         specified is now too high, this test validates that if that is the case then the previous page is used"""
 
         limit = 10
