@@ -118,6 +118,52 @@ def get_respondent_by_party_id(respondent_party_id):
     return response.json()
 
 
+def get_pending_surveys_by_party_id(respondent_party_id):
+    logger.info("Retrieving pending surveys", respondent_party_id=respondent_party_id)
+    url = f'{app.config["PARTY_URL"]}/party-api/v1/pending-surveys/originator/{respondent_party_id}'
+    response = requests.get(url, auth=app.config["BASIC_AUTH"])
+    try:
+        response.raise_for_status()
+    except requests.exceptions.HTTPError:
+        log_level = logger.warning if response.status_code in (400, 404) else logger.exception
+        log_level("Error retrieving pending surveys", respondent_party_id=respondent_party_id)
+        if response.status_code == 404:
+            return {}
+        raise ApiError(response)
+
+    logger.info("Successfully retrieved pending surveys", respondent_party_id=respondent_party_id)
+    return response.json()
+
+
+def delete_pending_surveys_by_batch_number(batch_number):
+    logger.info("Deleting pending surveys", batch_number=batch_number)
+    url = f'{app.config["PARTY_URL"]}/party-api/v1/pending-surveys/{batch_number}'
+    response = requests.delete(url, auth=app.config["BASIC_AUTH"])
+    try:
+        response.raise_for_status()
+    except requests.exceptions.HTTPError:
+        log_level = logger.warning if response.status_code in (400, 404) else logger.exception
+        log_level("Error deleting pending survey", batch_number=batch_number)
+        raise ApiError(response)
+
+    logger.info("Successfully deleted pending surveys", batch_number=batch_number)
+
+
+def resend_pending_surveys_email(batch_number):
+    logger.info("Resending pending survey email", batch_number=batch_number)
+    url = f'{app.config["PARTY_URL"]}/party-api/v1/pending-surveys/resend-email'
+    response = requests.post(url, json={"batch_number": batch_number}, auth=app.config["BASIC_AUTH"])
+    try:
+        response.raise_for_status()
+    except requests.exceptions.HTTPError:
+        log_level = logger.warning if response.status_code in (400, 404) else logger.exception
+        log_level("Error sending pending survey email", batch_number=batch_number)
+        return {}
+
+    logger.info("Successfully resend pending survey email", batch_number=batch_number)
+    return response.json()
+
+
 def get_respondent_by_party_ids(uuids):
     """
     Gets data for multiple respondents from party.  If the list is empty, returns an empty
