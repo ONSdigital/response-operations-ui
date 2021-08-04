@@ -1,23 +1,25 @@
 import logging
+from datetime import datetime
 
 from flask import Blueprint
 from flask import current_app as app
 from flask import flash, redirect, render_template, request, url_for
 from flask_login import login_required
 from flask_paginate import Pagination
-from datetime import datetime
-
-from iso8601 import parse_date, ParseError
+from iso8601 import ParseError, parse_date
 from structlog import wrap_logger
 
 from response_operations_ui.common.respondent_utils import filter_respondents
 from response_operations_ui.controllers import (
     party_controller,
     reporting_units_controllers,
-    respondent_controllers, survey_controllers,
+    respondent_controllers,
+    survey_controllers,
 )
-from response_operations_ui.controllers.party_controller import resend_pending_surveys_email, \
-    delete_pending_surveys_by_batch_number
+from response_operations_ui.controllers.party_controller import (
+    delete_pending_surveys_by_batch_number,
+    resend_pending_surveys_email,
+)
 from response_operations_ui.forms import EditContactDetailsForm, RespondentSearchForm
 
 logger = wrap_logger(logging.getLogger(__name__))
@@ -105,7 +107,7 @@ def confirm_delete_pending_surveys(respondent_id, batch_number):
         batch_number=batch_number,
         respondent_id=respondent_id,
         recipient_email=request.args["recipient_email"],
-        is_transfer=request.args["is_transfer"]
+        is_transfer=request.args["is_transfer"],
     )
 
 
@@ -113,24 +115,23 @@ def confirm_delete_pending_surveys(respondent_id, batch_number):
 @login_required
 def delete_pending_surveys(respondent_id, batch_number):
     delete_pending_surveys_by_batch_number(batch_number)
-    if request.args["is_transfer"] == 'True':
+    if request.args["is_transfer"] == "True":
         flash("You have successfully deleted the transfer request.")
     else:
         flash("You have successfully deleted the share request.")
     return redirect(url_for("respondent_bp.respondent_details", respondent_id=respondent_id))
 
 
-@respondent_bp.route("/pending-surveys/resend-email", methods=["GET"])
+@respondent_bp.route("<respondent_id>/pending-surveys/resend-email/<batch_number>", methods=["GET"])
 @login_required
-def send_pending_surveys_email():
-    batch_number = request.args["batch_number"]
-    respondent_id = request.args["respondent_id"]
+def send_pending_surveys_email(respondent_id, batch_number):
     response = resend_pending_surveys_email(batch_number)
     if response:
-        flash("You have successfully resent the [share/transfer] request email.",
-              response['resend_pending_surveys_email'])
+        flash(
+            "You have successfully resent the [share/transfer] request email.", response["resend_pending_surveys_email"]
+        )
     else:
-        flash("Error resending the [share/transfer] request email.", 'error')
+        flash("Error resending the [share/transfer] request email.", "error")
     return redirect(url_for("respondent_bp.respondent_details", respondent_id=respondent_id))
 
 
@@ -152,11 +153,12 @@ def respondent_details(respondent_id):
     elif info:
         flash(info, "information")
 
+    # Share Surveys and Pending Surveys information collection section
     pending_surveys = party_controller.get_pending_surveys_by_party_id(respondent_id)
     pending_transfer_surveys = []
     pending_share_surveys = []
     for pending_survey in pending_surveys:
-        if 'is_transfer' in pending_survey and pending_survey['is_transfer'] is True:
+        if "is_transfer" in pending_survey and pending_survey["is_transfer"] is True:
             pending_transfer_surveys.append(pending_survey)
         else:
             pending_share_surveys.append(pending_survey)
@@ -171,11 +173,18 @@ def respondent_details(respondent_id):
         mark_for_deletion=account["mark_for_deletion"],
         pending_transfer_surveys=formatted_transfer_surveys,
         pending_share_surveys=formatted_share_surveys,
-        respondent_id=respondent_id
+        respondent_id=respondent_id,
     )
 
 
 def get_formatted_pending_surveys(pending_surveys: list):
+    """
+    Get formatted pending surveys related to the respondent
+    :param pending_surveys: pending survey list to be formatted
+    :type pending_surveys: list
+    :return: pending survey formatted list
+    :rtype: list
+    """
     formatted_pending_surveys = []
     if len(pending_surveys) > 0:
         distinct_batch_number = {pending_surveys["batch_no"] for pending_surveys in pending_surveys}
@@ -183,38 +192,36 @@ def get_formatted_pending_surveys(pending_surveys: list):
             business_surveys_list = []
             distinct_businesses = set()
             for pending_survey in pending_surveys:
-                if pending_survey['batch_no'] == batch_number:
-                    distinct_businesses.add(pending_survey['business_id'])
-                    recipient_email = pending_survey['email_address']
-                    time_shared = pending_survey['time_shared']
+                if pending_survey["batch_no"] == batch_number:
+                    distinct_businesses.add(pending_survey["business_id"])
+                    recipient_email = pending_survey["email_address"]
+                    time_shared = pending_survey["time_shared"]
             for business_id in distinct_businesses:
                 business_surveys = []
                 for pending_survey in pending_surveys:
-                    if pending_survey["business_id"] == business_id and pending_survey['batch_no'] == batch_number:
+                    if pending_survey["business_id"] == business_id and pending_survey["batch_no"] == batch_number:
                         business_surveys.append(
-                            survey_controllers.get_survey_by_id(pending_survey["survey_id"]).get('shortName')
+                            survey_controllers.get_survey_by_id(pending_survey["survey_id"]).get("shortName")
                         )
                 selected_business = party_controller.get_business_by_party_id(business_id)
-                business_surveys_list.append({
-                    'business_name': selected_business["name"],
-                    'surveys': business_surveys
-                })
-            convert_events_to_new_format(time_shared)
-            formatted_pending_surveys.append({
-                'batch_no': batch_number,
-                'recipient_email': recipient_email,
-                'time_shared': convert_events_to_new_format(time_shared),
-                'pending_survey_details': business_surveys_list
-            })
+                business_surveys_list.append({"business_name": selected_business["name"], "surveys": business_surveys})
+            formatted_pending_surveys.append(
+                {
+                    "batch_no": batch_number,
+                    "recipient_email": recipient_email,
+                    "time_shared": convert_events_to_new_format(time_shared),
+                    "pending_survey_details": business_surveys_list,
+                }
+            )
     return formatted_pending_surveys
 
 
 def convert_events_to_new_format(date):
     """
-        This function formats time shared for pending shares
+    This function formats time shared for pending shares
 
-        :param: date in string format
-        :return: formatted date
+    :param: date in string format
+    :return: formatted date
     """
     try:
         date_time = parse_date(date)
