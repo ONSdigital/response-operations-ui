@@ -87,7 +87,7 @@
                   "value": "From"
               },
               { 
-                  "value": "Email address"
+                  "value": "Respondent email address"
               },
               { 
                   "value": "Subject"
@@ -105,8 +105,10 @@
         {% set surveyTableDataRows = [] %}
         
         {% for message in messages %}
-          {% if message.from and message.unread %}
-            {% set fromValue = '<span class="u-fw-b">' + message.from + '</span>' %}
+          {% if message.from and message.unread and not message.from_internal %}
+            {% set fromValue = '<a href="' + url_for('respondent_bp.respondent_details', respondent_id=message.from_id) + '" aria-label="Respondent details"><span class="u-fw-b">' + message.from + '</span></a>' %}
+          {% elif message.from and not message.from_internal%}
+            {% set fromValue = '<a href="' + url_for('respondent_bp.respondent_details', respondent_id=message.from_id) + '" aria-label="Respondent details">' + message.from + '</a>' %}
           {% elif message.from %}
             {% set fromValue = message.from %}
           {% else %}
@@ -128,8 +130,10 @@
           {% else %}
             {% set emailAddress = 'Unavailable' %}
           {% endif %}
-          {% if message.to and message.unread %}
-            {% set toValue = '<span class="u-fw-b">' + message.to + '</span>' %}
+          {% if message.to and message.unread and message.from_internal %}
+            {% set toValue = '<a href="' + url_for('respondent_bp.respondent_details', respondent_id=message.to_id) + '" aria-label="Respondent details"><span class="u-fw-b">' + message.to + '</span></a>' %}
+          {% elif message.to and message.from_internal %}
+            {% set toValue = '<a href="' + url_for('respondent_bp.respondent_details', respondent_id=message.to_id) + '" aria-label="Respondent details">' + message.to + '</a>' %}
           {% elif message.from %}
             {% set toValue = message.to %}
           {% else %}

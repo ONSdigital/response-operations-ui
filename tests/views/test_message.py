@@ -192,6 +192,9 @@ class TestMessage(ViewTestCase):
         self.assertIn("johnexample@example.com".encode(), response.data)
         self.assertIn("John Example".encode(), response.data)
         self.assertIn("Message from respondent".encode(), response.data)
+        self.assertIn(
+            'href="/respondents/respondent-details/ff4537df-2097-4a73-a530-e98dba7bf28f"'.encode(), response.data
+        )
 
     @requests_mock.mock()
     @patch("response_operations_ui.controllers.message_controllers._get_jwt")
@@ -214,6 +217,9 @@ class TestMessage(ViewTestCase):
         self.assertIn("John Example".encode(), response.data)
         self.assertIn("Message from respondent".encode(), response.data)
         self.assertIn("johnexample@example.com".encode(), response.data)
+        self.assertIn(
+            'href="/respondents/respondent-details/ff4537df-2097-4a73-a530-e98dba7bf28f"'.encode(), response.data
+        )
 
     @requests_mock.mock()
     @patch("response_operations_ui.controllers.message_controllers._get_jwt")
