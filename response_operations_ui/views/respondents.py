@@ -1,6 +1,7 @@
 import logging
 from datetime import datetime
 
+from dateutil.tz import gettz
 from flask import Blueprint
 from flask import current_app as app
 from flask import flash, redirect, render_template, request, url_for
@@ -249,6 +250,8 @@ def ordinal_date_formatter(date_format_required: str, date_to_be_formatted: date
     :param: date_to_be_formatted: the datetime object which needs ordinal date
     :return: formatted date
     """
+    # UTC/ BST adjustment
+    date_to_be_formatted = date_to_be_formatted.astimezone(gettz("Europe/London"))
     return date_to_be_formatted.strftime(date_format_required).replace(
         "{S}", str(date_to_be_formatted.day) + suffix(date_to_be_formatted.day)
     )
