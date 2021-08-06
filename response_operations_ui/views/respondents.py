@@ -178,13 +178,11 @@ def respondent_details(respondent_id):
     )
 
 
-def get_formatted_pending_surveys(pending_surveys: list):
+def get_formatted_pending_surveys(pending_surveys: list) -> list:
     """
     Get formatted pending surveys related to the respondent
     :param pending_surveys: pending survey list to be formatted
     :type pending_surveys: list
-    :return: pending survey formatted list
-    :rtype: list
     """
     formatted_pending_surveys = []
     if len(pending_surveys) > 0:
@@ -217,12 +215,11 @@ def get_formatted_pending_surveys(pending_surveys: list):
     return formatted_pending_surveys
 
 
-def convert_events_to_new_format(date):
+def convert_events_to_new_format(date: str) -> str:
     """
     This function formats time shared for pending shares
 
     :param: date in string format
-    :return: formatted date
     """
     try:
         date_time = parse_date(date)
@@ -236,7 +233,7 @@ def suffix(day: int):
     This function creates the ordinal suffix
 
     :param: day of the date time object
-    :return: ordinal suffix
+    :return: str ordinal suffix
     """
     return "th" if 11 <= day <= 13 else {1: "st", 2: "nd", 3: "rd"}.get(day % 10, "th")
 
@@ -248,7 +245,7 @@ def ordinal_date_formatter(date_format_required: str, date_to_be_formatted: date
 
     :param: date_format_required: output format in which date should be returned
     :param: date_to_be_formatted: the datetime object which needs ordinal date
-    :return: formatted date
+    :return: str formatted date
     """
     # UTC/ BST adjustment
     date_to_be_formatted = date_to_be_formatted.astimezone(gettz("Europe/London"))
