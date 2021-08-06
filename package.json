@@ -34,7 +34,7 @@
     "bcrypt-pbkdf": "^1.0.2",
     "big.js": "^5.2.2",
     "brace-expansion": "^1.1.11",
-    "browserslist": "^4.16.3",
+    "browserslist": "^4.16.5",
     "buffer-from": "^1.1.1",
     "call-bind": "^1.0.2",
     "callsites": "^3.1.0",
