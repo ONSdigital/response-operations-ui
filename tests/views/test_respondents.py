@@ -36,6 +36,10 @@ url_get_casegroups_by_business_party_id = f"{TestingConfig.CASE_URL}/casegroups/
 url_get_available_case_group_statuses_direct = (
     f"{TestingConfig.CASE_URL}/casegroups/transitions" f"/{collection_exercise_id_1}/{ru_ref}"
 )
+url_get_pending_share = f"{TestingConfig.PARTY_URL}/party-api/v1/pending-surveys/originator/" f"{respondent_party_id}"
+url_post_resend_pending_share_email = f"{TestingConfig.PARTY_URL}/party-api/v1/pending-surveys/resend-email"
+batch_number = "21983359-d944-4707-8979-299a433daed8"
+url_post_delete_pending_share = f"{TestingConfig.PARTY_URL}/party-api/v1/pending-surveys/{batch_number}"
 iac_1 = "jkbvyklkwj88"
 iac_2 = "ljbgg3kgstr4"
 
@@ -70,6 +74,10 @@ with open(f"{project_root}/test_data/party/respondent_party.json") as fp:
     respondent_party = json.load(fp)
 with open(f"{project_root}/test_data/iac/iac.json") as fp:
     iac = json.load(fp)
+with open(f"{project_root}/test_data/pending_survey/share.json") as fp:
+    share = json.load(fp)
+with open(f"{project_root}/test_data/pending_survey/transfer.json") as fp:
+    transfer = json.load(fp)
 
 
 class TestRespondents(ViewTestCase):
@@ -98,6 +106,7 @@ class TestRespondents(ViewTestCase):
     @requests_mock.mock()
     def test_edit_contact_details_and_email_change(self, mock_request):
         mock_request.get(f"{url_auth_respondent_account}/Jacky.Turner@email.com", json={"mark_for_deletion": False})
+        mock_request.get(url_get_pending_share, json=[])
         changed_details = {
             "first_name": "Jacky",
             "last_name": "Turner",
@@ -111,6 +120,7 @@ class TestRespondents(ViewTestCase):
     @requests_mock.mock()
     def test_edit_contact_details_email_change_with_trailing_space(self, mock_request):
         mock_request.get(f"{url_auth_respondent_account}/Jacky.Turner@email.com", json={"mark_for_deletion": False})
+        mock_request.get(url_get_pending_share, json=[])
         changed_details = {
             "first_name": "Jacky",
             "last_name": "Turner",
@@ -137,6 +147,7 @@ class TestRespondents(ViewTestCase):
         mock_request.get(url_get_respondent_party_by_party_id, json=respondent_party)
         mock_request.get(f"{url_get_iac}/{iac_1}", json=iac)
         mock_request.get(f"{url_get_iac}/{iac_2}", json=iac)
+        mock_request.get(url_get_pending_share, json=[])
 
         response = self.client.post(
             f"respondents/{respondent_party_id}/change-respondent-status" f"?tab=respondents&change_flag=ACTIVE",
@@ -276,7 +287,7 @@ class TestRespondents(ViewTestCase):
         mock_request.get(url_get_respondent_party_by_party_id, json=respondent_party)
         mock_request.get(f"{url_get_iac}/{iac_1}", json=iac)
         mock_request.get(f"{url_get_iac}/{iac_2}", json=iac)
-
+        mock_request.get(url_get_pending_share, json=[])
         get_response = self.client.get(
             f"respondents/undo-delete-respondent/{respondent_party_id}", follow_redirects=True
         )
@@ -291,3 +302,234 @@ class TestRespondents(ViewTestCase):
         )
         self.assertEqual(post_response.status_code, 200)
         self.assertIn("Delete respondent".encode(), post_response.data)
+
+    @requests_mock.mock()
+    def test_pending_surveys_records_empty(self, mock_request):
+        mock_request.put(url_change_respondent_status)
+        mock_request.patch(f"{url_auth_respondent_account}/Jacky.Turner@email.com")
+        mock_request.get(f"{url_auth_respondent_account}/Jacky.Turner@email.com", json={"mark_for_deletion": False})
+        mock_request.get(url_get_business_by_ru_ref, json=business_reporting_unit)
+        mock_request.get(url_get_cases_by_business_party_id, json=cases_list)
+        mock_request.get(url_get_casegroups_by_business_party_id, json=case_groups)
+        mock_request.get(f"{url_get_collection_exercise_by_id}/{collection_exercise_id_1}", json=collection_exercise)
+        mock_request.get(f"{url_get_collection_exercise_by_id}/{collection_exercise_id_2}", json=collection_exercise)
+        mock_request.get(url_get_business_party_by_party_id, json=business_party)
+        mock_request.get(url_get_available_case_group_statuses_direct, json=case_group_statuses)
+        mock_request.get(url_get_survey_by_id, json=survey)
+        mock_request.get(url_get_respondent_party_by_party_id, json=respondent_party)
+        mock_request.get(f"{url_get_iac}/{iac_1}", json=iac)
+        mock_request.get(f"{url_get_iac}/{iac_2}", json=iac)
+        mock_request.get(url_get_pending_share, json=[])
+
+        get_response = self.client.get(f"respondents/respondent-details/{respondent_party_id}", follow_redirects=True)
+        self.assertEqual(get_response.status_code, 200)
+        self.assertIn("Nothing has been shared.".encode(), get_response.data)
+        self.assertIn("Nothing has been transferred.".encode(), get_response.data)
+
+    @requests_mock.mock()
+    def test_pending_surveys_records_share_survey(self, mock_request):
+        mock_request.put(url_change_respondent_status)
+        mock_request.patch(f"{url_auth_respondent_account}/Jacky.Turner@email.com")
+        mock_request.get(f"{url_auth_respondent_account}/Jacky.Turner@email.com", json={"mark_for_deletion": False})
+        mock_request.get(url_get_business_by_ru_ref, json=business_reporting_unit)
+        mock_request.get(url_get_cases_by_business_party_id, json=cases_list)
+        mock_request.get(url_get_casegroups_by_business_party_id, json=case_groups)
+        mock_request.get(f"{url_get_collection_exercise_by_id}/{collection_exercise_id_1}", json=collection_exercise)
+        mock_request.get(f"{url_get_collection_exercise_by_id}/{collection_exercise_id_2}", json=collection_exercise)
+        mock_request.get(url_get_business_party_by_party_id, json=business_party)
+        mock_request.get(url_get_available_case_group_statuses_direct, json=case_group_statuses)
+        mock_request.get(url_get_survey_by_id, json=survey)
+        mock_request.get(url_get_respondent_party_by_party_id, json=respondent_party)
+        mock_request.get(f"{url_get_iac}/{iac_1}", json=iac)
+        mock_request.get(f"{url_get_iac}/{iac_2}", json=iac)
+        mock_request.get(url_get_pending_share, json=share)
+
+        get_response = self.client.get(f"respondents/respondent-details/{respondent_party_id}", follow_redirects=True)
+        self.assertEqual(get_response.status_code, 200)
+        self.assertNotIn("Nothing has been shared.".encode(), get_response.data)
+        self.assertIn("Nothing has been transferred.".encode(), get_response.data)
+        self.assertIn("example_four@example.com".encode(), get_response.data)
+        self.assertIn("<strong>Bolts and Ratchets Ltd:</strong>BLOCKS</br>".encode(), get_response.data)
+
+    @requests_mock.mock()
+    def test_pending_surveys_records_share_transfer(self, mock_request):
+        mock_request.put(url_change_respondent_status)
+        mock_request.patch(f"{url_auth_respondent_account}/Jacky.Turner@email.com")
+        mock_request.get(f"{url_auth_respondent_account}/Jacky.Turner@email.com", json={"mark_for_deletion": False})
+        mock_request.get(url_get_business_by_ru_ref, json=business_reporting_unit)
+        mock_request.get(url_get_cases_by_business_party_id, json=cases_list)
+        mock_request.get(url_get_casegroups_by_business_party_id, json=case_groups)
+        mock_request.get(f"{url_get_collection_exercise_by_id}/{collection_exercise_id_1}", json=collection_exercise)
+        mock_request.get(f"{url_get_collection_exercise_by_id}/{collection_exercise_id_2}", json=collection_exercise)
+        mock_request.get(url_get_business_party_by_party_id, json=business_party)
+        mock_request.get(url_get_available_case_group_statuses_direct, json=case_group_statuses)
+        mock_request.get(url_get_survey_by_id, json=survey)
+        mock_request.get(url_get_respondent_party_by_party_id, json=respondent_party)
+        mock_request.get(f"{url_get_iac}/{iac_1}", json=iac)
+        mock_request.get(f"{url_get_iac}/{iac_2}", json=iac)
+        mock_request.get(url_get_pending_share, json=transfer)
+
+        get_response = self.client.get(f"respondents/respondent-details/{respondent_party_id}", follow_redirects=True)
+        self.assertEqual(get_response.status_code, 200)
+        self.assertIn("Nothing has been shared.".encode(), get_response.data)
+        self.assertNotIn("Nothing has been transferred.".encode(), get_response.data)
+        self.assertIn("example_four@example.com".encode(), get_response.data)
+        self.assertIn("<strong>Bolts and Ratchets Ltd:</strong>BLOCKS</br>".encode(), get_response.data)
+
+    @requests_mock.mock()
+    def test_pending_surveys_resend_email_with_batch_number(self, mock_request):
+        mock_request.put(url_change_respondent_status)
+        mock_request.patch(f"{url_auth_respondent_account}/Jacky.Turner@email.com")
+        mock_request.get(f"{url_auth_respondent_account}/Jacky.Turner@email.com", json={"mark_for_deletion": False})
+        mock_request.get(url_get_business_by_ru_ref, json=business_reporting_unit)
+        mock_request.get(url_get_cases_by_business_party_id, json=cases_list)
+        mock_request.get(url_get_casegroups_by_business_party_id, json=case_groups)
+        mock_request.get(f"{url_get_collection_exercise_by_id}/{collection_exercise_id_1}", json=collection_exercise)
+        mock_request.get(f"{url_get_collection_exercise_by_id}/{collection_exercise_id_2}", json=collection_exercise)
+        mock_request.get(url_get_business_party_by_party_id, json=business_party)
+        mock_request.get(url_get_available_case_group_statuses_direct, json=case_group_statuses)
+        mock_request.get(url_get_survey_by_id, json=survey)
+        mock_request.get(url_get_respondent_party_by_party_id, json=respondent_party)
+        mock_request.get(f"{url_get_iac}/{iac_1}", json=iac)
+        mock_request.get(f"{url_get_iac}/{iac_2}", json=iac)
+        mock_request.get(url_get_pending_share, json=transfer)
+        mock_request.post(url_post_resend_pending_share_email, json={"resend_pending_surveys_email": "success"})
+        get_response = self.client.get(
+            f"respondents/{respondent_party_id}/pending-surveys/resend-email/{batch_number}", follow_redirects=True
+        )
+        self.assertEqual(get_response.status_code, 200)
+        self.assertIn("Nothing has been shared.".encode(), get_response.data)
+        self.assertNotIn("Nothing has been transferred.".encode(), get_response.data)
+        self.assertIn("example_four@example.com".encode(), get_response.data)
+        self.assertIn("<strong>Bolts and Ratchets Ltd:</strong>BLOCKS</br>".encode(), get_response.data)
+        self.assertIn("You have successfully resent the [share/transfer] request email.".encode(), get_response.data)
+
+    @requests_mock.mock()
+    def test_pending_surveys_resend_email_with_batch_number_error(self, mock_request):
+        mock_request.put(url_change_respondent_status)
+        mock_request.patch(f"{url_auth_respondent_account}/Jacky.Turner@email.com")
+        mock_request.get(f"{url_auth_respondent_account}/Jacky.Turner@email.com", json={"mark_for_deletion": False})
+        mock_request.get(url_get_business_by_ru_ref, json=business_reporting_unit)
+        mock_request.get(url_get_cases_by_business_party_id, json=cases_list)
+        mock_request.get(url_get_casegroups_by_business_party_id, json=case_groups)
+        mock_request.get(f"{url_get_collection_exercise_by_id}/{collection_exercise_id_1}", json=collection_exercise)
+        mock_request.get(f"{url_get_collection_exercise_by_id}/{collection_exercise_id_2}", json=collection_exercise)
+        mock_request.get(url_get_business_party_by_party_id, json=business_party)
+        mock_request.get(url_get_available_case_group_statuses_direct, json=case_group_statuses)
+        mock_request.get(url_get_survey_by_id, json=survey)
+        mock_request.get(url_get_respondent_party_by_party_id, json=respondent_party)
+        mock_request.get(f"{url_get_iac}/{iac_1}", json=iac)
+        mock_request.get(f"{url_get_iac}/{iac_2}", json=iac)
+        mock_request.get(url_get_pending_share, json=transfer)
+        mock_request.post(url_post_resend_pending_share_email, json={})
+        get_response = self.client.get(
+            f"respondents/{respondent_party_id}/pending-surveys/resend-email/{batch_number}", follow_redirects=True
+        )
+        self.assertEqual(get_response.status_code, 200)
+        self.assertIn("Nothing has been shared.".encode(), get_response.data)
+        self.assertNotIn("Nothing has been transferred.".encode(), get_response.data)
+        self.assertIn("example_four@example.com".encode(), get_response.data)
+        self.assertIn("<strong>Bolts and Ratchets Ltd:</strong>BLOCKS</br>".encode(), get_response.data)
+        self.assertIn("Error resending the [share/transfer] request email.".encode(), get_response.data)
+
+    @requests_mock.mock()
+    def test_pending_surveys_delete_confirm_page_for_share(self, mock_request):
+        mock_request.put(url_change_respondent_status)
+        mock_request.patch(f"{url_auth_respondent_account}/Jacky.Turner@email.com")
+        mock_request.get(f"{url_auth_respondent_account}/Jacky.Turner@email.com", json={"mark_for_deletion": False})
+        mock_request.get(url_get_business_by_ru_ref, json=business_reporting_unit)
+        mock_request.get(url_get_cases_by_business_party_id, json=cases_list)
+        mock_request.get(url_get_casegroups_by_business_party_id, json=case_groups)
+        mock_request.get(f"{url_get_collection_exercise_by_id}/{collection_exercise_id_1}", json=collection_exercise)
+        mock_request.get(f"{url_get_collection_exercise_by_id}/{collection_exercise_id_2}", json=collection_exercise)
+        mock_request.get(url_get_business_party_by_party_id, json=business_party)
+        mock_request.get(url_get_available_case_group_statuses_direct, json=case_group_statuses)
+        mock_request.get(url_get_survey_by_id, json=survey)
+        mock_request.get(url_get_respondent_party_by_party_id, json=respondent_party)
+        mock_request.get(f"{url_get_iac}/{iac_1}", json=iac)
+        mock_request.get(f"{url_get_iac}/{iac_2}", json=iac)
+        mock_request.get(url_get_pending_share, json=share)
+        mock_request.post(url_post_resend_pending_share_email, json={})
+        get_response = self.client.get(
+            f"respondents/{respondent_party_id}/pending-surveys/{batch_number}"
+            f"?recipient_email=example_@example.com&is_transfer=False",
+            follow_redirects=True,
+        )
+        self.assertEqual(get_response.status_code, 200)
+        self.assertIn("Delete sharing request for example_@example.com?".encode(), get_response.data)
+
+    @requests_mock.mock()
+    def test_pending_surveys_delete_confirm_page_for_transfer(self, mock_request):
+        mock_request.put(url_change_respondent_status)
+        mock_request.patch(f"{url_auth_respondent_account}/Jacky.Turner@email.com")
+        mock_request.get(f"{url_auth_respondent_account}/Jacky.Turner@email.com", json={"mark_for_deletion": False})
+        mock_request.get(url_get_business_by_ru_ref, json=business_reporting_unit)
+        mock_request.get(url_get_cases_by_business_party_id, json=cases_list)
+        mock_request.get(url_get_casegroups_by_business_party_id, json=case_groups)
+        mock_request.get(f"{url_get_collection_exercise_by_id}/{collection_exercise_id_1}", json=collection_exercise)
+        mock_request.get(f"{url_get_collection_exercise_by_id}/{collection_exercise_id_2}", json=collection_exercise)
+        mock_request.get(url_get_business_party_by_party_id, json=business_party)
+        mock_request.get(url_get_available_case_group_statuses_direct, json=case_group_statuses)
+        mock_request.get(url_get_survey_by_id, json=survey)
+        mock_request.get(url_get_respondent_party_by_party_id, json=respondent_party)
+        mock_request.get(f"{url_get_iac}/{iac_1}", json=iac)
+        mock_request.get(f"{url_get_iac}/{iac_2}", json=iac)
+        mock_request.get(url_get_pending_share, json=transfer)
+        mock_request.post(url_post_resend_pending_share_email, json={})
+        get_response = self.client.get(
+            f"respondents/{respondent_party_id}/pending-surveys/{batch_number}"
+            f"?recipient_email=example_@example.com&is_transfer=True",
+            follow_redirects=True,
+        )
+        self.assertEqual(get_response.status_code, 200)
+        self.assertIn("Delete transfer request for example_@example.com?".encode(), get_response.data)
+
+    @requests_mock.mock()
+    def test_pending_surveys_delete_for_share(self, mock_request):
+        mock_request.put(url_change_respondent_status)
+        mock_request.patch(f"{url_auth_respondent_account}/Jacky.Turner@email.com")
+        mock_request.get(f"{url_auth_respondent_account}/Jacky.Turner@email.com", json={"mark_for_deletion": False})
+        mock_request.get(url_get_business_by_ru_ref, json=business_reporting_unit)
+        mock_request.get(url_get_cases_by_business_party_id, json=cases_list)
+        mock_request.get(url_get_casegroups_by_business_party_id, json=case_groups)
+        mock_request.get(f"{url_get_collection_exercise_by_id}/{collection_exercise_id_1}", json=collection_exercise)
+        mock_request.get(f"{url_get_collection_exercise_by_id}/{collection_exercise_id_2}", json=collection_exercise)
+        mock_request.get(url_get_business_party_by_party_id, json=business_party)
+        mock_request.get(url_get_available_case_group_statuses_direct, json=case_group_statuses)
+        mock_request.get(url_get_survey_by_id, json=survey)
+        mock_request.get(url_get_respondent_party_by_party_id, json=respondent_party)
+        mock_request.get(f"{url_get_iac}/{iac_1}", json=iac)
+        mock_request.get(f"{url_get_iac}/{iac_2}", json=iac)
+        mock_request.get(url_get_pending_share, json=share)
+        mock_request.delete(url_post_delete_pending_share)
+        get_response = self.client.post(
+            f"respondents/{respondent_party_id}/pending-surveys/{batch_number}" f"?is_transfer=False",
+            follow_redirects=True,
+        )
+        self.assertEqual(get_response.status_code, 200)
+        self.assertIn("You have successfully deleted the share request.".encode(), get_response.data)
+
+    @requests_mock.mock()
+    def test_pending_surveys_delete_for_transfer(self, mock_request):
+        mock_request.put(url_change_respondent_status)
+        mock_request.patch(f"{url_auth_respondent_account}/Jacky.Turner@email.com")
+        mock_request.get(f"{url_auth_respondent_account}/Jacky.Turner@email.com", json={"mark_for_deletion": False})
+        mock_request.get(url_get_business_by_ru_ref, json=business_reporting_unit)
+        mock_request.get(url_get_cases_by_business_party_id, json=cases_list)
+        mock_request.get(url_get_casegroups_by_business_party_id, json=case_groups)
+        mock_request.get(f"{url_get_collection_exercise_by_id}/{collection_exercise_id_1}", json=collection_exercise)
+        mock_request.get(f"{url_get_collection_exercise_by_id}/{collection_exercise_id_2}", json=collection_exercise)
+        mock_request.get(url_get_business_party_by_party_id, json=business_party)
+        mock_request.get(url_get_available_case_group_statuses_direct, json=case_group_statuses)
+        mock_request.get(url_get_survey_by_id, json=survey)
+        mock_request.get(url_get_respondent_party_by_party_id, json=respondent_party)
+        mock_request.get(f"{url_get_iac}/{iac_1}", json=iac)
+        mock_request.get(f"{url_get_iac}/{iac_2}", json=iac)
+        mock_request.get(url_get_pending_share, json=transfer)
+        mock_request.delete(url_post_delete_pending_share)
+        get_response = self.client.post(
+            f"respondents/{respondent_party_id}/pending-surveys/{batch_number}" f"?is_transfer=True",
+            follow_redirects=True,
+        )
+        self.assertEqual(get_response.status_code, 200)
+        self.assertIn("You have successfully deleted the transfer request.".encode(), get_response.data)

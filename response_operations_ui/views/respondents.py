@@ -1,10 +1,13 @@
 import logging
+from datetime import datetime
 
+from dateutil.tz import gettz
 from flask import Blueprint
 from flask import current_app as app
 from flask import flash, redirect, render_template, request, url_for
 from flask_login import login_required
 from flask_paginate import Pagination
+from iso8601 import ParseError, parse_date
 from structlog import wrap_logger
 
 from response_operations_ui.common.respondent_utils import filter_respondents
@@ -12,6 +15,11 @@ from response_operations_ui.controllers import (
     party_controller,
     reporting_units_controllers,
     respondent_controllers,
+    survey_controllers,
+)
+from response_operations_ui.controllers.party_controller import (
+    delete_pending_surveys_by_batch_number,
+    resend_pending_surveys_email,
 )
 from response_operations_ui.forms import EditContactDetailsForm, RespondentSearchForm
 
@@ -92,6 +100,42 @@ def search_redirect():
     )
 
 
+@respondent_bp.route("<respondent_id>/pending-surveys/<batch_number>", methods=["GET"])
+@login_required
+def confirm_delete_pending_surveys(respondent_id, batch_number):
+    return render_template(
+        "confirm-pending-surveys-delete.html",
+        batch_number=batch_number,
+        respondent_id=respondent_id,
+        recipient_email=request.args["recipient_email"],
+        is_transfer=request.args["is_transfer"],
+    )
+
+
+@respondent_bp.route("<respondent_id>/pending-surveys/<batch_number>", methods=["POST"])
+@login_required
+def delete_pending_surveys(respondent_id, batch_number):
+    delete_pending_surveys_by_batch_number(batch_number)
+    if request.args["is_transfer"] == "True":
+        flash("You have successfully deleted the transfer request.")
+    else:
+        flash("You have successfully deleted the share request.")
+    return redirect(url_for("respondent_bp.respondent_details", respondent_id=respondent_id))
+
+
+@respondent_bp.route("<respondent_id>/pending-surveys/resend-email/<batch_number>", methods=["GET"])
+@login_required
+def send_pending_surveys_email(respondent_id, batch_number):
+    response = resend_pending_surveys_email(batch_number)
+    if response:
+        flash(
+            "You have successfully resent the [share/transfer] request email.", response["resend_pending_surveys_email"]
+        )
+    else:
+        flash("Error resending the [share/transfer] request email.", "error")
+    return redirect(url_for("respondent_bp.respondent_details", respondent_id=respondent_id))
+
+
 @respondent_bp.route("/respondent-details/<respondent_id>", methods=["GET"])
 @login_required
 def respondent_details(respondent_id):
@@ -110,12 +154,103 @@ def respondent_details(respondent_id):
     elif info:
         flash(info, "information")
 
+    # Share Surveys and Pending Surveys information collection section
+    pending_surveys = party_controller.get_pending_surveys_by_party_id(respondent_id)
+    pending_transfer_surveys = []
+    pending_share_surveys = []
+    for pending_survey in pending_surveys:
+        if "is_transfer" in pending_survey and pending_survey["is_transfer"] is True:
+            pending_transfer_surveys.append(pending_survey)
+        else:
+            pending_share_surveys.append(pending_survey)
+    formatted_transfer_surveys = get_formatted_pending_surveys(pending_transfer_surveys)
+    formatted_share_surveys = get_formatted_pending_surveys(pending_share_surveys)
+
     return render_template(
         "respondent.html",
         respondent=respondent,
         enrolments=enrolments,
         breadcrumbs=breadcrumbs,
         mark_for_deletion=account["mark_for_deletion"],
+        pending_transfer_surveys=formatted_transfer_surveys,
+        pending_share_surveys=formatted_share_surveys,
+        respondent_id=respondent_id,
+    )
+
+
+def get_formatted_pending_surveys(pending_surveys: list) -> list:
+    """
+    Get formatted pending surveys related to the respondent
+    :param pending_surveys: pending survey list to be formatted
+    :type pending_surveys: list
+    """
+    formatted_pending_surveys = []
+    if len(pending_surveys) > 0:
+        distinct_batch_number = {pending_surveys["batch_no"] for pending_surveys in pending_surveys}
+        for batch_number in distinct_batch_number:
+            business_surveys_list = []
+            distinct_businesses = set()
+            for pending_survey in pending_surveys:
+                if pending_survey["batch_no"] == batch_number:
+                    distinct_businesses.add(pending_survey["business_id"])
+                    recipient_email = pending_survey["email_address"]
+                    time_shared = pending_survey["time_shared"]
+            for business_id in distinct_businesses:
+                business_surveys = []
+                for pending_survey in pending_surveys:
+                    if pending_survey["business_id"] == business_id and pending_survey["batch_no"] == batch_number:
+                        business_surveys.append(
+                            survey_controllers.get_survey_by_id(pending_survey["survey_id"]).get("shortName")
+                        )
+                selected_business = party_controller.get_business_by_party_id(business_id)
+                business_surveys_list.append({"business_name": selected_business["name"], "surveys": business_surveys})
+            formatted_pending_surveys.append(
+                {
+                    "batch_no": batch_number,
+                    "recipient_email": recipient_email,
+                    "time_shared": convert_events_to_new_format(time_shared),
+                    "pending_survey_details": business_surveys_list,
+                }
+            )
+    return formatted_pending_surveys
+
+
+def convert_events_to_new_format(date: str) -> str:
+    """
+    This function formats time shared for pending shares
+
+    :param: date in string format
+    """
+    try:
+        date_time = parse_date(date)
+    except ParseError:
+        raise ParseError
+    return ordinal_date_formatter("{S} %B %Y at %H:%M", date_time)
+
+
+def suffix(day: int):
+    """
+    This function creates the ordinal suffix
+
+    :param: day of the date time object
+    :return: str ordinal suffix
+    """
+    return "th" if 11 <= day <= 13 else {1: "st", 2: "nd", 3: "rd"}.get(day % 10, "th")
+
+
+def ordinal_date_formatter(date_format_required: str, date_to_be_formatted: datetime):
+    """
+    This function takes the required output format and date to be formatted and returns the ordinal date in required
+    format.
+
+    :param: date_format_required: output format in which date should be returned
+    :param: date_to_be_formatted: the datetime object which needs ordinal date
+    :return: str formatted date
+    """
+    # UTC/ BST adjustment
+    date_to_be_formatted = date_to_be_formatted.astimezone(gettz("Europe/London"))
+    return date_to_be_formatted.strftime(date_format_required).replace(
+        "{S}", str(date_to_be_formatted.day) + suffix(date_to_be_formatted.day)
     )
 
 
