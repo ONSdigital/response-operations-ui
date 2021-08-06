@@ -320,7 +320,7 @@
     "terser-webpack-plugin": "^5.1.1",
     "to-fast-properties": "^2.0.0",
     "tough-cookie": "^2.5.0",
-    "trim-newlines": "^1.0.0",
+    "trim-newlines": "^3.0.1",
     "true-case-path": "^1.0.3",
     "tslib": "^1.14.1",
     "tunnel-agent": "^0.6.0",
