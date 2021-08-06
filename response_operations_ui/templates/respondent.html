@@ -154,5 +154,150 @@
   {% else %}
   <p><i>There are no surveys assigned to this respondent.</i></p>
   {% endif %}
+  
+  
+  <h2>Shared surveys</h2>
+  {% if pending_share_surveys|length > 0 %}
+    {% from "components/table/_macro.njk" import onsTable %}
+    {% set shareSurveyTableData = {
+        "table_class": 'table--dense',
+        "ths": [
+            { 
+                "value": "Recipient's email address"
+            },
+            { 
+                "value": "Shared surveys"
+            },
+            { 
+                "value": "Time"
+            },
+            { 
+                "value": "Status"
+            },
+            { 
+                "value": "Action"
+            }
+        ]
+        }
+    %}
+  
+    {% set shareSurveyTableDataRows = [] %}
+    {% for shareSurvey in pending_share_surveys %}
+        {% set shareSurveyEmail %}
+          Email sent
+          <a href="{{ url_for('respondent_bp.send_pending_surveys_email', batch_number=shareSurvey['batch_no'], respondent_id=respondent_id)}}">Resend email</a>
+        {% endset %}
+        {% set shareSurveyDelete %}
+          <a href="{{ url_for('respondent_bp.confirm_delete_pending_surveys', batch_number=shareSurvey['batch_no'], respondent_id=respondent_id, recipient_email=shareSurvey['recipient_email'], is_transfer=False)}}">Delete</a>
+        {% endset %}
+        {% set ns = namespace(shareSurveyBusinessDetails="") %}      
+        {% for record in shareSurvey['pending_survey_details'] %}
+          {% set ns.shareSurveyBusinessDetails = ns.shareSurveyBusinessDetails~"<strong>"~record['business_name']~":" ~"</strong>"~record['surveys']|join(',')~"</br>" %}
+        {% endfor %}
+        
+        
+        {% do shareSurveyTableDataRows.append(
+            {
+                "tds": [
+                {
+                    "value": shareSurvey['recipient_email']
+                },
+                {
+                    "value": ns.shareSurveyBusinessDetails
+                },
+                {
+                    "value": shareSurvey['time_shared']
+                },
+                {
+                    "value": shareSurveyEmail 
+                },
+                {
+                    "value": shareSurveyDelete
+                }
+                ]
+            }
+            ) %}
+  
+    {% endfor %}
+  
+    {% do shareSurveyTableData | setAttribute("trs", shareSurveyTableDataRows) %}
+    {{
+        onsTable(shareSurveyTableData)
+    }}
+  {% else %}
+  <p><i>Nothing has been shared.</i></p>
+  {% endif %}
+  
+  <h2>Transferred surveys</h2>
+  {% if pending_transfer_surveys|length > 0 %}
+    {% from "components/table/_macro.njk" import onsTable %}
+    {% set transferSurveyTableData = {
+        "table_class": 'table--dense',
+        "ths": [
+            { 
+                "value": "Recipient's email address"
+            },
+            { 
+                "value": "Transferred surveys"
+            },
+            { 
+                "value": "Time"
+            },
+            { 
+                "value": "Status"
+            },
+            { 
+                "value": "Action"
+            }
+        ]
+        }
+    %}
+  
+    {% set transferSurveyTableDataRows = [] %}
+    {% for transferSurvey in pending_transfer_surveys %}
+        {% set transferSurveyEmail %}
+          Email sent
+          <a href="{{ url_for('respondent_bp.send_pending_surveys_email', batch_number=transferSurvey['batch_no'], respondent_id=respondent_id)}}">Resend email</a>
+        {% endset %}
+        {% set transferSurveyDelete %}
+          <a href="{{ url_for('respondent_bp.confirm_delete_pending_surveys', batch_number=transferSurvey['batch_no'], respondent_id=respondent_id, recipient_email=transferSurvey['recipient_email'], is_transfer=True)}}">Delete</a>
+        {% endset %}
+        {% set ns = namespace(transferSurveyBusinessDetails="") %}      
+        {% for record in transferSurvey['pending_survey_details'] %}
+          {% set ns.transferSurveyBusinessDetails = ns.transferSurveyBusinessDetails~"<strong>"~record['business_name']~":" ~"</strong>"~record['surveys']|join(',')~"</br>" %}
+        {% endfor %}
+        
+        
+        {% do transferSurveyTableDataRows.append(
+            {
+                "tds": [
+                {
+                    "value": transferSurvey['recipient_email']
+                },
+                {
+                    "value": ns.transferSurveyBusinessDetails
+                },
+                {
+                    "value": transferSurvey['time_shared']
+                },
+                {
+                    "value": transferSurveyEmail 
+                },
+                {
+                    "value": transferSurveyDelete
+                }
+                ]
+            }
+            ) %}
+  
+    {% endfor %}
+  
+    {% do transferSurveyTableData | setAttribute("trs", transferSurveyTableDataRows) %}
+    {{
+        onsTable(transferSurveyTableData)
+    }}
+  {% else %}
+  <p><i>Nothing has been transferred.</i></p>
+  {% endif %}
 </section>
 {% endblock %}

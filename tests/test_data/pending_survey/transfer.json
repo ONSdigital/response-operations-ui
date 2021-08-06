@@ -1,0 +1,44 @@
+[
+    {
+        "batch_no": "21983359-d944-4707-8979-299a433daed8",
+        "business_id": "b3ba864b-7cbc-4f44-84fe-88dc018a1a4c",
+        "email_address": "example_@example.com",
+        "shared_by": "efd949f2-2139-48ee-ad42-d189f2b497cd",
+        "survey_id": "cb0711c3-0ac8-41d3-ae0e-567e5ea1ef87",
+        "time_shared": "2021-08-04 09:47:30",
+        "is_transfer": true
+    },
+    {
+        "batch_no": "21983359-d944-4707-8979-299a433daed9",
+        "business_id": "b3ba864b-7cbc-4f44-84fe-88dc018a1a4c",
+        "email_address": "example_one@example.com",
+        "shared_by": "efd949f2-2139-48ee-ad42-d189f2b497cd",
+        "survey_id": "cb0711c3-0ac8-41d3-ae0e-567e5ea1ef87",
+        "time_shared": "2021-08-04 09:47:30",
+        "is_transfer": true
+    },{
+        "batch_no": "21983359-d944-4707-8979-299a433daed7",
+        "business_id": "b3ba864b-7cbc-4f44-84fe-88dc018a1a4c",
+        "email_address": "example_two@example.com",
+        "shared_by": "efd949f2-2139-48ee-ad42-d189f2b497cd",
+        "survey_id": "cb0711c3-0ac8-41d3-ae0e-567e5ea1ef87",
+        "time_shared": "2021-08-04 09:47:30",
+        "is_transfer": true
+    },{
+        "batch_no": "21983359-d944-4707-8979-299a433daed6",
+        "business_id": "b3ba864b-7cbc-4f44-84fe-88dc018a1a4c",
+        "email_address": "example_three@example.com",
+        "shared_by": "efd949f2-2139-48ee-ad42-d189f2b497cd",
+        "survey_id": "cb0711c3-0ac8-41d3-ae0e-567e5ea1ef87",
+        "time_shared": "2021-08-04 09:47:30",
+        "is_transfer": true
+    },{
+        "batch_no": "21983359-d944-4707-8979-299a433daed5",
+        "business_id": "b3ba864b-7cbc-4f44-84fe-88dc018a1a4c",
+        "email_address": "example_four@example.com",
+        "shared_by": "efd949f2-2139-48ee-ad42-d189f2b497cd",
+        "survey_id": "cb0711c3-0ac8-41d3-ae0e-567e5ea1ef87",
+        "time_shared": "2021-08-04 09:47:30",
+        "is_transfer": true
+    }
+]
