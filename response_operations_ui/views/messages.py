@@ -7,8 +7,6 @@ from datetime import datetime
 from flask import (
     Blueprint,
     Markup,
-    abort,
-    current_app,
     flash,
     g,
     redirect,
@@ -119,7 +117,6 @@ def view_conversation(thread_id):
     closed_at = _format_closed_at(thread_conversation)
     breadcrumbs = _get_conversation_breadcrumbs(thread_conversation["messages"])
     respondent_is_deleted = False
-    change_category_enabled = current_app.config["CHANGE_CATEGORY_ENABLED"]
     for message in refined_thread:
         if "Deleted respondent" in message["username"]:
             respondent_is_deleted = True
@@ -178,7 +175,6 @@ def view_conversation(thread_id):
                 messages=refined_thread,
                 respondent_is_deleted=respondent_is_deleted,
                 thread_data=thread_conversation,
-                change_category_enabled=change_category_enabled,
             )
 
     return render_template(
@@ -195,16 +191,12 @@ def view_conversation(thread_id):
         conversation_tab=conversation_tab,
         ru_ref_filter=ru_ref_filter,
         business_id_filter=business_id_filter,
-        change_category_enabled=change_category_enabled,
     )
 
 
 @messages_bp.route("/threads/<thread_id>/change-category", methods=["GET"])
 @login_required
 def get_change_thread_category(thread_id):
-    if not current_app.config["CHANGE_CATEGORY_ENABLED"]:
-        logger.error("Change category page accessed while disabled.  Aborting")
-        abort(404)
     thread = message_controllers.get_conversation(thread_id)
     form = ChangeThreadCategoryForm()
     breadcrumbs = [{"text": "Messages", "url": "/messages"}, {"text": "Filter by survey"}]
@@ -224,9 +216,6 @@ def get_change_thread_category(thread_id):
 @messages_bp.route("/threads/<thread_id>/change-category", methods=["POST"])
 @login_required
 def post_change_thread_category(thread_id):  # noqa: C901
-    if not current_app.config["CHANGE_CATEGORY_ENABLED"]:
-        logger.error("Change category page accessed while disabled.  Aborting")
-        abort(404)
     thread = message_controllers.get_conversation(thread_id)
     form = ChangeThreadCategoryForm(request.form)
 
@@ -264,9 +253,6 @@ def post_change_thread_category(thread_id):  # noqa: C901
 @messages_bp.route("/threads/<thread_id>/change-reporting-unit", methods=["GET"])
 @login_required
 def get_change_reporting_unit(thread_id):
-    if not current_app.config["CHANGE_CATEGORY_ENABLED"]:
-        logger.error("Change category page accessed while disabled.  Aborting")
-        abort(404)
     thread = message_controllers.get_conversation(thread_id)
     reporting_units = get_respondent_enrolments_from_thread(thread)
 
@@ -284,9 +270,6 @@ def get_change_reporting_unit(thread_id):
 @messages_bp.route("/threads/<thread_id>/change-reporting-unit", methods=["POST"])
 @login_required
 def post_change_reporting_unit(thread_id):  # noqa: C901
-    if not current_app.config["CHANGE_CATEGORY_ENABLED"]:
-        logger.error("Change category page accessed while disabled.  Aborting")
-        abort(404)
     thread = message_controllers.get_conversation(thread_id)
     reporting_unit = request.form.get("reporting-units")
     if reporting_unit:
