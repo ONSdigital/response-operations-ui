@@ -80,8 +80,6 @@ spec:
             {{- else }}
             value: "http://$(CASE_SERVICE_HOST):$(CASE_SERVICE_PORT)"
             {{- end }}
-          - name: CHANGE_CATEGORY_ENABLED
-            value: "{{ .Values.changeCategoryEnabled }}"
           - name: COLLECTION_EXERCISE_URL
             {{- if .Values.dns.enabled }}
             value: "http://collection-exercise.{{ .Values.namespace }}.svc.cluster.local:{{ .Values.dns.wellKnownPort }}"
