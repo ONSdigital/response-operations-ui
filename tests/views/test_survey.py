@@ -337,6 +337,7 @@ class TestSurvey(ViewTestCase):
                 {"name": "COLLECTION_INSTRUMENT", "classifierTypes": ["FORM_TYPE"]},
                 {"name": "COMMUNICATION_TEMPLATE", "classifierTypes": ["LEGAL_BASIS", "REGION"]},
             ],
+            "eqVersion": "",
         }
         mock_request.post(
             url_create_survey, additional_matcher=lambda req: req.json() == expected_survey_request, status_code=201
