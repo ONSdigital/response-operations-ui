@@ -150,6 +150,7 @@ class TestCollectionExercise(ViewTestCase):
             "shortName": "BRES",
             "surveyRef": "221",
             "eqVersion": "",
+            "surveyMode": "SEFT",
         }
         self.seft_survey = {
             "id": survey_id,

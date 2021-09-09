@@ -567,7 +567,7 @@ def get_create_collection_exercise_form(survey_ref, short_name):
     logger.info("Retrieving survey data for form", short_name=short_name, survey_ref=survey_ref)
     form = CreateCollectionExerciseDetailsForm(form=request.form)
     survey_details = survey_controllers.get_survey(short_name)
-    survey_eq_version = survey_details["eqVersion"]
+    survey_eq_version = survey_details["eqVersion"] if survey_details["surveyMode"] != "SEFT" else ""
     return render_template(
         "create-collection-exercise.html",
         form=form,
