@@ -333,7 +333,7 @@ def _update_eq_version(short_name, period):
             "collection_exercise_bp.view_collection_exercise",
             period=period,
             short_name=short_name,
-            info_panel="eQ version can not be same as previous version.",
+            info_panel="eQ version is not updated as the selected version and existing version are same.",
         )
     )
 

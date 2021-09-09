@@ -687,7 +687,7 @@ class TestCollectionExercise(ViewTestCase):
         response = self.client.post(f"/surveys/{short_name}/{period}", data=data, follow_redirects=True)
 
         self.assertEqual(response.status_code, 200)
-        self.assertIn("eQ version can not be same as previous version.".encode(), response.data)
+        self.assertIn("eQ version is not updated as the selected version and existing version are same.".encode(), response.data)
 
     @requests_mock.mock()
     @patch("response_operations_ui.views.collection_exercise.build_collection_exercise_details")
