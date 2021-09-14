@@ -293,8 +293,8 @@ def create_survey(survey_ref, short_name, long_name, legal_basis, survey_mode):
             {"name": "COLLECTION_INSTRUMENT", "classifierTypes": ["FORM_TYPE"]},
             {"name": "COMMUNICATION_TEMPLATE", "classifierTypes": ["LEGAL_BASIS", "REGION"]},
         ],
+        "eqVersion": "v2" if survey_mode != "SEFT" else "",
     }
-
     response = requests.post(url, json=survey_details, auth=app.config["BASIC_AUTH"])
 
     try:
