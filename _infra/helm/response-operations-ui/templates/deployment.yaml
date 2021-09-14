@@ -207,6 +207,8 @@ spec:
             {{- else }}
             value: "http://$(SECURE_MESSAGE_SERVICE_HOST):$(SECURE_MESSAGE_SERVICE_PORT)"
             {{- end }}
+          - name: EQ_VERSION_ENABLED
+            value: "{{ .Values.features.v3Enabled }}"
           - name: SECURE_MESSAGE_JWT_SECRET
             valueFrom:
               secretKeyRef:

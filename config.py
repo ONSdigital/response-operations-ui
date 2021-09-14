@@ -89,6 +89,7 @@ class Config(object):
 
     TEST_MODE = strtobool(os.getenv("TEST_MODE", "False"))
     WTF_CSRF_ENABLED = strtobool(os.getenv("WTF_CSRF_ENABLED", "True"))
+    EQ_VERSION_ENABLED = strtobool(os.getenv("EQ_VERSION_ENABLED", "True"))
 
 
 class DevelopmentConfig(Config):

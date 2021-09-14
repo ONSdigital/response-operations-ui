@@ -7,7 +7,6 @@
 {% from "components/checkboxes/_macro.njk" import onsCheckboxes %}
 
 {% set page_title = survey.surveyRef + " " + survey.shortName + " " + ce.exerciseRef + " | Surveys" %}
-
 {% block main %}
     {% include 'collection_exercise/ce-success-panel.html' %}
     {% include 'collection_exercise/ce-handle-errors.html' %}
@@ -25,7 +24,11 @@
 
         <div class="grid__col col-5@l push-1@l">
             {% include 'collection_exercise/ce-reference-information.html' %}
+            {% if survey.surveyMode == 'EQ' and is_eq_v3_enabled %}
+              {% include 'collection_exercise/ce-select-eq-version.html' %}
+            {% endif %}
         </div>
+       
     </div>
 
 {% endblock %}
