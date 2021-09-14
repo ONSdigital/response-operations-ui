@@ -89,6 +89,7 @@ class Config(object):
 
     TEST_MODE = strtobool(os.getenv("TEST_MODE", "False"))
     WTF_CSRF_ENABLED = strtobool(os.getenv("WTF_CSRF_ENABLED", "True"))
+    EQ_VERSION_ENABLED = strtobool(os.getenv("WTF_CSRF_ENABLED", "True"))
 
 
 class DevelopmentConfig(Config):
@@ -132,7 +133,6 @@ class DevelopmentConfig(Config):
     CREATE_ACCOUNT_EMAIL_TOKEN_EXPIRY = int(os.getenv("CREATE_ACCOUNT_EMAIL_TOKEN_EXPIRY", "3628800"))
     CREATE_ACCOUNT_ADMIN_PASSWORD = os.getenv("CREATE_ACCOUNT_ADMIN_PASSWORD", "secret")
     WTF_CSRF_ENABLED = strtobool(os.getenv("WTF_CSRF_ENABLED", "False"))
-    EQ_VERSION_ENABLED = strtobool(os.getenv("WTF_CSRF_ENABLED", "True"))
 
 
 class TestingConfig(DevelopmentConfig):
