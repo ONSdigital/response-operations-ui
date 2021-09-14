@@ -382,7 +382,6 @@ def delete_respondent(respondent_id):
     breadcrumbs = [
         {"url": "/respondents", "text": "Respondents"},
         {"text": f"{respondent['emailAddress']}", "url": f"/respondents/respondent-details/{respondent_id}"},
-        {"text": "Delete"},
         {},
     ]
 
