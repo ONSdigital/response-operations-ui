@@ -5,9 +5,9 @@ from datetime import datetime
 import iso8601
 from dateutil import tz
 from dateutil.parser import parse
+from flask import Blueprint, abort
+from flask import current_app as app
 from flask import (
-    Blueprint,
-    abort,
     flash,
     jsonify,
     make_response,
@@ -17,7 +17,6 @@ from flask import (
     session,
     url_for,
 )
-from flask import current_app as app
 from flask_login import login_required
 from structlog import wrap_logger
 from wtforms import ValidationError
@@ -144,7 +143,7 @@ def view_collection_exercise(short_name, period):
         ci_classifiers=ce_details["ci_classifiers"]["classifierTypes"],
         info_panel=info_panel,
         existing_nudge=sorted_nudge_list if len(sorted_nudge_list) > 0 else [],
-        is_eq_v3_enabled=app.config["EQ_VERSION_ENABLED"]
+        is_eq_v3_enabled=app.config["EQ_VERSION_ENABLED"],
     )
 
 
