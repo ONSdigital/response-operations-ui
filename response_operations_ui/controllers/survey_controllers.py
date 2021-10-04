@@ -240,7 +240,7 @@ def refresh_cache():
     try:
         app.surveys_dict = get_surveys_dictionary()
     except ApiError:
-        logger.exception("Failed to resolve survey ref due to API error", survey_id=survey_id)
+        logger.exception("Failed to refresh survey cache")
 
 
 def update_survey_details(survey_ref, short_name, long_name):
@@ -261,7 +261,7 @@ def update_survey_details(survey_ref, short_name, long_name):
         raise ApiError(response)
 
     logger.info("Successfully updated survey details", survey_ref=survey_ref)
-    
+
     # refresh the cache
     refresh_cache()
 
