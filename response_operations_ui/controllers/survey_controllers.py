@@ -228,12 +228,19 @@ def get_survey_ref_by_id(survey_id: str):
         return app.surveys_dict[survey_id]["surveyRef"]
     except (AttributeError, KeyError):
         try:
-            app.surveys_dict = get_surveys_dictionary()
+            refresh_cache()
             return app.surveys_dict[survey_id]["surveyRef"]
         except ApiError:
             logger.exception("Failed to resolve survey ref due to API error", survey_id=survey_id)
         except KeyError:
             logger.exception("Failed to resolve survey ref", survey_id=survey_id)
+
+
+def refresh_cache():
+    try:
+        app.surveys_dict = get_surveys_dictionary()
+    except ApiError:
+        logger.exception("Failed to resolve survey ref due to API error", survey_id=survey_id)
 
 
 def update_survey_details(survey_ref, short_name, long_name):
@@ -254,6 +261,9 @@ def update_survey_details(survey_ref, short_name, long_name):
         raise ApiError(response)
 
     logger.info("Successfully updated survey details", survey_ref=survey_ref)
+    
+    # refresh the cache
+    refresh_cache()
 
 
 def get_legal_basis_list():
