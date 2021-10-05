@@ -5,6 +5,7 @@ import os
 import redis
 from flask import Flask, session
 from flask_assets import Environment
+from flask_cache import Cache
 from flask_login import LoginManager
 from flask_session import Session
 from flask_talisman import Talisman
@@ -111,6 +112,9 @@ def create_app(config_name=None):
     login_manager = LoginManager(app)
     login_manager.init_app(app)
     login_manager.login_view = "sign_in_bp.sign_in"
+
+    cache = Cache(app)
+    
 
     @app.context_processor
     def inject_availability_message():

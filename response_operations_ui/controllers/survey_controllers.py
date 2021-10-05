@@ -2,6 +2,7 @@ import logging
 
 import requests
 from flask import current_app as app
+from flask_cache import Cache as cache
 from requests.exceptions import HTTPError, RequestException
 from structlog import wrap_logger
 
@@ -199,17 +200,15 @@ def get_business_survey_shortname_list() -> set:
     return sorted(survey_set)
 
 
+@cache.cached(timeout=3600, key_prefix='get_survey_short_name_by_id')
 def get_survey_short_name_by_id(survey_id: str) -> str:
     try:
+        app.surveys_dict = get_surveys_dictionary()
         return app.surveys_dict[survey_id]["shortName"]
-    except (AttributeError, KeyError):
-        try:
-            app.surveys_dict = get_surveys_dictionary()
-            return app.surveys_dict[survey_id]["shortName"]
-        except ApiError:
-            logger.exception("Failed to resolve survey short name due to API error", survey_id=survey_id)
-        except KeyError:
-            logger.exception("Failed to resolve survey short name", survey_id=survey_id)
+    except ApiError:
+        logger.exception("Failed to resolve survey short name due to API error", survey_id=survey_id)
+    except KeyError:
+        logger.exception("Failed to resolve survey short name", survey_id=survey_id)
 
 
 def get_survey_id_by_short_name(short_name: str) -> str:
@@ -223,17 +222,15 @@ def get_survey_id_by_short_name(short_name: str) -> str:
     return get_survey_by_shortname(short_name)["id"]
 
 
+@cache.cached(timeout=3600, key_prefix='get_survey_ref_by_id')
 def get_survey_ref_by_id(survey_id: str):
     try:
+        app.surveys_dict = get_surveys_dictionary()
         return app.surveys_dict[survey_id]["surveyRef"]
-    except (AttributeError, KeyError):
-        try:
-            app.surveys_dict = get_surveys_dictionary()
-            return app.surveys_dict[survey_id]["surveyRef"]
-        except ApiError:
-            logger.exception("Failed to resolve survey ref due to API error", survey_id=survey_id)
-        except KeyError:
-            logger.exception("Failed to resolve survey ref", survey_id=survey_id)
+    except ApiError:
+        logger.exception("Failed to resolve survey ref due to API error", survey_id=survey_id)
+    except KeyError:
+        logger.exception("Failed to resolve survey ref", survey_id=survey_id)
 
 
 def update_survey_details(survey_ref, short_name, long_name):

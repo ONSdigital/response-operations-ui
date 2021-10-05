@@ -9,6 +9,8 @@ class Config(object):
     DEBUG = os.getenv("DEBUG", False)
     TESTING = False
     PORT = os.getenv("PORT", 8085)
+    CACHE_TYPE = "SimpleCache",  # Flask-Caching related configs
+    CACHE_DEFAULT_TIMEOUT = 300
     GOOGLE_TAG_MANAGER = os.getenv("GOOGLE_TAG_MANAGER")
     GOOGLE_TAG_MANAGER_PROP = os.getenv("GOOGLE_TAG_MANAGER_PROP")
     PREFERRED_URL_SCHEME = "https"
