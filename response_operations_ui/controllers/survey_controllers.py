@@ -1,4 +1,5 @@
 import logging
+import time
 
 import requests
 from flask import current_app as app
@@ -201,10 +202,11 @@ def get_business_survey_shortname_list() -> set:
 
 def get_survey_short_name_by_id(survey_id: str) -> str:
     try:
+        check_cache()
         return app.surveys_dict[survey_id]["shortName"]
     except (AttributeError, KeyError):
         try:
-            app.surveys_dict = get_surveys_dictionary()
+            refresh_cache()
             return app.surveys_dict[survey_id]["shortName"]
         except ApiError:
             logger.exception("Failed to resolve survey short name due to API error", survey_id=survey_id)
@@ -225,6 +227,7 @@ def get_survey_id_by_short_name(short_name: str) -> str:
 
 def get_survey_ref_by_id(survey_id: str):
     try:
+        check_cache()
         return app.surveys_dict[survey_id]["surveyRef"]
     except (AttributeError, KeyError):
         try:
@@ -236,9 +239,20 @@ def get_survey_ref_by_id(survey_id: str):
             logger.exception("Failed to resolve survey ref", survey_id=survey_id)
 
 
+def check_cache():
+    now = time.time()
+    # if the cache is greater than 60 seconds refresh it
+    if now - app.surveys_dict_time > 60:
+        logger.info("cache older than 60 seconds refreshing")
+        refresh_cache()
+    return app.surveys_dict
+
+
 def refresh_cache():
     try:
+        logger.info("refreshing cache")
         app.surveys_dict = get_surveys_dictionary()
+        app.surveys_dict_time = time.time()
     except ApiError:
         logger.exception("Failed to refresh survey cache")
 
