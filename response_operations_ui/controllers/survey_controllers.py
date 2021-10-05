@@ -240,9 +240,8 @@ def get_survey_ref_by_id(survey_id: str):
 
 
 def check_cache():
-    now = time.monotonic()
     # if the cache is greater than 60 seconds refresh it
-    if app.surveys_dict_time is None or now - app.surveys_dict_time > 60:
+    if app.surveys_dict_time is None or time.monotonic() - app.surveys_dict_time > 60:
         logger.info("cache older than 60 seconds refreshing")
         refresh_cache()
 
@@ -274,9 +273,6 @@ def update_survey_details(survey_ref, short_name, long_name):
         raise ApiError(response)
 
     logger.info("Successfully updated survey details", survey_ref=survey_ref)
-
-    # refresh the cache
-    refresh_cache()
 
 
 def get_legal_basis_list():
