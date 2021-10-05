@@ -240,10 +240,13 @@ def get_survey_ref_by_id(survey_id: str):
 
 
 def check_cache():
+    logger.info("checking cache")
     # if the cache is greater than 60 seconds refresh it
     if app.surveys_dict_time is None or time.monotonic() - app.surveys_dict_time > 60:
         logger.info("cache older than 60 seconds refreshing")
         refresh_cache()
+    else:
+        logger.info("cache is not out of date")
 
 
 def refresh_cache():
