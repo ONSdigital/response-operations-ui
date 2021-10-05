@@ -227,6 +227,7 @@ def get_survey_id_by_short_name(short_name: str) -> str:
 
 def get_survey_ref_by_id(survey_id: str):
     try:
+        logger.info("called get_survey_ref_by_id")
         check_cache()
         return app.surveys_dict[survey_id]["surveyRef"]
     except (AttributeError, KeyError):
