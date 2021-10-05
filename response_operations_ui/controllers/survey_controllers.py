@@ -210,7 +210,7 @@ def get_survey_short_name_by_id(survey_id: str) -> str:
             return app.surveys_dict[survey_id]["shortName"]
         except ApiError:
             logger.exception("Failed to resolve survey short name due to API error", survey_id=survey_id)
-        except KeyError:
+        except (KeyError, AttributeError):
             logger.exception("Failed to resolve survey short name", survey_id=survey_id)
 
 
@@ -235,24 +235,23 @@ def get_survey_ref_by_id(survey_id: str):
             return app.surveys_dict[survey_id]["surveyRef"]
         except ApiError:
             logger.exception("Failed to resolve survey ref due to API error", survey_id=survey_id)
-        except KeyError:
+        except (KeyError, AttributeError):
             logger.exception("Failed to resolve survey ref", survey_id=survey_id)
 
 
 def check_cache():
-    now = time.time()
+    now = time.monotonic()
     # if the cache is greater than 60 seconds refresh it
-    if now - app.surveys_dict_time > 60:
+    if app.surveys_dict_time is None or now - app.surveys_dict_time > 60:
         logger.info("cache older than 60 seconds refreshing")
         refresh_cache()
-    return app.surveys_dict
 
 
 def refresh_cache():
     try:
         logger.info("refreshing cache")
         app.surveys_dict = get_surveys_dictionary()
-        app.surveys_dict_time = time.time()
+        app.surveys_dict_time = time.monotonic()
     except ApiError:
         logger.exception("Failed to refresh survey cache")
 
