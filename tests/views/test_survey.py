@@ -175,6 +175,7 @@ class TestSurvey(ViewTestCase):
         self.assertIn(b"Ready for review", response.data)
         self.assertIn(b"Ready for live", response.data)
         self.assertIn(b"Live", response.data)
+        self.assertIn(b"Ended", response.data)
 
     @requests_mock.mock()
     def test_get_survey_short_name_by_id(self, mock_request):
