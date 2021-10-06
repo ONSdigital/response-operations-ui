@@ -517,10 +517,10 @@ class TestSurvey(ViewTestCase):
         self.assertEqual(
             ce_ids_in_order,
             [
-                "bd4d2bec-28d3-421c-a399-b2840e52e36e",
-                "23a83a62-87dd-4c6c-97e2-4b207f7e57f5",
-                "9f9d28c6-d010-47cc-832c-6ab9b741ee96",
                 "48b6c58a-bf5b-4bb3-8d7d-5e205ff3a0fd",
+                "9f9d28c6-d010-47cc-832c-6ab9b741ee96",
+                "23a83a62-87dd-4c6c-97e2-4b207f7e57f5",
+                "bd4d2bec-28d3-421c-a399-b2840e52e36e",
             ],
         )
 
