@@ -106,7 +106,7 @@ def view_collection_exercise(short_name, period):
 
     ce_state = ce_details["collection_exercise"]["state"]
     show_set_live_button = ce_state in ("READY_FOR_REVIEW", "FAILEDVALIDATION")
-    locked = ce_state in ("LIVE", "READY_FOR_LIVE", "EXECUTION_STARTED", "VALIDATED", "EXECUTED")
+    locked = ce_state in ("LIVE", "READY_FOR_LIVE", "EXECUTION_STARTED", "VALIDATED", "EXECUTED", "ENDED")
     processing = ce_state in ("EXECUTION_STARTED", "EXECUTED", "VALIDATED")
     validation_failed = ce_state == "FAILEDVALIDATION"
     validation_errors = ce_details["collection_exercise"]["validationErrors"]
@@ -504,7 +504,7 @@ def view_collection_exercise_details(short_name, period):
     form = EditCollectionExerciseDetailsForm(form=request.form)
     survey_details = survey_controllers.get_survey(short_name)
     ce_state = ce_details["collection_exercise"]["state"]
-    locked = ce_state in ("LIVE", "READY_FOR_LIVE", "EXECUTION_STARTED", "VALIDATED", "EXECUTED")
+    locked = ce_state in ("LIVE", "READY_FOR_LIVE", "EXECUTION_STARTED", "VALIDATED", "EXECUTED", "ENDED")
 
     return render_template(
         "edit-collection-exercise-details.html",
@@ -531,7 +531,7 @@ def edit_collection_exercise_details(short_name, period):
         ce_details = build_collection_exercise_details(short_name, period)
         ce_state = ce_details["collection_exercise"]["state"]
         survey_id = survey_controllers.get_survey_id_by_short_name(short_name)
-        locked = ce_state in ("LIVE", "READY_FOR_LIVE", "EXECUTION_STARTED", "VALIDATED", "EXECUTED")
+        locked = ce_state in ("LIVE", "READY_FOR_LIVE", "EXECUTION_STARTED", "VALIDATED", "EXECUTED", "ENDED")
 
         return render_template(
             "edit-collection-exercise-details.html",
