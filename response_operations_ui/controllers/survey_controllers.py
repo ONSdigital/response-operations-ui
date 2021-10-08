@@ -16,7 +16,7 @@ logger = wrap_logger(logging.getLogger(__name__))
 def check_cache():
     logger.debug("checking cache age")
     # if the cache is greater than 60 seconds refresh it
-    if app.surveys_dict_time is None or time.monotonic() - app.surveys_dict_time > 60:
+    if not hasattr(app, "surveys_dict_time") or time.monotonic() - app.surveys_dict_time > 60:
         logger.debug("cache older than 60 seconds refreshing")
         try:
             refresh_cache()

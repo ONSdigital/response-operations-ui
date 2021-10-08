@@ -86,3 +86,68 @@ class TestCaseControllers(unittest.TestCase):
             with self.app.app_context():
                 with self.assertRaises(ApiError):
                     survey_controllers.get_surveys_dictionary()
+
+    def test_check_cache(self):
+        
+        expected = {
+            "6aa8896f-ced5-4694-800c-6cd661b0c8b2": {"shortName": "ASHE", "surveyRef": "141"},
+            "AIFDI_id": {"shortName": "FDI", "surveyRef": "062"},
+            "AOFDI_id": {"shortName": "FDI", "surveyRef": "063"},
+            "QIFDI_id": {"shortName": "FDI", "surveyRef": "064"},
+            "QOFDI_id": {"shortName": "FDI", "surveyRef": "065"},
+            "cb0711c3-0ac8-41d3-ae0e-567e5ea1ef87": {"shortName": "BRES", "surveyRef": "221"},
+            "cb0711c3-0ac8-41d3-ae0e-567e5ea1ef88": {"shortName": "BRUS", "surveyRef": "222"},
+            "cb8accda-6118-4d3b-85a3-149e28960c54": {"shortName": "Bricks", "surveyRef": "074"},
+        }
+        try:
+            self.failIf(self.app.surveys_dict)
+        except AttributeError:
+            # we're expecting it not to be there
+            pass
+
+        try:
+            self.failIf(self.app.surveys_dict_time)
+        except AttributeError:
+            # we're expecting it not to be there
+            pass
+
+        with responses.RequestsMock() as rsps:
+            rsps.add(rsps.GET, url_get_surveys_list, json=survey_list)
+            with self.app.app_context():
+                survey_controllers.check_cache()
+                self.assertIsNotNone(self.app.surveys_dict)
+                self.assertIsNotNone(self.app.surveys_dict_time)
+                self.assertEqual(expected, self.app.surveys_dict)
+
+    def test_refresh_cache(self):
+
+        expected = {
+            "6aa8896f-ced5-4694-800c-6cd661b0c8b2": {"shortName": "ASHE", "surveyRef": "141"},
+            "AIFDI_id": {"shortName": "FDI", "surveyRef": "062"},
+            "AOFDI_id": {"shortName": "FDI", "surveyRef": "063"},
+            "QIFDI_id": {"shortName": "FDI", "surveyRef": "064"},
+            "QOFDI_id": {"shortName": "FDI", "surveyRef": "065"},
+            "cb0711c3-0ac8-41d3-ae0e-567e5ea1ef87": {"shortName": "BRES", "surveyRef": "221"},
+            "cb0711c3-0ac8-41d3-ae0e-567e5ea1ef88": {"shortName": "BRUS", "surveyRef": "222"},
+            "cb8accda-6118-4d3b-85a3-149e28960c54": {"shortName": "Bricks", "surveyRef": "074"},
+        }
+        
+        try:
+            self.failIf(self.app.surveys_dict)
+        except AttributeError:
+            # we're expecting it not to be there
+            pass
+
+        try:
+            self.failIf(self.app.surveys_dict_time)
+        except AttributeError:
+            # we're expecting it not to be there
+            pass
+
+        with responses.RequestsMock() as rsps:
+            rsps.add(rsps.GET, url_get_surveys_list, json=survey_list)
+            with self.app.app_context():
+                survey_controllers.refresh_cache()
+                self.assertIsNotNone(self.app.surveys_dict)
+                self.assertIsNotNone(self.app.surveys_dict_time)
+                self.assertEqual(expected, self.app.surveys_dict)
