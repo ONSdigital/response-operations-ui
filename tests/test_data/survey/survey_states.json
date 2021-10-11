@@ -53,6 +53,15 @@
       "events": [{"collectionExerciseId": "92d436aa-1251-4ae3-bad1-f3ae950f87be",
         "id": "fe11ebe1-01b5-4458-aa0e-3df1a290048d", "tag": "go_live", "timestamp": "2018-03-21T00:00:00.000Z"}]
 
+    },
+        {
+      "id": "14fb3e68-4dca-46db-bf49-04b84e07e77c",
+      "name": "BRES_2017",
+      "scheduledExecutionDateTime": "2017-09-10T23:00:00.000+0000",
+      "state": "ENDED",
+      "events": [{"collectionExerciseId": "92d436aa-1251-4ae3-bad1-f3ae950f87be",
+        "id": "fe11ebe1-01b5-4458-aa0e-3df1a290048d", "tag": "go_live", "timestamp": "2018-03-21T00:00:00.000Z"}]
+
     }
   ],
   "survey": {
