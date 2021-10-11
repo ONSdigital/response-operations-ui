@@ -58,6 +58,7 @@ def map_collection_exercise_state(ce_state):
         "EXECUTED": "Setting ready for live",
         "READY_FOR_LIVE": "Ready for live",
         "LIVE": "Live",
+        "ENDED": "Ended",
     }.get(ce_state, ce_state)
 
 
