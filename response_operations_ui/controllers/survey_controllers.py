@@ -1,4 +1,5 @@
 import logging
+import time
 
 import requests
 from flask import current_app as app
@@ -10,6 +11,26 @@ from response_operations_ui.common.mappers import format_short_name
 from response_operations_ui.exceptions.exceptions import ApiError
 
 logger = wrap_logger(logging.getLogger(__name__))
+
+
+def check_cache():
+    logger.debug("checking cache age")
+    # if the cache is greater than 60 seconds refresh it
+    if not hasattr(app, "surveys_dict_time") or time.monotonic() - app.surveys_dict_time > 60:
+        logger.debug("cache older than 60 seconds refreshing")
+        try:
+            refresh_cache()
+        except ApiError:
+            logger.exception("Failed to refresh survey cache")
+    else:
+        logger.debug("cache is not out of date")
+
+
+def refresh_cache():
+    logger.debug("refreshing cache")
+    app.surveys_dict = get_surveys_dictionary()
+    app.surveys_dict_time = time.monotonic()
+    logger.debug("refreshed cache")
 
 
 def get_survey_by_id(survey_id):
@@ -201,10 +222,12 @@ def get_business_survey_shortname_list() -> set:
 
 def get_survey_short_name_by_id(survey_id: str) -> str:
     try:
+        check_cache()
         return app.surveys_dict[survey_id]["shortName"]
     except (AttributeError, KeyError):
         try:
-            app.surveys_dict = get_surveys_dictionary()
+            # force a refresh in case there's a new survey
+            refresh_cache()
             return app.surveys_dict[survey_id]["shortName"]
         except ApiError:
             logger.exception("Failed to resolve survey short name due to API error", survey_id=survey_id)
@@ -225,10 +248,12 @@ def get_survey_id_by_short_name(short_name: str) -> str:
 
 def get_survey_ref_by_id(survey_id: str):
     try:
+        check_cache()
         return app.surveys_dict[survey_id]["surveyRef"]
     except (AttributeError, KeyError):
         try:
-            app.surveys_dict = get_surveys_dictionary()
+            # force a refresh in case there's a new survey
+            refresh_cache()
             return app.surveys_dict[survey_id]["surveyRef"]
         except ApiError:
             logger.exception("Failed to resolve survey ref due to API error", survey_id=survey_id)
