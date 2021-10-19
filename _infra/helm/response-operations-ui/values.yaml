@@ -30,11 +30,11 @@ service:
 
 resources:
   requests:
-    memory: "125Mi"
+    memory: "250Mi"
     cpu: "50m"
   limits:
-    cpu: "200m"
-    memory: "500Mi"
+    cpu: "150m"
+    memory: "300Mi"
 
 autoscaling: false
 scaleAt:
