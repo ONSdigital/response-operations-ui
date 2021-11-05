@@ -104,7 +104,7 @@ spec:
                 name: rops
                 key: create-account-password
           - name: CREATE_ACCOUNT_EMAIL_TOKEN_EXPIRY
-            value: "{{ .Values.admin.createccountEmailExpiry }}"
+            value: "{{ .Values.admin.createAccountEmailExpiry }}"
           - name: DASHBOARD_URL
             {{- if .Values.dashboard.hasIngress }}
             value: {{ .Values.dashboard.address }}
