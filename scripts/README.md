@@ -51,3 +51,22 @@ Included in this folder is a file called `example_business_file.xlsx` which mimi
 generates for us and can be used to generate example files.  There is also `example_print_file.csv` to mimic the print file
 for testing.
 
+## Generate sample file (generate_sample_file.py)
+
+This is a simple script that can be used to generate a sample file to load in a collection exercise.
+
+To run the script, do the following:
+```bash
+python generate_sample_file.py
+```
+
+The result of running the script will be a file called `sample.csv` created in the same folder with 5 sample units.
+
+Notes:
+- This script will append to a file called `sample.csv` (creating it first it doesn't exist).  If you've generated one
+  before then make sure you deleted the previous one, otherwise you'll have a sample with duplicate ru_refs, which will
+  cause issues in the sample load process.
+- By default, it will generate a file with 5 samples in it.  To change this number, modify the value in the `range`
+  in the script (e.g., changing it to 1000 will give you 1000 rows in the sample file) before running it again.
+- ALL the sample units will have a formtype of 0001.  If you're testing collection exercises with multiple formtypes
+  then generate the file then modify it accordingly.
