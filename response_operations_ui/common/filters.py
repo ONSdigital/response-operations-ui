@@ -42,7 +42,8 @@ def get_current_collection_exercise(collection_exercises):  # noqa: C901
         if start_date is None:
             continue
         delta = (parse_date(start_date) - now).total_seconds()
-        if delta < 0:
+        state = collection_exercise.get("state")
+        if delta < 0 and state in {"READYFORLIVE", "LIVE", "ENDED"}:
             if closest_time_delta == 0 or delta > closest_time_delta:
                 closest_time_delta = delta
                 closest_collection_exercise = collection_exercise

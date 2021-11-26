@@ -48,7 +48,11 @@
         ]
       }) 
     }}
-    <p class="u-fs-s">Data from the <a href="{{ data.dashboard_url }}">SDC dashboard</a></p>
+    {% if data.state == 'READYFORLIVE' or data.state == 'LIVE' or data.state == 'ENDED' %}
+      <p class="u-fs-s">Data from the <a href="{{ data.dashboard_url }}">SDC dashboard</a></p>
+    {% else %}
+      <p class="u-fs-s">Data from the SDC dashboard not available</p>
+    {% endif %}
   </section>
 
 {% endblock %}
