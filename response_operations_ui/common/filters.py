@@ -18,7 +18,7 @@ def get_current_collection_exercise(collection_exercises):  # noqa: C901
     Figures out what the most 'current' collection exercise is from a list of them.
     This is done with the following 4 steps:
       - If there are no collection exercises, return an empty dict
-      - Search for the nearest to today past scheduledStartDateTime.
+      - Search for the nearest to today past scheduledStartDateTime in LIVE, READY FOR LIVE and ENDED state.
       - If there are none in the past, search for the nearest scheduledStartDateTime in the future
       - Finally, if nothing has been found then return an empty dict as none of the collection exercises
         have been set up properly
