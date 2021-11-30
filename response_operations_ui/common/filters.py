@@ -15,11 +15,16 @@ def get_collection_exercise_by_period(exercises, period):
 
 def get_current_collection_exercise(collection_exercises):  # noqa: C901
     """
-    Figures out what the most 'current' collection exercise is from a list of them. This is done with the following 4
-    steps: - If there are no collection exercises, return an empty dict - Search for the nearest to today past
-    scheduledStartDateTime in LIVE, READY FOR LIVE and ENDED state. - If there are none in the past, search for the
-    nearest scheduledStartDateTime in the future - Finally, if nothing has been found then return an empty dict as
-    none of the collection exercises have been set up properly The reason we care about the state in the exercises in
+    Figures out what the most 'current' collection exercise is from a list of them.
+    This is done with the following 4 steps:
+      - If there are no collection exercises, return an empty dict
+      - Search for the nearest to today past scheduledStartDateTime in LIVE, READY FOR LIVE and ENDED state.
+      - If there are none in the past, search for the nearest scheduledStartDateTime in the future
+      - Finally, if nothing has been found then return an empty dict as none of the collection exercises
+        have been set up properly
+    Note:  If there are 2 collection exercises scheduled to start at the same time then it will display the first one
+    it comes across.
+    The reason we care about the state in the exercises in
     the past, but not in the future, is because if there are exercises in the past then they're likely to be set up
     correctly and give us useful information.  If there are none with a start date the past then it's likely that
     this is a new survey, and we just want whatever information we can get.
