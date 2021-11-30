@@ -18,12 +18,20 @@ def get_current_collection_exercise(collection_exercises):  # noqa: C901
     Figures out what the most 'current' collection exercise is from a list of them.
     This is done with the following 4 steps:
       - If there are no collection exercises, return an empty dict
-      - Search for the nearest to today past scheduledStartDateTime.
+      - Search for the nearest to today past scheduledStartDateTime in LIVE, READY FOR LIVE and ENDED state.
       - If there are none in the past, search for the nearest scheduledStartDateTime in the future
       - Finally, if nothing has been found then return an empty dict as none of the collection exercises
         have been set up properly
     Note:  If there are 2 collection exercises scheduled to start at the same time then it will display the first one
     it comes across.
+    The reason we care about the state in the exercises in
+    the past, but not in the future, is because if there are exercises in the past then they're likely to be set up
+    correctly and give us useful information.  If there are none with a start date the past then it's likely that
+    this is a new survey, and we just want whatever information we can get.
+
+    Additionally, the responses dashboard doesn't handle not fully set up collection exercises too well, so we can
+    try and save the user from giving them a dashboard link that won't work. Note:  If there are 2
+    collection exercises scheduled to start at the same time then it will display the first one it comes across.
 
     :param collection_exercises: A dictionary containing collection exercises for a survey
     :type collection_exercises: list
@@ -42,7 +50,8 @@ def get_current_collection_exercise(collection_exercises):  # noqa: C901
         if start_date is None:
             continue
         delta = (parse_date(start_date) - now).total_seconds()
-        if delta < 0:
+        state = collection_exercise.get("state")
+        if delta < 0 and state in {"READYFORLIVE", "LIVE", "ENDED"}:
             if closest_time_delta == 0 or delta > closest_time_delta:
                 closest_time_delta = delta
                 closest_collection_exercise = collection_exercise

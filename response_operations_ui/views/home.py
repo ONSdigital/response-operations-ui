@@ -90,6 +90,7 @@ def format_data_for_template(collection_exercise, survey):
     formatted_data["survey_id"] = survey["surveyRef"]
     formatted_data["shortName"] = survey["shortName"]
     formatted_data["longName"] = survey["longName"]
+    formatted_data["state"] = collection_exercise.get("state", "N/A")
 
     # We can't be certain of what events are present so we need to add the ones that are present and put a sensible
     # blank value to the ones that are absent. 'ref_period_start', 'ref_period_end' and 'employment' are

@@ -108,10 +108,7 @@ class TestFilters(unittest.TestCase):
         with open(f"{project_root}/test_data/collection_exercise/" f"only_past_collection_exercises.json") as json_data:
             collection_exercise_list = json.load(json_data)
 
-        with open(
-            f"{project_root}/test_data/collection_exercise/" f"closest_past_collection_exercise.json"
-        ) as json_data:
-            expected_output = json.load(json_data)
+        expected_output = {}
 
         output = get_current_collection_exercise(collection_exercise_list)
         self.assertEqual(output, expected_output)
@@ -126,7 +123,7 @@ class TestFilters(unittest.TestCase):
             collection_exercise_list = json.load(json_data)
 
         with open(
-            f"{project_root}/test_data/collection_exercise/" f"closest_past_collection_exercise.json"
+            f"{project_root}/test_data/collection_exercise/" f"closest_future_collection_exercise.json"
         ) as json_data:
             expected_output = json.load(json_data)
 
@@ -143,7 +140,7 @@ class TestFilters(unittest.TestCase):
             collection_exercise_list = json.load(json_data)
 
         with open(
-            f"{project_root}/test_data/collection_exercise/" f"closest_past_collection_exercise.json"
+            f"{project_root}/test_data/collection_exercise/" f"closest_future_collection_exercise.json"
         ) as json_data:
             expected_output = json.load(json_data)
 
