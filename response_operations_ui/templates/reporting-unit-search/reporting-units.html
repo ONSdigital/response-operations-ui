@@ -24,6 +24,10 @@
     </form>
     {% if not total_business_count %}
         <p class="u-mt-m">No results found</p>
+    {% elif total_business_count > max_rec %}
+        <h3 class="u-mt-l">The search results is too big to be displayed.</h3>
+        <h4 class="u-mt-m">We found {{ total_business_count }} records against the search criteria.</h4> 
+        <h4 class="u-mt-m">Please refine your search by adding more keywords/information.</h4>
     {% else %}
         <section class="u-mt-m">
             {% set surveyTableData = {

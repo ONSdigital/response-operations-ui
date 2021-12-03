@@ -280,6 +280,7 @@ def search_reporting_units():
     search_key_words = request.values.get("query", "")
     page = request.values.get("page", "1")
     limit = app.config["PARTY_BUSINESS_RESULTS_PER_PAGE"]
+    max_rec = app.config["PARTY_BUSINESS_RESULTS_TOTAL"]
     breadcrumbs = [{"text": "Reporting units"}]
     form = RuSearchForm()
     form.query.data = search_key_words
@@ -298,7 +299,7 @@ def search_reporting_units():
     pagination = Pagination(
         page=int(page),
         per_page=limit,
-        total=total_business_count,
+        total=len(business_list) if len(business_list) != 0 and len(business_list) <= limit else total_business_count,
         record_name="Business",
         prev_label="Previous",
         next_label="Next",
@@ -312,12 +313,15 @@ def search_reporting_units():
         "reporting-unit-search/reporting-units.html",
         form=form,
         business_list=business_list,
-        total_business_count=total_business_count,
+        total_business_count=len(business_list)
+        if len(business_list) != 0 and len(business_list) <= limit
+        else total_business_count,
         breadcrumbs=breadcrumbs,
         first_index=1 + offset,
         last_index=last_index,
         pagination=pagination,
-        show_pagination=bool(total_business_count > limit),
+        show_pagination=bool(total_business_count > limit) and total_business_count < max_rec,
+        max_rec=max_rec,
     )
 
 
