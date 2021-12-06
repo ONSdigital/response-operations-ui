@@ -299,8 +299,7 @@ def search_reporting_units():
     pagination = Pagination(
         page=int(page),
         per_page=limit,
-        total=
-        len(business_list) if len(business_list) != 0 and total_business_count <= limit else total_business_count,
+        total=len(business_list) if len(business_list) != 0 and total_business_count <= limit else total_business_count,
         record_name="Business",
         prev_label="Previous",
         next_label="Next",
