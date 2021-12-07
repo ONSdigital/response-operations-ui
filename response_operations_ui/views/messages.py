@@ -71,7 +71,7 @@ def create_message():
             return redirect(url_for("messages_bp.view_select_survey"))
         except (ApiError, InternalError):
             form = _repopulate_form_with_submitted_data(form)
-            form.errors["sending"] = ["Message failed to send, something has gone wrong with the website."]
+            flash("Message failed to send, something has gone wrong with the website.", "sending")
             return render_template("create-message.html", form=form, breadcrumbs=breadcrumbs)
 
     return render_template("create-message.html", form=form, breadcrumbs=breadcrumbs)
@@ -167,7 +167,7 @@ def view_conversation(thread_id):
                 error = "Cannot send message to respondent as they have been deleted"
 
             form = _repopulate_form_with_submitted_data(form)
-            form.errors["sending"] = [error]
+            flash(error, "sending")
             return render_template(
                 "conversation-view/conversation-view.html",
                 form=form,
