@@ -7,18 +7,22 @@
 {% from "components/lists/_macro.njk" import onsList %}
 
 {% set page_title = "Create Message" %}
-
 {% block main %}
-    {% if form.errors %}
+    {%- with messages = get_flashed_messages(category_filter=["sending"]) -%}
+      {% if (form.errors or messages) %}
         {% set errorData = [] %}
-
-        {% call
-            onsPanel({
-                "title": "This page has 1 error" if form.errors|length == 1 else "There are " + form.errors|length|string + " errors on this page",
-                "type": "error",
-                "classes": "u-mb-l"
-            })
-        %}
+          {% if form.errors %}
+            {% set title = "This page has 1 error" if form.errors|length == 1 else "There are " + form.errors|length|string + " errors on this page" %}
+          {% else %}
+            {% set title = "This page has 1 error" %}
+          {% endif %}
+          {% call
+              onsPanel({
+                  "title": title,
+                  "type": "error",
+                  "classes": "u-mb-l"
+              })
+          %}
         <p>These <strong>must be corrected</strong> to continue.</p>
         {% if form.subject.errors %}
             {% for error in form.subject.errors %}
@@ -44,14 +48,16 @@
                 ) %}
             {% endfor %}
         {% endif %}
-        {% if form.errors['sending'] %}
-            {% do errorData.append(
+        {%- if messages -%}
+            {%- for message in messages -%}
+              {% do errorData.append(
                 {
-                    "text": form.errors['sending'],
+                    "text": message,
                     "index": true
                 }
-            ) %}
-        {% endif %}
+              ) %}
+            {%- endfor -%}
+          {%- endif -%}
         {{
             onsList({
                 "classes": "list--bare",
@@ -60,7 +66,7 @@
         }}
         {% endcall %}
     {% endif %}
-    
+    {%- endwith -%}
     <h1>Create message</h1>
     <div class="grid grid--gutterless">
         <div class="grid__col col-8@m">
