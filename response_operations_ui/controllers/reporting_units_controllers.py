@@ -108,21 +108,3 @@ def generate_new_enrolment_code(case_id):
         raise ApiError(response)
 
     logger.info("Successfully generated new enrolment code", case_id=case_id)
-
-
-def resend_verification_email(party_id):
-    """Resends a verification email by hitting the party service with a party_id
-
-    :param party_id: party_id of the respondent
-    """
-    logger.info("Re-sending verification email", party_id=party_id)
-    url = f'{app.config["PARTY_URL"]}/party-api/v1/resend-verification-email/{party_id}'
-    response = requests.post(url, auth=app.config["BASIC_AUTH"])
-
-    try:
-        response.raise_for_status()
-    except requests.exceptions.HTTPError:
-        logger.exception("Re-sending of verification email failed", party_id=party_id)
-        raise ApiError(response)
-
-    logger.info("Successfully re-sent verification email", party_id=party_id)

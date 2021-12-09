@@ -45,6 +45,9 @@ iac_2 = "ljbgg3kgstr4"
 
 get_respondent_root = "http://localhost:8085/party-api/v1/respondents/"
 get_respondent_root_with_trailing_slash = f"{TestingConfig.PARTY_URL}/party-api/v1/respondents/"
+url_resend_verification_email = (
+    f"{TestingConfig.PARTY_URL}/party-api/v1/resend-account-email-change-notification" f"/{respondent_party_id}"
+)
 
 project_root = os.path.dirname(os.path.dirname(__file__))
 
@@ -533,3 +536,41 @@ class TestRespondents(ViewTestCase):
         )
         self.assertEqual(get_response.status_code, 200)
         self.assertIn("You have successfully deleted the transfer request.".encode(), get_response.data)
+
+    @requests_mock.mock()
+    def test_fail_resent_verification_email(self, mock_request):
+        mock_request.post(url_resend_verification_email, status_code=500)
+        response = self.client.post(f"respondents/resend_verification/{respondent_party_id}", follow_redirects=True)
+
+        request_history = mock_request.request_history
+        self.assertEqual(1, len(request_history))
+        self.assertEqual(500, response.status_code)
+
+    @requests_mock.mock()
+    def test_get_resent_verification_email(self, mock_request):
+        mock_request.get(url_get_respondent_party_by_party_id, json=respondent_party)
+        response = self.client.get(f"respondents/resend_verification/{respondent_party_id}", follow_redirects=True)
+        self.assertEqual(200, response.status_code)
+
+    @requests_mock.mock()
+    def test_resent_verification_email(self, mock_request):
+        mock_request.post(url_resend_verification_email, status_code=200)
+        mock_request.put(url_change_respondent_status)
+        mock_request.patch(f"{url_auth_respondent_account}/Jacky.Turner@email.com")
+        mock_request.get(f"{url_auth_respondent_account}/Jacky.Turner@email.com", json={"mark_for_deletion": False})
+        mock_request.get(url_get_business_by_ru_ref, json=business_reporting_unit)
+        mock_request.get(url_get_cases_by_business_party_id, json=cases_list)
+        mock_request.get(url_get_casegroups_by_business_party_id, json=case_groups)
+        mock_request.get(f"{url_get_collection_exercise_by_id}/{collection_exercise_id_1}", json=collection_exercise)
+        mock_request.get(f"{url_get_collection_exercise_by_id}/{collection_exercise_id_2}", json=collection_exercise)
+        mock_request.get(url_get_business_party_by_party_id, json=business_party)
+        mock_request.get(url_get_available_case_group_statuses_direct, json=case_group_statuses)
+        mock_request.get(url_get_survey_by_id, json=survey)
+        mock_request.get(url_get_respondent_party_by_party_id, json=respondent_party)
+        mock_request.get(f"{url_get_iac}/{iac_1}", json=iac)
+        mock_request.get(f"{url_get_iac}/{iac_2}", json=iac)
+        mock_request.get(url_get_pending_share, json=[])
+
+        response = self.client.post(f"respondents/resend_verification/{respondent_party_id}", follow_redirects=True)
+
+        self.assertEqual(200, response.status_code)

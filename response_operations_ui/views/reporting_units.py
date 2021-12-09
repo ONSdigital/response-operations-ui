@@ -106,6 +106,7 @@ def build_respondent_table_data_dict(respondents: list, ru_ref: str):
             "respondent": f"{respondent['firstName']} {respondent['lastName']}",
             "status": respondent["status"].title(),
             "surveys": {},
+            "id": respondent["id"],
         }
         respondent_surveys = party_controller.survey_ids_for_respondent(respondent, ru_ref)
         for survey_id in respondent_surveys:
@@ -325,6 +326,7 @@ def search_reporting_units():
     )
 
 
+# Not sure why is this endpoint exposed : Amit Sinha
 @reporting_unit_bp.route("/resend_verification/<ru_ref>/<party_id>", methods=["GET"])
 @login_required
 def view_resend_verification(ru_ref, party_id):
@@ -335,6 +337,7 @@ def view_resend_verification(ru_ref, party_id):
     return render_template("re-send-verification-email.html", ru_ref=ru_ref, email=email, tab="reporting_units")
 
 
+# Not sure why is this endpoint exposed : Amit Sinha
 @reporting_unit_bp.route("/resend_verification/<ru_ref>/<party_id>", methods=["POST"])
 @login_required
 def resend_verification(ru_ref, party_id):
