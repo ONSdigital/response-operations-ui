@@ -92,9 +92,6 @@
               ]
               }) 
           }}
-          {% if is_complete %}
-              <a href="{{ request.referrer }}" id="close-response" class="u-d-b u-mt-s">Close</a>
-          {% else %}
         
             <form action="{{ url_for('case_bp.update_response_status', ru_ref=ru_ref, survey=survey_short_name, case_group_id=case_group_id, period=ce_period) }}" method="post" class="u-mt-s">
                 <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
@@ -133,7 +130,6 @@
                 <a href="{{ request.referrer }}" id="cancel-change">Cancel</a>
               </p>
           </form>
-        {% endif %}
         </div>
     </div>
     <script{% if csp_nonce %} nonce="{{ csp_nonce() }}"{% endif %}>
