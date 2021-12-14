@@ -85,3 +85,21 @@ def obfuscate_email(email):
     prefix = f'{m[0][0]}{"*" * (len(m[0]) - 2)}{m[0][-1]}'
     domain = f'{m[1][0]}{"*" * (len(m[1]) - 2)}{m[1][-1]}'
     return f"{prefix}@{domain}"
+
+
+def resend_verification_email(party_id):
+    """Resends a account email change notification via party service with a party_id
+
+    :param party_id: party_id of the respondent
+    """
+    logger.info("Re-sending account email change verification notification", party_id=party_id)
+    url = f'{app.config["PARTY_URL"]}/party-api/v1/resend-account-email-change-notification/{party_id}'
+    response = requests.post(url, auth=app.config["BASIC_AUTH"])
+
+    try:
+        response.raise_for_status()
+    except requests.exceptions.HTTPError:
+        logger.exception("Re-sending account email change verification notification failed", party_id=party_id)
+        raise ApiError(response)
+
+    logger.info("Successfully re-sent account email change verification notification email", party_id=party_id)

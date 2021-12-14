@@ -317,7 +317,7 @@ def view_resend_verification(respondent_id):
 @respondent_bp.route("/resend_verification/<party_id>", methods=["POST"])
 @login_required
 def resend_verification(party_id):
-    reporting_units_controllers.resend_verification_email(party_id)
+    respondent_controllers.resend_verification_email(party_id)
     logger.info("Re-sent verification email.", party_id=party_id)
     flash("Verification email re-sent")
     return redirect(

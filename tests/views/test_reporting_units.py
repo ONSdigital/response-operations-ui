@@ -28,9 +28,6 @@ url_change_enrolment_status = f"{TestingConfig.PARTY_URL}/party-api/v1/responden
 url_change_respondent_status = (
     f"{TestingConfig.PARTY_URL}/party-api/v1/respondents/edit-account-status/" f"{respondent_party_id}"
 )
-url_resend_verification_email = (
-    f"{TestingConfig.PARTY_URL}/party-api/v1/resend-verification-email" f"/{respondent_party_id}"
-)
 
 url_get_business_by_ru_ref = f"{TestingConfig.PARTY_URL}/party-api/v1/businesses/ref/{ru_ref}"
 url_get_cases_by_business_party_id = f"{TestingConfig.CASE_URL}/cases/partyid/{business_party_id}"
@@ -323,36 +320,6 @@ class TestReportingUnits(TestCase):
         mock_request.get(get_respondent_by_id_url, json=respondent_with_pending_email)
         response = self.client.get(f"reporting-units/resend_verification/50012345678/{respondent_party_id}")
         self.assertEqual(response.status_code, 200)
-
-    @requests_mock.mock()
-    def test_resent_verification_email(self, mock_request):
-        mock_request.post(url_resend_verification_email)
-        mock_request.get(url_get_business_by_ru_ref, json=business_reporting_unit)
-        mock_request.get(url_get_cases_by_business_party_id, json=cases_list)
-        mock_request.get(f"{url_get_collection_exercise_by_id}/{collection_exercise_id_1}", json=collection_exercise)
-        mock_request.get(f"{url_get_collection_exercise_by_id}/{collection_exercise_id_2}", json=collection_exercise_2)
-        mock_request.get(url_get_business_attributes, json=business_attributes)
-        mock_request.get(url_get_survey_by_id, json=survey)
-        mock_request.get(url_get_respondent_party_by_list, json=respondent_party_list)
-        mock_request.get(f"{url_get_iac}/{iac_1}", json=iac)
-        mock_request.get(f"{url_get_iac}/{iac_2}", json=iac)
-
-        response = self.client.post(
-            f"reporting-units/resend_verification/50012345678/{respondent_party_id}", follow_redirects=True
-        )
-
-        self.assertEqual(response.status_code, 200)
-
-    @requests_mock.mock()
-    def test_fail_resent_verification_email(self, mock_request):
-        mock_request.get(url_resend_verification_email, status_code=500)
-        response = self.client.post(
-            f"reporting-units/resend_verification/50012345678/{respondent_party_id}", follow_redirects=True
-        )
-
-        request_history = mock_request.request_history
-        self.assertEqual(len(request_history), 1)
-        self.assertEqual(response.status_code, 500)
 
     @requests_mock.mock()
     def test_change_respondent_status(self, mock_request):
