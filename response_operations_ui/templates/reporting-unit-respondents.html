@@ -61,7 +61,7 @@
         {
           "tds": [
             {
-              "value": respondent.respondent,
+              "value": '<a href="' + url_for("reporting_unit_bp.view_contact_details", ru_ref=ru.sampleUnitRef, respondent_id= respondent.id) + '">' + respondent.respondent + '</a>',
               "data": "Respondent",
               "name": "tbl-respondents-respondent"
             },
