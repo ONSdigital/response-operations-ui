@@ -25,7 +25,7 @@ from response_operations_ui.controllers.party_controller import (
 )
 from response_operations_ui.forms import ChangeGroupStatusForm
 
-COMPLETE_STATE = ["COMPLETEDBYPHONE", "COMPLETE"]
+COMPLETE_STATE = ["COMPLETE"]
 COMPLETED_CASE_EVENTS = ["OFFLINE_RESPONSE_PROCESSED", "SUCCESSFUL_RESPONSE_UPLOAD", "COMPLETED_BY_PHONE"]
 SUCCESSFUL_CASE_EVENTS = ["OFFLINE_RESPONSE_PROCESSED", "SUCCESSFUL_RESPONSE_UPLOAD", "ONLINE_QUESTIONNAIRE_RESPONSE"]
 case_bp = Blueprint("case_bp", __name__, static_folder="static", template_folder="templates")
