@@ -540,7 +540,7 @@ class TestRespondents(ViewTestCase):
     @requests_mock.mock()
     def test_fail_resent_verification_email(self, mock_request):
         mock_request.post(url_resend_verification_email, status_code=500)
-        response = self.client.post(f"respondents/resend_verification/{respondent_party_id}", follow_redirects=True)
+        response = self.client.post(f"respondents/resend-verification/{respondent_party_id}", follow_redirects=True)
 
         request_history = mock_request.request_history
         self.assertEqual(1, len(request_history))
@@ -549,7 +549,7 @@ class TestRespondents(ViewTestCase):
     @requests_mock.mock()
     def test_get_resent_verification_email(self, mock_request):
         mock_request.get(url_get_respondent_party_by_party_id, json=respondent_party)
-        response = self.client.get(f"respondents/resend_verification/{respondent_party_id}", follow_redirects=True)
+        response = self.client.get(f"respondents/resend-verification/{respondent_party_id}", follow_redirects=True)
         self.assertEqual(200, response.status_code)
 
     @requests_mock.mock()
@@ -571,6 +571,6 @@ class TestRespondents(ViewTestCase):
         mock_request.get(f"{url_get_iac}/{iac_2}", json=iac)
         mock_request.get(url_get_pending_share, json=[])
 
-        response = self.client.post(f"respondents/resend_verification/{respondent_party_id}", follow_redirects=True)
+        response = self.client.post(f"respondents/resend-verification/{respondent_party_id}", follow_redirects=True)
 
         self.assertEqual(200, response.status_code)
