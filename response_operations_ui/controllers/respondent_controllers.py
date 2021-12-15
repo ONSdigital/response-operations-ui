@@ -87,19 +87,25 @@ def obfuscate_email(email):
     return f"{prefix}@{domain}"
 
 
-def resend_verification_email(party_id):
+def resend_verification_email(party_id, is_new_account_verification):
     """Resends a account email change notification via party service with a party_id
 
     :param party_id: party_id of the respondent
+    :param is_new_account_verification: bool
     """
-    logger.info("Re-sending account email change verification notification", party_id=party_id)
-    url = f'{app.config["PARTY_URL"]}/party-api/v1/resend-account-email-change-notification/{party_id}'
+    if is_new_account_verification:
+        logger.info("Re-sending new account verification email", party_id=party_id)
+        url = f'{app.config["PARTY_URL"]}/party-api/v1/resend-verification-email/{party_id}'
+    else:
+        logger.info("Re-sending account email change verification notification", party_id=party_id)
+        url = f'{app.config["PARTY_URL"]}/party-api/v1/resend-account-email-change-notification/{party_id}'
+
     response = requests.post(url, auth=app.config["BASIC_AUTH"])
 
     try:
         response.raise_for_status()
     except requests.exceptions.HTTPError:
-        logger.exception("Re-sending account email change verification notification failed", party_id=party_id)
+        logger.exception("Re-sending verification notification failed", party_id=party_id)
         raise ApiError(response)
 
-    logger.info("Successfully re-sent account email change verification notification email", party_id=party_id)
+    logger.info("Successfully re-sent verification notification email", party_id=party_id)

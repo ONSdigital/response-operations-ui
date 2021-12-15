@@ -302,24 +302,32 @@ def edit_contact_details(respondent_id):
     )
 
 
-@respondent_bp.route("/resend_verification/<respondent_id>", methods=["GET"])
+@respondent_bp.route("/resend-verification/<respondent_id>", methods=["GET"])
 @login_required
 def view_resend_verification(respondent_id):
     logger.info("Re-send verification email requested", respondent_id=respondent_id)
     respondent = party_controller.get_respondent_by_party_id(respondent_id)
-    email = respondent["pendingEmailAddress"] if "pendingEmailAddress" in respondent else respondent["emailAddress"]
+    is_new_email_verification_request = True if "pendingEmailAddress" in respondent else False
+    email = respondent["pendingEmailAddress"] if is_new_email_verification_request else respondent["emailAddress"]
 
     return render_template(
-        "re-send-verification-email.html", respondent_id=respondent_id, email=email, tab="respondents"
+        "re-send-verification-email.html",
+        respondent_id=respondent_id,
+        email=email,
+        tab="respondents",
+        is_new_email_verification_request=is_new_email_verification_request,
     )
 
 
-@respondent_bp.route("/resend_verification/<party_id>", methods=["POST"])
+@respondent_bp.route("/resend-verification/<party_id>", methods=["POST"])
 @login_required
 def resend_verification(party_id):
-    respondent_controllers.resend_verification_email(party_id)
+    form = request.form
+    is_new_account_verification = True if form.get("change") == "new-account-email" else False
+    respondent_controllers.resend_verification_email(party_id, is_new_account_verification)
     logger.info("Re-sent verification email.", party_id=party_id)
     flash("Verification email re-sent")
+
     return redirect(
         url_for(
             "respondent_bp.respondent_details",
