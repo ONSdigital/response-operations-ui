@@ -31,9 +31,9 @@ service:
 resources:
   requests:
     memory: "250Mi"
-    cpu: "50m"
+    cpu: "100m"
   limits:
-    cpu: "150m"
+    cpu: "300m"
     memory: "300Mi"
 
 autoscaling: false
