@@ -15,6 +15,7 @@ from response_operations_ui.controllers import (
     iac_controller,
     party_controller,
     reporting_units_controllers,
+    respondent_controllers,
 )
 from response_operations_ui.controllers.collection_exercise_controllers import (
     get_case_group_status_by_collection_exercise,
@@ -341,7 +342,9 @@ def view_resend_verification(ru_ref, party_id):
 @reporting_unit_bp.route("/resend_verification/<ru_ref>/<party_id>", methods=["POST"])
 @login_required
 def resend_verification(ru_ref, party_id):
-    reporting_units_controllers.resend_verification_email(party_id)
+    form = request.form
+    is_new_account_verification = True if form.get("change") == "new-account-email" else False
+    respondent_controllers.resend_verification_email(party_id, is_new_account_verification)
     logger.info("Re-sent verification email.", party_id=party_id)
     flash("Verification email re-sent")
     return redirect(url_for("reporting_unit_bp.view_reporting_unit", ru_ref=ru_ref))
