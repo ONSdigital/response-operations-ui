@@ -57,13 +57,20 @@ def view_reporting_unit(ru_ref):
 def build_survey_table_data_dict(collection_exercises: list, case_groups: list) -> list:
     """
     Creates the dictionary of survey & CE information for the front-end table to display
+
     :param collection_exercises: A list of collection exercises to add to the table
     :param case_groups: A list of case groups for the reporting unit
     :return: A sorted list of survey/CE information to provide to the front-end table
     """
     table_data = {}
+    surveys = {}
     for ce in collection_exercises:
-        survey = get_survey_by_id(ce["surveyId"])
+        # Keep a mini cache of surveys, so we don't have to keep asking for the same survey data repeatedly
+        survey = surveys.get(ce["surveyId"])
+        if survey is None:
+            survey = get_survey_by_id(ce["surveyId"])
+            surveys[ce["surveyId"]] = survey
+
         if survey["surveyRef"] in table_data:
             # Keep the one with the later go-live date
             if parse_date(table_data[survey["surveyRef"]]["goLive"]) > parse_date(ce["scheduledStartDateTime"]):

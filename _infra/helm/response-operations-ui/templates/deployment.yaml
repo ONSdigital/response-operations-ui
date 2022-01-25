@@ -189,7 +189,7 @@ spec:
             {{- if .Values.dns.enabled }}
             value: "http://sample-file-uploader.{{ .Values.namespace }}.svc.cluster.local:{{ .Values.dns.wellKnownPort }}"
             {{- else }}
-            value: "http://$(SAMPLE_SERVICE_HOST):$(SAMPLE_SERVICE_PORT)"
+            value: "http://$(SAMPLE_FILE_UPLOADER_SERVICE_HOST):$(SAMPLE_FILE_UPLOADER_SERVICE_PORT)"
             {{- end }}
           - name: SCHEME
             value: {{ .Values.scheme }}
