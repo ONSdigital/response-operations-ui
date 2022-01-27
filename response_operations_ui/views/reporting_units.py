@@ -148,8 +148,10 @@ def view_reporting_unit_survey(ru_ref, survey):
     cases = case_controller.get_cases_by_business_party_id(reporting_unit["id"])
     case_groups = [case["caseGroup"] for case in cases]
 
-    # Get all collection exercises for retrieved case groups
-    collection_exercise_ids = {case_group["collectionExerciseId"] for case_group in case_groups}
+    # Get all collection exercises for retrieved case groups and only for the survey we care about.
+    collection_exercise_ids = {
+        case_group["collectionExerciseId"] for case_group in case_groups if case_group["surveyId"] == survey
+    }
     collection_exercises = [get_collection_exercise_by_id(ce_id) for ce_id in collection_exercise_ids]
     live_collection_exercises = [
         ce for ce in collection_exercises if parse_date(ce["scheduledStartDateTime"]) < datetime.now(timezone.utc)
@@ -166,11 +168,7 @@ def view_reporting_unit_survey(ru_ref, survey):
     ]
 
     survey_collection_exercises = sorted(
-        [
-            collection_exercise
-            for collection_exercise in live_collection_exercises
-            if survey == collection_exercise["surveyId"]
-        ],
+        [collection_exercise for collection_exercise in live_collection_exercises],
         key=lambda ce: ce["scheduledStartDateTime"],
         reverse=True,
     )
