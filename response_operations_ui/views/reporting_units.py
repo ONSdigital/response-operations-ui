@@ -89,7 +89,7 @@ def build_survey_table_data_dict(collection_exercises: list, case_groups: list) 
 @reporting_unit_bp.route("/<ru_ref>/respondents", methods=["GET"])
 @login_required
 def view_respondents(ru_ref: str):
-    logger.info("Gathering data to view reporting unit", ru_ref=ru_ref)
+    logger.info("Gathering data to view reporting unit respondents", ru_ref=ru_ref)
     # Make some initial calls to retrieve some data we'll need
     reporting_unit = party_controller.get_business_by_ru_ref(ru_ref)
 
@@ -100,6 +100,7 @@ def view_respondents(ru_ref: str):
     respondent_table_data = build_respondent_table_data_dict(respondents, ru_ref)
 
     breadcrumbs = create_reporting_unit_breadcrumbs(ru_ref)
+    logger.info("Successfully gathered data to view reporting unit respondents", ru_ref=ru_ref)
 
     return render_template(
         "reporting-unit-respondents.html", ru=reporting_unit, respondents=respondent_table_data, breadcrumbs=breadcrumbs
@@ -141,7 +142,7 @@ def build_respondent_table_data_dict(respondents: list, ru_ref: str):
 @reporting_unit_bp.route("/<ru_ref>/surveys/<survey>", methods=["GET"])
 @login_required
 def view_reporting_unit_survey(ru_ref, survey):
-    logger.info("Gathering data to view reporting unit", ru_ref=ru_ref)
+    logger.info("Gathering data to view reporting unit survey data", ru_ref=ru_ref, survey=survey)
     # Make some initial calls to retrieve some data we'll need
     reporting_unit = party_controller.get_business_by_ru_ref(ru_ref)
 
@@ -190,6 +191,8 @@ def view_reporting_unit_survey(ru_ref, survey):
     unused_iac = ""
     if case is not None and iac_controller.is_iac_active(case["iac"]):
         unused_iac = case["iac"]
+
+    logger.info("Successfully gathered data to view reporting unit survey data", ru_ref=ru_ref, survey=survey)
 
     return render_template(
         "reporting-unit-survey.html",
