@@ -184,9 +184,9 @@ class TestReportingUnits(TestCase):
     #     mock_request.get(f"{url_get_collection_exercise_by_id}/{collection_exercise_id_2}", json=collection_exercise_2)
     #     mock_request.get(url_get_business_attributes, json=business_attributes)
     #     mock_request.get(url_get_respondent_party_by_party_id, status_code=500)
-    # 
+    #
     #     response = self.client.get("/reporting-units/50012345678/surveys/BLOCKS", follow_redirects=True)
-    # 
+    #
     #     request_history = mock_request.request_history
     #     self.assertEqual(len(request_history), 5)
     #     self.assertEqual(response.status_code, 500)
@@ -200,9 +200,9 @@ class TestReportingUnits(TestCase):
     #     mock_request.get(url_get_business_attributes, json=business_attributes)
     #     mock_request.get(url_get_respondent_party_by_list, json=respondent_party_list)
     #     mock_request.get(f"{url_get_iac}/{iac_1}", status_code=500)
-    # 
+    #
     #     response = self.client.get("/reporting-units/50012345678/surveys/BLOCKS", follow_redirects=True)
-    # 
+    #
     #     request_history = mock_request.request_history
     #     self.assertEqual(len(request_history), 7)
     #     self.assertEqual(response.status_code, 500)
