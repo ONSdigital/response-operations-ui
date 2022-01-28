@@ -105,7 +105,9 @@ def view_collection_exercise(short_name, period):
     ]
 
     ce_state = ce_details["collection_exercise"]["state"]
-    show_set_live_button = ce_state in ("READY_FOR_REVIEW", "FAILEDVALIDATION")
+    show_set_live_button = ce_state in ("READY_FOR_REVIEW", "FAILEDVALIDATION") \
+                           and ce_details["events"].get("ref_end_period_start") \
+                           and ce_details["events"].get("ref_end_period_end")
     locked = ce_state in ("LIVE", "READY_FOR_LIVE", "EXECUTION_STARTED", "VALIDATED", "EXECUTED", "ENDED")
     processing = ce_state in ("EXECUTION_STARTED", "EXECUTED", "VALIDATED")
     validation_failed = ce_state == "FAILEDVALIDATION"
