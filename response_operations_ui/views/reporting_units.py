@@ -89,7 +89,7 @@ def build_survey_table_data_dict(collection_exercises: list, case_groups: list) 
 @reporting_unit_bp.route("/<ru_ref>/respondents", methods=["GET"])
 @login_required
 def view_respondents(ru_ref: str):
-    logger.info("Gathering data to view reporting unit", ru_ref=ru_ref)
+    logger.info("Gathering data to view reporting unit respondents", ru_ref=ru_ref)
     # Make some initial calls to retrieve some data we'll need
     reporting_unit = party_controller.get_business_by_ru_ref(ru_ref)
 
@@ -100,6 +100,7 @@ def view_respondents(ru_ref: str):
     respondent_table_data = build_respondent_table_data_dict(respondents, ru_ref)
 
     breadcrumbs = create_reporting_unit_breadcrumbs(ru_ref)
+    logger.info("Successfully gathered data to view reporting unit respondents", ru_ref=ru_ref)
 
     return render_template(
         "reporting-unit-respondents.html", ru=reporting_unit, respondents=respondent_table_data, breadcrumbs=breadcrumbs
@@ -138,18 +139,20 @@ def build_respondent_table_data_dict(respondents: list, ru_ref: str):
     return sorted(table_data.values(), key=lambda t: t["respondent"])
 
 
-@reporting_unit_bp.route("/<ru_ref>/surveys/<survey>", methods=["GET"])
+@reporting_unit_bp.route("/<ru_ref>/surveys/<survey_id>", methods=["GET"])
 @login_required
-def view_reporting_unit_survey(ru_ref, survey):
-    logger.info("Gathering data to view reporting unit", ru_ref=ru_ref)
+def view_reporting_unit_survey(ru_ref, survey_id):
+    logger.info("Gathering data to view reporting unit survey data", ru_ref=ru_ref, survey_id=survey_id)
     # Make some initial calls to retrieve some data we'll need
     reporting_unit = party_controller.get_business_by_ru_ref(ru_ref)
 
     cases = case_controller.get_cases_by_business_party_id(reporting_unit["id"])
     case_groups = [case["caseGroup"] for case in cases]
 
-    # Get all collection exercises for retrieved case groups
-    collection_exercise_ids = {case_group["collectionExerciseId"] for case_group in case_groups}
+    # Get all collection exercises for retrieved case groups and only for the survey we care about.
+    collection_exercise_ids = {
+        case_group["collectionExerciseId"] for case_group in case_groups if case_group["surveyId"] == survey_id
+    }
     collection_exercises = [get_collection_exercise_by_id(ce_id) for ce_id in collection_exercise_ids]
     live_collection_exercises = [
         ce for ce in collection_exercises if parse_date(ce["scheduledStartDateTime"]) < datetime.now(timezone.utc)
@@ -160,17 +163,13 @@ def view_reporting_unit_survey(ru_ref, survey):
     respondents = party_controller.get_respondent_by_party_ids(respondent_party_ids)
 
     survey_respondents = [
-        party_controller.add_enrolment_status_for_respondent(respondent, ru_ref, survey)
+        party_controller.add_enrolment_status_for_respondent(respondent, ru_ref, survey_id)
         for respondent in respondents
-        if survey in party_controller.survey_ids_for_respondent(respondent, ru_ref)
+        if survey_id in party_controller.survey_ids_for_respondent(respondent, ru_ref)
     ]
 
     survey_collection_exercises = sorted(
-        [
-            collection_exercise
-            for collection_exercise in live_collection_exercises
-            if survey == collection_exercise["surveyId"]
-        ],
+        [collection_exercise for collection_exercise in live_collection_exercises],
         key=lambda ce: ce["scheduledStartDateTime"],
         reverse=True,
     )
@@ -180,18 +179,20 @@ def view_reporting_unit_survey(ru_ref, survey):
         add_collection_exercise_details(ce, attributes[ce["id"]], case_groups) for ce in survey_collection_exercises
     ]
 
-    survey_details = get_survey_by_id(survey)
+    survey_details = get_survey_by_id(survey_id)
     survey_details["display_name"] = f"{survey_details['surveyRef']} {survey_details['shortName']}"
 
     # If there's an active IAC on the newest case, return it to be displayed
-    collection_exercise_ids = [ce["id"] for ce in survey_collection_exercises]
+    live_collection_exercise_ids = [ce["id"] for ce in survey_collection_exercises]
     valid_cases = [
-        case for case in cases if case.get("caseGroup", {}).get("collectionExerciseId") in collection_exercise_ids
+        case for case in cases if case.get("caseGroup", {}).get("collectionExerciseId") in live_collection_exercise_ids
     ]
     case = next(iter(sorted(valid_cases, key=lambda c: c["createdDateTime"], reverse=True)), None)
     unused_iac = ""
     if case is not None and iac_controller.is_iac_active(case["iac"]):
         unused_iac = case["iac"]
+
+    logger.info("Successfully gathered data to view reporting unit survey data", ru_ref=ru_ref, survey_id=survey_id)
 
     return render_template(
         "reporting-unit-survey.html",
