@@ -139,10 +139,10 @@ def build_respondent_table_data_dict(respondents: list, ru_ref: str):
     return sorted(table_data.values(), key=lambda t: t["respondent"])
 
 
-@reporting_unit_bp.route("/<ru_ref>/surveys/<survey>", methods=["GET"])
+@reporting_unit_bp.route("/<ru_ref>/surveys/<survey_id>", methods=["GET"])
 @login_required
-def view_reporting_unit_survey(ru_ref, survey):
-    logger.info("Gathering data to view reporting unit survey data", ru_ref=ru_ref, survey=survey)
+def view_reporting_unit_survey(ru_ref, survey_id):
+    logger.info("Gathering data to view reporting unit survey data", ru_ref=ru_ref, survey_id=survey_id)
     # Make some initial calls to retrieve some data we'll need
     reporting_unit = party_controller.get_business_by_ru_ref(ru_ref)
 
@@ -151,7 +151,7 @@ def view_reporting_unit_survey(ru_ref, survey):
 
     # Get all collection exercises for retrieved case groups and only for the survey we care about.
     collection_exercise_ids = {
-        case_group["collectionExerciseId"] for case_group in case_groups if case_group["surveyId"] == survey
+        case_group["collectionExerciseId"] for case_group in case_groups if case_group["surveyId"] == survey_id
     }
     collection_exercises = [get_collection_exercise_by_id(ce_id) for ce_id in collection_exercise_ids]
     live_collection_exercises = [
@@ -163,9 +163,9 @@ def view_reporting_unit_survey(ru_ref, survey):
     respondents = party_controller.get_respondent_by_party_ids(respondent_party_ids)
 
     survey_respondents = [
-        party_controller.add_enrolment_status_for_respondent(respondent, ru_ref, survey)
+        party_controller.add_enrolment_status_for_respondent(respondent, ru_ref, survey_id)
         for respondent in respondents
-        if survey in party_controller.survey_ids_for_respondent(respondent, ru_ref)
+        if survey_id in party_controller.survey_ids_for_respondent(respondent, ru_ref)
     ]
 
     survey_collection_exercises = sorted(
@@ -179,7 +179,7 @@ def view_reporting_unit_survey(ru_ref, survey):
         add_collection_exercise_details(ce, attributes[ce["id"]], case_groups) for ce in survey_collection_exercises
     ]
 
-    survey_details = get_survey_by_id(survey)
+    survey_details = get_survey_by_id(survey_id)
     survey_details["display_name"] = f"{survey_details['surveyRef']} {survey_details['shortName']}"
 
     # If there's an active IAC on the newest case, return it to be displayed
@@ -192,7 +192,7 @@ def view_reporting_unit_survey(ru_ref, survey):
     if case is not None and iac_controller.is_iac_active(case["iac"]):
         unused_iac = case["iac"]
 
-    logger.info("Successfully gathered data to view reporting unit survey data", ru_ref=ru_ref, survey=survey)
+    logger.info("Successfully gathered data to view reporting unit survey data", ru_ref=ru_ref, survey_id=survey_id)
 
     return render_template(
         "reporting-unit-survey.html",
