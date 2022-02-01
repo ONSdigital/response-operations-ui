@@ -198,7 +198,7 @@ def create_user_account(email, password, user_name, first_name, last_name):
     return errors
 
 
-def update_user_account(user_id, email, password, user_name, first_name, last_name):
+def update_user_account(user_id, email, user_name, first_name, last_name):
     access_token = login_admin()
 
     headers = {
