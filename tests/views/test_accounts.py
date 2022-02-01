@@ -25,7 +25,7 @@ url_uaa_create_account = f"{TestingConfig.UAA_SERVICE_URL}/Users"
 
 class TestAccounts(unittest.TestCase):
     def setUp(self):
-        payload = {"user_id": "test-id", "aud": "response_operations"}
+        payload = {"user_id": user_id, "aud": "response_operations"}
         self.app = create_app("TestingConfig")
         self.access_token = jwt.encode(payload, self.app.config["UAA_PRIVATE_KEY"], algorithm="RS256")
         self.client = self.app.test_client()
@@ -38,11 +38,18 @@ class TestAccounts(unittest.TestCase):
 
     @requests_mock.mock()
     def test_my_account_page(self, mock_request):
-        response = self.client.get("/account/my-account")
+        with self.client.session_transaction() as session:
+            session["user_id"] = user_id
         mock_request.post(url_uaa_token, json={"access_token": self.access_token}, status_code=201)
         mock_request.get(url_uaa_get_user_by_id, json=uaa_user_by_id_json, status_code=200)
-        self.assertIn(b"Email address: ons@ons.fake", response.data)
-        self.assertIn(b"Password", response.data)
+        response = self.client.get("/account/my-account", follow_redirects=True)
+
+        self.assertIn(b"Email address:", response.data)
+        self.assertIn(b"ons@ons.fake", response.data)
+        self.assertIn(b"Username:", response.data)
+        self.assertIn(b"uaa_user", response.data)
+        self.assertIn(b"Name:", response.data)
+        self.assertIn(b"ONS User", response.data)
         self.assertEqual(response.status_code, 200)
 
     @requests_mock.mock()
