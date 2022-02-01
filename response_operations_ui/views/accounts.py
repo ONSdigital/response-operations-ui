@@ -3,6 +3,7 @@ import logging
 from flask import Blueprint
 from flask import current_app as app
 from flask import flash, redirect, render_template, request, session, url_for
+from flask_login import login_required
 from itsdangerous import BadData, BadSignature, SignatureExpired, URLSafeSerializer
 from structlog import wrap_logger
 
@@ -18,6 +19,7 @@ account_bp = Blueprint("account_bp", __name__, static_folder="static", template_
 
 
 @account_bp.route("/my-account", methods=["GET"])
+@login_required
 def get_my_account():
     logger.info(session)
     user_id = session["user_id"]
@@ -27,7 +29,7 @@ def get_my_account():
     user = {
         "username": user_from_uaa["userName"],
         "name": f"{first_name} {last_name}",
-        "email": user_from_uaa["emails"][0]["value"]
+        "email": user_from_uaa["emails"][0]["value"],
     }
     return render_template("account/my-account.html", user=user)
 

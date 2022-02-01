@@ -109,11 +109,7 @@ def get_user_by_id(user_id, access_token=None):
     try:
         response.raise_for_status()
     except HTTPError:
-        logger.error(
-            "Error retrieving user from UAA",
-            status_code=response.status_code,
-            user_id=user_id
-        )
+        logger.error("Error retrieving user from UAA", status_code=response.status_code, user_id=user_id)
         return
 
     return response.json()
