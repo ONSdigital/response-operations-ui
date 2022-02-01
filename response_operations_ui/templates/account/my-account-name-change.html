@@ -1,6 +1,6 @@
 {% extends "layouts/base.html" %}
 {% from "components/metadata/_macro.njk" import onsMetadata %}
-{% set page_title = "Respondents Change Name" %}
+{% set page_title = "User Change Name" %}
 
 {% block main %}
   {% if errors|length > 0 %}
@@ -40,7 +40,7 @@
 <h1 class="u-fs-xl">Enter your new contact details</h1>
 <form action="" method="post">
   {{ form.csrf_token }}
-  {% set firstName = respondent.firstName %}
+  {% set firstName = user.firstName %}
   {% if errors.first_name %}
     {% set errorFirstName = { "text": errors['first_name'][0],  "id": 'first_name_error' } %}
     {% set firstName = form.first_name.data %}

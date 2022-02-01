@@ -175,3 +175,18 @@ def send_confirm_created_email(email, first_name):
         # This shouldn't show the client an error - the account creation was still successful.
         # They just won't get a confirmation email
         logger.error("Error sending account creation confirmation email to Notify Gateway", msg=e.description)
+
+
+@account_bp.route("/change-account-details", methods=["GET", "POST"])
+def change_account_name(session):
+    logger.info(session)
+    user_id = session["user_id"]
+    user_from_uaa = uaa_controller.get_user_by_id(user_id)
+    first_name = user_from_uaa["name"]["givenName"]
+    last_name = user_from_uaa["name"]["familyName"]
+    user = {
+        "first_name": f"{first_name}",
+        "last_name": f"{last_name}",
+    }
+    return render_template("account/my-account.html", user=user)
+    

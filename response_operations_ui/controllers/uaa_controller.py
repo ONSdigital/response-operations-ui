@@ -196,3 +196,39 @@ def create_user_account(email, password, user_name, first_name, last_name):
             )
 
     return errors
+
+
+def update_user_account(user_id, email, password, user_name, first_name, last_name):
+    access_token = login_admin()
+
+    headers = {
+        "Content-Type": "application/json",
+        "Accept": "application/json",
+        "Authorization": f"Bearer {access_token}",
+    }
+
+    payload = {
+        "id": user_id,
+        "userName": user_name,
+        "name": {"givenName": first_name, "familyName": last_name},
+        "emails": [{"value": email, "primary": True}]
+    }
+
+    url = f"{app.config['UAA_SERVICE_URL']}/Users/{user_id}"
+    response = requests.patch(url, data=dumps(payload), headers=headers)
+    try:
+        response.raise_for_status()
+        return
+    except HTTPError:
+        if response.status_code == 404:
+            # User id not found
+            errors = {"user_id": ["User id not found"]}
+        else:
+            errors = {"status_code": response.status_code, "message": response.reason}
+            logger.error(
+                "Received an error when creating an account in UAA",
+                status_code=response.status_code,
+                reason=response.reason,
+            )
+
+    return errors
