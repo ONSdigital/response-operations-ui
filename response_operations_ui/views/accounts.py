@@ -30,6 +30,7 @@ def get_my_account():
         "username": user_from_uaa["userName"],
         "name": f"{first_name} {last_name}",
         "email": user_from_uaa["emails"][0]["value"],
+        "password_last_changed": user_from_uaa["passwordLastModified"]
     }
     return render_template("account/my-account.html", user=user)
 
