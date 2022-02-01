@@ -27,17 +27,8 @@
     <!-- End Google Tag Manager (noscript) -->	
    {% endif %}
 {% endblock %}
-
-{% set pageConfig = { 
-  "title": page_title + " | Survey Data Collection" if page_title else "Survey Data Collection",
-  "wide": true,
-  "header": {
-    "title": "Survey Data Collection",
-    "classes": "header--internal header--thin",
-    "logo": "ons-logo-neg-en",
-    "mobileLogo": "ons-logo-stacked-neg-en"
-  },
-  "serviceLinks": {
+{% if current_user.is_authenticated %}
+  {% set serviceLinks = {
     "itemsList": [
       {
         "text": "My account",
@@ -48,7 +39,27 @@
         "url": "/signout"
       }
     ]
+  } %}
+{% else %}
+  {% set serviceLinks = {
+    "itemsList": [
+      {
+        "text": "Sign in",
+        "url": "/"
+      },
+    ]
+  } %}
+{% endif %}
+{% set pageConfig = {
+  "title": page_title + " | Survey Data Collection" if page_title else "Survey Data Collection",
+  "wide": true,
+  "header": {
+    "title": "Survey Data Collection",
+    "classes": "header--internal header--thin",
+    "logo": "ons-logo-neg-en",
+    "mobileLogo": "ons-logo-stacked-neg-en"
   },
+  "serviceLinks": serviceLinks,
   "toggleButton": {
     "text": "Menu",
     "ariaLabel": "Toggle main navigation"
