@@ -1,0 +1,95 @@
+{% extends "layouts/base.html" %}
+{% from "components/metadata/_macro.njk" import onsMetadata %}
+{% set page_title = "Respondents Change Name" %}
+
+{% block main %}
+  {% if errors|length > 0 %}
+    {% if errors|length == 1 %}
+      {% set errorTitle = 'There is 1 error on this page' %}
+    {% elif errors|length > 1 %}
+      {% set errorTitle = 'There are ' ~ errors|length ~ ' errors on this page' %}
+    {% endif %}
+    {% call
+            onsPanel({
+                "type": "error",
+                "classes": "u-mb-s",
+                "title":  errorTitle
+            })
+      %}
+      <p>These <strong>must be corrected</strong> to continue.</p>
+      {% set errorData = [] %}
+      {% for error in errors %}
+        {% set error_text =  error %}
+        {% do errorData.append(
+                    {
+                        "text": 'Problem with the ' ~ error_text.replace('_', ' '),
+                        "index": true,
+                        "url": "#" ~ error ~ '_error',
+                        "classes": "js-inpagelink"
+                    }
+                ) %}
+      {% endfor %}
+      {{
+        onsList({
+            "classes": "list--bare",
+            "itemsList": errorData
+        })
+        }}
+    {% endcall %}
+  {% endif %}
+<h1 class="u-fs-xl">Enter your new contact details</h1>
+<form action="" method="post">
+  {{ form.csrf_token }}
+  {% set firstName = respondent.firstName %}
+  {% if errors.first_name %}
+    {% set errorFirstName = { "text": errors['first_name'][0],  "id": 'first_name_error' } %}
+    {% set firstName = form.first_name.data %}
+  {% endif %}
+  {{
+    onsInput({
+        "id": "first_name",
+        "name": "first_name",
+        "type": "text",
+        "label": {
+            "text": 'First name'
+        },
+        "error": errorFirstName,
+        "value": firstName
+    })
+    }}
+  {% set lastName = respondent.lastName %}
+  {% if errors.last_name %}
+    {% set errorLastName = { "text": errors['last_name'][0],  "id": 'last_name_error' } %}
+    {% set lastName = form.last_name.data %}
+  {% endif %}
+  {{
+    onsInput({
+        "id": "last_name",
+        "name": "last_name",
+        "type": "text",
+        "label": {
+            "text": 'Last name'
+        },
+        "error": errorLastName,
+        "value": lastName
+    })
+    }}
+
+  <div class="grid grid--flex grid--gutterless grid--vertical-center grid--no-wrap@s u-mt-m u-mb-m">
+    <div class="grid__col">
+      {{
+        onsButton({
+        "text": "Save",
+        "id": "btn-option-save",
+        "classes": 'btn-group__btn',
+        "submitType": "timer"
+        })
+        }}
+    </div>
+    <div class="grid__col u-ml-m">
+      <a href="{{ url_for('account_bp.get_account') }}" id="btn-account-change-detail-cancel">Cancel</a>
+    </div>
+  </div>
+</form>
+
+{% endblock main %}
