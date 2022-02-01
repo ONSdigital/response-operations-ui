@@ -60,4 +60,48 @@
       </div>
   </div>
 </section>
+<section>
+  <h1 class="u-fs-xl">Help with your account</h1>
+  <form action="{{ url_for('account_bp.update_account')}}" method="post">
+    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
+    {% if ns.optionError %}
+      {% set errorOption = { "text": ns.optionErrorMessage,  "id": 'option_error' } %}
+    {% endif %}
+    {% set radioComponent = {
+            "legend": "Choose an option",
+            "name": "option",
+            "id": "option",
+            "error": errorOption,
+        } %}
+    {% set radios = [] %}
+    {% do radios.append(
+            {
+                "id": "contact_details",
+                "label": {
+                "text": "Change my contact details"
+                },
+                "value": "contact_details"
+            }) %}
+    {% do radioComponent | setAttribute("radios", radios) %}
+    {{
+      onsRadios(radioComponent)
+      }}
+
+    <div class="grid grid--flex grid--gutterless grid--vertical-center grid--no-wrap@s u-mt-m u-mb-m">
+      <div class="grid__col">
+        {{
+          onsButton({
+          "text": "Continue",
+          "id": "btn-option-continue",
+          "classes": 'btn-group__btn',
+          "submitType": "timer"
+          })
+          }}
+      </div>
+      <div class="grid__col u-ml-m">
+        <a href="{{ url_for('surveys_bp.get_survey_list', tag='todo') }}" id="btn-option-cancel">Cancel</a>
+      </div>
+    </div>
+  </form>
+</section>
 {% endblock %}
