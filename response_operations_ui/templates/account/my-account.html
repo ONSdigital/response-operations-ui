@@ -1,0 +1,63 @@
+{% extends "layouts/base.html" %}
+{% from "components/metadata/_macro.njk" import onsMetadata %}
+{% set page_title = "Respondents" %}
+
+{% block main %}
+
+{% include 'partials/flashed-messages.html' %}
+
+<section>
+  <h1 id="respondent-name">Account details</h1>
+  <div class="grid grid--gutterless">
+      <div class="grid__col col-10@m">
+          {{ 
+              onsMetadata({
+                  "metadataLabel": "Account details",
+                  "termCol": "3",
+                  "descriptionCol": "9",
+                  "itemsList": [
+                      {
+                          "term": "Username:",
+                          "descriptions": [ 
+                              {
+                                  "description": user.username,
+                                  "id": "username",
+                                  "name": "username"
+                              }
+                          ]
+                      },
+                      {
+                          "term": "Name:",
+                          "descriptions": [ 
+                              {
+                                  "description": user.name,
+                                  "id": "name",
+                                  "name": "name"
+                              },                                  
+                          ]
+                      },
+                      {
+                          "term": "Email address:",
+                          "descriptions": [ 
+                              {
+                                  "description": user.email,
+                                  "id": "email-address"
+                              },                            
+                          ]
+                      },
+                      {
+                          "term": "Password:",
+                          "descriptions": [ 
+                              {
+                                  "description": "******",
+                                  "id": "password"
+                              },                            
+                          ]
+                      }
+                  ]
+              }) 
+          }}
+      </div>
+  </div>
+</section>
+{% endblock %}

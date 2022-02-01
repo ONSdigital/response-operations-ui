@@ -2,7 +2,7 @@ import logging
 
 from flask import Blueprint
 from flask import current_app as app
-from flask import flash, redirect, render_template, request, url_for
+from flask import flash, redirect, render_template, request, session, url_for
 from itsdangerous import BadData, BadSignature, SignatureExpired, URLSafeSerializer
 from structlog import wrap_logger
 
@@ -15,6 +15,21 @@ from response_operations_ui.forms import CreateAccountForm, RequestAccountForm
 logger = wrap_logger(logging.getLogger(__name__))
 
 account_bp = Blueprint("account_bp", __name__, static_folder="static", template_folder="templates")
+
+
+@account_bp.route("/my-account", methods=["GET"])
+def get_my_account():
+    logger.info(session)
+    user_id = session["user_id"]
+    user_from_uaa = uaa_controller.get_user_by_id(user_id)
+    first_name = user_from_uaa["name"]["givenName"]
+    last_name = user_from_uaa["name"]["familyName"]
+    user = {
+        "username": user_from_uaa["userName"],
+        "name": f"{first_name} {last_name}",
+        "email": user_from_uaa["emails"][0]["value"]
+    }
+    return render_template("account/my-account.html", user=user)
 
 
 @account_bp.route("/request-new-account", methods=["GET"])

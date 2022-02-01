@@ -94,6 +94,31 @@ def get_user_by_email(email, access_token=None):
     return response.json()
 
 
+def get_user_by_id(user_id, access_token=None):
+    if access_token is None:
+        access_token = login_admin()
+
+    headers = {
+        "Content-Type": "application/json",
+        "Accept": "application/json",
+        "Authorization": f"Bearer {access_token}",
+    }
+
+    url = f"{app.config['UAA_SERVICE_URL']}/Users/{user_id}"
+    response = requests.get(url, headers=headers)
+    try:
+        response.raise_for_status()
+    except HTTPError:
+        logger.error(
+            "Error retrieving user from UAA",
+            status_code=response.status_code,
+            user_id=user_id
+        )
+        return
+
+    return response.json()
+
+
 def retrieve_user_code(access_token, username):
     headers = {
         "Content-Type": "application/json",
