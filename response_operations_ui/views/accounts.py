@@ -44,7 +44,7 @@ def change_username():
     logger.info(session)
     form = UsernameChangeForm()
     form.validate_on_submit()
-    username = "test"
+    username = session.get("username")
     return render_template("account/change-username.html", username=username, form=UsernameChangeForm())
 
 
