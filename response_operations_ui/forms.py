@@ -461,6 +461,25 @@ class CreateAccountForm(FlaskForm):
             raise ValidationError("Your password doesn't meet the requirements")
 
 
+class UsernameChangeForm(FlaskForm):
+    user_name = StringField(
+        "User name",
+        validators=[
+            DataRequired(message="Username is required"),
+            Length(max=255, message="Username must be less than 255 characters"),
+        ],
+    )
+
+
+"""
+- field is not blank
+
+- max 255 chars
+
+- a-z and 0-9 characters only
+"""
+
+
 class BannerCreateForm(FlaskForm):
     title = StringField("Banner title", validators=[InputRequired("Enter a banner title")])
     banner_text = StringField(

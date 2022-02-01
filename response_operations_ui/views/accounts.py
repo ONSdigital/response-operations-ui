@@ -11,7 +11,11 @@ from response_operations_ui.common import token_decoder
 from response_operations_ui.controllers import uaa_controller
 from response_operations_ui.controllers.notify_controller import NotifyController
 from response_operations_ui.exceptions.exceptions import NotifyError
-from response_operations_ui.forms import CreateAccountForm, RequestAccountForm
+from response_operations_ui.forms import (
+    CreateAccountForm,
+    RequestAccountForm,
+    UsernameChangeForm,
+)
 
 logger = wrap_logger(logging.getLogger(__name__))
 
@@ -30,9 +34,18 @@ def get_my_account():
         "username": user_from_uaa["userName"],
         "name": f"{first_name} {last_name}",
         "email": user_from_uaa["emails"][0]["value"],
-        "password_last_changed": user_from_uaa["passwordLastModified"]
+        "password_last_changed": user_from_uaa["passwordLastModified"],
     }
     return render_template("account/my-account.html", user=user)
+
+
+@account_bp.route("/change-username", methods=["GET", "POST"])
+def change_username():
+    logger.info(session)
+    form = UsernameChangeForm()
+    form.validate_on_submit()
+    username = "test"
+    return render_template("account/change-username.html", username=username, form=UsernameChangeForm())
 
 
 @account_bp.route("/request-new-account", methods=["GET"])
