@@ -1,5 +1,7 @@
 {% extends "layouts/base.html" %}
 {% from "components/metadata/_macro.njk" import onsMetadata %}
+{% from "components/input/_macro.njk" import onsInput %}
+{% from "components/button/_macro.njk" import onsButton %}
 {% set page_title = "User Change Name" %}
 
 {% block main %}
@@ -40,7 +42,7 @@
 <h1 class="u-fs-xl">Enter your new contact details</h1>
 <form action="" method="post">
   {{ form.csrf_token }}
-  {% set firstName = user.firstName %}
+  {% set firstName = user.first_name %}
   {% if errors.first_name %}
     {% set errorFirstName = { "text": errors['first_name'][0],  "id": 'first_name_error' } %}
     {% set firstName = form.first_name.data %}
@@ -57,7 +59,7 @@
         "value": firstName
     })
     }}
-  {% set lastName = respondent.lastName %}
+  {% set lastName = user.last_name %}
   {% if errors.last_name %}
     {% set errorLastName = { "text": errors['last_name'][0],  "id": 'last_name_error' } %}
     {% set lastName = form.last_name.data %}
@@ -87,7 +89,7 @@
         }}
     </div>
     <div class="grid__col u-ml-m">
-      <a href="{{ url_for('account_bp.get_account') }}" id="btn-account-change-detail-cancel">Cancel</a>
+      <a href="{{ url_for('account_bp.get_my_account') }}" id="btn-account-change-detail-cancel">Cancel</a>
     </div>
   </div>
 </form>

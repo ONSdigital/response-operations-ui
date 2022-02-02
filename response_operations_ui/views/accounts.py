@@ -11,11 +11,16 @@ from response_operations_ui.common import dates, token_decoder
 from response_operations_ui.controllers import uaa_controller
 from response_operations_ui.controllers.notify_controller import NotifyController
 from response_operations_ui.exceptions.exceptions import NotifyError
-from response_operations_ui.forms import CreateAccountForm, RequestAccountForm
+from response_operations_ui.forms import CreateAccountForm, RequestAccountForm, OptionsForm, ChangeAccountName
 
 logger = wrap_logger(logging.getLogger(__name__))
 
 account_bp = Blueprint("account_bp", __name__, static_folder="static", template_folder="templates")
+
+form_redirect_mapper = {
+    "change_name": "account_bp.change_account_name",
+    "change_username": "account_bp.get_my_account",
+}
 
 
 @account_bp.route("/my-account", methods=["GET"])
@@ -36,6 +41,32 @@ def get_my_account():
         return render_template("account/my-account.html", user=user)
     except Exception as e:
         return jsonify(e)
+
+
+@account_bp.route("/", methods=["POST"])
+def update_account():
+    form = OptionsForm()
+    form_valid = form.validate()
+    if not form_valid:
+        flash("You need to choose an option")
+        return redirect(url_for("account_bp.get_my_account"))
+    else:
+        return redirect(url_for(form_redirect_mapper.get(form.data["option"])))
+
+
+@account_bp.route("/change-account-name", methods=["GET", "POST"])
+def change_account_name():
+    logger.info(session)
+    form = ChangeAccountName()
+    user_id = session["user_id"]
+    user_from_uaa = uaa_controller.get_user_by_id(user_id)
+    first_name = user_from_uaa["name"]["givenName"]
+    last_name = user_from_uaa["name"]["familyName"]
+    user = {
+        "first_name": f"{first_name}",
+        "last_name": f"{last_name}",
+    }
+    return render_template("account/change-account-name.html", user=user, form=form, errors=form.errors)
 
 
 @account_bp.route("/request-new-account", methods=["GET"])
@@ -175,18 +206,3 @@ def send_confirm_created_email(email, first_name):
         # This shouldn't show the client an error - the account creation was still successful.
         # They just won't get a confirmation email
         logger.error("Error sending account creation confirmation email to Notify Gateway", msg=e.description)
-
-
-@account_bp.route("/change-account-details", methods=["GET", "POST"])
-def change_account_name(session):
-    logger.info(session)
-    user_id = session["user_id"]
-    user_from_uaa = uaa_controller.get_user_by_id(user_id)
-    first_name = user_from_uaa["name"]["givenName"]
-    last_name = user_from_uaa["name"]["familyName"]
-    user = {
-        "first_name": f"{first_name}",
-        "last_name": f"{last_name}",
-    }
-    return render_template("account/my-account.html", user=user)
-    

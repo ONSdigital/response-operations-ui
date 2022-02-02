@@ -14,6 +14,7 @@ from wtforms import (
     StringField,
     SubmitField,
     TextAreaField,
+    RadioField,
 )
 from wtforms.validators import (
     DataRequired,
@@ -459,6 +460,33 @@ class CreateAccountForm(FlaskForm):
             or not any(char.isdigit() for char in password)
         ):
             raise ValidationError("Your password doesn't meet the requirements")
+
+
+class OptionsForm(FlaskForm):
+    option = RadioField(
+        "Label",
+        choices=[
+            ("value", "change_name"),
+            ("value", "change_username")
+        ],
+    )
+
+
+class ChangeAccountName(FlaskForm):
+    first_name = StringField(
+        ("First name"),
+        validators=[
+            DataRequired(("First name is required")),
+            Length(max=254, message=("Your first name must be less than 254 " "characters")),
+        ],
+    )
+    last_name = StringField(
+        ("Last name"),
+        validators=[
+            DataRequired(("Last name is required")),
+            Length(max=254, message=("Your last name must be less than 254 characters")),
+        ],
+    )
 
 
 class BannerCreateForm(FlaskForm):
