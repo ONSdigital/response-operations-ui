@@ -73,7 +73,6 @@ class SecureMessageForm(FlaskForm):
 
 
 class SecureMessageRuFilterForm(FlaskForm):
-
     ru_ref_filter = StringField(
         "ru_ref_filter", validators=[Length(min=11, max=11, message="Ru ref must be 11 characters")]
     )
@@ -406,9 +405,9 @@ class ResetPasswordForm(FlaskForm):
     def validate_password(form, field):
         password = field.data
         if (
-            password.isalnum()
-            or not any(char.isupper() for char in password)
-            or not any(char.isdigit() for char in password)
+                password.isalnum()
+                or not any(char.isupper() for char in password)
+                or not any(char.isdigit() for char in password)
         ):
             raise ValidationError("Your password doesn't meet the requirements")
 
@@ -455,21 +454,11 @@ class CreateAccountForm(FlaskForm):
     def validate_password(form, field):
         password = field.data
         if (
-            password.isalnum()
-            or not any(char.isupper() for char in password)
-            or not any(char.isdigit() for char in password)
+                password.isalnum()
+                or not any(char.isupper() for char in password)
+                or not any(char.isdigit() for char in password)
         ):
             raise ValidationError("Your password doesn't meet the requirements")
-
-
-class OptionsForm(FlaskForm):
-    option = RadioField(
-        "Label",
-        choices=[
-            ("value", "change_name"),
-            ("value", "change_username")
-        ],
-    )
 
 
 class ChangeAccountName(FlaskForm):
@@ -523,3 +512,18 @@ class BannerEditForm(FlaskForm):
     )
     banner_id = StringField("id")
     delete = BooleanField("Delete banner", default=False)
+
+
+class Form(FlaskForm):
+    def validate(self):
+        return "option" in self.data and self.data["option"]
+
+
+class OptionsForm(Form):
+    option = RadioField(
+        "Label",
+        choices=[
+            ("value", "change_name"),
+            ("value", "change_username")
+        ],
+    )

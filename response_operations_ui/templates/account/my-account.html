@@ -64,7 +64,7 @@
 </section>
 <section>
   <h1 class="u-fs-xl">Help with your account</h1>
-  <form action="{{ url_for('account_bp.update_account')}}" method="post">
+  <form action="" method="post">
     <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
     {% set radioComponent = {
             "legend": "Choose an option",

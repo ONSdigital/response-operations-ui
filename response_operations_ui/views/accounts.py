@@ -27,6 +27,7 @@ form_redirect_mapper = {
 @login_required
 def get_my_account():
     try:
+        form = OptionsForm()
         user_id = session["user_id"]
         user_from_uaa = uaa_controller.get_user_by_id(user_id)
         first_name = user_from_uaa["name"]["givenName"]
@@ -38,12 +39,12 @@ def get_my_account():
             "email": user_from_uaa["emails"][0]["value"],
             "password_last_changed": formatted_date,
         }
-        return render_template("account/my-account.html", user=user)
+        return render_template("account/my-account.html", user=user, form=form)
     except Exception as e:
         return jsonify(e)
 
 
-@account_bp.route("/", methods=["POST"])
+@account_bp.route("/my-account", methods=["POST"])
 def update_account():
     form = OptionsForm()
     form_valid = form.validate()
