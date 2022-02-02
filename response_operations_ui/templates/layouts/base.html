@@ -8,23 +8,23 @@
       <script type="text/javascript" src="{{ url_for('static', filename='js/main.min.js') }}"></script>
     {% endassets %}
     {% if config.GOOGLE_TAG_MANAGER %}
-      <!-- Google Tag Manager -->	
+      <!-- Google Tag Manager -->
       <script{% if csp_nonce %} nonce="{{ csp_nonce() }}"{% endif %}>
-        (function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':	
-        new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],	
-        j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=	
-        'https://www.googletagmanager.com/gtm.js?id='+i+dl+'&gtm_auth={{ config.GOOGLE_TAG_MANAGER_PROP }}&gtm_cookies_win=x';f.parentNode.insertBefore(j,f);	
+        (function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+        new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+        j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+        'https://www.googletagmanager.com/gtm.js?id='+i+dl+'&gtm_auth={{ config.GOOGLE_TAG_MANAGER_PROP }}&gtm_cookies_win=x';f.parentNode.insertBefore(j,f);
         })(window,document,'script','dataLayer','{{ config.GOOGLE_TAG_MANAGER }}');
-      </script>	
+      </script>
       <!-- End Google Tag Manager -->
     {% endif %}
 {% endblock %}
-{% block bodyStart %}	
+{% block bodyStart %}
   {% if config.GOOGLE_TAG_MANAGER %}
-    <!-- Google Tag Manager (noscript) -->	
-    <noscript><iframe src="https://www.googletagmanager.com/ns.html?id={{ config.GOOGLE_TAG_MANAGER }}&gtm_auth={{ config.GOOGLE_TAG_MANAGER_PROP }}&gtm_cookies_win=x"	
-    height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>	
-    <!-- End Google Tag Manager (noscript) -->	
+    <!-- Google Tag Manager (noscript) -->
+    <noscript><iframe src="https://www.googletagmanager.com/ns.html?id={{ config.GOOGLE_TAG_MANAGER }}&gtm_auth={{ config.GOOGLE_TAG_MANAGER_PROP }}&gtm_cookies_win=x"
+    height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+    <!-- End Google Tag Manager (noscript) -->
    {% endif %}
 {% endblock %}
 {% if current_user.is_authenticated %}
@@ -36,7 +36,7 @@
       },
       {
         "text": "Sign out",
-        "url": "/signout"
+        "url": "/logout"
       }
     ]
   } %}
@@ -67,7 +67,6 @@
 } %}
 
 {% include 'layouts/configs/navigation.html' %}
-{% include 'layouts/configs/signout-button.html' %}
 {% include 'layouts/configs/footer.html' %}
 {% from "components/panel/_macro.njk" import onsPanel %}
 
@@ -79,10 +78,10 @@
   <div class="page__container container container--wide">
     {% block preMain %}
       {% if availability_message %}
-        {{ 
+        {{
             onsPanel({
                 body: availability_message
-            }) 
+            })
         }}
       {% endif %}
       {% if breadcrumbs and hide_breadcrumbs != true %}
@@ -96,5 +95,5 @@
         </main>
       </div>
     </div>
-  </div>  
+  </div>
 {% endblock pageContent -%}
