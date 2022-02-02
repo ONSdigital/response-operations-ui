@@ -70,32 +70,51 @@ def change_account_name():
     user_from_uaa = uaa_controller.get_user_by_id(user_id)
     first_name = user_from_uaa["name"]["givenName"]
     last_name = user_from_uaa["name"]["familyName"]
+    form_first_name = form.data["first_name"]
+    form_last_name = form.data["last_name"]
     user = {
         "first_name": f"{first_name}",
         "last_name": f"{last_name}",
     }
-    return render_template("account/change-account-name.html", user=user, form=form, errors=form.errors)
+    payload = user_from_uaa
+    payload["name"] = {"familyName": form.data["last_name"], "givenName": form.data["first_name"]}
+    if request.method == "POST" and form.validate():
+        if (
+            (form_first_name != first_name)
+            and (form_first_name is not None)
+            or (form_last_name != last_name)
+            and (form_last_name is not None)
+        ):
+            uaa_controller.update_user_account(payload)
+            return logout.logout()
+        else:
+            return render_template("account/change-account-name.html", user=user, form=form, errors=form.errors)
+    else:
+        return render_template("account/change-account-name.html", user=user, form=form, errors=form.errors)
 
 
 @account_bp.route("/change-username", methods=["GET", "POST"])
 def change_username():
     logger.info(session)
     form = UsernameChangeForm()
-    username = session.get("username")
+    user_id = session["user_id"]
+    user_from_uaa = uaa_controller.get_user_by_id(user_id)
+    username = user_from_uaa["userName"]
     form_username = form["username"].data
-    print(f"username: {username}")
-    print(f"form username: {form_username}")
-    # check if the entered username is different from the current one
-    if request.method == "POST" and form.validate():
+    payload = user_from_uaa
+    payload["userName"] = form_username
+    print("here")
+    print(form.errors)
+    print(request.method)
+    print(form.validate_on_submit())
+    if request.method == "POST" and form.validate_on_submit():
         if (form_username != username) and (form_username is not None):
+            uaa_controller.update_user_account(payload)
             return logout.logout()
         else:
-            return render_template("account/change-username.html", username=username, form=UsernameChangeForm())
+            return render_template("account/change-username.html", username=username, form=form)
     else:
-        print(form.errors)
-        return render_template(
-            "account/change-username.html", username=username, form=UsernameChangeForm(), errors=form.errors
-        )
+        return render_template("account/change-username.html", username=username, form=form, errors=form.errors)
 
 
 @account_bp.route("/request-new-account", methods=["GET"])

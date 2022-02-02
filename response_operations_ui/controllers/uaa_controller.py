@@ -198,23 +198,17 @@ def create_user_account(email, password, user_name, first_name, last_name):
     return errors
 
 
-def update_user_account(user_id, email, user_name, first_name, last_name):
+def update_user_account(payload):
     access_token = login_admin()
 
     headers = {
         "Content-Type": "application/json",
         "Accept": "application/json",
         "Authorization": f"Bearer {access_token}",
+        "If-Match": "0",
     }
-
-    payload = {
-        "id": user_id,
-        "userName": user_name,
-        "name": {"givenName": first_name, "familyName": last_name},
-        "emails": [{"value": email, "primary": True}],
-    }
-
-    url = f"{app.config['UAA_SERVICE_URL']}/Users/{user_id}"
+    logger.info("Attempting change of user information", payload['id'])
+    url = f"{app.config['UAA_SERVICE_URL']}/Users/{payload['id']}"
     response = requests.patch(url, data=dumps(payload), headers=headers)
     try:
         response.raise_for_status()
@@ -226,7 +220,7 @@ def update_user_account(user_id, email, user_name, first_name, last_name):
         else:
             errors = {"status_code": response.status_code, "message": response.reason}
             logger.error(
-                "Received an error when creating an account in UAA",
+                "Received an error when updating account in UAA",
                 status_code=response.status_code,
                 reason=response.reason,
             )
