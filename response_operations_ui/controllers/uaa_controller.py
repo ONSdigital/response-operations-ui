@@ -207,7 +207,7 @@ def update_user_account(payload):
         "Authorization": f"Bearer {access_token}",
         "If-Match": "0",
     }
-    logger.info("Attempting change of user information", payload['id'])
+    logger.info("Attempting change of user information")
     url = f"{app.config['UAA_SERVICE_URL']}/Users/{payload['id']}"
     response = requests.patch(url, data=dumps(payload), headers=headers)
     try:
