@@ -522,5 +522,5 @@ class Form(FlaskForm):
 class OptionsForm(Form):
     option = RadioField(
         "Label",
-        choices=[("value", "change_name"), ("value", "change_username")],
+        choices=[("value", "change_username"), ("value", "change_name")],
     )

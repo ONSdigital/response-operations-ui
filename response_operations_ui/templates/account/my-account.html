@@ -25,7 +25,7 @@
     <hr class="u-mb-l col-8@m">
 </section>
 <section>
-  <h1 class="u-fs-xl">Help with your account</h1>
+  <h1 class="u-fs-xl">Help with account</h1>
   <form action="" method="post">
     <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
     {% set radioComponent = {
@@ -37,19 +37,19 @@
     {% set radios = [] %}
     {% do radios.append(
             {
-                "id": "change_name",
+                "id": "change_username",
                 "label": {
-                "text": "Change my name"
+                "text": "Change username"
                 },
-                "value": "change_name"
+                "value": "change_username"
             }) %}
     {% do radios.append(
             {
-                "id": "change_username",
+                "id": "change_name",
                 "label": {
-                "text": "Change my username"
+                "text": "Change name"
                 },
-                "value": "change_username"
+                "value": "change_name"
             }) %}
     {% do radioComponent | setAttribute("radios", radios) %}
     {{
@@ -66,9 +66,6 @@
           "submitType": "timer"
           })
           }}
-      </div>
-      <div class="grid__col u-ml-m">
-        <a href="{{ url_for('home_bp.get_overview_survey') }}" id="btn-option-cancel">Cancel</a>
       </div>
     </div>
   </form>
