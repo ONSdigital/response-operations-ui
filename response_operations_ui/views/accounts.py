@@ -16,7 +16,9 @@ from response_operations_ui.forms import (
     CreateAccountForm,
     OptionsForm,
     RequestAccountForm,
+    UsernameChangeForm,
 )
+from response_operations_ui.views import logout
 
 logger = wrap_logger(logging.getLogger(__name__))
 
@@ -73,6 +75,27 @@ def change_account_name():
         "last_name": f"{last_name}",
     }
     return render_template("account/change-account-name.html", user=user, form=form, errors=form.errors)
+
+
+@account_bp.route("/change-username", methods=["GET", "POST"])
+def change_username():
+    logger.info(session)
+    form = UsernameChangeForm()
+    username = session.get("username")
+    form_username = form["username"].data
+    print(f"username: {username}")
+    print(f"form username: {form_username}")
+    # check if the entered username is different from the current one
+    if request.method == "POST" and form.validate():
+        if (form_username != username) and (form_username is not None):
+            return logout.logout()
+        else:
+            return render_template("account/change-username.html", username=username, form=UsernameChangeForm())
+    else:
+        print(form.errors)
+        return render_template(
+            "account/change-username.html", username=username, form=UsernameChangeForm(), errors=form.errors
+        )
 
 
 @account_bp.route("/request-new-account", methods=["GET"])
