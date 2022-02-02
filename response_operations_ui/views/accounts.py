@@ -26,7 +26,7 @@ account_bp = Blueprint("account_bp", __name__, static_folder="static", template_
 
 form_redirect_mapper = {
     "change_name": "account_bp.change_account_name",
-    "change_username": "account_bp.get_my_account",
+    "change_username": "account_bp.change_username",
 }
 
 
