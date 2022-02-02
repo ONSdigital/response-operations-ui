@@ -1,4 +1,3 @@
-{% from "components/breadcrumb/_macro.njk" import onsBreadcrumb %}
 {% from "components/fieldset/_macro.njk" import onsFieldset %}
 {% from "components/input/_macro.njk" import onsInput %}
 {% from "components/button/_macro.njk" import onsButton %}
@@ -8,27 +7,6 @@
 {% from "components/metadata/_macro.njk" import onsMetadata %}
 
 {% set page_title = "Change contact details" %}
-{% set breadcrumbsData = [
-  {
-    "text": "Surveys",
-    "url": "/surveys/todo",
-    "id": "b-item-1"
-  },
-  {
-    "text": "Account",
-    "url": "/my-account",
-    "id": "b-item-2"
-  }
-] %}
-{% block breadcrumb %}
-{{
-    onsBreadcrumb({
-        "ariaLabel": "Breadcrumbs",
-        "id": "breadcrumbs",
-        "itemsList": breadcrumbsData
-    })
-}}
-{% endblock breadcrumb %}
 {% block main %}
 {% if errors|length > 0 %}
         {% if errors|length == 1 %}
