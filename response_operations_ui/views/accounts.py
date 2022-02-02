@@ -44,7 +44,6 @@ def get_my_account():
 def change_username():
     logger.info(session)
     form = UsernameChangeForm()
-    form.validate_on_submit()
     username = session.get("username")
     form_username = form["username"].data
     print(f"username: {username}")
@@ -56,7 +55,10 @@ def change_username():
         else:
             return render_template("account/change-username.html", username=username, form=UsernameChangeForm())
     else:
-        return render_template("account/change-username.html", username=username, form=UsernameChangeForm())
+        print(form.errors)
+        return render_template(
+            "account/change-username.html", username=username, form=UsernameChangeForm(), errors=form.errors
+        )
 
 
 @account_bp.route("/request-new-account", methods=["GET"])
