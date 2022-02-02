@@ -11,7 +11,12 @@ from response_operations_ui.common import dates, token_decoder
 from response_operations_ui.controllers import uaa_controller
 from response_operations_ui.controllers.notify_controller import NotifyController
 from response_operations_ui.exceptions.exceptions import NotifyError
-from response_operations_ui.forms import CreateAccountForm, RequestAccountForm, OptionsForm, ChangeAccountName
+from response_operations_ui.forms import (
+    ChangeAccountName,
+    CreateAccountForm,
+    OptionsForm,
+    RequestAccountForm,
+)
 
 logger = wrap_logger(logging.getLogger(__name__))
 

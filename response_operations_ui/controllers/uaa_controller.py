@@ -211,7 +211,7 @@ def update_user_account(user_id, email, user_name, first_name, last_name):
         "id": user_id,
         "userName": user_name,
         "name": {"givenName": first_name, "familyName": last_name},
-        "emails": [{"value": email, "primary": True}]
+        "emails": [{"value": email, "primary": True}],
     }
 
     url = f"{app.config['UAA_SERVICE_URL']}/Users/{user_id}"

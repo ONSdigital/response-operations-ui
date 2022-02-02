@@ -10,11 +10,11 @@ from wtforms import (
     IntegerField,
     Label,
     PasswordField,
+    RadioField,
     SelectField,
     StringField,
     SubmitField,
     TextAreaField,
-    RadioField,
 )
 from wtforms.validators import (
     DataRequired,
@@ -405,9 +405,9 @@ class ResetPasswordForm(FlaskForm):
     def validate_password(form, field):
         password = field.data
         if (
-                password.isalnum()
-                or not any(char.isupper() for char in password)
-                or not any(char.isdigit() for char in password)
+            password.isalnum()
+            or not any(char.isupper() for char in password)
+            or not any(char.isdigit() for char in password)
         ):
             raise ValidationError("Your password doesn't meet the requirements")
 
@@ -454,9 +454,9 @@ class CreateAccountForm(FlaskForm):
     def validate_password(form, field):
         password = field.data
         if (
-                password.isalnum()
-                or not any(char.isupper() for char in password)
-                or not any(char.isdigit() for char in password)
+            password.isalnum()
+            or not any(char.isupper() for char in password)
+            or not any(char.isdigit() for char in password)
         ):
             raise ValidationError("Your password doesn't meet the requirements")
 
@@ -522,8 +522,5 @@ class Form(FlaskForm):
 class OptionsForm(Form):
     option = RadioField(
         "Label",
-        choices=[
-            ("value", "change_name"),
-            ("value", "change_username")
-        ],
+        choices=[("value", "change_name"), ("value", "change_username")],
     )
