@@ -9,11 +9,7 @@
 {% set page_title = "Change contact details" %}
 {% block main %}
 {% if errors|length > 0 %}
-        {% if errors|length == 1 %}
-            {% set errorTitle = 'There is 1 error on this page' %}
-        {% elif errors|length > 1 %}
-            {% set errorTitle = 'There are ' ~ errors|length ~ ' errors on this page' %}
-        {% endif %}
+          {% set errorTitle = 'There was an error while changing the username' %}
         {% call
             onsPanel({
                 "type": "error",
@@ -21,7 +17,7 @@
                 "title":  errorTitle
             })
         %}
-            <p>These <strong>must be corrected</strong> to continue.</p>
+            <p>These <strong>must be corrected</strong> to save changes.</p>
             {% set errorData = [] %}
             {% for error in errors %}
                 {% set error_text =  error %}

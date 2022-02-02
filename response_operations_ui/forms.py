@@ -467,7 +467,7 @@ class UsernameChangeForm(FlaskForm):
         validators=[
             DataRequired(message="Username is required"),
             Length(max=255, message="Username must be less than 255 characters"),
-            Regexp(regex="^[a-z]+[0-9]+$", message="Username must onle contain lowercase letters or numbers")
+            Regexp(regex="^[a-z]+[0-9]+$", message="Username must only contain lowercase letters or numbers")
         ],
     )
 
