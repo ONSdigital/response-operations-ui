@@ -7,6 +7,7 @@ from flask import current_app as app
 from itsdangerous import URLSafeSerializer
 from requests import HTTPError
 from structlog import wrap_logger
+from datetime import datetime
 
 logger = wrap_logger(logging.getLogger(__name__))
 
@@ -205,11 +206,11 @@ def update_user_account(payload):
         "Content-Type": "application/json",
         "Accept": "application/json",
         "Authorization": f"Bearer {access_token}",
-        "If-Match": "0",
+        "If-Match": str(payload["meta"]["version"]),
     }
     logger.info("Attempting change of user information")
     url = f"{app.config['UAA_SERVICE_URL']}/Users/{payload['id']}"
-    response = requests.patch(url, data=dumps(payload), headers=headers)
+    response = requests.put(url, data=dumps(payload), headers=headers)
     try:
         response.raise_for_status()
         return
