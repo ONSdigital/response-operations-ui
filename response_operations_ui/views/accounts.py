@@ -94,7 +94,7 @@ def change_account_name():
                         template_name="change_account_details",
                         personalisation=personalisation,
                     )
-                    return logout.logout()
+                    return logout.logout("Your name has been changed")
                 except NotifyError as e:
                     logger.error(
                         "Error sending change of name acknowledgement email to Notify Gateway", msg=e.description

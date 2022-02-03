@@ -5,8 +5,9 @@ logout_bp = Blueprint("logout_bp", __name__, static_folder="static", template_fo
 
 
 @logout_bp.route("/")
-def logout():
+def logout(message="You are now signed out"):
     logout_user()
     session.clear()
-    flash("You are now signed out", category="successful_signout")
+    flash(message, category="successful_signout")
     return redirect(url_for("sign_in_bp.sign_in"))
+
