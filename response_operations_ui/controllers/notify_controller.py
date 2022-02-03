@@ -73,7 +73,7 @@ class NotifyController:
             "request_password_change": self.request_password_change_template,
             "confirm_create_account": self.confirm_create_account_template,
             "request_create_account": self.request_create_account_template,
-            "change_account_name": self.change_account_details_template,
+            "change_account_details": self.change_account_details_template,
         }
         if template_name in templates:
             return templates[template_name]

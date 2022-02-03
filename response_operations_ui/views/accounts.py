@@ -91,7 +91,7 @@ def change_account_name():
                 try:
                     NotifyController().request_to_notify(
                         email=user_from_uaa["emails"][0]["value"],
-                        template_name="ras-account-name-change-ack",
+                        template_name="change_account_details",
                         personalisation=personalisation,
                     )
                     return logout.logout()
