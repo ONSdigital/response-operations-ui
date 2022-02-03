@@ -16,6 +16,7 @@ class NotifyController:
         self.confirm_password_change_template = app.config["NOTIFY_CONFIRM_PASSWORD_CHANGE_TEMPLATE"]
         self.request_create_account_template = app.config["NOTIFY_REQUEST_CREATE_ACCOUNT_TEMPLATE"]
         self.confirm_create_account_template = app.config["NOTIFY_CONFIRM_CREATE_ACCOUNT_TEMPLATE"]
+        self.change_account_name_template = app.config["NOTIFY_CHANGE_ACCOUNT_NAME_TEMPLATE"]
         self.topic_id = app.config["PUBSUB_TOPIC"]
         self.project_id = app.config["GOOGLE_CLOUD_PROJECT"]
         self.publisher = None
@@ -72,6 +73,7 @@ class NotifyController:
             "request_password_change": self.request_password_change_template,
             "confirm_create_account": self.confirm_create_account_template,
             "request_create_account": self.request_create_account_template,
+            "change_account_name": self.change_account_name_template,
         }
         if template_name in templates:
             return templates[template_name]
