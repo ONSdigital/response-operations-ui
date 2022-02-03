@@ -10,4 +10,3 @@ def logout(message="You are now signed out"):
     session.clear()
     flash(message, category="successful_signout")
     return redirect(url_for("sign_in_bp.sign_in"))
-
