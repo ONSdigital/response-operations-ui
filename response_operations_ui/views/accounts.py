@@ -63,7 +63,6 @@ def update_account():
 
 @account_bp.route("/change-account-name", methods=["GET", "POST"])
 def change_account_name():
-    logger.info(session)
     form = ChangeAccountName()
     user_id = session["user_id"]
     user_from_uaa = uaa_controller.get_user_by_id(user_id)
@@ -84,8 +83,26 @@ def change_account_name():
             or (form_last_name != last_name)
             and (form_last_name is not None)
         ):
-            uaa_controller.update_user_account(payload)
-            return logout.logout()
+            errors = uaa_controller.update_user_account(payload)
+            if errors is None:
+                # send confirmation email
+                firstName_lastName = f"{form_first_name} {form_last_name}"
+                logger.info("Sending create account email", firstName_lastName=firstName_lastName)
+                personalisation = {"first_name": first_name, "firstName_lastName": firstName_lastName}
+                try:
+                    NotifyController().request_to_notify(
+                        email=user_from_uaa["emails"][0]["value"],
+                        template_name="rops-change-name-ack",
+                        personalisation=personalisation,
+                    )
+                    return logout.logout()
+                except NotifyError as e:
+                    logger.error(
+                        "Error sending chagne of name acknowledgement email to Notify Gateway", msg=e.description
+                    )
+                    return render_template("account/change-account-name.html", user=user, form=form, errors=form.errors)
+                else:
+                    return render_template("account/change-account-name.html", user=user, form=form, errors=form.errors)
         else:
             return render_template("account/change-account-name.html", user=user, form=form, errors=form.errors)
     else:
