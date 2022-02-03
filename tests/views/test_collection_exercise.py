@@ -91,6 +91,19 @@ with open(f"{project_root}/test_data/collection_exercise/nudge_events_two.json")
 with open(f"{project_root}/test_data/collection_exercise/events_2030.json") as json_data:
     events_2030 = json.load(json_data)
 
+with open(f"{project_root}/test_data/collection_exercise/collection_exercise_details_eq_both_ref_date.json") as json_data:
+    collection_exercise_eq_both_ref_date = json.load(json_data)
+
+with open(f"{project_root}/test_data/collection_exercise/collection_exercise_details_eq_non_ref_date.json") as json_data:
+    collection_exercise_eq_non_ref_date = json.load(json_data)
+
+with open(f"{project_root}/test_data/collection_exercise/collection_exercise_details_eq_ref_start_date.json") as json_data:
+    collection_exercise_eq_ref_start_date = json.load(json_data)
+
+with open(f"{project_root}/test_data/collection_exercise/collection_exercise_details_eq_ref_end_date.json") as json_data:
+    collection_exercise_eq_ref_end_date = json.load(json_data)
+
+
 """Define URLS"""
 collection_exercise_root = f"{TestingConfig.COLLECTION_EXERCISE_URL}/collectionexercises"
 url_ce_by_id = f"{collection_exercise_root}/{collection_exercise_id}"
@@ -126,6 +139,11 @@ url_get_classifier_type = f"{TestingConfig.SURVEY_URL}/surveys/{survey_id}/class
 url_sample_service_upload = f"{TestingConfig.SAMPLE_FILE_UPLOADER_URL}/samples/fileupload"
 
 url_get_sample_summary = f"{TestingConfig.SAMPLE_URL}/samples/samplesummary/{sample_summary_id}"
+
+
+url_get_by_survey_with_ref_start_date = f"{collection_exercise_root}/survey/{short_name}/{period}/event/ref_period_start?"
+
+url_get_by_survey_with_ref_end_date = f"{collection_exercise_root}/survey/{short_name}/{period}/event/ref_period_end?"
 
 ci_search_string = urlencode(
     {"searchString": json.dumps({"SURVEY_ID": survey_id, "COLLECTION_EXERCISE": collection_exercise_id})}
@@ -198,6 +216,22 @@ class TestCollectionExercise(ViewTestCase):
                 "surveyId": survey_id,
             }
         ]
+        self.collection_exercise_ref_start_date = [
+ {
+                "id": collection_exercise_event_id,
+                "collectionExerciseId": collection_exercise_id,
+                "tag": "ref_period_start",
+                "timestamp": "2018-03-16T00:00:00.000Z",
+            }
+        ]
+        self.collection_exercise_ref_end_date = [
+ {
+                "id": collection_exercise_event_id,
+                "collectionExerciseId": collection_exercise_id,
+                "tag": "ref_period_end",
+                "timestamp": "2018-03-16T00:00:00.000Z",
+            }
+        ]
         self.eq_ci_selectors = [
             {
                 "classifiers": {
@@ -226,6 +260,114 @@ class TestCollectionExercise(ViewTestCase):
             "totalSampleUnits": 5,
             "expectedCollectionInstruments": 1,
         }
+
+    @requests_mock.mock()
+    def test_collection_exercise_view_eq_non_ref_date(self, mock_request):
+        mock_request.get(url_get_survey_by_short_name, json=self.survey)
+        mock_request.get(url_ces_by_survey, json=self.collection_exercises)
+        mock_request.get(url_ce_by_id, json=collection_exercise_details["collection_exercise"])
+        mock_request.get(url_get_collection_exercise_events, json=self.collection_exercise_events)
+        mock_request.get(
+            f"{url_get_collection_instrument}?{ci_search_string}", json=self.collection_instruments, complete_qs=True
+        )
+        mock_request.get(
+            f"{url_get_collection_instrument}?{ci_type_search_string}", json=self.eq_ci_selectors, complete_qs=True
+        )
+        mock_request.get(url_link_sample, json=[sample_summary_id])
+        mock_request.get(url_get_sample_summary, json=self.sample_summary)
+        mock_request.get(url_get_classifier_type_selectors, json=classifier_type_selectors)
+        mock_request.get(url_get_classifier_type, json=classifier_types)
+
+        response = self.client.get(f"/surveys/{short_name}/{period}", follow_redirects=True)
+
+        self.assertEqual(response.status_code, 200)
+        self.assertIn("Business Register and Employment Survey".encode(), response.data)
+        self.assertIn("221_201712".encode(), response.data)
+        self.assertNotIn("Select eQ version".encode(), response.data)
+        self.assertNotIn("Set as ready for live".encode(), response.data)
+
+    @requests_mock.mock()
+    def test_collection_exercise_view_eq_ref_start_date(self, mock_request):
+        mock_request.get(url_get_survey_by_short_name, json=self.survey)
+        mock_request.get(url_ces_by_survey, json=self.collection_exercises)
+        mock_request.get(url_ce_by_id, json=collection_exercise_details["collection_exercise"])
+        mock_request.get(url_get_collection_exercise_events, json=self.collection_exercise_events)
+        mock_request.get(
+            f"{url_get_collection_instrument}?{ci_search_string}", json=self.collection_instruments, complete_qs=True
+        )
+        mock_request.get(
+            f"{url_get_collection_instrument}?{ci_type_search_string}", json=self.eq_ci_selectors, complete_qs=True
+        )
+        mock_request.get(url_link_sample, json=[sample_summary_id])
+        mock_request.get(url_get_sample_summary, json=self.sample_summary)
+        mock_request.get(url_get_classifier_type_selectors, json=classifier_type_selectors)
+        mock_request.get(url_get_classifier_type, json=classifier_types)
+
+        mock_request.get(url_get_by_survey_with_ref_start_date, json=collection_exercise_eq_ref_start_date)
+
+        response = self.client.get(f"/surveys/{short_name}/{period}", follow_redirects=True)
+
+        self.assertEqual(response.status_code, 200)
+        self.assertIn("Business Register and Employment Survey".encode(), response.data)
+        self.assertIn("221_201712".encode(), response.data)
+        self.assertNotIn("Select eQ version".encode(), response.data)
+        self.assertNotIn("Set as ready for live".encode(), response.data)
+
+
+    @requests_mock.mock()
+    def test_collection_exercise_view_eq_ref_end_date(self, mock_request):
+        mock_request.get(url_get_survey_by_short_name, json=self.survey)
+        mock_request.get(url_ces_by_survey, json=self.collection_exercises)
+        mock_request.get(url_ce_by_id, json=collection_exercise_details["collection_exercise"])
+        mock_request.get(url_get_collection_exercise_events, json=self.collection_exercise_events)
+        mock_request.get(
+            f"{url_get_collection_instrument}?{ci_search_string}", json=self.collection_instruments, complete_qs=True
+        )
+        mock_request.get(
+            f"{url_get_collection_instrument}?{ci_type_search_string}", json=self.eq_ci_selectors, complete_qs=True
+        )
+        mock_request.get(url_link_sample, json=[sample_summary_id])
+        mock_request.get(url_get_sample_summary, json=self.sample_summary)
+        mock_request.get(url_get_classifier_type_selectors, json=classifier_type_selectors)
+        mock_request.get(url_get_classifier_type, json=classifier_types)
+
+        mock_request.get(url_get_by_survey_with_ref_end_date, json=collection_exercise_eq_ref_end_date)
+
+        response = self.client.get(f"/surveys/{short_name}/{period}", follow_redirects=True)
+
+        self.assertEqual(response.status_code, 200)
+        self.assertIn("Business Register and Employment Survey".encode(), response.data)
+        self.assertIn("221_201712".encode(), response.data)
+        self.assertNotIn("Select eQ version".encode(), response.data)
+        self.assertNotIn("Set as ready for live".encode(), response.data)
+
+    @requests_mock.mock()
+    def test_collection_exercise_view_eq_both_ref_dates(self, mock_request):
+        mock_request.get(url_get_survey_by_short_name, json=self.survey)
+        mock_request.get(url_ces_by_survey, json=self.collection_exercises)
+        mock_request.get(url_ce_by_id, json=collection_exercise_details["collection_exercise"])
+        mock_request.get(url_get_collection_exercise_events, json=self.collection_exercise_events)
+        mock_request.get(
+            f"{url_get_collection_instrument}?{ci_search_string}", json=self.collection_instruments, complete_qs=True
+        )
+        mock_request.get(
+            f"{url_get_collection_instrument}?{ci_type_search_string}", json=self.eq_ci_selectors, complete_qs=True
+        )
+        mock_request.get(url_link_sample, json=[sample_summary_id])
+        mock_request.get(url_get_sample_summary, json=self.sample_summary)
+        mock_request.get(url_get_classifier_type_selectors, json=classifier_type_selectors)
+        mock_request.get(url_get_classifier_type, json=classifier_types)
+
+        mock_request.get(url_get_by_survey_with_ref_start_date, json=collection_exercise_eq_ref_start_date)
+        mock_request.get(url_get_by_survey_with_ref_end_date, json=collection_exercise_eq_ref_end_date)
+
+        response = self.client.get(f"/surveys/{short_name}/{period}", follow_redirects=True)
+
+        self.assertEqual(response.status_code, 200)
+        self.assertIn("Business Register and Employment Survey".encode(), response.data)
+        self.assertIn("221_201712".encode(), response.data)
+        self.assertNotIn("Select eQ version".encode(), response.data)
+        self.assertNotIn("Set as ready for live".encode(), response.data)
 
     @requests_mock.mock()
     def test_collection_exercise_view_seft(self, mock_request):
