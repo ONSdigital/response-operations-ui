@@ -91,16 +91,24 @@ with open(f"{project_root}/test_data/collection_exercise/nudge_events_two.json")
 with open(f"{project_root}/test_data/collection_exercise/events_2030.json") as json_data:
     events_2030 = json.load(json_data)
 
-with open(f"{project_root}/test_data/collection_exercise/collection_exercise_details_eq_both_ref_date.json") as json_data:
+with open(
+    f"{project_root}/test_data/collection_exercise/collection_exercise_details_eq_both_ref_date.json"
+) as json_data:
     collection_exercise_eq_both_ref_date = json.load(json_data)
 
-with open(f"{project_root}/test_data/collection_exercise/collection_exercise_details_eq_non_ref_date.json") as json_data:
+with open(
+    f"{project_root}/test_data/collection_exercise/collection_exercise_details_eq_non_ref_date.json"
+) as json_data:
     collection_exercise_eq_non_ref_date = json.load(json_data)
 
-with open(f"{project_root}/test_data/collection_exercise/collection_exercise_details_eq_ref_start_date.json") as json_data:
+with open(
+    f"{project_root}/test_data/collection_exercise/collection_exercise_details_eq_ref_start_date.json"
+) as json_data:
     collection_exercise_eq_ref_start_date = json.load(json_data)
 
-with open(f"{project_root}/test_data/collection_exercise/collection_exercise_details_eq_ref_end_date.json") as json_data:
+with open(
+    f"{project_root}/test_data/collection_exercise/collection_exercise_details_eq_ref_end_date.json"
+) as json_data:
     collection_exercise_eq_ref_end_date = json.load(json_data)
 
 
@@ -141,7 +149,9 @@ url_sample_service_upload = f"{TestingConfig.SAMPLE_FILE_UPLOADER_URL}/samples/f
 url_get_sample_summary = f"{TestingConfig.SAMPLE_URL}/samples/samplesummary/{sample_summary_id}"
 
 
-url_get_by_survey_with_ref_start_date = f"{collection_exercise_root}/survey/{short_name}/{period}/event/ref_period_start?"
+url_get_by_survey_with_ref_start_date = (
+    f"{collection_exercise_root}/survey/{short_name}/{period}/event/ref_period_start?"
+)
 
 url_get_by_survey_with_ref_end_date = f"{collection_exercise_root}/survey/{short_name}/{period}/event/ref_period_end?"
 
@@ -217,7 +227,7 @@ class TestCollectionExercise(ViewTestCase):
             }
         ]
         self.collection_exercise_ref_start_date = [
- {
+            {
                 "id": collection_exercise_event_id,
                 "collectionExerciseId": collection_exercise_id,
                 "tag": "ref_period_start",
@@ -225,7 +235,7 @@ class TestCollectionExercise(ViewTestCase):
             }
         ]
         self.collection_exercise_ref_end_date = [
- {
+            {
                 "id": collection_exercise_event_id,
                 "collectionExerciseId": collection_exercise_id,
                 "tag": "ref_period_end",
@@ -312,7 +322,6 @@ class TestCollectionExercise(ViewTestCase):
         self.assertIn("221_201712".encode(), response.data)
         self.assertNotIn("Select eQ version".encode(), response.data)
         self.assertNotIn("Set as ready for live".encode(), response.data)
-
 
     @requests_mock.mock()
     def test_collection_exercise_view_eq_ref_end_date(self, mock_request):
