@@ -94,10 +94,14 @@ def get_user_by_email(email, access_token=None):
     return response.json()
 
 
-def get_user_by_id(user_id, access_token=None):
-    if access_token is None:
-        access_token = login_admin()
+def get_user_by_id(user_id: str) -> dict:
+    """
+    Gets the user details from uaa, using the id of the user.
 
+    :param user_id: The id of the user in uaa
+    :return: The user details from uaa in dictionary form.
+    """
+    access_token = login_admin()
     headers = {
         "Content-Type": "application/json",
         "Accept": "application/json",
