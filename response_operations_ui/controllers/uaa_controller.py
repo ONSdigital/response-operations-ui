@@ -7,7 +7,6 @@ from flask import current_app as app
 from itsdangerous import URLSafeSerializer
 from requests import HTTPError
 from structlog import wrap_logger
-from datetime import datetime
 
 logger = wrap_logger(logging.getLogger(__name__))
 

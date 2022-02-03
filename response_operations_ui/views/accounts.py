@@ -83,13 +83,11 @@ def change_account_name():
             or (form_last_name != last_name)
             and (form_last_name is not None)
         ):
-            # errors = uaa_controller.update_user_account(payload)
-            errors = None
+            errors = uaa_controller.update_user_account(payload)
             if errors is None:
-                # send confirmation email
-                firstName_lastName = f"{form_first_name} {form_last_name}"
-                logger.info("Sending create account email", firstName_lastName=firstName_lastName)
-                personalisation = {"first_name": first_name, "firstName_lastName": firstName_lastName}
+                full_name = f"{form_first_name} {form_last_name}"
+                logger.info("Sending create account email", user_id=user_id)
+                personalisation = {"first_name": first_name, "value_name": "name", "changed_value": full_name}
                 try:
                     NotifyController().request_to_notify(
                         email=user_from_uaa["emails"][0]["value"],
