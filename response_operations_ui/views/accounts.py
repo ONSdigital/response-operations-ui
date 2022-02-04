@@ -80,12 +80,7 @@ def change_account_name():
         payload = user_from_uaa
         payload["name"] = {"familyName": form.data["last_name"], "givenName": form.data["first_name"]}
         if request.method == "POST" and form.validate():
-            if (
-                (form_first_name != first_name)
-                and (form_first_name is not None)
-                or (form_last_name != last_name)
-                and (form_last_name is not None)
-            ):
+            if (form_first_name != first_name) or (form_last_name != last_name):
                 errors = uaa_controller.update_user_account(payload)
                 if errors is None:
                     full_name = f"{form_first_name} {form_last_name}"
