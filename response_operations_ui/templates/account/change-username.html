@@ -1,0 +1,80 @@
+{% from "components/fieldset/_macro.njk" import onsFieldset %}
+{% from "components/input/_macro.njk" import onsInput %}
+{% from "components/button/_macro.njk" import onsButton %}
+{% from "components/lists/_macro.njk" import onsList %}
+
+{% extends "layouts/base.html" %}
+{% from "components/metadata/_macro.njk" import onsMetadata %}
+
+{% set page_title = "Change contact details" %}
+{% block main %}
+{% if errors|length > 0 %}
+          {% set errorTitle = 'There was an error while changing the username' %}
+        {% call
+            onsPanel({
+                "type": "error",
+                "classes": "u-mb-s",
+                "title":  errorTitle
+            })
+        %}
+            <p>These <strong>must be corrected</strong> to save changes.</p>
+            {% set errorData = [] %}
+            {% for error in errors %}
+                {% set error_text =  error %}
+                {% do errorData.append(
+                    {
+                        "text": 'Problem with the ' ~ error_text.replace('_', ' '),
+                        "index": true,
+                        "url": "#" ~ error ~ '_error',
+                        "classes": "js-inpagelink"
+                    }
+                ) %}
+            {% endfor %}
+            {{
+                onsList({
+                    "classes": "list--bare",
+                    "itemsList": errorData
+                })
+            }}
+        {% endcall %}
+    {% endif %}
+<h1 class="u-fs-xl">Change username</h1>
+<p>This should match your windows login username</p>
+<form action="" method="post">
+        {{ form.csrf_token }}
+        {% set userName = username %}
+            {{
+                onsInput({
+                    "id": "username",
+                    "name": "username",
+                    "type": "text",
+                    "label": {
+                        "text": 'Username'
+                    },
+                    "error": errorUsername,
+                    "value": userName
+                })
+            }}
+
+    <p><br>You will need to sign in again after saving your changes</p>
+
+
+    <div class="grid grid--flex grid--gutterless grid--vertical-center grid--no-wrap@s u-mt-m u-mb-m">
+        <div class="grid__col">
+            {{
+                onsButton({
+                "text": "Save",
+                "id": "btn-option-save",
+                "classes": 'btn-group__btn',
+                "submitType": "timer"
+                })
+            }}
+        </div>
+        <div class="grid__col u-ml-m btn-group__btn secondary">
+          <a href="{{ url_for('account_bp.get_my_account') }}" role="button" class="btn btn--link btn--secondary" id="btn-who-ons-option-cancel">
+            <span class="btn__inner">Cancel</span></a>
+        </div>
+    </div>
+</form>
+
+{% endblock main %}

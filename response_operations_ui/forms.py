@@ -478,6 +478,22 @@ class ChangeAccountName(FlaskForm):
     )
 
 
+class UsernameChangeForm(FlaskForm):
+    username = StringField(
+        "Username",
+        validators=[
+            DataRequired(message="Username is required"),
+            Length(max=255, message="Username must be less than 255 characters"),
+        ],
+    )
+
+    @staticmethod
+    def validate_username(form, field):
+        username = field.data
+        if (not username.isalnum() or not any(char.islower() for char in username)):
+            raise ValidationError("hello")
+
+
 class BannerCreateForm(FlaskForm):
     title = StringField("Banner title", validators=[InputRequired("Enter a banner title")])
     banner_text = StringField(
