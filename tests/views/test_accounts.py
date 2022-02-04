@@ -1,3 +1,5 @@
+import json
+import os
 import unittest
 from unittest import mock
 from unittest.mock import patch
@@ -9,15 +11,21 @@ from config import TestingConfig
 from response_operations_ui import create_app
 from response_operations_ui.common import token_decoder
 
+project_root = os.path.dirname(os.path.dirname(__file__))
+with open(f"{project_root}/test_data/uaa/user_by_id.json") as json_data:
+    uaa_user_by_id_json = json.load(json_data)
+
 test_email = "fake@ons.gov.uk"
+user_id = "fe2dc842-b3b3-4647-8317-858dab82ab94"
 url_uaa_token = f"{TestingConfig.UAA_SERVICE_URL}/oauth/token"
 url_uaa_get_accounts = f"{TestingConfig.UAA_SERVICE_URL}/Users?filter=email+eq+%22{test_email}%22"
+url_uaa_get_user_by_id = f"{TestingConfig.UAA_SERVICE_URL}/Users/{user_id}"
 url_uaa_create_account = f"{TestingConfig.UAA_SERVICE_URL}/Users"
 
 
 class TestAccounts(unittest.TestCase):
     def setUp(self):
-        payload = {"user_id": "test-id", "aud": "response_operations"}
+        payload = {"user_id": user_id, "aud": "response_operations"}
         self.app = create_app("TestingConfig")
         self.access_token = jwt.encode(payload, self.app.config["UAA_PRIVATE_KEY"], algorithm="RS256")
         self.client = self.app.test_client()
@@ -27,6 +35,23 @@ class TestAccounts(unittest.TestCase):
         self.assertIn(b"ONS email address", response.data)
         self.assertIn(b"admin password", response.data)
         self.assertEqual(response.status_code, 200)
+
+    # Uncomment once my-account page is enabled in future PR
+    # @requests_mock.mock()
+    # def test_my_account_page(self, mock_request):
+    #     with self.client.session_transaction() as session:
+    #         session["user_id"] = user_id
+    #     mock_request.post(url_uaa_token, json={"access_token": self.access_token}, status_code=201)
+    #     mock_request.get(url_uaa_get_user_by_id, json=uaa_user_by_id_json, status_code=200)
+    #     response = self.client.get("/account/my-account", follow_redirects=True)
+    #
+    #     self.assertIn(b"Email address:", response.data)
+    #     self.assertIn(b"ons@ons.fake", response.data)
+    #     self.assertIn(b"Username:", response.data)
+    #     self.assertIn(b"uaa_user", response.data)
+    #     self.assertIn(b"Name:", response.data)
+    #     self.assertIn(b"ONS User", response.data)
+    #     self.assertEqual(response.status_code, 200)
 
     @requests_mock.mock()
     def test_request_account(self, mock_request):

@@ -1,0 +1,26 @@
+{% extends "layouts/base.html" %}
+{% from "components/metadata/_macro.njk" import onsMetadata %}
+{% set page_title = "Account details" %}
+
+</details>" %}
+
+{% block main %}
+
+{% include 'partials/flashed-messages.html' %}
+
+<section>
+  <h1 id="respondent-name">Account details</h1>
+  <dl class="metadata metadata__list grid grid--gutterless u-cf u-mb-l" title="" aria-label="">
+  <dt class="metadata__term grid__col col-4@m">Username:</dt>
+  <dd class="metadata__value grid__col col-8@m">{{ user.username }}</dd>
+  <dt class="metadata__term grid__col col-4@m">Name:</dt>
+  <dd class="metadata__value grid__col col-8@m">{{ user.name }}</dd>
+  <dt class="metadata__term grid__col col-4@m">Email address:</dt>
+  <dd class="metadata__value grid__col col-8@m">{{ user.email }}</dd>
+  <dt class="metadata__term grid__col col-4@m">Password:</dt>
+  <dd class="metadata__value grid__col col-8@m">●●●●●●●●</dd>
+  <dd class="metadata__value grid__col col-8@m u-ml-no u-mb-xs u-fs-s">(Last changed on {{ user.password_last_changed }})</dd>
+</dl>
+    <hr class="u-mb-l col-8@m">
+</section>
+{% endblock %}
