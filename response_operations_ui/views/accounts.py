@@ -79,7 +79,6 @@ def change_account_name():
         }
         payload = user_from_uaa
         payload["name"] = {"familyName": form.data["last_name"], "givenName": form.data["first_name"]}
-        print("here")
         if request.method == "POST" and form.validate():
             if (
                 (form_first_name != first_name)
