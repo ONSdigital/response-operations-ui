@@ -61,14 +61,14 @@ class TestAccounts(unittest.TestCase):
     #     self.assertIn(b"ONS User", response.data)
     #     self.assertEqual(response.status_code, 200)
 
-    @requests_mock.mock()
-    def test_no_selection_made(self, mock_request):
-        with self.client.session_transaction() as session:
-            session["user_id"] = user_id
-        mock_request.post(url_uaa_token, json={"access_token": self.access_token}, status_code=201)
-        mock_request.get(url_uaa_get_user_by_id, json=uaa_user_by_id_json, status_code=200)
-        response = self.client.post("account/my-account", data=None, follow_redirects=True)
-        self.assertIn(b"You need to choose an option", response.data)
+    # @requests_mock.mock()
+    # def test_no_selection_made(self, mock_request):
+    #     with self.client.session_transaction() as session:
+    #         session["user_id"] = user_id
+    #     mock_request.post(url_uaa_token, json={"access_token": self.access_token}, status_code=201)
+    #     mock_request.get(url_uaa_get_user_by_id, json=uaa_user_by_id_json, status_code=200)
+    #     response = self.client.post("account/my-account", data=None, follow_redirects=True)
+    #     self.assertIn(b"You need to choose an option", response.data)
 
     @requests_mock.mock()
     def test_change_account_name_page(self, mock_request):
