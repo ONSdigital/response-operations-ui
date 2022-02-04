@@ -95,6 +95,23 @@ class TestAccounts(unittest.TestCase):
             self.assertIn(b"Your name has been changed", response.data)
 
     @requests_mock.mock()
+    def test_name_is_empty(self, mock_request):
+        with patch("response_operations_ui.views.accounts.NotifyController") as mock_notify:
+            with self.client.session_transaction() as session:
+                session["user_id"] = user_id
+            mock_notify()._send_message.return_value = mock.Mock()
+            mock_request.post(url_uaa_token, json={"access_token": self.access_token}, status_code=201)
+            mock_request.get(url_uaa_get_user_by_id, json=uaa_user_by_id_json, status_code=200)
+            mock_request.put(url_uaa_update_name, status_code=200)
+            response = self.client.post(
+                "/account/change-account-name",
+                follow_redirects=True,
+                data={"first_name": "", "last_name": ""},
+            )
+            self.assertIn(b"First name is required", response.data)
+            self.assertIn(b"Last name is required", response.data)
+
+    @requests_mock.mock()
     def test_request_account(self, mock_request):
         with patch("response_operations_ui.views.accounts.NotifyController") as mock_notify:
             mock_notify()._send_message.return_value = mock.Mock()
