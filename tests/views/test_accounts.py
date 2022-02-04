@@ -24,6 +24,11 @@ url_uaa_get_accounts = f"{TestingConfig.UAA_SERVICE_URL}/Users?filter=email+eq+%
 url_uaa_get_user_by_id = f"{TestingConfig.UAA_SERVICE_URL}/Users/{user_id}"
 url_uaa_create_account = f"{TestingConfig.UAA_SERVICE_URL}/Users"
 url_uaa_update_name = f"{TestingConfig.UAA_SERVICE_URL}/Users/{user_id}"
+max_char_name = (
+    "JZPKbNXWhztnGvFbHwfRlcRnpgFjQveWVqvkVgtVVXjcXwiiVvFCmbFAsBVUnjHoaLAOeNUsBHQIczjzuacJUDzLLwWjhBVyVrMf"
+    "rLNZQJQDvEeUFDgatOtwajCPNwskfDiGKSVrwdxKRfwsMiTlnslXANitYMaCWGMdSCprQmEIcMchYZgcBxMWFFgHzEljoNZTWTsd"
+    "sCEQiQycWJauMkduKmyzaxKxSZNtYxNpsyVGTxqroIUPwQSwXwyjLkkn"
+)
 
 
 class TestAccounts(unittest.TestCase):
@@ -62,8 +67,8 @@ class TestAccounts(unittest.TestCase):
             session["user_id"] = user_id
         mock_request.post(url_uaa_token, json={"access_token": self.access_token}, status_code=201)
         mock_request.get(url_uaa_get_user_by_id, json=uaa_user_by_id_json, status_code=200)
-        response = self.client.get("account/my-account", data=None, follow_redirects=True)
-        self.assertIn(b"You need to choose and option", response.data)
+        response = self.client.post("account/my-account", data=None, follow_redirects=True)
+        self.assertIn(b"You need to choose an option", response.data)
 
     @requests_mock.mock()
     def test_change_account_name_page(self, mock_request):
@@ -110,6 +115,23 @@ class TestAccounts(unittest.TestCase):
             )
             self.assertIn(b"First name is required", response.data)
             self.assertIn(b"Last name is required", response.data)
+
+    @requests_mock.mock()
+    def test_name_is_max_name_length(self, mock_request):
+        with patch("response_operations_ui.views.accounts.NotifyController") as mock_notify:
+            with self.client.session_transaction() as session:
+                session["user_id"] = user_id
+            mock_notify()._send_message.return_value = mock.Mock()
+            mock_request.post(url_uaa_token, json={"access_token": self.access_token}, status_code=201)
+            mock_request.get(url_uaa_get_user_by_id, json=uaa_user_by_id_json, status_code=200)
+            mock_request.put(url_uaa_update_name, status_code=200)
+            response = self.client.post(
+                "/account/change-account-name",
+                follow_redirects=True,
+                data={"first_name": max_char_name, "last_name": max_char_name},
+            )
+            self.assertIn(b"Your first name must be less than 255 characters", response.data)
+            self.assertIn(b"Your last name must be less than 255 characters", response.data)
 
     @requests_mock.mock()
     def test_request_account(self, mock_request):
