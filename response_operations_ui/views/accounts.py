@@ -34,8 +34,7 @@ form_redirect_mapper = {
 def get_my_account():
     try:
         # Remove once we redisplay the 'my account' link
-        if False:
-            abort(404)
+        abort(404)
         user_id = session["user_id"]
         user_from_uaa = uaa_controller.get_user_by_id(user_id)
         first_name = user_from_uaa["name"]["givenName"]
