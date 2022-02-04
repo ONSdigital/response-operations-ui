@@ -376,7 +376,7 @@ class TestCollectionExercise(ViewTestCase):
         self.assertIn("Business Register and Employment Survey".encode(), response.data)
         self.assertIn("221_201712".encode(), response.data)
         self.assertNotIn("Select eQ version".encode(), response.data)
-        self.assertNotIn("Set as ready for live".encode(), response.data)
+        self.assertIn("Set as ready for live".encode(), response.data)
 
     @requests_mock.mock()
     def test_collection_exercise_view_seft(self, mock_request):
