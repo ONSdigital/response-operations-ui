@@ -2,7 +2,7 @@ import logging
 
 from flask import Blueprint
 from flask import current_app as app
-from flask import flash, jsonify, redirect, render_template, request, session, url_for
+from flask import abort, flash, jsonify, redirect, render_template, request, session, url_for
 from flask_login import login_required
 from itsdangerous import BadData, BadSignature, SignatureExpired, URLSafeSerializer
 from structlog import wrap_logger
@@ -22,6 +22,8 @@ account_bp = Blueprint("account_bp", __name__, static_folder="static", template_
 @login_required
 def get_my_account():
     try:
+        # Remove once we redisplay the 'my account' link
+        abort(404)
         user_id = session["user_id"]
         user_from_uaa = uaa_controller.get_user_by_id(user_id)
         first_name = user_from_uaa["name"]["givenName"]
