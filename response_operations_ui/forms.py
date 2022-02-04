@@ -463,17 +463,17 @@ class CreateAccountForm(FlaskForm):
 
 class ChangeAccountName(FlaskForm):
     first_name = StringField(
-        ("First name"),
+        "First name",
         validators=[
-            DataRequired(("First name is required")),
-            Length(max=254, message=("Your first name must be less than 254 " "characters")),
+            DataRequired("First name is required"),
+            Length(max=254, message="Your first name must be less than 254 characters"),
         ],
     )
     last_name = StringField(
-        ("Last name"),
+        "Last name",
         validators=[
-            DataRequired(("Last name is required")),
-            Length(max=254, message=("Your last name must be less than 254 characters")),
+            DataRequired("Last name is required"),
+            Length(max=254, message="Your last name must be less than 254 characters"),
         ],
     )
 

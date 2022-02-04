@@ -39,7 +39,7 @@
         }}
     {% endcall %}
   {% endif %}
-<h1 class="u-fs-xl">Enter your new contact details</h1>
+<h1 class="u-fs-xl">Change name</h1>
 <form action="" method="post">
   {{ form.csrf_token }}
   {% set firstName = user.first_name %}
@@ -76,7 +76,7 @@
         "value": lastName
     })
     }}
-
+  <p><br>You will need to sign in again after saving your changes</p>
   <div class="grid grid--flex grid--gutterless grid--vertical-center grid--no-wrap@s u-mt-m u-mb-m">
     <div class="grid__col">
       {{

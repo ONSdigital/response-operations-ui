@@ -6,7 +6,8 @@
 
 {% block main %}
 
-{% include 'partials/flashed-messages.html' %}
+{% set ns = namespace() %}
+{% include "radio-option-select-error-panel.html" %}
 
 <section>
   <h1 id="respondent-name">Account details</h1>
@@ -27,6 +28,9 @@
   <h1 class="u-fs-xl">Help with account</h1>
   <form action="" method="post">
     <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
+    {% if ns.optionError %}
+      {% set errorOption = { "text": ns.optionErrorMessage,  "id": 'option_error' } %}
+    {% endif %}
     {% set radioComponent = {
             "legend": "Choose an option",
             "name": "option",
