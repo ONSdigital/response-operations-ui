@@ -1,8 +1,8 @@
 import logging
 
-from flask import Blueprint
+from flask import Blueprint, abort
 from flask import current_app as app
-from flask import abort, flash, jsonify, redirect, render_template, request, session, url_for
+from flask import flash, jsonify, redirect, render_template, request, session, url_for
 from flask_login import login_required
 from itsdangerous import BadData, BadSignature, SignatureExpired, URLSafeSerializer
 from structlog import wrap_logger
