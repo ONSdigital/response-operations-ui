@@ -203,6 +203,12 @@ def create_user_account(email, password, user_name, first_name, last_name):
 
 
 def update_user_account(payload):
+    """
+    Updates the user in uaa, using the user's id
+
+    :param payload: the same payload we receive from uaa, with the updated values
+    :return errors: The errors returned from uaa as a dictionary
+    """
     access_token = login_admin()
 
     headers = {
