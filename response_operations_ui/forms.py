@@ -491,7 +491,7 @@ class UsernameChangeForm(FlaskForm):
     def validate_username(form, field):
         username = field.data
         if not username.isalnum() or any(char.isupper() for char in username):
-            raise ValidationError("hello")
+            raise ValidationError("Username can only contain lowercase letters and numbers")
 
 
 class BannerCreateForm(FlaskForm):

@@ -43,6 +43,10 @@
 <form action="" method="post">
         {{ form.csrf_token }}
         {% set userName = username %}
+        {% if errors.username %}
+          {% set errorUsername = { "text": errors['username'][0],  "id": 'username_error' } %}
+          {% set username = form.username.data %}
+        {% endif %}
             {{
                 onsInput({
                     "id": "username",
