@@ -34,6 +34,7 @@ class TestSignIn(unittest.TestCase):
         self.assertIn(b"Password", response.data)
         self.assertEqual(response.status_code, 200)
         self.assertNotIn(b"Sign out", response.data)
+        self.assertNotIn(b"My account", response.data)
 
     def test_logout(self):
         response = self.client.get("/logout", follow_redirects=True)
@@ -51,6 +52,9 @@ class TestSignIn(unittest.TestCase):
         self.assertEqual(response.status_code, 200)
         self.assertIn("Choose a survey".encode(), response.data)
         self.assertIn("Sign out".encode(), response.data)
+        # Uncomment once my account link is made visible again
+        # self.assertIn("My account".encode(), response.data)
+        self.assertNotIn("Sign in".encode(), response.data)
 
     @requests_mock.mock()
     def test_sign_in_unable_to_decode_token(self, mock_request):
