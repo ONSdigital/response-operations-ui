@@ -145,28 +145,6 @@ def change_username():
         )
 
 
-@account_bp.route("/my-account", methods=["GET"])
-@login_required
-def get_my_account():
-    try:
-        # Remove once we redisplay the 'my account' link
-        abort(404)
-        user_id = session["user_id"]
-        user_from_uaa = uaa_controller.get_user_by_id(user_id)
-        first_name = user_from_uaa["name"]["givenName"]
-        last_name = user_from_uaa["name"]["familyName"]
-        formatted_date = dates.format_datetime_to_string(user_from_uaa["passwordLastModified"], date_format="%d %b %Y")
-        user = {
-            "username": user_from_uaa["userName"],
-            "name": f"{first_name} {last_name}",
-            "email": user_from_uaa["emails"][0]["value"],
-            "password_last_changed": formatted_date,
-        }
-        return render_template("account/my-account.html", user=user)
-    except Exception as e:
-        return jsonify(e)
-
-
 @account_bp.route("/request-new-account", methods=["GET"])
 def get_request_new_account(form_errors=None, email=None):
     form = RequestAccountForm(request.form)
