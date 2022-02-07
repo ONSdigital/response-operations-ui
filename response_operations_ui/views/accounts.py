@@ -17,7 +17,6 @@ from response_operations_ui.forms import (
     MyAccountOptionsForm,
     RequestAccountForm,
 )
-from response_operations_ui.views import logout
 
 logger = wrap_logger(logging.getLogger(__name__))
 

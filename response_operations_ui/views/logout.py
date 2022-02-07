@@ -1,6 +1,5 @@
-from flask import Blueprint, flash, redirect, url_for, request, make_response, session
+from flask import Blueprint, flash, make_response, redirect, request, session, url_for
 from flask_login import logout_user
-from response_operations_ui.common.session import Session
 
 logout_bp = Blueprint("logout_bp", __name__, static_folder="static", template_folder="templates")
 
