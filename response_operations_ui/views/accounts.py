@@ -123,7 +123,7 @@ def change_username():
                 personalisation = {
                     "first_name": user_from_uaa["name"]["givenName"],
                     "value_name": "username",
-                    "changed_value": username,
+                    "changed_value": form_username,
                 }
                 try:
                     NotifyController().request_to_notify(
