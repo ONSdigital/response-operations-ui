@@ -62,43 +62,39 @@ def update_account():
 
 @account_bp.route("/change-account-name", methods=["GET", "POST"])
 def change_account_name():
-    try:
-        form = ChangeAccountName()
-        user_id = session["user_id"]
-        user_from_uaa = uaa_controller.get_user_by_id(user_id)
-        user = {
-            "first_name": f"{user_from_uaa['name']['givenName']}",
-            "last_name": f"{user_from_uaa['name']['familyName']}",
-        }
-        payload = user_from_uaa
-        payload["name"] = {"familyName": form.data["last_name"], "givenName": form.data["first_name"]}
-        if request.method == "POST" and form.validate():
-            if (form.data["first_name"] != user["first_name"]) or (form.data["last_name"] != user["last_name"]):
-                errors = uaa_controller.update_user_account(payload)
-                if errors is None:
-                    full_name = f"{form.data['first_name']} {form.data['last_name']}"
-                    logger.info("Sending update account details email", user_id=user_id)
-                    personalisation = {
-                        "first_name": user["first_name"],
-                        "value_name": "name",
-                        "changed_value": full_name,
-                    }
-                    try:
-                        NotifyController().request_to_notify(
-                            email=user_from_uaa["emails"][0]["value"],
-                            template_name="change_account_details",
-                            personalisation=personalisation,
-                        )
-                        return logout.logout("Your name has been changed")
-                    except NotifyError as e:
-                        logger.error(
-                            "Error sending change of name acknowledgement email to Notify Gateway", msg=e.description
-                        )
-            else:
-                return redirect(url_for("account_bp.get_my_account"))
-        return render_template("account/change-account-name.html", user=user, form=form, errors=form.errors)
-    except Exception as e:
-        return jsonify(e)
+    form = ChangeAccountName()
+    user_id = session["user_id"]
+    user_from_uaa = uaa_controller.get_user_by_id(user_id)
+    user = {
+        "first_name": f"{user_from_uaa['name']['givenName']}",
+        "last_name": f"{user_from_uaa['name']['familyName']}",
+    }
+    user_from_uaa["name"] = {"familyName": form.data["last_name"], "givenName": form.data["first_name"]}
+    if request.method == "POST" and form.validate():
+        if (form.data["first_name"] != user["first_name"]) or (form.data["last_name"] != user["last_name"]):
+            errors = uaa_controller.update_user_account(user_from_uaa)
+            if errors is None:
+                full_name = f"{form.data['first_name']} {form.data['last_name']}"
+                logger.info("Sending update account details email", user_id=user_id)
+                personalisation = {
+                    "first_name": user["first_name"],
+                    "value_name": "name",
+                    "changed_value": full_name,
+                }
+                try:
+                    NotifyController().request_to_notify(
+                        email=user_from_uaa["emails"][0]["value"],
+                        template_name="change_account_details",
+                        personalisation=personalisation,
+                    )
+                    return logout.logout("Your name has been changed")
+                except NotifyError as e:
+                    logger.error(
+                        "Error sending change of name acknowledgement email to Notify Gateway", msg=e.description
+                    )
+        else:
+            return redirect(url_for("account_bp.get_my_account"))
+    return render_template("account/change-account-name.html", user=user, form=form, errors=form.errors)
 
 
 @account_bp.route("/request-new-account", methods=["GET"])
