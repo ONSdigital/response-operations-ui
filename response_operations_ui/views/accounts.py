@@ -68,23 +68,19 @@ def change_account_name():
         form = ChangeAccountName()
         user_id = session["user_id"]
         user_from_uaa = uaa_controller.get_user_by_id(user_id)
-        first_name = user_from_uaa["name"]["givenName"]
-        last_name = user_from_uaa["name"]["familyName"]
-        form_first_name = form.data["first_name"]
-        form_last_name = form.data["last_name"]
         user = {
-            "first_name": f"{first_name}",
-            "last_name": f"{last_name}",
+            "first_name": f"{user_from_uaa['name']['givenName']}",
+            "last_name": f"{user_from_uaa['name']['familyName']}",
         }
         payload = user_from_uaa
         payload["name"] = {"familyName": form.data["last_name"], "givenName": form.data["first_name"]}
         if request.method == "POST" and form.validate():
-            if (form_first_name != first_name) or (form_last_name != last_name):
+            if (form.data["first_name"] != user["first_name"]) or (form.data["last_name"] != user["last_name"]):
                 errors = uaa_controller.update_user_account(payload)
                 if errors is None:
-                    full_name = f"{form_first_name} {form_last_name}"
+                    full_name = f"{form.data['last_name']} {form.data['first_name']}"
                     logger.info("Sending update account details email", user_id=user_id)
-                    personalisation = {"first_name": first_name, "value_name": "name", "changed_value": full_name}
+                    personalisation = {"first_name": user["first_name"], "value_name": "name", "changed_value": full_name}
                     try:
                         NotifyController().request_to_notify(
                             email=user_from_uaa["emails"][0]["value"],
