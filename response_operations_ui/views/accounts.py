@@ -1,6 +1,6 @@
 import logging
 
-from flask import Blueprint, abort
+from flask import Blueprint
 from flask import current_app as app
 from flask import flash, jsonify, redirect, render_template, request, session, url_for
 from flask_login import login_required
@@ -33,8 +33,6 @@ form_redirect_mapper = {
 @login_required
 def get_my_account():
     try:
-        # Remove once we redisplay the 'my account' link
-        abort(404)
         user_id = session["user_id"]
         user_from_uaa = uaa_controller.get_user_by_id(user_id)
         first_name = user_from_uaa["name"]["givenName"]
