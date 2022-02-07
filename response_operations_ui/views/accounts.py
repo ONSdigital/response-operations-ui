@@ -80,7 +80,11 @@ def change_account_name():
                 if errors is None:
                     full_name = f"{form.data['last_name']} {form.data['first_name']}"
                     logger.info("Sending update account details email", user_id=user_id)
-                    personalisation = {"first_name": user["first_name"], "value_name": "name", "changed_value": full_name}
+                    personalisation = {
+                        "first_name": user["first_name"],
+                        "value_name": "name",
+                        "changed_value": full_name,
+                    }
                     try:
                         NotifyController().request_to_notify(
                             email=user_from_uaa["emails"][0]["value"],
