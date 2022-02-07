@@ -519,7 +519,7 @@ class Form(FlaskForm):
         return "option" in self.data and self.data["option"]
 
 
-class OptionsForm(Form):
+class MyAccountOptionsForm(Form):
     option = RadioField(
         "Label",
         choices=[("value", "change_username"), ("value", "change_name")],
