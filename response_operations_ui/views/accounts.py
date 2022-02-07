@@ -76,7 +76,7 @@ def change_account_name():
             if (form.data["first_name"] != user["first_name"]) or (form.data["last_name"] != user["last_name"]):
                 errors = uaa_controller.update_user_account(payload)
                 if errors is None:
-                    full_name = f"{form.data['last_name']} {form.data['first_name']}"
+                    full_name = f"{form.data['first_name']} {form.data['last_name']}"
                     logger.info("Sending update account details email", user_id=user_id)
                     personalisation = {
                         "first_name": user["first_name"],
