@@ -195,7 +195,7 @@ class TestCollectionExercise(ViewTestCase):
             "surveyRef": "074",
             "eqVersion": "v2",
             "surveyMode": "EQ",
-            "ref_period_start":  "2017-05-15T00:00:00Z",
+            "ref_period_start": "2017-05-15T00:00:00Z",
             "ref_period_end": "2017-05-15T00:00:00Z",
         }
         self.survey = {
@@ -273,7 +273,7 @@ class TestCollectionExercise(ViewTestCase):
                 "collectionExerciseId": collection_exercise_id,
                 "tag": "ref_period_end",
                 "timestamp": "2018-03-16T00:00:00.000Z",
-            }
+            },
         ]
         self.eq_ci_selectors = [
             {
