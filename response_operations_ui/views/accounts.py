@@ -1,6 +1,6 @@
 import logging
 
-from flask import Blueprint, abort
+from flask import Blueprint
 from flask import current_app as app
 from flask import flash, jsonify, redirect, render_template, request, session, url_for
 from flask_login import login_required
@@ -139,7 +139,6 @@ def change_username():
         else:
             return redirect(url_for("account_bp.get_my_account"))
     else:
-        print(form.errors)
         return render_template(
             "account/change-username.html", username=username, form=UsernameChangeForm(), errors=form.errors
         )
