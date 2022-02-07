@@ -21,9 +21,8 @@ test_email = "fake@ons.gov.uk"
 user_id = "fe2dc842-b3b3-4647-8317-858dab82ab94"
 url_uaa_token = f"{TestingConfig.UAA_SERVICE_URL}/oauth/token"
 url_uaa_get_accounts = f"{TestingConfig.UAA_SERVICE_URL}/Users?filter=email+eq+%22{test_email}%22"
-url_uaa_get_user_by_id = f"{TestingConfig.UAA_SERVICE_URL}/Users/{user_id}"
+url_uaa_user_by_id = f"{TestingConfig.UAA_SERVICE_URL}/Users/{user_id}"
 url_uaa_create_account = f"{TestingConfig.UAA_SERVICE_URL}/Users"
-url_uaa_update_name = f"{TestingConfig.UAA_SERVICE_URL}/Users/{user_id}"
 max_char_name = (
     "JZPKbNXWhztnGvFbHwfRlcRnpgFjQveWVqvkVgtVVXjcXwiiVvFCmbFAsBVUnjHoaLAOeNUsBHQIczjzuacJUDzLLwWjhBVyVrMf"
     "rLNZQJQDvEeUFDgatOtwajCPNwskfDiGKSVrwdxKRfwsMiTlnslXANitYMaCWGMdSCprQmEIcMchYZgcBxMWFFgHzEljoNZTWTsd"
@@ -49,7 +48,7 @@ class TestAccounts(unittest.TestCase):
         with self.client.session_transaction() as session:
             session["user_id"] = user_id
         mock_request.post(url_uaa_token, json={"access_token": self.access_token}, status_code=201)
-        mock_request.get(url_uaa_get_user_by_id, json=uaa_user_by_id_json, status_code=200)
+        mock_request.get(url_uaa_user_by_id, json=uaa_user_by_id_json, status_code=200)
         response = self.client.get("/account/my-account", follow_redirects=True)
 
         self.assertIn(b"Email address:", response.data)
@@ -65,7 +64,7 @@ class TestAccounts(unittest.TestCase):
         with self.client.session_transaction() as session:
             session["user_id"] = user_id
         mock_request.post(url_uaa_token, json={"access_token": self.access_token}, status_code=201)
-        mock_request.get(url_uaa_get_user_by_id, json=uaa_user_by_id_json, status_code=200)
+        mock_request.get(url_uaa_user_by_id, json=uaa_user_by_id_json, status_code=200)
         response = self.client.post("account/my-account", data=None, follow_redirects=True)
         self.assertIn(b"You need to choose an option", response.data)
 
@@ -74,7 +73,7 @@ class TestAccounts(unittest.TestCase):
         with self.client.session_transaction() as session:
             session["user_id"] = user_id
         mock_request.post(url_uaa_token, json={"access_token": self.access_token}, status_code=201)
-        mock_request.get(url_uaa_get_user_by_id, json=uaa_user_by_id_json, status_code=200)
+        mock_request.get(url_uaa_user_by_id, json=uaa_user_by_id_json, status_code=200)
         response = self.client.get("/account/change-account-name", follow_redirects=True)
         self.assertIn(b"First name", response.data)
         self.assertIn(b"ONS", response.data)
@@ -89,8 +88,8 @@ class TestAccounts(unittest.TestCase):
                 session["user_id"] = user_id
             mock_notify()._send_message.return_value = mock.Mock()
             mock_request.post(url_uaa_token, json={"access_token": self.access_token}, status_code=201)
-            mock_request.get(url_uaa_get_user_by_id, json=uaa_user_by_id_json, status_code=200)
-            mock_request.put(url_uaa_update_name, status_code=200)
+            mock_request.get(url_uaa_user_by_id, json=uaa_user_by_id_json, status_code=200)
+            mock_request.put(url_uaa_user_by_id, status_code=200)
             response = self.client.post(
                 "/account/change-account-name",
                 follow_redirects=True,
@@ -105,8 +104,8 @@ class TestAccounts(unittest.TestCase):
                 session["user_id"] = user_id
             mock_notify()._send_message.return_value = mock.Mock()
             mock_request.post(url_uaa_token, json={"access_token": self.access_token}, status_code=201)
-            mock_request.get(url_uaa_get_user_by_id, json=uaa_user_by_id_json, status_code=200)
-            mock_request.put(url_uaa_update_name, status_code=200)
+            mock_request.get(url_uaa_user_by_id, json=uaa_user_by_id_json, status_code=200)
+            mock_request.put(url_uaa_user_by_id, status_code=200)
             response = self.client.post(
                 "/account/change-account-name",
                 follow_redirects=True,
@@ -122,8 +121,8 @@ class TestAccounts(unittest.TestCase):
                 session["user_id"] = user_id
             mock_notify()._send_message.return_value = mock.Mock()
             mock_request.post(url_uaa_token, json={"access_token": self.access_token}, status_code=201)
-            mock_request.get(url_uaa_get_user_by_id, json=uaa_user_by_id_json, status_code=200)
-            mock_request.put(url_uaa_update_name, status_code=200)
+            mock_request.get(url_uaa_user_by_id, json=uaa_user_by_id_json, status_code=200)
+            mock_request.put(url_uaa_user_by_id, status_code=200)
             response = self.client.post(
                 "/account/change-account-name",
                 follow_redirects=True,
