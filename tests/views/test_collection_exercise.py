@@ -242,7 +242,6 @@ class TestCollectionExercise(ViewTestCase):
             {
                 "id": collection_exercise_event_id,
                 "collectionExerciseId": collection_exercise_id,
-                "tag": "mps",
                 "tag": "ref_period_start",
                 "timestamp": "2018-03-16T00:00:00.000Z",
             }
@@ -251,7 +250,7 @@ class TestCollectionExercise(ViewTestCase):
             {
                 "id": collection_exercise_event_id,
                 "collectionExerciseId": collection_exercise_id,
-                "tag": "mps",
+                "tag": "ref_period_end",
                 "timestamp": "2018-03-16T00:00:00.000Z",
             }
         ]
