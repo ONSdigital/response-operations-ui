@@ -490,7 +490,7 @@ class UsernameChangeForm(FlaskForm):
     @staticmethod
     def validate_username(form, field):
         username = field.data
-        if (not username.isalnum() or not any(char.islower() for char in username)):
+        if not username.isalnum() or any(char.isupper() for char in username):
             raise ValidationError("hello")
 
 

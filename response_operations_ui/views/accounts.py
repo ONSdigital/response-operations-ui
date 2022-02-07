@@ -113,9 +113,29 @@ def change_username():
     user_from_uaa = uaa_controller.get_user_by_id(user_id)
     username = user_from_uaa["userName"]
     form_username = form["username"].data
+    payload = user_from_uaa
+    payload["userName"] = form_username
     if request.method == "POST" and form.validate():
-        if (form_username != username) and (form_username is not None):
-            return logout.logout()
+        if form_username != username:
+            errors = uaa_controller.update_user_account(payload)
+            if errors is None:
+                logger.info("Sending update account details email", user_id=user_id)
+                personalisation = {
+                    "first_name": user_from_uaa["name"]["givenName"],
+                    "value_name": "username",
+                    "changed_value": username,
+                }
+                try:
+                    NotifyController().request_to_notify(
+                        email=user_from_uaa["emails"][0]["value"],
+                        template_name="change_account_details",
+                        personalisation=personalisation,
+                    )
+                    return logout.logout("Your username has been changed")
+                except NotifyError as e:
+                    logger.error(
+                        "Error sending change of name acknowledgement email to Notify Gateway", msg=e.description
+                    )
         else:
             return redirect(url_for("account_bp.get_my_account"))
     else:
