@@ -33,6 +33,11 @@ form_redirect_mapper = {
 def get_my_account():
     form = MyAccountOptionsForm()
     form_valid = form.validate()
+    if form_valid and request.method == "POST":
+        return redirect(url_for(form_redirect_mapper.get(form.data["option"])))
+    elif not form_valid and request.method == "POST":
+        flash("You need to choose an option")
+        return redirect(url_for("account_bp.get_my_account"))
     user_id = session["user_id"]
     user_from_uaa = uaa_controller.get_user_by_id(user_id)
     first_name = user_from_uaa["name"]["givenName"]
@@ -44,15 +49,11 @@ def get_my_account():
         "email": user_from_uaa["emails"][0]["value"],
         "password_last_changed": formatted_date,
     }
-    if not form_valid and request.method == "POST":
-        flash("You need to choose an option")
-        return redirect(url_for("account_bp.get_my_account"))
-    elif form_valid:
-        return redirect(url_for(form_redirect_mapper.get(form.data["option"])))
     return render_template("account/my-account.html", user=user)
 
 
 @account_bp.route("/change-account-name", methods=["GET", "POST"])
+@login_required
 def change_account_name():
     form = ChangeAccountName()
     user_id = session["user_id"]
