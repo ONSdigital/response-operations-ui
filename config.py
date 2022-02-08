@@ -70,8 +70,8 @@ class Config(object):
     NOTIFY_CONFIRM_CREATE_ACCOUNT_TEMPLATE = os.getenv(
         "NOTIFY_CONFIRM_CREATE_ACCOUNT_TEMPLATE", "confirm_create_account_id"
     )
-    NOTIFY_CHANGE_ACCOUNT_DETAILS_TEMPLATE = os.getenv(
-        "NOTIFY_CHANGE_ACCOUNT_DETAILS_TEMPLATE", "change_account_details_id"
+    NOTIFY_UPDATE_ACCOUNT_DETAILS_TEMPLATE = os.getenv(
+        "NOTIFY_UPDATE_ACCOUNT_DETAILS_TEMPLATE", "update_account_details_id"
     )
     SEND_EMAIL_TO_GOV_NOTIFY = os.getenv("SEND_EMAIL_TO_GOV_NOTIFY", False)
 

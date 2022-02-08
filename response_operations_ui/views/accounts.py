@@ -2,7 +2,7 @@ import logging
 
 from flask import Blueprint
 from flask import current_app as app
-from flask import flash, jsonify, redirect, render_template, request, session, url_for
+from flask import flash, redirect, render_template, request, session, url_for
 from flask_login import login_required
 from itsdangerous import BadData, BadSignature, SignatureExpired, URLSafeSerializer
 from structlog import wrap_logger
@@ -14,11 +14,10 @@ from response_operations_ui.exceptions.exceptions import NotifyError
 from response_operations_ui.forms import (
     ChangeAccountName,
     CreateAccountForm,
-    OptionsForm,
+    MyAccountOptionsForm,
     RequestAccountForm,
     UsernameChangeForm,
 )
-from response_operations_ui.views import logout
 
 logger = wrap_logger(logging.getLogger(__name__))
 
@@ -30,30 +29,76 @@ form_redirect_mapper = {
 }
 
 
-@account_bp.route("/my-account", methods=["GET"])
+@account_bp.route("/my-account", methods=["GET", "POST"])
 @login_required
 def get_my_account():
-    try:
-        form = OptionsForm()
-        user_id = session["user_id"]
-        user_from_uaa = uaa_controller.get_user_by_id(user_id)
-        first_name = user_from_uaa["name"]["givenName"]
-        last_name = user_from_uaa["name"]["familyName"]
-        formatted_date = dates.format_datetime_to_string(user_from_uaa["passwordLastModified"], date_format="%d %b %Y")
-        user = {
-            "username": user_from_uaa["userName"],
-            "name": f"{first_name} {last_name}",
-            "email": user_from_uaa["emails"][0]["value"],
-            "password_last_changed": formatted_date,
-        }
-        return render_template("account/my-account.html", user=user, form=form)
-    except Exception as e:
-        return jsonify(e)
+    form = MyAccountOptionsForm()
+    if request.method == "POST":
+        form_valid = form.validate()
+        if form_valid:
+            return redirect(url_for(form_redirect_mapper.get(form.data["option"])))
+        flash("You need to choose an option")
+    user_id = session["user_id"]
+    user_from_uaa = uaa_controller.get_user_by_id(user_id)
+    first_name = user_from_uaa["name"]["givenName"]
+    last_name = user_from_uaa["name"]["familyName"]
+    formatted_date = dates.format_datetime_to_string(user_from_uaa["passwordLastModified"], date_format="%d %b %Y")
+    user = {
+        "username": user_from_uaa["userName"],
+        "name": f"{first_name} {last_name}",
+        "email": user_from_uaa["emails"][0]["value"],
+        "password_last_changed": formatted_date,
+    }
+    return render_template("account/my-account.html", user=user)
+
+
+@account_bp.route("/change-account-name", methods=["GET", "POST"])
+@login_required
+def change_account_name():
+    form = ChangeAccountName()
+    user_id = session["user_id"]
+    user_from_uaa = uaa_controller.get_user_by_id(user_id)
+    user = {
+        "first_name": f"{user_from_uaa['name']['givenName']}",
+        "last_name": f"{user_from_uaa['name']['familyName']}",
+    }
+    user_from_uaa["name"] = {"familyName": form.data["last_name"], "givenName": form.data["first_name"]}
+    if request.method == "POST" and form.validate():
+        if (form.data["first_name"] != user["first_name"]) or (form.data["last_name"] != user["last_name"]):
+            errors = uaa_controller.update_user_account(user_from_uaa)
+            if errors is None:
+                full_name = f"{form.data['first_name']} {form.data['last_name']}"
+                logger.info("Sending update account details email", user_id=user_id)
+                personalisation = {
+                    "first_name": user["first_name"],
+                    "value_name": "name",
+                    "changed_value": full_name,
+                }
+                try:
+                    NotifyController().request_to_notify(
+                        email=user_from_uaa["emails"][0]["value"],
+                        template_name="update_account_details",
+                        personalisation=personalisation,
+                    )
+                    return redirect(url_for("logout_bp.logout", message="Your name has been changed"))
+                except NotifyError as e:
+                    logger.error(
+                        "Error sending change of name acknowledgement email to Notify Gateway", msg=e.description
+                    )
+                    return redirect(
+                        url_for(
+                            "logout_bp.logout",
+                            message="Your name has been changed however you may not receive an email",
+                        )
+                    )
+        else:
+            return redirect(url_for("account_bp.get_my_account"))
+    return render_template("account/change-account-name.html", user=user, form=form, errors=form.errors)
 
 
 @account_bp.route("/my-account", methods=["POST"])
 def update_account():
-    form = OptionsForm()
+    form = MyAccountOptionsForm()
     form_valid = form.validate()
     if not form_valid:
         flash("You need to choose an option")

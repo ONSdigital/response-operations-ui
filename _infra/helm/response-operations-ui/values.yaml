@@ -57,7 +57,7 @@ notify:
   confirmPasswordChangeTemplate: confirm_password_change_id
   requestCreateAccountTemplate: request_create_account_id
   requestPasswordChangeTemplate: request_password_change_id
-  updateAccountDetailsTemplate: change_account_details_id
+  updateAccountDetailsTemplate: update_account_details_id
   
 dashboard:
   hasIngress: false
