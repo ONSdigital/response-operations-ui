@@ -105,31 +105,35 @@ def change_username():
     user_from_uaa["userName"] = form["username"].data
     if request.method == "POST" and form.validate():
         if form["username"].data != username:
-            errors = uaa_controller.update_user_account(user_from_uaa)
-            if errors is None:
-                logger.info("Sending update account details email", user_id=user_id)
-                personalisation = {
-                    "first_name": user_from_uaa["name"]["givenName"],
-                    "value_name": "username",
-                    "changed_value": form["username"].data,
-                }
-                try:
-                    NotifyController().request_to_notify(
-                        email=user_from_uaa["emails"][0]["value"],
-                        template_name="change_account_details",
-                        personalisation=personalisation,
-                    )
+            logger.info("Sending update account details email", user_id=user_id)
+            personalisation = {
+                "first_name": user_from_uaa["name"]["givenName"],
+                "value_name": "username",
+                "changed_value": form["username"].data,
+            }
+            try:
+                NotifyController().request_to_notify(
+                    email=user_from_uaa["emails"][0]["value"],
+                    template_name="update_account_details",
+                    personalisation=personalisation,
+                )
+                errors = uaa_controller.update_user_account(user_from_uaa)
+                if errors is None:
                     return redirect(url_for("logout_bp.logout", message="Your username has been changed"))
-                except NotifyError as e:
-                    logger.error(
-                        "Error sending change of name acknowledgement email to Notify Gateway", msg=e.description
+                else:
+                    logger.error("Error changing user information", msg=errors)
+                    flash(
+                        "Something went wrong. Please ignore the email you have received and try again",
+                        category="error",
                     )
+            except NotifyError as e:
+                logger.error(
+                    "Error sending change of username acknowledgement email to Notify Gateway", msg=e.description
+                )
+                flash("Something went wrong while updating your username. Please try again", category="error")
         else:
             return redirect(url_for("account_bp.get_my_account"))
-    else:
-        return render_template(
-            "account/change-username.html", username=username, form=UsernameChangeForm(), errors=form.errors
-        )
+    return render_template("account/change-username.html", username=username, form=form, errors=form.errors)
 
 
 @account_bp.route("/request-new-account", methods=["GET"])
