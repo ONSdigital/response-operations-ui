@@ -32,12 +32,11 @@ form_redirect_mapper = {
 @login_required
 def get_my_account():
     form = MyAccountOptionsForm()
-    form_valid = form.validate()
-    if form_valid and request.method == "POST":
-        return redirect(url_for(form_redirect_mapper.get(form.data["option"])))
-    elif not form_valid and request.method == "POST":
+    if request.method == "POST":
+        form_valid = form.validate()
+        if form_valid:
+            return redirect(url_for(form_redirect_mapper.get(form.data["option"])))
         flash("You need to choose an option")
-        return redirect(url_for("account_bp.get_my_account"))
     user_id = session["user_id"]
     user_from_uaa = uaa_controller.get_user_by_id(user_id)
     first_name = user_from_uaa["name"]["givenName"]
