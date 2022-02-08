@@ -84,6 +84,12 @@ def change_account_name():
                     logger.error(
                         "Error sending change of name acknowledgement email to Notify Gateway", msg=e.description
                     )
+                    return redirect(
+                        url_for(
+                            "logout_bp.logout",
+                            message="Your name has been changed however you may not receive an email",
+                        )
+                    )
         else:
             return redirect(url_for("account_bp.get_my_account"))
     return render_template("account/change-account-name.html", user=user, form=form, errors=form.errors)
