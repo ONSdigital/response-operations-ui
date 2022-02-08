@@ -10,6 +10,7 @@ from wtforms import (
     IntegerField,
     Label,
     PasswordField,
+    RadioField,
     SelectField,
     StringField,
     SubmitField,
@@ -72,7 +73,6 @@ class SecureMessageForm(FlaskForm):
 
 
 class SecureMessageRuFilterForm(FlaskForm):
-
     ru_ref_filter = StringField(
         "ru_ref_filter", validators=[Length(min=11, max=11, message="Ru ref must be 11 characters")]
     )
@@ -461,6 +461,23 @@ class CreateAccountForm(FlaskForm):
             raise ValidationError("Your password doesn't meet the requirements")
 
 
+class ChangeAccountName(FlaskForm):
+    first_name = StringField(
+        "First name",
+        validators=[
+            DataRequired("First name is required"),
+            Length(max=255, message="Your first name must be less than 255 characters"),
+        ],
+    )
+    last_name = StringField(
+        "Last name",
+        validators=[
+            DataRequired("Last name is required"),
+            Length(max=255, message="Your last name must be less than 255 characters"),
+        ],
+    )
+
+
 class BannerCreateForm(FlaskForm):
     title = StringField("Banner title", validators=[InputRequired("Enter a banner title")])
     banner_text = StringField(
@@ -495,3 +512,15 @@ class BannerEditForm(FlaskForm):
     )
     banner_id = StringField("id")
     delete = BooleanField("Delete banner", default=False)
+
+
+class Form(FlaskForm):
+    def validate(self):
+        return "option" in self.data and self.data["option"]
+
+
+class MyAccountOptionsForm(Form):
+    option = RadioField(
+        "Label",
+        choices=[("value", "change_username"), ("value", "change_name")],
+    )
