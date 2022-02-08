@@ -62,8 +62,8 @@ def change_account_name():
         "first_name": f"{user_from_uaa['name']['givenName']}",
         "last_name": f"{user_from_uaa['name']['familyName']}",
     }
-    user_from_uaa["name"] = {"familyName": form.data["last_name"], "givenName": form.data["first_name"]}
     if request.method == "POST" and form.validate():
+        user_from_uaa["name"] = {"familyName": form.data["last_name"], "givenName": form.data["first_name"]}
         if (form.data["first_name"] != user["first_name"]) or (form.data["last_name"] != user["last_name"]):
             full_name = f"{form.data['first_name']} {form.data['last_name']}"
             logger.info("Sending update account details email", user_id=user_id)
@@ -102,8 +102,8 @@ def change_username():
     user_id = session["user_id"]
     user_from_uaa = uaa_controller.get_user_by_id(user_id)
     username = user_from_uaa["userName"]
-    user_from_uaa["userName"] = form["username"].data
     if request.method == "POST" and form.validate():
+        user_from_uaa["userName"] = form["username"].data
         if form["username"].data != username:
             logger.info("Sending update account details email", user_id=user_id)
             personalisation = {
@@ -112,6 +112,7 @@ def change_username():
                 "changed_value": form["username"].data,
             }
             try:
+                
                 NotifyController().request_to_notify(
                     email=user_from_uaa["emails"][0]["value"],
                     template_name="update_account_details",
@@ -120,7 +121,9 @@ def change_username():
                 errors = uaa_controller.update_user_account(user_from_uaa)
                 if errors is None:
                     return redirect(url_for("logout_bp.logout", message="Your username has been changed"))
-                else:
+                elif errors["response"][0] == 400:
+                    flash("ERROR", category="error")
+                else:    
                     logger.error("Error changing user information", msg=errors)
                     flash(
                         "Something went wrong. Please ignore the email you have received and try again",
@@ -133,6 +136,7 @@ def change_username():
                 flash("Something went wrong while updating your username. Please try again", category="error")
         else:
             return redirect(url_for("account_bp.get_my_account"))
+    print(form.errors)
     return render_template("account/change-username.html", username=username, form=form, errors=form.errors)
 
 

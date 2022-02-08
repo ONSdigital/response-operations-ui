@@ -5,22 +5,24 @@
 
 {% extends "layouts/base.html" %}
 {% from "components/metadata/_macro.njk" import onsMetadata %}
+{% set ns = namespace() %}
 
 {% set page_title = "Change username" %}
 {% block main %}
-{% if errors|length > 0 %}
-          {% set errorTitle = 'There was an error while changing the username' %}
-        {% call
+{% include 'partials/flashed-messages.html' %}
+{% if errors %}
+  {% set errorTitle = 'There is 1 error on this page' %}
+    {% call
             onsPanel({
                 "type": "error",
                 "classes": "u-mb-s",
                 "title":  errorTitle
             })
-        %}
-            <p>These <strong>must be corrected</strong> to save changes.</p>
+      %}
+<p xmlns="http://www.w3.org/1999/html">These <strong>must be corrected</strong> to continue.</p>
             {% set errorData = [] %}
             {% for error in errors %}
-                {% set error_text =  error %}
+            {% set error_text = error %}
                 {% do errorData.append(
                     {
                         "text": 'Problem with the ' ~ error_text.replace('_', ' '),
@@ -42,9 +44,16 @@
 <p>This should match your windows login username</p>
 <form action="" method="post">
         {{ form.csrf_token }}
-        {% set userName = username %}
         {% if errors.username %}
-          {% set errorUsername = { "text": errors['username'][0],  "id": 'username_error' } %}
+        {% set ns.errorUsernameText = NONE %}
+          {% for errorValue in errors.username %}
+            {% if ns.errorUsernameText == NONE %}
+              {% set ns.errorUsernameText = (errorValue) %}
+            {% else %}
+              {% set ns.errorUsernameText = ns.errorUsernameText~'</br>'~(errorValue) %}
+            {% endif %}
+          {% endfor %}
+            {% set errorUsername = { "text": ns.errorUsernameText,  "id": 'username_error' } %}
           {% set username = form.username.data %}
         {% endif %}
             {{
@@ -56,7 +65,7 @@
                         "text": 'Username'
                     },
                     "error": errorUsername,
-                    "value": userName
+                    "value": username
                 })
             }}
 
