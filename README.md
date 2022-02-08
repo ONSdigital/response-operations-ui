@@ -119,6 +119,13 @@ If you get a `Too many open files` error, then run the following to fix it
 ulimit -Sn 10000
 ```
 
+## Known issues
+If `isort` is making GitHub Actions fail with incorrectly sorted imports, check if a folder called `flask session` was created. Delete this and run the linting process again with
+
+```bash
+make lint
+```
+
 ## Acceptance tests and Incognito mode
 This app seems to have a problem working locally in incognito mode and through selenium tests. The problem can be traced to Talisman, disabling talisman allows the app to run locally in incognito and also allows acceptance tests to run without strange errors.
 

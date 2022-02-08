@@ -1,12 +1,14 @@
 {% extends "layouts/base.html" %}
 {% from "components/metadata/_macro.njk" import onsMetadata %}
+{% from "components/radios/_macro.njk" import onsRadios %}
+{% from "components/button/_macro.njk" import onsButton %}
 {% set page_title = "Account details" %}
-
-</details>" %}
 
 {% block main %}
 
-{% include 'partials/flashed-messages.html' %}
+{% set ns = namespace() %}
+{% include "radio-option-select-error-panel.html" %}
+
 
 <section>
   <h1 id="respondent-name">Account details</h1>
@@ -23,4 +25,45 @@
 </dl>
     <hr class="u-mb-l col-8@m">
 </section>
-{% endblock %}
+<section>
+  <h1 class="u-fs-xl">Help with account</h1>
+  <form action="" method="post">
+    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
+    {% if ns.optionError %}
+      {% set errorOption = { "text": ns.optionErrorMessage,  "id": 'option_error' } %}
+    {% endif %}
+    {% set radioComponent = {
+            "legend": "Choose an option",
+            "name": "option",
+            "id": "option",
+            "error": errorOption,
+        } %}
+    {% set radios = [] %}
+    {% do radios.append(
+            {
+                "id": "change_name",
+                "label": {
+                "text": "Change name"
+                },
+                "value": "change_name"
+            }) %}
+    {% do radioComponent | setAttribute("radios", radios) %}
+    {{
+      onsRadios(radioComponent)
+    }}
+
+    <div class="grid grid--flex grid--gutterless grid--vertical-center grid--no-wrap@s u-mt-m u-mb-m">
+      <div class="grid__col">
+        {{
+          onsButton({
+          "text": "Continue",
+          "id": "btn-option-continue",
+          "classes": 'btn-group__btn',
+          "submitType": "timer"
+          })
+          }}
+      </div>
+    </div>
+  </form>
+</section>
+{% endblock main%}
