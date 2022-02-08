@@ -64,32 +64,31 @@ def change_account_name():
     user_from_uaa["name"] = {"familyName": form.data["last_name"], "givenName": form.data["first_name"]}
     if request.method == "POST" and form.validate():
         if (form.data["first_name"] != user["first_name"]) or (form.data["last_name"] != user["last_name"]):
-            errors = uaa_controller.update_user_account(user_from_uaa)
-            if errors is None:
-                full_name = f"{form.data['first_name']} {form.data['last_name']}"
-                logger.info("Sending update account details email", user_id=user_id)
-                personalisation = {
-                    "first_name": user["first_name"],
-                    "value_name": "name",
-                    "changed_value": full_name,
-                }
-                try:
-                    NotifyController().request_to_notify(
-                        email=user_from_uaa["emails"][0]["value"],
-                        template_name="update_account_details",
-                        personalisation=personalisation,
-                    )
+            full_name = f"{form.data['first_name']} {form.data['last_name']}"
+            logger.info("Sending update account details email", user_id=user_id)
+            personalisation = {
+                "first_name": user["first_name"],
+                "value_name": "name",
+                "changed_value": full_name,
+            }
+            try:
+                NotifyController().request_to_notify(
+                    email=user_from_uaa["emails"][0]["value"],
+                    template_name="update_account_details",
+                    personalisation=personalisation,
+                )
+                errors = uaa_controller.update_user_account(user_from_uaa)
+                if errors is None:
                     return redirect(url_for("logout_bp.logout", message="Your name has been changed"))
-                except NotifyError as e:
-                    logger.error(
-                        "Error sending change of name acknowledgement email to Notify Gateway", msg=e.description
+                else:
+                    logger.error("Error changing user information", msg=errors)
+                    flash(
+                        "Something went wrong. Please ignore the email you have received and try again",
+                        category="error",
                     )
-                    return redirect(
-                        url_for(
-                            "logout_bp.logout",
-                            message="Your name has been changed however you may not receive an email",
-                        )
-                    )
+            except NotifyError as e:
+                logger.error("Error sending change of name acknowledgement email to Notify Gateway", msg=e.description)
+                flash("Something went wrong while updating your name. Please try again", category="error")
         else:
             return redirect(url_for("account_bp.get_my_account"))
     return render_template("account/change-account-name.html", user=user, form=form, errors=form.errors)
