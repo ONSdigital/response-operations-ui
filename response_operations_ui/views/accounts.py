@@ -82,7 +82,10 @@ def change_account_name():
                     return redirect(url_for("logout_bp.logout", message="Your name has been changed"))
                 else:
                     logger.error("Error changing user information", msg=errors)
-                    flash("You have received an email however your name has not been changed")
+                    flash(
+                        "Something went wrong. Please ignore the email you have received and try again",
+                        category="error",
+                    )
             except NotifyError as e:
                 logger.error("Error sending change of name acknowledgement email to Notify Gateway", msg=e.description)
                 flash("Something went wrong while updating your name. Please try again", category="error")
