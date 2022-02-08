@@ -6,6 +6,7 @@
 {% set page_title =  "Change Name" %}
 
 {% block main %}
+{% include 'partials/flashed-messages.html' %}
   {% if errors|length > 0 %}
     {% if errors|length == 1 %}
       {% set errorTitle = 'There is 1 error on this page' %}
