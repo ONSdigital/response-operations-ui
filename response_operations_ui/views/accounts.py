@@ -102,6 +102,7 @@ def change_username():
     user_id = session["user_id"]
     user_from_uaa = uaa_controller.get_user_by_id(user_id)
     username = user_from_uaa["userName"]
+    username_exists = False
     if request.method == "POST" and form.validate():
         user_from_uaa["userName"] = form["username"].data
         if form["username"].data != username:
@@ -112,19 +113,18 @@ def change_username():
                 "changed_value": form["username"].data,
             }
             try:
-
                 NotifyController().request_to_notify(
                     email=user_from_uaa["emails"][0]["value"],
                     template_name="update_account_details",
                     personalisation=personalisation,
                 )
-                errors = uaa_controller.update_user_account(user_from_uaa)
-                if errors is None:
+                uaa_errors = uaa_controller.update_user_account(user_from_uaa)
+                if uaa_errors is None:
                     return redirect(url_for("logout_bp.logout", message="Your username has been changed"))
-                elif errors["response"][0] == 400:
-                    flash("ERROR", category="error")
+                elif "response" in uaa_errors.keys() and uaa_errors["response"][0] == 400:
+                    username_exists = True
                 else:
-                    logger.error("Error changing user information", msg=errors)
+                    logger.error("Error changing user information", msg=uaa_errors)
                     flash(
                         "Something went wrong. Please ignore the email you have received and try again",
                         category="error",
@@ -136,7 +136,10 @@ def change_username():
                 flash("Something went wrong while updating your username. Please try again", category="error")
         else:
             return redirect(url_for("account_bp.get_my_account"))
-    return render_template("account/change-username.html", username=username, form=form, errors=form.errors)
+    errors = form.errors
+    if username_exists:
+        errors = {"username": ["Username already exists"]}
+    return render_template("account/change-username.html", username=username, form=form, errors=errors)
 
 
 @account_bp.route("/request-new-account", methods=["GET"])
