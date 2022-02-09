@@ -16,6 +16,7 @@ from response_operations_ui.forms import (
     CreateAccountForm,
     MyAccountOptionsForm,
     RequestAccountForm,
+    UsernameChangeForm,
 )
 
 logger = wrap_logger(logging.getLogger(__name__))
@@ -61,9 +62,9 @@ def change_account_name():
         "first_name": f"{user_from_uaa['name']['givenName']}",
         "last_name": f"{user_from_uaa['name']['familyName']}",
     }
-    user_from_uaa["name"] = {"familyName": form.data["last_name"], "givenName": form.data["first_name"]}
     if request.method == "POST" and form.validate():
         if (form.data["first_name"] != user["first_name"]) or (form.data["last_name"] != user["last_name"]):
+            user_from_uaa["name"] = {"familyName": form.data["last_name"], "givenName": form.data["first_name"]}
             full_name = f"{form.data['first_name']} {form.data['last_name']}"
             logger.info("Sending update account details email", user_id=user_id)
             personalisation = {
@@ -92,6 +93,53 @@ def change_account_name():
         else:
             return redirect(url_for("account_bp.get_my_account"))
     return render_template("account/change-account-name.html", user=user, form=form, errors=form.errors)
+
+
+@account_bp.route("/change-username", methods=["GET", "POST"])
+@login_required
+def change_username():
+    form = UsernameChangeForm()
+    user_id = session["user_id"]
+    user_from_uaa = uaa_controller.get_user_by_id(user_id)
+    username = user_from_uaa["userName"]
+    username_exists = False
+    if request.method == "POST" and form.validate():
+        if form["username"].data != username:
+            user_from_uaa["userName"] = form["username"].data
+            logger.info("Sending update account details email", user_id=user_id)
+            personalisation = {
+                "first_name": user_from_uaa["name"]["givenName"],
+                "value_name": "username",
+                "changed_value": form["username"].data,
+            }
+            try:
+                NotifyController().request_to_notify(
+                    email=user_from_uaa["emails"][0]["value"],
+                    template_name="update_account_details",
+                    personalisation=personalisation,
+                )
+                uaa_errors = uaa_controller.update_user_account(user_from_uaa)
+                if uaa_errors is None:
+                    return redirect(url_for("logout_bp.logout", message="Your username has been changed"))
+                elif uaa_errors["status_code"] == 400:
+                    username_exists = True
+                else:
+                    logger.error("Error changing user information", msg=uaa_errors)
+                    flash(
+                        "Something went wrong. Please ignore the email you have received and try again",
+                        category="error",
+                    )
+            except NotifyError as e:
+                logger.error(
+                    "Error sending change of username acknowledgement email to Notify Gateway", msg=e.description
+                )
+                flash("Something went wrong while updating your username. Please try again", category="error")
+        else:
+            return redirect(url_for("account_bp.get_my_account"))
+    errors = form.errors
+    if username_exists:
+        errors = {"username": [uaa_errors["message"]]}
+    return render_template("account/change-username.html", username=username, form=form, errors=errors)
 
 
 @account_bp.route("/request-new-account", methods=["GET"])
