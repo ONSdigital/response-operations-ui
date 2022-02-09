@@ -235,7 +235,7 @@ class TestAccounts(unittest.TestCase):
                 follow_redirects=True,
                 data={"username": "uaauser"},
             )
-            self.assertIn(b"Username already exists", response.data)
+            self.assertIn(b"Username already in use", response.data)
 
     @requests_mock.mock()
     def test_request_account(self, mock_request):

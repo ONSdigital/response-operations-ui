@@ -63,8 +63,8 @@ def change_account_name():
         "last_name": f"{user_from_uaa['name']['familyName']}",
     }
     if request.method == "POST" and form.validate():
-        user_from_uaa["name"] = {"familyName": form.data["last_name"], "givenName": form.data["first_name"]}
         if (form.data["first_name"] != user["first_name"]) or (form.data["last_name"] != user["last_name"]):
+            user_from_uaa["name"] = {"familyName": form.data["last_name"], "givenName": form.data["first_name"]}
             full_name = f"{form.data['first_name']} {form.data['last_name']}"
             logger.info("Sending update account details email", user_id=user_id)
             personalisation = {
@@ -104,8 +104,8 @@ def change_username():
     username = user_from_uaa["userName"]
     username_exists = False
     if request.method == "POST" and form.validate():
-        user_from_uaa["userName"] = form["username"].data
         if form["username"].data != username:
+            user_from_uaa["userName"] = form["username"].data
             logger.info("Sending update account details email", user_id=user_id)
             personalisation = {
                 "first_name": user_from_uaa["name"]["givenName"],
@@ -121,7 +121,7 @@ def change_username():
                 uaa_errors = uaa_controller.update_user_account(user_from_uaa)
                 if uaa_errors is None:
                     return redirect(url_for("logout_bp.logout", message="Your username has been changed"))
-                elif "response" in uaa_errors.keys() and uaa_errors["response"][0] == 400:
+                elif uaa_errors["status_code"] == 400:
                     username_exists = True
                 else:
                     logger.error("Error changing user information", msg=uaa_errors)
@@ -138,7 +138,7 @@ def change_username():
             return redirect(url_for("account_bp.get_my_account"))
     errors = form.errors
     if username_exists:
-        errors = {"username": ["Username already exists"]}
+        errors = {"username": [uaa_errors["message"]]}
     return render_template("account/change-username.html", username=username, form=form, errors=errors)
 
 
