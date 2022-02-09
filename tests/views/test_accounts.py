@@ -21,8 +21,7 @@ url_uaa_token = f"{TestingConfig.UAA_SERVICE_URL}/oauth/token"
 url_uaa_get_accounts = f"{TestingConfig.UAA_SERVICE_URL}/Users?filter=email+eq+%22{test_email}%22"
 url_uaa_user_by_id = f"{TestingConfig.UAA_SERVICE_URL}/Users/{user_id}"
 url_uaa_create_account = f"{TestingConfig.UAA_SERVICE_URL}/Users"
-url_uaa_update_account = f"{TestingConfig.UAA_SERVICE_URL}/Users/{user_id}"
-max_char = (
+max_256_characters = (
     "JZPKbNXWhztnGvFbHwfRlcRnpgFjQveWVqvkVgtVVXjcXwiiVvFCmbFAsBVUnjHoaLAOeNUsBHQIczjzuacJUDzLLwWjhBVyVrMf"
     "rLNZQJQDvEeUFDgatOtwajCPNwskfDiGKSVrwdxKRfwsMiTlnslXANitYMaCWGMdSCprQmEIcMchYZgcBxMWFFgHzEljoNZTWTsd"
     "sCEQiQycWJauMkduKmyzaxKxSZNtYxNpsyVGTxqroIUPwQSwXwyjLkkn"
@@ -125,7 +124,7 @@ class TestAccounts(unittest.TestCase):
             response = self.client.post(
                 "/account/change-account-name",
                 follow_redirects=True,
-                data={"first_name": max_char, "last_name": max_char},
+                data={"first_name": max_256_characters, "last_name": max_256_characters},
             )
             self.assertIn(b"Your first name must be less than 255 characters", response.data)
             self.assertIn(b"Your last name must be less than 255 characters", response.data)
@@ -149,7 +148,7 @@ class TestAccounts(unittest.TestCase):
             mock_notify()._send_message.return_value = mock.Mock()
             mock_request.post(url_uaa_token, json={"access_token": self.access_token}, status_code=201)
             mock_request.get(url_uaa_user_by_id, json=uaa_user_by_id_json, status_code=200)
-            mock_request.put(url_uaa_update_account, status_code=200)
+            mock_request.put(url_uaa_user_by_id, status_code=200)
             response = self.client.post(
                 "/account/change-username",
                 follow_redirects=True,
@@ -165,7 +164,7 @@ class TestAccounts(unittest.TestCase):
             mock_notify()._send_message.return_value = mock.Mock()
             mock_request.post(url_uaa_token, json={"access_token": self.access_token}, status_code=201)
             mock_request.get(url_uaa_user_by_id, json=uaa_user_by_id_json, status_code=200)
-            mock_request.put(url_uaa_update_account, status_code=200)
+            mock_request.put(url_uaa_user_by_id, status_code=200)
             response = self.client.post(
                 "/account/change-username",
                 follow_redirects=True,
@@ -181,11 +180,11 @@ class TestAccounts(unittest.TestCase):
             mock_notify()._send_message.return_value = mock.Mock()
             mock_request.post(url_uaa_token, json={"access_token": self.access_token}, status_code=201)
             mock_request.get(url_uaa_user_by_id, json=uaa_user_by_id_json, status_code=200)
-            mock_request.put(url_uaa_update_account, status_code=200)
+            mock_request.put(url_uaa_user_by_id, status_code=200)
             response = self.client.post(
                 "/account/change-username",
                 follow_redirects=True,
-                data={"username": max_char},
+                data={"username": max_256_characters},
             )
             self.assertIn(b"Username must be less than 255 characters", response.data)
 
@@ -197,7 +196,7 @@ class TestAccounts(unittest.TestCase):
             mock_notify()._send_message.return_value = mock.Mock()
             mock_request.post(url_uaa_token, json={"access_token": self.access_token}, status_code=201)
             mock_request.get(url_uaa_user_by_id, json=uaa_user_by_id_json, status_code=200)
-            mock_request.put(url_uaa_update_account, status_code=200)
+            mock_request.put(url_uaa_user_by_id, status_code=200)
             response = self.client.post(
                 "/account/change-username",
                 follow_redirects=True,
@@ -213,11 +212,11 @@ class TestAccounts(unittest.TestCase):
             mock_notify()._send_message.return_value = mock.Mock()
             mock_request.post(url_uaa_token, json={"access_token": self.access_token}, status_code=201)
             mock_request.get(url_uaa_user_by_id, json=uaa_user_by_id_json, status_code=200)
-            mock_request.put(url_uaa_update_account, status_code=200)
+            mock_request.put(url_uaa_user_by_id, status_code=200)
             response = self.client.post(
                 "/account/change-username",
                 follow_redirects=True,
-                data={"username": max_char + "!"},
+                data={"username": max_256_characters + "!"},
             )
             self.assertIn(b"Username must be less than 255 characters", response.data)
             self.assertIn(b"Username can only contain lowercase letters and numbers", response.data)
@@ -230,7 +229,7 @@ class TestAccounts(unittest.TestCase):
             mock_notify()._send_message.return_value = mock.Mock()
             mock_request.post(url_uaa_token, json={"access_token": self.access_token}, status_code=201)
             mock_request.get(url_uaa_user_by_id, json=uaa_user_by_id_json, status_code=200)
-            mock_request.put(url_uaa_update_account, status_code=400)
+            mock_request.put(url_uaa_user_by_id, status_code=400)
             response = self.client.post(
                 "/account/change-username",
                 follow_redirects=True,
