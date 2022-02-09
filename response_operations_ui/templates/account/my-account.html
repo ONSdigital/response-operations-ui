@@ -55,6 +55,14 @@
                 },
                 "value": "change_name"
             }) %}
+    {% do radios.append(
+            {
+                "id": "change_email",
+                "label": {
+                "text": "Change email"
+                },
+                "value": "change_email"
+            }) %}
     {% do radioComponent | setAttribute("radios", radios) %}
     {{
       onsRadios(radioComponent)

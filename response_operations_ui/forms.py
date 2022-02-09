@@ -494,6 +494,36 @@ class UsernameChangeForm(FlaskForm):
             raise ValidationError("Username can only contain lowercase letters and numbers")
 
 
+class ChangeEmailForm(FlaskForm):
+    email_address = StringField(
+        "Enter the ONS email address to create an account for",
+        validators=[
+            InputRequired("Enter an email address"),
+            Email(message="Invalid email address"),
+            Length(max=254, message="Your email must be less than 254 characters"),
+        ],
+    )
+
+    email_address_verification = StringField(
+        "Enter the ONS email address to create an account for",
+        validators=[
+            
+            InputRequired("Enter an email address"),
+            Email(message="Invalid email address"),
+            Length(max=254, message="Your email must be less than 254 characters"),
+        ],
+    )
+    
+    @staticmethod
+    def validate_email_address(_, field):
+        email = field.data
+        _validate_email_address(email)
+        local_part, domain_part = email.rsplit("@", 1)
+        if domain_part not in ["ons.gov.uk", "ext.ons.gov.uk", "ons.fake"]:
+            logger.info("Account requested for non-ONS email address")
+            raise ValidationError("Not a valid ONS email address")
+        
+    
 class BannerCreateForm(FlaskForm):
     title = StringField("Banner title", validators=[InputRequired("Enter a banner title")])
     banner_text = StringField(

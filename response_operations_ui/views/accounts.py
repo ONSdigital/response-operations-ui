@@ -17,6 +17,7 @@ from response_operations_ui.forms import (
     MyAccountOptionsForm,
     RequestAccountForm,
     UsernameChangeForm,
+    ChangeEmailForm,
 )
 
 logger = wrap_logger(logging.getLogger(__name__))
@@ -26,6 +27,7 @@ account_bp = Blueprint("account_bp", __name__, static_folder="static", template_
 form_redirect_mapper = {
     "change_name": "account_bp.change_account_name",
     "change_username": "account_bp.change_username",
+    "change_email": "account_bp.change_email"
 }
 
 
@@ -93,6 +95,17 @@ def change_account_name():
         else:
             return redirect(url_for("account_bp.get_my_account"))
     return render_template("account/change-account-name.html", user=user, form=form, errors=form.errors)
+
+
+@account_bp.route("/change-email", methods=["GET", "POST"])
+@login_required
+def change_email():
+    form = ChangeEmailForm()
+    user = {
+        "email_address": "example@ons.gov.uk",
+        "email_address_verification": "example@ons.gov.uk",
+    }
+    return render_template("account/change-email.html", user=user, form=form, errors=form.errors)
 
 
 @account_bp.route("/change-username", methods=["GET", "POST"])
