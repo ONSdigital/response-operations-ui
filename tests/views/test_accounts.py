@@ -206,6 +206,39 @@ class TestAccounts(unittest.TestCase):
             self.assertIn(b"Username can only contain lowercase letters and numbers", response.data)
 
     @requests_mock.mock()
+    def test_username_max_length_and_wrong_character_errors(self, mock_request):
+        with patch("response_operations_ui.views.accounts.NotifyController") as mock_notify:
+            with self.client.session_transaction() as session:
+                session["user_id"] = user_id
+            mock_notify()._send_message.return_value = mock.Mock()
+            mock_request.post(url_uaa_token, json={"access_token": self.access_token}, status_code=201)
+            mock_request.get(url_uaa_user_by_id, json=uaa_user_by_id_json, status_code=200)
+            mock_request.put(url_uaa_update_account, status_code=200)
+            response = self.client.post(
+                "/account/change-username",
+                follow_redirects=True,
+                data={"username": max_char + "!"},
+            )
+            self.assertIn(b"Username must be less than 255 characters", response.data)
+            self.assertIn(b"Username can only contain lowercase letters and numbers", response.data)
+
+    @requests_mock.mock()
+    def test_username_already_exists(self, mock_request):
+        with patch("response_operations_ui.views.accounts.NotifyController") as mock_notify:
+            with self.client.session_transaction() as session:
+                session["user_id"] = user_id
+            mock_notify()._send_message.return_value = mock.Mock()
+            mock_request.post(url_uaa_token, json={"access_token": self.access_token}, status_code=201)
+            mock_request.get(url_uaa_user_by_id, json=uaa_user_by_id_json, status_code=200)
+            mock_request.put(url_uaa_update_account, status_code=400)
+            response = self.client.post(
+                "/account/change-username",
+                follow_redirects=True,
+                data={"username": "uaauser"},
+            )
+            self.assertIn(b"Username already exists", response.data)
+
+    @requests_mock.mock()
     def test_request_account(self, mock_request):
         with patch("response_operations_ui.views.accounts.NotifyController") as mock_notify:
             mock_notify()._send_message.return_value = mock.Mock()
