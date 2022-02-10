@@ -13,11 +13,11 @@ from response_operations_ui.controllers.notify_controller import NotifyControlle
 from response_operations_ui.exceptions.exceptions import NotifyError
 from response_operations_ui.forms import (
     ChangeAccountName,
+    ChangeEmailForm,
     CreateAccountForm,
     MyAccountOptionsForm,
     RequestAccountForm,
     UsernameChangeForm,
-    ChangeEmailForm,
 )
 
 logger = wrap_logger(logging.getLogger(__name__))
@@ -27,7 +27,7 @@ account_bp = Blueprint("account_bp", __name__, static_folder="static", template_
 form_redirect_mapper = {
     "change_name": "account_bp.change_account_name",
     "change_username": "account_bp.change_username",
-    "change_email": "account_bp.change_email"
+    "change_email": "account_bp.change_email",
 }
 
 
@@ -106,47 +106,52 @@ def change_email():
     original_email_address = user_from_uaa["emails"][0]["value"]
     user = {
         "email_address": original_email_address,
-        "email_address_verification": original_email_address,
+        "email_confirm": original_email_address,
     }
     if request.method == "POST" and form.validate():
-        if (form.data["email_address"] != original_email_address) or (form.data["email_address_verification"] != original_email_address):
+        if (form.data["email_address"] != original_email_address) or (
+            form.data["email_confirm"] != original_email_address
+        ):
             personalisation = {
                 "first_name": user_from_uaa["name"]["givenName"],
                 "value_name": "name",
                 "changed_value": form.data["email_address"],
             }
             try:
-                pass
-                # NotifyController().request_to_notify(
-                #     email=user_from_uaa["emails"][0]["value"],
-                #     template_name="update_account_details",
-                #     personalisation=personalisation,
-                # )
-                send_update_account_email("email")
+                NotifyController().request_to_notify(
+                    email=user_from_uaa["emails"][0]["value"],
+                    template_name="update_account_details",
+                    personalisation=personalisation,
+                )
+                send_update_account_email(form.data["email_address"], user_from_uaa["name"]["givenName"])
+                return redirect(url_for("logout_bp.logout", message="A verification email has been sent"))
             except NotifyError as e:
-                pass
-            if "errors" is None:
-                pass
+                logger.error("Error sending change of name acknowledgement email to Notify Gateway", msg=e.description)
+                flash("Something went wrong while updating your email. Please try again", category="error")
         else:
             return redirect(url_for("account_bp.get_my_account"))
     return render_template("account/change-email.html", user=user, form=form, errors=form.errors)
 
 
 @account_bp.route("/verify-email/<token>", methods=["GET"])
+@login_required
 def verify_email(token):
-    # errors = uaa_controller.update_user_account(user_from_uaa)
-
     try:
+        user_id = session["user_id"]
+        user_from_uaa = uaa_controller.get_user_by_id(user_id)
         duration = app.config["EMAIL_TOKEN_EXPIRY"]
         _ = token_decoder.decode_email_token(token, duration)
+        user_from_uaa["emails"][0]["value"] = _
+        errors = uaa_controller.update_user_account(user_from_uaa)
+        if errors is not None:
+            return redirect(url_for("logout_bp.logout", message="ERROR"))
+        return redirect(url_for("logout_bp.logout", message="Your email has been changed"))
     except SignatureExpired:
         logger.warning("Token expired for Response Operations account creation", token=token)
-        return render_template("request-new-account-expired.html", token=token)
+        return redirect(url_for("logout_bp.logout", message="Your link has expired"))
     except (BadSignature, BadData):
         logger.warning("Invalid token sent to Response Operations account creation", token=token)
-        return render_template("request-new-account-expired.html", token=token)
-
-    return render_template("verify-email.html")
+        return redirect(url_for("logout_bp.logout", message="Your link is invalid"))
 
 
 @account_bp.route("/change-username", methods=["GET", "POST"])
@@ -222,11 +227,13 @@ def post_request_new_account():
     template_data = {"error": {"type": {"email_address": ["Not a valid ONS email address"]}}}
     return render_template("request-new-account.html", form=form, data=template_data, email=email)
 
-def send_update_account_email(email):
-    """Sends an email through GovNotify to the specified address with an encoded link to verify their email when its been changed
 
-   :param email: The email address to send to
-   """
+def send_update_account_email(email, first_name):
+    """Sends an email through GovNotify to the specified address with an encoded
+     link to verify their email when its been changed
+
+    :param email: The email address to send to
+    """
     url_safe_serializer = URLSafeSerializer(app.config["SECRET_KEY"])
 
     response = uaa_controller.get_user_by_email(email)
@@ -235,21 +242,23 @@ def send_update_account_email(email):
 
     if response["totalResults"] == 0:
         internal_url = app.config["RESPONSE_OPERATIONS_UI_URL"]
-        verification_url = f"{internal_url}/account/create-account/{token_decoder.generate_email_token(email)}"
+        verification_url = f"{internal_url}/account/verify-email/{token_decoder.generate_email_token(email)}"
 
         logger.info("Sending create account email", verification_url=verification_url)
 
-        personalisation = {"CREATE_ACCOUNT_URL": verification_url, "EMAIL": email}
+        personalisation = {"CONFIRM_EMAIL_URL": verification_url, "EMAIL": email, "first_name": first_name}
 
         try:
             NotifyController().request_to_notify(
                 email=email, template_name="request_create_account", personalisation=personalisation
             )
+            logger.info("Successfully sent email change email", encoded_email=url_safe_serializer.dumps(email))
+
         except NotifyError as e:
             logger.error("Error sending create account request email to Notify Gateway", msg=e.description)
             return render_template("request-new-account-error.html")
-    
-    
+
+
 def send_create_account_email(email):
     """Sends an email through GovNotify to the specified address with an encoded link to verify their email
 
@@ -303,7 +312,7 @@ def get_create_account(token, form_errors=None):
     except SignatureExpired:
         logger.warning("Token expired for Response Operations account creation", token=token)
         return render_template("request-new-account-expired.html", token=token)
-    except (BadSignature, BadData): 
+    except (BadSignature, BadData):
         logger.warning("Invalid token sent to Response Operations account creation", token=token)
         return render_template("request-new-account-expired.html", token=token)
 

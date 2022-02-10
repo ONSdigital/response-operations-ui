@@ -500,11 +500,12 @@ class ChangeEmailForm(FlaskForm):
         validators=[
             InputRequired("Enter an email address"),
             Email(message="Invalid email address"),
+            EqualTo("email_confirm", message="Your emails do not match"),
             Length(max=254, message="Your email must be less than 254 characters"),
         ],
     )
 
-    email_address_verification = StringField(
+    email_confirm = StringField(
         "Enter the ONS email address to create an account for",
         validators=[
             InputRequired("Enter an email address"),
@@ -512,7 +513,7 @@ class ChangeEmailForm(FlaskForm):
             Length(max=254, message="Your email must be less than 254 characters"),
         ],
     )
-    
+
     @staticmethod
     def validate_email_address(_, field):
         email = field.data
@@ -521,8 +522,8 @@ class ChangeEmailForm(FlaskForm):
         if domain_part not in ["ons.gov.uk", "ext.ons.gov.uk", "ons.fake"]:
             logger.info("Account requested for non-ONS email address")
             raise ValidationError("Not a valid ONS email address")
-        
-    
+
+
 class BannerCreateForm(FlaskForm):
     title = StringField("Banner title", validators=[InputRequired("Enter a banner title")])
     banner_text = StringField(
