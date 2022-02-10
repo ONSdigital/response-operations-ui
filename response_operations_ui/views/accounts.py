@@ -101,11 +101,52 @@ def change_account_name():
 @login_required
 def change_email():
     form = ChangeEmailForm()
+    user_id = session["user_id"]
+    user_from_uaa = uaa_controller.get_user_by_id(user_id)
+    original_email_address = user_from_uaa["emails"][0]["value"]
     user = {
-        "email_address": "example@ons.gov.uk",
-        "email_address_verification": "example@ons.gov.uk",
+        "email_address": original_email_address,
+        "email_address_verification": original_email_address,
     }
+    if request.method == "POST" and form.validate():
+        if (form.data["email_address"] != original_email_address) or (form.data["email_address_verification"] != original_email_address):
+            personalisation = {
+                "first_name": user_from_uaa["name"]["givenName"],
+                "value_name": "name",
+                "changed_value": form.data["email_address"],
+            }
+            try:
+                pass
+                # NotifyController().request_to_notify(
+                #     email=user_from_uaa["emails"][0]["value"],
+                #     template_name="update_account_details",
+                #     personalisation=personalisation,
+                # )
+                send_update_account_email("email")
+            except NotifyError as e:
+                pass
+            if "errors" is None:
+                pass
+        else:
+            return redirect(url_for("account_bp.get_my_account"))
     return render_template("account/change-email.html", user=user, form=form, errors=form.errors)
+
+
+@account_bp.route("/verify-email/<token>", methods=["GET"])
+def verify_email(token):
+    # errors = uaa_controller.update_user_account(user_from_uaa)
+
+    try:
+        duration = app.config["EMAIL_TOKEN_EXPIRY"]
+        _ = token_decoder.decode_email_token(token, duration)
+    except SignatureExpired:
+        logger.warning("Token expired for Response Operations account creation", token=token)
+        return render_template("request-new-account-expired.html", token=token)
+    except (BadSignature, BadData):
+        logger.warning("Invalid token sent to Response Operations account creation", token=token)
+        return render_template("request-new-account-expired.html", token=token)
+
+    return render_template("verify-email.html")
 
 
 @account_bp.route("/change-username", methods=["GET", "POST"])
@@ -181,7 +222,34 @@ def post_request_new_account():
     template_data = {"error": {"type": {"email_address": ["Not a valid ONS email address"]}}}
     return render_template("request-new-account.html", form=form, data=template_data, email=email)
 
+def send_update_account_email(email):
+    """Sends an email through GovNotify to the specified address with an encoded link to verify their email when its been changed
 
+   :param email: The email address to send to
+   """
+    url_safe_serializer = URLSafeSerializer(app.config["SECRET_KEY"])
+
+    response = uaa_controller.get_user_by_email(email)
+    if response is None:
+        return render_template("request-new-account-error.html")
+
+    if response["totalResults"] == 0:
+        internal_url = app.config["RESPONSE_OPERATIONS_UI_URL"]
+        verification_url = f"{internal_url}/account/create-account/{token_decoder.generate_email_token(email)}"
+
+        logger.info("Sending create account email", verification_url=verification_url)
+
+        personalisation = {"CREATE_ACCOUNT_URL": verification_url, "EMAIL": email}
+
+        try:
+            NotifyController().request_to_notify(
+                email=email, template_name="request_create_account", personalisation=personalisation
+            )
+        except NotifyError as e:
+            logger.error("Error sending create account request email to Notify Gateway", msg=e.description)
+            return render_template("request-new-account-error.html")
+    
+    
 def send_create_account_email(email):
     """Sends an email through GovNotify to the specified address with an encoded link to verify their email
 
@@ -235,7 +303,7 @@ def get_create_account(token, form_errors=None):
     except SignatureExpired:
         logger.warning("Token expired for Response Operations account creation", token=token)
         return render_template("request-new-account-expired.html", token=token)
-    except (BadSignature, BadData):
+    except (BadSignature, BadData): 
         logger.warning("Invalid token sent to Response Operations account creation", token=token)
         return render_template("request-new-account-expired.html", token=token)
 
