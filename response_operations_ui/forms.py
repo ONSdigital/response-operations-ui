@@ -509,8 +509,7 @@ class ChangeEmailForm(FlaskForm):
         "Enter the ONS email address to create an account for",
         validators=[
             InputRequired("Enter an email address"),
-            Email(message="Invalid email address"),
-            Length(max=254, message="Your email must be less than 254 characters"),
+            EqualTo("email_address", message="Your emails do not match"),
         ],
     )
 

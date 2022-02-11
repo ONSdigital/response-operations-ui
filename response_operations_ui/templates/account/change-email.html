@@ -42,7 +42,6 @@
   <h1 class="u-fs-xl">Change email address</h1>
   <form action="" method="post">
     {{ form.csrf_token }}
-    {% set email_address = user.email_address %}
       {% if errors.email_address %}
       {% set ns.email_address = NONE %}
       {% for errorValue in errors.email_address %}
@@ -53,8 +52,8 @@
         {% endif %}
       {% endfor %}
       {% set errorEmailAddress = { "text": ns.errorEmailAddressText,  "id": 'email_error' } %}
-      {% set email_address = form.email_address.data %}
     {% endif %}
+    {% set email_address = form.email_address.data %}
   
     {{
       onsInput({
@@ -62,13 +61,12 @@
           "name": "email_address",
           "type": "email",
           "label": {
-              "text": 'New email address'
+              "text": 'New email address',
           },
-          "error": errorEmailAddress,
-          "value": email_address
+      "error": errorEmailAddress,
+      "value": email_address
       })
       }}
-    {% set email_confirm = user.email_address %}
      {% if errors.email_confirm %}
       {% set ns.email_confirm = NONE %}
       {% for errorValue in errors.email_confirm %}
@@ -79,8 +77,8 @@
         {% endif %}
       {% endfor %}
       {% set errorEmailConfirm = { "text": ns.errorEmailConfirmText,  "id": 'email_error' } %}
-      {% set email_confirm = form.email_confirm.data %}
     {% endif %}
+    {% set email_confirm = form.email_confirm.data %}
   
     {{
       onsInput({

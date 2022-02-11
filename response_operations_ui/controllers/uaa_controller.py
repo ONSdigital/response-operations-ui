@@ -231,7 +231,7 @@ def update_user_account(payload):
             # Username already exists
             errors = {"status_code": response.status_code, "message": "Username already in use"}
         else:
-            errors = {"status_code": response.status_code, "message": response.reason}
+            errors = {"status_code": response.status_code, "message": "Unknown error"}
             logger.error(
                 "Received an error when updating account in UAA",
                 status_code=response.status_code,
