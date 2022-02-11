@@ -11,17 +11,29 @@
     {% with messages = get_flashed_messages(with_categories=true) %}
         {% if messages %}
             {% for category, message in messages %}
-                {% if category == "failed_authentication" or category == "successful_signout" or category == "account_created" %}
+                {% if category == "failed_authentication" or category == "successful_signout" or category == "account_created" or category == "warn" %}
+                    {% if category == "failed_authentication" %}
+                        {% set type = "error" %}
+                        {% set icon = null %}
+                    {% elif category == "warn" %}
+                        {% set type = "warn" %}
+                        {% set icon = null %}
+                    {% else %}
+                        {% set type = "success" %}
+                        {% set icon = check %}
+                    {% endif %}
                     {% call
                         onsPanel({
-                            "type": "error" if category == "failed_authentication" else "success",
+                            "type": type,
                             "classes": "u-mb-s",
                             "title":  message if category == "failed_authentication",
-                            "icon": null if category == "failed_authentication" else "check",
+                            "icon": icon,
                         })
                     %}
                     {% if category == "failed_authentication" %}
                         <p><a href="#username" id="try-again-link" class="js-inpagelink">Please try again</a></p>
+                    {% elif category == "warn" %}
+                        <p id="signed-out-warning">{{ message }}</p>  
                     {% else %}
                         <p id="successfully-signed-out">{{ message }}</p>
                     {% endif %}

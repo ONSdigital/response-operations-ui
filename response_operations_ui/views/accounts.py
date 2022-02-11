@@ -13,6 +13,7 @@ from response_operations_ui.controllers.notify_controller import NotifyControlle
 from response_operations_ui.exceptions.exceptions import NotifyError
 from response_operations_ui.forms import (
     ChangeAccountName,
+    ChangePasswordFrom,
     CreateAccountForm,
     MyAccountOptionsForm,
     RequestAccountForm,
@@ -26,6 +27,7 @@ account_bp = Blueprint("account_bp", __name__, static_folder="static", template_
 form_redirect_mapper = {
     "change_name": "account_bp.change_account_name",
     "change_username": "account_bp.change_username",
+    "change_password": "account_bp.change_password",
 }
 
 
@@ -80,7 +82,8 @@ def change_account_name():
                 )
                 errors = uaa_controller.update_user_account(user_from_uaa)
                 if errors is None:
-                    return redirect(url_for("logout_bp.logout", message="Your name has been changed"))
+                    flash("Your name has been changed", category="successful_signout")
+                    return redirect(url_for("logout_bp.logout"))
                 else:
                     logger.error("Error changing user information", msg=errors)
                     flash(
@@ -120,7 +123,8 @@ def change_username():
                 )
                 uaa_errors = uaa_controller.update_user_account(user_from_uaa)
                 if uaa_errors is None:
-                    return redirect(url_for("logout_bp.logout", message="Your username has been changed"))
+                    flash("Your username has been changed", category="successful_signout")
+                    return redirect(url_for("logout_bp.logout"))
                 elif uaa_errors["status_code"] == 400:
                     username_exists = True
                 else:
@@ -140,6 +144,49 @@ def change_username():
     if username_exists:
         errors = {"username": [uaa_errors["message"]]}
     return render_template("account/change-username.html", username=username, form=form, errors=errors)
+
+
+@account_bp.route("/change-password", methods=["GET", "POST"])
+@login_required
+def change_password():
+    form = ChangePasswordFrom()
+    user_id = session["user_id"]
+    user_from_uaa = uaa_controller.get_user_by_id(user_id)
+    if request.method == "POST" and form.validate():
+        password = form["password"].data
+        new_password = form["new_password"].data
+        if new_password == password:
+            return render_template(
+                "account/change-password.html",
+                form=form,
+                errors={"new_password": ["Your new password is the same as your old password"]},
+            )
+        logger.info("Sending account password acknowledgement email", user_id=user_id)
+        personalisation = {"first_name": user_from_uaa["name"]["givenName"]}
+        uaa_errors = uaa_controller.update_user_password(user_from_uaa, password, new_password)
+        if uaa_errors is None:
+            try:
+                NotifyController().request_to_notify(
+                    email=user_from_uaa["emails"][0]["value"],  # it's safe to assume that zeroth element is primary in
+                    # RAS/RM case
+                    template_name="update_account_password",
+                    personalisation=personalisation,
+                )
+            except NotifyError as e:
+                logger.error(
+                    "Error sending change of password acknowledgement email to Notify Gateway", msg=e.description
+                )
+                flash("We were unable to send the password change acknowledgement email.", category="warn")
+            flash("Your password has been changed", category="successful_signout")
+            return redirect(url_for("logout_bp.logout"))
+        else:
+            logger.error("Error changing user password", msg=uaa_errors)
+            flash(
+                "Error while updating password, either your current password is incorrect or something went wrong.",
+                category="error",
+            )
+    errors = form.errors
+    return render_template("account/change-password.html", form=form, errors=errors)
 
 
 @account_bp.route("/request-new-account", methods=["GET"])
