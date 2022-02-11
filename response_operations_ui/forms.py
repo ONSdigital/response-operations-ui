@@ -501,7 +501,7 @@ class ChangeEmailForm(FlaskForm):
             InputRequired("Enter an email address"),
             Email(message="Invalid email address"),
             EqualTo("email_confirm", message="Your emails do not match"),
-            Length(max=254, message="Your email must be less than 254 characters"),
+            Length(max=255, message="Your email must be less than 255 characters"),
         ],
     )
 

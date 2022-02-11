@@ -231,7 +231,7 @@ def post_request_new_account():
 
 def send_update_account_email(email, first_name):
     """Sends an email through GovNotify to the specified address with an encoded
-     link to verify their email when its been changed
+     link to verify their email when it has been changed
 
     :param email: The email address to send to
     :param first_name: the name of the user the email is being sent to, used in email
