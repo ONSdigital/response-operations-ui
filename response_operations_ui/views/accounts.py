@@ -233,6 +233,7 @@ def send_update_account_email(email, first_name):
      link to verify their email when its been changed
 
     :param email: The email address to send to
+    :param first_name: the name of the user the email is being sent to, used in email
     """
     url_safe_serializer = URLSafeSerializer(app.config["SECRET_KEY"])
 
@@ -246,7 +247,7 @@ def send_update_account_email(email, first_name):
 
         logger.info("Sending create account email", verification_url=verification_url)
 
-        personalisation = {"CONFIRM_EMAIL_URL": verification_url, "EMAIL": email, "first_name": first_name}
+        personalisation = {"CONFIRM_EMAIL_URL": verification_url, "first_name": first_name}
 
         try:
             NotifyController().request_to_notify(
@@ -256,7 +257,11 @@ def send_update_account_email(email, first_name):
 
         except NotifyError as e:
             logger.error("Error sending create account request email to Notify Gateway", msg=e.description)
-            return render_template("request-new-account-error.html")
+            flash("ERROR (SEND UPDATE")
+            #
+            # CHANGE THIS
+            #
+            return redirect(url_for("account_bp.change_email"))
 
 
 def send_create_account_email(email):
