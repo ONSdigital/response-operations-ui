@@ -227,6 +227,9 @@ def update_user_account(payload):
         if response.status_code == 404:
             # User id not found
             errors = {"user_id": ["User id not found"]}
+        elif response.status_code == 400:
+            # Username already exists
+            errors = {"status_code": response.status_code, "message": "Username already in use"}
         else:
             errors = {"status_code": response.status_code, "message": response.reason}
             logger.error(
