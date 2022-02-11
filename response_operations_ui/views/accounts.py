@@ -250,7 +250,7 @@ def send_update_account_email(email, first_name):
 
         try:
             NotifyController().request_to_notify(
-                email=email, template_name="request_create_account", personalisation=personalisation
+                email=email, template_name="update_email", personalisation=personalisation
             )
             logger.info("Successfully sent email change email", encoded_email=url_safe_serializer.dumps(email))
 
