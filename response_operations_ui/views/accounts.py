@@ -181,10 +181,16 @@ def change_password():
             return redirect(url_for("logout_bp.logout"))
         else:
             logger.error("Error changing user password", msg=uaa_errors)
-            flash(
-                "Error while updating password, either your current password is incorrect or something went wrong.",
-                category="error",
-            )
+            if uaa_errors["status_code"] == 401:
+                flash(
+                    "your current password is incorrect. Please re-enter a correct current password.",
+                    category="error",
+                )
+            else:
+                flash(
+                    "Something went wrong while updating your username. Please try again.",
+                    category="error",
+                )
     errors = form.errors
     return render_template("account/change-password.html", form=form, errors=errors)
 

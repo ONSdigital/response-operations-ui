@@ -479,8 +479,30 @@ class TestAccounts(unittest.TestCase):
                 },
             )
             self.assertIn(
-                b"Error while updating password, either your current password is incorrect or something "
-                b"went wrong.",
+                b"your current password is incorrect. Please re-enter a correct current password.",
+                response.data,
+            )
+
+    @requests_mock.mock()
+    def test_change_password_uaa_error(self, mock_request):
+        with patch("response_operations_ui.views.accounts.NotifyController") as mock_notify:
+            with self.client.session_transaction() as session:
+                session["user_id"] = user_id
+            mock_notify()._send_message.return_value = mock.Mock()
+            mock_request.post(url_uaa_token, json={"access_token": self.access_token}, status_code=201)
+            mock_request.get(url_uaa_user_by_id, json=uaa_user_by_id_json, status_code=200)
+            mock_request.put(url_uaa_user_password_change, status_code=403)
+            response = self.client.post(
+                "/account/change-password",
+                follow_redirects=True,
+                data={
+                    "password": "Something100",
+                    "new_password": "Something!100",
+                    "new_password_confirm": "Something!100",
+                },
+            )
+            self.assertIn(
+                b"Something went wrong while updating your username. Please try again.",
                 response.data,
             )
 

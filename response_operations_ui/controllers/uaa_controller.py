@@ -68,29 +68,6 @@ def login_admin():
         abort(response.status_code)
 
 
-# def login_admin_password_change_grant(username, current_password):
-#     token = login_admin()
-#
-#     headers = {"Content-Type": "application/x-www-form-urlencoded", "Accept": "application/json"}
-#     payload = {"username": username,
-#                "password": current_password,
-#                "client_id": app.config["UAA_CLIENT_ID"],
-#                "client_secret": app.config["UAA_CLIENT_SECRET"],
-#                "grant_type": "password",
-#                "token_format": "opaque",
-#                }
-#     try:
-#         url = f"{app.config['UAA_SERVICE_URL']}/oauth/token"
-#         response = requests.post(
-#             url, headers=headers, params=payload
-#         )
-#         resp_json = response.json()
-#         return resp_json.get("access_token")
-#     except HTTPError:
-#         logger.exception("Failed to log into UAA", status_code=response.status_code)
-#         abort(response.status_code)
-
-
 def get_user_by_email(email, access_token=None):
     if access_token is None:
         access_token = login_admin()

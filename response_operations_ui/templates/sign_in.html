@@ -14,20 +14,17 @@
                 {% if category == "failed_authentication" or category == "successful_signout" or category == "account_created" or category == "warn" %}
                     {% if category == "failed_authentication" %}
                         {% set type = "error" %}
-                        {% set icon = null %}
                     {% elif category == "warn" %}
                         {% set type = "warn" %}
-                        {% set icon = null %}
                     {% else %}
                         {% set type = "success" %}
-                        {% set icon = check %}
                     {% endif %}
                     {% call
                         onsPanel({
                             "type": type,
                             "classes": "u-mb-s",
                             "title":  message if category == "failed_authentication",
-                            "icon": icon,
+                            "icon": "check" if category == "successful_signout" else null,
                         })
                     %}
                     {% if category == "failed_authentication" %}
