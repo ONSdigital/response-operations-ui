@@ -136,7 +136,7 @@ def change_email():
 @account_bp.route("/verify-email/<token>", methods=["GET"])
 def verify_email(token):
     try:
-        duration = app.config["EMAIL_TOKEN_EXPIRY"]
+        duration = app.config["UPDATE_ACCOUNT_EMAIL_TOKEN_EXPIRY"]
         email = token_decoder.decode_email_token(token, duration)
         user_id = session["user_id"]
         user_from_uaa = uaa_controller.get_user_by_id(user_id)
