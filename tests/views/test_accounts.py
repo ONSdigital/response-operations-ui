@@ -135,6 +135,40 @@ class TestAccounts(unittest.TestCase):
             self.assertIn(b"Your last name must be less than 255 characters", response.data)
 
     @requests_mock.mock()
+    def test_name_notify_failure(self, mock_request):
+        with patch("response_operations_ui.views.accounts.NotifyController") as mock_notify:
+            with self.client.session_transaction() as session:
+                session["user_id"] = user_id
+            mock_notify().request_to_notify.side_effect = Mock(side_effect=NotifyError)
+            mock_request.post(url_uaa_token, json={"access_token": self.access_token}, status_code=201)
+            mock_request.get(url_uaa_user_by_id, json=uaa_user_by_id_json, status_code=200)
+            mock_request.put(url_uaa_user_by_id, status_code=200)
+            response = self.client.post(
+                "/account/change-account-name",
+                follow_redirects=True,
+                data={"first_name": "ONS", "last_name": "user"},
+            )
+            self.assertIn(b"Something went wrong while updating your name. Please try again", response.data)
+
+    @requests_mock.mock()
+    def test_name_uaa_error(self, mock_request):
+        with patch("response_operations_ui.views.accounts.NotifyController") as mock_notify:
+            with self.client.session_transaction() as session:
+                session["user_id"] = user_id
+            mock_notify()._send_message.return_value = mock.Mock()
+            mock_request.post(url_uaa_token, json={"access_token": self.access_token}, status_code=201)
+            mock_request.get(url_uaa_user_by_id, json=uaa_user_by_id_json, status_code=200)
+            mock_request.put(url_uaa_user_by_id, status_code=403)
+            response = self.client.post(
+                "/account/change-account-name",
+                follow_redirects=True,
+                data={"first_name": "ONS", "last_name": "user"},
+            )
+            self.assertIn(
+                b"Something went wrong. Please ignore the email you have received and try again", response.data
+            )
+
+    @requests_mock.mock()
     def test_change_username_page(self, mock_request):
         with self.client.session_transaction() as session:
             session["user_id"] = user_id
@@ -243,6 +277,40 @@ class TestAccounts(unittest.TestCase):
             self.assertIn(b"Username already in use", response.data)
 
     @requests_mock.mock()
+    def test_change_username_notify_failure(self, mock_request):
+        with patch("response_operations_ui.views.accounts.NotifyController") as mock_notify:
+            with self.client.session_transaction() as session:
+                session["user_id"] = user_id
+            mock_notify().request_to_notify.side_effect = Mock(side_effect=NotifyError)
+            mock_request.post(url_uaa_token, json={"access_token": self.access_token}, status_code=201)
+            mock_request.get(url_uaa_user_by_id, json=uaa_user_by_id_json, status_code=200)
+            mock_request.put(url_uaa_user_by_id, status_code=200)
+            response = self.client.post(
+                "/account/change-username",
+                follow_redirects=True,
+                data={"username": "uaauser"},
+            )
+            self.assertIn(b"Something went wrong while updating your username. Please try again", response.data)
+
+    @requests_mock.mock()
+    def test_username_uaa_error(self, mock_request):
+        with patch("response_operations_ui.views.accounts.NotifyController") as mock_notify:
+            with self.client.session_transaction() as session:
+                session["user_id"] = user_id
+            mock_notify()._send_message.return_value = mock.Mock()
+            mock_request.post(url_uaa_token, json={"access_token": self.access_token}, status_code=201)
+            mock_request.get(url_uaa_user_by_id, json=uaa_user_by_id_json, status_code=200)
+            mock_request.put(url_uaa_user_by_id, status_code=403)
+            response = self.client.post(
+                "/account/change-username",
+                follow_redirects=True,
+                data={"username": "uaauser"},
+            )
+            self.assertIn(
+                b"Something went wrong. Please ignore the email you have received and try again", response.data
+            )
+
+    @requests_mock.mock()
     def test_change_email_page(self, mock_request):
         with self.client.session_transaction() as session:
             session["user_id"] = user_id
@@ -304,6 +372,24 @@ class TestAccounts(unittest.TestCase):
                 data={"email_address": "fake@ons.gov.uk", "email_confirm": "fake@ons.gov.uk"},
             )
             self.assertIn(b"Something went wrong while updating your email. Please try again", response.data)
+
+    @requests_mock.mock()
+    def test_change_email_uaa_failure(self, mock_request):
+        with self.app.app_context():
+            with patch("response_operations_ui.views.accounts.NotifyController") as mock_notify:
+                with self.client.session_transaction() as session:
+                    session["user_id"] = user_id
+                mock_notify()._send_message.return_value = mock.Mock()
+                token = token_decoder.generate_email_token(test_email)
+                mock_request.post(url_uaa_token, json={"access_token": self.access_token}, status_code=201)
+                mock_request.get(url_uaa_user_by_id, json=uaa_user_by_id_json, status_code=200)
+                mock_request.put(url_uaa_user_by_id, status_code=403)
+                mock_request.get(url_uaa_get_accounts, json={"totalResults": 0}, status_code=200)
+                response = self.client.get(
+                    f"/account/verify-email/{token}",
+                    follow_redirects=True,
+                )
+                self.assertIn(b"Failed to update email. Please try again", response.data)
 
     @requests_mock.mock()
     def test_email_is_empty(self, mock_request):
