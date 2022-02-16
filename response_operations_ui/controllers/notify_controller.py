@@ -18,6 +18,7 @@ class NotifyController:
         self.confirm_create_account_template = app.config["NOTIFY_CONFIRM_CREATE_ACCOUNT_TEMPLATE"]
         self.update_account_details_template = app.config["NOTIFY_UPDATE_ACCOUNT_DETAILS_TEMPLATE"]
         self.update_email_template = app.config["NOTIFY_UPDATE_EMAIL_TEMPLATE"]
+        self.update_account_password_template = app.config["NOTIFY_UPDATE_ACCOUNT_PASSWORD_CHANGE_TEMPLATE"]
         self.topic_id = app.config["PUBSUB_TOPIC"]
         self.project_id = app.config["GOOGLE_CLOUD_PROJECT"]
         self.publisher = None
@@ -76,6 +77,7 @@ class NotifyController:
             "request_create_account": self.request_create_account_template,
             "update_account_details": self.update_account_details_template,
             "update_email": self.update_email_template,
+            "update_account_password": self.update_account_password_template,
         }
         if template_name in templates:
             return templates[template_name]

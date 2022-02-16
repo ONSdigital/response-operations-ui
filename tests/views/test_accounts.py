@@ -26,6 +26,7 @@ max_256_characters = (
 url_uaa_token = f"{TestingConfig.UAA_SERVICE_URL}/oauth/token"
 url_uaa_get_accounts = f"{TestingConfig.UAA_SERVICE_URL}/Users?filter=email+eq+%22{test_email}%22"
 url_uaa_user_by_id = f"{TestingConfig.UAA_SERVICE_URL}/Users/{user_id}"
+url_uaa_user_password_change = f"{TestingConfig.UAA_SERVICE_URL}/Users/{user_id}/password"
 url_uaa_create_account = f"{TestingConfig.UAA_SERVICE_URL}/Users"
 
 
@@ -60,6 +61,7 @@ class TestAccounts(unittest.TestCase):
         self.assertIn(b"Change username", response.data)
         self.assertIn(b"Change name", response.data)
         self.assertIn(b"Change email address", response.data)
+        self.assertIn(b"Change password", response.data)
         self.assertEqual(response.status_code, 200)
 
     @requests_mock.mock()
@@ -591,3 +593,179 @@ class TestAccounts(unittest.TestCase):
             )
             self.assertIn(b"Username already in use; please choose another", response.data)
             self.assertEqual(response.status_code, 200)
+
+    @requests_mock.mock()
+    def test_change_password_selection_made(self, mock_request):
+        with self.client.session_transaction() as session:
+            session["user_id"] = user_id
+        mock_request.post(url_uaa_token, json={"access_token": self.access_token}, status_code=201)
+        mock_request.get(url_uaa_user_by_id, json=uaa_user_by_id_json, status_code=200)
+        data = {"option": "change_password"}
+        response = self.client.post("account/my-account", data=data, follow_redirects=True)
+        self.assertIn(b"Change password", response.data)
+        self.assertIn(b"Enter current password", response.data)
+        self.assertIn(b"Your password must have", response.data)
+        self.assertIn(b"New Password", response.data)
+        self.assertIn(b"Re-type new password", response.data)
+
+    @requests_mock.mock()
+    def test_change_password_no_input(self, mock_request):
+        with patch("response_operations_ui.views.accounts.NotifyController") as mock_notify:
+            with self.client.session_transaction() as session:
+                session["user_id"] = user_id
+            mock_notify()._send_message.return_value = mock.Mock()
+            mock_request.post(url_uaa_token, json={"access_token": self.access_token}, status_code=201)
+            mock_request.get(url_uaa_user_by_id, json=uaa_user_by_id_json, status_code=200)
+            mock_request.put(url_uaa_user_password_change, status_code=200)
+            response = self.client.post(
+                "/account/change-password",
+                follow_redirects=True,
+                data={},
+            )
+            self.assertIn(b"There are 2 errors on this page", response.data)
+            self.assertIn(b"Your current password is required", response.data)
+            self.assertIn(b"Your new password is required", response.data)
+
+    @requests_mock.mock()
+    def test_change_password_wrong_input(self, mock_request):
+        with patch("response_operations_ui.views.accounts.NotifyController") as mock_notify:
+            with self.client.session_transaction() as session:
+                session["user_id"] = user_id
+            mock_notify()._send_message.return_value = mock.Mock()
+            mock_request.post(url_uaa_token, json={"access_token": self.access_token}, status_code=201)
+            mock_request.get(url_uaa_user_by_id, json=uaa_user_by_id_json, status_code=200)
+            mock_request.put(url_uaa_user_password_change, status_code=200)
+            response = self.client.post(
+                "/account/change-password",
+                follow_redirects=True,
+                data={"new_password": "something", "new_password_confirm": "something_else"},
+            )
+            self.assertIn(b"There are 2 errors on this page", response.data)
+            self.assertIn(b"Your current password is required", response.data)
+            self.assertIn(b"Your passwords do not match", response.data)
+
+    @requests_mock.mock()
+    def test_change_password_doesn_not_meet_requirement(self, mock_request):
+        with patch("response_operations_ui.views.accounts.NotifyController") as mock_notify:
+            with self.client.session_transaction() as session:
+                session["user_id"] = user_id
+            mock_notify()._send_message.return_value = mock.Mock()
+            mock_request.post(url_uaa_token, json={"access_token": self.access_token}, status_code=201)
+            mock_request.get(url_uaa_user_by_id, json=uaa_user_by_id_json, status_code=200)
+            mock_request.put(url_uaa_user_password_change, status_code=200)
+            response = self.client.post(
+                "/account/change-password",
+                follow_redirects=True,
+                data={"password": "something", "new_password": "something", "new_password_confirm": "something"},
+            )
+            self.assertIn(b"There is 1 error on this page", response.data)
+            self.assertIn(b"Your password doesn't meet the requirements", response.data)
+
+    @requests_mock.mock()
+    def test_change_password_current_new_password_same(self, mock_request):
+        with patch("response_operations_ui.views.accounts.NotifyController") as mock_notify:
+            with self.client.session_transaction() as session:
+                session["user_id"] = user_id
+            mock_notify()._send_message.return_value = mock.Mock()
+            mock_request.post(url_uaa_token, json={"access_token": self.access_token}, status_code=201)
+            mock_request.get(url_uaa_user_by_id, json=uaa_user_by_id_json, status_code=200)
+            mock_request.put(url_uaa_user_password_change, status_code=200)
+            response = self.client.post(
+                "/account/change-password",
+                follow_redirects=True,
+                data={
+                    "password": "Something!100",
+                    "new_password": "Something!100",
+                    "new_password_confirm": "Something!100",
+                },
+            )
+            self.assertIn(b"There is 1 error on this page", response.data)
+            self.assertIn(b"Your new password is the same as your old password", response.data)
+
+    @requests_mock.mock()
+    def test_change_password_current_password_incorrect(self, mock_request):
+        with patch("response_operations_ui.views.accounts.NotifyController") as mock_notify:
+            with self.client.session_transaction() as session:
+                session["user_id"] = user_id
+            mock_notify()._send_message.return_value = mock.Mock()
+            mock_request.post(url_uaa_token, json={"access_token": self.access_token}, status_code=201)
+            mock_request.get(url_uaa_user_by_id, json=uaa_user_by_id_json, status_code=200)
+            mock_request.put(url_uaa_user_password_change, status_code=401)
+            response = self.client.post(
+                "/account/change-password",
+                follow_redirects=True,
+                data={
+                    "password": "Something100",
+                    "new_password": "Something!100",
+                    "new_password_confirm": "Something!100",
+                },
+            )
+            self.assertIn(
+                b"your current password is incorrect. Please re-enter a correct current password.",
+                response.data,
+            )
+
+    @requests_mock.mock()
+    def test_change_password_uaa_error(self, mock_request):
+        with patch("response_operations_ui.views.accounts.NotifyController") as mock_notify:
+            with self.client.session_transaction() as session:
+                session["user_id"] = user_id
+            mock_notify()._send_message.return_value = mock.Mock()
+            mock_request.post(url_uaa_token, json={"access_token": self.access_token}, status_code=201)
+            mock_request.get(url_uaa_user_by_id, json=uaa_user_by_id_json, status_code=200)
+            mock_request.put(url_uaa_user_password_change, status_code=403)
+            response = self.client.post(
+                "/account/change-password",
+                follow_redirects=True,
+                data={
+                    "password": "Something100",
+                    "new_password": "Something!100",
+                    "new_password_confirm": "Something!100",
+                },
+            )
+            self.assertIn(
+                b"Something went wrong while updating your username. Please try again.",
+                response.data,
+            )
+
+    @requests_mock.mock()
+    def test_change_password_worked_but_notify_failed(self, mock_request):
+        with patch("response_operations_ui.views.accounts.NotifyController") as mock_notify:
+            with self.client.session_transaction() as session:
+                session["user_id"] = user_id
+            mock_notify().request_to_notify.side_effect = Mock(side_effect=NotifyError)
+            mock_request.post(url_uaa_token, json={"access_token": self.access_token}, status_code=201)
+            mock_request.get(url_uaa_user_by_id, json=uaa_user_by_id_json, status_code=200)
+            mock_request.put(url_uaa_user_password_change, status_code=200)
+            response = self.client.post(
+                "/account/change-password",
+                follow_redirects=True,
+                data={
+                    "password": "Something100",
+                    "new_password": "Something!100",
+                    "new_password_confirm": "Something!100",
+                },
+            )
+            self.assertIn(b"Your password has been changed", response.data)
+            self.assertIn(b"We were unable to send the password change acknowledgement email.", response.data)
+
+    @requests_mock.mock()
+    def test_change_password_success(self, mock_request):
+        with patch("response_operations_ui.views.accounts.NotifyController") as mock_notify:
+            with self.client.session_transaction() as session:
+                session["user_id"] = user_id
+            mock_notify()._send_message.return_value = mock.Mock()
+            mock_request.post(url_uaa_token, json={"access_token": self.access_token}, status_code=201)
+            mock_request.get(url_uaa_user_by_id, json=uaa_user_by_id_json, status_code=200)
+            mock_request.put(url_uaa_user_password_change, status_code=200)
+            response = self.client.post(
+                "/account/change-password",
+                follow_redirects=True,
+                data={
+                    "password": "Something100",
+                    "new_password": "Something!100",
+                    "new_password_confirm": "Something!100",
+                },
+            )
+            self.assertIn(b"Your password has been changed", response.data)
+            self.assertNotIn(b"We were unable to send the password change acknowledgement email.", response.data)
