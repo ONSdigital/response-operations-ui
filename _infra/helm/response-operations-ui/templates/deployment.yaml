@@ -106,7 +106,7 @@ spec:
           - name: CREATE_ACCOUNT_EMAIL_TOKEN_EXPIRY
             value: "{{ .Values.admin.createAccountEmailExpiry }}"
           - name: UPDATE_ACCOUNT_EMAIL_TOKEN_EXPIRY
-              value: "{{ .Values.admin.updateAccountEmailExpiry }}"
+            value: "{{ .Values.admin.updateAccountEmailExpiry }}"
           - name: DASHBOARD_URL
             {{- if .Values.dashboard.hasIngress }}
             value: {{ .Values.dashboard.address }}
