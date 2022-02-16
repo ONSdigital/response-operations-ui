@@ -538,5 +538,33 @@ class Form(FlaskForm):
 class MyAccountOptionsForm(Form):
     option = RadioField(
         "Label",
-        choices=[("value", "change_username"), ("value", "change_name")],
+        choices=[("value", "change_username"), ("value", "change_name"), ("value", "change_password")],
     )
+
+
+class ChangePasswordFrom(FlaskForm):
+    password = PasswordField("type your password", validators=[DataRequired("Your current password is required")])
+
+    new_password = PasswordField(
+        "Create a new password",
+        validators=[
+            DataRequired("Your new password is required"),
+            EqualTo("new_password_confirm", message="Your passwords do not match"),
+            Length(
+                min=8,
+                max=160,
+                message="Your password doesn't meet the requirements",
+            ),
+        ],
+    )
+    new_password_confirm = PasswordField("Re-type your new password")
+
+    @staticmethod
+    def validate_new_password(form, field):
+        new_password = field.data
+        if (
+            new_password.isalnum()
+            or not any(char.isupper() for char in new_password)
+            or not any(char.isdigit() for char in new_password)
+        ):
+            raise ValidationError("Your password doesn't meet the requirements")
