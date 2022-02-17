@@ -137,6 +137,7 @@ def change_email():
 
 
 @account_bp.route("/verify-email/<token>", methods=["GET"])
+@login_required
 def verify_email(token):
     try:
         duration = app.config["UPDATE_ACCOUNT_EMAIL_TOKEN_EXPIRY"]
