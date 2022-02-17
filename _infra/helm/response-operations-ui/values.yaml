@@ -6,6 +6,7 @@ sendEmailToGovNotify: false
 
 admin:
   createAccountEmailExpiry: "3628800"
+  updateAccountEmailExpiry: "259200"
 
 analytics:
   enabled: false
