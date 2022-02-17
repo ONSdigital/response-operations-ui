@@ -137,6 +137,8 @@ spec:
             value: {{ .Values.notify.requestPasswordChangeTemplate }}
           - name: NOTIFY_UPDATE_ACCOUNT_DETAILS_TEMPLATE
             value: {{ .Values.notify.updateAccountDetailsTemplate }}
+          - name: NOTIFY_UPDATE_ACCOUNT_PASSWORD_CHANGE_TEMPLATE
+            value: {{ .Values.notify.updateAccountPasswordTemplate }}
           - name: PARTY_URL
             {{- if .Values.dns.enabled }}
             value: "http://party.{{ .Values.namespace }}.svc.cluster.local:{{ .Values.dns.wellKnownPort }}"

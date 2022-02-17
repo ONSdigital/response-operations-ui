@@ -55,6 +55,14 @@
                 },
                 "value": "change_name"
             }) %}
+    {% do radios.append(
+            {
+                "id": "change_password",
+                "label": {
+                "text": "Change password"
+                },
+                "value": "change_password"
+            }) %}
     {% do radioComponent | setAttribute("radios", radios) %}
     {{
       onsRadios(radioComponent)
