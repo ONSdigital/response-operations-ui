@@ -6,6 +6,7 @@ sendEmailToGovNotify: false
 
 admin:
   createAccountEmailExpiry: "3628800"
+  updateAccountEmailExpiry: "259200"
 
 analytics:
   enabled: false
@@ -58,6 +59,7 @@ notify:
   requestCreateAccountTemplate: request_create_account_id
   requestPasswordChangeTemplate: request_password_change_id
   updateAccountDetailsTemplate: update_account_details_id
+  updateAccountEmailTemplate: update_email_id
   updateAccountPasswordTemplate: update_account_password_id
   
 dashboard:
