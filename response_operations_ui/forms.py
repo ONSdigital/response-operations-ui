@@ -39,7 +39,7 @@ survey_ref_validation = re.compile("^[0-9]{1,6}$")
 class LoginForm(FlaskForm):
     class Meta:
         csrf = True
-        
+
     username = StringField("Username", [InputRequired("Please enter a username")])
     password = PasswordField("Password", [InputRequired("Please enter a password")])
     submit = SubmitField("Sign in")

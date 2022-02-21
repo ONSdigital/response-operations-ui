@@ -15,7 +15,7 @@ class Config(object):
     LOGGING_LEVEL = os.getenv("LOGGING_LEVEL", "INFO")
     RESPONSE_OPERATIONS_UI_SECRET = os.getenv("RESPONSE_OPERATIONS_UI_SECRET", "secret")
     SESSION_TYPE = "redis"
-    #WTF_CSRF_TIME_LIMIT this wasn't set causing inconsistenices with sessions
+    # WTF_CSRF_TIME_LIMIT this wasn't set causing inconsistenices with sessions
     PERMANENT_SESSION_LIFETIME = os.getenv("PERMANENT_SESSION_LIFETIME", 43200)
     WTF_CSRF_TIME_LIMIT = os.getenv("WTF_CSRF_TIME_LIMIT", PERMANENT_SESSION_LIFETIME)
     REDIS_SERVICE = os.getenv("REDIS_SERVICE")
@@ -139,7 +139,7 @@ class DevelopmentConfig(Config):
     CREATE_ACCOUNT_EMAIL_TOKEN_EXPIRY = int(os.getenv("CREATE_ACCOUNT_EMAIL_TOKEN_EXPIRY", "3628800"))
     CREATE_ACCOUNT_ADMIN_PASSWORD = os.getenv("CREATE_ACCOUNT_ADMIN_PASSWORD", "secret")
     WTF_CSRF_ENABLED = strtobool(os.getenv("WTF_CSRF_ENABLED", "False"))
-   
+
 
 class TestingConfig(DevelopmentConfig):
     """Configuration used for testing.  The uaa public and private keys in this block are used ONLY for
