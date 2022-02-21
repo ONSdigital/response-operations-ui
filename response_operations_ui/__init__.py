@@ -83,7 +83,7 @@ def create_app(config_name=None):
         )
     app.name = "response_operations_ui"
 
-    CSRFProtect(app)
+    csrf = CSRFProtect(app)
 
     # Load css and js assets
     assets = Environment(app)
@@ -111,6 +111,19 @@ def create_app(config_name=None):
     login_manager = LoginManager(app)
     login_manager.init_app(app)
     login_manager.login_view = "sign_in_bp.sign_in"
+    
+    @app.before_request
+    def before_request():
+
+        session.permanent = True  # set session to use PERMANENT_SESSION_LIFETIME
+        session.modified = True   # reset the session timer on every request
+        try:
+            csrf.protect()
+        
+        except Exception as e:
+            if e.code == 400:
+                logger.warning(e.description)
+            logger.warning(e)
 
     @app.context_processor
     def inject_availability_message():
