@@ -313,18 +313,17 @@ def send_update_account_email(token_dict, first_name):
         verification_url = (
             f"{internal_url}/account/verify-email/{token_decoder.generate_email_token(json.dumps(token_dict))}"
         )
-        
+
         logger.info("Sending update account verification email", verification_url=verification_url)
+        personalisation = {"CONFIRM_EMAIL_URL": verification_url, "first_name": first_name}
+        NotifyController().request_to_notify(
+            email=token_dict["email"], template_name="update_email", personalisation=personalisation
+        )
     else:
         logger.info(
             "Requested account creation for email already in UAA", encoded_email=url_safe_serializer.dumps(token_dict["email"])
         )
         flash("Email already in use", category="error")
-
-    personalisation = {"CONFIRM_EMAIL_URL": verification_url, "first_name": first_name}
-    NotifyController().request_to_notify(
-        email=token_dict["email"], template_name="update_email", personalisation=personalisation
-        )
 
 
 def send_create_account_email(email):
