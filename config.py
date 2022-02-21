@@ -15,6 +15,7 @@ class Config(object):
     LOGGING_LEVEL = os.getenv("LOGGING_LEVEL", "INFO")
     RESPONSE_OPERATIONS_UI_SECRET = os.getenv("RESPONSE_OPERATIONS_UI_SECRET", "secret")
     SESSION_TYPE = "redis"
+    #WTF_CSRF_TIME_LIMIT this wasn't set causing inconsistenices with sessions
     PERMANENT_SESSION_LIFETIME = os.getenv("PERMANENT_SESSION_LIFETIME", 43200)
     WTF_CSRF_TIME_LIMIT = os.getenv("WTF_CSRF_TIME_LIMIT", PERMANENT_SESSION_LIFETIME)
     REDIS_SERVICE = os.getenv("REDIS_SERVICE")
