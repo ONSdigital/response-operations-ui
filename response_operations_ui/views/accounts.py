@@ -4,7 +4,7 @@ import logging
 from flask import Blueprint
 from flask import current_app as app
 from flask import flash, redirect, render_template, request, session, url_for
-from flask_login import login_required
+from flask_login import login_required, logout_user
 from itsdangerous import BadData, BadSignature, SignatureExpired, URLSafeSerializer
 from structlog import wrap_logger
 
@@ -129,7 +129,11 @@ def change_email():
                     "Successfully sent email change email",
                     encoded_email=url_safe_serializer.dumps(form.data["email_address"]),
                 )
-                flash("A verification email has been sent")
+                flash(
+                    "A verification email has been sent. You will need to login to change your email",
+                    category="successful_signout",
+                )
+                return redirect(url_for("logout_bp.logout"))
             except NotifyError as e:
                 logger.error("Error sending 'email change' email to Notify Gateway", msg=e.description)
                 flash("Something went wrong while updating your email. Please try again", category="error")
@@ -156,6 +160,7 @@ def verify_email(token):
                 flash("Failed to update email. Please try again", category="warn")
             else:
                 flash("Your email has been changed", category="successful_signout")
+                return redirect(url_for("account_bp.confirm_email_change"))
         else:
             logger.error("Invalid link for user", user_id=user_id)
             flash("Invalid link", category="warn")
@@ -168,6 +173,13 @@ def verify_email(token):
         logger.warning("Invalid token sent to Response Operations email change", token=token)
         flash("Your link is invalid", category="successful_signout")
         return redirect(url_for("logout_bp.logout"))
+
+
+@account_bp.route("/confirm-email-change", methods=["GET"])
+def confirm_email_change():
+    logout_user()
+    session.clear()
+    return render_template("account/confirm-email-change.html")
 
 
 @account_bp.route("/change-username", methods=["GET", "POST"])
