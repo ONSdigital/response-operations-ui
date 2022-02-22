@@ -321,7 +321,8 @@ def send_update_account_email(token_dict, first_name):
         )
     else:
         logger.info(
-            "Requested account creation for email already in UAA", encoded_email=url_safe_serializer.dumps(token_dict["email"])
+            "Requested account creation for email already in UAA",
+            encoded_email=url_safe_serializer.dumps(token_dict["email"]),
         )
         flash("Email already in use", category="error")
 
