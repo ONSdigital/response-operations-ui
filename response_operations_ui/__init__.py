@@ -83,7 +83,7 @@ def create_app(config_name=None):
         )
     app.name = "response_operations_ui"
 
-    csrf = CSRFProtect(app)
+    CSRFProtect(app)
 
     # Load css and js assets
     assets = Environment(app)
@@ -118,7 +118,7 @@ def create_app(config_name=None):
         session.permanent = True  # set session to use PERMANENT_SESSION_LIFETIME
         session.modified = True  # reset the session timer on every request
         try:
-            csrf.protect()
+            app.protect()
 
         except Exception as e:
             if e.code == 400:
