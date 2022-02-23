@@ -11,6 +11,7 @@ from structlog import wrap_logger
 from response_operations_ui.common import dates, token_decoder
 from response_operations_ui.controllers import uaa_controller
 from response_operations_ui.controllers.notify_controller import NotifyController
+from response_operations_ui.controllers.respondent_controllers import obfuscate_email
 from response_operations_ui.exceptions.exceptions import NotifyError
 from response_operations_ui.forms import (
     ChangeAccountName,
@@ -116,7 +117,7 @@ def change_email():
                 "changed_value": form.data["email_address"],
             }
             try:
-                logger.info("Sending verification email")
+                logger.info("Sending verification email", email=obfuscate_email(form.data["email_address"]))
                 token_dict = {"email": form.data["email_address"], "user_id": user_id}
                 send_update_account_email(token_dict, user_from_uaa["name"]["givenName"])
                 logger.info("Sending notification email")
@@ -313,9 +314,6 @@ def send_update_account_email(token_dict, first_name):
     :param token_dict: A dictionary containing the email address to send to and user id
     :param first_name: the name of the user the email is being sent to, used in email
     """
-
-    url_safe_serializer = URLSafeSerializer(app.config["SECRET_KEY"])
-
     response = uaa_controller.get_user_by_email(token_dict["email"])
     if response is None:
         return render_template("request-new-account-error.html")
@@ -332,6 +330,7 @@ def send_update_account_email(token_dict, first_name):
             email=token_dict["email"], template_name="update_email", personalisation=personalisation
         )
     else:
+        url_safe_serializer = URLSafeSerializer(app.config["SECRET_KEY"])
         logger.info(
             "Requested account creation for email already in UAA",
             encoded_email=url_safe_serializer.dumps(token_dict["email"]),
