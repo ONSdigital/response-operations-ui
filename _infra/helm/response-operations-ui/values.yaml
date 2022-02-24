@@ -78,4 +78,5 @@ test:
   
 features:
   v3Enabled: true
+  isRoleBasedAccessEnabled: false
 

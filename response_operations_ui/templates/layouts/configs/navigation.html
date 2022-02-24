@@ -6,29 +6,30 @@
   "currentPath": request.path,
 } %}
 
-{% do navigation | setAttribute("itemsList", [
-    {
-      "title": "Home",
-      "url": "/choose-overview-survey"
-    },
-    {
-      "title": "Surveys",
-      "url": "/surveys/"
-    },
-    {
-      "title": "Reporting units",
-      "url": "/reporting-units/"
-    },
-    {
-      "title": "Respondents",
-      "url": "/respondents/"
-    },
-    {
-      "title": "Messages",
-      "url": "/messages/select-survey",
-      "id": "messages-link"
-    }
-  ]) 
-%}
-
+{% if current_user.is_authenticated %}
+  {% do navigation | setAttribute("itemsList", [
+      {
+        "title": "Home",
+        "url": "/choose-overview-survey"
+      },
+      {
+        "title": "Surveys",
+        "url": "/surveys/"
+      },
+      {
+        "title": "Reporting units",
+        "url": "/reporting-units/"
+      },
+      {
+        "title": "Respondents",
+        "url": "/respondents/"
+      },
+      {
+        "title": "Messages",
+        "url": "/messages/select-survey",
+        "id": "messages-link"
+      }
+    ]) 
+  %}
+{% endif %}
 {% do pageConfig | setAttribute("navigation", navigation) %}
