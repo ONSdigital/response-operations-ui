@@ -18,7 +18,7 @@ url_uaa_get_user_groups = f"{TestingConfig.UAA_SERVICE_URL}/Groups"
 
 
 class TestUAAController(unittest.TestCase):
-    def setUp(self) -> None:
+    def setUp(self):
         self.app = create_app("TestingConfig")
         self.client = self.app.test_client()
 
