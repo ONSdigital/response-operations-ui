@@ -1,5 +1,4 @@
 import logging
-from distutils.log import error
 from json import JSONDecodeError, dumps
 
 import requests
