@@ -1,8 +1,9 @@
 import json
 import os
 import unittest
-from http.client import responses
 from urllib.error import HTTPError
+
+import responses
 
 from config import TestingConfig
 from response_operations_ui import create_app
