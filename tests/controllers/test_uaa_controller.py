@@ -4,8 +4,6 @@ import unittest
 from http.client import responses
 from urllib.error import HTTPError
 
-import requests_mock
-
 from config import TestingConfig
 from response_operations_ui import create_app
 from response_operations_ui.controllers import uaa_controller
@@ -22,7 +20,6 @@ class TestUAAController(unittest.TestCase):
         self.app = create_app("TestingConfig")
         self.client = self.app.test_client()
 
-    @requests_mock.mock()
     def test_get_user_group_list_success(self):
         with responses.RequestsMock() as rsps:
             rsps.add(
@@ -37,7 +34,6 @@ class TestUAAController(unittest.TestCase):
                 self.assertIn("7bcaf538-e7fd-4881-9870-71581ce234d2", groups.keys())
                 self.assertEqual(groups["7bcaf538-e7fd-4881-9870-71581ce234d2"], "Cooler Group Name for Update")
 
-    @requests_mock.mock()
     def test_get_user_group_list_failure(self):
         with responses.RequestsMock() as rsps:
             rsps.add(rsps.GET, url_uaa_get_user_groups, status=400)
