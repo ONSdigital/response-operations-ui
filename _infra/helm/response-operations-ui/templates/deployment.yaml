@@ -217,6 +217,8 @@ spec:
             {{- end }}
           - name: EQ_VERSION_ENABLED
             value: "{{ .Values.features.v3Enabled }}"
+          - name: IS_ROLE_BASED_ACCESS_ENABLED
+            value: "{{ .Values.features.isRoleBasedAccessEnabled }}"
           - name: SECURE_MESSAGE_JWT_SECRET
             valueFrom:
               secretKeyRef:

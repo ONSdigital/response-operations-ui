@@ -145,6 +145,7 @@ class DevelopmentConfig(Config):
     # 3 days in seconds
     UPDATE_ACCOUNT_EMAIL_TOKEN_EXPIRY = int(os.getenv("UPDATE_ACCOUNT_EMAIL_TOKEN_EXPIRY", "259200"))
     WTF_CSRF_ENABLED = strtobool(os.getenv("WTF_CSRF_ENABLED", "False"))
+    IS_ROLE_BASED_ACCESS_ENABLED = strtobool(os.getenv("IS_ROLE_BASED_ACCESS_ENABLED", "False"))
 
 
 class TestingConfig(DevelopmentConfig):

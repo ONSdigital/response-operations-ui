@@ -1,15 +1,17 @@
+import json
 import logging
 
 from flask import Blueprint
 from flask import current_app as app
 from flask import flash, redirect, render_template, request, session, url_for
-from flask_login import login_required
+from flask_login import login_required, logout_user
 from itsdangerous import BadData, BadSignature, SignatureExpired, URLSafeSerializer
 from structlog import wrap_logger
 
 from response_operations_ui.common import dates, token_decoder
 from response_operations_ui.controllers import uaa_controller
 from response_operations_ui.controllers.notify_controller import NotifyController
+from response_operations_ui.controllers.respondent_controllers import obfuscate_email
 from response_operations_ui.exceptions.exceptions import NotifyError
 from response_operations_ui.forms import (
     ChangeAccountName,
@@ -115,19 +117,24 @@ def change_email():
                 "changed_value": form.data["email_address"],
             }
             try:
+                logger.info("Sending verification email", email=obfuscate_email(form.data["email_address"]))
+                token_dict = {"email": form.data["email_address"], "user_id": user_id}
+                send_update_account_email(token_dict, user_from_uaa["name"]["givenName"])
                 logger.info("Sending notification email")
                 NotifyController().request_to_notify(
                     email=user_from_uaa["emails"][0]["value"],
                     template_name="update_account_details",
                     personalisation=personalisation,
                 )
-                logger.info("Sending verification email")
-                send_update_account_email(form.data["email_address"], user_from_uaa["name"]["givenName"])
                 logger.info(
                     "Successfully sent email change email",
                     encoded_email=url_safe_serializer.dumps(form.data["email_address"]),
                 )
-                flash("A verification email has been sent")
+                flash(
+                    "A verification email has been sent. You will need to login to change your email",
+                    category="successful_signout",
+                )
+                return redirect(url_for("logout_bp.logout"))
             except NotifyError as e:
                 logger.error("Error sending 'email change' email to Notify Gateway", msg=e.description)
                 flash("Something went wrong while updating your email. Please try again", category="error")
@@ -141,17 +148,23 @@ def change_email():
 def verify_email(token):
     try:
         duration = app.config["UPDATE_ACCOUNT_EMAIL_TOKEN_EXPIRY"]
-        email = token_decoder.decode_email_token(token, duration)
+        json_token = token_decoder.decode_email_token(token, duration)
+        token_dict = json.loads(json_token)
         user_id = session["user_id"]
-        user_from_uaa = uaa_controller.get_user_by_id(user_id)
-        user_from_uaa["emails"][0]["value"] = email
-        logger.info("Updating email in UAA")
-        errors = uaa_controller.update_user_account(user_from_uaa)
-        if errors is not None:
-            logger.error("Error updating email in UAA", msg=errors["message"])
-            flash("Failed to update email. Please try again", category="error")
-            return redirect(url_for("account_bp.change_email"))
-        flash("Your email has been changed", category="successful_signout")
+        if token_dict["user_id"] == user_id:
+            user_from_uaa = uaa_controller.get_user_by_id(user_id)
+            user_from_uaa["emails"][0]["value"] = token_dict["email"]
+            logger.info("Updating email in UAA")
+            errors = uaa_controller.update_user_account(user_from_uaa)
+            if errors is not None:
+                logger.error("Error updating email in UAA", msg=errors["message"])
+                flash("Failed to update email. Please try again", category="warn")
+            else:
+                flash("Your email has been changed", category="successful_signout")
+                return redirect(url_for("account_bp.confirm_email_change"))
+        else:
+            logger.error("Invalid link for user", user_id=user_id)
+            flash("Invalid link", category="warn")
         return redirect(url_for("logout_bp.logout"))
     except SignatureExpired:
         logger.warning("Token expired for Response Operations email change", token=token)
@@ -161,6 +174,13 @@ def verify_email(token):
         logger.warning("Invalid token sent to Response Operations email change", token=token)
         flash("Your link is invalid", category="successful_signout")
         return redirect(url_for("logout_bp.logout"))
+
+
+@account_bp.route("/confirm-email-change", methods=["GET"])
+def confirm_email_change():
+    logout_user()
+    session.clear()
+    return render_template("account/confirm-email-change.html")
 
 
 @account_bp.route("/change-username", methods=["GET", "POST"])
@@ -287,26 +307,35 @@ def post_request_new_account():
     return render_template("request-new-account.html", form=form, data=template_data, email=email)
 
 
-def send_update_account_email(email, first_name):
+def send_update_account_email(token_dict, first_name):
     """Sends an email through GovNotify to the specified address with an encoded
      link to verify their email when it has been changed
 
-    :param email: The email address to send to
+    :param token_dict: A dictionary containing the email address to send to and user id
     :param first_name: the name of the user the email is being sent to, used in email
     """
-
-    response = uaa_controller.get_user_by_email(email)
+    response = uaa_controller.get_user_by_email(token_dict["email"])
     if response is None:
         return render_template("request-new-account-error.html")
 
     if response["totalResults"] == 0:
         internal_url = app.config["RESPONSE_OPERATIONS_UI_URL"]
-        verification_url = f"{internal_url}/account/verify-email/{token_decoder.generate_email_token(email)}"
+        verification_url = (
+            f"{internal_url}/account/verify-email/{token_decoder.generate_email_token(json.dumps(token_dict))}"
+        )
 
-        logger.info("Sending create account email", verification_url=verification_url)
-
+        logger.info("Sending update account verification email", verification_url=verification_url)
         personalisation = {"CONFIRM_EMAIL_URL": verification_url, "first_name": first_name}
-        NotifyController().request_to_notify(email=email, template_name="update_email", personalisation=personalisation)
+        NotifyController().request_to_notify(
+            email=token_dict["email"], template_name="update_email", personalisation=personalisation
+        )
+    else:
+        url_safe_serializer = URLSafeSerializer(app.config["SECRET_KEY"])
+        logger.info(
+            "Requested account creation for email already in UAA",
+            encoded_email=url_safe_serializer.dumps(token_dict["email"]),
+        )
+        flash("Email already in use", category="error")
 
 
 def send_create_account_email(email):
