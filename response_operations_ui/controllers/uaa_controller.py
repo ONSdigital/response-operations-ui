@@ -299,5 +299,5 @@ def get_user_group_list():
             }
         else:
             errors = {"status_code": response.status_code, "message": response.reason}
-        logger.error(msg=errors)
+        logger.error(errors["message"], status_code=errors["status_code"])
         return
