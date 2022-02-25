@@ -6,7 +6,11 @@ from unittest.mock import Mock, patch
 
 import jwt
 import requests_mock
+<<<<<<< HEAD
 from flask_wtf.csrf import CSRFProtect
+=======
+from flask_wtf.csrf import CSRFProtect, generate_csrf
+>>>>>>> 2d64b480e435d12ca4c73437bad6f6e75b632973
 
 from config import TestingConfig
 from response_operations_ui import create_app
