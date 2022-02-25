@@ -28,7 +28,7 @@ class TestUAAController(unittest.TestCase):
 
     def test_get_user_group_list_success(self):
         with responses.RequestsMock() as rsps:
-            rsps.add(rsps.POST, url_uaa_token, json={"access_token": self.access_token}, status_code=201)
+            rsps.add(rsps.POST, url_uaa_token, json={"access_token": self.access_token}, status=201)
             rsps.add(
                 rsps.GET,
                 url_uaa_get_user_groups,
@@ -43,6 +43,7 @@ class TestUAAController(unittest.TestCase):
 
     def test_get_user_group_list_failure(self):
         with responses.RequestsMock() as rsps:
+            rsps.add(rsps.POST, url_uaa_token, json={"access_token": self.access_token}, status=201)
             rsps.add(rsps.GET, url_uaa_get_user_groups, status=400)
             with self.app.app_context():
                 self.assertRaises(HTTPError, uaa_controller.get_user_group_list())
