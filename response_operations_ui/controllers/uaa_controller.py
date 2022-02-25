@@ -272,7 +272,7 @@ def get_user_group_list():
     Gets a list of all groups in UAA, for the purpose of caching permissions
     :return groups: The groups available in UAA
     """
-    is_role_based_access_enabled = current_app.config["IS_ROLE_BASED_ACCESS_ENABLED"]
+    is_role_based_access_enabled = app.config["IS_ROLE_BASED_ACCESS_ENABLED"]
     if not is_role_based_access_enabled:
         return
 
