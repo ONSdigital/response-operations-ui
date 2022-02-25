@@ -497,6 +497,35 @@ class UsernameChangeForm(FlaskForm):
             raise ValidationError("Username can only contain lowercase letters and numbers")
 
 
+class ChangeEmailForm(FlaskForm):
+    email_address = StringField(
+        "Enter the ONS email address to create an account for",
+        validators=[
+            InputRequired("Enter an email address"),
+            Email(message="Invalid email address"),
+            EqualTo("email_confirm", message="Your emails do not match"),
+            Length(max=255, message="Your email must be less than 255 characters"),
+        ],
+    )
+
+    email_confirm = StringField(
+        "Enter the ONS email address to create an account for",
+        validators=[
+            InputRequired("Enter an email address"),
+            EqualTo("email_address", message="Your emails do not match"),
+        ],
+    )
+
+    @staticmethod
+    def validate_email_address(_, field):
+        email = field.data
+        _validate_email_address(email)
+        local_part, domain_part = email.rsplit("@", 1)
+        if domain_part not in ["ons.gov.uk", "ext.ons.gov.uk", "ons.fake"]:
+            logger.info("Account requested for non-ONS email address")
+            raise ValidationError("Not a valid ONS email address")
+
+
 class BannerCreateForm(FlaskForm):
     title = StringField("Banner title", validators=[InputRequired("Enter a banner title")])
     banner_text = StringField(
@@ -541,5 +570,33 @@ class Form(FlaskForm):
 class MyAccountOptionsForm(Form):
     option = RadioField(
         "Label",
-        choices=[("value", "change_username"), ("value", "change_name")],
+        choices=[("value", "change_username"), ("value", "change_name"), ("value", "change_password")],
     )
+
+
+class ChangePasswordFrom(FlaskForm):
+    password = PasswordField("type your password", validators=[DataRequired("Your current password is required")])
+
+    new_password = PasswordField(
+        "Create a new password",
+        validators=[
+            DataRequired("Your new password is required"),
+            EqualTo("new_password_confirm", message="Your passwords do not match"),
+            Length(
+                min=8,
+                max=160,
+                message="Your password doesn't meet the requirements",
+            ),
+        ],
+    )
+    new_password_confirm = PasswordField("Re-type your new password")
+
+    @staticmethod
+    def validate_new_password(form, field):
+        new_password = field.data
+        if (
+            new_password.isalnum()
+            or not any(char.isupper() for char in new_password)
+            or not any(char.isdigit() for char in new_password)
+        ):
+            raise ValidationError("Your password doesn't meet the requirements")

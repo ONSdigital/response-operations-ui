@@ -105,7 +105,15 @@ def view_collection_exercise(short_name, period):
     ]
 
     ce_state = ce_details["collection_exercise"]["state"]
-    show_set_live_button = ce_state in ("READY_FOR_REVIEW", "FAILEDVALIDATION")
+    if ce_details["survey"]["surveyMode"] == "EQ":
+        show_set_live_button = (
+            ce_state in ("READY_FOR_REVIEW")
+            and "ref_period_start" in ce_details["events"]
+            and "ref_period_end" in ce_details["events"]
+        )
+    else:
+        show_set_live_button = ce_state in ("READY_FOR_REVIEW", "FAILEDVALIDATION")
+
     locked = ce_state in ("LIVE", "READY_FOR_LIVE", "EXECUTION_STARTED", "VALIDATED", "EXECUTED", "ENDED")
     processing = ce_state in ("EXECUTION_STARTED", "EXECUTED", "VALIDATED")
     validation_failed = ce_state == "FAILEDVALIDATION"

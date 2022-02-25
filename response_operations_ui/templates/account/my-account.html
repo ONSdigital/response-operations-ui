@@ -9,7 +9,6 @@
 {% set ns = namespace() %}
 {% include "radio-option-select-error-panel.html" %}
 
-
 <section>
   <h1 id="respondent-name">Account details</h1>
   <dl class="metadata metadata__list grid grid--gutterless u-cf u-mb-l" title="" aria-label="">
@@ -54,6 +53,22 @@
                 "text": "Change name"
                 },
                 "value": "change_name"
+            }) %}
+    {% do radios.append(
+            {
+                "id": "change_email",
+                "label": {
+                "text": "Change email address"
+                },
+                "value": "change_email"
+            }) %}
+    {% do radios.append(
+            {
+                "id": "change_password",
+                "label": {
+                "text": "Change password"
+                },
+                "value": "change_password"
             }) %}
     {% do radioComponent | setAttribute("radios", radios) %}
     {{

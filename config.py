@@ -75,6 +75,10 @@ class Config(object):
     NOTIFY_UPDATE_ACCOUNT_DETAILS_TEMPLATE = os.getenv(
         "NOTIFY_UPDATE_ACCOUNT_DETAILS_TEMPLATE", "update_account_details_id"
     )
+    NOTIFY_UPDATE_EMAIL_TEMPLATE = os.getenv("NOTIFY_UPDATE_EMAIL_TEMPLATE", "update_email_id")
+    NOTIFY_UPDATE_ACCOUNT_PASSWORD_CHANGE_TEMPLATE = os.getenv(
+        "NOTIFY_UPDATE_ACCOUNT_PASSWORD_CHANGE_TEMPLATE", "update_account_password_id"
+    )
     SEND_EMAIL_TO_GOV_NOTIFY = os.getenv("SEND_EMAIL_TO_GOV_NOTIFY", False)
 
     REPORT_URL = os.getenv("REPORT_URL")
@@ -92,6 +96,8 @@ class Config(object):
     # 6 weeks in seconds
     CREATE_ACCOUNT_EMAIL_TOKEN_EXPIRY = int(os.getenv("CREATE_ACCOUNT_EMAIL_TOKEN_EXPIRY", "3628800"))
     CREATE_ACCOUNT_ADMIN_PASSWORD = os.getenv("CREATE_ACCOUNT_ADMIN_PASSWORD")
+    # 3 days in seconds
+    UPDATE_ACCOUNT_EMAIL_TOKEN_EXPIRY = int(os.getenv("UPDATE_ACCOUNT_EMAIL_TOKEN_EXPIRY", "259200"))
 
     TEST_MODE = strtobool(os.getenv("TEST_MODE", "False"))
     WTF_CSRF_ENABLED = strtobool(os.getenv("WTF_CSRF_ENABLED", "True"))
@@ -138,6 +144,8 @@ class DevelopmentConfig(Config):
     # 6 weeks in seconds
     CREATE_ACCOUNT_EMAIL_TOKEN_EXPIRY = int(os.getenv("CREATE_ACCOUNT_EMAIL_TOKEN_EXPIRY", "3628800"))
     CREATE_ACCOUNT_ADMIN_PASSWORD = os.getenv("CREATE_ACCOUNT_ADMIN_PASSWORD", "secret")
+    # 3 days in seconds
+    UPDATE_ACCOUNT_EMAIL_TOKEN_EXPIRY = int(os.getenv("UPDATE_ACCOUNT_EMAIL_TOKEN_EXPIRY", "259200"))
     WTF_CSRF_ENABLED = strtobool(os.getenv("WTF_CSRF_ENABLED", "False"))
 
 

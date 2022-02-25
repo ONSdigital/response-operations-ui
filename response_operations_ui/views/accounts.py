@@ -13,6 +13,8 @@ from response_operations_ui.controllers.notify_controller import NotifyControlle
 from response_operations_ui.exceptions.exceptions import NotifyError
 from response_operations_ui.forms import (
     ChangeAccountName,
+    ChangeEmailForm,
+    ChangePasswordFrom,
     CreateAccountForm,
     MyAccountOptionsForm,
     RequestAccountForm,
@@ -26,6 +28,8 @@ account_bp = Blueprint("account_bp", __name__, static_folder="static", template_
 form_redirect_mapper = {
     "change_name": "account_bp.change_account_name",
     "change_username": "account_bp.change_username",
+    "change_email": "account_bp.change_email",
+    "change_password": "account_bp.change_password",
 }
 
 
@@ -80,7 +84,8 @@ def change_account_name():
                 )
                 errors = uaa_controller.update_user_account(user_from_uaa)
                 if errors is None:
-                    return redirect(url_for("logout_bp.logout", message="Your name has been changed"))
+                    flash("Your name has been changed", category="successful_signout")
+                    return redirect(url_for("logout_bp.logout"))
                 else:
                     logger.error("Error changing user information", msg=errors)
                     flash(
@@ -93,6 +98,69 @@ def change_account_name():
         else:
             return redirect(url_for("account_bp.get_my_account"))
     return render_template("account/change-account-name.html", user=user, form=form, errors=form.errors)
+
+
+@account_bp.route("/change-email", methods=["GET", "POST"])
+@login_required
+def change_email():
+    url_safe_serializer = URLSafeSerializer(app.config["SECRET_KEY"])
+    form = ChangeEmailForm()
+    user_id = session["user_id"]
+    user_from_uaa = uaa_controller.get_user_by_id(user_id)
+    if request.method == "POST" and form.validate():
+        if form.data["email_address"] != user_from_uaa["emails"][0]["value"]:
+            personalisation = {
+                "first_name": user_from_uaa["name"]["givenName"],
+                "value_name": "email",
+                "changed_value": form.data["email_address"],
+            }
+            try:
+                logger.info("Sending notification email")
+                NotifyController().request_to_notify(
+                    email=user_from_uaa["emails"][0]["value"],
+                    template_name="update_account_details",
+                    personalisation=personalisation,
+                )
+                logger.info("Sending verification email")
+                send_update_account_email(form.data["email_address"], user_from_uaa["name"]["givenName"])
+                logger.info(
+                    "Successfully sent email change email",
+                    encoded_email=url_safe_serializer.dumps(form.data["email_address"]),
+                )
+                flash("A verification email has been sent")
+            except NotifyError as e:
+                logger.error("Error sending 'email change' email to Notify Gateway", msg=e.description)
+                flash("Something went wrong while updating your email. Please try again", category="error")
+        else:
+            return redirect(url_for("account_bp.get_my_account"))
+    return render_template("account/change-email.html", form=form, errors=form.errors)
+
+
+@account_bp.route("/verify-email/<token>", methods=["GET"])
+@login_required
+def verify_email(token):
+    try:
+        duration = app.config["UPDATE_ACCOUNT_EMAIL_TOKEN_EXPIRY"]
+        email = token_decoder.decode_email_token(token, duration)
+        user_id = session["user_id"]
+        user_from_uaa = uaa_controller.get_user_by_id(user_id)
+        user_from_uaa["emails"][0]["value"] = email
+        logger.info("Updating email in UAA")
+        errors = uaa_controller.update_user_account(user_from_uaa)
+        if errors is not None:
+            logger.error("Error updating email in UAA", msg=errors["message"])
+            flash("Failed to update email. Please try again", category="error")
+            return redirect(url_for("account_bp.change_email"))
+        flash("Your email has been changed", category="successful_signout")
+        return redirect(url_for("logout_bp.logout"))
+    except SignatureExpired:
+        logger.warning("Token expired for Response Operations email change", token=token)
+        flash("Your link has expired", category="successful_signout")
+        return redirect(url_for("logout_bp.logout"))
+    except (BadSignature, BadData):
+        logger.warning("Invalid token sent to Response Operations email change", token=token)
+        flash("Your link is invalid", category="successful_signout")
+        return redirect(url_for("logout_bp.logout"))
 
 
 @account_bp.route("/change-username", methods=["GET", "POST"])
@@ -120,7 +188,8 @@ def change_username():
                 )
                 uaa_errors = uaa_controller.update_user_account(user_from_uaa)
                 if uaa_errors is None:
-                    return redirect(url_for("logout_bp.logout", message="Your username has been changed"))
+                    flash("Your username has been changed", category="successful_signout")
+                    return redirect(url_for("logout_bp.logout"))
                 elif uaa_errors["status_code"] == 400:
                     username_exists = True
                 else:
@@ -140,6 +209,55 @@ def change_username():
     if username_exists:
         errors = {"username": [uaa_errors["message"]]}
     return render_template("account/change-username.html", username=username, form=form, errors=errors)
+
+
+@account_bp.route("/change-password", methods=["GET", "POST"])
+@login_required
+def change_password():
+    form = ChangePasswordFrom()
+    user_id = session["user_id"]
+    user_from_uaa = uaa_controller.get_user_by_id(user_id)
+    if request.method == "POST" and form.validate():
+        password = form["password"].data
+        new_password = form["new_password"].data
+        if new_password == password:
+            return render_template(
+                "account/change-password.html",
+                form=form,
+                errors={"new_password": ["Your new password is the same as your old password"]},
+            )
+        logger.info("Sending account password acknowledgement email", user_id=user_id)
+        personalisation = {"first_name": user_from_uaa["name"]["givenName"]}
+        uaa_errors = uaa_controller.update_user_password(user_from_uaa, password, new_password)
+        if uaa_errors is None:
+            try:
+                NotifyController().request_to_notify(
+                    email=user_from_uaa["emails"][0]["value"],  # it's safe to assume that zeroth element is primary in
+                    # RAS/RM case
+                    template_name="update_account_password",
+                    personalisation=personalisation,
+                )
+            except NotifyError as e:
+                logger.error(
+                    "Error sending change of password acknowledgement email to Notify Gateway", msg=e.description
+                )
+                flash("We were unable to send the password change acknowledgement email.", category="warn")
+            flash("Your password has been changed", category="successful_signout")
+            return redirect(url_for("logout_bp.logout"))
+        else:
+            logger.error("Error changing user password", msg=uaa_errors)
+            if uaa_errors["status_code"] == 401:
+                flash(
+                    "your current password is incorrect. Please re-enter a correct current password.",
+                    category="error",
+                )
+            else:
+                flash(
+                    "Something went wrong while updating your username. Please try again.",
+                    category="error",
+                )
+    errors = form.errors
+    return render_template("account/change-password.html", form=form, errors=errors)
 
 
 @account_bp.route("/request-new-account", methods=["GET"])
@@ -167,6 +285,28 @@ def post_request_new_account():
 
     template_data = {"error": {"type": {"email_address": ["Not a valid ONS email address"]}}}
     return render_template("request-new-account.html", form=form, data=template_data, email=email)
+
+
+def send_update_account_email(email, first_name):
+    """Sends an email through GovNotify to the specified address with an encoded
+     link to verify their email when it has been changed
+
+    :param email: The email address to send to
+    :param first_name: the name of the user the email is being sent to, used in email
+    """
+
+    response = uaa_controller.get_user_by_email(email)
+    if response is None:
+        return render_template("request-new-account-error.html")
+
+    if response["totalResults"] == 0:
+        internal_url = app.config["RESPONSE_OPERATIONS_UI_URL"]
+        verification_url = f"{internal_url}/account/verify-email/{token_decoder.generate_email_token(email)}"
+
+        logger.info("Sending create account email", verification_url=verification_url)
+
+        personalisation = {"CONFIRM_EMAIL_URL": verification_url, "first_name": first_name}
+        NotifyController().request_to_notify(email=email, template_name="update_email", personalisation=personalisation)
 
 
 def send_create_account_email(email):
