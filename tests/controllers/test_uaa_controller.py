@@ -1,14 +1,14 @@
-from http.client import responses
 import json
 import os
 import unittest
+from http.client import responses
 from urllib.error import HTTPError
-from config import TestingConfig
-
-from response_operations_ui import create_app
-from response_operations_ui.controllers import uaa_controller
 
 import requests_mock
+
+from config import TestingConfig
+from response_operations_ui import create_app
+from response_operations_ui.controllers import uaa_controller
 
 project_root = os.path.dirname(os.path.dirname(__file__))
 with open(f"{project_root}/test_data/uaa/user_groups.json") as json_data:
