@@ -100,6 +100,7 @@ class Config(object):
     TEST_MODE = strtobool(os.getenv("TEST_MODE", "False"))
     WTF_CSRF_ENABLED = strtobool(os.getenv("WTF_CSRF_ENABLED", "True"))
     EQ_VERSION_ENABLED = strtobool(os.getenv("EQ_VERSION_ENABLED", "True"))
+    IS_ROLE_BASED_ACCESS_ENABLED = strtobool(os.getenv("IS_ROLE_BASED_ACCESS_ENABLED", "False"))
 
 
 class DevelopmentConfig(Config):
@@ -145,7 +146,6 @@ class DevelopmentConfig(Config):
     # 3 days in seconds
     UPDATE_ACCOUNT_EMAIL_TOKEN_EXPIRY = int(os.getenv("UPDATE_ACCOUNT_EMAIL_TOKEN_EXPIRY", "259200"))
     WTF_CSRF_ENABLED = strtobool(os.getenv("WTF_CSRF_ENABLED", "False"))
-    IS_ROLE_BASED_ACCESS_ENABLED = strtobool(os.getenv("IS_ROLE_BASED_ACCESS_ENABLED", "False"))
 
 
 class TestingConfig(DevelopmentConfig):
