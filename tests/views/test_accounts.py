@@ -6,11 +6,11 @@ from unittest.mock import Mock, patch
 
 import jwt
 import requests_mock
+from flask_wtf.csrf import CSRFProtect, generate_csrf
 
 from config import TestingConfig
 from response_operations_ui import create_app
 from response_operations_ui.common import token_decoder
-from flask_wtf.csrf import generate_csrf, CSRFProtect
 from response_operations_ui.exceptions.exceptions import NotifyError
 
 project_root = os.path.dirname(os.path.dirname(__file__))
@@ -24,7 +24,7 @@ max_256_characters = (
     "rLNZQJQDvEeUFDgatOtwajCPNwskfDiGKSVrwdxKRfwsMiTlnslXANitYMaCWGMdSCprQmEIcMchYZgcBxMWFFgHzEljoNZTWTsd"
     "sCEQiQycWJauMkduKmyzaxKxSZNtYxNpsyVGTxqroIUPwQSwXwyjLkkn"
 )
-csrftoken = 'mytoken-OWY4NmQwODE4ODRjN2Q2NTlhMmZlYWEwYzU1YWQwMTVhM2JmNGYxYjJiMGI4MjJjZDE1ZDZMGYwMGEwOA=='
+csrftoken = "mytoken-OWY4NmQwODE4ODRjN2Q2NTlhMmZlYWEwYzU1YWQwMTVhM2JmNGYxYjJiMGI4MjJjZDE1ZDZMGYwMGEwOA=="
 url_uaa_token = f"{TestingConfig.UAA_SERVICE_URL}/oauth/token"
 url_uaa_get_accounts = f"{TestingConfig.UAA_SERVICE_URL}/Users?filter=email+eq+%22{test_email}%22"
 url_uaa_user_by_id = f"{TestingConfig.UAA_SERVICE_URL}/Users/{user_id}"
@@ -42,10 +42,8 @@ class TestAccounts(unittest.TestCase):
         self.access_token = jwt.encode(payload, self.app.config["UAA_PRIVATE_KEY"], algorithm="RS256")
         self.client = self.app.test_client()
         CSRFProtect(self.app)
-        self.app.config['WTF_CSRF_ENABLED'] = True
-        
-        
-        
+        self.app.config["WTF_CSRF_ENABLED"] = True
+
     def test_request_account_page(self):
         response = self.client.get("/account/request-new-account")
         self.assertIn(b"ONS email address", response.data)
@@ -85,7 +83,9 @@ class TestAccounts(unittest.TestCase):
     def test_change_account_name_page(self, mock_request):
         with self.client.session_transaction() as session:
             session["user_id"] = user_id
-        mock_request.post(url_uaa_token, json={"access_token": self.access_token, "csrftoken": csrftoken}, status_code=201)
+        mock_request.post(
+            url_uaa_token, json={"access_token": self.access_token, "csrftoken": csrftoken}, status_code=201
+        )
         mock_request.get(url_uaa_user_by_id, json=uaa_user_by_id_json, status_code=200)
         response = self.client.get("/account/change-account-name", follow_redirects=True)
         self.assertIn(b"First name", response.data)

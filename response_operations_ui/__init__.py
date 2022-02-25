@@ -3,13 +3,12 @@ import logging
 import os
 
 import redis
-from flask import Flask, session, redirect, url_for
+from flask import Flask, redirect, session, url_for
 from flask_assets import Environment
 from flask_login import LoginManager
 from flask_session import Session
 from flask_talisman import Talisman
-from flask_wtf.csrf import CSRFProtect
-from flask_wtf.csrf import CSRFError
+from flask_wtf.csrf import CSRFError, CSRFProtect
 from structlog import wrap_logger
 
 from config import Config
