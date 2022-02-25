@@ -289,9 +289,15 @@ def get_user_group_list():
         return groups
     except HTTPError:
         if response.status_code == 400:
-            errors = {"status_code": response.status_code, "message": "Invalid query parameters when getting user groups"}
+            errors = {
+                "status_code": response.status_code,
+                "message": "Invalid query parameters when getting user groups",
+            }
         elif response.status_code == 403:
-            errors = {"status_code": response.status_code, "message": "Insufficient user scope when getting user groups"}
+            errors = {
+                "status_code": response.status_code,
+                "message": "Insufficient user scope when getting user groups",
+            }
         else:
             errors = {"status_code": response.status_code, "message": response.reason}
         logger.error(msg=errors)
