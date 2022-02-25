@@ -1,3 +1,4 @@
+from distutils.log import error
 import logging
 from json import JSONDecodeError, dumps
 
@@ -264,3 +265,30 @@ def update_user_password(user, old_password, new_password):
             )
 
     return errors
+
+
+def get_user_group_list():
+    """
+    Gets a list of all groups in UAA, for the purpose of caching permissions
+    :return groups: The groups available in UAA
+    """
+    access_token = login_admin()
+    headers = generate_headers(access_token)
+    logger.info("Retrieving groups from UAA for caching")
+    url = f"{app.config['UAA_SERVICE_URL']}/Groups"
+    response = requests.get(url, headers=headers)
+    try:
+        response.raise_for_status()
+        groups = {}
+        for group in response.json()["resources"]:
+            groups[group["id"]] = group["displayName"]
+        return groups
+    except HTTPError:
+        if response.status_code == 400:
+            errors = {"status_code": response.status_code, "message": "Invalid query parameters when getting user groups"}
+        elif response.status_code == 403:
+            errors = {"status_code": response.status_code, "message": "Insufficient user scope when getting user groups"}
+        else:
+            errors = {"status_code": response.status_code, "message": response.reason}
+        logger.error(msg=errors)
+        return
