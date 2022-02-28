@@ -3,7 +3,7 @@ import logging
 import os
 
 import redis
-from flask import Flask, redirect, session, url_for
+from flask import Flask, flash, redirect, session, url_for
 from flask_assets import Environment
 from flask_login import LoginManager
 from flask_session import Session
@@ -114,7 +114,8 @@ def create_app(config_name=None):
 
     @app.errorhandler(CSRFError)
     def handle_csrf_error(e):
-        return redirect(url_for("logout_bp.logout", message="Your session timeout"))
+        flash("Your session timed out", category="info")
+        return redirect(url_for("logout_bp.logout"))
 
     @app.before_request
     def before_request():

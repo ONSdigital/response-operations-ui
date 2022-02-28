@@ -36,7 +36,6 @@ no_sample = collex_root + "_no_sample.json"
 failed_validation = collex_root + "_failedvalidation.json"
 collex_details = collex_root + ".json"
 
-
 """Load all the necessary test data"""
 with open(collex_details) as json_data:
     collection_exercise_details = json.load(json_data)
@@ -111,7 +110,6 @@ with open(
 ) as json_data:
     collection_exercise_eq_ref_end_date = json.load(json_data)
 
-
 """Define URLS"""
 collection_exercise_root = f"{TestingConfig.COLLECTION_EXERCISE_URL}/collectionexercises"
 url_ce_by_id = f"{collection_exercise_root}/{collection_exercise_id}"
@@ -148,7 +146,6 @@ url_sample_service_upload = f"{TestingConfig.SAMPLE_FILE_UPLOADER_URL}/samples/f
 
 url_get_sample_summary = f"{TestingConfig.SAMPLE_URL}/samples/samplesummary/{sample_summary_id}"
 
-
 url_get_by_survey_with_ref_start_date = (
     f"{collection_exercise_root}/survey/{short_name}/{period}/event/ref_period_start?"
 )
@@ -168,6 +165,7 @@ class File:
     pass
 
 
+# noinspection DuplicatedCode
 class TestCollectionExercise(ViewTestCase):
     def setup_data(self):
         self.headers = {"Authorization": "test_jwt", "Content-Type": "application/json"}
