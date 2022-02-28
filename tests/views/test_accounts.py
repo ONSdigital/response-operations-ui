@@ -24,7 +24,7 @@ max_256_characters = (
     "rLNZQJQDvEeUFDgatOtwajCPNwskfDiGKSVrwdxKRfwsMiTlnslXANitYMaCWGMdSCprQmEIcMchYZgcBxMWFFgHzEljoNZTWTsd"
     "sCEQiQycWJauMkduKmyzaxKxSZNtYxNpsyVGTxqroIUPwQSwXwyjLkkn"
 )
-csrf_token = "mytoken-OWY4NmQwODE4ODRjN2Q2NTlhMmZlYWEwYzU1YWQwMTVhM2JmNGYxYjJiMGI4MjJjZDE1ZDZMGYwMGEwOA=="
+csrf_token = 'ImRjMmJkZWRhNDcwMDBmM2JlZWEwYWM2YzhkYzMxMzliMjBmYmU1ZWIi.Yhy3Hw.cLsrWJHAXXmBJjLY0J8XP3oE8qw'
 url_uaa_token = f"{TestingConfig.UAA_SERVICE_URL}/oauth/token"
 url_uaa_get_accounts = f"{TestingConfig.UAA_SERVICE_URL}/Users?filter=email+eq+%22{test_email}%22"
 url_uaa_user_by_id = f"{TestingConfig.UAA_SERVICE_URL}/Users/{user_id}"
@@ -100,13 +100,16 @@ class TestAccounts(unittest.TestCase):
             with self.client.session_transaction() as session:
                 session["user_id"] = user_id
             mock_notify()._send_message.return_value = mock.Mock()
-            mock_request.post(url_uaa_token, json={"access_token": self.access_token}, status_code=201)
+            mock_request.post(
+                url_uaa_token, json={"access_token": self.access_token, "csrf_token": csrf_token}, status_code=201
+            )
+            # mock_request.post(url_uaa_token, json={"access_token": self.access_token}, status_code=201)
             mock_request.get(url_uaa_user_by_id, json=uaa_user_by_id_json, status_code=200)
             mock_request.put(url_uaa_user_by_id, status_code=200)
             response = self.client.post(
                 "/account/change-account-name",
                 follow_redirects=True,
-                data={"first_name": "ONSYES", "last_name": "Userno"},
+                data={"first_name": "ONSYES", "last_name": "Userno", "csrf_token": csrf_token},
             )
             self.assertIn(b"Your name has been changed", response.data)
 
