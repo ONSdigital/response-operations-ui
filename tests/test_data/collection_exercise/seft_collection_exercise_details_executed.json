@@ -24,7 +24,7 @@
       "scheduledReturnDateTime": "2018-07-08T09:19:09.000Z",
       "scheduledEndDateTime": "2018-07-09T09:19:09.000Z",
       "executedBy": null,
-      "state": "READY_FOR_LIVE",
+      "state": "EXECUTED",
       "exerciseRef": "204901",
       "userDescription": "test_exercise",
       "created": "2018-06-28T09:19:13.363Z",
