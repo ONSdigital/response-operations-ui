@@ -107,9 +107,9 @@ def view_collection_exercise(short_name, period):
     ce_state = ce_details["collection_exercise"]["state"]
     if ce_details["survey"]["surveyMode"] == "EQ":
         show_set_live_button = (
-                ce_state in ("READY_FOR_REVIEW")
-                and "ref_period_start" in ce_details["events"]
-                and "ref_period_end" in ce_details["events"]
+            ce_state in ("READY_FOR_REVIEW")
+            and "ref_period_start" in ce_details["events"]
+            and "ref_period_end" in ce_details["events"]
         )
     else:
         show_set_live_button = ce_state in ("READY_FOR_REVIEW", "FAILEDVALIDATION")
@@ -698,12 +698,16 @@ def get_create_collection_event_form(short_name, period, ce_id, tag):
 @collection_exercise_bp.route("/<short_name>/<period>/<ce_id>/create-event/<tag>", methods=["POST", "GET"])
 @login_required
 def create_collection_exercise_event(short_name, period, ce_id, tag):
-    if request.method == 'GET':
-        redirect(url_for("collection_exercise_bp.get_create_collection_event_form",
-                         period=period,
-                         short_name=short_name,
-                         ce_id=ce_id,
-                         tag=tag))
+    if request.method == "GET":
+        redirect(
+            url_for(
+                "collection_exercise_bp.get_create_collection_event_form",
+                period=period,
+                short_name=short_name,
+                ce_id=ce_id,
+                tag=tag,
+            )
+        )
     logger.info(
         "Creating collection exercise event",
         short_name=short_name,
