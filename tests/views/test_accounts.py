@@ -360,7 +360,8 @@ class TestAccounts(unittest.TestCase):
                 with self.client.session_transaction() as session:
                     session["user_id"] = user_id
                 mock_notify()._send_message.return_value = mock.Mock()
-                token = token_decoder.generate_email_token(test_email)
+                token_dict = {"email": test_email, "user_id": user_id}
+                token = token_decoder.generate_email_token(json.dumps(token_dict))
                 mock_request.post(url_uaa_token, json={"access_token": self.access_token}, status_code=201)
                 mock_request.get(url_uaa_user_by_id, json=uaa_user_by_id_json, status_code=200)
                 mock_request.put(url_uaa_user_by_id, status_code=200)
@@ -395,7 +396,8 @@ class TestAccounts(unittest.TestCase):
                 with self.client.session_transaction() as session:
                     session["user_id"] = user_id
                 mock_notify()._send_message.return_value = mock.Mock()
-                token = token_decoder.generate_email_token(test_email)
+                token_dict = {"email": test_email, "user_id": user_id}
+                token = token_decoder.generate_email_token(json.dumps(token_dict))
                 mock_request.post(url_uaa_token, json={"access_token": self.access_token}, status_code=201)
                 mock_request.get(url_uaa_user_by_id, json=uaa_user_by_id_json, status_code=200)
                 mock_request.put(url_uaa_user_by_id, status_code=403)
