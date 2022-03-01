@@ -1184,11 +1184,11 @@
         },
         "testfixtures": {
             "hashes": [
-                "sha256:2600100ae96ffd082334b378e355550fef8b4a529a6fa4c34f47130905c7426d",
-                "sha256:6ddb7f56a123e1a9339f130a200359092bd0a6455e31838d6c477e8729bb7763"
+                "sha256:02dae883f567f5b70fd3ad3c9eefb95912e78ac90be6c7444b5e2f46bf572c84",
+                "sha256:7de200e24f50a4a5d6da7019fb1197aaf5abd475efb2ec2422fdcf2f2eb98c1d"
             ],
             "index": "pypi",
-            "version": "==6.18.3"
+            "version": "==6.18.5"
         },
         "tomli": {
             "hashes": [

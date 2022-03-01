@@ -12,9 +12,6 @@ from response_operations_ui import create_app
 from response_operations_ui.common import token_decoder
 from response_operations_ui.exceptions.exceptions import NotifyError
 
-# from flask_wtf.csrf import CSRFProtect, generate_csrf
-
-
 project_root = os.path.dirname(os.path.dirname(__file__))
 with open(f"{project_root}/test_data/uaa/user_by_id.json") as json_data:
     uaa_user_by_id_json = json.load(json_data)
@@ -41,12 +38,6 @@ class TestAccounts(unittest.TestCase):
         self.app = create_app("TestingConfig")
         self.access_token = jwt.encode(payload, self.app.config["UAA_PRIVATE_KEY"], algorithm="RS256")
         self.client = self.app.test_client()
-        # with self.app.app_context():
-        #     with self.app.test_request_context("/"):
-        #         self.csrf_token = generate_csrf()
-        #     CSRFProtect(self.app)
-        # self.app.config["WTF_CSRF_ENABLED"] = True
-        # self.app.config["WTF_CSRF_METHODS"] = []
 
     def test_request_account_page(self):
         response = self.client.get("/account/request-new-account")
