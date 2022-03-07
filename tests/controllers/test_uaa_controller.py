@@ -47,4 +47,4 @@ class TestUAAController(unittest.TestCase):
             rsps.add(rsps.GET, url_uaa_get_user_groups, status=400)
             with self.app.app_context():
                 with self.assertRaises(HTTPError):
-                    uaa_controller.get_user_group_list()
+                    self.assertIsNone(uaa_controller.get_user_group_list())
