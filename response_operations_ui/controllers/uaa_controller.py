@@ -266,7 +266,7 @@ def update_user_password(user, old_password, new_password):
     return errors
 
 
-def get_user_group_list():
+def get_user_group_list() -> dict | None:
     """
     Gets a list of all groups in UAA, for the purpose of caching permissions
     :return groups: The groups available in UAA
