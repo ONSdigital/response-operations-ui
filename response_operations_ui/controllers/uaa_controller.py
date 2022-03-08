@@ -266,6 +266,22 @@ def update_user_password(user, old_password, new_password):
     return errors
 
 
+def get_user_group_by_name(group_name: str) -> str | None:
+    """
+    Gets the UUID of a group based on its name for permissions
+    If the groups are not cached in app config, it makes a call to do this
+    :param group_name: The name of the group to look up
+    :return group_uuid: The UUID of the group with that name, or None if not found
+    """
+    if "PERMISSION_GROUPS" not in app.config:
+        app.config["PERMISSION_GROUPS"] = get_user_group_list()
+
+    if app.config["PERMISSION_GROUPS"] is None or group_name not in app.config["PERMISSION_GROUPS"]:
+        return
+
+    return app.config["PERMISSION_GROUPS"][group_name]
+
+
 def get_user_group_list() -> dict | None:
     """
     Gets a list of all groups in UAA, for the purpose of caching permissions
@@ -284,7 +300,7 @@ def get_user_group_list() -> dict | None:
         response.raise_for_status()
         groups = {}
         for group in response.json()["resources"]:
-            groups[group["id"]] = group["displayName"]
+            group["displayName"] = groups[group["id"]]
         return groups
     except HTTPError:
         if response.status_code == 400:

@@ -37,8 +37,8 @@ class TestUAAController(unittest.TestCase):
             )
             with self.app.app_context():
                 groups = uaa_controller.get_user_group_list()
-                self.assertIn("7bcaf538-e7fd-4881-9870-71581ce234d2", groups.keys())
-                self.assertEqual(groups["7bcaf538-e7fd-4881-9870-71581ce234d2"], "Cooler Group Name for Update")
+                self.assertIn("Cooler Group Name for Update", groups.keys())
+                self.assertEqual(groups["Cooler Group Name for Update"], "7bcaf538-e7fd-4881-9870-71581ce234d2")
 
     def test_get_user_group_list_failure(self):
         with responses.RequestsMock() as rsps:
@@ -46,3 +46,16 @@ class TestUAAController(unittest.TestCase):
             rsps.add(rsps.GET, url_uaa_get_user_groups, status=400)
             with self.app.app_context():
                 self.assertIsNone(uaa_controller.get_user_group_list())
+
+    def test_get_user_group_by_name_success(self):
+        self.app.config["PERMISSION_GROUPS"] = {"Cooler Group Name for Update": "7bcaf538-e7fd-4881-9870-71581ce234d2"}
+        with self.app.app_context():
+            self.assertEqual(
+                uaa_controller.get_user_group_by_name("Cooler Group Name for Update"),
+                "7bcaf538-e7fd-4881-9870-71581ce234d2",
+            )
+
+    def test_get_user_group_by_name_missing(self):
+        self.app.config["PERMISSION_GROUPS"] = {"Cooler Group Name for Update": "7bcaf538-e7fd-4881-9870-71581ce234d2"}
+        with self.app.app_context():
+            self.assertIsNone(uaa_controller.get_user_group_by_name("Fake Group Name"))
