@@ -1,7 +1,6 @@
 import json
 import os
 import unittest
-from urllib.error import HTTPError
 
 import jwt
 import responses
