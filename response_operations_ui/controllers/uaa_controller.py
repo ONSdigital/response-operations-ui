@@ -300,7 +300,7 @@ def get_user_group_list() -> dict | None:
         response.raise_for_status()
         groups = {}
         for group in response.json()["resources"]:
-            group["displayName"] = groups[group["id"]]
+            groups[group["displayName"]] = group["id"]
         return groups
     except HTTPError:
         if response.status_code == 400:
