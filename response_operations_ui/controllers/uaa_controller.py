@@ -276,7 +276,13 @@ def user_has_permission(permission) -> bool:
     # Feature flagged
     is_role_based_access_enabled = app.config["IS_ROLE_BASED_ACCESS_ENABLED"]
     if not is_role_based_access_enabled:
-        default_permissions = ["surveys.view", "surveys.edit", ""]
+        default_permissions = [
+            "surveys.edit",
+            "reportingunits.edit",
+            "respondents.edit",
+            "respondents.delete",
+            "messages.edit",
+        ]
         return permission in default_permissions
 
     if session["user_id"] is None:

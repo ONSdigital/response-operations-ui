@@ -18,7 +18,7 @@ class TestUAAController(unittest.TestCase):
         self.app = create_app("TestingConfig")
         self.client = self.app.test_client()
 
-    @patch("uaa_controller.get_user_by_id")
+    @patch("get_user_by_id")
     def test_user_has_permission(self, mock_get_user):
         mock_get_user.return_value = uaa_user_by_id_json
         with self.client.session_transaction() as session:
