@@ -4,6 +4,7 @@ from json import JSONDecodeError, dumps
 import requests
 from flask import abort
 from flask import current_app as app
+from flask import session
 from itsdangerous import URLSafeSerializer
 from requests import HTTPError
 from structlog import wrap_logger
@@ -264,3 +265,22 @@ def update_user_password(user, old_password, new_password):
             )
 
     return errors
+
+
+def user_has_permission(permission) -> bool:
+    """
+    Checks to see if the user in the session has the specified permission
+    :param permission: The permission to check
+    :return has_permission: Whether the user has the permission or not
+    """
+    # Feature flagged
+    is_role_based_access_enabled = app.config["IS_ROLE_BASED_ACCESS_ENABLED"]
+    if not is_role_based_access_enabled:
+        default_permissions = ["surveys.view", "surveys.edit", ""]
+        return permission in default_permissions
+
+    if session["user_id"] is None:
+        return False
+
+    user = get_user_by_id(session["user_id"])
+    return any(g["display"] == permission for g in user.get("groups"))
