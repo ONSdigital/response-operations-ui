@@ -23,5 +23,6 @@ class TestUAAController(unittest.TestCase):
         mock_get_user.return_value = uaa_user_by_id_json
         with self.client.session_transaction() as session:
             session["user_id"] = user_id
-        self.assertTrue(uaa_controller.user_has_permission("oauth.approvals"))
-        self.assertFalse(uaa_controller.user_has_permission("oauth.disapprovals"))
+        with self.app.app_context():
+            self.assertTrue(uaa_controller.user_has_permission("oauth.approvals"))
+            self.assertFalse(uaa_controller.user_has_permission("oauth.disapprovals"))
