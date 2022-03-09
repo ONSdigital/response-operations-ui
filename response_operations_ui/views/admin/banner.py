@@ -1,6 +1,6 @@
 import logging
 
-from flask import Blueprint, flash, redirect, render_template, request, session, url_for
+from flask import flash, redirect, render_template, request, session, url_for
 from flask_login import current_user, login_required
 from structlog import wrap_logger
 
@@ -20,10 +20,9 @@ from response_operations_ui.forms import (
     BannerManageForm,
     BannerPublishForm,
 )
+from response_operations_ui.views.admin import admin_bp
 
 logger = wrap_logger(logging.getLogger(__name__))
-
-admin_bp = Blueprint("admin_bp", __name__, static_folder="static", template_folder="templates")
 
 
 @admin_bp.route("/banner", methods=["GET"])

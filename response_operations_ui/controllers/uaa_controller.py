@@ -264,3 +264,42 @@ def update_user_password(user, old_password, new_password):
             )
 
     return errors
+
+
+def get_users_list(
+    start_index: int, max_count: int, query: str = None, sort_by: str = "email", sort_order: str = "ascending"
+):
+    """
+    Updates the user password in uaa, using the user's id
+    :param query - UAA user object.
+    :param sort_by
+    :param sort_order
+    :param start_index
+    :param max_count
+    :return errors: The errors returned from uaa as a dictionary
+    """
+    access_token = login_admin()
+    headers = generate_headers(access_token)
+    param = {"filter": query, "sortBy": sort_by, "count": max_count, "startIndex": start_index, "sortOrder": sort_order}
+    logger.info("Attempting to fetch user records")
+    url = f"{app.config['UAA_SERVICE_URL']}/Users"
+    response = requests.get(url, params=param, headers=headers)
+    try:
+        response.raise_for_status()
+        return response.json()
+    except HTTPError:
+        if response.status_code == 403:
+            errors = {"status_code": response.status_code, "message": "You are not authorised to view this page."}
+        elif response.status_code == 400:
+            errors = {"status_code": response.status_code, "message": "Invalid request."}
+        elif response.status_code == 401:
+            errors = {"status_code": response.status_code, "message": "You don't have permission to view this page."}
+        else:
+            errors = {"status_code": response.status_code, "message": response.reason}
+            logger.error(
+                "Received an error when loading user data",
+                status_code=response.status_code,
+                reason=response.reason,
+            )
+
+    return errors

@@ -79,6 +79,24 @@ class SecureMessageRuFilterForm(FlaskForm):
     submit = SubmitField("Filter")
 
 
+class UserSearchForm(FlaskForm):
+    def strip_whitespace(s):
+        if isinstance(s, str):
+            s = s.strip()
+        return s
+
+    user_search = StringField(
+        "user_search",
+        validators=[
+            InputRequired(message="Please enter a valid email for search"),
+            Email(message="The email address must be in the correct format"),
+            Length(max=254, message="Your email search is not valid"),
+        ],
+        filters=[strip_whitespace],
+    )
+    submit = SubmitField("Filter")
+
+
 class RespondentSearchForm(FlaskForm):
     first_name = StringField("first_name")
     last_name = StringField("last_name")
