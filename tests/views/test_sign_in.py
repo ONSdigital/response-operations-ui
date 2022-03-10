@@ -30,6 +30,7 @@ class TestSignIn(unittest.TestCase):
 
     def test_sign_in_page(self):
         response = self.client.get("/sign-in")
+        self.app.config["IS_ROLE_BASED_ACCESS_ENABLED"] = False
         self.assertIn(b"Username", response.data)
         self.assertIn(b"Password", response.data)
         self.assertEqual(response.status_code, 200)
