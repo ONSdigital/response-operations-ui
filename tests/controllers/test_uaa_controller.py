@@ -35,3 +35,8 @@ class TestUAAController(unittest.TestCase):
         mock_request.get(url_uaa_user_by_id, json=uaa_user_by_id_json, status_code=200)
         with self.app.test_request_context():
             self.assertFalse(uaa_controller.user_has_permission("oauth.disapprovals"), user_id)
+
+    def test_user_has_permission_rba_disabled(self):
+        self.app.config["IS_ROLE_BASED_ACCESS_ENABLED"] = False
+        with self.app.test_request_context():
+            self.assertTrue(uaa_controller.user_has_permission("surveys.edit"), user_id)
