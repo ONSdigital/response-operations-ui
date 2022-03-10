@@ -29,7 +29,7 @@ class TestUAAController(unittest.TestCase):
         with self.client.session_transaction() as session:
             session["user_id"] = user_id
         mock_request.get(url_uaa_user_by_id, json=uaa_user_by_id_json, status_code=200)
-        with self.app.app_context():
+        with self.app.test_request_context():
             self.assertTrue(uaa_controller.user_has_permission("oauth.approvals"))
 
     @requests_mock.mock()
@@ -37,5 +37,5 @@ class TestUAAController(unittest.TestCase):
         with self.client.session_transaction() as session:
             session["user_id"] = user_id
         mock_request.get(url_uaa_user_by_id, json=uaa_user_by_id_json, status_code=200)
-        with self.app.app_context():
+        with self.app.test_request_context():
             self.assertFalse(uaa_controller.user_has_permission("oauth.disapprovals"))
