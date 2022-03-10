@@ -1,8 +1,11 @@
 import json
 import os
 import unittest
-from unittest.mock import patch
 
+import jwt
+import requests_mock
+
+from config import TestingConfig
 from response_operations_ui import create_app
 from response_operations_ui.controllers import uaa_controller
 
@@ -11,18 +14,28 @@ with open(f"{project_root}/test_data/uaa/user_by_id.json") as json_data:
     uaa_user_by_id_json = json.load(json_data)
 
 user_id = "fe2dc842-b3b3-4647-8317-858dab82ab94"
+url_uaa_user_by_id = f"{TestingConfig.UAA_SERVICE_URL}/Users/{user_id}"
 
 
 class TestUAAController(unittest.TestCase):
     def setUp(self):
+        payload = {"user_id": user_id, "aud": "response_operations"}
         self.app = create_app("TestingConfig")
+        self.access_token = jwt.encode(payload, self.app.config["UAA_PRIVATE_KEY"], algorithm="RS256")
         self.client = self.app.test_client()
 
-    @patch("response_operations_ui.controllers.uaa_controller.get_user_by_id")
-    def test_user_has_permission(self, mock_get_user):
-        mock_get_user.return_value = uaa_user_by_id_json
+    @requests_mock.mock()
+    def test_user_has_permission_true(self, mock_request):
         with self.client.session_transaction() as session:
             session["user_id"] = user_id
+        mock_request.get(url_uaa_user_by_id, json=uaa_user_by_id_json, status_code=200)
         with self.app.app_context():
             self.assertTrue(uaa_controller.user_has_permission("oauth.approvals"))
+
+    @requests_mock.mock()
+    def test_user_has_permission_true(self, mock_request):
+        with self.client.session_transaction() as session:
+            session["user_id"] = user_id
+        mock_request.get(url_uaa_user_by_id, json=uaa_user_by_id_json, status_code=200)
+        with self.app.app_context():
             self.assertFalse(uaa_controller.user_has_permission("oauth.disapprovals"))
