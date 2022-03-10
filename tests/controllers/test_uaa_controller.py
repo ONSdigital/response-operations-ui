@@ -26,16 +26,12 @@ class TestUAAController(unittest.TestCase):
 
     @requests_mock.mock()
     def test_user_has_permission_true(self, mock_request):
-        with self.client.session_transaction() as session:
-            session["user_id"] = user_id
         mock_request.get(url_uaa_user_by_id, json=uaa_user_by_id_json, status_code=200)
         with self.app.test_request_context():
-            self.assertTrue(uaa_controller.user_has_permission("oauth.approvals"))
+            self.assertTrue(uaa_controller.user_has_permission("oauth.approvals"), user_id)
 
     @requests_mock.mock()
     def test_user_has_permission_false(self, mock_request):
-        with self.client.session_transaction() as session:
-            session["user_id"] = user_id
         mock_request.get(url_uaa_user_by_id, json=uaa_user_by_id_json, status_code=200)
         with self.app.test_request_context():
-            self.assertFalse(uaa_controller.user_has_permission("oauth.disapprovals"))
+            self.assertFalse(uaa_controller.user_has_permission("oauth.disapprovals"), user_id)

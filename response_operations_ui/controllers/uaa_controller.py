@@ -267,10 +267,11 @@ def update_user_password(user, old_password, new_password):
     return errors
 
 
-def user_has_permission(permission) -> bool:
+def user_has_permission(permission, user_id=None) -> bool:
     """
-    Checks to see if the user in the session has the specified permission
+    Checks to see if the user provided or in the session has the specified permission
     :param permission: The permission to check
+    :param user_id: An optional user ID to check for
     :return has_permission: Whether the user has the permission or not
     """
     # Feature flagged
@@ -285,8 +286,10 @@ def user_has_permission(permission) -> bool:
         ]
         return permission in default_permissions
 
-    if session["user_id"] is None:
-        return False
+    if user_id is None:
+        if session is None or "user_id" not in session:
+            return False
+        user_id = session["user_id"]
 
-    user = get_user_by_id(session["user_id"])
+    user = get_user_by_id(user_id)
     return any(g["display"] == permission for g in user.get("groups"))
