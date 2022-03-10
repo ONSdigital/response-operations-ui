@@ -21,6 +21,7 @@ lint-check:
 
 test: lint-check
 	pipenv run python run_tests.py
+	rm -rf ./flask_session
 
 start:
 	pipenv run python run.py

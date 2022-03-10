@@ -1,3 +1,5 @@
+import json
+import os
 import unittest
 
 import jwt
@@ -8,6 +10,12 @@ from response_operations_ui import create_app
 
 url_sign_in_data = f"{TestingConfig.UAA_SERVICE_URL}/oauth/token"
 url_surveys = f"{TestingConfig.SURVEY_URL}/surveys/surveytype/Business"
+user_id = "fe2dc842-b3b3-4647-8317-858dab82ab94"
+url_uaa_user_by_id = f"{TestingConfig.UAA_SERVICE_URL}/Users/{user_id}"
+
+project_root = os.path.dirname(os.path.dirname(__file__))
+with open(f"{project_root}/test_data/uaa/user_by_id.json") as json_data:
+    uaa_user_by_id_json = json.load(json_data)
 
 surveys_list_json = [
     {
@@ -22,7 +30,7 @@ surveys_list_json = [
 
 class TestSignIn(unittest.TestCase):
     def setUp(self):
-        payload = {"user_id": "test-id", "aud": "response_operations"}
+        payload = {"user_id": "fe2dc842-b3b3-4647-8317-858dab82ab94", "aud": "response_operations"}
 
         self.app = create_app("TestingConfig")
         self.access_token = jwt.encode(payload, self.app.config["UAA_PRIVATE_KEY"], algorithm="RS256")
@@ -139,6 +147,7 @@ class TestSignIn(unittest.TestCase):
             session["next"] = "/surveys"
         mock_request.post(url_sign_in_data, json={"access_token": self.access_token}, status_code=201)
         mock_request.get(url_surveys, json=surveys_list_json, status_code=200)
+        mock_request.get(url_uaa_user_by_id, json=uaa_user_by_id_json, status_code=200)
 
         response = self.client.post("/sign-in", follow_redirects=True, data={"username": "user", "password": "pass"})
 
