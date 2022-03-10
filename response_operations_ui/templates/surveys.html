@@ -29,8 +29,8 @@ onsPanel({
 <h1 name="page-surveys-title">Surveys</h1>
 <div class="u-mb-l">
   <p class="field">
-    {{% if hasPermission("surveys.edit") %}}<a href="{{url_for('surveys_bp.create_survey')}}" id="create-new-survey"
-      name="create-new-survey">Create new survey</a>{{% endif %}}
+    {% if hasPermission("surveys.edit") %}<a href="{{url_for('surveys_bp.create_survey')}}" id="create-new-survey"
+      name="create-new-survey">Create new survey</a>{% endif %}
   </p>
 
   {% set surveyTableData = {
