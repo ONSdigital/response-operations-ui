@@ -292,4 +292,4 @@ def user_has_permission(permission, user_id=None) -> bool:
         user_id = session["user_id"]
 
     user = get_user_by_id(user_id)
-    return any(g["display"] == permission for g in user.get("groups"))
+    return any(permission in g["display"] for g in user.get("groups"))
