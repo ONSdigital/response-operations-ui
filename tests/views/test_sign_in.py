@@ -29,15 +29,17 @@ class TestSignIn(unittest.TestCase):
         self.client = self.app.test_client()
 
     def test_sign_in_page(self):
-        response = self.client.get("/sign-in")
-        self.assertIn(b"Username", response.data)
-        self.assertIn(b"Password", response.data)
-        self.assertEqual(response.status_code, 200)
-        self.assertNotIn(b"Sign out", response.data)
-        self.assertNotIn(b"My account", response.data)
-        self.assertNotIn(b"Home", response.data)
-        self.assertNotIn(b"Reporting units", response.data)
-        self.assertIn(b"Create an account", response.data)
+        self.app.config["IS_ROLE_BASED_ACCESS_ENABLED"] = False
+        with self.app.app_context():
+            response = self.client.get("/sign-in")
+            self.assertIn(b"Username", response.data)
+            self.assertIn(b"Password", response.data)
+            self.assertEqual(response.status_code, 200)
+            self.assertNotIn(b"Sign out", response.data)
+            self.assertNotIn(b"My account", response.data)
+            self.assertNotIn(b"Home", response.data)
+            self.assertNotIn(b"Reporting units", response.data)
+            self.assertIn(b"Create an account", response.data)
 
     def test_sign_in_page_with_role_based_access(self):
         self.app.config["IS_ROLE_BASED_ACCESS_ENABLED"] = True

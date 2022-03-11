@@ -15,7 +15,9 @@ class Config(object):
     LOGGING_LEVEL = os.getenv("LOGGING_LEVEL", "INFO")
     RESPONSE_OPERATIONS_UI_SECRET = os.getenv("RESPONSE_OPERATIONS_UI_SECRET", "secret")
     SESSION_TYPE = "redis"
-    PERMANENT_SESSION_LIFETIME = os.getenv("PERMANENT_SESSION_LIFETIME", 43200)
+    # WTF_CSRF_TIME_LIMIT this wasn't set causing inconsistenices with sessions
+    PERMANENT_SESSION_LIFETIME = int(os.getenv("PERMANENT_SESSION_LIFETIME", 43200))
+    WTF_CSRF_TIME_LIMIT = int(os.getenv("WTF_CSRF_TIME_LIMIT", PERMANENT_SESSION_LIFETIME))
     REDIS_SERVICE = os.getenv("REDIS_SERVICE")
     REDIS_HOST = os.getenv("REDIS_HOST")
     REDIS_PORT = os.getenv("REDIS_PORT")
@@ -177,3 +179,4 @@ Z5VVFymXN2n+A6UeWAnuO8/E1inhk99dBzKEGdw=
     SECURITY_USER_NAME = "admin"
     SECURITY_USER_PASSWORD = "secret"
     CREATE_ACCOUNT_ADMIN_PASSWORD = "secret"
+    IS_ROLE_BASED_ACCESS_ENABLED = True
