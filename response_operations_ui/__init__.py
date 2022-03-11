@@ -13,6 +13,7 @@ from structlog import wrap_logger
 
 from config import Config
 from response_operations_ui.common.jinja_filters import filter_blueprint
+from response_operations_ui.controllers.uaa_controller import user_has_permission
 from response_operations_ui.logger_config import logger_initial_config
 from response_operations_ui.user import User
 from response_operations_ui.views import setup_blueprints
@@ -98,6 +99,7 @@ def create_app(config_name=None):
     assets.url = app.static_url_path
 
     app.jinja_env.add_extension("jinja2.ext.do")
+    app.jinja_env.globals["hasPermission"] = user_has_permission
 
     app.register_blueprint(filter_blueprint)
 
