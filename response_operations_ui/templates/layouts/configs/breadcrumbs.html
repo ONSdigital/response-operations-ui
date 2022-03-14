@@ -1,26 +1,22 @@
-{% from "components/breadcrumb/_macro.njk" import onsBreadcrumb %}
+{% from "components/breadcrumbs/_macro.njk" import onsBreadcrumbs %}
 
 {% set breadcrumbsData = [] %}
 {% if breadcrumbs|length > 1 %}
-  {% for breadcrumb in breadcrumbs[:-2] %}
+    {% for breadcrumb in breadcrumbs[:-2] %}
+        {% do breadcrumbsData.append(breadcrumb) %}
+    {% endfor %}
 
-    {% do breadcrumbsData.append(breadcrumb) %}
-  {% endfor %}
-
-  {% do breadcrumbsData.append(
-    { 
-      "text": breadcrumbs[-2].text,
-      "url": breadcrumbs[-2].url
-    }
-  ) %}
-  {{ 
-
-    onsBreadcrumb({
-        "ariaLabel": "Breadcrumbs",
-        "id": "breadcrumbs",
-        "itemsList": breadcrumbsData
-    })
-  }}
+    {% do breadcrumbsData.append(
+        {
+            "text": breadcrumbs[-2].text,
+            "url": breadcrumbs[-2].url
+        }
+    ) %}
+    {{
+        onsBreadcrumbs({
+            "ariaLabel": "Breadcrumbs",
+            "id": "breadcrumbs",
+            "itemsList": breadcrumbsData
+        })
+    }}
 {% endif %}
-
-

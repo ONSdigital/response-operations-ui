@@ -12,8 +12,8 @@
     {% if loop.last %}
         {% if show_mark_unread == True %}
         {% set unreadLink = url_for('messages_bp.mark_message_unread',
-               message_id=message.message_id, from=message.from, to=message.to, page=page, 
-                       conversation_tab=conversation_tab, ru_ref_filter=ru_ref_filter, business_id_filter=business_id_filter) %}
+            message_id=message.message_id, from=message.from, to=message.to, page=page, 
+            conversation_tab=conversation_tab, ru_ref_filter=ru_ref_filter, business_id_filter=business_id_filter) %}
         {% set unreadLinkId = 'sm-mark-as-unread' %}
         {% set unreadLinkText = 'Mark as unread' %}
         {% endif %}
