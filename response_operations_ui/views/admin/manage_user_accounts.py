@@ -5,7 +5,10 @@ from flask_login import login_required
 from flask_paginate import Pagination
 from structlog import wrap_logger
 
-from response_operations_ui.controllers.uaa_controller import get_users_list
+from response_operations_ui.controllers.uaa_controller import (
+    get_users_list,
+    user_has_permission,
+)
 from response_operations_ui.forms import UserSearchForm
 from response_operations_ui.views.admin import admin_bp
 
@@ -31,6 +34,9 @@ def manage_user_accounts():
     #     print(random_choice)
     #     num_of_times += 1
     #     create_user_account(email, password, user_name, random.choice(first_names), random.choice(last_names))
+    if not user_has_permission("users.admin"):
+        logger.exception("Manage User Account request requested but unauthorised. ")
+        raise
     page = request.values.get("page", "1")
     user_with_email = request.values.get("user_with_email", None)
     limit = 20

@@ -171,12 +171,6 @@
             "thread_id": "fb0e79bd-e132-4f4f-a7fd-5e8c6b41b9af"
         },
         {
-            "@msg_from": {
-                "emailAddress": "ons@ons.fake",
-                "firstName": "ONS",
-                "id": "688da990-8e33-471f-ae26-e253df4bb759",
-                "lastName": "User"
-            },
             "@business_details": null,
             "_links": "",
             "body": "this is another message",
