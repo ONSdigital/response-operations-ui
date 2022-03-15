@@ -52,6 +52,7 @@ export default class AutosuggestUI {
     // Settings
     this.autosuggestData = autosuggestData || context.getAttribute('data-autosuggest-data');
     this.ariaYouHaveSelected = ariaYouHaveSelected || context.getAttribute('data-aria-you-have-selected');
+    this.minChars = minChars || context.getAttribute('data-min-chars') || 3;
     this.ariaMinChars = ariaMinChars || context.getAttribute('data-aria-min-chars');
     this.ariaOneResult = ariaOneResult || context.getAttribute('data-aria-one-result');
     this.ariaNResults = ariaNResults || context.getAttribute('data-aria-n-results');
@@ -66,7 +67,6 @@ export default class AutosuggestUI {
     this.typeMore = typeMore || context.getAttribute('data-type-more');
     this.allowMultiple = context.getAttribute('data-allow-multiple') || false;
     this.listboxId = this.listbox.getAttribute('id');
-    this.minChars = minChars || 3;
     this.resultLimit = resultLimit || 10;
     this.suggestOnBoot = suggestOnBoot;
     this.lang = lang || 'en';
@@ -185,11 +185,11 @@ export default class AutosuggestUI {
     this.ctrlKey = false;
   }
 
-  handleChange(alternative = false) {
-    if ((!this.blurring && this.input.value.trim()) || alternative === true) {
+  handleChange(groupResults = false) {
+    if ((!this.blurring && this.input.value.trim()) || groupResults === true) {
       this.settingResult = false;
-      if (alternative === true) {
-        this.getSuggestions(false, alternative);
+      if (groupResults === true) {
+        this.getSuggestions(false, groupResults);
       } else {
         this.getSuggestions();
       }
@@ -262,7 +262,7 @@ export default class AutosuggestUI {
     }
   }
 
-  getSuggestions(force, alternative) {
+  getSuggestions(force, groupResults) {
     if (!this.settingResult) {
       if (this.allowMultiple === 'true' && this.allSelections.length) {
         const newQuery = this.input.value.split(', ').find(item => !this.allSelections.includes(item));
@@ -278,7 +278,7 @@ export default class AutosuggestUI {
         this.unsetResults();
         this.checkCharCount();
         if (this.sanitisedQuery.length >= this.minChars) {
-          this.fetchSuggestions(this.sanitisedQuery, this.data, alternative)
+          this.fetchSuggestions(this.sanitisedQuery, this.data, groupResults)
             .then(this.handleResults.bind(this))
             .catch(error => {
               if (error.name !== 'AbortError') {
