@@ -14,7 +14,7 @@
             onsPanel({
                 "type": "success",
                 "icon": "check",
-                "classes": "u-mb-s",
+                "classes": "ons-u-mb-s",
                 "id": "success-panel"
             })
         %}
@@ -32,7 +32,7 @@
                 {% call
                     onsPanel({
                         "type": "error",
-                        "classes": "u-mb-s",
+                        "classes": "ons-u-mb-s",
                         "title":  errorTitle
                     })
                 %}
@@ -43,7 +43,7 @@
                                 {
                                     "text": message,
                                     "url": "#input_error",
-                                    "classes": "js-inpagelink"
+                                    "classes": "ons-js-inpagelink"
                                 }
                             ]
                         })
@@ -60,7 +60,7 @@
         {% endif %}
         {%- call onsFieldset({
             "legend": "Enter respondent information to search",
-            "legendClasses": "u-vh",
+            "legendClasses": "ons-u-vh",
             "error": errorOption
         }) -%}
             {{
@@ -98,7 +98,7 @@
             onsButton({
                 "text": "Search",
                 "id": "btn-search-respondent",
-                "classes": "u-mt-m",
+                "classes": "ons-u-mt-m",
                 "submitType": "timer"
             })
         }}

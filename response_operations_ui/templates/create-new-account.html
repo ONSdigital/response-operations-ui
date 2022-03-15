@@ -9,8 +9,8 @@
 {% set page_title = 'Create New Account' %}
 
 {% block main %}
-    <div class="grid">
-        <div class="grid__col col-8@m u-mt-m">
+    <div class="ons-grid">
+        <div class="ons-grid__col ons-col8@m ons-u-mt-m">
             {% if errorType %}
                 {% set error_count = data['error'] | length %}
                 {% set plural_suffix = 's' if error_count > 1 else '' %}
@@ -33,7 +33,7 @@
                 {% call
                     onsPanel({
                         "type": "error",
-                        "classes": "u-mb-s",
+                        "classes": "ons-u-mb-s",
                         "title": header_text
                     })
                 %}
@@ -45,13 +45,13 @@
                                 "text": error,
                                 "index": id,
                                 "url": "#username",
-                                "classes": "js-inpagelink"
+                                "classes": "ons-js-inpagelink"
                             }
                         ) %}
                     {% endfor %}
                     {{
                         onsList({
-                            "classes": "list--bare",
+                            "classes": "ons-list--bare",
                             "itemsList": errorData
                         })
                     }}
@@ -65,11 +65,11 @@
                 role="form">
                 {{ form.csrf_token }}
 
-                <h1 class="u-mt-l">Create your account</h1>
+                <h1 class="ons-u-mt-l">Create your account</h1>
 
                 {%- call onsFieldset({
                     "legend": "Complete the form to create your account",
-                    "legendClasses": "u-vh"
+                    "legendClasses": "ons-u-vh"
                 }) -%}
                     {% if errorType.user_name %}
                         {% set usernameError = { "text": errorType['user_name'][0] } %}
@@ -124,7 +124,7 @@
                             "error": lastNameError
                         })
                     }}
-                    <p class="u-mt-l">Your password must have:</p>
+                    <p class="ons-u-mt-l">Your password must have:</p>
                     {{
                         onsList({
                             "itemsList": [
@@ -179,7 +179,7 @@
 
                 {{
                     onsButton({
-                        "classes": "u-mb-s u-mt-s",
+                        "classes": "ons-u-mb-s ons-u-mt-s",
                         "text": "Confirm",
                         "id": "confirm_password_button"
                     })

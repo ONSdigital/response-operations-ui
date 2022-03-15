@@ -7,15 +7,15 @@
 {% set hide_breadcrumbs = true %}
 
 {% block main %}
-    <div class="grid">
-        <div class="grid__col col-12@m">
+    <div class="ons-grid">
+        <div class="ons-grid__col ons-col12@m">
             {%- with errors = get_flashed_messages(category_filter=["error"]) -%}
                 {%- if errors -%}
                     {% call
                         onsPanel({
                             "type":"error",
                             "title": "This page has 1 error",
-                            "classes": "u-mb-s",
+                            "classes": "ons-u-mb-s",
                             "id": "save-error"
                         })
                     %}
@@ -26,13 +26,13 @@
                                     "text": message,
                                     "index": true,
                                     "url": "#reporting-units",
-                                    "classes": "js-inpagelink"
+                                    "classes": "ons-js-inpagelink"
                                 }
                             ) %}
                         {% endfor %}
                         {{
                             onsList({
-                                "classes": "list--bare",
+                                "classes": "ons-list--bare",
                                 "itemsList": errorData
                             })
                         }}
@@ -40,7 +40,7 @@
                 {% endif %}
             {%- endwith -%}
         </div>
-        <div class="grid__col col-8@m">
+        <div class="ons-grid__col ons-col8@m">
             <h1>Assign a reporting unit to the thread</h1>
             {% if reporting_units %}
                 <form method="post">
@@ -67,8 +67,8 @@
                             "radios": radios
                         })
                     }}
-                    <div class="grid grid--flex grid--gutterless grid--vertical-center grid--no-wrap@s u-mt-m u-mb-m">
-                        <div class="grid__col">
+                    <div class="ons-grid ons-grid--flex ons-grid--gutterless ons-grid--vertical-center ons-grid--no-wrap@s ons-u-mt-m ons-u-mb-m">
+                        <div class="ons-grid__col">
                             {{
                                 onsButton({
                                     "text": "Continue",
@@ -77,14 +77,14 @@
                                 })
                             }}
                         </div>
-                        <div class="grid__col u-ml-m">
+                        <div class="ons-grid__col ons-u-ml-m">
                             <a href=" {{ url_for('messages_bp.view_conversation', thread_id=thread_id) }}">Cancel</a>
                         </div>
                     </div>
                 </form>
             {% else %}
                 <p>Reporting unit list failed to load. Please try again.</p>
-                <div class="grid__col u-ml-m">
+                <div class="ons-grid__col ons-u-ml-m">
                     <a href=" {{ url_for('messages_bp.view_conversation', thread_id=thread_id) }}">Cancel</a>
                 </div>
             {% endif %}

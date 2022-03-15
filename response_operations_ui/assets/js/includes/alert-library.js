@@ -13,11 +13,11 @@
     privateFunctions._getPanelTemplateHtml = function(title, message, panelClass) {
         let markUp = '';
 
-        markUp += '<div class="u-mt-l panel panel--' + (panelClass || 'error') + '">';
-        markUp += '    <div class="panel__header">';
-        markUp += '        <div class="u-fs-r--b">' + title + '</div>';
+        markUp += '<div class="ons-u-mt-l ons-panel ons-panel--' + (panelClass || 'error') + '">';
+        markUp += '    <div class="ons-panel__header">';
+        markUp += '        <div class="ons-u-fs-r--b">' + title + '</div>';
         markUp += '    </div>';
-        markUp += '    <div class="panel__body">';
+        markUp += '    <div class="ons-panel__body">';
         markUp += '        <div>' + message + '</div>';
         markUp += '    </div>';
         markUp += '</div>';
@@ -28,8 +28,8 @@
     privateFunctions._getSimplePanelTemplateHtml = function(message, panelClass) {
         let markUp = '';
 
-        markUp += '<div class="u-mt-l panel panel--simple panel--' + (panelClass || 'error') + '">';
-        markUp += '    <div class="panel__body">';
+        markUp += '<div class="ons-u-mt-l ons-panel ons-panel--simple ons-panel--' + (panelClass || 'error') + '">';
+        markUp += '    <div class="ons-panel__body">';
         markUp += '        <div>' + message + '</div>';
         markUp += '    </div>';
         markUp += '</div>';

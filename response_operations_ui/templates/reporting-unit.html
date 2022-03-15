@@ -6,7 +6,7 @@
 {% block main %}
     {% include 'partials/flashed-messages.html' %}
 
-    <h1 id="RU_NAME" class="u-fs-xl">{{ ru.name }}</h1>
+    <h1 id="RU_NAME" class="ons-u-fs-xl">{{ ru.name }}</h1>
 
     <dl id="RU_DETAILS" class="item-headlines">
         <dt class="item-headlines-term">
@@ -25,7 +25,7 @@
         {% endif %}
     </dl>
 
-    <div class="grid__col col-8@m u-pl-no">
+    <div class="ons-grid__col ons-col8@m ons-u-pl-no">
         {% include 'partials/reporting-unit-tabs.html' %}
 
         {% set surveyTableData = {
@@ -48,11 +48,11 @@
 
         {% for survey in surveys %}
             {% if survey[1].caseStatus == 'Not started' or survey[1].caseStatus == 'No longer required' %}
-                {% set status_class = 'status--dead' %}
+                {% set status_class = 'ons-status--dead' %}
             {% elif survey[1].caseStatus == 'In progress' or survey[1].caseStatus == 'Completed' or survey[1].caseStatus == 'Completed by phone' %}
-                {% set status_class = 'status--success' %}
+                {% set status_class = 'ons-status--success' %}
             {% else %}
-                {% set status_class = 'status--error' %}
+                {% set status_class = 'ons-status--error' %}
             {% endif %}
             {% do surveyTableDataRows.append( 
                 {
@@ -68,7 +68,7 @@
                             "name": "tbl-surveys-period"
                         },
                         {
-                            "value": '<span class="status ' + status_class + '">' + survey[1].caseStatus + '</span>',
+                            "value": '<span class="ons-status ' + status_class + '">' + survey[1].caseStatus + '</span>',
                             "data": "Status",
                             "name": "tbl-surveys-status"
                         }

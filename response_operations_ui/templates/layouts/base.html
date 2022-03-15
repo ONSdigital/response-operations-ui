@@ -47,7 +47,7 @@
     "wide": true,
     "header": {
         "title": "Survey Data Collection",
-        "classes": "header--internal header--thin",
+        "classes": "ons-header--internal ons-header--thin",
         "logo": "ons-logo-neg-en",
         "mobileLogo": "ons-logo-stacked-neg-en"
     },
@@ -61,13 +61,10 @@
 {% include 'layouts/configs/navigation.html' %}
 {% include 'layouts/configs/footer.html' %}
 {% from "components/panel/_macro.njk" import onsPanel %}
-
-{# To be removed when refactor complete #}
-{% import 'macros/grid.html' as grid %}
 {%- from 'macros/panel.html' import panel -%}
 
 {%- block pageContent %}
-    <div class="page__container container container--wide">
+    <div class="ons-page__container ons-container ons-container--wide">
         {% block preMain %}
             {% if availability_message %}
                 {{
@@ -80,9 +77,9 @@
                 {% include 'layouts/configs/breadcrumbs.html' %}
             {% endif %}
         {% endblock %}
-        <div class="grid">
-            <div class="grid__col col-12@m">
-                <main id="main-content" class="page__main {{ pageClasses }}">
+        <div class="ons-grid">
+            <div class="ons-grid__col ons-col12@m">
+                <main id="main-content" class="ons-page__main {{ pageClasses }}">
                     {%- block main %}{% endblock main -%}
                 </main>
             </div>

@@ -7,7 +7,7 @@
 {% block main %}
     {% include 'partials/flashed-messages.html' %}
 
-    <h1 id="RU_NAME" class="u-fs-xl">{{ ru.name }}</h1>
+    <h1 id="RU_NAME" class="ons-u-fs-xl">{{ ru.name }}</h1>
 
     <dl id="RU_DETAILS" class="item-headlines">
         <dt class="item-headlines-term">
@@ -25,7 +25,7 @@
             </dd>
         {% endif %}
     </dl>
-    <div class="grid__col col-8@m u-pl-no">
+    <div class="ons-grid__col ons-col8@m ons-u-pl-no">
         {% include 'partials/reporting-unit-tabs.html' %}
         {% 
             set respondentTableData = {

@@ -1,7 +1,7 @@
 {% from "components/metadata/_macro.njk" import onsMetadata %}
 
 {% block main %}
-    <section class="u-cf u-mb-l">
+    <section class="ons-u-cf ons-u-mb-l">
         {{
             onsMetadata({
                 "metadataLabel": data.longName + "information",
@@ -49,9 +49,9 @@
             })
         }}
         {% if data.state == 'READYFORLIVE' or data.state == 'LIVE' or data.state == 'ENDED' %}
-            <p class="u-fs-s">Data from the <a href="{{ data.dashboard_url }}">SDC dashboard</a></p>
+            <p class="ons-u-fs-s">Data from the <a href="{{ data.dashboard_url }}">SDC dashboard</a></p>
         {% else %}
-            <p class="u-fs-s">Data from the SDC dashboard not available</p>
+            <p class="ons-u-fs-s">Data from the SDC dashboard not available</p>
         {% endif %}
     </section>
 

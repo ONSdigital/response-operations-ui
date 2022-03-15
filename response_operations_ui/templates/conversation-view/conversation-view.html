@@ -19,7 +19,7 @@
                 onsPanel({
                     "type":"success",
                     "icon": "check",
-                    "classes": "u-mb-s",
+                    "classes": "ons-u-mb-s",
                     "bodyAttributes": {
                         "data-qa": "success-body"
                     }
@@ -33,8 +33,8 @@
     {% endwith %}
     {% include 'conversation-view/cv-handle-errors.html' %}
     <h1 name="page-messages-title">{{ subject }}</h1>
-    <div class="grid grid--gutterless">
-        <div class="grid__col col-9@m">
+    <div class="ons-grid ons-grid--gutterless">
+        <div class="ons-grid__col ons-col9@m">
             {% include 'conversation-view/cv-message-info.html' %}
             {% include 'conversation-view/cv-message-block.html' %}
 

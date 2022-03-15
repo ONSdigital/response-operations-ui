@@ -1,5 +1,5 @@
 <section id="section-sample" class="ce-section">
-    <h1 class="u-fs-r--b u-pt-m">Sample</h1>
+    <h1 class="ons-u-fs-r--b ons-u-pt-m">Sample</h1>
     {% if sample %}
         {% if 'ACTIVE' == sample.state %}
             {{
@@ -11,11 +11,11 @@
                     "ths": [
                         { 
                             "value": "Sample label",
-                            "class": "u-vh"
+                            "class": "ons-u-vh"
                         },
                         {
                             "value": "Sample number",
-                            "class": "u-vh"
+                            "class": "ons-u-vh"
                         }
                     ],
                     "trs": [
@@ -47,32 +47,32 @@
 
             <p>Sample loaded: {{ sample.ingestDateTime }}
                 {% if not locked %}
-                    <a class="u-ml-xs" id="remove_sample_btn_1" href="{{ url_for('collection_exercise_bp.get_confirm_remove_sample', short_name=survey.shortName, period=ce.exerciseRef) }}">Remove</a>
+                    <a class="ons-u-ml-xs" id="remove_sample_btn_1" href="{{ url_for('collection_exercise_bp.get_confirm_remove_sample', short_name=survey.shortName, period=ce.exerciseRef) }}">Remove</a>
                 {% endif %}
             </p>
         {% elif 'INIT' == sample.state %}
-            <div class="u-mb-xl">
-                <div class="u-fs-r">
-                    Loading&hellip; <span class="u-ml-xs"><a href="/surveys/{{survey.shortName}}/{{ce.exerciseRef}}?show_msg=true">Refresh to see progress</a></span>
+            <div class="ons-u-mb-xl">
+                <div class="ons-u-fs-r">
+                    Loading&hellip; <span class="ons-u-ml-xs"><a href="/surveys/{{survey.shortName}}/{{ce.exerciseRef}}?show_msg=true">Refresh to see progress</a></span>
                 </div>
             </div>
         {% elif 'FAILED' == sample.state %}
-            <div class="u-mb-xl">
+            <div class="ons-u-mb-xl">
                 {% call
                     onsPanel({
                         "type": "error",
-                        "classes": "u-mb-l"
+                        "classes": "ons-u-mb-l"
                     })
                 %}
                     {{ sample.notes }}
                 {% endcall %}
                 {% if not locked %}
-                    <a class="u-ml-xs" id="remove_sample_btn_2" href="{{ url_for('collection_exercise_bp.get_confirm_remove_sample', short_name=survey.shortName, period=ce.exerciseRef) }}">Remove</a>
+                    <a class="ons-u-ml-xs" id="remove_sample_btn_2" href="{{ url_for('collection_exercise_bp.get_confirm_remove_sample', short_name=survey.shortName, period=ce.exerciseRef) }}">Remove</a>
                 {% endif %}
             </div>
         {% endif %}
     {% elif not locked %}
-        <div class="u-mb-m">
+        <div class="ons-u-mb-m">
             <form id="form-load-sample"
                 method="post"
                 action=""
@@ -89,17 +89,17 @@
                         },
                         "accept": ".csv",
                         "label": {
-                            "classes": "u-vh",
+                            "classes": "ons-u-vh",
                             "text": "Choose file"
                         }
                     })
                 -}}
-                <div id="sample-preview" class="u-mb-s"></div>
+                <div id="sample-preview" class="ons-u-mb-s"></div>
                 {{
                     onsButton({
                         "text": "Check sample contents",
                         "id": "btn-check-sample-contents",
-                        "classes": "btn--small btn--disabled",
+                        "classes": "ons-btn--small ons-btn--disabled",
                         "attributes": {
                         "disabled": "true"
                         }
@@ -110,7 +110,7 @@
                         "text": "Load sample",
                         "id": "btn-load-sample",
                         "name": "load-sample",
-                        "classes": "hidden btn--small button--loader",
+                        "classes": "hidden ons-btn--small ons-button--loader",
                         "listeners": {
                         "click": "readCSV.handleFileUpload()"
                         }
@@ -119,7 +119,7 @@
                 {{
                     onsButton({
                         "text": "Cancel",
-                        "classes": "hidden btn--secondary btn--small",
+                        "classes": "hidden ons-btn--secondary ons-btn--small",
                         "id": "btn-cancel-load-sample",
                         "listeners": {
                         "click": "readCSV.cancelLoadSample()"

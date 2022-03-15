@@ -6,20 +6,20 @@
         "ths": [
             {
                 "value": "Event",
-                "class": "u-vh"
+                "class": "ons-u-vh"
             },
             {
                 "value": "Date",
-                "class": "u-vh"
+                "class": "ons-u-vh"
             },
             {
                 "value": "Status",
-                "class": "u-vh"
+                "class": "ons-u-vh"
             }
         ]
     } %}
     {% if (events.nudge_email_0) or (events.nudge_email_1) or (events.nudge_email_2) or (events.nudge_email_3) or (events.nudge_email_4) or (events.nudge_email_5) %}
-        <h2 class="u-fs-r--b u-pt-m">Nudge emails</h2>
+        <h2 class="ons-u-fs-r--b ons-u-pt-m">Nudge emails</h2>
     {% endif %}
     {% set surveyTableDataRows = [] %}
     {% set ns = namespace (seqlabel = '') %}
@@ -106,7 +106,7 @@
                 "button": {
                 "text": 'Edit',
                 "id": 'edit-event-date-' + nudgeGroup,
-                "classes": 'btn--secondary btn--small'
+                "classes": 'ons-btn--secondary ons-btn--small'
                 }
             } %}
         {% endif %}
@@ -119,12 +119,12 @@
                     },
                     {
                     "value": eventDay + ' <em>' + eventDate + '</em> ' + eventTime if event,
-                    "class": "u-ta-right",
+                    "class": "ons-u-ta-right",
                     "name": name
                     },
                     {
                     "form": formData,
-                    "class": "u-ta-right"
+                    "class": "ons-u-ta-right"
                     }
                 ]
                 }
@@ -148,9 +148,9 @@
             "action": url_for('collection_exercise_bp.get_create_collection_event_form', short_name=survey.shortName, period=ce.exerciseRef, ce_id=ce.id, tag=nudge),
             "method": 'get',
             "button": {
-            "text": 'Schedule nudge email',
-            "id": 'create-event-date-' + nudge,
-            "classes": 'btn--secondary btn--small'
+                "text": 'Schedule nudge email',
+                "id": 'create-event-date-' + nudge,
+                "classes": 'ons-btn--secondary ons-btn--small'
             }
         } %}
         {% if nudge %}
@@ -158,8 +158,8 @@
                 {
                     "tds": [
                         {
-                        "form": formData,
-                        "class": "u-ta-left"
+                            "form": formData,
+                            "class": "ons-u-ta-left"
                         }
                     ]
                 }
@@ -169,10 +169,10 @@
         {% call
             onsPanel({
                 "type": "info",
-                "classes": "u-mb-l"
+                "classes": "ons-u-mb-l"
             })
         %}
-            <p class="u-fs-r">You cannot schedule any new nudge emails</p>
+            <p class="ons-u-fs-r">You cannot schedule any new nudge emails</p>
         {% endcall %}
     {% endif %}
     {% do surveyTableData | setAttribute("trs", surveyTableDataRows) %}

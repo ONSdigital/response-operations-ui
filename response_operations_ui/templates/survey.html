@@ -11,7 +11,7 @@
             onsPanel({
                 "type": "success",
                 "icon": "check",
-                "classes": "u-mb-s",
+                "classes": "ons-u-mb-s",
                 "id": "updated_ce_message",
                 "body": "Collection exercise details updated"
             })
@@ -22,19 +22,19 @@
             onsPanel({
                 "type": "success",
                 "icon": "check",
-                "classes": "u-mb-s",
+                "classes": "ons-u-mb-s",
                 "id": "created_ce_message"
             })
         %}
-            <h1 class="u-fs-r--b">Collection exercise created</h1>
-            <p class="u-fs-r">
+            <h1 class="ons-u-fs-r--b">Collection exercise created</h1>
+            <p class="ons-u-fs-r">
                 <a href="{{ url_for('collection_exercise_bp.view_collection_exercise', short_name=survey.shortName.replace(' ', ''), period=newly_created_period) }}" id="newly_created_ce_link">View/edit {{survey.shortName}} {{newly_created_period}}</a>
             </p>
         {% endcall %}
     {% endif %}
 
     <h1 name="page-survey-title">{{survey.longName}}</h1>
-    <section class="u-cf">
+    <section class="ons-u-cf">
         {{
             onsMetadata({
                 "metadataLabel": survey.longName + "information",
@@ -94,18 +94,18 @@
     <section class="ce-list">
         <h2>Collection exercises for {{survey.shortName}}</h2>
         {% if survey.surveyMode == 'EQ' %}
-            <p class="field">
+            <p class="ons-field">
                 <a href="{{ url_for('surveys_bp.get_link_collection_instrument', short_name=survey.shortName) }}"
-                    role="button" class="btn btn--secondary btn--small" id="link-collection-instrument" name="link-collection-instrument-link"><span class="btn__inner">Link collection instrument</span></a>
+                    role="button" class="ons-btn ons-btn--secondary ons-btn--small" id="link-collection-instrument" name="link-collection-instrument-link"><span class="ons-btn__inner">Link collection instrument</span></a>
             </p>
         {% endif %}
-        <p class="field">
-        <a href="{{ url_for('collection_exercise_bp.get_create_collection_exercise_form', survey_ref=survey.surveyRef, short_name=survey.shortName.replace(' ', '')) }}"
-            role="button" class="btn" id="create-collection-exercise" name="create-collection-exercise-link"><span class="btn__inner">Create collection exercise</span></a>
+        <p class="ons-field">
+            <a href="{{ url_for('collection_exercise_bp.get_create_collection_exercise_form', survey_ref=survey.surveyRef, short_name=survey.shortName.replace(' ', '')) }}"
+                role="button" class="ons-btn" id="create-collection-exercise" name="create-collection-exercise-link"><span class="ons-btn__inner">Create collection exercise</span></a>
         </p>
 
         {% set surveyTableData = {
-            "table_class": 'table--responsive table--dense',
+            "table_class": 'ons-table--responsive ons-table--dense',
             "id": 'tbl-collection-exercise',
             "caption": 'The table shows collection exercise data for ' + survey.longName,
             "hideCaption": true,
@@ -141,7 +141,7 @@
 
         {% for exercise in collection_exercises %}
             {% set exerciseRef = exercise.exerciseRef if exercise.exerciseRef else "" %}
-            {% set surveyTableReport = '<a href="'+ url_for('collection_exercise_bp.response_chasing', ce_id=exercise.id, survey_id=survey.id) +'" target="_blank"><svg class="svg-icon" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" focusable="false"><path d="M19 9h-4V3H9v6H5l7 7 7-7zM5 18v2h14v-2H5z"/><path d="M0 0h24v24H0z" fill="none"/></svg> Response chasing</a>' if (exercise.state|upper == "LIVE" or  exercise.state|upper == "ENDED") %}
+            {% set surveyTableReport = '<a href="'+ url_for('collection_exercise_bp.response_chasing', ce_id=exercise.id, survey_id=survey.id) +'" target="_blank"><svg class="ons-svg-icon" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" focusable="false"><path d="M19 9h-4V3H9v6H5l7 7 7-7zM5 18v2h14v-2H5z"/><path d="M0 0h24v24H0z" fill="none"/></svg> Response chasing</a>' if (exercise.state|upper == "LIVE" or  exercise.state|upper == "ENDED") %}
 
             {% do surveyTableDataRows.append(
                 {

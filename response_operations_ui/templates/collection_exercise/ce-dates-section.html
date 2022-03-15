@@ -1,5 +1,5 @@
 <section class="ce-section ce-events">
-    <h2 class="u-fs-r--b u-pt-m">Dates</h2>
+    <h2 class="ons-u-fs-r--b ons-u-pt-m">Dates</h2>
 
     {% set surveyTableData = {
         "table_class": 'table--dense',
@@ -8,15 +8,15 @@
         "ths": [
             {
                 "value": "Event",
-                "class": "u-vh"
+                "class": "ons-u-vh"
             },
             {
                 "value": "Date",
-                "class": "u-vh"
+                "class": "ons-u-vh"
             },
             {
                 "value": "Status",
-                "class": "u-vh"
+                "class": "ons-u-vh"
             }
         ]
     } %}
@@ -107,7 +107,7 @@
                 "button": {
                 "text": 'Add',
                 "id": 'create-event-date-' + dateGroup,
-                "classes": 'btn--secondary btn--small'
+                "classes": 'ons-btn--secondary ons-btn--small'
                 }
             } %}
         {% elif not locked or eventIsInFuture %}
@@ -117,27 +117,27 @@
                 "button": {
                 "text": 'Edit',
                 "id": 'edit-event-date-' + dateGroup,
-                "classes": 'btn--secondary btn--small'
+                "classes": 'ons-btn--secondary ons-btn--small'
                 }
             } %}
         {% endif %}
         {% if label %}
             {% do surveyTableDataRows.append(
                 {
-                "tds": [
-                    {
-                    "value": label
-                    },
-                    {
-                    "value": eventDay + ' <em>' + eventDate + '</em> ' + eventTime if event,
-                    "class": "u-ta-right",
-                    "name": name
-                    },
-                    {
-                    "form": formData,
-                    "class": "u-ta-right"
-                    }
-                ]
+                    "tds": [
+                        {
+                            "value": label
+                        },
+                        {
+                            "value": eventDay + ' <em>' + eventDate + '</em> ' + eventTime if event,
+                            "class": "ons-u-ta-right",
+                            "name": name
+                        },
+                        {
+                            "form": formData,
+                            "class": "ons-u-ta-right"
+                        }
+                    ]
                 }
             ) %}
         {% endif %}

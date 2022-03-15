@@ -1164,7 +1164,7 @@ class TestMessage(ViewTestCase):
         mock_request.get(url_messages + "/count", json={"total": (limit * (page - 1)) - 1}, status_code=200)
         mock_request.get(url_get_threads_list, json=thread_list_multi_page)
 
-        conversation_tabs = ["my messages", "open", "initial"]  # Cant close a thread in the closed tab
+        conversation_tabs = ["my messages", "open", "initial"] # Cant close a thread in the closed tab
         for conversation_tab in conversation_tabs:
             with self.subTest(conversation_tab=conversation_tab):
                 # issue same call as when closing a conversation whilst on page 4 of the selected tab

@@ -6,17 +6,17 @@
 {% set hide_breadcrumbs = true %}
 
 {% block main %}
-    <div class="grid">
-        <div class="grid__col col-8@m">
+    <div class="ons-grid">
+        <div class="ons-grid__col ons-col8@m">
             {% if response_error %}
                 {% call
                     onsPanel({
                         "type": "error",
-                        "classes": "u-mb-s",
+                        "classes": "ons-u-mb-s",
                         "title": "This page has 1 error"
                     })
                 %}
-                    <p><a href="#inbox-radio" id="survey-select-link" class="js-inpagelink">{{ response_error }}</a></p>
+                    <p><a href="#inbox-radio" id="survey-select-link" class="ons-js-inpagelink">{{ response_error }}</a></p>
                 {% endcall %}
             {% endif %}
             <h1>Choose which messages to show</h1>
@@ -85,7 +85,7 @@
                     }}
                     {{
                         onsButton({
-                            "classes": "u-mt-m",
+                            "classes": "ons-u-mt-m",
                             "text": "Continue",
                             "id": "continue",
                             "submitType": "timer"

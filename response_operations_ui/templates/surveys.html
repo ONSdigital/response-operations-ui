@@ -11,7 +11,7 @@
             onsPanel({
                 "type": "success",
                 "icon": "check",
-                "classes": "u-mb-s",
+                "classes": "ons-u-mb-s",
                 "id": "success-panel"
             })
         %}
@@ -26,8 +26,8 @@
     {% endif %}
 
     <h1 name="page-surveys-title">Surveys</h1>
-    <div class="u-mb-l">
-        <p class="field">
+    <div class="ons-u-mb-l">
+        <p class="ons-field">
             <a href="{{url_for('surveys_bp.create_survey')}}" id="create-new-survey" name="create-new-survey">Create new survey</a>
         </p>
 
@@ -62,7 +62,7 @@
                 "button": {
                     "text": 'Edit',
                     "id": 'edit-survey-details-' + survey.surveyRef,
-                    "classes": 'btn--secondary btn--small'
+                    "classes": 'ons-btn--secondary ons-btn--small'
                 }
             } %}
 
@@ -91,7 +91,7 @@
                     },
                     {
                         "form": formData,
-                        "class": "u-ta-right"
+                        "class": "ons-u-ta-right"
                     }
                 ]
             }

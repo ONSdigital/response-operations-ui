@@ -4,9 +4,9 @@
 
 {% set page_title = 'New enrolment code for ' ~ trading_as ~ ' ' ~ '(' ~ ru_ref ~ ') for survey ' ~ survey_ref ~ ' ' ~ survey_name %}
 {% block main %}
-    <div class="grid grid--gutterless">
-        <div class="grid__col col-8@m">
-            <h1 class="u-fs-xl">New enrolment code</h1>
+    <div class="ons-grid ons-grid--gutterless">
+        <div class="ons-grid__col ons-col8@m">
+            <h1 class="ons-u-fs-xl">New enrolment code</h1>
             {{
                 onsMetadata({
                     "termCol": "2",
@@ -50,10 +50,10 @@
                 })
             }}
 
-            <div class="u-mt-l u-mb-m">
-                <div class="u-fs-r">New enrolment code:</div>
-                <div id="IAC" class="u-fs-l u-mt-s u-mb-s">{{iac}}</div>
-                <p id="copyEnrolmentCode" class="u-fs-r">
+            <div class="ons-u-mt-l ons-u-mb-m">
+                <div class="ons-u-fs-r">New enrolment code:</div>
+                <div id="IAC" class="ons-u-fs-l ons-u-mt-s ons-u-mb-s">{{iac}}</div>
+                <p id="copyEnrolmentCode" class="ons-u-fs-r">
                     You might want to make a note of this code before continuing
                 </p>
             </div>
@@ -63,7 +63,7 @@
                 <input type="hidden" name="csrf_token" value="{{ csrf_token() }}" />
                 {{
                     onsButton({
-                        "classes": "u-mb-s",
+                        "classes": "ons-u-mb-s",
                         "text": 'Ok',
                         "id": "ok-button"
                     })

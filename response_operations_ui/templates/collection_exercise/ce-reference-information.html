@@ -1,5 +1,5 @@
 <section class="ce-section ce-details">
-    <h2 class="u-fs-r--b u-pt-m">Reference information for this collection exercise</h2>
+    <h2 class="ons-u-fs-r--b ons-u-pt-m">Reference information for this collection exercise</h2>
 
     {% set surveyTableData = {
         "table_class": 'table--dense',
@@ -9,15 +9,15 @@
         "ths": [
             {
                 "value": "Event",
-                "class": "u-vh"
+                "class": "ons-u-vh"
             },
             {
                 "value": "Date",
-                "class": "u-vh"
+                "class": "ons-u-vh"
             },
             {
                 "value": "Status",
-                "class": "u-vh"
+                "class": "ons-u-vh"
             }
         ]
     } %}
@@ -74,7 +74,7 @@
                 "button": {
                 "text": 'Edit',
                 "id": 'edit-collection-exercise-period',
-                "classes": 'btn--secondary btn--small'
+                "classes": 'ons-btn--secondary ons-btn--small'
                 }
             } %}
         {% endif %}
@@ -85,7 +85,7 @@
                 "button": {
                 "text": 'Edit',
                 "id": 'edit-collection-exercise-period',
-                "classes": 'btn--secondary btn--small'
+                "classes": 'ons-btn--secondary ons-btn--small'
                 }
             } %}
         {% endif %}
@@ -97,7 +97,7 @@
                 "button": {
                 "text": 'Add',
                 "id": 'edit-event-date-' + id,
-                "classes": 'btn--secondary btn--small'
+                "classes": 'ons-btn--secondary ons-btn--small'
                 }
             } %}
         {% elif editable and (dateGroup != 'period' and dateGroup != 'user') %}
@@ -107,7 +107,7 @@
                 "button": {
                 "text": 'Edit',
                 "id": 'edit-event-date-ref-period-start',
-                "classes": 'btn--secondary btn--small'
+                "classes": 'ons-btn--secondary ons-btn--small'
                 }
             } %}
         {% endif %}
@@ -124,7 +124,7 @@
                     },
                     {
                         "form": formData,
-                        "class": "u-ta-right"
+                        "class": "ons-u-ta-right"
                     }
                 ]
             }
