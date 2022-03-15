@@ -1,3 +1,5 @@
+DESIGN_SYSTEM_VERSION=`cat .design-system-version`
+
 build:
 	pipenv install --dev
 
@@ -7,13 +9,16 @@ build-docker:
 build-kubernetes:
 	docker build -f _infra/docker/Dockerfile .
 
+load-design-system-templates:
+	pipenv run ./scripts/load_templates.sh $(DESIGN_SYSTEM_VERSION)
+
 lint:
 	pipenv check ./response_operations_ui ./tests 
 	pipenv run isort .
 	pipenv run black --line-length 120 .
 	pipenv run flake8
 
-lint-check:
+lint-check: load-design-system-templates
 	pipenv check ./response_operations_ui ./tests
 	pipenv run isort . --check-only
 	pipenv run black --line-length 120 --check .
@@ -23,7 +28,7 @@ test: lint-check
 	pipenv run python run_tests.py
 	rm -rf ./flask_session
 
-start:
+start: load-design-system-templates
 	pipenv run python run.py
 
 watch_and_start:
@@ -31,9 +36,6 @@ watch_and_start:
 
 docker: test
 	docker build -t sdcplatform/response-operations-ui:latest .
-
-load-templates:
-	pipenv run ./scripts/load_templates.sh
 
 minify-install:
 	npm init -y

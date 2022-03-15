@@ -83,3 +83,7 @@ minimised/
 /scripts/~$example_business_file.xlsx
 
 .history
+
+# Design System templates
+response_operations_ui/templates/components
+response-operations-ui/templates/layout

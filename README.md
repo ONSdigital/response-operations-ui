@@ -73,6 +73,18 @@ but for now the username and password are 'user' and 'pass'
 
 ## Frontend development
 
+### Load the ONS Design System Templates
+```
+make load-design-system-templates
+```
+
+This command will take the version number defined in the `.design-system-version` file and download the templates for that version of the Design System. It will also be automatically run when running `make start`.
+
+To update to a different version of the Design System:
+- update the version number in the `.design-system-version` file
+- run `make load-design-system-templates` script
+
+### Specific response-operations-ui styling and js
 Styling is implemented using scss and javascript. You can find the styling files in [the static folder](response_operations_ui/static)
 
 When the application is run the scss files are converted into css and they are minimised into one file, `all.css.min`
