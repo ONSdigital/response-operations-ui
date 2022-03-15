@@ -8,85 +8,86 @@
 {% block main %}
     <div class="grid grid--gutterless">
         <div class="grid__col col-8@m">
-        <h1 class="u-fs-xl">Close conversation</h1>
-        {% if category == 'SURVEY' %}
-            {{
-                onsMetadata({
-                "termCol": "2",
-                "descriptionCol": "10",
-                "itemsList": [
-                    {
-                        "term": "Subject:",
-                        "descriptions": [
+            <h1 class="u-fs-xl">Close conversation</h1>
+            {% if category == 'SURVEY' %}
+                {{
+                    onsMetadata({
+                        "termCol": "2",
+                        "descriptionCol": "10",
+                        "itemsList": [
                             {
-                                "description": subject
+                                "term": "Subject:",
+                                "descriptions": [
+                                    {
+                                        "description": subject
+                                    }
+                                ]
+                            },
+                            {
+                                "term": "Business:",
+                                "descriptions": [
+                                    {
+                                        "description": business
+                                    }
+                                ]
+                            },
+                            {
+                                "term": "Reference:",
+                                "descriptions": [
+                                    {
+                                        "description": ru_ref
+                                    }
+                                ]
+                            },
+                            {
+                                "term": "Respondent:",
+                                "descriptions": [
+                                    {
+                                        "description": respondent
+                                    }
+                                ]
                             }
                         ]
-                    },
-                    {
-                        "term": "Business:",
-                        "descriptions": [
+                    })
+                }}
+            {% else %}
+                {{
+                    onsMetadata({
+                        "termCol": "2",
+                        "descriptionCol": "10",
+                        "itemsList": [
                             {
-                                "description": business
+                                "term": "Category:",
+                                "descriptions": [
+                                    {
+                                        "description": category
+                                    }
+                                ]
+                            },
+                            {
+                                "term": "Respondent:",
+                                "descriptions": [
+                                    {
+                                        "description": respondent
+                                    }
+                                ]
                             }
                         ]
-                    },
-                    {
-                        "term": "Reference:",
-                        "descriptions": [
-                            {
-                                "description": ru_ref
-                            }
-                        ]
-                    },
-                    {
-                        "term": "Respondent:",
-                        "descriptions": [
-                            {
-                                "description": respondent
-                            }
-                        ]
-                    }
-                ]
-                })
-            }}
-        {% else %}
-            {{
-                onsMetadata({
-                "termCol": "2",
-                "descriptionCol": "10",
-                "itemsList": [
-                    {
-                        "term": "Category:",
-                        "descriptions": [
-                            {
-                                "description": category
-                            }
-                        ]
-                    },
-                    {
-                        "term": "Respondent:",
-                        "descriptions": [
-                            {
-                                "description": respondent
-                            }
-                        ]
-                    }
-                ]
-                })
-            }}
-        {% endif %}
+                    })
+                }}
+            {% endif %}
 
-        <form action="{{ url_for('messages_bp.close_conversation', thread_id=thread_id, page=page, conversation_tab=conversation_tab, ru_ref_filter=ru_ref_filter, business_id_filter=business_id_filter) }}" method="post">
-            <input type="hidden" name="closed" value="True" />
-            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
-            {{
-                onsButton({
-                    "classes": "u-mb-s u-mt-l",
-                    "text": "Close conversation"
-                })
-            }}
-        </form>
-        <p><a href="{{ url_for('messages_bp.view_conversation', thread_id=thread_id, page=page, conversation_tab=conversation_tab, ru_ref_filter=ru_ref_filter, business_id_filter=business_id_filter)}}#latest-message">Cancel</a></p>
+            <form action="{{ url_for('messages_bp.close_conversation', thread_id=thread_id, page=page, conversation_tab=conversation_tab, ru_ref_filter=ru_ref_filter, business_id_filter=business_id_filter) }}" method="post">
+                <input type="hidden" name="closed" value="True" />
+                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}" />
+                {{
+                    onsButton({
+                        "classes": "u-mb-s u-mt-l",
+                        "text": "Close conversation"
+                    })
+                }}
+            </form>
+            <p><a href="{{ url_for('messages_bp.view_conversation', thread_id=thread_id, page=page, conversation_tab=conversation_tab, ru_ref_filter=ru_ref_filter, business_id_filter=business_id_filter)}}#latest-message">Cancel</a></p>
+        </div>
     </div>
 {% endblock %}

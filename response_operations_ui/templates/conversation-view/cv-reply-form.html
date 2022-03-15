@@ -8,7 +8,7 @@
         {{ form.hidden_to_business_id(type='hidden', value=business_id) }}
         {{ form.hidden_survey_id(type='hidden', value=survey) }}
         {{ form.hidden_to_uuid(type='hidden', value=to_uuid)}}
-        
+
         {% set errorData = {} %}
         {% if form.subject.errors %}
             {% for error in form.subject.errors %}
@@ -40,18 +40,18 @@
         }}
         <div class="grid grid--flex grid--gutterless grid--vertical-center grid--no-wrap@s u-mt-m u-mb-m">
             <div class="grid__col">
-                {{ 
+                {{
                     onsButton({
                         "type": 'submit',
                         "text": 'Send message',
                         "id": "btn-send-message",
                         "submitType": "timer"
-                    }) 
+                    })
                 }}
-                </div>
-                <div class="grid__col u-ml-m">
-                    <a id="btn-close-conversation" href="{{ url_for('messages_bp.close_conversation', thread_id=messages[0].thread_id, page=page, conversation_tab=conversation_tab, business_id=business_id, ru_ref_filter=ru_ref_filter, business_id_filter=business_id_filter, category=thread_data.category) }}">Close conversation</a>
-                </div>
             </div>
+            <div class="grid__col u-ml-m">
+                <a id="btn-close-conversation" href="{{ url_for('messages_bp.close_conversation', thread_id=messages[0].thread_id, page=page, conversation_tab=conversation_tab, business_id=business_id, ru_ref_filter=ru_ref_filter, business_id_filter=business_id_filter, category=thread_data.category) }}">Close conversation</a>
+            </div>
+        </div>
     </form>
 </div>

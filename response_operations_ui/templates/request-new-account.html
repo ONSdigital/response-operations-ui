@@ -7,7 +7,6 @@
 {% from "components/button/_macro.njk" import onsButton %}
 
 {% set errorType = data['error']['type'] %}
-
 {% set page_title = 'Request New Account' %}
 
 {% block main %}
@@ -23,12 +22,12 @@
                         "title":  "This page has an error"
                     })
                 %}
-                <p>This <strong>must be corrected</strong> to continue.</p>
-                {% if errorType.email_address %}
-                    <p><a href="#email_address" class="js-inpagelink">{{ errorType['email_address'][0] }}</a></p>
-                {% elif errorType.password %}
-                    <p><a href="#password" class="js-inpagelink">{{ errorType['password'][0] }}</a></p>
-                {% endif %}
+                    <p>This <strong>must be corrected</strong> to continue.</p>
+                    {% if errorType.email_address %}
+                        <p><a href="#email_address" class="js-inpagelink">{{ errorType['email_address'][0] }}</a></p>
+                    {% elif errorType.password %}
+                        <p><a href="#password" class="js-inpagelink">{{ errorType['password'][0] }}</a></p>
+                    {% endif %}
                 {% endcall %}
             {% endif %}
 
@@ -54,7 +53,7 @@
                                 "id": "email_address",
                                 "name": "email_address",
                                 "type": "email",
-                                "autocomplete": "email",                                
+                                "autocomplete": "email",
                                 "label": {
                                     "text": "Enter the ONS email address to create an account for"
                                 },
@@ -63,17 +62,16 @@
                                 },
                                 "error": emailError
                             })
-                        }} 
+                        }}
                         {% if errorType.password %}
                             {% set passwordError = { "text": errorType['password'][0] } %}
                         {% endif %}
- 
                         {{
                             onsInput({
                                 "id": "inputPassword",
                                 "name": "password",
                                 "type": "password",
-                                "autocomplete": "off",                                
+                                "autocomplete": "off",
                                 "label": {
                                     "text": "Enter the admin password"
                                 },
@@ -82,7 +80,7 @@
                                 },
                                 "error": passwordError
                             })
-                        }}  
+                        }}
                 {%- endcall -%}
                 {{
                     onsButton({

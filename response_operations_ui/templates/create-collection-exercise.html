@@ -8,43 +8,43 @@
 {% block main %}
     <div class="grid grid--gutterless">
         <div class="grid__col col-8@m">
-        {% if errors %}
-            {% call
-                onsPanel({
-                    "type":"error",
-                    "title": "This page has 1 error",
-                    "classes": "u-mb-s",
-                    "id": "save-error"
-                })
-            %}
-                <h2 id='error-creating-ce-message' class="u-fs-r--b">Error creating collection exercise</h2>
-                <p class="u-fs-r">{{ errors }}</p>
-            {% endcall %}
-        {% endif %}
-        <h1 class="u-fs-xl">Create collection exercise</h1>
+            {% if errors %}
+                {% call
+                    onsPanel({
+                        "type":"error",
+                        "title": "This page has 1 error",
+                        "classes": "u-mb-s",
+                        "id": "save-error"
+                    })
+                %}
+                    <h2 id='error-creating-ce-message' class="u-fs-r--b">Error creating collection exercise</h2>
+                    <p class="u-fs-r">{{ errors }}</p>
+                {% endcall %}
+            {% endif %}
+             <h1 class="u-fs-xl">Create collection exercise</h1>
             <form action="" method="post">
                 {{ form.csrf_token }}
                 {{
                     onsMetadata({
-                    "termCol": "2",
-                    "descriptionCol": "10",
-                    "itemsList": [
-                        {
-                            "term": "Survey:",
-                            "descriptions": [
-                                {
-                                    "description": survey_ref ~ ' ' ~ short_name
-                                }
-                            ]
-                        }
-                    ]
+                        "termCol": "2",
+                        "descriptionCol": "10",
+                        "itemsList": [
+                            {
+                                "term": "Survey:",
+                                "descriptions": [
+                                    {
+                                        "description": survey_ref ~ ' ' ~ short_name
+                                    }
+                                ]
+                            }
+                        ]
                     })
                 }}
 
                 {%- call onsFieldset({
                     "legend": "Create collection exercise",
                     "legendClasses": "u-vh"
-                    }) -%}
+                }) -%}
                     {{
                         onsInput({
                             "id": "period",
