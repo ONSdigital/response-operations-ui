@@ -19,7 +19,7 @@
             <h2 id="SURVEY_NAME" class="ons-u-fs-xl">{{ survey.display_name }}</h2>
         </div>
         <div class="ons-grid__col ons-col12@m">
-            <div class="rons-u-survey-ces">
+            <div class="ru-survey-ces">
                 <h3 id="COLLECTION_EXERCISES" class="ons-u-fs-m">Collection exercises</h3>
 
                 {%
@@ -75,7 +75,7 @@
                                 {
                                     "value": ce.companyName,
                                     "data": "Reporting unit name",
-                                    "name": "tbl-collection-exercises-rons-u-name"
+                                    "name": "tbl-collection-exercises-ru-name"
                                 },
                                 {
                                     "value": ce.tradingAs,
@@ -102,7 +102,7 @@
                     onsTable(collectionExerciseTableData)
                 }}
             </div>
-            <div class="rons-u-survey-respondents ons-u-pt-s">
+            <div class="ru-survey-respondents ons-u-pt-s">
                 <h3 id="RESPONDENTS" class="ons-u-fs-m">Respondents</h3>
 
                 {% if iac != "" %}

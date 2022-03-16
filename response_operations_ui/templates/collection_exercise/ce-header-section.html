@@ -40,9 +40,9 @@
     </form>
     <script{% if csp_nonce %} nonce="{{ csp_nonce() }}" {% endif %}>
         document.getElementById("form-ready-for-live").addEventListener('submit', function () {
-        if(!confirm('This action cannot be undone.  Press OK to continue\, or Cancel to go back.')) {
-            event.preventDefault();
-        }
+            if(!confirm('This action cannot be undone.  Press OK to continue\, or Cancel to go back.')) {
+                event.preventDefault();
+            }
         });
     </script>
 {% endif %}
