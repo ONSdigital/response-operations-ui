@@ -19,11 +19,11 @@
             {% for collection_instrument in collection_instruments %}
                 {% do surveyTableDataRows.append(
                     {
-                    "tds": [
-                        {
-                        "value": collection_instrument.file_name
-                        }
-                    ]
+                        "tds": [
+                            {
+                                "value": collection_instrument.file_name
+                            }
+                        ]
                     }
                 ) %}
             {% endfor %}
@@ -68,7 +68,7 @@
                         '<input type="hidden" name="ce_id" value="' + ce.id + '">' +
                         '<input type="hidden" name="ci_id" value="' + collection_instrument.id + '">' +
                         '<input type="hidden" name="unselect-ci">' +
-                        '<input type="hidden" name="csrf_token" value="' + csrf_token() + '"/>' +
+                        '<input type="hidden" name="csrf_token" value="' + csrf_token() + '" />' +
                         '</form>'
                     %}
                 {% endif %}
@@ -80,7 +80,7 @@
                             },
                             {
                                 "value": formData,
-                                "class": "ons-u-ta-right"
+                                "tdClasses": "ons-u-ta-right"
                             }
                         ]
                     }

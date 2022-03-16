@@ -44,7 +44,7 @@
             <h1>Assign a reporting unit to the thread</h1>
             {% if reporting_units %}
                 <form method="post">
-                    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
+                    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}" />
                     {% set radios = [] %}
                     {% for reporting_unit in reporting_units %}
                         {% do radios.append(

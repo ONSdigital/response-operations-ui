@@ -71,7 +71,7 @@
     <div class="ons-grid ons-grid--gutterless">
         <div class="ons-grid__col ons-col8@m">
             <form action="{{ url_for('messages_bp.create_message') }}" method="post" id="create-message-form">
-                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
+                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}" />
                 {{ form.hidden_tag() }}
                 {{
                     onsMetadata({

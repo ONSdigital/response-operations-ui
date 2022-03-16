@@ -105,9 +105,9 @@
                 "action": url_for('collection_exercise_bp.get_create_collection_event_form', short_name=survey.shortName, period=ce.exerciseRef, ce_id=ce.id, tag=dateGroup),
                 "method": 'get',
                 "button": {
-                "text": 'Add',
-                "id": 'create-event-date-' + dateGroup,
-                "classes": 'ons-btn--secondary ons-btn--small'
+                    "text": 'Add',
+                    "id": 'create-event-date-' + dateGroup,
+                    "classes": 'ons-btn--secondary ons-btn--small'
                 }
             } %}
         {% elif not locked or eventIsInFuture %}
@@ -115,9 +115,9 @@
                 "action": url_for('collection_exercise_bp.update_event_date', short_name=survey.shortName, period=ce.exerciseRef, tag=dateGroup, errors=None if event == events.reminder),
                 "method": 'get',
                 "button": {
-                "text": 'Edit',
-                "id": 'edit-event-date-' + dateGroup,
-                "classes": 'ons-btn--secondary ons-btn--small'
+                    "text": 'Edit',
+                    "id": 'edit-event-date-' + dateGroup,
+                    "classes": 'ons-btn--secondary ons-btn--small'
                 }
             } %}
         {% endif %}

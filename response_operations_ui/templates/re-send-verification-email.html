@@ -11,7 +11,7 @@
                 <h1 class="ons-u-fs-xl">Re-send new account verification email</h1>
             {% endif %}
             <form action="" method="post" class="ons-u-mt-l">
-                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
+                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}" />
                 {% if is_new_email_verification_request %}
                     <input type="hidden" name="change" value="new-email" />
                 {% else %}

@@ -21,7 +21,7 @@
             {% endif %}
             <h1>Choose which messages to show</h1>
             <form method="post">
-                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
+                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}" />
                 {% if survey_list %}
                     {% set error = {
                         "text": "Select a survey"

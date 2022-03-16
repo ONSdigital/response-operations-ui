@@ -22,7 +22,7 @@
                         business_id=business_id, survey_id=survey_id, respondent_id=respondent_id,
                         change_flag=change_flag)}}"
                 {% endif %} class="ons-u-mt-l">
-                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
+                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}" />
                 {{
                     onsMetadata({
                         "termCol": "2",

@@ -10,11 +10,11 @@
         "ths": [
             {
                 "value": "Event",
-                "class": "ons-u-vh"
+                "thClasses": "ons-u-vh"
             },
             {
                 "value": "Date",
-                "class": "ons-u-vh"
+                "thClasses": "ons-u-vh"
             }
         ]
     } %}
@@ -44,16 +44,16 @@
         {% if label %}
             {% do surveyTableDataRows.append(
                 {
-                "tds": [
-                    {
-                    "value": label
-                    },
-                    {
-                    "value": event,
-                    "class": "ons-u-ta-right",
-                    "name": name
-                    }
-                ]
+                    "tds": [
+                        {
+                            "value": label
+                        },
+                        {
+                            "value": event,
+                            "tdClasses": "ons-u-ta-right",
+                            "name": name
+                        }
+                    ]
                 }
             ) %}
         {% endif %}

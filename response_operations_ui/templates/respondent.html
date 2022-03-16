@@ -101,8 +101,7 @@
                         "value": "Enrolment status"
                     }
                 ]
-                }
-            %}
+            } %}
 
             {% set surveyTableDataRows = [] %}
             {% for enrolment in enrolments %}
@@ -123,21 +122,21 @@
                 {% do surveyTableDataRows.append(
                     {
                         "tds": [
-                        {
-                            "value": '<a href="' + url_for('reporting_unit_bp.view_reporting_unit', ru_ref=enrolment['business']['sampleUnitRef'], _anchor='survey-'+enrolment['survey']['shortName'] ) + '">' + enrolment['business']['sampleUnitRef'] + '</a>'
-                        },
-                        {
-                            "value": enrolment['business']['name']
-                        },
-                        {
-                            "value": enrolment['business']['trading_as'] if enrolment['business']['trading_as'] else ""
-                        },
-                        {
-                            "value": enrolment['survey']['surveyRef'] + ' ' + enrolment['survey']['shortName'] 
-                        },
-                        {
-                            "value": enrolmentData 
-                        }
+                            {
+                                "value": '<a href="' + url_for('reporting_unit_bp.view_reporting_unit', ru_ref=enrolment['business']['sampleUnitRef'], _anchor='survey-'+enrolment['survey']['shortName'] ) + '">' + enrolment['business']['sampleUnitRef'] + '</a>'
+                            },
+                            {
+                                "value": enrolment['business']['name']
+                            },
+                            {
+                                "value": enrolment['business']['trading_as'] if enrolment['business']['trading_as'] else ""
+                            },
+                            {
+                                "value": enrolment['survey']['surveyRef'] + ' ' + enrolment['survey']['shortName'] 
+                            },
+                            {
+                                "value": enrolmentData 
+                            }
                         ]
                     }
                 ) %}
@@ -261,21 +260,21 @@
                 {% do transferSurveyTableDataRows.append(
                     {
                         "tds": [
-                        {
-                            "value": transferSurvey['recipient_email']
-                        },
-                        {
-                            "value": ns.transferSurveyBusinessDetails
-                        },
-                        {
-                            "value": transferSurvey['time_shared']
-                        },
-                        {
-                            "value": transferSurveyEmail 
-                        },
-                        {
-                            "value": transferSurveyDelete
-                        }
+                            {
+                                "value": transferSurvey['recipient_email']
+                            },
+                            {
+                                "value": ns.transferSurveyBusinessDetails
+                            },
+                            {
+                                "value": transferSurvey['time_shared']
+                            },
+                            {
+                                "value": transferSurveyEmail 
+                            },
+                            {
+                                "value": transferSurveyDelete
+                            }
                         ]
                     }
                 ) %}

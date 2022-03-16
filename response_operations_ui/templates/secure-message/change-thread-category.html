@@ -13,7 +13,7 @@
         <div class="ons-grid__col ons-col8@m">
             <h1>Assign a survey or category to the message</h1>
             <form method="post">
-                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
+                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}" />
                 {% if survey_list %}
                     {% if form.errors %}
                         {% set errorData = [] %}
@@ -26,7 +26,7 @@
                                 ) %}
                             {% endfor %}
                         {% endfor %}
-                        {# A onsRadios only takes one error.  We can't pick a random key so we gather all the 
+                        {# A onsRadios only takes one error. We can't pick a random key so we gather all the 
                         errors up then just pick whatever is at the first #}
                         {% set error = errorData[0] %}
                     {% endif %}

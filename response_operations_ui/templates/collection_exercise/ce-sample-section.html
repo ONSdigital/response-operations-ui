@@ -11,11 +11,11 @@
                     "ths": [
                         { 
                             "value": "Sample label",
-                            "class": "ons-u-vh"
+                            "thClasses": "ons-u-vh"
                         },
                         {
                             "value": "Sample number",
-                            "class": "ons-u-vh"
+                            "thClasses": "ons-u-vh"
                         }
                     ],
                     "trs": [
@@ -101,7 +101,7 @@
                         "id": "btn-check-sample-contents",
                         "classes": "ons-btn--small ons-btn--disabled",
                         "attributes": {
-                        "disabled": "true"
+                            "disabled": "true"
                         }
                     })
                 }}
@@ -112,7 +112,7 @@
                         "name": "load-sample",
                         "classes": "hidden ons-btn--small ons-button--loader",
                         "listeners": {
-                        "click": "readCSV.handleFileUpload()"
+                            "click": "readCSV.handleFileUpload()"
                         }
                     })
                 }}
@@ -122,7 +122,7 @@
                         "classes": "hidden ons-btn--secondary ons-btn--small",
                         "id": "btn-cancel-load-sample",
                         "listeners": {
-                        "click": "readCSV.cancelLoadSample()"
+                            "click": "readCSV.cancelLoadSample()"
                         }
                     })
                 }}

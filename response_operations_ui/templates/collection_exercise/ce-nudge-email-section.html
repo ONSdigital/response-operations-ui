@@ -6,15 +6,15 @@
         "ths": [
             {
                 "value": "Event",
-                "class": "ons-u-vh"
+                "thClasses": "ons-u-vh"
             },
             {
                 "value": "Date",
-                "class": "ons-u-vh"
+                "thClasses": "ons-u-vh"
             },
             {
                 "value": "Status",
-                "class": "ons-u-vh"
+                "thClasses": "ons-u-vh"
             }
         ]
     } %}
@@ -104,9 +104,9 @@
                 "action": url_for('collection_exercise_bp.update_event_date', short_name=survey.shortName, period=ce.exerciseRef, tag=nudgeGroup, errors=None),
                 "method": 'get',
                 "button": {
-                "text": 'Edit',
-                "id": 'edit-event-date-' + nudgeGroup,
-                "classes": 'ons-btn--secondary ons-btn--small'
+                    "text": 'Edit',
+                    "id": 'edit-event-date-' + nudgeGroup,
+                    "classes": 'ons-btn--secondary ons-btn--small'
                 }
             } %}
         {% endif %}
@@ -115,16 +115,16 @@
                 {
                 "tds": [
                     {
-                    "value": label
+                        "value": label
                     },
                     {
-                    "value": eventDay + ' <em>' + eventDate + '</em> ' + eventTime if event,
-                    "class": "ons-u-ta-right",
-                    "name": name
+                        "value": eventDay + ' <em>' + eventDate + '</em> ' + eventTime if event,
+                        "tdClasses": "ons-u-ta-right",
+                        "name": name
                     },
                     {
-                    "form": formData,
-                    "class": "ons-u-ta-right"
+                        "form": formData,
+                        "tdClasses": "ons-u-ta-right"
                     }
                 ]
                 }
@@ -159,7 +159,7 @@
                     "tds": [
                         {
                             "form": formData,
-                            "class": "ons-u-ta-left"
+                            "tdClasses": "ons-u-ta-left"
                         }
                     ]
                 }
