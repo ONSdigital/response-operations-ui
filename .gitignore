@@ -86,4 +86,4 @@ minimised/
 
 # Design System templates
 response_operations_ui/templates/components
-response-operations-ui/templates/layout
+response_operations_ui/templates/layout
