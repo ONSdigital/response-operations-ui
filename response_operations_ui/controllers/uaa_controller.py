@@ -317,18 +317,5 @@ def get_users_list(
         response.raise_for_status()
         return response.json()
     except HTTPError:
-        if response.status_code == 403:
-            errors = {"status_code": response.status_code, "message": "You are not authorised to view this page."}
-        elif response.status_code == 400:
-            errors = {"status_code": response.status_code, "message": "Invalid request."}
-        elif response.status_code == 401:
-            errors = {"status_code": response.status_code, "message": "You don't have permission to view this page."}
-        else:
-            errors = {"status_code": response.status_code, "message": response.reason}
-            logger.error(
-                "Received an error when loading user data",
-                status_code=response.status_code,
-                reason=response.reason,
-            )
-
-    return errors
+        logger.error("Unauthorised attempt to get user list.", status_code=response.status_code)
+        raise "Unauthorised Access"
