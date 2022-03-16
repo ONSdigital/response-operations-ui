@@ -3,7 +3,7 @@
     {% if survey.surveyMode == 'SEFT' %}
         {% if collection_instruments %}
             {% set surveyTableData = {
-                "table_class": 'table--dense',
+                "variants": 'compact',
                 "id": "collection-instruments-table",
                 "caption": 'Sample details for this collection exercise',
                 "hideCaption": true,
@@ -48,7 +48,7 @@
     {% if survey.surveyMode != 'SEFT' %}
         {% if collection_instruments %}
             {% set surveyTableData = {
-                "table_class": 'table--dense',
+                "variants": 'compact',
                 "id": "collection-instruments-table",
                 "caption": 'Sample details for this collection exercise',
                 "hideCaption": true,

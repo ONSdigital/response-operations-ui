@@ -83,7 +83,7 @@
         {% if enrolments|length > 0 %}
             {% from "components/table/_macro.njk" import onsTable %}
             {% set surveyTableData = {
-                "table_class": 'table--dense',
+                "variants": 'compact',
                 "ths": [
                     {
                         "value": "RU Reference"
@@ -155,7 +155,7 @@
         {% if pending_share_surveys|length > 0 %}
             {% from "components/table/_macro.njk" import onsTable %}
             {% set shareSurveyTableData = {
-                "table_class": 'table--dense',
+                "variants": 'compact',
                 "ths": [
                     {
                         "value": "Recipient's email address"
@@ -224,7 +224,7 @@
         {% if pending_transfer_surveys|length > 0 %}
             {% from "components/table/_macro.njk" import onsTable %}
             {% set transferSurveyTableData = {
-                "table_class": 'table--dense',
+                "variants": 'compact',
                 "ths": [
                     {
                         "value": "Recipient's email address"

@@ -2,7 +2,7 @@
     <h2 class="ons-u-fs-r--b ons-u-pt-m">Reference information for this collection exercise</h2>
 
     {% set surveyTableData = {
-        "table_class": 'table--dense',
+        "variants": 'compact',
         "id": 'tbl-ce-details',
         "caption": 'Dates for this collection exercise',
         "hideCaption": true,
@@ -48,21 +48,21 @@
             {% set id = 'period-start-date' %}
             {% set label = 'Reference period start date' %}
             {% if events.ref_period_start %}
-                {% set event = events.ref_period_start.day + ' ' +  events.ref_period_start.date %}
+                {% set event = events.ref_period_start.day + ' ' + events.ref_period_start.date %}
             {% endif %}
             {% set editable = true %}
         {% elif dateGroup == 'ref_period_end' %}
             {% set id = 'period-end-date' %}
             {% set label = 'Reference period end date' %}
             {% if events.ref_period_end %}
-                {% set event = events.ref_period_end.day + ' ' +  events.ref_period_end.date %}
+                {% set event = events.ref_period_end.day + ' ' + events.ref_period_end.date %}
             {% endif %}
             {% set editable = true %}
         {% elif dateGroup == 'employment' %}
             {% set id = 'employment-date' %}
             {% set label = 'Employment date' %}
             {% if events.employment %}
-                {% set event = events.employment.day + ' ' +  events.employment.date %}
+                {% set event = events.employment.day + ' ' + events.employment.date %}
             {% endif %}
             {% set editable = true %}
         {% endif %}
