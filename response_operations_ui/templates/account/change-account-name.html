@@ -6,95 +6,94 @@
 {% set page_title =  "Change Name" %}
 
 {% block main %}
-{% include 'partials/flashed-messages.html' %}
-  {% if errors|length > 0 %}
-    {% if errors|length == 1 %}
-      {% set errorTitle = 'There is 1 error on this page' %}
-    {% elif errors|length > 1 %}
-      {% set errorTitle = 'There are ' ~ errors|length ~ ' errors on this page' %}
-    {% endif %}
-    {% call
+    {% include 'partials/flashed-messages.html' %}
+    {% if errors|length > 0 %}
+        {% if errors|length == 1 %}
+            {% set errorTitle = 'There is 1 error on this page' %}
+        {% elif errors|length > 1 %}
+            {% set errorTitle = 'There are ' ~ errors|length ~ ' errors on this page' %}
+        {% endif %}
+        {% call
             onsPanel({
                 "type": "error",
-                "classes": "u-mb-s",
+                "classes": "ons-u-mb-s",
                 "title":  errorTitle
             })
-      %}
-      <p>These <strong>must be corrected</strong> to continue.</p>
-      {% set errorData = [] %}
-      {% for error in errors %}
-        {% set error_text =  error %}
-        {% do errorData.append(
+        %}
+            <p>These <strong>must be corrected</strong> to continue.</p>
+            {% set errorData = [] %}
+            {% for error in errors %}
+                {% set error_text =  error %}
+                {% do errorData.append(
                     {
                         "text": 'Problem with the ' ~ error_text.replace('_', ' '),
                         "index": true,
                         "url": "#" ~ error ~ '_error',
-                        "classes": "js-inpagelink"
+                        "classes": "ons-js-inpagelink"
                     }
                 ) %}
-      {% endfor %}
-      {{
-        onsList({
-            "classes": "list--bare",
-            "itemsList": errorData
-        })
+            {% endfor %}
+            {{
+                onsList({
+                    "classes": "ons-list--bare",
+                    "itemsList": errorData
+                })
+            }}
+        {% endcall %}
+    {% endif %}
+    <h1 class="ons-u-fs-xl">Change name</h1>
+    <form action="" method="post">
+        {{ form.csrf_token }}
+        {% set firstName = user.first_name %}
+        {% if errors.first_name %}
+            {% set errorFirstName = { "text": errors['first_name'][0],  "id": 'first_name_error' } %}
+            {% set firstName = form.first_name.data %}
+        {% endif %}
+        {{
+            onsInput({
+                "id": "first_name",
+                "name": "first_name",
+                "type": "text",
+                "label": {
+                    "text": 'First name'
+                },
+                "error": errorFirstName,
+                "value": firstName
+            })
         }}
-    {% endcall %}
-  {% endif %}
-<h1 class="u-fs-xl">Change name</h1>
-<form action="" method="post">
-  {{ form.csrf_token }}
-  {% set firstName = user.first_name %}
-  {% if errors.first_name %}
-    {% set errorFirstName = { "text": errors['first_name'][0],  "id": 'first_name_error' } %}
-    {% set firstName = form.first_name.data %}
-  {% endif %}
-  {{
-    onsInput({
-        "id": "first_name",
-        "name": "first_name",
-        "type": "text",
-        "label": {
-            "text": 'First name'
-        },
-        "error": errorFirstName,
-        "value": firstName
-    })
-    }}
-  {% set lastName = user.last_name %}
-  {% if errors.last_name %}
-    {% set errorLastName = { "text": errors['last_name'][0],  "id": 'last_name_error' } %}
-    {% set lastName = form.last_name.data %}
-  {% endif %}
-  {{
-    onsInput({
-        "id": "last_name",
-        "name": "last_name",
-        "type": "text",
-        "label": {
-            "text": 'Last name'
-        },
-        "error": errorLastName,
-        "value": lastName
-    })
-    }}
-  <p><br>You will need to sign in again after saving your changes.</p>
-  <div class="grid grid--flex grid--gutterless grid--vertical-center grid--no-wrap@s u-mt-m u-mb-m">
-    <div class="grid__col">
-      {{
-        onsButton({
-        "text": "Save",
-        "id": "btn-option-save",
-        "classes": 'btn-group__btn',
-        "submitType": "timer"
-        })
+        {% set lastName = user.last_name %}
+        {% if errors.last_name %}
+            {% set errorLastName = { "text": errors['last_name'][0],  "id": 'last_name_error' } %}
+            {% set lastName = form.last_name.data %}
+        {% endif %}
+        {{
+            onsInput({
+                "id": "last_name",
+                "name": "last_name",
+                "type": "text",
+                "label": {
+                    "text": 'Last name'
+                },
+                "error": errorLastName,
+                "value": lastName
+            })
         }}
-    </div>
-    <div class="grid__col u-ml-m btn-group__btn secondary">
-      <a href="{{ url_for('account_bp.get_my_account') }}" role="button" class="btn btn--link btn--secondary" id="btn-option-cancel">
-        <span class="btn__inner">Cancel</span></a>
-    </div>
-  </div>
-</form>
+        <p><br>You will need to sign in again after saving your changes.</p>
+        <div class="ons-grid ons-grid--flex ons-grid--gutterless ons-grid--vertical-center ons-grid--no-wrap@s ons-u-mt-m ons-u-mb-m">
+            <div class="ons-grid__col">
+                {{
+                    onsButton({
+                    "text": "Save",
+                    "id": "btn-option-save",
+                    "submitType": "timer"
+                    })
+                }}
+            </div>
+            <div class="ons-grid__col ons-u-ml-m">
+                <a href="{{ url_for('account_bp.get_my_account') }}" role="button" class="ons-btn ons-btn--link ons-btn--secondary" id="btn-option-cancel">
+                    <span class="ons-btn__inner">Cancel</span></a>
+            </div>
+        </div>
+    </form>
 
 {% endblock main %}

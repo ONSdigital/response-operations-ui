@@ -3,66 +3,66 @@
 {% extends "layouts/base.html" %}
 {% set page_title = "Delete respondent" %}
 {% block main %}
-{% include 'partials/flashed-messages.html' %}
-<section>
-  {% if delete %}
-    <h1 id="respondent-data">Delete {{ respondent_details.firstName[0]|upper }}{{ respondent_details.firstName[1:] }} {{ respondent_details.lastName[0]|upper }}{{ respondent_details.lastName[1:] }}'s data</h1>
-    {% call
-      onsPanel({
-        "type":"warn",
-        "id": "warn-delete",
-        "classes": "u-mb-m",
-      })
-    %}
-    <p>All of the information about this person will be deleted.</p>
-    <p>Once their data has been removed, it is unrecoverable.</p>
-    <p>Allow 24 hours for this to be completed.</p>
-    {% endcall %}
-    <div class="u-mb-l">
-      <form id="del-respondent-data" action="{{ url_for('respondent_bp.delete_respondent', respondent_id=respondent_details.id, mark_for_deletion=mark_for_deletion) }}" class="form u-mb-l" method="post">
-      <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
-        <p>
-          {{
-              onsButton({
-                  "text": "Delete respondent",
-                  "id": "btn-del-res",
-                  "name": "delete-respondent"
-              })
-          }}
-         
-          <a href="{{ url_for('respondent_bp.respondent_details', respondent_id=respondent_details.id) }}"
-              role="button" type="cancel" class="btn btn--secondary" id="btn-cancel-del-respondent"><span class="btn__inner">Cancel</span></a>
-        </p>
-      </form>
-    </div>
-  {% elif not delete %}
-    <h1 id="undo-respondent-data">Reactivate {{ respondent_details.firstName[0]|upper }}{{ respondent_details.firstName[1:] }} {{ respondent_details.lastName[0]|upper }}{{ respondent_details.lastName[1:] }}'s account</h1>
-    {% call
-      onsPanel({
-        "type":"warn",
-        "id": "warn-delete",
-        "classes": "u-mb-m",
-        })
-    %}
-    <p>The account is pending deletion and will be deleted by the end of the day.</p>
-    <p>Once their data has been removed, it is unrecoverable.</p>
-    {% endcall %}
-    <div class="u-mb-l">
-      <form id="undo-respondent-deletion" action="{{ url_for('respondent_bp.undo_delete_respondent', respondent_id=respondent_details.id) }}" class="form u-mb-l" method="post">
-      <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
-        <p>
-          {{
-            onsButton({
-                "text": "Reactivate respondent",
-                "id": "btn-undo-res-del",
-                "name": "undo-respondent-delete"
-            })
-          }}
-          <a href="{{ url_for('respondent_bp.respondent_details', respondent_id=respondent_details.id) }}"
-              role="button" type="cancel" class="btn btn--secondary" id="btn-cancel-undo-del-respondent"><span class="btn__inner">Cancel</span></a>
-        </p>
-      </form>
-    </div>
-  {% endif %}
-</section>
+    {% include 'partials/flashed-messages.html' %}
+    <section>
+        {% if delete %}
+            <h1 id="respondent-data">Delete {{ respondent_details.firstName[0]|upper }}{{ respondent_details.firstName[1:] }} {{ respondent_details.lastName[0]|upper }}{{ respondent_details.lastName[1:] }}'s data</h1>
+            {% call
+                onsPanel({
+                    "type":"warn",
+                    "id": "warn-delete",
+                    "classes": "ons-u-mb-m",
+                })
+            %}
+                <p>All of the information about this person will be deleted.</p>
+                <p>Once their data has been removed, it is unrecoverable.</p>
+                <p>Allow 24 hours for this to be completed.</p>
+            {% endcall %}
+            <div class="ons-u-mb-l">
+                <form id="del-respondent-data" action="{{ url_for('respondent_bp.delete_respondent', respondent_id=respondent_details.id, mark_for_deletion=mark_for_deletion) }}" class="form ons-u-mb-l" method="post">
+                    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}" />
+                    <p>
+                        {{
+                            onsButton({
+                                "text": "Delete respondent",
+                                "id": "btn-del-res",
+                                "name": "delete-respondent"
+                            })
+                        }}
+                        
+                        <a href="{{ url_for('respondent_bp.respondent_details', respondent_id=respondent_details.id) }}"
+                            role="button" type="cancel" class="ons-btn ons-btn--secondary" id="btn-cancel-del-respondent"><span class="ons-btn__inner">Cancel</span></a>
+                    </p>
+                </form>
+            </div>
+        {% elif not delete %}
+            <h1 id="undo-respondent-data">Reactivate {{ respondent_details.firstName[0]|upper }}{{ respondent_details.firstName[1:] }} {{ respondent_details.lastName[0]|upper }}{{ respondent_details.lastName[1:] }}'s account</h1>
+            {% call
+                onsPanel({
+                    "type":"warn",
+                    "id": "warn-delete",
+                    "classes": "ons-u-mb-m",
+                })
+            %}
+                <p>The account is pending deletion and will be deleted by the end of the day.</p>
+                <p>Once their data has been removed, it is unrecoverable.</p>
+            {% endcall %}
+            <div class="ons-u-mb-l">
+                <form id="undo-respondent-deletion" action="{{ url_for('respondent_bp.undo_delete_respondent', respondent_id=respondent_details.id) }}" class="form ons-u-mb-l" method="post">
+                    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}" />
+                    <p>
+                        {{
+                            onsButton({
+                                "text": "Reactivate respondent",
+                                "id": "btn-undo-res-del",
+                                "name": "undo-respondent-delete"
+                            })
+                        }}
+                        <a href="{{ url_for('respondent_bp.respondent_details', respondent_id=respondent_details.id) }}"
+                            role="button" type="cancel" class="ons-btn ons-btn--secondary" id="btn-cancel-undo-del-respondent"><span class="ons-btn__inner">Cancel</span></a>
+                    </p>
+                </form>
+            </div>
+        {% endif %}
+    </section>
 {% endblock %}

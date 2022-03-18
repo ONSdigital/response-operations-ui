@@ -1,45 +1,44 @@
 {% from "components/metadata/_macro.njk" import onsMetadata %}
 
 {% block main %}
-    
-  <section class="u-cf u-mb-l">
-    {{ 
-      onsMetadata({
-        "metadataLabel": data.longName + "information",
-        "id": "survey-attributes",
-        "termCol": "4",
-        "descriptionCol": "8",
-        "itemsList": [
-          {
-            "term": "Current period:",
-            "descriptions": [ 
-              {
-                  "description": data.userDescription,
-                  "id": "current-period"
-              }
-            ]
-          },
-          {
-            "term": "Next key date:",
-            "descriptions": [
-              {
-                  "description": data.next_key_date_tag,
-                  "id": "next-key-date-tag"
-              }
-            ]
-          },
+    <section class="ons-u-cf ons-u-mb-l">
+        {{
+            onsMetadata({
+                "metadataLabel": data.longName + "information",
+                "id": "survey-attributes",
+                "termCol": "4",
+                "descriptionCol": "8",
+                "itemsList": [
                     {
-            "term": "",
-            "descriptions": [
-              {
-                  "description": data.next_key_date_timestamp,
-                  "id": "next-key-date-timestamp"
-              }
-            ]
-          }
-        ]
-      }) 
-    }}
-  </section>
+                        "term": "Current period:",
+                        "descriptions": [ 
+                            {
+                                "description": data.userDescription,
+                                "id": "current-period"
+                            }
+                        ]
+                    },
+                    {
+                        "term": "Next key date:",
+                        "descriptions": [
+                            {
+                                "description": data.next_key_date_tag,
+                                "id": "next-key-date-tag"
+                            }
+                        ]
+                    },
+                    {
+                        "term": "",
+                        "descriptions": [
+                            {
+                                "description": data.next_key_date_timestamp,
+                                "id": "next-key-date-timestamp"
+                            }
+                        ]
+                    }
+                ]
+            })
+        }}
+    </section>
 
 {% endblock %}

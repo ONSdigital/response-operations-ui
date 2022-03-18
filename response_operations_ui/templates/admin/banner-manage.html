@@ -5,153 +5,150 @@
 {% from "components/lists/_macro.njk" import onsList %}
 {% from "components/textarea/_macro.njk" import onsTextarea %}
 {% from "components/radios/_macro.njk" import onsRadios %}
-{% set page_title = 'Alert Admin'  %}
+{% set page_title = 'Alert Admin' %}
 {% block main %}
-<div class="grid grid--gutterless">
-    <div class="grid__col col-8@m">
-      {% with messages = get_flashed_messages() %}
-          {% if messages %}
-              {% for message in messages %}
-                  {{
-                      onsPanel({
-                          "type": "success",
-                          "icon": "check",
-                          "classes": "u-mb-s",
-                          "id": "updated_removed_alert_message",
-                          "body": message
-                      })
-                  }}
-              {% endfor %}
-          {% endif %}
-      {% endwith %}
+<div class="ons-grid ons-grid--gutterless">
+    <div class="ons-grid__col ons-col8@m">
+        {% with messages = get_flashed_messages() %}
+            {% if messages %}
+                {% for message in messages %}
+                    {{
+                        onsPanel({
+                            "type": "success",
+                            "iconType": "check",
+                            "classes": "ons-u-mb-s",
+                            "id": "updated_removed_alert_message",
+                            "body": message
+                        })
+                    }}
+                {% endfor %}
+            {% endif %}
+        {% endwith %}
 
-      <h1>Create a new alert</h1>
+         <h1>Create a new alert</h1>
 
-      {% if errors %}
-          {% set errorData = [] %}
+        {% if errors %}
+            {% set errorData = [] %}
 
-          {% call
-              onsPanel({
-                  "type":"error",
-                  "id": "save-error",
-                  "classes": "u-mb-s",
-                  "title": "This page has 1 error" if errors|length == 1 else "There are " + errors|length|string + " errors on this page"
+            {% call
+                onsPanel({
+                    "type":"error",
+                    "id": "save-error",
+                    "classes": "ons-u-mb-s",
+                    "title": "This page has 1 error" if errors|length == 1 else "There are " + errors|length|string + " errors on this page"
+                })
+            %}
+                {% for field, error_list in errors %}
+                    {% do errorData.append(
+                        {
+                            "text": ', '.join(error_list),
+                            "index": true
+                        }
+                    ) %}
+                {% endfor %}
+                {{
+                    onsList({
+                        "classes": "ons-list--bare",
+                        "itemsList": errorData
+                    })
+                }}
+            {% endcall %}
+        {% endif %}
+        <form action="{{ url_for('admin_bp.post_banner') }}" method="POST">
+            {{ form.csrf_token }}
+            {%- call onsFieldset({
+                "legend": "Create a new alert",
+                "legendClasses": "ons-u-vh",
+                "classes": "ons-u-mt-m",
+            }) -%}
+                <div id="message_template" hidden>
+                    <script{% if csp_nonce %} nonce="{{ csp_nonce() }}"{% endif %}>
+                        document.getElementById("message_template").removeAttribute("hidden");
+                    </script>
+                    {% set radioComponent = {
+                        "legend": "Message template (optional)",
+                        "name": "event",
+                    } %}
+                    {% set radios = [] %}
+                    {% for banner in list_of_templates %}
+                        {% do radios.append(
+                            {
+                                "id": banner['id']|string,
+                                "name": "banner_id",
+                                "label": {
+                                    "text": banner['title']
+                                },
+                                "value": banner['content'],
+                                "attributes": {
+                                    "banner_id": banner['id']
+                                },
+                            }
+                        ) %}
+                    {% endfor %}
 
-              })
-          %}
-              {% for field, error_list in errors %}
-                  {% do errorData.append(
-                      {
-                          "text": ', '.join(error_list),
-                          "index": true
-                      }
-                  ) %}
-              {% endfor %}
-              {{
-                  onsList({
-                      "classes": "list--bare",
-                      "itemsList": errorData
-                  })
-              }}
-          {% endcall %}
-      {% endif %}
-      <form action="{{ url_for('admin_bp.post_banner') }}" method="POST">
-          {{ form.csrf_token }}
-          {%- call onsFieldset({
-              "legend": "Create a new alert",
-              "legendClasses": "u-vh",
-              "classes": "u-mt-m",
-              }) -%}
-              <div id="message_template" hidden>
-                <script{% if csp_nonce %} nonce="{{ csp_nonce() }}"{% endif %}>
-                document.getElementById("message_template").removeAttribute("hidden");
-                </script>
-              {% set radioComponent = {
-                  "legend": "Message template (optional)",
-                  "name": "event",
-              } %}
-
-              {% set radios = [] %}
-              {% for banner in list_of_templates %}
-                  {% do radios.append(
-                      {
-                          "id": banner['id']|string,
-                          "name": "banner_id",
-                          "label": {
-                              "text": banner['title']
-                          },
-                          "value": banner['content'],
-                          "attributes": {
-                              "banner_id": banner['id']
-                          },
-                      }
-                  ) %}
-              {% endfor %}
-
-              {% do radioComponent | setAttribute("radios", radios) %}
-              {{
-                  onsRadios(radioComponent)
-              }}
-              {{
-                  onsInput({
-                      "id": "banner-input-id",
-                      "name": "banner_id",
-                      "type": "hidden",
-                      "value": ""
-                  })
-              }}
+                    {% do radioComponent | setAttribute("radios", radios) %}
+                    {{
+                        onsRadios(radioComponent)
+                    }}
+                    {{
+                        onsInput({
+                            "id": "banner-input-id",
+                            "name": "banner_id",
+                            "type": "hidden",
+                            "value": ""
+                        })
+                    }}
                 </div>
-              <p class="field u-mt-s">
-                <noscript>
-                    <a href="{{ url_for('admin_bp.get_message_template') }}">View message templates</a>
-                </noscript>
-              </p>
-              <p class="field u-mt-s">
-                <a href="{{ url_for('admin_bp.manage_alert') }}">Manage message templates</a>
-              </p>
-             
-              {% set bannerTextError = { "text": form.banner_text.errors[0], "id": "bannertext-panel" } %}
-              {{
-                  onsTextarea({
-                      "id": "banner_text",
-                      "name": "banner_text",
-                      "label": {
-                          "text": "Message"
-                      },
-                      "charCheckLimit": '50000',
-                      "error": bannerTextError if form.banner_text.errors
-                  })
-              }}
-              <script{% if csp_nonce %} nonce="{{ csp_nonce() }}"{% endif %}>
-                  document.getElementsByName("event").forEach(element => {
-                      element.addEventListener("change", function(event) {
-                          document.getElementById("banner_text").value = event.target.value;
-                          document.getElementById("banner-input-id").value = event.target.getAttribute("banner_id");
-                      })
-                  });
-              </script>
-          {% endcall %}
-          {%- call onsFieldset({
-              "legend": "Create a new alert",
-              "legendClasses": "u-vh",
-              "classes": "u-mt-m"
-              }) -%}
-              {{
-                  onsButton({
-                      "text": "Continue",
-                      "id": "save-btn"
-                  })
-              }}
-              {{
-                  onsButton({
-                      "classes": "btn--secondary",
-                      "hideCaret": true,
-                      "text": "Cancel",
-                      "url": url_for('home_bp.home')
-                  })
-              }}
-          {% endcall %}
-      </form>
+                <p class="ons-field ons-u-mt-s">
+                    <noscript>
+                        <a href="{{ url_for('admin_bp.get_message_template') }}">View message templates</a>
+                    </noscript>
+                </p>
+                <p class="ons-field ons-u-mt-s">
+                    <a href="{{ url_for('admin_bp.manage_alert') }}">Manage message templates</a>
+                </p>
+                {% set bannerTextError = { "text": form.banner_text.errors[0], "id": "bannertext-panel" } %}
+                {{
+                    onsTextarea({
+                        "id": "banner_text",
+                        "name": "banner_text",
+                        "label": {
+                            "text": "Message"
+                        },
+                        "charCheckLimit": '50000',
+                        "error": bannerTextError if form.banner_text.errors
+                    })
+                }}
+                <script{% if csp_nonce %} nonce="{{ csp_nonce() }}"{% endif %}>
+                    document.getElementsByName("event").forEach(element => {
+                        element.addEventListener("change", function(event) {
+                            document.getElementById("banner_text").value = event.target.value;
+                            document.getElementById("banner-input-id").value = event.target.getAttribute("banner_id");
+                        })
+                    });
+                </script>
+            {% endcall %}
+            {%- call onsFieldset({
+                "legend": "Create a new alert",
+                "legendClasses": "ons-u-vh",
+                "classes": "ons-u-mt-m"
+            }) -%}
+                {{
+                    onsButton({
+                        "text": "Continue",
+                        "id": "save-btn"
+                    })
+                }}
+                {{
+                    onsButton({
+                        "classes": "ons-btn--secondary",
+                        "hideCaret": true,
+                        "text": "Cancel",
+                        "url": url_for('home_bp.home')
+                    })
+                }}
+            {% endcall %}
+        </form>
     </div>
-  </div>
+</div>
 {% endblock %}

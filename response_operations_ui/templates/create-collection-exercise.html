@@ -4,127 +4,127 @@
 {% from "components/fieldset/_macro.njk" import onsFieldset %}
 {% from "components/input/_macro.njk" import onsInput %}
 
-{% set page_title = 'Create collection exercise'  %}
+{% set page_title = 'Create collection exercise' %}
 {% block main %}
-  <div class="grid grid--gutterless">
-    <div class="grid__col col-8@m">
-      {% if errors %}
-        {% call
-          onsPanel({
-              "type":"error",
-              "title": "This page has 1 error",
-              "classes": "u-mb-s",
-              "id": "save-error"
-          })
-        %}
-          <h2 id='error-creating-ce-message' class="u-fs-r--b">Error creating collection exercise</h2>
-          <p class="u-fs-r">{{ errors }}</p>
-        {% endcall %}
-      {% endif %}
-      <h1 class="u-fs-xl">Create collection exercise</h1>
-      <form action="" method="post">
-        {{ form.csrf_token }}
-        {{ 
-          onsMetadata({
-          "termCol": "2",
-          "descriptionCol": "10",
-          "itemsList": [
-            {
-                "term": "Survey:",
-                "descriptions": [ 
-                    {
-                        "description": survey_ref ~ ' ' ~ short_name
-                    }
-                ]
-            }                                                   
-          ]
-        }) 
-      }}
+    <div class="ons-grid ons-grid--gutterless">
+        <div class="ons-grid__col ons-col8@m">
+            {% if errors %}
+                {% call
+                    onsPanel({
+                        "type":"error",
+                        "title": "This page has 1 error",
+                        "classes": "ons-u-mb-s",
+                        "id": "save-error"
+                    })
+                %}
+                    <h2 id='error-creating-ce-message' class="ons-u-fs-r--b">Error creating collection exercise</h2>
+                    <p class="ons-u-fs-r">{{ errors }}</p>
+                {% endcall %}
+            {% endif %}
+             <h1 class="ons-u-fs-xl">Create collection exercise</h1>
+            <form action="" method="post">
+                {{ form.csrf_token }}
+                {{
+                    onsMetadata({
+                        "termCol": "2",
+                        "descriptionCol": "10",
+                        "itemsList": [
+                            {
+                                "term": "Survey:",
+                                "descriptions": [
+                                    {
+                                        "description": survey_ref ~ ' ' ~ short_name
+                                    }
+                                ]
+                            }
+                        ]
+                    })
+                }}
 
-          {%- call onsFieldset({
-              "legend": "Create collection exercise",
-              "legendClasses": "u-vh"
-              }) -%}
-              {{
-                  onsInput({
-                      "id": "period",
-                      "name": "period",
-                      "type": "text",
-                      "label": {
-                          "text": 'Period'
-                      },
-                      "maxLength": 6,
-                      "value": period,
-                      "attributes": {
-                          "required": true
-                      }
-                  })
-              }} 
-              {{
-                  onsInput({
-                      "id": "user_description",
-                      "name": "user_description",
-                      "type": "text",
-                      "label": {
-                          "text": 'Period as shown to respondent'
-                      },
-                      "maxLength": 50,
-                      "value": user_description,
-                      "attributes": {
-                          "required": true
-                      }
-                  })
-              }} 
-              {{
-                  onsInput({
-                      "id": "survey_id",
-                      "name": "hidden_survey_id",
-                      "type": "hidden",
-                      "value": survey_id,
-                      "label": {
-                          "text": 'Survey id',
-                          "classes": "u-vh"
-                      }
-                  })
-              }} 
-              {{
-                  onsInput({
-                      "id": "survey_name",
-                      "name": "hidden_survey_name",
-                      "type": "hidden",
-                      "value": survey_name,
-                      "label": {
-                          "text": 'Survey name',
-                          "classes": "u-vh"
-                      }
-                  })
-              }}
-              {{
-                  onsInput({
-                      "id": "eq_version",
-                      "name": "hidden_eq_version",
-                      "type": "hidden",
-                      "value": survey_eq_version,
-                      "label": {
-                          "text": 'Survey eQ version',
-                          "classes": "u-vh"
-                      }
-                  })
-              }}
+                {%- call onsFieldset({
+                    "legend": "Create collection exercise",
+                    "legendClasses": "ons-u-vh"
+                }) -%}
+                    {{
+                        onsInput({
+                            "id": "period",
+                            "name": "period",
+                            "type": "text",
+                            "label": {
+                                "text": 'Period'
+                            },
+                            "maxLength": 6,
+                            "value": period,
+                            "attributes": {
+                                "required": true
+                            }
+                        })
+                    }}
+                    {{
+                        onsInput({
+                            "id": "user_description",
+                            "name": "user_description",
+                            "type": "text",
+                            "label": {
+                                "text": 'Period as shown to respondent'
+                            },
+                            "maxLength": 50,
+                            "value": user_description,
+                            "attributes": {
+                                "required": true
+                            }
+                        })
+                    }}
+                    {{
+                        onsInput({
+                            "id": "survey_id",
+                            "name": "hidden_survey_id",
+                            "type": "hidden",
+                            "value": survey_id,
+                            "label": {
+                                "text": 'Survey id',
+                                "classes": "ons-u-vh"
+                            }
+                        })
+                    }}
+                    {{
+                        onsInput({
+                            "id": "survey_name",
+                            "name": "hidden_survey_name",
+                            "type": "hidden",
+                            "value": survey_name,
+                            "label": {
+                                "text": 'Survey name',
+                                "classes": "ons-u-vh"
+                            }
+                        })
+                    }}
+                    {{
+                        onsInput({
+                            "id": "eq_version",
+                            "name": "hidden_eq_version",
+                            "type": "hidden",
+                            "value": survey_eq_version,
+                            "label": {
+                                "text": 'Survey eQ version',
+                                "classes": "ons-u-vh"
+                            }
+                        })
+                    }}
 
-          {% endcall %}
-          {{
-              onsButton({
-                  "classes": "u-mb-s u-mt-l",
-                  "text": "Save",
-                  "id": "save-btn"
-              })
-          }}   
+                {% endcall %}
+                {{
+                    onsButton({
+                        "classes": "ons-u-mb-s ons-u-mt-l",
+                        "text": "Save",
+                        "id": "save-btn"
+                    })
+                }}
 
-          <p>
-            <a id="cancel-btn" href="{{ url_for('surveys_bp.view_survey', short_name=short_name, period=period) }}">Cancel</a>
-          </p>
-        </form>
-      </div>
-  </div>
+                <p>
+                    <a id="cancel-btn" href="{{ url_for('surveys_bp.view_survey', short_name=short_name, period=period) }}">Cancel</a>
+                </p>
+            </form>
+        </div>
+    </div>
 {% endblock %}

@@ -1,24 +1,24 @@
 {% macro panel() -%}
-{% with %}
-{# Establishing variables #}
-{% set simple_class = ' panel--simple' if not 'header' in kwargs %}
-{% set type_class = ' panel--' + kwargs.get('type', 'info') %}
-{% set custom_classes = kwargs.get('class', '') %}
-{% set header = kwargs.get('header', False) %}
-{% set font_size = kwargs.get('font_size', 'u-fs-r--b') %}
-{% set id = kwargs.get('id', '') %}
-{% set data_qa = kwargs.get('data-qa', '') %}
+    {% with %}
+        {# Establishing variables #}
+        {% set simple_class = ' ons-panel--simple' if not 'header' in kwargs %}
+        {% set type_class = ' ons-panel--' + kwargs.get('type', 'info') %}
+        {% set custom_classes = kwargs.get('class', '') %}
+        {% set header = kwargs.get('header', False) %}
+        {% set font_size = kwargs.get('font_size', 'ons-u-fs-r--b') %}
+        {% set id = kwargs.get('id', '') %}
+        {% set data_qa = kwargs.get('data-qa', '') %}
 
-{# Render component #}
-<div class="panel{{ simple_class }}{{ type_class }} {{ custom_classes }}">
-    {% if header %}
-    <div class="panel__header">
-        <div class="{{ font_size }}">{{ header }}</div>
-    </div>
-    {% endif %}
-    <div id="{{ id }}" class="panel__body" data-qa="{{ data_qa }}">
-        {{ caller() }}
-    </div>
-</div>
-{% endwith %}
+        {# Render component #}
+        <div class="ons-panel{{ simple_class }}{{ type_class }} {{ custom_classes }}">
+            {% if header %}
+            <div class="ons-panel__header">
+                <div class="{{ font_size }}">{{ header }}</div>
+            </div>
+            {% endif %}
+            <div id="{{ id }}" class="ons-panel__body" data-qa="{{ data_qa }}">
+                {{ caller() }}
+            </div>
+        </div>
+    {% endwith %}
 {% endmacro %}

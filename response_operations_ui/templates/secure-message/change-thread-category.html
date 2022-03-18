@@ -6,108 +6,108 @@
 {% set hide_breadcrumbs = true %}
 
 {% block main %}
-  <div class="grid">
-      <div class="grid__col col-12@m">
-      {% include 'secure-message/change-thread-category-errors.html' %}
-      </div>
-      <div class="grid__col col-8@m">
-        <h1>Assign a survey or category to the message</h1>
-        <form method="post">
-          <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
-            {% if survey_list %}
-              {% if form.errors %}
-                {% set errorData = [] %}
-                {% for field in form.errors %}
-                  {% for error in form.errors[field] %}
-                    {% do errorData.append(
+    <div class="ons-grid">
+        <div class="ons-grid__col ons-col12@m">
+            {% include 'secure-message/change-thread-category-errors.html' %}
+        </div>
+        <div class="ons-grid__col ons-col8@m">
+            <h1>Assign a survey or category to the message</h1>
+            <form method="post">
+                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}" />
+                {% if survey_list %}
+                    {% if form.errors %}
+                        {% set errorData = [] %}
+                        {% for field in form.errors %}
+                            {% for error in form.errors[field] %}
+                                {% do errorData.append(
+                                    {
+                                        "text": error
+                                    }
+                                ) %}
+                            {% endfor %}
+                        {% endfor %}
+                        {# A onsRadios only takes one error. We can't pick a random key so we gather all the 
+                        errors up then just pick whatever is at the first #}
+                        {% set error = errorData[0] %}
+                    {% endif %}
+                    {% set surveys = [
                         {
-                            "text": error
+                            "value": "",
+                            "text": "Select a survey",
+                            "disabled": true,
+                            "selected": true
                         }
-                    ) %}
-                  {% endfor %}
-                {% endfor %}
-                {# A onsRadios only takes one error.  We can't pick a random key so we gather all the 
-                errors up then just pick whatever is at the first #}
-                {% set error = errorData[0] %}
-            {% endif %}
-            {% set surveys = [            
-              {
-                "value": "",
-                "text": "Select a survey",
-                "disabled": true,
-                "selected": true
-              }
-            ] %}
-            {% for survey in survey_list %}
-              {% do surveys.append(
-                {
-                  "value": survey.replace(' ', ''),
-                  "text": survey,
-                  "id": survey.replace(' ', '')
-                }
-              ) %}
-            {% endfor %}
-            {{
-                onsRadios({
-                    "legend": "Choose an option",
-                    "id": "category",
-                    "name": "category",
-                    "error": error,
-                    "radios": [
-                        {
-                            "id": "surveys-other",
-                            "label": {
-                                "text": "Survey"
-                            },
-                            "value": "SURVEY",
-                            "checked": true if thread.category == "SURVEY",
-                            "other": {
-                                "otherType": "select",
-                                "id": "survey-list",
-                                "name": "select_survey",
-                                "label": {
-                                    "text": "Please specify the survey"
-                                },
-                            "options": surveys,
+                    ] %}
+                    {% for survey in survey_list %}
+                        {% do surveys.append(
+                            {
+                                "value": survey.replace(' ', ''),
+                                "text": survey,
+                                "id": survey.replace(' ', '')
                             }
-                        },
-                        {
-                            "id": "technical-other",
-                            "label": {
-                                "text": "Technical"
-                            },
-                            "checked": true if thread.category == "TECHNICAL",
-                            "value": "TECHNICAL"
-                        },
-                        {
-                            "id": "misc-other",
-                            "label": {
-                                "text": "Respondent Feedback Team"
-                            },
-                            "checked": true if thread.category == "MISC",
-                            "value": "MISC"
-                        }
-                    ]
-                })
-            }}
-            <div class="grid grid--flex grid--gutterless grid--vertical-center grid--no-wrap@s u-mt-m u-mb-m">
-              <div class="grid__col">
-                {{
-                onsButton({
-                    "text": "Continue",
-                    "id": "continue",
-                    "submitType": "timer"
-                })
-              }}  
-              </div>
-              <div class="grid__col u-ml-m">
-                <a href=" {{ url_for('messages_bp.view_conversation', thread_id=thread_id) }}">Cancel</a>
-              </div>
-            </div>
-        {% else %}
-          <p>Survey list failed to load.  Please try again.</p>
-        {% endif %}
-      </form>
+                        ) %}
+                    {% endfor %}
+                    {{
+                        onsRadios({
+                            "legend": "Choose an option",
+                            "id": "category",
+                            "name": "category",
+                            "error": error,
+                            "radios": [
+                                {
+                                    "id": "surveys-other",
+                                    "label": {
+                                        "text": "Survey"
+                                    },
+                                    "value": "SURVEY",
+                                    "checked": true if thread.category == "SURVEY",
+                                    "other": {
+                                        "otherType": "select",
+                                        "id": "survey-list",
+                                        "name": "select_survey",
+                                        "label": {
+                                            "text": "Please specify the survey"
+                                        },
+                                    "options": surveys,
+                                    }
+                                },
+                                {
+                                    "id": "technical-other",
+                                    "label": {
+                                        "text": "Technical"
+                                    },
+                                    "checked": true if thread.category == "TECHNICAL",
+                                    "value": "TECHNICAL"
+                                },
+                                {
+                                    "id": "misc-other",
+                                    "label": {
+                                        "text": "Respondent Feedback Team"
+                                    },
+                                    "checked": true if thread.category == "MISC",
+                                    "value": "MISC"
+                                }
+                            ]
+                        })
+                    }}
+                    <div class="ons-grid ons-grid--flex ons-grid--gutterless ons-grid--vertical-center ons-grid--no-wrap@s ons-u-mt-m ons-u-mb-m">
+                        <div class="ons-grid__col">
+                            {{
+                                onsButton({
+                                    "text": "Continue",
+                                    "id": "continue",
+                                    "submitType": "timer"
+                                })
+                            }}
+                        </div>
+                        <div class="ons-grid__col ons-u-ml-m">
+                            <a href=" {{ url_for('messages_bp.view_conversation', thread_id=thread_id) }}">Cancel</a>
+                        </div>
+                    </div>
+                {% else %}
+                    <p>Survey list failed to load.  Please try again.</p>
+                {% endif %}
+            </form>
+        </div>
     </div>
-  </div>
 {% endblock %}

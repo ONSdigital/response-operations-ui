@@ -6,108 +6,106 @@
 
 {% set page_title = 'Edit survey details' %}
 {% block main %}
-  <div class="grid grid--gutterless">
-      <div class="grid__col col-8@m">
-          {% if errors %}
-            {% call
-              onsPanel({
-                  "type":"error",
-                  "title": "This page has 1 error",
-                  "classes": "u-mb-s",
-                  "id": "save-error"
-              })
-            %}
-              <h2 id='error-saving-message' class="u-fs-r--b">Error updating survey details</h2>
-              <p>Please remove any spaces or special characters from the name and try saving your changes again.</p>
-            {% endcall %}
-          {% endif %}
-        <h1 class="u-fs-xl">Edit survey details</h1>
-        <form action="" method="post">
-          {{ form.csrf_token }}
+    <div class="ons-grid ons-grid--gutterless">
+        <div class="ons-grid__col ons-col8@m">
+            {% if errors %}
+                {% call
+                    onsPanel({
+                        "type":"error",
+                        "title": "This page has 1 error",
+                        "classes": "ons-u-mb-s",
+                        "id": "save-error"
+                    })
+                %}
+                    <h2 id='error-saving-message' class="ons-u-fs-r--b">Error updating survey details</h2>
+                    <p>Please remove any spaces or special characters from the name and try saving your changes again.</p>
+                {% endcall %}
+            {% endif %}
+            <h1 class="ons-u-fs-xl">Edit survey details</h1>
+            <form action="" method="post">
+                {{ form.csrf_token }}
+                {{
+                    onsMetadata({
+                        "termCol": "2",
+                        "descriptionCol": "10",
+                        "itemsList": [
+                            {
+                                "term": "Survey ID:",
+                                "descriptions": [
+                                    {
+                                        "description": survey_ref
+                                    }
+                                ]
+                            },
+                            {
+                                "term": "Legal Basis:",
+                                "descriptions": [
+                                    {
+                                        "description": legal_basis
+                                    }
+                                ]
+                            }
+                        ]
+                    })
+                }}
 
-          {{ 
-              onsMetadata({
-              "termCol": "2",
-              "descriptionCol": "10",
-              "itemsList": [
-                  {
-                      "term": "Survey ID:",
-                      "descriptions": [ 
-                          {
-                              "description": survey_ref
-                          }
-                      ]
-                  },
-                  {
-                      "term": "Legal Basis:",
-                      "descriptions": [ 
-                          {
-                              "description": legal_basis
-                          }                
-                      ]
-                  }                                                    
-              ]
-              }) 
-          }}
+                {%- call onsFieldset({
+                    "legend": "Edit survey details",
+                    "legendClasses": "ons-u-vh"
+                }) -%}
+                    {{
+                        onsInput({
+                            "id": "short_name",
+                            "name": "short_name",
+                            "type": "text",
+                            "label": {
+                                "text": 'Short Name - <span class="ons-u-lighter ons-u-fw-n">' ~ short_name ~ '</span>'
+                            },
+                            "maxLength": 254,
+                            "value": short_name,
+                            "attributes": {
+                                "required": true
+                            }
+                        })
+                    }}
+                    {{
+                        onsInput({
+                            "id": "long_name",
+                            "name": "long_name",
+                            "type": "text",
+                            "label": {
+                                "text": 'Long Name - <span class="ons-u-lighter ons-u-fw-n">' ~ long_name ~ '</span>'
+                            },
+                            "maxLength": 254,
+                            "value": long_name,
+                            "attributes": {
+                                "required": true
+                            }
+                        })
+                    }}
+                    {{
+                        onsInput({
+                            "id": "survey_ref",
+                            "name": "hidden_survey_ref",
+                            "type": "hidden",
+                            "value": survey_ref,
+                            "label": {
+                                "text": 'Survey ref',
+                                "classes": "ons-u-vh"
+                            }
+                        })
+                    }}
+                {% endcall %}
 
-          {%- call onsFieldset({
-              "legend": "Edit survey details",
-              "legendClasses": "u-vh"
-              }) -%}
-              {{
-                  onsInput({
-                      "id": "short_name",
-                      "name": "short_name",
-                      "type": "text",
-                      "label": {
-                          "text": 'Short Name - <span class="u-lighter u-fw-n">' ~ short_name ~ '</span>'
-                      },
-                      "maxLength": 254,
-                      "value": short_name,
-                      "attributes": {
-                          "required": true
-                      }
-                  })
-              }} 
-              {{
-                  onsInput({
-                      "id": "long_name",
-                      "name": "long_name",
-                      "type": "text",
-                      "label": {
-                          "text": 'Long Name - <span class="u-lighter u-fw-n">' ~ long_name ~ '</span>'
-                      },
-                      "maxLength": 254,
-                      "value": long_name,
-                      "attributes": {
-                          "required": true
-                      }
-                  })
-              }} 
-              {{
-                  onsInput({
-                      "id": "survey_ref",
-                      "name": "hidden_survey_ref",
-                      "type": "hidden",
-                      "value": survey_ref,
-                      "label": {
-                          "text": 'Survey ref',
-                          "classes": "u-vh"
-                      }
-                  })
-              }} 
-
-          {% endcall %}
-
-          {{
-              onsButton({
-                  "classes": "u-mb-s u-mt-l",
-                  "text": "Save",
-                  "id": "save-btn"
-              })
-          }}   
-          <p><a id="cancel-btn" href="{{ url_for('surveys_bp.view_surveys') }}">Cancel</a></p>
-    </form>
-  </div>
-</div>
+                {{
+                    onsButton({
+                        "classes": "ons-u-mb-s ons-u-mt-l",
+                        "text": "Save",
+                        "id": "save-btn"
+                    })
+                }}
+                <p><a id="cancel-btn" href="{{ url_for('surveys_bp.view_surveys') }}">Cancel</a></p>
+            </form>
+        </div>
+    </div>
 {% endblock %}

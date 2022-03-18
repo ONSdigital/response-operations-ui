@@ -1,142 +1,141 @@
 <section class="ce-section ce-details">
-  <h2 class="u-fs-r--b u-pt-m">Reference information for this collection exercise</h2>
+    <h2 class="ons-u-fs-r--b ons-u-pt-m">Reference information for this collection exercise</h2>
 
-  {% set surveyTableData = {
-      "table_class": 'table--dense',
-      "id": 'tbl-ce-details',
-      "caption": 'Dates for this collection exercise',
-      "hideCaption": true,
-      "ths": [
-        { 
-            "value": "Event",
-            "class": "u-vh"
-        },
-        { 
-            "value": "Date",
-            "class": "u-vh"
-        },
-        { 
-            "value": "Status",
-            "class": "u-vh"
-        }
-      ]
-    }
-  %}
-
-  {% set surveyTableDataRows = [] %}
-  {% set dateGroups = ['period', 'user', 'surveyId', 'surveyTitle', 'ref_period_start', 'ref_period_end', 'employment'] %}
-
-  {% for dateGroup in dateGroups %}
-    {% if dateGroup == 'period' %}
-      {% set label = 'Period' %}
-      {% set id = 'period' %}
-      {% set event = ce.exerciseRef %}
-      {% set editable = true %}
-    {% elif dateGroup == 'user' %}
-      {% set label = 'Shown to respondent as' %}
-      {% set id = 'user-description' %}
-      {% set event = ce.userDescription %}
-      {% set editable = true %}
-    {% elif dateGroup == 'surveyId' %}
-      {% set id = 'survey-info' %}
-      {% set label = 'Survey ID and Abbreviation' %}
-      {% set event = survey.surveyRef + ' ' + survey.shortName %}
-    {% elif dateGroup == 'surveyTitle' %}
-      {% set id = 'survey-title' %}
-      {% set label = 'Survey title' %}
-      {% set event = survey.longName %}
-    {% elif dateGroup == 'ref_period_start' %}
-      {% set id = 'period-start-date' %}
-      {% set label = 'Reference period start date' %}
-      {% if events.ref_period_start %}
-        {% set event = events.ref_period_start.day + ' ' +  events.ref_period_start.date %}
-      {% endif %}
-      {% set editable = true %}
-    {% elif dateGroup == 'ref_period_end' %}
-      {% set id = 'period-end-date' %}
-      {% set label = 'Reference period end date' %}
-      {% if events.ref_period_end %}
-        {% set event = events.ref_period_end.day + ' ' +  events.ref_period_end.date %}
-      {% endif %}
-      {% set editable = true %}
-    {% elif dateGroup == 'employment' %}
-      {% set id = 'employment-date' %}
-      {% set label = 'Employment date' %}
-      {% if events.employment %}
-        {% set event = events.employment.day + ' ' +  events.employment.date %}
-      {% endif %}
-      {% set editable = true %}
-    {% endif %}
-
-    {% if (not locked) and (dateGroup == 'period') %}
-      {% set formData = {
-        "action": url_for('collection_exercise_bp.view_collection_exercise_details', short_name=survey.shortName, period=ce.exerciseRef, surveyRef=survey.surveyRef),
-        "method": 'get',
-        "button": {
-          "text": 'Edit',
-          "id": 'edit-collection-exercise-period',
-          "classes": 'btn--secondary btn--small'
-        }
-      } %}
-    {% endif %}
-    {% if (not locked) and (dateGroup == 'user') %}
-      {% set formData = {
-        "action": url_for('collection_exercise_bp.view_collection_exercise_details', short_name=survey.shortName, period=ce.exerciseRef, surveyRef=survey.surveyRef),
-        "method": 'get',
-        "button": {
-          "text": 'Edit',
-          "id": 'edit-collection-exercise-period',
-          "classes": 'btn--secondary btn--small'
-        }
-      } %}
-    {% endif %}  
-  
-    {% if not event and (dateGroup != 'period' and dateGroup != 'user') and editable %}
-      {% set formData = {
-        "action": url_for('collection_exercise_bp.get_create_collection_event_form', short_name=survey.shortName, ce_id=ce.id, period=ce.exerciseRef, tag=dateGroup),
-        "method": 'get',
-        "button": {
-          "text": 'Add',
-          "id": 'edit-event-date-' + id,
-          "classes": 'btn--secondary btn--small'
-        }
-      } %}
-    {% elif editable and (dateGroup != 'period' and dateGroup != 'user') %}
-      {% set formData = {
-        "action": url_for('collection_exercise_bp.update_event_date', short_name=survey.shortName, period=ce.exerciseRef, tag=dateGroup),
-        "method": 'get',
-        "button": {
-          "text": 'Edit',
-          "id": 'edit-event-date-ref-period-start',
-          "classes": 'btn--secondary btn--small'
-        }
-      } %}
-    {% endif %}
-
-    {% do surveyTableDataRows.append(
-      {
-        "tds": [
-          {
-            "value": label
-          },
-          {
-            "value": event if event,
-            "name": id
-          },
-          {
-            "form": formData,
-            "class": "u-ta-right"
-          }
+    {% set surveyTableData = {
+        "variants": 'compact',
+        "id": 'tbl-ce-details',
+        "caption": 'Dates for this collection exercise',
+        "hideCaption": true,
+        "ths": [
+            {
+                "value": "Event",
+                "thClasses": "ons-u-vh"
+            },
+            {
+                "value": "Date",
+                "thClasses": "ons-u-vh"
+            },
+            {
+                "value": "Status",
+                "thClasses": "ons-u-vh"
+            }
         ]
-      }
-    ) %}
+    } %}
 
-  {% endfor %}
+    {% set surveyTableDataRows = [] %}
+    {% set dateGroups = ['period', 'user', 'surveyId', 'surveyTitle', 'ref_period_start', 'ref_period_end', 'employment'] %}
 
-  {% do surveyTableData | setAttribute("trs", surveyTableDataRows) %}
+    {% for dateGroup in dateGroups %}
+        {% if dateGroup == 'period' %}
+            {% set label = 'Period' %}
+            {% set id = 'period' %}
+            {% set event = ce.exerciseRef %}
+            {% set editable = true %}
+        {% elif dateGroup == 'user' %}
+            {% set label = 'Shown to respondent as' %}
+            {% set id = 'user-description' %}
+            {% set event = ce.userDescription %}
+            {% set editable = true %}
+        {% elif dateGroup == 'surveyId' %}
+            {% set id = 'survey-info' %}
+            {% set label = 'Survey ID and Abbreviation' %}
+            {% set event = survey.surveyRef + ' ' + survey.shortName %}
+        {% elif dateGroup == 'surveyTitle' %}
+            {% set id = 'survey-title' %}
+            {% set label = 'Survey title' %}
+            {% set event = survey.longName %}
+        {% elif dateGroup == 'ref_period_start' %}
+            {% set id = 'period-start-date' %}
+            {% set label = 'Reference period start date' %}
+            {% if events.ref_period_start %}
+                {% set event = events.ref_period_start.day + ' ' + events.ref_period_start.date %}
+            {% endif %}
+            {% set editable = true %}
+        {% elif dateGroup == 'ref_period_end' %}
+            {% set id = 'period-end-date' %}
+            {% set label = 'Reference period end date' %}
+            {% if events.ref_period_end %}
+                {% set event = events.ref_period_end.day + ' ' + events.ref_period_end.date %}
+            {% endif %}
+            {% set editable = true %}
+        {% elif dateGroup == 'employment' %}
+            {% set id = 'employment-date' %}
+            {% set label = 'Employment date' %}
+            {% if events.employment %}
+                {% set event = events.employment.day + ' ' + events.employment.date %}
+            {% endif %}
+            {% set editable = true %}
+        {% endif %}
 
-  {{
-    onsTable(surveyTableData)
-  }}
+        {% if (not locked) and (dateGroup == 'period') %}
+            {% set formData = {
+                "action": url_for('collection_exercise_bp.view_collection_exercise_details', short_name=survey.shortName, period=ce.exerciseRef, surveyRef=survey.surveyRef),
+                "method": 'get',
+                "button": {
+                    "text": 'Edit',
+                    "id": 'edit-collection-exercise-period',
+                    "classes": 'ons-btn--secondary ons-btn--small'
+                }
+            } %}
+        {% endif %}
+        {% if (not locked) and (dateGroup == 'user') %}
+            {% set formData = {
+                "action": url_for('collection_exercise_bp.view_collection_exercise_details', short_name=survey.shortName, period=ce.exerciseRef, surveyRef=survey.surveyRef),
+                "method": 'get',
+                "button": {
+                    "text": 'Edit',
+                    "id": 'edit-collection-exercise-period',
+                    "classes": 'ons-btn--secondary ons-btn--small'
+                }
+            } %}
+        {% endif %}
+    
+        {% if not event and (dateGroup != 'period' and dateGroup != 'user') and editable %}
+            {% set formData = {
+                "action": url_for('collection_exercise_bp.get_create_collection_event_form', short_name=survey.shortName, ce_id=ce.id, period=ce.exerciseRef, tag=dateGroup),
+                "method": 'get',
+                "button": {
+                    "text": 'Add',
+                    "id": 'edit-event-date-' + id,
+                    "classes": 'ons-btn--secondary ons-btn--small'
+                }
+            } %}
+        {% elif editable and (dateGroup != 'period' and dateGroup != 'user') %}
+            {% set formData = {
+                "action": url_for('collection_exercise_bp.update_event_date', short_name=survey.shortName, period=ce.exerciseRef, tag=dateGroup),
+                "method": 'get',
+                "button": {
+                    "text": 'Edit',
+                    "id": 'edit-event-date-ref-period-start',
+                    "classes": 'ons-btn--secondary ons-btn--small'
+                }
+            } %}
+        {% endif %}
+
+        {% do surveyTableDataRows.append(
+            {
+                "tds": [
+                    {
+                        "value": label
+                    },
+                    {
+                        "value": event if event,
+                        "name": id
+                    },
+                    {
+                        "form": formData,
+                        "tdClasses": "ons-u-ta-right"
+                    }
+                ]
+            }
+        ) %}
+
+    {% endfor %}
+
+    {% do surveyTableData | setAttribute("trs", surveyTableDataRows) %}
+
+    {{
+        onsTable(surveyTableData)
+    }}
 
 </section>

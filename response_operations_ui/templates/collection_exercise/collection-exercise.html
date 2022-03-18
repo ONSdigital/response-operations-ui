@@ -13,8 +13,8 @@
     {% include 'collection_exercise/ce-info-panel.html' %}
 
     {% include 'collection_exercise/ce-header-section.html' %}
-    <div class="grid grid--gutterless">
-        <div class="grid__col col-6@l">
+    <div class="ons-grid ons-grid--gutterless">
+        <div class="ons-grid__col ons-col6@l">
             {% include 'partials/error-box.html' %}
             {% include 'collection_exercise/ce-dates-section.html' %}
             {% include 'collection_exercise/ce-nudge-email-section.html' %}
@@ -22,13 +22,11 @@
             {% include 'collection_exercise/ce-instrument-section.html' %}
         </div>
 
-        <div class="grid__col col-5@l push-1@l">
+        <div class="ons-grid__col ons-col5@l push-1@l">
             {% include 'collection_exercise/ce-reference-information.html' %}
             {% if survey.surveyMode == 'EQ' and is_eq_v3_enabled %}
               {% include 'collection_exercise/ce-select-eq-version.html' %}
             {% endif %}
         </div>
-       
     </div>
-
 {% endblock %}

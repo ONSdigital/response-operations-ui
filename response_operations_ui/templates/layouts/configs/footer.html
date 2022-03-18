@@ -1,19 +1,8 @@
 {% set footer = {
-  "poweredBy": {
-    "logo": "ons-logo-black-en",
-    "alt": "ONS Logo"
-  }
+    "poweredBy": {
+        "logo": "ons-logo-black-en",
+        "alt": "ONS Logo"
+    }
 } %}
-
-{# {% do footer | setAttribute("rows", [
-  {
-    "itemsList": [
-      {
-        "text": "Accessibility",
-        "url": "/accessibility"
-      }
-    ]
-  }
-]) %} #}
 
 {% do pageConfig | setAttribute("footer", footer) %}

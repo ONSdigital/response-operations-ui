@@ -1,11 +1,11 @@
 {% extends "layouts/base.html" %}
 {% from "components/button/_macro.njk" import onsButton %}
-{% set page_title = 'Your email address has been changed'  %}
+{% set page_title = 'Your email address has been changed' %}
 {% block main %}
-  <div class="grid grid--gutterless">
-    <div class="grid__col col-8@m">
-      <h1 class="u-fs-xl">Your email has been changed</h1>
-      <p>Thank you for changing your email address. Please <a id="signin-btn" href="{{ url_for('sign_in_bp.sign_in') }}">sign in</a>.</p>
+    <div class="ons-grid ons-grid--gutterless">
+        <div class="ons-grid__col ons-col8@m">
+            <h1 class="ons-u-fs-xl">Your email has been changed</h1>
+            <p>Thank you for changing your email address. Please <a id="signin-btn" href="{{ url_for('sign_in_bp.sign_in') }}">sign in</a>.</p>
+        </div>
     </div>
-  </div>
 {% endblock %}

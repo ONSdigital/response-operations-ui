@@ -11,34 +11,33 @@
     {% endif %}
     {% if loop.last %}
         {% if show_mark_unread == True %}
-        {% set unreadLink = url_for('messages_bp.mark_message_unread',
-               message_id=message.message_id, from=message.from, to=message.to, page=page, 
-                       conversation_tab=conversation_tab, ru_ref_filter=ru_ref_filter, business_id_filter=business_id_filter) %}
-        {% set unreadLinkId = 'sm-mark-as-unread' %}
-        {% set unreadLinkText = 'Mark as unread' %}
+            {% set unreadLink = url_for('messages_bp.mark_message_unread',
+                message_id=message.message_id, from=message.from, to=message.to, page=page, 
+                conversation_tab=conversation_tab, ru_ref_filter=ru_ref_filter, business_id_filter=business_id_filter) %}
+            {% set unreadLinkId = 'sm-mark-as-unread' %}
+            {% set unreadLinkText = 'Mark as unread' %}
         {% endif %}
         <div name="latest-message" id="latest-message">
     {% endif %}
 
     {% call onsMessage({
-            "type": msgType,
-            "id": msgId + loop.index|string,
-            "name": msgName,
-            "fromLabel": 'From',
-            "fromName": 'sm-from-user',
-            "fromId": 'sm-from-user-' + loop.index|string,
-            "fromValue": message.get('username'),
-            "sentLabel": 'Sent',
-            "sentValue": message.get('sent_date'),
-            "sentName": 'sm-sent-date',
-            "sentId": 'sm-sent-date-' + loop.index|string,
-            "unreadLink": unreadLink,
-            "unreadLinkId": unreadLinkId,
-            "unreadLinkText": unreadLinkText,
-            "messageID": 'conversation-message-body-' + loop.index|string,
-            "messageName": 'conversation-message-body'
-        })
-    %}
+        "type": msgType,
+        "id": msgId + loop.index|string,
+        "name": msgName,
+        "fromLabel": 'From',
+        "fromName": 'sm-from-user',
+        "fromId": 'sm-from-user-' + loop.index|string,
+        "fromValue": message.get('username'),
+        "sentLabel": 'Sent',
+        "sentValue": message.get('sent_date'),
+        "sentName": 'sm-sent-date',
+        "sentId": 'sm-sent-date-' + loop.index|string,
+        "unreadLink": unreadLink,
+        "unreadLinkId": unreadLinkId,
+        "unreadLinkText": unreadLinkText,
+        "messageID": 'conversation-message-body-' + loop.index|string,
+        "messageName": 'conversation-message-body'
+    }) %}
         <span style="white-space:pre-line">{{ message.get('body') }}</span>
     {% endcall %}
     {% if loop.last %}

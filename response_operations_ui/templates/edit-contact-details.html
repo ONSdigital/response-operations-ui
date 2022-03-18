@@ -4,165 +4,161 @@
 {% from "components/fieldset/_macro.njk" import onsFieldset %}
 {% from "components/input/_macro.njk" import onsInput %}
 
-{% set page_title = 'Edit contact details'  %}
+{% set page_title = 'Edit contact details' %}
 {% block main %}
-  <div class="grid grid--gutterless">
-    <div class="grid__col col-8@m">
-      {% if error_type == 'api error' %}
-          {% call
-            onsPanel({
-                "type":"error",
-                "classes": "u-mb-s",
-                "id": "save-error"
-            })
-          %}
-            <h2 id='error-saving-message' class="u-fs-r--b">Connection error</h2>
-            <p class="u-fs-r">Please try saving your changes again.</p>
-          {% endcall %}
-      {% endif %}
-      {% if error_type == 'email conflict' %}
-          {% call
-            onsPanel({
-                "type":"error",
-                "classes": "u-mb-s",
-                "id": "save-email-error"
-            })
-          %}
-          <h2 id='error-saving-email' class="u-fs-r--b">Error - email address already exists</h2>
-          <p class="u-fs-r">Please enter a different email address.</p>
-          {% endcall %}
-      {% endif %}
-    {% if errors %}
-        <div class="panel panel--error u-mb-m">
-          <div class="panel__header">
-            {% if errors|length > 1 %}
-            <h1 id="error-count" class="panel__title u-fs-r--b">This page has {{ errors|length }} errors</h1>
-            {% else %}
-            <h1 id="error-count" class="panel__title u-fs-r--b">This page has an error</h1>
+    <div class="ons-grid ons-grid--gutterless">
+        <div class="ons-grid__col ons-col8@m">
+            {% if error_type == 'api error' %}
+                {% call
+                    onsPanel({
+                        "type":"error",
+                        "classes": "ons-u-mb-s",
+                        "id": "save-error"
+                    })
+                %}
+                    <h2 id='error-saving-message' class="ons-u-fs-r--b">Connection error</h2>
+                    <p class="ons-u-fs-r">Please try saving your changes again.</p>
+                {% endcall %}
             {% endif %}
-          </div>
-          <div class="panel__body">
-            These must be corrected to continue.
-            <ol class="list u-ml-s u-mt-xs">
-              {% for error in form.last_name.errors %}
-                <li class="list__item"><a href='#lastName'>{{ error }}</a></li>
-              {% endfor %}
-              {% for error in form.first_name.errors %}
-                <li class="list__item"><a href='#firstName'>{{ error }}</a></li>
-              {% endfor %}
-              {% for error in form.email.errors %}
-                <li class="list__item"><a href='#email'>{{ error }}</a></li>
-              {% endfor %}
-              {% for error in form.telephone.errors %}
-                <li class="list__item"><a href='#telephone'>{{ error }}</a></li>
-              {% endfor %}
-            </ol>
-           </div>
-          </div>
-          {% endif %}
-      <h1 class="u-fs-xl">Edit contact details</h1>
-      {%- set href = url_for('respondent_bp.edit_contact_details', ru_ref=ru_ref, respondent_id=respondent_details.id) if tab=='respondents' else url_for('reporting_unit_bp.edit_contact_details', ru_ref=ru_ref, respondent_id=respondent_details.id) -%}
-      <form action="{{ href }}" method="post">
-        {{ form.csrf_token }}
-        {%- call onsFieldset({
-          "legend": "Edit contact details",
-          "legendClasses": "u-vh"
-          }) -%}
-          {% if failed_authentication or form.last_name.errors or errors %}
-              {% set lastNameError = { "text": "Last name is required", "id": "lastname-panel" } %}
-          {% endif %}
+            {% if error_type == 'email conflict' %}
+                {% call
+                    onsPanel({
+                        "type":"error",
+                        "classes": "ons-u-mb-s",
+                        "id": "save-email-error"
+                    })
+                %}
+                    <h2 id='error-saving-email' class="ons-u-fs-r--b">Error - email address already exists</h2>
+                    <p class="ons-u-fs-r">Please enter a different email address.</p>
+                {% endcall %}
+            {% endif %}
+            {% if errors %}
+                <div class="ons-panel ons-panel--error ons-u-mb-m">
+                    <div class="ons-panel__header">
+                        {% if errors|length > 1 %}
+                            <h1 id="error-count" class="ons-panel__title ons-u-fs-r--b">This page has {{ errors|length }} errors</h1>
+                        {% else %}
+                            <h1 id="error-count" class="ons-panel__title ons-u-fs-r--b">This page has an error</h1>
+                        {% endif %}
+                    </div>
+                    <div class="ons-panel__body">
+                        These must be corrected to continue.
+                        <ol class="ons-list ons-u-ml-s ons-u-mt-xs">
+                        {% for error in form.last_name.errors %}
+                            <li class="ons-list__item"><a href='#lastName'>{{ error }}</a></li>
+                        {% endfor %}
+                        {% for error in form.first_name.errors %}
+                            <li class="ons-list__item"><a href='#firstName'>{{ error }}</a></li>
+                        {% endfor %}
+                        {% for error in form.email.errors %}
+                            <li class="ons-list__item"><a href='#email'>{{ error }}</a></li>
+                        {% endfor %}
+                        {% for error in form.telephone.errors %}
+                            <li class="ons-list__item"><a href='#telephone'>{{ error }}</a></li>
+                        {% endfor %}
+                        </ol>
+                    </div>
+                </div>
+            {% endif %}
+            <h1 class="ons-u-fs-xl">Edit contact details</h1>
+            {%- set href = url_for('respondent_bp.edit_contact_details', ru_ref=ru_ref, respondent_id=respondent_details.id) if tab=='respondents' else url_for('reporting_unit_bp.edit_contact_details', ru_ref=ru_ref, respondent_id=respondent_details.id) -%}
+            <form action="{{ href }}" method="post">
+                {{ form.csrf_token }}
+                {%- call onsFieldset({
+                    "legend": "Edit contact details",
+                    "legendClasses": "ons-u-vh"
+                }) -%}
+                    {% if failed_authentication or form.last_name.errors or errors %}
+                        {% set lastNameError = { "text": "Last name is required", "id": "lastname-panel" } %}
+                    {% endif %}
 
-          {{
-              onsInput({
-                  "id": "lastName",
-                  "value": respondent_details.lastName,
-                  "name": "last_name",
-                  "type": "text",
-                  "label": {
-                      "text": 'Last name - <span class="u-lighter u-fw-n">' ~ respondent_details.lastName ~ '</span>'
-                  },
-                  "attributes": {
-                      "required": true
-                  },
-                  "error": lastNameError
-              })
-          }} 
-          {% if failed_authentication or form.first_name.errors or errors %}
-              {% set firstNameError = { "text": "First name is required", "id": "firstname-panel" } %}
-          {% endif %}
+                    {{
+                        onsInput({
+                            "id": "lastName",
+                            "value": respondent_details.lastName,
+                            "name": "last_name",
+                            "type": "text",
+                            "label": {
+                                "text": 'Last name - <span class="ons-u-lighter ons-u-fw-n">' ~ respondent_details.lastName ~ '</span>'
+                            },
+                            "attributes": {
+                                "required": true
+                            },
+                            "error": lastNameError
+                        })
+                    }}
+                    {% if failed_authentication or form.first_name.errors or errors %}
+                        {% set firstNameError = { "text": "First name is required", "id": "firstname-panel" } %}
+                    {% endif %}
 
-          {{
-              onsInput({
-                  "id": "firstName",
-                  "value": respondent_details.firstName,
-                  "name": "first_name",
-                  "type": "text",
-                  "label": {
-                      "text": 'First name - <span class="u-lighter u-fw-n">' ~ respondent_details.firstName ~ '</span>'
-                  },
-                  "attributes": {
-                      "required": true
-                  },
-                  "error": firstNameError
-              })
-          }} 
-          {% if failed_authentication or form.email.errors or errors %}
-              {% set emailError = { "text": "Email address is required", "id": "email-panel" } %}
-          {% endif %}
-          {{
-              onsInput({
-                  "id": "email",
-                  "value": respondent_details.emailAddress,
-                  "name": "email",
-                  "type": "email",
-                  "autocomplete": "email",
-                  "label": {
-                      "text": 'Email address - <span class="u-lighter u-fw-n">' ~ respondent_details.emailAddress ~ '</span>'
-                  },
-                  "attributes": {
-                      "required": true
-                  },
-                  "error": emailError
-              })
-          }} 
-          
-
-          {% if failed_authentication or form.telephone.errors or errors %}
-              {% set telephoneError = { "text": "Telephone number is required", "id": "telephone-panel" } %}
-          {% endif %}
-
-          {{
-              onsInput({
-                  "id": "telephone",
-                  "value": respondent_details.telephone,
-                  "name": "telephone",
-                  "type": "tel",
-                  "autocomplete": "tel",
-                  "label": {
-                      "text": 'Phone number - <span class="u-lighter u-fw-n">' ~ respondent_details.telephone ~ '</span>'
-                  },
-                  "attributes": {
-                      "required": true
-                  },
-                  "error": telephoneError
-              })
-          }} 
-          <input type="hidden" name="hidden_email" value="{{ respondent_details.emailAddress }}">
-
-        {%- endcall -%}
-        {{
-            onsButton({
-                "classes": "u-mb-s u-mt-l",
-                "text": "Save changes",
-                "id": "save-btn"
-            })
-        }}   
-    </form>
-    <p>
-      {%- set href = url_for('respondent_bp.respondent_details', respondent_id=respondent_details.id) if tab=='respondents' else url_for('reporting_unit_bp.view_reporting_unit', ru_ref=ru_ref) -%}
-      <a id="cancel-btn" href="{{ href }}" >Cancel</a>
-    </p>
-  </div>
-</div>
+                    {{
+                        onsInput({
+                            "id": "firstName",
+                            "value": respondent_details.firstName,
+                            "name": "first_name",
+                            "type": "text",
+                            "label": {
+                                "text": 'First name - <span class="ons-u-lighter ons-u-fw-n">' ~ respondent_details.firstName ~ '</span>'
+                            },
+                            "attributes": {
+                                "required": true
+                            },
+                            "error": firstNameError
+                        })
+                    }}
+                    {% if failed_authentication or form.email.errors or errors %}
+                        {% set emailError = { "text": "Email address is required", "id": "email-panel" } %}
+                    {% endif %}
+                    {{
+                        onsInput({
+                            "id": "email",
+                            "value": respondent_details.emailAddress,
+                            "name": "email",
+                            "type": "email",
+                            "autocomplete": "email",
+                            "label": {
+                                "text": 'Email address - <span class="ons-u-lighter ons-u-fw-n">' ~ respondent_details.emailAddress ~ '</span>'
+                            },
+                            "attributes": {
+                                "required": true
+                            },
+                            "error": emailError
+                        })
+                    }}
+                    {% if failed_authentication or form.telephone.errors or errors %}
+                        {% set telephoneError = { "text": "Telephone number is required", "id": "telephone-panel" } %}
+                    {% endif %}
+                    {{
+                        onsInput({
+                            "id": "telephone",
+                            "value": respondent_details.telephone,
+                            "name": "telephone",
+                            "type": "tel",
+                            "autocomplete": "tel",
+                            "label": {
+                                "text": 'Phone number - <span class="ons-u-lighter ons-u-fw-n">' ~ respondent_details.telephone ~ '</span>'
+                            },
+                            "attributes": {
+                                "required": true
+                            },
+                            "error": telephoneError
+                        })
+                    }}
+                    <input type="hidden" name="hidden_email" value="{{ respondent_details.emailAddress }}"/>
+                {%- endcall -%}
+                {{
+                    onsButton({
+                        "classes": "ons-u-mb-s ons-u-mt-l",
+                        "text": "Save changes",
+                        "id": "save-btn"
+                    })
+                }}
+            </form>
+            <p>
+                {%- set href = url_for('respondent_bp.respondent_details', respondent_id=respondent_details.id) if tab=='respondents' else url_for('reporting_unit_bp.view_reporting_unit', ru_ref=ru_ref) -%}
+                <a id="cancel-btn" href="{{ href }}" >Cancel</a>
+            </p>
+        </div>
+    </div>
 
 {% endblock %}

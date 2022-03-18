@@ -4,74 +4,71 @@
 
 {% set page_title = 'New enrolment code for ' ~ trading_as ~ ' ' ~ '(' ~ ru_ref ~ ') for survey ' ~ survey_ref ~ ' ' ~ survey_name %}
 {% block main %}
-  <div class="grid grid--gutterless">
-    <div class="grid__col col-8@m">
-      <h1 class="u-fs-xl">New enrolment code</h1>
-        {{ 
-            onsMetadata({
-            "termCol": "2",
-            "descriptionCol": "10",
-            "itemsList": [
-                {
-                    "term": "Reference:",
-                    "descriptions": [ 
+    <div class="ons-grid ons-grid--gutterless">
+        <div class="ons-grid__col ons-col8@m">
+            <h1 class="ons-u-fs-xl">New enrolment code</h1>
+            {{
+                onsMetadata({
+                    "termCol": "2",
+                    "descriptionCol": "10",
+                    "itemsList": [
                         {
-                            "description": ru_ref
+                            "term": "Reference:",
+                            "descriptions": [
+                                {
+                                    "description": ru_ref
+                                }
+                            ]
+                        },
+                        {
+                            "term": "Name:",
+                            "descriptions": [ 
+                                {
+                                    "description": ru_name,
+                                    "id": "ru_name"
+                                }
+                            ]
+                        },
+                        {
+                            "term": "Trading as:",
+                            "descriptions": [
+                                {
+                                    "description": trading_as
+                                }
+                            ]
+                        },
+                        {
+                            "term": "Survey:",
+                            "descriptions": [
+                                {
+                                    "description": survey_name,
+                                    "id": "survey"
+                                }
+                            ]
                         }
                     ]
-                },
-                {
-                    "term": "Name:",
-                    "descriptions": [ 
-                        {
-                            "description": ru_name,
-                            "id": "ru_name"
-                        }                
-                    ]
-                },
-                {
-                    "term": "Trading as:",
-                    "descriptions": [ 
-                        {
-                            "description": trading_as
-                        }                
-                    ]
-                },
-                {
-                    "term": "Survey:",
-                    "descriptions": [ 
-                        {
-                            "description": survey_name,
-                            "id": "survey"
-                        }                
-                    ]
-                }                                       
-            ]
-          }) 
-        }}
+                })
+            }}
 
-      <div class="u-mt-l u-mb-m">
-        <div class="u-fs-r">New enrolment code:</div>
-        <div id="IAC" class="u-fs-l u-mt-s u-mb-s">{{iac}}</div>
-        <div id="copyEnrolmentCode" class="u-fs-r">
-          You might want to make a note of this code before continuing
+            <div class="ons-u-mt-l ons-u-mb-m">
+                <div class="ons-u-fs-r">New enrolment code:</div>
+                <div id="IAC" class="ons-u-fs-l ons-u-mt-s ons-u-mb-s">{{iac}}</div>
+                <p id="copyEnrolmentCode" class="ons-u-fs-r">
+                    You might want to make a note of this code before continuing
+                </p>
+            </div>
+
+            <form action="/reporting-units/{{ru_ref}}">
+                <input type="hidden" name="s" value="073" />
+                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}" />
+                {{
+                    onsButton({
+                        "classes": "ons-u-mb-s",
+                        "text": 'Ok',
+                        "id": "ok-button"
+                    })
+                }}
+            </form>
         </div>
-        <div id="confirmCopy">
-
-        </div>
-      </div>
-
-      <form action="/reporting-units/{{ru_ref}}">
-        <input type="hidden" name="s" value="073" />
-        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/> 
-        {{
-            onsButton({
-                "classes": "u-mb-s",
-                "text": 'Ok',
-                "id": "ok-button"
-            })
-        }}   
-       </form>
     </div>
-  </div>
 {% endblock %}

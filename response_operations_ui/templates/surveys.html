@@ -6,103 +6,102 @@
 {% set page_title = "Surveys" %}
 
 {% block main %}
-  {% if info_message or new_survey %}
-    {% call
-      onsPanel({
-          "type": "success",
-          "icon": "check",
-          "classes": "u-mb-s",
-          "id": "success-panel"
-      })
-    %}
-      {% if info_message %}
-        {{ info_message }}
-      {% endif %}
-      {% if new_survey %}
-        <a href= {{ url_for("surveys_bp.view_survey", short_name=new_survey.short_name) }} id="created_survey_link">
-          {{ new_survey.long_name }}</a> has been added.
-      {% endif %}
-    {% endcall %}
-  {% endif %}
+    {% if info_message or new_survey %}
+        {% call
+            onsPanel({
+                "type": "success",
+                "iconType": "check",
+                "classes": "ons-u-mb-s",
+                "id": "success-panel"
+            })
+        %}
+            {% if info_message %}
+                {{ info_message }}
+            {% endif %}
+            {% if new_survey %}
+                <a href= {{ url_for("surveys_bp.view_survey", short_name=new_survey.short_name) }} id="created_survey_link">
+                    {{ new_survey.long_name }}</a> has been added.
+            {% endif %}
+        {% endcall %}
+    {% endif %}
 
+    <h1 name="page-surveys-title">Surveys</h1>
+    <div class="ons-u-mb-l">
+        <p class="ons-field">
+            <a href="{{url_for('surveys_bp.create_survey')}}" id="create-new-survey" name="create-new-survey">Create new survey</a>
+        </p>
 
-  <h1 name="page-surveys-title">Surveys</h1>
-  <div class="u-mb-l">
-    <p class="field">
-      <a href="{{url_for('surveys_bp.create_survey')}}" id="create-new-survey" name="create-new-survey">Create new survey</a>
-    </p>
-  
-  {% set surveyTableData = {
-      "table_class": 'table--responsive',
-      "id": 'tbl-surveys',
-      "ths": [
-        { 
-            "value": "ID"
-        },
-        { 
-            "value": "Title"
-        },
-        { 
-            "value": "Abbreviation"
-        },
-        { 
-            "value": "Legal basis"
-        },
-        { 
-            "value": ""
-        }
-      ]
-    }
-  %}
+        {% set surveyTableData = {
+            "variants": 'responsive',
+            "id": 'tbl-surveys',
+            "ths": [
+                {
+                    "value": "ID"
+                },
+                {
+                    "value": "Title"
+                },
+                {
+                    "value": "Abbreviation"
+                },
+                {
+                    "value": "Legal basis"
+                },
+                {
+                    "value": ""
+                }
+            ]
+        } %}
 
-  {% set surveyTableDataRows = [] %}
+        {% set surveyTableDataRows = [] %}
 
-  {% for survey in survey_list %}
-    {% set formData = {
-      "action": url_for("surveys_bp.view_survey_details", short_name=survey.shortName, long_name=survey.longName, legal_basis=survey.legalBasis, survey_ref=survey.surveyRef),
-      "method": 'get',
-      "button": {
-        "text": 'Edit',
-        "id": 'edit-survey-details-' + survey.surveyRef,
-        "classes": 'btn--secondary btn--small'
-      }
-    } %}
+        {% for survey in survey_list %}
+            {% set formData = {
+                "action": url_for("surveys_bp.view_survey_details", short_name=survey.shortName, long_name=survey.longName, legal_basis=survey.legalBasis, survey_ref=survey.surveyRef),
+                "method": 'get',
+                "button": {
+                    "text": 'Edit',
+                    "id": 'edit-survey-details-' + survey.surveyRef,
+                    "classes": 'ons-btn--secondary ons-btn--small'
+                }
+            } %}
 
-    {% do surveyTableDataRows.append(
-      {
-        "tds": [
-          {
-            "value": survey.surveyRef,
-            "data": "ID",
-            "name": "tbl-surveys-id"
-          },
-          {
-            "value": '<a href="/surveys/' + survey.shortName.replace(' ', '') + '" name="survey-link-' + survey.shortName + '">' + survey.longName + '</a>',
-            "data": "Title",
-            "name": "tbl-surveys-title"
-          },
-          {
-            "value": survey.shortName,
-            "data": "Abbreviation",
-            "name": "tbl-surveys-abbreviation"
-          },
-          {
-            "value": survey.legalBasis,
-            "data": "Legal basis",
-            "name": "tbl-surveys-legal-basis"
-          },
-          {
-            "form": formData,
-            "class": "u-ta-right"
-          }
-        ]
-      }
-    ) %}
-  {% endfor %}
-  
-  {% do surveyTableData | setAttribute("trs", surveyTableDataRows) %}
-  
-  {{
-    onsTable(surveyTableData)
-  }}
+            {% do surveyTableDataRows.append(
+            {
+                "tds": [
+                    {
+                        "value": survey.surveyRef,
+                        "data": "ID",
+                        "name": "tbl-surveys-id"
+                    },
+                    {
+                        "value": '<a href="/surveys/' + survey.shortName.replace(' ', '') + '" name="survey-link-' + survey.shortName + '">' + survey.longName + '</a>',
+                        "data": "Title",
+                        "name": "tbl-surveys-title"
+                    },
+                    {
+                        "value": survey.shortName,
+                        "data": "Abbreviation",
+                        "name": "tbl-surveys-abbreviation"
+                    },
+                    {
+                        "value": survey.legalBasis,
+                        "data": "Legal basis",
+                        "name": "tbl-surveys-legal-basis"
+                    },
+                    {
+                        "form": formData,
+                        "class": "ons-u-ta-right"
+                    }
+                ]
+            }
+            ) %}
+        {% endfor %}
+
+        {% do surveyTableData | setAttribute("trs", surveyTableDataRows) %}
+
+        {{
+            onsTable(surveyTableData)
+        }}
+    </div>
 {% endblock %}

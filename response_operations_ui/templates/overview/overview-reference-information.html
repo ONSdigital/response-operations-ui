@@ -1,68 +1,67 @@
 {% from "components/table/_macro.njk" import onsTable %}
 
 <section class="ce-section ce-details">
-  <h2 class="u-fs-r--b u-pt-m">Reference information for this collection exercise</h2>
+    <h2 class="ons-u-fs-r--b ons-u-pt-m">Reference information for this collection exercise</h2>
 
-  {% set surveyTableData = {
-      "table_class": 'table--dense',
-      "id": 'tbl-ce-details',
-      "caption": 'Reference information for this collection exercise',
-      "hideCaption": true,
-      "ths": [
-        { 
-            "value": "Event",
-            "class": "u-vh"
-        },
-        { 
-            "value": "Date",
-            "class": "u-vh"
-        }
-      ]
-    }
-  %}
-
-  {% set surveyTableDataRows = [] %}
-  {% set dateGroups = ['period', 'user', 'surveyId', 'surveyTitle'] %}
-
-  {% for dateGroup in dateGroups %}
-    {% if dateGroup == 'period' %}
-      {% set label = 'Period' %}
-      {% set id = 'period' %}
-      {% set event = data.exerciseRef %}
-    {% elif dateGroup == 'user' %}
-      {% set label = 'Shown to respondent as' %}
-      {% set id = 'user-description' %}
-      {% set event = data.userDescription %}
-    {% elif dateGroup == 'surveyId' %}
-      {% set id = 'survey-info' %}
-      {% set label = 'Survey ID and Abbreviation' %}
-      {% set event = data.survey_id + ' ' + data.shortName %}
-    {% elif dateGroup == 'surveyTitle' %}
-      {% set id = 'survey-title' %}
-      {% set label = 'Survey title' %}
-      {% set event = data.longName %}
-    {% endif %}
-
-    {% do surveyTableDataRows.append(
-      {
-        "tds": [
-          {
-            "value": label
-          },
-          {
-            "value": event if event,
-            "name": id
-          }
+    {% set surveyTableData = {
+        "variants": 'compact',
+        "id": 'tbl-ce-details',
+        "caption": 'Reference information for this collection exercise',
+        "hideCaption": true,
+        "ths": [
+            {
+                "value": "Event",
+                "thClasses": "ons-u-vh"
+            },
+            {
+                "value": "Date",
+                "thClasses": "ons-u-vh"
+            }
         ]
-      }
-    ) %}
+    } %}
 
-  {% endfor %}
+    {% set surveyTableDataRows = [] %}
+    {% set dateGroups = ['period', 'user', 'surveyId', 'surveyTitle'] %}
 
-  {% do surveyTableData | setAttribute("trs", surveyTableDataRows) %}
+    {% for dateGroup in dateGroups %}
+        {% if dateGroup == 'period' %}
+            {% set label = 'Period' %}
+            {% set id = 'period' %}
+            {% set event = data.exerciseRef %}
+        {% elif dateGroup == 'user' %}
+            {% set label = 'Shown to respondent as' %}
+            {% set id = 'user-description' %}
+            {% set event = data.userDescription %}
+        {% elif dateGroup == 'surveyId' %}
+            {% set id = 'survey-info' %}
+            {% set label = 'Survey ID and Abbreviation' %}
+            {% set event = data.survey_id + ' ' + data.shortName %}
+        {% elif dateGroup == 'surveyTitle' %}
+            {% set id = 'survey-title' %}
+            {% set label = 'Survey title' %}
+            {% set event = data.longName %}
+        {% endif %}
 
-  {{
-    onsTable(surveyTableData)
-  }}
+        {% do surveyTableDataRows.append(
+            {
+                "tds": [
+                    {
+                        "value": label
+                    },
+                    {
+                        "value": event if event,
+                        "name": id
+                    }
+                ]
+            }
+        ) %}
+
+    {% endfor %}
+
+    {% do surveyTableData | setAttribute("trs", surveyTableDataRows) %}
+
+    {{
+        onsTable(surveyTableData)
+    }}
 
 </section>

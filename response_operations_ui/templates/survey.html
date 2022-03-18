@@ -6,200 +6,198 @@
 {% from "components/button/_macro.njk" import onsButton %}
 
 {% block main %}
-  {% if updated_ce_message %}
-    {{      
-      onsPanel({
-          "type": "success",
-          "icon": "check",
-          "classes": "u-mb-s",
-          "id": "updated_ce_message",
-          "body": "Collection exercise details updated"
-      })
-    }}
-  {% endif %}
-  {% if created_ce_message %}
-      {% call
-        onsPanel({
-            "type": "success",
-            "icon": "check",
-            "classes": "u-mb-s",
-            "id": "created_ce_message"
-        })
-      %}
-        <h1 class="u-fs-r--b">Collection exercise created</h1>
-        <p class="u-fs-r">
-          <a href="{{ url_for('collection_exercise_bp.view_collection_exercise', short_name=survey.shortName.replace(' ', ''), period=newly_created_period) }}" id="newly_created_ce_link">View/edit {{survey.shortName}} {{newly_created_period}}</a>
-        </p>
-      {% endcall %}
-  {% endif %}
-
-  <h1 name="page-survey-title">{{survey.longName}}</h1>
-  <section class="u-cf">
-    {{ 
-      onsMetadata({
-        "metadataLabel": survey.longName + "information",
-        "id": "survey-attributes",
-        "termCol": "2",
-        "descriptionCol": "10",
-        "itemsList": [
-          {
-            "term": "Survey ID:",
-            "descriptions": [ 
-              {
-                  "description": survey.surveyRef,
-                  "id": "survey-id"
-              }
-            ]
-          },
-          {
-            "term": "Survey title:",
-            "descriptions": [ 
-              {
-                  "description": survey.longName,
-                  "id": "survey-title"
-              }                
-            ]
-          },
-          {
-            "term": "Abbreviation:",
-            "descriptions": [ 
-              {
-                  "description": survey.shortName,
-                  "id": "survey-abbreviation"
-              }                                     
-            ]
-          },
-          {
-            "term": "Legal basis:",
-            "descriptions": [ 
-              {
-                  "description": survey.legalBasis,
-                  "id": "survey-legal-basis"
-              }
-            ]
-          },
-                    {
-            "term": "Survey mode:",
-            "descriptions": [ 
-              {
-                  "description": survey.surveyMode,
-                  "id": "survey-mode"
-              }
-            ]
-          }
-        ]
-      }) 
-    }}
-  </section>
-  <section class="ce-list">
-    <h2>Collection exercises for {{survey.shortName}}</h2>
-    {% if survey.surveyMode == 'EQ' %}
-      <p class="field">
-        <a href="{{ url_for('surveys_bp.get_link_collection_instrument', short_name=survey.shortName) }}"
-          role="button" class="btn btn--secondary btn--small" id="link-collection-instrument" name="link-collection-instrument-link"><span class="btn__inner">Link collection instrument</span></a>
-      </p>
+    {% if updated_ce_message %}
+        {{
+            onsPanel({
+                "type": "success",
+                "iconType": "check",
+                "classes": "ons-u-mb-s",
+                "id": "updated_ce_message",
+                "body": "Collection exercise details updated"
+            })
+        }}
     {% endif %}
-    <p class="field">
-      <a href="{{ url_for('collection_exercise_bp.get_create_collection_exercise_form', survey_ref=survey.surveyRef, short_name=survey.shortName.replace(' ', '')) }}"
-        role="button" class="btn" id="create-collection-exercise" name="create-collection-exercise-link"><span class="btn__inner">Create collection exercise</span></a>
-    </p>
+    {% if created_ce_message %}
+        {% call
+            onsPanel({
+                "type": "success",
+                "iconType": "check",
+                "classes": "ons-u-mb-s",
+                "id": "created_ce_message"
+            })
+        %}
+            <h1 class="ons-u-fs-r--b">Collection exercise created</h1>
+            <p class="ons-u-fs-r">
+                <a href="{{ url_for('collection_exercise_bp.view_collection_exercise', short_name=survey.shortName.replace(' ', ''), period=newly_created_period) }}" id="newly_created_ce_link">View/edit {{survey.shortName}} {{newly_created_period}}</a>
+            </p>
+        {% endcall %}
+    {% endif %}
 
-    {% set surveyTableData = {
-        "table_class": 'table--responsive table--dense',
-        "id": 'tbl-collection-exercise',
-        "caption": 'The table shows collection exercise data for ' + survey.longName,
-        "hideCaption": true,
-        "ths": [
-          { 
-              "value": "Period"
-          },
-          { 
-              "value": "Respondent sees"
-          },
-          { 
-              "value": "Status"
-          },
-          { 
-              "value": "Sample"
-          },
-          { 
-              "value": "Report (CSV)"
-          },
-          { 
-              "value": "MPS"
-          },
-          { 
-              "value": "Go live"
-          },
-          { 
-              "value": "Return by"
-          }
-        ]
-      }
-    %}
+    <h1 name="page-survey-title">{{survey.longName}}</h1>
+    <section class="ons-u-cf">
+        {{
+            onsMetadata({
+                "metadataLabel": survey.longName + "information",
+                "id": "survey-attributes",
+                "termCol": "2",
+                "descriptionCol": "10",
+                "itemsList": [
+                    {
+                        "term": "Survey ID:",
+                        "descriptions": [
+                            {
+                                "description": survey.surveyRef,
+                                "id": "survey-id"
+                            }
+                        ]
+                    },
+                    {
+                        "term": "Survey title:",
+                        "descriptions": [
+                            {
+                                "description": survey.longName,
+                                "id": "survey-title"
+                            }
+                        ]
+                    },
+                    {
+                        "term": "Abbreviation:",
+                        "descriptions": [
+                            {
+                                "description": survey.shortName,
+                                "id": "survey-abbreviation"
+                            }
+                        ]
+                    },
+                    {
+                        "term": "Legal basis:",
+                        "descriptions": [
+                            {
+                                "description": survey.legalBasis,
+                                "id": "survey-legal-basis"
+                            }
+                        ]
+                    },
+                    {
+                        "term": "Survey mode:",
+                        "descriptions": [
+                            {
+                                "description": survey.surveyMode,
+                                "id": "survey-mode"
+                            }
+                        ]
+                    }
+                ]
+            })
+        }}
+    </section>
+    <section class="ce-list">
+        <h2>Collection exercises for {{survey.shortName}}</h2>
+        {% if survey.surveyMode == 'EQ' %}
+            <p class="ons-field">
+                <a href="{{ url_for('surveys_bp.get_link_collection_instrument', short_name=survey.shortName) }}"
+                    role="button" class="ons-btn ons-btn--secondary ons-btn--small" id="link-collection-instrument" name="link-collection-instrument-link"><span class="ons-btn__inner">Link collection instrument</span></a>
+            </p>
+        {% endif %}
+        <p class="ons-field">
+            <a href="{{ url_for('collection_exercise_bp.get_create_collection_exercise_form', survey_ref=survey.surveyRef, short_name=survey.shortName.replace(' ', '')) }}"
+                role="button" class="ons-btn" id="create-collection-exercise" name="create-collection-exercise-link"><span class="ons-btn__inner">Create collection exercise</span></a>
+        </p>
 
-    {% set surveyTableDataRows = [] %}
+        {% set surveyTableData = {
+            "variants": ['compact', 'responsive'],
+            "id": 'tbl-collection-exercise',
+            "caption": 'The table shows collection exercise data for ' + survey.longName,
+            "hideCaption": true,
+            "ths": [
+                {
+                    "value": "Period"
+                },
+                {
+                    "value": "Respondent sees"
+                },
+                {
+                    "value": "Status"
+                },
+                {
+                    "value": "Sample"
+                },
+                {
+                    "value": "Report (CSV)"
+                },
+                {
+                    "value": "MPS"
+                },
+                {
+                    "value": "Go live"
+                },
+                {
+                    "value": "Return by"
+                }
+            ]
+        } %}
 
-    {% for exercise in collection_exercises %}
-      {% set exerciseRef = exercise.exerciseRef if exercise.exerciseRef else "" %}
+        {% set surveyTableDataRows = [] %}
 
-      {% set surveyTableReport = '<a href="'+ url_for('collection_exercise_bp.response_chasing', ce_id=exercise.id, survey_id=survey.id) +'" target="_blank"><svg class="svg-icon" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" focusable="false"><path d="M19 9h-4V3H9v6H5l7 7 7-7zM5 18v2h14v-2H5z"/><path d="M0 0h24v24H0z" fill="none"/></svg> Response chasing</a>' if (exercise.state|upper == "LIVE" or  exercise.state|upper == "ENDED") %}
+        {% for exercise in collection_exercises %}
+            {% set exerciseRef = exercise.exerciseRef if exercise.exerciseRef else "" %}
+            {% set surveyTableReport = '<a href="'+ url_for('collection_exercise_bp.response_chasing', ce_id=exercise.id, survey_id=survey.id) +'" target="_blank"><svg class="ons-svg-icon" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" focusable="false"><path d="M19 9h-4V3H9v6H5l7 7 7-7zM5 18v2h14v-2H5z"/><path d="M0 0h24v24H0z" fill="none"/></svg> Response chasing</a>' if (exercise.state|upper == "LIVE" or  exercise.state|upper == "ENDED") %}
 
-      {% do surveyTableDataRows.append(
-        {
-          "highlight": true if newly_created_period == exerciseRef,
-          "tds": [
-            {
-              "value": '<a href="/surveys/' + survey.shortName.replace(' ', '') + "/" + exerciseRef + '"
-                   name="ce-link-' + exerciseRef + '">' + exerciseRef + '</a>' ,
-              "data": "Period",
-              "name" : "tbl-ce-period"
-            },
-            {
-              "value": exercise.userDescription,
-              "data": "Respondent sees",
-              "name" : "tbl-ce-shown-as"
-            },
-            {
-              "value": exercise.state,
-              "data": "Status",
-              "name" : "tbl-ce-status"
-            },
-            {
-              "value": exercise.sample_summary and exercise.sample_summary.totalSampleUnits or "",
-              "data": "Sample",
-              "name" : "tbl-ce-status"
-            },
-            {
-              "value": surveyTableReport,
-              "data": "Report (CSV)",
-              "name" : "tbl-ce-report"
-            },
-            {
-              "value": exercise.events.mps and exercise.events.mps.date or "",
-              "data": "MPS",
-              "name" : "tbl-ce-status"
-            },
-            {
-              "value": exercise.events.go_live and exercise.events.go_live.date or "",
-              "data": "Go live",
-              "name" : "tbl-ce-status"
-            },
-            {
-              "value": exercise.events.return_by and exercise.events.return_by.date or "",
-              "data": "Return by",
-              "name" : "tbl-ce-status"
-            }
-          ]
-        }
-      ) %}
-    {% endfor %}
-  
-    {% do surveyTableData | setAttribute("trs", surveyTableDataRows) %}
-  
-    {{
-      onsTable(surveyTableData)
-    }}
+            {% do surveyTableDataRows.append(
+                {
+                    "highlight": true if newly_created_period == exerciseRef,
+                    "tds": [
+                        {
+                            "value": '<a href="/surveys/' + survey.shortName.replace(' ', '') + "/" + exerciseRef + '"
+                                name="ce-link-' + exerciseRef + '">' + exerciseRef + '</a>',
+                            "data": "Period",
+                            "name" : "tbl-ce-period"
+                        },
+                        {
+                            "value": exercise.userDescription,
+                            "data": "Respondent sees",
+                            "name" : "tbl-ce-shown-as"
+                        },
+                        {
+                            "value": exercise.state,
+                            "data": "Status",
+                            "name" : "tbl-ce-status"
+                        },
+                        {
+                            "value": exercise.sample_summary and exercise.sample_summary.totalSampleUnits or "",
+                            "data": "Sample",
+                            "name" : "tbl-ce-status"
+                        },
+                        {
+                            "value": surveyTableReport,
+                            "data": "Report (CSV)",
+                            "name" : "tbl-ce-report"
+                        },
+                        {
+                            "value": exercise.events.mps and exercise.events.mps.date or "",
+                            "data": "MPS",
+                            "name" : "tbl-ce-status"
+                        },
+                        {
+                            "value": exercise.events.go_live and exercise.events.go_live.date or "",
+                            "data": "Go live",
+                            "name" : "tbl-ce-status"
+                        },
+                        {
+                            "value": exercise.events.return_by and exercise.events.return_by.date or "",
+                            "data": "Return by",
+                            "name" : "tbl-ce-status"
+                        }
+                    ]
+                }
+            ) %}
+        {% endfor %}
 
-  </section>
+        {% do surveyTableData | setAttribute("trs", surveyTableDataRows) %}
+
+        {{
+            onsTable(surveyTableData)
+        }}
+
+    </section>
 {% endblock %}

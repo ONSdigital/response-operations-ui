@@ -3,14 +3,14 @@
 {% call
     onsPanel({
         "type": "info",
-        "classes": "u-mb-l"
+        "classes": "ons-u-mb-l"
     })
 %}
-    <p class="u-fs-r">This conversation was closed on {{ closed_at }} by {{ thread_data.closed_by }}</p>
+    <p class="ons-u-fs-r">This conversation was closed on {{ closed_at }} by {{ thread_data.closed_by }}</p>
 {% endcall %}
 
 <form action="{{ url_for('messages_bp.view_conversation', thread_id=messages[0].thread_id, ru_ref_filter=ru_ref_filter, business_id_filter=business_id_filter) }}" method="post">
-    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
+    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}" />
     {{
         onsInput({
             "name": "reopen",
@@ -18,7 +18,7 @@
             "value": "Re-open conversation",
             "label": {
                 "text": "Re-open conversation",
-                "classes": "u-vh"
+                "classes": "ons-u-vh"
             },
         })
     }}
@@ -28,8 +28,8 @@
             "id": "btn-reopen-conversation",
             "type": "submit",
             "name": "reopen",
-            "classes": 'u-mt-s u-mb-s',
+            "classes": 'ons-u-mt-s ons-u-mb-s',
             "submitType": "timer"
         })
-    }}  
+    }}
 </form>

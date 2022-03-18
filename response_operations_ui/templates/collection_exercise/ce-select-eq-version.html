@@ -2,51 +2,51 @@
 {% from "components/question/_macro.njk" import onsQuestion %}
 
 <section class="ce-section ce-details">
-  <h2 class="u-fs-r--b u-pt-m">Select eQ version</h2>
-  <form method="post">
-      <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
+    <h2 class="ons-u-fs-r--b ons-u-pt-m">Select eQ version</h2>
+    <form method="post">
+        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}" />
         {% if locked %}
-          {% set attr = ({"disabled":"true"}) %}
+            {% set attr = ({"disabled":"true"}) %}
         {% else %}
-          {% set attr = ({}) %}
+            {% set attr = ({}) %}
         {% endif %}
         {{
-        onsRadios({
-            "legend": "Choose an option",
-            "id": "eq-version",
-            "name": "eq-version",
-            "radios": [
-                          {
-                              "id": "v2",
-                              "label": {
-                                  "text": "eQ version 2"
-                              },
-                              "value": "v2",
-                              "checked": true if not ce.eqVersion or ce.eqVersion=="v2" else false,
-                              "attributes": attr
-                          },
-                          {
-                              "id": "v3",
-                              "label": {
-                                  "text": "eQ version 3"
-                              },
-                              "value": "v3",
-                              "checked": true if ce.eqVersion and ce.eqVersion=="v3" else false,
-                              "attributes": attr
-                          }
-                      ]
-                 })
+            onsRadios({
+                "legend": "Choose an option",
+                "id": "eq-version",
+                "name": "eq-version",
+                "radios": [
+                    {
+                        "id": "v2",
+                        "label": {
+                            "text": "eQ version 2"
+                        },
+                        "value": "v2",
+                        "checked": true if not ce.eqVersion or ce.eqVersion=="v2" else false,
+                        "attributes": attr
+                    },
+                    {
+                        "id": "v3",
+                        "label": {
+                            "text": "eQ version 3"
+                        },
+                        "value": "v3",
+                        "checked": true if ce.eqVersion and ce.eqVersion=="v3" else false,
+                        "attributes": attr
+                    }
+                ]
+            })
         }}
         {% if not locked %}
             {{
-            onsButton({
-                "text": "Apply",
-                "id": "save-btn",
-                "type": "submit",
-                "classes": "u-mb-s u-mt-l",
-                "submitType": "timer"
-            })
-        }} 
+                onsButton({
+                    "text": "Apply",
+                    "id": "save-btn",
+                    "type": "submit",
+                    "classes": "ons-u-mb-s ons-u-mt-l",
+                    "submitType": "timer"
+                })
+            }}
         {% endif %}
     </form>
 </section>

@@ -1,10 +1,10 @@
     
-<h1 class="u-mt-xl">Find a respondent</h1>
+<h1 class="ons-u-mt-xl">Find a respondent</h1>
 <form action="{{ url_for('respondent_bp.search_redirect') }}" method="post">
     {{ form.csrf_token }}
     {%- call onsFieldset({
         "legend": "Enter respondent information to search",
-        "legendClasses": "u-vh"
+        "legendClasses": "ons-u-vh"
     }) -%}
         {{
             onsInput({
@@ -25,7 +25,7 @@
                     "text": "Last name"
                 }
             })
-        }}        
+        }}
         {{
             onsInput({
                 "id": "email_address",
@@ -35,14 +35,14 @@
                     "text": "Email address"
                 }
             })
-        }}      
-    {%- endcall -%}  
+        }}
+    {%- endcall -%}
     {{
         onsButton({
             "text": "Search",
             "id": "btn-search-respondent",
-            "classes": "u-mt-m u-mb-m",
+            "classes": "ons-u-mt-m ons-u-mb-m",
             "submitType": "timer"
         })
-    }}   
+    }}
 </form>

@@ -1,134 +1,132 @@
 <section id="section-sample" class="ce-section">
-  <h2 class="u-fs-r--b u-pt-m">Sample</h2>
-  {% if sample %}
-    {% if 'ACTIVE' == sample.state %}
-      {{
-        onsTable({
-          "table_class": 'table--dense',
-          "id": "sample-table",
-          "caption": 'Loaded sample summary',
-          "hideCaption": true,
-          "ths": [
-            { 
-                "value": "Sample label",
-                "class": "u-vh"
-            },
-            { 
-                "value": "Sample number",
-                "class": "u-vh"
-            }
-          ],
-          "trs": [
-            {
-              "tds": [
-                {
-                  "value": "Total businesses"
-                },
-                {
-                  "value": sample.totalSampleUnits,
-                  "name": "total-businesses"
-                }
-              ]
-            },
-            {
-              "tds": [
-                {
-                  "value": "Collection instruments"
-                },
-                {
-                  "value": sample.expectedCollectionInstruments,
-                  "name": "total-ci"
-                }
-              ]
-            }
-          ]
-        })
-    }}
-
-    <p>Sample loaded: {{ sample.ingestDateTime }}
-      {% if not locked %}
-      <a class="u-ml-xs" id="remove_sample_btn_1" href="{{ url_for('collection_exercise_bp.get_confirm_remove_sample', short_name=survey.shortName, period=ce.exerciseRef) }}">Remove</a>
-      {% endif %}
-    </p>
-    {% elif 'INIT' == sample.state %}
-        <div class="u-mb-xl">
-            <div class="u-fs-r">
-                Loading&hellip; <span class="u-ml-xs"><a href="/surveys/{{survey.shortName}}/{{ce.exerciseRef}}?show_msg=true">Refresh to see progress</a></span>
-             </div>
-        </div>
-    {% elif 'FAILED' == sample.state %}
-         <div class="u-mb-xl">
-             {% call
-                onsPanel({
-                    "type": "error",
-                    "classes": "u-mb-l"
+    <h1 class="ons-u-fs-r--b ons-u-pt-m">Sample</h1>
+    {% if sample %}
+        {% if 'ACTIVE' == sample.state %}
+            {{
+                onsTable({
+                    "variants": 'compact',
+                    "id": "sample-table",
+                    "caption": 'Loaded sample summary',
+                    "hideCaption": true,
+                    "ths": [
+                        { 
+                            "value": "Sample label",
+                            "thClasses": "ons-u-vh"
+                        },
+                        {
+                            "value": "Sample number",
+                            "thClasses": "ons-u-vh"
+                        }
+                    ],
+                    "trs": [
+                        {
+                            "tds": [
+                                {
+                                    "value": "Total businesses"
+                                },
+                                {
+                                    "value": sample.totalSampleUnits,
+                                    "name": "total-businesses"
+                                }
+                            ]
+                        },
+                        {
+                            "tds": [
+                                {
+                                    "value": "Collection instruments"
+                                },
+                                {
+                                    "value": sample.expectedCollectionInstruments,
+                                    "name": "total-ci"
+                                }
+                            ]
+                        }
+                    ]
                 })
-            %}
-                {{ sample.notes }}
-            {% endcall %}
-           {% if not locked %}
-           <a class="u-ml-xs" id="remove_sample_btn_2" href="{{ url_for('collection_exercise_bp.get_confirm_remove_sample', short_name=survey.shortName, period=ce.exerciseRef) }}">Remove</a>
-           {% endif %}
-         </div>
+            }}
+
+            <p>Sample loaded: {{ sample.ingestDateTime }}
+                {% if not locked %}
+                    <a class="ons-u-ml-xs" id="remove_sample_btn_1" href="{{ url_for('collection_exercise_bp.get_confirm_remove_sample', short_name=survey.shortName, period=ce.exerciseRef) }}">Remove</a>
+                {% endif %}
+            </p>
+        {% elif 'INIT' == sample.state %}
+            <div class="ons-u-mb-xl">
+                <div class="ons-u-fs-r">
+                    Loading&hellip; <span class="ons-u-ml-xs"><a href="/surveys/{{survey.shortName}}/{{ce.exerciseRef}}?show_msg=true">Refresh to see progress</a></span>
+                </div>
+            </div>
+        {% elif 'FAILED' == sample.state %}
+            <div class="ons-u-mb-xl">
+                {% call
+                    onsPanel({
+                        "type": "error",
+                        "classes": "ons-u-mb-l"
+                    })
+                %}
+                    {{ sample.notes }}
+                {% endcall %}
+                {% if not locked %}
+                    <a class="ons-u-ml-xs" id="remove_sample_btn_2" href="{{ url_for('collection_exercise_bp.get_confirm_remove_sample', short_name=survey.shortName, period=ce.exerciseRef) }}">Remove</a>
+                {% endif %}
+            </div>
+        {% endif %}
+    {% elif not locked %}
+        <div class="ons-u-mb-m">
+            <form id="form-load-sample"
+                method="post"
+                action=""
+                class="form"
+                enctype="multipart/form-data">
+                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}" />
+                <p>Choose a sample file to check details before loading</p>
+                {{-
+                    onsUpload({
+                        "id": "sampleFile",
+                        "name": "sampleFile",
+                        "listeners": {
+                        "change": "readCSV.handleFiles(this.files, ['FORM_TYPE'])"
+                        },
+                        "accept": ".csv",
+                        "label": {
+                            "classes": "ons-u-vh",
+                            "text": "Choose file"
+                        }
+                    })
+                -}}
+                <div id="sample-preview" class="ons-u-mb-s"></div>
+                {{
+                    onsButton({
+                        "text": "Check sample contents",
+                        "id": "btn-check-sample-contents",
+                        "classes": "ons-btn--small ons-btn--disabled",
+                        "attributes": {
+                            "disabled": "true"
+                        }
+                    })
+                }}
+                {{
+                    onsButton({
+                        "text": "Load sample",
+                        "id": "btn-load-sample",
+                        "name": "load-sample",
+                        "classes": "hidden ons-btn--small ons-button--loader",
+                        "listeners": {
+                            "click": "readCSV.handleFileUpload()"
+                        }
+                    })
+                }}
+                {{
+                    onsButton({
+                        "text": "Cancel",
+                        "classes": "hidden ons-btn--secondary ons-btn--small",
+                        "id": "btn-cancel-load-sample",
+                        "listeners": {
+                            "click": "readCSV.cancelLoadSample()"
+                        }
+                    })
+                }}
+            </form>
+        </div>
     {% endif %}
-  {% elif not locked %}
-    <div class="u-mb-m">
-      <form id="form-load-sample"
-            method="post"
-            action=""
-            class="form"
-            enctype="multipart/form-data">
-        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
-        <p>
-          Choose a sample file to check details before loading
-        </p>
-        {{-
-            onsUpload({
-                "id": "sampleFile",
-                "name": "sampleFile",
-                "listeners": {
-                  "change": "readCSV.handleFiles(this.files, ['FORM_TYPE'])"
-                },
-                "accept": ".csv",
-                "label": {
-                    "classes": "u-vh",
-                    "text": "Choose file"
-                }
-            })
-        -}}
-        <div id="sample-preview" class="u-mb-s"></div>
-          {{
-            onsButton({
-                "text": "Check sample contents",
-                "id": "btn-check-sample-contents",
-                "classes": "btn--small btn--disabled",
-                "attributes": {
-                  "disabled": "true"
-                }
-            })
-          }}   
-          {{
-            onsButton({
-                "text": "Load sample",
-                "id": "btn-load-sample",
-                "name": "load-sample",
-                "classes": "hidden btn--small button--loader",
-                "listeners": {
-                  "click": "readCSV.handleFileUpload()"
-                }
-            })
-          }}
-          {{
-            onsButton({
-                "text": "Cancel",
-                "classes": "hidden btn--secondary btn--small",
-                "id": "btn-cancel-load-sample",
-                "listeners": {
-                  "click": "readCSV.cancelLoadSample()"
-                }
-            })
-          }}   
-      </form>
-    </div>
-  {% endif %}
 </section>

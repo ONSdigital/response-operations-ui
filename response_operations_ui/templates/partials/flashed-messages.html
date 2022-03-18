@@ -3,28 +3,28 @@
           {% for category, message in messages %}
             {% if category == "error" %}
                 {% call onsPanel({
-                "type": 'error',
-                "id": 'error-id',
-                "classes": 'u-mb-m'
+                    "type": 'error',
+                    "id": 'error-id',
+                    "classes": 'ons-u-mb-m'
                 }) %}
-                    <p class="u-fs-r" id="flashed-error-message-{{ loop.index }}">{{ message }}</p>
+                    <p class="ons-u-fs-r" id="flashed-error-message-{{ loop.index }}">{{ message }}</p>
                 {% endcall %}
             {% elif category == "information" %}
                 {% call onsPanel({
-                "type": 'info',
-                "id": 'info-id',
-                "classes": 'u-mb-m'
+                    "type": 'info',
+                    "id": 'info-id',
+                    "classes": 'ons-u-mb-m'
                 }) %}
-                    <p class="u-fs-r" id="flashed-error-message-{{ loop.index }}">{{ message }}</p>
+                    <p class="ons-u-fs-r" id="flashed-error-message-{{ loop.index }}">{{ message }}</p>
                 {% endcall %}
             {% else %}
                 {% call onsPanel({
-                "type": 'success',
-                "id": 'success-id',
-                "icon": 'check',
-                "classes": 'u-mb-m'
+                    "type": 'success',
+                    "id": 'success-id',
+                    "iconType": 'check',
+                    "classes": 'ons-u-mb-m'
                 }) %}
-                    <p class="u-fs-r" id="flashed-message-{{ loop.index }}">{{ message }}</p>
+                    <p class="ons-u-fs-r" id="flashed-message-{{ loop.index }}">{{ message }}</p>
                 {% endcall %}
             {% endif %}
          {% endfor %}

@@ -2,23 +2,21 @@
 {% set page_title = data.survey_id + " " + data.shortName + " | Surveys" %}
 
 {% block main %}
-    <div class="grid overview">
-        <div class="grid__col col-12@m">
-            <h1 name="page-surveys-title" class="u-fs-xxl">{{ data.shortName }}<span class="u-fs-r">
-              <a href="{{ url_for('home_bp.get_overview_survey') }}">Change survey</a></span></h1>
+    <div class="ons-grid overview">
+        <div class="ons-grid__col ons-col12@m">
+            <h1 name="page-surveys-title" class="ons-u-fs-xxl">{{ data.shortName }}<span class="ons-u-fs-r">
+                <a href="{{ url_for('home_bp.get_overview_survey') }}">Change survey</a></span></h1>
         </div>
-        <div class="grid__col col-6@m">
+        <div class="ons-grid__col ons-col6@m">
             {% include 'overview/overview-survey.html' %}
         </div>
-        <div class="grid__col col-6@m">
+        <div class="ons-grid__col ons-col6@m">
             {% include 'overview/overview-sample.html' %}
-            
         </div>
-        
-        <div class="grid__col col-5@m">
+        <div class="ons-grid__col ons-col5@m">
            {% include 'overview/overview-reference-information.html' %} 
         </div>
-        <div class="grid__col col-5@m push-1@m">
+        <div class="ons-grid__col ons-col5@m push-1@m">
             {% include 'overview/overview-dates-section.html' %}
         </div>
     </div>

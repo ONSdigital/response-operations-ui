@@ -5,102 +5,102 @@
 {% from "components/lists/_macro.njk" import onsList %}
 {% from "components/table/_macro.njk" import onsTable %}
 
-{% set page_title = 'Link collection instruments'  %}
+{% set page_title = 'Link collection instruments' %}
 {% block main %}
-  <div class="grid grid--gutterless">
-    <div class="grid__col col-8@m">
-      <h1 class="u-fs-xl">Link collection instruments for {{ short_name }}</h1>
-      <form action="" method="post">
-        {{ form.csrf_token }}
-        {% if errors %}
-          {% set errorData = [] %}
-          {% call
-            onsPanel({
-                "type":"error",
-                "id": "save-error",
-                "classes": "u-mb-s",
-                "title": "This page has 1 error" if errors|length == 1 else "There are " + errors|length|string + " errors on this page"
-            })
-          %}
-          {% for field, error_list in errors %}
-            {% do errorData.append(
-                {
-                    "text": ', '.join(error_list),
-                    "index": true
-                })
-            %}
-          {% endfor %}
-          {{
-            onsList({
-                "classes": "list--bare",
-                "itemsList": errorData
-            })
-          }}
-        {% endcall %}
-        {% endif %}
-        {%- call onsFieldset({
-          "legend": "Link collection instruments",
-          "legendClasses": "u-vh" })
-        -%}
-        {{
-          onsInput({
-              "id": "formtype",
-              "name": "formtype",
-              "type": "text",
-              "maxLength": 20,
-              "value": form.formtype.data,
-              "classes": "input--w-5",
-              "attributes": {
-                  "required": true
-              },
-              "label": {
-                  "text": 'Add form type',
-                  "description": "For example: 0101"
-              }
-          })
-        }}
-        {% endcall %}
-        {{
-          onsButton({
-              "classes": "u-mb-l u-mt-s btn btn--secondary btn--small",
-              "text": "Upload",
-              "id": "save-btn"
-          })
-        }}
+    <div class="ons-grid ons-grid--gutterless">
+        <div class="ons-grid__col ons-col8@m">
+            <h1 class="ons-u-fs-xl">Link collection instruments for {{ short_name }}</h1>
+            <form action="" method="post">
+                {{ form.csrf_token }}
+                {% if errors %}
+                    {% set errorData = [] %}
+                    {% call
+                        onsPanel({
+                            "type":"error",
+                            "id": "save-error",
+                            "classes": "ons-u-mb-s",
+                            "title": "This page has 1 error" if errors|length == 1 else "There are " + errors|length|string + " errors on this page"
+                        })
+                    %}
+                        {% for field, error_list in errors %}
+                            {% do errorData.append(
+                                {
+                                    "text": ', '.join(error_list),
+                                    "index": true
+                                })
+                            %}
+                        {% endfor %}
+                        {{
+                            onsList({
+                                "classes": "ons-list--bare",
+                                "itemsList": errorData
+                            })
+                        }}
+                    {% endcall %}
+                {% endif %}
+                {%- call onsFieldset({
+                    "legend": "Link collection instruments",
+                    "legendClasses": "ons-u-vh" })
+                -%}
+                    {{
+                        onsInput({
+                            "id": "formtype",
+                            "name": "formtype",
+                            "type": "text",
+                            "maxLength": 20,
+                            "value": form.formtype.data,
+                            "classes": "input--w-5",
+                            "attributes": {
+                                "required": true
+                            },
+                            "label": {
+                                "text": 'Add form type',
+                                "description": "For example: 0101"
+                            }
+                        })
+                    }}
+                {% endcall %}
+                {{
+                    onsButton({
+                        "classes": "ons-u-mb-l ons-u-mt-s ons-btn ons-btn--secondary ons-btn--small",
+                        "text": "Upload",
+                        "id": "save-btn"
+                    })
+                }}
 
-        <section class="ce-section">
-          <label class="label u-fs-m">{{ eq_ci_selectors | length }} Collection instruments</label>
-          {% set surveyTableData = {
-            "table_class": 'table table--responsive',
-            "id": "collection-instruments-table",
-            "caption": 'Sample details for this collection exercise',
-            "hideCaption": true,
-            "ths": [
-              {
-                  "value": "Linked collection instruments",
-              },
-            ]}
-          %}
-          {% set surveyTableDataRows = [] %}
-          {% for ci in eq_ci_selectors %}
-            {% do surveyTableDataRows.append(
-              {
-                "tds": [
-                  {
-                    "value": ci.file_name|string
-                  }
-                ]
-              }
-            ) %}
-          {% endfor %}
-          {% do surveyTableData | setAttribute("trs", surveyTableDataRows) %}
-          {{ onsTable(surveyTableData) }}
-        </section>
-        <p>
-          <a href="{{ url_for('surveys_bp.view_survey', short_name=short_name) }}"
-            role="button" class="btn" id="done-link" name="done-link"><span class="btn__inner">Done</span></a>
-        </p>
-      </form>
+                <section class="ce-section">
+                    <label class="ons-label ons-u-fs-m">{{ eq_ci_selectors | length }} Collection instruments</label>
+                    {% set surveyTableData = {
+                        "variants": 'responsive',
+                        "id": "collection-instruments-table",
+                        "caption": 'Sample details for this collection exercise',
+                        "hideCaption": true,
+                        "ths": [
+                            {
+                                "value": "Linked collection instruments",
+                            },
+                        ]}
+                    %}
+                    {% set surveyTableDataRows = [] %}
+                    {% for ci in eq_ci_selectors %}
+                        {% do surveyTableDataRows.append(
+                            {
+                                "tds": [
+                                    {
+                                        "value": ci.file_name|string
+                                    }
+                                ]
+                            }
+                        ) %}
+                    {% endfor %}
+                    {% do surveyTableData | setAttribute("trs", surveyTableDataRows) %}
+                    {{ onsTable(surveyTableData) }}
+                </section>
+                <p>
+                    <a href="{{ url_for('surveys_bp.view_survey', short_name=short_name) }}"
+                        role="button" class="ons-btn" id="done-link" name="done-link"><span class="ons-btn__inner">Done</span></a>
+                </p>
+            </form>
+        </div>
     </div>
-  </div>
 {% endblock %}

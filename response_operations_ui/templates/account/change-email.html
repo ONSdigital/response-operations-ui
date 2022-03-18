@@ -8,108 +8,106 @@
 {% set ns = namespace() %}
 
 {% block main %}
-  {% include 'partials/flashed-messages.html' %}
-  {% if errors %}
-    {% set errorTitle = 'There is 1 error on this page' %}
-    {% call
+    {% include 'partials/flashed-messages.html' %}
+    {% if errors %}
+        {% set errorTitle = 'There is 1 error on this page' %}
+        {% call
             onsPanel({
                 "type": "error",
-                "classes": "u-mb-s",
+                "classes": "ons-u-mb-s",
                 "title":  errorTitle
             })
-      %}
-      <p>These <strong>must be corrected</strong> to continue.</p>
-      {% set errorData = [] %}
-      {% for error in errors %}
-        {% set error_text = error %}
-        {% do errorData.append(
+        %}
+            <p>These <strong>must be corrected</strong> to continue.</p>
+            {% set errorData = [] %}
+            {% for error in errors %}
+                {% set error_text = error %}
+                {% do errorData.append(
                     {
                         "text": 'Problem with the ' ~ error_text.replace('_', ' '),
                         "index": true,
                         "url": "#" ~ error ~ '_error',
-                        "classes": "js-inpagelink"
+                        "classes": "ons-js-inpagelink"
                     }
                 ) %}
-      {% endfor %}
-      {{
-        onsList({
-            "classes": "list--bare",
-            "itemsList": errorData
-        })
-        }}
-    {% endcall %}
-  {% endif %}
-  <h1 class="u-fs-xl">Change email address</h1>
-  <form action="" method="post">
-    {{ form.csrf_token }}
-      {% if errors.email_address %}
-      {% set ns.email_address = NONE %}
-      {% for errorValue in errors.email_address %}
-        {% if ns.errorEmailAddressText == NONE %}
-          {% set ns.errorEmailAddressText = (errorValue) %}
-        {% else %}
-          {% set ns.errorEmailAddressText = ns.errorEmailAddressText~'</br>'~(errorValue) %}
-        {% endif %}
-      {% endfor %}
-      {% set errorEmailAddress = { "text": ns.errorEmailAddressText,  "id": 'email_error' } %}
+            {% endfor %}
+            {{
+                onsList({
+                    "classes": "ons-list--bare",
+                    "itemsList": errorData
+                })
+            }}
+        {% endcall %}
     {% endif %}
-    {% set email_address = form.email_address.data %}
-  
-    {{
-      onsInput({
-          "id": "email_address",
-          "name": "email_address",
-          "type": "email",
-          "label": {
-              "text": 'New email address',
-          },
-      "error": errorEmailAddress,
-      "value": email_address
-      })
-      }}
-     {% if errors.email_confirm %}
-      {% set ns.email_confirm = NONE %}
-      {% for errorValue in errors.email_confirm %}
-        {% if ns.errorEmailConfirmText == NONE %}
-          {% set ns.errorEmailConfirmText = (errorValue) %}
-        {% else %}
-          {% set ns.errorEmailConfirmText = ns.errorEmailConfirmText~'</br>'~(errorValue) %}
+    <h1 class="ons-u-fs-xl">Change email address</h1>
+    <form action="" method="post">
+        {{ form.csrf_token }}
+        {% if errors.email_address %}
+            {% set ns.email_address = NONE %}
+            {% for errorValue in errors.email_address %}
+                {% if ns.errorEmailAddressText == NONE %}
+                    {% set ns.errorEmailAddressText = (errorValue) %}
+                {% else %}
+                    {% set ns.errorEmailAddressText = ns.errorEmailAddressText~'</br>'~(errorValue) %}
+                {% endif %}
+            {% endfor %}
+            {% set errorEmailAddress = { "text": ns.errorEmailAddressText,  "id": 'email_error' } %}
         {% endif %}
-      {% endfor %}
-      {% set errorEmailConfirm = { "text": ns.errorEmailConfirmText,  "id": 'email_error' } %}
-    {% endif %}
-    {% set email_confirm = form.email_confirm.data %}
-  
-    {{
-      onsInput({
-          "id": "email_confirm",
-          "name": "email_confirm",
-          "type": "email",
-          "label": {
-              "text": 'Re-type new email address'
-          },
-          "error": errorEmailConfirm,
-          "value": email_confirm
-      })
-    }}
-    <p><br>An email will be sent to the new address, and you will need to confirm the change of address. 
-      <br>After sending the verification email, you will need to sign in again. </p>
-    <div class="grid grid--flex grid--gutterless grid--vertical-center grid--no-wrap@s u-mt-m u-mb-m">
-      <div class="grid__col">
+        {% set email_address = form.email_address.data %}
+
         {{
-          onsButton({
-          "text": "Send Verification email",
-          "id": "btn-option-save",
-          "classes": 'btn-group__btn',
-          "submitType": "timer"
-          })
+            onsInput({
+                "id": "email_address",
+                "name": "email_address",
+                "type": "email",
+                "label": {
+                    "text": 'New email address',
+                },
+                "error": errorEmailAddress,
+                "value": email_address
+            })
         }}
-      </div>
-      <div class="grid__col u-ml-m btn-group__btn secondary">
-        <a href="{{ url_for('account_bp.get_my_account') }}" role="button" class="btn btn--link btn--secondary" id="btn-option-cancel">
-          <span class="btn__inner">Cancel</span></a>
-      </div>
-    </div>
-  </form>
+        {% if errors.email_confirm %}
+            {% set ns.email_confirm = NONE %}
+            {% for errorValue in errors.email_confirm %}
+                {% if ns.errorEmailConfirmText == NONE %}
+                    {% set ns.errorEmailConfirmText = (errorValue) %}
+                {% else %}
+                    {% set ns.errorEmailConfirmText = ns.errorEmailConfirmText~'</br>'~(errorValue) %}
+                {% endif %}
+            {% endfor %}
+            {% set errorEmailConfirm = { "text": ns.errorEmailConfirmText,  "id": 'email_error' } %}
+        {% endif %}
+        {% set email_confirm = form.email_confirm.data %}
+        {{
+            onsInput({
+                "id": "email_confirm",
+                "name": "email_confirm",
+                "type": "email",
+                "label": {
+                    "text": 'Re-type new email address'
+                },
+                "error": errorEmailConfirm,
+                "value": email_confirm
+            })
+        }}
+        <p><br>An email will be sent to the new address, and you will need to confirm the change of address. 
+        <br>After sending the verification email, you will need to sign in again. </p>
+        <div class="ons-grid ons-grid--flex ons-grid--gutterless ons-grid--vertical-center ons-grid--no-wrap@s ons-u-mt-m ons-u-mb-m">
+            <div class="ons-grid__col">
+                {{
+                    onsButton({
+                        "text": "Send Verification email",
+                        "id": "btn-option-save",
+                        "submitType": "timer"
+                    })
+                }}
+            </div>
+            <div class="ons-grid__col ons-u-ml-m">
+                <a href="{{ url_for('account_bp.get_my_account') }}" role="button" class="ons-btn ons-btn--link ons-btn--secondary" id="btn-option-cancel">
+                    <span class="ons-btn__inner">Cancel</span></a>
+            </div>
+        </div>
+    </form>
 
 {% endblock main %}

@@ -4,38 +4,38 @@
 
 {% set page_title = 'Alert Confirm Publish' %}
 {% block main %}
-    <div class="grid grid--gutterless">
-      <div class="grid__col col-8@m">
-        <h1>Publish alert</h1>
-        <p>The following alert will be published immediately:</p>
-        {{
-            onsPanel({
-                "label": {
-                    "text": "Message"
-                },
-                "body": current_banner,
-                "classes": "u-mb-l"
-            })
-        }}
-        <form action="" method="post">
-          {{ form.csrf_token }}
-          <div class="grid grid--flex grid--gutterless grid--vertical-center grid--no-wrap@s u-mt-m u-mb-m">
-            <div class="grid__col">
-              {{
-                  onsButton({
-                      "id": "publish-btn",
-                      "text": "Publish",
-                      "name": "publish",
-                      "value": "publish"
-                  })
-              }}
-            </div>
-            <div class="grid__col u-ml-m">
-              <a href="{{ url_for('admin_bp.get_banner_admin')}}">Cancel</a>
-            </div>
-            <input type="hidden" name="banner_text" value="{{ current_banner }}">
-          </div>
-        </form>
-      </div>
+    <div class="ons-grid ons-grid--gutterless">
+        <div class="ons-grid__col ons-col8@m">
+            <h1>Publish alert</h1>
+            <p>The following alert will be published immediately:</p>
+            {{
+                onsPanel({
+                    "label": {
+                        "text": "Message"
+                    },
+                    "body": current_banner,
+                    "classes": "ons-u-mb-l"
+                })
+            }}
+            <form action="" method="post">
+                {{ form.csrf_token }}
+                <div class="ons-grid ons-grid--flex ons-grid--gutterless ons-grid--vertical-center ons-grid--no-wrap@s ons-u-mt-m ons-u-mb-m">
+                    <div class="ons-grid__col">
+                        {{
+                            onsButton({
+                                "id": "publish-btn",
+                                "text": "Publish",
+                                "name": "publish",
+                                "value": "publish"
+                            })
+                        }}
+                    </div>
+                    <div class="ons-grid__col ons-u-ml-m">
+                        <a href="{{ url_for('admin_bp.get_banner_admin')}}">Cancel</a>
+                    </div>
+                    <input type="hidden" name="banner_text" value="{{ current_banner }}" />
+                </div>
+            </form>
+        </div>
     </div>
 {% endblock %}

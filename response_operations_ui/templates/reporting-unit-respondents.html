@@ -5,86 +5,86 @@
 {% set page_title = ru.name + " | Reporting units" %}
 
 {% block main %}
-  {% include 'partials/flashed-messages.html' %}
+    {% include 'partials/flashed-messages.html' %}
 
-  <h1 id="RU_NAME" class="u-fs-xl">{{ ru.name }}</h1>
+    <h1 id="RU_NAME" class="ons-u-fs-xl">{{ ru.name }}</h1>
 
-  <dl id="RU_DETAILS" class="item-headlines">
-    <dt class="item-headlines-term">
-      Reference:
-    </dt>
-    <dd id="RU_REF" class="item-headlines-definition">
-      {{ ru.sampleUnitRef }}
-    </dd>
-    {% if ru.trading_as %}
-      <dt class="item-headlines-term">
-        Trading as:
-      </dt>
-      <dd id="TRADING_AS" class="item-headlines-definition">
-        {{ ru.trading_as }} &#160;
-      </dd>
-    {% endif %}
-  </dl>
-<div class="grid__col col-8@m u-pl-no">
-  {% include 'partials/reporting-unit-tabs.html' %}
-  {% 
-    set respondentTableData = {
-      "table_class": 'table--responsive table--dense',
-      "id": 'tbl-respondents',
-      "ths": [
-        {
-          "value": "Respondent"
-        },
-        {
-          "value": "Account status"
-        },
-        {
-          "value": "Surveys"
-        }
-      ]
-    }
-  %}
-
-  {% set respondentTableDataRows = [] %}
-
-  {% if respondents|length > 0 %}
-    {% for respondent in respondents %}
-      {% set survey_string = [] %}
-      {% for survey in respondent.surveys %}
-        {% do survey_string.append('<a href="' + url_for("reporting_unit_bp.view_reporting_unit_survey", ru_ref=ru.sampleUnitRef, survey_id=survey[0]) + '">' + survey[1].name + '</a>') %}
-        {% if survey[1].status == "DISABLED" %}
-          {% do survey_string.append(" (Account disabled)") %}
+    <dl id="RU_DETAILS" class="item-headlines">
+        <dt class="item-headlines-term">
+            Reference:
+        </dt>
+        <dd id="RU_REF" class="item-headlines-definition">
+            {{ ru.sampleUnitRef }}
+        </dd>
+        {% if ru.trading_as %}
+            <dt class="item-headlines-term">
+                Trading as:
+            </dt>
+            <dd id="TRADING_AS" class="item-headlines-definition">
+                {{ ru.trading_as }} &#160;
+            </dd>
         {% endif %}
-        {% do survey_string.append("<br/>") %}
-      {% endfor %}
-      {% do respondentTableDataRows.append( 
-        {
-          "tds": [
-            {
-              "value": '<a href="' + url_for("reporting_unit_bp.view_contact_details", ru_ref=ru.sampleUnitRef, respondent_id= respondent.id) + '">' + respondent.respondent + '</a>',
-              "data": "Respondent",
-              "name": "tbl-respondents-respondent"
-            },
-            {
-              "value": respondent.status,
-              "data": "Account status",
-              "name": "tbl-respondents-status"
-            },
-            {
-              "value": survey_string|join(''),
-              "data": "Surveys",
-              "name": "tbl-respondents-surveys"
+    </dl>
+    <div class="ons-grid__col ons-col8@m ons-u-pl-no">
+        {% include 'partials/reporting-unit-tabs.html' %}
+        {% 
+            set respondentTableData = {
+                "variants": ['compact', 'responsive'],
+                "id": 'tbl-respondents',
+                "ths": [
+                    {
+                        "value": "Respondent"
+                    },
+                    {
+                        "value": "Account status"
+                    },
+                    {
+                        "value": "Surveys"
+                    }
+                ]
             }
-          ]
-        }
-      ) %}
-    {% endfor %}
-    {% do respondentTableData | setAttribute("trs", respondentTableDataRows) %}
-    {{
-      onsTable(respondentTableData)
-    }}
-  {% else %}
-    No respondents enrolled for this reporting unit
-  {% endif %}
-</div>
+        %}
+
+        {% set respondentTableDataRows = [] %}
+
+        {% if respondents|length > 0 %}
+            {% for respondent in respondents %}
+                {% set survey_string = [] %}
+                {% for survey in respondent.surveys %}
+                        {% do survey_string.append('<a href="' + url_for("reporting_unit_bp.view_reporting_unit_survey", ru_ref=ru.sampleUnitRef, survey_id=survey[0]) + '">' + survey[1].name + '</a>') %}
+                    {% if survey[1].status == "DISABLED" %}
+                        {% do survey_string.append(" (Account disabled)") %}
+                    {% endif %}
+                    {% do survey_string.append("<br/>") %}
+                {% endfor %}
+                {% do respondentTableDataRows.append( 
+                    {
+                        "tds": [
+                            {
+                                "value": '<a href="' + url_for("reporting_unit_bp.view_contact_details", ru_ref=ru.sampleUnitRef, respondent_id= respondent.id) + '">' + respondent.respondent + '</a>',
+                                "data": "Respondent",
+                                "name": "tbl-respondents-respondent"
+                            },
+                            {
+                                "value": respondent.status,
+                                "data": "Account status",
+                                "name": "tbl-respondents-status"
+                            },
+                            {
+                                "value": survey_string|join(''),
+                                "data": "Surveys",
+                                "name": "tbl-respondents-surveys"
+                            }
+                        ]
+                    }
+                ) %}
+            {% endfor %}
+            {% do respondentTableData | setAttribute("trs", respondentTableDataRows) %}
+            {{
+                onsTable(respondentTableData)
+            }}
+        {% else %}
+            <p>No respondents enrolled for this reporting unit</p>
+        {% endif %}
+    </div>
 {% endblock %}

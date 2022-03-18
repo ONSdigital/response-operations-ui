@@ -29,13 +29,13 @@ window.validateCI = {
         const mainAction = fileIsODS ? 'remove' : 'add';
         const contraAction = fileIsODS ? 'add' : 'remove';
 
-        this.__private__.nodeClassesChange(errorPanel, ['panel', 'panel--simple', 'panel--error'], mainAction);
-        this.__private__.nodeClassesChange(errorPanelBody, ['panel__body'], mainAction);
-        this.__private__.nodeClassesChange(button, ['btn--disabled'], contraAction);
+        this.__private__.nodeClassesChange(errorPanel, ['ons-panel', 'ons-panel--simple', 'ons-panel--error'], mainAction);
+        this.__private__.nodeClassesChange(errorPanelBody, ['ons-panel__body'], mainAction);
+        this.__private__.nodeClassesChange(button, ['ons-btn--disabled'], contraAction);
 
         this.__private__.arrayLikeToArray(errorPanelBody.querySelectorAll('p:not(.field)')).forEach(el => {
             this.__private__.nodeClassesChange(el, ['hidden'], contraAction);
-            this.__private__.nodeClassesChange(button, ['btn--disabled'], mainAction);
+            this.__private__.nodeClassesChange(button, ['ons-btn--disabled'], mainAction);
         });
     },
 

@@ -2,55 +2,53 @@
 {% set surveyTableData = {
     "id": 'tbl-businesses',
     "ths": [
-        { 
+        {
             "value": "Name"
         },
-        { 
+        {
             "value": "Email Address"
         },
-        { 
+        {
             "value": "Status"
         }
     ]
-    }
-%}
+} %}
 
 {% set surveyTableDataRows = [] %}
 {% for respondent in respondents %}
-  {% if not respondent.mark_for_deletion %}
-    {% do surveyTableDataRows.append(
-        {
-            "tds": [
+    {% if not respondent.mark_for_deletion %}
+        {% do surveyTableDataRows.append(
             {
-               "value": '<a href="' + respondent.href + '">' + respondent.name + '</a>'
-            },
-            {
-                "value": respondent.email
-            },
-            {
-                "value": '<span class="status status--small ' + respondent.status_class + '}">' + respondent.status | title + '</span>'
+                "tds": [
+                    {
+                        "value": '<a href="' + respondent.href + '">' + respondent.name + '</a>'
+                    },
+                    {
+                        "value": respondent.email
+                    },
+                    {
+                        "value": '<span class="ons-status ons-status--small ' + respondent.status_class + '}">' + respondent.status | title + '</span>'
+                    }
+                ]
             }
-            ]
-        }
         ) %}
-  {% else %}
-    {% do surveyTableDataRows.append(
-        {
-            "tds": [
+    {% else %}
+        {% do surveyTableDataRows.append(
             {
-               "value": respondent.name
-            },
-            {
-                "value": respondent.email
-            },
-            {
-                "value": '<span class="status status--small ' + respondent.status_class + '}">Deleted</span>'
+                "tds": [
+                    {
+                        "value": respondent.name
+                    },
+                    {
+                        "value": respondent.email
+                    },
+                    {
+                        "value": '<span class="ons-status ons-status--small ' + respondent.status_class + '}">Deleted</span>'
+                    }
+                ]
             }
-            ]
-        }
         ) %}
-  {% endif %}
-
+    {% endif %}
 {% endfor %}
 
 {% do surveyTableData | setAttribute("trs", surveyTableDataRows) %}
