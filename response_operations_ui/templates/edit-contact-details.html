@@ -146,18 +146,23 @@
                     }}
                     <input type="hidden" name="hidden_email" value="{{ respondent_details.emailAddress }}"/>
                 {%- endcall -%}
-                {{
-                    onsButton({
-                        "classes": "ons-u-mb-s ons-u-mt-l",
-                        "text": "Save changes",
-                        "id": "save-btn"
-                    })
-                }}
+                <div class="ons-grid ons-grid--flex ons-grid--gutterless ons-grid--vertical-center ons-grid--no-wrap@s ons-u-mt-m ons-u-mb-m">
+                    <div class="ons-grid__col">
+                        {{
+                            onsButton({
+                                "text": "Save changes",
+                                "id": "save-btn"
+                            })
+                        }}
+                    </div>
+                    <div class="ons-grid__col ons-u-ml-m">
+                        <div>
+                            {%- set href = url_for('respondent_bp.respondent_details', respondent_id=respondent_details.id) if tab=='respondents' else url_for('reporting_unit_bp.view_reporting_unit', ru_ref=ru_ref) -%}
+                            <a id="cancel-btn" href="{{ href }}">Cancel</a>
+                        </div>
+                    </div>
+                </div>
             </form>
-            <p>
-                {%- set href = url_for('respondent_bp.respondent_details', respondent_id=respondent_details.id) if tab=='respondents' else url_for('reporting_unit_bp.view_reporting_unit', ru_ref=ru_ref) -%}
-                <a id="cancel-btn" href="{{ href }}" >Cancel</a>
-            </p>
         </div>
     </div>
 
