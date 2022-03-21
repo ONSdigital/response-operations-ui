@@ -129,7 +129,15 @@
                                 {% endfor %}
                                 {% do checkboxesData | setAttribute("checkboxes", checkboxData) %}
                                 {{ onsCheckboxes(checkboxesData) }}
-                                <p class="ons-field ons-u-mt-s">
+                                <div class="ons-field ons-u-mt-s">
+                                    {{
+                                        onsButton({
+                                            "text": "Add",
+                                            "id": "btn-add-ci",
+                                            "name": "select-ci"
+                                        })
+                                    }}
+                                </div>
                             </div>
                         </div>
                     </form>
