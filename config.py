@@ -137,7 +137,7 @@ class DevelopmentConfig(Config):
 
     UAA_SERVICE_URL = os.getenv("UAA_SERVICE_URL", "http://localhost:9080")
     UAA_CLIENT_ID = os.getenv("UAA_CLIENT_ID", "response_operations")
-    UAA_CLIENT_SECRET = os.getenv("UAA_CLIENT_SECRET", "package.through.quarter.fruit")
+    UAA_CLIENT_SECRET = os.getenv("UAA_CLIENT_SECRET", "password")
 
     EMAIL_TOKEN_SALT = os.getenv("EMAIL_TOKEN_SALT", "aardvark")
     # 24 hours in seconds

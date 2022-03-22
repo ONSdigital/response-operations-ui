@@ -22,10 +22,10 @@
             {% include 'collection_exercise/ce-instrument-section.html' %}
         </div>
 
-        <div class="ons-grid__col ons-col5@l push-1@l">
+        <div class="ons-grid__col ons-col5@l ons-push-1@l">
             {% include 'collection_exercise/ce-reference-information.html' %}
             {% if survey.surveyMode == 'EQ' and is_eq_v3_enabled %}
-              {% include 'collection_exercise/ce-select-eq-version.html' %}
+                {% include 'collection_exercise/ce-select-eq-version.html' %}
             {% endif %}
         </div>
     </div>
