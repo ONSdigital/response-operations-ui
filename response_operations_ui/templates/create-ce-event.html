@@ -84,6 +84,7 @@
                 %}
                     {{
                         onsList({
+                            "element": 'ol',
                             "itemsList": listData
                         })
                     }}
@@ -92,7 +93,7 @@
             <form method="post" action="{{ url_for('collection_exercise_bp.create_collection_exercise_event', short_name=short_name, period=period, ce_id=ce_id, tag=tag)}}">
                 <div class="date-time-editor">
                     {{ form.csrf_token }}
-                    <fieldset class="fieldgroup fieldgroup--inline fieldgroup--date" data-qa="widget-date" role="group">
+                    <fieldset class="fieldgroup fieldgroup--inline fieldgroup--date ons-u-mb-m" data-qa="widget-date" role="group">
                         <legend class="fieldgroup__title ons-u-fs-r--b ons-u-mb-xs">Enter a date</legend>
                         <div class="ons-field-group">
                             <div class="ons-field field--input">
