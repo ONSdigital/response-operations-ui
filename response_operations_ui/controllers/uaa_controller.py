@@ -299,7 +299,7 @@ def get_users_list(
     start_index: int, max_count: int, query: str = None, sort_by: str = "email", sort_order: str = "ascending"
 ):
     """
-    Updates the user password in uaa, using the user's id
+    Gets all users in rops and provides a list.
     :param query - UAA user object.
     :param sort_by
     :param sort_order
@@ -319,3 +319,17 @@ def get_users_list(
     except HTTPError:
         logger.error("Unauthorised attempt to get user list.", status_code=response.status_code)
         raise "Unauthorised Access"
+
+
+def get_filter_query(filter_criteria: str, filter_value: str, filter_on: str):
+    return f"{filter_on} {get_filter(filter_criteria)} '{filter_value}'"
+
+
+def get_filter(filter_criteria: str):
+    switch = {
+        "equal": "eq",
+        "contains": "co",
+        "starts with": "sw",
+        "present": "pr",
+    }
+    return switch.get(filter_criteria, "nothing")
