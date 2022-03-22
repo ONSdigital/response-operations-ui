@@ -69,7 +69,8 @@ class TestMessage(ViewTestCase):
         self.client.post("/sign-in", follow_redirects=True, data={"username": "user", "password": "pass"})
         response = self.client.get("/admin/manage-user-accounts", follow_redirects=True)
 
-        self.assertEqual(response.status_code, 500)
+        self.assertEqual(response.status_code, 200)
+        self.assertNotIn("Manage User Accounts".encode(), response.data)
 
     @requests_mock.mock()
     def test_manage_user_accounts_403(self, mock_request):
