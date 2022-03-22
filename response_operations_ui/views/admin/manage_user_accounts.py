@@ -9,7 +9,8 @@ from werkzeug.exceptions import abort
 from response_operations_ui.controllers.uaa_controller import (
     get_filter_query,
     get_users_list,
-    user_has_permission, )
+    user_has_permission,
+)
 from response_operations_ui.forms import UserSearchForm
 from response_operations_ui.views.admin import admin_bp
 

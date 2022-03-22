@@ -21,12 +21,12 @@
       {% endcall %}
     {% endif %}
   {% endwith %}
-    <div class="grid grid--flex grid--between">
-      <div class="grid__col">
-          <h1 class="u-fs-l u-mb-xs" name="page-messages-title">Manage user accounts
+    <div class="ons-grid ons-grid--flex ons-grid--between">
+      <div class="ons-grid__col">
+          <h1 class="ons-u-fs-l u-mb-xs" name="page-messages-title">Manage user accounts
           </h1>
       </div>
-      <div class="grid__col"> 
+      <div class="ons-grid__col"> 
         <form action="" method="post">
           {{
             onsInput({
@@ -47,8 +47,8 @@
         </form>  
       </div>
   </div>
-  <div class="grid grid--flex grid--between u-st-s">
-        <div class="grid__col u-mt-s">
+  <div class="ons-grid ons-grid--flex ons-grid--between ons-u-st-s">
+        <div class="ons-grid__col ons-u-mt-s">
             <p class="field">
               <a href="#">Create new user account</a>
             </p>
@@ -86,7 +86,7 @@
       <th style="border-bottom:0; font-weight:normal; text-align: left; padding:0"><a href="{{ url_for('admin_bp.manage_user_accounts', user_with_email='Z') }}">Z</a></th>
     </tr>
   </table>
-  <section class="u-mt-s">
+  <section class="ons-u-mt-s">
             {% set userTableData = {
                 "table_class": 'table--dense',
                 "id": 'tbl-users',
