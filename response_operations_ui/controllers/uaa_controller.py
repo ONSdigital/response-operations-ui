@@ -293,3 +293,43 @@ def user_has_permission(permission, user_id=None) -> bool:
 
     user = get_user_by_id(user_id)
     return any(permission in g["display"] for g in user.get("groups"))
+
+
+def get_users_list(
+    start_index: int, max_count: int, query: str = None, sort_by: str = "email", sort_order: str = "ascending"
+):
+    """
+    Gets all users in rops and provides a list.
+    :param query - UAA user object.
+    :param sort_by
+    :param sort_order
+    :param start_index
+    :param max_count
+    :return errors: The errors returned from uaa as a dictionary
+    """
+    access_token = login_admin()
+    headers = generate_headers(access_token)
+    param = {"filter": query, "sortBy": sort_by, "count": max_count, "startIndex": start_index, "sortOrder": sort_order}
+    logger.info("Attempting to fetch user records")
+    url = f"{app.config['UAA_SERVICE_URL']}/Users"
+    response = requests.get(url, params=param, headers=headers)
+    try:
+        response.raise_for_status()
+        return response.json()
+    except HTTPError:
+        logger.error("Unauthorised attempt to get user list.", status_code=response.status_code)
+        raise "Unauthorised Access"
+
+
+def get_filter_query(filter_criteria: str, filter_value: str, filter_on: str):
+    return f"{filter_on} {get_filter(filter_criteria)} '{filter_value}'"
+
+
+def get_filter(filter_criteria: str):
+    switch = {
+        "equal": "eq",
+        "contains": "co",
+        "starts with": "sw",
+        "present": "pr",
+    }
+    return switch.get(filter_criteria, "nothing")

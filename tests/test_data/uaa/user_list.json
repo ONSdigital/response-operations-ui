@@ -1,0 +1,2010 @@
+{
+    "resources": [
+        {
+            "id": "c59796f8-c987-410d-b940-7f1ecdf3b525",
+            "meta": {
+                "version": 0,
+                "created": "2022-03-16T11:32:39.815Z",
+                "lastModified": "2022-03-16T11:32:39.815Z"
+            },
+            "userName": "Andy0.Smith",
+            "name": {
+                "familyName": "Johnson",
+                "givenName": "Andy0"
+            },
+            "emails": [
+                {
+                    "value": "Andy0.Smith@ons.gov.uk",
+                    "primary": "False"
+                }
+            ],
+            "groups": [
+                {
+                    "value": "2f271874-d15e-4c71-b5d1-55ed3dcf6ba6",
+                    "display": "roles",
+                    "type": "DIRECT"
+                },
+                {
+                    "value": "98136751-3d06-441e-97d3-be48d0193c4e",
+                    "display": "approvals.me",
+                    "type": "DIRECT"
+                },
+                {
+                    "value": "cd2779fe-fa69-4567-b0bf-0106fd63d988",
+                    "display": "user_attributes",
+                    "type": "DIRECT"
+                },
+                {
+                    "value": "d6edbb39-6142-4f21-bf8f-73870808bea5",
+                    "display": "uaa.user",
+                    "type": "DIRECT"
+                },
+                {
+                    "value": "edf99d97-4f8d-4794-ac09-23c037e35e33",
+                    "display": "password.write",
+                    "type": "DIRECT"
+                },
+                {
+                    "value": "95cc430f-bd7f-444a-b805-b016576a8d39",
+                    "display": "openid",
+                    "type": "DIRECT"
+                },
+                {
+                    "value": "97c4ac22-6425-4b16-bfa9-a092c0cd177b",
+                    "display": "scim.userids",
+                    "type": "DIRECT"
+                },
+                {
+                    "value": "73960a8e-b10b-4170-bdf2-6a4cfc4fbe82",
+                    "display": "scim.me",
+                    "type": "DIRECT"
+                },
+                {
+                    "value": "7af19d30-3083-4e19-b4dd-8b6f8d50e684",
+                    "display": "cloud_controller_service_permissions.read",
+                    "type": "DIRECT"
+                },
+                {
+                    "value": "04585b26-0f30-4d78-8df8-4b853173b4ca",
+                    "display": "oauth.approvals",
+                    "type": "DIRECT"
+                },
+                {
+                    "value": "c470332b-3a0b-458e-a563-03492e03663d",
+                    "display": "cloud_controller.read",
+                    "type": "DIRECT"
+                },
+                {
+                    "value": "3391f9dc-a580-49f8-a3e9-5abf38943521",
+                    "display": "profile",
+                    "type": "DIRECT"
+                },
+                {
+                    "value": "b4395b82-cca6-42cc-a044-174042c0820f",
+                    "display": "uaa.offline_token",
+                    "type": "DIRECT"
+                },
+                {
+                    "value": "502cbe44-c623-43b6-89af-763904d25af4",
+                    "display": "cloud_controller.write",
+                    "type": "DIRECT"
+                }
+            ],
+            "approvals": [],
+            "active": "True",
+            "verified": "True",
+            "origin": "uaa",
+            "zoneId": "uaa",
+            "passwordLastModified": "2022-03-16T11:32:39.000Z",
+            "schemas": [
+                "urn:scim:schemas:core:1.0"
+            ]
+        },
+        {
+            "id": "e2963ae1-7e1c-4ad6-8b73-6da876f058b2",
+            "meta": {
+                "version": 0,
+                "created": "2022-03-16T11:33:06.926Z",
+                "lastModified": "2022-03-16T11:33:06.926Z"
+            },
+            "userName": "Andy101.Williams",
+            "name": {
+                "familyName": "Johnson",
+                "givenName": "Bob101"
+            },
+            "emails": [
+                {
+                    "value": "Andy101.Williams@ons.gov.uk",
+                    "primary": "False"
+                }
+            ],
+            "groups": [
+                {
+                    "value": "2f271874-d15e-4c71-b5d1-55ed3dcf6ba6",
+                    "display": "roles",
+                    "type": "DIRECT"
+                },
+                {
+                    "value": "98136751-3d06-441e-97d3-be48d0193c4e",
+                    "display": "approvals.me",
+                    "type": "DIRECT"
+                },
+                {
+                    "value": "cd2779fe-fa69-4567-b0bf-0106fd63d988",
+                    "display": "user_attributes",
+                    "type": "DIRECT"
+                },
+                {
+                    "value": "d6edbb39-6142-4f21-bf8f-73870808bea5",
+                    "display": "uaa.user",
+                    "type": "DIRECT"
+                },
+                {
+                    "value": "edf99d97-4f8d-4794-ac09-23c037e35e33",
+                    "display": "password.write",
+                    "type": "DIRECT"
+                },
+                {
+                    "value": "95cc430f-bd7f-444a-b805-b016576a8d39",
+                    "display": "openid",
+                    "type": "DIRECT"
+                },
+                {
+                    "value": "97c4ac22-6425-4b16-bfa9-a092c0cd177b",
+                    "display": "scim.userids",
+                    "type": "DIRECT"
+                },
+                {
+                    "value": "73960a8e-b10b-4170-bdf2-6a4cfc4fbe82",
+                    "display": "scim.me",
+                    "type": "DIRECT"
+                },
+                {
+                    "value": "7af19d30-3083-4e19-b4dd-8b6f8d50e684",
+                    "display": "cloud_controller_service_permissions.read",
+                    "type": "DIRECT"
+                },
+                {
+                    "value": "04585b26-0f30-4d78-8df8-4b853173b4ca",
+                    "display": "oauth.approvals",
+                    "type": "DIRECT"
+                },
+                {
+                    "value": "c470332b-3a0b-458e-a563-03492e03663d",
+                    "display": "cloud_controller.read",
+                    "type": "DIRECT"
+                },
+                {
+                    "value": "3391f9dc-a580-49f8-a3e9-5abf38943521",
+                    "display": "profile",
+                    "type": "DIRECT"
+                },
+                {
+                    "value": "b4395b82-cca6-42cc-a044-174042c0820f",
+                    "display": "uaa.offline_token",
+                    "type": "DIRECT"
+                },
+                {
+                    "value": "502cbe44-c623-43b6-89af-763904d25af4",
+                    "display": "cloud_controller.write",
+                    "type": "DIRECT"
+                }
+            ],
+            "approvals": [],
+            "active": "True",
+            "verified": "True",
+            "origin": "uaa",
+            "zoneId": "uaa",
+            "passwordLastModified": "2022-03-16T11:33:06.000Z",
+            "schemas": [
+                "urn:scim:schemas:core:1.0"
+            ]
+        },
+        {
+            "id": "3f5b5be3-7081-465d-a0fc-ef9b329047bb",
+            "meta": {
+                "version": 0,
+                "created": "2022-03-16T11:33:08.253Z",
+                "lastModified": "2022-03-16T11:33:08.253Z"
+            },
+            "userName": "Andy106.Johnson",
+            "name": {
+                "familyName": "Johnson",
+                "givenName": "John106"
+            },
+            "emails": [
+                {
+                    "value": "Andy106.Johnson@ons.gov.uk",
+                    "primary": "False"
+                }
+            ],
+            "groups": [
+                {
+                    "value": "2f271874-d15e-4c71-b5d1-55ed3dcf6ba6",
+                    "display": "roles",
+                    "type": "DIRECT"
+                },
+                {
+                    "value": "98136751-3d06-441e-97d3-be48d0193c4e",
+                    "display": "approvals.me",
+                    "type": "DIRECT"
+                },
+                {
+                    "value": "cd2779fe-fa69-4567-b0bf-0106fd63d988",
+                    "display": "user_attributes",
+                    "type": "DIRECT"
+                },
+                {
+                    "value": "d6edbb39-6142-4f21-bf8f-73870808bea5",
+                    "display": "uaa.user",
+                    "type": "DIRECT"
+                },
+                {
+                    "value": "edf99d97-4f8d-4794-ac09-23c037e35e33",
+                    "display": "password.write",
+                    "type": "DIRECT"
+                },
+                {
+                    "value": "95cc430f-bd7f-444a-b805-b016576a8d39",
+                    "display": "openid",
+                    "type": "DIRECT"
+                },
+                {
+                    "value": "97c4ac22-6425-4b16-bfa9-a092c0cd177b",
+                    "display": "scim.userids",
+                    "type": "DIRECT"
+                },
+                {
+                    "value": "73960a8e-b10b-4170-bdf2-6a4cfc4fbe82",
+                    "display": "scim.me",
+                    "type": "DIRECT"
+                },
+                {
+                    "value": "7af19d30-3083-4e19-b4dd-8b6f8d50e684",
+                    "display": "cloud_controller_service_permissions.read",
+                    "type": "DIRECT"
+                },
+                {
+                    "value": "04585b26-0f30-4d78-8df8-4b853173b4ca",
+                    "display": "oauth.approvals",
+                    "type": "DIRECT"
+                },
+                {
+                    "value": "c470332b-3a0b-458e-a563-03492e03663d",
+                    "display": "cloud_controller.read",
+                    "type": "DIRECT"
+                },
+                {
+                    "value": "3391f9dc-a580-49f8-a3e9-5abf38943521",
+                    "display": "profile",
+                    "type": "DIRECT"
+                },
+                {
+                    "value": "b4395b82-cca6-42cc-a044-174042c0820f",
+                    "display": "uaa.offline_token",
+                    "type": "DIRECT"
+                },
+                {
+                    "value": "502cbe44-c623-43b6-89af-763904d25af4",
+                    "display": "cloud_controller.write",
+                    "type": "DIRECT"
+                }
+            ],
+            "approvals": [],
+            "active": "True",
+            "verified": "True",
+            "origin": "uaa",
+            "zoneId": "uaa",
+            "passwordLastModified": "2022-03-16T11:33:08.000Z",
+            "schemas": [
+                "urn:scim:schemas:core:1.0"
+            ]
+        },
+        {
+            "id": "8e8b09a8-7283-4ee7-ba95-9e83104c45b1",
+            "meta": {
+                "version": 0,
+                "created": "2022-03-16T11:33:08.502Z",
+                "lastModified": "2022-03-16T11:33:08.502Z"
+            },
+            "userName": "Andy107.Johnson",
+            "name": {
+                "familyName": "Smith",
+                "givenName": "Joe107"
+            },
+            "emails": [
+                {
+                    "value": "Andy107.Johnson@ons.gov.uk",
+                    "primary": "False"
+                }
+            ],
+            "groups": [
+                {
+                    "value": "2f271874-d15e-4c71-b5d1-55ed3dcf6ba6",
+                    "display": "roles",
+                    "type": "DIRECT"
+                },
+                {
+                    "value": "98136751-3d06-441e-97d3-be48d0193c4e",
+                    "display": "approvals.me",
+                    "type": "DIRECT"
+                },
+                {
+                    "value": "cd2779fe-fa69-4567-b0bf-0106fd63d988",
+                    "display": "user_attributes",
+                    "type": "DIRECT"
+                },
+                {
+                    "value": "d6edbb39-6142-4f21-bf8f-73870808bea5",
+                    "display": "uaa.user",
+                    "type": "DIRECT"
+                },
+                {
+                    "value": "edf99d97-4f8d-4794-ac09-23c037e35e33",
+                    "display": "password.write",
+                    "type": "DIRECT"
+                },
+                {
+                    "value": "95cc430f-bd7f-444a-b805-b016576a8d39",
+                    "display": "openid",
+                    "type": "DIRECT"
+                },
+                {
+                    "value": "97c4ac22-6425-4b16-bfa9-a092c0cd177b",
+                    "display": "scim.userids",
+                    "type": "DIRECT"
+                },
+                {
+                    "value": "73960a8e-b10b-4170-bdf2-6a4cfc4fbe82",
+                    "display": "scim.me",
+                    "type": "DIRECT"
+                },
+                {
+                    "value": "7af19d30-3083-4e19-b4dd-8b6f8d50e684",
+                    "display": "cloud_controller_service_permissions.read",
+                    "type": "DIRECT"
+                },
+                {
+                    "value": "04585b26-0f30-4d78-8df8-4b853173b4ca",
+                    "display": "oauth.approvals",
+                    "type": "DIRECT"
+                },
+                {
+                    "value": "c470332b-3a0b-458e-a563-03492e03663d",
+                    "display": "cloud_controller.read",
+                    "type": "DIRECT"
+                },
+                {
+                    "value": "3391f9dc-a580-49f8-a3e9-5abf38943521",
+                    "display": "profile",
+                    "type": "DIRECT"
+                },
+                {
+                    "value": "b4395b82-cca6-42cc-a044-174042c0820f",
+                    "display": "uaa.offline_token",
+                    "type": "DIRECT"
+                },
+                {
+                    "value": "502cbe44-c623-43b6-89af-763904d25af4",
+                    "display": "cloud_controller.write",
+                    "type": "DIRECT"
+                }
+            ],
+            "approvals": [],
+            "active": "True",
+            "verified": "True",
+            "origin": "uaa",
+            "zoneId": "uaa",
+            "passwordLastModified": "2022-03-16T11:33:08.000Z",
+            "schemas": [
+                "urn:scim:schemas:core:1.0"
+            ]
+        },
+        {
+            "id": "9014f945-65f6-4479-87a3-1183116d1097",
+            "meta": {
+                "version": 0,
+                "created": "2022-03-16T11:33:11.267Z",
+                "lastModified": "2022-03-16T11:33:11.267Z"
+            },
+            "userName": "Andy118.Johnson",
+            "name": {
+                "familyName": "Williams",
+                "givenName": "Joe118"
+            },
+            "emails": [
+                {
+                    "value": "Andy118.Johnson@ons.gov.uk",
+                    "primary": "False"
+                }
+            ],
+            "groups": [
+                {
+                    "value": "2f271874-d15e-4c71-b5d1-55ed3dcf6ba6",
+                    "display": "roles",
+                    "type": "DIRECT"
+                },
+                {
+                    "value": "98136751-3d06-441e-97d3-be48d0193c4e",
+                    "display": "approvals.me",
+                    "type": "DIRECT"
+                },
+                {
+                    "value": "cd2779fe-fa69-4567-b0bf-0106fd63d988",
+                    "display": "user_attributes",
+                    "type": "DIRECT"
+                },
+                {
+                    "value": "d6edbb39-6142-4f21-bf8f-73870808bea5",
+                    "display": "uaa.user",
+                    "type": "DIRECT"
+                },
+                {
+                    "value": "edf99d97-4f8d-4794-ac09-23c037e35e33",
+                    "display": "password.write",
+                    "type": "DIRECT"
+                },
+                {
+                    "value": "95cc430f-bd7f-444a-b805-b016576a8d39",
+                    "display": "openid",
+                    "type": "DIRECT"
+                },
+                {
+                    "value": "97c4ac22-6425-4b16-bfa9-a092c0cd177b",
+                    "display": "scim.userids",
+                    "type": "DIRECT"
+                },
+                {
+                    "value": "73960a8e-b10b-4170-bdf2-6a4cfc4fbe82",
+                    "display": "scim.me",
+                    "type": "DIRECT"
+                },
+                {
+                    "value": "7af19d30-3083-4e19-b4dd-8b6f8d50e684",
+                    "display": "cloud_controller_service_permissions.read",
+                    "type": "DIRECT"
+                },
+                {
+                    "value": "04585b26-0f30-4d78-8df8-4b853173b4ca",
+                    "display": "oauth.approvals",
+                    "type": "DIRECT"
+                },
+                {
+                    "value": "c470332b-3a0b-458e-a563-03492e03663d",
+                    "display": "cloud_controller.read",
+                    "type": "DIRECT"
+                },
+                {
+                    "value": "3391f9dc-a580-49f8-a3e9-5abf38943521",
+                    "display": "profile",
+                    "type": "DIRECT"
+                },
+                {
+                    "value": "b4395b82-cca6-42cc-a044-174042c0820f",
+                    "display": "uaa.offline_token",
+                    "type": "DIRECT"
+                },
+                {
+                    "value": "502cbe44-c623-43b6-89af-763904d25af4",
+                    "display": "cloud_controller.write",
+                    "type": "DIRECT"
+                }
+            ],
+            "approvals": [],
+            "active": "True",
+            "verified": "True",
+            "origin": "uaa",
+            "zoneId": "uaa",
+            "passwordLastModified": "2022-03-16T11:33:11.000Z",
+            "schemas": [
+                "urn:scim:schemas:core:1.0"
+            ]
+        },
+        {
+            "id": "682f76b3-7383-4844-a4c1-6ddabd9e4314",
+            "meta": {
+                "version": 0,
+                "created": "2022-03-16T11:33:12.128Z",
+                "lastModified": "2022-03-16T11:33:12.128Z"
+            },
+            "userName": "Andy121.Johnson",
+            "name": {
+                "familyName": "Smith",
+                "givenName": "David121"
+            },
+            "emails": [
+                {
+                    "value": "Andy121.Johnson@ons.gov.uk",
+                    "primary": "False"
+                }
+            ],
+            "groups": [
+                {
+                    "value": "2f271874-d15e-4c71-b5d1-55ed3dcf6ba6",
+                    "display": "roles",
+                    "type": "DIRECT"
+                },
+                {
+                    "value": "98136751-3d06-441e-97d3-be48d0193c4e",
+                    "display": "approvals.me",
+                    "type": "DIRECT"
+                },
+                {
+                    "value": "cd2779fe-fa69-4567-b0bf-0106fd63d988",
+                    "display": "user_attributes",
+                    "type": "DIRECT"
+                },
+                {
+                    "value": "d6edbb39-6142-4f21-bf8f-73870808bea5",
+                    "display": "uaa.user",
+                    "type": "DIRECT"
+                },
+                {
+                    "value": "edf99d97-4f8d-4794-ac09-23c037e35e33",
+                    "display": "password.write",
+                    "type": "DIRECT"
+                },
+                {
+                    "value": "95cc430f-bd7f-444a-b805-b016576a8d39",
+                    "display": "openid",
+                    "type": "DIRECT"
+                },
+                {
+                    "value": "97c4ac22-6425-4b16-bfa9-a092c0cd177b",
+                    "display": "scim.userids",
+                    "type": "DIRECT"
+                },
+                {
+                    "value": "73960a8e-b10b-4170-bdf2-6a4cfc4fbe82",
+                    "display": "scim.me",
+                    "type": "DIRECT"
+                },
+                {
+                    "value": "7af19d30-3083-4e19-b4dd-8b6f8d50e684",
+                    "display": "cloud_controller_service_permissions.read",
+                    "type": "DIRECT"
+                },
+                {
+                    "value": "04585b26-0f30-4d78-8df8-4b853173b4ca",
+                    "display": "oauth.approvals",
+                    "type": "DIRECT"
+                },
+                {
+                    "value": "c470332b-3a0b-458e-a563-03492e03663d",
+                    "display": "cloud_controller.read",
+                    "type": "DIRECT"
+                },
+                {
+                    "value": "3391f9dc-a580-49f8-a3e9-5abf38943521",
+                    "display": "profile",
+                    "type": "DIRECT"
+                },
+                {
+                    "value": "b4395b82-cca6-42cc-a044-174042c0820f",
+                    "display": "uaa.offline_token",
+                    "type": "DIRECT"
+                },
+                {
+                    "value": "502cbe44-c623-43b6-89af-763904d25af4",
+                    "display": "cloud_controller.write",
+                    "type": "DIRECT"
+                }
+            ],
+            "approvals": [],
+            "active": "True",
+            "verified": "True",
+            "origin": "uaa",
+            "zoneId": "uaa",
+            "passwordLastModified": "2022-03-16T11:33:12.000Z",
+            "schemas": [
+                "urn:scim:schemas:core:1.0"
+            ]
+        },
+        {
+            "id": "cbbd4bcc-316f-43b6-9ed4-d0c9d9f7cd2a",
+            "meta": {
+                "version": 0,
+                "created": "2022-03-16T11:33:13.579Z",
+                "lastModified": "2022-03-16T11:33:13.579Z"
+            },
+            "userName": "Andy127.Johnson",
+            "name": {
+                "familyName": "Williams",
+                "givenName": "John127"
+            },
+            "emails": [
+                {
+                    "value": "Andy127.Johnson@ons.gov.uk",
+                    "primary": "False"
+                }
+            ],
+            "groups": [
+                {
+                    "value": "2f271874-d15e-4c71-b5d1-55ed3dcf6ba6",
+                    "display": "roles",
+                    "type": "DIRECT"
+                },
+                {
+                    "value": "98136751-3d06-441e-97d3-be48d0193c4e",
+                    "display": "approvals.me",
+                    "type": "DIRECT"
+                },
+                {
+                    "value": "cd2779fe-fa69-4567-b0bf-0106fd63d988",
+                    "display": "user_attributes",
+                    "type": "DIRECT"
+                },
+                {
+                    "value": "d6edbb39-6142-4f21-bf8f-73870808bea5",
+                    "display": "uaa.user",
+                    "type": "DIRECT"
+                },
+                {
+                    "value": "edf99d97-4f8d-4794-ac09-23c037e35e33",
+                    "display": "password.write",
+                    "type": "DIRECT"
+                },
+                {
+                    "value": "95cc430f-bd7f-444a-b805-b016576a8d39",
+                    "display": "openid",
+                    "type": "DIRECT"
+                },
+                {
+                    "value": "97c4ac22-6425-4b16-bfa9-a092c0cd177b",
+                    "display": "scim.userids",
+                    "type": "DIRECT"
+                },
+                {
+                    "value": "73960a8e-b10b-4170-bdf2-6a4cfc4fbe82",
+                    "display": "scim.me",
+                    "type": "DIRECT"
+                },
+                {
+                    "value": "7af19d30-3083-4e19-b4dd-8b6f8d50e684",
+                    "display": "cloud_controller_service_permissions.read",
+                    "type": "DIRECT"
+                },
+                {
+                    "value": "04585b26-0f30-4d78-8df8-4b853173b4ca",
+                    "display": "oauth.approvals",
+                    "type": "DIRECT"
+                },
+                {
+                    "value": "c470332b-3a0b-458e-a563-03492e03663d",
+                    "display": "cloud_controller.read",
+                    "type": "DIRECT"
+                },
+                {
+                    "value": "3391f9dc-a580-49f8-a3e9-5abf38943521",
+                    "display": "profile",
+                    "type": "DIRECT"
+                },
+                {
+                    "value": "b4395b82-cca6-42cc-a044-174042c0820f",
+                    "display": "uaa.offline_token",
+                    "type": "DIRECT"
+                },
+                {
+                    "value": "502cbe44-c623-43b6-89af-763904d25af4",
+                    "display": "cloud_controller.write",
+                    "type": "DIRECT"
+                }
+            ],
+            "approvals": [],
+            "active": "True",
+            "verified": "True",
+            "origin": "uaa",
+            "zoneId": "uaa",
+            "passwordLastModified": "2022-03-16T11:33:13.000Z",
+            "schemas": [
+                "urn:scim:schemas:core:1.0"
+            ]
+        },
+        {
+            "id": "e6723038-20eb-4811-bfe6-d167ae8b7c17",
+            "meta": {
+                "version": 0,
+                "created": "2022-03-16T11:33:13.828Z",
+                "lastModified": "2022-03-16T11:33:13.828Z"
+            },
+            "userName": "Andy128.Smith",
+            "name": {
+                "familyName": "Williams",
+                "givenName": "Charlie128"
+            },
+            "emails": [
+                {
+                    "value": "Andy128.Smith@ons.gov.uk",
+                    "primary": "False"
+                }
+            ],
+            "groups": [
+                {
+                    "value": "2f271874-d15e-4c71-b5d1-55ed3dcf6ba6",
+                    "display": "roles",
+                    "type": "DIRECT"
+                },
+                {
+                    "value": "98136751-3d06-441e-97d3-be48d0193c4e",
+                    "display": "approvals.me",
+                    "type": "DIRECT"
+                },
+                {
+                    "value": "cd2779fe-fa69-4567-b0bf-0106fd63d988",
+                    "display": "user_attributes",
+                    "type": "DIRECT"
+                },
+                {
+                    "value": "d6edbb39-6142-4f21-bf8f-73870808bea5",
+                    "display": "uaa.user",
+                    "type": "DIRECT"
+                },
+                {
+                    "value": "edf99d97-4f8d-4794-ac09-23c037e35e33",
+                    "display": "password.write",
+                    "type": "DIRECT"
+                },
+                {
+                    "value": "95cc430f-bd7f-444a-b805-b016576a8d39",
+                    "display": "openid",
+                    "type": "DIRECT"
+                },
+                {
+                    "value": "97c4ac22-6425-4b16-bfa9-a092c0cd177b",
+                    "display": "scim.userids",
+                    "type": "DIRECT"
+                },
+                {
+                    "value": "73960a8e-b10b-4170-bdf2-6a4cfc4fbe82",
+                    "display": "scim.me",
+                    "type": "DIRECT"
+                },
+                {
+                    "value": "7af19d30-3083-4e19-b4dd-8b6f8d50e684",
+                    "display": "cloud_controller_service_permissions.read",
+                    "type": "DIRECT"
+                },
+                {
+                    "value": "04585b26-0f30-4d78-8df8-4b853173b4ca",
+                    "display": "oauth.approvals",
+                    "type": "DIRECT"
+                },
+                {
+                    "value": "c470332b-3a0b-458e-a563-03492e03663d",
+                    "display": "cloud_controller.read",
+                    "type": "DIRECT"
+                },
+                {
+                    "value": "3391f9dc-a580-49f8-a3e9-5abf38943521",
+                    "display": "profile",
+                    "type": "DIRECT"
+                },
+                {
+                    "value": "b4395b82-cca6-42cc-a044-174042c0820f",
+                    "display": "uaa.offline_token",
+                    "type": "DIRECT"
+                },
+                {
+                    "value": "502cbe44-c623-43b6-89af-763904d25af4",
+                    "display": "cloud_controller.write",
+                    "type": "DIRECT"
+                }
+            ],
+            "approvals": [],
+            "active": "True",
+            "verified": "True",
+            "origin": "uaa",
+            "zoneId": "uaa",
+            "passwordLastModified": "2022-03-16T11:33:13.000Z",
+            "schemas": [
+                "urn:scim:schemas:core:1.0"
+            ]
+        },
+        {
+            "id": "ad60ab68-b6c3-4008-946c-2c7d9d763d5e",
+            "meta": {
+                "version": 0,
+                "created": "2022-03-16T11:33:17.308Z",
+                "lastModified": "2022-03-16T11:33:17.308Z"
+            },
+            "userName": "Andy140.Smith",
+            "name": {
+                "familyName": "Johnson",
+                "givenName": "John140"
+            },
+            "emails": [
+                {
+                    "value": "Andy140.Smith@ons.gov.uk",
+                    "primary": "False"
+                }
+            ],
+            "groups": [
+                {
+                    "value": "2f271874-d15e-4c71-b5d1-55ed3dcf6ba6",
+                    "display": "roles",
+                    "type": "DIRECT"
+                },
+                {
+                    "value": "98136751-3d06-441e-97d3-be48d0193c4e",
+                    "display": "approvals.me",
+                    "type": "DIRECT"
+                },
+                {
+                    "value": "cd2779fe-fa69-4567-b0bf-0106fd63d988",
+                    "display": "user_attributes",
+                    "type": "DIRECT"
+                },
+                {
+                    "value": "d6edbb39-6142-4f21-bf8f-73870808bea5",
+                    "display": "uaa.user",
+                    "type": "DIRECT"
+                },
+                {
+                    "value": "edf99d97-4f8d-4794-ac09-23c037e35e33",
+                    "display": "password.write",
+                    "type": "DIRECT"
+                },
+                {
+                    "value": "95cc430f-bd7f-444a-b805-b016576a8d39",
+                    "display": "openid",
+                    "type": "DIRECT"
+                },
+                {
+                    "value": "97c4ac22-6425-4b16-bfa9-a092c0cd177b",
+                    "display": "scim.userids",
+                    "type": "DIRECT"
+                },
+                {
+                    "value": "73960a8e-b10b-4170-bdf2-6a4cfc4fbe82",
+                    "display": "scim.me",
+                    "type": "DIRECT"
+                },
+                {
+                    "value": "7af19d30-3083-4e19-b4dd-8b6f8d50e684",
+                    "display": "cloud_controller_service_permissions.read",
+                    "type": "DIRECT"
+                },
+                {
+                    "value": "04585b26-0f30-4d78-8df8-4b853173b4ca",
+                    "display": "oauth.approvals",
+                    "type": "DIRECT"
+                },
+                {
+                    "value": "c470332b-3a0b-458e-a563-03492e03663d",
+                    "display": "cloud_controller.read",
+                    "type": "DIRECT"
+                },
+                {
+                    "value": "3391f9dc-a580-49f8-a3e9-5abf38943521",
+                    "display": "profile",
+                    "type": "DIRECT"
+                },
+                {
+                    "value": "b4395b82-cca6-42cc-a044-174042c0820f",
+                    "display": "uaa.offline_token",
+                    "type": "DIRECT"
+                },
+                {
+                    "value": "502cbe44-c623-43b6-89af-763904d25af4",
+                    "display": "cloud_controller.write",
+                    "type": "DIRECT"
+                }
+            ],
+            "approvals": [],
+            "active": "True",
+            "verified": "True",
+            "origin": "uaa",
+            "zoneId": "uaa",
+            "passwordLastModified": "2022-03-16T11:33:17.000Z",
+            "schemas": [
+                "urn:scim:schemas:core:1.0"
+            ]
+        },
+        {
+            "id": "f458a432-c4c7-4fdd-90a1-8dd79b3e96a0",
+            "meta": {
+                "version": 0,
+                "created": "2022-03-16T11:33:17.556Z",
+                "lastModified": "2022-03-16T11:33:17.556Z"
+            },
+            "userName": "Andy141.Johnson",
+            "name": {
+                "familyName": "Johnson",
+                "givenName": "John141"
+            },
+            "emails": [
+                {
+                    "value": "Andy141.Johnson@ons.gov.uk",
+                    "primary": "False"
+                }
+            ],
+            "groups": [
+                {
+                    "value": "2f271874-d15e-4c71-b5d1-55ed3dcf6ba6",
+                    "display": "roles",
+                    "type": "DIRECT"
+                },
+                {
+                    "value": "98136751-3d06-441e-97d3-be48d0193c4e",
+                    "display": "approvals.me",
+                    "type": "DIRECT"
+                },
+                {
+                    "value": "cd2779fe-fa69-4567-b0bf-0106fd63d988",
+                    "display": "user_attributes",
+                    "type": "DIRECT"
+                },
+                {
+                    "value": "d6edbb39-6142-4f21-bf8f-73870808bea5",
+                    "display": "uaa.user",
+                    "type": "DIRECT"
+                },
+                {
+                    "value": "edf99d97-4f8d-4794-ac09-23c037e35e33",
+                    "display": "password.write",
+                    "type": "DIRECT"
+                },
+                {
+                    "value": "95cc430f-bd7f-444a-b805-b016576a8d39",
+                    "display": "openid",
+                    "type": "DIRECT"
+                },
+                {
+                    "value": "97c4ac22-6425-4b16-bfa9-a092c0cd177b",
+                    "display": "scim.userids",
+                    "type": "DIRECT"
+                },
+                {
+                    "value": "73960a8e-b10b-4170-bdf2-6a4cfc4fbe82",
+                    "display": "scim.me",
+                    "type": "DIRECT"
+                },
+                {
+                    "value": "7af19d30-3083-4e19-b4dd-8b6f8d50e684",
+                    "display": "cloud_controller_service_permissions.read",
+                    "type": "DIRECT"
+                },
+                {
+                    "value": "04585b26-0f30-4d78-8df8-4b853173b4ca",
+                    "display": "oauth.approvals",
+                    "type": "DIRECT"
+                },
+                {
+                    "value": "c470332b-3a0b-458e-a563-03492e03663d",
+                    "display": "cloud_controller.read",
+                    "type": "DIRECT"
+                },
+                {
+                    "value": "3391f9dc-a580-49f8-a3e9-5abf38943521",
+                    "display": "profile",
+                    "type": "DIRECT"
+                },
+                {
+                    "value": "b4395b82-cca6-42cc-a044-174042c0820f",
+                    "display": "uaa.offline_token",
+                    "type": "DIRECT"
+                },
+                {
+                    "value": "502cbe44-c623-43b6-89af-763904d25af4",
+                    "display": "cloud_controller.write",
+                    "type": "DIRECT"
+                }
+            ],
+            "approvals": [],
+            "active": "True",
+            "verified": "True",
+            "origin": "uaa",
+            "zoneId": "uaa",
+            "passwordLastModified": "2022-03-16T11:33:17.000Z",
+            "schemas": [
+                "urn:scim:schemas:core:1.0"
+            ]
+        },
+        {
+            "id": "04e343e9-e077-4573-be84-2bffc87f9bce",
+            "meta": {
+                "version": 0,
+                "created": "2022-03-16T11:33:17.794Z",
+                "lastModified": "2022-03-16T11:33:17.794Z"
+            },
+            "userName": "Andy142.Johnson",
+            "name": {
+                "familyName": "Williams",
+                "givenName": "Joe142"
+            },
+            "emails": [
+                {
+                    "value": "Andy142.Johnson@ons.gov.uk",
+                    "primary": "False"
+                }
+            ],
+            "groups": [
+                {
+                    "value": "2f271874-d15e-4c71-b5d1-55ed3dcf6ba6",
+                    "display": "roles",
+                    "type": "DIRECT"
+                },
+                {
+                    "value": "98136751-3d06-441e-97d3-be48d0193c4e",
+                    "display": "approvals.me",
+                    "type": "DIRECT"
+                },
+                {
+                    "value": "cd2779fe-fa69-4567-b0bf-0106fd63d988",
+                    "display": "user_attributes",
+                    "type": "DIRECT"
+                },
+                {
+                    "value": "d6edbb39-6142-4f21-bf8f-73870808bea5",
+                    "display": "uaa.user",
+                    "type": "DIRECT"
+                },
+                {
+                    "value": "edf99d97-4f8d-4794-ac09-23c037e35e33",
+                    "display": "password.write",
+                    "type": "DIRECT"
+                },
+                {
+                    "value": "95cc430f-bd7f-444a-b805-b016576a8d39",
+                    "display": "openid",
+                    "type": "DIRECT"
+                },
+                {
+                    "value": "97c4ac22-6425-4b16-bfa9-a092c0cd177b",
+                    "display": "scim.userids",
+                    "type": "DIRECT"
+                },
+                {
+                    "value": "73960a8e-b10b-4170-bdf2-6a4cfc4fbe82",
+                    "display": "scim.me",
+                    "type": "DIRECT"
+                },
+                {
+                    "value": "7af19d30-3083-4e19-b4dd-8b6f8d50e684",
+                    "display": "cloud_controller_service_permissions.read",
+                    "type": "DIRECT"
+                },
+                {
+                    "value": "04585b26-0f30-4d78-8df8-4b853173b4ca",
+                    "display": "oauth.approvals",
+                    "type": "DIRECT"
+                },
+                {
+                    "value": "c470332b-3a0b-458e-a563-03492e03663d",
+                    "display": "cloud_controller.read",
+                    "type": "DIRECT"
+                },
+                {
+                    "value": "3391f9dc-a580-49f8-a3e9-5abf38943521",
+                    "display": "profile",
+                    "type": "DIRECT"
+                },
+                {
+                    "value": "b4395b82-cca6-42cc-a044-174042c0820f",
+                    "display": "uaa.offline_token",
+                    "type": "DIRECT"
+                },
+                {
+                    "value": "502cbe44-c623-43b6-89af-763904d25af4",
+                    "display": "cloud_controller.write",
+                    "type": "DIRECT"
+                }
+            ],
+            "approvals": [],
+            "active": "True",
+            "verified": "True",
+            "origin": "uaa",
+            "zoneId": "uaa",
+            "passwordLastModified": "2022-03-16T11:33:17.000Z",
+            "schemas": [
+                "urn:scim:schemas:core:1.0"
+            ]
+        },
+        {
+            "id": "47fd9e84-7dc1-4cc0-a2b0-3909269fac71",
+            "meta": {
+                "version": 0,
+                "created": "2022-03-16T11:33:20.986Z",
+                "lastModified": "2022-03-16T11:33:20.986Z"
+            },
+            "userName": "Andy153.Smith",
+            "name": {
+                "familyName": "Johnson",
+                "givenName": "Bob153"
+            },
+            "emails": [
+                {
+                    "value": "Andy153.Smith@ons.gov.uk",
+                    "primary": "False"
+                }
+            ],
+            "groups": [
+                {
+                    "value": "2f271874-d15e-4c71-b5d1-55ed3dcf6ba6",
+                    "display": "roles",
+                    "type": "DIRECT"
+                },
+                {
+                    "value": "98136751-3d06-441e-97d3-be48d0193c4e",
+                    "display": "approvals.me",
+                    "type": "DIRECT"
+                },
+                {
+                    "value": "cd2779fe-fa69-4567-b0bf-0106fd63d988",
+                    "display": "user_attributes",
+                    "type": "DIRECT"
+                },
+                {
+                    "value": "d6edbb39-6142-4f21-bf8f-73870808bea5",
+                    "display": "uaa.user",
+                    "type": "DIRECT"
+                },
+                {
+                    "value": "edf99d97-4f8d-4794-ac09-23c037e35e33",
+                    "display": "password.write",
+                    "type": "DIRECT"
+                },
+                {
+                    "value": "95cc430f-bd7f-444a-b805-b016576a8d39",
+                    "display": "openid",
+                    "type": "DIRECT"
+                },
+                {
+                    "value": "97c4ac22-6425-4b16-bfa9-a092c0cd177b",
+                    "display": "scim.userids",
+                    "type": "DIRECT"
+                },
+                {
+                    "value": "73960a8e-b10b-4170-bdf2-6a4cfc4fbe82",
+                    "display": "scim.me",
+                    "type": "DIRECT"
+                },
+                {
+                    "value": "7af19d30-3083-4e19-b4dd-8b6f8d50e684",
+                    "display": "cloud_controller_service_permissions.read",
+                    "type": "DIRECT"
+                },
+                {
+                    "value": "04585b26-0f30-4d78-8df8-4b853173b4ca",
+                    "display": "oauth.approvals",
+                    "type": "DIRECT"
+                },
+                {
+                    "value": "c470332b-3a0b-458e-a563-03492e03663d",
+                    "display": "cloud_controller.read",
+                    "type": "DIRECT"
+                },
+                {
+                    "value": "3391f9dc-a580-49f8-a3e9-5abf38943521",
+                    "display": "profile",
+                    "type": "DIRECT"
+                },
+                {
+                    "value": "b4395b82-cca6-42cc-a044-174042c0820f",
+                    "display": "uaa.offline_token",
+                    "type": "DIRECT"
+                },
+                {
+                    "value": "502cbe44-c623-43b6-89af-763904d25af4",
+                    "display": "cloud_controller.write",
+                    "type": "DIRECT"
+                }
+            ],
+            "approvals": [],
+            "active": "True",
+            "verified": "True",
+            "origin": "uaa",
+            "zoneId": "uaa",
+            "passwordLastModified": "2022-03-16T11:33:20.000Z",
+            "schemas": [
+                "urn:scim:schemas:core:1.0"
+            ]
+        },
+        {
+            "id": "49c807d8-d1d7-4ba9-bd75-556defc8a6c4",
+            "meta": {
+                "version": 0,
+                "created": "2022-03-16T11:33:21.473Z",
+                "lastModified": "2022-03-16T11:33:21.473Z"
+            },
+            "userName": "Andy155.Smith",
+            "name": {
+                "familyName": "Smith",
+                "givenName": "Bob155"
+            },
+            "emails": [
+                {
+                    "value": "Andy155.Smith@ons.gov.uk",
+                    "primary": "False"
+                }
+            ],
+            "groups": [
+                {
+                    "value": "2f271874-d15e-4c71-b5d1-55ed3dcf6ba6",
+                    "display": "roles",
+                    "type": "DIRECT"
+                },
+                {
+                    "value": "98136751-3d06-441e-97d3-be48d0193c4e",
+                    "display": "approvals.me",
+                    "type": "DIRECT"
+                },
+                {
+                    "value": "cd2779fe-fa69-4567-b0bf-0106fd63d988",
+                    "display": "user_attributes",
+                    "type": "DIRECT"
+                },
+                {
+                    "value": "d6edbb39-6142-4f21-bf8f-73870808bea5",
+                    "display": "uaa.user",
+                    "type": "DIRECT"
+                },
+                {
+                    "value": "edf99d97-4f8d-4794-ac09-23c037e35e33",
+                    "display": "password.write",
+                    "type": "DIRECT"
+                },
+                {
+                    "value": "95cc430f-bd7f-444a-b805-b016576a8d39",
+                    "display": "openid",
+                    "type": "DIRECT"
+                },
+                {
+                    "value": "97c4ac22-6425-4b16-bfa9-a092c0cd177b",
+                    "display": "scim.userids",
+                    "type": "DIRECT"
+                },
+                {
+                    "value": "73960a8e-b10b-4170-bdf2-6a4cfc4fbe82",
+                    "display": "scim.me",
+                    "type": "DIRECT"
+                },
+                {
+                    "value": "7af19d30-3083-4e19-b4dd-8b6f8d50e684",
+                    "display": "cloud_controller_service_permissions.read",
+                    "type": "DIRECT"
+                },
+                {
+                    "value": "04585b26-0f30-4d78-8df8-4b853173b4ca",
+                    "display": "oauth.approvals",
+                    "type": "DIRECT"
+                },
+                {
+                    "value": "c470332b-3a0b-458e-a563-03492e03663d",
+                    "display": "cloud_controller.read",
+                    "type": "DIRECT"
+                },
+                {
+                    "value": "3391f9dc-a580-49f8-a3e9-5abf38943521",
+                    "display": "profile",
+                    "type": "DIRECT"
+                },
+                {
+                    "value": "b4395b82-cca6-42cc-a044-174042c0820f",
+                    "display": "uaa.offline_token",
+                    "type": "DIRECT"
+                },
+                {
+                    "value": "502cbe44-c623-43b6-89af-763904d25af4",
+                    "display": "cloud_controller.write",
+                    "type": "DIRECT"
+                }
+            ],
+            "approvals": [],
+            "active": "True",
+            "verified": "True",
+            "origin": "uaa",
+            "zoneId": "uaa",
+            "passwordLastModified": "2022-03-16T11:33:21.000Z",
+            "schemas": [
+                "urn:scim:schemas:core:1.0"
+            ]
+        },
+        {
+            "id": "3fc5bcc1-39e8-4204-b2c4-b2e0d0702070",
+            "meta": {
+                "version": 0,
+                "created": "2022-03-16T11:33:22.254Z",
+                "lastModified": "2022-03-16T11:33:22.254Z"
+            },
+            "userName": "Andy158.Williams",
+            "name": {
+                "familyName": "Smith",
+                "givenName": "John158"
+            },
+            "emails": [
+                {
+                    "value": "Andy158.Williams@ons.gov.uk",
+                    "primary": "False"
+                }
+            ],
+            "groups": [
+                {
+                    "value": "2f271874-d15e-4c71-b5d1-55ed3dcf6ba6",
+                    "display": "roles",
+                    "type": "DIRECT"
+                },
+                {
+                    "value": "98136751-3d06-441e-97d3-be48d0193c4e",
+                    "display": "approvals.me",
+                    "type": "DIRECT"
+                },
+                {
+                    "value": "cd2779fe-fa69-4567-b0bf-0106fd63d988",
+                    "display": "user_attributes",
+                    "type": "DIRECT"
+                },
+                {
+                    "value": "d6edbb39-6142-4f21-bf8f-73870808bea5",
+                    "display": "uaa.user",
+                    "type": "DIRECT"
+                },
+                {
+                    "value": "edf99d97-4f8d-4794-ac09-23c037e35e33",
+                    "display": "password.write",
+                    "type": "DIRECT"
+                },
+                {
+                    "value": "95cc430f-bd7f-444a-b805-b016576a8d39",
+                    "display": "openid",
+                    "type": "DIRECT"
+                },
+                {
+                    "value": "97c4ac22-6425-4b16-bfa9-a092c0cd177b",
+                    "display": "scim.userids",
+                    "type": "DIRECT"
+                },
+                {
+                    "value": "73960a8e-b10b-4170-bdf2-6a4cfc4fbe82",
+                    "display": "scim.me",
+                    "type": "DIRECT"
+                },
+                {
+                    "value": "7af19d30-3083-4e19-b4dd-8b6f8d50e684",
+                    "display": "cloud_controller_service_permissions.read",
+                    "type": "DIRECT"
+                },
+                {
+                    "value": "04585b26-0f30-4d78-8df8-4b853173b4ca",
+                    "display": "oauth.approvals",
+                    "type": "DIRECT"
+                },
+                {
+                    "value": "c470332b-3a0b-458e-a563-03492e03663d",
+                    "display": "cloud_controller.read",
+                    "type": "DIRECT"
+                },
+                {
+                    "value": "3391f9dc-a580-49f8-a3e9-5abf38943521",
+                    "display": "profile",
+                    "type": "DIRECT"
+                },
+                {
+                    "value": "b4395b82-cca6-42cc-a044-174042c0820f",
+                    "display": "uaa.offline_token",
+                    "type": "DIRECT"
+                },
+                {
+                    "value": "502cbe44-c623-43b6-89af-763904d25af4",
+                    "display": "cloud_controller.write",
+                    "type": "DIRECT"
+                }
+            ],
+            "approvals": [],
+            "active": "True",
+            "verified": "True",
+            "origin": "uaa",
+            "zoneId": "uaa",
+            "passwordLastModified": "2022-03-16T11:33:22.000Z",
+            "schemas": [
+                "urn:scim:schemas:core:1.0"
+            ]
+        },
+        {
+            "id": "623c7160-54a1-457b-a8c5-275e723605b8",
+            "meta": {
+                "version": 0,
+                "created": "2022-03-16T11:33:22.750Z",
+                "lastModified": "2022-03-16T11:33:22.750Z"
+            },
+            "userName": "Andy160.Johnson",
+            "name": {
+                "familyName": "Williams",
+                "givenName": "John160"
+            },
+            "emails": [
+                {
+                    "value": "Andy160.Johnson@ons.gov.uk",
+                    "primary": "False"
+                }
+            ],
+            "groups": [
+                {
+                    "value": "2f271874-d15e-4c71-b5d1-55ed3dcf6ba6",
+                    "display": "roles",
+                    "type": "DIRECT"
+                },
+                {
+                    "value": "98136751-3d06-441e-97d3-be48d0193c4e",
+                    "display": "approvals.me",
+                    "type": "DIRECT"
+                },
+                {
+                    "value": "cd2779fe-fa69-4567-b0bf-0106fd63d988",
+                    "display": "user_attributes",
+                    "type": "DIRECT"
+                },
+                {
+                    "value": "d6edbb39-6142-4f21-bf8f-73870808bea5",
+                    "display": "uaa.user",
+                    "type": "DIRECT"
+                },
+                {
+                    "value": "edf99d97-4f8d-4794-ac09-23c037e35e33",
+                    "display": "password.write",
+                    "type": "DIRECT"
+                },
+                {
+                    "value": "95cc430f-bd7f-444a-b805-b016576a8d39",
+                    "display": "openid",
+                    "type": "DIRECT"
+                },
+                {
+                    "value": "97c4ac22-6425-4b16-bfa9-a092c0cd177b",
+                    "display": "scim.userids",
+                    "type": "DIRECT"
+                },
+                {
+                    "value": "73960a8e-b10b-4170-bdf2-6a4cfc4fbe82",
+                    "display": "scim.me",
+                    "type": "DIRECT"
+                },
+                {
+                    "value": "7af19d30-3083-4e19-b4dd-8b6f8d50e684",
+                    "display": "cloud_controller_service_permissions.read",
+                    "type": "DIRECT"
+                },
+                {
+                    "value": "04585b26-0f30-4d78-8df8-4b853173b4ca",
+                    "display": "oauth.approvals",
+                    "type": "DIRECT"
+                },
+                {
+                    "value": "c470332b-3a0b-458e-a563-03492e03663d",
+                    "display": "cloud_controller.read",
+                    "type": "DIRECT"
+                },
+                {
+                    "value": "3391f9dc-a580-49f8-a3e9-5abf38943521",
+                    "display": "profile",
+                    "type": "DIRECT"
+                },
+                {
+                    "value": "b4395b82-cca6-42cc-a044-174042c0820f",
+                    "display": "uaa.offline_token",
+                    "type": "DIRECT"
+                },
+                {
+                    "value": "502cbe44-c623-43b6-89af-763904d25af4",
+                    "display": "cloud_controller.write",
+                    "type": "DIRECT"
+                }
+            ],
+            "approvals": [],
+            "active": "True",
+            "verified": "True",
+            "origin": "uaa",
+            "zoneId": "uaa",
+            "passwordLastModified": "2022-03-16T11:33:22.000Z",
+            "schemas": [
+                "urn:scim:schemas:core:1.0"
+            ]
+        },
+        {
+            "id": "280f7c0a-559e-459d-b31c-5bd9357f9c02",
+            "meta": {
+                "version": 0,
+                "created": "2022-03-16T11:33:22.986Z",
+                "lastModified": "2022-03-16T11:33:22.986Z"
+            },
+            "userName": "Andy161.Smith",
+            "name": {
+                "familyName": "Williams",
+                "givenName": "Joe161"
+            },
+            "emails": [
+                {
+                    "value": "Andy161.Smith@ons.gov.uk",
+                    "primary": "False"
+                }
+            ],
+            "groups": [
+                {
+                    "value": "2f271874-d15e-4c71-b5d1-55ed3dcf6ba6",
+                    "display": "roles",
+                    "type": "DIRECT"
+                },
+                {
+                    "value": "98136751-3d06-441e-97d3-be48d0193c4e",
+                    "display": "approvals.me",
+                    "type": "DIRECT"
+                },
+                {
+                    "value": "cd2779fe-fa69-4567-b0bf-0106fd63d988",
+                    "display": "user_attributes",
+                    "type": "DIRECT"
+                },
+                {
+                    "value": "d6edbb39-6142-4f21-bf8f-73870808bea5",
+                    "display": "uaa.user",
+                    "type": "DIRECT"
+                },
+                {
+                    "value": "edf99d97-4f8d-4794-ac09-23c037e35e33",
+                    "display": "password.write",
+                    "type": "DIRECT"
+                },
+                {
+                    "value": "95cc430f-bd7f-444a-b805-b016576a8d39",
+                    "display": "openid",
+                    "type": "DIRECT"
+                },
+                {
+                    "value": "97c4ac22-6425-4b16-bfa9-a092c0cd177b",
+                    "display": "scim.userids",
+                    "type": "DIRECT"
+                },
+                {
+                    "value": "73960a8e-b10b-4170-bdf2-6a4cfc4fbe82",
+                    "display": "scim.me",
+                    "type": "DIRECT"
+                },
+                {
+                    "value": "7af19d30-3083-4e19-b4dd-8b6f8d50e684",
+                    "display": "cloud_controller_service_permissions.read",
+                    "type": "DIRECT"
+                },
+                {
+                    "value": "04585b26-0f30-4d78-8df8-4b853173b4ca",
+                    "display": "oauth.approvals",
+                    "type": "DIRECT"
+                },
+                {
+                    "value": "c470332b-3a0b-458e-a563-03492e03663d",
+                    "display": "cloud_controller.read",
+                    "type": "DIRECT"
+                },
+                {
+                    "value": "3391f9dc-a580-49f8-a3e9-5abf38943521",
+                    "display": "profile",
+                    "type": "DIRECT"
+                },
+                {
+                    "value": "b4395b82-cca6-42cc-a044-174042c0820f",
+                    "display": "uaa.offline_token",
+                    "type": "DIRECT"
+                },
+                {
+                    "value": "502cbe44-c623-43b6-89af-763904d25af4",
+                    "display": "cloud_controller.write",
+                    "type": "DIRECT"
+                }
+            ],
+            "approvals": [],
+            "active": "True",
+            "verified": "True",
+            "origin": "uaa",
+            "zoneId": "uaa",
+            "passwordLastModified": "2022-03-16T11:33:22.000Z",
+            "schemas": [
+                "urn:scim:schemas:core:1.0"
+            ]
+        },
+        {
+            "id": "adcbbdb9-f2cd-4a83-8c9c-b4e244b15e9c",
+            "meta": {
+                "version": 0,
+                "created": "2022-03-16T11:33:23.786Z",
+                "lastModified": "2022-03-16T11:33:23.786Z"
+            },
+            "userName": "Andy164.Williams",
+            "name": {
+                "familyName": "Smith",
+                "givenName": "Bob164"
+            },
+            "emails": [
+                {
+                    "value": "Andy164.Williams@ons.gov.uk",
+                    "primary": "False"
+                }
+            ],
+            "groups": [
+                {
+                    "value": "2f271874-d15e-4c71-b5d1-55ed3dcf6ba6",
+                    "display": "roles",
+                    "type": "DIRECT"
+                },
+                {
+                    "value": "98136751-3d06-441e-97d3-be48d0193c4e",
+                    "display": "approvals.me",
+                    "type": "DIRECT"
+                },
+                {
+                    "value": "cd2779fe-fa69-4567-b0bf-0106fd63d988",
+                    "display": "user_attributes",
+                    "type": "DIRECT"
+                },
+                {
+                    "value": "d6edbb39-6142-4f21-bf8f-73870808bea5",
+                    "display": "uaa.user",
+                    "type": "DIRECT"
+                },
+                {
+                    "value": "edf99d97-4f8d-4794-ac09-23c037e35e33",
+                    "display": "password.write",
+                    "type": "DIRECT"
+                },
+                {
+                    "value": "95cc430f-bd7f-444a-b805-b016576a8d39",
+                    "display": "openid",
+                    "type": "DIRECT"
+                },
+                {
+                    "value": "97c4ac22-6425-4b16-bfa9-a092c0cd177b",
+                    "display": "scim.userids",
+                    "type": "DIRECT"
+                },
+                {
+                    "value": "73960a8e-b10b-4170-bdf2-6a4cfc4fbe82",
+                    "display": "scim.me",
+                    "type": "DIRECT"
+                },
+                {
+                    "value": "7af19d30-3083-4e19-b4dd-8b6f8d50e684",
+                    "display": "cloud_controller_service_permissions.read",
+                    "type": "DIRECT"
+                },
+                {
+                    "value": "04585b26-0f30-4d78-8df8-4b853173b4ca",
+                    "display": "oauth.approvals",
+                    "type": "DIRECT"
+                },
+                {
+                    "value": "c470332b-3a0b-458e-a563-03492e03663d",
+                    "display": "cloud_controller.read",
+                    "type": "DIRECT"
+                },
+                {
+                    "value": "3391f9dc-a580-49f8-a3e9-5abf38943521",
+                    "display": "profile",
+                    "type": "DIRECT"
+                },
+                {
+                    "value": "b4395b82-cca6-42cc-a044-174042c0820f",
+                    "display": "uaa.offline_token",
+                    "type": "DIRECT"
+                },
+                {
+                    "value": "502cbe44-c623-43b6-89af-763904d25af4",
+                    "display": "cloud_controller.write",
+                    "type": "DIRECT"
+                }
+            ],
+            "approvals": [],
+            "active": "True",
+            "verified": "True",
+            "origin": "uaa",
+            "zoneId": "uaa",
+            "passwordLastModified": "2022-03-16T11:33:23.000Z",
+            "schemas": [
+                "urn:scim:schemas:core:1.0"
+            ]
+        },
+        {
+            "id": "66ba5038-9d98-45f2-b2ee-2bece519b05c",
+            "meta": {
+                "version": 0,
+                "created": "2022-03-16T11:33:25.276Z",
+                "lastModified": "2022-03-16T11:33:25.276Z"
+            },
+            "userName": "Andy170.Williams",
+            "name": {
+                "familyName": "Johnson",
+                "givenName": "Joe170"
+            },
+            "emails": [
+                {
+                    "value": "Andy170.Williams@ons.gov.uk",
+                    "primary": "False"
+                }
+            ],
+            "groups": [
+                {
+                    "value": "2f271874-d15e-4c71-b5d1-55ed3dcf6ba6",
+                    "display": "roles",
+                    "type": "DIRECT"
+                },
+                {
+                    "value": "98136751-3d06-441e-97d3-be48d0193c4e",
+                    "display": "approvals.me",
+                    "type": "DIRECT"
+                },
+                {
+                    "value": "cd2779fe-fa69-4567-b0bf-0106fd63d988",
+                    "display": "user_attributes",
+                    "type": "DIRECT"
+                },
+                {
+                    "value": "d6edbb39-6142-4f21-bf8f-73870808bea5",
+                    "display": "uaa.user",
+                    "type": "DIRECT"
+                },
+                {
+                    "value": "edf99d97-4f8d-4794-ac09-23c037e35e33",
+                    "display": "password.write",
+                    "type": "DIRECT"
+                },
+                {
+                    "value": "95cc430f-bd7f-444a-b805-b016576a8d39",
+                    "display": "openid",
+                    "type": "DIRECT"
+                },
+                {
+                    "value": "97c4ac22-6425-4b16-bfa9-a092c0cd177b",
+                    "display": "scim.userids",
+                    "type": "DIRECT"
+                },
+                {
+                    "value": "73960a8e-b10b-4170-bdf2-6a4cfc4fbe82",
+                    "display": "scim.me",
+                    "type": "DIRECT"
+                },
+                {
+                    "value": "7af19d30-3083-4e19-b4dd-8b6f8d50e684",
+                    "display": "cloud_controller_service_permissions.read",
+                    "type": "DIRECT"
+                },
+                {
+                    "value": "04585b26-0f30-4d78-8df8-4b853173b4ca",
+                    "display": "oauth.approvals",
+                    "type": "DIRECT"
+                },
+                {
+                    "value": "c470332b-3a0b-458e-a563-03492e03663d",
+                    "display": "cloud_controller.read",
+                    "type": "DIRECT"
+                },
+                {
+                    "value": "3391f9dc-a580-49f8-a3e9-5abf38943521",
+                    "display": "profile",
+                    "type": "DIRECT"
+                },
+                {
+                    "value": "b4395b82-cca6-42cc-a044-174042c0820f",
+                    "display": "uaa.offline_token",
+                    "type": "DIRECT"
+                },
+                {
+                    "value": "502cbe44-c623-43b6-89af-763904d25af4",
+                    "display": "cloud_controller.write",
+                    "type": "DIRECT"
+                }
+            ],
+            "approvals": [],
+            "active": "True",
+            "verified": "True",
+            "origin": "uaa",
+            "zoneId": "uaa",
+            "passwordLastModified": "2022-03-16T11:33:25.000Z",
+            "schemas": [
+                "urn:scim:schemas:core:1.0"
+            ]
+        },
+        {
+            "id": "a104fcf6-f3ad-42a1-ae4b-a018e3355d63",
+            "meta": {
+                "version": 0,
+                "created": "2022-03-16T11:33:27.424Z",
+                "lastModified": "2022-03-16T11:33:27.424Z"
+            },
+            "userName": "Andy178.Smith",
+            "name": {
+                "familyName": "Williams",
+                "givenName": "Andy178"
+            },
+            "emails": [
+                {
+                    "value": "Andy178.Smith@ons.gov.uk",
+                    "primary": "False"
+                }
+            ],
+            "groups": [
+                {
+                    "value": "2f271874-d15e-4c71-b5d1-55ed3dcf6ba6",
+                    "display": "roles",
+                    "type": "DIRECT"
+                },
+                {
+                    "value": "98136751-3d06-441e-97d3-be48d0193c4e",
+                    "display": "approvals.me",
+                    "type": "DIRECT"
+                },
+                {
+                    "value": "cd2779fe-fa69-4567-b0bf-0106fd63d988",
+                    "display": "user_attributes",
+                    "type": "DIRECT"
+                },
+                {
+                    "value": "d6edbb39-6142-4f21-bf8f-73870808bea5",
+                    "display": "uaa.user",
+                    "type": "DIRECT"
+                },
+                {
+                    "value": "edf99d97-4f8d-4794-ac09-23c037e35e33",
+                    "display": "password.write",
+                    "type": "DIRECT"
+                },
+                {
+                    "value": "95cc430f-bd7f-444a-b805-b016576a8d39",
+                    "display": "openid",
+                    "type": "DIRECT"
+                },
+                {
+                    "value": "97c4ac22-6425-4b16-bfa9-a092c0cd177b",
+                    "display": "scim.userids",
+                    "type": "DIRECT"
+                },
+                {
+                    "value": "73960a8e-b10b-4170-bdf2-6a4cfc4fbe82",
+                    "display": "scim.me",
+                    "type": "DIRECT"
+                },
+                {
+                    "value": "7af19d30-3083-4e19-b4dd-8b6f8d50e684",
+                    "display": "cloud_controller_service_permissions.read",
+                    "type": "DIRECT"
+                },
+                {
+                    "value": "04585b26-0f30-4d78-8df8-4b853173b4ca",
+                    "display": "oauth.approvals",
+                    "type": "DIRECT"
+                },
+                {
+                    "value": "c470332b-3a0b-458e-a563-03492e03663d",
+                    "display": "cloud_controller.read",
+                    "type": "DIRECT"
+                },
+                {
+                    "value": "3391f9dc-a580-49f8-a3e9-5abf38943521",
+                    "display": "profile",
+                    "type": "DIRECT"
+                },
+                {
+                    "value": "b4395b82-cca6-42cc-a044-174042c0820f",
+                    "display": "uaa.offline_token",
+                    "type": "DIRECT"
+                },
+                {
+                    "value": "502cbe44-c623-43b6-89af-763904d25af4",
+                    "display": "cloud_controller.write",
+                    "type": "DIRECT"
+                }
+            ],
+            "approvals": [],
+            "active": "True",
+            "verified": "True",
+            "origin": "uaa",
+            "zoneId": "uaa",
+            "passwordLastModified": "2022-03-16T11:33:27.000Z",
+            "schemas": [
+                "urn:scim:schemas:core:1.0"
+            ]
+        },
+        {
+            "id": "8bf99c75-8cb9-47bf-95ba-346f3327642e",
+            "meta": {
+                "version": 0,
+                "created": "2022-03-16T11:33:28.218Z",
+                "lastModified": "2022-03-16T11:33:28.218Z"
+            },
+            "userName": "Andy181.Johnson",
+            "name": {
+                "familyName": "Johnson",
+                "givenName": "Andy181"
+            },
+            "emails": [
+                {
+                    "value": "Andy181.Johnson@ons.gov.uk",
+                    "primary": "False"
+                }
+            ],
+            "groups": [
+                {
+                    "value": "2f271874-d15e-4c71-b5d1-55ed3dcf6ba6",
+                    "display": "roles",
+                    "type": "DIRECT"
+                },
+                {
+                    "value": "98136751-3d06-441e-97d3-be48d0193c4e",
+                    "display": "approvals.me",
+                    "type": "DIRECT"
+                },
+                {
+                    "value": "cd2779fe-fa69-4567-b0bf-0106fd63d988",
+                    "display": "user_attributes",
+                    "type": "DIRECT"
+                },
+                {
+                    "value": "d6edbb39-6142-4f21-bf8f-73870808bea5",
+                    "display": "uaa.user",
+                    "type": "DIRECT"
+                },
+                {
+                    "value": "edf99d97-4f8d-4794-ac09-23c037e35e33",
+                    "display": "password.write",
+                    "type": "DIRECT"
+                },
+                {
+                    "value": "95cc430f-bd7f-444a-b805-b016576a8d39",
+                    "display": "openid",
+                    "type": "DIRECT"
+                },
+                {
+                    "value": "97c4ac22-6425-4b16-bfa9-a092c0cd177b",
+                    "display": "scim.userids",
+                    "type": "DIRECT"
+                },
+                {
+                    "value": "73960a8e-b10b-4170-bdf2-6a4cfc4fbe82",
+                    "display": "scim.me",
+                    "type": "DIRECT"
+                },
+                {
+                    "value": "7af19d30-3083-4e19-b4dd-8b6f8d50e684",
+                    "display": "cloud_controller_service_permissions.read",
+                    "type": "DIRECT"
+                },
+                {
+                    "value": "04585b26-0f30-4d78-8df8-4b853173b4ca",
+                    "display": "oauth.approvals",
+                    "type": "DIRECT"
+                },
+                {
+                    "value": "c470332b-3a0b-458e-a563-03492e03663d",
+                    "display": "cloud_controller.read",
+                    "type": "DIRECT"
+                },
+                {
+                    "value": "3391f9dc-a580-49f8-a3e9-5abf38943521",
+                    "display": "profile",
+                    "type": "DIRECT"
+                },
+                {
+                    "value": "b4395b82-cca6-42cc-a044-174042c0820f",
+                    "display": "uaa.offline_token",
+                    "type": "DIRECT"
+                },
+                {
+                    "value": "502cbe44-c623-43b6-89af-763904d25af4",
+                    "display": "cloud_controller.write",
+                    "type": "DIRECT"
+                }
+            ],
+            "approvals": [],
+            "active": "True",
+            "verified": "True",
+            "origin": "uaa",
+            "zoneId": "uaa",
+            "passwordLastModified": "2022-03-16T11:33:28.000Z",
+            "schemas": [
+                "urn:scim:schemas:core:1.0"
+            ]
+        }
+    ],
+    "startIndex": 1,
+    "itemsPerPage": 20,
+    "totalResults": 502,
+    "schemas": [
+        "urn:scim:schemas:core:1.0"
+    ]
+}

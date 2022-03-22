@@ -7,28 +7,61 @@
 } %}
 
 {% if current_user.is_authenticated %}
+  {% if hasPermission('users.admin') %}
     {% do navigation | setAttribute("itemsList", [
-        {
-            "title": "Home",
-            "url": "/choose-overview-survey"
-        },
-        {
-            "title": "Surveys",
-            "url": "/surveys/"
-        },
-        {
-            "title": "Reporting units",
-            "url": "/reporting-units/"
-        },
-        {
-            "title": "Respondents",
-            "url": "/respondents/"
-        },
-        {
-            "title": "Messages",
-            "url": "/messages/select-survey",
-            "id": "messages-link"
-        }
-    ]) %}
+      {
+        "title": "Home",
+        "url": "/choose-overview-survey"
+      },
+      {
+        "title": "Surveys",
+        "url": "/surveys/"
+      },
+      {
+        "title": "Reporting units",
+        "url": "/reporting-units/"
+      },
+      {
+        "title": "Respondents",
+        "url": "/respondents/"
+      },
+      {
+        "title": "Messages",
+        "url": "/messages/select-survey",
+        "id": "messages-link"
+      },
+      {
+        "title": "Manage User Accounts",
+        "url": "/admin/manage-user-accounts",
+        "id": "messages-link"
+      }
+    ]) 
+    %}
+  {% else %}
+    {% do navigation | setAttribute("itemsList", [
+      {
+        "title": "Home",
+        "url": "/choose-overview-survey"
+      },
+      {
+        "title": "Surveys",
+        "url": "/surveys/"
+      },
+      {
+        "title": "Reporting units",
+        "url": "/reporting-units/"
+      },
+      {
+        "title": "Respondents",
+        "url": "/respondents/"
+      },
+      {
+        "title": "Messages",
+        "url": "/messages/select-survey",
+        "id": "messages-link"
+      }
+    ]) 
+    %}
+  {% endif %}
 {% endif %}
 {% do pageConfig | setAttribute("navigation", navigation) %}
