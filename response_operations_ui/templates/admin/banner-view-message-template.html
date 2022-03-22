@@ -8,12 +8,12 @@
 {% set page_title = 'Alert Admin' %}
 {% block main %}
     <div class="ons-grid ons-grid--gutterless">
-        <div class="ons-grid__col ons-col8@m">
-        <h1>Message templates</h1>
-        {% for banner in list_of_templates %}
-            <h2>{{ banner['title'] }}</h2>
-            <p>{{ banner['content'] }}</p>
-        {% endfor %}
+        <div class="ons-grid__col ons-col-8@m">
+            <h1>Message templates</h1>
+            {% for banner in list_of_templates %}
+                <h2>{{ banner['title'] }}</h2>
+                <p>{{ banner['content'] }}</p>
+            {% endfor %}
         </div>
         <div>
             <a href="{{ url_for('admin_bp.get_banner_admin') }}" role="button" class="ons-btn"><span class="ons-btn__inner">Back to create an alert</span></a>

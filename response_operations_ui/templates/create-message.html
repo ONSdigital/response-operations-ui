@@ -69,7 +69,7 @@
     {%- endwith -%}
     <h1>Create message</h1>
     <div class="ons-grid ons-grid--gutterless">
-        <div class="ons-grid__col ons-col8@m">
+        <div class="ons-grid__col ons-col-8@m">
             <form action="{{ url_for('messages_bp.create_message') }}" method="post" id="create-message-form">
                 <input type="hidden" name="csrf_token" value="{{ csrf_token() }}" />
                 {{ form.hidden_tag() }}

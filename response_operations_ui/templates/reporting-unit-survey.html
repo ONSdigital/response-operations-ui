@@ -6,7 +6,7 @@
 
 {% block main %}
     <div class="ons-grid">
-        <div id="main" class="ons-grid__col ons-col10@m">
+        <div id="main" class="ons-grid__col ons-col-10@m">
             <form action="{{ url_for('reporting_unit_bp.view_reporting_unit', ru_ref=ru.sampleUnitRef) }}" method="get">
                 {{
                     onsButton({
@@ -18,7 +18,7 @@
             <h1 id="RU_NAME" class="ons-u-fs-l">{{ ru.name }}</h1>
             <h2 id="SURVEY_NAME" class="ons-u-fs-xl">{{ survey.display_name }}</h2>
         </div>
-        <div class="ons-grid__col ons-col12@m">
+        <div class="ons-grid__col ons-col-12@m">
             <div class="ru-survey-ces">
                 <h3 id="COLLECTION_EXERCISES" class="ons-u-fs-m">Collection exercises</h3>
 
