@@ -8,6 +8,7 @@ from response_operations_ui import create_app
 
 url_sign_in_data = f"{TestingConfig.UAA_SERVICE_URL}/oauth/token"
 url_surveys = f"{TestingConfig.SURVEY_URL}/surveys/surveytype/Business"
+url_permission_url = f"{TestingConfig.UAA_SERVICE_URL}/Users/test-id"
 
 surveys_list_json = [
     {
@@ -18,6 +19,11 @@ surveys_list_json = [
         "surveyRef": "023",
     }
 ]
+
+user_permission_admin_json = {
+    "id": "5902656c-c41c-4b38-a294-0359e6aabe59",
+    "groups": [{"value": "f385f89e-928f-4a0f-96a0-4c48d9007cc3", "display": "uaa.user", "type": "DIRECT"}],
+}
 
 
 class TestSignIn(unittest.TestCase):
@@ -64,7 +70,7 @@ class TestSignIn(unittest.TestCase):
     def test_sign_in(self, mock_request):
         mock_request.post(url_sign_in_data, json={"access_token": self.access_token}, status_code=201)
         mock_request.get(url_surveys, json=surveys_list_json, status_code=200)
-
+        mock_request.get(url_permission_url, json=user_permission_admin_json, status_code=200)
         response = self.client.post("/sign-in", follow_redirects=True, data={"username": "user", "password": "pass"})
 
         self.assertEqual(response.status_code, 200)
@@ -119,7 +125,7 @@ class TestSignIn(unittest.TestCase):
     def test_sign_in_redirect_while_authenticated(self, mock_request):
         mock_request.post(url_sign_in_data, json={"access_token": self.access_token}, status_code=201)
         mock_request.get(url_surveys, json=surveys_list_json, status_code=200)
-
+        mock_request.get(url_permission_url, json=user_permission_admin_json, status_code=200)
         response = self.client.post("/sign-in", follow_redirects=True, data={"username": "user", "password": "pass"})
 
         self.assertIn("Choose a survey".encode(), response.data)
@@ -139,7 +145,7 @@ class TestSignIn(unittest.TestCase):
             session["next"] = "/surveys"
         mock_request.post(url_sign_in_data, json={"access_token": self.access_token}, status_code=201)
         mock_request.get(url_surveys, json=surveys_list_json, status_code=200)
-
+        mock_request.get(url_permission_url, json=user_permission_admin_json, status_code=200)
         response = self.client.post("/sign-in", follow_redirects=True, data={"username": "user", "password": "pass"})
 
         self.assertEqual(response.status_code, 200)

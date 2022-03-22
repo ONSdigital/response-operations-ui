@@ -137,17 +137,18 @@ class DevelopmentConfig(Config):
 
     UAA_SERVICE_URL = os.getenv("UAA_SERVICE_URL", "http://localhost:9080")
     UAA_CLIENT_ID = os.getenv("UAA_CLIENT_ID", "response_operations")
-    UAA_CLIENT_SECRET = os.getenv("UAA_CLIENT_SECRET", "password")
+    UAA_CLIENT_SECRET = os.getenv("UAA_CLIENT_SECRET", "package.through.quarter.fruit")
 
     EMAIL_TOKEN_SALT = os.getenv("EMAIL_TOKEN_SALT", "aardvark")
     # 24 hours in seconds
     EMAIL_TOKEN_EXPIRY = int(os.getenv("EMAIL_TOKEN_EXPIRY", "86400"))
     # 6 weeks in seconds
     CREATE_ACCOUNT_EMAIL_TOKEN_EXPIRY = int(os.getenv("CREATE_ACCOUNT_EMAIL_TOKEN_EXPIRY", "3628800"))
-    CREATE_ACCOUNT_ADMIN_PASSWORD = os.getenv("CREATE_ACCOUNT_ADMIN_PASSWORD", "secret")
+    CREATE_ACCOUNT_ADMIN_PASSWORD = os.getenv("CREATE_ACCOUNT_ADMIN_PASSWORD", "package.through.quarter.fruit")
     # 3 days in seconds
     UPDATE_ACCOUNT_EMAIL_TOKEN_EXPIRY = int(os.getenv("UPDATE_ACCOUNT_EMAIL_TOKEN_EXPIRY", "259200"))
     WTF_CSRF_ENABLED = strtobool(os.getenv("WTF_CSRF_ENABLED", "False"))
+    IS_ROLE_BASED_ACCESS_ENABLED = strtobool(os.getenv("IS_ROLE_BASED_ACCESS_ENABLED", "True"))
 
 
 class TestingConfig(DevelopmentConfig):
