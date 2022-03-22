@@ -5,19 +5,18 @@
 {% from "components/lists/_macro.njk" import onsList %}
 {% from "components/textarea/_macro.njk" import onsTextarea %}
 {% from "components/radios/_macro.njk" import onsRadios %}
-{% set page_title = 'Alert Admin'  %}
+{% set page_title = 'Alert Admin' %}
 {% block main %}
-  <div class="grid grid--gutterless">
-    <div class="grid__col col-8@m">
-      <h1>Message templates</h1>
-              {% for banner in list_of_templates %}
-                  <h2>{{ banner['title'] }}</h2>
-                  <p>{{ banner['content'] }}</p>
-                  <p></p>
-              {% endfor %}
+    <div class="ons-grid ons-grid--gutterless">
+        <div class="ons-grid__col ons-col8@m">
+        <h1>Message templates</h1>
+        {% for banner in list_of_templates %}
+            <h2>{{ banner['title'] }}</h2>
+            <p>{{ banner['content'] }}</p>
+        {% endfor %}
+        </div>
+        <div>
+            <a href="{{ url_for('admin_bp.get_banner_admin') }}" role="button" class="ons-btn"><span class="ons-btn__inner">Back to create an alert</span></a>
+        </div>
     </div>
-    <div class="btn-group">
-      <a href="{{ url_for('admin_bp.get_banner_admin') }}" role="button" class="btn btn-group__btn"><span class="btn__inner">Back to create an alert</span></a>
-    </div>
-  </div>
 {% endblock %}

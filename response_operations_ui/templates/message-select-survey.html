@@ -6,96 +6,95 @@
 {% set hide_breadcrumbs = true %}
 
 {% block main %}
-  <div class="grid">
-      <div class="grid__col col-8@m">
-        {% if response_error %}
-          {% call
-            onsPanel({
-                "type": "error",
-                "classes": "u-mb-s",
-                "title":  "This page has 1 error"
-            })
-          %}
-            <p><a href="#inbox-radio" id="survey-select-link" class="js-inpagelink">{{ response_error }}</a></p>
-          {% endcall %}
-        {% endif %}
-        <h1>Choose which messages to show</h1>
-        <form method="post">
-          <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
-          {% if survey_list %}
-            {% set error = {
-              "text": "Select a survey"
-            } %}         
-            {% set surveys = [            
-              {
-                "value": "",
-                "text": "Select a survey",
-                "disabled": true,
-                "selected": true
-              }
-            ] %}
-            {% for survey in survey_list %}
-              {% do surveys.append(
-                {
-                  "value": survey.replace(' ', ''),
-                  "text": survey,
-                  "id": survey.replace(' ', '')
-                }
-              ) %}
-            {% endfor %}
-            {{
-    onsRadios({
-        "legend": "Choose an option",
-        "id": "inbox-radio",
-        "name": "inbox-radio",
-        "radios": [
-            {
-                "id": "surveys-other",
-                "label": {
-                    "text": "Surveys"
-                },
-                "value": "surveys",
-                "other": {
-                    "otherType": "select",
-                    "id": "survey-list",
-                    "name": "select-survey",
-                    "label": {
-                        "text": "Please specify the survey"
-                    },
-                "options": surveys,
-                "error": error if response_error
-                        
-                }
-            },
-            {
-                "id": "technical-other",
-                "label": {
-                    "text": "Technical"
-                },
-                "value": "technical"
-            },
-            {
-                "id": "misc",
-                "label": {
-                    "text": "Respondent Feedback Team"
-                },
-                "value": "misc"
-            }
-        ]
-    })
-}}
-            {{
-                onsButton({
-                    "classes": "u-mt-m",
-                    "text": "Continue",
-                    "id": "continue",
-                    "submitType": "timer"
-                })
-            }}   
-        {% else %}
-          <p> Unable to retrieve list of surveys </p>
-        {% endif %}
-      </form>
+    <div class="ons-grid">
+        <div class="ons-grid__col ons-col8@m">
+            {% if response_error %}
+                {% call
+                    onsPanel({
+                        "type": "error",
+                        "classes": "ons-u-mb-s",
+                        "title": "This page has 1 error"
+                    })
+                %}
+                    <p><a href="#inbox-radio" id="survey-select-link" class="ons-js-inpagelink">{{ response_error }}</a></p>
+                {% endcall %}
+            {% endif %}
+            <h1>Choose which messages to show</h1>
+            <form method="post">
+                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}" />
+                {% if survey_list %}
+                    {% set error = {
+                        "text": "Select a survey"
+                    } %}
+                    {% set surveys = [
+                        {
+                            "value": "",
+                            "text": "Select a survey",
+                            "disabled": true,
+                            "selected": true
+                        }
+                    ] %}
+                    {% for survey in survey_list %}
+                        {% do surveys.append(
+                            {
+                                "value": survey.replace(' ', ''),
+                                "text": survey,
+                                "id": survey.replace(' ', '')
+                            }
+                        ) %}
+                    {% endfor %}
+                    {{
+                        onsRadios({
+                            "legend": "Choose an option",
+                            "id": "inbox-radio",
+                            "name": "inbox-radio",
+                            "radios": [
+                                {
+                                    "id": "surveys-other",
+                                    "label": {
+                                        "text": "Surveys"
+                                    },
+                                    "value": "surveys",
+                                    "other": {
+                                        "otherType": "select",
+                                        "id": "survey-list",
+                                        "name": "select-survey",
+                                        "label": {
+                                            "text": "Please specify the survey"
+                                        },
+                                    "options": surveys,
+                                    "error": error if response_error
+                                    }
+                                },
+                                {
+                                    "id": "technical-other",
+                                    "label": {
+                                        "text": "Technical"
+                                    },
+                                    "value": "technical"
+                                },
+                                {
+                                    "id": "misc",
+                                    "label": {
+                                        "text": "Respondent Feedback Team"
+                                    },
+                                    "value": "misc"
+                                }
+                            ]
+                        })
+                    }}
+                    {{
+                        onsButton({
+                            "classes": "ons-u-mt-m",
+                            "text": "Continue",
+                            "id": "continue",
+                            "submitType": "timer"
+                        })
+                    }}
+                {% else %}
+                    <p> Unable to retrieve list of surveys </p>
+                {% endif %}
+            </form>
+        </div>
     </div>
-  </div>
 {% endblock %}

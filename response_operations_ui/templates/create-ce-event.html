@@ -7,140 +7,136 @@
 
 {% set page_title = 'Create event date' %}
 {% block main %}
-  <div class="grid grid--gutterless">
-    <div class="grid__col col-8@m">
-      {%- with errors = get_flashed_messages(category_filter=["error"]) -%}
-        {%- if errors -%}
-            {% set errorLength = errors|length %}
-            {% call
-              onsPanel({
-                  "type":"error",
-                  "title": "This page has 1 error" if errorLength == 1 else "There are " ~ errorLength ~ " errors on this page",
-                  "classes": "u-mb-s",
-                  "id": "save-error"
-              })
-            %}
-            {% set errorData = [] %}
-              {% for message in errors %}
-                  {% do errorData.append(
-                    {
-                        "text": message,
-                        "index": true,
-                        "url": "#",
-                        "classes": "js-inpagelink"
-                    }
-                ) %}
-
-              {% endfor %}
-              
-              {{
-                  onsList({
-                      "classes": "list--bare",
-                      "itemsList": errorData
-                  }) 
-              }}
-          {% endcall %}
-        {% endif %}
-      {%- endwith -%}
-      <h1 class="u-fs-xl">Create business event</h1>
-      {{ 
-        onsMetadata({
-          "termCol": "2",
-          "descriptionCol": "10",
-          "itemsList": [
-            {
-              "term": "Survey:",
-              "descriptions": [ 
-                  {
-                      "description": survey_ref ~ ' ' ~ short_name
-                  }
-              ]
-            },
-            {
-              "term": "Period:",
-              "descriptions": [ 
-                  {
-                      "description": period,
-                      "id": "period"
-                  }
-              ]
-            }
-          ]
-        })
-      }}
-
-      <h2 class="u-fs-l">{{event_name}}</h2>
-      {% if date_restriction_text %}
-          {% set listData = [] %}
-          {% for text in date_restriction_text %}
-
-            {% do listData.append(
-                {
-                    "text": text
-                }
-            ) %}
-          {% endfor %}
-          {% call
-            onsPanel({
-                "classes": "u-mb-m"
-            })
-          %}
+    <div class="ons-grid ons-grid--gutterless">
+        <div class="ons-grid__col ons-col8@m">
+            {%- with errors = get_flashed_messages(category_filter=["error"]) -%}
+                {%- if errors -%}
+                    {% set errorLength = errors|length %}
+                    {% call
+                        onsPanel({
+                            "type":"error",
+                            "title": "This page has 1 error" if errorLength == 1 else "There are " ~ errorLength ~ " errors on this page",
+                            "classes": "ons-u-mb-s",
+                            "id": "save-error"
+                    })
+                    %}
+                        {% set errorData = [] %}
+                        {% for message in errors %}
+                            {% do errorData.append(
+                                {
+                                    "text": message,
+                                    "index": true,
+                                    "url": "#",
+                                    "classes": "ons-js-inpagelink"
+                                }
+                            ) %}
+                        {% endfor %}
+                        {{
+                            onsList({
+                                "classes": "ons-list--bare",
+                                "itemsList": errorData
+                            })
+                        }}
+                    {% endcall %}
+                {% endif %}
+            {%- endwith -%}
+            <h1 class="ons-u-fs-xl">Create business event</h1>
             {{
-                onsList({
-                    "itemsList": listData
-                }) 
-            }}           
-        {% endcall %}
-      {% endif %}
-      <form method="post" action="{{ url_for('collection_exercise_bp.create_collection_exercise_event', short_name=short_name, period=period, ce_id=ce_id, tag=tag)}}" class="">
-        <div class="date-time-editor">
-        {{ form.csrf_token }}
-        <fieldset class="fieldgroup fieldgroup--inline fieldgroup--date" data-qa="widget-date" role="group">
-          <legend class="fieldgroup__title u-fs-r--b u-mb-xs">Enter a date</legend>
-          <div class="field-group">
-            <div class="field field--input">
-              <label class="label u-fs-s--b" for="date-en-gb-day" data-qa="label-day">Day</label>
-              {{ form.day(id="date-en-gb-day", size=2, class_="input input--text input--StringField input--w-2", type="number") }}
-            </div>
-            <div class="field field--select">
-              <label class="label u-fs-s--b" for="date-en-gb-month" data-qa="label-month">Month</label>
-              {{ form.month(id="date-en-gb-month", class_="input input--select input--w-auto") }}
-            </div>
-            <div class="field field--input">
-              <label class="label u-fs-s--b" for="date-en-gb-year" data-qa="label-year">Year</label>
-              {{ form.year(id="date-en-gb-year", class="input input--text input--StringField input--w-4", type="number") }}
-            </div>
-          </div>
-        </fieldset>
-        {% if tag not in ['ref_period_start', 'ref_period_end', 'employment'] %}
-        <fieldset class="fieldgroup fieldgroup--time" data-qa="widget-time">
-          <legend class="fieldgroup__title u-fs-r--b u-mb-xs">Time (Newport)</legend>
-          <div class="field-group">
-            <div class="field field--select field--hrs">
-              <label class="label u-fs-s--b" for="time-select-hrs" id="time-hrs">Hrs</label>
-              {{ form.hour(id="time-select-hrs", class_="input input--select input--w-4 input--select__time-hrs") }}
-            </div>
-            <div class="field field--select field--mins">
-              <label class="label u-fs-s--b" for="time-select-mins" id="time-mins">Mins</label>
-              {{ form.minute(id="time-select-mins", class_="input input--select input--w-4 input--select__time-mins") }}
-            </div>
-          </div>
-        </fieldset>
-        {% endif %}
-      </div>
-        {{
-            onsButton({
-                "classes": "u-mb-s",
-                "text": "Save",
-                "id": "submit",
-                "name": "submit"
-            })
-        }}   
+                onsMetadata({
+                    "termCol": "2",
+                    "descriptionCol": "10",
+                    "itemsList": [
+                        {
+                            "term": "Survey:",
+                            "descriptions": [
+                                {
+                                    "description": survey_ref ~ ' ' ~ short_name
+                                }
+                            ]
+                        },
+                        {
+                            "term": "Period:",
+                            "descriptions": [
+                                {
+                                    "description": period,
+                                    "id": "period"
+                                }
+                            ]
+                        }
+                    ]
+                })
+            }}
 
-        <p>
-          <a href=" {{ url_for('collection_exercise_bp.view_collection_exercise', short_name=survey.shortName, period=period) }}">Cancel</a>
-        </p>
-      </form>
+            <h2 class="ons-u-fs-l">{{event_name}}</h2>
+            {% if date_restriction_text %}
+                {% set listData = [] %}
+                {% for text in date_restriction_text %}
+                    {% do listData.append(
+                        {
+                            "text": text
+                        }
+                    ) %}
+                {% endfor %}
+                {% call
+                    onsPanel({
+                        "classes": "ons-u-mb-m"
+                    })
+                %}
+                    {{
+                        onsList({
+                            "itemsList": listData
+                        })
+                    }}
+                {% endcall %}
+            {% endif %}
+            <form method="post" action="{{ url_for('collection_exercise_bp.create_collection_exercise_event', short_name=short_name, period=period, ce_id=ce_id, tag=tag)}}">
+                <div class="date-time-editor">
+                    {{ form.csrf_token }}
+                    <fieldset class="fieldgroup fieldgroup--inline fieldgroup--date" data-qa="widget-date" role="group">
+                        <legend class="fieldgroup__title ons-u-fs-r--b ons-u-mb-xs">Enter a date</legend>
+                        <div class="ons-field-group">
+                            <div class="ons-field field--input">
+                                <label class="ons-label ons-u-fs-s--b" for="date-en-gb-day" data-qa="label-day">Day</label>
+                                {{ form.day(id="date-en-gb-day", size=2, class_="ons-input ons-input--text input--StringField ons-input--w-2", type="number") }}
+                            </div>
+                            <div class="ons-field field--select">
+                                <label class="ons-label ons-u-fs-s--b" for="date-en-gb-month" data-qa="label-month">Month</label>
+                                {{ form.month(id="date-en-gb-month", class_="ons-input ons-input--w-auto") }}
+                            </div>
+                            <div class="ons-field field--input">
+                                <label class="ons-label ons-u-fs-s--b" for="date-en-gb-year" data-qa="label-year">Year</label>
+                                {{ form.year(id="date-en-gb-year", class="ons-input ons-input--text input--StringField ons-input--w-4", type="number") }}
+                            </div>
+                        </div>
+                    </fieldset>
+                    {% if tag not in ['ref_period_start', 'ref_period_end', 'employment'] %}
+                        <fieldset class="fieldgroup fieldgroup--time" data-qa="widget-time">
+                            <legend class="fieldgroup__title ons-u-fs-r--b ons-u-mb-xs">Time (Newport)</legend>
+                            <div class="ons-field-group">
+                                <div class="ons-field field--select field--hrs">
+                                    <label class="ons-label ons-u-fs-s--b" for="time-select-hrs" id="time-hrs">Hrs</label>
+                                    {{ form.hour(id="time-select-hrs", class_="ons-input ons-input--w-4 input--select__time-hrs") }}
+                                </div>
+                                <div class="ons-field field--select field--mins">
+                                    <label class="ons-label ons-u-fs-s--b" for="time-select-mins" id="time-mins">Mins</label>
+                                    {{ form.minute(id="time-select-mins", class_="ons-input ons-input--w-4 input--select__time-mins") }}
+                                </div>
+                            </div>
+                        </fieldset>
+                    {% endif %}
+                </div>
+                {{
+                    onsButton({
+                        "classes": "ons-u-mb-s",
+                        "text": "Save",
+                        "id": "submit",
+                        "name": "submit"
+                    })
+                }}
+                <p>
+                    <a href=" {{ url_for('collection_exercise_bp.view_collection_exercise', short_name=survey.shortName, period=period) }}">Cancel</a>
+                </p>
+            </form>
+        </div>
     </div>
-  </div>
 {% endblock main %}

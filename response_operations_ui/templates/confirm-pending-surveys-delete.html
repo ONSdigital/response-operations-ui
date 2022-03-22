@@ -4,41 +4,40 @@
 {% from "components/fieldset/_macro.njk" import onsFieldset %}
 {% from "components/input/_macro.njk" import onsInput %}
 
-{% set page_title = 'Delete Pending Survey'  %}
+{% set page_title = 'Delete Pending Survey' %}
 {% block main %}
-  <div class="grid grid--gutterless">
-    <div class="grid__col col-6@m">
-      <h1 class="u-fs-xl">
-        Delete {% if is_transfer == 'True' %}transfer{% else %}sharing{% endif %} request for {{ recipient_email }}?
-      </h1>
-      <p>The request to {% if is_transfer == 'True' %}transfer{% else %}share{% endif %} the surveys will be cancelled, and the email sent to the recipient will no longer be valid.</p>
-      <p>Once the option to delete is confirmed, it is unrecoverable.</p>
-      <p>New requests to share or transfer to the email will be available immediately.</p>
-      {% set deleteMessage %}
-          Delete {% if is_transfer == 'True' %}transfer{% else %}share{% endif %} request
-        {% endset %}
-      <form method="post" action="{{ url_for('respondent_bp.delete_pending_surveys', respondent_id=respondent_id,
-                              batch_number=batch_number, is_transfer=is_transfer)}}" class="u-mt-l">
-        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
-        <p class="field u-mt-l">
-        <div class="grid grid--flex grid--gutterless grid--vertical-center grid--no-wrap@s u-mt-m u-mb-m">
-            <div class="grid__col">
-                {{
-                    onsButton({
-                    "text": deleteMessage,
-                    "id": "btn-option-delete",
-                    "classes": 'btn btn-group__btn',
-                    "submitType": "timer"
-                    })
-                }}
-            </div>
-            <div class="grid__col u-ml-m">
-                <a href="{{ url_for('respondent_bp.respondent_details', respondent_id=respondent_id) }}"
-                id="btn-option-cancel">Cancel</a>
-            </div>
+    <div class="ons-grid ons-grid--gutterless">
+        <div class="ons-grid__col ons-col6@m">
+            <h1 class="ons-u-fs-xl">
+                Delete {% if is_transfer == 'True' %}transfer{% else %}sharing{% endif %} request for {{ recipient_email }}?
+            </h1>
+            <p>The request to {% if is_transfer == 'True' %}transfer{% else %}share{% endif %} the surveys will be cancelled, and the email sent to the recipient will no longer be valid.</p>
+            <p>Once the option to delete is confirmed, it is unrecoverable.</p>
+            <p>New requests to share or transfer to the email will be available immediately.</p>
+            {% set deleteMessage %}
+                Delete {% if is_transfer == 'True' %}transfer{% else %}share{% endif %} request
+            {% endset %}
+            <form method="post" action="{{ url_for('respondent_bp.delete_pending_surveys', respondent_id=respondent_id,
+                batch_number=batch_number, is_transfer=is_transfer)}}" class="ons-u-mt-l">
+                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}" />
+                <p class="ons-field ons-u-mt-l">
+                    <div class="ons-grid ons-grid--flex ons-grid--gutterless ons-grid--vertical-center ons-grid--no-wrap@s ons-u-mt-m ons-u-mb-m">
+                        <div class="ons-grid__col">
+                            {{
+                                onsButton({
+                                    "text": deleteMessage,
+                                    "id": "btn-option-delete",
+                                    "submitType": "timer"
+                                })
+                            }}
+                        </div>
+                        <div class="ons-grid__col ons-u-ml-m">
+                            <a href="{{ url_for('respondent_bp.respondent_details', respondent_id=respondent_id) }}"
+                                id="btn-option-cancel">Cancel</a>
+                        </div>
+                    </div>
+                </p>
+            </form>
         </div>
-    </p>
-      </form>
     </div>
-  </div>
 {% endblock %}

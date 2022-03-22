@@ -4,96 +4,96 @@
 {% from "components/fieldset/_macro.njk" import onsFieldset %}
 {% from "components/input/_macro.njk" import onsInput %}
 
-{% set page_title = 'Edit collection exercise details'  %}
+{% set page_title = 'Edit collection exercise details' %}
 {% block main %}
-  <div class="grid grid--gutterless">
-    <div class="grid__col col-8@m">
-      {% if errors %}
-        {% call
-          onsPanel({
-              "type":"error",
-              "title": "This page has 1 error",
-              "classes": "u-mb-s",
-              "id": "save-error"
-          })
-        %}
-            {% if form.errors.period[1] == 'Please enter numbers only for the period' %}
-              <p>{{form.period.errors[1]}}</p>
-            {% else %}
-              <p>Use a period that is not in use by any collection exercise for this survey</p>
+    <div class="ons-grid ons-grid--gutterless">
+        <div class="ons-grid__col ons-col8@m">
+            {% if errors %}
+                {% call
+                onsPanel({
+                    "type":"error",
+                    "title": "This page has 1 error",
+                    "classes": "ons-u-mb-s",
+                    "id": "save-error"
+                })
+                %}
+                    {% if form.errors.period[1] == 'Please enter numbers only for the period' %}
+                        <p>{{form.period.errors[1]}}</p>
+                    {% else %}
+                        <p>Use a period that is not in use by any collection exercise for this survey</p>
+                    {% endif %}
+                {% endcall %}
             {% endif %}
-        {% endcall %}
-      {% endif %}
 
-    <h1 class="u-fs-xl">Edit collection exercise details</h1>
+            <h1 class="ons-u-fs-xl">Edit collection exercise details</h1>
 
-    <form action="" method="post">
-      {{ form.csrf_token }}
-        {{ 
-          onsMetadata({
-          "termCol": "2",
-          "descriptionCol": "10",
-          "itemsList": [
-            {
-                "term": "Survey:",
-                "descriptions": [ 
-                    {
-                        "description": survey_ref ~ ' ' ~ short_name
-                    }
-                ]
-            }                                                   
-          ]
-        }) 
-      }}
-        {% if not locked %}
-          {{
-              onsInput({
-                  "id": "period",
-                  "name": "period",
-                  "type": "text",
-                  "label": {
-                      "text": 'Period'
-                  },
-                  "maxLength": 6,
-                  "value": period,
-                  "attributes": {
-                      "required": true
-                  }
-              })
-          }} 
-        {% endif %}
-        {% if not locked %}
-          {{
-              onsInput({
-                  "id": "user_description",
-                  "name": "user_description",
-                  "type": "user_description",
-                  "label": {
-                      "text": 'Period as shown to respondent'
-                  },
-                  "maxLength": 50,
-                  "value": user_description,
-                  "attributes": {
-                      "required": true
-                  }
-              })
-          }} 
-        {% endif %}
-        {{ form.collection_exercise_id(value=collection_exercise_id, id='collection_exercise_id') }}
-        {{ form.hidden_survey_id(value=survey_id, id='survey_id') }}
-        {{
-            onsButton({
-                "text": "Save",
-                "id": "save-btn",
-                "type": "submit",
-                "classes": "u-mb-s u-mt-l",
-                "submitType": "timer"
-            })
-        }}    
-        <p>
-          <a id="cancel-btn" href="{{ url_for('collection_exercise_bp.view_collection_exercise', short_name=short_name, period=period) }}">Cancel</a>
-        </p>
-    </form>
-  </div>
-</div>
+            <form action="" method="post">
+                {{ form.csrf_token }}
+                {{
+                    onsMetadata({
+                        "termCol": "2",
+                        "descriptionCol": "10",
+                        "itemsList": [
+                            {
+                                "term": "Survey:",
+                                "descriptions": [
+                                    {
+                                        "description": survey_ref ~ ' ' ~ short_name
+                                    }
+                                ]
+                            }
+                        ]
+                    })
+                }}
+                {% if not locked %}
+                    {{
+                        onsInput({
+                            "id": "period",
+                            "name": "period",
+                            "type": "text",
+                            "label": {
+                                "text": 'Period'
+                            },
+                            "maxLength": 6,
+                            "value": period,
+                            "attributes": {
+                                "required": true
+                            }
+                        })
+                    }}
+                {% endif %}
+                {% if not locked %}
+                    {{
+                        onsInput({
+                            "id": "user_description",
+                            "name": "user_description",
+                            "type": "user_description",
+                            "label": {
+                                "text": 'Period as shown to respondent'
+                            },
+                            "maxLength": 50,
+                            "value": user_description,
+                            "attributes": {
+                                "required": true
+                            }
+                        })
+                    }}
+                {% endif %}
+                {{ form.collection_exercise_id(value=collection_exercise_id, id='collection_exercise_id') }}
+                {{ form.hidden_survey_id(value=survey_id, id='survey_id') }}
+                {{
+                    onsButton({
+                        "text": "Save",
+                        "id": "save-btn",
+                        "type": "submit",
+                        "classes": "ons-u-mb-s ons-u-mt-l",
+                        "submitType": "timer"
+                    })
+                }}
+                <p>
+                    <a id="cancel-btn" href="{{ url_for('collection_exercise_bp.view_collection_exercise', short_name=short_name, period=period) }}">Cancel</a>
+                </p>
+            </form>
+        </div>
+    </div>
 {% endblock %}

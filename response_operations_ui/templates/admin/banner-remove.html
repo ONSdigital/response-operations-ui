@@ -1,10 +1,10 @@
 {% extends "layouts/base.html" %}
 {% from "components/button/_macro.njk" import onsButton %}
 
-{% set page_title = 'Banner Remove'  %}
+{% set page_title = 'Banner Remove' %}
 {% block main %}
-    <div class="grid grid--gutterless">
-        <div class="grid__col col-8@m">
+    <div class="ons-grid ons-grid--gutterless">
+        <div class="ons-grid__col ons-col8@m">
             <h1>Alert Banner</h1>
             <form action="" method="post">
                 {{ form.csrf_token }}
@@ -15,9 +15,8 @@
                             "text": "Message" 
                         },
                         "body": current_banner,
-                        "classes": "u-mb-l"    
+                        "classes": "ons-u-mb-l"    
                     })
-                
                 }}
                 {{
                     onsButton({

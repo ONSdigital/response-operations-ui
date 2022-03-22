@@ -9,78 +9,78 @@
 {% set page_title = "Create Message" %}
 {% block main %}
     {%- with messages = get_flashed_messages(category_filter=["sending"]) -%}
-      {% if (form.errors or messages) %}
-        {% set errorData = [] %}
-          {% if form.errors %}
-            {% set title = "This page has 1 error" if form.errors|length == 1 else "There are " + form.errors|length|string + " errors on this page" %}
-          {% else %}
-            {% set title = "This page has 1 error" %}
-          {% endif %}
-          {% call
-              onsPanel({
-                  "title": title,
-                  "type": "error",
-                  "classes": "u-mb-l"
-              })
-          %}
-        <p>These <strong>must be corrected</strong> to continue.</p>
-        {% if form.subject.errors %}
-            {% for error in form.subject.errors %}
-                {% do errorData.append(
-                    {
-                        "text": error,
-                        "index": true,
-                        "url": "#secure-message-subject",
-                        "classes": "js-inpagelink"
-                    }
-                ) %}
-            {% endfor %}
+        {% if (form.errors or messages) %}
+            {% set errorData = [] %}
+            {% if form.errors %}
+                {% set title = "This page has 1 error" if form.errors|length == 1 else "There are " + form.errors|length|string + " errors on this page" %}
+            {% else %}
+                {% set title = "This page has 1 error" %}
+            {% endif %}
+            {% call
+                onsPanel({
+                    "title": title,
+                    "type": "error",
+                    "classes": "ons-u-mb-l"
+                })
+            %}
+                <p>These <strong>must be corrected</strong> to continue.</p>
+                {% if form.subject.errors %}
+                    {% for error in form.subject.errors %}
+                        {% do errorData.append(
+                            {
+                                "text": error,
+                                "index": true,
+                                "url": "#secure-message-subject",
+                                "classes": "ons-js-inpagelink"
+                            }
+                        ) %}
+                    {% endfor %}
+                {% endif %}
+                {% if form.body.errors %}
+                    {% for error in form.body.errors %}
+                        {% do errorData.append(
+                            {
+                                "text": error,
+                                "index": true,
+                                "url": "#secure-message-body",
+                                "classes": "ons-js-inpagelink"
+                            }
+                        ) %}
+                    {% endfor %}
+                {% endif %}
+                {%- if messages -%}
+                    {%- for message in messages -%}
+                    {% do errorData.append(
+                        {
+                            "text": message,
+                            "index": true
+                        }
+                    ) %}
+                    {%- endfor -%}
+                {%- endif -%}
+                {{
+                    onsList({
+                        "classes": "ons-list--bare",
+                        "itemsList": errorData
+                    })
+                }}
+            {% endcall %}
         {% endif %}
-        {% if form.body.errors %}
-            {% for error in form.body.errors %}
-                {% do errorData.append(
-                    {
-                        "text": error,
-                        "index": true,
-                        "url": "#secure-message-body",
-                        "classes": "js-inpagelink"
-                    }
-                ) %}
-            {% endfor %}
-        {% endif %}
-        {%- if messages -%}
-            {%- for message in messages -%}
-              {% do errorData.append(
-                {
-                    "text": message,
-                    "index": true
-                }
-              ) %}
-            {%- endfor -%}
-          {%- endif -%}
-        {{
-            onsList({
-                "classes": "list--bare",
-                "itemsList": errorData
-            }) 
-        }}
-        {% endcall %}
-    {% endif %}
     {%- endwith -%}
     <h1>Create message</h1>
-    <div class="grid grid--gutterless">
-        <div class="grid__col col-8@m">
+    <div class="ons-grid ons-grid--gutterless">
+        <div class="ons-grid__col ons-col8@m">
             <form action="{{ url_for('messages_bp.create_message') }}" method="post" id="create-message-form">
-            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
+                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}" />
                 {{ form.hidden_tag() }}
-                {{ 
+                {{
                     onsMetadata({
                         "termCol": "3",
                         "descriptionCol": "9",
                         "itemsList": [
                             {
                                 "term": "Survey:",
-                                "descriptions": [ 
+                                "descriptions": [
                                     {
                                         "description": form.survey_id(id="survey-label") if form.survey_id(id="survey-label") else "",
                                         "id": "survey"
@@ -89,60 +89,59 @@
                             },
                             {
                                 "term": "RU Ref:",
-                                "descriptions": [ 
+                                "descriptions": [
                                     {
                                         "description": form.ru_ref(id="ru-ref-label") if form.ru_ref(id="ru-ref-label") else "",
                                         "id": "ruref"
-                                    }                
+                                    }
                                 ]
                             },
                             {
                                 "term": "Business:",
-                                "descriptions": [ 
+                                "descriptions": [
                                     {
                                         "description": form.business(id="business-label") if form.business(id="business-label") else "",
                                         "id": "ru"
-                                    }                                     
+                                    }
                                 ]
                             },
                             {
                                 "term": "To:",
-                                "descriptions": [ 
+                                "descriptions": [
                                     {
                                         "description": form.to(id="to-label") if form.to(id="to-label") else "",
                                         "id": "recipient"
                                     }
                                 ]
-                            }     
+                            }
                         ]
                     }) 
                 }}
 
                 {%- call onsFieldset({
                     "legend": "Complete the form to send a message",
-                    "legendClasses": "u-vh"
-                    }) -%}
-                    <div id="subject-field"{% if form.subject.errors %} class="panel panel--simple panel--error u-mt-s{% endif %}">
+                    "legendClasses": "ons-u-vh"
+                }) -%}
+                    <div id="subject-field"{% if form.subject.errors %} class="ons-panel ons-panel--simple ons-panel--error ons-u-mt-s{% endif %}">
                         {% for error in form.subject.errors %}
                             <p id="subject-error-{{ loop.index }}" class="error-message">{{ error }}</p>
                         {% endfor %}
-                        <label class="label" for="secure-message-subject">Subject</label>
+                        <label class="ons-label" for="secure-message-subject">Subject</label>
                         {{ form.subject(id='secure-message-subject',
-                        class_='input input--text u-mb-m input--w-50',
+                        class_='input input--text ons-u-mb-m input--w-50',
                         maxlength='96', size=80, required=required) }}
                     </div>
 
-                    <div id="body-field"{% if form.body.errors %} class="panel panel--simple panel--error u-mb-m{% endif %}">
+                    <div id="body-field"{% if form.body.errors %} class="ons-panel ons-panel--simple ons-panel--error ons-u-mb-m{% endif %}">
                         {% for error in form.body.errors %}
                             <p id="body-error-{{ loop.index }}" class="error-message">{{ error }}</p>
                         {% endfor %}
-                        <label class="label" for="secure-message-body">Message</label>
+                        <label class="ons-label" for="secure-message-body">Message</label>
                         {{ form.body(id='secure-message-body',
-                        class_='input input--textarea u-mb-m',
+                        class_='input input--textarea ons-u-mb-m',
                         rows='10', maxlength='50000', cols=80, required=required) }}
                     </div>
                 {%- endcall -%}
-
                 {{
                     onsButton({
                         "text": "Send",
@@ -151,12 +150,12 @@
                         "name": "send-message",
                         "submitType": "timer"
                     })
-                }}    
+                }}
             </form>
         </div>
     </div>
     {% if form.hidden_ru_ref.data %}
-        <p class="u-mt-xs">
+        <p class="ons-u-mt-xs">
             <a href="{{ url_for('reporting_unit_bp.view_reporting_unit', ru_ref=form.hidden_ru_ref.data) }}" id="btn-cancel">Cancel</a>
         </p>
     {% endif %}

@@ -3,70 +3,70 @@
 {% set categoryDescription = ' (' + thread_data.category + ') ' if thread_data.category != 'SURVEY' else '' %}
 {% set description = surveyDescription + categoryDescription + ' <a href="' + url_for('messages_bp.get_change_thread_category', thread_id=messages[0]['thread_id']) + '">Assign a survey or category</a>' %}
 {% if thread_data.category != 'SURVEY' %}
-  <div class="grid grid--gutterless">
-    <div class="grid__col col-10@m">
-        {{ 
-            onsMetadata({
-                "metadataLabel": "Information about the category",
-                "termCol": "3",
-                "descriptionCol": "9",
-                "itemsList": [
-                    {
-                        "term": "Category:",
-                        "descriptions": [ 
-                            {
-                                "description": description,
-                                "id": "survey"
-                            }
-                        ]
-                    }
-                ]
-            }) 
-        }}
+    <div class="ons-grid ons-grid--gutterless">
+        <div class="ons-grid__col ons-col10@m">
+            {{
+                onsMetadata({
+                    "metadataLabel": "Information about the category",
+                    "termCol": "3",
+                    "descriptionCol": "9",
+                    "itemsList": [
+                        {
+                            "term": "Category:",
+                            "descriptions": [ 
+                                {
+                                    "description": description,
+                                    "id": "survey"
+                                }
+                            ]
+                        }
+                    ]
+                })
+            }}
 
+        </div>
     </div>
-</div>
 {% else %}
-  <div class="grid grid--gutterless">
-    <div class="grid__col col-10@m">
-        {{ 
-            onsMetadata({
-                "metadataLabel": "Information about the survey and respondant",
-                "termCol": "3",
-                "descriptionCol": "9",
-                "itemsList": [
-                    {
-                        "term": "Survey:",
-                        "descriptions": [ 
-                            {
-                                "description": description,
-                                "id": "survey"
-                            }
-                        ]
-                    },
-                    {
-                        "term": "RU Ref:",
-                        "descriptions": [ 
-                            {
-                                "description": messages[0].get('ru_ref') if messages[0].get('ru_ref') else "",
-                                "id": "ruref"
-                            }                  
-                        ]
-                    },
-                    {
-                        "term": "Business:",
-                        "descriptions": [ 
-                            {
-                                "description": messages[0].get('business_name') if messages[0].get('business_name') else "",
-                                "id": "ru"
-                            }                                     
-                        ]
-                    }
-                ]
-            }) 
-        }}
+    <div class="ons-grid ons-grid--gutterless">
+        <div class="ons-grid__col ons-col10@m">
+            {{
+                onsMetadata({
+                    "metadataLabel": "Information about the survey and respondant",
+                    "termCol": "3",
+                    "descriptionCol": "9",
+                    "itemsList": [
+                        {
+                            "term": "Survey:",
+                            "descriptions": [
+                                {
+                                    "description": description,
+                                    "id": "survey"
+                                }
+                            ]
+                        },
+                        {
+                            "term": "RU Ref:",
+                            "descriptions": [
+                                {
+                                    "description": messages[0].get('ru_ref') if messages[0].get('ru_ref') else "",
+                                    "id": "ruref"
+                                }
+                            ]
+                        },
+                        {
+                            "term": "Business:",
+                            "descriptions": [
+                                {
+                                    "description": messages[0].get('business_name') if messages[0].get('business_name') else "",
+                                    "id": "ru"
+                                }
+                            ]
+                        }
+                    ]
+                })
+            }}
 
+        </div>
     </div>
-</div>
 {% endif %}
 

@@ -2,7 +2,7 @@
 {% if processing %}
     {% call
         onsPanel({
-            "classes": "u-mb-s",
+            "classes": "ons-u-mb-s",
             "id": "processing-info"
         })
     %}
@@ -12,7 +12,7 @@
     {% call
         onsPanel({
             "type": "error",
-            "classes": "u-mb-s",
+            "classes": "ons-u-mb-s",
             "id": "validation-error"
         })
     %}
@@ -30,7 +30,7 @@
     {% call
         onsPanel({
             "type": "error",
-            "classes": "u-mb-s",
+            "classes": "ons-u-mb-s",
             "id": "validation-error",
             "title": error['header']
         })
@@ -44,17 +44,17 @@
     {% if sample.state == 'INIT' %}
         {% call
             onsPanel({
-                "classes": "u-mb-s"
+                "classes": "ons-u-mb-s"
             })
         %}
-            Loading sample&hellip; <span class="u-ml-xs"><a href="/surveys/{{survey.shortName}}/{{ce.exerciseRef}}?show_msg=true">Refresh to see progress</a>
+            Loading sample&hellip; <span class="ons-u-ml-xs"><a href="/surveys/{{survey.shortName}}/{{ce.exerciseRef}}?show_msg=true">Refresh to see progress</a>
         {% endcall %}
     {% elif sample.state == 'ACTIVE' %}
         {% call
             onsPanel({
                 "type": "success",
-                "icon": "check",
-                "classes": "u-mb-s",
+                "iconType": "check",
+                "classes": "ons-u-mb-s",
                 "id": "sample-success"
             })
         %}
@@ -64,10 +64,10 @@
         {% call
             onsPanel({
                 "type": "error",
-                "classes": "u-mb-s"
+                "classes": "ons-u-mb-s"
             })
         %}
-            Error loading sample <span class="u-ml-xs"><a href="#section-sample">See error details</a></span>
+            Error loading sample <span class="ons-u-ml-xs"><a href="#section-sample">See error details</a></span>
         {% endcall %}
     {% endif %}
 {% endif %}

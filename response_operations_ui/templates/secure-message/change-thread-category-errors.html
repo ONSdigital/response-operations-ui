@@ -1,34 +1,33 @@
 {% from "components/lists/_macro.njk" import onsList %}
 {%- with errors = get_flashed_messages(category_filter=["error"]) -%}
-  {%- if errors -%}
-      {% call
-        onsPanel({
-            "type":"error",
-            "title": "This page has 1 error",
-            "classes": "u-mb-s",
-            "id": "save-error"
-        })
-      %}
-      {% set errorData = [] %}
-      {% for message in errors %}
-          {% do errorData.append(
-            {
-                "text": message,
-                "index": true,
-                "url": "#category",
-                "classes": "js-inpagelink"
-            }
-        ) %}
-
-      {% endfor %}
-      {{
-          onsList({
-              "classes": "list--bare",
-              "itemsList": errorData
-          })
-      }}
-    {% endcall %}
-  {% endif %}
+    {%- if errors -%}
+        {% call
+            onsPanel({
+                "type":"error",
+                "title": "This page has 1 error",
+                "classes": "ons-u-mb-s",
+                "id": "save-error"
+            })
+        %}
+            {% set errorData = [] %}
+            {% for message in errors %}
+                {% do errorData.append(
+                    {
+                        "text": message,
+                        "index": true,
+                        "url": "#category",
+                        "classes": "ons-js-inpagelink"
+                    }
+                ) %}
+            {% endfor %}
+            {{
+                onsList({
+                    "classes": "ons-list--bare",
+                    "itemsList": errorData
+                })
+            }}
+        {% endcall %}
+    {% endif %}
 {%- endwith -%}
 {% if form.errors %}
     {% set error_count = form.errors | length %}
@@ -39,7 +38,7 @@
         onsPanel({
             "title": header_text,
             "type": "error",
-            "classes": "u-mb-m col-8@m"
+            "classes": "ons-u-mb-m ons-col8@m"
         })
     %}
         <p>These <strong>must be corrected</strong> to continue.</p>
@@ -50,7 +49,7 @@
                         "text": error,
                         "index": true,
                         "url": "#category",
-                        "classes": "js-inpagelink"
+                        "classes": "ons-js-inpagelink"
                     }
                 ) %}
             {% endfor %}
@@ -62,14 +61,14 @@
                         "text": error,
                         "index": true,
                         "url": "#category",
-                        "classes": "js-inpagelink"
+                        "classes": "ons-js-inpagelink"
                     }
                 ) %}
             {% endfor %}
         {% endif %}
         {{
             onsList({
-                "classes": "list--bare",
+                "classes": "ons-list--bare",
                 "itemsList": errorData
             }) 
         }}

@@ -7,89 +7,87 @@
 {% set hide_breadcrumbs = true %}
 
 {% block main %}
-  <div class="grid">
-      <div class="grid__col col-12@m">
-        {%- with errors = get_flashed_messages(category_filter=["error"]) -%}
-        {%- if errors -%}
-            {% call
-              onsPanel({
-                  "type":"error",
-                  "title": "This page has 1 error",
-                  "classes": "u-mb-s",
-                  "id": "save-error"
-              })
-            %}
-            {% set errorData = [] %}
-            {% for message in errors %}
-                {% do errorData.append(
-                  {
-                      "text": message,
-                      "index": true,
-                      "url": "#reporting-units",
-                      "classes": "js-inpagelink"
-                  }
-              ) %}
-      
-            {% endfor %}
-            {{
-                onsList({
-                    "classes": "list--bare",
-                    "itemsList": errorData
-                })
-            }}
-          {% endcall %}
-        {% endif %}
-      {%- endwith -%}
-      </div>
-      <div class="grid__col col-8@m">
-        <h1>Assign a reporting unit to the thread</h1>
-        {% if reporting_units %}
-        <form method="post">
-          <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
-          
-            {% set radios = [] %}
-              {% for reporting_unit in reporting_units %}
-                  {% do radios.append(
-                      {
-                          "id": reporting_unit.name,
-                          "name": "reporting-unit",
-                          "label": {
-                              "text": reporting_unit.name
-                          },
-                          "value": reporting_unit.id
-                      }
-                  ) %}
-              {% endfor %}
-            {{
-                onsRadios({
-                    "legend": "Choose an option",
-                    "id": "reporting-units",
-                    "name": "reporting-units",
-                    "error": error,
-                    "radios": radios
-                })
-            }}
-            <div class="grid grid--flex grid--gutterless grid--vertical-center grid--no-wrap@s u-mt-m u-mb-m">
-              <div class="grid__col">
-                {{
-                onsButton({
-                    "text": "Continue",
-                    "id": "continue",
-                    "submitType": "timer"
-                })
-              }}  
-              </div>
-              <div class="grid__col u-ml-m">
-                <a href=" {{ url_for('messages_bp.view_conversation', thread_id=thread_id) }}">Cancel</a>
-              </div>
-            </div>
-        {% else %}
-          <p>Reporting unit list failed to load.  Please try again.</p>
-          <div class="grid__col u-ml-m">
-            <a href=" {{ url_for('messages_bp.view_conversation', thread_id=thread_id) }}">Cancel</a>
-          </div>
-        {% endif %}
-      </form>
+    <div class="ons-grid">
+        <div class="ons-grid__col ons-col12@m">
+            {%- with errors = get_flashed_messages(category_filter=["error"]) -%}
+                {%- if errors -%}
+                    {% call
+                        onsPanel({
+                            "type":"error",
+                            "title": "This page has 1 error",
+                            "classes": "ons-u-mb-s",
+                            "id": "save-error"
+                        })
+                    %}
+                        {% set errorData = [] %}
+                        {% for message in errors %}
+                            {% do errorData.append(
+                                {
+                                    "text": message,
+                                    "index": true,
+                                    "url": "#reporting-units",
+                                    "classes": "ons-js-inpagelink"
+                                }
+                            ) %}
+                        {% endfor %}
+                        {{
+                            onsList({
+                                "classes": "ons-list--bare",
+                                "itemsList": errorData
+                            })
+                        }}
+                    {% endcall %}
+                {% endif %}
+            {%- endwith -%}
+        </div>
+        <div class="ons-grid__col ons-col8@m">
+            <h1>Assign a reporting unit to the thread</h1>
+            {% if reporting_units %}
+                <form method="post">
+                    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}" />
+                    {% set radios = [] %}
+                    {% for reporting_unit in reporting_units %}
+                        {% do radios.append(
+                            {
+                                "id": reporting_unit.name,
+                                "name": "reporting-unit",
+                                "label": {
+                                    "text": reporting_unit.name
+                                },
+                                "value": reporting_unit.id
+                            }
+                        ) %}
+                    {% endfor %}
+                    {{
+                        onsRadios({
+                            "legend": "Choose an option",
+                            "id": "reporting-units",
+                            "name": "reporting-units",
+                            "error": error,
+                            "radios": radios
+                        })
+                    }}
+                    <div class="ons-grid ons-grid--flex ons-grid--gutterless ons-grid--vertical-center ons-grid--no-wrap@s ons-u-mt-m ons-u-mb-m">
+                        <div class="ons-grid__col">
+                            {{
+                                onsButton({
+                                    "text": "Continue",
+                                    "id": "continue",
+                                    "submitType": "timer"
+                                })
+                            }}
+                        </div>
+                        <div class="ons-grid__col ons-u-ml-m">
+                            <a href=" {{ url_for('messages_bp.view_conversation', thread_id=thread_id) }}">Cancel</a>
+                        </div>
+                    </div>
+                </form>
+            {% else %}
+                <p>Reporting unit list failed to load. Please try again.</p>
+                <div class="ons-grid__col ons-u-ml-m">
+                    <a href=" {{ url_for('messages_bp.view_conversation', thread_id=thread_id) }}">Cancel</a>
+                </div>
+            {% endif %}
+        </div>
     </div>
-  </div>
 {% endblock %}

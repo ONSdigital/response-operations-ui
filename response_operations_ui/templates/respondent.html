@@ -4,300 +4,289 @@
 
 {% block main %}
 
-{% include 'partials/flashed-messages.html' %}
+    {% include 'partials/flashed-messages.html' %}
 
-<section>
-  <h1 id="respondent-name">{{ respondent.firstName }} {{ respondent.lastName }}</h1>
-  <div class="grid grid--gutterless">
-      <div class="grid__col col-10@m">
-          {% set accountStatus %}
-              {% if respondent.status  == 'Suspended' %} Locked {% else %} {{ respondent.status }} {% endif %}
-              <br>
-              {% if respondent.status == 'Created' %}<a id="resend-verification-email-btn" href="{{ url_for('respondent_bp.view_resend_verification', respondent_id=respondent.id) }}">Re-send new account verification email</a>
-              {% elif respondent.status == 'Suspended' %}<a id="respondent-unlock-link" href="{{ url_for('respondent_bp.confirm_change_respondent_status', party_id=respondent.id, tab='respondents', change_flag='ACTIVE') }}">Unlock</a>
-              {% endif %}
-          {% endset %}
-          {{ 
-              onsMetadata({
-                  "metadataLabel": "Information about the respondant",
-                  "termCol": "3",
-                  "descriptionCol": "9",
-                  "itemsList": [
-                      {
-                          "term": "Email:",
-                          "descriptions": [ 
-                              {
-                                  "description": respondent.emailAddress,
-                                  "id": "respondent-email",
-                                  "name": "tbl-respondent-email"
-                              }
-                          ]
-                      },
-                      {
-                          "term": "New Email:" if respondent.pendingEmailAddress else "",
-                          "descriptions": [ 
-                              {
-                                  "description": respondent.pendingEmailAddress + '<br>
-                          <a id="resend-verification-email-btn" href="' + url_for('respondent_bp.view_resend_verification', respondent_id=respondent.id) + '">Re-send verification email</a>' if respondent.pendingEmailAddress else "",
-                                  "id": "respondent-email" if respondent.pendingEmailAddress else "",
-                                  "name": "tbl-respondent-pending-email" if respondent.pendingEmailAddress else ""
-                              }                  
-                          ]
-                      },
-                      {
-                          "term": "Tel:",
-                          "descriptions": [ 
-                              {
-                                  "description": respondent.telephone,
-                                  "id": "respondent-phone",
-                                  "name": "tbl-respondent-phone"
-                              },
-                              {
-                                "description": '<a id="edit-contact-details" href="' + url_for('respondent_bp.view_contact_details', respondent_id=respondent.id) + '">Edit contact details</a>'
-                              }                                     
-                          ]
-                      },
-                      {
-                          "term": "Account:",
-                          "descriptions": [ 
-                              {
-                                  "description": "Pending deletion<br><small>The respondent will be deleted by the end of the day.</small>" if mark_for_deletion else accountStatus,
-                                  "id": "respondent-account-status"
-                              },
-                                {
-                                  "description": '<a id="delete-respondent" href="' + url_for('respondent_bp.delete_respondent', respondent_id=respondent.id) + '">Delete respondent</a>' if not mark_for_deletion else ""
-                              }  
-                              ,
-                                {
-                                  "description": '<a id="undo-delete-respondent" href="' + url_for('respondent_bp.undo_delete_respondent', respondent_id=respondent.id) + '">Reactivate respondent</a>' if mark_for_deletion else ""
-                              }                                
-                          ]
-                      }
-                  ]
-              }) 
-          }}
-      </div>
-  </div>
-</section>
+    <section>
+        <h1 id="respondent-name">{{ respondent.firstName }} {{ respondent.lastName }}</h1>
+        <div class="ons-grid ons-grid--gutterless">
+            <div class="ons-grid__col ons-col10@m">
+                {% set accountStatus %}
+                    {% if respondent.status  == 'Suspended' %} Locked {% else %} {{ respondent.status }} {% endif %}
+                    <br>
+                    {% if respondent.status == 'Created' %}<a id="resend-verification-email-btn" href="{{ url_for('respondent_bp.view_resend_verification', respondent_id=respondent.id) }}">Re-send new account verification email</a>
+                    {% elif respondent.status == 'Suspended' %}<a id="respondent-unlock-link" href="{{ url_for('respondent_bp.confirm_change_respondent_status', party_id=respondent.id, tab='respondents', change_flag='ACTIVE') }}">Unlock</a>
+                    {% endif %}
+                {% endset %}
+                {{
+                    onsMetadata({
+                        "metadataLabel": "Information about the respondant",
+                        "termCol": "3",
+                        "descriptionCol": "9",
+                        "itemsList": [
+                            {
+                                "term": "Email:",
+                                "descriptions": [
+                                    {
+                                        "description": respondent.emailAddress,
+                                        "id": "respondent-email",
+                                        "name": "tbl-respondent-email"
+                                    }
+                                ]
+                            },
+                            {
+                                "term": "New Email:" if respondent.pendingEmailAddress else "",
+                                "descriptions": [
+                                    {
+                                        "description": respondent.pendingEmailAddress + '<br><a id="resend-verification-email-btn" href="' + url_for('respondent_bp.view_resend_verification', respondent_id=respondent.id) + '">Re-send verification email</a>' if respondent.pendingEmailAddress else "",
+                                        "id": "respondent-email" if respondent.pendingEmailAddress else "",
+                                        "name": "tbl-respondent-pending-email" if respondent.pendingEmailAddress else ""
+                                    }
+                                ]
+                            },
+                            {
+                                "term": "Tel:",
+                                "descriptions": [
+                                    {
+                                        "description": respondent.telephone,
+                                        "id": "respondent-phone",
+                                        "name": "tbl-respondent-phone"
+                                    },
+                                    {
+                                        "description": '<a id="edit-contact-details" href="' + url_for('respondent_bp.view_contact_details', respondent_id=respondent.id) + '">Edit contact details</a>'
+                                    }
+                                ]
+                            },
+                            {
+                                "term": "Account:",
+                                "descriptions": [
+                                    {
+                                        "description": "Pending deletion<br><small>The respondent will be deleted by the end of the day.</small>" if mark_for_deletion else accountStatus,
+                                        "id": "respondent-account-status"
+                                    },
+                                    {
+                                        "description": '<a id="delete-respondent" href="' + url_for('respondent_bp.delete_respondent', respondent_id=respondent.id) + '">Delete respondent</a>' if not mark_for_deletion else ""
+                                    },
+                                        {
+                                        "description": '<a id="undo-delete-respondent" href="' + url_for('respondent_bp.undo_delete_respondent', respondent_id=respondent.id) + '">Reactivate respondent</a>' if mark_for_deletion else ""
+                                    }
+                                ]
+                            }
+                        ]
+                    })
+                }}
+            </div>
+        </div>
+    </section>
 
+    <section>
+        <h2>Enrolments</h2>
+        {% if enrolments|length > 0 %}
+            {% from "components/table/_macro.njk" import onsTable %}
+            {% set surveyTableData = {
+                "variants": 'compact',
+                "ths": [
+                    {
+                        "value": "RU Reference"
+                    },
+                    {
+                        "value": "Reporting unit name"
+                    },
+                    {
+                        "value": "Trading as"
+                    },
+                    {
+                        "value": "Survey"
+                    },
+                    {
+                        "value": "Enrolment status"
+                    }
+                ]
+            } %}
 
-<section>
-  <h2>Enrolments</h2>
-  {% if enrolments|length > 0 %}
-    {% from "components/table/_macro.njk" import onsTable %}
-    {% set surveyTableData = {
-        "table_class": 'table--dense',
-        "ths": [
-            { 
-                "value": "RU Reference"
-            },
-            { 
-                "value": "Reporting unit name"
-            },
-            { 
-                "value": "Trading as"
-            },
-            { 
-                "value": "Survey"
-            },
-            { 
-                "value": "Enrolment status"
-            }
-        ]
-        }
-    %}
-  
-    {% set surveyTableDataRows = [] %}
-    {% for enrolment in enrolments %}
-        {% set enrolmentData %}
-          {{ enrolment['status'].title() }}
-          {% if enrolment['status'] == 'ENABLED' %}
-          <a href="{{ url_for('reporting_unit_bp.confirm_change_enrolment_status', ru_ref=enrolment['business']['sampleUnitRef'], ru_name=enrolment['business']['name'], survey_id=enrolment['survey']['id'],
-                              survey_name=enrolment['survey']['shortName'], respondent_id=respondent.id, respondent_first_name=respondent.firstName,
-                              respondent_last_name=respondent.lastName, business_id=enrolment['business']['id'], trading_as=enrolment['business']['trading_as'], change_flag='DISABLED', tab='respondents')}}"
-              id="change-enrolment-status">Disable</a>
-          {% elif enrolment['status'] == 'DISABLED' %}
-          <a href="{{ url_for('reporting_unit_bp.confirm_change_enrolment_status', ru_ref=enrolment['business']['sampleUnitRef'], ru_name=enrolment['business']['name'], survey_id=enrolment['survey']['id'],
-                              survey_name=enrolment['survey']['shortName'], respondent_id=respondent.id, respondent_first_name=respondent.firstName,
-                              respondent_last_name=respondent.lastName, business_id=enrolment['business']['id'], trading_as=enrolment['business']['trading_as'], change_flag='ENABLED', tab='respondents')}}"
-            id="change-enrolment-status">Re-enable</a>
-          {% endif %}
-        {% endset %}
-        {% do surveyTableDataRows.append(
-            {
-                "tds": [
-                {
-                    "value": '<a href="' + url_for('reporting_unit_bp.view_reporting_unit', ru_ref=enrolment['business']['sampleUnitRef'], _anchor='survey-'+enrolment['survey']['shortName'] ) + '">' + enrolment['business']['sampleUnitRef'] + '</a>'
-                },
-                {
-                    "value": enrolment['business']['name']
-                },
-                {
-                    "value": enrolment['business']['trading_as'] if enrolment['business']['trading_as'] else ""
-                },
-                {
-                    "value": enrolment['survey']['surveyRef'] + ' ' + enrolment['survey']['shortName'] 
-                },
-                {
-                    "value": enrolmentData 
-                }
+            {% set surveyTableDataRows = [] %}
+            {% for enrolment in enrolments %}
+                {% set enrolmentData %}
+                    {{ enrolment['status'].title() }}
+                    {% if enrolment['status'] == 'ENABLED' %}
+                    <a href="{{ url_for('reporting_unit_bp.confirm_change_enrolment_status', ru_ref=enrolment['business']['sampleUnitRef'], ru_name=enrolment['business']['name'], survey_id=enrolment['survey']['id'],
+                        survey_name=enrolment['survey']['shortName'], respondent_id=respondent.id, respondent_first_name=respondent.firstName,
+                        respondent_last_name=respondent.lastName, business_id=enrolment['business']['id'], trading_as=enrolment['business']['trading_as'], change_flag='DISABLED', tab='respondents')}}"
+                        id="change-enrolment-status">Disable</a>
+                    {% elif enrolment['status'] == 'DISABLED' %}
+                    <a href="{{ url_for('reporting_unit_bp.confirm_change_enrolment_status', ru_ref=enrolment['business']['sampleUnitRef'], ru_name=enrolment['business']['name'], survey_id=enrolment['survey']['id'],
+                        survey_name=enrolment['survey']['shortName'], respondent_id=respondent.id, respondent_first_name=respondent.firstName,
+                        respondent_last_name=respondent.lastName, business_id=enrolment['business']['id'], trading_as=enrolment['business']['trading_as'], change_flag='ENABLED', tab='respondents')}}"
+                        id="change-enrolment-status">Re-enable</a>
+                    {% endif %}
+                {% endset %}
+                {% do surveyTableDataRows.append(
+                    {
+                        "tds": [
+                            {
+                                "value": '<a href="' + url_for('reporting_unit_bp.view_reporting_unit', ru_ref=enrolment['business']['sampleUnitRef'], _anchor='survey-'+enrolment['survey']['shortName'] ) + '">' + enrolment['business']['sampleUnitRef'] + '</a>'
+                            },
+                            {
+                                "value": enrolment['business']['name']
+                            },
+                            {
+                                "value": enrolment['business']['trading_as'] if enrolment['business']['trading_as'] else ""
+                            },
+                            {
+                                "value": enrolment['survey']['surveyRef'] + ' ' + enrolment['survey']['shortName'] 
+                            },
+                            {
+                                "value": enrolmentData 
+                            }
+                        ]
+                    }
+                ) %}
+            {% endfor %}
+
+            {% do surveyTableData | setAttribute("trs", surveyTableDataRows) %}
+            {{
+                onsTable(surveyTableData)
+            }}
+        {% else %}
+            <p><i>There are no surveys assigned to this respondent.</i></p>
+        {% endif %}
+
+        <h2>Shared surveys</h2>
+        {% if pending_share_surveys|length > 0 %}
+            {% from "components/table/_macro.njk" import onsTable %}
+            {% set shareSurveyTableData = {
+                "variants": 'compact',
+                "ths": [
+                    {
+                        "value": "Recipient's email address"
+                    },
+                    {
+                        "value": "Shared surveys"
+                    },
+                    {
+                        "value": "Time"
+                    },
+                    {
+                        "value": "Status"
+                    },
+                    {
+                        "value": "Action"
+                    }
                 ]
-            }
-            ) %}
-  
-    {% endfor %}
-  
-    {% do surveyTableData | setAttribute("trs", surveyTableDataRows) %}
-    {{
-        onsTable(surveyTableData)
-    }}
-  {% else %}
-  <p><i>There are no surveys assigned to this respondent.</i></p>
-  {% endif %}
-  
-  
-  <h2>Shared surveys</h2>
-  {% if pending_share_surveys|length > 0 %}
-    {% from "components/table/_macro.njk" import onsTable %}
-    {% set shareSurveyTableData = {
-        "table_class": 'table--dense',
-        "ths": [
-            { 
-                "value": "Recipient's email address"
-            },
-            { 
-                "value": "Shared surveys"
-            },
-            { 
-                "value": "Time"
-            },
-            { 
-                "value": "Status"
-            },
-            { 
-                "value": "Action"
-            }
-        ]
-        }
-    %}
-  
-    {% set shareSurveyTableDataRows = [] %}
-    {% for shareSurvey in pending_share_surveys %}
-        {% set shareSurveyEmail %}
-          Email sent
-          <a href="{{ url_for('respondent_bp.send_pending_surveys_email', batch_number=shareSurvey['batch_no'], respondent_id=respondent_id)}}">Resend email</a>
-        {% endset %}
-        {% set shareSurveyDelete %}
-          <a href="{{ url_for('respondent_bp.confirm_delete_pending_surveys', batch_number=shareSurvey['batch_no'], respondent_id=respondent_id, recipient_email=shareSurvey['recipient_email'], is_transfer=False)}}">Delete</a>
-        {% endset %}
-        {% set ns = namespace(shareSurveyBusinessDetails="") %}      
-        {% for record in shareSurvey['pending_survey_details'] %}
-          {% set ns.shareSurveyBusinessDetails = ns.shareSurveyBusinessDetails~"<strong>"~record['business_name']~":" ~"</strong>"~record['surveys']|join(',')~"</br>" %}
-        {% endfor %}
-        
-        
-        {% do shareSurveyTableDataRows.append(
-            {
-                "tds": [
-                {
-                    "value": shareSurvey['recipient_email']
-                },
-                {
-                    "value": ns.shareSurveyBusinessDetails
-                },
-                {
-                    "value": shareSurvey['time_shared']
-                },
-                {
-                    "value": shareSurveyEmail 
-                },
-                {
-                    "value": shareSurveyDelete
-                }
+            } %}
+
+            {% set shareSurveyTableDataRows = [] %}
+            {% for shareSurvey in pending_share_surveys %}
+                {% set shareSurveyEmail %}
+                    Email sent
+                    <a href="{{ url_for('respondent_bp.send_pending_surveys_email', batch_number=shareSurvey['batch_no'], respondent_id=respondent_id)}}">Resend email</a>
+                {% endset %}
+                {% set shareSurveyDelete %}
+                    <a href="{{ url_for('respondent_bp.confirm_delete_pending_surveys', batch_number=shareSurvey['batch_no'], respondent_id=respondent_id, recipient_email=shareSurvey['recipient_email'], is_transfer=False)}}">Delete</a>
+                {% endset %}
+                {% set ns = namespace(shareSurveyBusinessDetails="") %}
+                {% for record in shareSurvey['pending_survey_details'] %}
+                    {% set ns.shareSurveyBusinessDetails = ns.shareSurveyBusinessDetails~"<strong>"~record['business_name']~":" ~"</strong>"~record['surveys']|join(',')~"</br>" %}
+                {% endfor %}
+
+                {% do shareSurveyTableDataRows.append(
+                    {
+                        "tds": [
+                            {
+                                "value": shareSurvey['recipient_email']
+                            },
+                            {
+                                "value": ns.shareSurveyBusinessDetails
+                            },
+                            {
+                                "value": shareSurvey['time_shared']
+                            },
+                            {
+                                "value": shareSurveyEmail 
+                            },
+                            {
+                                "value": shareSurveyDelete
+                            }
+                        ]
+                    }
+                ) %}
+            {% endfor %}
+
+            {% do shareSurveyTableData | setAttribute("trs", shareSurveyTableDataRows) %}
+            {{
+                onsTable(shareSurveyTableData)
+            }}
+        {% else %}
+            <p><i>Nothing has been shared.</i></p>
+        {% endif %}
+
+        <h2>Transferred surveys</h2>
+        {% if pending_transfer_surveys|length > 0 %}
+            {% from "components/table/_macro.njk" import onsTable %}
+            {% set transferSurveyTableData = {
+                "variants": 'compact',
+                "ths": [
+                    {
+                        "value": "Recipient's email address"
+                    },
+                    {
+                        "value": "Transferred surveys"
+                    },
+                    {
+                        "value": "Time"
+                    },
+                    {
+                        "value": "Status"
+                    },
+                    {
+                        "value": "Action"
+                    }
                 ]
-            }
-            ) %}
-  
-    {% endfor %}
-  
-    {% do shareSurveyTableData | setAttribute("trs", shareSurveyTableDataRows) %}
-    {{
-        onsTable(shareSurveyTableData)
-    }}
-  {% else %}
-  <p><i>Nothing has been shared.</i></p>
-  {% endif %}
-  
-  <h2>Transferred surveys</h2>
-  {% if pending_transfer_surveys|length > 0 %}
-    {% from "components/table/_macro.njk" import onsTable %}
-    {% set transferSurveyTableData = {
-        "table_class": 'table--dense',
-        "ths": [
-            { 
-                "value": "Recipient's email address"
-            },
-            { 
-                "value": "Transferred surveys"
-            },
-            { 
-                "value": "Time"
-            },
-            { 
-                "value": "Status"
-            },
-            { 
-                "value": "Action"
-            }
-        ]
-        }
-    %}
-  
-    {% set transferSurveyTableDataRows = [] %}
-    {% for transferSurvey in pending_transfer_surveys %}
-        {% set transferSurveyEmail %}
-          Email sent
-          <a href="{{ url_for('respondent_bp.send_pending_surveys_email', batch_number=transferSurvey['batch_no'], respondent_id=respondent_id)}}">Resend email</a>
-        {% endset %}
-        {% set transferSurveyDelete %}
-          <a href="{{ url_for('respondent_bp.confirm_delete_pending_surveys', batch_number=transferSurvey['batch_no'], respondent_id=respondent_id, recipient_email=transferSurvey['recipient_email'], is_transfer=True)}}">Delete</a>
-        {% endset %}
-        {% set ns = namespace(transferSurveyBusinessDetails="") %}      
-        {% for record in transferSurvey['pending_survey_details'] %}
-          {% set ns.transferSurveyBusinessDetails = ns.transferSurveyBusinessDetails~"<strong>"~record['business_name']~":" ~"</strong>"~record['surveys']|join(',')~"</br>" %}
-        {% endfor %}
-        
-        
-        {% do transferSurveyTableDataRows.append(
-            {
-                "tds": [
-                {
-                    "value": transferSurvey['recipient_email']
-                },
-                {
-                    "value": ns.transferSurveyBusinessDetails
-                },
-                {
-                    "value": transferSurvey['time_shared']
-                },
-                {
-                    "value": transferSurveyEmail 
-                },
-                {
-                    "value": transferSurveyDelete
-                }
-                ]
-            }
-            ) %}
-  
-    {% endfor %}
-  
-    {% do transferSurveyTableData | setAttribute("trs", transferSurveyTableDataRows) %}
-    {{
-        onsTable(transferSurveyTableData)
-    }}
-  {% else %}
-  <p><i>Nothing has been transferred.</i></p>
-  {% endif %}
-</section>
+            } %}
+
+            {% set transferSurveyTableDataRows = [] %}
+            {% for transferSurvey in pending_transfer_surveys %}
+                {% set transferSurveyEmail %}
+                    Email sent
+                    <a href="{{ url_for('respondent_bp.send_pending_surveys_email', batch_number=transferSurvey['batch_no'], respondent_id=respondent_id)}}">Resend email</a>
+                {% endset %}
+                {% set transferSurveyDelete %}
+                    <a href="{{ url_for('respondent_bp.confirm_delete_pending_surveys', batch_number=transferSurvey['batch_no'], respondent_id=respondent_id, recipient_email=transferSurvey['recipient_email'], is_transfer=True)}}">Delete</a>
+                {% endset %}
+                {% set ns = namespace(transferSurveyBusinessDetails="") %}
+                {% for record in transferSurvey['pending_survey_details'] %}
+                    {% set ns.transferSurveyBusinessDetails = ns.transferSurveyBusinessDetails~"<strong>"~record['business_name']~":" ~"</strong>"~record['surveys']|join(',')~"</br>" %}
+                {% endfor %}
+
+                {% do transferSurveyTableDataRows.append(
+                    {
+                        "tds": [
+                            {
+                                "value": transferSurvey['recipient_email']
+                            },
+                            {
+                                "value": ns.transferSurveyBusinessDetails
+                            },
+                            {
+                                "value": transferSurvey['time_shared']
+                            },
+                            {
+                                "value": transferSurveyEmail 
+                            },
+                            {
+                                "value": transferSurveyDelete
+                            }
+                        ]
+                    }
+                ) %}
+
+            {% endfor %}
+
+            {% do transferSurveyTableData | setAttribute("trs", transferSurveyTableDataRows) %}
+            {{
+                onsTable(transferSurveyTableData)
+            }}
+        {% else %}
+            <p><i>Nothing has been transferred.</i></p>
+        {% endif %}
+    </section>
 {% endblock %}

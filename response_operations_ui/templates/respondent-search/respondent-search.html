@@ -10,60 +10,59 @@
 
 {% block main %}
     {% if success_panel %}
-    {% call
-        onsPanel({
-            "type": "success",
-            "icon": "check",
-            "classes": "u-mb-s",
-            "id": "success-panel"
-        })
-    %}
-        {{ success_panel }}
-    {% endcall %}
-{% endif %}
-{% set ns = namespace() %}
-{% set ns.optionError = false %}
-{% with messages = get_flashed_messages() %}
+        {% call
+            onsPanel({
+                "type": "success",
+                "iconType": "check",
+                "classes": "ons-u-mb-s",
+                "id": "success-panel"
+            })
+        %}
+            {{ success_panel }}
+        {% endcall %}
+    {% endif %}
+    {% set ns = namespace() %}
+    {% set ns.optionError = false %}
+    {% with messages = get_flashed_messages() %}
         {%- if messages -%}
             {% for message in messages %}
-            {% set ns.optionError = true %}
-            {% set ns.errorMessage = message %}
-            {% set errorTitle = 'There is 1 error on this page' %}
+                {% set ns.optionError = true %}
+                {% set ns.errorMessage = message %}
+                {% set errorTitle = 'There is 1 error on this page' %}
                 {% call
                     onsPanel({
                         "type": "error",
-                        "classes": "u-mb-s",
+                        "classes": "ons-u-mb-s",
                         "title":  errorTitle
                     })
-                  %}
-                  {{
-                    onsList({
-                        "element": "ol",
-                        "itemsList": [
-                        {
-                            "text": message,
-                            "url": "#input_error",
-                            "classes": "js-inpagelink"
-                        }
-                        ]
-                    })
-                }}
+                %}
+                    {{
+                        onsList({
+                            "element": "ol",
+                            "itemsList": [
+                                {
+                                    "text": message,
+                                    "url": "#input_error",
+                                    "classes": "ons-js-inpagelink"
+                                }
+                            ]
+                        })
+                    }}
                 {% endcall %}
-        {% endfor %}
+            {% endfor %}
         {%- endif -%}
     {% endwith %}
     <h1>Find a respondent</h1>
     <form action="{{ url_for('respondent_bp.search_redirect') }}" method="post">
         {{ form.csrf_token }}
         {% if ns.optionError %}
-                {% set errorOption = { "text": ns.errorMessage,  "id": 'input_error' } %}
+            {% set errorOption = { "text": ns.errorMessage,  "id": 'input_error' } %}
         {% endif %}
         {%- call onsFieldset({
             "legend": "Enter respondent information to search",
-            "legendClasses": "u-vh",
+            "legendClasses": "ons-u-vh",
             "error": errorOption
         }) -%}
-        
             {{
                 onsInput({
                     "id": "first_name",
@@ -83,7 +82,7 @@
                         "text": "Last name"
                     }
                 })
-            }}        
+            }}
             {{
                 onsInput({
                     "id": "email_address",
@@ -93,15 +92,15 @@
                         "text": "Email address"
                     }
                 })
-            }}      
-        {%- endcall -%}  
+            }}
+        {%- endcall -%}
         {{
             onsButton({
                 "text": "Search",
                 "id": "btn-search-respondent",
-                "classes": "u-mt-m",
+                "classes": "ons-u-mt-m",
                 "submitType": "timer"
             })
-        }}   
+        }}
     </form>
 {% endblock %}

@@ -1,47 +1,48 @@
 
 <h1 name="page-ce-title">{{survey.shortName}} {{ce.exerciseRef}}</h1>
-{{ 
+{{
     onsMetadata({
-    "metadataLabel": survey.longName + "information",
-    "termCol": "1",
-    "descriptionCol": "11",
-    "itemsList": [
-        {
-            "term": "Status:",
-            "descriptions": [ 
-                {
-                    "description": ce.state,
-                    "id": "ce_status"
-                }
-            ]
-        },
-        {
-            "term": "Report:" if ce.state|upper == "LIVE",
-            "descriptions": [ 
-                {
-                    "description": '<a href="' + url_for('collection_exercise_bp.response_chasing', ce_id=ce.id, survey_id=survey.id) + '"><svg class="svg-icon" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" focusable="false"><path d="M19 9h-4V3H9v6H5l7 7 7-7zM5 18v2h14v-2H5z"/><path d="M0 0h24v24H0z" fill="none"/></svg> Response chasing</a>' if ce.state|upper == "LIVE",
-                    "id": "ce_status"
-                }                
-            ]
-        }                                                    
-    ]
-    }) 
+        "metadataLabel": survey.longName + "information",
+        "termCol": "1",
+        "descriptionCol": "11",
+        "itemsList": [
+            {
+                "term": "Status:",
+                "descriptions": [
+                    {
+                        "description": ce.state,
+                        "id": "ce_status"
+                    }
+                ]
+            },
+            {
+                "term": "Report:" if ce.state|upper == "LIVE",
+                "descriptions": [
+                    {
+                        "description": '<a href="' + url_for('collection_exercise_bp.response_chasing', ce_id=ce.id, survey_id=survey.id) + '"><svg class="ons-svg-icon" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" focusable="false"><path d="M19 9h-4V3H9v6H5l7 7 7-7zM5 18v2h14v-2H5z"/><path d="M0 0h24v24H0z" fill="none"/></svg> Response chasing</a>' if ce.state|upper == "LIVE",
+                        "id": "ce_status"
+                    }
+                ]
+            }
+        ]
+    })
 }}
 {% if show_set_live_button %}
-    <form id="form-ready-for-live" action="" class="form u-mb-l" method="post" enctype="multipart/form-data">
-    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
+    <form id="form-ready-for-live" action="" class="form ons-u-mb-l" method="post" enctype="multipart/form-data">
+        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}" />
         {{
             onsButton({
                 "text": "Set as ready for live",
                 "id": "btn-ready-for-live",
                 "name": "ready-for-live"
             })
-        }}    
+        }}
     </form>
     <script{% if csp_nonce %} nonce="{{ csp_nonce() }}" {% endif %}>
-    document.getElementById("form-ready-for-live").addEventListener('submit', function () {
-      if(!confirm('This action cannot be undone.  Press OK to continue\, or Cancel to go back.')) {
-        event.preventDefault();
-      }
-    });</script>
+        document.getElementById("form-ready-for-live").addEventListener('submit', function () {
+            if(!confirm('This action cannot be undone.  Press OK to continue\, or Cancel to go back.')) {
+                event.preventDefault();
+            }
+        });
+    </script>
 {% endif %}

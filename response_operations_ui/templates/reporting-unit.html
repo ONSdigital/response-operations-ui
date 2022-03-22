@@ -4,84 +4,82 @@
 {% set page_title = ru.name + " | Reporting units" %}
 
 {% block main %}
-  {% include 'partials/flashed-messages.html' %}
+    {% include 'partials/flashed-messages.html' %}
 
-  <h1 id="RU_NAME" class="u-fs-xl">{{ ru.name }}</h1>
+    <h1 id="RU_NAME" class="ons-u-fs-xl">{{ ru.name }}</h1>
 
-  <dl id="RU_DETAILS" class="item-headlines">
-    <dt class="item-headlines-term">
-      Reference:
-    </dt>
-    <dd id="RU_REF" class="item-headlines-definition">
-      {{ ru.sampleUnitRef }}
-    </dd>
-    {% if ru.trading_as %}
-      <dt class="item-headlines-term">
-        Trading as:
-      </dt>
-      <dd id="TRADING_AS" class="item-headlines-definition">
-        {{ ru.trading_as }} &#160;
-      </dd>
-    {% endif %}
-  </dl>
+    <dl id="RU_DETAILS" class="item-headlines">
+        <dt class="item-headlines-term">
+            Reference:
+        </dt>
+        <dd id="RU_REF" class="item-headlines-definition">
+            {{ ru.sampleUnitRef }}
+        </dd>
+        {% if ru.trading_as %}
+            <dt class="item-headlines-term">
+                Trading as:
+            </dt>
+            <dd id="TRADING_AS" class="item-headlines-definition">
+                {{ ru.trading_as }} &#160;
+            </dd>
+        {% endif %}
+    </dl>
 
-<div class="grid__col col-8@m u-pl-no">
-  {% include 'partials/reporting-unit-tabs.html' %}
+    <div class="ons-grid__col ons-col8@m ons-u-pl-no">
+        {% include 'partials/reporting-unit-tabs.html' %}
 
-  {% 
-    set surveyTableData = {
-      "table_class": 'table--responsive table--dense',
-      "id": 'tbl-surveys',
-      "ths": [
-        {
-          "value": "Survey"
-        },
-        {
-          "value": "Current period"
-        },
-        {
-          "value": "Status"
-        }
-      ]
-    }
-  %}
+        {% set surveyTableData = {
+            "variants": ['compact', 'responsive'],
+            "id": 'tbl-surveys',
+            "ths": [
+                {
+                    "value": "Survey"
+                },
+                {
+                    "value": "Current period"
+                },
+                {
+                    "value": "Status"
+                }
+            ]
+        } %}
 
-  {% set surveyTableDataRows = [] %}
+        {% set surveyTableDataRows = [] %}
 
-  {% for survey in surveys %}
-    {% if survey[1].caseStatus == 'Not started' or survey[1].caseStatus == 'No longer required' %}
-      {% set status_class = 'status--dead' %}
-    {% elif survey[1].caseStatus == 'In progress' or survey[1].caseStatus == 'Completed' or survey[1].caseStatus == 'Completed by phone' %}
-      {% set status_class = 'status--success' %}
-    {% else %}
-      {% set status_class = 'status--error' %}
-    {% endif %}
-    {% do surveyTableDataRows.append( 
-      {
-        "tds": [
-          {
-            "value": '<a href="' + url_for("reporting_unit_bp.view_reporting_unit_survey", ru_ref=ru.sampleUnitRef, survey_id=survey[1].surveyId) + '" id="survey-' + survey[1].shortName + '" >' + survey[1].surveyName + '</a>',
-            "data": "Survey",
-            "name": "tbl-surveys-survey"
-          },
-          {
-            "value": survey[1].period,
-            "data": "Current period",
-            "name": "tbl-surveys-period"
-          },
-          {
-            "value": '<span class="status ' + status_class + '">' + survey[1].caseStatus + '</span>',
-            "data": "Status",
-            "name": "tbl-surveys-status"
-          }
-        ]
-      }
-    ) %}
-  {% endfor %}
+        {% for survey in surveys %}
+            {% if survey[1].caseStatus == 'Not started' or survey[1].caseStatus == 'No longer required' %}
+                {% set status_class = 'ons-status--dead' %}
+            {% elif survey[1].caseStatus == 'In progress' or survey[1].caseStatus == 'Completed' or survey[1].caseStatus == 'Completed by phone' %}
+                {% set status_class = 'ons-status--success' %}
+            {% else %}
+                {% set status_class = 'ons-status--error' %}
+            {% endif %}
+            {% do surveyTableDataRows.append( 
+                {
+                    "tds": [
+                        {
+                            "value": '<a href="' + url_for("reporting_unit_bp.view_reporting_unit_survey", ru_ref=ru.sampleUnitRef, survey_id=survey[1].surveyId) + '" id="survey-' + survey[1].shortName + '" >' + survey[1].surveyName + '</a>',
+                            "data": "Survey",
+                            "name": "tbl-surveys-survey"
+                        },
+                        {
+                            "value": survey[1].period,
+                            "data": "Current period",
+                            "name": "tbl-surveys-period"
+                        },
+                        {
+                            "value": '<span class="ons-status ' + status_class + '">' + survey[1].caseStatus + '</span>',
+                            "data": "Status",
+                            "name": "tbl-surveys-status"
+                        }
+                    ]
+                }
+            ) %}
+        {% endfor %}
 
-  {% do surveyTableData | setAttribute("trs", surveyTableDataRows) %}
-  {{
-    onsTable(surveyTableData)
-  }}
-  </div>
+        {% do surveyTableData | setAttribute("trs", surveyTableDataRows) %}
+        {{
+            onsTable(surveyTableData)
+        }}
+    </div>
 {% endblock %}

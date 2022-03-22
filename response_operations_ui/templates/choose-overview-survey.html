@@ -8,64 +8,64 @@
 
 {% block main %}
 
-  <h1 name="page-surveys-title">Choose a survey</h1>
-      {% set surveyTableData = {
-          "table_class": 'table--responsive',
-          "id": 'tbl-surveys',
-          "ths": [
-            {
-                "value": "ID"
-            },
-            {
-                "value": "Title"
-            },
-            {
-                "value": "Abbreviation"
-            },
-            {
-                "value": ""
-            }
-          ]
-        }
-      %}
-  
-      {% set surveyTableDataRows = [] %}
-        {% for survey in survey_list %}
-          {% set buttonCell = '<form action="" method="post">
-          <input type="hidden" name="csrf_token" value="' + csrf_token() + '"/>
-          <input type="hidden" name="overview-survey-choice" value="' + survey.shortName + '">
-          <button type="submit" class="btn btn--secondary btn--small" id="choose-' + survey.shortName + '">
-            <span class="btn__inner">Choose</span></button>
-          </form>' %}
-            {% do surveyTableDataRows.append(
-              {
-                "tds": [
-                  {
-                    "value": survey.surveyRef,
-                    "data": "ID",
-                    "name": "tbl-surveys-id"
-                  },
-                  {
-                    "value": survey.longName,
-                    "data": "Title",
-                    "name": "tbl-surveys-title"
-                  },
-                  {
-                    "value": survey.shortName,
-                    "data": "Abbreviation",
-                    "name": "tbl-surveys-abbreviation"
-                  },
-                  {
-                    "value": buttonCell
-                  }
-                ]
-              }
-            ) %}
-        {% endfor %}
-  
-      {% do surveyTableData | setAttribute("trs", surveyTableDataRows) %}
-  
-      {{
-        onsTable(surveyTableData)
-      }}
+    <h1 name="page-surveys-title">Choose a survey</h1>
+        {% set surveyTableData = {
+            "variants": 'responsive',
+            "id": 'tbl-surveys',
+            "ths": [
+                {
+                    "value": "ID"
+                },
+                {
+                    "value": "Title"
+                },
+                {
+                    "value": "Abbreviation"
+                },
+                {
+                    "value": ""
+                }
+            ]
+        } %}
+
+        {% set surveyTableDataRows = [] %}
+            {% for survey in survey_list %}
+                {% set buttonCell = '<form action="" method="post">
+                    <input type="hidden" name="csrf_token" value="' + csrf_token() + '" />
+                    <input type="hidden" name="overview-survey-choice" value="' + survey.shortName + '">
+                    <button type="submit" class="ons-btn ons-btn--secondary ons-btn--small" id="choose-' + survey.shortName + '">
+                        <span class="ons-btn__inner">Choose</span>
+                    </button>
+                </form>' %}
+                {% do surveyTableDataRows.append(
+                    {
+                        "tds": [
+                            {
+                                "value": survey.surveyRef,
+                                "data": "ID",
+                                "name": "tbl-surveys-id"
+                            },
+                            {
+                                "value": survey.longName,
+                                "data": "Title",
+                                "name": "tbl-surveys-title"
+                            },
+                            {
+                                "value": survey.shortName,
+                                "data": "Abbreviation",
+                                "name": "tbl-surveys-abbreviation"
+                            },
+                            {
+                                "value": buttonCell
+                            }
+                        ]
+                    }
+                ) %}
+            {% endfor %}
+
+        {% do surveyTableData | setAttribute("trs", surveyTableDataRows) %}
+
+        {{
+            onsTable(surveyTableData)
+        }}
 {% endblock %}

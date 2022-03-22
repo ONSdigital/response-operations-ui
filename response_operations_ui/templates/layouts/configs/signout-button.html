@@ -1,14 +1,14 @@
 {% if current_user.is_authenticated %}
     {% do pageConfig | setAttribute("signoutButton", {
-      "type": 'button',
-      "text": 'Sign out',
-      "classes": 'btn--ghost',
-      "url": '/logout',
-      "attributes": {
-          "data-qa": "btn-sign-out",
-          "data-ga": "click",
-          "data-ga-category": "Navigation",
-          "data-ga-action": "Sign out click"
-      }
-  }) %}
+        "type": 'button',
+        "text": 'Sign out',
+        "classes": 'ons-btn--ghost',
+        "url": '/logout',
+        "attributes": {
+            "data-qa": "btn-sign-out",
+            "data-ga": "click",
+            "data-ga-category": "Navigation",
+            "data-ga-action": "Sign out click"
+        }
+    }) %}
 {% endif %}

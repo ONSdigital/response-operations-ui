@@ -2,12 +2,11 @@
 {% set page_title = survey + " | Surveys" %}
 
 {% block main %}
-    <div class="grid overview">
-        <div class="grid__col col-12@m">
-            <h1 name="page-surveys-title" class="u-fs-xxl">{{ survey }}<span class="u-fs-r">
-              <a href="{{ url_for('home_bp.get_overview_survey') }}">Change survey</a></span></h1>
+    <div class="ons-grid overview">
+        <div class="ons-grid__col ons-col12@m">
+            <h1 name="page-surveys-title" class="ons-u-fs-xxl">{{ survey }}<span class="ons-u-fs-r">
+                <a href="{{ url_for('home_bp.get_overview_survey') }}">Change survey</a></span></h1>
             <p>There are no collection exercises for this survey</p>
         </div>
-        
     </div>
 {% endblock %}

@@ -4,123 +4,121 @@
 {% from "components/input/_macro.njk" import onsInput %}
 {% from "components/lists/_macro.njk" import onsList %}
 
-{% set page_title = 'Create survey'  %}
+{% set page_title = 'Create survey' %}
 {% block main %}
-
-  <div class="grid grid--gutterless">
-    <div class="grid__col col-8@m">
-        <h1 class="u-fs-xl">Create new survey</h1>
+    <div class="ons-grid ons-grid--gutterless">
+        <div class="ons-grid__col ons-col8@m">
+            <h1 class="ons-u-fs-xl">Create new survey</h1>
             <form action="" method="post">
                 {{ form.csrf_token }}
                 {% if errors %}
                     {% set errorData = [] %}
 
-                {% call
-                    onsPanel({
-                        "type":"error",
-                        "id": "save-error",
-                        "classes": "u-mb-s",
-                        "title": "This page has 1 error" if errors|length == 1 else "There are " + errors|length|string + " errors on this page"
+                    {% call
+                        onsPanel({
+                            "type":"error",
+                            "id": "save-error",
+                            "classes": "ons-u-mb-s",
+                            "title": "This page has 1 error" if errors|length == 1 else "There are " + errors|length|string + " errors on this page"
 
-                    })
-                %}
-                    {% for field, error_list in errors %}
-                        {% do errorData.append(
-                            {
-                                "text": ', '.join(error_list),
-                                "index": true
-                            }
-                        ) %}
-                    {% endfor %}
+                        })
+                    %}
+                        {% for field, error_list in errors %}
+                            {% do errorData.append(
+                                {
+                                    "text": ', '.join(error_list),
+                                    "index": true
+                                }
+                            ) %}
+                        {% endfor %}
+                        {{
+                            onsList({
+                                "classes": "ons-list--bare",
+                                "itemsList": errorData
+                            })
+                        }}
+                    {% endcall %}
+                {% endif %}
+
+                {%- call onsFieldset({
+                    "legend": "Create new survey",
+                    "legendClasses": "ons-u-vh"
+                }) -%}
                     {{
-                        onsList({
-                            "classes": "list--bare",
-                            "itemsList": errorData
-                        }) 
+                        onsInput({
+                            "id": "long_name",
+                            "name": "long_name",
+                            "type": "text",
+                            "maxLength": 100,
+                            "attributes": {
+                                "required": true
+                            },
+                            "label": {
+                                "text": 'Survey name',
+                                "description": "For example: Monthly Business Survey"
+                            }
+                        })
+                    }}
+                    {{
+                        onsInput({
+                            "id": "survey_ref",
+                            "name": "survey_ref",
+                            "type": "text",
+                            "maxLength": 20,
+                            "value": survey_ref,
+                            "classes": "input--w-5",
+                            "attributes": {
+                                "required": true
+                            },
+                            "label": {
+                                "text": 'Survey ID',
+                                "description": "For example: 001"
+                            }
+                        })
+                    }}
+                    {{
+                        onsInput({
+                            "id": "short_name",
+                            "name": "short_name",
+                            "type": "text",
+                            "maxLength": 20,
+                            "classes": "input--w-5",
+                            "attributes": {
+                                "required": true
+                            },
+                            "label": {
+                                "text": 'Abbreviation',
+                                "description": "For example: MBS"
+                            }
+                        })
                     }}
                 {% endcall %}
-            {% endif %}
-
-            {%- call onsFieldset({
-                "legend": "Create new survey",
-                "legendClasses": "u-vh"
-                }) -%}
-                {{
-                    onsInput({
-                        "id": "long_name",
-                        "name": "long_name",
-                        "type": "text",
-                        "maxLength": 100,
-                        "attributes": {
-                            "required": true
-                        },
-                        "label": {
-                            "text": 'Survey name',
-                            "description": "For example: Monthly Business Survey"
-                        }
-                    })
-                }} 
-                {{
-                    onsInput({
-                        "id": "survey_ref",
-                        "name": "survey_ref",
-                        "type": "text",
-                        "maxLength": 20,
-                        "value": survey_ref,
-                        "classes": "input--w-5",
-                        "attributes": {
-                            "required": true
-                        },
-                        "label": {
-                            "text": 'Survey ID',
-                            "description": "For example: 001"
-                        }
-                    })
-                }} 
-                {{
-                    onsInput({
-                        "id": "short_name",
-                        "name": "short_name",
-                        "type": "text",
-                        "maxLength": 20,
-                        "classes": "input--w-5",
-                        "attributes": {
-                            "required": true
-                        },
-                        "label": {
-                            "text": 'Abbreviation',
-                            "description": "For example: MBS"
-                        }
-                    })
-                }} 
-            {% endcall %}
-            <p class="field">
-                <label class="label u-fs-r--b " for="legal_basis">
-                    Legal basis
-                </label>
-                {{ form.legal_basis(class_="input input--select", id='legal_basis', required=required) }}
-            </p>
-            <div class="field field--select u-mb-m">
-                <label class="label u-fs-r--b " for="select">
-                    Survey Mode
-                </label>
-                {{ form.survey_mode(class_="input input--select", id='survey_mode', required=required) }}
-            </div> 
-
-            <div class="grid grid--flex grid--gutterless grid--vertical-center grid--no-wrap@s u-mt-m u-mb-m">
-                <div class="grid__col">
-                    {{
-                        onsButton({
-                            "text": "Save and continue",
-                            "id": "save-btn"
-                        })
-                    }} 
+                <p class="ons-field">
+                    <label class="ons-label ons-u-fs-r--b " for="legal_basis">
+                        Legal basis
+                    </label>
+                    {{ form.legal_basis(class_="input ", id='legal_basis', required=required) }}
+                </p>
+                <div class="ons-field field--select ons-u-mb-m">
+                    <label class="ons-label ons-u-fs-r--b " for="select">
+                        Survey Mode
+                    </label>
+                    {{ form.survey_mode(class_="input ", id='survey_mode', required=required) }}
                 </div>
-                <div class="grid__col u-ml-m">
-                    <a id="cancel-btn" href="{{ url_for('surveys_bp.view_surveys') }}">Cancel</a>
+                <div class="ons-grid ons-grid--flex ons-grid--gutterless ons-grid--vertical-center ons-grid--no-wrap@s ons-u-mt-m ons-u-mb-m">
+                    <div class="ons-grid__col">
+                        {{
+                            onsButton({
+                                "text": "Save and continue",
+                                "id": "save-btn"
+                            })
+                        }}
+                    </div>
+                    <div class="ons-grid__col ons-u-ml-m">
+                        <a id="cancel-btn" href="{{ url_for('surveys_bp.view_surveys') }}">Cancel</a>
+                    </div>
                 </div>
-            </div>
-        </form>
+            </form>
+        </div>
     </div>
-</div>
 {% endblock %}

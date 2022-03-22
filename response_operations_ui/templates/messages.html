@@ -7,238 +7,231 @@
 {% set page_title = "Messages" %}
 {% set hide_breadcrumbs = true %}
 {% block main %}
-
-  {% with messages = get_flashed_messages() %}
-    {% if messages %}
-          {% call
-          onsPanel({
-              "type":"success",
-              "icon": "check",
-              "classes": "u-mb-s",
-              "bodyAttributes": {
-                 "data-qa": "success-body"
-              }
-          })
-      %}
-        {% for message in messages %}
-          <p id="flashed-message-{{ loop.index }}">{{ message }}</p>
-        {% endfor %}
-      {% endcall %}
-    {% endif %}
-  {% endwith %}
-  <div class="grid grid--flex grid--between">
-    <div class="grid__col"> 
-      {% if breadcrumbs %}
-        {% include 'layouts/configs/breadcrumbs.html' %}
-      {% endif %}
-
-      {% if change_survey %}
-        <h1 class="u-fs-l u-mb-xs" name="page-messages-title">{{ displayed_short_name }} Messages
-          <span class="u-fs-r">(<a id="change-survey" href="{{ url_for('messages_bp.select_inbox') }}">Change inbox</a>)</span>
-        </h1>
-      {% else %}
-        <h1 class="u-fs-xl" name="page-messages-title">Messages</h1>
-      {% endif %}
-        
-      {% if ru_ref_filter %}
-          <p id="clear_ru_ref" class="u-fs-s">Filtered by RU ref: {{ ru_ref_filter }}
-            <a href="{{ url_for('messages_bp.clear_filter', selected_survey=selected_survey, conversation_tab=conversation_tab) }}">Clear filter</a>
-          </p>
-      {% endif %}  
-    </div>
-    <div class="grid__col u-mt-s@s"> 
-      <form action="{{ url_for('messages_bp.view_selected_survey',selected_survey=selected_survey, conversation_tab=conversation_tab, ru_ref_filter=ru_ref_filter, business_id_filter=business_id_filter, page=page, limit=limit) }}" method="post">
-        {{ form.csrf_token }}
-        {{
-          onsInput({
-            "id": 'search-field',
-            "type": 'number',
-            "width": '6',
-            "label": 'Filter RU ref',
-            "name": 'ru_ref_filter',
-            "value": ru_ref_filter,
-            "searchButton": {
-                "text": 'Filter',
-                "id": 'btn-filter-ru',
-                "type": 'submit'
-            },
-            "charCheck": {
-                "charcheckCountdown": true,
-                "limit": 11,
-                "charCountSingular": "{x} more character needed",
-                "charCountPlural": "{x} more characters needed",
-                "charCountOverLimitSingular": "{x} character too many",
-                "charCountOverLimitPlural": "{x} characters too many"
-            }
-          })
-        }}
-      </form>  
-    </div>
-  </div>
-  <div class="grid">
-    <div class="grid__col col-12@m u-mt-s">
-        {% set nav = [] %}
-        {% for tab_key, tab_value in tab_titles.items() %}
-            {% do nav.append(
-              {
-                "title": tab_value,
-                "url": url_for('messages_bp.view_selected_survey', selected_survey=selected_survey, conversation_tab=tab_key, ru_ref_filter=ru_ref_filter, business_id_filter=business_id_filter)
-              }
-            ) %}
-        {% endfor %}
-        {{ 
-          onsSectionNavigation({
-              "id": "message-menu",
-              "ariaLabel": "Messages menu",
-              "ariraListLabel": "Navigation menu",
-              "tabQuery": tab_titles[conversation_tab]|lower if request.args.get('conversation_tab') else tab_titles['open']|lower,
-              "itemsList": nav
-          })
-        }}
-
-
-        {% if response_error %}
-          <h1 class="u-fs-l u-mt-l">Oops! Something went wrong</h1>
-          <p>
-            There's an issue with the messaging service, please try again later.
-          </p>
-          <p>
-            Until then you can still use other parts of the system.
-          </p>
-        {% else %}
-        {% if not messages %}
-          <div class="u-mt-l">
-            {% if conversation_tab == 'closed' %}
-            <p>No closed conversations</p>
-            {% elif conversation_tab == 'my messages' %}
-            <p>There are currently no messages</p>
-            {% else %}
-            <p>No new conversations</p>
+    {% with messages = get_flashed_messages() %}
+        {% if messages %}
+            {% call
+                onsPanel({
+                    "type":"success",
+                    "iconType": "check",
+                    "classes": "ons-u-mb-s",
+                    "bodyAttributes": {
+                        "data-qa": "success-body"
+                    }
+                })
+            %}
+                {% for message in messages %}
+                    <p id="flashed-message-{{ loop.index }}">{{ message }}</p>
+                {% endfor %}
+            {% endcall %}
+        {% endif %}
+    {% endwith %}
+    <div class="ons-grid ons-grid--flex ons-grid--between">
+        <div class="ons-grid__col">
+            {% if breadcrumbs %}
+                {% include 'layouts/configs/breadcrumbs.html' %}
             {% endif %}
-          </div>
-        {% else %}
 
-        {% set surveyTableData = {
-            "table_class": 'table--dense table--row-hover u-mt-m',
-            "id": 'tbl-messages',
-            "ths": [
-              { 
-                  "value": "RU Ref"
-              },
-              { 
-                  "value": "Business name"
-              },
-              { 
-                  "value": "Subject"
-              },
-              { 
-                  "value": "From"
-              },
-              { 
-                  "value": "To"
-              },
-              { 
-                  "value": "Date and time"
-              }
-            ]
-          }
-        %}
+            {% if change_survey %}
+                <h1 class="ons-u-fs-l ons-u-mb-xs" name="page-messages-title">
+                    {{ displayed_short_name }} Messages
+                    <span class="ons-u-fs-r">(<a id="change-survey" href="{{ url_for('messages_bp.select_inbox') }}">Change inbox</a>)</span>
+                </h1>
+            {% else %}
+                <h1 class="ons-u-fs-xl" name="page-messages-title">Messages</h1>
+            {% endif %}
+            {% if ru_ref_filter %}
+                <p id="clear_ru_ref" class="ons-u-fs-s">Filtered by RU ref: {{ ru_ref_filter }}
+                    <a href="{{ url_for('messages_bp.clear_filter', selected_survey=selected_survey, conversation_tab=conversation_tab) }}">Clear filter</a>
+                </p>
+            {% endif %}
+        </div>
+        <div class="ons-grid__col ons-u-mt-s@s">
+            <form action="{{ url_for('messages_bp.view_selected_survey',selected_survey=selected_survey, conversation_tab=conversation_tab, ru_ref_filter=ru_ref_filter, business_id_filter=business_id_filter, page=page, limit=limit) }}" method="post">
+                {{ form.csrf_token }}
+                {{
+                    onsInput({
+                        "id": 'search-field',
+                        "type": 'number',
+                        "width": '6',
+                        "label": 'Filter RU ref',
+                        "name": 'ru_ref_filter',
+                        "value": ru_ref_filter,
+                        "searchButton": {
+                            "text": 'Filter',
+                            "id": 'btn-filter-ru',
+                            "type": 'submit'
+                        },
+                        "charCheck": {
+                            "charcheckCountdown": true,
+                            "limit": 11,
+                            "charCountSingular": "{x} more character needed",
+                            "charCountPlural": "{x} more characters needed",
+                            "charCountOverLimitSingular": "{x} character too many",
+                            "charCountOverLimitPlural": "{x} characters too many"
+                        }
+                    })
+                }}
+            </form>
+        </div>
+    </div>
+    <div class="ons-grid">
+        <div class="ons-grid__col ons-col12@m ons-u-mt-s">
+            {% set nav = [] %}
+            {% for tab_key, tab_value in tab_titles.items() %}
+                {% do nav.append(
+                    {
+                        "title": tab_value,
+                        "url": url_for('messages_bp.view_selected_survey', selected_survey=selected_survey, conversation_tab=tab_key, ru_ref_filter=ru_ref_filter, business_id_filter=business_id_filter)
+                    }
+                ) %}
+            {% endfor %}
+            {{
+                onsSectionNavigation({
+                    "id": "message-menu",
+                    "ariaLabel": "Messages menu",
+                    "ariraListLabel": "Navigation menu",
+                    "tabQuery": tab_titles[conversation_tab]|lower if request.args.get('conversation_tab') else tab_titles['open']|lower,
+                    "itemsList": nav
+                })
+            }}
+            {% if response_error %}
+                <h1 class="ons-u-fs-l ons-u-mt-l">Oops! Something went wrong</h1>
+                <p>There's an issue with the messaging service, please try again later.</p>
+                <p>Until then you can still use other parts of the system.</p>
+            {% else %}
+                {% if not messages %}
+                    <div class="ons-u-mt-l">
+                        {% if conversation_tab == 'closed' %}
+                            <p>No closed conversations</p>
+                        {% elif conversation_tab == 'my messages' %}
+                            <p>There are currently no messages</p>
+                        {% else %}
+                            <p>No new conversations</p>
+                        {% endif %}
+                    </div>
+                {% else %}
 
-        {% set surveyTableDataRows = [] %}
+                    {% set surveyTableData = {
+                        "tableClasses": 'ons-u-mt-m',
+                        "variants": ['compact', 'row-hover'],
+                        "id": 'tbl-messages',
+                        "ths": [
+                            {
+                                "value": "RU Ref"
+                            },
+                            {
+                                "value": "Business name"
+                            },
+                            {
+                                "value": "Subject"
+                            },
+                            {
+                                "value": "From"
+                            },
+                            {
+                                "value": "To"
+                            },
+                            {
+                                "value": "Date and time"
+                            }
+                        ]
+                    } %}
 
-        {% for message in messages %}
-          {% if message.ru_ref and message.unread %}
-            {% set ruRef = '<span class="status status--info status--small u-fw-b">' + message.ru_ref + '</span>' %}
-          {% elif message.ru_ref %}
-            {% set ruRef = message.ru_ref %}
-          {% else %}
-            {% set ruRef = 'Unavailable' %}
-          {% endif %}
-          {% if message.business_name and message.unread %}
-            {% set businessName = '<span class="u-fw-b">' + message.business_name + '</span>' %}
-          {% elif message.business_name %}
-            {% set businessName = message.business_name %}
-          {% else %}
-            {% set businessName = 'Unavailable' %}
-          {% endif %}
-          {% if message.from and message.unread %}
-            {% set fromValue = '<span class="u-fw-b">' + message.from + '</span>' %}
-          {% elif message.from %}
-            {% set fromValue = message.from %}
-          {% else %}
-            {% set fromValue = 'Unavailable' %}
-          {% endif %}
-          {% if message.to and message.unread %}
-            {% set toValue = '<span class="u-fw-b">' + message.to + '</span>' %}
-          {% elif message.to %}
-            {% set toValue = message.to %}
-          {% else %}
-            {% set toValue = 'Unavailable' %}
-          {% endif %}
-          {% if message.sent_date and message.unread %}
-            {% set sentDate = '<span class="u-fw-b">' + message.sent_date + '</span>' %}
-          {% elif message.sent_date %}
-            {% set sentDate = message.sent_date %}
-          {% else %}
-            {% set sentDate = 'Unavailable' %}
-          {% endif %}
+                    {% set surveyTableDataRows = [] %}
 
-          {% do surveyTableDataRows.append(
-            {
-              "name": 'message-unread' if message.unread else 'message',
-              "id": 'message-' + loop.index|string,
-              "classes": 'u-fw-b' if message.unread else '',
-              "tds": [
-                {
-                  "value": ruRef,
-                  "data": "RU Ref",
-                  "name": "tbl-messages-RU_Ref",
-                  "id": 'ru-ref-' + loop.index|string
-                },
-                {
-                  "value": businessName,
-                  "data": "Business name",
-                  "name": "tbl-messages-business",
-                  "id": 'business-name-' + loop.index|string
-                },
-                {
-                  "value": '<span class="u-fw-b"><a href="' + url_for('messages_bp.view_conversation', thread_id=message.thread_id, page=page, conversation_tab=conversation_tab, ru_ref_filter=ru_ref_filter, business_id_filter=business_id_filter) +'#latest-message" id="message-link-' + loop.index|string + '">' + message.subject + '</a></span>' if message.unread else '<a href="' + url_for('messages_bp.view_conversation', thread_id=message.thread_id, page=page, conversation_tab=conversation_tab, ru_ref_filter=ru_ref_filter, business_id_filter=business_id_filter) +'#latest-message" id="message-link-' + loop.index|string + '">' + message.subject + '</a>',
-                  "data": "Subject",
-                  "name": "tbl-messages-subject"
-                },
-                {
-                  "value": fromValue if message.from else 'Unavailable',
-                  "data": "From",
-                  "name": "tbl-messages-from",
-                  "id": 'messages-from-' + loop.index|string
-                },
-                {
-                  "value": toValue if message.to else 'Unavailable',
-                  "data": "To",
-                  "name": "tbl-messages-to",
-                  "id": 'messages-to-' + loop.index|string
-                },
-                {
-                  "value": sentDate if message.sent_date else 'Unavailable',
-                  "data": "Date and time",
-                  "name": "tbl-messages-received",
-                  "id": 'messages-time-' + loop.index|string
-                }
-              ]
-            }
-          ) %}
-        {% endfor %}
+                    {% for message in messages %}
+                        {% if message.ru_ref and message.unread %}
+                            {% set ruRef = '<span class="ons-status ons-status--info ons-status--small ons-u-fw-b">' + message.ru_ref + '</span>' %}
+                        {% elif message.ru_ref %}
+                            {% set ruRef = message.ru_ref %}
+                        {% else %}
+                            {% set ruRef = 'Unavailable' %}
+                        {% endif %}
+                        {% if message.business_name and message.unread %}
+                            {% set businessName = '<span class="ons-u-fw-b">' + message.business_name + '</span>' %}
+                        {% elif message.business_name %}
+                            {% set businessName = message.business_name %}
+                        {% else %}
+                            {% set businessName = 'Unavailable' %}
+                        {% endif %}
+                        {% if message.from and message.unread %}
+                            {% set fromValue = '<span class="ons-u-fw-b">' + message.from + '</span>' %}
+                        {% elif message.from %}
+                            {% set fromValue = message.from %}
+                        {% else %}
+                            {% set fromValue = 'Unavailable' %}
+                        {% endif %}
+                        {% if message.to and message.unread %}
+                            {% set toValue = '<span class="ons-u-fw-b">' + message.to + '</span>' %}
+                        {% elif message.to %}
+                            {% set toValue = message.to %}
+                        {% else %}
+                            {% set toValue = 'Unavailable' %}
+                        {% endif %}
+                        {% if message.sent_date and message.unread %}
+                            {% set sentDate = '<span class="ons-u-fw-b">' + message.sent_date + '</span>' %}
+                        {% elif message.sent_date %}
+                            {% set sentDate = message.sent_date %}
+                        {% else %}
+                            {% set sentDate = 'Unavailable' %}
+                        {% endif %}
 
-        {% do surveyTableData | setAttribute("trs", surveyTableDataRows) %}
+                        {% do surveyTableDataRows.append(
+                            {
+                                "name": 'message-unread' if message.unread else 'message',
+                                "id": 'message-' + loop.index|string,
+                                "classes": 'ons-u-fw-b' if message.unread else '',
+                                "tds": [
+                                    {
+                                        "value": ruRef,
+                                        "data": "RU Ref",
+                                        "name": "tbl-messages-RU_Ref",
+                                        "id": 'ru-ref-' + loop.index|string
+                                    },
+                                    {
+                                        "value": businessName,
+                                        "data": "Business name",
+                                        "name": "tbl-messages-business",
+                                        "id": 'business-name-' + loop.index|string
+                                    },
+                                    {
+                                        "value": '<span class="ons-u-fw-b"><a href="' + url_for('messages_bp.view_conversation', thread_id=message.thread_id, page=page, conversation_tab=conversation_tab, ru_ref_filter=ru_ref_filter, business_id_filter=business_id_filter) +'#latest-message" id="message-link-' + loop.index|string + '">' + message.subject + '</a></span>' if message.unread else '<a href="' + url_for('messages_bp.view_conversation', thread_id=message.thread_id, page=page, conversation_tab=conversation_tab, ru_ref_filter=ru_ref_filter, business_id_filter=business_id_filter) +'#latest-message" id="message-link-' + loop.index|string + '">' + message.subject + '</a>',
+                                        "data": "Subject",
+                                        "name": "tbl-messages-subject"
+                                    },
+                                    {
+                                        "value": fromValue if message.from else 'Unavailable',
+                                        "data": "From",
+                                        "name": "tbl-messages-from",
+                                        "id": 'messages-from-' + loop.index|string
+                                    },
+                                    {
+                                        "value": toValue if message.to else 'Unavailable',
+                                        "data": "To",
+                                        "name": "tbl-messages-to",
+                                        "id": 'messages-to-' + loop.index|string
+                                    },
+                                    {
+                                        "value": sentDate if message.sent_date else 'Unavailable',
+                                        "data": "Date and time",
+                                        "name": "tbl-messages-received",
+                                        "id": 'messages-time-' + loop.index|string
+                                    }
+                                ]
+                            }
+                        ) %}
+                    {% endfor %}
 
-        {{
-          onsTable(surveyTableData)
-        }}
+                    {% do surveyTableData | setAttribute("trs", surveyTableDataRows) %}
 
-        {% endif %}
-        {{ pagination.links }}
+                    {{
+                        onsTable(surveyTableData)
+                    }}
 
-        {% endif %}
-      </div>
+                {% endif %}
+                {{ pagination.links }}
+
+            {% endif %}
+        </div>
     </div>
 {% endblock %}

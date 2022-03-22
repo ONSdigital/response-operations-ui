@@ -8,131 +8,130 @@
 {% set page_title = 'Change response status for ' ~ ru_name ~ ' ('~ru_ref~') for survey ' ~  survey_id ~ ' ' ~ survey_name ~ ' period ' ~ ce_period %}
 {%- block main %}
 
-  <div class="grid grid--gutterless">
-      <div class="grid__col col-8@m">
+    <div class="ons-grid ons-grid--gutterless">
+        <div class="ons-grid__col ons-col8@m">
             {% if is_complete %}
-                <h1 class="u-mt-m u-fs-xl">Response status</h1>
+                <h1 class="ons-u-mt-m ons-u-fs-xl">Response status</h1>
             {% else %}
-                <h1 class="u-mt-m u-fs-xl">Change response status</h1>
+                <h1 class="ons-u-mt-m ons-u-fs-xl">Change response status</h1>
             {% endif %}
-          {{ 
-              onsMetadata({
-              "termCol": "3",
-              "descriptionCol": "9",
-              "itemsList": [
-                  {
-                      "term": "Reference:",
-                      "descriptions": [ 
-                          {
-                              "description": ru_ref
-                          }
-                      ]
-                  },
-                  {
-                      "term": "Name:",
-                      "descriptions": [ 
-                          {
-                              "description": ru_name
-                          }                
-                      ]
-                  },
-                  {
-                      "term": "Trading as:",
-                      "descriptions": [ 
-                          {
-                              "description": trading_as
-                          }                
-                      ]
-                  },
-                  {
-                      "term": "Survey:",
-                      "descriptions": [ 
-                          {
-                              "description": survey_ref ~ ' ' ~ survey_short_name,
-                              "id": "survey"
-                          }                
-                      ]
-                  },
-                  {
-                      "term": "Period:",
-                      "descriptions": [ 
-                          {
-                              "description": ce_period,
-                              "id": "period"
-                          }                
-                      ]
-                  },
-                  {
-                      "term": "Current status:",
-                      "descriptions": [ 
-                          {
-                              "description": case_group_status,
-                              "id": "current-status"
-                          }                
-                      ]
-                  },
-                  {
-                      "term": "Date and time:" if is_complete,
-                      "descriptions": [ 
-                          {
-                              "description": completed_timestamp if is_complete,
-                              "id": "date-and-time"
-                          }                
-                      ]
-                  },
-                  {
-                      "term": "Respondent:",
-                      "descriptions": [ 
-                          {
-                              "description": completed_respondent,
-                              "id": "completed-respondent"
-                          }                
-                      ]
-                  }                                                 
-              ]
-              }) 
-          }}
-          {% if is_complete %}
-              <a href="{{ request.referrer }}" id="close-response">Close</a>
-          {% else %}
-            <form action="{{ url_for('case_bp.update_response_status', ru_ref=ru_ref, survey=survey_short_name, case_group_id=case_group_id, period=ce_period) }}" method="post" class="u-mt-s">
-                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
-                {% set radioComponent = {
-                    "legend": "Change response status",
-                    "name": "event"
-                } %}
-
-                {% set radios = [] %}                
-                {% for event, status in statuses.items() %}
-                    {% do radios.append(
+            {{
+                onsMetadata({
+                    "termCol": "3",
+                    "descriptionCol": "9",
+                    "itemsList": [
                         {
-                            "id": 'state-' ~ loop.index,
-                            "label": {
-                                "text": status
-                            },
-                            "value": event
+                            "term": "Reference:",
+                            "descriptions": [
+                                {
+                                    "description": ru_ref
+                                }
+                            ]
+                        },
+                        {
+                            "term": "Name:",
+                            "descriptions": [
+                                {
+                                    "description": ru_name
+                                }
+                            ]
+                        },
+                        {
+                            "term": "Trading as:",
+                            "descriptions": [
+                                {
+                                    "description": trading_as
+                                }
+                            ]
+                        },
+                        {
+                            "term": "Survey:",
+                            "descriptions": [
+                                {
+                                    "description": survey_ref ~ ' ' ~ survey_short_name,
+                                    "id": "survey"
+                                }
+                            ]
+                        },
+                        {
+                            "term": "Period:",
+                            "descriptions": [
+                                {
+                                    "description": ce_period,
+                                    "id": "period"
+                                }
+                            ]
+                        },
+                        {
+                            "term": "Current status:",
+                            "descriptions": [
+                                {
+                                    "description": case_group_status,
+                                    "id": "current-status"
+                                }
+                            ]
+                        },
+                        {
+                            "term": "Date and time:" if is_complete,
+                            "descriptions": [
+                                {
+                                    "description": completed_timestamp if is_complete,
+                                    "id": "date-and-time"
+                                }
+                            ]
+                        },
+                        {
+                            "term": "Respondent:",
+                            "descriptions": [
+                                {
+                                    "description": completed_respondent,
+                                    "id": "completed-respondent"
+                                }
+                            ]
                         }
-                    ) %}
-                {% endfor %}
+                    ]
+                })
+            }}
+            {% if is_complete %}
+                <a href="{{ request.referrer }}" id="close-response">Close</a>
+            {% else %}
+                <form action="{{ url_for('case_bp.update_response_status', ru_ref=ru_ref, survey=survey_short_name, case_group_id=case_group_id, period=ce_period) }}" method="post" class="ons-u-mt-s">
+                    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}" />
+                    {% set radioComponent = {
+                        "legend": "Change response status",
+                        "name": "event"
+                    } %}
 
-                {% do radioComponent | setAttribute("radios", radios) %}
-            
-                {{
-                    onsRadios(radioComponent)
-                }}
+                    {% set radios = [] %}
+                    {% for event, status in statuses.items() %}
+                        {% do radios.append(
+                            {
+                                "id": 'state-' ~ loop.index,
+                                "label": {
+                                    "text": status
+                                },
+                                "value": event
+                            }
+                        ) %}
+                    {% endfor %}
 
-                {{
-                    onsButton({
-                        "classes": "u-mb-s u-mt-l",
-                        "text": "Confirm",
-                        "id": "response-status-change-confirm-button"
-                    })
-                }}   
-              <p>
-                <a href="{{ request.referrer }}" id="cancel-change">Cancel</a>
-              </p>
-          </form>
-        {% endif %}
+                    {% do radioComponent | setAttribute("radios", radios) %}
+                    {{
+                        onsRadios(radioComponent)
+                    }}
+
+                    {{
+                        onsButton({
+                            "classes": "ons-u-mb-s ons-u-mt-l",
+                            "text": "Confirm",
+                            "id": "response-status-change-confirm-button"
+                        })
+                    }}
+                    <p>
+                        <a href="{{ request.referrer }}" id="cancel-change">Cancel</a>
+                    </p>
+                </form>
+            {% endif %}
         </div>
     </div>
     <script{% if csp_nonce %} nonce="{{ csp_nonce() }}"{% endif %}>

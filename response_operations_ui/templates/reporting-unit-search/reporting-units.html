@@ -9,11 +9,10 @@
     <h1>Reporting units</h1>
     <form action="{{ url_for('reporting_unit_bp.search_redirect') }}" method="post">
         {{ form.csrf_token }}
-        <p class="field u-mb-s">
-            <label for="query" class="label">Type a reference or company name</label>
-            {{ form.query(size=20, class_="ru-search-box input input--text", id="query")}}
+        <p class="ons-field ons-u-mb-s">
+            <label for="query" class="ons-label">Type a reference or company name</label>
+            {{ form.query(size=20, class_="ru-search-box ons-input ons-input--text", id="query")}}
         </p>
-
         {{
             onsButton({
                 "text": "Search",
@@ -23,61 +22,57 @@
         }}
     </form>
     {% if not total_business_count %}
-        <p class="u-mt-m">No results found</p>
+        <p class="ons-u-mt-m">No results found</p>
     {% elif total_business_count > max_rec %}
-        <h3 class="u-mt-l">The search results is too big to be displayed.</h3>
-        <h4 class="u-mt-m">We found {{ total_business_count }} records against the search criteria.</h4> 
-        <h4 class="u-mt-m">Please refine your search by adding more keywords/information.</h4>
+        <h3 class="ons-u-mt-l">The search results is too big to be displayed.</h3>
+        <h4 class="ons-u-mt-m">We found {{ total_business_count }} records against the search criteria.</h4>
+        <h4 class="ons-u-mt-m">Please refine your search by adding more keywords/information.</h4>
     {% else %}
-        <section class="u-mt-m">
+        <section class="ons-u-mt-m">
             {% set surveyTableData = {
-                "table_class": 'table--dense',
+                "variants": 'compact',
                 "id": 'tbl-businesses',
                 "ths": [
-                    { 
+                    {
                         "value": "RU reference"
                     },
-                    { 
+                    {
                         "value": "Name"
                     },
-                    { 
+                    {
                         "value": "Trading as"
                     }
                 ]
-                }
-            %}
+            } %}
 
             {% set surveyTableDataRows = [] %}
             {% for business in business_list %}
                 {% do surveyTableDataRows.append(
                     {
                         "tds": [
-                        {
-                            "value": '<a href="/reporting-units/' + business.ruref + '" name="details-link-' + business.ruref + '">' + business.ruref + '</a>'
-                        },
-                        {
-                            "value": business.name
-                        },
-                        {
-                            "value": business.trading_as
-                        }
+                            {
+                                "value": '<a href="/reporting-units/' + business.ruref + '" name="details-link-' + business.ruref + '">' + business.ruref + '</a>'
+                            },
+                            {
+                                "value": business.name
+                            },
+                            {
+                                "value": business.trading_as
+                            }
                         ]
                     }
-                    ) %}
-
+                ) %}
             {% endfor %}
 
             {% do surveyTableData | setAttribute("trs", surveyTableDataRows) %}
-            {{
-                onsTable(surveyTableData)
-            }}
+            {{ onsTable(surveyTableData) }}
         </section>
         {% if total_business_count == 1  %}
-            <h2 class="u-fs-l">{{ total_business_count }} Result found</h2>
-        {%  else %}    
-            <h2 class="u-fs-l">{{ total_business_count }} Results found</h2>
+            <h2 class="ons-u-fs-l">{{ total_business_count }} Result found</h2>
+        {%  else %}
+            <h2 class="ons-u-fs-l">{{ total_business_count }} Results found</h2>
         {% endif %}
-        <h3 class="u-mb-m">Displaying <strong>{{ first_index }} - {{ last_index }}</strong> of <strong>{{ total_business_count }}</strong> </h3>
+        <h3 class="ons-u-mb-m">Displaying <strong>{{ first_index }} - {{ last_index }}</strong> of <strong>{{ total_business_count }}</strong></h3>
         {% if show_pagination %}{% include 'respondent-search/rs-pagination.html' %}{% endif %}
-    {%  endif %}
+    {% endif %}
 {% endblock %}

@@ -7,94 +7,93 @@
 {% from "components/textarea/_macro.njk" import onsTextarea %}
 {% set page_title = 'Template Edit' %}
 {% block main %}
-  <div class="grid grid--gutterless">
-    <div class="grid__col col-8@m">
-      <h1>Edit message template</h1>
-      <form action="{{ url_for('admin_bp.get_post_edit_template', banner_id=banner.id) }}" method="post">
-          {{ form.csrf_token }}
-          {% if errors %}
-              {% set errorData = [] %}
-              {% call
-                  onsPanel({
-                      "type":"error",
-                      "id": "save-error",
-                      "classes": "u-mb-s",
-                      "title": "This page has 1 error" if errors|length == 1 else "There are " + errors|length|string + " errors on this page"
-                  })
-              %}
-                  {% for field, error_list in errors %}
-                      {% do errorData.append(
-                          {
-                              "text": ', '.join(error_list),
-                              "index": true
-                          }
-                      ) %}
-                  {% endfor %}
-                  {{
-                      onsList({
-                          "classes": "list--bare",
-                          "itemsList": errorData
-                      })
-                  }}
-              {% endcall %}
-          {% endif %}
-          {% set titleError = { "text": form.title.errors[0], "id": "title-panel" } %}
-          {{
-              onsInput({
-                  "id": "banner",
-                  "name": "title",
-                  "type": "text",
-                  "label": {
-                      "text": 'Message template title'
-                  },
-                  "error": titleError if form.title.errors,
-                  "value": banner.title
-              })
-          }}
-          {% set bannerError = { "text": form.banner.errors[0], "id": "banner-panel" } %}
-          {{
-              onsTextarea({
-                  "id": "banner-text",
-                  "name": "banner",
-                  "label": {
-                      "text": "Message"
-                  },
-                  "charCheckLimit": '50000',
-                  "error": bannerError if form.banner.errors,
-                  "value": banner.content
-              })
-          }}
-          {{
-              onsCheckboxes({
-                  "dontWrap": false,
-                  "legend": "Select to delete this template",
-                  "checkboxes": [
-                      {
-                          "id": "delete-banner",
-                          "name": "delete",
-                          "label": {
-                              "text": "Delete template"
-                          },
-                          "value": "y"
-                      }
-                  ]
-              })
-          }}
-         <div class="grid grid--flex grid--gutterless grid--vertical-center grid--no-wrap@s u-mt-m u-mb-m">
-           <div class="grid__col">
-              {{
-                  onsButton({
-                      "classes": "btn-group__btn",
-                      "text": "Done",
-                      "id": "save-btn"
-                  })
-              }}
-           </div>
-           <div class="grid__col u-ml-m">
-             <a href="{{ url_for('admin_bp.manage_alert')}}">Cancel</a>
-           </div>
-         </div>
-      </form>
+    <div class="ons-grid ons-grid--gutterless">
+        <div class="ons-grid__col ons-col8@m">
+            <h1>Edit message template</h1>
+            <form action="{{ url_for('admin_bp.get_post_edit_template', banner_id=banner.id) }}" method="post">
+                {{ form.csrf_token }}
+                {% if errors %}
+                    {% set errorData = [] %}
+                    {% call
+                        onsPanel({
+                            "type":"error",
+                            "id": "save-error",
+                            "classes": "ons-u-mb-s",
+                            "title": "This page has 1 error" if errors|length == 1 else "There are " + errors|length|string + " errors on this page"
+                        })
+                    %}
+                        {% for field, error_list in errors %}
+                            {% do errorData.append(
+                                {
+                                    "text": ', '.join(error_list),
+                                    "index": true
+                                }
+                            ) %}
+                        {% endfor %}
+                        {{
+                            onsList({
+                                "classes": "ons-list--bare",
+                                "itemsList": errorData
+                            })
+                        }}
+                    {% endcall %}
+                {% endif %}
+                {% set titleError = { "text": form.title.errors[0], "id": "title-panel" } %}
+                {{
+                    onsInput({
+                        "id": "banner",
+                        "name": "title",
+                        "type": "text",
+                        "label": {
+                            "text": 'Message template title'
+                        },
+                        "error": titleError if form.title.errors,
+                        "value": banner.title
+                    })
+                }}
+                {% set bannerError = { "text": form.banner.errors[0], "id": "banner-panel" } %}
+                {{
+                    onsTextarea({
+                        "id": "banner-text",
+                        "name": "banner",
+                        "label": {
+                            "text": "Message"
+                        },
+                        "charCheckLimit": '50000',
+                        "error": bannerError if form.banner.errors,
+                        "value": banner.content
+                    })
+                }}
+                {{
+                    onsCheckboxes({
+                        "dontWrap": false,
+                        "legend": "Select to delete this template",
+                        "checkboxes": [
+                            {
+                                "id": "delete-banner",
+                                "name": "delete",
+                                "label": {
+                                    "text": "Delete template"
+                                },
+                                "value": "y"
+                            }
+                        ]
+                    })
+                }}
+                <div class="ons-grid ons-grid--flex ons-grid--gutterless ons-grid--vertical-center ons-grid--no-wrap@s ons-u-mt-m ons-u-mb-m">
+                    <div class="ons-grid__col">
+                        {{
+                            onsButton({
+                                "text": "Done",
+                                "id": "save-btn"
+                            })
+                        }}
+                    </div>
+                    <div class="ons-grid__col ons-u-ml-m">
+                        <a href="{{ url_for('admin_bp.manage_alert')}}">Cancel</a>
+                    </div>
+                </div>
+            </form>
+        </div>
     </div>
-  </div>
 {% endblock %}
