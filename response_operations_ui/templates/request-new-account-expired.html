@@ -3,7 +3,7 @@
 
 {% block main %}
     <div class="ons-grid">
-        <div class="ons-grid__col ons-col8@m ons-u-mt-m">
+        <div class="ons-grid__col ons-col-8@m ons-u-mt-m">
             <h1 class="ons-u-mt-l">Your link has expired</h1>
             <p>
                 You can <a href="{{ url_for('account_bp.resend_account_email_expired_token', token=token) }}">request another account creation email</a> or

@@ -8,7 +8,7 @@
 {% set page_title = 'Template Edit' %}
 {% block main %}
     <div class="ons-grid ons-grid--gutterless">
-        <div class="ons-grid__col ons-col8@m">
+        <div class="ons-grid__col ons-col-8@m">
             <h1>Edit message template</h1>
             <form action="{{ url_for('admin_bp.get_post_edit_template', banner_id=banner.id) }}" method="post">
                 {{ form.csrf_token }}

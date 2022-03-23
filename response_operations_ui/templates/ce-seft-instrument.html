@@ -8,7 +8,7 @@
 
 {% block main %}
     <h1 name="page-survey-title" class="ons-u-mb-l">Load Collection instruments for {{survey.shortName}} {{period}}</h1>
-    <div class="ons-u-mb-l ons-col6@l">
+    <div class="ons-u-mb-l ons-col-6@l">
         {% include 'collection_exercise/ce-success-panel.html' %}
         {% include 'collection_exercise/ce-handle-errors.html' %}
         {% include 'collection_exercise/ce-info-panel.html' %}
@@ -49,7 +49,7 @@
             </div>
         </form>
     </div>
-    <div class="ons-u-mb-l ons-col6@m">
+    <div class="ons-u-mb-l ons-col-6@m">
         {% if collection_instruments %}
             <label class="ons-label ons-u-fs-m">{{ collection_instruments | length }} Collection instruments</label>
             <section class="ce-section">

@@ -8,7 +8,7 @@
 {% set page_title = 'Create event date' %}
 {% block main %}
     <div class="ons-grid ons-grid--gutterless">
-        <div class="ons-grid__col ons-col8@m">
+        <div class="ons-grid__col ons-col-8@m">
             {%- with errors = get_flashed_messages(category_filter=["error"]) -%}
                 {%- if errors -%}
                     {% set errorLength = errors|length %}
@@ -18,7 +18,7 @@
                             "title": "This page has 1 error" if errorLength == 1 else "There are " ~ errorLength ~ " errors on this page",
                             "classes": "ons-u-mb-s",
                             "id": "save-error"
-                    })
+                        })
                     %}
                         {% set errorData = [] %}
                         {% for message in errors %}
@@ -84,6 +84,7 @@
                 %}
                     {{
                         onsList({
+                            "element": 'ol',
                             "itemsList": listData
                         })
                     }}
@@ -92,7 +93,7 @@
             <form method="post" action="{{ url_for('collection_exercise_bp.create_collection_exercise_event', short_name=short_name, period=period, ce_id=ce_id, tag=tag)}}">
                 <div class="date-time-editor">
                     {{ form.csrf_token }}
-                    <fieldset class="fieldgroup fieldgroup--inline fieldgroup--date" data-qa="widget-date" role="group">
+                    <fieldset class="fieldgroup fieldgroup--inline fieldgroup--date ons-u-mb-m" data-qa="widget-date" role="group">
                         <legend class="fieldgroup__title ons-u-fs-r--b ons-u-mb-xs">Enter a date</legend>
                         <div class="ons-field-group">
                             <div class="ons-field field--input">
@@ -125,17 +126,20 @@
                         </fieldset>
                     {% endif %}
                 </div>
-                {{
-                    onsButton({
-                        "classes": "ons-u-mb-s",
-                        "text": "Save",
-                        "id": "submit",
-                        "name": "submit"
-                    })
-                }}
-                <p>
-                    <a href=" {{ url_for('collection_exercise_bp.view_collection_exercise', short_name=survey.shortName, period=period) }}">Cancel</a>
-                </p>
+                <div class="ons-grid ons-grid--flex ons-grid--gutterless ons-grid--vertical-center ons-grid--no-wrap@s ons-u-mt-m ons-u-mb-m">
+                    <div class="ons-grid__col">
+                        {{
+                            onsButton({
+                                "text": "Save",
+                                "id": "submit",
+                                "name": "submit"
+                            })
+                        }}
+                    </div>
+                    <div class="ons-grid__col ons-u-ml-m">
+                        <a href="{{ url_for('collection_exercise_bp.view_collection_exercise', short_name=survey.shortName, period=period) }}">Cancel</a>
+                    </div>
+                </div>
             </form>
         </div>
     </div>

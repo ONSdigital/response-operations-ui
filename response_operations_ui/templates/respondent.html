@@ -9,7 +9,7 @@
     <section>
         <h1 id="respondent-name">{{ respondent.firstName }} {{ respondent.lastName }}</h1>
         <div class="ons-grid ons-grid--gutterless">
-            <div class="ons-grid__col ons-col10@m">
+            <div class="ons-grid__col ons-col-10@m">
                 {% set accountStatus %}
                     {% if respondent.status  == 'Suspended' %} Locked {% else %} {{ respondent.status }} {% endif %}
                     <br>

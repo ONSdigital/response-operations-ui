@@ -10,7 +10,7 @@
 
 {% block main %}
     <div class="ons-grid">
-        <div class="ons-grid__col ons-col8@m ons-u-mt-m">
+        <div class="ons-grid__col ons-col-8@m ons-u-mt-m">
             {% if errorType %}
                 {% set error_count = data['error'] | length %}
                 {% set plural_suffix = 's' if error_count > 1 else '' %}

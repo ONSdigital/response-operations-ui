@@ -7,15 +7,15 @@
 {% set page_title = 'Edit collection exercise details' %}
 {% block main %}
     <div class="ons-grid ons-grid--gutterless">
-        <div class="ons-grid__col ons-col8@m">
+        <div class="ons-grid__col ons-col-8@m">
             {% if errors %}
                 {% call
-                onsPanel({
-                    "type":"error",
-                    "title": "This page has 1 error",
-                    "classes": "ons-u-mb-s",
-                    "id": "save-error"
-                })
+                    onsPanel({
+                        "type":"error",
+                        "title": "This page has 1 error",
+                        "classes": "ons-u-mb-s",
+                        "id": "save-error"
+                    })
                 %}
                     {% if form.errors.period[1] == 'Please enter numbers only for the period' %}
                         <p>{{form.period.errors[1]}}</p>
@@ -81,18 +81,20 @@
                 {% endif %}
                 {{ form.collection_exercise_id(value=collection_exercise_id, id='collection_exercise_id') }}
                 {{ form.hidden_survey_id(value=survey_id, id='survey_id') }}
-                {{
-                    onsButton({
-                        "text": "Save",
-                        "id": "save-btn",
-                        "type": "submit",
-                        "classes": "ons-u-mb-s ons-u-mt-l",
-                        "submitType": "timer"
-                    })
-                }}
-                <p>
-                    <a id="cancel-btn" href="{{ url_for('collection_exercise_bp.view_collection_exercise', short_name=short_name, period=period) }}">Cancel</a>
-                </p>
+                <div class="ons-grid ons-grid--flex ons-grid--gutterless ons-grid--vertical-center ons-grid--no-wrap@s ons-u-mt-m ons-u-mb-m">
+                    <div class="ons-grid__col">
+                        {{
+                            onsButton({
+                                "text": "Save",
+                                "id": "save-btn",
+                                "name": "submit"
+                            })
+                        }}
+                    </div>
+                    <div class="ons-grid__col ons-u-ml-m">
+                        <a id="cancel-btn" href="{{ url_for('collection_exercise_bp.view_collection_exercise', short_name=short_name, period=period) }}">Cancel</a>
+                    </div>
+                </div>
             </form>
         </div>
     </div>
