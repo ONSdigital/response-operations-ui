@@ -11,7 +11,7 @@
           {% call
            onsPanel({
                 "type": "error",
-                "classes": "u-mb-s",
+                "classes": "ons-u-mb-l",
                 "title":  errorTitle
             })
       %}
@@ -34,13 +34,16 @@
               "name": 'user_search',
               "value": user_search,
               "label": {
-                "text": 'example@ons.gov.uk'
+                "text": ('example@ons.gov.uk' if search_email == None else search_email),
+                
+                "classes": 'ons-u-pb-xs'
               },
               "accessiblePlaceholder": true,
               "searchButton": {
-                  "text": "search",
+                  "text": "Search",
                   "id": 'btn-user-search',
-                  "type": 'submit'
+                  "type": 'submit',
+                  "iconType": 'search'
               }
             })
           }}
@@ -54,9 +57,8 @@
             </p>
         </div>
   </div>
-  
-
-  <table width="100%" style="border-collapse: collapse; table-layout: fixed;">
+  {% if user_list is defined and user_list|length > 0 %}
+    <table width="100%" style="border-collapse: collapse; table-layout: fixed;">
     <tr>
       <th style="border-bottom:0; font-weight:normal; text-align: left; padding:0"><a href="{{ url_for('admin_bp.manage_user_accounts', user_with_email='A') }}">A</a></th>
       <th style="border-bottom:0; font-weight:normal; text-align: left; padding:0"><a href="{{ url_for('admin_bp.manage_user_accounts', user_with_email='B') }}">B</a></th>
@@ -104,8 +106,8 @@
                 ]
                 }
             %}
-
-            {% set userTableDataRows = [] %}
+            
+              {% set userTableDataRows = [] %}
             {% for user in user_list %}
                 {% do userTableDataRows.append(
                     {
@@ -129,11 +131,14 @@
                     ) %}
 
             {% endfor %}
-
+            
             {% do userTableData | setAttribute("trs", userTableDataRows) %}
             {{
                 onsTable(userTableData)
             }}
         </section>
         {% if show_pagination %}{% include 'respondent-search/rs-pagination.html' %}{% endif %}
+  {% else %}
+    <p class="u-mt-m">No results found</p>
+  {% endif %}
 {% endblock %}

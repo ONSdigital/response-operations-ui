@@ -33,6 +33,7 @@ def manage_user_accounts():
     offset = (int(page) - 1) * limit
     query = None
     form = UserSearchForm()
+    search_email = None
     if user_with_email is not None:
         query = get_filter_query("starts with", user_with_email, "emails.value")
     if form.validate_on_submit():
@@ -61,6 +62,7 @@ def manage_user_accounts():
         pagination=pagination,
         show_pagination=bool(uaa_user_list["totalResults"] > limit),
         form=form,
+        search_email=search_email,
     )
 
 
