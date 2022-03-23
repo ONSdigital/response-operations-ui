@@ -74,7 +74,7 @@ class TestSignIn(unittest.TestCase):
         response = self.client.post("/sign-in", follow_redirects=True, data={"username": "user", "password": "pass"})
 
         self.assertEqual(response.status_code, 200)
-        self.assertIn("Choose a survey".encode(), response.data)
+        self.assertIn("Online Business Surveys".encode(), response.data)
         self.assertIn("Sign out".encode(), response.data)
         # Uncomment once my account link is made visible again
         # self.assertIn("My account".encode(), response.data)
@@ -128,7 +128,7 @@ class TestSignIn(unittest.TestCase):
         mock_request.get(url_permission_url, json=user_permission_admin_json, status_code=200)
         response = self.client.post("/sign-in", follow_redirects=True, data={"username": "user", "password": "pass"})
 
-        self.assertIn("Choose a survey".encode(), response.data)
+        self.assertIn("Online Business Surveys".encode(), response.data)
 
         # First test that we hit a redirect
         response = self.client.get("/sign-in")
@@ -137,7 +137,7 @@ class TestSignIn(unittest.TestCase):
         # Then test that the redirect takes you to the home page.
         response = self.client.get("/sign-in", follow_redirects=True)
         self.assertEqual(response.status_code, 200)
-        self.assertIn("Choose a survey".encode(), response.data)
+        self.assertIn("Online Business Surveys".encode(), response.data)
 
     @requests_mock.mock()
     def test_sign_in_next_url(self, mock_request):
