@@ -10,10 +10,6 @@
   {% if hasPermission('users.admin') %}
     {% do navigation | setAttribute("itemsList", [
       {
-        "title": "Home",
-        "url": "/choose-overview-survey"
-      },
-      {
         "title": "Surveys",
         "url": "/surveys/"
       },
@@ -39,10 +35,6 @@
     %}
   {% else %}
     {% do navigation | setAttribute("itemsList", [
-      {
-        "title": "Home",
-        "url": "/choose-overview-survey"
-      },
       {
         "title": "Surveys",
         "url": "/surveys/"
