@@ -2,7 +2,7 @@ import logging
 
 from flask import Blueprint
 from flask import current_app as app
-from flask import redirect, render_template, request, session, url_for
+from flask import redirect, render_template, session, url_for
 from flask_login import login_required
 from requests.exceptions import ConnectionError, HTTPError
 from structlog import wrap_logger
@@ -32,7 +32,7 @@ home_bp = Blueprint("home_bp", __name__, static_folder="static", template_folder
 def home():
     overview_survey = session.get("overview_survey")
     if not session.get("overview_survey"):
-        return redirect(url_for("home_bp.get_overview_survey"))
+        return redirect(url_for("surveys_bp.view_surveys"))
 
     survey = survey_controllers.get_survey_by_shortname(overview_survey)
     collection_exercises = collection_exercise_controllers.get_collection_exercises_by_survey(survey["id"])
@@ -42,23 +42,6 @@ def home():
 
     formatted_data = format_data_for_template(current_collection_exercise, survey)
     return render_template("overview/overview.html", data=formatted_data)
-
-
-@home_bp.route("/choose-overview-survey", methods=["GET"])
-@login_required
-def get_overview_survey():
-    survey_list = survey_controllers.get_surveys_list()
-    breadcrumbs = [{"text": "Choose overview survey"}]
-    return render_template("choose-overview-survey.html", survey_list=survey_list, breadcrumbs=breadcrumbs)
-
-
-@home_bp.route("/choose-overview-survey", methods=["POST"])
-@login_required
-def post_overview_survey():
-    survey_shortname = request.form.get("overview-survey-choice")
-    logger.info("Adding overview survey choice to session", survey_shortname=survey_shortname)
-    session["overview_survey"] = survey_shortname
-    return redirect(url_for("home_bp.home"))
 
 
 def format_data_for_template(collection_exercise, survey):
