@@ -508,9 +508,9 @@ class UsernameChangeForm(FlaskForm):
     @staticmethod
     def validate_username(form, field):
         username = field.data
-        special_characters = ".@_"
-        if not username.isalnum() or any(char.isupper() for char in username):
-            if not any(char in special_characters for char in username):
+        legal_characters = re.compile("[a-z0-9.@_]")
+        for char in username:
+            if not legal_characters.search(char):
                 raise ValidationError(
                     "Username can only contain lowercase letters, numbers, and special characters (`.`, `@`, and `_`)"
                 )

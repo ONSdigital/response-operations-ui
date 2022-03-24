@@ -197,7 +197,7 @@ class TestAccounts(unittest.TestCase):
             response = self.client.post(
                 "/account/change-username",
                 follow_redirects=True,
-                data={"username": "uaauser"},
+                data={"username": "uaa.@_user123"},
             )
             self.assertIn(b"Your username has been changed", response.data)
 
@@ -245,9 +245,12 @@ class TestAccounts(unittest.TestCase):
             response = self.client.post(
                 "/account/change-username",
                 follow_redirects=True,
-                data={"username": "uaa_user"},
+                data={"username": "uaa_user!"},
             )
-            self.assertIn(b"Username can only contain lowercase letters and numbers", response.data)
+            self.assertIn(
+                b"Username can only contain lowercase letters, numbers, and special characters (`.`, `@`, and `_`)", 
+                response.data,
+            )
 
     @requests_mock.mock()
     def test_username_max_length_and_wrong_character_errors(self, mock_request):
@@ -264,7 +267,10 @@ class TestAccounts(unittest.TestCase):
                 data={"username": max_256_characters + "!"},
             )
             self.assertIn(b"Username must be less than 255 characters", response.data)
-            self.assertIn(b"Username can only contain lowercase letters and numbers", response.data)
+            self.assertIn(
+                b"Username can only contain lowercase letters, numbers, and special characters (`.`, `@`, and `_`)", 
+                response.data,
+            )
 
     @requests_mock.mock()
     def test_username_already_exists(self, mock_request):
