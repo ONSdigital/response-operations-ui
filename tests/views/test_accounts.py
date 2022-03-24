@@ -248,7 +248,7 @@ class TestAccounts(unittest.TestCase):
                 data={"username": "uaa_user!"},
             )
             self.assertIn(
-                b"Username can only contain lowercase letters, numbers, and special characters (`.`, `@`, and `_`)", 
+                b"Username can only contain lowercase letters, numbers, and special characters (`.`, `@`, and `_`)",
                 response.data,
             )
 
@@ -268,7 +268,7 @@ class TestAccounts(unittest.TestCase):
             )
             self.assertIn(b"Username must be less than 255 characters", response.data)
             self.assertIn(
-                b"Username can only contain lowercase letters, numbers, and special characters (`.`, `@`, and `_`)", 
+                b"Username can only contain lowercase letters, numbers, and special characters (`.`, `@`, and `_`)",
                 response.data,
             )
 
