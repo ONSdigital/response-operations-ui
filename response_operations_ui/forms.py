@@ -508,16 +508,12 @@ class UsernameChangeForm(FlaskForm):
     @staticmethod
     def validate_username(form, field):
         username = field.data
+        special_characters = ".@_"
         if not username.isalnum() or any(char.isupper() for char in username):
-            raise ValidationError(
-                "Username can only contain lowercase letters, numbers, and special characters (`.`, `@`, and `_`)"
-            )
-        
-        if len(username) <= 0:
-            raise ValidationError("Username must not be empty")
-        
-        if len(username > 255):
-            raise ValidationError("Username must not be longer than 255 characters")
+            if not any(char in special_characters for char in username):
+                raise ValidationError(
+                    "Username can only contain lowercase letters, numbers, and special characters (`.`, `@`, and `_`)"
+                )
 
 
 class ChangeEmailForm(FlaskForm):
