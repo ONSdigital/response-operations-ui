@@ -95,13 +95,29 @@
         <h2>Collection exercises for {{survey.shortName}}</h2>
         {% if survey.surveyMode == 'EQ' %}
             <p class="ons-field">
-                <a href="{{ url_for('surveys_bp.get_link_collection_instrument', short_name=survey.shortName) }}"
-                    role="button" class="ons-btn ons-btn--secondary ons-btn--small" id="link-collection-instrument" name="link-collection-instrument-link"><span class="ons-btn__inner">Link collection instrument</span></a>
+                {{
+                    onsButton({
+                        "text": "Link collection instrument",
+                        "id": "link-collection-instrument",
+                        "variants": ['secondary', 'small'],
+                        "name": "link-collection-instrument-link",
+                        "noIcon": true,
+                        "url": url_for('surveys_bp.get_link_collection_instrument', short_name=survey.shortName)
+                    })
+                }}
             </p>
         {% endif %}
         <p class="ons-field">
-            <a href="{{ url_for('collection_exercise_bp.get_create_collection_exercise_form', survey_ref=survey.surveyRef, short_name=survey.shortName.replace(' ', '')) }}"
-                role="button" class="ons-btn" id="create-collection-exercise" name="create-collection-exercise-link"><span class="ons-btn__inner">Create collection exercise</span></a>
+            {{
+                onsButton({
+                    "text": "Create collection exercise",
+                    "id": "create-collection-exercise",
+                    "variants": ['small'],
+                    "name": "create-collection-exercise-link",
+                    "noIcon": true,
+                    "url": url_for('collection_exercise_bp.get_create_collection_exercise_form', survey_ref=survey.surveyRef, short_name=survey.shortName.replace(' ', ''))
+                })
+            }}
         </p>
 
         {% set surveyTableData = {
