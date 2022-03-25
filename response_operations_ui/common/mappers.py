@@ -25,8 +25,28 @@ def convert_events_to_new_format(events):
             "month": localised_datetime.strftime("%m"),
             "time": localised_datetime.strftime("%H:%M"),
             "is_in_future": date_time_utc > iso8601.parse_date(datetime.now(timezone.utc).isoformat()),
+            "event_status": event["eventStatus"],
         }
     return formatted_events
+
+
+def get_collex_event_status(events):
+    """
+    Maps each event to relevant status
+    :param events:
+    :type events:
+    :return: mapped status
+    :rtype: Str
+    """
+    collex_event_status = None
+    for event in events:
+        if event["eventStatus"] == "RETRY":
+            collex_event_status = "Retrying"
+        if event["eventStatus"] == "FAILED":
+            collex_event_status = "Failed"
+        if event["eventStatus"] == "PROCESSING":
+            collex_event_status = "Processing"
+    return collex_event_status
 
 
 def convert_event_list_to_dictionary(events):

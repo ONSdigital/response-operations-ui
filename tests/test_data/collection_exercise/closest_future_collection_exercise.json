@@ -23,43 +23,50 @@
       "id": "573e60ce-4041-4cd6-8d09-9048457db0af",
       "collectionExerciseId": "aec41b04-a177-4994-b385-a16136242d05",
       "tag": "mps",
-      "timestamp": "2020-07-01T06:00:00.000Z"
+      "timestamp": "2020-07-01T06:00:00.000Z",
+      "eventStatus": "PROCESSED"
     },
     {
       "id": "bfd78cbe-5144-4f9d-9e6e-45a733ca244e",
       "collectionExerciseId": "aec41b04-a177-4994-b385-a16136242d05",
       "tag": "go_live",
-      "timestamp": "2020-07-02T06:00:00.000Z"
+      "timestamp": "2020-07-02T06:00:00.000Z",
+      "eventStatus": "PROCESSED"
     },
     {
       "id": "1092eca6-3ff3-41a6-8557-ccd6d539262e",
       "collectionExerciseId": "aec41b04-a177-4994-b385-a16136242d05",
       "tag": "return_by",
-      "timestamp": "2020-07-20T06:00:00.000Z"
+      "timestamp": "2020-07-20T06:00:00.000Z",
+      "eventStatus": "PROCESSED"
     },
     {
       "id": "dca2e26c-6d0e-4ea5-a55d-a80ea00f636c",
       "collectionExerciseId": "aec41b04-a177-4994-b385-a16136242d05",
       "tag": "reminder",
-      "timestamp": "2020-07-21T06:00:00.000Z"
+      "timestamp": "2020-07-21T06:00:00.000Z",
+      "eventStatus": "PROCESSED"
     },
     {
       "id": "494323a1-1832-4db0-b52f-5c75303458d5",
       "collectionExerciseId": "aec41b04-a177-4994-b385-a16136242d05",
       "tag": "exercise_end",
-      "timestamp": "2020-07-30T06:00:00.000Z"
+      "timestamp": "2020-07-30T06:00:00.000Z",
+      "eventStatus": "PROCESSED"
     },
     {
       "id": "598b2487-5ffe-4508-b43a-4999cccb3006",
       "collectionExerciseId": "aec41b04-a177-4994-b385-a16136242d05",
       "tag": "ref_period_start",
-      "timestamp": "2020-06-01T06:00:00.000Z"
+      "timestamp": "2020-06-01T06:00:00.000Z",
+      "eventStatus": "PROCESSED"
     },
     {
       "id": "a73570e1-70c9-4427-9886-a643140d3996",
       "collectionExerciseId": "aec41b04-a177-4994-b385-a16136242d05",
       "tag": "ref_period_end",
-      "timestamp": "2020-06-30T06:00:00.000Z"
+      "timestamp": "2020-06-30T06:00:00.000Z",
+      "eventStatus": "PROCESSED"
     }
   ]
 }

@@ -24,43 +24,50 @@
         "id": "cd3fdc36-f060-41e4-bc75-624f6f31e111",
         "collectionExerciseId": "6327160f-d7a8-4fcc-8551-a69c50b33e5f",
         "tag": "mps",
-        "timestamp": "2020-08-01T06:00:00.000Z"
+        "timestamp": "2020-08-01T06:00:00.000Z",
+      "eventStatus": "PROCESSED"
       },
       {
         "id": "d950c192-e58d-4dcb-9a38-76658dbea6dc",
         "collectionExerciseId": "6327160f-d7a8-4fcc-8551-a69c50b33e5f",
         "tag": "go_live",
-        "timestamp": "2020-08-02T06:00:00.000Z"
+        "timestamp": "2020-08-02T06:00:00.000Z",
+      "eventStatus": "PROCESSED"
       },
       {
         "id": "380eba4a-7a4a-4e5c-b108-14cf0de2e877",
         "collectionExerciseId": "6327160f-d7a8-4fcc-8551-a69c50b33e5f",
         "tag": "return_by",
-        "timestamp": "2020-08-20T06:00:00.000Z"
+        "timestamp": "2020-08-20T06:00:00.000Z",
+      "eventStatus": "PROCESSED"
       },
       {
         "id": "9622e3f9-5ad0-4a77-978f-e29967314eb2",
         "collectionExerciseId": "6327160f-d7a8-4fcc-8551-a69c50b33e5f",
         "tag": "reminder",
-        "timestamp": "2020-08-21T06:00:00.000Z"
+        "timestamp": "2020-08-21T06:00:00.000Z",
+      "eventStatus": "PROCESSED"
       },
       {
         "id": "fedc5374-5d66-4390-bf47-6be268404b5c",
         "collectionExerciseId": "6327160f-d7a8-4fcc-8551-a69c50b33e5f",
         "tag": "exercise_end",
-        "timestamp": "2020-08-31T06:00:00.000Z"
+        "timestamp": "2020-08-31T06:00:00.000Z",
+      "eventStatus": "PROCESSED"
       },
       {
         "id": "1ca67320-97c8-48e8-bd0b-fb45cfa11a39",
         "collectionExerciseId": "6327160f-d7a8-4fcc-8551-a69c50b33e5f",
         "tag": "ref_period_start",
-        "timestamp": "2020-07-01T06:00:00.000Z"
+        "timestamp": "2020-07-01T06:00:00.000Z",
+      "eventStatus": "PROCESSED"
       },
       {
         "id": "fc0e52f5-8b18-44a9-a546-b62d43c6e09c",
         "collectionExerciseId": "6327160f-d7a8-4fcc-8551-a69c50b33e5f",
         "tag": "ref_period_end",
-        "timestamp": "2020-07-30T06:00:00.000Z"
+        "timestamp": "2020-07-30T06:00:00.000Z",
+      "eventStatus": "PROCESSED"
       }
     ]
   },
@@ -89,43 +96,50 @@
         "id": "573e60ce-4041-4cd6-8d09-9048457db0af",
         "collectionExerciseId": "aec41b04-a177-4994-b385-a16136242d05",
         "tag": "mps",
-        "timestamp": "2020-07-01T06:00:00.000Z"
+        "timestamp": "2020-07-01T06:00:00.000Z",
+      "eventStatus": "PROCESSED"
       },
       {
         "id": "bfd78cbe-5144-4f9d-9e6e-45a733ca244e",
         "collectionExerciseId": "aec41b04-a177-4994-b385-a16136242d05",
         "tag": "go_live",
-        "timestamp": "2020-07-02T06:00:00.000Z"
+        "timestamp": "2020-07-02T06:00:00.000Z",
+      "eventStatus": "PROCESSED"
       },
       {
         "id": "1092eca6-3ff3-41a6-8557-ccd6d539262e",
         "collectionExerciseId": "aec41b04-a177-4994-b385-a16136242d05",
         "tag": "return_by",
-        "timestamp": "2020-07-20T06:00:00.000Z"
+        "timestamp": "2020-07-20T06:00:00.000Z",
+      "eventStatus": "PROCESSED"
       },
       {
         "id": "dca2e26c-6d0e-4ea5-a55d-a80ea00f636c",
         "collectionExerciseId": "aec41b04-a177-4994-b385-a16136242d05",
         "tag": "reminder",
-        "timestamp": "2020-07-21T06:00:00.000Z"
+        "timestamp": "2020-07-21T06:00:00.000Z",
+      "eventStatus": "PROCESSED"
       },
       {
         "id": "494323a1-1832-4db0-b52f-5c75303458d5",
         "collectionExerciseId": "aec41b04-a177-4994-b385-a16136242d05",
         "tag": "exercise_end",
-        "timestamp": "2020-07-30T06:00:00.000Z"
+        "timestamp": "2020-07-30T06:00:00.000Z",
+      "eventStatus": "PROCESSED"
       },
       {
         "id": "598b2487-5ffe-4508-b43a-4999cccb3006",
         "collectionExerciseId": "aec41b04-a177-4994-b385-a16136242d05",
         "tag": "ref_period_start",
-        "timestamp": "2020-06-01T06:00:00.000Z"
+        "timestamp": "2020-06-01T06:00:00.000Z",
+      "eventStatus": "PROCESSED"
       },
       {
         "id": "a73570e1-70c9-4427-9886-a643140d3996",
         "collectionExerciseId": "aec41b04-a177-4994-b385-a16136242d05",
         "tag": "ref_period_end",
-        "timestamp": "2020-06-30T06:00:00.000Z"
+        "timestamp": "2020-06-30T06:00:00.000Z",
+      "eventStatus": "PROCESSED"
       }
     ]
   }

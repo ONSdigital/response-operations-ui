@@ -236,6 +236,7 @@ class TestCollectionExercise(ViewTestCase):
                 "collectionExerciseId": collection_exercise_id,
                 "tag": "mps",
                 "timestamp": "2018-03-16T00:00:00.000Z",
+                "eventStatus": "PROCESSED",
             }
         ]
         self.collection_exercises_link = [sample_summary_id]
@@ -259,6 +260,7 @@ class TestCollectionExercise(ViewTestCase):
                 "collectionExerciseId": collection_exercise_id,
                 "tag": "ref_period_start",
                 "timestamp": "2018-03-16T00:00:00.000Z",
+                "eventStatus": "PROCESSED",
             }
         ]
         self.collection_exercise_ref_end_date = [
@@ -267,6 +269,7 @@ class TestCollectionExercise(ViewTestCase):
                 "collectionExerciseId": collection_exercise_id,
                 "tag": "ref_period_end",
                 "timestamp": "2018-03-16T00:00:00.000Z",
+                "eventStatus": "PROCESSED",
             }
         ]
         self.collection_exercise_ref_both_date = [
@@ -275,18 +278,21 @@ class TestCollectionExercise(ViewTestCase):
                 "collectionExerciseId": collection_exercise_id,
                 "tag": "mps",
                 "timestamp": "2018-03-16T00:00:00.000Z",
+                "eventStatus": "PROCESSED",
             },
             {
                 "id": collection_exercise_event_id,
                 "collectionExerciseId": collection_exercise_id,
                 "tag": "ref_period_start",
                 "timestamp": "2018-03-16T00:00:00.000Z",
+                "eventStatus": "PROCESSED",
             },
             {
                 "id": collection_exercise_event_id,
                 "collectionExerciseId": collection_exercise_id,
                 "tag": "ref_period_end",
                 "timestamp": "2018-03-16T00:00:00.000Z",
+                "eventStatus": "PROCESSED",
             },
         ]
         self.eq_ci_selectors = [

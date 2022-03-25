@@ -47,6 +47,7 @@ class TestFilters(unittest.TestCase):
             "collectionExerciseId": "aec41b04-a177-4994-b385-a16136242d05",
             "tag": "mps",
             "timestamp": "2020-07-01T06:00:00.000Z",
+            "eventStatus": "PROCESSED",
         }
         output = get_nearest_future_key_date(collection_exercise["events"])
         self.assertEqual(output, expected_output)

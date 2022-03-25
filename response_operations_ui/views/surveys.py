@@ -8,6 +8,7 @@ from structlog import wrap_logger
 
 from response_operations_ui.common.mappers import (
     convert_events_to_new_format,
+    get_collex_event_status,
     map_collection_exercise_state,
 )
 from response_operations_ui.controllers import (
@@ -53,7 +54,6 @@ def view_surveys():
 @surveys_bp.route("/<short_name>", methods=["GET"])
 @login_required
 def view_survey(short_name):
-
     survey = survey_controllers.get_survey(short_name)
     breadcrumbs = [
         {"text": "Surveys", "url": "/surveys"},
@@ -79,6 +79,7 @@ def view_survey(short_name):
     # Mapping backend states to frontend sates for the user
     for collex in collection_exercises:
         collex["state"] = map_collection_exercise_state(collex["state"])
+        collex["event_status"] = get_collex_event_status(collex["events"]) if collex.get("events") else None
         collex["events"] = convert_events_to_new_format(collex["events"]) if collex.get("events") else {}
 
     _sort_collection_exercise(collection_exercises)
