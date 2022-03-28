@@ -4,6 +4,8 @@
 {% from "components/table/_macro.njk" import onsTable %}
 {% from "components/metadata/_macro.njk" import onsMetadata %}
 {% from "components/button/_macro.njk" import onsButton %}
+{% from "components/status/_macro.njk" import onsStatus %}
+
 
 {% block main %}
     {% if updated_ce_message %}
@@ -158,7 +160,27 @@
         {% for exercise in collection_exercises %}
             {% set exerciseRef = exercise.exerciseRef if exercise.exerciseRef else "" %}
             {% set surveyTableReport = '<a href="'+ url_for('collection_exercise_bp.response_chasing', ce_id=exercise.id, survey_id=survey.id) +'" target="_blank"><svg class="ons-svg-icon" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" focusable="false"><path d="M19 9h-4V3H9v6H5l7 7 7-7zM5 18v2h14v-2H5z"/><path d="M0 0h24v24H0z" fill="none"/></svg> Response chasing</a>' if (exercise.state|upper == "LIVE" or  exercise.state|upper == "ENDED") %}
-
+            {% if exercise.state == 'Ended' %}
+                {% set type = 'ons-status ons-status--dead' %}
+                {% set status_event = '' %}
+            {% elif exercise.state == 'Live' %}
+                {% set type = 'ons-status ons-status--success' %}
+                {% set status_event = '' %}
+                {% if exercise.event_status == 'Processing' or exercise.event_status == 'Retrying' %}
+                  {% set type = 'ons-status ons-status--pending' %}
+                  {% set status_event = '(' + exercise.event_status + ')' %}
+                {% endif %}
+                {% if exercise.event_status == 'Failed' %}
+                  {% set type = 'ons-status ons-status--error' %}
+                  {% set status_event = '(' + exercise.event_status + ')' %}
+                {% endif %}
+            {% elif exercise.state == 'Created' or exercise.state == 'Scheduled'%}
+                {% set type = 'ons-status ons-status--info' %}
+                {% set status_event = '' %}
+            {% else %}
+                {% set type = 'ons-status ons-status--info' %}
+                {% set status_event = '' %}
+            {% endif %}
             {% do surveyTableDataRows.append(
                 {
                     "highlight": true if newly_created_period == exerciseRef,
@@ -175,7 +197,7 @@
                             "name" : "tbl-ce-shown-as"
                         },
                         {
-                            "value": exercise.state,
+                            "value": '<span class="'+ type + '">'+ exercise.state + status_event +'</span>',
                             "data": "Status",
                             "name" : "tbl-ce-status"
                         },

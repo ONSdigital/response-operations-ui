@@ -27,6 +27,7 @@
         </div>
         <div class="ons-grid__col"> 
             <form action="" method="post">
+                {{ form.csrf_token }}
                 {{
                     onsInput({
                         "id": 'search-field',
@@ -34,7 +35,6 @@
                         "value": user_search,
                         "label": {
                             "text": ('example@ons.gov.uk' if search_email == None else search_email),
-                            
                             "classes": 'ons-u-pb-xs'
                         },
                         "accessiblePlaceholder": true,
