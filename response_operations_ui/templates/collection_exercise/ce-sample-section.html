@@ -99,7 +99,7 @@
                     onsButton({
                         "text": "Check sample contents",
                         "id": "btn-check-sample-contents",
-                        "classes": "ons-btn--small ons-btn--disabled",
+                        "variants": ['small', 'disabled'],
                         "attributes": {
                             "disabled": "true"
                         }
@@ -110,7 +110,9 @@
                         "text": "Load sample",
                         "id": "btn-load-sample",
                         "name": "load-sample",
-                        "classes": "hidden ons-btn--small ons-button--loader",
+                        "classes": "hidden",
+                        "submitType": "loader",
+                        "variants": ['small'],
                         "listeners": {
                             "click": "readCSV.handleFileUpload()"
                         }
@@ -119,7 +121,8 @@
                 {{
                     onsButton({
                         "text": "Cancel",
-                        "classes": "hidden ons-btn--secondary ons-btn--small",
+                        "classes": "hidden",
+                        "variants": ['secondary', 'small'],
                         "id": "btn-cancel-load-sample",
                         "listeners": {
                             "click": "readCSV.cancelLoadSample()"
