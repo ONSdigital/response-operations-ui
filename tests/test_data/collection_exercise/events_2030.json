@@ -1,30 +1,37 @@
 [
   {
     "tag": "mps",
-    "timestamp": "2030-10-11T22:00:00.000+0000"
+    "timestamp": "2030-10-11T22:00:00.000+0000",
+      "eventStatus": "PROCESSED"
   },
   {
     "tag": "go_live",
-    "timestamp": "2030-10-11T22:00:00.000+0000"
+    "timestamp": "2030-10-11T22:00:00.000+0000",
+      "eventStatus": "PROCESSED"
   },
   {
     "tag": "return_by",
-    "timestamp": "2030-10-11T22:00:00.000+0000"
+    "timestamp": "2030-10-11T22:00:00.000+0000",
+      "eventStatus": "PROCESSED"
   },
   {
     "tag": "reminder",
-    "timestamp": "2030-10-10T22:00:00.000+0000"
+    "timestamp": "2030-10-10T22:00:00.000+0000",
+      "eventStatus": "PROCESSED"
   },
   {
     "tag": "reminder2",
-    "timestamp": "2030-10-11T22:00:00.000+0000"
+    "timestamp": "2030-10-11T22:00:00.000+0000",
+      "eventStatus": "PROCESSED"
   },
   {
     "tag": "exercise_end",
-    "timestamp": "2030-10-11T22:00:00.000+0000"
+    "timestamp": "2030-10-11T22:00:00.000+0000",
+      "eventStatus": "PROCESSED"
   },
   {
     "tag": "nudge_email_0",
-    "timestamp": "2030-10-11T22:00:00.000+0000"
+    "timestamp": "2030-10-11T22:00:00.000+0000",
+      "eventStatus": "PROCESSED"
   }
 ]

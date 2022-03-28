@@ -27,27 +27,33 @@
   "events": [
     {
       "tag": "mps",
-      "timestamp": "1993-05-15T23:00:00.000+0000"
+      "timestamp": "1993-05-15T23:00:00.000+0000",
+      "eventStatus": "PROCESSED"
     },
     {
       "tag": "go_live",
-      "timestamp": "1993-05-15T23:00:00.000+0000"
+      "timestamp": "1993-05-15T23:00:00.000+0000",
+      "eventStatus": "PROCESSED"
     },
     {
       "tag": "return_by",
-      "timestamp": "1993-05-15T23:00:00.000+0000"
+      "timestamp": "1993-05-15T23:00:00.000+0000",
+      "eventStatus": "PROCESSED"
     },
     {
       "tag": "reminder",
-      "timestamp": "1993-05-15T23:00:00.000+0000"
+      "timestamp": "1993-05-15T23:00:00.000+0000",
+      "eventStatus": "PROCESSED"
     },
     {
       "tag": "exercise_end",
-      "timestamp": "1993-05-15T23:00:00.000+0000"
+      "timestamp": "1993-05-15T23:00:00.000+0000",
+      "eventStatus": "PROCESSED"
     },
     {
       "tag": "ref_period_start",
-      "timestamp": "1993-05-15T23:00:00.000+0000"
+      "timestamp": "1993-05-15T23:00:00.000+0000",
+      "eventStatus": "PROCESSED"
     }
   ],
   "collection_instruments": [

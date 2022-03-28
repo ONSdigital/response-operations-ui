@@ -85,6 +85,7 @@ class TestSurvey(ViewTestCase):
                 "collectionExerciseId": collection_exercise_id,
                 "tag": "mps",
                 "timestamp": "2018-03-16T00:00:00.000Z",
+                "eventStatus": "PROCESSED",
             }
         ]
         self.collection_exercises_link = [sample_summary_id]

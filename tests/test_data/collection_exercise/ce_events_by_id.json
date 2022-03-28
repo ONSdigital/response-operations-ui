@@ -3,24 +3,28 @@
         "id": "3b58ed0f-d153-4c1c-b26b-c689204ceae2",
         "collectionExerciseId": "4a084bc0-130f-4aee-ae48-1a9f9e50178f",
         "tag": "mps",
-        "timestamp": "2020-01-27T07:00:00.000Z"
+        "timestamp": "2020-01-27T07:00:00.000Z",
+        "eventStatus": "PROCESSED"
     },
     {
         "id": "d7161efc-cdec-4152-8831-4af703219037",
         "collectionExerciseId": "4a084bc0-130f-4aee-ae48-1a9f9e50178f",
         "tag": "go_live",
-        "timestamp": "2020-01-28T07:00:00.000Z"
+        "timestamp": "2020-01-28T07:00:00.000Z",
+        "eventStatus": "PROCESSED"
     },
     {
         "id": "ab994483-7448-4436-9786-cf424d9126ff",
         "collectionExerciseId": "4a084bc0-130f-4aee-ae48-1a9f9e50178f",
         "tag": "return_by",
-        "timestamp": "2020-01-29T07:00:00.000Z"
+        "timestamp": "2020-01-29T07:00:00.000Z",
+        "eventStatus": "PROCESSED"
     },
     {
         "id": "17afa226-df8d-450d-8ff3-ec2fedd93e95",
         "collectionExerciseId": "4a084bc0-130f-4aee-ae48-1a9f9e50178f",
         "tag": "exercise_end",
-        "timestamp": "2020-01-30T07:00:00.000Z"
+        "timestamp": "2020-01-30T07:00:00.000Z",
+        "eventStatus": "PROCESSED"
     }
 ]

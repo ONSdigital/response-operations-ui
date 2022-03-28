@@ -1,42 +1,52 @@
 [
   {
     "tag": "mps",
-    "timestamp": "2018-10-11T22:00:00.000+0000"
+    "timestamp": "2018-10-11T22:00:00.000+0000",
+      "eventStatus": "PROCESSED"
   },
   {
     "tag": "go_live",
-    "timestamp": "2018-10-11T22:00:00.000+0000"
+    "timestamp": "2018-10-11T22:00:00.000+0000",
+      "eventStatus": "PROCESSED"
   },
   {
     "tag": "return_by",
-    "timestamp": "2018-10-11T22:00:00.000+0000"
+    "timestamp": "2018-10-11T22:00:00.000+0000",
+      "eventStatus": "PROCESSED"
   },
   {
     "tag": "first_reminder",
-    "timestamp": "2018-10-11T22:00:00.000+0000"
+    "timestamp": "2018-10-11T22:00:00.000+0000",
+      "eventStatus": "PROCESSED"
   },
   {
     "tag": "exercise_end",
-    "timestamp": "2018-10-11T22:00:00.000+0000"
+    "timestamp": "2018-10-11T22:00:00.000+0000",
+      "eventStatus": "PROCESSED"
   },
   {
     "tag": "nudge_email_0",
-    "timestamp": "2018-10-11T22:00:00.000+0000"
+    "timestamp": "2018-10-11T22:00:00.000+0000",
+      "eventStatus": "PROCESSED"
   },
   {
     "tag": "nudge_email_1",
-    "timestamp": "2018-10-11T22:00:00.000+0000"
+    "timestamp": "2018-10-11T22:00:00.000+0000",
+      "eventStatus": "PROCESSED"
   },
   {
     "tag": "nudge_email_2",
-    "timestamp": "2018-10-11T22:00:00.000+0000"
+    "timestamp": "2018-10-11T22:00:00.000+0000",
+      "eventStatus": "PROCESSED"
   },
   {
     "tag": "nudge_email_3",
-    "timestamp": "2018-10-11T22:00:00.000+0000"
+    "timestamp": "2018-10-11T22:00:00.000+0000",
+      "eventStatus": "PROCESSED"
   },
   {
     "tag": "nudge_email_4",
-    "timestamp": "2018-10-11T22:00:00.000+0000"
+    "timestamp": "2018-10-11T22:00:00.000+0000",
+      "eventStatus": "PROCESSED"
   }
 ]
