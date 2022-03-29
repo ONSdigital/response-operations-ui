@@ -1,12 +1,15 @@
 import json
 import os
 
+import jwt
 import mock
 import requests_mock
 from bs4 import BeautifulSoup
 
 from config import TestingConfig
+from response_operations_ui import create_app
 from tests.views import ViewTestCase
+from tests.views.test_admin import url_permission_url, url_sign_in_data
 from tests.views.test_reporting_units import (
     url_change_respondent_status,
     url_edit_contact_details,
@@ -17,6 +20,7 @@ from tests.views.test_reporting_units import (
     url_get_respondent_party_by_party_id,
     url_get_survey_by_id,
 )
+from tests.views.test_sign_in import url_surveys
 
 respondent_party_id = "cd592e0f-8d07-407b-b75d-e01fbdae8233"
 business_party_id = "b3ba864b-7cbc-4f44-84fe-88dc018a1a4c"
@@ -82,10 +86,30 @@ with open(f"{project_root}/test_data/pending_survey/share.json") as fp:
 with open(f"{project_root}/test_data/pending_survey/transfer.json") as fp:
     transfer = json.load(fp)
 
+user_permission_respondent_edit_json = {
+    "id": "5902656c-c41c-4b38-a294-0359e6aabe59",
+    "groups": [{"value": "f385f89e-928f-4a0f-96a0-4c48d9007cc3", "display": "respondents.edit", "type": "DIRECT"}],
+}
+
+user_permission_respondent_delete_json = {
+    "id": "5902656c-c41c-4b38-a294-0359e6aabe59",
+    "groups": [{"value": "f385f89e-928f-4a0f-96a0-4c48d9007cc3", "display": "respondents.delete", "type": "DIRECT"}],
+}
+
 
 class TestRespondents(ViewTestCase):
     def setup_data(self):
-        pass
+        self.app = create_app("TestingConfig")
+        payload = {"user_id": "test-id", "aud": "response_operations"}
+        self.access_token = jwt.encode(payload, TestingConfig.UAA_PRIVATE_KEY, algorithm="RS256")
+        self.surveys_list_json = [
+            {
+                "id": "f235e99c-8edf-489a-9c72-6cabe6c387fc",
+                "shortName": "ASHE",
+                "longName": "ASHE long name",
+                "surveyRef": "123",
+            }
+        ]
 
     def mock_for_change_details(self, changed_details, mock_request):
         mock_request.get(get_respondent_by_id_url, json=respondent)
@@ -108,6 +132,10 @@ class TestRespondents(ViewTestCase):
 
     @requests_mock.mock()
     def test_edit_contact_details_and_email_change(self, mock_request):
+        mock_request.post(url_sign_in_data, json={"access_token": self.access_token}, status_code=201)
+        mock_request.get(url_surveys, json=self.surveys_list_json, status_code=200)
+        mock_request.get(url_permission_url, json=user_permission_respondent_edit_json, status_code=200)
+        self.client.post("/sign-in", follow_redirects=True, data={"username": "user", "password": "pass"})
         mock_request.get(f"{url_auth_respondent_account}/Jacky.Turner@email.com", json={"mark_for_deletion": False})
         mock_request.get(url_get_pending_share, json=[])
         changed_details = {
@@ -122,6 +150,10 @@ class TestRespondents(ViewTestCase):
 
     @requests_mock.mock()
     def test_edit_contact_details_email_change_with_trailing_space(self, mock_request):
+        mock_request.post(url_sign_in_data, json={"access_token": self.access_token}, status_code=201)
+        mock_request.get(url_surveys, json=self.surveys_list_json, status_code=200)
+        mock_request.get(url_permission_url, json=user_permission_respondent_edit_json, status_code=200)
+        self.client.post("/sign-in", follow_redirects=True, data={"username": "user", "password": "pass"})
         mock_request.get(f"{url_auth_respondent_account}/Jacky.Turner@email.com", json={"mark_for_deletion": False})
         mock_request.get(url_get_pending_share, json=[])
         changed_details = {
@@ -137,6 +169,10 @@ class TestRespondents(ViewTestCase):
 
     @requests_mock.mock()
     def test_change_respondent_status(self, mock_request):
+        mock_request.post(url_sign_in_data, json={"access_token": self.access_token}, status_code=201)
+        mock_request.get(url_surveys, json=self.surveys_list_json, status_code=200)
+        mock_request.get(url_permission_url, json=user_permission_respondent_edit_json, status_code=200)
+        self.client.post("/sign-in", follow_redirects=True, data={"username": "user", "password": "pass"})
         mock_request.put(url_change_respondent_status)
         mock_request.get(f"{url_auth_respondent_account}/Jacky.Turner@email.com", json={"mark_for_deletion": False})
         mock_request.get(url_get_business_by_ru_ref, json=business_reporting_unit)
@@ -247,6 +283,10 @@ class TestRespondents(ViewTestCase):
 
     @requests_mock.mock()
     def test_delete_respondent_template_for_delete(self, mock_request):
+        mock_request.post(url_sign_in_data, json={"access_token": self.access_token}, status_code=201)
+        mock_request.get(url_surveys, json=self.surveys_list_json, status_code=200)
+        mock_request.get(url_permission_url, json=user_permission_respondent_delete_json, status_code=200)
+        self.client.post("/sign-in", follow_redirects=True, data={"username": "user", "password": "pass"})
         mock_request.put(url_change_respondent_status)
         mock_request.delete(url_auth_respondent_account)
         mock_request.get(f"{url_auth_respondent_account}/Jacky.Turner@email.com", json={"mark_for_deletion": True})
@@ -276,6 +316,10 @@ class TestRespondents(ViewTestCase):
 
     @requests_mock.mock()
     def test_delete_respondent_template_for_undo_delete(self, mock_request):
+        mock_request.post(url_sign_in_data, json={"access_token": self.access_token}, status_code=201)
+        mock_request.get(url_surveys, json=self.surveys_list_json, status_code=200)
+        mock_request.get(url_permission_url, json=user_permission_respondent_delete_json, status_code=200)
+        self.client.post("/sign-in", follow_redirects=True, data={"username": "user", "password": "pass"})
         mock_request.put(url_change_respondent_status)
         mock_request.patch(f"{url_auth_respondent_account}/Jacky.Turner@email.com")
         mock_request.get(f"{url_auth_respondent_account}/Jacky.Turner@email.com", json={"mark_for_deletion": False})
@@ -539,21 +583,30 @@ class TestRespondents(ViewTestCase):
 
     @requests_mock.mock()
     def test_fail_resent_verification_email(self, mock_request):
+        mock_request.post(url_sign_in_data, json={"access_token": self.access_token}, status_code=201)
+        mock_request.get(url_surveys, json=self.surveys_list_json, status_code=200)
+        mock_request.get(url_permission_url, json=user_permission_respondent_edit_json, status_code=200)
+        self.client.post("/sign-in", follow_redirects=True, data={"username": "user", "password": "pass"})
         mock_request.post(url_resend_verification_email, status_code=500)
         response = self.client.post(f"respondents/resend-verification/{respondent_party_id}", follow_redirects=True)
-
-        request_history = mock_request.request_history
-        self.assertEqual(1, len(request_history))
         self.assertEqual(500, response.status_code)
 
     @requests_mock.mock()
     def test_get_resent_verification_email(self, mock_request):
+        mock_request.post(url_sign_in_data, json={"access_token": self.access_token}, status_code=201)
+        mock_request.get(url_surveys, json=self.surveys_list_json, status_code=200)
+        mock_request.get(url_permission_url, json=user_permission_respondent_edit_json, status_code=200)
+        self.client.post("/sign-in", follow_redirects=True, data={"username": "user", "password": "pass"})
         mock_request.get(url_get_respondent_party_by_party_id, json=respondent_party)
         response = self.client.get(f"respondents/resend-verification/{respondent_party_id}", follow_redirects=True)
         self.assertEqual(200, response.status_code)
 
     @requests_mock.mock()
     def test_resent_verification_email(self, mock_request):
+        mock_request.post(url_sign_in_data, json={"access_token": self.access_token}, status_code=201)
+        mock_request.get(url_surveys, json=self.surveys_list_json, status_code=200)
+        mock_request.get(url_permission_url, json=user_permission_respondent_edit_json, status_code=200)
+        self.client.post("/sign-in", follow_redirects=True, data={"username": "user", "password": "pass"})
         mock_request.post(url_resend_verification_email, status_code=200)
         mock_request.put(url_change_respondent_status)
         mock_request.patch(f"{url_auth_respondent_account}/Jacky.Turner@email.com")
