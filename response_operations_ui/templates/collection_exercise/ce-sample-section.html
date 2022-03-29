@@ -1,5 +1,6 @@
 <section id="section-sample" class="ce-section">
     <h1 class="ons-u-fs-r--b ons-u-pt-m">Sample</h1>
+    {% set surveyEditPermission = hasPermission('surveys.edit') %}
     {% if sample %}
         {% if 'ACTIVE' == sample.state %}
             {{
@@ -46,7 +47,7 @@
             }}
 
             <p>Sample loaded: {{ sample.ingestDateTime }}
-                {% if not locked %}
+                {% if not locked and surveyEditPermission%}
                     <a class="ons-u-ml-xs" id="remove_sample_btn_1" href="{{ url_for('collection_exercise_bp.get_confirm_remove_sample', short_name=survey.shortName, period=ce.exerciseRef) }}">Remove</a>
                 {% endif %}
             </p>
@@ -66,7 +67,7 @@
                 %}
                     {{ sample.notes }}
                 {% endcall %}
-                {% if not locked %}
+                {% if not locked and surveyEditPermission %}
                     <a class="ons-u-ml-xs" id="remove_sample_btn_2" href="{{ url_for('collection_exercise_bp.get_confirm_remove_sample', short_name=survey.shortName, period=ce.exerciseRef) }}">Remove</a>
                 {% endif %}
             </div>
@@ -80,52 +81,54 @@
                 enctype="multipart/form-data">
                 <input type="hidden" name="csrf_token" value="{{ csrf_token() }}" />
                 <p>Choose a sample file to check details before loading</p>
-                {{-
-                    onsUpload({
-                        "id": "sampleFile",
-                        "name": "sampleFile",
-                        "listeners": {
-                        "change": "readCSV.handleFiles(this.files, ['FORM_TYPE'])"
-                        },
-                        "accept": ".csv",
-                        "label": {
-                            "classes": "ons-u-vh",
-                            "text": "Choose file"
-                        }
-                    })
-                -}}
-                <div id="sample-preview" class="ons-u-mb-s"></div>
-                {{
-                    onsButton({
-                        "text": "Check sample contents",
-                        "id": "btn-check-sample-contents",
-                        "classes": "ons-btn--small ons-btn--disabled",
-                        "attributes": {
-                            "disabled": "true"
-                        }
-                    })
-                }}
-                {{
-                    onsButton({
-                        "text": "Load sample",
-                        "id": "btn-load-sample",
-                        "name": "load-sample",
-                        "classes": "hidden ons-btn--small ons-button--loader",
-                        "listeners": {
-                            "click": "readCSV.handleFileUpload()"
-                        }
-                    })
-                }}
-                {{
-                    onsButton({
-                        "text": "Cancel",
-                        "classes": "hidden ons-btn--secondary ons-btn--small",
-                        "id": "btn-cancel-load-sample",
-                        "listeners": {
-                            "click": "readCSV.cancelLoadSample()"
-                        }
-                    })
-                }}
+                {% if surveyEditPermission %}
+                    {{-
+                        onsUpload({
+                            "id": "sampleFile",
+                            "name": "sampleFile",
+                            "listeners": {
+                            "change": "readCSV.handleFiles(this.files, ['FORM_TYPE'])"
+                            },
+                            "accept": ".csv",
+                            "label": {
+                                "classes": "ons-u-vh",
+                                "text": "Choose file"
+                            }
+                        })
+                    -}}
+                    <div id="sample-preview" class="ons-u-mb-s"></div>
+                    {{
+                        onsButton({
+                            "text": "Check sample contents",
+                            "id": "btn-check-sample-contents",
+                            "classes": "ons-btn--small ons-btn--disabled",
+                            "attributes": {
+                                "disabled": "true"
+                            }
+                        })
+                    }}
+                    {{
+                        onsButton({
+                            "text": "Load sample",
+                            "id": "btn-load-sample",
+                            "name": "load-sample",
+                            "classes": "hidden ons-btn--small ons-button--loader",
+                            "listeners": {
+                                "click": "readCSV.handleFileUpload()"
+                            }
+                        })
+                    }}
+                    {{
+                        onsButton({
+                            "text": "Cancel",
+                            "classes": "hidden ons-btn--secondary ons-btn--small",
+                            "id": "btn-cancel-load-sample",
+                            "listeners": {
+                                "click": "readCSV.cancelLoadSample()"
+                            }
+                        })
+                    }}
+                {% endif %}
             </form>
         </div>
     {% endif %}

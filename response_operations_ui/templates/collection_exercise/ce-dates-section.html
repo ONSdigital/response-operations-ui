@@ -1,25 +1,44 @@
 <section class="ce-section ce-events">
     <h2 class="ons-u-fs-r--b ons-u-pt-m">Dates</h2>
+    {% set surveyEditPermission = hasPermission('surveys.edit') %}
 
-    {% set surveyTableData = {
-        "variants": 'compact',
-        "caption": 'Dates for this collection exercise',
-        "hideCaption": true,
-        "ths": [
-            {
-                "value": "Event",
-                "class": "ons-u-vh"
-            },
-            {
-                "value": "Date",
-                "class": "ons-u-vh"
-            },
-            {
-                "value": "Status",
-                "class": "ons-u-vh"
-            }
-        ]
-    } %}
+    {% if surveyEditPermission %}
+      {% set surveyTableData = {
+          "variants": 'compact',
+          "caption": 'Dates for this collection exercise',
+          "hideCaption": true,
+          "ths": [
+              {
+                  "value": "Event",
+                  "class": "ons-u-vh"
+              },
+              {
+                  "value": "Date",
+                  "class": "ons-u-vh"
+              },
+              {
+                  "value": "Status",
+                  "class": "ons-u-vh"
+              }
+          ]
+      } %}
+    {% else %}
+      {% set surveyTableData = {
+          "variants": 'compact',
+          "caption": 'Dates for this collection exercise',
+          "hideCaption": true,
+          "ths": [
+              {
+                  "value": "Event",
+                  "class": "ons-u-vh"
+              },
+              {
+                  "value": "Date",
+                  "class": "ons-u-vh"
+              }
+          ]
+      } %}
+    {% endif %}
 
     {% set surveyTableDataRows = [] %}
     {% set dateGroups = ['mps', 'go_live', 'return_by', 'reminder', 'reminder2', 'reminder3', 'exercise_end'] %}
@@ -100,26 +119,28 @@
             {% endif %}
         {% endif %}
 
-        {% if not event %}
-            {% set formData = {
-                "action": url_for('collection_exercise_bp.get_create_collection_event_form', short_name=survey.shortName, period=ce.exerciseRef, ce_id=ce.id, tag=dateGroup),
-                "method": 'get',
-                "button": {
-                    "text": 'Add',
-                    "id": 'create-event-date-' + dateGroup,
-                    "classes": 'ons-btn--secondary ons-btn--small'
-                }
-            } %}
-        {% elif not locked or eventIsInFuture %}
-            {% set formData = {
-                "action": url_for('collection_exercise_bp.update_event_date', short_name=survey.shortName, period=ce.exerciseRef, tag=dateGroup, errors=None if event == events.reminder),
-                "method": 'get',
-                "button": {
-                    "text": 'Edit',
-                    "id": 'edit-event-date-' + dateGroup,
-                    "classes": 'ons-btn--secondary ons-btn--small'
-                }
-            } %}
+        {% if surveyEditPermission %}
+          {% if not event %}
+              {% set formData = {
+                  "action": url_for('collection_exercise_bp.get_create_collection_event_form', short_name=survey.shortName, period=ce.exerciseRef, ce_id=ce.id, tag=dateGroup),
+                  "method": 'get',
+                  "button": {
+                      "text": 'Add',
+                      "id": 'create-event-date-' + dateGroup,
+                      "classes": 'ons-btn--secondary ons-btn--small'
+                  }
+              } %}
+          {% elif not locked or eventIsInFuture %}
+              {% set formData = {
+                  "action": url_for('collection_exercise_bp.update_event_date', short_name=survey.shortName, period=ce.exerciseRef, tag=dateGroup, errors=None if event == events.reminder),
+                  "method": 'get',
+                  "button": {
+                      "text": 'Edit',
+                      "id": 'edit-event-date-' + dateGroup,
+                      "classes": 'ons-btn--secondary ons-btn--small'
+                  }
+              } %}
+          {% endif %}
         {% endif %}
         {% if label %}
             {% do surveyTableDataRows.append(

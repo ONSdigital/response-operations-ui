@@ -4,6 +4,7 @@
 {% from "components/button/_macro.njk" import onsButton %}
 
 {% set page_title = "Surveys" %}
+{% set surveyEditPermission = hasPermission('surveys.edit') %}
 
 {% block main %}
     {% if info_message or new_survey %}
@@ -29,11 +30,13 @@
           <h1 class="ons-u-fs-xl u-mb-xs" name="page-surveys-title">Online Business Surveys
           </h1>
       </div>
-      <div class="ons-grid__col"> 
-         <p class="ons-field">
-            <a href="{{url_for('surveys_bp.create_survey')}}" id="create-new-survey" name="create-new-survey">Create new survey</a>
-        </p>
+      {% if surveyEditPermission %}
+      <div class="ons-grid__col">
+        <p class="ons-field">
+              <a href="{{url_for('surveys_bp.create_survey')}}" id="create-new-survey" name="create-new-survey">Create new survey</a>
+          </p>
       </div>
+      {% endif %}
   </div>
     <div class="ons-u-mb-xl ons-grid__col">
         {% set surveyTableData = {
@@ -63,7 +66,6 @@
         {% set surveyTableDataRows = [] %}
 
         {% for survey in survey_list %}
-        
             {% set formData = {
                 "action": url_for("surveys_bp.view_survey_details", short_name=survey.shortName, long_name=survey.longName, legal_basis=survey.legalBasis, survey_ref=survey.surveyRef),
                 "method": 'get',
@@ -73,38 +75,66 @@
                     "classes": 'ons-btn--secondary ons-btn--small'
                 }
             } %}
-
-            {% do surveyTableDataRows.append(
-            {
-                "tds": [
-                    {
-                        "value": '<a href="/surveys/' + survey.shortName.replace(' ', '') + '" name="survey-link-' + survey.shortName + '">' + survey.longName + '</a>' + ' | ' + survey.shortName,
-                        "data": "Survey Title",
-                        "name": "tbl-surveys-title"
-                    },
-                    {
-                        "value": survey.surveyRef,
-                        "data": "Survey ID",
-                        "name": "tbl-surveys-ref"
-                    },
-                    {
-                        "value": survey.surveyMode,
-                        "data": "Survey mode",
-                        "name": "tbl-surveys-mode"
-                    },
-                    {
-                        "value": survey.legalBasis,
-                        "data": "Legal basis",
-                        "name": "tbl-surveys-legal-basis"
-                    },
-                    {
-                        "value": '<a href="' + url_for("surveys_bp.view_survey_details", short_name=survey.shortName, long_name=survey.longName, legal_basis=survey.legalBasis, survey_ref=survey.surveyRef) + '">Edit ' +'survey</a>',
-                        "class": "ons-u-ta-right",
-                        "dataSort": "2"
-                    }
-                ]
-            }
-            ) %}
+            {% if surveyEditPermission %}
+                {% do surveyTableDataRows.append(
+                {
+                    "tds": [
+                        {
+                            "value": '<a href="/surveys/' + survey.shortName.replace(' ', '') + '" name="survey-link-' + survey.shortName + '">' + survey.longName + '</a>' + ' | ' + survey.shortName,
+                            "data": "Survey Title",
+                            "name": "tbl-surveys-title"
+                        },
+                        {
+                            "value": survey.surveyRef,
+                            "data": "Survey ID",
+                            "name": "tbl-surveys-ref"
+                        },
+                        {
+                            "value": survey.surveyMode,
+                            "data": "Survey mode",
+                            "name": "tbl-surveys-mode"
+                        },
+                        {
+                            "value": survey.legalBasis,
+                            "data": "Legal basis",
+                            "name": "tbl-surveys-legal-basis"
+                        },
+                        {
+                            "value": '<a href="' + url_for("surveys_bp.view_survey_details", short_name=survey.shortName, long_name=survey.longName, legal_basis=survey.legalBasis, survey_ref=survey.surveyRef) + '">Edit ' +'survey</a>',
+                            "class": "ons-u-ta-right",
+                            "dataSort": "2"
+                        }
+                    ]
+                }
+                ) %}
+              {% else %}
+                {% do surveyTableDataRows.append(
+                {
+                    "tds": [
+                        {
+                            "value": '<a href="/surveys/' + survey.shortName.replace(' ', '') + '" name="survey-link-' + survey.shortName + '">' + survey.longName + '</a>' + ' | ' + survey.shortName,
+                            "data": "Survey Title",
+                            "name": "tbl-surveys-title"
+                        },
+                        {
+                            "value": survey.surveyRef,
+                            "data": "Survey ID",
+                            "name": "tbl-surveys-ref"
+                        },
+                        {
+                            "value": survey.surveyMode,
+                            "data": "Survey mode",
+                            "name": "tbl-surveys-mode"
+                        },
+                        {
+                            "value": survey.legalBasis,
+                            "data": "Legal basis",
+                            "name": "tbl-surveys-legal-basis"
+                        }
+                    ]
+                }
+                ) %}
+              {% endif %}
         {% endfor %}
 
         {% do surveyTableData | setAttribute("trs", surveyTableDataRows) %}
