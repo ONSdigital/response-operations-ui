@@ -1863,6 +1863,9 @@ class TestCollectionExercise(ViewTestCase):
     @requests_mock.mock()
     @patch("response_operations_ui.views.collection_exercise.build_collection_exercise_details")
     def test_manage_collection_instruments_is_present(self, mock_request, mock_details):
+        mock_request.post(url_sign_in_data, json={"access_token": self.access_token}, status_code=201)
+        mock_request.get(url_permission_url, json=user_permission_surveys_edit_json, status_code=200)
+        self.client.post("/sign-in", follow_redirects=True, data={"username": "user", "password": "pass"})
         mock_details.return_value = formatted_new_collection_exercise_details
         mock_request.get(url_get_survey_by_short_name, json=updated_survey_info["survey"])
         mock_request.get(url_ces_by_survey, json=updated_survey_info["collection_exercises"])
@@ -1875,6 +1878,9 @@ class TestCollectionExercise(ViewTestCase):
     @requests_mock.mock()
     @patch("response_operations_ui.views.collection_exercise.build_collection_exercise_details")
     def test_load_collection_instruments_is_not_present(self, mock_request, mock_details):
+        mock_request.post(url_sign_in_data, json={"access_token": self.access_token}, status_code=201)
+        mock_request.get(url_permission_url, json=user_permission_surveys_edit_json, status_code=200)
+        self.client.post("/sign-in", follow_redirects=True, data={"username": "user", "password": "pass"})
         mock_details.return_value = seft_collection_exercise_details
         mock_request.get(url_get_survey_by_short_name, json=updated_survey_info["survey"])
         mock_request.get(url_ces_by_survey, json=updated_survey_info["collection_exercises"])
@@ -2075,3 +2081,25 @@ class TestCollectionExercise(ViewTestCase):
         self.assertIn("Sample loaded".encode(), response.data)
         self.assertNotIn("Remove".encode(), response.data)
         self.assertNotIn("Set as ready for live".encode(), response.data)
+
+    @requests_mock.mock()
+    @patch("response_operations_ui.views.collection_exercise.build_collection_exercise_details")
+    def test_manage_collection_instruments_is_present_no_edit_permission(self, mock_request, mock_details):
+        mock_details.return_value = formatted_new_collection_exercise_details
+        mock_request.get(url_get_survey_by_short_name, json=updated_survey_info["survey"])
+        mock_request.get(url_ces_by_survey, json=updated_survey_info["collection_exercises"])
+        response = self.client.get(f"/surveys/{short_name}/{period}", follow_redirects=True)
+
+        self.assertEqual(response.status_code, 200)
+        self.assertNotIn("Manage collection instruments".encode(), response.data)
+
+    @requests_mock.mock()
+    @patch("response_operations_ui.views.collection_exercise.build_collection_exercise_details")
+    def test_load_collection_instruments_is_not_present_no_edit_permission(self, mock_request, mock_details):
+        mock_details.return_value = seft_collection_exercise_details
+        mock_request.get(url_get_survey_by_short_name, json=updated_survey_info["survey"])
+        mock_request.get(url_ces_by_survey, json=updated_survey_info["collection_exercises"])
+        response = self.client.get(f"/surveys/{short_name}/{period}", follow_redirects=True)
+
+        self.assertEqual(response.status_code, 200)
+        self.assertNotIn("Load collection instruments".encode(), response.data)
