@@ -1706,6 +1706,9 @@ class TestCollectionExercise(ViewTestCase):
 
     @requests_mock.mock()
     def test_schedule_nudge_email_option_present(self, mock_request):
+        mock_request.post(url_sign_in_data, json={"access_token": self.access_token}, status_code=201)
+        mock_request.get(url_permission_url, json=user_permission_surveys_edit_json, status_code=200)
+        self.client.post("/sign-in", follow_redirects=True, data={"username": "user", "password": "pass"})
         mock_request.get(url_get_survey_by_short_name, json=self.survey)
         mock_request.get(url_ces_by_survey, json=self.collection_exercises)
         mock_request.get(url_ce_by_id, json=collection_exercise_details["collection_exercise"])
@@ -1716,9 +1719,6 @@ class TestCollectionExercise(ViewTestCase):
         mock_request.get(
             f"{url_get_collection_instrument}?{ci_type_search_string_eq}", json=self.eq_ci_selectors, complete_qs=True
         )
-        mock_request.post(url_sign_in_data, json={"access_token": self.access_token}, status_code=201)
-        mock_request.get(url_permission_url, json=user_permission_surveys_edit_json, status_code=200)
-        self.client.post("/sign-in", follow_redirects=True, data={"username": "user", "password": "pass"})
         mock_request.get(url_link_sample, json=[sample_summary_id])
         mock_request.get(url_get_sample_summary, json=self.sample_summary)
         mock_request.get(url_get_classifier_type_selectors, json=classifier_type_selectors)
@@ -1754,6 +1754,9 @@ class TestCollectionExercise(ViewTestCase):
 
     @requests_mock.mock()
     def test_can_create_up_to_five_nudge_email(self, mock_request):
+        mock_request.post(url_sign_in_data, json={"access_token": self.access_token}, status_code=201)
+        mock_request.get(url_permission_url, json=user_permission_surveys_edit_json, status_code=200)
+        self.client.post("/sign-in", follow_redirects=True, data={"username": "user", "password": "pass"})
         mock_request.get(url_get_survey_by_short_name, json=self.survey)
         mock_request.get(url_ces_by_survey, json=self.collection_exercises)
         mock_request.get(url_ce_by_id, json=collection_exercise_details["collection_exercise"])
@@ -1761,9 +1764,6 @@ class TestCollectionExercise(ViewTestCase):
         mock_request.get(
             f"{url_get_collection_instrument}?{ci_search_string}", json=self.collection_instruments, complete_qs=True
         )
-        mock_request.post(url_sign_in_data, json={"access_token": self.access_token}, status_code=201)
-        mock_request.get(url_permission_url, json=user_permission_surveys_edit_json, status_code=200)
-        self.client.post("/sign-in", follow_redirects=True, data={"username": "user", "password": "pass"})
         mock_request.get(
             f"{url_get_collection_instrument}?{ci_type_search_string_eq}", json=self.eq_ci_selectors, complete_qs=True
         )
@@ -2011,3 +2011,67 @@ class TestCollectionExercise(ViewTestCase):
         self.assertEqual(response.status_code, 200)
         self.assertNotIn("Collection instrument loaded".encode(), response.data)
         self.assertIn("Error: No collection instrument supplied".encode(), response.data)
+
+    @requests_mock.mock()
+    def test_survey_edit_permission(self, mock_request):
+        mock_request.post(url_sign_in_data, json={"access_token": self.access_token}, status_code=201)
+        mock_request.get(url_permission_url, json=user_permission_surveys_edit_json, status_code=200)
+        self.client.post("/sign-in", follow_redirects=True, data={"username": "user", "password": "pass"})
+        mock_request.get(url_get_survey_by_short_name, json=self.eq_survey_dates)
+        mock_request.get(url_ces_by_survey, json=self.collection_exercises)
+        mock_request.get(url_ce_by_id, json=collection_exercise_details["collection_exercise"])
+        mock_request.get(url_get_collection_exercise_events, json=events)
+        mock_request.get(
+            f"{url_get_collection_instrument}?{ci_search_string}", json=self.collection_instruments, complete_qs=True
+        )
+        mock_request.get(
+            f"{url_get_collection_instrument}?{ci_type_search_string_eq}", json=self.eq_ci_selectors, complete_qs=True
+        )
+        mock_request.get(url_link_sample, json=[sample_summary_id])
+        mock_request.get(url_get_sample_summary, json=self.sample_summary)
+        mock_request.get(url_get_classifier_type_selectors, json=classifier_type_selectors)
+        mock_request.get(url_get_classifier_type, json=classifier_types)
+
+        response = self.client.get(f"/surveys/{short_name}/{period}", follow_redirects=True)
+
+        self.assertEqual(response.status_code, 200)
+        self.assertIn("Monthly Survey of Building Materials Bricks".encode(), response.data)
+        self.assertIn("221_201712".encode(), response.data)
+        self.assertIn("Select eQ version".encode(), response.data)
+        self.assertIn("Add".encode(), response.data)
+        self.assertIn("Edit".encode(), response.data)
+        self.assertIn("Schedule nudge email".encode(), response.data)
+        self.assertIn("Apply".encode(), response.data)
+        self.assertIn("Sample loaded".encode(), response.data)
+        self.assertIn("Remove".encode(), response.data)
+
+    @requests_mock.mock()
+    def test_no_survey_edit_permission(self, mock_request):
+        mock_request.get(url_get_survey_by_short_name, json=self.eq_survey_dates)
+        mock_request.get(url_ces_by_survey, json=self.collection_exercises)
+        mock_request.get(url_ce_by_id, json=collection_exercise_details["collection_exercise"])
+        mock_request.get(url_get_collection_exercise_events, json=self.collection_exercise_events)
+        mock_request.get(
+            f"{url_get_collection_instrument}?{ci_search_string}", json=self.collection_instruments, complete_qs=True
+        )
+        mock_request.get(
+            f"{url_get_collection_instrument}?{ci_type_search_string_eq}", json=self.eq_ci_selectors, complete_qs=True
+        )
+        mock_request.get(url_link_sample, json=[sample_summary_id])
+        mock_request.get(url_get_sample_summary, json=self.sample_summary)
+        mock_request.get(url_get_classifier_type_selectors, json=classifier_type_selectors)
+        mock_request.get(url_get_classifier_type, json=classifier_types)
+
+        response = self.client.get(f"/surveys/{short_name}/{period}", follow_redirects=True)
+
+        self.assertEqual(response.status_code, 200)
+        self.assertIn("Monthly Survey of Building Materials Bricks".encode(), response.data)
+        self.assertIn("221_201712".encode(), response.data)
+        self.assertIn("Select eQ version".encode(), response.data)
+        self.assertNotIn("Add".encode(), response.data)
+        self.assertNotIn("Edit".encode(), response.data)
+        self.assertNotIn("Schedule nudge email".encode(), response.data)
+        self.assertNotIn("Apply".encode(), response.data)
+        self.assertIn("Sample loaded".encode(), response.data)
+        self.assertNotIn("Remove".encode(), response.data)
+        self.assertNotIn("Set as ready for live".encode(), response.data)
