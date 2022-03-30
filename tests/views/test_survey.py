@@ -580,3 +580,60 @@ class TestSurvey(ViewTestCase):
         self.assertEqual(response.status_code, 200)
         self.assertIn("This page has 1 error".encode(), response.data)
         self.assertIn("Cannot upload an instrument with an identical set of classifiers".encode(), response.data)
+
+    @requests_mock.mock()
+    def test_survey_list_edit_permission(self, mock_request):
+        mock_request.get(url_get_survey_list, json=survey_list)
+        mock_request.post(url_sign_in_data, json={"access_token": self.access_token}, status_code=201)
+        mock_request.get(url_permission_url, json=user_permission_surveys_edit_json, status_code=200)
+        self.client.post("/sign-in", follow_redirects=True, data={"username": "user", "password": "pass"})
+
+        response = self.client.get("/surveys")
+
+        self.assertEqual(response.status_code, 200)
+        self.assertIn("BRES".encode(), response.data)
+        self.assertIn("BRUS".encode(), response.data)
+        self.assertIn("Edit survey".encode(), response.data)
+        self.assertIn("Create survey".encode(), response.data)
+
+    @requests_mock.mock()
+    def test_survey_list_no_edit_permission(self, mock_request):
+        mock_request.get(url_get_survey_list, json=survey_list)
+
+        response = self.client.get("/surveys")
+
+        self.assertEqual(response.status_code, 200)
+        self.assertIn("BRES".encode(), response.data)
+        self.assertIn("BRUS".encode(), response.data)
+        self.assertNotIn("Edit survey".encode(), response.data)
+        self.assertNotIn("Create survey".encode(), response.data)
+
+    @requests_mock.mock()
+    def test_survey_view_edit_permission(self, mock_request):
+        mock_request.post(url_sign_in_data, json={"access_token": self.access_token}, status_code=201)
+        mock_request.get(url_permission_url, json=user_permission_surveys_edit_json, status_code=200)
+        self.client.post("/sign-in", follow_redirects=True, data={"username": "user", "password": "pass"})
+        mock_request.get(url_get_collection_exercise_events, json=self.collection_exercises_events)
+        mock_request.get(url_get_collection_exercises, json=self.collection_exercises)
+        mock_request.get(url_get_collection_exercises_link, json=self.collection_exercises_link)
+        mock_request.get(url_get_sample_summary, json=self.sample_summary)
+        mock_request.get(url_get_survey_by_short_name, json=survey_info["survey"])
+
+        response = self.client.get("/surveys/bres", follow_redirects=True)
+
+        self.assertIn("Create collection exercise".encode(), response.data)
+        self.assertEqual(response.status_code, 200)
+
+    @requests_mock.mock()
+    def test_survey_view_no_edit_permission(self, mock_request):
+        mock_request.get(url_get_collection_exercise_events, json=self.collection_exercises_events)
+        mock_request.get(url_get_collection_exercises, json=self.collection_exercises)
+        mock_request.get(url_get_collection_exercises_link, json=self.collection_exercises_link)
+        mock_request.get(url_get_sample_summary, json=self.sample_summary)
+        mock_request.get(url_get_survey_by_short_name, json=survey_info["survey"])
+
+        response = self.client.get("/surveys/bres", follow_redirects=True)
+
+        self.assertNotIn("Link collection instrument".encode(), response.data)
+        self.assertNotIn("Create collection exercise".encode(), response.data)
+        self.assertEqual(response.status_code, 200)
