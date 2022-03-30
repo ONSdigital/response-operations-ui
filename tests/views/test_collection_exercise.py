@@ -5,6 +5,7 @@ from io import BytesIO
 from unittest.mock import patch
 from urllib.parse import urlencode, urlparse
 
+import jwt
 import mock
 import requests_mock
 
@@ -18,6 +19,7 @@ from response_operations_ui.views.collection_exercise import (
     validate_ru_specific_collection_instrument,
 )
 from tests.views import ViewTestCase
+from tests.views.test_admin import url_permission_url, url_sign_in_data
 
 ci_selector_id = "efa868fb-fb80-44c7-9f33-d6800a17c4da"
 collection_exercise_event_id = "b4a36392-a21f-485b-9dc4-d151a8fcd565"
@@ -126,6 +128,11 @@ with open(
 ) as json_data:
     collection_exercise_eq_ref_end_date = json.load(json_data)
 
+user_permission_surveys_edit_json = {
+    "id": "5902656c-c41c-4b38-a294-0359e6aabe59",
+    "groups": [{"value": "f385f89e-928f-4a0f-96a0-4c48d9007cc3", "display": "surveys.edit", "type": "DIRECT"}],
+}
+
 """Define URLS"""
 collection_exercise_root = f"{TestingConfig.COLLECTION_EXERCISE_URL}/collectionexercises"
 url_ce_by_id = f"{collection_exercise_root}/{collection_exercise_id}"
@@ -186,6 +193,8 @@ class File:
 class TestCollectionExercise(ViewTestCase):
     def setup_data(self):
         self.headers = {"Authorization": "test_jwt", "Content-Type": "application/json"}
+        payload = {"user_id": "test-id", "aud": "response_operations"}
+        self.access_token = jwt.encode(payload, TestingConfig.UAA_PRIVATE_KEY, algorithm="RS256")
         self.survey_data = {"id": survey_id}
         self.survey = {
             "id": survey_id,
@@ -1707,6 +1716,9 @@ class TestCollectionExercise(ViewTestCase):
         mock_request.get(
             f"{url_get_collection_instrument}?{ci_type_search_string_eq}", json=self.eq_ci_selectors, complete_qs=True
         )
+        mock_request.post(url_sign_in_data, json={"access_token": self.access_token}, status_code=201)
+        mock_request.get(url_permission_url, json=user_permission_surveys_edit_json, status_code=200)
+        self.client.post("/sign-in", follow_redirects=True, data={"username": "user", "password": "pass"})
         mock_request.get(url_link_sample, json=[sample_summary_id])
         mock_request.get(url_get_sample_summary, json=self.sample_summary)
         mock_request.get(url_get_classifier_type_selectors, json=classifier_type_selectors)
@@ -1749,6 +1761,9 @@ class TestCollectionExercise(ViewTestCase):
         mock_request.get(
             f"{url_get_collection_instrument}?{ci_search_string}", json=self.collection_instruments, complete_qs=True
         )
+        mock_request.post(url_sign_in_data, json={"access_token": self.access_token}, status_code=201)
+        mock_request.get(url_permission_url, json=user_permission_surveys_edit_json, status_code=200)
+        self.client.post("/sign-in", follow_redirects=True, data={"username": "user", "password": "pass"})
         mock_request.get(
             f"{url_get_collection_instrument}?{ci_type_search_string_eq}", json=self.eq_ci_selectors, complete_qs=True
         )

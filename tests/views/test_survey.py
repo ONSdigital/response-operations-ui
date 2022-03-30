@@ -3,6 +3,7 @@ import os
 from contextlib import suppress
 from unittest.mock import MagicMock
 
+import jwt
 import requests_mock
 from requests import RequestException
 
@@ -12,6 +13,7 @@ from response_operations_ui.controllers.survey_controllers import (
 )
 from response_operations_ui.views.surveys import _sort_collection_exercise
 from tests.views import ViewTestCase
+from tests.views.test_admin import url_permission_url, url_sign_in_data
 
 collection_exercise_id = "14fb3e68-4dca-46db-bf49-04b84e07e77c"
 collection_exercise_event_id = "b4a36392-a21f-485b-9dc4-d151a8fcd565"
@@ -61,9 +63,16 @@ url_post_instrument_link = (
     f"classifiers=%7B%22form_type%22%3A%220001%22%2C%22eq_id%22%3A%22qbs%22%7D"
 )
 
+user_permission_surveys_edit_json = {
+    "id": "5902656c-c41c-4b38-a294-0359e6aabe59",
+    "groups": [{"value": "f385f89e-928f-4a0f-96a0-4c48d9007cc3", "display": "surveys.edit", "type": "DIRECT"}],
+}
+
 
 class TestSurvey(ViewTestCase):
     def setup_data(self):
+        payload = {"user_id": "test-id", "aud": "response_operations"}
+        self.access_token = jwt.encode(payload, TestingConfig.UAA_PRIVATE_KEY, algorithm="RS256")
         self.survey = {
             "id": survey_id,
             "longName": "Business Register and Employment Survey",
@@ -103,6 +112,9 @@ class TestSurvey(ViewTestCase):
     @requests_mock.mock()
     def test_survey_list(self, mock_request):
         mock_request.get(url_get_survey_list, json=survey_list)
+        mock_request.post(url_sign_in_data, json={"access_token": self.access_token}, status_code=201)
+        mock_request.get(url_permission_url, json=user_permission_surveys_edit_json, status_code=200)
+        self.client.post("/sign-in", follow_redirects=True, data={"username": "user", "password": "pass"})
 
         response = self.client.get("/surveys")
 
