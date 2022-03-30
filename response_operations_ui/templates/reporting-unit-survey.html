@@ -3,8 +3,20 @@
 {% from "components/table/_macro.njk" import onsTable %}
 
 {% set page_title = ru.name + " | " + survey.display_name %}
-
+{% set is_reporting_unit_permission = hasPermission('reportingunits.edit') %}
 {% block main %}
+
+    <div class="ons-grid ons-u-mb-xs">
+      {{
+            onsButton({
+                "variants": ['secondary', 'small'],
+                "text": "Back to surveys",
+                "classes": "ons-u-ml-s",
+                "url": url_for('reporting_unit_bp.view_reporting_unit', ru_ref=ru.sampleUnitRef),
+                "noIcon": true
+            })
+    }}
+    </div>
     <div class="ons-grid">
         <div id="main" class="ons-grid__col ons-col-10@m">
             <h1 id="RU_NAME" class="ons-u-fs-l">{{ ru.name }}</h1>
@@ -49,9 +61,9 @@
                         {% set status_class = 'ons-status--error' %}
                     {% endif %}
 
-                    {% if ce.responseStatus in ['Not started', 'In progress']  %}
+                    {% if ce.responseStatus in ['Not started', 'In progress'] and is_reporting_unit_permission  %}
                         {% set survey_link = '&nbsp;   <a href="' + url_for("case_bp.get_response_statuses", ru_ref=ru.sampleUnitRef, survey=survey.shortName, period=ce.exerciseRef) + '">Change</a>' %}
-                    {% elif ce.responseStatus in ['Completed', 'Completed by phone', 'No longer required'] %}
+                    {% elif ce.responseStatus in ['Completed', 'Completed by phone', 'No longer required'] and is_reporting_unit_permission  %}
                         {% set survey_link = '&nbsp;   <a href="' + url_for("case_bp.get_response_statuses", ru_ref=ru.sampleUnitRef, survey=survey.shortName, period=ce.exerciseRef) + '">View</a>' %}
                     {% else %}
                         {% set survey_link = '' %}
@@ -96,19 +108,19 @@
             </div>
             <div class="ru-survey-respondents ons-u-pt-s">
                 <h3 id="RESPONDENTS" class="ons-u-fs-m">Respondents</h3>
-
-                {% if iac != "" %}
+                {% if is_reporting_unit_permission %}
+                  {% if iac != "" %}
                     <div>Unused enrolment code:
                         <code class="ons-u-fs-r ons-u-ml-s" id="unused-enrolment-code">{{ iac }}</code>
                     </div>
-                {% else %}
+                  {% else %}
                     <a href="{{ url_for('reporting_unit_bp.generate_new_enrolment_code', case_id=case.id,
                         collection_exercise_id=collection_exercises[0].id, ru_name=ru.name,
                         ru_ref=ru.sampleUnitRef, trading_as=collection_exercises[0].tradingAs, survey_ref=survey.surveyRef,
                         survey_name=survey.shortName) }}"
                         id="generate-new-code-{{survey.shortName}}">Generate new enrolment code</a>
+                  {% endif %}
                 {% endif %}
-
                 {%
                     set respondentTableData = {
                         "variants": ['compact', 'responsive'],
@@ -152,6 +164,9 @@
                         {% set change_status_link = '<a href="' + url_for("reporting_unit_bp.confirm_change_enrolment_status", ru_ref=ru.sampleUnitRef, ru_name=ru.name, survey_id=survey.id,
                             survey_name=survey.shortName, respondent_id=respondent.id, respondent_first_name=respondent.firstName,
                             respondent_last_name=respondent.lastName, business_id=ru.id, trading_as=ru.trading_as, change_flag='ENABLED', tab="reporting_units") + '" id="change-enrolment-status">Re-enable</a>' %}
+                    {% endif %}
+                    {% if not is_reporting_unit_permission %}
+                       {% set change_status_link = '' %}
                     {% endif %}
 
                     {% set formData = {
@@ -249,14 +264,5 @@
                 }}
             </div>
         </div>
-        {{
-            onsButton({
-                "variants": ['secondary', 'small'],
-                "text": "Back to surveys",
-                "classes": "ons-u-ml-s",
-                "url": url_for('reporting_unit_bp.view_reporting_unit', ru_ref=ru.sampleUnitRef),
-                "noIcon": true
-            })
-        }}
     </div>
 {% endblock %}

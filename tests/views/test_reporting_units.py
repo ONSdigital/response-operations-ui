@@ -2,12 +2,15 @@ import json
 import os
 import re
 from random import randint
-from unittest import TestCase
 
+import jwt
 import requests_mock
 
 from config import TestingConfig
 from response_operations_ui import create_app
+from tests.views import ViewTestCase
+from tests.views.test_admin import url_surveys
+from tests.views.test_sign_in import url_sign_in_data
 
 respondent_party_id = "cd592e0f-8d07-407b-b75d-e01fbdae8233"
 business_party_id = "b3ba864b-7cbc-4f44-84fe-88dc018a1a4c"
@@ -40,6 +43,8 @@ url_get_respondent_party_by_party_id = f"{TestingConfig.PARTY_URL}/party-api/v1/
 url_get_respondent_party_by_list = f"{TestingConfig.PARTY_URL}/party-api/v1/respondents?id={respondent_party_id}"
 url_get_iac = f"{TestingConfig.IAC_URL}/iacs"
 url_get_case = f"{TestingConfig.CASE_URL}/cases/{case_id}?iac=true"
+
+url_permission_url = f"{TestingConfig.UAA_SERVICE_URL}/Users/test-id"
 
 project_root = os.path.dirname(os.path.dirname(__file__))
 
@@ -77,11 +82,30 @@ with open(f"{project_root}/test_data/party/respondent_party_list.json") as fp:
 with open(f"{project_root}/test_data/iac/iac.json") as fp:
     iac = json.load(fp)
 
+user_permission_admin_json = {
+    "id": "5902656c-c41c-4b38-a294-0359e6aabe59",
+    "groups": [{"value": "f385f89e-928f-4a0f-96a0-4c48d9007cc3", "display": "users.admin", "type": "DIRECT"}],
+}
 
-class TestReportingUnits(TestCase):
-    def setUp(self):
+user_permission_reporting_unit_edit_json = {
+    "id": "5902656c-c41c-4b38-a294-0359e6aabe59",
+    "groups": [{"value": "f385f89e-928f-4a0f-96a0-4c48d9007cc3", "display": "reportingunits.edit", "type": "DIRECT"}],
+}
+
+
+class TestReportingUnits(ViewTestCase):
+    def setup_data(self):
         self.app = create_app("TestingConfig")
-        self.client = self.app.test_client()
+        payload = {"user_id": "test-id", "aud": "response_operations"}
+        self.access_token = jwt.encode(payload, TestingConfig.UAA_PRIVATE_KEY, algorithm="RS256")
+        self.surveys_list_json = [
+            {
+                "id": "f235e99c-8edf-489a-9c72-6cabe6c387fc",
+                "shortName": "ASHE",
+                "longName": "ASHE long name",
+                "surveyRef": "123",
+            }
+        ]
 
     @requests_mock.mock()
     def test_get_reporting_unit(self, mock_request):
@@ -192,6 +216,60 @@ class TestReportingUnits(TestCase):
         request_history = mock_request.request_history
         self.assertEqual(len(request_history), 5)
         self.assertEqual(response.status_code, 500)
+
+    @requests_mock.mock()
+    def test_get_reporting_unit_survey_reporting_unit_edit_role(self, mock_request):
+        mock_request.post(url_sign_in_data, json={"access_token": self.access_token}, status_code=201)
+        mock_request.get(url_surveys, json=self.surveys_list_json, status_code=200)
+        mock_request.get(url_permission_url, json=user_permission_reporting_unit_edit_json, status_code=200)
+        self.client.post("/sign-in", follow_redirects=True, data={"username": "user", "password": "pass"})
+        mock_request.get(url_get_business_by_ru_ref, json=business_reporting_unit)
+        mock_request.get(url_get_cases_by_business_party_id, json=cases_list)
+        mock_request.get(f"{url_get_collection_exercise_by_id}/{collection_exercise_id_1}", json=collection_exercise)
+        mock_request.get(f"{url_get_collection_exercise_by_id}/{collection_exercise_id_2}", json=collection_exercise_2)
+        mock_request.get(url_get_respondent_party_by_party_id, json=respondent_party)
+        mock_request.get(url_get_business_attributes, json=business_attributes)
+        mock_request.get(url_get_survey_by_id, json=survey)
+        mock_request.get(url_get_respondent_party_by_list, json=respondent_party_list)
+        mock_request.get(f"{url_get_iac}/{iac_1}", json=iac)
+        mock_request.get(f"{url_get_iac}/{iac_2}", json=iac)
+        mock_request.get(url_permission_url, json=user_permission_reporting_unit_edit_json, status_code=200)
+
+        response = self.client.get(
+            "/reporting-units/50012345678/surveys/cb0711c3-0ac8-41d3-ae0e-567e5ea1ef87", follow_redirects=True
+        )
+
+        self.assertIn('id="change-enrolment-status"'.encode(), response.data)
+        self.assertIn('id="unused-enrolment-code"'.encode(), response.data)
+        self.assertIn("Change".encode(), response.data)
+        self.assertEqual(response.status_code, 200)
+
+    @requests_mock.mock()
+    def test_get_reporting_unit_survey_no_reporting_unit_edit_role(self, mock_request):
+        mock_request.post(url_sign_in_data, json={"access_token": self.access_token}, status_code=201)
+        mock_request.get(url_surveys, json=self.surveys_list_json, status_code=200)
+        mock_request.get(url_permission_url, json=user_permission_admin_json, status_code=200)
+        self.client.post("/sign-in", follow_redirects=True, data={"username": "user", "password": "pass"})
+        mock_request.get(url_get_business_by_ru_ref, json=business_reporting_unit)
+        mock_request.get(url_get_cases_by_business_party_id, json=cases_list)
+        mock_request.get(f"{url_get_collection_exercise_by_id}/{collection_exercise_id_1}", json=collection_exercise)
+        mock_request.get(f"{url_get_collection_exercise_by_id}/{collection_exercise_id_2}", json=collection_exercise_2)
+        mock_request.get(url_get_respondent_party_by_party_id, json=respondent_party)
+        mock_request.get(url_get_business_attributes, json=business_attributes)
+        mock_request.get(url_get_survey_by_id, json=survey)
+        mock_request.get(url_get_respondent_party_by_list, json=respondent_party_list)
+        mock_request.get(f"{url_get_iac}/{iac_1}", json=iac)
+        mock_request.get(f"{url_get_iac}/{iac_2}", json=iac)
+        mock_request.get(url_permission_url, json=user_permission_admin_json, status_code=200)
+
+        response = self.client.get(
+            "/reporting-units/50012345678/surveys/cb0711c3-0ac8-41d3-ae0e-567e5ea1ef87", follow_redirects=True
+        )
+
+        self.assertNotIn('id="change-enrolment-status"'.encode(), response.data)
+        self.assertNotIn('id="unused-enrolment-code"'.encode(), response.data)
+        self.assertNotIn("Change".encode(), response.data)
+        self.assertEqual(response.status_code, 200)
 
     @requests_mock.mock()
     def test_get_reporting_unit_iac_fail(self, mock_request):

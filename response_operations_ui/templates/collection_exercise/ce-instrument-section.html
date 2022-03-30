@@ -32,15 +32,29 @@
             {{ onsTable(surveyTableData) }}
             {% if ce.state|upper != "LIVE" and ce.state|upper != "READY FOR LIVE" and ce.state|upper != "SETTING READY FOR LIVE" %}
                 <p class="ons-field ons-u-mt-l">
-                    <a href="{{ url_for('collection_exercise_bp.get_seft_collection_instrument', period=ce.exerciseRef, short_name=survey.shortName.replace(' ', '')) }}"
-                        role="button" class="ons-btn ons-btn--secondary" id="btn-mng-seft-ci"><span class="ons-btn__inner">Manage collection instruments</span></a>
+                    {{
+                        onsButton({
+                            "text": "Manage collection instruments",
+                            "id": "btn-mng-seft-ci",
+                            "variants": ['secondary', 'small'],
+                            "noIcon": true,
+                            "url": url_for('collection_exercise_bp.get_seft_collection_instrument', period=ce.exerciseRef, short_name=survey.shortName.replace(' ', ''))
+                        })
+                    }}
                 </p>
             {% endif %}
         {% elif not collection_instruments %}
             {% if not ce.state|upper == "LIVE" %}
                 <p class="ons-field ons-u-mt-l">
-                    <a href="{{ url_for('collection_exercise_bp.get_seft_collection_instrument', period=ce.exerciseRef, short_name=survey.shortName.replace(' ', '')) }}"
-                        role="button" class="ons-btn ons-btn--secondary" id="btn-load-seft-ci"><span class="ons-btn__inner">Load collection instruments</span></a>
+                    {{
+                        onsButton({
+                            "text": "Load collection instruments",
+                            "id": "btn-load-seft-ci",
+                            "variants": ['secondary', 'small'],
+                            "noIcon": true,
+                            "url": url_for('collection_exercise_bp.get_seft_collection_instrument', period=ce.exerciseRef, short_name=survey.shortName.replace(' ', ''))
+                        })
+                    }}
                 </p>
             {% endif %}
         {% endif %}

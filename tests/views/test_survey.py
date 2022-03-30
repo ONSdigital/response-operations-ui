@@ -121,7 +121,7 @@ class TestSurvey(ViewTestCase):
         self.assertEqual(response.status_code, 200)
         self.assertIn("BRES".encode(), response.data)
         self.assertIn("BRUS".encode(), response.data)
-        self.assertIn("Create new survey".encode(), response.data)
+        self.assertIn("Create survey".encode(), response.data)
 
     @requests_mock.mock()
     def test_survey_list_no_surveys(self, mock_request):
