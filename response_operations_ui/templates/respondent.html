@@ -3,8 +3,12 @@
 {% set page_title = "Respondents" %}
 
 {% block main %}
-
+    
     {% include 'partials/flashed-messages.html' %}
+
+    
+    {% set is_respondent_edit_permission = hasPermission('respondents.edit') %}
+    {% set is_respondent_delete_permission = hasPermission('respondents.delete') %}
 
     <section>
         <h1 id="respondent-name">{{ respondent.firstName }} {{ respondent.lastName }}</h1>
@@ -13,8 +17,8 @@
                 {% set accountStatus %}
                     {% if respondent.status  == 'Suspended' %} Locked {% else %} {{ respondent.status }} {% endif %}
                     <br>
-                    {% if respondent.status == 'Created' %}<a id="resend-verification-email-btn" href="{{ url_for('respondent_bp.view_resend_verification', respondent_id=respondent.id) }}">Re-send new account verification email</a>
-                    {% elif respondent.status == 'Suspended' %}<a id="respondent-unlock-link" href="{{ url_for('respondent_bp.confirm_change_respondent_status', party_id=respondent.id, tab='respondents', change_flag='ACTIVE') }}">Unlock</a>
+                    {% if respondent.status == 'Created' and is_respondent_edit_permission %}<a id="resend-verification-email-btn" href="{{ url_for('respondent_bp.view_resend_verification', respondent_id=respondent.id) }}">Re-send new account verification email</a>
+                    {% elif respondent.status == 'Suspended' and is_respondent_edit_permission %}<a id="respondent-unlock-link" href="{{ url_for('respondent_bp.confirm_change_respondent_status', party_id=respondent.id, tab='respondents', change_flag='ACTIVE') }}">Unlock</a>
                     {% endif %}
                 {% endset %}
                 {{
@@ -37,7 +41,7 @@
                                 "term": "New Email:" if respondent.pendingEmailAddress else "",
                                 "descriptions": [
                                     {
-                                        "description": respondent.pendingEmailAddress + '<br><a id="resend-verification-email-btn" href="' + url_for('respondent_bp.view_resend_verification', respondent_id=respondent.id) + '">Re-send verification email</a>' if respondent.pendingEmailAddress else "",
+                                        "description": respondent.pendingEmailAddress + '<br><a id="resend-verification-email-btn" href="' + url_for('respondent_bp.view_resend_verification', respondent_id=respondent.id) + '">Re-send verification email</a>' if respondent.pendingEmailAddress and is_respondent_edit_permission else "",
                                         "id": "respondent-email" if respondent.pendingEmailAddress else "",
                                         "name": "tbl-respondent-pending-email" if respondent.pendingEmailAddress else ""
                                     }
@@ -52,7 +56,7 @@
                                         "name": "tbl-respondent-phone"
                                     },
                                     {
-                                        "description": '<a id="edit-contact-details" href="' + url_for('respondent_bp.view_contact_details', respondent_id=respondent.id) + '">Edit contact details</a>'
+                                        "description": '<a id="edit-contact-details" href="' + url_for('respondent_bp.view_contact_details', respondent_id=respondent.id) + '">Edit contact details</a>' if is_respondent_edit_permission else ''
                                     }
                                 ]
                             },
@@ -64,10 +68,10 @@
                                         "id": "respondent-account-status"
                                     },
                                     {
-                                        "description": '<a id="delete-respondent" href="' + url_for('respondent_bp.delete_respondent', respondent_id=respondent.id) + '">Delete respondent</a>' if not mark_for_deletion else ""
+                                        "description": '<a id="delete-respondent" href="' + url_for('respondent_bp.delete_respondent', respondent_id=respondent.id) + '">Delete respondent</a>' if not mark_for_deletion and is_respondent_delete_permission else ""
                                     },
                                         {
-                                        "description": '<a id="undo-delete-respondent" href="' + url_for('respondent_bp.undo_delete_respondent', respondent_id=respondent.id) + '">Reactivate respondent</a>' if mark_for_deletion else ""
+                                        "description": '<a id="undo-delete-respondent" href="' + url_for('respondent_bp.undo_delete_respondent', respondent_id=respondent.id) + '">Reactivate respondent</a>' if mark_for_deletion and is_respondent_edit_permission else ""
                                     }
                                 ]
                             }
@@ -107,16 +111,18 @@
             {% for enrolment in enrolments %}
                 {% set enrolmentData %}
                     {{ enrolment['status'].title() }}
-                    {% if enrolment['status'] == 'ENABLED' %}
-                    <a href="{{ url_for('reporting_unit_bp.confirm_change_enrolment_status', ru_ref=enrolment['business']['sampleUnitRef'], ru_name=enrolment['business']['name'], survey_id=enrolment['survey']['id'],
-                        survey_name=enrolment['survey']['shortName'], respondent_id=respondent.id, respondent_first_name=respondent.firstName,
-                        respondent_last_name=respondent.lastName, business_id=enrolment['business']['id'], trading_as=enrolment['business']['trading_as'], change_flag='DISABLED', tab='respondents')}}"
-                        id="change-enrolment-status">Disable</a>
-                    {% elif enrolment['status'] == 'DISABLED' %}
-                    <a href="{{ url_for('reporting_unit_bp.confirm_change_enrolment_status', ru_ref=enrolment['business']['sampleUnitRef'], ru_name=enrolment['business']['name'], survey_id=enrolment['survey']['id'],
-                        survey_name=enrolment['survey']['shortName'], respondent_id=respondent.id, respondent_first_name=respondent.firstName,
-                        respondent_last_name=respondent.lastName, business_id=enrolment['business']['id'], trading_as=enrolment['business']['trading_as'], change_flag='ENABLED', tab='respondents')}}"
-                        id="change-enrolment-status">Re-enable</a>
+                    {% if is_respondent_edit_permission %}
+                      {% if enrolment['status'] == 'ENABLED' %}
+                      <a href="{{ url_for('reporting_unit_bp.confirm_change_enrolment_status', ru_ref=enrolment['business']['sampleUnitRef'], ru_name=enrolment['business']['name'], survey_id=enrolment['survey']['id'],
+                          survey_name=enrolment['survey']['shortName'], respondent_id=respondent.id, respondent_first_name=respondent.firstName,
+                          respondent_last_name=respondent.lastName, business_id=enrolment['business']['id'], trading_as=enrolment['business']['trading_as'], change_flag='DISABLED', tab='respondents')}}"
+                          id="change-enrolment-status">Disable</a>
+                      {% elif enrolment['status'] == 'DISABLED' %}
+                      <a href="{{ url_for('reporting_unit_bp.confirm_change_enrolment_status', ru_ref=enrolment['business']['sampleUnitRef'], ru_name=enrolment['business']['name'], survey_id=enrolment['survey']['id'],
+                          survey_name=enrolment['survey']['shortName'], respondent_id=respondent.id, respondent_first_name=respondent.firstName,
+                          respondent_last_name=respondent.lastName, business_id=enrolment['business']['id'], trading_as=enrolment['business']['trading_as'], change_flag='ENABLED', tab='respondents')}}"
+                          id="change-enrolment-status">Re-enable</a>
+                      {% endif %}
                     {% endif %}
                 {% endset %}
                 {% do surveyTableDataRows.append(
@@ -171,6 +177,19 @@
                     {
                         "value": "Action"
                     }
+                ] if is_respondent_edit_permission else [
+                    {
+                        "value": "Recipient's email address"
+                    },
+                    {
+                        "value": "Shared surveys"
+                    },
+                    {
+                        "value": "Time"
+                    },
+                    {
+                        "value": "Status"
+                    }
                 ]
             } %}
 
@@ -206,6 +225,19 @@
                             {
                                 "value": shareSurveyDelete
                             }
+                        ] if is_respondent_edit_permission else [
+                            {
+                                "value": shareSurvey['recipient_email']
+                            },
+                            {
+                                "value": ns.shareSurveyBusinessDetails
+                            },
+                            {
+                                "value": shareSurvey['time_shared']
+                            },
+                            {
+                                "value": shareSurveyEmail 
+                            }
                         ]
                     }
                 ) %}
@@ -239,6 +271,19 @@
                     },
                     {
                         "value": "Action"
+                    }
+                ] if is_respondent_edit_permission else [
+                    {
+                        "value": "Recipient's email address"
+                    },
+                    {
+                        "value": "Transferred surveys"
+                    },
+                    {
+                        "value": "Time"
+                    },
+                    {
+                        "value": "Status"
                     }
                 ]
             } %}
@@ -274,6 +319,19 @@
                             },
                             {
                                 "value": transferSurveyDelete
+                            }
+                        ] if is_respondent_edit_permission else [
+                            {
+                                "value": transferSurvey['recipient_email']
+                            },
+                            {
+                                "value": ns.transferSurveyBusinessDetails
+                            },
+                            {
+                                "value": transferSurvey['time_shared']
+                            },
+                            {
+                                "value": transferSurveyEmail 
                             }
                         ]
                     }
