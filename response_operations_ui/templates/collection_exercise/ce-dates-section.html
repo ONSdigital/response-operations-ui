@@ -1,44 +1,35 @@
 <section class="ce-section ce-events">
-    <h2 class="ons-u-fs-r--b ons-u-pt-m">Dates</h2>
-    {% set surveyEditPermission = hasPermission('surveys.edit') %}
-
-    {% if surveyEditPermission %}
-      {% set surveyTableData = {
-          "variants": 'compact',
-          "caption": 'Dates for this collection exercise',
-          "hideCaption": true,
-          "ths": [
-              {
-                  "value": "Event",
-                  "class": "ons-u-vh"
-              },
-              {
-                  "value": "Date",
-                  "class": "ons-u-vh"
-              },
-              {
-                  "value": "Status",
-                  "class": "ons-u-vh"
-              }
-          ]
-      } %}
-    {% else %}
-      {% set surveyTableData = {
-          "variants": 'compact',
-          "caption": 'Dates for this collection exercise',
-          "hideCaption": true,
-          "ths": [
-              {
-                  "value": "Event",
-                  "class": "ons-u-vh"
-              },
-              {
-                  "value": "Date",
-                  "class": "ons-u-vh"
-              }
-          ]
-      } %}
-    {% endif %}
+    {% set surveyEditPermission = hasPermission('surveys.edit') %}  
+    {% set surveyTableData = { 
+        "variants": 'compact',
+        "caption": 'Dates for this collection exercise', 
+        "hideCaption": true,
+        "ths":
+            [ 
+                {  
+                    "value": "Event",
+                    "class": "ons-u-vh" 
+                }, 
+                { 
+                    "value": "Date",
+                    "class": "ons-u-vh"
+                }, 
+                { 
+                    "value": "Status",
+                    "class": "ons-u-vh"
+                } if surveyEditPermission else 
+                    [ 
+                        {  
+                            "value": "Event",     
+                            "class": "ons-u-vh" 
+                        }, 
+                        { 
+                            "value": "Date", 
+                            "class": "ons-u-vh" 
+                        }
+                    ]
+            ]
+    } %}
 
     {% set surveyTableDataRows = [] %}
     {% set dateGroups = ['mps', 'go_live', 'return_by', 'reminder', 'reminder2', 'reminder3', 'exercise_end'] %}

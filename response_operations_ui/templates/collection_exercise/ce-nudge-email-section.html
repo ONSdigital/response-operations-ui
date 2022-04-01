@@ -1,42 +1,25 @@
 <section class="ce-section ce-events">
     {% set surveyEditPermission = hasPermission('surveys.edit') %}
-    {% if surveyEditPermission %}
-      {% set surveyTableData = {
-          "variants": 'compact',
-          "caption": 'Nudge emails for this collection exercise',
-          "hideCaption": true,
-          "ths": [
-              {
-                  "value": "Event",
-                  "thClasses": "ons-u-vh"
-              },
-              {
-                  "value": "Date",
-                  "thClasses": "ons-u-vh"
-              },
-              {
-                  "value": "Status",
-                  "thClasses": "ons-u-vh"
-              }
-          ]
-      } %}
-    {% else %}
-      {% set surveyTableData = {
-          "variants": 'compact',
-          "caption": 'Nudge emails for this collection exercise',
-          "hideCaption": true,
-          "ths": [
-              {
-                  "value": "Event",
-                  "thClasses": "ons-u-vh"
-              },
-              {
-                  "value": "Date",
-                  "thClasses": "ons-u-vh"
-              }
-          ]
-      } %}
-    {% endif %}
+    {% set surveyTableData = {
+        "variants": 'compact',
+        "caption": 'Nudge emails for this collection exercise',
+        "hideCaption": true,
+        "ths":
+            [
+                {
+                    "value": "Event",
+                    "thClasses": "ons-u-vh"
+                },
+                {
+                    "value": "Date",
+                    "thClasses": "ons-u-vh"
+                },
+                {
+                    "value": "Status",
+                    "thClasses": "ons-u-vh"
+                } 
+            ]
+    } %}
     {% if (events.nudge_email_0) or (events.nudge_email_1) or (events.nudge_email_2) or (events.nudge_email_3) or (events.nudge_email_4) or (events.nudge_email_5) %}
         <h2 class="ons-u-fs-r--b ons-u-pt-m">Nudge emails</h2>
     {% endif %}
@@ -134,20 +117,21 @@
         {% if label %}
             {% do surveyTableDataRows.append(
                 {
-                "tds": [
-                    {
-                        "value": label
-                    },
-                    {
-                        "value": eventDay + ' <em>' + eventDate + '</em> ' + eventTime if event,
-                        "tdClasses": "ons-u-ta-right",
-                        "name": name
-                    },
-                    {
-                        "form": formData,
-                        "tdClasses": "ons-u-ta-right"
-                    }
-                ]
+                "tds": 
+                    [
+                        {
+                            "value": label
+                        },
+                        {
+                            "value": eventDay + ' <em>' + eventDate + '</em> ' + eventTime if event,
+                            "tdClasses": "ons-u-ta-right",
+                            "name": name
+                        },
+                        {
+                            "form": formData,
+                            "tdClasses": "ons-u-ta-right"
+                        }
+                    ]
                 }
             ) %}
         {% endif %}

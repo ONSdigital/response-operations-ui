@@ -1,8 +1,7 @@
 <section class="ce-section {{'ons-panel ons-panel--simple ons-panel--error' if missing_ci else ''}}">
     <h2 class="ons-u-fs-r--b ons-u-pt-m">Collection instruments ({{ collection_instruments | length }})</h2>
     {% set surveyEditPermission = hasPermission('surveys.edit') %}
-    {% if survey.surveyMode == 'SEFT' %}
-        {% if collection_instruments %}
+        {% if survey.surveyMode == 'SEFT' and collection_instruments %}
             {% set surveyTableData = {
                 "variants": 'compact',
                 "id": "collection-instruments-table",
@@ -43,24 +42,21 @@
                     }}
                 </p>
             {% endif %}
-        {% elif not collection_instruments %}
-            {% if not ce.state|upper == "LIVE" and surveyEditPermission %}
-                <p class="ons-field ons-u-mt-l">
-                    {{
-                        onsButton({
-                            "text": "Load collection instruments",
-                            "id": "btn-load-seft-ci",
-                            "variants": ['secondary', 'small'],
-                            "noIcon": true,
-                            "url": url_for('collection_exercise_bp.get_seft_collection_instrument', period=ce.exerciseRef, short_name=survey.shortName.replace(' ', ''))
-                        })
-                    }}
-                </p>
-            {% else %}
-                <p>No collection instruments loaded</p>
-            {% endif %}
+        {% elif survey.surveyMode == 'SEFT' and not collection_instruments and not ce.state|upper == "LIVE" and surveyEditPermission %}
+            <p class="ons-field ons-u-mt-l">
+                {{
+                    onsButton({
+                        "text": "Load collection instruments",
+                        "id": "btn-load-seft-ci",
+                        "variants": ['secondary', 'small'],
+                        "noIcon": true,
+                        "url": url_for('collection_exercise_bp.get_seft_collection_instrument', period=ce.exerciseRef, short_name=survey.shortName.replace(' ', ''))
+                    })
+                }}
+            </p>
+        {% elif survey.surveyMode == 'SEFT' %}
+            <p>No collection instruments loaded</p>
         {% endif %}
-    {% endif %}
 
     {% if survey.surveyMode != 'SEFT' %}
         {% if collection_instruments %}
