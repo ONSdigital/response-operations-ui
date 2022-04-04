@@ -35,6 +35,7 @@ from response_operations_ui.common.validators import valid_date_for_event
 from response_operations_ui.controllers import (
     collection_exercise_controllers,
     collection_instrument_controllers,
+    party_controller,
     sample_controllers,
     survey_controllers,
 )
@@ -792,17 +793,21 @@ def remove_loaded_sample(short_name, period):
     sample_summary_id = ce_details["sample_summary"]["id"]
     collection_exercise_id = ce_details["collection_exercise"]["id"]
 
-    unlink_sample_summary = collection_exercise_controllers.unlink_sample_summary(
+    logger.info(
+        "Removing sample for collection exercise",
+        short_name=short_name,
+        period=period,
+        collection_exercise_id=collection_exercise_id,
+        sample_summary_id=sample_summary_id,
+    )
+    # TODO what happens if one of these 3 steps fail?  How do we recover and/or try again?
+    party_controller.delete_attributes_by_sample_summary_id(sample_summary_id)
+    sample_controllers.delete_sample(sample_summary_id)
+    is_successfully_unlinked = collection_exercise_controllers.unlink_sample_summary(
         collection_exercise_id, sample_summary_id
     )
 
-    if unlink_sample_summary:
-        logger.info(
-            "Removing sample for collection exercise",
-            short_name=short_name,
-            period=period,
-            collection_exercise_id=collection_exercise_id,
-        )
+    if is_successfully_unlinked:
         return redirect(
             url_for(
                 "collection_exercise_bp.view_collection_exercise",
@@ -817,6 +822,7 @@ def remove_loaded_sample(short_name, period):
             short_name=short_name,
             period=period,
             collection_exercise_id=collection_exercise_id,
+            sample_summary_id=sample_summary_id,
         )
         session["error"] = json.dumps(
             {"section": "head", "header": "Error: Failed to remove sample", "message": "Please try again"}
