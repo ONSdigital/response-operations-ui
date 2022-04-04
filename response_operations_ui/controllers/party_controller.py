@@ -330,14 +330,14 @@ def delete_attributes_by_sample_summary_id(sample_summary_id: str) -> None:
 
     try:
         response.raise_for_status()
-    except (HTTPError, RequestException):
+    except HTTPError:
         logger.error(
             "Failed to delete business attributes by sample summary id",
             sample_summary_id=sample_summary_id,
             status_code=response.status_code,
         )
         raise ApiError(response)
-    logger.info("Successfully deleted business attributes", sample_summary_id)
+    logger.info("Successfully deleted business attributes", sample_summary_id=sample_summary_id)
     return
 
 
