@@ -1,22 +1,24 @@
 <section class="ce-section ce-events">
+    {% set surveyEditPermission = hasPermission('surveys.edit') %}
     {% set surveyTableData = {
         "variants": 'compact',
         "caption": 'Nudge emails for this collection exercise',
         "hideCaption": true,
-        "ths": [
-            {
-                "value": "Event",
-                "thClasses": "ons-u-vh"
-            },
-            {
-                "value": "Date",
-                "thClasses": "ons-u-vh"
-            },
-            {
-                "value": "Status",
-                "thClasses": "ons-u-vh"
-            }
-        ]
+        "ths":
+            [
+                {
+                    "value": "Event",
+                    "thClasses": "ons-u-vh"
+                },
+                {
+                    "value": "Date",
+                    "thClasses": "ons-u-vh"
+                },
+                {
+                    "value": "Status",
+                    "thClasses": "ons-u-vh"
+                } 
+            ]
     } %}
     {% if (events.nudge_email_0) or (events.nudge_email_1) or (events.nudge_email_2) or (events.nudge_email_3) or (events.nudge_email_4) or (events.nudge_email_5) %}
         <h2 class="ons-u-fs-r--b ons-u-pt-m">Nudge emails</h2>
@@ -99,34 +101,37 @@
                 {% set ns.seqnum = ns.seqnum + 1 %}
             {% endif %}
         {% endif %}
-        {% if not locked or eventIsInFuture %}
-            {% set formData = {
-                "action": url_for('collection_exercise_bp.update_event_date', short_name=survey.shortName, period=ce.exerciseRef, tag=nudgeGroup, errors=None),
-                "method": 'get',
-                "button": {
-                    "text": 'Edit',
-                    "id": 'edit-event-date-' + nudgeGroup,
-                    "classes": 'ons-btn--secondary ons-btn--small'
-                }
-            } %}
+        {% if surveyEditPermission %}
+          {% if not locked or eventIsInFuture %}
+              {% set formData = {
+                  "action": url_for('collection_exercise_bp.update_event_date', short_name=survey.shortName, period=ce.exerciseRef, tag=nudgeGroup, errors=None),
+                  "method": 'get',
+                  "button": {
+                      "text": 'Edit',
+                      "id": 'edit-event-date-' + nudgeGroup,
+                      "classes": 'ons-btn--secondary ons-btn--small'
+                  }
+              } %}
+          {% endif %}
         {% endif %}
         {% if label %}
             {% do surveyTableDataRows.append(
                 {
-                "tds": [
-                    {
-                        "value": label
-                    },
-                    {
-                        "value": eventDay + ' <em>' + eventDate + '</em> ' + eventTime if event,
-                        "tdClasses": "ons-u-ta-right",
-                        "name": name
-                    },
-                    {
-                        "form": formData,
-                        "tdClasses": "ons-u-ta-right"
-                    }
-                ]
+                "tds": 
+                    [
+                        {
+                            "value": label
+                        },
+                        {
+                            "value": eventDay + ' <em>' + eventDate + '</em> ' + eventTime if event,
+                            "tdClasses": "ons-u-ta-right",
+                            "name": name
+                        },
+                        {
+                            "form": formData,
+                            "tdClasses": "ons-u-ta-right"
+                        }
+                    ]
                 }
             ) %}
         {% endif %}
@@ -144,26 +149,28 @@
         {% set nudge = 'nudge_email_4' %}
     {% endif %}
     {% if ( (events.go_live) and (events.return_by) and (nudge) ) %} 
-        {% set formData = {
-            "action": url_for('collection_exercise_bp.get_create_collection_event_form', short_name=survey.shortName, period=ce.exerciseRef, ce_id=ce.id, tag=nudge),
-            "method": 'get',
-            "button": {
-                "text": 'Schedule nudge email',
-                "id": 'create-event-date-' + nudge,
-                "classes": 'ons-btn--secondary ons-btn--small'
-            }
-        } %}
-        {% if nudge %}
-            {% do surveyTableDataRows.append(
-                {
-                    "tds": [
-                        {
-                            "form": formData,
-                            "tdClasses": "ons-u-ta-left"
-                        }
-                    ]
+        {% if surveyEditPermission %}
+            {% set formData = {
+                "action": url_for('collection_exercise_bp.get_create_collection_event_form', short_name=survey.shortName, period=ce.exerciseRef, ce_id=ce.id, tag=nudge),
+                "method": 'get',
+                "button": {
+                    "text": 'Schedule nudge email',
+                    "id": 'create-event-date-' + nudge,
+                    "classes": 'ons-btn--secondary ons-btn--small'
                 }
-            ) %}
+            } %}
+            {% if nudge %}
+                {% do surveyTableDataRows.append(
+                    {
+                        "tds": [
+                            {
+                                "form": formData,
+                                "tdClasses": "ons-u-ta-left"
+                            }
+                        ]
+                    }
+                ) %}
+            {% endif %}
         {% endif %}
     {% elif ( (events.go_live) and (events.return_by) ) %}
         {% call

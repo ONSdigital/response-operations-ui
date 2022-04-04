@@ -6,6 +6,7 @@
 {% from "components/button/_macro.njk" import onsButton %}
 {% from "components/status/_macro.njk" import onsStatus %}
 
+{% set surveyEditPermission = hasPermission('surveys.edit') %}
 
 {% block main %}
     {% if updated_ce_message %}
@@ -94,33 +95,35 @@
         }}
     </section>
     <section class="ce-list">
-        <h2>Collection exercises for {{survey.shortName}}</h2>
-        {% if survey.surveyMode == 'EQ' %}
+        {% if surveyEditPermission %}
+          <h2>Collection exercises for {{survey.shortName}}</h2>
+            {% if survey.surveyMode == 'EQ' %}
+                <p class="ons-field">
+                    {{
+                        onsButton({
+                            "text": "Link collection instrument",
+                            "id": "link-collection-instrument",
+                            "variants": ['secondary', 'small'],
+                            "name": "link-collection-instrument-link",
+                            "noIcon": true,
+                            "url": url_for('surveys_bp.get_link_collection_instrument', short_name=survey.shortName)
+                        })
+                    }}
+                </p>
+            {% endif %}
             <p class="ons-field">
                 {{
                     onsButton({
-                        "text": "Link collection instrument",
-                        "id": "link-collection-instrument",
-                        "variants": ['secondary', 'small'],
-                        "name": "link-collection-instrument-link",
+                        "text": "Create collection exercise",
+                        "id": "create-collection-exercise",
+                        "variants": ['small'],
+                        "name": "create-collection-exercise-link",
                         "noIcon": true,
-                        "url": url_for('surveys_bp.get_link_collection_instrument', short_name=survey.shortName)
+                        "url": url_for('collection_exercise_bp.get_create_collection_exercise_form', survey_ref=survey.surveyRef, short_name=survey.shortName.replace(' ', ''))
                     })
                 }}
             </p>
-        {% endif %}
-        <p class="ons-field">
-            {{
-                onsButton({
-                    "text": "Create collection exercise",
-                    "id": "create-collection-exercise",
-                    "variants": ['small'],
-                    "name": "create-collection-exercise-link",
-                    "noIcon": true,
-                    "url": url_for('collection_exercise_bp.get_create_collection_exercise_form', survey_ref=survey.surveyRef, short_name=survey.shortName.replace(' ', ''))
-                })
-            }}
-        </p>
+      {% endif %}
 
         {% set surveyTableData = {
             "variants": ['compact', 'responsive'],

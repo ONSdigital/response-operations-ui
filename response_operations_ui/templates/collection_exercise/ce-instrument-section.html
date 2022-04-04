@@ -1,7 +1,7 @@
 <section class="ce-section {{'ons-panel ons-panel--simple ons-panel--error' if missing_ci else ''}}">
     <h2 class="ons-u-fs-r--b ons-u-pt-m">Collection instruments ({{ collection_instruments | length }})</h2>
-    {% if survey.surveyMode == 'SEFT' %}
-        {% if collection_instruments %}
+    {% set surveyEditPermission = hasPermission('surveys.edit') %}
+        {% if survey.surveyMode == 'SEFT' and collection_instruments %}
             {% set surveyTableData = {
                 "variants": 'compact',
                 "id": "collection-instruments-table",
@@ -29,7 +29,7 @@
             {% endfor %}
             {% do surveyTableData | setAttribute("trs", surveyTableDataRows) %}
             {{ onsTable(surveyTableData) }}
-            {% if ce.state|upper != "LIVE" and ce.state|upper != "READY FOR LIVE" and ce.state|upper != "SETTING READY FOR LIVE" %}
+            {% if ce.state|upper != "LIVE" and ce.state|upper != "READY FOR LIVE" and ce.state|upper != "SETTING READY FOR LIVE" and surveyEditPermission %}
                 <p class="ons-field ons-u-mt-l">
                     {{
                         onsButton({
@@ -42,126 +42,190 @@
                     }}
                 </p>
             {% endif %}
-        {% elif not collection_instruments %}
-            {% if not ce.state|upper == "LIVE" %}
-                <p class="ons-field ons-u-mt-l">
-                    {{
-                        onsButton({
-                            "text": "Load collection instruments",
-                            "id": "btn-load-seft-ci",
-                            "variants": ['secondary', 'small'],
-                            "noIcon": true,
-                            "url": url_for('collection_exercise_bp.get_seft_collection_instrument', period=ce.exerciseRef, short_name=survey.shortName.replace(' ', ''))
-                        })
-                    }}
-                </p>
-            {% endif %}
+        {% elif survey.surveyMode == 'SEFT' and not collection_instruments and not ce.state|upper == "LIVE" and surveyEditPermission %}
+            <p class="ons-field ons-u-mt-l">
+                {{
+                    onsButton({
+                        "text": "Load collection instruments",
+                        "id": "btn-load-seft-ci",
+                        "variants": ['secondary', 'small'],
+                        "noIcon": true,
+                        "url": url_for('collection_exercise_bp.get_seft_collection_instrument', period=ce.exerciseRef, short_name=survey.shortName.replace(' ', ''))
+                    })
+                }}
+            </p>
+        {% elif survey.surveyMode == 'SEFT' %}
+            <p>No collection instruments loaded</p>
         {% endif %}
-    {% endif %}
 
     {% if survey.surveyMode != 'SEFT' %}
         {% if collection_instruments %}
-            {% set surveyTableData = {
-                "variants": 'compact',
-                "id": "collection-instruments-table",
-                "caption": 'Sample details for this collection exercise',
-                "hideCaption": true,
-                "ths": [
-                    {
-                        "value": "Collection instrument",
-                        "class": "ons-u-vh"
-                    }
-                ]
-            } %}
-            {% set surveyTableDataRows = [] %}
-            {% for collection_instrument in collection_instruments %}
-                {% if not locked %}
-                    {% set formData =
-                        '<form id="form-unselect-ci-' + loop.index|string + '" action="" method="post">' +
-                        '<a href=# id="unlink-ci-' + loop.index|string + '"><svg class="ons-ons-svg-icon" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" focusable="false"><path d="M0 0h24v24H0z" fill="none"/><path d="M7 11v2h10v-2H7zm5-9C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8z"/></svg></a>' +
-                        '<input type="hidden" name="ce_id" value="' + ce.id + '">' +
-                        '<input type="hidden" name="ci_id" value="' + collection_instrument.id + '">' +
-                        '<input type="hidden" name="unselect-ci">' +
-                        '<input type="hidden" name="csrf_token" value="' + csrf_token() + '" />' +
-                        '</form>'
-                    %}
-                {% endif %}
-                {% do surveyTableDataRows.append(
-                    {
-                        "tds": [
+            {% if surveyEditPermission %}
+                {% set surveyTableData = {
+                    "variants": 'compact',
+                    "id": "collection-instruments-table",
+                    "caption": 'Sample details for this collection exercise',
+                    "hideCaption": true,
+                    "ths": [
+                        {
+                            "value": "Collection instrument",
+                            "class": "ons-u-vh"
+                        }
+                    ]
+                } %}
+                {% set surveyTableDataRows = [] %}
+                {% for collection_instrument in collection_instruments %}
+                    {% if not locked %}
+                        {% set formData =
+                            '<form id="form-unselect-ci-' + loop.index|string + '" action="" method="post">' +
+                            '<a href=# id="unlink-ci-' + loop.index|string + '"><svg class="ons-ons-svg-icon" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" focusable="false"><path d="M0 0h24v24H0z" fill="none"/><path d="M7 11v2h10v-2H7zm5-9C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8z"/></svg></a>' +
+                            '<input type="hidden" name="ce_id" value="' + ce.id + '">' +
+                            '<input type="hidden" name="ci_id" value="' + collection_instrument.id + '">' +
+                            '<input type="hidden" name="unselect-ci">' +
+                            '<input type="hidden" name="csrf_token" value="' + csrf_token() + '" />' +
+                            '</form>'
+                        %}
+                    {% endif %}
+                    {% do surveyTableDataRows.append(
+                        {
+                            "tds": [
+                                {
+                                    "value": collection_instrument.file_name
+                                },
+                                {
+                                    "value": formData,
+                                    "tdClasses": "ons-u-ta-right"
+                                }
+                            ]
+                        }
+                    ) %}
+                {% endfor %}
+                {% do surveyTableData | setAttribute("trs", surveyTableDataRows) %}
+                {{ onsTable(surveyTableData) }}
+                {% for i in range(surveyTableDataRows | length) %}
+                    {% set j = i + 1 %}
+                    {% if not locked %}
+                        <script{% if csp_nonce %} nonce="{{ csp_nonce() }}" {% endif %}>
+                            document.getElementById("unlink-ci-{{ j }}").addEventListener('click', function () {
+                            this.parentNode.submit()
+                        });</script>
+                    {% endif %}
+                {% endfor %}
+            {% else %}
+                {% if collection_instruments %}
+                    {% set surveyTableData = {
+                        "variants": 'compact',
+                        "id": "collection-instruments-table",
+                        "caption": 'Sample details for this collection exercise',
+                        "hideCaption": true,
+                        "ths": [
                             {
-                                "value": collection_instrument.file_name
-                            },
-                            {
-                                "value": formData,
-                                "tdClasses": "ons-u-ta-right"
+                                "value": "Collection instrument",
+                                "class": "ons-u-vh"
                             }
                         ]
-                    }
-                ) %}
-            {% endfor %}
-            {% do surveyTableData | setAttribute("trs", surveyTableDataRows) %}
-            {{ onsTable(surveyTableData) }}
-            {% for i in range(surveyTableDataRows | length) %}
-                {% set j = i + 1 %}
-                {% if not locked %}
-                    <script{% if csp_nonce %} nonce="{{ csp_nonce() }}" {% endif %}>
-                        document.getElementById("unlink-ci-{{ j }}").addEventListener('click', function () {
-                        this.parentNode.submit()
-                    });</script>
+                    } %}
+                    {% set surveyTableDataRows = [] %}
+                    {% for collection_instrument in collection_instruments %}
+                        {% do surveyTableDataRows.append(
+                            {
+                                "tds": [
+                                    {
+                                        "value": collection_instrument.file_name
+                                    }
+                                ]
+                            }
+                        ) %}
+                    {% endfor %}
+                    {% do surveyTableData | setAttribute("trs", surveyTableDataRows) %}
+                    {{ onsTable(surveyTableData) }}
                 {% endif %}
-            {% endfor %}
+            {% endif %}
         {% endif %}
 
         {% if not locked %}
-            <div class="ons-u-mb-m">
-                {% if eq_ci_selectors %}
-                    {% set checkboxesData = {
-                        "name": "checkbox-answer",
-                        "legend": "eQ collection instruments available:"
-                    } %}
-
-                    {% set checkboxData = [] %}
-
-                    <form id="form-select-ci" action="" class="form" method="post" enctype="multipart/form-data">
-                        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}" />
-                        <div id="ciSelectErrorPanel"
-                            class="{{'ons-panel ons-panel--simple ons-panel--error' if error.section == 'ciSelect' else ''}}">
-                            <div id="ciSelectErrorPanelBody" class="{{'ons-panel__body' if error.section == 'ciSelect' else ''}}">
-                                <input type="hidden" name="ce_id" value="{{ ce.id }}" />
-                                {% for ci in eq_ci_selectors %}
-                                    {% do checkboxData.append(
-                                        {
-                                            "id": ci.id,
-                                            "name": "checkbox-answer",
-                                            "label": {
-                                                "text": survey.surveyRef + ' ' + ci.file_name|string + ' eQ'
-                                            },
-                                            "value": ci.id
-                                        }
-                                    ) %}
-                                {% endfor %}
-                                {% do checkboxesData | setAttribute("checkboxes", checkboxData) %}
-                                {{ onsCheckboxes(checkboxesData) }}
-                                <div class="ons-u-mt-s">
-                                    {{
-                                        onsButton({
-                                            "text": "Add",
-                                            "id": "btn-add-ci",
-                                            "name": "select-ci"
-                                        })
-                                    }}
+            {% if surveyEditPermission %}
+                <div class="ons-u-mb-m">
+                    {% if eq_ci_selectors %}
+                        {% set checkboxesData = {
+                            "name": "checkbox-answer",
+                            "legend": "eQ collection instruments available:"
+                        } %}
+    
+                        {% set checkboxData = [] %}
+    
+                        <form id="form-select-ci" action="" class="form" method="post" enctype="multipart/form-data">
+                            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}" />
+                            <div id="ciSelectErrorPanel"
+                                class="{{'ons-panel ons-panel--simple ons-panel--error' if error.section == 'ciSelect' else ''}}">
+                                <div id="ciSelectErrorPanelBody" class="{{'ons-panel__body' if error.section == 'ciSelect' else ''}}">
+                                    <input type="hidden" name="ce_id" value="{{ ce.id }}" />
+                                    {% for ci in eq_ci_selectors %}
+                                        {% do checkboxData.append(
+                                            {
+                                                "id": ci.id,
+                                                "name": "checkbox-answer",
+                                                "label": {
+                                                    "text": survey.surveyRef + ' ' + ci.file_name|string + ' eQ'
+                                                },
+                                                "value": ci.id
+                                            }
+                                        ) %}
+                                    {% endfor %}
+                                    {% do checkboxesData | setAttribute("checkboxes", checkboxData) %}
+                                    {{ onsCheckboxes(checkboxesData) }}
+                                    <div class="ons-u-mt-s">
+                                        {{
+                                            onsButton({
+                                                "text": "Add",
+                                                "id": "btn-add-ci",
+                                                "name": "select-ci"
+                                            })
+                                        }}
+                                    </div>
                                 </div>
                             </div>
+                        </form>
+                    {% else %}
+                        <div>
+                            <p>This survey type is an EQ but no collection instruments have been set up for it yet.</p>
+                            {% if surveyEditPermission %}
+                                <p><a href="{{ url_for('surveys_bp.get_link_collection_instrument', short_name=survey.shortName) }}" class="ons-btn ons-btn--secondary ons-btn--small"><span class="ons-btn__inner">Link collection instruments</span></a></p>
+                            {% endif %}
                         </div>
-                    </form>
-                {% else %}
-                    <div>
-                        <p>This survey type is an EQ but no collection instruments have been set up for it yet.</p>
-                        <p><a href="{{ url_for('surveys_bp.get_link_collection_instrument', short_name=survey.shortName) }}" class="ons-btn ons-btn--secondary ons-btn--small"><span class="ons-btn__inner">Link collection instruments</span></a></p>
-                    </div>
-                {% endif %}
-            </div>
+                    {% endif %}
+                </div>
+            {% else %}
+  
+            
+                <div class="ons-u-mb-m">
+                    {% if eq_ci_selectors %}
+                        {% set surveyTableData = {
+                            "variants": 'compact',
+                            "id": "collection-instruments-table",
+                            "caption": 'eQ collection instruments available:'
+                        } %}
+                        {% set surveyTableDataRows = [] %}
+                        {% for ci in eq_ci_selectors %}
+                            {% do surveyTableDataRows.append(
+                                {
+                                    "tds": [
+                                        {
+                                            "value": survey.surveyRef + ' ' + ci.file_name|string + ' eQ'
+                                        }
+                                    ]
+                                }
+                            ) %}
+                        {% endfor %}
+                        {% do surveyTableData | setAttribute("trs", surveyTableDataRows) %}
+                        {{ onsTable(surveyTableData) }}
+                    {% else %}
+                        <div>
+                            <p>This survey type is an EQ but no collection instruments have been set up for it yet.</p>
+                        </div>
+                    {% endif %}
+                </div>
+            {% endif %}
         {% endif %}
     {% endif %}
 </section>
