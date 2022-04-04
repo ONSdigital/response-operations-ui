@@ -312,6 +312,35 @@ def update_contact_details(respondent_id, form, ru_ref="NOT DEFINED"):
     return contact_details_changed
 
 
+def delete_attributes_by_sample_summary_id(sample_summary_id: str) -> None:
+    """
+    Deletes all the business attributes for a given sample_summary_id.  Each attribute represents a sample that a
+    business was part of, and if the sample is deleted (e.g., a mistake was made in the sample file) then calling
+    this will remove the now not needed data in party that is generated as part of the sample load process.
+
+    :param sample_summary_id: A sample summary id
+    :return: None
+    :raises ApiError: Occurs in the case that party returns a 4XX or 5XX value.  The most likely case being that
+    the sample_summary_id isn't a valid uuid.
+    """
+    logger.info("Deleting business attributes", sample_summary_id=sample_summary_id)
+
+    url = f'{app.config["PARTY_URL"]}/party-api/v1/businesses/attributes/sample-summary/{sample_summary_id}'
+    response = requests.delete(url, auth=app.config["BASIC_AUTH"])
+
+    try:
+        response.raise_for_status()
+    except (HTTPError, RequestException):
+        logger.error(
+            "Failed to delete business attributes by sample summary id",
+            sample_summary_id=sample_summary_id,
+            status_code=response.status_code,
+        )
+        raise ApiError(response)
+    logger.info("Successfully deleted business attributes", sample_summary_id)
+    return
+
+
 def _compare_contact_details(new_contact_details, old_contact_details):
     # Currently the 'get contact details' and 'update respondent details' keys do not match and must be mapped
     contact_details_map = {
