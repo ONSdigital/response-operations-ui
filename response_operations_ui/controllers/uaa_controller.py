@@ -1,4 +1,5 @@
 import logging
+from datetime import datetime, timedelta
 from json import JSONDecodeError, dumps
 
 import requests
@@ -267,6 +268,15 @@ def update_user_password(user, old_password, new_password):
     return errors
 
 
+def refresh_permissions(user_id):
+    """
+    Refreshes the cache of permissions for the current user
+    :param user_id: The user ID to refresh for
+    """
+    user = get_user_by_id(user_id)
+    session["permissions"] = {"groups": user.get("groups"), "expiry": (datetime.now() + timedelta(minutes=5))}
+
+
 def user_has_permission(permission, user_id=None) -> bool:
     """
     Checks to see if the user provided or in the session has the specified permission
@@ -291,8 +301,10 @@ def user_has_permission(permission, user_id=None) -> bool:
             return False
         user_id = session["user_id"]
 
-    user = get_user_by_id(user_id)
-    return any(permission in g["display"] for g in user.get("groups"))
+    if "permissions" not in session or session["permissions"]["expiry"] < datetime.now():
+        refresh_permissions(user_id)
+
+    return any(permission in g["display"] for g in session["permissions"]["groups"])
 
 
 def get_users_list(
