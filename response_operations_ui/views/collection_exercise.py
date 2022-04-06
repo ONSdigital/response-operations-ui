@@ -801,11 +801,13 @@ def remove_loaded_sample(short_name, period):
         sample_summary_id=sample_summary_id,
     )
     # TODO what happens if one of these 3 steps fail?  How do we recover and/or try again?
+    # If the sample summary succeeds but the unlink fails then you can't get back into the exercise.  For now
+    # we'll do the sample delete after the unlink as it's the safest option.
     party_controller.delete_attributes_by_sample_summary_id(sample_summary_id)
-    sample_controllers.delete_sample(sample_summary_id)
     is_successfully_unlinked = collection_exercise_controllers.unlink_sample_summary(
         collection_exercise_id, sample_summary_id
     )
+    sample_controllers.delete_sample(sample_summary_id)
 
     if is_successfully_unlinked:
         return redirect(

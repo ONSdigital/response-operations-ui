@@ -148,6 +148,7 @@ url_update_ce_period = f"{collection_exercise_root}/{collection_exercise_id}/exe
 url_get_collection_exercise_events = f"{collection_exercise_root}/{collection_exercise_id}/events"
 url_create_collection_exercise = f"{TestingConfig.COLLECTION_EXERCISE_URL}/collectionexercises"
 url_execute = f"{TestingConfig.COLLECTION_EXERCISE_URL}/collectionexerciseexecution/{collection_exercise_id}"
+url_get_by_survey_with_ref_end_date = f"{collection_exercise_root}/survey/{short_name}/{period}/event/ref_period_end?"
 
 collection_instrument_root = f"{TestingConfig.COLLECTION_INSTRUMENT_URL}/collection-instrument-api/1.0.2"
 url_collection_instrument = f"{collection_instrument_root}/upload/{collection_exercise_id}"
@@ -161,19 +162,21 @@ url_get_collection_instrument = f"{collection_instrument_root}/collectioninstrum
 
 url_survey_shortname = f"{TestingConfig.SURVEY_URL}/surveys/shortname/{short_name}"
 url_get_survey_by_short_name = f"{TestingConfig.SURVEY_URL}/surveys/shortname/{short_name}"
-
 url_get_classifier_type_selectors = f"{TestingConfig.SURVEY_URL}/surveys/{survey_id}/classifiertypeselectors"
 url_get_classifier_type = f"{TestingConfig.SURVEY_URL}/surveys/{survey_id}/classifiertypeselectors/{ci_selector_id}"
 
 url_sample_service_upload = f"{TestingConfig.SAMPLE_FILE_UPLOADER_URL}/samples/fileupload"
 
 url_get_sample_summary = f"{TestingConfig.SAMPLE_URL}/samples/samplesummary/{sample_summary_id}"
+url_delete_sample_summary = f"{TestingConfig.SAMPLE_URL}/samples/samplesummary/{sample_summary_id}"
 
 url_get_by_survey_with_ref_start_date = (
     f"{collection_exercise_root}/survey/{short_name}/{period}/event/ref_period_start?"
 )
 
-url_get_by_survey_with_ref_end_date = f"{collection_exercise_root}/survey/{short_name}/{period}/event/ref_period_end?"
+url_party_delete_attributes = (
+    f"{TestingConfig.PARTY_URL}/party-api/v1/businesses/attributes/sample-summary/{sample_summary_id}"
+)
 
 ci_search_string = urlencode(
     {"searchString": json.dumps({"SURVEY_ID": survey_id, "COLLECTION_EXERCISE": collection_exercise_id})}
@@ -1557,7 +1560,9 @@ class TestCollectionExercise(ViewTestCase):
     @patch("response_operations_ui.views.collection_exercise.build_collection_exercise_details")
     def test_remove_loaded_sample_success(self, mock_request, mock_details):
         mock_details.return_value = formatted_collection_exercise_details
+        mock_request.delete(url_party_delete_attributes, status_code=204)
         mock_request.delete(url_ce_remove_sample, status_code=200)
+        mock_request.delete(url_delete_sample_summary, status_code=204)
         response = self.client.post(f"/surveys/{short_name}/{period}/confirm-remove-sample", follow_redirects=True)
 
         self.assertEqual(response.status_code, 200)
@@ -1567,7 +1572,14 @@ class TestCollectionExercise(ViewTestCase):
     @patch("response_operations_ui.views.collection_exercise.build_collection_exercise_details")
     def test_remove_loaded_sample_failed(self, mock_request, mock_details):
         mock_details.return_value = formatted_collection_exercise_details
+        mock_request.delete(url_party_delete_attributes, status_code=204)
         mock_request.delete(url_ce_remove_sample, status_code=500)
+
+        # TODO Change code to not call sample if the unlink fails
+        mock_request.delete(url_delete_sample_summary, status_code=204)
+
+        # TODO Write tests for failed calls to party and sample respectively
+
         response = self.client.post(f"/surveys/{short_name}/{period}/confirm-remove-sample", follow_redirects=True)
 
         self.assertEqual(response.status_code, 200)
