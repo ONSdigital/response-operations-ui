@@ -131,6 +131,7 @@ def view_collection_exercise(short_name, period):
     info_panel = request.args.get("info_panel")
     sorted_nudge_list = get_existing_sorted_nudge_events(ce_details["events"])
     error_json = _get_error_from_session()
+    _delete_sample_data_if_required()
 
     return render_template(
         "collection_exercise/collection-exercise.html",
@@ -156,9 +157,25 @@ def view_collection_exercise(short_name, period):
     )
 
 
+def _delete_sample_data_if_required():
+    """
+    If a sample data deletion failed as part of the 'remove sample' functionality, then we can try again without having
+    to get the user involved.  If the deletion succeeds on this, or a later attempt, then we remove it from the session.
+    """
+    sample_summary_id = session.get("retry_sample_delete_id")
+    if sample_summary_id:
+        try:
+            sample_controllers.delete_sample(sample_summary_id)
+            session.pop("retry_sample_delete_id")
+        except ApiError:
+            logger.error(
+                "Sample deletion failed, will try again on next exercise load", sample_summary_id=sample_summary_id
+            )
+
+
 def _get_error_from_session():
     """
-    This is an ugly fix for errors being written to the permanently to the session. This guarantees that an error
+    This is an ugly fix for errors being written permanently to the session. This guarantees that an error
     will be displayed once and then removed. If errors are ever tidied up (using flash for instance) then this code
     can go.
     """
@@ -800,25 +817,13 @@ def remove_loaded_sample(short_name, period):
         collection_exercise_id=collection_exercise_id,
         sample_summary_id=sample_summary_id,
     )
-    # TODO what happens if one of these 3 steps fail?  How do we recover and/or try again?
+
     # If the sample summary succeeds but the unlink fails then you can't get back into the exercise.  For now
     # we'll do the sample delete after the unlink as it's the safest option.
-    party_controller.delete_attributes_by_sample_summary_id(sample_summary_id)
-    is_successfully_unlinked = collection_exercise_controllers.unlink_sample_summary(
-        collection_exercise_id, sample_summary_id
-    )
-    sample_controllers.delete_sample(sample_summary_id)
-
-    if is_successfully_unlinked:
-        return redirect(
-            url_for(
-                "collection_exercise_bp.view_collection_exercise",
-                short_name=short_name,
-                period=period,
-                success_panel="Sample removed",
-            )
-        )
-    else:
+    try:
+        party_controller.delete_attributes_by_sample_summary_id(sample_summary_id)
+        collection_exercise_controllers.unlink_sample_summary(collection_exercise_id, sample_summary_id)
+    except ApiError:
         logger.info(
             "Failed to remove sample for collection exercise",
             short_name=short_name,
@@ -832,6 +837,24 @@ def remove_loaded_sample(short_name, period):
         return redirect(
             url_for("collection_exercise_bp.view_collection_exercise", short_name=short_name, period=period)
         )
+
+    # If the sample summary call fails, the only consequence will be orphaned data.  We'll write the id to the session,
+    # and try again after the redirect, only removing it from the session once it's been deleted.  There's a chance
+    # this might not be enough, as the next attempt could fail and the user could then log out, deleting the session.
+    # But this is so unlikely to happen that it's an okay risk to take.
+    try:
+        sample_controllers.delete_sample(sample_summary_id)
+    except ApiError:
+        session["retry_sample_delete_id"] = sample_summary_id
+
+    return redirect(
+        url_for(
+            "collection_exercise_bp.view_collection_exercise",
+            short_name=short_name,
+            period=period,
+            success_panel="Sample removed",
+        )
+    )
 
 
 @collection_exercise_bp.route("/<short_name>/<period>/load-collection-instruments", methods=["GET"])
