@@ -161,6 +161,7 @@ def _delete_sample_data_if_required():
     """
     If a sample data deletion failed as part of the 'remove sample' functionality, then we can try again without having
     to get the user involved.  If the deletion succeeds on this, or a later attempt, then we remove it from the session.
+    If it fails then we leave it in the session, so we can try again.
     """
     sample_summary_id = session.get("retry_sample_delete_id")
     if sample_summary_id:
@@ -818,8 +819,10 @@ def remove_loaded_sample(short_name, period):
         sample_summary_id=sample_summary_id,
     )
 
-    # If the sample summary succeeds but the unlink fails then you can't get back into the exercise.  For now
-    # we'll do the sample delete after the unlink as it's the safest option.
+    # The order for the deletion has to be party, collection exercise then sample.  If either of the first two fail,
+    # then the link is still there, and the 'remove sample' button will be there for the user to click again.  If the
+    # sample data was deleted before collection exercise, then the page would error as it tries to find sample data that
+    # no longer exists.
     try:
         party_controller.delete_attributes_by_sample_summary_id(sample_summary_id)
         collection_exercise_controllers.unlink_sample_summary(collection_exercise_id, sample_summary_id)

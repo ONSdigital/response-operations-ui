@@ -1570,13 +1570,21 @@ class TestCollectionExercise(ViewTestCase):
 
     @requests_mock.mock()
     @patch("response_operations_ui.views.collection_exercise.build_collection_exercise_details")
-    def test_remove_loaded_sample_failed(self, mock_request, mock_details):
+    def test_remove_loaded_sample_failed_on_party(self, mock_request, mock_details):
+        mock_details.return_value = formatted_collection_exercise_details
+        mock_request.delete(url_party_delete_attributes, status_code=500)
+
+        response = self.client.post(f"/surveys/{short_name}/{period}/confirm-remove-sample", follow_redirects=True)
+
+        self.assertEqual(response.status_code, 200)
+        self.assertIn("Error: Failed to remove sample".encode(), response.data)
+
+    @requests_mock.mock()
+    @patch("response_operations_ui.views.collection_exercise.build_collection_exercise_details")
+    def test_remove_loaded_sample_failed_on_unlink(self, mock_request, mock_details):
         mock_details.return_value = formatted_collection_exercise_details
         mock_request.delete(url_party_delete_attributes, status_code=204)
         mock_request.delete(url_ce_remove_sample, status_code=500)
-
-        # TODO Change code to not call sample if the unlink fails
-        mock_request.delete(url_delete_sample_summary, status_code=204)
 
         # TODO Write tests for failed calls to party and sample respectively
 
@@ -1584,6 +1592,20 @@ class TestCollectionExercise(ViewTestCase):
 
         self.assertEqual(response.status_code, 200)
         self.assertIn("Error: Failed to remove sample".encode(), response.data)
+
+    @requests_mock.mock()
+    @patch("response_operations_ui.views.collection_exercise.build_collection_exercise_details")
+    def test_remove_loaded_sample_failed_on_sample(self, mock_request, mock_details):
+        mock_details.return_value = formatted_collection_exercise_details
+        mock_request.delete(url_party_delete_attributes, status_code=204)
+        mock_request.delete(url_ce_remove_sample, status_code=200)
+        mock_request.delete(url_delete_sample_summary, status_code=500)
+
+        response = self.client.post(f"/surveys/{short_name}/{period}/confirm-remove-sample", follow_redirects=True)
+
+        self.assertEqual(response.status_code, 200)
+        # If the sample deletion fails, then there shouldn't be an error message
+        self.assertNotIn("Error: Failed to remove sample".encode(), response.data)
 
     def test_get_confirm_remove_sample(self):
         response = self.client.get("/surveys/test/000000/confirm-remove-sample", follow_redirects=True)
