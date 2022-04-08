@@ -1586,8 +1586,6 @@ class TestCollectionExercise(ViewTestCase):
         mock_request.delete(url_party_delete_attributes, status_code=204)
         mock_request.delete(url_ce_remove_sample, status_code=500)
 
-        # TODO Write tests for failed calls to party and sample respectively
-
         response = self.client.post(f"/surveys/{short_name}/{period}/confirm-remove-sample", follow_redirects=True)
 
         self.assertEqual(response.status_code, 200)
