@@ -275,7 +275,7 @@ def refresh_permissions(user_id):
     """
     logger.info("Refreshing permissions", user_id=user_id)
     user = get_user_by_id(user_id)
-    session["permissions"] = {"groups": user.get("groups"), "expiry": (datetime.now() + timedelta(minutes=5))}
+    session["permissions"] = {"groups": user.get("groups"), "expiry": (datetime.now() + timedelta(minutes=1))}
     logger.info("New session", session=session)
 
 
