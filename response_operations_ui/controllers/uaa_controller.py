@@ -104,7 +104,6 @@ def get_user_by_id(user_id: str) -> dict:
 
     url = f"{app.config['UAA_SERVICE_URL']}/Users/{user_id}"
     response = requests.get(url, headers=headers)
-    logger.info("User retrieved from UAA", response=response)
     try:
         response.raise_for_status()
     except HTTPError:
@@ -274,10 +273,8 @@ def refresh_permissions(user_id):
     Refreshes the cache of permissions for the current user
     :param user_id: The user ID to refresh for
     """
-    logger.info("Refreshing permissions", user_id=user_id)
     user = get_user_by_id(user_id)
-    session["permissions"] = {"groups": user.get("groups"), "expiry": (datetime.now() + timedelta(minutes=1))}
-    logger.info("New session", session=session)
+    session["permissions"] = {"groups": user.get("groups"), "expiry": (datetime.now() + timedelta(minutes=5))}
 
 
 def user_has_permission(permission, user_id=None) -> bool:
@@ -288,7 +285,6 @@ def user_has_permission(permission, user_id=None) -> bool:
     :return has_permission: Whether the user has the permission or not
     """
     # Feature flagged
-    logger.info("I am in the permissions function", session=session)
     is_role_based_access_enabled = app.config["IS_ROLE_BASED_ACCESS_ENABLED"]
     if not is_role_based_access_enabled:
         default_permissions = [
@@ -298,13 +294,10 @@ def user_has_permission(permission, user_id=None) -> bool:
             "respondents.delete",
             "messages.edit",
         ]
-        logger.info("RBA flag switched off")
         return permission in default_permissions
 
-    logger.info("Passed User ID", user_id=user_id)
     if user_id is None:
         if session is None or "user_id" not in session:
-            logger.info("No user ID in session or session is None")
             return False
         user_id = session["user_id"]
 
