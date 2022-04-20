@@ -274,10 +274,7 @@ def refresh_permissions(user_id):
     :param user_id: The user ID to refresh for
     """
     user = get_user_by_id(user_id)
-    session["permissions"] = {
-        "groups": user.get("groups"),
-        "expiry": (datetime.now() + timedelta(minutes=5)).strftime("%d/%m/%Y, %H:%M:%S"),
-    }
+    session["permissions"] = {"groups": user.get("groups"), "expiry": (datetime.now() + timedelta(minutes=5))}
 
 
 def user_has_permission(permission, user_id=None) -> bool:
@@ -304,10 +301,7 @@ def user_has_permission(permission, user_id=None) -> bool:
             return False
         user_id = session["user_id"]
 
-    if (
-        "permissions" not in session
-        or datetime.strptime(session["permissions"]["expiry"], "%d/%m/%Y, %H:%M:%S") < datetime.now()
-    ):
+    if "permissions" not in session or session["permissions"]["expiry"] < datetime.now():
         refresh_permissions(user_id)
 
     return any(permission in g["display"] for g in session["permissions"]["groups"])
