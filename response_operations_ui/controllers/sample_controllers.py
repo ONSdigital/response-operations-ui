@@ -47,3 +47,36 @@ def upload_sample(short_name, period, file):
     logger.info("Successfully uploaded sample file", response_json=sample_summary, sample_id=sample_summary["id"])
 
     return sample_summary
+
+
+def delete_sample(sample_summary_id: str) -> None:
+    """
+    Deletes the sample summary and associated sample units that have been previously uploaded.
+    In the case of getting a 404 from the sample service we'll just assume it's 'successful' as nothing is wrong,
+    just that nothing got deleted.
+
+    :param sample_summary_id: The sample summary uuid
+    :return: None, as the sample service returns a 204 on success
+    """
+    logger.info("Deleting sample", sample_summary_id=sample_summary_id)
+
+    url = f'{app.config["SAMPLE_URL"]}/samples/samplesummary/{sample_summary_id}'
+
+    response = requests.delete(url=url, auth=app.config["BASIC_AUTH"])
+
+    try:
+        response.raise_for_status()
+    except (HTTPError, RequestException):
+        if response.status_code == 404:
+            logger.info(
+                "Sample summary not found, could possibly have been deleted already",
+                sample_summary_id=sample_summary_id,
+            )
+        else:
+            logger.error(
+                "Error uploading sample file", status=response.status_code, sample_summary_id=sample_summary_id
+            )
+            raise ApiError(response)
+
+    logger.info("Successfully deleted sample", sample_summary_id=sample_summary_id)
+    return

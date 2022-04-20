@@ -389,14 +389,13 @@ def unlink_sample_summary(collection_exercise_id, sample_summary_id):
             collection_exercise_id=collection_exercise_id,
             sample_summary_id=sample_summary_id,
         )
-        return False
+        raise ApiError(response)
 
     logger.info(
         "Successfully unlinked sample summary from a collection exercise",
         collection_exercise_id=collection_exercise_id,
         sample_summary_id=sample_summary_id,
     )
-    return True
 
 
 def get_collection_exercise_from_list(exercises, period):
