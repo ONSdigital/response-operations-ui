@@ -104,6 +104,7 @@ def get_user_by_id(user_id: str) -> dict:
 
     url = f"{app.config['UAA_SERVICE_URL']}/Users/{user_id}"
     response = requests.get(url, headers=headers)
+    logger.info("User retrieved from UAA", response=response)
     try:
         response.raise_for_status()
     except HTTPError:
