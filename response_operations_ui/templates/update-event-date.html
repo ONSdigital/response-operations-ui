@@ -103,16 +103,15 @@
                     </fieldset>
                     {% if tag not in ['ref_period_start', 'ref_period_end', 'employment'] %}
                         <fieldset class="fieldgroup fieldgroup--time ons-u-mt-l" data-qa="widget-time">
-                            <legend class="fieldgroup__title ons-u-fs-r--b">Time (Newport)</legend>
+                            <legend class="fieldgroup__title ons-u-fs-r--b ">Time (Newport)</legend>
                             <div class="ons-field-group">
                                 <div class="ons-field field--select field--hrs">
                                     <label class="ons-label ons-u-fs-s--b" for="time-select-hrs" id="time-hrs">Hrs</label>
-                                    {{ form.hour(id="time-select-hrs", class_="input input--w-4 input--select__time-hrs") }}
+                                    {{ form.hour(id="time-select-hrs", class_="ons-input ons-input--w-4 input--select__time-hrs") }}
                                 </div>
-
                                 <div class="ons-field field--select field--mins">
                                     <label class="ons-label ons-u-fs-s--b" for="time-select-mins" id="time-mins">Mins</label>
-                                    {{ form.minute(id="time-select-mins", class_="input input--w-4 input--select__time-mins") }}
+                                    {{ form.minute(id="time-select-mins", class_="ons-input ons-input--w-4 input--select__time-mins") }}
                                 </div>
                             </div>
                         </fieldset>
