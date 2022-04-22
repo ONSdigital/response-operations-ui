@@ -35,68 +35,21 @@
             </p>
         {% endcall %}
     {% endif %}
-
-    <h1 name="page-survey-title">{{survey.longName}}</h1>
-    <section class="ons-u-cf">
-        {{
-            onsMetadata({
-                "metadataLabel": survey.longName + "information",
-                "id": "survey-attributes",
-                "termCol": "2",
-                "descriptionCol": "10",
-                "itemsList": [
-                    {
-                        "term": "Survey ID:",
-                        "descriptions": [
-                            {
-                                "description": survey.surveyRef,
-                                "id": "survey-id"
-                            }
-                        ]
-                    },
-                    {
-                        "term": "Survey title:",
-                        "descriptions": [
-                            {
-                                "description": survey.longName,
-                                "id": "survey-title"
-                            }
-                        ]
-                    },
-                    {
-                        "term": "Abbreviation:",
-                        "descriptions": [
-                            {
-                                "description": survey.shortName,
-                                "id": "survey-abbreviation"
-                            }
-                        ]
-                    },
-                    {
-                        "term": "Legal basis:",
-                        "descriptions": [
-                            {
-                                "description": survey.legalBasis,
-                                "id": "survey-legal-basis"
-                            }
-                        ]
-                    },
-                    {
-                        "term": "Survey mode:",
-                        "descriptions": [
-                            {
-                                "description": survey.surveyMode,
-                                "id": "survey-mode"
-                            }
-                        ]
-                    }
-                ]
-            })
-        }}
-    </section>
+    
+    <div class="ons-grid ons-grid--flex ons-grid--between">
+        <div class="ons-grid__col">
+            <h1 name="page-survey-title">{{survey.longName}} | {{survey.shortName}} {{survey.surveyRef}}</h1>
+        </div>
+            {% if surveyEditPermission %}
+                <div class="ons-grid__col"> 
+                    <p class="ons-field">
+                        <a href="{{url_for('collection_exercise_bp.get_create_collection_exercise_form', survey_ref=survey.surveyRef, short_name=survey.shortName.replace(' ', ''))}}">Create collection exercise</a>
+                    </p>
+                </div>
+            {% endif %}
+      </div>
     <section class="ce-list">
         {% if surveyEditPermission %}
-          <h2>Collection exercises for {{survey.shortName}}</h2>
             {% if survey.surveyMode == 'EQ' %}
                 <p class="ons-field">
                     {{
@@ -111,19 +64,8 @@
                     }}
                 </p>
             {% endif %}
-            <p class="ons-field">
-                {{
-                    onsButton({
-                        "text": "Create collection exercise",
-                        "id": "create-collection-exercise",
-                        "variants": ['small'],
-                        "name": "create-collection-exercise-link",
-                        "noIcon": true,
-                        "url": url_for('collection_exercise_bp.get_create_collection_exercise_form', survey_ref=survey.surveyRef, short_name=survey.shortName.replace(' ', ''))
-                    })
-                }}
-            </p>
-      {% endif %}
+        {% endif %}
+        <h2>Collection exercises (CE)</h2>
 
         {% set surveyTableData = {
             "variants": ['compact', 'responsive'],
@@ -132,19 +74,16 @@
             "hideCaption": true,
             "ths": [
                 {
-                    "value": "Period"
+                    "value": "Period ID"
                 },
                 {
-                    "value": "Respondent sees"
+                    "value": "Reporting dates"
                 },
                 {
                     "value": "Status"
                 },
                 {
-                    "value": "Sample"
-                },
-                {
-                    "value": "Report (CSV)"
+                    "value": "Sample Size"
                 },
                 {
                     "value": "MPS"
@@ -154,6 +93,9 @@
                 },
                 {
                     "value": "Return by"
+                },
+                {
+                    "value": "First Reminder"
                 }
             ]
         } %}
@@ -210,11 +152,6 @@
                             "name" : "tbl-ce-status"
                         },
                         {
-                            "value": surveyTableReport,
-                            "data": "Report (CSV)",
-                            "name" : "tbl-ce-report"
-                        },
-                        {
                             "value": exercise.events.mps and exercise.events.mps.date or "",
                             "data": "MPS",
                             "name" : "tbl-ce-status"
@@ -228,7 +165,12 @@
                             "value": exercise.events.return_by and exercise.events.return_by.date or "",
                             "data": "Return by",
                             "name" : "tbl-ce-status"
-                        }
+                        },
+                        {
+                            "value": exercise.events.reminder and exercise.events.reminder.date or "",
+                            "data": "First Reminder",
+                            "name" : "tbl-ce-report"
+                        },
                     ]
                 }
             ) %}
