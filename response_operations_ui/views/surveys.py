@@ -55,13 +55,6 @@ def view_surveys():
 @login_required
 def view_survey(short_name):
     survey = survey_controllers.get_survey(short_name)
-    breadcrumbs = [
-        {"text": "Surveys", "url": "/surveys"},
-        {
-            "text": f"{survey['surveyRef']} {survey['shortName']}",
-        },
-    ]
-
     collection_exercises = (
         collection_exercise_controllers.get_collection_exercises_with_events_and_samples_by_survey_id(survey["id"])
     )
@@ -88,7 +81,6 @@ def view_survey(short_name):
         "survey.html",
         survey=survey,
         collection_exercises=collection_exercises,
-        breadcrumbs=breadcrumbs,
         updated_ce_message=updated_ce_message,
         created_ce_message=created_ce_message,
         newly_created_period=newly_created_period,
