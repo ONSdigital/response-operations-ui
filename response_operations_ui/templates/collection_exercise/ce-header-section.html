@@ -19,7 +19,7 @@
                 "term": "Report:" if ce.state|upper == "LIVE",
                 "descriptions": [
                     {
-                        "description": '<a href="' + url_for('collection_exercise_bp.response_chasing', ce_id=ce.id, survey_id=survey.id) + '"><svg class="ons-svg-icon" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" focusable="false"><path d="M19 9h-4V3H9v6H5l7 7 7-7zM5 18v2h14v-2H5z"/><path d="M0 0h24v24H0z" fill="none"/></svg> Response chasing</a>' if ce.state|upper == "LIVE",
+                        "description": '<a href="' + url_for('collection_exercise_bp.response_chasing', ce_id=ce.id, survey_id=survey.id) + '"><svg class="ons-svg-icon" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" focusable="false"><path d="M19 9h-4V3H9v6H5l7 7 7-7zM5 18v2h14v-2H5z"/><path d="M0 0h24v24H0z" fill="none"/></svg> Response chasing</a>' if (ce.state|upper == "LIVE" or exercise.state|upper == "ENDED"),
                         "id": "ce_status"
                     }
                 ]
