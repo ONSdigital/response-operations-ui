@@ -96,15 +96,6 @@ def build_collection_exercise_details(short_name, period):
 @login_required
 def view_collection_exercise(short_name, period):
     ce_details = build_collection_exercise_details(short_name, period)
-    breadcrumbs = [
-        {"text": "Surveys", "url": "/surveys"},
-        {
-            "text": f"{ce_details['survey']['surveyRef']} {ce_details['survey']['shortName']}",
-            "url": f"/surveys/{ce_details['survey']['shortName'].replace(' ', '')}",
-        },
-        {"text": f"{ce_details['collection_exercise']['exerciseRef']}"},
-    ]
-
     ce_state = ce_details["collection_exercise"]["state"]
     if ce_details["survey"]["surveyMode"] == "EQ":
         show_set_live_button = (
@@ -135,7 +126,6 @@ def view_collection_exercise(short_name, period):
 
     return render_template(
         "collection_exercise/collection-exercise.html",
-        breadcrumbs=breadcrumbs,
         ce=ce_details["collection_exercise"],
         collection_instruments=ce_details["collection_instruments"],
         eq_ci_selectors=ce_details["eq_ci_selectors"],
