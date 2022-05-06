@@ -36,22 +36,45 @@
                     -}}
                 </div>
             </div>
-            <div>
-                {{
-                    onsButton({
-                        "text": "Upload",
-                        "id": "btn-load-ci",
-                        "variants": ['secondary', 'small', 'disabled'],
-                        "name": "load-ci",
-                        "submitType": "timer"
-                    })
-                }}
+            <div class="ons-u-mb-l">
+                {% if collection_instrument %}
+                    {{
+                        onsButton({
+                            "text": "Upload",
+                            "id": "btn-load-ci",
+                            "variants": ['primary', 'small'],
+                            "name": "load-ci",
+                            "submitType": "timer"
+                        })
+                    }}
+                {% elif not collection_instrument %} 
+                    {{
+                        onsButton({
+                            "text": "Upload",
+                            "id": "btn-load-ci",
+                            "variants": ['primary', 'small'],
+                            "name": "load-ci",
+                            "submitType": "timer"
+                        })
+                    }}
+                    {{
+                        onsButton({
+                            "text": "Cancel",
+                            "id": "btn-load-ci",
+                            "variants": ['secondary', 'small'],
+                            "name": "load-ci-cancel",
+                            "url": url_for('collection_exercise_bp.get_upload_sample_ci', short_name=survey.shortName, period=ce.exerciseRef),
+                            "submitType": "timer",
+                            "noIcon": "true"
+                        })
+                    }}
+                {% endif %}
             </div>
         </form>
     </div>
     <div class="ons-u-mb-l ons-col-6@m">
         {% if collection_instruments %}
-            <label class="ons-label ons-u-fs-m">{{ collection_instruments | length }} Collection instruments</label>
+            <label class="ons-label ons-u-fs-m">{{ collection_instruments | length }} SEFT collection instruments uploaded</label>
             <section class="ce-section">
                 {% set surveyTableData = {
                     "variants": 'responsive',
@@ -60,10 +83,7 @@
                     "hideCaption": true,
                     "ths": [
                         {
-                            "value": "File Name",
-                        },
-                        {
-                            "value": "Status"
+                            "value": "",
                         },
                         {
                             "value": ""
@@ -76,7 +96,7 @@
                     {% if not locked %}
                         {% set formData = 
                             '<form id="form-unselect-ci-' + loop.index|string + '" action="" method="post">' +
-                            '<a role="button" class="ons-btn ons-btn--secondary ons-btn--small" href=# id="unlink-ci-' + loop.index|string + '"><span class="ons-btn__inner">Remove</span></a>' +
+                            '<a href=# id="unlink-ci-' + loop.index|string + '">Remove SEFT file</a>' +
                             '<input type="hidden" name="ce_id" value="' + ce.id + '">' +
                             '<input type="hidden" name="ci_id" value="' + collection_instrument.id + '">' +
                             '<input type="hidden" name="unselect-ci">' +
@@ -89,10 +109,6 @@
                         "tds": [
                             {
                                 "value": collection_instrument.file_name
-                            },
-                            {
-                                "value": 'Ready',
-                                "tdClasses": "ons-status ons-status--success"
                             },
                             {
                                 "value": formData,
@@ -119,16 +135,17 @@
     </div>
     <div class="ons-u-mb-l">
         {% if collection_instruments %}
-            <p class="ons-field ons-u-mt-l">
-                <a href="{{ url_for('collection_exercise_bp.view_collection_exercise', period=period, short_name=survey.shortName.replace(' ', '')) }}"
-                    role="button" class="ons-btn" id="btn-upload-ci-done"><span class="ons-btn__inner">Done</span></a>
-            </p>
-        {% elif not collection_instruments %}
-            <p class="ons-field ons-u-mt-l">
-                <a href="" role="button" class="ons-btn ons-btn--disabled"><span class="ons-btn__inner">Done</span></a>
-                <a href="{{ url_for('collection_exercise_bp.view_collection_exercise', period=period, short_name=survey.shortName.replace(' ', '')) }}"
-                    role="button" class="ons-btn ons-btn--secondary" id="btn-upload-ci-cancel"><span class="ons-btn__inner">Cancel</span></a>
-            </p>
+            {{
+                onsButton({
+                    "text": "Done",
+                    "id": "btn-upload-ci-done",
+                    "variants": primary,
+                    "name": "load-ci-done",
+                    "url": url_for('collection_exercise_bp.get_upload_sample_ci', short_name=survey.shortName, period=ce.exerciseRef),
+                    "submitType": "timer",
+                    "noIcon": "true"
+                })
+            }}
         {% endif %}
     </div>
 {% endblock %}

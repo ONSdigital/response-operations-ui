@@ -81,11 +81,12 @@
                 {% set eventTime = event.time %}
             {% endif %}
         {% elif dateGroup == 'reminder' %}
-            {% set label = 'First reminder' %}
+            {% set label = ' ' %}
             {% set event = events.reminder %}
             {% set name = 'first-reminder-date' %}
             {% set value = 'reminder' %}
             {% if event %}
+                {% set label = 'First reminder' %}
                 {% set eventDay = event.day %}
                 {% set eventDate = event.date %}
                 {% set eventTime = event.time %}
@@ -97,10 +98,11 @@
             {% set value = 'reminder' %}
             {% if events.reminder %}
                 {% set showReminder = true %}
-                {% set label = 'Second reminder' %}
+                {% set label = ' ' %}
                 {% set name = 'second-reminder-date' %}
             {% endif %}
             {% if event %}
+                {% set label = 'Second reminder' %}
                 {% set eventDay = event.day %}
                 {% set eventDate = event.date %}
                 {% set eventTime = event.time %}
@@ -112,10 +114,11 @@
             {% set value = 'reminder' %}
             {% if events.reminder2 %}
                 {% set showReminder = true %}
-                {% set label = 'Third reminder' %}
+                {% set label = ' ' %}
                 {% set name = 'third-reminder-date' %}
             {% endif %}
             {% if event %}
+                {% set label = 'Third reminder' %}
                 {% set eventDay = event.day %}
                 {% set eventDate = event.date %}
                 {% set eventTime = event.time %}
@@ -133,14 +136,13 @@
                 {% set eventTime = event.time %}
             {% endif %}
         {% elif dateGroup == 'nudge_email_0' %}
+            {% set label = ' ' %}
             {% set event = events.nudge_email_0 %}
             {% set value = 'nudge email' %}
-            {% if events.add_nudge_email %}
-                {% set showNudgeEmail = true %}
-                {% set label = 'First nudge email' %}
-                {% set name = 'first-nudge-email-date' %}
-            {% endif %}
+            {% set showNudgeEmail = true %}
+            {% set name = 'first-nudge-email-date' %}
             {% if event %}
+                {% set label = 'First nudge email' %}
                 {% set eventDay = event.day %}
                 {% set eventDate = event.date %}
                 {% set eventTime = event.time %}
@@ -152,10 +154,11 @@
             {% set value = 'nudge email' %}
             {% if events.nudge_email_0 %}
                 {% set showNudgeEmail = true %}
-                {% set label = 'Second nudge email' %}
+                {% set label = ' ' %}
                 {% set name = 'second-nudge-email-date' %}
             {% endif %}
             {% if event %}
+                {% set label = 'Second nudge email' %}
                 {% set eventDay = event.day %}
                 {% set eventDate = event.date %}
                 {% set eventTime = event.time %}
@@ -167,10 +170,11 @@
             {% set value = 'nudge email' %}
             {% if events.nudge_email_2 %}
                 {% set showNudgeEmail = true %}
-                {% set label = 'Third nudge email' %}
+                {% set label = ' ' %}
                 {% set name = 'third-nudge-email-date' %}
             {% endif %}
             {% if event %}
+                {% set label = 'Third nudge email' %}
                 {% set eventDay = event.day %}
                 {% set eventDate = event.date %}
                 {% set eventTime = event.time %}
@@ -182,10 +186,11 @@
             {% set value = 'nudge email' %}
             {% if events.nudge_email_3 %}
                 {% set showNudgeEmail = true %}
-                {% set label = 'Fourth nudge email' %}
+                {% set label = ' ' %}
                 {% set name = 'fourth-nudge-email-date' %}
             {% endif %}
             {% if event %}
+                {% set label = 'Fourth nudge email' %}
                 {% set eventDay = event.day %}
                 {% set eventDate = event.date %}
                 {% set eventTime = event.time %}
@@ -197,10 +202,11 @@
             {% set value = 'nudge email' %}
             {% if events.nudge_email_4 %}
                 {% set showNudgeEmail = true %}
-                {% set label = 'Fifth nudge email' %}
+                {% set label = ' ' %}
                 {% set name = 'fifth-nudge-email-date' %}
             {% endif %}
             {% if event %}
+                {% set label = 'Fifth nudge email' %}
                 {% set eventDay = event.day %}
                 {% set eventDate = event.date %}
                 {% set eventTime = event.time %}
@@ -216,8 +222,6 @@
                 {% set hyperlink = '<a href="' + url_for("collection_exercise_bp.get_create_collection_event_form",  short_name=survey.shortName, period=ce.exerciseRef, ce_id=ce.id, tag=dateGroup) + '">Add ' + value + '</a>' %}
             {% elif not locked or eventIsInFuture %}
                 {% set hyperlink = '<a href="' + url_for("collection_exercise_bp.update_event_date",  short_name=survey.shortName, period=ce.exerciseRef, tag=dateGroup, errors=None if event == events.reminder) + '">Edit ' + value + '</a>' %}
-            {% elif ( (events.go_live) and (events.return_by) and (nudge) ) %}
-                {% set hyperlink = '<a href="' + url_for("collection_exercise_bp.get_create_collection_event_form",  short_name=survey.shortName, period=ce.exerciseRef, ce_id=ce.id, tag=nudge) + '">Add nudge email</a>' %}
             {% endif %}
         {% endif %}
         {% if label %}
@@ -234,61 +238,13 @@
                         },
                         {
                             "value": hyperlink,
-                            "class": "ons-u-ta-right"
+                            "tdClasses": "ons-u-ta-right"
                         }
                     ]
                 }
             ) %}
         {% endif %}
     {% endfor %}
-  
-    
-    {% set nudge = '' %}
-    {% if not events.nudge_email_0 %}
-        {% set nudge = 'nudge_email_0' %}
-    {% elif not events.nudge_email_1 %}
-        {% set nudge = 'nudge_email_1' %}
-    {% elif not events.nudge_email_2 %}
-        {% set nudge = 'nudge_email_2' %}
-    {% elif not events.nudge_email_3 %}
-        {% set nudge = 'nudge_email_3' %}
-    {% elif not events.nudge_email_4%}
-        {% set nudge = 'nudge_email_4' %}
-    {% endif %}
-    {% if ( (events.go_live) and (events.return_by) and (nudge) ) %} 
-        {% if surveyEditPermission %}
-            {% set formData = {
-                "action": url_for('collection_exercise_bp.get_create_collection_event_form', short_name=survey.shortName, period=ce.exerciseRef, ce_id=ce.id, tag=nudge),
-                "method": 'get',
-                "button": {
-                    "text": 'Schedule nudge email',
-                    "id": 'create-event-date-' + nudge,
-                    "classes": 'ons-btn--secondary ons-btn--small'
-                }
-            } %}
-            {% if nudge %}
-                {% do surveyTableDataRows.append(
-                    {
-                        "tds": [
-                            {
-                                "form": formData,
-                                "tdClasses": "ons-u-ta-left"
-                            }
-                        ]
-                    }
-                ) %}
-            {% endif %}
-        {% endif %}
-    {% elif ( (events.go_live) and (events.return_by) ) %}
-        {% call
-            onsPanel({
-                "type": "info",
-                "classes": "ons-u-mb-l"
-            })
-        %}
-            <p class="ons-u-fs-r">You cannot schedule any new nudge emails</p>
-        {% endcall %}
-    {% endif %}
 
     {% do surveyTableData | setAttribute("trs", surveyTableDataRows) %}
 

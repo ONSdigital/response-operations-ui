@@ -92,6 +92,7 @@ def build_collection_exercise_details(short_name, period):
     }
 
 
+# TODO: Remove unnecessary code
 @collection_exercise_bp.route("/<short_name>/<period>", methods=["GET"])
 @login_required
 def view_collection_exercise(short_name, period):
@@ -282,7 +283,7 @@ def _upload_sample(short_name, period):
 
     return redirect(
         url_for(
-            "collection_exercise_bp.view_collection_exercise",
+            "collection_exercise_bp.get_upload_sample_ci",
             short_name=short_name,
             period=period,
             error=error,
@@ -399,9 +400,9 @@ def _upload_collection_instrument(short_name, period):
 
     return redirect(
         url_for(
-            "collection_exercise_bp.view_collection_exercise",
-            short_name=short_name,
+            "collection_exercise_bp.get_seft_collection_instrument",
             period=period,
+            short_name=short_name,
             success_panel=success_panel,
         )
     )
@@ -784,6 +785,63 @@ def get_event_name(tag):
         "nudge_email_4": "Schedule nudge email",
     }
     return event_names.get(tag)
+
+
+@collection_exercise_bp.route("/<short_name>/<period>/upload-sample-ci", methods=["GET"])
+@login_required
+def get_upload_sample_ci(short_name, period):
+    logger.info("Retrieving upload sample collection instrument page", short_name=short_name, period=period)
+    ce_details = build_collection_exercise_details(short_name, period)
+    ce_state = ce_details["collection_exercise"]["state"]
+    if ce_details["survey"]["surveyMode"] == "EQ":
+        show_set_live_button = (
+            ce_state in ("READY_FOR_REVIEW")
+            and "ref_period_start" in ce_details["events"]
+            and "ref_period_end" in ce_details["events"]
+        )
+    else:
+        show_set_live_button = ce_state in ("READY_FOR_REVIEW", "FAILEDVALIDATION")
+
+    locked = ce_state in ("LIVE", "READY_FOR_LIVE", "EXECUTION_STARTED", "VALIDATED", "EXECUTED", "ENDED")
+    processing = ce_state in ("EXECUTION_STARTED", "EXECUTED", "VALIDATED")
+    validation_failed = ce_state == "FAILEDVALIDATION"
+    validation_errors = ce_details["collection_exercise"]["validationErrors"]
+    missing_ci = validation_errors and any(
+        "MISSING_COLLECTION_INSTRUMENT" in unit["errors"] for unit in validation_errors
+    )
+    ce_details["collection_exercise"]["state"] = map_collection_exercise_state(ce_state)  # NOQA
+    _format_ci_file_name(ce_details["collection_instruments"], ce_details["survey"])
+
+    _delete_sample_data_if_required()
+
+    return render_template(
+        "collection_exercise/upload-sample-ci.html",
+        ce=ce_details["collection_exercise"],
+        collection_instruments=ce_details["collection_instruments"],
+        sample=ce_details["sample_summary"],
+        survey=ce_details["survey"],
+    )
+
+
+@collection_exercise_bp.route("/<short_name>/<period>/upload-sample-file", methods=["GET"])
+@login_required
+def get_upload_sample_file(short_name, period):
+    logger.info("Retrieving upload sample file page", short_name=short_name, period=period)
+    ce_details = build_collection_exercise_details(short_name, period)
+    ce_state = ce_details["collection_exercise"]["state"]
+    ce_details["collection_exercise"]["state"] = map_collection_exercise_state(ce_state)  # NOQA
+    return render_template(
+        "collection_exercise/upload-sample-file.html",
+        ce=ce_details["collection_exercise"],
+        survey=ce_details["survey"],
+        sample=ce_details["sample_summary"],
+    )
+
+
+@collection_exercise_bp.route("/<short_name>/<period>/upload-sample-file", methods=["POST"])
+@login_required
+def post_upload_sample_file(short_name, period):
+    return _upload_sample(short_name, period)
 
 
 @collection_exercise_bp.route("/<short_name>/<period>/confirm-remove-sample", methods=["GET"])
