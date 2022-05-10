@@ -239,6 +239,7 @@ def post_sample_ci(short_name, period):
         return _update_eq_version(short_name, period)
     return get_upload_sample_ci(short_name, period)
 
+
 @collection_exercise_bp.route("response_chasing/<ce_id>/<survey_id>", methods=["GET"])
 @login_required
 def response_chasing(ce_id, survey_id):
@@ -814,12 +815,10 @@ def get_upload_sample_ci(short_name, period):
     ce_details = build_collection_exercise_details(short_name, period)
     ce_state = ce_details["collection_exercise"]["state"]
 
-    validation_errors = ce_details["collection_exercise"]["validationErrors"]
-    missing_ci = validation_errors and any(
-        "MISSING_COLLECTION_INSTRUMENT" in unit["errors"] for unit in validation_errors
-    )
     ce_details["collection_exercise"]["state"] = map_collection_exercise_state(ce_state)  # NOQA
-    ce_details["eq_ci_selectors"] = filter_eq_ci_selectors(ce_details["eq_ci_selectors"], ce_details["collection_instruments"])
+    ce_details["eq_ci_selectors"] = filter_eq_ci_selectors(
+        ce_details["eq_ci_selectors"], ce_details["collection_instruments"]
+    )
     _format_ci_file_name(ce_details["collection_instruments"], ce_details["survey"])
 
     error_json = _get_error_from_session()
@@ -901,9 +900,7 @@ def remove_loaded_sample(short_name, period):
         session["error"] = json.dumps(
             {"section": "head", "header": "Error: Failed to remove sample", "message": "Please try again"}
         )
-        return redirect(
-            url_for("collection_exercise_bp.get_upload_sample_ci", short_name=short_name, period=period)
-        )
+        return redirect(url_for("collection_exercise_bp.get_upload_sample_ci", short_name=short_name, period=period))
 
     # If the sample summary call fails, the only consequence will be orphaned data.  We'll write the id to the session,
     # and try again after the redirect, only removing it from the session once it's been deleted.  There's a chance
