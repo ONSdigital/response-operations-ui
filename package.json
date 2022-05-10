@@ -353,14 +353,14 @@
     "yocto-queue": "^0.1.0"
   },
   "devDependencies": {
-    "@babel/core": "^7.17.9",
-    "@babel/preset-env": "^7.16.11",
-    "babel-loader": "^8.2.4",
+    "@babel/core": "^7.17.10",
+    "@babel/preset-env": "^7.17.10",
+    "babel-loader": "^8.2.5",
     "file-loader": "^6.2.0",
     "node-sass": "^7.0.1",
     "resolve-url-loader": "^5.0.0",
     "sass-loader": "^11.1.1",
-    "webpack": "^5.72.0",
+    "webpack": "^5.72.1",
     "webpack-cli": "^4.9.2"
   },
   "scripts": {

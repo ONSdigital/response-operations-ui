@@ -245,6 +245,20 @@
             ) %}
         {% endif %}
     {% endfor %}
+  
+    {% do surveyTableDataRows.append(
+        {
+            "tds": [
+                {
+                    "value": " "
+                },
+                {
+                    "value": " ",
+                    "name": id
+                }
+            ]
+        }
+    ) %}
 
     {% do surveyTableData | setAttribute("trs", surveyTableDataRows) %}
 

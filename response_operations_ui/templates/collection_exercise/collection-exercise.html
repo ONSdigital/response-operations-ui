@@ -19,49 +19,15 @@
             {% include 'collection_exercise/ce-info-section.html' %}
             {% include 'collection_exercise/action-dates-section.html' %}
             {% include 'collection_exercise/sample-ci-section.html' %}
+            {{
+                onsButton({
+                    "text": "Done",
+                    "id": "btn-option-done",
+                    "submitType": "timer",
+                    "url": url_for('surveys_bp.view_survey', short_name=survey.shortName),
+                    "noIcon": "true"
+                })
+              }}
         </div>
-        <div class="ons-grid ons-grid--flex ons-grid--gutterless ons-grid--vertical-center ons-grid--no-wrap@s ons-u-mt-m ons-u-mb-m">
-            <div class="ons-grid__col">
-                {{
-                    onsButton({
-                        "text": "Done",
-                        "id": "btn-option-done",
-                        "submitType": "timer",
-                        "url": url_for('surveys_bp.view_survey', short_name=survey.shortName),
-                        "noIcon": "true"
-                    })
-                  }}
-            </div>
-        </div>
-        
-        {% if 2 == 4 %}
-            <div class="ons-grid__col ons-col-6@l">
-                {% include 'partials/error-box.html' %}
-                {% include 'collection_exercise/ce-dates-section.html' %}
-                {% include 'collection_exercise/ce-nudge-email-section.html' %}
-                {% include 'collection_exercise/ce-sample-section.html' %}
-                {% include 'collection_exercise/ce-instrument-section.html' %}
-                <div class="ons-grid ons-grid--flex ons-grid--gutterless ons-grid--vertical-center ons-grid--no-wrap@s ons-u-mt-m ons-u-mb-m">
-                    <div class="ons-grid__col">
-                        {{
-                            onsButton({
-                                "text": "Done",
-                                "id": "btn-option-done",
-                                "submitType": "timer",
-                                "url": url_for('surveys_bp.view_survey', short_name=survey.shortName),
-                                "noIcon": "true"
-                            })
-                          }}
-                    </div>
-                </div>
-            </div>
-
-            <div class="ons-grid__col ons-col-5@l ons-push-1@l">
-                {% include 'collection_exercise/ce-reference-information.html' %}
-                {% if survey.surveyMode == 'EQ' and is_eq_v3_enabled %}
-                    {% include 'collection_exercise/ce-select-eq-version.html' %}
-                {% endif %}
-            </div>
-        {% endif %}
     </div>
 {% endblock %}
