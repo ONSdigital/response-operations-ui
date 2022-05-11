@@ -19,15 +19,17 @@
             {% include 'collection_exercise/ce-info-section.html' %}
             {% include 'collection_exercise/action-dates-section.html' %}
             {% include 'collection_exercise/sample-ci-section.html' %}
-            {{
-                onsButton({
-                    "text": "Done",
-                    "id": "btn-option-done",
-                    "submitType": "timer",
-                    "url": url_for('surveys_bp.view_survey', short_name=survey.shortName),
-                    "noIcon": "true"
-                })
-              }}
+            <div class="ons-grid__col ons-u-pt-m">
+                {{
+                    onsButton({
+                        "text": "Done",
+                        "id": "btn-option-done",
+                        "submitType": "timer",
+                        "url": url_for('surveys_bp.view_survey', short_name=survey.shortName),
+                        "noIcon": "true"
+                    })
+                }}
+            </div>
         </div>
     </div>
 {% endblock %}

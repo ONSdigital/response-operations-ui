@@ -362,7 +362,7 @@ def _update_eq_version(short_name, period):
         flash("eQ version updated successfully.")
         return redirect(
             url_for(
-                "collection_exercise_bp.get_upload_sample_ci",
+                "collection_exercise_bp.view_collection_exercise",
                 period=period,
                 short_name=short_name,
                 success_panel=f"eQ version updated to {eq_version}.",
@@ -370,10 +370,9 @@ def _update_eq_version(short_name, period):
         )
     return redirect(
         url_for(
-            "collection_exercise_bp.get_upload_sample_ci",
+            "collection_exercise_bp.view_collection_exercise",
             period=period,
             short_name=short_name,
-            info_panel="eQ version is not updated as the selected version and existing version are same.",
         )
     )
 
@@ -814,7 +813,7 @@ def get_upload_sample_ci(short_name, period):
     logger.info("Retrieving upload sample collection instrument page", short_name=short_name, period=period)
     ce_details = build_collection_exercise_details(short_name, period)
     ce_state = ce_details["collection_exercise"]["state"]
-    # test
+
     ce_details["collection_exercise"]["state"] = map_collection_exercise_state(ce_state)  # NOQA
     ce_details["eq_ci_selectors"] = filter_eq_ci_selectors(
         ce_details["eq_ci_selectors"], ce_details["collection_instruments"]

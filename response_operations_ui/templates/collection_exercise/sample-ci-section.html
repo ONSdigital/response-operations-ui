@@ -1,138 +1,104 @@
 <section class="ce-section ce-details">
-    <div class="ons-grid ons-grid--flex ons-grid--gutterless ons-grid--vertical-center ons-grid--no-wrap@s ons-u-mt-m ons-u-mb-m">
-        <div class="ons-grid__col">
-            <div class="ons-grid ons-grid--flex ons-grid--gutterless ons-grid--vertical-center ons-grid--no-wrap@s ons-u-mt-m ons-u-mb-m">
-                <div class="ons-grid__col">
-                    {% if sample %}
-                        {{
-                            onsTable({
-                                "variants": 'compact',
-                                "id": "sample-table",
-                                "caption": 'Loaded sample summary',
-                                "hideCaption": true,
-                                "ths": [
-                                    { 
-                                        "value": "Sample & Collection instruments (CI)",
-                                        "thClasses": "ons-u-ta"
-                                    },
-                                    {
-                                        "value": " ",
-                                        "thClasses": "ons-u-ta"
-                                    },
-                                    {
-                                        "value": "Uploaded " + sample.ingestDateTime,
-                                        "thClasses": "ons-u-ta"
-                                    }
-                                ],
-                                "trs": [
-                                    {
-                                        "tds": [
-                                            {
-                                                "value": "Total businesses",
-                                                "tdClasses": "ons-u-ta"
-                                            },
-                                            {
-                                                "value": sample.totalSampleUnits,
-                                                "name": "total-instruments",
-                                                "tdClasses": "ons-u-ta-right"
-                                            },
-                                            {
-                                                "value": ' ',
-                                                "name": "upload-seft-instruments",
-                                                "tdClasses": "ons-u-ta-right"
-                                            }
-                                        ]
-                                    },
-                                    {
-                                        "tds": [
-                                            {
-                                                "value": "Collection instruments",
-                                                "tdClasses": "ons-u-ta"
-                                            },
-                                            {
-                                                "value": collection_instruments|length|string,
-                                                "name": "total-instruments",
-                                                "tdClasses": "ons-u-ta-right"
-                                            },
-                                            {
-                                                "value": ' ',
-                                                "name": "upload-seft-instruments",
-                                                "tdClasses": "ons-u-ta-right"
-                                            }
-                                        ]
-                                    },
-                                    {
-                                        "tds": [
-                                            {
-                                                "value": ' ',
-                                                "tdClasses": "ons-u-ta"
-                                            },
-                                            {
-                                                "value": ' ',
-                                                "name": "total-instruments",
-                                                "tdClasses": "ons-u-ta-right"
-                                            },
-                                            {
-                                                "value": ' ',
-                                                "name": "upload-seft-instruments",
-                                                "tdClasses": "ons-u-ta-right"
-                                            }
-                                        ]
-                                    },
-                                ]
-                            })
-                        }}
-                    {% elif not sample %}
-                        {{
-                            onsTable({
-                                "variants": 'compact',
-                                "id": "sample-table",
-                                "caption": 'Loaded sample summary',
-                                "hideCaption": true,
-                                "ths": [
-                                    { 
-                                        "value": "Sample & Collection instruments (CI)",
-                                        "thClasses": "ons-u-ta"
-                                    },
-                                    {
-                                        "value": " ",
-                                        "thClasses": "ons-u-ta"
-                                    },
-                                    {
-                                        "value": " " ,
-                                        "thClasses": "ons-u-ta"
-                                    }
-                                ],
-                            })
-                        }}
-                    {% endif %}
-                </div>
-            </div>
-            {% if not locked %}
-                {% if (not sample) or (not collection_instruments) %}
-                    {{
-                        onsButton({
-                            "text": 'Upload sample file & CI',
-                            "id": 'btn-option-done',
-                            "submitType": 'timer',
-                            "variants": ['secondary', 'small'],
-                            "url": url_for('collection_exercise_bp.get_upload_sample_ci', short_name=survey.shortName, period=ce.exerciseRef),
-                            "noIcon": 'true'
-                        })
-                    }}
-                {% elif sample and collection_instruments %}
-                    {{
-                        onsButton({
-                            "text": 'Replace sample file & CI',
-                            "id": 'btn-option-done',
-                            "submitType": 'timer',
-                            "variants": ['secondary', 'small'],
-                            "url": url_for('collection_exercise_bp.get_upload_sample_ci', short_name=survey.shortName, period=ce.exerciseRef),
-                            "noIcon": 'true'
-                        })
-                    }}
-                {% endif %}
-            {% endif %}
-        </div>
-    </div>
+    {% if sample %}
+        {{
+            onsTable({
+                "variants": ['compact', 'responsive'],
+                "id": "sample-table",
+                "caption": 'Loaded sample summary',
+                "hideCaption": true,
+                "ths": [
+                    { 
+                        "value": "Sample & Collection instruments (CI)",
+                        "thClasses": "ons-u-ta"
+                    },
+                    {
+                        "value": " ",
+                        "thClasses": "ons-u-ta"
+                    },
+                    {
+                        "value": "Uploaded " + sample.ingestDateTime,
+                        "thClasses": "ons-u-ta"
+                    }
+                ],
+                "trs": [
+                    {
+                        "tds": [
+                            {
+                                "value": "Total businesses",
+                                "tdClasses": "ons-u-ta"
+                            },
+                            {
+                                "value": sample.totalSampleUnits,
+                                "name": "total-instruments",
+                                "tdClasses": "ons-u-ta-right"
+                            },
+                            {
+                                "value": ' ',
+                                "name": "upload-seft-instruments",
+                                "tdClasses": "ons-u-ta-right"
+                            }
+                        ]
+                    },
+                    {
+                        "tds": [
+                            {
+                                "value": "Collection instruments",
+                                "tdClasses": "ons-u-ta"
+                            },
+                            {
+                                "value": collection_instruments|length|string,
+                                "name": "total-instruments",
+                                "tdClasses": "ons-u-ta-right"
+                            },
+                            {
+                                "value": ' ',
+                                "name": "upload-seft-instruments",
+                                "tdClasses": "ons-u-ta-right"
+                            }
+                        ]
+                    }
+                ]
+            })
+        }}
+    {% elif not sample %}
+        {{
+            onsTable({
+                "variants": ['compact', 'responsive'],
+                "id": "sample-table",
+                "caption": 'Loaded sample summary',
+                "hideCaption": true,
+                "ths": [
+                    { 
+                        "value": "Sample & Collection instruments (CI)",
+                        "thClasses": "ons-u-ta"
+                    }
+                ],
+            })
+        }}
+    {% endif %}
+    {% if not locked %}
+        {% if (not sample) or (not collection_instruments) %}
+            {{
+                onsButton({
+                    "text": 'Upload sample file & CI',
+                    "id": 'btn-option-done',
+                    "submitType": 'timer',
+                    "variants": ['secondary', 'small'],
+                    "url": url_for('collection_exercise_bp.get_upload_sample_ci', short_name=survey.shortName, period=ce.exerciseRef),
+                    "noIcon": 'true'
+                })
+            }}
+        {% elif sample and collection_instruments %}
+            {{
+                onsButton({
+                    "text": 'Replace sample file & CI',
+                    "id": 'btn-option-done',
+                    "submitType": 'timer',
+                    "variants": ['secondary', 'small'],
+                    "url": url_for('collection_exercise_bp.get_upload_sample_ci', short_name=survey.shortName, period=ce.exerciseRef),
+                    "noIcon": 'true'
+                })
+            }}
+        {% endif %}
+    {% endif %}
 </section>

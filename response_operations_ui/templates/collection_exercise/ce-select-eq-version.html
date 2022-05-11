@@ -43,10 +43,10 @@
                 {% if not locked %}
                     {{
                         onsButton({
-                            "text": "Apply",
+                            "text": "Done",
                             "id": "save-btn",
                             "type": "submit",
-                            "classes": "ons-u-mb-s ons-u-mt-l",
+                            "classes": "ons-u-mt-l",
                             "submitType": "timer",
                         })
                     }}
@@ -58,6 +58,18 @@
             {% else %}
               <em>eQ version {{ce.eqVersion|replace("v", "")}} selected </em>
             {% endif %}
+            <div class="ons-grid__col">
+                {{
+                    onsButton({
+                        "text": "Done",
+                        "id": "btn-option-done",
+                        "classes": "ons-u-mt-l",
+                        "submitType": "timer",
+                        "url": url_for('collection_exercise_bp.view_collection_exercise', short_name=survey.shortName, period=ce.exerciseRef),
+                        "noIcon": "true"
+                    })
+                  }}
+            </div>
         {% endif %}
 </section>
 

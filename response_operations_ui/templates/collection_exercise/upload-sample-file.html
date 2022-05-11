@@ -14,7 +14,7 @@
         {% if 'ACTIVE' == sample.state %}
             {{
                 onsTable({
-                    "variants": 'compact',
+                    "variants": ['compact', 'responsive'],
                     "id": "sample-table",
                     "caption": 'Loaded sample summary',
                     "hideCaption": true,
@@ -50,18 +50,7 @@
                                     "name": "total-ci"
                                 }
                             ]
-                        },
-                        {
-                            "tds": [
-                                {
-                                    "value": " "
-                                },
-                                {
-                                    "value": " ",
-                                    "name": "total-ci"
-                                }
-                            ]
-                        },
+                        }
                     ]
                 })
             }}

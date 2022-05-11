@@ -1,121 +1,106 @@
 <section>
     <h1 name="page-ce-title">Upload sample file & collection instruments</h1>
-        <div class="ons-grid ons-grid--flex ons-grid--gutterless ons-grid--vertical-center ons-grid--no-wrap@s ons-u-mt-m ons-u-mb-m">
-            <div class="ons-grid__col">
-                {% if sample %}
-                    {% if 'ACTIVE' == sample.state %}
-                        {{
-                            onsTable({
-                                "variants": 'compact',
-                                "id": "sample-table",
-                                "caption": 'Loaded sample summary',
-                                "hideCaption": true,
-                                "ths": [
-                                    { 
-                                        "value": "Sample",
-                                        "thClasses": "ons-u-ta"
+        {% if sample %}
+            {% if 'ACTIVE' == sample.state %}
+                {{
+                    onsTable({
+                        "variants": ['compact', 'responsive'],
+                        "id": "sample-table",
+                        "caption": 'Loaded sample summary',
+                        "hideCaption": true,
+                        "ths": [
+                            { 
+                                "value": "Sample",
+                                "thClasses": "ons-u-ta"
+                            },
+                            {
+                                "value": "Sample loaded: " + sample.ingestDateTime,
+                                "thClasses": "ons-u-ta-right"
+                            }
+                        ],
+                        "trs": [
+                            {
+                                "tds": [
+                                    {
+                                        "value": "Total businesses"
                                     },
                                     {
-                                        "value": "Sample loaded: " + sample.ingestDateTime,
-                                        "thClasses": "ons-u-ta"
+                                        "value": sample.totalSampleUnits,
+                                        "name": "total-businesses",
+                                        "numeric": "true"
                                     }
-                                ],
-                                "trs": [
-                                    {
-                                        "tds": [
-                                            {
-                                                "value": "Total businesses"
-                                            },
-                                            {
-                                                "value": sample.totalSampleUnits,
-                                                "name": "total-businesses",
-                                                "numeric": "true"
-                                            }
-                                        ]
-                                    },
-                                    {
-                                        "tds": [
-                                            {
-                                                "value": "Collection instruments needed"
-                                            },
-                                            {
-                                                "value": sample.expectedCollectionInstruments,
-                                                "name": "total-ci",
-                                                "numeric": "true"
-                                            }
-                                        ]
-                                    },
-                                    {
-                                        "tds": [
-                                            {
-                                                "value": " "
-                                            },
-                                            {
-                                                "value": " ",
-                                                "name": "total-ci"
-                                            }
-                                        ]
-                                    },
                                 ]
-                            })
-                        }}
-                    {% elif 'INIT' == sample.state %}
-                        <div class="ons-u-mb-xl">
-                            <div class="ons-u-fs-r">
-                                Loading&hellip; <span class="ons-u-ml-xs"><a href="/surveys/{{survey.shortName}}/{{ce.exerciseRef}}?show_msg=true">Refresh to see progress</a></span>
-                            </div>
-                        </div>
-                    {% elif 'FAILED' == sample.state %}
-                        <div class="ons-u-mb-xl">
-                            {% call
-                                onsPanel({
-                                    "type": "error",
-                                    "classes": "ons-u-mb-l"
-                                })
-                            %}
-                                {{ sample.notes }}
-                            {% endcall %}
-                            {% if not locked and surveyEditPermission %}
-                                <a class="ons-u-ml-xs" id="remove_sample_btn_2" href="{{ url_for('collection_exercise_bp.get_confirm_remove_sample', short_name=survey.shortName, period=ce.exerciseRef) }}">Remove</a>
-                            {% endif %}
-                        </div>
+                            },
+                            {
+                                "tds": [
+                                    {
+                                        "value": "Collection instruments needed"
+                                    },
+                                    {
+                                        "value": sample.expectedCollectionInstruments,
+                                        "name": "total-ci",
+                                        "numeric": "true"
+                                    }
+                                ]
+                            }
+                        ]
+                    })
+                }}
+            {% elif 'INIT' == sample.state %}
+                <div class="ons-u-mb-xl">
+                    <div class="ons-u-fs-r">
+                        Loading&hellip; <span class="ons-u-ml-xs"><a href="/surveys/{{survey.shortName}}/{{ce.exerciseRef}}?show_msg=true">Refresh to see progress</a></span>
+                    </div>
+                </div>
+            {% elif 'FAILED' == sample.state %}
+                <div class="ons-u-mb-xl">
+                    {% call
+                        onsPanel({
+                            "type": "error",
+                            "classes": "ons-u-mb-l"
+                        })
+                    %}
+                        {{ sample.notes }}
+                    {% endcall %}
+                    {% if not locked and surveyEditPermission %}
+                        <a class="ons-u-ml-xs" id="remove_sample_btn_2" href="{{ url_for('collection_exercise_bp.get_confirm_remove_sample', short_name=survey.shortName, period=ce.exerciseRef) }}">Remove</a>
                     {% endif %}
-                    {{
-                        onsButton({
-                            "text": 'Replace sample file',
-                            "id": 'btn-replace-sample',
-                            "submitType": 'timer',
-                            "variants": ['secondary', 'small'],
-                            "url": url_for('collection_exercise_bp.get_upload_sample_file', short_name=survey.shortName, period=ce.exerciseRef),
-                            "noIcon": 'true'
-                        })
-                    }}
-                {% else %}
-                     {{
-                        onsTable({
-                            "variants": 'compact',
-                            "id": "sample-table",
-                            "caption": 'Loaded sample summary',
-                            "hideCaption": true,
-                            "ths": [
-                                { 
-                                    "value": "Sample",
-                                    "thClasses": "ons-u-ta"
-                                }
-                            ]
-                        })
-                    }}
-                    {{
-                        onsButton({
-                            "text": 'Upload sample file',
-                            "id": 'btn-upload-sample',
-                            "submitType": 'timer',
-                            "variants": ['secondary', 'small'],
-                            "url": url_for('collection_exercise_bp.get_upload_sample_file', short_name=survey.shortName, period=ce.exerciseRef),
-                            "noIcon": 'true'
-                        })
-                    }}
-                {% endif %}
-            </div>
-        </div>
+                </div>
+            {% endif %}
+            {{
+                onsButton({
+                    "text": 'Replace sample file',
+                    "id": 'btn-replace-sample',
+                    "submitType": 'timer',
+                    "variants": ['secondary', 'small'],
+                    "url": url_for('collection_exercise_bp.get_upload_sample_file', short_name=survey.shortName, period=ce.exerciseRef),
+                    "noIcon": 'true'
+                })
+            }}
+        {% elif not sample %}
+             {{
+                onsTable({
+                    "variants": ['compact', 'responsive'],
+                    "id": "sample-table",
+                    "caption": 'Loaded sample summary',
+                    "hideCaption": true,
+                    "ths": [
+                        { 
+                            "value": "Sample",
+                            "thClasses": "ons-u-ta"
+                        }
+                    ]
+                })
+            }}
+            {{
+                onsButton({
+                    "text": 'Upload sample file',
+                    "id": 'btn-upload-sample',
+                    "submitType": 'timer',
+                    "variants": ['secondary', 'small'],
+                    "url": url_for('collection_exercise_bp.get_upload_sample_file', short_name=survey.shortName, period=ce.exerciseRef),
+                    "noIcon": 'true'
+                })
+            }}
+        {% endif %}
 </section>

@@ -3,44 +3,44 @@
 
     {% set surveyEditPermission = hasPermission('surveys.edit') %}
     {% if surveyEditPermission %}
-        {% set surveyTableData = {
-            "variants": 'compact',
-            "id": 'tbl-ce-details',
-            "caption": 'Dates for this collection exercise',
-            "hideCaption": true,
-            "ths": [
-                {
+        {% set tblHeaders =  
+            [ 
+                {  
                     "value": "Event",
-                    "thClasses": "ons-u-vh"
-                },
-                {
+                    "thClasses": "ons-u-vh" 
+                }, 
+                { 
                     "value": "Date",
                     "thClasses": "ons-u-vh"
-                },
-                {
+                }, 
+                { 
                     "value": "Status",
                     "thClasses": "ons-u-vh"
                 }
             ]
-        } %}
+        %}
     {% else %}
-        {% set surveyTableData = {
-            "variants": 'compact',
-            "id": 'tbl-ce-details',
-            "caption": 'Dates for this collection exercise',
-            "hideCaption": true,
-            "ths": [
-                {
+        {% set tblHeaders =  
+            [ 
+                {  
                     "value": "Event",
-                    "thClasses": "ons-u-vh"
-                },
-                {
+                    "thClasses": "ons-u-vh" 
+                }, 
+                { 
                     "value": "Date",
                     "thClasses": "ons-u-vh"
                 }
             ]
-        } %}
+        %}
     {% endif %}
+    {% set surveyTableData = {
+        "variants": ['compact', 'responsive'],
+        "id": 'tbl-ce-details',
+        "caption": 'Dates for this collection exercise',
+        "hideCaption": true,
+        "ths": tblHeaders
+    } %}
+
 
     {% set surveyTableDataRows = [] %}
     {% set dateGroups = ['periodId', 'user', 'ref_period_start', 'ref_period_end', 'employment'] %}
@@ -96,57 +96,37 @@
             {% elif editable and (dateGroup != 'periodId' and dateGroup != 'user') %}
                 {% set hyperlink = '<a href="' + url_for("collection_exercise_bp.update_event_date", short_name=survey.shortName, period=ce.exerciseRef, tag=dateGroup) + '">Edit '+ value + '</a>' %}
             {% endif %}
-    
-            
-  
-            {% do surveyTableDataRows.append(
-                {
-                    "tds": [
-                        {
-                            "value": label
-                        },
-                        {
-                            "value": event if event,
-                            "name": id
-                        },
-                        {
-                            "value": hyperlink,
-                            "tdClasses": "ons-u-ta-right"
-                        }
-                    ]
-                }
-            ) %}
-        {% else %}   
-            {% do surveyTableDataRows.append(
-                {
-                    "tds": [
-                        {
-                            "value": label
-                        },
-                        {
-                            "value": event if event,
-                            "name": id
-                        }
-                    ]
-                }
-            ) %}
         {% endif %}
 
+        
+        {% do surveyTableDataRows.append(
+            {
+                "tds": [
+                    {
+                        "value": label
+                    },
+                    {
+                        "value": event if event,
+                        "name": id
+                    },
+                    {
+                        "value": hyperlink,
+                        "tdClasses": "ons-u-ta-right"
+                    } if surveyEditPermission else
+                        [ 
+                            {
+                                "value": label
+                            },
+                            {
+                                "value": event if event,
+                                "name": id
+                            }
+                        ]
+                ]
+            }
+        ) %}
+
     {% endfor %}
-    
-    {% do surveyTableDataRows.append(
-        {
-            "tds": [
-                {
-                    "value": " "
-                },
-                {
-                    "value": " ",
-                    "name": id
-                }
-            ]
-        }
-    ) %}
 
     {% do surveyTableData | setAttribute("trs", surveyTableDataRows) %}
 

@@ -2,11 +2,8 @@
     <h2 class="ons-u-fs-r--b ons-u-pt-m">Action dates</h2>
     
     {% set surveyEditPermission = hasPermission('surveys.edit') %}  
-    {% set surveyTableData = { 
-        "variants": 'compact',
-        "caption": 'Dates for this collection exercise', 
-        "hideCaption": true,
-        "ths":
+    {% if surveyEditPermission %}
+        {% set tblHeaders =  
             [ 
                 {  
                     "value": "Event",
@@ -19,18 +16,29 @@
                 { 
                     "value": "Status",
                     "thClasses": "ons-u-vh"
-                } if surveyEditPermission else 
-                    [ 
-                        {  
-                            "value": "Event",     
-                            "thClasses": "ons-u-vh" 
-                        }, 
-                        { 
-                            "value": "Date", 
-                            "thClasses": "ons-u-vh" 
-                        }
-                    ]
+                }
             ]
+        %}
+    {% else %}
+        {% set tblHeaders =  
+            [ 
+                {  
+                    "value": "Event",
+                    "thClasses": "ons-u-vh" 
+                }, 
+                { 
+                    "value": "Date",
+                    "thClasses": "ons-u-vh"
+                }
+            ]
+        %}
+    {% endif %}
+    {% set surveyTableData = {
+        "variants": ['compact', 'responsive'],
+        "id": 'tbl-ce-details',
+        "caption": 'Dates for this collection exercise',
+        "hideCaption": true,
+        "ths": tblHeaders
     } %}
 
     {% set surveyTableDataRows = [] %}
@@ -81,7 +89,9 @@
                 {% set eventTime = event.time %}
             {% endif %}
         {% elif dateGroup == 'reminder' %}
-            {% set label = ' ' %}
+            {% if surveyEditPermission %}
+                {% set label = ' ' %}
+            {% endif %}
             {% set event = events.reminder %}
             {% set name = 'first-reminder-date' %}
             {% set value = 'reminder' %}
@@ -136,7 +146,9 @@
                 {% set eventTime = event.time %}
             {% endif %}
         {% elif dateGroup == 'nudge_email_0' %}
-            {% set label = ' ' %}
+            {% if surveyEditPermission %}
+                {% set label = ' ' %}
+            {% endif %}
             {% set event = events.nudge_email_0 %}
             {% set value = 'nudge email' %}
             {% set showNudgeEmail = true %}
@@ -239,26 +251,22 @@
                         {
                             "value": hyperlink,
                             "tdClasses": "ons-u-ta-right"
-                        }
+                        }if surveyEditPermission else
+                            [
+                                {
+                                    "value": label
+                                },
+                                {
+                                    "value": eventDay + ' <em>' + eventDate + '</em> ' + eventTime if event,
+                                    "class": "ons-u-ta-right",
+                                    "name": name
+                                }
+                            ]
                     ]
                 }
             ) %}
         {% endif %}
     {% endfor %}
-  
-    {% do surveyTableDataRows.append(
-        {
-            "tds": [
-                {
-                    "value": " "
-                },
-                {
-                    "value": " ",
-                    "name": id
-                }
-            ]
-        }
-    ) %}
 
     {% do surveyTableData | setAttribute("trs", surveyTableDataRows) %}
 
