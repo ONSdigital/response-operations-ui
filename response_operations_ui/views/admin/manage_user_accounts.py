@@ -79,17 +79,18 @@ def manage_account():
         # Someone has gotten here directly without passing a parameter in, send them back to the main page
         flash("No user was selected to edit", "error")
         manage_user_accounts()
-    
+
     uaa_user = get_user_by_email(user_requested)
     if uaa_user is None or len(uaa_user["resources"] == 0):
         # Something went wrong when trying to retrieve them from UAA
         flash("Selected user could not be found", "error")
         manage_user_accounts()
-    
+
     name = uaa_user["resources"][0]["name"]["givenName"] + " " + uaa_user["resources"][0]["name"]["familyName"]
     permissions = (g["display"] for g in uaa_user["resources"][0]["groups"])
 
     return render_template("admin/manage_account.html", name=name, permissions=permissions)
+
 
 def _get_refine_user_list(users: list):
     user_list = []
