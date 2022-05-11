@@ -814,7 +814,7 @@ def get_upload_sample_ci(short_name, period):
     logger.info("Retrieving upload sample collection instrument page", short_name=short_name, period=period)
     ce_details = build_collection_exercise_details(short_name, period)
     ce_state = ce_details["collection_exercise"]["state"]
-
+    # test
     ce_details["collection_exercise"]["state"] = map_collection_exercise_state(ce_state)  # NOQA
     ce_details["eq_ci_selectors"] = filter_eq_ci_selectors(
         ce_details["eq_ci_selectors"], ce_details["collection_instruments"]
