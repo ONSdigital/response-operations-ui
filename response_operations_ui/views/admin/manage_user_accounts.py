@@ -1,5 +1,4 @@
 import logging
-from tkinter import N
 
 from flask import flash, render_template, request
 from flask_login import login_required
