@@ -1,4 +1,5 @@
 import logging
+from tkinter import N
 
 from flask import flash, render_template, request
 from flask_login import login_required
@@ -8,6 +9,7 @@ from werkzeug.exceptions import abort
 
 from response_operations_ui.controllers.uaa_controller import (
     get_filter_query,
+    get_user_by_email,
     get_users_list,
     user_has_permission,
 )
@@ -65,6 +67,29 @@ def manage_user_accounts():
         search_email=search_email,
     )
 
+
+@admin_bp.route("/manage-account", methods=["GET"])
+@login_required
+def manage_account():
+    if not user_has_permission("users.admin"):
+        logger.exception("Manage User Account request requested but unauthorised. ")
+        abort(401)
+    user_requested = request.values.get("user", None)
+    if user_requested is None:
+        # Someone has gotten here directly without passing a parameter in, send them back to the main page
+        flash("No user was selected to edit", "error")
+        manage_user_accounts()
+    
+    uaa_user = get_user_by_email(user_requested)
+    if uaa_user is None or len(uaa_user["resources"] == 0):
+        # Something went wrong when trying to retrieve them from UAA
+        flash("Selected user could not be found", "error")
+        manage_user_accounts()
+    
+    name = uaa_user["resources"][0]["name"]["givenName"] + " " + uaa_user["resources"][0]["name"]["familyName"]
+    permissions = (g["display"] for g in uaa_user["resources"][0]["groups"])
+
+    return render_template("admin/manage_account.html", name=name, permissions=permissions)
 
 def _get_refine_user_list(users: list):
     user_list = []
