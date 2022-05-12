@@ -79,6 +79,7 @@ def manage_account():
         flash("No user was selected to edit", "error")
         manage_user_accounts()
 
+    logger.info("Attempting to get user " + user_requested)
     uaa_user = get_user_by_email(user_requested)
     if uaa_user is None or len(uaa_user["resources"] == 0):
         # Something went wrong when trying to retrieve them from UAA
