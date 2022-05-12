@@ -208,6 +208,7 @@ def get_existing_sorted_nudge_events(events):
     return sorted_nudge_list
 
 
+# TODO: cleanup
 @collection_exercise_bp.route("/<short_name>/<period>", methods=["POST"])
 @login_required
 def post_collection_exercise(short_name, period):
@@ -226,7 +227,7 @@ def post_collection_exercise(short_name, period):
     return view_collection_exercise(short_name, period)
 
 
-@collection_exercise_bp.route("/<short_name>/<period>/upload-sample-ci", methods=["POST"])
+@collection_exercise_bp.route("/<short_name>/<period>/view-sample-ci", methods=["POST"])
 @login_required
 def post_sample_ci(short_name, period):
     if "load-sample" in request.form:
@@ -237,7 +238,7 @@ def post_sample_ci(short_name, period):
         return _unselect_collection_instrument(short_name, period)
     if "eq-version" in request.form:
         return _update_eq_version(short_name, period)
-    return get_upload_sample_ci(short_name, period)
+    return get_view_sample_ci(short_name, period)
 
 
 @collection_exercise_bp.route("response_chasing/<ce_id>/<survey_id>", methods=["GET"])
@@ -304,7 +305,7 @@ def _upload_sample(short_name, period):
 
     return redirect(
         url_for(
-            "collection_exercise_bp.get_upload_sample_ci",
+            "collection_exercise_bp.get_view_sample_ci",
             short_name=short_name,
             period=period,
             error=error,
@@ -345,7 +346,7 @@ def _select_collection_instrument(short_name, period):
 
     return redirect(
         url_for(
-            "collection_exercise_bp.get_upload_sample_ci",
+            "collection_exercise_bp.get_view_sample_ci",
             short_name=short_name,
             period=period,
             success_panel=success_panel,
@@ -432,7 +433,7 @@ def _unselect_collection_instrument(short_name, period):
     success_panel = _unlink_collection_instrument()
     return redirect(
         url_for(
-            "collection_exercise_bp.get_upload_sample_ci",
+            "collection_exercise_bp.get_view_sample_ci",
             short_name=short_name,
             period=period,
             success_panel=success_panel,
@@ -807,9 +808,9 @@ def get_event_name(tag):
     return event_names.get(tag)
 
 
-@collection_exercise_bp.route("/<short_name>/<period>/upload-sample-ci", methods=["GET"])
+@collection_exercise_bp.route("/<short_name>/<period>/view-sample-ci", methods=["GET"])
 @login_required
-def get_upload_sample_ci(short_name, period):
+def get_view_sample_ci(short_name, period):
     logger.info("Retrieving upload sample collection instrument page", short_name=short_name, period=period)
     ce_details = build_collection_exercise_details(short_name, period)
     ce_state = ce_details["collection_exercise"]["state"]
@@ -822,15 +823,22 @@ def get_upload_sample_ci(short_name, period):
 
     error_json = _get_error_from_session()
     _delete_sample_data_if_required()
+    show_msg = request.args.get("show_msg")
+
+    success_panel = request.args.get("success_panel")
+    info_panel = request.args.get("info_panel")
 
     return render_template(
-        "collection_exercise/upload-sample-ci.html",
+        "collection_exercise/view-sample-ci.html",
         ce=ce_details["collection_exercise"],
         collection_instruments=ce_details["collection_instruments"],
         sample=ce_details["sample_summary"],
         survey=ce_details["survey"],
         eq_ci_selectors=ce_details["eq_ci_selectors"],
         error=error_json,
+        success_panel=success_panel,
+        info_panel=info_panel,
+        show_msg=show_msg,
     )
 
 
@@ -899,7 +907,7 @@ def remove_loaded_sample(short_name, period):
         session["error"] = json.dumps(
             {"section": "head", "header": "Error: Failed to remove sample", "message": "Please try again"}
         )
-        return redirect(url_for("collection_exercise_bp.get_upload_sample_ci", short_name=short_name, period=period))
+        return redirect(url_for("collection_exercise_bp.get_view_sample_ci", short_name=short_name, period=period))
 
     # If the sample summary call fails, the only consequence will be orphaned data.  We'll write the id to the session,
     # and try again after the redirect, only removing it from the session once it's been deleted.  There's a chance
@@ -912,7 +920,7 @@ def remove_loaded_sample(short_name, period):
 
     return redirect(
         url_for(
-            "collection_exercise_bp.get_upload_sample_ci",
+            "collection_exercise_bp.get_view_sample_ci",
             short_name=short_name,
             period=period,
             success_panel="Sample removed",

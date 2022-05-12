@@ -495,7 +495,7 @@ class TestCollectionExercise(ViewTestCase):
         self.assertIn("Monthly Survey of Building Materials Bricks".encode(), response.data)
         self.assertIn("074".encode(), response.data)
         self.assertIn("Uploaded".encode(), response.data)
-        self.assertIn("test_collection_instrument.xlxs".encode(), response.data)
+        self.assertIn("Collection instruments".encode(), response.data)
         self.assertIn("Set as ready for live".encode(), response.data)
 
     @requests_mock.mock()
@@ -526,7 +526,7 @@ class TestCollectionExercise(ViewTestCase):
         self.assertIn("Monthly Survey of Building Materials Bricks".encode(), response.data)
         self.assertIn("074".encode(), response.data)
         self.assertIn("Uploaded".encode(), response.data)
-        self.assertIn("test_collection_instrument.xlxs".encode(), response.data)
+        self.assertIn("Collection instruments".encode(), response.data)
         self.assertIn("Ready for live".encode(), response.data)
         self.assertNotIn("Set ready for live".encode(), response.data)
 
@@ -558,7 +558,7 @@ class TestCollectionExercise(ViewTestCase):
         self.assertIn("Monthly Survey of Building Materials Bricks".encode(), response.data)
         self.assertIn("074".encode(), response.data)
         self.assertIn("Uploaded".encode(), response.data)
-        self.assertIn("test_collection_instrument.xlxs".encode(), response.data)
+        self.assertIn("Collection instruments".encode(), response.data)
         self.assertIn("Setting ready for live".encode(), response.data)
         self.assertNotIn("Set ready for live".encode(), response.data)
 
@@ -590,7 +590,7 @@ class TestCollectionExercise(ViewTestCase):
         self.assertIn("Monthly Survey of Building Materials Bricks".encode(), response.data)
         self.assertIn("074".encode(), response.data)
         self.assertIn("Uploaded".encode(), response.data)
-        self.assertIn("test_collection_instrument.xlxs".encode(), response.data)
+        self.assertIn("Collection instruments".encode(), response.data)
         self.assertIn("Setting ready for live".encode(), response.data)
         self.assertNotIn("Set ready for live".encode(), response.data)
 
@@ -622,7 +622,7 @@ class TestCollectionExercise(ViewTestCase):
         self.assertIn("Monthly Survey of Building Materials Bricks".encode(), response.data)
         self.assertIn("074".encode(), response.data)
         self.assertIn("Uploaded".encode(), response.data)
-        self.assertIn("test_collection_instrument.xlxs".encode(), response.data)
+        self.assertIn("Collection instruments".encode(), response.data)
         self.assertIn("Setting ready for live".encode(), response.data)
         self.assertNotIn("Set ready for live".encode(), response.data)
 
@@ -654,7 +654,7 @@ class TestCollectionExercise(ViewTestCase):
         self.assertIn("Monthly Survey of Building Materials Bricks".encode(), response.data)
         self.assertIn("074".encode(), response.data)
         self.assertIn("Uploaded".encode(), response.data)
-        self.assertIn("test_collection_instrument.xlxs".encode(), response.data)
+        self.assertIn("Collection instruments".encode(), response.data)
         self.assertIn("Ended".encode(), response.data)
         self.assertNotIn("Set ready for live".encode(), response.data)
 
@@ -803,7 +803,9 @@ class TestCollectionExercise(ViewTestCase):
         mock_request.post(url_collection_instrument_link, status_code=200)
         mock_details.return_value = formatted_collection_exercise_details
 
-        response = self.client.post(f"/surveys/{short_name}/{period}/upload-sample-ci", data=post_data, follow_redirects=True)
+        response = self.client.post(
+            f"/surveys/{short_name}/{period}/view-sample-ci", data=post_data, follow_redirects=True
+        )
 
         self.assertEqual(response.status_code, 200)
         self.assertIn("Collection instruments added".encode(), response.data)
@@ -924,7 +926,7 @@ class TestCollectionExercise(ViewTestCase):
     def test_view_collection_instrument(self, mock_request, mock_details):
         mock_details.return_value = formatted_collection_exercise_details
 
-        response = self.client.get(f"/surveys/{short_name}/{period}/upload-sample-ci", follow_redirects=True)
+        response = self.client.get(f"/surveys/{short_name}/{period}/load-collection-instruments", follow_redirects=True)
 
         self.assertEqual(response.status_code, 200)
         self.assertIn("test_collection_instrument.xlxs".encode(), response.data)
@@ -951,11 +953,11 @@ class TestCollectionExercise(ViewTestCase):
     def test_add_another_collection_instrument_when_already_uploaded(self, mock_request, mock_details):
         mock_details.return_value = formatted_collection_exercise_details
 
-        response = self.client.get(f"/surveys/{short_name}/{period}/upload-sample-ci", follow_redirects=True)
+        response = self.client.get(f"/surveys/{short_name}/{period}/load-collection-instruments", follow_redirects=True)
 
         self.assertEqual(response.status_code, 200)
-        self.assertIn("Collection instruments (1)".encode(), response.data, response.data)
-        self.assertNotIn("Manage collection instruments".encode(), response.data, response.data)
+        self.assertIn("1 SEFT collection instruments uploaded".encode(), response.data, response.data)
+        self.assertIn("Remove SEFT file".encode(), response.data, response.data)
         self.assertNotIn("Add another collection instrument. Must be XLSX".encode(), response.data)
 
     @requests_mock.mock()
@@ -974,7 +976,9 @@ class TestCollectionExercise(ViewTestCase):
         mock_request.post(url_sample_service_upload, json=sample_data)
         mock_request.put(url_collection_exercise_link, json=collection_exercise_link)
 
-        response = self.client.post(f"/surveys/{short_name}/{period}", data=post_data, follow_redirects=True)
+        response = self.client.post(
+            f"/surveys/{short_name}/{period}/upload-sample-file", data=post_data, follow_redirects=True
+        )
 
         self.assertEqual(response.status_code, 200)
         self.assertIn("Sample loaded successfully".encode(), response.data)
@@ -1045,7 +1049,9 @@ class TestCollectionExercise(ViewTestCase):
         mock_request.get(url_get_survey_by_short_name, status_code=200, json=self.survey_data)
         mock_request.get(url_ces_by_survey, status_code=200, json=exercise_data)
 
-        response = self.client.post(f"/surveys/{short_name}/{period}", data=data, follow_redirects=True)
+        response = self.client.post(
+            f"/surveys/{short_name}/{period}/upload-sample-file", data=data, follow_redirects=True
+        )
 
         self.assertEqual(response.status_code, 200)
         self.assertNotIn("Sample loaded successfully".encode(), response.data)
@@ -1061,7 +1067,9 @@ class TestCollectionExercise(ViewTestCase):
             mock_details.return_value = json.load(collection_exercise)
         mock_request.get(url_get_survey_by_short_name, status_code=200, json=self.survey_data)
         mock_request.get(url_ces_by_survey, status_code=200, json=exercise_data)
-        response = self.client.post(f"/surveys/{short_name}/{period}", data=data, follow_redirects=True)
+        response = self.client.post(
+            f"/surveys/{short_name}/{period}/upload-sample-file", data=data, follow_redirects=True
+        )
 
         self.assertEqual(response.status_code, 200)
         self.assertNotIn("Sample loaded successfully".encode(), response.data)
@@ -1096,7 +1104,7 @@ class TestCollectionExercise(ViewTestCase):
     #     mock_request.get(url_get_survey_by_short_name, status_code=200, json=self.survey_data)
     #     mock_request.get(url_ces_by_survey, status_code=200, json=exercise_data)
     #     response = self.client.post(f"/surveys/{short_name}/{period}", data=data, follow_redirects=True)
-    # 
+    #
     #     self.assertEqual(response.status_code, 200)
     #     self.assertIn(
     #         "eQ version is not updated as the selected version and existing version are same.".encode(), response.data
@@ -1363,7 +1371,9 @@ class TestCollectionExercise(ViewTestCase):
         mock_request.put(url_collection_instrument_unlink, status_code=200)
         mock_details.return_value = formatted_collection_exercise_details
 
-        response = self.client.post(f"/surveys/{short_name}/{period}", data=post_data, follow_redirects=True)
+        response = self.client.post(
+            f"/surveys/{short_name}/{period}/load-collection-instruments", data=post_data, follow_redirects=True
+        )
 
         self.assertEqual(response.status_code, 200)
         self.assertIn("Collection instrument removed".encode(), response.data)
@@ -1885,21 +1895,19 @@ class TestCollectionExercise(ViewTestCase):
         self.assertEqual(error["header"], "Error: Invalid file name format for ru specific collection instrument")
         self.assertEqual(error["message"], "Please provide a file with a valid 11 digit ru ref in the file name")
 
-    # TODO: this might not be needed or needs to be moved to another page
     @requests_mock.mock()
     @patch("response_operations_ui.views.collection_exercise.build_collection_exercise_details")
-    def test_manage_collection_instruments_is_present(self, mock_request, mock_details):
+    def test_replace_sample_is_present(self, mock_request, mock_details):
         mock_request.post(url_sign_in_data, json={"access_token": self.access_token}, status_code=201)
         mock_request.get(url_permission_url, json=user_permission_surveys_edit_json, status_code=200)
         self.client.post("/sign-in", follow_redirects=True, data={"username": "user", "password": "pass"})
         mock_details.return_value = formatted_new_collection_exercise_details
         mock_request.get(url_get_survey_by_short_name, json=updated_survey_info["survey"])
         mock_request.get(url_ces_by_survey, json=updated_survey_info["collection_exercises"])
-        response = self.client.get(f"/surveys/{short_name}/{period}", follow_redirects=True)
+        response = self.client.get(f"/surveys/{short_name}/{period}/view-sample-ci", follow_redirects=True)
 
         self.assertEqual(response.status_code, 200)
-        self.assertNotIn("Load Collection Instruments".encode(), response.data)
-        self.assertIn("Manage collection instruments".encode(), response.data)
+        self.assertIn("Replace sample file".encode(), response.data)
 
     @requests_mock.mock()
     @patch("response_operations_ui.views.collection_exercise.build_collection_exercise_details")
@@ -1910,11 +1918,10 @@ class TestCollectionExercise(ViewTestCase):
         mock_details.return_value = seft_collection_exercise_details
         mock_request.get(url_get_survey_by_short_name, json=updated_survey_info["survey"])
         mock_request.get(url_ces_by_survey, json=updated_survey_info["collection_exercises"])
-        response = self.client.get(f"/surveys/{short_name}/{period}", follow_redirects=True)
+        response = self.client.get(f"/surveys/{short_name}/{period}/view-sample-ci", follow_redirects=True)
 
         self.assertEqual(response.status_code, 200)
-        self.assertIn("Load collection instruments".encode(), response.data)
-        self.assertNotIn("Manage collection instruments".encode(), response.data)
+        self.assertIn("Upload SEFT files".encode(), response.data)
 
     @requests_mock.mock()
     @patch("response_operations_ui.views.collection_exercise.build_collection_exercise_details")

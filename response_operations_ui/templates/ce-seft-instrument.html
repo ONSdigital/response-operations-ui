@@ -63,7 +63,7 @@
                             "id": "btn-load-ci",
                             "variants": ['secondary', 'small'],
                             "name": "load-ci-cancel",
-                            "url": url_for('collection_exercise_bp.get_upload_sample_ci', short_name=survey.shortName, period=ce.exerciseRef),
+                            "url": url_for('collection_exercise_bp.get_view_sample_ci', short_name=survey.shortName, period=ce.exerciseRef),
                             "submitType": "timer",
                             "noIcon": "true"
                         })
@@ -141,7 +141,7 @@
                     "id": "btn-upload-ci-done",
                     "variants": primary,
                     "name": "load-ci-done",
-                    "url": url_for('collection_exercise_bp.get_upload_sample_ci', short_name=survey.shortName, period=ce.exerciseRef),
+                    "url": url_for('collection_exercise_bp.get_view_sample_ci', short_name=survey.shortName, period=ce.exerciseRef),
                     "submitType": "timer",
                     "noIcon": "true"
                 })
