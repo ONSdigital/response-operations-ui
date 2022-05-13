@@ -3,7 +3,7 @@
         {% if survey.surveyMode == 'SEFT' %}
             {{
                 onsTable({
-                    "variants": 'compact',
+                    "variants": ['compact', 'responsive'],
                     "id": "collection-instruments-table",
                     "caption": 'Collection instruments',
                     "hideCaption": true,
@@ -39,18 +39,7 @@
                                     "tdClasses": "ons-u-ta-right"
                                 }
                             ]
-                        },
-                        {
-                            "tds": [
-                                {
-                                    "value": " "
-                                },
-                                {
-                                    "value": " ",
-                                    "name": "total-ci"
-                                }
-                            ]
-                        },
+                        }
                     ]
                 })
             }}
@@ -71,91 +60,71 @@
       
         {% if survey.surveyMode != 'SEFT' %}
             {% if collection_instruments %}
-                {% if surveyEditPermission %}
-                    {% set surveyTableData = {
-                        "variants": ['compact', 'responsive'],
-                        "id": "collection-instruments-table",
-                        "caption": 'Collection instruments for this exercise',
-                        "hideCaption": true,
-                        "ths": [
-                            {
-                                "value": "Collection instruments (" + collection_instruments|length|string + ")",
-                                "class": "ons-u-vh"
-                            },
-                            {
-                                "value": " ",
-                                "class": "ons-u-vh"
-                            }
-                        ]
-                    } %}
-                    {% set surveyTableDataRows = [] %}
-                    {% for collection_instrument in collection_instruments %}
-                        {% if not locked %}
-                            {% set formData =
-                                '<form id="form-unselect-ci-' + loop.index|string + '" action="" method="post">' +
-                                '<a href=# id="unlink-ci-' + loop.index|string + '"><svg class="ons-ons-svg-icon" viewBox="0 0 45 22" xmlns="http://www.w3.org/2000/svg" focusable="false"><path d="M0 0h24v24H0z" fill="none"/><path d="M7 11v2h10v-2H7zm5-9C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8z"/></svg></a>' +
-                                '<input type="hidden" name="ce_id" value="' + ce.id + '">' +
-                                '<input type="hidden" name="ci_id" value="' + collection_instrument.id + '">' +
-                                '<input type="hidden" name="unselect-ci">' +
-                                '<input type="hidden" name="csrf_token" value="' + csrf_token() + '" />' +
-                                '</form>'
-                            %}
-                        {% endif %}
-                        {% do surveyTableDataRows.append(
-                            {
-                                "tds": [
-                                    {
-                                        "value": collection_instrument.file_name
-                                    },
-                                    {
-                                        "value": formData,
-                                        "tdClasses": "ons-u-vh-right"
-                                    }
-                                ]
-                            }
-                        ) %}
-                    {% endfor %}
-                    {% do surveyTableData | setAttribute("trs", surveyTableDataRows) %}
-                    {{ onsTable(surveyTableData) }}
-                    {% for i in range(surveyTableDataRows | length) %}
-                        {% set j = i + 1 %}
-                        {% if not locked %}
-                            <script{% if csp_nonce %} nonce="{{ csp_nonce() }}" {% endif %}>
-                                document.getElementById("unlink-ci-{{ j }}").addEventListener('click', function () {
-                                this.parentNode.submit()
-                            });</script>
-                        {% endif %}
-                    {% endfor %}
-                {% else %}
-                    {% if collection_instruments %}
-                        {% set surveyTableData = {
-                            "variants": ['compact', 'responsive'],
-                            "id": "collection-instruments-table",
-                            "caption": 'Collection instruments for this collection exercise',
-                            "hideCaption": true,
-                            "ths": [
+                {% set surveyTableData = {
+                    "variants": ['compact', 'responsive'],
+                    "id": "collection-instruments-table",
+                    "caption": 'Collection instruments for this exercise',
+                    "hideCaption": true,
+                    "ths": [
+                        {
+                            "value": "Collection instruments (" + collection_instruments|length|string + ")",
+                            "class": "ons-u-vh"
+                        },
+                        {
+                            "value": " ",
+                            "class": "ons-u-vh"
+                        } if surveyEditPermission else
+                            [
                                 {
                                     "value": "Collection instruments (" + collection_instruments|length|string + ")",
                                     "class": "ons-u-vh"
                                 }
                             ]
-                        } %}
-                        {% set surveyTableDataRows = [] %}
-                        {% for collection_instrument in collection_instruments %}
-                            {% do surveyTableDataRows.append(
+                    ]
+                } %}
+                {% set surveyTableDataRows = [] %}
+                {% for collection_instrument in collection_instruments %}
+                    {% if not locked and surveyEditPermission%}
+                        {% set formData =
+                            '<form id="form-unselect-ci-' + loop.index|string + '" action="" method="post">' +
+                            '<a href=# id="unlink-ci-' + loop.index|string + '"><svg class="ons-ons-svg-icon" viewBox="0 0 45 22" xmlns="http://www.w3.org/2000/svg" focusable="false"><path d="M0 0h24v24H0z" fill="none"/><path d="M7 11v2h10v-2H7zm5-9C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8z"/></svg></a>' +
+                            '<input type="hidden" name="ce_id" value="' + ce.id + '">' +
+                            '<input type="hidden" name="ci_id" value="' + collection_instrument.id + '">' +
+                            '<input type="hidden" name="unselect-ci">' +
+                            '<input type="hidden" name="csrf_token" value="' + csrf_token() + '" />' +
+                            '</form>'
+                        %}
+                    {% endif %}
+                    {% do surveyTableDataRows.append(
+                        {
+                            "tds": [
                                 {
-                                    "tds": [
+                                    "value": collection_instrument.file_name
+                                },
+                                {
+                                    "value": formData,
+                                    "tdClasses": "ons-u-vh-right"
+                                } if surveyEditPermission else
+                                    [
                                         {
                                             "value": collection_instrument.file_name
                                         }
                                     ]
-                                }
-                            ) %}
-                        {% endfor %}
-                        {% do surveyTableData | setAttribute("trs", surveyTableDataRows) %}
-                        {{ onsTable(surveyTableData) }}
+                            ]
+                        }
+                    ) %}
+                {% endfor %}
+                {% do surveyTableData | setAttribute("trs", surveyTableDataRows) %}
+                {{ onsTable(surveyTableData) }}
+                {% for i in range(surveyTableDataRows | length) %}
+                    {% set j = i + 1 %}
+                    {% if not locked %}
+                        <script{% if csp_nonce %} nonce="{{ csp_nonce() }}" {% endif %}>
+                            document.getElementById("unlink-ci-{{ j }}").addEventListener('click', function () {
+                            this.parentNode.submit()
+                        });</script>
                     {% endif %}
-                {% endif %}
+                {% endfor %}
             {% endif %}
     
             {% if not locked %}
@@ -211,8 +180,6 @@
                         {% endif %}
                     </div>
                 {% else %}
-      
-                
                     <div class="ons-u-mb-m">
                         {% if eq_ci_selectors %}
                             {% set surveyTableData = {

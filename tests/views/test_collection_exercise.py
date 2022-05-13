@@ -186,6 +186,12 @@ ci_type_search_string_eq = urlencode({"searchString": json.dumps({"SURVEY_ID": s
 ci_type_search_string_seft = urlencode({"searchString": json.dumps({"SURVEY_ID": survey_id, "TYPE": "SEFT"})})
 
 
+def sign_in_with_permission(self, mock_request, permission):
+    mock_request.post(url_sign_in_data, json={"access_token": self.access_token}, status_code=201)
+    mock_request.get(url_permission_url, json=permission, status_code=200)
+    self.client.post("/sign-in", follow_redirects=True, data={"username": "user", "password": "pass"})
+
+
 class File:
     """Used to imitate a file being uploaded"""
 
@@ -358,7 +364,6 @@ class TestCollectionExercise(ViewTestCase):
         self.assertEqual(response.status_code, 200)
         self.assertIn("Monthly Survey of Building Materials Bricks".encode(), response.data)
         self.assertIn("221_201712".encode(), response.data)
-        # self.assertIn("Select eQ version".encode(), response.data)
         self.assertNotIn("Set as ready for live".encode(), response.data)
 
     @requests_mock.mock()
@@ -950,19 +955,20 @@ class TestCollectionExercise(ViewTestCase):
     # TODO: figure out where this should be happening
     @requests_mock.mock()
     @patch("response_operations_ui.views.collection_exercise.build_collection_exercise_details")
-    def test_add_another_collection_instrument_when_already_uploaded(self, mock_request, mock_details):
+    def test_add_another_collection_instrument_when_already_uploaded_no_permission(self, mock_request, mock_details):
         mock_details.return_value = formatted_collection_exercise_details
 
         response = self.client.get(f"/surveys/{short_name}/{period}/load-collection-instruments", follow_redirects=True)
 
         self.assertEqual(response.status_code, 200)
         self.assertIn("1 SEFT collection instruments uploaded".encode(), response.data, response.data)
-        self.assertIn("Remove SEFT file".encode(), response.data, response.data)
+        self.assertNotIn("Remove SEFT file".encode(), response.data, response.data)
         self.assertNotIn("Add another collection instrument. Must be XLSX".encode(), response.data)
 
     @requests_mock.mock()
     @patch("response_operations_ui.views.collection_exercise.build_collection_exercise_details")
     def test_upload_sample(self, mock_request, mock_details):
+        sign_in_with_permission(self, mock_request, user_permission_surveys_edit_json)
         post_data = {"sampleFile": (BytesIO(b"data"), "test.csv"), "load-sample": ""}
 
         sample_data = {"id": sample_summary_id}
@@ -1041,6 +1047,7 @@ class TestCollectionExercise(ViewTestCase):
     @requests_mock.mock()
     @patch("response_operations_ui.views.collection_exercise.build_collection_exercise_details")
     def test_no_upload_sample_when_bad_extension(self, mock_request, mock_details):
+        sign_in_with_permission(self, mock_request, user_permission_surveys_edit_json)
         data = {"sampleFile": (BytesIO(b"data"), "test.html"), "load-sample": ""}
         with open(
             f"{project_root}/test_data/collection_exercise/formatted_collection_exercise_details_no_sample.json"
@@ -1060,6 +1067,7 @@ class TestCollectionExercise(ViewTestCase):
     @requests_mock.mock()
     @patch("response_operations_ui.views.collection_exercise.build_collection_exercise_details")
     def test_no_upload_sample_when_no_file(self, mock_request, mock_details):
+        sign_in_with_permission(self, mock_request, user_permission_surveys_edit_json)
         data = {"load-sample": ""}
         with open(
             f"{project_root}/test_data/collection_exercise/formatted_collection_exercise_details_no_sample.json"
@@ -1216,6 +1224,7 @@ class TestCollectionExercise(ViewTestCase):
     @requests_mock.mock()
     @patch("response_operations_ui.views.collection_exercise.build_collection_exercise_details")
     def test_update_collection_exercise_details_success(self, mock_request, mock_details):
+        sign_in_with_permission(self, mock_request, user_permission_surveys_edit_json)
         changed_ce_details = {
             "collection_exercise_id": collection_exercise_id,
             "user_description": "16th June 2019",
@@ -1245,6 +1254,7 @@ class TestCollectionExercise(ViewTestCase):
 
     @requests_mock.mock()
     def test_update_collection_exercise_userdescription_success(self, mock_request):
+        sign_in_with_permission(self, mock_request, user_permission_surveys_edit_json)
         test_description = "16th June 2019"
         changed_ce_details = {
             "collection_exercise_id": collection_exercise_id,
@@ -1266,6 +1276,7 @@ class TestCollectionExercise(ViewTestCase):
 
     @requests_mock.mock()
     def test_update_collection_exercise_details_fail(self, mock_request):
+        sign_in_with_permission(self, mock_request, user_permission_surveys_edit_json)
         changed_ce_details = {
             "collection_exercise_id": collection_exercise_id,
             "user_description": "16th June 2019",
@@ -1280,11 +1291,12 @@ class TestCollectionExercise(ViewTestCase):
         )
 
         request_history = mock_request.request_history
-        self.assertEqual(len(request_history), 2)
+        self.assertEqual(len(request_history), 6)
         self.assertEqual(response.status_code, 500)
 
     @requests_mock.mock()
     def test_update_collection_exercise_details_404(self, mock_request):
+        sign_in_with_permission(self, mock_request, user_permission_surveys_edit_json)
         changed_ce_details = {
             "collection_exercise_id": collection_exercise_id,
             "user_description": "16th June 2019",
@@ -1299,11 +1311,12 @@ class TestCollectionExercise(ViewTestCase):
         )
 
         request_history = mock_request.request_history
-        self.assertEqual(len(request_history), 2)
+        self.assertEqual(len(request_history), 6)
         self.assertEqual(response.status_code, 500)
 
     @requests_mock.mock()
     def test_update_collection_exercise_period_fail(self, mock_request):
+        sign_in_with_permission(self, mock_request, user_permission_surveys_edit_json)
         changed_ce_details = {
             "collection_exercise_id": collection_exercise_id,
             "user_description": "16th June 2019",
@@ -1321,11 +1334,12 @@ class TestCollectionExercise(ViewTestCase):
         )
 
         request_history = mock_request.request_history
-        self.assertEqual(len(request_history), 3)
+        self.assertEqual(len(request_history), 7)
         self.assertEqual(response.status_code, 500)
 
     @requests_mock.mock()
     def test_update_collection_exercise_period_404(self, mock_request):
+        sign_in_with_permission(self, mock_request, user_permission_surveys_edit_json)
         changed_ce_details = {
             "collection_exercise_id": collection_exercise_id,
             "user_description": "16th June 2019",
@@ -1343,12 +1357,13 @@ class TestCollectionExercise(ViewTestCase):
         )
 
         request_history = mock_request.request_history
-        self.assertEqual(len(request_history), 3)
+        self.assertEqual(len(request_history), 7)
         self.assertEqual(response.status_code, 500)
 
     @requests_mock.mock()
     @patch("response_operations_ui.views.collection_exercise.build_collection_exercise_details")
     def test_get_ce_details(self, mock_request, mock_details):
+        sign_in_with_permission(self, mock_request, user_permission_surveys_edit_json)
         mock_details.return_value = formatted_collection_exercise_details
         mock_request.get(url_get_survey_by_short_name, json=updated_survey_info["survey"])
         mock_request.get(url_ces_by_survey, json=updated_survey_info["collection_exercises"])
@@ -1362,6 +1377,7 @@ class TestCollectionExercise(ViewTestCase):
     @requests_mock.mock()
     @patch("response_operations_ui.views.collection_exercise.build_collection_exercise_details")
     def test_unlink_collection_instrument(self, mock_request, mock_details):
+        sign_in_with_permission(self, mock_request, user_permission_surveys_edit_json)
         post_data = {
             "ci_id": collection_instrument_id,
             "ce_id": collection_exercise_id,
@@ -1397,6 +1413,7 @@ class TestCollectionExercise(ViewTestCase):
 
     @requests_mock.mock()
     def test_create_collection_exercise_success(self, mock_request):
+        sign_in_with_permission(self, mock_request, user_permission_surveys_edit_json)
         new_collection_exercise_details = {
             "hidden_survey_name": "BRES",
             "hidden_survey_id": survey_id,
@@ -1420,6 +1437,7 @@ class TestCollectionExercise(ViewTestCase):
 
     @requests_mock.mock()
     def test_create_collection_exercise_failure(self, mock_request):
+        sign_in_with_permission(self, mock_request, user_permission_surveys_edit_json)
         new_collection_exercise_details = {
             "hidden_survey_name": "BRES",
             "hidden_survey_id": survey_id,
@@ -1434,11 +1452,12 @@ class TestCollectionExercise(ViewTestCase):
         )
 
         request_history = mock_request.request_history
-        self.assertEqual(len(request_history), 2)
+        self.assertEqual(len(request_history), 6)
         self.assertEqual(response.status_code, 500)
 
     @requests_mock.mock()
     def test_get_create_ce_form(self, mock_request):
+        sign_in_with_permission(self, mock_request, user_permission_surveys_edit_json)
         mock_request.get(url_ces_by_survey, json=self.collection_exercises)
         mock_request.get(url_get_survey_by_short_name, json=self.survey)
         response = self.client.get(
@@ -1450,6 +1469,7 @@ class TestCollectionExercise(ViewTestCase):
 
     @requests_mock.mock()
     def test_failed_create_ce_validation_period_exists(self, mock_request):
+        sign_in_with_permission(self, mock_request, user_permission_surveys_edit_json)
         taken_period = "12345"
         new_collection_exercise_details = {
             "hidden_survey_name": "BRES",
@@ -1476,6 +1496,7 @@ class TestCollectionExercise(ViewTestCase):
 
     @requests_mock.mock()
     def test_failed_create_ce_letters_fails_in_period_validation(self, mock_request):
+        sign_in_with_permission(self, mock_request, user_permission_surveys_edit_json)
         new_collection_exercise_details = {
             "hidden_survey_name": "BRES",
             "hidden_survey_id": survey_id,
@@ -1497,6 +1518,7 @@ class TestCollectionExercise(ViewTestCase):
     @requests_mock.mock()
     @patch("response_operations_ui.views.collection_exercise.build_collection_exercise_details")
     def test_failed_edit_ce_validation_period_exists(self, mock_request, mock_details):
+        sign_in_with_permission(self, mock_request, user_permission_surveys_edit_json)
         taken_period = "12345"
         changed_ce_details = {
             "collection_exercise_id": collection_exercise_id,
@@ -1535,6 +1557,7 @@ class TestCollectionExercise(ViewTestCase):
     @requests_mock.mock()
     @patch("response_operations_ui.views.collection_exercise.build_collection_exercise_details")
     def test_failed_edit_ce_validation_letters_in_period_fails_validation(self, mock_request, mock_details):
+        sign_in_with_permission(self, mock_request, user_permission_surveys_edit_json)
         changed_ce_details = {
             "collection_exercise_id": collection_exercise_id,
             "user_description": "16th June 2019",
@@ -1564,6 +1587,7 @@ class TestCollectionExercise(ViewTestCase):
     @requests_mock.mock()
     @patch("response_operations_ui.views.collection_exercise.build_collection_exercise_details")
     def test_remove_loaded_sample_success(self, mock_request, mock_details):
+        sign_in_with_permission(self, mock_request, user_permission_surveys_edit_json)
         mock_details.return_value = formatted_collection_exercise_details
         mock_request.delete(url_party_delete_attributes, status_code=204)
         mock_request.delete(url_ce_remove_sample, status_code=200)
@@ -1576,6 +1600,7 @@ class TestCollectionExercise(ViewTestCase):
     @requests_mock.mock()
     @patch("response_operations_ui.views.collection_exercise.build_collection_exercise_details")
     def test_remove_loaded_sample_failed_on_party(self, mock_request, mock_details):
+        sign_in_with_permission(self, mock_request, user_permission_surveys_edit_json)
         mock_details.return_value = formatted_collection_exercise_details
         mock_request.delete(url_party_delete_attributes, status_code=500)
 
@@ -1587,6 +1612,7 @@ class TestCollectionExercise(ViewTestCase):
     @requests_mock.mock()
     @patch("response_operations_ui.views.collection_exercise.build_collection_exercise_details")
     def test_remove_loaded_sample_failed_on_unlink(self, mock_request, mock_details):
+        sign_in_with_permission(self, mock_request, user_permission_surveys_edit_json)
         mock_details.return_value = formatted_collection_exercise_details
         mock_request.delete(url_party_delete_attributes, status_code=204)
         mock_request.delete(url_ce_remove_sample, status_code=500)
@@ -1599,6 +1625,7 @@ class TestCollectionExercise(ViewTestCase):
     @requests_mock.mock()
     @patch("response_operations_ui.views.collection_exercise.build_collection_exercise_details")
     def test_remove_loaded_sample_failed_on_sample(self, mock_request, mock_details):
+        sign_in_with_permission(self, mock_request, user_permission_surveys_edit_json)
         mock_details.return_value = formatted_collection_exercise_details
         mock_request.delete(url_party_delete_attributes, status_code=204)
         mock_request.delete(url_ce_remove_sample, status_code=200)
@@ -1618,6 +1645,7 @@ class TestCollectionExercise(ViewTestCase):
 
     @requests_mock.mock()
     def test_get_create_ce_event_form_success(self, mock_request):
+        sign_in_with_permission(self, mock_request, user_permission_surveys_edit_json)
         mock_request.get(url_survey_shortname, json=survey)
         mock_request.get(url_collection_exercise_survey_id, json=[collection_exercise])
         mock_request.get(url_get_collection_exercise_events, json=events)
@@ -1630,9 +1658,11 @@ class TestCollectionExercise(ViewTestCase):
         self.assertIn("MBS".encode(), response.data)
         self.assertIn("Main print selection".encode(), response.data)
 
+    @requests_mock.mock()
     @mock.patch("response_operations_ui.views.collection_exercise.build_collection_exercise_details")
     @mock.patch("response_operations_ui.controllers.collection_exercise_controllers.create_collection_exercise_event")
-    def test_create_collection_exercise_event_success(self, mock_ce_events, mock_get_ce_details):
+    def test_create_collection_exercise_event_success(self, mock_request, mock_ce_events, mock_get_ce_details):
+        sign_in_with_permission(self, mock_request, user_permission_surveys_edit_json)
         with open(
             f"{project_root}/test_data/collection_exercise/formatted_collection_exercise_details_no_events.json"
         ) as collection_exercise:
@@ -1651,6 +1681,7 @@ class TestCollectionExercise(ViewTestCase):
 
     @requests_mock.mock()
     def test_create_collection_exercise_invalid_form(self, mock_request):
+        sign_in_with_permission(self, mock_request, user_permission_surveys_edit_json)
         mock_request.get(url_survey_shortname, json=survey)
         mock_request.get(url_collection_exercise_survey_id, json=[collection_exercise])
         mock_request.get(url_get_collection_exercise_events, json=events)
@@ -1667,6 +1698,7 @@ class TestCollectionExercise(ViewTestCase):
 
     @requests_mock.mock()
     def test_create_collection_exercise_date_in_past(self, mock_request):
+        sign_in_with_permission(self, mock_request, user_permission_surveys_edit_json)
         mock_request.get(url_survey_shortname, json=survey)
         mock_request.get(url_collection_exercise_survey_id, json=[collection_exercise])
         mock_request.get(url_get_collection_exercise_events, json=events)
@@ -1685,6 +1717,7 @@ class TestCollectionExercise(ViewTestCase):
     @requests_mock.mock()
     @mock.patch("response_operations_ui.controllers.collection_exercise_controllers.create_collection_exercise_event")
     def test_create_collection_events_not_set_sequentially(self, mock_request, mock_ce_event):
+        sign_in_with_permission(self, mock_request, user_permission_surveys_edit_json)
         mock_request.get(url_survey_shortname, json=survey)
         mock_request.get(url_collection_exercise_survey_id, json=[collection_exercise])
         mock_request.get(url_get_collection_exercise_events, json=events_2030)
@@ -1743,9 +1776,7 @@ class TestCollectionExercise(ViewTestCase):
 
     @requests_mock.mock()
     def test_schedule_nudge_email_option_present(self, mock_request):
-        mock_request.post(url_sign_in_data, json={"access_token": self.access_token}, status_code=201)
-        mock_request.get(url_permission_url, json=user_permission_surveys_edit_json, status_code=200)
-        self.client.post("/sign-in", follow_redirects=True, data={"username": "user", "password": "pass"})
+        sign_in_with_permission(self, mock_request, user_permission_surveys_edit_json)
         mock_request.get(url_get_survey_by_short_name, json=self.survey)
         mock_request.get(url_ces_by_survey, json=self.collection_exercises)
         mock_request.get(url_ce_by_id, json=collection_exercise_details["collection_exercise"])
@@ -1790,9 +1821,7 @@ class TestCollectionExercise(ViewTestCase):
 
     @requests_mock.mock()
     def test_can_create_up_to_five_nudge_email(self, mock_request):
-        mock_request.post(url_sign_in_data, json={"access_token": self.access_token}, status_code=201)
-        mock_request.get(url_permission_url, json=user_permission_surveys_edit_json, status_code=200)
-        self.client.post("/sign-in", follow_redirects=True, data={"username": "user", "password": "pass"})
+        sign_in_with_permission(self, mock_request, user_permission_surveys_edit_json)
         mock_request.get(url_get_survey_by_short_name, json=self.survey)
         mock_request.get(url_ces_by_survey, json=self.collection_exercises)
         mock_request.get(url_ce_by_id, json=collection_exercise_details["collection_exercise"])
@@ -1898,9 +1927,7 @@ class TestCollectionExercise(ViewTestCase):
     @requests_mock.mock()
     @patch("response_operations_ui.views.collection_exercise.build_collection_exercise_details")
     def test_replace_sample_is_present(self, mock_request, mock_details):
-        mock_request.post(url_sign_in_data, json={"access_token": self.access_token}, status_code=201)
-        mock_request.get(url_permission_url, json=user_permission_surveys_edit_json, status_code=200)
-        self.client.post("/sign-in", follow_redirects=True, data={"username": "user", "password": "pass"})
+        sign_in_with_permission(self, mock_request, user_permission_surveys_edit_json)
         mock_details.return_value = formatted_new_collection_exercise_details
         mock_request.get(url_get_survey_by_short_name, json=updated_survey_info["survey"])
         mock_request.get(url_ces_by_survey, json=updated_survey_info["collection_exercises"])
@@ -1912,9 +1939,7 @@ class TestCollectionExercise(ViewTestCase):
     @requests_mock.mock()
     @patch("response_operations_ui.views.collection_exercise.build_collection_exercise_details")
     def test_load_collection_instruments_is_not_present(self, mock_request, mock_details):
-        mock_request.post(url_sign_in_data, json={"access_token": self.access_token}, status_code=201)
-        mock_request.get(url_permission_url, json=user_permission_surveys_edit_json, status_code=200)
-        self.client.post("/sign-in", follow_redirects=True, data={"username": "user", "password": "pass"})
+        sign_in_with_permission(self, mock_request, user_permission_surveys_edit_json)
         mock_details.return_value = seft_collection_exercise_details
         mock_request.get(url_get_survey_by_short_name, json=updated_survey_info["survey"])
         mock_request.get(url_ces_by_survey, json=updated_survey_info["collection_exercises"])
@@ -1926,6 +1951,7 @@ class TestCollectionExercise(ViewTestCase):
     @requests_mock.mock()
     @patch("response_operations_ui.views.collection_exercise.build_collection_exercise_details")
     def test_seft_upload_and_view_collection_instrument(self, mock_request, mock_details):
+        sign_in_with_permission(self, mock_request, user_permission_surveys_edit_json)
         post_data = {"ciFile": (BytesIO(b"data"), "064_201803_0001.xlsx"), "load-ci": ""}
         mock_request.post(url_collection_instrument, status_code=201)
         mock_request.get(url_ces_by_survey, json=exercise_data)
@@ -1945,6 +1971,7 @@ class TestCollectionExercise(ViewTestCase):
     @requests_mock.mock()
     @patch("response_operations_ui.views.collection_exercise.build_collection_exercise_details")
     def test_seft_upload_collection_instrument_supports_xls(self, mock_request, mock_details):
+        sign_in_with_permission(self, mock_request, user_permission_surveys_edit_json)
         post_data = {"ciFile": (BytesIO(b"data"), "064_201803_0001.xls"), "load-ci": ""}
         mock_request.post(url_collection_instrument, status_code=201)
         mock_request.get(url_ces_by_survey, json=exercise_data)
@@ -1964,6 +1991,7 @@ class TestCollectionExercise(ViewTestCase):
     @requests_mock.mock()
     @patch("response_operations_ui.views.collection_exercise.build_collection_exercise_details")
     def test_seft_failed_upload_collection_instrument(self, mock_request, mock_details):
+        sign_in_with_permission(self, mock_request, user_permission_surveys_edit_json)
         post_data = {"ciFile": (BytesIO(b"data"), "064_201803_0001.xlsx"), "load-ci": ""}
         mock_request.post(url_collection_instrument, status_code=500)
         mock_request.get(url_get_survey_by_short_name, status_code=200, json=self.survey_data)
@@ -1980,6 +2008,7 @@ class TestCollectionExercise(ViewTestCase):
     @requests_mock.mock()
     @patch("response_operations_ui.views.collection_exercise.build_collection_exercise_details")
     def test_no_upload_seft_collection_instrument_when_bad_extension(self, mock_request, mock_details):
+        sign_in_with_permission(self, mock_request, user_permission_surveys_edit_json)
         post_data = {"ciFile": (BytesIO(b"data"), "064_201803_0001.html"), "load-ci": ""}
         mock_details.return_value = formatted_collection_exercise_details
 
@@ -1994,6 +2023,7 @@ class TestCollectionExercise(ViewTestCase):
     @requests_mock.mock()
     @patch("response_operations_ui.views.collection_exercise.build_collection_exercise_details")
     def test_no_upload_seft_collection_instrument_when_bad_form_type_format(self, mock_request, mock_details):
+        sign_in_with_permission(self, mock_request, user_permission_surveys_edit_json)
         post_data = {"ciFile": (BytesIO(b"data"), "064_201803_xxxxx.xlsx"), "load-ci": ""}
         mock_details.return_value = formatted_collection_exercise_details
 
@@ -2008,6 +2038,7 @@ class TestCollectionExercise(ViewTestCase):
     @requests_mock.mock()
     @patch("response_operations_ui.views.collection_exercise.build_collection_exercise_details")
     def test_no_upload_seft_collection_instrument_bad_file_name_format(self, mock_request, mock_details):
+        sign_in_with_permission(self, mock_request, user_permission_surveys_edit_json)
         post_data = {"ciFile": (BytesIO(b"data"), "064201803_xxxxx.xlsx"), "load-ci": ""}
         mock_details.return_value = formatted_collection_exercise_details
 
@@ -2022,6 +2053,7 @@ class TestCollectionExercise(ViewTestCase):
     @requests_mock.mock()
     @patch("response_operations_ui.views.collection_exercise.build_collection_exercise_details")
     def test_no_upload_seft_collection_instrument_form_type_not_integer(self, mock_request, mock_details):
+        sign_in_with_permission(self, mock_request, user_permission_surveys_edit_json)
         post_data = {"ciFile": (BytesIO(b"data"), "064_201803_123E.xlsx"), "load-ci": ""}
         mock_details.return_value = formatted_collection_exercise_details
 
@@ -2036,6 +2068,7 @@ class TestCollectionExercise(ViewTestCase):
     @requests_mock.mock()
     @patch("response_operations_ui.views.collection_exercise.build_collection_exercise_details")
     def test_no_upload_seft_collection_instrument_when_no_file(self, mock_request, mock_details):
+        sign_in_with_permission(self, mock_request, user_permission_surveys_edit_json)
         post_data = {"load-ci": ""}
         mock_details.return_value = formatted_collection_exercise_details
 
@@ -2049,9 +2082,7 @@ class TestCollectionExercise(ViewTestCase):
 
     @requests_mock.mock()
     def test_survey_edit_permission_collection_exercise(self, mock_request):
-        mock_request.post(url_sign_in_data, json={"access_token": self.access_token}, status_code=201)
-        mock_request.get(url_permission_url, json=user_permission_surveys_edit_json, status_code=200)
-        self.client.post("/sign-in", follow_redirects=True, data={"username": "user", "password": "pass"})
+        sign_in_with_permission(self, mock_request, user_permission_surveys_edit_json)
         mock_request.get(url_get_survey_by_short_name, json=self.eq_survey_dates)
         mock_request.get(url_ces_by_survey, json=self.collection_exercises)
         mock_request.get(url_ce_by_id, json=collection_exercise_details["collection_exercise"])

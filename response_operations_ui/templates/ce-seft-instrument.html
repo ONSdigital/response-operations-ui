@@ -6,6 +6,8 @@
 {% from "components/upload/_macro.njk" import onsUpload %}
 {% from "components/checkboxes/_macro.njk" import onsCheckboxes %}
 
+{% set surveyEditPermission = hasPermission('surveys.edit') %}
+
 {% block main %}
     <h1 name="page-survey-title" class="ons-u-mb-l">Load Collection instruments for {{survey.shortName}} {{period}}</h1>
     <div class="ons-u-mb-l ons-col-6@l">
@@ -13,139 +15,141 @@
         {% include 'collection_exercise/ce-handle-errors.html' %}
         {% include 'collection_exercise/ce-info-panel.html' %}
         {% include 'partials/error-box.html' %}
-        <form id="seft-form-load-ci" action="" class="ons-form" method="post" enctype="multipart/form-data">
-            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}" />
-            <div id="ciFileErrorPanel" class="{{'ons-panel ons-panel--simple ons-panel--error' if error.section == 'ciFile' else ''}}">
-                <label class="ons-label ons-u-fs-m">Upload SEFT files</label>
-                <span class="ons-label__description">File types accepted are .xls and .xlsx</span>
-                <div id="ciFileErrorPanelBody" class="{{'ons-panel__body' if error.section == 'ciFile' else ''}}">
-                    <p id="ciFileErrorText" class="hidden">Incorrect file type. Please choose a file type XLSX or XLS</p>
-                    {{-
-                        onsUpload({
-                            "id": "ciFile",
-                            "name": "ciFile",
-                            "listeners": {
-                                "change": "validateCI.checkSelectedCI(this.files)"
-                            },
-                            "accept": ".xlsx, .xls",
-                            "label": {
-                                "classes": "ons-u-vh",
-                                "text": "Choose file"
-                            }
-                        })
-                    -}}
+        {% if surveyEditPermission %}
+            <form id="seft-form-load-ci" action="" class="ons-form" method="post" enctype="multipart/form-data">
+                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}" />
+                <div id="ciFileErrorPanel" class="{{'ons-panel ons-panel--simple ons-panel--error' if error.section == 'ciFile' else ''}}">
+                    <label class="ons-label ons-u-fs-m">Upload SEFT files</label>
+                    <span class="ons-label__description">File types accepted are .xls and .xlsx</span>
+                    <div id="ciFileErrorPanelBody" class="{{'ons-panel__body' if error.section == 'ciFile' else ''}}">
+                        <p id="ciFileErrorText" class="hidden">Incorrect file type. Please choose a file type XLSX or XLS</p>
+                        {{-
+                            onsUpload({
+                                "id": "ciFile",
+                                "name": "ciFile",
+                                "listeners": {
+                                    "change": "validateCI.checkSelectedCI(this.files)"
+                                },
+                                "accept": ".xlsx, .xls",
+                                "label": {
+                                    "classes": "ons-u-vh",
+                                    "text": "Choose file"
+                                }
+                            })
+                        -}}
+                    </div>
                 </div>
-            </div>
-            <div class="ons-u-mb-l">
-                {% if collection_instrument %}
-                    {{
-                        onsButton({
-                            "text": "Upload",
-                            "id": "btn-load-ci",
-                            "variants": ['primary', 'small'],
-                            "name": "load-ci",
-                            "submitType": "timer"
-                        })
-                    }}
-                {% elif not collection_instrument %} 
-                    {{
-                        onsButton({
-                            "text": "Upload",
-                            "id": "btn-load-ci",
-                            "variants": ['primary', 'small'],
-                            "name": "load-ci",
-                            "submitType": "timer"
-                        })
-                    }}
-                    {{
-                        onsButton({
-                            "text": "Cancel",
-                            "id": "btn-load-ci",
-                            "variants": ['secondary', 'small'],
-                            "name": "load-ci-cancel",
-                            "url": url_for('collection_exercise_bp.get_view_sample_ci', short_name=survey.shortName, period=ce.exerciseRef),
-                            "submitType": "timer",
-                            "noIcon": "true"
-                        })
-                    }}
-                {% endif %}
-            </div>
-        </form>
+                <div class="ons-u-mb-l">
+                    {% if collection_instrument %}
+                        {{
+                            onsButton({
+                                "text": "Upload",
+                                "id": "btn-load-ci",
+                                "variants": ['primary', 'small'],
+                                "name": "load-ci",
+                                "submitType": "timer"
+                            })
+                        }}
+                    {% elif not collection_instrument %} 
+                        {{
+                            onsButton({
+                                "text": "Upload",
+                                "id": "btn-load-ci",
+                                "variants": ['primary', 'small'],
+                                "name": "load-ci",
+                                "submitType": "timer"
+                            })
+                        }}
+                        {{
+                            onsButton({
+                                "text": "Cancel",
+                                "id": "btn-load-ci",
+                                "variants": ['secondary', 'small'],
+                                "name": "load-ci-cancel",
+                                "url": url_for('collection_exercise_bp.get_view_sample_ci', short_name=survey.shortName, period=ce.exerciseRef),
+                                "submitType": "timer",
+                                "noIcon": "true"
+                            })
+                        }}
+                    {% endif %}
+                </div>
+            </form>
+        {% endif %}
     </div>
     <div class="ons-u-mb-l ons-col-6@m">
-        {% if collection_instruments %}
-            <label class="ons-label ons-u-fs-m">{{ collection_instruments | length }} SEFT collection instruments uploaded</label>
-            <section class="ce-section">
-                {% set surveyTableData = {
-                    "variants": 'responsive',
-                    "id": "collection-instruments-table",
-                    "caption": 'Sample details for this collection exercise',
-                    "hideCaption": true,
-                    "ths": [
+        <label class="ons-label ons-u-fs-m">{{ collection_instruments | length }} SEFT collection instruments uploaded</label>
+        <section class="ce-section">
+            {% set surveyTableData = {
+                "variants": 'responsive',
+                "id": "collection-instruments-table",
+                "caption": 'Sample details for this collection exercise',
+                "hideCaption": true,
+                "ths": [
+                    {
+                        "value": "",
+                    },
+                    {
+                        "value": ""
+                    }
+                ]
+            } %}
+            {% include 'partials/error-box.html' %}
+            {% set surveyTableDataRows = [] %}
+            {% for collection_instrument in collection_instruments %}
+                {% if not locked and surveyEditPermission %}
+                    {% set formData = 
+                        '<form id="form-unselect-ci-' + loop.index|string + '" action="" method="post">' +
+                        '<a href=# id="unlink-ci-' + loop.index|string + '">Remove SEFT file</a>' +
+                        '<input type="hidden" name="ce_id" value="' + ce.id + '">' +
+                        '<input type="hidden" name="ci_id" value="' + collection_instrument.id + '">' +
+                        '<input type="hidden" name="unselect-ci">' +
+                        '<input type="hidden" name="csrf_token" value="' + csrf_token() + '" />' +
+                        '</form>'
+                    %}
+                {% endif %}
+                {% do surveyTableDataRows.append(
+                {
+                    "tds": [
                         {
-                            "value": "",
+                            "value": collection_instrument.file_name
                         },
                         {
-                            "value": ""
-                        }
+                            "value": formData,
+                            "tdClasses": "ons-u-ta-right"
+                        } if surveyEditPermission else
+                            [
+                                {
+                                    "value": collection_instrument.file_name
+                                }
+                            ]
                     ]
-                } %}
-                {% include 'partials/error-box.html' %}
-                {% set surveyTableDataRows = [] %}
-                {% for collection_instrument in collection_instruments %}
-                    {% if not locked %}
-                        {% set formData = 
-                            '<form id="form-unselect-ci-' + loop.index|string + '" action="" method="post">' +
-                            '<a href=# id="unlink-ci-' + loop.index|string + '">Remove SEFT file</a>' +
-                            '<input type="hidden" name="ce_id" value="' + ce.id + '">' +
-                            '<input type="hidden" name="ci_id" value="' + collection_instrument.id + '">' +
-                            '<input type="hidden" name="unselect-ci">' +
-                            '<input type="hidden" name="csrf_token" value="' + csrf_token() + '" />' +
-                            '</form>'
-                        %}
-                    {% endif %}
-                    {% do surveyTableDataRows.append(
-                    {
-                        "tds": [
-                            {
-                                "value": collection_instrument.file_name
-                            },
-                            {
-                                "value": formData,
-                                "tdClasses": "ons-u-ta-right"
-                            }
-                        ]
-                    }
-                    ) %}
-                {% endfor %}
-                {% do surveyTableData | setAttribute("trs", surveyTableDataRows) %}
-                {{
-                    onsTable(surveyTableData)
-                }}
-                {% for i in range(surveyTableDataRows | length) %}
-                    {% set j = i + 1 %}
-                    <script{% if csp_nonce %} nonce="{{ csp_nonce() }}" {% endif %}>
-                    document.getElementById("unlink-ci-{{ j }}").addEventListener('click', function () {
-                        this.parentNode.submit()
-                    });</script>
-                {% endfor %}
-            </section>
-
-        {% endif %}
+                }
+                ) %}
+            {% endfor %}
+            {% do surveyTableData | setAttribute("trs", surveyTableDataRows) %}
+            {{
+                onsTable(surveyTableData)
+            }}
+            {% for i in range(surveyTableDataRows | length) %}
+                {% set j = i + 1 %}
+                <script{% if csp_nonce %} nonce="{{ csp_nonce() }}" {% endif %}>
+                document.getElementById("unlink-ci-{{ j }}").addEventListener('click', function () {
+                    this.parentNode.submit()
+                });</script>
+            {% endfor %}
+        </section>
     </div>
     <div class="ons-u-mb-l">
-        {% if collection_instruments %}
-            {{
-                onsButton({
-                    "text": "Done",
-                    "id": "btn-upload-ci-done",
-                    "variants": primary,
-                    "name": "load-ci-done",
-                    "url": url_for('collection_exercise_bp.get_view_sample_ci', short_name=survey.shortName, period=ce.exerciseRef),
-                    "submitType": "timer",
-                    "noIcon": "true"
-                })
-            }}
-        {% endif %}
+        {{
+            onsButton({
+                "text": "Done",
+                "id": "btn-upload-ci-done",
+                "variants": primary,
+                "name": "load-ci-done",
+                "url": url_for('collection_exercise_bp.get_view_sample_ci', short_name=survey.shortName, period=ce.exerciseRef),
+                "submitType": "timer",
+                "noIcon": "true"
+            })
+        }}
     </div>
 {% endblock %}
