@@ -8,6 +8,9 @@
 
 {% set page_title = survey.surveyRef + " " + survey.shortName + " " + ce.exerciseRef + " | Surveys" %}
 {% block main %}
+    {% include 'collection_exercise/ce-success-panel.html' %}
+    {% include 'collection_exercise/ce-handle-errors.html' %}
+    {% include 'collection_exercise/ce-info-panel.html' %}
     <h1 name="page-ce-title">Upload sample file</h1>
     {% set surveyEditPermission = hasPermission('surveys.edit') %}
     {% if sample %}
@@ -56,11 +59,6 @@
             }}
 
             <p>Sample loaded: {{ sample.ingestDateTime }}
-                {% if not locked and surveyEditPermission %}
-                    {{locked}}
-                    {{surveyEditPermission}}
-                    <a class="ons-u-ml-xs" id="remove_sample_btn_1" href="{{ url_for('collection_exercise_bp.get_confirm_remove_sample', short_name=survey.shortName, period=ce.exerciseRef) }}">Remove</a>
-                {% endif %}
             </p>
         {% elif 'INIT' == sample.state %}
             <div class="ons-u-mb-xl">
@@ -78,9 +76,6 @@
                 %}
                     {{ sample.notes }}
                 {% endcall %}
-                {% if not locked and surveyEditPermission %}
-                    <a class="ons-u-ml-xs" id="remove_sample_btn_2" href="{{ url_for('collection_exercise_bp.get_confirm_remove_sample', short_name=survey.shortName, period=ce.exerciseRef) }}">Remove</a>
-                {% endif %}
             </div>
         {% endif %}
         {{

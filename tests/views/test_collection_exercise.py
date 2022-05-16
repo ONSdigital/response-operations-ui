@@ -2289,7 +2289,6 @@ class TestCollectionExercise(ViewTestCase):
         self.assertIn("Collection instruments".encode(), response.data)
         self.assertIn("8\n".encode(), response.data)
         self.assertIn("1\n".encode(), response.data)
-        self.assertIn("Remove".encode(), response.data)
         self.assertIn("Done".encode(), response.data)
 
     @requests_mock.mock()

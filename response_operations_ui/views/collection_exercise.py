@@ -864,6 +864,7 @@ def get_upload_sample_file(short_name, period):
     ce_state = ce_details["collection_exercise"]["state"]
     ce_details["collection_exercise"]["state"] = map_collection_exercise_state(ce_state)  # NOQA
     locked = ce_state in ("LIVE", "READY_FOR_LIVE", "EXECUTION_STARTED", "VALIDATED", "EXECUTED", "ENDED")
+    success_panel = request.args.get("success_panel")
     error_json = _get_error_from_session()
     return render_template(
         "collection_exercise/ce-upload-sample-file.html",
@@ -873,6 +874,7 @@ def get_upload_sample_file(short_name, period):
         eq_ci_selectors=ce_details["eq_ci_selectors"],
         error=error_json,
         locked=locked,
+        success_panel=success_panel,
     )
 
 
@@ -942,7 +944,7 @@ def remove_loaded_sample(short_name, period):
 
     return redirect(
         url_for(
-            "collection_exercise_bp.get_view_sample_ci",
+            "collection_exercise_bp.get_upload_sample_file",
             short_name=short_name,
             period=period,
             success_panel="Sample removed",
