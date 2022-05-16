@@ -1,7 +1,6 @@
 {% extends "layouts/base.html" %}
-{% from "components/search/_macro.njk" import onsSearch %}
 {% from "components/table/_macro.njk" import onsTable %}
-{% from "components/checkboxes/_macro.njk" import onsCheckboxes %}
+{% from "components/checkboxes/_checkbox-macro.njk" import onsCheckbox %}
 
 {% block main %}
     <div class="ons-grid ons-grid--flex ons-grid--between">
@@ -9,67 +8,118 @@
             <h1 class="ons-u-fs-l u-mb-xs" name="page-manage-account-title">{{ name }}</h1>
         </div>
     </div>
-    {{ form.csrf_token }}
-    {{ 
-        onsCheckboxes({
-            "dontWrap": false,
-            "legend": "Select user permissions",
-            "checkboxes": [
-                {
-                    "id": "surveys-edit",
-                    "name": "surveys-edit",
-                    "label": {
-                        "text": "Surveys: Edit"
-                    },
-                    "value": "y",
-                    "checked": permissions["surveys.edit"]
-                },
-                {
-                    "id": "reporting-units-edit",
-                    "name": "reporting-units-edit",
-                    "label": {
-                        "text": "Reporting Units: Edit"
-                    },
-                    "value": "y",
-                    "checked": permissions["reportingunits.edit"]
-                },
-                {
-                    "id": "respondents-edit",
-                    "name": "respondents-edit",
-                    "label": {
-                        "text": "Respondents: Edit"
-                    },
-                    "value": "y",
-                    "checked": permissions["respondents.edit"]
-                },
-                {
-                    "id": "respondents-delete",
-                    "name": "respondents-delete",
-                    "label": {
-                        "text": "Respondents: Delete"
-                    },
-                    "value": "y",
-                    "checked": permissions["respondents.delete"]
-                },
-                {
-                    "id": "messages-edit",
-                    "name": "messages-edit",
-                    "label": {
-                        "text": "Messages: Edit"
-                    },
-                    "value": "y",
-                    "checked": permissions["messages.edit"]
-                },
-                {
-                    "id": "users-admin",
-                    "name": "users-admin",
-                    "label": {
-                        "text": "Manage User Accounts"
-                    },
-                    "value": "y",
-                    "checked": permissions["users.admin"]
-                },
-            ]
-        })
-    }}
+
+    <div class="ons-grid ons-grid--flex ons-grid--between">
+        <div class="ons-grid__col">
+            <h2 class="ons-u-fs-m u-mb-xs" name="page-manage-account-subtitle">Select user permissions</h2>
+        </div>
+    </div>
+    
+    <form id="user-permissions" action="" method="post">
+        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}" />
+        <section class="ons-u-mt-s">
+            <table id="tbl-users" class="ons-table" >
+                <thead class="ons-table__head">
+                    <tr class="ons-table__row">
+                        <th scope="col" class="ons-table__header">
+                            <span>Survey Data Collection area</span>
+                        </th>
+                        <th scope="col" class="ons-table__header">
+                            <span>Edit</span>
+                        </th>
+                        <th scope="col" class="ons-table__header">
+                            <span>Delete</span>
+                        </th>
+                    </tr>
+                </thead>
+                <tbody class="ons-table__body">
+                    <tr class="ons-table__row">
+                        <td class="ons-table__cell">
+                            Surveys
+                        </td>
+                        <td class="ons-table__cell">
+                            {{
+                                onsCheckbox({
+                                    "id": "surveys-edit",
+                                    "label": {
+                                        "text": "Edit surveys",
+                                        "classes": "ons-u-vh"
+                                    },
+                                    "value": "y",
+                                    "checked": permissions["surveys.edit"]
+                                })
+                            }}
+                        </td>
+                    </tr>
+                    <tr class="ons-table__row">
+                        <td class="ons-table__cell">
+                            Reporting units
+                        </td>
+                        <td class="ons-table__cell">
+                            {{
+                                onsCheckbox({
+                                    "id": "reporting-units-edit",
+                                    "label": {
+                                        "text": "Edit reporting units",
+                                        "classes": "ons-u-vh"
+                                    },
+                                    "value": "y",
+                                    "checked": permissions["reportingunits.edit"]
+                                })
+                            }}
+                        </td>
+                    </tr>
+                    <tr class="ons-table__row">
+                        <td class="ons-table__cell">
+                            Respondents
+                        </td>
+                        <td class="ons-table__cell">
+                            {{
+                                onsCheckbox({
+                                    "id": "respondents-edit",
+                                    "label": {
+                                        "text": "Edit respondents",
+                                        "classes": "ons-u-vh"
+                                    },
+                                    "value": "y",
+                                    "checked": permissions["respondents.edit"]
+                                })
+                            }}
+                        </td>
+                        <td class="ons-table__cell">
+                            {{
+                                onsCheckbox({
+                                    "id": "respondents-delete",
+                                    "label": {
+                                        "text": "Delete respondents",
+                                        "classes": "ons-u-vh"
+                                    },
+                                    "value": "y",
+                                    "checked": permissions["respondents.delete"]
+                                })
+                            }}
+                        </td>
+                    </tr>
+                    <tr class="ons-table__row">
+                        <td class="ons-table__cell">
+                            Messages
+                        </td>
+                        <td class="ons-table__cell">
+                            {{
+                                onsCheckbox({
+                                    "id": "messages-edit",
+                                    "label": {
+                                        "text": "Edit messages",
+                                        "classes": "ons-u-vh"
+                                    },
+                                    "value": "y",
+                                    "checked": permissions["messages.edit"]
+                                })
+                            }}
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </section>
+    </form>
 {% endblock %}
