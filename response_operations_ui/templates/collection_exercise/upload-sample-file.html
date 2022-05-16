@@ -57,6 +57,8 @@
 
             <p>Sample loaded: {{ sample.ingestDateTime }}
                 {% if not locked and surveyEditPermission %}
+                    {{locked}}
+                    {{surveyEditPermission}}
                     <a class="ons-u-ml-xs" id="remove_sample_btn_1" href="{{ url_for('collection_exercise_bp.get_confirm_remove_sample', short_name=survey.shortName, period=ce.exerciseRef) }}">Remove</a>
                 {% endif %}
             </p>

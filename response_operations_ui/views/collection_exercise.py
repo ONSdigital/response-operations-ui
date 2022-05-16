@@ -838,6 +838,7 @@ def get_view_sample_ci(short_name, period):
     ce_details["eq_ci_selectors"] = filter_eq_ci_selectors(
         ce_details["eq_ci_selectors"], ce_details["collection_instruments"]
     )
+    locked = ce_state in ("LIVE", "READY_FOR_LIVE", "EXECUTION_STARTED", "VALIDATED", "EXECUTED", "ENDED")
     _format_ci_file_name(ce_details["collection_instruments"], ce_details["survey"])
 
     error_json = _get_error_from_session()
@@ -858,6 +859,7 @@ def get_view_sample_ci(short_name, period):
         success_panel=success_panel,
         info_panel=info_panel,
         show_msg=show_msg,
+        locked=locked,
     )
 
 
@@ -871,6 +873,7 @@ def get_upload_sample_file(short_name, period):
     ce_details = build_collection_exercise_details(short_name, period)
     ce_state = ce_details["collection_exercise"]["state"]
     ce_details["collection_exercise"]["state"] = map_collection_exercise_state(ce_state)  # NOQA
+    locked = ce_state in ("LIVE", "READY_FOR_LIVE", "EXECUTION_STARTED", "VALIDATED", "EXECUTED", "ENDED")
     error_json = _get_error_from_session()
     return render_template(
         "collection_exercise/upload-sample-file.html",
@@ -879,6 +882,7 @@ def get_upload_sample_file(short_name, period):
         sample=ce_details["sample_summary"],
         eq_ci_selectors=ce_details["eq_ci_selectors"],
         error=error_json,
+        locked=locked,
     )
 
 
