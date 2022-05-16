@@ -14,10 +14,10 @@
     {% include 'collection_exercise/ce-handle-errors.html' %}
     {% include 'collection_exercise/ce-info-panel.html' %}
     <div class="ons-grid ons-grid--gutterless">
+        {% include 'partials/error-box.html' %}
         <div class="ons-grid__col ons-col-7@l">
             {% include 'collection_exercise/ce-sample-section.html' %}
-            {% include 'collection_exercise/collection-instrument-section.html' %}
+            {% include 'collection_exercise/ce-collection-instrument-section.html' %}
         </div>
-        {% include 'partials/error-box.html' %}
     </div>
 {% endblock %}

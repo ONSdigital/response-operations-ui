@@ -100,7 +100,6 @@ def build_collection_exercise_details(short_name, period):
     }
 
 
-# TODO: Remove unnecessary code
 @collection_exercise_bp.route("/<short_name>/<period>", methods=["GET"])
 @login_required
 def view_collection_exercise(short_name, period):
@@ -209,22 +208,11 @@ def get_existing_sorted_nudge_events(events):
     return sorted_nudge_list
 
 
-# TODO: cleanup
 @collection_exercise_bp.route("/<short_name>/<period>", methods=["POST"])
 @login_required
 def post_collection_exercise(short_name, period):
-    if "load-sample" in request.form:
-        return _upload_sample(short_name, period)
-    elif "load-ci" in request.form:
-        return _upload_collection_instrument(short_name, period)
-    elif "ready-for-live" in request.form:
+    if "ready-for-live" in request.form:
         return _set_ready_for_live(short_name, period)
-    elif "select-ci" in request.form:
-        return _select_collection_instrument(short_name, period)
-    elif "unselect-ci" in request.form:
-        return _unselect_collection_instrument(short_name, period)
-    if "eq-version" in request.form:
-        return _update_eq_version(short_name, period)
     return view_collection_exercise(short_name, period)
 
 
@@ -233,6 +221,8 @@ def post_collection_exercise(short_name, period):
 def post_sample_ci(short_name, period):
     if "load-sample" in request.form:
         return _upload_sample(short_name, period)
+    elif "load-ci" in request.form:
+        return _upload_collection_instrument(short_name, period)
     elif "select-ci" in request.form:
         return _select_collection_instrument(short_name, period)
     elif "unselect-ci" in request.form:
@@ -849,7 +839,7 @@ def get_view_sample_ci(short_name, period):
     info_panel = request.args.get("info_panel")
 
     return render_template(
-        "collection_exercise/view-sample-ci.html",
+        "collection_exercise/ce-view-sample-ci.html",
         ce=ce_details["collection_exercise"],
         collection_instruments=ce_details["collection_instruments"],
         sample=ce_details["sample_summary"],
@@ -876,7 +866,7 @@ def get_upload_sample_file(short_name, period):
     locked = ce_state in ("LIVE", "READY_FOR_LIVE", "EXECUTION_STARTED", "VALIDATED", "EXECUTED", "ENDED")
     error_json = _get_error_from_session()
     return render_template(
-        "collection_exercise/upload-sample-file.html",
+        "collection_exercise/ce-upload-sample-file.html",
         ce=ce_details["collection_exercise"],
         survey=ce_details["survey"],
         sample=ce_details["sample_summary"],
