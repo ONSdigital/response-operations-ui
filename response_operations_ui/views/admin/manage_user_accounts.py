@@ -89,7 +89,7 @@ def manage_account():
     name = uaa_user["resources"][0]["name"]["givenName"] + " " + uaa_user["resources"][0]["name"]["familyName"]
     permissions = (g["display"] for g in uaa_user["resources"][0]["groups"])
 
-    return render_template("admin/manage_account.html", name=name, permissions=permissions)
+    return render_template("admin/manage-account.html", name=name, permissions=permissions)
 
 
 def _get_refine_user_list(users: list):
