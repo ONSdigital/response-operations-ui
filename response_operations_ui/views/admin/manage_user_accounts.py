@@ -81,7 +81,7 @@ def manage_account():
 
     logger.info("Attempting to get user " + user_requested)
     uaa_user = get_user_by_email(user_requested)
-    if uaa_user is None or len(uaa_user["resources"] == 0):
+    if uaa_user is None or len(uaa_user["resources"]) == 0:
         # Something went wrong when trying to retrieve them from UAA
         flash("Selected user could not be found", "error")
         manage_user_accounts()
