@@ -232,9 +232,9 @@
         {% if ((not value == 'nudge email') or (value == 'nudge email' and events.go_live and events.return_by)) %}
             {% if not(value == 'reminder' and not event) or surveyEditPermission %}
                 {% if not event %}
-                    {% set hyperlink = '<a href="' + url_for("collection_exercise_bp.get_create_collection_event_form",  short_name=survey.shortName, period=ce.exerciseRef, ce_id=ce.id, tag=dateGroup) + '">Add ' + value + '</a>' %}
+                    {% set hyperlink = '<a href="' + url_for("collection_exercise_bp.get_create_collection_event_form",  short_name=survey.shortName, period=ce.exerciseRef, ce_id=ce.id, tag=dateGroup) + '" id="' + 'create-event-date-' + dateGroup + '">' + 'Add ' + value + '</a>' %}
                 {% elif not locked or eventIsInFuture %}
-                    {% set hyperlink = '<a href="' + url_for("collection_exercise_bp.update_event_date",  short_name=survey.shortName, period=ce.exerciseRef, tag=dateGroup, errors=None if event == events.reminder) + '">Edit ' + value + '</a>' %}
+                    {% set hyperlink = '<a href="' + url_for("collection_exercise_bp.update_event_date",  short_name=survey.shortName, period=ce.exerciseRef, tag=dateGroup, errors=None if event == events.reminder) + '" id="' + 'edit-event-date-' + dateGroup + '">' + 'Edit ' + value + '</a>' %}
                 {% endif %}
                 {% if label %}
                     {% do surveyTableDataRows.append(
