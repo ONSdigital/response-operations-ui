@@ -71,7 +71,7 @@
                 {{
                     onsButton({
                         "text": 'Replace sample file',
-                        "id": 'btn-replace-sample',
+                        "id": 'btn-replace-sample-file',
                         "submitType": 'timer',
                         "variants": ['secondary', 'small'],
                         "url": url_for('collection_exercise_bp.get_confirm_remove_sample', short_name=survey.shortName, period=ce.exerciseRef),
@@ -107,7 +107,7 @@
                 {{
                     onsButton({
                         "text": 'Upload sample file',
-                        "id": 'btn-upload-sample',
+                        "id": 'btn-upload-sample-file',
                         "submitType": 'timer',
                         "variants": ['secondary', 'small'],
                         "url": url_for('collection_exercise_bp.get_upload_sample_file', short_name=survey.shortName, period=ce.exerciseRef),
