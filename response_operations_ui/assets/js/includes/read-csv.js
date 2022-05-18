@@ -82,6 +82,7 @@ window.readCSV.handleFiles = function(files, classifiers) {
 window.readCSV.cancelLoadSample = function() {
     document.getElementById('sample-preview').innerHTML = '';
     document.getElementById('form-load-sample').reset();
+    document.getElementById('btn-upload-sample').disabled = true;
     document.getElementById('sampleFile').focus();
 };
 
