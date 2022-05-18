@@ -1,5 +1,5 @@
 <section class="ce-section ce-details">
-    <h2 class="ons-u-fs-r--b ons-u-pt-m">Reference information for this collection exercise</h2>
+    <h2 class="ons-u-fs-r--b ons-u-pt-m">Collection exercise information</h2>
 
     {% set surveyEditPermission = hasPermission('surveys.edit') %}
     {% if surveyEditPermission %}
@@ -34,7 +34,7 @@
         %}
     {% endif %}
     {% set surveyTableData = {
-        "variants": ['compact', 'responsive'],
+        "variants": ['compact'],
         "id": 'tbl-ce-details',
         "caption": 'Dates for this collection exercise',
         "hideCaption": true,
@@ -81,7 +81,7 @@
                 {% set event = events.employment.day + ' ' + events.employment.date %}
             {% endif %}
             {% set editable = true %}
-            {% set value = 'employment date' %}
+            {% set value = ' date' %}
         {% endif %}
 
         {% if surveyEditPermission %}
@@ -103,11 +103,11 @@
             {
                 "tds": [
                     {
-                        "value": label
+                        "value": label,
                     },
                     {
                         "value": event if event,
-                        "name": id
+                        "name": id,
                     },
                     {
                         "value": hyperlink,
@@ -115,11 +115,11 @@
                     } if surveyEditPermission else
                         [ 
                             {
-                                "value": label
+                                "value": label,
                             },
                             {
                                 "value": event if event,
-                                "name": id
+                                "name": id,
                             }
                         ]
                 ]

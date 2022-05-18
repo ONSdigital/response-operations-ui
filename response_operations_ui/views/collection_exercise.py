@@ -509,7 +509,7 @@ def _validate_sample():
 def _format_sample_summary(sample):
     if sample and sample.get("ingestDateTime"):
         submission_datetime = localise_datetime(iso8601.parse_date(sample["ingestDateTime"]))
-        submission_time = submission_datetime.strftime("%I:%M%p on %B %d, %Y")
+        submission_time = submission_datetime.strftime("%d %B %Y %I:%M%p")
         sample["ingestDateTime"] = submission_time
 
     return sample
@@ -959,6 +959,14 @@ def get_seft_collection_instrument(short_name, period):
     show_msg = request.args.get("show_msg")
     success_panel = request.args.get("success_panel")
     info_panel = request.args.get("info_panel")
+    locked = ce_details["collection_exercise"]["state"] in (
+        "LIVE",
+        "READY_FOR_LIVE",
+        "EXECUTION_STARTED",
+        "VALIDATED",
+        "EXECUTED",
+        "ENDED",
+    )
     error_json = _get_error_from_session()
     return render_template(
         "ce-seft-instrument.html",
@@ -970,6 +978,7 @@ def get_seft_collection_instrument(short_name, period):
         info_panel=info_panel,
         show_msg=show_msg,
         period=period,
+        locked=locked,
     )
 
 

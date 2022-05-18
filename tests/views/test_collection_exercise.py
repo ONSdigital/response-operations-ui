@@ -337,7 +337,7 @@ class TestCollectionExercise(ViewTestCase):
             "surveyRef": "",
             "ingestDateTime": "2018-03-14T14:29:51.325Z",
             "state": "ACTIVE",
-            "totalSampleUnits": 5,
+            "totalSampleUnits": 8,
             "expectedCollectionInstruments": 1,
         }
 

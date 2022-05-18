@@ -8,18 +8,20 @@
                 "hideCaption": true,
                 "ths": [
                     { 
-                        "value": "Sample & Collection instruments (CI)",
+                        "value": "Sample",
+                        "thClasses": "ons-u-fs-r--b"
+                    },
+                    {
+                        "value": "",
                         "thClasses": "ons-u-ta"
                     },
                     {
-                        "value": " ",
-                        "thClasses": "ons-u-ta"
+                        "value": "Uploaded " + '<em>' + sample.ingestDateTime[:-8] + '</em>' + sample.ingestDateTime[-8:],
+                        "thClasses": "ons-u-fs-r",
+                        "numeric": "true"
                     },
-                    {
-                        "value": "Uploaded " + sample.ingestDateTime,
-                        "thClasses": "ons-u-ta-right"
-                    }
                 ],
+                
                 "trs": [
                     {
                         "tds": [
@@ -70,7 +72,7 @@
                 "ths": [
                     { 
                         "value": "Sample & Collection instruments (CI)",
-                        "thClasses": "ons-u-ta"
+                        "thClasses": "ons-u-fs-r--b"
                     }
                 ],
             })

@@ -9,13 +9,13 @@
 {% set surveyEditPermission = hasPermission('surveys.edit') %}
 
 {% block main %}
+    {% include 'collection_exercise/ce-success-panel.html' %}
+    {% include 'collection_exercise/ce-handle-errors.html' %}
+    {% include 'collection_exercise/ce-info-panel.html' %}
+    {% include 'partials/error-box.html' %}
     <h1 name="page-survey-title" class="ons-u-mb-l">Load Collection instruments for {{survey.shortName}} {{period}}</h1>
-    <div class="ons-u-mb-l ons-col-6@l">
-        {% include 'collection_exercise/ce-success-panel.html' %}
-        {% include 'collection_exercise/ce-handle-errors.html' %}
-        {% include 'collection_exercise/ce-info-panel.html' %}
-        {% include 'partials/error-box.html' %}
-        {% if surveyEditPermission %}
+    <div class="ons-u-mb-l ons-col-7@l">
+        {% if surveyEditPermission and not locked%}
             <form id="seft-form-load-ci" action="" class="ons-form" method="post" enctype="multipart/form-data">
                 <input type="hidden" name="csrf_token" value="{{ csrf_token() }}" />
                 <div id="ciFileErrorPanel" class="{{'ons-panel ons-panel--simple ons-panel--error' if error.section == 'ciFile' else ''}}">
@@ -45,6 +45,7 @@
                             onsButton({
                                 "text": "Upload",
                                 "id": "btn-load-ci",
+                                "classes": "ons-u-mt-l",
                                 "variants": ['primary'],
                                 "name": "load-ci",
                                 "submitType": "timer"
@@ -55,7 +56,8 @@
                             onsButton({
                                 "text": "Upload",
                                 "id": "btn-load-ci",
-                                "variants": ['primary'],
+                                "classes": "ons-u-mt-l",
+                                "variants": ['primary', 'small'],
                                 "name": "load-ci",
                                 "submitType": "timer"
                             })
@@ -64,7 +66,8 @@
                             onsButton({
                                 "text": "Cancel",
                                 "id": "btn-load-ci",
-                                "variants": ['secondary'],
+                                "classes": "ons-u-mt-l",
+                                "variants": ['secondary', 'small'],
                                 "name": "load-ci-cancel",
                                 "url": url_for('collection_exercise_bp.get_view_sample_ci', short_name=survey.shortName, period=ce.exerciseRef),
                                 "submitType": "timer",
@@ -76,80 +79,82 @@
             </form>
         {% endif %}
     </div>
-    <div class="ons-u-mb-l ons-col-6@m">
-        <label class="ons-label ons-u-fs-m">{{ collection_instruments | length }} SEFT collection instruments uploaded</label>
-        <section class="ce-section">
-            {% set surveyTableData = {
-                "variants": 'responsive',
-                "id": "collection-instruments-table",
-                "caption": 'Sample details for this collection exercise',
-                "hideCaption": true,
-                "ths": [
-                    {
-                        "value": "",
-                    },
-                    {
-                        "value": ""
-                    }
-                ]
-            } %}
-            {% include 'partials/error-box.html' %}
-            {% set surveyTableDataRows = [] %}
-            {% for collection_instrument in collection_instruments %}
-                {% if not locked and surveyEditPermission %}
-                    {% set formData = 
-                        '<form id="form-unselect-ci-' + loop.index|string + '" action="" method="post">' +
-                        '<a href=# id="unlink-ci-' + loop.index|string + '">Remove SEFT file</a>' +
-                        '<input type="hidden" name="ce_id" value="' + ce.id + '">' +
-                        '<input type="hidden" name="ci_id" value="' + collection_instrument.id + '">' +
-                        '<input type="hidden" name="unselect-ci">' +
-                        '<input type="hidden" name="csrf_token" value="' + csrf_token() + '" />' +
-                        '</form>'
-                    %}
-                {% endif %}
-                {% do surveyTableDataRows.append(
-                {
-                    "tds": [
+    {% if collection_instruments or (not surveyEditPermission) %}
+        <div class="ons-u-mb-l ons-col-6@m">
+            <section class="ce-section">
+                {% set surveyTableData = {
+                    "variants": 'responsive',
+                    "id": "collection-instruments-table",
+                    "caption": 'Sample details for this collection exercise',
+                    "hideCaption": true,
+                    "ths": [
                         {
-                            "value": collection_instrument.file_name
+                            "value": collection_instruments|length|string + " SEFT collection instruments uploaded",
+                            "thClasses": "ons-u-fs-r--b"
                         },
                         {
-                            "value": formData,
-                            "tdClasses": "ons-u-ta-right"
-                        } if surveyEditPermission else
-                            [
-                                {
-                                    "value": collection_instrument.file_name
-                                }
-                            ]
+                            "value": ""
+                        }
                     ]
-                }
-                ) %}
-            {% endfor %}
-            {% do surveyTableData | setAttribute("trs", surveyTableDataRows) %}
+                } %}
+                {% include 'partials/error-box.html' %}
+                {% set surveyTableDataRows = [] %}
+                {% for collection_instrument in collection_instruments %}
+                    {% if not locked and surveyEditPermission %}
+                        {% set formData = 
+                            '<form id="form-unselect-ci-' + loop.index|string + '" action="" method="post">' +
+                            '<a href=# id="unlink-ci-' + loop.index|string + '">Remove SEFT file</a>' +
+                            '<input type="hidden" name="ce_id" value="' + ce.id + '">' +
+                            '<input type="hidden" name="ci_id" value="' + collection_instrument.id + '">' +
+                            '<input type="hidden" name="unselect-ci">' +
+                            '<input type="hidden" name="csrf_token" value="' + csrf_token() + '" />' +
+                            '</form>'
+                        %}
+                    {% endif %}
+                    {% do surveyTableDataRows.append(
+                    {
+                        "tds": [
+                            {
+                                "value": collection_instrument.file_name
+                            },
+                            {
+                                "value": formData,
+                                "tdClasses": "ons-u-ta-right"
+                            } if surveyEditPermission else
+                                [
+                                    {
+                                        "value": collection_instrument.file_name
+                                    }
+                                ]
+                        ]
+                    }
+                    ) %}
+                {% endfor %}
+                {% do surveyTableData | setAttribute("trs", surveyTableDataRows) %}
+                {{
+                    onsTable(surveyTableData)
+                }}
+                {% for i in range(surveyTableDataRows | length) %}
+                    {% set j = i + 1 %}
+                    <script{% if csp_nonce %} nonce="{{ csp_nonce() }}" {% endif %}>
+                    document.getElementById("unlink-ci-{{ j }}").addEventListener('click', function () {
+                        this.parentNode.submit()
+                    });</script>
+                {% endfor %}
+            </section>
+        </div>
+        <div class="ons-u-mb-l">
             {{
-                onsTable(surveyTableData)
+                onsButton({
+                    "text": "Done",
+                    "id": "btn-upload-ci-done",
+                    "variants": primary,
+                    "name": "load-ci-done",
+                    "url": url_for('collection_exercise_bp.get_view_sample_ci', short_name=survey.shortName, period=ce.exerciseRef),
+                    "submitType": "timer",
+                    "noIcon": "true"
+                })
             }}
-            {% for i in range(surveyTableDataRows | length) %}
-                {% set j = i + 1 %}
-                <script{% if csp_nonce %} nonce="{{ csp_nonce() }}" {% endif %}>
-                document.getElementById("unlink-ci-{{ j }}").addEventListener('click', function () {
-                    this.parentNode.submit()
-                });</script>
-            {% endfor %}
-        </section>
-    </div>
-    <div class="ons-u-mb-l">
-        {{
-            onsButton({
-                "text": "Done",
-                "id": "btn-upload-ci-done",
-                "variants": primary,
-                "name": "load-ci-done",
-                "url": url_for('collection_exercise_bp.get_view_sample_ci', short_name=survey.shortName, period=ce.exerciseRef),
-                "submitType": "timer",
-                "noIcon": "true"
-            })
-        }}
-    </div>
+        </div>
+    {% endif %}
 {% endblock %}

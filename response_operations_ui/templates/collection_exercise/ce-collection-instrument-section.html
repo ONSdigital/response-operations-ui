@@ -10,11 +10,11 @@
                     "ths": [
                         { 
                             "value": "Collection instruments library",
-                            "thClasses": "ons-u-ta"
+                            "thClasses": "ons-u-fs-r--b"
                         },
                         {
-                            "value": "",
-                            "thClasses": "ons-u-ta"
+                            "value": "Selected files",
+                            "thClasses": "ons-u-fs-r--b"
                         },
                         {
                             "value": " ",
@@ -31,7 +31,7 @@
                                 {
                                     "value": collection_instruments|length|string,
                                     "name": "total-instruments",
-                                    "tdClasses": "ons-u-ta-right"
+                                    "tdClasses": "ons-u-ta"
                                 },
                                 {
                                     "value": '<a id="seft-upload-link" href="' + url_for('collection_exercise_bp.get_seft_collection_instrument', period=ce.exerciseRef, short_name=survey.shortName.replace(' ', '')) + '">Upload SEFT files</a>',
@@ -68,7 +68,7 @@
                     "ths": [
                         {
                             "value": "Collection instruments (" + collection_instruments|length|string + ")",
-                            "class": "ons-u-vh"
+                            "thClasses": "ons-u-fs-r--b"
                         },
                         {
                             "value": " ",
@@ -77,7 +77,7 @@
                             [
                                 {
                                     "value": "Collection instruments (" + collection_instruments|length|string + ")",
-                                    "class": "ons-u-vh"
+                                    "thClasses": "ons-u-fs-r--b"
                                 }
                             ]
                     ]

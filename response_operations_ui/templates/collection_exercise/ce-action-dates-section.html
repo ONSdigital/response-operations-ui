@@ -1,4 +1,4 @@
-<section class="ce-section ce-events">
+<section class="ce-section ce-details">
     <h2 class="ons-u-fs-r--b ons-u-pt-m">Action dates</h2>
     
     {% set surveyEditPermission = hasPermission('surveys.edit') %}  
@@ -34,7 +34,7 @@
         %}
     {% endif %}
     {% set surveyTableData = {
-        "variants": ['compact', 'responsive'],
+        "variants": ['compact'],
         "id": 'tbl-ce-details',
         "caption": 'Dates for this collection exercise',
         "hideCaption": true,
@@ -59,7 +59,7 @@
         {% set label = '' %}
         {% set eventIsInFuture = False %}
         {% if dateGroup == 'mps' %}
-            {% set label = 'Main print selection in processing' %}
+            {% set label = 'Main print selection' %}
             {% set event = events.mps %}
             {% set name = 'mps-date' %}
             {% set value = 'date' %}
@@ -95,8 +95,8 @@
             {% set event = events.reminder %}
             {% set name = 'first-reminder-date' %}
             {% set value = 'reminder' %}
+            {% set label = 'First reminder' %}
             {% if event %}
-                {% set label = 'First reminder' %}
                 {% set eventDay = event.day %}
                 {% set eventDate = event.date %}
                 {% set eventTime = event.time %}
@@ -153,8 +153,8 @@
             {% set value = 'nudge email' %}
             {% set showNudgeEmail = true %}
             {% set name = 'first-nudge-email-date' %}
+            {% set label = 'First nudge email' %}
             {% if event %}
-                {% set label = 'First nudge email' %}
                 {% set eventDay = event.day %}
                 {% set eventDate = event.date %}
                 {% set eventTime = event.time %}
@@ -241,12 +241,12 @@
                         {
                             "tds": [
                                 {
-                                    "value": label
+                                    "value": label,
                                 },
                                 {
-                                    "value": eventDay + ' <em>' + eventDate + '</em> ' + eventTime if event,
-                                    "class": "ons-u-ta-right",
-                                    "name": name
+                                    "value": eventDay + ' ' + eventDate + ' ' + eventTime if event,
+                                    "name": name,
+                                    "tdClasses": "ons-push-1@m"
                                 },
                                 {
                                     "value": hyperlink,
@@ -254,12 +254,13 @@
                                 }if surveyEditPermission else
                                     [
                                         {
-                                            "value": label
+                                            "value": label,
+                                            "tdClasses": "ons-push-1@m"
                                         },
                                         {
-                                            "value": eventDay + ' <em>' + eventDate + '</em> ' + eventTime if event,
-                                            "class": "ons-u-ta-right",
-                                            "name": name
+                                            "value": eventDay + ' ' + eventDate + ' ' + eventTime if event,
+                                            "tdClasses": "ons-u-ta-right",
+                                            "name": name,
                                         }
                                     ]
                             ]
