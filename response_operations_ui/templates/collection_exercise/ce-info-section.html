@@ -1,20 +1,20 @@
 <section class="ce-section ce-details">
-
+    <h2 class="ons-u-fs-r--b ons-u-pt-m">Collection exercise information</h2>
     {% set surveyEditPermission = hasPermission('surveys.edit') %}
     {% if surveyEditPermission %}
         {% set tblHeaders =  
             [ 
                 {  
-                    "value": "Collection exercise information",
-                    "thClasses": "ons-u-fs-r--b" 
+                    "value": "",
+                    "thClasses": "ons-u-vh"
                 }, 
                 { 
                     "value": "",
-                    "thClasses": "ons-u-ta"
+                    "thClasses": "ons-u-vh"
                 }, 
                 { 
                     "value": "",
-                    "thClasses": "ons-u-ta"
+                    "thClasses": "ons-u-vh"
                 }
             ]
         %}
@@ -38,6 +38,7 @@
         "caption": 'Dates for this collection exercise',
         "hideCaption": true,
         "ths": tblHeaders,
+        "tableClasses": "ce-dates-table"
     } %}
 
 
@@ -107,7 +108,6 @@
                     {
                         "value": event if event,
                         "name": id,
-                        "tdClasses": "ons-pull-1@m"
                     },
                     {
                         "value": hyperlink,
@@ -120,7 +120,6 @@
                             {
                                 "value": event if event,
                                 "name": id,
-                                "tdClasses": "ons-pull-1@m"
                             }
                         ]
                 ]

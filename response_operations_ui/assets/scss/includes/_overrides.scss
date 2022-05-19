@@ -237,6 +237,14 @@ table.ce-cis .tbl-ce-label {
     border-bottom: 1px solid #222;
 }
 
+.ce-dates-table{
+    table-layout: fixed;
+}
+
+.ce-dates-table th{
+    width: 33.3%;
+}
+
 /* Collection exercise - Reporting unit styles */
 
 .ceru-headline {

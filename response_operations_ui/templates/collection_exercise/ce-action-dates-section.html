@@ -1,19 +1,20 @@
 <section class="ce-section ce-details">
+    <h2 class="ons-u-fs-r--b ons-u-pt-m">Action dates</h2>
     {% set surveyEditPermission = hasPermission('surveys.edit') %}  
     {% if surveyEditPermission %}
         {% set tblHeaders =  
             [ 
                 {  
-                    "value": "Action dates",
-                    "thClasses": "ons-u-fs-r--b" 
+                    "value": "",
+                    "thClasses": "ons-u-vh" 
                 }, 
                 { 
                     "value": "",
-                    "thClasses": "ons-u-ta"
+                    "thClasses": "ons-u-vh"
                 }, 
                 { 
                     "value": "",
-                    "thClasses": "ons-u-ta"
+                    "thClasses": "ons-u-vh"
                 }
             ]
         %}
@@ -37,6 +38,7 @@
         "caption": 'Dates for this collection exercise',
         "hideCaption": true,
         "ths": tblHeaders,
+        "tableClasses": "ce-dates-table"
     } %}
 
     {% set surveyTableDataRows = [] %}
@@ -244,7 +246,6 @@
                                 {
                                     "value": eventDay + ' ' + eventDate + ' ' + eventTime if event,
                                     "name": name,
-                                    "tdClasses": "ons-push-1@m"
                                 },
                                 {
                                     "value": hyperlink,
@@ -253,11 +254,9 @@
                                     [
                                         {
                                             "value": label,
-                                            "tdClasses": "ons-push-1@m"
                                         },
                                         {
                                             "value": eventDay + ' ' + eventDate + ' ' + eventTime if event,
-                                            "tdClasses": "ons-u-ta-right",
                                             "name": name,
                                         }
                                     ]
