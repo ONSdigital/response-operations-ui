@@ -40,7 +40,18 @@
                     </div>
                 </div>
                 <div class="ons-u-mb-l">
-                    {% if collection_instrument %}
+                    {% if collection_instruments %}
+                        {{
+                            onsButton({
+                                "text": "Upload",
+                                "id": "btn-load-ci",
+                                "classes": "ons-u-mt-m",
+                                "variants": ['primary', 'small'],
+                                "name": "load-ci",
+                                "submitType": "timer"
+                            })
+                        }}
+                    {% elif not collection_instruments %} 
                         {{
                             onsButton({
                                 "text": "Upload",
@@ -51,29 +62,18 @@
                                 "submitType": "timer"
                             })
                         }}
-                    {% elif not collection_instrument %} 
-                        {{
-                            onsButton({
-                                "text": "Upload",
-                                "id": "btn-load-ci",
-                                "classes": "ons-u-mt-l",
-                                "variants": ['primary', 'small'],
-                                "name": "load-ci",
-                                "submitType": "timer"
-                            })
-                        }}
                         {{
                             onsButton({
                                 "text": "Cancel",
                                 "id": "btn-load-ci",
                                 "classes": "ons-u-mt-l",
-                                "variants": ['secondary', 'small'],
+                                "variants": ['secondary'],
                                 "name": "load-ci-cancel",
                                 "url": url_for('collection_exercise_bp.get_view_sample_ci', short_name=survey.shortName, period=ce.exerciseRef),
                                 "submitType": "timer",
                                 "noIcon": "true"
                             })
-                        }}
+                        }} 
                     {% endif %}
                 </div>
             </form>

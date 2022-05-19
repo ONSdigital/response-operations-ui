@@ -354,7 +354,7 @@ def _update_eq_version(short_name, period):
         flash("eQ version updated successfully.")
         return redirect(
             url_for(
-                "collection_exercise_bp.view_collection_exercise",
+                "collection_exercise_bp.get_view_sample_ci",
                 period=period,
                 short_name=short_name,
                 success_panel=f"eQ version updated to {eq_version}.",
@@ -362,7 +362,7 @@ def _update_eq_version(short_name, period):
         )
     return redirect(
         url_for(
-            "collection_exercise_bp.view_collection_exercise",
+            "collection_exercise_bp.get_view_sample_ci",
             period=period,
             short_name=short_name,
         )

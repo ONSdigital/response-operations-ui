@@ -1,7 +1,7 @@
 {% from "components/radios/_macro.njk" import onsRadios %}
 {% from "components/question/_macro.njk" import onsQuestion %}
 
-<section class="ce-section ce-details">
+<section class="ce-section ce-details ons-u-mt-l">
     <h2 class="ons-u-fs-r--b ons-u-pt-m">Select eQ version</h2>
     {% set surveyEditPermission = hasPermission('surveys.edit') %}
         {% if surveyEditPermission %}  
@@ -15,6 +15,7 @@
                 {{
                     onsRadios({
                         "legend": "Choose an option",
+                        "legendClasses": "ons-u-vh",
                         "id": "eq-version",
                         "name": "eq-version",
                         "borderless": true,
@@ -43,10 +44,11 @@
                 {% if not locked %}
                     {{
                         onsButton({
-                            "text": "Done",
+                            "text": "Apply",
                             "id": "btn-option-done",
                             "type": "submit",
-                            "classes": "ons-u-mt-l",
+                            "variants": ['secondary', 'small'],
+                            "classes": "ons-u-mt-s",
                             "submitType": "timer",
                         })
                     }}
@@ -58,18 +60,6 @@
             {% else %}
               <em>eQ version {{ce.eqVersion|replace("v", "")}} selected </em>
             {% endif %}
-            <div class="ons-grid__col">
-                {{
-                    onsButton({
-                        "text": "Done",
-                        "id": "btn-option-done",
-                        "classes": "ons-u-mt-l",
-                        "submitType": "timer",
-                        "url": url_for('collection_exercise_bp.view_collection_exercise', short_name=survey.shortName, period=ce.exerciseRef),
-                        "noIcon": "true"
-                    })
-                  }}
-            </div>
         {% endif %}
 </section>
 
