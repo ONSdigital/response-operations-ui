@@ -1,21 +1,20 @@
 <section class="ce-section ce-details">
-    <h2 class="ons-u-fs-r--b ons-u-pt-m">Collection exercise information</h2>
 
     {% set surveyEditPermission = hasPermission('surveys.edit') %}
     {% if surveyEditPermission %}
         {% set tblHeaders =  
             [ 
                 {  
-                    "value": "Event",
-                    "thClasses": "ons-u-vh" 
+                    "value": "Collection exercise information",
+                    "thClasses": "ons-u-fs-r--b" 
                 }, 
                 { 
-                    "value": "Date",
-                    "thClasses": "ons-u-vh"
+                    "value": "",
+                    "thClasses": "ons-u-ta"
                 }, 
                 { 
-                    "value": "Status",
-                    "thClasses": "ons-u-vh"
+                    "value": "",
+                    "thClasses": "ons-u-ta"
                 }
             ]
         %}
@@ -23,22 +22,22 @@
         {% set tblHeaders =  
             [ 
                 {  
-                    "value": "Event",
-                    "thClasses": "ons-u-vh" 
+                    "value": "Collection exercise information",
+                    "thClasses": "ons-u-fs-r--b" 
                 }, 
                 { 
-                    "value": "Date",
-                    "thClasses": "ons-u-vh"
+                    "value": "",
+                    "thClasses": "ons-u-ta"
                 }
             ]
         %}
     {% endif %}
     {% set surveyTableData = {
-        "variants": ['compact'],
+        "variants": ['compact', 'responsive'],
         "id": 'tbl-ce-details',
         "caption": 'Dates for this collection exercise',
         "hideCaption": true,
-        "ths": tblHeaders
+        "ths": tblHeaders,
     } %}
 
 
@@ -108,6 +107,7 @@
                     {
                         "value": event if event,
                         "name": id,
+                        "tdClasses": "ons-pull-1@m"
                     },
                     {
                         "value": hyperlink,
@@ -120,6 +120,7 @@
                             {
                                 "value": event if event,
                                 "name": id,
+                                "tdClasses": "ons-pull-1@m"
                             }
                         ]
                 ]

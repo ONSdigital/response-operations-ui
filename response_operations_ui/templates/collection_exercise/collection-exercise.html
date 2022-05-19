@@ -13,23 +13,21 @@
     {% include 'collection_exercise/ce-info-panel.html' %}
 
     {% include 'collection_exercise/ce-header-section.html' %}
-    <div class="ons-grid--gutterless">
+    <div class="ons-grid--gutterless ons-col-6@m">
         {% include 'partials/error-box.html' %}
-        <div class="ons-grid__col ons-col-6@m">
-            {% include 'collection_exercise/ce-info-section.html' %}
-            {% include 'collection_exercise/ce-action-dates-section.html' %}
-            {% include 'collection_exercise/ce-sample-ci-section.html' %}
-            <div class="ons-grid__col ons-u-pt-m">
-                {{
-                    onsButton({
-                        "text": "Done",
-                        "id": "btn-option-done",
-                        "submitType": "timer",
-                        "url": url_for('surveys_bp.view_survey', short_name=survey.shortName),
-                        "noIcon": "true"
-                    })
-                }}
-            </div>
+        {% include 'collection_exercise/ce-info-section.html' %}
+        {% include 'collection_exercise/ce-action-dates-section.html' %}
+        {% include 'collection_exercise/ce-sample-ci-section.html' %}
+        <div class="ons-u-pt-m">
+            {{
+                onsButton({
+                    "text": "Done",
+                    "id": "btn-option-done",
+                    "submitType": "timer",
+                    "url": url_for('surveys_bp.view_survey', short_name=survey.shortName),
+                    "noIcon": "true"
+                })
+            }}
         </div>
     </div>
 {% endblock %}
