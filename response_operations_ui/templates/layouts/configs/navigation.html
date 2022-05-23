@@ -4,9 +4,16 @@
     "ariaLabel": "Main menu",
     "ariraListLabel": "Navigation menu",
     "currentPath": request.path,
+    "wide": true
 } %}
 
 {% if current_user.is_authenticated %}
+  {% do navigation | setAttribute("toggleNavigationButton",
+      {
+        "text": 'Menu',
+        "ariaLabel": 'Toggle navigation menu'
+      }
+  )%}
   {% if hasPermission('users.admin') %}
     {% do navigation | setAttribute("itemsList", [
       {
