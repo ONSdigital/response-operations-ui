@@ -2085,7 +2085,7 @@ class TestCollectionExercise(ViewTestCase):
         self.assertIn("Add reminder".encode(), response.data)
         self.assertIn("Add nudge email".encode(), response.data)
         self.assertIn("Replace sample file & CI".encode(), response.data)
-        
+
     @requests_mock.mock()
     def test_survey_edit_permission_collection_exercise_no_sample(self, mock_request):
         sign_in_with_permission(self, mock_request, user_permission_surveys_edit_json)
@@ -2114,7 +2114,7 @@ class TestCollectionExercise(ViewTestCase):
         self.assertIn("Add reminder".encode(), response.data)
         self.assertIn("Add nudge email".encode(), response.data)
         self.assertIn("Upload sample file & CI".encode(), response.data)
-        
+
     @requests_mock.mock()
     def test_no_survey_edit_permission_collection_exercise(self, mock_request):
         mock_request.get(url_get_survey_by_short_name, json=self.eq_survey_dates)
