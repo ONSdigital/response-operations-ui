@@ -818,7 +818,7 @@ def get_view_sample_ci(short_name, period):
     ce_details["eq_ci_selectors"] = filter_eq_ci_selectors(
         ce_details["eq_ci_selectors"], ce_details["collection_instruments"]
     )
-    
+
     locked = ce_state in ("LIVE", "READY_FOR_LIVE", "EXECUTION_STARTED", "VALIDATED", "EXECUTED", "ENDED")
     _format_ci_file_name(ce_details["collection_instruments"], ce_details["survey"])
 
