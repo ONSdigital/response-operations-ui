@@ -58,14 +58,14 @@ collection_exercise_bp = Blueprint(
 )
 
 
-def filter_eq_ci_selectors(eq_ci_selectors, collection_instruments):
+def filter_eq_ci_selectors(eq_ci_selectors: list, collection_instruments: list) -> list:
     """
-    Takes all eQ collection instruments available for the collection exercise as a dict and the already linked
-    instruments and returns a dict of the collection instruments that have not yet been linked for this exercise
+    Takes all eQ collection instruments available for the collection exercise as a list and the already linked
+    instruments and returns a list of the collection instruments that have not yet been linked for this exercise
 
-    :param eq_ci_selectors: dict of available eQ collection instruments
-    :param collection_instruments: dict of linked eQ collection instruments
-    :returns eq_ci_selectors: dict of eQ collection instruments available to be linked to this exercise
+    :param eq_ci_selectors: list of available eQ collection instruments
+    :param collection_instruments: list of linked eQ collection instruments
+    :returns eq_ci_selectors: list of eQ collection instruments available to be linked to this exercise
     """
     for collection_instrument in collection_instruments:
         if collection_instrument in eq_ci_selectors:
