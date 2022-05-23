@@ -90,5 +90,5 @@ window.readCSV.cancelLoadSample = function() {
 window.readCSV.handleFileUpload = function() {
     document.getElementById('btn-upload-sample').classList.add('is-loading');
     document.getElementById('btn-upload-sample').style.pointerEvents = "none";
-
+    document.getElementById('btn-upload-sample').disabled = false;
 };

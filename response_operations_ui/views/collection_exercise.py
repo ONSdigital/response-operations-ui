@@ -117,10 +117,6 @@ def view_collection_exercise(short_name, period):
     locked = ce_state in ("LIVE", "READY_FOR_LIVE", "EXECUTION_STARTED", "VALIDATED", "EXECUTED", "ENDED")
     processing = ce_state in ("EXECUTION_STARTED", "EXECUTED", "VALIDATED")
     validation_failed = ce_state == "FAILEDVALIDATION"
-    validation_errors = ce_details["collection_exercise"]["validationErrors"]
-    missing_ci = validation_errors and any(
-        "MISSING_COLLECTION_INSTRUMENT" in unit["errors"] for unit in validation_errors
-    )
     ce_details["collection_exercise"]["state"] = map_collection_exercise_state(ce_state)  # NOQA
     _format_ci_file_name(ce_details["collection_instruments"], ce_details["survey"])
 
@@ -128,7 +124,6 @@ def view_collection_exercise(short_name, period):
 
     success_panel = request.args.get("success_panel")
     info_panel = request.args.get("info_panel")
-    sorted_nudge_list = get_existing_sorted_nudge_events(ce_details["events"])
     error_json = _get_error_from_session()
     _delete_sample_data_if_required()
 
@@ -136,11 +131,9 @@ def view_collection_exercise(short_name, period):
         "collection_exercise/collection-exercise.html",
         ce=ce_details["collection_exercise"],
         collection_instruments=ce_details["collection_instruments"],
-        eq_ci_selectors=ce_details["eq_ci_selectors"],
         error=error_json,
         events=ce_details["events"],
         locked=locked,
-        missing_ci=missing_ci,
         processing=processing,
         sample=ce_details["sample_summary"],
         show_set_live_button=show_set_live_button,
@@ -150,8 +143,6 @@ def view_collection_exercise(short_name, period):
         show_msg=show_msg,
         ci_classifiers=ce_details["ci_classifiers"]["classifierTypes"],
         info_panel=info_panel,
-        existing_nudge=sorted_nudge_list if len(sorted_nudge_list) > 0 else [],
-        is_eq_v3_enabled=app.config["EQ_VERSION_ENABLED"],
     )
 
 
@@ -823,11 +814,11 @@ def get_view_sample_ci(short_name, period):
     logger.info("Retrieving upload sample collection instrument page", short_name=short_name, period=period)
     ce_details = build_collection_exercise_details(short_name, period)
     ce_state = ce_details["collection_exercise"]["state"]
-
     ce_details["collection_exercise"]["state"] = map_collection_exercise_state(ce_state)  # NOQA
     ce_details["eq_ci_selectors"] = filter_eq_ci_selectors(
         ce_details["eq_ci_selectors"], ce_details["collection_instruments"]
     )
+    
     locked = ce_state in ("LIVE", "READY_FOR_LIVE", "EXECUTION_STARTED", "VALIDATED", "EXECUTED", "ENDED")
     _format_ci_file_name(ce_details["collection_instruments"], ce_details["survey"])
 
@@ -842,14 +833,14 @@ def get_view_sample_ci(short_name, period):
         "collection_exercise/ce-view-sample-ci.html",
         ce=ce_details["collection_exercise"],
         collection_instruments=ce_details["collection_instruments"],
+        error=error_json,
+        locked=locked,
         sample=ce_details["sample_summary"],
         survey=ce_details["survey"],
-        eq_ci_selectors=ce_details["eq_ci_selectors"],
-        error=error_json,
         success_panel=success_panel,
-        info_panel=info_panel,
         show_msg=show_msg,
-        locked=locked,
+        eq_ci_selectors=ce_details["eq_ci_selectors"],
+        info_panel=info_panel,
     )
 
 
@@ -865,16 +856,17 @@ def get_upload_sample_file(short_name, period):
     ce_details["collection_exercise"]["state"] = map_collection_exercise_state(ce_state)  # NOQA
     locked = ce_state in ("LIVE", "READY_FOR_LIVE", "EXECUTION_STARTED", "VALIDATED", "EXECUTED", "ENDED")
     success_panel = request.args.get("success_panel")
+    show_msg = request.args.get("show_msg")
     error_json = _get_error_from_session()
     return render_template(
         "collection_exercise/ce-upload-sample-file.html",
         ce=ce_details["collection_exercise"],
-        survey=ce_details["survey"],
-        sample=ce_details["sample_summary"],
-        eq_ci_selectors=ce_details["eq_ci_selectors"],
         error=error_json,
         locked=locked,
+        sample=ce_details["sample_summary"],
+        survey=ce_details["survey"],
         success_panel=success_panel,
+        show_msg=show_msg,
     )
 
 
