@@ -1,4 +1,5 @@
 <section class="ce-section ce-details">
+    {% set surveyEditPermission = hasPermission('surveys.edit') %}
     {% if sample %}
         {{
             onsTable({
@@ -76,27 +77,25 @@
             })
         }}
     {% endif %}
-    {% if (not sample) or (not collection_instruments) %}
-        {{
-            onsButton({
-                "text": 'Upload sample file & CI',
-                "id": 'btn-sample-ci',
-                "submitType": 'timer',
-                "variants": ['secondary', 'small'],
-                "url": url_for('collection_exercise_bp.get_view_sample_ci', short_name=survey.shortName, period=ce.exerciseRef),
-                "noIcon": 'true'
-            })
-        }}
-    {% elif sample and collection_instruments %}
-        {{
-            onsButton({
-                "text": 'Replace sample file & CI',
-                "id": 'btn-sample-ci',
-                "submitType": 'timer',
-                "variants": ['secondary', 'small'],
-                "url": url_for('collection_exercise_bp.get_view_sample_ci', short_name=survey.shortName, period=ce.exerciseRef),
-                "noIcon": 'true'
-            })
-        }}
+    {% if surveyEditPermission %}
+        {% if not sample and not locked %}
+            {% set sampleCiButtonText = 'Upload sample file & CI' %}
+        {% elif sample and not locked %}
+            {% set sampleCiButtonText = 'Replace sample file & CI' %}
+        {% elif locked %}
+            {% set sampleCiButtonText = 'View sample file & CI' %}
+        {% endif %}
+    {% else %}
+        {% set sampleCiButtonText = 'View sample file & CI' %}
     {% endif %}
+    {{
+        onsButton({
+            "text": sampleCiButtonText,
+            "id": 'btn-sample-ci',
+            "submitType": 'timer',
+            "variants": ['secondary', 'small'],
+            "url": url_for('collection_exercise_bp.get_view_sample_ci', short_name=survey.shortName, period=ce.exerciseRef),
+            "noIcon": 'true'
+        })
+    }}
 </section>

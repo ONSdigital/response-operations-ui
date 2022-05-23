@@ -2084,6 +2084,60 @@ class TestCollectionExercise(ViewTestCase):
         self.assertIn("Edit".encode(), response.data)
         self.assertIn("Add reminder".encode(), response.data)
         self.assertIn("Add nudge email".encode(), response.data)
+        self.assertIn("Replace sample file & CI".encode(), response.data)
+        
+    @requests_mock.mock()
+    def test_survey_edit_permission_collection_exercise_no_sample(self, mock_request):
+        sign_in_with_permission(self, mock_request, user_permission_surveys_edit_json)
+        mock_request.get(url_get_survey_by_short_name, json=self.eq_survey_dates)
+        mock_request.get(url_ces_by_survey, json=self.collection_exercises)
+        mock_request.get(url_ce_by_id, json=collection_exercise_details["collection_exercise"])
+        mock_request.get(url_get_collection_exercise_events, json=events)
+        mock_request.get(
+            f"{url_get_collection_instrument}?{ci_search_string}", json=self.collection_instruments, complete_qs=True
+        )
+        mock_request.get(
+            f"{url_get_collection_instrument}?{ci_type_search_string_eq}", json=self.eq_ci_selectors, complete_qs=True
+        )
+        mock_request.get(url_link_sample, json=[""])
+        mock_request.get(url_get_sample_summary, json="")
+        mock_request.get(url_get_classifier_type_selectors, json=classifier_type_selectors)
+        mock_request.get(url_get_classifier_type, json=classifier_types)
+
+        response = self.client.get(f"/surveys/{short_name}/{period}", follow_redirects=True)
+
+        self.assertEqual(response.status_code, 200)
+        self.assertIn("Monthly Survey of Building Materials Bricks".encode(), response.data)
+        self.assertIn("221_201712".encode(), response.data)
+        self.assertIn("Add".encode(), response.data)
+        self.assertIn("Edit".encode(), response.data)
+        self.assertIn("Add reminder".encode(), response.data)
+        self.assertIn("Add nudge email".encode(), response.data)
+        self.assertIn("Upload sample file & CI".encode(), response.data)
+        
+    @requests_mock.mock()
+    def test_no_survey_edit_permission_collection_exercise(self, mock_request):
+        mock_request.get(url_get_survey_by_short_name, json=self.eq_survey_dates)
+        mock_request.get(url_ces_by_survey, json=self.collection_exercises)
+        mock_request.get(url_ce_by_id, json=collection_exercise_details["collection_exercise"])
+        mock_request.get(url_get_collection_exercise_events, json=events)
+        mock_request.get(
+            f"{url_get_collection_instrument}?{ci_search_string}", json=self.collection_instruments, complete_qs=True
+        )
+        mock_request.get(
+            f"{url_get_collection_instrument}?{ci_type_search_string_eq}", json=self.eq_ci_selectors, complete_qs=True
+        )
+        mock_request.get(url_link_sample, json=[""])
+        mock_request.get(url_get_sample_summary, json="")
+        mock_request.get(url_get_classifier_type_selectors, json=classifier_type_selectors)
+        mock_request.get(url_get_classifier_type, json=classifier_types)
+
+        response = self.client.get(f"/surveys/{short_name}/{period}", follow_redirects=True)
+
+        self.assertEqual(response.status_code, 200)
+        self.assertIn("Monthly Survey of Building Materials Bricks".encode(), response.data)
+        self.assertIn("221_201712".encode(), response.data)
+        self.assertIn("View sample file & CI".encode(), response.data)
 
     @requests_mock.mock()
     def test_seft_view_sample_ci_page_survey_permission(self, mock_request):
