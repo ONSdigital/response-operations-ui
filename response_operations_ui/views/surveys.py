@@ -2,7 +2,7 @@ import logging
 from datetime import datetime
 from json import JSONDecodeError, loads
 
-from flask import Blueprint, abort, redirect, render_template, request, session, url_for
+from flask import Blueprint, redirect, render_template, request, session, url_for
 from flask_login import login_required
 from structlog import wrap_logger
 
@@ -11,11 +11,11 @@ from response_operations_ui.common.mappers import (
     get_collex_event_status,
     map_collection_exercise_state,
 )
+from response_operations_ui.common.uaa import verify_permission
 from response_operations_ui.controllers import (
     collection_exercise_controllers,
     collection_instrument_controllers,
     survey_controllers,
-    uaa_controller,
 )
 from response_operations_ui.exceptions.exceptions import ApiError
 from response_operations_ui.forms import (
@@ -91,9 +91,7 @@ def view_survey(short_name):
 @surveys_bp.route("/edit-survey-details/<short_name>", methods=["GET"])
 @login_required
 def view_survey_details(short_name):
-    if not uaa_controller.user_has_permission("surveys.edit"):
-        logger.error("User has insufficient permissions to access this page", user_id=session["user_id"])
-        abort(500)
+    verify_permission("surveys.edit", session)
     survey_details = survey_controllers.get_survey(short_name)
     form = EditSurveyDetailsForm(form=request.form)
 
@@ -111,9 +109,7 @@ def view_survey_details(short_name):
 @surveys_bp.route("/edit-survey-details/<short_name>", methods=["POST", "GET"])
 @login_required
 def edit_survey_details(short_name):
-    if not uaa_controller.user_has_permission("surveys.edit"):
-        logger.error("User has insufficient permissions to access this page", user_id=session["user_id"])
-        abort(500)
+    verify_permission("surveys.edit", session)
     form = EditSurveyDetailsForm(form=request.form)
     if not form.validate():
         survey_details = survey_controllers.get_survey(short_name)
@@ -139,9 +135,7 @@ def edit_survey_details(short_name):
 @surveys_bp.route("/create", methods=["GET"])
 @login_required
 def show_create_survey():
-    if not uaa_controller.user_has_permission("surveys.edit"):
-        logger.error("User has insufficient permissions to access this page", user_id=session["user_id"])
-        abort(500)
+    verify_permission("surveys.edit", session)
     form = CreateSurveyDetailsForm(form=request.form)
 
     return render_template("create-survey.html", form=form)
@@ -150,9 +144,7 @@ def show_create_survey():
 @surveys_bp.route("/create", methods=["POST"])
 @login_required
 def create_survey():
-    if not uaa_controller.user_has_permission("surveys.edit"):
-        logger.error("User has insufficient permissions to access this page", user_id=session["user_id"])
-        abort(500)
+    verify_permission("surveys.edit", session)
     form = CreateSurveyDetailsForm(form=request.form)
     if not form.validate():
         return render_template("create-survey.html", form=form, errors=form.errors.items())
@@ -182,9 +174,7 @@ def create_survey():
 @surveys_bp.route("/<short_name>/link-collection-instrument", methods=["GET"])
 @login_required
 def get_link_collection_instrument(short_name):
-    if not uaa_controller.user_has_permission("surveys.edit"):
-        logger.error("User has insufficient permissions to access this page", user_id=session["user_id"])
-        abort(500)
+    verify_permission("surveys.edit", session)
     form = LinkCollectionInstrumentForm(form=request.form)
     short_name_lower = str(short_name).lower()
     survey_id = survey_controllers.get_survey_by_shortname(short_name_lower)["id"]
@@ -200,9 +190,7 @@ def get_link_collection_instrument(short_name):
 @surveys_bp.route("/<short_name>/link-collection-instrument", methods=["POST"])
 @login_required
 def post_link_collection_instrument(short_name):
-    if not uaa_controller.user_has_permission("surveys.edit"):
-        logger.error("User has insufficient permissions to access this page", user_id=session["user_id"])
-        abort(500)
+    verify_permission("surveys.edit", session)
     form = LinkCollectionInstrumentForm(form=request.form)
     eq_ci_selectors = []
     try:
