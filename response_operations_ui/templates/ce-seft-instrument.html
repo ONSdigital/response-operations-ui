@@ -15,7 +15,7 @@
     {% include 'partials/error-box.html' %}
     <h1 name="page-survey-title" class="ons-u-mb-l">Load Collection instruments for {{survey.shortName}} {{period}}</h1>
     <div class="ons-u-mb-l ons-col-7@l">
-        {% if surveyEditPermission and not locked%}
+        {% if (not locked) and surveyEditPermission %}
             <form id="seft-form-load-ci" action="" class="ons-form" method="post" enctype="multipart/form-data">
                 <input type="hidden" name="csrf_token" value="{{ csrf_token() }}" />
                 <div id="ciFileErrorPanel" class="{{'ons-panel ons-panel--simple ons-panel--error' if error.section == 'ciFile' else ''}}">
@@ -41,40 +41,36 @@
                 </div>
                 <div class="ons-u-mb-l">
                     {% if collection_instruments %}
-                        {{
-                            onsButton({
-                                "text": "Upload",
-                                "id": "btn-load-ci",
-                                "classes": "ons-u-mt-m",
-                                "variants": ['primary', 'small'],
-                                "name": "load-ci",
-                                "submitType": "timer"
-                            })
-                        }}
+                        {% set uploadClasses = 'ons-u-mt-m' %}
+                        {% set variants = ['primary', 'small'] %}
+                        {% set cancelClasses = 'ons-u-vh' %}
                     {% elif not collection_instruments %} 
-                        {{
-                            onsButton({
-                                "text": "Upload",
-                                "id": "btn-load-ci",
-                                "classes": "ons-u-mt-l",
-                                "variants": ['primary'],
-                                "name": "load-ci",
-                                "submitType": "timer"
-                            })
-                        }}
-                        {{
-                            onsButton({
-                                "text": "Cancel",
-                                "id": "btn-load-ci",
-                                "classes": "ons-u-mt-l",
-                                "variants": ['secondary'],
-                                "name": "load-ci-cancel",
-                                "url": url_for('collection_exercise_bp.get_view_sample_ci', short_name=survey.shortName, period=ce.exerciseRef),
-                                "submitType": "timer",
-                                "noIcon": "true"
-                            })
-                        }} 
+                        {% set uploadClasses = 'ons-u-mt-l' %}
+                        {% set variants = ['primary'] %}
+                        {% set cancelClasses = 'ons-u-mt-l' %}
                     {% endif %}
+                    {{
+                        onsButton({
+                            "text": "Upload",
+                            "id": "btn-load-ci",
+                            "classes": uploadClasses,
+                            "variants": variants,
+                            "name": "load-ci",
+                            "submitType": "timer"
+                        })
+                    }}
+                    {{
+                        onsButton({
+                            "text": "Cancel",
+                            "id": "btn-load-ci",
+                            "classes": cancelClasses,
+                            "variants": ['secondary'],
+                            "name": "load-ci-cancel",
+                            "url": url_for('collection_exercise_bp.get_view_sample_ci', short_name=survey.shortName, period=ce.exerciseRef),
+                            "submitType": "timer",
+                            "noIcon": "true"
+                        })
+                    }} 
                 </div>
             </form>
         {% endif %}
@@ -88,14 +84,20 @@
                     "caption": 'Sample details for this collection exercise',
                     "hideCaption": true,
                     "ths": [
-                        {
-                            "value": collection_instruments|length|string + " SEFT collection instruments uploaded",
-                            "thClasses": "ons-u-fs-r--b"
-                        },
-                        {
-                            "value": ""
-                        }
-                    ]
+                                {
+                                    "value": collection_instruments|length|string + " SEFT collection instruments uploaded",
+                                    "thClasses": "ons-u-fs-r--b"
+                                },
+                                {
+                                    "value": " "
+                                }   
+                            ] if surveyEditPermission else
+                                [
+                                    {
+                                        "value": collection_instruments|length|string + " SEFT collection instruments uploaded",
+                                        "thClasses": "ons-u-fs-r--b"
+                                    }
+                                ]
                 } %}
                 {% include 'partials/error-box.html' %}
                 {% set surveyTableDataRows = [] %}
@@ -114,19 +116,19 @@
                     {% do surveyTableDataRows.append(
                     {
                         "tds": [
-                            {
-                                "value": collection_instrument.file_name
-                            },
-                            {
-                                "value": formData,
-                                "tdClasses": "ons-u-ta-right"
-                            } if surveyEditPermission else
+                                    {
+                                        "value": collection_instrument.file_name
+                                    },
+                                    {
+                                        "value": formData,
+                                        "tdClasses": "ons-u-ta-right"
+                                    } 
+                                ] if surveyEditPermission else
                                 [
                                     {
                                         "value": collection_instrument.file_name
                                     }
                                 ]
-                        ]
                     }
                     ) %}
                 {% endfor %}

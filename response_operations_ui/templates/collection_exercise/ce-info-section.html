@@ -1,36 +1,25 @@
 <section class="ce-section ce-details ons-u-mb-l">
     <h2 class="ons-u-fs-r--b ons-u-pt-m">Collection exercise information</h2>
     {% set surveyEditPermission = hasPermission('surveys.edit') %}
+    {% set tblHeaders =  
+        [ 
+            {  
+                "value": "Event",
+                "thClasses": "ons-u-vh" 
+            }, 
+            { 
+                "value": "Date",
+                "thClasses": "ons-u-vh"
+            }
+        ]
+    %}
     {% if surveyEditPermission %}
-        {% set tblHeaders =  
-            [ 
-                {  
-                    "value": "",
-                    "thClasses": "ons-u-vh"
-                }, 
+        {% do tblHeaders.append( 
                 { 
-                    "value": "",
-                    "thClasses": "ons-u-vh"
-                }, 
-                { 
-                    "value": "",
+                    "value": "Action",
                     "thClasses": "ons-u-vh"
                 }
-            ]
-        %}
-    {% else %}
-        {% set tblHeaders =  
-            [ 
-                {  
-                    "value": "",
-                    "thClasses": "ons-u-vh" 
-                }, 
-                { 
-                    "value": "",
-                    "thClasses": "ons-u-vh"
-                }
-            ]
-        %}
+         )%}
     {% endif %}
     {% set surveyTableData = {
         "variants": ['compact', 'responsive'],

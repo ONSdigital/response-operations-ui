@@ -1,25 +1,22 @@
 
 <h1 name="page-ce-title">{{ce.exerciseRef}} Collection Exercise | {{survey.shortName}} {{survey.surveyRef}}</h1>
+{% set status_event = '' %}
 {% if ce.state == 'Ended' %}
-    {% set type = 'ons-status ons-status--dead' %}
-    {% set status_event = '' %}
+    {% set class = 'ons-status ons-status--dead' %}
 {% elif ce.state == 'Live' %}
-    {% set type = 'ons-status ons-status--success' %}
-    {% set status_event = '' %}
+    {% set class = 'ons-status ons-status--success' %}
     {% if ce.event_status == 'Processing' or ce.event_status == 'Retrying' %}
-      {% set type = 'ons-status ons-status--pending' %}
+      {% set class = 'ons-status ons-status--pending' %}
       {% set status_event = '(' + exercise.event_status + ')' %}
     {% endif %}
     {% if ce.event_status == 'Failed' %}
-      {% set type = 'ons-status ons-status--error' %}
+      {% set class = 'ons-status ons-status--error' %}
       {% set status_event = '(' + exercise.event_status + ')' %}
     {% endif %}
 {% elif ce.state == 'Created' or ce.state == 'Scheduled'%}
-    {% set type = 'ons-status ons-status--info' %}
-    {% set status_event = '' %}
+    {% set class = 'ons-status ons-status--info' %}
 {% else %}
-    {% set type = 'ons-status ons-status--info' %}
-    {% set status_event = '' %}
+    {% set class = 'ons-status ons-status--info' %}
 {% endif %}
 {{
     onsMetadata({
@@ -31,7 +28,7 @@
                 "term": "Status:",
                 "descriptions": [
                     {
-                        "description": '<span class="'+ type + '">'+ ce.state + status_event +'</span>',
+                        "description": '<span class="'+ class + '">'+ ce.state + status_event +'</span>',
                         "id": "ce_status"
                     }
                 ]

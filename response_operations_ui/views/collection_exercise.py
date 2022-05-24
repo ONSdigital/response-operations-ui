@@ -58,7 +58,7 @@ collection_exercise_bp = Blueprint(
 )
 
 
-def filter_eq_ci_selectors(eq_ci_selectors: list, collection_instruments: list) -> list:
+def filter_eq_ci_selectors(eq_ci_selectors: list[dict], collection_instruments: list[dict]) -> list[dict]:
     """
     Takes all eQ collection instruments available for the collection exercise as a list and the already linked
     instruments and returns a list of the collection instruments that have not yet been linked for this exercise
@@ -819,10 +819,8 @@ def get_event_name(tag):
 @collection_exercise_bp.route("/<short_name>/<period>/view-sample-ci", methods=["GET"])
 @login_required
 def get_view_sample_ci(short_name, period):
-    logger.info("Retrieving upload sample collection instrument page", short_name=short_name, period=period)
     ce_details = build_collection_exercise_details(short_name, period)
     ce_state = ce_details["collection_exercise"]["state"]
-    ce_details["collection_exercise"]["state"] = map_collection_exercise_state(ce_state)  # NOQA
     ce_details["eq_ci_selectors"] = filter_eq_ci_selectors(
         ce_details["eq_ci_selectors"], ce_details["collection_instruments"]
     )
@@ -858,7 +856,6 @@ def get_upload_sample_file(short_name, period):
     if not uaa_controller.user_has_permission("surveys.edit"):
         logger.error("User has insufficient permissions to access this page", user_id=session["user_id"])
         abort(500)
-    logger.info("Retrieving upload sample file page", short_name=short_name, period=period)
     ce_details = build_collection_exercise_details(short_name, period)
     ce_state = ce_details["collection_exercise"]["state"]
     ce_details["collection_exercise"]["state"] = map_collection_exercise_state(ce_state)  # NOQA

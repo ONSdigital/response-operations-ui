@@ -134,9 +134,8 @@
                             "text": "Cancel",
                             "variants": ['secondary', 'small'],
                             "id": "btn-cancel-load-sample",
-                            "listeners": {
-                                "click": "readCSV.cancelLoadSample()"
-                            }
+                            "url": url_for('collection_exercise_bp.get_view_sample_ci', short_name=survey.shortName, period=ce.exerciseRef),
+                            "noIcon": true
                         })
                     }}
                 </form>

@@ -79,14 +79,6 @@ window.readCSV.handleFiles = function(files, classifiers) {
     }
 };
 
-window.readCSV.cancelLoadSample = function() {
-    document.getElementById('sample-preview').innerHTML = '';
-    document.getElementById('form-load-sample').reset();
-    document.getElementById('btn-upload-sample').disabled = true;
-    document.getElementById('sampleFile').focus();
-};
-
-
 window.readCSV.handleFileUpload = function() {
     document.getElementById('btn-upload-sample').classList.add('is-loading');
     document.getElementById('btn-upload-sample').style.pointerEvents = "none";

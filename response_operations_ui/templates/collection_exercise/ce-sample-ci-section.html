@@ -37,7 +37,7 @@
                             },
                             {
                                 "value": ' ',
-                                "name": "upload-seft-instruments",
+                                "name": "upload-sample-time",
                             }
                         ]
                     },
@@ -54,14 +54,14 @@
                             },
                             {
                                 "value": ' ',
-                                "name": "upload-seft-instruments",
+                                "name": "upload-sample-time",
                             }
                         ]
                     }
                 ]
             })
         }}
-    {% elif not sample %}
+    {% else %}
         {{
             onsTable({
                 "variants": ['compact', 'responsive'],
@@ -77,16 +77,15 @@
             })
         }}
     {% endif %}
-    {% if surveyEditPermission %}
-        {% if not sample and not locked %}
-            {% set sampleCiButtonText = 'Upload sample file & CI' %}
-        {% elif sample and not locked %}
-            {% set sampleCiButtonText = 'Replace sample file & CI' %}
-        {% elif locked %}
-            {% set sampleCiButtonText = 'View sample file & CI' %}
-        {% endif %}
-    {% else %}
+  
+    {% if locked or (not surveyEditPermission) %}
         {% set sampleCiButtonText = 'View sample file & CI' %}
+    {% else %}
+        {% if not sample %}
+            {% set sampleCiButtonText = 'Upload sample file & CI' %}
+        {% else %}
+            {% set sampleCiButtonText = 'Replace sample file & CI' %}
+        {% endif %}
     {% endif %}
     {{
         onsButton({
