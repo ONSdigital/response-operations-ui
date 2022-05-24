@@ -191,7 +191,7 @@
                             {% endfor %}
                             {% do surveyTableData | setAttribute("trs", surveyTableDataRows) %}
                             {{ onsTable(surveyTableData) }}
-                        {% else %}
+                        {% elif not(eq_ci_selectors or collection_instruments) %}
                             <div>
                                 <p>This survey type is an EQ but no collection instruments have been set up for it yet.</p>
                             </div>
