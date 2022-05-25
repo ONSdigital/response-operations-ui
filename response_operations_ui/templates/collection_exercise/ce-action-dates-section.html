@@ -226,32 +226,30 @@
                     {% set hyperlink = '<a href="' + url_for("collection_exercise_bp.update_event_date",  short_name=survey.shortName, period=ce.exerciseRef, tag=dateGroup, errors=None if event == events.reminder) + '" id="' + 'edit-event-date-' + dateGroup + '">' + 'Edit ' + value + '</a>' %}
                 {% endif %}
                 {% if label %}
-                    {% do surveyTableDataRows.append(
-                        {
-                            "tds": [
-                                {
-                                    "value": label,
-                                },
-                                {
-                                    "value": eventDay + ' ' + eventDate + ' ' + eventTime if event,
-                                    "name": name,
-                                },
-                                {
-                                    "value": hyperlink,
-                                    "tdClasses": "ons-u-ta-right"
-                                }if surveyEditPermission else
-                                    [
-                                        {
-                                            "value": label,
-                                        },
-                                        {
-                                            "value": eventDay + ' ' + eventDate + ' ' + eventTime if event,
-                                            "name": name,
-                                        }
-                                    ]
-                            ]
-                        }
-                    ) %}
+                    {% set tds = 
+                        [ 
+                            {  
+                                "value": label, 
+                            }, 
+                            { 
+                                "value": eventDay + ' ' + eventDate + ' ' + eventTime if event, 
+                                "name": name, 
+                            } 
+                        ]
+                    %}  
+                    {% if surveyEditPermission %} 
+                        {% do tds.append(
+                            { 
+                                "value": hyperlink, 
+                                "tdClasses": "ons-u-ta-right" 
+                            }
+                        ) %} 
+                    {% endif %}   
+                    {% do surveyTableDataRows.append( 
+                        { 
+                            "tds": tds 
+                        } 
+                    )%}
                 {% endif %}
             {% endif %}
         {% endif %}

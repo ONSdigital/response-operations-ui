@@ -1,5 +1,10 @@
 <section class="ce-section {{'ons-panel ons-panel--simple ons-panel--error' if missing_ci else ''}} ons-u-pt-m ons-u-mb-l ons-u-mt-M">
     {% set surveyEditPermission = hasPermission('surveys.edit') %}
+    {% if surveyEditPermission %}
+        {% set linkText = 'Upload SEFT files' %}
+    {% else %}
+        {% set linkText = 'View SEFT files' %}
+    {% endif %}
         {% if survey.surveyMode == 'SEFT' %}
             {{
                 onsTable({
@@ -34,7 +39,7 @@
                                     "tdClasses": "ons-u-ta"
                                 },
                                 {
-                                    "value": '<a id="seft-upload-link" href="' + url_for('collection_exercise_bp.get_seft_collection_instrument', period=ce.exerciseRef, short_name=survey.shortName.replace(' ', '')) + '">Upload SEFT files</a>',
+                                    "value": '<a id="seft-upload-link" href="' + url_for('collection_exercise_bp.get_seft_collection_instrument', period=ce.exerciseRef, short_name=survey.shortName.replace(' ', '')) + '">' + linkText + '</a>',
                                     "name": "upload-seft-instruments",
                                     "tdClasses": "ons-u-ta-right"
                                 }
@@ -48,27 +53,29 @@
       
         {% if survey.surveyMode != 'SEFT' %}
             {% if collection_instruments %}
+                {% set surveyTableDataHeader = [] %}
+                {% set ths = 
+                    [ 
+                        {
+                            "value": "Collection instruments (" + collection_instruments|length|string + ")",
+                            "thClasses": "ons-u-fs-r--b"
+                        },
+                    ]
+                %}  
+                {% if surveyEditPermission %} 
+                    {% do ths.append(
+                        {
+                            "value": " ",
+                            "class": "ons-u-vh"
+                        },
+                    ) %} 
+                {% endif %}
                 {% set surveyTableData = {
                     "variants": ['compact', 'responsive'],
                     "id": "collection-instruments-table",
                     "caption": 'Collection instruments for this exercise',
                     "hideCaption": true,
-                    "ths": [
-                        {
-                            "value": "Collection instruments (" + collection_instruments|length|string + ")",
-                            "thClasses": "ons-u-fs-r--b"
-                        },
-                        {
-                            "value": " ",
-                            "class": "ons-u-vh"
-                        } if surveyEditPermission else
-                            [
-                                {
-                                    "value": "Collection instruments (" + collection_instruments|length|string + ")",
-                                    "thClasses": "ons-u-fs-r--b"
-                                }
-                            ]
-                    ]
+                    "ths": ths
                 } %}
                 {% set surveyTableDataRows = [] %}
                 {% for collection_instrument in collection_instruments %}
@@ -83,24 +90,27 @@
                             '</form>'
                         %}
                     {% endif %}
-                    {% do surveyTableDataRows.append(
-                        {
-                            "tds": [
-                                {
-                                    "value": collection_instrument.file_name
-                                },
-                                {
-                                    "value": formData,
-                                    "tdClasses": "ons-u-vh-right"
-                                } if surveyEditPermission else
-                                    [
-                                        {
-                                            "value": collection_instrument.file_name
-                                        }
-                                    ]
-                            ]
-                        }
-                    ) %}
+                    {% set tds = 
+                        [ 
+                            {
+                                "value": collection_instrument.file_name
+                            },
+                        ]
+                    %}  
+                    {% if surveyEditPermission %} 
+                        {% do tds.append(
+                            {
+                                "value": formData,
+                                "tdClasses": "ons-u-vh-right"
+                            },
+                        ) %} 
+                    {% endif %}   
+                    {% do surveyTableDataRows.append( 
+                        { 
+                            "tds": tds 
+                        } 
+                    )%}
+  
                 {% endfor %}
                 {% do surveyTableData | setAttribute("trs", surveyTableDataRows) %}
                 {{ onsTable(surveyTableData) }}

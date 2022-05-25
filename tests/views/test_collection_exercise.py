@@ -2163,7 +2163,6 @@ class TestCollectionExercise(ViewTestCase):
         self.assertIn("No sample file uploaded".encode(), response.data)
         self.assertIn("Upload sample file".encode(), response.data)
         self.assertIn("SEFT collection instruments".encode(), response.data)
-        self.assertIn("0".encode(), response.data)
         self.assertIn("Upload SEFT files".encode(), response.data)
         self.assertIn("Done".encode(), response.data)
 
@@ -2222,7 +2221,6 @@ class TestCollectionExercise(ViewTestCase):
         self.assertIn("Sample loaded".encode(), response.data)
         self.assertIn("Replace sample file".encode(), response.data)
         self.assertIn("SEFT collection instruments".encode(), response.data)
-        self.assertIn("0".encode(), response.data)
         self.assertIn("Upload SEFT files".encode(), response.data)
         self.assertIn("Done".encode(), response.data)
 
@@ -2249,8 +2247,7 @@ class TestCollectionExercise(ViewTestCase):
         self.assertIn("Sample loaded".encode(), response.data)
         self.assertNotIn("Replace sample file".encode(), response.data)
         self.assertIn("SEFT collection instruments".encode(), response.data)
-        self.assertIn("0".encode(), response.data)
-        self.assertIn("Upload SEFT files".encode(), response.data)
+        self.assertIn("View SEFT files".encode(), response.data)
         self.assertIn("Done".encode(), response.data)
 
     @requests_mock.mock()
@@ -2341,8 +2338,6 @@ class TestCollectionExercise(ViewTestCase):
         self.assertIn("Sample loaded".encode(), response.data)
         self.assertIn("Total businesses".encode(), response.data)
         self.assertIn("Collection instruments".encode(), response.data)
-        self.assertIn("8\n".encode(), response.data)
-        self.assertIn("1\n".encode(), response.data)
         self.assertIn("Done".encode(), response.data)
 
     @requests_mock.mock()

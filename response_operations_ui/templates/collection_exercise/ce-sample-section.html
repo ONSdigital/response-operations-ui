@@ -67,7 +67,7 @@
                 {% endif %}
             </div>
         {% endif %}
-        {% if surveyEditPermission and not locked %}
+        {% if not locked and surveyEditPermission %}
             {{
                 onsButton({
                     "text": 'Replace sample file',
