@@ -92,6 +92,15 @@ def manage_account():
     return render_template("admin/manage-account.html", name=name, permissions=permissions)
 
 
+@admin_bp.route("/manage-account", methods=["POST"])
+@login_required
+def update_account_permissions():
+    if not user_has_permission("users.admin"):
+        logger.exception("Manage User Account request requested but unauthorised. ")
+        abort(401)
+    
+
+
 def _get_refine_user_list(users: list):
     user_list = []
     for user in users:
