@@ -1,5 +1,23 @@
 
-<h1 name="page-ce-title">{{survey.shortName}} {{ce.exerciseRef}}</h1>
+<h1 name="page-ce-title">{{ce.exerciseRef}} Collection Exercise | {{survey.shortName}} {{survey.surveyRef}}</h1>
+{% set status_event = '' %}
+{% if ce.state == 'Ended' %}
+    {% set class = 'ons-status ons-status--dead' %}
+{% elif ce.state == 'Live' %}
+    {% set class = 'ons-status ons-status--success' %}
+    {% if ce.event_status == 'Processing' or ce.event_status == 'Retrying' %}
+      {% set class = 'ons-status ons-status--pending' %}
+      {% set status_event = '(' + exercise.event_status + ')' %}
+    {% endif %}
+    {% if ce.event_status == 'Failed' %}
+      {% set class = 'ons-status ons-status--error' %}
+      {% set status_event = '(' + exercise.event_status + ')' %}
+    {% endif %}
+{% elif ce.state == 'Created' or ce.state == 'Scheduled'%}
+    {% set class = 'ons-status ons-status--info' %}
+{% else %}
+    {% set class = 'ons-status ons-status--info' %}
+{% endif %}
 {{
     onsMetadata({
         "metadataLabel": survey.longName + "information",
@@ -10,7 +28,7 @@
                 "term": "Status:",
                 "descriptions": [
                     {
-                        "description": ce.state,
+                        "description": '<span class="'+ class + '">'+ ce.state + status_event +'</span>',
                         "id": "ce_status"
                     }
                 ]
@@ -19,7 +37,7 @@
                 "term": "Report:" if ce.state|upper == "LIVE",
                 "descriptions": [
                     {
-                        "description": '<a href="' + url_for('collection_exercise_bp.response_chasing', ce_id=ce.id, survey_id=survey.id) + '"><svg class="ons-svg-icon" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" focusable="false"><path d="M19 9h-4V3H9v6H5l7 7 7-7zM5 18v2h14v-2H5z"/><path d="M0 0h24v24H0z" fill="none"/></svg> Response chasing</a>' if (ce.state|upper == "LIVE" or ce.state|upper == "ENDED"),
+                        "description": '<a href="' + url_for('collection_exercise_bp.response_chasing', ce_id=ce.id, survey_id=survey.id) + '"><svg class="ons-svg-icon" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" focusable="false"><path d="M19 9h-4V3H9v6H5l7 7 7-7zM5 18v2h14v-2H5z"/><path d="M0 0h24v24H0z" fill="none"/></svg> Download response report</a>' if (ce.state|upper == "LIVE" or ce.state|upper == "ENDED"),
                         "id": "ce_status"
                     }
                 ]

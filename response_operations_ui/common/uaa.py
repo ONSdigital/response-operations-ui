@@ -2,9 +2,11 @@ import logging
 from json import JSONDecodeError
 
 import requests
-from flask import current_app
+from flask import abort, current_app
 from requests import HTTPError
 from structlog import wrap_logger
+
+from response_operations_ui.controllers import uaa_controller
 
 logger = wrap_logger(logging.getLogger(__name__))
 
@@ -36,3 +38,9 @@ def get_uaa_public_key():
     if not current_app.config.get("UAA_PUBLIC_KEY"):
         current_app.config["UAA_PUBLIC_KEY"] = request_uaa_public_key(current_app)
     return current_app.config["UAA_PUBLIC_KEY"]
+
+
+def verify_permission(required_permission, session):
+    if not uaa_controller.user_has_permission(required_permission):
+        logger.error("User has insufficient permissions to access this page", user_id=session["user_id"])
+        abort(500)

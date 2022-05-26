@@ -5,9 +5,9 @@ from datetime import datetime
 import iso8601
 from dateutil import tz
 from dateutil.parser import parse
-from flask import Blueprint, abort
-from flask import current_app as app
 from flask import (
+    Blueprint,
+    abort,
     flash,
     jsonify,
     make_response,
@@ -31,6 +31,7 @@ from response_operations_ui.common.mappers import (
     format_short_name,
     map_collection_exercise_state,
 )
+from response_operations_ui.common.uaa import verify_permission
 from response_operations_ui.common.validators import valid_date_for_event
 from response_operations_ui.controllers import (
     collection_exercise_controllers,
@@ -55,6 +56,21 @@ logger = wrap_logger(logging.getLogger(__name__))
 collection_exercise_bp = Blueprint(
     "collection_exercise_bp", __name__, static_folder="static", template_folder="templates"
 )
+
+
+def filter_eq_ci_selectors(eq_ci_selectors: list[dict], collection_instruments: list[dict]) -> list[dict]:
+    """
+    Takes all eQ collection instruments available for the collection exercise as a list and the already linked
+    instruments and returns a list of the collection instruments that have not yet been linked for this exercise
+
+    :param eq_ci_selectors: list of available eQ collection instruments
+    :param collection_instruments: list of linked eQ collection instruments
+    :returns eq_ci_selectors: list of eQ collection instruments available to be linked to this exercise
+    """
+    for collection_instrument in collection_instruments:
+        if collection_instrument in eq_ci_selectors:
+            eq_ci_selectors.remove(collection_instrument)
+    return eq_ci_selectors
 
 
 def build_collection_exercise_details(short_name, period):
@@ -96,15 +112,6 @@ def build_collection_exercise_details(short_name, period):
 @login_required
 def view_collection_exercise(short_name, period):
     ce_details = build_collection_exercise_details(short_name, period)
-    breadcrumbs = [
-        {"text": "Surveys", "url": "/surveys"},
-        {
-            "text": f"{ce_details['survey']['surveyRef']} {ce_details['survey']['shortName']}",
-            "url": f"/surveys/{ce_details['survey']['shortName'].replace(' ', '')}",
-        },
-        {"text": f"{ce_details['collection_exercise']['exerciseRef']}"},
-    ]
-
     ce_state = ce_details["collection_exercise"]["state"]
     if ce_details["survey"]["surveyMode"] == "EQ":
         show_set_live_button = (
@@ -118,10 +125,6 @@ def view_collection_exercise(short_name, period):
     locked = ce_state in ("LIVE", "READY_FOR_LIVE", "EXECUTION_STARTED", "VALIDATED", "EXECUTED", "ENDED")
     processing = ce_state in ("EXECUTION_STARTED", "EXECUTED", "VALIDATED")
     validation_failed = ce_state == "FAILEDVALIDATION"
-    validation_errors = ce_details["collection_exercise"]["validationErrors"]
-    missing_ci = validation_errors and any(
-        "MISSING_COLLECTION_INSTRUMENT" in unit["errors"] for unit in validation_errors
-    )
     ce_details["collection_exercise"]["state"] = map_collection_exercise_state(ce_state)  # NOQA
     _format_ci_file_name(ce_details["collection_instruments"], ce_details["survey"])
 
@@ -129,20 +132,16 @@ def view_collection_exercise(short_name, period):
 
     success_panel = request.args.get("success_panel")
     info_panel = request.args.get("info_panel")
-    sorted_nudge_list = get_existing_sorted_nudge_events(ce_details["events"])
     error_json = _get_error_from_session()
     _delete_sample_data_if_required()
 
     return render_template(
         "collection_exercise/collection-exercise.html",
-        breadcrumbs=breadcrumbs,
         ce=ce_details["collection_exercise"],
         collection_instruments=ce_details["collection_instruments"],
-        eq_ci_selectors=ce_details["eq_ci_selectors"],
         error=error_json,
         events=ce_details["events"],
         locked=locked,
-        missing_ci=missing_ci,
         processing=processing,
         sample=ce_details["sample_summary"],
         show_set_live_button=show_set_live_button,
@@ -152,8 +151,6 @@ def view_collection_exercise(short_name, period):
         show_msg=show_msg,
         ci_classifiers=ce_details["ci_classifiers"]["classifierTypes"],
         info_panel=info_panel,
-        existing_nudge=sorted_nudge_list if len(sorted_nudge_list) > 0 else [],
-        is_eq_v3_enabled=app.config["EQ_VERSION_ENABLED"],
     )
 
 
@@ -213,19 +210,25 @@ def get_existing_sorted_nudge_events(events):
 @collection_exercise_bp.route("/<short_name>/<period>", methods=["POST"])
 @login_required
 def post_collection_exercise(short_name, period):
+    if "ready-for-live" in request.form:
+        return _set_ready_for_live(short_name, period)
+    return view_collection_exercise(short_name, period)
+
+
+@collection_exercise_bp.route("/<short_name>/<period>/view-sample-ci", methods=["POST"])
+@login_required
+def post_sample_ci(short_name, period):
     if "load-sample" in request.form:
         return _upload_sample(short_name, period)
     elif "load-ci" in request.form:
         return _upload_collection_instrument(short_name, period)
-    elif "ready-for-live" in request.form:
-        return _set_ready_for_live(short_name, period)
     elif "select-ci" in request.form:
         return _select_collection_instrument(short_name, period)
     elif "unselect-ci" in request.form:
         return _unselect_collection_instrument(short_name, period)
     if "eq-version" in request.form:
         return _update_eq_version(short_name, period)
-    return view_collection_exercise(short_name, period)
+    return get_view_sample_ci(short_name, period)
 
 
 @collection_exercise_bp.route("response_chasing/<ce_id>/<survey_id>", methods=["GET"])
@@ -292,7 +295,7 @@ def _upload_sample(short_name, period):
 
     return redirect(
         url_for(
-            "collection_exercise_bp.view_collection_exercise",
+            "collection_exercise_bp.get_view_sample_ci",
             short_name=short_name,
             period=period,
             error=error,
@@ -333,7 +336,7 @@ def _select_collection_instrument(short_name, period):
 
     return redirect(
         url_for(
-            "collection_exercise_bp.view_collection_exercise",
+            "collection_exercise_bp.get_view_sample_ci",
             short_name=short_name,
             period=period,
             success_panel=success_panel,
@@ -350,7 +353,7 @@ def _update_eq_version(short_name, period):
         flash("eQ version updated successfully.")
         return redirect(
             url_for(
-                "collection_exercise_bp.view_collection_exercise",
+                "collection_exercise_bp.get_view_sample_ci",
                 period=period,
                 short_name=short_name,
                 success_panel=f"eQ version updated to {eq_version}.",
@@ -358,10 +361,9 @@ def _update_eq_version(short_name, period):
         )
     return redirect(
         url_for(
-            "collection_exercise_bp.view_collection_exercise",
+            "collection_exercise_bp.get_view_sample_ci",
             period=period,
             short_name=short_name,
-            info_panel="eQ version is not updated as the selected version and existing version are same.",
         )
     )
 
@@ -409,9 +411,9 @@ def _upload_collection_instrument(short_name, period):
 
     return redirect(
         url_for(
-            "collection_exercise_bp.view_collection_exercise",
-            short_name=short_name,
+            "collection_exercise_bp.get_seft_collection_instrument",
             period=period,
+            short_name=short_name,
             success_panel=success_panel,
         )
     )
@@ -421,7 +423,7 @@ def _unselect_collection_instrument(short_name, period):
     success_panel = _unlink_collection_instrument()
     return redirect(
         url_for(
-            "collection_exercise_bp.view_collection_exercise",
+            "collection_exercise_bp.get_view_sample_ci",
             short_name=short_name,
             period=period,
             success_panel=success_panel,
@@ -506,7 +508,7 @@ def _validate_sample():
 def _format_sample_summary(sample):
     if sample and sample.get("ingestDateTime"):
         submission_datetime = localise_datetime(iso8601.parse_date(sample["ingestDateTime"]))
-        submission_time = submission_datetime.strftime("%I:%M%p on %B %d, %Y")
+        submission_time = submission_datetime.strftime("%d %B %Y %I:%M%p")
         sample["ingestDateTime"] = submission_time
 
     return sample
@@ -526,6 +528,7 @@ def _get_form_type(file_name):
 @collection_exercise_bp.route("/<short_name>/<period>/edit-collection-exercise-details", methods=["GET"])
 @login_required
 def view_collection_exercise_details(short_name, period):
+    verify_permission("surveys.edit", session)
     logger.info("Retrieving collection exercise data for form", short_name=short_name, period=period)
     ce_details = build_collection_exercise_details(short_name, period)
     form = EditCollectionExerciseDetailsForm(form=request.form)
@@ -550,6 +553,7 @@ def view_collection_exercise_details(short_name, period):
 @collection_exercise_bp.route("/<short_name>/<period>/edit-collection-exercise-details", methods=["POST"])
 @login_required
 def edit_collection_exercise_details(short_name, period):
+    verify_permission("surveys.edit", session)
     form = EditCollectionExerciseDetailsForm(form=request.form)
     if not form.validate():
         logger.info(
@@ -592,6 +596,7 @@ def edit_collection_exercise_details(short_name, period):
 @collection_exercise_bp.route("/<survey_ref>/<short_name>/create-collection-exercise", methods=["GET"])
 @login_required
 def get_create_collection_exercise_form(survey_ref, short_name):
+    verify_permission("surveys.edit", session)
     logger.info("Retrieving survey data for form", short_name=short_name, survey_ref=survey_ref)
     form = CreateCollectionExerciseDetailsForm(form=request.form)
     survey_details = survey_controllers.get_survey(short_name)
@@ -610,6 +615,7 @@ def get_create_collection_exercise_form(survey_ref, short_name):
 @collection_exercise_bp.route("/<survey_ref>/<short_name>/create-collection-exercise", methods=["POST"])
 @login_required
 def create_collection_exercise(survey_ref, short_name):
+    verify_permission("surveys.edit", session)
     logger.info("Attempting to create collection exercise", survey_ref=survey_ref, survey=short_name)
     ce_form = CreateCollectionExerciseDetailsForm(form=request.form)
     form = request.form
@@ -673,6 +679,7 @@ def create_collection_exercise(survey_ref, short_name):
 @collection_exercise_bp.route("/<short_name>/<period>/<ce_id>/confirm-create-event/<tag>", methods=["GET"])
 @login_required
 def get_create_collection_event_form(short_name, period, ce_id, tag):
+    verify_permission("surveys.edit", session)
     logger.info(
         "Retrieving form for create collection exercise event",
         short_name=short_name,
@@ -717,6 +724,7 @@ def get_create_collection_event_form(short_name, period, ce_id, tag):
 @collection_exercise_bp.route("/<short_name>/<period>/<ce_id>/create-event/<tag>", methods=["POST", "GET"])
 @login_required
 def create_collection_exercise_event(short_name, period, ce_id, tag):
+    verify_permission("surveys.edit", session)
     if request.method == "GET":
         redirect(
             url_for(
@@ -796,6 +804,70 @@ def get_event_name(tag):
     return event_names.get(tag)
 
 
+@collection_exercise_bp.route("/<short_name>/<period>/view-sample-ci", methods=["GET"])
+@login_required
+def get_view_sample_ci(short_name, period):
+    ce_details = build_collection_exercise_details(short_name, period)
+    ce_state = ce_details["collection_exercise"]["state"]
+    ce_details["eq_ci_selectors"] = filter_eq_ci_selectors(
+        ce_details["eq_ci_selectors"], ce_details["collection_instruments"]
+    )
+
+    locked = ce_state in ("LIVE", "READY_FOR_LIVE", "EXECUTION_STARTED", "VALIDATED", "EXECUTED", "ENDED")
+    _format_ci_file_name(ce_details["collection_instruments"], ce_details["survey"])
+
+    error_json = _get_error_from_session()
+    _delete_sample_data_if_required()
+    show_msg = request.args.get("show_msg")
+
+    success_panel = request.args.get("success_panel")
+    info_panel = request.args.get("info_panel")
+
+    return render_template(
+        "collection_exercise/ce-view-sample-ci.html",
+        ce=ce_details["collection_exercise"],
+        collection_instruments=ce_details["collection_instruments"],
+        error=error_json,
+        locked=locked,
+        sample=ce_details["sample_summary"],
+        survey=ce_details["survey"],
+        success_panel=success_panel,
+        show_msg=show_msg,
+        eq_ci_selectors=ce_details["eq_ci_selectors"],
+        info_panel=info_panel,
+    )
+
+
+@collection_exercise_bp.route("/<short_name>/<period>/upload-sample-file", methods=["GET"])
+@login_required
+def get_upload_sample_file(short_name, period):
+    verify_permission("surveys.edit", session)
+    ce_details = build_collection_exercise_details(short_name, period)
+    ce_state = ce_details["collection_exercise"]["state"]
+    ce_details["collection_exercise"]["state"] = map_collection_exercise_state(ce_state)  # NOQA
+    locked = ce_state in ("LIVE", "READY_FOR_LIVE", "EXECUTION_STARTED", "VALIDATED", "EXECUTED", "ENDED")
+    success_panel = request.args.get("success_panel")
+    show_msg = request.args.get("show_msg")
+    error_json = _get_error_from_session()
+    return render_template(
+        "collection_exercise/ce-upload-sample-file.html",
+        ce=ce_details["collection_exercise"],
+        error=error_json,
+        locked=locked,
+        sample=ce_details["sample_summary"],
+        survey=ce_details["survey"],
+        success_panel=success_panel,
+        show_msg=show_msg,
+    )
+
+
+@collection_exercise_bp.route("/<short_name>/<period>/upload-sample-file", methods=["POST"])
+@login_required
+def post_upload_sample_file(short_name, period):
+    verify_permission("surveys.edit", session)
+    return _upload_sample(short_name, period)
+
+
 @collection_exercise_bp.route("/<short_name>/<period>/confirm-remove-sample", methods=["GET"])
 @login_required
 def get_confirm_remove_sample(short_name, period):
@@ -807,6 +879,7 @@ def get_confirm_remove_sample(short_name, period):
 @collection_exercise_bp.route("/<short_name>/<period>/confirm-remove-sample", methods=["POST"])
 @login_required
 def remove_loaded_sample(short_name, period):
+    verify_permission("surveys.edit", session)
     ce_details = build_collection_exercise_details(short_name, period)
     sample_summary_id = ce_details["sample_summary"]["id"]
     collection_exercise_id = ce_details["collection_exercise"]["id"]
@@ -837,9 +910,7 @@ def remove_loaded_sample(short_name, period):
         session["error"] = json.dumps(
             {"section": "head", "header": "Error: Failed to remove sample", "message": "Please try again"}
         )
-        return redirect(
-            url_for("collection_exercise_bp.view_collection_exercise", short_name=short_name, period=period)
-        )
+        return redirect(url_for("collection_exercise_bp.get_view_sample_ci", short_name=short_name, period=period))
 
     # If the sample summary call fails, the only consequence will be orphaned data.  We'll write the id to the session,
     # and try again after the redirect, only removing it from the session once it's been deleted.  There's a chance
@@ -852,7 +923,7 @@ def remove_loaded_sample(short_name, period):
 
     return redirect(
         url_for(
-            "collection_exercise_bp.view_collection_exercise",
+            "collection_exercise_bp.get_upload_sample_file",
             short_name=short_name,
             period=period,
             success_panel="Sample removed",
@@ -867,6 +938,14 @@ def get_seft_collection_instrument(short_name, period):
     show_msg = request.args.get("show_msg")
     success_panel = request.args.get("success_panel")
     info_panel = request.args.get("info_panel")
+    locked = ce_details["collection_exercise"]["state"] in (
+        "LIVE",
+        "READY_FOR_LIVE",
+        "EXECUTION_STARTED",
+        "VALIDATED",
+        "EXECUTED",
+        "ENDED",
+    )
     error_json = _get_error_from_session()
     return render_template(
         "ce-seft-instrument.html",
@@ -878,12 +957,14 @@ def get_seft_collection_instrument(short_name, period):
         info_panel=info_panel,
         show_msg=show_msg,
         period=period,
+        locked=locked,
     )
 
 
 @collection_exercise_bp.route("/<short_name>/<period>/load-collection-instruments", methods=["POST"])
 @login_required
 def post_seft_collection_instrument(short_name, period):
+    verify_permission("surveys.edit", session)
     if "unselect-ci" in request.form:
         return _unselect_seft_collection_instrument(short_name, period)
     return _upload_seft_collection_instrument(short_name, period)

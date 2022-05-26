@@ -31,7 +31,6 @@ url_uaa_user_password_change = f"{TestingConfig.UAA_SERVICE_URL}/Users/{user_id}
 url_uaa_create_account = f"{TestingConfig.UAA_SERVICE_URL}/Users"
 
 
-# noinspection DuplicatedCode
 class TestAccounts(unittest.TestCase):
     def setUp(self):
         payload = {"user_id": user_id, "aud": "response_operations"}
