@@ -20,9 +20,7 @@ window.readCSV.__private__.getOutputTemplate = function(businessCount, ciCount) 
 
 window.readCSV.__private__.renderUI = function(businessCount, ciCount) {
     document.getElementById('sample-preview').innerHTML = window.readCSV.__private__.getOutputTemplate(businessCount, ciCount);
-    document.getElementById('btn-check-sample-contents').style.display = 'none';
-    document.getElementById('btn-load-sample').style.display = 'inline-block';
-    document.getElementById('btn-cancel-load-sample').style.display = 'inline-block';
+    document.getElementById('btn-upload-sample').disabled = false;
 };
 
 window.readCSV.__private__.errorHandler = function(evt) {
@@ -81,18 +79,8 @@ window.readCSV.handleFiles = function(files, classifiers) {
     }
 };
 
-window.readCSV.cancelLoadSample = function() {
-    document.getElementById('sample-preview').innerHTML = '';
-    document.getElementById('form-load-sample').reset();
-    document.getElementById('btn-check-sample-contents').style.display = 'block';
-    document.getElementById('btn-load-sample').style.display = 'none';
-    document.getElementById('btn-cancel-load-sample').style.display = 'none';
-    document.getElementById('sampleFile').focus();
-};
-
-
 window.readCSV.handleFileUpload = function() {
-    document.getElementById('btn-load-sample').classList.add('is-loading');
-    document.getElementById('btn-load-sample').style.pointerEvents = "none";
-
+    document.getElementById('btn-upload-sample').classList.add('is-loading');
+    document.getElementById('btn-upload-sample').style.pointerEvents = "none";
+    document.getElementById('btn-upload-sample').disabled = false;
 };

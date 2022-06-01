@@ -69,6 +69,12 @@ user_permission_surveys_edit_json = {
 }
 
 
+def sign_in_with_permission(self, mock_request, permission):
+    mock_request.post(url_sign_in_data, json={"access_token": self.access_token}, status_code=201)
+    mock_request.get(url_permission_url, json=permission, status_code=200)
+    self.client.post("/sign-in", follow_redirects=True, data={"username": "user", "password": "pass"})
+
+
 class TestSurvey(ViewTestCase):
     def setup_data(self):
         payload = {"user_id": "test-id", "aud": "response_operations"}
@@ -259,6 +265,7 @@ class TestSurvey(ViewTestCase):
 
     @requests_mock.mock()
     def test_update_survey_details_success(self, mock_request):
+        sign_in_with_permission(self, mock_request, user_permission_surveys_edit_json)
         changed_survey_details = {"hidden_survey_ref": "222", "long_name": "New Survey Long Name", "short_name": "QBX"}
         mock_request.get(url_get_survey_list, json=survey_list)
         mock_request.put(url_update_survey_details)
@@ -272,17 +279,19 @@ class TestSurvey(ViewTestCase):
 
     @requests_mock.mock()
     def test_update_survey_details_failure(self, mock_request):
+        sign_in_with_permission(self, mock_request, user_permission_surveys_edit_json)
         changed_survey_details = {"hidden_survey_ref": "222", "long_name": "New Survey Long Name", "short_name": "QBX"}
         mock_request.put(url_update_survey_details, status_code=500)
 
         response = self.client.post("/surveys/edit-survey-details/QBS", data=changed_survey_details)
 
         request_history = mock_request.request_history
-        self.assertEqual(len(request_history), 1)
+        self.assertEqual(len(request_history), 5)
         self.assertEqual(response.status_code, 500)
 
     @requests_mock.mock()
     def test_update_survey_details_failed_validation(self, mock_request):
+        sign_in_with_permission(self, mock_request, user_permission_surveys_edit_json)
         changed_survey_details = {"hidden_survey_ref": "222", "long_name": "New Survey Long Name", "short_name": "Q BX"}
         mock_request.get(url_get_survey_list, json=survey_list)
         mock_request.put(url_update_survey_details)
@@ -301,6 +310,7 @@ class TestSurvey(ViewTestCase):
 
     @requests_mock.mock()
     def test_get_survey_details(self, mock_request):
+        sign_in_with_permission(self, mock_request, user_permission_surveys_edit_json)
         mock_request.get(url_get_survey_list, json=survey_list)
         mock_request.get(url_get_survey_by_short_name, json=survey_info["survey"])
 
@@ -311,6 +321,7 @@ class TestSurvey(ViewTestCase):
 
     @requests_mock.mock()
     def test_get_survey_create(self, mock_request):
+        sign_in_with_permission(self, mock_request, user_permission_surveys_edit_json)
         mock_request.get(url_get_legal_basis_list, json=legal_basis_list)
 
         response = self.client.get("surveys/create")
@@ -332,6 +343,7 @@ class TestSurvey(ViewTestCase):
 
     @requests_mock.mock()
     def test_create_survey_ok(self, mock_request):
+        sign_in_with_permission(self, mock_request, user_permission_surveys_edit_json)
         create_survey_request = {
             "survey_ref": "999",
             "long_name": "Test Survey",
@@ -365,6 +377,7 @@ class TestSurvey(ViewTestCase):
 
     @requests_mock.mock()
     def test_create_survey_conflict(self, mock_request):
+        sign_in_with_permission(self, mock_request, user_permission_surveys_edit_json)
         error_message = "XXX ERROR MESSAGE XXX"
         create_survey_request = {
             "survey_ref": "999",
@@ -385,6 +398,7 @@ class TestSurvey(ViewTestCase):
 
     @requests_mock.mock()
     def test_create_survey_bad_request(self, mock_request):
+        sign_in_with_permission(self, mock_request, user_permission_surveys_edit_json)
         error_message = "XXX ERROR MESSAGE XXX"
         create_survey_request = {
             "survey_ref": "999",
@@ -405,6 +419,7 @@ class TestSurvey(ViewTestCase):
 
     @requests_mock.mock()
     def test_create_survey_bad_survey_ref(self, mock_request):
+        sign_in_with_permission(self, mock_request, user_permission_surveys_edit_json)
         create_survey_request = {
             "survey_ref": "BAD!",
             "long_name": "Test Survey",
@@ -424,6 +439,7 @@ class TestSurvey(ViewTestCase):
 
     @requests_mock.mock()
     def test_create_survey_spaces_shortname(self, mock_request):
+        sign_in_with_permission(self, mock_request, user_permission_surveys_edit_json)
         create_survey_request = {
             "survey_ref": "999",
             "long_name": "Test Survey",
@@ -443,6 +459,7 @@ class TestSurvey(ViewTestCase):
 
     @requests_mock.mock()
     def test_create_survey_html_shortname(self, mock_request):
+        sign_in_with_permission(self, mock_request, user_permission_surveys_edit_json)
         create_survey_request = {
             "survey_ref": "999",
             "long_name": "Test Survey",
@@ -462,6 +479,7 @@ class TestSurvey(ViewTestCase):
 
     @requests_mock.mock()
     def test_create_survey_html_longname(self, mock_request):
+        sign_in_with_permission(self, mock_request, user_permission_surveys_edit_json)
         create_survey_request = {
             "survey_ref": "999",
             "long_name": "<b>Test Survey</b>",
@@ -481,6 +499,7 @@ class TestSurvey(ViewTestCase):
 
     @requests_mock.mock()
     def test_create_survey_internal_server_error(self, mock_request):
+        sign_in_with_permission(self, mock_request, user_permission_surveys_edit_json)
         create_survey_request = {
             "survey_ref": "999",
             "long_name": "Test Survey",
@@ -494,11 +513,12 @@ class TestSurvey(ViewTestCase):
         response = self.client.post("surveys/create", data=create_survey_request)
 
         request_history = mock_request.request_history
-        self.assertEqual(len(request_history), 2)
+        self.assertEqual(len(request_history), 6)
         self.assertEqual(response.status_code, 500)
 
     @requests_mock.mock()
     def test_update_survey_details_failed_validation_short_name_has_spaces(self, mock_request):
+        sign_in_with_permission(self, mock_request, user_permission_surveys_edit_json)
         changed_survey_details = {
             "hidden_survey_ref": "222",
             "long_name": "New Survey Long Name",
@@ -545,6 +565,7 @@ class TestSurvey(ViewTestCase):
 
     @requests_mock.mock()
     def test_link_collection_instrument_success(self, mock_request):
+        sign_in_with_permission(self, mock_request, user_permission_surveys_edit_json)
         changed_survey_details = {"formtype": "0001"}
         data = [
             {
@@ -563,6 +584,7 @@ class TestSurvey(ViewTestCase):
 
     @requests_mock.mock()
     def test_link_collection_instrument_duplicate(self, mock_request):
+        sign_in_with_permission(self, mock_request, user_permission_surveys_edit_json)
         changed_survey_details = {"formtype": "0001"}
         data = [
             {

@@ -53,7 +53,7 @@ describe('CSV Reader tests', () => {
 
                 samplePreview.id = 'sample-preview';
                 buttonCheckSampleContents.id = 'btn-check-sample-contents';
-                buttonLoadSample.id = 'btn-load-sample';
+                buttonLoadSample.id = 'btn-upload-sample';
                 buttonCancelLoadSample.id = 'btn-cancel-load-sample';
 
                 [
@@ -292,7 +292,7 @@ describe('CSV Reader tests', () => {
 
             it('should hide the load sample button', () => {
                 window.readCSV.cancelLoadSample();
-                expect(document.getElementById('btn-load-sample').style.display).toEqual('none');
+                expect(document.getElementById('btn-upload-sample').style.display).toEqual('none');
             });
 
             it('should hide the load cancel button', () => {

@@ -78,7 +78,7 @@ button.hidden {
 }
 
 #btn-check-sample-contents,
-#btn-load-sample,
+#btn-upload-sample,
 #btn-cancel-load-sample,
 #btn-add-ci,
 #btn-load-ci,
@@ -235,6 +235,14 @@ table.ce-cis .tbl-ce-label {
 
 .ci-list th {
     border-bottom: 1px solid #222;
+}
+
+.ce-dates-table{
+    table-layout: fixed;
+}
+
+.ce-dates-table th td{
+    width: 33.3%;
 }
 
 /* Collection exercise - Reporting unit styles */

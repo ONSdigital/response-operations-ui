@@ -1,0 +1,263 @@
+<section class="ce-section ce-details ons-u-mb-l">
+    <h2 class="ons-u-fs-r--b ons-u-pt-m">Action dates</h2>
+    {% set surveyEditPermission = hasPermission('surveys.edit') %}  
+    {% set tblHeaders =  
+        [ 
+            {  
+                "value": "Event",
+                "thClasses": "ons-u-vh" 
+            }, 
+            { 
+                "value": "Date",
+                "thClasses": "ons-u-vh"
+            }
+        ]
+    %}
+    {% if surveyEditPermission %}
+        {% do tblHeaders.append( 
+                { 
+                    "value": "Action",
+                    "thClasses": "ons-u-vh"
+                }
+         )%}
+    {% endif %}
+    {% set surveyTableData = {
+        "variants": ['compact', 'responsive'],
+        "id": 'tbl-ce-details',
+        "caption": 'Dates for this collection exercise',
+        "hideCaption": true,
+        "ths": tblHeaders,
+        "tableClasses": "ce-dates-table"
+    } %}
+
+    {% set surveyTableDataRows = [] %}
+    {% set dateGroups = ['mps', 'go_live', 'return_by', 'reminder', 'reminder2', 'reminder3', 'exercise_end', 'nudge_email_0', 'nudge_email_2', 'nudge_email_3', 'nudge_email_4', 'nudge_email_5'] %}
+    {% set nudge = '' %}
+    {% if not events.nudge_email_0 %}
+        {% set nudge = 'nudge_email_0' %}
+    {% elif not events.nudge_email_1 %}
+        {% set nudge = 'nudge_email_1' %}
+    {% elif not events.nudge_email_2 %}
+        {% set nudge = 'nudge_email_2' %}
+    {% elif not events.nudge_email_3 %}
+        {% set nudge = 'nudge_email_3' %}
+    {% elif not events.nudge_email_4%}
+        {% set nudge = 'nudge_email_4' %}
+    {% endif %}
+    {% for dateGroup in dateGroups %}
+        {% set label = '' %}
+        {% set eventIsInFuture = False %}
+        {% if dateGroup == 'mps' %}
+            {% set label = 'Main print selection' %}
+            {% set event = events.mps %}
+            {% set name = 'mps-date' %}
+            {% set value = 'date' %}
+            {% if event %}
+                {% set eventDay = event.day %}
+                {% set eventDate = event.date %}
+                {% set eventTime = event.time %}
+            {% endif %}
+        {% elif dateGroup == 'go_live' %}
+            {% set label = 'Go live' %}
+            {% set event = events.go_live %}
+            {% set name = 'go-live-date' %}
+            {% set value = 'date' %}
+            {% if event %}
+                {% set eventDay = event.day %}
+                {% set eventDate = event.date %}
+                {% set eventTime = event.time %}
+            {% endif %}
+        {% elif dateGroup == 'return_by' %}
+            {% set label = 'Return by' %}
+            {% set event = events.return_by %}
+            {% set name = 'return-by-date' %}
+            {% set value = 'date' %}
+            {% if event %}
+                {% set eventDay = event.day %}
+                {% set eventDate = event.date %}
+                {% set eventTime = event.time %}
+            {% endif %}
+        {% elif dateGroup == 'reminder' %}
+            {% if surveyEditPermission %}
+                {% set label = ' ' %}
+            {% endif %}
+            {% set event = events.reminder %}
+            {% set name = 'first-reminder-date' %}
+            {% set value = 'reminder' %}
+            {% set label = 'First reminder' %}
+            {% if event %}
+                {% set eventDay = event.day %}
+                {% set eventDate = event.date %}
+                {% set eventTime = event.time %}
+                {% set eventIsInFuture = event.is_in_future %}
+                {% set value = 'date' %}
+            {% endif %}
+        {% elif dateGroup == 'reminder2' %}
+            {% set event = events.reminder2 %}
+            {% set value = 'reminder' %}
+            {% if events.reminder %}
+                {% set showReminder = true %}
+                {% set label = ' ' %}
+                {% set name = 'second-reminder-date' %}
+            {% endif %}
+            {% if event %}
+                {% set label = 'Second reminder' %}
+                {% set eventDay = event.day %}
+                {% set eventDate = event.date %}
+                {% set eventTime = event.time %}
+                {% set eventIsInFuture = event.is_in_future %}
+                {% set value = 'date' %}
+            {% endif %}
+        {% elif dateGroup == 'reminder3' %}
+            {% set event = events.reminder3 %}
+            {% set value = 'reminder' %}
+            {% if events.reminder2 %}
+                {% set showReminder = true %}
+                {% set label = ' ' %}
+                {% set name = 'third-reminder-date' %}
+            {% endif %}
+            {% if event %}
+                {% set label = 'Third reminder' %}
+                {% set eventDay = event.day %}
+                {% set eventDate = event.date %}
+                {% set eventTime = event.time %}
+                {% set eventIsInFuture = event.is_in_future %}
+                {% set value = 'date' %}
+            {% endif %}
+        {% elif dateGroup == 'exercise_end' %}
+            {% set label = 'Exercise end' %}
+            {% set event = events.exercise_end %}
+            {% set name = 'exercise-end-date' %}
+            {% set value = 'date' %}
+            {% if event %}
+                {% set eventDay = event.day %}
+                {% set eventDate = event.date %}
+                {% set eventTime = event.time %}
+            {% endif %}
+        {% elif dateGroup == 'nudge_email_0' %}
+            {% if surveyEditPermission %}
+                {% set label = ' ' %}
+            {% endif %}
+            {% set event = events.nudge_email_0 %}
+            {% set value = 'nudge email' %}
+            {% set showNudgeEmail = true %}
+            {% set name = 'first-nudge-email-date' %}
+            {% set label = 'First nudge email' %}
+            {% if event %}
+                {% set eventDay = event.day %}
+                {% set eventDate = event.date %}
+                {% set eventTime = event.time %}
+                {% set eventIsInFuture = event.is_in_future %}
+                {% set value = 'date' %}
+            {% endif %}
+        {% elif dateGroup == 'nudge_email_2' %}
+            {% set event = events.nudge_email_2 %}
+            {% set value = 'nudge email' %}
+            {% if events.nudge_email_0 %}
+                {% set showNudgeEmail = true %}
+                {% set label = ' ' %}
+                {% set name = 'second-nudge-email-date' %}
+            {% endif %}
+            {% if event %}
+                {% set label = 'Second nudge email' %}
+                {% set eventDay = event.day %}
+                {% set eventDate = event.date %}
+                {% set eventTime = event.time %}
+                {% set eventIsInFuture = event.is_in_future %}
+                {% set value = 'date' %}
+            {% endif %}
+        {% elif dateGroup == 'nudge_email_3' %}
+            {% set event = events.nudge_email_3 %}
+            {% set value = 'nudge email' %}
+            {% if events.nudge_email_2 %}
+                {% set showNudgeEmail = true %}
+                {% set label = ' ' %}
+                {% set name = 'third-nudge-email-date' %}
+            {% endif %}
+            {% if event %}
+                {% set label = 'Third nudge email' %}
+                {% set eventDay = event.day %}
+                {% set eventDate = event.date %}
+                {% set eventTime = event.time %}
+                {% set eventIsInFuture = event.is_in_future %}
+                {% set value = 'date' %}
+            {% endif %}
+        {% elif dateGroup == 'nudge_email_4' %}
+            {% set event = events.nudge_email_4 %}
+            {% set value = 'nudge email' %}
+            {% if events.nudge_email_3 %}
+                {% set showNudgeEmail = true %}
+                {% set label = ' ' %}
+                {% set name = 'fourth-nudge-email-date' %}
+            {% endif %}
+            {% if event %}
+                {% set label = 'Fourth nudge email' %}
+                {% set eventDay = event.day %}
+                {% set eventDate = event.date %}
+                {% set eventTime = event.time %}
+                {% set eventIsInFuture = event.is_in_future %}
+                {% set value = 'date' %}
+            {% endif %}
+        {% elif dateGroup == 'nudge_email_5' %}
+            {% set event = events.nudge_email_5 %}
+            {% set value = 'nudge email' %}
+            {% if events.nudge_email_4 %}
+                {% set showNudgeEmail = true %}
+                {% set label = ' ' %}
+                {% set name = 'fifth-nudge-email-date' %}
+            {% endif %}
+            {% if event %}
+                {% set label = 'Fifth nudge email' %}
+                {% set eventDay = event.day %}
+                {% set eventDate = event.date %}
+                {% set eventTime = event.time %}
+                {% set eventIsInFuture = event.is_in_future %}
+                {% set value = 'date' %}
+            {% endif %}
+        {% elif ( (events.go_live) and (events.return_by) and (nudge) ) %}
+            {% set label = ' ' %}
+        {% endif %}
+  
+        {% if ((not value == 'nudge email') or (value == 'nudge email' and events.go_live and events.return_by)) %}
+            {% if not(value == 'reminder' and not event) or surveyEditPermission %}
+                {% if not event %}
+                    {% set hyperlink = '<a href="' + url_for("collection_exercise_bp.get_create_collection_event_form",  short_name=survey.shortName, period=ce.exerciseRef, ce_id=ce.id, tag=dateGroup) + '" id="' + 'create-event-date-' + dateGroup + '">' + 'Add ' + value + '</a>' %}
+                {% elif not locked or eventIsInFuture %}
+                    {% set hyperlink = '<a href="' + url_for("collection_exercise_bp.update_event_date",  short_name=survey.shortName, period=ce.exerciseRef, tag=dateGroup, errors=None if event == events.reminder) + '" id="' + 'edit-event-date-' + dateGroup + '">' + 'Edit ' + value + '</a>' %}
+                {% endif %}
+                {% if label %}
+                    {% set tds = 
+                        [ 
+                            {  
+                                "value": label, 
+                            }, 
+                            { 
+                                "value": eventDay + ' ' + eventDate + ' ' + eventTime if event, 
+                                "name": name, 
+                            } 
+                        ]
+                    %}  
+                    {% if surveyEditPermission %} 
+                        {% do tds.append(
+                            { 
+                                "value": hyperlink, 
+                                "tdClasses": "ons-u-ta-right" 
+                            }
+                        ) %} 
+                    {% endif %}   
+                    {% do surveyTableDataRows.append( 
+                        { 
+                            "tds": tds 
+                        } 
+                    )%}
+                {% endif %}
+            {% endif %}
+        {% endif %}
+    {% endfor %}
+
+    {% do surveyTableData | setAttribute("trs", surveyTableDataRows) %}
+
+    {{
+        onsTable(surveyTableData)
+    }}
+</section>

@@ -1,0 +1,100 @@
+<section class="ce-section ce-details">
+    {% set surveyEditPermission = hasPermission('surveys.edit') %}
+    {% if sample %}
+        {{
+            onsTable({
+                "variants": ['compact', 'responsive'],
+                "id": "sample-table",
+                "caption": 'Loaded sample summary',
+                "hideCaption": true,
+                "ths": [
+                    { 
+                        "value": "Sample & Collection instruments (CI)",
+                        "thClasses": "ons-u-fs-r--b"
+                    },
+                    {
+                        "value": "",
+                        "thClasses": "ons-u-ta"
+                    },
+                    {
+                        "value": "Uploaded " + '<em>' + sample.ingestDateTime[:-8] + '</em>' + sample.ingestDateTime[-8:],
+                        "thClasses": "ons-u-fs-r",
+                        "numeric": "true"
+                    },
+                ],
+                
+                "trs": [
+                    {
+                        "tds": [
+                            {
+                                "value": "Total businesses",
+                                "tdClasses": "ons-u-ta"
+                            },
+                            {
+                                "value": sample.totalSampleUnits,
+                                "name": "total-instruments",
+                                "tdClasses": "ons-u-ta-right"
+                            },
+                            {
+                                "value": ' ',
+                                "name": "upload-sample-time",
+                            }
+                        ]
+                    },
+                    {
+                        "tds": [
+                            {
+                                "value": "Collection instruments",
+                                "tdClasses": "ons-u-ta"
+                            },
+                            {
+                                "value": sample.expectedCollectionInstruments,
+                                "name": "total-instruments",
+                                "tdClasses": "ons-u-ta-right"
+                            },
+                            {
+                                "value": ' ',
+                                "name": "upload-sample-time",
+                            }
+                        ]
+                    }
+                ]
+            })
+        }}
+    {% else %}
+        {{
+            onsTable({
+                "variants": ['compact', 'responsive'],
+                "id": "sample-table",
+                "caption": 'Loaded sample summary',
+                "hideCaption": true,
+                "ths": [
+                    { 
+                        "value": "Sample & Collection instruments (CI)",
+                        "thClasses": "ons-u-fs-r--b"
+                    }
+                ],
+            })
+        }}
+    {% endif %}
+  
+    {% if locked or (not surveyEditPermission) %}
+        {% set sampleCiButtonText = 'View sample file & CI' %}
+    {% else %}
+        {% if not sample %}
+            {% set sampleCiButtonText = 'Upload sample file & CI' %}
+        {% else %}
+            {% set sampleCiButtonText = 'Replace sample file & CI' %}
+        {% endif %}
+    {% endif %}
+    {{
+        onsButton({
+            "text": sampleCiButtonText,
+            "id": 'btn-sample-ci',
+            "submitType": 'timer',
+            "variants": ['secondary', 'small'],
+            "url": url_for('collection_exercise_bp.get_view_sample_ci', short_name=survey.shortName, period=ce.exerciseRef),
+            "noIcon": 'true'
+        })
+    }}
+</section>
