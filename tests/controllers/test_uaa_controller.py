@@ -14,8 +14,14 @@ with open(f"{project_root}/test_data/uaa/user_by_id.json") as json_data:
     uaa_user_by_id_json = json.load(json_data)
 
 user_id = "fe2dc842-b3b3-4647-8317-858dab82ab94"
+group_id = "9da7cfd5-95d0-455b-9005-02ce638e56c9"
 url_uaa_user_by_id = f"{TestingConfig.UAA_SERVICE_URL}/Users/{user_id}"
+url_uaa_add_to_group = f"{TestingConfig.UAA_SERVICE_URL}/Groups/{group_id}/members"
+url_uaa_remove_from_group = f"{TestingConfig.UAA_SERVICE_URL}/Groups/{group_id}/members/{user_id}"
 url_uaa_token = f"{TestingConfig.UAA_SERVICE_URL}/oauth/token"
+
+uaa_group_add_success_json = {"type": "USER", "value": user_id}
+uaa_group_remove_success_json = uaa_group_add_success_json
 
 
 class TestUAAController(unittest.TestCase):
@@ -43,3 +49,17 @@ class TestUAAController(unittest.TestCase):
         self.app.config["IS_ROLE_BASED_ACCESS_ENABLED"] = False
         with self.app.test_request_context():
             self.assertTrue(uaa_controller.user_has_permission("surveys.edit", user_id))
+
+    @requests_mock.mock()
+    def test_add_group_membership_success(self, mock_request):
+        mock_request.post(url_uaa_token, json={"access_token": self.access_token}, status_code=201)
+        mock_request.post(url_uaa_add_to_group, json=uaa_group_add_success_json, status_code=201)
+        with self.app.test_request_context():
+            self.assertEqual(uaa_controller.add_group_membership(user_id, group_id), uaa_group_add_success_json)
+
+    @requests_mock.mock()
+    def test_remove_group_membership_success(self, mock_request):
+        mock_request.post(url_uaa_token, json={"access_token": self.access_token}, status_code=201)
+        mock_request.delete(url_uaa_remove_from_group, json=uaa_group_add_success_json, status_code=200)
+        with self.app.test_request_context():
+            self.assertEqual(uaa_controller.remove_group_membership(user_id, group_id), uaa_group_remove_success_json)

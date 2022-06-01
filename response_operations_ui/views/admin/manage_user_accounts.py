@@ -81,14 +81,14 @@ def manage_account():
     if user_requested is None:
         # Someone has gotten here directly without passing a parameter in, send them back to the main page
         flash("No user was selected to edit", "error")
-        manage_user_accounts()
+        return redirect(url_for("admin_bp.manage_user_accounts"))
 
     logger.info("Attempting to get user " + user_requested)
     uaa_user = get_user_by_email(user_requested)
     if uaa_user is None or len(uaa_user["resources"]) == 0:
         # Something went wrong when trying to retrieve them from UAA
         flash("Selected user could not be found", "error")
-        manage_user_accounts()
+        return redirect(url_for("admin_bp.manage_user_accounts"))
 
     name = uaa_user["resources"][0]["name"]["givenName"] + " " + uaa_user["resources"][0]["name"]["familyName"]
     permissions = {g["display"]: "y" for g in uaa_user["resources"][0]["groups"]}
@@ -107,7 +107,6 @@ def update_account_permissions():
         logger.exception("Manage User Account request requested but unauthorised.")
         abort(401)
 
-    # TODO probably put this in the flask form then just pass on the loop later on?
     user_id = request.form.get("user_id")
     user = get_user_by_id(user_id)
     groups = get_groups()
@@ -125,21 +124,20 @@ def update_account_permissions():
     }
 
     for permission, ticked in form.data.items():
-        group_details = next(
-            item for item in groups["resources"] if item["displayName"] == translated_permissions[permission]
-        )
+        # Translate the permission, so we have the uaa form of it
+        translated_permission = translated_permissions[permission]
+        group_details = next(item for item in groups["resources"] if item["displayName"] == translated_permission)
+        group_id = group_details["id"]
         if ticked:
-            if translated_permissions[permission] in user_groups:
-                logger.info("nothing to do, already part of it")
-                continue
-            add_group_membership(user_id, group_details["id"])
-        else:
-            if translated_permissions[permission] in user_groups:
-                remove_group_membership(user_id, group_details["id"])
+            if translated_permission in user_groups:
+                continue  # Nothing to do, already part of the group
+            add_group_membership(user_id, group_id)
 
-            logger.info("Nothing to do, already not part of it")
-            continue
-    # Apply the differences in the permissions
+        if translated_permission in user_groups:
+            remove_group_membership(user_id, group_id)
+        continue  # Nothing to do, already not in the group
+
+    # TODO do we flash?  What do we flash? Where do we redirect to after we do this?
     return redirect(url_for("admin_bp.manage_user_accounts"))
 
 
