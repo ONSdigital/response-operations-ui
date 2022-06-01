@@ -268,6 +268,69 @@ def update_user_password(user, old_password, new_password):
     return errors
 
 
+def get_groups():
+    access_token = login_admin()
+    headers = generate_headers(access_token)
+
+    url = f"{app.config['UAA_SERVICE_URL']}/Groups"
+    response = requests.get(url, headers=headers)
+    try:
+        response.raise_for_status()
+    except HTTPError:
+        logger.error("Error retrieving groups from UAA", status_code=response.status_code, exc_info=True)
+        # TODO what is the sensible thing to raise if something goes wrong
+        raise
+
+    return response.json()
+
+
+def add_group_membership(user_id, group_id):
+    access_token = login_admin()
+    headers = generate_headers(access_token)
+
+    url = f"{app.config['UAA_SERVICE_URL']}/Groups/{group_id}/members"
+    payload = {"type": "USER", "value": user_id}
+    response = requests.post(url, json=payload, headers=headers)
+    try:
+        response.raise_for_status()
+    except HTTPError:
+        logger.error(
+            "Error retrieving user from UAA",
+            status_code=response.status_code,
+            group_id=group_id,
+            user_id=user_id,
+            text=response.text,
+            exc_info=True,
+        )
+        # TODO what is the sensible thing to raise if something goes wrong
+        raise
+
+    return response.json()
+
+
+def remove_group_membership(user_id, group_id):
+    access_token = login_admin()
+    headers = generate_headers(access_token)
+
+    url = f"{app.config['UAA_SERVICE_URL']}/Groups/{group_id}/members/{user_id}"
+    response = requests.delete(url, headers=headers)
+    try:
+        response.raise_for_status()
+    except HTTPError:
+        logger.error(
+            "Error retrieving user from UAA",
+            status_code=response.status_code,
+            group_id=group_id,
+            user_id=user_id,
+            text=response.text,
+            exc_info=True,
+        )
+        # TODO what is the sensible thing to raise if something goes wrong
+        raise
+
+    return response.json()
+
+
 def refresh_permissions(user_id):
     """
     Refreshes the cache of permissions for the current user

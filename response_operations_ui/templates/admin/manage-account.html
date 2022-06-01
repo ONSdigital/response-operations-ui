@@ -1,6 +1,7 @@
 {% extends "layouts/base.html" %}
 {% from "components/table/_macro.njk" import onsTable %}
 {% from "components/checkboxes/_checkbox-macro.njk" import onsCheckbox %}
+{% from "components/button/_macro.njk" import onsButton %}
 
 {% block main %}
     <div class="ons-grid ons-grid--flex ons-grid--between">
@@ -17,7 +18,68 @@
     
     <form id="user-permissions" action="" method="post">
         <input type="hidden" name="csrf_token" value="{{ csrf_token() }}" />
-        <section class="ons-u-mt-s">
+        <input type="hidden" name="user_id" value="{{ user_id }}" />
+      {{
+          onsCheckbox({
+              "id": "surveys_edit",
+              "name": "surveys_edit",
+              "label": {
+                  "text": "Edit surveys"
+              },
+              "hideLabel": true,
+              "value": "y",
+              "checked": permissions["surveys.edit"]
+          })
+      }}
+            {{
+          onsCheckbox({
+              "id": "reporting_units_edit",
+              "name": "reporting_units_edit",
+              "label": {
+                  "text": "Edit reporting units"
+              },
+              "hideLabel": true,
+              "value": "y",
+              "checked": permissions["reportingunits.edit"]
+          })
+      }}
+            {{
+          onsCheckbox({
+              "id": "respondents_edit",
+              "name": "respondents_edit",
+              "label": {
+                  "text": "Edit respondents"
+              },
+              "hideLabel": true,
+              "value": "y",
+              "checked": permissions["respondents.edit"]
+          })
+      }}
+            {{
+          onsCheckbox({
+              "id": "respondents_delete",
+              "name": "respondents_delete",
+              "label": {
+                  "text": "Delete respondents"
+              },
+              "hideLabel": true,
+              "value": "y",
+              "checked": permissions["respondents.delete"]
+          })
+      }}
+            {{
+          onsCheckbox({
+              "id": "messages_edit",
+              "name": "messages_edit",
+              "label": {
+                  "text": "Edit messages"
+              },
+              "hideLabel": true,
+              "value": "y",
+              "checked": permissions["messages.edit"]
+          })
+      }}
+        <!--<section class="ons-u-mt-s">
             <table id="tbl-users" class="ons-table" >
                 <thead class="ons-table__head">
                     <tr class="ons-table__row">
@@ -41,6 +103,7 @@
                             {{
                                 onsCheckbox({
                                     "id": "surveys-edit",
+                                    "name": "surveys-edit",
                                     "label": {
                                         "text": "Edit surveys"
                                     },
@@ -120,6 +183,20 @@
                     </tr>
                 </tbody>
             </table>
-        </section>
+        </section> -->
+        <div class="ons-grid ons-grid--flex ons-grid--gutterless ons-grid--vertical-center ons-grid--no-wrap@s ons-u-mt-m ons-u-mb-m">
+          <div class="ons-grid__col">
+          {{
+              onsButton({
+                  "id": "save-changes",
+                  "text": "Save changes",
+                  "submitType": "timer"
+              })
+          }}
+          </div>
+          <div class="ons-grid__col ons-u-ml-m">
+              <a href=" {{ url_for('admin_bp.manage_user_accounts') }}">Cancel</a>
+          </div>
+        </div>
     </form>
 {% endblock %}

@@ -1,18 +1,22 @@
 import logging
 
-from flask import flash, render_template, request
+from flask import flash, redirect, render_template, request, url_for
 from flask_login import login_required
 from flask_paginate import Pagination
 from structlog import wrap_logger
 from werkzeug.exceptions import abort
 
 from response_operations_ui.controllers.uaa_controller import (
+    add_group_membership,
     get_filter_query,
+    get_groups,
     get_user_by_email,
+    get_user_by_id,
     get_users_list,
+    remove_group_membership,
     user_has_permission,
 )
-from response_operations_ui.forms import UserSearchForm
+from response_operations_ui.forms import EditUserPermissionsForm, UserSearchForm
 from response_operations_ui.views.admin import admin_bp
 
 logger = wrap_logger(logging.getLogger(__name__))
@@ -26,7 +30,7 @@ def manage_user_accounts():
     This endpoint lists all current user in the system.
     """
     if not user_has_permission("users.admin"):
-        logger.exception("Manage User Account request requested but unauthorised. ")
+        logger.exception("Manage User Account request requested but unauthorised.")
         abort(401)
     page = request.values.get("page", "1")
     user_with_email = request.values.get("user_with_email", None)
@@ -71,7 +75,7 @@ def manage_user_accounts():
 @login_required
 def manage_account():
     if not user_has_permission("users.admin"):
-        logger.exception("Manage User Account request requested but unauthorised. ")
+        logger.exception("Manage User Account request requested but unauthorised.")
         abort(401)
     user_requested = request.values.get("user", None)
     if user_requested is None:
@@ -87,18 +91,56 @@ def manage_account():
         manage_user_accounts()
 
     name = uaa_user["resources"][0]["name"]["givenName"] + " " + uaa_user["resources"][0]["name"]["familyName"]
-    permissions = (g["display"] for g in uaa_user["resources"][0]["groups"])
+    permissions = {g["display"]: "y" for g in uaa_user["resources"][0]["groups"]}
 
-    return render_template("admin/manage-account.html", name=name, permissions=permissions)
+    # TODO the checkboxes in a table didn't seem to get posted, had to take them out of the table to get them working.
+    #  will fix that after we get the functionality sorted
+    return render_template(
+        "admin/manage-account.html", name=name, permissions=permissions, user_id=uaa_user["resources"][0]["id"]
+    )
 
 
 @admin_bp.route("/manage-account", methods=["POST"])
 @login_required
 def update_account_permissions():
     if not user_has_permission("users.admin"):
-        logger.exception("Manage User Account request requested but unauthorised. ")
+        logger.exception("Manage User Account request requested but unauthorised.")
         abort(401)
-    
+
+    # TODO probably put this in the flask form then just pass on the loop later on?
+    user_id = request.form.get("user_id")
+    user = get_user_by_id(user_id)
+    groups = get_groups()
+    # Get user from uaa (so we have a fresh set of permissions to look at)
+    form = EditUserPermissionsForm(request.form)
+    user_groups = [group["display"] for group in user["groups"]]
+
+    # TODO need to figure out how to get from surveys_edit to surveys.edit (the group name in uaa)
+    translated_permissions = {
+        "surveys_edit": "surveys.edit",
+        "reporting_units_edit": "reportingunits.edit",
+        "respondents_edit": "respondents.edit",
+        "respondents_delete": "respondents.delete",
+        "messages_edit": "messages.edit",
+    }
+
+    for permission, ticked in form.data.items():
+        group_details = next(
+            item for item in groups["resources"] if item["displayName"] == translated_permissions[permission]
+        )
+        if ticked:
+            if translated_permissions[permission] in user_groups:
+                logger.info("nothing to do, already part of it")
+                continue
+            add_group_membership(user_id, group_details["id"])
+        else:
+            if translated_permissions[permission] in user_groups:
+                remove_group_membership(user_id, group_details["id"])
+
+            logger.info("Nothing to do, already not part of it")
+            continue
+    # Apply the differences in the permissions
+    return redirect(url_for("admin_bp.manage_user_accounts"))
 
 
 def _get_refine_user_list(users: list):
