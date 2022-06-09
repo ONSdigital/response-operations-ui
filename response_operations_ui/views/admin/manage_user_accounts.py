@@ -107,10 +107,11 @@ def update_account_permissions():
         logger.exception("Manage User Account request requested but unauthorised.")
         abort(401)
 
+    # Get user from uaa, so we have a fresh set of permissions to look at
     user_id = request.form.get("user_id")
     user = get_user_by_id(user_id)
     groups = get_groups()
-    # Get user from uaa (so we have a fresh set of permissions to look at)
+
     form = EditUserPermissionsForm(request.form)
     user_groups = [group["display"] for group in user["groups"]]
 
@@ -123,25 +124,28 @@ def update_account_permissions():
         "messages_edit": "messages.edit",
     }
 
-    for permission, ticked in form.data.items():
+    # Because we can't add or remove in a batch, if one of them fail then we can leave the user in a state that wasn't
+    # intended.  Though it can be easily fixed by trying again.
+
+    for permission, is_ticked in form.data.items():
         # Translate the permission, so we have the uaa form of it
         translated_permission = translated_permissions[permission]
         group_details = next(item for item in groups["resources"] if item["displayName"] == translated_permission)
         group_id = group_details["id"]
-        if ticked:
+        if is_ticked:
             if translated_permission in user_groups:
                 continue  # Nothing to do, already part of the group
-            add_group_membership(user_id, group_id)
+            add_group_membership(user_id, group_id)  # Ticked and not in group, need to add it
 
         if translated_permission in user_groups:
-            remove_group_membership(user_id, group_id)
+            remove_group_membership(user_id, group_id)  # Not ticked but in group, need to remove it
         continue  # Nothing to do, already not in the group
 
     # TODO do we flash?  What do we flash? Where do we redirect to after we do this?
     return redirect(url_for("admin_bp.manage_user_accounts"))
 
 
-def _get_refine_user_list(users: list):
+def _get_refine_user_list(users: list) -> list[dict]:
     user_list = []
     for user in users:
         user_list.append(

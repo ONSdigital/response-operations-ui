@@ -19,67 +19,7 @@
     <form id="user-permissions" action="" method="post">
         <input type="hidden" name="csrf_token" value="{{ csrf_token() }}" />
         <input type="hidden" name="user_id" value="{{ user_id }}" />
-      {{
-          onsCheckbox({
-              "id": "surveys_edit",
-              "name": "surveys_edit",
-              "label": {
-                  "text": "Edit surveys"
-              },
-              "hideLabel": true,
-              "value": "y",
-              "checked": permissions["surveys.edit"]
-          })
-      }}
-            {{
-          onsCheckbox({
-              "id": "reporting_units_edit",
-              "name": "reporting_units_edit",
-              "label": {
-                  "text": "Edit reporting units"
-              },
-              "hideLabel": true,
-              "value": "y",
-              "checked": permissions["reportingunits.edit"]
-          })
-      }}
-            {{
-          onsCheckbox({
-              "id": "respondents_edit",
-              "name": "respondents_edit",
-              "label": {
-                  "text": "Edit respondents"
-              },
-              "hideLabel": true,
-              "value": "y",
-              "checked": permissions["respondents.edit"]
-          })
-      }}
-            {{
-          onsCheckbox({
-              "id": "respondents_delete",
-              "name": "respondents_delete",
-              "label": {
-                  "text": "Delete respondents"
-              },
-              "hideLabel": true,
-              "value": "y",
-              "checked": permissions["respondents.delete"]
-          })
-      }}
-            {{
-          onsCheckbox({
-              "id": "messages_edit",
-              "name": "messages_edit",
-              "label": {
-                  "text": "Edit messages"
-              },
-              "hideLabel": true,
-              "value": "y",
-              "checked": permissions["messages.edit"]
-          })
-      }}
-        <!--<section class="ons-u-mt-s">
+        <section class="ons-u-mt-s">
             <table id="tbl-users" class="ons-table" >
                 <thead class="ons-table__head">
                     <tr class="ons-table__row">
@@ -101,17 +41,17 @@
                         </td>
                         <td class="ons-table__cell">
                             {{
-                                onsCheckbox({
-                                    "id": "surveys-edit",
-                                    "name": "surveys-edit",
-                                    "label": {
-                                        "text": "Edit surveys"
-                                    },
-                                    "hideLabel": true,
-                                    "value": "y",
-                                    "checked": permissions["surveys.edit"]
-                                })
-                            }}
+                              onsCheckbox({
+                                  "id": "surveys_edit",
+                                  "name": "surveys_edit",
+                                  "label": {
+                                      "text": "Edit surveys"
+                                  },
+                                  "hideLabel": true,
+                                  "value": "y",
+                                  "checked": permissions["surveys.edit"]
+                              })
+                          }}
                         </td>
                     </tr>
                     <tr class="ons-table__row">
@@ -120,16 +60,17 @@
                         </td>
                         <td class="ons-table__cell">
                             {{
-                                onsCheckbox({
-                                    "id": "reporting-units-edit",
-                                    "label": {
-                                        "text": "Edit reporting units"
-                                    },
-                                    "hideLabel": true,
-                                    "value": "y",
-                                    "checked": permissions["reportingunits.edit"]
-                                })
-                            }}
+                            onsCheckbox({
+                                "id": "reporting_units_edit",
+                                "name": "reporting_units_edit",
+                                "label": {
+                                    "text": "Edit reporting units"
+                                },
+                                "hideLabel": true,
+                                "value": "y",
+                                "checked": permissions["reportingunits.edit"]
+                            })
+                        }}
                         </td>
                     </tr>
                     <tr class="ons-table__row">
@@ -137,30 +78,32 @@
                             Respondents
                         </td>
                         <td class="ons-table__cell">
-                            {{
-                                onsCheckbox({
-                                    "id": "respondents-edit",
-                                    "label": {
-                                        "text": "Edit respondents"
-                                    },
-                                    "hideLabel": true,
-                                    "value": "y",
-                                    "checked": permissions["respondents.edit"]
-                                })
-                            }}
+                        {{
+                            onsCheckbox({
+                                "id": "respondents_edit",
+                                "name": "respondents_edit",
+                                "label": {
+                                    "text": "Edit respondents"
+                                },
+                                "hideLabel": true,
+                                "value": "y",
+                                "checked": permissions["respondents.edit"]
+                            })
+                        }}
                         </td>
                         <td class="ons-table__cell">
-                            {{
-                                onsCheckbox({
-                                    "id": "respondents-delete",
-                                    "label": {
-                                        "text": "Delete respondents"
-                                    },
-                                    "hideLabel": true,
-                                    "value": "y",
-                                    "checked": permissions["respondents.delete"]
-                                })
-                            }}
+                        {{
+                            onsCheckbox({
+                                "id": "respondents_delete",
+                                "name": "respondents_delete",
+                                "label": {
+                                    "text": "Delete respondents"
+                                },
+                                "hideLabel": true,
+                                "value": "y",
+                                "checked": permissions["respondents.delete"]
+                            })
+                        }}
                         </td>
                     </tr>
                     <tr class="ons-table__row">
@@ -168,22 +111,23 @@
                             Messages
                         </td>
                         <td class="ons-table__cell">
-                            {{
-                                onsCheckbox({
-                                    "id": "messages-edit",
-                                    "label": {
-                                        "text": "Edit messages"
-                                    },
-                                    "hideLabel": true,
-                                    "value": "y",
-                                    "checked": permissions["messages.edit"]
-                                })
-                            }}
+                        {{
+                            onsCheckbox({
+                                "id": "messages_edit",
+                                "name": "messages_edit",
+                                "label": {
+                                    "text": "Edit messages"
+                                },
+                                "hideLabel": true,
+                                "value": "y",
+                                "checked": permissions["messages.edit"]
+                            })
+                        }}
                         </td>
                     </tr>
                 </tbody>
             </table>
-        </section> -->
+
         <div class="ons-grid ons-grid--flex ons-grid--gutterless ons-grid--vertical-center ons-grid--no-wrap@s ons-u-mt-m ons-u-mb-m">
           <div class="ons-grid__col">
           {{
