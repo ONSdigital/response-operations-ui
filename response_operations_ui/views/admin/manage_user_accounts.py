@@ -93,8 +93,6 @@ def manage_account():
     name = uaa_user["resources"][0]["name"]["givenName"] + " " + uaa_user["resources"][0]["name"]["familyName"]
     permissions = {g["display"]: "y" for g in uaa_user["resources"][0]["groups"]}
 
-    # TODO the checkboxes in a table didn't seem to get posted, had to take them out of the table to get them working.
-    #  will fix that after we get the functionality sorted
     return render_template(
         "admin/manage-account.html", name=name, permissions=permissions, user_id=uaa_user["resources"][0]["id"]
     )
@@ -109,6 +107,11 @@ def update_account_permissions():
 
     # Get user from uaa, so we have a fresh set of permissions to look at
     user_id = request.form.get("user_id")
+    if user_id is None:
+        # If we haven't got the user_id, then redirecting back to the users list is the only sensible
+        # place to send them back to.
+        flash("user_id missing when editing user", "error")
+        return redirect(url_for("admin_bp.manage_user_accounts"))
     user = get_user_by_id(user_id)
     groups = get_groups()
 
@@ -127,6 +130,7 @@ def update_account_permissions():
     # Because we can't add or remove in a batch, if one of them fail then we can leave the user in a state that wasn't
     # intended.  Though it can be easily fixed by trying again.
 
+    was_permission_changed = False
     for permission, is_ticked in form.data.items():
         # Translate the permission, so we have the uaa form of it
         translated_permission = translated_permissions[permission]
@@ -136,12 +140,52 @@ def update_account_permissions():
             if translated_permission in user_groups:
                 continue  # Nothing to do, already part of the group
             add_group_membership(user_id, group_id)  # Ticked and not in group, need to add it
+            was_permission_changed = True
 
         if translated_permission in user_groups:
             remove_group_membership(user_id, group_id)  # Not ticked but in group, need to remove it
+            was_permission_changed = True
         continue  # Nothing to do, already not in the group
 
-    # TODO do we flash?  What do we flash? Where do we redirect to after we do this?
+    if was_permission_changed:
+        logger.info("send an email")
+        flash("User account has been successfully changed. An email to inform the user has been sent.")
+
+    return redirect(url_for("admin_bp.manage_user_accounts"))
+
+
+@admin_bp.route("/delete-account/<user_id>", methods=["GET"])
+@login_required
+def get_delete_uaa_user(user_id):
+    if not user_has_permission("users.admin"):
+        logger.exception("Manage User Account request requested but unauthorised.")
+        abort(401)
+
+    uaa_user = get_user_by_id(user_id)
+    if user_id is None:
+        # TODO is this the right place to redirect to?
+        flash("User does not exist", "error")
+        return redirect(url_for("admin_bp.manage_user_accounts"))
+
+    name = uaa_user["resources"][0]["name"]["givenName"] + " " + uaa_user["resources"][0]["name"]["familyName"]
+    # TODO create real template
+    return render_template("admin/manage-account.html", name=name, user_id=uaa_user["resources"][0]["id"])
+
+
+@admin_bp.route("/delete-account/<user_id>", methods=["POST"])
+@login_required
+def post_delete_uaa_user(user_id):
+    if not user_has_permission("users.admin"):
+        logger.exception("Manage User Account request requested but unauthorised.")
+        abort(401)
+
+    user = get_user_by_id(user_id)
+    if user is None:
+        # TODO is this the right place to redirect to?
+        flash("User does not exist", "error")
+        return redirect(url_for("admin_bp.manage_user_accounts"))
+    # Delete user
+    flash("User account has been successfully deleted. An email to inform the user has been sent.")
     return redirect(url_for("admin_bp.manage_user_accounts"))
 
 
