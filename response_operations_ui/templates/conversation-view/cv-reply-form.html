@@ -1,6 +1,8 @@
 {% from "components/textarea/_macro.njk" import onsTextarea %}
 {% from "components/input/_macro.njk" import onsInput %}
 
+{% set is_message_edit_permission = hasPermission('messages.edit') %}
+
 <div class="secure-message-form">
     <form action="{{ url_for('messages_bp.view_conversation', thread_id=messages[0].thread_id, page=page, conversation_tab=conversation_tab, ru_ref_filter=ru_ref_filter, business_id_filter=business_id_filter) }}" method="post" id="create-message-form" class="ons-u-mb-m">
         {{ form.csrf_token }}
@@ -22,36 +24,37 @@
                 }
             ) %}
         {% endif %}
-
-        {{
-            onsTextarea({
-                "id": "secure-message-body",
-                "name": "body",
-                "label": {
-                    "text": "Reply"
-                },
-                "charCheckLimit": '50000',
-                "attributes": {
-                    "required": true
-                },
-                "error": errorData if errorData,
-                "charCheckLimit": {}
-            })
-        }}
-        <div class="ons-grid ons-grid--flex ons-grid--gutterless ons-grid--vertical-center ons-grid--no-wrap@s ons-u-mt-m ons-u-mb-m">
-            <div class="ons-grid__col">
-                {{
-                    onsButton({
-                        "type": 'submit',
-                        "text": 'Send message',
-                        "id": "btn-send-message",
-                        "submitType": "timer"
-                    })
-                }}
-            </div>
-            <div class="ons-grid__col ons-u-ml-m">
-                <a id="btn-close-conversation" href="{{ url_for('messages_bp.close_conversation', thread_id=messages[0].thread_id, page=page, conversation_tab=conversation_tab, business_id=business_id, ru_ref_filter=ru_ref_filter, business_id_filter=business_id_filter, category=thread_data.category) }}">Close conversation</a>
-            </div>
-        </div>
+      {% if is_message_edit_permission %}
+          {{
+              onsTextarea({
+                  "id": "secure-message-body",
+                  "name": "body",
+                  "label": {
+                      "text": "Reply"
+                  },
+                  "charCheckLimit": '50000',
+                  "attributes": {
+                      "required": true
+                  },
+                  "error": errorData if errorData,
+                  "charCheckLimit": {}
+              })
+          }}
+          <div class="ons-grid ons-grid--flex ons-grid--gutterless ons-grid--vertical-center ons-grid--no-wrap@s ons-u-mt-m ons-u-mb-m">
+              <div class="ons-grid__col">
+                  {{
+                      onsButton({
+                          "type": 'submit',
+                          "text": 'Send message',
+                          "id": "btn-send-message",
+                          "submitType": "timer"
+                      })
+                  }}
+              </div>
+              <div class="ons-grid__col ons-u-ml-m">
+                  <a id="btn-close-conversation" href="{{ url_for('messages_bp.close_conversation', thread_id=messages[0].thread_id, page=page, conversation_tab=conversation_tab, business_id=business_id, ru_ref_filter=ru_ref_filter, business_id_filter=business_id_filter, category=thread_data.category) }}">Close conversation</a>
+              </div>
+          </div>
+      {% endif %}
     </form>
 </div>

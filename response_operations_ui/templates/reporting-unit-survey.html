@@ -4,6 +4,7 @@
 
 {% set page_title = ru.name + " | " + survey.display_name %}
 {% set is_reporting_unit_permission = hasPermission('reportingunits.edit') %}
+{% set is_message_edit_permission = hasPermission('messages.edit') %}
 {% block main %}
 
     <div class="ons-grid ons-u-mb-xs">
@@ -134,9 +135,6 @@
                             },
                             {
                                 "value": "Enrolment status"
-                            },
-                            {
-                                "value": "Messages"
                             }
                         ]
                     }
@@ -168,51 +166,54 @@
                     {% if not is_reporting_unit_permission %}
                        {% set change_status_link = '' %}
                     {% endif %}
-
-                    {% set formData = {
-                        "action": url_for('messages_bp.create_message'),
-                        "button": {
-                            "text": "Create message",
-                            "id": "create-message-button-" + loop.index|string,
-                            "classes": 'ons-btn--secondary ons-btn--small',
-                            "value": 'create-message-view',
-                            "name": 'create-message'
-                        },
-                        "hiddenFormField": [
-                            {
-                                "name": "ru_ref",
-                                "value": ru.sampleUnitRef
-                            },
-                            {
-                                "name": "business_id",
-                                "value": ru.id
-                            },
-                            {
-                                "name": "business",
-                                "value": ru.name
-                            },
-                            {
-                                "name": "survey",
-                                "value": survey.shortName
-                            },
-                            {
-                                "name": "survey_id",
-                                "value": survey.id
-                            },
-                            {
-                                "name": "msg_to_name",
-                                "value": respondent.firstName + ' ' + respondent.lastName
-                            },
-                            {
-                                "name": "msg_to",
-                                "value": respondent.id
-                            },
-                            {
-                                "name": "csrf_token",
-                                "value": csrf_token()
-                            }
-                        ]
-                    } %}
+              
+              {% if is_message_edit_permission %}
+  
+                      {% set formData = {
+                          "action": url_for('messages_bp.create_message'),
+                          "button": {
+                              "text": "Create message",
+                              "id": "create-message-button-" + loop.index|string,
+                              "classes": 'ons-btn--secondary ons-btn--small',
+                              "value": 'create-message-view',
+                              "name": 'create-message'
+                          },
+                          "hiddenFormField": [
+                              {
+                                  "name": "ru_ref",
+                                  "value": ru.sampleUnitRef
+                              },
+                              {
+                                  "name": "business_id",
+                                  "value": ru.id
+                              },
+                              {
+                                  "name": "business",
+                                  "value": ru.name
+                              },
+                              {
+                                  "name": "survey",
+                                  "value": survey.shortName
+                              },
+                              {
+                                  "name": "survey_id",
+                                  "value": survey.id
+                              },
+                              {
+                                  "name": "msg_to_name",
+                                  "value": respondent.firstName + ' ' + respondent.lastName
+                              },
+                              {
+                                  "name": "msg_to",
+                                  "value": respondent.id
+                              },
+                              {
+                                  "name": "csrf_token",
+                                  "value": csrf_token()
+                              }
+                          ]
+                      } %}
+              {% endif %}
                     {% do respondentTableDataRows.append(
                         {
                             "tds": [
