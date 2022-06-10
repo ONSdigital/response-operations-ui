@@ -78,7 +78,7 @@
                 }}
             {% endif %}
           
-          {% if is_messages_edit_permission %}
+            {% if is_message_edit_permission %}
               <form action="{{ url_for('messages_bp.close_conversation', thread_id=thread_id, page=page, conversation_tab=conversation_tab, ru_ref_filter=ru_ref_filter, business_id_filter=business_id_filter) }}" method="post">
                   <input type="hidden" name="closed" value="True" />
                   <input type="hidden" name="csrf_token" value="{{ csrf_token() }}" />
@@ -89,8 +89,8 @@
                       })
                   }}
               </form>
-          {% endif %}
-            <p><a href="{{ url_for('messages_bp.view_conversation', thread_id=thread_id, page=page, conversation_tab=conversation_tab, ru_ref_filter=ru_ref_filter, business_id_filter=business_id_filter)}}#latest-message">Return to messages</a></p>
-        </div>
+            {% endif %}
+              <p><a href="{{ url_for('messages_bp.view_conversation', thread_id=thread_id, page=page, conversation_tab=conversation_tab, ru_ref_filter=ru_ref_filter, business_id_filter=business_id_filter)}}#latest-message">Return to messages</a></p>
+          </div>
     </div>
 {% endblock %}
