@@ -139,6 +139,13 @@ user_permission_messages_edit_json = {
     "groups": [{"value": "f385f89e-928f-4a0f-96a0-4c48d9007cc3", "display": "messages.edit", "type": "DIRECT"}],
 }
 
+
+def sign_in_with_permission(self, mock_request, permission):
+    mock_request.post(url_sign_in_data, json={"access_token": self.access_token}, status_code=201)
+    mock_request.get(url_permission_url, json=permission, status_code=200)
+    self.client.post("/sign-in", follow_redirects=True, data={"username": "user", "password": "pass"})
+
+
 class TestMessage(ViewTestCase):
     def setup_data(self):
         self.surveys_list_json = [
