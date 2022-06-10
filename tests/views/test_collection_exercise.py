@@ -1004,7 +1004,7 @@ class TestCollectionExercise(ViewTestCase):
 
         self.assertEqual(response.status_code, 200)
         self.assertIn("Sample loaded successfully".encode(), response.data)
-        self.assertIn("Loaded sample summary".encode(), response.data)
+        self.assertIn("Sample summary".encode(), response.data)
         self.assertIn("8\n".encode(), response.data)
         self.assertIn("1\n".encode(), response.data)
 
@@ -1078,7 +1078,7 @@ class TestCollectionExercise(ViewTestCase):
 
         self.assertEqual(response.status_code, 200)
         self.assertNotIn("Sample loaded successfully".encode(), response.data)
-        self.assertNotIn("Loaded sample summary".encode(), response.data)
+        self.assertIn("Sample summary".encode(), response.data)
 
     @requests_mock.mock()
     @patch("response_operations_ui.views.collection_exercise.build_collection_exercise_details")
@@ -1097,7 +1097,7 @@ class TestCollectionExercise(ViewTestCase):
 
         self.assertEqual(response.status_code, 200)
         self.assertNotIn("Sample loaded successfully".encode(), response.data)
-        self.assertNotIn("Loaded sample summary".encode(), response.data)
+        self.assertIn("Sample summary".encode(), response.data)
 
     @requests_mock.mock()
     @patch("response_operations_ui.views.collection_exercise.build_collection_exercise_details")

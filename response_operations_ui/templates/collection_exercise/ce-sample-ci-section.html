@@ -1,74 +1,49 @@
 <section class="ce-section ce-details">
     {% set surveyEditPermission = hasPermission('surveys.edit') %}
+    {% set tblHeaders =  
+        [ 
+            { 
+                "value": "Sample & Collection instruments (CI)",
+                "thClasses": "ons-u-fs-r--b"
+            }
+        ]
+    %}
+    {% if sample and (sample.state == 'ACTIVE' or sample.state == 'COMPLETE') %}
+        {% do tblHeaders.append(
+            {
+                "value": "",
+                "thClasses": "ons-u-ta"
+            }
+         )%}
+        {% do tblHeaders.append(
+            {
+                "value": "Uploaded " + '<em>' + sample.ingestDateTime[:-8] + '</em>' + sample.ingestDateTime[-8:],
+                "thClasses": "ons-u-fs-r",
+                "numeric": "true"
+            }
+         )%}
+    {% endif %}
+    {% set surveyTableData = {
+        "variants": ['compact', 'responsive'],
+        "id": "sample-table",
+        "caption": 'Sample summary',
+        "hideCaption": true,
+        "ths": tblHeaders,
+    } %}
     {% if sample %}
-        {% if 'ACTIVE' == sample.state %}
+        {% if 'INIT' == sample.state %}
             {{
-                onsTable({
-                    "variants": ['compact', 'responsive'],
-                    "id": "sample-table",
-                    "caption": 'Loaded sample summary',
-                    "hideCaption": true,
-                    "ths": [
-                        { 
-                            "value": "Sample & Collection instruments (CI)",
-                            "thClasses": "ons-u-fs-r--b"
-                        },
-                        {
-                            "value": "",
-                            "thClasses": "ons-u-ta"
-                        },
-                        {
-                            "value": "Uploaded " + '<em>' + sample.ingestDateTime[:-8] + '</em>' + sample.ingestDateTime[-8:],
-                            "thClasses": "ons-u-fs-r",
-                            "numeric": "true"
-                        },
-                    ],
-                    
-                    "trs": [
-                        {
-                            "tds": [
-                                {
-                                    "value": "Total businesses",
-                                    "tdClasses": "ons-u-ta"
-                                },
-                                {
-                                    "value": sample.totalSampleUnits,
-                                    "name": "total-instruments",
-                                    "tdClasses": "ons-u-ta-right"
-                                },
-                                {
-                                    "value": ' ',
-                                    "name": "upload-sample-time",
-                                }
-                            ]
-                        },
-                        {
-                            "tds": [
-                                {
-                                    "value": "Collection instruments",
-                                    "tdClasses": "ons-u-ta"
-                                },
-                                {
-                                    "value": sample.expectedCollectionInstruments,
-                                    "name": "total-instruments",
-                                    "tdClasses": "ons-u-ta-right"
-                                },
-                                {
-                                    "value": ' ',
-                                    "name": "upload-sample-time",
-                                }
-                            ]
-                        }
-                    ]
-                })
+                onsTable(surveyTableData)
             }}
-        {% elif 'INIT' == sample.state %}
             <div class="ons-u-mb-xl">
                 <div class="ons-u-fs-r">
                     Loading&hellip; <span class="ons-u-ml-xs"><a href="/surveys/{{survey.shortName}}/{{ce.exerciseRef}}/view-sample-ci?show_msg=true">Refresh to see progress</a></span>
                 </div>
             </div>
         {% elif 'FAILED' == sample.state %}
+            {{
+                onsTable(surveyTableData)
+            }}
             <div class="ons-u-mb-xl">
                 {% call
                     onsPanel({
@@ -78,26 +53,54 @@
                 %}
                     {{ sample.notes }}
                 {% endcall %}
-                {% if not locked and surveyEditPermission %}
-                    <a class="ons-u-ml-xs" id="remove_sample_btn_2" href="{{ url_for('collection_exercise_bp.get_confirm_remove_sample', short_name=survey.shortName, period=ce.exerciseRef) }}">Remove</a>
-                {% endif %}
             </div>
+        {% elif sample.state == 'ACTIVE' or sample.state == 'COMPLETE' %}
+            {% set surveyTableDataRows = [
+                {
+                    "tds": [
+                        {
+                            "value": "Total businesses",
+                            "tdClasses": "ons-u-ta"
+                        },
+                        {
+                            "value": sample.totalSampleUnits,
+                            "name": "total-instruments",
+                            "tdClasses": "ons-u-ta-right"
+                        },
+                        {
+                            "value": ' ',
+                            "name": "upload-sample-time",
+                        }
+                    ]
+                },
+                {
+                    "tds": [
+                        {
+                            "value": "Collection instruments",
+                            "tdClasses": "ons-u-ta"
+                        },
+                        {
+                            "value": sample.expectedCollectionInstruments,
+                            "name": "total-instruments",
+                            "tdClasses": "ons-u-ta-right"
+                        },
+                        {
+                            "value": ' ',
+                            "name": "upload-sample-time",
+                        }
+                    ]
+                }
+            ] %}
+            {% do surveyTableData | setAttribute("trs", surveyTableDataRows) %}
+    
+            {{
+                onsTable(surveyTableData)
+            }}
+        {% else %}
+            {{
+                onsTable(surveyTableData)
+            }}
         {% endif %}
-    {% else %}
-        {{
-            onsTable({
-                "variants": ['compact', 'responsive'],
-                "id": "sample-table",
-                "caption": 'Loaded sample summary',
-                "hideCaption": true,
-                "ths": [
-                    { 
-                        "value": "Sample & Collection instruments (CI)",
-                        "thClasses": "ons-u-fs-r--b"
-                    }
-                ],
-            })
-        }}
     {% endif %}
   
     {% if locked or (not surveyEditPermission) %}
