@@ -134,6 +134,10 @@ user_permission_admin_json = {
     "groups": [{"value": "f385f89e-928f-4a0f-96a0-4c48d9007cc3", "display": "uaa.user", "type": "DIRECT"}],
 }
 
+user_permission_messages_edit_json = {
+    "id": "5902656c-c41c-4b38-a294-0359e6aabe59",
+    "groups": [{"value": "f385f89e-928f-4a0f-96a0-4c48d9007cc3", "display": "messages.edit", "type": "DIRECT"}],
+}
 
 class TestMessage(ViewTestCase):
     def setup_data(self):
@@ -503,6 +507,7 @@ class TestMessage(ViewTestCase):
     @requests_mock.mock()
     @patch("response_operations_ui.controllers.message_controllers._get_jwt")
     def test_get_thread_with_deleted_user_cannot_be_replied_to(self, mock_request, mock_get_jwt):
+        sign_in_with_permission(self, mock_request, user_permission_messages_edit_json)
         mock_get_jwt.return_value = "blah"
         with open(f"{project_root}/test_data/message/thread_missing_respondent.json") as thread_json:
             missing_user_json = json.load(thread_json)
@@ -532,6 +537,7 @@ class TestMessage(ViewTestCase):
     @requests_mock.mock()
     @patch("response_operations_ui.controllers.message_controllers._get_jwt")
     def test_get_read_thread_sent_to_same_user_mark_unread_displayed(self, mock_request, mock_get_jwt):
+        sign_in_with_permission(self, mock_request, user_permission_messages_edit_json)
         mock_get_jwt.return_value = "blah"
         test_data = copy.deepcopy(thread_unread_json)
         test_data["messages"][0]["msg_to"] = ["test-id"]
@@ -775,6 +781,7 @@ class TestMessage(ViewTestCase):
     @patch("response_operations_ui.controllers.message_controllers._get_jwt")
     @patch("response_operations_ui.controllers.uaa_controller.user_has_permission")
     def test_conversation(self, mock_request, has_permission, mock_get_jwt):
+        sign_in_with_permission(self, mock_request, user_permission_messages_edit_json)
         mock_get_jwt.return_value = "blah"
         mock_request.get(url_get_thread, json=thread_json)
         mock_request.get(url_get_surveys_list, json=survey_list)
@@ -792,6 +799,7 @@ class TestMessage(ViewTestCase):
     @requests_mock.mock()
     @patch("response_operations_ui.controllers.message_controllers._get_jwt")
     def test_conversation_reply_fail(self, mock_request, mock_get_jwt):
+        sign_in_with_permission(self, mock_request, user_permission_messages_edit_json)
         mock_get_jwt.return_value = "blah"
         mock_request.get(url_get_thread, json=thread_json)
         mock_request.get(url_get_surveys_list, json=survey_list)
