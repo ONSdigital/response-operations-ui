@@ -2,9 +2,9 @@
 {% from "components/button/_macro.njk" import onsButton %}
 {% from "components/table/_macro.njk" import onsTable %}
 
-{% set page_title = ru.name + " | " + survey.display_name %}
-{% set is_reporting_unit_permission = hasPermission('reportingunits.edit') %}
-{% set is_message_edit_permission = hasPermission('messages.edit') %}
+{% set pageTitle = ru.name + " | " + survey.display_name %}
+{% set isReportingUnitPermission = hasPermission('reportingunits.edit') %}
+{% set isMessageEditPermission = hasPermission('messages.edit') %}
 {% block main %}
 
     <div class="ons-grid ons-u-mb-xs">
@@ -62,9 +62,9 @@
                         {% set status_class = 'ons-status--error' %}
                     {% endif %}
 
-                    {% if ce.responseStatus in ['Not started', 'In progress'] and is_reporting_unit_permission  %}
+                    {% if ce.responseStatus in ['Not started', 'In progress'] and isReportingUnitPermission  %}
                         {% set survey_link = '&nbsp;   <a href="' + url_for("case_bp.get_response_statuses", ru_ref=ru.sampleUnitRef, survey=survey.shortName, period=ce.exerciseRef) + '">Change</a>' %}
-                    {% elif ce.responseStatus in ['Completed', 'Completed by phone', 'No longer required'] and is_reporting_unit_permission  %}
+                    {% elif ce.responseStatus in ['Completed', 'Completed by phone', 'No longer required'] and isReportingUnitPermission  %}
                         {% set survey_link = '&nbsp;   <a href="' + url_for("case_bp.get_response_statuses", ru_ref=ru.sampleUnitRef, survey=survey.shortName, period=ce.exerciseRef) + '">View</a>' %}
                     {% else %}
                         {% set survey_link = '' %}
@@ -109,7 +109,7 @@
             </div>
             <div class="ru-survey-respondents ons-u-pt-s">
                 <h3 id="RESPONDENTS" class="ons-u-fs-m">Respondents</h3>
-                {% if is_reporting_unit_permission %}
+                {% if isReportingUnitPermission %}
                   {% if iac != "" %}
                     <div>Unused enrolment code:
                         <code class="ons-u-fs-r ons-u-ml-s" id="unused-enrolment-code">{{ iac }}</code>
@@ -163,11 +163,11 @@
                             survey_name=survey.shortName, respondent_id=respondent.id, respondent_first_name=respondent.firstName,
                             respondent_last_name=respondent.lastName, business_id=ru.id, trading_as=ru.trading_as, change_flag='ENABLED', tab="reporting_units") + '" id="change-enrolment-status">Re-enable</a>' %}
                     {% endif %}
-                    {% if not is_reporting_unit_permission %}
+                    {% if not isReportingUnitPermission %}
                        {% set change_status_link = '' %}
                     {% endif %}
               
-              {% if is_message_edit_permission %}
+              {% if isMessageEditPermission %}
   
                       {% set formData = {
                           "action": url_for('messages_bp.create_message'),
