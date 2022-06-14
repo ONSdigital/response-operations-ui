@@ -7,15 +7,6 @@
               },
           ]
     %}
-    {% if sample and (sample.state == 'ACTIVE' or sample.state == 'COMPLETE') %}
-        {% do tblHeaders.append(
-            {
-                "value": "Sample loaded: " + '<em>' + sample.ingestDateTime[:-7] + '</em>' + sample.ingestDateTime[-7:],
-                "thClasses": "ons-u-fs-r",
-                "numeric": "true"
-            }
-         )%}
-    {% endif %}
     {% set surveyTableData = {
         "variants": ['compact', 'responsive'],
         "id": "sample-table",
@@ -25,6 +16,13 @@
     } %}
     {% if sample %}
         {% if sample.state == 'ACTIVE' or sample.state == 'COMPLETE' %}
+            {% do tblHeaders.append(
+                {
+                    "value": "Sample loaded: " + '<em>' + sample.ingestDateTime[:-7] + '</em>' + sample.ingestDateTime[-7:],
+                    "thClasses": "ons-u-fs-r",
+                    "numeric": "true"
+                }
+             )%}
             {% set surveyTableDataRows = [
                 {
                     "tds": [
@@ -95,7 +93,7 @@
     {% else %}
           {% set sampleButtonText = 'Replace sample file' %}
     {% endif %}
-    {% if surveyEditPermission %}
+    {% if (not locked) and surveyEditPermission %}
         {{
             onsButton({
                 "text": sampleButtonText,

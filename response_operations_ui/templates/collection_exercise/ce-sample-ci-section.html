@@ -8,21 +8,7 @@
             }
         ]
     %}
-    {% if sample and (sample.state == 'ACTIVE' or sample.state == 'COMPLETE') %}
-        {% do tblHeaders.append(
-            {
-                "value": "",
-                "thClasses": "ons-u-ta"
-            }
-         )%}
-        {% do tblHeaders.append(
-            {
-                "value": "Uploaded " + '<em>' + sample.ingestDateTime[:-8] + '</em>' + sample.ingestDateTime[-8:],
-                "thClasses": "ons-u-fs-r",
-                "numeric": "true"
-            }
-         )%}
-    {% endif %}
+  
     {% set surveyTableData = {
         "variants": ['compact', 'responsive'],
         "id": "sample-table",
@@ -30,69 +16,83 @@
         "hideCaption": true,
         "ths": tblHeaders,
     } %}
+  
     {% if sample %}
         {% if sample.state == 'ACTIVE' or sample.state == 'COMPLETE' %}
-            {% set surveyTableDataRows = [
+            {% do tblHeaders.append(
                 {
-                    "tds": [
-                        {
-                            "value": "Total businesses",
-                            "tdClasses": "ons-u-ta"
-                        },
-                        {
-                            "value": sample.totalSampleUnits,
-                            "name": "total-instruments",
-                            "tdClasses": "ons-u-ta-right"
-                        },
-                        {
-                            "value": ' ',
-                            "name": "upload-sample-time",
-                        }
-                    ]
-                },
-                {
-                    "tds": [
-                        {
-                            "value": "Collection instruments",
-                            "tdClasses": "ons-u-ta"
-                        },
-                        {
-                            "value": sample.expectedCollectionInstruments,
-                            "name": "total-instruments",
-                            "tdClasses": "ons-u-ta-right"
-                        },
-                        {
-                            "value": ' ',
-                            "name": "upload-sample-time",
-                        }
-                    ]
+                    "value": "",
+                    "thClasses": "ons-u-ta"
                 }
-            ] %}
+             )%}
+            {% do tblHeaders.append(
+                {
+                    "value": "Uploaded " + '<em>' + sample.ingestDateTime[:-8] + '</em>' + sample.ingestDateTime[-8:],
+                    "thClasses": "ons-u-fs-r",
+                    "numeric": "true"
+                }
+             )%}
+            {% set surveyTableDataRows = [
+                    {
+                        "tds": [
+                            {
+                                "value": "Total businesses",
+                                "tdClasses": "ons-u-ta"
+                            },
+                            {
+                                "value": sample.totalSampleUnits,
+                                "name": "total-instruments",
+                                "tdClasses": "ons-u-ta-right"
+                            },
+                            {
+                                "value": ' ',
+                                "name": "upload-sample-time",
+                            }
+                        ]
+                    },
+                    {
+                        "tds": [
+                            {
+                                "value": "Collection instruments",
+                                "tdClasses": "ons-u-ta"
+                            },
+                            {
+                                "value": sample.expectedCollectionInstruments,
+                                "name": "total-instruments",
+                                "tdClasses": "ons-u-ta-right"
+                            },
+                            {
+                                "value": ' ',
+                                "name": "upload-sample-time",
+                            }
+                        ]
+                    }
+                ] %}
             {% do surveyTableData | setAttribute("trs", surveyTableDataRows) %}
         {% endif %}
-        {{
-            onsTable(surveyTableData)
-        }}
+    
+        {{ onsTable(surveyTableData) }}
+    
         {% if 'INIT' == sample.state %}
-            <div class="ons-u-mb-m">
-                <div class="ons-u-fs-r">
-                    Loading&hellip; <span class="ons-u-ml-xs"><a href="/surveys/{{survey.shortName}}/{{ce.exerciseRef}}/view-sample-ci?show_msg=true">Refresh to see progress</a></span>
-                </div>
-            </div>
+              <div class="ons-u-mb-m">
+                  <div class="ons-u-fs-r">
+                      Loading&hellip; <span class="ons-u-ml-xs"><a href="/surveys/{{survey.shortName}}/{{ce.exerciseRef}}/view-sample-ci?show_msg=true">Refresh to see progress</a></span>
+                  </div>
+              </div>
         {% elif 'FAILED' == sample.state %}
-            {% call
-                onsPanel({
-                    "type": "error",
-                    "classes": "ons-u-mb-l"
-                })
-            %}
-                {{ sample.notes }}
-            {% endcall %}
+             <div class="ons-u-mb-xl">
+                  {% call
+                      onsPanel({
+                          "type": "error",
+                          "classes": "ons-u-mb-l"
+                      })
+                  %}
+                      {{ sample.notes }}
+                  {% endcall %}
+              </div>
         {% endif %}
     {% else %}
-        {{
-            onsTable(surveyTableData)
-        }}
+        {{ onsTable(surveyTableData) }}
     {% endif %}
   
     {% if locked or (not surveyEditPermission) %}
