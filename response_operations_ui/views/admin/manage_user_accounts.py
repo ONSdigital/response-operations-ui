@@ -6,6 +6,7 @@ from flask_paginate import Pagination
 from structlog import wrap_logger
 from werkzeug.exceptions import abort
 
+from response_operations_ui.controllers.notify_controller import NotifyController
 from response_operations_ui.controllers.uaa_controller import (
     add_group_membership,
     delete_user,
@@ -17,6 +18,7 @@ from response_operations_ui.controllers.uaa_controller import (
     remove_group_membership,
     user_has_permission,
 )
+from response_operations_ui.exceptions.exceptions import NotifyError
 from response_operations_ui.forms import EditUserPermissionsForm, UserSearchForm
 from response_operations_ui.views.admin import admin_bp
 
@@ -150,7 +152,18 @@ def update_account_permissions():
         continue  # Nothing to do, already not in the group
 
     if was_permission_changed:
-        logger.info("send an email")
+        personalisation = {}
+        try:
+            NotifyController().request_to_notify(
+                email=user["emails"][0]["value"],
+                template_name="update_user_permissions",
+                personalisation=personalisation,
+            )
+        except NotifyError as e:
+            logger.error("failed to send email", exception=e)
+            # TODO what happens on failure?
+            raise
+
         flash("User account has been successfully changed. An email to inform the user has been sent.")
 
     return redirect(url_for("admin_bp.manage_user_accounts"))
@@ -182,13 +195,27 @@ def post_delete_uaa_user(user_id):
 
     user = get_user_by_id(user_id)
     if user is None:
-        # TODO is this the right place to redirect to?
         flash("User does not exist", "error")
         return redirect(url_for("admin_bp.manage_user_accounts"))
 
     # TODO if the user is you then don't delete
+    # if user["id"] == session.user_id:
+    #   flash("You cannot delete yourself", "error")
+    #   logger.error("User tried to delete themselves, user_id=user_id)
+    #   return redirect(url_for("admin_bp.manage_user_accounts"))
 
-    delete_user(user_id)
+    personalisation = {"FIRST_NAME": user["name"]["givenName"]}
+    try:
+        NotifyController().request_to_notify(
+            email=user["emails"][0]["value"],
+            template_name="delete_user",
+            personalisation=personalisation,
+        )
+        delete_user(user_id)
+    except NotifyError as e:
+        logger.error("failed to send email", exception=e)
+        # TODO what happens on failure?
+        raise
 
     flash("User account has been successfully deleted. An email to inform the user has been sent.")
     return redirect(url_for("admin_bp.manage_user_accounts"))
