@@ -128,19 +128,21 @@
                 </tbody>
             </table>
 
-        <div class="ons-grid ons-grid--flex ons-grid--gutterless ons-grid--vertical-center ons-grid--no-wrap@s ons-u-mt-m ons-u-mb-m">
-          <div class="ons-grid__col">
-          {{
-              onsButton({
-                  "id": "save-changes",
-                  "text": "Save changes",
-                  "submitType": "timer"
-              })
-          }}
+          <div class="ons-grid ons-grid--flex ons-grid--gutterless ons-grid--vertical-center ons-grid--no-wrap@s ons-u-mt-m ons-u-mb-m">
+            <div class="ons-grid__col">
+            {{
+                onsButton({
+                    "id": "save-changes",
+                    "text": "Save changes",
+                    "submitType": "timer"
+                })
+            }}
+            </div>
+            <div class="ons-grid__col ons-u-ml-m">
+                <a href=" {{ url_for('admin_bp.manage_user_accounts') }}">Cancel</a>
+            </div>
           </div>
-          <div class="ons-grid__col ons-u-ml-m">
-              <a href=" {{ url_for('admin_bp.manage_user_accounts') }}">Cancel</a>
-          </div>
-        </div>
+          <a href=" {{ url_for('admin_bp.get_delete_uaa_user', user_id=user_id) }}">Delete user account</a>
+        </section>
     </form>
 {% endblock %}

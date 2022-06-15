@@ -113,6 +113,27 @@ def get_user_by_id(user_id: str) -> dict:
     return response.json()
 
 
+def delete_user(user_id: str):
+    """
+    Deletes the user from uaa, using the id of the user.
+
+    :param user_id: The id of the user in uaa
+    """
+    access_token = login_admin()
+    headers = generate_headers(access_token)
+
+    url = f"{app.config['UAA_SERVICE_URL']}/Users/{user_id}"
+    response = requests.delete(url, headers=headers)
+    try:
+        response.raise_for_status()
+    except HTTPError:
+        # TODO is this the best way to handle the error?
+        logger.error("Error deleting user from UAA", status_code=response.status_code, user_id=user_id, exc_info=True)
+        raise
+
+    return response.json()
+
+
 def retrieve_user_code(access_token, username):
     headers = generate_headers(access_token)
 

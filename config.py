@@ -79,6 +79,11 @@ class Config(object):
     NOTIFY_UPDATE_ACCOUNT_PASSWORD_CHANGE_TEMPLATE = os.getenv(
         "NOTIFY_UPDATE_ACCOUNT_PASSWORD_CHANGE_TEMPLATE", "update_account_password_id"
     )
+    NOTIFY_UPDATE_USER_PERMISSIONS_TEMPLATE = os.getenv(
+        "NOTIFY_UPDATE_USER_PERMISSIONS_TEMPLATE", "update_user_permissions_id"
+    )
+    NOTIFY_DELETE_USER_TEMPLATE = os.getenv("NOTIFY_DELETE_USER_TEMPLATE", "delete_user_id")
+
     SEND_EMAIL_TO_GOV_NOTIFY = os.getenv("SEND_EMAIL_TO_GOV_NOTIFY", False)
 
     REPORT_URL = os.getenv("REPORT_URL")

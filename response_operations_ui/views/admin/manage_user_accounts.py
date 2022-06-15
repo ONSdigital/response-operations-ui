@@ -8,6 +8,7 @@ from werkzeug.exceptions import abort
 
 from response_operations_ui.controllers.uaa_controller import (
     add_group_membership,
+    delete_user,
     get_filter_query,
     get_groups,
     get_user_by_email,
@@ -93,6 +94,8 @@ def manage_account():
     name = uaa_user["resources"][0]["name"]["givenName"] + " " + uaa_user["resources"][0]["name"]["familyName"]
     permissions = {g["display"]: "y" for g in uaa_user["resources"][0]["groups"]}
 
+    # TODO if the user is you maybe don't show the delete button?
+
     return render_template(
         "admin/manage-account.html", name=name, permissions=permissions, user_id=uaa_user["resources"][0]["id"]
     )
@@ -118,7 +121,6 @@ def update_account_permissions():
     form = EditUserPermissionsForm(request.form)
     user_groups = [group["display"] for group in user["groups"]]
 
-    # TODO need to figure out how to get from surveys_edit to surveys.edit (the group name in uaa)
     translated_permissions = {
         "surveys_edit": "surveys.edit",
         "reporting_units_edit": "reportingunits.edit",
@@ -163,13 +165,12 @@ def get_delete_uaa_user(user_id):
 
     uaa_user = get_user_by_id(user_id)
     if user_id is None:
-        # TODO is this the right place to redirect to?
         flash("User does not exist", "error")
         return redirect(url_for("admin_bp.manage_user_accounts"))
 
-    name = uaa_user["resources"][0]["name"]["givenName"] + " " + uaa_user["resources"][0]["name"]["familyName"]
-    # TODO create real template
-    return render_template("admin/manage-account.html", name=name, user_id=uaa_user["resources"][0]["id"])
+    name = uaa_user["name"]["givenName"] + " " + uaa_user["name"]["familyName"]
+    email = uaa_user["emails"][0]["value"]
+    return render_template("admin/user-delete.html", name=name, email=email)
 
 
 @admin_bp.route("/delete-account/<user_id>", methods=["POST"])
@@ -184,7 +185,11 @@ def post_delete_uaa_user(user_id):
         # TODO is this the right place to redirect to?
         flash("User does not exist", "error")
         return redirect(url_for("admin_bp.manage_user_accounts"))
-    # Delete user
+
+    # TODO if the user is you then don't delete
+
+    delete_user(user_id)
+
     flash("User account has been successfully deleted. An email to inform the user has been sent.")
     return redirect(url_for("admin_bp.manage_user_accounts"))
 
