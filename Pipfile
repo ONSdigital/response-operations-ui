@@ -55,7 +55,7 @@ WTForms = "*"
 email_validator = "*"
 
 [dev-packages]
-black = "==21.12b0"
+black = "*"
 flake8 = "*"
 fakeredis = "*"
 freezegun = "*"
