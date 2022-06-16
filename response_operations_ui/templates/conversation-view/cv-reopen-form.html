@@ -1,5 +1,5 @@
 {% from "components/input/_macro.njk" import onsInput %}
-{% set isMessageEditPermission = hasPermission('messages.edit') %}
+{% set is_message_edit_permission = hasPermission('messages.edit') %}
 
 {% call
     onsPanel({
@@ -10,7 +10,7 @@
     <p class="ons-u-fs-r">This conversation was closed on {{ closed_at }} by {{ thread_data.closed_by }}</p>
 {% endcall %}
 
-{% if isMessageEditPermission %}
+{% if is_message_edit_permission %}
   <form action="{{ url_for('messages_bp.view_conversation', thread_id=messages[0].thread_id, ru_ref_filter=ru_ref_filter, business_id_filter=business_id_filter) }}" method="post">
       <input type="hidden" name="csrf_token" value="{{ csrf_token() }}" />
       {{
