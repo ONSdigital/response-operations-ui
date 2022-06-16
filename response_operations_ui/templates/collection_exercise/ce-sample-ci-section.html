@@ -1,29 +1,38 @@
 <section class="ce-section ce-details">
     {% set surveyEditPermission = hasPermission('surveys.edit') %}
+    {% set tblHeaders =  
+        [ 
+            { 
+                "value": "Sample & Collection instruments (CI)",
+                "thClasses": "ons-u-fs-r--b"
+            }
+        ]
+    %}
+  
+    {% set surveyTableData = {
+        "variants": ['compact', 'responsive'],
+        "id": "sample-table",
+        "caption": 'Sample summary',
+        "hideCaption": true,
+        "ths": tblHeaders,
+    } %}
+  
     {% if sample %}
-        {{
-            onsTable({
-                "variants": ['compact', 'responsive'],
-                "id": "sample-table",
-                "caption": 'Loaded sample summary',
-                "hideCaption": true,
-                "ths": [
-                    { 
-                        "value": "Sample & Collection instruments (CI)",
-                        "thClasses": "ons-u-fs-r--b"
-                    },
-                    {
-                        "value": "",
-                        "thClasses": "ons-u-ta"
-                    },
-                    {
-                        "value": "Uploaded " + '<em>' + sample.ingestDateTime[:-8] + '</em>' + sample.ingestDateTime[-8:],
-                        "thClasses": "ons-u-fs-r",
-                        "numeric": "true"
-                    },
-                ],
-                
-                "trs": [
+        {% if sample.state == 'ACTIVE' or sample.state == 'COMPLETE' %}
+            {% do tblHeaders.append(
+                {
+                    "value": "",
+                    "thClasses": "ons-u-ta"
+                }
+             )%}
+            {% do tblHeaders.append(
+                {
+                    "value": "Uploaded " + '<em>' + sample.ingestDateTime[:-8] + '</em>' + sample.ingestDateTime[-8:],
+                    "thClasses": "ons-u-fs-r",
+                    "numeric": "true"
+                }
+             )%}
+            {% set surveyTableDataRows = [
                     {
                         "tds": [
                             {
@@ -58,24 +67,32 @@
                             }
                         ]
                     }
-                ]
-            })
-        }}
+                ] %}
+            {% do surveyTableData | setAttribute("trs", surveyTableDataRows) %}
+        {% endif %}
+    
+        {{ onsTable(surveyTableData) }}
+    
+        {% if 'INIT' == sample.state %}
+              <div class="ons-u-mb-m">
+                  <div class="ons-u-fs-r">
+                      Loading&hellip; <span class="ons-u-ml-xs"><a href="/surveys/{{survey.shortName}}/{{ce.exerciseRef}}?show_msg=true">Refresh to see progress</a></span>
+                  </div>
+              </div>
+        {% elif 'FAILED' == sample.state %}
+             <div class="ons-u-mb-m">
+                  {% call
+                      onsPanel({
+                          "type": "error",
+                          "classes": "ons-u-mb-l"
+                      })
+                  %}
+                      {{ sample.notes }}
+                  {% endcall %}
+              </div>
+        {% endif %}
     {% else %}
-        {{
-            onsTable({
-                "variants": ['compact', 'responsive'],
-                "id": "sample-table",
-                "caption": 'Loaded sample summary',
-                "hideCaption": true,
-                "ths": [
-                    { 
-                        "value": "Sample & Collection instruments (CI)",
-                        "thClasses": "ons-u-fs-r--b"
-                    }
-                ],
-            })
-        }}
+        {{ onsTable(surveyTableData) }}
     {% endif %}
   
     {% if locked or (not surveyEditPermission) %}
