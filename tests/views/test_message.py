@@ -1673,12 +1673,12 @@ class TestMessage(ViewTestCase):
         mock_request.get(url_get_surveys_list, json=survey_list)
         self.mock_uaa()
         response = self.client.get("/messages/threads/fb0e79bd-e132-4f4f-a7fd-5e8c6b41b9af")
-        
-        self.assertEqual(response.status_code,200)
+
+        self.assertEqual(response.status_code, 200)
         self.assertNotIn("Reply".encode(), response.data)
         self.assertNotIn("Close conversation".encode(), response.data)
         self.assertNotIn("Send message".encode(), response.data)
-    
+
     @staticmethod
     def _mock_request_called_with_expected_query(mock_instance, query):
         for element in mock_instance.request_history:

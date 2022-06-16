@@ -744,7 +744,7 @@ class TestReportingUnits(ViewTestCase):
         request_history = mock_request.request_history
         self.assertEqual(len(request_history), 1)
         self.assertEqual(response.status_code, 500)
-    
+
     @requests_mock.mock()
     def test_reporting_unit_page_no_message_edit_permission(self, mock_request):
         mock_request.post(url_sign_in_data, json={"access_token": self.access_token}, status_code=201)
@@ -767,7 +767,7 @@ class TestReportingUnits(ViewTestCase):
             "/reporting-units/50012345678/surveys/cb0711c3-0ac8-41d3-ae0e-567e5ea1ef87", follow_redirects=True
         )
 
-        self.assertNotIn('Create message'.encode(), response.data)
+        self.assertNotIn("Create message".encode(), response.data)
         self.assertEqual(response.status_code, 200)
 
     @staticmethod
