@@ -1664,6 +1664,21 @@ class TestMessage(ViewTestCase):
                     response_body.lower().replace(" ", ""),
                 )
 
+    @requests_mock.mock()
+    @patch("response_operations_ui.controllers.message_controllers._get_jwt")
+    def test_conversation_reply_no_edit_permission(self, mock_request, mock_get_jwt):
+        mock_get_jwt.return_value = "blah"
+        mock_request.get(url_get_thread, json=thread_unread_json)
+        mock_request.put(url_update_label)
+        mock_request.get(url_get_surveys_list, json=survey_list)
+        self.mock_uaa()
+        response = self.client.get("/messages/threads/fb0e79bd-e132-4f4f-a7fd-5e8c6b41b9af")
+        
+        self.assertEqual(response.status_code,200)
+        self.assertNotIn("Reply".encode(), response.data)
+        self.assertNotIn("Close conversation".encode(), response.data)
+        self.assertNotIn("Send message".encode(), response.data)
+    
     @staticmethod
     def _mock_request_called_with_expected_query(mock_instance, query):
         for element in mock_instance.request_history:
