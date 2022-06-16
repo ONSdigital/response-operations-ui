@@ -1,6 +1,6 @@
 import logging
 
-from flask import flash, redirect, render_template, request, url_for
+from flask import flash, redirect, render_template, request, session, url_for
 from flask_login import login_required
 from flask_paginate import Pagination
 from structlog import wrap_logger
@@ -160,9 +160,9 @@ def update_account_permissions():
                 personalisation=personalisation,
             )
         except NotifyError as e:
-            logger.error("failed to send email", exception=e)
-            # TODO what happens on failure?
-            raise
+            logger.error("failed to send email", msg=e.description, exc_info=True)
+            flash("Failed to send email, please try again", "error")
+            return redirect(url_for("admin_bp.manage_account", user=user["emails"][0]["value"]))
 
         flash("User account has been successfully changed. An email to inform the user has been sent.")
 
@@ -198,11 +198,12 @@ def post_delete_uaa_user(user_id):
         flash("User does not exist", "error")
         return redirect(url_for("admin_bp.manage_user_accounts"))
 
-    # TODO if the user is you then don't delete
-    # if user["id"] == session.user_id:
-    #   flash("You cannot delete yourself", "error")
-    #   logger.error("User tried to delete themselves, user_id=user_id)
-    #   return redirect(url_for("admin_bp.manage_user_accounts"))
+    # This should be impossible via the regular user journey, but could be done by manipulating the url, so we have
+    # to check for this just incase.
+    if user["id"] == session["user_id"]:
+        flash("You cannot delete your own user account", "error")
+        logger.error("User tried to delete themselves", user_id=user_id)
+        return redirect(url_for("admin_bp.manage_user_accounts"))
 
     personalisation = {"FIRST_NAME": user["name"]["givenName"]}
     try:
@@ -213,9 +214,9 @@ def post_delete_uaa_user(user_id):
         )
         delete_user(user_id)
     except NotifyError as e:
-        logger.error("failed to send email", exception=e)
-        # TODO what happens on failure?
-        raise
+        logger.error("failed to send email", msg=e.description, exc_info=True)
+        flash("Failed to send email, please try again", "error")
+        return redirect(url_for("admin_bp.get_delete_uaa_user", user_id=user_id))
 
     flash("User account has been successfully deleted. An email to inform the user has been sent.")
     return redirect(url_for("admin_bp.manage_user_accounts"))
