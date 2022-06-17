@@ -93,10 +93,13 @@ def manage_account():
         flash("Selected user could not be found", "error")
         return redirect(url_for("admin_bp.manage_user_accounts"))
 
+    if uaa_user["resources"][0]["id"] == session["user_id"]:
+        flash("You cannot modify your own user account", "error")
+        logger.error("User tried to modify their own account", user_id=uaa_user["resources"][0]["id"])
+        return redirect(url_for("admin_bp.manage_user_accounts"))
+
     name = uaa_user["resources"][0]["name"]["givenName"] + " " + uaa_user["resources"][0]["name"]["familyName"]
     permissions = {g["display"]: "y" for g in uaa_user["resources"][0]["groups"]}
-
-    # TODO if the user is you maybe don't show the delete button?
 
     return render_template(
         "admin/manage-account.html", name=name, permissions=permissions, user_id=uaa_user["resources"][0]["id"]
@@ -117,7 +120,16 @@ def update_account_permissions():
         # place to send them back to.
         flash("user_id missing when editing user", "error")
         return redirect(url_for("admin_bp.manage_user_accounts"))
+
+    if user_id == session["user_id"]:
+        flash("You cannot modify your own user account", "error")
+        logger.error("User tried to modify their own account", user_id=user_id)
+        return redirect(url_for("admin_bp.manage_user_accounts"))
+
     user = get_user_by_id(user_id)
+    if user is None:
+        flash("User does not exist", "error")
+        return redirect(url_for("admin_bp.manage_user_accounts"))
     groups = get_groups()
 
     form = EditUserPermissionsForm(request.form)
@@ -176,13 +188,18 @@ def get_delete_uaa_user(user_id):
         logger.exception("Manage User Account request requested but unauthorised.")
         abort(401)
 
-    uaa_user = get_user_by_id(user_id)
-    if user_id is None:
+    if user_id == session["user_id"]:
+        flash("You cannot delete your own user account", "error")
+        logger.error("User tried to delete themselves", user_id=user_id)
+        return redirect(url_for("admin_bp.manage_user_accounts"))
+
+    user = get_user_by_id(user_id)
+    if user is None:
         flash("User does not exist", "error")
         return redirect(url_for("admin_bp.manage_user_accounts"))
 
-    name = uaa_user["name"]["givenName"] + " " + uaa_user["name"]["familyName"]
-    email = uaa_user["emails"][0]["value"]
+    name = user["name"]["givenName"] + " " + user["name"]["familyName"]
+    email = user["emails"][0]["value"]
     return render_template("admin/user-delete.html", name=name, email=email)
 
 
@@ -193,16 +210,14 @@ def post_delete_uaa_user(user_id):
         logger.exception("Manage User Account request requested but unauthorised.")
         abort(401)
 
+    if user_id == session["user_id"]:
+        flash("You cannot delete your own user account", "error")
+        logger.error("User tried to delete themselves", user_id=user_id)
+        return redirect(url_for("admin_bp.manage_user_accounts"))
+
     user = get_user_by_id(user_id)
     if user is None:
         flash("User does not exist", "error")
-        return redirect(url_for("admin_bp.manage_user_accounts"))
-
-    # This should be impossible via the regular user journey, but could be done by manipulating the url, so we have
-    # to check for this just incase.
-    if user["id"] == session["user_id"]:
-        flash("You cannot delete your own user account", "error")
-        logger.error("User tried to delete themselves", user_id=user_id)
         return redirect(url_for("admin_bp.manage_user_accounts"))
 
     personalisation = {"FIRST_NAME": user["name"]["givenName"]}
@@ -231,6 +246,7 @@ def _get_refine_user_list(users: list) -> list[dict]:
                 "name": user["name"]["givenName"],
                 "lastname": user["name"]["familyName"],
                 "id": user["id"],
+                "show_edit_button": user["id"] != session["user_id"],
             }
         )
     return user_list
