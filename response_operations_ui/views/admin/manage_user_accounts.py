@@ -141,6 +141,7 @@ def update_account_permissions():
         "respondents_edit": "respondents.edit",
         "respondents_delete": "respondents.delete",
         "messages_edit": "messages.edit",
+        "uaa_admin": "uaa.admin",
     }
 
     # Because we can't add or remove in a batch, if one of them fail then we can leave the user in a state that wasn't

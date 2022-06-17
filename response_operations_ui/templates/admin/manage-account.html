@@ -128,6 +128,23 @@
                 </tbody>
             </table>
 
+          <div class="ons-grid ons-grid--flex ons-grid--gutterless ons-u-mt-m ons-u-mb-m">
+            <div class="ons-grid__col ons-col-3@m">
+            <strong>Manage user accounts</strong>
+            {{
+                onsCheckbox({
+                    "id": "uaa_admin",
+                    "name": "uaa_admin",
+                    "label": {
+                        "text": "Manage user accounts"
+                    },
+                    "value": "y",
+                    "checked": permissions["uaa.admin"]
+                })
+              }}
+            </div>
+          </div>
+
           <div class="ons-grid ons-grid--flex ons-grid--gutterless ons-grid--vertical-center ons-grid--no-wrap@s ons-u-mt-m ons-u-mb-m">
             <div class="ons-grid__col">
             {{
