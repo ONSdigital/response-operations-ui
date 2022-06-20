@@ -13,7 +13,6 @@ from response_operations_ui.controllers.uaa_controller import (
     delete_user,
     get_filter_query,
     get_groups,
-    get_user_by_email,
     get_user_by_id,
     get_users_list,
     remove_group_membership,
@@ -75,62 +74,49 @@ def manage_user_accounts():
     )
 
 
-@admin_bp.route("/manage-account", methods=["GET"])
+@admin_bp.route("/manage-account/<user_id>", methods=["GET"])
 @login_required
-def manage_account():
+def manage_account(user_id):
     if not user_has_permission("users.admin"):
         logger.exception("Manage User Account request requested but unauthorised.")
         abort(401)
-    user_requested = request.values.get("user")
-    if user_requested is None:
-        # Someone has gotten here directly without passing a parameter in, send them back to the main page
-        flash("No user was selected to edit", "error")
-        return redirect(url_for("admin_bp.manage_user_accounts"))
 
-    logger.info("Attempting to get user by email", user=user_requested)
-    uaa_user = get_user_by_email(user_requested)
-    if uaa_user is None or len(uaa_user["resources"]) == 0:
+    logger.info("Attempting to get user by id", user_id=user_id)
+    uaa_user = get_user_by_id(user_id)
+    if uaa_user is None:
         # Something went wrong when trying to retrieve them from UAA
         flash("Selected user could not be found", "error")
         return redirect(url_for("admin_bp.manage_user_accounts"))
 
-    if uaa_user["resources"][0]["id"] == session["user_id"]:
+    if uaa_user["id"] == session["user_id"]:
         flash("You cannot modify your own user account", "error")
-        logger.error("User tried to modify their own account", user_id=uaa_user["resources"][0]["id"])
+        logger.error("User tried to modify their own account", user_id=uaa_user["id"])
         return redirect(url_for("admin_bp.manage_user_accounts"))
 
-    name = uaa_user["resources"][0]["name"]["givenName"] + " " + uaa_user["resources"][0]["name"]["familyName"]
-    permissions = {g["display"]: "y" for g in uaa_user["resources"][0]["groups"]}
+    name = uaa_user["name"]["givenName"] + " " + uaa_user["name"]["familyName"]
+    permissions = {g["display"]: "y" for g in uaa_user["groups"]}
 
-    return render_template(
-        "admin/manage-account.html", name=name, permissions=permissions, user_id=uaa_user["resources"][0]["id"]
-    )
+    return render_template("admin/manage-account.html", name=name, permissions=permissions, user_id=uaa_user["id"])
 
 
-@admin_bp.route("/manage-account", methods=["POST"])
+@admin_bp.route("/manage-account/<user_id>", methods=["POST"])
 @login_required
-def update_account_permissions():
+def update_account_permissions(user_id):
     if not user_has_permission("users.admin"):
         logger.exception("Manage User Account request requested but unauthorised.")
         abort(401)
-
-    # Get user from uaa, so we have a fresh set of permissions to look at
-    user_id = request.form.get("user_id")
-    if user_id is None:
-        # If we haven't got the user_id, then redirecting back to the users list is the only sensible
-        # place to send them back to.
-        flash("user_id missing when editing user", "error")
-        return redirect(url_for("admin_bp.manage_user_accounts"))
 
     if user_id == session["user_id"]:
         flash("You cannot modify your own user account", "error")
         logger.error("User tried to modify their own account", user_id=user_id)
         return redirect(url_for("admin_bp.manage_user_accounts"))
 
+    # Get user from uaa, so we have a fresh set of permissions to look at
     user = get_user_by_id(user_id)
     if user is None:
         flash("User does not exist", "error")
         return redirect(url_for("admin_bp.manage_user_accounts"))
+
     try:
         groups = get_groups()
     except HTTPError:
