@@ -21,6 +21,24 @@
             {% endcall %}
         {% endif %}
     {% endwith %}
+    {% with messages = get_flashed_messages() %}
+        {% if messages %}
+            {% call
+                onsPanel({
+                    "type":"success",
+                    "iconType": "check",
+                    "classes": "ons-u-mb-s",
+                    "bodyAttributes": {
+                        "data-qa": "success-body"
+                    }
+                })
+            %}
+                {% for message in messages %}
+                    <p id="flashed-message-{{ loop.index }}">{{ message }}</p>
+                {% endfor %}
+            {% endcall %}
+        {% endif %}
+    {% endwith %}
     <div class="ons-grid ons-grid--flex ons-grid--between">
         <div class="ons-grid__col">
             <h1 class="ons-u-fs-l u-mb-xs" name="page-messages-title">Manage user accounts</h1>

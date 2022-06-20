@@ -245,6 +245,7 @@ def post_delete_uaa_user(user_id):
         flash("Failed to delete user, please try again", "error")
         return redirect(url_for("admin_bp.get_delete_uaa_user", user_id=user_id))
 
+    logger.info("Just before the flash")
     flash("User account has been successfully deleted. An email to inform the user has been sent.")
     return redirect(url_for("admin_bp.manage_user_accounts"))
 
