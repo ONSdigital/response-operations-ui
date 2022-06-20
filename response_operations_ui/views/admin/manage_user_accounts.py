@@ -3,6 +3,7 @@ import logging
 from flask import flash, redirect, render_template, request, session, url_for
 from flask_login import login_required
 from flask_paginate import Pagination
+from requests import HTTPError
 from structlog import wrap_logger
 from werkzeug.exceptions import abort
 
@@ -80,13 +81,13 @@ def manage_account():
     if not user_has_permission("users.admin"):
         logger.exception("Manage User Account request requested but unauthorised.")
         abort(401)
-    user_requested = request.values.get("user", None)
+    user_requested = request.values.get("user")
     if user_requested is None:
         # Someone has gotten here directly without passing a parameter in, send them back to the main page
         flash("No user was selected to edit", "error")
         return redirect(url_for("admin_bp.manage_user_accounts"))
 
-    logger.info("Attempting to get user " + user_requested)
+    logger.info("Attempting to get user by email", user=user_requested)
     uaa_user = get_user_by_email(user_requested)
     if uaa_user is None or len(uaa_user["resources"]) == 0:
         # Something went wrong when trying to retrieve them from UAA
@@ -130,7 +131,11 @@ def update_account_permissions():
     if user is None:
         flash("User does not exist", "error")
         return redirect(url_for("admin_bp.manage_user_accounts"))
-    groups = get_groups()
+    try:
+        groups = get_groups()
+    except HTTPError:
+        flash("Failed to get groups, please try again", "error")
+        return redirect(url_for("admin_bp.manage_user_accounts"))
 
     form = EditUserPermissionsForm(request.form)
     user_groups = [group["display"] for group in user["groups"]]
@@ -156,21 +161,28 @@ def update_account_permissions():
         if is_ticked:
             if translated_permission in user_groups:
                 continue  # Nothing to do, already part of the group
-            add_group_membership(user_id, group_id)  # Ticked and not in group, need to add it
+            try:
+                add_group_membership(user_id, group_id)  # Ticked and not in group, need to add it
+            except HTTPError:
+                flash(f"Failed add [{permission}] to the user, please try again", "error")
+                return redirect(url_for("admin_bp.manage_account", user=user["emails"][0]["value"]))
             was_permission_changed = True
 
         if translated_permission in user_groups:
-            remove_group_membership(user_id, group_id)  # Not ticked but in group, need to remove it
+            try:
+                remove_group_membership(user_id, group_id)  # Not ticked but in group, need to remove it
+            except HTTPError:
+                flash(f"Failed remove [{permission}] to the user, please try again", "error")
+                return redirect(url_for("admin_bp.manage_account", user=user["emails"][0]["value"]))
             was_permission_changed = True
         continue  # Nothing to do, already not in the group
 
     if was_permission_changed:
-        personalisation = {}
         try:
             NotifyController().request_to_notify(
                 email=user["emails"][0]["value"],
                 template_name="update_user_permissions",
-                personalisation=personalisation,
+                personalisation={},
             )
         except NotifyError as e:
             logger.error("failed to send email", msg=e.description, exc_info=True)
@@ -221,17 +233,16 @@ def post_delete_uaa_user(user_id):
         flash("User does not exist", "error")
         return redirect(url_for("admin_bp.manage_user_accounts"))
 
-    personalisation = {"FIRST_NAME": user["name"]["givenName"]}
     try:
         NotifyController().request_to_notify(
             email=user["emails"][0]["value"],
             template_name="delete_user",
-            personalisation=personalisation,
+            personalisation={},
         )
         delete_user(user_id)
-    except NotifyError as e:
-        logger.error("failed to send email", msg=e.description, exc_info=True)
-        flash("Failed to send email, please try again", "error")
+    except (NotifyError, HTTPError):
+        logger.error("Failed to complete user deletion process", user_id=user_id, exc_info=True)
+        flash("Failed to delete user, please try again", "error")
         return redirect(url_for("admin_bp.get_delete_uaa_user", user_id=user_id))
 
     flash("User account has been successfully deleted. An email to inform the user has been sent.")

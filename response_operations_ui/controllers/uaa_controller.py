@@ -127,7 +127,6 @@ def delete_user(user_id: str):
     try:
         response.raise_for_status()
     except HTTPError:
-        # TODO is this the best way to handle the error?
         logger.error("Error deleting user from UAA", status_code=response.status_code, user_id=user_id, exc_info=True)
         raise
 
@@ -253,22 +252,23 @@ def update_user_account(payload):
     return errors
 
 
-def update_user_password(user, old_password, new_password):
+def update_user_password(user: dict, old_password: str, new_password: str) -> dict | None:
     """
     Updates the user password in uaa, using the user's id
-    :param user - UAA user object.
-    :param old_password
-    :param new_password
+    :param user: UAA user object.
+    :param old_password: The old password
+    :param new_password: The new password
     :return errors: The errors returned from uaa as a dictionary
     """
     access_token = login_admin()
     headers = generate_headers(access_token)
     payload = {"oldPassword": old_password, "password": new_password}
-    logger.info("Attempting change of user's password")
+    logger.info("Attempting change of users password", user_id=user["id"])
     url = f"{app.config['UAA_SERVICE_URL']}/Users/{user['id']}/password"
     response = requests.put(url, data=dumps(payload), headers=headers)
     try:
         response.raise_for_status()
+        logger.info("Successfully changed users password", user_id=user["id"])
         return
     except HTTPError:
         if response.status_code == 404:
@@ -290,6 +290,7 @@ def update_user_password(user, old_password, new_password):
 
 
 def get_groups():
+    logger.info("About to get group list from uaa")
     access_token = login_admin()
     headers = generate_headers(access_token)
 
@@ -299,13 +300,14 @@ def get_groups():
         response.raise_for_status()
     except HTTPError:
         logger.error("Error retrieving groups from UAA", status_code=response.status_code, exc_info=True)
-        # TODO what is the sensible thing to raise if something goes wrong
         raise
 
+    logger.info("Successfully retrieved group list from uaa")
     return response.json()
 
 
-def add_group_membership(user_id, group_id):
+def add_group_membership(user_id: str, group_id: str):
+    logger.info("About to add member to group", user_id=user_id, group_id=group_id)
     access_token = login_admin()
     headers = generate_headers(access_token)
 
@@ -316,20 +318,21 @@ def add_group_membership(user_id, group_id):
         response.raise_for_status()
     except HTTPError:
         logger.error(
-            "Error retrieving user from UAA",
+            "Error adding group membership",
             status_code=response.status_code,
             group_id=group_id,
             user_id=user_id,
             text=response.text,
             exc_info=True,
         )
-        # TODO what is the sensible thing to raise if something goes wrong
         raise
 
+    logger.info("Successfully added member to group", user_id=user_id, group_id=group_id)
     return response.json()
 
 
-def remove_group_membership(user_id, group_id):
+def remove_group_membership(user_id: str, group_id: str):
+    logger.info("About to remove member from group", user_id=user_id, group_id=group_id)
     access_token = login_admin()
     headers = generate_headers(access_token)
 
@@ -339,16 +342,16 @@ def remove_group_membership(user_id, group_id):
         response.raise_for_status()
     except HTTPError:
         logger.error(
-            "Error retrieving user from UAA",
+            "Error removing group membership",
             status_code=response.status_code,
             group_id=group_id,
             user_id=user_id,
             text=response.text,
             exc_info=True,
         )
-        # TODO what is the sensible thing to raise if something goes wrong
         raise
 
+    logger.info("Successfully removed member from group", user_id=user_id, group_id=group_id)
     return response.json()
 
 
