@@ -32,9 +32,7 @@ def manage_user_accounts():
     This endpoint, by design is only accessible to ROPs admin user.
     This endpoint lists all current user in the system.
     """
-    if not user_has_permission("users.admin"):
-        logger.exception("Manage User Account request requested but unauthorised.")
-        abort(401)
+    _verify_user_admin_permission()
     page = request.values.get("page", "1")
     user_with_email = request.values.get("user_with_email", None)
     limit = 20
@@ -77,9 +75,7 @@ def manage_user_accounts():
 @admin_bp.route("/manage-account/<user_id>", methods=["GET"])
 @login_required
 def manage_account(user_id):
-    if not user_has_permission("users.admin"):
-        logger.exception("Manage User Account request requested but unauthorised.")
-        abort(401)
+    _verify_user_admin_permission()
 
     logger.info("Attempting to get user by id", user_id=user_id)
     uaa_user = get_user_by_id(user_id)
@@ -102,9 +98,7 @@ def manage_account(user_id):
 @admin_bp.route("/manage-account/<user_id>", methods=["POST"])
 @login_required
 def update_account_permissions(user_id):
-    if not user_has_permission("users.admin"):
-        logger.exception("Manage User Account request requested but unauthorised.")
-        abort(401)
+    _verify_user_admin_permission()
 
     if user_id == session["user_id"]:
         flash("You cannot modify your own user account", "error")
@@ -180,12 +174,10 @@ def update_account_permissions(user_id):
     return redirect(url_for("admin_bp.manage_user_accounts"))
 
 
-@admin_bp.route("/delete-account/<user_id>", methods=["GET"])
+@admin_bp.route("/manage-account/<user_id>/delete", methods=["GET"])
 @login_required
 def get_delete_uaa_user(user_id):
-    if not user_has_permission("users.admin"):
-        logger.exception("Manage User Account request requested but unauthorised.")
-        abort(401)
+    _verify_user_admin_permission()
 
     if user_id == session["user_id"]:
         flash("You cannot delete your own user account", "error")
@@ -202,12 +194,10 @@ def get_delete_uaa_user(user_id):
     return render_template("admin/user-delete.html", name=name, email=email)
 
 
-@admin_bp.route("/delete-account/<user_id>", methods=["POST"])
+@admin_bp.route("/manage-account/<user_id>/delete", methods=["POST"])
 @login_required
 def post_delete_uaa_user(user_id):
-    if not user_has_permission("users.admin"):
-        logger.exception("Manage User Account request requested but unauthorised.")
-        abort(401)
+    _verify_user_admin_permission()
 
     if user_id == session["user_id"]:
         flash("You cannot delete your own user account", "error")
@@ -234,6 +224,16 @@ def post_delete_uaa_user(user_id):
     logger.info("Just before the flash")
     flash("User account has been successfully deleted. An email to inform the user has been sent.")
     return redirect(url_for("admin_bp.manage_user_accounts"))
+
+
+def _verify_user_admin_permission():
+    """
+    Checks if the user has 'users.admin' permission and aborts with a 401 status code if the user
+    doesn't have permission.
+    """
+    if not user_has_permission("users.admin"):
+        logger.exception("Manage User Account request requested but unauthorised.")
+        abort(401)
 
 
 def _get_refine_user_list(users: list) -> list[dict]:
