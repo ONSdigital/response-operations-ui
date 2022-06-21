@@ -189,6 +189,76 @@ class TestMessage(ViewTestCase):
         self.assertNotIn("Create new user account".encode(), response.data)
         self.assertNotIn("Edit or delete user account".encode(), response.data)
 
+    @requests_mock.mock()
+    def test_edit_account_get_fail_own_id(self, mock_request):
+        payload = {"user_id": user_id, "aud": "response_operations"}
+        own_id_access_token = jwt.encode(payload, TestingConfig.UAA_PRIVATE_KEY, algorithm="RS256")
+        mock_request.post(url_sign_in_data, json={"access_token": own_id_access_token}, status_code=201)
+        mock_request.get(url_surveys, json=self.surveys_list_json, status_code=200)
+        mock_request.get(url_permission_url, json=user_permission_admin_json, status_code=200)
+        mock_request.get(url_uaa_user_list, json=uaa_user_search_email, status_code=200)
+        mock_request.get(url_uaa_user_by_id, json=uaa_user_by_id_json, status_code=200)
+        self.client.post("/sign-in", follow_redirects=True, data={"username": "user", "password": "pass"})
+        mock_request.get(url_uaa_user_by_id, json=uaa_user_by_id_json, status_code=200)
+        response = self.client.get("/admin/manage-account/fe2dc842-b3b3-4647-8317-858dab82ab94", follow_redirects=True)
+        self.assertEqual(200, response.status_code)
+        # Check we're on the account list page with a message flashed
+        self.assertIn("You cannot modify your own user account".encode(), response.data)
+        self.assertIn("Manage user accounts".encode(), response.data)
+        self.assertIn("Create new user account".encode(), response.data)
+
+    @requests_mock.mock()
+    def test_edit_account_get_fail_user_not_found(self, mock_request):
+        mock_request.post(url_sign_in_data, json={"access_token": self.access_token}, status_code=201)
+        mock_request.get(url_surveys, json=self.surveys_list_json, status_code=200)
+        mock_request.get(url_permission_url, json=user_permission_admin_json, status_code=200)
+        mock_request.get(url_uaa_user_list, json=uaa_user_search_email, status_code=200)
+        self.client.post("/sign-in", follow_redirects=True, data={"username": "user", "password": "pass"})
+        mock_request.get(url_invalid_uaa_user_by_id, status_code=404)
+
+        # uuid for this user doesn't exist
+        response = self.client.get("/admin/manage-account/adb544bb-5e60-46e0-b2f0-285e0acee6fd", follow_redirects=True)
+        self.assertEqual(200, response.status_code)
+        # Check we're on the account list page with a message flashed
+        self.assertIn("Selected user could not be found".encode(), response.data)
+        self.assertIn("Manage user accounts".encode(), response.data)
+        self.assertIn("Create new user account".encode(), response.data)
+
+    @requests_mock.mock()
+    def test_edit_account_post_fail_own_id(self, mock_request):
+        payload = {"user_id": user_id, "aud": "response_operations"}
+        own_id_access_token = jwt.encode(payload, TestingConfig.UAA_PRIVATE_KEY, algorithm="RS256")
+        mock_request.post(url_sign_in_data, json={"access_token": own_id_access_token}, status_code=201)
+        mock_request.get(url_surveys, json=self.surveys_list_json, status_code=200)
+        mock_request.get(url_permission_url, json=user_permission_admin_json, status_code=200)
+        mock_request.get(url_uaa_user_list, json=uaa_user_search_email, status_code=200)
+        mock_request.get(url_uaa_user_by_id, json=uaa_user_by_id_json, status_code=200)
+        self.client.post("/sign-in", follow_redirects=True, data={"username": "user", "password": "pass"})
+        mock_request.get(url_uaa_user_by_id, json=uaa_user_by_id_json, status_code=200)
+        response = self.client.post("/admin/manage-account/fe2dc842-b3b3-4647-8317-858dab82ab94", follow_redirects=True)
+        self.assertEqual(200, response.status_code)
+        # Check we're on the account list page with a message flashed
+        self.assertIn("You cannot modify your own user account".encode(), response.data)
+        self.assertIn("Manage user accounts".encode(), response.data)
+        self.assertIn("Create new user account".encode(), response.data)
+
+    @requests_mock.mock()
+    def test_edit_account_post_fail_user_not_found(self, mock_request):
+        mock_request.post(url_sign_in_data, json={"access_token": self.access_token}, status_code=201)
+        mock_request.get(url_surveys, json=self.surveys_list_json, status_code=200)
+        mock_request.get(url_permission_url, json=user_permission_admin_json, status_code=200)
+        mock_request.get(url_uaa_user_list, json=uaa_user_search_email, status_code=200)
+        self.client.post("/sign-in", follow_redirects=True, data={"username": "user", "password": "pass"})
+        mock_request.get(url_invalid_uaa_user_by_id, status_code=404)
+
+        # uuid for this user doesn't exist
+        response = self.client.post("/admin/manage-account/adb544bb-5e60-46e0-b2f0-285e0acee6fd", follow_redirects=True)
+        self.assertEqual(200, response.status_code)
+        # Check we're on the account list page with a message flashed
+        self.assertIn("User does not exist".encode(), response.data)
+        self.assertIn("Manage user accounts".encode(), response.data)
+        self.assertIn("Create new user account".encode(), response.data)
+
     #
     # Delete user
     @requests_mock.mock()
