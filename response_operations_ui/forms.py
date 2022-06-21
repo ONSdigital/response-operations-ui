@@ -48,7 +48,7 @@ class EditUserPermissionsForm(FlaskForm):
     respondents_edit = BooleanField()
     respondents_delete = BooleanField()
     messages_edit = BooleanField()
-    uaa_admin = BooleanField()
+    users_admin = BooleanField()
 
 
 class SecureMessageForm(FlaskForm):
