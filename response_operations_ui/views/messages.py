@@ -5,9 +5,9 @@ import math
 from datetime import datetime
 
 from flask import (
-    abort,
     Blueprint,
     Markup,
+    abort,
     flash,
     g,
     redirect,
