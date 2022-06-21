@@ -623,7 +623,9 @@ class TestMessage(ViewTestCase):
         "business_id": "c614e64e-d981-4eba-b016-d9822f09a4fb",
     }
 
-    def test_details_fields_prepopulated(self):
+    @requests_mock.mock()
+    def test_details_fields_prepopulated(self, mock_request):
+        sign_in_with_permission(self, mock_request, user_permission_messages_edit_json)
         response = self.client.post("/messages/create-message", data=self.ru_details)
 
         self.assertIn("BRES 2017".encode(), response.data)
@@ -631,7 +633,9 @@ class TestMessage(ViewTestCase):
         self.assertIn("Bolts &amp; Rachets Ltd".encode(), response.data)
         self.assertIn("Jacky Turner".encode(), response.data)
 
-    def test_empty_subject_and_body_rejected(self):
+    @requests_mock.mock()
+    def test_empty_subject_and_body_rejected(self, mock_request):
+        sign_in_with_permission(self, mock_request, user_permission_messages_edit_json)
         response = self.client.post("/messages/create-message")
 
         self.assertIn("Please enter a subject".encode(), response.data)
@@ -700,6 +704,7 @@ class TestMessage(ViewTestCase):
         mock_request.get(url_permission_url, json=user_permission_admin_json, status_code=200)
         mock_request.post(url_sign_in_data, json={"access_token": self.access_token}, status_code=201)
         current_user.return_value.id = 1
+        sign_in_with_permission(self, mock_request, user_permission_messages_edit_json)
         with self.client.session_transaction() as session:
             session["user_id"] = "test-id"
         with self.app.app_context():
@@ -725,6 +730,9 @@ class TestMessage(ViewTestCase):
         mock_request.get(f"{url_get_iac}/{iac_1}", json=iac)
         mock_request.get(f"{url_get_iac}/{iac_2}", json=iac)
         current_user.return_value.id = 1
+        sign_in_with_permission(self, mock_request, user_permission_messages_edit_json)
+        with self.client.session_transaction() as session:
+            session["user_id"] = "test-id"
         with self.app.app_context():
             response = self.client.post("/messages/create-message", data=self.FDI_message, follow_redirects=True)
 
@@ -738,6 +746,9 @@ class TestMessage(ViewTestCase):
         mock_request.post(url_send_message, status_code=500)
         mock_get_jwt.return_value = "blah"
         current_user.return_value.id = 1
+        sign_in_with_permission(self, mock_request, user_permission_messages_edit_json)
+        with self.client.session_transaction() as session:
+            session["user_id"] = "test-id"
         with self.app.app_context():
             response = self.client.post("/messages/create-message", data=self.message_form, follow_redirects=True)
 
@@ -839,6 +850,7 @@ class TestMessage(ViewTestCase):
             session["user_id"] = "test-id"
         mock_get_jwt.return_value = "blah"
         current_user.return_value.id = 1
+        sign_in_with_permission(self, mock_request, user_permission_messages_edit_json)
         # Post message on reply
         mock_request.get(url_get_thread, json=thread_json)
         mock_request.post(url_send_message, json=threads_no_unread_list, status_code=201)
@@ -1000,6 +1012,7 @@ class TestMessage(ViewTestCase):
     @requests_mock.mock()
     @patch("response_operations_ui.controllers.message_controllers._get_jwt")
     def test_get_close_conversation_confirmation_page_for_survey(self, mock_request, mock_get_jwt):
+        sign_in_with_permission(self, mock_request, user_permission_messages_edit_json)
         with self.client.session_transaction() as session:
             session["messages_survey_selection"] = "QBS"
         mock_get_jwt.return_value = "blah"
@@ -1020,6 +1033,7 @@ class TestMessage(ViewTestCase):
     @requests_mock.mock()
     @patch("response_operations_ui.controllers.message_controllers._get_jwt")
     def test_get_close_conversation_confirmation_page_for_technical(self, mock_request, mock_get_jwt):
+        sign_in_with_permission(self, mock_request, user_permission_messages_edit_json)
         with self.client.session_transaction() as session:
             session["messages_survey_selection"] = ""
         mock_get_jwt.return_value = "blah"
@@ -1040,6 +1054,7 @@ class TestMessage(ViewTestCase):
     @requests_mock.mock()
     @patch("response_operations_ui.controllers.message_controllers._get_jwt")
     def test_get_close_conversation_confirmation_page_for_misc(self, mock_request, mock_get_jwt):
+        sign_in_with_permission(self, mock_request, user_permission_messages_edit_json)
         with self.client.session_transaction() as session:
             session["messages_survey_selection"] = ""
         mock_get_jwt.return_value = "blah"
@@ -1060,6 +1075,7 @@ class TestMessage(ViewTestCase):
     @requests_mock.mock()
     @patch("response_operations_ui.controllers.message_controllers._get_jwt")
     def test_close_conversation(self, mock_request, mock_get_jwt):
+        sign_in_with_permission(self, mock_request, user_permission_messages_edit_json)
         with self.client.session_transaction() as session:
             session["messages_survey_selection"] = "Ashe"
         mock_get_jwt.return_value = "blah"
@@ -1082,6 +1098,7 @@ class TestMessage(ViewTestCase):
     @requests_mock.mock()
     @patch("response_operations_ui.controllers.message_controllers._get_jwt")
     def test_close_conversation_http_error(self, mock_request, mock_get_jwt):
+        sign_in_with_permission(self, mock_request, user_permission_messages_edit_json)
         with self.client.session_transaction() as session:
             session["messages_survey_selection"] = "Ashe"
         mock_get_jwt.return_value = "blah"
@@ -1092,12 +1109,13 @@ class TestMessage(ViewTestCase):
         )
 
         request_history = mock_request.request_history
-        self.assertEqual(len(request_history), 1)
+        self.assertEqual(len(request_history), 5)
         self.assertEqual(response.status_code, 500)
 
     @requests_mock.mock()
     @patch("response_operations_ui.controllers.message_controllers._get_jwt")
     def test_reopen_conversation(self, mock_request, mock_get_jwt):
+        sign_in_with_permission(self, mock_request, user_permission_messages_edit_json)
         with self.client.session_transaction() as session:
             session["messages_survey_selection"] = "Ashe"
         mock_get_jwt.return_value = "blah"
@@ -1162,6 +1180,7 @@ class TestMessage(ViewTestCase):
         page = 2
         thread_id = "fb0e79bd-e132-4f4f-a7fd-5e8c6b41b9af"
 
+        sign_in_with_permission(self, mock_request, user_permission_messages_edit_json)
         with self.client.session_transaction() as session:
             session["messages_survey_selection"] = "Ashe"
         mock_get_jwt.return_value = "blah"
@@ -1204,6 +1223,7 @@ class TestMessage(ViewTestCase):
         page = 4
         thread_id = "fb0e79bd-e132-4f4f-a7fd-5e8c6b41b9af"
 
+        sign_in_with_permission(self, mock_request, user_permission_messages_edit_json)
         with self.client.session_transaction() as session:
             session["messages_survey_selection"] = "Ashe"
         mock_get_jwt.return_value = "blah"
@@ -1243,6 +1263,7 @@ class TestMessage(ViewTestCase):
         page = 4
         thread_id = "fb0e79bd-e132-4f4f-a7fd-5e8c6b41b9af"
 
+        sign_in_with_permission(self, mock_request, user_permission_messages_edit_json)
         with self.client.session_transaction() as session:
             session["messages_survey_selection"] = "Ashe"
         mock_get_jwt.return_value = "blah"
