@@ -188,7 +188,7 @@
 
           <div class="ons-grid ons-grid--flex ons-grid--gutterless ons-u-mt-m ons-u-mb-m">
             <div class="ons-grid__col ons-col-3@m">
-            <strong>Manage user accounts</strong>
+            <strong>Manager permissions</strong>
             {{
                 onsCheckbox({
                     "id": "users_admin",
@@ -214,7 +214,8 @@
             }}
             </div>
             <div class="ons-grid__col ons-u-ml-m">
-                <a href=" {{ url_for('admin_bp.manage_user_accounts') }}">Cancel</a>
+                <a href="{{ url_for('admin_bp.manage_user_accounts') }}" role="button" class="ons-btn ons-btn--link ons-btn--secondary" id="btn-option-cancel">
+                    <span class="ons-btn__inner">Cancel</span></a>
             </div>
           </div>
           <a href=" {{ url_for('admin_bp.get_delete_uaa_user', user_id=user_id) }}">Delete user account</a>
