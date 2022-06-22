@@ -123,46 +123,35 @@
                   {% endif %}
                 {% endif %}
               
+                {% set tblHeaders =  
+                    [ 
+                        { 
+                            "value": "Contact details"
+                        },
+                        { 
+                            "value": "Account status"
+                        },
+                        { 
+                            "value": "Enrolment status"
+                        }
+                    ]
+                %}
+              
                 {% if isMessageEditPermission %}
-                  {%
-                      set respondentTableData = {
-                          "variants": ['compact', 'responsive'],
-                          "id": 'tbl-respondents',
-                          "ths": [
-                              {
-                                  "value": "Contact details"
-                              },
-                              {
-                                  "value": "Account status"
-                              },
-                              {
-                                  "value": "Enrolment status"
-                              },
-                              {
-                                  "value": "Messages"
-                              }
-                          ]
-                      }
-                  %}
-                {% else %}
-                  {%
-                      set respondentTableData = {
-                          "variants": ['compact', 'responsive'],
-                          "id": 'tbl-respondents',
-                          "ths": [
-                              {
-                                  "value": "Contact details"
-                              },
-                              {
-                                  "value": "Account status"
-                              },
-                              {
-                                  "value": "Enrolment status"
-                              }
-                          ]
-                      }
-                  %}
+                    {% do tblHeaders.append( 
+                            { 
+                                "value": "Messages"
+                            }
+                     )%}
                 {% endif %}
+              
+                {%
+                    set respondentTableData = {
+                        "variants": ['compact', 'responsive'],
+                        "id": 'tbl-respondents',
+                        "ths": tblHeaders
+                    }
+                %}
 
                 {% set respondentTableDataRows = [] %}
 
