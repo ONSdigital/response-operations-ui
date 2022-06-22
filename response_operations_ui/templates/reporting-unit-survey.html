@@ -122,26 +122,47 @@
                         id="generate-new-code-{{survey.shortName}}">Generate new enrolment code</a>
                   {% endif %}
                 {% endif %}
-                {%
-                    set respondentTableData = {
-                        "variants": ['compact', 'responsive'],
-                        "id": 'tbl-respondents',
-                        "ths": [
-                            {
-                                "value": "Contact details"
-                            },
-                            {
-                                "value": "Account status"
-                            },
-                            {
-                                "value": "Enrolment status"
-                            },
-                            {
-                                "value": "Messages"
-                            }
-                        ]
-                    }
-                %}
+              
+                {% if isMessageEditPermission %}
+                  {%
+                      set respondentTableData = {
+                          "variants": ['compact', 'responsive'],
+                          "id": 'tbl-respondents',
+                          "ths": [
+                              {
+                                  "value": "Contact details"
+                              },
+                              {
+                                  "value": "Account status"
+                              },
+                              {
+                                  "value": "Enrolment status"
+                              },
+                              {
+                                  "value": "Messages"
+                              }
+                          ]
+                      }
+                  %}
+                {% else %}
+                  {%
+                      set respondentTableData = {
+                          "variants": ['compact', 'responsive'],
+                          "id": 'tbl-respondents',
+                          "ths": [
+                              {
+                                  "value": "Contact details"
+                              },
+                              {
+                                  "value": "Account status"
+                              },
+                              {
+                                  "value": "Enrolment status"
+                              }
+                          ]
+                      }
+                  %}
+                {% endif %}
 
                 {% set respondentTableDataRows = [] %}
 
