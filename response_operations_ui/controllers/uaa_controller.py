@@ -293,6 +293,7 @@ def user_has_permission(permission, user_id=None) -> bool:
             "respondents.edit",
             "respondents.delete",
             "messages.edit",
+            "messages.delete",
         ]
         return permission in default_permissions
 
