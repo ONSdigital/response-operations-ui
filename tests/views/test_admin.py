@@ -29,7 +29,7 @@ user_permission_admin_json = {
 
 project_root = os.path.dirname(os.path.dirname(__file__))
 with open(f"{project_root}/test_data/uaa/user_list.json") as fp:
-    uaa_user_list = json.load(fp)
+    uaa_user_list_json = json.load(fp)
 with open(f"{project_root}/test_data/uaa/email_search_user.json") as fp:
     uaa_user_search_email = json.load(fp)
 with open(f"{project_root}/test_data/uaa/user_by_id.json") as json_data:
@@ -104,7 +104,7 @@ class TestMessage(ViewTestCase):
     def test_manage_user_accounts_success(self, mock_request):
         mock_request = self.setup_common_mocks(mock_request)
         mock_request.get(url_surveys, json=self.surveys_list_json, status_code=200)
-        mock_request.get(url_uaa_user_list, json=uaa_user_list, status_code=200)
+        mock_request.get(url_uaa_user_list, json=uaa_user_list_json, status_code=200)
         self.client.post("/sign-in", follow_redirects=True, data={"username": "user", "password": "pass"})
         response = self.client.get("/admin/manage-user-accounts", follow_redirects=True)
         self.assertEqual(200, response.status_code)
@@ -157,7 +157,7 @@ class TestMessage(ViewTestCase):
     def test_manage_user_accounts_letter_search_success(self, mock_request):
         mock_request = self.setup_common_mocks(mock_request)
         mock_request.get(url_surveys, json=self.surveys_list_json, status_code=200)
-        mock_request.get(url_uaa_user_list, json=uaa_user_list, status_code=200)
+        mock_request.get(url_uaa_user_list, json=uaa_user_list_json, status_code=200)
         self.client.post("/sign-in", follow_redirects=True, data={"username": "user", "password": "pass"})
         form = {"user_search": "test"}
         response = self.client.get("/admin/manage-user-accounts?user_with_email=C", data=form, follow_redirects=True)

@@ -128,7 +128,7 @@ def update_account_permissions(user_id):
     }
 
     # Because we can't add or remove in a batch, if one of them fail then we can leave the user in a state that wasn't
-    # intended.  Though it can be easily fixed by trying again.
+    # intended.  It's not a big deal though it can be easily fixed by trying again.
 
     was_permission_changed = False
     for permission, is_ticked in form.data.items():
@@ -142,7 +142,7 @@ def update_account_permissions(user_id):
             try:
                 add_group_membership(user_id, group_id)  # Ticked and not in group, need to add it
             except HTTPError:
-                flash(f"Failed add [{permission}] to the user, please try again", "error")
+                flash(f"Failed to add [{permission}] to the user, please try again", "error")
                 return redirect(url_for("admin_bp.manage_account", user=user["emails"][0]["value"]))
             was_permission_changed = True
 
@@ -150,7 +150,7 @@ def update_account_permissions(user_id):
             try:
                 remove_group_membership(user_id, group_id)  # Not ticked but in group, need to remove it
             except HTTPError:
-                flash(f"Failed remove [{permission}] to the user, please try again", "error")
+                flash(f"Failed to remove [{permission}] to the user, please try again", "error")
                 return redirect(url_for("admin_bp.manage_account", user=user["emails"][0]["value"]))
             was_permission_changed = True
         continue  # Nothing to do, already not in the group
