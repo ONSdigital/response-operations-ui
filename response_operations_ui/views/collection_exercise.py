@@ -281,17 +281,20 @@ def _upload_sample(short_name, period):
 
         if not exercise:
             return make_response(jsonify({"message": "Collection exercise not found"}), 404)
-        sample_summary = sample_controllers.upload_sample(short_name, period, request.files["sampleFile"])
-
-        logger.info(
-            "Linking sample summary with collection exercise",
-            collection_exercise_id=exercise["id"],
-            sample_id=sample_summary["id"],
-        )
-
-        collection_exercise_controllers.link_sample_summary_to_collection_exercise(
-            collection_exercise_id=exercise["id"], sample_summary_id=sample_summary["id"]
-        )
+        try:
+            sample_summary = sample_controllers.upload_sample(short_name, period, request.files["sampleFile"])
+            
+            logger.info(
+                "Linking sample summary with collection exercise",
+                collection_exercise_id=exercise["id"],
+                sample_id=sample_summary["id"],
+            )
+            collection_exercise_controllers.link_sample_summary_to_collection_exercise(
+                collection_exercise_id=exercise["id"], sample_summary_id=sample_summary["id"]
+            )
+        except (ApiError) as e:
+            if e.status_code == 400:
+                error = e.message
 
     return redirect(
         url_for(
