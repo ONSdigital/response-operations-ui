@@ -283,7 +283,7 @@ def _upload_sample(short_name, period):
             return make_response(jsonify({"message": "Collection exercise not found"}), 404)
         try:
             sample_summary = sample_controllers.upload_sample(short_name, period, request.files["sampleFile"])
-            
+
             logger.info(
                 "Linking sample summary with collection exercise",
                 collection_exercise_id=exercise["id"],
