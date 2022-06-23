@@ -295,6 +295,9 @@ def _upload_sample(short_name, period):
         except (ApiError) as e:
             if e.status_code == 400:
                 error = e.message
+            else:
+                # For a non-400, just let the error bubble up
+                raise e
 
     return redirect(
         url_for(
