@@ -49,11 +49,17 @@ class TestMessage(ViewTestCase):
         payload = {"user_id": "test-id", "aud": "response_operations"}
         self.access_token = jwt.encode(payload, TestingConfig.UAA_PRIVATE_KEY, algorithm="RS256")
 
+    def setup_common_mocks(self, mock_request, with_uaa_user_list=False):
+        mock_request.post(url_sign_in_data, json={"access_token": self.access_token}, status_code=201)
+        mock_request.get(url_permission_url, json=user_permission_admin_json, status_code=200)
+        if with_uaa_user_list:
+            mock_request.get(url_uaa_user_list, json=uaa_user_search_email, status_code=200)
+        return mock_request
+
     @requests_mock.mock()
     def test_manage_user_accounts_visible_to_user_admin_role(self, mock_request):
-        mock_request.post(url_sign_in_data, json={"access_token": self.access_token}, status_code=201)
+        mock_request = self.setup_common_mocks(mock_request)
         mock_request.get(url_surveys, json=self.surveys_list_json, status_code=200)
-        mock_request.get(url_permission_url, json=user_permission_admin_json, status_code=200)
         response = self.client.post("/sign-in", follow_redirects=True, data={"username": "user", "password": "pass"})
 
         self.assertEqual(response.status_code, 200)
@@ -86,9 +92,8 @@ class TestMessage(ViewTestCase):
     @requests_mock.mock()
     def test_manage_user_accounts_403(self, mock_request):
         # TODO Improve this test.  A 500 response isn't what should be happening here
-        mock_request.post(url_sign_in_data, json={"access_token": self.access_token}, status_code=201)
+        mock_request = self.setup_common_mocks(mock_request)
         mock_request.get(url_surveys, json=self.surveys_list_json, status_code=200)
-        mock_request.get(url_permission_url, json=user_permission_admin_json, status_code=200)
         mock_request.get(url_uaa_user_list, json={}, status_code=403)
         self.client.post("/sign-in", follow_redirects=True, data={"username": "user", "password": "pass"})
         response = self.client.get("/admin/manage-user-accounts", follow_redirects=True)
@@ -97,9 +102,8 @@ class TestMessage(ViewTestCase):
 
     @requests_mock.mock()
     def test_manage_user_accounts_success(self, mock_request):
-        mock_request.post(url_sign_in_data, json={"access_token": self.access_token}, status_code=201)
+        mock_request = self.setup_common_mocks(mock_request)
         mock_request.get(url_surveys, json=self.surveys_list_json, status_code=200)
-        mock_request.get(url_permission_url, json=user_permission_admin_json, status_code=200)
         mock_request.get(url_uaa_user_list, json=uaa_user_list, status_code=200)
         self.client.post("/sign-in", follow_redirects=True, data={"username": "user", "password": "pass"})
         response = self.client.get("/admin/manage-user-accounts", follow_redirects=True)
@@ -114,10 +118,8 @@ class TestMessage(ViewTestCase):
 
     @requests_mock.mock()
     def test_manage_user_accounts_email_search(self, mock_request):
-        mock_request.post(url_sign_in_data, json={"access_token": self.access_token}, status_code=201)
+        mock_request = self.setup_common_mocks(mock_request, with_uaa_user_list=True)
         mock_request.get(url_surveys, json=self.surveys_list_json, status_code=200)
-        mock_request.get(url_permission_url, json=user_permission_admin_json, status_code=200)
-        mock_request.get(url_uaa_user_list, json=uaa_user_search_email, status_code=200)
         self.client.post("/sign-in", follow_redirects=True, data={"username": "user", "password": "pass"})
         form = {"user_search": "Andy155.Smith@ons.gov.uk"}
         response = self.client.post("/admin/manage-user-accounts", data=form, follow_redirects=True)
@@ -133,10 +135,8 @@ class TestMessage(ViewTestCase):
 
     @requests_mock.mock()
     def test_manage_user_accounts_email_search_no_email(self, mock_request):
-        mock_request.post(url_sign_in_data, json={"access_token": self.access_token}, status_code=201)
+        mock_request = self.setup_common_mocks(mock_request, with_uaa_user_list=True)
         mock_request.get(url_surveys, json=self.surveys_list_json, status_code=200)
-        mock_request.get(url_permission_url, json=user_permission_admin_json, status_code=200)
-        mock_request.get(url_uaa_user_list, json=uaa_user_search_email, status_code=200)
         self.client.post("/sign-in", follow_redirects=True, data={"username": "user", "password": "pass"})
         form = {"user_search": ""}
         response = self.client.post("/admin/manage-user-accounts", data=form, follow_redirects=True)
@@ -145,10 +145,8 @@ class TestMessage(ViewTestCase):
 
     @requests_mock.mock()
     def test_manage_user_accounts_email_search_invalid_email(self, mock_request):
-        mock_request.post(url_sign_in_data, json={"access_token": self.access_token}, status_code=201)
+        mock_request = self.setup_common_mocks(mock_request, with_uaa_user_list=True)
         mock_request.get(url_surveys, json=self.surveys_list_json, status_code=200)
-        mock_request.get(url_permission_url, json=user_permission_admin_json, status_code=200)
-        mock_request.get(url_uaa_user_list, json=uaa_user_search_email, status_code=200)
         self.client.post("/sign-in", follow_redirects=True, data={"username": "user", "password": "pass"})
         form = {"user_search": "test"}
         response = self.client.post("/admin/manage-user-accounts", data=form, follow_redirects=True)
@@ -157,9 +155,8 @@ class TestMessage(ViewTestCase):
 
     @requests_mock.mock()
     def test_manage_user_accounts_letter_search_success(self, mock_request):
-        mock_request.post(url_sign_in_data, json={"access_token": self.access_token}, status_code=201)
+        mock_request = self.setup_common_mocks(mock_request)
         mock_request.get(url_surveys, json=self.surveys_list_json, status_code=200)
-        mock_request.get(url_permission_url, json=user_permission_admin_json, status_code=200)
         mock_request.get(url_uaa_user_list, json=uaa_user_list, status_code=200)
         self.client.post("/sign-in", follow_redirects=True, data={"username": "user", "password": "pass"})
         form = {"user_search": "test"}
@@ -177,9 +174,7 @@ class TestMessage(ViewTestCase):
     # Edit user permission
     @requests_mock.mock()
     def test_edit_account_success(self, mock_request):
-        mock_request.post(url_sign_in_data, json={"access_token": self.access_token}, status_code=201)
-        mock_request.get(url_permission_url, json=user_permission_admin_json, status_code=200)
-        mock_request.get(url_uaa_user_list, json=uaa_user_search_email, status_code=200)
+        mock_request = self.setup_common_mocks(mock_request, with_uaa_user_list=True)
         self.client.post("/sign-in", follow_redirects=True, data={"username": "user", "password": "pass"})
         mock_request.get(url_uaa_user_by_id, json=uaa_user_by_id_json, status_code=200)
         response = self.client.get(f"/admin/manage-account/{user_id}", follow_redirects=True)
@@ -211,9 +206,7 @@ class TestMessage(ViewTestCase):
 
     @requests_mock.mock()
     def test_edit_account_get_fail_user_not_found(self, mock_request):
-        mock_request.post(url_sign_in_data, json={"access_token": self.access_token}, status_code=201)
-        mock_request.get(url_permission_url, json=user_permission_admin_json, status_code=200)
-        mock_request.get(url_uaa_user_list, json=uaa_user_search_email, status_code=200)
+        mock_request = self.setup_common_mocks(mock_request, with_uaa_user_list=True)
         self.client.post("/sign-in", follow_redirects=True, data={"username": "user", "password": "pass"})
         mock_request.get(url_invalid_uaa_user_by_id, status_code=404)
 
@@ -244,9 +237,7 @@ class TestMessage(ViewTestCase):
 
     @requests_mock.mock()
     def test_edit_account_post_fail_user_not_found(self, mock_request):
-        mock_request.post(url_sign_in_data, json={"access_token": self.access_token}, status_code=201)
-        mock_request.get(url_permission_url, json=user_permission_admin_json, status_code=200)
-        mock_request.get(url_uaa_user_list, json=uaa_user_search_email, status_code=200)
+        mock_request = self.setup_common_mocks(mock_request, with_uaa_user_list=True)
         self.client.post("/sign-in", follow_redirects=True, data={"username": "user", "password": "pass"})
         mock_request.get(url_invalid_uaa_user_by_id, status_code=404)
 
@@ -262,9 +253,7 @@ class TestMessage(ViewTestCase):
     # Delete user
     @requests_mock.mock()
     def test_delete_account_get_success(self, mock_request):
-        mock_request.post(url_sign_in_data, json={"access_token": self.access_token}, status_code=201)
-        mock_request.get(url_permission_url, json=user_permission_admin_json, status_code=200)
-        mock_request.get(url_uaa_user_list, json=uaa_user_search_email, status_code=200)
+        mock_request = self.setup_common_mocks(mock_request, with_uaa_user_list=True)
         mock_request.get(url_uaa_user_by_id, json=uaa_user_by_id_json, status_code=200)
         self.client.post("/sign-in", follow_redirects=True, data={"username": "user", "password": "pass"})
         response = self.client.get(f"/admin/manage-account/{user_id}/delete", follow_redirects=True)
@@ -295,9 +284,7 @@ class TestMessage(ViewTestCase):
 
     @requests_mock.mock()
     def test_delete_account_get_fail_user_not_found(self, mock_request):
-        mock_request.post(url_sign_in_data, json={"access_token": self.access_token}, status_code=201)
-        mock_request.get(url_permission_url, json=user_permission_admin_json, status_code=200)
-        mock_request.get(url_uaa_user_list, json=uaa_user_search_email, status_code=200)
+        mock_request = self.setup_common_mocks(mock_request, with_uaa_user_list=True)
         mock_request.get(url_invalid_uaa_user_by_id, status_code=404)
         self.client.post("/sign-in", follow_redirects=True, data={"username": "user", "password": "pass"})
 
@@ -313,9 +300,7 @@ class TestMessage(ViewTestCase):
 
     @requests_mock.mock()
     def test_delete_account_post_success(self, mock_request):
-        mock_request.post(url_sign_in_data, json={"access_token": self.access_token}, status_code=201)
-        mock_request.get(url_permission_url, json=user_permission_admin_json, status_code=200)
-        mock_request.get(url_uaa_user_list, json=uaa_user_search_email, status_code=200)
+        mock_request = self.setup_common_mocks(mock_request, with_uaa_user_list=True)
         mock_request.get(url_uaa_user_by_id, json=uaa_user_by_id_json, status_code=200)
         self.client.post("/sign-in", follow_redirects=True, data={"username": "user", "password": "pass"})
 
@@ -348,9 +333,7 @@ class TestMessage(ViewTestCase):
 
     @requests_mock.mock()
     def test_delete_account_post_fail_user_not_found(self, mock_request):
-        mock_request.post(url_sign_in_data, json={"access_token": self.access_token}, status_code=201)
-        mock_request.get(url_permission_url, json=user_permission_admin_json, status_code=200)
-        mock_request.get(url_uaa_user_list, json=uaa_user_search_email, status_code=200)
+        mock_request = self.setup_common_mocks(mock_request, with_uaa_user_list=True)
         mock_request.get(url_invalid_uaa_user_by_id, status_code=404)
         self.client.post("/sign-in", follow_redirects=True, data={"username": "user", "password": "pass"})
 

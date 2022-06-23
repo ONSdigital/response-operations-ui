@@ -80,7 +80,6 @@ def manage_account(user_id):
     logger.info("Attempting to get user by id", user_id=user_id)
     uaa_user = get_user_by_id(user_id)
     if uaa_user is None:
-        # Something went wrong when trying to retrieve them from UAA
         flash("Selected user could not be found", "error")
         return redirect(url_for("admin_bp.manage_user_accounts"))
 
@@ -89,8 +88,8 @@ def manage_account(user_id):
         logger.error("User tried to modify their own account", user_id=uaa_user["id"])
         return redirect(url_for("admin_bp.manage_user_accounts"))
 
-    name = uaa_user["name"]["givenName"] + " " + uaa_user["name"]["familyName"]
-    permissions = {g["display"]: "y" for g in uaa_user["groups"]}
+    name = f"{uaa_user['name']['givenName']} {uaa_user['name']['familyName']}"
+    permissions = {group["display"]: "y" for group in uaa_user["groups"]}
 
     return render_template("admin/manage-account.html", name=name, permissions=permissions, user_id=uaa_user["id"])
 
@@ -105,7 +104,6 @@ def update_account_permissions(user_id):
         logger.error("User tried to modify their own account", user_id=user_id)
         return redirect(url_for("admin_bp.manage_user_accounts"))
 
-    # Get user from uaa, so we have a fresh set of permissions to look at
     user = get_user_by_id(user_id)
     if user is None:
         flash("User does not exist", "error")
@@ -189,7 +187,7 @@ def get_delete_uaa_user(user_id):
         flash("User does not exist", "error")
         return redirect(url_for("admin_bp.manage_user_accounts"))
 
-    name = user["name"]["givenName"] + " " + user["name"]["familyName"]
+    name = f"{user['name']['givenName']} {user['name']['familyName']}"
     email = user["emails"][0]["value"]
     return render_template("admin/user-delete.html", name=name, email=email)
 
@@ -221,7 +219,6 @@ def post_delete_uaa_user(user_id):
         flash("Failed to delete user, please try again", "error")
         return redirect(url_for("admin_bp.get_delete_uaa_user", user_id=user_id))
 
-    logger.info("Just before the flash")
     flash("User account has been successfully deleted. An email to inform the user has been sent.")
     return redirect(url_for("admin_bp.manage_user_accounts"))
 
