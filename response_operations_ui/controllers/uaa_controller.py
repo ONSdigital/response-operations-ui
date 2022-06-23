@@ -92,7 +92,7 @@ def get_user_by_email(email, access_token=None):
     return response.json()
 
 
-def get_user_by_id(user_id: str) -> dict:
+def get_user_by_id(user_id: str) -> dict | None:
     """
     Gets the user details from uaa, using the id of the user.
 
