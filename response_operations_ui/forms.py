@@ -42,7 +42,7 @@ class LoginForm(FlaskForm):
     submit = SubmitField("Sign in")
 
 
-class EditUserPermissionsForm(FlaskForm):
+class EditUserGroupsForm(FlaskForm):
     surveys_edit = BooleanField()
     reporting_units_edit = BooleanField()
     respondents_edit = BooleanField()

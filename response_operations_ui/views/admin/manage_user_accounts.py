@@ -19,7 +19,7 @@ from response_operations_ui.controllers.uaa_controller import (
     user_has_permission,
 )
 from response_operations_ui.exceptions.exceptions import NotifyError
-from response_operations_ui.forms import EditUserPermissionsForm, UserSearchForm
+from response_operations_ui.forms import EditUserGroupsForm, UserSearchForm
 from response_operations_ui.views.admin import admin_bp
 
 logger = wrap_logger(logging.getLogger(__name__))
@@ -32,7 +32,7 @@ def manage_user_accounts():
     This endpoint, by design is only accessible to ROPs admin user.
     This endpoint lists all current user in the system.
     """
-    _verify_user_admin_permission()
+    _verify_user_in_user_admin_group()
     page = request.values.get("page", "1")
     user_with_email = request.values.get("user_with_email", None)
     limit = 20
@@ -74,8 +74,8 @@ def manage_user_accounts():
 
 @admin_bp.route("/manage-account/<user_id>", methods=["GET"])
 @login_required
-def manage_account(user_id):
-    _verify_user_admin_permission()
+def get_manage_account_groups(user_id):
+    _verify_user_in_user_admin_group()
 
     logger.info("Attempting to get user by id", user_id=user_id)
     uaa_user = get_user_by_id(user_id)
@@ -89,15 +89,15 @@ def manage_account(user_id):
         return redirect(url_for("admin_bp.manage_user_accounts"))
 
     name = f"{uaa_user['name']['givenName']} {uaa_user['name']['familyName']}"
-    permissions = {group["display"]: "y" for group in uaa_user["groups"]}
+    groups = {group["display"]: "y" for group in uaa_user["groups"]}
 
-    return render_template("admin/manage-account.html", name=name, permissions=permissions, user_id=uaa_user["id"])
+    return render_template("admin/manage-account.html", name=name, groups=groups, user_id=uaa_user["id"])
 
 
 @admin_bp.route("/manage-account/<user_id>", methods=["POST"])
 @login_required
-def update_account_permissions(user_id):
-    _verify_user_admin_permission()
+def post_manage_account_groups(user_id):
+    _verify_user_in_user_admin_group()
 
     if user_id == session["user_id"]:
         flash("You cannot modify your own user account", "error")
@@ -115,10 +115,10 @@ def update_account_permissions(user_id):
         flash("Failed to get groups, please try again", "error")
         return redirect(url_for("admin_bp.manage_user_accounts"))
 
-    form = EditUserPermissionsForm(request.form)
+    form = EditUserGroupsForm(request.form)
     groups_user_is_in = [group["display"] for group in user["groups"]]
 
-    uaa_permission_mapping = {
+    uaa_group_mapping = {
         "surveys_edit": "surveys.edit",
         "reporting_units_edit": "reportingunits.edit",
         "respondents_edit": "respondents.edit",
@@ -129,33 +129,32 @@ def update_account_permissions(user_id):
 
     # Because we can't add or remove in a batch, if one of them fail then we can leave the user in a state that wasn't
     # intended.  It's not a big deal though it can be easily fixed by trying again.
-
-    was_permission_changed = False
-    for permission, is_ticked in form.data.items():
-        # Translate the permission, so we have the uaa form of it
-        translated_permission = uaa_permission_mapping[permission]
-        has_permission_already = translated_permission in groups_user_is_in
-        group_details = next(item for item in groups["resources"] if item["displayName"] == translated_permission)
+    was_group_membership_changed = False
+    for group, is_ticked in form.data.items():
+        # Translate the group, so we have the uaa form of it
+        mapped_group = uaa_group_mapping[group]
+        in_group_already = mapped_group in groups_user_is_in
+        group_details = next(item for item in groups["resources"] if item["displayName"] == mapped_group)
         if is_ticked:
-            if has_permission_already:
+            if in_group_already:
                 continue  # Nothing to do, already part of the group
             try:
                 add_group_membership(user_id, group_details["id"])  # Ticked and not in group, need to add it
-                was_permission_changed = True
+                was_group_membership_changed = True
             except HTTPError:
-                flash(f"Failed to add [{permission}] to the user, please try again", "error")
+                flash(f"Failed to add the user to the {group} group, please try again", "error")
                 return redirect(url_for("admin_bp.manage_account", user=user["emails"][0]["value"]))
         else:
-            if has_permission_already:
+            if in_group_already:
                 try:
                     remove_group_membership(user_id, group_details["id"])  # Not ticked but in group, need to remove it
-                    was_permission_changed = True
+                    was_group_membership_changed = True
                 except HTTPError:
-                    flash(f"Failed to remove [{permission}] to the user, please try again", "error")
+                    flash(f"Failed to remove the user from the {group} group, please try again", "error")
                     return redirect(url_for("admin_bp.manage_account", user=user["emails"][0]["value"]))
             continue  # Nothing to do, already not in the group
 
-    if was_permission_changed:
+    if was_group_membership_changed:
         try:
             NotifyController().request_to_notify(
                 email=user["emails"][0]["value"],
@@ -175,7 +174,7 @@ def update_account_permissions(user_id):
 @admin_bp.route("/manage-account/<user_id>/delete", methods=["GET"])
 @login_required
 def get_delete_uaa_user(user_id):
-    _verify_user_admin_permission()
+    _verify_user_in_user_admin_group()
 
     if user_id == session["user_id"]:
         flash("You cannot delete your own user account", "error")
@@ -195,7 +194,7 @@ def get_delete_uaa_user(user_id):
 @admin_bp.route("/manage-account/<user_id>/delete", methods=["POST"])
 @login_required
 def post_delete_uaa_user(user_id):
-    _verify_user_admin_permission()
+    _verify_user_in_user_admin_group()
 
     if user_id == session["user_id"]:
         flash("You cannot delete your own user account", "error")
@@ -223,10 +222,10 @@ def post_delete_uaa_user(user_id):
     return redirect(url_for("admin_bp.manage_user_accounts"))
 
 
-def _verify_user_admin_permission():
+def _verify_user_in_user_admin_group():
     """
-    Checks if the user has 'users.admin' permission and aborts with a 401 status code if the user
-    doesn't have permission.
+    Checks if the user is in the 'users.admin' group and aborts with a 401 status code if the user
+    is not in the group.
     """
     if not user_has_permission("users.admin"):
         logger.exception("Manage User Account request requested but unauthorised.")
