@@ -118,7 +118,7 @@ def update_account_permissions(user_id):
     form = EditUserPermissionsForm(request.form)
     user_groups = [group["display"] for group in user["groups"]]
 
-    translated_permissions = {
+    uaa_permission_mapping = {
         "surveys_edit": "surveys.edit",
         "reporting_units_edit": "reportingunits.edit",
         "respondents_edit": "respondents.edit",
@@ -133,7 +133,7 @@ def update_account_permissions(user_id):
     was_permission_changed = False
     for permission, is_ticked in form.data.items():
         # Translate the permission, so we have the uaa form of it
-        translated_permission = translated_permissions[permission]
+        translated_permission = uaa_permission_mapping[permission]
         group_details = next(item for item in groups["resources"] if item["displayName"] == translated_permission)
         group_id = group_details["id"]
         if is_ticked:
