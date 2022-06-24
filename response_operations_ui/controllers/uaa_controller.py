@@ -92,7 +92,7 @@ def get_user_by_email(email, access_token=None):
     return response.json()
 
 
-def get_user_by_id(user_id: str) -> dict:
+def get_user_by_id(user_id: str) -> dict | None:
     """
     Gets the user details from uaa, using the id of the user.
 
@@ -113,7 +113,7 @@ def get_user_by_id(user_id: str) -> dict:
     return response.json()
 
 
-def delete_user(user_id: str):
+def delete_user(user_id: str) -> dict:
     """
     Deletes the user from uaa, using the id of the user.
 
@@ -295,7 +295,6 @@ def get_groups() -> dict:
     every group and its metadata
     :return: A dictionary containing details about the groups
     """
-    logger.info("About to get group list from uaa")
     access_token = login_admin()
     headers = generate_headers(access_token)
 
@@ -307,7 +306,6 @@ def get_groups() -> dict:
         logger.error("Error retrieving groups from UAA", status_code=response.status_code, exc_info=True)
         raise
 
-    logger.info("Successfully retrieved group list from uaa")
     return response.json()
 
 
@@ -399,6 +397,7 @@ def user_has_permission(permission, user_id=None) -> bool:
             "respondents.edit",
             "respondents.delete",
             "messages.edit",
+            "messages.delete",
         ]
         return permission in default_permissions
 

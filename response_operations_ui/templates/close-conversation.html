@@ -4,7 +4,8 @@
 {% from "components/fieldset/_macro.njk" import onsFieldset %}
 {% from "components/input/_macro.njk" import onsInput %}
 
-{% set page_title = 'Close conversation' %}
+{% set isMessageEditPermission = hasPermission('messages.edit') %}
+{% set pageTitle = 'Close conversation' %}
 {% block main %}
     <div class="ons-grid ons-grid--gutterless">
         <div class="ons-grid__col ons-col-8@m">
@@ -76,18 +77,20 @@
                     })
                 }}
             {% endif %}
-
-            <form action="{{ url_for('messages_bp.close_conversation', thread_id=thread_id, page=page, conversation_tab=conversation_tab, ru_ref_filter=ru_ref_filter, business_id_filter=business_id_filter) }}" method="post">
-                <input type="hidden" name="closed" value="True" />
-                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}" />
-                {{
-                    onsButton({
-                        "classes": "ons-u-mb-s ons-u-mt-l",
-                        "text": "Close conversation"
-                    })
-                }}
-            </form>
-            <p><a href="{{ url_for('messages_bp.view_conversation', thread_id=thread_id, page=page, conversation_tab=conversation_tab, ru_ref_filter=ru_ref_filter, business_id_filter=business_id_filter)}}#latest-message">Cancel</a></p>
-        </div>
+          
+            {% if isMessageEditPermission %}
+              <form action="{{ url_for('messages_bp.close_conversation', thread_id=thread_id, page=page, conversation_tab=conversation_tab, ru_ref_filter=ru_ref_filter, business_id_filter=business_id_filter) }}" method="post">
+                  <input type="hidden" name="closed" value="True" />
+                  <input type="hidden" name="csrf_token" value="{{ csrf_token() }}" />
+                  {{
+                      onsButton({
+                          "classes": "ons-u-mb-s ons-u-mt-l",
+                          "text": "Close conversation"
+                      })
+                  }}
+              </form>
+            {% endif %}
+              <p><a href="{{ url_for('messages_bp.view_conversation', thread_id=thread_id, page=page, conversation_tab=conversation_tab, ru_ref_filter=ru_ref_filter, business_id_filter=business_id_filter)}}#latest-message">Return to messages</a></p>
+          </div>
     </div>
 {% endblock %}
