@@ -85,7 +85,7 @@ def manage_account(user_id):
 
     if uaa_user["id"] == session["user_id"]:
         flash("You cannot modify your own user account", "error")
-        logger.error("User tried to modify their own account", user_id=uaa_user["id"])
+        logger.info("User tried to modify their own account", user_id=uaa_user["id"])
         return redirect(url_for("admin_bp.manage_user_accounts"))
 
     name = f"{uaa_user['name']['givenName']} {uaa_user['name']['familyName']}"
@@ -101,7 +101,7 @@ def update_account_permissions(user_id):
 
     if user_id == session["user_id"]:
         flash("You cannot modify your own user account", "error")
-        logger.error("User tried to modify their own account", user_id=user_id)
+        logger.info("User tried to modify their own account", user_id=user_id)
         return redirect(url_for("admin_bp.manage_user_accounts"))
 
     user = get_user_by_id(user_id)
@@ -179,7 +179,7 @@ def get_delete_uaa_user(user_id):
 
     if user_id == session["user_id"]:
         flash("You cannot delete your own user account", "error")
-        logger.error("User tried to delete themselves", user_id=user_id)
+        logger.info("User tried to delete themselves", user_id=user_id)
         return redirect(url_for("admin_bp.manage_user_accounts"))
 
     user = get_user_by_id(user_id)
@@ -199,7 +199,7 @@ def post_delete_uaa_user(user_id):
 
     if user_id == session["user_id"]:
         flash("You cannot delete your own user account", "error")
-        logger.error("User tried to delete themselves", user_id=user_id)
+        logger.info("User tried to delete themselves", user_id=user_id)
         return redirect(url_for("admin_bp.manage_user_accounts"))
 
     user = get_user_by_id(user_id)
