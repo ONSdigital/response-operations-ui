@@ -116,7 +116,7 @@ def update_account_permissions(user_id):
         return redirect(url_for("admin_bp.manage_user_accounts"))
 
     form = EditUserPermissionsForm(request.form)
-    user_groups = [group["display"] for group in user["groups"]]
+    groups_user_is_in = [group["display"] for group in user["groups"]]
 
     uaa_permission_mapping = {
         "surveys_edit": "surveys.edit",
@@ -134,26 +134,26 @@ def update_account_permissions(user_id):
     for permission, is_ticked in form.data.items():
         # Translate the permission, so we have the uaa form of it
         translated_permission = uaa_permission_mapping[permission]
+        has_permission_already = translated_permission in groups_user_is_in
         group_details = next(item for item in groups["resources"] if item["displayName"] == translated_permission)
-        group_id = group_details["id"]
         if is_ticked:
-            if translated_permission in user_groups:
+            if has_permission_already:
                 continue  # Nothing to do, already part of the group
             try:
-                add_group_membership(user_id, group_id)  # Ticked and not in group, need to add it
+                add_group_membership(user_id, group_details["id"])  # Ticked and not in group, need to add it
+                was_permission_changed = True
             except HTTPError:
                 flash(f"Failed to add [{permission}] to the user, please try again", "error")
                 return redirect(url_for("admin_bp.manage_account", user=user["emails"][0]["value"]))
-            was_permission_changed = True
-
-        if translated_permission in user_groups:
-            try:
-                remove_group_membership(user_id, group_id)  # Not ticked but in group, need to remove it
-            except HTTPError:
-                flash(f"Failed to remove [{permission}] to the user, please try again", "error")
-                return redirect(url_for("admin_bp.manage_account", user=user["emails"][0]["value"]))
-            was_permission_changed = True
-        continue  # Nothing to do, already not in the group
+        else:
+            if has_permission_already:
+                try:
+                    remove_group_membership(user_id, group_details["id"])  # Not ticked but in group, need to remove it
+                    was_permission_changed = True
+                except HTTPError:
+                    flash(f"Failed to remove [{permission}] to the user, please try again", "error")
+                    return redirect(url_for("admin_bp.manage_account", user=user["emails"][0]["value"]))
+            continue  # Nothing to do, already not in the group
 
     if was_permission_changed:
         try:
