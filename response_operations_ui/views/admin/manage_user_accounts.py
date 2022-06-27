@@ -131,6 +131,8 @@ def post_manage_account_groups(user_id):
     # intended.  It's not a big deal though it can be easily fixed by trying again.
     was_group_membership_changed = False
     for group, is_ticked in form.data.items():
+        if group == "csrf_token":
+            continue
         # Translate the group, so we have the uaa form of it
         mapped_group = uaa_group_mapping[group]
         in_group_already = mapped_group in groups_user_is_in
