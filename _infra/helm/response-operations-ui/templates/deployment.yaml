@@ -143,6 +143,10 @@ spec:
             value: {{ .Values.notify.updateAccountEmailTemplate }}
           - name: NOTIFY_UPDATE_ACCOUNT_PASSWORD_CHANGE_TEMPLATE
             value: {{ .Values.notify.updateAccountPasswordTemplate }}
+          - name: NOTIFY_UPDATE_USER_PERMISSIONS_TEMPLATE
+            value: {{ .Values.notify.updateUserPermissionsTemplate }}
+          - name: NOTIFY_DELETE_USER_TEMPLATE
+            value: {{ .Values.notify.deleteUserTemplate }}
           - name: PARTY_URL
             {{- if .Values.dns.enabled }}
             value: "http://party.{{ .Values.namespace }}.svc.cluster.local:{{ .Values.dns.wellKnownPort }}"

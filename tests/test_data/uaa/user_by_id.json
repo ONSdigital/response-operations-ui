@@ -68,6 +68,11 @@
       "type": "DIRECT"
     },
     {
+      "value": "0940c480-6fc7-4f68-bca3-8a5a5ab030f2",
+      "display": "users.admin",
+      "type": "DIRECT"
+    },
+    {
       "value": "16bde578-d74e-4463-865a-a94c05342a3b",
       "display": "cloud_controller_service_permissions.read",
       "type": "DIRECT"

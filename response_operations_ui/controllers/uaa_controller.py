@@ -92,7 +92,7 @@ def get_user_by_email(email, access_token=None):
     return response.json()
 
 
-def get_user_by_id(user_id: str) -> dict:
+def get_user_by_id(user_id: str) -> dict | None:
     """
     Gets the user details from uaa, using the id of the user.
 
@@ -109,6 +109,26 @@ def get_user_by_id(user_id: str) -> dict:
     except HTTPError:
         logger.error("Error retrieving user from UAA", status_code=response.status_code, user_id=user_id)
         return
+
+    return response.json()
+
+
+def delete_user(user_id: str) -> dict:
+    """
+    Deletes the user from uaa, using the id of the user.
+
+    :param user_id: The id of the user in uaa
+    """
+    access_token = login_admin()
+    headers = generate_headers(access_token)
+
+    url = f"{app.config['UAA_SERVICE_URL']}/Users/{user_id}"
+    response = requests.delete(url, headers=headers)
+    try:
+        response.raise_for_status()
+    except HTTPError:
+        logger.error("Error deleting user from UAA", status_code=response.status_code, user_id=user_id, exc_info=True)
+        raise
 
     return response.json()
 
@@ -232,22 +252,23 @@ def update_user_account(payload):
     return errors
 
 
-def update_user_password(user, old_password, new_password):
+def update_user_password(user: dict, old_password: str, new_password: str) -> dict | None:
     """
     Updates the user password in uaa, using the user's id
-    :param user - UAA user object.
-    :param old_password
-    :param new_password
+    :param user: UAA user object.
+    :param old_password: The old password
+    :param new_password: The new password
     :return errors: The errors returned from uaa as a dictionary
     """
     access_token = login_admin()
     headers = generate_headers(access_token)
     payload = {"oldPassword": old_password, "password": new_password}
-    logger.info("Attempting change of user's password")
+    logger.info("Attempting change of users password", user_id=user["id"])
     url = f"{app.config['UAA_SERVICE_URL']}/Users/{user['id']}/password"
     response = requests.put(url, data=dumps(payload), headers=headers)
     try:
         response.raise_for_status()
+        logger.info("Successfully changed users password", user_id=user["id"])
         return
     except HTTPError:
         if response.status_code == 404:
@@ -268,9 +289,91 @@ def update_user_password(user, old_password, new_password):
     return errors
 
 
+def get_groups() -> dict:
+    """
+    Gets all the groups that uaa has.  The dictionary has a 'resources' key, which contains a list that has
+    every group and its metadata
+    :return: A dictionary containing details about the groups
+    """
+    access_token = login_admin()
+    headers = generate_headers(access_token)
+
+    url = f"{app.config['UAA_SERVICE_URL']}/Groups"
+    response = requests.get(url, headers=headers)
+    try:
+        response.raise_for_status()
+    except HTTPError:
+        logger.error("Error retrieving groups from UAA", status_code=response.status_code, exc_info=True)
+        raise
+
+    return response.json()
+
+
+def add_group_membership(user_id: str, group_id: str) -> dict:
+    """
+    Adds a user to a group in uaa
+
+    :param user_id: The uuid of the internal user
+    :param group_id: The uuid of the group
+    """
+    logger.info("About to add member to group", user_id=user_id, group_id=group_id)
+    access_token = login_admin()
+    headers = generate_headers(access_token)
+
+    url = f"{app.config['UAA_SERVICE_URL']}/Groups/{group_id}/members"
+    payload = {"type": "USER", "value": user_id}
+    response = requests.post(url, json=payload, headers=headers)
+    try:
+        response.raise_for_status()
+    except HTTPError:
+        logger.error(
+            "Error adding group membership",
+            status_code=response.status_code,
+            group_id=group_id,
+            user_id=user_id,
+            text=response.text,
+            exc_info=True,
+        )
+        raise
+
+    logger.info("Successfully added member to group", user_id=user_id, group_id=group_id)
+    return response.json()
+
+
+def remove_group_membership(user_id: str, group_id: str) -> dict:
+    """
+    Removes a user from a group in uaa
+
+    :param user_id: The uuid of the internal user
+    :param group_id: The uuid of the group
+    """
+    logger.info("About to remove member from group", user_id=user_id, group_id=group_id)
+    access_token = login_admin()
+    headers = generate_headers(access_token)
+
+    url = f"{app.config['UAA_SERVICE_URL']}/Groups/{group_id}/members/{user_id}"
+    response = requests.delete(url, headers=headers)
+    try:
+        response.raise_for_status()
+    except HTTPError:
+        logger.error(
+            "Error removing group membership",
+            status_code=response.status_code,
+            group_id=group_id,
+            user_id=user_id,
+            text=response.text,
+            exc_info=True,
+        )
+        raise
+
+    logger.info("Successfully removed member from group", user_id=user_id, group_id=group_id)
+    return response.json()
+
+
 def refresh_permissions(user_id):
     """
     Refreshes the cache of permissions for the current user
+
     :param user_id: The user ID to refresh for
     """
     user = get_user_by_id(user_id)
@@ -280,9 +383,10 @@ def refresh_permissions(user_id):
 def user_has_permission(permission, user_id=None) -> bool:
     """
     Checks to see if the user provided or in the session has the specified permission
+
     :param permission: The permission to check
     :param user_id: An optional user ID to check for
-    :return has_permission: Whether the user has the permission or not
+    :return: Whether the user has the permission or not
     """
     # Feature flagged
     is_role_based_access_enabled = app.config["IS_ROLE_BASED_ACCESS_ENABLED"]
@@ -310,15 +414,17 @@ def user_has_permission(permission, user_id=None) -> bool:
 
 def get_users_list(
     start_index: int, max_count: int, query: str = None, sort_by: str = "email", sort_order: str = "ascending"
-):
+) -> dict | str:
     """
-    Gets all users in rops and provides a list.
-    :param query - UAA user object.
-    :param sort_by
-    :param sort_order
-    :param start_index
-    :param max_count
-    :return errors: The errors returned from uaa as a dictionary
+    Gets all users in uaa.  A query can be provided to refine the search.
+
+    :param query: UAA user object.
+    :param sort_by:
+    :param sort_order:
+    :param start_index:
+    :param max_count:
+    :return: Either the result as a dict (with the list being in the 'resources' key) or "Unauthorised Access" on a
+             4XX or 5XX result
     """
     access_token = login_admin()
     headers = generate_headers(access_token)
@@ -326,6 +432,7 @@ def get_users_list(
     logger.info("Attempting to fetch user records")
     url = f"{app.config['UAA_SERVICE_URL']}/Users"
     response = requests.get(url, params=param, headers=headers)
+    # TODO Update this function to only have one return type (dict).  Multiple return types isn't great.
     try:
         response.raise_for_status()
         return response.json()

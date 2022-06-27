@@ -576,7 +576,7 @@ class TestSurvey(ViewTestCase):
             }
         ]
         mock_request.get(url_get_survey_by_qbs, json=survey_info["survey"])
-        mock_request.get(url_get_eq_ci_selectors, json=data)  # TODO figure out what real data looks like
+        mock_request.get(url_get_eq_ci_selectors, json=data)
         mock_request.post(url_post_instrument_link)
         response = self.client.post("/surveys/QBS/link-collection-instrument", data=changed_survey_details)
         self.assertEqual(response.status_code, 200)

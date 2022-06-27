@@ -1,0 +1,105 @@
+{
+  "id": "af154d97-d703-4f06-9b52-09807406201a",
+  "meta": {
+    "version": 0,
+    "created": "2022-06-17T11:22:18.571Z",
+    "lastModified": "2022-06-17T11:22:18.571Z"
+  },
+  "userName": "uaa_message_edit_user",
+  "name": {
+    "familyName": "User",
+    "givenName": "ONS"
+  },
+  "emails": [
+    {
+      "value": "ons_five@ons.fake",
+      "primary": false
+    }
+  ],
+  "groups": [
+    {
+      "value": "2854b1a0-a758-476e-80d3-6d84fcf9fcf4",
+      "display": "cloud_controller.read",
+      "type": "DIRECT"
+    },
+    {
+      "value": "86f4c6d3-94e4-4fe5-a68d-be6d8452339e",
+      "display": "cloud_controller_service_permissions.read",
+      "type": "DIRECT"
+    },
+    {
+      "value": "f6d4e029-951c-489e-ac1e-d75f18803359",
+      "display": "roles",
+      "type": "DIRECT"
+    },
+    {
+      "value": "791ee906-b5a1-47a7-9dd3-f70231b284e3",
+      "display": "password.write",
+      "type": "DIRECT"
+    },
+    {
+      "value": "e60f5a94-2c09-42ff-99df-21ef89dd1545",
+      "display": "uaa.user",
+      "type": "DIRECT"
+    },
+    {
+      "value": "00065626-bfe9-48e0-9ed8-d302b2db628f",
+      "display": "scim.userids",
+      "type": "DIRECT"
+    },
+    {
+      "value": "c1beb8cb-a463-45d4-90dc-b0433d1248b6",
+      "display": "profile",
+      "type": "DIRECT"
+    },
+    {
+      "value": "eee8f876-6af1-472d-a46e-dc177d8e11fc",
+      "display": "cloud_controller.write",
+      "type": "DIRECT"
+    },
+    {
+      "value": "632bf0f6-45af-4141-a82c-b4712a6f79b7",
+      "display": "approvals.me",
+      "type": "DIRECT"
+    },
+    {
+      "value": "6a394b96-74f7-47b2-a893-c5bec162fcf9",
+      "display": "scim.me",
+      "type": "DIRECT"
+    },
+    {
+      "value": "95338069-2a79-49c0-ad1b-40011059351e",
+      "display": "uaa.offline_token",
+      "type": "DIRECT"
+    },
+    {
+      "value": "ed038e62-3f7d-4a69-bc9f-005fc7097712",
+      "display": "openid",
+      "type": "DIRECT"
+    },
+    {
+      "value": "1d83ce1c-d45d-4cf6-abc2-9ca3cb6f7be5",
+      "display": "oauth.approvals",
+      "type": "DIRECT"
+    },
+    {
+      "value": "b5d4383e-845e-42ea-9a30-5e9868f8c5c8",
+      "display": "messages.edit",
+      "type": "DIRECT"
+    },
+    {
+      "value": "257b9b16-b614-4999-bddb-4e821ad14752",
+      "display": "user_attributes",
+      "type": "DIRECT"
+    }
+  ],
+  "approvals": [],
+  "active": true,
+  "verified": true,
+  "origin": "uaa",
+  "zoneId": "uaa",
+  "passwordLastModified": "2022-06-17T11:22:18.000Z",
+  "schemas": [
+    "urn:scim:schemas:core:1.0"
+  ]
+}

@@ -19,6 +19,8 @@ class NotifyController:
         self.update_account_details_template = app.config["NOTIFY_UPDATE_ACCOUNT_DETAILS_TEMPLATE"]
         self.update_email_template = app.config["NOTIFY_UPDATE_EMAIL_TEMPLATE"]
         self.update_account_password_template = app.config["NOTIFY_UPDATE_ACCOUNT_PASSWORD_CHANGE_TEMPLATE"]
+        self.update_user_permissions_template = app.config["NOTIFY_UPDATE_USER_PERMISSIONS_TEMPLATE"]
+        self.delete_user_template = app.config["NOTIFY_DELETE_USER_TEMPLATE"]
         self.topic_id = app.config["PUBSUB_TOPIC"]
         self.project_id = app.config["GOOGLE_CLOUD_PROJECT"]
         self.publisher = None
@@ -78,6 +80,8 @@ class NotifyController:
             "update_account_details": self.update_account_details_template,
             "update_email": self.update_email_template,
             "update_account_password": self.update_account_password_template,
+            "update_user_permissions": self.update_user_permissions_template,
+            "delete_user": self.delete_user_template,
         }
         if template_name in templates:
             return templates[template_name]
