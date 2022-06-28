@@ -76,8 +76,7 @@ class TestSignIn(unittest.TestCase):
         self.assertEqual(response.status_code, 200)
         self.assertIn("Online Business Surveys".encode(), response.data)
         self.assertIn("Sign out".encode(), response.data)
-        # Uncomment once my account link is made visible again
-        # self.assertIn("My account".encode(), response.data)
+        self.assertIn("My account".encode(), response.data)
         self.assertNotIn("Sign in".encode(), response.data)
 
     @requests_mock.mock()

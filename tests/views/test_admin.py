@@ -63,7 +63,7 @@ class TestMessage(ViewTestCase):
         response = self.client.post("/sign-in", follow_redirects=True, data={"username": "user", "password": "pass"})
 
         self.assertEqual(response.status_code, 200)
-        self.assertIn("Manage User Accounts".encode(), response.data)
+        self.assertIn("Manage user accounts".encode(), response.data)
         self.assertIn("Online Business Surveys".encode(), response.data)
 
     @requests_mock.mock()
@@ -74,7 +74,7 @@ class TestMessage(ViewTestCase):
         response = self.client.post("/sign-in", follow_redirects=True, data={"username": "user", "password": "pass"})
 
         self.assertEqual(response.status_code, 200)
-        self.assertNotIn("Manage User Accounts".encode(), response.data)
+        self.assertNotIn("Manage user accounts".encode(), response.data)
         self.assertIn("Online Business Surveys".encode(), response.data)
 
     @requests_mock.mock()
@@ -86,12 +86,13 @@ class TestMessage(ViewTestCase):
         response = self.client.get("/admin/manage-user-accounts", follow_redirects=True)
 
         self.assertEqual(response.status_code, 200)
-        self.assertNotIn("Manage User Accounts".encode(), response.data)
+        self.assertNotIn("Manage user accounts".encode(), response.data)
         self.assertIn("Online Business Surveys".encode(), response.data)
 
     @requests_mock.mock()
     def test_manage_user_accounts_403(self, mock_request):
-        # TODO Improve this test.  A 500 response isn't what should be happening here
+        # TODO Improve this test.  A 500 response isn't what should be happening here, it should be a 200 with a
+        # sensible error screen
         mock_request = self.setup_common_mocks(mock_request)
         mock_request.get(url_surveys, json=self.surveys_list_json, status_code=200)
         mock_request.get(url_uaa_user_list, json={}, status_code=403)
