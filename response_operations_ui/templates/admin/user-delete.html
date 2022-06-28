@@ -20,14 +20,16 @@
           <div class="ons-grid__col">
           {{
               onsButton({
-                  "id": "save-changes",
-                  "text": "Save changes",
+                  "id": "delete-user",
+                  "text": "Delete user",
                   "submitType": "timer"
               })
           }}
           </div>
           <div class="ons-grid__col ons-u-ml-m">
-              <a href=" {{ url_for('admin_bp.manage_user_accounts') }}">Cancel</a>
+            <a href="{{ url_for('admin_bp.get_manage_account_groups', user_id=user_id) }}" role="button" class="ons-btn ons-btn--link ons-btn--secondary" id="btn-option-cancel">
+              <span class="ons-btn__inner">Cancel</span>
+            </a>
           </div>
         </div>
     </form>
