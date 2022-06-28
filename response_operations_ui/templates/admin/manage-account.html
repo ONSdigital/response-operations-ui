@@ -6,16 +6,16 @@
 {% block main %}
     <div class="ons-grid ons-grid--flex ons-grid--between">
         <div class="ons-grid__col">
-            <h1 class="ons-u-fs-l u-mb-xs" name="page-manage-account-title">{{ name }}</h1>
+            <h1>{{ name }}</h1>
         </div>
     </div>
 
     <div class="ons-grid ons-grid--flex ons-grid--between">
         <div class="ons-grid__col">
-            <h2 class="ons-u-fs-m u-mb-xs" name="page-manage-account-subtitle">Select user permissions</h2>
-        </div>
+            <h2 class="ons-u-fs-m u-mb-xs">Select user permissions</h2>
+            <p>All users have permission to view all the preselected Survey Data Collection areas below. </p>
+          </div>
     </div>
-    
     <form id="user-permissions" action="" method="post">
         <input type="hidden" name="csrf_token" value="{{ csrf_token() }}" />
         <section class="ons-u-mt-s">
