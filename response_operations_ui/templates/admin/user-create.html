@@ -1,0 +1,245 @@
+
+{% extends "layouts/base.html" %}
+{% from "components/button/_macro.njk" import onsButton %}
+{% from "components/lists/_macro.njk" import onsList %}
+{% from "components/password/_macro.njk" import onsPassword %}
+{% from "components/input/_macro.njk" import onsInput %}
+{% from "components/fieldset/_macro.njk" import onsFieldset %}
+{% from "components/table/_macro.njk" import onsTable %}
+{% from "components/checkboxes/_checkbox-macro.njk" import onsCheckbox %}
+
+{% set page_title = 'Create New Account' %}
+
+{% block main %}
+    <div class="ons-grid">
+        <div class="ons-grid__col ons-col-8@m ons-u-mt-m">
+            <form
+                method="post"
+                action="{{ url_for('account_bp.post_create_account', token='token') }}"
+                class="form"
+                role="form">
+                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}" />
+
+                <h1 class="ons-u-mt-l">Create your account</h1>
+                    {{
+                        onsInput({
+                            "id": "inputUserName",
+                            "name": "user_name",
+                            "type": "text",
+                            "label": {
+                                "description": "Consider using your ONS username",
+                                "text": "Username"
+                            },
+                            "attributes": {
+                                "required": true
+                            },
+                            "error": usernameError
+                        })
+                    }}
+                    {{
+                        onsInput({
+                            "id": "inputFirstName",
+                            "name": "first_name",
+                            "type": "text",
+                            "label": {
+                                "text": "First name"
+                            },
+                            "attributes": {
+                                "required": true
+                            },
+                            "error": firstNameError
+                        })
+                    }}
+                    {{
+                        onsInput({
+                            "id": "inputLastName",
+                            "name": "last_name",
+                            "type": "text",
+                            "label": {
+                                "text": "Last name"
+                            },
+                            "attributes": {
+                                "required": true
+                            },
+                            "error": lastNameError
+                        })
+                    }}
+                  <table id="tbl-users" class="ons-table" >
+                <thead class="ons-table__head">
+                    <tr class="ons-table__row">
+                        <th scope="col" class="ons-table__header">
+                            <span>Survey Data Collection area</span>
+                        </th>
+                        <th scope="col" class="ons-table__header">
+                            <span>View</span>
+                        </th>
+                        <th scope="col" class="ons-table__header">
+                            <span>Edit</span>
+                        </th>
+                        <th scope="col" class="ons-table__header">
+                            <span>Delete</span>
+                        </th>
+                    </tr>
+                </thead>
+                <tbody class="ons-table__body">
+                    <tr class="ons-table__row">
+                        <td class="ons-table__cell">
+                            Surveys
+                        </td>
+                        <td class="ons-table__cell">
+                            {{
+                              onsCheckbox({
+                                  "id": "surveys_view",
+                                  "name": "surveys_view",
+                                  "label": {
+                                      "text": "View surveys"
+                                  },
+                                  "hideLabel": true,
+                                  "value": "y",
+                                  "checked": true,
+                                  "disabled": true,
+                              })
+                          }}
+                        </td>
+                        <td class="ons-table__cell">
+                            {{
+                              onsCheckbox({
+                                  "id": "surveys_edit",
+                                  "name": "surveys_edit",
+                                  "label": {
+                                      "text": "Edit surveys"
+                                  },
+                                  "hideLabel": true,
+                                  "value": "y",
+                              })
+                          }}
+                        </td>
+                        <td class="ons-table__cell"></td>
+                    </tr>
+                    <tr class="ons-table__row">
+                        <td class="ons-table__cell">
+                            Reporting units
+                        </td>
+                        <td class="ons-table__cell">
+                            {{
+                              onsCheckbox({
+                                  "id": "reporting_units_view",
+                                  "label": {
+                                      "text": "View reporting units"
+                                  },
+                                  "hideLabel": true,
+                                  "value": "y",
+                                  "checked": true,
+                                  "disabled": true,
+                              })
+                          }}
+                        </td>
+                        <td class="ons-table__cell">
+                            {{
+                            onsCheckbox({
+                                "id": "reporting_units_edit",
+                                "name": "reporting_units_edit",
+                                "label": {
+                                    "text": "Edit reporting units"
+                                },
+                                "hideLabel": true,
+                                "value": "y",
+                            })
+                        }}
+                        </td>
+                        <td class="ons-table__cell"></td>
+                    </tr>
+                    <tr class="ons-table__row">
+                        <td class="ons-table__cell">
+                            Respondents
+                        </td>
+                        <td class="ons-table__cell">
+                            {{
+                              onsCheckbox({
+                                  "id": "respondents_view",
+                                  "label": {
+                                      "text": "View respondents"
+                                  },
+                                  "hideLabel": true,
+                                  "value": "y",
+                                  "checked": true,
+                                  "disabled": true,
+                              })
+                          }}
+                        </td>
+                        <td class="ons-table__cell">
+                        {{
+                            onsCheckbox({
+                                "id": "respondents_edit",
+                                "name": "respondents_edit",
+                                "label": {
+                                    "text": "Edit respondents"
+                                },
+                                "hideLabel": true,
+                                "value": "y",
+                            })
+                        }}
+                        </td>
+                        <td class="ons-table__cell">
+                        {{
+                            onsCheckbox({
+                                "id": "respondents_delete",
+                                "name": "respondents_delete",
+                                "label": {
+                                    "text": "Delete respondents"
+                                },
+                                "hideLabel": true,
+                                "value": "y",
+                            })
+                        }}
+                        </td>
+                    </tr>
+                    <tr class="ons-table__row">
+                        <td class="ons-table__cell">
+                            Messages
+                        </td>
+                        <td class="ons-table__cell">
+                            {{
+                              onsCheckbox({
+                                  "id": "messages_view",
+                                  "label": {
+                                      "text": "View messages"
+                                  },
+                                  "hideLabel": true,
+                                  "value": "y",
+                                  "checked": true,
+                                  "disabled": true,
+                              })
+                          }}
+                        </td>
+                        <td class="ons-table__cell">
+                        {{
+                            onsCheckbox({
+                                "id": "messages_edit",
+                                "name": "messages_edit",
+                                "label": {
+                                    "text": "Edit messages"
+                                },
+                                "hideLabel": true,
+                                "value": "y",
+                            })
+                        }}
+                        </td>
+                      <td class="ons-table__cell"></td>
+                    </tr>
+                </tbody>
+            </table>
+
+                {{
+                    onsButton({
+                        "classes": "ons-u-mb-s ons-u-mt-s",
+                        "text": "Confirm",
+                        "id": "confirm_password_button"
+                    })
+                }}
+                <p><a href="{{ url_for('sign_in_bp.sign_in') }}">Cancel</a></p>
+
+            </form>
+        </div>
+    </div>
+{% endblock main %}

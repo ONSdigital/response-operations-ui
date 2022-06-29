@@ -72,6 +72,14 @@ def manage_user_accounts():
     )
 
 
+@admin_bp.route("/create-account", methods=["GET"])
+@login_required
+def get_create_account():
+    _verify_user_in_user_admin_group()
+
+    return render_template("admin/user-create.html")
+
+
 @admin_bp.route("/manage-account/<user_id>", methods=["GET"])
 @login_required
 def get_manage_account_groups(user_id):
