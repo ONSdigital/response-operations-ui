@@ -18,7 +18,7 @@
     </div>
     <form id="user-permissions" action="" method="post">
         <input type="hidden" name="csrf_token" value="{{ csrf_token() }}" />
-        <section class="ons-u-mt-s">
+        <section class="ons-u-mt-s ons-col-7@m">
             <table id="tbl-users" class="ons-table" >
                 <thead class="ons-table__head">
                     <tr class="ons-table__row">
@@ -190,8 +190,8 @@
                 </tbody>
             </table>
 
-          <div class="ons-grid ons-grid--flex ons-grid--gutterless ons-u-mt-m ons-u-mb-m">
-            <div class="ons-grid__col ons-col-3@m">
+          <div class="ons-grid ons-grid--flex ons-grid--gutterless ons-u-mt-l ons-u-mb-m">
+            <div class="ons-grid__col ons-col-7@m">
             <strong>Manager permissions</strong>
             {{
                 onsCheckbox({
@@ -207,7 +207,7 @@
               }}
             </div>
           </div>
-          <div class="ons-panel ons-panel--warn ons-panel--no-title">
+          <div class="ons-panel ons-panel--warn ons-panel--no-title ons-u-mt-l">
             <span class="ons-panel__icon" aria-hidden="true">!</span>
             <span class="ons-u-vh">Warning: </span>
             <div class="ons-panel__body">
