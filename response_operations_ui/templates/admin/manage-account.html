@@ -13,7 +13,7 @@
     <div class="ons-grid ons-grid--flex ons-grid--between">
         <div class="ons-grid__col">
             <h2>Select user permissions</h2>
-            <p>All users have permission to view all the preselected Survey Data Collection areas below. </p>
+            <span>All users have permission to view all the preselected Survey Data Collection areas below. </span>
           </div>
     </div>
     <form id="user-permissions" action="" method="post">
@@ -197,6 +197,7 @@
                 onsCheckbox({
                     "id": "users_admin",
                     "name": "users_admin",
+                    "classes": "ons-u-mt-s",
                     "label": {
                         "text": "Manage user accounts"
                     },
@@ -206,6 +207,13 @@
               }}
             </div>
           </div>
+          <div class="ons-panel ons-panel--warn ons-panel--no-title">
+            <span class="ons-panel__icon" aria-hidden="true">!</span>
+            <span class="ons-u-vh">Warning: </span>
+            <div class="ons-panel__body">
+              Changes will be applied shortly
+            </div>
+        </div>
 
           <div class="ons-grid ons-grid--flex ons-grid--gutterless ons-grid--vertical-center ons-grid--no-wrap@s ons-u-mt-m ons-u-mb-m">
             <div class="ons-grid__col">
@@ -222,7 +230,9 @@
                     <span class="ons-btn__inner">Cancel</span></a>
             </div>
           </div>
-          <a href=" {{ url_for('admin_bp.get_delete_uaa_user', user_id=user_id) }}">Delete user account</a>
+          <div class="ons-u-mt-xl">
+            <a href=" {{ url_for('admin_bp.get_delete_uaa_user', user_id=user_id) }}">Delete user account</a>
+          </div>
         </section>
     </form>
 {% endblock %}
