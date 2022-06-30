@@ -57,6 +57,7 @@ jobs:
       - name: Test
         run: make test
       - uses: google-github-actions/auth@v0
+        id: 'auth'
         with:
           credentials_json: '${{ secrets.GCR_KEY }}'
       - run: |
