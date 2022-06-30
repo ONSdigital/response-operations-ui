@@ -13,50 +13,91 @@
 {% block main %}
     <div class="ons-grid">
         <div class="ons-grid__col ons-col-8@m ons-u-mt-m">
+          {% if form.errors %}
+            {% set errorData = [] %}
+                {% set error_count = form.errors | length %}
+                {% set plural_suffix = 's' if error_count > 1 else '' %}
+                {% set header_text = 'This page has ' ~ error_count ~ ' error' ~ plural_suffix %}
+            {% call
+                onsPanel({
+                    "title": header_text,
+                    "type": "error"
+                })
+            %}
+                <p>These <strong>must be corrected</strong> to continue.</p>
+                {% for error in form.first_name.errors %}
+                    {% do errorData.append(
+                        {
+                            "text": error,
+                            "index": true,
+                            "url": "#first_name",
+                            "classes": "ons-js-inpagelink"
+                        }
+                    ) %}
+                {% endfor %}
+                {% for error in form.last_name.errors %}
+                    {% do errorData.append(
+                        {
+                            "text": error,
+                            "index": true,
+                            "url": "#last_name",
+                            "classes": "ons-js-inpagelink"
+                        }
+                    ) %}
+                {% endfor %}
+                {% for error in form.email.errors %}
+                    {% do errorData.append(
+                        {
+                            "text": error,
+                            "index": true,
+                            "url": "#email",
+                            "classes": "ons-js-inpagelink"
+                        }
+                    ) %}
+                {% endfor %}
+                {{
+                    onsList({
+                        "classes": "list--bare",
+                        "itemsList": errorData
+                    })
+                }}
+            {% endcall %}
+        {% endif %}
             <form method="post" action="" class="form" role="form">
                 <input type="hidden" name="csrf_token" value="{{ csrf_token() }}" />
                 <h1 class="ons-u-mt-l">Create your account</h1>
+
                     {{
                         onsInput({
-                            "id": "inputUserName",
-                            "name": "user_name",
-                            "type": "text",
-                            "label": {
-                                "description": "Consider using your ONS username",
-                                "text": "Username"
-                            },
-                            "attributes": {
-                                "required": true
-                            },
-                            "error": usernameError
-                        })
-                    }}
-                    {{
-                        onsInput({
-                            "id": "inputFirstName",
+                            "id": "first_name",
                             "name": "first_name",
                             "type": "text",
                             "label": {
+                                "description": "Enter the new users first name",
                                 "text": "First name"
                             },
-                            "attributes": {
-                                "required": true
-                            },
-                            "error": firstNameError
                         })
                     }}
                     {{
                         onsInput({
-                            "id": "inputLastName",
+                            "id": "last_name",
                             "name": "last_name",
                             "type": "text",
                             "label": {
+                                "description": "Enter the new users last name",
                                 "text": "Last name"
                             },
-                            "attributes": {
-                                "required": true
+                        })
+                    }}
+                                        {{
+                        onsInput({
+                            "id": "email",
+                            "name": "email",
+                            "type": "text",
+                            "label": {
+                                "description": "Enter the ONS email of the new user",
+                                "text": "Email"
                             },
-                            "error": lastNameError
                         })
                     }}
                   <table id="tbl-users" class="ons-table" >
@@ -224,6 +265,21 @@
                     </tr>
                 </tbody>
             </table>
+              <div class="ons-grid ons-grid--flex ons-grid--gutterless ons-u-mt-m ons-u-mb-m">
+            <div class="ons-grid__col ons-col-3@m">
+            <strong>Manager permissions</strong>
+            {{
+                onsCheckbox({
+                    "id": "users_admin",
+                    "name": "users_admin",
+                    "label": {
+                        "text": "Manage user accounts"
+                    },
+                    "value": "y",
+                })
+              }}
+            </div>
+          </div>
 
                 {{
                     onsButton({

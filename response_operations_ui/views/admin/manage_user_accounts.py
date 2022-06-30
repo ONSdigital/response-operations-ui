@@ -19,7 +19,11 @@ from response_operations_ui.controllers.uaa_controller import (
     user_has_permission,
 )
 from response_operations_ui.exceptions.exceptions import NotifyError
-from response_operations_ui.forms import EditUserGroupsForm, UserSearchForm
+from response_operations_ui.forms import (
+    EditUserGroupsForm,
+    NewCreateAccountForm,
+    UserSearchForm,
+)
 from response_operations_ui.views.admin import admin_bp
 
 logger = wrap_logger(logging.getLogger(__name__))
@@ -76,17 +80,46 @@ def manage_user_accounts():
 @login_required
 def get_create_account():
     _verify_user_in_user_admin_group()
+    form = NewCreateAccountForm()
 
-    return render_template("admin/user-create.html")
+    return render_template("admin/user-create.html", form=form)
 
 
 @admin_bp.route("/create-account", methods=["POST"])
 @login_required
 def post_create_account():
     _verify_user_in_user_admin_group()
+    form = NewCreateAccountForm(request.form)
 
-    email = "todo@todo.com"
-    return render_template("admin/user-create-confirmation.html", email=email)
+    if not form.validate():
+        return render_template("admin/user-create.html", form=form)
+
+    # try:
+    #     groups = get_groups()
+    # except HTTPError:
+    #     flash("Failed to get groups, please try again", "error")
+    #     return redirect(url_for("admin_bp.manage_user_accounts"))
+
+    # uaa_group_mapping = {
+    #     "surveys_edit": "surveys.edit",
+    #     "reporting_units_edit": "reportingunits.edit",
+    #     "respondents_edit": "respondents.edit",
+    #     "respondents_delete": "respondents.delete",
+    #     "messages_edit": "messages.edit",
+    #     "users_admin": "users.admin",
+    # }
+
+    # figure out function signature
+    # user = new_create_user_account(values)
+    # user_id = user['id']
+    # groups = ['surveys_edit', 'all the other permissions']
+    # for group in groups:
+    #     mapped_group = uaa_group_mapping[group]
+    #     group_details = next(item for item in groups["resources"] if item["displayName"] == mapped_group)
+    #     add_group_membership(user_id, group_details["id"])
+    #     send account activation email to user
+
+    return render_template("admin/user-create-confirmation.html", email=form.email)
 
 
 @admin_bp.route("/manage-account/<user_id>", methods=["GET"])

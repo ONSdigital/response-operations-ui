@@ -6,6 +6,7 @@ from flask_wtf import FlaskForm
 from structlog import wrap_logger
 from wtforms import (
     BooleanField,
+    EmailField,
     HiddenField,
     IntegerField,
     Label,
@@ -460,6 +461,20 @@ class RequestAccountForm(FlaskForm):
         if domain_part not in ["ons.gov.uk", "ext.ons.gov.uk", "ons.fake"]:
             logger.info("Account requested for non-ONS email address")
             raise ValidationError("Not a valid ONS email address")
+
+
+# TODO Rename this
+class NewCreateAccountForm(FlaskForm):
+    first_name = StringField("First name", validators=[DataRequired(message="First name is required")])
+    last_name = StringField("Last name", validators=[DataRequired(message="Last name is required")])
+    email = EmailField("Email", validators=[DataRequired(message="Email is required")])
+
+    surveys_edit = BooleanField()
+    reporting_units_edit = BooleanField()
+    respondents_edit = BooleanField()
+    respondents_delete = BooleanField()
+    messages_edit = BooleanField()
+    users_admin = BooleanField()
 
 
 class CreateAccountForm(FlaskForm):
