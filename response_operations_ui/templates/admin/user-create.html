@@ -13,13 +13,8 @@
 {% block main %}
     <div class="ons-grid">
         <div class="ons-grid__col ons-col-8@m ons-u-mt-m">
-            <form
-                method="post"
-                action="{{ url_for('account_bp.post_create_account', token='token') }}"
-                class="form"
-                role="form">
+            <form method="post" action="" class="form" role="form">
                 <input type="hidden" name="csrf_token" value="{{ csrf_token() }}" />
-
                 <h1 class="ons-u-mt-l">Create your account</h1>
                     {{
                         onsInput({

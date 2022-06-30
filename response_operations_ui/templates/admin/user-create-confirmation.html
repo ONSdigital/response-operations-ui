@@ -1,0 +1,17 @@
+{% extends "layouts/base.html" %}
+{% from "components/table/_macro.njk" import onsTable %}
+{% from "components/checkboxes/_checkbox-macro.njk" import onsCheckbox %}
+{% from "components/button/_macro.njk" import onsButton %}
+
+{% block main %}
+    <div class="ons-grid ons-grid--flex ons-grid--between">
+        <div class="ons-grid__col">
+            <h1 class="ons-u-fs-l u-mb-xs" name="page-manage-account-title">Account created</h1>
+        </div>
+    </div>
+
+    <p>An email to activate the account has been sent to {{ email }} This email will be valid for 6 weeks.</p>
+
+    <a href=" {{ url_for('admin_bp.manage_user_accounts') }}">Return to manage user accounts</a>
+
+{% endblock %}
