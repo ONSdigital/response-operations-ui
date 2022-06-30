@@ -19,7 +19,7 @@
     <form id="user-permissions" action="" method="post">
         <input type="hidden" name="csrf_token" value="{{ csrf_token() }}" />
         <section class="ons-u-mt-s ons-col-7@m">
-            <table id="tbl-users" class="ons-table" >
+            <table id="tbl-users" class="ons-table ons-table--responsive">
                 <thead class="ons-table__head">
                     <tr class="ons-table__row">
                         <th scope="col" class="ons-table__header">
@@ -211,7 +211,7 @@
             <span class="ons-panel__icon" aria-hidden="true">!</span>
             <span class="ons-u-vh">Warning: </span>
             <div class="ons-panel__body">
-              Changes will be applied shortly
+              Changes will happen shortly
             </div>
         </div>
 
