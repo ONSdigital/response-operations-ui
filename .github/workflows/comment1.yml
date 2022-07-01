@@ -26,7 +26,7 @@ jobs:
           
       - uses: onsdigital/ras-rm-spinnaker-action@main
         with:
-          comment-body: 'babbal'
+          comment-body: '/deploy babbal'
           gcp-project: ${{ secrets.GOOGLE_PROJECT_ID }}
           bot-token: ${{ secrets.BOT_TOKEN }}
           spinnaker-topic: ${{ secrets.SPINNAKER_TOPIC }}
