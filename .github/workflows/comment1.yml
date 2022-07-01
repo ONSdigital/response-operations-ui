@@ -22,8 +22,7 @@ jobs:
         uses: google-github-actions/setup-gcloud@v0
         with:
           project_id: ${{ secrets.GOOGLE_PROJECT_ID }}
-            service_account_key: ${{ secrets.GCR_KEY }}
-            export_default_credentials: true
+          export_default_credentials: true
           
       - uses: onsdigital/ras-rm-spinnaker-action@main
         with:
