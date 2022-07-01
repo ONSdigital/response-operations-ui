@@ -6,20 +6,20 @@
 {% block main %}
     <div class="ons-grid ons-grid--flex ons-grid--between">
         <div class="ons-grid__col">
-            <h1 class="ons-u-fs-l u-mb-xs" name="page-manage-account-title">{{ name }}</h1>
+            <h1>{{ name }}</h1>
         </div>
     </div>
 
     <div class="ons-grid ons-grid--flex ons-grid--between">
         <div class="ons-grid__col">
-            <h2 class="ons-u-fs-m u-mb-xs" name="page-manage-account-subtitle">Select user permissions</h2>
-        </div>
+            <h2>Select user permissions</h2>
+            <span>All users have permission to view all the preselected Survey Data Collection areas below. </span>
+          </div>
     </div>
-    
     <form id="user-permissions" action="" method="post">
         <input type="hidden" name="csrf_token" value="{{ csrf_token() }}" />
-        <section class="ons-u-mt-s">
-            <table id="tbl-users" class="ons-table" >
+        <section class="ons-u-mt-s ons-col-7@m">
+            <table id="tbl-users" class="ons-table ons-table--responsive">
                 <thead class="ons-table__head">
                     <tr class="ons-table__row">
                         <th scope="col" class="ons-table__header">
@@ -190,13 +190,14 @@
                 </tbody>
             </table>
 
-          <div class="ons-grid ons-grid--flex ons-grid--gutterless ons-u-mt-m ons-u-mb-m">
-            <div class="ons-grid__col ons-col-3@m">
+          <div class="ons-grid ons-grid--flex ons-grid--gutterless ons-u-mt-l ons-u-mb-m">
+            <div class="ons-grid__col ons-col-7@m">
             <strong>Manager permissions</strong>
             {{
                 onsCheckbox({
                     "id": "users_admin",
                     "name": "users_admin",
+                    "classes": "ons-u-mt-s",
                     "label": {
                         "text": "Manage user accounts"
                     },
@@ -206,6 +207,13 @@
               }}
             </div>
           </div>
+          <div class="ons-panel ons-panel--warn ons-panel--no-title ons-u-mt-l">
+            <span class="ons-panel__icon" aria-hidden="true">!</span>
+            <span class="ons-u-vh">Warning: </span>
+            <div class="ons-panel__body">
+              Changes will happen shortly
+            </div>
+        </div>
 
           <div class="ons-grid ons-grid--flex ons-grid--gutterless ons-grid--vertical-center ons-grid--no-wrap@s ons-u-mt-m ons-u-mb-m">
             <div class="ons-grid__col">
@@ -222,7 +230,9 @@
                     <span class="ons-btn__inner">Cancel</span></a>
             </div>
           </div>
-          <a href=" {{ url_for('admin_bp.get_delete_uaa_user', user_id=user_id) }}">Delete user account</a>
+          <div class="ons-u-mt-xl">
+            <a href=" {{ url_for('admin_bp.get_delete_uaa_user', user_id=user_id) }}">Delete user account</a>
+          </div>
         </section>
     </form>
 {% endblock %}

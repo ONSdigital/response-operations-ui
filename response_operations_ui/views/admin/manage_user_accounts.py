@@ -240,7 +240,7 @@ def get_delete_uaa_user(user_id):
 
     name = f"{user['name']['givenName']} {user['name']['familyName']}"
     email = user["emails"][0]["value"]
-    return render_template("admin/user-delete.html", name=name, email=email)
+    return render_template("admin/user-delete.html", name=name, email=email, user_id=user_id)
 
 
 @admin_bp.route("/manage-account/<user_id>/delete", methods=["POST"])
