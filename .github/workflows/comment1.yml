@@ -10,7 +10,7 @@ env:
 jobs:
   comment:
     runs-on: ubuntu-latest
-    if: contains(github.event.comment.body, '/deploy')
+    if: contains(github.event.comment.body, '/trigger')
     steps:
       - uses: google-github-actions/setup-gcloud@v0
         with:
