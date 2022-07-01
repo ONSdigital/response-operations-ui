@@ -21,6 +21,7 @@ from response_operations_ui.forms import (
     MyAccountOptionsForm,
     RequestAccountForm,
     UsernameChangeForm,
+    VerifyAccountForm,
 )
 
 logger = wrap_logger(logging.getLogger(__name__))
@@ -435,6 +436,23 @@ def post_create_account(token):
             return render_template("create-new-account.html", form=form, data=template_data)
 
         return render_template("create-new-account-error.html")
+
+
+@account_bp.route("/verify-account/<token>", methods=["GET"])
+def get_verify_account(token):
+    form = VerifyAccountForm()
+    return render_template("account/verify-account.html", form=form, token=token)
+
+
+@account_bp.route("/verify-account/<token>", methods=["GET"])
+def post_verify_account(token):
+    form = VerifyAccountForm(request.form)
+
+    if not form.validate(form):
+        return render_template("account/verify-account.html", form=form, token=token)
+
+    flash("Account successfully verified", category="account_created")
+    return redirect(url_for("sign_in_bp.sign_in"))
 
 
 def send_confirm_created_email(email, first_name):

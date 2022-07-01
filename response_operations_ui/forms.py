@@ -468,6 +468,7 @@ class NewCreateAccountForm(FlaskForm):
     first_name = StringField("First name", validators=[DataRequired(message="First name is required")])
     last_name = StringField("Last name", validators=[DataRequired(message="Last name is required")])
     email = EmailField("Email", validators=[DataRequired(message="Email is required")])
+    username = StringField("Username", validators=[DataRequired(message="Username is required")])
 
     surveys_edit = BooleanField()
     reporting_units_edit = BooleanField()
@@ -475,6 +476,22 @@ class NewCreateAccountForm(FlaskForm):
     respondents_delete = BooleanField()
     messages_edit = BooleanField()
     users_admin = BooleanField()
+
+
+class VerifyAccountForm(FlaskForm):
+    password = PasswordField(
+        "Create a new password",
+        validators=[
+            DataRequired("Your new password is required"),
+            EqualTo("password_confirm", message="Your passwords do not match"),
+            Length(
+                min=12,
+                max=160,
+                message="Your password doesn't meet the requirements",
+            ),
+        ],
+    )
+    password_confirm = PasswordField("Re-type your new password")
 
 
 class CreateAccountForm(FlaskForm):

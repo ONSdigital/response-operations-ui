@@ -10,6 +10,7 @@ from werkzeug.exceptions import abort
 from response_operations_ui.controllers.notify_controller import NotifyController
 from response_operations_ui.controllers.uaa_controller import (
     add_group_membership,
+    create_user_account_with_random_password,
     delete_user,
     get_filter_query,
     get_groups,
@@ -94,30 +95,35 @@ def post_create_account():
     if not form.validate():
         return render_template("admin/user-create.html", form=form)
 
-    # try:
-    #     groups = get_groups()
-    # except HTTPError:
-    #     flash("Failed to get groups, please try again", "error")
-    #     return redirect(url_for("admin_bp.manage_user_accounts"))
+    try:
+        groups_from_uaa = get_groups()
+    except HTTPError:
+        flash("Failed to get groups, please try again", "error")
+        return redirect(url_for("admin_bp.manage_user_accounts"))
 
-    # uaa_group_mapping = {
-    #     "surveys_edit": "surveys.edit",
-    #     "reporting_units_edit": "reportingunits.edit",
-    #     "respondents_edit": "respondents.edit",
-    #     "respondents_delete": "respondents.delete",
-    #     "messages_edit": "messages.edit",
-    #     "users_admin": "users.admin",
-    # }
+    uaa_group_mapping = {
+        "surveys_edit": "surveys.edit",
+        "reporting_units_edit": "reportingunits.edit",
+        "respondents_edit": "respondents.edit",
+        "respondents_delete": "respondents.delete",
+        "messages_edit": "messages.edit",
+        "users_admin": "users.admin",
+    }
 
-    # figure out function signature
-    # user = new_create_user_account(values)
-    # user_id = user['id']
-    # groups = ['surveys_edit', 'all the other permissions']
-    # for group in groups:
-    #     mapped_group = uaa_group_mapping[group]
-    #     group_details = next(item for item in groups["resources"] if item["displayName"] == mapped_group)
-    #     add_group_membership(user_id, group_details["id"])
-    #     send account activation email to user
+    user = create_user_account_with_random_password(
+        form.email.data, form.username.data, form.first_name.data, form.last_name.data
+    )
+    user_id = user["id"]
+    logger.info("User was created!", user=user, user_id=user_id)
+    groups_in_form = ["surveys_edit"]
+    # TODO implement function that gets a list of all the ticked boxes in the form.
+    # groups_in_form = get_groups_from_form(form)
+    for group in groups_in_form:
+        mapped_group = uaa_group_mapping[group]
+        group_details = next(item for item in groups_from_uaa["resources"] if item["displayName"] == mapped_group)
+        add_group_membership(user_id, group_details["id"])
+        # token = generate_token_from_user_id
+        # send account activation email to user with token
 
     return render_template("admin/user-create-confirmation.html", email=form.email)
 

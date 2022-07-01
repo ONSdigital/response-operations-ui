@@ -1,0 +1,99 @@
+
+{% extends "layouts/base.html" %}
+{% from "components/button/_macro.njk" import onsButton %}
+{% from "components/lists/_macro.njk" import onsList %}
+{% from "components/password/_macro.njk" import onsPassword %}
+{% from "components/input/_macro.njk" import onsInput %}
+{% from "components/fieldset/_macro.njk" import onsFieldset %}
+{% from "components/table/_macro.njk" import onsTable %}
+{% from "components/checkboxes/_checkbox-macro.njk" import onsCheckbox %}
+
+{% set page_title = 'Verify account' %}
+
+{% block main %}
+    <div class="ons-grid">
+        <div class="ons-grid__col ons-col-8@m ons-u-mt-m">
+          {% if form.errors %}
+            {% set errorData = [] %}
+                {% set error_count = form.errors | length %}
+                {% set plural_suffix = 's' if error_count > 1 else '' %}
+                {% set header_text = 'This page has ' ~ error_count ~ ' error' ~ plural_suffix %}
+            {% call
+                onsPanel({
+                    "title": header_text,
+                    "type": "error"
+                })
+            %}
+                <p>These <strong>must be corrected</strong> to continue.</p>
+                {% for error in form.password.errors %}
+                    {% do errorData.append(
+                        {
+                            "text": error,
+                            "index": true,
+                            "url": "#password",
+                            "classes": "ons-js-inpagelink"
+                        }
+                    ) %}
+                {% endfor %}
+                {% for error in form.confirm_password.errors %}
+                    {% do errorData.append(
+                        {
+                            "text": error,
+                            "index": true,
+                            "url": "#confirm_password",
+                            "classes": "ons-js-inpagelink"
+                        }
+                    ) %}
+                {% endfor %}
+                {{
+                    onsList({
+                        "classes": "list--bare",
+                        "itemsList": errorData
+                    })
+                }}
+            {% endcall %}
+        {% endif %}
+            <form method="post" action="" class="form" role="form">
+                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}" />
+                <h1 class="ons-u-mt-l">Verify account</h1>
+                    {{
+                        onsPassword({
+                            "id": "password",
+                            "name": "password",
+                            "label": {
+                                "text": 'New password'
+                            },
+                            "attributes": {
+                                "autocomplete": 'off'
+                            },
+                            "showPasswordText": "Show password",
+                            "error": passwordError
+                        })
+                    }}
+                    {{
+                        onsInput({
+                            "id": "password_confirm",
+                            "name": "password_confirm",
+                            "type": "password",
+                            "label": {
+                                "text": "Re-type new password"
+                            },
+                            "attributes": {
+                                "autocomplete": 'off'
+                            },
+                            "error": passwordError
+                        })
+                    }}
+                {{
+                    onsButton({
+                        "classes": "ons-u-mb-s ons-u-mt-s",
+                        "text": "Confirm",
+                        "id": "confirm_password_button"
+                    })
+                }}
+                <p><a href="{{ url_for('sign_in_bp.sign_in') }}">Cancel</a></p>
+
+            </form>
+        </div>
+    </div>
+{% endblock main %}

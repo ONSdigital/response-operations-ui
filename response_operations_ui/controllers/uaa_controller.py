@@ -1,6 +1,7 @@
 import logging
 from datetime import datetime, timedelta
 from json import JSONDecodeError, dumps
+from secrets import token_urlsafe
 
 import requests
 from flask import abort
@@ -180,28 +181,32 @@ def change_user_password(email, password):
 
 
 # TODO sort function name
-def new_create_user_account(email, password, user_name, first_name, last_name):
+def create_user_account_with_random_password(email, user_name, first_name, last_name):
     access_token = login_admin()
 
     headers = generate_headers(access_token)
 
+    # We can't create a user without a password, so we'll create an inactive user with a crazy long password so
+    # nobody can access it.   When the user ends up getting a link to verify their account and set their password, we
+    # can activate, verify and change the password at the same time.
     payload = {
         "userName": user_name,
         "name": {"formatted": f"{first_name} {last_name}", "givenName": first_name, "familyName": last_name},
         "emails": [{"value": email, "primary": True}],
-        "active": True,
-        "verified": True,
-        "password": password,
+        "password": token_urlsafe(64),
+        "verified": False,
     }
 
     url = f"{app.config['UAA_SERVICE_URL']}/Users"
-    response = requests.post(url, data=dumps(payload), headers=headers)
+    response = requests.post(url, json=payload, headers=headers)
     try:
         response.raise_for_status()
-        return
-    except HTTPError:
+        return response.json()
+    except HTTPError as e:
+        logger.error("something went wrong", exception=e)
         if response.status_code == 409:
             # Username already exists
+            # TODO figure out how to handle these errors
             errors = {"user_name": ["Username already in use; please choose another"]}
         else:
             errors = {"status_code": response.status_code, "message": response.reason}
