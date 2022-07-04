@@ -414,7 +414,7 @@ def user_has_permission(permission, user_id=None) -> bool:
 
 def get_users_list(
     start_index: int, max_count: int, query: str = None, sort_by: str = "email", sort_order: str = "ascending"
-) -> dict | str:
+) -> dict:
     """
     Gets all users in uaa.  A query can be provided to refine the search.
 
@@ -432,13 +432,12 @@ def get_users_list(
     logger.info("Attempting to fetch user records")
     url = f"{app.config['UAA_SERVICE_URL']}/Users"
     response = requests.get(url, params=param, headers=headers)
-    # TODO Update this function to only have one return type (dict).  Multiple return types isn't great.
     try:
         response.raise_for_status()
         return response.json()
     except HTTPError:
         logger.error("Unauthorised attempt to get user list.", status_code=response.status_code)
-        raise "Unauthorised Access"
+        raise {"error": "Unauthorised Access", "totalResults": 0, "resources": []}
 
 
 def get_filter_query(filter_criteria: str, filter_value: str, filter_on: str):

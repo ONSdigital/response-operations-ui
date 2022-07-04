@@ -49,6 +49,8 @@ def manage_user_accounts():
         flash(form.errors["user_search"][0], "error")
 
     uaa_user_list = get_users_list(start_index=offset, max_count=limit, query=query)
+    if "error" in uaa_user_list:
+        flash(uaa_user_list["error"], "error")
     user_list = _get_refine_user_list(uaa_user_list["resources"])
     pagination = Pagination(
         page=int(page),
