@@ -1,8 +1,8 @@
 name: comment
 
 on:
-  issue_comment:
-    types: [created]
+  push:
+    branches: [ main ]
 
 env:
   SERVICE: response-operations-ui
@@ -10,19 +10,14 @@ env:
 jobs:
   comment:
     runs-on: ubuntu-latest
-    if: contains(github.event.comment.body, '/deploy')
     steps:
-      - uses: google-github-actions/setup-gcloud@v0
-        with:
-          project_id: ${{ secrets.GOOGLE_PROJECT_ID }}
-          service_account_key: ${{ secrets.GCR_KEY }}
-          export_default_credentials: true
-          
-      - uses: onsdigital/ras-rm-spinnaker-action@main
-        with:
-          comment-body: ${{ github.event.comment.body }}
-          gcp-project: ${{ secrets.GOOGLE_PROJECT_ID }}
-          bot-token: ${{ secrets.BOT_TOKEN }}
-          spinnaker-topic: ${{ secrets.SPINNAKER_TOPIC }}
-          artifact-bucket: ${{ secrets.ARTIFACT_BUCKET }}
-          helm-chart: ${{ env.SERVICE }}/${{ env.SERVICE }}-latest.tgz
+    - uses: 'actions/checkout@v3'
+      with:
+        repository: 'onsdigital/ras-rm-spinnaker-action@main'
+    - id: 'auth'
+      name: 'Authenticate to Google Cloud'
+      uses: 'google-github-actions/auth@v0'
+      with:
+        credentials_json: '${{ secrets.GCR_KEY }}'
+
+
