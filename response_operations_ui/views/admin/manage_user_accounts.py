@@ -51,6 +51,12 @@ def manage_user_accounts():
     uaa_user_list = get_users_list(start_index=offset, max_count=limit, query=query)
     if "error" in uaa_user_list:
         flash(uaa_user_list["error"], "error")
+        return render_template(
+            "admin/manage-user-accounts.html",
+            show_pagination=False,
+            form=form,
+            search_email=search_email,
+        )
     user_list = _get_refine_user_list(uaa_user_list["resources"])
     pagination = Pagination(
         page=int(page),

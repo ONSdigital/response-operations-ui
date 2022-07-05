@@ -423,8 +423,7 @@ def get_users_list(
     :param sort_order:
     :param start_index:
     :param max_count:
-    :return: Either the result as a dict (with the list being in the 'resources' key) or "Unauthorised Access" on a
-             4XX or 5XX result
+    :return: A dict containing the users or an error message
     """
     access_token = login_admin()
     headers = generate_headers(access_token)
@@ -436,8 +435,8 @@ def get_users_list(
         response.raise_for_status()
         return response.json()
     except HTTPError:
-        logger.error("Unauthorised attempt to get user list.", status_code=response.status_code)
-        raise {"error": "Unauthorised Access", "totalResults": 0, "resources": []}
+        logger.error("Failed to retrieve user list.", status_code=response.status_code)
+        return {"error": "Failed to retrieve user list, please try again", "totalResults": 0, "resources": []}
 
 
 def get_filter_query(filter_criteria: str, filter_value: str, filter_on: str):
