@@ -18,15 +18,10 @@ jobs:
         uses: 'google-github-actions/auth@v0'
         with:
           credentials_json: '${{ secrets.GCR_KEY }}'
-      - name: Setup Google Cloud SDK
-        uses: google-github-actions/setup-gcloud@v0
-        with:
-          project_id: ${{ secrets.GOOGLE_PROJECT_ID }}
-          export_default_credentials: true
           
       - uses: onsdigital/ras-rm-spinnaker-action@main
         with:
-          comment-body: ${{ github.event.comment.body }}
+          comment-body: '/deploy babbal'
           gcp-project: ${{ secrets.GOOGLE_PROJECT_ID }}
           bot-token: ${{ secrets.BOT_TOKEN }}
           spinnaker-topic: ${{ secrets.SPINNAKER_TOPIC }}
