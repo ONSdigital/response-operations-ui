@@ -438,20 +438,22 @@ def post_create_account(token):
 
 @account_bp.route("/verify-account/<token>", methods=["GET"])
 def get_verify_account(token):
-    duration = app.config["UPDATE_ACCOUNT_EMAIL_TOKEN_EXPIRY"]
+    duration = app.config["CREATE_ACCOUNT_EMAIL_TOKEN_EXPIRY"]
     user_id = token_decoder.decode_email_token(token, duration)
-    logger.info("Heres the result", user_id=user_id)
-    # If user_id isn't found then show generic error screen
+    user = uaa_controller.get_user_by_id(user_id)
+    if user is None:
+        raise Exception("User does not exist")
     form = VerifyAccountForm()
     return render_template("account/verify-account.html", form=form)
 
 
 @account_bp.route("/verify-account/<token>", methods=["POST"])
 def post_verify_account(token):
-    # TODO decode token and get id from it
-    # If user_id isn't found then show error screen
-    duration = app.config["UPDATE_ACCOUNT_EMAIL_TOKEN_EXPIRY"]
+    duration = app.config["CREATE_ACCOUNT_EMAIL_TOKEN_EXPIRY"]
     user_id = token_decoder.decode_email_token(token, duration)
+    user = uaa_controller.get_user_by_id(user_id)
+    if user is None:
+        raise Exception("User does not exist")
     form = VerifyAccountForm(request.form)
 
     if not form.validate():

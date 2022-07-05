@@ -132,20 +132,21 @@ def post_create_account():
         add_group_membership(user_id, group_details["id"])
 
     token = token_decoder.generate_token(user_id)
-    verification_link = url_for("account_bp.get_verify_account", token=token)
+    internal_url = current_app.config["RESPONSE_OPERATIONS_UI_URL"]
+    verification_url = f"{internal_url}{url_for('account_bp.get_verify_account', token=token)}"
     if not current_app.config["SEND_EMAIL_TO_GOV_NOTIFY"]:
-        logger.info("Here is the verification link", verification_link=verification_link)
+        logger.info("Here is the verification url", verification_link=verification_url)
 
     try:
         NotifyController().request_to_notify(
             email=email,
             template_name="create_user_account",
-            personalisation={"verification_link": verification_link},
+            personalisation={"verification_link": verification_url},
         )
     except NotifyError as e:
         # TODO what do we do if this fails?
         logger.error("failed to send email", msg=e.description, exc_info=True)
-        flash(f"Account created but no email sent.  Verification link was {verification_link}", "error")
+        flash(f"Account created but no email sent.  Verification url was {verification_url}", "error")
         return render_template("admin/user-create.html", form=form)
     # send account activation email to user with token
 
