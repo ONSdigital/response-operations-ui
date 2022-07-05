@@ -3,6 +3,8 @@ name: comment
 on:
   push:
     branches: [ main ]
+  pull_request:
+    branches: [ main ]
 
 env:
   SERVICE: response-operations-ui
@@ -16,7 +18,10 @@ jobs:
         uses: 'google-github-actions/auth@v0'
         with:
           credentials_json: '${{ secrets.GCR_KEY }}'
-          
+      - name: Setup Google Cloud SDK
+        uses: google-github-actions/setup-gcloud@v0
+        with:
+          project_id: ${{ secrets.GOOGLE_PROJECT_ID }}
       - uses: onsdigital/ras-rm-spinnaker-action@main
         with:
           comment-body: '/deploy babbal'
