@@ -129,6 +129,8 @@ spec:
             {{- else }}
             value: "http://$(IAC_SERVICE_HOST):$(IAC_SERVICE_PORT)"
             {{- end }}
+          - name: NOTIFY_CREATE_USER_ACCOUNT_TEMPLATE
+            value: {{ .Values.notify.createUserAccountTemplate }}
           - name: NOTIFY_CONFIRM_CREATE_ACCOUNT_TEMPLATE
             value: {{ .Values.notify.confirmCreateAccountTemplate }}
           - name: NOTIFY_CONFIRM_PASSWORD_CHANGE_TEMPLATE

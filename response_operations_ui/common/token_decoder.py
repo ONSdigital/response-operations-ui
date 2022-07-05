@@ -22,11 +22,11 @@ def decode_access_token(access_token):
     return decoded_jwt
 
 
-def generate_email_token(email):
-    """Creates a token based on a provided email address
+def generate_token(data):
+    """Creates a token based on a provided data
 
-    :param email: email address of the respondent
-    :return: A serialised string containing the email address
+    :param data: Some data that we wish to create a token for
+    :return: A serialised string containing the data
     """
     secret_key = current_app.config["SECRET_KEY"]
     email_token_salt = current_app.config["EMAIL_TOKEN_SALT"]
@@ -38,7 +38,7 @@ def generate_email_token(email):
         raise InternalServerError(msg)
 
     timed_serializer = URLSafeTimedSerializer(secret_key)
-    return timed_serializer.dumps(email, salt=email_token_salt)
+    return timed_serializer.dumps(data, salt=email_token_salt)
 
 
 def decode_email_token(token, duration=None):

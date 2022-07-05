@@ -1,12 +1,21 @@
 import logging
 
-from flask import flash, redirect, render_template, request, session, url_for
+from flask import (
+    current_app,
+    flash,
+    redirect,
+    render_template,
+    request,
+    session,
+    url_for,
+)
 from flask_login import login_required
 from flask_paginate import Pagination
 from requests import HTTPError
 from structlog import wrap_logger
 from werkzeug.exceptions import abort
 
+from response_operations_ui.common import token_decoder
 from response_operations_ui.controllers.notify_controller import NotifyController
 from response_operations_ui.controllers.uaa_controller import (
     add_group_membership,
@@ -28,6 +37,15 @@ from response_operations_ui.forms import (
 from response_operations_ui.views.admin import admin_bp
 
 logger = wrap_logger(logging.getLogger(__name__))
+
+uaa_group_mapping = {
+    "surveys_edit": "surveys.edit",
+    "reporting_units_edit": "reportingunits.edit",
+    "respondents_edit": "respondents.edit",
+    "respondents_delete": "respondents.delete",
+    "messages_edit": "messages.edit",
+    "users_admin": "users.admin",
+}
 
 
 @admin_bp.route("/manage-user-accounts", methods=["GET", "POST"])
@@ -101,28 +119,10 @@ def post_create_account():
         flash("Failed to get groups, please try again", "error")
         return redirect(url_for("admin_bp.manage_user_accounts"))
 
-    uaa_group_mapping = {
-        "surveys_edit": "surveys.edit",
-        "reporting_units_edit": "reportingunits.edit",
-        "respondents_edit": "respondents.edit",
-        "respondents_delete": "respondents.delete",
-        "messages_edit": "messages.edit",
-        "users_admin": "users.admin",
-    }
-
-    user = create_user_account_with_random_password(form.email.data, form.first_name.data, form.last_name.data)
+    email = form.email.data
+    user = create_user_account_with_random_password(email, form.first_name.data, form.last_name.data)
     user_id = user["id"]
-    logger.info("User was created!", user=user, user_id=user_id)
-
-    # TODO implement function that gets a list of all the ticked boxes in the form.
-    groups_in_form = [
-        "surveys_edit",
-        "reporting_units_edit",
-        "respondents_edit",
-        "respondents_delete",
-        "messages_edit",
-        "users_admin",
-    ]
+    groups_in_form = form.get_uaa_permission_groups()
 
     for group, is_ticked in form.data.items():
         if group not in groups_in_form or not is_ticked:
@@ -130,10 +130,26 @@ def post_create_account():
         mapped_group = uaa_group_mapping[group]
         group_details = next(item for item in groups_from_uaa["resources"] if item["displayName"] == mapped_group)
         add_group_membership(user_id, group_details["id"])
-        # token = generate_token_from_user_id
-        # send account activation email to user with token
 
-    return render_template("admin/user-create-confirmation.html", email=form.email.data, user_id=user_id)
+    token = token_decoder.generate_token(user_id)
+    verification_link = url_for("account_bp.get_verify_account", token=token)
+    if not current_app.config["SEND_EMAIL_TO_GOV_NOTIFY"]:
+        logger.info("Here is the verification link", verification_link=verification_link)
+
+    try:
+        NotifyController().request_to_notify(
+            email=email,
+            template_name="create_user_account",
+            personalisation={"verification_link": verification_link},
+        )
+    except NotifyError as e:
+        # TODO what do we do if this fails?
+        logger.error("failed to send email", msg=e.description, exc_info=True)
+        flash(f"Account created but no email sent.  Verification link was {verification_link}", "error")
+        return render_template("admin/user-create.html", form=form)
+    # send account activation email to user with token
+
+    return render_template("admin/user-create-confirmation.html", email=form.email.data, token=token)
 
 
 @admin_bp.route("/manage-account/<user_id>", methods=["GET"])
@@ -181,15 +197,6 @@ def post_manage_account_groups(user_id):
 
     form = EditUserGroupsForm(request.form)
     groups_user_is_in = [group["display"] for group in user["groups"]]
-
-    uaa_group_mapping = {
-        "surveys_edit": "surveys.edit",
-        "reporting_units_edit": "reportingunits.edit",
-        "respondents_edit": "respondents.edit",
-        "respondents_delete": "respondents.delete",
-        "messages_edit": "messages.edit",
-        "users_admin": "users.admin",
-    }
 
     # Because we can't add or remove in a batch, if one of them fail then we can leave the user in a state that wasn't
     # intended.  It's not a big deal though it can be easily fixed by trying again.

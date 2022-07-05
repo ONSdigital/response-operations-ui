@@ -66,6 +66,7 @@ class Config(object):
     NOTIFY_CONFIRM_PASSWORD_CHANGE_TEMPLATE = os.getenv(
         "NOTIFY_CONFIRM_PASSWORD_CHANGE_TEMPLATE", "confirm_password_change_id"
     )
+    NOTIFY_CREATE_USER_ACCOUNT_TEMPLATE = os.getenv("NOTIFY_CREATE_USER_ACCOUNT_TEMPLATE", "create_user_account_id")
     NOTIFY_REQUEST_CREATE_ACCOUNT_TEMPLATE = os.getenv(
         "NOTIFY_REQUEST_CREATE_ACCOUNT_TEMPLATE", "request_create_account_id"
     )

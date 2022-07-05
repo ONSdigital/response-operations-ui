@@ -131,7 +131,7 @@ def send_password_change_email(email):
     if response["totalResults"] > 0:
         first_name = response["resources"][0]["name"]["givenName"]
         internal_url = app.config["RESPONSE_OPERATIONS_UI_URL"]
-        verification_url = f"{internal_url}/passwords/reset-password/{token_decoder.generate_email_token(email)}"
+        verification_url = f"{internal_url}/passwords/reset-password/{token_decoder.generate_token(email)}"
 
         logger.info("Sending password change email", verification_url=verification_url)
 

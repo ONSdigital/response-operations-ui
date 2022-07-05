@@ -321,9 +321,7 @@ def send_update_account_email(token_dict, first_name):
 
     if response["totalResults"] == 0:
         internal_url = app.config["RESPONSE_OPERATIONS_UI_URL"]
-        verification_url = (
-            f"{internal_url}/account/verify-email/{token_decoder.generate_email_token(json.dumps(token_dict))}"
-        )
+        verification_url = f"{internal_url}/account/verify-email/{token_decoder.generate_token(json.dumps(token_dict))}"
 
         logger.info("Sending update account verification email", verification_url=verification_url)
         personalisation = {"CONFIRM_EMAIL_URL": verification_url, "first_name": first_name}
@@ -352,7 +350,7 @@ def send_create_account_email(email):
 
     if response["totalResults"] == 0:
         internal_url = app.config["RESPONSE_OPERATIONS_UI_URL"]
-        verification_url = f"{internal_url}/account/create-account/{token_decoder.generate_email_token(email)}"
+        verification_url = f"{internal_url}/account/create-account/{token_decoder.generate_token(email)}"
 
         logger.info("Sending create account email", verification_url=verification_url)
 
@@ -440,15 +438,22 @@ def post_create_account(token):
 
 @account_bp.route("/verify-account/<token>", methods=["GET"])
 def get_verify_account(token):
+    duration = app.config["UPDATE_ACCOUNT_EMAIL_TOKEN_EXPIRY"]
+    user_id = token_decoder.decode_email_token(token, duration)
+    logger.info("Heres the result", user_id=user_id)
+    # If user_id isn't found then show generic error screen
     form = VerifyAccountForm()
     return render_template("account/verify-account.html", form=form)
 
 
 @account_bp.route("/verify-account/<token>", methods=["POST"])
 def post_verify_account(token):
-    form = VerifyAccountForm(request.form)
     # TODO decode token and get id from it
-    user_id = token
+    # If user_id isn't found then show error screen
+    duration = app.config["UPDATE_ACCOUNT_EMAIL_TOKEN_EXPIRY"]
+    user_id = token_decoder.decode_email_token(token, duration)
+    form = VerifyAccountForm(request.form)
+
     if not form.validate():
         return render_template("account/verify-account.html", form=form)
 

@@ -357,7 +357,7 @@ class TestAccounts(unittest.TestCase):
                     session["user_id"] = user_id
                 mock_notify()._send_message.return_value = mock.Mock()
                 token_dict = {"email": test_email, "user_id": user_id}
-                token = token_decoder.generate_email_token(json.dumps(token_dict))
+                token = token_decoder.generate_token(json.dumps(token_dict))
                 mock_request.post(url_uaa_token, json={"access_token": self.access_token}, status_code=201)
                 mock_request.get(url_uaa_user_by_id, json=uaa_user_by_id_json, status_code=200)
                 mock_request.put(url_uaa_user_by_id, status_code=200)
@@ -393,7 +393,7 @@ class TestAccounts(unittest.TestCase):
                     session["user_id"] = user_id
                 mock_notify()._send_message.return_value = mock.Mock()
                 token_dict = {"email": test_email, "user_id": user_id}
-                token = token_decoder.generate_email_token(json.dumps(token_dict))
+                token = token_decoder.generate_token(json.dumps(token_dict))
                 mock_request.post(url_uaa_token, json={"access_token": self.access_token}, status_code=201)
                 mock_request.get(url_uaa_user_by_id, json=uaa_user_by_id_json, status_code=200)
                 mock_request.put(url_uaa_user_by_id, status_code=403)
@@ -513,7 +513,7 @@ class TestAccounts(unittest.TestCase):
 
     def test_create_account_page(self):
         with self.app.app_context():
-            token = token_decoder.generate_email_token(test_email)
+            token = token_decoder.generate_token(test_email)
             response = self.client.get(f"/account/create-account/{token}")
             self.assertIn(b"Consider using your ONS username", response.data)
             self.assertIn(b"at least one capital letter", response.data)
@@ -529,7 +529,7 @@ class TestAccounts(unittest.TestCase):
         with self.app.app_context():
             with patch("response_operations_ui.views.accounts.NotifyController") as mock_notify:
                 mock_notify()._send_message.return_value = mock.Mock()
-                token = token_decoder.generate_email_token(test_email)
+                token = token_decoder.generate_token(test_email)
                 mock_request.post(url_uaa_token, json={"access_token": self.access_token}, status_code=201)
                 mock_request.post(url_uaa_create_account, json={}, status_code=201)
                 response = self.client.post(
@@ -550,7 +550,7 @@ class TestAccounts(unittest.TestCase):
     @requests_mock.mock()
     def test_create_account_different_passwords(self, mock_request):
         with self.app.app_context():
-            token = token_decoder.generate_email_token(test_email)
+            token = token_decoder.generate_token(test_email)
             response = self.client.post(
                 f"/account/create-account/{token}",
                 follow_redirects=True,
@@ -568,7 +568,7 @@ class TestAccounts(unittest.TestCase):
     @requests_mock.mock()
     def test_create_account_fails(self, mock_request):
         with self.app.app_context():
-            token = token_decoder.generate_email_token(test_email)
+            token = token_decoder.generate_token(test_email)
             mock_request.post(url_uaa_token, json={"access_token": self.access_token}, status_code=201)
             mock_request.post(url_uaa_create_account, json={}, status_code=403)
             response = self.client.post(
@@ -588,7 +588,7 @@ class TestAccounts(unittest.TestCase):
     @requests_mock.mock()
     def test_create_account_username_taken(self, mock_request):
         with self.app.app_context():
-            token = token_decoder.generate_email_token(test_email)
+            token = token_decoder.generate_token(test_email)
             mock_request.post(url_uaa_token, json={"access_token": self.access_token}, status_code=201)
             mock_request.post(url_uaa_create_account, json={}, status_code=409)
             response = self.client.post(

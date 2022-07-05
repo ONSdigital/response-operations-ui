@@ -476,6 +476,17 @@ class NewCreateAccountForm(FlaskForm):
     messages_edit = BooleanField()
     users_admin = BooleanField()
 
+    @staticmethod
+    def get_uaa_permission_groups():
+        return [
+            "surveys_edit",
+            "reporting_units_edit",
+            "respondents_edit",
+            "respondents_delete",
+            "messages_edit",
+            "users_admin",
+        ]
+
 
 class VerifyAccountForm(FlaskForm):
     password = PasswordField(

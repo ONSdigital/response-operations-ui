@@ -66,7 +66,7 @@ class TestPasswords(unittest.TestCase):
 
     def test_reset_password_page(self):
         with self.app.app_context():
-            token = token_decoder.generate_email_token(test_email)
+            token = token_decoder.generate_token(test_email)
             response = self.client.get(f"/passwords/reset-password/{token}")
             self.assertIn(b"New password", response.data)
             self.assertIn(b"at least one capital letter", response.data)
@@ -82,7 +82,7 @@ class TestPasswords(unittest.TestCase):
         with self.app.app_context():
             with patch("response_operations_ui.views.passwords.NotifyController") as mock_notify:
                 mock_notify()._send_message.return_value = mock.Mock()
-                token = token_decoder.generate_email_token(test_email)
+                token = token_decoder.generate_token(test_email)
                 mock_request.post(url_uaa_token, json={"access_token": self.access_token}, status_code=201)
                 mock_request.post(url_uaa_reset_code, json={"code": "testcode"}, status_code=201)
                 mock_request.post(url_uaa_reset_pw, status_code=200)
@@ -102,7 +102,7 @@ class TestPasswords(unittest.TestCase):
     @requests_mock.mock()
     def test_reset_password_different_passwords(self, mock_request):
         with self.app.app_context():
-            token = token_decoder.generate_email_token(test_email)
+            token = token_decoder.generate_token(test_email)
             response = self.client.post(
                 f"/passwords/reset-password/{token}",
                 follow_redirects=True,
@@ -114,7 +114,7 @@ class TestPasswords(unittest.TestCase):
     @requests_mock.mock()
     def test_reset_password_fails(self, mock_request):
         with self.app.app_context():
-            token = token_decoder.generate_email_token(test_email)
+            token = token_decoder.generate_token(test_email)
             mock_request.post(url_uaa_token, json={"access_token": self.access_token}, status_code=201)
             mock_request.post(url_uaa_reset_code, json={"code": "testcode"}, status_code=201)
             mock_request.post(url_uaa_reset_pw, json={}, status_code=403)
@@ -132,7 +132,7 @@ class TestPasswords(unittest.TestCase):
     @requests_mock.mock()
     def test_reset_password_old_password(self, mock_request):
         with self.app.app_context():
-            token = token_decoder.generate_email_token(test_email)
+            token = token_decoder.generate_token(test_email)
             mock_request.post(url_uaa_token, json={"access_token": self.access_token}, status_code=201)
             mock_request.post(url_uaa_reset_code, json={"code": "testcode"}, status_code=201)
             mock_request.post(url_uaa_reset_pw, json={}, status_code=422)
