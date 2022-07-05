@@ -91,15 +91,14 @@ class TestMessage(ViewTestCase):
 
     @requests_mock.mock()
     def test_manage_user_accounts_403(self, mock_request):
-        # TODO Improve this test.  A 500 response isn't what should be happening here, it should be a 200 with a
-        # sensible error screen
         mock_request = self.setup_common_mocks(mock_request)
         mock_request.get(url_surveys, json=self.surveys_list_json, status_code=200)
         mock_request.get(url_uaa_user_list, json={}, status_code=403)
         self.client.post("/sign-in", follow_redirects=True, data={"username": "user", "password": "pass"})
         response = self.client.get("/admin/manage-user-accounts", follow_redirects=True)
 
-        self.assertEqual(response.status_code, 500)
+        self.assertEqual(response.status_code, 200)
+        self.assertIn("Failed to retrieve user list, please try again".encode(), response.data)
 
     @requests_mock.mock()
     def test_manage_user_accounts_success(self, mock_request):
