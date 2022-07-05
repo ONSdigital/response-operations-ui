@@ -468,7 +468,6 @@ class NewCreateAccountForm(FlaskForm):
     first_name = StringField("First name", validators=[DataRequired(message="First name is required")])
     last_name = StringField("Last name", validators=[DataRequired(message="Last name is required")])
     email = EmailField("Email", validators=[DataRequired(message="Email is required")])
-    username = StringField("Username", validators=[DataRequired(message="Username is required")])
 
     surveys_edit = BooleanField()
     reporting_units_edit = BooleanField()
@@ -492,6 +491,16 @@ class VerifyAccountForm(FlaskForm):
         ],
     )
     password_confirm = PasswordField("Re-type your new password")
+
+    @staticmethod
+    def validate_password(form, field):
+        password = field.data
+        if (
+            password.isalnum()
+            or not any(char.isupper() for char in password)
+            or not any(char.isdigit() for char in password)
+        ):
+            raise ValidationError("Your password doesn't meet the requirements")
 
 
 class CreateAccountForm(FlaskForm):

@@ -441,16 +441,19 @@ def post_create_account(token):
 @account_bp.route("/verify-account/<token>", methods=["GET"])
 def get_verify_account(token):
     form = VerifyAccountForm()
-    return render_template("account/verify-account.html", form=form, token=token)
+    return render_template("account/verify-account.html", form=form)
 
 
-@account_bp.route("/verify-account/<token>", methods=["GET"])
+@account_bp.route("/verify-account/<token>", methods=["POST"])
 def post_verify_account(token):
     form = VerifyAccountForm(request.form)
+    # TODO decode token and get id from it
+    user_id = token
+    if not form.validate():
+        return render_template("account/verify-account.html", form=form)
 
-    if not form.validate(form):
-        return render_template("account/verify-account.html", form=form, token=token)
-
+    uaa_controller.change_user_password_for_verify_journey(user_id, form.password.data)
+    uaa_controller.verify_user(user_id)
     flash("Account successfully verified", category="account_created")
     return redirect(url_for("sign_in_bp.sign_in"))
 

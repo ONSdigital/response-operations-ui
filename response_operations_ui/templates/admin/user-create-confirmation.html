@@ -13,5 +13,7 @@
     <p>An email to activate the account has been sent to {{ email }} This email will be valid for 6 weeks.</p>
 
     <a href=" {{ url_for('admin_bp.manage_user_accounts') }}">Return to manage user accounts</a>
+  
+    <a href=" {{ url_for('account_bp.get_verify_account', token=user_id) }}">Test url for email link</a>
 
 {% endblock %}

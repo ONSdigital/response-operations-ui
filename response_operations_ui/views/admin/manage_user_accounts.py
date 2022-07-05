@@ -110,22 +110,30 @@ def post_create_account():
         "users_admin": "users.admin",
     }
 
-    user = create_user_account_with_random_password(
-        form.email.data, form.username.data, form.first_name.data, form.last_name.data
-    )
+    user = create_user_account_with_random_password(form.email.data, form.first_name.data, form.last_name.data)
     user_id = user["id"]
     logger.info("User was created!", user=user, user_id=user_id)
-    groups_in_form = ["surveys_edit"]
+
     # TODO implement function that gets a list of all the ticked boxes in the form.
-    # groups_in_form = get_groups_from_form(form)
-    for group in groups_in_form:
+    groups_in_form = [
+        "surveys_edit",
+        "reporting_units_edit",
+        "respondents_edit",
+        "respondents_delete",
+        "messages_edit",
+        "users_admin",
+    ]
+
+    for group, is_ticked in form.data.items():
+        if group not in groups_in_form or not is_ticked:
+            continue
         mapped_group = uaa_group_mapping[group]
         group_details = next(item for item in groups_from_uaa["resources"] if item["displayName"] == mapped_group)
         add_group_membership(user_id, group_details["id"])
         # token = generate_token_from_user_id
         # send account activation email to user with token
 
-    return render_template("admin/user-create-confirmation.html", email=form.email)
+    return render_template("admin/user-create-confirmation.html", email=form.email.data, user_id=user_id)
 
 
 @admin_bp.route("/manage-account/<user_id>", methods=["GET"])

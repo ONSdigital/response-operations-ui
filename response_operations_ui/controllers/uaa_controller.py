@@ -180,8 +180,44 @@ def change_user_password(email, password):
     return change_password(access_token=access_token, user_code=password_reset_code, new_password=password)
 
 
+# TODO change function name
+def change_user_password_for_verify_journey(user_id, password):
+    access_token = login_admin()
+
+    user = get_user_by_id(user_id)
+    if user is None:
+        return
+    username = user["userName"]
+
+    password_reset_code = retrieve_user_code(access_token=access_token, username=username)
+    if password_reset_code is None:
+        return
+
+    return change_password(access_token=access_token, user_code=password_reset_code, new_password=password)
+
+
+def verify_user(user_id: str) -> dict:
+    """
+    Verified the user in uaa, using the id of the user.
+
+    :param user_id: The id of the user in uaa
+    """
+    access_token = login_admin()
+    headers = generate_headers(access_token)
+
+    url = f"{app.config['UAA_SERVICE_URL']}/Users/{user_id}/verify"
+    response = requests.get(url, headers=headers)
+    try:
+        response.raise_for_status()
+    except HTTPError:
+        logger.error("Error verifying user in UAA", status_code=response.status_code, user_id=user_id, exc_info=True)
+        raise
+
+    return response.json()
+
+
 # TODO sort function name
-def create_user_account_with_random_password(email, user_name, first_name, last_name):
+def create_user_account_with_random_password(email, first_name, last_name):
     access_token = login_admin()
 
     headers = generate_headers(access_token)
@@ -190,7 +226,7 @@ def create_user_account_with_random_password(email, user_name, first_name, last_
     # nobody can access it.   When the user ends up getting a link to verify their account and set their password, we
     # can activate, verify and change the password at the same time.
     payload = {
-        "userName": user_name,
+        "userName": email,
         "name": {"formatted": f"{first_name} {last_name}", "givenName": first_name, "familyName": last_name},
         "emails": [{"value": email, "primary": True}],
         "password": token_urlsafe(64),

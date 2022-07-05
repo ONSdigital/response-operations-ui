@@ -35,12 +35,12 @@
                         }
                     ) %}
                 {% endfor %}
-                {% for error in form.confirm_password.errors %}
+                {% for error in form.password_confirm.errors %}
                     {% do errorData.append(
                         {
                             "text": error,
                             "index": true,
-                            "url": "#confirm_password",
+                            "url": "#password_confirm",
                             "classes": "ons-js-inpagelink"
                         }
                     ) %}

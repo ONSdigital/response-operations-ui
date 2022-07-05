@@ -55,16 +55,6 @@
                         }
                     ) %}
                 {% endfor %}
-                {% for error in form.username.errors %}
-                    {% do errorData.append(
-                        {
-                            "text": error,
-                            "index": true,
-                            "url": "#username",
-                            "classes": "ons-js-inpagelink"
-                        }
-                    ) %}
-                {% endfor %}
                 {{
                     onsList({
                         "classes": "list--bare",
@@ -107,17 +97,6 @@
                             "label": {
                                 "description": "Enter the ONS email of the new user",
                                 "text": "Email"
-                            },
-                        })
-                    }}
-                    {{
-                        onsInput({
-                            "id": "username",
-                            "name": "username",
-                            "type": "text",
-                            "label": {
-                                "description": "Enter the username of the new user",
-                                "text": "Username"
                             },
                         })
                     }}
