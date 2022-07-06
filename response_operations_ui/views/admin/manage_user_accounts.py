@@ -156,13 +156,13 @@ def post_create_account():
     internal_url = current_app.config["RESPONSE_OPERATIONS_UI_URL"]
     verification_url = f"{internal_url}{url_for('account_bp.get_verify_account', token=token)}"
     if not current_app.config["SEND_EMAIL_TO_GOV_NOTIFY"]:
-        logger.info("Here is the verification url", verification_link=verification_url)
+        logger.info("Verification url for new user", verification_link=verification_url)
 
     try:
         NotifyController().request_to_notify(
             email=email,
             template_name="create_user_account",
-            personalisation={"verification_link": verification_url},
+            personalisation={"verification_url": verification_url},
         )
     except NotifyError as e:
         # If the account is created but the email fails, we'll send them to the next success screen but have an error
@@ -174,11 +174,11 @@ def post_create_account():
             exc_info=True,
         )
         flash(
-            f"Account created but no email sent.  Verification url was {verification_url}. Give this to the user",
+            f"The account has been created but no email was sent. Give this link to the user {verification_url}",
             "error",
         )
 
-    return render_template("admin/user-create-confirmation.html", email=form.email.data, token=token)
+    return render_template("admin/user-create-confirmation.html", email=email, token=token)
 
 
 @admin_bp.route("/manage-account/<user_id>", methods=["GET"])

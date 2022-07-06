@@ -1,0 +1,27 @@
+{
+  "id": "f37c1be2-7f8e-421a-a102-817180ecb4ce",
+  "meta": {
+    "version": 0,
+    "created": "2022-07-06T13:02:10.838Z",
+    "lastModified": "2022-07-06T13:02:28.573Z"
+  },
+  "userName": "blah@blah.com",
+  "name": {
+    "familyName": "blah",
+    "givenName": "surname"
+  },
+  "emails": [
+    {
+      "value": "blah@blah.com",
+      "primary": false
+    }
+  ],
+  "active": true,
+  "verified": true,
+  "origin": "uaa",
+  "zoneId": "uaa",
+  "passwordLastModified": "2022-07-06T13:02:28.000Z",
+  "schemas": [
+    "urn:scim:schemas:core:1.0"
+  ]
+}

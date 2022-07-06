@@ -163,13 +163,7 @@ def change_password(access_token: str, user_code: str, new_password: str) -> req
     payload = {"code": user_code, "new_password": new_password}
 
     url = f"{app.config['UAA_SERVICE_URL']}/password_change"
-    response = requests.post(url, json=payload, headers=headers)
-    try:
-        response.raise_for_status()
-    except HTTPError:
-        logger.error("Something went wrong resetting the users password", exc_info=True)
-        raise
-    return response
+    return requests.post(url, data=dumps(payload), headers=headers)
 
 
 def generate_headers(access_token):
@@ -267,13 +261,13 @@ def create_user_account_with_random_password(email: str, first_name: str, last_n
     try:
         response.raise_for_status()
         return response.json()
-    except HTTPError as e:
-        logger.error("something went wrong", exception=e)
+    except HTTPError:
         response_json = response.json()
         logger.error(
             "Received an error when creating an account in UAA",
             status_code=response.status_code,
             message=response_json.get("message"),
+            exc_info=True,
         )
         return {"error": response_json.get("message")}
 

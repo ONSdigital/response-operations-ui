@@ -1,0 +1,5 @@
+{
+  "error_description": "User 56e97a1b-2188-4989-8342-199b83c505ce does not exist",
+  "error": "scim_resource_not_found",
+  "message": "User 56e97a1b-2188-4989-8342-199b83c505ce does not exist"
+}
