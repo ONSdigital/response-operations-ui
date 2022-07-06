@@ -147,13 +147,29 @@ def retrieve_user_code(access_token, username):
     return response.json().get("code")
 
 
-def change_password(access_token, user_code, new_password):
+def change_password(access_token: str, user_code: str, new_password: str) -> requests.Response:
+    """
+    Resets the password for a user using a user_code that was given to us by uaa via the password reset functionality
+    that it offers.
+
+    :param access_token: The access code that authenticates us with uaa
+    :param user_code: A code given to us by uaa as part of the password reset functionality
+    :param new_password: New password for the user
+    :return: The response from the password reset endpoint
+    :raises HTTPError: Raised if hitting the password reset endpoint results in a 4XX or 5XX status code.
+    """
     headers = generate_headers(access_token)
 
     payload = {"code": user_code, "new_password": new_password}
 
     url = f"{app.config['UAA_SERVICE_URL']}/password_change"
-    return requests.post(url, data=dumps(payload), headers=headers)
+    response = requests.post(url, json=payload, headers=headers)
+    try:
+        response.raise_for_status()
+    except HTTPError:
+        logger.error("Something went wrong resetting the users password", exc_info=True)
+        raise
+    return response
 
 
 def generate_headers(access_token):
@@ -180,8 +196,14 @@ def change_user_password(email, password):
     return change_password(access_token=access_token, user_code=password_reset_code, new_password=password)
 
 
-# TODO change function name
-def change_user_password_for_verify_journey(user_id, password):
+def reset_user_password_by_id(user_id: str, password: str) -> requests.Response | None:
+    """
+    Resets the user password from something unknown to whatever the user chooses.
+
+    :param user_id: The id of the uua user
+    :param password: The new password for the account
+    :return: The response of hitting the /password_change endpoint in uaa.
+    """
     access_token = login_admin()
 
     user = get_user_by_id(user_id)
@@ -512,7 +534,7 @@ def get_users_list(
         return response.json()
     except HTTPError:
         logger.error("Failed to retrieve user list.", status_code=response.status_code)
-        return {"error": "Failed to retrieve user list, please try again", "totalResults": 0, "resources": []}
+        return {"error": "Failed to retrieve user list, please try again"}
 
 
 def get_filter_query(filter_criteria: str, filter_value: str, filter_on: str):

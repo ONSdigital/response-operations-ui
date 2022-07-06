@@ -6,6 +6,7 @@ from flask import current_app as app
 from flask import flash, redirect, render_template, request, session, url_for
 from flask_login import login_required, logout_user
 from itsdangerous import BadData, BadSignature, SignatureExpired, URLSafeSerializer
+from requests import HTTPError
 from structlog import wrap_logger
 
 from response_operations_ui.common import dates, token_decoder
@@ -400,6 +401,7 @@ def get_create_account(token, form_errors=None):
 
 @account_bp.route("/create-account/<token>", methods=["POST"])
 def post_create_account(token):
+    # This is the old way of creating an account and will be removed once RBA has been implemented.
     form = CreateAccountForm(request.form)
 
     if not form.validate():
@@ -459,8 +461,13 @@ def post_verify_account(token):
     if not form.validate():
         return render_template("account/verify-account.html", form=form)
 
-    uaa_controller.change_user_password_for_verify_journey(user_id, form.password.data)
-    uaa_controller.verify_user(user_id)
+    try:
+        uaa_controller.reset_user_password_by_id(user_id, form.password.data)
+        uaa_controller.verify_user(user_id)
+    except HTTPError:
+        flash("Something went wrong setting password and verifying account, please try again")
+        return render_template("account/verify-account.html", form=form)
+
     flash("Account successfully verified", category="account_created")
     return redirect(url_for("sign_in_bp.sign_in"))
 
