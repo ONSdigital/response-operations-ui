@@ -1,8 +1,8 @@
 name: comment
 
 on:
-  pull_request:
-    branches: [ main ]
+  issue_comment:
+    types: [created]
 
 env:
   SERVICE: response-operations-ui
