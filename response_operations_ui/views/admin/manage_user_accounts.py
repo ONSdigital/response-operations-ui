@@ -30,8 +30,8 @@ from response_operations_ui.controllers.uaa_controller import (
 )
 from response_operations_ui.exceptions.exceptions import NotifyError
 from response_operations_ui.forms import (
+    CreateAccountWithPermissionsForm,
     EditUserGroupsForm,
-    NewCreateAccountForm,
     UserSearchForm,
 )
 from response_operations_ui.views.admin import admin_bp
@@ -99,8 +99,7 @@ def manage_user_accounts():
 @login_required
 def get_create_account():
     _verify_user_in_user_admin_group()
-    form = NewCreateAccountForm()
-
+    form = CreateAccountWithPermissionsForm()
     return render_template("admin/user-create.html", form=form)
 
 
@@ -108,7 +107,7 @@ def get_create_account():
 @login_required
 def post_create_account():
     _verify_user_in_user_admin_group()
-    form = NewCreateAccountForm(request.form)
+    form = CreateAccountWithPermissionsForm(request.form)
 
     if not form.validate():
         return render_template("admin/user-create.html", form=form)
@@ -117,10 +116,14 @@ def post_create_account():
         groups_from_uaa = get_groups()
     except HTTPError:
         flash("Failed to get groups, please try again", "error")
-        return redirect(url_for("admin_bp.manage_user_accounts"))
+        return render_template("admin/user-create.html", form=form)
 
     email = form.email.data
     user = create_user_account_with_random_password(email, form.first_name.data, form.last_name.data)
+    if user.get("error"):
+        flash(user.get("error"), "error")
+        return render_template("admin/user-create.html", form=form)
+
     user_id = user["id"]
     groups_in_form = form.get_uaa_permission_groups()
 
@@ -129,7 +132,17 @@ def post_create_account():
             continue
         mapped_group = uaa_group_mapping[group]
         group_details = next(item for item in groups_from_uaa["resources"] if item["displayName"] == mapped_group)
-        add_group_membership(user_id, group_details["id"])
+        try:
+            add_group_membership(user_id, group_details["id"])
+        except HTTPError:
+            # If a group permission add fails then we just need to continue, but let the person creating the account
+            # that it won't have all the permissions they requested.  This is easily fixed by them granting the
+            # permission via the manage accounts screen
+            flash(
+                f"Failed to give the user the {group} permission. The account has still been created but the "
+                f"permission will need to be granted later"
+            )
+            continue
 
     token = token_decoder.generate_token(user_id)
     internal_url = current_app.config["RESPONSE_OPERATIONS_UI_URL"]
@@ -144,11 +157,18 @@ def post_create_account():
             personalisation={"verification_link": verification_url},
         )
     except NotifyError as e:
-        # TODO what do we do if this fails?
-        logger.error("failed to send email", msg=e.description, exc_info=True)
-        flash(f"Account created but no email sent.  Verification url was {verification_url}", "error")
-        return render_template("admin/user-create.html", form=form)
-    # send account activation email to user with token
+        # If the account is created but the email fails, we'll send them to the next success screen but have an error
+        # appear to tell them that the email won't be coming.
+        logger.error(
+            "Failed to send email, but account was created",
+            verification_url=verification_url,
+            msg=e.description,
+            exc_info=True,
+        )
+        flash(
+            f"Account created but no email sent.  Verification url was {verification_url}. Give this to the user",
+            "error",
+        )
 
     return render_template("admin/user-create-confirmation.html", email=form.email.data, token=token)
 

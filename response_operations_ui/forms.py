@@ -463,8 +463,7 @@ class RequestAccountForm(FlaskForm):
             raise ValidationError("Not a valid ONS email address")
 
 
-# TODO Rename this
-class NewCreateAccountForm(FlaskForm):
+class CreateAccountWithPermissionsForm(FlaskForm):
     first_name = StringField("First name", validators=[DataRequired(message="First name is required")])
     last_name = StringField("Last name", validators=[DataRequired(message="Last name is required")])
     email = EmailField("Email", validators=[DataRequired(message="Email is required")])

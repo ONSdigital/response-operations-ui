@@ -216,15 +216,22 @@ def verify_user(user_id: str) -> dict:
     return response.json()
 
 
-# TODO sort function name
-def create_user_account_with_random_password(email, first_name, last_name):
-    access_token = login_admin()
+def create_user_account_with_random_password(email: str, first_name: str, last_name: str) -> dict:
+    """
+    Creates a user in uaa with a 64 character length password.  This is designed to be used when a user with admin
+    permission creates an account that the intended user will then set the password for.
 
+    :param email: Email of the user being created, also acts as their username
+    :param first_name: First name of the user being created
+    :param last_name: Last name of the user being created
+    :return: A dict representing the user on success, or a dict with an 'error' key on any failure
+    """
+    access_token = login_admin()
     headers = generate_headers(access_token)
 
-    # We can't create a user without a password, so we'll create an inactive user with a crazy long password so
+    # We can't create a user without a password, so we'll create an unverified user with a crazy long password so
     # nobody can access it.   When the user ends up getting a link to verify their account and set their password, we
-    # can activate, verify and change the password at the same time.
+    # can verify and change the password at the same time.
     payload = {
         "userName": email,
         "name": {"formatted": f"{first_name} {last_name}", "givenName": first_name, "familyName": last_name},
@@ -240,24 +247,17 @@ def create_user_account_with_random_password(email, first_name, last_name):
         return response.json()
     except HTTPError as e:
         logger.error("something went wrong", exception=e)
-        if response.status_code == 409:
-            # Username already exists
-            # TODO figure out how to handle these errors
-            errors = {"user_name": ["Username already in use; please choose another"]}
-        else:
-            errors = {"status_code": response.status_code, "message": response.reason}
-            logger.error(
-                "Received an error when creating an account in UAA",
-                status_code=response.status_code,
-                reason=response.reason,
-            )
-
-    return errors
+        response_json = response.json()
+        logger.error(
+            "Received an error when creating an account in UAA",
+            status_code=response.status_code,
+            message=response_json.get("message"),
+        )
+        return {"error": response_json.get("message")}
 
 
 def create_user_account(email, password, user_name, first_name, last_name):
     access_token = login_admin()
-
     headers = generate_headers(access_token)
 
     payload = {
