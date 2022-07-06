@@ -42,6 +42,15 @@ class LoginForm(FlaskForm):
     submit = SubmitField("Sign in")
 
 
+class EditUserGroupsForm(FlaskForm):
+    surveys_edit = BooleanField()
+    reporting_units_edit = BooleanField()
+    respondents_edit = BooleanField()
+    respondents_delete = BooleanField()
+    messages_edit = BooleanField()
+    users_admin = BooleanField()
+
+
 class SecureMessageForm(FlaskForm):
     send = SubmitField(label="Send")
     subject = StringField(

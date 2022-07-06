@@ -143,6 +143,10 @@ spec:
             value: {{ .Values.notify.updateAccountEmailTemplate }}
           - name: NOTIFY_UPDATE_ACCOUNT_PASSWORD_CHANGE_TEMPLATE
             value: {{ .Values.notify.updateAccountPasswordTemplate }}
+          - name: NOTIFY_UPDATE_USER_PERMISSIONS_TEMPLATE
+            value: {{ .Values.notify.updateUserPermissionsTemplate }}
+          - name: NOTIFY_DELETE_USER_TEMPLATE
+            value: {{ .Values.notify.deleteUserTemplate }}
           - name: PARTY_URL
             {{- if .Values.dns.enabled }}
             value: "http://party.{{ .Values.namespace }}.svc.cluster.local:{{ .Values.dns.wellKnownPort }}"
@@ -215,8 +219,6 @@ spec:
             {{- else }}
             value: "http://$(SECURE_MESSAGE_SERVICE_HOST):$(SECURE_MESSAGE_SERVICE_PORT)"
             {{- end }}
-          - name: EQ_VERSION_ENABLED
-            value: "{{ .Values.features.v3Enabled }}"
           - name: IS_ROLE_BASED_ACCESS_ENABLED
             value: "{{ .Values.features.isRoleBasedAccessEnabled }}"
           - name: SECURE_MESSAGE_JWT_SECRET

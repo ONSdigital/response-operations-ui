@@ -21,6 +21,24 @@
             {% endcall %}
         {% endif %}
     {% endwith %}
+    {% with messages = get_flashed_messages() %}
+        {% if messages %}
+            {% call
+                onsPanel({
+                    "type":"success",
+                    "iconType": "check",
+                    "classes": "ons-u-mb-s",
+                    "bodyAttributes": {
+                        "data-qa": "success-body"
+                    }
+                })
+            %}
+                {% for message in messages %}
+                    <p id="flashed-message-{{ loop.index }}">{{ message }}</p>
+                {% endfor %}
+            {% endcall %}
+        {% endif %}
+    {% endwith %}
     <div class="ons-grid ons-grid--flex ons-grid--between">
         <div class="ons-grid__col">
             <h1 class="ons-u-fs-l u-mb-xs" name="page-messages-title">Manage user accounts</h1>
@@ -101,7 +119,9 @@
                     { 
                         "value": "Last name",
                     },
-                    { "value": ""}
+                    { 
+                        "value": ""
+                    }
                 ]
                 }
             %}
@@ -121,7 +141,7 @@
                                 "value": user.lastname,
                             },
                             {
-                                "value": '<a> Edit or delete user account </a>',
+                                "value": '<a href="' + url_for("admin_bp.get_manage_account_groups", user_id=user.id) + '">Edit or delete user account </a>' if user.show_edit_button else "",
                                 "class": "ons-u-ta-right"
                             },
                         ]

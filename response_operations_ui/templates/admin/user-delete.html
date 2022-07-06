@@ -1,0 +1,36 @@
+{% extends "layouts/base.html" %}
+{% from "components/table/_macro.njk" import onsTable %}
+{% from "components/checkboxes/_checkbox-macro.njk" import onsCheckbox %}
+{% from "components/button/_macro.njk" import onsButton %}
+
+{% block main %}
+    <div class="ons-grid ons-grid--flex ons-grid--between">
+        <div class="ons-grid__col">
+            <h1>Delete {{ name }}'s user account? </h1>
+        </div>
+    </div>
+    
+    <form id="user-permissions" action="" method="post">
+        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}" />
+        <section class="ons-u-mt-s">
+          <p>All the information about {{ email }} will be deleted.  An email to notify the user will be sent.</p>
+
+
+        <div class="ons-grid ons-grid--flex ons-grid--gutterless ons-grid--vertical-center ons-grid--no-wrap@s ons-u-mt-m ons-u-mb-m">
+          <div class="ons-grid__col">
+          {{
+              onsButton({
+                  "id": "delete-user",
+                  "text": "Delete user",
+                  "submitType": "timer"
+              })
+          }}
+          </div>
+          <div class="ons-grid__col ons-u-ml-s">
+            <a href="{{ url_for('admin_bp.get_manage_account_groups', user_id=user_id) }}" role="button" class="ons-btn ons-btn--link ons-btn--secondary" id="btn-option-cancel">
+              <span class="ons-btn__inner">Cancel</span>
+            </a>
+          </div>
+        </div>
+    </form>
+{% endblock %}
