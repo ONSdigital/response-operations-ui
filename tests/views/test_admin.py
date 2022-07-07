@@ -8,10 +8,13 @@ import requests_mock
 from config import TestingConfig
 from tests.views import ViewTestCase
 
+group_id = "79f41e0c-9991-4ee8-b2d0-af2f470dfd20"
 url_sign_in_data = f"{TestingConfig.UAA_SERVICE_URL}/oauth/token"
 url_surveys = f"{TestingConfig.SURVEY_URL}/surveys/surveytype/Business"
 url_permission_url = f"{TestingConfig.UAA_SERVICE_URL}/Users/test-id"
-url_uaa_user_list = f"{TestingConfig.UAA_SERVICE_URL}/Users"
+url_uaa_groups = f"{TestingConfig.UAA_SERVICE_URL}/Groups"
+url_uaa_users = f"{TestingConfig.UAA_SERVICE_URL}/Users"
+url_uaa_add_to_group = f"{TestingConfig.UAA_SERVICE_URL}/Groups/{group_id}/members"
 
 user_id = "fe2dc842-b3b3-4647-8317-858dab82ab94"
 url_uaa_user_by_id = f"{TestingConfig.UAA_SERVICE_URL}/Users/{user_id}"
@@ -34,6 +37,12 @@ with open(f"{project_root}/test_data/uaa/email_search_user.json") as fp:
     uaa_user_search_email = json.load(fp)
 with open(f"{project_root}/test_data/uaa/user_by_id.json") as json_data:
     uaa_user_by_id_json = json.load(json_data)
+with open(f"{project_root}/test_data/uaa/get_groups_success.json") as json_data:
+    get_groups_success_json = json.load(json_data)
+with open(f"{project_root}/test_data/uaa/create_user_success.json") as json_data:
+    create_user_success_json = json.load(json_data)
+
+uaa_group_add_success_json = {"type": "USER", "value": user_id}
 
 
 class TestMessage(ViewTestCase):
@@ -53,7 +62,7 @@ class TestMessage(ViewTestCase):
         mock_request.post(url_sign_in_data, json={"access_token": self.access_token}, status_code=201)
         mock_request.get(url_permission_url, json=user_permission_admin_json, status_code=200)
         if with_uaa_user_list:
-            mock_request.get(url_uaa_user_list, json=uaa_user_search_email, status_code=200)
+            mock_request.get(url_uaa_users, json=uaa_user_search_email, status_code=200)
         return mock_request
 
     @requests_mock.mock()
@@ -93,7 +102,7 @@ class TestMessage(ViewTestCase):
     def test_manage_user_accounts_403(self, mock_request):
         mock_request = self.setup_common_mocks(mock_request)
         mock_request.get(url_surveys, json=self.surveys_list_json, status_code=200)
-        mock_request.get(url_uaa_user_list, json={}, status_code=403)
+        mock_request.get(url_uaa_users, json={}, status_code=403)
         self.client.post("/sign-in", follow_redirects=True, data={"username": "user", "password": "pass"})
         response = self.client.get("/admin/manage-user-accounts", follow_redirects=True)
 
@@ -104,7 +113,7 @@ class TestMessage(ViewTestCase):
     def test_manage_user_accounts_success(self, mock_request):
         mock_request = self.setup_common_mocks(mock_request)
         mock_request.get(url_surveys, json=self.surveys_list_json, status_code=200)
-        mock_request.get(url_uaa_user_list, json=uaa_user_list_json, status_code=200)
+        mock_request.get(url_uaa_users, json=uaa_user_list_json, status_code=200)
         self.client.post("/sign-in", follow_redirects=True, data={"username": "user", "password": "pass"})
         response = self.client.get("/admin/manage-user-accounts", follow_redirects=True)
         self.assertEqual(200, response.status_code)
@@ -157,7 +166,7 @@ class TestMessage(ViewTestCase):
     def test_manage_user_accounts_letter_search_success(self, mock_request):
         mock_request = self.setup_common_mocks(mock_request)
         mock_request.get(url_surveys, json=self.surveys_list_json, status_code=200)
-        mock_request.get(url_uaa_user_list, json=uaa_user_list_json, status_code=200)
+        mock_request.get(url_uaa_users, json=uaa_user_list_json, status_code=200)
         self.client.post("/sign-in", follow_redirects=True, data={"username": "user", "password": "pass"})
         form = {"user_search": "test"}
         response = self.client.get("/admin/manage-user-accounts?user_with_email=C", data=form, follow_redirects=True)
@@ -171,7 +180,42 @@ class TestMessage(ViewTestCase):
         self.assertIn("Page 1 of 26".encode(), response.data)
         self.assertIn("Andy155.Smith@ons.gov.uk".encode(), response.data)
 
+    # Create account
+
+    @requests_mock.mock()
+    def test_get_create_account_success(self, mock_request):
+        mock_request = self.setup_common_mocks(mock_request, with_uaa_user_list=True)
+        self.client.post("/sign-in", follow_redirects=True, data={"username": "user", "password": "pass"})
+        mock_request.get(url_uaa_user_by_id, json=uaa_user_by_id_json, status_code=200)
+        response = self.client.get("/admin/create-account", follow_redirects=True)
+        self.assertEqual(200, response.status_code)
+        self.assertIn("Create your account".encode(), response.data)
+        self.assertIn("Manager permissions".encode(), response.data)
+        self.assertIn("Confirm".encode(), response.data)
+
+    @requests_mock.mock()
+    def test_post_create_account_success(self, mock_request):
+        mock_request = self.setup_common_mocks(mock_request, with_uaa_user_list=True)
+        self.client.post("/sign-in", follow_redirects=True, data={"username": "user", "password": "pass"})
+        mock_request.get(url_uaa_user_by_id, json=uaa_user_by_id_json, status_code=200)
+        mock_request.get(url_uaa_groups, json=get_groups_success_json, status_code=200)
+        mock_request.post(url_uaa_users, json=create_user_success_json, status_code=200)
+        mock_request.post(url_uaa_add_to_group, json=uaa_group_add_success_json, status_code=201)
+        response = self.client.post(
+            "/admin/create-account",
+            follow_redirects=True,
+            data={"first_name": "ONS", "last_name": "user", "email": "some.one@ons.gov.uk", "surveys_edit": True},
+        )
+        self.assertEqual(200, response.status_code)
+        self.assertIn(
+            "An email to activate the account has been sent to some.one@ons.gov.uk. "
+            "This email will be valid for 6 weeks.".encode(),
+            response.data,
+        )
+        self.assertIn("Return to manage user accounts".encode(), response.data)
+
     # Edit user permission
+
     @requests_mock.mock()
     def test_edit_account_success(self, mock_request):
         mock_request = self.setup_common_mocks(mock_request, with_uaa_user_list=True)
@@ -193,7 +237,7 @@ class TestMessage(ViewTestCase):
         own_id_access_token = jwt.encode(payload, TestingConfig.UAA_PRIVATE_KEY, algorithm="RS256")
         mock_request.post(url_sign_in_data, json={"access_token": own_id_access_token}, status_code=201)
         mock_request.get(url_permission_url, json=user_permission_admin_json, status_code=200)
-        mock_request.get(url_uaa_user_list, json=uaa_user_search_email, status_code=200)
+        mock_request.get(url_uaa_users, json=uaa_user_search_email, status_code=200)
         mock_request.get(url_uaa_user_by_id, json=uaa_user_by_id_json, status_code=200)
         self.client.post("/sign-in", follow_redirects=True, data={"username": "user", "password": "pass"})
         mock_request.get(url_uaa_user_by_id, json=uaa_user_by_id_json, status_code=200)
@@ -224,7 +268,7 @@ class TestMessage(ViewTestCase):
         own_id_access_token = jwt.encode(payload, TestingConfig.UAA_PRIVATE_KEY, algorithm="RS256")
         mock_request.post(url_sign_in_data, json={"access_token": own_id_access_token}, status_code=201)
         mock_request.get(url_permission_url, json=user_permission_admin_json, status_code=200)
-        mock_request.get(url_uaa_user_list, json=uaa_user_search_email, status_code=200)
+        mock_request.get(url_uaa_users, json=uaa_user_search_email, status_code=200)
         mock_request.get(url_uaa_user_by_id, json=uaa_user_by_id_json, status_code=200)
         self.client.post("/sign-in", follow_redirects=True, data={"username": "user", "password": "pass"})
         mock_request.get(url_uaa_user_by_id, json=uaa_user_by_id_json, status_code=200)
@@ -267,7 +311,7 @@ class TestMessage(ViewTestCase):
         payload = {"user_id": user_id, "aud": "response_operations"}
         own_id_access_token = jwt.encode(payload, TestingConfig.UAA_PRIVATE_KEY, algorithm="RS256")
         mock_request.post(url_sign_in_data, json={"access_token": own_id_access_token}, status_code=201)
-        mock_request.get(url_uaa_user_list, json=uaa_user_search_email, status_code=200)
+        mock_request.get(url_uaa_users, json=uaa_user_search_email, status_code=200)
         mock_request.get(url_uaa_user_by_id, json=uaa_user_by_id_json, status_code=200)
         self.client.post("/sign-in", follow_redirects=True, data={"username": "user", "password": "pass"})
 
@@ -320,7 +364,7 @@ class TestMessage(ViewTestCase):
         payload = {"user_id": user_id, "aud": "response_operations"}
         own_id_access_token = jwt.encode(payload, TestingConfig.UAA_PRIVATE_KEY, algorithm="RS256")
         mock_request.post(url_sign_in_data, json={"access_token": own_id_access_token}, status_code=201)
-        mock_request.get(url_uaa_user_list, json=uaa_user_search_email, status_code=200)
+        mock_request.get(url_uaa_users, json=uaa_user_search_email, status_code=200)
         mock_request.get(url_uaa_user_by_id, json=uaa_user_by_id_json, status_code=200)
         self.client.post("/sign-in", follow_redirects=True, data={"username": "user", "password": "pass"})
 
