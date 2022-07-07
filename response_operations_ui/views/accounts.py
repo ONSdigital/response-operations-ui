@@ -463,7 +463,6 @@ def post_verify_account(token):
 
     try:
         uaa_controller.reset_user_password_by_id(user_id, form.password.data)
-        uaa_controller.verify_user(user_id)
     except HTTPError:
         flash("Something went wrong setting password and verifying account, please try again")
         return render_template("account/verify-account.html", form=form)

@@ -212,26 +212,6 @@ def reset_user_password_by_id(user_id: str, password: str) -> requests.Response 
     return change_password(access_token=access_token, user_code=password_reset_code, new_password=password)
 
 
-def verify_user(user_id: str) -> dict:
-    """
-    Verified the user in uaa, using the id of the user.
-
-    :param user_id: The id of the user in uaa
-    """
-    access_token = login_admin()
-    headers = generate_headers(access_token)
-
-    url = f"{app.config['UAA_SERVICE_URL']}/Users/{user_id}/verify"
-    response = requests.get(url, headers=headers)
-    try:
-        response.raise_for_status()
-    except HTTPError:
-        logger.error("Error verifying user in UAA", status_code=response.status_code, user_id=user_id, exc_info=True)
-        raise
-
-    return response.json()
-
-
 def create_user_account_with_random_password(email: str, first_name: str, last_name: str) -> dict:
     """
     Creates a user in uaa with a 64 character length password.  This is designed to be used when a user with admin

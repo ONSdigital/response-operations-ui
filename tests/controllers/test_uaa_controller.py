@@ -17,10 +17,6 @@ with open(f"{project_root}/test_data/uaa/delete_user_success_response.json") as 
     delete_success_response = json.load(json_data)
 with open(f"{project_root}/test_data/uaa/get_groups_success.json") as json_data:
     get_groups_success_json = json.load(json_data)
-with open(f"{project_root}/test_data/uaa/verify_user_success.json") as json_data:
-    verify_user_success_json = json.load(json_data)
-with open(f"{project_root}/test_data/uaa/verify_user_not_found.json") as json_data:
-    verify_user_not_found_json = json.load(json_data)
 
 user_id = "fe2dc842-b3b3-4647-8317-858dab82ab94"
 group_id = "9da7cfd5-95d0-455b-9005-02ce638e56c9"
@@ -145,22 +141,3 @@ class TestUAAController(unittest.TestCase):
         with self.app.test_request_context():
             with self.assertRaises(HTTPError):
                 uaa_controller.get_groups()
-
-    @requests_mock.mock()
-    def test_verify_user_success(self, mock_request):
-        mock_request.post(url_uaa_token, json={"access_token": self.access_token}, status_code=201)
-        mock_request.get(url_uaa_verify_user, json=verify_user_success_json, status_code=200)
-        with self.app.test_request_context():
-            self.assertEqual(uaa_controller.verify_user(user_id), verify_user_success_json)
-
-    @requests_mock.mock()
-    def test_verify_user_failure(self, mock_request):
-        mock_request.post(url_uaa_token, json={"access_token": self.access_token}, status_code=201)
-        mock_request.get(
-            f"{TestingConfig.UAA_SERVICE_URL}/Users/{fake_user_id}/verify",
-            json=verify_user_not_found_json,
-            status_code=404,
-        )
-        with self.app.test_request_context():
-            with self.assertRaises(HTTPError):
-                uaa_controller.verify_user(fake_user_id)
