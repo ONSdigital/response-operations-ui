@@ -1,0 +1,100 @@
+{
+  "id": "0620883d-83f4-4e3e-87a4-7e7bcec5b71a",
+  "meta": {
+    "version": 0,
+    "created": "2022-07-07T11:32:59.111Z",
+    "lastModified": "2022-07-07T11:32:59.111Z"
+  },
+  "userName": "some.one@ons.gov.uk",
+  "name": {
+    "familyName": "person",
+    "givenName": "Some"
+  },
+  "emails": [
+    {
+      "value": "some.one@ons.gov.uk",
+      "primary": false
+    }
+  ],
+  "groups": [
+    {
+      "value": "052ce253-f854-4633-a263-0e9783edcdff",
+      "display": "uaa.offline_token",
+      "type": "DIRECT"
+    },
+    {
+      "value": "efe0d93b-c5fc-42fa-afb2-72fcb76f798c",
+      "display": "approvals.me",
+      "type": "DIRECT"
+    },
+    {
+      "value": "e9aea43b-e9d1-4910-9a75-a9f636071ef3",
+      "display": "cloud_controller.write",
+      "type": "DIRECT"
+    },
+    {
+      "value": "dc4daae0-f51a-4fa2-b01a-0572638e9f45",
+      "display": "openid",
+      "type": "DIRECT"
+    },
+    {
+      "value": "4d94d5c3-32ac-48e4-a509-82bf961185f0",
+      "display": "roles",
+      "type": "DIRECT"
+    },
+    {
+      "value": "18ded683-6501-4477-b4de-1cec266465b7",
+      "display": "password.write",
+      "type": "DIRECT"
+    },
+    {
+      "value": "e994d00e-2dc6-4f22-9720-cde14baa1ce1",
+      "display": "scim.userids",
+      "type": "DIRECT"
+    },
+    {
+      "value": "ae5503a3-1b5c-4ac1-9171-450c7ab22eb1",
+      "display": "oauth.approvals",
+      "type": "DIRECT"
+    },
+    {
+      "value": "a64f506f-d8e3-42ba-9ab3-63e8036b5fbe",
+      "display": "uaa.user",
+      "type": "DIRECT"
+    },
+    {
+      "value": "9c9e9cd7-280b-4803-bbd6-934fd5633153",
+      "display": "scim.me",
+      "type": "DIRECT"
+    },
+    {
+      "value": "4cf3eba0-4cf3-430f-b8ca-67521faebf65",
+      "display": "user_attributes",
+      "type": "DIRECT"
+    },
+    {
+      "value": "6ea0bcf6-c402-4226-aa35-e9ac666689ad",
+      "display": "cloud_controller.read",
+      "type": "DIRECT"
+    },
+    {
+      "value": "0b030ce0-2d5e-4d4c-99eb-ca590e023ad1",
+      "display": "cloud_controller_service_permissions.read",
+      "type": "DIRECT"
+    },
+    {
+      "value": "d5175c57-cdea-4a24-8fcf-50c7f5a76f75",
+      "display": "profile",
+      "type": "DIRECT"
+    }
+  ],
+  "approvals": [],
+  "active": true,
+  "verified": false,
+  "origin": "uaa",
+  "zoneId": "uaa",
+  "passwordLastModified": "2022-07-07T11:32:59.000Z",
+  "schemas": [
+    "urn:scim:schemas:core:1.0"
+  ]
+}
