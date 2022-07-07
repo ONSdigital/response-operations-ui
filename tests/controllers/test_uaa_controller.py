@@ -21,6 +21,8 @@ with open(f"{project_root}/test_data/uaa/create_user_success.json") as json_data
     create_user_success_json = json.load(json_data)
 with open(f"{project_root}/test_data/uaa/create_user_already_exists.json") as json_data:
     create_user_already_exists_json = json.load(json_data)
+with open(f"{project_root}/test_data/uaa/email_search_user.json") as fp:
+    uaa_user_search_email = json.load(fp)
 
 user_id = "fe2dc842-b3b3-4647-8317-858dab82ab94"
 group_id = "9da7cfd5-95d0-455b-9005-02ce638e56c9"
@@ -53,6 +55,8 @@ class TestUAAController(unittest.TestCase):
         self.access_token = jwt.encode(payload, self.app.config["UAA_PRIVATE_KEY"], algorithm="RS256")
         self.client = self.app.test_client()
 
+    # user_has_permission
+
     @requests_mock.mock()
     def test_user_has_permission_true(self, mock_request):
         mock_request.post(url_uaa_token, json={"access_token": self.access_token}, status_code=201)
@@ -71,6 +75,8 @@ class TestUAAController(unittest.TestCase):
         self.app.config["IS_ROLE_BASED_ACCESS_ENABLED"] = False
         with self.app.test_request_context():
             self.assertTrue(uaa_controller.user_has_permission("surveys.edit", user_id))
+
+    # update_user_password
 
     @requests_mock.mock()
     def test_update_user_password_user_client_error(self, mock_request):
@@ -92,6 +98,8 @@ class TestUAAController(unittest.TestCase):
                 uaa_controller.update_user_password(uaa_user_by_id_json, "old", "new"), expected_output
             )
 
+    # add_group_membership
+
     @requests_mock.mock()
     def test_add_group_membership_success(self, mock_request):
         mock_request.post(url_uaa_token, json={"access_token": self.access_token}, status_code=201)
@@ -106,6 +114,8 @@ class TestUAAController(unittest.TestCase):
         with self.app.test_request_context():
             with self.assertRaises(HTTPError):
                 uaa_controller.add_group_membership(user_id, fake_group_id)
+
+    # remove_group_membership
 
     @requests_mock.mock()
     def test_remove_group_membership_success(self, mock_request):
@@ -124,6 +134,8 @@ class TestUAAController(unittest.TestCase):
             with self.assertRaises(HTTPError):
                 uaa_controller.remove_group_membership(fake_user_id, group_id)
 
+    # delete_user
+
     @requests_mock.mock()
     def test_delete_user_success(self, mock_request):
         mock_request.post(url_uaa_token, json={"access_token": self.access_token}, status_code=201)
@@ -139,6 +151,8 @@ class TestUAAController(unittest.TestCase):
             with self.assertRaises(HTTPError):
                 uaa_controller.delete_user(user_id)
 
+    # get_groups
+
     @requests_mock.mock()
     def test_get_groups_success(self, mock_request):
         mock_request.post(url_uaa_token, json={"access_token": self.access_token}, status_code=201)
@@ -153,6 +167,8 @@ class TestUAAController(unittest.TestCase):
         with self.app.test_request_context():
             with self.assertRaises(HTTPError):
                 uaa_controller.get_groups()
+
+    # create_user_account_with_random_password
 
     @requests_mock.mock()
     def test_create_user_account_with_random_password_success(self, mock_request):
@@ -174,6 +190,8 @@ class TestUAAController(unittest.TestCase):
                 {"error": "Username already in use: some.one@ons.gov.uk"},
             )
 
+    # change_user_password
+
     @requests_mock.mock()
     def test_change_user_password_by_id_user_not_found(self, mock_request):
         mock_request.post(url_uaa_token, json={"access_token": self.access_token}, status_code=201)
@@ -181,6 +199,18 @@ class TestUAAController(unittest.TestCase):
 
         with self.app.test_request_context():
             self.assertIsNone(uaa_controller.change_user_password("some.one@ons.gov.uk", user_password))
+
+    @requests_mock.mock()
+    def test_change_user_password_retrieve_code_failure(self, mock_request):
+        mock_request.post(url_uaa_token, json={"access_token": self.access_token}, status_code=201)
+        mock_request.get(url_uaa_user_by_email, json=uaa_user_search_email, status_code=200)
+        # Docs aren't clear about failure codes for this endpoint so 500 is a safe one we can assume it can throw.
+        mock_request.post(url_uaa_password_reset_code, status_code=500)
+
+        with self.app.test_request_context():
+            self.assertIsNone(uaa_controller.change_user_password(user_email, user_password))
+
+    # reset_user_password_by_id
 
     @requests_mock.mock()
     def test_reset_user_password_by_id_user_not_found(self, mock_request):
@@ -191,7 +221,7 @@ class TestUAAController(unittest.TestCase):
             self.assertIsNone(uaa_controller.reset_user_password_by_id(user_id, user_password))
 
     @requests_mock.mock()
-    def test_reset_user_password_by_id_user_retrieve_code_failure(self, mock_request):
+    def test_reset_user_password_by_id_retrieve_code_failure(self, mock_request):
         mock_request.post(url_uaa_token, json={"access_token": self.access_token}, status_code=201)
         mock_request.get(url_uaa_user_by_id, json=uaa_user_by_id_json, status_code=200)
         # Docs aren't clear about failure codes for this endpoint so 500 is a safe one we can assume it can throw.
@@ -201,7 +231,7 @@ class TestUAAController(unittest.TestCase):
             self.assertIsNone(uaa_controller.reset_user_password_by_id(user_id, user_password))
 
     @requests_mock.mock()
-    def test_reset_user_password_by_id_user_password_change_failure(self, mock_request):
+    def test_reset_user_password_by_id_password_change_failure(self, mock_request):
         password_reset_code_json = {"code": "f-Ni-kNixp", "user_id": user_id}
         mock_request.post(url_uaa_token, json={"access_token": self.access_token}, status_code=201)
         mock_request.get(url_uaa_user_by_id, json=uaa_user_by_id_json, status_code=200)
@@ -213,7 +243,7 @@ class TestUAAController(unittest.TestCase):
             self.assertEqual(output.status_code, 500)
 
     @requests_mock.mock()
-    def test_reset_user_password_by_id_user_retrieve_code_success(self, mock_request):
+    def test_reset_user_password_by_id_password_change_success(self, mock_request):
         password_reset_code_json = {"code": "f-Ni-kNixp", "user_id": user_id}
         password_change_success_json = {
             "username": user_email,

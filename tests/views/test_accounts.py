@@ -29,6 +29,8 @@ url_uaa_get_accounts = f"{TestingConfig.UAA_SERVICE_URL}/Users?filter=email+eq+%
 url_uaa_user_by_id = f"{TestingConfig.UAA_SERVICE_URL}/Users/{user_id}"
 url_uaa_user_password_change = f"{TestingConfig.UAA_SERVICE_URL}/Users/{user_id}/password"
 url_uaa_create_account = f"{TestingConfig.UAA_SERVICE_URL}/Users"
+url_uaa_password_reset_code = f"{TestingConfig.UAA_SERVICE_URL}/password_resets"
+url_uaa_password_change = f"{TestingConfig.UAA_SERVICE_URL}/password_change"
 
 
 class TestAccounts(unittest.TestCase):
@@ -603,6 +605,68 @@ class TestAccounts(unittest.TestCase):
                 },
             )
             self.assertIn(b"Username already in use; please choose another", response.data)
+            self.assertEqual(response.status_code, 200)
+
+    # verify-account
+
+    @requests_mock.mock()
+    def test_get_verify_account(self, mock_request):
+        with self.app.app_context():
+            with patch("response_operations_ui.views.accounts.NotifyController") as mock_notify:
+                mock_notify()._send_message.return_value = mock.Mock()
+                token = token_decoder.generate_token(user_id)
+                mock_request.post(url_uaa_token, json={"access_token": self.access_token}, status_code=201)
+                mock_request.get(url_uaa_user_by_id, json=uaa_user_by_id_json, status_code=200)
+                response = self.client.get(
+                    f"/account/verify-account/{token}",
+                    follow_redirects=True,
+                )
+                self.assertIn(b"Verify account", response.data)
+                self.assertIn(b"Confirm", response.data)
+                self.assertEqual(response.status_code, 200)
+
+    @requests_mock.mock()
+    def test_post_verify_account(self, mock_request):
+        with self.app.app_context():
+            password_reset_code_json = {"code": "f-Ni-kNixp", "user_id": user_id}
+            token = token_decoder.generate_token(user_id)
+            mock_request.post(url_uaa_token, json={"access_token": self.access_token}, status_code=201)
+            mock_request.get(url_uaa_user_by_id, json=uaa_user_by_id_json, status_code=200)
+            mock_request.post(url_uaa_password_reset_code, json=password_reset_code_json, status_code=201)
+            mock_request.post(url_uaa_password_change, status_code=200)
+            response = self.client.post(
+                f"/account/verify-account/{token}",
+                follow_redirects=True,
+                data={
+                    "password": "TestPassword1!",
+                    "password_confirm": "TestPassword1!",
+                },
+            )
+            self.assertIn(b"Account successfully verified", response.data)
+            self.assertIn(b"Sign in", response.data)
+            self.assertIn(b"Forgot password?", response.data)
+            self.assertEqual(response.status_code, 200)
+
+    @requests_mock.mock()
+    def test_post_verify_account_failure(self, mock_request):
+        with self.app.app_context():
+            token = token_decoder.generate_token(user_id)
+            mock_request.post(url_uaa_token, json={"access_token": self.access_token}, status_code=201)
+            mock_request.get(url_uaa_user_by_id, json=uaa_user_by_id_json, status_code=200)
+            mock_request.post(url_uaa_password_reset_code, status_code=500)
+            response = self.client.post(
+                f"/account/verify-account/{token}",
+                follow_redirects=True,
+                data={
+                    "password": "TestPassword1!",
+                    "password_confirm": "TestPassword1!",
+                },
+            )
+            self.assertIn(b"Verify account", response.data)
+            self.assertIn(
+                b"Something went wrong setting password and verifying account, please try again", response.data
+            )
+            self.assertIn(b"Confirm", response.data)
             self.assertEqual(response.status_code, 200)
 
     @requests_mock.mock()
