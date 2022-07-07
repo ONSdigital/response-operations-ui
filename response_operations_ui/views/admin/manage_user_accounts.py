@@ -178,7 +178,7 @@ def post_create_account():
             "error",
         )
 
-    return render_template("admin/user-create-confirmation.html", email=email, token=token)
+    return render_template("admin/user-create-confirmation.html", email=email)
 
 
 @admin_bp.route("/manage-account/<user_id>", methods=["GET"])

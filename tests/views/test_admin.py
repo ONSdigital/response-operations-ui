@@ -201,18 +201,20 @@ class TestMessage(ViewTestCase):
         mock_request.get(url_uaa_groups, json=get_groups_success_json, status_code=200)
         mock_request.post(url_uaa_users, json=create_user_success_json, status_code=200)
         mock_request.post(url_uaa_add_to_group, json=uaa_group_add_success_json, status_code=201)
-        response = self.client.post(
-            "/admin/create-account",
-            follow_redirects=True,
-            data={"first_name": "ONS", "last_name": "user", "email": "some.one@ons.gov.uk", "surveys_edit": True},
-        )
-        self.assertEqual(200, response.status_code)
-        self.assertIn(
-            "An email to activate the account has been sent to some.one@ons.gov.uk. "
-            "This email will be valid for 6 weeks.".encode(),
-            response.data,
-        )
-        self.assertIn("Return to manage user accounts".encode(), response.data)
+        with patch("response_operations_ui.views.admin.manage_user_accounts.NotifyController") as mock_notify:
+            mock_notify().request_to_notify.return_value = None
+            response = self.client.post(
+                "/admin/create-account",
+                follow_redirects=True,
+                data={"first_name": "ONS", "last_name": "user", "email": "some.one@ons.gov.uk", "surveys_edit": True},
+            )
+            self.assertEqual(200, response.status_code)
+            self.assertIn(
+                "An email to activate the account has been sent to some.one@ons.gov.uk. "
+                "This email will be valid for 6 weeks.".encode(),
+                response.data,
+            )
+            self.assertIn("Return to manage user accounts".encode(), response.data)
 
     # Edit user permission
 
