@@ -445,7 +445,7 @@ def get_verify_account(token):
     if user is None:
         raise Exception("User does not exist")
     form = VerifyAccountForm()
-    return render_template("account/verify-account.html", form=form)
+    return render_template("account/verify-account.html", form=form, username=user["userName"])
 
 
 @account_bp.route("/verify-account/<token>", methods=["POST"])
@@ -458,12 +458,12 @@ def post_verify_account(token):
     form = VerifyAccountForm(request.form)
 
     if not form.validate():
-        return render_template("account/verify-account.html", form=form)
+        return render_template("account/verify-account.html", form=form, username=user["userName"])
 
     result = uaa_controller.reset_user_password_by_id(user_id, form.password.data)
     if result is None:
         flash("Something went wrong setting password and verifying account, please try again", "error")
-        return render_template("account/verify-account.html", form=form)
+        return render_template("account/verify-account.html", form=form, username=user["userName"])
 
     flash("Account successfully verified", category="account_created")
     return redirect(url_for("sign_in_bp.sign_in"))
