@@ -41,6 +41,8 @@ with open(f"{project_root}/test_data/uaa/get_groups_success.json") as json_data:
     get_groups_success_json = json.load(json_data)
 with open(f"{project_root}/test_data/uaa/create_user_success.json") as json_data:
     create_user_success_json = json.load(json_data)
+with open(f"{project_root}/test_data/uaa/create_user_already_exists.json") as json_data:
+    create_user_already_exists_json = json.load(json_data)
 
 uaa_group_add_success_json = {"type": "USER", "value": user_id}
 
@@ -143,20 +145,18 @@ class TestMessage(ViewTestCase):
         self.assertIn("Andy155.Smith@ons.gov.uk".encode(), response.data)
 
     @requests_mock.mock()
-    def test_manage_user_accounts_email_search_no_email(self, mock_request):
+    def test_manage_user_accounts_email_search_failure(self, mock_request):
         mock_request = self.setup_common_mocks(mock_request, with_uaa_user_list=True)
         mock_request.get(url_surveys, json=self.surveys_list_json, status_code=200)
         self.client.post("/sign-in", follow_redirects=True, data={"username": "user", "password": "pass"})
+
+        # No email address
         form = {"user_search": ""}
         response = self.client.post("/admin/manage-user-accounts", data=form, follow_redirects=True)
         self.assertEqual(200, response.status_code)
         self.assertIn("Please enter a valid email for search".encode(), response.data)
 
-    @requests_mock.mock()
-    def test_manage_user_accounts_email_search_invalid_email(self, mock_request):
-        mock_request = self.setup_common_mocks(mock_request, with_uaa_user_list=True)
-        mock_request.get(url_surveys, json=self.surveys_list_json, status_code=200)
-        self.client.post("/sign-in", follow_redirects=True, data={"username": "user", "password": "pass"})
+        # Invalid email address
         form = {"user_search": "test"}
         response = self.client.post("/admin/manage-user-accounts", data=form, follow_redirects=True)
         self.assertEqual(200, response.status_code)
@@ -216,6 +216,71 @@ class TestMessage(ViewTestCase):
             )
             self.assertIn("Return to manage user accounts".encode(), response.data)
 
+    @requests_mock.mock()
+    def test_post_create_account_failure(self, mock_request):
+        mock_request = self.setup_common_mocks(mock_request, with_uaa_user_list=True)
+        self.client.post("/sign-in", follow_redirects=True, data={"username": "user", "password": "pass"})
+        mock_request.get(url_uaa_user_by_id, json=uaa_user_by_id_json, status_code=200)
+        mock_request.get(url_uaa_groups, status_code=403)
+
+        # Test getting group failure
+        response = self.client.post(
+            "/admin/create-account",
+            follow_redirects=True,
+            data={"first_name": "ONS", "last_name": "user", "email": "some.one@ons.gov.uk", "surveys_edit": True},
+        )
+        self.assertEqual(200, response.status_code)
+        self.assertIn("Create your account".encode(), response.data)
+        self.assertIn("Manager permissions".encode(), response.data)
+        self.assertIn("Confirm".encode(), response.data)
+        self.assertIn("Failed to get groups, please try again".encode(), response.data)
+
+        # Test creating user failure
+        mock_request.get(url_uaa_groups, json=get_groups_success_json, status_code=200)
+        mock_request.post(url_uaa_users, json=create_user_already_exists_json, status_code=409)
+        response = self.client.post(
+            "/admin/create-account",
+            follow_redirects=True,
+            data={"first_name": "ONS", "last_name": "user", "email": "some.one@ons.gov.uk", "surveys_edit": True},
+        )
+        self.assertEqual(200, response.status_code)
+        self.assertIn("Create your account".encode(), response.data)
+        self.assertIn("Manager permissions".encode(), response.data)
+        self.assertIn("Confirm".encode(), response.data)
+        self.assertIn("Username already in use: some.one@ons.gov.uk".encode(), response.data)
+        self.assertNotIn("Failed to get groups, please try again".encode(), response.data)
+
+        # Test adding group membership failure
+        mock_request.get(url_uaa_groups, json=get_groups_success_json, status_code=200)
+        mock_request.post(url_uaa_users, json=create_user_success_json, status_code=200)
+        mock_request.post(url_uaa_add_to_group, status_code=400)
+        with patch("response_operations_ui.views.admin.manage_user_accounts.NotifyController") as mock_notify:
+            mock_notify().request_to_notify.return_value = None
+            response = self.client.post(
+                "/admin/create-account",
+                follow_redirects=True,
+                data={"first_name": "ONS", "last_name": "user", "email": "some.one@ons.gov.uk", "surveys_edit": True},
+            )
+            self.assertEqual(200, response.status_code)
+            self.assertIn(
+                "An email to activate the account has been sent to some.one@ons.gov.uk. "
+                "This email will be valid for 6 weeks.".encode(),
+                response.data,
+            )
+            self.assertIn(
+                "Failed to give the user the surveys_edit permission. The account has still been created but "
+                "the permission will need to be granted later".encode(),
+                response.data,
+            )
+            self.assertIn("Return to manage user accounts".encode(), response.data)
+
+            # Verify previous flash messages are not here, and that we're on the confirmation screen as failing to add
+            # to a group won't stop the creation journey.
+            self.assertNotIn("Create your account".encode(), response.data)
+            self.assertNotIn("Manager permissions".encode(), response.data)
+            self.assertNotIn("Username already in use: some.one@ons.gov.uk".encode(), response.data)
+            self.assertNotIn("Failed to get groups, please try again".encode(), response.data)
+
     # Edit user permission
 
     @requests_mock.mock()
@@ -229,7 +294,7 @@ class TestMessage(ViewTestCase):
         self.assertIn("ONS User".encode(), response.data)
         self.assertIn("Delete user account".encode(), response.data)
 
-        # Check we're not
+        # Check we're not on manage account page
         self.assertNotIn("Create new user account".encode(), response.data)
         self.assertNotIn("Edit or delete user account".encode(), response.data)
 

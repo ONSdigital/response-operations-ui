@@ -148,7 +148,8 @@ def post_create_account():
             # permission via the manage accounts screen
             flash(
                 f"Failed to give the user the {group} permission. The account has still been created but the "
-                f"permission will need to be granted later"
+                f"permission will need to be granted later",
+                "error",
             )
             continue
 
