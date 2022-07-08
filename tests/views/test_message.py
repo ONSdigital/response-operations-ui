@@ -730,11 +730,11 @@ class TestMessage(ViewTestCase):
 
     @requests_mock.mock()
     @patch("response_operations_ui.controllers.message_controllers._get_jwt")
-    def test_conversation_reply_fail_500(self, mock_request, mock_get_jwt):
+    def test_conversation_fail(self, mock_request, mock_get_jwt):
         mock_get_jwt.return_value = "blah"
-        mock_request.get(url_get_thread, json=thread_json, status_code=500)
+        mock_request.get(url_get_thread, status_code=500)
 
-        response = self.client.post("/messages/threads/fb0e79bd-e132-4f4f-a7fd-5e8c6b41b9af", follow_redirects=True)
+        response = self.client.get("/messages/threads/fb0e79bd-e132-4f4f-a7fd-5e8c6b41b9af", follow_redirects=True)
 
         request_history = mock_request.request_history
         self.assertEqual(len(request_history), 1)
@@ -770,18 +770,6 @@ class TestMessage(ViewTestCase):
         self.assertIn("RU Ref".encode(), response.data)
         self.assertIn("Business name".encode(), response.data)
         self.assertIn("Subject".encode(), response.data)
-
-    @requests_mock.mock()
-    @patch("response_operations_ui.controllers.message_controllers._get_jwt")
-    def test_conversation_fail(self, mock_request, mock_get_jwt):
-        mock_get_jwt.return_value = "blah"
-        mock_request.get(url_get_thread, status_code=500)
-
-        response = self.client.get("/messages/threads/fb0e79bd-e132-4f4f-a7fd-5e8c6b41b9af", follow_redirects=True)
-
-        request_history = mock_request.request_history
-        self.assertEqual(len(request_history), 1)
-        self.assertEqual(response.status_code, 500)
 
     @requests_mock.mock()
     def test_conversation_decode_error(self, mock_request):
@@ -898,9 +886,7 @@ class TestMessage(ViewTestCase):
         self.assertIn("FDI Messages".encode(), response.data)
 
     def test_get_to_id(self):
-        with open(f"{project_root}/test_data/message/threads.json") as fp:
-            conversation = json.load(fp)
-        self.assertEqual(conversation["messages"][0]["msg_to"][0], _get_to_id(conversation["messages"][0]))
+        self.assertEqual(thread_list["messages"][0]["msg_to"][0], _get_to_id(thread_list["messages"][0]))
 
     def test_get_to_id_index_error(self):
         with open(f"{project_root}/test_data/message/threads.json") as fp:
@@ -931,7 +917,7 @@ class TestMessage(ViewTestCase):
 
     @requests_mock.mock()
     @patch("response_operations_ui.controllers.message_controllers._get_jwt")
-    def test_get_close_conversation_confirmation_page_for_technical(self, mock_request, mock_get_jwt):
+    def test_get_close_conversation_confirmation_page_for_categories(self, mock_request, mock_get_jwt):
         sign_in_with_permission(self, mock_request, user_permission_messages_edit_json)
         with self.client.session_transaction() as session:
             session["messages_survey_selection"] = ""
@@ -939,32 +925,22 @@ class TestMessage(ViewTestCase):
         mock_request.get(url_get_thread, json=thread_json)
         mock_request.get(url_get_surveys_list, json=survey_list)
 
+        # Technical
         response = self.client.get(
             "/messages/threads/fb0e79bd-e132-4f4f-a7fd-5e8c6b41b9af/close-conversation?category=TECHNICAL",
             follow_redirects=True,
         )
-
         self.assertEqual(200, response.status_code)
         self.assertIn("Category".encode(), response.data)
         self.assertNotIn("Business".encode(), response.data)
         self.assertNotIn("Reference".encode(), response.data)
         self.assertIn("Respondent".encode(), response.data)
 
-    @requests_mock.mock()
-    @patch("response_operations_ui.controllers.message_controllers._get_jwt")
-    def test_get_close_conversation_confirmation_page_for_misc(self, mock_request, mock_get_jwt):
-        sign_in_with_permission(self, mock_request, user_permission_messages_edit_json)
-        with self.client.session_transaction() as session:
-            session["messages_survey_selection"] = ""
-        mock_get_jwt.return_value = "blah"
-        mock_request.get(url_get_thread, json=thread_json)
-        mock_request.get(url_get_surveys_list, json=survey_list)
-
+        # Misc
         response = self.client.get(
             "/messages/threads/fb0e79bd-e132-4f4f-a7fd-5e8c6b41b9af/close-conversation?category=MISC",
             follow_redirects=True,
         )
-
         self.assertEqual(200, response.status_code)
         self.assertIn("Category".encode(), response.data)
         self.assertNotIn("Business".encode(), response.data)
@@ -1114,7 +1090,7 @@ class TestMessage(ViewTestCase):
 
     @requests_mock.mock()
     @patch("response_operations_ui.controllers.message_controllers._get_jwt")
-    def test_closeing_conversation_returns_to_previous_tab_if_page_is_now_too_high(self, mock_request, mock_get_jwt):
+    def test_closing_conversation_returns_to_previous_tab_if_page_is_now_too_high(self, mock_request, mock_get_jwt):
         """if a conversation is closed then it will disappear from some tabs. That could mean that the page number
         specified is now too high, this test validates that if that is the case then the previous page is used"""
 
