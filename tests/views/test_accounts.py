@@ -622,7 +622,7 @@ class TestAccounts(unittest.TestCase):
                     follow_redirects=True,
                 )
                 self.assertIn(b"Verify account", response.data)
-                self.assertIn(b"Confirm", response.data)
+                self.assertIn(b"Activate account", response.data)
                 self.assertEqual(response.status_code, 200)
 
     @requests_mock.mock()
@@ -666,7 +666,7 @@ class TestAccounts(unittest.TestCase):
             self.assertIn(
                 b"Something went wrong setting password and verifying account, please try again", response.data
             )
-            self.assertIn(b"Confirm", response.data)
+            self.assertIn(b"Activate account", response.data)
             self.assertEqual(response.status_code, 200)
 
     @requests_mock.mock()
