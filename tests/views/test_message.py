@@ -50,6 +50,7 @@ url_modify_label_base = f"{TestingConfig.SECURE_MESSAGE_URL}/messages/modify/"
 url_select_survey = f"{TestingConfig.SECURE_MESSAGE_URL}/messages/select-survey"
 
 url_sign_in_data = f"{TestingConfig.UAA_SERVICE_URL}/oauth/token"
+url_permission_url = f"{TestingConfig.UAA_SERVICE_URL}/Users/test-id"
 url_get_case_groups_by_business_party_id = f"{TestingConfig.CASE_URL}/cases/partyid/{business_party_id}"
 url_get_collection_exercise_by_id = f"{TestingConfig.COLLECTION_EXERCISE_URL}/collectionexercises"
 url_get_iac = f"{TestingConfig.IAC_URL}/iacs"
@@ -58,82 +59,70 @@ project_root = os.path.dirname(os.path.dirname(__file__))
 
 with open(f"{project_root}/test_data/message/thread.json") as json_data:
     thread_json = json.load(json_data)
-
 with open(f"{project_root}/test_data/message/thread_missing_subject.json") as json_data:
     thread_missing_subject = json.load(json_data)
-
 with open(f"{project_root}/test_data/message/threads.json") as json_data:
     thread_list = json.load(json_data)
-
 with open(f"{project_root}/test_data/message/threads_multipage.json") as json_data:
     thread_list_multi_page = json.load(json_data)
-
 with open(f"{project_root}/test_data/message/threads_multipage_multi_ru.json") as json_data:
     thread_list_multi_page_multi_ru = json.load(json_data)
-
 with open(f"{project_root}/test_data/survey/survey_list.json") as json_data:
     survey_list = json.load(json_data)
-
 with open(f"{project_root}/test_data/survey/ashe_response.json") as json_data:
     ashe_info = json.load(json_data)
-
 with open(f"{project_root}/test_data/message/threads_no_unread.json") as json_data:
     threads_no_unread_list = json.load(json_data)
-
 with open(f"{project_root}/test_data/message/threads_unread.json") as json_data:
     threads_unread_list = json.load(json_data)
-
 with open(f"{project_root}/test_data/message/thread_unread.json") as json_data:
     thread_unread_json = json.load(json_data)
-
 with open(f"{project_root}/test_data/message/thread_unread_technical.json") as json_data:
     thread_unread_technical_json = json.load(json_data)
-
 with open(f"{project_root}/test_data/message/thread_unread_rft.json") as json_data:
     thread_unread_rft_json = json.load(json_data)
-
 with open(f"{project_root}/test_data/party/business_reporting_unit.json") as fp:
     business_reporting_unit = json.load(fp)
-
 with open(f"{project_root}/test_data/party/get_business_by_ru_ref.json") as fp:
     business_by_ru_ref_json = json.load(fp)
-
 with open(f"{project_root}/test_data/case/cases_list.json") as fp:
     cases_list = json.load(fp)
-
 with open(f"{project_root}/test_data/collection_exercise/collection_exercise.json") as fp:
     collection_exercise = json.load(fp)
-
 with open(f"{project_root}/test_data/collection_exercise/collection_exercise_2.json") as fp:
     collection_exercise_2 = json.load(fp)
-
 with open(f"{project_root}/test_data/party/business_attributes.json") as fp:
     business_attributes = json.load(fp)
-
 with open(f"{project_root}/test_data/party/business_party.json") as fp:
     business_party = json.load(fp)
-
 with open(f"{project_root}/test_data/survey/single_survey.json") as fp:
     survey = json.load(fp)
-
 with open(f"{project_root}/test_data/survey/survey_02b9c366.json") as fp:
     survey_02b9c366 = json.load(fp)
-
 with open(f"{project_root}/test_data/party/respondent_party.json") as fp:
     respondent_party = json.load(fp)
-
 with open(f"{project_root}/test_data/party/respondent_party_list.json") as fp:
     respondent_party_list = json.load(fp)
-
 with open(f"{project_root}/test_data/iac/iac.json") as fp:
     iac = json.load(fp)
+with open(f"{project_root}/test_data/message/threads_missing_atmsg_to.json") as json_data:
+    threads_missing_atmsg_to_json = json.load(json_data)
+with open(f"{project_root}/test_data/message/threads_missing_atmsg_from.json") as json_data:
+    threads_missing_atmsg_from_json = json.load(json_data)
+with open(f"{project_root}/test_data/message/threads_missing_msg_to.json") as json_data:
+    threads_missing_msg_to_json = json.load(json_data)
+with open(f"{project_root}/test_data/message/threads_missing_ru_ref.json") as json_data:
+    threads_missing_ru_ref_json = json.load(json_data)
+with open(f"{project_root}/test_data/message/threads_missing_sent_date.json") as json_data:
+    threads_missing_sent_date_json = json.load(json_data)
+with open(f"{project_root}/test_data/message/threads_missing_business_name.json") as json_data:
+    threads_missing_business_name_json = json.load(json_data)
 
-url_permission_url = f"{TestingConfig.UAA_SERVICE_URL}/Users/test-id"
+
 user_permission_admin_json = {
     "id": "5902656c-c41c-4b38-a294-0359e6aabe59",
     "groups": [{"value": "f385f89e-928f-4a0f-96a0-4c48d9007cc3", "display": "uaa.user", "type": "DIRECT"}],
 }
-
 user_permission_messages_edit_json = {
     "id": "5902656c-c41c-4b38-a294-0359e6aabe59",
     "groups": [{"value": "f385f89e-928f-4a0f-96a0-4c48d9007cc3", "display": "messages.edit", "type": "DIRECT"}],
@@ -167,7 +156,6 @@ class TestMessage(ViewTestCase):
 
     @requests_mock.mock()
     def mock_uaa(self, mock_request):
-
         mock_request.get(url_permission_url, json=user_permission_admin_json, status_code=200)
         mock_request.post(url_sign_in_data, json={"access_token": self.access_token}, status_code=201)
 
@@ -179,7 +167,6 @@ class TestMessage(ViewTestCase):
         mock_request.get(url_get_threads_list, json=thread_list)
         mock_request.get(url_get_surveys_list, json=self.surveys_list_json)
         mock_request.get(shortname_url + "/ASHE", json=ashe_info["survey"])
-        self.mock_uaa()
         response = self.client.get("/messages/ASHE")
 
         self.assertEqual(response.status_code, 200)
@@ -204,7 +191,6 @@ class TestMessage(ViewTestCase):
         mock_request.get(url_get_threads_list, json=thread_list)
         mock_request.get(url_get_surveys_list, json=self.surveys_list_json)
         mock_request.get(shortname_url + "/technical", json=ashe_info["survey"])
-        self.mock_uaa()
         response = self.client.get("/messages/technical")
 
         self.assertEqual(response.status_code, 200)
@@ -229,7 +215,6 @@ class TestMessage(ViewTestCase):
         mock_request.get(url_get_surveys_list, json=self.surveys_list_json)
         mock_request.get(shortname_url + "/miscellaneous", json=ashe_info["survey"])
         form = {"inbox-radio": "misc"}
-        self.mock_uaa()
         response = self.client.post("/messages/select-survey", data=form, follow_redirects=True)
 
         self.assertEqual(response.status_code, 200)
@@ -254,7 +239,6 @@ class TestMessage(ViewTestCase):
         mock_request.get(url_get_threads_list, json=thread_list)
         mock_request.get(url_get_surveys_list, json=self.surveys_list_json)
         mock_request.get(shortname_url + "/miscellaneous", json=ashe_info["survey"])
-        self.mock_uaa()
         response = self.client.get("/messages/miscellaneous")
 
         self.assertEqual(response.status_code, 200)
@@ -271,7 +255,6 @@ class TestMessage(ViewTestCase):
     def test_survey_short_name_failure(self, mock_request, mock_get_jwt):
         mock_get_jwt.return_value = "blah"
         mock_request.get(shortname_url + "/ASHE", status_code=500)
-        self.mock_uaa()
         response = self.client.get("/messages/ASHE", follow_redirects=True)
 
         request_history = mock_request.request_history
@@ -280,102 +263,52 @@ class TestMessage(ViewTestCase):
 
     @requests_mock.mock()
     @patch("response_operations_ui.controllers.message_controllers._get_jwt")
-    def test_threads_list_with_missing_atmsg_to(self, mock_request, mock_get_jwt):
+    def test_threads_list_missing_data(self, mock_request, mock_get_jwt):
         mock_get_jwt.return_value = "blah"
-        with open(f"{project_root}/test_data/message/threads_missing_atmsg_to.json") as thread_json:
-            malformed_thread_list = json.load(thread_json)
         mock_request.get(url_messages + "/count", json={"total": 1}, status_code=200)
-        mock_request.get(url_get_threads_list, json=malformed_thread_list)
         mock_request.get(url_get_surveys_list, json=self.surveys_list_json)
         mock_request.get(shortname_url + "/ASHE", json=ashe_info["survey"])
-        self.mock_uaa()
-        response = self.client.get("/messages/ASHE")
 
+        # Missing atmsg_to
+        mock_request.get(url_get_threads_list, json=threads_missing_atmsg_to_json)
+        response = self.client.get("/messages/ASHE")
         self.assertEqual(response.status_code, 200)
         self.assertIn("Unavailable".encode(), response.data)
         self.assertIn("Example message subject".encode(), response.data)
 
-    @requests_mock.mock()
-    @patch("response_operations_ui.controllers.message_controllers._get_jwt")
-    def test_threads_list_with_missing_atmsg_from(self, mock_request, mock_get_jwt):
-        mock_get_jwt.return_value = "blah"
-        with open(f"{project_root}/test_data/message/threads_missing_atmsg_from.json") as thread_json:
-            malformed_thread_list = json.load(thread_json)
-        mock_request.get(url_messages + "/count", json={"total": 1}, status_code=200)
-        mock_request.get(url_get_threads_list, json=malformed_thread_list)
-        mock_request.get(url_get_surveys_list, json=self.surveys_list_json)
-        mock_request.get(shortname_url + "/ASHE", json=ashe_info["survey"])
-        self.mock_uaa()
+        # Missing atmsg_from
+        mock_request.get(url_get_threads_list, json=threads_missing_atmsg_from_json)
         response = self.client.get("/messages/ASHE")
-
         self.assertEqual(response.status_code, 200)
         self.assertIn("Deleted respondent".encode(), response.data)
         self.assertIn("Example message subject".encode(), response.data)
 
-    @requests_mock.mock()
-    @patch("response_operations_ui.controllers.message_controllers._get_jwt")
-    def test_threads_list_with_missing_msg_to(self, mock_request, mock_get_jwt):
-        mock_get_jwt.return_value = "blah"
-        with open(f"{project_root}/test_data/message/threads_missing_msg_to.json") as thread_json:
-            malformed_thread_list = json.load(thread_json)
-        mock_request.get(url_messages + "/count", json={"total": 1}, status_code=200)
-        mock_request.get(url_get_threads_list, json=malformed_thread_list)
-        mock_request.get(url_get_surveys_list, json=self.surveys_list_json)
-        mock_request.get(shortname_url + "/ASHE", json=ashe_info["survey"])
-        self.mock_uaa()
+        # Missing msg_to
+        mock_request.get(url_get_threads_list, json=threads_missing_msg_to_json)
+        response = self.client.get("/messages/ASHE")
+        self.assertEqual(response.status_code, 200)
+        self.assertIn("Unavailable".encode(), response.data)
+        self.assertIn("Example message subject".encode(), response.data)
+
+        # Missing ru_ref
+        mock_request.get(url_get_threads_list, json=threads_missing_ru_ref_json)
         response = self.client.get("/messages/ASHE")
 
         self.assertEqual(response.status_code, 200)
         self.assertIn("Unavailable".encode(), response.data)
         self.assertIn("Example message subject".encode(), response.data)
 
-    @requests_mock.mock()
-    @patch("response_operations_ui.controllers.message_controllers._get_jwt")
-    def test_threads_list_with_missing_date(self, mock_request, mock_get_jwt):
-        mock_get_jwt.return_value = "blah"
-        with open(f"{project_root}/test_data/message/threads_missing_sent_date.json") as thread_json:
-            malformed_thread_list = json.load(thread_json)
-        mock_request.get(url_messages + "/count", json={"total": 1}, status_code=200)
-        mock_request.get(url_get_threads_list, json=malformed_thread_list)
-        mock_request.get(url_get_surveys_list, json=self.surveys_list_json)
-        mock_request.get(shortname_url + "/ASHE", json=ashe_info["survey"])
-        self.mock_uaa()
+        # Missing date
+        mock_request.get(url_get_threads_list, json=threads_missing_sent_date_json)
         response = self.client.get("/messages/ASHE")
 
         self.assertEqual(response.status_code, 200)
         self.assertIn("Unavailable".encode(), response.data)
         self.assertIn("Example message subject".encode(), response.data)
 
-    @requests_mock.mock()
-    @patch("response_operations_ui.controllers.message_controllers._get_jwt")
-    def test_threads_list_with_missing_ru_ref(self, mock_request, mock_get_jwt):
-        mock_get_jwt.return_value = "blah"
-        with open(f"{project_root}/test_data/message/threads_missing_ru_ref.json") as thread_json:
-            malformed_thread_list = json.load(thread_json)
-        mock_request.get(url_messages + "/count", json={"total": 1}, status_code=200)
-        mock_request.get(url_get_threads_list, json=malformed_thread_list)
-        mock_request.get(url_get_surveys_list, json=self.surveys_list_json)
-        mock_request.get(shortname_url + "/ASHE", json=ashe_info["survey"])
-        self.mock_uaa()
+        # Missing business name
+        mock_request.get(url_get_threads_list, json=threads_missing_business_name_json)
         response = self.client.get("/messages/ASHE")
-
-        self.assertEqual(response.status_code, 200)
-        self.assertIn("Unavailable".encode(), response.data)
-        self.assertIn("Example message subject".encode(), response.data)
-
-    @requests_mock.mock()
-    @patch("response_operations_ui.controllers.message_controllers._get_jwt")
-    def test_threads_list_with_missing_business_name(self, mock_request, mock_get_jwt):
-        mock_get_jwt.return_value = "blah"
-        with open(f"{project_root}/test_data/message/threads_missing_business_name.json") as thread_json:
-            malformed_thread_list = json.load(thread_json)
-        mock_request.get(url_messages + "/count", json={"total": 1}, status_code=200)
-        mock_request.get(url_get_threads_list, json=malformed_thread_list)
-        mock_request.get(url_get_surveys_list, json=self.surveys_list_json)
-        mock_request.get(shortname_url + "/ASHE", json=ashe_info["survey"])
-        self.mock_uaa()
-        response = self.client.get("/messages/ASHE")
-
         self.assertEqual(response.status_code, 200)
         self.assertIn("Unavailable".encode(), response.data)
         self.assertIn("Example message subject".encode(), response.data)
@@ -387,7 +320,6 @@ class TestMessage(ViewTestCase):
         mock_request.get(url_messages + "/count", json={"total": 1}, status_code=200)
         mock_request.get(url_get_threads_list, status_code=500)
         mock_request.get(shortname_url + "/ASHE", json=ashe_info["survey"])
-        self.mock_uaa()
         response = self.client.get("/messages/ASHE", follow_redirects=True)
 
         request_history = mock_request.request_history
@@ -404,7 +336,6 @@ class TestMessage(ViewTestCase):
         mock_request.get(url_messages + "/count", json={"total": 1}, status_code=200)
         mock_request.get(url_get_threads_list, json={"messages": []})
         mock_request.get(shortname_url + "/ASHE", json=ashe_info["survey"])
-        self.mock_uaa()
         response = self.client.get("/messages/ASHE")
 
         self.assertEqual(response.status_code, 200)
@@ -416,7 +347,6 @@ class TestMessage(ViewTestCase):
         mock_get_jwt.return_value = "blah"
         mock_request.get(shortname_url + "/ASHE", json=ashe_info["survey"])
         mock_request.get(url_messages + "/count", json={"total": 1}, status_code=500)
-        self.mock_uaa()
         response = self.client.get("/messages/ASHE", follow_redirects=True)
 
         request_history = mock_request.request_history
@@ -429,7 +359,6 @@ class TestMessage(ViewTestCase):
         mock_request.get(url_get_surveys_list, json=self.surveys_list_json)
         mock_request.get(url_get_threads_list, json=threads_no_unread_list)
         mock_request.get(shortname_url + "/ASHE", json=ashe_info["survey"])
-        self.mock_uaa()
         response = self.client.get("/messages/ASHE")
 
         self.assertNotIn("message-list__item--unread".encode(), response.data)
@@ -443,7 +372,6 @@ class TestMessage(ViewTestCase):
         mock_request.get(url_get_surveys_list, json=self.surveys_list_json)
         mock_request.get(url_get_threads_list, json=threads_unread_list)
         mock_request.get(shortname_url + "/ASHE", json=ashe_info["survey"])
-        self.mock_uaa()
         response = self.client.get("/messages/ASHE")
 
         self.assertIn('name="message-unread"'.encode(), response.data)
@@ -461,55 +389,30 @@ class TestMessage(ViewTestCase):
 
     @requests_mock.mock()
     @patch("response_operations_ui.controllers.message_controllers._get_jwt")
-    def test_get_thread(self, mock_request, mock_get_jwt):
+    def test_get_thread_success(self, mock_request, mock_get_jwt):
         mock_get_jwt.return_value = "blah"
+        mock_request.put(url_update_label)
+        mock_request.get(url_get_surveys_list, json=survey_list)
+
+        # Survey messages
         mock_request.get(url_get_thread, json=thread_unread_json)
-        mock_request.put(url_update_label)
-        mock_request.get(url_get_surveys_list, json=survey_list)
-        self.mock_uaa()
         response = self.client.get("/messages/threads/fb0e79bd-e132-4f4f-a7fd-5e8c6b41b9af")
-
         self.assertIn("Unread Message Subject".encode(), response.data)
+        self.assertIn("Mark as unread".encode(), response.data)
 
-    @requests_mock.mock()
-    @patch("response_operations_ui.controllers.message_controllers._get_jwt")
-    def test_get_thread_for_technical_messages(self, mock_request, mock_get_jwt):
-        mock_get_jwt.return_value = "blah"
+        # Technical messages
         mock_request.get(url_get_thread, json=thread_unread_technical_json)
-        mock_request.put(url_update_label)
-        mock_request.get(url_get_surveys_list, json=survey_list)
-        self.mock_uaa()
         response = self.client.get("/messages/threads/fb0e79bd-e132-4f4f-a7fd-5e8c6b41b9af")
-
         self.assertIn("Unread Message Subject".encode(), response.data)
         self.assertIn("Category".encode(), response.data)
         self.assertIn("TECHNICAL".encode(), response.data)
 
-    @requests_mock.mock()
-    @patch("response_operations_ui.controllers.message_controllers._get_jwt")
-    def test_get_thread_for_rft_messages(self, mock_request, mock_get_jwt):
-        mock_get_jwt.return_value = "blah"
+        # RFT messages
         mock_request.get(url_get_thread, json=thread_unread_rft_json)
-        mock_request.put(url_update_label)
-        mock_request.get(url_get_surveys_list, json=survey_list)
-        self.mock_uaa()
         response = self.client.get("/messages/threads/fb0e79bd-e132-4f4f-a7fd-5e8c6b41b9af")
-
         self.assertIn("Unread Message Subject".encode(), response.data)
         self.assertIn("Category".encode(), response.data)
         self.assertIn("MISC".encode(), response.data)
-
-    @requests_mock.mock()
-    @patch("response_operations_ui.controllers.message_controllers._get_jwt")
-    def test_get_thread_sent_to_GROUP_mark_unread_displayed(self, mock_request, mock_get_jwt):
-        mock_get_jwt.return_value = "blah"
-        mock_request.get(url_get_thread, json=thread_unread_json)
-        mock_request.put(url_update_label)
-        mock_request.get(url_get_surveys_list, json=survey_list)
-        self.mock_uaa()
-        response = self.client.get("/messages/threads/fb0e79bd-e132-4f4f-a7fd-5e8c6b41b9af")
-
-        self.assertIn("Mark as unread".encode(), response.data)
 
     @requests_mock.mock()
     @patch("response_operations_ui.controllers.message_controllers._get_jwt")
@@ -536,7 +439,6 @@ class TestMessage(ViewTestCase):
         mock_request.get(url_get_thread, json=test_data)
         mock_request.put(url_update_label)
         mock_request.get(url_get_surveys_list, json=survey_list)
-        self.mock_uaa()
         response = self.client.get("/messages/threads/fb0e79bd-e132-4f4f-a7fd-5e8c6b41b9af")
 
         self.assertNotIn("Mark as unread".encode(), response.data)
@@ -564,7 +466,6 @@ class TestMessage(ViewTestCase):
         mock_request.get(url_get_thread, json=thread_unread_json)
         mock_request.put(url_update_label, status_code=500)
         mock_request.get(url_get_surveys_list, json=survey_list)
-        self.mock_uaa()
         response = self.client.get("/messages/threads/fb0e79bd-e132-4f4f-a7fd-5e8c6b41b9af")
 
         self.assertIn("Unread Message Subject".encode(), response.data)
@@ -596,7 +497,6 @@ class TestMessage(ViewTestCase):
         mock_request.get(url_get_threads_list, json={})
         mock_request.get(url_messages + "/count", json={"total": 1}, status_code=200)
         mock_request.get(shortname_url + "/ASHE", json=ashe_info["survey"])
-        self.mock_uaa()
         response = self.client.get("/messages/ASHE")
 
         self.assertEqual(response.status_code, 200)
@@ -925,7 +825,6 @@ class TestMessage(ViewTestCase):
     def test_dropdown_post_nothing_selected(self, mock_request):
         mock_request.get(url_get_threads_list, json=thread_list)
         mock_request.get(url_get_surveys_list, json=self.surveys_list_json)
-        self.mock_uaa()
         response = self.client.post("/messages/select-survey", follow_redirects=True)
 
         self.assertEqual(200, response.status_code)
@@ -1692,7 +1591,6 @@ class TestMessage(ViewTestCase):
         mock_request.get(url_get_thread, json=thread_unread_json)
         mock_request.put(url_update_label)
         mock_request.get(url_get_surveys_list, json=survey_list)
-        self.mock_uaa()
         response = self.client.get("/messages/threads/fb0e79bd-e132-4f4f-a7fd-5e8c6b41b9af")
 
         self.assertEqual(response.status_code, 200)
