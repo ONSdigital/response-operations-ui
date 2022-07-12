@@ -56,7 +56,6 @@ class TestUAAController(unittest.TestCase):
         self.client = self.app.test_client()
 
     # user_has_permission
-
     @requests_mock.mock()
     def test_user_has_permission_true(self, mock_request):
         mock_request.post(url_uaa_token, json={"access_token": self.access_token}, status_code=201)

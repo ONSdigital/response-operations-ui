@@ -213,8 +213,7 @@ def reset_user_password_by_id(user_id: str, password: str) -> requests.Response 
 
 def create_user_account_with_random_password(email: str, first_name: str, last_name: str) -> dict:
     """
-    Creates a user in uaa with a 64 character length password.  This is designed to be used when a user with admin
-    permission creates an account that the intended user will then set the password for.
+    Creates a user in uaa with a 64 character length password.
 
     :param email: Email of the user being created, also acts as their username
     :param first_name: First name of the user being created
