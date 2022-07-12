@@ -23,7 +23,8 @@ def decode_access_token(access_token):
 
 
 def generate_token(data):
-    """Creates a token based on a provided data
+    """
+    Creates a token based on data provided
 
     :param data: Some data that we wish to create a token for
     :return: A serialised string containing the data
