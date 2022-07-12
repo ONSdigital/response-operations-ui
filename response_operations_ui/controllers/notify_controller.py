@@ -16,7 +16,8 @@ class NotifyController:
         self.confirm_password_change_template = app.config["NOTIFY_CONFIRM_PASSWORD_CHANGE_TEMPLATE"]
         self.create_user_account_template = app.config["NOTIFY_CREATE_USER_ACCOUNT_TEMPLATE"]
 
-        # request and confirm create account templates are the pre-RBA ones and will be removed at some point.
+        # Request and confirm create account templates were used in the old pre-role based access account creation flow.
+        # Once the IS_ROLE_BASED_ACCESS_ENABLED flag is true in all environments, we can remove these templates.
         self.request_create_account_template = app.config["NOTIFY_REQUEST_CREATE_ACCOUNT_TEMPLATE"]
         self.confirm_create_account_template = app.config["NOTIFY_CONFIRM_CREATE_ACCOUNT_TEMPLATE"]
 

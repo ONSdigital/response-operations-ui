@@ -149,14 +149,13 @@ def retrieve_user_code(access_token, username):
 
 def change_password(access_token: str, user_code: str, new_password: str) -> requests.Response:
     """
-    Resets the password for a user using a user_code that was given to us by uaa via the password reset functionality
+    Changes the password for a user using a user_code that was given to us by uaa via the password reset functionality
     that it offers.
 
     :param access_token: The access code that authenticates us with uaa
     :param user_code: A code given to us by uaa as part of the password reset functionality
     :param new_password: New password for the user
     :return: The response from the password reset endpoint
-    :raises HTTPError: Raised if hitting the password reset endpoint results in a 4XX or 5XX status code.
     """
     headers = generate_headers(access_token)
 
