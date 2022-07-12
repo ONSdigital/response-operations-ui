@@ -493,7 +493,7 @@ class TestReportingUnits(ViewTestCase):
         self.assertEqual(response.status_code, 200)
 
     @requests_mock.mock()
-    def test_edit_contact_details_email_already_exists(self, mock_request):
+    def test_edit_contact_details_email_failures(self, mock_request):
         changed_details = {
             "first_name": "Tom",
             "last_name": "Smith",
@@ -501,27 +501,18 @@ class TestReportingUnits(ViewTestCase):
             "telephone": "7971161859",
         }
         mock_request.get(get_respondent_by_id_url, json=respondent)
-        mock_request.put(url_edit_contact_details, status_code=409)
 
+        # User already exists (409)
+        mock_request.put(url_edit_contact_details, status_code=409)
         response = self.client.post(
             f"/reporting-units/50012345678/edit-contact-details/{respondent_party_id}",
             data=changed_details,
             follow_redirects=True,
         )
-
         self.assertIn("Error - email address already exists".encode(), response.data)
 
-    @requests_mock.mock()
-    def test_edit_contact_details_404_response(self, mock_request):
-        changed_details = {
-            "first_name": "Tom",
-            "last_name": "Smith",
-            "email": "Jacky.Turner@email.com",
-            "telephone": "7971161859",
-        }
-        mock_request.get(get_respondent_by_id_url, json=respondent)
+        # User not found (404)
         mock_request.put(url_edit_contact_details, status_code=404)
-
         response = self.client.post(
             f"/reporting-units/50012345678/edit-contact-details/{respondent_party_id}",
             data=changed_details,
@@ -530,42 +521,13 @@ class TestReportingUnits(ViewTestCase):
 
         self.assertIn(CONNECTION_ERROR.encode(), response.data)
 
-    @requests_mock.mock()
-    def test_edit_contact_details_500_response(self, mock_request):
-        changed_details = {
-            "first_name": "Tom",
-            "last_name": "Smith",
-            "email": "Jacky.Turner@email.com",
-            "telephone": "7971161867",
-        }
-        mock_request.get(get_respondent_by_id_url, json=respondent)
+        # Server error (500)
         mock_request.put(url_edit_contact_details, status_code=500)
-
         response = self.client.post(
             f"/reporting-units/50012345678/edit-contact-details/{respondent_party_id}",
             data=changed_details,
             follow_redirects=True,
         )
-
-        self.assertIn(CONNECTION_ERROR.encode(), response.data)
-
-    @requests_mock.mock()
-    def test_edit_contact_details_error_response(self, mock_request):
-        changed_details = {
-            "first_name": "Tom",
-            "last_name": "Smith",
-            "email": "Jacky.Turner@email.com",
-            "telephone": "7971161867",
-        }
-        mock_request.get(get_respondent_by_id_url, json=respondent)
-        mock_request.put(url_edit_contact_details, status_code=405)
-
-        response = self.client.post(
-            f"/reporting-units/50012345678/edit-contact-details/{respondent_party_id}",
-            data=changed_details,
-            follow_redirects=True,
-        )
-
         self.assertIn(CONNECTION_ERROR.encode(), response.data)
 
     @requests_mock.mock()
