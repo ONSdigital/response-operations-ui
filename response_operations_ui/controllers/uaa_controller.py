@@ -14,7 +14,7 @@ from structlog import wrap_logger
 logger = wrap_logger(logging.getLogger(__name__))
 
 
-def sign_in(username, password):
+def sign_in(username: str, password: str):
     logger.info("Retrieving OAuth2 token for sign-in")
     url = f'{app.config["UAA_SERVICE_URL"]}/oauth/token'
 
@@ -174,7 +174,15 @@ def generate_headers(access_token):
     return headers
 
 
-def change_user_password_by_email(email: str, password: str):
+def change_user_password_by_email(email: str, password: str) -> requests.Response | None:
+    """
+    Changes the user password from something unknown to whatever the user chooses, using the email of the user as
+    an identifier.
+
+    :param email: The email address of the uaa user
+    :param password: The new password for the account
+    :return: The response object we get after hitting the /password_change endpoint in uaa.
+    """
     access_token = login_admin()
 
     user_response = get_user_by_email(email, access_token)
@@ -191,11 +199,12 @@ def change_user_password_by_email(email: str, password: str):
 
 def change_user_password_by_id(user_id: str, password: str) -> requests.Response | None:
     """
-    Resets the user password from something unknown to whatever the user chooses.
+    Changes the user password from something unknown to whatever the user chooses, using the user_id of the user as
+    an identifier.
 
     :param user_id: The id of the uua user
     :param password: The new password for the account
-    :return: The response of hitting the /password_change endpoint in uaa.
+    :return: The response object we get after hitting the /password_change endpoint in uaa.
     """
     access_token = login_admin()
 
@@ -283,12 +292,12 @@ def create_user_account(email, password, user_name, first_name, last_name):
     return errors
 
 
-def update_user_account(payload):
+def update_user_account(payload) -> dict | None:
     """
     Updates the user in uaa, using the user's id
 
     :param payload: the same payload we receive from uaa, with the updated values
-    :return errors: The errors returned from uaa as a dictionary
+    :return errors: None on success, or the errors returned from uaa as a dictionary
     """
     access_token = login_admin()
 
@@ -440,7 +449,7 @@ def remove_group_membership(user_id: str, group_id: str) -> dict:
     return response.json()
 
 
-def refresh_permissions(user_id):
+def refresh_permissions(user_id: str) -> None:
     """
     Refreshes the cache of permissions for the current user
 
@@ -450,7 +459,7 @@ def refresh_permissions(user_id):
     session["permissions"] = {"groups": user.get("groups"), "expiry": (datetime.now() + timedelta(minutes=5))}
 
 
-def user_has_permission(permission, user_id=None) -> bool:
+def user_has_permission(permission: str, user_id=None) -> bool:
     """
     Checks to see if the user provided or in the session has the specified permission
 
@@ -509,7 +518,7 @@ def get_users_list(
         return {"error": "Failed to retrieve user list, please try again"}
 
 
-def get_filter_query(filter_criteria: str, filter_value: str, filter_on: str):
+def get_filter_query(filter_criteria: str, filter_value: str, filter_on: str) -> str:
     return f"{filter_on} {get_filter(filter_criteria)} '{filter_value}'"
 
 
