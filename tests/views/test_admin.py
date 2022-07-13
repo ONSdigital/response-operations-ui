@@ -211,7 +211,7 @@ class TestMessage(ViewTestCase):
             self.assertEqual(200, response.status_code)
             self.assertIn(
                 "An email to activate the account has been sent to some.one@ons.gov.uk. "
-                "This email will be valid for 6 weeks.".encode(),
+                "This email will be valid for 4 weeks.".encode(),
                 response.data,
             )
             self.assertIn("Return to manage user accounts".encode(), response.data)
@@ -264,7 +264,7 @@ class TestMessage(ViewTestCase):
             self.assertEqual(200, response.status_code)
             self.assertIn(
                 "An email to activate the account has been sent to some.one@ons.gov.uk. "
-                "This email will be valid for 6 weeks.".encode(),
+                "This email will be valid for 4 weeks.".encode(),
                 response.data,
             )
             self.assertIn(
