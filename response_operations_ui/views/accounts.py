@@ -460,7 +460,7 @@ def post_verify_account(token):
     if not form.validate():
         return render_template("account/verify-account.html", form=form, username=user["userName"])
 
-    result = uaa_controller.reset_user_password_by_id(user_id, form.password.data)
+    result = uaa_controller.change_user_password_by_id(user_id, form.password.data)
     if result is None:
         flash("Something went wrong setting password and verifying account, please try again", "error")
         return render_template("account/verify-account.html", form=form, username=user["userName"])

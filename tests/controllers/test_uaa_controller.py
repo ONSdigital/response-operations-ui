@@ -189,7 +189,7 @@ class TestUAAController(unittest.TestCase):
                 {"error": "Username already in use: some.one@ons.gov.uk"},
             )
 
-    # change_user_password
+    # change_user_password_by_email
 
     @requests_mock.mock()
     def test_change_user_password_by_id_user_not_found(self, mock_request):
@@ -197,7 +197,7 @@ class TestUAAController(unittest.TestCase):
         mock_request.get(url_uaa_user_by_email, status_code=404)
 
         with self.app.test_request_context():
-            self.assertIsNone(uaa_controller.change_user_password("some.one@ons.gov.uk", user_password))
+            self.assertIsNone(uaa_controller.change_user_password_by_email("some.one@ons.gov.uk", user_password))
 
     @requests_mock.mock()
     def test_change_user_password_retrieve_code_failure(self, mock_request):
@@ -207,9 +207,9 @@ class TestUAAController(unittest.TestCase):
         mock_request.post(url_uaa_password_reset_code, status_code=500)
 
         with self.app.test_request_context():
-            self.assertIsNone(uaa_controller.change_user_password(user_email, user_password))
+            self.assertIsNone(uaa_controller.change_user_password_by_email(user_email, user_password))
 
-    # reset_user_password_by_id
+    # change_user_password_by_id
 
     @requests_mock.mock()
     def test_reset_user_password_by_id_user_not_found(self, mock_request):
@@ -217,7 +217,7 @@ class TestUAAController(unittest.TestCase):
         mock_request.get(url_uaa_user_by_id, status_code=404)
 
         with self.app.test_request_context():
-            self.assertIsNone(uaa_controller.reset_user_password_by_id(user_id, user_password))
+            self.assertIsNone(uaa_controller.change_user_password_by_id(user_id, user_password))
 
     @requests_mock.mock()
     def test_reset_user_password_by_id_retrieve_code_failure(self, mock_request):
@@ -227,7 +227,7 @@ class TestUAAController(unittest.TestCase):
         mock_request.post(url_uaa_password_reset_code, status_code=500)
 
         with self.app.test_request_context():
-            self.assertIsNone(uaa_controller.reset_user_password_by_id(user_id, user_password))
+            self.assertIsNone(uaa_controller.change_user_password_by_id(user_id, user_password))
 
     @requests_mock.mock()
     def test_reset_user_password_by_id_password_change_failure(self, mock_request):
@@ -238,7 +238,7 @@ class TestUAAController(unittest.TestCase):
         mock_request.post(url_uaa_password_change, status_code=500)
 
         with self.app.test_request_context():
-            output = uaa_controller.reset_user_password_by_id(user_id, user_password)
+            output = uaa_controller.change_user_password_by_id(user_id, user_password)
             self.assertEqual(output.status_code, 500)
 
     @requests_mock.mock()
@@ -256,6 +256,6 @@ class TestUAAController(unittest.TestCase):
         mock_request.post(url_uaa_password_change, json=password_change_success_json, status_code=200)
 
         with self.app.test_request_context():
-            output = uaa_controller.reset_user_password_by_id(user_id, user_password)
+            output = uaa_controller.change_user_password_by_id(user_id, user_password)
             self.assertEqual(output.status_code, 200)
             self.assertEqual(output.json(), password_change_success_json)

@@ -174,7 +174,7 @@ def generate_headers(access_token):
     return headers
 
 
-def change_user_password(email, password):
+def change_user_password_by_email(email: str, password: str):
     access_token = login_admin()
 
     user_response = get_user_by_email(email, access_token)
@@ -189,7 +189,7 @@ def change_user_password(email, password):
     return change_password(access_token=access_token, user_code=password_reset_code, new_password=password)
 
 
-def reset_user_password_by_id(user_id: str, password: str) -> requests.Response | None:
+def change_user_password_by_id(user_id: str, password: str) -> requests.Response | None:
     """
     Resets the user password from something unknown to whatever the user chooses.
 

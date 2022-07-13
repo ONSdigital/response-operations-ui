@@ -91,7 +91,7 @@ def post_reset_password(token):
         logger.warning("Invalid token sent to Response Operations password reset", token=token)
         return render_template("reset-password-expired.html", token=token)
 
-    response = uaa_controller.change_user_password(email, password)
+    response = uaa_controller.change_user_password_by_email(email, password)
 
     if response is not None:
         if response.status_code == 200:
