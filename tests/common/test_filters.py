@@ -25,7 +25,7 @@ class TestFilters(unittest.TestCase):
         """Tests a survey with a collection exercise that's in its most empty state will return an empty
         dict."""
         with open(
-            f"{project_root}/test_data/collection_exercise/" f"single_new_collection_exercise_for_survey.json"
+            f"{project_root}/test_data/collection_exercise/single_new_collection_exercise_for_survey.json"
         ) as json_data:
             collection_exercise_list = json.load(json_data)
 
@@ -37,9 +37,7 @@ class TestFilters(unittest.TestCase):
     def test_get_nearest_future_key_date_future_dates_only(self):
         """Tests that given set of events with only future dates, the closest future event to 'today'
         will be picked"""
-        with open(
-            f"{project_root}/test_data/collection_exercise/" f"closest_future_collection_exercise.json"
-        ) as json_data:
+        with open(f"{project_root}/test_data/collection_exercise/closest_future_collection_exercise.json") as json_data:
             collection_exercise = json.load(json_data)
 
         expected_output = {
@@ -56,9 +54,7 @@ class TestFilters(unittest.TestCase):
     def test_get_nearest_future_key_date_past_dates_only(self):
         """Tests that given set of events with only past dates, the function will return an empty dict as it only
         works for events in the future"""
-        with open(
-            f"{project_root}/test_data/collection_exercise/" f"closest_past_collection_exercise.json"
-        ) as json_data:
+        with open(f"{project_root}/test_data/collection_exercise/closest_past_collection_exercise.json") as json_data:
             collection_exercise = json.load(json_data)
 
         expected_output = {}
@@ -77,7 +73,7 @@ class TestFilters(unittest.TestCase):
         """Tests a survey with a collection exercise that's in its most empty state will return an empty
         dict."""
         with open(
-            f"{project_root}/test_data/collection_exercise/" f"single_new_collection_exercise_for_survey.json"
+            f"{project_root}/test_data/collection_exercise/single_new_collection_exercise_for_survey.json"
         ) as json_data:
             collection_exercise_list = json.load(json_data)
 
@@ -89,14 +85,10 @@ class TestFilters(unittest.TestCase):
     def test_get_current_collection_exercise_future_dates_only(self):
         """Tests that given set of collection exercises with only future dates, the closest date to 'today'
         will be picked"""
-        with open(
-            f"{project_root}/test_data/collection_exercise/" f"only_future_collection_exercises.json"
-        ) as json_data:
+        with open(f"{project_root}/test_data/collection_exercise/only_future_collection_exercises.json") as json_data:
             collection_exercise_list = json.load(json_data)
 
-        with open(
-            f"{project_root}/test_data/collection_exercise/" f"closest_future_collection_exercise.json"
-        ) as json_data:
+        with open(f"{project_root}/test_data/collection_exercise/closest_future_collection_exercise.json") as json_data:
             expected_output = json.load(json_data)
 
         output = get_current_collection_exercise(collection_exercise_list)
@@ -106,7 +98,7 @@ class TestFilters(unittest.TestCase):
     def test_get_current_collection_exercise_past_dates_only(self):
         """Tests that given set of collection exercises with only past dates, the closest date to 'today'
         will be picked"""
-        with open(f"{project_root}/test_data/collection_exercise/" f"only_past_collection_exercises.json") as json_data:
+        with open(f"{project_root}/test_data/collection_exercise/only_past_collection_exercises.json") as json_data:
             collection_exercise_list = json.load(json_data)
 
         expected_output = {}
@@ -119,13 +111,11 @@ class TestFilters(unittest.TestCase):
         """Tests that given set of collection exercises with past and future dates, the closest date to 'today'
         will be picked"""
         with open(
-            f"{project_root}/test_data/collection_exercise/" f"mixed_past_and_future_collection_exercises.json"
+            f"{project_root}/test_data/collection_exercise/mixed_past_and_future_collection_exercises.json"
         ) as json_data:
             collection_exercise_list = json.load(json_data)
 
-        with open(
-            f"{project_root}/test_data/collection_exercise/" f"closest_future_collection_exercise.json"
-        ) as json_data:
+        with open(f"{project_root}/test_data/collection_exercise/closest_future_collection_exercise.json") as json_data:
             expected_output = json.load(json_data)
 
         output = get_current_collection_exercise(collection_exercise_list)
@@ -136,13 +126,11 @@ class TestFilters(unittest.TestCase):
         """Tests that when there are two collection exercises with the same start date, the one that was seen first
         will be the one returned."""
         with open(
-            f"{project_root}/test_data/collection_exercise/" f"multiple_same_start_collection_exercises.json"
+            f"{project_root}/test_data/collection_exercise/multiple_same_start_collection_exercises.json"
         ) as json_data:
             collection_exercise_list = json.load(json_data)
 
-        with open(
-            f"{project_root}/test_data/collection_exercise/" f"closest_future_collection_exercise.json"
-        ) as json_data:
+        with open(f"{project_root}/test_data/collection_exercise/closest_future_collection_exercise.json") as json_data:
             expected_output = json.load(json_data)
 
         output = get_current_collection_exercise(collection_exercise_list)

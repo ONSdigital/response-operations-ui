@@ -486,6 +486,15 @@ class CreateAccountWithPermissionsForm(FlaskForm):
             "users_admin",
         ]
 
+    @staticmethod
+    def validate_email(_, field):
+        email = field.data
+        _validate_email_address(email)
+        local_part, domain_part = email.rsplit("@", 1)
+        if domain_part not in ["ons.gov.uk", "ext.ons.gov.uk", "ons.fake"]:
+            logger.info("Account requested for non-ONS email address")
+            raise ValidationError("Not a valid ONS email address")
+
 
 class VerifyAccountForm(FlaskForm):
     password = PasswordField(

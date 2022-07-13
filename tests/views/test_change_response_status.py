@@ -19,7 +19,7 @@ party_id = "cd592e0f-8d07-407b-b75d-e01fbdae8233"
 
 url_get_survey_by_short_name = f"{TestingConfig.SURVEY_URL}/surveys/shortname/{short_name}"
 url_get_collection_exercises_by_survey = (
-    f"{TestingConfig.COLLECTION_EXERCISE_URL}" f"/collectionexercises/survey/{survey_id}"
+    f"{TestingConfig.COLLECTION_EXERCISE_URL}/collectionexercises/survey/{survey_id}"
 )
 url_get_business_by_ru_ref = f"{TestingConfig.PARTY_URL}/party-api/v1/businesses/ref/{ru_ref}"
 url_get_available_case_group_statuses = (
