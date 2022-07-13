@@ -5,7 +5,7 @@ publicIP: false
 sendEmailToGovNotify: false
 
 admin:
-  createAccountEmailExpiry: "3628800"
+  createAccountEmailExpiry: "2419200"
   updateAccountEmailExpiry: "259200"
 
 analytics:
