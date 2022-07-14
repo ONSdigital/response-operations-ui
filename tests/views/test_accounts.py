@@ -607,7 +607,7 @@ class TestAccounts(unittest.TestCase):
             self.assertIn(b"Username already in use; please choose another", response.data)
             self.assertEqual(response.status_code, 200)
 
-    # verify-account
+    # activate-account
 
     @requests_mock.mock()
     def test_get_verify_account(self, mock_request):
@@ -621,7 +621,7 @@ class TestAccounts(unittest.TestCase):
                     f"/account/activate-account/{token}",
                     follow_redirects=True,
                 )
-                self.assertIn(b"Verify account", response.data)
+                self.assertIn(b"Activate your account", response.data)
                 self.assertIn(b"Activate account", response.data)
                 self.assertEqual(response.status_code, 200)
 
@@ -662,9 +662,9 @@ class TestAccounts(unittest.TestCase):
                     "password_confirm": "TestPassword1!",
                 },
             )
-            self.assertIn(b"Verify account", response.data)
+            self.assertIn(b"Activate your account", response.data)
             self.assertIn(
-                b"Something went wrong setting password and verifying account, please try again", response.data
+                b"Something went wrong setting password and activating account, please try again", response.data
             )
             self.assertIn(b"Activate account", response.data)
             self.assertEqual(response.status_code, 200)

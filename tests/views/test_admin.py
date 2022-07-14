@@ -191,7 +191,7 @@ class TestMessage(ViewTestCase):
         self.assertEqual(200, response.status_code)
         self.assertIn("Create your account".encode(), response.data)
         self.assertIn("Manager permissions".encode(), response.data)
-        self.assertIn("Confirm".encode(), response.data)
+        self.assertIn("Create account".encode(), response.data)
 
     @requests_mock.mock()
     def test_post_create_account_success(self, mock_request):
@@ -210,10 +210,9 @@ class TestMessage(ViewTestCase):
             )
             self.assertEqual(200, response.status_code)
             self.assertIn(
-                "An email to activate the account has been sent to some.one@ons.gov.uk. "
-                "This email will be valid for 4 weeks.".encode(),
-                response.data,
+                "An email to activate the account has been sent to some.one@ons.gov.uk.".encode(), response.data
             )
+            self.assertIn("This email will be valid for 4 weeks.".encode(), response.data)
             self.assertIn("Return to manage user accounts".encode(), response.data)
 
     @requests_mock.mock()
@@ -232,7 +231,7 @@ class TestMessage(ViewTestCase):
         self.assertEqual(200, response.status_code)
         self.assertIn("Create your account".encode(), response.data)
         self.assertIn("Manager permissions".encode(), response.data)
-        self.assertIn("Confirm".encode(), response.data)
+        self.assertIn("Create account".encode(), response.data)
         self.assertIn("Failed to get groups, please try again".encode(), response.data)
 
         # Test creating user failure
@@ -263,10 +262,9 @@ class TestMessage(ViewTestCase):
             )
             self.assertEqual(200, response.status_code)
             self.assertIn(
-                "An email to activate the account has been sent to some.one@ons.gov.uk. "
-                "This email will be valid for 4 weeks.".encode(),
-                response.data,
+                "An email to activate the account has been sent to some.one@ons.gov.uk.".encode(), response.data
             )
+            self.assertIn("This email will be valid for 4 weeks.".encode(), response.data)
             self.assertIn(
                 "Failed to give the user the surveys_edit permission. The account has still been created but "
                 "the permission will need to be granted later".encode(),

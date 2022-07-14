@@ -462,7 +462,7 @@ def post_verify_account(token):
 
     result = uaa_controller.change_user_password_by_id(user_id, form.password.data)
     if result is None:
-        flash("Something went wrong setting password and verifying account, please try again", "error")
+        flash("Something went wrong setting password and activating account, please try again", "error")
         return render_template("account/activate-account.html", form=form, username=user["userName"])
 
     flash("Account successfully verified", category="account_created")
