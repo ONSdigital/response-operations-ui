@@ -19,7 +19,7 @@ party_id = "cd592e0f-8d07-407b-b75d-e01fbdae8233"
 
 url_get_survey_by_short_name = f"{TestingConfig.SURVEY_URL}/surveys/shortname/{short_name}"
 url_get_collection_exercises_by_survey = (
-    f"{TestingConfig.COLLECTION_EXERCISE_URL}" f"/collectionexercises/survey/{survey_id}"
+    f"{TestingConfig.COLLECTION_EXERCISE_URL}/collectionexercises/survey/{survey_id}"
 )
 url_get_business_by_ru_ref = f"{TestingConfig.PARTY_URL}/party-api/v1/businesses/ref/{ru_ref}"
 url_get_available_case_group_statuses = (
@@ -91,63 +91,49 @@ class TestChangeResponseStatus(TestCase):
         self.assertIn(b"Completed by phone", data)
 
     @requests_mock.mock()
-    def test_get_available_status_survey_fail(self, mock_request):
+    def test_get_available_status_failures(self, mock_request):
+        """
+        Tests how the response status page will act if various API calls fail.
+        """
+        response_status_url = f"/case/{ru_ref}/response-status?survey={short_name}&period={period}"
+        # Survey fail
         mock_request.get(url_get_survey_by_short_name, status_code=500)
-
-        response = self.client.get(
-            f"/case/{ru_ref}/response-status?survey={short_name}&period={period}", follow_redirects=True
-        )
-
+        response = self.client.get(response_status_url, follow_redirects=True)
+        self.assertEqual(response.status_code, 500)
         self.assertIn("Server error (Error 500)".encode(), response.data)
 
-    @requests_mock.mock()
-    def test_get_available_status_collection_exercise_fail(self, mock_request):
+        # Collection exercise fail
         mock_request.get(url_get_survey_by_short_name, json=survey)
         mock_request.get(url_get_collection_exercises_by_survey, status_code=500)
-
-        response = self.client.get(
-            f"/case/{ru_ref}/response-status?survey={short_name}&period={period}", follow_redirects=True
-        )
-
+        response = self.client.get(response_status_url, follow_redirects=True)
+        self.assertEqual(response.status_code, 500)
         self.assertIn("Server error (Error 500)".encode(), response.data)
 
-    @requests_mock.mock()
-    def test_get_available_status_party_fail(self, mock_request):
+        # Party fail
         mock_request.get(url_get_survey_by_short_name, json=survey)
         mock_request.get(url_get_collection_exercises_by_survey, json=collection_exercise_list)
         mock_request.get(url_get_business_by_ru_ref, status_code=500)
-
-        response = self.client.get(
-            f"/case/{ru_ref}/response-status?survey={short_name}&period={period}", follow_redirects=True
-        )
-
+        response = self.client.get(response_status_url, follow_redirects=True)
+        self.assertEqual(response.status_code, 500)
         self.assertIn("Server error (Error 500)".encode(), response.data)
 
-    @requests_mock.mock()
-    def test_get_available_status_case_fail(self, mock_request):
+        # Case fail
         mock_request.get(url_get_survey_by_short_name, json=survey)
         mock_request.get(url_get_collection_exercises_by_survey, json=collection_exercise_list)
         mock_request.get(url_get_business_by_ru_ref, json=business_reporting_unit)
         mock_request.get(url_get_available_case_group_statuses, status_code=500)
-
-        response = self.client.get(
-            f"/case/{ru_ref}/response-status?survey={short_name}&period={period}", follow_redirects=True
-        )
-
+        response = self.client.get(response_status_url, follow_redirects=True)
+        self.assertEqual(response.status_code, 500)
         self.assertIn("Server error (Error 500)".encode(), response.data)
 
-    @requests_mock.mock()
-    def test_get_available_status_case_group_fail(self, mock_request):
+        # Case group fail
         mock_request.get(url_get_survey_by_short_name, json=survey)
         mock_request.get(url_get_collection_exercises_by_survey, json=collection_exercise_list)
         mock_request.get(url_get_business_by_ru_ref, json=business_reporting_unit)
         mock_request.get(url_get_available_case_group_statuses, json=self.statuses)
         mock_request.get(url_get_case_groups_by_business_party_id, status_code=500)
-
-        response = self.client.get(
-            f"/case/{ru_ref}/response-status?survey={short_name}&period={period}", follow_redirects=True
-        )
-
+        response = self.client.get(response_status_url, follow_redirects=True)
+        self.assertEqual(response.status_code, 500)
         self.assertIn("Server error (Error 500)".encode(), response.data)
 
     @requests_mock.mock()
@@ -168,7 +154,7 @@ class TestChangeResponseStatus(TestCase):
         mock_request.get(url_get_case_by_case_group_id, json=[case], status_code=500)
 
         response = self.client.post(
-            f"/case/{ru_ref}/response-status" f"?survey={short_name}&period={period}&case_group_id={case_group_id}",
+            f"/case/{ru_ref}/response-status?survey={short_name}&period={period}&case_group_id={case_group_id}",
             data={"event": "COMPLETEDBYPHONE"},
             follow_redirects=True,
         )
@@ -182,7 +168,7 @@ class TestChangeResponseStatus(TestCase):
         mock_request.post(url_post_case_event, status_code=500)
 
         response = self.client.post(
-            f"/case/{ru_ref}/response-status" f"?survey={short_name}&period={period}&case_group_id={case_group_id}",
+            f"/case/{ru_ref}/response-status?survey={short_name}&period={period}&case_group_id={case_group_id}",
             data={"event": "COMPLETEDBYPHONE"},
             follow_redirects=True,
         )
@@ -195,7 +181,7 @@ class TestChangeResponseStatus(TestCase):
         mock_request.get(url_get_case_by_case_group_id, json=[case])
 
         response = self.client.post(
-            f"/case/{ru_ref}/response-status" f"?survey={short_name}&period={period}&case_group_id={case_group_id}"
+            f"/case/{ru_ref}/response-status?survey={short_name}&period={period}&case_group_id={case_group_id}"
         )
 
         self.assertEqual(response.status_code, 302)
@@ -213,6 +199,7 @@ class TestChangeResponseStatus(TestCase):
             follow_redirects=True,
         )
 
+        self.assertEqual(response.status_code, 500)
         self.assertIn("Server error (Error 500)".encode(), response.data)
 
     @requests_mock.mock()

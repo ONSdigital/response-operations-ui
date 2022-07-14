@@ -5,7 +5,7 @@ publicIP: false
 sendEmailToGovNotify: false
 
 admin:
-  createAccountEmailExpiry: "3628800"
+  createAccountEmailExpiry: "2419200"
   updateAccountEmailExpiry: "259200"
 
 analytics:
@@ -54,6 +54,7 @@ ingress:
   gcpCertName: response-operations-gcp-cert
 
 notify:
+  createUserAccountTemplate: create_user_account_id
   confirmCreateAccountTemplate: confirm_create_account_id
   confirmPasswordChangeTemplate: confirm_password_change_id
   requestCreateAccountTemplate: request_create_account_id

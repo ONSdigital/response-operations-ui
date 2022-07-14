@@ -70,41 +70,41 @@
     <div class="ons-grid ons-grid--flex ons-grid--between ons-u-st-s">
         <div class="ons-grid__col ons-u-mt-s">
             <p class="field">
-                <a href="#">Create new user account</a>
+                <a href="{{ url_for('admin_bp.get_create_account') }}">Create new user account</a>
             </p>
         </div>
     </div>
+    <table width="100%" style="border-collapse: collapse; table-layout: fixed;">
+        <tr>
+            <th style="border-bottom:0; font-weight:normal; text-align: left; padding:0"><a href="{{ url_for('admin_bp.manage_user_accounts', user_with_email='A') }}">A</a></th>
+            <th style="border-bottom:0; font-weight:normal; text-align: left; padding:0"><a href="{{ url_for('admin_bp.manage_user_accounts', user_with_email='B') }}">B</a></th>
+            <th style="border-bottom:0; font-weight:normal; text-align: left; padding:0"><a href="{{ url_for('admin_bp.manage_user_accounts', user_with_email='C') }}">C</a></th>
+            <th style="border-bottom:0; font-weight:normal; text-align: left; padding:0"><a href="{{ url_for('admin_bp.manage_user_accounts', user_with_email='D') }}">D</a></th>
+            <th style="border-bottom:0; font-weight:normal; text-align: left; padding:0"><a href="{{ url_for('admin_bp.manage_user_accounts', user_with_email='E') }}">E</a></th>
+            <th style="border-bottom:0; font-weight:normal; text-align: left; padding:0"><a href="{{ url_for('admin_bp.manage_user_accounts', user_with_email='F') }}">F</a></th>
+            <th style="border-bottom:0; font-weight:normal; text-align: left; padding:0"><a href="{{ url_for('admin_bp.manage_user_accounts', user_with_email='G') }}">G</a></th>
+            <th style="border-bottom:0; font-weight:normal; text-align: left; padding:0"><a href="{{ url_for('admin_bp.manage_user_accounts', user_with_email='H') }}">H</a></th>
+            <th style="border-bottom:0; font-weight:normal; text-align: left; padding:0"><a href="{{ url_for('admin_bp.manage_user_accounts', user_with_email='I') }}">I</a></th>
+            <th style="border-bottom:0; font-weight:normal; text-align: left; padding:0"><a href="{{ url_for('admin_bp.manage_user_accounts', user_with_email='J') }}">J</a></th>
+            <th style="border-bottom:0; font-weight:normal; text-align: left; padding:0"><a href="{{ url_for('admin_bp.manage_user_accounts', user_with_email='K') }}">K</a></th>
+            <th style="border-bottom:0; font-weight:normal; text-align: left; padding:0"><a href="{{ url_for('admin_bp.manage_user_accounts', user_with_email='L') }}">L</a></th>
+            <th style="border-bottom:0; font-weight:normal; text-align: left; padding:0"><a href="{{ url_for('admin_bp.manage_user_accounts', user_with_email='M') }}">M</a></th>
+            <th style="border-bottom:0; font-weight:normal; text-align: left; padding:0"><a href="{{ url_for('admin_bp.manage_user_accounts', user_with_email='N') }}">N</a></th>
+            <th style="border-bottom:0; font-weight:normal; text-align: left; padding:0"><a href="{{ url_for('admin_bp.manage_user_accounts', user_with_email='O') }}">O</a></th>
+            <th style="border-bottom:0; font-weight:normal; text-align: left; padding:0"><a href="{{ url_for('admin_bp.manage_user_accounts', user_with_email='P') }}">P</a></th>
+            <th style="border-bottom:0; font-weight:normal; text-align: left; padding:0"><a href="{{ url_for('admin_bp.manage_user_accounts', user_with_email='Q') }}">Q</a></th>
+            <th style="border-bottom:0; font-weight:normal; text-align: left; padding:0"><a href="{{ url_for('admin_bp.manage_user_accounts', user_with_email='R') }}">R</a></th>
+            <th style="border-bottom:0; font-weight:normal; text-align: left; padding:0"><a href="{{ url_for('admin_bp.manage_user_accounts', user_with_email='S') }}">S</a></th>
+            <th style="border-bottom:0; font-weight:normal; text-align: left; padding:0"><a href="{{ url_for('admin_bp.manage_user_accounts', user_with_email='T') }}">T</a></th>
+            <th style="border-bottom:0; font-weight:normal; text-align: left; padding:0"><a href="{{ url_for('admin_bp.manage_user_accounts', user_with_email='U') }}">U</a></th>
+            <th style="border-bottom:0; font-weight:normal; text-align: left; padding:0"><a href="{{ url_for('admin_bp.manage_user_accounts', user_with_email='V') }}">V</a></th>
+            <th style="border-bottom:0; font-weight:normal; text-align: left; padding:0"><a href="{{ url_for('admin_bp.manage_user_accounts', user_with_email='W') }}">W</a></th>
+            <th style="border-bottom:0; font-weight:normal; text-align: left; padding:0"><a href="{{ url_for('admin_bp.manage_user_accounts', user_with_email='X') }}">X</a></th>
+            <th style="border-bottom:0; font-weight:normal; text-align: left; padding:0"><a href="{{ url_for('admin_bp.manage_user_accounts', user_with_email='Y') }}">Y</a></th>
+            <th style="border-bottom:0; font-weight:normal; text-align: left; padding:0"><a href="{{ url_for('admin_bp.manage_user_accounts', user_with_email='Z') }}">Z</a></th>
+        </tr>
+    </table>
     {% if user_list is defined and user_list|length > 0 %}
-        <table width="100%" style="border-collapse: collapse; table-layout: fixed;">
-            <tr>
-                <th style="border-bottom:0; font-weight:normal; text-align: left; padding:0"><a href="{{ url_for('admin_bp.manage_user_accounts', user_with_email='A') }}">A</a></th>
-                <th style="border-bottom:0; font-weight:normal; text-align: left; padding:0"><a href="{{ url_for('admin_bp.manage_user_accounts', user_with_email='B') }}">B</a></th>
-                <th style="border-bottom:0; font-weight:normal; text-align: left; padding:0"><a href="{{ url_for('admin_bp.manage_user_accounts', user_with_email='C') }}">C</a></th>
-                <th style="border-bottom:0; font-weight:normal; text-align: left; padding:0"><a href="{{ url_for('admin_bp.manage_user_accounts', user_with_email='D') }}">D</a></th>
-                <th style="border-bottom:0; font-weight:normal; text-align: left; padding:0"><a href="{{ url_for('admin_bp.manage_user_accounts', user_with_email='E') }}">E</a></th>
-                <th style="border-bottom:0; font-weight:normal; text-align: left; padding:0"><a href="{{ url_for('admin_bp.manage_user_accounts', user_with_email='F') }}">F</a></th>
-                <th style="border-bottom:0; font-weight:normal; text-align: left; padding:0"><a href="{{ url_for('admin_bp.manage_user_accounts', user_with_email='G') }}">G</a></th>
-                <th style="border-bottom:0; font-weight:normal; text-align: left; padding:0"><a href="{{ url_for('admin_bp.manage_user_accounts', user_with_email='H') }}">H</a></th>
-                <th style="border-bottom:0; font-weight:normal; text-align: left; padding:0"><a href="{{ url_for('admin_bp.manage_user_accounts', user_with_email='I') }}">I</a></th>
-                <th style="border-bottom:0; font-weight:normal; text-align: left; padding:0"><a href="{{ url_for('admin_bp.manage_user_accounts', user_with_email='J') }}">J</a></th>
-                <th style="border-bottom:0; font-weight:normal; text-align: left; padding:0"><a href="{{ url_for('admin_bp.manage_user_accounts', user_with_email='K') }}">K</a></th>
-                <th style="border-bottom:0; font-weight:normal; text-align: left; padding:0"><a href="{{ url_for('admin_bp.manage_user_accounts', user_with_email='L') }}">L</a></th>
-                <th style="border-bottom:0; font-weight:normal; text-align: left; padding:0"><a href="{{ url_for('admin_bp.manage_user_accounts', user_with_email='M') }}">M</a></th>
-                <th style="border-bottom:0; font-weight:normal; text-align: left; padding:0"><a href="{{ url_for('admin_bp.manage_user_accounts', user_with_email='N') }}">N</a></th>
-                <th style="border-bottom:0; font-weight:normal; text-align: left; padding:0"><a href="{{ url_for('admin_bp.manage_user_accounts', user_with_email='O') }}">O</a></th>
-                <th style="border-bottom:0; font-weight:normal; text-align: left; padding:0"><a href="{{ url_for('admin_bp.manage_user_accounts', user_with_email='P') }}">P</a></th>
-                <th style="border-bottom:0; font-weight:normal; text-align: left; padding:0"><a href="{{ url_for('admin_bp.manage_user_accounts', user_with_email='Q') }}">Q</a></th>
-                <th style="border-bottom:0; font-weight:normal; text-align: left; padding:0"><a href="{{ url_for('admin_bp.manage_user_accounts', user_with_email='R') }}">R</a></th>
-                <th style="border-bottom:0; font-weight:normal; text-align: left; padding:0"><a href="{{ url_for('admin_bp.manage_user_accounts', user_with_email='S') }}">S</a></th>
-                <th style="border-bottom:0; font-weight:normal; text-align: left; padding:0"><a href="{{ url_for('admin_bp.manage_user_accounts', user_with_email='T') }}">T</a></th>
-                <th style="border-bottom:0; font-weight:normal; text-align: left; padding:0"><a href="{{ url_for('admin_bp.manage_user_accounts', user_with_email='U') }}">U</a></th>
-                <th style="border-bottom:0; font-weight:normal; text-align: left; padding:0"><a href="{{ url_for('admin_bp.manage_user_accounts', user_with_email='V') }}">V</a></th>
-                <th style="border-bottom:0; font-weight:normal; text-align: left; padding:0"><a href="{{ url_for('admin_bp.manage_user_accounts', user_with_email='W') }}">W</a></th>
-                <th style="border-bottom:0; font-weight:normal; text-align: left; padding:0"><a href="{{ url_for('admin_bp.manage_user_accounts', user_with_email='X') }}">X</a></th>
-                <th style="border-bottom:0; font-weight:normal; text-align: left; padding:0"><a href="{{ url_for('admin_bp.manage_user_accounts', user_with_email='Y') }}">Y</a></th>
-                <th style="border-bottom:0; font-weight:normal; text-align: left; padding:0"><a href="{{ url_for('admin_bp.manage_user_accounts', user_with_email='Z') }}">Z</a></th>
-            </tr>
-        </table>
         <section class="ons-u-mt-s">
             {% set userTableData = {
                 "table_class": 'table--dense',
@@ -156,6 +156,8 @@
         </section>
         {% if show_pagination %}{% include 'respondent-search/rs-pagination.html' %}{% endif %}
     {% else %}
-        <p class="u-mt-m">No results found</p>
+        <section class="ons-u-mt-s">
+          <p class="u-mt-m">No results found</p>
+        </section>
     {% endif %}
 {% endblock %}

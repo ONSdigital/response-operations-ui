@@ -14,8 +14,13 @@ class NotifyController:
     def __init__(self):
         self.request_password_change_template = app.config["NOTIFY_REQUEST_PASSWORD_CHANGE_TEMPLATE"]
         self.confirm_password_change_template = app.config["NOTIFY_CONFIRM_PASSWORD_CHANGE_TEMPLATE"]
+        self.create_user_account_template = app.config["NOTIFY_CREATE_USER_ACCOUNT_TEMPLATE"]
+
+        # Request and confirm create account templates were used in the old pre-role based access account creation flow.
+        # Once the IS_ROLE_BASED_ACCESS_ENABLED flag is true in all environments, we can remove these templates.
         self.request_create_account_template = app.config["NOTIFY_REQUEST_CREATE_ACCOUNT_TEMPLATE"]
         self.confirm_create_account_template = app.config["NOTIFY_CONFIRM_CREATE_ACCOUNT_TEMPLATE"]
+
         self.update_account_details_template = app.config["NOTIFY_UPDATE_ACCOUNT_DETAILS_TEMPLATE"]
         self.update_email_template = app.config["NOTIFY_UPDATE_EMAIL_TEMPLATE"]
         self.update_account_password_template = app.config["NOTIFY_UPDATE_ACCOUNT_PASSWORD_CHANGE_TEMPLATE"]
@@ -75,6 +80,7 @@ class NotifyController:
         templates = {
             "confirm_password_change": self.confirm_password_change_template,
             "request_password_change": self.request_password_change_template,
+            "create_user_account": self.create_user_account_template,
             "confirm_create_account": self.confirm_create_account_template,
             "request_create_account": self.request_create_account_template,
             "update_account_details": self.update_account_details_template,

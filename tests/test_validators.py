@@ -32,14 +32,13 @@ with open(f"{project_root}/tests/test_data/survey/single_survey.json") as json_d
 with open(f"{project_root}/tests/test_data/collection_exercise/events.json") as json_data:
     events = json.load(json_data)
 url_put_update_event_date = (
-    f"{TestingConfig.COLLECTION_EXERCISE_URL}/collectionexercises" f"/{collection_exercise_id}/events/{tag}"
+    f"{TestingConfig.COLLECTION_EXERCISE_URL}/collectionexercises/{collection_exercise_id}/events/{tag}"
 )
 url_survey_shortname = f"{TestingConfig.SURVEY_URL}/surveys/shortname/{survey_short_name}"
-url_collection_exercise_survey_id = (
-    f"{TestingConfig.COLLECTION_EXERCISE_URL}/collectionexercises/survey" f"/{survey_id}"
-)
+url_collection_exercise_survey_id = f"{TestingConfig.COLLECTION_EXERCISE_URL}/collectionexercises/survey/{survey_id}"
+
 url_get_collection_exercise_events = (
-    f"{TestingConfig.COLLECTION_EXERCISE_URL}" f"/collectionexercises/{collection_exercise_id}/events"
+    f"{TestingConfig.COLLECTION_EXERCISE_URL}/collectionexercises/{collection_exercise_id}/events"
 )
 
 

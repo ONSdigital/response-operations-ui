@@ -14,6 +14,7 @@ from response_operations_ui.controllers.notify_controller import NotifyControlle
 from response_operations_ui.controllers.respondent_controllers import obfuscate_email
 from response_operations_ui.exceptions.exceptions import NotifyError
 from response_operations_ui.forms import (
+    ActivateAccountForm,
     ChangeAccountName,
     ChangeEmailForm,
     ChangePasswordFrom,
@@ -320,9 +321,7 @@ def send_update_account_email(token_dict, first_name):
 
     if response["totalResults"] == 0:
         internal_url = app.config["RESPONSE_OPERATIONS_UI_URL"]
-        verification_url = (
-            f"{internal_url}/account/verify-email/{token_decoder.generate_email_token(json.dumps(token_dict))}"
-        )
+        verification_url = f"{internal_url}/account/verify-email/{token_decoder.generate_token(json.dumps(token_dict))}"
 
         logger.info("Sending update account verification email", verification_url=verification_url)
         personalisation = {"CONFIRM_EMAIL_URL": verification_url, "first_name": first_name}
@@ -351,7 +350,7 @@ def send_create_account_email(email):
 
     if response["totalResults"] == 0:
         internal_url = app.config["RESPONSE_OPERATIONS_UI_URL"]
-        verification_url = f"{internal_url}/account/create-account/{token_decoder.generate_email_token(email)}"
+        verification_url = f"{internal_url}/account/create-account/{token_decoder.generate_token(email)}"
 
         logger.info("Sending create account email", verification_url=verification_url)
 
@@ -401,6 +400,7 @@ def get_create_account(token, form_errors=None):
 
 @account_bp.route("/create-account/<token>", methods=["POST"])
 def post_create_account(token):
+    # This is the old way of creating an account and will be removed once RBA has been implemented.
     form = CreateAccountForm(request.form)
 
     if not form.validate():
@@ -435,6 +435,38 @@ def post_create_account(token):
             return render_template("create-new-account.html", form=form, data=template_data)
 
         return render_template("create-new-account-error.html")
+
+
+@account_bp.route("/activate-account/<token>", methods=["GET"])
+def get_activate_account(token):
+    duration = app.config["CREATE_ACCOUNT_EMAIL_TOKEN_EXPIRY"]
+    user_id = token_decoder.decode_email_token(token, duration)
+    user = uaa_controller.get_user_by_id(user_id)
+    if user is None:
+        raise Exception("User does not exist")
+    form = ActivateAccountForm()
+    return render_template("account/activate-account.html", form=form, username=user["userName"])
+
+
+@account_bp.route("/activate-account/<token>", methods=["POST"])
+def post_activate_account(token):
+    duration = app.config["CREATE_ACCOUNT_EMAIL_TOKEN_EXPIRY"]
+    user_id = token_decoder.decode_email_token(token, duration)
+    user = uaa_controller.get_user_by_id(user_id)
+    if user is None:
+        raise Exception("User does not exist")
+    form = ActivateAccountForm(request.form)
+
+    if not form.validate():
+        return render_template("account/activate-account.html", form=form, username=user["userName"])
+
+    result = uaa_controller.change_user_password_by_id(user_id, form.password.data)
+    if result is None:
+        flash("Something went wrong setting password and activating account, please try again", "error")
+        return render_template("account/activate-account.html", form=form, username=user["userName"])
+
+    flash("Account successfully activated", category="account_created")
+    return redirect(url_for("sign_in_bp.sign_in"))
 
 
 def send_confirm_created_email(email, first_name):

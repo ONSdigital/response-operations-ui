@@ -1,6 +1,7 @@
 import logging
 from datetime import datetime, timedelta
 from json import JSONDecodeError, dumps
+from secrets import token_urlsafe
 
 import requests
 from flask import abort
@@ -13,7 +14,7 @@ from structlog import wrap_logger
 logger = wrap_logger(logging.getLogger(__name__))
 
 
-def sign_in(username, password):
+def sign_in(username: str, password: str):
     logger.info("Retrieving OAuth2 token for sign-in")
     url = f'{app.config["UAA_SERVICE_URL"]}/oauth/token'
 
@@ -146,7 +147,16 @@ def retrieve_user_code(access_token, username):
     return response.json().get("code")
 
 
-def change_password(access_token, user_code, new_password):
+def change_password(access_token: str, user_code: str, new_password: str) -> requests.Response:
+    """
+    Changes the password for a user using a user_code that was given to us by uaa via the password reset functionality
+    that it offers.
+
+    :param access_token: The access code that authenticates us with uaa
+    :param user_code: A code given to us by uaa as part of the password reset functionality
+    :param new_password: New password for the user
+    :return: The response from the password reset endpoint
+    """
     headers = generate_headers(access_token)
 
     payload = {"code": user_code, "new_password": new_password}
@@ -164,7 +174,15 @@ def generate_headers(access_token):
     return headers
 
 
-def change_user_password(email, password):
+def change_user_password_by_email(email: str, password: str) -> requests.Response | None:
+    """
+    Changes the user password from something unknown to whatever the user chooses, using the email of the user as
+    an identifier.
+
+    :param email: The email address of the uaa user
+    :param password: The new password for the account
+    :return: The response object we get after hitting the /password_change endpoint in uaa.
+    """
     access_token = login_admin()
 
     user_response = get_user_by_email(email, access_token)
@@ -179,9 +197,70 @@ def change_user_password(email, password):
     return change_password(access_token=access_token, user_code=password_reset_code, new_password=password)
 
 
-def create_user_account(email, password, user_name, first_name, last_name):
+def change_user_password_by_id(user_id: str, password: str) -> requests.Response | None:
+    """
+    Changes the user password from something unknown to whatever the user chooses, using the user_id of the user as
+    an identifier.
+
+    :param user_id: The id of the uua user
+    :param password: The new password for the account
+    :return: The response object we get after hitting the /password_change endpoint in uaa.
+    """
     access_token = login_admin()
 
+    user = get_user_by_id(user_id)
+    if user is None:
+        return
+    username = user["userName"]
+
+    password_reset_code = retrieve_user_code(access_token=access_token, username=username)
+    if password_reset_code is None:
+        return
+
+    return change_password(access_token=access_token, user_code=password_reset_code, new_password=password)
+
+
+def create_user_account_with_random_password(email: str, first_name: str, last_name: str) -> dict:
+    """
+    Creates a user in uaa with a 64 character length password.
+
+    :param email: Email of the user being created, also acts as their username
+    :param first_name: First name of the user being created
+    :param last_name: Last name of the user being created
+    :return: A dict representing the user on success, or a dict with an 'error' key on any failure
+    """
+    access_token = login_admin()
+    headers = generate_headers(access_token)
+
+    # We can't create a user without a password, so we'll create an unverified user with a crazy long password so
+    # nobody can access it.   When the user ends up getting a link to verify their account and set their password, we
+    # can verify and change the password at the same time.
+    payload = {
+        "userName": email,
+        "name": {"formatted": f"{first_name} {last_name}", "givenName": first_name, "familyName": last_name},
+        "emails": [{"value": email, "primary": True}],
+        "password": token_urlsafe(64),
+        "verified": False,
+    }
+
+    url = f"{app.config['UAA_SERVICE_URL']}/Users"
+    response = requests.post(url, json=payload, headers=headers)
+    try:
+        response.raise_for_status()
+        return response.json()
+    except HTTPError:
+        response_json = response.json()
+        logger.error(
+            "Received an error when creating an account in UAA",
+            status_code=response.status_code,
+            message=response_json.get("message"),
+            exc_info=True,
+        )
+        return {"error": response_json.get("message")}
+
+
+def create_user_account(email, password, user_name, first_name, last_name):
+    access_token = login_admin()
     headers = generate_headers(access_token)
 
     payload = {
@@ -213,12 +292,12 @@ def create_user_account(email, password, user_name, first_name, last_name):
     return errors
 
 
-def update_user_account(payload):
+def update_user_account(payload) -> dict | None:
     """
     Updates the user in uaa, using the user's id
 
     :param payload: the same payload we receive from uaa, with the updated values
-    :return errors: The errors returned from uaa as a dictionary
+    :return errors: None on success, or the errors returned from uaa as a dictionary
     """
     access_token = login_admin()
 
@@ -370,7 +449,7 @@ def remove_group_membership(user_id: str, group_id: str) -> dict:
     return response.json()
 
 
-def refresh_permissions(user_id):
+def refresh_permissions(user_id: str) -> None:
     """
     Refreshes the cache of permissions for the current user
 
@@ -380,7 +459,7 @@ def refresh_permissions(user_id):
     session["permissions"] = {"groups": user.get("groups"), "expiry": (datetime.now() + timedelta(minutes=5))}
 
 
-def user_has_permission(permission, user_id=None) -> bool:
+def user_has_permission(permission: str, user_id=None) -> bool:
     """
     Checks to see if the user provided or in the session has the specified permission
 
@@ -436,10 +515,10 @@ def get_users_list(
         return response.json()
     except HTTPError:
         logger.error("Failed to retrieve user list.", status_code=response.status_code)
-        return {"error": "Failed to retrieve user list, please try again", "totalResults": 0, "resources": []}
+        return {"error": "Failed to retrieve user list, please try again"}
 
 
-def get_filter_query(filter_criteria: str, filter_value: str, filter_on: str):
+def get_filter_query(filter_criteria: str, filter_value: str, filter_on: str) -> str:
     return f"{filter_on} {get_filter(filter_criteria)} '{filter_value}'"
 
 
