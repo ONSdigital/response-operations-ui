@@ -116,8 +116,8 @@
                     }}
               <div class="ons-u-mt-l">
               <h2>Select user permissions</h2>
-              <p>All users have permission to view all the preselected Survey Data Collection areas below.</p>
-              <table id="tbl-users" class="ons-table ons-u-mt-l ons-table--responsive">
+              <span>All users have permission to view all the preselected Survey Data Collection areas below.</span>
+              <table id="tbl-users" class="ons-table ons-u-mt-xs ons-table--responsive">
                 <thead class="ons-table__head">
                     <tr class="ons-table__row">
                         <th scope="col" class="ons-table__header">
@@ -284,7 +284,7 @@
             </table>
             </div>
             <div class="ons-grid ons-grid--flex ons-grid--gutterless ons-u-mt-l ons-u-mb-m">
-            <div class="ons-grid__col ons-col-7@m">
+            <div class="ons-grid__col ons-col-5@m">
             <strong>Manager permissions</strong>
             {{
                 onsCheckbox({
@@ -309,7 +309,7 @@
                 })
             }}
             </div>
-            <div class="ons-grid__col ons-u-ml-m">
+            <div class="ons-grid__col ons-u-ml-s">
                 <a href="{{ url_for('admin_bp.manage_user_accounts') }}" role="button" class="ons-btn ons-btn--link ons-btn--secondary" id="btn-option-cancel">
                     <span class="ons-btn__inner">Cancel</span></a>
             </div>
