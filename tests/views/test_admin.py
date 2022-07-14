@@ -245,7 +245,7 @@ class TestMessage(ViewTestCase):
         self.assertEqual(200, response.status_code)
         self.assertIn("Create your account".encode(), response.data)
         self.assertIn("Manager permissions".encode(), response.data)
-        self.assertIn("Confirm".encode(), response.data)
+        self.assertIn("Create account".encode(), response.data)
         self.assertIn("Username already in use: some.one@ons.gov.uk".encode(), response.data)
         self.assertNotIn("Failed to get groups, please try again".encode(), response.data)
 
