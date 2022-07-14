@@ -618,7 +618,7 @@ class TestAccounts(unittest.TestCase):
                 mock_request.post(url_uaa_token, json={"access_token": self.access_token}, status_code=201)
                 mock_request.get(url_uaa_user_by_id, json=uaa_user_by_id_json, status_code=200)
                 response = self.client.get(
-                    f"/account/verify-account/{token}",
+                    f"/account/activate-account/{token}",
                     follow_redirects=True,
                 )
                 self.assertIn(b"Verify account", response.data)
@@ -635,7 +635,7 @@ class TestAccounts(unittest.TestCase):
             mock_request.post(url_uaa_password_reset_code, json=password_reset_code_json, status_code=201)
             mock_request.post(url_uaa_password_change, status_code=200)
             response = self.client.post(
-                f"/account/verify-account/{token}",
+                f"/account/activate-account/{token}",
                 follow_redirects=True,
                 data={
                     "password": "TestPassword1!",
@@ -655,7 +655,7 @@ class TestAccounts(unittest.TestCase):
             mock_request.get(url_uaa_user_by_id, json=uaa_user_by_id_json, status_code=200)
             mock_request.post(url_uaa_password_reset_code, status_code=500)
             response = self.client.post(
-                f"/account/verify-account/{token}",
+                f"/account/activate-account/{token}",
                 follow_redirects=True,
                 data={
                     "password": "TestPassword1!",

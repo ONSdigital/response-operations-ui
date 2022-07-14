@@ -14,6 +14,7 @@ from response_operations_ui.controllers.notify_controller import NotifyControlle
 from response_operations_ui.controllers.respondent_controllers import obfuscate_email
 from response_operations_ui.exceptions.exceptions import NotifyError
 from response_operations_ui.forms import (
+    ActivateAccountForm,
     ChangeAccountName,
     ChangeEmailForm,
     ChangePasswordFrom,
@@ -21,7 +22,6 @@ from response_operations_ui.forms import (
     MyAccountOptionsForm,
     RequestAccountForm,
     UsernameChangeForm,
-    VerifyAccountForm,
 )
 
 logger = wrap_logger(logging.getLogger(__name__))
@@ -437,33 +437,33 @@ def post_create_account(token):
         return render_template("create-new-account-error.html")
 
 
-@account_bp.route("/verify-account/<token>", methods=["GET"])
+@account_bp.route("/activate-account/<token>", methods=["GET"])
 def get_verify_account(token):
     duration = app.config["CREATE_ACCOUNT_EMAIL_TOKEN_EXPIRY"]
     user_id = token_decoder.decode_email_token(token, duration)
     user = uaa_controller.get_user_by_id(user_id)
     if user is None:
         raise Exception("User does not exist")
-    form = VerifyAccountForm()
-    return render_template("account/verify-account.html", form=form, username=user["userName"])
+    form = ActivateAccountForm()
+    return render_template("account/activate-account.html", form=form, username=user["userName"])
 
 
-@account_bp.route("/verify-account/<token>", methods=["POST"])
+@account_bp.route("/activate-account/<token>", methods=["POST"])
 def post_verify_account(token):
     duration = app.config["CREATE_ACCOUNT_EMAIL_TOKEN_EXPIRY"]
     user_id = token_decoder.decode_email_token(token, duration)
     user = uaa_controller.get_user_by_id(user_id)
     if user is None:
         raise Exception("User does not exist")
-    form = VerifyAccountForm(request.form)
+    form = ActivateAccountForm(request.form)
 
     if not form.validate():
-        return render_template("account/verify-account.html", form=form, username=user["userName"])
+        return render_template("account/activate-account.html", form=form, username=user["userName"])
 
     result = uaa_controller.change_user_password_by_id(user_id, form.password.data)
     if result is None:
         flash("Something went wrong setting password and verifying account, please try again", "error")
-        return render_template("account/verify-account.html", form=form, username=user["userName"])
+        return render_template("account/activate-account.html", form=form, username=user["userName"])
 
     flash("Account successfully verified", category="account_created")
     return redirect(url_for("sign_in_bp.sign_in"))

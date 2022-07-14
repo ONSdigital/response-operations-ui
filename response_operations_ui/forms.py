@@ -496,7 +496,7 @@ class CreateAccountWithPermissionsForm(FlaskForm):
             raise ValidationError("Not a valid ONS email address")
 
 
-class VerifyAccountForm(FlaskForm):
+class ActivateAccountForm(FlaskForm):
     password = PasswordField(
         "Create a new password",
         validators=[
