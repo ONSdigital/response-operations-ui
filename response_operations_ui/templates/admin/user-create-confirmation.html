@@ -22,12 +22,13 @@
         {% endwith %}
         <div class="ons-grid__col">
             <h1 class="u-mb-xs" name="page-manage-account-title">Account created</h1>
-        </div>
-    </div>
+
   
-    <p>An email to activate the account has been sent to {{ email }}.</p>
+    <span>An email to activate the account has been sent to {{ email }}.</span>
     <p>This email will be valid for 4 weeks.</p>
 
     <a href="{{ url_for('admin_bp.manage_user_accounts') }}">Return to manage user accounts</a>
+          </div>
+    </div>
 
 {% endblock %}

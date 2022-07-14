@@ -72,7 +72,7 @@
             <h1>Activate your account</h1>
             <form method="post" action="" class="form" role="form">
                 <input type="hidden" name="csrf_token" value="{{ csrf_token() }}" />
-              <p>An account has been created for <strong>{{ username }}</strong>.</p>
+              <span>An account has been created for <strong>{{ username }}</strong>.</span>
               <p>To activate the account, you must create a password.</p>
                 {{
                     onsPanel({
