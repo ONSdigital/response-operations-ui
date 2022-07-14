@@ -12,7 +12,7 @@
 
 {% block main %}
     <div class="ons-grid">
-        <div class="ons-grid__col ons-col-8@m ons-u-mt-m">
+        <div class="ons-grid__col ons-col-8@m">
         {% with messages = get_flashed_messages(category_filter=["error"]) %}
             {% if messages %}
                 {% call
@@ -78,10 +78,9 @@
                 }}
             {% endcall %}
         {% endif %}
+            <h1>Create your account</h1>
             <form method="post" action="" class="form" role="form">
                 <input type="hidden" name="csrf_token" value="{{ csrf_token() }}" />
-                <h1 class="ons-u-mt-l">Create your account</h1>
-
                     {{
                         onsInput({
                             "id": "first_name",
@@ -111,11 +110,14 @@
                             "type": "text",
                             "label": {
                                 "description": "Enter the ONS email of the new user",
-                                "text": "Email"
+                                "text": "ONS email address"
                             },
                         })
                     }}
-              <table id="tbl-users" class="ons-table ons-u-mt-l">
+              <div class="ons-u-mt-l">
+              <h2>Select user permissions</h2>
+              <p>All users have permission to view all the preselected Survey Data Collection areas below.</p>
+              <table id="tbl-users" class="ons-table ons-u-mt-l ons-table--responsive">
                 <thead class="ons-table__head">
                     <tr class="ons-table__row">
                         <th scope="col" class="ons-table__header">
@@ -280,13 +282,15 @@
                     </tr>
                 </tbody>
             </table>
-              <div class="ons-grid ons-grid--flex ons-grid--gutterless ons-u-mt-m ons-u-mb-m">
-            <div class="ons-grid__col ons-col-3@m">
+            </div>
+            <div class="ons-grid ons-grid--flex ons-grid--gutterless ons-u-mt-l ons-u-mb-m">
+            <div class="ons-grid__col ons-col-7@m">
             <strong>Manager permissions</strong>
             {{
                 onsCheckbox({
                     "id": "users_admin",
                     "name": "users_admin",
+                    "classes": "ons-u-mt-s",
                     "label": {
                         "text": "Manage user accounts"
                     },
@@ -295,16 +299,21 @@
               }}
             </div>
           </div>
-
-                {{
-                    onsButton({
-                        "classes": "ons-u-mb-s ons-u-mt-s",
-                        "text": "Confirm",
-                        "id": "confirm_password_button"
-                    })
-                }}
-                <p><a href="{{ url_for('sign_in_bp.sign_in') }}">Cancel</a></p>
-
+          <div class="ons-grid ons-grid--flex ons-grid--gutterless ons-grid--vertical-center ons-grid--no-wrap@s ons-u-mt-m ons-u-mb-m">
+            <div class="ons-grid__col">
+            {{
+                onsButton({
+                    "id": "create-account",
+                    "text": "Create account",
+                    "submitType": "timer"
+                })
+            }}
+            </div>
+            <div class="ons-grid__col ons-u-ml-m">
+                <a href="{{ url_for('admin_bp.manage_user_accounts') }}" role="button" class="ons-btn ons-btn--link ons-btn--secondary" id="btn-option-cancel">
+                    <span class="ons-btn__inner">Cancel</span></a>
+            </div>
+          </div>
             </form>
         </div>
     </div>
