@@ -610,7 +610,7 @@ class TestAccounts(unittest.TestCase):
     # activate-account
 
     @requests_mock.mock()
-    def test_get_verify_account(self, mock_request):
+    def test_get_activate_account(self, mock_request):
         with self.app.app_context():
             with patch("response_operations_ui.views.accounts.NotifyController") as mock_notify:
                 mock_notify()._send_message.return_value = mock.Mock()
@@ -626,7 +626,7 @@ class TestAccounts(unittest.TestCase):
                 self.assertEqual(response.status_code, 200)
 
     @requests_mock.mock()
-    def test_post_verify_account(self, mock_request):
+    def test_post_activate_account(self, mock_request):
         with self.app.app_context():
             password_reset_code_json = {"code": "f-Ni-kNixp", "user_id": user_id}
             token = token_decoder.generate_token(user_id)
@@ -642,13 +642,13 @@ class TestAccounts(unittest.TestCase):
                     "password_confirm": "TestPassword1!",
                 },
             )
-            self.assertIn(b"Account successfully verified", response.data)
+            self.assertIn(b"Account successfully activated", response.data)
             self.assertIn(b"Sign in", response.data)
             self.assertIn(b"Forgot password?", response.data)
             self.assertEqual(response.status_code, 200)
 
     @requests_mock.mock()
-    def test_post_verify_account_failure(self, mock_request):
+    def test_post_activate_account_failure(self, mock_request):
         with self.app.app_context():
             token = token_decoder.generate_token(user_id)
             mock_request.post(url_uaa_token, json={"access_token": self.access_token}, status_code=201)

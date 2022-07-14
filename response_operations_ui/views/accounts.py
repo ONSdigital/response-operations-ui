@@ -438,7 +438,7 @@ def post_create_account(token):
 
 
 @account_bp.route("/activate-account/<token>", methods=["GET"])
-def get_verify_account(token):
+def get_activate_account(token):
     duration = app.config["CREATE_ACCOUNT_EMAIL_TOKEN_EXPIRY"]
     user_id = token_decoder.decode_email_token(token, duration)
     user = uaa_controller.get_user_by_id(user_id)
@@ -449,7 +449,7 @@ def get_verify_account(token):
 
 
 @account_bp.route("/activate-account/<token>", methods=["POST"])
-def post_verify_account(token):
+def post_activate_account(token):
     duration = app.config["CREATE_ACCOUNT_EMAIL_TOKEN_EXPIRY"]
     user_id = token_decoder.decode_email_token(token, duration)
     user = uaa_controller.get_user_by_id(user_id)
@@ -465,7 +465,7 @@ def post_verify_account(token):
         flash("Something went wrong setting password and activating account, please try again", "error")
         return render_template("account/activate-account.html", form=form, username=user["userName"])
 
-    flash("Account successfully verified", category="account_created")
+    flash("Account successfully activated", category="account_created")
     return redirect(url_for("sign_in_bp.sign_in"))
 
 

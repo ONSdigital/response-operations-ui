@@ -155,7 +155,7 @@ def post_create_account():
 
     token = token_decoder.generate_token(user_id)
     internal_url = current_app.config["RESPONSE_OPERATIONS_UI_URL"]
-    verification_url = f"{internal_url}{url_for('account_bp.get_verify_account', token=token)}"
+    verification_url = f"{internal_url}{url_for('account_bp.get_activate_account', token=token)}"
     if not current_app.config["SEND_EMAIL_TO_GOV_NOTIFY"]:
         logger.info("Verification url for new user", verification_link=verification_url)
 
