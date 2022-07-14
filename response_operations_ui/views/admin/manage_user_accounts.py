@@ -1,15 +1,25 @@
 import logging
 
-from flask import flash, redirect, render_template, request, session, url_for
+from flask import (
+    current_app,
+    flash,
+    redirect,
+    render_template,
+    request,
+    session,
+    url_for,
+)
 from flask_login import login_required
 from flask_paginate import Pagination
 from requests import HTTPError
 from structlog import wrap_logger
 from werkzeug.exceptions import abort
 
+from response_operations_ui.common import token_decoder
 from response_operations_ui.controllers.notify_controller import NotifyController
 from response_operations_ui.controllers.uaa_controller import (
     add_group_membership,
+    create_user_account_with_random_password,
     delete_user,
     get_filter_query,
     get_groups,
@@ -19,10 +29,23 @@ from response_operations_ui.controllers.uaa_controller import (
     user_has_permission,
 )
 from response_operations_ui.exceptions.exceptions import NotifyError
-from response_operations_ui.forms import EditUserGroupsForm, UserSearchForm
+from response_operations_ui.forms import (
+    CreateAccountWithPermissionsForm,
+    EditUserGroupsForm,
+    UserSearchForm,
+)
 from response_operations_ui.views.admin import admin_bp
 
 logger = wrap_logger(logging.getLogger(__name__))
+
+uaa_group_mapping = {
+    "surveys_edit": "surveys.edit",
+    "reporting_units_edit": "reportingunits.edit",
+    "respondents_edit": "respondents.edit",
+    "respondents_delete": "respondents.delete",
+    "messages_edit": "messages.edit",
+    "users_admin": "users.admin",
+}
 
 
 @admin_bp.route("/manage-user-accounts", methods=["GET", "POST"])
@@ -80,6 +103,85 @@ def manage_user_accounts():
     )
 
 
+@admin_bp.route("/create-account", methods=["GET"])
+@login_required
+def get_create_account():
+    _verify_user_in_user_admin_group()
+    form = CreateAccountWithPermissionsForm()
+    return render_template("admin/user-create.html", form=form)
+
+
+@admin_bp.route("/create-account", methods=["POST"])
+@login_required
+def post_create_account():
+    _verify_user_in_user_admin_group()
+    form = CreateAccountWithPermissionsForm(request.form)
+
+    if not form.validate():
+        return render_template("admin/user-create.html", form=form)
+
+    try:
+        groups_from_uaa = get_groups()
+    except HTTPError:
+        flash("Failed to get groups, please try again", "error")
+        return render_template("admin/user-create.html", form=form)
+
+    email = form.email.data
+    user = create_user_account_with_random_password(email, form.first_name.data, form.last_name.data)
+    if user.get("error"):
+        flash(user.get("error"), "error")
+        return render_template("admin/user-create.html", form=form)
+
+    user_id = user["id"]
+    groups_in_form = form.get_uaa_permission_groups()
+
+    for group, is_ticked in form.data.items():
+        if group not in groups_in_form or not is_ticked:
+            continue
+        mapped_group = uaa_group_mapping[group]
+        group_details = next(item for item in groups_from_uaa["resources"] if item["displayName"] == mapped_group)
+        try:
+            add_group_membership(user_id, group_details["id"])
+        except HTTPError:
+            # If a group permission add fails then we just need to continue, but let the person creating the account
+            # that it won't have all the permissions they requested.  This is easily fixed by them granting the
+            # permission via the manage accounts screen
+            flash(
+                f"Failed to give the user the {group} permission. The account has still been created but the "
+                f"permission will need to be granted later",
+                "error",
+            )
+            continue
+
+    token = token_decoder.generate_token(user_id)
+    internal_url = current_app.config["RESPONSE_OPERATIONS_UI_URL"]
+    verification_url = f"{internal_url}{url_for('account_bp.get_activate_account', token=token)}"
+    if not current_app.config["SEND_EMAIL_TO_GOV_NOTIFY"]:
+        logger.info("Verification url for new user", verification_link=verification_url)
+
+    try:
+        NotifyController().request_to_notify(
+            email=email,
+            template_name="create_user_account",
+            personalisation={"verification_url": verification_url},
+        )
+    except NotifyError as e:
+        # If the account is created but the email fails, we'll send them to the next success screen but have an error
+        # appear to tell them that the email won't be coming.
+        logger.error(
+            "Failed to send email, but account was created",
+            verification_url=verification_url,
+            msg=e.description,
+            exc_info=True,
+        )
+        flash(
+            f"The account has been created but no email was sent. Give this link to the user {verification_url}",
+            "error",
+        )
+
+    return render_template("admin/user-create-confirmation.html", email=email)
+
+
 @admin_bp.route("/manage-account/<user_id>", methods=["GET"])
 @login_required
 def get_manage_account_groups(user_id):
@@ -125,15 +227,6 @@ def post_manage_account_groups(user_id):
 
     form = EditUserGroupsForm(request.form)
     groups_user_is_in = [group["display"] for group in user["groups"]]
-
-    uaa_group_mapping = {
-        "surveys_edit": "surveys.edit",
-        "reporting_units_edit": "reportingunits.edit",
-        "respondents_edit": "respondents.edit",
-        "respondents_delete": "respondents.delete",
-        "messages_edit": "messages.edit",
-        "users_admin": "users.admin",
-    }
 
     # Because we can't add or remove in a batch, if one of them fail then we can leave the user in a state that wasn't
     # intended.  It's not a big deal though it can be easily fixed by trying again.

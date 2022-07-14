@@ -1,25 +1,123 @@
+
 {% extends "layouts/base.html" %}
+{% from "components/button/_macro.njk" import onsButton %}
+{% from "components/lists/_macro.njk" import onsList %}
+{% from "components/password/_macro.njk" import onsPassword %}
+{% from "components/input/_macro.njk" import onsInput %}
+{% from "components/fieldset/_macro.njk" import onsFieldset %}
 {% from "components/table/_macro.njk" import onsTable %}
 {% from "components/checkboxes/_checkbox-macro.njk" import onsCheckbox %}
-{% from "components/button/_macro.njk" import onsButton %}
+
+{% set page_title = 'Create New Account' %}
 
 {% block main %}
-    <div class="ons-grid ons-grid--flex ons-grid--between">
-        <div class="ons-grid__col">
-            <h1>{{ name }}</h1>
-        </div>
-    </div>
-
-    <div class="ons-grid ons-grid--flex ons-grid--between">
-        <div class="ons-grid__col">
-            <h2>Select user permissions</h2>
-            <span>All users have permission to view all the preselected Survey Data Collection areas below. </span>
-          </div>
-    </div>
-    <form id="user-permissions" action="" method="post">
-        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}" />
-        <section class="ons-u-mt-s ons-col-7@m">
-            <table id="tbl-users" class="ons-table ons-table--responsive">
+    <div class="ons-grid">
+        <div class="ons-grid__col ons-col-8@m">
+        {% with messages = get_flashed_messages(category_filter=["error"]) %}
+            {% if messages %}
+                {% call
+                    onsPanel({
+                            "type": "error",
+                            "classes": "ons-u-mb-l",
+                            "title":  errorTitle
+                        })
+                %}
+                    {% for message in messages %}
+                        <p id="flashed-message-{{ loop.index }}">{{ message }}</p>
+                    {% endfor %}
+                {% endcall %}
+            {% endif %}
+        {% endwith %}
+          {% if form.errors %}
+            {% set errorData = [] %}
+                {% set error_count = form.errors | length %}
+                {% set plural_suffix = 's' if error_count > 1 else '' %}
+                {% set header_text = 'This page has ' ~ error_count ~ ' error' ~ plural_suffix %}
+            {% call
+                onsPanel({
+                    "title": header_text,
+                    "type": "error"
+                })
+            %}
+                <p>These <strong>must be corrected</strong> to continue.</p>
+                {% for error in form.first_name.errors %}
+                    {% do errorData.append(
+                        {
+                            "text": error,
+                            "index": true,
+                            "url": "#first_name",
+                            "classes": "ons-js-inpagelink"
+                        }
+                    ) %}
+                {% endfor %}
+                {% for error in form.last_name.errors %}
+                    {% do errorData.append(
+                        {
+                            "text": error,
+                            "index": true,
+                            "url": "#last_name",
+                            "classes": "ons-js-inpagelink"
+                        }
+                    ) %}
+                {% endfor %}
+                {% for error in form.email.errors %}
+                    {% do errorData.append(
+                        {
+                            "text": error,
+                            "index": true,
+                            "url": "#email",
+                            "classes": "ons-js-inpagelink"
+                        }
+                    ) %}
+                {% endfor %}
+                {{
+                    onsList({
+                        "classes": "list--bare",
+                        "itemsList": errorData
+                    })
+                }}
+            {% endcall %}
+        {% endif %}
+            <h1>Create your account</h1>
+            <form method="post" action="" class="form" role="form">
+                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}" />
+                    {{
+                        onsInput({
+                            "id": "first_name",
+                            "name": "first_name",
+                            "type": "text",
+                            "label": {
+                                "description": "Enter the new users first name",
+                                "text": "First name"
+                            },
+                        })
+                    }}
+                    {{
+                        onsInput({
+                            "id": "last_name",
+                            "name": "last_name",
+                            "type": "text",
+                            "label": {
+                                "description": "Enter the new users last name",
+                                "text": "Last name"
+                            },
+                        })
+                    }}
+                    {{
+                        onsInput({
+                            "id": "email",
+                            "name": "email",
+                            "type": "text",
+                            "label": {
+                                "description": "Enter the ONS email of the new user",
+                                "text": "ONS email address"
+                            },
+                        })
+                    }}
+              <div class="ons-u-mt-l">
+              <h2>Select user permissions</h2>
+              <span>All users have permission to view all the preselected Survey Data Collection areas below.</span>
+              <table id="tbl-users" class="ons-table ons-u-mt-xs ons-table--responsive">
                 <thead class="ons-table__head">
                     <tr class="ons-table__row">
                         <th scope="col" class="ons-table__header">
@@ -66,7 +164,6 @@
                                   },
                                   "hideLabel": true,
                                   "value": "y",
-                                  "checked": groups["surveys.edit"]
                               })
                           }}
                         </td>
@@ -100,7 +197,6 @@
                                 },
                                 "hideLabel": true,
                                 "value": "y",
-                                "checked": groups["reportingunits.edit"]
                             })
                         }}
                         </td>
@@ -134,7 +230,6 @@
                                 },
                                 "hideLabel": true,
                                 "value": "y",
-                                "checked": groups["respondents.edit"]
                             })
                         }}
                         </td>
@@ -148,7 +243,6 @@
                                 },
                                 "hideLabel": true,
                                 "value": "y",
-                                "checked": groups["respondents.delete"]
                             })
                         }}
                         </td>
@@ -181,7 +275,6 @@
                                 },
                                 "hideLabel": true,
                                 "value": "y",
-                                "checked": groups["messages.edit"]
                             })
                         }}
                         </td>
@@ -189,9 +282,9 @@
                     </tr>
                 </tbody>
             </table>
-
-          <div class="ons-grid ons-grid--flex ons-grid--gutterless ons-u-mt-l ons-u-mb-m">
-            <div class="ons-grid__col ons-col-7@m">
+            </div>
+            <div class="ons-grid ons-grid--flex ons-grid--gutterless ons-u-mt-l ons-u-mb-m">
+            <div class="ons-grid__col ons-col-5@m">
             <strong>Manager permissions</strong>
             {{
                 onsCheckbox({
@@ -202,25 +295,16 @@
                         "text": "Manage user accounts"
                     },
                     "value": "y",
-                    "checked": groups["users.admin"]
                 })
               }}
             </div>
           </div>
-          <div class="ons-panel ons-panel--warn ons-panel--no-title ons-u-mt-l">
-            <span class="ons-panel__icon" aria-hidden="true">!</span>
-            <span class="ons-u-vh">Warning: </span>
-            <div class="ons-panel__body">
-              Changes will happen shortly
-            </div>
-        </div>
-
           <div class="ons-grid ons-grid--flex ons-grid--gutterless ons-grid--vertical-center ons-grid--no-wrap@s ons-u-mt-m ons-u-mb-m">
             <div class="ons-grid__col">
             {{
                 onsButton({
-                    "id": "save-changes",
-                    "text": "Save changes",
+                    "id": "create-account",
+                    "text": "Create account",
                     "submitType": "timer"
                 })
             }}
@@ -230,9 +314,7 @@
                     <span class="ons-btn__inner">Cancel</span></a>
             </div>
           </div>
-          <div class="ons-u-mt-xl">
-            <a href=" {{ url_for('admin_bp.get_delete_uaa_user', user_id=user_id) }}">Delete user account</a>
-          </div>
-        </section>
-    </form>
-{% endblock %}
+            </form>
+        </div>
+    </div>
+{% endblock main %}

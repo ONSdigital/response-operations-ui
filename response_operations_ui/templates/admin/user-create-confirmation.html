@@ -1,0 +1,34 @@
+{% extends "layouts/base.html" %}
+{% from "components/table/_macro.njk" import onsTable %}
+{% from "components/checkboxes/_checkbox-macro.njk" import onsCheckbox %}
+{% from "components/button/_macro.njk" import onsButton %}
+
+{% block main %}
+    <div class="ons-grid ons-grid--flex ons-grid--between">
+      {% with messages = get_flashed_messages(category_filter=["error"]) %}
+            {% if messages %}
+                {% call
+                    onsPanel({
+                            "type": "error",
+                            "classes": "ons-u-mb-l",
+                            "title":  errorTitle
+                        })
+                %}
+                    {% for message in messages %}
+                        <p id="flashed-message-{{ loop.index }}">{{ message }}</p>
+                    {% endfor %}
+                {% endcall %}
+            {% endif %}
+        {% endwith %}
+        <div class="ons-grid__col">
+            <h1 class="u-mb-xs" name="page-manage-account-title">Account created</h1>
+
+  
+    <span>An email to activate the account has been sent to {{ email }}.</span>
+    <p>This email will be valid for 4 weeks.</p>
+
+    <a href="{{ url_for('admin_bp.manage_user_accounts') }}">Return to manage user accounts</a>
+          </div>
+    </div>
+
+{% endblock %}

@@ -7,7 +7,7 @@ from werkzeug.exceptions import InternalServerError
 from response_operations_ui import create_app
 from response_operations_ui.common.token_decoder import (
     decode_email_token,
-    generate_email_token,
+    generate_token,
 )
 
 
@@ -22,7 +22,7 @@ class TestTokenDecoder(unittest.TestCase):
     def test_generating_and_decoding_email_token(self):
         with self.app.app_context():
             try:
-                email_token = generate_email_token("test@ons.gov")
+                email_token = generate_token("test@ons.gov")
             except InternalServerError:
                 self.fail("Exception raised in generating email token")
 

@@ -6,6 +6,7 @@ from flask_wtf import FlaskForm
 from structlog import wrap_logger
 from wtforms import (
     BooleanField,
+    EmailField,
     HiddenField,
     IntegerField,
     Label,
@@ -460,6 +461,65 @@ class RequestAccountForm(FlaskForm):
         if domain_part not in ["ons.gov.uk", "ext.ons.gov.uk", "ons.fake"]:
             logger.info("Account requested for non-ONS email address")
             raise ValidationError("Not a valid ONS email address")
+
+
+class CreateAccountWithPermissionsForm(FlaskForm):
+    first_name = StringField("First name", validators=[DataRequired(message="First name is required")])
+    last_name = StringField("Last name", validators=[DataRequired(message="Last name is required")])
+    email = EmailField("Email", validators=[DataRequired(message="Email is required")])
+
+    surveys_edit = BooleanField()
+    reporting_units_edit = BooleanField()
+    respondents_edit = BooleanField()
+    respondents_delete = BooleanField()
+    messages_edit = BooleanField()
+    users_admin = BooleanField()
+
+    @staticmethod
+    def get_uaa_permission_groups():
+        return [
+            "surveys_edit",
+            "reporting_units_edit",
+            "respondents_edit",
+            "respondents_delete",
+            "messages_edit",
+            "users_admin",
+        ]
+
+    @staticmethod
+    def validate_email(_, field):
+        email = field.data
+        _validate_email_address(email)
+        local_part, domain_part = email.rsplit("@", 1)
+        if domain_part not in ["ons.gov.uk", "ext.ons.gov.uk", "ons.fake"]:
+            logger.info("Account requested for non-ONS email address")
+            raise ValidationError("Not a valid ONS email address")
+
+
+class ActivateAccountForm(FlaskForm):
+    password = PasswordField(
+        "Create a new password",
+        validators=[
+            DataRequired("Your new password is required"),
+            EqualTo("password_confirm", message="Your passwords do not match"),
+            Length(
+                min=12,
+                max=160,
+                message="Your password doesn't meet the requirements",
+            ),
+        ],
+    )
+    password_confirm = PasswordField("Re-type your new password")
+
+    @staticmethod
+    def validate_password(form, field):
+        password = field.data
+        if (
+            password.isalnum()
+            or not any(char.isupper() for char in password)
+            or not any(char.isdigit() for char in password)
+        ):
+            raise ValidationError("Your password doesn't meet the requirements")
 
 
 class CreateAccountForm(FlaskForm):
