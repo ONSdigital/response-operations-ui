@@ -18,6 +18,5 @@ spec:
         backend:
           service:
             name: {{ .Chart.Name }}
-            port: 
-              {{ .Values.service.port }}
+            port: {{ .Values.service.port }}
 {{- end }}
