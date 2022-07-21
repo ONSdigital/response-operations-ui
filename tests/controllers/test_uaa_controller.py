@@ -70,11 +70,6 @@ class TestUAAController(unittest.TestCase):
         with self.app.test_request_context():
             self.assertFalse(uaa_controller.user_has_permission("oauth.disapprovals", user_id))
 
-    def test_user_has_permission_rba_disabled(self):
-        self.app.config["IS_ROLE_BASED_ACCESS_ENABLED"] = False
-        with self.app.test_request_context():
-            self.assertTrue(uaa_controller.user_has_permission("surveys.edit", user_id))
-
     # update_user_password
 
     @requests_mock.mock()

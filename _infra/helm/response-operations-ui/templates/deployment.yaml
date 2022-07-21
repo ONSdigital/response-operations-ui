@@ -221,8 +221,6 @@ spec:
             {{- else }}
             value: "http://$(SECURE_MESSAGE_SERVICE_HOST):$(SECURE_MESSAGE_SERVICE_PORT)"
             {{- end }}
-          - name: IS_ROLE_BASED_ACCESS_ENABLED
-            value: "{{ .Values.features.isRoleBasedAccessEnabled }}"
           - name: SECURE_MESSAGE_JWT_SECRET
             valueFrom:
               secretKeyRef:

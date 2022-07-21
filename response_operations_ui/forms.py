@@ -440,29 +440,6 @@ class ResetPasswordForm(FlaskForm):
             raise ValidationError("Your password doesn't meet the requirements")
 
 
-class RequestAccountForm(FlaskForm):
-    """The form used by request-new-account.html"""
-
-    email_address = StringField(
-        "Enter the ONS email address to create an account for",
-        validators=[
-            InputRequired("Enter an email address"),
-            Email(message="Invalid email address"),
-            Length(max=254, message="Your email must be less than 254 characters"),
-        ],
-    )
-    password = PasswordField("Enter the admin password", validators=[InputRequired("Enter the admin password")])
-
-    @staticmethod
-    def validate_email_address(_, field):
-        email = field.data
-        _validate_email_address(email)
-        local_part, domain_part = email.rsplit("@", 1)
-        if domain_part not in ["ons.gov.uk", "ext.ons.gov.uk", "ons.fake"]:
-            logger.info("Account requested for non-ONS email address")
-            raise ValidationError("Not a valid ONS email address")
-
-
 class CreateAccountWithPermissionsForm(FlaskForm):
     first_name = StringField("First name", validators=[DataRequired(message="First name is required")])
     last_name = StringField("Last name", validators=[DataRequired(message="Last name is required")])
@@ -510,32 +487,6 @@ class ActivateAccountForm(FlaskForm):
         ],
     )
     password_confirm = PasswordField("Re-type your new password")
-
-    @staticmethod
-    def validate_password(form, field):
-        password = field.data
-        if (
-            password.isalnum()
-            or not any(char.isupper() for char in password)
-            or not any(char.isdigit() for char in password)
-        ):
-            raise ValidationError("Your password doesn't meet the requirements")
-
-
-class CreateAccountForm(FlaskForm):
-    first_name = StringField("First name", validators=[DataRequired(message="First name is required")])
-    last_name = StringField("Last name", validators=[DataRequired(message="Last name is required")])
-    user_name = StringField("User name", validators=[DataRequired(message="Username is required")])
-    password = PasswordField(
-        "New password",
-        validators=[
-            DataRequired(message="Password is required"),
-            EqualTo("password_confirm", message="Your passwords do not match"),
-            Length(min=8, max=160, message="Your password doesn't meet the requirements"),
-        ],
-    )
-
-    password_confirm = PasswordField("Re-type new password")
 
     @staticmethod
     def validate_password(form, field):

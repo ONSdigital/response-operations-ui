@@ -29,13 +29,11 @@ user_permission_admin_json = {
 class TestSignIn(unittest.TestCase):
     def setUp(self):
         payload = {"user_id": "test-id", "aud": "response_operations"}
-
         self.app = create_app("TestingConfig")
         self.access_token = jwt.encode(payload, self.app.config["UAA_PRIVATE_KEY"], algorithm="RS256")
         self.client = self.app.test_client()
 
     def test_sign_in_page(self):
-        self.app.config["IS_ROLE_BASED_ACCESS_ENABLED"] = False
         with self.app.app_context():
             response = self.client.get("/sign-in")
             self.assertIn(b"Username", response.data)
@@ -45,20 +43,6 @@ class TestSignIn(unittest.TestCase):
             self.assertNotIn(b"My account", response.data)
             self.assertNotIn(b"Home", response.data)
             self.assertNotIn(b"Reporting units", response.data)
-            self.assertIn(b"Create an account", response.data)
-
-    def test_sign_in_page_with_role_based_access(self):
-        self.app.config["IS_ROLE_BASED_ACCESS_ENABLED"] = True
-        with self.app.app_context():
-            response = self.client.get("/sign-in")
-            self.assertIn(b"Username", response.data)
-            self.assertIn(b"Password", response.data)
-            self.assertEqual(response.status_code, 200)
-            self.assertNotIn(b"Sign out", response.data)
-            self.assertNotIn(b"My account", response.data)
-            self.assertNotIn(b"Home", response.data)
-            self.assertNotIn(b"Reporting units", response.data)
-            self.assertNotIn(b"Create an account", response.data)
 
     def test_logout(self):
         response = self.client.get("/logout", follow_redirects=True)
