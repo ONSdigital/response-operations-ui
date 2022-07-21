@@ -55,9 +55,7 @@ ingress:
 
 notify:
   createUserAccountTemplate: create_user_account_id
-  confirmCreateAccountTemplate: confirm_create_account_id
   confirmPasswordChangeTemplate: confirm_password_change_id
-  requestCreateAccountTemplate: request_create_account_id
   requestPasswordChangeTemplate: request_password_change_id
   updateAccountDetailsTemplate: update_account_details_id
   updateAccountEmailTemplate: update_email_id

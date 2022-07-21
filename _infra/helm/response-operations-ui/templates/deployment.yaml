@@ -98,11 +98,6 @@ spec:
             {{- else }}
             value: "http://$(BANNER_API_SERVICE_HOST):$(BANNER_API_SERVICE_PORT)"
             {{- end }}
-          - name: CREATE_ACCOUNT_ADMIN_PASSWORD
-            valueFrom:
-              secretKeyRef:
-                name: rops
-                key: create-account-password
           - name: CREATE_ACCOUNT_EMAIL_TOKEN_EXPIRY
             value: "{{ .Values.admin.createAccountEmailExpiry }}"
           - name: UPDATE_ACCOUNT_EMAIL_TOKEN_EXPIRY
@@ -131,12 +126,8 @@ spec:
             {{- end }}
           - name: NOTIFY_CREATE_USER_ACCOUNT_TEMPLATE
             value: {{ .Values.notify.createUserAccountTemplate }}
-          - name: NOTIFY_CONFIRM_CREATE_ACCOUNT_TEMPLATE
-            value: {{ .Values.notify.confirmCreateAccountTemplate }}
           - name: NOTIFY_CONFIRM_PASSWORD_CHANGE_TEMPLATE
             value: {{ .Values.notify.confirmPasswordChangeTemplate }}
-          - name: NOTIFY_REQUEST_CREATE_ACCOUNT_TEMPLATE
-            value: {{ .Values.notify.requestCreateAccountTemplate }}
           - name: NOTIFY_REQUEST_PASSWORD_CHANGE_TEMPLATE
             value: {{ .Values.notify.requestPasswordChangeTemplate }}
           - name: NOTIFY_UPDATE_ACCOUNT_DETAILS_TEMPLATE
