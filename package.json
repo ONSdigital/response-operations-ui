@@ -316,7 +316,7 @@
     "supports-color": "^7.2.0",
     "tapable": "^2.2.0",
     "tar": "^6.1.0",
-    "terser": "^5.12.1",
+    "terser": "^5.14.2",
     "terser-webpack-plugin": "^5.1.1",
     "to-fast-properties": "^2.0.0",
     "tough-cookie": "^2.5.0",
