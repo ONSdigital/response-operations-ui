@@ -57,9 +57,7 @@ def get_response_statuses(ru_ref, error=None):
     allowed_statuses = {"COMPLETEDBYPHONE", "NOLONGERREQUIRED"}
     statuses = case_controller.get_available_case_group_statuses_direct(exercise["id"], ru_ref)
     available_statuses = {
-        event: map_ce_response_status(status)
-        for event, status in statuses.items()
-        if status in allowed_statuses
+        event: map_ce_response_status(status) for event, status in statuses.items() if status in allowed_statuses
     }
 
     case_groups = case_controller.get_case_groups_by_business_party_id(reporting_unit["id"])
