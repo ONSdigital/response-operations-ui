@@ -292,7 +292,7 @@ def _upload_sample(short_name, period):
             collection_exercise_controllers.link_sample_summary_to_collection_exercise(
                 collection_exercise_id=exercise["id"], sample_summary_id=sample_summary["id"]
             )
-        except (ApiError) as e:
+        except ApiError as e:
             if e.status_code == 400:
                 error = e.message
             else:
