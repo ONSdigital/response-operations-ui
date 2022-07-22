@@ -1108,7 +1108,7 @@ class TestCollectionExercise(ViewTestCase):
         post_data = {"sampleFile": (BytesIO(b"data"), "test.csv"), "load-sample": ""}
 
         with open(
-                f"{project_root}/test_data/collection_exercise/formatted_collection_exercise_details_no_sample.json"
+            f"{project_root}/test_data/collection_exercise/formatted_collection_exercise_details_no_sample.json"
         ) as collection_exercise:
             mock_details.return_value = json.load(collection_exercise)
         mock_request.get(url_ces_by_survey, json=self.collection_exercises)
