@@ -26,6 +26,7 @@ from response_operations_ui.controllers.party_controller import (
 from response_operations_ui.forms import ChangeGroupStatusForm
 
 COMPLETE_STATE = ["COMPLETE", "COMPLETEDBYPHONE"]
+ALLOWED_TRANSITIONS = ["COMPLETEDBYPHONE", "NOLONGERREQUIRED"]
 COMPLETED_CASE_EVENTS = ["OFFLINE_RESPONSE_PROCESSED", "SUCCESSFUL_RESPONSE_UPLOAD", "COMPLETED_BY_PHONE"]
 SUCCESSFUL_CASE_EVENTS = ["OFFLINE_RESPONSE_PROCESSED", "SUCCESSFUL_RESPONSE_UPLOAD", "ONLINE_QUESTIONNAIRE_RESPONSE"]
 case_bp = Blueprint("case_bp", __name__, static_folder="static", template_folder="templates")
@@ -46,18 +47,15 @@ def get_response_statuses(ru_ref, error=None):
     exercise = collection_exercise_controllers.get_collection_exercise_from_list(exercises, period)
     reporting_unit = party_controller.get_business_by_ru_ref(ru_ref)
 
-    # The statuses variable is a dict that contains the action as the key (EQ_LAUNCH for example) and the value is
-    # the new state it will be in (e.g., COMPLETE, INPROGRESS, etc).
-    # The available_statuses are the statuses that we allow a case to switch to.  We currently only allow changing to
-    # COMPLETEDBYPHONE and NOLONGERREQUIRED, and no other, states via the UI.
-    # Historically we've not allowed changing back to NOTSTARTED as case wasn't smart enough to reset the case to a
-    # state where it would start sending communications out (e.g., reminder emails), if this changes then we can add it
-    # to this list though it would need to be written to be a bit more clever about which radio buttons to present as
-    # this implementation is very basic.
-    allowed_statuses = {"COMPLETEDBYPHONE", "NOLONGERREQUIRED"}
-    statuses = case_controller.get_available_case_group_statuses_direct(exercise["id"], ru_ref)
-    available_statuses = {
-        event: map_ce_response_status(status) for event, status in statuses.items() if status in allowed_statuses
+    # The possible_transitions_for_case variable is a dict that contains the action as the key (EQ_LAUNCH for example)
+    # and the value is the new state it will be in (e.g., COMPLETE, INPROGRESS, etc).
+    # The allowed_transitions_for_case are the statuses that we allow a case to switch to.  We currently only allow
+    # a subset of them via the UI as case can't handle switching between certain states correctly.
+    possible_transitions_for_case = case_controller.get_available_case_group_statuses_direct(exercise["id"], ru_ref)
+    allowed_transitions_for_case = {
+        event: map_ce_response_status(status)
+        for event, status in possible_transitions_for_case.items()
+        if status in ALLOWED_TRANSITIONS
     }
 
     case_groups = case_controller.get_case_groups_by_business_party_id(reporting_unit["id"])
@@ -66,9 +64,9 @@ def get_response_statuses(ru_ref, error=None):
     case_id = get_case_by_case_group_id(case_group["id"]).get("id")
     is_complete = case_group_status in COMPLETE_STATE
     completed_timestamp = get_timestamp_for_completed_case_event(case_id) if is_complete else None
-    case_events = get_case_events_by_case_id(case_id=case_id)
 
     if case_group_status == "COMPLETE":
+        case_events = get_case_events_by_case_id(case_id=case_id)
         case_event = get_case_event_for_seft_or_eq(case_events)
         completed_respondent = get_user_from_case_events(case_event)
 
@@ -80,7 +78,7 @@ def get_response_statuses(ru_ref, error=None):
         survey_short_name=format_short_name(survey["shortName"]),
         survey_ref=survey["surveyRef"],
         ce_period=period,
-        statuses=available_statuses,
+        allowed_transitions_for_case=allowed_transitions_for_case,
         case_group_status=map_ce_response_status(case_group_status),
         case_group_id=case_group["id"],
         error=error,

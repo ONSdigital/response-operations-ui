@@ -92,6 +92,7 @@ class TestChangeResponseStatus(TestCase):
         self.assertIn(b"221 BLOCKS", data)
         self.assertIn(b"Not started", data)
         self.assertIn(b"Completed by phone", data)
+        self.assertIn(b"No longer required", data)
 
         # Test that events that end up in the NOTSTARTED state don't get a radio button
         self.assertNotIn(b"ACCESS_CODE_AUTHENTICATION_ATTEMPT", data)
