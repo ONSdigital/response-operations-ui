@@ -68,6 +68,9 @@ class TestChangeResponseStatus(TestCase):
             "EQ_LAUNCH": "INPROGRESS",
             "SUCCESSFUL_RESPONSE_UPLOAD": "COMPLETE",
             "COMPLETED_BY_PHONE": "COMPLETEDBYPHONE",
+            "RESPONDENT_ENROLED": "NOTSTARTED",
+            "ACCESS_CODE_AUTHENTICATION_ATTEMPT": "NOTSTARTED",
+            "NO_LONGER_REQUIRED": "NOLONGERREQUIRED",
         }
 
     @requests_mock.mock()
@@ -89,6 +92,11 @@ class TestChangeResponseStatus(TestCase):
         self.assertIn(b"221 BLOCKS", data)
         self.assertIn(b"Not started", data)
         self.assertIn(b"Completed by phone", data)
+        self.assertIn(b"No longer required", data)
+
+        # Test that events that end up in the NOTSTARTED state don't get a radio button
+        self.assertNotIn(b"ACCESS_CODE_AUTHENTICATION_ATTEMPT", data)
+        self.assertNotIn(b"RESPONDENT_ENROLED", data)
 
     @requests_mock.mock()
     def test_get_available_status_failures(self, mock_request):

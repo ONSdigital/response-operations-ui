@@ -103,7 +103,7 @@
                     } %}
 
                     {% set radios = [] %}
-                    {% for event, status in statuses.items() %}
+                    {% for event, status in allowed_transitions_for_case.items() %}
                         {% do radios.append(
                             {
                                 "id": 'state-' ~ loop.index,
