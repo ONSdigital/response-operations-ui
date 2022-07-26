@@ -270,9 +270,9 @@ def _set_ready_for_live(short_name, period):
 
 
 def _upload_sample(short_name, period):
-    error = _validate_sample()
+    valid = _validate_sample()
 
-    if not error:
+    if valid:
         survey_id = survey_controllers.get_survey_id_by_short_name(short_name)
         exercises = collection_exercise_controllers.get_collection_exercises_by_survey(survey_id)
 
@@ -294,7 +294,7 @@ def _upload_sample(short_name, period):
             )
         except ApiError as e:
             if e.status_code == 400:
-                error = e.message
+                flash(e.message, "error")
             else:
                 # For a non-400, just let the error bubble up
                 raise e
@@ -304,7 +304,6 @@ def _upload_sample(short_name, period):
             "collection_exercise_bp.get_view_sample_ci",
             short_name=short_name,
             period=period,
-            error=error,
             show_msg="true",
         )
     )
@@ -497,18 +496,23 @@ def validate_file_extension_is_correct(file):
     return error
 
 
-def _validate_sample():
-    error = None
-    if "sampleFile" in request.files:
-        file = request.files["sampleFile"]
-        if not str.endswith(file.filename, ".csv"):
-            logger.info("Invalid file format uploaded", filename=file.filename)
-            error = "Invalid file format"
-    else:
+def _validate_sample() -> bool:
+    """
+    Does some light touch validation around the sample file.  It ensures a file got uploaded and that it has the
+    right extension.
+    :return: True if sample is valid, False if it's invalid
+    """
+    if "sampleFile" not in request.files:
         logger.info("No file uploaded")
-        error = "File not uploaded"
+        flash("No file uploaded", "error")
+        return False
 
-    return error
+    file = request.files["sampleFile"]
+    if not str.endswith(file.filename, ".csv"):
+        logger.info("Invalid file format uploaded", filename=file.filename)
+        flash("Invalid file format", "error")
+        return False
+    return True
 
 
 def _format_sample_summary(sample):
