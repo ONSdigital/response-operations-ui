@@ -115,11 +115,6 @@ def get_cases_by_business_party_id(business_party_id):
     return response.json()
 
 
-def is_allowed_status(status):
-    allowed_statuses = {"COMPLETEDBYPHONE", "NOLONGERREQUIRED", "NOTSTARTED"}
-    return status in allowed_statuses
-
-
 def get_case_group_by_collection_exercise(case_groups, collection_exercise_id):
     return next(
         (case_group for case_group in case_groups if case_group["collectionExerciseId"] == collection_exercise_id), None
