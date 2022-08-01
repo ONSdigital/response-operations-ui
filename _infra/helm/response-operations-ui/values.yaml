@@ -78,4 +78,4 @@ test:
   enabled: false
   
 features:
-  isRoleBasedAccessEnabled: false
+  isRoleBasedAccessEnabled: true

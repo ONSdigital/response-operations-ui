@@ -1067,8 +1067,8 @@ class TestCollectionExercise(ViewTestCase):
         data = {"sampleFile": (BytesIO(b"data"), "test.html"), "load-sample": ""}
         with open(
             f"{project_root}/test_data/collection_exercise/formatted_collection_exercise_details_no_sample.json"
-        ) as collection_exercise:
-            mock_details.return_value = json.load(collection_exercise)
+        ) as collection_exercise_no_sample:
+            mock_details.return_value = json.load(collection_exercise_no_sample)
         mock_request.get(url_get_survey_by_short_name, status_code=200, json=self.survey_data)
         mock_request.get(url_ces_by_survey, status_code=200, json=exercise_data)
 
@@ -1079,6 +1079,7 @@ class TestCollectionExercise(ViewTestCase):
         self.assertEqual(response.status_code, 200)
         self.assertNotIn("Sample loaded successfully".encode(), response.data)
         self.assertIn("Sample summary".encode(), response.data)
+        self.assertIn("Invalid file format".encode(), response.data)
 
     @requests_mock.mock()
     @patch("response_operations_ui.views.collection_exercise.build_collection_exercise_details")
@@ -1098,6 +1099,31 @@ class TestCollectionExercise(ViewTestCase):
         self.assertEqual(response.status_code, 200)
         self.assertNotIn("Sample loaded successfully".encode(), response.data)
         self.assertIn("Sample summary".encode(), response.data)
+        self.assertIn("No file uploaded".encode(), response.data)
+
+    @requests_mock.mock()
+    @patch("response_operations_ui.views.collection_exercise.build_collection_exercise_details")
+    def test_upload_sample_csv_too_few_columns(self, mock_request, mock_details):
+        sign_in_with_permission(self, mock_request, user_permission_surveys_edit_json)
+        post_data = {"sampleFile": (BytesIO(b"data"), "test.csv"), "load-sample": ""}
+
+        with open(
+            f"{project_root}/test_data/collection_exercise/formatted_collection_exercise_details_no_sample.json"
+        ) as collection_exercise:
+            mock_details.return_value = json.load(collection_exercise)
+        mock_request.get(url_ces_by_survey, json=self.collection_exercises)
+        mock_request.get(url_get_survey_by_short_name, json=self.survey_data)
+        mock_request.get(url_ces_by_survey, json=exercise_data)
+        mock_request.post(url_sample_service_upload, status_code=400, text="Too few columns in CSV file")
+
+        response = self.client.post(
+            f"/surveys/{short_name}/{period}/upload-sample-file", data=post_data, follow_redirects=True
+        )
+
+        self.assertEqual(response.status_code, 200)
+        self.assertNotIn("Sample loaded successfully".encode(), response.data)
+        self.assertIn("Sample summary".encode(), response.data)
+        self.assertIn("Too few columns in CSV file".encode(), response.data)
 
     @requests_mock.mock()
     @patch("response_operations_ui.views.collection_exercise.build_collection_exercise_details")
