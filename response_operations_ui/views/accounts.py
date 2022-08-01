@@ -308,49 +308,6 @@ def send_update_account_email(token_dict, first_name):
         flash("Email already in use", category="error")
 
 
-def send_create_account_email(email):
-    """Sends an email through GovNotify to the specified address with an encoded link to verify their email
-
-    :param email: The email address to send to
-    """
-    url_safe_serializer = URLSafeSerializer(app.config["SECRET_KEY"])
-
-    response = uaa_controller.get_user_by_email(email)
-    if response is None:
-        return render_template("request-new-account-error.html")
-
-    if response["totalResults"] == 0:
-        internal_url = app.config["RESPONSE_OPERATIONS_UI_URL"]
-        verification_url = f"{internal_url}/account/create-account/{token_decoder.generate_token(email)}"
-
-        logger.info("Sending create account email", verification_url=verification_url)
-
-        personalisation = {"CREATE_ACCOUNT_URL": verification_url, "EMAIL": email}
-
-        try:
-            NotifyController().request_to_notify(
-                email=email, template_name="request_create_account", personalisation=personalisation
-            )
-        except NotifyError as e:
-            logger.error("Error sending create account request email to Notify Gateway", msg=e.description)
-            return render_template("request-new-account-error.html")
-
-        logger.info("Successfully sent create account request email", encoded_email=url_safe_serializer.dumps(email))
-    else:
-        logger.info(
-            "Requested account creation for email already in UAA", encoded_email=url_safe_serializer.dumps(email)
-        )
-        return render_template("request-new-account-exists.html", email=email)
-
-    return render_template("request-new-account-check-email.html", email=email)
-
-
-@account_bp.route("/resend_account_email_expired_token/<token>", methods=["GET"])
-def resend_account_email_expired_token(token):
-    email = token_decoder.decode_email_token(token)
-    return send_create_account_email(email)
-
-
 @account_bp.route("/activate-account/<token>", methods=["GET"])
 def get_activate_account(token):
     duration = app.config["CREATE_ACCOUNT_EMAIL_TOKEN_EXPIRY"]
