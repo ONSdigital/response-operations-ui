@@ -71,7 +71,14 @@ def login_admin():
         abort(response.status_code)
 
 
-def get_user_by_email(email, access_token=None):
+def get_user_by_email(email: str, access_token=None) -> dict | None:
+    """
+    Gets the user details from uaa, using the email of the user as a search parameter.
+
+    :param email: The email of the user being searched for
+    :param access_token: The response-operations-ui client access token for uaa
+    :return: A dict containing the search results, or None if there was an error getting records
+    """
     if access_token is None:
         access_token = login_admin()
 
