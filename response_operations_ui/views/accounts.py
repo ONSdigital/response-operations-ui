@@ -18,9 +18,7 @@ from response_operations_ui.forms import (
     ChangeAccountName,
     ChangeEmailForm,
     ChangePasswordFrom,
-    CreateAccountForm,
     MyAccountOptionsForm,
-    RequestAccountForm,
     UsernameChangeForm,
 )
 
@@ -281,33 +279,6 @@ def change_password():
     return render_template("account/change-password.html", form=form, errors=errors)
 
 
-@account_bp.route("/request-new-account", methods=["GET"])
-def get_request_new_account(form_errors=None, email=None):
-    form = RequestAccountForm(request.form)
-    template_data = {"error": {"type": form_errors}}
-    return render_template("request-new-account.html", form=form, data=template_data, email=email)
-
-
-@account_bp.route("/request-new-account", methods=["POST"])
-def post_request_new_account():
-    form = RequestAccountForm(request.form)
-    form.email_address.data = form.email_address.data.strip()
-    email = form.data.get("email_address")
-
-    if form.validate():
-        password = form.data.get("password")
-        admin_password = app.config["CREATE_ACCOUNT_ADMIN_PASSWORD"]
-        if password != admin_password:
-            logger.info("Invalid password provided for create account")
-            template_data = {"error": {"type": {"password": ["Incorrect admin secret"]}}}
-            return render_template("request-new-account.html", form=form, data=template_data, email=email)
-
-        return send_create_account_email(email)
-
-    template_data = {"error": {"type": {"email_address": ["Not a valid ONS email address"]}}}
-    return render_template("request-new-account.html", form=form, data=template_data, email=email)
-
-
 def send_update_account_email(token_dict, first_name):
     """Sends an email through GovNotify to the specified address with an encoded
      link to verify their email when it has been changed
@@ -335,106 +306,6 @@ def send_update_account_email(token_dict, first_name):
             encoded_email=url_safe_serializer.dumps(token_dict["email"]),
         )
         flash("Email already in use", category="error")
-
-
-def send_create_account_email(email):
-    """Sends an email through GovNotify to the specified address with an encoded link to verify their email
-
-    :param email: The email address to send to
-    """
-    url_safe_serializer = URLSafeSerializer(app.config["SECRET_KEY"])
-
-    response = uaa_controller.get_user_by_email(email)
-    if response is None:
-        return render_template("request-new-account-error.html")
-
-    if response["totalResults"] == 0:
-        internal_url = app.config["RESPONSE_OPERATIONS_UI_URL"]
-        verification_url = f"{internal_url}/account/create-account/{token_decoder.generate_token(email)}"
-
-        logger.info("Sending create account email", verification_url=verification_url)
-
-        personalisation = {"CREATE_ACCOUNT_URL": verification_url, "EMAIL": email}
-
-        try:
-            NotifyController().request_to_notify(
-                email=email, template_name="request_create_account", personalisation=personalisation
-            )
-        except NotifyError as e:
-            logger.error("Error sending create account request email to Notify Gateway", msg=e.description)
-            return render_template("request-new-account-error.html")
-
-        logger.info("Successfully sent create account request email", encoded_email=url_safe_serializer.dumps(email))
-    else:
-        logger.info(
-            "Requested account creation for email already in UAA", encoded_email=url_safe_serializer.dumps(email)
-        )
-        return render_template("request-new-account-exists.html", email=email)
-
-    return render_template("request-new-account-check-email.html", email=email)
-
-
-@account_bp.route("/resend_account_email_expired_token/<token>", methods=["GET"])
-def resend_account_email_expired_token(token):
-    email = token_decoder.decode_email_token(token)
-    return send_create_account_email(email)
-
-
-@account_bp.route("/create-account/<token>", methods=["GET"])
-def get_create_account(token, form_errors=None):
-    form = CreateAccountForm(request.form)
-
-    try:
-        duration = app.config["EMAIL_TOKEN_EXPIRY"]
-        _ = token_decoder.decode_email_token(token, duration)
-    except SignatureExpired:
-        logger.warning("Token expired for Response Operations account creation", token=token)
-        return render_template("request-new-account-expired.html", token=token)
-    except (BadSignature, BadData):
-        logger.warning("Invalid token sent to Response Operations account creation", token=token)
-        return render_template("request-new-account-expired.html", token=token)
-
-    template_data = {"error": {"type": form_errors}, "token": token}
-    return render_template("create-new-account.html", form=form, data=template_data)
-
-
-@account_bp.route("/create-account/<token>", methods=["POST"])
-def post_create_account(token):
-    # This is the old way of creating an account and will be removed once RBA has been implemented.
-    form = CreateAccountForm(request.form)
-
-    if not form.validate():
-        template_data = {"error": {"type": form.errors}, "token": token}
-        return render_template("create-new-account.html", form=form, data=template_data)
-
-    try:
-        duration = app.config["EMAIL_TOKEN_EXPIRY"]
-        email = token_decoder.decode_email_token(token, duration)
-    except SignatureExpired:
-        logger.warning("Token expired for Response Operations create account", token=token)
-        return render_template("request-new-account-expired.html", token=token)
-    except (BadSignature, BadData):
-        logger.warning("Invalid token sent to Response Operations create account", token=token)
-        return render_template("request-new-account-expired.html", token=token)
-
-    password = request.form.get("password")
-    user_name = request.form.get("user_name")
-    first_name = request.form.get("first_name")
-    last_name = request.form.get("last_name")
-
-    errors = uaa_controller.create_user_account(email, password, user_name, first_name, last_name)
-
-    if errors is None:
-        logger.info("Successfully created user account", token=token)
-        send_confirm_created_email(email, first_name)
-        flash("Account successfully created", category="account_created")
-        return redirect(url_for("sign_in_bp.sign_in"))
-    else:
-        if "user_name" in errors:
-            template_data = {"error": {"type": errors}, "token": token}
-            return render_template("create-new-account.html", form=form, data=template_data)
-
-        return render_template("create-new-account-error.html")
 
 
 @account_bp.route("/activate-account/<token>", methods=["GET"])

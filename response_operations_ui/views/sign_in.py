@@ -3,7 +3,6 @@ import logging
 from flask import (
     Blueprint,
     abort,
-    current_app,
     get_flashed_messages,
     redirect,
     render_template,
@@ -56,14 +55,12 @@ def sign_in():
             if "next" in session:
                 return redirect(session["next"])
             return redirect(url_for("home_bp.home"))
-    is_role_based_access_enabled = current_app.config["IS_ROLE_BASED_ACCESS_ENABLED"]
     for message in get_flashed_messages(with_categories=True):
         if "failed_authentication" in message:
             return render_template(
                 "sign_in.html",
                 form=form,
                 failed_authentication=True,
-                is_role_base_access_enabled=is_role_based_access_enabled,
             )
 
-    return render_template("sign_in.html", form=form, is_role_base_access_enabled=is_role_based_access_enabled)
+    return render_template("sign_in.html", form=form)

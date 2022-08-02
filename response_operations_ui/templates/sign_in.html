@@ -78,12 +78,7 @@
                 }}
             {% endcall %}
         {% endif %}
-        <p class="ons-field">
-            <h2>Sign in</h2>
-            {% if not is_role_base_access_enabled %}
-                <a href="/account/request-new-account">Create an account</a>
-            {% endif %}
-        </p>
+        <h2>Sign in</h2>
         {% if failed_authentication or form.username.errors | length > 0 %}
             {% set error = { "text": "Username is required" } %}
         {% endif %}

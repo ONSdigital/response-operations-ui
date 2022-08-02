@@ -71,7 +71,14 @@ def login_admin():
         abort(response.status_code)
 
 
-def get_user_by_email(email, access_token=None):
+def get_user_by_email(email: str, access_token=None) -> dict | None:
+    """
+    Gets the user details from uaa, using the email of the user as a search parameter.
+
+    :param email: The email of the user being searched for
+    :param access_token: The response-operations-ui client access token for uaa
+    :return: A dict containing the search results, or None if there was an error getting records
+    """
     if access_token is None:
         access_token = login_admin()
 
@@ -259,39 +266,6 @@ def create_user_account_with_random_password(email: str, first_name: str, last_n
         return {"error": response_json.get("message")}
 
 
-def create_user_account(email, password, user_name, first_name, last_name):
-    access_token = login_admin()
-    headers = generate_headers(access_token)
-
-    payload = {
-        "userName": user_name,
-        "name": {"formatted": f"{first_name} {last_name}", "givenName": first_name, "familyName": last_name},
-        "emails": [{"value": email, "primary": True}],
-        "active": True,
-        "verified": True,
-        "password": password,
-    }
-
-    url = f"{app.config['UAA_SERVICE_URL']}/Users"
-    response = requests.post(url, data=dumps(payload), headers=headers)
-    try:
-        response.raise_for_status()
-        return
-    except HTTPError:
-        if response.status_code == 409:
-            # Username already exists
-            errors = {"user_name": ["Username already in use; please choose another"]}
-        else:
-            errors = {"status_code": response.status_code, "message": response.reason}
-            logger.error(
-                "Received an error when creating an account in UAA",
-                status_code=response.status_code,
-                reason=response.reason,
-            )
-
-    return errors
-
-
 def update_user_account(payload) -> dict | None:
     """
     Updates the user in uaa, using the user's id
@@ -467,19 +441,6 @@ def user_has_permission(permission: str, user_id=None) -> bool:
     :param user_id: An optional user ID to check for
     :return: Whether the user has the permission or not
     """
-    # Feature flagged
-    is_role_based_access_enabled = app.config["IS_ROLE_BASED_ACCESS_ENABLED"]
-    if not is_role_based_access_enabled:
-        default_permissions = [
-            "surveys.edit",
-            "reportingunits.edit",
-            "respondents.edit",
-            "respondents.delete",
-            "messages.edit",
-            "messages.delete",
-        ]
-        return permission in default_permissions
-
     if user_id is None:
         if session is None or "user_id" not in session:
             return False

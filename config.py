@@ -67,12 +67,6 @@ class Config(object):
         "NOTIFY_CONFIRM_PASSWORD_CHANGE_TEMPLATE", "confirm_password_change_id"
     )
     NOTIFY_CREATE_USER_ACCOUNT_TEMPLATE = os.getenv("NOTIFY_CREATE_USER_ACCOUNT_TEMPLATE", "create_user_account_id")
-    NOTIFY_REQUEST_CREATE_ACCOUNT_TEMPLATE = os.getenv(
-        "NOTIFY_REQUEST_CREATE_ACCOUNT_TEMPLATE", "request_create_account_id"
-    )
-    NOTIFY_CONFIRM_CREATE_ACCOUNT_TEMPLATE = os.getenv(
-        "NOTIFY_CONFIRM_CREATE_ACCOUNT_TEMPLATE", "confirm_create_account_id"
-    )
     NOTIFY_UPDATE_ACCOUNT_DETAILS_TEMPLATE = os.getenv(
         "NOTIFY_UPDATE_ACCOUNT_DETAILS_TEMPLATE", "update_account_details_id"
     )
@@ -101,13 +95,11 @@ class Config(object):
     EMAIL_TOKEN_EXPIRY = int(os.getenv("EMAIL_TOKEN_EXPIRY", "86400"))
     # 4 weeks in seconds
     CREATE_ACCOUNT_EMAIL_TOKEN_EXPIRY = int(os.getenv("CREATE_ACCOUNT_EMAIL_TOKEN_EXPIRY", "2419200"))
-    CREATE_ACCOUNT_ADMIN_PASSWORD = os.getenv("CREATE_ACCOUNT_ADMIN_PASSWORD")
     # 3 days in seconds
     UPDATE_ACCOUNT_EMAIL_TOKEN_EXPIRY = int(os.getenv("UPDATE_ACCOUNT_EMAIL_TOKEN_EXPIRY", "259200"))
 
     TEST_MODE = strtobool(os.getenv("TEST_MODE", "False"))
     WTF_CSRF_ENABLED = strtobool(os.getenv("WTF_CSRF_ENABLED", "True"))
-    IS_ROLE_BASED_ACCESS_ENABLED = strtobool(os.getenv("IS_ROLE_BASED_ACCESS_ENABLED", "False"))
 
 
 class DevelopmentConfig(Config):
@@ -149,11 +141,9 @@ class DevelopmentConfig(Config):
     EMAIL_TOKEN_EXPIRY = int(os.getenv("EMAIL_TOKEN_EXPIRY", "86400"))
     # 4 weeks in seconds
     CREATE_ACCOUNT_EMAIL_TOKEN_EXPIRY = int(os.getenv("CREATE_ACCOUNT_EMAIL_TOKEN_EXPIRY", "2419200"))
-    CREATE_ACCOUNT_ADMIN_PASSWORD = os.getenv("CREATE_ACCOUNT_ADMIN_PASSWORD", "package.through.quarter.fruit")
     # 3 days in seconds
     UPDATE_ACCOUNT_EMAIL_TOKEN_EXPIRY = int(os.getenv("UPDATE_ACCOUNT_EMAIL_TOKEN_EXPIRY", "259200"))
     WTF_CSRF_ENABLED = strtobool(os.getenv("WTF_CSRF_ENABLED", "False"))
-    IS_ROLE_BASED_ACCESS_ENABLED = strtobool(os.getenv("IS_ROLE_BASED_ACCESS_ENABLED", "True"))
 
 
 class TestingConfig(DevelopmentConfig):
@@ -184,5 +174,3 @@ Z5VVFymXN2n+A6UeWAnuO8/E1inhk99dBzKEGdw=
     SECRET_KEY = "sekrit!"
     SECURITY_USER_NAME = "admin"
     SECURITY_USER_PASSWORD = "secret"
-    CREATE_ACCOUNT_ADMIN_PASSWORD = "secret"
-    IS_ROLE_BASED_ACCESS_ENABLED = True
