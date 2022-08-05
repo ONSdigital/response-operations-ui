@@ -54,6 +54,12 @@ with open(f"{project_root}/test_data/case/case_events_without_partyId_in_metadat
     case_events_without_partyId_in_metadata = json.load(fp)
 with open(f"{project_root}/test_data/reporting_units/respondent.json") as json_data:
     respondent = json.load(json_data)
+with open(f"{project_root}/test_data/case/case_group_statuses_completed_to_notstarted.json") as fp:
+    case_groups_not_started = json.load(fp)
+with open(f"{project_root}/test_data/case/case_groups_list_completed_by_phone.json") as fp:
+    case_groups_completed_by_phone = json.load(fp)
+with open(f"{project_root}/test_data/case/case_groups_list_no_longer_required.json") as fp:
+    case_groups_no_longer_required = json.load(fp)
 
 
 class TestChangeResponseStatus(TestCase):
@@ -71,6 +77,7 @@ class TestChangeResponseStatus(TestCase):
             "RESPONDENT_ENROLED": "NOTSTARTED",
             "ACCESS_CODE_AUTHENTICATION_ATTEMPT": "NOTSTARTED",
             "NO_LONGER_REQUIRED": "NOLONGERREQUIRED",
+            "COMPLETED_TO_NOTSTARTED": "NOTSTARTED",
         }
 
     @requests_mock.mock()
@@ -289,3 +296,45 @@ class TestChangeResponseStatus(TestCase):
         self.assertIn(b"221 BLOCKS", data)
         self.assertIn(b"Completed", data)
         self.assertNotIn(b"Jacky Turner", data)
+
+    @requests_mock.mock()
+    def test_not_started_status_is_present_for_completed_by_phone(self, mock_request):
+        mock_request.get(url_get_survey_by_short_name, json=survey)
+        mock_request.get(url_get_collection_exercises_by_survey, json=collection_exercise_list)
+        mock_request.get(url_get_business_by_ru_ref, json=business_reporting_unit)
+        mock_request.get(url_get_available_case_group_statuses, json=self.statuses)
+        mock_request.get(url_get_case_groups_by_business_party_id, json=case_groups_completed_by_phone)
+        mock_request.get(url_get_case_events, json=case_events)
+        mock_request.get(url_update_case_group_status, json=case_groups_not_started)
+        mock_request.get(url_get_case_by_case_group_id, json=[case])
+
+        response = self.client.get(f"/case/{ru_ref}/response-status?survey={short_name}&period={period}")
+
+        data = response.data
+        self.assertEqual(response.status_code, 200)
+        self.assertIn(b"19000001", data)
+        self.assertIn(b"Bolts and Ratchets", data)
+        self.assertIn(b"221 BLOCKS", data)
+        self.assertIn(b"Completed by phone", data)
+        self.assertIn(b"Not started", data)
+        
+    @requests_mock.mock()
+    def test_not_started_status_is_present_for_no_longer_required(self, mock_request):
+        mock_request.get(url_get_survey_by_short_name, json=survey)
+        mock_request.get(url_get_collection_exercises_by_survey, json=collection_exercise_list)
+        mock_request.get(url_get_business_by_ru_ref, json=business_reporting_unit)
+        mock_request.get(url_get_available_case_group_statuses, json=self.statuses)
+        mock_request.get(url_get_case_groups_by_business_party_id, json=case_groups_no_longer_required)
+        mock_request.get(url_get_case_events, json=case_events)
+        mock_request.get(url_update_case_group_status, json=case_groups_not_started)
+        mock_request.get(url_get_case_by_case_group_id, json=[case])
+
+        response = self.client.get(f"/case/{ru_ref}/response-status?survey={short_name}&period={period}")
+
+        data = response.data
+        self.assertEqual(response.status_code, 200)
+        self.assertIn(b"19000001", data)
+        self.assertIn(b"Bolts and Ratchets", data)
+        self.assertIn(b"221 BLOCKS", data)
+        self.assertIn(b"No longer required", data)
+        self.assertIn(b"Not started", data)
