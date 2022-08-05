@@ -50,8 +50,8 @@ def get_response_statuses(ru_ref, error=None):
     reporting_unit = party_controller.get_business_by_ru_ref(ru_ref)
 
     statuses = case_controller.get_available_case_group_statuses_direct(exercise["id"], ru_ref)
-    # Code was added back to retrieve the 'Not started' radio buttons for the cases where 'Completed by phone' and 
-    # 'Not longer required' cases need to be reset back to 'Not started'
+    # Code was added back to retrieve the 'Not started' radio buttons for the cases where 'Completed by phone' and
+    # 'No longer required' cases need to be reset back to 'Not started'
     available_statuses = {
         event: map_ce_response_status(status)
         for event, status in statuses.items()
@@ -72,12 +72,8 @@ def get_response_statuses(ru_ref, error=None):
 
     # Below code was added to remove duplicated and not needed 'Not started' radio buttons when the case is set to
     # 'NOTSTARTED'
-    if case_group_status == 'NOTSTARTED':
-        available_statuses = {
-            key: val 
-            for key, val in available_statuses.items() 
-            if val != 'Not started'
-        }
+    if case_group_status == "NOTSTARTED":
+        available_statuses = {key: val for key, val in available_statuses.items() if val != "Not started"}
 
     return render_template(
         "response-status.html",

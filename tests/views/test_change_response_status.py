@@ -317,7 +317,7 @@ class TestChangeResponseStatus(TestCase):
         self.assertIn(b"221 BLOCKS", data)
         self.assertIn(b"Completed by phone", data)
         self.assertIn(b"Not started", data)
-        
+
     @requests_mock.mock()
     def test_not_started_status_is_present_for_no_longer_required(self, mock_request):
         mock_request.get(url_get_survey_by_short_name, json=survey)
