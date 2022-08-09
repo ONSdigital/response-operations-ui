@@ -158,7 +158,9 @@ url_collection_instrument_link = (
 url_collection_instrument_unlink = (
     f"{collection_instrument_root}/unlink-exercise/{collection_instrument_id}/{collection_exercise_id}"
 )
+
 url_get_collection_instrument = f"{collection_instrument_root}/collectioninstrument"
+url_delete_collection_instrument = f"{collection_instrument_root}/delete/{collection_instrument_id}"
 
 url_survey_shortname = f"{TestingConfig.SURVEY_URL}/surveys/shortname/{short_name}"
 url_get_survey_by_short_name = f"{TestingConfig.SURVEY_URL}/surveys/shortname/{short_name}"
@@ -1399,16 +1401,15 @@ class TestCollectionExercise(ViewTestCase):
 
     @requests_mock.mock()
     @patch("response_operations_ui.views.collection_exercise.build_collection_exercise_details")
-    def test_unlink_collection_instrument(self, mock_request, mock_details):
+    def test_delete_seft_collection_instrument(self, mock_request, mock_details):
         sign_in_with_permission(self, mock_request, user_permission_surveys_edit_json)
+        mock_details.return_value = formatted_collection_exercise_details
         post_data = {
             "ci_id": collection_instrument_id,
-            "ce_id": collection_exercise_id,
-            "unselect-ci": "",
+            "delete-ci": "",
         }
 
-        mock_request.put(url_collection_instrument_unlink, status_code=200)
-        mock_details.return_value = formatted_collection_exercise_details
+        mock_request.delete(url_delete_collection_instrument, status_code=200)
 
         response = self.client.post(
             f"/surveys/{short_name}/{period}/load-collection-instruments", data=post_data, follow_redirects=True
@@ -1416,6 +1417,25 @@ class TestCollectionExercise(ViewTestCase):
 
         self.assertEqual(response.status_code, 200)
         self.assertIn("Collection instrument removed".encode(), response.data)
+
+    @requests_mock.mock()
+    @patch("response_operations_ui.views.collection_exercise.build_collection_exercise_details")
+    def test_delete_seft_collection_instrument_failure(self, mock_request, mock_details):
+        sign_in_with_permission(self, mock_request, user_permission_surveys_edit_json)
+        mock_details.return_value = formatted_collection_exercise_details
+        post_data = {
+            "ci_id": collection_instrument_id,
+            "delete-ci": "",
+        }
+
+        mock_request.delete(url_delete_collection_instrument, status_code=404)
+
+        response = self.client.post(
+            f"/surveys/{short_name}/{period}/load-collection-instruments", data=post_data, follow_redirects=True
+        )
+
+        self.assertEqual(response.status_code, 200)
+        self.assertIn("Error: Failed to remove collection instrument".encode(), response.data)
 
     @requests_mock.mock()
     @patch("response_operations_ui.views.collection_exercise.build_collection_exercise_details")
