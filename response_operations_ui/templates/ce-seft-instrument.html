@@ -103,7 +103,7 @@
                     {% if not locked and surveyEditPermission %}
                         {% set formData = 
                             '<form id="form-delete-ci-' + loop.index|string + '" action="" method="post">' +
-                            '<a href=# id="unlink-ci-' + loop.index|string + '">Remove SEFT file</a>' +
+                            '<a href=# id="delete-ci-' + loop.index|string + '">Remove SEFT file</a>' +
                             '<input type="hidden" name="ci_id" value="' + collection_instrument.id + '">' +
                             '<input type="hidden" name="delete-ci">' +
                             '<input type="hidden" name="csrf_token" value="' + csrf_token() + '" />' +
