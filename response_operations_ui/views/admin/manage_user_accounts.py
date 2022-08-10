@@ -70,6 +70,12 @@ def manage_user_accounts():
         query = get_filter_query("equal", search_email, "emails.value")
     if form.errors:
         flash(form.errors["user_search"][0], "error")
+        return render_template(
+            "admin/manage-user-accounts.html",
+            show_pagination=False,
+            form=form,
+            search_email=search_email,
+        )
 
     uaa_user_list = get_users_list(start_index=offset, max_count=limit, query=query)
     if "error" in uaa_user_list:
