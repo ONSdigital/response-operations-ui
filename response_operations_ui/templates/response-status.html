@@ -10,7 +10,7 @@
 
     <div class="ons-grid ons-grid--gutterless">
         <div class="ons-grid__col ons-col-8@m">
-            {% if is_complete %}
+            {% if is_case_complete %}
                 <h1 class="ons-u-mt-m ons-u-fs-xl">Response status</h1>
             {% else %}
                 <h1 class="ons-u-mt-m ons-u-fs-xl">Change response status</h1>
@@ -72,10 +72,10 @@
                             ]
                         },
                         {
-                            "term": "Date and time:" if is_complete,
+                            "term": "Date and time:" if is_case_complete,
                             "descriptions": [
                                 {
-                                    "description": completed_timestamp if is_complete,
+                                    "description": completed_timestamp if is_case_complete,
                                     "id": "date-and-time"
                                 }
                             ]
@@ -92,7 +92,7 @@
                     ]
                 })
             }}
-            {% if is_complete %}
+            {% if is_case_complete %}
                 <a href="{{ request.referrer }}" id="close-response">Close</a>
             {% else %}
                 <form action="{{ url_for('case_bp.update_response_status', ru_ref=ru_ref, survey=survey_short_name, case_group_id=case_group_id, period=ce_period) }}" method="post" class="ons-u-mt-s">
@@ -103,7 +103,7 @@
                     } %}
 
                     {% set radios = [] %}
-                    {% for event, status in statuses.items() %}
+                    {% for event, status in allowed_transitions_for_case.items() %}
                         {% do radios.append(
                             {
                                 "id": 'state-' ~ loop.index,
