@@ -64,7 +64,7 @@ def get_response_statuses(ru_ref, error=None):
         case_event = get_case_event_for_seft_or_eq(case_events)
         completed_respondent = get_user_from_case_events(case_event)
 
-    # Using a list filter to return only the status we actually require. This is then is used by the
+    # Using a list filter to return only the status we actually require. This is then used
     # to create the dictionary with only the required allowed transitions for certain case events
     allowed_transitions_filtered = list(filter(lambda statuses: statuses != case_group_status, ALLOWED_TRANSITIONS))
 

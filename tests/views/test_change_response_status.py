@@ -333,8 +333,5 @@ class TestChangeResponseStatus(TestCase):
 
         data = response.data
         self.assertEqual(response.status_code, 200)
-        self.assertIn(b"19000001", data)
-        self.assertIn(b"Bolts and Ratchets", data)
-        self.assertIn(b"221 BLOCKS", data)
         self.assertIn(b"No longer required", data)
         self.assertIn(b"Not started", data)
