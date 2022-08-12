@@ -475,12 +475,12 @@ def get_users_list(
         response.raise_for_status()
         return response.json()
     except HTTPError:
-        logger.error("Failed to retrieve user list.", status_code=response.status_code)
+        logger.error("Failed to retrieve user list.", status_code=response.status_code, exc_info=True)
         return {"error": "Failed to retrieve user list, please try again"}
 
 
 def get_filter_query(filter_criteria: str, filter_value: str, filter_on: str) -> str:
-    return f"{filter_on} {get_filter(filter_criteria)} '{filter_value}'"
+    return f'{filter_on} {get_filter(filter_criteria)} "{filter_value}"'
 
 
 def get_filter(filter_criteria: str):

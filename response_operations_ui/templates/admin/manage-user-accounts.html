@@ -6,39 +6,29 @@
 
 
 {% block main %}
-    {% with messages = get_flashed_messages(category_filter=["error"]) %}
+      {% with messages = get_flashed_messages(with_categories=true) %}
         {% if messages %}
+          {% for category, message in messages %}
+            {% if category == "error" %}
+                {% set type = "error" %}
+            {% else %}
+                {% set type = "success" %}
+            {% endif %}
             {% call
                 onsPanel({
-                        "type": "error",
-                        "classes": "ons-u-mb-l",
-                        "title":  errorTitle
-                    })
-            %}
-                {% for message in messages %}
-                    <p id="flashed-message-{{ loop.index }}">{{ message }}</p>
-                {% endfor %}
-            {% endcall %}
-        {% endif %}
-    {% endwith %}
-    {% with messages = get_flashed_messages() %}
-        {% if messages %}
-            {% call
-                onsPanel({
-                    "type":"success",
-                    "iconType": "check",
-                    "classes": "ons-u-mb-s",
-                    "bodyAttributes": {
-                        "data-qa": "success-body"
-                    }
+                    "type": type,
+                    "classes": "ons-u-mb-l",
+                    "iconType": "check" if type == "success" else null,
                 })
             %}
-                {% for message in messages %}
-                    <p id="flashed-message-{{ loop.index }}">{{ message }}</p>
+                {% for category, message in messages %}
+                  <p id="flashed-message-{{ loop.index }}">{{ message }}</p>
                 {% endfor %}
             {% endcall %}
+          {% endfor %}
         {% endif %}
-    {% endwith %}
+      {% endwith %}
+
     <div class="ons-grid ons-grid--flex ons-grid--between">
         <div class="ons-grid__col">
             <h1 class="ons-u-fs-l u-mb-xs" name="page-messages-title">Manage user accounts</h1>
