@@ -99,5 +99,5 @@ class TestCaseControllers(unittest.TestCase):
         with responses.RequestsMock() as rsps:
             rsps.add(rsps.GET, url_get_cases, json=[], status=204, content_type="application/json")
             with self.app.app_context():
-                get_case_events = case_controller.get_cases_by_business_party_id(case_id)
+                get_case_events = case_controller.get_cases_by_business_party_id(case_id, 12)
                 self.assertEqual(get_case_events, [])
