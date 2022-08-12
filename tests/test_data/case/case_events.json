@@ -20,6 +20,19 @@
     "createdBy": "SYSTEM",
     "createdDateTime": "2018-04-22T15:16:50Z",
     "metadata": {"partyId": "cd592e0f-8d07-407b-b75d-e01fbdae8233"}
-
+  },
+  {
+   "category":"COMPLETED_TO_NOTSTARTED",
+   "subCategory":null,
+   "createdBy":"SYSTEM",
+   "createdDateTime":"2018-04-22T15:16:50Z",
+   "metadata":{"partyId": "cd592e0f-8d07-407b-b75d-e01fbdae8233"}
+  },
+  {
+   "category":"NO_LONGER_REQUIRED",
+   "subCategory":null,
+   "createdBy":"SYSTEM",
+   "createdDateTime":"2018-04-22T15:16:50Z",
+   "metadata":{"partyId": "cd592e0f-8d07-407b-b75d-e01fbdae8233"}
   }
 ]
