@@ -182,6 +182,24 @@ def unlink_collection_instrument(ce_id, ci_id):
     return True
 
 
+def delete_seft_collection_instrument(ci_id: str) -> bool:
+    """Deletes a SEFT collection instrument
+
+    :param ci_id: A uuid of a collection instrument
+    :rtype: bool
+    """
+    url = f'{app.config["COLLECTION_INSTRUMENT_URL"]}/collection-instrument-api/1.0.2/delete/{ci_id}'
+    response = requests.delete(url, auth=app.config["BASIC_AUTH"])
+
+    try:
+        response.raise_for_status()
+    except requests.exceptions.HTTPError:
+        logger.error(response.text, status=response.status_code)
+        return False
+
+    return True
+
+
 def get_collection_instruments_by_classifier(survey_id=None, collection_exercise_id=None, ci_type=None):
     logger.info(
         "Retrieving collection instruments",
