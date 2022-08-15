@@ -10,7 +10,6 @@
 
 {% block main %}
     {% include 'collection_exercise/ce-success-panel.html' %}
-    {% include 'collection_exercise/ce-handle-errors.html' %}
     {% include 'collection_exercise/ce-info-panel.html' %}
     {% include 'partials/error-box.html' %}
     <h1 name="page-survey-title" class="ons-u-mb-l">Load Collection instruments for {{survey.shortName}} {{period}}</h1>
@@ -99,16 +98,14 @@
                                     }
                                 ]
                 } %}
-                {% include 'partials/error-box.html' %}
                 {% set surveyTableDataRows = [] %}
                 {% for collection_instrument in collection_instruments %}
                     {% if not locked and surveyEditPermission %}
                         {% set formData = 
-                            '<form id="form-unselect-ci-' + loop.index|string + '" action="" method="post">' +
-                            '<a href=# id="unlink-ci-' + loop.index|string + '">Remove SEFT file</a>' +
-                            '<input type="hidden" name="ce_id" value="' + ce.id + '">' +
+                            '<form id="form-delete-ci-' + loop.index|string + '" action="" method="post">' +
+                            '<a href=# id="delete-ci-' + loop.index|string + '">Remove SEFT file</a>' +
                             '<input type="hidden" name="ci_id" value="' + collection_instrument.id + '">' +
-                            '<input type="hidden" name="unselect-ci">' +
+                            '<input type="hidden" name="delete-ci">' +
                             '<input type="hidden" name="csrf_token" value="' + csrf_token() + '" />' +
                             '</form>'
                         %}
@@ -139,7 +136,7 @@
                 {% for i in range(surveyTableDataRows | length) %}
                     {% set j = i + 1 %}
                     <script{% if csp_nonce %} nonce="{{ csp_nonce() }}" {% endif %}>
-                    document.getElementById("unlink-ci-{{ j }}").addEventListener('click', function () {
+                    document.getElementById("delete-ci-{{ j }}").addEventListener('click', function () {
                         this.parentNode.submit()
                     });</script>
                 {% endfor %}
