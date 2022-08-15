@@ -136,7 +136,7 @@
                 {% for i in range(surveyTableDataRows | length) %}
                     {% set j = i + 1 %}
                     <script{% if csp_nonce %} nonce="{{ csp_nonce() }}" {% endif %}>
-                    document.getElementById("unlink-ci-{{ j }}").addEventListener('click', function () {
+                    document.getElementById("delete-ci-{{ j }}").addEventListener('click', function () {
                         this.parentNode.submit()
                     });</script>
                 {% endfor %}
