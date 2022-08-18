@@ -148,6 +148,9 @@ def view_reporting_unit_survey(ru_ref, survey_id):
     # Make some initial calls to retrieve some data we'll need
     reporting_unit = party_controller.get_business_by_ru_ref(ru_ref)
     max_number_of_cases = request.args.get("max-number-of-cases", app.config["MAX_CASES_RETRIEVED_PER_SURVEY"])
+    if int(max_number_of_cases) == 0:
+        flash("Maximum number of cases cannot be 0.  Using default maximum instead", "error")
+        max_number_of_cases = app.config["MAX_CASES_RETRIEVED_PER_SURVEY"]
     cases = case_controller.get_cases_by_business_party_id(reporting_unit["id"], max_number_of_cases)
     case_groups = [case["caseGroup"] for case in cases]
 
