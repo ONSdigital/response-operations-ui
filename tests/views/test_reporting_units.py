@@ -218,6 +218,37 @@ class TestReportingUnits(ViewTestCase):
         self.assertEqual(response.status_code, 500)
 
     @requests_mock.mock()
+    def test_get_reporting_unit_survey_max_no_of_cases_0_causes_warning(self, mock_request):
+        """
+        If the max-number-of-cases url parameter is 0 then a flashed warning will be displayed saying that it'll use
+        the default value instead.
+        """
+        mock_request.post(url_sign_in_data, json={"access_token": self.access_token}, status_code=201)
+        mock_request.get(url_surveys, json=self.surveys_list_json, status_code=200)
+        mock_request.get(url_permission_url, json=user_permission_reporting_unit_edit_json, status_code=200)
+        self.client.post("/sign-in", follow_redirects=True, data={"username": "user", "password": "pass"})
+        mock_request.get(url_get_business_by_ru_ref, json=business_reporting_unit)
+        mock_request.get(url_get_cases_by_business_party_id, json=cases_list)
+        mock_request.get(f"{url_get_collection_exercise_by_id}/{collection_exercise_id_1}", json=collection_exercise)
+        mock_request.get(f"{url_get_collection_exercise_by_id}/{collection_exercise_id_2}", json=collection_exercise_2)
+        mock_request.get(url_get_respondent_party_by_party_id, json=respondent_party)
+        mock_request.get(url_get_business_attributes, json=business_attributes)
+        mock_request.get(url_get_survey_by_id, json=survey)
+        mock_request.get(url_get_respondent_party_by_list, json=respondent_party_list)
+        mock_request.get(f"{url_get_iac}/{iac_1}", json=iac)
+        mock_request.get(f"{url_get_iac}/{iac_2}", json=iac)
+        mock_request.get(url_permission_url, json=user_permission_reporting_unit_edit_json, status_code=200)
+
+        response = self.client.get(
+            "/reporting-units/50012345678/surveys/cb0711c3-0ac8-41d3-ae0e-567e5ea1ef87?max-number-of-cases=0",
+            follow_redirects=True,
+        )
+
+        self.assertIn("Maximum number of cases cannot be 0.  Using default maximum instead".encode(), response.data)
+        self.assertIn("Back to surveys".encode(), response.data)
+        self.assertEqual(response.status_code, 200)
+
+    @requests_mock.mock()
     def test_get_reporting_unit_survey_reporting_unit_edit_role(self, mock_request):
         mock_request.post(url_sign_in_data, json={"access_token": self.access_token}, status_code=201)
         mock_request.get(url_surveys, json=self.surveys_list_json, status_code=200)

@@ -90,13 +90,21 @@ def get_case_groups_by_business_party_id(business_party_id):
     return response.json()
 
 
-def get_cases_by_business_party_id(business_party_id):
+def get_cases_by_business_party_id(business_party_id: str, max_number_of_cases: str) -> dict:
+    """
+    Gets the case details for a given business from the case service.  The cases will be returned most recent
+    first, so having 12 cases maximum will result in getting the 12 most recent cases for each survey.
+
+    :param business_party_id: party uuid of the business
+    :param max_number_of_cases: Maximum number of cases that will be returned
+    :return: A dictionary containing all the case data
+    """
     logger.info("Retrieving cases", business_party_id=business_party_id)
     url = f'{app.config["CASE_URL"]}/cases/partyid/{business_party_id}'
     response = requests.get(
         url,
         auth=app.config["BASIC_AUTH"],
-        params={"iac": "True", "max_cases_per_survey": app.config["MAX_CASES_RETRIEVED_PER_SURVEY"]},
+        params={"iac": "True", "max_cases_per_survey": max_number_of_cases},
     )
 
     try:
