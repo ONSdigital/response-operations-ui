@@ -24,4 +24,4 @@ class TestForms(unittest.TestCase):
                 form.email.data = email
                 result = form.validate()
                 self.assertTrue(result)
-                self.assertEquals(len(form.errors), 0)
+                self.assertEqual(len(form.errors), 0)

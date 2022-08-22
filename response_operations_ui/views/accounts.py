@@ -14,11 +14,11 @@ from response_operations_ui.controllers.notify_controller import NotifyControlle
 from response_operations_ui.controllers.respondent_controllers import obfuscate_email
 from response_operations_ui.exceptions.exceptions import NotifyError
 from response_operations_ui.forms import (
-    ActivateAccountForm,
     ChangeAccountName,
     ChangeEmailForm,
     ChangePasswordFrom,
     MyAccountOptionsForm,
+    SetAccountPasswordForm,
     UsernameChangeForm,
 )
 
@@ -315,7 +315,7 @@ def get_activate_account(token):
     user = uaa_controller.get_user_by_id(user_id)
     if user is None:
         raise Exception("User does not exist")
-    form = ActivateAccountForm()
+    form = SetAccountPasswordForm()
     return render_template("account/activate-account.html", form=form, username=user["userName"])
 
 
@@ -326,7 +326,7 @@ def post_activate_account(token):
     user = uaa_controller.get_user_by_id(user_id)
     if user is None:
         raise Exception("User does not exist")
-    form = ActivateAccountForm(request.form)
+    form = SetAccountPasswordForm(request.form)
 
     if not form.validate():
         return render_template("account/activate-account.html", form=form, username=user["userName"])
