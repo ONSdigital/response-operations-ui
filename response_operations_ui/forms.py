@@ -417,29 +417,6 @@ def _validate_email_address(email: str):
         raise ValidationError("Invalid email address")
 
 
-class ResetPasswordForm(FlaskForm):
-    password = PasswordField(
-        "New password",
-        validators=[
-            DataRequired("Password is required"),
-            EqualTo("password_confirm", message="Your passwords do not match"),
-            Length(min=8, max=160, message="Your password doesn't meet the requirements"),
-        ],
-    )
-
-    password_confirm = PasswordField("Re-type new password")
-
-    @staticmethod
-    def validate_password(form, field):
-        password = field.data
-        if (
-            password.isalnum()
-            or not any(char.isupper() for char in password)
-            or not any(char.isdigit() for char in password)
-        ):
-            raise ValidationError("Your password doesn't meet the requirements")
-
-
 class CreateAccountWithPermissionsForm(FlaskForm):
     first_name = StringField("First name", validators=[DataRequired(message="First name is required")])
     last_name = StringField("Last name", validators=[DataRequired(message="Last name is required")])
@@ -473,7 +450,7 @@ class CreateAccountWithPermissionsForm(FlaskForm):
             raise ValidationError("Not a valid ONS email address")
 
 
-class ActivateAccountForm(FlaskForm):
+class SetAccountPasswordForm(FlaskForm):
     password = PasswordField(
         "Create a new password",
         validators=[
@@ -622,7 +599,7 @@ class ChangePasswordFrom(FlaskForm):
             DataRequired("Your new password is required"),
             EqualTo("new_password_confirm", message="Your passwords do not match"),
             Length(
-                min=8,
+                min=12,
                 max=160,
                 message="Your password doesn't meet the requirements",
             ),
