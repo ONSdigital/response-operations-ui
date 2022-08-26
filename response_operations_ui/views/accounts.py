@@ -275,8 +275,7 @@ def change_password():
                     "Something went wrong while updating your password. Please try again.",
                     category="error",
                 )
-    errors = form.errors
-    return render_template("account/change-password.html", form=form, errors=errors)
+    return render_template("account/change-password.html", form=form, errors=form.errors)
 
 
 def send_update_account_email(token_dict, first_name):
