@@ -272,7 +272,7 @@ def change_password():
                 )
             else:
                 flash(
-                    "Something went wrong while updating your username. Please try again.",
+                    "Something went wrong while updating your password. Please try again.",
                     category="error",
                 )
     errors = form.errors
