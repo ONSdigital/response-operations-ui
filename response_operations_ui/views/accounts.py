@@ -245,14 +245,13 @@ def change_password():
                 form=form,
                 errors={"new_password": ["Your new password is the same as your old password"]},
             )
-        logger.info("Sending account password acknowledgement email", user_id=user_id)
         personalisation = {"first_name": user_from_uaa["name"]["givenName"]}
         uaa_errors = uaa_controller.update_user_password(user_from_uaa, password, new_password)
         if uaa_errors is None:
+            logger.info("Sending account password acknowledgement email", user_id=user_id)
             try:
                 NotifyController().request_to_notify(
-                    email=user_from_uaa["emails"][0]["value"],  # it's safe to assume that zeroth element is primary in
-                    # RAS/RM case
+                    email=user_from_uaa["emails"][0]["value"],  # Safe to assume that zeroth element is primary email
                     template_name="update_account_password",
                     personalisation=personalisation,
                 )
@@ -272,11 +271,10 @@ def change_password():
                 )
             else:
                 flash(
-                    "Something went wrong while updating your username. Please try again.",
+                    "Something went wrong while updating your password. Please try again.",
                     category="error",
                 )
-    errors = form.errors
-    return render_template("account/change-password.html", form=form, errors=errors)
+    return render_template("account/change-password.html", form=form, errors=form.errors)
 
 
 def send_update_account_email(token_dict, first_name):
