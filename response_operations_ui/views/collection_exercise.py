@@ -128,6 +128,29 @@ def view_collection_exercise(short_name, period):
     ce_details["collection_exercise"]["state"] = map_collection_exercise_state(ce_state)  # NOQA
     _format_ci_file_name(ce_details["collection_instruments"], ce_details["survey"])
 
+    # If there's a sample summary, but we're still in a state where we're setting up the collection exercise, then check
+    # the sample summary and change it to ACTIVE if they're all present.  The exact conditions would need to be figured
+    # out as we'd only want to check
+
+    # Also, this could maybe be just changed to
+    # "if ce_details["sample_summary"] and ce_details["sample_summary"]["state"] == 'INIT'"
+    # or
+    # "if ce_details["sample_summary"]
+    # and (ce_details["sample_summary"]["state"] != 'ACTIVE' or ce_details["sample_summary"]["state"] != 'COMPLETE')"
+    # as the only way all the sample units wouldn't be present is if we'd just created it, and they're still being
+    # loaded.  This is just here as an example for now!
+    if (
+        not locked
+        and not show_set_live_button
+        and ce_details["sample_summary"]
+        and ce_details["sample_summary"]["state"] == "INIT"
+    ):
+        sample_controllers.check_if_all_sample_units_present_and_change_state(ce_details["sample_summary"]["id"])
+        # This block of code probably need reordering if we productionize it, but if we change the state of the sample
+        # summary then we'll need to grab the most recent version of it to make sure it's current.
+        sample_summary = sample_controllers.get_sample_summary(ce_details["sample_summary"]["id"])
+        ce_details["sample_summary"] = _format_sample_summary(sample_summary)
+
     show_msg = request.args.get("show_msg")
 
     success_panel = request.args.get("success_panel")
@@ -837,6 +860,13 @@ def get_view_sample_ci(short_name, period):
     )
 
     locked = ce_state in ("LIVE", "READY_FOR_LIVE", "EXECUTION_STARTED", "VALIDATED", "EXECUTED", "ENDED")
+    if not locked:
+        sample_controllers.check_if_all_sample_units_present_and_change_state(ce_details["sample_summary"]["id"])
+        # This block of code probably need reordering if we productionize it, but if we change the state of the sample
+        # summary then we'll need to grab the most recent version of it to make sure it's current.
+        sample_summary = sample_controllers.get_sample_summary(ce_details["sample_summary"]["id"])
+        ce_details["sample_summary"] = _format_sample_summary(sample_summary)
+
     _format_ci_file_name(ce_details["collection_instruments"], ce_details["survey"])
 
     error_json = _get_error_from_session()

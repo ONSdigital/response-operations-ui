@@ -28,6 +28,31 @@ def get_sample_summary(sample_summary_id):
     return response.json()
 
 
+def check_if_all_sample_units_present_and_change_state(sample_summary_id):
+    """
+    Calls endpoint in sample that counts if expected sample units == actual number of sample units
+    and changes sample summary state to ACTIVE if the two number do match.
+
+    :param sample_summary_id:
+    :return:
+    """
+    logger.info("Retrieving sample summary", sample_summary_id=sample_summary_id)
+    url = f'{app.config["SAMPLE_URL"]}/samples/samplesummary/{sample_summary_id}/check-all-units-present'
+    response = requests.get(url, auth=app.config["BASIC_AUTH"])
+
+    try:
+        response.raise_for_status()
+    except HTTPError:
+        logger.error(
+            "Error checking sample summary", sample_summary_id=sample_summary_id, status_code=response.status_code
+        )
+        raise ApiError(response)
+
+    response_json = response.json()
+    logger.info("Successfully checked if all units present", response=response_json)
+    return response_json
+
+
 def upload_sample(short_name, period, file):
     logger.info("Uploading sample", short_name=short_name, period=period, filename=file.filename)
 
