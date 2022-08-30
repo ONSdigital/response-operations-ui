@@ -1,18 +1,18 @@
 {
-  "id": "fe2dc842-b3b3-4647-8317-858dab82ab94",
+  "id": "some.one@ons.gov.uk",
   "meta": {
     "version": 0,
     "created": "2022-02-01T08:35:48.194Z",
     "lastModified": "2022-02-01T08:35:48.194Z"
   },
-  "userName": "uaa_user",
+  "userName": "some.one@ons.gov.uk",
   "name": {
     "familyName": "User",
     "givenName": "ONS"
   },
   "emails": [
     {
-      "value": "ons@ons.fake",
+      "value": "some.one@ons.gov.uk",
       "primary": "False"
     }
   ],

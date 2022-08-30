@@ -16,7 +16,8 @@ url_uaa_groups = f"{TestingConfig.UAA_SERVICE_URL}/Groups"
 url_uaa_users = f"{TestingConfig.UAA_SERVICE_URL}/Users"
 url_uaa_add_to_group = f"{TestingConfig.UAA_SERVICE_URL}/Groups/{group_id}/members"
 
-user_id = "fe2dc842-b3b3-4647-8317-858dab82ab94"
+user_id = "some.one@ons.gov.uk"
+user_email = user_id
 url_uaa_user_by_id = f"{TestingConfig.UAA_SERVICE_URL}/Users/{user_id}"
 url_invalid_uaa_user_by_id = f"{TestingConfig.UAA_SERVICE_URL}/Users/adb544bb-5e60-46e0-b2f0-285e0acee6fd"
 
@@ -206,12 +207,10 @@ class TestMessage(ViewTestCase):
             response = self.client.post(
                 "/admin/create-account",
                 follow_redirects=True,
-                data={"first_name": "ONS", "last_name": "user", "email": "some.one@ons.gov.uk", "surveys_edit": True},
+                data={"first_name": "ONS", "last_name": "user", "email": user_email, "surveys_edit": True},
             )
             self.assertEqual(200, response.status_code)
-            self.assertIn(
-                "An email to activate the account has been sent to some.one@ons.gov.uk.".encode(), response.data
-            )
+            self.assertIn(f"An email to activate the account has been sent to {user_email}.".encode(), response.data)
             self.assertIn("This email will be valid for 4 weeks.".encode(), response.data)
             self.assertIn("Return to manage user accounts".encode(), response.data)
 
@@ -226,7 +225,7 @@ class TestMessage(ViewTestCase):
         response = self.client.post(
             "/admin/create-account",
             follow_redirects=True,
-            data={"first_name": "ONS", "last_name": "user", "email": "some.one@ons.gov.uk", "surveys_edit": True},
+            data={"first_name": "ONS", "last_name": "user", "email": user_email, "surveys_edit": True},
         )
         self.assertEqual(200, response.status_code)
         self.assertIn("Create your account".encode(), response.data)
@@ -240,13 +239,13 @@ class TestMessage(ViewTestCase):
         response = self.client.post(
             "/admin/create-account",
             follow_redirects=True,
-            data={"first_name": "ONS", "last_name": "user", "email": "some.one@ons.gov.uk", "surveys_edit": True},
+            data={"first_name": "ONS", "last_name": "user", "email": user_email, "surveys_edit": True},
         )
         self.assertEqual(200, response.status_code)
         self.assertIn("Create your account".encode(), response.data)
         self.assertIn("Manager permissions".encode(), response.data)
         self.assertIn("Create account".encode(), response.data)
-        self.assertIn("Username already in use: some.one@ons.gov.uk".encode(), response.data)
+        self.assertIn(f"Username already in use: {user_email}".encode(), response.data)
         self.assertNotIn("Failed to get groups, please try again".encode(), response.data)
 
         # Test adding group membership failure
@@ -258,12 +257,10 @@ class TestMessage(ViewTestCase):
             response = self.client.post(
                 "/admin/create-account",
                 follow_redirects=True,
-                data={"first_name": "ONS", "last_name": "user", "email": "some.one@ons.gov.uk", "surveys_edit": True},
+                data={"first_name": "ONS", "last_name": "user", "email": user_email, "surveys_edit": True},
             )
             self.assertEqual(200, response.status_code)
-            self.assertIn(
-                "An email to activate the account has been sent to some.one@ons.gov.uk.".encode(), response.data
-            )
+            self.assertIn(f"An email to activate the account has been sent to {user_email}.".encode(), response.data)
             self.assertIn("This email will be valid for 4 weeks.".encode(), response.data)
             self.assertIn(
                 "Failed to give the user the surveys_edit permission. The account has still been created but "
@@ -276,7 +273,7 @@ class TestMessage(ViewTestCase):
             # to a group won't stop the creation journey.
             self.assertNotIn("Create your account".encode(), response.data)
             self.assertNotIn("Manager permissions".encode(), response.data)
-            self.assertNotIn("Username already in use: some.one@ons.gov.uk".encode(), response.data)
+            self.assertNotIn(f"Username already in use: {user_email}".encode(), response.data)
             self.assertNotIn("Failed to get groups, please try again".encode(), response.data)
 
     # Edit user permission
@@ -364,11 +361,12 @@ class TestMessage(ViewTestCase):
     def test_delete_account_get_success(self, mock_request):
         mock_request = self.setup_common_mocks(mock_request, with_uaa_user_list=True)
         mock_request.get(url_uaa_user_by_id, json=uaa_user_by_id_json, status_code=200)
+        mock_request.get(url_surveys, json=self.surveys_list_json, status_code=200)
         self.client.post("/sign-in", follow_redirects=True, data={"username": "user", "password": "pass"})
         response = self.client.get(f"/admin/manage-account/{user_id}/delete", follow_redirects=True)
         self.assertEqual(200, response.status_code)
         self.assertIn("Delete ONS User's user account?".encode(), response.data)
-        self.assertIn("All the information about ons@ons.fake will be deleted.".encode(), response.data)
+        self.assertIn(f"All the information about {user_id} will be deleted.".encode(), response.data)
         self.assertIn("An email to notify the user will be sent.".encode(), response.data)
 
     @requests_mock.mock()
