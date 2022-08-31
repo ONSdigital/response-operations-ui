@@ -16,8 +16,8 @@ url_uaa_groups = f"{TestingConfig.UAA_SERVICE_URL}/Groups"
 url_uaa_users = f"{TestingConfig.UAA_SERVICE_URL}/Users"
 url_uaa_add_to_group = f"{TestingConfig.UAA_SERVICE_URL}/Groups/{group_id}/members"
 
-user_id = "some.one@ons.gov.uk"
-user_email = user_id
+user_id = "fe2dc842-b3b3-4647-8317-858dab82ab94"
+user_email = "some.one@ons.gov.uk"
 url_uaa_user_by_id = f"{TestingConfig.UAA_SERVICE_URL}/Users/{user_id}"
 url_invalid_uaa_user_by_id = f"{TestingConfig.UAA_SERVICE_URL}/Users/adb544bb-5e60-46e0-b2f0-285e0acee6fd"
 
@@ -366,7 +366,7 @@ class TestMessage(ViewTestCase):
         response = self.client.get(f"/admin/manage-account/{user_id}/delete", follow_redirects=True)
         self.assertEqual(200, response.status_code)
         self.assertIn("Delete ONS User's user account?".encode(), response.data)
-        self.assertIn(f"All the information about {user_id} will be deleted.".encode(), response.data)
+        self.assertIn(f"All the information about {user_email} will be deleted.".encode(), response.data)
         self.assertIn("An email to notify the user will be sent.".encode(), response.data)
 
     @requests_mock.mock()
