@@ -332,11 +332,11 @@ def update_user_password(user: dict, old_password: str, new_password: str) -> di
         elif response.status_code == 401:
             errors = {"status_code": response.status_code, "message": "Invalid current password "}
         else:
-            errors = {"status_code": response.status_code, "message": response.reason}
+            errors = {"status_code": response.status_code, "message": response.text}
             logger.error(
                 "Received an error when updating account in UAA",
                 status_code=response.status_code,
-                reason=response.reason,
+                reason=response.text,
             )
 
     return errors

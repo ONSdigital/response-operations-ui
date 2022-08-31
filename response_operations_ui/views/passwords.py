@@ -10,7 +10,7 @@ from response_operations_ui.common import token_decoder
 from response_operations_ui.controllers import uaa_controller
 from response_operations_ui.controllers.notify_controller import NotifyController
 from response_operations_ui.exceptions.exceptions import NotifyError
-from response_operations_ui.forms import ForgotPasswordForm, ResetPasswordForm
+from response_operations_ui.forms import ForgotPasswordForm, SetAccountPasswordForm
 
 logger = wrap_logger(logging.getLogger(__name__))
 
@@ -47,16 +47,15 @@ def forgot_password_check_email():
 
     try:
         email = URLSafeSerializer(app.config["SECRET_KEY"]).loads(encoded_email)
+        return render_template("forgot-password-check-email.html", email=email)
     except BadSignature:
         logger.error("Unable to decode email from URL", encoded_email=encoded_email)
         abort(404)
 
-    return render_template("forgot-password-check-email.html", email=email)
-
 
 @passwords_bp.route("/reset-password/<token>", methods=["GET"])
 def get_reset_password(token, form_errors=None):
-    form = ResetPasswordForm(request.form)
+    form = SetAccountPasswordForm(request.form)
 
     try:
         duration = app.config["EMAIL_TOKEN_EXPIRY"]
@@ -74,7 +73,7 @@ def get_reset_password(token, form_errors=None):
 
 @passwords_bp.route("/reset-password/<token>", methods=["POST"])
 def post_reset_password(token):
-    form = ResetPasswordForm(request.form)
+    form = SetAccountPasswordForm(request.form)
 
     if not form.validate():
         return get_reset_password(token, form_errors=form.errors)

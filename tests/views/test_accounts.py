@@ -661,7 +661,7 @@ class TestAccounts(unittest.TestCase):
                 },
             )
             self.assertIn(
-                b"Something went wrong while updating your username. Please try again.",
+                b"Something went wrong while updating your password. Please try again.",
                 response.data,
             )
 
