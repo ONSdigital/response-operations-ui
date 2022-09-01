@@ -25,12 +25,12 @@ with open(f"{project_root}/test_data/uaa/email_search_user.json") as fp:
     uaa_user_search_email = json.load(fp)
 
 user_id = "fe2dc842-b3b3-4647-8317-858dab82ab94"
+user_email = "some.one@ons.gov.uk"
 group_id = "9da7cfd5-95d0-455b-9005-02ce638e56c9"
 fake_group_id = "eaf2988b-99b4-423b-9a09-63b1d6f07677"
 fake_user_id = "56e97a1b-2188-4989-8342-199b83c505ce"
 user_first_name = "Some"
 user_last_name = "One"
-user_email = "some.one@ons.gov.uk"
 user_password = "password"
 url_uaa_users = f"{TestingConfig.UAA_SERVICE_URL}/Users"
 url_uaa_user_by_id = f"{TestingConfig.UAA_SERVICE_URL}/Users/{user_id}"
@@ -181,7 +181,7 @@ class TestUAAController(unittest.TestCase):
         with self.app.test_request_context():
             self.assertEqual(
                 uaa_controller.create_user_account_with_random_password(user_email, user_first_name, user_last_name),
-                {"error": "Username already in use: some.one@ons.gov.uk"},
+                {"error": f"Username already in use: {user_email}"},
             )
 
     # change_user_password_by_email
@@ -192,7 +192,7 @@ class TestUAAController(unittest.TestCase):
         mock_request.get(url_uaa_user_by_email, status_code=404)
 
         with self.app.test_request_context():
-            self.assertIsNone(uaa_controller.change_user_password_by_email("some.one@ons.gov.uk", user_password))
+            self.assertIsNone(uaa_controller.change_user_password_by_email(user_email, user_password))
 
     @requests_mock.mock()
     def test_change_user_password_retrieve_code_failure(self, mock_request):

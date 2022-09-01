@@ -5,14 +5,14 @@
     "created": "2022-02-01T08:35:48.194Z",
     "lastModified": "2022-02-01T08:35:48.194Z"
   },
-  "userName": "uaa_user",
+  "userName": "some.one@ons.gov.uk",
   "name": {
     "familyName": "User",
     "givenName": "ONS"
   },
   "emails": [
     {
-      "value": "ons@ons.fake",
+      "value": "some.one@ons.gov.uk",
       "primary": "False"
     }
   ],
