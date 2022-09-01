@@ -17,7 +17,7 @@ with open(f"{project_root}/test_data/uaa/user_by_id.json") as json_data:
     uaa_user_by_id_json = json.load(json_data)
 
 user_id = "fe2dc842-b3b3-4647-8317-858dab82ab94"
-user_email = user_id
+user_email = "fake@ons.gov.uk"
 new_user_email = "new.one@ons.gov.uk"
 max_256_characters = (
     "JZPKbNXWhztnGvFbHwfRlcRnpgFjQveWVqvkVgtVVXjcXwiiVvFCmbFAsBVUnjHoaLAOeNUsBHQIczjzuacJUDzLLwWjhBVyVrMf"
