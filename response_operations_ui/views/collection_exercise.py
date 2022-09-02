@@ -140,7 +140,7 @@ def view_collection_exercise(short_name, period):
     # as the only way all the sample units wouldn't be present is if we'd just created it, and they're still being
     # loaded.  This is just here as an example for now!
     if (
-        not locked
+        (not locked or not processing)
         and not show_set_live_button
         and ce_details["sample_summary"]
         and ce_details["sample_summary"]["state"] == "INIT"
@@ -860,7 +860,7 @@ def get_view_sample_ci(short_name, period):
     )
 
     locked = ce_state in ("LIVE", "READY_FOR_LIVE", "EXECUTION_STARTED", "VALIDATED", "EXECUTED", "ENDED")
-    if not locked:
+    if not locked and ce_details["sample_summary"] and ce_details["sample_summary"]["state"] == "INIT":
         sample_controllers.check_if_all_sample_units_present_and_change_state(ce_details["sample_summary"]["id"])
         # This block of code probably need reordering if we productionize it, but if we change the state of the sample
         # summary then we'll need to grab the most recent version of it to make sure it's current.

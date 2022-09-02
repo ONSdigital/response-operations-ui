@@ -36,7 +36,7 @@ def check_if_all_sample_units_present_and_change_state(sample_summary_id):
     :param sample_summary_id:
     :return:
     """
-    logger.info("Retrieving sample summary", sample_summary_id=sample_summary_id)
+    logger.info("Checking sample summary state", sample_summary_id=sample_summary_id)
     url = f'{app.config["SAMPLE_URL"]}/samples/samplesummary/{sample_summary_id}/check-all-units-present'
     response = requests.get(url, auth=app.config["BASIC_AUTH"])
 
@@ -48,9 +48,9 @@ def check_if_all_sample_units_present_and_change_state(sample_summary_id):
         )
         raise ApiError(response)
 
-    response_json = response.json()
-    logger.info("Successfully checked if all units present", response=response_json)
-    return response_json
+    value = response.text
+    logger.info("Successfully checked if all units present", sample_summary_id=sample_summary_id, value=value)
+    return None
 
 
 def upload_sample(short_name, period, file):

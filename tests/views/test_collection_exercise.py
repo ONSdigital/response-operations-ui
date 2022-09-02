@@ -170,6 +170,9 @@ url_get_classifier_type = f"{TestingConfig.SURVEY_URL}/surveys/{survey_id}/class
 url_sample_service_upload = f"{TestingConfig.SAMPLE_FILE_UPLOADER_URL}/samples/fileupload"
 
 url_get_sample_summary = f"{TestingConfig.SAMPLE_URL}/samples/samplesummary/{sample_summary_id}"
+url_get_sample_summary_status = (
+    f"{TestingConfig.SAMPLE_URL}/samples/samplesummary/{sample_summary_id}/check-all-units-present"
+)
 url_delete_sample_summary = f"{TestingConfig.SAMPLE_URL}/samples/samplesummary/{sample_summary_id}"
 
 url_get_by_survey_with_ref_start_date = (
@@ -808,6 +811,8 @@ class TestCollectionExercise(ViewTestCase):
     def test_select_collection_instrument(self, mock_request, mock_details):
         post_data = {"checkbox-answer": [collection_instrument_id], "ce_id": collection_exercise_id, "select-ci": ""}
         mock_request.post(url_collection_instrument_link, status_code=200)
+        mock_request.get(url_get_sample_summary_status, status_code=200)
+        mock_request.get(url_get_sample_summary, json=self.sample_summary)
         mock_details.return_value = formatted_collection_exercise_details
 
         response = self.client.post(
@@ -822,6 +827,8 @@ class TestCollectionExercise(ViewTestCase):
     def test_failed_select_collection_instrument(self, mock_request, mock_details):
         post_data = {"checkbox-answer": [collection_instrument_id], "ce_id": collection_exercise_id, "select-ci": ""}
         mock_request.post(url_collection_instrument_link, status_code=500)
+        mock_request.get(url_get_sample_summary_status, status_code=200)
+        mock_request.get(url_get_sample_summary, json=self.sample_summary)
         mock_details.return_value = formatted_collection_exercise_details
 
         response = self.client.post(
@@ -836,6 +843,8 @@ class TestCollectionExercise(ViewTestCase):
     def test_failed_no_selected_collection_instrument(self, mock_request, mock_details):
         post_data = {"checkbox-answer": [], "ce_id": "000000", "select-ci": ""}
         mock_details.return_value = formatted_collection_exercise_details
+        mock_request.get(url_get_sample_summary_status, status_code=200)
+        mock_request.get(url_get_sample_summary, json=self.sample_summary)
 
         response = self.client.post(
             f"/surveys/{short_name}/{period}/view-sample-ci", data=post_data, follow_redirects=True
@@ -999,6 +1008,8 @@ class TestCollectionExercise(ViewTestCase):
         mock_request.get(url_ces_by_survey, json=exercise_data)
         mock_request.post(url_sample_service_upload, json=sample_data)
         mock_request.put(url_collection_exercise_link, json=collection_exercise_link)
+        mock_request.get(url_get_sample_summary_status, status_code=200)
+        mock_request.get(url_get_sample_summary, json=self.sample_summary)
 
         response = self.client.post(
             f"/surveys/{short_name}/{period}/upload-sample-file", data=post_data, follow_redirects=True
@@ -1073,6 +1084,8 @@ class TestCollectionExercise(ViewTestCase):
             mock_details.return_value = json.load(collection_exercise_no_sample)
         mock_request.get(url_get_survey_by_short_name, status_code=200, json=self.survey_data)
         mock_request.get(url_ces_by_survey, status_code=200, json=exercise_data)
+        mock_request.get(url_get_sample_summary_status, status_code=200)
+        mock_request.get(url_get_sample_summary, json=self.sample_summary)
 
         response = self.client.post(
             f"/surveys/{short_name}/{period}/upload-sample-file", data=data, follow_redirects=True
@@ -1094,6 +1107,8 @@ class TestCollectionExercise(ViewTestCase):
             mock_details.return_value = json.load(collection_exercise)
         mock_request.get(url_get_survey_by_short_name, status_code=200, json=self.survey_data)
         mock_request.get(url_ces_by_survey, status_code=200, json=exercise_data)
+        mock_request.get(url_get_sample_summary_status, status_code=200)
+        mock_request.get(url_get_sample_summary, json=self.sample_summary)
         response = self.client.post(
             f"/surveys/{short_name}/{period}/upload-sample-file", data=data, follow_redirects=True
         )
@@ -1117,6 +1132,8 @@ class TestCollectionExercise(ViewTestCase):
         mock_request.get(url_get_survey_by_short_name, json=self.survey_data)
         mock_request.get(url_ces_by_survey, json=exercise_data)
         mock_request.post(url_sample_service_upload, status_code=400, text="Too few columns in CSV file")
+        mock_request.get(url_get_sample_summary_status, status_code=200)
+        mock_request.get(url_get_sample_summary, json=self.sample_summary)
 
         response = self.client.post(
             f"/surveys/{short_name}/{period}/upload-sample-file", data=post_data, follow_redirects=True
@@ -1136,6 +1153,8 @@ class TestCollectionExercise(ViewTestCase):
         ) as collection_exercise:
             mock_details.return_value = json.load(collection_exercise)
         mock_request.put(url_update_ce_eq_version, status_code=200)
+        mock_request.get(url_get_sample_summary_status, status_code=200)
+        mock_request.get(url_get_sample_summary, json=self.sample_summary)
         mock_request.get(url_get_survey_by_short_name, status_code=200, json=self.survey_data)
         mock_request.get(url_ces_by_survey, status_code=200, json=exercise_data)
         response = self.client.post(f"/surveys/{short_name}/{period}/view-sample-ci", data=data, follow_redirects=True)
@@ -1447,6 +1466,8 @@ class TestCollectionExercise(ViewTestCase):
         }
 
         mock_request.put(url_collection_instrument_unlink, status_code=500)
+        mock_request.get(url_get_sample_summary_status, status_code=200)
+        mock_request.get(url_get_sample_summary, json=self.sample_summary)
         mock_details.return_value = formatted_collection_exercise_details
 
         response = self.client.post(
@@ -1648,6 +1669,8 @@ class TestCollectionExercise(ViewTestCase):
         sign_in_with_permission(self, mock_request, user_permission_surveys_edit_json)
         mock_details.return_value = formatted_collection_exercise_details
         mock_request.delete(url_party_delete_attributes, status_code=500)
+        mock_request.get(url_get_sample_summary_status, status_code=200)
+        mock_request.get(url_get_sample_summary, json=self.sample_summary)
 
         response = self.client.post(f"/surveys/{short_name}/{period}/confirm-remove-sample", follow_redirects=True)
 
@@ -1661,6 +1684,8 @@ class TestCollectionExercise(ViewTestCase):
         mock_details.return_value = formatted_collection_exercise_details
         mock_request.delete(url_party_delete_attributes, status_code=204)
         mock_request.delete(url_ce_remove_sample, status_code=500)
+        mock_request.get(url_get_sample_summary_status, status_code=200)
+        mock_request.get(url_get_sample_summary, json=self.sample_summary)
 
         response = self.client.post(f"/surveys/{short_name}/{period}/confirm-remove-sample", follow_redirects=True)
 
@@ -1954,6 +1979,8 @@ class TestCollectionExercise(ViewTestCase):
         mock_details.return_value = formatted_new_collection_exercise_details
         mock_request.get(url_get_survey_by_short_name, json=updated_survey_info["survey"])
         mock_request.get(url_ces_by_survey, json=updated_survey_info["collection_exercises"])
+        mock_request.get(url_get_sample_summary_status, status_code=200)
+        mock_request.get(url_get_sample_summary, json=self.sample_summary)
         response = self.client.get(f"/surveys/{short_name}/{period}/view-sample-ci", follow_redirects=True)
 
         self.assertEqual(response.status_code, 200)
@@ -1966,6 +1993,8 @@ class TestCollectionExercise(ViewTestCase):
         mock_details.return_value = seft_collection_exercise_details
         mock_request.get(url_get_survey_by_short_name, json=updated_survey_info["survey"])
         mock_request.get(url_ces_by_survey, json=updated_survey_info["collection_exercises"])
+        mock_request.get(url_get_sample_summary_status, status_code=200)
+        mock_request.get(url_get_sample_summary, json=self.sample_summary)
         response = self.client.get(f"/surveys/{short_name}/{period}/view-sample-ci", follow_redirects=True)
 
         self.assertEqual(response.status_code, 200)
@@ -2202,6 +2231,8 @@ class TestCollectionExercise(ViewTestCase):
         mock_request.get(url_get_sample_summary, json="")
         mock_request.get(url_get_classifier_type_selectors, json=classifier_type_selectors)
         mock_request.get(url_get_classifier_type, json=classifier_types)
+        mock_request.get(url_get_sample_summary_status, status_code=200)
+        mock_request.get(url_get_sample_summary, json=self.sample_summary)
 
         response = self.client.get(f"/surveys/{short_name}/{period}/view-sample-ci")
 
@@ -2229,6 +2260,8 @@ class TestCollectionExercise(ViewTestCase):
         mock_request.get(url_get_sample_summary, json="")
         mock_request.get(url_get_classifier_type_selectors, json=classifier_type_selectors)
         mock_request.get(url_get_classifier_type, json=classifier_types)
+        mock_request.get(url_get_sample_summary_status, status_code=200)
+        mock_request.get(url_get_sample_summary, json=self.sample_summary)
 
         mock_request.get(url_get_by_survey_with_ref_start_date, json=collection_exercise_eq_ref_start_date)
         mock_request.get(url_get_by_survey_with_ref_end_date, json=collection_exercise_eq_ref_end_date)
@@ -2260,6 +2293,7 @@ class TestCollectionExercise(ViewTestCase):
         mock_request.get(url_get_sample_summary, json=self.sample_summary)
         mock_request.get(url_get_classifier_type_selectors, json=classifier_type_selectors)
         mock_request.get(url_get_classifier_type, json=classifier_types)
+        mock_request.get(url_get_sample_summary_status, status_code=200)
 
         response = self.client.get(f"/surveys/{short_name}/{period}/view-sample-ci")
 
@@ -2286,6 +2320,8 @@ class TestCollectionExercise(ViewTestCase):
         mock_request.get(url_get_sample_summary, json=self.sample_summary)
         mock_request.get(url_get_classifier_type_selectors, json=classifier_type_selectors)
         mock_request.get(url_get_classifier_type, json=classifier_types)
+        mock_request.get(url_get_sample_summary_status, status_code=200)
+        mock_request.get(url_get_sample_summary, json=self.sample_summary)
 
         response = self.client.get(f"/surveys/{short_name}/{period}/view-sample-ci")
 
@@ -2313,6 +2349,8 @@ class TestCollectionExercise(ViewTestCase):
         mock_request.get(url_get_sample_summary, json=self.sample_summary)
         mock_request.get(url_get_classifier_type_selectors, json=classifier_type_selectors)
         mock_request.get(url_get_classifier_type, json=classifier_types)
+        mock_request.get(url_get_sample_summary_status, status_code=200)
+        mock_request.get(url_get_sample_summary, json=self.sample_summary)
 
         mock_request.get(url_get_by_survey_with_ref_start_date, json=collection_exercise_eq_ref_start_date)
         mock_request.get(url_get_by_survey_with_ref_end_date, json=collection_exercise_eq_ref_end_date)
@@ -2343,6 +2381,8 @@ class TestCollectionExercise(ViewTestCase):
         mock_request.get(url_get_sample_summary, json=self.sample_summary)
         mock_request.get(url_get_classifier_type_selectors, json=classifier_type_selectors)
         mock_request.get(url_get_classifier_type, json=classifier_types)
+        mock_request.get(url_get_sample_summary_status, status_code=200)
+        mock_request.get(url_get_sample_summary, json=self.sample_summary)
 
         mock_request.get(url_get_by_survey_with_ref_start_date, json=collection_exercise_eq_ref_start_date)
         mock_request.get(url_get_by_survey_with_ref_end_date, json=collection_exercise_eq_ref_end_date)
