@@ -28,7 +28,7 @@ def get_sample_summary(sample_summary_id):
     return response.json()
 
 
-def check_if_all_sample_units_present_and_change_state(sample_summary_id):
+def check_if_all_sample_units_present_for_sample_summary(sample_summary_id):
     """
     Calls endpoint in sample that counts if expected sample units == actual number of sample units
     and changes sample summary state to ACTIVE if the two number do match.
@@ -48,9 +48,16 @@ def check_if_all_sample_units_present_and_change_state(sample_summary_id):
         )
         raise ApiError(response)
 
-    value = response.text
-    logger.info("Successfully checked if all units present", sample_summary_id=sample_summary_id, value=value)
-    return None
+    response_json = response.json
+    are_all_sample_units_loaded = response_json["areAllSampleUnitsLoaded"]
+    logger.info(
+        "Successfully checked if all units present",
+        sample_summary_id=sample_summary_id,
+        are_all_sample_units_loaded=are_all_sample_units_loaded,
+        expected_total=response_json["expectedTotal"],
+        current_total=response_json["currentTotal"],
+    )
+    return are_all_sample_units_loaded
 
 
 def upload_sample(short_name, period, file):

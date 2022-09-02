@@ -115,7 +115,7 @@ def view_collection_exercise(short_name, period):
     ce_state = ce_details["collection_exercise"]["state"]
     if ce_details["survey"]["surveyMode"] == "EQ":
         show_set_live_button = (
-            ce_state in ("READY_FOR_REVIEW")
+            ce_state in "READY_FOR_REVIEW"
             and "ref_period_start" in ce_details["events"]
             and "ref_period_end" in ce_details["events"]
         )
@@ -129,27 +129,15 @@ def view_collection_exercise(short_name, period):
     _format_ci_file_name(ce_details["collection_instruments"], ce_details["survey"])
 
     # If there's a sample summary, but we're still in a state where we're setting up the collection exercise, then check
-    # the sample summary and change it to ACTIVE if they're all present.  The exact conditions would need to be figured
-    # out as we'd only want to check
-
-    # Also, this could maybe be just changed to
-    # "if ce_details["sample_summary"] and ce_details["sample_summary"]["state"] == 'INIT'"
-    # or
-    # "if ce_details["sample_summary"]
-    # and (ce_details["sample_summary"]["state"] != 'ACTIVE' or ce_details["sample_summary"]["state"] != 'COMPLETE')"
-    # as the only way all the sample units wouldn't be present is if we'd just created it, and they're still being
-    # loaded.  This is just here as an example for now!
-    if (
-        (not locked or not processing)
-        and not show_set_live_button
-        and ce_details["sample_summary"]
-        and ce_details["sample_summary"]["state"] == "INIT"
-    ):
-        sample_controllers.check_if_all_sample_units_present_and_change_state(ce_details["sample_summary"]["id"])
-        # This block of code probably need reordering if we productionize it, but if we change the state of the sample
-        # summary then we'll need to grab the most recent version of it to make sure it's current.
-        sample_summary = sample_controllers.get_sample_summary(ce_details["sample_summary"]["id"])
-        ce_details["sample_summary"] = _format_sample_summary(sample_summary)
+    # the sample summary and change it to ACTIVE all sample units are present.
+    if sample_summary_state_check_required(ce_details):
+        are_all_sample_units_loaded = sample_controllers.check_if_all_sample_units_present_for_sample_summary(
+            ce_details["sample_summary"]["id"]
+        )
+        if are_all_sample_units_loaded:
+            # Get an up-to-date copy of the sample summary data now that it's active
+            sample_summary = sample_controllers.get_sample_summary(ce_details["sample_summary"]["id"])
+            ce_details["sample_summary"] = _format_sample_summary(sample_summary)
 
     show_msg = request.args.get("show_msg")
 
@@ -858,14 +846,16 @@ def get_view_sample_ci(short_name, period):
     ce_details["eq_ci_selectors"] = filter_eq_ci_selectors(
         ce_details["eq_ci_selectors"], ce_details["collection_instruments"]
     )
-
     locked = ce_state in ("LIVE", "READY_FOR_LIVE", "EXECUTION_STARTED", "VALIDATED", "EXECUTED", "ENDED")
-    if not locked and ce_details["sample_summary"] and ce_details["sample_summary"]["state"] == "INIT":
-        sample_controllers.check_if_all_sample_units_present_and_change_state(ce_details["sample_summary"]["id"])
-        # This block of code probably need reordering if we productionize it, but if we change the state of the sample
-        # summary then we'll need to grab the most recent version of it to make sure it's current.
-        sample_summary = sample_controllers.get_sample_summary(ce_details["sample_summary"]["id"])
-        ce_details["sample_summary"] = _format_sample_summary(sample_summary)
+
+    if sample_summary_state_check_required(ce_details):
+        are_all_sample_units_loaded = sample_controllers.check_if_all_sample_units_present_for_sample_summary(
+            ce_details["sample_summary"]["id"]
+        )
+        if are_all_sample_units_loaded:
+            # Get an up-to-date copy of the sample summary data now that it's active
+            sample_summary = sample_controllers.get_sample_summary(ce_details["sample_summary"]["id"])
+            ce_details["sample_summary"] = _format_sample_summary(sample_summary)
 
     _format_ci_file_name(ce_details["collection_instruments"], ce_details["survey"])
 
@@ -888,6 +878,36 @@ def get_view_sample_ci(short_name, period):
         show_msg=show_msg,
         eq_ci_selectors=ce_details["eq_ci_selectors"],
         info_panel=info_panel,
+    )
+
+
+def sample_summary_state_check_required(ce_details: dict) -> bool:
+    """
+    Determines whether we need to check the sample summary to see if all the sample units have been loaded.
+    We only need to do that in a few circumstances, generally when the collection exercise is still being created and
+    when the sample summary is still in the INIT state.
+
+    :param ce_details: A dict generated from the 'build_collection_exercise_details' function
+    :return: True if we need to check and possibly modify the state of the sample summary, false otherwise.
+    """
+    ce_state = ce_details["collection_exercise"]["state"]
+    ce_state_where_sample_summary_is_active = (
+        "READY_FOR_REVIEW",
+        "FAILEDVALIDATION",
+        "LIVE",
+        "READY_FOR_LIVE",
+        "EXECUTION_STARTED",
+        "VALIDATED",
+        "EXECUTED",
+        "ENDED",
+        "EXECUTION_STARTED",
+        "EXECUTED",
+        "VALIDATED",
+    )
+    return (
+        ce_state not in ce_state_where_sample_summary_is_active
+        and ce_details["sample_summary"]
+        and ce_details["sample_summary"].get("state") == "INIT"
     )
 
 
