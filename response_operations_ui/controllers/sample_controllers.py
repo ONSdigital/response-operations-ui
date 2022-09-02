@@ -48,7 +48,7 @@ def check_if_all_sample_units_present_for_sample_summary(sample_summary_id):
         )
         raise ApiError(response)
 
-    response_json = response.json
+    response_json = response.json()
     are_all_sample_units_loaded = response_json["areAllSampleUnitsLoaded"]
     logger.info(
         "Successfully checked if all units present",
