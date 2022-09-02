@@ -900,9 +900,6 @@ def sample_summary_state_check_required(ce_details: dict) -> bool:
         "VALIDATED",
         "EXECUTED",
         "ENDED",
-        "EXECUTION_STARTED",
-        "EXECUTED",
-        "VALIDATED",
     )
     return (
         ce_state not in ce_state_where_sample_summary_is_active
