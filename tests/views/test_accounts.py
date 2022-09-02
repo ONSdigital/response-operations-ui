@@ -16,8 +16,9 @@ project_root = os.path.dirname(os.path.dirname(__file__))
 with open(f"{project_root}/test_data/uaa/user_by_id.json") as json_data:
     uaa_user_by_id_json = json.load(json_data)
 
-test_email = "fake@ons.gov.uk"
 user_id = "fe2dc842-b3b3-4647-8317-858dab82ab94"
+user_email = "fake@ons.gov.uk"
+new_user_email = "new.one@ons.gov.uk"
 max_256_characters = (
     "JZPKbNXWhztnGvFbHwfRlcRnpgFjQveWVqvkVgtVVXjcXwiiVvFCmbFAsBVUnjHoaLAOeNUsBHQIczjzuacJUDzLLwWjhBVyVrMf"
     "rLNZQJQDvEeUFDgatOtwajCPNwskfDiGKSVrwdxKRfwsMiTlnslXANitYMaCWGMdSCprQmEIcMchYZgcBxMWFFgHzEljoNZTWTsd"
@@ -25,7 +26,8 @@ max_256_characters = (
 )
 csrf_token = "ImRjMmJkZWRhNDcwMDBmM2JlZWEwYWM2YzhkYzMxMzliMjBmYmU1ZWIi.Yhy3Hw.cLsrWJHAXXmBJjLY0J8XP3oE8qw"
 url_uaa_token = f"{TestingConfig.UAA_SERVICE_URL}/oauth/token"
-url_uaa_get_accounts = f"{TestingConfig.UAA_SERVICE_URL}/Users?filter=email+eq+%22{test_email}%22"
+url_uaa_get_accounts = f"{TestingConfig.UAA_SERVICE_URL}/Users?filter=email+eq+%22{user_email}%22"
+url_uaa_get_accounts_new_email = f"{TestingConfig.UAA_SERVICE_URL}/Users?filter=email+eq+%22{new_user_email}%22"
 url_uaa_user_by_id = f"{TestingConfig.UAA_SERVICE_URL}/Users/{user_id}"
 url_uaa_user_password_change = f"{TestingConfig.UAA_SERVICE_URL}/Users/{user_id}/password"
 url_uaa_create_account = f"{TestingConfig.UAA_SERVICE_URL}/Users"
@@ -49,9 +51,8 @@ class TestAccounts(unittest.TestCase):
         response = self.client.get("/account/my-account", follow_redirects=True)
 
         self.assertIn(b"Email address:", response.data)
-        self.assertIn(b"ons@ons.fake", response.data)
+        self.assertIn(b"some.one@ons.gov.uk", response.data)
         self.assertIn(b"Username:", response.data)
-        self.assertIn(b"uaa_user", response.data)
         self.assertIn(b"Name:", response.data)
         self.assertIn(b"ONS User", response.data)
         self.assertIn(b"Change username", response.data)
@@ -177,7 +178,7 @@ class TestAccounts(unittest.TestCase):
         mock_request.get(url_uaa_user_by_id, json=uaa_user_by_id_json, status_code=200)
         response = self.client.get("/account/change-username", follow_redirects=True)
         self.assertIn(b"Username", response.data)
-        self.assertIn(b"uaa_user", response.data)  # look into this
+        self.assertIn(b"some.one@ons.gov.uk", response.data)  # look into this
         self.assertEqual(response.status_code, 200)
 
     @requests_mock.mock()
@@ -337,11 +338,11 @@ class TestAccounts(unittest.TestCase):
             mock_request.post(url_uaa_token, json={"access_token": self.access_token}, status_code=201)
             mock_request.get(url_uaa_user_by_id, json=uaa_user_by_id_json, status_code=200)
             mock_request.put(url_uaa_user_by_id, status_code=200)
-            mock_request.get(url_uaa_get_accounts, json={"totalResults": 0}, status_code=200)
+            mock_request.get(url_uaa_get_accounts_new_email, json={"totalResults": 0}, status_code=200)
             response = self.client.post(
                 "/account/change-email",
                 follow_redirects=True,
-                data={"email_address": "fake@ons.gov.uk", "email_confirm": "fake@ons.gov.uk"},
+                data={"email_address": new_user_email, "email_confirm": new_user_email},
             )
             self.assertIn(b"A verification email has been sent", response.data)
 
@@ -352,7 +353,7 @@ class TestAccounts(unittest.TestCase):
                 with self.client.session_transaction() as session:
                     session["user_id"] = user_id
                 mock_notify()._send_message.return_value = mock.Mock()
-                token_dict = {"email": test_email, "user_id": user_id}
+                token_dict = {"email": user_email, "user_id": user_id}
                 token = token_decoder.generate_token(json.dumps(token_dict))
                 mock_request.post(url_uaa_token, json={"access_token": self.access_token}, status_code=201)
                 mock_request.get(url_uaa_user_by_id, json=uaa_user_by_id_json, status_code=200)
@@ -373,11 +374,11 @@ class TestAccounts(unittest.TestCase):
             mock_request.post(url_uaa_token, json={"access_token": self.access_token}, status_code=201)
             mock_request.get(url_uaa_user_by_id, json=uaa_user_by_id_json, status_code=200)
             mock_request.put(url_uaa_user_by_id, status_code=200)
-            mock_request.get(url_uaa_get_accounts, json={"totalResults": 0}, status_code=200)
+            mock_request.get(url_uaa_get_accounts_new_email, json={"totalResults": 0}, status_code=200)
             response = self.client.post(
                 "/account/change-email",
                 follow_redirects=True,
-                data={"email_address": "fake@ons.gov.uk", "email_confirm": "fake@ons.gov.uk"},
+                data={"email_address": new_user_email, "email_confirm": new_user_email},
             )
             self.assertIn(b"Something went wrong while updating your email. Please try again", response.data)
 
@@ -388,7 +389,7 @@ class TestAccounts(unittest.TestCase):
                 with self.client.session_transaction() as session:
                     session["user_id"] = user_id
                 mock_notify()._send_message.return_value = mock.Mock()
-                token_dict = {"email": test_email, "user_id": user_id}
+                token_dict = {"email": user_email, "user_id": user_id}
                 token = token_decoder.generate_token(json.dumps(token_dict))
                 mock_request.post(url_uaa_token, json={"access_token": self.access_token}, status_code=201)
                 mock_request.get(url_uaa_user_by_id, json=uaa_user_by_id_json, status_code=200)
