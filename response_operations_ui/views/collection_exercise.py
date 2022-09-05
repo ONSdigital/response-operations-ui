@@ -130,7 +130,7 @@ def view_collection_exercise(short_name, period):
 
     # If there's a sample summary, but we're still in a state where we're setting up the collection exercise, then check
     # the sample summary and change it to ACTIVE all sample units are present.
-    if sample_summary_state_check_required(ce_details):
+    if sample_controllers.sample_summary_state_check_required(ce_details):
         are_all_sample_units_loaded = sample_controllers.check_if_all_sample_units_present_for_sample_summary(
             ce_details["sample_summary"]["id"]
         )
@@ -848,7 +848,7 @@ def get_view_sample_ci(short_name, period):
     )
     locked = ce_state in ("LIVE", "READY_FOR_LIVE", "EXECUTION_STARTED", "VALIDATED", "EXECUTED", "ENDED")
 
-    if sample_summary_state_check_required(ce_details):
+    if sample_controllers.sample_summary_state_check_required(ce_details):
         are_all_sample_units_loaded = sample_controllers.check_if_all_sample_units_present_for_sample_summary(
             ce_details["sample_summary"]["id"]
         )
@@ -878,33 +878,6 @@ def get_view_sample_ci(short_name, period):
         show_msg=show_msg,
         eq_ci_selectors=ce_details["eq_ci_selectors"],
         info_panel=info_panel,
-    )
-
-
-def sample_summary_state_check_required(ce_details: dict) -> bool:
-    """
-    Determines whether we need to check the sample summary to see if all the sample units have been loaded.
-    We only need to do that in a few circumstances, generally when the collection exercise is still being created and
-    when the sample summary is still in the INIT state.
-
-    :param ce_details: A dict generated from the 'build_collection_exercise_details' function
-    :return: True if we need to check and possibly modify the state of the sample summary, false otherwise.
-    """
-    ce_state = ce_details["collection_exercise"]["state"]
-    ce_state_where_sample_summary_is_active = (
-        "READY_FOR_REVIEW",
-        "FAILEDVALIDATION",
-        "LIVE",
-        "READY_FOR_LIVE",
-        "EXECUTION_STARTED",
-        "VALIDATED",
-        "EXECUTED",
-        "ENDED",
-    )
-    return (
-        ce_state not in ce_state_where_sample_summary_is_active
-        and ce_details["sample_summary"]
-        and ce_details["sample_summary"].get("state") == "INIT"
     )
 
 

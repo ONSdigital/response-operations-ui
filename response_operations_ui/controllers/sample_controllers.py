@@ -28,7 +28,7 @@ def get_sample_summary(sample_summary_id):
     return response.json()
 
 
-def check_if_all_sample_units_present_for_sample_summary(sample_summary_id):
+def check_if_all_sample_units_present_for_sample_summary(sample_summary_id: str) -> bool:
     """
     Calls endpoint in sample that counts if expected sample units == actual number of sample units
     and changes sample summary state to ACTIVE if the two number do match.
@@ -112,3 +112,28 @@ def delete_sample(sample_summary_id: str) -> None:
 
     logger.info("Successfully deleted sample", sample_summary_id=sample_summary_id)
     return
+
+
+def sample_summary_state_check_required(ce_details: dict) -> bool:
+    """
+    Determines whether we need to check the sample summary to see if all the sample units have been loaded.
+    We only need to do that in a few circumstances, generally when the collection exercise is still being created and
+    when the sample summary is still in the INIT state.
+
+    :param ce_details: A dict generated from the 'build_collection_exercise_details' function
+    :return: True if we need to check and possibly modify the state of the sample summary, false otherwise.
+    """
+    ce_state = ce_details["collection_exercise"]["state"]
+    ce_state_where_sample_summary_is_active = [
+        "READY_FOR_REVIEW",
+        "FAILEDVALIDATION",
+        "LIVE",
+        "READY_FOR_LIVE",
+        "EXECUTION_STARTED",
+        "VALIDATED",
+        "EXECUTED",
+        "ENDED",
+    ]
+    return ce_state not in ce_state_where_sample_summary_is_active and (
+        ce_details["sample_summary"] is not None and ce_details["sample_summary"].get("state") == "INIT"
+    )
