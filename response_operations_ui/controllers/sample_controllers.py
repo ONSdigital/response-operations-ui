@@ -28,7 +28,7 @@ def get_sample_summary(sample_summary_id):
     return response.json()
 
 
-def check_if_all_sample_units_present_for_sample_summary(sample_summary_id: str) -> bool:
+def check_if_all_sample_units_present_for_sample_summary(sample_summary_id: str) -> dict:
     """
     Calls endpoint in sample that counts if expected sample units == actual number of sample units
     and changes sample summary state to ACTIVE if the two number do match.
@@ -57,7 +57,7 @@ def check_if_all_sample_units_present_for_sample_summary(sample_summary_id: str)
         expected_total=response_json["expectedTotal"],
         current_total=response_json["currentTotal"],
     )
-    return are_all_sample_units_loaded
+    return response_json
 
 
 def upload_sample(short_name, period, file):

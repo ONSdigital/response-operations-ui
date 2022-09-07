@@ -47,7 +47,7 @@
                 "classes": "ons-u-mb-s"
             })
         %}
-            Loading sample&hellip; <span class="ons-u-ml-xs"><a href="/surveys/{{survey.shortName}}/{{ce.exerciseRef}}/view-sample-ci?show_msg=true">Refresh to see progress</a>
+            Loading sample (sample_count.currentTotal / sample_count.expectedTotal) &hellip; <span class="ons-u-ml-xs"><a href="/surveys/{{survey.shortName}}/{{ce.exerciseRef}}/view-sample-ci?show_msg=true">Refresh to see progress</a>
         {% endcall %}
     {% elif sample.state == 'ACTIVE' %}
         {% call
