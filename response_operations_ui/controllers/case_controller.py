@@ -39,6 +39,21 @@ def post_case_event(case_id, category, description):
     logger.info("Successfully posted case event", case_id=case_id, category=category)
 
 
+def get_case_events_by_case_id(case_id):
+    logger.info("Retrieving case events by case id", case_group_id=case_id)
+    url = f'{app.config["CASE_URL"]}/cases/{case_id}/events'
+    response = requests.get(url, auth=app.config["BASIC_AUTH"])
+
+    try:
+        response.raise_for_status()
+    except requests.exceptions.HTTPError:
+        logger.exception("Error getting case events by case id", case_id=case_id)
+        raise ApiError(response)
+
+    logger.info("Successfully retrieved case events by case id", case_id=case_id)
+    return response.json()
+
+
 def get_case_by_case_group_id(case_group_id):
     logger.info("Retrieving case by case group id", case_group_id=case_group_id)
     url = f'{app.config["CASE_URL"]}/cases/casegroupid/{case_group_id}'
