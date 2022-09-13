@@ -131,13 +131,16 @@ def view_collection_exercise(short_name, period):
     # If there's a sample summary, but we're still in a state where we're setting up the collection exercise, then check
     # the sample summary and change it to ACTIVE all sample units are present.
     if sample_controllers.sample_summary_state_check_required(ce_details):
-        are_all_sample_units_loaded = sample_controllers.check_if_all_sample_units_present_for_sample_summary(
-            ce_details["sample_summary"]["id"]
-        )
-        if are_all_sample_units_loaded:
-            # Get an up-to-date copy of the sample summary data now that it's active
-            sample_summary = sample_controllers.get_sample_summary(ce_details["sample_summary"]["id"])
-            ce_details["sample_summary"] = _format_sample_summary(sample_summary)
+        try:
+            are_all_sample_units_loaded = sample_controllers.check_if_all_sample_units_present_for_sample_summary(
+                ce_details["sample_summary"]["id"]
+            )
+            if are_all_sample_units_loaded:
+                # Get an up-to-date copy of the sample summary data now that it's active
+                sample_summary = sample_controllers.get_sample_summary(ce_details["sample_summary"]["id"])
+                ce_details["sample_summary"] = _format_sample_summary(sample_summary)
+        except ApiError:
+            flash("Sample summary check failed.  Refresh page to try again", category="error")
 
     show_msg = request.args.get("show_msg")
 

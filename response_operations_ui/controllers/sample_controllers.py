@@ -47,7 +47,9 @@ def check_if_all_sample_units_present_for_sample_summary(sample_summary_id: str)
         response.raise_for_status()
     except HTTPError:
         logger.error(
-            "Error checking sample summary", sample_summary_id=sample_summary_id, status_code=response.status_code
+            "Error checking sample summary",
+            sample_summary_id=sample_summary_id,
+            status_code=response.status_code,
         )
         raise ApiError(response)
 
