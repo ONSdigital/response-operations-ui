@@ -118,7 +118,7 @@ def change_email():
 
             if _notify_account_update_emails_sent(current_email, new_email, first_name, user_id):
                 flash(
-                    "A verification email has been sent. You will need to login to change your email",
+                    "A verification email has been sent.",
                     category="successful_signout",
                 )
                 return redirect(url_for("logout_bp.logout"))
@@ -140,11 +140,9 @@ def _notify_account_update_emails_sent(current_email: str, new_email: str, first
         "changed_value": new_email,
     }
     token = token_decoder.generate_token(json.dumps({"email": new_email, "user_id": user_id}))
-
-    update_email_personalisation = {
-        "CONFIRM_EMAIL_URL": f"{app.config['RESPONSE_OPERATIONS_UI_URL']}/account/verify-email/{token}",
-        "first_name": first_name,
-    }
+    verification_url = f"{app.config['RESPONSE_OPERATIONS_UI_URL']}/account/verify-email/{token}"
+    update_email_personalisation = {"CONFIRM_EMAIL_URL": verification_url, "first_name": first_name}
+    logger.info("Sending update account verification email", verification_url=verification_url)
 
     try:
         notify_controller.request_to_notify(
