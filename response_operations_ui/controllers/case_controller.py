@@ -39,7 +39,7 @@ def post_case_event(case_id, category, description):
     logger.info("Successfully posted case event", case_id=case_id, category=category)
 
 
-def get_case_events_by_case_id(case_id):
+def get_all_category_case_events_by_case_id(case_id):
     logger.info("Retrieving case events by case id", case_group_id=case_id)
     url = f'{app.config["CASE_URL"]}/cases/{case_id}/events'
     response = requests.get(url, auth=app.config["BASIC_AUTH"])

@@ -92,6 +92,12 @@
                     ]
                 })
             }}
+          <h3>Case events</h3>
+          <ul>
+            {% for event in case_events %}
+              <li>{{event.createdDateTime}} - {{ event.category }}</li>
+            {% endfor %}
+        </ul>
             {% if is_case_complete %}
                 <a href="{{ request.referrer }}" id="close-response">Close</a>
             {% else %}

@@ -56,7 +56,7 @@ def get_response_statuses(ru_ref, error=None):
     case_group = case_controller.get_case_group_by_collection_exercise(case_groups, exercise["id"])
     case_group_status = case_group["caseGroupStatus"]
     case_id = get_case_by_case_group_id(case_group["id"]).get("id")
-    case_events = case_controller.get_case_events_by_case_id(case_id)
+    case_events = case_controller.get_all_category_case_events_by_case_id(case_id)
     is_case_complete = case_group_status in COMPLETE_STATE
     completed_timestamp = get_timestamp_for_completed_case_event(case_id) if is_case_complete else None
 
