@@ -111,12 +111,12 @@ def change_email():
             return render_template("request-new-account-error.html")
 
         current_email = uaa_user["emails"][0]["value"]
-        new_email_address = form.data["email_address"]
+        new_email = form.data["email_address"]
 
-        if current_email != new_email_address and _can_change_username_and_email(new_email_address):
+        if current_email != new_email and _can_change_username_and_email(new_email):
             first_name = uaa_user["name"]["givenName"]
 
-            if _notify_account_update_emails_sent(current_email, new_email_address, first_name, user_id):
+            if _notify_account_update_emails_sent(current_email, new_email, first_name, user_id):
                 flash(
                     "A verification email has been sent. You will need to login to change your email",
                     category="successful_signout",
@@ -125,22 +125,21 @@ def change_email():
 
             flash("Something went wrong while updating your email. Please try again", category="error")
         else:
+            logger.info(f"Unable to change username and email for {user_id}, email already used")
             flash("Email already in use", category="error")
 
     return render_template("account/change-email.html", form=form, errors=form.errors)
 
 
-def _notify_account_update_emails_sent(
-    current_email: str, new_email_address: str, first_name: str, user_id: str
-) -> None:
+def _notify_account_update_emails_sent(current_email: str, new_email: str, first_name: str, user_id: str) -> bool:
     notify_controller = NotifyController()
 
     update_account_details_personalisation = {
         "first_name": first_name,
         "value_name": "email",
-        "changed_value": new_email_address,
+        "changed_value": new_email,
     }
-    token = token_decoder.generate_token(json.dumps({"email": new_email_address, "user_id": user_id}))
+    token = token_decoder.generate_token(json.dumps({"email": new_email, "user_id": user_id}))
 
     update_email_personalisation = {
         "CONFIRM_EMAIL_URL": f"{app.config['RESPONSE_OPERATIONS_UI_URL']}/account/verify-email/{token}",
@@ -149,7 +148,7 @@ def _notify_account_update_emails_sent(
 
     try:
         notify_controller.request_to_notify(
-            email=new_email_address, template_name="update_email", personalisation=update_email_personalisation
+            email=new_email, template_name="update_email", personalisation=update_email_personalisation
         )
         notify_controller.request_to_notify(
             email=current_email,
@@ -165,8 +164,8 @@ def _notify_account_update_emails_sent(
     return True
 
 
-def _can_change_username_and_email(new_email_address: str) -> bool:
-    user_filter = f"email+eq+%22{new_email_address}%22+or+userName+eq+%22{new_email_address}%22"
+def _can_change_username_and_email(new_email: str) -> bool:
+    user_filter = f"email+eq+%22{new_email}%22+or+userName+eq+%22{new_email}%22"
     uaa_user = uaa_controller.get_user_by_filter(user_filter)
 
     if uaa_user and uaa_user["totalResults"] == 0:

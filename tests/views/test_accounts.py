@@ -17,7 +17,6 @@ with open(f"{project_root}/test_data/uaa/user_by_id.json") as json_data:
     uaa_user_by_id_json = json.load(json_data)
 
 user_id = "fe2dc842-b3b3-4647-8317-858dab82ab94"
-fake_id = "7c478749-ffa2-4eea-8294-03391328c1d0"
 user_email = "fake@ons.gov.uk"
 new_user_email = "new.one@ons.gov.uk"
 max_256_characters = (
@@ -233,9 +232,12 @@ class TestAccounts(unittest.TestCase):
         )
         self.assertIn(b"Not a valid ONS email address", response.data)
 
-    def test_change_email_user_id_doesnt_exist(self):
+    @requests_mock.mock()
+    def test_change_email_user_id_doesnt_exist(self, mock_request):
         with self.client.session_transaction() as session:
-            session["user_id"] = fake_id
+            session["user_id"] = user_id
+        mock_request.post(url_uaa_token, json={"access_token": self.access_token}, status_code=201)
+        mock_request.get(url_uaa_user_by_id, json=uaa_user_by_id_json, status_code=404)
         response = self.client.post(
             "/account/change-email",
             follow_redirects=True,
