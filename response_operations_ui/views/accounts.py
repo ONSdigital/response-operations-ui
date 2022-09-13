@@ -180,6 +180,10 @@ def verify_email(token):
         token_dict = json.loads(json_token)
 
         user_from_uaa = uaa_controller.get_user_by_id(token_dict["user_id"])
+
+        if user_from_uaa is None:
+            return render_template("request-new-account-error.html")
+
         user_from_uaa["emails"][0]["value"] = token_dict["email"]
         user_from_uaa["userName"] = token_dict["email"]
 
