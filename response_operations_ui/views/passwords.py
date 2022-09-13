@@ -123,7 +123,8 @@ def resend_password_email_expired_token(token):
 def send_password_change_email(email):
     url_safe_serializer = URLSafeSerializer(app.config["SECRET_KEY"])
 
-    response = uaa_controller.get_user_by_email(email)
+    user_filter = f"email+eq+%22{email}%22"
+    response = uaa_controller.get_user_by_filter(user_filter)
     if response is None:
         return render_template("forgot-password-error.html")
 
@@ -154,7 +155,9 @@ def send_password_change_email(email):
 
 
 def send_confirm_change_email(email):
-    user = uaa_controller.get_user_by_email(email)
+    user_filter = f"email+eq+%22{email}%22"
+    user = uaa_controller.get_user_by_filter(user_filter)
+
     first_name = user["resources"][0]["name"]["givenName"]
     if first_name != "":
         personalisation = {"FIRST_NAME": first_name}

@@ -17,6 +17,7 @@ with open(f"{project_root}/test_data/uaa/user_by_id.json") as json_data:
     uaa_user_by_id_json = json.load(json_data)
 
 user_id = "fe2dc842-b3b3-4647-8317-858dab82ab94"
+fake_id = "7c478749-ffa2-4eea-8294-03391328c1d0"
 user_email = "fake@ons.gov.uk"
 new_user_email = "new.one@ons.gov.uk"
 max_256_characters = (
@@ -27,7 +28,11 @@ max_256_characters = (
 csrf_token = "ImRjMmJkZWRhNDcwMDBmM2JlZWEwYWM2YzhkYzMxMzliMjBmYmU1ZWIi.Yhy3Hw.cLsrWJHAXXmBJjLY0J8XP3oE8qw"
 url_uaa_token = f"{TestingConfig.UAA_SERVICE_URL}/oauth/token"
 url_uaa_get_accounts = f"{TestingConfig.UAA_SERVICE_URL}/Users?filter=email+eq+%22{user_email}%22"
-url_uaa_get_accounts_new_email = f"{TestingConfig.UAA_SERVICE_URL}/Users?filter=email+eq+%22{new_user_email}%22"
+url_uaa_get_accounts_new_email = (
+    f"{TestingConfig.UAA_SERVICE_URL}/Users?filter=email+eq+%22{new_user_email}%22+"
+    f"or+userName+eq+%22{new_user_email}%22"
+)
+
 url_uaa_user_by_id = f"{TestingConfig.UAA_SERVICE_URL}/Users/{user_id}"
 url_uaa_user_password_change = f"{TestingConfig.UAA_SERVICE_URL}/Users/{user_id}/password"
 url_uaa_create_account = f"{TestingConfig.UAA_SERVICE_URL}/Users"
@@ -52,11 +57,8 @@ class TestAccounts(unittest.TestCase):
 
         self.assertIn(b"Email address:", response.data)
         self.assertIn(b"some.one@ons.gov.uk", response.data)
-        self.assertIn(b"Username:", response.data)
         self.assertIn(b"Name:", response.data)
         self.assertIn(b"ONS User", response.data)
-        self.assertIn(b"Change username", response.data)
-        self.assertIn(b"Change name", response.data)
         self.assertIn(b"Change email address", response.data)
         self.assertIn(b"Change password", response.data)
         self.assertEqual(response.status_code, 200)
@@ -171,160 +173,13 @@ class TestAccounts(unittest.TestCase):
             )
 
     @requests_mock.mock()
-    def test_change_username_page(self, mock_request):
-        with self.client.session_transaction() as session:
-            session["user_id"] = user_id
-        mock_request.post(url_uaa_token, json={"access_token": self.access_token}, status_code=201)
-        mock_request.get(url_uaa_user_by_id, json=uaa_user_by_id_json, status_code=200)
-        response = self.client.get("/account/change-username", follow_redirects=True)
-        self.assertIn(b"Username", response.data)
-        self.assertIn(b"some.one@ons.gov.uk", response.data)  # look into this
-        self.assertEqual(response.status_code, 200)
-
-    @requests_mock.mock()
-    def test_change_username(self, mock_request):
-        with patch("response_operations_ui.views.accounts.NotifyController") as mock_notify:
-            with self.client.session_transaction() as session:
-                session["user_id"] = user_id
-            mock_notify()._send_message.return_value = mock.Mock()
-            mock_request.post(url_uaa_token, json={"access_token": self.access_token}, status_code=201)
-            mock_request.get(url_uaa_user_by_id, json=uaa_user_by_id_json, status_code=200)
-            mock_request.put(url_uaa_user_by_id, status_code=200)
-            response = self.client.post(
-                "/account/change-username",
-                follow_redirects=True,
-                data={"username": "uaa.@_user123"},
-            )
-            self.assertIn(b"Your username has been changed", response.data)
-
-    @requests_mock.mock()
-    def test_username_is_empty(self, mock_request):
-        with patch("response_operations_ui.views.accounts.NotifyController") as mock_notify:
-            with self.client.session_transaction() as session:
-                session["user_id"] = user_id
-            mock_notify()._send_message.return_value = mock.Mock()
-            mock_request.post(url_uaa_token, json={"access_token": self.access_token}, status_code=201)
-            mock_request.get(url_uaa_user_by_id, json=uaa_user_by_id_json, status_code=200)
-            mock_request.put(url_uaa_user_by_id, status_code=200)
-            response = self.client.post(
-                "/account/change-username",
-                follow_redirects=True,
-                data={"username": ""},
-            )
-            self.assertIn(b"Username is required", response.data)
-
-    @requests_mock.mock()
-    def test_username_is_max_name_length(self, mock_request):
-        with patch("response_operations_ui.views.accounts.NotifyController") as mock_notify:
-            with self.client.session_transaction() as session:
-                session["user_id"] = user_id
-            mock_notify()._send_message.return_value = mock.Mock()
-            mock_request.post(url_uaa_token, json={"access_token": self.access_token}, status_code=201)
-            mock_request.get(url_uaa_user_by_id, json=uaa_user_by_id_json, status_code=200)
-            mock_request.put(url_uaa_user_by_id, status_code=200)
-            response = self.client.post(
-                "/account/change-username",
-                follow_redirects=True,
-                data={"username": max_256_characters},
-            )
-            self.assertIn(b"Username must be less than 255 characters", response.data)
-
-    @requests_mock.mock()
-    def test_username_contains_wrong_chars(self, mock_request):
-        with patch("response_operations_ui.views.accounts.NotifyController") as mock_notify:
-            with self.client.session_transaction() as session:
-                session["user_id"] = user_id
-            mock_notify()._send_message.return_value = mock.Mock()
-            mock_request.post(url_uaa_token, json={"access_token": self.access_token}, status_code=201)
-            mock_request.get(url_uaa_user_by_id, json=uaa_user_by_id_json, status_code=200)
-            mock_request.put(url_uaa_user_by_id, status_code=200)
-            response = self.client.post(
-                "/account/change-username",
-                follow_redirects=True,
-                data={"username": "uaa_user!"},
-            )
-            self.assertIn(
-                b"Username can only contain lowercase letters, numbers, and special characters (`.`, `@`, and `_`)",
-                response.data,
-            )
-
-    @requests_mock.mock()
-    def test_username_max_length_and_wrong_character_errors(self, mock_request):
-        with patch("response_operations_ui.views.accounts.NotifyController") as mock_notify:
-            with self.client.session_transaction() as session:
-                session["user_id"] = user_id
-            mock_notify()._send_message.return_value = mock.Mock()
-            mock_request.post(url_uaa_token, json={"access_token": self.access_token}, status_code=201)
-            mock_request.get(url_uaa_user_by_id, json=uaa_user_by_id_json, status_code=200)
-            mock_request.put(url_uaa_user_by_id, status_code=200)
-            response = self.client.post(
-                "/account/change-username",
-                follow_redirects=True,
-                data={"username": max_256_characters + "!"},
-            )
-            self.assertIn(b"Username must be less than 255 characters", response.data)
-            self.assertIn(
-                b"Username can only contain lowercase letters, numbers, and special characters (`.`, `@`, and `_`)",
-                response.data,
-            )
-
-    @requests_mock.mock()
-    def test_username_already_exists(self, mock_request):
-        with patch("response_operations_ui.views.accounts.NotifyController") as mock_notify:
-            with self.client.session_transaction() as session:
-                session["user_id"] = user_id
-            mock_notify()._send_message.return_value = mock.Mock()
-            mock_request.post(url_uaa_token, json={"access_token": self.access_token}, status_code=201)
-            mock_request.get(url_uaa_user_by_id, json=uaa_user_by_id_json, status_code=200)
-            mock_request.put(url_uaa_user_by_id, status_code=400)
-            response = self.client.post(
-                "/account/change-username",
-                follow_redirects=True,
-                data={"username": "uaauser"},
-            )
-            self.assertIn(b"Username already in use", response.data)
-
-    @requests_mock.mock()
-    def test_change_username_notify_failure(self, mock_request):
-        with patch("response_operations_ui.views.accounts.NotifyController") as mock_notify:
-            with self.client.session_transaction() as session:
-                session["user_id"] = user_id
-            mock_notify().request_to_notify.side_effect = Mock(side_effect=NotifyError)
-            mock_request.post(url_uaa_token, json={"access_token": self.access_token}, status_code=201)
-            mock_request.get(url_uaa_user_by_id, json=uaa_user_by_id_json, status_code=200)
-            mock_request.put(url_uaa_user_by_id, status_code=200)
-            response = self.client.post(
-                "/account/change-username",
-                follow_redirects=True,
-                data={"username": "uaauser"},
-            )
-            self.assertIn(b"Something went wrong while updating your username. Please try again", response.data)
-
-    @requests_mock.mock()
-    def test_username_uaa_error(self, mock_request):
-        with patch("response_operations_ui.views.accounts.NotifyController") as mock_notify:
-            with self.client.session_transaction() as session:
-                session["user_id"] = user_id
-            mock_notify()._send_message.return_value = mock.Mock()
-            mock_request.post(url_uaa_token, json={"access_token": self.access_token}, status_code=201)
-            mock_request.get(url_uaa_user_by_id, json=uaa_user_by_id_json, status_code=200)
-            mock_request.put(url_uaa_user_by_id, status_code=403)
-            response = self.client.post(
-                "/account/change-username",
-                follow_redirects=True,
-                data={"username": "uaauser"},
-            )
-            self.assertIn(
-                b"Something went wrong. Please ignore the email you have received and try again", response.data
-            )
-
-    @requests_mock.mock()
     def test_change_email_page(self, mock_request):
         with self.client.session_transaction() as session:
             session["user_id"] = user_id
         mock_request.post(url_uaa_token, json={"access_token": self.access_token}, status_code=201)
         mock_request.get(url_uaa_user_by_id, json=uaa_user_by_id_json, status_code=200)
         response = self.client.get("/account/change-email", follow_redirects=True)
+
         self.assertIn(b"New email address", response.data)
         self.assertIn(b"Re-type new email address", response.data)
         self.assertEqual(response.status_code, 200)
@@ -337,14 +192,116 @@ class TestAccounts(unittest.TestCase):
             mock_notify()._send_message.return_value = mock.Mock()
             mock_request.post(url_uaa_token, json={"access_token": self.access_token}, status_code=201)
             mock_request.get(url_uaa_user_by_id, json=uaa_user_by_id_json, status_code=200)
-            mock_request.put(url_uaa_user_by_id, status_code=200)
+
             mock_request.get(url_uaa_get_accounts_new_email, json={"totalResults": 0}, status_code=200)
             response = self.client.post(
                 "/account/change-email",
                 follow_redirects=True,
                 data={"email_address": new_user_email, "email_confirm": new_user_email},
             )
+
             self.assertIn(b"A verification email has been sent", response.data)
+
+    def test_change_email_is_empty(self):
+        response = self.client.post(
+            "/account/change-email", follow_redirects=True, data={"email_address": "", "email_confirm": ""}
+        )
+        self.assertIn(b"Enter an email address", response.data)
+
+    def test_change_email_is_max_name_length(self):
+        response = self.client.post(
+            "/account/change-email",
+            follow_redirects=True,
+            data={"email_address": max_256_characters + "@ons.fake"},
+        )
+        self.assertIn(b"Invalid email", response.data)
+        self.assertIn(b"Your email must be less than 255 characters", response.data)
+
+    def test_change_emails_different(self):
+        response = self.client.post(
+            "/account/change-email",
+            follow_redirects=True,
+            data={"email_address": "fake@ons.gov.uk", "email_confirm": "ons@ons.fake"},
+        )
+        self.assertIn(b"Your emails do not match", response.data)
+
+    def test_change_email_wrong_domain(self):
+        response = self.client.post(
+            "/account/change-email",
+            follow_redirects=True,
+            data={"email_address": "test@test.test"},
+        )
+        self.assertIn(b"Not a valid ONS email address", response.data)
+
+    def test_change_email_user_id_doesnt_exist(self):
+        with self.client.session_transaction() as session:
+            session["user_id"] = fake_id
+        response = self.client.post(
+            "/account/change-email",
+            follow_redirects=True,
+            data={"email_address": new_user_email, "email_confirm": new_user_email},
+        )
+        self.assertIn(b"There was a problem trying to send you an email to create an account", response.data)
+
+    @requests_mock.mock()
+    def test_change_email_not_changed(self, mock_request):
+        with self.client.session_transaction() as session:
+            session["user_id"] = user_id
+        mock_request.post(url_uaa_token, json={"access_token": self.access_token}, status_code=201)
+        mock_request.get(url_uaa_user_by_id, json=uaa_user_by_id_json, status_code=200)
+        response = self.client.post(
+            "/account/change-email",
+            follow_redirects=True,
+            data={"email_address": "some.one@ons.gov.uk", "email_confirm": "some.one@ons.gov.uk"},
+        )
+        self.assertIn(b"Email already in use", response.data)
+
+    @requests_mock.mock()
+    def test_email_already_in_use(self, mock_request):
+        with self.client.session_transaction() as session:
+            session["user_id"] = user_id
+        mock_request.post(url_uaa_token, json={"access_token": self.access_token}, status_code=201)
+        mock_request.get(url_uaa_user_by_id, json=uaa_user_by_id_json, status_code=200)
+
+        mock_request.get(url_uaa_get_accounts_new_email, json={"totalResults": 1}, status_code=200)
+        response = self.client.post(
+            "/account/change-email",
+            follow_redirects=True,
+            data={"email_address": new_user_email, "email_confirm": new_user_email},
+        )
+        self.assertIn(b"Email already in use", response.data)
+
+    @requests_mock.mock()
+    def test_change_email_notify_failure(self, mock_request):
+        with patch("response_operations_ui.views.accounts.NotifyController") as mock_notify:
+            with self.client.session_transaction() as session:
+                session["user_id"] = user_id
+            mock_notify().request_to_notify.side_effect = Mock(side_effect=NotifyError)
+            mock_request.post(url_uaa_token, json={"access_token": self.access_token}, status_code=201)
+            mock_request.get(url_uaa_user_by_id, json=uaa_user_by_id_json, status_code=200)
+            mock_request.get(url_uaa_get_accounts_new_email, json={"totalResults": 0}, status_code=200)
+            response = self.client.post(
+                "/account/change-email",
+                follow_redirects=True,
+                data={"email_address": new_user_email, "email_confirm": new_user_email},
+            )
+            self.assertIn(b"Something went wrong while updating your email. Please try again", response.data)
+
+    @requests_mock.mock()
+    def test_change_email_uaa_failure(self, mock_request):
+        with self.app.app_context():
+            with self.client.session_transaction() as session:
+                session["user_id"] = user_id
+            token_dict = {"email": user_email, "user_id": user_id}
+            token = token_decoder.generate_token(json.dumps(token_dict))
+            mock_request.post(url_uaa_token, json={"access_token": self.access_token}, status_code=201)
+            mock_request.get(url_uaa_user_by_id, json=uaa_user_by_id_json, status_code=200)
+            mock_request.put(url_uaa_user_by_id, status_code=403)
+            response = self.client.get(
+                f"/account/verify-email/{token}",
+                follow_redirects=True,
+            )
+            self.assertIn(b"Failed to update email. Please try again", response.data)
 
     @requests_mock.mock()
     def test_email_verification(self, mock_request):
@@ -364,111 +321,6 @@ class TestAccounts(unittest.TestCase):
                     follow_redirects=True,
                 )
                 self.assertIn(b"Your email has been changed", response.data)
-
-    @requests_mock.mock()
-    def test_change_email_notify_failure(self, mock_request):
-        with patch("response_operations_ui.views.accounts.NotifyController") as mock_notify:
-            with self.client.session_transaction() as session:
-                session["user_id"] = user_id
-            mock_notify().request_to_notify.side_effect = Mock(side_effect=NotifyError)
-            mock_request.post(url_uaa_token, json={"access_token": self.access_token}, status_code=201)
-            mock_request.get(url_uaa_user_by_id, json=uaa_user_by_id_json, status_code=200)
-            mock_request.put(url_uaa_user_by_id, status_code=200)
-            mock_request.get(url_uaa_get_accounts_new_email, json={"totalResults": 0}, status_code=200)
-            response = self.client.post(
-                "/account/change-email",
-                follow_redirects=True,
-                data={"email_address": new_user_email, "email_confirm": new_user_email},
-            )
-            self.assertIn(b"Something went wrong while updating your email. Please try again", response.data)
-
-    @requests_mock.mock()
-    def test_change_email_uaa_failure(self, mock_request):
-        with self.app.app_context():
-            with patch("response_operations_ui.views.accounts.NotifyController") as mock_notify:
-                with self.client.session_transaction() as session:
-                    session["user_id"] = user_id
-                mock_notify()._send_message.return_value = mock.Mock()
-                token_dict = {"email": user_email, "user_id": user_id}
-                token = token_decoder.generate_token(json.dumps(token_dict))
-                mock_request.post(url_uaa_token, json={"access_token": self.access_token}, status_code=201)
-                mock_request.get(url_uaa_user_by_id, json=uaa_user_by_id_json, status_code=200)
-                mock_request.put(url_uaa_user_by_id, status_code=403)
-                mock_request.get(url_uaa_get_accounts, json={"totalResults": 0}, status_code=200)
-                response = self.client.get(
-                    f"/account/verify-email/{token}",
-                    follow_redirects=True,
-                )
-                self.assertIn(b"Failed to update email. Please try again", response.data)
-
-    @requests_mock.mock()
-    def test_email_is_empty(self, mock_request):
-        with patch("response_operations_ui.views.accounts.NotifyController") as mock_notify:
-            with self.client.session_transaction() as session:
-                session["user_id"] = user_id
-            mock_notify()._send_message.return_value = mock.Mock()
-            mock_request.post(url_uaa_token, json={"access_token": self.access_token}, status_code=201)
-            mock_request.get(url_uaa_user_by_id, json=uaa_user_by_id_json, status_code=200)
-            mock_request.put(url_uaa_user_by_id, status_code=200)
-            mock_request.get(url_uaa_get_accounts, json={"totalResults": 0}, status_code=200)
-            response = self.client.post(
-                "/account/change-email",
-                follow_redirects=True,
-                data={"email_address": "", "email_confirm": ""},
-            )
-            self.assertIn(b"Enter an email address", response.data)
-
-    @requests_mock.mock()
-    def test_email_is_max_name_length(self, mock_request):
-        with patch("response_operations_ui.views.accounts.NotifyController") as mock_notify:
-            with self.client.session_transaction() as session:
-                session["user_id"] = user_id
-            mock_notify()._send_message.return_value = mock.Mock()
-            mock_request.post(url_uaa_token, json={"access_token": self.access_token}, status_code=201)
-            mock_request.get(url_uaa_user_by_id, json=uaa_user_by_id_json, status_code=200)
-            mock_request.put(url_uaa_user_by_id, status_code=200)
-            mock_request.get(url_uaa_get_accounts, json={"totalResults": 0}, status_code=200)
-            response = self.client.post(
-                "/account/change-email",
-                follow_redirects=True,
-                data={"email_address": max_256_characters + "@ons.fake"},
-            )
-            self.assertIn(b"Invalid email", response.data)
-            self.assertIn(b"Your email must be less than 255 characters", response.data)
-
-    @requests_mock.mock()
-    def test_different_emails(self, mock_request):
-        with patch("response_operations_ui.views.accounts.NotifyController") as mock_notify:
-            with self.client.session_transaction() as session:
-                session["user_id"] = user_id
-            mock_notify()._send_message.return_value = mock.Mock()
-            mock_request.post(url_uaa_token, json={"access_token": self.access_token}, status_code=201)
-            mock_request.get(url_uaa_user_by_id, json=uaa_user_by_id_json, status_code=200)
-            mock_request.put(url_uaa_user_by_id, status_code=200)
-            mock_request.get(url_uaa_get_accounts, json={"totalResults": 0}, status_code=200)
-            response = self.client.post(
-                "/account/change-email",
-                follow_redirects=True,
-                data={"email_address": "fake@ons.gov.uk", "email_confirm": "ons@ons.fake"},
-            )
-            self.assertIn(b"Your emails do not match", response.data)
-
-    @requests_mock.mock()
-    def test_wrong_email_domain(self, mock_request):
-        with patch("response_operations_ui.views.accounts.NotifyController") as mock_notify:
-            with self.client.session_transaction() as session:
-                session["user_id"] = user_id
-            mock_notify()._send_message.return_value = mock.Mock()
-            mock_request.post(url_uaa_token, json={"access_token": self.access_token}, status_code=201)
-            mock_request.get(url_uaa_user_by_id, json=uaa_user_by_id_json, status_code=200)
-            mock_request.put(url_uaa_user_by_id, status_code=200)
-            mock_request.get(url_uaa_get_accounts, json={"totalResults": 0}, status_code=200)
-            response = self.client.post(
-                "/account/change-email",
-                follow_redirects=True,
-                data={"email_address": "test@test.test"},
-            )
-            self.assertIn(b"Not a valid ONS email address", response.data)
 
     # activate-account
 
