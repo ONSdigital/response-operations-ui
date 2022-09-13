@@ -37,7 +37,7 @@ def check_if_all_sample_units_present_for_sample_summary(sample_summary_id: str)
     :return:
     """
     logger.info("Checking sample summary state", sample_summary_id=sample_summary_id)
-    url = f'{app.config["SAMPLE_URL"]}/samples/samplesummary/{sample_summary_id}/check-all-units-present'
+    url = f'{app.config["SAMPLE_URL"]}/samples/samplesummary/{sample_summary_id}/check-and-transition-sample-summary-status'
     response = requests.get(url, auth=app.config["BASIC_AUTH"])
 
     try:
