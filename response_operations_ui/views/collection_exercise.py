@@ -852,13 +852,16 @@ def get_view_sample_ci(short_name, period):
     locked = ce_state in ("LIVE", "READY_FOR_LIVE", "EXECUTION_STARTED", "VALIDATED", "EXECUTED", "ENDED")
 
     if sample_controllers.sample_summary_state_check_required(ce_details):
-        are_all_sample_units_loaded = sample_controllers.check_if_all_sample_units_present_for_sample_summary(
-            ce_details["sample_summary"]["id"]
-        )
-        if are_all_sample_units_loaded:
-            # Get an up-to-date copy of the sample summary data now that it's active
-            sample_summary = sample_controllers.get_sample_summary(ce_details["sample_summary"]["id"])
-            ce_details["sample_summary"] = _format_sample_summary(sample_summary)
+        try:
+            are_all_sample_units_loaded = sample_controllers.check_if_all_sample_units_present_for_sample_summary(
+                ce_details["sample_summary"]["id"]
+            )
+            if are_all_sample_units_loaded:
+                # Get an up-to-date copy of the sample summary data now that it's active
+                sample_summary = sample_controllers.get_sample_summary(ce_details["sample_summary"]["id"])
+                ce_details["sample_summary"] = _format_sample_summary(sample_summary)
+        except ApiError:
+            flash("Sample summary check failed.  Refresh page to try again", category="error")
 
     _format_ci_file_name(ce_details["collection_instruments"], ce_details["survey"])
 
