@@ -2,7 +2,7 @@
 {% from "components/question/_macro.njk" import onsQuestion %}
 
 <section class="ce-section ce-details ons-u-mt-l">
-    <h2 class="ons-u-fs-r--b ons-u-pt-m">Select eQ version</h2>
+    <h2 class="ons-u-fs-r--b ons-u-pt-m ons-u-bb">Select eQ version</h2>
     {% set surveyEditPermission = hasPermission('surveys.edit') %}
         {% if surveyEditPermission %}  
             <form method="post">
