@@ -672,7 +672,7 @@ class TestCollectionExercise(ViewTestCase):
     @requests_mock.mock()
     @patch("response_operations_ui.views.collection_exercise.build_collection_exercise_details")
     def test_collection_exercise_sample_check_failed(self, mock_request, mock_details):
-        mock_request.get(url_get_sample_summary_status, status_code=404)
+        mock_request.get(url_get_sample_summary_status, status_code=500)
         mock_details.return_value = ce_details_sample_init_state
 
         response = self.client.get(f"/surveys/{short_name}/{period}", follow_redirects=True)
@@ -2238,7 +2238,7 @@ class TestCollectionExercise(ViewTestCase):
     def test_eq_view_sample_ci_page_failed_sample_check(self, mock_request, mock_details):
         mock_details.return_value = ce_details_sample_init_state
         sign_in_with_permission(self, mock_request, user_permission_surveys_edit_json)
-        mock_request.get(url_get_sample_summary_status, status_code=404)
+        mock_request.get(url_get_sample_summary_status, status_code=500)
 
         response = self.client.get(f"/surveys/{short_name}/{period}/view-sample-ci")
 
