@@ -887,21 +887,6 @@ class TestCollectionExercise(ViewTestCase):
 
     @requests_mock.mock()
     @patch("response_operations_ui.views.collection_exercise.build_collection_exercise_details")
-    def test_choose_collection_instrument_when_first(self, mock_request, mock_details):
-        with open(
-            f"{project_root}/test_data/collection_exercise/formatted_collection_exercise_details_no_ci.json"
-        ) as collection_exercise:
-            mock_details.return_value = json.load(collection_exercise)
-
-        response = self.client.get(f"/surveys/{short_name}/{period}", follow_redirects=True)
-
-        self.assertEqual(response.status_code, 200)
-        self.assertIn("total-instruments".encode(), response.data, response.data)
-        self.assertNotIn("Load collection instruments".encode(), response.data, response.data)
-        self.assertNotIn("Add a collection instrument. Must be XLSX".encode(), response.data)
-
-    @requests_mock.mock()
-    @patch("response_operations_ui.views.collection_exercise.build_collection_exercise_details")
     def test_add_another_collection_instrument_when_already_uploaded_no_permission(self, mock_request, mock_details):
         mock_details.return_value = formatted_collection_exercise_details
 
