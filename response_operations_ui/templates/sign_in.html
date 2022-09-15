@@ -4,6 +4,7 @@
 {% from "components/error/_macro.njk" import onsError %}
 {% from "components/lists/_macro.njk" import onsList %}
 {% from "components/button/_macro.njk" import onsButton %}
+{% from "components/password/_macro.njk" import onsPassword %}
 
 {% set page_title = "Sign-In" %}
 
@@ -106,16 +107,13 @@
             {% endif %}
 
             {{
-                onsInput({
+                onsPassword({
                     "id": "password",
                     "name": "password",
-                    "type": "password",
                     "label": {
                         "text": "Password"
                     },
-                    "attributes": {
-                        "required": true
-                    },
+                    "showPasswordText": "Show password",
                     "error": error
                 })
             }}
