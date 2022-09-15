@@ -673,12 +673,6 @@ class TestCollectionExercise(ViewTestCase):
         mock_request.get(url_ces_by_survey, json=self.collection_exercises)
         mock_request.get(url_ce_by_id, json=collection_exercise_details["collection_exercise"])
         mock_request.get(url_get_collection_exercise_events, json=self.collection_exercise_events)
-        mock_request.get(
-            f"{url_get_collection_instrument}?{ci_search_string}", json=self.collection_instruments, complete_qs=True
-        )
-        mock_request.get(
-            f"{url_get_collection_instrument}?{ci_type_search_string_eq}", json=self.eq_ci_selectors, complete_qs=True
-        )
         mock_request.get(url_link_sample, json=[sample_summary_id])
         mock_request.get(url_get_sample_summary, json=self.sample_summary)
         mock_request.get(url_get_classifier_type_selectors, json=classifier_type_selectors)
@@ -687,7 +681,7 @@ class TestCollectionExercise(ViewTestCase):
         response = self.client.get(f"/surveys/{short_name}/{period}")
 
         request_history = mock_request.request_history
-        self.assertEqual(len(request_history), 10)
+        self.assertEqual(len(request_history), 8)
         self.assertEqual(response.status_code, 500)
 
     @requests_mock.mock()
