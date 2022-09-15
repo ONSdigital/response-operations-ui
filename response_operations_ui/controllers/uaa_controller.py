@@ -71,11 +71,10 @@ def login_admin():
         abort(response.status_code)
 
 
-def get_user_by_email(email: str, access_token=None) -> dict | None:
+def get_user_by_filter(user_filter: str, access_token=None) -> dict | None:
     """
-    Gets the user details from uaa, using the email of the user as a search parameter.
-
-    :param email: The email of the user being searched for
+    Gets the user details from uaa using the filter param
+    :param user_filter: The filter to search with
     :param access_token: The response-operations-ui client access token for uaa
     :return: A dict containing the search results, or None if there was an error getting records
     """
@@ -84,8 +83,9 @@ def get_user_by_email(email: str, access_token=None) -> dict | None:
 
     headers = generate_headers(access_token)
 
-    url = f"{app.config['UAA_SERVICE_URL']}/Users?filter=email+eq+%22{email}%22"
+    url = f"{app.config['UAA_SERVICE_URL']}/Users?filter={user_filter}"
     response = requests.get(url, headers=headers)
+
     try:
         response.raise_for_status()
     except HTTPError:
@@ -93,7 +93,7 @@ def get_user_by_email(email: str, access_token=None) -> dict | None:
         logger.error(
             "Error retrieving user from UAA",
             status_code=response.status_code,
-            encoded_email=url_safe_serializer.dumps(email),
+            encoded_filter=url_safe_serializer.dumps(user_filter),
         )
         return
 
@@ -191,8 +191,9 @@ def change_user_password_by_email(email: str, password: str) -> requests.Respons
     :return: The response object we get after hitting the /password_change endpoint in uaa.
     """
     access_token = login_admin()
+    user_filter = f"email+eq+%22{email}%22"
 
-    user_response = get_user_by_email(email, access_token)
+    user_response = get_user_by_filter(user_filter, access_token)
     if user_response is None:
         return
     username = user_response["resources"][0]["userName"]
