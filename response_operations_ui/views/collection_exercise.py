@@ -138,6 +138,20 @@ def view_collection_exercise(short_name, period):
     validation_failed = ce_state == "FAILEDVALIDATION"
     ce_details["collection_exercise"]["state"] = map_collection_exercise_state(ce_state)
 
+    # If there's a sample summary, but we're still in a state where we're setting up the collection exercise, then check
+    # the sample summary and change it to ACTIVE all sample units are present.
+    if sample_controllers.sample_summary_state_check_required(ce_details):
+        try:
+            are_all_sample_units_loaded = sample_controllers.check_if_all_sample_units_present_for_sample_summary(
+                ce_details["sample_summary"]["id"]
+            )
+            if are_all_sample_units_loaded:
+                # Get an up-to-date copy of the sample summary data now that it's active
+                sample_summary = sample_controllers.get_sample_summary(ce_details["sample_summary"]["id"])
+                ce_details["sample_summary"] = _format_sample_summary(sample_summary)
+        except ApiError:
+            flash("Sample summary check failed.  Refresh page to try again", category="error")
+
     show_msg = request.args.get("show_msg")
 
     success_panel = request.args.get("success_panel")
@@ -844,8 +858,20 @@ def get_view_sample_ci(short_name, period):
     ce_details["eq_ci_selectors"] = filter_eq_ci_selectors(
         ce_details["eq_ci_selectors"], ce_details["collection_instruments"]
     )
-
     locked = ce_state in ("LIVE", "READY_FOR_LIVE", "EXECUTION_STARTED", "VALIDATED", "EXECUTED", "ENDED")
+
+    if sample_controllers.sample_summary_state_check_required(ce_details):
+        try:
+            are_all_sample_units_loaded = sample_controllers.check_if_all_sample_units_present_for_sample_summary(
+                ce_details["sample_summary"]["id"]
+            )
+            if are_all_sample_units_loaded:
+                # Get an up-to-date copy of the sample summary data now that it's active
+                sample_summary = sample_controllers.get_sample_summary(ce_details["sample_summary"]["id"])
+                ce_details["sample_summary"] = _format_sample_summary(sample_summary)
+        except ApiError:
+            flash("Sample summary check failed.  Refresh page to try again", category="error")
+
     _format_ci_file_name(ce_details["collection_instruments"], ce_details["survey"])
 
     error_json = _get_error_from_session()
