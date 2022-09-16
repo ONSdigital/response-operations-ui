@@ -645,7 +645,6 @@ class TestCollectionExercise(ViewTestCase):
         self.assertEqual(len(request_history), 5)
         self.assertEqual(response.status_code, 500)
 
-
     @requests_mock.mock()
     @patch("response_operations_ui.views.collection_exercise.build_collection_exercise_details")
     def test_upload_collection_instrument(self, mock_request, mock_details):
@@ -2296,8 +2295,6 @@ class TestCollectionExercise(ViewTestCase):
         mock_request.get(url_get_collection_exercise_events, json=self.collection_exercise_events)
         mock_request.get(url_link_sample, json=[sample_summary_id])
         mock_request.get(url_get_sample_summary, json=self.sample_summary)
-        mock_request.get(url_get_classifier_type_selectors, json=classifier_type_selectors)
-        mock_request.get(url_get_classifier_type, json=classifier_types)
 
         response = self.client.get(f"/surveys/{short_name}/{period}", follow_redirects=True)
 
