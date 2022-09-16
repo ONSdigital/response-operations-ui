@@ -73,7 +73,14 @@ def filter_eq_ci_selectors(eq_ci_selectors: list[dict], collection_instruments: 
     return eq_ci_selectors
 
 
-def build_collection_exercise_details(short_name, period):
+def build_collection_exercise_details(short_name: str, period: str, include_ci=True) -> dict:
+    """
+
+    :param short_name: short name of the survey (e.g., MBS, BRES, etc)
+    :param period: Period for the collection exercise
+    :param include_ci: Flag to include collection instrument data or not
+    :return: A dict containing useful data about a given collection exercise
+    """
     survey = survey_controllers.get_survey_by_shortname(short_name)
     survey_id = survey["id"]
     exercises = collection_exercise_controllers.get_collection_exercises_by_survey(survey_id)
@@ -85,37 +92,41 @@ def build_collection_exercise_details(short_name, period):
     survey["shortName"] = format_short_name(survey["shortName"])
     full_exercise = collection_exercise_controllers.get_collection_exercise_by_id(collection_exercise_id)
     exercise_events = collection_exercise_controllers.get_collection_exercise_events_by_id(collection_exercise_id)
-    collection_instruments = collection_instrument_controllers.get_collection_instruments_by_classifier(
-        collection_exercise_id=collection_exercise_id, survey_id=survey_id
-    )
-
-    eq_ci_selectors = collection_instrument_controllers.get_collection_instruments_by_classifier(
-        ci_type="EQ", survey_id=survey_id
-    )
-
     summary_id = collection_exercise_controllers.get_linked_sample_summary_id(collection_exercise_id)
     sample_summary = sample_controllers.get_sample_summary(summary_id) if summary_id else None
     ci_classifiers = survey_controllers.get_survey_ci_classifier(survey_id)
 
-    return {
+    exercise_dict = {
         "survey": survey,
         "collection_exercise": full_exercise,
         "events": convert_events_to_new_format(exercise_events),
-        "collection_instruments": collection_instruments,
-        "eq_ci_selectors": eq_ci_selectors,
         "sample_summary": _format_sample_summary(sample_summary),
         "ci_classifiers": ci_classifiers,
     }
+
+    if include_ci:
+        collection_instruments = collection_instrument_controllers.get_collection_instruments_by_classifier(
+            collection_exercise_id=collection_exercise_id, survey_id=survey_id
+        )
+
+        eq_ci_selectors = collection_instrument_controllers.get_collection_instruments_by_classifier(
+            ci_type="EQ", survey_id=survey_id
+        )
+
+        exercise_dict["collection_instruments"] = collection_instruments
+        exercise_dict["eq_ci_selectors"] = eq_ci_selectors
+
+    return exercise_dict
 
 
 @collection_exercise_bp.route("/<short_name>/<period>", methods=["GET"])
 @login_required
 def view_collection_exercise(short_name, period):
-    ce_details = build_collection_exercise_details(short_name, period)
+    ce_details = build_collection_exercise_details(short_name, period, include_ci=False)
     ce_state = ce_details["collection_exercise"]["state"]
     if ce_details["survey"]["surveyMode"] == "EQ":
         show_set_live_button = (
-            ce_state in ("READY_FOR_REVIEW")
+            ce_state in "READY_FOR_REVIEW"
             and "ref_period_start" in ce_details["events"]
             and "ref_period_end" in ce_details["events"]
         )
@@ -125,8 +136,21 @@ def view_collection_exercise(short_name, period):
     locked = ce_state in ("LIVE", "READY_FOR_LIVE", "EXECUTION_STARTED", "VALIDATED", "EXECUTED", "ENDED")
     processing = ce_state in ("EXECUTION_STARTED", "EXECUTED", "VALIDATED")
     validation_failed = ce_state == "FAILEDVALIDATION"
-    ce_details["collection_exercise"]["state"] = map_collection_exercise_state(ce_state)  # NOQA
-    _format_ci_file_name(ce_details["collection_instruments"], ce_details["survey"])
+    ce_details["collection_exercise"]["state"] = map_collection_exercise_state(ce_state)
+
+    # If there's a sample summary, but we're still in a state where we're setting up the collection exercise, then check
+    # the sample summary and change it to ACTIVE all sample units are present.
+    if sample_controllers.sample_summary_state_check_required(ce_details):
+        try:
+            are_all_sample_units_loaded = sample_controllers.check_if_all_sample_units_present_for_sample_summary(
+                ce_details["sample_summary"]["id"]
+            )
+            if are_all_sample_units_loaded:
+                # Get an up-to-date copy of the sample summary data now that it's active
+                sample_summary = sample_controllers.get_sample_summary(ce_details["sample_summary"]["id"])
+                ce_details["sample_summary"] = _format_sample_summary(sample_summary)
+        except ApiError:
+            flash("Sample summary check failed.  Refresh page to try again", category="error")
 
     show_msg = request.args.get("show_msg")
 
@@ -138,7 +162,6 @@ def view_collection_exercise(short_name, period):
     return render_template(
         "collection_exercise/collection-exercise.html",
         ce=ce_details["collection_exercise"],
-        collection_instruments=ce_details["collection_instruments"],
         error=error_json,
         events=ce_details["events"],
         locked=locked,
@@ -835,8 +858,20 @@ def get_view_sample_ci(short_name, period):
     ce_details["eq_ci_selectors"] = filter_eq_ci_selectors(
         ce_details["eq_ci_selectors"], ce_details["collection_instruments"]
     )
-
     locked = ce_state in ("LIVE", "READY_FOR_LIVE", "EXECUTION_STARTED", "VALIDATED", "EXECUTED", "ENDED")
+
+    if sample_controllers.sample_summary_state_check_required(ce_details):
+        try:
+            are_all_sample_units_loaded = sample_controllers.check_if_all_sample_units_present_for_sample_summary(
+                ce_details["sample_summary"]["id"]
+            )
+            if are_all_sample_units_loaded:
+                # Get an up-to-date copy of the sample summary data now that it's active
+                sample_summary = sample_controllers.get_sample_summary(ce_details["sample_summary"]["id"])
+                ce_details["sample_summary"] = _format_sample_summary(sample_summary)
+        except ApiError:
+            flash("Sample summary check failed.  Refresh page to try again", category="error")
+
     _format_ci_file_name(ce_details["collection_instruments"], ce_details["survey"])
 
     error_json = _get_error_from_session()

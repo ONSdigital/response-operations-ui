@@ -9,6 +9,7 @@ from flask_login import LoginManager
 from flask_session import Session
 from flask_talisman import Talisman
 from flask_wtf.csrf import CSRFError, CSRFProtect
+from jinja2 import ChainableUndefined
 from structlog import wrap_logger
 
 from config import Config
@@ -98,6 +99,7 @@ def create_app(config_name=None):
 
     assets.url = app.static_url_path
 
+    app.jinja_env.undefined = ChainableUndefined
     app.jinja_env.add_extension("jinja2.ext.do")
     app.jinja_env.globals["hasPermission"] = user_has_permission
 
