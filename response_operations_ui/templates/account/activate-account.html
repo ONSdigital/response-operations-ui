@@ -88,13 +88,10 @@
                         "id": "password",
                         "name": "password",
                         "label": {
-                            "text": 'Password'
-                        },
-                        "attributes": {
-                            "autocomplete": 'off'
+                            "text": "Password"
                         },
                         "showPasswordText": "Show password",
-                        "error": passwordError
+                        "error": {"text": errorData[0]["text"] } if errorData else None
                     })
                 }}
                 {{
@@ -104,11 +101,7 @@
                         "label": {
                             "text": "Confirm password"
                         },
-                        "attributes": {
-                            "autocomplete": 'off'
-                        },
                         "showPasswordText": "Show password",
-                        "error": passwordError
                     })
                 }}
                 <div class="ons-grid ons-grid--flex ons-grid--gutterless ons-grid--vertical-center ons-grid--no-wrap@s ons-u-mt-m ons-u-mb-m">
