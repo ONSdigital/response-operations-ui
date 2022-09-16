@@ -116,6 +116,8 @@ with open(
     f"{project_root}/test_data/collection_exercise/collection_exercise_details_eq_ref_end_date.json"
 ) as json_data:
     collection_exercise_eq_ref_end_date = json.load(json_data)
+with open(f"{project_root}/test_data/collection_exercise/collection_exercise_details_sample_init_state.json") as fp:
+    ce_details_sample_init_state = json.load(fp)
 
 user_permission_surveys_edit_json = {
     "id": "5902656c-c41c-4b38-a294-0359e6aabe59",
@@ -157,6 +159,10 @@ url_get_survey_by_short_name = f"{TestingConfig.SURVEY_URL}/surveys/shortname/{s
 url_sample_service_upload = f"{TestingConfig.SAMPLE_FILE_UPLOADER_URL}/samples/fileupload"
 
 url_get_sample_summary = f"{TestingConfig.SAMPLE_URL}/samples/samplesummary/{sample_summary_id}"
+url_get_sample_summary_status = (
+    f"{TestingConfig.SAMPLE_URL}/samples/samplesummary/"
+    f"{sample_summary_id}/check-and-transition-sample-summary-status"
+)
 url_delete_sample_summary = f"{TestingConfig.SAMPLE_URL}/samples/samplesummary/{sample_summary_id}"
 
 url_get_by_survey_with_ref_start_date = (
@@ -581,36 +587,38 @@ class TestCollectionExercise(ViewTestCase):
         self.assertNotIn("Set ready for live".encode(), response.data)
 
     @requests_mock.mock()
-    def test_collection_exercise_view_404(self, mock_request):
+    @patch("response_operations_ui.views.collection_exercise.build_collection_exercise_details")
+    def test_collection_exercise_sample_check_failed(self, mock_request, mock_details):
+        mock_request.get(url_get_sample_summary_status, status_code=500)
+        mock_details.return_value = ce_details_sample_init_state
+
+        response = self.client.get(f"/surveys/{short_name}/{period}", follow_redirects=True)
+
+        self.assertEqual(response.status_code, 200)
+        self.assertIn("Monthly Business Survey".encode(), response.data)
+        self.assertIn("MBS 009".encode(), response.data)
+        self.assertIn("Sample summary check failed.  Refresh page to try again".encode(), response.data)
+        self.assertIn("Action dates".encode(), response.data)
+        self.assertIn("Loading&hellip;".encode(), response.data)
+        self.assertIn("Refresh to see progress".encode(), response.data)
+
+    @requests_mock.mock()
+    def test_collection_exercise_view_survey_errors(self, mock_request):
         mock_request.get(url_get_survey_by_short_name, json=self.survey)
+
+        # Empty list
         mock_request.get(url_ces_by_survey, json=[])
-
         response = self.client.get(f"/surveys/{short_name}/{period}", follow_redirects=True)
-
-        request_history = mock_request.request_history
-        self.assertEqual(len(request_history), 2)
         self.assertEqual(response.status_code, 500)
 
-    @requests_mock.mock()
-    def test_collection_exercise_view_empty_list(self, mock_request):
-        mock_request.get(url_get_survey_by_short_name, json=self.survey)
+        # 204 returned (no surveys found with that id)
         mock_request.get(url_ces_by_survey, status_code=204)
-
         response = self.client.get(f"/surveys/{short_name}/{period}", follow_redirects=True)
-
-        request_history = mock_request.request_history
-        self.assertEqual(len(request_history), 2)
         self.assertEqual(response.status_code, 500)
 
-    @requests_mock.mock()
-    def test_collection_exercise_view_404_no_match(self, mock_request):
-        mock_request.get(url_get_survey_by_short_name, json=self.survey)
+        # No match
         mock_request.get(url_ces_by_survey, json=[{"exerciseRef": "111111"}])
-
         response = self.client.get(f"/surveys/{short_name}/{period}", follow_redirects=True)
-
-        request_history = mock_request.request_history
-        self.assertEqual(len(request_history), 2)
         self.assertEqual(response.status_code, 500)
 
     @requests_mock.mock()
@@ -636,6 +644,7 @@ class TestCollectionExercise(ViewTestCase):
         request_history = mock_request.request_history
         self.assertEqual(len(request_history), 5)
         self.assertEqual(response.status_code, 500)
+
 
     @requests_mock.mock()
     @patch("response_operations_ui.views.collection_exercise.build_collection_exercise_details")
@@ -2025,6 +2034,22 @@ class TestCollectionExercise(ViewTestCase):
         self.assertIn("checkbox-answer".encode(), response.data)
         self.assertIn("Select eQ version".encode(), response.data)
         self.assertIn("Done".encode(), response.data)
+
+    @requests_mock.mock()
+    @patch("response_operations_ui.views.collection_exercise.build_collection_exercise_details")
+    def test_eq_view_sample_ci_page_failed_sample_check(self, mock_request, mock_details):
+        mock_details.return_value = ce_details_sample_init_state
+        sign_in_with_permission(self, mock_request, user_permission_surveys_edit_json)
+        mock_request.get(url_get_sample_summary_status, status_code=500)
+
+        response = self.client.get(f"/surveys/{short_name}/{period}/view-sample-ci")
+
+        self.assertEqual(200, response.status_code)
+        self.assertIn("Sample summary check failed.  Refresh page to try again".encode(), response.data)
+        self.assertIn("Refresh to see progress".encode(), response.data)
+        self.assertIn("Replace sample file".encode(), response.data)
+        self.assertIn("eQ collection instruments available".encode(), response.data)
+        self.assertIn("Select eQ version".encode(), response.data)
 
     @requests_mock.mock()
     def test_loaded_sample_view_sample_ci_page_survey_permission(self, mock_request):
