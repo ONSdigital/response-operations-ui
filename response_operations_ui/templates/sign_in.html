@@ -81,7 +81,7 @@
         {% endif %}
         <h2>Sign in</h2>
         {% if failed_authentication or form.username.errors | length > 0 %}
-            {% set error = { "text": "Username is required" } %}
+            {% set error = { "text": "Email address is required" } %}
         {% endif %}
         {%- call onsFieldset({
             "legend": "Sign in",
@@ -93,7 +93,7 @@
                     "name": "username",
                     "type": "text",
                     "label": {
-                        "text": "Username"
+                        "text": "Email address"
                     },
                     "attributes": {
                         "required": true
