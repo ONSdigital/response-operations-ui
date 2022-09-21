@@ -56,12 +56,6 @@ with open(f"{project_root}/test_data/collection_exercise/exercise_data.json") as
 with open(f"{project_root}/test_data/collection_exercise/ce_details_new_event.json") as fp:
     ce_details_no_events = json.load(fp)
 
-with open(f"{project_root}/test_data/survey/classifier_type_selectors.json") as json_data:
-    classifier_type_selectors = json.load(json_data)
-
-with open(f"{project_root}/test_data/survey/classifier_types.json") as json_data:
-    classifier_types = json.load(json_data)
-
 with open(f"{project_root}/test_data/collection_exercise/formatted_collection_exercise_details.json") as fp:
     formatted_collection_exercise_details = json.load(fp)
 with open(f"{project_root}/test_data/collection_exercise/formatted_new_collection_exercise_details.json") as fp:
@@ -157,8 +151,6 @@ url_delete_collection_instrument = f"{collection_instrument_root}/delete/{collec
 
 url_survey_shortname = f"{TestingConfig.SURVEY_URL}/surveys/shortname/{short_name}"
 url_get_survey_by_short_name = f"{TestingConfig.SURVEY_URL}/surveys/shortname/{short_name}"
-url_get_classifier_type_selectors = f"{TestingConfig.SURVEY_URL}/surveys/{survey_id}/classifiertypeselectors"
-url_get_classifier_type = f"{TestingConfig.SURVEY_URL}/surveys/{survey_id}/classifiertypeselectors/{ci_selector_id}"
 
 url_sample_service_upload = f"{TestingConfig.SAMPLE_FILE_UPLOADER_URL}/samples/fileupload"
 
@@ -357,8 +349,6 @@ class TestCollectionExercise(ViewTestCase):
         mock_request.get(url_get_collection_exercise_events, json=self.collection_exercise_events)
         mock_request.get(url_link_sample, json=[sample_summary_id])
         mock_request.get(url_get_sample_summary, json=self.sample_summary)
-        mock_request.get(url_get_classifier_type_selectors, json=classifier_type_selectors)
-        mock_request.get(url_get_classifier_type, json=classifier_types)
 
         response = self.client.get(f"/surveys/{short_name}/{period}", follow_redirects=True)
 
@@ -381,8 +371,6 @@ class TestCollectionExercise(ViewTestCase):
         )
         mock_request.get(url_link_sample, json=[sample_summary_id])
         mock_request.get(url_get_sample_summary, json=self.sample_summary)
-        mock_request.get(url_get_classifier_type_selectors, json=classifier_type_selectors)
-        mock_request.get(url_get_classifier_type, json=classifier_types)
 
         mock_request.get(url_get_by_survey_with_ref_start_date, json=collection_exercise_eq_ref_start_date)
 
@@ -407,8 +395,6 @@ class TestCollectionExercise(ViewTestCase):
         )
         mock_request.get(url_link_sample, json=[sample_summary_id])
         mock_request.get(url_get_sample_summary, json=self.sample_summary)
-        mock_request.get(url_get_classifier_type_selectors, json=classifier_type_selectors)
-        mock_request.get(url_get_classifier_type, json=classifier_types)
 
         mock_request.get(url_get_by_survey_with_ref_end_date, json=collection_exercise_eq_ref_end_date)
 
@@ -427,8 +413,6 @@ class TestCollectionExercise(ViewTestCase):
         mock_request.get(url_get_collection_exercise_events, json=self.collection_exercise_ref_both_date)
         mock_request.get(url_link_sample, json=[sample_summary_id])
         mock_request.get(url_get_sample_summary, json=self.sample_summary)
-        mock_request.get(url_get_classifier_type_selectors, json=classifier_type_selectors)
-        mock_request.get(url_get_classifier_type, json=classifier_types)
 
         mock_request.get(url_get_by_survey_with_ref_start_date, json=collection_exercise_eq_ref_start_date)
         mock_request.get(url_get_by_survey_with_ref_end_date, json=collection_exercise_eq_ref_end_date)
@@ -454,8 +438,6 @@ class TestCollectionExercise(ViewTestCase):
         )
         mock_request.get(url_link_sample, json=[sample_summary_id])
         mock_request.get(url_get_sample_summary, json=self.sample_summary)
-        mock_request.get(url_get_classifier_type_selectors, json=classifier_type_selectors)
-        mock_request.get(url_get_classifier_type, json=classifier_types)
 
         response = self.client.get(f"/surveys/{short_name}/{period}", follow_redirects=True)
 
@@ -475,8 +457,6 @@ class TestCollectionExercise(ViewTestCase):
         mock_request.get(url_get_collection_exercise_events, json=self.collection_exercise_events)
         mock_request.get(url_link_sample, json=[sample_summary_id])
         mock_request.get(url_get_sample_summary, json=self.sample_summary)
-        mock_request.get(url_get_classifier_type_selectors, json=classifier_type_selectors)
-        mock_request.get(url_get_classifier_type, json=classifier_types)
 
         post_data = {"ciFile": (BytesIO(b"data"), "074_201803_0001.xlsx"), "load-ci": ""}
         mock_request.post(url_collection_instrument, status_code=201)
@@ -500,8 +480,6 @@ class TestCollectionExercise(ViewTestCase):
         mock_request.get(url_get_collection_exercise_events, json=self.collection_exercise_events)
         mock_request.get(url_link_sample, json=[sample_summary_id])
         mock_request.get(url_get_sample_summary, json=self.sample_summary)
-        mock_request.get(url_get_classifier_type_selectors, json=classifier_type_selectors)
-        mock_request.get(url_get_classifier_type, json=classifier_types)
 
         post_data = {"ciFile": (BytesIO(b"data"), "074_201803_0001.xlsx"), "load-ci": ""}
         mock_request.post(url_collection_instrument, status_code=201)
@@ -526,8 +504,6 @@ class TestCollectionExercise(ViewTestCase):
         mock_request.get(url_get_collection_exercise_events, json=self.collection_exercise_events)
         mock_request.get(url_link_sample, json=[sample_summary_id])
         mock_request.get(url_get_sample_summary, json=self.sample_summary)
-        mock_request.get(url_get_classifier_type_selectors, json=classifier_type_selectors)
-        mock_request.get(url_get_classifier_type, json=classifier_types)
 
         post_data = {"ciFile": (BytesIO(b"data"), "074_201803_0001.xlsx"), "load-ci": ""}
         mock_request.post(url_collection_instrument, status_code=201)
@@ -552,8 +528,6 @@ class TestCollectionExercise(ViewTestCase):
         mock_request.get(url_get_collection_exercise_events, json=self.collection_exercise_events)
         mock_request.get(url_link_sample, json=[sample_summary_id])
         mock_request.get(url_get_sample_summary, json=self.sample_summary)
-        mock_request.get(url_get_classifier_type_selectors, json=classifier_type_selectors)
-        mock_request.get(url_get_classifier_type, json=classifier_types)
 
         post_data = {"ciFile": (BytesIO(b"data"), "074_201803_0001.xlsx"), "load-ci": ""}
         mock_request.post(url_collection_instrument, status_code=201)
@@ -578,8 +552,6 @@ class TestCollectionExercise(ViewTestCase):
         mock_request.get(url_get_collection_exercise_events, json=self.collection_exercise_events)
         mock_request.get(url_link_sample, json=[sample_summary_id])
         mock_request.get(url_get_sample_summary, json=self.sample_summary)
-        mock_request.get(url_get_classifier_type_selectors, json=classifier_type_selectors)
-        mock_request.get(url_get_classifier_type, json=classifier_types)
 
         post_data = {"ciFile": (BytesIO(b"data"), "074_201803_0001.xlsx"), "load-ci": ""}
         mock_request.post(url_collection_instrument, status_code=201)
@@ -604,8 +576,6 @@ class TestCollectionExercise(ViewTestCase):
         mock_request.get(url_get_collection_exercise_events, json=self.collection_exercise_events)
         mock_request.get(url_link_sample, json=[sample_summary_id])
         mock_request.get(url_get_sample_summary, json=self.sample_summary)
-        mock_request.get(url_get_classifier_type_selectors, json=classifier_type_selectors)
-        mock_request.get(url_get_classifier_type, json=classifier_types)
 
         post_data = {"ciFile": (BytesIO(b"data"), "074_201803_0001.xlsx"), "load-ci": ""}
         mock_request.post(url_collection_instrument, status_code=201)
@@ -678,48 +648,6 @@ class TestCollectionExercise(ViewTestCase):
 
         request_history = mock_request.request_history
         self.assertEqual(len(request_history), 5)
-        self.assertEqual(response.status_code, 500)
-
-    def set_up_common_classifier_mocks(self, mock_request):
-        mock_request.get(url_get_survey_by_short_name, json=self.survey)
-        mock_request.get(url_ces_by_survey, json=self.collection_exercises)
-        mock_request.get(url_ce_by_id, json=collection_exercise_details["collection_exercise"])
-        mock_request.get(url_get_collection_exercise_events, json=self.collection_exercise_events)
-        mock_request.get(url_link_sample, json=[sample_summary_id])
-        mock_request.get(url_get_sample_summary, json=self.sample_summary)
-        return mock_request
-
-    @requests_mock.mock()
-    def test_collection_exercise_view_classifiers_fail(self, mock_request):
-        mock_request = self.set_up_common_classifier_mocks(mock_request)
-        mock_request.get(url_get_classifier_type_selectors, json=classifier_type_selectors)
-        mock_request.get(url_get_classifier_type, status_code=400)
-
-        response = self.client.get(f"/surveys/{short_name}/{period}")
-
-        request_history = mock_request.request_history
-        self.assertEqual(len(request_history), 8)
-        self.assertEqual(response.status_code, 500)
-
-    @requests_mock.mock()
-    def test_collection_exercise_view_classifiers_204(self, mock_request):
-        mock_request = self.set_up_common_classifier_mocks(mock_request)
-        mock_request.get(url_get_classifier_type_selectors, status_code=204)
-        response = self.client.get(f"/surveys/{short_name}/{period}")
-
-        request_history = mock_request.request_history
-        self.assertEqual(len(request_history), 7)
-        self.assertEqual(response.status_code, 500)
-
-    @requests_mock.mock()
-    def test_collection_exercise_view_selectors_fail(self, mock_request):
-        mock_request = self.set_up_common_classifier_mocks(mock_request)
-        mock_request.get(url_get_classifier_type_selectors, status_code=400)
-
-        response = self.client.get(f"/surveys/{short_name}/{period}")
-
-        request_history = mock_request.request_history
-        self.assertEqual(len(request_history), 7)
         self.assertEqual(response.status_code, 500)
 
     @requests_mock.mock()
@@ -1707,8 +1635,6 @@ class TestCollectionExercise(ViewTestCase):
         mock_request.get(url_get_collection_exercise_events, json=self.collection_exercise_events)
         mock_request.get(url_link_sample, json=[sample_summary_id])
         mock_request.get(url_get_sample_summary, json=self.sample_summary)
-        mock_request.get(url_get_classifier_type_selectors, json=classifier_type_selectors)
-        mock_request.get(url_get_classifier_type, json=classifier_types)
 
         response = self.client.get(f"/surveys/{short_name}/{period}", follow_redirects=True)
 
@@ -1724,8 +1650,6 @@ class TestCollectionExercise(ViewTestCase):
         mock_request.get(url_get_collection_exercise_events, json=events)
         mock_request.get(url_link_sample, json=[sample_summary_id])
         mock_request.get(url_get_sample_summary, json=self.sample_summary)
-        mock_request.get(url_get_classifier_type_selectors, json=classifier_type_selectors)
-        mock_request.get(url_get_classifier_type, json=classifier_types)
 
         response = self.client.get(f"/surveys/{short_name}/{period}", follow_redirects=True)
 
@@ -1741,8 +1665,6 @@ class TestCollectionExercise(ViewTestCase):
         mock_request.get(url_get_collection_exercise_events, json=nudge_events_two)
         mock_request.get(url_link_sample, json=[sample_summary_id])
         mock_request.get(url_get_sample_summary, json=self.sample_summary)
-        mock_request.get(url_get_classifier_type_selectors, json=classifier_type_selectors)
-        mock_request.get(url_get_classifier_type, json=classifier_types)
 
         response = self.client.get(f"/surveys/{short_name}/{period}", follow_redirects=True)
 
@@ -1996,8 +1918,6 @@ class TestCollectionExercise(ViewTestCase):
         mock_request.get(url_get_collection_exercise_events, json=events)
         mock_request.get(url_link_sample, json=[sample_summary_id])
         mock_request.get(url_get_sample_summary, json=self.sample_summary)
-        mock_request.get(url_get_classifier_type_selectors, json=classifier_type_selectors)
-        mock_request.get(url_get_classifier_type, json=classifier_types)
 
         response = self.client.get(f"/surveys/{short_name}/{period}", follow_redirects=True)
 
@@ -2019,8 +1939,6 @@ class TestCollectionExercise(ViewTestCase):
         mock_request.get(url_get_collection_exercise_events, json=events)
         mock_request.get(url_link_sample, json=[""])
         mock_request.get(url_get_sample_summary, json="")
-        mock_request.get(url_get_classifier_type_selectors, json=classifier_type_selectors)
-        mock_request.get(url_get_classifier_type, json=classifier_types)
 
         response = self.client.get(f"/surveys/{short_name}/{period}", follow_redirects=True)
 
@@ -2041,8 +1959,6 @@ class TestCollectionExercise(ViewTestCase):
         mock_request.get(url_get_collection_exercise_events, json=events)
         mock_request.get(url_link_sample, json=[""])
         mock_request.get(url_get_sample_summary, json="")
-        mock_request.get(url_get_classifier_type_selectors, json=classifier_type_selectors)
-        mock_request.get(url_get_classifier_type, json=classifier_types)
 
         response = self.client.get(f"/surveys/{short_name}/{period}", follow_redirects=True)
 
@@ -2066,8 +1982,6 @@ class TestCollectionExercise(ViewTestCase):
         )
         mock_request.get(url_link_sample, json=[""])
         mock_request.get(url_get_sample_summary, json="")
-        mock_request.get(url_get_classifier_type_selectors, json=classifier_type_selectors)
-        mock_request.get(url_get_classifier_type, json=classifier_types)
 
         response = self.client.get(f"/surveys/{short_name}/{period}/view-sample-ci")
 
@@ -2093,8 +2007,6 @@ class TestCollectionExercise(ViewTestCase):
         )
         mock_request.get(url_link_sample, json=[""])
         mock_request.get(url_get_sample_summary, json="")
-        mock_request.get(url_get_classifier_type_selectors, json=classifier_type_selectors)
-        mock_request.get(url_get_classifier_type, json=classifier_types)
 
         mock_request.get(url_get_by_survey_with_ref_start_date, json=collection_exercise_eq_ref_start_date)
         mock_request.get(url_get_by_survey_with_ref_end_date, json=collection_exercise_eq_ref_end_date)
@@ -2140,8 +2052,6 @@ class TestCollectionExercise(ViewTestCase):
         )
         mock_request.get(url_link_sample, json=[sample_summary_id])
         mock_request.get(url_get_sample_summary, json=self.sample_summary)
-        mock_request.get(url_get_classifier_type_selectors, json=classifier_type_selectors)
-        mock_request.get(url_get_classifier_type, json=classifier_types)
 
         response = self.client.get(f"/surveys/{short_name}/{period}/view-sample-ci")
 
@@ -2166,8 +2076,6 @@ class TestCollectionExercise(ViewTestCase):
         )
         mock_request.get(url_link_sample, json=[sample_summary_id])
         mock_request.get(url_get_sample_summary, json=self.sample_summary)
-        mock_request.get(url_get_classifier_type_selectors, json=classifier_type_selectors)
-        mock_request.get(url_get_classifier_type, json=classifier_types)
 
         response = self.client.get(f"/surveys/{short_name}/{period}/view-sample-ci")
 
@@ -2193,8 +2101,6 @@ class TestCollectionExercise(ViewTestCase):
         )
         mock_request.get(url_link_sample, json=[sample_summary_id])
         mock_request.get(url_get_sample_summary, json=self.sample_summary)
-        mock_request.get(url_get_classifier_type_selectors, json=classifier_type_selectors)
-        mock_request.get(url_get_classifier_type, json=classifier_types)
 
         mock_request.get(url_get_by_survey_with_ref_start_date, json=collection_exercise_eq_ref_start_date)
         mock_request.get(url_get_by_survey_with_ref_end_date, json=collection_exercise_eq_ref_end_date)
@@ -2223,8 +2129,6 @@ class TestCollectionExercise(ViewTestCase):
         )
         mock_request.get(url_link_sample, json=[sample_summary_id])
         mock_request.get(url_get_sample_summary, json=self.sample_summary)
-        mock_request.get(url_get_classifier_type_selectors, json=classifier_type_selectors)
-        mock_request.get(url_get_classifier_type, json=classifier_types)
 
         mock_request.get(url_get_by_survey_with_ref_start_date, json=collection_exercise_eq_ref_start_date)
         mock_request.get(url_get_by_survey_with_ref_end_date, json=collection_exercise_eq_ref_end_date)
@@ -2254,8 +2158,6 @@ class TestCollectionExercise(ViewTestCase):
         )
         mock_request.get(url_link_sample, json=[sample_summary_id])
         mock_request.get(url_get_sample_summary, json=self.sample_summary)
-        mock_request.get(url_get_classifier_type_selectors, json=classifier_type_selectors)
-        mock_request.get(url_get_classifier_type, json=classifier_types)
 
         mock_request.get(url_get_by_survey_with_ref_start_date, json=collection_exercise_eq_ref_start_date)
         mock_request.get(url_get_by_survey_with_ref_end_date, json=collection_exercise_eq_ref_end_date)
@@ -2282,8 +2184,6 @@ class TestCollectionExercise(ViewTestCase):
         )
         mock_request.get(url_link_sample, json=[sample_summary_id])
         mock_request.get(url_get_sample_summary, json=self.sample_summary)
-        mock_request.get(url_get_classifier_type_selectors, json=classifier_type_selectors)
-        mock_request.get(url_get_classifier_type, json=classifier_types)
 
         mock_request.get(url_get_by_survey_with_ref_start_date, json=collection_exercise_eq_ref_start_date)
         mock_request.get(url_get_by_survey_with_ref_end_date, json=collection_exercise_eq_ref_end_date)
@@ -2382,8 +2282,6 @@ class TestCollectionExercise(ViewTestCase):
         mock_request.get(url_get_collection_exercise_events, json=self.collection_exercise_events)
         mock_request.get(url_link_sample, json=[sample_summary_id])
         mock_request.get(url_get_sample_summary, json=self.sample_summary)
-        mock_request.get(url_get_classifier_type_selectors, json=classifier_type_selectors)
-        mock_request.get(url_get_classifier_type, json=classifier_types)
 
         response = self.client.get(f"/surveys/{short_name}/{period}", follow_redirects=True)
 
