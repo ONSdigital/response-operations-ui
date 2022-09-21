@@ -138,31 +138,20 @@ def view_collection_exercise(short_name, period):
 
     # If there's a sample summary, but we're still in a state where we're setting up the collection exercise, then check
     # the sample summary and change it to ACTIVE all sample units are present.
+    sample_count = None
     if sample_controllers.sample_summary_state_check_required(ce_details):
         try:
-            are_all_sample_units_loaded = sample_controllers.check_if_all_sample_units_present_for_sample_summary(
+            check_dict = sample_controllers.check_if_all_sample_units_present_for_sample_summary(
                 ce_details["sample_summary"]["id"]
             )
-            if are_all_sample_units_loaded:
+            if check_dict["areAllSampleUnitsLoaded"]:
                 # Get an up-to-date copy of the sample summary data now that it's active
                 sample_summary = sample_controllers.get_sample_summary(ce_details["sample_summary"]["id"])
                 ce_details["sample_summary"] = _format_sample_summary(sample_summary)
+            else:
+                sample_count = check_dict
         except ApiError:
             flash("Sample summary check failed.  Refresh page to try again", category="error")
-
-    # If there's a sample summary, but we're still in a state where we're setting up the collection exercise, then check
-    # the sample summary and change it to ACTIVE all sample units are present.
-    sample_count = None
-    if sample_controllers.sample_summary_state_check_required(ce_details):
-        check_dict = sample_controllers.check_if_all_sample_units_present_for_sample_summary(
-            ce_details["sample_summary"]["id"]
-        )
-        if check_dict["areAllSampleUnitsLoaded"]:
-            # Get an up-to-date copy of the sample summary data now that it's active
-            sample_summary = sample_controllers.get_sample_summary(ce_details["sample_summary"]["id"])
-            ce_details["sample_summary"] = _format_sample_summary(sample_summary)
-        else:
-            sample_count = check_dict
 
     show_msg = request.args.get("show_msg")
 
