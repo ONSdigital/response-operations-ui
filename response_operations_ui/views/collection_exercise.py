@@ -94,14 +94,12 @@ def build_collection_exercise_details(short_name: str, period: str, include_ci=T
     exercise_events = collection_exercise_controllers.get_collection_exercise_events_by_id(collection_exercise_id)
     summary_id = collection_exercise_controllers.get_linked_sample_summary_id(collection_exercise_id)
     sample_summary = sample_controllers.get_sample_summary(summary_id) if summary_id else None
-    ci_classifiers = survey_controllers.get_survey_ci_classifier(survey_id)
 
     exercise_dict = {
         "survey": survey,
         "collection_exercise": full_exercise,
         "events": convert_events_to_new_format(exercise_events),
         "sample_summary": _format_sample_summary(sample_summary),
-        "ci_classifiers": ci_classifiers,
     }
 
     if include_ci:
@@ -172,7 +170,6 @@ def view_collection_exercise(short_name, period):
         success_panel=success_panel,
         validation_failed=validation_failed,
         show_msg=show_msg,
-        ci_classifiers=ce_details["ci_classifiers"]["classifierTypes"],
         info_panel=info_panel,
     )
 

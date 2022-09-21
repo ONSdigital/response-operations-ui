@@ -74,13 +74,5 @@
     "state":"ACTIVE",
     "totalSampleUnits":5,
     "expectedCollectionInstruments":2
-  },
-  "ci_classifiers": {
-    "id": "efa868fb-fb80-44c7-9f33-d6800a17c4da",
-    "name": "COLLECTION_INSTRUMENT",
-    "classifierTypes": [
-      "COLLECTION_EXERCISE",
-      "RU_REF"
-    ]
   }
 }

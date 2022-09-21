@@ -100,48 +100,6 @@ def get_survey_by_shortname(short_name: str) -> dict:
     return response.json()
 
 
-def get_survey_ci_classifier(survey_id: str):
-    logger.info("Retrieving classifier type selectors", survey_id=survey_id)
-    url = f'{app.config["SURVEY_URL"]}/surveys/{survey_id}/classifiertypeselectors'
-    response = requests.get(url, auth=app.config["BASIC_AUTH"])
-
-    if response.status_code == 204:
-        logger.error("classifiers missing for survey", survey_id=survey_id)
-        raise ApiError(response)
-    try:
-        response.raise_for_status()
-    except HTTPError:
-        logger.error("Error classifier type selectors", survey_id=survey_id)
-        raise ApiError(response)
-
-    logger.info("Successfully retrieved classifier type selectors", survey_id=survey_id)
-
-    classifier_type_selectors = response.json()
-    ci_selector = None
-    for selector in classifier_type_selectors:
-        if selector["name"] == "COLLECTION_INSTRUMENT":
-            ci_selector = selector
-            break
-
-    logger.info("Retrieving classifiers for CI selector type", survey_id=survey_id, ci_selector=ci_selector["id"])
-    url = f'{app.config["SURVEY_URL"]}/surveys/{survey_id}/classifiertypeselectors/{ci_selector["id"]}'
-    response = requests.get(url, auth=app.config["BASIC_AUTH"])
-
-    try:
-        response.raise_for_status()
-    except HTTPError:
-        logger.error(
-            "Error retrieving classifiers for CI selector type", survey_id=survey_id, ci_selector=ci_selector["id"]
-        )
-        raise ApiError(response)
-
-    logger.info(
-        "Successfully retrieved classifiers for CI selector type", survey_id=survey_id, ci_selector=ci_selector["id"]
-    )
-
-    return response.json()
-
-
 def get_surveys_list():
     logger.info("Retrieving surveys list")
     url = f'{app.config["SURVEY_URL"]}/surveys/surveytype/Business'
