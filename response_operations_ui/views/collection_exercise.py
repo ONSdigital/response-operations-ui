@@ -903,7 +903,7 @@ def get_view_sample_ci(short_name, period):
         locked=locked,
         sample=ce_details["sample_summary"],
         survey=ce_details["survey"],
-        sample_count=check_dict,
+        sample_count=sample_count,
         success_panel=success_panel,
         show_msg=show_msg,
         eq_ci_selectors=ce_details["eq_ci_selectors"],
