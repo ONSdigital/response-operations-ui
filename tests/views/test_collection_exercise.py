@@ -600,7 +600,7 @@ class TestCollectionExercise(ViewTestCase):
         self.assertIn("Sample summary check failed.  Refresh page to try again".encode(), response.data)
         self.assertIn("Action dates".encode(), response.data)
         # TODO fix this
-        self.assertIn("Loading ( /  loaded) &hellip;".encode(), response.data)
+        self.assertIn("Loading &hellip;".encode(), response.data)
         self.assertIn("Refresh to see progress".encode(), response.data)
 
     @requests_mock.mock()
