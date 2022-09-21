@@ -4,6 +4,7 @@
 {% from "components/error/_macro.njk" import onsError %}
 {% from "components/lists/_macro.njk" import onsList %}
 {% from "components/button/_macro.njk" import onsButton %}
+{% from "components/password/_macro.njk" import onsPassword %}
 
 {% set page_title = "Sign-In" %}
 
@@ -80,7 +81,7 @@
         {% endif %}
         <h2>Sign in</h2>
         {% if failed_authentication or form.username.errors | length > 0 %}
-            {% set error = { "text": "Username is required" } %}
+            {% set error = { "text": "Email address is required" } %}
         {% endif %}
         {%- call onsFieldset({
             "legend": "Sign in",
@@ -92,7 +93,7 @@
                     "name": "username",
                     "type": "text",
                     "label": {
-                        "text": "Username"
+                        "text": "Email address"
                     },
                     "attributes": {
                         "required": true
@@ -106,16 +107,13 @@
             {% endif %}
 
             {{
-                onsInput({
+                onsPassword({
                     "id": "password",
                     "name": "password",
-                    "type": "password",
                     "label": {
                         "text": "Password"
                     },
-                    "attributes": {
-                        "required": true
-                    },
+                    "showPasswordText": "Show password",
                     "error": error
                 })
             }}

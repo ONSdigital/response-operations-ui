@@ -12,12 +12,10 @@
 <section>
     <h1 id="respondent-name">Account details</h1>
     <dl class="ons-metadata ons-metadata__list ons-grid ons-grid--gutterless ons-u-cf ons-u-mb-l" title="" aria-label="">
-        <dt class="ons-metadata__term ons-grid__col ons-col-4@m">Username:</dt>
-        <dd class="ons-metadata__value ons-grid__col ons-col-8@m">{{ user.username }}</dd>
-        <dt class="ons-metadata__term ons-grid__col ons-col-4@m">Name:</dt>
-        <dd class="ons-metadata__value ons-grid__col ons-col-8@m">{{ user.name }}</dd>
         <dt class="ons-metadata__term ons-grid__col ons-col-4@m">Email address:</dt>
         <dd class="ons-metadata__value ons-grid__col ons-col-8@m">{{ user.email }}</dd>
+        <dt class="ons-metadata__term ons-grid__col ons-col-4@m">Name:</dt>
+        <dd class="ons-metadata__value ons-grid__col ons-col-8@m">{{ user.name }}</dd>
         <dt class="ons-metadata__term ons-grid__col ons-col-4@m">Password:</dt>
         <dd class="ons-metadata__value ons-grid__col ons-col-8@m">●●●●●●●●</dd>
         <dd class="ons-metadata__value ons-grid__col ons-col-8@m ons-u-ml-no ons-u-mb-xs ons-u-fs-s">(Last changed on {{ user.password_last_changed }})</dd>
@@ -39,11 +37,11 @@
         } %}
         {% set radios = [] %}
         {% do radios.append({
-            "id": "change_username",
+            "id": "change_email",
             "label": {
-                "text": "Change username"
+                "text": "Change email address"
             },
-            "value": "change_username"
+            "value": "change_email"
         }) %}
         {% do radios.append({
             "id": "change_name",
@@ -51,13 +49,6 @@
                 "text": "Change name"
             },
             "value": "change_name"
-        }) %}
-        {% do radios.append({
-            "id": "change_email",
-            "label": {
-                "text": "Change email address"
-            },
-            "value": "change_email"
         }) %}
         {% do radios.append({
             "id": "change_password",

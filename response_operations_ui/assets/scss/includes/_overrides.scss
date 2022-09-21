@@ -48,16 +48,6 @@ footer {
     display: none;
 }
 
-.not-mvp {
-    display: none;
-}
-
-/* Survey page */
-
-.in-the-past {
-    color: #6a6a6a;
-}
-
 /* Collection exercise page */
 
 #output .panel {
@@ -109,20 +99,6 @@ button.hidden {
     color: white;
 }
 
-.ce-ci-info-list__item {
-    list-style: square;
-}
-
-.ce-ci-info-list__item.success {
-    list-style: none;
-    background-image: url("../images/tick-green.png");
-    background-size: 20px 20px;
-    background-repeat: no-repeat;
-    background-position: left center;
-    padding-left: 24px;
-    margin-left: -20px;
-}
-
 .btn--secondary.btn--border.btn--small {
     margin: 0 0.5rem;
     padding: 0.25rem 1rem;
@@ -151,28 +127,9 @@ button.hidden {
 /* Collection exercise views */
 
 .ce-section h2 {
-    border-bottom: 2px solid #222;
     padding-top: 9px;
     margin-bottom: 0.3rem;
     padding-bottom: 0.4rem;
-}
-
-.ce-event-date {
-    color: #666;
-    font-weight: 400;
-}
-
-.ce-event-date em {
-    color: #222;
-    font-weight: 500;
-}
-
-table.ce-cis .tbl-ce-label {
-    vertical-align: middle;
-}
-
-.ci-info-panel {
-    margin: 2rem 0;
 }
 
 .ce-events__list {
@@ -192,11 +149,6 @@ table.ce-cis .tbl-ce-label {
 .ce-events__list th {
     font-weight: 700;
     border-bottom: 1px solid #222;
-}
-
-.action-area {
-    margin-top: 1rem;
-    margin-bottom: 3rem;
 }
 
 #upload legend {
@@ -222,21 +174,6 @@ table.ce-cis .tbl-ce-label {
     box-shadow: inset 0 3px 4px #888;
 }
 
-.ci-list {
-    border-collapse: collapse;
-    width: 100%;
-}
-
-.ci-list th,
-.ci-list td {
-    text-align: left;
-    padding: 0.5rem;
-}
-
-.ci-list th {
-    border-bottom: 1px solid #222;
-}
-
 .ce-dates-table{
     table-layout: fixed;
 }
@@ -247,71 +184,6 @@ table.ce-cis .tbl-ce-label {
 
 /* Collection exercise - Reporting unit styles */
 
-.ceru-headline {
-    background: #f5f6ff;
-    padding: 1rem;
-    margin: 1rem 0;
-}
-
-.tempHack {
-    width: 2.5rem;
-    display: inline-block;
-}
-
 .error-message {
     color: #d0021b;
-}
-
-/* Social */
-
-.cosy {
-    display: inline-block;
-}
-
-.case-search {
-    background-color: #e4e8eb;
-}
-
-.case-search-input2 {
-    width: 8rem;
-}
-
-.case-search-submit2 {
-    padding: 0.5rem 1rem;
-    margin-left: 0.5rem;
-}
-
-.case-search-results-info {
-    margin: 1rem 0 2rem 0;
-}
-
-.case-search-results-list {
-    list-style: none;
-    padding-left: 0;
-}
-
-.case-search-results-list__item {
-    margin-bottom: 1rem;
-}
-
-.results-list-ref {
-    margin-right: 1rem;
-}
-
-.results-list-postcode {
-    margin-right: 1rem;
-}
-
-.results-list-survey {
-    display: none;
-}
-
-.results-list-status {
-    display: none;
-}
-
-/* temporary styles for social */
-
-.case-address__prem {
-    display: block;
 }

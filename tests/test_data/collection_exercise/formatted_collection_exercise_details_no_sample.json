@@ -79,11 +79,5 @@
       "surveyId": "cb8accda-6118-4d3b-85a3-149e28960c54"
     }],
   "eq_ci_selectors": [],
-  "sample_summary": null,
-  "ci_classifiers":
-    {
-      "id": "f8bb361a-e63a-11e7-80c1-9a214cf093ae",
-      "name": "COLLECTION_INSTRUMENT",
-      "classifierTypes": ["FORM_TYPE"]
-    }
+  "sample_summary": null
 }

@@ -493,26 +493,6 @@ class ChangeAccountName(FlaskForm):
     )
 
 
-class UsernameChangeForm(FlaskForm):
-    username = StringField(
-        "Username",
-        validators=[
-            DataRequired(message="Username is required"),
-            Length(max=255, message="Username must be less than 255 characters"),
-        ],
-    )
-
-    @staticmethod
-    def validate_username(form, field):
-        username = field.data
-        legal_characters = re.compile("[a-z0-9.@_]")
-        for char in username:
-            if not legal_characters.search(char):
-                raise ValidationError(
-                    "Username can only contain lowercase letters, numbers, and special characters (`.`, `@`, and `_`)"
-                )
-
-
 class ChangeEmailForm(FlaskForm):
     email_address = StringField(
         "Enter the ONS email address to create an account for",

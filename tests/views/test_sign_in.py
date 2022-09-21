@@ -36,7 +36,7 @@ class TestSignIn(unittest.TestCase):
     def test_sign_in_page(self):
         with self.app.app_context():
             response = self.client.get("/sign-in")
-            self.assertIn(b"Username", response.data)
+            self.assertIn(b"Email address", response.data)
             self.assertIn(b"Password", response.data)
             self.assertEqual(response.status_code, 200)
             self.assertNotIn(b"Sign out", response.data)
