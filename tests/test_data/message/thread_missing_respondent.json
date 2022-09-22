@@ -1,196 +1,106 @@
 {
-    "category": "SURVEY",
-    "is_closed": false,
-    "closed_by": null,
-    "closed_by_uuid": null,
-    "closed_at": null,
-    "messages": [
-        {
-            "@msg_from": {
-                "emailAddress": "ons@ons.fake",
-                "firstName": "ONS",
-                "id": "688da990-8e33-471f-ae26-e253df4bb759",
-                "lastName": "User"
-            },
-            "@business_details": null,
-            "_links": "",
-            "body": "fifth message",
-            "case_id": "",
-            "collection_exercise": "",
-            "from_internal": true,
-            "labels": [
-                "SENT"
+  "category":"SURVEY",
+   "closed_at":null,
+   "closed_by":null,
+   "closed_by_uuid":null,
+   "is_closed":false,
+   "messages":[
+      {
+         "@business_details":{
+            "associations":[
+               {
+                  "businessRespondentStatus":"ACTIVE",
+                  "enrolments":[
+                     {
+                        "enrolmentStatus":"ENABLED",
+                        "surveyId":"cb8accda-6118-4d3b-85a3-149e28960c54"
+                     }
+                  ],
+                  "partyId":"8dffcdd1-90c8-49f1-838f-3bff738f38f6"
+               }
             ],
-            "msg_from": "688da990-8e33-471f-ae26-e253df4bb759",
-            "msg_id": "ffa3887e-5fed-4e6a-8e25-ed3bc5ef78b6",
-            "msg_to": [
-                "c244b582-f1c0-4604-9d59-ffe828c98cdd"
+            "id":"a5455e4e-7b94-44d7-a9a6-479bcdf26872",
+            "name":"BOLTS AND RATCHETS",
+            "sampleSummaryId":"82a7817c-b4c6-43f0-a3af-845717c4645f",
+            "sampleUnitRef":"49900000006",
+            "sampleUnitType":"B",
+            "trading_as":"BOLTS LTD"
+         },
+         "@msg_to":[
+            {
+               "emailAddress":"uaa_user@ons.gov.uk",
+               "firstName":"ONS",
+               "id":"688da990-8e33-471f-ae26-e253df4bb759",
+               "lastName":"User"
+            }
+         ],
+         "_links":"",
+         "body":"Respondent response",
+         "business_id":"a5455e4e-7b94-44d7-a9a6-479bcdf26872",
+         "case_id":"",
+         "exercise_id":"",
+         "from_internal":false,
+         "labels":[
+            "INBOX"
+         ],
+         "msg_from":"8dffcdd1-90c8-49f1-838f-3bff738f38f8",
+         "msg_id":"a3f83cad-5606-4cfc-b235-fb7aee2078b3",
+         "msg_to":[
+            "c105d34a-7096-4938-8053-1edff384a1f8"
+         ],
+         "read_date":"2022-09-22 10:06:23.317089",
+         "sent_date":"2022-09-22 10:05:54.883931",
+         "subject":"Test email subject",
+         "survey_id":"cb8accda-6118-4d3b-85a3-149e28960c54",
+         "thread_id":"fb0e79bd-e132-4f4f-a7fd-5e8c6b41b9af"
+      },
+      {
+         "@business_details":{
+            "associations":[
+               {
+                  "businessRespondentStatus":"ACTIVE",
+                  "enrolments":[
+                     {
+                        "enrolmentStatus":"ENABLED",
+                        "surveyId":"0b1f8376-28e9-4884-bea5-acf9d709464e"
+                     }
+                  ],
+                  "partyId":"8dffcdd1-90c8-49f1-838f-3bff738f38f6"
+               }
             ],
-            "business_id": "a9ae91cc-0acc-47c4-9433-27f9d629b532",
-            "sent_date": "2019-11-13 13:27:40.190012",
-            "subject": "message 1",
-            "survey_id": "cb8accda-6118-4d3b-85a3-149e28960c54",
-            "thread_id": "fb0e79bd-e132-4f4f-a7fd-5e8c6b41b9af"
-        },
-        {
-            "@msg_from": {
-                "emailAddress": "ons@ons.fake",
-                "firstName": "ONS",
-                "id": "688da990-8e33-471f-ae26-e253df4bb759",
-                "lastName": "User"
-            },
-            "@business_details": null,
-            "_links": "",
-            "body": "fourth message!!!",
-            "case_id": "",
-            "collection_exercise": "",
-            "from_internal": true,
-            "labels": [
-                "SENT"
-            ],
-            "msg_from": "688da990-8e33-471f-ae26-e253df4bb759",
-            "msg_id": "c802c268-344b-43f5-9968-a907640379da",
-            "msg_to": [
-                "c244b582-f1c0-4604-9d59-ffe828c98cdd"
-            ],
-            "business_id": "a9ae91cc-0acc-47c4-9433-27f9d629b532",
-            "sent_date": "2019-11-13 13:25:43.411487",
-            "subject": "message 1",
-            "survey_id": "cb8accda-6118-4d3b-85a3-149e28960c54",
-            "thread_id": "fb0e79bd-e132-4f4f-a7fd-5e8c6b41b9af"
-        },
-        {
-            "@msg_from": {
-                "emailAddress": "ons@ons.fake",
-                "firstName": "ONS",
-                "id": "688da990-8e33-471f-ae26-e253df4bb759",
-                "lastName": "User"
-            },
-            "@business_details": null,
-            "_links": "",
-            "body": "another one",
-            "case_id": "",
-            "collection_exercise": "",
-            "from_internal": true,
-            "labels": [
-                "SENT"
-            ],
-            "msg_from": "688da990-8e33-471f-ae26-e253df4bb759",
-            "msg_id": "4531fa75-06a9-4b1c-8f5d-bd7aab5a1926",
-            "msg_to": [
-                "c244b582-f1c0-4604-9d59-ffe828c98cdd"
-            ],
-            "business_id": "a9ae91cc-0acc-47c4-9433-27f9d629b532",
-            "sent_date": "2019-11-13 13:25:19.093378",
-            "subject": "message 1",
-            "survey_id": "cb8accda-6118-4d3b-85a3-149e28960c54",
-            "thread_id": "fb0e79bd-e132-4f4f-a7fd-5e8c6b41b9af"
-        },
-        {
-            "@msg_from": {
-                "emailAddress": "ons@ons.fake",
-                "firstName": "ONS",
-                "id": "688da990-8e33-471f-ae26-e253df4bb759",
-                "lastName": "User"
-            },
-            "@business_details": null,
-            "_links": "",
-            "body": "another message",
-            "case_id": "",
-            "collection_exercise": "",
-            "from_internal": true,
-            "labels": [
-                "SENT"
-            ],
-            "msg_from": "688da990-8e33-471f-ae26-e253df4bb759",
-            "msg_id": "657d6389-f30f-4f86-a4c8-b96aa8fb35e5",
-            "msg_to": [
-                "c244b582-f1c0-4604-9d59-ffe828c98cdd"
-            ],
-            "business_id": "a9ae91cc-0acc-47c4-9433-27f9d629b532",
-            "sent_date": "2019-11-13 13:23:16.915518",
-            "subject": "message 1",
-            "survey_id": "cb8accda-6118-4d3b-85a3-149e28960c54",
-            "thread_id": "fb0e79bd-e132-4f4f-a7fd-5e8c6b41b9af"
-        },
-        {
-            "@msg_from": {
-                "emailAddress": "ons@ons.fake",
-                "firstName": "ONS",
-                "id": "688da990-8e33-471f-ae26-e253df4bb759",
-                "lastName": "User"
-            },
-            "@business_details": null,
-            "_links": "",
-            "body": "more messages",
-            "case_id": "",
-            "collection_exercise": "",
-            "from_internal": true,
-            "labels": [
-                "SENT"
-            ],
-            "msg_from": "688da990-8e33-471f-ae26-e253df4bb759",
-            "msg_id": "2674e648-a610-4e63-a885-8e6d182827df",
-            "msg_to": [
-                "c244b582-f1c0-4604-9d59-ffe828c98cdd"
-            ],
-            "business_id": "a9ae91cc-0acc-47c4-9433-27f9d629b532",
-            "sent_date": "2019-11-12 15:50:07.090764",
-            "subject": "message 1",
-            "survey_id": "cb8accda-6118-4d3b-85a3-149e28960c54",
-            "thread_id": "fb0e79bd-e132-4f4f-a7fd-5e8c6b41b9af"
-        },
-        {
-            "@msg_to": [
-                {
-                    "emailAddress": "ons@ons.fake",
-                    "firstName": "ONS",
-                    "id": "688da990-8e33-471f-ae26-e253df4bb759",
-                    "lastName": "User"
-                }
-            ],
-            "@business_details": null,
-            "_links": "",
-            "body": "another message",
-            "case_id": "",
-            "collection_exercise": "",
-            "from_internal": false,
-            "labels": [
-                "INBOX"
-            ],
-            "msg_from": "c244b582-f1c0-4604-9d59-ffe828c98cdd",
-            "msg_id": "602f867f-1047-4fcc-a880-7d2a0bfa70ce",
-            "msg_to": [
-                "688da990-8e33-471f-ae26-e253df4bb759"
-            ],
-            "read_date": "2019-11-12 15:50:03.427759",
-            "business_id": "a9ae91cc-0acc-47c4-9433-27f9d629b532",
-            "sent_date": "2019-11-12 15:49:54.247973",
-            "subject": "message 1",
-            "survey_id": "cb8accda-6118-4d3b-85a3-149e28960c54",
-            "thread_id": "fb0e79bd-e132-4f4f-a7fd-5e8c6b41b9af"
-        },
-        {
-            "@business_details": null,
-            "_links": "",
-            "body": "this is another message",
-            "case_id": "",
-            "collection_exercise": "",
-            "from_internal": true,
-            "labels": [
-                "SENT"
-            ],
-            "msg_from": "688da990-8e33-471f-ae26-e253df4bb759",
-            "msg_id": "fb0e79bd-e132-4f4f-a7fd-5e8c6b41b9af",
-            "msg_to": [
-                "c244b582-f1c0-4604-9d59-ffe828c98cdd"
-            ],
-            "read_date": "2019-11-12 15:49:50.623395",
-            "business_id": "a9ae91cc-0acc-47c4-9433-27f9d629b532",
-            "sent_date": "2019-11-12 15:49:34.906784",
-            "subject": "message 1",
-            "survey_id": "cb8accda-6118-4d3b-85a3-149e28960c54",
-            "thread_id": "fb0e79bd-e132-4f4f-a7fd-5e8c6b41b9af"
-        }
-    ]
+            "id":"a5455e4e-7b94-44d7-a9a6-479bcdf26872",
+            "name":"BOLTS AND RATCHETS",
+            "sampleSummaryId":"82a7817c-b4c6-43f0-a3af-845717c4645f",
+            "sampleUnitRef":"49900000006",
+            "sampleUnitType":"B",
+            "trading_as":"BOLTS LTD"
+         },
+         "@msg_from":{
+            "emailAddress":"uaa_user@ons.gov.uk",
+            "firstName":"ONS",
+            "id":"c105d34a-7096-4938-8053-1edff384a1f8",
+            "lastName":"User"
+         },
+         "_links":"",
+         "body":"Test email message",
+         "business_id":"a5455e4e-7b94-44d7-a9a6-479bcdf26872",
+         "case_id":"",
+         "exercise_id":"",
+         "from_internal":true,
+         "labels":[
+            "SENT"
+         ],
+         "msg_from":"c105d34a-7096-4938-8053-1edff384a1f8",
+         "msg_id":"1efb77d1-e583-464f-9a70-c44d81d31f7f",
+         "msg_to":[
+            "8dffcdd1-90c8-49f1-838f-3bff738f38f8"
+         ],
+         "read_date":"2022-09-22 10:05:42.918674",
+         "sent_date":"2022-09-22 10:05:28.530331",
+         "subject":"Test email subject",
+         "survey_id":"cb8accda-6118-4d3b-85a3-149e28960c54",
+         "thread_id":"fb0e79bd-e132-4f4f-a7fd-5e8c6b41b9af"
+      }
+   ]
 }
+

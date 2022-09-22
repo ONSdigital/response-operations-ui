@@ -108,10 +108,8 @@
                         {% set fromValue = '<a href="' + url_for('respondent_bp.respondent_details', respondent_id=message.from_id) + '" aria-label="Respondent details"><span class="ons-u-fw-b">' + message.from + '</span></a>' %}
                     {% elif message.from and not message.from_internal%}
                         {% set fromValue = '<a href="' + url_for('respondent_bp.respondent_details', respondent_id=message.from_id) + '" aria-label="Respondent details">' + message.from + '</a>' %}
-                    {% elif message.from %}
+                    {% else message.from %}
                         {% set fromValue = message.from %}
-                    {% else %}
-                        {% set fromValue = 'Unavailable' %}
                     {% endif %}
                     {% if message.from_email and message.unread %}
                         {% if not message.from_internal %}
