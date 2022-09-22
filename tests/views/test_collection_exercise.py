@@ -1,4 +1,3 @@
-import copy
 import json
 import os
 from io import BytesIO
@@ -10,9 +9,6 @@ import mock
 import requests_mock
 
 from config import TestingConfig
-from response_operations_ui.controllers.collection_exercise_controllers import (
-    get_collection_exercises_with_events_and_samples_by_survey_id,
-)
 from response_operations_ui.views.collection_exercise import (
     get_existing_sorted_nudge_events,
     validate_file_extension_is_correct,
@@ -240,6 +236,15 @@ class TestCollectionExercise(ViewTestCase):
                 "scheduledExecutionDateTime": "2017-05-15T00:00:00Z",
                 "state": "PUBLISHED",
                 "exerciseRef": "000000",
+                "events": [
+                    {
+                        "collectionExerciseId": "14fb3e68-4dca-46db-bf49-04b84e07e77c",
+                        "eventStatus": "PROCESSED",
+                        "id": "b4a36392-a21f-485b-9dc4-d151a8fcd565",
+                        "tag": "mps",
+                        "timestamp": "2018-03-16T00:00:00.000Z",
+                    }
+                ],
             }
         ]
         self.collection_exercise_events = [
@@ -1621,24 +1626,6 @@ class TestCollectionExercise(ViewTestCase):
 
         self.assertEqual(response.status_code, 200)
         self.assertIn("Collection exercise events must be set sequentially".encode(), response.data)
-
-    def test_get_collection_exercises_with_events_and_samples_by_survey_id(self):
-        name_space = "response_operations_ui.controllers.collection_exercise_controllers."
-        with mock.patch(
-            name_space + "get_collection_exercises_by_survey", return_value=self.collection_exercises
-        ), mock.patch(
-            name_space + "get_collection_exercise_events_by_id", return_value=self.collection_exercise_events
-        ), mock.patch(
-            name_space + "get_linked_sample_summary_id", return_value=self.sample_summary["id"]
-        ), mock.patch(
-            name_space + "get_sample_summary", return_value=self.sample_summary
-        ):
-            ce_list = get_collection_exercises_with_events_and_samples_by_survey_id(self.survey["id"])
-
-        expected_ce_list = copy.deepcopy(self.collection_exercises)
-        expected_ce_list[0]["events"] = self.collection_exercise_events
-        expected_ce_list[0]["sample_summary"] = self.sample_summary
-        self.assertEqual(ce_list, expected_ce_list)
 
     @requests_mock.mock()
     def test_schedule_nudge_email_option_not_present(self, mock_request):
