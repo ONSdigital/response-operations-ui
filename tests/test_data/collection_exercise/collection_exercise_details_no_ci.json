@@ -61,13 +61,5 @@
       "timestamp": "1993-05-15T23:00:00.000+0000",
       "eventStatus": "PROCESSED"
     }
-  ],
-  "ci_classifiers": {
-    "id": "efa868fb-fb80-44c7-9f33-d6800a17c4da",
-    "name": "COLLECTION_INSTRUMENT",
-    "classifierTypes": [
-      "COLLECTION_EXERCISE",
-      "RU_REF"
-    ]
-  }
+  ]
 }
