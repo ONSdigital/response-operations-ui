@@ -460,13 +460,12 @@ def link_sample_summary_to_collection_exercise(collection_exercise_id, sample_su
     return response.json()
 
 
-def get_collection_exercises_with_events_and_samples_by_survey_id(survey_id):
-    logger.info("Retrieving collection exercise with events and samples", survey_id=survey_id)
+def get_collection_exercises_with_samples_by_survey_id(survey_id):
+    logger.info("Retrieving collection exercise with samples", survey_id=survey_id)
 
     ce_list = get_collection_exercises_by_survey(survey_id)
 
     for ce in ce_list:
-        ce["events"] = get_collection_exercise_events_by_id(ce["id"])
         sample_summary_id = get_linked_sample_summary_id(ce["id"])
         if sample_summary_id:
             ce["sample_summary"] = get_sample_summary(sample_summary_id)
