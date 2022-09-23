@@ -43,7 +43,7 @@
 {% if sample and show_msg == 'true' %}
     {% if sample.state == 'INIT' %}
         {% if sample_load_status %}
-          {% set status = '(' ~ sample_load_status.currentTotal ~ '/'  ~sample_load_status.expectedTotal ~ 'loaded ) ' %}
+          {% set status = '(' ~ sample_load_status.currentTotal ~ ' / '  ~sample_load_status.expectedTotal ~ ' loaded) ' %}
         {% endif %}
         {% call
             onsPanel({

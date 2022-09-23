@@ -588,6 +588,22 @@ class TestCollectionExercise(ViewTestCase):
 
     @requests_mock.mock()
     @patch("response_operations_ui.views.collection_exercise.build_collection_exercise_details")
+    def test_collection_exercise_sample_check_count(self, mock_request, mock_details):
+        sample_status_json = {"areAllSampleUnitsLoaded": False, "expectedTotal": 10, "currentTotal": 5}
+        mock_request.get(url_get_sample_summary_status, json=sample_status_json)
+        mock_details.return_value = ce_details_sample_init_state
+
+        response = self.client.get(f"/surveys/{short_name}/{period}", follow_redirects=True)
+
+        self.assertEqual(response.status_code, 200)
+        self.assertIn("Monthly Business Survey".encode(), response.data)
+        self.assertIn("MBS 009".encode(), response.data)
+        self.assertIn("Action dates".encode(), response.data)
+        self.assertIn("Loading (5 / 10 loaded) &hellip;".encode(), response.data)
+        self.assertIn("Refresh to see progress".encode(), response.data)
+
+    @requests_mock.mock()
+    @patch("response_operations_ui.views.collection_exercise.build_collection_exercise_details")
     def test_collection_exercise_sample_check_failed(self, mock_request, mock_details):
         mock_request.get(url_get_sample_summary_status, status_code=500)
         mock_details.return_value = ce_details_sample_init_state
@@ -599,7 +615,7 @@ class TestCollectionExercise(ViewTestCase):
         self.assertIn("MBS 009".encode(), response.data)
         self.assertIn("Sample summary check failed.  Refresh page to try again".encode(), response.data)
         self.assertIn("Action dates".encode(), response.data)
-        # TODO fix this
+        # Note that the (current \ total) get completely removed if the call fails
         self.assertIn("Loading &hellip;".encode(), response.data)
         self.assertIn("Refresh to see progress".encode(), response.data)
 
@@ -2034,6 +2050,23 @@ class TestCollectionExercise(ViewTestCase):
         self.assertIn("checkbox-answer".encode(), response.data)
         self.assertIn("Select eQ version".encode(), response.data)
         self.assertIn("Done".encode(), response.data)
+
+    @requests_mock.mock()
+    @patch("response_operations_ui.views.collection_exercise.build_collection_exercise_details")
+    def test_eq_view_sample_ci_page_sample_load_count(self, mock_request, mock_details):
+        sample_status_json = {"areAllSampleUnitsLoaded": False, "expectedTotal": 10, "currentTotal": 5}
+        mock_details.return_value = ce_details_sample_init_state
+        sign_in_with_permission(self, mock_request, user_permission_surveys_edit_json)
+        mock_request.get(url_get_sample_summary_status, json=sample_status_json)
+
+        response = self.client.get(f"/surveys/{short_name}/{period}/view-sample-ci?show_msg=true")
+
+        self.assertEqual(200, response.status_code)
+        self.assertIn("Loading sample (5 / 10 loaded) &hellip;".encode(), response.data)
+        self.assertIn("Refresh to see progress".encode(), response.data)
+        self.assertIn("Replace sample file".encode(), response.data)
+        self.assertIn("eQ collection instruments available".encode(), response.data)
+        self.assertIn("Select eQ version".encode(), response.data)
 
     @requests_mock.mock()
     @patch("response_operations_ui.views.collection_exercise.build_collection_exercise_details")

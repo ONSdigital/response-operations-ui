@@ -73,7 +73,7 @@ class TestSampleControllers(unittest.TestCase):
             )
             with self.app.app_context():
                 output = sample_controllers.check_if_all_sample_units_present_for_sample_summary(sample_summary_id)
-                self.assertTrue(output)
+                self.assertDictEqual(output, sample_summary_status_complete_json)
 
     def test_check_if_all_sample_units_present_for_sample_summary_failure(self):
         with responses.RequestsMock() as rsps:
