@@ -41,15 +41,12 @@ with open(f"{project_root}/test_data/survey/updated_survey_list.json") as f:
 with open(f"{project_root}/test_data/survey/create_survey_response.json") as f:
     create_survey_response = json.load(f)
 url_get_collection_exercises = (
-    f"{TestingConfig.COLLECTION_EXERCISE_URL}" f'/collectionexercises/survey/{survey_info["survey"]["id"]}'
-)
-url_get_collection_exercise_events = (
-    f"{TestingConfig.COLLECTION_EXERCISE_URL}" f"/collectionexercises/{collection_exercise_id}/events"
+    f'{TestingConfig.COLLECTION_EXERCISE_URL}/collectionexercises/survey/{survey_info["survey"]["id"]}'
 )
 url_get_collection_exercises_link = (
-    f"{TestingConfig.COLLECTION_EXERCISE_URL}" f"/collectionexercises/link/{collection_exercise_id}"
+    f"{TestingConfig.COLLECTION_EXERCISE_URL}/collectionexercises/link/{collection_exercise_id}"
 )
-url_get_sample_summary = f"{TestingConfig.SAMPLE_URL}" f"/samples/samplesummary/{sample_summary_id}"
+url_get_sample_summary = f"{TestingConfig.SAMPLE_URL}/samples/samplesummary/{sample_summary_id}"
 
 url_get_eq_ci_selectors = (
     f"{TestingConfig.COLLECTION_INSTRUMENT_URL}"
@@ -92,15 +89,6 @@ class TestSurvey(ViewTestCase):
                 "name": "201601",
                 "scheduledExecutionDateTime": "2017-05-15T00:00:00Z",
                 "state": "PUBLISHED",
-            }
-        ]
-        self.collection_exercises_events = [
-            {
-                "id": collection_exercise_event_id,
-                "collectionExerciseId": collection_exercise_id,
-                "tag": "mps",
-                "timestamp": "2018-03-16T00:00:00.000Z",
-                "eventStatus": "PROCESSED",
             }
         ]
         self.collection_exercises_link = [sample_summary_id]
@@ -159,7 +147,6 @@ class TestSurvey(ViewTestCase):
 
     @requests_mock.mock()
     def test_survey_view(self, mock_request):
-        mock_request.get(url_get_collection_exercise_events, json=self.collection_exercises_events)
         mock_request.get(url_get_collection_exercises, json=self.collection_exercises)
         mock_request.get(url_get_collection_exercises_link, json=self.collection_exercises_link)
         mock_request.get(url_get_sample_summary, json=self.sample_summary)
@@ -181,7 +168,6 @@ class TestSurvey(ViewTestCase):
 
     @requests_mock.mock()
     def test_survey_state_mapping(self, mock_request):
-        mock_request.get(url_get_collection_exercise_events, json=self.collection_exercises_events)
         mock_request.get(url_get_collection_exercises, json=survey_info_states["collection_exercises"])
         mock_request.get(url_get_collection_exercises_link, json=self.collection_exercises_link)
         mock_request.get(url_get_sample_summary, json=self.sample_summary)
@@ -296,7 +282,6 @@ class TestSurvey(ViewTestCase):
         mock_request.get(url_get_survey_list, json=survey_list)
         mock_request.put(url_update_survey_details)
         mock_request.get(url_get_survey_list, json=updated_survey_list)
-        mock_request.get(url_get_collection_exercise_events, json=self.collection_exercises_events)
         mock_request.get(url_get_collection_exercises, json=self.collection_exercises)
         mock_request.get(url_get_collection_exercises_link, json=self.collection_exercises_link)
         mock_request.get(url_get_sample_summary, json=self.sample_summary)
@@ -635,7 +620,6 @@ class TestSurvey(ViewTestCase):
         mock_request.post(url_sign_in_data, json={"access_token": self.access_token}, status_code=201)
         mock_request.get(url_permission_url, json=user_permission_surveys_edit_json, status_code=200)
         self.client.post("/sign-in", follow_redirects=True, data={"username": "user", "password": "pass"})
-        mock_request.get(url_get_collection_exercise_events, json=self.collection_exercises_events)
         mock_request.get(url_get_collection_exercises, json=self.collection_exercises)
         mock_request.get(url_get_collection_exercises_link, json=self.collection_exercises_link)
         mock_request.get(url_get_sample_summary, json=self.sample_summary)
@@ -648,7 +632,6 @@ class TestSurvey(ViewTestCase):
 
     @requests_mock.mock()
     def test_survey_view_no_edit_permission(self, mock_request):
-        mock_request.get(url_get_collection_exercise_events, json=self.collection_exercises_events)
         mock_request.get(url_get_collection_exercises, json=self.collection_exercises)
         mock_request.get(url_get_collection_exercises_link, json=self.collection_exercises_link)
         mock_request.get(url_get_sample_summary, json=self.sample_summary)

@@ -54,7 +54,7 @@
                             "term": "RU Ref:",
                             "descriptions": [
                                 {
-                                    "description": messages[0].get('ru_ref') if messages[0].get('ru_ref') else "",
+                                    "description": '<a href="' + url_for('reporting_unit_bp.view_respondents', ru_ref=messages[0]['ru_ref']) + '">' + messages[0]['ru_ref'] + '</a>' if messages[0]['ru_ref'] else "",
                                     "id": "ruref"
                                 }
                             ]
