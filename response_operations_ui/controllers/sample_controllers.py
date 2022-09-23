@@ -34,7 +34,7 @@ def check_if_all_sample_units_present_for_sample_summary(sample_summary_id: str)
     and changes sample summary state to ACTIVE if the two number do match.
 
     :param sample_summary_id:
-    :return:
+    :return: A dict with the loaded state, expected and current sample units loaded
     """
     logger.info("Checking sample summary state", sample_summary_id=sample_summary_id)
 
