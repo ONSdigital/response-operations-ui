@@ -42,12 +42,16 @@
 {# Show state message panels #}
 {% if sample and show_msg == 'true' %}
     {% if sample.state == 'INIT' %}
+        {% if sample_load_status %}
+          {% set status = '(' ~ sample_load_status.currentTotal ~ ' / '  ~sample_load_status.expectedTotal ~ ' loaded) ' %}
+        {% endif %}
         {% call
             onsPanel({
                 "classes": "ons-u-mb-s"
             })
         %}
-            Loading sample&hellip; <span class="ons-u-ml-xs"><a href="/surveys/{{survey.shortName}}/{{ce.exerciseRef}}/view-sample-ci?show_msg=true">Refresh to see progress</a>
+            Loading sample {{ status }}&hellip; <span class="ons-u-ml-xs">
+          <a href="/surveys/{{survey.shortName}}/{{ce.exerciseRef}}/view-sample-ci?show_msg=true">Refresh to see progress</a>
         {% endcall %}
     {% elif sample.state == 'ACTIVE' %}
         {% call

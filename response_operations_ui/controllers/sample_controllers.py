@@ -28,15 +28,16 @@ def get_sample_summary(sample_summary_id):
     return response.json()
 
 
-def check_if_all_sample_units_present_for_sample_summary(sample_summary_id: str) -> bool:
+def check_if_all_sample_units_present_for_sample_summary(sample_summary_id: str) -> dict:
     """
     Calls endpoint in sample that counts if expected sample units == actual number of sample units
     and changes sample summary state to ACTIVE if the two number do match.
 
     :param sample_summary_id:
-    :return:
+    :return: A dict with the loaded state, expected and current sample units loaded
     """
     logger.info("Checking sample summary state", sample_summary_id=sample_summary_id)
+
     url = (
         f'{app.config["SAMPLE_URL"]}/samples/samplesummary/'
         f"{sample_summary_id}/check-and-transition-sample-summary-status"
@@ -47,9 +48,7 @@ def check_if_all_sample_units_present_for_sample_summary(sample_summary_id: str)
         response.raise_for_status()
     except HTTPError:
         logger.error(
-            "Error checking sample summary",
-            sample_summary_id=sample_summary_id,
-            status_code=response.status_code,
+            "Error checking sample summary", sample_summary_id=sample_summary_id, status_code=response.status_code
         )
         raise ApiError(response)
 
@@ -62,7 +61,8 @@ def check_if_all_sample_units_present_for_sample_summary(sample_summary_id: str)
         expected_total=response_json["expectedTotal"],
         current_total=response_json["currentTotal"],
     )
-    return are_all_sample_units_loaded
+
+    return response_json
 
 
 def upload_sample(short_name, period, file):
