@@ -16,6 +16,7 @@ with open(f"{project_root}/test_data/collection_exercise/formatted_collection_ex
     exercise_details = json.load(fp)
 
 sample_summary_id = "3f469cea-e9af-4d1a-812c-de504ae46fd5"
+
 url_check_sample_units = (
     f"{TestingConfig.SAMPLE_URL}/samples/samplesummary/{sample_summary_id}/check-and-transition-sample-summary-status"
 )
@@ -72,7 +73,7 @@ class TestSampleControllers(unittest.TestCase):
             )
             with self.app.app_context():
                 output = sample_controllers.check_if_all_sample_units_present_for_sample_summary(sample_summary_id)
-                self.assertTrue(output)
+                self.assertDictEqual(output, sample_summary_status_complete_json)
 
     def test_check_if_all_sample_units_present_for_sample_summary_failure(self):
         with responses.RequestsMock() as rsps:
