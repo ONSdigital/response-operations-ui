@@ -124,10 +124,10 @@ def view_conversation(thread_id):
     latest_message = refined_thread[-1]
     closed_at = _format_closed_at(thread_conversation)
     breadcrumbs = _get_conversation_breadcrumbs(thread_conversation["messages"])
-    respondent_is_deleted = False
-    for message in refined_thread:
-        if "Deleted respondent" in message["username"]:
-            respondent_is_deleted = True
+
+    respondent_key = "to" if latest_message["internal"] else "from"
+    respondent_is_deleted = True if latest_message[respondent_key] == "Deleted respondent" else False
+
     if latest_message["unread"] and _can_mark_as_unread(latest_message):
         message_controllers.remove_unread_label(latest_message["message_id"])
 
@@ -188,6 +188,17 @@ def view_conversation(thread_id):
                 thread_data=thread_conversation,
             )
 
+    close_conversation_url = url_for(
+        "messages_bp.close_conversation",
+        thread_id=refined_thread[0]["thread_id"],
+        page=page,
+        conversation_tab=conversation_tab,
+        business_id=refined_thread[0]["business_id"],
+        ru_ref_filter=ru_ref_filter,
+        business_id_filter=business_id_filter,
+        category=thread_conversation["category"],
+    )
+
     return render_template(
         "conversation-view/conversation-view.html",
         breadcrumbs=breadcrumbs,
@@ -200,6 +211,7 @@ def view_conversation(thread_id):
         thread_data=thread_conversation,
         show_mark_unread=_can_mark_as_unread(latest_message),
         conversation_tab=conversation_tab,
+        close_conversation_url=close_conversation_url,
         ru_ref_filter=ru_ref_filter,
         business_id_filter=business_id_filter,
     )
@@ -627,14 +639,16 @@ def close_conversation(thread_id):
         )
 
     thread_conversation = message_controllers.get_conversation(thread_id)
-    refined_thread = [_refine(message) for message in reversed(thread_conversation["messages"])]
+    last_message = _refine(thread_conversation["messages"][-1])
+    respondent_key = "to" if last_message["internal"] else "from"
+    respondent = last_message[respondent_key]
 
     return render_template(
         "close-conversation.html",
-        subject=refined_thread[0]["subject"],
-        business=refined_thread[0]["business_name"],
-        ru_ref=refined_thread[0]["ru_ref"],
-        respondent=refined_thread[0]["to"] if refined_thread[0]["internal"] is True else refined_thread[0]["from"],
+        subject=last_message["subject"],
+        business=last_message["business_name"],
+        ru_ref=last_message["ru_ref"],
+        respondent=respondent,
         thread_id=thread_id,
         page=page,
         conversation_tab=conversation_tab,
@@ -921,6 +935,7 @@ def _get_to_name(message: dict) -> str:
         return f"{message.get('@msg_to')[0].get('firstName')} {message.get('@msg_to')[0].get('lastName')}"
     except (IndexError, TypeError):
         logger.info("Failed to retrieve message to name", message_id=message.get("msg_id"))
+        return "Deleted respondent"
 
 
 def _get_ru_ref_from_message(message: dict) -> str:
