@@ -44,3 +44,11 @@ class NotifyError(Exception):
         self.error = error
         for k, v in kwargs.items():
             self.__dict__[k] = v
+
+
+class RURetrievalError(Exception):
+    def __init__(self, response, ru_ref):
+        self.ru_ref = ru_ref
+        self.url = response.url
+        self.status_code = response.status_code
+        self.message = response.text

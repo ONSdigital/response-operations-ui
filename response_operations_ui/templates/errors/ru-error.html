@@ -1,0 +1,17 @@
+{% extends "layouts/base.html" %}
+{% set page_title = "Failed to retrieve RU Ref - ONS Business Surveys" %}
+
+{% block main %}
+    <h1 class="ons-u-mt-m">Failed to retrieve RU Ref</h1>
+    {% call
+        onsPanel({
+            "type": "error",
+            "classes": "ons-u-mb-l"
+        })
+    %}
+      <p>We were unable to retrieve RU Ref {{ ru_ref }}. </p>
+      <p>Please try again after the survey has gone live.</p>
+      <p>You may want to visit the <a href="/">homepage</a></p>
+      <p>If you still encounter problems please <a href="/contact-us">contact us</a>. We apologise for any inconvenience this may have caused.</p>
+    {% endcall %}
+{% endblock main %}
