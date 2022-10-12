@@ -1386,9 +1386,7 @@ class TestMessage(ViewTestCase):
 
         self.assertEqual(200, response.status_code)
 
-        assert 'id="flashed-message-1' in response_body
-
-        assert f"Filter not applied: {ru_ref_filter} is an unknown RU ref" in response_body
+        assert f"We were unable to retrieve RU Ref { ru_ref_filter }. " in response_body
 
     @requests_mock.mock()
     @patch("response_operations_ui.controllers.message_controllers._get_jwt")

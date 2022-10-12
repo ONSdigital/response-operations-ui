@@ -5,8 +5,8 @@ from structlog import wrap_logger
 
 from response_operations_ui.exceptions.exceptions import (
     ApiError,
-    UpdateContactDetailsException,
     RURetrievalError,
+    UpdateContactDetailsException,
 )
 
 logger = wrap_logger(logging.getLogger(__name__))
@@ -54,7 +54,7 @@ def server_error(error):
 
 
 @error_bp.app_errorhandler(RURetrievalError)
-def api_error(error):
+def ru_retrieval_error(error):
     logger.error(
         error.message,
         url=request.url,

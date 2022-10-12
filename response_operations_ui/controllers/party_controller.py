@@ -9,9 +9,9 @@ from structlog import wrap_logger
 from response_operations_ui.controllers.survey_controllers import get_survey_by_id
 from response_operations_ui.exceptions.exceptions import (
     ApiError,
-    SearchRespondentsException,
-    UpdateContactDetailsException, 
     RURetrievalError,
+    SearchRespondentsException,
+    UpdateContactDetailsException,
 )
 from response_operations_ui.forms import EditContactDetailsForm
 

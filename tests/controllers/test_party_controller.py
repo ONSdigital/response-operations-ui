@@ -11,6 +11,7 @@ from response_operations_ui import create_app
 from response_operations_ui.controllers import party_controller
 from response_operations_ui.exceptions.exceptions import (
     ApiError,
+    RURetrievalError,
     SearchRespondentsException,
 )
 
@@ -95,7 +96,7 @@ class TestPartyController(unittest.TestCase):
             rsps.add(rsps.GET, get_business_by_ru_ref_url, status=404)
 
             with self.app.app_context():
-                with self.assertRaises(ApiError):
+                with self.assertRaises(RURetrievalError):
                     party_controller.get_business_by_ru_ref(ru_ref)
 
     def test_delete_attributes_by_sample_summary_id_server_error(self):
