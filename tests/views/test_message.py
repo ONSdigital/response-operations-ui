@@ -120,7 +120,6 @@ with open(f"{project_root}/test_data/message/threads_missing_business_name.json"
 with open(f"{project_root}/test_data/message/thread_missing_respondent.json") as json_data:
     missing_user_json = json.load(json_data)
 
-
 user_permission_admin_json = {
     "id": "5902656c-c41c-4b38-a294-0359e6aabe59",
     "groups": [{"value": "f385f89e-928f-4a0f-96a0-4c48d9007cc3", "display": "uaa.user", "type": "DIRECT"}],
@@ -1386,7 +1385,12 @@ class TestMessage(ViewTestCase):
 
         self.assertEqual(200, response.status_code)
 
-        assert f"We were unable to retrieve RU Ref { ru_ref_filter }. " in response_body
+        assert (
+            "This reporting unit has been loaded using a sample, but the collection exercise is not yet ready for "
+            "live." in response_body
+        )
+
+        assert "Please refer to your Survey Processing Centre contact if this is not corrected." in response_body
 
     @requests_mock.mock()
     @patch("response_operations_ui.controllers.message_controllers._get_jwt")

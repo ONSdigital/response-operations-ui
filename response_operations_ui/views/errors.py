@@ -63,5 +63,4 @@ def ru_retrieval_error(error):
     )
     return render_template(
         "errors/ru-error.html",
-        ru_ref=error.ru_ref,
     )
