@@ -5,7 +5,6 @@ from structlog import wrap_logger
 
 from response_operations_ui.exceptions.exceptions import (
     ApiError,
-    RURetrievalError,
     UpdateContactDetailsException,
 )
 
@@ -51,16 +50,3 @@ def handle_authentication_error(error):
 def server_error(error):
     logger.exception("Generic exception generated", exc_info=error, url=request.url, status_code=500)
     return render_template("errors/500-error.html"), 500
-
-
-@error_bp.app_errorhandler(RURetrievalError)
-def ru_retrieval_error(error):
-    logger.error(
-        error.message,
-        url=request.url,
-        api_status_code=error.status_code,
-        api_url=error.url,
-    )
-    return render_template(
-        "errors/ru-error.html",
-    )

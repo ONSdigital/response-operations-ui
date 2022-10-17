@@ -9,7 +9,6 @@ from structlog import wrap_logger
 from response_operations_ui.controllers.survey_controllers import get_survey_by_id
 from response_operations_ui.exceptions.exceptions import (
     ApiError,
-    RURetrievalError,
     SearchRespondentsException,
     UpdateContactDetailsException,
 )
@@ -37,10 +36,7 @@ def get_business_by_ru_ref(ru_ref: str):
     except requests.exceptions.HTTPError:
         log_level = logger.warning if response.status_code in (400, 404) else logger.exception
         log_level("Failed to retrieve reporting unit", ru_ref=ru_ref)
-        if response.status_code == 404:
-            raise RURetrievalError(response, ru_ref)
-        else:
-            raise ApiError(response)
+        raise ApiError(response)
 
     logger.info("Successfully retrieved reporting unit", ru_ref=ru_ref)
     return response.json()

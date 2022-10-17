@@ -22,6 +22,7 @@ from response_operations_ui.controllers.collection_exercise_controllers import (
     get_collection_exercise_by_id,
 )
 from response_operations_ui.controllers.survey_controllers import get_survey_by_id
+from response_operations_ui.exceptions.exceptions import ApiError
 from response_operations_ui.forms import EditContactDetailsForm, RuSearchForm
 
 logger = wrap_logger(logging.getLogger(__name__))
@@ -34,7 +35,18 @@ reporting_unit_bp = Blueprint("reporting_unit_bp", __name__, static_folder="stat
 def view_reporting_unit(ru_ref):
     logger.info("Gathering data to view reporting unit", ru_ref=ru_ref)
     # Make some initial calls to retrieve some data we'll need
-    reporting_unit = party_controller.get_business_by_ru_ref(ru_ref)
+    try:
+        reporting_unit = party_controller.get_business_by_ru_ref(ru_ref)
+    except ApiError as api_error:
+        # We had to introduce this code here to cover the niche event where a RU Ref has been loaded and the go live
+        # has not occurred, leading to a RU ref not being found. Currently, there is no efficient way to filter out
+        # RU refs that are not present before go live. This is our best option at the moment.
+        if api_error.status_code == 404:
+            return render_template(
+                "errors/ru-error.html",
+            )
+        else:
+            raise api_error
 
     cases = case_controller.get_cases_by_business_party_id(
         reporting_unit["id"], app.config["MAX_CASES_RETRIEVED_PER_SURVEY"]
