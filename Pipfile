@@ -53,11 +53,12 @@ Jinja2 = "*"
 MarkupSafe = "*"
 WTForms = "*"
 email_validator = "*"
-djlint = "*"
+
 
 [dev-packages]
 black = "*"
 flake8 = "*"
+djlint = "*"
 fakeredis = "*"
 freezegun = "*"
 isort = "*"
