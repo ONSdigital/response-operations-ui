@@ -54,7 +54,6 @@ MarkupSafe = "*"
 WTForms = "*"
 email_validator = "*"
 
-
 [dev-packages]
 black = "*"
 flake8 = "*"
