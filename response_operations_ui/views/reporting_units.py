@@ -41,7 +41,7 @@ def view_reporting_unit(ru_ref):
         # We had to introduce this code here to cover the niche event where a RU Ref has been loaded and the go live
         # has not occurred, leading to a RU ref not being found. Currently, there is no efficient way to filter out
         # RU refs that are not present before go live. This is our best option at the moment.
-        if api_error.status_code == 404:
+        if api_error.status_code == 400:
             return render_template(
                 "errors/ru-error.html",
             )
