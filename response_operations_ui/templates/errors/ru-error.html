@@ -1,0 +1,16 @@
+{% extends "layouts/base.html" %}
+{% set page_title = "Reporting unit - not loaded" %}
+
+{% block main %}
+    <h1 class="ons-u-mt-m">Reporting unit - not loaded</h1>
+    {% call
+        onsPanel({
+            "type": "error",
+            "classes": "ons-u-mb-l"
+        })
+    %}
+      <p>This reporting unit has been loaded using a sample, but the collection exercise is not yet ready for live. 
+        Please refer to your Survey Processing Centre contact if this is incorrect.</p>
+      <p>Please click to return to the <a href="/surveys">surveys page</a></p>
+    {% endcall %}
+{% endblock main %}
