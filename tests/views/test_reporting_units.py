@@ -138,6 +138,22 @@ class TestReportingUnits(ViewTestCase):
         self.assertEqual(response.status_code, 500)
 
     @requests_mock.mock()
+    def test_get_reporting_unit_party_ru_before_go_live(self, mock_request):
+        mock_request.get(url_get_business_by_ru_ref, status_code=400)
+
+        response = self.client.get("/reporting-units/50012345678", follow_redirects=True)
+
+        request_history = mock_request.request_history
+
+        self.assertEqual(len(request_history), 1)
+        self.assertEqual(response.status_code, 200)
+        self.assertIn(
+            "This reporting unit has been loaded using a sample, but the collection exercise is not yet "
+            "ready for live.".encode(),
+            response.data,
+        )
+
+    @requests_mock.mock()
     def test_get_reporting_unit_cases_fail(self, mock_request):
         mock_request.get(url_get_business_by_ru_ref, json=business_reporting_unit)
         mock_request.get(url_get_cases_by_business_party_id, status_code=500)
