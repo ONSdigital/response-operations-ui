@@ -20,7 +20,7 @@
                 {{ info_message }}
             {% endif %}
             {% if new_survey %}
-                <a href= {{ url_for("surveys_bp.view_survey", short_name=new_survey.short_name) }} id="created_survey_link">
+                <a href={{url_for("surveys_bp.view_survey", short_name=new_survey.short_name)}} id="created_survey_link">
                     {{ new_survey.long_name }}</a> has been added.
             {% endif %}
         {% endcall %}

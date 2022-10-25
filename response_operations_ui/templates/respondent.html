@@ -16,7 +16,7 @@
             <div class="ons-grid__col ons-col-10@m">
                 {% set accountStatus %}
                     {% if respondent.status  == 'Suspended' %} Locked {% else %} {{ respondent.status }} {% endif %}
-                    <br>
+                    <br/>
                     {% if respondent.status == 'Created' and is_respondent_edit_permission %}<a id="resend-verification-email-btn" href="{{ url_for('respondent_bp.view_resend_verification', respondent_id=respondent.id) }}">Re-send new account verification email</a>
                     {% elif respondent.status == 'Suspended' and is_respondent_edit_permission %}<a id="respondent-unlock-link" href="{{ url_for('respondent_bp.confirm_change_respondent_status', party_id=respondent.id, tab='respondents', change_flag='ACTIVE') }}">Unlock</a>
                     {% endif %}
@@ -41,7 +41,7 @@
                                 "term": "New Email:" if respondent.pendingEmailAddress else "",
                                 "descriptions": [
                                     {
-                                        "description": respondent.pendingEmailAddress + '<br><a id="resend-verification-email-btn" href="' + url_for('respondent_bp.view_resend_verification', respondent_id=respondent.id) + '">Re-send verification email</a>' if respondent.pendingEmailAddress and is_respondent_edit_permission else "",
+                                        "description": respondent.pendingEmailAddress + '<br/><a id="resend-verification-email-btn" href="' + url_for('respondent_bp.view_resend_verification', respondent_id=respondent.id) + '">Re-send verification email</a>' if respondent.pendingEmailAddress and is_respondent_edit_permission else "",
                                         "id": "respondent-email" if respondent.pendingEmailAddress else "",
                                         "name": "tbl-respondent-pending-email" if respondent.pendingEmailAddress else ""
                                     }
@@ -64,7 +64,7 @@
                                 "term": "Account:",
                                 "descriptions": [
                                     {
-                                        "description": "Pending deletion<br><small>The respondent will be deleted by the end of the day.</small>" if mark_for_deletion else accountStatus,
+                                        "description": "Pending deletion<br/><small>The respondent will be deleted by the end of the day.</small>" if mark_for_deletion else accountStatus,
                                         "id": "respondent-account-status"
                                     },
                                     {

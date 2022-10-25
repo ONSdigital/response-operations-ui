@@ -94,14 +94,12 @@ def build_collection_exercise_details(short_name: str, period: str, include_ci=T
     exercise_events = collection_exercise_controllers.get_collection_exercise_events_by_id(collection_exercise_id)
     summary_id = collection_exercise_controllers.get_linked_sample_summary_id(collection_exercise_id)
     sample_summary = sample_controllers.get_sample_summary(summary_id) if summary_id else None
-    ci_classifiers = survey_controllers.get_survey_ci_classifier(survey_id)
 
     exercise_dict = {
         "survey": survey,
         "collection_exercise": full_exercise,
         "events": convert_events_to_new_format(exercise_events),
         "sample_summary": _format_sample_summary(sample_summary),
-        "ci_classifiers": ci_classifiers,
     }
 
     if include_ci:
@@ -140,12 +138,13 @@ def view_collection_exercise(short_name, period):
 
     # If there's a sample summary, but we're still in a state where we're setting up the collection exercise, then check
     # the sample summary and change it to ACTIVE all sample units are present.
+    sample_load_status = None
     if sample_controllers.sample_summary_state_check_required(ce_details):
         try:
-            are_all_sample_units_loaded = sample_controllers.check_if_all_sample_units_present_for_sample_summary(
+            sample_load_status = sample_controllers.check_if_all_sample_units_present_for_sample_summary(
                 ce_details["sample_summary"]["id"]
             )
-            if are_all_sample_units_loaded:
+            if sample_load_status["areAllSampleUnitsLoaded"]:
                 # Get an up-to-date copy of the sample summary data now that it's active
                 sample_summary = sample_controllers.get_sample_summary(ce_details["sample_summary"]["id"])
                 ce_details["sample_summary"] = _format_sample_summary(sample_summary)
@@ -166,13 +165,13 @@ def view_collection_exercise(short_name, period):
         events=ce_details["events"],
         locked=locked,
         processing=processing,
+        sample_load_status=sample_load_status,
         sample=ce_details["sample_summary"],
         show_set_live_button=show_set_live_button,
         survey=ce_details["survey"],
         success_panel=success_panel,
         validation_failed=validation_failed,
         show_msg=show_msg,
-        ci_classifiers=ce_details["ci_classifiers"]["classifierTypes"],
         info_panel=info_panel,
     )
 
@@ -859,13 +858,13 @@ def get_view_sample_ci(short_name, period):
         ce_details["eq_ci_selectors"], ce_details["collection_instruments"]
     )
     locked = ce_state in ("LIVE", "READY_FOR_LIVE", "EXECUTION_STARTED", "VALIDATED", "EXECUTED", "ENDED")
-
+    sample_load_status = None
     if sample_controllers.sample_summary_state_check_required(ce_details):
         try:
-            are_all_sample_units_loaded = sample_controllers.check_if_all_sample_units_present_for_sample_summary(
+            sample_load_status = sample_controllers.check_if_all_sample_units_present_for_sample_summary(
                 ce_details["sample_summary"]["id"]
             )
-            if are_all_sample_units_loaded:
+            if sample_load_status["areAllSampleUnitsLoaded"]:
                 # Get an up-to-date copy of the sample summary data now that it's active
                 sample_summary = sample_controllers.get_sample_summary(ce_details["sample_summary"]["id"])
                 ce_details["sample_summary"] = _format_sample_summary(sample_summary)
@@ -889,6 +888,7 @@ def get_view_sample_ci(short_name, period):
         locked=locked,
         sample=ce_details["sample_summary"],
         survey=ce_details["survey"],
+        sample_load_status=sample_load_status,
         success_panel=success_panel,
         show_msg=show_msg,
         eq_ci_selectors=ce_details["eq_ci_selectors"],

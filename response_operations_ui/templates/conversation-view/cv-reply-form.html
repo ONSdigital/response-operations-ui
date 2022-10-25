@@ -52,7 +52,7 @@
                   }}
               </div>
               <div class="ons-grid__col ons-u-ml-m">
-                  <a id="btn-close-conversation" href="{{ url_for('messages_bp.close_conversation', thread_id=messages[0].thread_id, page=page, conversation_tab=conversation_tab, business_id=business_id, ru_ref_filter=ru_ref_filter, business_id_filter=business_id_filter, category=thread_data.category) }}">Close conversation</a>
+                  <a id="btn-close-conversation" href={{close_conversation_url}}>Close conversation</a>
               </div>
           </div>
       {% endif %}

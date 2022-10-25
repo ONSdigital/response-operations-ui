@@ -82,6 +82,7 @@ def get_response_statuses(ru_ref, error=None):
         trading_as=reporting_unit["trading_as"],
         survey_short_name=format_short_name(survey["shortName"]),
         survey_ref=survey["surveyRef"],
+        survey_id=survey["id"],
         ce_period=period,
         case_events=case_events,
         allowed_transitions_for_case=allowed_transitions_for_case,

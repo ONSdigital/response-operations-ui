@@ -17,7 +17,7 @@
                         "id": "save-error"
                     })
                 %}
-                    <h2 id='error-saving-message' class="ons-u-fs-r--b">Error updating survey details</h2>
+                    <h2 id="error-saving-message" class="ons-u-fs-r--b">Error updating survey details</h2>
                     <p>Please remove any spaces or special characters from the name and try saving your changes again.</p>
                 {% endcall %}
             {% endif %}
@@ -108,6 +108,7 @@
                     <div class="ons-grid__col ons-u-ml-m">
                         <a id="cancel-btn" href="{{ url_for('surveys_bp.view_surveys') }}">Cancel</a>
                     </div>
+                </div>  
             </form>
         </div>
     </div>

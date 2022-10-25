@@ -38,14 +38,30 @@
             {% include 'conversation-view/cv-message-info.html' %}
             {% include 'conversation-view/cv-message-block.html' %}
 
-            {% if respondent_is_deleted %}
-                <span>Cannot reply or modify conversation as the respondent has been deleted</span>
-                <br>
-            {% else %}
-                {% if not thread_data.is_closed %}
-                    {% include 'conversation-view/cv-reply-form.html' %}
+            {% if thread_data.is_closed %}
+                {% call
+                    onsPanel({
+                    "type": "info",
+                    "classes": "ons-u-mb-l"
+                    })
+                  %}
+                <p class="ons-u-fs-r">This conversation was closed on {{ closed_at }} by {{ thread_data.closed_by }}</p>
+                {% endcall %}
+            
+                {% if respondent_is_deleted %}
+                  <span>This conversation can not be re-opened as the respondent has been deleted</span><br/><br/>
                 {% else %}
-                    {% include 'conversation-view/cv-reopen-form.html' %}
+                  {% include 'conversation-view/cv-reopen-form.html' %}
+                {% endif %}
+          
+            {% else %}
+                {% if respondent_is_deleted %}
+                    <span>You can no longer send a message as this respondent has been deleted</span>
+                    <br/>
+                    <a id="btn-close-conversation" href={{close_conversation_url}}>Close conversation</a>
+                    <br/><br/>
+                {% else %}
+                    {% include 'conversation-view/cv-reply-form.html' %}
                 {% endif %}
             {% endif %}
 

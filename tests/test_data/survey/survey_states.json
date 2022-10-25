@@ -6,7 +6,8 @@
       "scheduledExecutionDateTime": "2017-09-10T23:00:00.000+0000",
       "state": "CREATED",
       "events": [{"collectionExerciseId": "92d436aa-1251-4ae3-bad1-f3ae950f87be",
-        "id": "fe11ebe1-01b5-4458-aa0e-3df1a290048d", "tag": "go_live", "timestamp": "2018-03-21T00:00:00.000Z"}]
+        "id": "fe11ebe1-01b5-4458-aa0e-3df1a290048d", "tag": "go_live", "timestamp": "2018-03-21T00:00:00.000Z", "eventStatus": "PROCESSED"
+      }]
 
     },
     {
@@ -15,7 +16,8 @@
       "scheduledExecutionDateTime": "2017-09-10T23:00:00.000+0000",
       "state": "SCHEDULED",
       "events": [{"collectionExerciseId": "92d436aa-1251-4ae3-bad1-f3ae950f87be",
-        "id": "fe11ebe1-01b5-4458-aa0e-3df1a290048d", "tag": "go_live", "timestamp": "2018-03-21T00:00:00.000Z"}]
+        "id": "fe11ebe1-01b5-4458-aa0e-3df1a290048d", "tag": "go_live", "timestamp": "2018-03-21T00:00:00.000Z", "eventStatus": "PROCESSED"
+      }]
 
     },
     {
@@ -24,7 +26,7 @@
       "scheduledExecutionDateTime": "2017-09-10T23:00:00.000+0000",
       "state": "READY_FOR_REVIEW",
       "events": [{"collectionExerciseId": "92d436aa-1251-4ae3-bad1-f3ae950f87be",
-        "id": "fe11ebe1-01b5-4458-aa0e-3df1a290048d", "tag": "go_live", "timestamp": "2018-03-21T00:00:00.000Z"}]
+        "id": "fe11ebe1-01b5-4458-aa0e-3df1a290048d", "tag": "go_live", "timestamp": "2018-03-21T00:00:00.000Z", "eventStatus": "PROCESSED"}]
 
     },
     {
@@ -33,7 +35,7 @@
       "scheduledExecutionDateTime": "2017-09-10T23:00:00.000+0000",
       "state": "EXECUTION_STARTED",
       "events": [{"collectionExerciseId": "92d436aa-1251-4ae3-bad1-f3ae950f87be",
-        "id": "fe11ebe1-01b5-4458-aa0e-3df1a290048d", "tag": "go_live", "timestamp": "2018-03-21T00:00:00.000Z"}]
+        "id": "fe11ebe1-01b5-4458-aa0e-3df1a290048d", "tag": "go_live", "timestamp": "2018-03-21T00:00:00.000Z", "eventStatus": "PROCESSED"}]
 
     },
     {
@@ -42,7 +44,7 @@
       "scheduledExecutionDateTime": "2017-09-10T23:00:00.000+0000",
       "state": "READY_FOR_LIVE",
       "events": [{"collectionExerciseId": "92d436aa-1251-4ae3-bad1-f3ae950f87be",
-        "id": "fe11ebe1-01b5-4458-aa0e-3df1a290048d", "tag": "go_live", "timestamp": "2018-03-21T00:00:00.000Z"}]
+        "id": "fe11ebe1-01b5-4458-aa0e-3df1a290048d", "tag": "go_live", "timestamp": "2018-03-21T00:00:00.000Z", "eventStatus": "PROCESSED"}]
 
     },
     {
@@ -51,7 +53,7 @@
       "scheduledExecutionDateTime": "2017-09-10T23:00:00.000+0000",
       "state": "LIVE",
       "events": [{"collectionExerciseId": "92d436aa-1251-4ae3-bad1-f3ae950f87be",
-        "id": "fe11ebe1-01b5-4458-aa0e-3df1a290048d", "tag": "go_live", "timestamp": "2018-03-21T00:00:00.000Z"}]
+        "id": "fe11ebe1-01b5-4458-aa0e-3df1a290048d", "tag": "go_live", "timestamp": "2018-03-21T00:00:00.000Z", "eventStatus": "PROCESSED"}]
 
     },
         {
@@ -60,7 +62,7 @@
       "scheduledExecutionDateTime": "2017-09-10T23:00:00.000+0000",
       "state": "ENDED",
       "events": [{"collectionExerciseId": "92d436aa-1251-4ae3-bad1-f3ae950f87be",
-        "id": "fe11ebe1-01b5-4458-aa0e-3df1a290048d", "tag": "go_live", "timestamp": "2018-03-21T00:00:00.000Z"}]
+        "id": "fe11ebe1-01b5-4458-aa0e-3df1a290048d", "tag": "go_live", "timestamp": "2018-03-21T00:00:00.000Z", "eventStatus": "PROCESSED"}]
 
     }
   ],
