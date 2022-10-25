@@ -604,7 +604,7 @@ class TestCollectionExercise(ViewTestCase):
         self.assertIn("Monthly Business Survey".encode(), response.data)
         self.assertIn("MBS 009".encode(), response.data)
         self.assertIn("Action dates".encode(), response.data)
-        self.assertIn("Loading (5 / 10 loaded) &hellip;".encode(), response.data)
+        self.assertIn("Loading (5 / 10 loaded) …".encode(), response.data)
         self.assertIn("Refresh to see progress".encode(), response.data)
 
     @requests_mock.mock()
@@ -621,7 +621,7 @@ class TestCollectionExercise(ViewTestCase):
         self.assertIn("Sample summary check failed.  Refresh page to try again".encode(), response.data)
         self.assertIn("Action dates".encode(), response.data)
         # Note that the (current \ total) get completely removed if the call fails
-        self.assertIn("Loading &hellip;".encode(), response.data)
+        self.assertIn("Loading …".encode(), response.data)
         self.assertIn("Refresh to see progress".encode(), response.data)
 
     @requests_mock.mock()
@@ -2049,7 +2049,7 @@ class TestCollectionExercise(ViewTestCase):
         response = self.client.get(f"/surveys/{short_name}/{period}/view-sample-ci?show_msg=true")
 
         self.assertEqual(200, response.status_code)
-        self.assertIn("Loading sample (5 / 10 loaded) &hellip;".encode(), response.data)
+        self.assertIn("Loading sample (5 / 10 loaded) …".encode(), response.data)
         self.assertIn("Refresh to see progress".encode(), response.data)
         self.assertIn("Replace sample file".encode(), response.data)
         self.assertIn("eQ collection instruments available".encode(), response.data)

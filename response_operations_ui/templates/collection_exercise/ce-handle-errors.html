@@ -50,7 +50,7 @@
                 "classes": "ons-u-mb-s"
             })
         %}
-            Loading sample {{ status }}&hellip; <span class="ons-u-ml-xs">
+            Loading sample {{ status }}… <span class="ons-u-ml-xs"></span>
           <a href="/surveys/{{survey.shortName}}/{{ce.exerciseRef}}/view-sample-ci?show_msg=true">Refresh to see progress</a>
         {% endcall %}
     {% elif sample.state == 'ACTIVE' %}

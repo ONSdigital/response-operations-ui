@@ -54,7 +54,7 @@
                 }}
             {% endcall %}
         {% endif %}
-        <form action="{{ url_for('admin_bp.post_banner') }}" method="POST">
+        <form action="{{ url_for('admin_bp.post_banner') }}" method="post">
             {{ form.csrf_token }}
             {%- call onsFieldset({
                 "legend": "Create a new alert",
