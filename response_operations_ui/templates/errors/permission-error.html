@@ -1,0 +1,16 @@
+{% extends "layouts/base.html" %}
+{% set page_title = "Server error (Error 500) - ONS Business Surveys" %}
+
+{% block main %}
+    <h1 class="ons-u-mt-m">Error 500 - Server error</h1>
+    {% call
+        onsPanel({
+            "type": "error",
+            "classes": "ons-u-mb-l"
+        })
+    %}
+        <p>Something has gone wrong with the website.</p>
+        <p>You may want to visit the <a href="/">homepage</a></p>
+        <p>If you still encounter problems, please raise a service desk ticket.</p>
+    {% endcall %}
+{% endblock main %}
