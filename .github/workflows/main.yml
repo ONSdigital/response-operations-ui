@@ -50,7 +50,7 @@ jobs:
         run: |
           python -m pip install --upgrade pip
           python -m pip install wheel==0.38.0
-          python -m pip install py==1.10.0
+          python -m pip install py
           pip install pipenv
           pipenv install --dev --deploy
       - name: Load Design System templates
