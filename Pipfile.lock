@@ -1012,11 +1012,11 @@
         },
         "djlint": {
             "hashes": [
-                "sha256:a28133317eccc3924b157c947f98f0bdc300f754f51097b5467c73e112aa9fec",
-                "sha256:e7fd305f93057cd205a29999b840210db70789e4cf277625f148447ad7de62b1"
+                "sha256:517b1a2dfb943854abaf8b1ad2117d5c2e699d5916cd2621e24f8669eb564af2",
+                "sha256:7339b0e2b228655000e6bc5e85adb146e1cdad11a1a29c52c3f1e68707d02d86"
             ],
             "index": "pypi",
-            "version": "==1.19.6"
+            "version": "==1.19.7"
         },
         "editorconfig": {
             "hashes": [
