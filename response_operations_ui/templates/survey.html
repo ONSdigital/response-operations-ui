@@ -129,74 +129,74 @@
             {% set event_statuses = '' %}
             {% if exercise.events.mps %}
                 {% if exercise.events.mps.event_status == 'SCHEDULED' %}
-                    {% set event_statuses = event_statuses + '<br>' + '<span class="'+ 'ons-status ons-status--info' + '">' + exercise.events.mps.event_status + '</span>' + ' (MPS)' %}
+                    {% set event_statuses = event_statuses + '<br>' + '<span class="'+ 'ons-status ons-status--info' + '">' + exercise.events.mps.event_status + '</span>' + ' (MPS)' + '</br>' %}
                 {% elif exercise.events.mps.event_status == 'PROCESSING' or exercise.events.mps.event_status == 'RETRY' %}
-                    {% set event_statuses = event_statuses + '<br>' + '<span class="'+ 'ons-status ons-status--pending' + '">' + exercise.events.mps.event_status + '</span>' + ' (MPS)' %}
+                    {% set event_statuses = event_statuses + '<br>' + '<span class="'+ 'ons-status ons-status--pending' + '">' + exercise.events.mps.event_status + '</span>' + ' (MPS)' + '</br>' %}
                 {% elif exercise.events.mps.event_status == 'FAILED' %}
-                    {% set event_statuses = event_statuses + '<br>' + '<span class="'+ 'ons-status ons-status--error' + '">' + exercise.events.mps.event_status + '</span>' + ' (MPS)' %}
+                    {% set event_statuses = event_statuses + '<br>' + '<span class="'+ 'ons-status ons-status--error' + '">' + exercise.events.mps.event_status + '</span>' + ' (MPS)' + '</br>' %}
                 {% endif %}
                 {% if exercise.events.go_live.event_status == 'SCHEDULED' %}
-                    {% set event_statuses = event_statuses + '<br>' + '<span class="'+ 'ons-status ons-status--info' + '">' + exercise.events.go_live.event_status + '</span>' + ' (Go live)' %}
+                    {% set event_statuses = event_statuses + '<br>' + '<span class="'+ 'ons-status ons-status--info' + '">' + exercise.events.go_live.event_status + '</span>' + ' (Go live)' + '</br>' %}
                 {% elif exercise.events.go_live.event_status == 'PROCESSING' or exercise.events.go_live.event_status == 'RETRY' %}
-                    {% set event_statuses = event_statuses + '<br>' + '<span class="'+ 'ons-status ons-status--pending' + '">' + exercise.events.go_live.event_status + '</span>' + ' (Go live)' %}
+                    {% set event_statuses = event_statuses + '<br>' + '<span class="'+ 'ons-status ons-status--pending' + '">' + exercise.events.go_live.event_status + '</span>' + ' (Go live)' + '</br>' %}
                 {% elif exercise.events.go_live.event_status == 'FAILED' %}
-                    {% set event_statuses = event_statuses + '<br>' + '<span class="'+ 'ons-status ons-status--error' + '">' + exercise.events.go_live.event_status + '</span>' + ' (Go live)' %}
+                    {% set event_statuses = event_statuses + '<br>' + '<span class="'+ 'ons-status ons-status--error' + '">' + exercise.events.go_live.event_status + '</span>' + ' (Go live)' + '</br>' %}
                 {% endif %}
                 {% if exercise.events.reminder.event_status == 'SCHEDULED' %}
-                    {% set event_statuses = event_statuses + '<br>' + '<span class="'+ 'ons-status ons-status--info' + '">' + exercise.events.reminder.event_status + '</span>' + ' (First reminder)' %}
+                    {% set event_statuses = event_statuses + '<br>' + '<span class="'+ 'ons-status ons-status--info' + '">' + exercise.events.reminder.event_status + '</span>' + ' (First reminder)' + '</br>' %}
                 {% elif exercise.events.reminder.event_status == 'PROCESSING' or exercise.events.reminder.event_status == 'RETRY' %}
-                    {% set event_statuses = event_statuses + '<br>' + '<span class="'+ 'ons-status ons-status--pending' + '">' + exercise.events.reminder.event_status + '</span>' + ' (First reminder)' %}
+                    {% set event_statuses = event_statuses + '<br>' + '<span class="'+ 'ons-status ons-status--pending' + '">' + exercise.events.reminder.event_status + '</span>' + ' (First reminder)' + '</br>' %}
                 {% elif exercise.events.reminder.event_status == 'FAILED' %}
-                    {% set event_statuses = event_statuses + '<br>' + '<span class="'+ 'ons-status ons-status--error' + '">' + exercise.events.reminder.event_status + '</span>' + ' (First reminder)' %}
+                    {% set event_statuses = event_statuses + '<br>' + '<span class="'+ 'ons-status ons-status--error' + '">' + exercise.events.reminder.event_status + '</span>' + ' (First reminder)' + '</br>' %}
                 {% endif %}
                 {% if exercise.events.reminder2.event_status == 'SCHEDULED' %}
-                    {% set event_statuses = event_statuses + '<br>' + '<span class="'+ 'ons-status ons-status--info' + '">' + exercise.events.reminder2.event_status + '</span>' + ' (Second reminder)' %}
+                    {% set event_statuses = event_statuses + '<br>' + '<span class="'+ 'ons-status ons-status--info' + '">' + exercise.events.reminder2.event_status + '</span>' + ' (Second reminder)' + '</br>' %}
                 {% elif exercise.events.reminder2.event_status == 'PROCESSING' or exercise.events.reminder2.event_status == 'RETRY' %}
-                    {% set event_statuses = event_statuses + '<br>' + '<span class="'+ 'ons-status ons-status--pending' + '">' + exercise.events.reminder2.event_status + '</span>' + ' (Second reminder)' %}
+                    {% set event_statuses = event_statuses + '<br>' + '<span class="'+ 'ons-status ons-status--pending' + '">' + exercise.events.reminder2.event_status + '</span>' + ' (Second reminder)' + '</br>' %}
                 {% elif exercise.events.reminder2.event_status == 'FAILED' %}
-                    {% set event_statuses = event_statuses + '<br>' + '<span class="'+ 'ons-status ons-status--error' + '">' + exercise.events.reminder2.event_status + '</span>' + ' (Second reminder)' %}
+                    {% set event_statuses = event_statuses + '<br>' + '<span class="'+ 'ons-status ons-status--error' + '">' + exercise.events.reminder2.event_status + '</span>' + ' (Second reminder)' + '</br>' %}
                 {% endif %}
                 {% if exercise.events.reminder3.event_status == 'SCHEDULED' %}
-                    {% set event_statuses = event_statuses + '<br>' + '<span class="'+ 'ons-status ons-status--info' + '">' + exercise.events.reminder3.event_status + '</span>' + ' (Third reminder)' %}
+                    {% set event_statuses = event_statuses + '<br>' + '<span class="'+ 'ons-status ons-status--info' + '">' + exercise.events.reminder3.event_status + '</span>' + ' (Third reminder)' + '</br>' %}
                 {% elif exercise.events.reminder3.event_status == 'PROCESSING' or exercise.events.reminder3.event_status == 'RETRY' %}
-                    {% set event_statuses = event_statuses + '<br>' + '<span class="'+ 'ons-status ons-status--pending' + '">' + exercise.events.reminder3.event_status + '</span>' + ' (Third reminder)' %}
+                    {% set event_statuses = event_statuses + '<br>' + '<span class="'+ 'ons-status ons-status--pending' + '">' + exercise.events.reminder3.event_status + '</span>' + ' (Third reminder)' + '</br>' %}
                 {% elif exercise.events.reminder3.event_status == 'FAILED' %}
-                    {% set event_statuses = event_statuses + '<br>' + '<span class="'+ 'ons-status ons-status--error' + '">' + exercise.events.reminder3.event_status + '</span>' + ' (Third reminder)' %}
+                    {% set event_statuses = event_statuses + '<br>' + '<span class="'+ 'ons-status ons-status--error' + '">' + exercise.events.reminder3.event_status + '</span>' + ' (Third reminder)' + '</br>' %}
                 {% endif %}
                 {% if exercise.events.nudge_email_0.event_status == 'SCHEDULED' %}
-                    {% set event_statuses = event_statuses + '<br>' + '<span class="'+ 'ons-status ons-status--info' + '">' + exercise.events.nudge_email_0.event_status + '</span>' + ' (First nudge email)' %}
+                    {% set event_statuses = event_statuses + '<br>' + '<span class="'+ 'ons-status ons-status--info' + '">' + exercise.events.nudge_email_0.event_status + '</span>' + ' (First nudge email)' + '</br>' %}
                 {% elif exercise.events.nudge_email_0.event_status == 'PROCESSING' or exercise.events.nudge_email_0.event_status == 'RETRY' %}
-                    {% set event_statuses = event_statuses + '<br>' + '<span class="'+ 'ons-status ons-status--pending' + '">' + exercise.events.nudge_email_0.event_status + '</span>' + ' (First nudge email)' %}
+                    {% set event_statuses = event_statuses + '<br>' + '<span class="'+ 'ons-status ons-status--pending' + '">' + exercise.events.nudge_email_0.event_status + '</span>' + ' (First nudge email)' + '</br>' %}
                 {% elif exercise.events.nudge_email_0.event_status == 'FAILED' %}
-                    {% set event_statuses = event_statuses + '<br>' + '<span class="'+ 'ons-status ons-status--error' + '">' + exercise.events.nudge_email_0.event_status + '</span>' + ' (First nudge email)' %}
+                    {% set event_statuses = event_statuses + '<br>' + '<span class="'+ 'ons-status ons-status--error' + '">' + exercise.events.nudge_email_0.event_status + '</span>' + ' (First nudge email)' + '</br>' %}
                 {% endif %}
                 {% if exercise.events.nudge_email_2.event_status == 'SCHEDULED' %}
-                    {% set event_statuses = event_statuses + '<br>' + '<span class="'+ 'ons-status ons-status--info' + '">' + exercise.events.nudge_email_2.event_status + '</span>' + ' (Second nudge email)' %}
+                    {% set event_statuses = event_statuses + '<br>' + '<span class="'+ 'ons-status ons-status--info' + '">' + exercise.events.nudge_email_2.event_status + '</span>' + ' (Second nudge email)' + '</br>' %}
                 {% elif exercise.events.nudge_email_2.event_status == 'PROCESSING' or exercise.events.nudge_email_2.event_status == 'RETRY' %}
-                    {% set event_statuses = event_statuses + '<br>' + '<span class="'+ 'ons-status ons-status--pending' + '">' + exercise.events.nudge_email_2.event_status + '</span>' + ' (Second nudge email)'%}
+                    {% set event_statuses = event_statuses + '<br>' + '<span class="'+ 'ons-status ons-status--pending' + '">' + exercise.events.nudge_email_2.event_status + '</span>' + ' (Second nudge email)' + '</br>' %}
                 {% elif exercise.events.nudge_email_2.event_status == 'FAILED' %}
-                    {% set event_statuses = event_statuses + '<br>' + '<span class="'+ 'ons-status ons-status--error' + '">' + exercise.events.nudge_email_2.event_status + '</span>' + ' (Second nudge email)'%}
+                    {% set event_statuses = event_statuses + '<br>' + '<span class="'+ 'ons-status ons-status--error' + '">' + exercise.events.nudge_email_2.event_status + '</span>' + ' (Second nudge email)' + '</br>' %}
                 {% endif %}
                 {% if exercise.events.nudge_email_3.event_status == 'SCHEDULED' %}
-                    {% set event_statuses = event_statuses + '<br>' + '<span class="'+ 'ons-status ons-status--info' + '">' + exercise.events.nudge_email_3.event_status + '</span>' + ' (Third nudge email)' %}
+                    {% set event_statuses = event_statuses + '<br>' + '<span class="'+ 'ons-status ons-status--info' + '">' + exercise.events.nudge_email_3.event_status + '</span>' + ' (Third nudge email)' + '</br>' %}
                 {% elif exercise.events.nudge_email_3.event_status == 'PROCESSING' or exercise.events.nudge_email_3.event_status == 'RETRY' %}
-                    {% set event_statuses = event_statuses + '<br>' + '<span class="'+ 'ons-status ons-status--pending' + '">' + exercise.events.nudge_email_3.event_status + '</span>' + ' (Third nudge email)' %}
+                    {% set event_statuses = event_statuses + '<br>' + '<span class="'+ 'ons-status ons-status--pending' + '">' + exercise.events.nudge_email_3.event_status + '</span>' + ' (Third nudge email)' + '</br>' %}
                 {% elif exercise.events.nudge_email_3.event_status == 'FAILED' %}
-                    {% set event_statuses = event_statuses + '<br>' + '<span class="'+ 'ons-status ons-status--error' + '">' + exercise.events.nudge_email_3.event_status + '</span>' + ' (Third nudge email)' %}
+                    {% set event_statuses = event_statuses + '<br>' + '<span class="'+ 'ons-status ons-status--error' + '">' + exercise.events.nudge_email_3.event_status + '</span>' + ' (Third nudge email)' + '</br>' %}
                 {% endif %}
                 {% if exercise.events.nudge_email_4.event_status == 'SCHEDULED' %}
-                    {% set event_statuses = event_statuses + '<br>' + '<span class="'+ 'ons-status ons-status--info' + '">' + exercise.events.nudge_email_4.event_status + '</span>' + ' (Fourth nudge email)' %}
+                    {% set event_statuses = event_statuses + '<br>' + '<span class="'+ 'ons-status ons-status--info' + '">' + exercise.events.nudge_email_4.event_status + '</span>' + ' (Fourth nudge email)' + '</br>' %}
                 {% elif exercise.events.nudge_email_4.event_status == 'PROCESSING' or exercise.events.nudge_email_4.event_status == 'RETRY' %}
-                    {% set event_statuses = event_statuses + '<br>' + '<span class="'+ 'ons-status ons-status--pending' + '">' + exercise.events.nudge_email_4.event_status + '</span>' + ' (Fourth nudge email)' %}
+                    {% set event_statuses = event_statuses + '<br>' + '<span class="'+ 'ons-status ons-status--pending' + '">' + exercise.events.nudge_email_4.event_status + '</span>' + ' (Fourth nudge email)' + '</br>' %}
                 {% elif exercise.events.nudge_email_4.event_status == 'FAILED' %}
-                    {% set event_statuses = event_statuses + '<br>' + '<span class="'+ 'ons-status ons-status--error' + '">' + exercise.events.nudge_email_4.event_status + '</span>' + ' (Fourth nudge email)' %}
+                    {% set event_statuses = event_statuses + '<br>' + '<span class="'+ 'ons-status ons-status--error' + '">' + exercise.events.nudge_email_4.event_status + '</span>' + ' (Fourth nudge email)' + '</br>' %}
                 {% endif %}
                 {% if exercise.events.nudge_email_5.event_status == 'SCHEDULED' %}
-                    {% set event_statuses = event_statuses + '<br>' + '<span class="'+ 'ons-status ons-status--info' + '">' + exercise.events.nudge_email_5.event_status + '</span>' + ' (Fifth nudge email)' %}
+                    {% set event_statuses = event_statuses + '<br>' + '<span class="'+ 'ons-status ons-status--info' + '">' + exercise.events.nudge_email_5.event_status + '</span>' + ' (Fifth nudge email)' + '</br>' %}
                 {% elif exercise.events.nudge_email_5.event_status == 'PROCESSING' or exercise.events.nudge_email_5.event_status == 'RETRY' %}
-                    {% set event_statuses = event_statuses + '<br>' + '<span class="'+ 'ons-status ons-status--pending' + '">' + exercise.events.nudge_email_5.event_status + '</span>' + ' (Fifth nudge email)' %}
+                    {% set event_statuses = event_statuses + '<br>' + '<span class="'+ 'ons-status ons-status--pending' + '">' + exercise.events.nudge_email_5.event_status + '</span>' + ' (Fifth nudge email)' + '</br>' %}
                 {% elif exercise.events.nudge_email_5.event_status == 'FAILED' %}
-                    {% set event_statuses = event_statuses + '<br>' + '<span class="'+ 'ons-status ons-status--error' + '">' + exercise.events.nudge_email_5.event_status + '</span>' + ' (Fifth nudge email)' %}
+                    {% set event_statuses = event_statuses + '<br>' + '<span class="'+ 'ons-status ons-status--error' + '">' + exercise.events.nudge_email_5.event_status + '</span>' + ' (Fifth nudge email)' + '</br>' %}
                 {% endif %}
             {% endif %}
             {% do surveyTableDataRows.append(
