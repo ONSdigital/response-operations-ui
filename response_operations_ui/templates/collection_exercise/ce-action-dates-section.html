@@ -56,6 +56,14 @@
                 {% set eventDay = event.day %}
                 {% set eventDate = event.date %}
                 {% set eventTime = event.time %}
+                {% set eventStatus = events.mps.event_status %}
+                {% if eventStatus == 'PROCESSING' or eventStatus == 'RETRY' %}
+                    {% set eventStatus = '<br>' +'<span class="'+ 'ons-status ons-status--pending' + '">'+ eventStatus +'</span>' %}
+                {% elif eventStatus == 'FAILED' %}
+                    {% set eventStatus = '<br>' +'<span class="'+ 'ons-status ons-status--error' + '">'+ eventStatus +'</span>' %}
+                {% else %}
+                    {% set eventStatus = '' %}
+                {% endif %}
             {% endif %}
         {% elif dateGroup == 'go_live' %}
             {% set label = 'Go live' %}
@@ -66,6 +74,14 @@
                 {% set eventDay = event.day %}
                 {% set eventDate = event.date %}
                 {% set eventTime = event.time %}
+                {% set eventStatus = events.go_live.event_status %}
+                {% if eventStatus == 'PROCESSING' or eventStatus == 'RETRY' %}
+                    {% set eventStatus = '<br>' +'<span class="'+ 'ons-status ons-status--pending' + '">'+ eventStatus +'</span>' %}
+                {% elif eventStatus == 'FAILED' %}
+                    {% set eventStatus = '<br>' +'<span class="'+ 'ons-status ons-status--error' + '">'+ eventStatus +'</span>' %}
+                {% else %}
+                    {% set eventStatus = '' %}
+                {% endif %}
             {% endif %}
         {% elif dateGroup == 'return_by' %}
             {% set label = 'Return by' %}
@@ -89,6 +105,14 @@
                 {% set eventDay = event.day %}
                 {% set eventDate = event.date %}
                 {% set eventTime = event.time %}
+                {% set eventStatus = events.reminder.event_status %}
+                {% if eventStatus == 'PROCESSING' or eventStatus == 'RETRY' %}
+                    {% set eventStatus = '<br>' +'<span class="'+ 'ons-status ons-status--pending' + '">'+ eventStatus +'</span>' %}
+                {% elif eventStatus == 'FAILED' %}
+                    {% set eventStatus = '<br>' +'<span class="'+ 'ons-status ons-status--error' + '">'+ eventStatus +'</span>' %}
+                {% else %}
+                    {% set eventStatus = '' %}
+                {% endif %}
                 {% set eventIsInFuture = event.is_in_future %}
                 {% set value = 'date' %}
             {% endif %}
@@ -105,6 +129,14 @@
                 {% set eventDay = event.day %}
                 {% set eventDate = event.date %}
                 {% set eventTime = event.time %}
+                {% set eventStatus = events.reminder2.event_status %}
+                {% if eventStatus == 'PROCESSING' or eventStatus == 'RETRY' %}
+                    {% set eventStatus = '<br>' +'<span class="'+ 'ons-status ons-status--pending' + '">'+ eventStatus +'</span>' %}
+                {% elif eventStatus == 'FAILED' %}
+                    {% set eventStatus = '<br>' +'<span class="'+ 'ons-status ons-status--error' + '">'+ eventStatus +'</span>' %}
+                {% else %}
+                    {% set eventStatus = '' %}
+                {% endif %}
                 {% set eventIsInFuture = event.is_in_future %}
                 {% set value = 'date' %}
             {% endif %}
@@ -121,6 +153,14 @@
                 {% set eventDay = event.day %}
                 {% set eventDate = event.date %}
                 {% set eventTime = event.time %}
+                {% set eventStatus = events.reminder3.event_status %}
+                {% if eventStatus == 'PROCESSING' or eventStatus == 'RETRY' %}
+                    {% set eventStatus = '<br>' +'<span class="'+ 'ons-status ons-status--pending' + '">'+ eventStatus +'</span>' %}
+                {% elif eventStatus == 'FAILED' %}
+                    {% set eventStatus = '<br>' +'<span class="'+ 'ons-status ons-status--error' + '">'+ eventStatus +'</span>' %}
+                {% else %}
+                    {% set eventStatus = '' %}
+                {% endif %}
                 {% set eventIsInFuture = event.is_in_future %}
                 {% set value = 'date' %}
             {% endif %}
@@ -147,6 +187,14 @@
                 {% set eventDay = event.day %}
                 {% set eventDate = event.date %}
                 {% set eventTime = event.time %}
+                {% set eventStatus = events.nudge_email_0.event_status %}
+                {% if eventStatus == 'PROCESSING' or eventStatus == 'RETRY' %}
+                    {% set eventStatus = '<br>' +'<span class="'+ 'ons-status ons-status--pending' + '">'+ eventStatus +'</span>' %}
+                {% elif eventStatus == 'FAILED' %}
+                    {% set eventStatus = '<br>' +'<span class="'+ 'ons-status ons-status--error' + '">'+ eventStatus +'</span>' %}
+                {% else %}
+                    {% set eventStatus = '' %}
+                {% endif %}
                 {% set eventIsInFuture = event.is_in_future %}
                 {% set value = 'date' %}
             {% endif %}
@@ -163,6 +211,14 @@
                 {% set eventDay = event.day %}
                 {% set eventDate = event.date %}
                 {% set eventTime = event.time %}
+                {% set eventStatus = events.nudge_email_2.event_status %}
+                {% if eventStatus == 'PROCESSING' or eventStatus == 'RETRY' %}
+                    {% set eventStatus = '<br>' +'<span class="'+ 'ons-status ons-status--pending' + '">'+ eventStatus +'</span>' %}
+                {% elif eventStatus == 'FAILED' %}
+                    {% set eventStatus = '<br>' +'<span class="'+ 'ons-status ons-status--error' + '">'+ eventStatus +'</span>' %}
+                {% else %}
+                    {% set eventStatus = '' %}
+                {% endif %}
                 {% set eventIsInFuture = event.is_in_future %}
                 {% set value = 'date' %}
             {% endif %}
@@ -179,6 +235,14 @@
                 {% set eventDay = event.day %}
                 {% set eventDate = event.date %}
                 {% set eventTime = event.time %}
+                {% set eventStatus = events.nudge_email_3.event_status %}
+                {% if eventStatus == 'PROCESSING' or eventStatus == 'RETRY' %}
+                    {% set eventStatus = '<br>' +'<span class="'+ 'ons-status ons-status--pending' + '">'+ eventStatus +'</span>' %}
+                {% elif eventStatus == 'FAILED' %}
+                    {% set eventStatus = '<br>' +'<span class="'+ 'ons-status ons-status--error' + '">'+ eventStatus +'</span>' %}
+                {% else %}
+                    {% set eventStatus = '' %}
+                {% endif %}
                 {% set eventIsInFuture = event.is_in_future %}
                 {% set value = 'date' %}
             {% endif %}
@@ -195,6 +259,14 @@
                 {% set eventDay = event.day %}
                 {% set eventDate = event.date %}
                 {% set eventTime = event.time %}
+                {% set eventStatus = events.nudge_email_4.event_status %}
+                {% if eventStatus == 'PROCESSING' or eventStatus == 'RETRY' %}
+                    {% set eventStatus = '<br>' +'<span class="'+ 'ons-status ons-status--pending' + '">'+ eventStatus +'</span>' %}
+                {% elif eventStatus == 'FAILED' %}
+                    {% set eventStatus = '<br>' +'<span class="'+ 'ons-status ons-status--error' + '">'+ eventStatus +'</span>' %}
+                {% else %}
+                    {% set eventStatus = '' %}
+                {% endif %}
                 {% set eventIsInFuture = event.is_in_future %}
                 {% set value = 'date' %}
             {% endif %}
@@ -211,6 +283,14 @@
                 {% set eventDay = event.day %}
                 {% set eventDate = event.date %}
                 {% set eventTime = event.time %}
+                {% set eventStatus = events.nudge_email_5.event_status %}
+                {% if eventStatus == 'PROCESSING' or eventStatus == 'RETRY' %}
+                    {% set eventStatus = '<br>' +'<span class="'+ 'ons-status ons-status--pending' + '">'+ eventStatus +'</span>' %}
+                {% elif eventStatus == 'FAILED' %}
+                    {% set eventStatus = '<br>' +'<span class="'+ 'ons-status ons-status--error' + '">'+ eventStatus +'</span>' %}
+                {% else %}
+                    {% set eventStatus = '' %}
+                {% endif %}
                 {% set eventIsInFuture = event.is_in_future %}
                 {% set value = 'date' %}
             {% endif %}
@@ -226,13 +306,28 @@
                     {% set hyperlink = '<a href="' + url_for("collection_exercise_bp.update_event_date",  short_name=survey.shortName, period=ce.exerciseRef, tag=dateGroup, errors=None if event == events.reminder) + '" id="' + 'edit-event-date-' + dateGroup + '">' + 'Edit ' + value + '</a>' %}
                 {% endif %}
                 {% if label %}
+                    {% if event %}
+                        {% set eventInfo = eventDay + ' ' + eventDate + ' ' + eventTime %}
+                        {% if label == 'Main print selection'
+                        or label == 'Go live'
+                        or label == 'First reminder'
+                        or label == 'Second reminder'
+                        or label == 'Third reminder'
+                        or label == 'First nudge email'
+                        or label == 'Second nudge email'
+                        or label == 'Third nudge email'
+                        or label == 'Fourth nudge email'
+                        or label == 'Fifth nudge email' %}
+                            {% set eventInfo = eventInfo + eventStatus %}
+                        {% endif %}
+                    {% endif %}
                     {% set tds = 
                         [ 
                             {  
                                 "value": label, 
                             }, 
                             { 
-                                "value": eventDay + ' ' + eventDate + ' ' + eventTime if event, 
+                                "value": eventInfo if event, 
                                 "name": name, 
                             } 
                         ]
