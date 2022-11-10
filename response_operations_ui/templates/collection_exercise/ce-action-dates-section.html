@@ -58,9 +58,9 @@
                 {% set eventTime = event.time %}
                 {% set eventStatus = events.mps.event_status %}
                 {% if eventStatus == 'PROCESSING' or eventStatus == 'RETRY' %}
-                    {% set eventStatus = '<br>' +'<span class="'+ 'ons-status ons-status--pending' + '">'+ eventStatus +'</span>' + '</br>' %}
+                    {% set eventStatus = '<br/>' +'<span class="'+ 'ons-status ons-status--pending' + '">'+ eventStatus +'</span>' %}
                 {% elif eventStatus == 'FAILED' %}
-                    {% set eventStatus = '<br>' +'<span class="'+ 'ons-status ons-status--error' + '">'+ eventStatus +'</span>' + '</br>' %}
+                    {% set eventStatus = '<br/>' +'<span class="'+ 'ons-status ons-status--error' + '">'+ eventStatus +'</span>' %}
                 {% else %}
                     {% set eventStatus = '' %}
                 {% endif %}
@@ -76,9 +76,9 @@
                 {% set eventTime = event.time %}
                 {% set eventStatus = events.go_live.event_status %}
                 {% if eventStatus == 'PROCESSING' or eventStatus == 'RETRY' %}
-                    {% set eventStatus = '<br>' +'<span class="'+ 'ons-status ons-status--pending' + '">'+ eventStatus +'</span>' + '</br>' %}
+                    {% set eventStatus = '<br/>' +'<span class="'+ 'ons-status ons-status--pending' + '">'+ eventStatus +'</span>' %}
                 {% elif eventStatus == 'FAILED' %}
-                    {% set eventStatus = '<br>' +'<span class="'+ 'ons-status ons-status--error' + '">'+ eventStatus +'</span>' + '</br>' %}
+                    {% set eventStatus = '<br/>' +'<span class="'+ 'ons-status ons-status--error' + '">'+ eventStatus +'</span>' %}
                 {% else %}
                     {% set eventStatus = '' %}
                 {% endif %}
@@ -107,9 +107,9 @@
                 {% set eventTime = event.time %}
                 {% set eventStatus = events.reminder.event_status %}
                 {% if eventStatus == 'PROCESSING' or eventStatus == 'RETRY' %}
-                    {% set eventStatus = '<br>' +'<span class="'+ 'ons-status ons-status--pending' + '">'+ eventStatus +'</span>' + '</br>' %}
+                    {% set eventStatus = '<br/>' +'<span class="'+ 'ons-status ons-status--pending' + '">'+ eventStatus +'</span>' %}
                 {% elif eventStatus == 'FAILED' %}
-                    {% set eventStatus = '<br>' +'<span class="'+ 'ons-status ons-status--error' + '">'+ eventStatus +'</span>' + '</br>' %}
+                    {% set eventStatus = '<br/>' +'<span class="'+ 'ons-status ons-status--error' + '">'+ eventStatus +'</span>' %}
                 {% else %}
                     {% set eventStatus = '' %}
                 {% endif %}
@@ -131,9 +131,9 @@
                 {% set eventTime = event.time %}
                 {% set eventStatus = events.reminder2.event_status %}
                 {% if eventStatus == 'PROCESSING' or eventStatus == 'RETRY' %}
-                    {% set eventStatus = '<br>' +'<span class="'+ 'ons-status ons-status--pending' + '">'+ eventStatus +'</span>' + '</br>' %}
+                    {% set eventStatus = '<br/>' +'<span class="'+ 'ons-status ons-status--pending' + '">'+ eventStatus +'</span>' %}
                 {% elif eventStatus == 'FAILED' %}
-                    {% set eventStatus = '<br>' +'<span class="'+ 'ons-status ons-status--error' + '">'+ eventStatus +'</span>' + '</br>' %}
+                    {% set eventStatus = '<br/>' +'<span class="'+ 'ons-status ons-status--error' + '">'+ eventStatus +'</span>' %}
                 {% else %}
                     {% set eventStatus = '' %}
                 {% endif %}
@@ -155,9 +155,9 @@
                 {% set eventTime = event.time %}
                 {% set eventStatus = events.reminder3.event_status %}
                 {% if eventStatus == 'PROCESSING' or eventStatus == 'RETRY' %}
-                    {% set eventStatus = '<br>' +'<span class="'+ 'ons-status ons-status--pending' + '">'+ eventStatus +'</span>' + '</br>' %}
+                    {% set eventStatus = '<br/>' +'<span class="'+ 'ons-status ons-status--pending' + '">'+ eventStatus +'</span>' %}
                 {% elif eventStatus == 'FAILED' %}
-                    {% set eventStatus = '<br>' +'<span class="'+ 'ons-status ons-status--error' + '">'+ eventStatus +'</span>' + '</br>' %}
+                    {% set eventStatus = '<br/>' +'<span class="'+ 'ons-status ons-status--error' + '">'+ eventStatus +'</span>' %}
                 {% else %}
                     {% set eventStatus = '' %}
                 {% endif %}
@@ -189,9 +189,9 @@
                 {% set eventTime = event.time %}
                 {% set eventStatus = events.nudge_email_0.event_status %}
                 {% if eventStatus == 'PROCESSING' or eventStatus == 'RETRY' %}
-                    {% set eventStatus = '<br>' +'<span class="'+ 'ons-status ons-status--pending' + '">'+ eventStatus +'</span>' + '</br>' %}
+                    {% set eventStatus = '<br/>' +'<span class="'+ 'ons-status ons-status--pending' + '">'+ eventStatus +'</span>' %}
                 {% elif eventStatus == 'FAILED' %}
-                    {% set eventStatus = '<br>' +'<span class="'+ 'ons-status ons-status--error' + '">'+ eventStatus +'</span>' + '</br>' %}
+                    {% set eventStatus = '<br/>' +'<span class="'+ 'ons-status ons-status--error' + '">'+ eventStatus +'</span>' %}
                 {% else %}
                     {% set eventStatus = '' %}
                 {% endif %}
@@ -213,9 +213,9 @@
                 {% set eventTime = event.time %}
                 {% set eventStatus = events.nudge_email_2.event_status %}
                 {% if eventStatus == 'PROCESSING' or eventStatus == 'RETRY' %}
-                    {% set eventStatus = '<br>' +'<span class="'+ 'ons-status ons-status--pending' + '">'+ eventStatus +'</span>' + '</br>' %}
+                    {% set eventStatus = '<br/>' +'<span class="'+ 'ons-status ons-status--pending' + '">'+ eventStatus +'</span>' %}
                 {% elif eventStatus == 'FAILED' %}
-                    {% set eventStatus = '<br>' +'<span class="'+ 'ons-status ons-status--error' + '">'+ eventStatus +'</span>' + '</br>' %}
+                    {% set eventStatus = '<br/>' +'<span class="'+ 'ons-status ons-status--error' + '">'+ eventStatus +'</span>' %}
                 {% else %}
                     {% set eventStatus = '' %}
                 {% endif %}
@@ -237,9 +237,9 @@
                 {% set eventTime = event.time %}
                 {% set eventStatus = events.nudge_email_3.event_status %}
                 {% if eventStatus == 'PROCESSING' or eventStatus == 'RETRY' %}
-                    {% set eventStatus = '<br>' +'<span class="'+ 'ons-status ons-status--pending' + '">'+ eventStatus +'</span>' + '</br>' %}
+                    {% set eventStatus = '<br/>' +'<span class="'+ 'ons-status ons-status--pending' + '">'+ eventStatus +'</span>' %}
                 {% elif eventStatus == 'FAILED' %}
-                    {% set eventStatus = '<br>' +'<span class="'+ 'ons-status ons-status--error' + '">'+ eventStatus +'</span>' + '</br>' %}
+                    {% set eventStatus = '<br/>' +'<span class="'+ 'ons-status ons-status--error' + '">'+ eventStatus +'</span>' %}
                 {% else %}
                     {% set eventStatus = '' %}
                 {% endif %}
@@ -261,9 +261,9 @@
                 {% set eventTime = event.time %}
                 {% set eventStatus = events.nudge_email_4.event_status %}
                 {% if eventStatus == 'PROCESSING' or eventStatus == 'RETRY' %}
-                    {% set eventStatus = '<br>' +'<span class="'+ 'ons-status ons-status--pending' + '">'+ eventStatus +'</span>' + '</br>' %}
+                    {% set eventStatus = '<br/>' +'<span class="'+ 'ons-status ons-status--pending' + '">'+ eventStatus +'</span>' %}
                 {% elif eventStatus == 'FAILED' %}
-                    {% set eventStatus = '<br>' +'<span class="'+ 'ons-status ons-status--error' + '">'+ eventStatus +'</span>' + '</br>' %}
+                    {% set eventStatus = '<br/>' +'<span class="'+ 'ons-status ons-status--error' + '">'+ eventStatus +'</span>' %}
                 {% else %}
                     {% set eventStatus = '' %}
                 {% endif %}
@@ -285,9 +285,9 @@
                 {% set eventTime = event.time %}
                 {% set eventStatus = events.nudge_email_5.event_status %}
                 {% if eventStatus == 'PROCESSING' or eventStatus == 'RETRY' %}
-                    {% set eventStatus = '<br>' +'<span class="'+ 'ons-status ons-status--pending' + '">'+ eventStatus +'</span>' + '</br>' %}
+                    {% set eventStatus = '<br/>' +'<span class="'+ 'ons-status ons-status--pending' + '">'+ eventStatus +'</span>' %}
                 {% elif eventStatus == 'FAILED' %}
-                    {% set eventStatus = '<br>' +'<span class="'+ 'ons-status ons-status--error' + '">'+ eventStatus +'</span>' + '</br>' %}
+                    {% set eventStatus = '<br/>' +'<span class="'+ 'ons-status ons-status--error' + '">'+ eventStatus +'</span>' %}
                 {% else %}
                     {% set eventStatus = '' %}
                 {% endif %}
