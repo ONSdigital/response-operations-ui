@@ -29,9 +29,9 @@
                 {% endcall %}
             {% endif %}
         {% endwith %}
-          {% if form.errors %}
+          {% if form.password.errors %}
             {% set errorData = [] %}
-                {% set error_count = form.errors | length %}
+                {% set error_count = form.password.errors | length %}
                 {% set plural_suffix = 's' if error_count > 1 else '' %}
                 {% set header_text = 'This page has ' ~ error_count ~ ' error' ~ plural_suffix %}
             {% call
