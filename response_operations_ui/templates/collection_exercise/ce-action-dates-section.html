@@ -56,6 +56,7 @@
                 {% set eventDay = event.day %}
                 {% set eventDate = event.date %}
                 {% set eventTime = event.time %}
+                {% set eventIsInFuture = event.is_in_future %}
             {% endif %}
         {% elif dateGroup == 'go_live' %}
             {% set label = 'Go live' %}
@@ -66,11 +67,13 @@
                 {% set eventDay = event.day %}
                 {% set eventDate = event.date %}
                 {% set eventTime = event.time %}
+                {% set eventIsInFuture = event.is_in_future %}
             {% endif %}
         {% elif dateGroup == 'return_by' %}
             {% set label = 'Return by' %}
             {% set event = events.return_by %}
             {% set name = 'return-by-date' %}
+            {% set eventIsInFuture = event.is_in_future %}
             {% set value = 'date' %}
             {% if event %}
                 {% set eventDay = event.day %}
@@ -128,6 +131,7 @@
             {% set label = 'Exercise end' %}
             {% set event = events.exercise_end %}
             {% set name = 'exercise-end-date' %}
+            {% set eventIsInFuture = event.is_in_future %}
             {% set value = 'date' %}
             {% if event %}
                 {% set eventDay = event.day %}
