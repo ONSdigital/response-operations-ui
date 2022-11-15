@@ -89,6 +89,20 @@ class TestSurvey(ViewTestCase):
                 "name": "201601",
                 "scheduledExecutionDateTime": "2017-05-15T00:00:00Z",
                 "state": "PUBLISHED",
+                'events': [
+                    {'id': '95525070-d117-4491-b149-0d6ef6b94562',
+                     'collectionExerciseId': collection_exercise_id, 'tag': 'go_live',
+                     'timestamp': '2023-01-01T09:00:00.000Z', 'eventStatus': 'RETRY'},
+                    {'id': '689467d2-3d5a-4c34-bdb2-de02c633d0c2',
+                     'collectionExerciseId': collection_exercise_id, 'tag': 'mps',
+                     'timestamp': '2023-01-01T07:00:00.000Z', 'eventStatus': 'FAILED'},
+                    {'id': 'af35bdb9-70b7-283c-8ee0-4b0584b88634',
+                     'collectionExerciseId': collection_exercise_id, 'tag': 'reminder',
+                     'timestamp': '2023-02-01T07:00:00.000Z', 'eventStatus': 'PROCESSING'},
+                    {'id': 'f464e681-0b3a-f35f-604d-a6c3b2bb9b56',
+                     'collectionExerciseId': collection_exercise_id, 'tag': 'reminder2',
+                     'timestamp': '2023-03-01T07:00:00.000Z', 'eventStatus': 'SCHEDULED'}
+                ]
             }
         ]
         self.collection_exercises_link = [sample_summary_id]
@@ -155,6 +169,21 @@ class TestSurvey(ViewTestCase):
         response = self.client.get("/surveys/bres", follow_redirects=True)
 
         self.assertEqual(response.status_code, 200)
+
+    @requests_mock.mock()
+    def test_survey_view_collection_exercise_event_status(self, mock_request):
+        mock_request.get(url_get_collection_exercises, json=self.collection_exercises)
+        mock_request.get(url_get_collection_exercises_link, json=self.collection_exercises_link)
+        mock_request.get(url_get_sample_summary, json=self.sample_summary)
+        mock_request.get(url_get_survey_by_short_name, json=survey_info["survey"])
+
+        response = self.client.get("/surveys/bres", follow_redirects=True)
+
+        self.assertEqual(response.status_code, 200)
+        self.assertIn("RETRY".encode(), response.data)
+        self.assertIn("FAILED".encode(), response.data)
+        self.assertIn("PROCESSING".encode(), response.data)
+        self.assertIn("SCHEDULED".encode(), response.data)
 
     @requests_mock.mock()
     def test_survey_view_fail(self, mock_request):
