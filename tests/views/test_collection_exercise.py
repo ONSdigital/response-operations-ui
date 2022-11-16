@@ -282,7 +282,7 @@ class TestCollectionExercise(ViewTestCase):
                 "tag": "reminder3",
                 "timestamp": "2018-03-20T00:00:00.000Z",
                 "eventStatus": "PROCESSING",
-            }
+            },
         ]
         self.collection_exercises_link = [sample_summary_id]
         self.collection_instruments = [

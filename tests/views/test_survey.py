@@ -89,20 +89,36 @@ class TestSurvey(ViewTestCase):
                 "name": "201601",
                 "scheduledExecutionDateTime": "2017-05-15T00:00:00Z",
                 "state": "PUBLISHED",
-                'events': [
-                    {'id': '95525070-d117-4491-b149-0d6ef6b94562',
-                     'collectionExerciseId': collection_exercise_id, 'tag': 'go_live',
-                     'timestamp': '2023-01-01T09:00:00.000Z', 'eventStatus': 'RETRY'},
-                    {'id': '689467d2-3d5a-4c34-bdb2-de02c633d0c2',
-                     'collectionExerciseId': collection_exercise_id, 'tag': 'mps',
-                     'timestamp': '2023-01-01T07:00:00.000Z', 'eventStatus': 'FAILED'},
-                    {'id': 'af35bdb9-70b7-283c-8ee0-4b0584b88634',
-                     'collectionExerciseId': collection_exercise_id, 'tag': 'reminder',
-                     'timestamp': '2023-02-01T07:00:00.000Z', 'eventStatus': 'PROCESSING'},
-                    {'id': 'f464e681-0b3a-f35f-604d-a6c3b2bb9b56',
-                     'collectionExerciseId': collection_exercise_id, 'tag': 'reminder2',
-                     'timestamp': '2023-03-01T07:00:00.000Z', 'eventStatus': 'SCHEDULED'}
-                ]
+                "events": [
+                    {
+                        "id": "95525070-d117-4491-b149-0d6ef6b94562",
+                        "collectionExerciseId": collection_exercise_id,
+                        "tag": "go_live",
+                        "timestamp": "2023-01-01T09:00:00.000Z",
+                        "eventStatus": "RETRY",
+                    },
+                    {
+                        "id": "689467d2-3d5a-4c34-bdb2-de02c633d0c2",
+                        "collectionExerciseId": collection_exercise_id,
+                        "tag": "mps",
+                        "timestamp": "2023-01-01T07:00:00.000Z",
+                        "eventStatus": "FAILED",
+                    },
+                    {
+                        "id": "af35bdb9-70b7-283c-8ee0-4b0584b88634",
+                        "collectionExerciseId": collection_exercise_id,
+                        "tag": "reminder",
+                        "timestamp": "2023-02-01T07:00:00.000Z",
+                        "eventStatus": "PROCESSING",
+                    },
+                    {
+                        "id": "f464e681-0b3a-f35f-604d-a6c3b2bb9b56",
+                        "collectionExerciseId": collection_exercise_id,
+                        "tag": "reminder2",
+                        "timestamp": "2023-03-01T07:00:00.000Z",
+                        "eventStatus": "SCHEDULED",
+                    },
+                ],
             }
         ]
         self.collection_exercises_link = [sample_summary_id]
