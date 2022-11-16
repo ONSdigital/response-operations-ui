@@ -20,7 +20,7 @@ lint:
 	pipenv run flake8 --exclude ./node_modules
 
 lint-check: load-design-system-templates
-	pipenv check ./response_operations_ui ./tests -1 51457 -i 51499
+	pipenv check ./response_operations_ui ./tests -1 51457-i 51499
 	pipenv run isort . --check-only
 	pipenv run black --line-length 120 --check .
 	pipenv run djlint . 
