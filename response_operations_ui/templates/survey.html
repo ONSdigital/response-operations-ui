@@ -112,11 +112,11 @@
                 {# Live exercises have the event status in brackets if it's processing, retrying or failed.  The 'failed' event state is prioritised over the others #}
                 {% if exercise.event_status == 'Processing' or exercise.event_status == 'Retrying' %}
                   {% set state_html_class = 'ons-status--pending' %}
-                  {% set status_event = '(' + exercise.event_status + ')' %}
+                  {% set status_event = ' (' + exercise.event_status + ')' %}
                 {% endif %}
                 {% if exercise.event_status == 'Failed' %}
                   {% set state_html_class = 'ons-status--error' %}
-                  {% set status_event = '(' + exercise.event_status + ')' %}
+                  {% set status_event = ' (' + exercise.event_status + ')' %}
                 {% endif %}
             {% endif %}
             {% do surveyTableDataRows.append(
@@ -135,7 +135,7 @@
                             "name" : "tbl-ce-shown-as"
                         },
                         {
-                            "value": '<span class="ons-status ' + state_html_class + '">' + exercise.state + " " + status_event + '</span>',
+                            "value": '<span class="ons-status ' + state_html_class + '">' + exercise.state + status_event + '</span>',
                             "data": "Status",
                             "name" : "tbl-ce-status"
                         },
