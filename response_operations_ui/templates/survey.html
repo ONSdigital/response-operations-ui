@@ -103,109 +103,29 @@
         {% set surveyTableDataRows = [] %}
 
         {% for exercise in collection_exercises %}
-            {% set exerciseRef = exercise.exerciseRef if exercise.exerciseRef else "" %}
-            {% set surveyTableReport = '<a href="'+ url_for('collection_exercise_bp.response_chasing', ce_id=exercise.id, survey_id=survey.id) +'" target="_blank"><svg class="ons-svg-icon" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" focusable="false"><path d="M19 9h-4V3H9v6H5l7 7 7-7zM5 18v2h14v-2H5z"/><path d="M0 0h24v24H0z" fill="none"/></svg> Response chasing</a>' if (exercise.state|upper == "LIVE" or  exercise.state|upper == "ENDED") %}
+            {% set status_event = '' %}
+            {% set state_html_class = 'ons-status--info' %}
             {% if exercise.state == 'Ended' %}
-                {% set type = 'ons-status ons-status--dead' %}
-                {% set status_event = '' %}
+                {% set state_html_class = 'ons-status--dead' %}
             {% elif exercise.state == 'Live' %}
-                {% set type = 'ons-status ons-status--success' %}
-                {% set status_event = '' %}
+                {% set state_html_class = 'ons-status--success' %}
+                {# Live exercises have the event status in brackets if it's processing, retrying or failed.  The 'failed' event state is prioritised over the others #}
                 {% if exercise.event_status == 'Processing' or exercise.event_status == 'Retrying' %}
-                  {% set type = 'ons-status ons-status--pending' %}
+                  {% set state_html_class = 'ons-status--pending' %}
                   {% set status_event = '(' + exercise.event_status + ')' %}
                 {% endif %}
                 {% if exercise.event_status == 'Failed' %}
-                  {% set type = 'ons-status ons-status--error' %}
+                  {% set state_html_class = 'ons-status--error' %}
                   {% set status_event = '(' + exercise.event_status + ')' %}
-                {% endif %}
-            {% elif exercise.state == 'Created' or exercise.state == 'Scheduled'%}
-                {% set type = 'ons-status ons-status--info' %}
-                {% set status_event = '' %}
-            {% else %}
-                {% set type = 'ons-status ons-status--info' %}
-                {% set status_event = '' %}
-            {% endif %}
-            {% set event_statuses = '' %}
-            {% if exercise.events.mps %}
-                {% if exercise.events.mps.event_status == 'SCHEDULED' %}
-                    {% set event_statuses = event_statuses + '<br/>' + '<span class="'+ 'ons-status ons-status--info' + '">' + exercise.events.mps.event_status + '</span>' + ' (MPS)' %}
-                {% elif exercise.events.mps.event_status == 'PROCESSING' or exercise.events.mps.event_status == 'RETRY' %}
-                    {% set event_statuses = event_statuses + '<br/>' + '<span class="'+ 'ons-status ons-status--pending' + '">' + exercise.events.mps.event_status + '</span>' + ' (MPS)' %}
-                {% elif exercise.events.mps.event_status == 'FAILED' %}
-                    {% set event_statuses = event_statuses + '<br/>' + '<span class="'+ 'ons-status ons-status--error' + '">' + exercise.events.mps.event_status + '</span>' + ' (MPS)' %}
-                {% endif %}
-                {% if exercise.events.go_live.event_status == 'SCHEDULED' %}
-                    {% set event_statuses = event_statuses + '<br/>' + '<span class="'+ 'ons-status ons-status--info' + '">' + exercise.events.go_live.event_status + '</span>' + ' (Go live)' %}
-                {% elif exercise.events.go_live.event_status == 'PROCESSING' or exercise.events.go_live.event_status == 'RETRY' %}
-                    {% set event_statuses = event_statuses + '<br/>' + '<span class="'+ 'ons-status ons-status--pending' + '">' + exercise.events.go_live.event_status + '</span>' + ' (Go live)' %}
-                {% elif exercise.events.go_live.event_status == 'FAILED' %}
-                    {% set event_statuses = event_statuses + '<br/>' + '<span class="'+ 'ons-status ons-status--error' + '">' + exercise.events.go_live.event_status + '</span>' + ' (Go live)' %}
-                {% endif %}
-                {% if exercise.events.reminder.event_status == 'SCHEDULED' %}
-                    {% set event_statuses = event_statuses + '<br/>' + '<span class="'+ 'ons-status ons-status--info' + '">' + exercise.events.reminder.event_status + '</span>' + ' (First reminder)' %}
-                {% elif exercise.events.reminder.event_status == 'PROCESSING' or exercise.events.reminder.event_status == 'RETRY' %}
-                    {% set event_statuses = event_statuses + '<br/>' + '<span class="'+ 'ons-status ons-status--pending' + '">' + exercise.events.reminder.event_status + '</span>' + ' (First reminder)' %}
-                {% elif exercise.events.reminder.event_status == 'FAILED' %}
-                    {% set event_statuses = event_statuses + '<br/>' + '<span class="'+ 'ons-status ons-status--error' + '">' + exercise.events.reminder.event_status + '</span>' + ' (First reminder)' %}
-                {% endif %}
-                {% if exercise.events.reminder2.event_status == 'SCHEDULED' %}
-                    {% set event_statuses = event_statuses + '<br/>' + '<span class="'+ 'ons-status ons-status--info' + '">' + exercise.events.reminder2.event_status + '</span>' + ' (Second reminder)' %}
-                {% elif exercise.events.reminder2.event_status == 'PROCESSING' or exercise.events.reminder2.event_status == 'RETRY' %}
-                    {% set event_statuses = event_statuses + '<br/>' + '<span class="'+ 'ons-status ons-status--pending' + '">' + exercise.events.reminder2.event_status + '</span>' + ' (Second reminder)' %}
-                {% elif exercise.events.reminder2.event_status == 'FAILED' %}
-                    {% set event_statuses = event_statuses + '<br/>' + '<span class="'+ 'ons-status ons-status--error' + '">' + exercise.events.reminder2.event_status + '</span>' + ' (Second reminder)' %}
-                {% endif %}
-                {% if exercise.events.reminder3.event_status == 'SCHEDULED' %}
-                    {% set event_statuses = event_statuses + '<br/>' + '<span class="'+ 'ons-status ons-status--info' + '">' + exercise.events.reminder3.event_status + '</span>' + ' (Third reminder)' %}
-                {% elif exercise.events.reminder3.event_status == 'PROCESSING' or exercise.events.reminder3.event_status == 'RETRY' %}
-                    {% set event_statuses = event_statuses + '<br/>' + '<span class="'+ 'ons-status ons-status--pending' + '">' + exercise.events.reminder3.event_status + '</span>' + ' (Third reminder)' %}
-                {% elif exercise.events.reminder3.event_status == 'FAILED' %}
-                    {% set event_statuses = event_statuses + '<br/>' + '<span class="'+ 'ons-status ons-status--error' + '">' + exercise.events.reminder3.event_status + '</span>' + ' (Third reminder)' %}
-                {% endif %}
-                {% if exercise.events.nudge_email_0.event_status == 'SCHEDULED' %}
-                    {% set event_statuses = event_statuses + '<br/>' + '<span class="'+ 'ons-status ons-status--info' + '">' + exercise.events.nudge_email_0.event_status + '</span>' + ' (First nudge email)' %}
-                {% elif exercise.events.nudge_email_0.event_status == 'PROCESSING' or exercise.events.nudge_email_0.event_status == 'RETRY' %}
-                    {% set event_statuses = event_statuses + '<br/>' + '<span class="'+ 'ons-status ons-status--pending' + '">' + exercise.events.nudge_email_0.event_status + '</span>' + ' (First nudge email)' %}
-                {% elif exercise.events.nudge_email_0.event_status == 'FAILED' %}
-                    {% set event_statuses = event_statuses + '<br/>' + '<span class="'+ 'ons-status ons-status--error' + '">' + exercise.events.nudge_email_0.event_status + '</span>' + ' (First nudge email)' %}
-                {% endif %}
-                {% if exercise.events.nudge_email_2.event_status == 'SCHEDULED' %}
-                    {% set event_statuses = event_statuses + '<br/>' + '<span class="'+ 'ons-status ons-status--info' + '">' + exercise.events.nudge_email_2.event_status + '</span>' + ' (Second nudge email)' %}
-                {% elif exercise.events.nudge_email_2.event_status == 'PROCESSING' or exercise.events.nudge_email_2.event_status == 'RETRY' %}
-                    {% set event_statuses = event_statuses + '<br/>' + '<span class="'+ 'ons-status ons-status--pending' + '">' + exercise.events.nudge_email_2.event_status + '</span>' + ' (Second nudge email)'%}
-                {% elif exercise.events.nudge_email_2.event_status == 'FAILED' %}
-                    {% set event_statuses = event_statuses + '<br/>' + '<span class="'+ 'ons-status ons-status--error' + '">' + exercise.events.nudge_email_2.event_status + '</span>' + ' (Second nudge email)'%}
-                {% endif %}
-                {% if exercise.events.nudge_email_3.event_status == 'SCHEDULED' %}
-                    {% set event_statuses = event_statuses + '<br/>' + '<span class="'+ 'ons-status ons-status--info' + '">' + exercise.events.nudge_email_3.event_status + '</span>' + ' (Third nudge email)' %}
-                {% elif exercise.events.nudge_email_3.event_status == 'PROCESSING' or exercise.events.nudge_email_3.event_status == 'RETRY' %}
-                    {% set event_statuses = event_statuses + '<br/>' + '<span class="'+ 'ons-status ons-status--pending' + '">' + exercise.events.nudge_email_3.event_status + '</span>' + ' (Third nudge email)' %}
-                {% elif exercise.events.nudge_email_3.event_status == 'FAILED' %}
-                    {% set event_statuses = event_statuses + '<br/>' + '<span class="'+ 'ons-status ons-status--error' + '">' + exercise.events.nudge_email_3.event_status + '</span>' + ' (Third nudge email)' %}
-                {% endif %}
-                {% if exercise.events.nudge_email_4.event_status == 'SCHEDULED' %}
-                    {% set event_statuses = event_statuses + '<br/>' + '<span class="'+ 'ons-status ons-status--info' + '">' + exercise.events.nudge_email_4.event_status + '</span>' + ' (Fourth nudge email)' %}
-                {% elif exercise.events.nudge_email_4.event_status == 'PROCESSING' or exercise.events.nudge_email_4.event_status == 'RETRY' %}
-                    {% set event_statuses = event_statuses + '<br/>' + '<span class="'+ 'ons-status ons-status--pending' + '">' + exercise.events.nudge_email_4.event_status + '</span>' + ' (Fourth nudge email)' %}
-                {% elif exercise.events.nudge_email_4.event_status == 'FAILED' %}
-                    {% set event_statuses = event_statuses + '<br/>' + '<span class="'+ 'ons-status ons-status--error' + '">' + exercise.events.nudge_email_4.event_status + '</span>' + ' (Fourth nudge email)' %}
-                {% endif %}
-                {% if exercise.events.nudge_email_5.event_status == 'SCHEDULED' %}
-                    {% set event_statuses = event_statuses + '<br/>' + '<span class="'+ 'ons-status ons-status--info' + '">' + exercise.events.nudge_email_5.event_status + '</span>' + ' (Fifth nudge email)' %}
-                {% elif exercise.events.nudge_email_5.event_status == 'PROCESSING' or exercise.events.nudge_email_5.event_status == 'RETRY' %}
-                    {% set event_statuses = event_statuses + '<br/>' + '<span class="'+ 'ons-status ons-status--pending' + '">' + exercise.events.nudge_email_5.event_status + '</span>' + ' (Fifth nudge email)' %}
-                {% elif exercise.events.nudge_email_5.event_status == 'FAILED' %}
-                    {% set event_statuses = event_statuses + '<br/>' + '<span class="'+ 'ons-status ons-status--error' + '">' + exercise.events.nudge_email_5.event_status + '</span>' + ' (Fifth nudge email)' %}
                 {% endif %}
             {% endif %}
             {% do surveyTableDataRows.append(
                 {
-                    "highlight": true if newly_created_period == exerciseRef,
+                    "highlight": true if newly_created_period == exercise.exerciseRef,
                     "tds": [
                         {
-                            "value": '<a href="/surveys/' + survey.shortName.replace(' ', '') + "/" + exerciseRef + '"
-                                name="ce-link-' + exerciseRef + '">' + exerciseRef + '</a>',
+                            "value": '<a href="/surveys/' + survey.shortName.replace(' ', '') + "/" + exercise.exerciseRef + '"
+                                name="ce-link-' + exercise.exerciseRef + '">' + exercise.exerciseRef + '</a>',
                             "data": "Period",
                             "name" : "tbl-ce-period"
                         },
@@ -215,32 +135,32 @@
                             "name" : "tbl-ce-shown-as"
                         },
                         {
-                            "value": '<span class="'+ type + '">'+ exercise.state + status_event + event_statuses +'</span>',
+                            "value": '<span class="ons-status ' + state_html_class + '">' + exercise.state + " " + status_event + '</span>',
                             "data": "Status",
                             "name" : "tbl-ce-status"
                         },
                         {
-                            "value": exercise.sample_summary and exercise.sample_summary.totalSampleUnits or "",
+                            "value": exercise.sample_summary.totalSampleUnits,
                             "data": "Sample",
                             "name" : "tbl-ce-status"
                         },
                         {
-                            "value": exercise.events.mps and exercise.events.mps.date or "",
+                            "value": exercise.events.mps.date,
                             "data": "MPS",
                             "name" : "tbl-ce-status"
                         },
                         {
-                            "value": exercise.events.go_live and exercise.events.go_live.date or "",
+                            "value": exercise.events.go_live.date,
                             "data": "Go live",
                             "name" : "tbl-ce-status"
                         },
                         {
-                            "value": exercise.events.return_by and exercise.events.return_by.date or "",
+                            "value": exercise.events.return_by.date,
                             "data": "Return by",
                             "name" : "tbl-ce-status"
                         },
                         {
-                            "value": exercise.events.reminder and exercise.events.reminder.date or "",
+                            "value": exercise.events.reminder.date,
                             "data": "First Reminder",
                             "name" : "tbl-ce-report"
                         },
