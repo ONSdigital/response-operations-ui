@@ -37,13 +37,12 @@
     {% set eventExecutionStatus = '' %}
     {% if events.mps %}
         {% set eventInfo = events.mps.day + ' ' + events.mps.date + ' ' + events.mps.time %}
-        {% set eventIsInFuture = events.mps.is_in_future %}
         {% if events.mps.event_status == 'PROCESSING' or events.mps.event_status == 'RETRY' %}
             {% set eventExecutionStatus = '<br/>' +'<span class="'+ 'ons-status ons-status--pending' + '">'+ events.mps.event_status +'</span>' %}
         {% elif events.mps.event_status == 'FAILED' %}
             {% set eventExecutionStatus = '<br/>' +'<span class="'+ 'ons-status ons-status--error' + '">'+ events.mps.event_status +'</span>' %}
         {% endif %}
-        {% if not locked or eventIsInFuture %}
+        {% if not locked or events.mps.is_in_future %}
           {% set hyperlink = '<a href="' + url_for("collection_exercise_bp.update_event_date",  short_name=survey.shortName, period=ce.exerciseRef, tag='mps') + '" id="edit-event-date-mps">Edit date</a>' %}
         {% endif %}
     {% else %}
@@ -80,13 +79,13 @@
     {% set eventExecutionStatus = '' %}
     {% if events.go_live %}
         {% set eventInfo = events.go_live.day + ' ' + events.go_live.date + ' ' + events.go_live.time %}
-        {% set eventIsInFuture = events.mps.is_in_future %}
+        {% set eventIsInFuture = events.go_live.is_in_future %}
         {% if events.go_live.event_status == 'PROCESSING' or events.mps.event_status == 'RETRY' %}
             {% set eventExecutionStatus = '<br/>' +'<span class="'+ 'ons-status ons-status--pending' + '">'+ events.go_live.event_status +'</span>' %}
         {% elif events.go_live.event_status == 'FAILED' %}
             {% set eventExecutionStatus = '<br/>' +'<span class="'+ 'ons-status ons-status--error' + '">'+ events.go_live.event_status +'</span>' %}
         {% endif %}
-        {% if not locked or eventIsInFuture %}
+        {% if not locked or events.go_live.is_in_future %}
           {% set hyperlink = '<a href="' + url_for("collection_exercise_bp.update_event_date",  short_name=survey.shortName, period=ce.exerciseRef, tag='go_live') + '" id="edit-event-date-go_live">Edit date</a>' %}
         {% endif %}
     {% else %}
