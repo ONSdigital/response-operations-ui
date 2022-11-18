@@ -1,21 +1,21 @@
 <section class="ce-section ce-details ons-u-mb-l">
     <h2 class="ons-u-fs-r--b ons-u-pt-m">Action dates</h2>
     {% set surveyEditPermission = hasPermission('surveys.edit') %}  
-    {% set tblHeaders =  
-        [ 
-            {  
+    {% set tblHeaders =
+        [
+            {
                 "value": "Event",
                 "thClasses": "ons-u-vh" 
-            }, 
-            { 
+            },
+            {
                 "value": "Date",
                 "thClasses": "ons-u-vh"
             }
         ]
     %}
     {% if surveyEditPermission %}
-        {% do tblHeaders.append( 
-                { 
+        {% do tblHeaders.append(
+                {
                     "value": "Action",
                     "thClasses": "ons-u-vh"
                 }
@@ -31,7 +31,94 @@
     } %}
 
     {% set surveyTableDataRows = [] %}
-    {% set dateGroups = ['mps', 'go_live', 'return_by', 'reminder', 'reminder2', 'reminder3', 'exercise_end', 'nudge_email_0', 'nudge_email_2', 'nudge_email_3', 'nudge_email_4', 'nudge_email_5'] %}
+
+    {# MPS row #}
+    {% set eventInfo = '' %}
+    {% set eventExecutionStatus = '' %}
+    {% if events.mps %}
+        {% set eventInfo = events.mps.day + ' ' + events.mps.date + ' ' + events.mps.time %}
+        {% set eventIsInFuture = events.mps.is_in_future %}
+        {% if events.mps.event_status == 'PROCESSING' or events.mps.event_status == 'RETRY' %}
+            {% set eventExecutionStatus = '<br/>' +'<span class="'+ 'ons-status ons-status--pending' + '">'+ events.mps.event_status +'</span>' %}
+        {% elif events.mps.event_status == 'FAILED' %}
+            {% set eventExecutionStatus = '<br/>' +'<span class="'+ 'ons-status ons-status--error' + '">'+ events.mps.event_status +'</span>' %}
+        {% endif %}
+        {% if not locked or eventIsInFuture %}
+          {% set hyperlink = '<a href="' + url_for("collection_exercise_bp.update_event_date",  short_name=survey.shortName, period=ce.exerciseRef, tag='mps') + '" id="edit-event-date-mps">Edit date</a>' %}
+        {% endif %}
+    {% else %}
+        {% set hyperlink = '<a href="' + url_for("collection_exercise_bp.get_create_collection_event_form",  short_name=survey.shortName, period=ce.exerciseRef, ce_id=ce.id, tag='mps') + '" id="create-event-date-mps">Add date</a>' %}
+    {% endif %}
+
+    {% set tds =
+        [
+            {
+                "value": 'Main print selection',
+            },
+            {
+                "value": eventInfo + eventExecutionStatus,
+                "name": 'mps-date',
+            }
+        ]
+    %}
+    {% if surveyEditPermission %}
+        {% do tds.append(
+            {
+                "value": hyperlink,
+                "tdClasses": "ons-u-ta-right"
+            }
+        ) %}
+    {% endif %}
+    {% do surveyTableDataRows.append(
+        {
+            "tds": tds
+        }
+    )%}
+
+    {# Go live row #}
+    {% set eventInfo = '' %}
+    {% set eventExecutionStatus = '' %}
+    {% if events.go_live %}
+        {% set eventInfo = events.go_live.day + ' ' + events.go_live.date + ' ' + events.go_live.time %}
+        {% set eventIsInFuture = events.mps.is_in_future %}
+        {% if events.go_live.event_status == 'PROCESSING' or events.mps.event_status == 'RETRY' %}
+            {% set eventExecutionStatus = '<br/>' +'<span class="'+ 'ons-status ons-status--pending' + '">'+ events.go_live.event_status +'</span>' %}
+        {% elif events.go_live.event_status == 'FAILED' %}
+            {% set eventExecutionStatus = '<br/>' +'<span class="'+ 'ons-status ons-status--error' + '">'+ events.go_live.event_status +'</span>' %}
+        {% endif %}
+        {% if not locked or eventIsInFuture %}
+          {% set hyperlink = '<a href="' + url_for("collection_exercise_bp.update_event_date",  short_name=survey.shortName, period=ce.exerciseRef, tag='go_live') + '" id="edit-event-date-go_live">Edit date</a>' %}
+        {% endif %}
+    {% else %}
+        {% set hyperlink = '<a href="' + url_for("collection_exercise_bp.get_create_collection_event_form",  short_name=survey.shortName, period=ce.exerciseRef, ce_id=ce.id, tag='go_live') + '" id="create-event-date-go_live">Add date</a>' %}
+    {% endif %}
+
+    {% set tds =
+        [
+            {
+                "value": 'Go live',
+            },
+            {
+                "value": eventInfo + eventExecutionStatus,
+                "name": 'go-live-date',
+            }
+        ]
+    %}
+    {% if surveyEditPermission %}
+        {% do tds.append(
+            {
+                "value": hyperlink,
+                "tdClasses": "ons-u-ta-right"
+            }
+        ) %}
+    {% endif %}
+    {% do surveyTableDataRows.append(
+        {
+            "tds": tds
+        }
+    )%}
+
+    {% set dateGroups = ['return_by', 'reminder', 'reminder2', 'reminder3', 'exercise_end', 'nudge_email_0', 'nudge_email_1', 'nudge_email_2', 'nudge_email_3', 'nudge_email_4'] %}
     {% set nudge = '' %}
     {% if not events.nudge_email_0 %}
         {% set nudge = 'nudge_email_0' %}
@@ -46,46 +133,9 @@
     {% endif %}
     {% for dateGroup in dateGroups %}
         {% set label = '' %}
+        {% set value = 'date' %}
         {% set eventIsInFuture = False %}
-        {% if dateGroup == 'mps' %}
-            {% set label = 'Main print selection' %}
-            {% set event = events.mps %}
-            {% set name = 'mps-date' %}
-            {% set value = 'date' %}
-            {% if event %}
-                {% set eventDay = event.day %}
-                {% set eventDate = event.date %}
-                {% set eventTime = event.time %}
-                {% set eventStatus = events.mps.event_status %}
-                {% if eventStatus == 'PROCESSING' or eventStatus == 'RETRY' %}
-                    {% set eventStatus = '<br/>' +'<span class="'+ 'ons-status ons-status--pending' + '">'+ eventStatus +'</span>' %}
-                {% elif eventStatus == 'FAILED' %}
-                    {% set eventStatus = '<br/>' +'<span class="'+ 'ons-status ons-status--error' + '">'+ eventStatus +'</span>' %}
-                {% else %}
-                    {% set eventStatus = '' %}
-                {% endif %}
-                {% set eventIsInFuture = event.is_in_future %}
-            {% endif %}
-        {% elif dateGroup == 'go_live' %}
-            {% set label = 'Go live' %}
-            {% set event = events.go_live %}
-            {% set name = 'go-live-date' %}
-            {% set value = 'date' %}
-            {% if event %}
-                {% set eventDay = event.day %}
-                {% set eventDate = event.date %}
-                {% set eventTime = event.time %}
-                {% set eventStatus = events.go_live.event_status %}
-                {% if eventStatus == 'PROCESSING' or eventStatus == 'RETRY' %}
-                    {% set eventStatus = '<br/>' +'<span class="'+ 'ons-status ons-status--pending' + '">'+ eventStatus +'</span>' %}
-                {% elif eventStatus == 'FAILED' %}
-                    {% set eventStatus = '<br/>' +'<span class="'+ 'ons-status ons-status--error' + '">'+ eventStatus +'</span>' %}
-                {% else %}
-                    {% set eventStatus = '' %}
-                {% endif %}
-                {% set eventIsInFuture = event.is_in_future %}
-            {% endif %}
-        {% elif dateGroup == 'return_by' %}
+        {% if dateGroup == 'return_by' %}
             {% set label = 'Return by' %}
             {% set event = events.return_by %}
             {% set name = 'return-by-date' %}
@@ -202,8 +252,8 @@
                 {% set eventIsInFuture = event.is_in_future %}
                 {% set value = 'date' %}
             {% endif %}
-        {% elif dateGroup == 'nudge_email_2' %}
-            {% set event = events.nudge_email_2 %}
+        {% elif dateGroup == 'nudge_email_1' %}
+            {% set event = events.nudge_email_1 %}
             {% set value = 'nudge email' %}
             {% if events.nudge_email_0 %}
                 {% set showNudgeEmail = true %}
@@ -212,6 +262,30 @@
             {% endif %}
             {% if event %}
                 {% set label = 'Second nudge email' %}
+                {% set eventDay = event.day %}
+                {% set eventDate = event.date %}
+                {% set eventTime = event.time %}
+                {% set eventStatus = events.nudge_email_1.event_status %}
+                {% if eventStatus == 'PROCESSING' or eventStatus == 'RETRY' %}
+                    {% set eventStatus = '<br/>' +'<span class="'+ 'ons-status ons-status--pending' + '">'+ eventStatus +'</span>' %}
+                {% elif eventStatus == 'FAILED' %}
+                    {% set eventStatus = '<br/>' +'<span class="'+ 'ons-status ons-status--error' + '">'+ eventStatus +'</span>' %}
+                {% else %}
+                    {% set eventStatus = '' %}
+                {% endif %}
+                {% set eventIsInFuture = event.is_in_future %}
+                {% set value = 'date' %}
+            {% endif %}
+        {% elif dateGroup == 'nudge_email_2' %}
+            {% set event = events.nudge_email_2 %}
+            {% set value = 'nudge email' %}
+            {% if events.nudge_email_1 %}
+                {% set showNudgeEmail = true %}
+                {% set label = ' ' %}
+                {% set name = 'third-nudge-email-date' %}
+            {% endif %}
+            {% if event %}
+                {% set label = 'Third nudge email' %}
                 {% set eventDay = event.day %}
                 {% set eventDate = event.date %}
                 {% set eventTime = event.time %}
@@ -232,10 +306,10 @@
             {% if events.nudge_email_2 %}
                 {% set showNudgeEmail = true %}
                 {% set label = ' ' %}
-                {% set name = 'third-nudge-email-date' %}
+                {% set name = 'fourth-nudge-email-date' %}
             {% endif %}
             {% if event %}
-                {% set label = 'Third nudge email' %}
+                {% set label = 'Fourth nudge email' %}
                 {% set eventDay = event.day %}
                 {% set eventDate = event.date %}
                 {% set eventTime = event.time %}
@@ -256,30 +330,6 @@
             {% if events.nudge_email_3 %}
                 {% set showNudgeEmail = true %}
                 {% set label = ' ' %}
-                {% set name = 'fourth-nudge-email-date' %}
-            {% endif %}
-            {% if event %}
-                {% set label = 'Fourth nudge email' %}
-                {% set eventDay = event.day %}
-                {% set eventDate = event.date %}
-                {% set eventTime = event.time %}
-                {% set eventStatus = events.nudge_email_4.event_status %}
-                {% if eventStatus == 'PROCESSING' or eventStatus == 'RETRY' %}
-                    {% set eventStatus = '<br/>' +'<span class="'+ 'ons-status ons-status--pending' + '">'+ eventStatus +'</span>' %}
-                {% elif eventStatus == 'FAILED' %}
-                    {% set eventStatus = '<br/>' +'<span class="'+ 'ons-status ons-status--error' + '">'+ eventStatus +'</span>' %}
-                {% else %}
-                    {% set eventStatus = '' %}
-                {% endif %}
-                {% set eventIsInFuture = event.is_in_future %}
-                {% set value = 'date' %}
-            {% endif %}
-        {% elif dateGroup == 'nudge_email_5' %}
-            {% set event = events.nudge_email_5 %}
-            {% set value = 'nudge email' %}
-            {% if events.nudge_email_4 %}
-                {% set showNudgeEmail = true %}
-                {% set label = ' ' %}
                 {% set name = 'fifth-nudge-email-date' %}
             {% endif %}
             {% if event %}
@@ -287,7 +337,7 @@
                 {% set eventDay = event.day %}
                 {% set eventDate = event.date %}
                 {% set eventTime = event.time %}
-                {% set eventStatus = events.nudge_email_5.event_status %}
+                {% set eventStatus = events.nudge_email_3.event_status %}
                 {% if eventStatus == 'PROCESSING' or eventStatus == 'RETRY' %}
                     {% set eventStatus = '<br/>' +'<span class="'+ 'ons-status ons-status--pending' + '">'+ eventStatus +'</span>' %}
                 {% elif eventStatus == 'FAILED' %}
@@ -312,9 +362,7 @@
                 {% if label %}
                     {% if event %}
                         {% set eventInfo = eventDay + ' ' + eventDate + ' ' + eventTime %}
-                        {% if label == 'Main print selection'
-                        or label == 'Go live'
-                        or label == 'First reminder'
+                        {% if label == 'First reminder'
                         or label == 'Second reminder'
                         or label == 'Third reminder'
                         or label == 'First nudge email'
