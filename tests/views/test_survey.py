@@ -87,6 +87,7 @@ class TestSurvey(ViewTestCase):
             {
                 "id": collection_exercise_id,
                 "name": "201601",
+                "exerciseRef": "201803",
                 "scheduledExecutionDateTime": "2017-05-15T00:00:00Z",
                 "state": "PUBLISHED",
                 "events": [
