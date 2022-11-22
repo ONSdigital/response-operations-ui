@@ -347,9 +347,9 @@
             {% if event %}
                 {% set eventInfo = event.day + ' ' + event.date + ' ' + event.time %}
                 {% if events.reminder.event_status == 'PROCESSING' or events.reminder.event_status == 'RETRY' %}
-                    {% set eventStatus = '<br/>' +'<span class="'+ 'ons-status ons-status--pending' + '">'+ events.reminder.event_status +'</span>' %}
-                {% elif eventStatus == 'FAILED' %}
-                    {% set eventStatus = '<br/>' +'<span class="'+ 'ons-status ons-status--error' + '">'+ events.reminder.event_status +'</span>' %}
+                    {% set eventStatus = '<br/>' +'<span class="'+ 'ons-status ons-status--pending' + '">'+ events.reminder.event_status | capitalize +'</span>' %}
+                {% elif events.reminder.event_status == 'FAILED' %}
+                    {% set eventStatus = '<br/>' +'<span class="'+ 'ons-status ons-status--error' + '">'+ events.reminder.event_status | capitalize +'</span>' %}
                 {% endif %}
                 {% set eventIsInFuture = event.is_in_future %}
                 {% set value = 'date' %}
@@ -366,9 +366,9 @@
                 {% set label = 'Second reminder' %}
                 {% set eventInfo = event.day + ' ' + event.date + ' ' + event.time %}
                 {% if events.reminder2.event_status == 'PROCESSING' or events.reminder2.event_status == 'RETRY' %}
-                    {% set eventStatus = '<br/>' +'<span class="'+ 'ons-status ons-status--pending' + '">'+ events.reminder2.event_status +'</span>' %}
-                {% elif eventStatus == 'FAILED' %}
-                    {% set eventStatus = '<br/>' +'<span class="'+ 'ons-status ons-status--error' + '">'+ events.reminder2.event_status +'</span>' %}
+                    {% set eventStatus = '<br/>' +'<span class="'+ 'ons-status ons-status--pending' + '">'+ events.reminder2.event_status | capitalize +'</span>' %}
+                {% elif events.reminder2.event_status == 'FAILED' %}
+                    {% set eventStatus = '<br/>' +'<span class="'+ 'ons-status ons-status--error' + '">'+ events.reminder2.event_status | capitalize +'</span>' %}
                 {% endif %}
                 {% set eventIsInFuture = event.is_in_future %}
                 {% set value = 'date' %}
@@ -385,9 +385,9 @@
                 {% set label = 'Third reminder' %}
                 {% set eventInfo = event.day + ' ' + event.date + ' ' + event.time %}
                 {% if events.reminder3.event_status == 'PROCESSING' or events.reminder3.event_status == 'RETRY' %}
-                    {% set eventStatus = '<br/>' +'<span class="'+ 'ons-status ons-status--pending' + '">'+ events.reminder3.event_status +'</span>' %}
+                    {% set eventStatus = '<br/>' +'<span class="'+ 'ons-status ons-status--pending' + '">'+ events.reminder3.event_status | capitalize +'</span>' %}
                 {% elif eventStatus == 'FAILED' %}
-                    {% set eventStatus = '<br/>' +'<span class="'+ 'ons-status ons-status--error' + '">'+ events.reminder3.event_status +'</span>' %}
+                    {% set eventStatus = '<br/>' +'<span class="'+ 'ons-status ons-status--error' + '">'+ events.reminder3.event_status | capitalize +'</span>' %}
                 {% endif %}
                 {% set eventIsInFuture = event.is_in_future %}
                 {% set value = 'date' %}

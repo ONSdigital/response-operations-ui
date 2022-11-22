@@ -494,9 +494,9 @@ class TestCollectionExercise(ViewTestCase):
         response = self.client.get(f"/surveys/{short_name}/{period}", follow_redirects=True)
 
         self.assertEqual(response.status_code, 200)
-        self.assertIn("RETRY".encode(), response.data)
-        self.assertIn("FAILED".encode(), response.data)
-        self.assertIn("PROCESSING".encode(), response.data)
+        self.assertIn("Retry".encode(), response.data)
+        self.assertIn("Failed".encode(), response.data)
+        self.assertIn("Processing".encode(), response.data)
 
     @requests_mock.mock()
     @patch("response_operations_ui.views.collection_exercise.build_collection_exercise_details")
