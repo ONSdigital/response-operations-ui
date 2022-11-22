@@ -109,7 +109,7 @@
                 {% set state_html_class = 'ons-status--dead' %}
             {% elif exercise.state == 'Live' %}
                 {% set state_html_class = 'ons-status--success' %}
-                {# Live exercises have the event status in brackets if it's processing, retrying or failed.  The 'failed' event state is prioritised over the others #}
+                {# Live exercises have the event status in brackets if it's processing, retrying or failed. #}
                 {% if exercise.event_status == 'Processing' or exercise.event_status == 'Retrying' %}
                   {% set state_html_class = 'ons-status--pending' %}
                   {% set status_event = ' (' + exercise.event_status + ')' %}

@@ -1,3 +1,4 @@
+import copy
 import json
 import os
 from contextlib import suppress
@@ -187,21 +188,27 @@ class TestSurvey(ViewTestCase):
 
         self.assertEqual(response.status_code, 200)
 
-    # Will uncomment later, just sorting it out for now
-    # @requests_mock.mock()
-    # def test_survey_view_collection_exercise_event_status(self, mock_request):
-    #     mock_request.get(url_get_collection_exercises, json=self.collection_exercises)
-    #     mock_request.get(url_get_collection_exercises_link, json=self.collection_exercises_link)
-    #     mock_request.get(url_get_sample_summary, json=self.sample_summary)
-    #     mock_request.get(url_get_survey_by_short_name, json=survey_info["survey"])
-    #
-    #     response = self.client.get("/surveys/bres", follow_redirects=True)
-    #
-    #     self.assertEqual(response.status_code, 200)
-    #     self.assertIn("R".encode(), response.data)
-    #     self.assertIn("FAILED".encode(), response.data)
-    #     self.assertIn("PROCESSING".encode(), response.data)
-    #     self.assertIn("SCHEDULED".encode(), response.data)
+    @requests_mock.mock()
+    def test_survey_view_collection_exercise_event_status(self, mock_request):
+        mock_request.get(url_get_collection_exercises, json=self.collection_exercises)
+        mock_request.get(url_get_collection_exercises_link, json=self.collection_exercises_link)
+        mock_request.get(url_get_sample_summary, json=self.sample_summary)
+        mock_request.get(url_get_survey_by_short_name, json=survey_info["survey"])
+
+        # When the exercise isn't live, nothing shows
+        response = self.client.get("/surveys/bres", follow_redirects=True)
+        self.assertEqual(response.status_code, 200)
+        self.assertNotIn("Processing".encode(), response.data)
+
+        # When the exercise is live, it shows a status.  Prioritises 'Processing' when multiple happen because that's
+        # how the 'get_collex_event_status' function works
+        exercise_copy = copy.deepcopy(self.collection_exercises)
+        exercise_copy[0]['state'] = 'LIVE'
+        mock_request.get(url_get_collection_exercises, json=exercise_copy)
+        response = self.client.get("/surveys/bres", follow_redirects=True)
+
+        self.assertEqual(response.status_code, 200)
+        self.assertIn("Processing".encode(), response.data)
 
     @requests_mock.mock()
     def test_survey_view_fail(self, mock_request):
