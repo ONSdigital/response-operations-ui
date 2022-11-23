@@ -47,9 +47,10 @@ def search_redirect():
     form = RespondentSearchForm()
     form_valid = form.validate()
 
-    if not form_valid:
-        flash("At least one input should be filled")
-        return redirect(url_for("respondent_bp.respondent_home"))
+    if request.method == "POST":
+        if not form_valid:
+            flash("At least one input should be filled")
+            return redirect(url_for("respondent_bp.respondent_home"))
 
     email_address = form.email_address.data or ""
     first_name = form.first_name.data or ""
