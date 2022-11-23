@@ -203,7 +203,7 @@ class TestSurvey(ViewTestCase):
         # When the exercise is live, it shows a status.  Prioritises 'Processing' when multiple happen because that's
         # how the 'get_collex_event_status' function works
         exercise_copy = copy.deepcopy(self.collection_exercises)
-        exercise_copy[0]['state'] = 'LIVE'
+        exercise_copy[0]["state"] = "LIVE"
         mock_request.get(url_get_collection_exercises, json=exercise_copy)
         response = self.client.get("/surveys/bres", follow_redirects=True)
 
