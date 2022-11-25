@@ -10,7 +10,11 @@ from response_operations_ui.common import token_decoder
 from response_operations_ui.controllers import uaa_controller
 from response_operations_ui.controllers.notify_controller import NotifyController
 from response_operations_ui.exceptions.exceptions import NotifyError
-from response_operations_ui.forms import ForgotPasswordForm, SetAccountPasswordForm
+from response_operations_ui.forms import (
+    ForgotPasswordForm,
+    ResetAccountPasswordForm,
+    SetAccountPasswordForm,
+)
 
 logger = wrap_logger(logging.getLogger(__name__))
 
@@ -73,7 +77,7 @@ def get_reset_password(token, form_errors=None):
 
 @passwords_bp.route("/reset-password/<token>", methods=["POST"])
 def post_reset_password(token):
-    form = SetAccountPasswordForm(request.form)
+    form = ResetAccountPasswordForm(request.form)
 
     if not form.validate():
         return get_reset_password(token, form_errors=form.errors)

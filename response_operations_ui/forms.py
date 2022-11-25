@@ -475,6 +475,32 @@ class SetAccountPasswordForm(FlaskForm):
     )
 
 
+class ResetAccountPasswordForm(FlaskForm):
+    password = PasswordField(
+        "Create a new password",
+        validators=[
+            DataRequired("Your new password is required"),
+            EqualTo("password_confirm", message="Your passwords do not match"),
+            Length(
+                min=12,
+                max=160,
+                message="Your password doesn't meet the requirements",
+            ),
+        ],
+    )
+    password_confirm = PasswordField("Re-type your new password")
+
+    @staticmethod
+    def validate_password(form, field):
+        password = field.data
+        if (
+            password.isalnum()
+            or not any(char.isupper() for char in password)
+            or not any(char.isdigit() for char in password)
+        ):
+            raise ValidationError("Your password doesn't meet the requirements")
+
+
 class ChangeAccountName(FlaskForm):
     first_name = StringField(
         "First name",
