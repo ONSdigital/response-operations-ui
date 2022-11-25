@@ -29,18 +29,28 @@
                 {% endcall %}
             {% endif %}
         {% endwith %}
+          {% set password_error_count = 0 %}
+          {% set password_confirm_error_count = 0 %}
           {% if form.password.errors %}
+            {% set password_error_count = form.password.errors | length|default(0, true) %}
+          {% endif %}
+          {% if form.password_confirm.errors %}
+            {% set password_confirm_error_count = form.password_confirm.errors | length|default(0, true) %}
+          {% endif %}
+          {% if password_error_count or password_confirm_error_count %}
             {% set errorData = [] %}
-                {% set error_count = form.password.errors | length %}
+            {% set password = namespace(text = '') %}
+            {% set password_confirm = namespace(text = '') %}
+                {% set error_count = password_error_count + password_confirm_error_count %}
                 {% set plural_suffix = 's' if error_count > 1 else '' %}
-                {% set header_text = 'This page has ' ~ error_count ~ ' error' ~ plural_suffix %}
+                {% set plural_singular_word = 'are ' if error_count > 1 else 'is ' %}
+                {% set header_text = 'There ' ~ plural_singular_word ~ error_count ~ ' problem' ~ plural_suffix ~ ' with your password' %}
             {% call
                 onsPanel({
                     "title": header_text,
                     "type": "error"
                 })
             %}
-                <p>These <strong>must be corrected</strong> to continue.</p>
                 {% for error in form.password.errors %}
                     {% do errorData.append(
                         {
@@ -63,35 +73,46 @@
                 {% endfor %}
                 {{
                     onsList({
+                        "element": 'ol',
                         "classes": "list--bare",
                         "itemsList": errorData
                     })
                 }}
             {% endcall %}
         {% endif %}
+            {% if errorData %}
+                </br>
+            {% endif %}
             <h1>Activate your account</h1>
             <form method="post" action="" class="form" role="form">
                 <input type="hidden" name="csrf_token" value="{{ csrf_token() }}" />
-              <span>An account has been created for <strong>{{ username }}</strong>.</span>
-              <p>To activate the account, you must create a password.</p>
-                {{
-                    onsPanel({
-                        "body": '<p>Your password must have:</p><ul>
-                        <li>at least 12 characters</li>
-                        <li>at least 1 uppercase letter</li>
-                        <li>at least 1 symbol (eg: ?!£%)</li>
-                        <li>at least 1 number</li></ul>'
-                    })
-                }}
+              <span>An account has been created for <strong>{{ username }}</strong>. 
+                To activate the account, you must create a password.</span>
+              <!--Double <br> required to ensure correct spacing between above span and password information section-->
+              </br>
+              </br>
+              {% set password_information = '<p>' + 'Your password must have at least:' + '</p><ul>'
+                        + '<li>' + 'at least 12 characters' + '</li>'
+                        + '<li>' + 'at least 1 uppercase letter' + '</li>'
+                        + '<li>' + 'at least 1 symbol (eg: ?!£%)' + '</li>'
+                        + '<li>' + 'at least 1 number' + '</li></ul>' %}
+              {% if password_error_count == 0  %}
+                  {{
+                        onsPanel({
+                            "body": password_information,
+                        })
+                    }}
+              {% endif %}
                 {{
                     onsPassword({
                         "id": "password",
                         "name": "password",
+                        "showPasswordText": "Show password",
                         "label": {
-                            "text": "Password"
+                            "text": password_information + '<p>' + ' Password' + '</p>' if form.password.errors else 'Password',
                         },
                         "showPasswordText": "Show password",
-                        "error": {"text": errorData[0]["text"] } if errorData else None
+                        "error": {"text": 'Enter a password in the correct format' } if form.password.errors else None
                     })
                 }}
                 {{
@@ -102,6 +123,8 @@
                             "text": "Confirm password"
                         },
                         "showPasswordText": "Show password",
+                        "error": {"text": 'Enter passwords that match' } if password_confirm_error_count else None,
+                        "attributes": {"margin-top": 0}
                     })
                 }}
                 <div class="ons-grid ons-grid--flex ons-grid--gutterless ons-grid--vertical-center ons-grid--no-wrap@s ons-u-mt-m ons-u-mb-m">
