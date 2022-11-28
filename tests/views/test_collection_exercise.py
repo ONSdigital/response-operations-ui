@@ -254,7 +254,35 @@ class TestCollectionExercise(ViewTestCase):
                 "tag": "mps",
                 "timestamp": "2018-03-16T00:00:00.000Z",
                 "eventStatus": "PROCESSED",
-            }
+            },
+            {
+                "id": collection_exercise_event_id,
+                "collectionExerciseId": collection_exercise_id,
+                "tag": "go_live",
+                "timestamp": "2018-03-17T00:00:00.000Z",
+                "eventStatus": "RETRY",
+            },
+            {
+                "id": collection_exercise_event_id,
+                "collectionExerciseId": collection_exercise_id,
+                "tag": "reminder",
+                "timestamp": "2018-03-18T00:00:00.000Z",
+                "eventStatus": "FAILED",
+            },
+            {
+                "id": collection_exercise_event_id,
+                "collectionExerciseId": collection_exercise_id,
+                "tag": "reminder2",
+                "timestamp": "2018-03-19T00:00:00.000Z",
+                "eventStatus": "SCHEDULED",
+            },
+            {
+                "id": collection_exercise_event_id,
+                "collectionExerciseId": collection_exercise_id,
+                "tag": "reminder3",
+                "timestamp": "2018-03-20T00:00:00.000Z",
+                "eventStatus": "PROCESSING",
+            },
         ]
         self.collection_exercises_link = [sample_summary_id]
         self.collection_instruments = [
@@ -447,6 +475,28 @@ class TestCollectionExercise(ViewTestCase):
         self.assertIn("PUBLISHED".encode(), response.data)
         self.assertNotIn("Select eQ version".encode(), response.data)
         self.assertNotIn("Set ready for live".encode(), response.data)
+
+    @requests_mock.mock()
+    def test_collection_exercise_view_event_statuses(self, mock_request):
+        mock_request.get(url_get_survey_by_short_name, json=self.survey)
+        mock_request.get(url_ces_by_survey, json=self.collection_exercises)
+        mock_request.get(url_ce_by_id, json=collection_exercise_details["collection_exercise"])
+        mock_request.get(url_get_collection_exercise_events, json=self.collection_exercise_events)
+        mock_request.get(
+            f"{url_get_collection_instrument}?{ci_search_string}", json=self.collection_instruments, complete_qs=True
+        )
+        mock_request.get(
+            f"{url_get_collection_instrument}?{ci_type_search_string_eq}", json=self.eq_ci_selectors, complete_qs=True
+        )
+        mock_request.get(url_link_sample, json=[sample_summary_id])
+        mock_request.get(url_get_sample_summary, json=self.sample_summary)
+
+        response = self.client.get(f"/surveys/{short_name}/{period}", follow_redirects=True)
+
+        self.assertEqual(response.status_code, 200)
+        self.assertIn("Retry".encode(), response.data)
+        self.assertIn("Failed".encode(), response.data)
+        self.assertIn("Processing".encode(), response.data)
 
     @requests_mock.mock()
     @patch("response_operations_ui.views.collection_exercise.build_collection_exercise_details")
