@@ -99,7 +99,7 @@ def search_redirect():
         format_total=True,
         format_number=True,
         show_single_page=False,
-        href=pagination_href,
+        href=urllib.parse.quote_plus(pagination_href),
     )
 
     return render_template(
