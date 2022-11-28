@@ -1,4 +1,5 @@
 import logging
+import urllib.parse
 from datetime import datetime
 
 from dateutil.tz import gettz
@@ -51,14 +52,25 @@ def search_redirect():
         if not form_valid:
             flash("At least one input should be filled")
             return redirect(url_for("respondent_bp.respondent_home"))
+        email_address = form.email_address.data or ""
+        first_name = form.first_name.data or ""
+        last_name = form.last_name.data or ""
+    else:
+        email_address = request.args.get("email", "")
+        first_name = request.args.get("firstname", "")
+        last_name = request.args.get("lastname", "")
+    page = request.values.get("page", "1")
 
-    email_address = form.email_address.data or ""
-    first_name = form.first_name.data or ""
-    last_name = form.last_name.data or ""
-
+    pagination_href = "/respondent-search?"
+    if email_address != "":
+        pagination_href = pagination_href + "email='" + email_address + "'&"
+    if first_name != "":
+        pagination_href = pagination_href + "firstname='" + first_name + "'&"
+    if last_name != "":
+        pagination_href = pagination_href + "lastname='" + last_name + "'&"
+    pagination_href = pagination_href[:-1] + "&page=" + page
     breadcrumbs = [{"text": "Respondents"}, {"text": "Search"}]
 
-    page = request.values.get("page", "1")
     limit = app.config["PARTY_RESPONDENTS_PER_PAGE"]
 
     party_response = party_controller.search_respondents(first_name, last_name, email_address, page, limit)
@@ -87,6 +99,7 @@ def search_redirect():
         format_total=True,
         format_number=True,
         show_single_page=False,
+        href=pagination_href,
     )
 
     return render_template(
