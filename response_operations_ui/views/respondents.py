@@ -1,5 +1,4 @@
 import logging
-import urllib.parse
 from datetime import datetime
 
 from dateutil.tz import gettz
@@ -61,14 +60,14 @@ def search_redirect():
         last_name = request.args.get("lastname", "")
     page = request.values.get("page", "1")
 
-    pagination_href = "/respondent-search?"
+    pagination_href = "?"
     if email_address != "":
         pagination_href = pagination_href + "email='" + email_address + "'&"
     if first_name != "":
         pagination_href = pagination_href + "firstname='" + first_name + "'&"
     if last_name != "":
         pagination_href = pagination_href + "lastname='" + last_name + "'&"
-    pagination_href = pagination_href[:-1] + "&page=" + page
+    pagination_href = pagination_href[:-1] + "&page={0}"
     breadcrumbs = [{"text": "Respondents"}, {"text": "Search"}]
 
     limit = app.config["PARTY_RESPONDENTS_PER_PAGE"]
@@ -99,7 +98,7 @@ def search_redirect():
         format_total=True,
         format_number=True,
         show_single_page=False,
-        href=urllib.parse.quote_plus(pagination_href),
+        href=pagination_href,
     )
 
     return render_template(
