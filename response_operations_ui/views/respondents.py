@@ -60,7 +60,7 @@ def search_redirect():
         last_name = request.args.get("lastname", "")
     page = request.values.get("page", "1")
 
-    pagination_href = "abcd"
+    pagination_href = "abcd{0}"
     breadcrumbs = [{"text": "Respondents"}, {"text": "Search"}]
 
     limit = app.config["PARTY_RESPONDENTS_PER_PAGE"]
