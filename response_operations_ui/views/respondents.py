@@ -62,11 +62,11 @@ def search_redirect():
 
     pagination_href = "search?"
     if email_address != "":
-        pagination_href = pagination_href + "email='" + email_address + "'&"
+        pagination_href = pagination_href + "email=" + email_address + "&"
     if first_name != "":
-        pagination_href = pagination_href + "firstname='" + first_name + "'&"
+        pagination_href = pagination_href + "firstname=" + first_name + "&"
     if last_name != "":
-        pagination_href = pagination_href + "lastname='" + last_name + "'&"
+        pagination_href = pagination_href + "lastname=" + last_name + "&"
     pagination_href = pagination_href[:-1] + "&page={0}"
     breadcrumbs = [{"text": "Respondents"}, {"text": "Search"}]
 
