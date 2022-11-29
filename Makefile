@@ -13,14 +13,14 @@ load-design-system-templates:
 	pipenv run ./scripts/load_templates.sh $(DESIGN_SYSTEM_VERSION)
 
 lint:
-	pipenv check ./response_operations_ui ./tests -i 51499
+	pipenv check ./response_operations_ui ./tests
 	pipenv run isort .
 	pipenv run black --line-length 120 .
 	pipenv run djlint .
 	pipenv run flake8 --exclude ./node_modules
 
 lint-check: load-design-system-templates
-	pipenv check ./response_operations_ui ./tests -i 51499
+	pipenv check ./response_operations_ui ./tests
 	pipenv run isort . --check-only
 	pipenv run black --line-length 120 --check .
 	pipenv run djlint . 

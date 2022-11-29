@@ -47,17 +47,21 @@ def search_redirect():
     form = RespondentSearchForm()
     form_valid = form.validate()
 
-    if not form_valid:
-        flash("At least one input should be filled")
-        return redirect(url_for("respondent_bp.respondent_home"))
-
-    email_address = form.email_address.data or ""
-    first_name = form.first_name.data or ""
-    last_name = form.last_name.data or ""
+    if request.method == "POST":
+        if not form_valid:
+            flash("At least one input should be filled")
+            return redirect(url_for("respondent_bp.respondent_home"))
+        email_address = form.email_address.data or ""
+        first_name = form.first_name.data or ""
+        last_name = form.last_name.data or ""
+    else:
+        email_address = request.args.get("email", "")
+        first_name = request.args.get("firstname", "")
+        last_name = request.args.get("lastname", "")
+    page = request.values.get("page", "1")
 
     breadcrumbs = [{"text": "Respondents"}, {"text": "Search"}]
 
-    page = request.values.get("page", "1")
     limit = app.config["PARTY_RESPONDENTS_PER_PAGE"]
 
     party_response = party_controller.search_respondents(first_name, last_name, email_address, page, limit)
@@ -86,6 +90,7 @@ def search_redirect():
         format_total=True,
         format_number=True,
         show_single_page=False,
+        href=_generate_pagination_href(email_address, first_name, last_name),
     )
 
     return render_template(
@@ -449,3 +454,16 @@ def undo_delete_respondent(respondent_id):
     return render_template(
         "delete-respondent.html", respondent_details=respondent, delete=False, breadcrumbs=breadcrumbs
     )
+
+
+def _generate_pagination_href(email_address="", first_name="", last_name=""):
+    href_string_list = []
+    if email_address != "":
+        href_string_list.append("email=" + email_address)
+    if first_name != "":
+        href_string_list.append("firstname=" + first_name)
+    if last_name != "":
+        href_string_list.append("lastname=" + last_name)
+    # This is needed for custom hrefs as per the flask-paginate docs
+    href_string_list.append("page={0}")
+    return "search?" + "&".join(href_string_list)
