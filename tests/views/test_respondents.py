@@ -8,6 +8,7 @@ from bs4 import BeautifulSoup
 
 from config import TestingConfig
 from response_operations_ui import create_app
+from response_operations_ui.views.respondents import _generate_pagination_href
 from tests.views import ViewTestCase
 from tests.views.test_admin import url_permission_url, url_sign_in_data
 from tests.views.test_reporting_units import (
@@ -627,3 +628,9 @@ class TestRespondents(ViewTestCase):
         response = self.client.post(f"respondents/resend-verification/{respondent_party_id}", follow_redirects=True)
 
         self.assertEqual(200, response.status_code)
+
+    def test_generate_pagination_href(self):
+        first_name = "Jim"
+        last_name = "Bob"
+
+        self.assertEqual("search?firstname=Jim&lastname=Bob&page={0}", _generate_pagination_href("", first_name, last_name))

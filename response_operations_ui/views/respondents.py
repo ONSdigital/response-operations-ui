@@ -60,14 +60,6 @@ def search_redirect():
         last_name = request.args.get("lastname", "")
     page = request.values.get("page", "1")
 
-    pagination_href = "search?"
-    if email_address != "":
-        pagination_href = pagination_href + "email=" + email_address + "&"
-    if first_name != "":
-        pagination_href = pagination_href + "firstname=" + first_name + "&"
-    if last_name != "":
-        pagination_href = pagination_href + "lastname=" + last_name + "&"
-    pagination_href = pagination_href[:-1] + "&page={0}"
     breadcrumbs = [{"text": "Respondents"}, {"text": "Search"}]
 
     limit = app.config["PARTY_RESPONDENTS_PER_PAGE"]
@@ -98,7 +90,7 @@ def search_redirect():
         format_total=True,
         format_number=True,
         show_single_page=False,
-        href=pagination_href,
+        href=_generate_pagination_href(email_address, first_name, last_name),
     )
 
     return render_template(
@@ -462,3 +454,16 @@ def undo_delete_respondent(respondent_id):
     return render_template(
         "delete-respondent.html", respondent_details=respondent, delete=False, breadcrumbs=breadcrumbs
     )
+
+
+def _generate_pagination_href(email_address="", first_name="", last_name=""):
+    href_string_list = []
+    if email_address != "":
+        href_string_list.append("email=" + email_address)
+    if first_name != "":
+        href_string_list.append("firstname=" + first_name)
+    if last_name != "":
+        href_string_list.append("lastname=" + last_name)
+    # This is needed for custom hrefs as per the flask-paginate docs
+    href_string_list.append("page={0}")
+    return "search?" + "&".join(href_string_list)
