@@ -68,7 +68,7 @@ def get_reset_password(token, form_errors=None):
         return render_template("reset-password-expired.html", token=token)
 
     template_data = {"error": {"type": form_errors}, "token": token}
-    return render_template("reset-password-mk1.html", form=form, data=template_data)
+    return render_template("reset-password.html", form=form, data=template_data)
 
 
 @passwords_bp.route("/reset-password/<token>", methods=["POST"])
