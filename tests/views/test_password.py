@@ -68,8 +68,8 @@ class TestPasswords(unittest.TestCase):
         with self.app.app_context():
             token = token_decoder.generate_token(test_email)
             response = self.client.get(f"/passwords/reset-password/{token}")
-            self.assertIn(b"New password", response.data)
-            self.assertIn(b"at least one capital letter", response.data)
+            self.assertIn(b"New Password", response.data)
+            self.assertIn(b"at least 1 uppercase letter", response.data)
             self.assertEqual(response.status_code, 200)
 
     def test_reset_password_page_dodgy_token(self):
@@ -108,7 +108,7 @@ class TestPasswords(unittest.TestCase):
                 follow_redirects=True,
                 data={"password": "TestPassword1!", "password_confirm": "WrongPassword!"},
             )
-            self.assertIn(b"Your passwords do not match", response.data)
+            self.assertIn(b"Enter passwords that match", response.data)
             self.assertEqual(response.status_code, 200)
 
     @requests_mock.mock()

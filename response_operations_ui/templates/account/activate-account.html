@@ -32,6 +32,8 @@
           {% set password_error_count = 0 %}
           {% set password_confirm_error_count = 0 %}
           {% if form.password.errors %}
+            {% set unique_errors = form.password.errors | unique %}
+            <p>{{unique_errors}}</p>
             {% set password_error_count = form.password.errors | length|default(0, true) %}
           {% endif %}
           {% if form.password_confirm.errors %}

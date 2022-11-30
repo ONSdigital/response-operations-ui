@@ -10,11 +10,7 @@ from response_operations_ui.common import token_decoder
 from response_operations_ui.controllers import uaa_controller
 from response_operations_ui.controllers.notify_controller import NotifyController
 from response_operations_ui.exceptions.exceptions import NotifyError
-from response_operations_ui.forms import (
-    ForgotPasswordForm,
-    ResetAccountPasswordForm,
-    SetAccountPasswordForm,
-)
+from response_operations_ui.forms import ForgotPasswordForm, SetAccountPasswordForm
 
 logger = wrap_logger(logging.getLogger(__name__))
 
@@ -72,15 +68,15 @@ def get_reset_password(token, form_errors=None):
         return render_template("reset-password-expired.html", token=token)
 
     template_data = {"error": {"type": form_errors}, "token": token}
-    return render_template("reset-password.html", form=form, data=template_data)
+    return render_template("reset-password-mk1.html", form=form, data=template_data)
 
 
 @passwords_bp.route("/reset-password/<token>", methods=["POST"])
 def post_reset_password(token):
-    form = ResetAccountPasswordForm(request.form)
+    form = SetAccountPasswordForm(request.form)
 
     if not form.validate():
-        return get_reset_password(token, form_errors=form.errors)
+        return render_template("reset-password.html", form=form, token=token)
 
     password = request.form.get("password")
 
@@ -106,8 +102,8 @@ def post_reset_password(token):
         if response.status_code == 422:
             # 422 == New password same as old password
             logger.info("New password same as old password", token=token)
-            errors = {"password": ["Please choose a different password or login with the old password"]}
-            return get_reset_password(token, form_errors=errors)
+            form.password.errors.append("Please choose a different password or login with the old password")
+            return render_template("reset-password.html", form=form, token=token)
 
     logger.warning("Error changing password in UAA", token=token)
     return render_template("reset-password-error.html")

@@ -451,19 +451,18 @@ class CreateAccountWithPermissionsForm(FlaskForm):
 
 
 class SetAccountPasswordForm(FlaskForm):
-    # Password match check has been removed from password validator as it is redundant (main password dictates match.
+    # Password match check has been removed from password validator as it is redundant (main password dictates match).
     # Regex is used to check password has correct characters. This also includes a check on length range.
     # Redundant range validator removed. Due to the inclusion of regexp, the validate_password method has been removed.
-    # Password confirm only runs a check to ensure it matches with password. Not additional checks required.
-    regex_formula = (
-        r"^(?=[A-Za-z0-9~€`<>\*\{\[\]\}+|/\\\-\',\"_£.@#$%^&+!=]+$)^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])"
-        r"(?=.*[~€`<>\*\{\[\]\}+|/\\\-\',\"_£.@#$%^&+!=])(?=.{12,160}).*$"
-    )
+    # Password confirm only runs a check to ensure it matches with password. No additional checks required.
+
+    regex_formula = r"^(?=[A-Za-z0-9\W])^(?=.*[a-z])(?=.*[A-Z])(?=.*[\W])(?=.*[0-9])(?=.{12,160}).*$"
+    
     password = PasswordField(
         "Create a new password",
         validators=[
             DataRequired("Your new password is required"),
-            Regexp(regex_formula, message="Enter a password in the correct format."),
+            Regexp(regex_formula, message="Your password doesn't meet the requirements"),
         ],
     )
     password_confirm = PasswordField(
@@ -473,33 +472,7 @@ class SetAccountPasswordForm(FlaskForm):
             EqualTo("password", message="Enter passwords that match"),
         ],
     )
-
-
-class ResetAccountPasswordForm(FlaskForm):
-    password = PasswordField(
-        "Create a new password",
-        validators=[
-            DataRequired("Your new password is required"),
-            EqualTo("password_confirm", message="Your passwords do not match"),
-            Length(
-                min=12,
-                max=160,
-                message="Your password doesn't meet the requirements",
-            ),
-        ],
-    )
-    password_confirm = PasswordField("Re-type your new password")
-
-    @staticmethod
-    def validate_password(form, field):
-        password = field.data
-        if (
-            password.isalnum()
-            or not any(char.isupper() for char in password)
-            or not any(char.isdigit() for char in password)
-        ):
-            raise ValidationError("Your password doesn't meet the requirements")
-
+    
 
 class ChangeAccountName(FlaskForm):
     first_name = StringField(
