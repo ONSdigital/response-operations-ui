@@ -457,7 +457,7 @@ class SetAccountPasswordForm(FlaskForm):
     # Password confirm only runs a check to ensure it matches with password. No additional checks required.
 
     regex_formula = r"^(?=[A-Za-z0-9\W])^(?=.*[a-z])(?=.*[A-Z])(?=.*[\W])(?=.*[0-9])(?=.{12,160}).*$"
-    
+
     password = PasswordField(
         "Create a new password",
         validators=[
@@ -472,7 +472,7 @@ class SetAccountPasswordForm(FlaskForm):
             EqualTo("password", message="Enter passwords that match"),
         ],
     )
-    
+
 
 class ChangeAccountName(FlaskForm):
     first_name = StringField(
