@@ -464,16 +464,16 @@ class SetAccountPasswordForm(FlaskForm):
             EqualTo("password", message="Enter passwords that match"),
         ],
     )
-    
+
     @staticmethod
     def validate_password(form, field):
         password = field.data
         if (
-                password.isalnum()
-                or not any(char.isupper() for char in password)
-                or not any(char.isdigit() for char in password)
-                or len(password) < 12
-                or len(password) > 160
+            password.isalnum()
+            or not any(char.isupper() for char in password)
+            or not any(char.isdigit() for char in password)
+            or len(password) < 12
+            or len(password) > 160
         ):
             raise ValidationError("Your password doesn't meet the requirements")
 
