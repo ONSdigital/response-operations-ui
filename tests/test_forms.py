@@ -1,7 +1,7 @@
 import unittest
 
 from response_operations_ui import create_app
-from response_operations_ui.forms import CreateAccountWithPermissionsForm
+from response_operations_ui.forms import CreateAccountWithPermissionsForm, SetAccountPasswordForm
 
 
 class TestForms(unittest.TestCase):
@@ -25,3 +25,33 @@ class TestForms(unittest.TestCase):
                 result = form.validate()
                 self.assertTrue(result)
                 self.assertEqual(len(form.errors), 0)
+                
+    def test_valid_password_for_activation_and_reset(self):
+        with self.app.app_context():
+            form = SetAccountPasswordForm()
+            form.password.data = "Abcde123Edcba!"
+            form.password_confirm.data = "Abcde123Edcba!"
+            result = form.validate()
+            self.assertTrue(result)
+            self.assertTrue(len(form.errors) == 0)
+            
+    def test_nonvalid_password_for_activation_and_reset(self):
+        with self.app.app_context():
+            form = SetAccountPasswordForm()
+            password_too_short = "Abcde123!"
+            password_missing_numbers = "AbcdeEdcba!"
+            password_missing_letters = "12345678910!"
+            password_missing_special_char = "Abcde123Edcba"
+            password_too_long = r"Abcde123EdcbaAbcde123EdcbaAbcde123EdcbaAbcde123EdcbaAbcde123EdcbaAbcde123Edcba" \
+                                r"Abcde123EdcbaAbcde123EdcbaAbcde123EdcbaAbcde123EdcbaAbcde123EdcbaAbcde123EdcbaAbcd2!"
+
+            incorrect_passwords = [password_too_short, password_missing_letters, password_missing_numbers, 
+                                    password_too_long, password_missing_special_char]
+            
+            for password in incorrect_passwords:
+                form.password.data = password
+                form.password_confirm.data = password
+                result = form.validate()
+                self.assertFalse(result)
+                self.assertTrue(form.errors.get("password")[0], "Your password doesn't meet the requirements")
+            

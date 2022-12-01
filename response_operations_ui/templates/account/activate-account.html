@@ -20,7 +20,7 @@
                     onsPanel({
                             "type": "error",
                             "classes": "ons-u-mb-l",
-                            "title":  errorTitle
+                            "title":  errorTitle,
                         })
                 %}
                     {% for message in messages %}
@@ -29,30 +29,19 @@
                 {% endcall %}
             {% endif %}
         {% endwith %}
-          {% set password_error_count = 0 %}
-          {% set password_confirm_error_count = 0 %}
-          {% if form.password.errors %}
-            {% set unique_errors = form.password.errors | unique %}
-            <p>{{unique_errors}}</p>
-            {% set password_error_count = form.password.errors | length|default(0, true) %}
-          {% endif %}
-          {% if form.password_confirm.errors %}
-            {% set password_confirm_error_count = form.password_confirm.errors | length|default(0, true) %}
-          {% endif %}
-          {% if password_error_count or password_confirm_error_count %}
+          {% if form.password.errors or form.password_confirm.errors %}
             {% set errorData = [] %}
-            {% set password = namespace(text = '') %}
-            {% set password_confirm = namespace(text = '') %}
-                {% set error_count = password_error_count + password_confirm_error_count %}
+                {% set error_count = form.password.errors | length|default(0, true) + form.password_confirm.errors | length|default(0, true) %}
                 {% set plural_suffix = 's' if error_count > 1 else '' %}
                 {% set plural_singular_word = 'are ' if error_count > 1 else 'is ' %}
                 {% set header_text = 'There ' ~ plural_singular_word ~ error_count ~ ' problem' ~ plural_suffix ~ ' with your password' %}
-            {% call
-                onsPanel({
-                    "title": header_text,
-                    "type": "error"
-                })
-            %}
+            <div style="margin-bottom:1.6rem;">
+                {% call
+                    onsPanel({
+                        "title": header_text,
+                        "type": "error"
+                    })
+                %}
                 {% for error in form.password.errors %}
                     {% do errorData.append(
                         {
@@ -81,27 +70,24 @@
                     })
                 }}
             {% endcall %}
+            </div>
         {% endif %}
-            {% if errorData %}
-                </br>
-            {% endif %}
-            <h1>Activate your account</h1>
+            <h1 style="display:inline-block; margin-bottom:1.6rem;">Activate your account</h1>
             <form method="post" action="" class="form" role="form">
                 <input type="hidden" name="csrf_token" value="{{ csrf_token() }}" />
-              <span>An account has been created for <strong>{{ username }}</strong>. 
+              <span style="display:inline-block; margin-bottom:1.6rem">An account has been created for <strong>{{ username }}</strong>. 
                 To activate the account, you must create a password.</span>
-              <!--Double <br> required to ensure correct spacing between above span and password information section-->
-              </br>
-              </br>
               {% set password_information = '<p>' + 'Your password must have at least:' + '</p><ul>'
                         + '<li>' + 'at least 12 characters' + '</li>'
                         + '<li>' + 'at least 1 uppercase letter' + '</li>'
                         + '<li>' + 'at least 1 symbol (eg: ?!£%)' + '</li>'
                         + '<li>' + 'at least 1 number' + '</li></ul>' %}
-              {% if password_error_count == 0  %}
+              {% if form.password.errors | length == 0 %}
                   {{
                         onsPanel({
                             "body": password_information,
+                            "bodyAttributes": {
+                                "style": "" }
                         })
                     }}
               {% endif %}
@@ -111,7 +97,7 @@
                         "name": "password",
                         "showPasswordText": "Show password",
                         "label": {
-                            "text": password_information + '<p>' + ' Password' + '</p>' if form.password.errors else 'Password',
+                            "text": password_information + '<p>' + 'Password' + '</p>' if form.password.errors else 'Password',
                         },
                         "showPasswordText": "Show password",
                         "error": {"text": 'Enter a password in the correct format' } if form.password.errors else None
@@ -125,7 +111,7 @@
                             "text": "Confirm password"
                         },
                         "showPasswordText": "Show password",
-                        "error": {"text": 'Enter passwords that match' } if password_confirm_error_count else None,
+                        "error": {"text": 'Enter passwords that match' } if form.password_confirm.errors else None,
                         "attributes": {"margin-top": 0}
                     })
                 }}
