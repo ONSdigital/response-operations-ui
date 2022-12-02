@@ -14,7 +14,7 @@
 {% block main %}
     <div class="ons-grid">
         <div class="ons-grid__col ons-col-8@m">
-            {% include 'partials/flash-error-messages.html' %}
+            {% include 'partials/password-error-messages.html' %}
             <h1>Activate your account</h1>
             <form method="post" action="" class="form" role="form">
                 <input type="hidden" name="csrf_token" value="{{ csrf_token() }}" />
