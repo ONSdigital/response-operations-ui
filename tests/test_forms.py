@@ -29,7 +29,7 @@ class TestForms(unittest.TestCase):
                 self.assertTrue(result)
                 self.assertEqual(len(form.errors), 0)
 
-    def test_valid_password_for_activation_and_reset(self):
+    def test_set_account_password_valid(self):
         with self.app.app_context():
             form = SetAccountPasswordForm()
             form.password.data = "Abcde123Edcba!"
@@ -38,7 +38,7 @@ class TestForms(unittest.TestCase):
             self.assertTrue(result)
             self.assertTrue(len(form.errors) == 0)
 
-    def test_nonvalid_password_for_activation_and_reset(self):
+    def test_set_account_password_invalid(self):
         with self.app.app_context():
             form = SetAccountPasswordForm()
             password_too_short = "Abcde123!"
