@@ -35,10 +35,10 @@
                 {% set plural_suffix = 's' if error_count > 1 else '' %}
                 {% set plural_singular_word = 'are ' if error_count > 1 else 'is ' %}
                 {% set header_text = 'There ' ~ plural_singular_word ~ error_count ~ ' problem' ~ plural_suffix ~ ' with your password' %}
-            <div style="margin-bottom:1.6rem;">
                 {% call
                     onsPanel({
                         "title": header_text,
+                        "classes": "ons-u-mb-l",
                         "type": "error"
                     })
                 %}
@@ -70,12 +70,11 @@
                     })
                 }}
             {% endcall %}
-            </div>
         {% endif %}
-            <h1 style="display:inline-block; margin-bottom:1.6rem;">Activate your account</h1>
+            <h1>Activate your account</h1>
             <form method="post" action="" class="form" role="form">
                 <input type="hidden" name="csrf_token" value="{{ csrf_token() }}" />
-              <span style="display:inline-block; margin-bottom:1.6rem">An account has been created for <strong>{{ username }}</strong>. 
+              <span class="ons-u-mb-l" style="display:inline-block;">An account has been created for <strong>{{ username }}</strong>. 
                 To activate the account, you must create a password.</span>
               {% set password_information = '<p>' + 'Your password must have at least:' + '</p><ul>'
                         + '<li>' + 'at least 12 characters' + '</li>'
@@ -86,8 +85,6 @@
                   {{
                         onsPanel({
                             "body": password_information,
-                            "bodyAttributes": {
-                                "style": "" }
                         })
                     }}
               {% endif %}
@@ -100,8 +97,8 @@
                             "text": password_information + '<p>' + 'Password' + '</p>' if form.password.errors else 'Password',
                         },
                         "showPasswordText": "Show password",
-                        "error": {"text": 'Enter a password in the correct format' } if form.password.errors else None
-                    })
+                        "error": {"text": 'Enter a password in the correct format' } if form.password.errors else None,
+                })
                 }}
                 {{
                     onsPassword({
@@ -112,7 +109,6 @@
                         },
                         "showPasswordText": "Show password",
                         "error": {"text": 'Enter passwords that match' } if form.password_confirm.errors else None,
-                        "attributes": {"margin-top": 0}
                     })
                 }}
                 <div class="ons-grid ons-grid--flex ons-grid--gutterless ons-grid--vertical-center ons-grid--no-wrap@s ons-u-mt-m ons-u-mb-m">
