@@ -14,85 +14,35 @@
 {% block main %}
     <div class="ons-grid">
         <div class="ons-grid__col ons-col-8@m">
-        {% with messages = get_flashed_messages(category_filter=["error"]) %}
-            {% if messages %}
-                {% call
-                    onsPanel({
-                            "type": "error",
-                            "classes": "ons-u-mb-l",
-                            "title":  errorTitle
-                        })
-                %}
-                    {% for message in messages %}
-                        <p id="flashed-message-{{ loop.index }}">{{ message }}</p>
-                    {% endfor %}
-                {% endcall %}
-            {% endif %}
-        {% endwith %}
-          {% if form.errors %}
-            {% set errorData = [] %}
-                {% set error_count = form.errors | length %}
-                {% set plural_suffix = 's' if error_count > 1 else '' %}
-                {% set header_text = 'This page has ' ~ error_count ~ ' error' ~ plural_suffix %}
-            {% call
-                onsPanel({
-                    "title": header_text,
-                    "type": "error"
-                })
-            %}
-                <p>These <strong>must be corrected</strong> to continue.</p>
-                {% for error in form.password.errors %}
-                    {% do errorData.append(
-                        {
-                            "text": error,
-                            "index": true,
-                            "url": "#password",
-                            "classes": "ons-js-inpagelink"
-                        }
-                    ) %}
-                {% endfor %}
-                {% for error in form.password_confirm.errors %}
-                    {% do errorData.append(
-                        {
-                            "text": error,
-                            "index": true,
-                            "url": "#password_confirm",
-                            "classes": "ons-js-inpagelink"
-                        }
-                    ) %}
-                {% endfor %}
-                {{
-                    onsList({
-                        "classes": "list--bare",
-                        "itemsList": errorData
-                    })
-                }}
-            {% endcall %}
-        {% endif %}
+            {% include 'partials/password-error-messages.html' %}
             <h1>Activate your account</h1>
             <form method="post" action="" class="form" role="form">
                 <input type="hidden" name="csrf_token" value="{{ csrf_token() }}" />
-              <span>An account has been created for <strong>{{ username }}</strong>.</span>
-              <p>To activate the account, you must create a password.</p>
-                {{
-                    onsPanel({
-                        "body": '<p>Your password must have:</p><ul>
-                        <li>at least 12 characters</li>
-                        <li>at least 1 uppercase letter</li>
-                        <li>at least 1 symbol (eg: ?!£%)</li>
-                        <li>at least 1 number</li></ul>'
-                    })
-                }}
+              <span class="ons-u-mb-l" style="display:inline-block;">An account has been created for <strong>{{ username }}</strong>. 
+                To activate the account, you must create a password.</span>
+              {% set password_information = '<p>' + 'Your password must have at least:' + '</p><ul>'
+                        + '<li>' + 'at least 12 characters' + '</li>'
+                        + '<li>' + 'at least 1 uppercase letter' + '</li>'
+                        + '<li>' + 'at least 1 symbol (eg: ?!£%)' + '</li>'
+                        + '<li>' + 'at least 1 number' + '</li></ul>' %}
+              {% if form.password.errors | length == 0 %}
+                  {{
+                        onsPanel({
+                            "body": password_information,
+                        })
+                    }}
+              {% endif %}
                 {{
                     onsPassword({
                         "id": "password",
                         "name": "password",
+                        "showPasswordText": "Show password",
                         "label": {
-                            "text": "Password"
+                            "text": password_information + '<p>' + 'Password' + '</p>' if form.password.errors else 'Password',
                         },
                         "showPasswordText": "Show password",
-                        "error": {"text": errorData[0]["text"] } if errorData else None
-                    })
+                        "error": {"text": 'Enter a password in the correct format' } if form.password.errors else None,
+                })
                 }}
                 {{
                     onsPassword({
@@ -102,6 +52,7 @@
                             "text": "Confirm password"
                         },
                         "showPasswordText": "Show password",
+                        "error": {"text": 'Enter passwords that match' } if form.password_confirm.errors else None,
                     })
                 }}
                 <div class="ons-grid ons-grid--flex ons-grid--gutterless ons-grid--vertical-center ons-grid--no-wrap@s ons-u-mt-m ons-u-mb-m">

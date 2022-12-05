@@ -455,15 +455,15 @@ class SetAccountPasswordForm(FlaskForm):
         "Create a new password",
         validators=[
             DataRequired("Your new password is required"),
-            EqualTo("password_confirm", message="Your passwords do not match"),
-            Length(
-                min=12,
-                max=160,
-                message="Your password doesn't meet the requirements",
-            ),
         ],
     )
-    password_confirm = PasswordField("Re-type your new password")
+    password_confirm = PasswordField(
+        "Re-type your new password",
+        validators=[
+            DataRequired("Re-type your new password"),
+            EqualTo("password", message="Enter passwords that match"),
+        ],
+    )
 
     @staticmethod
     def validate_password(form, field):
@@ -472,6 +472,8 @@ class SetAccountPasswordForm(FlaskForm):
             password.isalnum()
             or not any(char.isupper() for char in password)
             or not any(char.isdigit() for char in password)
+            or len(password) < 12
+            or len(password) > 160
         ):
             raise ValidationError("Your password doesn't meet the requirements")
 
