@@ -159,7 +159,7 @@ def post_create_account():
             )
             continue
 
-    logger.info("User account created", administering_user_id={user_id}, user_id_created={user_id})
+    logger.info("User account created", administering_user_id=session["user_id"], user_id_created=user_id)
     token = token_decoder.generate_token(user_id)
     internal_url = current_app.config["RESPONSE_OPERATIONS_UI_URL"]
     verification_url = f"{internal_url}{url_for('account_bp.get_activate_account', token=token)}"
@@ -328,7 +328,7 @@ def post_delete_uaa_user(user_id):
         flash("Failed to delete user, please try again", "error")
         return redirect(url_for("admin_bp.get_delete_uaa_user", user_id=user_id))
 
-    logger.info("User account deleted", administering_user_id={user_id}, user_id_deleted={user_id})
+    logger.info("User account deleted", administering_user_id=session["user_id"], user_id_deleted=user_id)
     flash("User account has been successfully deleted. An email to inform the user has been sent.")
     return redirect(url_for("admin_bp.manage_user_accounts"))
 
