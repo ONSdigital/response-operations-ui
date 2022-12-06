@@ -102,7 +102,7 @@ class TestUAAController(unittest.TestCase):
         with self.app.test_request_context():
             with self.app.app_context():
                 session["user_id"] = user_id
-                self.assertEqual(uaa_controller.add_group_membership(user_id, group_id), uaa_group_add_success_json)
+            self.assertEqual(uaa_controller.add_group_membership(user_id, group_id), uaa_group_add_success_json)
 
     @requests_mock.mock()
     def test_add_group_membership_not_found(self, mock_request):
@@ -121,7 +121,7 @@ class TestUAAController(unittest.TestCase):
         with self.app.test_request_context():
             with self.app.app_context():
                 session["user_id"] = user_id
-                self.assertEqual(uaa_controller.remove_group_membership(user_id, group_id), uaa_group_remove_success_json)
+            self.assertEqual(uaa_controller.remove_group_membership(user_id, group_id), uaa_group_remove_success_json)
 
     @requests_mock.mock()
     def test_remove_group_membership_not_found(self, mock_request):
