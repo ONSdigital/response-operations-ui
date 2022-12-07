@@ -390,7 +390,13 @@ def add_group_membership(user_id: str, group_id: str) -> dict:
         )
         raise
 
-    logger.info("Successfully added member to group", user_id=user_id, group_id=group_id)
+    logger.info(
+        "Successfully added member to group",
+        administering_user_id=session["user_id"],
+        user_id_amended=user_id,
+        group_id=group_id,
+    )
+
     return response.json()
 
 
@@ -420,7 +426,13 @@ def remove_group_membership(user_id: str, group_id: str) -> dict:
         )
         raise
 
-    logger.info("Successfully removed member from group", user_id=user_id, group_id=group_id)
+    logger.info(
+        "Successfully removed member from group",
+        administering_user_id=session["user_id"],
+        user_id_amended=user_id,
+        group_id=group_id,
+    )
+
     return response.json()
 
 

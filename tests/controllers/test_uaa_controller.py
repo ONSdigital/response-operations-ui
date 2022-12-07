@@ -4,6 +4,7 @@ import unittest
 
 import jwt
 import requests_mock
+from flask import session
 from requests import HTTPError
 
 from config import TestingConfig
@@ -99,6 +100,8 @@ class TestUAAController(unittest.TestCase):
         mock_request.post(url_uaa_token, json={"access_token": self.access_token}, status_code=201)
         mock_request.post(url_uaa_add_to_group, json=uaa_group_add_success_json, status_code=201)
         with self.app.test_request_context():
+            with self.app.app_context():
+                session["user_id"] = user_id
             self.assertEqual(uaa_controller.add_group_membership(user_id, group_id), uaa_group_add_success_json)
 
     @requests_mock.mock()
@@ -116,6 +119,8 @@ class TestUAAController(unittest.TestCase):
         mock_request.post(url_uaa_token, json={"access_token": self.access_token}, status_code=201)
         mock_request.delete(url_uaa_remove_from_group, json=uaa_group_add_success_json, status_code=200)
         with self.app.test_request_context():
+            with self.app.app_context():
+                session["user_id"] = user_id
             self.assertEqual(uaa_controller.remove_group_membership(user_id, group_id), uaa_group_remove_success_json)
 
     @requests_mock.mock()
