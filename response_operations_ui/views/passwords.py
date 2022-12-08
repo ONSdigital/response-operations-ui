@@ -103,7 +103,7 @@ def post_reset_password(token):
             # 422 == New password same as old password
             logger.info("New password same as old password", token=token)
             form.password.errors.append("You have entered your current password. Enter a new password or login")
-            return render_template("reset-password.html", form=form, token=token)
+            return render_template("reset-password.html", form=form, token=token, duplicate_password=True)
 
     logger.warning("Error changing password in UAA", token=token)
     return render_template("reset-password-error.html")

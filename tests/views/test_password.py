@@ -144,5 +144,5 @@ class TestPasswords(unittest.TestCase):
                 follow_redirects=True,
                 data={"password": "TestPassword1!", "password_confirm": "TestPassword1!"},
             )
-            self.assertIn(b"Please choose a different password or login with the old password", response.data)
+            self.assertIn(b"You have entered your current password. Enter a new password or login", response.data)
             self.assertEqual(response.status_code, 200)
