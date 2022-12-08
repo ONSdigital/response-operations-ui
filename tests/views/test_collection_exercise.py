@@ -902,7 +902,7 @@ class TestCollectionExercise(ViewTestCase):
     @patch("response_operations_ui.views.collection_exercise.build_collection_exercise_details")
     def test_upload_sample(self, mock_request, mock_details):
         sign_in_with_permission(self, mock_request, user_permission_surveys_edit_json)
-        post_data = {"sampleFile": (BytesIO(b"data"), "test.csv"), "load-sample": ""}
+        post_data = {"sampleFile": (BytesIO(b"data"), "test.csv")}
 
         sample_data = {"id": sample_summary_id}
 
@@ -964,24 +964,25 @@ class TestCollectionExercise(ViewTestCase):
     @requests_mock.mock()
     @patch("response_operations_ui.views.collection_exercise.build_collection_exercise_details")
     def test_failed_upload_sample(self, mock_request, mock_details):
-        data = {"sampleFile": (BytesIO(b"data"), "test.csv"), "load-sample": ""}
+        sign_in_with_permission(self, mock_request, user_permission_surveys_edit_json)
+        data = {"sampleFile": (BytesIO(b"data"), "test.csv")}
 
         mock_request.get(url_get_survey_by_short_name, status_code=200, json=self.survey_data)
         mock_request.get(url_ces_by_survey, status_code=200, json=exercise_data)
         mock_request.post(url_sample_service_upload, status_code=500)
         mock_details.return_value = formatted_collection_exercise_details
 
-        response = self.client.post(f"/surveys/{short_name}/{period}/view-sample-ci", data=data)
+        response = self.client.post(f"/surveys/{short_name}/{period}/upload-sample-file", data=data)
 
         request_history = mock_request.request_history
-        self.assertEqual(len(request_history), 3)
         self.assertEqual(response.status_code, 500)
+        self.assertEqual(len(request_history), 7)
 
     @requests_mock.mock()
     @patch("response_operations_ui.views.collection_exercise.build_collection_exercise_details")
     def test_no_upload_sample_when_bad_extension(self, mock_request, mock_details):
         sign_in_with_permission(self, mock_request, user_permission_surveys_edit_json)
-        data = {"sampleFile": (BytesIO(b"data"), "test.html"), "load-sample": ""}
+        data = {"sampleFile": (BytesIO(b"data"), "test.html")}
         with open(
             f"{project_root}/test_data/collection_exercise/formatted_collection_exercise_details_no_sample.json"
         ) as collection_exercise_no_sample:
@@ -1022,7 +1023,7 @@ class TestCollectionExercise(ViewTestCase):
     @patch("response_operations_ui.views.collection_exercise.build_collection_exercise_details")
     def test_upload_sample_csv_too_few_columns(self, mock_request, mock_details):
         sign_in_with_permission(self, mock_request, user_permission_surveys_edit_json)
-        post_data = {"sampleFile": (BytesIO(b"data"), "test.csv"), "load-sample": ""}
+        post_data = {"sampleFile": (BytesIO(b"data"), "test.csv")}
 
         with open(
             f"{project_root}/test_data/collection_exercise/formatted_collection_exercise_details_no_sample.json"
@@ -1827,7 +1828,7 @@ class TestCollectionExercise(ViewTestCase):
         mock_details.return_value = formatted_new_collection_exercise_details
         mock_request.get(url_get_survey_by_short_name, json=updated_survey_info["survey"])
         mock_request.get(url_ces_by_survey, json=updated_survey_info["collection_exercises"])
-        response = self.client.get(f"/surveys/{short_name}/{period}/view-sample-ci", follow_redirects=True)
+        response = self.client.get(f"/surveys/{short_name}/{period}", follow_redirects=True)
 
         self.assertEqual(response.status_code, 200)
         self.assertIn("Replace sample file".encode(), response.data)
@@ -1995,7 +1996,8 @@ class TestCollectionExercise(ViewTestCase):
         self.assertIn("Edit".encode(), response.data)
         self.assertIn("Add reminder".encode(), response.data)
         self.assertIn("Add nudge email".encode(), response.data)
-        self.assertIn("Replace sample file & CI".encode(), response.data)
+        self.assertIn("Replace sample file".encode(), response.data)
+        self.assertIn("Add collection instruments".encode(), response.data)
 
     @requests_mock.mock()
     def test_survey_edit_permission_collection_exercise_no_sample(self, mock_request):
@@ -2016,7 +2018,8 @@ class TestCollectionExercise(ViewTestCase):
         self.assertIn("Edit".encode(), response.data)
         self.assertIn("Add reminder".encode(), response.data)
         self.assertIn("Add nudge email".encode(), response.data)
-        self.assertIn("Upload sample file & CI".encode(), response.data)
+        self.assertIn("Upload sample file".encode(), response.data)
+        self.assertIn("Add collection instruments".encode(), response.data)
 
     @requests_mock.mock()
     def test_no_survey_edit_permission_collection_exercise(self, mock_request):
@@ -2032,7 +2035,8 @@ class TestCollectionExercise(ViewTestCase):
         self.assertEqual(response.status_code, 200)
         self.assertIn("Monthly Survey of Building Materials Bricks".encode(), response.data)
         self.assertIn("221_201712".encode(), response.data)
-        self.assertIn("View sample file & CI".encode(), response.data)
+        self.assertIn("View collection instruments".encode(), response.data)
+        self.assertNotIn("Upload sample file".encode(), response.data)
 
     @requests_mock.mock()
     def test_seft_view_sample_ci_page_survey_permission(self, mock_request):
@@ -2279,7 +2283,7 @@ class TestCollectionExercise(ViewTestCase):
     @requests_mock.mock()
     @patch("response_operations_ui.views.collection_exercise.build_collection_exercise_details")
     def test_upload_sample_no_survey_permission(self, mock_request, mock_details):
-        post_data = {"sampleFile": (BytesIO(b"data"), "test.csv"), "load-sample": ""}
+        post_data = {"sampleFile": (BytesIO(b"data"), "test.csv")}
 
         sample_data = {"id": sample_summary_id}
 
