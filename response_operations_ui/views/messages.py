@@ -519,7 +519,7 @@ def view_selected_survey(selected_survey):  # noqa: C901
 
         tab_counts = _get_tab_counts(business_id_filter, conversation_tab, ru_ref_filter, survey_id, category)
 
-        # If the page is higher then possible, redirect users to the highest possible page.
+        # If the page is higher than possible, redirect users to the highest possible page.
         recalculated_page = _verify_requested_page_is_within_bounds(page, limit, tab_counts["current"])
         if recalculated_page != page:
             return redirect(

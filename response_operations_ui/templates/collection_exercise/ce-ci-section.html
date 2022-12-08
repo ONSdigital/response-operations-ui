@@ -3,7 +3,7 @@
     {% set tblHeaders =  
         [ 
             { 
-                "value": "Sample & Collection instruments (CI)",
+                "value": "Collection instruments (CI)",
                 "thClasses": "ons-u-fs-r--b"
             }
         ]
@@ -16,6 +16,8 @@
         "hideCaption": true,
         "ths": tblHeaders,
     } %}
+
+
   
     {% if sample %}
         {% if sample.state == 'ACTIVE' or sample.state == 'COMPLETE' %}
@@ -99,13 +101,9 @@
     {% endif %}
   
     {% if locked or (not surveyEditPermission) %}
-        {% set sampleCiButtonText = 'View sample file & CI' %}
+        {% set sampleCiButtonText = 'View collection instruments' %}
     {% else %}
-        {% if not sample %}
-            {% set sampleCiButtonText = 'Upload sample file & CI' %}
-        {% else %}
-            {% set sampleCiButtonText = 'Replace sample file & CI' %}
-        {% endif %}
+        {% set sampleCiButtonText = 'Add collection instruments' %}
     {% endif %}
     {{
         onsButton({
