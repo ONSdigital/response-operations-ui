@@ -29,6 +29,7 @@ from response_operations_ui.common.filters import get_collection_exercise_by_per
 from response_operations_ui.common.mappers import (
     convert_events_to_new_format,
     format_short_name,
+    get_event_name,
     map_collection_exercise_state,
 )
 from response_operations_ui.common.uaa import verify_permission
@@ -240,9 +241,7 @@ def post_collection_exercise(short_name, period):
 @collection_exercise_bp.route("/<short_name>/<period>/view-sample-ci", methods=["POST"])
 @login_required
 def post_sample_ci(short_name, period):
-    if "load-sample" in request.form:
-        return _upload_sample(short_name, period)
-    elif "load-ci" in request.form:
+    if "load-ci" in request.form:
         return _upload_collection_instrument(short_name, period)
     elif "select-ci" in request.form:
         return _select_collection_instrument(short_name, period)
@@ -287,46 +286,6 @@ def _set_ready_for_live(short_name, period):
             short_name=short_name,
             period=period,
             success_panel=success_panel,
-        )
-    )
-
-
-def _upload_sample(short_name, period):
-    valid = _validate_sample()
-
-    if valid:
-        survey_id = survey_controllers.get_survey_id_by_short_name(short_name)
-        exercises = collection_exercise_controllers.get_collection_exercises_by_survey(survey_id)
-
-        # Find the collection exercise for the given period
-        exercise = get_collection_exercise_by_period(exercises, period)
-
-        if not exercise:
-            return make_response(jsonify({"message": "Collection exercise not found"}), 404)
-        try:
-            sample_summary = sample_controllers.upload_sample(short_name, period, request.files["sampleFile"])
-
-            logger.info(
-                "Linking sample summary with collection exercise",
-                collection_exercise_id=exercise["id"],
-                sample_id=sample_summary["id"],
-            )
-            collection_exercise_controllers.link_sample_summary_to_collection_exercise(
-                collection_exercise_id=exercise["id"], sample_summary_id=sample_summary["id"]
-            )
-        except ApiError as e:
-            if e.status_code == 400:
-                flash(e.message, "error")
-            else:
-                # For a non-400, just let the error bubble up
-                raise e
-
-    return redirect(
-        url_for(
-            "collection_exercise_bp.get_view_sample_ci",
-            short_name=short_name,
-            period=period,
-            show_msg="true",
         )
     )
 
@@ -828,27 +787,6 @@ def create_collection_exercise_event(short_name, period, ce_id, tag):
     )
 
 
-def get_event_name(tag):
-    event_names = {
-        "mps": "Main print selection",
-        "go_live": "Go Live",
-        "return_by": "Return by",
-        "exercise_end": "Exercise end",
-        "reminder": "First reminder",
-        "reminder2": "Second reminder",
-        "reminder3": "Third reminder",
-        "ref_period_start": "Reference period start date",
-        "ref_period_end": "Reference period end date",
-        "employment": "Employment date",
-        "nudge_email_0": "Schedule nudge email",
-        "nudge_email_1": "Schedule nudge email",
-        "nudge_email_2": "Schedule nudge email",
-        "nudge_email_3": "Schedule nudge email",
-        "nudge_email_4": "Schedule nudge email",
-    }
-    return event_names.get(tag)
-
-
 @collection_exercise_bp.route("/<short_name>/<period>/view-sample-ci", methods=["GET"])
 @login_required
 def get_view_sample_ci(short_name, period):
@@ -923,7 +861,41 @@ def get_upload_sample_file(short_name, period):
 @login_required
 def post_upload_sample_file(short_name, period):
     verify_permission("surveys.edit", session)
-    return _upload_sample(short_name, period)
+    if _validate_sample():
+        survey_id = survey_controllers.get_survey_id_by_short_name(short_name)
+        exercises = collection_exercise_controllers.get_collection_exercises_by_survey(survey_id)
+
+        # Find the collection exercise for the given period
+        exercise = get_collection_exercise_by_period(exercises, period)
+
+        if not exercise:
+            return make_response(jsonify({"message": "Collection exercise not found"}), 404)
+        try:
+            sample_summary = sample_controllers.upload_sample(short_name, period, request.files["sampleFile"])
+
+            logger.info(
+                "Linking sample summary with collection exercise",
+                collection_exercise_id=exercise["id"],
+                sample_id=sample_summary["id"],
+            )
+            collection_exercise_controllers.link_sample_summary_to_collection_exercise(
+                collection_exercise_id=exercise["id"], sample_summary_id=sample_summary["id"]
+            )
+        except ApiError as e:
+            if e.status_code == 400:
+                flash(e.message, "error")
+            else:
+                # For a non-400, just let the error bubble up
+                raise e
+
+    return redirect(
+        url_for(
+            "collection_exercise_bp.view_collection_exercise",
+            short_name=short_name,
+            period=period,
+            show_msg="true",
+        )
+    )
 
 
 @collection_exercise_bp.route("/<short_name>/<period>/confirm-remove-sample", methods=["GET"])

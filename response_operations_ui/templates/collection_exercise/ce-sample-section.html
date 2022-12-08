@@ -3,7 +3,7 @@
     {% set tblHeaders =  
           [ 
               { 
-                  "value": "Sample",
+                  "value": "Sample file",
                   "thClasses": "ons-u-fs-r--b"
               },
           ]
@@ -76,9 +76,6 @@
         {% set surveyTableDataRows = [
             {
                 "tds": [
-                    {
-                        "value": "No sample file uploaded"
-                    }
                 ]
             },
         ] %}
@@ -101,6 +98,7 @@
             onsButton({
                 "text": sampleButtonText,
                 "id": 'btn-upload-sample-file',
+                "classes": "ons-u-mb-l",
                 "submitType": 'timer',
                 "variants": ['secondary', 'small'],
                 "url": sampleButtonLink,
