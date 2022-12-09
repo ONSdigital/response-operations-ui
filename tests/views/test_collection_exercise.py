@@ -928,7 +928,8 @@ class TestCollectionExercise(ViewTestCase):
     @requests_mock.mock()
     @patch("response_operations_ui.views.collection_exercise.build_collection_exercise_details")
     def test_upload_sample_link_failure(self, mock_request, mock_details):
-        post_data = {"sampleFile": (BytesIO(b"data"), "test.csv"), "load-sample": ""}
+        sign_in_with_permission(self, mock_request, user_permission_surveys_edit_json)
+        post_data = {"sampleFile": (BytesIO(b"data"), "test.csv")}
         sample_data = {"id": sample_summary_id}
         collection_exercise_link = {"id": ""}
 
@@ -938,27 +939,10 @@ class TestCollectionExercise(ViewTestCase):
         mock_request.post(url_sample_service_upload, status_code=200, json=sample_data)
         mock_request.put(url_collection_exercise_link, status_code=500, json=collection_exercise_link)
 
-        response = self.client.post(f"/surveys/{short_name}/{period}/view-sample-ci", data=post_data)
+        response = self.client.post(f"/surveys/{short_name}/{period}/upload-sample-file", data=post_data)
 
         request_history = mock_request.request_history
-        self.assertEqual(len(request_history), 4)
-        self.assertEqual(response.status_code, 500)
-
-    @requests_mock.mock()
-    @patch("response_operations_ui.views.collection_exercise.build_collection_exercise_details")
-    def test_upload_sample_exception(self, mock_request, mock_details):
-        post_data = {"sampleFile": (BytesIO(b"data"), "test.csv"), "load-sample": ""}
-        sample_data = {"id": sample_summary_id}
-
-        mock_details.return_value = formatted_collection_exercise_details
-        mock_request.get(url_get_survey_by_short_name, status_code=200, json=self.survey_data)
-        mock_request.get(url_ces_by_survey, status_code=200, json=exercise_data)
-        mock_request.post(url_sample_service_upload, status_code=500, json=sample_data)
-
-        response = self.client.post(f"/surveys/{short_name}/{period}/view-sample-ci", data=post_data)
-
-        request_history = mock_request.request_history
-        self.assertEqual(len(request_history), 3)
+        self.assertEqual(len(request_history), 8)
         self.assertEqual(response.status_code, 500)
 
     @requests_mock.mock()
@@ -2057,8 +2041,6 @@ class TestCollectionExercise(ViewTestCase):
         response = self.client.get(f"/surveys/{short_name}/{period}/view-sample-ci")
 
         self.assertEqual(200, response.status_code)
-        self.assertIn("No sample file uploaded".encode(), response.data)
-        self.assertIn("Upload sample file".encode(), response.data)
         self.assertIn("SEFT collection instruments".encode(), response.data)
         self.assertIn("Upload SEFT files".encode(), response.data)
         self.assertIn("Done".encode(), response.data)
@@ -2085,45 +2067,10 @@ class TestCollectionExercise(ViewTestCase):
         response = self.client.get(f"/surveys/{short_name}/{period}/view-sample-ci")
 
         self.assertEqual(200, response.status_code)
-        self.assertIn("No sample file uploaded".encode(), response.data)
-        self.assertIn("Upload sample file".encode(), response.data)
         self.assertIn("Collection instruments".encode(), response.data)
         self.assertIn("checkbox-answer".encode(), response.data)
         self.assertIn("Select eQ version".encode(), response.data)
         self.assertIn("Done".encode(), response.data)
-
-    @requests_mock.mock()
-    @patch("response_operations_ui.views.collection_exercise.build_collection_exercise_details")
-    def test_eq_view_sample_ci_page_sample_load_count(self, mock_request, mock_details):
-        sample_status_json = {"areAllSampleUnitsLoaded": False, "expectedTotal": 10, "currentTotal": 5}
-        mock_details.return_value = ce_details_sample_init_state
-        sign_in_with_permission(self, mock_request, user_permission_surveys_edit_json)
-        mock_request.get(url_get_sample_summary_status, json=sample_status_json)
-
-        response = self.client.get(f"/surveys/{short_name}/{period}/view-sample-ci?show_msg=true")
-
-        self.assertEqual(200, response.status_code)
-        self.assertIn("Loading sample (5 / 10 loaded) …".encode(), response.data)
-        self.assertIn("Refresh to see progress".encode(), response.data)
-        self.assertIn("Replace sample file".encode(), response.data)
-        self.assertIn("eQ collection instruments available".encode(), response.data)
-        self.assertIn("Select eQ version".encode(), response.data)
-
-    @requests_mock.mock()
-    @patch("response_operations_ui.views.collection_exercise.build_collection_exercise_details")
-    def test_eq_view_sample_ci_page_failed_sample_check(self, mock_request, mock_details):
-        mock_details.return_value = ce_details_sample_init_state
-        sign_in_with_permission(self, mock_request, user_permission_surveys_edit_json)
-        mock_request.get(url_get_sample_summary_status, status_code=500)
-
-        response = self.client.get(f"/surveys/{short_name}/{period}/view-sample-ci")
-
-        self.assertEqual(200, response.status_code)
-        self.assertIn("Sample summary check failed.  Refresh page to try again".encode(), response.data)
-        self.assertIn("Refresh to see progress".encode(), response.data)
-        self.assertIn("Replace sample file".encode(), response.data)
-        self.assertIn("eQ collection instruments available".encode(), response.data)
-        self.assertIn("Select eQ version".encode(), response.data)
 
     @requests_mock.mock()
     def test_loaded_sample_view_sample_ci_page_survey_permission(self, mock_request):
@@ -2144,8 +2091,6 @@ class TestCollectionExercise(ViewTestCase):
         response = self.client.get(f"/surveys/{short_name}/{period}/view-sample-ci")
 
         self.assertEqual(200, response.status_code)
-        self.assertIn("Sample loaded".encode(), response.data)
-        self.assertIn("Replace sample file".encode(), response.data)
         self.assertIn("SEFT collection instruments".encode(), response.data)
         self.assertIn("Upload SEFT files".encode(), response.data)
         self.assertIn("Done".encode(), response.data)
@@ -2168,8 +2113,6 @@ class TestCollectionExercise(ViewTestCase):
         response = self.client.get(f"/surveys/{short_name}/{period}/view-sample-ci")
 
         self.assertEqual(200, response.status_code)
-        self.assertIn("Sample loaded".encode(), response.data)
-        self.assertNotIn("Replace sample file".encode(), response.data)
         self.assertIn("SEFT collection instruments".encode(), response.data)
         self.assertIn("View SEFT files".encode(), response.data)
         self.assertIn("Done".encode(), response.data)
@@ -2196,8 +2139,6 @@ class TestCollectionExercise(ViewTestCase):
         response = self.client.get(f"/surveys/{short_name}/{period}/view-sample-ci")
 
         self.assertEqual(200, response.status_code)
-        self.assertIn("Sample loaded".encode(), response.data)
-        self.assertIn("Replace sample file".encode(), response.data)
         self.assertIn("Collection instruments".encode(), response.data)
         self.assertIn("unlink-ci-1".encode(), response.data)
         self.assertIn("Select eQ version".encode(), response.data)
@@ -2224,8 +2165,6 @@ class TestCollectionExercise(ViewTestCase):
         response = self.client.get(f"/surveys/{short_name}/{period}/view-sample-ci")
 
         self.assertEqual(200, response.status_code)
-        self.assertIn("Sample loaded".encode(), response.data)
-        self.assertNotIn("Replace sample file".encode(), response.data)
         self.assertIn("Collection instruments".encode(), response.data)
         self.assertNotIn("form-unselect-ci-1".encode(), response.data)
         self.assertIn("Select eQ version".encode(), response.data)
