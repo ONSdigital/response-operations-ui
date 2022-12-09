@@ -474,7 +474,6 @@ class TestCollectionExercise(ViewTestCase):
         self.assertIn("221_201712".encode(), response.data)
         self.assertIn("PUBLISHED".encode(), response.data)
         self.assertNotIn("Select eQ version".encode(), response.data)
-        self.assertNotIn("Set ready for live".encode(), response.data)
 
     @requests_mock.mock()
     def test_collection_exercise_view_event_statuses(self, mock_request):
@@ -500,20 +499,18 @@ class TestCollectionExercise(ViewTestCase):
 
     @requests_mock.mock()
     @patch("response_operations_ui.views.collection_exercise.build_collection_exercise_details")
-    def test_collection_exercise_view_seft_set_ready_for_live(self, mock_request, mock_details):
+    def test_collection_exercise_view_seft_exercise_states(self, mock_request, mock_details):
         mock_request.get(url_get_survey_by_short_name, json=self.seft_survey)
         mock_request.get(url_ces_by_survey, json=self.collection_exercises)
         mock_request.get(url_ce_by_id, json=collection_exercise_details["collection_exercise"])
         mock_request.get(url_get_collection_exercise_events, json=self.collection_exercise_events)
         mock_request.get(url_link_sample, json=[sample_summary_id])
         mock_request.get(url_get_sample_summary, json=self.sample_summary)
-
-        post_data = {"ciFile": (BytesIO(b"data"), "074_201803_0001.xlsx"), "load-ci": ""}
         mock_request.post(url_collection_instrument, status_code=201)
+
+        # Set exercise status to READY_FOR_REVIEW
         mock_details.return_value = seft_collection_exercise_details_set_ready_for_live
-
-        response = self.client.get(f"/surveys/{short_name}/{period}", data=post_data, follow_redirects=True)
-
+        response = self.client.get(f"/surveys/{short_name}/{period}", follow_redirects=True)
         self.assertEqual(response.status_code, 200)
         self.assertIn("Monthly Survey of Building Materials Bricks".encode(), response.data)
         self.assertIn("074".encode(), response.data)
@@ -521,125 +518,39 @@ class TestCollectionExercise(ViewTestCase):
         self.assertIn("Collection instruments".encode(), response.data)
         self.assertIn("Set as ready for live".encode(), response.data)
 
-    @requests_mock.mock()
-    @patch("response_operations_ui.views.collection_exercise.build_collection_exercise_details")
-    def test_collection_exercise_view_seft_ready_for_live(self, mock_request, mock_details):
-        mock_request.get(url_get_survey_by_short_name, json=self.seft_survey)
-        mock_request.get(url_ces_by_survey, json=self.collection_exercises)
-        mock_request.get(url_ce_by_id, json=collection_exercise_details["collection_exercise"])
-        mock_request.get(url_get_collection_exercise_events, json=self.collection_exercise_events)
-        mock_request.get(url_link_sample, json=[sample_summary_id])
-        mock_request.get(url_get_sample_summary, json=self.sample_summary)
-
-        post_data = {"ciFile": (BytesIO(b"data"), "074_201803_0001.xlsx"), "load-ci": ""}
-        mock_request.post(url_collection_instrument, status_code=201)
+        # Set the exercise state to READY_FOR_LIVE
         mock_details.return_value = seft_collection_exercise_details_ready_for_live
-
-        response = self.client.get(f"/surveys/{short_name}/{period}", data=post_data, follow_redirects=True)
-
+        response = self.client.get(f"/surveys/{short_name}/{period}", follow_redirects=True)
         self.assertEqual(response.status_code, 200)
-        self.assertIn("Monthly Survey of Building Materials Bricks".encode(), response.data)
-        self.assertIn("074".encode(), response.data)
-        self.assertIn("Uploaded".encode(), response.data)
-        self.assertIn("Collection instruments".encode(), response.data)
         self.assertIn("Ready for live".encode(), response.data)
-        self.assertNotIn("Set ready for live".encode(), response.data)
+        self.assertNotIn("Set as ready for live".encode(), response.data)
 
-    @requests_mock.mock()
-    @patch("response_operations_ui.views.collection_exercise.build_collection_exercise_details")
-    def test_collection_exercise_view_seft_execution_started(self, mock_request, mock_details):
-        mock_request.get(url_get_survey_by_short_name, json=self.seft_survey)
-        mock_request.get(url_ces_by_survey, json=self.collection_exercises)
-        mock_request.get(url_ce_by_id, json=collection_exercise_details["collection_exercise"])
-        mock_request.get(url_get_collection_exercise_events, json=self.collection_exercise_events)
-        mock_request.get(url_link_sample, json=[sample_summary_id])
-        mock_request.get(url_get_sample_summary, json=self.sample_summary)
-
-        post_data = {"ciFile": (BytesIO(b"data"), "074_201803_0001.xlsx"), "load-ci": ""}
-        mock_request.post(url_collection_instrument, status_code=201)
+        # Set the exercise state to EXECUTION STARTED
         mock_details.return_value = seft_collection_exercise_details_execution_started
-
-        response = self.client.get(f"/surveys/{short_name}/{period}", data=post_data, follow_redirects=True)
-
+        response = self.client.get(f"/surveys/{short_name}/{period}", follow_redirects=True)
         self.assertEqual(response.status_code, 200)
-        self.assertIn("Monthly Survey of Building Materials Bricks".encode(), response.data)
-        self.assertIn("074".encode(), response.data)
-        self.assertIn("Uploaded".encode(), response.data)
-        self.assertIn("Collection instruments".encode(), response.data)
         self.assertIn("Setting ready for live".encode(), response.data)
-        self.assertNotIn("Set ready for live".encode(), response.data)
+        self.assertNotIn("Set as ready for live".encode(), response.data)
 
-    @requests_mock.mock()
-    @patch("response_operations_ui.views.collection_exercise.build_collection_exercise_details")
-    def test_collection_exercise_view_seft_validated(self, mock_request, mock_details):
-        mock_request.get(url_get_survey_by_short_name, json=self.seft_survey)
-        mock_request.get(url_ces_by_survey, json=self.collection_exercises)
-        mock_request.get(url_ce_by_id, json=collection_exercise_details["collection_exercise"])
-        mock_request.get(url_get_collection_exercise_events, json=self.collection_exercise_events)
-        mock_request.get(url_link_sample, json=[sample_summary_id])
-        mock_request.get(url_get_sample_summary, json=self.sample_summary)
-
-        post_data = {"ciFile": (BytesIO(b"data"), "074_201803_0001.xlsx"), "load-ci": ""}
-        mock_request.post(url_collection_instrument, status_code=201)
+        # Set the exercise state to VALIDATED
         mock_details.return_value = seft_collection_exercise_details_validated
-
-        response = self.client.get(f"/surveys/{short_name}/{period}", data=post_data, follow_redirects=True)
-
+        response = self.client.get(f"/surveys/{short_name}/{period}", follow_redirects=True)
         self.assertEqual(response.status_code, 200)
-        self.assertIn("Monthly Survey of Building Materials Bricks".encode(), response.data)
-        self.assertIn("074".encode(), response.data)
-        self.assertIn("Uploaded".encode(), response.data)
-        self.assertIn("Collection instruments".encode(), response.data)
         self.assertIn("Setting ready for live".encode(), response.data)
-        self.assertNotIn("Set ready for live".encode(), response.data)
+        self.assertNotIn("Set as ready for live".encode(), response.data)
 
-    @requests_mock.mock()
-    @patch("response_operations_ui.views.collection_exercise.build_collection_exercise_details")
-    def test_collection_exercise_view_seft_executed(self, mock_request, mock_details):
-        mock_request.get(url_get_survey_by_short_name, json=self.seft_survey)
-        mock_request.get(url_ces_by_survey, json=self.collection_exercises)
-        mock_request.get(url_ce_by_id, json=collection_exercise_details["collection_exercise"])
-        mock_request.get(url_get_collection_exercise_events, json=self.collection_exercise_events)
-        mock_request.get(url_link_sample, json=[sample_summary_id])
-        mock_request.get(url_get_sample_summary, json=self.sample_summary)
-
-        post_data = {"ciFile": (BytesIO(b"data"), "074_201803_0001.xlsx"), "load-ci": ""}
-        mock_request.post(url_collection_instrument, status_code=201)
+        # Set the exercise state to EXECUTED
         mock_details.return_value = seft_collection_exercise_details_executed
-
-        response = self.client.get(f"/surveys/{short_name}/{period}", data=post_data, follow_redirects=True)
-
+        response = self.client.get(f"/surveys/{short_name}/{period}", follow_redirects=True)
         self.assertEqual(response.status_code, 200)
-        self.assertIn("Monthly Survey of Building Materials Bricks".encode(), response.data)
-        self.assertIn("074".encode(), response.data)
-        self.assertIn("Uploaded".encode(), response.data)
-        self.assertIn("Collection instruments".encode(), response.data)
         self.assertIn("Setting ready for live".encode(), response.data)
-        self.assertNotIn("Set ready for live".encode(), response.data)
+        self.assertNotIn("Set as ready for live".encode(), response.data)
 
-    @requests_mock.mock()
-    @patch("response_operations_ui.views.collection_exercise.build_collection_exercise_details")
-    def test_collection_exercise_view_seft_ended(self, mock_request, mock_details):
-        mock_request.get(url_get_survey_by_short_name, json=self.seft_survey)
-        mock_request.get(url_ces_by_survey, json=self.collection_exercises)
-        mock_request.get(url_ce_by_id, json=collection_exercise_details["collection_exercise"])
-        mock_request.get(url_get_collection_exercise_events, json=self.collection_exercise_events)
-        mock_request.get(url_link_sample, json=[sample_summary_id])
-        mock_request.get(url_get_sample_summary, json=self.sample_summary)
-
-        post_data = {"ciFile": (BytesIO(b"data"), "074_201803_0001.xlsx"), "load-ci": ""}
-        mock_request.post(url_collection_instrument, status_code=201)
+        # Set the exercise state to ENDED
         mock_details.return_value = seft_collection_exercise_details_ended
-
-        response = self.client.get(f"/surveys/{short_name}/{period}", data=post_data, follow_redirects=True)
-
+        response = self.client.get(f"/surveys/{short_name}/{period}", follow_redirects=True)
         self.assertEqual(response.status_code, 200)
-        self.assertIn("Monthly Survey of Building Materials Bricks".encode(), response.data)
-        self.assertIn("074".encode(), response.data)
-        self.assertIn("Uploaded".encode(), response.data)
-        self.assertIn("Collection instruments".encode(), response.data)
         self.assertIn("Ended".encode(), response.data)
-        self.assertNotIn("Set ready for live".encode(), response.data)
 
     @requests_mock.mock()
     @patch("response_operations_ui.views.collection_exercise.build_collection_exercise_details")
