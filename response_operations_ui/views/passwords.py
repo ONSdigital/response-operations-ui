@@ -102,8 +102,8 @@ def post_reset_password(token):
         if response.status_code == 422:
             # 422 == New password same as old password
             logger.info("New password same as old password", token=token)
-            form.password.errors.append("Please choose a different password or login with the old password")
-            return render_template("reset-password.html", form=form, token=token)
+            form.password.errors.append("You have entered your current password. Enter a new password or login")
+            return render_template("reset-password.html", form=form, token=token, duplicate_password=True)
 
     logger.warning("Error changing password in UAA", token=token)
     return render_template("reset-password-error.html")

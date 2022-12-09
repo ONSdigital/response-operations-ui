@@ -475,7 +475,7 @@ class SetAccountPasswordForm(FlaskForm):
             or len(password) < 12
             or len(password) > 160
         ):
-            raise ValidationError("Your password doesn't meet the requirements")
+            raise ValidationError("Enter a password in the correct format")
 
 
 class ChangeAccountName(FlaskForm):
