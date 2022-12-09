@@ -21,10 +21,10 @@
               <span class="ons-u-mb-l" style="display:inline-block;">An account has been created for <strong>{{ username }}</strong>. 
                 To activate the account, you must create a password.</span>
               {% set password_information = '<p>' + 'Your password must have at least:' + '</p><ul>'
-                        + '<li>' + 'at least 12 characters' + '</li>'
-                        + '<li>' + 'at least 1 uppercase letter' + '</li>'
-                        + '<li>' + 'at least 1 symbol (eg: ?!£%)' + '</li>'
-                        + '<li>' + 'at least 1 number' + '</li></ul>' %}
+                        + '<li>' + '12 characters' + '</li>'
+                        + '<li>' + '1 uppercase letter' + '</li>'
+                        + '<li>' + '1 symbol (such as: ?!£%)' + '</li>'
+                        + '<li>' + '1 number' + '</li></ul>' %}
               {% if form.password.errors | length == 0 %}
                   {{
                         onsPanel({
@@ -38,7 +38,7 @@
                         "name": "password",
                         "showPasswordText": "Show password",
                         "label": {
-                            "text": password_information + '<p>' + 'Password' + '</p>' if form.password.errors else 'Password',
+                            "text": password_information + 'Password' if form.password.errors else 'Password',
                         },
                         "showPasswordText": "Show password",
                         "error": {"text": 'Enter a password in the correct format' } if form.password.errors else None,
