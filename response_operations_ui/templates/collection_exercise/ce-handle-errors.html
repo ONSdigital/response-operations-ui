@@ -51,7 +51,7 @@
             })
         %}
             Loading sample {{ status }}… <span class="ons-u-ml-xs"></span>
-          <a href="/surveys/{{survey.shortName}}/{{ce.exerciseRef}}/view-sample-ci?show_msg=true">Refresh to see progress</a>
+          <a href="/surveys/{{survey.shortName}}/{{ce.exerciseRef}}?show_msg=true">Refresh to see progress</a>
         {% endcall %}
     {% elif sample.state == 'ACTIVE' %}
         {% call
