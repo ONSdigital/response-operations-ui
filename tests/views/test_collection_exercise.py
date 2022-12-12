@@ -2205,5 +2205,5 @@ class TestCollectionExercise(ViewTestCase):
         self.assertNotIn("Edit".encode(), response.data)
         self.assertNotIn("Add nudge email".encode(), response.data)
         self.assertNotIn("Add reminder".encode(), response.data)
-        self.assertIn("kUploaded".encode(), response.data)
+        self.assertIn("Uploaded".encode(), response.data)
         self.assertNotIn("Set as ready for live".encode(), response.data)
