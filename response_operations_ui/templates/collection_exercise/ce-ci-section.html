@@ -25,48 +25,8 @@
                     "thClasses": "ons-u-ta"
                 }
              )%}
-            {% do tblHeaders.append(
-                {
-                    "value": "Uploaded " + '<em>' + sample.ingestDateTime[:-8] + '</em>' + sample.ingestDateTime[-8:],
-                    "thClasses": "ons-u-fs-r",
-                    "numeric": "true"
-                }
-             )%}
             {% set surveyTableDataRows = [
-                    {
-                        "tds": [
-                            {
-                                "value": "Total businesses",
-                                "tdClasses": "ons-u-ta"
-                            },
-                            {
-                                "value": sample.totalSampleUnits,
-                                "name": "total-instruments",
-                                "tdClasses": "ons-u-ta-right"
-                            },
-                            {
-                                "value": ' ',
-                                "name": "upload-sample-time",
-                            }
-                        ]
-                    },
-                    {
-                        "tds": [
-                            {
-                                "value": "Collection instruments",
-                                "tdClasses": "ons-u-ta"
-                            },
-                            {
-                                "value": sample.expectedCollectionInstruments,
-                                "name": "total-instruments",
-                                "tdClasses": "ons-u-ta-right"
-                            },
-                            {
-                                "value": ' ',
-                                "name": "upload-sample-time",
-                            }
-                        ]
-                    }
+
                 ] %}
             {% do surveyTableData | setAttribute("trs", surveyTableDataRows) %}
         {% endif %}
