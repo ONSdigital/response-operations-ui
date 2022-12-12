@@ -377,6 +377,12 @@ class TestCollectionExercise(ViewTestCase):
         mock_request.get(url_get_collection_exercise_events, json=self.collection_exercise_events)
         mock_request.get(url_link_sample, json=[sample_summary_id])
         mock_request.get(url_get_sample_summary, json=self.sample_summary)
+        mock_request.get(
+            f"{url_get_collection_instrument}?{ci_search_string}", json=self.collection_instruments, complete_qs=True
+        )
+        mock_request.get(
+            f"{url_get_collection_instrument}?{ci_type_search_string_eq}", json=self.eq_ci_selectors, complete_qs=True
+        )
 
         response = self.client.get(f"/surveys/{short_name}/{period}", follow_redirects=True)
 
@@ -441,6 +447,12 @@ class TestCollectionExercise(ViewTestCase):
         mock_request.get(url_get_collection_exercise_events, json=self.collection_exercise_ref_both_date)
         mock_request.get(url_link_sample, json=[sample_summary_id])
         mock_request.get(url_get_sample_summary, json=self.sample_summary)
+        mock_request.get(
+            f"{url_get_collection_instrument}?{ci_search_string}", json=self.collection_instruments, complete_qs=True
+        )
+        mock_request.get(
+            f"{url_get_collection_instrument}?{ci_type_search_string_eq}", json=self.eq_ci_selectors, complete_qs=True
+        )
 
         mock_request.get(url_get_by_survey_with_ref_start_date, json=collection_exercise_eq_ref_start_date)
         mock_request.get(url_get_by_survey_with_ref_end_date, json=collection_exercise_eq_ref_end_date)
@@ -1572,6 +1584,12 @@ class TestCollectionExercise(ViewTestCase):
         mock_request.get(url_get_collection_exercise_events, json=self.collection_exercise_events)
         mock_request.get(url_link_sample, json=[sample_summary_id])
         mock_request.get(url_get_sample_summary, json=self.sample_summary)
+        mock_request.get(
+            f"{url_get_collection_instrument}?{ci_search_string}", json=self.collection_instruments, complete_qs=True
+        )
+        mock_request.get(
+            f"{url_get_collection_instrument}?{ci_type_search_string_eq}", json=self.eq_ci_selectors, complete_qs=True
+        )
 
         response = self.client.get(f"/surveys/{short_name}/{period}", follow_redirects=True)
 
@@ -1587,6 +1605,12 @@ class TestCollectionExercise(ViewTestCase):
         mock_request.get(url_get_collection_exercise_events, json=events)
         mock_request.get(url_link_sample, json=[sample_summary_id])
         mock_request.get(url_get_sample_summary, json=self.sample_summary)
+        mock_request.get(
+            f"{url_get_collection_instrument}?{ci_search_string}", json=self.collection_instruments, complete_qs=True
+        )
+        mock_request.get(
+            f"{url_get_collection_instrument}?{ci_type_search_string_eq}", json=self.eq_ci_selectors, complete_qs=True
+        )
 
         response = self.client.get(f"/surveys/{short_name}/{period}", follow_redirects=True)
 
@@ -1602,6 +1626,12 @@ class TestCollectionExercise(ViewTestCase):
         mock_request.get(url_get_collection_exercise_events, json=nudge_events_two)
         mock_request.get(url_link_sample, json=[sample_summary_id])
         mock_request.get(url_get_sample_summary, json=self.sample_summary)
+        mock_request.get(
+            f"{url_get_collection_instrument}?{ci_search_string}", json=self.collection_instruments, complete_qs=True
+        )
+        mock_request.get(
+            f"{url_get_collection_instrument}?{ci_type_search_string_eq}", json=self.eq_ci_selectors, complete_qs=True
+        )
 
         response = self.client.get(f"/surveys/{short_name}/{period}", follow_redirects=True)
 
@@ -1855,6 +1885,12 @@ class TestCollectionExercise(ViewTestCase):
         mock_request.get(url_get_collection_exercise_events, json=events)
         mock_request.get(url_link_sample, json=[sample_summary_id])
         mock_request.get(url_get_sample_summary, json=self.sample_summary)
+        mock_request.get(
+            f"{url_get_collection_instrument}?{ci_search_string}", json=self.collection_instruments, complete_qs=True
+        )
+        mock_request.get(
+            f"{url_get_collection_instrument}?{ci_type_search_string_eq}", json=self.eq_ci_selectors, complete_qs=True
+        )
 
         response = self.client.get(f"/surveys/{short_name}/{period}", follow_redirects=True)
 
@@ -1875,6 +1911,12 @@ class TestCollectionExercise(ViewTestCase):
         mock_request.get(url_ces_by_survey, json=self.collection_exercises)
         mock_request.get(url_ce_by_id, json=collection_exercise_details["collection_exercise"])
         mock_request.get(url_get_collection_exercise_events, json=events)
+        mock_request.get(
+            f"{url_get_collection_instrument}?{ci_search_string}", json=self.collection_instruments, complete_qs=True
+        )
+        mock_request.get(
+            f"{url_get_collection_instrument}?{ci_type_search_string_eq}", json=self.eq_ci_selectors, complete_qs=True
+        )
         mock_request.get(url_link_sample, json=[""])
         mock_request.get(url_get_sample_summary, json="")
 
@@ -1896,6 +1938,12 @@ class TestCollectionExercise(ViewTestCase):
         mock_request.get(url_ces_by_survey, json=self.collection_exercises)
         mock_request.get(url_ce_by_id, json=collection_exercise_details["collection_exercise"])
         mock_request.get(url_get_collection_exercise_events, json=events)
+        mock_request.get(
+            f"{url_get_collection_instrument}?{ci_search_string}", json=self.collection_instruments, complete_qs=True
+        )
+        mock_request.get(
+            f"{url_get_collection_instrument}?{ci_type_search_string_eq}", json=self.eq_ci_selectors, complete_qs=True
+        )
         mock_request.get(url_link_sample, json=[""])
         mock_request.get(url_get_sample_summary, json="")
 
@@ -2195,6 +2243,12 @@ class TestCollectionExercise(ViewTestCase):
         mock_request.get(url_get_collection_exercise_events, json=self.collection_exercise_events)
         mock_request.get(url_link_sample, json=[sample_summary_id])
         mock_request.get(url_get_sample_summary, json=self.sample_summary)
+        mock_request.get(
+            f"{url_get_collection_instrument}?{ci_search_string}", json=self.collection_instruments, complete_qs=True
+        )
+        mock_request.get(
+            f"{url_get_collection_instrument}?{ci_type_search_string_eq}", json=self.eq_ci_selectors, complete_qs=True
+        )
 
         response = self.client.get(f"/surveys/{short_name}/{period}", follow_redirects=True)
 

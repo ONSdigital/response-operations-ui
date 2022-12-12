@@ -17,22 +17,45 @@
         "ths": tblHeaders,
     } %}
 
-    {% if sample %}
-        {% if sample.state == 'ACTIVE' or sample.state == 'COMPLETE' %}
-            {% do tblHeaders.append(
+    {% if survey.surveyMode == 'EQ' %}
+        {% do tblHeaders.append(
+            {
+                "value": "",
+                "thClasses": "ons-u-ta"
+            }
+        )%}
+        {% set surveyTableDataRows = [ 
+            {"tds": [
                 {
-                    "value": "",
-                    "thClasses": "ons-u-ta"
-                }
-             )%}
-            {% set surveyTableDataRows = [
-
-                ] %}
-            {% do surveyTableData | setAttribute("trs", surveyTableDataRows) %}
-        {% endif %}
-    
+                    "value": 'EQ collection instruments'
+                },
+                {
+                    "value": instrument_count,
+                    "tdClasses": "ons-u-ta-right"
+                }] 
+            } 
+        ] %}
+        {% do surveyTableData | setAttribute("trs", surveyTableDataRows) %}
         {{ onsTable(surveyTableData) }}
     {% else %}
+        {% do tblHeaders.append(
+            {
+                "value": "",
+                "thClasses": "ons-u-ta"
+            }
+        )%}
+        {% set surveyTableDataRows = [ 
+            {"tds": [
+                {
+                    "value": 'SEFT collection instruments'
+                },
+                {
+                    "value": instrument_count,
+                    "tdClasses": "ons-u-ta-right"
+                }]
+            }
+        ] %}
+        {% do surveyTableData | setAttribute("trs", surveyTableDataRows) %}
         {{ onsTable(surveyTableData) }}
     {% endif %}
   

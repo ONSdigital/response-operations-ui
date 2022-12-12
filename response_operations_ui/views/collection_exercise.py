@@ -121,7 +121,7 @@ def build_collection_exercise_details(short_name: str, period: str, include_ci=T
 @collection_exercise_bp.route("/<short_name>/<period>", methods=["GET"])
 @login_required
 def view_collection_exercise(short_name, period):
-    ce_details = build_collection_exercise_details(short_name, period, include_ci=False)
+    ce_details = build_collection_exercise_details(short_name, period, include_ci=True)
     ce_state = ce_details["collection_exercise"]["state"]
     if ce_details["survey"]["surveyMode"] == "EQ":
         show_set_live_button = (
@@ -162,6 +162,7 @@ def view_collection_exercise(short_name, period):
     return render_template(
         "collection_exercise/collection-exercise.html",
         ce=ce_details["collection_exercise"],
+        instrument_count=str(len(ce_details["collection_instruments"])),
         error=error_json,
         events=ce_details["events"],
         locked=locked,
