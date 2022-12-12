@@ -514,7 +514,7 @@ class TestCollectionExercise(ViewTestCase):
         self.assertEqual(response.status_code, 200)
         self.assertIn("Monthly Survey of Building Materials Bricks".encode(), response.data)
         self.assertIn("074".encode(), response.data)
-        self.assertIn("Uploaded".encode(), response.data)
+        self.assertIn("Sample uploaded".encode(), response.data)
         self.assertIn("Collection instruments".encode(), response.data)
         self.assertIn("Set as ready for live".encode(), response.data)
 
@@ -2205,5 +2205,5 @@ class TestCollectionExercise(ViewTestCase):
         self.assertNotIn("Edit".encode(), response.data)
         self.assertNotIn("Add nudge email".encode(), response.data)
         self.assertNotIn("Add reminder".encode(), response.data)
-        self.assertIn("Uploaded".encode(), response.data)
+        self.assertIn("Sample loaded".encode(), response.data)
         self.assertNotIn("Set as ready for live".encode(), response.data)
