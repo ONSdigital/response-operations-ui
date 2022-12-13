@@ -25,7 +25,10 @@ from response_operations_ui.common.date_restriction_generator import (
     get_date_restriction_text,
 )
 from response_operations_ui.common.dates import localise_datetime
-from response_operations_ui.common.filters import get_collection_exercise_by_period
+from response_operations_ui.common.filters import (
+    filter_eq_ci_selectors,
+    get_collection_exercise_by_period,
+)
 from response_operations_ui.common.mappers import (
     convert_events_to_new_format,
     format_short_name,
@@ -57,21 +60,6 @@ logger = wrap_logger(logging.getLogger(__name__))
 collection_exercise_bp = Blueprint(
     "collection_exercise_bp", __name__, static_folder="static", template_folder="templates"
 )
-
-
-def filter_eq_ci_selectors(eq_ci_selectors: list[dict], collection_instruments: list[dict]) -> list[dict]:
-    """
-    Takes all eQ collection instruments available for the collection exercise as a list and the already linked
-    instruments and returns a list of the collection instruments that have not yet been linked for this exercise
-
-    :param eq_ci_selectors: list of available eQ collection instruments
-    :param collection_instruments: list of linked eQ collection instruments
-    :returns eq_ci_selectors: list of eQ collection instruments available to be linked to this exercise
-    """
-    for collection_instrument in collection_instruments:
-        if collection_instrument in eq_ci_selectors:
-            eq_ci_selectors.remove(collection_instrument)
-    return eq_ci_selectors
 
 
 def build_collection_exercise_details(short_name: str, period: str, include_ci=True) -> dict:
