@@ -472,7 +472,6 @@ class TestCollectionExercise(ViewTestCase):
         self.assertIn("Business Register and Employment Survey".encode(), response.data)
         self.assertIn("221_201712".encode(), response.data)
         self.assertIn("PUBLISHED".encode(), response.data)
-        self.assertNotIn("Select eQ version".encode(), response.data)
         self.assertNotIn("Set ready for live".encode(), response.data)
 
     @requests_mock.mock()
@@ -2068,7 +2067,6 @@ class TestCollectionExercise(ViewTestCase):
         self.assertIn("Upload sample file".encode(), response.data)
         self.assertIn("Collection instruments".encode(), response.data)
         self.assertIn("checkbox-answer".encode(), response.data)
-        self.assertIn("Select eQ version".encode(), response.data)
         self.assertIn("Done".encode(), response.data)
 
     @requests_mock.mock()
@@ -2086,7 +2084,6 @@ class TestCollectionExercise(ViewTestCase):
         self.assertIn("Refresh to see progress".encode(), response.data)
         self.assertIn("Replace sample file".encode(), response.data)
         self.assertIn("eQ collection instruments available".encode(), response.data)
-        self.assertIn("Select eQ version".encode(), response.data)
 
     @requests_mock.mock()
     @patch("response_operations_ui.views.collection_exercise.build_collection_exercise_details")
@@ -2102,7 +2099,6 @@ class TestCollectionExercise(ViewTestCase):
         self.assertIn("Refresh to see progress".encode(), response.data)
         self.assertIn("Replace sample file".encode(), response.data)
         self.assertIn("eQ collection instruments available".encode(), response.data)
-        self.assertIn("Select eQ version".encode(), response.data)
 
     @requests_mock.mock()
     def test_loaded_sample_view_sample_ci_page_survey_permission(self, mock_request):
@@ -2179,7 +2175,6 @@ class TestCollectionExercise(ViewTestCase):
         self.assertIn("Replace sample file".encode(), response.data)
         self.assertIn("Collection instruments".encode(), response.data)
         self.assertIn("unlink-ci-1".encode(), response.data)
-        self.assertIn("Select eQ version".encode(), response.data)
         self.assertIn("Done".encode(), response.data)
 
     @requests_mock.mock()
@@ -2207,7 +2202,6 @@ class TestCollectionExercise(ViewTestCase):
         self.assertNotIn("Replace sample file".encode(), response.data)
         self.assertIn("Collection instruments".encode(), response.data)
         self.assertNotIn("form-unselect-ci-1".encode(), response.data)
-        self.assertIn("Select eQ version".encode(), response.data)
         self.assertIn("Done".encode(), response.data)
 
     @requests_mock.mock()
