@@ -8,7 +8,7 @@
     "surveyType": "Business",
     "surveyMode": "EQ",
     "legalBasisRef": "STA1947",
-    "eqVersion": "v2"
+    "eqVersion": "v3"
   },
   "collection_exercise": {
     "id": "14fb3e68-4dca-46db-bf49-04b84e07e77c",
@@ -23,7 +23,7 @@
     "scheduledReturnDateTime": null,
     "scheduledEndDateTime": null,
     "executedBy": null,
-    "eqVersion": "v2",
+    "eqVersion": "v3",
     "state": "CREATED",
     "exerciseRef": "2107",
     "userDescription": "July 2021",

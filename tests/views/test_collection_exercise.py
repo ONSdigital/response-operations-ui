@@ -130,7 +130,6 @@ url_get_collection_exercises_link = f"{collection_exercise_root}/link/{collectio
 url_link_sample = f"{collection_exercise_root}/link/{collection_exercise_id}"
 url_collection_exercise_survey_id = f"{collection_exercise_root}/survey/{survey_id}"
 url_update_ce_user_details = f"{collection_exercise_root}/{collection_exercise_id}/userDescription"
-url_update_ce_eq_version = f"{collection_exercise_root}/{collection_exercise_id}/eqVersion"
 url_update_ce_period = f"{collection_exercise_root}/{collection_exercise_id}/exerciseRef"
 url_get_collection_exercise_events = f"{collection_exercise_root}/{collection_exercise_id}/events"
 url_create_collection_exercise = f"{TestingConfig.COLLECTION_EXERCISE_URL}/collectionexercises"
@@ -1041,22 +1040,6 @@ class TestCollectionExercise(ViewTestCase):
         self.assertNotIn("Sample loaded successfully".encode(), response.data)
         self.assertIn("Sample summary".encode(), response.data)
         self.assertIn("Too few columns in CSV file".encode(), response.data)
-
-    @requests_mock.mock()
-    @patch("response_operations_ui.views.collection_exercise.build_collection_exercise_details")
-    def test_eq_version_change_success(self, mock_request, mock_details):
-        data = {"eq-version": "v3"}
-        with open(
-            f"{project_root}/test_data/collection_exercise/formatted_collection_exercise_details_eq_version.json"
-        ) as collection_exercise:
-            mock_details.return_value = json.load(collection_exercise)
-        mock_request.put(url_update_ce_eq_version, status_code=200)
-        mock_request.get(url_get_survey_by_short_name, status_code=200, json=self.survey_data)
-        mock_request.get(url_ces_by_survey, status_code=200, json=exercise_data)
-        response = self.client.post(f"/surveys/{short_name}/{period}/view-sample-ci", data=data, follow_redirects=True)
-
-        self.assertEqual(response.status_code, 200)
-        self.assertIn("eQ version updated to v3".encode(), response.data)
 
     @requests_mock.mock()
     @patch("response_operations_ui.views.collection_exercise.build_collection_exercise_details")

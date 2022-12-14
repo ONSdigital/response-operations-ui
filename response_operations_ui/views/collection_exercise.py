@@ -40,9 +40,6 @@ from response_operations_ui.controllers import (
     sample_controllers,
     survey_controllers,
 )
-from response_operations_ui.controllers.collection_exercise_controllers import (
-    update_collection_exercise_eq_version,
-)
 from response_operations_ui.exceptions.exceptions import ApiError
 from response_operations_ui.forms import (
     CreateCollectionExerciseDetailsForm,
@@ -248,8 +245,6 @@ def post_sample_ci(short_name, period):
         return _select_collection_instrument(short_name, period)
     elif "unselect-ci" in request.form:
         return _unselect_collection_instrument(short_name, period)
-    if "eq-version" in request.form:
-        return _update_eq_version(short_name, period)
     return get_view_sample_ci(short_name, period)
 
 
@@ -367,30 +362,6 @@ def _select_collection_instrument(short_name, period):
             short_name=short_name,
             period=period,
             success_panel=success_panel,
-        )
-    )
-
-
-def _update_eq_version(short_name, period):
-    eq_version = request.form.get("eq-version")
-    ce_details = build_collection_exercise_details(short_name, period)
-    ce = ce_details["collection_exercise"]
-    if ce["eqVersion"] != eq_version:
-        update_collection_exercise_eq_version(ce["id"], eq_version)
-        flash("eQ version updated successfully.")
-        return redirect(
-            url_for(
-                "collection_exercise_bp.get_view_sample_ci",
-                period=period,
-                short_name=short_name,
-                success_panel=f"eQ version updated to {eq_version}.",
-            )
-        )
-    return redirect(
-        url_for(
-            "collection_exercise_bp.get_view_sample_ci",
-            period=period,
-            short_name=short_name,
         )
     )
 
@@ -645,7 +616,6 @@ def get_create_collection_exercise_form(survey_ref, short_name):
     logger.info("Retrieving survey data for form", short_name=short_name, survey_ref=survey_ref)
     form = CreateCollectionExerciseDetailsForm(form=request.form)
     survey_details = survey_controllers.get_survey(short_name)
-    survey_eq_version = survey_details["eqVersion"] if survey_details["surveyMode"] != "SEFT" else ""
     return render_template(
         "create-collection-exercise.html",
         form=form,
@@ -653,7 +623,6 @@ def get_create_collection_exercise_form(survey_ref, short_name):
         survey_ref=survey_ref,
         survey_id=survey_details["id"],
         survey_name=survey_details["shortName"],
-        survey_eq_version=survey_eq_version,
     )
 
 
@@ -667,7 +636,6 @@ def create_collection_exercise(survey_ref, short_name):
 
     survey_id = form.get("hidden_survey_id")
     survey_name = form.get("hidden_survey_name")
-    survey_eq_version = form.get("hidden_eq_version")
 
     if not ce_form.validate():
         logger.info("Failed validation, retrieving survey data for form", survey=short_name, survey_ref=survey_ref)
@@ -684,7 +652,6 @@ def create_collection_exercise(survey_ref, short_name):
             survey_ref=survey_ref,
             survey_id=survey_id,
             survey_name=survey_name,
-            survey_eq_version=survey_eq_version,
         )
 
     created_period = form.get("period")
@@ -701,18 +668,16 @@ def create_collection_exercise(survey_ref, short_name):
                 survey_ref=survey_ref,
                 survey_id=survey_id,
                 survey_name=survey_name,
-                survey_eq_version=survey_eq_version,
             )
 
     logger.info(
         "Creating collection exercise for survey",
         survey=short_name,
         survey_ref=survey_ref,
-        survey_eq_version=survey_eq_version,
     )
 
     collection_exercise_controllers.create_collection_exercise(
-        survey_id, survey_name, form.get("user_description"), form.get("period"), survey_eq_version
+        survey_id, survey_name, form.get("user_description"), form.get("period")
     )
 
     logger.info("Successfully created collection exercise", survey=short_name, survey_ref=survey_ref)
