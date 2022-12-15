@@ -486,7 +486,6 @@ class TestCollectionExercise(ViewTestCase):
         self.assertIn("PUBLISHED".encode(), response.data)
         self.assertNotIn("Set ready for live".encode(), response.data)
 
-
     @requests_mock.mock()
     def test_collection_exercise_view_event_statuses(self, mock_request):
         mock_request.get(url_get_survey_by_short_name, json=self.survey)
