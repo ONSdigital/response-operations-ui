@@ -63,7 +63,7 @@
         {% elif 'INIT' == sample.state %}
             <div class="ons-u-mb-xl">
                 <div class="ons-u-fs-r">
-                    Loading… <span class="ons-u-ml-xs"><a href="/surveys/{{survey.shortName}}/{{ce.exerciseRef}}/view-sample-ci?show_msg=true">Refresh to see progress</a></span>
+                    Loading… <span class="ons-u-ml-xs"><a href="/surveys/{{survey.shortName}}/{{ce.exerciseRef}}?show_msg=true">Refresh to see progress</a></span>
                 </div>
             </div>
         {% elif 'FAILED' == sample.state %}
@@ -134,7 +134,7 @@
                             "text": "Cancel",
                             "variants": ['secondary', 'small'],
                             "id": "btn-cancel-load-sample",
-                            "url": url_for('collection_exercise_bp.get_view_sample_ci', short_name=survey.shortName, period=ce.exerciseRef),
+                            "url": url_for('collection_exercise_bp.view_collection_exercise', short_name=survey.shortName, period=ce.exerciseRef),
                             "noIcon": true
                         })
                     }}
