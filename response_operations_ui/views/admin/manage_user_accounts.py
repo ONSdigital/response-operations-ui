@@ -273,7 +273,7 @@ def post_manage_account_groups(user_id):
                 template_name="update_user_permissions",
                 personalisation={},
             )
-            permission_change_sign_out(user['id'])
+            permission_change_sign_out(user["id"])
         except NotifyError as e:
             logger.error("failed to send email", msg=e.description, exc_info=True)
             flash("Failed to send email, please try again", "error")
@@ -286,11 +286,12 @@ def post_manage_account_groups(user_id):
 
 def permission_change_sign_out(user_id):
     all_sessions = current_app.config["SESSION_REDIS"]
-    
+
     for user_in_session in all_sessions.keys():
         if user_id in str(all_sessions.get(user_in_session)):
             all_sessions.delete(user_in_session)
-    
+
+
 @admin_bp.route("/manage-account/<user_id>/delete", methods=["GET"])
 @login_required
 def get_delete_uaa_user(user_id):
@@ -366,4 +367,3 @@ def _get_refine_user_list(users: list) -> list[dict]:
             }
         )
     return user_list
-
