@@ -9,7 +9,7 @@ from flask import (
     session,
     url_for,
 )
-from flask_login import login_required, logout_user
+from flask_login import login_required
 from flask_paginate import Pagination
 from requests import HTTPError
 from structlog import wrap_logger
