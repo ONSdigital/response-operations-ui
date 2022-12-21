@@ -5,6 +5,7 @@ import unittest
 from response_operations_ui.common.mappers import (
     convert_event_list_to_dictionary,
     get_display_text_for_event,
+    get_event_name,
 )
 
 project_root = os.path.dirname(os.path.dirname(__file__))
@@ -31,6 +32,12 @@ class TestMappers(unittest.TestCase):
 
     def test_convert_event_list_to_dictionary_empty_list(self):
         function_input = []
+        expected_output = {}
+        output = convert_event_list_to_dictionary(function_input)
+        self.assertEqual(output, expected_output)
+
+    def test_convert_event_list_to_dictionary_none_input(self):
+        function_input = None
         expected_output = {}
         output = convert_event_list_to_dictionary(function_input)
         self.assertEqual(output, expected_output)
@@ -66,5 +73,23 @@ class TestMappers(unittest.TestCase):
         ]
         for test in tests:
             output = get_display_text_for_event(test[0])
+            expected_output = test[1]
+            self.assertEqual(output, expected_output)
+
+    def test_get_event_name(self):
+        tests = [
+            ["mps", "Main print selection"],
+            ["go_live", "Go Live"],
+            ["return_by", "Return by"],
+            ["reminder", "First reminder"],
+            ["reminder2", "Second reminder"],
+            ["nudge_email_0", "Schedule nudge email"],
+            ["nudge_email_1", "Schedule nudge email"],
+            ["fake_event", None],
+            ["", None],
+            [None, None],
+        ]
+        for test in tests:
+            output = get_event_name(test[0])
             expected_output = test[1]
             self.assertEqual(output, expected_output)

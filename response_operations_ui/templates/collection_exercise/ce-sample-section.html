@@ -1,8 +1,9 @@
 <section class="ons-u-mt-s">
+    {% set surveyEditPermission = hasPermission('surveys.edit') %}
     {% set tblHeaders =  
           [ 
               { 
-                  "value": "Sample",
+                  "value": "Sample file",
                   "thClasses": "ons-u-fs-r--b"
               },
           ]
@@ -55,12 +56,16 @@
             {{
                 onsTable(surveyTableData)
             }}
+        
         {% if 'INIT' == sample.state %}
-            <div class="ons-u-mb-m">
-                <div class="ons-u-fs-r">
-                    Loading… <span class="ons-u-ml-xs"><a href="/surveys/{{survey.shortName}}/{{ce.exerciseRef}}/view-sample-ci?show_msg=true">Refresh to see progress</a></span>
-                </div>
-            </div>
+          {% if sample_load_status %}
+            {% set status = '(' ~ sample_load_status.currentTotal ~ ' / '  ~sample_load_status.expectedTotal ~ ' loaded) ' %}
+          {% endif %}
+              <div class="ons-u-mb-m">
+                  <div class="ons-u-fs-r">
+                      Loading {{ status }}… <span class="ons-u-ml-xs"><a href="/surveys/{{survey.shortName}}/{{ce.exerciseRef}}?show_msg=true">Refresh to see progress</a></span>
+                  </div>
+              </div>
         {% elif 'FAILED' == sample.state %}
             {% call
                 onsPanel({
@@ -75,9 +80,6 @@
         {% set surveyTableDataRows = [
             {
                 "tds": [
-                    {
-                        "value": "No sample file uploaded"
-                    }
                 ]
             },
         ] %}
@@ -95,11 +97,12 @@
           {% set sampleButtonText = 'Replace sample file' %}
           {% set sampleButtonLink = url_for('collection_exercise_bp.get_confirm_remove_sample', short_name=survey.shortName, period=ce.exerciseRef) %}
     {% endif %}
-    {% if (not locked) and surveyEditPermission %}
+    {% if (not locked) and surveyEditPermission and (not 'INIT' == sample.state) %}
         {{
             onsButton({
                 "text": sampleButtonText,
                 "id": 'btn-upload-sample-file',
+                "classes": "ons-u-mb-l",
                 "submitType": 'timer',
                 "variants": ['secondary', 'small'],
                 "url": sampleButtonLink,

@@ -11,17 +11,17 @@ from response_operations_ui.common.date_restriction_generator import (
     get_date_restriction_text,
 )
 from response_operations_ui.common.filters import get_collection_exercise_by_period
-from response_operations_ui.common.mappers import convert_events_to_new_format
+from response_operations_ui.common.mappers import (
+    convert_events_to_new_format,
+    get_event_name,
+)
 from response_operations_ui.common.validators import valid_date_for_event
 from response_operations_ui.controllers import (
     collection_exercise_controllers,
     survey_controllers,
 )
 from response_operations_ui.forms import EventDateForm
-from response_operations_ui.views.collection_exercise import (
-    collection_exercise_bp,
-    get_event_name,
-)
+from response_operations_ui.views.collection_exercise import collection_exercise_bp
 
 logger = wrap_logger(logging.getLogger(__name__))
 
