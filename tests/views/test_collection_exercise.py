@@ -1277,23 +1277,6 @@ class TestCollectionExercise(ViewTestCase):
         self.assertIn("123456".encode(), response.data)
 
     @requests_mock.mock()
-    def test_create_collection_exercise_invalid_period(self, mock_request):
-        sign_in_with_permission(self, mock_request, user_permission_surveys_edit_json)
-        new_collection_exercise_details = {
-            "user_description": "New collection exercise",
-            "period": "invalid",
-        }
-        mock_request.get(url_survey_shortname, status_code=200, json=self.survey)
-
-        response = self.client.post(
-            f"/surveys/{survey_ref}/{short_name}/create-collection-exercise", data=new_collection_exercise_details
-        )
-
-        self.assertIn("Error creating collection exercise".encode(), response.data)
-        self.assertIn("Please enter numbers only for the period".encode(), response.data)
-        self.assertEqual(response.status_code, 200)
-
-    @requests_mock.mock()
     def test_get_create_ce_form(self, mock_request):
         sign_in_with_permission(self, mock_request, user_permission_surveys_edit_json)
         mock_request.get(url_ces_by_survey, json=self.collection_exercises)
@@ -1331,6 +1314,23 @@ class TestCollectionExercise(ViewTestCase):
             "Use a period that is not in use by any collection exercise for this survey".encode(),
             response.data,
         )
+
+    @requests_mock.mock()
+    def test_create_collection_exercise_invalid_period(self, mock_request):
+        sign_in_with_permission(self, mock_request, user_permission_surveys_edit_json)
+        new_collection_exercise_details = {
+            "user_description": "New collection exercise",
+            "period": "invalid",
+        }
+        mock_request.get(url_survey_shortname, status_code=200, json=self.survey)
+
+        response = self.client.post(
+            f"/surveys/{survey_ref}/{short_name}/create-collection-exercise", data=new_collection_exercise_details
+        )
+
+        self.assertIn("Error creating collection exercise".encode(), response.data)
+        self.assertIn("Please enter numbers only for the period".encode(), response.data)
+        self.assertEqual(response.status_code, 200)
 
     @requests_mock.mock()
     @patch("response_operations_ui.views.collection_exercise.build_collection_exercise_details")

@@ -88,6 +88,7 @@ def get_survey_by_shortname(short_name: str) -> dict:
     logger.info("Retrieving survey", short_name=short_name)
     url = f'{app.config["SURVEY_URL"]}/surveys/shortname/{short_name}'
     response = requests.get(url, auth=app.config["BASIC_AUTH"])
+
     try:
         response.raise_for_status()
     except (HTTPError, RequestException):
