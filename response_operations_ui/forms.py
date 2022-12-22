@@ -274,8 +274,6 @@ class EventDateForm(FlaskForm):
 class CreateCollectionExerciseDetailsForm(FlaskForm):
     user_description = StringField("user_description")
     period = IntegerField("period")
-    hidden_survey_id = HiddenField("hidden_survey_id")
-    hidden_survey_name = HiddenField("hidden_survey_name")
 
     @staticmethod
     def validate_period(form, field):
