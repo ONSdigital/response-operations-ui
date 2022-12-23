@@ -1253,7 +1253,7 @@ class TestCollectionExercise(ViewTestCase):
         self.assertIn("Error: Failed to remove collection instrument".encode(), response.data)
 
     @requests_mock.mock()
-    def test_get_create_create_collection_exercise(self, mock_request):
+    def test_get_create_collection_exercise(self, mock_request):
         sign_in_with_permission(self, mock_request, user_permission_surveys_edit_json)
         mock_request.get(url_ces_by_survey, json=self.collection_exercises)
         response = self.client.get(
