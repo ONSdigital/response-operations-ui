@@ -1253,11 +1253,20 @@ class TestCollectionExercise(ViewTestCase):
         self.assertIn("Error: Failed to remove collection instrument".encode(), response.data)
 
     @requests_mock.mock()
-    def test_create_collection_exercise_success(self, mock_request):
+    def test_get_create_create_collection_exercise(self, mock_request):
+        sign_in_with_permission(self, mock_request, user_permission_surveys_edit_json)
+        mock_request.get(url_ces_by_survey, json=self.collection_exercises)
+        response = self.client.get(
+            f"/surveys/{survey_ref}/{short_name}/create-collection-exercise", follow_redirects=True
+        )
+
+        self.assertEqual(response.status_code, 200)
+        self.assertIn("Create collection exercise".encode(), response.data)
+
+    @requests_mock.mock()
+    def test_create_collection_exercise(self, mock_request):
         sign_in_with_permission(self, mock_request, user_permission_surveys_edit_json)
         new_collection_exercise_details = {
-            "hidden_survey_name": "BRES",
-            "hidden_survey_id": survey_id,
             "user_description": "New collection exercise",
             "period": "123456",
         }
@@ -1275,26 +1284,13 @@ class TestCollectionExercise(ViewTestCase):
         )
         self.assertEqual(response.status_code, 200)
         self.assertIn("123456".encode(), response.data)
+        self.assertIn("Collection exercise created".encode(), response.data)
 
     @requests_mock.mock()
-    def test_get_create_ce_form(self, mock_request):
-        sign_in_with_permission(self, mock_request, user_permission_surveys_edit_json)
-        mock_request.get(url_ces_by_survey, json=self.collection_exercises)
-        mock_request.get(url_get_survey_by_short_name, json=self.survey)
-        response = self.client.get(
-            f"/surveys/{survey_ref}/{short_name}/create-collection-exercise", follow_redirects=True
-        )
-
-        self.assertEqual(response.status_code, 200)
-        self.assertIn("Create collection exercise".encode(), response.data)
-
-    @requests_mock.mock()
-    def test_failed_create_ce_validation_period_exists(self, mock_request):
+    def test_create_collection_exercise_period_already_exists(self, mock_request):
         sign_in_with_permission(self, mock_request, user_permission_surveys_edit_json)
         taken_period = "12345"
         new_collection_exercise_details = {
-            "hidden_survey_name": "BRES",
-            "hidden_survey_id": survey_id,
             "user_description": "New collection exercise",
             "period": taken_period,
         }
@@ -1302,7 +1298,6 @@ class TestCollectionExercise(ViewTestCase):
         ces[0]["exerciseRef"] = taken_period
         mock_request.get(url_ces_by_survey, json=ces)
         mock_request.get(url_get_survey_by_short_name, json=updated_survey_info["survey"])
-        mock_request.post(url_create_collection_exercise, status_code=200)
 
         response = self.client.post(
             f"/surveys/{survey_ref}/{short_name}/create-collection-exercise",
