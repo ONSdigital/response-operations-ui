@@ -592,16 +592,11 @@ def get_create_collection_exercise_form(survey_ref, short_name):
     verify_permission("surveys.edit", session)
     logger.info("Retrieving survey data for form", short_name=short_name, survey_ref=survey_ref)
     form = CreateCollectionExerciseDetailsForm(form=request.form)
-    survey_details = survey_controllers.get_survey(short_name)
-    survey_eq_version = survey_details["eqVersion"] if survey_details["surveyMode"] != "SEFT" else ""
     return render_template(
         "create-collection-exercise.html",
         form=form,
         short_name=short_name,
         survey_ref=survey_ref,
-        survey_id=survey_details["id"],
-        survey_name=survey_details["shortName"],
-        survey_eq_version=survey_eq_version,
     )
 
 
@@ -611,11 +606,9 @@ def create_collection_exercise(survey_ref, short_name):
     verify_permission("surveys.edit", session)
     logger.info("Attempting to create collection exercise", survey_ref=survey_ref, survey=short_name)
     ce_form = CreateCollectionExerciseDetailsForm(form=request.form)
-    form = request.form
-
-    survey_id = form.get("hidden_survey_id")
-    survey_name = form.get("hidden_survey_name")
-    survey_eq_version = form.get("hidden_eq_version")
+    survey_details = survey_controllers.get_survey(short_name)
+    survey_id = survey_details["id"]
+    survey_name = survey_details["shortName"]
 
     if not ce_form.validate():
         logger.info("Failed validation, retrieving survey data for form", survey=short_name, survey_ref=survey_ref)
@@ -632,9 +625,9 @@ def create_collection_exercise(survey_ref, short_name):
             survey_ref=survey_ref,
             survey_id=survey_id,
             survey_name=survey_name,
-            survey_eq_version=survey_eq_version,
         )
 
+    form = request.form
     created_period = form.get("period")
     ce_details = collection_exercise_controllers.get_collection_exercises_by_survey(survey_id)
 
@@ -649,15 +642,15 @@ def create_collection_exercise(survey_ref, short_name):
                 survey_ref=survey_ref,
                 survey_id=survey_id,
                 survey_name=survey_name,
-                survey_eq_version=survey_eq_version,
             )
 
     logger.info(
         "Creating collection exercise for survey",
         survey=short_name,
         survey_ref=survey_ref,
-        survey_eq_version=survey_eq_version,
     )
+
+    survey_eq_version = "v3" if survey_details["surveyMode"] == "EQ" else ""
 
     collection_exercise_controllers.create_collection_exercise(
         survey_id, survey_name, form.get("user_description"), form.get("period"), survey_eq_version
