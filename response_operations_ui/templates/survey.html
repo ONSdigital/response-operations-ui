@@ -11,50 +11,50 @@
 {% block main %}
     {% if updated_ce_message %}
         {{
-            onsPanel({
-                "type": "success",
-                "iconType": "check",
-                "classes": "ons-u-mb-s",
-                "id": "updated_ce_message",
-                "body": "Collection exercise details updated"
-            })
+        onsPanel({
+        "type": "success",
+        "iconType": "check",
+        "classes": "ons-u-mb-s",
+        "id": "updated_ce_message",
+        "body": "Collection exercise details updated"
+        })
         }}
     {% endif %}
     {% if created_ce_message %}
         {% call
-            onsPanel({
-                "type": "success",
-                "iconType": "check",
-                "classes": "ons-u-mb-s",
-                "id": "created_ce_message"
-            })
+        onsPanel({
+        "type": "success",
+        "iconType": "check",
+        "classes": "ons-u-mb-s",
+        "id": "created_ce_message"
+        })
         %}
-            <h1 class="ons-u-fs-r--b">Collection exercise created</h1>
-            <p class="ons-u-fs-r">
-                <a href="{{ url_for('collection_exercise_bp.view_collection_exercise', short_name=survey.shortName.replace(' ', ''), period=newly_created_period) }}" id="newly_created_ce_link">View/edit {{survey.shortName}} {{newly_created_period}}</a>
-            </p>
-        {% endcall %}
-    {% endif %}
-    
-    <div class="ons-grid ons-grid--flex ons-grid--between">
-        <div class="ons-grid__col">
-            <h1 name="page-survey-title">{{survey.longName}} | {{survey.shortName}} {{survey.surveyRef}}</h1>
-        </div>
-      </div>
-    {% if collection_exercises|length > 0 %}
+        <h1 class="ons-u-fs-r--b">Collection exercise created</h1>
+        <p class="ons-u-fs-r">
+            <a href="{{ url_for('collection_exercise_bp.view_collection_exercise', short_name=survey.shortName.replace(' ', ''), period=newly_created_period) }}" id="newly_created_ce_link">View/edit {{survey.shortName}} {{newly_created_period}}</a>
+        </p>
+    {% endcall %}
+{% endif %}
+
+<div class="ons-grid ons-grid--flex ons-grid--between">
+    <div class="ons-grid__col">
+        <h1 name="page-survey-title">{{survey.longName}} | {{survey.shortName}} {{survey.surveyRef}}</h1>
+    </div>
+</div>
+{% if collection_exercises|length > 0 %}
     <section class="ce-list">
         {% if surveyEditPermission %}
             {% if survey.surveyMode == 'EQ' %}
                 <p class="ons-field">
                     {{
-                        onsButton({
-                            "text": "Link collection instrument",
-                            "id": "link-collection-instrument",
-                            "variants": ['secondary', 'small'],
-                            "name": "link-collection-instrument-link",
-                            "noIcon": true,
-                            "url": url_for('surveys_bp.get_link_collection_instrument', short_name=survey.shortName)
-                        })
+                    onsButton({
+                    "text": "Link collection instrument",
+                    "id": "link-collection-instrument",
+                    "variants": ['secondary', 'small'],
+                    "name": "link-collection-instrument-link",
+                    "noIcon": true,
+                    "url": url_for('surveys_bp.get_link_collection_instrument', short_name=survey.shortName)
+                    })
                     }}
                 </p>
             {% endif %}
@@ -64,46 +64,44 @@
                 <h2 class="ons-u-fs-l u-mb-xs" name="page-survey-subtitle">Collection exercises (CE)
                 </h2>
             </div>
-            {% if surveyEditPermission %}
-                <div class="ons-grid__col"> 
-                   <p class="ons-field">
-                      <a id="create-collection-exercise" href="{{url_for('collection_exercise_bp.get_create_collection_exercise_form', survey_ref=survey.surveyRef, short_name=survey.shortName.replace(' ', ''))}}">Create collection exercise</a>
-                   </p>
+                <div class="ons-grid__col">
+                    <p class="ons-field">
+                        <a id="create-collection-exercise" href="{{url_for('collection_exercise_bp.get_create_collection_exercise_form', survey_ref=survey.surveyRef, short_name=survey.shortName.replace(' ', ''))}}">Create collection exercise</a>
+                    </p>
                 </div>
-            {% endif %}
         </div>
 
         {% set surveyTableData = {
-            "variants": ['compact', 'responsive'],
-            "id": 'tbl-collection-exercise',
-            "caption": 'The table shows collection exercise data for ' + survey.longName,
-            "hideCaption": true,
-            "ths": [
-                {
-                    "value": "Period ID"
-                },
-                {
-                    "value": "Reporting dates"
-                },
-                {
-                    "value": "Status"
-                },
-                {
-                    "value": "Sample Size"
-                },
-                {
-                    "value": "MPS"
-                },
-                {
-                    "value": "Go live"
-                },
-                {
-                    "value": "Return by"
-                },
-                {
-                    "value": "First Reminder"
-                }
-            ]
+        "variants": ['compact', 'responsive'],
+        "id": 'tbl-collection-exercise',
+        "caption": 'The table shows collection exercise data for ' + survey.longName,
+        "hideCaption": true,
+        "ths": [
+        {
+        "value": "Period ID"
+        },
+        {
+        "value": "Reporting dates"
+        },
+        {
+        "value": "Status"
+        },
+        {
+        "value": "Sample Size"
+        },
+        {
+        "value": "MPS"
+        },
+        {
+        "value": "Go live"
+        },
+        {
+        "value": "Return by"
+        },
+        {
+        "value": "First Reminder"
+        }
+        ]
         } %}
 
         {% set surveyTableDataRows = [] %}
@@ -117,77 +115,77 @@
                 {% set state_html_class = 'ons-status--success' %}
                 {# Live exercises have the event status in brackets if it's processing, retrying or failed. #}
                 {% if exercise.event_status == 'Processing' or exercise.event_status == 'Retrying' %}
-                  {% set state_html_class = 'ons-status--pending' %}
-                  {% set status_event = ' (' + exercise.event_status + ')' %}
+                    {% set state_html_class = 'ons-status--pending' %}
+                    {% set status_event = ' (' + exercise.event_status + ')' %}
                 {% endif %}
                 {% if exercise.event_status == 'Failed' %}
-                  {% set state_html_class = 'ons-status--error' %}
-                  {% set status_event = ' (' + exercise.event_status + ')' %}
+                    {% set state_html_class = 'ons-status--error' %}
+                    {% set status_event = ' (' + exercise.event_status + ')' %}
                 {% endif %}
             {% endif %}
             {% do surveyTableDataRows.append(
-                {
-                    "highlight": true if newly_created_period == exercise.exerciseRef,
-                    "tds": [
-                        {
-                            "value": '<a href="/surveys/' + survey.shortName.replace(' ', '') + "/" + exercise.exerciseRef + '"
-                                name="ce-link-' + exercise.exerciseRef + '">' + exercise.exerciseRef + '</a>',
-                            "data": "Period",
-                            "name" : "tbl-ce-period"
-                        },
-                        {
-                            "value": exercise.userDescription,
-                            "data": "Respondent sees",
-                            "name" : "tbl-ce-shown-as"
-                        },
-                        {
-                            "value": '<span class="ons-status ' + state_html_class + '">' + exercise.state + status_event + '</span>',
-                            "data": "Status",
-                            "name" : "tbl-ce-status"
-                        },
-                        {
-                            "value": exercise.sample_summary.totalSampleUnits,
-                            "data": "Sample",
-                            "name" : "tbl-ce-status"
-                        },
-                        {
-                            "value": exercise.events.mps.date,
-                            "data": "MPS",
-                            "name" : "tbl-ce-status"
-                        },
-                        {
-                            "value": exercise.events.go_live.date,
-                            "data": "Go live",
-                            "name" : "tbl-ce-status"
-                        },
-                        {
-                            "value": exercise.events.return_by.date,
-                            "data": "Return by",
-                            "name" : "tbl-ce-status"
-                        },
-                        {
-                            "value": exercise.events.reminder.date,
-                            "data": "First Reminder",
-                            "name" : "tbl-ce-report"
-                        },
-                    ]
-                }
+            {
+            "highlight": true if newly_created_period == exercise.exerciseRef,
+            "tds": [
+            {
+            "value": '<a href="/surveys/' + survey.shortName.replace(' ', '') + "/" + exercise.exerciseRef + '"
+                name="ce-link-' + exercise.exerciseRef + '">' + exercise.exerciseRef + '</a>',
+            "data": "Period",
+            "name" : "tbl-ce-period"
+            },
+            {
+            "value": exercise.userDescription,
+            "data": "Respondent sees",
+            "name" : "tbl-ce-shown-as"
+            },
+            {
+            "value": '<span class="ons-status ' + state_html_class + '">' + exercise.state + status_event + '</span>',
+            "data": "Status",
+            "name" : "tbl-ce-status"
+            },
+            {
+            "value": exercise.sample_summary.totalSampleUnits,
+            "data": "Sample",
+            "name" : "tbl-ce-status"
+            },
+            {
+            "value": exercise.events.mps.date,
+            "data": "MPS",
+            "name" : "tbl-ce-status"
+            },
+            {
+            "value": exercise.events.go_live.date,
+            "data": "Go live",
+            "name" : "tbl-ce-status"
+            },
+            {
+            "value": exercise.events.return_by.date,
+            "data": "Return by",
+            "name" : "tbl-ce-status"
+            },
+            {
+            "value": exercise.events.reminder.date,
+            "data": "First Reminder",
+            "name" : "tbl-ce-report"
+            },
+            ]
+            }
             ) %}
         {% endfor %}
 
         {% do surveyTableData | setAttribute("trs", surveyTableDataRows) %}
 
         {{
-            onsTable(surveyTableData)
+        onsTable(surveyTableData)
         }}
 
     </section>
-    {% else %}
-        <div class="ons-grid ons-grid--flex ons-grid--between">
-            <div class="ons-grid__col">
-                <h2 class="ons-u-fs-l u-mb-xs" name="page-survey-subtitle">Collection exercises (CE)
+{% else %}
+    <div class="ons-grid ons-grid--flex ons-grid--between">
+        <div class="ons-grid__col">
+            <h2 class="ons-u-fs-l u-mb-xs" name="page-survey-subtitle">Collection exercises (CE)
             </h2>
         </div>
         <p>No collection exercises to display. {% if surveyEditPermission %}<a id="create-collection-exercise" href="{{url_for('collection_exercise_bp.get_create_collection_exercise_form', survey_ref=survey.surveyRef, short_name=survey.shortName.replace(' ', ''))}}">Create collection exercise</a>{% endif %}</p>
-    {% endif %}
+{% endif %}
 {% endblock %}
