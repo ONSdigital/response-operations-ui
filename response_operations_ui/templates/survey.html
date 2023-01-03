@@ -187,7 +187,7 @@
             <div class="ons-grid__col">
                 <h2 class="ons-u-fs-l u-mb-xs" name="page-survey-subtitle">Collection exercises (CE)
             </h2>
+            <p>No collection exercises to display. {% if surveyEditPermission %}<a id="create-collection-exercise" href="{{url_for('collection_exercise_bp.get_create_collection_exercise_form', survey_ref=survey.surveyRef, short_name=survey.shortName.replace(' ', ''))}}">Create collection exercise</a>{% endif %}</p>
         </div>
-        <p>No collection exercises to display. {% if surveyEditPermission %}<a id="create-collection-exercise" href="{{url_for('collection_exercise_bp.get_create_collection_exercise_form', survey_ref=survey.surveyRef, short_name=survey.shortName.replace(' ', ''))}}">Create collection exercise</a>{% endif %}</p>
-    {% endif %}
+        {% endif %}
 {% endblock %}
