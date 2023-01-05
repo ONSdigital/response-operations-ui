@@ -286,9 +286,11 @@ def post_manage_account_groups(user_id):
 
 def permission_change_sign_out(user_id):
     all_sessions = current_app.config["SESSION_REDIS"]
+    get_all_sessions_keys = all_sessions.scan(cursor=0, match="*")[1]
 
-    for user_in_session in all_sessions.keys():
-        if user_id in str(all_sessions.get(user_in_session)):
+    for user_in_session in get_all_sessions_keys:
+        user_session_information = str(all_sessions.mget(user_in_session))
+        if user_id in user_session_information:
             all_sessions.delete(user_in_session)
 
 
