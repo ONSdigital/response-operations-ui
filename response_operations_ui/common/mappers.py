@@ -120,3 +120,24 @@ def get_display_text_for_event(event):
         "exercise_end": "Exercise end",
     }
     return mapping.get(event, event)
+
+
+def get_event_name(tag: str) -> str | None:
+    event_names = {
+        "mps": "Main print selection",
+        "go_live": "Go Live",
+        "return_by": "Return by",
+        "exercise_end": "Exercise end",
+        "reminder": "First reminder",
+        "reminder2": "Second reminder",
+        "reminder3": "Third reminder",
+        "ref_period_start": "Reference period start date",
+        "ref_period_end": "Reference period end date",
+        "employment": "Employment date",
+        "nudge_email_0": "Schedule nudge email",
+        "nudge_email_1": "Schedule nudge email",
+        "nudge_email_2": "Schedule nudge email",
+        "nudge_email_3": "Schedule nudge email",
+        "nudge_email_4": "Schedule nudge email",
+    }
+    return event_names.get(tag)

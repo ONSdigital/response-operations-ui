@@ -25,10 +25,14 @@ from response_operations_ui.common.date_restriction_generator import (
     get_date_restriction_text,
 )
 from response_operations_ui.common.dates import localise_datetime
-from response_operations_ui.common.filters import get_collection_exercise_by_period
+from response_operations_ui.common.filters import (
+    filter_eq_ci_selectors,
+    get_collection_exercise_by_period,
+)
 from response_operations_ui.common.mappers import (
     convert_events_to_new_format,
     format_short_name,
+    get_event_name,
     map_collection_exercise_state,
 )
 from response_operations_ui.common.uaa import verify_permission
@@ -56,21 +60,6 @@ logger = wrap_logger(logging.getLogger(__name__))
 collection_exercise_bp = Blueprint(
     "collection_exercise_bp", __name__, static_folder="static", template_folder="templates"
 )
-
-
-def filter_eq_ci_selectors(eq_ci_selectors: list[dict], collection_instruments: list[dict]) -> list[dict]:
-    """
-    Takes all eQ collection instruments available for the collection exercise as a list and the already linked
-    instruments and returns a list of the collection instruments that have not yet been linked for this exercise
-
-    :param eq_ci_selectors: list of available eQ collection instruments
-    :param collection_instruments: list of linked eQ collection instruments
-    :returns eq_ci_selectors: list of eQ collection instruments available to be linked to this exercise
-    """
-    for collection_instrument in collection_instruments:
-        if collection_instrument in eq_ci_selectors:
-            eq_ci_selectors.remove(collection_instrument)
-    return eq_ci_selectors
 
 
 def build_collection_exercise_details(short_name: str, period: str, include_ci=True) -> dict:
@@ -120,7 +109,7 @@ def build_collection_exercise_details(short_name: str, period: str, include_ci=T
 @collection_exercise_bp.route("/<short_name>/<period>", methods=["GET"])
 @login_required
 def view_collection_exercise(short_name, period):
-    ce_details = build_collection_exercise_details(short_name, period, include_ci=False)
+    ce_details = build_collection_exercise_details(short_name, period, include_ci=True)
     ce_state = ce_details["collection_exercise"]["state"]
     if ce_details["survey"]["surveyMode"] == "EQ":
         show_set_live_button = (
@@ -161,6 +150,7 @@ def view_collection_exercise(short_name, period):
     return render_template(
         "collection_exercise/collection-exercise.html",
         ce=ce_details["collection_exercise"],
+        instrument_count=str(len(ce_details["collection_instruments"])),
         error=error_json,
         events=ce_details["events"],
         locked=locked,
@@ -240,9 +230,7 @@ def post_collection_exercise(short_name, period):
 @collection_exercise_bp.route("/<short_name>/<period>/view-sample-ci", methods=["POST"])
 @login_required
 def post_sample_ci(short_name, period):
-    if "load-sample" in request.form:
-        return _upload_sample(short_name, period)
-    elif "load-ci" in request.form:
+    if "load-ci" in request.form:
         return _upload_collection_instrument(short_name, period)
     elif "select-ci" in request.form:
         return _select_collection_instrument(short_name, period)
@@ -287,46 +275,6 @@ def _set_ready_for_live(short_name, period):
             short_name=short_name,
             period=period,
             success_panel=success_panel,
-        )
-    )
-
-
-def _upload_sample(short_name, period):
-    valid = _validate_sample()
-
-    if valid:
-        survey_id = survey_controllers.get_survey_id_by_short_name(short_name)
-        exercises = collection_exercise_controllers.get_collection_exercises_by_survey(survey_id)
-
-        # Find the collection exercise for the given period
-        exercise = get_collection_exercise_by_period(exercises, period)
-
-        if not exercise:
-            return make_response(jsonify({"message": "Collection exercise not found"}), 404)
-        try:
-            sample_summary = sample_controllers.upload_sample(short_name, period, request.files["sampleFile"])
-
-            logger.info(
-                "Linking sample summary with collection exercise",
-                collection_exercise_id=exercise["id"],
-                sample_id=sample_summary["id"],
-            )
-            collection_exercise_controllers.link_sample_summary_to_collection_exercise(
-                collection_exercise_id=exercise["id"], sample_summary_id=sample_summary["id"]
-            )
-        except ApiError as e:
-            if e.status_code == 400:
-                flash(e.message, "error")
-            else:
-                # For a non-400, just let the error bubble up
-                raise e
-
-    return redirect(
-        url_for(
-            "collection_exercise_bp.get_view_sample_ci",
-            short_name=short_name,
-            period=period,
-            show_msg="true",
         )
     )
 
@@ -644,16 +592,11 @@ def get_create_collection_exercise_form(survey_ref, short_name):
     verify_permission("surveys.edit", session)
     logger.info("Retrieving survey data for form", short_name=short_name, survey_ref=survey_ref)
     form = CreateCollectionExerciseDetailsForm(form=request.form)
-    survey_details = survey_controllers.get_survey(short_name)
-    survey_eq_version = survey_details["eqVersion"] if survey_details["surveyMode"] != "SEFT" else ""
     return render_template(
         "create-collection-exercise.html",
         form=form,
         short_name=short_name,
         survey_ref=survey_ref,
-        survey_id=survey_details["id"],
-        survey_name=survey_details["shortName"],
-        survey_eq_version=survey_eq_version,
     )
 
 
@@ -663,11 +606,9 @@ def create_collection_exercise(survey_ref, short_name):
     verify_permission("surveys.edit", session)
     logger.info("Attempting to create collection exercise", survey_ref=survey_ref, survey=short_name)
     ce_form = CreateCollectionExerciseDetailsForm(form=request.form)
-    form = request.form
-
-    survey_id = form.get("hidden_survey_id")
-    survey_name = form.get("hidden_survey_name")
-    survey_eq_version = form.get("hidden_eq_version")
+    survey_details = survey_controllers.get_survey(short_name)
+    survey_id = survey_details["id"]
+    survey_name = survey_details["shortName"]
 
     if not ce_form.validate():
         logger.info("Failed validation, retrieving survey data for form", survey=short_name, survey_ref=survey_ref)
@@ -684,9 +625,9 @@ def create_collection_exercise(survey_ref, short_name):
             survey_ref=survey_ref,
             survey_id=survey_id,
             survey_name=survey_name,
-            survey_eq_version=survey_eq_version,
         )
 
+    form = request.form
     created_period = form.get("period")
     ce_details = collection_exercise_controllers.get_collection_exercises_by_survey(survey_id)
 
@@ -701,15 +642,15 @@ def create_collection_exercise(survey_ref, short_name):
                 survey_ref=survey_ref,
                 survey_id=survey_id,
                 survey_name=survey_name,
-                survey_eq_version=survey_eq_version,
             )
 
     logger.info(
         "Creating collection exercise for survey",
         survey=short_name,
         survey_ref=survey_ref,
-        survey_eq_version=survey_eq_version,
     )
+
+    survey_eq_version = "v3" if survey_details["surveyMode"] == "EQ" else ""
 
     collection_exercise_controllers.create_collection_exercise(
         survey_id, survey_name, form.get("user_description"), form.get("period"), survey_eq_version
@@ -828,27 +769,6 @@ def create_collection_exercise_event(short_name, period, ce_id, tag):
     )
 
 
-def get_event_name(tag):
-    event_names = {
-        "mps": "Main print selection",
-        "go_live": "Go Live",
-        "return_by": "Return by",
-        "exercise_end": "Exercise end",
-        "reminder": "First reminder",
-        "reminder2": "Second reminder",
-        "reminder3": "Third reminder",
-        "ref_period_start": "Reference period start date",
-        "ref_period_end": "Reference period end date",
-        "employment": "Employment date",
-        "nudge_email_0": "Schedule nudge email",
-        "nudge_email_1": "Schedule nudge email",
-        "nudge_email_2": "Schedule nudge email",
-        "nudge_email_3": "Schedule nudge email",
-        "nudge_email_4": "Schedule nudge email",
-    }
-    return event_names.get(tag)
-
-
 @collection_exercise_bp.route("/<short_name>/<period>/view-sample-ci", methods=["GET"])
 @login_required
 def get_view_sample_ci(short_name, period):
@@ -923,7 +843,41 @@ def get_upload_sample_file(short_name, period):
 @login_required
 def post_upload_sample_file(short_name, period):
     verify_permission("surveys.edit", session)
-    return _upload_sample(short_name, period)
+    if _validate_sample():
+        survey_id = survey_controllers.get_survey_id_by_short_name(short_name)
+        exercises = collection_exercise_controllers.get_collection_exercises_by_survey(survey_id)
+
+        # Find the collection exercise for the given period
+        exercise = get_collection_exercise_by_period(exercises, period)
+
+        if not exercise:
+            return make_response(jsonify({"message": "Collection exercise not found"}), 404)
+        try:
+            sample_summary = sample_controllers.upload_sample(short_name, period, request.files["sampleFile"])
+
+            logger.info(
+                "Linking sample summary with collection exercise",
+                collection_exercise_id=exercise["id"],
+                sample_id=sample_summary["id"],
+            )
+            collection_exercise_controllers.link_sample_summary_to_collection_exercise(
+                collection_exercise_id=exercise["id"], sample_summary_id=sample_summary["id"]
+            )
+        except ApiError as e:
+            if e.status_code == 400:
+                flash(e.message, "error")
+            else:
+                # For a non-400, just let the error bubble up
+                raise e
+
+    return redirect(
+        url_for(
+            "collection_exercise_bp.view_collection_exercise",
+            short_name=short_name,
+            period=period,
+            show_msg="true",
+        )
+    )
 
 
 @collection_exercise_bp.route("/<short_name>/<period>/confirm-remove-sample", methods=["GET"])
