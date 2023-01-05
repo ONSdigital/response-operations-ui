@@ -222,8 +222,6 @@ def post_manage_account_groups(user_id):
         return redirect(url_for("admin_bp.manage_user_accounts"))
 
     user = get_user_by_id(user_id)
-    print("User info: " + str(user))
-    print("Signed in user: " + str(session["user_id"]))
     if user is None:
         flash("User does not exist", "error")
         return redirect(url_for("admin_bp.manage_user_accounts"))
@@ -273,7 +271,7 @@ def post_manage_account_groups(user_id):
                 template_name="update_user_permissions",
                 personalisation={},
             )
-            permission_change_sign_out(user["id"])
+            delete_user_from_redis_session(user["id"])
         except NotifyError as e:
             logger.error("failed to send email", msg=e.description, exc_info=True)
             flash("Failed to send email, please try again", "error")
@@ -284,7 +282,7 @@ def post_manage_account_groups(user_id):
     return redirect(url_for("admin_bp.manage_user_accounts"))
 
 
-def permission_change_sign_out(user_id):
+def delete_user_from_redis_session(user_id):
     all_sessions = current_app.config["SESSION_REDIS"]
     get_all_sessions_keys = all_sessions.scan(cursor=0, match="*")[1]
 
