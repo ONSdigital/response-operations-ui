@@ -21,7 +21,7 @@
                     <p class="ons-u-fs-r">{{ errors }}</p>
                 {% endcall %}
             {% endif %}
-             <h1 class="ons-u-fs-xl">Create collection exercise</h1>
+            <h1 class="ons-u-fs-xl">Create collection exercise | {{survey.shortName}} {{survey.surveyRef}}</h1>
             <form action="" method="post">
                 {{ form.csrf_token }}
                 {{
