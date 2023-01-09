@@ -588,7 +588,7 @@ def edit_collection_exercise_details(short_name, period):
 
 @collection_exercise_bp.route("/<survey_ref>/<short_name>/create-collection-exercise", methods=["GET"])
 @login_required
-def get_create_collection_exercise_form(survey_ref, short_name):
+def get_create_collection_exercise_form(survey_ref, short_name, previous_period=None):
     verify_permission("surveys.edit", session)
     logger.info("Retrieving survey data for form", short_name=short_name, survey_ref=survey_ref)
     form = CreateCollectionExerciseDetailsForm(form=request.form)
@@ -597,6 +597,7 @@ def get_create_collection_exercise_form(survey_ref, short_name):
         form=form,
         short_name=short_name,
         survey_ref=survey_ref,
+        previous_period=previous_period,
     )
 
 

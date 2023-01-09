@@ -67,7 +67,7 @@
             {% if surveyEditPermission %}
                 <div class="ons-grid__col"> 
                    <p class="ons-field">
-                      <a id="create-collection-exercise" href="{{url_for('collection_exercise_bp.get_create_collection_exercise_form', survey_ref=survey.surveyRef, short_name=survey.shortName.replace(' ', ''))}}">Create collection exercise</a>
+                      <a id="create-collection-exercise" href="{{url_for('collection_exercise_bp.get_create_collection_exercise_form', survey_ref=survey.surveyRef, short_name=survey.shortName.replace(' ', '')), previous_period=collection_exercises[0].exerciseRef}}">Create collection exercise</a>
                    </p>
                 </div>
             {% endif %}

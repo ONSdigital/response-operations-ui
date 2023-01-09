@@ -22,24 +22,26 @@
                 {% endcall %}
             {% endif %}
             <h1 class="ons-u-fs-xl">Create collection exercise | {{survey_ref}} {{short_name}}</h1>
-            <form action="" method="post">
-                {{ form.csrf_token }}
-                {{
-                    onsMetadata({
-                        "termCol": "2",
-                        "descriptionCol": "10",
-                        "itemsList": [
-                            {
-                                "term": "Survey:",
-                                "descriptions": [
-                                    {
-                                        "description": survey_ref ~ ' ' ~ short_name
-                                    }
-                                ]
-                            }
-                        ]
-                    })
-                }}
+            <form action="" class="ons-form" method="post">
+                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}" />
+                {% set period_information = '<p>' + 'The period:' + '</p><ul>'
+                    + '<li>' + 'Must not be blank' + '</li>'
+                    + '<li>' + 'Can only be numeric' + '</li>'
+                    + '<li>' + 'Can only be between two and six characters long' + '</li></ul>' %}
+                {% if errors %}
+                    {{
+                        onsPanel({
+                            "body": period_information,
+                        })
+                    }}
+                {% endif %}
+                <label class="ons-label ons-u-fs-m">Period</label>
+                {% if previous_period %}
+                    <span class="ons-label__description">The most recent Period ID added was {{ previous_period }}</span>
+                {% else %}
+                    <span class="ons-label__description">The Period ID is a two, four or six digit number.</span>
+                {% endif %}
+                    
 
                 {%- call onsFieldset({
                     "legend": "Create collection exercise",
