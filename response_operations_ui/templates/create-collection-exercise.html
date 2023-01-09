@@ -36,10 +36,10 @@
                     }}
                 {% endif %}
                 <label class="ons-label ons-u-fs-m">Period</label>
-                {% if previous_period %}
-                    <span class="ons-label__description">The most recent Period ID added was {{ previous_period }}</span>
-                {% else %}
+                {% if previous_period is None %}
                     <span class="ons-label__description">The Period ID is a two, four or six digit number.</span>
+                {% else %}
+                    <span class="ons-label__description">The most recent Period ID added was {{ previous_period }}</span>
                 {% endif %}
                     
 
