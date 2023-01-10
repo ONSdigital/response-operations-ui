@@ -1268,7 +1268,7 @@ class TestCollectionExercise(ViewTestCase):
         sign_in_with_permission(self, mock_request, user_permission_surveys_edit_json)
         new_collection_exercise_details = {
             "user_description": "New collection exercise",
-            "period": "123456",
+            "period": period,
         }
         mock_request.get(url_ces_by_survey, json=self.collection_exercises)
         mock_request.get(url_get_survey_by_short_name, json=self.survey)
@@ -1276,6 +1276,14 @@ class TestCollectionExercise(ViewTestCase):
         mock_request.get(url_get_collection_exercises_link, json=self.collection_exercises_link)
         mock_request.get(url_get_sample_summary, json=self.sample_summary)
         mock_request.post(url_create_collection_exercise, status_code=200)
+        mock_request.get(url_ce_by_id, json=collection_exercise_details["collection_exercise"])
+        mock_request.get(url_link_sample, json=[sample_summary_id])
+        mock_request.get(
+            f"{url_get_collection_instrument}?{ci_search_string}", json=self.collection_instruments, complete_qs=True
+        )
+        mock_request.get(
+            f"{url_get_collection_instrument}?{ci_type_search_string_eq}", json=self.eq_ci_selectors, complete_qs=True
+        )
 
         response = self.client.post(
             f"/surveys/{survey_ref}/{short_name}/create-collection-exercise",
@@ -1283,8 +1291,8 @@ class TestCollectionExercise(ViewTestCase):
             follow_redirects=True,
         )
         self.assertEqual(response.status_code, 200)
-        self.assertIn("123456".encode(), response.data)
-        self.assertIn("Collection exercise created".encode(), response.data)
+        self.assertIn("Monthly Survey of Building Materials Bricks".encode(), response.data)
+        self.assertIn(period.encode(), response.data)
 
     @requests_mock.mock()
     def test_create_collection_exercise_period_already_exists(self, mock_request):
