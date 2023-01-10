@@ -42,56 +42,56 @@
                 {% else %}
                     <span class="ons-label__description">The Period ID is a two, four or six digit number.</span>
                 {% endif %}
-                    
 
-                {%- call onsFieldset({
-                    "legend": "Create collection exercise",
-                    "legendClasses": "ons-u-vh"
-                }) -%}
+                {{
+                    onsInput({
+                        "id": "period",
+                        "name": "period",
+                        "type": "text",
+                        "maxLength": 6,
+                        "value": period,
+                        "attributes": {
+                            "required": true
+                        }
+                    })
+                }}
+                {{
+                    onsInput({
+                        "id": "user_description",
+                        "name": "user_description",
+                        "type": "text",
+                        "label": {
+                            "text": 'Period as shown to respondent'
+                        },
+                        "maxLength": 50,
+                        "value": user_description,
+                        "attributes": {
+                            "required": true
+                        }
+                    })
+                }}
+
+                <div class="ons-u-mb-l">
                     {{
-                        onsInput({
-                            "id": "period",
-                            "name": "period",
-                            "type": "text",
-                            "label": {
-                                "text": 'Period'
-                            },
-                            "maxLength": 6,
-                            "value": period,
-                            "attributes": {
-                                "required": true
-                            }
+                        onsButton({
+                            "text": "Save",
+                            "id": "save-btn",
+                            "classes": 'ons-u-mt-l',
+                            "variants": ['primary'],
+                            "submitType": "timer",
                         })
                     }}
                     {{
-                        onsInput({
-                            "id": "user_description",
-                            "name": "user_description",
-                            "type": "text",
-                            "label": {
-                                "text": 'Period as shown to respondent'
-                            },
-                            "maxLength": 50,
-                            "value": user_description,
-                            "attributes": {
-                                "required": true
-                            }
+                        onsButton({
+                            "text": "Cancel",
+                            "id": "cancel-btn",
+                            "classes": 'ons-u-mt-l',
+                            "variants": ['secondary'],
+                            "url": url_for('surveys_bp.view_survey', short_name=short_name),
+                            "submitType": "timer",
+                            "noIcon": "true"
                         })
-                    }}
-                {% endcall %}
-
-                <div class="ons-grid ons-grid--flex ons-grid--gutterless ons-grid--vertical-center ons-grid--no-wrap@s ons-u-mt-m ons-u-mb-m">
-                    <div class="ons-grid__col">
-                        {{
-                            onsButton({
-                                "text": "Save",
-                                "id": "save-btn"
-                            })
-                        }}
-                    </div>
-                    <div class="ons-grid__col ons-u-ml-m">
-                        <a id="cancel-btn" href="{{ url_for('surveys_bp.view_survey', short_name=short_name, period=period) }}">Cancel</a>
-                    </div>
+                    }} 
                 </div>
             </form>
         </div>
