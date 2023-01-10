@@ -659,7 +659,9 @@ def create_collection_exercise(survey_ref, short_name):
 
     logger.info("Successfully created collection exercise", survey=short_name, survey_ref=survey_ref)
     return redirect(
-        url_for("collection_exercise_bp.view_collection_exercise_details", short_name=short_name, period=form.get("period"))
+        url_for(
+            "collection_exercise_bp.view_collection_exercise_details", short_name=short_name, period=form.get("period")
+        )
     )
 
 
