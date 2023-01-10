@@ -20,21 +20,6 @@
             })
         }}
     {% endif %}
-    {% if created_ce_message %}
-        {% call
-            onsPanel({
-                "type": "success",
-                "iconType": "check",
-                "classes": "ons-u-mb-s",
-                "id": "created_ce_message"
-            })
-        %}
-            <h1 class="ons-u-fs-r--b">Collection exercise created</h1>
-            <p class="ons-u-fs-r">
-                <a href="{{ url_for('collection_exercise_bp.view_collection_exercise', short_name=survey.shortName.replace(' ', ''), period=newly_created_period) }}" id="newly_created_ce_link">View/edit {{survey.shortName}} {{newly_created_period}}</a>
-            </p>
-        {% endcall %}
-    {% endif %}
     
     <div class="ons-grid ons-grid--flex ons-grid--between">
         <div class="ons-grid__col">
