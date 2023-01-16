@@ -1292,7 +1292,7 @@ class TestCollectionExercise(ViewTestCase):
         response = self.client.post(
             f"/surveys/{survey_ref}/{short_name}/create-collection-exercise",
             data=new_collection_exercise_details,
-            follow_redirects=True,
+            follow_redirects=True
         )
         self.assertEqual(response.status_code, 200)
         self.assertIn("Monthly Survey of Building Materials Bricks".encode(), response.data)
