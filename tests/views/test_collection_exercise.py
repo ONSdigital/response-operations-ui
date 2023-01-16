@@ -1295,7 +1295,7 @@ class TestCollectionExercise(ViewTestCase):
             follow_redirects=True,
         )
         self.assertEqual(response.status_code, 200)
-        self.assertIn("Monthly Survey of Building Materials Bricks".encode(), response.data)
+        self.assertIn("Business Register and Employment".encode(), response.data)
         self.assertIn(period.encode(), response.data)
 
     @requests_mock.mock()
