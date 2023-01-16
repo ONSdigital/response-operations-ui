@@ -1270,17 +1270,13 @@ class TestCollectionExercise(ViewTestCase):
             "user_description": "New collection exercise",
             "period": period,
         }
-        mock_request.get(url_ces_by_survey, json=self.collection_exercises)
+        mock_request.get(url_ces_by_survey, status_code=200)
         mock_request.get(url_get_survey_by_short_name, json=self.survey)
         mock_request.get(url_get_collection_exercise_events, json=self.collection_exercise_events)
         mock_request.get(url_get_collection_exercises_link, json=self.collection_exercises_link)
         mock_request.get(url_get_sample_summary, json=self.sample_summary)
         mock_request.post(url_create_collection_exercise, status_code=200)
-        mock_request.register_uri(
-            "GET",
-            url_ce_by_id,
-            [{"status_code": 200}, {"json": collection_exercise_details["collection_exercise"], "status_code": 200}],
-        )
+        mock_request.get(url_ce_by_id, json=self.collection_exercise_details["collection_exercise"])
         mock_request.get(url_link_sample, json=[sample_summary_id])
         mock_request.get(
             f"{url_get_collection_instrument}?{ci_search_string}", json=self.collection_instruments, complete_qs=True
