@@ -1270,7 +1270,7 @@ class TestCollectionExercise(ViewTestCase):
             "user_description": "New collection exercise",
             "period": period,
         }
-        mock_request.get(url_ces_by_survey, status_code=200)
+        mock_request.get(url_ces_by_survey, status_code=200, json={})
         mock_request.get(url_get_survey_by_short_name, json=self.survey)
         mock_request.get(url_get_collection_exercise_events, json=self.collection_exercise_events)
         mock_request.get(url_get_collection_exercises_link, json=self.collection_exercises_link)
