@@ -115,6 +115,9 @@ with open(
 with open(f"{project_root}/test_data/collection_exercise/collection_exercise_details_sample_init_state.json") as fp:
     ce_details_sample_init_state = json.load(fp)
 
+with open(f"{project_root}/test_data/survey/survey_list.json") as json_data:
+    survey_list = json.load(json_data)
+
 user_permission_surveys_edit_json = {
     "id": "5902656c-c41c-4b38-a294-0359e6aabe59",
     "groups": [{"value": "f385f89e-928f-4a0f-96a0-4c48d9007cc3", "display": "surveys.edit", "type": "DIRECT"}],
@@ -136,6 +139,7 @@ url_get_collection_exercise_events = f"{collection_exercise_root}/{collection_ex
 url_create_collection_exercise = f"{TestingConfig.COLLECTION_EXERCISE_URL}/collectionexercises"
 url_execute = f"{TestingConfig.COLLECTION_EXERCISE_URL}/collectionexerciseexecution/{collection_exercise_id}"
 url_get_by_survey_with_ref_end_date = f"{collection_exercise_root}/survey/{short_name}/{period}/event/ref_period_end?"
+url_get_surveys_list = f"{TestingConfig.SURVEY_URL}/surveys/surveytype/Business"
 
 collection_instrument_root = f"{TestingConfig.COLLECTION_INSTRUMENT_URL}/collection-instrument-api/1.0.2"
 url_collection_instrument = f"{collection_instrument_root}/upload/{collection_exercise_id}"
@@ -1284,6 +1288,7 @@ class TestCollectionExercise(ViewTestCase):
         mock_request.get(
             f"{url_get_collection_instrument}?{ci_type_search_string_eq}", json=self.eq_ci_selectors, complete_qs=True
         )
+        mock_request.get(url_get_surveys_list, json=survey_list)
 
         response = self.client.post(
             f"/surveys/{survey_ref}/{short_name}/create-collection-exercise",
