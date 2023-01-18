@@ -1093,7 +1093,7 @@ class TestCollectionExercise(ViewTestCase):
         )
 
         self.assertEqual(response.status_code, 302)
-        self.assertEqual(urlparse(response.location).path, f"/surveys/{short_name}")
+        self.assertEqual(urlparse(response.location).path, f"/surveys/{short_name}/201906")
 
     @requests_mock.mock()
     def test_update_collection_exercise_details_fail(self, mock_request):
