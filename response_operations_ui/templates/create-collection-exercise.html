@@ -38,9 +38,9 @@
                 {% endif %}
                 <label class="ons-label ons-u-fs-m">Period</label>
                 {% if previous_period is not none %}
-                    <span class="ons-label__description">The most recent Period ID added was {{ previous_period }}</span>
+                    <span class="ons-label__description ons-u-mb-s">The most recent Period ID added was {{ previous_period }}</span>
                 {% else %}
-                    <span class="ons-label__description">The Period ID is a two, four or six digit number.</span>
+                    <span class="ons-label__description ons-u-mb-s">The Period ID is a two, four or six digit number.</span>
                 {% endif %}
 
                 {{
@@ -79,11 +79,11 @@
                     }} 
                 </div>
             </form>
-            <div class="ons-grid__col ons-col-3@xs">
+            <div class="ons-grid__col ons-col-8@m">
                 {{
                     onsAccordion({
                         "id": "infoAccordion",
-                        "open": true,
+                        "open": false,
                         "itemsList": [
                             {
                                 "title": "What is a Period ID",
