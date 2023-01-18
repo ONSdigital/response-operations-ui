@@ -583,7 +583,7 @@ def edit_collection_exercise_details(short_name, period):
                 form.get("collection_exercise_id"), form.get("period")
             )
 
-        return redirect(url_for("surveys_bp.view_survey", short_name=short_name, ce_updated="True"))
+        return redirect(url_for("collection_exercise_bp.view_collection_exercise", short_name=short_name, period=form.get("period")))
 
 
 @collection_exercise_bp.route("/<survey_ref>/<short_name>/create-collection-exercise", methods=["GET"])
