@@ -777,6 +777,7 @@ def create_collection_exercise_event(short_name, period, ce_id, tag):
 @login_required
 def get_view_sample_ci(short_name, period):
     ce_details = build_collection_exercise_details(short_name, period)
+    breadcrumbs = [{"text": "Back"}]
     ce_state = ce_details["collection_exercise"]["state"]
     ce_details["eq_ci_selectors"] = filter_eq_ci_selectors(
         ce_details["eq_ci_selectors"], ce_details["collection_instruments"]
@@ -806,6 +807,7 @@ def get_view_sample_ci(short_name, period):
 
     return render_template(
         "collection_exercise/ce-view-sample-ci.html",
+        breadcrumbs=breadcrumbs,
         ce=ce_details["collection_exercise"],
         collection_instruments=ce_details["collection_instruments"],
         error=error_json,
@@ -947,10 +949,24 @@ def remove_loaded_sample(short_name, period):
     )
 
 
+def split(list_to_split, num_of_lists):
+    k, m = divmod(len(list_to_split), num_of_lists)
+    return (list_to_split[i*k+min(i, m):(i+1)*k+min(i+1, m)] for i in range(num_of_lists))
+
+
+def create_seft_ci_table(ce_details):
+    collection_instruments = [ci for ci in ce_details["collection_instruments"]]
+    ci_columns = list(split(collection_instruments, 3))
+    table_columns = {'left': ci_columns[0], 'middle': ci_columns[1], 'right': ci_columns[2]}
+    # print(table_columns)
+    return table_columns
+
+
 @collection_exercise_bp.route("/<short_name>/<period>/load-collection-instruments", methods=["GET"])
 @login_required
 def get_seft_collection_instrument(short_name, period):
     ce_details = build_collection_exercise_details(short_name, period)
+    breadcrumbs = [{"text": "Back"}]
     show_msg = request.args.get("show_msg")
     success_panel = request.args.get("success_panel")
     info_panel = request.args.get("info_panel")
@@ -962,9 +978,13 @@ def get_seft_collection_instrument(short_name, period):
         "EXECUTED",
         "ENDED",
     )
+    
+    table_columns = create_seft_ci_table(ce_details)
+    
     error_json = _get_error_from_session()
     return render_template(
         "ce-seft-instrument.html",
+        breadcrumbs=breadcrumbs,
         survey=ce_details["survey"],
         ce=ce_details["collection_exercise"],
         collection_instruments=ce_details["collection_instruments"],
@@ -974,6 +994,7 @@ def get_seft_collection_instrument(short_name, period):
         show_msg=show_msg,
         period=period,
         locked=locked,
+        table_columns=table_columns,
     )
 
 

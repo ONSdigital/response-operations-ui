@@ -7,6 +7,7 @@
 {% from "components/checkboxes/_macro.njk" import onsCheckboxes %}
 
 {% set surveyEditPermission = hasPermission('surveys.edit') %}
+{% set count = namespace(value = 0) %}
 
 {% block main %}
     {% include 'collection_exercise/ce-success-panel.html' %}
@@ -75,7 +76,8 @@
         {% endif %}
     </div>
     {% if collection_instruments or (not surveyEditPermission) %}
-        <div class="ons-u-mb-l ons-col-7@m">
+        <h4>{{collection_instruments|length|string + " SEFT collection instruments uploaded"}}</h4>
+        <div class="ons-u-mb-l ons-col-9@m">
             <section class="ce-section">
                 {% set surveyTableData = {
                     "variants": 'responsive',
@@ -84,12 +86,32 @@
                     "hideCaption": true,
                     "ths": [
                                 {
-                                    "value": collection_instruments|length|string + " SEFT collection instruments uploaded",
+                                    "value": "name",
                                     "thClasses": "ons-u-fs-r--b"
                                 },
                                 {
                                     "value": " "
-                                }   
+                                },
+                                {
+                                    "value": " ",
+                                },
+                                {
+                                    "value": "name",
+                                    "thClasses": "ons-u-fs-r--b"
+                                },
+                                {
+                                    "value": " "
+                                },
+                                {
+                                    "value": " "
+                                },
+                                {
+                                    "value": "name",
+                                    "thClasses": "ons-u-fs-r--b"
+                                },
+                                {
+                                    "value": " "
+                                },
                             ] if surveyEditPermission else
                                 [
                                     {
@@ -98,28 +120,67 @@
                                     }
                                 ]
                 } %}
+              
+                
                 {% set surveyTableDataRows = [] %}
-                {% for collection_instrument in collection_instruments %}
-                    {% if not locked and surveyEditPermission %}
-                        {% set formData = 
-                            '<form id="form-delete-ci-' + loop.index|string + '" action="" method="post">' +
-                            '<a href=# id="delete-ci-' + loop.index|string + '">Remove SEFT file</a>' +
-                            '<input type="hidden" name="ci_id" value="' + collection_instrument.id + '"/>' +
-                            '<input type="hidden" name="delete-ci"/>' +
-                            '<input type="hidden" name="csrf_token" value="' + csrf_token() + '" />' +
-                            '</form>'
-                        %}
-                    {% endif %}
+                {% set leftColumn = [] %}
+                {% set middleColumn = [] %}
+                {% set rightColumn = [] %}
+                {% for column, cis in table_columns.items() %}
+                    {% for collection_instrument in cis %}
+                        {% if not locked and surveyEditPermission %}
+                            {% set count.value = count.value + 1 %}
+                            {{count.value}}
+                            {% set formData = 
+                                '<form id="form-delete-ci-' + count.value|string + '" action="" method="post">' +
+                                '<a href=# id="delete-ci-' + count.value|string + '">Remove</a>' +
+                                '<input type="hidden" name="ci_id" value="' + collection_instrument.id + '"/>' +
+                                '<input type="hidden" name="delete-ci"/>' +
+                                '<input type="hidden" name="csrf_token" value="' + csrf_token() + '" />' +
+                                '</form>'
+                            %}
+                        {% endif %}
+                        {% if column == "left" %}
+                            {% do leftColumn.append([collection_instrument.file_name, formData]) %}
+                        {% elif column == "middle" %}
+                            {% do middleColumn.append([collection_instrument.file_name, formData]) %}
+                        {% else %}
+                            {% do rightColumn.append([collection_instrument.file_name, formData]) %}
+                        {% endif %}
+                    {% endfor %}
+                {% endfor %}
+              
+                {% for row in range(0, (collection_instruments|length)//3 + 1) %}
                     {% do surveyTableDataRows.append(
                     {
                         "tds": [
                                     {
-                                        "value": collection_instrument.file_name
+                                        "value": leftColumn[row][0]
                                     },
                                     {
-                                        "value": formData,
+                                        "value": leftColumn[row][1],
                                         "tdClasses": "ons-u-ta-right"
-                                    } 
+                                    },
+                                    {
+                                        "value": " "
+                                    },
+                                    {
+                                        "value": middleColumn[row][0]
+                                    },
+                                    {
+                                        "value": middleColumn[row][1],
+                                        "tdClasses": "ons-u-ta-right"
+                                    },
+                                    {
+                                        "value": " "
+                                    },
+                                    {
+                                        "value": rightColumn[row][0]
+                                    },
+                                    {
+                                        "value": rightColumn[row][1],
+                                        "tdClasses": "ons-u-ta-right"
+                                    },
                                 ] if surveyEditPermission else
                                 [
                                     {
