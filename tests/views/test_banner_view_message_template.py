@@ -15,6 +15,7 @@ class TestBannerViewMessageTemplate(ViewTestCase):
         self.app.config["SESSION_REDIS"] = fakeredis.FakeStrictRedis(
             host=self.app.config["REDIS_HOST"], port=self.app.config["FAKE_REDIS_PORT"], db=self.app.config["REDIS_DB"]
         )
+
     @requests_mock.mock()
     def test_collection_exercise_view(self, mock_request):
         mock_request.get(url_template, json=templates_response, status_code=200)

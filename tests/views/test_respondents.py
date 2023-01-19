@@ -99,7 +99,7 @@ user_permission_respondent_delete_json = {
 }
 
 
-class TestRespondents(ViewTestCase):        
+class TestRespondents(ViewTestCase):
     def setup_data(self):
         payload = {"user_id": "test-id", "aud": "response_operations"}
         self.app = create_app("TestingConfig")
@@ -285,10 +285,10 @@ class TestRespondents(ViewTestCase):
         )
         """Asert that page 1 passed to party controller even though no page specified in passed in params"""
         self._mock_party_data(search_respondents_mock)
-        
+
         self.client.post("/respondents/search", data={"email_address": "@"}, follow_redirects=True)  # All
 
-        search_respondents_mock.assert_called_with("", "", "@", "1", self.app.config["PARTY_RESPONDENTS_PER_PAGE"] )
+        search_respondents_mock.assert_called_with("", "", "@", "1", self.app.config["PARTY_RESPONDENTS_PER_PAGE"])
 
     @requests_mock.mock()
     def test_delete_respondent_template_for_delete(self, mock_request):
