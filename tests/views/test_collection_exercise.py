@@ -1043,37 +1043,6 @@ class TestCollectionExercise(ViewTestCase):
         self.assertNotIn("Incorrect file type. Please choose a file type XLSX".encode(), response.data)
 
     @requests_mock.mock()
-    @patch("response_operations_ui.views.collection_exercise.build_collection_exercise_details")
-    def test_update_collection_exercise_details_success(self, mock_request, mock_details):
-        sign_in_with_permission(self, mock_request, user_permission_surveys_edit_json)
-        changed_ce_details = {
-            "collection_exercise_id": collection_exercise_id,
-            "user_description": "16th June 2019",
-            "period": "201907",
-            "hidden_survey_id": survey_id,
-        }
-        # update survey
-        mock_details.return_value = formatted_collection_exercise_details
-        mock_request.get(url_get_survey_by_short_name, json=updated_survey_info["survey"])
-        mock_request.put(url_update_ce_user_details)
-        mock_request.put(url_update_ce_period)
-        # redirect to survey details
-        mock_request.get(url_ces_by_survey, json=updated_survey_info["collection_exercises"])
-        mock_request.get(url_get_collection_exercise_events, json=self.collection_exercise_events)
-        mock_request.get(url_get_collection_exercises_link, json=self.collection_exercises_link)
-        mock_request.get(url_get_sample_summary, json=self.sample_summary)
-
-        response = self.client.post(
-            f"/surveys/{short_name}/{period}/edit-collection-exercise-details",
-            data=changed_ce_details,
-            follow_redirects=True,
-        )
-
-        self.assertEqual(response.status_code, 200)
-        self.assertIn("16th June 2019".encode(), response.data)
-        self.assertIn("201906".encode(), response.data)
-
-    @requests_mock.mock()
     def test_update_collection_exercise_userdescription_success(self, mock_request):
         sign_in_with_permission(self, mock_request, user_permission_surveys_edit_json)
         test_description = "16th June 2019"
@@ -1093,7 +1062,7 @@ class TestCollectionExercise(ViewTestCase):
         )
 
         self.assertEqual(response.status_code, 302)
-        self.assertEqual(urlparse(response.location).path, f"/surveys/{short_name}")
+        self.assertEqual(urlparse(response.location).path, f"/surveys/{short_name}/201906")
 
     @requests_mock.mock()
     def test_update_collection_exercise_details_fail(self, mock_request):
@@ -1268,14 +1237,26 @@ class TestCollectionExercise(ViewTestCase):
         sign_in_with_permission(self, mock_request, user_permission_surveys_edit_json)
         new_collection_exercise_details = {
             "user_description": "New collection exercise",
-            "period": "123456",
+            "period": period,
         }
-        mock_request.get(url_ces_by_survey, json=self.collection_exercises)
+        mock_request.register_uri(
+            "GET",
+            url_ces_by_survey,
+            [{"json": {}, "status_code": 200}, {"json": self.collection_exercises, "status_code": 200}],
+        )
         mock_request.get(url_get_survey_by_short_name, json=self.survey)
         mock_request.get(url_get_collection_exercise_events, json=self.collection_exercise_events)
         mock_request.get(url_get_collection_exercises_link, json=self.collection_exercises_link)
         mock_request.get(url_get_sample_summary, json=self.sample_summary)
         mock_request.post(url_create_collection_exercise, status_code=200)
+        mock_request.get(url_ce_by_id, json=collection_exercise_details["collection_exercise"])
+        mock_request.get(url_link_sample, json=[sample_summary_id])
+        mock_request.get(
+            f"{url_get_collection_instrument}?{ci_search_string}", json=self.collection_instruments, complete_qs=True
+        )
+        mock_request.get(
+            f"{url_get_collection_instrument}?{ci_type_search_string_eq}", json=self.eq_ci_selectors, complete_qs=True
+        )
 
         response = self.client.post(
             f"/surveys/{survey_ref}/{short_name}/create-collection-exercise",
@@ -1283,8 +1264,8 @@ class TestCollectionExercise(ViewTestCase):
             follow_redirects=True,
         )
         self.assertEqual(response.status_code, 200)
-        self.assertIn("123456".encode(), response.data)
-        self.assertIn("Collection exercise created".encode(), response.data)
+        self.assertIn("Business Register and Employment".encode(), response.data)
+        self.assertIn(period.encode(), response.data)
 
     @requests_mock.mock()
     def test_create_collection_exercise_period_already_exists(self, mock_request):
