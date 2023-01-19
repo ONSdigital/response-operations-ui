@@ -3,6 +3,7 @@ import os
 import re
 from random import randint
 
+import fakeredis
 import jwt
 import requests_mock
 
@@ -97,6 +98,10 @@ class TestReportingUnits(ViewTestCase):
     def setup_data(self):
         self.app = create_app("TestingConfig")
         payload = {"user_id": "test-id", "aud": "response_operations"}
+        self.client = self.app.test_client()
+        self.app.config["SESSION_REDIS"] = fakeredis.FakeStrictRedis(
+            host=self.app.config["REDIS_HOST"], port=self.app.config["FAKE_REDIS_PORT"], db=self.app.config["REDIS_DB"]
+        )
         self.access_token = jwt.encode(payload, TestingConfig.UAA_PRIVATE_KEY, algorithm="RS256")
         self.surveys_list_json = [
             {
