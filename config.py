@@ -150,6 +150,7 @@ class TestingConfig(DevelopmentConfig):
     """Configuration used for testing.  The uaa public and private keys in this block are used ONLY for
     the unit tests when testing the jwt and aren't used at all for anything else.
     """
+
     FAKE_REDIS_PORT = os.getenv("FAKE_REDIS_PORT", 6380)
 
     DEBUG = False
