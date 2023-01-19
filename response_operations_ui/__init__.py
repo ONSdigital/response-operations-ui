@@ -150,8 +150,8 @@ def create_app(config_name=None):
         return User(user_id, username)
 
     # When running the tests locally, we need to be able to run them without Redis. The below fakeredis configuration
-    # will allow to achieve this. Fakeredis will only be used if the configuration being used is debug or test
-    if app.config["DEBUG"] or app.config["TESTING"]:
+    # will achieve this. Fakeredis will only be used if the configuration being used is test.
+    if app.config["TESTING"]:
         app.config["SESSION_REDIS"] = fakeredis.FakeStrictRedis(
             host=app.config["REDIS_HOST"], port=app.config["REDIS_PORT"], db=app.config["REDIS_DB"]
         )
