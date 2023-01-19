@@ -153,7 +153,7 @@ def create_app(config_name=None):
     # will achieve this. Fakeredis will only be used if the configuration being used is test.
     if app.config["TESTING"]:
         app.config["SESSION_REDIS"] = fakeredis.FakeStrictRedis(
-            host=app.config["REDIS_HOST"], port=app.config["REDIS_PORT"], db=app.config["REDIS_DB"]
+            host=app.config["REDIS_HOST"], port=app.config["FAKE_REDIS_PORT"], db=app.config["REDIS_DB"]
         )
     else:
         # wrap in the flask server side session manager and back it by redis
