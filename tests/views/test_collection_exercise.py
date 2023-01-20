@@ -4,6 +4,7 @@ from io import BytesIO
 from unittest.mock import patch
 from urllib.parse import urlencode, urlparse
 
+import fakeredis
 import jwt
 import mock
 import requests_mock
@@ -368,6 +369,10 @@ class TestCollectionExercise(ViewTestCase):
             "totalSampleUnits": 8,
             "expectedCollectionInstruments": 1,
         }
+
+        self.app.config["SESSION_REDIS"] = fakeredis.FakeStrictRedis(
+            host=self.app.config["REDIS_HOST"], port=self.app.config["FAKE_REDIS_PORT"], db=self.app.config["REDIS_DB"]
+        )
 
     @requests_mock.mock()
     def test_collection_exercise_view_eq_non_ref_date(self, mock_request):

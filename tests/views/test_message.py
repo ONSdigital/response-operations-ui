@@ -3,6 +3,7 @@ import json
 import os
 from unittest.mock import patch
 
+import fakeredis
 import jwt
 import requests_mock
 
@@ -153,6 +154,9 @@ class TestMessage(ViewTestCase):
 
     def before(self):
         self.mock_uaa()
+        self.app.config["SESSION_REDIS"] = fakeredis.FakeStrictRedis(
+            host=self.app.config["REDIS_HOST"], port=self.app.config["FAKE_REDIS_PORT"], db=self.app.config["REDIS_DB"]
+        )
         # sign-in to setup the user in the session
         self.client.post("/sign-in", follow_redirects=True, data={"username": "user", "password": "pass"})
 

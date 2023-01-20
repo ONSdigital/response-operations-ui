@@ -2,6 +2,7 @@ import unittest
 from unittest import mock
 from unittest.mock import patch
 
+import fakeredis
 import jwt
 import requests_mock
 
@@ -22,6 +23,9 @@ class TestPasswords(unittest.TestCase):
         self.app = create_app("TestingConfig")
         self.access_token = jwt.encode(payload, self.app.config["UAA_PRIVATE_KEY"], algorithm="RS256")
         self.client = self.app.test_client()
+        self.app.config["SESSION_REDIS"] = fakeredis.FakeStrictRedis(
+            host=self.app.config["REDIS_HOST"], port=self.app.config["FAKE_REDIS_PORT"], db=self.app.config["REDIS_DB"]
+        )
 
     def test_request_reset_page(self):
         response = self.client.get("/passwords/forgot-password")
