@@ -583,12 +583,15 @@ def edit_collection_exercise_details(short_name, period):
                 form.get("collection_exercise_id"), form.get("period")
             )
 
-        return redirect(url_for("surveys_bp.view_survey", short_name=short_name, ce_updated="True"))
+        return redirect(
+            url_for("collection_exercise_bp.view_collection_exercise", short_name=short_name, period=form.get("period"))
+        )
 
 
 @collection_exercise_bp.route("/<survey_ref>/<short_name>/create-collection-exercise", methods=["GET"])
 @login_required
 def get_create_collection_exercise_form(survey_ref, short_name):
+    previous_period = request.args.get("previous_period")
     verify_permission("surveys.edit", session)
     logger.info("Retrieving survey data for form", short_name=short_name, survey_ref=survey_ref)
     form = CreateCollectionExerciseDetailsForm(form=request.form)
@@ -597,6 +600,7 @@ def get_create_collection_exercise_form(survey_ref, short_name):
         form=form,
         short_name=short_name,
         survey_ref=survey_ref,
+        previous_period=previous_period,
     )
 
 
@@ -658,7 +662,7 @@ def create_collection_exercise(survey_ref, short_name):
 
     logger.info("Successfully created collection exercise", survey=short_name, survey_ref=survey_ref)
     return redirect(
-        url_for("surveys_bp.view_survey", short_name=short_name, ce_created="True", new_period=form.get("period"))
+        url_for("collection_exercise_bp.view_collection_exercise", short_name=short_name, period=form.get("period"))
     )
 
 

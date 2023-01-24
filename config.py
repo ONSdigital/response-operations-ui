@@ -151,6 +151,8 @@ class TestingConfig(DevelopmentConfig):
     the unit tests when testing the jwt and aren't used at all for anything else.
     """
 
+    FAKE_REDIS_PORT = os.getenv("FAKE_REDIS_PORT", 6380)
+
     DEBUG = False
     TESTING = True
     LOGIN_DISABLED = True

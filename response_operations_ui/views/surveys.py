@@ -64,10 +64,6 @@ def view_survey(short_name):
     if request.args.get("ce_updated"):
         updated_ce_message = "Collection exercise details updated"
 
-    created_ce_message = None
-    if request.args.get("ce_created"):
-        created_ce_message = "Collection exercise created"
-
     newly_created_period = request.args.get("new_period")
 
     # Mapping backend states to frontend sates for the user
@@ -83,7 +79,6 @@ def view_survey(short_name):
         survey=survey,
         collection_exercises=collection_exercises,
         updated_ce_message=updated_ce_message,
-        created_ce_message=created_ce_message,
         newly_created_period=newly_created_period,
     )
 

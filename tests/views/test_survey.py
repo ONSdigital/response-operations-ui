@@ -4,6 +4,7 @@ import os
 from contextlib import suppress
 from unittest.mock import MagicMock
 
+import fakeredis
 import jwt
 import requests_mock
 from requests import RequestException
@@ -134,6 +135,9 @@ class TestSurvey(ViewTestCase):
             "totalSampleUnits": 5,
             "expectedCollectionInstruments": 1,
         }
+        self.app.config["SESSION_REDIS"] = fakeredis.FakeStrictRedis(
+            host=self.app.config["REDIS_HOST"], port=self.app.config["FAKE_REDIS_PORT"], db=self.app.config["REDIS_DB"]
+        )
 
     @requests_mock.mock()
     def test_survey_list(self, mock_request):
