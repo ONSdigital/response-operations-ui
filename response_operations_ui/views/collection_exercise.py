@@ -955,16 +955,15 @@ def remove_loaded_sample(short_name, period):
     )
 
 
-def split(list_to_split, num_of_lists):
+def split_list(list_to_split, num_of_lists):
     k, m = divmod(len(list_to_split), num_of_lists)
     return (list_to_split[i * k + min(i, m) : (i + 1) * k + min(i + 1, m)] for i in range(num_of_lists))
 
 
 def create_seft_ci_table(ce_details):
     collection_instruments = [ci for ci in ce_details["collection_instruments"]]
-    ci_columns = list(split(collection_instruments, 3))
+    ci_columns = list(split_list(collection_instruments, 3))
     table_columns = {"left": ci_columns[0], "middle": ci_columns[1], "right": ci_columns[2]}
-    # print(table_columns)
     return table_columns
 
 
@@ -990,7 +989,6 @@ def get_seft_collection_instrument(short_name, period):
         short_name=ce_details["survey"]["shortName"],
         period=ce_details["collection_exercise"]["exerciseRef"],
     )
-    # url_for('collection_exercise_bp.get_view_sample_ci', short_name=survey.shortName, period=ce.exerciseRef)
     breadcrumbs = [{"text": "Back", "url": back_url}, {"text": "View sample"}]
 
     error_json = _get_error_from_session()
