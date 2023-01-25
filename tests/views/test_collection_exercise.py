@@ -1858,7 +1858,7 @@ class TestCollectionExercise(ViewTestCase):
         self.assertIn("Add reminder".encode(), response.data)
         self.assertIn("Add nudge email".encode(), response.data)
         self.assertIn("Replace sample file".encode(), response.data)
-        self.assertIn('id="create-event-date-go-live">Add</a>'.encode(), response.data)
+        self.assertIn('id="create-event-date-go_live">Add</a>'.encode(), response.data)
 
     @requests_mock.mock()
     def test_survey_edit_permission_collection_exercise_no_sample(self, mock_request):
@@ -1888,7 +1888,7 @@ class TestCollectionExercise(ViewTestCase):
         self.assertIn("Add reminder".encode(), response.data)
         self.assertIn("Add nudge email".encode(), response.data)
         self.assertIn("Upload sample file".encode(), response.data)
-        self.assertIn('id="create-event-date-go-live">Add</a>'.encode(), response.data)
+        self.assertIn('id="create-event-date-go_live">Add</a>'.encode(), response.data)
 
     @requests_mock.mock()
     def test_no_survey_edit_permission_collection_exercise(self, mock_request):
@@ -1910,7 +1910,7 @@ class TestCollectionExercise(ViewTestCase):
         self.assertEqual(response.status_code, 200)
         self.assertIn("Monthly Survey of Building Materials Bricks".encode(), response.data)
         self.assertIn("221_201712".encode(), response.data)
-        self.assertIn('id="create-event-date-go-live">View</a>'.encode(), response.data)
+        self.assertIn('id="create-event-date-go_live">View</a>'.encode(), response.data)
         self.assertNotIn("Upload sample file".encode(), response.data)
 
     @requests_mock.mock()
