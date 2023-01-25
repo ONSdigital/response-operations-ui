@@ -79,33 +79,19 @@
         <h4>{{collection_instruments|length|string + " SEFT collection instruments uploaded"}}</h4>
         <div class="ons-u-mb-l">
             <section class="ce-section">
-                {% set surveyTableLeftData = {
-                    "variants": 'responsive',
-                    "id": "collection-instruments-left-table",
-                    "caption": 'Sample details for this collection exercise',
-                    "hideCaption": true,
-                    "ths": []
-                } %}
-                {% set surveyTableMiddleData = {
-                    "variants": 'responsive',
-                    "id": "collection-instruments-middle-table",
-                    "caption": 'Sample details for this collection exercise',
-                    "hideCaption": true,
-                    "ths": []
-                } %}
-                {% set surveyTableRightData = {
-                    "variants": 'responsive',
-                    "id": "collection-instruments-right-table",
-                    "caption": 'Sample details for this collection exercise',
-                    "hideCaption": true,
-                    "ths": []
-                } %}
+                {% set tables = ['left', 'middle', 'right'] %}
+                <div class="ons-grid ons-col-12@m ons-grid--vertical-center ons-grid--no-wrap@m ons-u-mt-m ons-u-mb-m">
+                {% for table in tables %}
+                    {% set surveyTableData = {
+                        "variants": 'responsive',
+                        "id": "collection-instruments-" + table + "-table",
+                        "caption": 'Sample details for this collection exercise',
+                        "hideCaption": true,
+                        "ths": []
+                    } %}
               
-                
-                {% set surveyTableDataRowsLeft = [] %}
-                {% set surveyTableDataRowsMiddle = [] %}
-                {% set surveyTableDataRowsRight = [] %}
-                {% for column, cis in table_columns.items() %}
+                    {% set surveyTableDataRows = [] %}
+                    {% for column, cis in table_columns.items() %}
                     {% for collection_instrument in cis %}
                         {% if not locked and surveyEditPermission %}
                             {% set ci_count.value = ci_count.value + 1 %}
@@ -118,46 +104,8 @@
                                 '</form>'
                             %}
                         {% endif %}
-                        {% if column == "left" %}
-                            {% do surveyTableDataRowsLeft.append(
-                                {
-                                    "tds": [
-                                                {
-                                                    "value": collection_instrument.file_name
-                                                },
-                                                {
-                                                    "value": formData,
-                                                    "tdClasses": "ons-u-ta-right"
-                                                },
-                                            ] if surveyEditPermission else
-                                            [
-                                                {
-                                                    "value": collection_instrument.file_name
-                                                }
-                                            ]
-                                }
-                                ) %}
-                        {% elif column == "middle" %}
-                            {% do surveyTableDataRowsMiddle.append(
-                                {
-                                    "tds": [
-                                                {
-                                                    "value": collection_instrument.file_name
-                                                },
-                                                {
-                                                    "value": formData,
-                                                    "tdClasses": "ons-u-ta-right"
-                                                },
-                                            ] if surveyEditPermission else
-                                            [
-                                                {
-                                                    "value": collection_instrument.file_name
-                                                }
-                                            ]
-                                }
-                                ) %}
-                        {% else %}
-                            {% do surveyTableDataRowsRight.append(
+                        {% if column == table %}
+                            {% do surveyTableDataRows.append(
                                 {
                                     "tds": [
                                                 {
@@ -176,28 +124,18 @@
                                 }
                                 ) %}
                         {% endif %}
+                        {% endfor %}
                     {% endfor %}
+                            {% do surveyTableData | setAttribute("trs", surveyTableDataRows) %}
+                            <div class="ons-grid__col ons-col-4@m">
+                                {{
+                                  onsTable(surveyTableData)
+                                }}
+                            </div>
                 {% endfor %}
-                <div class="ons-grid ons-col-12@m ons-grid--vertical-center ons-grid--no-wrap@m ons-u-mt-m ons-u-mb-m">
-                    {% do surveyTableLeftData | setAttribute("trs", surveyTableDataRowsLeft) %}
-                    <div class="ons-grid__col ons-col-4@m">
-                        {{
-                          onsTable(surveyTableLeftData)
-                        }}
-                    </div>
-                    {% do surveyTableMiddleData | setAttribute("trs", surveyTableDataRowsMiddle) %}
-                    <div class="ons-grid__col ons-col-4@m">
-                        {{
-                          onsTable(surveyTableMiddleData)
-                        }}
-                    </div>
-                    {% do surveyTableRightData | setAttribute("trs", surveyTableDataRowsRight) %}
-                    <div class="ons-grid__col ons-col-4@m">
-                        {{
-                          onsTable(surveyTableRightData)
-                        }}
-                    </div>
                 </div>
+              
+                
                 {% for i in range(ci_count.value) %}
                     {% set j = i + 1 %}
                     <script{% if csp_nonce %} nonce="{{ csp_nonce() }}" {% endif %}>

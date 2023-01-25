@@ -804,16 +804,8 @@ def get_view_sample_ci(short_name, period):
     success_panel = request.args.get("success_panel")
     info_panel = request.args.get("info_panel")
 
-    back_url = url_for(
-        "collection_exercise_bp.view_collection_exercise",
-        short_name=ce_details["survey"]["shortName"],
-        period=ce_details["collection_exercise"]["exerciseRef"],
-    )
-    breadcrumbs = [{"text": "Back", "url": back_url}, {"text": "View sample"}]
-
     return render_template(
         "collection_exercise/ce-view-sample-ci.html",
-        breadcrumbs=breadcrumbs,
         ce=ce_details["collection_exercise"],
         collection_instruments=ce_details["collection_instruments"],
         error=error_json,
