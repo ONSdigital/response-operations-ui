@@ -17,11 +17,6 @@
     <div class="ons-grid ons-grid--gutterless">
         {% include 'partials/error-box.html' %}
         <div class="ons-grid__col">
-          {% if breadcrumbs %}
-                {% include 'layouts/configs/breadcrumbs.html' %}
-          {% endif %}
-          <p>{{breadcrumbs}}</p>
-            {% include 'layouts/configs/breadcrumbs.html' %}
             {% if survey.surveyMode == 'EQ' %}
               <h1 name="page-ce-title">Select collection instruments</h1>
             {% else %}

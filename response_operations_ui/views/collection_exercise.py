@@ -777,7 +777,6 @@ def create_collection_exercise_event(short_name, period, ce_id, tag):
 @login_required
 def get_view_sample_ci(short_name, period):
     ce_details = build_collection_exercise_details(short_name, period)
-    breadcrumbs = [{"text": "Back"}]
     ce_state = ce_details["collection_exercise"]["state"]
     ce_details["eq_ci_selectors"] = filter_eq_ci_selectors(
         ce_details["eq_ci_selectors"], ce_details["collection_instruments"]
@@ -804,6 +803,13 @@ def get_view_sample_ci(short_name, period):
 
     success_panel = request.args.get("success_panel")
     info_panel = request.args.get("info_panel")
+
+    back_url = url_for(
+        "collection_exercise_bp.view_collection_exercise",
+        short_name=ce_details["survey"]["shortName"],
+        period=ce_details["collection_exercise"]["exerciseRef"],
+    )
+    breadcrumbs = [{"text": "Back", "url": back_url}, {"text": "View sample"}]
 
     return render_template(
         "collection_exercise/ce-view-sample-ci.html",
@@ -951,13 +957,13 @@ def remove_loaded_sample(short_name, period):
 
 def split(list_to_split, num_of_lists):
     k, m = divmod(len(list_to_split), num_of_lists)
-    return (list_to_split[i*k+min(i, m):(i+1)*k+min(i+1, m)] for i in range(num_of_lists))
+    return (list_to_split[i * k + min(i, m) : (i + 1) * k + min(i + 1, m)] for i in range(num_of_lists))
 
 
 def create_seft_ci_table(ce_details):
     collection_instruments = [ci for ci in ce_details["collection_instruments"]]
     ci_columns = list(split(collection_instruments, 3))
-    table_columns = {'left': ci_columns[0], 'middle': ci_columns[1], 'right': ci_columns[2]}
+    table_columns = {"left": ci_columns[0], "middle": ci_columns[1], "right": ci_columns[2]}
     # print(table_columns)
     return table_columns
 
@@ -966,7 +972,6 @@ def create_seft_ci_table(ce_details):
 @login_required
 def get_seft_collection_instrument(short_name, period):
     ce_details = build_collection_exercise_details(short_name, period)
-    breadcrumbs = [{"text": "Back"}]
     show_msg = request.args.get("show_msg")
     success_panel = request.args.get("success_panel")
     info_panel = request.args.get("info_panel")
@@ -978,9 +983,16 @@ def get_seft_collection_instrument(short_name, period):
         "EXECUTED",
         "ENDED",
     )
-    
+
     table_columns = create_seft_ci_table(ce_details)
-    
+    back_url = url_for(
+        "collection_exercise_bp.get_view_sample_ci",
+        short_name=ce_details["survey"]["shortName"],
+        period=ce_details["collection_exercise"]["exerciseRef"],
+    )
+    # url_for('collection_exercise_bp.get_view_sample_ci', short_name=survey.shortName, period=ce.exerciseRef)
+    breadcrumbs = [{"text": "Back", "url": back_url}, {"text": "View sample"}]
+
     error_json = _get_error_from_session()
     return render_template(
         "ce-seft-instrument.html",
