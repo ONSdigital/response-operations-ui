@@ -63,12 +63,8 @@
             {% set editable = true %}
             {% set value = 'end date' %}
         {% elif dateGroup == 'employment' %}
-            {% if employment_date_required %}
-                {% set label = 'Employment date * ' %}
-            {% else %}
-                {% set label = 'Employment date ' %}
-            {% endif %}
             {% set id = 'employment-date' %}
+            {% set label = 'Employment date' %}
             {% if events.employment %}
                 {% set event = events.employment.day + ' ' + events.employment.date %}
             {% endif %}

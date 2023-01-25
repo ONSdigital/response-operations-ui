@@ -4,7 +4,7 @@
     {{
        onsLabel({
           "text": "Collection instruments (CI)",
-          "for": "some-input",
+          "for": "sample-table",
           "description": "You can see the minimum number of collection instruments needed under the 'Sample file' 
           section. "
     })
@@ -27,8 +27,8 @@
         {% set ciButtonText = 'View or Upload' %}
     {% endif %}
   
-    {% set hyperlink = '<a href="' + url_for('collection_exercise_bp.get_view_sample_ci', short_name=survey.shortName, 
-                            period=ce.exerciseRef) + '" id="create-event-date-go_live">' + ciButtonText + '</a>' %}
+    {% set addCILink = '<a href="' + url_for('collection_exercise_bp.get_view_sample_ci', short_name=survey.shortName, 
+                            period=ce.exerciseRef) + '" id="create-event-date-go-live">' + ciButtonText + '</a>' %}
   
     {% set surveyTableDataRows = [ 
         {"tds": [
@@ -40,7 +40,7 @@
                 "tdClasses": "ons-u-ta-centre"
             }, 
             {
-              "value": hyperlink,
+              "value": addCILink,
               "tdClasses": "ons-u-ta-right"
             }
           ] 
