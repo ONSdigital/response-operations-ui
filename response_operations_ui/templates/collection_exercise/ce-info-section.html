@@ -35,20 +35,20 @@
 
     {% for dateGroup in dateGroups %}
         {% if dateGroup == 'periodId' %}
-            {% set label = 'Period ID' %}
+            {% set label = 'Period ID *' %}
             {% set id = 'periodId' %}
             {% set event = ce.exerciseRef %}
             {% set editable = true %}
             {% set value = 'ID' %}
         {% elif dateGroup == 'user' %}
-            {% set label = 'Reporting dates' %}
+            {% set label = 'Reporting dates *' %}
             {% set id = 'user-description' %}
             {% set event = ce.userDescription %}
             {% set editable = true %}
             {% set value = 'dates' %}
         {% elif dateGroup == 'ref_period_start' %}
             {% set id = 'period-start-date' %}
-            {% set label = 'Reference period start date' %}
+            {% set label = 'Reference period start date *' %}
             {% if events.ref_period_start %}
                 {% set event = events.ref_period_start.day + ' ' + events.ref_period_start.date %}
             {% endif %}
@@ -56,15 +56,19 @@
             {% set value = 'start date' %}
         {% elif dateGroup == 'ref_period_end' %}
             {% set id = 'period-end-date' %}
-            {% set label = 'Reference period end date' %}
+            {% set label = 'Reference period end date *' %}
             {% if events.ref_period_end %}
                 {% set event = events.ref_period_end.day + ' ' + events.ref_period_end.date %}
             {% endif %}
             {% set editable = true %}
             {% set value = 'end date' %}
         {% elif dateGroup == 'employment' %}
+            {% if employment_date_required %}
+                {% set label = 'Employment date * ' %}
+            {% else %}
+                {% set label = 'Employment date ' %}
+            {% endif %}
             {% set id = 'employment-date' %}
-            {% set label = 'Employment date' %}
             {% if events.employment %}
                 {% set event = events.employment.day + ' ' + events.employment.date %}
             {% endif %}
