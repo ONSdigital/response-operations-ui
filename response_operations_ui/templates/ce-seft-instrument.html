@@ -7,7 +7,7 @@
 {% from "components/checkboxes/_macro.njk" import onsCheckboxes %}
 
 {% set surveyEditPermission = hasPermission('surveys.edit') %}
-{% set count = namespace(value = 0) %}
+{% set ci_count = namespace(value = 0) %}
 
 {% block main %}
     {% include 'collection_exercise/ce-success-panel.html' %}
@@ -108,10 +108,10 @@
                 {% for column, cis in table_columns.items() %}
                     {% for collection_instrument in cis %}
                         {% if not locked and surveyEditPermission %}
-                            {% set count.value = count.value + 1 %}
+                            {% set ci_count.value = ci_count.value + 1 %}
                             {% set formData = 
-                                '<form id="form-delete-ci-' + count.value|string + '" action="" method="post">' +
-                                '<a href=# id="delete-ci-' + count.value|string + '">Remove</a>' +
+                                '<form id="form-delete-ci-' + ci_count.value|string + '" action="" method="post">' +
+                                '<a href=# id="delete-ci-' + ci_count.value|string + '">Remove</a>' +
                                 '<input type="hidden" name="ci_id" value="' + collection_instrument.id + '"/>' +
                                 '<input type="hidden" name="delete-ci"/>' +
                                 '<input type="hidden" name="csrf_token" value="' + csrf_token() + '" />' +
@@ -198,7 +198,7 @@
                         }}
                     </div>
                 </div>
-                {% for i in range(surveyTableDataRows | length) %}
+                {% for i in range(ci_count.value) %}
                     {% set j = i + 1 %}
                     <script{% if csp_nonce %} nonce="{{ csp_nonce() }}" {% endif %}>
                     document.getElementById("delete-ci-{{ j }}").addEventListener('click', function () {
