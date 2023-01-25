@@ -2,6 +2,7 @@ import json
 import os
 from unittest.mock import patch
 
+import fakeredis
 import jwt
 import requests_mock
 
@@ -60,6 +61,9 @@ class TestMessage(ViewTestCase):
         ]
         payload = {"user_id": "test-id", "aud": "response_operations"}
         self.access_token = jwt.encode(payload, TestingConfig.UAA_PRIVATE_KEY, algorithm="RS256")
+        self.app.config["SESSION_REDIS"] = fakeredis.FakeStrictRedis(
+            host=self.app.config["REDIS_HOST"], port=self.app.config["FAKE_REDIS_PORT"], db=self.app.config["REDIS_DB"]
+        )
 
     def setup_common_mocks(self, mock_request, with_uaa_user_list=False):
         mock_request.post(url_sign_in_data, json={"access_token": self.access_token}, status_code=201)

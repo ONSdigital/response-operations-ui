@@ -1,6 +1,7 @@
 import json
 import os
 
+import fakeredis
 import jwt
 import mock
 import requests_mock
@@ -100,8 +101,12 @@ user_permission_respondent_delete_json = {
 
 class TestRespondents(ViewTestCase):
     def setup_data(self):
-        self.app = create_app("TestingConfig")
         payload = {"user_id": "test-id", "aud": "response_operations"}
+        self.app = create_app("TestingConfig")
+        self.client = self.app.test_client()
+        self.app.config["SESSION_REDIS"] = fakeredis.FakeStrictRedis(
+            host=self.app.config["REDIS_HOST"], port=self.app.config["FAKE_REDIS_PORT"], db=self.app.config["REDIS_DB"]
+        )
         self.access_token = jwt.encode(payload, TestingConfig.UAA_PRIVATE_KEY, algorithm="RS256")
         self.surveys_list_json = [
             {
@@ -275,6 +280,9 @@ class TestRespondents(ViewTestCase):
 
     @mock.patch("response_operations_ui.controllers.party_controller.search_respondents")
     def test_search_respondents_page_defaults_to_1(self, search_respondents_mock):
+        self.app.config["PARTY_RESPONDENTS_PER_PAGE"] = fakeredis.FakeStrictRedis(
+            host=self.app.config["REDIS_HOST"], port=self.app.config["FAKE_REDIS_PORT"], db=self.app.config["REDIS_DB"]
+        )
         """Asert that page 1 passed to party controller even though no page specified in passed in params"""
         self._mock_party_data(search_respondents_mock)
 

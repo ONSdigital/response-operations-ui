@@ -1,5 +1,6 @@
 import unittest
 
+import fakeredis
 import jwt
 import requests_mock
 
@@ -32,6 +33,9 @@ class TestSignIn(unittest.TestCase):
         self.app = create_app("TestingConfig")
         self.access_token = jwt.encode(payload, self.app.config["UAA_PRIVATE_KEY"], algorithm="RS256")
         self.client = self.app.test_client()
+        self.app.config["SESSION_REDIS"] = fakeredis.FakeStrictRedis(
+            host=self.app.config["REDIS_HOST"], port=self.app.config["FAKE_REDIS_PORT"], db=self.app.config["REDIS_DB"]
+        )
 
     def test_sign_in_page(self):
         with self.app.app_context():
