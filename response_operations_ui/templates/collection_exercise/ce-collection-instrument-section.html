@@ -129,43 +129,38 @@
             {% if not locked %}
                 {% if surveyEditPermission %}
                     <div class="ons-u-mb-m">
-                        <div>
-                                {%- call onsFieldset({
-                                    "legend": "Link collection instruments",
-                                    "legendClasses": "ons-u-vh" })
-                                -%}
-                                    {{
-                                        onsInput({
-                                            "id": "formtype",
-                                            "name": "formtype",
-                                            "type": "text",
-                                            "width": 4,
-                                            "maxLength": 4,
-                                            "value": form.formtype.data,
-                                            "classes": "input--w-5",
-                                            "attributes": {
-                                                "required": true
-                                            },
-                                            "label": {
-                                                "text": 'Add EQ collection instrument',
-                                                "description": "It must be a 4 digit number"
-                                            }
-                                        })
-                                    }}
-                                {% endcall %}
-                                {{
-                                    onsButton({
-                                        "classes": "ons-u-mb-l ons-u-mt-s",
-                                        "variants": ['secondary', 'small'],
-                                        "text": "Add",
-                                        "id": "save-btn",
-                                        "variants": 'small'
-                                    })
-                                }}
-                            </div>
+                         {%- call onsFieldset({
+                            "legend": "Link collection instruments",
+                            "legendClasses": "ons-u-vh" })
+                        -%}
+                            {{
+                                onsInput({
+                                    "id": "formtype",
+                                    "name": "formtype",
+                                    "type": "text",
+                                    "maxLength": 4,
+                                    "value": form.formtype.data,
+                                    "classes": "input--w-5",
+                                    "attributes": {
+                                        "required": true
+                                    },
+                                    "label": {
+                                        "text": 'Add form type',
+                                        "description": "For example: 0101"
+                                    }
+                                })
+                            }}
+                        {% endcall %}
+                        {{
+                            onsButton({
+                                "classes": "ons-u-mb-l ons-u-mt-s",
+                                "variants": ['secondary', 'small'],
+                                "text": "Upload",
+                                "id": "save-btn"
+                            })
+                        }}
                     </div>
-                    <form id="form-select-ci" class="form" method="post" role="form"
-                          action="{{url_for('collection_exercise_bp.view_collection_exercise', short_name=survey.shortName, period=ce.exerciseRef)}}">
+                    <form id="form-select-ci" class="form" method="post" role="form" action="">
                         <input type="hidden" name="csrf_token" value="{{ csrf_token() }}" />
                         {{
                             onsLabel({

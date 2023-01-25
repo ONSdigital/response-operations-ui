@@ -146,7 +146,6 @@ def view_collection_exercise(short_name, period):
     info_panel = request.args.get("info_panel")
     error_json = _get_error_from_session()
     _delete_sample_data_if_required()
-    employment_date_required = _employment_date_required(short_name)
 
     return render_template(
         "collection_exercise/collection-exercise.html",
@@ -164,7 +163,6 @@ def view_collection_exercise(short_name, period):
         validation_failed=validation_failed,
         show_msg=show_msg,
         info_panel=info_panel,
-        employment_date_required=employment_date_required,
     )
 
 
@@ -597,7 +595,6 @@ def get_create_collection_exercise_form(survey_ref, short_name):
     verify_permission("surveys.edit", session)
     logger.info("Retrieving survey data for form", short_name=short_name, survey_ref=survey_ref)
     form = CreateCollectionExerciseDetailsForm(form=request.form)
-    employment_date_required = _employment_date_required(short_name)
 
     return render_template(
         "create-collection-exercise.html",
@@ -605,7 +602,6 @@ def get_create_collection_exercise_form(survey_ref, short_name):
         short_name=short_name,
         survey_ref=survey_ref,
         previous_period=previous_period,
-        employment_date_required=employment_date_required,
     )
 
 
@@ -618,7 +614,6 @@ def create_collection_exercise(survey_ref, short_name):
     survey_details = survey_controllers.get_survey(short_name)
     survey_id = survey_details["id"]
     survey_name = survey_details["shortName"]
-    employment_date_required = _employment_date_required(short_name)
 
     if not ce_form.validate():
         logger.info("Failed validation, retrieving survey data for form", survey=short_name, survey_ref=survey_ref)
@@ -635,7 +630,6 @@ def create_collection_exercise(survey_ref, short_name):
             survey_ref=survey_ref,
             survey_id=survey_id,
             survey_name=survey_name,
-            employment_date_required=employment_date_required,
         )
 
     form = request.form
@@ -653,7 +647,6 @@ def create_collection_exercise(survey_ref, short_name):
                 survey_ref=survey_ref,
                 survey_id=survey_id,
                 survey_name=survey_name,
-                employment_date_required=employment_date_required,
             )
 
     logger.info(
@@ -1068,31 +1061,3 @@ def _upload_seft_collection_instrument(short_name, period):
             success_panel=success_panel,
         )
     )
-
-
-def _employment_date_required(survey):
-    match survey:
-        case "MBS":
-            return True
-        case "RSI":
-            return True
-        case "BSS":
-            return True
-        case "QPSESLA":
-            return True
-        case "QPSESPB":
-            return True
-        case "QPSESCS":
-            return True
-        case "VACS2":
-            return True
-        case "VACS3":
-            return True
-        case "VACS4":
-            return True
-        case "BRES":
-            return True
-        case "CAT":
-            return True
-        case _:
-            return False
