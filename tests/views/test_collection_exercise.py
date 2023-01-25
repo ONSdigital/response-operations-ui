@@ -1878,8 +1878,6 @@ class TestCollectionExercise(ViewTestCase):
 
         response = self.client.get(f"/surveys/{short_name}/{period}", follow_redirects=True)
 
-        print("Response data test: " + str(response.data))
-
         self.assertEqual(response.status_code, 200)
         self.assertIn("Monthly Survey of Building Materials Bricks".encode(), response.data)
         self.assertIn("221_201712".encode(), response.data)
