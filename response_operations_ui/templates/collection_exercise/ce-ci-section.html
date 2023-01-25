@@ -1,51 +1,77 @@
-{% from "components/label/_macro.njk" import onsLabel %}
 <section class="ce-section ce-details">
     {% set surveyEditPermission = hasPermission('surveys.edit') %}
-    {{
-       onsLabel({
-          "text": "Collection instruments (CI)",
-          "for": "sample-table",
-          "description": "You can see the minimum number of collection instruments needed under the 'Sample file' 
-          section. "
-    })
-    }}
+    {% set tblHeaders =  
+        [ 
+            { 
+                "value": "Collection instruments (CI)",
+                "thClasses": "ons-u-fs-r--b"
+            }
+        ]
+    %}
+  
     {% set surveyTableData = {
         "variants": ['compact', 'responsive'],
         "id": "sample-table",
         "caption": 'Sample summary',
         "hideCaption": true,
+        "ths": tblHeaders,
     } %}
+
     {% if survey.surveyMode == 'EQ' %}
-        {% set ciType = 'EQ collection instruments' %}
-        {% if locked or (not surveyEditPermission) %}
-          {% set ciButtonText = 'View' %}
-        {% else %}
-          {% set ciButtonText = 'Add' %}
-        {% endif %}
+        {% do tblHeaders.append(
+            {
+                "value": "",
+                "thClasses": "ons-u-ta"
+            }
+        )%}
+        {% set surveyTableDataRows = [ 
+            {"tds": [
+                {
+                    "value": 'EQ collection instruments'
+                },
+                {
+                    "value": instrument_count,
+                    "tdClasses": "ons-u-ta-right"
+                }] 
+            } 
+        ] %}
+        {% do surveyTableData | setAttribute("trs", surveyTableDataRows) %}
+        {{ onsTable(surveyTableData) }}
     {% else %}
-        {% set ciType = 'SEFT collection instruments' %}
-        {% set ciButtonText = 'View or Upload' %}
+        {% do tblHeaders.append(
+            {
+                "value": "",
+                "thClasses": "ons-u-ta"
+            }
+        )%}
+        {% set surveyTableDataRows = [ 
+            {"tds": [
+                {
+                    "value": 'SEFT collection instruments'
+                },
+                {
+                    "value": instrument_count,
+                    "tdClasses": "ons-u-ta-right"
+                }]
+            }
+        ] %}
+        {% do surveyTableData | setAttribute("trs", surveyTableDataRows) %}
+        {{ onsTable(surveyTableData) }}
     {% endif %}
   
-    {% set addCILink = '<a href="' + url_for('collection_exercise_bp.get_view_sample_ci', short_name=survey.shortName, 
-                            period=ce.exerciseRef) + '" id="create-event-date-go_live">' + ciButtonText + '</a>' %}
-  
-    {% set surveyTableDataRows = [ 
-        {"tds": [
-            {
-                "value": ciType
-            },
-            {
-                "value": instrument_count,
-                "tdClasses": "ons-u-ta-centre"
-            }, 
-            {
-              "value": addCILink,
-              "tdClasses": "ons-u-ta-right"
-            }
-          ] 
-        } 
-    ] %}
-    {% do surveyTableData | setAttribute("trs", surveyTableDataRows) %}
-    {{ onsTable(surveyTableData) }}
+    {% if locked or (not surveyEditPermission) %}
+        {% set ciButtonText = 'View collection instruments' %}
+    {% else %}
+        {% set ciButtonText = 'Add collection instruments' %}
+    {% endif %}
+    {{
+        onsButton({
+            "text": ciButtonText,
+            "id": 'btn-sample-ci',
+            "submitType": 'timer',
+            "variants": ['secondary', 'small'],
+            "url": url_for('collection_exercise_bp.get_view_sample_ci', short_name=survey.shortName, period=ce.exerciseRef),
+            "noIcon": 'true'
+        })
+    }}
 </section>
