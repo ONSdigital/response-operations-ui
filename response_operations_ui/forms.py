@@ -327,19 +327,19 @@ class CreateSurveyDetailsForm(FlaskForm):
         ],
     )
     survey_ref = StringField("survey_ref", validators=[InputRequired(message="Please remove spaces in Survey ID")])
-    legal_basis = SelectField("legal_basis", choices=[("", "Select an option")])
-    survey_mode = SelectField(
+    legal_basis = RadioField("legal_basis", choices=[])
+    survey_mode = RadioField(
         "survey_mode",
         choices=[
-            ("", "Select an option"),
-            ("EQ", "Electronic Questionnaire (eQ)"),
-            ("SEFT", "Secure Electronic File Transfer (SEFT)"),
+            ("EQ", "EQ"),
+            ("SEFT", "SEFT"),
+            ("SEFT & EQ", "SEFT & EQ"),
         ],
     )
 
     def __init__(self, form):
         super().__init__(form)
-        self.legal_basis.choices = [("", "Select an option")] + survey_controllers.get_legal_basis_list()
+        self.legal_basis.choices = survey_controllers.get_legal_basis_list()
 
     @staticmethod
     def validate_short_name(form, field):
