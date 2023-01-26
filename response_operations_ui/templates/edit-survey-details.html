@@ -7,7 +7,7 @@
 {% set page_title = 'Edit survey details' %}
 {% block main %}
     <div class="ons-grid ons-grid--gutterless">
-        <div class="ons-grid__col ons-col-8@m">
+        <div class="ons-grid__col ons-col-10@m">
             {% if errors %}
                 {% call
                     onsPanel({
@@ -21,7 +21,7 @@
                     <p>Please remove any spaces or special characters from the name and try saving your changes again.</p>
                 {% endcall %}
             {% endif %}
-            <h1 class="ons-u-fs-xl">Edit survey details</h1>
+            <h1 class="ons-u-fs-xxl">Edit survey</h1>
             <form action="" method="post">
                 {{ form.csrf_token }}
                 {{
@@ -55,14 +55,14 @@
                 }) -%}
                     {{
                         onsInput({
-                            "id": "short_name",
-                            "name": "short_name",
+                            "id": "long_name",
+                            "name": "long_name",
                             "type": "text",
                             "label": {
-                                "text": 'Short Name - <span class="ons-u-lighter ons-u-fw-n">' ~ short_name ~ '</span>'
+                                "text": 'Survey title'
                             },
                             "maxLength": 254,
-                            "value": short_name,
+                            "value": long_name,
                             "attributes": {
                                 "required": true
                             }
@@ -70,14 +70,14 @@
                     }}
                     {{
                         onsInput({
-                            "id": "long_name",
-                            "name": "long_name",
+                            "id": "short_name",
+                            "name": "short_name",
                             "type": "text",
                             "label": {
-                                "text": 'Long Name - <span class="ons-u-lighter ons-u-fw-n">' ~ long_name ~ '</span>'
+                                "text": 'Survey abbreviation'
                             },
-                            "maxLength": 254,
-                            "value": long_name,
+                            "maxLength": 20,
+                            "value": short_name,
                             "attributes": {
                                 "required": true
                             }
@@ -100,13 +100,14 @@
                     <div class="ons-grid__col">
                         {{
                             onsButton({
-                                "text": "Save",
+                                "text": "Save changes",
                                 "id": "save-btn"
                             })
                         }}
                     </div>
-                    <div class="ons-grid__col ons-u-ml-m">
-                        <a id="cancel-btn" href="{{ url_for('surveys_bp.view_surveys') }}">Cancel</a>
+                      <div class="ons-grid__col ons-u-ml-s">
+                        <a href="{{ url_for('surveys_bp.view_surveys') }}" role="button" class="ons-btn ons-btn--link ons-btn--secondary" id="btn-option-cancel">
+                            <span class="ons-btn__inner">Cancel</span></a>
                     </div>
                 </div>  
             </form>
