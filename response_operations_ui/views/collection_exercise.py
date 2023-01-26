@@ -595,6 +595,7 @@ def get_create_collection_exercise_form(survey_ref, short_name):
     verify_permission("surveys.edit", session)
     logger.info("Retrieving survey data for form", short_name=short_name, survey_ref=survey_ref)
     form = CreateCollectionExerciseDetailsForm(form=request.form)
+
     return render_template(
         "create-collection-exercise.html",
         form=form,
