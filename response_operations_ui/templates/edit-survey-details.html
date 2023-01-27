@@ -100,14 +100,7 @@
                     <label class="ons-label ons-u-fs-r--b " for="select">
                         Survey mode
                     </label>
-                   <dl>
-                    {% for subfield in form.survey_mode %}
-                      <dt class="ons-list ons-list--bare">
-                        {{ subfield }}
-                        {{ subfield.label }}
-                      </dt>
-                    {% endfor %}
-                   </dl>
+                    {{ form.survey_mode(class_="input ons-list ons-list--bare", id='survey_mode', required=required) }}
                 </div>
               
                 <div class="ons-grid ons-grid--flex ons-grid--gutterless ons-grid--vertical-center ons-grid--no-wrap@s ons-u-mt-m ons-u-mb-m">
