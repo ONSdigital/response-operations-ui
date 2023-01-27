@@ -27,7 +27,7 @@
                 {{
                     onsMetadata({
                         "termCol": "2",
-                        "descriptionCol": "10",
+                        "descriptionCol": "9",
                         "itemsList": [
                             {
                                 "term": "Survey ID:",
@@ -76,7 +76,7 @@
                             "label": {
                                 "text": 'Survey abbreviation'
                             },
-                            "maxLength": 20,
+                            "maxLength": 10,
                             "value": short_name,
                             "attributes": {
                                 "required": true
@@ -100,7 +100,14 @@
                     <label class="ons-label ons-u-fs-r--b " for="select">
                         Survey mode
                     </label>
-                    {{ form.survey_mode(class_="input ", id='survey_mode', required=required) }}
+                   <dl>
+                    {% for subfield in form.survey_mode %}
+                      <dt class="ons-list ons-list--bare">
+                        {{ subfield }}
+                        {{ subfield.label }}
+                      </dt>
+                    {% endfor %}
+                   </dl>
                 </div>
               
                 <div class="ons-grid ons-grid--flex ons-grid--gutterless ons-grid--vertical-center ons-grid--no-wrap@s ons-u-mt-m ons-u-mb-m">
