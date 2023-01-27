@@ -117,16 +117,13 @@ def edit_survey_details(short_name):
             long_name=survey_details["longName"],
             survey_ref=survey_details["surveyRef"],
             survey_details=survey_details,
-            survey_mode=survey_details["survey_mode"]
+            survey_mode=survey_details["survey_mode"],
         )
 
     else:
         form = request.form
         survey_controllers.update_survey_details(
-            form.get("hidden_survey_ref"), 
-            form.get("short_name"), 
-            form.get("long_name"), 
-            form.get("survey_mode")
+            form.get("hidden_survey_ref"), form.get("short_name"), form.get("long_name"), form.get("survey_mode")
         )
         return redirect(url_for("surveys_bp.view_surveys", message_key="survey_changed"))
 
