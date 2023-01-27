@@ -96,6 +96,13 @@
                         })
                     }}
                 {% endcall %}
+                <div class="ons-field field--select ons-u-mb-m">
+                    <label class="ons-label ons-u-fs-r--b " for="select">
+                        Survey mode
+                    </label>
+                    {{ form.survey_mode(class_="input ", id='survey_mode', required=required) }}
+                </div>
+              
                 <div class="ons-grid ons-grid--flex ons-grid--gutterless ons-grid--vertical-center ons-grid--no-wrap@s ons-u-mt-m ons-u-mb-m">
                     <div class="ons-grid__col">
                         {{

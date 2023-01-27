@@ -295,6 +295,14 @@ class EditSurveyDetailsForm(FlaskForm):
             Regexp(regex=r"^[a-zA-Z0-9]+$", message="Please use alphanumeric characters only."),
         ],
     )
+    survey_mode = RadioField(
+        "survey_mode",
+        choices=[
+            ("EQ", "EQ"),
+            ("SEFT", "SEFT"),
+            ("SEFT & EQ", "SEFT & EQ"),
+        ],
+    )
     hidden_survey_ref = HiddenField("hidden_survey_ref")
 
     @staticmethod
@@ -333,7 +341,7 @@ class CreateSurveyDetailsForm(FlaskForm):
         choices=[
             ("EQ", "EQ"),
             ("SEFT", "SEFT"),
-            ("SEFT & EQ", "SEFT & EQ"),
+            ("EQ_AND_SEFT", "EQ AND SEFT"),
         ],
     )
 
