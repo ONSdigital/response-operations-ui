@@ -311,6 +311,12 @@ class EditSurveyDetailsForm(FlaskForm):
         if " " in short_name:
             raise ValidationError("Please remove spaces in short name")
 
+    @staticmethod
+    def validate_survey_mode(form, field):
+        survey_mode = field.data
+        if not survey_mode:
+            raise ValidationError("Please select eQ or SEFT")
+
 
 class ChangeThreadCategoryForm(FlaskForm):
     # These aren't string fields in the html form but the data this form is populated with are strings
@@ -371,7 +377,7 @@ class CreateSurveyDetailsForm(FlaskForm):
     def validate_survey_mode(form, field):
         survey_mode = field.data
         if not survey_mode:
-            raise ValidationError("Please select eQ or SEFT")
+            raise ValidationError("Please select EQ, SEFT or EQ AND SEFT")
 
 
 class LinkCollectionInstrumentForm(FlaskForm):
