@@ -97,10 +97,38 @@
               </div>
                 {% endcall %}
                  <div class="ons-field field--select ons-u-mb-m">
-                    <label class="ons-label ons-u-fs-r--b " for="select">
-                        Survey mode
-                    </label>
-                    {{ form.survey_mode(class_="input ons-list ons-list--bare", id='survey_mode', required=required) }}
+                    {{
+                        onsRadios({
+                            "legend": "Survey mode",
+                            "id": "surveyMode",
+                            "name": "surveyMode",
+                            "borderless": true,
+                            "radios": [
+                                {
+                                    "id": "EQ",
+                                    "label": {
+                                        "text": "EQ"
+                                    },
+                                    "value": "EQ",
+                                    "checked": true,
+                                    },
+                                {
+                                    "id": "SEFT",
+                                    "label": {
+                                        "text": "SEFT"
+                                    },
+                                    "value": "SEFT"
+                                },
+                                {
+                                    "id": "SEFT_AND_EQ",
+                                    "label": {
+                                        "text": "SEFT AND EQ"
+                                    },
+                                    "value": "SEFT_AND_EQ"
+                                }
+                            ]
+                        })
+                    }}
                 </div>
                 <p class="ons-field">
                     <label class="ons-label ons-u-fs-r--b " for="legal_basis">

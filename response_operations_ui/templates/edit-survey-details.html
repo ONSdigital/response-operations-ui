@@ -3,6 +3,7 @@
 {% from "components/metadata/_macro.njk" import onsMetadata %}
 {% from "components/fieldset/_macro.njk" import onsFieldset %}
 {% from "components/input/_macro.njk" import onsInput %}
+{% from "components/radios/_macro.njk" import onsRadios %}
 
 {% set page_title = 'Edit survey details' %}
 {% block main %}
@@ -97,10 +98,38 @@
                     }}
                 {% endcall %}
                 <div class="ons-field field--select ons-u-mb-m">
-                    <label class="ons-label ons-u-fs-r--b " for="select">
-                        Survey mode
-                    </label>
-                    {{ form.survey_mode(class_="input ons-list ons-list--bare", id='survey_mode', checked=true) }}
+                   {{
+                        onsRadios({
+                            "legend": "Survey mode",
+                            "id": "surveyMode",
+                            "name": "surveyMode",
+                            "borderless": true,
+                            "radios": [
+                                {
+                                    "id": "EQ",
+                                    "label": {
+                                        "text": "EQ"
+                                    },
+                                    "value": "EQ",
+                                    "checked": true,
+                                    },
+                                {
+                                    "id": "SEFT",
+                                    "label": {
+                                        "text": "SEFT"
+                                    },
+                                    "value": "SEFT"
+                                },
+                                {
+                                    "id": "SEFT_AND_EQ",
+                                    "label": {
+                                        "text": "SEFT AND EQ"
+                                    },
+                                    "value": "SEFT_AND_EQ"
+                                }
+                            ]
+                        })
+                    }}
                 </div>
               
                 <div class="ons-grid ons-grid--flex ons-grid--gutterless ons-grid--vertical-center ons-grid--no-wrap@s ons-u-mt-m ons-u-mb-m">

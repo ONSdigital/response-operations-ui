@@ -295,14 +295,7 @@ class EditSurveyDetailsForm(FlaskForm):
             Regexp(regex=r"^[a-zA-Z0-9]+$", message="Please use alphanumeric characters only."),
         ],
     )
-    survey_mode = RadioField(
-        "survey_mode",
-        choices=[
-            ("EQ", "EQ"),
-            ("SEFT", "SEFT"),
-            ("SEFT & EQ", "SEFT & EQ"),
-        ]
-    )
+    surveyMode = StringField()
     hidden_survey_ref = HiddenField("hidden_survey_ref")
 
     @staticmethod
@@ -336,14 +329,7 @@ class CreateSurveyDetailsForm(FlaskForm):
     )
     survey_ref = StringField("survey_ref", validators=[InputRequired(message="Please remove spaces in Survey ID")])
     legal_basis = RadioField("legal_basis", choices=[])
-    survey_mode = RadioField(
-        "survey_mode",
-        choices=[
-            ("EQ", "EQ"),
-            ("SEFT", "SEFT"),
-            ("EQ_AND_SEFT", "EQ AND SEFT"),
-        ],
-    )
+    survey_mode = StringField("survey_mode")
 
     def __init__(self, form):
         super().__init__(form)

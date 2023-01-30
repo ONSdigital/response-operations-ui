@@ -106,7 +106,7 @@ def view_survey_details(short_name):
 def edit_survey_details(short_name):
     verify_permission("surveys.edit", session)
     survey_details = survey_controllers.get_survey(short_name)
-    form = EditSurveyDetailsForm(form=request.form, default_values=survey_details)
+    form = EditSurveyDetailsForm(form=request.form)
     if not form.validate():
         return render_template(
             "edit-survey-details.html",
@@ -117,7 +117,7 @@ def edit_survey_details(short_name):
             long_name=survey_details["longName"],
             survey_ref=survey_details["surveyRef"],
             survey_details=survey_details,
-            survey_mode=survey_details["surveyMode"],
+            surveyMode=survey_details["surveyMode"],
         )
 
     else:
