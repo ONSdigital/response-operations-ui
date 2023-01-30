@@ -103,9 +103,14 @@
         }}
     {% endif %}
 
-    {% if not sample and (not locked) and surveyEditPermission and (not 'INIT' == sample.state)%}
+    {% if not sample %}
           {% set sampleButtonText = 'Upload sample file' %}
           {% set sampleButtonLink = url_for('collection_exercise_bp.get_upload_sample_file', short_name=survey.shortName, period=ce.exerciseRef) %}
+    {% else %}
+          {% set sampleButtonText = 'Replace sample file' %}
+          {% set sampleButtonLink = url_for('collection_exercise_bp.get_confirm_remove_sample', short_name=survey.shortName, period=ce.exerciseRef) %}
+    {% endif %}
+    {% if (not locked) and surveyEditPermission and (not 'INIT' == sample.state) %}
         {{
             onsButton({
                 "text": sampleButtonText,
