@@ -328,12 +328,12 @@ class CreateSurveyDetailsForm(FlaskForm):
         ],
     )
     survey_ref = StringField("survey_ref", validators=[InputRequired(message="Please remove spaces in Survey ID")])
-    legal_basis = RadioField("legal_basis", choices=[])
-    survey_mode = StringField("survey_mode")
+    legal_basis = StringField(validators=[InputRequired("Please select a Legal Basis")])
+    survey_mode = StringField(validators=[InputRequired("Please select a Survey Mode")])
 
     def __init__(self, form):
         super().__init__(form)
-        self.legal_basis.choices = survey_controllers.get_legal_basis_list()
+        self.legal_basis = survey_controllers.get_legal_basis_list()
 
     @staticmethod
     def validate_short_name(form, field):
