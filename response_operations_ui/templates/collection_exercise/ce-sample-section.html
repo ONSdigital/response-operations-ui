@@ -28,7 +28,6 @@
     {% endif %}
     {% if sample %}
         {% if sample.state == 'ACTIVE' or sample.state == 'COMPLETE' %}
-            Hello
             {% do tblHeaders.append(
                 {
                     "value": "Sample loaded: " + '<em>' + sample.ingestDateTime[:-7] + '</em>' + sample.ingestDateTime[-7:],
