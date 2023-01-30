@@ -301,7 +301,7 @@ class EditSurveyDetailsForm(FlaskForm):
             ("EQ", "EQ"),
             ("SEFT", "SEFT"),
             ("SEFT & EQ", "SEFT & EQ"),
-        ],
+        ]
     )
     hidden_survey_ref = HiddenField("hidden_survey_ref")
 
@@ -310,12 +310,6 @@ class EditSurveyDetailsForm(FlaskForm):
         short_name = field.data
         if " " in short_name:
             raise ValidationError("Please remove spaces in short name")
-
-    @staticmethod
-    def validate_survey_mode(form, field):
-        survey_mode = field.data
-        if not survey_mode:
-            raise ValidationError("Please select eQ or SEFT")
 
 
 class ChangeThreadCategoryForm(FlaskForm):
