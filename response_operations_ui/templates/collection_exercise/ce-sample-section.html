@@ -15,7 +15,17 @@
         "hideCaption": true,
         "ths": tblHeaders,
     } %}
-  
+    {% if (not locked) and surveyEditPermission and (not 'INIT' == sample.state) %}
+        {% if sample %}
+          {% set addSampleLink = '<a href="' + url_for('collection_exercise_bp.get_confirm_remove_sample', short_name=survey.shortName, period=ce.exerciseRef)
+             + '" id="btn-upload-sample-file">Replace sample file</a>' %}
+        {% else %}
+          {% set addSampleLink = '<a href="' + url_for('collection_exercise_bp.get_upload_sample_file', short_name=survey.shortName, period=ce.exerciseRef)
+             + '" id="btn-upload-sample-file">Upload sample file</a>' %}
+        {% endif %}
+    {% else %}
+        {% set addSampleLink = '' %}
+    {% endif %}
     {% if sample %}
         {% if sample.state == 'ACTIVE' or sample.state == 'COMPLETE' %}
             {% do tblHeaders.append(
@@ -53,17 +63,15 @@
                 {
                     "tds": [
                         {
-                            "value": ""
+                            
                         },
                         {
-                            "value": '<a href="' + url_for('collection_exercise_bp.get_view_sample_ci', short_name=survey.shortName, 
-                            period=ce.exerciseRef) + '" id="create-event-date-go_live">Replace sample file</a>',
+                            "value": addSampleLink,
                             "tdClasses": "ons-u-ta-right"
                         }
                     ]
                 }
             ] %}
-            
             {% do surveyTableData | setAttribute("trs", surveyTableDataRows) %}
         {% endif %}
             {{
@@ -93,8 +101,12 @@
         {% set surveyTableDataRows = [
             {
                 "tds": [
+                    {
+                       "value": addSampleLink,
+                       "tdClasses": "ons-u-ta-right"
+                    }
                 ]
-            },
+            }
         ] %}
         {% do surveyTableData | setAttribute("trs", surveyTableDataRows) %}
     
@@ -102,25 +114,4 @@
             onsTable(surveyTableData)
         }}
     {% endif %}
-
-    {% if not sample %}
-          {% set sampleButtonText = 'Upload sample file' %}
-          {% set sampleButtonLink = url_for('collection_exercise_bp.get_upload_sample_file', short_name=survey.shortName, period=ce.exerciseRef) %}
-    {% else %}
-          {% set sampleButtonText = 'Replace sample file' %}
-          {% set sampleButtonLink = url_for('collection_exercise_bp.get_confirm_remove_sample', short_name=survey.shortName, period=ce.exerciseRef) %}
-    {% endif %}
-    {% if (not locked) and surveyEditPermission and (not 'INIT' == sample.state) %}
-        {{
-            onsButton({
-                "text": sampleButtonText,
-                "id": 'btn-upload-sample-file',
-                "classes": "ons-u-mb-l",
-                "submitType": 'timer',
-                "variants": ['secondary', 'small'],
-                "url": sampleButtonLink,
-                "noIcon": 'true'
-            })
-        }}
-  {% endif %}
 </section>
