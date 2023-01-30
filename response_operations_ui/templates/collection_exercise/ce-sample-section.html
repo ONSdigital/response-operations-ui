@@ -28,6 +28,7 @@
     {% endif %}
     {% if sample %}
         {% if sample.state == 'ACTIVE' or sample.state == 'COMPLETE' %}
+            Hello
             {% do tblHeaders.append(
                 {
                     "value": "Sample loaded: " + '<em>' + sample.ingestDateTime[:-7] + '</em>' + sample.ingestDateTime[-7:],
@@ -63,7 +64,7 @@
                 {
                     "tds": [
                         {
-                            
+                            "value": ''
                         },
                         {
                             "value": addSampleLink,
@@ -73,10 +74,12 @@
                 }
             ] %}
             {% do surveyTableData | setAttribute("trs", surveyTableDataRows) %}
-        {% endif %}
+                    
             {{
                 onsTable(surveyTableData)
             }}
+  
+        {% endif %}
         
         {% if 'INIT' == sample.state %}
           {% if sample_load_status %}
@@ -88,14 +91,29 @@
                   </div>
               </div>
         {% elif 'FAILED' == sample.state %}
-            {% call
-                onsPanel({
-                    "type": "error",
-                    "classes": "ons-u-mb-l"
-                })
-            %}
-                {{ sample.notes }}
-            {% endcall %}
+            {% if error is none %}
+                {% set sampleError = "None" %}
+            {% else %}
+                {% set sampleError = error %}
+            {% endif %}
+            
+            {% set surveyTableDataRows = [
+                {                    
+                    "tds": [
+                        {
+                            "value": sampleError
+                        },
+                        {
+                            "value": addSampleLink,
+                            "tdClasses": "ons-u-ta-right"
+                        }
+                    ]
+                }
+            ] %}
+            {% do surveyTableData | setAttribute("trs", surveyTableDataRows) %}
+            {{
+                onsTable(surveyTableData)
+            }}
         {% endif %}
     {% else %}
         {% set surveyTableDataRows = [
