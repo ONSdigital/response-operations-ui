@@ -101,8 +101,8 @@
                    {{
                         onsRadios({
                             "legend": "Survey mode",
-                            "id": "surveyMode",
-                            "name": "surveyMode",
+                            "id": "survey_mode",
+                            "name": "survey_mode",
                             "borderless": true,
                             "radios": [
                                 {
@@ -111,21 +111,23 @@
                                         "text": "EQ"
                                     },
                                     "value": "EQ",
-                                    "checked": true,
+                                    "checked": true if survey_mode == 'EQ',
                                     },
                                 {
                                     "id": "SEFT",
                                     "label": {
                                         "text": "SEFT"
                                     },
-                                    "value": "SEFT"
+                                    "value": "SEFT",
+                                    "checked": true if survey_mode == 'SEFT',
                                 },
                                 {
                                     "id": "SEFT_AND_EQ",
                                     "label": {
                                         "text": "SEFT AND EQ"
                                     },
-                                    "value": "SEFT_AND_EQ"
+                                    "value": "SEFT_AND_EQ",
+                                    "checked": true if survey_mode == 'SEFT_AND_EQ',
                                 }
                             ]
                         })

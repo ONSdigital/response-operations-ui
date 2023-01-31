@@ -110,7 +110,6 @@
                                         "text": "EQ"
                                     },
                                     "value": "EQ",
-                                    "checked": true,
                                     },
                                 {
                                     "id": "SEFT",
@@ -143,12 +142,12 @@
                 {% for lb in form.legal_basis %}
                     {% do radios.append(
                         {
-                            "id": lb[1],
-                            "name": lb[1],
+                            "id": lb[0],
+                            "name": lb[0],
                             "label": {
                                 "text": lb[1],
                             },
-                            "value": lb[1],
+                            "value": lb[0],
                         }
                     ) %}
                 {% endfor %}

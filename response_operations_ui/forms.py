@@ -295,7 +295,7 @@ class EditSurveyDetailsForm(FlaskForm):
             Regexp(regex=r"^[a-zA-Z0-9]+$", message="Please use alphanumeric characters only."),
         ],
     )
-    surveyMode = StringField()
+    survey_mode = StringField()
     hidden_survey_ref = HiddenField("hidden_survey_ref")
 
     @staticmethod
