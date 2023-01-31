@@ -314,7 +314,7 @@ class TestSurvey(ViewTestCase):
             "hidden_survey_ref": "222",
             "long_name": "New Survey Long Name",
             "short_name": "QBX",
-            "survey_mode": "EQ",
+            "survey_mode": "SEFT",
         }
         mock_request.get(url_get_survey_list, json=survey_list)
         mock_request.put(url_update_survey_details)
@@ -329,7 +329,12 @@ class TestSurvey(ViewTestCase):
     @requests_mock.mock()
     def test_update_survey_details_failure(self, mock_request):
         sign_in_with_permission(self, mock_request, user_permission_surveys_edit_json)
-        changed_survey_details = {"hidden_survey_ref": "222", "long_name": "New Survey Long Name", "short_name": "QBX"}
+        changed_survey_details = {
+            "hidden_survey_ref": "222",
+            "long_name": "New Survey Long Name",
+            "short_name": "QBX",
+            "survey_mode": "EQ",
+        }
         mock_request.put(url_update_survey_details, status_code=500)
 
         response = self.client.post("/surveys/edit-survey-details/QBS", data=changed_survey_details)

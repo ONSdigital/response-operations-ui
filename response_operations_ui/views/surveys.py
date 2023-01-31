@@ -116,8 +116,8 @@ def edit_survey_details(short_name):
             legal_basis=survey_details["legalBasis"],
             long_name=survey_details["longName"],
             survey_ref=survey_details["surveyRef"],
+            survey_mode=survey_details["surveyMode"],
             survey_details=survey_details,
-            surveyMode=survey_details["surveyMode"],
         )
 
     else:
