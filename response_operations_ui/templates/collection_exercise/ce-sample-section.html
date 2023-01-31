@@ -35,7 +35,7 @@
                     "numeric": "true"
                 }
              )%}
-            {% set surveyTableDataRows = [
+                       {% set surveyTableDataRows = [
                 {
                     "tds": [
                         {
@@ -73,13 +73,10 @@
                 }
             ] %}
             {% do surveyTableData | setAttribute("trs", surveyTableDataRows) %}
-                    
             {{
                 onsTable(surveyTableData)
             }}
-  
         {% endif %}
-        
         {% if 'INIT' == sample.state %}
           {% if sample_load_status %}
             {% set status = '(' ~ sample_load_status.currentTotal ~ ' / '  ~sample_load_status.expectedTotal ~ ' loaded) ' %}
@@ -91,7 +88,7 @@
               </div>
         {% elif 'FAILED' == sample.state %}
             {% if error is none %}
-                {% set sampleError = "None" %}
+                {% set sampleError = "Upload a new sample file" %}
             {% else %}
                 {% set sampleError = error %}
             {% endif %}
@@ -110,9 +107,16 @@
                 }
             ] %}
             {% do surveyTableData | setAttribute("trs", surveyTableDataRows) %}
+            {% call
+                onsPanel({
+                    "type": "error",
+                    "classes": "ons-u-mb-l"
+                })
+            %}
             {{
                 onsTable(surveyTableData)
             }}
+            {% endcall %}
         {% endif %}
     {% else %}
         {% set surveyTableDataRows = [
@@ -126,9 +130,8 @@
             }
         ] %}
         {% do surveyTableData | setAttribute("trs", surveyTableDataRows) %}
-    
         {{
-            onsTable(surveyTableData)
+          onsTable(surveyTableData)
         }}
     {% endif %}
 </section>
