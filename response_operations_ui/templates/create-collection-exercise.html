@@ -36,11 +36,11 @@
                         })
                     }}
                 {% endif %}
-                <label class="ons-label ons-u-fs-m">Period</label>
+                <label class="ons-label ons-label--with-description" aria-describedby="period-hint" for="period">Period</label>
                 {% if previous_period is not none %}
-                    <span class="ons-label__description ons-u-mb-s">The most recent Period ID added was {{ previous_period }}</span>
+                    <span class="ons-label__description  ons-input--with-description" id="period-hint">The most recent Period ID added was {{ previous_period }}</span>
                 {% else %}
-                    <span class="ons-label__description ons-u-mb-s">The Period ID is a two, four or six digit number.</span>
+                    <span class="ons-label__description  ons-input--with-description" id="period-hint">The Period ID is a two, four or six digit number.</span>
                 {% endif %}
 
                 {{
@@ -51,7 +51,8 @@
                         "maxLength": 6,
                         "value": period,
                         "attributes": {
-                            "required": true
+                            "required": true,
+                            "aria-describedby": "period-hint"
                         }
                     })
                 }}
@@ -83,12 +84,8 @@
                 {{
                     onsDetails({
                         "id": "periodDetails",
-                        "itemsList": [
-                            {
-                                "title": "What is a Period ID",
-                                "content": "<p>The period ID is a two, four or six digit number that represents the month or year that a survey runs until.</p><p>'202212' or '2212' would represent December 2022.</p><p>'22' would represent the year 2022.</p>"
-                            }
-                        ]
+                        "title": "What is a Period ID",
+                        "content": "<p>The period ID is a two, four or six digit number that represents the month or year that a survey runs until.</p><p>'202212' or '2212' would represent December 2022.</p><p>'22' would represent the year 2022.</p>"
                     })
                 }}
             </div>
