@@ -1,5 +1,5 @@
 {% if current_user.is_authenticated %}
-    {% do pageConfig | setAttribute("signoutButton", {
+    {% do pageConfig.header | setAttribute("signoutButton", {
         "type": 'button',
         "text": 'Sign out',
         "classes": 'ons-btn--ghost',
