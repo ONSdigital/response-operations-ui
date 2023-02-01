@@ -150,7 +150,7 @@ def view_collection_exercise(short_name, period):
     return render_template(
         "collection_exercise/collection-exercise.html",
         ce=ce_details["collection_exercise"],
-        instrument_count=str(len(ce_details["collection_instruments"])),
+        instrument_count=len(ce_details["collection_instruments"]),
         error=error_json,
         events=ce_details["events"],
         locked=locked,
