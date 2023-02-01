@@ -21,16 +21,15 @@
         {% else %}
           {% set ciButtonText = 'Add' %}
         {% endif %}
-        {% set addCILink = '<a href="' + url_for('collection_exercise_bp.get_view_sample_ci', short_name=survey.shortName, 
-                                period=ce.exerciseRef) + '" id="ci-link-eq">' + ciButtonText + '</a>' %}
+        {% set link = url_for('collection_exercise_bp.get_view_sample_ci', short_name=survey.shortName, period=ce.exerciseRef) %}
     {% else %}
         {% set ciType = 'SEFT collection instruments' %}
         {% set ciButtonText = 'View or Upload' if instrument_count > 0 else 'Upload'%}
-  
-        {% set addCILink = '<a href="' + url_for('collection_exercise_bp.get_seft_collection_instrument', period=ce.exerciseRef, 
-        short_name=survey.shortName.replace(' ', '')) + '" id="ci-link-seft">' + ciButtonText + '</a>' %}
+        {% set link = url_for('collection_exercise_bp.get_seft_collection_instrument', period=ce.exerciseRef, 
+        short_name=survey.shortName.replace(' ', '')) %}
     {% endif %}
   
+    {% set addCILink = '<a href="' + link + '" id="create-event-date-go_live">' + ciButtonText + '</a>' %}
     
   
     {% set surveyTableDataRows = [ 
