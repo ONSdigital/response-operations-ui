@@ -1908,7 +1908,7 @@ class TestCollectionExercise(ViewTestCase):
         self.assertEqual(response.status_code, 200)
         self.assertIn("Monthly Survey of Building Materials Bricks".encode(), response.data)
         self.assertIn("221_201712".encode(), response.data)
-        self.assertIn('id="create-event-date-go_live">View</a>'.encode(), response.data)
+        self.assertIn('id="view-add-upload-ci">View</a>'.encode(), response.data)
         self.assertNotIn("Upload sample file".encode(), response.data)
 
     @requests_mock.mock()
