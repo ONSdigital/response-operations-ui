@@ -15,6 +15,17 @@
         "hideCaption": true,
         "ths": tblHeaders,
     } %}
+    {% if (not locked) and surveyEditPermission and (not 'INIT' == sample.state) %}
+        {% if sample %}
+          {% set addSampleLink = '<a href="' + url_for('collection_exercise_bp.get_confirm_remove_sample', short_name=survey.shortName, period=ce.exerciseRef)
+             + '" id="btn-upload-sample-file">Replace sample file</a>' %}
+        {% else %}
+          {% set addSampleLink = '<a href="' + url_for('collection_exercise_bp.get_upload_sample_file', short_name=survey.shortName, period=ce.exerciseRef)
+             + '" id="btn-upload-sample-file">Upload sample file</a>' %}
+        {% endif %}
+    {% else %}
+        {% set addSampleLink = '' %}
+    {% endif %}
     {% if sample %}
         {% if sample.state == 'ACTIVE' or sample.state == 'COMPLETE' %}
             {% do tblHeaders.append(
@@ -24,7 +35,7 @@
                     "numeric": "true"
                 }
              )%}
-            {% set surveyTableDataRows = [
+                       {% set surveyTableDataRows = [
                 {
                     "tds": [
                         {
@@ -48,15 +59,24 @@
                             "numeric": "true"
                         }
                     ]
+                },
+                {
+                    "tds": [
+                        {
+                            "value": ''
+                        },
+                        {
+                            "value": addSampleLink,
+                            "tdClasses": "ons-u-ta-right"
+                        }
+                    ]
                 }
             ] %}
-            
             {% do surveyTableData | setAttribute("trs", surveyTableDataRows) %}
-        {% endif %}
             {{
                 onsTable(surveyTableData)
             }}
-        
+        {% endif %}
         {% if 'INIT' == sample.state %}
           {% if sample_load_status %}
             {% set status = '(' ~ sample_load_status.currentTotal ~ ' / '  ~sample_load_status.expectedTotal ~ ' loaded) ' %}
@@ -67,47 +87,51 @@
                   </div>
               </div>
         {% elif 'FAILED' == sample.state %}
+            {% if error is none %}
+                {% set sampleError = "Upload a new sample file" %}
+            {% else %}
+                {% set sampleError = error %}
+            {% endif %}
+            
+            {% set surveyTableDataRows = [
+                {                    
+                    "tds": [
+                        {
+                            "value": sampleError
+                        },
+                        {
+                            "value": addSampleLink,
+                            "tdClasses": "ons-u-ta-right"
+                        }
+                    ]
+                }
+            ] %}
+            {% do surveyTableData | setAttribute("trs", surveyTableDataRows) %}
             {% call
                 onsPanel({
                     "type": "error",
                     "classes": "ons-u-mb-l"
                 })
             %}
-                {{ sample.notes }}
+            {{
+                onsTable(surveyTableData)
+            }}
             {% endcall %}
         {% endif %}
     {% else %}
         {% set surveyTableDataRows = [
             {
                 "tds": [
+                    {
+                       "value": addSampleLink,
+                       "tdClasses": "ons-u-ta-right"
+                    }
                 ]
-            },
+            }
         ] %}
         {% do surveyTableData | setAttribute("trs", surveyTableDataRows) %}
-    
         {{
-            onsTable(surveyTableData)
+          onsTable(surveyTableData)
         }}
     {% endif %}
-
-    {% if not sample %}
-          {% set sampleButtonText = 'Upload sample file' %}
-          {% set sampleButtonLink = url_for('collection_exercise_bp.get_upload_sample_file', short_name=survey.shortName, period=ce.exerciseRef) %}
-    {% else %}
-          {% set sampleButtonText = 'Replace sample file' %}
-          {% set sampleButtonLink = url_for('collection_exercise_bp.get_confirm_remove_sample', short_name=survey.shortName, period=ce.exerciseRef) %}
-    {% endif %}
-    {% if (not locked) and surveyEditPermission and (not 'INIT' == sample.state) %}
-        {{
-            onsButton({
-                "text": sampleButtonText,
-                "id": 'btn-upload-sample-file',
-                "classes": "ons-u-mb-l",
-                "submitType": 'timer',
-                "variants": ['secondary', 'small'],
-                "url": sampleButtonLink,
-                "noIcon": 'true'
-            })
-        }}
-  {% endif %}
 </section>
