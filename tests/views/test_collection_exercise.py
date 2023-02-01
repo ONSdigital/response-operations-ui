@@ -1858,7 +1858,7 @@ class TestCollectionExercise(ViewTestCase):
         self.assertIn("Add reminder".encode(), response.data)
         self.assertIn("Add nudge email".encode(), response.data)
         self.assertIn("Replace sample file".encode(), response.data)
-        self.assertIn('id="create-event-date-go_live">Add</a>'.encode(), response.data)
+        self.assertIn('id="view-add-upload-ci">Add</a>'.encode(), response.data)
 
     @requests_mock.mock()
     def test_survey_edit_permission_collection_exercise_no_sample(self, mock_request):
@@ -1886,7 +1886,7 @@ class TestCollectionExercise(ViewTestCase):
         self.assertIn("Add reminder".encode(), response.data)
         self.assertIn("Add nudge email".encode(), response.data)
         self.assertIn("Upload sample file".encode(), response.data)
-        self.assertIn('id="create-event-date-go_live">Add</a>'.encode(), response.data)
+        self.assertIn('id="view-add-upload-ci">Add</a>'.encode(), response.data)
 
     @requests_mock.mock()
     def test_no_survey_edit_permission_collection_exercise(self, mock_request):
