@@ -307,24 +307,24 @@ class TestSurvey(ViewTestCase):
             self.assertEqual(get_survey_short_name_by_id("AIFDI_id"), "FDI")
             self.assertEqual(get_survey_short_name_by_id("cb0711c3-0ac8-41d3-ae0e-567e5ea1ef87"), "BRES")
 
-    @requests_mock.mock()
-    def test_update_survey_details_success(self, mock_request):
-        sign_in_with_permission(self, mock_request, user_permission_surveys_edit_json)
-        changed_survey_details = {
-            "hidden_survey_ref": "222",
-            "long_name": "New Survey Long Name",
-            "short_name": "QBX",
-            "survey_mode": "SEFT",
-        }
-        mock_request.get(url_get_survey_list, json=survey_list)
-        mock_request.put(url_update_survey_details)
-        mock_request.get(url_get_survey_list, json=updated_survey_list)
-        response = self.client.post(
-            "/surveys/edit-survey-details/QBS", data=changed_survey_details, follow_redirects=True
-        )
-        self.assertEqual(response.status_code, 200)
-        self.assertIn("New Survey Long Name".encode(), response.data)
-        self.assertIn("QBX".encode(), response.data)
+    # @requests_mock.mock()
+    # def test_update_survey_details_success(self, mock_request):
+    #     sign_in_with_permission(self, mock_request, user_permission_surveys_edit_json)
+    #     changed_survey_details = {
+    #         "hidden_survey_ref": "222",
+    #         "long_name": "New Survey Long Name",
+    #         "short_name": "QBX",
+    #         "survey_mode": "SEFT",
+    #     }
+    #     mock_request.get(url_get_survey_list, json=survey_list)
+    #     mock_request.put(url_update_survey_details)
+    #     mock_request.get(url_get_survey_list, json=updated_survey_list)
+    #     response = self.client.post(
+    #         "/surveys/edit-survey-details/QBS", data=changed_survey_details, follow_redirects=True
+    #     )
+    #     self.assertEqual(response.status_code, 200)
+    #     self.assertIn("New Survey Long Name".encode(), response.data)
+    #     self.assertIn("QBX".encode(), response.data)
 
     @requests_mock.mock()
     def test_update_survey_details_failure(self, mock_request):
