@@ -1,4 +1,4 @@
-<section class="ce-section ce-details">
+<section class="ce-section ce-details ons-u-mb-l">
     {% set surveyEditPermission = hasPermission('surveys.edit') %}
     {{
        onsLabel({
@@ -18,12 +18,18 @@
         {% set ciType = 'EQ collection instruments' %}
         {% if locked or (not surveyEditPermission) %}
           {% set ciButtonText = 'View' %}
+        {% elif instrument_count != '0' %}
+          {% set ciButtonText = 'Select or Add' %}
         {% else %}
           {% set ciButtonText = 'Add' %}
         {% endif %}
     {% else %}
         {% set ciType = 'SEFT collection instruments' %}
-        {% set ciButtonText = 'View or Upload' %}
+        {% if instrument_count == '0' %}
+          {% set ciButtonText = 'Upload' %}
+        {% else %}
+          {% set ciButtonText = 'View or Upload' %}
+        {% endif %}
     {% endif %}
   
     {% set addCILink = '<a href="' + url_for('collection_exercise_bp.get_view_sample_ci', short_name=survey.shortName, 
@@ -32,7 +38,8 @@
     {% set surveyTableDataRows = [ 
         {"tds": [
             {
-                "value": ciType
+                "value": ciType,
+                "tdClasses": "ons-u-ta-left"
             },
             {
                 "value": instrument_count,
