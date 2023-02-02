@@ -1,10 +1,11 @@
 import logging
 
-from flask import Blueprint, flash, redirect, render_template, request, url_for
+from flask import Blueprint, flash, redirect, render_template, request, session, url_for
 from structlog import wrap_logger
 
 from response_operations_ui.exceptions.exceptions import (
     ApiError,
+    NoPermissionError,
     UpdateContactDetailsException,
 )
 
@@ -43,6 +44,12 @@ def handle_authentication_error(error):
     logger.warning("Authentication failed")
     flash("Incorrect username or password", category="failed_authentication")
     return redirect(url_for("sign_in_bp.sign_in"))
+
+
+@error_bp.app_errorhandler(NoPermissionError)
+def handle_no_permission_error(_):
+    logger.warning("User attempted to access page they don't have permission to view", user_id=session["user_id"])
+    return render_template("errors/no-permission-error.html")
 
 
 @error_bp.app_errorhandler(Exception)

@@ -1,0 +1,15 @@
+{% extends "layouts/base.html" %}
+{% set page_title = "Reporting unit - not loaded" %}
+
+{% block main %}
+    <h1 class="ons-u-mt-m">Access is denied</h1>
+    {% call
+        onsPanel({
+            "type": "error",
+            "classes": "ons-u-mb-l"
+        })
+    %}
+      <p>You do not have the required permission to access this function under your current role profile. If you believe this to be a mistake, please contact your SDC champion representative.</p>
+    {% endcall %}
+    <p><a href="/surveys">Return to surveys</a></p>
+{% endblock main %}

@@ -13,7 +13,6 @@ from flask_login import login_required
 from flask_paginate import Pagination
 from requests import HTTPError
 from structlog import wrap_logger
-from werkzeug.exceptions import abort
 
 from response_operations_ui.common import token_decoder
 from response_operations_ui.controllers.notify_controller import NotifyController
@@ -28,7 +27,7 @@ from response_operations_ui.controllers.uaa_controller import (
     remove_group_membership,
     user_has_permission,
 )
-from response_operations_ui.exceptions.exceptions import NotifyError
+from response_operations_ui.exceptions.exceptions import NoPermissionError, NotifyError
 from response_operations_ui.forms import (
     CreateAccountWithPermissionsForm,
     EditUserGroupsForm,
@@ -340,7 +339,7 @@ def _verify_user_in_user_admin_group():
     """
     if not user_has_permission("users.admin"):
         logger.exception("Manage User Account request requested but unauthorised.")
-        abort(401)
+        raise NoPermissionError
 
 
 def _get_refine_user_list(users: list) -> list[dict]:

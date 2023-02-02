@@ -103,7 +103,11 @@ class TestMessage(ViewTestCase):
 
         self.assertEqual(response.status_code, 200)
         self.assertNotIn("Manage user accounts".encode(), response.data)
-        self.assertIn("Online Business Surveys".encode(), response.data)
+        self.assertIn(
+            "You do not have the required permission to "
+            "access this function under your current role profile".encode(),
+            response.data,
+        )
 
     @requests_mock.mock()
     def test_manage_user_accounts_403(self, mock_request):
