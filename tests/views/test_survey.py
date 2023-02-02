@@ -314,7 +314,7 @@ class TestSurvey(ViewTestCase):
             "hidden_survey_ref": "222",
             "long_name": "New Survey Long Name",
             "short_name": "QBX",
-            "survey_mode": "SEFT",
+            "survey_mode": "EQ",
         }
         mock_request.get(url_get_survey_list, json=survey_list)
         mock_request.put(url_update_survey_details)
