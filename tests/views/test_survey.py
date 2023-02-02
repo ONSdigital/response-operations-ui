@@ -307,7 +307,7 @@ class TestSurvey(ViewTestCase):
             self.assertEqual(get_survey_short_name_by_id("AIFDI_id"), "FDI")
             self.assertEqual(get_survey_short_name_by_id("cb0711c3-0ac8-41d3-ae0e-567e5ea1ef87"), "BRES")
 
-    @requests_mock.mock(real_http=True)
+    @requests_mock.mock()
     def test_update_survey_details_success(self, mock_request):
         sign_in_with_permission(self, mock_request, user_permission_surveys_edit_json)
         changed_survey_details = {
