@@ -224,7 +224,6 @@ def update_survey_details(survey_ref, short_name, long_name, survey_mode):
     url = f'{app.config["SURVEY_URL"]}/surveys/ref/{survey_ref}'
 
     survey_details = {"ShortName": short_name, "LongName": long_name, "surveyMode": survey_mode}
-    print(survey_details)
     response = requests.put(url, json=survey_details, auth=app.config["BASIC_AUTH"])
 
     if response.status_code == 404:
