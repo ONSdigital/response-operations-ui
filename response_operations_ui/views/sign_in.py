@@ -31,7 +31,6 @@ def sign_in():
         return redirect(url_for("home_bp.home"))
 
     if form.validate_on_submit():
-
         username = request.form.get("username")
         password = request.form.get("password")
 
