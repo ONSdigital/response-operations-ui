@@ -347,6 +347,7 @@ class TestSurvey(ViewTestCase):
 
     @requests_mock.mock()
     def test_update_survey_details_failed_validation(self, mock_request):
+        mock_request.get(url_get_survey_list, json=survey_list)
         sign_in_with_permission(self, mock_request, user_permission_surveys_edit_json)
         changed_survey_details = {
             "hidden_survey_ref": "222",
@@ -354,7 +355,6 @@ class TestSurvey(ViewTestCase):
             "short_name": "Q BX",
             "survey_mode": "EQ",
         }
-        mock_request.get(url_get_survey_list, json=survey_list)
         mock_request.put(url_update_survey_details)
         mock_request.get(url_get_survey_list, json=updated_survey_list)
         mock_request.get(url_get_collection_exercises, json=self.collection_exercises)
@@ -578,6 +578,7 @@ class TestSurvey(ViewTestCase):
 
     @requests_mock.mock()
     def test_update_survey_details_failed_validation_short_name_has_spaces(self, mock_request):
+        mock_request.get(url_get_survey_list, json=survey_list)
         sign_in_with_permission(self, mock_request, user_permission_surveys_edit_json)
         changed_survey_details = {
             "hidden_survey_ref": "222",
@@ -585,7 +586,6 @@ class TestSurvey(ViewTestCase):
             "short_name": "QBX spaces",
             "survey_mode": "EQ",
         }
-        mock_request.get(url_get_survey_list, json=survey_list)
         mock_request.put(url_update_survey_details)
         mock_request.get(url_get_survey_list, json=updated_survey_list)
         mock_request.get(url_get_survey_by_short_name, json=survey_info["survey"])
