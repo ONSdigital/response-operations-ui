@@ -1,3 +1,7 @@
+{% from "components/input/_macro.njk" import onsInput %}
+{% from "components/checkboxes/_checkbox-macro.njk" import onsCheckbox %}
+{% from "components/label/_macro.njk" import onsLabel %}
+
 <section class="ce-section {{'ons-panel ons-panel--simple ons-panel--error' if missing_ci else ''}} ons-u-pt-m ons-u-mb-l ons-u-mt-M">
     {% set surveyEditPermission = hasPermission('surveys.edit') %}
     {% if surveyEditPermission %}
@@ -50,8 +54,39 @@
             }}
         {% endif %}
       
-      
         {% if survey.surveyMode != 'SEFT' %}
+                {% if not locked and surveyEditPermission %}
+                    <form id="form-add-ci" action="" class="form" method="post" enctype="multipart/form-data">
+                        {{ form.csrf_token }}
+                        {{
+                            onsInput({
+                                "name": "formtype",
+                                "type": "text",
+                                "id": "text-width",
+                                "width": "7",
+                                "maxLength": 4,
+                                "value": form.formtype.data,
+                                "classes": "input--w-5",
+                                "attributes": {
+                                    "required": true
+                                },
+                                "label": {
+                                    "text": 'Add EQ collection instrument',
+                                    "description": "It must be a 4 digit number"
+                                }
+                            })
+                        }}
+                        {{
+                            onsButton({
+                                "classes": "ons-u-mb-l ons-u-mt-s",
+                                "variants": ['primary', 'small'],
+                                "name": 'add-ci',
+                                "text": 'Add',
+                                "id": "save-btn",
+                            })
+                        }}
+                    </form>
+                {% endif %}
             {% if collection_instruments %}
                 {% set surveyTableDataHeader = [] %}
                 {% set ths = 
@@ -129,37 +164,58 @@
                 {% if surveyEditPermission %}
                     <div class="ons-u-mb-m">
                         {% if eq_ci_selectors %}
-                            {% set checkboxesData = {
-                                "name": "checkbox-answer",
-                                "legend": "eQ collection instruments available:"
-                            } %}
-        
-                            {% set checkboxData = [] %}
-        
                             <form id="form-select-ci" action="" class="form" method="post" enctype="multipart/form-data">
+                                {{
+                                    onsLabel({
+                                        "id": 'ci-selector',
+                                        "text": 'Select EQ collection instruments'
+                                    })
+                                }}
                                 <input type="hidden" name="csrf_token" value="{{ csrf_token() }}" />
+                                <input type="hidden" name="csrf_token" value="" />
                                 <div id="ciSelectErrorPanel"
                                     class="{{'ons-panel ons-panel--simple ons-panel--error' if error.section == 'ciSelect' else ''}}">
                                     <div id="ciSelectErrorPanelBody" class="{{'ons-panel__body' if error.section == 'ciSelect' else ''}}">
-                                        <input type="hidden" name="ce_id" value="{{ ce.id }}" />
-                                        {% for ci in eq_ci_selectors %}
-                                            {% do checkboxData.append(
-                                                {
-                                                    "id": ci.id,
-                                                    "name": "checkbox-answer",
-                                                    "label": {
-                                                        "text": survey.surveyRef + ' ' + ci.file_name|string + ' eQ'
-                                                    },
-                                                    "value": ci.id
-                                                }
-                                            ) %}
-                                        {% endfor %}
-                                        {% do checkboxesData | setAttribute("checkboxes", checkboxData) %}
-                                        {{ onsCheckboxes(checkboxesData) }}
+                                        <input type="hidden" name="ce_id" value="{{ ce.id }}" />                                       
+                                            <table class="ons-table">
+                                                <button type="submit" class="ons-btn ons-u-mb-s ons-js-auto-selector ons-btn--small ons-btn--secondary" data-unselect-all="Unselect all" data-select-all="Select all">
+                                                    <span class="ons-btn__inner">
+                                                      <span class="ons-btn__text">
+                                                        <span class="ons-js-button-text">Select all</span>
+                                                      </span>
+                                                    </span>
+                                                </button>
+                                                <thead class="ons-table__head">
+                                                    <tr class="ons-table__row"></tr>
+                                                </thead>
+                                                <tbody>
+                                                    {% for eq_ci in eq_ci_selectors|batch(3, '&nbsp;') %}
+                                                          <tr>
+                                                              {% for ci in eq_ci %}
+                                                                  {% if ci['file_name'] %}
+                                                                      <td>
+                                                                          {{
+                                                                              onsCheckbox({
+                                                                                  "id": ci['id']|string,
+                                                                                  "label": {
+                                                                                      "text": ci['file_name']|string
+                                                                                  },
+                                                                                  "value": ci['id']|string,
+                                                                                  "classes": "ons-checkbox--no-border",
+                                                                                  "name": "checkbox-answer"
+                                                                              })
+                                                                          }}
+                                                                      </td>
+                                                                  {% endif %}
+                                                              {% endfor %}
+                                                          </tr>
+                                                    {% endfor %}
+                                                </tbody>
+                                            </table>
                                         <div class="ons-u-mt-xxs">
                                             {{
                                                 onsButton({
-                                                    "text": "Add",
+                                                    "text": "Done",
                                                     "id": "btn-add-ci",
                                                     "name": "select-ci",
                                                     "classes": "ons-u-mt-s",
@@ -210,4 +266,9 @@
                 {% endif %}
             {% endif %}
         {% endif %}
+        <div class="ons-grid ons-grid--flex ons-grid--between">
+        <div class="ons-grid__col">
+            <h1 class="ons-u-fs-l u-mb-xs" name="page-manage-account-title">{{ name }}</h1>
+        </div>
+    </div>
 </section>
