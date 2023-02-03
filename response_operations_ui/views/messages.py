@@ -95,7 +95,7 @@ def view_conversation(thread_id):
 
     if request.method == "POST" and request.form.get("reopen"):
         if not user_has_permission("messages.edit"):
-            logger.exception("No message edit role")
+            logger.error("No message edit role")
             raise NoPermissionError
         payload = {"is_closed": False}
         message_controllers.patch_thread(thread_id, payload)
@@ -138,7 +138,7 @@ def view_conversation(thread_id):
 
     if form.validate_on_submit():
         if not user_has_permission("messages.edit"):
-            logger.exception("No message edit role")
+            logger.error("No message edit role")
             raise NoPermissionError
         form = _populate_form_details_from_hidden_fields(form)
         g.form_subject_data = form.subject.data
@@ -606,7 +606,7 @@ def _get_tab_counts(business_id_filter, conversation_tab, ru_ref_filter, survey_
 @login_required
 def close_conversation(thread_id):
     if not user_has_permission("messages.edit"):
-        logger.exception("No message edit role")
+        logger.error("No message edit role")
         raise NoPermissionError
     conversation_tab = request.args.get("conversation_tab")
     page = request.args.get("page")

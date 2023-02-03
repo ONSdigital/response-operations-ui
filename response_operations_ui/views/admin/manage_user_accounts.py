@@ -338,7 +338,7 @@ def _verify_user_in_user_admin_group():
     is not in the group.
     """
     if not user_has_permission("users.admin"):
-        logger.exception("Manage User Account request requested but unauthorised.")
+        logger.error("Manage User Account request requested but unauthorised.")
         raise NoPermissionError
 
 
