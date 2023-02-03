@@ -309,6 +309,7 @@ class TestSurvey(ViewTestCase):
 
     @requests_mock.mock()
     def test_update_survey_details_success(self, mock_request):
+        mock_request.get(url_get_survey_list, json=survey_list)
         sign_in_with_permission(self, mock_request, user_permission_surveys_edit_json)
         changed_survey_details = {
             "hidden_survey_ref": "222",
@@ -316,7 +317,7 @@ class TestSurvey(ViewTestCase):
             "short_name": "QBX",
             "survey_mode": "EQ",
         }
-        mock_request.get(url_get_survey_list, json=survey_list)
+
         mock_request.put(url_update_survey_details)
         mock_request.get(url_get_survey_list, json=updated_survey_list)
         response = self.client.post(
@@ -369,8 +370,8 @@ class TestSurvey(ViewTestCase):
 
     @requests_mock.mock()
     def test_get_survey_details(self, mock_request):
-        sign_in_with_permission(self, mock_request, user_permission_surveys_edit_json)
         mock_request.get(url_get_survey_list, json=survey_list)
+        sign_in_with_permission(self, mock_request, user_permission_surveys_edit_json)
         mock_request.get(url_get_survey_by_short_name, json=survey_info["survey"])
 
         response = self.client.get("surveys/edit-survey-details/bres", follow_redirects=True)

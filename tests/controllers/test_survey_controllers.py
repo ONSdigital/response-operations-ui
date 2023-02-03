@@ -88,7 +88,6 @@ class TestCaseControllers(unittest.TestCase):
                     survey_controllers.get_surveys_dictionary()
 
     def test_check_cache(self):
-
         expected = {
             "6aa8896f-ced5-4694-800c-6cd661b0c8b2": {"shortName": "ASHE", "surveyRef": "141"},
             "AIFDI_id": {"shortName": "FDI", "surveyRef": "062"},
@@ -120,7 +119,6 @@ class TestCaseControllers(unittest.TestCase):
                 self.assertEqual(expected, self.app.surveys_dict)
 
     def test_refresh_cache(self):
-
         expected = {
             "6aa8896f-ced5-4694-800c-6cd661b0c8b2": {"shortName": "ASHE", "surveyRef": "141"},
             "AIFDI_id": {"shortName": "FDI", "surveyRef": "062"},

@@ -483,7 +483,6 @@ def view_technical_inbox():  # noqa: C901
 @messages_bp.route("/<selected_survey>", methods=["GET", "POST"])
 @login_required
 def view_selected_survey(selected_survey):  # noqa: C901
-
     displayed_short_name = format_short_name(selected_survey)
     session["messages_survey_selection"] = selected_survey
     breadcrumbs = [{"text": displayed_short_name + " Messages"}]
@@ -1111,7 +1110,6 @@ def _process_non_survey_category_page(
     conversation_tab = request.args.get("conversation_tab", default="open")
     category = category
     try:
-
         tab_counts = _get_tab_counts("", conversation_tab, "", None, category)
 
         # If the page is higher then possible, redirect users to the highest possible page.

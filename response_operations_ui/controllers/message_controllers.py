@@ -123,7 +123,6 @@ def _get_secure_message_threads_params(
 
 
 def get_thread_list(survey_id, business_id, conversation_tab, page, limit, category) -> dict:
-
     logger.info(
         "Retrieving threads list", survey_id=survey_id, conversation_tab=conversation_tab, business_id=business_id
     )
