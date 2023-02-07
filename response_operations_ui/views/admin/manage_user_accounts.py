@@ -14,7 +14,7 @@ from flask_paginate import Pagination
 from requests import HTTPError
 from structlog import wrap_logger
 
-from response_operations_ui.common import token_decoder
+from response_operations_ui.common import token_decoder, uaa
 from response_operations_ui.controllers.notify_controller import NotifyController
 from response_operations_ui.controllers.uaa_controller import (
     add_group_membership,
@@ -25,9 +25,8 @@ from response_operations_ui.controllers.uaa_controller import (
     get_user_by_id,
     get_users_list,
     remove_group_membership,
-    user_has_permission,
 )
-from response_operations_ui.exceptions.exceptions import NoPermissionError, NotifyError
+from response_operations_ui.exceptions.exceptions import NotifyError
 from response_operations_ui.forms import (
     CreateAccountWithPermissionsForm,
     EditUserGroupsForm,
@@ -54,7 +53,7 @@ def manage_user_accounts():
     This endpoint, by design is only accessible to ROPs admin user.
     This endpoint lists all current user in the system.
     """
-    _verify_user_in_user_admin_group()
+    uaa.verify_permission("users.admin")
     page = request.values.get("page", "1")
     user_with_email = request.values.get("user_with_email", None)
     limit = 20
@@ -111,7 +110,7 @@ def manage_user_accounts():
 @admin_bp.route("/create-account", methods=["GET"])
 @login_required
 def get_create_account():
-    _verify_user_in_user_admin_group()
+    uaa.verify_permission("users.admin")
     form = CreateAccountWithPermissionsForm()
     return render_template("admin/user-create.html", form=form)
 
@@ -119,7 +118,7 @@ def get_create_account():
 @admin_bp.route("/create-account", methods=["POST"])
 @login_required
 def post_create_account():
-    _verify_user_in_user_admin_group()
+    uaa.verify_permission("users.admin")
     form = CreateAccountWithPermissionsForm(request.form)
 
     if not form.validate():
@@ -191,7 +190,7 @@ def post_create_account():
 @admin_bp.route("/manage-account/<user_id>", methods=["GET"])
 @login_required
 def get_manage_account_groups(user_id):
-    _verify_user_in_user_admin_group()
+    uaa.verify_permission("users.admin")
 
     logger.info("Attempting to get user by id", user_id=user_id)
     uaa_user = get_user_by_id(user_id)
@@ -213,7 +212,7 @@ def get_manage_account_groups(user_id):
 @admin_bp.route("/manage-account/<user_id>", methods=["POST"])
 @login_required
 def post_manage_account_groups(user_id):
-    _verify_user_in_user_admin_group()
+    uaa.verify_permission("users.admin")
 
     if user_id == session["user_id"]:
         flash("You cannot modify your own user account", "error")
@@ -283,7 +282,7 @@ def post_manage_account_groups(user_id):
 @admin_bp.route("/manage-account/<user_id>/delete", methods=["GET"])
 @login_required
 def get_delete_uaa_user(user_id):
-    _verify_user_in_user_admin_group()
+    uaa.verify_permission("users.admin")
 
     if user_id == session["user_id"]:
         flash("You cannot delete your own user account", "error")
@@ -303,7 +302,7 @@ def get_delete_uaa_user(user_id):
 @admin_bp.route("/manage-account/<user_id>/delete", methods=["POST"])
 @login_required
 def post_delete_uaa_user(user_id):
-    _verify_user_in_user_admin_group()
+    uaa.verify_permission("users.admin")
 
     if user_id == session["user_id"]:
         flash("You cannot delete your own user account", "error")
@@ -330,15 +329,6 @@ def post_delete_uaa_user(user_id):
     logger.info("User account deleted", administering_user_id=session["user_id"], user_id_deleted=user_id)
     flash("User account has been successfully deleted. An email to inform the user has been sent.")
     return redirect(url_for("admin_bp.manage_user_accounts"))
-
-
-def _verify_user_in_user_admin_group():
-    """
-    Checks if the user is in the 'users.admin' group and aborts with a 401 status code if the user
-    is not in the group.
-    """
-    if not user_has_permission("users.admin"):
-        raise NoPermissionError("users.admin")
 
 
 def _get_refine_user_list(users: list) -> list[dict]:

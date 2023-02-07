@@ -86,7 +86,7 @@ def view_survey(short_name):
 @surveys_bp.route("/edit-survey-details/<short_name>", methods=["GET"])
 @login_required
 def view_survey_details(short_name):
-    verify_permission("surveys.edit", session)
+    verify_permission("surveys.edit")
     survey_details = survey_controllers.get_survey(short_name)
     form = EditSurveyDetailsForm(form=request.form)
 
@@ -104,7 +104,7 @@ def view_survey_details(short_name):
 @surveys_bp.route("/edit-survey-details/<short_name>", methods=["POST", "GET"])
 @login_required
 def edit_survey_details(short_name):
-    verify_permission("surveys.edit", session)
+    verify_permission("surveys.edit")
     form = EditSurveyDetailsForm(form=request.form)
     if not form.validate():
         survey_details = survey_controllers.get_survey(short_name)
@@ -131,7 +131,7 @@ def edit_survey_details(short_name):
 @surveys_bp.route("/create", methods=["GET"])
 @login_required
 def show_create_survey():
-    verify_permission("surveys.edit", session)
+    verify_permission("surveys.edit")
     form = CreateSurveyDetailsForm(form=request.form)
 
     return render_template("create-survey.html", form=form)
@@ -140,7 +140,7 @@ def show_create_survey():
 @surveys_bp.route("/create", methods=["POST"])
 @login_required
 def create_survey():
-    verify_permission("surveys.edit", session)
+    verify_permission("surveys.edit")
     form = CreateSurveyDetailsForm(form=request.form)
     if not form.validate():
         return render_template("create-survey.html", form=form, errors=form.errors.items())
@@ -170,7 +170,7 @@ def create_survey():
 @surveys_bp.route("/<short_name>/link-collection-instrument", methods=["GET"])
 @login_required
 def get_link_collection_instrument(short_name):
-    verify_permission("surveys.edit", session)
+    verify_permission("surveys.edit")
     form = LinkCollectionInstrumentForm(form=request.form)
     short_name_lower = str(short_name).lower()
     survey_id = survey_controllers.get_survey_by_shortname(short_name_lower)["id"]
@@ -186,7 +186,7 @@ def get_link_collection_instrument(short_name):
 @surveys_bp.route("/<short_name>/link-collection-instrument", methods=["POST"])
 @login_required
 def post_link_collection_instrument(short_name):
-    verify_permission("surveys.edit", session)
+    verify_permission("surveys.edit")
     form = LinkCollectionInstrumentForm(form=request.form)
     eq_ci_selectors = []
     try:
