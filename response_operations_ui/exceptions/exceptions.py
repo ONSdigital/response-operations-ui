@@ -39,7 +39,8 @@ class UserDoesNotExist(Exception):
 
 
 class NoPermissionError(Exception):
-    pass
+    def __init__(self, missing_permission):
+        self.missing_permission = missing_permission
 
 
 class NotifyError(Exception):

@@ -338,8 +338,7 @@ def _verify_user_in_user_admin_group():
     is not in the group.
     """
     if not user_has_permission("users.admin"):
-        logger.error("Manage User Account request requested but unauthorised.")
-        raise NoPermissionError
+        raise NoPermissionError("users.admin")
 
 
 def _get_refine_user_list(users: list) -> list[dict]:

@@ -47,8 +47,12 @@ def handle_authentication_error(error):
 
 
 @error_bp.app_errorhandler(NoPermissionError)
-def handle_no_permission_error(_):
-    logger.error("User attempted to access page they don't have permission to view", user_id=session["user_id"])
+def handle_no_permission_error(error):
+    logger.error(
+        "User attempted to access page they don't have permission to view",
+        user_id=session["user_id"],
+        permission=error.missing_permission,
+    )
     return render_template("errors/no-permission-error.html")
 
 
