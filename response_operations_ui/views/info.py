@@ -12,7 +12,6 @@ info_bp = Blueprint("info_bp", __name__, static_folder="static", template_folder
 
 @info_bp.route("/", methods=["GET"])
 def get_info():
-
     _health_check = {}
     if Path("git_info").exists():
         with open("git_info") as io:

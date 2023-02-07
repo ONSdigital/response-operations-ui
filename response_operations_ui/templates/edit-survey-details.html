@@ -3,11 +3,12 @@
 {% from "components/metadata/_macro.njk" import onsMetadata %}
 {% from "components/fieldset/_macro.njk" import onsFieldset %}
 {% from "components/input/_macro.njk" import onsInput %}
+{% from "components/radios/_macro.njk" import onsRadios %}
 
 {% set page_title = 'Edit survey details' %}
 {% block main %}
     <div class="ons-grid ons-grid--gutterless">
-        <div class="ons-grid__col ons-col-8@m">
+        <div class="ons-grid__col ons-col-10@m">
             {% if errors %}
                 {% call
                     onsPanel({
@@ -21,13 +22,13 @@
                     <p>Please remove any spaces or special characters from the name and try saving your changes again.</p>
                 {% endcall %}
             {% endif %}
-            <h1 class="ons-u-fs-xl">Edit survey details</h1>
+            <h1 class="ons-u-fs-xxl">Edit survey</h1>
             <form action="" method="post">
                 {{ form.csrf_token }}
                 {{
                     onsMetadata({
                         "termCol": "2",
-                        "descriptionCol": "10",
+                        "descriptionCol": "9",
                         "itemsList": [
                             {
                                 "term": "Survey ID:",
@@ -48,21 +49,21 @@
                         ]
                     })
                 }}
-
+              
                 {%- call onsFieldset({
                     "legend": "Edit survey details",
                     "legendClasses": "ons-u-vh"
                 }) -%}
                     {{
                         onsInput({
-                            "id": "short_name",
-                            "name": "short_name",
+                            "id": "long_name",
+                            "name": "long_name",
                             "type": "text",
                             "label": {
-                                "text": 'Short Name - <span class="ons-u-lighter ons-u-fw-n">' ~ short_name ~ '</span>'
+                                "text": 'Survey title'
                             },
                             "maxLength": 254,
-                            "value": short_name,
+                            "value": long_name,
                             "attributes": {
                                 "required": true
                             }
@@ -70,14 +71,15 @@
                     }}
                     {{
                         onsInput({
-                            "id": "long_name",
-                            "name": "long_name",
+                            "id": "short_name",
+                            "name": "short_name",
                             "type": "text",
                             "label": {
-                                "text": 'Long Name - <span class="ons-u-lighter ons-u-fw-n">' ~ long_name ~ '</span>'
+                                "text": 'Survey abbreviation'
                             },
-                            "maxLength": 254,
-                            "value": long_name,
+                            "maxLength": 10,
+                            "width": "10",
+                            "value": short_name,
                             "attributes": {
                                 "required": true
                             }
@@ -96,17 +98,56 @@
                         })
                     }}
                 {% endcall %}
+              
+                <div class="ons-field field--select ons-u-mb-m">
+                   {{
+                        onsRadios({
+                            "legend": "Survey mode",
+                            "id": "survey_mode",
+                            "name": "survey_mode",
+                            "borderless": true,
+                            "radios": [
+                                {
+                                    "id": "EQ",
+                                    "label": {
+                                        "text": "EQ"
+                                    },
+                                    "value": "EQ",
+                                    "checked": true if survey_mode == 'EQ',
+                                    },
+                                {
+                                    "id": "SEFT",
+                                    "label": {
+                                        "text": "SEFT"
+                                    },
+                                    "value": "SEFT",
+                                    "checked": true if survey_mode == 'SEFT',
+                                },
+                                {
+                                    "id": "EQ_AND_SEFT",
+                                    "label": {
+                                        "text": "EQ AND SEFT"
+                                    },
+                                    "value": "EQ_AND_SEFT",
+                                    "checked": true if survey_mode == 'EQ_AND_SEFT',
+                                }
+                            ]
+                        })
+                    }}
+                </div>
+              
                 <div class="ons-grid ons-grid--flex ons-grid--gutterless ons-grid--vertical-center ons-grid--no-wrap@s ons-u-mt-m ons-u-mb-m">
                     <div class="ons-grid__col">
                         {{
                             onsButton({
-                                "text": "Save",
+                                "text": "Save changes",
                                 "id": "save-btn"
                             })
                         }}
                     </div>
-                    <div class="ons-grid__col ons-u-ml-m">
-                        <a id="cancel-btn" href="{{ url_for('surveys_bp.view_surveys') }}">Cancel</a>
+                      <div class="ons-grid__col ons-u-ml-s">
+                        <a href="{{ url_for('surveys_bp.view_surveys') }}" role="button" class="ons-btn ons-btn--link ons-btn--secondary" id="btn-option-cancel">
+                            <span class="ons-btn__inner">Cancel</span></a>
                     </div>
                 </div>  
             </form>
