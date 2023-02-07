@@ -57,6 +57,7 @@ class TestMessage(ViewTestCase):
                 "shortName": "ASHE",
                 "longName": "ASHE long name",
                 "surveyRef": "123",
+                "surveyMode": "EQ",
             }
         ]
         payload = {"user_id": "test-id", "aud": "response_operations"}
