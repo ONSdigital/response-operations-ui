@@ -2,7 +2,7 @@ import logging
 from datetime import datetime
 
 from dateutil.tz import gettz
-from flask import Blueprint, abort
+from flask import Blueprint
 from flask import current_app as app
 from flask import flash, redirect, render_template, request, url_for
 from flask_login import login_required
@@ -22,6 +22,7 @@ from response_operations_ui.controllers.party_controller import (
     resend_pending_surveys_email,
 )
 from response_operations_ui.controllers.uaa_controller import user_has_permission
+from response_operations_ui.exceptions.exceptions import NoPermissionError
 from response_operations_ui.forms import EditContactDetailsForm, RespondentSearchForm
 
 logger = wrap_logger(logging.getLogger(__name__))
@@ -264,8 +265,7 @@ def ordinal_date_formatter(date_format_required: str, date_to_be_formatted: date
 @login_required
 def view_contact_details(respondent_id):
     if not user_has_permission("respondents.edit"):
-        logger.exception("No respondent edit role")
-        abort(401)
+        raise NoPermissionError("respondents.edit")
     respondent_detail = party_controller.get_respondent_by_party_id(respondent_id)
 
     form = EditContactDetailsForm(form=request.form, default_values=respondent_detail)
@@ -283,8 +283,7 @@ def view_contact_details(respondent_id):
 @login_required
 def edit_contact_details(respondent_id):
     if not user_has_permission("respondents.edit"):
-        logger.exception("No respondent edit role")
-        abort(401)
+        raise NoPermissionError("respondents.edit")
     edit_contact_details_form = EditContactDetailsForm(form=request.form)
     if not edit_contact_details_form.validate():
         contact_details = party_controller.get_respondent_by_party_id(respondent_id)
@@ -318,8 +317,7 @@ def edit_contact_details(respondent_id):
 @login_required
 def view_resend_verification(respondent_id):
     if not user_has_permission("respondents.edit"):
-        logger.exception("No respondent edit role")
-        abort(401)
+        raise NoPermissionError("respondents.edit")
     logger.info("Re-send verification email requested", respondent_id=respondent_id)
     respondent = party_controller.get_respondent_by_party_id(respondent_id)
     is_new_email_verification_request = True if "pendingEmailAddress" in respondent else False
@@ -338,8 +336,7 @@ def view_resend_verification(respondent_id):
 @login_required
 def resend_verification(party_id):
     if not user_has_permission("respondents.edit"):
-        logger.exception("No respondent edit role")
-        abort(401)
+        raise NoPermissionError("respondents.edit")
     form = request.form
     is_new_account_verification = True if form.get("change") == "new-account-email" else False
     respondent_controllers.resend_verification_email(party_id, is_new_account_verification)
@@ -358,8 +355,7 @@ def resend_verification(party_id):
 @login_required
 def change_enrolment_status(respondent_id):
     if not user_has_permission("respondents.edit"):
-        logger.exception("No respondent edit role")
-        abort(401)
+        raise NoPermissionError("respondents.edit")
     reporting_units_controllers.change_enrolment_status(
         business_id=request.args["business_id"],
         respondent_id=respondent_id,
@@ -373,8 +369,7 @@ def change_enrolment_status(respondent_id):
 @login_required
 def change_respondent_status(respondent_id):
     if not user_has_permission("respondents.edit"):
-        logger.exception("No respondent edit role")
-        abort(401)
+        raise NoPermissionError("respondents.edit")
     reporting_units_controllers.change_respondent_status(
         respondent_id=respondent_id, change_flag=request.args["change_flag"]
     )
@@ -387,8 +382,7 @@ def change_respondent_status(respondent_id):
 @login_required
 def confirm_change_respondent_status(party_id):
     if not user_has_permission("respondents.edit"):
-        logger.exception("No respondent edit role")
-        abort(401)
+        raise NoPermissionError("respondents.edit")
     respondent = party_controller.get_respondent_by_party_id(party_id)
     return render_template(
         "confirm-respondent-status-change.html",
@@ -405,8 +399,7 @@ def confirm_change_respondent_status(party_id):
 @login_required
 def delete_respondent(respondent_id):
     if not user_has_permission("respondents.delete"):
-        logger.exception("No respondent delete role")
-        abort(401)
+        raise NoPermissionError("respondents.delete")
     respondent = party_controller.get_respondent_by_party_id(respondent_id)
 
     if request.method == "POST":
@@ -432,8 +425,7 @@ def delete_respondent(respondent_id):
 @login_required
 def undo_delete_respondent(respondent_id):
     if not user_has_permission("respondents.delete"):
-        logger.exception("No respondent delete role")
-        abort(401)
+        raise NoPermissionError("respondents.delete")
     respondent = party_controller.get_respondent_by_party_id(respondent_id)
 
     if request.method == "POST":

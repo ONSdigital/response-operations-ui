@@ -7,7 +7,6 @@ from datetime import datetime
 from flask import (
     Blueprint,
     Markup,
-    abort,
     flash,
     g,
     redirect,
@@ -35,7 +34,11 @@ from response_operations_ui.controllers.survey_controllers import (
     get_survey_short_name_by_id,
 )
 from response_operations_ui.controllers.uaa_controller import user_has_permission
-from response_operations_ui.exceptions.exceptions import ApiError, InternalError
+from response_operations_ui.exceptions.exceptions import (
+    ApiError,
+    InternalError,
+    NoPermissionError,
+)
 from response_operations_ui.forms import (
     ChangeThreadCategoryForm,
     SecureMessageForm,
@@ -53,8 +56,7 @@ CACHE_HEADERS = {"Cache-Control": "no-cache, no-store, must-revalidate", "Pragma
 @login_required
 def create_message():
     if not user_has_permission("messages.edit"):
-        logger.exception("No message edit role")
-        abort(401)
+        raise NoPermissionError("messages.edit")
     form = SecureMessageForm(request.form)
     breadcrumbs = _build_create_message_breadcrumbs()
 
@@ -92,8 +94,7 @@ def view_conversation(thread_id):
 
     if request.method == "POST" and request.form.get("reopen"):
         if not user_has_permission("messages.edit"):
-            logger.exception("No message edit role")
-            abort(401)
+            raise NoPermissionError("messages.edit")
         payload = {"is_closed": False}
         message_controllers.patch_thread(thread_id, payload)
         thread_url = (
@@ -135,8 +136,7 @@ def view_conversation(thread_id):
 
     if form.validate_on_submit():
         if not user_has_permission("messages.edit"):
-            logger.exception("No message edit role")
-            abort(401)
+            raise NoPermissionError("messages.edit")
         form = _populate_form_details_from_hidden_fields(form)
         g.form_subject_data = form.subject.data
         g.form_body_data = form.body.data
@@ -221,8 +221,7 @@ def view_conversation(thread_id):
 @login_required
 def get_change_thread_category(thread_id):
     if not user_has_permission("messages.edit"):
-        logger.exception("No message edit role")
-        abort(401)
+        raise NoPermissionError("messages.edit")
     thread = message_controllers.get_conversation(thread_id)
     form = ChangeThreadCategoryForm()
     breadcrumbs = [{"text": "Messages", "url": "/messages"}, {"text": "Filter by survey"}]
@@ -243,8 +242,7 @@ def get_change_thread_category(thread_id):
 @login_required
 def post_change_thread_category(thread_id):  # noqa: C901
     if not user_has_permission("messages.edit"):
-        logger.exception("No message edit role")
-        abort(401)
+        raise NoPermissionError("messages.edit")
     thread = message_controllers.get_conversation(thread_id)
     form = ChangeThreadCategoryForm(request.form)
 
@@ -483,7 +481,6 @@ def view_technical_inbox():  # noqa: C901
 @messages_bp.route("/<selected_survey>", methods=["GET", "POST"])
 @login_required
 def view_selected_survey(selected_survey):  # noqa: C901
-
     displayed_short_name = format_short_name(selected_survey)
     session["messages_survey_selection"] = selected_survey
     breadcrumbs = [{"text": displayed_short_name + " Messages"}]
@@ -604,8 +601,7 @@ def _get_tab_counts(business_id_filter, conversation_tab, ru_ref_filter, survey_
 @login_required
 def close_conversation(thread_id):
     if not user_has_permission("messages.edit"):
-        logger.exception("No message edit role")
-        abort(401)
+        raise NoPermissionError("messages.edit")
     conversation_tab = request.args.get("conversation_tab")
     page = request.args.get("page")
     ru_ref_filter = request.args.get("ru_ref_filter")
@@ -1111,7 +1107,6 @@ def _process_non_survey_category_page(
     conversation_tab = request.args.get("conversation_tab", default="open")
     category = category
     try:
-
         tab_counts = _get_tab_counts("", conversation_tab, "", None, category)
 
         # If the page is higher then possible, redirect users to the highest possible page.

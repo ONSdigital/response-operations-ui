@@ -38,6 +38,11 @@ class UserDoesNotExist(Exception):
         self.message = message
 
 
+class NoPermissionError(Exception):
+    def __init__(self, missing_permission):
+        self.missing_permission = missing_permission
+
+
 class NotifyError(Exception):
     def __init__(self, description=None, error=None, **kwargs):
         self.description = description
