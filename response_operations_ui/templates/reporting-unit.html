@@ -47,13 +47,18 @@
         {% set surveyTableDataRows = [] %}
 
         {% for survey in surveys %}
-            {% if survey[1].caseStatus == 'Not started' or survey[1].caseStatus == 'No longer required' %}
-                {% set status_class = 'ons-status--dead' %}
-            {% elif survey[1].caseStatus == 'In progress' or survey[1].caseStatus == 'Completed' or survey[1].caseStatus == 'Completed by phone' %}
+            {% if survey[1].caseStatus == 'Not started' %}
+                {% set status_class = 'ons-status--info' %}
+            {% elif survey[1].caseStatus == 'In progress' %}
+                {% set status_class = 'ons-status--pending' %}
+            {% elif survey[1].caseStatus == 'Completed' or survey[1].caseStatus == 'Completed by phone' %}
                 {% set status_class = 'ons-status--success' %}
+            {% elif survey[1].caseStatus == 'No longer required' %}
+                 {% set status_class = 'ons-status--dead' %}
             {% else %}
                 {% set status_class = 'ons-status--error' %}
             {% endif %}
+      
             {% do surveyTableDataRows.append( 
                 {
                     "tds": [
