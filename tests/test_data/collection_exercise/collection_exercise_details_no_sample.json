@@ -22,7 +22,6 @@
     "shortName": "BRES",
     "surveyRef": "221"
   },
-  "eq_ci_selectors":[],
   "collection_instruments": [
     {
       "classifiers": {

@@ -67,7 +67,7 @@
           "is_in_future": false
         }
     },
-  "collection_instruments": [
+  "collection_instruments": {"SEFT":[
     {
       "classifiers":
       {
@@ -77,8 +77,7 @@
       "file_name": "074 test_collection_instrument.xlxs eQ",
       "id": "b4cbe60d-804d-4b67-b7d8-8bbef76455da",
       "surveyId": "cb8accda-6118-4d3b-85a3-149e28960c54"
-    }],
-  "eq_ci_selectors": [],
+    }]},
   "sample_summary":
     {
       "id": "1a11543f-eb19-41f5-825f-e41aca15e724",
