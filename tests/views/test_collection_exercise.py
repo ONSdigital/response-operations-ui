@@ -66,9 +66,6 @@ with open(f"{project_root}/test_data/collection_exercise/formatted_new_collectio
 with open(f"{project_root}/test_data/collection_exercise/seft_collection_exercise_details.json") as seft:
     seft_collection_exercise_details = json.load(seft)
 
-with open(f"{project_root}/test_data/collection_exercise/eq_and_seft_collection_exercise_details.json") as seft:
-    eq_and_seft_collection_exercise_details = json.load(seft)
-
 with open(f"{project_root}/test_data/collection_exercise/collection_exercise.json") as json_data:
     collection_exercise = json.load(json_data)
 
@@ -678,7 +675,8 @@ class TestCollectionExercise(ViewTestCase):
         with self.app.app_context():
             exercise_dict = build_collection_exercise_details("MBS", "000000", include_ci=True)
 
-        # Then the collection exercise has 2 keys (EQ and SEFT) with 2 values in SEFT and 1 in EQ in the collection instrument
+        # Then the collection exercise has 2 keys (EQ and SEFT)
+        # with 2 values in SEFT and 1 in EQ in the collection instrument
         expected_output = {"SEFT": self.seft_collection_instruments, "EQ": self.eq_collection_instrument}
 
         self.assertEquals(expected_output, exercise_dict["collection_instruments"])
@@ -802,7 +800,8 @@ class TestCollectionExercise(ViewTestCase):
         self.assertIn("Error: Failed to add collection instrument(s)".encode(), response.data)
 
     @patch(
-        "response_operations_ui.views.collection_exercise.collection_instrument_controllers.get_collection_instruments_by_classifier"
+        "response_operations_ui.views.collection_exercise.collection_instrument_controllers."
+        "get_collection_instruments_by_classifier"
     )
     @patch("response_operations_ui.views.collection_exercise.build_collection_exercise_details")
     def test_failed_no_selected_eq_collection_instrument(self, mock_details, mock_ci_selector):

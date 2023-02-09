@@ -119,7 +119,6 @@ def view_collection_exercise(short_name, period):
     ce_details = build_collection_exercise_details(short_name, period, include_ci=True)
     ce_state = ce_details["collection_exercise"]["state"]
     survey_mode = ce_details["survey"]["surveyMode"]
-
     if survey_mode == "EQ":
         show_set_live_button = (
             ce_state in "READY_FOR_REVIEW"
@@ -1017,57 +1016,6 @@ def _delete_seft_collection_instrument(short_name, period):
                 "message": "Please try again",
             }
         )
-
-    return redirect(
-        url_for(
-            "collection_exercise_bp.get_seft_collection_instrument",
-            short_name=short_name,
-            period=period,
-            success_panel=success_panel,
-        )
-    )
-
-
-def _upload_seft_collection_instrument(short_name, period):
-    success_panel = None
-    error = _validate_collection_instrument()
-
-    if not error:
-        file = request.files["ciFile"]
-        is_ru_specific_instrument = False
-        if file.filename.split(".")[0].isdigit():
-            is_ru_specific_instrument = True
-
-        logger.info("Collection instrument about to be uploaded", filename=file.filename)
-        survey_id = survey_controllers.get_survey_id_by_short_name(short_name)
-        exercises = collection_exercise_controllers.get_collection_exercises_by_survey(survey_id)
-
-        # Find the collection exercise for the given period
-        exercise = get_collection_exercise_by_period(exercises, period)
-        if not exercise:
-            return make_response(jsonify({"message": "Collection exercise not found"}), 404)
-
-        error_text = None
-        if is_ru_specific_instrument:
-            ru_ref = file.filename.split(".")[0]
-            upload_success, error_text = collection_instrument_controllers.upload_ru_specific_collection_instrument(
-                exercise["id"], file, ru_ref
-            )
-        else:
-            form_type = _get_form_type(file.filename)
-            upload_success = collection_instrument_controllers.upload_collection_instrument(
-                exercise["id"], file, form_type
-            )
-
-        if upload_success:
-            success_panel = "Collection instrument loaded"
-        else:
-            message = error_text if error_text else "Please try again"
-            session["error"] = json.dumps(
-                {"section": "ciFile", "header": "Error: Failed to upload collection instrument", "message": message}
-            )
-    else:
-        session["error"] = json.dumps(error)
 
     return redirect(
         url_for(
