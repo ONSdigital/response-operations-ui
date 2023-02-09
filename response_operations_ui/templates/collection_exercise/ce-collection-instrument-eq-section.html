@@ -1,0 +1,99 @@
+{% from "components/input/_macro.njk" import onsInput %}
+{% from "components/checkboxes/_checkbox-macro.njk" import onsCheckbox %}
+{% from "components/label/_macro.njk" import onsLabel %}
+
+<section class="ce-section ons-u-pt-m ons-u-mb-l ons-u-mt-M">
+    {% include 'partials/ce-collection-instrument-eq-section-error-messages.html' %}
+    {% set surveyEditPermission = hasPermission('surveys.edit') %}
+    {% if not locked and surveyEditPermission %}
+       {% include 'collection_exercise/ce-eq-add-ci.html' %}
+        <div id="ciSelectionForm"
+            class="{{'ons-panel ons-panel--error ons-panel--no-title' if error else ''}} ons-u-mt-l">
+            <span class="ons-panel__assistive-text ons-u-vh">Error: </span>
+            {% if error['header'] %}
+                <div class="ons-panel__body">
+                  <p class="ons-panel__error ons-u-mb-s">
+                    <strong>{{ error['header'] }}</strong>
+                  </p>
+                </div>
+            {% endif %}
+            {% if complete_ci_dict %}
+                <form id="form-select-ci" action="" class="form" method="post" enctype="multipart/form-data">
+                    {{
+                        onsLabel({
+                            "id": 'ci-selector',
+                            "classes": ' ons-u-mb-s',
+                            "text": 'Select EQ collection instruments'
+                        })
+                    }}
+                    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}" />
+                    <input type="hidden" name="csrf_token" value="" />
+                    <input type="hidden" name="ce_id" value="{{ ce.id }}" />                                       
+                    <table class="ons-table">
+                        {% set selectAllText = "Select all" %}
+                        {% set unselectAllText = "Unselect all" %}
+                        {% if collection_instruments|length == complete_ci_dict|length %}
+                            {% set autoSelectState = unselectAllText %}
+                        {% else %}
+                            {% set autoSelectState = selectAllText %}
+                        {% endif %}
+                        {{ 
+                            onsButton({
+                                "html": '<span class="ons-js-button-text">' + autoSelectState + '</span>',
+                                "variants": btnClasses,
+                                "classes": 'ons-u-mb-m ons-js-auto-selector  ons-btn--small ons-btn--secondary',
+                                "attributes": {
+                                    "data-unselect-all": unselectAllText,
+                                    "data-select-all": selectAllText
+                                },
+                                "id": "select-or-unselect-ci"
+                            })
+                        }}
+                        <thead class="ons-table__head">
+                            <tr class="ons-table__row"></tr>
+                        </thead>
+                        <tbody class="ons-table__body">
+                            {% for eq_ci in complete_ci_dict|batch(3, ' ') %} 
+                                  <tr class="ons-table__row">
+                                      {% for ci in eq_ci %}
+                                          {% if ci['form_type'] %}
+                                              <td class="ons-table__cell">
+                                                    {{
+                                                      onsCheckbox({
+                                                          "id": "ci-check",
+                                                          "label": {
+                                                              "text": ci['form_type']
+                                                          },
+                                                          "value": ci['id']|string,
+                                                          "checked": true if ci['checked'] == 'true' else false,
+                                                          "name": "checkbox-answer",
+                                                          "classes": "ons-checkbox--no-border"
+                                                      })
+                                                  }}
+                                              </td>
+                                          {% endif %}
+                                      {% endfor %}
+                                  </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                    <p id="ci-checked-count">{{ collection_instruments|length }} selected out of {{ complete_ci_dict|length }} available</p>
+                    <div class="ons-u-mt-xxs">
+                        {{
+                            onsButton({
+                                "text": "Done",
+                                "id": "btn-add-ci",
+                                "name": "select-ci"
+                            })
+                        }}
+                    </div>
+                </form>
+            {% endif %}
+        </div>
+    {% endif %}
+    <div class="ons-grid ons-grid--flex ons-grid--between">
+        <div class="ons-grid__col">
+            <h1 class="ons-u-fs-l u-mb-xs" name="page-manage-account-title">{{ name }}</h1>
+        </div>
+    </div>
+</section>

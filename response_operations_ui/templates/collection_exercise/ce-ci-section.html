@@ -32,7 +32,7 @@
         {% endif %}
     {% endif %}
   
-    {% set addCILink = '<a href="' + url_for('collection_exercise_bp.get_view_eq_sample_ci', short_name=survey.shortName, 
+    {% set addCILink = '<a href="' + url_for('collection_exercise_bp.get_view_sample_ci', short_name=survey.shortName, 
                             period=ce.exerciseRef) + '" id="view-add-upload-ci">' + ciButtonText + '</a>' %}
   
     {% set surveyTableDataRows = [ 
