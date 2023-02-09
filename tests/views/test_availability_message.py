@@ -18,6 +18,7 @@ surveys_list_json = [
         "longName": "Monthly Business Survey - Retail Sales Index",
         "shortName": "RSI",
         "surveyRef": "023",
+        "surveyMode": "EQ",
     }
 ]
 
