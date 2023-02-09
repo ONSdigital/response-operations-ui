@@ -564,7 +564,7 @@ def _select_eq_collection_instrument(short_name, period):
         )
     return redirect(
         url_for(
-            "collection_exercise_bp.get_view_sample_ci",
+            "collection_exercise_bp.view_collection_exercise",
             short_name=short_name,
             period=period,
             success_panel=success_panel,
