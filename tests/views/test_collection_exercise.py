@@ -645,8 +645,8 @@ class TestCollectionExercise(ViewTestCase):
 
         # Then the collection exercise has 1 key (EQ) and 1 value in the collection instrument
         expected_output = {"EQ": self.eq_collection_instrument}
-        self.assertEquals(expected_output, exercise_dict["collection_instruments"])
-        self.assertEquals(len(exercise_dict["collection_instruments"]["EQ"]), 1)
+        self.assertEqual(expected_output, exercise_dict["collection_instruments"])
+        self.assertEqual(len(exercise_dict["collection_instruments"]["EQ"]), 1)
 
     @requests_mock.mock()
     def test_collection_exercise_details_multiple_seft_collection_instruments(self, mock_request):
@@ -662,10 +662,10 @@ class TestCollectionExercise(ViewTestCase):
         # Then the collection exercise has 1 key (SEFT) and 2 values in the collection instrument
         expected_output = {"SEFT": eq_and_seft}
 
-        self.assertEquals(expected_output, exercise_dict["collection_instruments"])
-        self.assertEquals(len(exercise_dict["collection_instruments"]["SEFT"]), 2)
-        self.assertEquals(exercise_dict["collection_instruments"]["SEFT"][0]["id"], collection_instrument_id)
-        self.assertEquals(exercise_dict["collection_instruments"]["SEFT"][1]["id"], collection_instrument_id_2)
+        self.assertEqual(expected_output, exercise_dict["collection_instruments"])
+        self.assertEqual(len(exercise_dict["collection_instruments"]["SEFT"]), 2)
+        self.assertEqual(exercise_dict["collection_instruments"]["SEFT"][0]["id"], collection_instrument_id)
+        self.assertEqual(exercise_dict["collection_instruments"]["SEFT"][1]["id"], collection_instrument_id_2)
 
     @requests_mock.mock()
     def test_collection_exercise_details_eq_and_seft_collection_instruments(self, mock_request):
@@ -687,9 +687,9 @@ class TestCollectionExercise(ViewTestCase):
         # with 2 values in SEFT and 1 in EQ in the collection instrument
         expected_output = {"SEFT": self.seft_collection_instruments, "EQ": self.eq_collection_instrument}
 
-        self.assertEquals(expected_output, exercise_dict["collection_instruments"])
-        self.assertEquals(len(exercise_dict["collection_instruments"]["SEFT"]), 2)
-        self.assertEquals(len(exercise_dict["collection_instruments"]["EQ"]), 1)
+        self.assertEqual(expected_output, exercise_dict["collection_instruments"])
+        self.assertEqual(len(exercise_dict["collection_instruments"]["SEFT"]), 2)
+        self.assertEqual(len(exercise_dict["collection_instruments"]["EQ"]), 1)
 
     @requests_mock.mock()
     @patch("response_operations_ui.views.collection_exercise.build_collection_exercise_details")
