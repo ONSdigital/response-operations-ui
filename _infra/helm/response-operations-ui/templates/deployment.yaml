@@ -233,5 +233,7 @@ spec:
             value: "{{- if .Values.test.enabled -}}True{{- else -}}False{{- end -}}"
           - name: WTF_CSRF_ENABLED
             value: "{{- if .Values.test.enabled -}}False{{- else -}}True{{- end -}}"
+          - name: MULTI_MODE_ENABLED
+            value: "{{ .Values.features.multiModeEnabled }}"
           resources:
             {{ toYaml .Values.resources | nindent 12 }}
