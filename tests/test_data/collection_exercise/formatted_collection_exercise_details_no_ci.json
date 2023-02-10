@@ -2,13 +2,13 @@
   "survey":
     {
       "id": "cb8accda-6118-4d3b-85a3-149e28960c54",
-      "shortName": "MBS",
+      "shortName": "Bricks",
       "longName": "Monthly Survey of Building Materials Bricks",
       "surveyRef": "074",
       "legalBasis": "Voluntary - BEIS",
       "surveyType": "Business",
       "legalBasisRef": "Vol_BEIS",
-      "surveyMode": "EQ"
+      "surveyMode": "SEFT"
     },
   "collection_exercise":
     {
@@ -24,14 +24,13 @@
       "scheduledReturnDateTime": "2018-07-08T09:19:09.000Z",
       "scheduledEndDateTime": "2018-07-09T09:19:09.000Z",
       "executedBy": null,
-      "state": "SCHEDULED",
+      "state": "Live",
       "exerciseRef": "204901",
       "userDescription": "test_exercise",
       "created": "2018-06-28T09:19:13.363Z",
       "updated": "2018-06-28T09:20:09.004Z",
       "deleted": null,
-      "validationErrors": null,
-      "eqVersion": "v2"
+      "validationErrors": null
     },
   "events":
     {
@@ -68,18 +67,7 @@
           "is_in_future": false
         }
     },
-  "collection_instruments": [
-    {
-      "classifiers":
-      {
-        "COLLECTION_EXERCISE": ["a50f0bc7-fa4f-4468-a5df-e677d9003b7e"],
-        "RU_REF": [],
-        "form_type": ["test_collection_instrument.xlxs"]
-      },
-      "file_name": "074 test_collection_instrument.xlxs eQ",
-      "id": "b4cbe60d-804d-4b67-b7d8-8bbef76455da",
-      "surveyId": "cb8accda-6118-4d3b-85a3-149e28960c54"
-    }],
+  "collection_instruments": [],
   "eq_ci_selectors": [],
   "sample_summary":
     {
