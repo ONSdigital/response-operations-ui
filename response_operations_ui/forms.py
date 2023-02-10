@@ -295,6 +295,7 @@ class EditSurveyDetailsForm(FlaskForm):
             Regexp(regex=r"^[a-zA-Z0-9]+$", message="Please use alphanumeric characters only."),
         ],
     )
+    survey_mode = StringField()
     hidden_survey_ref = HiddenField("hidden_survey_ref")
 
     @staticmethod
@@ -327,19 +328,12 @@ class CreateSurveyDetailsForm(FlaskForm):
         ],
     )
     survey_ref = StringField("survey_ref", validators=[InputRequired(message="Please remove spaces in Survey ID")])
-    legal_basis = SelectField("legal_basis", choices=[("", "Select an option")])
-    survey_mode = SelectField(
-        "survey_mode",
-        choices=[
-            ("", "Select an option"),
-            ("EQ", "Electronic Questionnaire (eQ)"),
-            ("SEFT", "Secure Electronic File Transfer (SEFT)"),
-        ],
-    )
+    legal_basis = StringField(validators=[InputRequired("Please select a Legal Basis")])
+    survey_mode = StringField(validators=[InputRequired("Please select a Survey Mode")])
 
     def __init__(self, form):
         super().__init__(form)
-        self.legal_basis.choices = [("", "Select an option")] + survey_controllers.get_legal_basis_list()
+        self.legal_basis = survey_controllers.get_legal_basis_list()
 
     @staticmethod
     def validate_short_name(form, field):
@@ -363,7 +357,7 @@ class CreateSurveyDetailsForm(FlaskForm):
     def validate_survey_mode(form, field):
         survey_mode = field.data
         if not survey_mode:
-            raise ValidationError("Please select eQ or SEFT")
+            raise ValidationError("Please select EQ, SEFT or EQ AND SEFT")
 
 
 class LinkCollectionInstrumentForm(FlaskForm):

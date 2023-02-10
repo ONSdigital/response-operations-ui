@@ -62,7 +62,7 @@ with open(f"{project_root}/test_data/collection_exercise/formatted_collection_ex
 
 with open(f"{project_root}/test_data/collection_exercise/formatted_collection_exercise_details_no_ci.json") as fp:
     formatted_collection_exercise_details_no_ci = json.load(fp)
-    
+
 with open(f"{project_root}/test_data/collection_exercise/formatted_new_collection_exercise_details.json") as fp:
     formatted_new_collection_exercise_details = json.load(fp)
 
@@ -123,6 +123,11 @@ with open(f"{project_root}/test_data/collection_exercise/collection_exercise_det
 user_permission_surveys_edit_json = {
     "id": "5902656c-c41c-4b38-a294-0359e6aabe59",
     "groups": [{"value": "f385f89e-928f-4a0f-96a0-4c48d9007cc3", "display": "surveys.edit", "type": "DIRECT"}],
+}
+
+user_permission_messages_edit_json = {
+    "id": "5902656c-c41c-4b38-a294-0359e6aabe59",
+    "groups": [{"value": "f385f89e-928f-4a0f-96a0-4c48d9007cc3", "display": "messages.edit", "type": "DIRECT"}],
 }
 
 """Define URLS"""
@@ -296,9 +301,7 @@ class TestCollectionExercise(ViewTestCase):
                     "COLLECTION_EXERCISE": [
                         collection_exercise_id,
                     ],
-                    "form_type": [
-                      "file"
-                    ],
+                    "form_type": ["file"],
                     "RU_REF": [],
                     "SURVEY_ID": survey_id,
                 },
@@ -696,7 +699,7 @@ class TestCollectionExercise(ViewTestCase):
     def test_failed_no_selected_collection_instrument(self, mock_request, mock_details):
         post_data = {"checkbox-answer": [], "ce_id": "000000", "select-ci": ""}
         mock_details.return_value = formatted_collection_exercise_details_no_ci
-        
+
         response = self.client.post(
             f"/surveys/{short_name}/{period}/view-sample-ci", data=post_data, follow_redirects=True
         )
@@ -2052,12 +2055,12 @@ class TestCollectionExercise(ViewTestCase):
     #     )
     #     mock_request.get(url_link_sample, json=[sample_summary_id])
     #     mock_request.get(url_get_sample_summary, json=self.sample_summary)
-    # 
+    #
     #     mock_request.get(url_get_by_survey_with_ref_start_date, json=collection_exercise_eq_ref_start_date)
     #     mock_request.get(url_get_by_survey_with_ref_end_date, json=collection_exercise_eq_ref_end_date)
-    # 
+    #
     #     response = self.client.get(f"/surveys/{short_name}/{period}/view-sample-ci")
-    # 
+    #
     #     self.assertEqual(200, response.status_code)
     #     self.assertIn("Collection instruments".encode(), response.data)
     #     self.assertNotIn("form-unselect-ci-1".encode(), response.data)
@@ -2092,6 +2095,8 @@ class TestCollectionExercise(ViewTestCase):
 
     @requests_mock.mock()
     def test_upload_sample_page_no_survey_permission(self, mock_request):
+        # Sign in without correct permissions
+        sign_in_with_permission(self, mock_request, user_permission_messages_edit_json)
         mock_request.get(url_get_survey_by_short_name, json=self.eq_survey_dates)
         mock_request.get(url_ces_by_survey, json=self.collection_exercises)
         mock_request.get(url_ce_by_id, json=collection_exercise_eq_both_ref_date["collection_exercise"])
@@ -2110,11 +2115,18 @@ class TestCollectionExercise(ViewTestCase):
 
         response = self.client.get(f"/surveys/{short_name}/{period}/upload-sample-file")
 
-        self.assertEqual(500, response.status_code)
+        self.assertEqual(response.status_code, 200)
+        self.assertIn(
+            "You do not have the required permission to "
+            "access this function under your current role profile".encode(),
+            response.data,
+        )
 
     @requests_mock.mock()
     @patch("response_operations_ui.views.collection_exercise.build_collection_exercise_details")
     def test_upload_sample_no_survey_permission(self, mock_request, mock_details):
+        # Sign in without correct permissions
+        sign_in_with_permission(self, mock_request, user_permission_messages_edit_json)
         post_data = {"sampleFile": (BytesIO(b"data"), "test.csv")}
 
         sample_data = {"id": sample_summary_id}
@@ -2132,18 +2144,30 @@ class TestCollectionExercise(ViewTestCase):
             f"/surveys/{short_name}/{period}/upload-sample-file", data=post_data, follow_redirects=True
         )
 
-        self.assertEqual(response.status_code, 500)
+        self.assertEqual(response.status_code, 200)
+        self.assertIn(
+            "You do not have the required permission to "
+            "access this function under your current role profile".encode(),
+            response.data,
+        )
 
     @requests_mock.mock()
     @patch("response_operations_ui.views.collection_exercise.build_collection_exercise_details")
     def test_remove_loaded_sample_no_survey_permission(self, mock_request, mock_details):
+        # Sign in without correct permissions
+        sign_in_with_permission(self, mock_request, user_permission_messages_edit_json)
         mock_details.return_value = formatted_collection_exercise_details
         mock_request.delete(url_party_delete_attributes, status_code=204)
         mock_request.delete(url_ce_remove_sample, status_code=200)
         mock_request.delete(url_delete_sample_summary, status_code=204)
         response = self.client.post(f"/surveys/{short_name}/{period}/confirm-remove-sample", follow_redirects=True)
 
-        self.assertEqual(response.status_code, 500)
+        self.assertEqual(response.status_code, 200)
+        self.assertIn(
+            "You do not have the required permission to "
+            "access this function under your current role profile".encode(),
+            response.data,
+        )
 
     @requests_mock.mock()
     @patch("response_operations_ui.views.collection_exercise.build_collection_exercise_details")
@@ -2164,6 +2188,8 @@ class TestCollectionExercise(ViewTestCase):
     @requests_mock.mock()
     @patch("response_operations_ui.views.collection_exercise.build_collection_exercise_details")
     def test_load_ci_load_collection_instrument_page_no_survey_permission(self, mock_request, mock_details):
+        # Sign in without correct permissions
+        sign_in_with_permission(self, mock_request, user_permission_messages_edit_json)
         post_data = {"ciFile": (BytesIO(b"data"), "064_201803_0001.xlsx"), "load-ci": ""}
         mock_request.post(url_collection_instrument, status_code=201)
         mock_request.get(url_ces_by_survey, json=exercise_data)
@@ -2174,11 +2200,18 @@ class TestCollectionExercise(ViewTestCase):
             f"/surveys/{short_name}/{period}/load-collection-instruments", data=post_data, follow_redirects=True
         )
 
-        self.assertEqual(response.status_code, 500)
+        self.assertEqual(response.status_code, 200)
+        self.assertIn(
+            "You do not have the required permission to "
+            "access this function under your current role profile".encode(),
+            response.data,
+        )
 
     @requests_mock.mock()
     @patch("response_operations_ui.views.collection_exercise.build_collection_exercise_details")
     def test_remove_ci_load_collection_instrument_page_no_survey_permission(self, mock_request, mock_details):
+        # Sign in without correct permissions
+        sign_in_with_permission(self, mock_request, user_permission_messages_edit_json)
         post_data = {
             "ci_id": collection_instrument_id,
             "ce_id": collection_exercise_id,
@@ -2192,8 +2225,12 @@ class TestCollectionExercise(ViewTestCase):
             f"/surveys/{short_name}/{period}/load-collection-instruments", data=post_data, follow_redirects=True
         )
 
-        self.assertEqual(response.status_code, 500)
-        self.assertIn("Something has gone wrong with the website".encode(), response.data)
+        self.assertEqual(response.status_code, 200)
+        self.assertIn(
+            "You do not have the required permission to "
+            "access this function under your current role profile".encode(),
+            response.data,
+        )
 
     @requests_mock.mock()
     def test_collection_exercise_no_survey_edit_permission(self, mock_request):
@@ -2228,22 +2265,22 @@ class TestCollectionExercise(ViewTestCase):
     #     sign_in_with_permission(self, mock_request, user_permission_surveys_edit_json)
     #     post_data = {"formtype": "0001", "ce_id": collection_exercise_id, "add-ci": ""}
     #     mock_request.get(url_get_survey_by_short_name, json=self.eq_survey_dates)
-    # 
+    #
     #     with open(f"{project_root}/test_data/survey/survey.json") as f:
     #         survey_info = json.load(f)
-    #     
+    #
     #     url_post_instrument_link = (
     #         f"{TestingConfig.COLLECTION_INSTRUMENT_URL}"
     #         f'/collection-instrument-api/1.0.2/upload?survey_id={survey_info["survey"]["id"]}&'
     #         f"classifiers=%7B%22form_type%22%3A%220001%22%2C%22eq_id%22%3A%22qbs%22%7D"
     #     )
-    # 
+    #
     #     url_get_eq_ci_selectors = (
     #         f"{TestingConfig.COLLECTION_INSTRUMENT_URL}"
     #         f"/collection-instrument-api/1.0.2/collectioninstrument?"
     #         f'searchString=%7B%22SURVEY_ID%22%3A+%22{survey_info["survey"]["id"]}%22%2C+%22TYPE%22%3A+%22EQ%22%7D'
     #     )
-    #     
+    #
     #     data = [
     #         {
     #             "classifiers": {"COLLECTION_EXERCISE": [], "RU_REF": [], "eq_id": "qbs", "form_type": "0001"},
@@ -2253,7 +2290,7 @@ class TestCollectionExercise(ViewTestCase):
     #         }
     #     ]
     #     url_get_survey_by_qbs = f"{TestingConfig.SURVEY_URL}/surveys/shortname/QBS"
-    # 
+    #
     #     mock_request.get(url_get_survey_by_qbs, json=survey_info["survey"])
     #     mock_request.get(url_get_eq_ci_selectors, json=data)
     #     mock_request.get(f"/surveys/{short_name}/{period}/view-sample-ci")
@@ -2262,6 +2299,6 @@ class TestCollectionExercise(ViewTestCase):
     #     response = self.client.post(
     #         f"/surveys/{short_name}/{period}/view-sample-ci", data=post_data, follow_redirects=True
     #     )
-    #     
+    #
     #     self.assertEqual(response.status_code, 200)
     #     self.assertIn("Collection instruments added".encode(), response.data)

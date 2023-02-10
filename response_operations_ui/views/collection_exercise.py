@@ -54,7 +54,8 @@ from response_operations_ui.forms import (
     CreateCollectionExerciseDetailsForm,
     EditCollectionExerciseDetailsForm,
     EventDateForm,
-    RemoveLoadedSample, LinkCollectionInstrumentForm,
+    LinkCollectionInstrumentForm,
+    RemoveLoadedSample,
 )
 
 logger = wrap_logger(logging.getLogger(__name__))
@@ -115,9 +116,9 @@ def view_collection_exercise(short_name, period):
     ce_state = ce_details["collection_exercise"]["state"]
     if ce_details["survey"]["surveyMode"] == "EQ":
         show_set_live_button = (
-                ce_state in "READY_FOR_REVIEW"
-                and "ref_period_start" in ce_details["events"]
-                and "ref_period_end" in ce_details["events"]
+            ce_state in "READY_FOR_REVIEW"
+            and "ref_period_start" in ce_details["events"]
+            and "ref_period_end" in ce_details["events"]
         )
     else:
         show_set_live_button = ce_state in ("READY_FOR_REVIEW", "FAILEDVALIDATION")
@@ -529,15 +530,15 @@ def _select_eq_collection_instrument(short_name, period):
     ce_details = build_collection_exercise_details(short_name, period)
     ce_id = ce_details["collection_exercise"]["id"]
     cis_present = ce_details["collection_instruments"]
-    
+
     if cis_present:
         for ci_for_removal in cis_present:
-            ci_id = ci_for_removal['id']
+            ci_id = ci_for_removal["id"]
             if not cis_selected and ci_id:
                 collection_instrument_controllers.unlink_collection_instrument(ce_id, ci_id)
             elif ci_id not in cis_selected:
-                collection_instrument_controllers.unlink_collection_instrument(ce_id, ci_id)        
-    
+                collection_instrument_controllers.unlink_collection_instrument(ce_id, ci_id)
+
     if cis_selected:
         for ci in cis_selected:
             if ci not in cis_present:
@@ -562,7 +563,7 @@ def _select_eq_collection_instrument(short_name, period):
                 "message": "Please select a collection instrument",
             }
         )
-    if 'error' in session:
+    if "error" in session:
         return redirect(
             url_for(
                 "collection_exercise_bp.get_view_sample_ci",
@@ -571,7 +572,7 @@ def _select_eq_collection_instrument(short_name, period):
                 success_panel=success_panel,
             )
         )
-            
+
     return redirect(
         url_for(
             "collection_exercise_bp.view_collection_exercise",
@@ -623,13 +624,18 @@ def _add_collection_instrument(short_name, period):
         try:
             error_dict = json.loads(err.message)
             errors = [error_dict["errors"][0]]
-            errors = [error.replace('Cannot upload an instrument with an identical set of classifiers', 
-                                    'Enter a CI that has not already been added') for error in errors]
+            errors = [
+                error.replace(
+                    "Cannot upload an instrument with an identical set of classifiers",
+                    "Enter a CI that has not already been added",
+                )
+                for error in errors
+            ]
         except (JSONDecodeError, KeyError):
             # If the message isn't JSON, or the 'errors' key doesn't exist, we'll render the message anyway as it
             # might still be helpful.
             errors = [("", [err.message])]
-        
+
         breadcrumbs = [{"text": "Back", "url": "/surveys/" + short_name + "/" + period}, {}]
         return render_template(
             "collection_exercise/ce-view-sample-ci.html",
@@ -650,7 +656,7 @@ def _add_collection_instrument(short_name, period):
 @collection_exercise_bp.route("/<short_name>/<period>/edit-collection-exercise-details", methods=["GET"])
 @login_required
 def view_collection_exercise_details(short_name, period):
-    verify_permission("surveys.edit", session)
+    verify_permission("surveys.edit")
     logger.info("Retrieving collection exercise data for form", short_name=short_name, period=period)
     ce_details = build_collection_exercise_details(short_name, period)
     form = EditCollectionExerciseDetailsForm(form=request.form)
@@ -675,7 +681,7 @@ def view_collection_exercise_details(short_name, period):
 @collection_exercise_bp.route("/<short_name>/<period>/edit-collection-exercise-details", methods=["POST"])
 @login_required
 def edit_collection_exercise_details(short_name, period):
-    verify_permission("surveys.edit", session)
+    verify_permission("surveys.edit")
     form = EditCollectionExerciseDetailsForm(form=request.form)
     if not form.validate():
         logger.info(
@@ -721,7 +727,7 @@ def edit_collection_exercise_details(short_name, period):
 @login_required
 def get_create_collection_exercise_form(survey_ref, short_name):
     previous_period = request.args.get("previous_period")
-    verify_permission("surveys.edit", session)
+    verify_permission("surveys.edit")
     logger.info("Retrieving survey data for form", short_name=short_name, survey_ref=survey_ref)
     form = CreateCollectionExerciseDetailsForm(form=request.form)
 
@@ -737,7 +743,7 @@ def get_create_collection_exercise_form(survey_ref, short_name):
 @collection_exercise_bp.route("/<survey_ref>/<short_name>/create-collection-exercise", methods=["POST"])
 @login_required
 def create_collection_exercise(survey_ref, short_name):
-    verify_permission("surveys.edit", session)
+    verify_permission("surveys.edit")
     logger.info("Attempting to create collection exercise", survey_ref=survey_ref, survey=short_name)
     ce_form = CreateCollectionExerciseDetailsForm(form=request.form)
     survey_details = survey_controllers.get_survey(short_name)
@@ -799,7 +805,7 @@ def create_collection_exercise(survey_ref, short_name):
 @collection_exercise_bp.route("/<short_name>/<period>/<ce_id>/confirm-create-event/<tag>", methods=["GET"])
 @login_required
 def get_create_collection_event_form(short_name, period, ce_id, tag):
-    verify_permission("surveys.edit", session)
+    verify_permission("surveys.edit")
     logger.info(
         "Retrieving form for create collection exercise event",
         short_name=short_name,
@@ -844,7 +850,7 @@ def get_create_collection_event_form(short_name, period, ce_id, tag):
 @collection_exercise_bp.route("/<short_name>/<period>/<ce_id>/create-event/<tag>", methods=["POST", "GET"])
 @login_required
 def create_collection_exercise_event(short_name, period, ce_id, tag):
-    verify_permission("surveys.edit", session)
+    verify_permission("surveys.edit")
     if request.method == "GET":
         redirect(
             url_for(
@@ -960,13 +966,13 @@ def _get_collective_cis(ce_details):
     duplicate_list = []
 
     for ci in ce_details["collection_instruments"]:
-        ci_to_add = {'id': ci['id'], 'form_type': ci['classifiers']['form_type'], 'checked': 'true'}
+        ci_to_add = {"id": ci["id"], "form_type": ci["classifiers"]["form_type"], "checked": "true"}
         complete_ci_dict.append(ci_to_add)
-        duplicate_list.append(ci['id'])
+        duplicate_list.append(ci["id"])
 
     for eq_ci in ce_details["eq_ci_selectors"]:
-        if eq_ci['id'] not in duplicate_list:
-            eq_ci_to_add = {'id': eq_ci['id'], 'form_type': eq_ci['classifiers']['form_type'], 'checked': 'false'}
+        if eq_ci["id"] not in duplicate_list:
+            eq_ci_to_add = {"id": eq_ci["id"], "form_type": eq_ci["classifiers"]["form_type"], "checked": "false"}
             complete_ci_dict.append(eq_ci_to_add)
 
     return complete_ci_dict
@@ -975,7 +981,7 @@ def _get_collective_cis(ce_details):
 @collection_exercise_bp.route("/<short_name>/<period>/upload-sample-file", methods=["GET"])
 @login_required
 def get_upload_sample_file(short_name, period):
-    verify_permission("surveys.edit", session)
+    verify_permission("surveys.edit")
     ce_details = build_collection_exercise_details(short_name, period)
     ce_state = ce_details["collection_exercise"]["state"]
     ce_details["collection_exercise"]["state"] = map_collection_exercise_state(ce_state)  # NOQA
@@ -998,7 +1004,7 @@ def get_upload_sample_file(short_name, period):
 @collection_exercise_bp.route("/<short_name>/<period>/upload-sample-file", methods=["POST"])
 @login_required
 def post_upload_sample_file(short_name, period):
-    verify_permission("surveys.edit", session)
+    verify_permission("surveys.edit")
     if _validate_sample():
         survey_id = survey_controllers.get_survey_id_by_short_name(short_name)
         exercises = collection_exercise_controllers.get_collection_exercises_by_survey(survey_id)
@@ -1047,7 +1053,7 @@ def get_confirm_remove_sample(short_name, period):
 @collection_exercise_bp.route("/<short_name>/<period>/confirm-remove-sample", methods=["POST"])
 @login_required
 def remove_loaded_sample(short_name, period):
-    verify_permission("surveys.edit", session)
+    verify_permission("surveys.edit")
     ce_details = build_collection_exercise_details(short_name, period)
     sample_summary_id = ce_details["sample_summary"]["id"]
     collection_exercise_id = ce_details["collection_exercise"]["id"]
@@ -1132,7 +1138,7 @@ def get_seft_collection_instrument(short_name, period):
 @collection_exercise_bp.route("/<short_name>/<period>/load-collection-instruments", methods=["POST"])
 @login_required
 def post_seft_collection_instrument(short_name, period):
-    verify_permission("surveys.edit", session)
+    verify_permission("surveys.edit")
     if "delete-ci" in request.form:
         return _delete_seft_collection_instrument(short_name, period)
     return _upload_seft_collection_instrument(short_name, period)
