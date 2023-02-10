@@ -19,7 +19,6 @@ from flask import (
     url_for,
 )
 from flask_login import login_required
-from flask_wtf import FlaskForm
 from structlog import wrap_logger
 from wtforms import ValidationError
 
