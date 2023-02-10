@@ -583,7 +583,6 @@ def _select_eq_collection_instrument(short_name, period):
 
 
 def _add_collection_instrument(short_name, period):
-    verify_permission("surveys.edit", session)
     form = LinkCollectionInstrumentForm(form=request.form)
     eq_ci_selectors = []
     ce_details = build_collection_exercise_details(short_name, period)
