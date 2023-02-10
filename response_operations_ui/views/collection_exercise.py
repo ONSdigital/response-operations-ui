@@ -533,7 +533,7 @@ def _get_form_type(file_name):
 @collection_exercise_bp.route("/<short_name>/<period>/edit-collection-exercise-details", methods=["GET"])
 @login_required
 def view_collection_exercise_details(short_name, period):
-    verify_permission("surveys.edit", session)
+    verify_permission("surveys.edit")
     logger.info("Retrieving collection exercise data for form", short_name=short_name, period=period)
     ce_details = build_collection_exercise_details(short_name, period)
     form = EditCollectionExerciseDetailsForm(form=request.form)
@@ -558,7 +558,7 @@ def view_collection_exercise_details(short_name, period):
 @collection_exercise_bp.route("/<short_name>/<period>/edit-collection-exercise-details", methods=["POST"])
 @login_required
 def edit_collection_exercise_details(short_name, period):
-    verify_permission("surveys.edit", session)
+    verify_permission("surveys.edit")
     form = EditCollectionExerciseDetailsForm(form=request.form)
     if not form.validate():
         logger.info(
@@ -604,7 +604,7 @@ def edit_collection_exercise_details(short_name, period):
 @login_required
 def get_create_collection_exercise_form(survey_ref, short_name):
     previous_period = request.args.get("previous_period")
-    verify_permission("surveys.edit", session)
+    verify_permission("surveys.edit")
     logger.info("Retrieving survey data for form", short_name=short_name, survey_ref=survey_ref)
     form = CreateCollectionExerciseDetailsForm(form=request.form)
 
@@ -620,7 +620,7 @@ def get_create_collection_exercise_form(survey_ref, short_name):
 @collection_exercise_bp.route("/<survey_ref>/<short_name>/create-collection-exercise", methods=["POST"])
 @login_required
 def create_collection_exercise(survey_ref, short_name):
-    verify_permission("surveys.edit", session)
+    verify_permission("surveys.edit")
     logger.info("Attempting to create collection exercise", survey_ref=survey_ref, survey=short_name)
     ce_form = CreateCollectionExerciseDetailsForm(form=request.form)
     survey_details = survey_controllers.get_survey(short_name)
@@ -682,7 +682,7 @@ def create_collection_exercise(survey_ref, short_name):
 @collection_exercise_bp.route("/<short_name>/<period>/<ce_id>/confirm-create-event/<tag>", methods=["GET"])
 @login_required
 def get_create_collection_event_form(short_name, period, ce_id, tag):
-    verify_permission("surveys.edit", session)
+    verify_permission("surveys.edit")
     logger.info(
         "Retrieving form for create collection exercise event",
         short_name=short_name,
@@ -727,7 +727,7 @@ def get_create_collection_event_form(short_name, period, ce_id, tag):
 @collection_exercise_bp.route("/<short_name>/<period>/<ce_id>/create-event/<tag>", methods=["POST", "GET"])
 @login_required
 def create_collection_exercise_event(short_name, period, ce_id, tag):
-    verify_permission("surveys.edit", session)
+    verify_permission("surveys.edit")
     if request.method == "GET":
         redirect(
             url_for(
@@ -839,7 +839,7 @@ def get_view_sample_ci(short_name, period):
 @collection_exercise_bp.route("/<short_name>/<period>/upload-sample-file", methods=["GET"])
 @login_required
 def get_upload_sample_file(short_name, period):
-    verify_permission("surveys.edit", session)
+    verify_permission("surveys.edit")
     ce_details = build_collection_exercise_details(short_name, period)
     ce_state = ce_details["collection_exercise"]["state"]
     ce_details["collection_exercise"]["state"] = map_collection_exercise_state(ce_state)  # NOQA
@@ -862,7 +862,7 @@ def get_upload_sample_file(short_name, period):
 @collection_exercise_bp.route("/<short_name>/<period>/upload-sample-file", methods=["POST"])
 @login_required
 def post_upload_sample_file(short_name, period):
-    verify_permission("surveys.edit", session)
+    verify_permission("surveys.edit")
     if _validate_sample():
         survey_id = survey_controllers.get_survey_id_by_short_name(short_name)
         exercises = collection_exercise_controllers.get_collection_exercises_by_survey(survey_id)
@@ -911,7 +911,7 @@ def get_confirm_remove_sample(short_name, period):
 @collection_exercise_bp.route("/<short_name>/<period>/confirm-remove-sample", methods=["POST"])
 @login_required
 def remove_loaded_sample(short_name, period):
-    verify_permission("surveys.edit", session)
+    verify_permission("surveys.edit")
     ce_details = build_collection_exercise_details(short_name, period)
     sample_summary_id = ce_details["sample_summary"]["id"]
     collection_exercise_id = ce_details["collection_exercise"]["id"]
@@ -996,7 +996,7 @@ def get_seft_collection_instrument(short_name, period):
 @collection_exercise_bp.route("/<short_name>/<period>/load-collection-instruments", methods=["POST"])
 @login_required
 def post_seft_collection_instrument(short_name, period):
-    verify_permission("surveys.edit", session)
+    verify_permission("surveys.edit")
     if "delete-ci" in request.form:
         return _delete_seft_collection_instrument(short_name, period)
     return _upload_seft_collection_instrument(short_name, period)

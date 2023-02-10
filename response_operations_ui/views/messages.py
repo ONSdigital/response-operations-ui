@@ -22,6 +22,7 @@ from structlog import wrap_logger
 from config import FDI_LIST, VACANCIES_LIST
 from response_operations_ui.common.dates import get_formatted_date, localise_datetime
 from response_operations_ui.common.mappers import format_short_name
+from response_operations_ui.common.uaa import verify_permission
 from response_operations_ui.controllers import (
     message_controllers,
     party_controller,
@@ -33,12 +34,7 @@ from response_operations_ui.controllers.survey_controllers import (
     get_survey_ref_by_id,
     get_survey_short_name_by_id,
 )
-from response_operations_ui.controllers.uaa_controller import user_has_permission
-from response_operations_ui.exceptions.exceptions import (
-    ApiError,
-    InternalError,
-    NoPermissionError,
-)
+from response_operations_ui.exceptions.exceptions import ApiError, InternalError
 from response_operations_ui.forms import (
     ChangeThreadCategoryForm,
     SecureMessageForm,
@@ -55,8 +51,7 @@ CACHE_HEADERS = {"Cache-Control": "no-cache, no-store, must-revalidate", "Pragma
 @messages_bp.route("/create-message", methods=["POST"])
 @login_required
 def create_message():
-    if not user_has_permission("messages.edit"):
-        raise NoPermissionError("messages.edit")
+    verify_permission("messages.edit")
     form = SecureMessageForm(request.form)
     breadcrumbs = _build_create_message_breadcrumbs()
 
@@ -93,8 +88,7 @@ def view_conversation(thread_id):
     business_id_filter = request.args.get("business_id_filter")
 
     if request.method == "POST" and request.form.get("reopen"):
-        if not user_has_permission("messages.edit"):
-            raise NoPermissionError("messages.edit")
+        verify_permission("messages.edit")
         payload = {"is_closed": False}
         message_controllers.patch_thread(thread_id, payload)
         thread_url = (
@@ -135,8 +129,7 @@ def view_conversation(thread_id):
     form = SecureMessageForm(request.form)
 
     if form.validate_on_submit():
-        if not user_has_permission("messages.edit"):
-            raise NoPermissionError("messages.edit")
+        verify_permission("messages.edit")
         form = _populate_form_details_from_hidden_fields(form)
         g.form_subject_data = form.subject.data
         g.form_body_data = form.body.data
@@ -220,8 +213,7 @@ def view_conversation(thread_id):
 @messages_bp.route("/threads/<thread_id>/change-category", methods=["GET"])
 @login_required
 def get_change_thread_category(thread_id):
-    if not user_has_permission("messages.edit"):
-        raise NoPermissionError("messages.edit")
+    verify_permission("messages.edit")
     thread = message_controllers.get_conversation(thread_id)
     form = ChangeThreadCategoryForm()
     breadcrumbs = [{"text": "Messages", "url": "/messages"}, {"text": "Filter by survey"}]
@@ -241,8 +233,7 @@ def get_change_thread_category(thread_id):
 @messages_bp.route("/threads/<thread_id>/change-category", methods=["POST"])
 @login_required
 def post_change_thread_category(thread_id):  # noqa: C901
-    if not user_has_permission("messages.edit"):
-        raise NoPermissionError("messages.edit")
+    verify_permission("messages.edit")
     thread = message_controllers.get_conversation(thread_id)
     form = ChangeThreadCategoryForm(request.form)
 
@@ -600,8 +591,7 @@ def _get_tab_counts(business_id_filter, conversation_tab, ru_ref_filter, survey_
 @messages_bp.route("/threads/<thread_id>/close-conversation", methods=["GET", "POST"])
 @login_required
 def close_conversation(thread_id):
-    if not user_has_permission("messages.edit"):
-        raise NoPermissionError("messages.edit")
+    verify_permission("messages.edit")
     conversation_tab = request.args.get("conversation_tab")
     page = request.args.get("page")
     ru_ref_filter = request.args.get("ru_ref_filter")
