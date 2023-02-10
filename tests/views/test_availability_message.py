@@ -1,6 +1,7 @@
 from unittest import TestCase
 from unittest.mock import patch
 
+import fakeredis
 import requests_mock
 
 from config import TestingConfig
@@ -17,6 +18,7 @@ surveys_list_json = [
         "longName": "Monthly Business Survey - Retail Sales Index",
         "shortName": "RSI",
         "surveyRef": "023",
+        "surveyMode": "EQ",
     }
 ]
 
@@ -25,6 +27,9 @@ class TestAvailabilityMessage(TestCase):
     def setUp(self):
         self.app = create_app("TestingConfig")
         self.client = self.app.test_client()
+        self.app.config["SESSION_REDIS"] = fakeredis.FakeStrictRedis(
+            host=self.app.config["REDIS_HOST"], port=self.app.config["FAKE_REDIS_PORT"], db=self.app.config["REDIS_DB"]
+        )
 
     @patch("redis.StrictRedis")
     @requests_mock.mock()

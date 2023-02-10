@@ -2,6 +2,7 @@ import json
 import os
 from urllib.parse import urlparse
 
+import fakeredis
 import requests_mock
 
 from config import TestingConfig
@@ -63,6 +64,10 @@ class TestUpdateEventDate(ViewTestCase):
             "minute": "00",
             "checkbox": "True",
         }
+
+        self.app.config["SESSION_REDIS"] = fakeredis.FakeStrictRedis(
+            host=self.app.config["REDIS_HOST"], port=self.app.config["FAKE_REDIS_PORT"], db=self.app.config["REDIS_DB"]
+        )
 
     @requests_mock.mock()
     def test_update_event_date_view(self, mock_request):

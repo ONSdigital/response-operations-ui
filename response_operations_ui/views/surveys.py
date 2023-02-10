@@ -64,10 +64,6 @@ def view_survey(short_name):
     if request.args.get("ce_updated"):
         updated_ce_message = "Collection exercise details updated"
 
-    created_ce_message = None
-    if request.args.get("ce_created"):
-        created_ce_message = "Collection exercise created"
-
     newly_created_period = request.args.get("new_period")
 
     # Mapping backend states to frontend sates for the user
@@ -83,7 +79,6 @@ def view_survey(short_name):
         survey=survey,
         collection_exercises=collection_exercises,
         updated_ce_message=updated_ce_message,
-        created_ce_message=created_ce_message,
         newly_created_period=newly_created_period,
     )
 
@@ -91,7 +86,7 @@ def view_survey(short_name):
 @surveys_bp.route("/edit-survey-details/<short_name>", methods=["GET"])
 @login_required
 def view_survey_details(short_name):
-    verify_permission("surveys.edit", session)
+    verify_permission("surveys.edit")
     survey_details = survey_controllers.get_survey(short_name)
     form = EditSurveyDetailsForm(form=request.form)
 
@@ -109,7 +104,7 @@ def view_survey_details(short_name):
 @surveys_bp.route("/edit-survey-details/<short_name>", methods=["POST", "GET"])
 @login_required
 def edit_survey_details(short_name):
-    verify_permission("surveys.edit", session)
+    verify_permission("surveys.edit")
     form = EditSurveyDetailsForm(form=request.form)
     if not form.validate():
         survey_details = survey_controllers.get_survey(short_name)
@@ -121,13 +116,14 @@ def edit_survey_details(short_name):
             legal_basis=survey_details["legalBasis"],
             long_name=survey_details["longName"],
             survey_ref=survey_details["surveyRef"],
+            survey_mode=survey_details["surveyMode"],
             survey_details=survey_details,
         )
 
     else:
         form = request.form
         survey_controllers.update_survey_details(
-            form.get("hidden_survey_ref"), form.get("short_name"), form.get("long_name")
+            form.get("hidden_survey_ref"), form.get("short_name"), form.get("long_name"), form.get("survey_mode")
         )
         return redirect(url_for("surveys_bp.view_surveys", message_key="survey_changed"))
 
@@ -135,7 +131,7 @@ def edit_survey_details(short_name):
 @surveys_bp.route("/create", methods=["GET"])
 @login_required
 def show_create_survey():
-    verify_permission("surveys.edit", session)
+    verify_permission("surveys.edit")
     form = CreateSurveyDetailsForm(form=request.form)
 
     return render_template("create-survey.html", form=form)
@@ -144,7 +140,7 @@ def show_create_survey():
 @surveys_bp.route("/create", methods=["POST"])
 @login_required
 def create_survey():
-    verify_permission("surveys.edit", session)
+    verify_permission("surveys.edit")
     form = CreateSurveyDetailsForm(form=request.form)
     if not form.validate():
         return render_template("create-survey.html", form=form, errors=form.errors.items())
@@ -174,7 +170,7 @@ def create_survey():
 @surveys_bp.route("/<short_name>/link-collection-instrument", methods=["GET"])
 @login_required
 def get_link_collection_instrument(short_name):
-    verify_permission("surveys.edit", session)
+    verify_permission("surveys.edit")
     form = LinkCollectionInstrumentForm(form=request.form)
     short_name_lower = str(short_name).lower()
     survey_id = survey_controllers.get_survey_by_shortname(short_name_lower)["id"]
@@ -190,7 +186,7 @@ def get_link_collection_instrument(short_name):
 @surveys_bp.route("/<short_name>/link-collection-instrument", methods=["POST"])
 @login_required
 def post_link_collection_instrument(short_name):
-    verify_permission("surveys.edit", session)
+    verify_permission("surveys.edit")
     form = LinkCollectionInstrumentForm(form=request.form)
     eq_ci_selectors = []
     try:
