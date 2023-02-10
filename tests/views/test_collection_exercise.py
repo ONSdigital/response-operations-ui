@@ -23,6 +23,7 @@ ci_selector_id = "efa868fb-fb80-44c7-9f33-d6800a17c4da"
 collection_exercise_event_id = "b4a36392-a21f-485b-9dc4-d151a8fcd565"
 collection_exercise_id = "14fb3e68-4dca-46db-bf49-04b84e07e77c"
 collection_instrument_id = "a32800c5-5dc1-459d-9932-0da6c21d2ed2"
+collection_instrument_id_2 = "5c5ca56f-8d15-426d-969a-9799d68d7971"
 period = "000000"
 sample_summary_id = "1a11543f-eb19-41f5-825f-e41aca15e724"
 short_name = "MBS"
@@ -293,7 +294,7 @@ class TestCollectionExercise(ViewTestCase):
                     "SURVEY_ID": survey_id,
                 },
                 "file_name": "file",
-                "id": collection_instrument_id,
+                "id": collection_instrument_id_2,
                 "surveyId": survey_id,
                 "type": "SEFT",
             },
@@ -658,6 +659,8 @@ class TestCollectionExercise(ViewTestCase):
 
         self.assertEquals(expected_output, exercise_dict["collection_instruments"])
         self.assertEquals(len(exercise_dict["collection_instruments"]["SEFT"]), 2)
+        self.assertEquals(exercise_dict["collection_instruments"]["SEFT"][0]["id"], collection_instrument_id)
+        self.assertEquals(exercise_dict["collection_instruments"]["SEFT"][1]["id"], collection_instrument_id_2)
 
     @requests_mock.mock()
     def test_collection_exercise_details_eq_and_seft_collection_instruments(self, mock_request):
