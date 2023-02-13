@@ -60,7 +60,7 @@ collection_exercise_bp = Blueprint(
     "collection_exercise_bp", __name__, static_folder="static", template_folder="templates"
 )
 
-CI_TABLE_TEXT = {
+CI_TABLE_LINK_TEXT = {
     "EQ": {"no_instrument": "Add", "restricted": "View", "has_permission": "Select or Add"},
     "SEFT": {"no_instrument": "Upload", "restricted": "View", "has_permission": "View or Upload"},
 }
@@ -189,14 +189,13 @@ def _build_ci_table_context(ci: dict, locked: bool, survey_mode: str, short_name
     ci_table_context = []
     for survey_mode_type in required_survey_mode_types:
         ci_count = len(ci.get(survey_mode_type, []))
+        ci_table_state_text = "no_instrument" if ci_count == 0 else ci_table_state_text
         ci_table_context.append(
             {
                 "type": survey_mode_type.lower(),
                 "title": f"{survey_mode_type} collection instruments",
                 "url": f"{view_sample_ci_url}?survey_mode={survey_mode_type}",
-                "text": CI_TABLE_TEXT[survey_mode_type][ci_table_state_text]
-                if ci_count != 0
-                else CI_TABLE_TEXT[survey_mode_type]["no_instrument"],
+                "link_text": CI_TABLE_LINK_TEXT[survey_mode_type][ci_table_state_text],
                 "count": str(ci_count),
             }
         )
