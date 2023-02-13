@@ -34,7 +34,7 @@
     "events": []
   },
   "events": {},
-  "collection_instruments": [],
+  "collection_instruments": {},
   "eq_ci_selectors": [
     {
       "classifiers": {

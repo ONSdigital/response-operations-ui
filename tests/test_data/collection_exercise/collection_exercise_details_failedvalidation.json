@@ -42,9 +42,8 @@
     "shortName": "BRES",
     "surveyRef": "221"
   },
-  "eq_ci_selectors":[],
-  "collection_instruments": [
-  ],
+  
+  "collection_instruments": {},
   "sample_summary": {
     "id":"1a11543f-eb19-41f5-825f-e41aca15e724",
     "effectiveStartDateTime":null,

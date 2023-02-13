@@ -17,7 +17,6 @@
     "userDescription": "January 2017",
     "validationErrors": null
   },
-  "eq_ci_selectors":[],
   "survey": {
     "id": "cb0711c3-0ac8-41d3-ae0e-567e5ea1ef87",
     "longName": "Business Register and Employment Survey",
@@ -56,20 +55,22 @@
       "eventStatus": "PROCESSED"
     }
   ],
-  "collection_instruments": [
-    {
-      "classifiers": {
-        "COLLECTION_EXERCISE": [
-          "e33daf0e-6a27-40cd-98dc-c6231f50e84a"
-        ],
-        "RU_REF": [],
-        "SURVEY_ID": "cb0711c3-0ac8-41d3-ae0e-567e5ea1ef87"
-      },
-      "file_name": "collection_instrument.xlsx",
-      "id": "f732afbe-c710-4c95-a8d3-6644833195a7",
-      "surveyId": "cb0711c3-0ac8-41d3-ae0e-567e5ea1ef87"
-    }
-  ],
+  "collection_instruments": {
+    "EQ":[
+      {
+        "classifiers": {
+          "COLLECTION_EXERCISE": [
+            "e33daf0e-6a27-40cd-98dc-c6231f50e84a"
+          ], 
+          "RU_REF": [], 
+          "SURVEY_ID": "cb0711c3-0ac8-41d3-ae0e-567e5ea1ef87"
+        }, 
+        "file_name": "collection_instrument.xlsx", 
+        "id": "f732afbe-c710-4c95-a8d3-6644833195a7", 
+        "surveyId": "cb0711c3-0ac8-41d3-ae0e-567e5ea1ef87"
+      }
+    ]
+  },
   "sample_summary": {
     "id":"1a11543f-eb19-41f5-825f-e41aca15e724",
     "effectiveStartDateTime":null,
