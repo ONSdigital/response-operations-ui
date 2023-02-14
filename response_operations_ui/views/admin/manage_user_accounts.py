@@ -270,12 +270,12 @@ def post_manage_account_groups(user_id):
                 template_name="update_user_permissions",
                 personalisation={},
             )
-            delete_user_from_redis_session(user["id"])
         except NotifyError as e:
             logger.error("failed to send email", msg=e.description, exc_info=True)
             flash("Failed to send email, please try again", "error")
             return redirect(url_for("admin_bp.manage_account", user=user["emails"][0]["value"]))
 
+        delete_user_from_redis_session(user["id"])
         flash("User account has been successfully changed. An email to inform the user has been sent.")
 
     return redirect(url_for("admin_bp.manage_user_accounts"))
