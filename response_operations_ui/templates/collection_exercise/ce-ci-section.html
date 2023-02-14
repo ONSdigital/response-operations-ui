@@ -1,57 +1,40 @@
-<section class="ce-section ce-details ons-u-mb-l">
-    {% set surveyEditPermission = hasPermission('surveys.edit') %}
+<section class="ce-section ce-details">
+    {% set collectionInstrumentTableDataRows = [] %}
     {{
        onsLabel({
           "text": "Collection instruments (CI)",
-          "for": "sample-table",
+          "for": "collection-instrument-table",
           "description": "You can see the minimum number of collection instruments needed under the 'Sample file' 
           section. "
-    })
+      })
     }}
-    {% set surveyTableData = {
+    {% set  collectionInstrumentTableData = {
         "variants": ['compact', 'responsive'],
-        "id": "sample-table",
-        "caption": 'Sample summary',
+        "id": "collection-instrument-table",
+        "caption": 'Collection Instruments',
         "hideCaption": true,
     } %}
-    {% if survey.surveyMode == 'EQ' %}
-        {% set ciType = 'EQ collection instruments' %}
-        {% if locked or (not surveyEditPermission) %}
-          {% set ciButtonText = 'View' %}
-        {% elif instrument_count != '0' %}
-          {% set ciButtonText = 'Select or Add' %}
-        {% else %}
-          {% set ciButtonText = 'Add' %}
-        {% endif %}
-    {% else %}
-        {% set ciType = 'SEFT collection instruments' %}
-        {% if instrument_count == '0' %}
-          {% set ciButtonText = 'Upload' %}
-        {% else %}
-          {% set ciButtonText = 'View or Upload' %}
-        {% endif %}
-    {% endif %}
   
-    {% set addCILink = '<a href="' + url_for('collection_exercise_bp.get_view_sample_ci', short_name=survey.shortName, 
-                            period=ce.exerciseRef) + '" id="view-add-upload-ci">' + ciButtonText + '</a>' %}
-  
-    {% set surveyTableDataRows = [ 
-        {"tds": [
-            {
-                "value": ciType,
-                "tdClasses": "ons-u-ta-left"
-            },
-            {
-                "value": instrument_count,
-                "tdClasses": "ons-u-ta-centre"
-            }, 
-            {
-              "value": addCILink,
-              "tdClasses": "ons-u-ta-right"
-            }
-          ] 
-        } 
-    ] %}
-    {% do surveyTableData | setAttribute("trs", surveyTableDataRows) %}
-    {{ onsTable(surveyTableData) }}
+    {% for ci_type in ci_table_context %}
+      {% do collectionInstrumentTableDataRows.append(
+          {
+              "tds": [
+                {
+                  "value": ci_type.title
+                },
+                {
+                  "value": ci_type.count,
+                  "tdClasses": "ons-u-ta-centre"
+                }, 
+                {
+                  "value": '<a href="' + ci_type.url + '" id="view-add-upload-ci-' + ci_type.type + '">' + ci_type.link_text + '</a>',
+                  "tdClasses": "ons-u-ta-right"
+                }
+              ] 
+          }
+      )
+    %}
+    {% endfor %}
+    {% do collectionInstrumentTableData | setAttribute("trs", collectionInstrumentTableDataRows) %}
+    {{ onsTable(collectionInstrumentTableData) }}
 </section>

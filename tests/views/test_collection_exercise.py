@@ -11,6 +11,7 @@ import requests_mock
 
 from config import TestingConfig
 from response_operations_ui.views.collection_exercise import (
+    build_collection_exercise_details,
     get_existing_sorted_nudge_events,
     validate_file_extension_is_correct,
     validate_ru_specific_collection_instrument,
@@ -22,6 +23,7 @@ ci_selector_id = "efa868fb-fb80-44c7-9f33-d6800a17c4da"
 collection_exercise_event_id = "b4a36392-a21f-485b-9dc4-d151a8fcd565"
 collection_exercise_id = "14fb3e68-4dca-46db-bf49-04b84e07e77c"
 collection_instrument_id = "a32800c5-5dc1-459d-9932-0da6c21d2ed2"
+collection_instrument_id_2 = "5c5ca56f-8d15-426d-969a-9799d68d7971"
 period = "000000"
 sample_summary_id = "1a11543f-eb19-41f5-825f-e41aca15e724"
 short_name = "MBS"
@@ -64,22 +66,6 @@ with open(f"{project_root}/test_data/collection_exercise/formatted_new_collectio
 
 with open(f"{project_root}/test_data/collection_exercise/seft_collection_exercise_details.json") as seft:
     seft_collection_exercise_details = json.load(seft)
-with open(
-    f"{project_root}/test_data/collection_exercise/seft_collection_exercise_details_set_ready_for_live.json"
-) as seft:
-    seft_collection_exercise_details_set_ready_for_live = json.load(seft)
-with open(f"{project_root}/test_data/collection_exercise/seft_collection_exercise_details_ready_for_live.json") as seft:
-    seft_collection_exercise_details_ready_for_live = json.load(seft)
-with open(
-    f"{project_root}/test_data/collection_exercise/seft_collection_exercise_details_execution_started.json"
-) as seft:
-    seft_collection_exercise_details_execution_started = json.load(seft)
-with open(f"{project_root}/test_data/collection_exercise/seft_collection_exercise_details_validated.json") as seft:
-    seft_collection_exercise_details_validated = json.load(seft)
-with open(f"{project_root}/test_data/collection_exercise/seft_collection_exercise_details_executed.json") as seft:
-    seft_collection_exercise_details_executed = json.load(seft)
-with open(f"{project_root}/test_data/collection_exercise/seft_collection_exercise_details_ended.json") as seft:
-    seft_collection_exercise_details_ended = json.load(seft)
 
 with open(f"{project_root}/test_data/collection_exercise/collection_exercise.json") as json_data:
     collection_exercise = json.load(json_data)
@@ -201,7 +187,7 @@ class TestCollectionExercise(ViewTestCase):
         payload = {"user_id": "test-id", "aud": "response_operations"}
         self.access_token = jwt.encode(payload, TestingConfig.UAA_PRIVATE_KEY, algorithm="RS256")
         self.survey_data = {"id": survey_id}
-        self.survey = {
+        self.seft_survey = {
             "id": survey_id,
             "longName": "Business Register and Employment Survey",
             "shortName": "BRES",
@@ -209,14 +195,6 @@ class TestCollectionExercise(ViewTestCase):
             "eqVersion": "",
             "surveyMode": "SEFT",
         }
-        self.seft_survey = {
-            "id": survey_id,
-            "longName": "Monthly Survey of Building Materials Bricks",
-            "shortName": "Bricks",
-            "surveyRef": "074",
-            "eqVersion": "",
-        }
-
         self.eq_survey_dates = {
             "id": survey_id,
             "longName": "Monthly Survey of Building Materials Bricks",
@@ -226,14 +204,6 @@ class TestCollectionExercise(ViewTestCase):
             "surveyMode": "EQ",
             "ref_period_start": "2017-05-15T00:00:00Z",
             "ref_period_end": "2017-05-15T00:00:00Z",
-        }
-        self.survey = {
-            "id": survey_id,
-            "longName": "Business Register and Employment Survey",
-            "shortName": "BRES",
-            "surveyRef": "221",
-            "eqVersion": "",
-            "surveyMode": "SEFT",
         }
         self.collection_exercises = [
             {
@@ -291,7 +261,7 @@ class TestCollectionExercise(ViewTestCase):
             },
         ]
         self.collection_exercises_link = [sample_summary_id]
-        self.collection_instruments = [
+        self.eq_collection_instrument = [
             {
                 "classifiers": {
                     "COLLECTION_EXERCISE": [
@@ -303,7 +273,36 @@ class TestCollectionExercise(ViewTestCase):
                 "file_name": "file",
                 "id": collection_instrument_id,
                 "surveyId": survey_id,
+                "type": "EQ",
             }
+        ]
+        self.seft_collection_instruments = [
+            {
+                "classifiers": {
+                    "COLLECTION_EXERCISE": [
+                        collection_exercise_id,
+                    ],
+                    "RU_REF": [],
+                    "SURVEY_ID": survey_id,
+                },
+                "file_name": "file",
+                "id": collection_instrument_id,
+                "surveyId": survey_id,
+                "type": "SEFT",
+            },
+            {
+                "classifiers": {
+                    "COLLECTION_EXERCISE": [
+                        collection_exercise_id,
+                    ],
+                    "RU_REF": [],
+                    "SURVEY_ID": survey_id,
+                },
+                "file_name": "file",
+                "id": collection_instrument_id_2,
+                "surveyId": survey_id,
+                "type": "SEFT",
+            },
         ]
         self.collection_exercise_ref_start_date = [
             {
@@ -358,12 +357,6 @@ class TestCollectionExercise(ViewTestCase):
                 "surveyId": survey_id,
             }
         ]
-        self.linked_sample = {
-            "collectionExerciseId": collection_exercise_id,
-            "sampleSummaryIds": [
-                sample_summary_id,
-            ],
-        }
         self.sample_summary = {
             "id": sample_summary_id,
             "effectiveStartDateTime": "",
@@ -388,7 +381,7 @@ class TestCollectionExercise(ViewTestCase):
         mock_request.get(url_link_sample, json=[sample_summary_id])
         mock_request.get(url_get_sample_summary, json=self.sample_summary)
         mock_request.get(
-            f"{url_get_collection_instrument}?{ci_search_string}", json=self.collection_instruments, complete_qs=True
+            f"{url_get_collection_instrument}?{ci_search_string}", json=self.eq_collection_instrument, complete_qs=True
         )
         mock_request.get(
             f"{url_get_collection_instrument}?{ci_type_search_string_eq}", json=self.eq_ci_selectors, complete_qs=True
@@ -408,7 +401,7 @@ class TestCollectionExercise(ViewTestCase):
         mock_request.get(url_ce_by_id, json=collection_exercise_details["collection_exercise"])
         mock_request.get(url_get_collection_exercise_events, json=self.collection_exercise_ref_start_date)
         mock_request.get(
-            f"{url_get_collection_instrument}?{ci_search_string}", json=self.collection_instruments, complete_qs=True
+            f"{url_get_collection_instrument}?{ci_search_string}", json=self.eq_collection_instrument, complete_qs=True
         )
         mock_request.get(
             f"{url_get_collection_instrument}?{ci_type_search_string_eq}", json=self.eq_ci_selectors, complete_qs=True
@@ -432,7 +425,7 @@ class TestCollectionExercise(ViewTestCase):
         mock_request.get(url_ce_by_id, json=collection_exercise_details["collection_exercise"])
         mock_request.get(url_get_collection_exercise_events, json=self.collection_exercise_ref_end_date)
         mock_request.get(
-            f"{url_get_collection_instrument}?{ci_search_string}", json=self.collection_instruments, complete_qs=True
+            f"{url_get_collection_instrument}?{ci_search_string}", json=self.eq_collection_instrument, complete_qs=True
         )
         mock_request.get(
             f"{url_get_collection_instrument}?{ci_type_search_string_eq}", json=self.eq_ci_selectors, complete_qs=True
@@ -458,7 +451,7 @@ class TestCollectionExercise(ViewTestCase):
         mock_request.get(url_link_sample, json=[sample_summary_id])
         mock_request.get(url_get_sample_summary, json=self.sample_summary)
         mock_request.get(
-            f"{url_get_collection_instrument}?{ci_search_string}", json=self.collection_instruments, complete_qs=True
+            f"{url_get_collection_instrument}?{ci_search_string}", json=self.eq_collection_instrument, complete_qs=True
         )
         mock_request.get(
             f"{url_get_collection_instrument}?{ci_type_search_string_eq}", json=self.eq_ci_selectors, complete_qs=True
@@ -476,12 +469,14 @@ class TestCollectionExercise(ViewTestCase):
 
     @requests_mock.mock()
     def test_collection_exercise_view_seft(self, mock_request):
-        mock_request.get(url_get_survey_by_short_name, json=self.survey)
+        mock_request.get(url_get_survey_by_short_name, json=self.seft_survey)
         mock_request.get(url_ces_by_survey, json=self.collection_exercises)
         mock_request.get(url_ce_by_id, json=collection_exercise_details["collection_exercise"])
         mock_request.get(url_get_collection_exercise_events, json=self.collection_exercise_events)
         mock_request.get(
-            f"{url_get_collection_instrument}?{ci_search_string}", json=self.collection_instruments, complete_qs=True
+            f"{url_get_collection_instrument}?{ci_search_string}",
+            json=self.seft_collection_instruments,
+            complete_qs=True,
         )
         mock_request.get(
             f"{url_get_collection_instrument}?{ci_type_search_string_eq}", json=self.eq_ci_selectors, complete_qs=True
@@ -496,14 +491,84 @@ class TestCollectionExercise(ViewTestCase):
         self.assertIn("221_201712".encode(), response.data)
         self.assertIn("PUBLISHED".encode(), response.data)
 
+    @patch("response_operations_ui.views.collection_exercise.build_collection_exercise_details")
+    def test_collection_exercise_view_eq_instrument(self, mock_details):
+        # Given I have an eQ collection exercise with a collection instrument linked
+        eq_cis = {"EQ": self.eq_collection_instrument}
+        ce_details = {
+            "survey": self.eq_survey_dates,
+            "collection_exercise": self.collection_exercises[0],
+            "collection_instruments": eq_cis,
+            "events": {},
+            "sample_summary": {},
+        }
+        mock_details.return_value = ce_details
+
+        # When I call the collection exercise period endpoint
+        response = self.client.get(f"/surveys/{short_name}/{period}", follow_redirects=True)
+
+        # Then I can view eQ collection instruments but not SEFT
+        self.assertEqual(response.status_code, 200)
+        self.assertIn("EQ collection instruments".encode(), response.data)
+        self.assertIn('id="view-add-upload-ci-eq">View</a>'.encode(), response.data)
+        self.assertNotIn("SEFT collection instruments".encode(), response.data)
+        self.assertNotIn('id="view-add-upload-ci-seft">View</a>'.encode(), response.data)
+
+    @patch("response_operations_ui.views.collection_exercise.build_collection_exercise_details")
+    def test_collection_exercise_view_seft_instruments(self, mock_details):
+        # Given I have a SEFT collection exercise with collection instruments uploaded
+        seft_cis = {"SEFT": self.seft_collection_instruments}
+        ce_details = {
+            "survey": self.seft_survey,
+            "collection_exercise": self.collection_exercises[0],
+            "collection_instruments": seft_cis,
+            "events": {},
+            "sample_summary": {},
+        }
+        mock_details.return_value = ce_details
+
+        # When I call the collection exercise period endpoint
+        response = self.client.get(f"/surveys/{short_name}/{period}", follow_redirects=True)
+
+        # Then I can view SEFT collection instruments but not EQ
+        self.assertEqual(response.status_code, 200)
+        self.assertIn("SEFT collection instruments".encode(), response.data)
+        self.assertIn('id="view-add-upload-ci-seft">View</a>'.encode(), response.data)
+        self.assertNotIn("EQ collection instruments".encode(), response.data)
+        self.assertNotIn('id="view-add-upload-ci-eq">View</a>'.encode(), response.data)
+
+    @patch("response_operations_ui.views.collection_exercise.build_collection_exercise_details")
+    def test_collection_exercise_view_eq_and_seft_instruments(self, mock_details):
+        # Given I have an eQ and SEFT collection exercise with collection instruments for both
+        eq_and_seft_cis = {"SEFT": self.seft_collection_instruments, "EQ": self.eq_collection_instrument}
+        ce_details = {
+            "survey": self.seft_survey,
+            "collection_exercise": self.collection_exercises[0],
+            "collection_instruments": eq_and_seft_cis,
+            "events": {},
+            "sample_summary": {},
+        }
+        ce_details["survey"]["surveyMode"] = "EQ_AND_SEFT"
+        mock_details.return_value = ce_details
+
+        # When I call the collection exercise period endpoint
+        response = self.client.get(f"/surveys/{short_name}/{period}", follow_redirects=True)
+
+        # Then I can view eQ and SEFT collection instruments for both
+        self.assertEqual(response.status_code, 200)
+        self.assertIn("SEFT collection instruments".encode(), response.data)
+        self.assertIn("EQ collection instruments".encode(), response.data)
+        self.assertIn('id="view-add-upload-ci-eq">View</a>'.encode(), response.data)
+        self.assertIn('id="view-add-upload-ci-seft">View</a>'.encode(), response.data)
+
     @requests_mock.mock()
     def test_collection_exercise_view_event_statuses(self, mock_request):
-        mock_request.get(url_get_survey_by_short_name, json=self.survey)
+        mock_request.get(url_get_survey_by_short_name, json=self.seft_survey)
         mock_request.get(url_ces_by_survey, json=self.collection_exercises)
         mock_request.get(url_ce_by_id, json=collection_exercise_details["collection_exercise"])
         mock_request.get(url_get_collection_exercise_events, json=self.collection_exercise_events)
         mock_request.get(
-            f"{url_get_collection_instrument}?{ci_search_string}", json=self.collection_instruments, complete_qs=True
+            f"{url_get_collection_instrument}?{ci_search_string}", json=self.eq_collection_instrument, complete_qs=True
         )
         mock_request.get(
             f"{url_get_collection_instrument}?{ci_type_search_string_eq}", json=self.eq_ci_selectors, complete_qs=True
@@ -518,19 +583,10 @@ class TestCollectionExercise(ViewTestCase):
         self.assertIn("Failed".encode(), response.data)
         self.assertIn("Processing".encode(), response.data)
 
-    @requests_mock.mock()
     @patch("response_operations_ui.views.collection_exercise.build_collection_exercise_details")
-    def test_collection_exercise_view_seft_exercise_states(self, mock_request, mock_details):
-        mock_request.get(url_get_survey_by_short_name, json=self.seft_survey)
-        mock_request.get(url_ces_by_survey, json=self.collection_exercises)
-        mock_request.get(url_ce_by_id, json=collection_exercise_details["collection_exercise"])
-        mock_request.get(url_get_collection_exercise_events, json=self.collection_exercise_events)
-        mock_request.get(url_link_sample, json=[sample_summary_id])
-        mock_request.get(url_get_sample_summary, json=self.sample_summary)
-        mock_request.post(url_collection_instrument, status_code=201)
-
-        # Set exercise status to READY_FOR_REVIEW
-        mock_details.return_value = seft_collection_exercise_details_set_ready_for_live
+    def test_collection_exercise_view_seft_exercise_states(self, mock_details):
+        seft_collection_exercise_details["collection_exercise"]["state"] = "READY_FOR_REVIEW"
+        mock_details.return_value = seft_collection_exercise_details
         response = self.client.get(f"/surveys/{short_name}/{period}", follow_redirects=True)
         self.assertEqual(response.status_code, 200)
         self.assertIn("Monthly Survey of Building Materials Bricks".encode(), response.data)
@@ -540,38 +596,100 @@ class TestCollectionExercise(ViewTestCase):
         self.assertIn("Set as ready for live".encode(), response.data)
 
         # Set the exercise state to READY_FOR_LIVE
-        mock_details.return_value = seft_collection_exercise_details_ready_for_live
+        seft_collection_exercise_details["collection_exercise"]["state"] = "READY_FOR_LIVE"
+        mock_details.return_value = seft_collection_exercise_details
         response = self.client.get(f"/surveys/{short_name}/{period}", follow_redirects=True)
         self.assertEqual(response.status_code, 200)
         self.assertIn("Ready for live".encode(), response.data)
         self.assertNotIn("Set as ready for live".encode(), response.data)
 
         # Set the exercise state to EXECUTION STARTED
-        mock_details.return_value = seft_collection_exercise_details_execution_started
+        seft_collection_exercise_details["collection_exercise"]["state"] = "EXECUTION_STARTED"
+        mock_details.return_value = seft_collection_exercise_details
         response = self.client.get(f"/surveys/{short_name}/{period}", follow_redirects=True)
         self.assertEqual(response.status_code, 200)
         self.assertIn("Setting ready for live".encode(), response.data)
         self.assertNotIn("Set as ready for live".encode(), response.data)
 
         # Set the exercise state to VALIDATED
-        mock_details.return_value = seft_collection_exercise_details_validated
+        seft_collection_exercise_details["collection_exercise"]["state"] = "VALIDATED"
+        mock_details.return_value = seft_collection_exercise_details
         response = self.client.get(f"/surveys/{short_name}/{period}", follow_redirects=True)
         self.assertEqual(response.status_code, 200)
         self.assertIn("Setting ready for live".encode(), response.data)
         self.assertNotIn("Set as ready for live".encode(), response.data)
 
         # Set the exercise state to EXECUTED
-        mock_details.return_value = seft_collection_exercise_details_executed
+        seft_collection_exercise_details["collection_exercise"]["state"] = "EXECUTED"
+        mock_details.return_value = seft_collection_exercise_details
         response = self.client.get(f"/surveys/{short_name}/{period}", follow_redirects=True)
         self.assertEqual(response.status_code, 200)
         self.assertIn("Setting ready for live".encode(), response.data)
         self.assertNotIn("Set as ready for live".encode(), response.data)
 
         # Set the exercise state to ENDED
-        mock_details.return_value = seft_collection_exercise_details_ended
+        seft_collection_exercise_details["collection_exercise"]["state"] = "ENDED"
+        mock_details.return_value = seft_collection_exercise_details
         response = self.client.get(f"/surveys/{short_name}/{period}", follow_redirects=True)
         self.assertEqual(response.status_code, 200)
         self.assertIn("Ended".encode(), response.data)
+
+    @requests_mock.mock()
+    def test_collection_exercise_details_single_eq_collection_instrument(self, mock_request):
+        # Given I have a collection exercise with a single eq collection instrument (EQ)
+        self._mock_build_collection_exercise_details(mock_request)
+
+        # When I call build_collection_exercise_details
+        with self.app.app_context():
+            exercise_dict = build_collection_exercise_details("MBS", "000000", include_ci=True)
+
+        # Then the collection exercise has 1 key (EQ) and 1 value in the collection instrument
+        expected_output = {"EQ": self.eq_collection_instrument}
+        self.assertEqual(expected_output, exercise_dict["collection_instruments"])
+        self.assertEqual(len(exercise_dict["collection_instruments"]["EQ"]), 1)
+
+    @requests_mock.mock()
+    def test_collection_exercise_details_multiple_seft_collection_instruments(self, mock_request):
+        # Given I have multiple collection instruments of the same type (2 x SEFT)
+        eq_and_seft = self.seft_collection_instruments.copy()
+        self._mock_build_collection_exercise_details(mock_request, False)
+        mock_request.get(f"{url_get_collection_instrument}?{ci_search_string}", json=eq_and_seft, complete_qs=True)
+
+        # When I call build_collection_exercise_details
+        with self.app.app_context():
+            exercise_dict = build_collection_exercise_details("MBS", "000000", include_ci=True)
+
+        # Then the collection exercise has 1 key (SEFT) and 2 values in the collection instrument
+        expected_output = {"SEFT": eq_and_seft}
+
+        self.assertEqual(expected_output, exercise_dict["collection_instruments"])
+        self.assertEqual(len(exercise_dict["collection_instruments"]["SEFT"]), 2)
+        self.assertEqual(exercise_dict["collection_instruments"]["SEFT"][0]["id"], collection_instrument_id)
+        self.assertEqual(exercise_dict["collection_instruments"]["SEFT"][1]["id"], collection_instrument_id_2)
+
+    @requests_mock.mock()
+    def test_collection_exercise_details_eq_and_seft_collection_instruments(self, mock_request):
+        # Given I have multiple collection instruments of different types (2 x SEFT, 1 x EQ)
+        eq_and_seft_collection_instruments = self.seft_collection_instruments.copy()
+        eq_and_seft_collection_instruments.append(self.eq_collection_instrument[0])
+        self._mock_build_collection_exercise_details(mock_request, False)
+        mock_request.get(
+            f"{url_get_collection_instrument}?{ci_search_string}",
+            json=eq_and_seft_collection_instruments,
+            complete_qs=True,
+        )
+
+        # When I call build_collection_exercise_details
+        with self.app.app_context():
+            exercise_dict = build_collection_exercise_details("MBS", "000000", include_ci=True)
+
+        # Then the collection exercise has 2 keys (EQ and SEFT)
+        # with 2 values in SEFT and 1 in EQ in the collection instrument
+        expected_output = {"SEFT": self.seft_collection_instruments, "EQ": self.eq_collection_instrument}
+
+        self.assertEqual(expected_output, exercise_dict["collection_instruments"])
+        self.assertEqual(len(exercise_dict["collection_instruments"]["SEFT"]), 2)
+        self.assertEqual(len(exercise_dict["collection_instruments"]["EQ"]), 1)
 
     @requests_mock.mock()
     @patch("response_operations_ui.views.collection_exercise.build_collection_exercise_details")
@@ -608,7 +726,7 @@ class TestCollectionExercise(ViewTestCase):
 
     @requests_mock.mock()
     def test_collection_exercise_view_survey_errors(self, mock_request):
-        mock_request.get(url_get_survey_by_short_name, json=self.survey)
+        mock_request.get(url_get_survey_by_short_name, json=self.seft_survey)
 
         # Empty list
         mock_request.get(url_ces_by_survey, json=[])
@@ -635,7 +753,7 @@ class TestCollectionExercise(ViewTestCase):
 
         # 400 Response back from collection instrument
         mock_request.reset()
-        mock_request.get(url_get_survey_by_short_name, json=self.survey)
+        mock_request.get(url_get_survey_by_short_name, json=self.seft_survey)
         mock_request.get(url_ces_by_survey, json=self.collection_exercises)
         mock_request.get(url_ce_by_id, json=collection_exercise_details["collection_exercise"])
         mock_request.get(url_get_collection_exercise_events, json=self.collection_exercise_events)
@@ -647,8 +765,8 @@ class TestCollectionExercise(ViewTestCase):
 
     @requests_mock.mock()
     @patch("response_operations_ui.views.collection_exercise.build_collection_exercise_details")
-    def test_upload_collection_instrument(self, mock_request, mock_details):
-        post_data = {"ciFile": (BytesIO(b"data"), "064_201803_0001.xlsx"), "load-ci": ""}
+    def test_upload_seft_collection_instrument(self, mock_request, mock_details):
+        post_data = {"ciFile": (BytesIO(b"data"), "064_201803_0001.xlsx"), "load-seft-ci": ""}
         mock_request.post(url_collection_instrument, status_code=201)
         mock_request.get(url_ces_by_survey, json=exercise_data)
         mock_request.get(url_get_survey_by_short_name, json=self.survey_data)
@@ -663,8 +781,8 @@ class TestCollectionExercise(ViewTestCase):
 
     @requests_mock.mock()
     @patch("response_operations_ui.views.collection_exercise.build_collection_exercise_details")
-    def test_select_collection_instrument(self, mock_request, mock_details):
-        post_data = {"checkbox-answer": [collection_instrument_id], "ce_id": collection_exercise_id, "select-ci": ""}
+    def test_select_eq_collection_instrument(self, mock_request, mock_details):
+        post_data = {"checkbox-answer": [collection_instrument_id], "ce_id": collection_exercise_id, "select-eq-ci": ""}
         mock_request.post(url_collection_instrument_link, status_code=200)
         mock_details.return_value = formatted_collection_exercise_details
 
@@ -677,8 +795,8 @@ class TestCollectionExercise(ViewTestCase):
 
     @requests_mock.mock()
     @patch("response_operations_ui.views.collection_exercise.build_collection_exercise_details")
-    def test_failed_select_collection_instrument(self, mock_request, mock_details):
-        post_data = {"checkbox-answer": [collection_instrument_id], "ce_id": collection_exercise_id, "select-ci": ""}
+    def test_failed_select_eq_collection_instrument(self, mock_request, mock_details):
+        post_data = {"checkbox-answer": [collection_instrument_id], "ce_id": collection_exercise_id, "select-eq-ci": ""}
         mock_request.post(url_collection_instrument_link, status_code=500)
         mock_details.return_value = formatted_collection_exercise_details
 
@@ -689,14 +807,18 @@ class TestCollectionExercise(ViewTestCase):
         self.assertEqual(response.status_code, 200)
         self.assertIn("Error: Failed to add collection instrument(s)".encode(), response.data)
 
-    @requests_mock.mock()
+    @patch(
+        "response_operations_ui.views.collection_exercise.collection_instrument_controllers."
+        "get_collection_instruments_by_classifier"
+    )
     @patch("response_operations_ui.views.collection_exercise.build_collection_exercise_details")
-    def test_failed_no_selected_collection_instrument(self, mock_request, mock_details):
-        post_data = {"checkbox-answer": [], "ce_id": "000000", "select-ci": ""}
+    def test_failed_no_selected_eq_collection_instrument(self, mock_details, mock_ci_selector):
+        post_data = {"checkbox-answer": [], "ce_id": "000000", "select-eq-ci": ""}
         mock_details.return_value = formatted_collection_exercise_details
+        mock_ci_selector.return_value = []
 
         response = self.client.post(
-            f"/surveys/{short_name}/{period}/view-sample-ci", data=post_data, follow_redirects=True
+            f"/surveys/{short_name}/{period}/view-sample-ci?survey_mode=EQ", data=post_data, follow_redirects=True
         )
 
         self.assertEqual(response.status_code, 200)
@@ -704,8 +826,8 @@ class TestCollectionExercise(ViewTestCase):
 
     @requests_mock.mock()
     @patch("response_operations_ui.views.collection_exercise.build_collection_exercise_details")
-    def test_view_collection_instrument_after_upload(self, mock_request, mock_details):
-        post_data = {"ciFile": (BytesIO(b"data"), "064_201803_0001.xlsx"), "load-ci": ""}
+    def test_view_seft_collection_instrument_after_upload(self, mock_request, mock_details):
+        post_data = {"ciFile": (BytesIO(b"data"), "064_201803_0001.xlsx"), "load-seft-ci": ""}
         mock_request.post(url_collection_instrument, status_code=201)
         mock_request.get(url_get_survey_by_short_name, json=self.survey_data)
         mock_request.get(url_ces_by_survey, json=self.collection_exercises)
@@ -720,8 +842,8 @@ class TestCollectionExercise(ViewTestCase):
 
     @requests_mock.mock()
     @patch("response_operations_ui.views.collection_exercise.build_collection_exercise_details")
-    def test_failed_upload_collection_instrument(self, mock_request, mock_details):
-        post_data = {"ciFile": (BytesIO(b"data"), "064_201803_0001.xlsx"), "load-ci": ""}
+    def test_failed_upload_seft_collection_instrument(self, mock_request, mock_details):
+        post_data = {"ciFile": (BytesIO(b"data"), "064_201803_0001.xlsx"), "load-seft-ci": ""}
         mock_request.post(url_collection_instrument, status_code=500)
         mock_request.get(url_get_survey_by_short_name, status_code=200, json=self.survey_data)
         mock_request.get(url_ces_by_survey, json=self.collection_exercises)
@@ -735,11 +857,11 @@ class TestCollectionExercise(ViewTestCase):
         self.assertIn("Error: Failed to upload collection instrument".encode(), response.data)
 
     @patch("response_operations_ui.views.collection_exercise.build_collection_exercise_details")
-    def test_upload_collection_instrument_upload_validation(self, mock_details):
+    def test_upload_seft_collection_instrument_upload_validation(self, mock_details):
         mock_details.return_value = formatted_collection_exercise_details
 
         # Bad file extension
-        post_data = {"ciFile": (BytesIO(b"data"), "064_201803_0001.html"), "load-ci": ""}
+        post_data = {"ciFile": (BytesIO(b"data"), "064_201803_0001.html"), "load-seft-ci": ""}
         response = self.client.post(
             f"/surveys/{short_name}/{period}/view-sample-ci", data=post_data, follow_redirects=True
         )
@@ -748,7 +870,7 @@ class TestCollectionExercise(ViewTestCase):
         self.assertIn("Error: Wrong file type for collection instrument".encode(), response.data)
 
         # Bad form type format
-        post_data = {"ciFile": (BytesIO(b"data"), "064_201803_xxxxx.xlsx"), "load-ci": ""}
+        post_data = {"ciFile": (BytesIO(b"data"), "064_201803_xxxxx.xlsx"), "load-seft-ci": ""}
         response = self.client.post(
             f"/surveys/{short_name}/{period}/view-sample-ci", data=post_data, follow_redirects=True
         )
@@ -757,7 +879,7 @@ class TestCollectionExercise(ViewTestCase):
         self.assertIn("Error: Invalid file name format for collection instrument".encode(), response.data)
 
         # Bad file name format
-        post_data = {"ciFile": (BytesIO(b"data"), "064201803_xxxxx.xlsx"), "load-ci": ""}
+        post_data = {"ciFile": (BytesIO(b"data"), "064201803_xxxxx.xlsx"), "load-seft-ci": ""}
         response = self.client.post(
             f"/surveys/{short_name}/{period}/view-sample-ci", data=post_data, follow_redirects=True
         )
@@ -766,7 +888,7 @@ class TestCollectionExercise(ViewTestCase):
         self.assertIn("Error: Invalid file name format for collection instrument".encode(), response.data)
 
         # Formtype isn't an integer
-        post_data = {"ciFile": (BytesIO(b"data"), "064_201803_123E.xlsx"), "load-ci": ""}
+        post_data = {"ciFile": (BytesIO(b"data"), "064_201803_123E.xlsx"), "load-seft-ci": ""}
         response = self.client.post(
             f"/surveys/{short_name}/{period}/view-sample-ci", data=post_data, follow_redirects=True
         )
@@ -775,7 +897,7 @@ class TestCollectionExercise(ViewTestCase):
         self.assertIn("Error: Invalid file name format for collection instrument".encode(), response.data)
 
         # No file supplied
-        post_data = {"load-ci": ""}
+        post_data = {"load-seft-ci": ""}
         response = self.client.post(
             f"/surveys/{short_name}/{period}/view-sample-ci", data=post_data, follow_redirects=True
         )
@@ -792,9 +914,8 @@ class TestCollectionExercise(ViewTestCase):
         self.assertEqual(response.status_code, 200)
         self.assertIn("test_collection_instrument.xlxs".encode(), response.data)
 
-    @requests_mock.mock()
     @patch("response_operations_ui.views.collection_exercise.build_collection_exercise_details")
-    def test_add_another_collection_instrument_when_already_uploaded_no_permission(self, mock_request, mock_details):
+    def test_add_another_collection_instrument_when_already_uploaded_no_permission(self, mock_details):
         mock_details.return_value = formatted_collection_exercise_details
 
         response = self.client.get(f"/surveys/{short_name}/{period}/load-collection-instruments", follow_redirects=True)
@@ -935,22 +1056,6 @@ class TestCollectionExercise(ViewTestCase):
 
     @requests_mock.mock()
     @patch("response_operations_ui.views.collection_exercise.build_collection_exercise_details")
-    def test_eq_version_change_success(self, mock_request, mock_details):
-        data = {"eq-version": "v3"}
-        with open(
-            f"{project_root}/test_data/collection_exercise/formatted_collection_exercise_details_eq_version.json"
-        ) as collection_exercise:
-            mock_details.return_value = json.load(collection_exercise)
-        mock_request.put(url_update_ce_eq_version, status_code=200)
-        mock_request.get(url_get_survey_by_short_name, status_code=200, json=self.survey_data)
-        mock_request.get(url_ces_by_survey, status_code=200, json=exercise_data)
-        response = self.client.post(f"/surveys/{short_name}/{period}/view-sample-ci", data=data, follow_redirects=True)
-
-        self.assertEqual(response.status_code, 200)
-        self.assertIn("eQ version updated to v3".encode(), response.data)
-
-    @requests_mock.mock()
-    @patch("response_operations_ui.views.collection_exercise.build_collection_exercise_details")
     def test_post_ready_for_live(self, mock_request, mock_details):
         post_data = {"ready-for-live": ""}
         details = formatted_collection_exercise_details.copy()
@@ -1024,9 +1129,8 @@ class TestCollectionExercise(ViewTestCase):
         self.assertEqual(len(request_history), 2)
         self.assertEqual(response.status_code, 500)
 
-    @requests_mock.mock()
     @patch("response_operations_ui.views.collection_exercise.build_collection_exercise_details")
-    def test_get_processing(self, mock_request, mock_details):
+    def test_get_processing(self, mock_details):
         details = formatted_collection_exercise_details.copy()
         details["collection_exercise"]["state"] = "EXECUTION_STARTED"
         mock_details.return_value = details
@@ -1036,9 +1140,8 @@ class TestCollectionExercise(ViewTestCase):
         self.assertEqual(response.status_code, 200)
         self.assertIn("Processing collection exercise".encode(), response.data)
 
-    @requests_mock.mock()
     @patch("response_operations_ui.views.collection_exercise.build_collection_exercise_details")
-    def test_failed_execution(self, mock_request, mock_details):
+    def test_failed_execution(self, mock_details):
         with open(
             f"{project_root}/test_data/collection_exercise/"
             f"formatted_collection_exercise_details_failedvalidation.json"
@@ -1218,7 +1321,7 @@ class TestCollectionExercise(ViewTestCase):
         post_data = {
             "ci_id": collection_instrument_id,
             "ce_id": collection_exercise_id,
-            "unselect-ci": "",
+            "unselect-eq-ci": "",
         }
 
         mock_request.put(url_collection_instrument_unlink, status_code=500)
@@ -1254,7 +1357,7 @@ class TestCollectionExercise(ViewTestCase):
             url_ces_by_survey,
             [{"json": {}, "status_code": 200}, {"json": self.collection_exercises, "status_code": 200}],
         )
-        mock_request.get(url_get_survey_by_short_name, json=self.survey)
+        mock_request.get(url_get_survey_by_short_name, json=self.seft_survey)
         mock_request.get(url_get_collection_exercise_events, json=self.collection_exercise_events)
         mock_request.get(url_get_collection_exercises_link, json=self.collection_exercises_link)
         mock_request.get(url_get_sample_summary, json=self.sample_summary)
@@ -1262,7 +1365,7 @@ class TestCollectionExercise(ViewTestCase):
         mock_request.get(url_ce_by_id, json=collection_exercise_details["collection_exercise"])
         mock_request.get(url_link_sample, json=[sample_summary_id])
         mock_request.get(
-            f"{url_get_collection_instrument}?{ci_search_string}", json=self.collection_instruments, complete_qs=True
+            f"{url_get_collection_instrument}?{ci_search_string}", json=self.eq_collection_instrument, complete_qs=True
         )
         mock_request.get(
             f"{url_get_collection_instrument}?{ci_type_search_string_eq}", json=self.eq_ci_selectors, complete_qs=True
@@ -1308,7 +1411,7 @@ class TestCollectionExercise(ViewTestCase):
             "user_description": "New collection exercise",
             "period": "invalid",
         }
-        mock_request.get(url_survey_shortname, status_code=200, json=self.survey)
+        mock_request.get(url_survey_shortname, status_code=200, json=self.seft_survey)
 
         response = self.client.post(
             f"/surveys/{survey_ref}/{short_name}/create-collection-exercise", data=new_collection_exercise_details
@@ -1539,14 +1642,14 @@ class TestCollectionExercise(ViewTestCase):
 
     @requests_mock.mock()
     def test_schedule_nudge_email_option_not_present(self, mock_request):
-        mock_request.get(url_get_survey_by_short_name, json=self.survey)
+        mock_request.get(url_get_survey_by_short_name, json=self.seft_survey)
         mock_request.get(url_ces_by_survey, json=self.collection_exercises)
         mock_request.get(url_ce_by_id, json=collection_exercise_details["collection_exercise"])
         mock_request.get(url_get_collection_exercise_events, json=self.collection_exercise_events)
         mock_request.get(url_link_sample, json=[sample_summary_id])
         mock_request.get(url_get_sample_summary, json=self.sample_summary)
         mock_request.get(
-            f"{url_get_collection_instrument}?{ci_search_string}", json=self.collection_instruments, complete_qs=True
+            f"{url_get_collection_instrument}?{ci_search_string}", json=self.eq_collection_instrument, complete_qs=True
         )
         mock_request.get(
             f"{url_get_collection_instrument}?{ci_type_search_string_eq}", json=self.eq_ci_selectors, complete_qs=True
@@ -1560,14 +1663,14 @@ class TestCollectionExercise(ViewTestCase):
     @requests_mock.mock()
     def test_schedule_nudge_email_option_present(self, mock_request):
         sign_in_with_permission(self, mock_request, user_permission_surveys_edit_json)
-        mock_request.get(url_get_survey_by_short_name, json=self.survey)
+        mock_request.get(url_get_survey_by_short_name, json=self.seft_survey)
         mock_request.get(url_ces_by_survey, json=self.collection_exercises)
         mock_request.get(url_ce_by_id, json=collection_exercise_details["collection_exercise"])
         mock_request.get(url_get_collection_exercise_events, json=events)
         mock_request.get(url_link_sample, json=[sample_summary_id])
         mock_request.get(url_get_sample_summary, json=self.sample_summary)
         mock_request.get(
-            f"{url_get_collection_instrument}?{ci_search_string}", json=self.collection_instruments, complete_qs=True
+            f"{url_get_collection_instrument}?{ci_search_string}", json=self.eq_collection_instrument, complete_qs=True
         )
         mock_request.get(
             f"{url_get_collection_instrument}?{ci_type_search_string_eq}", json=self.eq_ci_selectors, complete_qs=True
@@ -1581,14 +1684,14 @@ class TestCollectionExercise(ViewTestCase):
     @requests_mock.mock()
     def test_can_create_up_to_five_nudge_email(self, mock_request):
         sign_in_with_permission(self, mock_request, user_permission_surveys_edit_json)
-        mock_request.get(url_get_survey_by_short_name, json=self.survey)
+        mock_request.get(url_get_survey_by_short_name, json=self.seft_survey)
         mock_request.get(url_ces_by_survey, json=self.collection_exercises)
         mock_request.get(url_ce_by_id, json=collection_exercise_details["collection_exercise"])
         mock_request.get(url_get_collection_exercise_events, json=nudge_events_two)
         mock_request.get(url_link_sample, json=[sample_summary_id])
         mock_request.get(url_get_sample_summary, json=self.sample_summary)
         mock_request.get(
-            f"{url_get_collection_instrument}?{ci_search_string}", json=self.collection_instruments, complete_qs=True
+            f"{url_get_collection_instrument}?{ci_search_string}", json=self.eq_collection_instrument, complete_qs=True
         )
         mock_request.get(
             f"{url_get_collection_instrument}?{ci_type_search_string_eq}", json=self.eq_ci_selectors, complete_qs=True
@@ -1695,12 +1798,15 @@ class TestCollectionExercise(ViewTestCase):
 
     @requests_mock.mock()
     @patch("response_operations_ui.views.collection_exercise.build_collection_exercise_details")
-    def test_load_collection_instruments_is_not_present(self, mock_request, mock_details):
+    def test_load_seft_collection_instruments_is_not_present(self, mock_request, mock_details):
         sign_in_with_permission(self, mock_request, user_permission_surveys_edit_json)
+        seft_collection_exercise_details["collection_instruments"] = {}
         mock_details.return_value = seft_collection_exercise_details
         mock_request.get(url_get_survey_by_short_name, json=updated_survey_info["survey"])
         mock_request.get(url_ces_by_survey, json=updated_survey_info["collection_exercises"])
-        response = self.client.get(f"/surveys/{short_name}/{period}/view-sample-ci", follow_redirects=True)
+        response = self.client.get(
+            f"/surveys/{short_name}/{period}/view-sample-ci?survey_mode=SEFT", follow_redirects=True
+        )
 
         self.assertEqual(response.status_code, 200)
         self.assertIn("Upload SEFT files".encode(), response.data)
@@ -1847,7 +1953,7 @@ class TestCollectionExercise(ViewTestCase):
         mock_request.get(url_link_sample, json=[sample_summary_id])
         mock_request.get(url_get_sample_summary, json=self.sample_summary)
         mock_request.get(
-            f"{url_get_collection_instrument}?{ci_search_string}", json=self.collection_instruments, complete_qs=True
+            f"{url_get_collection_instrument}?{ci_search_string}", json=self.eq_collection_instrument, complete_qs=True
         )
         mock_request.get(
             f"{url_get_collection_instrument}?{ci_type_search_string_eq}", json=self.eq_ci_selectors, complete_qs=True
@@ -1873,7 +1979,7 @@ class TestCollectionExercise(ViewTestCase):
         mock_request.get(url_ce_by_id, json=collection_exercise_details["collection_exercise"])
         mock_request.get(url_get_collection_exercise_events, json=events)
         mock_request.get(
-            f"{url_get_collection_instrument}?{ci_search_string}", json=self.collection_instruments, complete_qs=True
+            f"{url_get_collection_instrument}?{ci_search_string}", json=self.eq_collection_instrument, complete_qs=True
         )
         mock_request.get(
             f"{url_get_collection_instrument}?{ci_type_search_string_eq}", json=self.eq_ci_selectors, complete_qs=True
@@ -1900,7 +2006,7 @@ class TestCollectionExercise(ViewTestCase):
         mock_request.get(url_ce_by_id, json=collection_exercise_details["collection_exercise"])
         mock_request.get(url_get_collection_exercise_events, json=events)
         mock_request.get(
-            f"{url_get_collection_instrument}?{ci_search_string}", json=self.collection_instruments, complete_qs=True
+            f"{url_get_collection_instrument}?{ci_search_string}", json=self.eq_collection_instrument, complete_qs=True
         )
         mock_request.get(
             f"{url_get_collection_instrument}?{ci_type_search_string_eq}", json=self.eq_ci_selectors, complete_qs=True
@@ -1913,18 +2019,20 @@ class TestCollectionExercise(ViewTestCase):
         self.assertEqual(response.status_code, 200)
         self.assertIn("Monthly Survey of Building Materials Bricks".encode(), response.data)
         self.assertIn("221_201712".encode(), response.data)
-        self.assertIn('id="view-add-upload-ci">View</a>'.encode(), response.data)
+        self.assertIn('id="view-add-upload-ci-eq">View</a>'.encode(), response.data)
         self.assertNotIn("Upload sample file".encode(), response.data)
 
     @requests_mock.mock()
     def test_seft_view_sample_ci_page_survey_permission(self, mock_request):
         sign_in_with_permission(self, mock_request, user_permission_surveys_edit_json)
-        mock_request.get(url_get_survey_by_short_name, json=self.survey)
+        mock_request.get(url_get_survey_by_short_name, json=self.seft_survey)
         mock_request.get(url_ces_by_survey, json=self.collection_exercises)
         mock_request.get(url_ce_by_id, json=collection_exercise_details_no_sample["collection_exercise"])
         mock_request.get(url_get_collection_exercise_events, json=self.collection_exercise_events)
         mock_request.get(
-            f"{url_get_collection_instrument}?{ci_search_string}", json=self.collection_instruments, complete_qs=True
+            f"{url_get_collection_instrument}?{ci_search_string}",
+            json=self.seft_collection_instruments,
+            complete_qs=True,
         )
         mock_request.get(
             f"{url_get_collection_instrument}?{ci_type_search_string_eq}", json=self.eq_ci_selectors, complete_qs=True
@@ -1932,7 +2040,7 @@ class TestCollectionExercise(ViewTestCase):
         mock_request.get(url_link_sample, json=[""])
         mock_request.get(url_get_sample_summary, json="")
 
-        response = self.client.get(f"/surveys/{short_name}/{period}/view-sample-ci")
+        response = self.client.get(f"/surveys/{short_name}/{period}/view-sample-ci?survey_mode=SEFT")
 
         self.assertEqual(200, response.status_code)
         self.assertIn("SEFT collection instruments".encode(), response.data)
@@ -1947,7 +2055,7 @@ class TestCollectionExercise(ViewTestCase):
         mock_request.get(url_ce_by_id, json=collection_exercise_eq_both_ref_date["collection_exercise"])
         mock_request.get(url_get_collection_exercise_events, json=self.collection_exercise_ref_both_date)
         mock_request.get(
-            f"{url_get_collection_instrument}?{ci_search_string}", json=self.collection_instruments, complete_qs=True
+            f"{url_get_collection_instrument}?{ci_search_string}", json=self.eq_collection_instrument, complete_qs=True
         )
         mock_request.get(
             f"{url_get_collection_instrument}?{ci_type_search_string_eq}", json=self.eq_ci_selectors, complete_qs=True
@@ -1958,7 +2066,7 @@ class TestCollectionExercise(ViewTestCase):
         mock_request.get(url_get_by_survey_with_ref_start_date, json=collection_exercise_eq_ref_start_date)
         mock_request.get(url_get_by_survey_with_ref_end_date, json=collection_exercise_eq_ref_end_date)
 
-        response = self.client.get(f"/surveys/{short_name}/{period}/view-sample-ci")
+        response = self.client.get(f"/surveys/{short_name}/{period}/view-sample-ci?survey_mode=EQ")
 
         self.assertEqual(200, response.status_code)
         self.assertIn("Collection instruments".encode(), response.data)
@@ -1966,14 +2074,16 @@ class TestCollectionExercise(ViewTestCase):
         self.assertIn("Done".encode(), response.data)
 
     @requests_mock.mock()
-    def test_loaded_sample_view_sample_ci_page_survey_permission(self, mock_request):
+    def test_seft_loaded_sample_view_sample_ci_page_survey_permission(self, mock_request):
         sign_in_with_permission(self, mock_request, user_permission_surveys_edit_json)
-        mock_request.get(url_get_survey_by_short_name, json=self.survey)
+        mock_request.get(url_get_survey_by_short_name, json=self.seft_survey)
         mock_request.get(url_ces_by_survey, json=self.collection_exercises)
         mock_request.get(url_ce_by_id, json=collection_exercise_details["collection_exercise"])
         mock_request.get(url_get_collection_exercise_events, json=self.collection_exercise_events)
         mock_request.get(
-            f"{url_get_collection_instrument}?{ci_search_string}", json=self.collection_instruments, complete_qs=True
+            f"{url_get_collection_instrument}?{ci_search_string}",
+            json=self.seft_collection_instruments,
+            complete_qs=True,
         )
         mock_request.get(
             f"{url_get_collection_instrument}?{ci_type_search_string_eq}", json=self.eq_ci_selectors, complete_qs=True
@@ -1981,7 +2091,7 @@ class TestCollectionExercise(ViewTestCase):
         mock_request.get(url_link_sample, json=[sample_summary_id])
         mock_request.get(url_get_sample_summary, json=self.sample_summary)
 
-        response = self.client.get(f"/surveys/{short_name}/{period}/view-sample-ci")
+        response = self.client.get(f"/surveys/{short_name}/{period}/view-sample-ci?survey_mode=SEFT")
 
         self.assertEqual(200, response.status_code)
         self.assertIn("SEFT collection instruments".encode(), response.data)
@@ -1990,12 +2100,14 @@ class TestCollectionExercise(ViewTestCase):
 
     @requests_mock.mock()
     def test_seft_loaded_sample_view_sample_ci_page_no_survey_permission(self, mock_request):
-        mock_request.get(url_get_survey_by_short_name, json=self.survey)
+        mock_request.get(url_get_survey_by_short_name, json=self.seft_survey)
         mock_request.get(url_ces_by_survey, json=self.collection_exercises)
         mock_request.get(url_ce_by_id, json=collection_exercise_details["collection_exercise"])
         mock_request.get(url_get_collection_exercise_events, json=self.collection_exercise_events)
         mock_request.get(
-            f"{url_get_collection_instrument}?{ci_search_string}", json=self.collection_instruments, complete_qs=True
+            f"{url_get_collection_instrument}?{ci_search_string}",
+            json=self.seft_collection_instruments,
+            complete_qs=True,
         )
         mock_request.get(
             f"{url_get_collection_instrument}?{ci_type_search_string_eq}", json=self.eq_ci_selectors, complete_qs=True
@@ -2003,7 +2115,7 @@ class TestCollectionExercise(ViewTestCase):
         mock_request.get(url_link_sample, json=[sample_summary_id])
         mock_request.get(url_get_sample_summary, json=self.sample_summary)
 
-        response = self.client.get(f"/surveys/{short_name}/{period}/view-sample-ci")
+        response = self.client.get(f"/surveys/{short_name}/{period}/view-sample-ci?survey_mode=SEFT")
 
         self.assertEqual(200, response.status_code)
         self.assertIn("SEFT collection instruments".encode(), response.data)
@@ -2018,7 +2130,7 @@ class TestCollectionExercise(ViewTestCase):
         mock_request.get(url_ce_by_id, json=collection_exercise_eq_both_ref_date["collection_exercise"])
         mock_request.get(url_get_collection_exercise_events, json=self.collection_exercise_ref_both_date)
         mock_request.get(
-            f"{url_get_collection_instrument}?{ci_search_string}", json=self.collection_instruments, complete_qs=True
+            f"{url_get_collection_instrument}?{ci_search_string}", json=self.eq_collection_instrument, complete_qs=True
         )
         mock_request.get(
             f"{url_get_collection_instrument}?{ci_type_search_string_eq}", json=self.eq_ci_selectors, complete_qs=True
@@ -2029,11 +2141,11 @@ class TestCollectionExercise(ViewTestCase):
         mock_request.get(url_get_by_survey_with_ref_start_date, json=collection_exercise_eq_ref_start_date)
         mock_request.get(url_get_by_survey_with_ref_end_date, json=collection_exercise_eq_ref_end_date)
 
-        response = self.client.get(f"/surveys/{short_name}/{period}/view-sample-ci")
+        response = self.client.get(f"/surveys/{short_name}/{period}/view-sample-ci?survey_mode=EQ")
 
         self.assertEqual(200, response.status_code)
         self.assertIn("Collection instruments".encode(), response.data)
-        self.assertIn("unlink-ci-1".encode(), response.data)
+        self.assertIn("unlink-eq-ci-1".encode(), response.data)
         self.assertIn("Done".encode(), response.data)
 
     @requests_mock.mock()
@@ -2043,7 +2155,7 @@ class TestCollectionExercise(ViewTestCase):
         mock_request.get(url_ce_by_id, json=collection_exercise_eq_both_ref_date["collection_exercise"])
         mock_request.get(url_get_collection_exercise_events, json=self.collection_exercise_ref_both_date)
         mock_request.get(
-            f"{url_get_collection_instrument}?{ci_search_string}", json=self.collection_instruments, complete_qs=True
+            f"{url_get_collection_instrument}?{ci_search_string}", json=self.eq_collection_instrument, complete_qs=True
         )
         mock_request.get(
             f"{url_get_collection_instrument}?{ci_type_search_string_eq}", json=self.eq_ci_selectors, complete_qs=True
@@ -2054,11 +2166,11 @@ class TestCollectionExercise(ViewTestCase):
         mock_request.get(url_get_by_survey_with_ref_start_date, json=collection_exercise_eq_ref_start_date)
         mock_request.get(url_get_by_survey_with_ref_end_date, json=collection_exercise_eq_ref_end_date)
 
-        response = self.client.get(f"/surveys/{short_name}/{period}/view-sample-ci")
+        response = self.client.get(f"/surveys/{short_name}/{period}/view-sample-ci?survey_mode=EQ")
 
         self.assertEqual(200, response.status_code)
         self.assertIn("Collection instruments".encode(), response.data)
-        self.assertNotIn("form-unselect-ci-1".encode(), response.data)
+        self.assertNotIn("form-unselect-eq-ci-1".encode(), response.data)
         self.assertIn("Done".encode(), response.data)
 
     @requests_mock.mock()
@@ -2069,7 +2181,7 @@ class TestCollectionExercise(ViewTestCase):
         mock_request.get(url_ce_by_id, json=collection_exercise_eq_both_ref_date["collection_exercise"])
         mock_request.get(url_get_collection_exercise_events, json=self.collection_exercise_ref_both_date)
         mock_request.get(
-            f"{url_get_collection_instrument}?{ci_search_string}", json=self.collection_instruments, complete_qs=True
+            f"{url_get_collection_instrument}?{ci_search_string}", json=self.eq_collection_instrument, complete_qs=True
         )
         mock_request.get(
             f"{url_get_collection_instrument}?{ci_type_search_string_eq}", json=self.eq_ci_selectors, complete_qs=True
@@ -2097,7 +2209,7 @@ class TestCollectionExercise(ViewTestCase):
         mock_request.get(url_ce_by_id, json=collection_exercise_eq_both_ref_date["collection_exercise"])
         mock_request.get(url_get_collection_exercise_events, json=self.collection_exercise_ref_both_date)
         mock_request.get(
-            f"{url_get_collection_instrument}?{ci_search_string}", json=self.collection_instruments, complete_qs=True
+            f"{url_get_collection_instrument}?{ci_search_string}", json=self.eq_collection_instrument, complete_qs=True
         )
         mock_request.get(
             f"{url_get_collection_instrument}?{ci_type_search_string_eq}", json=self.eq_ci_selectors, complete_qs=True
@@ -2210,7 +2322,7 @@ class TestCollectionExercise(ViewTestCase):
         post_data = {
             "ci_id": collection_instrument_id,
             "ce_id": collection_exercise_id,
-            "unselect-ci": "",
+            "unselect-eq-ci": "",
         }
 
         mock_request.put(url_collection_instrument_unlink, status_code=200)
@@ -2236,7 +2348,7 @@ class TestCollectionExercise(ViewTestCase):
         mock_request.get(url_link_sample, json=[sample_summary_id])
         mock_request.get(url_get_sample_summary, json=self.sample_summary)
         mock_request.get(
-            f"{url_get_collection_instrument}?{ci_search_string}", json=self.collection_instruments, complete_qs=True
+            f"{url_get_collection_instrument}?{ci_search_string}", json=self.eq_collection_instrument, complete_qs=True
         )
         mock_request.get(
             f"{url_get_collection_instrument}?{ci_type_search_string_eq}", json=self.eq_ci_selectors, complete_qs=True
@@ -2253,3 +2365,18 @@ class TestCollectionExercise(ViewTestCase):
         self.assertNotIn("Add reminder".encode(), response.data)
         self.assertIn("Sample loaded".encode(), response.data)
         self.assertNotIn("Set as ready for live".encode(), response.data)
+
+    def _mock_build_collection_exercise_details(self, mock_request, mock_ci_request=True):
+        mock_request.get(url_get_survey_by_short_name, json=self.seft_survey)
+        mock_request.get(url_ces_by_survey, json=self.collection_exercises)
+        mock_request.get(url_ce_by_id, json=collection_exercise_details["collection_exercise"])
+        mock_request.get(url_get_collection_exercise_events, json=self.collection_exercise_events)
+        mock_request.get(url_link_sample, json=[sample_summary_id])
+        mock_request.get(url_get_sample_summary, json=self.sample_summary)
+
+        if mock_ci_request:
+            mock_request.get(
+                f"{url_get_collection_instrument}?{ci_search_string}",
+                json=self.eq_collection_instrument,
+                complete_qs=True,
+            )

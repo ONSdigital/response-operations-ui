@@ -2,7 +2,15 @@ import logging
 from datetime import datetime
 from json import JSONDecodeError, loads
 
-from flask import Blueprint, redirect, render_template, request, session, url_for
+from flask import (
+    Blueprint,
+    current_app,
+    redirect,
+    render_template,
+    request,
+    session,
+    url_for,
+)
 from flask_login import login_required
 from structlog import wrap_logger
 
@@ -98,6 +106,7 @@ def view_survey_details(short_name):
         long_name=survey_details["longName"],
         survey_ref=survey_details["surveyRef"],
         survey_mode=survey_details["surveyMode"],
+        multi_mode_enabled=current_app.config["MULTI_MODE_ENABLED"],
     )
 
 
@@ -134,7 +143,7 @@ def show_create_survey():
     verify_permission("surveys.edit")
     form = CreateSurveyDetailsForm(form=request.form)
 
-    return render_template("create-survey.html", form=form)
+    return render_template("create-survey.html", form=form, multi_mode_enabled=current_app.config["MULTI_MODE_ENABLED"])
 
 
 @surveys_bp.route("/create", methods=["POST"])
@@ -143,7 +152,12 @@ def create_survey():
     verify_permission("surveys.edit")
     form = CreateSurveyDetailsForm(form=request.form)
     if not form.validate():
-        return render_template("create-survey.html", form=form, errors=form.errors.items())
+        return render_template(
+            "create-survey.html",
+            form=form,
+            errors=form.errors.items(),
+            multi_mode_enabled=current_app.config["MULTI_MODE_ENABLED"],
+        )
 
     try:
         survey_controllers.create_survey(
@@ -162,7 +176,12 @@ def create_survey():
         # If it's conflict or bad request assume the service has returned a useful error
         # message as the body of the response
         if err.status_code == 409 or err.status_code == 400:
-            return render_template("create-survey.html", form=form, errors=[("", [err.message])])
+            return render_template(
+                "create-survey.html",
+                form=form,
+                errors=[("", [err.message])],
+                multi_mode_enabled=current_app.config["MULTI_MODE_ENABLED"],
+            )
         else:
             raise
 
