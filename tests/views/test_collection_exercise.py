@@ -1169,7 +1169,7 @@ class TestCollectionExercise(ViewTestCase):
         mock_request.put(url_update_ce_user_details)
 
         response = self.client.post(
-            f"/surveys/{short_name}/201906/edit-collection-exercise-details",
+            f"/surveys/{short_name}/201906/edit-collection-exercise-period-id",
             data=changed_ce_details,
             follow_redirects=False,
         )
@@ -1190,7 +1190,7 @@ class TestCollectionExercise(ViewTestCase):
         mock_request.put(url_update_ce_user_details, status_code=500)
 
         response = self.client.post(
-            f"/surveys/{short_name}/{period}/edit-collection-exercise-details", data=changed_ce_details
+            f"/surveys/{short_name}/{period}/edit-collection-exercise-period-id", data=changed_ce_details
         )
 
         request_history = mock_request.request_history
@@ -1210,7 +1210,7 @@ class TestCollectionExercise(ViewTestCase):
         mock_request.put(url_update_ce_user_details, status_code=404)
 
         response = self.client.post(
-            f"/surveys/{short_name}/{period}/edit-collection-exercise-details", data=changed_ce_details
+            f"/surveys/{short_name}/{period}/edit-collection-exercise-period-id", data=changed_ce_details
         )
 
         request_history = mock_request.request_history
@@ -1231,7 +1231,7 @@ class TestCollectionExercise(ViewTestCase):
         mock_request.put(url_update_ce_period, status_code=500)
 
         response = self.client.post(
-            f"/surveys/{short_name}/{period}/edit-collection-exercise-details",
+            f"/surveys/{short_name}/{period}/edit-collection-exercise-period-id",
             data=changed_ce_details,
             follow_redirects=True,
         )
@@ -1254,7 +1254,7 @@ class TestCollectionExercise(ViewTestCase):
         mock_request.put(url_update_ce_period, status_code=404)
 
         response = self.client.post(
-            f"/surveys/{short_name}/{period}/edit-collection-exercise-details",
+            f"/surveys/{short_name}/{period}/edit-collection-exercise-period-id",
             data=changed_ce_details,
             follow_redirects=True,
         )
@@ -1271,7 +1271,7 @@ class TestCollectionExercise(ViewTestCase):
         mock_request.get(url_get_survey_by_short_name, json=updated_survey_info["survey"])
         mock_request.get(url_ces_by_survey, json=updated_survey_info["collection_exercises"])
         response = self.client.get(
-            f"/surveys/{short_name}/{period}/edit-collection-exercise-details", follow_redirects=True
+            f"/surveys/{short_name}/{period}/edit-collection-exercise-period-id", follow_redirects=True
         )
 
         self.assertEqual(response.status_code, 200)
@@ -1449,7 +1449,7 @@ class TestCollectionExercise(ViewTestCase):
         mock_request.get(url_get_sample_summary, json=self.sample_summary)
 
         response = self.client.post(
-            f"/surveys/{short_name}/{period}/edit-collection-exercise-details",
+            f"/surveys/{short_name}/{period}/edit-collection-exercise-period-id",
             data=changed_ce_details,
             follow_redirects=True,
         )
@@ -1482,7 +1482,7 @@ class TestCollectionExercise(ViewTestCase):
         mock_request.get(url_get_sample_summary, json=self.sample_summary)
 
         response = self.client.post(
-            f"/surveys/{short_name}/{period}/edit-collection-exercise-details",
+            f"/surveys/{short_name}/{period}/edit-collection-exercise-period-id",
             data=changed_ce_details,
             follow_redirects=True,
         )
