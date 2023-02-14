@@ -281,14 +281,27 @@ def post_manage_account_groups(user_id):
     return redirect(url_for("admin_bp.manage_user_accounts"))
 
 
-def delete_user_from_redis_session(user_id):
-    all_sessions = current_app.config["SESSION_REDIS"]
-    get_all_sessions_keys = all_sessions.scan(cursor=0, match="*")[1]
+def delete_user_from_redis_session(user_id: str) -> None:
+    """
+    Deletes a users' session from redis, functionally logging them out.
+    This function searches for all session keys in redis that start with 'session:', then  loops over
+    all of them, getting the value of key, searching for the users id and deleting any keys it finds with the
+    id inside it.
 
-    for user_in_session in get_all_sessions_keys:
-        user_session_information = str(all_sessions.mget(user_in_session))
-        if user_id in user_session_information:
-            all_sessions.delete(user_in_session)
+    :param user_id: The uuid of an internal user
+    """
+    logger.info("Attempting to delete session for user to log them out", user_id=user_id)
+    session_redis = current_app.config["SESSION_REDIS"]
+    session_keys = session_redis.scan(cursor=0, match="session:*")[1]
+
+    for session_key in session_keys:
+        session_value = str(session_redis.get(session_key))
+        if user_id in session_value:
+            # We're not exiting the loop once we've deleted the session as it's possible for a user
+            # to have active multiple sessions if they signed in on multiple browsers/devices
+            logger.info("Deleting session", user_id=user_id, session_key=session_key)
+            session_redis.delete(session_key)
+    logger.info("Finished attempting to delete session for user", user_id=user_id)
 
 
 @admin_bp.route("/manage-account/<user_id>/delete", methods=["GET"])
