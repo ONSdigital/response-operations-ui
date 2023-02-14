@@ -49,8 +49,8 @@ from response_operations_ui.controllers.uaa_controller import user_has_permissio
 from response_operations_ui.exceptions.exceptions import ApiError
 from response_operations_ui.forms import (
     CreateCollectionExerciseDetailsForm,
-    EditCollectionExercisePeriodIDForm,
     EditCollectionExercisePeriodDescriptionForm,
+    EditCollectionExercisePeriodIDForm,
     EventDateForm,
     RemoveLoadedSample,
 )
