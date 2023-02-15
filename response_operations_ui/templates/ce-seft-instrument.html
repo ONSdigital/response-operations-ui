@@ -69,7 +69,7 @@
                             "url": url_for('collection_exercise_bp.get_view_sample_ci', short_name=survey.shortName, period=ce.exerciseRef, survey_mode='SEFT'),
                             "submitType": "timer",
                             "noIcon": "true"
-                        })
+                          })
                     }} 
                 </div>
             </form>
@@ -89,58 +89,58 @@
                     {% do tables.append('right') %}
                 {% endif %}
                 <div class="ons-grid ons-col-12@m ons-grid--vertical-center ons-grid--no-wrap@m ons-u-mt-m ons-u-mb-m">
-                {% for table in tables %}
-                    {% set surveyTableData = {
-                        "variants": 'responsive',
-                        "id": "collection-instruments-" + table + "-table",
-                        "caption": 'Sample details for this collection exercise',
-                        "hideCaption": true,
-                        "ths": []
-                    } %}
-              
-                    {% set surveyTableDataRows = [] %}
-                    {% for column, cis in table_columns.items() %}
-                        {% for collection_instrument in cis %}
-                            {% if not locked and surveyEditPermission %}
-                                {% set ci_count.value = ci_count.value + 1 %}
-                                {% set formData = 
-                                    '<form id="form-delete-ci-' + ci_count.value|string + '" action="" method="post">' +
-                                    '<a href=# id="delete-ci-' + ci_count.value|string + '">Remove</a>' +
-                                    '<input type="hidden" name="ci_id" value="' + collection_instrument.id + '"/>' +
-                                    '<input type="hidden" name="delete-ci"/>' +
-                                    '<input type="hidden" name="csrf_token" value="' + csrf_token() + '" />' +
-                                    '</form>'
-                                %}
-                            {% endif %}
-                            {% if column == table %}
-                                {% do surveyTableDataRows.append(
-                                    {
-                                        "tds": [
-                                                    {
-                                                        "value": collection_instrument.file_name
-                                                    },
-                                                    {
-                                                        "value": formData,
-                                                        "tdClasses": "ons-u-ta-right"
-                                                    },
-                                                ] if surveyEditPermission else
-                                                [
-                                                    {
-                                                        "value": collection_instrument.file_name
-                                                    }
-                                                ]
-                                    }
-                                    ) %}
-                            {% endif %}
+                    {% for table in tables %}
+                        {% set surveyTableData = {
+                            "variants": 'responsive',
+                            "id": "collection-instruments-" + table + "-table",
+                            "caption": 'Sample details for this collection exercise',
+                            "hideCaption": true,
+                            "ths": []
+                        } %}
+                  
+                        {% set surveyTableDataRows = [] %}
+                        {% for column, cis in table_columns.items() %}
+                            {% for collection_instrument in cis %}
+                                {% if not locked and surveyEditPermission %}
+                                    {% set ci_count.value = ci_count.value + 1 %}
+                                    {% set formData = 
+                                        '<form id="form-delete-ci-' + ci_count.value|string + '" action="" method="post">' +
+                                        '<a href=# id="delete-ci-' + ci_count.value|string + '">Remove</a>' +
+                                        '<input type="hidden" name="ci_id" value="' + collection_instrument.id + '"/>' +
+                                        '<input type="hidden" name="delete-ci"/>' +
+                                        '<input type="hidden" name="csrf_token" value="' + csrf_token() + '" />' +
+                                        '</form>'
+                                    %}
+                                {% endif %}
+                                {% if column == table %}
+                                    {% do surveyTableDataRows.append(
+                                        {
+                                            "tds": [
+                                                        {
+                                                            "value": collection_instrument.file_name
+                                                        },
+                                                        {
+                                                            "value": formData,
+                                                            "tdClasses": "ons-u-ta-right"
+                                                        },
+                                                    ] if surveyEditPermission else
+                                                    [
+                                                        {
+                                                            "value": collection_instrument.file_name
+                                                        }
+                                                    ]
+                                        }
+                                        ) %}
+                                {% endif %}
+                            {% endfor %}
                         {% endfor %}
+                        {% do surveyTableData | setAttribute("trs", surveyTableDataRows) %}
+                        <div class="ons-grid__col ons-col-4@m">
+                            {{
+                              onsTable(surveyTableData)
+                            }}
+                        </div>
                     {% endfor %}
-                    {% do surveyTableData | setAttribute("trs", surveyTableDataRows) %}
-                    <div class="ons-grid__col ons-col-4@m">
-                        {{
-                          onsTable(surveyTableData)
-                        }}
-                    </div>
-                {% endfor %}
                 </div>
               
                 
@@ -161,7 +161,6 @@
                     "variants": primary,
                     "name": "load-ci-done",
                     "url": url_for('collection_exercise_bp.get_view_sample_ci', short_name=survey.shortName, period=ce.exerciseRef, survey_mode='SEFT'),
-                    "url": url_for('collection_exercise_bp.view_collection_exercise', short_name=survey.shortName, period=ce.exerciseRef),
                     "submitType": "timer",
                     "noIcon": "true"
                 })
