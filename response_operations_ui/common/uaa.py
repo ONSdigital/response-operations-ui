@@ -2,11 +2,12 @@ import logging
 from json import JSONDecodeError
 
 import requests
-from flask import abort, current_app
+from flask import current_app
 from requests import HTTPError
 from structlog import wrap_logger
 
 from response_operations_ui.controllers import uaa_controller
+from response_operations_ui.exceptions.exceptions import NoPermissionError
 
 logger = wrap_logger(logging.getLogger(__name__))
 
@@ -40,7 +41,14 @@ def get_uaa_public_key():
     return current_app.config["UAA_PUBLIC_KEY"]
 
 
-def verify_permission(required_permission, session):
+def verify_permission(required_permission: str):
+    """
+    Calls the uaa service to find if the currently logged in user has the supplied permission against their account.
+    Doesn't return anything if the user does have permission and raises a NoPermissionError exception if the user
+    doesn't have permission.
+
+    :param required_permission: A string representing a permission (e.g., surveys.edit)
+    :raises NoPermissionError: Raised if the user doesn't have the permission against their account
+    """
     if not uaa_controller.user_has_permission(required_permission):
-        logger.error("User has insufficient permissions to access this page", user_id=session["user_id"])
-        abort(500)
+        raise NoPermissionError(required_permission)

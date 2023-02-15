@@ -204,29 +204,6 @@ def execute_collection_exercise(collection_exercise_id):
     logger.info("Successfully began execution of collection exercise", collection_exercise_id=collection_exercise_id)
 
 
-def update_collection_exercise_eq_version(collection_exercise_id, eq_version):
-    logger.info("Updating collection exercise eq version", collection_exercise_id=collection_exercise_id)
-
-    header = {"Content-Type": "text/plain"}
-    url = f'{app.config["COLLECTION_EXERCISE_URL"]}/collectionexercises/{collection_exercise_id}/eqVersion'
-    response = requests.put(url, headers=header, data=eq_version, auth=app.config["BASIC_AUTH"])
-
-    try:
-        response.raise_for_status()
-    except HTTPError:
-        if response.status_code == 404:
-            logger.error("Error retrieving collection exercise", collection_exercise_id=collection_exercise_id)
-        else:
-            logger.error(
-                "Failed to update collection exercise eq version", collection_exercise_id=collection_exercise_id
-            )
-        raise ApiError(response)
-
-    logger.info(
-        "Successfully updated collection exercise user description", collection_exercise_id=collection_exercise_id
-    )
-
-
 def update_collection_exercise_user_description(collection_exercise_id, user_description):
     logger.info("Updating collection exercise user description", collection_exercise_id=collection_exercise_id)
 
