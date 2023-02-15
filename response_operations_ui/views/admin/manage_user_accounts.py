@@ -264,6 +264,7 @@ def post_manage_account_groups(user_id):
             continue  # Nothing to do, already not in the group
 
     if was_group_membership_changed:
+        delete_user_from_redis_session(user["id"])
         try:
             NotifyController().request_to_notify(
                 email=user["emails"][0]["value"],
@@ -274,8 +275,6 @@ def post_manage_account_groups(user_id):
             logger.error("failed to send email", msg=e.description, exc_info=True)
             flash("Failed to send email, please try again", "error")
             return redirect(url_for("admin_bp.manage_account", user=user["emails"][0]["value"]))
-
-        delete_user_from_redis_session(user["id"])
         flash("User account has been successfully changed. An email to inform the user has been sent.")
 
     return redirect(url_for("admin_bp.manage_user_accounts"))
@@ -301,7 +300,6 @@ def delete_user_from_redis_session(user_id: str) -> None:
             # to have active multiple sessions if they signed in on multiple browsers/devices
             logger.info("Deleting session", user_id=user_id, session_key=session_key)
             session_redis.delete(session_key)
-    logger.info("Finished attempting to delete session for user", user_id=user_id)
 
 
 @admin_bp.route("/manage-account/<user_id>/delete", methods=["GET"])
