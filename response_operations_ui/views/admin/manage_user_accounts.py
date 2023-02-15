@@ -264,6 +264,7 @@ def post_manage_account_groups(user_id):
             continue  # Nothing to do, already not in the group
 
     if was_group_membership_changed:
+        delete_user_from_redis_session(user["id"])
         try:
             NotifyController().request_to_notify(
                 email=user["emails"][0]["value"],
@@ -274,10 +275,31 @@ def post_manage_account_groups(user_id):
             logger.error("failed to send email", msg=e.description, exc_info=True)
             flash("Failed to send email, please try again", "error")
             return redirect(url_for("admin_bp.manage_account", user=user["emails"][0]["value"]))
-
         flash("User account has been successfully changed. An email to inform the user has been sent.")
 
     return redirect(url_for("admin_bp.manage_user_accounts"))
+
+
+def delete_user_from_redis_session(user_id: str) -> None:
+    """
+    Deletes a users' session from redis, functionally logging them out.
+    This function searches for all session keys in redis that start with 'session:', then  loops over
+    all of them, getting the value of key, searching for the users id and deleting any keys it finds with the
+    id inside it.
+
+    :param user_id: The uuid of an internal user
+    """
+    logger.info("Attempting to delete session for user to log them out", user_id=user_id)
+    session_redis = current_app.config["SESSION_REDIS"]
+    session_keys = session_redis.scan(cursor=0, match="session:*")[1]
+
+    for session_key in session_keys:
+        session_value = str(session_redis.get(session_key))
+        if user_id in session_value:
+            # We're not exiting the loop once we've deleted the session as it's possible for a user
+            # to have active multiple sessions if they signed in on multiple browsers/devices
+            logger.info("Deleting session", user_id=user_id, session_key=session_key)
+            session_redis.delete(session_key)
 
 
 @admin_bp.route("/manage-account/<user_id>/delete", methods=["GET"])
