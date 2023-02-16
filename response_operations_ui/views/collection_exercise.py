@@ -656,7 +656,7 @@ def submit_collection_exercise_period_description(short_name, period):
         )
 
         return redirect(
-            url_for("collection_exercise_bp.view_collection_exercise", short_name=short_name, period=form.get("period"))
+            url_for("collection_exercise_bp.view_collection_exercise", short_name=short_name, period=period)
         )
 
 
