@@ -131,7 +131,7 @@
                             },
                             {
                                 "value": '<a href="' + url_for("admin_bp.get_manage_account_groups", user_id=user.id) + '" > Edit</a>' + '<a style="text-decoration: none"> | </a>' + '<a href="' + url_for("admin_bp.get_delete_uaa_user", user_id=user.id) + '"> Delete </a>' if user.show_edit_button else "", 
-                                "class": "ons-u-ta-right",
+                                "tdClasses": "ons-u-ta-right",
                             },
                         ]
                     }
