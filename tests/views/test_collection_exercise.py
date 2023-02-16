@@ -1194,7 +1194,7 @@ class TestCollectionExercise(ViewTestCase):
         )
 
         request_history = mock_request.request_history
-        self.assertEqual(len(request_history), 7)
+        self.assertEqual(len(request_history), 6)
         self.assertEqual(response.status_code, 500)
 
     @requests_mock.mock()
@@ -1214,7 +1214,7 @@ class TestCollectionExercise(ViewTestCase):
         )
 
         request_history = mock_request.request_history
-        self.assertEqual(len(request_history), 7)
+        self.assertEqual(len(request_history), 6)
         self.assertEqual(response.status_code, 500)
 
     @requests_mock.mock()
@@ -1237,7 +1237,7 @@ class TestCollectionExercise(ViewTestCase):
         )
 
         request_history = mock_request.request_history
-        self.assertEqual(len(request_history), 7)
+        self.assertEqual(len(request_history), 6)
         self.assertEqual(response.status_code, 500)
 
     @requests_mock.mock()
@@ -1260,7 +1260,7 @@ class TestCollectionExercise(ViewTestCase):
         )
 
         request_history = mock_request.request_history
-        self.assertEqual(len(request_history), 7)
+        self.assertEqual(len(request_history), 6)
         self.assertEqual(response.status_code, 500)
 
     @requests_mock.mock()
