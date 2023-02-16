@@ -160,6 +160,11 @@ def view_collection_exercise(short_name, period):
         ce_details["survey"]["shortName"],
         ce_details["collection_exercise"]["exerciseRef"],
     )
+    
+    total_ci_count = 0
+    for ci in ci_table_context:
+        total_ci_count += int(ci['count'])
+    total_ci_count = str(total_ci_count)
 
     return render_template(
         "collection_exercise/collection-exercise.html",
@@ -177,6 +182,7 @@ def view_collection_exercise(short_name, period):
         validation_failed=validation_failed,
         show_msg=show_msg,
         info_panel=info_panel,
+        total_ci_count=total_ci_count,
     )
 
 
