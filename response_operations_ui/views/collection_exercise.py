@@ -566,7 +566,7 @@ def edit_collection_exercise_period_description(short_name, period):
     locked = ce_state in ("LIVE", "READY_FOR_LIVE", "EXECUTION_STARTED", "VALIDATED", "EXECUTED", "ENDED")
 
     return render_template(
-        "edit-collection-exercise-period-id.html",
+        "edit-collection-exercise-period-description.html",
         survey_ref=ce_details["survey"]["surveyRef"],
         form=form,
         short_name=short_name,
@@ -635,7 +635,7 @@ def submit_collection_exercise_period_description(short_name, period):
         locked = ce_state in ("LIVE", "READY_FOR_LIVE", "EXECUTION_STARTED", "VALIDATED", "EXECUTED", "ENDED")
 
         return render_template(
-            "edit-collection-exercise-details.html",
+            "edit-collection-exercise-period-description.html",
             survey_ref=ce_details["survey"]["surveyRef"],
             form=form,
             short_name=short_name,

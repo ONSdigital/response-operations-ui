@@ -191,7 +191,7 @@ class EditCollectionExercisePeriodIDForm(FlaskForm):
 
 
 class EditCollectionExercisePeriodDescriptionForm(FlaskForm):
-    user_description = HiddenField("user_description")
+    user_description = StringField("user_description")
     collection_exercise_id = HiddenField("collection_exercise_id")
     hidden_survey_id = HiddenField("hidden_survey_id")
     period = HiddenField("period")
