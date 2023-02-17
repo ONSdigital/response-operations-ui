@@ -160,11 +160,7 @@ def view_collection_exercise(short_name, period):
         ce_details["survey"]["shortName"],
         ce_details["collection_exercise"]["exerciseRef"],
     )
-    
-    total_ci_count = 0
-    for ci in ci_table_context:
-        total_ci_count += int(ci['count'])
-    total_ci_count = str(total_ci_count)
+    total_ci_count = get_total_ci_count(ci_table_context)
 
     return render_template(
         "collection_exercise/collection-exercise.html",
@@ -184,6 +180,12 @@ def view_collection_exercise(short_name, period):
         info_panel=info_panel,
         total_ci_count=total_ci_count,
     )
+
+def get_total_ci_count(ci_table_context):
+    total_count = 0
+    for ci in ci_table_context:
+        total_count += int(ci['count'])
+    return str(total_count)
 
 
 def _build_ci_table_context(ci: dict, locked: bool, survey_mode: str, short_name: str, exercise_ref: str) -> list:
