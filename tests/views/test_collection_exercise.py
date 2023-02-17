@@ -61,6 +61,9 @@ with open(f"{project_root}/test_data/collection_exercise/ce_details_new_event.js
 
 with open(f"{project_root}/test_data/collection_exercise/formatted_collection_exercise_details.json") as fp:
     formatted_collection_exercise_details = json.load(fp)
+    
+with open(f"{project_root}/test_data/collection_exercise/formatted_collection_exercise_details_eq.json") as fp:
+    formatted_collection_exercise_details_eq = json.load(fp)
 with open(f"{project_root}/test_data/collection_exercise/formatted_new_collection_exercise_details.json") as fp:
     formatted_new_collection_exercise_details = json.load(fp)
 
@@ -269,6 +272,7 @@ class TestCollectionExercise(ViewTestCase):
                     ],
                     "RU_REF": [],
                     "SURVEY_ID": survey_id,
+                    "form_type": "form",
                 },
                 "file_name": "file",
                 "id": collection_instrument_id,
@@ -822,7 +826,7 @@ class TestCollectionExercise(ViewTestCase):
         )
 
         self.assertEqual(response.status_code, 200)
-        self.assertIn("Error: No collection instruments selected".encode(), response.data)
+        self.assertIn("No collection instruments selected".encode(), response.data)
 
     @requests_mock.mock()
     @patch("response_operations_ui.views.collection_exercise.build_collection_exercise_details")
@@ -1321,15 +1325,17 @@ class TestCollectionExercise(ViewTestCase):
         post_data = {
             "ci_id": collection_instrument_id,
             "ce_id": collection_exercise_id,
-            "unselect-eq-ci": "",
+            "select-eq-ci": "",
         }
 
         mock_request.put(url_collection_instrument_unlink, status_code=500)
-        mock_details.return_value = formatted_collection_exercise_details
+        mock_details.return_value = formatted_collection_exercise_details_eq
 
         response = self.client.post(
             f"/surveys/{short_name}/{period}/view-sample-ci", data=post_data, follow_redirects=True
         )
+        
+        print("Response " + str(response.data))
 
         self.assertEqual(response.status_code, 200)
         self.assertIn("Error: Failed to remove collection instrument".encode(), response.data)
@@ -2069,7 +2075,7 @@ class TestCollectionExercise(ViewTestCase):
         response = self.client.get(f"/surveys/{short_name}/{period}/view-sample-ci?survey_mode=EQ")
 
         self.assertEqual(200, response.status_code)
-        self.assertIn("Collection instruments".encode(), response.data)
+        self.assertIn("Select EQ collection instruments".encode(), response.data)
         self.assertIn("checkbox-answer".encode(), response.data)
         self.assertIn("Done".encode(), response.data)
 
@@ -2144,10 +2150,11 @@ class TestCollectionExercise(ViewTestCase):
         response = self.client.get(f"/surveys/{short_name}/{period}/view-sample-ci?survey_mode=EQ")
 
         self.assertEqual(200, response.status_code)
-        self.assertIn("Collection instruments".encode(), response.data)
-        self.assertIn("unlink-eq-ci-1".encode(), response.data)
+        self.assertIn("Select EQ collection instruments".encode(), response.data)
+        self.assertIn("btn-add-ci".encode(), response.data)
         self.assertIn("Done".encode(), response.data)
 
+    
     @requests_mock.mock()
     def test_linked_ci_eq_view_sample_ci_page_no_survey_permission(self, mock_request):
         mock_request.get(url_get_survey_by_short_name, json=self.eq_survey_dates)
@@ -2169,9 +2176,8 @@ class TestCollectionExercise(ViewTestCase):
         response = self.client.get(f"/surveys/{short_name}/{period}/view-sample-ci?survey_mode=EQ")
 
         self.assertEqual(200, response.status_code)
-        self.assertIn("Collection instruments".encode(), response.data)
+        self.assertIn("Select collection instruments".encode(), response.data)
         self.assertNotIn("form-unselect-eq-ci-1".encode(), response.data)
-        self.assertIn("Done".encode(), response.data)
 
     @requests_mock.mock()
     def test_loaded_sample_upload_sample_page_survey_permission(self, mock_request):

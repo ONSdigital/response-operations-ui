@@ -365,8 +365,9 @@ class LinkCollectionInstrumentForm(FlaskForm):
         "formtype",
         default="",
         validators=[
-            InputRequired(message="Please enter a formtype"),
-            Regexp(regex=r"^[0-9]+$", message="Please use numeric characters only."),
+            InputRequired(message="Add a 4 digit number"),
+            Regexp(regex=r"^[0-9]+$", message="Add a 4 digit number"),
+            Length(min=4, max=4, message="Add a 4 digit number"),
         ],
     )
 
