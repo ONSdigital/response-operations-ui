@@ -5,7 +5,7 @@
     {% else %}
         {% set linkText = 'View SEFT files' %}
     {% endif %}
-        {% if survey.surveyMode == 'SEFT' %}
+        {% if request.args.get('survey_mode') == "SEFT" %}
             {{
                 onsTable({
                     "variants": ['compact', 'responsive'],
@@ -34,7 +34,7 @@
                                     "tdClasses": "ons-u-ta"
                                 },
                                 {
-                                    "value": collection_instruments|length|string,
+                                    "value": collection_instruments["SEFT"]|length|string,
                                     "name": "total-instruments",
                                     "tdClasses": "ons-u-ta"
                                 },
@@ -50,14 +50,13 @@
             }}
         {% endif %}
       
-      
-        {% if survey.surveyMode != 'SEFT' %}
+        {% if request.args.get('survey_mode') == "EQ" %}
             {% if collection_instruments %}
                 {% set surveyTableDataHeader = [] %}
                 {% set ths = 
                     [ 
                         {
-                            "value": "Collection instruments (" + collection_instruments|length|string + ")",
+                            "value": "Collection instruments ",
                             "thClasses": "ons-u-fs-r--b"
                         },
                     ]
@@ -78,14 +77,14 @@
                     "ths": ths
                 } %}
                 {% set surveyTableDataRows = [] %}
-                {% for collection_instrument in collection_instruments %}
+                {% for collection_instrument in collection_instruments["EQ"] %}
                     {% if not locked and surveyEditPermission%}
                         {% set formData =
-                            '<form id="form-unselect-ci-' + loop.index|string + '" action="" method="post">' +
-                            '<a href=# id="unlink-ci-' + loop.index|string + '"><svg class="ons-ons-svg-icon" viewBox="0 0 45 22" xmlns="http://www.w3.org/2000/svg" focusable="false"><path d="M0 0h24v24H0z" fill="none"/><path d="M7 11v2h10v-2H7zm5-9C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8z"/></svg></a>' +
+                            '<form id="form-unselect-eq-ci-' + loop.index|string + '" action="" method="post">' +
+                            '<a href=# id="unlink-eq-ci-' + loop.index|string + '"><svg class="ons-ons-svg-icon" viewBox="0 0 45 22" xmlns="http://www.w3.org/2000/svg" focusable="false"><path d="M0 0h24v24H0z" fill="none"/><path d="M7 11v2h10v-2H7zm5-9C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8z"/></svg></a>' +
                             '<input type="hidden" name="ce_id" value="' + ce.id + '"/>' +
                             '<input type="hidden" name="ci_id" value="' + collection_instrument.id + '"/>' +
-                            '<input type="hidden" name="unselect-ci"/>' +
+                            '<input type="hidden" name="unselect-eq-ci"/>' +
                             '<input type="hidden" name="csrf_token" value="' + csrf_token() + '" />' +
                             '</form>'
                         %}
@@ -118,13 +117,13 @@
                     {% for i in range(surveyTableDataRows | length) %}
                         {% set j = i + 1 %}
                             <script{% if csp_nonce %} nonce="{{ csp_nonce() }}" {% endif %}>
-                                document.getElementById("unlink-ci-{{ j }}").addEventListener('click', function () {
+                                document.getElementById("unlink-eq-ci-{{ j }}").addEventListener('click', function () {
                                 this.parentNode.submit()
                             });</script>
                     {% endfor %}
                 {% endif %}
             {% endif %}
-    
+
             {% if not locked %}
                 {% if surveyEditPermission %}
                     <div class="ons-u-mb-m">
@@ -136,7 +135,7 @@
         
                             {% set checkboxData = [] %}
         
-                            <form id="form-select-ci" action="" class="form" method="post" enctype="multipart/form-data">
+                            <form id="form-select-eq-ci" action="" class="form" method="post" enctype="multipart/form-data">
                                 <input type="hidden" name="csrf_token" value="{{ csrf_token() }}" />
                                 <div id="ciSelectErrorPanel"
                                     class="{{'ons-panel ons-panel--simple ons-panel--error' if error.section == 'ciSelect' else ''}}">
@@ -161,7 +160,7 @@
                                                 onsButton({
                                                     "text": "Add",
                                                     "id": "btn-add-ci",
-                                                    "name": "select-ci",
+                                                    "name": "select-eq-ci",
                                                     "classes": "ons-u-mt-s",
                                                     "variants": ['secondary', 'small']
                                                 })

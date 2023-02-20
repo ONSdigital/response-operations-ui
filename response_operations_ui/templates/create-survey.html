@@ -6,6 +6,34 @@
 {% from "components/lists/_macro.njk" import onsList %}
 
 {% set page_title = 'Create survey' %}
+
+{% set survey_mode_options = [
+  {
+    "id": "EQ",
+    "label": {
+      "text": "EQ"
+    },
+    "value": "EQ",
+  },
+  {
+    "id": "SEFT",
+    "label": {
+      "text": "SEFT"
+    },
+    "value": "SEFT",
+  }]
+%}
+
+{% if multi_mode_enabled %}
+  {% do survey_mode_options.append({
+    "id": "EQ_AND_SEFT",
+    "label": {
+      "text": "EQ and SEFT"
+    },
+    "value": "EQ_AND_SEFT",
+  })%}
+{% endif %}
+
 {% block main %}
     <div class="ons-grid ons-grid--gutterless">
         <div class="ons-grid__col ons-col-8@m">
@@ -99,35 +127,13 @@
               </div>
                 {% endcall %}
                  <div class="ons-field field--select ons-u-mb-m">
-                    {{
+                   {{
                         onsRadios({
                             "legend": "Survey mode",
                             "id": "survey_mode",
                             "name": "survey_mode",
                             "borderless": true,
-                            "radios": [
-                                {
-                                    "id": "EQ",
-                                    "label": {
-                                        "text": "EQ"
-                                    },
-                                    "value": "EQ",
-                                    },
-                                {
-                                    "id": "SEFT",
-                                    "label": {
-                                        "text": "SEFT"
-                                    },
-                                    "value": "SEFT"
-                                },
-                                {
-                                    "id": "EQ_AND_SEFT",
-                                    "label": {
-                                        "text": "EQ AND SEFT"
-                                    },
-                                    "value": "EQ_AND_SEFT"
-                                }
-                            ]
+                            "radios": survey_mode_options
                         })
                     }}
                 </div>

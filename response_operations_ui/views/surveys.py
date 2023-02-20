@@ -2,7 +2,15 @@ import logging
 from datetime import datetime
 from json import JSONDecodeError, loads
 
-from flask import Blueprint, redirect, render_template, request, session, url_for
+from flask import (
+    Blueprint,
+    current_app,
+    redirect,
+    render_template,
+    request,
+    session,
+    url_for,
+)
 from flask_login import login_required
 from structlog import wrap_logger
 
@@ -86,7 +94,7 @@ def view_survey(short_name):
 @surveys_bp.route("/edit-survey-details/<short_name>", methods=["GET"])
 @login_required
 def view_survey_details(short_name):
-    verify_permission("surveys.edit", session)
+    verify_permission("surveys.edit")
     survey_details = survey_controllers.get_survey(short_name)
     form = EditSurveyDetailsForm(form=request.form)
 
@@ -98,13 +106,14 @@ def view_survey_details(short_name):
         long_name=survey_details["longName"],
         survey_ref=survey_details["surveyRef"],
         survey_mode=survey_details["surveyMode"],
+        multi_mode_enabled=current_app.config["MULTI_MODE_ENABLED"],
     )
 
 
 @surveys_bp.route("/edit-survey-details/<short_name>", methods=["POST", "GET"])
 @login_required
 def edit_survey_details(short_name):
-    verify_permission("surveys.edit", session)
+    verify_permission("surveys.edit")
     form = EditSurveyDetailsForm(form=request.form)
     if not form.validate():
         survey_details = survey_controllers.get_survey(short_name)
@@ -131,19 +140,24 @@ def edit_survey_details(short_name):
 @surveys_bp.route("/create", methods=["GET"])
 @login_required
 def show_create_survey():
-    verify_permission("surveys.edit", session)
+    verify_permission("surveys.edit")
     form = CreateSurveyDetailsForm(form=request.form)
 
-    return render_template("create-survey.html", form=form)
+    return render_template("create-survey.html", form=form, multi_mode_enabled=current_app.config["MULTI_MODE_ENABLED"])
 
 
 @surveys_bp.route("/create", methods=["POST"])
 @login_required
 def create_survey():
-    verify_permission("surveys.edit", session)
+    verify_permission("surveys.edit")
     form = CreateSurveyDetailsForm(form=request.form)
     if not form.validate():
-        return render_template("create-survey.html", form=form, errors=form.errors.items())
+        return render_template(
+            "create-survey.html",
+            form=form,
+            errors=form.errors.items(),
+            multi_mode_enabled=current_app.config["MULTI_MODE_ENABLED"],
+        )
 
     try:
         survey_controllers.create_survey(
@@ -162,7 +176,12 @@ def create_survey():
         # If it's conflict or bad request assume the service has returned a useful error
         # message as the body of the response
         if err.status_code == 409 or err.status_code == 400:
-            return render_template("create-survey.html", form=form, errors=[("", [err.message])])
+            return render_template(
+                "create-survey.html",
+                form=form,
+                errors=[("", [err.message])],
+                multi_mode_enabled=current_app.config["MULTI_MODE_ENABLED"],
+            )
         else:
             raise
 
@@ -170,7 +189,7 @@ def create_survey():
 @surveys_bp.route("/<short_name>/link-collection-instrument", methods=["GET"])
 @login_required
 def get_link_collection_instrument(short_name):
-    verify_permission("surveys.edit", session)
+    verify_permission("surveys.edit")
     form = LinkCollectionInstrumentForm(form=request.form)
     short_name_lower = str(short_name).lower()
     survey_id = survey_controllers.get_survey_by_shortname(short_name_lower)["id"]
@@ -186,7 +205,7 @@ def get_link_collection_instrument(short_name):
 @surveys_bp.route("/<short_name>/link-collection-instrument", methods=["POST"])
 @login_required
 def post_link_collection_instrument(short_name):
-    verify_permission("surveys.edit", session)
+    verify_permission("surveys.edit")
     form = LinkCollectionInstrumentForm(form=request.form)
     eq_ci_selectors = []
     try:

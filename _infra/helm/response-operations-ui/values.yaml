@@ -76,3 +76,6 @@ dns:
 
 test:
   enabled: false
+
+features:
+  multiModeEnabled: false
