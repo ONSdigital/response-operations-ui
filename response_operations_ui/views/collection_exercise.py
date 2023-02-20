@@ -52,7 +52,8 @@ from response_operations_ui.forms import (
     CreateCollectionExerciseDetailsForm,
     EditCollectionExerciseDetailsForm,
     EventDateForm,
-    RemoveLoadedSample, LinkCollectionInstrumentForm,
+    LinkCollectionInstrumentForm,
+    RemoveLoadedSample,
 )
 
 logger = wrap_logger(logging.getLogger(__name__))
@@ -100,9 +101,10 @@ def build_collection_exercise_details(short_name: str, period: str, include_ci: 
         exercise_dict["collection_instruments"] = _build_collection_instruments_details(
             collection_exercise_id, survey_id
         )
-        if survey['surveyMode'] == 'EQ':
+        if survey["surveyMode"] == "EQ":
             exercise_dict[
-                "eq_ci_selectors"] = collection_instrument_controllers.get_collection_instruments_by_classifier(
+                "eq_ci_selectors"
+            ] = collection_instrument_controllers.get_collection_instruments_by_classifier(
                 ci_type="EQ", survey_id=survey_id
             )
     return exercise_dict
@@ -325,14 +327,14 @@ def _select_eq_collection_instrument(short_name, period):
     cis_removed = []
     ce_details = build_collection_exercise_details(short_name, period, include_ci=True)
     ce_id = ce_details["collection_exercise"]["id"]
-    if 'EQ' in ce_details["collection_instruments"]:
-        cis_present = ce_details["collection_instruments"]['EQ']
+    if "EQ" in ce_details["collection_instruments"]:
+        cis_present = ce_details["collection_instruments"]["EQ"]
     else:
         cis_present = []
 
     if cis_present:
         for ci_for_removal in cis_present:
-            ci_id = ci_for_removal['id']
+            ci_id = ci_for_removal["id"]
             if not cis_selected and ci_id:
                 ci_removed = collection_instrument_controllers.unlink_collection_instrument(ce_id, ci_id)
                 cis_removed.append(ci_removed)
@@ -351,10 +353,7 @@ def _select_eq_collection_instrument(short_name, period):
 
             return redirect(
                 url_for(
-                    "collection_exercise_bp.get_view_sample_ci",
-                    short_name=short_name,
-                    period=period,
-                    survey_mode="EQ"
+                    "collection_exercise_bp.get_view_sample_ci", short_name=short_name, period=period, survey_mode="EQ"
                 )
             )
 
@@ -374,10 +373,7 @@ def _select_eq_collection_instrument(short_name, period):
 
             return redirect(
                 url_for(
-                    "collection_exercise_bp.get_view_sample_ci",
-                    short_name=short_name,
-                    period=period,
-                    survey_mode="EQ"
+                    "collection_exercise_bp.get_view_sample_ci", short_name=short_name, period=period, survey_mode="EQ"
                 )
             )
 
@@ -390,12 +386,7 @@ def _select_eq_collection_instrument(short_name, period):
             }
         )
         return redirect(
-            url_for(
-                "collection_exercise_bp.get_view_sample_ci",
-                short_name=short_name,
-                period=period,
-                survey_mode="EQ"
-            )
+            url_for("collection_exercise_bp.get_view_sample_ci", short_name=short_name, period=period, survey_mode="EQ")
         )
 
     if cis_added and cis_removed:
@@ -411,7 +402,7 @@ def _select_eq_collection_instrument(short_name, period):
             "collection_exercise_bp.view_collection_exercise",
             short_name=short_name,
             period=period,
-            success_panel=success_panel
+            success_panel=success_panel,
         )
     )
 
@@ -881,7 +872,7 @@ def get_view_sample_ci(short_name, period):
 
     success_panel = request.args.get("success_panel")
     info_panel = request.args.get("info_panel")
-    
+
     complete_ci_dict = _get_collective_cis(ce_details, eq_ci_selectors)
 
     breadcrumbs = [{"text": "Back", "url": "/surveys/" + short_name + "/" + period}, {}]
@@ -1101,9 +1092,7 @@ def _add_collection_instrument(short_name, period):
         # The eq_id of a collection instrument will ALWAYS be its shortname.
         short_name_lower = str(short_name).lower()
         survey_uuid = survey_controllers.get_survey_by_shortname(short_name_lower)["id"]
-        collection_instrument_controllers.get_collection_instruments_by_classifier(
-            ci_type="EQ", survey_id=survey_uuid
-        )
+        collection_instrument_controllers.get_collection_instruments_by_classifier(ci_type="EQ", survey_id=survey_uuid)
         if not form.validate():
             unique_error = list(dict.fromkeys(form.formtype.errors))
 
@@ -1114,15 +1103,13 @@ def _add_collection_instrument(short_name, period):
                     "message": unique_error[0],
                 }
             )
-            return get_view_sample_ci(short_name, period) 
-        
+            return get_view_sample_ci(short_name, period)
+
         collection_instrument_controllers.link_collection_instrument_to_survey(
             survey_uuid, short_name_lower, form.formtype.data
         )
         # Need to get selectors a second time as we just added one and the list from before is outdated.
-        collection_instrument_controllers.get_collection_instruments_by_classifier(
-            ci_type="EQ", survey_id=survey_uuid
-        )
+        collection_instrument_controllers.get_collection_instruments_by_classifier(ci_type="EQ", survey_id=survey_uuid)
     except ApiError as err:
         try:
             session["error"] = json.dumps(
@@ -1137,8 +1124,8 @@ def _add_collection_instrument(short_name, period):
             # might still be helpful.
             errors = [("", [err.message])]
             session["error"] = json.dumps(errors[0])
-            
-        return get_view_sample_ci(short_name, period) 
+
+        return get_view_sample_ci(short_name, period)
 
     form.formtype.data = ""  # Reset the value on successful submission
     return get_view_sample_ci(short_name, period)
@@ -1147,9 +1134,9 @@ def _add_collection_instrument(short_name, period):
 def _get_collective_cis(ce_details, eq_ci_selectors):
     complete_ci_dict = []
     duplicate_list = []
-    
-    if 'EQ' in ce_details["collection_instruments"]:
-        for ci in ce_details["collection_instruments"]['EQ']:
+
+    if "EQ" in ce_details["collection_instruments"]:
+        for ci in ce_details["collection_instruments"]["EQ"]:
             ci_to_add = {"id": ci["id"], "form_type": ci["classifiers"]["form_type"], "checked": "true"}
             complete_ci_dict.append(ci_to_add)
             duplicate_list.append(ci["id"])

@@ -61,7 +61,7 @@ with open(f"{project_root}/test_data/collection_exercise/ce_details_new_event.js
 
 with open(f"{project_root}/test_data/collection_exercise/formatted_collection_exercise_details.json") as fp:
     formatted_collection_exercise_details = json.load(fp)
-    
+
 with open(f"{project_root}/test_data/collection_exercise/formatted_collection_exercise_details_eq.json") as fp:
     formatted_collection_exercise_details_eq = json.load(fp)
 with open(f"{project_root}/test_data/collection_exercise/formatted_new_collection_exercise_details.json") as fp:
@@ -1334,7 +1334,7 @@ class TestCollectionExercise(ViewTestCase):
         response = self.client.post(
             f"/surveys/{short_name}/{period}/view-sample-ci", data=post_data, follow_redirects=True
         )
-        
+
         print("Response " + str(response.data))
 
         self.assertEqual(response.status_code, 200)
@@ -2154,7 +2154,6 @@ class TestCollectionExercise(ViewTestCase):
         self.assertIn("btn-add-ci".encode(), response.data)
         self.assertIn("Done".encode(), response.data)
 
-    
     @requests_mock.mock()
     def test_linked_ci_eq_view_sample_ci_page_no_survey_permission(self, mock_request):
         mock_request.get(url_get_survey_by_short_name, json=self.eq_survey_dates)
