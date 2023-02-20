@@ -76,6 +76,9 @@ with open(f"{project_root}/test_data/collection_exercise/collection_exercise.jso
 with open(f"{project_root}/test_data/survey/single_survey.json") as json_data:
     survey = json.load(json_data)
 
+with open(f"{project_root}/test_data/survey/single_survey_eq.json") as json_data:
+    survey_eq = json.load(json_data)
+
 with open(f"{project_root}/test_data/collection_exercise/events.json") as json_data:
     events = json.load(json_data)
 
@@ -141,6 +144,7 @@ url_collection_instrument_unlink = (
     f"{collection_instrument_root}/unlink-exercise/{collection_instrument_id}/{collection_exercise_id}"
 )
 
+url_post_instrument_link = f"{TestingConfig.COLLECTION_INSTRUMENT_URL}/collection-instrument-api/1.0.2/upload"
 url_get_collection_instrument = f"{collection_instrument_root}/collectioninstrument"
 url_delete_collection_instrument = f"{collection_instrument_root}/delete/{collection_instrument_id}"
 
@@ -1335,8 +1339,6 @@ class TestCollectionExercise(ViewTestCase):
             f"/surveys/{short_name}/{period}/view-sample-ci", data=post_data, follow_redirects=True
         )
 
-        print("Response " + str(response.data))
-
         self.assertEqual(response.status_code, 200)
         self.assertIn("Error: Failed to remove collection instrument".encode(), response.data)
 
@@ -2385,3 +2387,76 @@ class TestCollectionExercise(ViewTestCase):
                 json=self.eq_collection_instrument,
                 complete_qs=True,
             )
+
+    @requests_mock.mock()
+    def test_add_collection_instrument_success(self, mock_request):
+        sign_in_with_permission(self, mock_request, user_permission_surveys_edit_json)
+        post_data = {"formtype": "0001", "add-ci": ""}
+        mock_request.get(url_survey_shortname, json=survey_eq)
+        mock_request.get(
+            f"{url_get_collection_instrument}?{ci_type_search_string_eq}", json=self.eq_ci_selectors, complete_qs=True
+        )
+        mock_request.post(
+            f"{url_post_instrument_link}?survey_id={survey_id}&classifiers=%7B%22form_type%22%3A%220001%22%2C%22eq_id"
+            f"%22%3A%22mbs%22%7D",
+            status_code=200,
+        )
+        mock_request.get(
+            f"{url_get_collection_instrument}?{ci_type_search_string_eq}", json=self.eq_ci_selectors, complete_qs=True
+        )
+        mock_request.get(url_ces_by_survey, json=self.collection_exercises)
+        mock_request.get(url_ce_by_id, json=collection_exercise_details["collection_exercise"])
+        mock_request.get(url_get_collection_exercise_events, json=self.collection_exercise_events)
+        mock_request.get(url_collection_exercise_link, json=[sample_summary_id])
+        mock_request.get(url_get_sample_summary, json=self.sample_summary)
+        mock_request.get(
+            f"{url_get_collection_instrument}?{ci_search_string}",
+            json=self.eq_collection_instrument,
+            complete_qs=True,
+        )
+        response = self.client.post(
+            f"/surveys/{short_name}/{period}/view-sample-ci?survey_mode=EQ", data=post_data, follow_redirects=True
+        )
+
+        self.assertEqual(response.status_code, 200)
+        print("Response: " + str(response.data))
+        self.assertIn(collection_instrument_id.encode(), response.data)
+
+    @requests_mock.mock()
+    def test_add_collection_instrument_duplicate(self, mock_request):
+        sign_in_with_permission(self, mock_request, user_permission_surveys_edit_json)
+        post_data = {"formtype": "0001", "add-ci": ""}
+        mock_request.get(url_survey_shortname, json=survey_eq)
+        mock_request.get(
+            f"{url_get_collection_instrument}?{ci_type_search_string_eq}", json=self.eq_ci_selectors, complete_qs=True
+        )
+        # error_data = {"Cannot upload an instrument with an identical set of classifiers"}
+        # error_data = {"Failed to link collection instrument to survey"}
+        error_data = {"errors": ["Cannot upload an instrument with an identical set of classifiers"]}
+
+        mock_request.post(
+            f"{url_post_instrument_link}?survey_id={survey_id}&classifiers=%7B%22form_type%22%3A%220001%22%2C%22eq_id"
+            f"%22%3A%22mbs%22%7D",
+            status_code=400,
+            json=error_data,
+        )
+        mock_request.get(
+            f"{url_get_collection_instrument}?{ci_type_search_string_eq}", json=self.eq_ci_selectors, complete_qs=True
+        )
+        mock_request.get(url_ces_by_survey, json=self.collection_exercises)
+        mock_request.get(url_ce_by_id, json=collection_exercise_details["collection_exercise"])
+        mock_request.get(url_get_collection_exercise_events, json=self.collection_exercise_events)
+        mock_request.get(url_collection_exercise_link, json=[sample_summary_id])
+        mock_request.get(url_get_sample_summary, json=self.sample_summary)
+        mock_request.get(
+            f"{url_get_collection_instrument}?{ci_search_string}",
+            json=self.eq_collection_instrument,
+            complete_qs=True,
+        )
+        response = self.client.post(
+            f"/surveys/{short_name}/{period}/view-sample-ci?survey_mode=EQ", data=post_data, follow_redirects=True
+        )
+
+        self.assertEqual(response.status_code, 200)
+        self.assertIn("There is a problem with this page".encode(), response.data)
+        self.assertIn("Cannot upload an instrument with an identical set of classifiers".encode(), response.data)

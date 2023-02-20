@@ -625,46 +625,6 @@ class TestSurvey(ViewTestCase):
         self.assertEqual(format_short_name("Sand&Gravel"), "Sand & Gravel")
 
     @requests_mock.mock()
-    def test_link_collection_instrument_success(self, mock_request):
-        sign_in_with_permission(self, mock_request, user_permission_surveys_edit_json)
-        changed_survey_details = {"formtype": "0001"}
-        data = [
-            {
-                "classifiers": {"COLLECTION_EXERCISE": [], "RU_REF": [], "eq_id": "qbs", "form_type": "0001"},
-                "file_name": "0001",
-                "id": "dde9cab1-b5bd-42a2-8ff7-80e3ddb8c11e",
-                "surveyId": "cb0711c3-0ac8-41d3-ae0e-567e5ea1ef87",
-            }
-        ]
-        mock_request.get(url_get_survey_by_qbs, json=survey_info["survey"])
-        mock_request.get(url_get_eq_ci_selectors, json=data)
-        mock_request.post(url_post_instrument_link)
-        response = self.client.post("/surveys/QBS/link-collection-instrument", data=changed_survey_details)
-        self.assertEqual(response.status_code, 200)
-        self.assertIn("0001".encode(), response.data)
-
-    @requests_mock.mock()
-    def test_link_collection_instrument_duplicate(self, mock_request):
-        sign_in_with_permission(self, mock_request, user_permission_surveys_edit_json)
-        changed_survey_details = {"formtype": "0001"}
-        data = [
-            {
-                "classifiers": {"COLLECTION_EXERCISE": [], "RU_REF": [], "eq_id": "qbs", "form_type": "0001"},
-                "file_name": "0001",
-                "id": "dde9cab1-b5bd-42a2-8ff7-80e3ddb8c11e",
-                "surveyId": "cb0711c3-0ac8-41d3-ae0e-567e5ea1ef87",
-            }
-        ]
-        error_data = {"errors": ["Cannot upload an instrument with an identical set of classifiers"]}
-        mock_request.get(url_get_survey_by_qbs, json=survey_info["survey"])
-        mock_request.get(url_get_eq_ci_selectors, json=data)
-        mock_request.post(url_post_instrument_link, status_code=400, json=error_data)
-        response = self.client.post("/surveys/QBS/link-collection-instrument", data=changed_survey_details)
-        self.assertEqual(response.status_code, 200)
-        self.assertIn("This page has 1 error".encode(), response.data)
-        self.assertIn("Cannot upload an instrument with an identical set of classifiers".encode(), response.data)
-
-    @requests_mock.mock()
     def test_survey_list_edit_permission(self, mock_request):
         mock_request.get(url_get_survey_list, json=survey_list)
         mock_request.post(url_sign_in_data, json={"access_token": self.access_token}, status_code=201)

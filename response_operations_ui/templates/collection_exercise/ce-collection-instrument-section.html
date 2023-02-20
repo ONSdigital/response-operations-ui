@@ -1,7 +1,7 @@
 {% from "components/input/_macro.njk" import onsInput %}
 {% from "components/checkboxes/_checkbox-macro.njk" import onsCheckbox %}
 {% from "components/label/_macro.njk" import onsLabel %}
-<section class="ce-section {{'ons-panel ons-panel--simple ons-panel--error' if missing_ci else ''}} ons-u-pt-m ons-u-mb-l ons-u-mt-M">
+<section class="ce-section {{'ons-panel ons-panel--simple ons-panel--error' if missing_ci else ''}} ons-u-mb-m ons-u-mt-m">
     {% set surveyEditPermission = hasPermission('surveys.edit') %}
     {% if surveyEditPermission %}
         {% set linkText = 'Upload SEFT files' %}

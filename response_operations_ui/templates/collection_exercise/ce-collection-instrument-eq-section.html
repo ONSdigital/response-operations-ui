@@ -1,4 +1,5 @@
-<div id="ciSelectionForm" class="{{'ons-panel ons-panel--error ons-panel--no-title' if 'ciSelect' in error['section'] else ''}} ons-u-mt-l">
+<div id="ciSelectionForm" class="{{'ons-panel ons-panel--error ons-panel--no-title' if 'ciSelect' in error['section'] else ''}} 
+ons-u-mt-l">
     <span class="ons-panel__assistive-text ons-u-vh">Error: </span>
     {% if 'ciSelect' in error['section'] %}
         <div class="ons-panel__body">
@@ -40,31 +41,34 @@
                     })
                 }}
                 <thead class="ons-table__head">
+                    {# Blank <tr> Required to give the correct formatting for the table #}
                     <tr class="ons-table__row"></tr>
                 </thead>
-                <tbody class="ons-table__body">
+                <tbody class="ons-table__body" >
                     {% for eq_ci in complete_ci_dict|batch(3, ' ') %} 
-                          <tr class="ons-table__row">
-                              {% for ci in eq_ci %}
-                                  {% if ci['form_type'] %}
-                                      <td class="ons-table__cell" >
-                                            {{
-                                              onsCheckbox({
-                                                  "id": "ci-check",
-                                                  "label": {
-                                                      "text": ci['form_type']
-                                                  },
-                                                  "value": ci['id']|string,
-                                                  "checked": true if ci['checked'] == 'true' else false,
-                                                  "name": "checkbox-answer",
-                                                  "classes": "ons-checkbox--no-border"
-                                              })
-                                          }}
-                                      </td>
-                                  {% endif %}
-                              {% endfor %}
-                          </tr>
+                        <tr class="ons-table__row" style="border-bottom: 1px #222222">
+                            {% for ci in eq_ci %}
+                                {% if ci['form_type'] %}
+                                    <td class="ons-table__cell" style="border-right: 10px solid white;">
+                                          {{
+                                            onsCheckbox({
+                                                "id": "ci-check",
+                                                "label": {
+                                                    "text": ci['form_type']
+                                                },
+                                                "value": ci['id']|string,
+                                                "checked": true if ci['checked'] == 'true' else false,
+                                                "name": "checkbox-answer",
+                                                "classes": "ons-checkbox--no-border"
+                                            })
+                                        }}
+                                    </td>
+                                {% endif %}
+                            {% endfor %}
+                        </tr>
                     {% endfor %}
+                    {# Blank <tr> Required to give the correct formatting for the table #}
+                    <tr class="ons-table__row"></tr>
                 </tbody>
             </table>
             <p id="ci-checked-count">{{ collection_instruments['EQ']|length }} selected out of {{ complete_ci_dict|length }} available</p>
