@@ -2419,7 +2419,6 @@ class TestCollectionExercise(ViewTestCase):
         )
 
         self.assertEqual(response.status_code, 200)
-        print("Response: " + str(response.data))
         self.assertIn(collection_instrument_id.encode(), response.data)
 
     @requests_mock.mock()
