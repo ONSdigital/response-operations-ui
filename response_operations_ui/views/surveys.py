@@ -24,10 +24,7 @@ from response_operations_ui.controllers import (
     survey_controllers,
 )
 from response_operations_ui.exceptions.exceptions import ApiError
-from response_operations_ui.forms import (
-    CreateSurveyDetailsForm,
-    EditSurveyDetailsForm,
-)
+from response_operations_ui.forms import CreateSurveyDetailsForm, EditSurveyDetailsForm
 
 logger = wrap_logger(logging.getLogger(__name__))
 
