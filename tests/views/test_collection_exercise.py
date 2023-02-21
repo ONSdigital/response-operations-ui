@@ -2429,8 +2429,6 @@ class TestCollectionExercise(ViewTestCase):
         mock_request.get(
             f"{url_get_collection_instrument}?{ci_type_search_string_eq}", json=self.eq_ci_selectors, complete_qs=True
         )
-        # error_data = {"Cannot upload an instrument with an identical set of classifiers"}
-        # error_data = {"Failed to link collection instrument to survey"}
         error_data = {"errors": ["Cannot upload an instrument with an identical set of classifiers"]}
 
         mock_request.post(
