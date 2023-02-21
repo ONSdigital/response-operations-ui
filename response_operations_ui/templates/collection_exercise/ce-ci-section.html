@@ -15,7 +15,7 @@
                   "value": "",
                   },
                   { 
-                        "value":'<em>' + "Total CI " + '(' + ci_details["total_ci_count"] + ')' '</em>',
+                        "value":'<em>' + "Total CI " + '(' + ci_table_context["total_ci_count"] + ')' '</em>',
                         "thClasses": "ons-u-fs-r--b",
                   },
         ]
@@ -29,7 +29,7 @@
         "hideCaption": true,
     } %}
   
-    {% for ci_type in ci_details["ci_table_context"] %}
+    {% for ci_type in ci_table_context["ci_details"] %}
       {% do collectionInstrumentTableDataRows.append(
           {
               "tds": [
