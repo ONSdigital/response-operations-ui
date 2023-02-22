@@ -71,8 +71,6 @@
             {% set editable = true %}
             {% set value = 'employment date' %}
         {% endif %}
-        {{dateGroup}}
-        {{event}}
         {% if surveyEditPermission %}
             {% if (not locked) and (dateGroup == 'periodId') %}
                 {% set hyperlink = '<a href="' + url_for("collection_exercise_bp.view_collection_exercise_details", short_name=survey.shortName, period=ce.exerciseRef, surveyRef=survey.surveyRef) + '" id="' + 'edit-event-date-' + id + '">' + 'Edit '+ value + '</a>' %}
