@@ -43,10 +43,10 @@
             {% set eventExecutionStatus = '<br/>' +'<span class="'+ 'ons-status ons-status--error' + '">'+ events.mps.event_status | capitalize +'</span>' %}
         {% endif %}
         {% if not locked or events.mps.is_in_future %}
-          {% set hyperlink = '<a href="' + url_for("collection_exercise_bp.update_event_date",  short_name=survey.shortName, period=ce.exerciseRef, tag='mps') + '" id="edit-event-date-mps">Edit date</a>' %}
+          {% set hyperlink = '<a href="' + url_for("collection_exercise_bp.update_event_date",  short_name=survey.shortName, period=ce.exerciseRef, tag='mps') + '" id="edit-event-date-mps">Edit print date</a>' %}
         {% endif %}
     {% else %}
-        {% set hyperlink = '<a href="' + url_for("collection_exercise_bp.get_create_collection_event_form",  short_name=survey.shortName, period=ce.exerciseRef, ce_id=ce.id, tag='mps') + '" id="create-event-date-mps">Add date</a>' %}
+        {% set hyperlink = '<a href="' + url_for("collection_exercise_bp.get_create_collection_event_form",  short_name=survey.shortName, period=ce.exerciseRef, ce_id=ce.id, tag='mps') + '" id="create-event-date-mps">Add print date</a>' %}
     {% endif %}
 
     {% set tds =
@@ -85,10 +85,10 @@
             {% set eventExecutionStatus = '<br/>' +'<span class="'+ 'ons-status ons-status--error' + '">'+ events.go_live.event_status | capitalize +'</span>' %}
         {% endif %}
         {% if not locked or events.go_live.is_in_future %}
-          {% set hyperlink = '<a href="' + url_for("collection_exercise_bp.update_event_date",  short_name=survey.shortName, period=ce.exerciseRef, tag='go_live') + '" id="edit-event-date-go_live">Edit date</a>' %}
+          {% set hyperlink = '<a href="' + url_for("collection_exercise_bp.update_event_date",  short_name=survey.shortName, period=ce.exerciseRef, tag='go_live') + '" id="edit-event-date-go_live">Edit go live date</a>' %}
         {% endif %}
     {% else %}
-        {% set hyperlink = '<a href="' + url_for("collection_exercise_bp.get_create_collection_event_form",  short_name=survey.shortName, period=ce.exerciseRef, ce_id=ce.id, tag='go_live') + '" id="create-event-date-go_live">Add date</a>' %}
+        {% set hyperlink = '<a href="' + url_for("collection_exercise_bp.get_create_collection_event_form",  short_name=survey.shortName, period=ce.exerciseRef, ce_id=ce.id, tag='go_live') + '" id="create-event-date-go_live">Add go live date</a>' %}
     {% endif %}
 
     {% set tds =
@@ -132,7 +132,7 @@
     {% endif %}
     {% for dateGroup in dateGroups %}
         {% set label = '' %}
-        {% set value = 'date' %}
+        {% set value = 'nudge email' %}
         {% set eventIsInFuture = False %}
         {% set eventInfo = '' %}
         {% set eventStatus = '' %}
@@ -156,7 +156,6 @@
                     {% set eventStatus = '' %}
                 {% endif %}
                 {% set eventIsInFuture = event.is_in_future %}
-                {% set value = 'date' %}
             {% endif %}
         {% elif dateGroup == 'nudge_email_1' %}
             {% set event = events.nudge_email_1 %}
@@ -178,7 +177,6 @@
                     {% set eventStatus = '' %}
                 {% endif %}
                 {% set eventIsInFuture = event.is_in_future %}
-                {% set value = 'date' %}
             {% endif %}
         {% elif dateGroup == 'nudge_email_2' %}
             {% set event = events.nudge_email_2 %}
@@ -200,7 +198,6 @@
                     {% set eventStatus = '' %}
                 {% endif %}
                 {% set eventIsInFuture = event.is_in_future %}
-                {% set value = 'date' %}
             {% endif %}
         {% elif dateGroup == 'nudge_email_3' %}
             {% set event = events.nudge_email_3 %}
@@ -222,7 +219,6 @@
                     {% set eventStatus = '' %}
                 {% endif %}
                 {% set eventIsInFuture = event.is_in_future %}
-                {% set value = 'date' %}
             {% endif %}
         {% elif dateGroup == 'nudge_email_4' %}
             {% set event = events.nudge_email_4 %}
@@ -244,7 +240,6 @@
                     {% set eventStatus = '' %}
                 {% endif %}
                 {% set eventIsInFuture = event.is_in_future %}
-                {% set value = 'date' %}
             {% endif %}
         {% elif ( (events.go_live) and (events.return_by) and (nudge) ) %}
             {% set label = ' ' %}
@@ -300,10 +295,10 @@
             {% set eventExecutionStatus = '<br/>' +'<span class="'+ 'ons-status ons-status--error' + '">'+ events.return_by.event_status | capitalize +'</span>' %}
         {% endif %}
         {% if not locked or events.return_by.is_in_future %}
-          {% set hyperlink = '<a href="' + url_for("collection_exercise_bp.update_event_date",  short_name=survey.shortName, period=ce.exerciseRef, tag='return_by') + '" id="edit-event-date-return_by">Edit date</a>' %}
+          {% set hyperlink = '<a href="' + url_for("collection_exercise_bp.update_event_date",  short_name=survey.shortName, period=ce.exerciseRef, tag='return_by') + '" id="edit-event-date-return_by">Edit return date</a>' %}
         {% endif %}
     {% else %}
-        {% set hyperlink = '<a href="' + url_for("collection_exercise_bp.get_create_collection_event_form",  short_name=survey.shortName, period=ce.exerciseRef, ce_id=ce.id, tag='return_by') + '" id="create-event-date-return_by">Add date</a>' %}
+        {% set hyperlink = '<a href="' + url_for("collection_exercise_bp.get_create_collection_event_form",  short_name=survey.shortName, period=ce.exerciseRef, ce_id=ce.id, tag='return_by') + '" id="create-event-date-return_by">Add return date</a>' %}
     {% endif %}
 
     {% set tds =
@@ -352,7 +347,6 @@
                     {% set eventStatus = '<br/>' +'<span class="'+ 'ons-status ons-status--error' + '">'+ events.reminder.event_status | capitalize +'</span>' %}
                 {% endif %}
                 {% set eventIsInFuture = event.is_in_future %}
-                {% set value = 'date' %}
             {% endif %}
         {% elif dateGroup == 'reminder2' %}
             {% set event = events.reminder2 %}
@@ -371,7 +365,6 @@
                     {% set eventStatus = '<br/>' +'<span class="'+ 'ons-status ons-status--error' + '">'+ events.reminder2.event_status | capitalize +'</span>' %}
                 {% endif %}
                 {% set eventIsInFuture = event.is_in_future %}
-                {% set value = 'date' %}
             {% endif %}
         {% elif dateGroup == 'reminder3' %}
             {% set event = events.reminder3 %}
@@ -390,7 +383,6 @@
                     {% set eventStatus = '<br/>' +'<span class="'+ 'ons-status ons-status--error' + '">'+ events.reminder3.event_status | capitalize +'</span>' %}
                 {% endif %}
                 {% set eventIsInFuture = event.is_in_future %}
-                {% set value = 'date' %}
             {% endif %}
         {% endif %}
       
@@ -440,10 +432,10 @@
             {% set eventExecutionStatus = '<br/>' +'<span class="'+ 'ons-status ons-status--error' + '">'+ events.exercise_end.event_status | capitalize +'</span>' %}
         {% endif %}
         {% if not locked or events.exercise_end.is_in_future %}
-          {% set hyperlink = '<a href="' + url_for("collection_exercise_bp.update_event_date",  short_name=survey.shortName, period=ce.exerciseRef, tag='exercise_end') + '" id="edit-event-date-exercise_end">Edit date</a>' %}
+          {% set hyperlink = '<a href="' + url_for("collection_exercise_bp.update_event_date",  short_name=survey.shortName, period=ce.exerciseRef, tag='exercise_end') + '" id="edit-event-date-exercise_end">Edit end date</a>' %}
         {% endif %}
     {% else %}
-        {% set hyperlink = '<a href="' + url_for("collection_exercise_bp.get_create_collection_event_form",  short_name=survey.shortName, period=ce.exerciseRef, ce_id=ce.id, tag='exercise_end') + '" id="create-event-date-exercise_end">Add date</a>' %}
+        {% set hyperlink = '<a href="' + url_for("collection_exercise_bp.get_create_collection_event_form",  short_name=survey.shortName, period=ce.exerciseRef, ce_id=ce.id, tag='exercise_end') + '" id="create-event-date-exercise_end">Add end date</a>' %}
     {% endif %}
 
     {% set tds =
