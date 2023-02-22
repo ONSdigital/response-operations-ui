@@ -8,14 +8,28 @@
           section. "
       })
     }}
-    {% set  collectionInstrumentTableData = {
+      {% set  collectionInstrumentTableData = {
         "variants": ['compact', 'responsive'],
         "id": "collection-instrument-table",
         "caption": 'Collection Instruments',
         "hideCaption": true,
     } %}
+  {% if survey["surveyMode"] == "EQ_AND_SEFT" %}
+      {% set tblHeaders =
+        [
+                  {
+                  "value": "",
+                  },
+                  { 
+                        "value":"<em>Total CI (" + ci_table_context["total_ci_count"] + ")</em>" ,
+                        "thClasses": "ons-u-fs-r--b",
+                  },
+        ]
+        %}
+    {% do collectionInstrumentTableData | setAttribute("ths", tblHeaders) %}
+  {% endif %}
   
-    {% for ci_type in ci_table_context %}
+    {% for ci_type in ci_table_context["ci_details"] %}
       {% do collectionInstrumentTableDataRows.append(
           {
               "tds": [
