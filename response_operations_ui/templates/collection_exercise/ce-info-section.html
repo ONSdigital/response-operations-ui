@@ -45,7 +45,7 @@
             {% set id = 'user-description' %}
             {% set event = ce.userDescription %}
             {% set editable = true %}
-            {% set value = 'dates' %}
+            {% set value = 'reporting period' %}
         {% elif dateGroup == 'ref_period_start' %}
             {% set id = 'period-start-date' %}
             {% set label = 'Reference period start date *' %}
@@ -69,7 +69,7 @@
                 {% set event = events.employment.day + ' ' + events.employment.date %}
             {% endif %}
             {% set editable = true %}
-            {% set value = ' date' %}
+            {% set value = 'employment date' %}
         {% endif %}
 
         {% if surveyEditPermission %}
