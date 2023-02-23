@@ -190,7 +190,7 @@ def _build_ci_table_context(ci: dict, locked: bool, survey_mode: str, short_name
     total_ci_count = 0
     for survey_mode_type in required_survey_mode_types:
         ci_count = len(ci.get(survey_mode_type, []))
-        ci_table_state_text = "no_instrument" if ci_count == 0 else ci_table_state_text
+        ci_table_state_text = "no_instrument" if ci_count == 0 and user_has_permission("surveys.edit") else ci_table_state_text
         ci_details.append(
             {
                 "type": survey_mode_type.lower(),
