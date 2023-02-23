@@ -1,55 +1,5 @@
 <section class="ce-section {{'ons-panel ons-panel--simple ons-panel--error' if missing_ci else ''}} ons-u-pt-m ons-u-mb-l ons-u-mt-M">
     {% set surveyEditPermission = hasPermission('surveys.edit') %}
-    {% if surveyEditPermission %}
-        {% set linkText = 'Upload SEFT files' %}
-    {% else %}
-        {% set linkText = 'View SEFT files' %}
-    {% endif %}
-        {% if request.args.get('survey_mode') == "SEFT" %}
-            {{
-                onsTable({
-                    "variants": ['compact', 'responsive'],
-                    "id": "collection-instruments-table",
-                    "caption": 'Collection instruments',
-                    "hideCaption": true,
-                    "ths": [
-                        { 
-                            "value": "Collection instruments library",
-                            "thClasses": "ons-u-fs-r--b"
-                        },
-                        {
-                            "value": "Selected files",
-                            "thClasses": "ons-u-fs-r--b"
-                        },
-                        {
-                            "value": " ",
-                            "thClasses": "ons-u-ta"
-                        }
-                    ],
-                    "trs": [
-                        {
-                            "tds": [
-                                {
-                                    "value": "SEFT collection instruments",
-                                    "tdClasses": "ons-u-ta"
-                                },
-                                {
-                                    "value": collection_instruments["SEFT"]|length|string,
-                                    "name": "total-instruments",
-                                    "tdClasses": "ons-u-ta"
-                                },
-                                {
-                                    "value": '<a id="seft-upload-link" href="' + url_for('collection_exercise_bp.get_seft_collection_instrument', period=ce.exerciseRef, short_name=survey.shortName.replace(' ', '')) + '">' + linkText + '</a>',
-                                    "name": "upload-seft-instruments",
-                                    "tdClasses": "ons-u-ta-right"
-                                }
-                            ]
-                        }
-                    ]
-                })
-            }}
-        {% endif %}
-      
         {% if request.args.get('survey_mode') == "EQ" %}
             {% if collection_instruments %}
                 {% set surveyTableDataHeader = [] %}
