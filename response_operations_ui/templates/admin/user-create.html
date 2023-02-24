@@ -167,7 +167,19 @@
                               })
                           }}
                         </td>
-                        <td class="ons-table__cell"></td>
+                        <td class="ons-table__cell">
+                            {{
+                                onsCheckbox({
+                                    "id": "surveys_delete",
+                                    "name": "surveys_delete",
+                                    "label": {
+                                        "text": "Delete surveys"
+                                    },
+                                    "hideLabel": true,
+                                    "value": "y",
+                                })
+                            }}
+                        </td>
                     </tr>
                     <tr class="ons-table__row">
                         <td class="ons-table__cell">
