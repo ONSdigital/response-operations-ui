@@ -2074,7 +2074,7 @@ class TestCollectionExercise(ViewTestCase):
         self.assertIn("Done".encode(), response.data)
 
     @requests_mock.mock()
-    def test_seft_loaded_sample_view_sample_ci_page_survey_permission(self, mock_request):
+    def test_seft_loaded_load_collection_instruments_page_survey_permission(self, mock_request):
         sign_in_with_permission(self, mock_request, user_permission_surveys_edit_json)
         mock_request.get(url_get_survey_by_short_name, json=self.seft_survey)
         mock_request.get(url_ces_by_survey, json=self.collection_exercises)
@@ -2091,15 +2091,16 @@ class TestCollectionExercise(ViewTestCase):
         mock_request.get(url_link_sample, json=[sample_summary_id])
         mock_request.get(url_get_sample_summary, json=self.sample_summary)
 
-        response = self.client.get(f"/surveys/{short_name}/{period}/view-sample-ci?survey_mode=SEFT")
+        response = self.client.get(f"/surveys/{short_name}/{period}/load-collection-instruments")
 
         self.assertEqual(200, response.status_code)
-        self.assertIn("SEFT collection instruments".encode(), response.data)
+        self.assertIn("Load Collection instruments for".encode(), response.data)
         self.assertIn("Upload SEFT files".encode(), response.data)
-        self.assertIn("Done".encode(), response.data)
+        self.assertIn("File types accepted are .xls and .xlsx".encode(), response.data)
+        self.assertIn("Upload".encode(), response.data)
 
     @requests_mock.mock()
-    def test_seft_loaded_sample_view_sample_ci_page_no_survey_permission(self, mock_request):
+    def test_seft_loaded_load_collection_instrument_page_no_survey_permission(self, mock_request):
         mock_request.get(url_get_survey_by_short_name, json=self.seft_survey)
         mock_request.get(url_ces_by_survey, json=self.collection_exercises)
         mock_request.get(url_ce_by_id, json=collection_exercise_details["collection_exercise"])
@@ -2115,11 +2116,11 @@ class TestCollectionExercise(ViewTestCase):
         mock_request.get(url_link_sample, json=[sample_summary_id])
         mock_request.get(url_get_sample_summary, json=self.sample_summary)
 
-        response = self.client.get(f"/surveys/{short_name}/{period}/view-sample-ci?survey_mode=SEFT")
+        response = self.client.get(f"/surveys/{short_name}/{period}/load-collection-instruments")
 
         self.assertEqual(200, response.status_code)
-        self.assertIn("SEFT collection instruments".encode(), response.data)
-        self.assertIn("View SEFT files".encode(), response.data)
+        self.assertIn("Load Collection instruments for".encode(), response.data)
+        self.assertIn("SEFT collection instruments uploaded".encode(), response.data)
         self.assertIn("Done".encode(), response.data)
 
     @requests_mock.mock()

@@ -28,9 +28,8 @@
         %}
     {% do collectionInstrumentTableData | setAttribute("ths", tblHeaders) %}
   {% endif %}
-  
     {% for ci_type in ci_table_context["ci_details"] %}
-      {% if survey["surveyMode"] == "EQ" %}
+      {% if ci_type.type == "eq" %}
         {% do collectionInstrumentTableDataRows.append(
             {
                 "tds": [
@@ -50,7 +49,7 @@
         )
         %}
       {% endif %}
-      {% if survey["surveyMode"] == "SEFT" %}
+      {% if ci_type.type == "seft" %}
         {% do collectionInstrumentTableDataRows.append(
             {
                 "tds": [
