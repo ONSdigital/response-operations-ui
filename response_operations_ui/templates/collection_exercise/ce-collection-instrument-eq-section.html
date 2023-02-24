@@ -49,10 +49,10 @@ ons-u-mt-l">
                         <tr class="ons-table__row" style="border-bottom: 1px #222222">
                             {% for ci in eq_ci %}
                                 {% if ci['form_type'] %}
-                                    <td class="ons-table__cell" style="border-right: 10px solid white;">
+                                    <td class="ons-table__cell" style="border-right: 10px solid transparent;">
                                           {{
                                             onsCheckbox({
-                                                "id": "ci-check",
+                                                "id": "ci-check-" + ci['form_type'],
                                                 "label": {
                                                     "text": ci['form_type']
                                                 },

@@ -61,9 +61,7 @@ with open(f"{project_root}/test_data/collection_exercise/ce_details_new_event.js
 
 with open(f"{project_root}/test_data/collection_exercise/formatted_collection_exercise_details.json") as fp:
     formatted_collection_exercise_details = json.load(fp)
-
-with open(f"{project_root}/test_data/collection_exercise/formatted_collection_exercise_details_eq.json") as fp:
-    formatted_collection_exercise_details_eq = json.load(fp)
+    
 with open(f"{project_root}/test_data/collection_exercise/formatted_new_collection_exercise_details.json") as fp:
     formatted_new_collection_exercise_details = json.load(fp)
 
@@ -137,11 +135,11 @@ url_get_by_survey_with_ref_end_date = f"{collection_exercise_root}/survey/{short
 
 collection_instrument_root = f"{TestingConfig.COLLECTION_INSTRUMENT_URL}/collection-instrument-api/1.0.2"
 url_collection_instrument = f"{collection_instrument_root}/upload/{collection_exercise_id}"
-url_collection_instrument_link = (
-    f"{collection_instrument_root}/link-exercise/{collection_instrument_id}/{collection_exercise_id}"
-)
 url_collection_instrument_unlink = (
     f"{collection_instrument_root}/unlink-exercise/{collection_instrument_id}/{collection_exercise_id}"
+)
+url_collection_instrument_multi_select = (
+    f"{collection_instrument_root}/multi-select-exercise/{collection_exercise_id}"
 )
 
 url_post_instrument_link = f"{TestingConfig.COLLECTION_INSTRUMENT_URL}/collection-instrument-api/1.0.2/upload"
@@ -201,6 +199,14 @@ class TestCollectionExercise(ViewTestCase):
             "surveyRef": "221",
             "eqVersion": "",
             "surveyMode": "SEFT",
+        }
+        self.eq_survey = {
+            "id": survey_id,
+            "longName": "Monthly Business Survey",
+            "shortName": "MBS",
+            "surveyRef": "009",
+            "eqVersion": "",
+            "surveyMode": "EQ",
         }
         self.eq_survey_dates = {
             "id": survey_id,
@@ -375,6 +381,13 @@ class TestCollectionExercise(ViewTestCase):
             "totalSampleUnits": 8,
             "expectedCollectionInstruments": 1,
         }
+        self.multi_select_response = [
+            {"added": True},
+            {"removed": True},
+            {"added": True,
+             "removed": True
+             }
+        ]
 
         self.app.config["SESSION_REDIS"] = fakeredis.FakeStrictRedis(
             host=self.app.config["REDIS_HOST"], port=self.app.config["FAKE_REDIS_PORT"], db=self.app.config["REDIS_DB"]
@@ -789,11 +802,19 @@ class TestCollectionExercise(ViewTestCase):
 
     @requests_mock.mock()
     @patch("response_operations_ui.views.collection_exercise.build_collection_exercise_details")
-    def test_select_eq_collection_instrument(self, mock_request, mock_details):
+    def test_add_eq_collection_instrument(self, mock_request, mock_details):
+        sign_in_with_permission(self, mock_request, user_permission_surveys_edit_json)
         post_data = {"checkbox-answer": [collection_instrument_id], "ce_id": collection_exercise_id, "select-eq-ci": ""}
-        mock_request.post(url_collection_instrument_link, status_code=200)
-        mock_details.return_value = formatted_collection_exercise_details
-
+        ce_details = {
+            "survey": self.eq_survey,
+            "collection_exercise": self.collection_exercises[0],
+            "collection_instruments": {"EQ": []},
+            "events": {},
+            "sample_summary": {},
+        }
+        mock_request.post(url_collection_instrument_multi_select, json=self.multi_select_response[0], status_code=200)
+        mock_details.return_value = ce_details
+        
         response = self.client.post(
             f"/surveys/{short_name}/{period}/view-sample-ci", data=post_data, follow_redirects=True
         )
@@ -803,11 +824,87 @@ class TestCollectionExercise(ViewTestCase):
 
     @requests_mock.mock()
     @patch("response_operations_ui.views.collection_exercise.build_collection_exercise_details")
-    def test_failed_select_eq_collection_instrument(self, mock_request, mock_details):
-        post_data = {"checkbox-answer": [collection_instrument_id], "ce_id": collection_exercise_id, "select-eq-ci": ""}
-        mock_request.post(url_collection_instrument_link, status_code=500)
-        mock_details.return_value = formatted_collection_exercise_details
+    def test_remove_eq_collection_instrument(self, mock_request, mock_details):
+        sign_in_with_permission(self, mock_request, user_permission_surveys_edit_json)
+        post_data = {"checkbox-answer": [], "ce_id": collection_exercise_id, "select-eq-ci": ""}
+        mock_request.post(url_collection_instrument_multi_select, json=self.multi_select_response[1], status_code=200)
+        
+        ce_details = {
+            "survey": self.eq_survey,
+            "collection_exercise": self.collection_exercises[0],
+            "collection_instruments": {"EQ": self.eq_collection_instrument},
+            "events": {},
+            "sample_summary": {},
+        }
+        
+        mock_details.return_value = ce_details
 
+        response = self.client.post(
+            f"/surveys/{short_name}/{period}/view-sample-ci", data=post_data, follow_redirects=True
+        )
+
+        self.assertEqual(response.status_code, 200)
+        self.assertIn("Collection instruments removed".encode(), response.data)
+    
+    @requests_mock.mock()
+    @patch("response_operations_ui.views.collection_exercise.build_collection_exercise_details")
+    def test_add_and_remove_eq_collection_instrument(self, mock_request, mock_details):
+        sign_in_with_permission(self, mock_request, user_permission_surveys_edit_json)
+        post_data = {"checkbox-answer": [collection_instrument_id_2], "ce_id": collection_exercise_id, "select-eq-ci": ""}
+        mock_request.post(url_collection_instrument_multi_select, json=self.multi_select_response[2], status_code=200)
+        
+        ce_details = {
+            "survey": self.eq_survey,
+            "collection_exercise": self.collection_exercises[0],
+            "collection_instruments": {"EQ": self.eq_collection_instrument},
+            "events": {},
+            "sample_summary": {},
+        }
+
+        mock_details.return_value = ce_details
+
+        response = self.client.post(
+            f"/surveys/{short_name}/{period}/view-sample-ci", data=post_data, follow_redirects=True
+        )
+
+        self.assertEqual(response.status_code, 200)
+        self.assertIn("Collection instruments both added and removed".encode(), response.data)
+    
+    @requests_mock.mock()
+    @patch("response_operations_ui.views.collection_exercise.collection_instrument_controllers."
+           "get_collection_instruments_by_classifier")
+    @patch("response_operations_ui.views.collection_exercise._get_collective_cis")
+    @patch("response_operations_ui.views.collection_exercise.build_collection_exercise_details")
+    def test_failed_add_eq_collection_instrument(self, mock_request, mock_details, mock_collective_cis, mock_ci_selector):
+        sign_in_with_permission(self, mock_request, user_permission_surveys_edit_json)
+        post_data = {"checkbox-answer": [collection_instrument_id], 
+                     "ce_id": collection_exercise_id, "select-eq-ci": ""}
+        mock_request.post(url_collection_instrument_multi_select, status_code=500, content=b'{"errors":["Error: '
+                                                                                           b'Failed to add collection '
+                                                                                           b'instrument(s)"]}\n')
+        eq_ci_to_add = {"id": collection_instrument_id, "form_type": '0001', "checked": "true"}
+        mock_ci_selector.return_value = [self.eq_ci_selectors]
+        mock_collective_cis.return_value = [eq_ci_to_add]
+        
+        mock_request.get(
+            f"{url_get_collection_instrument}?{ci_search_string}", json=self.eq_collection_instrument, complete_qs=True,
+            status_code=200
+        )
+        mock_request.get(
+            f"{url_get_collection_instrument}?{ci_type_search_string_eq}", json=self.eq_ci_selectors, complete_qs=True,
+            status_code=200
+        )
+
+        ce_details = {
+            "survey": self.eq_survey,
+            "collection_exercise": self.collection_exercises[0],
+            "collection_instruments": {"EQ": []},
+            "events": {},
+            "sample_summary": {},
+        }
+
+        mock_details.return_value = ce_details
+        
         response = self.client.post(
             f"/surveys/{short_name}/{period}/view-sample-ci", data=post_data, follow_redirects=True
         )
@@ -815,14 +912,66 @@ class TestCollectionExercise(ViewTestCase):
         self.assertEqual(response.status_code, 200)
         self.assertIn("Error: Failed to add collection instrument(s)".encode(), response.data)
 
+    @requests_mock.mock()
+    @patch("response_operations_ui.views.collection_exercise.collection_instrument_controllers."
+           "get_collection_instruments_by_classifier")
+    @patch("response_operations_ui.views.collection_exercise._get_collective_cis")
+    @patch("response_operations_ui.views.collection_exercise.build_collection_exercise_details")
+    def test_failed_remove_eq_collection_instrument(self, mock_request, mock_details, mock_collective_cis,
+                                                    mock_ci_selector):
+        sign_in_with_permission(self, mock_request, user_permission_surveys_edit_json)
+        post_data = {"checkbox-answer": [], "ce_id": collection_exercise_id, "select-eq-ci": ""}
+        mock_request.post(url_collection_instrument_multi_select, status_code=500, content=b'{"errors":["Error: '
+                                                                                           b'Failed to remove collection '
+                                                                                           b'instrument(s)"]}\n')
+        eq_ci_to_remove = {"id": collection_instrument_id, "form_type": '0001', "checked": "false"}
+        mock_ci_selector.return_value = [self.eq_ci_selectors]
+        mock_collective_cis.return_value = [eq_ci_to_remove]
+
+        mock_request.get(
+            f"{url_get_collection_instrument}?{ci_search_string}", json=self.eq_collection_instrument, complete_qs=True,
+            status_code=200
+        )
+        mock_request.get(
+            f"{url_get_collection_instrument}?{ci_type_search_string_eq}", json=self.eq_ci_selectors, complete_qs=True,
+            status_code=200
+        )
+
+        ce_details = {
+            "survey": self.eq_survey,
+            "collection_exercise": self.collection_exercises[0],
+            "collection_instruments": {"EQ": self.eq_collection_instrument},
+            "events": {},
+            "sample_summary": {},
+        }
+
+        mock_details.return_value = ce_details
+
+        response = self.client.post(
+            f"/surveys/{short_name}/{period}/view-sample-ci", data=post_data, follow_redirects=True
+        )
+
+        self.assertEqual(response.status_code, 200)
+        self.assertIn("Error: Failed to remove collection instrument(s)".encode(), response.data)
+
     @patch(
         "response_operations_ui.views.collection_exercise.collection_instrument_controllers."
         "get_collection_instruments_by_classifier"
     )
+    @patch("response_operations_ui.views.collection_exercise._get_collective_cis")
     @patch("response_operations_ui.views.collection_exercise.build_collection_exercise_details")
-    def test_failed_no_selected_eq_collection_instrument(self, mock_details, mock_ci_selector):
+    def test_failed_no_selected_eq_collection_instrument(self, mock_request, mock_details, mock_ci_selector):
+        sign_in_with_permission(self, mock_request, user_permission_surveys_edit_json)
         post_data = {"checkbox-answer": [], "ce_id": "000000", "select-eq-ci": ""}
-        mock_details.return_value = formatted_collection_exercise_details
+        ce_details = {
+            "survey": self.eq_survey,
+            "collection_exercise": self.collection_exercises[0],
+            "collection_instruments": {},
+            "events": {},
+            "sample_summary": {},
+        }
+
+        mock_details.return_value = ce_details
         mock_ci_selector.return_value = []
 
         response = self.client.post(
@@ -1318,25 +1467,6 @@ class TestCollectionExercise(ViewTestCase):
 
         response = self.client.post(
             f"/surveys/{short_name}/{period}/load-collection-instruments", data=post_data, follow_redirects=True
-        )
-
-        self.assertEqual(response.status_code, 200)
-        self.assertIn("Error: Failed to remove collection instrument".encode(), response.data)
-
-    @requests_mock.mock()
-    @patch("response_operations_ui.views.collection_exercise.build_collection_exercise_details")
-    def test_failed_unlink_collection_instrument(self, mock_request, mock_details):
-        post_data = {
-            "ci_id": collection_instrument_id,
-            "ce_id": collection_exercise_id,
-            "select-eq-ci": "",
-        }
-
-        mock_request.put(url_collection_instrument_unlink, status_code=500)
-        mock_details.return_value = formatted_collection_exercise_details_eq
-
-        response = self.client.post(
-            f"/surveys/{short_name}/{period}/view-sample-ci", data=post_data, follow_redirects=True
         )
 
         self.assertEqual(response.status_code, 200)
@@ -2331,10 +2461,7 @@ class TestCollectionExercise(ViewTestCase):
             "ce_id": collection_exercise_id,
             "unselect-eq-ci": "",
         }
-
-        mock_request.put(url_collection_instrument_unlink, status_code=200)
-        mock_details.return_value = formatted_collection_exercise_details
-
+        
         response = self.client.post(
             f"/surveys/{short_name}/{period}/load-collection-instruments", data=post_data, follow_redirects=True
         )
