@@ -427,7 +427,7 @@ class CreateAccountWithPermissionsForm(FlaskForm):
     def get_uaa_permission_groups():
         return [
             "surveys_edit",
-            "surveys_delete"
+            "surveys_delete",
             "reporting_units_edit",
             "respondents_edit",
             "respondents_delete",
