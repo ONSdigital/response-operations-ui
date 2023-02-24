@@ -1804,9 +1804,7 @@ class TestCollectionExercise(ViewTestCase):
         mock_details.return_value = seft_collection_exercise_details
         mock_request.get(url_get_survey_by_short_name, json=updated_survey_info["survey"])
         mock_request.get(url_ces_by_survey, json=updated_survey_info["collection_exercises"])
-        response = self.client.get(
-            f"/surveys/{short_name}/{period}/load-collection-instruments", follow_redirects=True
-        )
+        response = self.client.get(f"/surveys/{short_name}/{period}/load-collection-instruments", follow_redirects=True)
 
         self.assertEqual(response.status_code, 200)
         self.assertIn("Upload SEFT files".encode(), response.data)
@@ -2095,7 +2093,7 @@ class TestCollectionExercise(ViewTestCase):
 
         self.assertEqual(200, response.status_code)
         self.assertIn("Load Collection instruments for".encode(), response.data)
-        self.assertIn("Upload SEFT files".encode(), response.data)        
+        self.assertIn("Upload SEFT files".encode(), response.data)
         self.assertIn("Remove SEFT file".encode(), response.data)
         self.assertIn("File types accepted are .xls and .xlsx".encode(), response.data)
         self.assertIn("Upload".encode(), response.data)
