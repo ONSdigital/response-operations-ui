@@ -129,9 +129,9 @@ def view_collection_exercise(short_name, period):
     survey_mode = ce_details["survey"]["surveyMode"]
     if survey_mode == "EQ":
         show_set_live_button = (
-                ce_state in "READY_FOR_REVIEW"
-                and "ref_period_start" in ce_details["events"]
-                and "ref_period_end" in ce_details["events"]
+            ce_state in "READY_FOR_REVIEW"
+            and "ref_period_start" in ce_details["events"]
+            and "ref_period_end" in ce_details["events"]
         )
     else:
         show_set_live_button = ce_state in ("READY_FOR_REVIEW", "FAILEDVALIDATION")
@@ -188,17 +188,18 @@ def view_collection_exercise(short_name, period):
     )
 
 
-def _build_ci_table_context(ci: dict, locked: bool, survey_mode: str, short_name: str, exercise_ref: str) -> list:
+def _build_ci_table_context(ci: dict, locked: bool, survey_mode: str, short_name: str, exercise_ref: str) -> dict:
     view_sample_ci_url = url_for(
         "collection_exercise_bp.get_view_sample_ci", short_name=short_name, period=exercise_ref
     )
     required_survey_mode_types = ["SEFT", "EQ"] if survey_mode == "EQ_AND_SEFT" else [survey_mode]
     ci_table_state_text = "restricted" if locked or not user_has_permission("surveys.edit") else "has_permission"
-    ci_table_context = []
+    ci_details = []
+    total_ci_count = 0
     for survey_mode_type in required_survey_mode_types:
         ci_count = len(ci.get(survey_mode_type, []))
         ci_table_state_text = "no_instrument" if ci_count == 0 else ci_table_state_text
-        ci_table_context.append(
+        ci_details.append(
             {
                 "type": survey_mode_type.lower(),
                 "title": f"{survey_mode_type} collection instruments",
@@ -207,7 +208,8 @@ def _build_ci_table_context(ci: dict, locked: bool, survey_mode: str, short_name
                 "count": str(ci_count),
             }
         )
-    return ci_table_context
+        total_ci_count += ci_count
+    return {"total_ci_count": str(total_ci_count), "ci_details": ci_details}
 
 
 def _delete_sample_data_if_required():
@@ -349,24 +351,25 @@ def _select_eq_collection_instrument(short_name, period):
         for cis in cis_present:
             if cis["id"] not in cis_selected:
                 cis_removed.append(cis["id"])
-        
+
             duplicate_cis_selected.append(cis["id"])
-        
+
         # An initial check for all duplicates. There is no point sending to CI service if these are all duplicated CIs
         # Duplicated CIs are only sent to the CI service to check what CIs to unlink
         if sorted(duplicate_cis_selected) == sorted(cis_selected):
             all_duplicates = True
-            
-        if "EQ" in ce_details["survey"]['surveyMode'] and not all_duplicates:
+
+        if "EQ" in ce_details["survey"]["surveyMode"] and not all_duplicates:
             cis_selected = list(set(cis_selected).difference(cis_removed))
             ce_id = ce_details["collection_exercise"]["id"]
-            response_status, response_content = \
-                collection_instrument_controllers.multi_select_collection_instrument(cis_selected, ce_id)
-            
+            response_status, response_content = collection_instrument_controllers.multi_select_collection_instrument(
+                cis_selected, ce_id
+            )
+
             if response_status == 200:
-                if 'added' in response_content and 'removed' in response_content:
+                if "added" in response_content and "removed" in response_content:
                     success_panel = "Collection instruments both added and removed"
-                elif 'added' in response_content:
+                elif "added" in response_content:
                     success_panel = "Collection instruments added"
                 else:
                     success_panel = "Collection instruments removed"
@@ -380,8 +383,10 @@ def _select_eq_collection_instrument(short_name, period):
                 )
                 return redirect(
                     url_for(
-                        "collection_exercise_bp.get_view_sample_ci", short_name=short_name, period=period,
-                        survey_mode="EQ"
+                        "collection_exercise_bp.get_view_sample_ci",
+                        short_name=short_name,
+                        period=period,
+                        survey_mode="EQ",
                     )
                 )
 
