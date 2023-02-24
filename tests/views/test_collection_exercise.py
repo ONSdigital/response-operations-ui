@@ -533,7 +533,7 @@ class TestCollectionExercise(ViewTestCase):
         # Then I can view SEFT collection instruments but not EQ
         self.assertEqual(response.status_code, 200)
         self.assertIn("SEFT collection instruments".encode(), response.data)
-        self.assertIn('id="view-add-upload-ci-seft">View</a>'.encode(), response.data)
+        self.assertIn('id="seft-upload-link">View</a>'.encode(), response.data)
         self.assertNotIn("EQ collection instruments".encode(), response.data)
         self.assertNotIn('id="view-add-upload-ci-eq">View</a>'.encode(), response.data)
 
@@ -559,7 +559,7 @@ class TestCollectionExercise(ViewTestCase):
         self.assertIn("SEFT collection instruments".encode(), response.data)
         self.assertIn("EQ collection instruments".encode(), response.data)
         self.assertIn('id="view-add-upload-ci-eq">View</a>'.encode(), response.data)
-        self.assertIn('id="view-add-upload-ci-seft">View</a>'.encode(), response.data)
+        self.assertIn('id="seft-upload-link">View</a>'.encode(), response.data)
 
     @requests_mock.mock()
     def test_collection_exercise_view_event_statuses(self, mock_request):
@@ -1805,7 +1805,7 @@ class TestCollectionExercise(ViewTestCase):
         mock_request.get(url_get_survey_by_short_name, json=updated_survey_info["survey"])
         mock_request.get(url_ces_by_survey, json=updated_survey_info["collection_exercises"])
         response = self.client.get(
-            f"/surveys/{short_name}/{period}/view-sample-ci?survey_mode=SEFT", follow_redirects=True
+            f"/surveys/{short_name}/{period}/load-collection-instruments", follow_redirects=True
         )
 
         self.assertEqual(response.status_code, 200)
