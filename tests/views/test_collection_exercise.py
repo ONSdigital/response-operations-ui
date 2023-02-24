@@ -2023,7 +2023,7 @@ class TestCollectionExercise(ViewTestCase):
         self.assertNotIn("Upload sample file".encode(), response.data)
 
     @requests_mock.mock()
-    def test_seft_view_sample_ci_page_survey_permission(self, mock_request):
+    def test_seft_load_collection_instruments_survey_permission(self, mock_request):
         sign_in_with_permission(self, mock_request, user_permission_surveys_edit_json)
         mock_request.get(url_get_survey_by_short_name, json=self.seft_survey)
         mock_request.get(url_ces_by_survey, json=self.collection_exercises)
@@ -2040,12 +2040,12 @@ class TestCollectionExercise(ViewTestCase):
         mock_request.get(url_link_sample, json=[""])
         mock_request.get(url_get_sample_summary, json="")
 
-        response = self.client.get(f"/surveys/{short_name}/{period}/view-sample-ci?survey_mode=SEFT")
+        response = self.client.get(f"/surveys/{short_name}/{period}/load-collection-instruments")
 
         self.assertEqual(200, response.status_code)
-        self.assertIn("SEFT collection instruments".encode(), response.data)
+        self.assertIn("Load Collection instruments for".encode(), response.data)
         self.assertIn("Upload SEFT files".encode(), response.data)
-        self.assertIn("Done".encode(), response.data)
+        self.assertIn("Upload".encode(), response.data)
 
     @requests_mock.mock()
     def test_eq_view_sample_ci_page_survey_permission(self, mock_request):
@@ -2095,7 +2095,8 @@ class TestCollectionExercise(ViewTestCase):
 
         self.assertEqual(200, response.status_code)
         self.assertIn("Load Collection instruments for".encode(), response.data)
-        self.assertIn("Upload SEFT files".encode(), response.data)
+        self.assertIn("Upload SEFT files".encode(), response.data)        
+        self.assertIn("Remove SEFT file".encode(), response.data)
         self.assertIn("File types accepted are .xls and .xlsx".encode(), response.data)
         self.assertIn("Upload".encode(), response.data)
 
@@ -2121,6 +2122,7 @@ class TestCollectionExercise(ViewTestCase):
         self.assertEqual(200, response.status_code)
         self.assertIn("Load Collection instruments for".encode(), response.data)
         self.assertIn("SEFT collection instruments uploaded".encode(), response.data)
+        self.assertNotIn("Remove SEFT file".encode(), response.data)
         self.assertIn("Done".encode(), response.data)
 
     @requests_mock.mock()
