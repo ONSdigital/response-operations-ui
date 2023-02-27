@@ -28,22 +28,22 @@
       </div>
     {% if collection_exercises|length > 0 %}
     <section class="ce-list">
-{#        {% if surveyEditPermission %}#}
-{#            {% if survey.surveyMode in ['EQ', 'EQ_AND_SEFT'] %}#}
-{#                <p class="ons-field">#}
-{#                    {{#}
-{#                        onsButton({#}
-{#                            "text": "Link collection instrument",#}
-{#                            "id": "link-collection-instrument",#}
-{#                            "variants": ['secondary', 'small'],#}
-{#                            "name": "link-collection-instrument-link",#}
-{#                            "noIcon": true,#}
-{#                            "url": url_for('surveys_bp.get_link_collection_instrument', short_name=survey.shortName)#}
-{#                        })#}
-{#                    }}#}
-{#                </p>#}
-{#            {% endif %}#}
-{#        {% endif %}#}
+        {% if surveyEditPermission %}
+            {% if survey.surveyMode in ['EQ', 'EQ_AND_SEFT'] %}
+                <p class="ons-field">
+                    {{
+                        onsButton({
+                            "text": "Link collection instrument",
+                            "id": "link-collection-instrument",
+                            "variants": ['secondary', 'small'],
+                            "name": "link-collection-instrument-link",
+                            "noIcon": true,
+                            "url": url_for('surveys_bp.get_link_collection_instrument', short_name=survey.shortName)
+                        })
+                    }}
+                </p>
+            {% endif %}
+        {% endif %}
         <div class="ons-grid ons-grid--flex ons-grid--between">
             <div class="ons-grid__col">
                 <h2 class="ons-u-fs-l u-mb-xs" name="page-survey-subtitle">Collection exercises (CE)
