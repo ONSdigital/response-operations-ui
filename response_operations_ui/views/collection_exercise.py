@@ -451,33 +451,6 @@ def _upload_seft_collection_instrument(short_name, period):
     )
 
 
-def _unselect_eq_collection_instrument(short_name, period):
-    success_panel = "Collection instrument removed"
-    ci_id = request.form.get("ci_id")
-    ce_id = request.form.get("ce_id")
-    ci_unlinked = collection_instrument_controllers.unlink_collection_instrument(ce_id, ci_id)
-
-    if not ci_unlinked:
-        success_panel = None
-        session["error"] = json.dumps(
-            {
-                "section": "head",
-                "header": "Error: Failed to remove collection instrument",
-                "message": "Please try again",
-            }
-        )
-
-    return redirect(
-        url_for(
-            "collection_exercise_bp.get_view_sample_ci",
-            short_name=short_name,
-            period=period,
-            success_panel=success_panel,
-            survey_mode="EQ",
-        )
-    )
-
-
 def _validate_collection_instrument():
     if "ciFile" in request.files:
         file = request.files["ciFile"]
