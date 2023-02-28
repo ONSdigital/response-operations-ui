@@ -44,14 +44,16 @@ def upload_collection_instrument(collection_exercise_id, file, form_type=None):
             form_type=form_type,
             status=response.status_code,
         )
-        return False
+        if response.headers["Content-Type"] == "application/json":
+            return False, response.json().get("errors")[0]
+        return False, None
 
     logger.info(
         "Successfully uploaded collection instrument",
         collection_exercise_id=collection_exercise_id,
         form_type=form_type,
     )
-    return True
+    return True, None
 
 
 def upload_ru_specific_collection_instrument(collection_exercise_id, file, ru_ref):

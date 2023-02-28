@@ -119,7 +119,9 @@ class TestCollectionInstrumentController(unittest.TestCase):
             rsps.add(rsps.POST, ci_upload_url, status=401)
             with self.app.app_context():
                 file = self.create_test_file()
-                self.assertFalse(upload_collection_instrument(collection_exercise_id, file))
+                upload_success, error_text = upload_collection_instrument(collection_exercise_id, file)
+                self.assertFalse(upload_success)
+                self.assertEqual(error_text, None)
 
     def test_upload_collection_instrument_failure(self):
         """Tests on failure (500) False is returned"""
@@ -127,7 +129,9 @@ class TestCollectionInstrumentController(unittest.TestCase):
             rsps.add(rsps.POST, ci_upload_url, status=500, json={"errors": ["Failed to publish upload message"]})
             with self.app.app_context():
                 file = self.create_test_file()
-                self.assertFalse(upload_collection_instrument(collection_exercise_id, file))
+                upload_success, error_text = upload_collection_instrument(collection_exercise_id, file)
+                self.assertFalse(upload_success)
+                self.assertEqual(error_text, "Failed to publish upload message")
 
     def test_link_collection_instrument(self):
         """Tests on success (200) True is returned"""
