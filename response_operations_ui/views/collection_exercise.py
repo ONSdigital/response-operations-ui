@@ -374,7 +374,6 @@ def _upload_seft_collection_instrument(short_name, period):
         if not exercise:
             return make_response(jsonify({"message": "Collection exercise not found"}), 404)
 
-        error_text = None
         if is_ru_specific_instrument:
             ru_ref = file.filename.split(".")[0]
             upload_success, error_text = collection_instrument_controllers.upload_ru_specific_collection_instrument(
@@ -382,7 +381,7 @@ def _upload_seft_collection_instrument(short_name, period):
             )
         else:
             form_type = _get_form_type(file.filename)
-            upload_success = collection_instrument_controllers.upload_collection_instrument(
+            upload_success, error_text = collection_instrument_controllers.upload_collection_instrument(
                 exercise["id"], file, form_type
             )
 

@@ -840,22 +840,6 @@ class TestCollectionExercise(ViewTestCase):
         self.assertEqual(response.status_code, 200)
         self.assertIn("test_collection_instrument.xlxs".encode(), response.data)
 
-    @requests_mock.mock()
-    @patch("response_operations_ui.views.collection_exercise.build_collection_exercise_details")
-    def test_failed_upload_seft_collection_instrument(self, mock_request, mock_details):
-        post_data = {"ciFile": (BytesIO(b"data"), "064_201803_0001.xlsx"), "load-seft-ci": ""}
-        mock_request.post(url_collection_instrument, status_code=500)
-        mock_request.get(url_get_survey_by_short_name, status_code=200, json=self.survey_data)
-        mock_request.get(url_ces_by_survey, json=self.collection_exercises)
-        mock_details.return_value = formatted_collection_exercise_details
-
-        response = self.client.post(
-            f"/surveys/{short_name}/{period}/view-sample-ci", data=post_data, follow_redirects=True
-        )
-
-        self.assertEqual(response.status_code, 200)
-        self.assertIn("Error: Failed to upload collection instrument".encode(), response.data)
-
     @patch("response_operations_ui.views.collection_exercise.build_collection_exercise_details")
     def test_upload_seft_collection_instrument_upload_validation(self, mock_details):
         mock_details.return_value = formatted_collection_exercise_details
@@ -1852,11 +1836,14 @@ class TestCollectionExercise(ViewTestCase):
         self.assertIn("Remove SEFT file".encode(), response.data)
 
     @requests_mock.mock()
+    @patch("response_operations_ui.controllers.collection_instrument_controllers.upload_collection_instrument")
     @patch("response_operations_ui.views.collection_exercise.build_collection_exercise_details")
-    def test_seft_failed_upload_collection_instrument(self, mock_request, mock_details):
+    def test_seft_failed_upload_collection_instrument_with_error_message(
+        self, mock_request, mock_details, mock_upload_ci
+    ):
         sign_in_with_permission(self, mock_request, user_permission_surveys_edit_json)
+        mock_upload_ci.return_value = (False, "Error message passed")
         post_data = {"ciFile": (BytesIO(b"data"), "064_201803_0001.xlsx"), "load-ci": ""}
-        mock_request.post(url_collection_instrument, status_code=500)
         mock_request.get(url_get_survey_by_short_name, status_code=200, json=self.survey_data)
         mock_request.get(url_ces_by_survey, json=self.collection_exercises)
         mock_details.return_value = formatted_collection_exercise_details
@@ -1867,6 +1854,28 @@ class TestCollectionExercise(ViewTestCase):
 
         self.assertEqual(response.status_code, 200)
         self.assertIn("Error: Failed to upload collection instrument".encode(), response.data)
+        self.assertIn("Error message passed".encode(), response.data)
+
+    @requests_mock.mock()
+    @patch("response_operations_ui.controllers.collection_instrument_controllers.upload_collection_instrument")
+    @patch("response_operations_ui.views.collection_exercise.build_collection_exercise_details")
+    def test_seft_failed_upload_collection_instrument_without_error_message(
+        self, mock_request, mock_details, mock_upload_ci
+    ):
+        sign_in_with_permission(self, mock_request, user_permission_surveys_edit_json)
+        mock_upload_ci.return_value = (False, None)
+        post_data = {"ciFile": (BytesIO(b"data"), "064_201803_0001.xlsx"), "load-ci": ""}
+        mock_request.get(url_get_survey_by_short_name, status_code=200, json=self.survey_data)
+        mock_request.get(url_ces_by_survey, json=self.collection_exercises)
+        mock_details.return_value = formatted_collection_exercise_details
+
+        response = self.client.post(
+            f"/surveys/{short_name}/{period}/load-collection-instruments", data=post_data, follow_redirects=True
+        )
+
+        self.assertEqual(response.status_code, 200)
+        self.assertIn("Error: Failed to upload collection instrument".encode(), response.data)
+        self.assertIn("Please try again".encode(), response.data)
 
     @requests_mock.mock()
     @patch("response_operations_ui.views.collection_exercise.build_collection_exercise_details")
