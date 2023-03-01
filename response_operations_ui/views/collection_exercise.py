@@ -195,6 +195,7 @@ def _build_ci_table_context(ci: dict, locked: bool, survey_mode: str, short_name
             {
                 "type": survey_mode_type.lower(),
                 "title": f"{survey_mode_type} collection instruments",
+                "url": view_sample_ci_url,
                 "link_text": CI_TABLE_LINK_TEXT[survey_mode_type][ci_table_state_text],
                 "count": str(ci_count),
             }
