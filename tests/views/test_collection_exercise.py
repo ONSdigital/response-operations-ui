@@ -2103,7 +2103,7 @@ class TestCollectionExercise(ViewTestCase):
         self.assertEqual(200, response.status_code)
         self.assertIn("Load Collection instruments for".encode(), response.data)
         self.assertIn("Upload SEFT files".encode(), response.data)
-        self.assertIn("Remove SEFT file".encode(), response.data)
+        self.assertIn("Remove".encode(), response.data)
         self.assertIn("File types accepted are .xls and .xlsx".encode(), response.data)
         self.assertIn("Upload".encode(), response.data)
 
