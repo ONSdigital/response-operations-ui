@@ -14,7 +14,7 @@
     {% include 'collection_exercise/ce-info-panel.html' %}
     {% include 'partials/flashed-messages.html' %}
     <div class="ons-grid ons-grid--gutterless">
-        {% if survey.surveyMode == 'EQ' %}
+        {% if survey.surveyMode == 'EQ' or survey.surveyMode == 'EQ_AND_SEFT' %}
           <h1 name="page-ce-title">Select collection instruments</h1>
         {% else %}
           {% include 'collection_exercise/ce-handle-errors.html' %}
