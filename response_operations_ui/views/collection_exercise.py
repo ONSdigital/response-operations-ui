@@ -2,7 +2,6 @@ import json
 import logging
 from collections import defaultdict
 from datetime import datetime
-from json import JSONDecodeError
 
 import iso8601
 from dateutil import tz
@@ -1083,7 +1082,7 @@ def _add_collection_instrument(short_name, period):
         )
         # Need to get selectors a second time as we just added one and the list from before is outdated.
         collection_instrument_controllers.get_collection_instruments_by_classifier(ci_type="EQ", survey_id=survey_uuid)
-    except ApiError as err:
+    except ApiError:
         session["error"] = json.dumps(
             {
                 "section": "add-ci-error",
