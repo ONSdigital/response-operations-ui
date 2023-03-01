@@ -100,7 +100,7 @@ class Config(object):
 
     TEST_MODE = strtobool(os.getenv("TEST_MODE", "False"))
     WTF_CSRF_ENABLED = strtobool(os.getenv("WTF_CSRF_ENABLED", "True"))
-    MULTI_MODE_ENABLED = strtobool(os.getenv("MULTI_MODE_ENABLED", "True"))
+    MULTI_MODE_ENABLED = strtobool(os.getenv("MULTI_MODE_ENABLED", "False"))
 
 
 class DevelopmentConfig(Config):
