@@ -23,7 +23,7 @@ ons-u-mt-l">
             <table class="ons-table">
                 {% set selectAllText = "Select all" %}
                 {% set unselectAllText = "Unselect all" %}
-                {% if collection_instruments['EQ']|length == complete_ci_dict|length %}
+                {% if collection_instruments['EQ']|length == all_cis_for_survey|length %}
                     {% set autoSelectState = unselectAllText %}
                 {% else %}
                     {% set autoSelectState = selectAllText %}
@@ -45,7 +45,7 @@ ons-u-mt-l">
                     <tr class="ons-table__row"></tr>
                 </thead>
                 <tbody class="ons-table__body" >
-                    {% for eq_ci in complete_ci_dict|batch(3, ' ') %} 
+                    {% for eq_ci in all_cis_for_survey|batch(3, ' ') %} 
                         <tr class="ons-table__row" style="border-bottom: 1px #222222">
                             {% for ci in eq_ci %}
                                 {% if ci['form_type'] %}
@@ -71,7 +71,7 @@ ons-u-mt-l">
                     <tr class="ons-table__row"></tr>
                 </tbody>
             </table>
-            <p id="ci-checked-count">{{ collection_instruments['EQ']|length }} selected out of {{ complete_ci_dict|length }} available</p>
+            <p id="ci-checked-count">{{ collection_instruments['EQ']|length }} selected out of {{ all_cis_for_survey|length }} available</p>
             <div class="ons-u-mt-xxs">
                 {{
                     onsButton({

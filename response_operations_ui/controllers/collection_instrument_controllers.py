@@ -128,7 +128,7 @@ def link_collection_instrument_to_survey(survey_uuid, eq_id, form_type):
     )
 
 
-def multi_select_collection_instrument(cis_selected, ce_id):
+def update_collection_exercise_instruments(cis_selected, ce_id):
     """Links a collection instrument to a collection exercise
 
     :param ce_id: A uuid of a collection exercise
@@ -138,18 +138,20 @@ def multi_select_collection_instrument(cis_selected, ce_id):
     :return: True on success.  False on failure
     :rtype: bool
     """
-    bound_logger = logger.bind(collection_exercise_id=ce_id)
-    bound_logger.info("Linking collection instrument to collection exercise")
-    url = f'{app.config["COLLECTION_INSTRUMENT_URL"]}' f"/collection-instrument-api/1.0.2/multi-select-exercise/{ce_id}"
+    url = (
+        f'{app.config["COLLECTION_INSTRUMENT_URL"]}'
+        f"/collection-instrument-api/1.0.2"
+        f"/update_collection_exercise_instruments/{ce_id}"
+    )
     payload = {
         "instruments": cis_selected,
     }
     response = requests.post(url, params=payload, auth=app.config["BASIC_AUTH"])
     try:
         response.raise_for_status()
-        bound_logger.info("Successfully linked collection instrument to collection exercise")
+        logger.info("Successfully linked collection instrument to collection exercise")
     except requests.exceptions.HTTPError:
-        bound_logger.error(
+        logger.error(
             "Failed to link and/or unlink collection instrument to collection exercise", status=response.status_code
         )
         return response.status_code, response.json().get("errors")[0]

@@ -325,18 +325,13 @@ def _set_ready_for_live(short_name, period):
 
 def _select_eq_collection_instrument(short_name, period):
     success_panel = None
-    all_duplicates = False
     cis_selected = request.form.getlist("checkbox-answer")
     cis_removed = []
-    duplicate_cis_selected = []
     ce_details = build_collection_exercise_details(short_name, period, include_ci=True)
 
-    if "EQ" in ce_details["collection_instruments"]:
-        cis_present = ce_details["collection_instruments"]["EQ"]
-    else:
-        cis_present = []
+    cis_already_linked = ce_details.get("collection_instruments", "EQ")
 
-    if not cis_selected and not cis_present:
+    if not cis_selected and not cis_already_linked:
         session["error"] = json.dumps(
             {
                 "section": "ciSelect",
@@ -347,37 +342,26 @@ def _select_eq_collection_instrument(short_name, period):
         return redirect(
             url_for("collection_exercise_bp.get_view_sample_ci", short_name=short_name, period=period, survey_mode="EQ")
         )
-    elif cis_selected or cis_present:
-        for cis in cis_present:
-            if cis["id"] not in cis_selected:
-                cis_removed.append(cis["id"])
-
-            duplicate_cis_selected.append(cis["id"])
-
-        # An initial check for all duplicates. There is no point sending to CI service if these are all duplicated CIs
-        # Duplicated CIs are only sent to the CI service to check what CIs to unlink
-        if sorted(duplicate_cis_selected) == sorted(cis_selected):
-            all_duplicates = True
-
-        if "EQ" in ce_details["survey"]["surveyMode"] and not all_duplicates:
+    elif cis_selected or cis_already_linked:
+        if "EQ" in ce_details["survey"]["surveyMode"]:
             cis_selected = list(set(cis_selected).difference(cis_removed))
             ce_id = ce_details["collection_exercise"]["id"]
-            response_status, response_content = collection_instrument_controllers.multi_select_collection_instrument(
-                cis_selected, ce_id
-            )
+            response = collection_instrument_controllers.update_collection_exercise_instruments(cis_selected, ce_id)
 
-            if response_status == 200:
-                if "added" in response_content and "removed" in response_content:
-                    success_panel = "Collection instruments both added and removed"
-                elif "added" in response_content:
-                    success_panel = "Collection instruments added"
+            if response[0] != 200:
+                if cis_selected and cis_removed:
+                    error_message = "Error: Failed to add and remove collection instrument(s)"
+                elif cis_selected and not cis_removed:
+                    error_message = "Error: Failed to add collection instrument(s)"
+                elif not cis_selected and cis_removed:
+                    error_message = "Error: Failed to remove collection instrument(s)"
                 else:
-                    success_panel = "Collection instruments removed"
-            else:
+                    error_message = response[1]
+
                 session["error"] = json.dumps(
                     {
                         "section": "ciSelect",
-                        "header": response_content,
+                        "header": error_message,
                         "message": "Please try again",
                     }
                 )
@@ -839,7 +823,7 @@ def get_view_sample_ci(short_name, period):
     success_panel = request.args.get("success_panel")
     info_panel = request.args.get("info_panel")
 
-    complete_ci_dict = _get_collective_cis(ce_details, eq_ci_selectors)
+    all_cis_for_survey = _get_collective_cis(ce_details, eq_ci_selectors)
 
     breadcrumbs = [{"text": "Back", "url": "/surveys/" + short_name + "/" + period}, {}]
 
@@ -856,7 +840,7 @@ def get_view_sample_ci(short_name, period):
         show_msg=show_msg,
         eq_ci_selectors=eq_ci_selectors,
         info_panel=info_panel,
-        complete_ci_dict=complete_ci_dict,
+        all_cis_for_survey=all_cis_for_survey,
         breadcrumbs=breadcrumbs,
     )
 
@@ -1077,19 +1061,13 @@ def _add_collection_instrument(short_name, period):
         # Need to get selectors a second time as we just added one and the list from before is outdated.
         collection_instrument_controllers.get_collection_instruments_by_classifier(ci_type="EQ", survey_id=survey_uuid)
     except ApiError as err:
-        try:
-            session["error"] = json.dumps(
-                {
-                    "section": "add-ci-error",
-                    "header": "Cannot upload an instrument with an identical set of classifiers",
-                    "message": "Enter a CI that has not already been added",
-                }
-            )
-        except (JSONDecodeError, KeyError):
-            # If the message isn't JSON, or the 'errors' key doesn't exist, we'll render the message anyway as it
-            # might still be helpful.
-            errors = [("", [err.message])]
-            session["error"] = json.dumps(errors[0])
+        session["error"] = json.dumps(
+            {
+                "section": "add-ci-error",
+                "header": "Cannot upload an instrument with an identical set of classifiers",
+                "message": "Enter a CI that has not already been added",
+            }
+        )
 
         return get_view_sample_ci(short_name, period)
 
@@ -1097,21 +1075,21 @@ def _add_collection_instrument(short_name, period):
     return get_view_sample_ci(short_name, period)
 
 
-# Need to create a list containing all the available CIS to be used on the CI selection page. This iss all the
-# CIs already linked and CIs unlinked
 def _get_collective_cis(ce_details, eq_ci_selectors):
-    complete_ci_dict = []
+    # Need to create a list containing all the available CIs to be used on the CI selection page. This is all the
+    # CIs already linked and CIs unlinked
+    all_cis_for_survey = []
     duplicate_list = []
 
     if "EQ" in ce_details["collection_instruments"]:
         for ci in ce_details["collection_instruments"]["EQ"]:
             ci_to_add = {"id": ci["id"], "form_type": ci["classifiers"]["form_type"], "checked": "true"}
-            complete_ci_dict.append(ci_to_add)
+            all_cis_for_survey.append(ci_to_add)
             duplicate_list.append(ci["id"])
 
     for eq_ci in eq_ci_selectors:
         if eq_ci["id"] not in duplicate_list:
             eq_ci_to_add = {"id": eq_ci["id"], "form_type": eq_ci["classifiers"]["form_type"], "checked": "false"}
-            complete_ci_dict.append(eq_ci_to_add)
+            all_cis_for_survey.append(eq_ci_to_add)
 
-    return complete_ci_dict
+    return all_cis_for_survey
