@@ -1,6 +1,5 @@
 <section class="ce-section {{'ons-panel ons-panel--simple ons-panel--error' if missing_ci else ''}} ons-u-pt-m ons-u-mb-l ons-u-mt-M">
     {% set surveyEditPermission = hasPermission('surveys.edit') %}
-        {% if request.args.get('survey_mode') == "EQ" %}
             {% if collection_instruments %}
                 {% set surveyTableDataHeader = [] %}
                 {% set ths = 

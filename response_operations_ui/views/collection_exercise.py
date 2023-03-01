@@ -195,7 +195,6 @@ def _build_ci_table_context(ci: dict, locked: bool, survey_mode: str, short_name
             {
                 "type": survey_mode_type.lower(),
                 "title": f"{survey_mode_type} collection instruments",
-                "url": f"{view_sample_ci_url}?survey_mode={survey_mode_type}",
                 "link_text": CI_TABLE_LINK_TEXT[survey_mode_type][ci_table_state_text],
                 "count": str(ci_count),
             }
@@ -350,7 +349,6 @@ def _select_eq_collection_instrument(short_name, period):
             short_name=short_name,
             period=period,
             success_panel=success_panel,
-            survey_mode="EQ",
         )
     )
 
