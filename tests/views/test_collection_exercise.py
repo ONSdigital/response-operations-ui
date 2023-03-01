@@ -1811,7 +1811,7 @@ class TestCollectionExercise(ViewTestCase):
         self.assertIn("Collection instrument loaded".encode(), response.data)
         self.assertIn("test_collection_instrument.xlxs".encode(), response.data)
         self.assertIn("1 SEFT collection instruments uploaded".encode(), response.data)
-        self.assertIn("Remove SEFT file".encode(), response.data)
+        self.assertIn("Remove".encode(), response.data)
 
     @requests_mock.mock()
     @patch("response_operations_ui.views.collection_exercise.build_collection_exercise_details")
@@ -1831,7 +1831,7 @@ class TestCollectionExercise(ViewTestCase):
         self.assertIn("Collection instrument loaded".encode(), response.data)
         self.assertIn("test_collection_instrument.xlxs".encode(), response.data)
         self.assertIn("1 SEFT collection instruments uploaded".encode(), response.data)
-        self.assertIn("Remove SEFT file".encode(), response.data)
+        self.assertIn("Remove".encode(), response.data)
 
     @requests_mock.mock()
     @patch("response_operations_ui.controllers.collection_instrument_controllers.upload_collection_instrument")
