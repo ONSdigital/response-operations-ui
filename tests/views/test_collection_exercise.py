@@ -389,9 +389,9 @@ class TestCollectionExercise(ViewTestCase):
         self.multi_select_response = [{"added": True}, {"removed": True}, {"added": True, "removed": True}]
         self.single_survey_eq = {
             "id": "cb0711c3-0ac8-41d3-ae0e-567e5ea1ef87",
-            "shortName": "BLOCKS",
-            "longName": "Business Register and Employment Survey",
-            "surveyRef": "221",
+            "longName": "Monthly Business Survey",
+            "shortName": "MBS",
+            "surveyRef": "009",
             "surveyMode": "EQ",
         }
 
