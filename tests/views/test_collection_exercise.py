@@ -44,23 +44,15 @@ with open(collex_details) as json_data:
 with open(no_sample) as json_data:
     collection_exercise_details_no_sample = json.load(json_data)
 
-with open(failed_validation) as json_data:
-    collection_exercise_details_failedvalidation = json.load(json_data)
-
 with open(f"{project_root}/test_data/survey/edited_survey_ce_details.json") as json_data:
     updated_survey_info = json.load(json_data)
-
-with open(f"{project_root}/test_data/survey/survey_by_id.json") as fp:
-    survey_by_id = json.load(fp)
 
 with open(f"{project_root}/test_data/collection_exercise/exercise_data.json") as json_data:
     exercise_data = json.load(json_data)
 
-with open(f"{project_root}/test_data/collection_exercise/ce_details_new_event.json") as fp:
-    ce_details_no_events = json.load(fp)
-
 with open(f"{project_root}/test_data/collection_exercise/formatted_collection_exercise_details.json") as fp:
     formatted_collection_exercise_details = json.load(fp)
+
 with open(f"{project_root}/test_data/collection_exercise/formatted_new_collection_exercise_details.json") as fp:
     formatted_new_collection_exercise_details = json.load(fp)
 
@@ -76,11 +68,8 @@ with open(f"{project_root}/test_data/survey/single_survey.json") as json_data:
 with open(f"{project_root}/test_data/collection_exercise/events.json") as json_data:
     events = json.load(json_data)
 
-with open(f"{project_root}/test_data/collection_exercise/nudge_events_one.json") as json_data:
-    nudge_events_one = json.load(json_data)
-
-with open(f"{project_root}/test_data/collection_exercise/nudge_events_two.json") as json_data:
-    nudge_events_two = json.load(json_data)
+with open(f"{project_root}/test_data/collection_exercise/nudge_events.json") as json_data:
+    nudge_events = json.load(json_data)
 
 with open(f"{project_root}/test_data/collection_exercise/events_2030.json") as json_data:
     events_2030 = json.load(json_data)
@@ -99,6 +88,7 @@ with open(
     f"{project_root}/test_data/collection_exercise/collection_exercise_details_eq_ref_end_date.json"
 ) as json_data:
     collection_exercise_eq_ref_end_date = json.load(json_data)
+
 with open(f"{project_root}/test_data/collection_exercise/collection_exercise_details_sample_init_state.json") as fp:
     ce_details_sample_init_state = json.load(fp)
 
@@ -1671,7 +1661,7 @@ class TestCollectionExercise(ViewTestCase):
         mock_request.get(url_get_survey_by_short_name, json=self.seft_survey)
         mock_request.get(url_ces_by_survey, json=self.collection_exercises)
         mock_request.get(url_ce_by_id, json=collection_exercise_details["collection_exercise"])
-        mock_request.get(url_get_collection_exercise_events, json=nudge_events_two)
+        mock_request.get(url_get_collection_exercise_events, json=nudge_events)
         mock_request.get(url_link_sample, json=[sample_summary_id])
         mock_request.get(url_get_sample_summary, json=self.sample_summary)
         mock_request.get(
@@ -1693,7 +1683,7 @@ class TestCollectionExercise(ViewTestCase):
         def test_create_collection_events_not_set_sequentially(self, mock_request, mock_ce_event):
             mock_request.get(url_survey_shortname, json=survey)
             mock_request.get(url_collection_exercise_survey_id, json=[collection_exercise])
-            mock_request.get(url_get_collection_exercise_events, json=nudge_events_two)
+            mock_request.get(url_get_collection_exercise_events, json=nudge_events)
             mock_ce_event.return_value = "Collection exercise events must be set sequentially"
 
             create_ce_event_form = {"day": "15", "month": "10", "year": "2018", "hour": "01", "minute": "00"}
@@ -2285,14 +2275,9 @@ class TestCollectionExercise(ViewTestCase):
             response.data,
         )
 
-    @requests_mock.mock()
     @patch("response_operations_ui.views.collection_exercise.build_collection_exercise_details")
-    def test_loaded_ci_load_collection_instrument_no_page_survey_permission(self, mock_request, mock_details):
-        mock_request.post(url_collection_instrument, status_code=201)
-        mock_request.get(url_ces_by_survey, json=exercise_data)
-        mock_request.get(url_get_survey_by_short_name, json=self.survey_data)
+    def test_loaded_ci_load_collection_instrument_no_page_survey_permission(self, mock_details):
         mock_details.return_value = formatted_collection_exercise_details
-
         response = self.client.get(f"/surveys/{short_name}/{period}/load-collection-instruments", follow_redirects=True)
 
         self.assertEqual(response.status_code, 200)
@@ -2307,9 +2292,6 @@ class TestCollectionExercise(ViewTestCase):
         # Sign in without correct permissions
         sign_in_with_permission(self, mock_request, user_permission_messages_edit_json)
         post_data = {"ciFile": (BytesIO(b"data"), "064_201803_0001.xlsx"), "load-ci": ""}
-        mock_request.post(url_collection_instrument, status_code=201)
-        mock_request.get(url_ces_by_survey, json=exercise_data)
-        mock_request.get(url_get_survey_by_short_name, json=self.survey_data)
         mock_details.return_value = formatted_collection_exercise_details
 
         response = self.client.post(
