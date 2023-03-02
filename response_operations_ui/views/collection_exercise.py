@@ -1064,7 +1064,6 @@ def _add_collection_instrument(short_name, period):
         # The eq_id of a collection instrument will ALWAYS be its shortname.
         short_name_lower = str(short_name).lower()
         survey_uuid = survey_controllers.get_survey_by_shortname(short_name_lower)["id"]
-        collection_instrument_controllers.get_collection_instruments_by_classifier(ci_type="EQ", survey_id=survey_uuid)
         if not form.validate():
             unique_error = list(dict.fromkeys(form.formtype.errors))
 
@@ -1080,8 +1079,6 @@ def _add_collection_instrument(short_name, period):
         collection_instrument_controllers.link_collection_instrument_to_survey(
             survey_uuid, short_name_lower, form.formtype.data
         )
-        # Need to get selectors a second time as we just added one and the list from before is outdated.
-        collection_instrument_controllers.get_collection_instruments_by_classifier(ci_type="EQ", survey_id=survey_uuid)
     except ApiError:
         session["error"] = json.dumps(
             {

@@ -205,6 +205,14 @@ class TestCollectionExercise(ViewTestCase):
             "eqVersion": "",
             "surveyMode": "EQ",
         }
+        self.eq_and_seft_survey = {
+            "id": survey_id,
+            "longName": "Monthly Business Survey",
+            "shortName": "MBS",
+            "surveyRef": "009",
+            "eqVersion": "",
+            "surveyMode": "EQ_AND_SEFT",
+        }
         self.eq_survey_dates = {
             "id": survey_id,
             "longName": "Monthly Survey of Building Materials Bricks",
@@ -821,6 +829,27 @@ class TestCollectionExercise(ViewTestCase):
 
     @requests_mock.mock()
     @patch("response_operations_ui.views.collection_exercise.build_collection_exercise_details")
+    def test_add_eq_seft_collection_instrument(self, mock_request, mock_details):
+        sign_in_with_permission(self, mock_request, user_permission_surveys_edit_json)
+        post_data = {"checkbox-answer": [collection_instrument_id], "ce_id": collection_exercise_id, "select-eq-ci": ""}
+        ce_details = {
+            "survey": self.eq_and_seft_survey,
+            "collection_exercise": self.collection_exercises[0],
+            "collection_instruments": {"EQ": []},
+            "events": {},
+            "sample_summary": {},
+        }
+        mock_request.post(url_collection_instrument_multi_select, json=self.multi_select_response[0], status_code=200)
+        mock_details.return_value = ce_details
+
+        response = self.client.post(
+            f"/surveys/{short_name}/{period}/view-sample-ci", data=post_data, follow_redirects=True
+        )
+
+        self.assertEqual(response.status_code, 200)
+
+    @requests_mock.mock()
+    @patch("response_operations_ui.views.collection_exercise.build_collection_exercise_details")
     def test_remove_eq_collection_instrument(self, mock_request, mock_details):
         sign_in_with_permission(self, mock_request, user_permission_surveys_edit_json)
         post_data = {"checkbox-answer": [], "ce_id": collection_exercise_id, "select-eq-ci": ""}
@@ -828,6 +857,29 @@ class TestCollectionExercise(ViewTestCase):
 
         ce_details = {
             "survey": self.eq_survey,
+            "collection_exercise": self.collection_exercises[0],
+            "collection_instruments": {"EQ": self.eq_collection_instrument},
+            "events": {},
+            "sample_summary": {},
+        }
+
+        mock_details.return_value = ce_details
+
+        response = self.client.post(
+            f"/surveys/{short_name}/{period}/view-sample-ci", data=post_data, follow_redirects=True
+        )
+
+        self.assertEqual(response.status_code, 200)
+
+    @requests_mock.mock()
+    @patch("response_operations_ui.views.collection_exercise.build_collection_exercise_details")
+    def test_remove_eq_seft_collection_instrument(self, mock_request, mock_details):
+        sign_in_with_permission(self, mock_request, user_permission_surveys_edit_json)
+        post_data = {"checkbox-answer": [], "ce_id": collection_exercise_id, "select-eq-ci": ""}
+        mock_request.post(url_collection_instrument_multi_select, json=self.multi_select_response[1], status_code=200)
+
+        ce_details = {
+            "survey": self.eq_and_seft_survey,
             "collection_exercise": self.collection_exercises[0],
             "collection_instruments": {"EQ": self.eq_collection_instrument},
             "events": {},
@@ -1940,12 +1992,12 @@ class TestCollectionExercise(ViewTestCase):
 
     @requests_mock.mock()
     @patch("response_operations_ui.views.collection_exercise.build_collection_exercise_details")
-    def test_seft_upload_collection_instrument_supports_xls(self, mock_request, mock_details):
+    def test_eq_and_seft_upload_collection_instrument_supports_xls(self, mock_request, mock_details):
         sign_in_with_permission(self, mock_request, user_permission_surveys_edit_json)
         post_data = {"ciFile": (BytesIO(b"data"), "064_201803_0001.xls"), "load-ci": ""}
         mock_request.post(url_collection_instrument, status_code=201)
         mock_request.get(url_ces_by_survey, json=exercise_data)
-        mock_request.get(url_get_survey_by_short_name, json=self.survey_data)
+        mock_request.get(url_get_survey_by_short_name, json=self.eq_and_seft_survey)
         mock_details.return_value = formatted_collection_exercise_details
 
         response = self.client.post(
