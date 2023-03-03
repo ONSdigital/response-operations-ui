@@ -137,6 +137,37 @@ def edit_survey_details(short_name):
         return redirect(url_for("surveys_bp.view_surveys", message_key="survey_changed"))
 
 
+@surveys_bp.route("/edit-survey-details/<short_name>/delete", methods=["GET, POST"])
+@login_required
+def delete_survey(short_name):
+    verify_permission("surveys.delete")
+    survey_details = survey_controllers.get_survey(short_name)
+    # I think we need to get the exercises for the survey as a final double check incase someone was using curl
+    # to hit the endpoint directly
+    # try:
+    #     Get all collection exercises for survey
+    # except HTTPError:
+    #     flash('Error getting collection exercises')
+    #     redirect to survey page or render template with error?
+    # if exercises:
+    #     Do something sensible as they must've used a url to get here
+    
+    # if POST:
+    #     try:
+    #         Call survey delete endpoint
+    #     except HTTPError:
+    #         flash error
+    #         render delete-survey template
+    form = EditSurveyDetailsForm(form=request.form)
+
+    return render_template(
+        "surveys/delete-survey.html",
+        form=form,
+        short_name=short_name,
+        long_name=survey_details["longName"],
+    )
+
+
 @surveys_bp.route("/create", methods=["GET"])
 @login_required
 def show_create_survey():
