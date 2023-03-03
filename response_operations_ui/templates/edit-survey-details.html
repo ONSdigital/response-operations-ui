@@ -4,6 +4,7 @@
 {% from "components/fieldset/_macro.njk" import onsFieldset %}
 {% from "components/input/_macro.njk" import onsInput %}
 {% from "components/radios/_macro.njk" import onsRadios %}
+{% from "components/details/_macro.njk" import onsDetails %}
 
 {% set page_title = 'Edit survey details' %}
 
@@ -159,6 +160,21 @@
                     </div>
                 </div>  
             </form>
+        {% if survey_can_be_deleted %}
+          <div class="ons-grid__col ons-u-ml-s">
+            <a href="{{ url_for('surveys_bp.delete_survey', short_name=short_name) }}" id="delete-survey">Delete survey</a>
+          </div>
+        {% else %}
+              <div class="ons-grid__col ons-col-8@m">
+              {{
+                  onsDetails({
+                      "id": "surveyDeletionoDetails",
+                      "title": "How can I delete this survey?",
+                      "content": "<p>You can only delete the <strong>" + long_name + "</strong> when all it's collection exercises and secure messages have been deleted</p>"
+                  })
+              }}
+          </div>
+        {% endif %}
         </div>
     </div>
 {% endblock %}

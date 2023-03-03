@@ -5,6 +5,7 @@ from json import JSONDecodeError, loads
 from flask import (
     Blueprint,
     current_app,
+    flash,
     redirect,
     render_template,
     request,
@@ -12,6 +13,7 @@ from flask import (
     url_for,
 )
 from flask_login import login_required
+from requests.exceptions import HTTPError
 from structlog import wrap_logger
 
 from response_operations_ui.common.mappers import (
@@ -96,6 +98,15 @@ def view_survey(short_name):
 def view_survey_details(short_name):
     verify_permission("surveys.edit")
     survey_details = survey_controllers.get_survey(short_name)
+    survey_can_be_deleted = False
+    try:
+        exercises = collection_exercise_controllers.get_collection_exercises_by_survey(survey_details["id"])
+        # TODO also get secure messages?
+        if not exercises:
+            survey_can_be_deleted = True
+    except HTTPError:
+        flash("Error getting collection exercises for deletion page, please try again", "error")
+        # TODO I think continuing is fine as this shouldn't be fatal.  User might only want to edit anyway?
     form = EditSurveyDetailsForm(form=request.form)
 
     return render_template(
@@ -107,10 +118,11 @@ def view_survey_details(short_name):
         survey_ref=survey_details["surveyRef"],
         survey_mode=survey_details["surveyMode"],
         multi_mode_enabled=current_app.config["MULTI_MODE_ENABLED"],
+        survey_can_be_deleted=survey_can_be_deleted,
     )
 
 
-@surveys_bp.route("/edit-survey-details/<short_name>", methods=["POST", "GET"])
+@surveys_bp.route("/edit-survey-details/<short_name>", methods=["POST"])
 @login_required
 def edit_survey_details(short_name):
     verify_permission("surveys.edit")
@@ -137,12 +149,44 @@ def edit_survey_details(short_name):
         return redirect(url_for("surveys_bp.view_surveys", message_key="survey_changed"))
 
 
+@surveys_bp.route("/edit-survey-details/<short_name>/delete", methods=["GET", "POST"])
+@login_required
+def delete_survey(short_name):
+    verify_permission("surveys.delete")
+    survey_details = survey_controllers.get_survey(short_name)
+    # We need to get the exercises for the survey, even if it's a POST, as we need to protect against someone hitting
+    # this endpoint directly instead of going via a browser
+    try:
+        exercises = collection_exercise_controllers.get_collection_exercises_by_survey(survey_details["id"])
+        if exercises:
+            flash(f"{short_name} survey has collection exercises, it cannot be deleted", "error")
+            return redirect(url_for("surveys_bp.view_surveys"))
+    except HTTPError:
+        flash("Error getting collection exercises for deletion page, please try again", "error")
+        return redirect(url_for("surveys_bp.view_surveys"))
+
+    form = EditSurveyDetailsForm(form=request.form)
+    if request.method == "POST":
+        try:
+            survey_controllers.delete_survey_by_id(survey_details["id"])
+            flash(f"{short_name} deleted successfully")
+            return redirect(url_for("surveys_bp.view_surveys"))
+        except HTTPError:
+            flash("Something went wrong deleting the survey, please try again")
+
+    return render_template(
+        "surveys/delete-survey.html",
+        form=form,
+        short_name=short_name,
+        long_name=survey_details["longName"],
+    )
+
+
 @surveys_bp.route("/create", methods=["GET"])
 @login_required
 def show_create_survey():
     verify_permission("surveys.edit")
     form = CreateSurveyDetailsForm(form=request.form)
-
     return render_template("create-survey.html", form=form, multi_mode_enabled=current_app.config["MULTI_MODE_ENABLED"])
 
 
