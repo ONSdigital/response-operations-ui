@@ -151,7 +151,7 @@ def delete_survey(short_name):
     #     redirect to survey page or render template with error?
     # if exercises:
     #     Do something sensible as they must've used a url to get here
-    
+
     # if POST:
     #     try:
     #         Call survey delete endpoint
