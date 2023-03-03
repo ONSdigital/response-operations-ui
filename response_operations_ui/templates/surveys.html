@@ -82,16 +82,6 @@
         {% set surveyTableDataRows = [] %}
 
         {% for survey in survey_list %}
-        
-            {% set formData = {
-                "action": url_for("surveys_bp.view_survey_details", short_name=survey.shortName, long_name=survey.longName, legal_basis=survey.legalBasis, survey_ref=survey.surveyRef),
-                "method": 'get',
-                "button": {
-                    "text": 'Edit survey',
-                    "id": 'edit-survey-details-' + survey.surveyRef,
-                    "classes": 'ons-btn--secondary ons-btn--small'
-                }
-            } %}
             {% do surveyTableDataRows.append(
             {
                 "tds": [
@@ -116,7 +106,7 @@
                         "name": "tbl-surveys-legal-basis"
                     },
                     {
-                        "value": '<a href="' + url_for("surveys_bp.view_survey_details", short_name=survey.shortName, long_name=survey.longName, legal_basis=survey.legalBasis, survey_ref=survey.surveyRef) + '">Edit ' +'survey</a>',
+                        "value": '<a href="' + url_for("surveys_bp.view_survey_details", short_name=survey.shortName) + '">Edit survey</a>',
                         "class": "ons-u-ta-right",
                         "dataSort": "2",
                     } if surveyEditPermission else 
