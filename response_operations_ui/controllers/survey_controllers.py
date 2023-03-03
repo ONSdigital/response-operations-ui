@@ -33,15 +33,12 @@ def refresh_cache():
     logger.debug("refreshed cache")
 
 
-def get_survey_by_id(survey_id):
+def get_survey_by_id(survey_id: str) -> dict:
     """
-    Gets a survey from the survey service by its uuid.  This uuid is the one assigned
-    to the survey when it was created
+    Gets a survey from the survey service by its uuid.
 
     :param survey_id: A uuid for a survey
-    :type survey_id: str
     :return: A dict containing the json describing the survey
-    :rtype: dict
     """
     logger.info("Retrieve survey using survey uuid", survey_id=survey_id)
     url = f'{app.config["SURVEY_URL"]}/surveys/{survey_id}'
@@ -58,15 +55,13 @@ def get_survey_by_id(survey_id):
     return response.json()
 
 
-def get_survey_by_ref(survey_id):
+def get_survey_by_ref(survey_id: str) -> dict:
     """
     Gets a survey from the service service by its id.  This id is the one the ONS refers to the survey
     by (e.g., MBS = 009, RSI = 023)
 
     :param survey_id: A number representing the id of the survey
-    :type survey_id: str
     :return: A dict containing the json describing the survey
-    :rtype: dict
     """
     logger.info("Retrieve survey using survey id", survey_id=survey_id)
     url = f'{app.config["SURVEY_URL"]}/surveys/ref/{survey_id}'
@@ -133,6 +128,27 @@ def get_survey(short_name: str) -> dict:
 
     logger.info("Successfully retrieved survey details", short_name=short_name, survey_id=survey["id"])
     return survey
+
+
+def delete_survey_by_id(survey_id: str) -> None:
+    """
+    Deletes a survey from the survey service by its uuid.
+
+    :param survey_id: A uuid for a survey
+    :returns: A dict containing the json describing the survey
+    """
+    logger.info("Attempting to delete survey", survey_id=survey_id)
+    url = f'{app.config["SURVEY_URL"]}/surveys/{survey_id}'
+    response = requests.delete(url, auth=app.config["BASIC_AUTH"])
+
+    try:
+        response.raise_for_status()
+    except (HTTPError, RequestException):
+        logger.error("Survey deletion failed", survey_id=survey_id, exc_info=True)
+        raise ApiError(response)
+
+    logger.info("Successfully deleted survey", survey_id=survey_id)
+    return response.json()
 
 
 def convert_specific_surveys_to_specific_shortnames(survey_short_name: str) -> str:
