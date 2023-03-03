@@ -148,7 +148,6 @@ def delete_survey_by_id(survey_id: str) -> None:
         raise ApiError(response)
 
     logger.info("Successfully deleted survey", survey_id=survey_id)
-    return response.json()
 
 
 def convert_specific_surveys_to_specific_shortnames(survey_short_name: str) -> str:
