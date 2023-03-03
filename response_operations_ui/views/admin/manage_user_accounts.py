@@ -39,6 +39,7 @@ logger = wrap_logger(logging.getLogger(__name__))
 
 uaa_group_mapping = {
     "surveys_edit": "surveys.edit",
+    "surveys_delete": "surveys.delete",
     "reporting_units_edit": "reportingunits.edit",
     "respondents_edit": "respondents.edit",
     "respondents_delete": "respondents.delete",
