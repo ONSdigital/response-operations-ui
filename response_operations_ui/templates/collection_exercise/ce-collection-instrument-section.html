@@ -4,7 +4,7 @@
 <section class="ce-section {{'ons-panel ons-panel--simple ons-panel--error' if missing_ci else ''}} ons-u-mb-m ons-u-mt-m">
     {% set surveyEditPermission = hasPermission('surveys.edit') %}
     {% if surveyEditPermission %}
-        {% set linkText = 'Upload SEFT files' %}
+        {% set linkText = 'Upload SEFT collection instrument' %}
     {% else %}
         {% set linkText = 'View SEFT files' %}
     {% endif %}
