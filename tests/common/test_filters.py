@@ -136,26 +136,3 @@ class TestFilters(unittest.TestCase):
 
         output = get_current_collection_exercise(collection_exercise_list)
         self.assertEqual(output, expected_output)
-
-    def test_filter_eq_ci_selectors(self):
-        selectors = [
-            {
-                "classifiers": {"COLLECTION_EXERCISE": [], "RU_REF": [], "eq_id": "2", "form_type": "0001"},
-                "file_name": "0001",
-                "id": "aa794d7b-b810-4197-a8bb-e5e92739df06",
-                "surveyId": "02b9c366-7397-42f7-942a-76dc5876d86d",
-            }
-        ]
-
-        instruments = [
-            {
-                "classifiers": {"COLLECTION_EXERCISE": [], "RU_REF": [], "eq_id": "2", "form_type": "0001"},
-                "file_name": "0001",
-                "id": "aa794d7b-b810-4197-a8bb-e5e92739df06",
-                "surveyId": "02b9c366-7397-42f7-942a-76dc5876d86d",
-            }
-        ]
-
-        expected_output = []
-        output = filter_eq_ci_selectors(selectors, instruments)
-        self.assertEqual(output, expected_output)

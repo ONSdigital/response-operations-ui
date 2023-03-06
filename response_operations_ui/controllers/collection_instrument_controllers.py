@@ -151,7 +151,7 @@ def update_collection_exercise_instruments(cis_selected, ce_id):
     response = requests.post(url, params=payload, auth=app.config["BASIC_AUTH"])
     try:
         response.raise_for_status()
-        logger.info("Successfully linked collection instrument to collection exercise")
+        logger.info("Successfully linked collection instrument to collection exercise", ce_id=ce_id)
     except requests.exceptions.HTTPError:
         logger.error(
             "Failed to link and/or unlink collection instrument to collection exercise", status=response.status_code
