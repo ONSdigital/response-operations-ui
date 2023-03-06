@@ -20,7 +20,7 @@
                 <input type="hidden" name="csrf_token" value="{{ csrf_token() }}" />
                 <div id="ciFileErrorPanel" class="{{'ons-panel ons-panel--simple ons-panel--error' if error.section == 'ciFile' else ''}}">
                     <label class="ons-label ons-u-fs-m">Upload SEFT collection instrument</label>
-                    <span class="ons-label__description">File types accepted are .xls and .xlsx</span>
+                    <span class="ons-label__description">File types accepted are XLS and XLSX</span>
                     <div id="ciFileErrorPanelBody" class="{{'ons-panel__body' if error.section == 'ciFile' else ''}}">
                         <p id="ciFileErrorText" class="hidden">Incorrect file type. Please choose a file type XLSX or XLS</p>
                         {{-
