@@ -1793,7 +1793,7 @@ class TestCollectionExercise(ViewTestCase):
         )
 
         self.assertEqual(response.status_code, 200)
-        self.assertIn("Upload SEFT files".encode(), response.data)
+        self.assertIn("Upload SEFT collection instrument".encode(), response.data)
 
     @requests_mock.mock()
     @patch("response_operations_ui.views.collection_exercise.build_collection_exercise_details")
@@ -2053,7 +2053,7 @@ class TestCollectionExercise(ViewTestCase):
 
         self.assertEqual(200, response.status_code)
         self.assertIn("SEFT collection instruments".encode(), response.data)
-        self.assertIn("Upload SEFT files".encode(), response.data)
+        self.assertIn("Upload SEFT collection instrument".encode(), response.data)
         self.assertIn("Done".encode(), response.data)
 
     @requests_mock.mock()
@@ -2104,7 +2104,7 @@ class TestCollectionExercise(ViewTestCase):
 
         self.assertEqual(200, response.status_code)
         self.assertIn("SEFT collection instruments".encode(), response.data)
-        self.assertIn("Upload SEFT files".encode(), response.data)
+        self.assertIn("Upload SEFT collection instrument".encode(), response.data)
         self.assertIn("Done".encode(), response.data)
 
     @requests_mock.mock()
