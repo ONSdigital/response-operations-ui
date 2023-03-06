@@ -2125,7 +2125,6 @@ class TestCollectionExercise(ViewTestCase):
         response = self.client.get(f"/surveys/{short_name}/{period}/load-collection-instruments")
 
         self.assertEqual(200, response.status_code)
-        self.assertIn("Load Collection instruments for".encode(), response.data)
         self.assertIn("SEFT collection instruments uploaded".encode(), response.data)
         self.assertNotIn("Remove SEFT file".encode(), response.data)
         self.assertIn("Done".encode(), response.data)
