@@ -2105,7 +2105,6 @@ class TestCollectionExercise(ViewTestCase):
         self.assertIn("Upload SEFT collection instrument".encode(), response.data)
         self.assertIn("Done".encode(), response.data)
 
-
     @requests_mock.mock()
     def test_seft_loaded_load_collection_instrument_page_no_survey_permission(self, mock_request):
         mock_request.get(url_get_survey_by_short_name, json=self.seft_survey)
