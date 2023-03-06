@@ -2050,18 +2050,9 @@ class TestCollectionExercise(ViewTestCase):
         response = self.client.get(f"/surveys/{short_name}/{period}/load-collection-instruments")
 
         self.assertEqual(200, response.status_code)
-<<<<<<< HEAD
-<<<<<<< HEAD
-        self.assertIn("Load Collection instruments for".encode(), response.data)
-        self.assertIn("Upload SEFT files".encode(), response.data)
-        self.assertIn("Upload".encode(), response.data)
-=======
-=======
->>>>>>> main
         self.assertIn("SEFT collection instruments".encode(), response.data)
         self.assertIn("Upload SEFT collection instrument".encode(), response.data)
         self.assertIn("Done".encode(), response.data)
->>>>>>> 3132f0b (fix subtitle for upload SEFT files (#851))
 
     @requests_mock.mock()
     def test_eq_view_sample_ci_page_survey_permission(self, mock_request):
@@ -2110,20 +2101,10 @@ class TestCollectionExercise(ViewTestCase):
         response = self.client.get(f"/surveys/{short_name}/{period}/load-collection-instruments")
 
         self.assertEqual(200, response.status_code)
-<<<<<<< HEAD
-<<<<<<< HEAD
-        self.assertIn("Load Collection instruments for".encode(), response.data)
-        self.assertIn("Upload SEFT files".encode(), response.data)
-        self.assertIn("Remove".encode(), response.data)
-        self.assertIn("File types accepted are .xls and .xlsx".encode(), response.data)
-        self.assertIn("Upload".encode(), response.data)
-=======
-=======
->>>>>>> main
         self.assertIn("SEFT collection instruments".encode(), response.data)
         self.assertIn("Upload SEFT collection instrument".encode(), response.data)
         self.assertIn("Done".encode(), response.data)
->>>>>>> 3132f0b (fix subtitle for upload SEFT files (#851))
+
 
     @requests_mock.mock()
     def test_seft_loaded_load_collection_instrument_page_no_survey_permission(self, mock_request):
