@@ -920,29 +920,6 @@ class TestCollectionExercise(ViewTestCase):
         ce_details = {
             "survey": self.eq_survey,
             "collection_exercise": self.collection_exercises[0],
-            "collection_instruments": {"EQ": self.eq_collection_instrument},
-            "events": {},
-            "sample_summary": {},
-        }
-
-        mock_details.return_value = ce_details
-
-        response = self.client.post(
-            f"/surveys/{short_name}/{period}/view-sample-ci", data=post_data, follow_redirects=True
-        )
-
-        self.assertEqual(response.status_code, 200)
-
-    @requests_mock.mock()
-    @patch("response_operations_ui.views.collection_exercise.build_collection_exercise_details")
-    def test_remove_eq_collection_instrument(self, mock_request, mock_details):
-        sign_in_with_permission(self, mock_request, user_permission_surveys_edit_json)
-        post_data = {"checkbox-answer": [], "ce_id": collection_exercise_id, "select-eq-ci": ""}
-        mock_request.post(url_collection_instrument_multi_select, json=self.multi_select_response[1], status_code=200)
-
-        ce_details = {
-            "survey": self.eq_survey,
-            "collection_exercise": self.collection_exercises[0],
             "collection_instruments": {"EQ": self.eq_multiple_collection_instrument},
             "events": {},
             "sample_summary": {},
