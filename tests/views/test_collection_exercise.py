@@ -2051,10 +2051,13 @@ class TestCollectionExercise(ViewTestCase):
 
         self.assertEqual(200, response.status_code)
 <<<<<<< HEAD
+<<<<<<< HEAD
         self.assertIn("Load Collection instruments for".encode(), response.data)
         self.assertIn("Upload SEFT files".encode(), response.data)
         self.assertIn("Upload".encode(), response.data)
 =======
+=======
+>>>>>>> main
         self.assertIn("SEFT collection instruments".encode(), response.data)
         self.assertIn("Upload SEFT collection instrument".encode(), response.data)
         self.assertIn("Done".encode(), response.data)
@@ -2108,12 +2111,15 @@ class TestCollectionExercise(ViewTestCase):
 
         self.assertEqual(200, response.status_code)
 <<<<<<< HEAD
+<<<<<<< HEAD
         self.assertIn("Load Collection instruments for".encode(), response.data)
         self.assertIn("Upload SEFT files".encode(), response.data)
         self.assertIn("Remove".encode(), response.data)
         self.assertIn("File types accepted are .xls and .xlsx".encode(), response.data)
         self.assertIn("Upload".encode(), response.data)
 =======
+=======
+>>>>>>> main
         self.assertIn("SEFT collection instruments".encode(), response.data)
         self.assertIn("Upload SEFT collection instrument".encode(), response.data)
         self.assertIn("Done".encode(), response.data)
