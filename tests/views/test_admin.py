@@ -133,7 +133,8 @@ class TestMessage(ViewTestCase):
         self.assertIn("Create new user account".encode(), response.data)
         self.assertIn("Andy0".encode(), response.data)
         self.assertIn("Johnson".encode(), response.data)
-        self.assertIn("Edit or delete user account".encode(), response.data)
+        self.assertIn("Edit".encode(), response.data)
+        self.assertIn("Delete".encode(), response.data)
         self.assertIn("Andy0.Smith@ons.gov.uk".encode(), response.data)
         self.assertIn("Page 1 of 26".encode(), response.data)
 
@@ -149,7 +150,8 @@ class TestMessage(ViewTestCase):
         self.assertIn("Create new user account".encode(), response.data)
         self.assertNotIn("Andy0".encode(), response.data)
         self.assertNotIn("Johnson".encode(), response.data)
-        self.assertIn("Edit or delete user account".encode(), response.data)
+        self.assertIn("Edit".encode(), response.data)
+        self.assertIn("Delete".encode(), response.data)
         self.assertNotIn("Andy0.Smith@ons.gov.uk".encode(), response.data)
         self.assertNotIn("Page 1 of 26".encode(), response.data)
         self.assertIn("Andy155.Smith@ons.gov.uk".encode(), response.data)
@@ -185,7 +187,8 @@ class TestMessage(ViewTestCase):
         self.assertIn("Create new user account".encode(), response.data)
         self.assertIn("Andy0".encode(), response.data)
         self.assertIn("Johnson".encode(), response.data)
-        self.assertIn("Edit or delete user account".encode(), response.data)
+        self.assertIn("Edit".encode(), response.data)
+        self.assertIn("Delete".encode(), response.data)
         self.assertIn("Andy0.Smith@ons.gov.uk".encode(), response.data)
         self.assertIn("Page 1 of 26".encode(), response.data)
         self.assertIn("Andy155.Smith@ons.gov.uk".encode(), response.data)
@@ -296,11 +299,11 @@ class TestMessage(ViewTestCase):
         self.assertEqual(200, response.status_code)
         self.assertIn("Select user permissions".encode(), response.data)
         self.assertIn("ONS User".encode(), response.data)
-        self.assertIn("Delete user account".encode(), response.data)
 
         # Check we're not on manage account page
         self.assertNotIn("Create new user account".encode(), response.data)
-        self.assertNotIn("Edit or delete user account".encode(), response.data)
+        self.assertNotIn("First name".encode(), response.data)
+        self.assertNotIn("Last name".encode(), response.data)
 
     @requests_mock.mock()
     def test_edit_account_get_fail_own_id(self, mock_request):

@@ -29,7 +29,7 @@
     {% if collection_exercises|length > 0 %}
     <section class="ce-list">
         {% if surveyEditPermission %}
-            {% if survey.surveyMode == 'EQ' %}
+            {% if survey.surveyMode in ['EQ', 'EQ_AND_SEFT'] %}
                 <p class="ons-field">
                     {{
                         onsButton({

@@ -166,6 +166,7 @@ def view_collection_exercise(short_name, period):
         "collection_exercise/collection-exercise.html",
         ce=ce_details["collection_exercise"],
         ci_table_context=ci_table_context,
+        instrument_count=len(ce_details["collection_instruments"]),
         error=error_json,
         events=ce_details["events"],
         locked=locked,
@@ -181,17 +182,18 @@ def view_collection_exercise(short_name, period):
     )
 
 
-def _build_ci_table_context(ci: dict, locked: bool, survey_mode: str, short_name: str, exercise_ref: str) -> list:
+def _build_ci_table_context(ci: dict, locked: bool, survey_mode: str, short_name: str, exercise_ref: str) -> dict:
     view_sample_ci_url = url_for(
         "collection_exercise_bp.get_view_sample_ci", short_name=short_name, period=exercise_ref
     )
     required_survey_mode_types = ["SEFT", "EQ"] if survey_mode == "EQ_AND_SEFT" else [survey_mode]
     ci_table_state_text = "restricted" if locked or not user_has_permission("surveys.edit") else "has_permission"
-    ci_table_context = []
+    ci_details = []
+    total_ci_count = 0
     for survey_mode_type in required_survey_mode_types:
         ci_count = len(ci.get(survey_mode_type, []))
         ci_table_state_text = "no_instrument" if ci_count == 0 else ci_table_state_text
-        ci_table_context.append(
+        ci_details.append(
             {
                 "type": survey_mode_type.lower(),
                 "title": f"{survey_mode_type} collection instruments",
@@ -200,7 +202,8 @@ def _build_ci_table_context(ci: dict, locked: bool, survey_mode: str, short_name
                 "count": str(ci_count),
             }
         )
-    return ci_table_context
+        total_ci_count += ci_count
+    return {"total_ci_count": str(total_ci_count), "ci_details": ci_details}
 
 
 def _delete_sample_data_if_required():
@@ -373,7 +376,6 @@ def _upload_seft_collection_instrument(short_name, period):
         if not exercise:
             return make_response(jsonify({"message": "Collection exercise not found"}), 404)
 
-        error_text = None
         if is_ru_specific_instrument:
             ru_ref = file.filename.split(".")[0]
             upload_success, error_text = collection_instrument_controllers.upload_ru_specific_collection_instrument(
@@ -381,7 +383,7 @@ def _upload_seft_collection_instrument(short_name, period):
             )
         else:
             form_type = _get_form_type(file.filename)
-            upload_success = collection_instrument_controllers.upload_collection_instrument(
+            upload_success, error_text = collection_instrument_controllers.upload_collection_instrument(
                 exercise["id"], file, form_type
             )
 
@@ -1023,10 +1025,23 @@ def remove_loaded_sample(short_name, period):
     )
 
 
+def _split_list(list_to_split, num_of_lists):
+    k, m = divmod(len(list_to_split), num_of_lists)
+    return (list_to_split[i * k + min(i, m) : (i + 1) * k + min(i + 1, m)] for i in range(num_of_lists))
+
+
+def _create_seft_ci_table(collection_instruments):
+    collection_instruments = [ci for ci in collection_instruments]
+    ci_columns = list(_split_list(collection_instruments, 3))
+    table_columns = {"left": ci_columns[0], "middle": ci_columns[1], "right": ci_columns[2]}
+    return table_columns
+
+
 @collection_exercise_bp.route("/<short_name>/<period>/load-collection-instruments", methods=["GET"])
 @login_required
 def get_seft_collection_instrument(short_name, period):
     ce_details = build_collection_exercise_details(short_name, period, include_ci=True)
+    collection_instruments = ce_details["collection_instruments"].get("SEFT", {})
     show_msg = request.args.get("show_msg")
     success_panel = request.args.get("success_panel")
     info_panel = request.args.get("info_panel")
@@ -1038,18 +1053,28 @@ def get_seft_collection_instrument(short_name, period):
         "EXECUTED",
         "ENDED",
     )
+
+    table_columns = _create_seft_ci_table(collection_instruments)
+    back_url = url_for(
+        "collection_exercise_bp.get_view_sample_ci",
+        short_name=ce_details["survey"]["shortName"],
+        period=ce_details["collection_exercise"]["exerciseRef"],
+    )
+    breadcrumbs = [{"text": "Back", "url": back_url}, {"text": "View sample"}]
     error_json = _get_error_from_session()
     return render_template(
         "ce-seft-instrument.html",
+        breadcrumbs=breadcrumbs,
         survey=ce_details["survey"],
         ce=ce_details["collection_exercise"],
-        collection_instruments=ce_details["collection_instruments"].get("SEFT", {}),
+        collection_instruments=collection_instruments,
         success_panel=success_panel,
         error=error_json,
         info_panel=info_panel,
         show_msg=show_msg,
         period=period,
         locked=locked,
+        table_columns=table_columns,
     )
 
 

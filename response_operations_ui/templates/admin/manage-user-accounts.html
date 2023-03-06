@@ -130,8 +130,8 @@
                                 "value": user.lastname,
                             },
                             {
-                                "value": '<a href="' + url_for("admin_bp.get_manage_account_groups", user_id=user.id) + '">Edit or delete user account </a>' if user.show_edit_button else "",
-                                "class": "ons-u-ta-right"
+                                "value": '<a href="' + url_for("admin_bp.get_manage_account_groups", user_id=user.id) + '" > Edit</a>' + ' | ' + '<a href="' + url_for("admin_bp.get_delete_uaa_user", user_id=user.id) + '"> Delete </a>' if user.show_edit_button else "", 
+                                "tdClasses": "ons-u-ta-right",
                             },
                         ]
                     }

@@ -45,6 +45,7 @@ class LoginForm(FlaskForm):
 
 class EditUserGroupsForm(FlaskForm):
     surveys_edit = BooleanField()
+    surveys_delete = BooleanField()
     reporting_units_edit = BooleanField()
     respondents_edit = BooleanField()
     respondents_delete = BooleanField()
@@ -421,6 +422,7 @@ class CreateAccountWithPermissionsForm(FlaskForm):
     email = EmailField("Email", validators=[DataRequired(message="Email is required")])
 
     surveys_edit = BooleanField()
+    surveys_delete = BooleanField()
     reporting_units_edit = BooleanField()
     respondents_edit = BooleanField()
     respondents_delete = BooleanField()
@@ -431,6 +433,7 @@ class CreateAccountWithPermissionsForm(FlaskForm):
     def get_uaa_permission_groups():
         return [
             "surveys_edit",
+            "surveys_delete",
             "reporting_units_edit",
             "respondents_edit",
             "respondents_delete",
