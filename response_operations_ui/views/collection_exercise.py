@@ -998,11 +998,7 @@ def get_seft_collection_instrument(short_name, period):
     )
 
     table_columns = _create_seft_ci_table(collection_instruments)
-    back_url = url_for(
-        "collection_exercise_bp.get_view_sample_ci",
-        short_name=ce_details["survey"]["shortName"],
-        period=ce_details["collection_exercise"]["exerciseRef"],
-    )
+    back_url = url_for("collection_exercise_bp.view_collection_exercise", short_name=short_name, period=period)
     breadcrumbs = [{"text": "Back", "url": back_url}, {"text": "View sample"}]
     error_json = _get_error_from_session()
     return render_template(
