@@ -100,7 +100,7 @@ def build_collection_exercise_details(short_name: str, period: str, include_ci: 
         exercise_dict["collection_instruments"] = _build_collection_instruments_details(
             collection_exercise_id, survey_id
         )
-        if survey["surveyMode"] == "EQ":
+        if survey["surveyMode"] in ("EQ_AND_SEFT", "EQ"):
             exercise_dict[
                 "eq_ci_selectors"
             ] = collection_instrument_controllers.get_collection_instruments_by_classifier(
@@ -808,8 +808,7 @@ def get_view_sample_ci(short_name, period):
         )
         all_cis_for_survey = filter_eq_ci_selectors(all_eq_survey_ci, linked_eq_ci)
         _format_ci_file_name(linked_eq_ci, ce_details["survey"])
-        if ce_details["eq_ci_selectors"]:
-            eq_ci_selectors = ce_details["eq_ci_selectors"]
+        eq_ci_selectors = ce_details.get("eq_ci_selectors", {})
 
     error_json = _get_error_from_session()
     _delete_sample_data_if_required()
@@ -819,7 +818,6 @@ def get_view_sample_ci(short_name, period):
     info_panel = request.args.get("info_panel")
 
     breadcrumbs = [{"text": "Back", "url": "/surveys/" + short_name + "/" + period}, {}]
-    print("Error: " + str(error_json))
     return render_template(
         "collection_exercise/ce-view-sample-ci.html",
         ce=ce_details["collection_exercise"],

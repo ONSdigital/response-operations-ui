@@ -119,7 +119,7 @@ def get_nearest_future_key_date(events):
     return closest_key_date
 
 
-def filter_eq_ci_selectors(eq_ci_selectors, collection_instruments):
+def filter_eq_ci_selectors(eq_ci_selectors: list[dict], collection_instruments: list[dict]) -> list[dict]:
     """
     Takes all eQ collection instruments available for the collection exercise as a list and the already linked
     instruments and returns a list of the collection instruments that have not yet been linked for this exercise.

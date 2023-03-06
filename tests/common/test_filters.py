@@ -5,7 +5,6 @@ import unittest
 from freezegun import freeze_time
 
 from response_operations_ui.common.filters import (
-    filter_eq_ci_selectors,
     get_current_collection_exercise,
     get_nearest_future_key_date,
 )
