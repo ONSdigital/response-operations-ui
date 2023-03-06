@@ -13,7 +13,7 @@
     {% include 'collection_exercise/ce-success-panel.html' %}
     {% include 'collection_exercise/ce-info-panel.html' %}
     {% include 'partials/error-box.html' %}
-    <h1 name="page-survey-title" class="ons-u-mb-l">Load Collection instruments for {{survey.shortName}} {{period}}</h1>
+    <h1 name="page-survey-title" class="ons-u-mb-l">SEFT collection instruments | {{ survey.shortName }} {{ survey.surveyRef }}</h1>
     <div class="ons-u-mb-l ons-col-7@l">
         {% if (not locked) and surveyEditPermission %}
             <form id="seft-form-load-ci" action="" class="ons-form" method="post" enctype="multipart/form-data">
