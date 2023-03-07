@@ -49,7 +49,8 @@ from response_operations_ui.controllers.uaa_controller import user_has_permissio
 from response_operations_ui.exceptions.exceptions import ApiError
 from response_operations_ui.forms import (
     CreateCollectionExerciseDetailsForm,
-    EditCollectionExerciseDetailsForm,
+    EditCollectionExercisePeriodDescriptionForm,
+    EditCollectionExercisePeriodIDForm,
     EventDateForm,
     RemoveLoadedSample,
 )
@@ -535,36 +536,60 @@ def _get_form_type(file_name):
     return file_name.split("_")[2]  # file name format is surveyId_period_formType
 
 
-@collection_exercise_bp.route("/<short_name>/<period>/edit-collection-exercise-details", methods=["GET"])
+@collection_exercise_bp.route("/<short_name>/<period>/edit-collection-exercise-period-id", methods=["GET"])
 @login_required
-def view_collection_exercise_details(short_name, period):
+def edit_collection_exercise_period_id(short_name, period):
     verify_permission("surveys.edit")
     logger.info("Retrieving collection exercise data for form", short_name=short_name, period=period)
     ce_details = build_collection_exercise_details(short_name, period)
-    form = EditCollectionExerciseDetailsForm(form=request.form)
+    form = EditCollectionExercisePeriodIDForm(form=request.form)
     survey_details = survey_controllers.get_survey(short_name)
     ce_state = ce_details["collection_exercise"]["state"]
     locked = ce_state in ("LIVE", "READY_FOR_LIVE", "EXECUTION_STARTED", "VALIDATED", "EXECUTED", "ENDED")
 
     return render_template(
-        "edit-collection-exercise-details.html",
+        "edit-collection-exercise-period-id.html",
         survey_ref=ce_details["survey"]["surveyRef"],
         form=form,
         short_name=short_name,
         period=period,
         locked=locked,
         ce_state=ce_details["collection_exercise"]["state"],
-        user_description=ce_details["collection_exercise"]["userDescription"],
         collection_exercise_id=ce_details["collection_exercise"]["id"],
         survey_id=survey_details["id"],
     )
 
 
-@collection_exercise_bp.route("/<short_name>/<period>/edit-collection-exercise-details", methods=["POST"])
+@collection_exercise_bp.route("/<short_name>/<period>/edit-collection-exercise-period-description", methods=["GET"])
 @login_required
-def edit_collection_exercise_details(short_name, period):
+def edit_collection_exercise_period_description(short_name, period):
     verify_permission("surveys.edit")
-    form = EditCollectionExerciseDetailsForm(form=request.form)
+    logger.info("Retrieving collection exercise data for form", short_name=short_name, period=period)
+    ce_details = build_collection_exercise_details(short_name, period)
+    form = EditCollectionExercisePeriodIDForm(form=request.form)
+    survey_details = survey_controllers.get_survey(short_name)
+    ce_state = ce_details["collection_exercise"]["state"]
+    locked = ce_state in ("LIVE", "READY_FOR_LIVE", "EXECUTION_STARTED", "VALIDATED", "EXECUTED", "ENDED")
+
+    return render_template(
+        "edit-collection-exercise-period-description.html",
+        survey_ref=ce_details["survey"]["surveyRef"],
+        form=form,
+        short_name=short_name,
+        period=period,
+        user_description=ce_details["collection_exercise"]["userDescription"],
+        locked=locked,
+        ce_state=ce_details["collection_exercise"]["state"],
+        collection_exercise_id=ce_details["collection_exercise"]["id"],
+        survey_id=survey_details["id"],
+    )
+
+
+@collection_exercise_bp.route("/<short_name>/<period>/edit-collection-exercise-period-id", methods=["POST"])
+@login_required
+def submit_collection_exercise_period_id(short_name, period):
+    verify_permission("surveys.edit")
+    form = EditCollectionExercisePeriodIDForm(form=request.form)
     if not form.validate():
         logger.info(
             "Failed validation, retrieving collection exercise data for form", short_name=short_name, period=period
@@ -575,7 +600,48 @@ def edit_collection_exercise_details(short_name, period):
         locked = ce_state in ("LIVE", "READY_FOR_LIVE", "EXECUTION_STARTED", "VALIDATED", "EXECUTED", "ENDED")
 
         return render_template(
-            "edit-collection-exercise-details.html",
+            "edit-collection-exercise-period-id.html",
+            survey_ref=ce_details["survey"]["surveyRef"],
+            form=form,
+            short_name=short_name,
+            period=period,
+            locked=locked,
+            ce_state=ce_details["collection_exercise"]["state"],
+            errors=form.errors,
+            collection_exercise_id=ce_details["collection_exercise"]["id"],
+            survey_id=survey_id,
+        )
+
+    else:
+        logger.info("Updating collection exercise period ID", short_name=short_name, period=period)
+        form = request.form
+
+        if form.get("period") != period:
+            collection_exercise_controllers.update_collection_exercise_period(
+                form.get("collection_exercise_id"), form.get("period")
+            )
+
+        return redirect(
+            url_for("collection_exercise_bp.view_collection_exercise", short_name=short_name, period=form.get("period"))
+        )
+
+
+@collection_exercise_bp.route("/<short_name>/<period>/edit-collection-exercise-period-description", methods=["POST"])
+@login_required
+def submit_collection_exercise_period_description(short_name, period):
+    verify_permission("surveys.edit")
+    form = EditCollectionExercisePeriodDescriptionForm(form=request.form)
+    if not form.validate():
+        logger.info(
+            "Failed validation, retrieving collection exercise data for form", short_name=short_name, period=period
+        )
+        ce_details = build_collection_exercise_details(short_name, period)
+        ce_state = ce_details["collection_exercise"]["state"]
+        survey_id = survey_controllers.get_survey_id_by_short_name(short_name)
+        locked = ce_state in ("LIVE", "READY_FOR_LIVE", "EXECUTION_STARTED", "VALIDATED", "EXECUTED", "ENDED")
+
+        return render_template(
+            "edit-collection-exercise-period-description.html",
             survey_ref=ce_details["survey"]["surveyRef"],
             form=form,
             short_name=short_name,
@@ -589,19 +655,14 @@ def edit_collection_exercise_details(short_name, period):
         )
 
     else:
-        logger.info("Updating collection exercise details", short_name=short_name, period=period)
+        logger.info("Updating collection exercise period description", short_name=short_name, period=period)
         form = request.form
         collection_exercise_controllers.update_collection_exercise_user_description(
             form.get("collection_exercise_id"), form.get("user_description")
         )
 
-        if form.get("period") != period:
-            collection_exercise_controllers.update_collection_exercise_period(
-                form.get("collection_exercise_id"), form.get("period")
-            )
-
         return redirect(
-            url_for("collection_exercise_bp.view_collection_exercise", short_name=short_name, period=form.get("period"))
+            url_for("collection_exercise_bp.view_collection_exercise", short_name=short_name, period=period)
         )
 
 
