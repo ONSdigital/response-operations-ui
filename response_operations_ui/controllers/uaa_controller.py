@@ -8,7 +8,8 @@ from flask import abort
 from flask import current_app as app
 from flask import session
 from itsdangerous import URLSafeSerializer
-from requests import HTTPError
+from requests import HTTPError, ConnectionError
+from response_operations_ui.exceptions.exceptions import ServiceUnavailableException
 from structlog import wrap_logger
 
 logger = wrap_logger(logging.getLogger(__name__))
@@ -359,7 +360,9 @@ def get_groups() -> dict:
     except HTTPError:
         logger.error("Error retrieving groups from UAA", status_code=response.status_code, exc_info=True)
         raise
-
+    except ConnectionError:
+        logger.error("UAA returned a connection error", status_code=response.status_code, exc_info=True)
+        raise ServiceUnavailableException("UAA returned a connection error", 503)
     return response.json()
 
 
