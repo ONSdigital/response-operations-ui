@@ -62,23 +62,6 @@
                         })
                     }}
                 {% endif %}
-                {% if not locked %}
-                    {{
-                        onsInput({
-                            "id": "user_description",
-                            "name": "user_description",
-                            "type": "user_description",
-                            "label": {
-                                "text": 'Period as shown to respondent'
-                            },
-                            "maxLength": 50,
-                            "value": user_description,
-                            "attributes": {
-                                "required": true
-                            }
-                        })
-                    }}
-                {% endif %}
                 {{ form.collection_exercise_id(value=collection_exercise_id, id='collection_exercise_id') }}
                 {{ form.hidden_survey_id(value=survey_id, id='survey_id') }}
                 <div class="ons-grid ons-grid--flex ons-grid--gutterless ons-grid--vertical-center ons-grid--no-wrap@s ons-u-mt-m ons-u-mb-m">
