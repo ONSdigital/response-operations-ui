@@ -183,9 +183,6 @@ def view_collection_exercise(short_name, period):
 
 
 def _build_ci_table_context(ci: dict, locked: bool, survey_mode: str, short_name: str, exercise_ref: str) -> dict:
-    view_sample_ci_url = url_for(
-        "collection_exercise_bp.get_view_sample_ci", short_name=short_name, period=exercise_ref
-    )
     required_survey_mode_types = ["SEFT", "EQ"] if survey_mode == "EQ_AND_SEFT" else [survey_mode]
     ci_table_state_text = "restricted" if locked or not user_has_permission("surveys.edit") else "has_permission"
     ci_details = []
@@ -193,11 +190,19 @@ def _build_ci_table_context(ci: dict, locked: bool, survey_mode: str, short_name
     for survey_mode_type in required_survey_mode_types:
         ci_count = len(ci.get(survey_mode_type, []))
         ci_table_state_text = "no_instrument" if ci_count == 0 else ci_table_state_text
+        if survey_mode_type == "EQ":
+            view_sample_ci_url = url_for(
+                "collection_exercise_bp.get_view_sample_ci", short_name=short_name, period=exercise_ref
+            )
+        else:
+            view_sample_ci_url = url_for(
+                "collection_exercise_bp.get_seft_collection_instrument", period=exercise_ref, short_name=short_name
+            )
         ci_details.append(
             {
                 "type": survey_mode_type.lower(),
                 "title": f"{survey_mode_type} collection instruments",
-                "url": f"{view_sample_ci_url}?survey_mode={survey_mode_type}",
+                "url": view_sample_ci_url,
                 "link_text": CI_TABLE_LINK_TEXT[survey_mode_type][ci_table_state_text],
                 "count": str(ci_count),
             }
@@ -352,7 +357,6 @@ def _select_eq_collection_instrument(short_name, period):
             short_name=short_name,
             period=period,
             success_panel=success_panel,
-            survey_mode="EQ",
         )
     )
 
@@ -1055,11 +1059,7 @@ def get_seft_collection_instrument(short_name, period):
     )
 
     table_columns = _create_seft_ci_table(collection_instruments)
-    back_url = url_for(
-        "collection_exercise_bp.get_view_sample_ci",
-        short_name=ce_details["survey"]["shortName"],
-        period=ce_details["collection_exercise"]["exerciseRef"],
-    )
+    back_url = url_for("collection_exercise_bp.view_collection_exercise", short_name=short_name, period=period)
     breadcrumbs = [{"text": "Back", "url": back_url}, {"text": "View sample"}]
     error_json = _get_error_from_session()
     return render_template(
