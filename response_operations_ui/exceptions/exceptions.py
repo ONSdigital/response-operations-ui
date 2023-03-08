@@ -51,9 +51,9 @@ class NotifyError(Exception):
             self.__dict__[k] = v
             
 
-class ServiceUnavailableException(ConnectionError):
+class ServiceUnavailableException(Exception):
 
-    status_code = 503
+    status_code = 500
     def __init__(self, errors, status_code=None):
         self.errors = errors if isinstance(errors, list) else [errors]
         self.status_code = status_code

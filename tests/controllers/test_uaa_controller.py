@@ -174,11 +174,22 @@ class TestUAAController(unittest.TestCase):
     @requests_mock.mock()
     def test_get_groups_connection_error(self, mock_request):
         mock_request.post(url_uaa_token, json={"access_token": self.access_token}, status_code=201)
-        with patch("requests.get", side_effect=requests.ConnectionError):
-            with self.app.test_request_context():
-                with self.assertRaises(ConnectionError):
-                    self.assertEquals(uaa_controller.get_groups(),"UAA returned a connection error")
-                    print(uaa_controller.get_groups())
+        with self.app.test_request_context():
+            with patch("requests.get", side_effect=requests.ConnectionError):
+                with self.assertRaises(ServiceUnavailableException) as exception:
+                    uaa_controller.get_groups()
+        self.assertEqual(503, exception.exception.status_code)
+        self.assertEqual(["UAA returned a connection error"], exception.exception.errors)
+        
+    @requests_mock.mock()
+    def test_get_groups_timeout(self, mock_request):
+        mock_request.post(url_uaa_token, json={"access_token": self.access_token}, status_code=201)
+        with self.app.test_request_context():
+            with patch("requests.get", side_effect=requests.Timeout):
+                with self.assertRaises(ServiceUnavailableException) as exception:
+                    uaa_controller.get_groups()
+        self.assertEqual(504, exception.exception.status_code)
+        self.assertEqual(["UAA has timed out"], exception.exception.errors)
 
     # create_user_account_with_random_password
 

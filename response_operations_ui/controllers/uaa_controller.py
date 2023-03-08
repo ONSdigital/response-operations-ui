@@ -8,7 +8,7 @@ from flask import abort
 from flask import current_app as app
 from flask import session
 from itsdangerous import URLSafeSerializer
-from requests import HTTPError, ConnectionError
+from requests import HTTPError, ConnectionError, Timeout
 from response_operations_ui.exceptions.exceptions import ServiceUnavailableException
 from structlog import wrap_logger
 
@@ -354,15 +354,18 @@ def get_groups() -> dict:
     headers = generate_headers(access_token)
 
     url = f"{app.config['UAA_SERVICE_URL']}/Groups"
-    response = requests.get(url, headers=headers)
     try:
+        response = requests.get(url, headers=headers)
         response.raise_for_status()
     except HTTPError:
-        logger.error("Error retrieving groups from UAA", status_code=response.status_code, exc_info=True)
+        logger.error("Error retrieving groups from UAA", exc_info=True)
         raise
     except ConnectionError:
-        logger.error("UAA returned a connection error", status_code=response.status_code, exc_info=True)
+        logger.error("UAA returned a connection error", exc_info=True)
         raise ServiceUnavailableException("UAA returned a connection error", 503)
+    except Timeout:
+        logger.error("UAA has timed out", exc_info=True)           
+        raise ServiceUnavailableException("UAA has timed out", 504)
     return response.json()
 
 
