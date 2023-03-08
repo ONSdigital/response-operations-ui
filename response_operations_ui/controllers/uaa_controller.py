@@ -8,9 +8,10 @@ from flask import abort
 from flask import current_app as app
 from flask import session
 from itsdangerous import URLSafeSerializer
-from requests import HTTPError, ConnectionError, Timeout
-from response_operations_ui.exceptions.exceptions import ServiceUnavailableException
+from requests import ConnectionError, HTTPError, Timeout
 from structlog import wrap_logger
+
+from response_operations_ui.exceptions.exceptions import ServiceUnavailableException
 
 logger = wrap_logger(logging.getLogger(__name__))
 
@@ -364,7 +365,7 @@ def get_groups() -> dict:
         logger.error("UAA returned a connection error", exc_info=True)
         raise ServiceUnavailableException("UAA returned a connection error", 503)
     except Timeout:
-        logger.error("UAA has timed out", exc_info=True)           
+        logger.error("UAA has timed out", exc_info=True)
         raise ServiceUnavailableException("UAA has timed out", 504)
     return response.json()
 

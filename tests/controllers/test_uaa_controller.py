@@ -3,14 +3,13 @@ import os
 import unittest
 from unittest.mock import patch
 
-import requests
-
 import jwt
+import requests
 import requests_mock
 from flask import session
-from requests import HTTPError, ConnectionError
+from requests import HTTPError
 
-from config import TestingConfig 
+from config import TestingConfig
 from response_operations_ui import create_app
 from response_operations_ui.controllers import uaa_controller
 from response_operations_ui.exceptions.exceptions import ServiceUnavailableException
@@ -180,7 +179,7 @@ class TestUAAController(unittest.TestCase):
                     uaa_controller.get_groups()
         self.assertEqual(503, exception.exception.status_code)
         self.assertEqual(["UAA returned a connection error"], exception.exception.errors)
-        
+
     @requests_mock.mock()
     def test_get_groups_timeout(self, mock_request):
         mock_request.post(url_uaa_token, json={"access_token": self.access_token}, status_code=201)
