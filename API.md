@@ -22,7 +22,7 @@ This page documents the response operations ui endpoints that can be hit.
 * `ce_id` is the collection exercise ID.
 * `survey_id` is the survey ID.
 
-`surveys/<short_name>/<period>/edit-collection-exercise-details`
+`surveys/<short_name>/<period>/edit-collection-exercise-period-id`
 * GET request to this endpoint allows you to view collection exercise details.
 * POST request to this endpoint allows you to view editing collection exercise details.
 * `short_name` is the abbreviated name of the collection exercise.

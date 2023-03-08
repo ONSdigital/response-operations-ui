@@ -8,33 +8,46 @@
           section. "
       })
     }}
-    {% set  collectionInstrumentTableData = {
+      {% set  collectionInstrumentTableData = {
         "variants": ['compact', 'responsive'],
         "id": "collection-instrument-table",
         "caption": 'Collection Instruments',
         "hideCaption": true,
         "tableClasses": "ce-overview-table"
     } %}
-  
-    {% for ci_type in ci_table_context %}
-      {% do collectionInstrumentTableDataRows.append(
-          {
-              "tds": [
-                {
-                  "value": ci_type.title
-                },
-                {
-                  "value": ci_type.count,
-                  "tdClasses": "ons-u-ta-centre"
-                }, 
-                {
-                  "value": '<a href="' + ci_type.url + '" id="view-add-upload-ci-' + ci_type.type + '">' + ci_type.link_text + '</a>',
-                  "tdClasses": "ons-u-ta-right"
-                }
-              ] 
-          }
-      )
-    %}
+  {% if survey["surveyMode"] == "EQ_AND_SEFT" %}
+      {% set tblHeaders =
+        [
+                  {
+                  "value": "",
+                  },
+                  { 
+                        "value":"<em>Total CI (" + ci_table_context["total_ci_count"] + ")</em>" ,
+                        "thClasses": "ons-u-fs-r--b",
+                  },
+        ]
+        %}
+    {% do collectionInstrumentTableData | setAttribute("ths", tblHeaders) %}
+  {% endif %}
+    {% for ci_type in ci_table_context["ci_details"] %}
+        {% do collectionInstrumentTableDataRows.append(
+            {
+                "tds": [
+                  {
+                    "value": ci_type.title
+                  },
+                  {
+                    "value": ci_type.count,
+                    "tdClasses": "ons-u-ta-centre"
+                  }, 
+                  {
+                    "value": '<a href="' + ci_type.url + '" id="view-add-upload-ci-' + ci_type.type + '">' + ci_type.link_text + '</a>',
+                    "tdClasses": "ons-u-ta-right"
+                  }
+                ] 
+            }
+        )
+        %}
     {% endfor %}
     {% do collectionInstrumentTableData | setAttribute("trs", collectionInstrumentTableDataRows) %}
     {{ onsTable(collectionInstrumentTableData) }}

@@ -16,13 +16,9 @@
     {% include 'partials/flashed-messages.html' %}
     <div class="ons-grid ons-grid--gutterless">
         {% include 'partials/error-box.html' %}
-        {% if survey.surveyMode == 'EQ' %}
-          <h1 name="page-ce-title">Select collection instruments</h1>
-        {% else %}
-          <h1 name="page-ce-title">Load collection instruments</h1>
-        {% endif %}
+        <h1 name="page-ce-title">Select collection instruments</h1>
         <div class="ons-grid__col ons-col-7@l">
-            {% include 'collection_exercise/ce-collection-instrument-section.html' %}
+            {% include 'collection_exercise/ce-eq-instrument-section.html' %}
             {{
                 onsButton({
                     "text": "Done",
