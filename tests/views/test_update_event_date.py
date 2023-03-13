@@ -26,8 +26,8 @@ with open(f"{project_root}/test_data/survey/single_survey.json") as json_data:
     survey = json.load(json_data)
 with open(f"{project_root}/test_data/collection_exercise/events.json") as json_data:
     events = json.load(json_data)
-with open(f"{project_root}/test_data/collection_exercise/nudge_events_two.json") as json_data:
-    nudge_events_two = json.load(json_data)
+with open(f"{project_root}/test_data/collection_exercise/nudge_events.json") as json_data:
+    nudge_events = json.load(json_data)
 with open(f"{project_root}/test_data/collection_exercise/events_2030.json") as json_data:
     events_2030 = json.load(json_data)
 url_put_update_event_date = (
@@ -195,7 +195,7 @@ class TestUpdateEventDate(ViewTestCase):
         mock_request.put(url_put_update_event_date, status_code=201)
         mock_request.get(url_survey_shortname, json=survey)
         mock_request.get(url_collection_exercise_survey_id, json=[collection_exercise])
-        mock_request.get(url_get_collection_exercise_events, json=nudge_events_two)
+        mock_request.get(url_get_collection_exercise_events, json=nudge_events)
         create_ce_event_form = {"day": "15", "month": "10", "year": "2018", "hour": "01", "minute": "00"}
 
         response = self.client.post(
