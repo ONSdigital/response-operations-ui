@@ -14,7 +14,7 @@
     {% include 'collection_exercise/ce-info-panel.html' %}
     {% include 'partials/flashed-messages.html' %}
     <div class="ons-grid ons-grid--gutterless">
-        {% if survey.surveyMode == 'EQ' or survey.surveyMode == 'EQ_AND_SEFT' %}
+        {% if survey.surveyMode in ("EQ_AND_SEFT", "EQ") %}
           <h1 name="page-ce-title">Select collection instruments</h1>
         {% else %}
           {% include 'collection_exercise/ce-handle-errors.html' %}
@@ -22,8 +22,8 @@
           <h1 name="page-ce-title">Load collection instruments</h1>
         {% endif %}
         <div class="ons-grid__col ons-col-7@l">
-            {% include 'collection_exercise/ce-collection-instrument-section.html' %}
-            {% if not survey.surveyMode == 'EQ' %}
+            {% include 'collection_exercise/ce-eq-instrument-section.html' %}
+            {% if survey.surveyMode not in ("EQ_AND_SEFT", "EQ") %}
                 {{
                     onsButton({
                         "text": "Done",

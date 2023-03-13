@@ -14,7 +14,7 @@
     {% include 'collection_exercise/ce-info-panel.html' %}
     {% include 'partials/error-box.html' %}
     <h1 name="page-survey-title" class="ons-u-mb-l">SEFT collection instruments | {{ survey.shortName }} {{ survey.surveyRef }}</h1>
-    <div class="ons-u-mb-l ons-col-7@l">
+    <div class="ons-u-mb-xl ons-col-7@l">
         {% if (not locked) and surveyEditPermission %}
             <form id="seft-form-load-ci" action="" class="ons-form" method="post" enctype="multipart/form-data">
                 <input type="hidden" name="csrf_token" value="{{ csrf_token() }}" />
@@ -59,18 +59,6 @@
                             "submitType": "timer"
                         })
                     }}
-                    {{
-                        onsButton({
-                            "text": "Cancel",
-                            "id": "btn-load-ci",
-                            "classes": cancelClasses,
-                            "variants": ['secondary'],
-                            "name": "load-ci-cancel",
-                            "url": url_for('collection_exercise_bp.get_view_sample_ci', short_name=survey.shortName, period=ce.exerciseRef, survey_mode='SEFT'),
-                            "submitType": "timer",
-                            "noIcon": "true"
-                          })
-                    }} 
                 </div>
             </form>
         {% endif %}
@@ -160,7 +148,7 @@
                     "id": "btn-upload-ci-done",
                     "variants": primary,
                     "name": "load-ci-done",
-                    "url": url_for('collection_exercise_bp.get_view_sample_ci', short_name=survey.shortName, period=ce.exerciseRef, survey_mode='SEFT'),
+                    "url": url_for('collection_exercise_bp.view_collection_exercise', short_name=survey.shortName, period=ce.exerciseRef),
                     "submitType": "timer",
                     "noIcon": "true"
                 })

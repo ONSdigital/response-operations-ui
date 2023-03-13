@@ -1,0 +1,11 @@
+{% from "components/input/_macro.njk" import onsInput %}
+{% from "components/checkboxes/_checkbox-macro.njk" import onsCheckbox %}
+{% from "components/label/_macro.njk" import onsLabel %}
+<section class="ce-section {{'ons-panel ons-panel--simple ons-panel--error' if missing_ci else ''}} ons-u-mb-m ons-u-mt-m">
+    {% set surveyEditPermission = hasPermission('surveys.edit') %}
+    {% if not locked and surveyEditPermission %}
+      {% include 'partials/ce-collection-instrument-eq-section-error-messages.html' %}
+      {% include 'collection_exercise/ce-add-eq-ci.html' %}
+      {% include 'collection_exercise/ce-collection-instrument-eq-section.html' %}
+    {% endif %} 
+</section>

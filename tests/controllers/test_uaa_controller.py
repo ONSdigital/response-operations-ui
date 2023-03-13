@@ -1,8 +1,10 @@
 import json
 import os
 import unittest
+from unittest.mock import patch
 
 import jwt
+import requests
 import requests_mock
 from flask import session
 from requests import HTTPError
@@ -10,6 +12,7 @@ from requests import HTTPError
 from config import TestingConfig
 from response_operations_ui import create_app
 from response_operations_ui.controllers import uaa_controller
+from response_operations_ui.exceptions.exceptions import ServiceUnavailableException
 
 project_root = os.path.dirname(os.path.dirname(__file__))
 with open(f"{project_root}/test_data/uaa/user_by_id.json") as json_data:
@@ -166,6 +169,26 @@ class TestUAAController(unittest.TestCase):
         with self.app.test_request_context():
             with self.assertRaises(HTTPError):
                 uaa_controller.get_groups()
+
+    @requests_mock.mock()
+    def test_get_groups_connection_error(self, mock_request):
+        mock_request.post(url_uaa_token, json={"access_token": self.access_token}, status_code=201)
+        with self.app.test_request_context():
+            with patch("requests.get", side_effect=requests.ConnectionError):
+                with self.assertRaises(ServiceUnavailableException) as exception:
+                    uaa_controller.get_groups()
+        self.assertEqual(503, exception.exception.status_code)
+        self.assertEqual(["UAA returned a connection error"], exception.exception.errors)
+
+    @requests_mock.mock()
+    def test_get_groups_timeout(self, mock_request):
+        mock_request.post(url_uaa_token, json={"access_token": self.access_token}, status_code=201)
+        with self.app.test_request_context():
+            with patch("requests.get", side_effect=requests.Timeout):
+                with self.assertRaises(ServiceUnavailableException) as exception:
+                    uaa_controller.get_groups()
+        self.assertEqual(504, exception.exception.status_code)
+        self.assertEqual(["UAA has timed out"], exception.exception.errors)
 
     # create_user_account_with_random_password
 
