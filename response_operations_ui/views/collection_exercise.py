@@ -129,9 +129,9 @@ def view_collection_exercise(short_name, period):
     survey_mode = ce_details["survey"]["surveyMode"]
     if survey_mode == "EQ":
         show_set_live_button = (
-                ce_state in "READY_FOR_REVIEW"
-                and "ref_period_start" in ce_details["events"]
-                and "ref_period_end" in ce_details["events"]
+            ce_state in "READY_FOR_REVIEW"
+            and "ref_period_start" in ce_details["events"]
+            and "ref_period_end" in ce_details["events"]
         )
     else:
         show_set_live_button = ce_state in ("READY_FOR_REVIEW", "FAILEDVALIDATION")
@@ -1031,7 +1031,7 @@ def remove_loaded_sample(short_name, period):
 
 def _split_list(list_to_split, num_of_lists):
     k, m = divmod(len(list_to_split), num_of_lists)
-    return (list_to_split[i * k + min(i, m): (i + 1) * k + min(i + 1, m)] for i in range(num_of_lists))
+    return (list_to_split[i * k + min(i, m) : (i + 1) * k + min(i + 1, m)] for i in range(num_of_lists))
 
 
 def _create_seft_ci_table(collection_instruments):
