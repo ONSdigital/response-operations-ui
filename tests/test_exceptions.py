@@ -5,6 +5,7 @@ from response_operations_ui.exceptions.exceptions import (
     ApiError,
     InternalError,
     SearchRespondentsException,
+    ServiceUnavailableException,
     UpdateContactDetailsException,
 )
 
@@ -44,3 +45,10 @@ class TestApiError(unittest.TestCase):
         self.assertEqual(exception.kw1, "KW1")
         self.assertEqual(exception.kw2, "KW2")
         self.assertEqual(exception.kw3, "KW3")
+
+    def test_service_unavailable_exception(self):
+        exception = ServiceUnavailableException(["Error1", "Error2"], 503)
+
+        self.assertEqual(exception.status_code, 503)
+        self.assertEqual(exception.errors[0], "Error1")
+        self.assertEqual(exception.errors[1], "Error2")
