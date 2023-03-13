@@ -1052,53 +1052,6 @@ class TestCollectionExercise(ViewTestCase):
         self.assertIn("Error: Failed to add and remove collection instrument(s)".encode(), response.data)
 
     @requests_mock.mock()
-    @patch(
-        "response_operations_ui.views.collection_exercise.collection_instrument_controllers."
-        "get_collection_instruments_by_classifier"
-    )
-    @patch("response_operations_ui.common.filters.filter_eq_ci_selectors")
-    @patch("response_operations_ui.views.collection_exercise.build_collection_exercise_details")
-    def test_failed_no_selected_eq_collection_instrument(
-        self, mock_request, mock_details, mock_collective_cis, mock_ci_selector
-    ):
-        sign_in_with_permission(self, mock_request, user_permission_surveys_edit_json)
-        post_data = {"checkbox-answer": [], "ce_id": collection_exercise_id, "select-eq-ci": ""}
-        eq_ci_to_remove = {"id": collection_instrument_id, "form_type": "0001", "checked": "false"}
-        mock_ci_selector.return_value = self.eq_ci_selectors
-        mock_collective_cis.return_value = eq_ci_to_remove
-
-        mock_request.get(
-            f"{url_get_collection_instrument}?{ci_search_string}",
-            json=self.eq_collection_instrument,
-            complete_qs=True,
-            status_code=200,
-        )
-        mock_request.get(
-            f"{url_get_collection_instrument}?{ci_type_search_string_eq}",
-            json=self.eq_ci_selectors,
-            complete_qs=True,
-            status_code=200,
-        )
-
-        ce_details = {
-            "survey": self.eq_survey,
-            "collection_exercise": self.collection_exercises[0],
-            "collection_instruments": {},
-            "events": {},
-            "sample_summary": {},
-            "eq_ci_selectors": self.eq_collection_instrument,
-        }
-
-        mock_details.return_value = ce_details
-
-        response = self.client.post(
-            f"/surveys/{short_name}/{period}/view-sample-ci", data=post_data, follow_redirects=True
-        )
-
-        self.assertEqual(response.status_code, 200)
-        self.assertIn("No collection instruments selected".encode(), response.data)
-
-    @requests_mock.mock()
     @patch("response_operations_ui.views.collection_exercise.build_collection_exercise_details")
     def test_view_seft_collection_instrument_after_upload(self, mock_request, mock_details):
         post_data = {"ciFile": (BytesIO(b"data"), "064_201803_0001.xlsx"), "load-seft-ci": ""}

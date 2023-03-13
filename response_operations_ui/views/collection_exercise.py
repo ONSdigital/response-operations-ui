@@ -334,19 +334,6 @@ def _select_eq_collection_instrument(short_name, period):
     cis_selected = request.form.getlist("checkbox-answer")
     ce_details = build_collection_exercise_details(short_name, period, include_ci=True)
 
-    cis_already_linked = ce_details.get("collection_instruments", "EQ")
-
-    if not cis_selected and not cis_already_linked:
-        session["error"] = json.dumps(
-            {
-                "section": "ciSelect",
-                "header": "No collection instruments selected",
-                "message": "Please select a collection instrument",
-            }
-        )
-        return redirect(
-            url_for("collection_exercise_bp.get_view_sample_ci", short_name=short_name, period=period, survey_mode="EQ")
-        )
     if "EQ" in ce_details["survey"]["surveyMode"]:
         ce_id = ce_details["collection_exercise"]["id"]
         response = collection_instrument_controllers.update_collection_exercise_instruments(cis_selected, ce_id)
