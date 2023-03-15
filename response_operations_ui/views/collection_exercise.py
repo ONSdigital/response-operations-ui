@@ -52,6 +52,7 @@ from response_operations_ui.forms import (
     EditCollectionExercisePeriodDescriptionForm,
     EditCollectionExercisePeriodIDForm,
     EventDateForm,
+    LinkCollectionInstrumentForm,
     RemoveLoadedSample,
 )
 
@@ -100,6 +101,12 @@ def build_collection_exercise_details(short_name: str, period: str, include_ci: 
         exercise_dict["collection_instruments"] = _build_collection_instruments_details(
             collection_exercise_id, survey_id
         )
+        if survey["surveyMode"] in ("EQ_AND_SEFT", "EQ"):
+            exercise_dict[
+                "eq_ci_selectors"
+            ] = collection_instrument_controllers.get_collection_instruments_by_classifier(
+                ci_type="EQ", survey_id=survey_id
+            )
     return exercise_dict
 
 
@@ -279,8 +286,8 @@ def post_sample_ci(short_name, period):
         return _upload_seft_collection_instrument(short_name, period)
     elif "select-eq-ci" in request.form:
         return _select_eq_collection_instrument(short_name, period)
-    elif "unselect-eq-ci" in request.form:
-        return _unselect_eq_collection_instrument(short_name, period)
+    elif "add-eq-ci" in request.form:
+        return _add_collection_instrument(short_name, period)
     return get_view_sample_ci(short_name, period)
 
 
@@ -325,35 +332,37 @@ def _set_ready_for_live(short_name, period):
 def _select_eq_collection_instrument(short_name, period):
     success_panel = None
     cis_selected = request.form.getlist("checkbox-answer")
-    cis_added = []
+    ce_details = build_collection_exercise_details(short_name, period, include_ci=True)
 
-    if cis_selected:
-        for ci in cis_selected:
-            ci_added = collection_instrument_controllers.link_collection_instrument(request.form["ce_id"], ci)
-            cis_added.append(ci_added)
+    if "EQ" in ce_details["survey"]["surveyMode"]:
+        ce_id = ce_details["collection_exercise"]["id"]
+        response = collection_instrument_controllers.update_collection_exercise_instruments(cis_selected, ce_id)
 
-        if all(added for added in cis_added):
-            success_panel = "Collection instruments added"
-        else:
+        if response[0] != 200:
+            if cis_selected:
+                error_message = "Error: Failed to add and remove collection instrument(s)"
+            else:
+                error_message = response[1]
+
             session["error"] = json.dumps(
                 {
                     "section": "ciSelect",
-                    "header": "Error: Failed to add collection instrument(s)",
+                    "header": error_message,
                     "message": "Please try again",
                 }
             )
+            return redirect(
+                url_for(
+                    "collection_exercise_bp.get_view_sample_ci",
+                    short_name=short_name,
+                    period=period,
+                    survey_mode="EQ",
+                )
+            )
 
-    else:
-        session["error"] = json.dumps(
-            {
-                "section": "ciSelect",
-                "header": "Error: No collection instruments selected",
-                "message": "Please select a collection instrument",
-            }
-        )
     return redirect(
         url_for(
-            "collection_exercise_bp.get_view_sample_ci",
+            "collection_exercise_bp.view_collection_exercise",
             short_name=short_name,
             period=period,
             success_panel=success_panel,
@@ -407,33 +416,6 @@ def _upload_seft_collection_instrument(short_name, period):
             period=period,
             short_name=short_name,
             success_panel=success_panel,
-        )
-    )
-
-
-def _unselect_eq_collection_instrument(short_name, period):
-    success_panel = "Collection instrument removed"
-    ci_id = request.form.get("ci_id")
-    ce_id = request.form.get("ce_id")
-    ci_unlinked = collection_instrument_controllers.unlink_collection_instrument(ce_id, ci_id)
-
-    if not ci_unlinked:
-        success_panel = None
-        session["error"] = json.dumps(
-            {
-                "section": "head",
-                "header": "Error: Failed to remove collection instrument",
-                "message": "Please try again",
-            }
-        )
-
-    return redirect(
-        url_for(
-            "collection_exercise_bp.get_view_sample_ci",
-            short_name=short_name,
-            period=period,
-            success_panel=success_panel,
-            survey_mode="EQ",
         )
     )
 
@@ -857,9 +839,10 @@ def create_collection_exercise_event(short_name, period, ce_id, tag):
 def get_view_sample_ci(short_name, period):
     ce_details = build_collection_exercise_details(short_name, period, include_ci=True)
     ce_state = ce_details["collection_exercise"]["state"]
-    eq_ci_selectors = []
     locked = ce_state in ("LIVE", "READY_FOR_LIVE", "EXECUTION_STARTED", "VALIDATED", "EXECUTED", "ENDED")
     sample_load_status = None
+    all_cis_for_survey = []
+    eq_ci_selectors = []
     if sample_controllers.sample_summary_state_check_required(ce_details):
         try:
             sample_load_status = sample_controllers.check_if_all_sample_units_present_for_sample_summary(
@@ -876,8 +859,9 @@ def get_view_sample_ci(short_name, period):
         all_eq_survey_ci = collection_instrument_controllers.get_collection_instruments_by_classifier(
             ci_type="EQ", survey_id=ce_details["survey"]["id"]
         )
-        eq_ci_selectors = filter_eq_ci_selectors(all_eq_survey_ci, linked_eq_ci)
+        all_cis_for_survey = filter_eq_ci_selectors(all_eq_survey_ci, linked_eq_ci)
         _format_ci_file_name(linked_eq_ci, ce_details["survey"])
+        eq_ci_selectors = ce_details.get("eq_ci_selectors", {})
 
     error_json = _get_error_from_session()
     _delete_sample_data_if_required()
@@ -886,6 +870,7 @@ def get_view_sample_ci(short_name, period):
     success_panel = request.args.get("success_panel")
     info_panel = request.args.get("info_panel")
 
+    breadcrumbs = [{"text": "Back", "url": "/surveys/" + short_name + "/" + period}, {}]
     return render_template(
         "collection_exercise/ce-view-sample-ci.html",
         ce=ce_details["collection_exercise"],
@@ -899,6 +884,8 @@ def get_view_sample_ci(short_name, period):
         show_msg=show_msg,
         eq_ci_selectors=eq_ci_selectors,
         info_panel=info_panel,
+        all_cis_for_survey=all_cis_for_survey,
+        breadcrumbs=breadcrumbs,
     )
 
 
@@ -1110,3 +1097,40 @@ def _delete_seft_collection_instrument(short_name, period):
             success_panel=success_panel,
         )
     )
+
+
+def _add_collection_instrument(short_name, period):
+    form = LinkCollectionInstrumentForm(form=request.form)
+    try:
+        # The eq_id of a collection instrument will ALWAYS be its shortname.
+        short_name_lower = str(short_name).lower()
+        survey_uuid = survey_controllers.get_survey_by_shortname(short_name_lower)["id"]
+        if not form.validate():
+            unique_error = list(dict.fromkeys(form.formtype.errors))
+
+            session["error"] = json.dumps(
+                {
+                    "section": "add-ci-error",
+                    "header": unique_error[0],
+                    "message": unique_error[0],
+                }
+            )
+            return get_view_sample_ci(short_name, period)
+
+        collection_instrument_controllers.link_collection_instrument_to_survey(
+            survey_uuid, short_name_lower, form.formtype.data
+        )
+    except ApiError as error_response:
+        json_error = json.loads(error_response.message)
+        session["error"] = json.dumps(
+            {
+                "section": "add-ci-error",
+                "header": json_error["errors"][0],
+                "message": json_error["errors"][0],
+            }
+        )
+
+        return get_view_sample_ci(short_name, period)
+
+    form.formtype.data = ""  # Reset the value on successful submission
+    return get_view_sample_ci(short_name, period)

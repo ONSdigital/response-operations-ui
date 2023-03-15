@@ -11,24 +11,30 @@
 
 {% block main %}
     {% include 'collection_exercise/ce-success-panel.html' %}
-    {% include 'collection_exercise/ce-handle-errors.html' %}
     {% include 'collection_exercise/ce-info-panel.html' %}
     {% include 'partials/flashed-messages.html' %}
     <div class="ons-grid ons-grid--gutterless">
-        {% include 'partials/error-box.html' %}
-        <h1 name="page-ce-title">Select collection instruments</h1>
+        {% if survey.surveyMode in ("EQ_AND_SEFT", "EQ") %}
+          <h1 name="page-ce-title">Select collection instruments</h1>
+        {% else %}
+          {% include 'collection_exercise/ce-handle-errors.html' %}
+          {% include 'partials/error-box.html' %}
+          <h1 name="page-ce-title">Load collection instruments</h1>
+        {% endif %}
         <div class="ons-grid__col ons-col-7@l">
             {% include 'collection_exercise/ce-eq-instrument-section.html' %}
-            {{
-                onsButton({
-                    "text": "Done",
-                    "id": "btn-option-done",
-                    "classes": "ons-u-mt-s",
-                    "submitType": "timer",
-                    "url": url_for('collection_exercise_bp.view_collection_exercise', short_name=survey.shortName, period=ce.exerciseRef),
-                    "noIcon": "true"
-                })
-              }}
+            {% if survey.surveyMode not in ("EQ_AND_SEFT", "EQ") %}
+                {{
+                    onsButton({
+                        "text": "Done",
+                        "id": "btn-option-done",
+                        "classes": "ons-u-mt-s",
+                        "submitType": "timer",
+                        "url": url_for('collection_exercise_bp.view_collection_exercise', short_name=survey.shortName, period=ce.exerciseRef),
+                        "noIcon": "true"
+                    })
+                  }}
+            {%  endif %}
         </div>
     </div>
 {% endblock %}
