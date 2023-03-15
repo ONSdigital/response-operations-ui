@@ -2384,7 +2384,7 @@ class TestCollectionExercise(ViewTestCase):
         response = self.client.get(f"/surveys/{short_name}/{period}/view-sample-ci?survey_mode=EQ")
 
         self.assertEqual(200, response.status_code)
-        self.assertIn("Select collection instruments".encode(), response.data)
+        self.assertIn("1 EQ collection instrument selected".encode(), response.data)
         self.assertNotIn("form-unselect-eq-ci-1".encode(), response.data)
 
     @requests_mock.mock()

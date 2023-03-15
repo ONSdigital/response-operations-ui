@@ -1,0 +1,57 @@
+<div id="ciSelectionForm" class="{{'ons-panel ons-panel--error ons-panel--no-title' if 'ciSelect' in error['section'] else ''}} 
+ons-u-mt-l">
+    <span class="ons-panel__assistive-text ons-u-vh">Error: </span>
+    {% if 'ciSelect' in error['section'] %}
+        <div class="ons-panel__body">
+          <p class="ons-panel__error ons-u-mb-s">
+            <strong>{{ error['header'] }}</strong>
+          </p>
+        </div>
+    {% endif %}
+    {% if (eq_ci_selectors or collection_instruments['EQ']) %}
+        <form id="form-select-ci" action="" class="form" method="post" enctype="multipart/form-data">
+            {% set eq_count = collection_instruments['EQ']|length %}
+            {% if eq_count < 1 or eq_count > 1  %}
+              {% set eq_count_text = eq_count|string +' EQ collection instruments selected' %}
+            {% else %}
+              {% set eq_count_text = eq_count|string + ' EQ collection instrument selected' %}
+            {% endif %}
+            {{
+                onsLabel({
+                    "id": 'ci-selector',
+                    "classes": ' ons-u-mb-s',
+                    "text": eq_count_text
+                })
+            }}
+            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}" />
+            <input type="hidden" name="csrf_token" value="" />
+            <input type="hidden" name="ce_id" value="{{ ce.id }}" />                                       
+            <table class="ons-table">
+                <thead class="ons-table__head">
+                    {# Blank <tr> Required to give the correct formatting for the table #}
+                    <tr class="ons-table__row"></tr>
+                </thead>
+                <tbody class="ons-table__body" >
+                    {% for eq_ci in all_cis_for_survey|batch(3, ' ') %} 
+                        <tr class="ons-table__row" style="border-bottom: 1px #222222">
+                            {% for ci in eq_ci %}
+                                {% if ci['form_type'] and ci['checked'] == 'true' %}
+                                    <td class="ons-table__cell" style="border-right: 10px solid transparent;">
+                                        {{  ci['form_type'] }}
+                                    </td>
+                                {% endif %}
+                            {% endfor %}
+                        </tr>
+                    {% endfor %}
+                    {# Blank <tr> Required to give the correct formatting for the table #}
+                    <tr class="ons-table__row"></tr>
+                </tbody>
+            </table>
+        </form>
+    {% endif %}
+</div>
+<div class="ons-grid ons-grid--flex ons-grid--between">
+    <div class="ons-grid__col">
+        <h1 class="ons-u-fs-l u-mb-xs" name="page-manage-account-title">{{ name }}</h1>
+    </div>
+</div>
