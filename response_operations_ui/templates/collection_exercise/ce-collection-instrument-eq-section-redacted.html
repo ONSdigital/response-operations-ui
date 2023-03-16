@@ -12,7 +12,7 @@ ons-u-mt-l">
         <form id="form-select-ci" action="" class="form" method="post" enctype="multipart/form-data">
             {% set eq_count = collection_instruments['EQ']|length %}
             {% if eq_count < 1 or eq_count > 1  %}
-              {% set eq_count_text = eq_count|string +' EQ collection instruments selected' %}
+              {% set eq_count_text = eq_count|string + ' EQ collection instruments selected' %}
             {% else %}
               {% set eq_count_text = eq_count|string + ' EQ collection instrument selected' %}
             {% endif %}
@@ -25,28 +25,29 @@ ons-u-mt-l">
             }}
             <input type="hidden" name="csrf_token" value="{{ csrf_token() }}" />
             <input type="hidden" name="csrf_token" value="" />
-            <input type="hidden" name="ce_id" value="{{ ce.id }}" />                                       
-            <table class="ons-table">
-                <thead class="ons-table__head">
-                    {# Blank <tr> Required to give the correct formatting for the table #}
-                    <tr class="ons-table__row"></tr>
-                </thead>
-                <tbody class="ons-table__body" >
-                    {% for eq_ci in all_cis_for_survey|batch(3, ' ') %} 
-                        <tr class="ons-table__row" style="border-bottom: 1px #222222">
-                            {% for ci in eq_ci %}
-                                {% if ci['form_type'] and ci['checked'] == 'true' %}
-                                    <td class="ons-table__cell" style="border-right: 10px solid transparent;">
-                                        {{  ci['form_type'] }}
+            <input type="hidden" name="ce_id" value="{{ ce.id }}" />
+            <div class="ons-grid ons-col-12@m ons-grid--vertical-center ons-grid--no-wrap@m ons-u-mt-m ons-u-mb-m">
+                {% for eq_ci in all_cis_for_survey|batch(3, ' ') %}
+                    {% for ci in eq_ci %}
+                      {% if ci['form_type'] and ci['checked'] == 'true' %}
+                          <div class="ons-grid__col ons-col-4@m" style="padding-left: 1rem">
+                            <table id="collection-instruments-left-table" class="ons-table ons-table--responsive">
+                              <thead class="ons-table__head">
+                                <tr class="ons-table__row"> </tr>
+                              </thead>
+                              <tbody class="ons-table__body">
+                                <tr class="ons-table__row">
+                                    <td class="ons-table__cell">
+                                      {{  ci['form_type'] }}
                                     </td>
-                                {% endif %}
-                            {% endfor %}
-                        </tr>
-                    {% endfor %}
-                    {# Blank <tr> Required to give the correct formatting for the table #}
-                    <tr class="ons-table__row"></tr>
-                </tbody>
-            </table>
+                                </tr>
+                              </tbody>
+                              </table>
+                          </div>
+                      {% endif %}
+                  {% endfor %}
+              {% endfor %}
+            </div>
         </form>
     {% endif %}
 </div>

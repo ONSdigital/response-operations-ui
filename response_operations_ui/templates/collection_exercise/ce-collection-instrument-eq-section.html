@@ -19,38 +19,39 @@ ons-u-mt-l">
             }}
             <input type="hidden" name="csrf_token" value="{{ csrf_token() }}" />
             <input type="hidden" name="csrf_token" value="" />
-            <input type="hidden" name="ce_id" value="{{ ce.id }}" />                                       
-            <table class="ons-table">
-                {% set selectAllText = "Select all" %}
-                {% set unselectAllText = "Unselect all" %}
-                {% if collection_instruments['EQ']|length == all_cis_for_survey|length %}
-                    {% set autoSelectState = unselectAllText %}
-                {% else %}
-                    {% set autoSelectState = selectAllText %}
-                {% endif %}
-                {{ 
-                    onsButton({
-                        "html": '<span class="ons-js-button-text" id="selection-text">' + autoSelectState + '</span>',
-                        "variants": btnClasses,
-                        "classes": 'ons-u-mb-m ons-btn--small ons-btn--secondary',
-                        "id": "select-or-unselect-ci",
-                        "attributes": {
-                            "data-unselect-all": unselectAllText,
-                            "data-select-all": selectAllText
-                        }
-                    })
-                }}
-                <thead class="ons-table__head">
-                    {# Blank <tr> Required to give the correct formatting for the table #}
-                    <tr class="ons-table__row"></tr>
-                </thead>
-                <tbody class="ons-table__body" >
-                    {% for eq_ci in all_cis_for_survey|batch(3, ' ') %} 
-                        <tr class="ons-table__row" style="border-bottom: 1px #222222">
-                            {% for ci in eq_ci %}
-                                {% if ci['form_type'] %}
-                                    <td class="ons-table__cell" style="border-right: 10px solid transparent;">
-                                          {{
+            <input type="hidden" name="ce_id" value="{{ ce.id }}" /> 
+            {% set selectAllText = "Select all" %}
+            {% set unselectAllText = "Unselect all" %}
+            {% if collection_instruments['EQ']|length == all_cis_for_survey|length %}
+                {% set autoSelectState = unselectAllText %}
+            {% else %}
+                {% set autoSelectState = selectAllText %}
+            {% endif %}
+            {{ 
+                onsButton({
+                    "html": '<span class="ons-js-button-text" id="selection-text">' + autoSelectState + '</span>',
+                    "variants": btnClasses,
+                    "classes": 'ons-u-mb-m ons-btn--small ons-btn--secondary',
+                    "id": "select-or-unselect-ci",
+                    "attributes": {
+                        "data-unselect-all": unselectAllText,
+                        "data-select-all": selectAllText
+                    }
+                })
+            }}
+            <div class="ons-grid ons-col-12@m ons-grid--vertical-center ons-grid--no-wrap@m ons-u-mt-m ons-u-mb-m">
+                {% for eq_ci in all_cis_for_survey|batch(3, ' ') %}
+                    {% for ci in eq_ci %}
+                      {% if ci['form_type'] and ci['checked'] == 'true' %}
+                          <div class="ons-grid__col ons-col-4@m" style="padding-left: 1rem">
+                            <table id="collection-instruments-left-table" class="ons-table ons-table--responsive">
+                              <thead class="ons-table__head">
+                                <tr class="ons-table__row"> </tr>
+                              </thead>
+                              <tbody class="ons-table__body">
+                                <tr class="ons-table__row">
+                                    <td class="ons-table__cell">
+                                        {{
                                             onsCheckbox({
                                                 "id": "ci-check-" + ci['form_type'],
                                                 "label": {
@@ -63,14 +64,14 @@ ons-u-mt-l">
                                             })
                                         }}
                                     </td>
-                                {% endif %}
-                            {% endfor %}
-                        </tr>
-                    {% endfor %}
-                    {# Blank <tr> Required to give the correct formatting for the table #}
-                    <tr class="ons-table__row"></tr>
-                </tbody>
-            </table>
+                                </tr>
+                              </tbody>
+                              </table>
+                          </div>
+                      {% endif %}
+                  {% endfor %}
+              {% endfor %}
+            </div>
             <p id="ci-checked-count">{{ collection_instruments['EQ']|length }} selected out of {{ all_cis_for_survey|length }} available</p>
             <div class="ons-u-mt-xxs">
                 {{
