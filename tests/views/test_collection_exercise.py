@@ -278,7 +278,7 @@ class TestCollectionExercise(ViewTestCase):
                     ],
                     "RU_REF": [],
                     "SURVEY_ID": survey_id,
-                    "form_type": "form",
+                    "form_type": "0001",
                 },
                 "file_name": "file",
                 "id": collection_instrument_id,
@@ -388,7 +388,9 @@ class TestCollectionExercise(ViewTestCase):
         self.eq_ci_selectors = [
             {
                 "classifiers": {
-                    "COLLECTION_EXERCISE": [],
+                                        "COLLECTION_EXERCISE": [
+                        collection_exercise_id,
+                    ],
                     "RU_REF": [],
                     "SURVEY_ID": survey_id,
                     "form_type": "0001",
@@ -396,8 +398,25 @@ class TestCollectionExercise(ViewTestCase):
                 "file_name": None,
                 "id": collection_instrument_id,
                 "surveyId": survey_id,
+                "type": "EQ",
             }
         ]
+        # self.eq_collection_instrument = [
+        #     {
+        #         "classifiers": {
+        #             "COLLECTION_EXERCISE": [
+        #                 collection_exercise_id,
+        #             ],
+        #             "RU_REF": [],
+        #             "SURVEY_ID": survey_id,
+        #             "form_type": "0001",
+        #         },
+        #         "file_name": "None",
+        #         "id": collection_instrument_id,
+        #         "surveyId": survey_id,
+        #         "type": "EQ",
+        #     },
+        # ]
         self.sample_summary = {
             "id": sample_summary_id,
             "effectiveStartDateTime": "",
@@ -2364,7 +2383,8 @@ class TestCollectionExercise(ViewTestCase):
         self.assertIn("Done".encode(), response.data)
 
     @requests_mock.mock()
-    def test_linked_ci_eq_view_sample_ci_page_no_survey_permission(self, mock_request):
+    @mock.patch("response_operations_ui.views.collection_exercise.build_collection_exercise_details")
+    def test_linked_ci_eq_view_sample_ci_page_no_survey_permission(self, mock_request, mock_details):
         mock_request.get(url_get_survey_by_short_name, json=self.eq_survey_dates)
         mock_request.get(url_ces_by_survey, json=self.collection_exercises)
         mock_request.get(url_ce_by_id, json=collection_exercise_eq_both_ref_date["collection_exercise"])
@@ -2380,6 +2400,15 @@ class TestCollectionExercise(ViewTestCase):
 
         mock_request.get(url_get_by_survey_with_ref_start_date, json=collection_exercise_eq_ref_start_date)
         mock_request.get(url_get_by_survey_with_ref_end_date, json=collection_exercise_eq_ref_end_date)
+        eq_cis = {"EQ": self.eq_ci_selectors}
+        ce_details = {
+            "survey": self.eq_survey_dates,
+            "collection_exercise": self.collection_exercises[0],
+            "collection_instruments": eq_cis,
+            "events": {},
+            "sample_summary": {},
+        }
+        mock_details.return_value = ce_details
 
         response = self.client.get(f"/surveys/{short_name}/{period}/view-sample-ci?survey_mode=EQ")
 

@@ -11,10 +11,10 @@ ons-u-mt-l">
     {% if (eq_ci_selectors or collection_instruments['EQ']) %}
         <form id="form-select-ci" action="" class="form" method="post" enctype="multipart/form-data">
             {% set eq_count = collection_instruments['EQ']|length %}
-            {% if eq_count < 1 or eq_count > 1  %}
-              {% set eq_count_text = eq_count|string + ' EQ collection instruments selected' %}
-            {% else %}
+            {% if eq_count == 1  %}
               {% set eq_count_text = eq_count|string + ' EQ collection instrument selected' %}
+            {% else %}
+              {% set eq_count_text = eq_count|string + ' EQ collection instruments selected' %}
             {% endif %}
             {{
                 onsLabel({
