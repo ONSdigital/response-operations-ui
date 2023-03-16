@@ -401,22 +401,6 @@ class TestCollectionExercise(ViewTestCase):
                 "type": "EQ",
             }
         ]
-        # self.eq_collection_instrument = [
-        #     {
-        #         "classifiers": {
-        #             "COLLECTION_EXERCISE": [
-        #                 collection_exercise_id,
-        #             ],
-        #             "RU_REF": [],
-        #             "SURVEY_ID": survey_id,
-        #             "form_type": "0001",
-        #         },
-        #         "file_name": "None",
-        #         "id": collection_instrument_id,
-        #         "surveyId": survey_id,
-        #         "type": "EQ",
-        #     },
-        # ]
         self.sample_summary = {
             "id": sample_summary_id,
             "effectiveStartDateTime": "",
