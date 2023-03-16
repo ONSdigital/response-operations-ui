@@ -1,0 +1,58 @@
+<div id="ciSelectionForm" class="{{'ons-panel ons-panel--error ons-panel--no-title' if 'ciSelect' in error['section'] else ''}} 
+ons-u-mt-l">
+    <span class="ons-panel__assistive-text ons-u-vh">Error: </span>
+    {% if 'ciSelect' in error['section'] %}
+        <div class="ons-panel__body">
+          <p class="ons-panel__error ons-u-mb-s">
+            <strong>{{ error['header'] }}</strong>
+          </p>
+        </div>
+    {% endif %}
+    {% if (eq_ci_selectors or collection_instruments['EQ']) %}
+        <form id="form-select-ci" action="" class="form" method="post" enctype="multipart/form-data">
+            {% set eq_count = collection_instruments['EQ']|length %}
+            {% if eq_count == 1  %}
+              {% set eq_count_text = eq_count|string + ' EQ collection instrument selected' %}
+            {% else %}
+              {% set eq_count_text = eq_count|string + ' EQ collection instruments selected' %}
+            {% endif %}
+            {{
+                onsLabel({
+                    "id": 'ci-selector',
+                    "classes": ' ons-u-mb-s',
+                    "text": eq_count_text
+                })
+            }}
+            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}" />
+            <input type="hidden" name="csrf_token" value="" />
+            <input type="hidden" name="ce_id" value="{{ ce.id }}" />
+            <div class="ons-grid ons-col-12@m ons-grid--vertical-center ons-grid--no-wrap@m ons-u-mt-m ons-u-mb-m">
+                {% for eq_ci in all_cis_for_survey|batch(3, ' ') %}
+                    {% for ci in eq_ci %}
+                      {% if ci['form_type'] and ci['checked'] == 'true' %}
+                          <div class="ons-grid__col ons-col-4@m" style="padding-left: 1rem">
+                            <table id="collection-instruments-left-table" class="ons-table ons-table--responsive">
+                              <thead class="ons-table__head">
+                                <tr class="ons-table__row"> </tr>
+                              </thead>
+                              <tbody class="ons-table__body">
+                                <tr class="ons-table__row">
+                                    <td class="ons-table__cell">
+                                      {{  ci['form_type'] }}
+                                    </td>
+                                </tr>
+                              </tbody>
+                            </table>
+                          </div>
+                      {% endif %}
+                  {% endfor %}
+              {% endfor %}
+            </div>
+        </form>
+    {% endif %}
+</div>
+<div class="ons-grid ons-grid--flex ons-grid--between">
+    <div class="ons-grid__col">
+        <h1 class="ons-u-fs-l u-mb-xs" name="page-manage-account-title">{{ name }}</h1>
+    </div>
+</div>

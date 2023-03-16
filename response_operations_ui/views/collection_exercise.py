@@ -872,7 +872,7 @@ def get_view_sample_ci(short_name, period):
 
     breadcrumbs = [{"text": "Back", "url": "/surveys/" + short_name + "/" + period}, {}]
     return render_template(
-        "collection_exercise/ce-view-sample-ci.html",
+        "collection_exercise/ce-eq-instrument-section.html",
         ce=ce_details["collection_exercise"],
         collection_instruments=ce_details["collection_instruments"],
         error=error_json,
