@@ -388,7 +388,7 @@ class TestCollectionExercise(ViewTestCase):
         self.eq_ci_selectors = [
             {
                 "classifiers": {
-                                        "COLLECTION_EXERCISE": [
+                    "COLLECTION_EXERCISE": [
                         collection_exercise_id,
                     ],
                     "RU_REF": [],
