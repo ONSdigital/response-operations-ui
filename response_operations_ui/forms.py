@@ -171,8 +171,7 @@ class EditContactDetailsForm(FlaskForm):
             self.telephone.data = default_values.get("telephone")
 
 
-class EditCollectionExerciseDetailsForm(FlaskForm):
-    user_description = HiddenField("user_description")
+class EditCollectionExercisePeriodIDForm(FlaskForm):
     period = IntegerField("period")
     collection_exercise_id = HiddenField("collection_exercise_id")
     hidden_survey_id = HiddenField("hidden_survey_id")
@@ -190,6 +189,13 @@ class EditCollectionExerciseDetailsForm(FlaskForm):
                 continue
             if ce["exerciseRef"] == str(inputted_period):
                 raise ValidationError("Please enter a period not in use")
+
+
+class EditCollectionExercisePeriodDescriptionForm(FlaskForm):
+    user_description = StringField("user_description")
+    collection_exercise_id = HiddenField("collection_exercise_id")
+    hidden_survey_id = HiddenField("hidden_survey_id")
+    period = HiddenField("period")
 
 
 class ChangeGroupStatusForm(FlaskForm):
@@ -366,8 +372,9 @@ class LinkCollectionInstrumentForm(FlaskForm):
         "formtype",
         default="",
         validators=[
-            InputRequired(message="Please enter a formtype"),
-            Regexp(regex=r"^[0-9]+$", message="Please use numeric characters only."),
+            InputRequired(message="Add a 4 digit number"),
+            Regexp(regex=r"^[0-9]+$", message="Add a 4 digit number"),
+            Length(min=4, max=4, message="Add a 4 digit number"),
         ],
     )
 
