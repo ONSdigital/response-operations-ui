@@ -95,7 +95,7 @@ def view_survey_details(short_name):
     )
 
 
-@surveys_bp.route("/edit-survey-details/<short_name>", methods=["POST", "GET"])
+@surveys_bp.route("/edit-survey-details/<short_name>", methods=["POST"])
 @login_required
 def edit_survey_details(short_name):
     verify_permission("surveys.edit")
@@ -111,7 +111,6 @@ def edit_survey_details(short_name):
             long_name=survey_details["longName"],
             survey_ref=survey_details["surveyRef"],
             survey_mode=survey_details["surveyMode"],
-            survey_details=survey_details,
         )
 
     else:
