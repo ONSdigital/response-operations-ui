@@ -21,18 +21,15 @@
       "text": "SEFT"
     },
     "value": "SEFT",
-  }]
-%}
-
-{% if multi_mode_enabled %}
-  {% do survey_mode_options.append({
+  },
+  {
     "id": "EQ_AND_SEFT",
     "label": {
       "text": "EQ and SEFT"
     },
     "value": "EQ_AND_SEFT",
-  })%}
-{% endif %}
+  }]
+%}
 
 {% block main %}
     <div class="ons-grid ons-grid--gutterless">
