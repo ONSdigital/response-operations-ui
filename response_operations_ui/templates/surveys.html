@@ -48,21 +48,19 @@
           "ariaDesc": "descending",
           "id": 'tbl-surveys',
           "ths": [
-              {
-                  "value": "Survey title","ariaSort": "none"
-              },
-              {
-                  "value": "Survey ID","ariaSort": "none"
-              },
-              {
-                  "value": "Survey mode","ariaSort": "none"
-              },
-              {
-                  "value": "Legal basis","ariaSort": "none"
-              },
-              {
-                  "value": "Edit survey", "ariaSort": "none"
-              } if surveyEditPermission else 
+                    {
+                        "value": "Survey title","ariaSort": "none"
+                    },
+                    {
+                        "value": "Survey ID","ariaSort": "none"
+                    },
+                    {
+                        "value": "Survey mode","ariaSort": "none"
+                    },
+                    {
+                        "value": "Legal basis","ariaSort": "none"
+                    } 
+                  ] if surveyEditPermission else 
                   [
                       {
                           "value": "Survey title","ariaSort": "none"
@@ -77,7 +75,6 @@
                           "value": "Legal basis","ariaSort": "none"
                       }
                   ]
-          ]
       } %}
         {% set surveyTableDataRows = [] %}
 
