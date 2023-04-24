@@ -87,17 +87,8 @@ def create_app(config_name=None):
 
     csrf = CSRFProtect(app)
 
-    # Load css and js assets
-    assets = Environment(app)
-
-    if app.config["DEBUG"] or app.config["TESTING"]:
-        assets.cache = False
-        assets.manifest = None
-
     if not app.config["DEBUG"]:
         app.wsgi_app = GCPLoadBalancer(app.wsgi_app)
-
-    assets.url = app.static_url_path
 
     app.jinja_env.undefined = ChainableUndefined
     app.jinja_env.add_extension("jinja2.ext.do")
