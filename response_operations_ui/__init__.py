@@ -4,7 +4,6 @@ import os
 
 import redis
 from flask import Flask, flash, redirect, session, url_for
-from flask_assets import Environment
 from flask_login import LoginManager
 from flask_session import Session
 from flask_talisman import Talisman
