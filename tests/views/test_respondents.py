@@ -61,8 +61,6 @@ with open(f"{project_root}/test_data/reporting_units/respondent.json") as json_d
     respondent = json.load(json_data)
 with open(f"{project_root}/test_data/reporting_units/reporting_unit.json") as json_data:
     reporting_unit = json.load(json_data)
-with open(f"{project_root}/test_data/survey/survey_by_id.json") as json_data:
-    survey_by_id = json.load(json_data)
 with open(f"{project_root}/test_data/party/business_reporting_unit.json") as fp:
     business_reporting_unit = json.load(fp)
 with open(f"{project_root}/test_data/case/cases_list.json") as fp:

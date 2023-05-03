@@ -48,21 +48,19 @@
           "ariaDesc": "descending",
           "id": 'tbl-surveys',
           "ths": [
-              {
-                  "value": "Survey title","ariaSort": "none"
-              },
-              {
-                  "value": "Survey ID","ariaSort": "none"
-              },
-              {
-                  "value": "Survey mode","ariaSort": "none"
-              },
-              {
-                  "value": "Legal basis","ariaSort": "none"
-              },
-              {
-                  "value": "Edit survey", "ariaSort": "none"
-              } if surveyEditPermission else 
+                    {
+                        "value": "Survey title","ariaSort": "none"
+                    },
+                    {
+                        "value": "Survey ID","ariaSort": "none"
+                    },
+                    {
+                        "value": "Survey mode","ariaSort": "none"
+                    },
+                    {
+                        "value": "Legal basis","ariaSort": "none"
+                    } 
+                  ] if surveyEditPermission else 
                   [
                       {
                           "value": "Survey title","ariaSort": "none"
@@ -77,21 +75,10 @@
                           "value": "Legal basis","ariaSort": "none"
                       }
                   ]
-          ]
       } %}
         {% set surveyTableDataRows = [] %}
 
         {% for survey in survey_list %}
-        
-            {% set formData = {
-                "action": url_for("surveys_bp.view_survey_details", short_name=survey.shortName, long_name=survey.longName, legal_basis=survey.legalBasis, survey_ref=survey.surveyRef),
-                "method": 'get',
-                "button": {
-                    "text": 'Edit survey',
-                    "id": 'edit-survey-details-' + survey.surveyRef,
-                    "classes": 'ons-btn--secondary ons-btn--small'
-                }
-            } %}
             {% do surveyTableDataRows.append(
             {
                 "tds": [
@@ -116,7 +103,7 @@
                         "name": "tbl-surveys-legal-basis"
                     },
                     {
-                        "value": '<a href="' + url_for("surveys_bp.view_survey_details", short_name=survey.shortName, long_name=survey.longName, legal_basis=survey.legalBasis, survey_ref=survey.surveyRef) + '">Edit ' +'survey</a>',
+                        "value": '<a href="' + url_for("surveys_bp.view_survey_details", short_name=survey.shortName) + '">Edit survey</a>',
                         "class": "ons-u-ta-right",
                         "dataSort": "2",
                     } if surveyEditPermission else 

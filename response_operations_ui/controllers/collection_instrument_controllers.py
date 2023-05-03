@@ -130,6 +130,36 @@ def link_collection_instrument_to_survey(survey_uuid, eq_id, form_type):
     )
 
 
+def update_collection_exercise_instruments(cis_selected, ce_id):
+    """Links a collection instrument to a collection exercise
+
+    :param ce_id: A uuid of a collection exercise
+    :type ce_id: str
+    :param cis_selected: A list uuid of collection instruments
+    :type cis_selected: list
+    :return: True on success.  False on failure
+    :rtype: bool
+    """
+    url = (
+        f'{app.config["COLLECTION_INSTRUMENT_URL"]}'
+        f"/collection-instrument-api/1.0.2"
+        f"/update_collection_exercise_instruments/{ce_id}"
+    )
+    payload = {
+        "instruments": cis_selected,
+    }
+    response = requests.post(url, params=payload, auth=app.config["BASIC_AUTH"])
+    try:
+        response.raise_for_status()
+        logger.info("Successfully linked collection instrument to collection exercise", ce_id=ce_id)
+    except requests.exceptions.HTTPError:
+        logger.error(
+            "Failed to link and/or unlink collection instrument to collection exercise", status=response.status_code
+        )
+        return response.status_code, response.json().get("errors")[0]
+    return response.status_code, str(response.content)
+
+
 def link_collection_instrument(ce_id, ci_id):
     """Links a collection instrument to a collection exercise
 

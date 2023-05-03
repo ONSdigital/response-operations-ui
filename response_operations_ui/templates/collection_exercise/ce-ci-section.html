@@ -29,25 +29,26 @@
         %}
     {% do collectionInstrumentTableData | setAttribute("ths", tblHeaders) %}
   {% endif %}
+  
     {% for ci_type in ci_table_context["ci_details"] %}
-        {% do collectionInstrumentTableDataRows.append(
-            {
-                "tds": [
-                  {
-                    "value": ci_type.title
-                  },
-                  {
-                    "value": ci_type.count,
-                    "tdClasses": "ons-u-ta-centre"
-                  }, 
-                  {
-                    "value": '<a href="' + ci_type.url + '" id="view-add-upload-ci-' + ci_type.type + '">' + ci_type.link_text + '</a>',
-                    "tdClasses": "ons-u-ta-right"
-                  }
-                ] 
-            }
-        )
-        %}
+      {% do collectionInstrumentTableDataRows.append(
+          {
+              "tds": [
+                {
+                  "value": ci_type.title
+                },
+                {
+                  "value": ci_type.count,
+                  "tdClasses": "ons-u-ta-centre"
+                }, 
+                {
+                  "value": '<a href="' + ci_type.url + '" id="view-add-upload-ci-' + ci_type.type + '">' + ci_type.link_text + '</a>',
+                  "tdClasses": "ons-u-ta-right"
+                }
+              ] 
+          }
+      )
+    %}
     {% endfor %}
     {% do collectionInstrumentTableData | setAttribute("trs", collectionInstrumentTableDataRows) %}
     {{ onsTable(collectionInstrumentTableData) }}
