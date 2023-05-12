@@ -1,12 +1,8 @@
 {% extends "layout/_template.njk" %}
 {% block head %}
-    {% assets "scss_all" %}
-        <link rel=stylesheet type=text/css href="{{ url_for('static', filename='css/main.css') }}"/>
-    {% endassets %}
+    <link rel=stylesheet type=text/css href="{{ url_for('static', filename='css/main.css') }}"/>
     <script type="text/javascript" src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
-    {% assets "js_all" %}
-        <script type="text/javascript" src="{{ url_for('static', filename='js/main.min.js') }}"></script>
-    {% endassets %}
+    <script type="text/javascript" src="{{ url_for('static', filename='js/main.min.js') }}"></script>
     {% if config.GOOGLE_TAG_MANAGER %}
         <!-- Google Tag Manager -->
         <script>
