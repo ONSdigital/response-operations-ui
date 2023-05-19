@@ -135,9 +135,9 @@ def view_collection_exercise(short_name, period):
         )
     elif survey_mode == "EQ_AND_SEFT":
         show_set_live_button = (
-                ce_state in ("READY_FOR_REVIEW", "FAILEDVALIDATION")
-                and "ref_period_start" in ce_details["events"]
-                and "ref_period_end" in ce_details["events"]
+            ce_state in ("READY_FOR_REVIEW", "FAILEDVALIDATION")
+            and "ref_period_start" in ce_details["events"]
+            and "ref_period_end" in ce_details["events"]
         )
     else:
         show_set_live_button = ce_state in ("READY_FOR_REVIEW", "FAILEDVALIDATION")
