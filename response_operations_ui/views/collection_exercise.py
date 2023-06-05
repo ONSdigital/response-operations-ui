@@ -135,12 +135,12 @@ def view_collection_exercise(short_name, period):
         )
     elif survey_mode == "EQ_AND_SEFT":
         show_set_live_button = (
-            ce_state in ("READY_FOR_REVIEW", "FAILEDVALIDATION")
+            ce_state in "READY_FOR_REVIEW"
             and "ref_period_start" in ce_details["events"]
             and "ref_period_end" in ce_details["events"]
         )
     else:
-        show_set_live_button = ce_state in ("READY_FOR_REVIEW", "FAILEDVALIDATION")
+        show_set_live_button = ce_state in "READY_FOR_REVIEW"
 
     locked = ce_state in ("LIVE", "READY_FOR_LIVE", "EXECUTION_STARTED", "VALIDATED", "EXECUTED", "ENDED")
     processing = ce_state in ("EXECUTION_STARTED", "EXECUTED", "VALIDATED")
