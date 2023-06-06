@@ -126,9 +126,7 @@ url_collection_instrument = f"{collection_instrument_root}/upload/{collection_ex
 url_collection_instrument_unlink = (
     f"{collection_instrument_root}/unlink-exercise/{collection_instrument_id}/{collection_exercise_id}"
 )
-url_collection_instrument_multi_select = (
-    f"{collection_instrument_root}/update_collection_exercise_instruments/{collection_exercise_id}"
-)
+url_collection_instrument_multi_select = f"{collection_instrument_root}/update-eq-instruments/{collection_exercise_id}"
 
 url_post_instrument_link = f"{TestingConfig.COLLECTION_INSTRUMENT_URL}/collection-instrument-api/1.0.2/upload"
 url_get_collection_instrument = f"{collection_instrument_root}/collectioninstrument"
