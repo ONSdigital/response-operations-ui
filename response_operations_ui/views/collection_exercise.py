@@ -127,13 +127,7 @@ def view_collection_exercise(short_name, period):
     ce_details = build_collection_exercise_details(short_name, period, include_ci=True)
     ce_state = ce_details["collection_exercise"]["state"]
     survey_mode = ce_details["survey"]["surveyMode"]
-    if survey_mode == "EQ":
-        show_set_live_button = (
-            ce_state in "READY_FOR_REVIEW"
-            and "ref_period_start" in ce_details["events"]
-            and "ref_period_end" in ce_details["events"]
-        )
-    elif survey_mode == "EQ_AND_SEFT":
+    if survey_mode in ("EQ", "EQ_AND_SEFT"):
         show_set_live_button = (
             ce_state in "READY_FOR_REVIEW"
             and "ref_period_start" in ce_details["events"]
