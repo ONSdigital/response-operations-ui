@@ -336,7 +336,7 @@ def _select_eq_collection_instrument(short_name, period):
 
     if "EQ" in ce_details["survey"]["surveyMode"]:
         ce_id = ce_details["collection_exercise"]["id"]
-        response = collection_instrument_controllers.update_collection_exercise_instruments(cis_selected, ce_id)
+        response = collection_instrument_controllers.update_collection_exercise_eq_instruments(cis_selected, ce_id)
 
         if response[0] != 200:
             if cis_selected:

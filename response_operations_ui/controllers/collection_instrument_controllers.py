@@ -130,8 +130,8 @@ def link_collection_instrument_to_survey(survey_uuid, eq_id, form_type):
     )
 
 
-def update_collection_exercise_instruments(cis_selected, ce_id):
-    """Links a collection instrument to a collection exercise
+def update_collection_exercise_eq_instruments(cis_selected, ce_id):
+    """Links a collection instrument to an eQ collection exercise
 
     :param ce_id: A uuid of a collection exercise
     :type ce_id: str
@@ -143,7 +143,7 @@ def update_collection_exercise_instruments(cis_selected, ce_id):
     url = (
         f'{app.config["COLLECTION_INSTRUMENT_URL"]}'
         f"/collection-instrument-api/1.0.2"
-        f"/update_collection_exercise_instruments/{ce_id}"
+        f"/update-eq-instruments/{ce_id}"
     )
     payload = {
         "instruments": cis_selected,
