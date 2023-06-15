@@ -424,19 +424,17 @@ class TestCollectionExercise(ViewTestCase):
 
     @requests_mock.mock()
     def test_collection_exercise_view_eq_non_ref_date(self, mock_request):
-        mock_request.get(url_get_survey_by_short_name, json=self.eq_survey_dates)
-        mock_request.get(url_ces_by_survey, json=self.collection_exercises)
-        mock_request.get(url_ce_by_id, json=collection_exercise_details["collection_exercise"])
-        mock_request.get(url_get_collection_exercise_events, json=self.collection_exercise_events)
-        mock_request.get(url_link_sample, json=[sample_summary_id])
-        mock_request.get(url_get_sample_summary, json=self.sample_summary)
-        mock_request.get(
-            f"{url_get_collection_instrument}?{ci_search_string}", json=self.eq_collection_instrument, complete_qs=True
+        self.load_eq_survey(
+            mock_request,
+            self.eq_survey_dates,
+            self.collection_exercises,
+            collection_exercise_details["collection_exercise"],
+            self.collection_exercise_events,
+            sample_summary_id,
+            self.sample_summary,
+            self.eq_collection_instrument,
+            self.eq_ci_selectors,
         )
-        mock_request.get(
-            f"{url_get_collection_instrument}?{ci_type_search_string_eq}", json=self.eq_ci_selectors, complete_qs=True
-        )
-
         response = self.client.get(f"/surveys/{short_name}/{period}", follow_redirects=True)
 
         self.assertEqual(response.status_code, 200)
@@ -446,18 +444,17 @@ class TestCollectionExercise(ViewTestCase):
 
     @requests_mock.mock()
     def test_collection_exercise_view_eq_ref_start_date(self, mock_request):
-        mock_request.get(url_get_survey_by_short_name, json=self.eq_survey_dates)
-        mock_request.get(url_ces_by_survey, json=self.collection_exercises)
-        mock_request.get(url_ce_by_id, json=collection_exercise_details["collection_exercise"])
-        mock_request.get(url_get_collection_exercise_events, json=self.collection_exercise_ref_start_date)
-        mock_request.get(
-            f"{url_get_collection_instrument}?{ci_search_string}", json=self.eq_collection_instrument, complete_qs=True
+        self.load_eq_survey(
+            mock_request,
+            self.eq_survey_dates,
+            self.collection_exercises,
+            collection_exercise_details["collection_exercise"],
+            self.collection_exercise_ref_start_date,
+            sample_summary_id,
+            self.sample_summary,
+            self.eq_collection_instrument,
+            self.eq_ci_selectors,
         )
-        mock_request.get(
-            f"{url_get_collection_instrument}?{ci_type_search_string_eq}", json=self.eq_ci_selectors, complete_qs=True
-        )
-        mock_request.get(url_link_sample, json=[sample_summary_id])
-        mock_request.get(url_get_sample_summary, json=self.sample_summary)
 
         mock_request.get(url_get_by_survey_with_ref_start_date, json=collection_exercise_eq_ref_start_date)
 
@@ -470,43 +467,40 @@ class TestCollectionExercise(ViewTestCase):
 
     @requests_mock.mock()
     def test_collection_exercise_view_eq_ref_end_date(self, mock_request):
-        mock_request.get(url_get_survey_by_short_name, json=self.eq_survey_dates)
-        mock_request.get(url_ces_by_survey, json=self.collection_exercises)
-        mock_request.get(url_ce_by_id, json=collection_exercise_details["collection_exercise"])
-        mock_request.get(url_get_collection_exercise_events, json=self.collection_exercise_ref_end_date)
-        mock_request.get(
-            f"{url_get_collection_instrument}?{ci_search_string}", json=self.eq_collection_instrument, complete_qs=True
+        self.load_eq_survey(
+            mock_request,
+            self.eq_and_seft_survey,
+            self.collection_exercises,
+            collection_exercise_details["collection_exercise"],
+            self.collection_exercise_ref_end_date,
+            sample_summary_id,
+            self.sample_summary,
+            self.eq_collection_instrument,
+            self.eq_ci_selectors,
         )
-        mock_request.get(
-            f"{url_get_collection_instrument}?{ci_type_search_string_eq}", json=self.eq_ci_selectors, complete_qs=True
-        )
-        mock_request.get(url_link_sample, json=[sample_summary_id])
-        mock_request.get(url_get_sample_summary, json=self.sample_summary)
 
         mock_request.get(url_get_by_survey_with_ref_end_date, json=collection_exercise_eq_ref_end_date)
 
         response = self.client.get(f"/surveys/{short_name}/{period}", follow_redirects=True)
 
         self.assertEqual(response.status_code, 200)
-        self.assertIn("Monthly Survey of Building Materials Bricks".encode(), response.data)
+        self.assertIn("Monthly Business Survey".encode(), response.data)
         self.assertIn("221_201712".encode(), response.data)
         self.assertNotIn("Set as ready for live".encode(), response.data)
 
     @requests_mock.mock()
     def test_collection_exercise_view_eq_both_ref_dates(self, mock_request):
-        mock_request.get(url_get_survey_by_short_name, json=self.eq_survey_dates)
-        mock_request.get(url_ces_by_survey, json=self.collection_exercises)
-        mock_request.get(url_ce_by_id, json=collection_exercise_eq_both_ref_date["collection_exercise"])
-        mock_request.get(url_get_collection_exercise_events, json=self.collection_exercise_ref_both_date)
-        mock_request.get(url_link_sample, json=[sample_summary_id])
-        mock_request.get(url_get_sample_summary, json=self.sample_summary)
-        mock_request.get(
-            f"{url_get_collection_instrument}?{ci_search_string}", json=self.eq_collection_instrument, complete_qs=True
+        self.load_eq_survey(
+            mock_request,
+            self.eq_survey_dates,
+            self.collection_exercises,
+            collection_exercise_eq_both_ref_date["collection_exercise"],
+            self.collection_exercise_ref_both_date,
+            sample_summary_id,
+            self.sample_summary,
+            self.eq_collection_instrument,
+            self.eq_ci_selectors,
         )
-        mock_request.get(
-            f"{url_get_collection_instrument}?{ci_type_search_string_eq}", json=self.eq_ci_selectors, complete_qs=True
-        )
-
         mock_request.get(url_get_by_survey_with_ref_start_date, json=collection_exercise_eq_ref_start_date)
         mock_request.get(url_get_by_survey_with_ref_end_date, json=collection_exercise_eq_ref_end_date)
 
@@ -516,6 +510,29 @@ class TestCollectionExercise(ViewTestCase):
         self.assertIn("Monthly Survey of Building Materials Bricks".encode(), response.data)
         self.assertIn("221_201712".encode(), response.data)
         self.assertIn("Set as ready for live".encode(), response.data)
+
+    def load_eq_survey(
+        self,
+        mock_request,
+        survey_short_name,
+        collection_exercises,
+        collex_details,
+        collex_events,
+        sample_summary_id,
+        sample_summary,
+        eq_ci,
+        eq_ci_selectors,
+    ):
+        mock_request.get(url_get_survey_by_short_name, json=survey_short_name)
+        mock_request.get(url_ces_by_survey, json=collection_exercises)
+        mock_request.get(url_ce_by_id, json=collex_details)
+        mock_request.get(url_get_collection_exercise_events, json=collex_events)
+        mock_request.get(url_link_sample, json=[sample_summary_id])
+        mock_request.get(url_get_sample_summary, json=sample_summary)
+        mock_request.get(f"{url_get_collection_instrument}?{ci_search_string}", json=eq_ci, complete_qs=True)
+        mock_request.get(
+            f"{url_get_collection_instrument}?{ci_type_search_string_eq}", json=eq_ci_selectors, complete_qs=True
+        )
 
     @requests_mock.mock()
     def test_collection_exercise_view_seft(self, mock_request):
