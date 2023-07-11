@@ -290,7 +290,7 @@
     "sass-graph": "^2.2.5",
     "schema-utils": "^3.0.0",
     "scss-tokenizer": "^0.2.3",
-    "semver": "^6.3.0",
+    "semver": "^6.3.1",
     "serialize-javascript": "^5.0.1",
     "set-blocking": "^2.0.0",
     "shallow-clone": "^3.0.1",
