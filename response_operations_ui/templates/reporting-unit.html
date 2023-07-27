@@ -64,18 +64,15 @@
                     "tds": [
                         {
                             "value": '<a href="' + url_for("reporting_unit_bp.view_reporting_unit_survey", ru_ref=ru.sampleUnitRef, survey_id=survey[1].surveyId) + '" id="survey-' + survey[1].shortName + '" >' + survey[1].surveyName + '</a>',
-                            "data": "Survey",
-                            "name": "tbl-surveys-survey"
+                            "data": "Survey"
                         },
                         {
                             "value": survey[1].period,
-                            "data": "Current period",
-                            "name": "tbl-surveys-period"
+                            "data": "Current period"
                         },
                         {
                             "value": '<span class="ons-status ' + status_class + '">' + survey[1].caseStatus + '</span>',
-                            "data": "Status",
-                            "name": "tbl-surveys-status"
+                            "data": "Status"
                         }
                     ]
                 }
