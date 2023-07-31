@@ -1,4 +1,4 @@
-{% from "components/lists/_macro.njk" import onsList %}
+{% from "components/list/_macro.njk" import onsList %}
 {% with messages = get_flashed_messages(category_filter=["error"]) %}
     {% if messages %}
         {% call

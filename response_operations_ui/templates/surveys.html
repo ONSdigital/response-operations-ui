@@ -84,23 +84,19 @@
                 "tds": [
                     {
                         "value": '<a href="/surveys/' + survey.shortName.replace(' ', '') + '" name="survey-link-' + survey.shortName + '">' + survey.longName + '</a><a style="text-decoration: none">' + ' | ' + survey.shortName + '</a>',
-                        "data": "Survey Title",
-                        "name": "tbl-surveys-title"
+                        "data": "Survey Title"
                     },
                     {
                         "value": survey.surveyRef,
-                        "data": "Survey ID",
-                        "name": "tbl-surveys-ref"
+                        "data": "Survey ID"
                     },
                     {
                         "value": survey.surveyMode.replace('_AND_', ' and '),
-                        "data": "Survey mode",
-                        "name": "tbl-surveys-mode"
+                        "data": "Survey mode"
                     },
                     {
                         "value": survey.legalBasis,
-                        "data": "Legal basis",
-                        "name": "tbl-surveys-legal-basis"
+                        "data": "Legal basis"
                     },
                     {
                         "value": '<a href="' + url_for("surveys_bp.view_survey_details", short_name=survey.shortName) + '">Edit survey</a>',
@@ -110,23 +106,19 @@
                         [
                             {
                                 "value": '<a href="/surveys/' + survey.shortName.replace(' ', '') + '" name="survey-link-' + survey.shortName + '">' + survey.longName + '</a>' + ' | ' + survey.shortName,
-                                "data": "Survey Title",
-                                "name": "tbl-surveys-title"
+                                "data": "Survey Title"
                             },
                             {
                                 "value": survey.surveyRef,
-                                "data": "Survey ID",
-                                "name": "tbl-surveys-ref"
+                                "data": "Survey ID"
                             },
                             {
                                 "value": survey.surveyMode.replace('_AND_', ' and '),
-                                "data": "Survey mode",
-                                "name": "tbl-surveys-mode"
+                                "data": "Survey mode"
                             },
                             {
                                 "value": survey.legalBasis,
-                                "data": "Legal basis",
-                                "name": "tbl-surveys-legal-basis"
+                                "data": "Legal basis"
                             }
                         ]
                 ]

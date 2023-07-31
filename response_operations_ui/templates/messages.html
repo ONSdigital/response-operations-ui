@@ -185,36 +185,30 @@
                                     {
                                         "value": ruRef,
                                         "data": "RU Ref",
-                                        "name": "tbl-messages-RU_Ref",
                                         "id": 'ru-ref-' + loop.index|string
                                     },
                                     {
                                         "value": businessName,
                                         "data": "Business name",
-                                        "name": "tbl-messages-business",
                                         "id": 'business-name-' + loop.index|string
                                     },
                                     {
                                         "value": '<span class="ons-u-fw-b"><a href="' + url_for('messages_bp.view_conversation', thread_id=message.thread_id, page=page, conversation_tab=conversation_tab, ru_ref_filter=ru_ref_filter, business_id_filter=business_id_filter) +'#latest-message" id="message-link-' + loop.index|string + '">' + message.subject + '</a></span>' if message.unread else '<a href="' + url_for('messages_bp.view_conversation', thread_id=message.thread_id, page=page, conversation_tab=conversation_tab, ru_ref_filter=ru_ref_filter, business_id_filter=business_id_filter) +'#latest-message" id="message-link-' + loop.index|string + '">' + message.subject + '</a>',
-                                        "data": "Subject",
-                                        "name": "tbl-messages-subject"
+                                        "data": "Subject"
                                     },
                                     {
                                         "value": fromValue if message.from else 'Unavailable',
                                         "data": "From",
-                                        "name": "tbl-messages-from",
                                         "id": 'messages-from-' + loop.index|string
                                     },
                                     {
                                         "value": toValue if message.to else 'Unavailable',
                                         "data": "To",
-                                        "name": "tbl-messages-to",
                                         "id": 'messages-to-' + loop.index|string
                                     },
                                     {
                                         "value": sentDate if message.sent_date else 'Unavailable',
                                         "data": "Date and time",
-                                        "name": "tbl-messages-received",
                                         "id": 'messages-time-' + loop.index|string
                                     }
                                 ]

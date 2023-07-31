@@ -380,7 +380,6 @@ class TestMessage(ViewTestCase):
         mock_request.get(shortname_url + "/ASHE", json=ashe_info["survey"])
         response = self.client.get("/messages/ASHE")
 
-        self.assertIn('name="message-unread"'.encode(), response.data)
         self.assertIn("status".encode(), response.data)
 
     def test_get_message_unread_status(self):
