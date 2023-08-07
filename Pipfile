@@ -43,6 +43,7 @@ Jinja2 = "*"
 MarkupSafe = "*"
 WTForms = "*"
 email_validator = "*"
+certifi = "*"
 
 [dev-packages]
 black = "*"
