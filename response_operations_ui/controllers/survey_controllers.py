@@ -219,12 +219,11 @@ def get_survey_ref_by_id(survey_id: str):
             logger.exception("Failed to resolve survey ref", survey_id=survey_id)
 
 
-def update_survey_details(survey_ref, short_name, long_name):
+def update_survey_details(survey_ref, short_name, long_name, survey_mode):
     logger.info("Updating survey details", survey_ref=survey_ref)
     url = f'{app.config["SURVEY_URL"]}/surveys/ref/{survey_ref}'
 
-    survey_details = {"ShortName": short_name, "LongName": long_name}
-
+    survey_details = {"ShortName": short_name, "LongName": long_name, "surveyMode": survey_mode}
     response = requests.put(url, json=survey_details, auth=app.config["BASIC_AUTH"])
 
     if response.status_code == 404:
@@ -262,6 +261,7 @@ def create_survey(survey_ref, short_name, long_name, legal_basis, survey_mode):
         short_name=short_name,
         long_name=long_name,
         legal_basis=legal_basis,
+        survey_mode=survey_mode,
     )
     url = f'{app.config["SURVEY_URL"]}/surveys'
 

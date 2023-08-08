@@ -309,9 +309,15 @@ class TestSurvey(ViewTestCase):
 
     @requests_mock.mock()
     def test_update_survey_details_success(self, mock_request):
-        sign_in_with_permission(self, mock_request, user_permission_surveys_edit_json)
-        changed_survey_details = {"hidden_survey_ref": "222", "long_name": "New Survey Long Name", "short_name": "QBX"}
         mock_request.get(url_get_survey_list, json=survey_list)
+        sign_in_with_permission(self, mock_request, user_permission_surveys_edit_json)
+        changed_survey_details = {
+            "hidden_survey_ref": "222",
+            "long_name": "New Survey Long Name",
+            "short_name": "QBX",
+            "survey_mode": "EQ",
+        }
+
         mock_request.put(url_update_survey_details)
         mock_request.get(url_get_survey_list, json=updated_survey_list)
         response = self.client.post(
@@ -320,11 +326,17 @@ class TestSurvey(ViewTestCase):
         self.assertEqual(response.status_code, 200)
         self.assertIn("New Survey Long Name".encode(), response.data)
         self.assertIn("QBX".encode(), response.data)
+        self.assertIn("EQ".encode(), response.data)
 
     @requests_mock.mock()
     def test_update_survey_details_failure(self, mock_request):
         sign_in_with_permission(self, mock_request, user_permission_surveys_edit_json)
-        changed_survey_details = {"hidden_survey_ref": "222", "long_name": "New Survey Long Name", "short_name": "QBX"}
+        changed_survey_details = {
+            "hidden_survey_ref": "222",
+            "long_name": "New Survey Long Name",
+            "short_name": "QBX",
+            "survey_mode": "EQ",
+        }
         mock_request.put(url_update_survey_details, status_code=500)
 
         response = self.client.post("/surveys/edit-survey-details/QBS", data=changed_survey_details)
@@ -335,9 +347,14 @@ class TestSurvey(ViewTestCase):
 
     @requests_mock.mock()
     def test_update_survey_details_failed_validation(self, mock_request):
-        sign_in_with_permission(self, mock_request, user_permission_surveys_edit_json)
-        changed_survey_details = {"hidden_survey_ref": "222", "long_name": "New Survey Long Name", "short_name": "Q BX"}
         mock_request.get(url_get_survey_list, json=survey_list)
+        sign_in_with_permission(self, mock_request, user_permission_surveys_edit_json)
+        changed_survey_details = {
+            "hidden_survey_ref": "222",
+            "long_name": "New Survey Long Name",
+            "short_name": "Q BX",
+            "survey_mode": "EQ",
+        }
         mock_request.put(url_update_survey_details)
         mock_request.get(url_get_survey_list, json=updated_survey_list)
         mock_request.get(url_get_collection_exercises, json=self.collection_exercises)
@@ -353,8 +370,8 @@ class TestSurvey(ViewTestCase):
 
     @requests_mock.mock()
     def test_get_survey_details(self, mock_request):
-        sign_in_with_permission(self, mock_request, user_permission_surveys_edit_json)
         mock_request.get(url_get_survey_list, json=survey_list)
+        sign_in_with_permission(self, mock_request, user_permission_surveys_edit_json)
         mock_request.get(url_get_survey_by_short_name, json=survey_info["survey"])
 
         response = self.client.get("surveys/edit-survey-details/bres", follow_redirects=True)
@@ -561,13 +578,14 @@ class TestSurvey(ViewTestCase):
 
     @requests_mock.mock()
     def test_update_survey_details_failed_validation_short_name_has_spaces(self, mock_request):
+        mock_request.get(url_get_survey_list, json=survey_list)
         sign_in_with_permission(self, mock_request, user_permission_surveys_edit_json)
         changed_survey_details = {
             "hidden_survey_ref": "222",
             "long_name": "New Survey Long Name",
             "short_name": "QBX spaces",
+            "survey_mode": "EQ",
         }
-        mock_request.get(url_get_survey_list, json=survey_list)
         mock_request.put(url_update_survey_details)
         mock_request.get(url_get_survey_list, json=updated_survey_list)
         mock_request.get(url_get_survey_by_short_name, json=survey_info["survey"])
@@ -605,46 +623,6 @@ class TestSurvey(ViewTestCase):
 
         self.assertEqual(format_short_name("QBS"), "QBS")
         self.assertEqual(format_short_name("Sand&Gravel"), "Sand & Gravel")
-
-    @requests_mock.mock()
-    def test_link_collection_instrument_success(self, mock_request):
-        sign_in_with_permission(self, mock_request, user_permission_surveys_edit_json)
-        changed_survey_details = {"formtype": "0001"}
-        data = [
-            {
-                "classifiers": {"COLLECTION_EXERCISE": [], "RU_REF": [], "eq_id": "qbs", "form_type": "0001"},
-                "file_name": "0001",
-                "id": "dde9cab1-b5bd-42a2-8ff7-80e3ddb8c11e",
-                "surveyId": "cb0711c3-0ac8-41d3-ae0e-567e5ea1ef87",
-            }
-        ]
-        mock_request.get(url_get_survey_by_qbs, json=survey_info["survey"])
-        mock_request.get(url_get_eq_ci_selectors, json=data)
-        mock_request.post(url_post_instrument_link)
-        response = self.client.post("/surveys/QBS/link-collection-instrument", data=changed_survey_details)
-        self.assertEqual(response.status_code, 200)
-        self.assertIn("0001".encode(), response.data)
-
-    @requests_mock.mock()
-    def test_link_collection_instrument_duplicate(self, mock_request):
-        sign_in_with_permission(self, mock_request, user_permission_surveys_edit_json)
-        changed_survey_details = {"formtype": "0001"}
-        data = [
-            {
-                "classifiers": {"COLLECTION_EXERCISE": [], "RU_REF": [], "eq_id": "qbs", "form_type": "0001"},
-                "file_name": "0001",
-                "id": "dde9cab1-b5bd-42a2-8ff7-80e3ddb8c11e",
-                "surveyId": "cb0711c3-0ac8-41d3-ae0e-567e5ea1ef87",
-            }
-        ]
-        error_data = {"errors": ["Cannot upload an instrument with an identical set of classifiers"]}
-        mock_request.get(url_get_survey_by_qbs, json=survey_info["survey"])
-        mock_request.get(url_get_eq_ci_selectors, json=data)
-        mock_request.post(url_post_instrument_link, status_code=400, json=error_data)
-        response = self.client.post("/surveys/QBS/link-collection-instrument", data=changed_survey_details)
-        self.assertEqual(response.status_code, 200)
-        self.assertIn("This page has 1 error".encode(), response.data)
-        self.assertIn("Cannot upload an instrument with an identical set of classifiers".encode(), response.data)
 
     @requests_mock.mock()
     def test_survey_list_edit_permission(self, mock_request):

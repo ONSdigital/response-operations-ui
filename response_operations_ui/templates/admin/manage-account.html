@@ -70,7 +70,20 @@
                               })
                           }}
                         </td>
-                        <td class="ons-table__cell"></td>
+                        <td class="ons-table__cell">
+                        {{
+                            onsCheckbox({
+                                "id": "surveys_delete",
+                                "name": "surveys_delete",
+                                "label": {
+                                    "text": "Delete surveys"
+                                },
+                                "hideLabel": true,
+                                "value": "y",
+                                "checked": groups["surveys.delete"]
+                            })
+                        }}
+                        </td>
                     </tr>
                     <tr class="ons-table__row">
                         <td class="ons-table__cell">
@@ -229,9 +242,6 @@
                 <a href="{{ url_for('admin_bp.manage_user_accounts') }}" role="button" class="ons-btn ons-btn--link ons-btn--secondary" id="btn-option-cancel">
                     <span class="ons-btn__inner">Cancel</span></a>
             </div>
-          </div>
-          <div class="ons-u-mt-xl">
-            <a href=" {{ url_for('admin_bp.get_delete_uaa_user', user_id=user_id) }}">Delete user account</a>
           </div>
         </section>
     </form>

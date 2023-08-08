@@ -1,14 +1,40 @@
 {% extends "layouts/base.html" %}
 {% from "components/button/_macro.njk" import onsButton %}
+{% from "components/radios/_macro.njk" import onsRadios %}
 {% from "components/fieldset/_macro.njk" import onsFieldset %}
 {% from "components/input/_macro.njk" import onsInput %}
-{% from "components/lists/_macro.njk" import onsList %}
+{% from "components/list/_macro.njk" import onsList %}
 
 {% set page_title = 'Create survey' %}
+
+{% set survey_mode_options = [
+  {
+    "id": "EQ",
+    "label": {
+      "text": "EQ"
+    },
+    "value": "EQ",
+  },
+  {
+    "id": "SEFT",
+    "label": {
+      "text": "SEFT"
+    },
+    "value": "SEFT",
+  },
+  {
+    "id": "EQ_AND_SEFT",
+    "label": {
+      "text": "EQ and SEFT"
+    },
+    "value": "EQ_AND_SEFT",
+  }]
+%}
+
 {% block main %}
     <div class="ons-grid ons-grid--gutterless">
         <div class="ons-grid__col ons-col-8@m">
-            <h1 class="ons-u-fs-xl">Create new survey</h1>
+            <h1 class="ons-u-fs-xxl">Create survey</h1>
             <form action="" method="post">
                 {{ form.csrf_token }}
                 {% if errors %}
@@ -44,6 +70,7 @@
                     "legend": "Create new survey",
                     "legendClasses": "ons-u-vh"
                 }) -%}
+              <div class="ons-grid__col ons-col-5@m">
                     {{
                         onsInput({
                             "id": "long_name",
@@ -54,8 +81,25 @@
                                 "required": true
                             },
                             "label": {
-                                "text": 'Survey name',
+                                "text": 'Survey title',
                                 "description": "For example: Monthly Business Survey"
+                            }
+                        })
+                    }}
+                    {{
+                        onsInput({
+                            "id": "short_name",
+                            "name": "short_name",
+                            "type": "text",
+                            "maxLength": 10,
+                            "width": "10",
+                            "classes": "input--w-5",
+                            "attributes": {
+                                "required": true
+                            },
+                            "label": {
+                                "text": 'Survey abbreviation',
+                                "description": "For example: MBS"
                             }
                         })
                     }}
@@ -64,7 +108,8 @@
                             "id": "survey_ref",
                             "name": "survey_ref",
                             "type": "text",
-                            "maxLength": 20,
+                            "maxLength": 10,
+                            "width": "10",
                             "value": survey_ref,
                             "classes": "input--w-5",
                             "attributes": {
@@ -76,46 +121,60 @@
                             }
                         })
                     }}
-                    {{
-                        onsInput({
-                            "id": "short_name",
-                            "name": "short_name",
-                            "type": "text",
-                            "maxLength": 20,
-                            "classes": "input--w-5",
-                            "attributes": {
-                                "required": true
-                            },
-                            "label": {
-                                "text": 'Abbreviation',
-                                "description": "For example: MBS"
-                            }
+              </div>
+                {% endcall %}
+                 <div class="ons-field field--select ons-u-mb-m">
+                   {{
+                        onsRadios({
+                            "legend": "Survey mode",
+                            "id": "survey_mode",
+                            "name": "survey_mode",
+                            "borderless": true,
+                            "radios": survey_mode_options
                         })
                     }}
-                {% endcall %}
-                <p class="ons-field">
-                    <label class="ons-label ons-u-fs-r--b " for="legal_basis">
-                        Legal basis
-                    </label>
-                    {{ form.legal_basis(class_="input ", id='legal_basis', required=required) }}
-                </p>
-                <div class="ons-field field--select ons-u-mb-m">
-                    <label class="ons-label ons-u-fs-r--b " for="select">
-                        Survey Mode
-                    </label>
-                    {{ form.survey_mode(class_="input ", id='survey_mode', required=required) }}
                 </div>
+                <p class="ons-field">
+                  {% set radioComponent = {
+                    "legend": "Legal Basis",
+                    "name": "legal_basis",
+                    "id": "legal_basis",
+                    "borderless": true
+
+                } %}
+
+                {% set radios = [] %}
+                {% for lb in form.legal_basis %}
+                    {% do radios.append(
+                        {
+                            "id": lb[0],
+                            "name": lb[0],
+                            "label": {
+                                "text": lb[1],
+                            },
+                            "value": lb[0],
+                        }
+                    ) %}
+                {% endfor %}
+
+                {% do radioComponent | setAttribute("radios", radios) %}
+                {{
+                    onsRadios(radioComponent)
+                }}
+                </p>
+               
                 <div class="ons-grid ons-grid--flex ons-grid--gutterless ons-grid--vertical-center ons-grid--no-wrap@s ons-u-mt-m ons-u-mb-m">
                     <div class="ons-grid__col">
                         {{
                             onsButton({
-                                "text": "Save and continue",
+                                "text": "Create Survey",
                                 "id": "save-btn"
                             })
                         }}
                     </div>
-                    <div class="ons-grid__col ons-u-ml-m">
-                        <a id="cancel-btn" href="{{ url_for('surveys_bp.view_surveys') }}">Cancel</a>
+                    <div class="ons-grid__col ons-u-ml-s">
+                        <a href="{{ url_for('surveys_bp.view_surveys') }}" role="button" class="ons-btn ons-btn--link ons-btn--secondary" id="btn-option-cancel">
+                            <span class="ons-btn__inner">Cancel</span></a>
                     </div>
                 </div>
             </form>

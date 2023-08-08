@@ -47,30 +47,32 @@
         {% set surveyTableDataRows = [] %}
 
         {% for survey in surveys %}
-            {% if survey[1].caseStatus == 'Not started' or survey[1].caseStatus == 'No longer required' %}
-                {% set status_class = 'ons-status--dead' %}
-            {% elif survey[1].caseStatus == 'In progress' or survey[1].caseStatus == 'Completed' or survey[1].caseStatus == 'Completed by phone' %}
+            {% if survey[1].caseStatus == 'Not started' %}
+                {% set status_class = 'ons-status--info' %}
+            {% elif survey[1].caseStatus == 'In progress' %}
+                {% set status_class = 'ons-status--pending' %}
+            {% elif survey[1].caseStatus == 'Completed' or survey[1].caseStatus == 'Completed by phone' %}
                 {% set status_class = 'ons-status--success' %}
+            {% elif survey[1].caseStatus == 'No longer required' %}
+                 {% set status_class = 'ons-status--dead' %}
             {% else %}
                 {% set status_class = 'ons-status--error' %}
             {% endif %}
+      
             {% do surveyTableDataRows.append( 
                 {
                     "tds": [
                         {
                             "value": '<a href="' + url_for("reporting_unit_bp.view_reporting_unit_survey", ru_ref=ru.sampleUnitRef, survey_id=survey[1].surveyId) + '" id="survey-' + survey[1].shortName + '" >' + survey[1].surveyName + '</a>',
-                            "data": "Survey",
-                            "name": "tbl-surveys-survey"
+                            "data": "Survey"
                         },
                         {
                             "value": survey[1].period,
-                            "data": "Current period",
-                            "name": "tbl-surveys-period"
+                            "data": "Current period"
                         },
                         {
                             "value": '<span class="ons-status ' + status_class + '">' + survey[1].caseStatus + '</span>',
-                            "data": "Status",
-                            "name": "tbl-surveys-status"
+                            "data": "Status"
                         }
                     ]
                 }

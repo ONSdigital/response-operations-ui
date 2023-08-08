@@ -4,7 +4,6 @@ import os
 
 import redis
 from flask import Flask, flash, redirect, session, url_for
-from flask_assets import Environment
 from flask_login import LoginManager
 from flask_session import Session
 from flask_talisman import Talisman
@@ -87,17 +86,8 @@ def create_app(config_name=None):
 
     csrf = CSRFProtect(app)
 
-    # Load css and js assets
-    assets = Environment(app)
-
-    if app.config["DEBUG"] or app.config["TESTING"]:
-        assets.cache = False
-        assets.manifest = None
-
     if not app.config["DEBUG"]:
         app.wsgi_app = GCPLoadBalancer(app.wsgi_app)
-
-    assets.url = app.static_url_path
 
     app.jinja_env.undefined = ChainableUndefined
     app.jinja_env.add_extension("jinja2.ext.do")
@@ -123,7 +113,6 @@ def create_app(config_name=None):
 
     @app.before_request
     def before_request():
-
         session.permanent = True  # set session to use PERMANENT_SESSION_LIFETIME
         session.modified = True  # reset the session timer on every request
         try:
@@ -136,7 +125,6 @@ def create_app(config_name=None):
 
     @app.context_processor
     def inject_availability_message():
-
         redis_avail_msg = app.config["SESSION_REDIS"]
 
         if len(redis_avail_msg.keys("AVAILABILITY_MESSAGE_RES_OPS")) == 1:

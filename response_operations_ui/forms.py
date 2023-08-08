@@ -45,6 +45,7 @@ class LoginForm(FlaskForm):
 
 class EditUserGroupsForm(FlaskForm):
     surveys_edit = BooleanField()
+    surveys_delete = BooleanField()
     reporting_units_edit = BooleanField()
     respondents_edit = BooleanField()
     respondents_delete = BooleanField()
@@ -170,8 +171,7 @@ class EditContactDetailsForm(FlaskForm):
             self.telephone.data = default_values.get("telephone")
 
 
-class EditCollectionExerciseDetailsForm(FlaskForm):
-    user_description = HiddenField("user_description")
+class EditCollectionExercisePeriodIDForm(FlaskForm):
     period = IntegerField("period")
     collection_exercise_id = HiddenField("collection_exercise_id")
     hidden_survey_id = HiddenField("hidden_survey_id")
@@ -189,6 +189,13 @@ class EditCollectionExerciseDetailsForm(FlaskForm):
                 continue
             if ce["exerciseRef"] == str(inputted_period):
                 raise ValidationError("Please enter a period not in use")
+
+
+class EditCollectionExercisePeriodDescriptionForm(FlaskForm):
+    user_description = StringField("user_description")
+    collection_exercise_id = HiddenField("collection_exercise_id")
+    hidden_survey_id = HiddenField("hidden_survey_id")
+    period = HiddenField("period")
 
 
 class ChangeGroupStatusForm(FlaskForm):
@@ -295,6 +302,7 @@ class EditSurveyDetailsForm(FlaskForm):
             Regexp(regex=r"^[a-zA-Z0-9]+$", message="Please use alphanumeric characters only."),
         ],
     )
+    survey_mode = StringField()
     hidden_survey_ref = HiddenField("hidden_survey_ref")
 
     @staticmethod
@@ -327,19 +335,12 @@ class CreateSurveyDetailsForm(FlaskForm):
         ],
     )
     survey_ref = StringField("survey_ref", validators=[InputRequired(message="Please remove spaces in Survey ID")])
-    legal_basis = SelectField("legal_basis", choices=[("", "Select an option")])
-    survey_mode = SelectField(
-        "survey_mode",
-        choices=[
-            ("", "Select an option"),
-            ("EQ", "Electronic Questionnaire (eQ)"),
-            ("SEFT", "Secure Electronic File Transfer (SEFT)"),
-        ],
-    )
+    legal_basis = StringField(validators=[InputRequired("Please select a Legal Basis")])
+    survey_mode = StringField(validators=[InputRequired("Please select a Survey Mode")])
 
     def __init__(self, form):
         super().__init__(form)
-        self.legal_basis.choices = [("", "Select an option")] + survey_controllers.get_legal_basis_list()
+        self.legal_basis = survey_controllers.get_legal_basis_list()
 
     @staticmethod
     def validate_short_name(form, field):
@@ -363,7 +364,7 @@ class CreateSurveyDetailsForm(FlaskForm):
     def validate_survey_mode(form, field):
         survey_mode = field.data
         if not survey_mode:
-            raise ValidationError("Please select eQ or SEFT")
+            raise ValidationError("Please select EQ, SEFT or EQ AND SEFT")
 
 
 class LinkCollectionInstrumentForm(FlaskForm):
@@ -371,8 +372,9 @@ class LinkCollectionInstrumentForm(FlaskForm):
         "formtype",
         default="",
         validators=[
-            InputRequired(message="Please enter a formtype"),
-            Regexp(regex=r"^[0-9]+$", message="Please use numeric characters only."),
+            InputRequired(message="Add a 4 digit number"),
+            Regexp(regex=r"^[0-9]+$", message="Add a 4 digit number"),
+            Length(min=4, max=4, message="Add a 4 digit number"),
         ],
     )
 
@@ -421,6 +423,7 @@ class CreateAccountWithPermissionsForm(FlaskForm):
     email = EmailField("Email", validators=[DataRequired(message="Email is required")])
 
     surveys_edit = BooleanField()
+    surveys_delete = BooleanField()
     reporting_units_edit = BooleanField()
     respondents_edit = BooleanField()
     respondents_delete = BooleanField()
@@ -431,6 +434,7 @@ class CreateAccountWithPermissionsForm(FlaskForm):
     def get_uaa_permission_groups():
         return [
             "surveys_edit",
+            "surveys_delete",
             "reporting_units_edit",
             "respondents_edit",
             "respondents_delete",
