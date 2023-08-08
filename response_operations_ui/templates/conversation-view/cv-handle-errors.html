@@ -1,4 +1,4 @@
-{% from "components/lists/_macro.njk" import onsList %}
+{% from "components/list/_macro.njk" import onsList %}
 {% if form.errors %}
     {% set error_count = form.errors | length %}
     {% set plural_suffix = 's' if error_count > 1 else '' %}

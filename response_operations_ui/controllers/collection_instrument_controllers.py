@@ -44,14 +44,16 @@ def upload_collection_instrument(collection_exercise_id, file, form_type=None):
             form_type=form_type,
             status=response.status_code,
         )
-        return False
+        if response.headers["Content-Type"] == "application/json":
+            return False, response.json().get("errors")[0]
+        return False, None
 
     logger.info(
         "Successfully uploaded collection instrument",
         collection_exercise_id=collection_exercise_id,
         form_type=form_type,
     )
-    return True
+    return True, None
 
 
 def upload_ru_specific_collection_instrument(collection_exercise_id, file, ru_ref):
@@ -126,6 +128,36 @@ def link_collection_instrument_to_survey(survey_uuid, eq_id, form_type):
     logger.info(
         "Successfully linked collection instrument to survey", survey_uuid=survey_uuid, eq_id=eq_id, form_type=form_type
     )
+
+
+def update_collection_exercise_eq_instruments(cis_selected, ce_id):
+    """Links a collection instrument to an eQ collection exercise
+
+    :param ce_id: A uuid of a collection exercise
+    :type ce_id: str
+    :param cis_selected: A list uuid of collection instruments
+    :type cis_selected: list
+    :return: True on success.  False on failure
+    :rtype: bool
+    """
+    url = (
+        f'{app.config["COLLECTION_INSTRUMENT_URL"]}'
+        f"/collection-instrument-api/1.0.2"
+        f"/update-eq-instruments/{ce_id}"
+    )
+    payload = {
+        "instruments": cis_selected,
+    }
+    response = requests.post(url, params=payload, auth=app.config["BASIC_AUTH"])
+    try:
+        response.raise_for_status()
+        logger.info("Successfully linked collection instrument to collection exercise", ce_id=ce_id)
+    except requests.exceptions.HTTPError:
+        logger.error(
+            "Failed to link and/or unlink collection instrument to collection exercise", status=response.status_code
+        )
+        return response.status_code, response.json().get("errors")[0]
+    return response.status_code, str(response.content)
 
 
 def link_collection_instrument(ce_id, ci_id):

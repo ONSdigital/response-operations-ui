@@ -1,0 +1,55 @@
+{% from "components/list/_macro.njk" import onsList %}
+{% with messages = get_flashed_messages(category_filter=["error"]) %}
+    {% if messages %}
+        {% call
+            onsPanel({
+                    "type": "error",
+                    "classes": "ons-u-mb-l",
+                    "title":  errorTitle,
+                })
+        %}
+            {% for message in messages %}
+                <p id="flashed-message-{{ loop.index }}">{{ message }}</p>
+            {% endfor %}
+        {% endcall %}
+    {% endif %}
+{% endwith %}
+{% if form.errors.items or error %}
+    {% set errorData = [] %}
+        {% set header_text = 'There is a problem with this page' %}
+        {% call
+            onsPanel({
+                "title": header_text,
+                "classes": "ons-u-mb-l",
+                "type": "error"
+            })
+        %}
+        {% if 'add-ci-error' in error['section'] %}
+            {% do errorData.append(
+                {
+                    "text": error['header'],
+                    "index": true,
+                    "url": "#form-add-ci",
+                    "classes": "ons-js-inpagelink"
+                }
+            ) %}
+        {% endif %}
+        {% if 'ciSelect' in error['section'] %}
+            {% do errorData.append(
+                {
+                    "text": error['header'],
+                    "index": true,
+                    "url": "#form-select-ci",
+                    "classes": "ons-js-inpagelink"
+                }
+            ) %}
+        {% endif %}
+        {{
+            onsList({
+                "element": 'ol',
+                "classes": "list--bare",
+                "itemsList": errorData
+            })
+        }}
+    {% endcall %}
+{% endif %}

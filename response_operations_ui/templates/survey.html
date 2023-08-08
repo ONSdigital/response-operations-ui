@@ -28,22 +28,6 @@
       </div>
     {% if collection_exercises|length > 0 %}
     <section class="ce-list">
-        {% if surveyEditPermission %}
-            {% if survey.surveyMode == 'EQ' %}
-                <p class="ons-field">
-                    {{
-                        onsButton({
-                            "text": "Link collection instrument",
-                            "id": "link-collection-instrument",
-                            "variants": ['secondary', 'small'],
-                            "name": "link-collection-instrument-link",
-                            "noIcon": true,
-                            "url": url_for('surveys_bp.get_link_collection_instrument', short_name=survey.shortName)
-                        })
-                    }}
-                </p>
-            {% endif %}
-        {% endif %}
         <div class="ons-grid ons-grid--flex ons-grid--between">
             <div class="ons-grid__col">
                 <h2 class="ons-u-fs-l u-mb-xs" name="page-survey-subtitle">Collection exercises (CE)
@@ -117,43 +101,35 @@
                         {
                             "value": '<a href="/surveys/' + survey.shortName.replace(' ', '') + "/" + exercise.exerciseRef + '"
                                 name="ce-link-' + exercise.exerciseRef + '">' + exercise.exerciseRef + '</a>',
-                            "data": "Period",
-                            "name" : "tbl-ce-period"
+                            "data": "Period"
                         },
                         {
                             "value": exercise.userDescription,
-                            "data": "Respondent sees",
-                            "name" : "tbl-ce-shown-as"
+                            "data": "Respondent sees"
                         },
                         {
                             "value": '<span class="ons-status ' + state_html_class + '">' + exercise.state + status_event + '</span>',
-                            "data": "Status",
-                            "name" : "tbl-ce-status"
+                            "data": "Status"
                         },
                         {
                             "value": exercise.sample_summary.totalSampleUnits,
-                            "data": "Sample",
-                            "name" : "tbl-ce-status"
+                            "data": "Sample"
                         },
                         {
                             "value": exercise.events.mps.date,
-                            "data": "MPS",
-                            "name" : "tbl-ce-status"
+                            "data": "MPS"
                         },
                         {
                             "value": exercise.events.go_live.date,
-                            "data": "Go live",
-                            "name" : "tbl-ce-status"
+                            "data": "Go live"
                         },
                         {
                             "value": exercise.events.return_by.date,
-                            "data": "Return by",
-                            "name" : "tbl-ce-status"
+                            "data": "Return by"
                         },
                         {
                             "value": exercise.events.reminder.date,
-                            "data": "First Reminder",
-                            "name" : "tbl-ce-report"
+                            "data": "First Reminder"
                         },
                     ]
                 }

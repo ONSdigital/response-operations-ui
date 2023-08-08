@@ -55,10 +55,14 @@
                 {% set collectionExerciseTableDataRows = [] %}
 
                 {% for ce in collection_exercises %}
-                    {% if ce.responseStatus == 'Not started' or ce.responseStatus == 'No longer required' %}
-                        {% set status_class = 'ons-status--dead' %}
-                    {% elif ce.responseStatus == 'In progress' or ce.responseStatus == 'Completed' or ce.responseStatus == 'Completed by phone' %}
+                    {% if ce.responseStatus == 'Not started' %}
+                        {% set status_class = 'ons-status--info' %}
+                    {% elif ce.responseStatus == 'In progress' %}
+                        {% set status_class = 'ons-status--pending' %}
+                    {% elif ce.responseStatus == 'Completed' or ce.responseStatus == 'Completed by phone' %}
                         {% set status_class = 'ons-status--success' %}
+                    {% elif ce.responseStatus == 'No longer required' %}
+                        {% set status_class = 'ons-status--dead' %}
                     {% else %}
                         {% set status_class = 'ons-status--error' %}
                     {% endif %}
@@ -75,28 +79,23 @@
                             "tds": [
                                 {
                                     "value": ce.exerciseRef,
-                                    "data": "Period",
-                                    "name": "tbl-collection-exercises-period"
+                                    "data": "Period"
                                 },
                                 {
                                     "value": ce.companyName,
-                                    "data": "Reporting unit name",
-                                    "name": "tbl-collection-exercises-ru-name"
+                                    "data": "Reporting unit name"
                                 },
                                 {
                                     "value": ce.tradingAs,
-                                    "data": "Trading as",
-                                    "name": "tbl-collection-exercises-trading-as"
+                                    "data": "Trading as"
                                 },
                                 {
                                     "value": ce.companyRegion,
-                                    "data": "Region",
-                                    "name": "tbl-collection-exercises-region"
+                                    "data": "Region"
                                 },
                                 {
                                     "value": '<span class="ons-status ' + status_class + '">' + ce.responseStatus + '</span>' + survey_link,
-                                    "data": "Status",
-                                    "name": "tbl-collection-exercises-status"
+                                    "data": "Status"
                                 },
                             ]
                         }

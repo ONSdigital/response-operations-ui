@@ -27,7 +27,7 @@
         "caption": 'Dates for this collection exercise',
         "hideCaption": true,
         "ths": tblHeaders,
-        "tableClasses": "ce-dates-table"
+        "tableClasses": "ce-overview-table"
     } %}
 
     {% set surveyTableDataRows = [] %}
@@ -41,11 +41,11 @@
             {% set editable = true %}
             {% set value = 'ID' %}
         {% elif dateGroup == 'user' %}
-            {% set label = 'Reporting dates *' %}
+            {% set label = 'Reporting period *' %}
             {% set id = 'user-description' %}
             {% set event = ce.userDescription %}
             {% set editable = true %}
-            {% set value = 'dates' %}
+            {% set value = 'reporting period' %}
         {% elif dateGroup == 'ref_period_start' %}
             {% set id = 'period-start-date' %}
             {% set label = 'Reference period start date *' %}
@@ -69,15 +69,16 @@
                 {% set event = events.employment.day + ' ' + events.employment.date %}
             {% endif %}
             {% set editable = true %}
-            {% set value = ' date' %}
+            {% set value = 'employment date' %}
         {% endif %}
-
         {% if surveyEditPermission %}
             {% if (not locked) and (dateGroup == 'periodId') %}
-                {% set hyperlink = '<a href="' + url_for("collection_exercise_bp.view_collection_exercise_details", short_name=survey.shortName, period=ce.exerciseRef, surveyRef=survey.surveyRef) + '" id="' + 'edit-event-date-' + id + '">' + 'Edit '+ value + '</a>' %}
+                {% set hyperlink = '<a href="' + url_for("collection_exercise_bp.edit_collection_exercise_period_id", short_name=survey.shortName, period=ce.exerciseRef, surveyRef=survey.surveyRef) + '" id="' + 'edit-event-date-' + id + '">' + 'Edit '+ value + '</a>' %}
             {% endif %}
-            {% if (not locked) and (dateGroup == 'user') %}
-                {% set hyperlink = '<a href="' + url_for("collection_exercise_bp.view_collection_exercise_details", short_name=survey.shortName, period=ce.exerciseRef, surveyRef=survey.surveyRef) + '" id="' + 'edit-event-date-' + id + '">' + 'Edit '+ value + '</a>' %}
+            {% if event and (not locked) and (dateGroup == 'user') %}
+                {% set hyperlink = '<a href="' + url_for("collection_exercise_bp.edit_collection_exercise_period_description", short_name=survey.shortName, period=ce.exerciseRef, surveyRef=survey.surveyRef) + '" id="' + 'edit-event-date-' + id + '">' + 'Edit '+ value + '</a>' %}
+            {% elif not event and (not locked) and (dateGroup == 'user') %}
+                {% set hyperlink = '<a href="' + url_for("collection_exercise_bp.edit_collection_exercise_period_description", short_name=survey.shortName, period=ce.exerciseRef, surveyRef=survey.surveyRef) + '" id="' + 'edit-event-date-' + id + '">' + 'Add '+ value + '</a>' %}
             {% endif %}
             {% if not event and (dateGroup != 'periodId' and dateGroup != 'user') and editable %}
                 {% set hyperlink = '<a href="' + url_for("collection_exercise_bp.get_create_collection_event_form", short_name=survey.shortName, ce_id=ce.id, period=ce.exerciseRef, tag=dateGroup) + '" id="' + 'add-event-date-' + id + '">' + 'Add '+ value + '</a>' %}
@@ -91,8 +92,7 @@
                     "value": label, 
                 }, 
                 {
-                    "value": event if event,
-                    "name": id,
+                    "value": event if event
                 },
             ]
         %}  

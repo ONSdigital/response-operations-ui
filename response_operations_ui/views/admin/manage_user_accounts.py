@@ -13,9 +13,9 @@ from flask_login import login_required
 from flask_paginate import Pagination
 from requests import HTTPError
 from structlog import wrap_logger
-from werkzeug.exceptions import abort
 
-from response_operations_ui.common import token_decoder
+from response_operations_ui.common.token_decoder import generate_token
+from response_operations_ui.common.uaa import verify_permission
 from response_operations_ui.controllers.notify_controller import NotifyController
 from response_operations_ui.controllers.uaa_controller import (
     add_group_membership,
@@ -26,7 +26,6 @@ from response_operations_ui.controllers.uaa_controller import (
     get_user_by_id,
     get_users_list,
     remove_group_membership,
-    user_has_permission,
 )
 from response_operations_ui.exceptions.exceptions import NotifyError
 from response_operations_ui.forms import (
@@ -40,6 +39,7 @@ logger = wrap_logger(logging.getLogger(__name__))
 
 uaa_group_mapping = {
     "surveys_edit": "surveys.edit",
+    "surveys_delete": "surveys.delete",
     "reporting_units_edit": "reportingunits.edit",
     "respondents_edit": "respondents.edit",
     "respondents_delete": "respondents.delete",
@@ -55,7 +55,7 @@ def manage_user_accounts():
     This endpoint, by design is only accessible to ROPs admin user.
     This endpoint lists all current user in the system.
     """
-    _verify_user_in_user_admin_group()
+    verify_permission("users.admin")
     page = request.values.get("page", "1")
     user_with_email = request.values.get("user_with_email", None)
     limit = 20
@@ -112,7 +112,7 @@ def manage_user_accounts():
 @admin_bp.route("/create-account", methods=["GET"])
 @login_required
 def get_create_account():
-    _verify_user_in_user_admin_group()
+    verify_permission("users.admin")
     form = CreateAccountWithPermissionsForm()
     return render_template("admin/user-create.html", form=form)
 
@@ -120,7 +120,7 @@ def get_create_account():
 @admin_bp.route("/create-account", methods=["POST"])
 @login_required
 def post_create_account():
-    _verify_user_in_user_admin_group()
+    verify_permission("users.admin")
     form = CreateAccountWithPermissionsForm(request.form)
 
     if not form.validate():
@@ -160,7 +160,7 @@ def post_create_account():
             continue
 
     logger.info("User account created", administering_user_id=session["user_id"], user_id_created=user_id)
-    token = token_decoder.generate_token(user_id)
+    token = generate_token(user_id)
     internal_url = current_app.config["RESPONSE_OPERATIONS_UI_URL"]
     verification_url = f"{internal_url}{url_for('account_bp.get_activate_account', token=token)}"
     if not current_app.config["SEND_EMAIL_TO_GOV_NOTIFY"]:
@@ -192,7 +192,7 @@ def post_create_account():
 @admin_bp.route("/manage-account/<user_id>", methods=["GET"])
 @login_required
 def get_manage_account_groups(user_id):
-    _verify_user_in_user_admin_group()
+    verify_permission("users.admin")
 
     logger.info("Attempting to get user by id", user_id=user_id)
     uaa_user = get_user_by_id(user_id)
@@ -214,7 +214,7 @@ def get_manage_account_groups(user_id):
 @admin_bp.route("/manage-account/<user_id>", methods=["POST"])
 @login_required
 def post_manage_account_groups(user_id):
-    _verify_user_in_user_admin_group()
+    verify_permission("users.admin")
 
     if user_id == session["user_id"]:
         flash("You cannot modify your own user account", "error")
@@ -265,6 +265,7 @@ def post_manage_account_groups(user_id):
             continue  # Nothing to do, already not in the group
 
     if was_group_membership_changed:
+        delete_user_from_redis_session(user["id"])
         try:
             NotifyController().request_to_notify(
                 email=user["emails"][0]["value"],
@@ -275,16 +276,37 @@ def post_manage_account_groups(user_id):
             logger.error("failed to send email", msg=e.description, exc_info=True)
             flash("Failed to send email, please try again", "error")
             return redirect(url_for("admin_bp.manage_account", user=user["emails"][0]["value"]))
-
         flash("User account has been successfully changed. An email to inform the user has been sent.")
 
     return redirect(url_for("admin_bp.manage_user_accounts"))
 
 
+def delete_user_from_redis_session(user_id: str) -> None:
+    """
+    Deletes a users' session from redis, functionally logging them out.
+    This function searches for all session keys in redis that start with 'session:', then  loops over
+    all of them, getting the value of key, searching for the users id and deleting any keys it finds with the
+    id inside it.
+
+    :param user_id: The uuid of an internal user
+    """
+    logger.info("Attempting to delete session for user to log them out", user_id=user_id)
+    session_redis = current_app.config["SESSION_REDIS"]
+    session_keys = session_redis.scan(cursor=0, match="session:*")[1]
+
+    for session_key in session_keys:
+        session_value = str(session_redis.get(session_key))
+        if user_id in session_value:
+            # We're not exiting the loop once we've deleted the session as it's possible for a user
+            # to have active multiple sessions if they signed in on multiple browsers/devices
+            logger.info("Deleting session", user_id=user_id, session_key=session_key)
+            session_redis.delete(session_key)
+
+
 @admin_bp.route("/manage-account/<user_id>/delete", methods=["GET"])
 @login_required
 def get_delete_uaa_user(user_id):
-    _verify_user_in_user_admin_group()
+    verify_permission("users.admin")
 
     if user_id == session["user_id"]:
         flash("You cannot delete your own user account", "error")
@@ -304,7 +326,7 @@ def get_delete_uaa_user(user_id):
 @admin_bp.route("/manage-account/<user_id>/delete", methods=["POST"])
 @login_required
 def post_delete_uaa_user(user_id):
-    _verify_user_in_user_admin_group()
+    verify_permission("users.admin")
 
     if user_id == session["user_id"]:
         flash("You cannot delete your own user account", "error")
@@ -331,16 +353,6 @@ def post_delete_uaa_user(user_id):
     logger.info("User account deleted", administering_user_id=session["user_id"], user_id_deleted=user_id)
     flash("User account has been successfully deleted. An email to inform the user has been sent.")
     return redirect(url_for("admin_bp.manage_user_accounts"))
-
-
-def _verify_user_in_user_admin_group():
-    """
-    Checks if the user is in the 'users.admin' group and aborts with a 401 status code if the user
-    is not in the group.
-    """
-    if not user_has_permission("users.admin"):
-        logger.exception("Manage User Account request requested but unauthorised.")
-        abort(401)
 
 
 def _get_refine_user_list(users: list) -> list[dict]:
