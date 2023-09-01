@@ -28,6 +28,7 @@ collection_instrument_id_3 = "bc0b2cdf-754c-4ffd-bab2-e30bf177ec80"
 collection_instrument_id_4 = "912f8a05-8f9c-4d90-bff5-825f45775822"
 period = "000000"
 sample_summary_id = "1a11543f-eb19-41f5-825f-e41aca15e724"
+seft_collection_instrument_id = "58f4dcc1-47dc-4adb-b0a4-bffaf95fc375"
 short_name = "MBS"
 survey_id = "cb0711c3-0ac8-41d3-ae0e-567e5ea1ef87"
 survey_ref = "141"
@@ -120,6 +121,7 @@ url_get_collection_exercise_events = f"{collection_exercise_root}/{collection_ex
 url_create_collection_exercise = f"{TestingConfig.COLLECTION_EXERCISE_URL}/collectionexercises"
 url_execute = f"{TestingConfig.COLLECTION_EXERCISE_URL}/collectionexerciseexecution/{collection_exercise_id}"
 url_get_by_survey_with_ref_end_date = f"{collection_exercise_root}/survey/{short_name}/{period}/event/ref_period_end?"
+url_post_view_sample_ci = f"{collection_exercise_root}/survey/{survey_id}/{period}/view-sample-ci"
 
 collection_instrument_root = f"{TestingConfig.COLLECTION_INSTRUMENT_URL}/collection-instrument-api/1.0.2"
 url_collection_instrument = f"{collection_instrument_root}/upload/{collection_exercise_id}"
@@ -131,6 +133,7 @@ url_collection_instrument_multi_select = f"{collection_instrument_root}/update-e
 url_post_instrument_link = f"{TestingConfig.COLLECTION_INSTRUMENT_URL}/collection-instrument-api/1.0.2/upload"
 url_get_collection_instrument = f"{collection_instrument_root}/collectioninstrument"
 url_delete_collection_instrument = f"{collection_instrument_root}/delete/{collection_instrument_id}"
+url_update_collection_instrument = f"{collection_instrument_root}/update-eq-instruments/{collection_exercise_id}"
 
 url_survey_shortname = f"{TestingConfig.SURVEY_URL}/surveys/shortname/{short_name}"
 url_get_survey_by_short_name = f"{TestingConfig.SURVEY_URL}/surveys/shortname/{short_name}"
@@ -310,6 +313,35 @@ class TestCollectionExercise(ViewTestCase):
                 },
                 "file_name": "file",
                 "id": collection_instrument_id_2,
+                "surveyId": survey_id,
+                "type": "EQ",
+            },
+        ]
+        self.eq_and_seft_collection_instruments = [
+            {
+                "classifiers": {
+                    "COLLECTION_EXERCISE": [
+                        collection_exercise_id,
+                    ],
+                    "RU_REF": [],
+                    "SURVEY_ID": survey_id,
+                },
+                "file_name": "file",
+                "id": seft_collection_instrument_id,
+                "surveyId": survey_id,
+                "type": "SEFT",
+            },
+            {
+                "classifiers": {
+                    "COLLECTION_EXERCISE": [
+                        collection_exercise_id,
+                    ],
+                    "RU_REF": [],
+                    "SURVEY_ID": survey_id,
+                    "form_type": "0001",
+                },
+                "file_name": "file",
+                "id": collection_instrument_id,
                 "surveyId": survey_id,
                 "type": "EQ",
             },
@@ -2597,8 +2629,11 @@ class TestCollectionExercise(ViewTestCase):
         self.assertIn("Sample loaded".encode(), response.data)
         self.assertNotIn("Set as ready for live".encode(), response.data)
 
-    def _mock_build_collection_exercise_details(self, mock_request, mock_ci_request=True):
-        mock_request.get(url_get_survey_by_short_name, json=self.seft_survey)
+    def _mock_build_collection_exercise_details(self, mock_request, mock_ci_request=True, is_eq_seft=None):
+        if is_eq_seft:
+            mock_request.get(url_get_survey_by_short_name, json=self.eq_and_seft_survey)
+        else:
+            mock_request.get(url_get_survey_by_short_name, json=self.seft_survey)
         mock_request.get(url_ces_by_survey, json=self.collection_exercises)
         mock_request.get(url_ce_by_id, json=collection_exercise_details["collection_exercise"])
         mock_request.get(url_get_collection_exercise_events, json=self.collection_exercise_events)
@@ -2679,3 +2714,39 @@ class TestCollectionExercise(ViewTestCase):
 
         self.assertEqual(response.status_code, 200)
         self.assertIn("There is a problem with this page".encode(), response.data)
+
+    @requests_mock.mock()
+    def test_select_eq_collection_instrument_for_eq_seft(self, mock_request):
+        sign_in_with_permission(self, mock_request, user_permission_surveys_edit_json)
+
+        # Given I have uploaded a SEFT CI and then add a eQ CI for a eQ SEFT
+        eq_and_seft = self.eq_and_seft_collection_instruments.copy()
+        post_data = {"select-eq-ci": ""}
+        mock_request.get(
+            f"{url_get_collection_instrument}?{ci_search_string}",
+            json=eq_and_seft,
+            complete_qs=True,
+        )
+        mock_request.get(
+            f"{url_get_collection_instrument}?{ci_type_search_string_eq}", json=self.eq_ci_selectors, complete_qs=True
+        )
+        self._mock_build_collection_exercise_details(mock_request, False, True)
+
+        mock_request.post(
+            f"{url_update_collection_instrument}",
+            json=f"'id':'{seft_collection_instrument_id}'",
+            status_code=200,
+        )
+
+        # And I finish and return to the CE overview page
+        response = self.client.post(
+            f"/surveys/{short_name}/{period}/view-sample-ci?survey_mode=EQ", data=post_data, follow_redirects=True
+        )
+
+        with self.app.app_context():
+            exercise_dict = build_collection_exercise_details("MBS", "000000", include_ci=True)
+
+        # Then I expect both SEFT and eQ CIs to be present
+        self.assertEqual(len(exercise_dict["collection_instruments"]["SEFT"]), 1)
+        self.assertEqual(len(exercise_dict["collection_instruments"]["EQ"]), 1)
+        self.assertIn("Total CI (2)".encode(), response.data)
