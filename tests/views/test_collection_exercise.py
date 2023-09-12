@@ -94,6 +94,9 @@ with open(
 with open(f"{project_root}/test_data/collection_exercise/collection_exercise_details_sample_init_state.json") as fp:
     ce_details_sample_init_state = json.load(fp)
 
+with open(f"{project_root}/test_data/collection_exercise/collection_exercise_pre_population.json") as fp:
+    ce_with_pre_population = json.load(fp)
+
 user_permission_surveys_edit_json = {
     "id": "5902656c-c41c-4b38-a294-0359e6aabe59",
     "groups": [{"value": "f385f89e-928f-4a0f-96a0-4c48d9007cc3", "display": "surveys.edit", "type": "DIRECT"}],
@@ -228,6 +231,7 @@ class TestCollectionExercise(ViewTestCase):
                         "timestamp": "2018-03-16T00:00:00.000Z",
                     }
                 ],
+                "supplementaryDatasetJson": None,
             }
         ]
         self.collection_exercise_events = [
@@ -510,6 +514,26 @@ class TestCollectionExercise(ViewTestCase):
         self.assertIn("Monthly Survey of Building Materials Bricks".encode(), response.data)
         self.assertIn("221_201712".encode(), response.data)
         self.assertIn("Set as ready for live".encode(), response.data)
+        self.assertNotIn("Pre-Populated data is available for this sample".encode(), response.data)
+
+    @requests_mock.mock()
+    def test_collection_exercise_view_with_pre_population(self, mock_request):
+        self.load_eq_survey(
+            mock_request,
+            self.eq_survey_dates,
+            self.collection_exercises,
+            ce_with_pre_population["collection_exercise"],
+            self.collection_exercise_ref_both_date,
+            sample_summary_id,
+            self.sample_summary,
+            self.eq_collection_instrument,
+            self.eq_ci_selectors,
+        )
+
+        response = self.client.get(f"/surveys/{short_name}/{period}", follow_redirects=True)
+
+        self.assertEqual(response.status_code, 200)
+        self.assertIn("Pre-Populated data is available for this sample".encode(), response.data)
 
     def load_eq_survey(
         self,

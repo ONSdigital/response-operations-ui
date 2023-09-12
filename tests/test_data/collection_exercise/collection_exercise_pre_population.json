@@ -1,0 +1,90 @@
+{
+  "collection_exercise": {
+    "actualExecutionDateTime": "2017-11-10T12:14:41.768+0000",
+    "actualPublishDateTime": "2017-11-10T12:16:28.509+0000",
+    "executedBy": null,
+    "exerciseRef": "221_201712",
+    "id": "14fb3e68-4dca-46db-bf49-04b84e07e77c",
+    "name": "000000",
+    "periodEndDateTime": "2017-09-15T22:59:59.000+0000",
+    "periodStartDateTime": "2017-09-14T23:00:00.000+0000",
+    "scheduledEndDateTime": "2018-06-29T23:00:00.000+0000",
+    "scheduledExecutionDateTime": "2017-09-10T23:00:00.000+0000",
+    "scheduledReturnDateTime": "2017-10-06T00:00:00.000+0000",
+    "scheduledStartDateTime": "2017-09-11T23:00:00.000+0000",
+    "state": "READY_FOR_REVIEW",
+    "surveyId": "cb0711c3-0ac8-41d3-ae0e-567e5ea1ef87",
+    "userDescription": "January 2017",
+    "validationErrors": null,
+    "supplementaryDatasetJson": "{\"survey_id\":\"139\",\"period_id\":\"202201\",\"form_types\":[\"0001\",\"0002\",\"0003\"],\"title\":\"QBS\",\"sds_published_at\":\"2023-08-24T11:55:00Z\",\"total_reporting_units\":1,\"schema_version\":\"v1.0.0\",\"sds_dataset_version\":2,\"filename\":\"eccb61ad-4eb3-4714-8afd-8c8426960b43.json\",\"dataset_id\":\"eccb61ad-4eb3-4714-8afd-8c8426960b43\"}"
+  },
+  "survey": {
+    "id": "cb0711c3-0ac8-41d3-ae0e-567e5ea1ef87",
+    "longName": "Business Register and Employment Survey",
+    "shortName": "BRES",
+    "surveyRef": "221"
+  },
+  "events": [
+    {
+      "tag": "mps",
+      "timestamp": "1993-05-15T23:00:00.000+0000",
+      "eventStatus": "PROCESSED"
+    },
+    {
+      "tag": "go_live",
+      "timestamp": "1993-05-15T23:00:00.000+0000",
+      "eventStatus": "PROCESSED"
+    },
+    {
+      "tag": "return_by",
+      "timestamp": "1993-05-15T23:00:00.000+0000",
+      "eventStatus": "PROCESSED"
+    },
+    {
+      "tag": "reminder",
+      "timestamp": "1993-05-15T23:00:00.000+0000",
+      "eventStatus": "PROCESSED"
+    },
+    {
+      "tag": "exercise_end",
+      "timestamp": "1993-05-15T23:00:00.000+0000",
+      "eventStatus": "PROCESSED"
+    },
+    {
+      "tag": "ref_period_start",
+      "timestamp": "1993-05-15T23:00:00.000+0000",
+      "eventStatus": "PROCESSED"
+    },
+    {
+      "tag": "ref_period_end",
+      "timestamp": "1993-05-15T23:00:00.000+0000",
+      "eventStatus": "PROCESSED"
+    }
+  ],
+  "collection_instruments": {
+    "EQ":[
+      {
+        "classifiers": {
+          "COLLECTION_EXERCISE": [
+            "e33daf0e-6a27-40cd-98dc-c6231f50e84a"
+          ], 
+          "RU_REF": [], 
+          "SURVEY_ID": "cb0711c3-0ac8-41d3-ae0e-567e5ea1ef87"
+        }, 
+        "file_name": "collection_instrument.xlsx", 
+        "id": "f732afbe-c710-4c95-a8d3-6644833195a7", 
+        "surveyId": "cb0711c3-0ac8-41d3-ae0e-567e5ea1ef87"
+      }
+    ]
+  },
+  "sample_summary": {
+    "id":"1a11543f-eb19-41f5-825f-e41aca15e724",
+    "effectiveStartDateTime":null,
+    "effectiveEndDateTime":null,
+    "surveyRef":null,
+    "ingestDateTime":"2018-01-24T08:57:28.686+0000",
+    "state":"ACTIVE",
+    "totalSampleUnits":5,
+    "expectedCollectionInstruments":2
+  }
+}
