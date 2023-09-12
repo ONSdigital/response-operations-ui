@@ -136,6 +136,8 @@ def view_collection_exercise(short_name, period):
     else:
         show_set_live_button = ce_state in "READY_FOR_REVIEW"
 
+    show_sds = True if ce_details["collection_exercise"]["supplementaryDatasetJson"] else False
+
     locked = ce_state in ("LIVE", "READY_FOR_LIVE", "EXECUTION_STARTED", "VALIDATED", "EXECUTED", "ENDED")
     processing = ce_state in ("EXECUTION_STARTED", "EXECUTED", "VALIDATED")
     validation_failed = ce_state == "FAILEDVALIDATION"
@@ -186,6 +188,7 @@ def view_collection_exercise(short_name, period):
         validation_failed=validation_failed,
         show_msg=show_msg,
         info_panel=info_panel,
+        show_sds=show_sds,
     )
 
 

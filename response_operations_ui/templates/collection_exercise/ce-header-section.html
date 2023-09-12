@@ -1,5 +1,14 @@
 
 <h1 name="page-ce-title">{{ce.exerciseRef}} Collection Exercise | {{survey.shortName}} {{survey.surveyRef}}</h1>
+{% if show_sds %}
+    {{
+        onsPanel({
+            "id": 'pre-population-banner',
+            "body": '<p>Pre-Populated data is available for this sample</p>',
+            "classes": 'ons-u-mb-m ons-u-mt-m ons-col-7@m',
+        })
+    }}
+{% endif %}
 {% set status_event = '' %}
 {% if ce.state == 'Ended' %}
     {% set class = 'ons-status ons-status--dead' %}
