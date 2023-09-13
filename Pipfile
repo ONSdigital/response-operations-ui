@@ -46,7 +46,7 @@ email_validator = "*"
 [dev-packages]
 black = "*"
 flake8 = "*"
-djlint = "==1.25.0"
+djlint = "*"
 fakeredis = "*"
 freezegun = "*"
 isort = "*"
