@@ -231,7 +231,7 @@ class TestCollectionExercise(ViewTestCase):
                         "timestamp": "2018-03-16T00:00:00.000Z",
                     }
                 ],
-                "supplementaryDatasetJson": None,
+                "supplementaryDatasetEntity": None,
             }
         ]
         self.collection_exercise_events = [

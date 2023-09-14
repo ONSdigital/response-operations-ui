@@ -32,7 +32,7 @@
     "deleted": null,
     "validationErrors": null,
     "events": [],
-    "supplementaryDatasetJson": null
+    "supplementaryDatasetEntity": null
   },
   "events": {},
   "collection_instruments": {},
