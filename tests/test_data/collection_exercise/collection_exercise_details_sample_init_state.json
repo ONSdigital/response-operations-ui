@@ -31,7 +31,8 @@
     "updated": null,
     "deleted": null,
     "validationErrors": null,
-    "events": []
+    "events": [],
+    "supplementaryDatasetEntity": null
   },
   "events": {},
   "collection_instruments": {},

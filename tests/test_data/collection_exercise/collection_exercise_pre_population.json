@@ -12,11 +12,11 @@
     "scheduledExecutionDateTime": "2017-09-10T23:00:00.000+0000",
     "scheduledReturnDateTime": "2017-10-06T00:00:00.000+0000",
     "scheduledStartDateTime": "2017-09-11T23:00:00.000+0000",
-    "state": "PUBLISHED",
+    "state": "READY_FOR_REVIEW",
     "surveyId": "cb0711c3-0ac8-41d3-ae0e-567e5ea1ef87",
     "userDescription": "January 2017",
     "validationErrors": null,
-    "supplementaryDatasetEntity": null
+    "supplementaryDatasetEntity": "{\"survey_id\":\"139\",\"period_id\":\"202201\",\"form_types\":[\"0001\",\"0002\",\"0003\"],\"title\":\"QBS\",\"sds_published_at\":\"2023-08-24T11:55:00Z\",\"total_reporting_units\":1,\"schema_version\":\"v1.0.0\",\"sds_dataset_version\":2,\"filename\":\"eccb61ad-4eb3-4714-8afd-8c8426960b43.json\",\"dataset_id\":\"eccb61ad-4eb3-4714-8afd-8c8426960b43\"}"
   },
   "survey": {
     "id": "cb0711c3-0ac8-41d3-ae0e-567e5ea1ef87",
@@ -49,10 +49,20 @@
       "tag": "exercise_end",
       "timestamp": "1993-05-15T23:00:00.000+0000",
       "eventStatus": "PROCESSED"
+    },
+    {
+      "tag": "ref_period_start",
+      "timestamp": "1993-05-15T23:00:00.000+0000",
+      "eventStatus": "PROCESSED"
+    },
+    {
+      "tag": "ref_period_end",
+      "timestamp": "1993-05-15T23:00:00.000+0000",
+      "eventStatus": "PROCESSED"
     }
   ],
   "collection_instruments": {
-    "SEFT": [
+    "EQ":[
       {
         "classifiers": {
           "COLLECTION_EXERCISE": [

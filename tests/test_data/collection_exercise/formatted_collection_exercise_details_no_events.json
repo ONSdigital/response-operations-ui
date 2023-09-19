@@ -30,7 +30,8 @@
       "created": "2018-06-28T09:19:13.363Z",
       "updated": "2018-06-28T09:20:09.004Z",
       "deleted": null,
-      "validationErrors": null
+      "validationErrors": null,
+      "supplementaryDatasetEntity": null
     },
   "events":
     {
