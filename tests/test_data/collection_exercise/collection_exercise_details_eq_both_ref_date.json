@@ -16,8 +16,7 @@
     "state": "READY_FOR_REVIEW",
     "surveyId": "cb0711c3-0ac8-41d3-ae0e-567e5ea1ef87",
     "userDescription": "January 2017",
-    "validationErrors": null,
-    "supplementaryDatasetEntity": null
+    "validationErrors": null
   },
   "survey": {
     "id": "cb0711c3-0ac8-41d3-ae0e-567e5ea1ef87",

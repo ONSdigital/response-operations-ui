@@ -136,7 +136,7 @@ def view_collection_exercise(short_name, period):
     else:
         show_set_live_button = ce_state in "READY_FOR_REVIEW"
 
-    show_sds = True if ce_details["collection_exercise"]["supplementaryDatasetEntity"] else False
+    show_sds = True if ce_details["collection_exercise"].get("supplementaryDatasetEntity") else False
 
     locked = ce_state in ("LIVE", "READY_FOR_LIVE", "EXECUTION_STARTED", "VALIDATED", "EXECUTED", "ENDED")
     processing = ce_state in ("EXECUTION_STARTED", "EXECUTED", "VALIDATED")
