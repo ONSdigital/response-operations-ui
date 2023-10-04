@@ -19,7 +19,7 @@ logger = wrap_logger(logging.getLogger(__name__))
 def sign_in(username: str, password: str):
     logger.info("Retrieving OAuth2 token for sign-in")
     url = f'{app.config["UAA_SERVICE_URL"]}/oauth/token'
-
+    logger.error(f"UAA url{url}")
     data = {
         "grant_type": "password",
         "client_id": app.config["UAA_CLIENT_ID"],
