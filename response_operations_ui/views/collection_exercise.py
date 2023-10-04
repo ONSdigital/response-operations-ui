@@ -121,27 +121,17 @@ def _build_collection_instruments_details(collection_exercise_id: str, survey_id
     return collection_instruments_by_survey_mode
 
 
+def update_ce_details(ce_details: dict) -> dict:
+    ce_details["collection_exercise"] = collection_exercise_controllers.get_collection_exercise_by_id(
+        ce_details["collection_exercise"]["id"]
+    )
+    return ce_details
+
+
 @collection_exercise_bp.route("/<short_name>/<period>", methods=["GET"])
 @login_required
 def view_collection_exercise(short_name, period):
     ce_details = build_collection_exercise_details(short_name, period, include_ci=True)
-    ce_state = ce_details["collection_exercise"]["state"]
-    survey_mode = ce_details["survey"]["surveyMode"]
-    if survey_mode in ("EQ", "EQ_AND_SEFT"):
-        show_set_live_button = (
-            ce_state in "READY_FOR_REVIEW"
-            and "ref_period_start" in ce_details["events"]
-            and "ref_period_end" in ce_details["events"]
-        )
-    else:
-        show_set_live_button = ce_state in "READY_FOR_REVIEW"
-
-    show_sds = True if ce_details["collection_exercise"].get("supplementaryDatasetEntity") else False
-
-    locked = ce_state in ("LIVE", "READY_FOR_LIVE", "EXECUTION_STARTED", "VALIDATED", "EXECUTED", "ENDED")
-    processing = ce_state in ("EXECUTION_STARTED", "EXECUTED", "VALIDATED")
-    validation_failed = ce_state == "FAILEDVALIDATION"
-    ce_details["collection_exercise"]["state"] = map_collection_exercise_state(ce_state)
 
     # If there's a sample summary, but we're still in a state where we're setting up the collection exercise, then check
     # the sample summary and change it to ACTIVE all sample units are present.
@@ -154,8 +144,26 @@ def view_collection_exercise(short_name, period):
             if sample_load_status["areAllSampleUnitsLoaded"]:
                 sample_summary = sample_controllers.get_sample_summary(ce_details["sample_summary"]["id"])
                 ce_details["sample_summary"] = _format_sample_summary(sample_summary)
+                ce_details = update_ce_details(ce_details)
         except ApiError:
             flash("Sample summary check failed.  Refresh page to try again", category="error")
+
+    ce_state = ce_details["collection_exercise"]["state"]
+    survey_mode = ce_details["survey"]["surveyMode"]
+    show_sds = True if ce_details["collection_exercise"].get("supplementaryDatasetEntity") else False
+    locked = ce_state in ("LIVE", "READY_FOR_LIVE", "EXECUTION_STARTED", "VALIDATED", "EXECUTED", "ENDED")
+    processing = ce_state in ("EXECUTION_STARTED", "EXECUTED", "VALIDATED")
+    validation_failed = ce_state == "FAILEDVALIDATION"
+    ce_details["collection_exercise"]["state"] = map_collection_exercise_state(ce_state)
+
+    if survey_mode in ("EQ", "EQ_AND_SEFT"):
+        show_set_live_button = (
+            ce_state in "READY_FOR_REVIEW"
+            and "ref_period_start" in ce_details["events"]
+            and "ref_period_end" in ce_details["events"]
+        )
+    else:
+        show_set_live_button = ce_state in "READY_FOR_REVIEW"
 
     show_msg = request.args.get("show_msg")
     success_panel = request.args.get("success_panel")
