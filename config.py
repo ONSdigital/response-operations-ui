@@ -132,7 +132,7 @@ class DevelopmentConfig(Config):
     SURVEY_URL = os.getenv("SURVEY_URL", "http://localhost:8080")
     AUTH_URL = os.getenv("AUTH_URL", "http://localhost:8041")
 
-    UAA_SERVICE_URL = os.getenv("UAA_SERVICE_URL")
+    UAA_SERVICE_URL = os.getenv("UAA_SERVICE_URL", "http://localhost:9080")
     UAA_CLIENT_ID = os.getenv("UAA_CLIENT_ID", "response_operations")
     UAA_CLIENT_SECRET = os.getenv("UAA_CLIENT_SECRET", "package.through.quarter.fruit")
 
