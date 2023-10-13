@@ -97,6 +97,12 @@ with open(f"{project_root}/test_data/collection_exercise/collection_exercise_det
 with open(f"{project_root}/test_data/collection_exercise/collection_exercise_pre_population.json") as fp:
     ce_with_pre_population = json.load(fp)
 
+with open(f"{project_root}/test_data/sample/all_sample_units_loaded.json") as fp:
+    all_sample_units_loaded = json.load(fp)
+
+with open(f"{project_root}/test_data/sample/not_all_sample_units_loaded.json") as fp:
+    not_all_sample_units_loaded = json.load(fp)
+
 user_permission_surveys_edit_json = {
     "id": "5902656c-c41c-4b38-a294-0359e6aabe59",
     "groups": [{"value": "f385f89e-928f-4a0f-96a0-4c48d9007cc3", "display": "surveys.edit", "type": "DIRECT"}],
@@ -146,6 +152,9 @@ url_get_sample_summary_status = (
     f"{sample_summary_id}/check-and-transition-sample-summary-status"
 )
 url_delete_sample_summary = f"{TestingConfig.SAMPLE_URL}/samples/samplesummary/{sample_summary_id}"
+url_check_if_all_sample_units_present_for_sample_summary = (
+    f"{TestingConfig.SAMPLE_URL}/samples/samplesummary/{sample_summary_id}/check-and-transition-sample-summary-status"
+)
 
 url_get_by_survey_with_ref_start_date = (
     f"{collection_exercise_root}/survey/{short_name}/{period}/event/ref_period_start?"
@@ -533,6 +542,39 @@ class TestCollectionExercise(ViewTestCase):
 
         self.assertEqual(response.status_code, 200)
         self.assertIn("Pre-Populated data is available for this sample".encode(), response.data)
+
+    @requests_mock.mock()
+    @patch("response_operations_ui.controllers.sample_controllers.sample_summary_state_check_required")
+    def test_collection_exercise_update_ce_details(self, mock_request, mock_details):
+        self.load_eq_survey(
+            mock_request,
+            self.eq_survey_dates,
+            self.collection_exercises,
+            collection_exercise_eq_both_ref_date["collection_exercise"],
+            self.collection_exercise_ref_both_date,
+            sample_summary_id,
+            self.sample_summary,
+            self.eq_collection_instrument,
+            self.eq_ci_selectors,
+        )
+        # Not all sample units are loaded and therefore the ce is still in a scheduled state
+        mock_request.get(url_ce_by_id, json=ce_details_sample_init_state["collection_exercise"])
+        mock_request.get(
+            url_check_if_all_sample_units_present_for_sample_summary,
+            json=not_all_sample_units_loaded["sample_load_status"],
+        )
+        response = self.client.get(f"/surveys/{short_name}/{period}", follow_redirects=True)
+        self.assertEqual(response.status_code, 200)
+        self.assertIn("Created".encode(), response.data)
+        # All sample units loaded and the ce is now in a Ready for review state
+        mock_request.get(
+            url_check_if_all_sample_units_present_for_sample_summary, json=all_sample_units_loaded["sample_load_status"]
+        )
+        mock_request.get(url_ce_by_id, json=collection_exercise_eq_both_ref_date["collection_exercise"])
+        mock_details.return_value = True
+        response = self.client.get(f"/surveys/{short_name}/{period}", follow_redirects=True)
+        self.assertEqual(response.status_code, 200)
+        self.assertIn("Ready for review".encode(), response.data)
 
     def load_eq_survey(
         self,
