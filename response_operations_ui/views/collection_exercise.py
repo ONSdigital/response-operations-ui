@@ -181,7 +181,7 @@ def view_collection_exercise(short_name, period):
     response_chasing_context = (
         _build_response_chasing_context(ce_details["collection_exercise"]["id"], ce_details["survey"]["id"])
         if ce_state in ("LIVE", "ENDED")
-        else None,
+        else None
     )
 
     return render_template(
