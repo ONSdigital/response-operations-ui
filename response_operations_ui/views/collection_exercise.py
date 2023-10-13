@@ -170,6 +170,11 @@ def view_collection_exercise(short_name, period):
         ce_details["survey"]["shortName"],
         ce_details["collection_exercise"]["exerciseRef"],
     )
+    response_chasing_context = (
+        _build_response_chasing_context(ce_details["collection_exercise"]["id"], ce_details["survey"]["id"])
+        if ce_state in ("LIVE", "ENDED")
+        else None,
+    )
 
     return render_template(
         "collection_exercise/collection-exercise.html",
@@ -189,7 +194,19 @@ def view_collection_exercise(short_name, period):
         show_msg=show_msg,
         info_panel=info_panel,
         show_sds=show_sds,
+        response_chasing=response_chasing_context,
     )
+
+
+def _build_response_chasing_context(ce_id, survey_id) -> dict:
+    return {
+        "xslx_url": url_for(
+            "collection_exercise_bp.response_chasing", document_type="xslx", ce_id=ce_id, survey_id=survey_id
+        ),
+        "csv_url": url_for(
+            "collection_exercise_bp.response_chasing", document_type="csv", ce_id=ce_id, survey_id=survey_id
+        ),
+    }
 
 
 def _build_ci_table_context(ci: dict, locked: bool, survey_mode: str, short_name: str, exercise_ref: str) -> dict:
@@ -294,11 +311,11 @@ def post_sample_ci(short_name, period):
     return get_view_sample_ci(short_name, period)
 
 
-@collection_exercise_bp.route("response_chasing/<ce_id>/<survey_id>", methods=["GET"])
+@collection_exercise_bp.route("response_chasing/<document_type>/<ce_id>/<survey_id>", methods=["GET"])
 @login_required
-def response_chasing(ce_id, survey_id):
+def response_chasing(document_type, ce_id, survey_id):
     logger.info("Response chasing", ce_id=ce_id, survey_id=survey_id)
-    response = collection_exercise_controllers.download_report(ce_id, survey_id)
+    response = collection_exercise_controllers.download_report(document_type, ce_id, survey_id)
     return response.content, response.status_code, response.headers.items()
 
 
