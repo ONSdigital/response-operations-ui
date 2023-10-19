@@ -27,31 +27,44 @@
 {% else %}
     {% set class = 'ons-status ons-status--info' %}
 {% endif %}
+
+{% set metaDataList = [{
+    "term": "Status:",
+    "descriptions": [{
+        "description": '<span class="'+ class + '">'+ ce.state + status_event +'</span>',
+        "id": "ce_status"
+    }]
+}] %}
+
+{% if response_chasing %}
+    {% do metaDataList.append({
+        "term": "Report:",
+        "descriptions": [{
+            "description":
+                onsButton({
+                    "text": 'Save report as xslx',
+                    "url": response_chasing.xslx_url,
+                    "variants": ['download', 'small', 'secondary'],
+                    "removeDownloadAttribute": true
+                })
+                +
+                onsButton({
+                    "text": 'Save report as csv',
+                    "url": response_chasing.csv_url,
+                    "variants": ['download', 'small', 'secondary'],
+                    "removeDownloadAttribute": true
+                }),
+            "id": "ce_status"
+        }]
+    })%}
+{% endif %}
+
 {{
     onsMetadata({
         "metadataLabel": survey.longName + "information",
         "termCol": "1",
         "descriptionCol": "11",
-        "itemsList": [
-            {
-                "term": "Status:",
-                "descriptions": [
-                    {
-                        "description": '<span class="'+ class + '">'+ ce.state + status_event +'</span>',
-                        "id": "ce_status"
-                    }
-                ]
-            },
-            {
-                "term": "Report:" if ce.state|upper == "LIVE",
-                "descriptions": [
-                    {
-                        "description": '<a href="' + url_for('collection_exercise_bp.response_chasing', ce_id=ce.id, survey_id=survey.id) + '"><svg class="ons-icon" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" focusable="false"><path d="M19 9h-4V3H9v6H5l7 7 7-7zM5 18v2h14v-2H5z"/><path d="M0 0h24v24H0z" fill="none"/></svg> Download response report</a>' if (ce.state|upper == "LIVE" or ce.state|upper == "ENDED"),
-                        "id": "ce_status"
-                    }
-                ]
-            }
-        ]
+        "itemsList": metaDataList
     })
 }}
 {% if show_set_live_button %}

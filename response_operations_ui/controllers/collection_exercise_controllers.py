@@ -12,14 +12,17 @@ from response_operations_ui.exceptions.exceptions import ApiError
 logger = wrap_logger(logging.getLogger(__name__))
 
 
-def download_report(collection_exercise_id, survey_id):
+def download_report(document_type, collection_exercise_id, survey_id):
     logger.info(
-        "Downloading response chasing report", collection_exercise_id=collection_exercise_id, survey_id=survey_id
+        "Downloading response chasing report",
+        document_type=document_type,
+        collection_exercise_id=collection_exercise_id,
+        survey_id=survey_id,
     )
 
     url = (
         f"{app.config['REPORT_URL']}"
-        f"/reporting-api/v1/response-chasing/download-report/{collection_exercise_id}/{survey_id}"
+        f"/reporting-api/v1/response-chasing/download-report/{document_type}/{collection_exercise_id}/{survey_id}"
     )
 
     response = requests.get(url)
@@ -32,11 +35,6 @@ def download_report(collection_exercise_id, survey_id):
         )
         raise ApiError(response)
 
-    logger.info(
-        "Successfully downloaded response chasing report",
-        collection_exercise_id=collection_exercise_id,
-        survey_id=survey_id,
-    )
     return response
 
 
