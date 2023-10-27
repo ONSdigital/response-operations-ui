@@ -100,9 +100,6 @@ class TestCollectionExerciseController(unittest.TestCase):
     @requests_mock.mock()
     def test_get_collection_exercises_with_events_and_samples_by_survey_id(self, mock_request):
         collection_exercise_id = "14fb3e68-4dca-46db-bf49-04b84e07e77c"
-        url_collection_exercise_link = (
-            f"{TestingConfig.COLLECTION_EXERCISE_URL}/collectionexercises/link/{collection_exercise_id}"
-        )
 
         collection_exercises = [
             {
@@ -122,23 +119,10 @@ class TestCollectionExerciseController(unittest.TestCase):
                 ],
             }
         ]
-        sample_summary = {
-            "id": sample_summary_id,
-            "effectiveStartDateTime": "",
-            "effectiveEndDateTime": "",
-            "surveyRef": "",
-            "ingestDateTime": "2018-03-14T14:29:51.325Z",
-            "state": "ACTIVE",
-            "totalSampleUnits": 8,
-            "expectedCollectionInstruments": 1,
-        }
-        mock_request.get(url_get_sample_summary, json=sample_summary)
-        mock_request.get(url_collection_exercise_link, json=[sample_summary_id])
         mock_request.get(url_ce_by_survey, json=collection_exercises)
         with self.app.app_context():
             ce_list = collection_exercise_controllers.get_collection_exercises_with_samples_by_survey_id(
                 bres_survey["id"]
             )
 
-        collection_exercises[0]["sample_summary"] = sample_summary
         self.assertEqual(ce_list, collection_exercises)
