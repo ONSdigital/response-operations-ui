@@ -15,7 +15,6 @@ ce_id = "4a084bc0-130f-4aee-ae48-1a9f9e50178f"
 sample_summary_id = "1a11543f-eb19-41f5-825f-e41aca15e724"
 survey_id = "02b9c366-7397-42f7-942a-76dc5876d86d"
 
-url_get_sample_summary = f"{TestingConfig.SAMPLE_URL}/samples/samplesummary/{sample_summary_id}"
 url_ce_by_survey = f"{TestingConfig.COLLECTION_EXERCISE_URL}/collectionexercises/survey/{survey_id}"
 ce_events_by_id_url = f"{TestingConfig.COLLECTION_EXERCISE_URL}/collectionexercises/{ce_id}/events"
 ce_nudge_events_by_id_url = f"{TestingConfig.COLLECTION_EXERCISE_URL}/collectionexercises/{ce_id}/events/nudge"
