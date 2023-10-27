@@ -87,14 +87,11 @@ def build_collection_exercise_details(short_name: str, period: str, include_ci: 
     survey["shortName"] = format_short_name(survey["shortName"])
     full_exercise = collection_exercise_controllers.get_collection_exercise_by_id(collection_exercise_id)
     exercise_events = collection_exercise_controllers.get_collection_exercise_events_by_id(collection_exercise_id)
-    summary_id = collection_exercise_controllers.get_linked_sample_summary_id(collection_exercise_id)
-    sample_summary = sample_controllers.get_sample_summary(summary_id) if summary_id else None
 
     exercise_dict = {
         "survey": survey,
         "collection_exercise": full_exercise,
         "events": convert_events_to_new_format(exercise_events),
-        "sample_summary": _format_sample_summary(sample_summary),
     }
 
     if include_ci:

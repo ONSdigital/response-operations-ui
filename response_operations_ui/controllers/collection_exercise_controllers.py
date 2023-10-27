@@ -377,34 +377,6 @@ def get_collection_exercise_from_list(exercises, period):
     return next((exercise for exercise in exercises if exercise["exerciseRef"] == period), None)
 
 
-def get_linked_sample_summary_id(collection_exercise_id):
-    logger.info("Retrieving sample linked to collection exercise", collection_exercise_id=collection_exercise_id)
-    url = f'{app.config["COLLECTION_EXERCISE_URL"]}/collectionexercises/link/{collection_exercise_id}'
-    response = requests.get(url, auth=app.config["BASIC_AUTH"])
-
-    if response.status_code == 204:
-        logger.info("No samples linked to collection exercise", collection_exercise_id=collection_exercise_id)
-        return
-    try:
-        response.raise_for_status()
-    except HTTPError:
-        logger.error(
-            "Error retrieving sample summaries linked to collection exercise",
-            collection_exercise_id=collection_exercise_id,
-        )
-        raise ApiError(response)
-
-    # currently, we only want a single sample summary
-    sample_summary_id = response.json()[0]
-
-    logger.info(
-        "Successfully retrieved linked sample summary",
-        collection_exercise_id=collection_exercise_id,
-        sample_summary_id=sample_summary_id,
-    )
-    return sample_summary_id
-
-
 def link_sample_summary_to_collection_exercise(collection_exercise_id, sample_summary_id):
     logger.info(
         "Linking sample summary to collection exercise",
@@ -439,12 +411,6 @@ def get_collection_exercises_with_samples_by_survey_id(survey_id):
     logger.info("Retrieving collection exercise with samples", survey_id=survey_id)
 
     ce_list = get_collection_exercises_by_survey(survey_id)
-
-    for ce in ce_list:
-        sample_summary_id = get_linked_sample_summary_id(ce["id"])
-        if sample_summary_id:
-            ce["sample_summary"] = get_sample_summary(sample_summary_id)
-
     logger.info("Successfully retrieved collection exercise details", survey_id=survey_id)
 
     return ce_list
