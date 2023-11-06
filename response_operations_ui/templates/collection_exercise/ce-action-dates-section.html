@@ -12,7 +12,7 @@
             }
         ]
     %}
-    {% if context["survey_edit_permission"] %}
+    {% if has_edit_permission %}
         {% do actionDatesHeaders.append({"value": "Action", "thClasses": "ons-u-vh"} )%}
     {% endif %}
     
@@ -36,7 +36,7 @@
                 {% set event_text = event_text + '<br/><span class="ons-status ons-status--error">' + event_status +'</span>'%}
             {% endif %}
         {% endif %}
-            
+    
         {% set actionDatesTds = [{"value": event["label"]},{"value": event_text}]%}
         
         {% if "hyperlink" in event %}
@@ -44,8 +44,9 @@
                 "value": '<a href="'+ event["hyperlink"] + '" id="'+ event["hyperlink_id"] + '">' + event["hyperlink_text"]+'</a>',
                 "tdClasses": "ons-u-ta-right"
                 }) %}
-            {% elif context["survey_edit_permission"] %}
-                {% do actionDatesTds.append({}) %}
+        
+        {% elif has_edit_permission %}
+            {% do actionDatesTds.append({}) %}
         {% endif %}
         
         {% do actionDatesTableDataRows.append({"tds": actionDatesTds })%}
@@ -53,5 +54,4 @@
     
     {% do actionDatesTableData | setAttribute("trs", actionDatesTableDataRows) %}
     {{ onsTable(actionDatesTableData) }}
-    
 </section>

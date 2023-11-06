@@ -13,8 +13,8 @@
         ]
     %}
     
-    {% if context["survey_edit_permission"] %}
-        {% do tblHeaders.append({"value": "Action", "thClasses": "ons-u-vh" })%}
+    {% if has_edit_permission %}
+        {% do ceInfoHeaders.append({"value": "Action", "thClasses": "ons-u-vh" })%}
     {% endif %}
     
     {% set ceInfoTableData = {
@@ -35,7 +35,7 @@
             {% do ceInfoTds.append({
                 "value": '<a href="'+ event["hyperlink"] + '" id="'+ event["hyperlink_id"] + '">' + event["hyperlink_text"]+'</a>',
                 "tdClasses": "ons-u-ta-right"}) %}
-        {% elif context["survey_edit_permission"] %}
+        {% elif has_edit_permission %}
             {% do ceInfoTds.append({}) %}
         {% endif %}
     

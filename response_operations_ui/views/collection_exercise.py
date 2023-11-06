@@ -172,6 +172,7 @@ def view_collection_exercise(short_name, period):
 
     return render_template(
         "collection_exercise/collection-exercise.html",
+        has_edit_permission=has_edit_permission,
         ce=ce_details["collection_exercise"],
         error=error_json,
         locked=locked,
@@ -186,7 +187,6 @@ def view_collection_exercise(short_name, period):
         info_panel=info_panel,
         show_sds=show_sds,
         context=context,
-        survey_edit_permission=has_edit_permission,
     )
 
 
