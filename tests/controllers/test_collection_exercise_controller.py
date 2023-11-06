@@ -123,5 +123,4 @@ class TestCollectionExerciseController(unittest.TestCase):
             ce_list = collection_exercise_controllers.get_collection_exercises_with_samples_by_survey_id(
                 bres_survey["id"]
             )
-
         self.assertEqual(ce_list, collection_exercises)
