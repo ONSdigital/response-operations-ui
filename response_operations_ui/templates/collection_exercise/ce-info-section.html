@@ -1,7 +1,6 @@
 <section class="ce-section ce-details ons-u-mb-l">
     <h2 class="ons-u-fs-r--b ons-u-pt-m">Collection exercise information</h2>
-    {% set surveyEditPermission = hasPermission('surveys.edit') %}
-    {% set tblHeaders =  
+    {% set ceInfoHeaders =
         [ 
             {  
                 "value": "Event",
@@ -13,109 +12,37 @@
             }
         ]
     %}
-    {% if surveyEditPermission %}
-        {% do tblHeaders.append( 
-                { 
-                    "value": "Action",
-                    "thClasses": "ons-u-vh"
-                }
-         )%}
+    
+    {% if context["survey_edit_permission"] %}
+        {% do tblHeaders.append({"value": "Action", "thClasses": "ons-u-vh" })%}
     {% endif %}
-    {% set surveyTableData = {
+    
+    {% set ceInfoTableData = {
         "variants": ['compact', 'responsive'],
         "id": 'tbl-ce-details',
         "caption": 'Dates for this collection exercise',
         "hideCaption": true,
-        "ths": tblHeaders,
+        "ths": ceInfoHeaders,
         "tableClasses": "ce-overview-table"
     } %}
-
-    {% set surveyTableDataRows = [] %}
-    {% set dateGroups = ['periodId', 'user', 'ref_period_start', 'ref_period_end', 'employment'] %}
-
-    {% for dateGroup in dateGroups %}
-        {% if dateGroup == 'periodId' %}
-            {% set label = 'Period ID *' %}
-            {% set id = 'periodId' %}
-            {% set event = ce.exerciseRef %}
-            {% set editable = true %}
-            {% set value = 'ID' %}
-        {% elif dateGroup == 'user' %}
-            {% set label = 'Reporting period *' %}
-            {% set id = 'user-description' %}
-            {% set event = ce.userDescription %}
-            {% set editable = true %}
-            {% set value = 'reporting period' %}
-        {% elif dateGroup == 'ref_period_start' %}
-            {% set id = 'period-start-date' %}
-            {% set label = 'Reference period start date *' %}
-            {% if events.ref_period_start %}
-                {% set event = events.ref_period_start.day + ' ' + events.ref_period_start.date %}
-            {% endif %}
-            {% set editable = true %}
-            {% set value = 'start date' %}
-        {% elif dateGroup == 'ref_period_end' %}
-            {% set id = 'period-end-date' %}
-            {% set label = 'Reference period end date *' %}
-            {% if events.ref_period_end %}
-                {% set event = events.ref_period_end.day + ' ' + events.ref_period_end.date %}
-            {% endif %}
-            {% set editable = true %}
-            {% set value = 'end date' %}
-        {% elif dateGroup == 'employment' %}
-            {% set id = 'employment-date' %}
-            {% set label = 'Employment date' %}
-            {% if events.employment %}
-                {% set event = events.employment.day + ' ' + events.employment.date %}
-            {% endif %}
-            {% set editable = true %}
-            {% set value = 'employment date' %}
+    
+    {% set ceInfoTableDataRows = [] %}
+    
+    {% for event in context["ce_info"].values() %}
+        {% set ceInfoTds = [{"value": event["label"]}, {"value": event["text"]}]%}
+    
+        {% if "hyperlink" in event %}
+            {% do ceInfoTds.append({
+                "value": '<a href="'+ event["hyperlink"] + '" id="'+ event["hyperlink_id"] + '">' + event["hyperlink_text"]+'</a>',
+                "tdClasses": "ons-u-ta-right"}) %}
+        {% elif context["survey_edit_permission"] %}
+            {% do ceInfoTds.append({}) %}
         {% endif %}
-        {% if surveyEditPermission %}
-            {% if (not locked) and (dateGroup == 'periodId') %}
-                {% set hyperlink = '<a href="' + url_for("collection_exercise_bp.edit_collection_exercise_period_id", short_name=survey.shortName, period=ce.exerciseRef, surveyRef=survey.surveyRef) + '" id="' + 'edit-event-date-' + id + '">' + 'Edit '+ value + '</a>' %}
-            {% endif %}
-            {% if event and (not locked) and (dateGroup == 'user') %}
-                {% set hyperlink = '<a href="' + url_for("collection_exercise_bp.edit_collection_exercise_period_description", short_name=survey.shortName, period=ce.exerciseRef, surveyRef=survey.surveyRef) + '" id="' + 'edit-event-date-' + id + '">' + 'Edit '+ value + '</a>' %}
-            {% elif not event and (not locked) and (dateGroup == 'user') %}
-                {% set hyperlink = '<a href="' + url_for("collection_exercise_bp.edit_collection_exercise_period_description", short_name=survey.shortName, period=ce.exerciseRef, surveyRef=survey.surveyRef) + '" id="' + 'edit-event-date-' + id + '">' + 'Add '+ value + '</a>' %}
-            {% endif %}
-            {% if not event and (dateGroup != 'periodId' and dateGroup != 'user') and editable %}
-                {% set hyperlink = '<a href="' + url_for("collection_exercise_bp.get_create_collection_event_form", short_name=survey.shortName, ce_id=ce.id, period=ce.exerciseRef, tag=dateGroup) + '" id="' + 'add-event-date-' + id + '">' + 'Add '+ value + '</a>' %}
-            {% elif editable and (dateGroup != 'periodId' and dateGroup != 'user') %}
-                {% set hyperlink = '<a href="' + url_for("collection_exercise_bp.update_event_date", short_name=survey.shortName, period=ce.exerciseRef, tag=dateGroup) + '" id="' + 'edit-event-date-' + id + '">' + 'Edit '+ value + '</a>' %}
-            {% endif %}
-        {% endif %}
-        {% set tds = 
-            [ 
-                {  
-                    "value": label, 
-                }, 
-                {
-                    "value": event if event
-                },
-            ]
-        %}  
-        {% if surveyEditPermission %} 
-            {% do tds.append(
-                { 
-                    "value": hyperlink, 
-                    "tdClasses": "ons-u-ta-right" 
-                }
-            ) %} 
-        {% endif %}   
-        {% do surveyTableDataRows.append( 
-            { 
-                "tds": tds 
-            } 
-        )%}
-
+    
+        {% do ceInfoTableDataRows.append({"tds": ceInfoTds })%}
+    
     {% endfor %}
-
-    {% do surveyTableData | setAttribute("trs", surveyTableDataRows) %}
-
-    {{
-        onsTable(surveyTableData)
-    }}
-
+    
+    {% do ceInfoTableData | setAttribute("trs", ceInfoTableDataRows) %}
+    {{ onsTable(ceInfoTableData) }}
 </section>

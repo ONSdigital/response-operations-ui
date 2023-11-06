@@ -1,7 +1,6 @@
 <section class="ce-section ce-details ons-u-mb-l">
     <h2 class="ons-u-fs-r--b ons-u-pt-m">Action dates</h2>
-    {% set surveyEditPermission = hasPermission('surveys.edit') %}  
-    {% set tblHeaders =
+    {% set actionDatesHeaders =
         [
             {
                 "value": "Event",
@@ -13,459 +12,46 @@
             }
         ]
     %}
-    {% if surveyEditPermission %}
-        {% do tblHeaders.append(
-                {
-                    "value": "Action",
-                    "thClasses": "ons-u-vh"
-                }
-         )%}
+    {% if context["survey_edit_permission"] %}
+        {% do actionDatesHeaders.append({"value": "Action", "thClasses": "ons-u-vh"} )%}
     {% endif %}
-    {% set surveyTableData = {
+    
+    {% set actionDatesTableData = {
         "variants": ['compact', 'responsive'],
         "id": 'tbl-ce-details',
         "caption": 'Dates for this collection exercise',
         "hideCaption": true,
         "ths": tblHeaders,
         "tableClasses": "ce-overview-table"
-    } %}
-
-    {% set surveyTableDataRows = [] %}
-
-    {# MPS row #}
-    {% set eventInfo = '' %}
-    {% set eventExecutionStatus = '' %}
-    {% if events.mps %}
-        {% set eventInfo = events.mps.day + ' ' + events.mps.date + ' ' + events.mps.time %}
-        {% if events.mps.event_status == 'PROCESSING' or events.mps.event_status == 'RETRY' %}
-            {% set eventExecutionStatus = '<br/>' +'<span class="'+ 'ons-status ons-status--pending' + '">'+ events.mps.event_status | capitalize +'</span>' %}
-        {% elif events.mps.event_status == 'FAILED' %}
-            {% set eventExecutionStatus = '<br/>' +'<span class="'+ 'ons-status ons-status--error' + '">'+ events.mps.event_status | capitalize +'</span>' %}
+    }%}
+    {% set actionDatesTableDataRows = [] %}
+    
+    {% for event in context["action_dates"].values() %}
+        {% set event_text = event["text"] %}
+        {% if "status" in event %}
+            {% set event_status = event["status"] | capitalize %}
+            {% if event_status == 'Processing' or event_status == 'Retry' %}
+                {% set event_text = event_text + '<br/><span class="ons-status ons-status--pending">' + event_status +'</span>'%}
+            {% elif event_status == 'Failed' %}
+                {% set event_text = event_text + '<br/><span class="ons-status ons-status--error">' + event_status +'</span>'%}
+            {% endif %}
         {% endif %}
-        {% if not locked or events.mps.is_in_future %}
-          {% set hyperlink = '<a href="' + url_for("collection_exercise_bp.update_event_date",  short_name=survey.shortName, period=ce.exerciseRef, tag='mps') + '" id="edit-event-date-mps">Edit print date</a>' %}
-        {% endif %}
-    {% else %}
-        {% set hyperlink = '<a href="' + url_for("collection_exercise_bp.get_create_collection_event_form",  short_name=survey.shortName, period=ce.exerciseRef, ce_id=ce.id, tag='mps') + '" id="create-event-date-mps">Add print date</a>' %}
-    {% endif %}
-
-    {% set tds =
-        [
-            {
-                "value": 'Main print selection *',
-            },
-            {
-                "value": eventInfo + eventExecutionStatus,
-                "name": 'mps-date',
-            }
-        ]
-    %}
-    {% if surveyEditPermission %}
-        {% do tds.append(
-            {
-                "value": hyperlink,
+            
+        {% set actionDatesTds = [{"value": event["label"]},{"value": event_text}]%}
+        
+        {% if "hyperlink" in event %}
+            {% do actionDatesTds.append({
+                "value": '<a href="'+ event["hyperlink"] + '" id="'+ event["hyperlink_id"] + '">' + event["hyperlink_text"]+'</a>',
                 "tdClasses": "ons-u-ta-right"
-            }
-        ) %}
-    {% endif %}
-    {% do surveyTableDataRows.append(
-        {
-            "tds": tds
-        }
-    )%}
-
-    {# Go live row #}
-    {% set eventInfo = '' %}
-    {% set eventExecutionStatus = '' %}
-    {% if events.go_live %}
-        {% set eventInfo = events.go_live.day + ' ' + events.go_live.date + ' ' + events.go_live.time %}
-        {% if events.go_live.event_status == 'PROCESSING' or events.go_live.event_status == 'RETRY' %}
-            {% set eventExecutionStatus = '<br/>' +'<span class="'+ 'ons-status ons-status--pending' + '">'+ events.go_live.event_status | capitalize +'</span>' %}
-        {% elif events.go_live.event_status == 'FAILED' %}
-            {% set eventExecutionStatus = '<br/>' +'<span class="'+ 'ons-status ons-status--error' + '">'+ events.go_live.event_status | capitalize +'</span>' %}
+                }) %}
+            {% elif context["survey_edit_permission"] %}
+                {% do actionDatesTds.append({}) %}
         {% endif %}
-        {% if not locked or events.go_live.is_in_future %}
-          {% set hyperlink = '<a href="' + url_for("collection_exercise_bp.update_event_date",  short_name=survey.shortName, period=ce.exerciseRef, tag='go_live') + '" id="edit-event-date-go_live">Edit go live date</a>' %}
-        {% endif %}
-    {% else %}
-        {% set hyperlink = '<a href="' + url_for("collection_exercise_bp.get_create_collection_event_form",  short_name=survey.shortName, period=ce.exerciseRef, ce_id=ce.id, tag='go_live') + '" id="create-event-date-go_live">Add go live date</a>' %}
-    {% endif %}
-
-    {% set tds =
-        [
-            {
-                "value": 'Go live *',
-            },
-            {
-                "value": eventInfo + eventExecutionStatus,
-                "name": 'go-live-date',
-            }
-        ]
-    %}
-    {% if surveyEditPermission %}
-        {% do tds.append(
-            {
-                "value": hyperlink,
-                "tdClasses": "ons-u-ta-right"
-            }
-        ) %}
-    {% endif %}
-    {% do surveyTableDataRows.append(
-        {
-            "tds": tds
-        }
-    )%}
-
-    {# Nudge email rows #}
-    {% set dateGroups = ['nudge_email_0', 'nudge_email_1', 'nudge_email_2', 'nudge_email_3', 'nudge_email_4'] %}
-    {% set nudge = '' %}
-    {% if not events.nudge_email_0 %}
-        {% set nudge = 'nudge_email_0' %}
-    {% elif not events.nudge_email_1 %}
-        {% set nudge = 'nudge_email_1' %}
-    {% elif not events.nudge_email_2 %}
-        {% set nudge = 'nudge_email_2' %}
-    {% elif not events.nudge_email_3 %}
-        {% set nudge = 'nudge_email_3' %}
-    {% elif not events.nudge_email_4%}
-        {% set nudge = 'nudge_email_4' %}
-    {% endif %}
-    {% for dateGroup in dateGroups %}
-        {% set label = '' %}
-        {% set value = 'nudge email' %}
-        {% set eventIsInFuture = False %}
-        {% set eventInfo = '' %}
-        {% set eventStatus = '' %}
-        {% if dateGroup == 'nudge_email_0' %}
-            {% if surveyEditPermission %}
-                {% set label = ' ' %}
-            {% endif %}
-            {% set event = events.nudge_email_0 %}
-            {% set value = 'nudge email' %}
-            {% set showNudgeEmail = true %}
-            {% set name = 'first-nudge-email-date' %}
-            {% set label = 'First nudge email' %}
-            {% if event %}
-                {% set eventInfo = event.day + ' ' + event.date + ' ' + event.time %}
-                {% set eventStatus = events.nudge_email_0.event_status %}
-                {% if eventStatus == 'PROCESSING' or eventStatus == 'RETRY' %}
-                    {% set eventStatus = '<br/>' +'<span class="'+ 'ons-status ons-status--pending' + '">' + eventStatus | capitalize + '</span>' %}
-                {% elif eventStatus == 'FAILED' %}
-                    {% set eventStatus = '<br/>' +'<span class="'+ 'ons-status ons-status--error' + '">' + eventStatus | capitalize + '</span>' %}
-                {% else %}
-                    {% set eventStatus = '' %}
-                {% endif %}
-                {% set eventIsInFuture = event.is_in_future %}
-            {% endif %}
-        {% elif dateGroup == 'nudge_email_1' %}
-            {% set event = events.nudge_email_1 %}
-            {% set value = 'nudge email' %}
-            {% if events.nudge_email_0 %}
-                {% set showNudgeEmail = true %}
-                {% set label = ' ' %}
-                {% set name = 'second-nudge-email-date' %}
-            {% endif %}
-            {% if event %}
-                {% set label = 'Second nudge email' %}
-                {% set eventInfo = event.day + ' ' + event.date + ' ' + event.time %}
-                {% set eventStatus = events.nudge_email_1.event_status %}
-                {% if eventStatus == 'PROCESSING' or eventStatus == 'RETRY' %}
-                    {% set eventStatus = '<br/>' +'<span class="'+ 'ons-status ons-status--pending' + '">' + eventStatus | capitalize + '</span>' %}
-                {% elif eventStatus == 'FAILED' %}
-                    {% set eventStatus = '<br/>' +'<span class="'+ 'ons-status ons-status--error' + '">' + eventStatus | capitalize + '</span>' %}
-                {% else %}
-                    {% set eventStatus = '' %}
-                {% endif %}
-                {% set eventIsInFuture = event.is_in_future %}
-            {% endif %}
-        {% elif dateGroup == 'nudge_email_2' %}
-            {% set event = events.nudge_email_2 %}
-            {% set value = 'nudge email' %}
-            {% if events.nudge_email_1 %}
-                {% set showNudgeEmail = true %}
-                {% set label = ' ' %}
-                {% set name = 'third-nudge-email-date' %}
-            {% endif %}
-            {% if event %}
-                {% set label = 'Third nudge email' %}
-                {% set eventInfo = event.day + ' ' + event.date + ' ' + event.time %}
-                {% set eventStatus = events.nudge_email_2.event_status %}
-                {% if eventStatus == 'PROCESSING' or eventStatus == 'RETRY' %}
-                    {% set eventStatus = '<br/>' +'<span class="'+ 'ons-status ons-status--pending' + '">' + eventStatus | capitalize + '</span>' %}
-                {% elif eventStatus == 'FAILED' %}
-                    {% set eventStatus = '<br/>' +'<span class="'+ 'ons-status ons-status--error' + '">' + eventStatus | capitalize + '</span>' %}
-                {% else %}
-                    {% set eventStatus = '' %}
-                {% endif %}
-                {% set eventIsInFuture = event.is_in_future %}
-            {% endif %}
-        {% elif dateGroup == 'nudge_email_3' %}
-            {% set event = events.nudge_email_3 %}
-            {% set value = 'nudge email' %}
-            {% if events.nudge_email_2 %}
-                {% set showNudgeEmail = true %}
-                {% set label = ' ' %}
-                {% set name = 'fourth-nudge-email-date' %}
-            {% endif %}
-            {% if event %}
-                {% set label = 'Fourth nudge email' %}
-                {% set eventInfo = event.day + ' ' + event.date + ' ' + event.time %}
-                {% set eventStatus = events.nudge_email_3.event_status %}
-                {% if eventStatus == 'PROCESSING' or eventStatus == 'RETRY' %}
-                    {% set eventStatus = '<br/>' +'<span class="'+ 'ons-status ons-status--pending' + '">' + eventStatus | capitalize + '</span>' %}
-                {% elif eventStatus == 'FAILED' %}
-                    {% set eventStatus = '<br/>' +'<span class="'+ 'ons-status ons-status--error' + '">' + eventStatus | capitalize + '</span>' %}
-                {% else %}
-                    {% set eventStatus = '' %}
-                {% endif %}
-                {% set eventIsInFuture = event.is_in_future %}
-            {% endif %}
-        {% elif dateGroup == 'nudge_email_4' %}
-            {% set event = events.nudge_email_4 %}
-            {% set value = 'nudge email' %}
-            {% if events.nudge_email_3 %}
-                {% set showNudgeEmail = true %}
-                {% set label = ' ' %}
-                {% set name = 'fifth-nudge-email-date' %}
-            {% endif %}
-            {% if event %}
-                {% set label = 'Fifth nudge email' %}
-                {% set eventInfo = event.day + ' ' + event.date + ' ' + event.time %}
-                {% set eventStatus = events.nudge_email_3.event_status %}
-                {% if eventStatus == 'PROCESSING' or eventStatus == 'RETRY' %}
-                    {% set eventStatus = '<br/>' +'<span class="'+ 'ons-status ons-status--pending' + '">' + eventStatus | capitalize + '</span>' %}
-                {% elif eventStatus == 'FAILED' %}
-                    {% set eventStatus = '<br/>' +'<span class="'+ 'ons-status ons-status--error' + '">' + eventStatus | capitalize + '</span>' %}
-                {% else %}
-                    {% set eventStatus = '' %}
-                {% endif %}
-                {% set eventIsInFuture = event.is_in_future %}
-            {% endif %}
-        {% elif ( (events.go_live) and (events.return_by) and (nudge) ) %}
-            {% set label = ' ' %}
-        {% endif %}
-      
-        {# This if statement is here as you can't set a nudge email before go_live or after the return_by.
-        But we need to know what they are before we can validate it #}
-        {% if ((not value == 'nudge email') or (value == 'nudge email' and events.go_live and events.return_by)) %}
-            {% if not(value == 'reminder' and not event) or surveyEditPermission %}
-                {% if not event %}
-                    {% set hyperlink = '<a href="' + url_for("collection_exercise_bp.get_create_collection_event_form",  short_name=survey.shortName, period=ce.exerciseRef, ce_id=ce.id, tag=dateGroup) + '" id="' + 'create-event-date-' + dateGroup + '">' + 'Add ' + value + '</a>' %}
-                {% elif not locked or eventIsInFuture %}
-                    {% set hyperlink = '<a href="' + url_for("collection_exercise_bp.update_event_date",  short_name=survey.shortName, period=ce.exerciseRef, tag=dateGroup, errors=None if event == events.reminder) + '" id="' + 'edit-event-date-' + dateGroup + '">' + 'Edit ' + value + '</a>' %}
-                {% endif %}
-                {% if label %}
-                    {% set tds =
-                        [
-                            {
-                                "value": label,
-                            },
-                            {
-                                "value": eventInfo + eventStatus,
-                                "name": name,
-                            }
-                        ]
-                    %}
-                    {% if surveyEditPermission %}
-                        {% do tds.append(
-                            {
-                                "value": hyperlink,
-                                "tdClasses": "ons-u-ta-right"
-                            }
-                        ) %}
-                    {% endif %}
-                    {% do surveyTableDataRows.append(
-                        {
-                            "tds": tds
-                        }
-                    )%}
-                {% endif %}
-            {% endif %}
-        {% endif %}
+        
+        {% do actionDatesTableDataRows.append({"tds": actionDatesTds })%}
     {% endfor %}
-
-    {# Return by row #}
-    {% set eventInfo = '' %}
-    {% set eventExecutionStatus = '' %}
-    {% if events.return_by %}
-        {% set eventInfo = events.return_by.day + ' ' + events.return_by.date + ' ' + events.return_by.time %}
-        {% if events.return_by.event_status == 'PROCESSING' or events.return_by.event_status == 'RETRY' %}
-            {% set eventExecutionStatus = '<br/>' +'<span class="'+ 'ons-status ons-status--pending' + '">'+ events.return_by.event_status | capitalize +'</span>' %}
-        {% elif events.return_by.event_status == 'FAILED' %}
-            {% set eventExecutionStatus = '<br/>' +'<span class="'+ 'ons-status ons-status--error' + '">'+ events.return_by.event_status | capitalize +'</span>' %}
-        {% endif %}
-        {% if not locked or events.return_by.is_in_future %}
-          {% set hyperlink = '<a href="' + url_for("collection_exercise_bp.update_event_date",  short_name=survey.shortName, period=ce.exerciseRef, tag='return_by') + '" id="edit-event-date-return_by">Edit return date</a>' %}
-        {% endif %}
-    {% else %}
-        {% set hyperlink = '<a href="' + url_for("collection_exercise_bp.get_create_collection_event_form",  short_name=survey.shortName, period=ce.exerciseRef, ce_id=ce.id, tag='return_by') + '" id="create-event-date-return_by">Add return date</a>' %}
-    {% endif %}
-
-    {% set tds =
-        [
-            {
-                "value": 'Return by *',
-            },
-            {
-                "value": eventInfo + eventExecutionStatus,
-                "name": 'return-by-date',
-            }
-        ]
-    %}
-    {% if surveyEditPermission %}
-        {% do tds.append(
-            {
-                "value": hyperlink,
-                "tdClasses": "ons-u-ta-right"
-            }
-        ) %}
-    {% endif %}
-    {% do surveyTableDataRows.append(
-        {
-            "tds": tds
-        }
-    )%}
-
-    {# Reminder rows #}
-    {% set dateGroups = ['reminder', 'reminder2', 'reminder3'] %}
-    {% for dateGroup in dateGroups %}
-        {% set label = '' %}
-        {% set value = 'date' %}
-        {% set eventIsInFuture = False %}
-        {% set eventInfo = '' %}
-        {% set eventStatus = '' %}
-        {% if dateGroup == 'reminder' %}
-            {% set event = events.reminder %}
-            {% set name = 'first-reminder-date' %}
-            {% set value = 'reminder' %}
-            {% set label = 'First reminder' %}
-            {% if event %}
-                {% set eventInfo = event.day + ' ' + event.date + ' ' + event.time %}
-                {% if events.reminder.event_status == 'PROCESSING' or events.reminder.event_status == 'RETRY' %}
-                    {% set eventStatus = '<br/>' +'<span class="'+ 'ons-status ons-status--pending' + '">'+ events.reminder.event_status | capitalize +'</span>' %}
-                {% elif events.reminder.event_status == 'FAILED' %}
-                    {% set eventStatus = '<br/>' +'<span class="'+ 'ons-status ons-status--error' + '">'+ events.reminder.event_status | capitalize +'</span>' %}
-                {% endif %}
-                {% set eventIsInFuture = event.is_in_future %}
-            {% endif %}
-        {% elif dateGroup == 'reminder2' %}
-            {% set event = events.reminder2 %}
-            {% set value = 'reminder' %}
-            {% if events.reminder %}
-                {% set showReminder = true %}
-                {% set label = ' ' %}
-                {% set name = 'second-reminder-date' %}
-            {% endif %}
-            {% if event %}
-                {% set label = 'Second reminder' %}
-                {% set eventInfo = event.day + ' ' + event.date + ' ' + event.time %}
-                {% if events.reminder2.event_status == 'PROCESSING' or events.reminder2.event_status == 'RETRY' %}
-                    {% set eventStatus = '<br/>' +'<span class="'+ 'ons-status ons-status--pending' + '">'+ events.reminder2.event_status | capitalize +'</span>' %}
-                {% elif events.reminder2.event_status == 'FAILED' %}
-                    {% set eventStatus = '<br/>' +'<span class="'+ 'ons-status ons-status--error' + '">'+ events.reminder2.event_status | capitalize +'</span>' %}
-                {% endif %}
-                {% set eventIsInFuture = event.is_in_future %}
-            {% endif %}
-        {% elif dateGroup == 'reminder3' %}
-            {% set event = events.reminder3 %}
-            {% set value = 'reminder' %}
-            {% if events.reminder2 %}
-                {% set showReminder = true %}
-                {% set label = ' ' %}
-                {% set name = 'third-reminder-date' %}
-            {% endif %}
-            {% if event %}
-                {% set label = 'Third reminder' %}
-                {% set eventInfo = event.day + ' ' + event.date + ' ' + event.time %}
-                {% if events.reminder3.event_status == 'PROCESSING' or events.reminder3.event_status == 'RETRY' %}
-                    {% set eventStatus = '<br/>' +'<span class="'+ 'ons-status ons-status--pending' + '">'+ events.reminder3.event_status | capitalize +'</span>' %}
-                {% elif eventStatus == 'FAILED' %}
-                    {% set eventStatus = '<br/>' +'<span class="'+ 'ons-status ons-status--error' + '">'+ events.reminder3.event_status | capitalize +'</span>' %}
-                {% endif %}
-                {% set eventIsInFuture = event.is_in_future %}
-            {% endif %}
-        {% endif %}
-      
-        {% if not(value == 'reminder' and not event) or surveyEditPermission %}
-            {% if not event %}
-                {% set hyperlink = '<a href="' + url_for("collection_exercise_bp.get_create_collection_event_form",  short_name=survey.shortName, period=ce.exerciseRef, ce_id=ce.id, tag=dateGroup) + '" id="' + 'create-event-date-' + dateGroup + '">' + 'Add ' + value + '</a>' %}
-            {% elif not locked or eventIsInFuture %}
-                {% set hyperlink = '<a href="' + url_for("collection_exercise_bp.update_event_date",  short_name=survey.shortName, period=ce.exerciseRef, tag=dateGroup, errors=None if event == events.reminder) + '" id="' + 'edit-event-date-' + dateGroup + '">' + 'Edit ' + value + '</a>' %}
-            {% endif %}
-            {% if label %}
-                {% set tds = 
-                    [ 
-                        {  
-                            "value": label, 
-                        }, 
-                        { 
-                            "value": eventInfo + eventStatus, 
-                            "name": name, 
-                        } 
-                    ]
-                %}  
-                {% if surveyEditPermission %} 
-                    {% do tds.append(
-                        { 
-                            "value": hyperlink, 
-                            "tdClasses": "ons-u-ta-right" 
-                        }
-                    ) %} 
-                {% endif %}   
-                {% do surveyTableDataRows.append( 
-                    { 
-                        "tds": tds 
-                    } 
-                )%}
-            {% endif %}
-        {% endif %}
-    {% endfor %}
-
-    {# Exerise end row #}
-    {% set eventInfo = '' %}
-    {% set eventExecutionStatus = '' %}
-    {% if events.exercise_end %}
-        {% set eventInfo = events.exercise_end.day + ' ' + events.exercise_end.date + ' ' + events.exercise_end.time %}
-        {% if events.exercise_end.event_status == 'PROCESSING' or events.exercise_end.event_status == 'RETRY' %}
-            {% set eventExecutionStatus = '<br/>' +'<span class="'+ 'ons-status ons-status--pending' + '">'+ events.exercise_end.event_status | capitalize +'</span>' %}
-        {% elif events.exercise_end.event_status == 'FAILED' %}
-            {% set eventExecutionStatus = '<br/>' +'<span class="'+ 'ons-status ons-status--error' + '">'+ events.exercise_end.event_status | capitalize +'</span>' %}
-        {% endif %}
-        {% if not locked or events.exercise_end.is_in_future %}
-          {% set hyperlink = '<a href="' + url_for("collection_exercise_bp.update_event_date",  short_name=survey.shortName, period=ce.exerciseRef, tag='exercise_end') + '" id="edit-event-date-exercise_end">Edit end date</a>' %}
-        {% endif %}
-    {% else %}
-        {% set hyperlink = '<a href="' + url_for("collection_exercise_bp.get_create_collection_event_form",  short_name=survey.shortName, period=ce.exerciseRef, ce_id=ce.id, tag='exercise_end') + '" id="create-event-date-exercise_end">Add end date</a>' %}
-    {% endif %}
-
-    {% set tds =
-        [
-            {
-                "value": 'Exercise end *',
-            },
-            {
-                "value": eventInfo + eventExecutionStatus,
-                "name": 'exercise-end-date',
-            }
-        ]
-    %}
-    {% if surveyEditPermission %}
-        {% do tds.append(
-            {
-                "value": hyperlink,
-                "tdClasses": "ons-u-ta-right"
-            }
-        ) %}
-    {% endif %}
-    {% do surveyTableDataRows.append(
-        {
-            "tds": tds
-        }
-    )%}
-
-    {% do surveyTableData | setAttribute("trs", surveyTableDataRows) %}
-
-    {{
-        onsTable(surveyTableData)
-    }}
+    
+    {% do actionDatesTableData | setAttribute("trs", actionDatesTableDataRows) %}
+    {{ onsTable(actionDatesTableData) }}
+    
 </section>
