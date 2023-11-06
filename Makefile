@@ -27,7 +27,7 @@ lint-check: load-design-system-templates
 	pipenv run djlint . 
 	pipenv run flake8 --exclude ./node_modules
 
-test:
+test: lint-check
 	pipenv run python run_tests.py
 	rm -rf ./flask_session
 
