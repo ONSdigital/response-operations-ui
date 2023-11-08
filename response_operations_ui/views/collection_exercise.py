@@ -38,6 +38,7 @@ from response_operations_ui.common.mappers import (
 )
 from response_operations_ui.common.uaa import verify_permission
 from response_operations_ui.common.validators import valid_date_for_event
+from response_operations_ui.contexts.collection_exercise import build_ce_context
 from response_operations_ui.controllers import (
     collection_exercise_controllers,
     collection_instrument_controllers,
@@ -61,11 +62,6 @@ logger = wrap_logger(logging.getLogger(__name__))
 collection_exercise_bp = Blueprint(
     "collection_exercise_bp", __name__, static_folder="static", template_folder="templates"
 )
-
-CI_TABLE_LINK_TEXT = {
-    "EQ": {"no_instrument": "Add", "restricted": "View", "has_permission": "Select or Add"},
-    "SEFT": {"no_instrument": "Upload", "restricted": "View", "has_permission": "View or Upload"},
-}
 
 
 def build_collection_exercise_details(short_name: str, period: str, include_ci: bool = False) -> dict:
@@ -171,26 +167,14 @@ def view_collection_exercise(short_name, period):
     error_json = _get_error_from_session()
     _delete_sample_data_if_required()
 
-    ci_table_context = _build_ci_table_context(
-        ce_details["collection_instruments"],
-        locked,
-        survey_mode,
-        ce_details["survey"]["shortName"],
-        ce_details["collection_exercise"]["exerciseRef"],
-    )
-    response_chasing_context = (
-        _build_response_chasing_context(ce_details["collection_exercise"]["id"], ce_details["survey"]["id"])
-        if ce_state in ("LIVE", "ENDED")
-        else None
-    )
+    has_edit_permission = user_has_permission("surveys.edit")
+    context = build_ce_context(ce_details, has_edit_permission, locked)
 
     return render_template(
         "collection_exercise/collection-exercise.html",
+        has_edit_permission=has_edit_permission,
         ce=ce_details["collection_exercise"],
-        ci_table_context=ci_table_context,
-        instrument_count=len(ce_details["collection_instruments"]),
         error=error_json,
-        events=ce_details["events"],
         locked=locked,
         processing=processing,
         sample_load_status=sample_load_status,
@@ -202,48 +186,8 @@ def view_collection_exercise(short_name, period):
         show_msg=show_msg,
         info_panel=info_panel,
         show_sds=show_sds,
-        response_chasing=response_chasing_context,
+        context=context,
     )
-
-
-def _build_response_chasing_context(ce_id, survey_id) -> dict:
-    return {
-        "xslx_url": url_for(
-            "collection_exercise_bp.response_chasing", document_type="xslx", ce_id=ce_id, survey_id=survey_id
-        ),
-        "csv_url": url_for(
-            "collection_exercise_bp.response_chasing", document_type="csv", ce_id=ce_id, survey_id=survey_id
-        ),
-    }
-
-
-def _build_ci_table_context(ci: dict, locked: bool, survey_mode: str, short_name: str, exercise_ref: str) -> dict:
-    required_survey_mode_types = ["SEFT", "EQ"] if survey_mode == "EQ_AND_SEFT" else [survey_mode]
-    ci_table_state_text = "restricted" if locked or not user_has_permission("surveys.edit") else "has_permission"
-    ci_details = []
-    total_ci_count = 0
-    for survey_mode_type in required_survey_mode_types:
-        ci_count = len(ci.get(survey_mode_type, []))
-        ci_table_state_text = "no_instrument" if ci_count == 0 else ci_table_state_text
-        if survey_mode_type == "EQ":
-            view_sample_ci_url = url_for(
-                "collection_exercise_bp.get_view_sample_ci", short_name=short_name, period=exercise_ref
-            )
-        else:
-            view_sample_ci_url = url_for(
-                "collection_exercise_bp.get_seft_collection_instrument", period=exercise_ref, short_name=short_name
-            )
-        ci_details.append(
-            {
-                "type": survey_mode_type.lower(),
-                "title": f"{survey_mode_type} collection instruments",
-                "url": view_sample_ci_url,
-                "link_text": CI_TABLE_LINK_TEXT[survey_mode_type][ci_table_state_text],
-                "count": str(ci_count),
-            }
-        )
-        total_ci_count += ci_count
-    return {"total_ci_count": str(total_ci_count), "ci_details": ci_details}
 
 
 def _delete_sample_data_if_required():
