@@ -41,7 +41,7 @@ def build_ce_context(ce_details: dict, has_edit_permission: bool, locked: bool) 
         has_edit_permission,
     )
 
-    ce_info_events = _ce_events(ce, events)
+    ce_info_events = _ce_info_events(ce, events)
     action_date_events = _action_date_events(events)
     ce_info = _build_event_section(ce, has_edit_permission, locked, ce_info_events, short_name, survey_ref)
     action_dates = _build_event_section(ce, has_edit_permission, locked, action_date_events, short_name, survey_ref)
@@ -80,7 +80,7 @@ def _build_event_section(
     return section
 
 
-def _ce_events(ce: dict, events: dict) -> dict:
+def _ce_info_events(ce: dict, events: dict) -> dict:
     return {
         "period_id": {
             "label": "Period ID *",

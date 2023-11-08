@@ -1,7 +1,9 @@
 from response_operations_ui.contexts.collection_exercise import build_ce_context
 
+SURVEY_ID = "c23bb1c1-5202-43bb-8357-7a07c844308f"
+CE_ID = "7702d7fd-f998-499d-a972-e2906b19e6cf"
 PERIOD_ID_URL = "/surveys/MWSS/021123"
-EXERCISE_ID_URL = f"{PERIOD_ID_URL}/7702d7fd-f998-499d-a972-e2906b19e6cf"
+EXERCISE_ID_URL = f"{PERIOD_ID_URL}/{CE_ID}"
 
 
 def test_no_edit_permission(app, ce_details, expected_ce_context_no_permission):
@@ -132,6 +134,17 @@ def test_not_locked_event_in_the_past(app, ce_details_event_in_the_past):
 
     # Then there is a hyperlink to add/edit
     assert "hyperlink" in context["action_dates"]["go_live"]
+
+
+def test_response_chasing(app, ce_details_live):
+    # Given the exercise is live
+    # When build_ce_context is called
+    with app.test_request_context():
+        context = build_ce_context(ce_details_live, True, True)
+
+    # Then response_chasing is populated correctly
+    assert context["response_chasing"]["xslx_url"] == f"/surveys/response_chasing/xslx/{CE_ID}/{SURVEY_ID}"
+    assert context["response_chasing"]["csv_url"] == f"/surveys/response_chasing/csv/{CE_ID}/{SURVEY_ID}"
 
 
 def _get_event_context(context, parent, event):
