@@ -30,7 +30,7 @@ def build_ce_context(ce_details: dict, has_edit_permission: bool, locked: bool) 
     collection_instruments = ce_details["collection_instruments"]
 
     response_chasing = (
-        _build_response_chasing(ce["id"], ce_details["survey"]["id"]) if ce["state"] in ("LIVE", "ENDED") else None
+        _build_response_chasing(ce["id"], ce_details["survey"]["id"]) if ce["state"] in ("Live", "Ended") else None
     )
     ci_table = _build_ci_table(
         collection_instruments,
