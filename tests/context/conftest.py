@@ -242,10 +242,3 @@ def ce_details_dynamic_event_deleted(ce_details_dynamic_event):
     ce_details_dynamic_event_deleted = ce_details_dynamic_event.copy()
     del ce_details_dynamic_event_deleted["events"]["reminder2"]
     return ce_details_dynamic_event_deleted
-
-
-@pytest.fixture()
-def ce_details_live(ce_details):
-    ce_details_live = ce_details.copy()
-    ce_details_live["collection_exercise"]["state"] = "LIVE"
-    return ce_details_live
