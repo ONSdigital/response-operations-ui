@@ -22,7 +22,7 @@
                   "value": "",
                   },
                   { 
-                        "value":"<em>Total CI (" + ci_table_context["total_ci_count"] + ")</em>" ,
+                        "value":"<em>Total CI (" + context["ci_table"]["total_ci_count"] + ")</em>" ,
                         "thClasses": "ons-u-fs-r--b",
                   },
         ]
@@ -30,7 +30,7 @@
     {% do collectionInstrumentTableData | setAttribute("ths", tblHeaders) %}
   {% endif %}
   
-    {% for ci_type in ci_table_context["ci_details"] %}
+    {% for ci_type in context["ci_table"]["ci_details"] %}
       {% do collectionInstrumentTableDataRows.append(
           {
               "tds": [
