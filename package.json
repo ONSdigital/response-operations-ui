@@ -222,7 +222,7 @@
     "pinkie": "^2.0.4",
     "pinkie-promise": "^2.0.1",
     "pkg-dir": "^4.2.0",
-    "postcss": "^8.4.28",
+    "postcss": "^8.4.31",
     "postcss-attribute-case-insensitive": "^4.0.2",
     "postcss-color-functional-notation": "^2.0.1",
     "postcss-color-gray": "^5.0.0",
