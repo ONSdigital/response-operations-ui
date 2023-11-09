@@ -1,3 +1,5 @@
+import pytest
+
 from response_operations_ui.contexts.collection_exercise import build_ce_context
 
 SURVEY_ID = "c23bb1c1-5202-43bb-8357-7a07c844308f"
@@ -136,11 +138,13 @@ def test_not_locked_event_in_the_past(app, ce_details_event_in_the_past):
     assert "hyperlink" in context["action_dates"]["go_live"]
 
 
-def test_response_chasing(app, ce_details_live):
-    # Given the exercise is live
+@pytest.mark.parametrize("status", ["Live", "Ended"])
+def test_response_chasing(app, ce_details, status):
+    # Given the exercise is live/Ended
+    ce_details["collection_exercise"]["state"] = status
     # When build_ce_context is called
     with app.test_request_context():
-        context = build_ce_context(ce_details_live, True, True)
+        context = build_ce_context(ce_details, True, True)
 
     # Then response_chasing is populated correctly
     assert context["response_chasing"]["xslx_url"] == f"/surveys/response_chasing/xslx/{CE_ID}/{SURVEY_ID}"
