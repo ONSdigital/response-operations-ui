@@ -140,11 +140,12 @@ def test_not_locked_event_in_the_past(app, ce_details_event_in_the_past):
 
 @pytest.mark.parametrize("status", ["Live", "Ended"])
 def test_response_chasing(app, ce_details, status):
-    # Given the exercise is live/Ended
-    ce_details["collection_exercise"]["state"] = status
+    # Given the exercise is Live/Ended
+    ce_details_state_updated = ce_details.copy()
+    ce_details_state_updated["collection_exercise"]["state"] = status
     # When build_ce_context is called
     with app.test_request_context():
-        context = build_ce_context(ce_details, True, True)
+        context = build_ce_context(ce_details_state_updated, True, True)
 
     # Then response_chasing is populated correctly
     assert context["response_chasing"]["xslx_url"] == f"/surveys/response_chasing/xslx/{CE_ID}/{SURVEY_ID}"
