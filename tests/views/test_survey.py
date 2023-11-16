@@ -138,9 +138,9 @@ class TestSurvey(ViewTestCase):
         self.sampleSize = 5
         self.sampleLinks = [
             {
-                'sampleLinkPK': 2,
-                'collectionExerciseId': collection_exercise_id,
-                'sampleSummaryId': 'e78098be-db10-49ea-80b0-b5d7cc7f4079'
+                "sampleLinkPK": 2,
+                "collectionExerciseId": collection_exercise_id,
+                "sampleSummaryId": "e78098be-db10-49ea-80b0-b5d7cc7f4079",
             },
         ]
         self.app.config["SESSION_REDIS"] = fakeredis.FakeStrictRedis(

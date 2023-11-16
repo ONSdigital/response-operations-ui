@@ -634,7 +634,7 @@ class TestCollectionExercise(ViewTestCase):
             "events": {},
             "sample_summary": {},
             "sampleSize": 0,
-            "sampleLinks": []
+            "sampleLinks": [],
         }
         mock_details.return_value = ce_details
 
@@ -659,7 +659,7 @@ class TestCollectionExercise(ViewTestCase):
             "events": {},
             "sample_summary": {},
             "sampleSize": 0,
-            "sampleLinks": []
+            "sampleLinks": [],
         }
         mock_details.return_value = ce_details
 
@@ -684,7 +684,7 @@ class TestCollectionExercise(ViewTestCase):
             "events": {},
             "sample_summary": {},
             "sampleSize": 0,
-            "sampleLinks": []
+            "sampleLinks": [],
         }
         ce_details["survey"]["surveyMode"] = "EQ_AND_SEFT"
         mock_details.return_value = ce_details
@@ -933,7 +933,7 @@ class TestCollectionExercise(ViewTestCase):
             "events": {},
             "sample_summary": {},
             "sampleSize": 0,
-            "sampleLinks": []
+            "sampleLinks": [],
         }
         mock_request.post(url_collection_instrument_multi_select, json=self.multi_select_response[0], status_code=200)
         mock_details.return_value = ce_details
@@ -960,7 +960,7 @@ class TestCollectionExercise(ViewTestCase):
             "events": {},
             "sample_summary": {},
             "sampleSize": 0,
-            "sampleLinks": []
+            "sampleLinks": [],
         }
         mock_request.post(url_collection_instrument_multi_select, json=self.multi_select_response[0], status_code=200)
         mock_details.return_value = ce_details
@@ -983,7 +983,7 @@ class TestCollectionExercise(ViewTestCase):
             "events": {},
             "sample_summary": {},
             "sampleSize": 0,
-            "sampleLinks": []
+            "sampleLinks": [],
         }
         mock_request.post(url_collection_instrument_multi_select, json=self.multi_select_response[0], status_code=200)
         mock_details.return_value = ce_details
@@ -1008,7 +1008,7 @@ class TestCollectionExercise(ViewTestCase):
             "events": {},
             "sample_summary": {},
             "sampleSize": 0,
-            "sampleLinks": []
+            "sampleLinks": [],
         }
 
         mock_details.return_value = ce_details
@@ -1033,7 +1033,7 @@ class TestCollectionExercise(ViewTestCase):
             "events": {},
             "sample_summary": {},
             "sampleSize": 0,
-            "sampleLinks": []
+            "sampleLinks": [],
         }
 
         mock_details.return_value = ce_details
@@ -1062,7 +1062,7 @@ class TestCollectionExercise(ViewTestCase):
             "events": {},
             "sample_summary": {},
             "sampleSize": 0,
-            "sampleLinks": []
+            "sampleLinks": [],
         }
 
         mock_details.return_value = ce_details
@@ -1091,7 +1091,7 @@ class TestCollectionExercise(ViewTestCase):
             "events": {},
             "sample_summary": {},
             "sampleSize": 0,
-            "sampleLinks": []
+            "sampleLinks": [],
         }
 
         mock_details.return_value = ce_details
@@ -2494,7 +2494,7 @@ class TestCollectionExercise(ViewTestCase):
             "events": {},
             "sample_summary": {},
             "sampleSize": 0,
-            "sampleLinks": []
+            "sampleLinks": [],
         }
         mock_details.return_value = ce_details
 
