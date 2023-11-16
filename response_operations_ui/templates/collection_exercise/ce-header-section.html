@@ -36,21 +36,21 @@
     }]
 }] %}
 
-{% if response_chasing %}
+{% if context["response_chasing"] %}
     {% do metaDataList.append({
         "term": "Report:",
         "descriptions": [{
             "description":
                 onsButton({
                     "text": 'Save report as xslx',
-                    "url": response_chasing.xslx_url,
+                    "url": context["response_chasing"]["xslx_url"],
                     "variants": ['download', 'small', 'secondary'],
                     "removeDownloadAttribute": true
                 })
                 +
                 onsButton({
                     "text": 'Save report as csv',
-                    "url": response_chasing.csv_url,
+                    "url": context["response_chasing"]["csv_url"],
                     "variants": ['download', 'small', 'secondary'],
                     "removeDownloadAttribute": true
                 }),
