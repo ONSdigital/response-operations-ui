@@ -633,6 +633,8 @@ class TestCollectionExercise(ViewTestCase):
             "collection_instruments": eq_cis,
             "events": {},
             "sample_summary": {},
+            "sampleSize": 0,
+            "sampleLinks": []
         }
         mock_details.return_value = ce_details
 
@@ -656,6 +658,8 @@ class TestCollectionExercise(ViewTestCase):
             "collection_instruments": seft_cis,
             "events": {},
             "sample_summary": {},
+            "sampleSize": 0,
+            "sampleLinks": []
         }
         mock_details.return_value = ce_details
 
@@ -679,6 +683,8 @@ class TestCollectionExercise(ViewTestCase):
             "collection_instruments": eq_and_seft_cis,
             "events": {},
             "sample_summary": {},
+            "sampleSize": 0,
+            "sampleLinks": []
         }
         ce_details["survey"]["surveyMode"] = "EQ_AND_SEFT"
         mock_details.return_value = ce_details
@@ -926,6 +932,8 @@ class TestCollectionExercise(ViewTestCase):
             "collection_instruments": {"EQ": []},
             "events": {},
             "sample_summary": {},
+            "sampleSize": 0,
+            "sampleLinks": []
         }
         mock_request.post(url_collection_instrument_multi_select, json=self.multi_select_response[0], status_code=200)
         mock_details.return_value = ce_details
@@ -951,6 +959,8 @@ class TestCollectionExercise(ViewTestCase):
             "collection_instruments": {"EQ": []},
             "events": {},
             "sample_summary": {},
+            "sampleSize": 0,
+            "sampleLinks": []
         }
         mock_request.post(url_collection_instrument_multi_select, json=self.multi_select_response[0], status_code=200)
         mock_details.return_value = ce_details
@@ -972,6 +982,8 @@ class TestCollectionExercise(ViewTestCase):
             "collection_instruments": {"EQ": []},
             "events": {},
             "sample_summary": {},
+            "sampleSize": 0,
+            "sampleLinks": []
         }
         mock_request.post(url_collection_instrument_multi_select, json=self.multi_select_response[0], status_code=200)
         mock_details.return_value = ce_details
@@ -995,6 +1007,8 @@ class TestCollectionExercise(ViewTestCase):
             "collection_instruments": {"EQ": self.eq_multiple_collection_instrument},
             "events": {},
             "sample_summary": {},
+            "sampleSize": 0,
+            "sampleLinks": []
         }
 
         mock_details.return_value = ce_details
@@ -1018,6 +1032,8 @@ class TestCollectionExercise(ViewTestCase):
             "collection_instruments": {"EQ": self.eq_collection_instrument},
             "events": {},
             "sample_summary": {},
+            "sampleSize": 0,
+            "sampleLinks": []
         }
 
         mock_details.return_value = ce_details
@@ -1045,6 +1061,8 @@ class TestCollectionExercise(ViewTestCase):
             "collection_instruments": {"EQ": self.eq_collection_instrument},
             "events": {},
             "sample_summary": {},
+            "sampleSize": 0,
+            "sampleLinks": []
         }
 
         mock_details.return_value = ce_details
@@ -1072,6 +1090,8 @@ class TestCollectionExercise(ViewTestCase):
             "collection_instruments": {"EQ": self.eq_multiple_collection_instrument},
             "events": {},
             "sample_summary": {},
+            "sampleSize": 0,
+            "sampleLinks": []
         }
 
         mock_details.return_value = ce_details
@@ -1122,6 +1142,8 @@ class TestCollectionExercise(ViewTestCase):
             "collection_instruments": {"EQ": []},
             "events": {},
             "sample_summary": {},
+            "sampleSize": 0,
+            "sampleLinks": [],
             "eq_ci_selectors": self.eq_collection_instrument,
         }
 
@@ -2471,6 +2493,8 @@ class TestCollectionExercise(ViewTestCase):
             "collection_instruments": eq_cis,
             "events": {},
             "sample_summary": {},
+            "sampleSize": 0,
+            "sampleLinks": []
         }
         mock_details.return_value = ce_details
 
