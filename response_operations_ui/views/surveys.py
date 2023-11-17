@@ -50,7 +50,7 @@ def view_surveys():
 @login_required
 def view_survey(short_name):
     survey = survey_controllers.get_survey(short_name)
-    collection_exercises = collection_exercise_controllers.get_collection_exercises_by_survey_id(survey["id"])
+    collection_exercises = collection_exercise_controllers.get_collection_exercises_by_survey(survey["id"])
 
     updated_ce_message = None
     if request.args.get("ce_updated"):

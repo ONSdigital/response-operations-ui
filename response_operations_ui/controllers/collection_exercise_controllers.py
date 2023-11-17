@@ -432,13 +432,3 @@ def link_sample_summary_to_collection_exercise(collection_exercise_id, sample_su
         sample_summary_id=sample_summary_id,
     )
     return response.json()
-
-
-def get_collection_exercises_by_survey_id(survey_id):
-    logger.info("Retrieving collection exercise with samples", survey_id=survey_id)
-
-    ce_list = get_collection_exercises_by_survey(survey_id)
-
-    logger.info("Successfully retrieved collection exercise details", survey_id=survey_id)
-
-    return ce_list

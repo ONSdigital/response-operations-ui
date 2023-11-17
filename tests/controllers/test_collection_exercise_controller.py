@@ -120,5 +120,5 @@ class TestCollectionExerciseController(unittest.TestCase):
         ]
         mock_request.get(url_ce_by_survey, json=collection_exercises)
         with self.app.app_context():
-            ce_list = collection_exercise_controllers.get_collection_exercises_by_survey_id(bres_survey["id"])
+            ce_list = collection_exercise_controllers.get_collection_exercises_by_survey(bres_survey["id"])
         self.assertEqual(ce_list, collection_exercises)
