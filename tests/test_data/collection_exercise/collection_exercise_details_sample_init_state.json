@@ -60,6 +60,8 @@
     "notes": null,
     "errorCode": "null"
   },
+  "sampleSize": 9, 
+  "sampleLinks": [{"sampleLinkPK": 2, "collectionExerciseId": "14fb3e68-4dca-46db-bf49-04b84e07e77c", "sampleSummaryId": "1a11543f-eb19-41f5-825f-e41aca15e724"}],
   "ci_classifiers": {
     "id": "fd804303-c2c3-4aa9-be65-b6e2cadd522d",
     "name": "COLLECTION_INSTRUMENT",

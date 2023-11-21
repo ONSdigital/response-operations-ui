@@ -15,7 +15,6 @@ ce_id = "4a084bc0-130f-4aee-ae48-1a9f9e50178f"
 sample_summary_id = "1a11543f-eb19-41f5-825f-e41aca15e724"
 survey_id = "02b9c366-7397-42f7-942a-76dc5876d86d"
 
-url_get_sample_summary = f"{TestingConfig.SAMPLE_URL}/samples/samplesummary/{sample_summary_id}"
 url_ce_by_survey = f"{TestingConfig.COLLECTION_EXERCISE_URL}/collectionexercises/survey/{survey_id}"
 ce_events_by_id_url = f"{TestingConfig.COLLECTION_EXERCISE_URL}/collectionexercises/{ce_id}/events"
 ce_nudge_events_by_id_url = f"{TestingConfig.COLLECTION_EXERCISE_URL}/collectionexercises/{ce_id}/events/nudge"
@@ -100,9 +99,6 @@ class TestCollectionExerciseController(unittest.TestCase):
     @requests_mock.mock()
     def test_get_collection_exercises_with_events_and_samples_by_survey_id(self, mock_request):
         collection_exercise_id = "14fb3e68-4dca-46db-bf49-04b84e07e77c"
-        url_collection_exercise_link = (
-            f"{TestingConfig.COLLECTION_EXERCISE_URL}/collectionexercises/link/{collection_exercise_id}"
-        )
 
         collection_exercises = [
             {
@@ -122,23 +118,7 @@ class TestCollectionExerciseController(unittest.TestCase):
                 ],
             }
         ]
-        sample_summary = {
-            "id": sample_summary_id,
-            "effectiveStartDateTime": "",
-            "effectiveEndDateTime": "",
-            "surveyRef": "",
-            "ingestDateTime": "2018-03-14T14:29:51.325Z",
-            "state": "ACTIVE",
-            "totalSampleUnits": 8,
-            "expectedCollectionInstruments": 1,
-        }
-        mock_request.get(url_get_sample_summary, json=sample_summary)
-        mock_request.get(url_collection_exercise_link, json=[sample_summary_id])
         mock_request.get(url_ce_by_survey, json=collection_exercises)
         with self.app.app_context():
-            ce_list = collection_exercise_controllers.get_collection_exercises_with_samples_by_survey_id(
-                bres_survey["id"]
-            )
-
-        collection_exercises[0]["sample_summary"] = sample_summary
+            ce_list = collection_exercise_controllers.get_collection_exercises_by_survey(bres_survey["id"])
         self.assertEqual(ce_list, collection_exercises)

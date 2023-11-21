@@ -68,5 +68,8 @@
         "timestamp": "2020-03-30T06:00:00.000Z",
       "eventStatus": "PROCESSED"
       }
-    ]
+    ],
+    "sampleSize": 5, 
+    "sampleLinks": [{"sampleLinkPK": 2, "collectionExerciseId": "aec41b04-a177-4994-b385-a16136242d05f", "sampleSummaryId": "1a11543f-eb19-41f5-825f-e41aca15e724"}]
+
   }
