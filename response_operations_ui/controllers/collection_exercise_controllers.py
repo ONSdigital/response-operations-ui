@@ -6,7 +6,6 @@ from flask import current_app as app
 from requests.exceptions import HTTPError
 from structlog import wrap_logger
 
-from response_operations_ui.controllers.sample_controllers import get_sample_summary
 from response_operations_ui.exceptions.exceptions import ApiError
 
 logger = wrap_logger(logging.getLogger(__name__))
@@ -433,18 +432,3 @@ def link_sample_summary_to_collection_exercise(collection_exercise_id, sample_su
         sample_summary_id=sample_summary_id,
     )
     return response.json()
-
-
-def get_collection_exercises_with_samples_by_survey_id(survey_id):
-    logger.info("Retrieving collection exercise with samples", survey_id=survey_id)
-
-    ce_list = get_collection_exercises_by_survey(survey_id)
-
-    for ce in ce_list:
-        sample_summary_id = get_linked_sample_summary_id(ce["id"])
-        if sample_summary_id:
-            ce["sample_summary"] = get_sample_summary(sample_summary_id)
-
-    logger.info("Successfully retrieved collection exercise details", survey_id=survey_id)
-
-    return ce_list

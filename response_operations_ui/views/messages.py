@@ -2,11 +2,11 @@ import html
 import json
 import logging
 import math
+from markupsafe import Markup
 from datetime import datetime
 
 from flask import (
     Blueprint,
-    Markup,
     flash,
     g,
     redirect,
