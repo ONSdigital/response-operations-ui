@@ -1100,7 +1100,7 @@ class TestMessage(ViewTestCase):
                 self.assertIn(match, response_body.replace("amp;", ""))
 
                 # and that page 2 is selected
-                self.assertIn('<liclass="active"><a>2</a></li>', response_body)
+                self.assertIn('<liclass="page-itemactive"><aclass="page-link">2<spanclass="sr-only">(current)</span></a>', response_body)
 
     @requests_mock.mock()
     @patch("response_operations_ui.controllers.message_controllers._get_jwt")
@@ -1143,7 +1143,9 @@ class TestMessage(ViewTestCase):
                 self.assertIn(match, response_body.replace("amp;", ""))
 
                 # and that page 3 is selected
-                self.assertIn('<liclass="active"><a>3</a></li>', response_body)
+                self.assertIn(
+                    '<liclass="page-itemactive"><aclass="page-link">3<spanclass="sr-only">(current)</span></a>',
+                    response_body)
 
     @requests_mock.mock()
     @patch("response_operations_ui.controllers.message_controllers._get_jwt")
