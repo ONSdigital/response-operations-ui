@@ -13,7 +13,9 @@
     "scheduledReturnDateTime": "2017-10-06T00:00:00.000+0000",
     "scheduledStartDateTime": "2017-09-11T23:00:00.000+0000",
     "state": "PUBLISHED",
-    "surveyId": "cb0711c3-0ac8-41d3-ae0e-567e5ea1ef87"
+    "surveyId": "cb0711c3-0ac8-41d3-ae0e-567e5ea1ef87",
+    "sampleSize": 5, 
+    "sampleLinks": [{"sampleLinkPK": 2, "collectionExerciseId": "14fb3e68-4dca-46db-bf49-04b84e07e77c", "sampleSummaryId": "1a11543f-eb19-41f5-825f-e41aca15e724"}]
   },
   {
     "id": "14fb3e68-4dca-46db-bf49-04b84e07e77d",
@@ -29,6 +31,8 @@
     "scheduledReturnDateTime": "2017-10-06T00:00:00.000+0000",
     "scheduledStartDateTime": "2017-09-11T23:00:00.000+0000",
     "state": "PUBLISHED",
-    "surveyId": "cb0711c3-0ac8-41d3-ae0e-567e5ea1ef87"
+    "surveyId": "cb0711c3-0ac8-41d3-ae0e-567e5ea1ef87",
+    "sampleSize": 5, 
+    "sampleLinks": [{"sampleLinkPK": 2, "collectionExerciseId": "14fb3e68-4dca-46db-bf49-04b84e07e77c", "sampleSummaryId": "1a11543f-eb19-41f5-825f-e41aca15e724"}]
   }
 ]

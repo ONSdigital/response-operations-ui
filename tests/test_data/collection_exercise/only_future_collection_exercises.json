@@ -69,7 +69,9 @@
         "timestamp": "2020-07-30T06:00:00.000Z",
       "eventStatus": "PROCESSED"
       }
-    ]
+    ],
+    "sampleSize": 5, 
+    "sampleLinks": [{"sampleLinkPK": 2, "collectionExerciseId": "6327160f-d7a8-4fcc-8551-a69c50b33e5f", "sampleSummaryId": "1a11543f-eb19-41f5-825f-e41aca15e724"}]
   },
   {
     "id": "aec41b04-a177-4994-b385-a16136242d05",
@@ -141,6 +143,8 @@
         "timestamp": "2020-06-30T06:00:00.000Z",
       "eventStatus": "PROCESSED"
       }
-    ]
+    ], 
+    "sampleSize": 5, 
+    "sampleLinks": [{"sampleLinkPK": 2, "collectionExerciseId": "6327160f-d7a8-4fcc-8551-a69c50b33e5f", "sampleSummaryId": "1a11543f-eb19-41f5-825f-e41aca15e724"}]
   }
 ]

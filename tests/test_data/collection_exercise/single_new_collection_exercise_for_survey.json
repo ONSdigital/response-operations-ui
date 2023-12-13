@@ -19,6 +19,8 @@
     "updated": null,
     "deleted": null,
     "validationErrors": null,
-    "events": []
+    "events": [],
+    "sampleSize": null, 
+    "sampleLinks": []
   }
 ]

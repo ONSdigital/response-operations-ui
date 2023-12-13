@@ -135,6 +135,14 @@ class TestSurvey(ViewTestCase):
             "totalSampleUnits": 5,
             "expectedCollectionInstruments": 1,
         }
+        self.sampleSize = 5
+        self.sampleLinks = [
+            {
+                "sampleLinkPK": 2,
+                "collectionExerciseId": collection_exercise_id,
+                "sampleSummaryId": "e78098be-db10-49ea-80b0-b5d7cc7f4079",
+            },
+        ]
         self.app.config["SESSION_REDIS"] = fakeredis.FakeStrictRedis(
             host=self.app.config["REDIS_HOST"], port=self.app.config["FAKE_REDIS_PORT"], db=self.app.config["REDIS_DB"]
         )

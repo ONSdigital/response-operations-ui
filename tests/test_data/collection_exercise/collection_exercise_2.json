@@ -12,5 +12,7 @@
   "scheduledReturnDateTime": "2017-10-06T00:00:00.000+0000",
   "scheduledStartDateTime": "2017-09-11T23:00:00.000+0000",
   "state": "PUBLISHED",
-  "surveyId": "cb0711c3-0ac8-41d3-ae0e-567e5ea1ef87"
+  "surveyId": "cb0711c3-0ac8-41d3-ae0e-567e5ea1ef87",
+  "sampleSize": 8, 
+  "sampleLinks": [{"sampleLinkPK": 2, "collectionExerciseId": "29838cac-bde6-4b7e-bde3-055958edfc6b", "sampleSummaryId": "e78098be-db10-49ea-80b0-b5d7cc7f4079"}]
 }

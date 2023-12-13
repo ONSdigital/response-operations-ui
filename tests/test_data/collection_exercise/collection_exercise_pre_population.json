@@ -86,5 +86,7 @@
     "state":"ACTIVE",
     "totalSampleUnits":5,
     "expectedCollectionInstruments":2
-  }
+  },
+  "sampleSize": 5, 
+  "sampleLinks": [{"sampleLinkPK": 2, "collectionExerciseId": "14fb3e68-4dca-46db-bf49-04b84e07e77c", "sampleSummaryId": "1a11543f-eb19-41f5-825f-e41aca15e724"}]
 }

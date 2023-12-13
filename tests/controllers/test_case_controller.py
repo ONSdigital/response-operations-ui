@@ -90,14 +90,14 @@ class TestCaseControllers(unittest.TestCase):
 
     def test_empty_response_if_no_enrolements_case_groups(self):
         with responses.RequestsMock() as rsps:
-            rsps.add(rsps.GET, url_get_case_groups, json=[], status=204, content_type="application/json")
+            rsps.add(rsps.GET, url_get_case_groups, status=204, content_type="application/json")
             with self.app.app_context():
                 get_case_events = case_controller.get_case_groups_by_business_party_id(case_id)
                 self.assertEqual(get_case_events, [])
 
     def test_empty_response_if_no_enrolements_cases(self):
         with responses.RequestsMock() as rsps:
-            rsps.add(rsps.GET, url_get_cases, json=[], status=204, content_type="application/json")
+            rsps.add(rsps.GET, url_get_cases, status=204, content_type="application/json")
             with self.app.app_context():
                 get_case_events = case_controller.get_cases_by_business_party_id(case_id, 12)
                 self.assertEqual(get_case_events, [])
