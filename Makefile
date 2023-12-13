@@ -21,12 +21,13 @@ lint:
 
 lint-check: load-design-system-templates
 	pipenv check ./response_operations_ui ./tests
+
 	pipenv run isort . --check-only
 	pipenv run black --line-length 120 --check .
 	pipenv run djlint . 
 	pipenv run flake8 --exclude ./node_modules
 
-test:
+test: lint-check
 	pipenv run python run_tests.py
 	rm -rf ./flask_session
 
