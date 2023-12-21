@@ -6,7 +6,6 @@ from datetime import datetime
 
 from flask import (
     Blueprint,
-    Markup,
     flash,
     g,
     redirect,
@@ -17,6 +16,7 @@ from flask import (
 )
 from flask_login import current_user, login_required
 from flask_paginate import Pagination
+from markupsafe import Markup
 from structlog import wrap_logger
 
 from config import FDI_LIST, VACANCIES_LIST
