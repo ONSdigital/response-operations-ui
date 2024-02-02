@@ -3,10 +3,12 @@ import os
 from unittest import TestCase
 
 import fakeredis
+import jwt
 import requests_mock
 
 from config import TestingConfig
 from response_operations_ui import create_app
+from tests.views.test_sign_in import url_sign_in_data
 
 short_name = "BLOCKS"
 survey_id = "cb0711c3-0ac8-41d3-ae0e-567e5ea1ef87"
@@ -32,8 +34,9 @@ url_post_case_event = f"{TestingConfig.CASE_URL}/cases/{case_id}/events"
 url_get_case_by_case_group_id = f"{TestingConfig.CASE_URL}/cases/casegroupid/{case_group_id}"
 url_get_case_events = f"{TestingConfig.CASE_URL}/cases/{case_id}/events"
 get_respondent_by_id_url = f"{TestingConfig.PARTY_URL}/party-api/v1/respondents/id/{party_id}"
-project_root = os.path.dirname(os.path.dirname(__file__))
+url_permission_url = f"{TestingConfig.UAA_SERVICE_URL}/Users/test-id"
 
+project_root = os.path.dirname(os.path.dirname(__file__))
 
 with open(f"{project_root}/test_data/survey/single_survey.json") as fp:
     survey = json.load(fp)
@@ -60,12 +63,19 @@ with open(f"{project_root}/test_data/case/case_groups_list_completed_by_phone.js
 with open(f"{project_root}/test_data/case/case_groups_list_no_longer_required.json") as fp:
     case_groups_no_longer_required = json.load(fp)
 
+user_permission_reporting_unit_edit_json = {
+    "id": "5902656c-c41c-4b38-a294-0359e6aabe59",
+    "groups": [{"value": "f385f89e-928f-4a0f-96a0-4c48d9007cc3", "display": "reportingunits.edit", "type": "DIRECT"}],
+}
+
 
 class TestChangeResponseStatus(TestCase):
     def setUp(self):
         self.app = create_app("TestingConfig")
+        payload = {"user_id": "test-id", "aud": "response_operations"}
         self.client = self.app.test_client()
         self.setup_data()
+        self.access_token = jwt.encode(payload, TestingConfig.UAA_PRIVATE_KEY, algorithm="RS256")
         self.app.config["SESSION_REDIS"] = fakeredis.FakeStrictRedis(
             host=self.app.config["REDIS_HOST"], port=self.app.config["FAKE_REDIS_PORT"], db=self.app.config["REDIS_DB"]
         )
@@ -83,7 +93,10 @@ class TestChangeResponseStatus(TestCase):
 
     @requests_mock.mock()
     def test_get_available_status(self, mock_request):
+        mock_request.post(url_sign_in_data, json={"access_token": self.access_token}, status_code=201)
         mock_request.get(url_get_survey_by_short_name, json=survey)
+        mock_request.get(url_permission_url, json=user_permission_reporting_unit_edit_json, status_code=200)
+        self.client.post("/sign-in", follow_redirects=True, data={"username": "user", "password": "pass"})
         mock_request.get(url_get_collection_exercises_by_survey, json=collection_exercise_list)
         mock_request.get(url_get_business_by_ru_ref, json=business_reporting_unit)
         mock_request.get(url_get_available_case_group_statuses, json=self.statuses)
@@ -300,13 +313,17 @@ class TestChangeResponseStatus(TestCase):
 
     @requests_mock.mock()
     def test_not_started_status_is_present_for_completed_by_phone(self, mock_request):
+        mock_request.post(url_sign_in_data, json={"access_token": self.access_token}, status_code=201)
         mock_request.get(url_get_survey_by_short_name, json=survey)
+        mock_request.get(url_permission_url, json=user_permission_reporting_unit_edit_json, status_code=200)
+        self.client.post("/sign-in", follow_redirects=True, data={"username": "user", "password": "pass"})
         mock_request.get(url_get_collection_exercises_by_survey, json=collection_exercise_list)
         mock_request.get(url_get_business_by_ru_ref, json=business_reporting_unit)
         mock_request.get(url_get_available_case_group_statuses, json=self.statuses)
         mock_request.get(url_get_case_groups_by_business_party_id, json=case_groups_completed_by_phone)
         mock_request.get(url_get_case_events, json=case_events)
         mock_request.get(url_get_case_by_case_group_id, json=[case])
+        mock_request.get(url_permission_url, json=user_permission_reporting_unit_edit_json, status_code=200)
 
         response = self.client.get(f"/case/{ru_ref}/response-status?survey={short_name}&period={period}")
 
@@ -317,7 +334,10 @@ class TestChangeResponseStatus(TestCase):
 
     @requests_mock.mock()
     def test_not_started_status_is_present_for_no_longer_required(self, mock_request):
+        mock_request.post(url_sign_in_data, json={"access_token": self.access_token}, status_code=201)
         mock_request.get(url_get_survey_by_short_name, json=survey)
+        mock_request.get(url_permission_url, json=user_permission_reporting_unit_edit_json, status_code=200)
+        self.client.post("/sign-in", follow_redirects=True, data={"username": "user", "password": "pass"})
         mock_request.get(url_get_collection_exercises_by_survey, json=collection_exercise_list)
         mock_request.get(url_get_business_by_ru_ref, json=business_reporting_unit)
         mock_request.get(url_get_available_case_group_statuses, json=self.statuses)
@@ -330,4 +350,24 @@ class TestChangeResponseStatus(TestCase):
         data = response.data
         self.assertEqual(response.status_code, 200)
         self.assertIn(b"No longer required", data)
+        self.assertIn(b"Not started", data)
+
+    @requests_mock.mock()
+    def test_not_started_status_is_present_for_completed(self, mock_request):
+        mock_request.post(url_sign_in_data, json={"access_token": self.access_token}, status_code=201)
+        mock_request.get(url_get_survey_by_short_name, json=survey)
+        mock_request.get(url_permission_url, json=user_permission_reporting_unit_edit_json, status_code=200)
+        self.client.post("/sign-in", follow_redirects=True, data={"username": "user", "password": "pass"})
+        mock_request.get(url_get_collection_exercises_by_survey, json=collection_exercise_list)
+        mock_request.get(url_get_business_by_ru_ref, json=business_reporting_unit)
+        mock_request.get(url_get_available_case_group_statuses, json=self.statuses)
+        mock_request.get(url_get_case_groups_by_business_party_id, json=case_groups_no_longer_required)
+        mock_request.get(url_get_case_events, json=case_events)
+        mock_request.get(url_get_case_by_case_group_id, json=[case])
+
+        response = self.client.get(f"/case/{ru_ref}/response-status?survey={short_name}&period={period}")
+
+        data = response.data
+        self.assertEqual(response.status_code, 200)
+        self.assertIn(b"Completed", data)
         self.assertIn(b"Not started", data)

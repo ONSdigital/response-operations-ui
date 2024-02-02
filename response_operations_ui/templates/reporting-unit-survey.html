@@ -67,9 +67,9 @@
                         {% set status_class = 'ons-status--error' %}
                     {% endif %}
 
-                    {% if ce.responseStatus in ['Not started', 'In progress'] and isReportingUnitPermission  %}
+                    {% if ce.responseStatus in ['Not started', 'In progress','Completed', 'Completed by phone', 'No longer required'] and isReportingUnitPermission  %}
                         {% set survey_link = '&nbsp;   <a href="' + url_for("case_bp.get_response_statuses", ru_ref=ru.sampleUnitRef, survey=survey.shortName, period=ce.exerciseRef) + '">Change</a>' %}
-                    {% elif ce.responseStatus in ['Completed', 'Completed by phone', 'No longer required'] and isReportingUnitPermission  %}
+                    {% elif isReportingUnitPermission  %}
                         {% set survey_link = '&nbsp;   <a href="' + url_for("case_bp.get_response_statuses", ru_ref=ru.sampleUnitRef, survey=survey.shortName, period=ce.exerciseRef) + '">View</a>' %}
                     {% else %}
                         {% set survey_link = '' %}

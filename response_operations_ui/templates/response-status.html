@@ -6,6 +6,7 @@
 {% from "components/radios/_macro.njk" import onsRadios %}
 
 {% set page_title = 'Change response status for ' ~ ru_name ~ ' ('~ru_ref~') for survey ' ~  survey_id ~ ' ' ~ survey_name ~ ' period ' ~ ce_period %}
+{% set isReportingUnitPermission = hasPermission('reportingunits.edit') %}
 {%- block main %}
 
     <div class="ons-grid ons-grid--gutterless">
@@ -92,9 +93,8 @@
                     ]
                 })
             }}
-            {% if is_case_complete %}
-                <a href="{{ url_for('reporting_unit_bp.view_reporting_unit_survey', ru_ref=ru_ref, survey_id=survey_id) }}" id="close-response">Close</a>
-            {% else %}
+            <p>{{ isReportingUnitPermission }}</p>
+            {% if isReportingUnitPermission %}
                 <form action="{{ url_for('case_bp.update_response_status', ru_ref=ru_ref, survey=survey_short_name, case_group_id=case_group_id, period=ce_period) }}" method="post" class="ons-u-mt-s">
                     <input type="hidden" name="csrf_token" value="{{ csrf_token() }}" />
                     {% set radioComponent = {
