@@ -68,6 +68,11 @@ user_permission_reporting_unit_edit_json = {
     "groups": [{"value": "f385f89e-928f-4a0f-96a0-4c48d9007cc3", "display": "reportingunits.edit", "type": "DIRECT"}],
 }
 
+user_permission_admin_json = {
+    "id": "5902656c-c41c-4b38-a294-0359e6aabe59",
+    "groups": [{"value": "f385f89e-928f-4a0f-96a0-4c48d9007cc3", "display": "users.admin", "type": "DIRECT"}],
+}
+
 
 class TestChangeResponseStatus(TestCase):
     def setUp(self):
@@ -361,9 +366,10 @@ class TestChangeResponseStatus(TestCase):
         mock_request.get(url_get_collection_exercises_by_survey, json=collection_exercise_list)
         mock_request.get(url_get_business_by_ru_ref, json=business_reporting_unit)
         mock_request.get(url_get_available_case_group_statuses, json=self.statuses)
-        mock_request.get(url_get_case_groups_by_business_party_id, json=case_groups_no_longer_required)
-        mock_request.get(url_get_case_events, json=case_events)
+        mock_request.get(url_get_case_groups_by_business_party_id, json=case_groups_completed)
         mock_request.get(url_get_case_by_case_group_id, json=[case])
+        mock_request.get(url_get_case_events, json=case_events)
+        mock_request.get(get_respondent_by_id_url, json=respondent)
 
         response = self.client.get(f"/case/{ru_ref}/response-status?survey={short_name}&period={period}")
 
@@ -371,3 +377,22 @@ class TestChangeResponseStatus(TestCase):
         self.assertEqual(response.status_code, 200)
         self.assertIn(b"Completed", data)
         self.assertIn(b"Not started", data)
+
+    @requests_mock.mock()
+    def test_not_started_status_is_not_present_for_not_started_without_permission(self, mock_request):
+        mock_request.get(url_get_survey_by_short_name, json=survey)
+        mock_request.get(url_get_collection_exercises_by_survey, json=collection_exercise_list)
+        mock_request.get(url_get_collection_exercises_by_survey, json=collection_exercise_list)
+        mock_request.get(url_get_business_by_ru_ref, json=business_reporting_unit)
+        mock_request.get(url_get_available_case_group_statuses, json=self.statuses)
+        mock_request.get(url_get_case_groups_by_business_party_id, json=case_groups_completed)
+        mock_request.get(url_get_case_by_case_group_id, json=[case])
+        mock_request.get(url_get_case_events, json=case_events)
+        mock_request.get(get_respondent_by_id_url, json=respondent)
+
+        response = self.client.get(f"/case/{ru_ref}/response-status?survey={short_name}&period={period}")
+
+        data = response.data
+        self.assertEqual(response.status_code, 200)
+        self.assertIn(b"Completed", data)
+        self.assertNotIn(b"Not started", data)
