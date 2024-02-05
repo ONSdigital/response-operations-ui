@@ -15,13 +15,13 @@ from flask import (
     url_for,
 )
 from flask_login import current_user, login_required
-from flask_paginate import Pagination
 from markupsafe import Markup
 from structlog import wrap_logger
 
 from config import FDI_LIST, VACANCIES_LIST
 from response_operations_ui.common.dates import get_formatted_date, localise_datetime
 from response_operations_ui.common.mappers import format_short_name
+from response_operations_ui.common.pagination_processor import pagination_processor
 from response_operations_ui.common.uaa import verify_permission
 from response_operations_ui.controllers import (
     message_controllers,
@@ -528,7 +528,7 @@ def view_selected_survey(selected_survey):  # noqa: C901
             )
         ]
 
-        pagination = _get_pagination_object(page, limit, tab_counts)
+        pagination = pagination_processor(tab_counts["current"], limit, page)
 
         return render_template(
             "messages.html",
@@ -654,20 +654,6 @@ def view_misc_inbox():  # noqa: C901
         redirect_url="messages_bp.view_misc_inbox",
         breadcrumbs=breadcrumbs,
         category="MISC",
-    )
-
-
-def _get_pagination_object(page, limit, tab_counts) -> Pagination:
-    return Pagination(
-        page=page,
-        per_page=limit,
-        total=tab_counts["current"],
-        record_name="messages",
-        prev_label="Previous",
-        next_label="Next",
-        outer_window=0,
-        format_total=True,
-        format_number=True,
     )
 
 
@@ -1048,7 +1034,7 @@ def _process_category_page(
             )
         ]
 
-        pagination = _get_pagination_object(page, limit, tab_counts)
+        pagination = pagination_processor(tab_counts["current"], limit, page)
 
         return render_template(
             render_html,
@@ -1114,7 +1100,7 @@ def _process_non_survey_category_page(
             _refine(message)
             for message in message_controllers.get_thread_list(None, "", conversation_tab, page, limit, category)
         ]
-        pagination = _get_pagination_object(page, limit, tab_counts)
+        pagination = pagination_processor(tab_counts["current"], limit, page)
 
         return render_template(
             render_html,

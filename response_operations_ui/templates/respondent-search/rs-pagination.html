@@ -1,6 +1,19 @@
-{% if pagination.links %}
-    <div class="ons-u-mt-m">
-        <h5 class="ons-u-mb-xs">Page {{ pagination.page }} of {{ pagination.total_pages }}</h5>
-        {{ pagination.links }}
-    </div>
-{% endif %}
+{% from "components/pagination/_macro.njk" import onsPagination %}
+
+<div class="ons-u-mt-m">
+    {% set pages = [] %}
+    {% for page in pagination.page_links %}
+      {% if conversation_tab %}
+        {% set link = {'url': "?conversation_tab=" + conversation_tab + "&page=" + page | string } %}
+      {% else %}
+        {% set link = {'url': "?page=" + page | string } %}
+      {% endif %}
+      {% set pages = pages.append(link) %}
+    {% endfor %}
+    {{ 
+      onsPagination({
+        "currentPageNumber": pagination.page,
+        "pages": pages
+      })
+    }}
+</div>

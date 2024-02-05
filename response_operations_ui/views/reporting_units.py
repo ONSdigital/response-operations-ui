@@ -340,9 +340,9 @@ def search_reporting_units():
         "reporting-unit-search/reporting-units.html",
         form=form,
         business_list=business_list,
-        total_business_count=len(business_list)
-        if len(business_list) != 0 and total_business_count <= limit
-        else total_business_count,
+        total_business_count=(
+            len(business_list) if len(business_list) != 0 and total_business_count <= limit else total_business_count
+        ),
         breadcrumbs=breadcrumbs,
         first_index=1 + offset,
         last_index=last_index,

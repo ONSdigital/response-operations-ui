@@ -42,6 +42,8 @@ Jinja2 = "*"
 MarkupSafe = "*"
 WTForms = "*"
 email_validator = "*"
+jwcrypto = "*"
+flake8 = "*"
 
 [dev-packages]
 black = "*"

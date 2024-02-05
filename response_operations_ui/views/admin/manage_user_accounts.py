@@ -1,4 +1,5 @@
 import logging
+import math
 
 from flask import (
     current_app,
@@ -14,6 +15,7 @@ from flask_paginate import Pagination
 from requests import HTTPError
 from structlog import wrap_logger
 
+from response_operations_ui.common.pagination_processor import pagination_processor
 from response_operations_ui.common.token_decoder import generate_token
 from response_operations_ui.common.uaa import verify_permission
 from response_operations_ui.controllers.notify_controller import NotifyController
@@ -87,25 +89,16 @@ def manage_user_accounts():
             search_email=search_email,
         )
     user_list = _get_refine_user_list(uaa_user_list["resources"])
-    pagination = Pagination(
-        page=int(page),
-        per_page=limit,
-        total=uaa_user_list["totalResults"],
-        record_name="Users",
-        prev_label="Previous",
-        next_label="Next",
-        outer_window=0,
-        format_total=True,
-        format_number=True,
-        show_single_page=False,
-    )
+
+    pagination = pagination_processor(uaa_user_list["totalResults"], limit, page)
+
     return render_template(
         "admin/manage-user-accounts.html",
         user_list=user_list,
-        pagination=pagination,
         show_pagination=bool(uaa_user_list["totalResults"] > limit),
         form=form,
         search_email=search_email,
+        pagination=pagination,
     )
 
 
