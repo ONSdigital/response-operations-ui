@@ -73,6 +73,6 @@
             <h2 class="ons-u-fs-l">{{ total_business_count }} Results found</h2>
         {% endif %}
         <h3 class="ons-u-mb-m">Displaying <strong>{{ first_index }} - {{ last_index }}</strong> of <strong>{{ total_business_count }}</strong></h3>
-        {% if show_pagination %}{% include 'respondent-search/rs-pagination.html' %}{% endif %}
+        {% if show_pagination %}{% include 'partials/pagination.html' %}{% endif %}
     {% endif %}
 {% endblock %}
