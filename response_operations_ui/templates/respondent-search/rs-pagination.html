@@ -5,6 +5,8 @@
     {% for page in pagination.page_links %}
       {% if conversation_tab %}
         {% set link = {'url': "?conversation_tab=" + conversation_tab + "&page=" + page | string } %}
+      {% elif href %}
+        {% set link = {'url': href + page | string } %}
       {% else %}
         {% set link = {'url': "?page=" + page | string } %}
       {% endif %}

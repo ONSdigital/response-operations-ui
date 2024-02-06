@@ -640,5 +640,5 @@ class TestRespondents(ViewTestCase):
         last_name = "Bob"
 
         self.assertEqual(
-            "search?firstname=Jim&lastname=Bob&page={0}", _generate_pagination_href("", first_name, last_name)
+            "search?firstname=Jim&lastname=Bob&page=", _generate_pagination_href("", first_name, last_name)
         )

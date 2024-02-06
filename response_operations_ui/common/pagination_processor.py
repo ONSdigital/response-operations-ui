@@ -1,7 +1,7 @@
 import math
 
 
-def pagination_processor(total_results, page_limit, page_number):
+def pagination_processor(total_results, page_limit, page_number, href=None):
     page_links = []
     total_results = math.ceil(total_results / page_limit)
     for page_link in range(1, (total_results + 1)):

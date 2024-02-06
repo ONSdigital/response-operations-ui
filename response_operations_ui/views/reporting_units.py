@@ -5,7 +5,6 @@ from flask import Blueprint
 from flask import current_app as app
 from flask import flash, redirect, render_template, request, url_for
 from flask_login import login_required
-from flask_paginate import Pagination
 from iso8601 import parse_date
 from structlog import wrap_logger
 
@@ -325,19 +324,6 @@ def search_reporting_units():
     last_index = (limit + offset) if total_business_count >= limit else total_business_count
 
     pagination = pagination_processor(total_business_count, limit, page)
-
-    # pagination = Pagination(
-    #     page=int(page),
-    #     per_page=limit,
-    #     total=len(business_list) if len(business_list) != 0 and total_business_count <= limit else total_business_count,
-    #     record_name="Business",
-    #     prev_label="Previous",
-    #     next_label="Next",
-    #     outer_window=0,
-    #     format_total=True,
-    #     format_number=True,
-    #     show_single_page=False,
-    # )
 
     return render_template(
         "reporting-unit-search/reporting-units.html",

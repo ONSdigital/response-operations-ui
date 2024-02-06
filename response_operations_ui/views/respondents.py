@@ -6,10 +6,10 @@ from flask import Blueprint
 from flask import current_app as app
 from flask import flash, redirect, render_template, request, url_for
 from flask_login import login_required
-from flask_paginate import Pagination
 from iso8601 import ParseError, parse_date
 from structlog import wrap_logger
 
+from response_operations_ui.common.pagination_processor import pagination_processor
 from response_operations_ui.common.respondent_utils import filter_respondents
 from response_operations_ui.common.uaa import verify_permission
 from response_operations_ui.controllers import (
@@ -63,6 +63,7 @@ def search_redirect():
     breadcrumbs = [{"text": "Respondents"}, {"text": "Search"}]
 
     limit = app.config["PARTY_RESPONDENTS_PER_PAGE"]
+    # limit = 2
 
     party_response = party_controller.search_respondents(first_name, last_name, email_address, page, limit)
 
@@ -79,19 +80,9 @@ def search_redirect():
         (results_per_page + offset) if total_respondents_available >= results_per_page else total_respondents_available
     )
 
-    pagination = Pagination(
-        page=int(page),
-        per_page=results_per_page,
-        total=total_respondents_available,
-        record_name="respondents",
-        prev_label="Previous",
-        next_label="Next",
-        outer_window=0,
-        format_total=True,
-        format_number=True,
-        show_single_page=False,
-        href=_generate_pagination_href(email_address, first_name, last_name),
-    )
+    href = _generate_pagination_href(email_address, first_name, last_name)
+
+    pagination = pagination_processor(total_respondents_available, limit, page, href)
 
     return render_template(
         "respondent-search/respondent-search-results.html",
@@ -102,6 +93,7 @@ def search_redirect():
         first_index=1 + offset,
         last_index=last_index,
         pagination=pagination,
+        href=href,
         show_pagination=bool(total_respondents_available > results_per_page),
     )
 
@@ -447,5 +439,5 @@ def _generate_pagination_href(email_address="", first_name="", last_name=""):
     if last_name != "":
         href_string_list.append("lastname=" + last_name)
     # This is needed for custom hrefs as per the flask-paginate docs
-    href_string_list.append("page={0}")
+    href_string_list.append("page=")
     return "search?" + "&".join(href_string_list)

@@ -1,5 +1,4 @@
 import logging
-import math
 
 from flask import (
     current_app,
@@ -11,7 +10,6 @@ from flask import (
     url_for,
 )
 from flask_login import login_required
-from flask_paginate import Pagination
 from requests import HTTPError
 from structlog import wrap_logger
 
