@@ -1,14 +1,14 @@
 import math
 
 
-def pagination_processor(total_results, page_limit, page_number, href=None):
-    page_links = []
+def pagination_processor(total_results, page_limit, current_page_number):
+    page_numbers = []
     total_results = math.ceil(total_results / page_limit)
     for page_link in range(1, (total_results + 1)):
-        page_links.append(page_link)
+        page_numbers.append(page_link)
 
     pagination = {
-        "page_links": page_links,
-        "page": page_number,
+        "page_numbers": page_numbers,
+        "current_page_number": current_page_number,
     }
     return pagination
