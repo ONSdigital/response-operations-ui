@@ -410,7 +410,8 @@ class TestReportingUnits(ViewTestCase):
         self.assertIn("75 Results found", data)
         self.assertIn("Displaying 1 - 25 of 75", data)
         self.assertIn("Page 1 of 3", data)  # Validates the page count is correct
-        self.assertIn("Previous 123Next", data)  # Validates Pagination controls displayed
+        data = data.replace("\n", "").replace(" ", "")  # Need to remove newline and space due to ONS formatting
+        self.assertIn("123Next", data)  # Validates Pagination controls displayed
 
     @requests_mock.mock()
     def test_search_reporting_units_no_results_displays_correctly(self, mock_request):
