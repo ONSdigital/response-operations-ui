@@ -63,7 +63,6 @@ def search_redirect():
     breadcrumbs = [{"text": "Respondents"}, {"text": "Search"}]
 
     limit = app.config["PARTY_RESPONDENTS_PER_PAGE"]
-    # limit = 2
 
     party_response = party_controller.search_respondents(first_name, last_name, email_address, page, limit)
 
@@ -82,7 +81,7 @@ def search_redirect():
 
     href = _generate_pagination_href(email_address, first_name, last_name)
 
-    pagination = pagination_processor(total_respondents_available, limit, page, href)
+    pagination = pagination_processor(total_respondents_available, limit, page)
 
     return render_template(
         "respondent-search/respondent-search-results.html",
