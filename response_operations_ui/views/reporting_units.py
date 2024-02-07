@@ -10,6 +10,9 @@ from iso8601 import parse_date
 from structlog import wrap_logger
 
 from response_operations_ui.common.mappers import map_ce_response_status, map_region
+from response_operations_ui.contexts.reporting_units import (
+    build_reporting_units_context,
+)
 from response_operations_ui.controllers import (
     case_controller,
     iac_controller,
@@ -211,6 +214,15 @@ def view_reporting_unit_survey(ru_ref, survey_id):
 
     logger.info("Successfully gathered data to view reporting unit survey data", ru_ref=ru_ref, survey_id=survey_id)
 
+    context = build_reporting_units_context(
+        collection_exercises_with_details, reporting_unit, survey_details, survey_respondents, case, unused_iac
+    )
+    print()
+    print()
+    print(context)
+    print()
+    print()
+
     return render_template(
         "reporting-unit-survey.html",
         ru=reporting_unit,
@@ -219,6 +231,7 @@ def view_reporting_unit_survey(ru_ref, survey_id):
         collection_exercises=collection_exercises_with_details,
         iac=unused_iac,
         case=case,
+        context=context,
     )
 
 
