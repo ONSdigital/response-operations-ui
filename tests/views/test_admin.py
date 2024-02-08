@@ -137,6 +137,10 @@ class TestMessage(ViewTestCase):
         self.assertIn("Delete".encode(), response.data)
         self.assertIn("Andy0.Smith@ons.gov.uk".encode(), response.data)
         self.assertIn("Page 1 of 26".encode(), response.data)
+        # Validates Pagination controls displayed
+        self.assertIn('<a href="?page=1" class="ons-pagination__link"aria-current="true" aria-label="Current page ('
+                      'Page 1 of 26)">1</a>'.encode(), response.data)  
+        self.assertIn('<a href="?page=2" class="ons-pagination__link"aria-label="Go to page 2"rel="next">2</a>'.encode(), response.data)  # Validates Pagination controls displayed
 
     @requests_mock.mock()
     def test_manage_user_accounts_email_search(self, mock_request):

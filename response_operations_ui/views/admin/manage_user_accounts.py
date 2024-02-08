@@ -87,7 +87,7 @@ def manage_user_accounts():
             search_email=search_email,
         )
     user_list = _get_refine_user_list(uaa_user_list["resources"])
-
+    
     pagination = pagination_processor(uaa_user_list["totalResults"], limit, page)
 
     return render_template(

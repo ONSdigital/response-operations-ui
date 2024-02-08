@@ -81,7 +81,7 @@ def search_redirect():
 
     href = _generate_pagination_href(email_address, first_name, last_name)
 
-    pagination = pagination_processor(total_respondents_available, limit, page)
+    pagination = pagination_processor(total_respondents_available, limit, page, href)
 
     return render_template(
         "respondent-search/respondent-search-results.html",
@@ -92,7 +92,6 @@ def search_redirect():
         first_index=1 + offset,
         last_index=last_index,
         pagination=pagination,
-        href=href,
         show_pagination=bool(total_respondents_available > results_per_page),
     )
 
@@ -437,6 +436,4 @@ def _generate_pagination_href(email_address="", first_name="", last_name=""):
         href_string_list.append("firstname=" + first_name)
     if last_name != "":
         href_string_list.append("lastname=" + last_name)
-    # This is needed for custom hrefs as per the flask-paginate docs
-    href_string_list.append("page=")
     return "search?" + "&".join(href_string_list)

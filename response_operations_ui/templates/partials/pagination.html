@@ -1,21 +1,10 @@
 {% from "components/pagination/_macro.njk" import onsPagination %}
 
 <div class="ons-u-mt-m">
-    {% set pages = [] %}
-    {% for page_number in pagination.page_numbers %}
-      {% if conversation_tab %}
-        {% set link = {'url': "?conversation_tab=" + conversation_tab + "&page=" + page_number | string } %}
-      {% elif href %}
-        {% set link = {'url': href + page_number | string } %}
-      {% else %}
-        {% set link = {'url': "?page=" + page_number | string} %}
-      {% endif %}
-      {% set pages = pages.append(link) %}
-    {% endfor %}
     {{ 
       onsPagination({
         "currentPageNumber": pagination.current_page_number,
-        "pages": pages
+        "pages": pagination.page_links
       })
     }}
 </div>
