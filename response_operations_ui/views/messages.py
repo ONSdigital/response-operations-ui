@@ -527,9 +527,9 @@ def view_selected_survey(selected_survey):  # noqa: C901
                 survey_id, business_id_filter, conversation_tab, page, limit, category
             )
         ]
-        
+
         href = "?conversation_tab=" + conversation_tab
-        
+
         pagination = pagination_processor(tab_counts["current"], limit, page, href)
 
         return render_template(
@@ -1035,7 +1035,7 @@ def _process_category_page(
                 None, business_id_filter, conversation_tab, page, limit, category
             )
         ]
-        
+
         href = "?conversation_tab=" + conversation_tab
 
         pagination = pagination_processor(tab_counts["current"], limit, page, href)
@@ -1106,7 +1106,7 @@ def _process_non_survey_category_page(
         ]
 
         href = "?conversation_tab=" + conversation_tab
-        
+
         pagination = pagination_processor(tab_counts["current"], limit, page, href)
 
         return render_template(
