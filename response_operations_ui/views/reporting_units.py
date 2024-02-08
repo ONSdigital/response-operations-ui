@@ -25,6 +25,7 @@ from response_operations_ui.controllers.collection_exercise_controllers import (
     get_collection_exercise_by_id,
 )
 from response_operations_ui.controllers.survey_controllers import get_survey_by_id
+from response_operations_ui.controllers.uaa_controller import user_has_permission
 from response_operations_ui.exceptions.exceptions import ApiError
 from response_operations_ui.forms import EditContactDetailsForm, RuSearchForm
 
@@ -214,14 +215,16 @@ def view_reporting_unit_survey(ru_ref, survey_id):
 
     logger.info("Successfully gathered data to view reporting unit survey data", ru_ref=ru_ref, survey_id=survey_id)
 
+    permissions = [user_has_permission("reportingunits.edit"), user_has_permission("messages.edit")]
     context = build_reporting_units_context(
-        collection_exercises_with_details, reporting_unit, survey_details, survey_respondents, case, unused_iac
+        collection_exercises_with_details,
+        reporting_unit,
+        survey_details,
+        survey_respondents,
+        case,
+        unused_iac,
+        permissions,
     )
-    print()
-    print()
-    print(context)
-    print()
-    print()
 
     return render_template(
         "reporting-unit-survey.html",

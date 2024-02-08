@@ -1,18 +1,18 @@
 from flask import url_for
 
-from response_operations_ui.controllers.uaa_controller import user_has_permission
-
 
 def build_reporting_units_context(
-    collection_exercises: list, ru: dict, survey: dict, respondents: list, case, unused_iac: str
+    collection_exercises: list, ru: dict, survey: dict, respondents: list, case, unused_iac: str, permissions: list
 ):
-    collection_exercise_section = _build_collection_exercise_section(collection_exercises, ru, survey)
-    respondents_section = _build_respondents_section(respondents, case, collection_exercises, ru, survey, unused_iac)
+    collection_exercise_section = _build_collection_exercise_section(collection_exercises, ru, survey, permissions)
+    respondents_section = _build_respondents_section(
+        respondents, case, collection_exercises, ru, survey, unused_iac, permissions
+    )
 
     return {"collection_exercise_section": collection_exercise_section, "respondents_section": respondents_section}
 
 
-def _build_collection_exercise_section(collection_exercises: list, ru: dict, survey: dict):
+def _build_collection_exercise_section(collection_exercises: list, ru: dict, survey: dict, permissions: list):
     row = {}
     table = []
     for ce in collection_exercises:
@@ -23,13 +23,13 @@ def _build_collection_exercise_section(collection_exercises: list, ru: dict, sur
             survey=survey["shortName"],
             period=ce["exerciseRef"],
         )
-        row["hyperlink_text"] = "Change" if user_has_permission("reportingunits.edit") else "View"
+        row["hyperlink_text"] = "Change" if permissions[0] else "View"
         row["period"] = ce["exerciseRef"]
         row["reporting_unit_name"] = ce["companyName"]
         row["trading_as"] = ce["tradingAs"]
         row["region"] = ce["companyRegion"]
         row["response_status"] = ce["responseStatus"]
-        row["status"] = _build_ce_status(ru, survey, ce)
+        row["status"] = _build_ce_status(ru, survey, ce, permissions)
         table.append(row)
     return table
 
@@ -47,14 +47,14 @@ def _select_status_class(status):
         return "ons-status--error"
 
 
-def _build_ce_status(ru, survey, ce):
+def _build_ce_status(ru, survey, ce, permissions):
     hyperlink = url_for(
         "case_bp.get_response_statuses",
         ru_ref=ru["sampleUnitRef"],
         survey=survey["shortName"],
         period=ce["exerciseRef"],
     )
-    hyperlink_text = "Change" if user_has_permission("reportingunits.edit") else "View"
+    hyperlink_text = "Change" if permissions[0] else "View"
     status_class = _select_status_class(ce["responseStatus"])
     response_status = ce["responseStatus"]
     return (
@@ -72,11 +72,13 @@ def _build_ce_status(ru, survey, ce):
     )
 
 
-def _build_respondents_section(respondents: list, case, collection_exercises, ru, survey, unused_iac):
+def _build_respondents_section(
+    respondents: list, case, collection_exercises: list, ru: dict, survey: dict, unused_iac: str, permissions: list
+):
     row = {}
     table = []
     for respondent in respondents:
-        if user_has_permission("reportingunits.edit"):
+        if permissions[0]:
             if unused_iac:
                 row["enrolment_code"] = unused_iac
             else:
@@ -105,21 +107,17 @@ def _build_respondents_section(respondents: list, case, collection_exercises, ru
             + respondent["status"].capitalize()
             + "</span>"
         )
-        (
-            enrolment_status_hyperlink,
-            enrolment_status_hyperlink_text,
-            enrolment_status_class,
-        ) = _build_enrollment_status_hyperlink(respondent, ru, survey)
-        row["enrolment_status"] = _build_enrolment_status(respondent, ru, survey)
-        row["message"] = [
-            {"name": "ru_ref", "value": ru["sampleUnitRef"]},
-            {"name": "business_id", "value": ru["id"]},
-            {"name": "business", "value": ru["name"]},
-            {"name": "survey", "value": survey["shortName"]},
-            {"name": "survey_id", "value": survey["id"]},
-            {"name": "msg_to_name", "value": row["contact_details"]["Name"]},
-            {"name": "msg_to", "value": respondent["id"]},
-        ]
+        row["enrolment_status"] = _build_enrolment_status(respondent, ru, survey, permissions)
+        if permissions[1]:
+            row["message"] = [
+                {"name": "ru_ref", "value": ru["sampleUnitRef"]},
+                {"name": "business_id", "value": ru["id"]},
+                {"name": "business", "value": ru["name"]},
+                {"name": "survey", "value": survey["shortName"]},
+                {"name": "survey_id", "value": survey["id"]},
+                {"name": "msg_to_name", "value": row["contact_details"]["Name"]},
+                {"name": "msg_to", "value": respondent["id"]},
+            ]
         table.append(row)
 
     return table
@@ -132,7 +130,7 @@ def _select_account_status_class(status):
         return "ons-status--success"
 
 
-def _build_enrollment_status_hyperlink(respondent, ru, survey):
+def _build_enrollment_status_hyperlink(respondent, ru, survey, permissions):
     if respondent["enrolmentStatus"] == "ENABLED":
         status_class = "ons-status--success"
         hyperlink = url_for(
@@ -157,7 +155,7 @@ def _build_enrollment_status_hyperlink(respondent, ru, survey):
         )
         hyperlink_text = "Re-send verification email"
     else:
-        status_class = "ons-status-dead"
+        status_class = "ons-status--dead"
         hyperlink = url_for(
             "reporting_unit_bp.confirm_change_enrolment_status",
             ru_ref=ru["sampleUnitRef"],
@@ -173,18 +171,18 @@ def _build_enrollment_status_hyperlink(respondent, ru, survey):
             tab="reporting_units",
         )
         hyperlink_text = "Re-enable"
-    if not user_has_permission("reportingunits.edit"):
+    if not permissions[0]:
         hyperlink = None
 
     return hyperlink, hyperlink_text, status_class
 
 
-def _build_enrolment_status(respondent, ru, survey):
+def _build_enrolment_status(respondent, ru, survey, permissions):
     (
         hyperlink,
         hyperlink_text,
         enrolment_status_class,
-    ) = _build_enrollment_status_hyperlink(respondent, ru, survey)
+    ) = _build_enrollment_status_hyperlink(respondent, ru, survey, permissions)
     enrolment_status = (
         '<span class="ons-status '
         + enrolment_status_class
@@ -192,6 +190,8 @@ def _build_enrolment_status(respondent, ru, survey):
         + respondent["enrolmentStatus"].capitalize()
         + "</span> <br/>"
     )
-    enrolment_status_link = ' <a href="' + hyperlink + '">' + hyperlink_text + "</a>" if hyperlink else ""
+    enrolment_status_link = (
+        ' <a href="' + hyperlink + '"id="change-enrolment-status">' + hyperlink_text + "</a>" if hyperlink else ""
+    )
     enrolment_status = enrolment_status + enrolment_status_link
     return enrolment_status
