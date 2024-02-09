@@ -51,7 +51,7 @@ def test_transitions_from_not_started(
             True,
         )
         radios = get_case_context(context, "change_response_status", "radios")
-    
+
     assert expected_case_context_transitions_from_not_started["change_response_status"]["radios"] == radios
 
 
