@@ -1,4 +1,3 @@
-import json
 import unittest
 
 from response_operations_ui.common.pagination_processor import pagination_processor
