@@ -656,3 +656,100 @@ def expected_case_context_with_all_permissions():
 @pytest.fixture
 def expected_case_context_with_no_permissions():
     return {"change_response_status": {}}
+
+
+@pytest.fixture
+def expected_case_context_transitions_from_not_started():
+    return {
+        "change_response_status": {
+            "form_action": "/case/49900000001/response-status?survey=QBS&"
+            + "case_group_id=6fef0397-f07b-4d65-8988-931cec23057f&period=1912",
+            "radios": [
+                {"id": "state-1", "label": {"text": "Completed by phone"}, "value": "COMPLETED_BY_PHONE"},
+                {"id": "state-2", "label": {"text": "No longer required"}, "value": "NO_LONGER_REQUIRED"},
+            ],
+            "cancel_link": "/reporting-units/49900000001/surveys/02b9c366-7397-42f7-942a-76dc5876d86d",
+        }
+    }
+
+
+@pytest.fixture
+def expected_case_context_transitions_from_completed_by_phone():
+    return {
+        "change_response_status": {
+            "form_action": "/case/49900000001/response-status?survey=QBS&"
+            + "case_group_id=6fef0397-f07b-4d65-8988-931cec23057f&period=1912",
+            "radios": [{"id": "state-1", "label": {"text": "Not started"}, "value": "COMPLETED_TO_NOTSTARTED"}],
+            "cancel_link": "/reporting-units/49900000001/surveys/02b9c366-7397-42f7-942a-76dc5876d86d",
+        }
+    }
+
+
+@pytest.fixture
+def expected_case_context_transitions_from_in_progress():
+    return {
+        "change_response_status": {
+            "form_action": "/case/49900000001/response-status?survey=QBS&"
+            + "case_group_id=6fef0397-f07b-4d65-8988-931cec23057f&period=1912",
+            "radios": [
+                {"id": "state-1", "label": {"text": "Completed by phone"}, "value": "COMPLETED_BY_PHONE"},
+                {"id": "state-2", "label": {"text": "No longer required"}, "value": "NO_LONGER_REQUIRED"},
+            ],
+            "cancel_link": "/reporting-units/49900000001/surveys/02b9c366-7397-42f7-942a-76dc5876d86d",
+        }
+    }
+
+
+@pytest.fixture
+def expected_case_context_transitions_from_no_longer_required():
+    return {
+        "change_response_status": {
+            "form_action": "/case/49900000001/response-status?survey=QBS&"
+            + "case_group_id=6fef0397-f07b-4d65-8988-931cec23057f&period=1912",
+            "radios": [{"id": "state-1", "label": {"text": "Not started"}, "value": "COMPLETED_TO_NOTSTARTED"}],
+            "cancel_link": "/reporting-units/49900000001/surveys/02b9c366-7397-42f7-942a-76dc5876d86d",
+        }
+    }
+
+
+@pytest.fixture
+def expected_case_context_transitions_from_complete():
+    return {
+        "change_response_status": {
+            "form_action": "/case/49900000001/response-status?survey=QBS&"
+            + "case_group_id=6fef0397-f07b-4d65-8988-931cec23057f&period=1912",
+            "radios": [{"id": "state-1", "label": {"text": "Not started"}, "value": "COMPLETED_TO_NOTSTARTED"}],
+            "cancel_link": "/reporting-units/49900000001/surveys/02b9c366-7397-42f7-942a-76dc5876d86d",
+        }
+    }
+
+
+@pytest.fixture
+def transitions_for_complete_case():
+    return {"COMPLETED_TO_NOTSTARTED": "Not started"}
+
+
+@pytest.fixture
+def transitions_for_completed_by_phone_case():
+    return {"COMPLETED_TO_NOTSTARTED": "Not started"}
+
+
+@pytest.fixture
+def transitions_for_no_longer_required_case():
+    return {"COMPLETED_TO_NOTSTARTED": "Not started"}
+
+
+@pytest.fixture
+def transitions_for_in_progress_case():
+    return {
+        "COMPLETED_BY_PHONE": "Completed by phone",
+        "NO_LONGER_REQUIRED": "No longer required",
+    }
+
+
+@pytest.fixture
+def transitions_for_not_started_case():
+    return {
+        "COMPLETED_BY_PHONE": "Completed by phone",
+        "NO_LONGER_REQUIRED": "No longer required",
+    }
