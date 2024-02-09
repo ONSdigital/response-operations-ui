@@ -639,3 +639,20 @@ def expected_ru_context_with_all_permissions():
             }
         ],
     }
+
+
+@pytest.fixture
+def expected_case_context_with_all_permissions():
+    return {
+        "change_response_status": {
+            "form_action": "/case/49900000001/response-status?survey=QBS&"
+            + "case_group_id=6fef0397-f07b-4d65-8988-931cec23057f&period=1912",
+            "radios": [{"id": "state-1", "label": {"text": "Not started"}, "value": "COMPLETED_TO_NOTSTARTED"}],
+            "cancel_link": "/reporting-units/49900000001/surveys/02b9c366-7397-42f7-942a-76dc5876d86d",
+        }
+    }
+
+
+@pytest.fixture
+def expected_case_context_with_no_permissions():
+    return {"change_response_status": {}}

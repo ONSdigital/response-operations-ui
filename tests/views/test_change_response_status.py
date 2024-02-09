@@ -379,7 +379,7 @@ class TestChangeResponseStatus(TestCase):
         self.assertIn(b"Not started", data)
 
     @requests_mock.mock()
-    def test_not_started_status_is_not_present_for_not_started_without_permission(self, mock_request):
+    def test_no_status_change_options_available_without_permission(self, mock_request):
         mock_request.get(url_get_survey_by_short_name, json=survey)
         mock_request.get(url_get_collection_exercises_by_survey, json=collection_exercise_list)
         mock_request.get(url_get_collection_exercises_by_survey, json=collection_exercise_list)
