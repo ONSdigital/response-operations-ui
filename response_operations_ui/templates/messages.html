@@ -227,7 +227,7 @@
                     }}
 
                 {% endif %}
-                {% include 'partials/pagination.html' %}
+                {% if show_pagination %}{% include 'partials/pagination.html' %}{% endif %}
             {% endif %}
         </div>
     </div>

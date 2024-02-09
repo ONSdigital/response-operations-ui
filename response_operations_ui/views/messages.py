@@ -477,7 +477,7 @@ def view_selected_survey(selected_survey):  # noqa: C901
     breadcrumbs = [{"text": displayed_short_name + " Messages"}]
 
     page = request.args.get("page", default=1, type=int)
-    limit = request.args.get("limit", default=10, type=int)
+    limit = request.args.get("limit", default=2, type=int)
     conversation_tab = request.args.get("conversation_tab", default="open")
     ru_ref_filter = request.args.get("ru_ref_filter", default="")
     business_id_filter = request.args.get("business_id_filter", default="")
@@ -541,11 +541,13 @@ def view_selected_survey(selected_survey):  # noqa: C901
             selected_survey=selected_survey,
             displayed_short_name=displayed_short_name,
             pagination=pagination,
+            limit=limit,
             change_survey=True,
             conversation_tab=conversation_tab,
             business_id_filter=business_id_filter,
             ru_ref_filter=ru_ref_filter,
             tab_titles=_get_tab_titles(tab_counts, ru_ref_filter),
+            show_pagination=bool(tab_counts["current"] > limit),
         )
 
     except (TypeError, KeyError):
@@ -995,7 +997,7 @@ def _process_category_page(
     :rtype: WSGI application
     """
     page = request.args.get("page", default=1, type=int)
-    limit = request.args.get("limit", default=10, type=int)
+    limit = request.args.get("limit", default=2, type=int)
     conversation_tab = request.args.get("conversation_tab", default="open")
     ru_ref_filter = request.args.get("ru_ref_filter", default="")
     business_id_filter = request.args.get("business_id_filter", default="")
@@ -1048,10 +1050,12 @@ def _process_category_page(
             messages=messages,
             selected_survey=selected_survey,
             pagination=pagination,
+            limit=limit,
             conversation_tab=conversation_tab,
             business_id_filter=business_id_filter,
             ru_ref_filter=ru_ref_filter,
             tab_titles=_get_tab_titles(tab_counts, ru_ref_filter),
+            show_pagination=bool(tab_counts["current"] > limit),
         )
 
     except (TypeError, KeyError):
@@ -1083,7 +1087,7 @@ def _process_non_survey_category_page(
     :rtype: WSGI application
     """
     page = request.args.get("page", default=1, type=int)
-    limit = request.args.get("limit", default=10, type=int)
+    limit = request.args.get("limit", default=2, type=int)
     conversation_tab = request.args.get("conversation_tab", default="open")
     category = category
     try:
@@ -1115,8 +1119,10 @@ def _process_non_survey_category_page(
             breadcrumbs=breadcrumbs,
             messages=messages,
             pagination=pagination,
+            limit=limit,
             conversation_tab=conversation_tab,
             tab_titles=_get_tab_titles(tab_counts, ""),
+            show_pagination=bool(tab_counts["current"] > limit),
         )
 
     except (TypeError, KeyError):
