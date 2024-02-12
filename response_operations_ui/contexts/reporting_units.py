@@ -13,24 +13,26 @@ def build_reporting_units_context(
 
 
 def _build_collection_exercise_section(collection_exercises: list, ru: dict, survey: dict, permissions: list):
-    row = {}
     table = []
     for ce in collection_exercises:
-        row["status_class"] = _select_status_class(ce["responseStatus"])
-        row["hyperlink"] = url_for(
-            "case_bp.get_response_statuses",
-            ru_ref=ru["sampleUnitRef"],
-            survey=survey["shortName"],
-            period=ce["exerciseRef"],
-        )
-        row["hyperlink_text"] = "Change" if permissions[0] else "View"
-        row["period"] = ce["exerciseRef"]
-        row["reporting_unit_name"] = ce["companyName"]
-        row["trading_as"] = ce["tradingAs"]
-        row["region"] = ce["companyRegion"]
-        row["response_status"] = ce["responseStatus"]
-        row["status"] = _build_ce_status(ru, survey, ce, permissions)
+        row = {
+            "status_class": _select_status_class(ce["responseStatus"]),
+            "hyperlink": url_for(
+                "case_bp.get_response_statuses",
+                ru_ref=ru["sampleUnitRef"],
+                survey=survey["shortName"],
+                period=ce["exerciseRef"],
+            ),
+            "hyperlink_text": "Change" if permissions[0] else "View",
+            "period": ce["exerciseRef"],
+            "reporting_unit_name": ce["companyName"],
+            "trading_as": ce["tradingAs"],
+            "region": ce["companyRegion"],
+            "response_status": ce["responseStatus"],
+            "status": _build_ce_status(ru, survey, ce, permissions),
+        }
         table.append(row)
+
     return table
 
 
@@ -75,9 +77,9 @@ def _build_ce_status(ru, survey, ce, permissions):
 def _build_respondents_section(
     respondents: list, case, collection_exercises: list, ru: dict, survey: dict, unused_iac: str, permissions: list
 ):
-    row = {}
     table = []
     for respondent in respondents:
+        row = {}
         if permissions[0]:
             if unused_iac:
                 row["enrolment_code"] = unused_iac

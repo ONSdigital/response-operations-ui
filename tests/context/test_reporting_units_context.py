@@ -274,5 +274,28 @@ def test_respondent_enrolment_disabled(
     assert "ons-status--dead" in enrolment_status
 
 
+def test_multiple_collection_exercises_and_respondents(
+    app,
+    multiple_collection_exercises_with_details,
+    multiple_reporting_units,
+    survey_details,
+    multiple_survey_respondents,
+    multiple_cases,
+    expected_ru_context_with_multiple_ces_and_respondents,
+):
+    with app.test_request_context():
+        context = build_reporting_units_context(
+            multiple_collection_exercises_with_details,
+            multiple_reporting_units,
+            survey_details,
+            multiple_survey_respondents,
+            multiple_cases,
+            "99yk5r3yjycn",
+            [True, True],
+        )
+
+    assert context == expected_ru_context_with_multiple_ces_and_respondents
+
+
 def get_ru_context(context, section, index, cell):
     return context[section][index][cell]
