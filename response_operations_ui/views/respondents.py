@@ -77,7 +77,7 @@ def search_redirect():
 
     if len(respondents) == 1:
         last_index = 0
-    elif total_respondents_available >= results_per_page:
+    elif (total_respondents_available >= results_per_page) and not (len(respondents) < limit):
         last_index = results_per_page + offset
     else:
         last_index = total_respondents_available
