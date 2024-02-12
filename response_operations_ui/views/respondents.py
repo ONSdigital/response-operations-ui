@@ -75,9 +75,12 @@ def search_redirect():
 
     offset = (int(page) - 1) * results_per_page
 
-    last_index = (
-        (results_per_page + offset) if total_respondents_available >= results_per_page else total_respondents_available
-    )
+    if len(respondents) == 1:
+        last_index = 0
+    elif total_respondents_available >= results_per_page:
+        last_index = results_per_page + offset
+    else:
+        last_index = total_respondents_available
 
     href = _generate_pagination_href(email_address, first_name, last_name)
 

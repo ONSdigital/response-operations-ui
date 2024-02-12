@@ -321,9 +321,19 @@ def search_reporting_units():
     total_business_count = response_data["total_business_count"]
 
     offset = (int(page) - 1) * limit
-    last_index = (limit + offset) if total_business_count >= limit else total_business_count
 
-    pagination = pagination_processor(total_business_count, limit, page)
+    if len(business_list) == 1:
+        last_index = 0
+    elif len(business_list) < (limit + offset):
+        last_index = total_business_count
+    elif total_business_count >= limit:
+        last_index = limit + offset
+    else:
+        last_index = total_business_count
+
+    href = "?query=" + search_key_words
+
+    pagination = pagination_processor(total_business_count, limit, page, href)
 
     return render_template(
         "reporting-unit-search/reporting-units.html",
