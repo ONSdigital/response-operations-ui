@@ -1,0 +1,10 @@
+{% from "components/pagination/_macro.njk" import onsPagination %}
+
+<div class="ons-u-mt-m">
+    {{ 
+      onsPagination({
+        "currentPageNumber": pagination.current_page_number,
+        "pages": pagination.page_links
+      })
+    }}
+</div>

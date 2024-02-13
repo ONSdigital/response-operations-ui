@@ -6,10 +6,10 @@ from flask import Blueprint
 from flask import current_app as app
 from flask import flash, redirect, render_template, request, url_for
 from flask_login import login_required
-from flask_paginate import Pagination
 from iso8601 import ParseError, parse_date
 from structlog import wrap_logger
 
+from response_operations_ui.common.pagination_processor import pagination_processor
 from response_operations_ui.common.respondent_utils import filter_respondents
 from response_operations_ui.common.uaa import verify_permission
 from response_operations_ui.controllers import (
@@ -75,23 +75,16 @@ def search_redirect():
 
     offset = (int(page) - 1) * results_per_page
 
-    last_index = (
-        (results_per_page + offset) if total_respondents_available >= results_per_page else total_respondents_available
-    )
+    if len(respondents) == 1:
+        last_index = 0
+    elif (total_respondents_available >= results_per_page) and not (len(respondents) < limit):
+        last_index = results_per_page + offset
+    else:
+        last_index = total_respondents_available
 
-    pagination = Pagination(
-        page=int(page),
-        per_page=results_per_page,
-        total=total_respondents_available,
-        record_name="respondents",
-        prev_label="Previous",
-        next_label="Next",
-        outer_window=0,
-        format_total=True,
-        format_number=True,
-        show_single_page=False,
-        href=_generate_pagination_href(email_address, first_name, last_name),
-    )
+    href = _generate_pagination_href(email_address, first_name, last_name)
+
+    pagination = pagination_processor(total_respondents_available, limit, page, href)
 
     return render_template(
         "respondent-search/respondent-search-results.html",
@@ -446,6 +439,4 @@ def _generate_pagination_href(email_address="", first_name="", last_name=""):
         href_string_list.append("firstname=" + first_name)
     if last_name != "":
         href_string_list.append("lastname=" + last_name)
-    # This is needed for custom hrefs as per the flask-paginate docs
-    href_string_list.append("page={0}")
     return "search?" + "&".join(href_string_list)

@@ -192,8 +192,7 @@
                     }}
 
                 {% endif %}
-                {{ pagination.links }}
-
+                {% if show_pagination %}{% include 'partials/pagination.html' %}{% endif %}
             {% endif %}
         </div>
     </div>
