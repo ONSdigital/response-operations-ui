@@ -215,7 +215,10 @@ def view_reporting_unit_survey(ru_ref, survey_id):
 
     logger.info("Successfully gathered data to view reporting unit survey data", ru_ref=ru_ref, survey_id=survey_id)
 
-    permissions = [user_has_permission("reportingunits.edit"), user_has_permission("messages.edit")]
+    permissions = {
+        "reporting_unit_edit": user_has_permission("reportingunits.edit"),
+        "messages_edit": user_has_permission("messages.edit"),
+    }
     context = build_reporting_units_context(
         collection_exercises_with_details,
         reporting_unit,

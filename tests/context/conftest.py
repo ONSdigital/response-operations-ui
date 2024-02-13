@@ -371,100 +371,9 @@ def error_collection_exercise_with_details(collection_exercises_with_details):
 
 
 @pytest.fixture
-def multiple_collection_exercises_with_details():
-    return [
-        {
-            "id": "57e06b27-a62b-4d8e-8d57-7b6b80067e4f",
-            "surveyId": "02b9c366-7397-42f7-942a-76dc5876d86d",
-            "name": None,
-            "actualExecutionDateTime": None,
-            "scheduledExecutionDateTime": "2024-02-11T07:00:00.000Z",
-            "scheduledStartDateTime": "2024-02-11T07:00:00.000Z",
-            "actualPublishDateTime": None,
-            "periodStartDateTime": "2024-02-11T07:00:00.000Z",
-            "periodEndDateTime": "2024-02-16T07:00:00.000Z",
-            "scheduledReturnDateTime": "2024-02-16T07:00:00.000Z",
-            "scheduledEndDateTime": "2024-02-16T07:00:00.000Z",
-            "executedBy": None,
-            "eqVersion": "v3",
-            "state": "LIVE",
-            "exerciseRef": "1912",
-            "userDescription": "December",
-            "created": "2024-02-12T10:55:27.726Z",
-            "updated": "2024-02-12T10:56:11.848Z",
-            "deleted": None,
-            "validationErrors": None,
-            "events": [
-                {
-                    "id": "7e319653-aeb4-4c0a-a61a-29e2032a7798",
-                    "collectionExerciseId": "57e06b27-a62b-4d8e-8d57-7b6b80067e4f",
-                    "tag": "employment",
-                    "timestamp": "2024-02-11T07:00:00.000Z",
-                    "eventStatus": "PROCESSED",
-                },
-                {
-                    "id": "23dbdfec-ab00-4f48-a1da-b4bc52a2535e",
-                    "collectionExerciseId": "57e06b27-a62b-4d8e-8d57-7b6b80067e4f",
-                    "tag": "ref_period_start",
-                    "timestamp": "2024-02-11T07:00:00.000Z",
-                    "eventStatus": "PROCESSED",
-                },
-                {
-                    "id": "5203feba-6abd-41ba-b9a0-05772b4fbe78",
-                    "collectionExerciseId": "57e06b27-a62b-4d8e-8d57-7b6b80067e4f",
-                    "tag": "mps",
-                    "timestamp": "2024-02-11T07:00:00.000Z",
-                    "eventStatus": "PROCESSED",
-                },
-                {
-                    "id": "a0f7d120-18bf-44fb-9a26-d072d394929a",
-                    "collectionExerciseId": "57e06b27-a62b-4d8e-8d57-7b6b80067e4f",
-                    "tag": "go_live",
-                    "timestamp": "2024-02-11T07:00:00.000Z",
-                    "eventStatus": "PROCESSED",
-                },
-                {
-                    "id": "ae0d0a11-346c-420f-a330-f6a78197e526",
-                    "collectionExerciseId": "57e06b27-a62b-4d8e-8d57-7b6b80067e4f",
-                    "tag": "reminder",
-                    "timestamp": "2024-02-16T07:00:00.000Z",
-                    "eventStatus": "SCHEDULED",
-                },
-                {
-                    "id": "58dfcc65-894e-4007-a463-808cbe946cb5",
-                    "collectionExerciseId": "57e06b27-a62b-4d8e-8d57-7b6b80067e4f",
-                    "tag": "return_by",
-                    "timestamp": "2024-02-16T07:00:00.000Z",
-                    "eventStatus": "SCHEDULED",
-                },
-                {
-                    "id": "ecafc330-01c1-4f88-bc57-2dcf719a57ac",
-                    "collectionExerciseId": "57e06b27-a62b-4d8e-8d57-7b6b80067e4f",
-                    "tag": "exercise_end",
-                    "timestamp": "2024-02-16T07:00:00.000Z",
-                    "eventStatus": "SCHEDULED",
-                },
-                {
-                    "id": "c993524c-f790-4e4c-8af9-c04a0ca3e6d1",
-                    "collectionExerciseId": "57e06b27-a62b-4d8e-8d57-7b6b80067e4f",
-                    "tag": "ref_period_end",
-                    "timestamp": "2024-02-16T07:00:00.000Z",
-                    "eventStatus": "SCHEDULED",
-                },
-            ],
-            "sampleSize": 8,
-            "sampleLinks": [
-                {
-                    "sampleLinkPK": 2,
-                    "collectionExerciseId": "57e06b27-a62b-4d8e-8d57-7b6b80067e4f",
-                    "sampleSummaryId": "72a7ffa5-0adb-476a-89d2-3ba54a004426",
-                }
-            ],
-            "responseStatus": "Not started",
-            "companyName": "RUNAME1_COMPANY1 RUNNAME2_COMPANY1 ",
-            "companyRegion": "GB",
-            "tradingAs": "TOTAL UK ACTIVITY  ",
-        },
+def multiple_collection_exercises_with_details(collection_exercises_with_details):
+    multiple_collection_exercises_with_details = collection_exercises_with_details.copy()
+    multiple_collection_exercises_with_details.append(
         {
             "id": "f44feba3-c6e8-4e5f-a7ce-065ddc081424",
             "surveyId": "02b9c366-7397-42f7-942a-76dc5876d86d",
@@ -550,7 +459,8 @@ def multiple_collection_exercises_with_details():
             "companyRegion": "GB",
             "tradingAs": "TOTAL UK ACTIVITY  ",
         },
-    ]
+    )
+    return multiple_collection_exercises_with_details
 
 
 @pytest.fixture()
@@ -604,58 +514,16 @@ def reporting_unit():
 
 
 @pytest.fixture
-def multiple_reporting_units():
-    return {
-        "associations": [
-            {
-                "businessRespondentStatus": "ACTIVE",
-                "enrolments": [{"enrolmentStatus": "ENABLED", "surveyId": "02b9c366-7397-42f7-942a-76dc5876d86d"}],
-                "partyId": "258b95c5-1e48-4357-881c-ad4d544eab32",
-            },
-            {
-                "businessRespondentStatus": "ACTIVE",
-                "enrolments": [{"enrolmentStatus": "ENABLED", "surveyId": "02b9c366-7397-42f7-942a-76dc5876d86d"}],
-                "partyId": "985bf97e-4f03-4898-92ef-dd7aac23ab08",
-            },
-        ],
-        "attributes": {
-            "birthdate": "01/09/1993",
-            "cellNo": 7,
-            "checkletter": "F",
-            "currency": "S",
-            "entname1": "ENTNAME1_COMPANY1",
-            "entname2": "ENTNAME2_COMPANY1",
-            "entname3": "",
-            "entref": "9900000576",
-            "entrepmkr": "E",
-            "formType": "0001",
-            "froempment": 8478,
-            "frosic2007": "45320",
-            "frosic92": "50300",
-            "frotover": 801325,
-            "inclexcl": "D",
-            "legalstatus": "1",
-            "name": "RUNAME1_COMPANY1 RUNNAME2_COMPANY1",
-            "region": "FE",
-            "runame1": "RUNAME1_COMPANY1",
-            "runame2": "RUNNAME2_COMPANY1",
-            "runame3": "",
-            "rusic2007": "45320",
-            "rusic92": "50300",
-            "sampleUnitId": "68d27d0e-92b3-474e-af5f-3f9f7ad299a0",
-            "seltype": "C",
-            "trading_as": "TOTAL UK ACTIVITY",
-            "tradstyle1": "TOTAL UK ACTIVITY",
-            "tradstyle2": "",
-            "tradstyle3": "",
+def multiple_reporting_units(reporting_unit):
+    multiple_reporting_units = reporting_unit.copy()
+    multiple_reporting_units["associations"].append(
+        {
+            "businessRespondentStatus": "ACTIVE",
+            "enrolments": [{"enrolmentStatus": "ENABLED", "surveyId": "02b9c366-7397-42f7-942a-76dc5876d86d"}],
+            "partyId": "985bf97e-4f03-4898-92ef-dd7aac23ab08",
         },
-        "id": "3d6597e3-2bee-43d7-84e0-6f4f993240eb",
-        "name": "RUNAME1_COMPANY1 RUNNAME2_COMPANY1",
-        "sampleSummaryId": "0b35dff1-07a3-4cfc-9eaf-2f01f6602e11",
-        "sampleUnitRef": "49900000001",
-        "sampleUnitType": "B",
-        "trading_as": "TOTAL UK ACTIVITY",
-    }
+    )
+    return multiple_reporting_units
 
 
 @pytest.fixture()
@@ -698,26 +566,9 @@ def survey_respondents():
 
 
 @pytest.fixture
-def multiple_survey_respondents():
-    return [
-        {
-            "associations": [
-                {
-                    "businessRespondentStatus": "ACTIVE",
-                    "enrolments": [{"enrolmentStatus": "ENABLED", "surveyId": "02b9c366-7397-42f7-942a-76dc5876d86d"}],
-                    "partyId": "3d6597e3-2bee-43d7-84e0-6f4f993240eb",
-                    "sampleUnitRef": "49900000001",
-                }
-            ],
-            "emailAddress": "example@example.com",
-            "firstName": "john",
-            "id": "258b95c5-1e48-4357-881c-ad4d544eab32",
-            "lastName": "doe",
-            "sampleUnitType": "BI",
-            "status": "ACTIVE",
-            "telephone": "07772257772",
-            "enrolmentStatus": "ENABLED",
-        },
+def multiple_survey_respondents(survey_respondents):
+    multiple_survey_respondents = survey_respondents.copy()
+    multiple_survey_respondents.append(
         {
             "associations": [
                 {
@@ -736,7 +587,8 @@ def multiple_survey_respondents():
             "telephone": "1234567890",
             "enrolmentStatus": "ENABLED",
         },
-    ]
+    )
+    return multiple_survey_respondents
 
 
 @pytest.fixture
@@ -826,28 +678,36 @@ def expected_ru_context_without_ru_permission():
     return {
         "collection_exercise_section": [
             {
-                "status_class": "ons-status--info",
                 "hyperlink": "/case/49900000001/response-status?survey=QBS&period=1912",
                 "hyperlink_text": "View",
                 "period": "1912",
-                "reporting_unit_name": "RUNAME1_COMPANY1 RUNNAME2_COMPANY1 ",
-                "trading_as": "TOTAL UK ACTIVITY  ",
                 "region": "GB",
+                "reporting_unit_name": "RUNAME1_COMPANY1 " "RUNNAME2_COMPANY1 ",
                 "response_status": "Not started",
-                "status": '<span class="ons-status ons-status--info">Not started</span>&nbsp;   '
-                + '<a href="/case/49900000001/response-status?survey=QBS&period=1912">View</a>',
+                "status": {
+                    "hyperlink": "/case/49900000001/response-status?survey=QBS&period=1912",
+                    "hyperlink_text": "View",
+                    "response_status": "Not started",
+                    "status_class": "ons-status--info",
+                },
+                "status_class": "ons-status--info",
+                "trading_as": "TOTAL UK ACTIVITY  ",
             }
         ],
         "respondents_section": [
             {
+                "account_status": "Active",
+                "account_status_class": "ons-status--success",
+                "contact_details": {"email": "example@example.com", "name": "john doe", "tel": "07772257772"},
                 "enrolment_code": "",
-                "contact_details": {"Name": "john doe", "Email": "example@example.com", "Tel": "07772257772"},
-                "account_status": '<span class="ons-status ons-status--success">Active</span>',
-                "enrolment_status": '<span class="ons-status ons-status--success">Enabled</span> <br/>',
+                "enrolment_status": "Enabled",
+                "enrolment_status_class": "ons-status--success",
+                "enrolment_status_hyperlink": None,
+                "enrolment_status_hyperlink_text": "Disable",
                 "message": [
                     {"name": "ru_ref", "value": "49900000001"},
                     {"name": "business_id", "value": "a5348157-feb4-4bad-9614-fc76e2bfea94"},
-                    {"name": "business", "value": "RUNAME1_COMPANY1 RUNNAME2_COMPANY1"},
+                    {"name": "business", "value": "RUNAME1_COMPANY1 " "RUNNAME2_COMPANY1"},
                     {"name": "survey", "value": "QBS"},
                     {"name": "survey_id", "value": "02b9c366-7397-42f7-942a-76dc5876d86d"},
                     {"name": "msg_to_name", "value": "john doe"},
@@ -863,37 +723,44 @@ def expected_ru_context_without_messages_permission():
     return {
         "collection_exercise_section": [
             {
-                "status_class": "ons-status--info",
                 "hyperlink": "/case/49900000001/response-status?survey=QBS&period=1912",
                 "hyperlink_text": "Change",
                 "period": "1912",
-                "reporting_unit_name": "RUNAME1_COMPANY1 RUNNAME2_COMPANY1 ",
-                "trading_as": "TOTAL UK ACTIVITY  ",
                 "region": "GB",
+                "reporting_unit_name": "RUNAME1_COMPANY1 " "RUNNAME2_COMPANY1 ",
                 "response_status": "Not started",
-                "status": '<span class="ons-status ons-status--info">Not started</span>&nbsp;  '
-                + ' <a href="/case/49900000001/response-status?survey=QBS&period=1912">Change</a>',
+                "status": {
+                    "hyperlink": "/case/49900000001/response-status?survey=QBS&period=1912",
+                    "hyperlink_text": "Change",
+                    "response_status": "Not started",
+                    "status_class": "ons-status--info",
+                },
+                "status_class": "ons-status--info",
+                "trading_as": "TOTAL UK ACTIVITY  ",
             }
         ],
         "respondents_section": [
             {
+                "account_status": "Active",
+                "account_status_class": "ons-status--success",
+                "contact_details": {"email": "example@example.com", "name": "john doe", "tel": "07772257772"},
                 "enrolment_code_hyperlink": "/reporting-units/49900000001/new_enrolment_code?"
                 + "case_id=f4056be6-2581-4308-b7cd-88118325e81d&"
                 + "collection_exercise_id=1012f36c-b352-431c-b0c9-e7f435cbdd0c&"
                 + "ru_name=RUNAME1_COMPANY1+RUNNAME2_COMPANY1&"
                 + "trading_as=TOTAL+UK+ACTIVITY++&survey_ref=139&survey_name=QBS",
-                "enrolment_code_hyperlink_text": "Generate new enrollment code",
-                "contact_details": {"Name": "john doe", "Email": "example@example.com", "Tel": "07772257772"},
-                "account_status": '<span class="ons-status ons-status--success">Active</span>',
-                "enrolment_status": '<span class="ons-status ons-status--success">Enabled</span> <br/>'
-                + ' <a href="/reporting-units/49900000001/change-enrolment-status?'
+                "enrolment_code_hyperlink_text": "Generate new " "enrollment code",
+                "enrolment_status": "Enabled",
+                "enrolment_status_class": "ons-status--success",
+                "enrolment_status_hyperlink": "/reporting-units/49900000001/change-enrolment-status?"
                 + "ru_name=RUNAME1_COMPANY1+RUNNAME2_COMPANY1&"
                 + "survey_id=02b9c366-7397-42f7-942a-76dc5876d86d&"
                 + "survey_name=QBS&respondent_id=bf19a18f-fe15-4005-b698-fdd36f35f940&"
                 + "respondent_first_name=john&respondent_last_name=doe&"
                 + "business_id=a5348157-feb4-4bad-9614-fc76e2bfea94&"
-                + "trading_as=TOTAL+UK+ACTIVITY&change_flag=DISABLED&"
-                + 'tab=reporting_units"id="change-enrolment-status">Disable</a>',
+                + "trading_as=TOTAL+UK+ACTIVITY++&"
+                + "change_flag=DISABLED&tab=reporting_units",
+                "enrolment_status_hyperlink_text": "Disable",
             }
         ],
     }
@@ -904,41 +771,48 @@ def expected_ru_context_with_all_permissions():
     return {
         "collection_exercise_section": [
             {
-                "status_class": "ons-status--info",
                 "hyperlink": "/case/49900000001/response-status?survey=QBS&period=1912",
                 "hyperlink_text": "Change",
                 "period": "1912",
-                "reporting_unit_name": "RUNAME1_COMPANY1 RUNNAME2_COMPANY1 ",
-                "trading_as": "TOTAL UK ACTIVITY  ",
                 "region": "GB",
+                "reporting_unit_name": "RUNAME1_COMPANY1 " "RUNNAME2_COMPANY1 ",
                 "response_status": "Not started",
-                "status": '<span class="ons-status ons-status--info">Not started</span>&nbsp;   '
-                + '<a href="/case/49900000001/response-status?survey=QBS&period=1912">Change</a>',
+                "status": {
+                    "hyperlink": "/case/49900000001/response-status?survey=QBS&period=1912",
+                    "hyperlink_text": "Change",
+                    "response_status": "Not started",
+                    "status_class": "ons-status--info",
+                },
+                "status_class": "ons-status--info",
+                "trading_as": "TOTAL UK ACTIVITY  ",
             }
         ],
         "respondents_section": [
             {
+                "account_status": "Active",
+                "account_status_class": "ons-status--success",
+                "contact_details": {"email": "example@example.com", "name": "john doe", "tel": "07772257772"},
                 "enrolment_code_hyperlink": "/reporting-units/49900000001/new_enrolment_code?"
                 + "case_id=f4056be6-2581-4308-b7cd-88118325e81d&"
                 + "collection_exercise_id=1012f36c-b352-431c-b0c9-e7f435cbdd0c&"
                 + "ru_name=RUNAME1_COMPANY1+RUNNAME2_COMPANY1&"
                 + "trading_as=TOTAL+UK+ACTIVITY++&survey_ref=139&survey_name=QBS",
-                "enrolment_code_hyperlink_text": "Generate new enrollment code",
-                "contact_details": {"Name": "john doe", "Email": "example@example.com", "Tel": "07772257772"},
-                "account_status": '<span class="ons-status ons-status--success">Active</span>',
-                "enrolment_status": '<span class="ons-status ons-status--success">Enabled</span> <br/> '
-                + '<a href="/reporting-units/49900000001/change-enrolment-status?'
+                "enrolment_code_hyperlink_text": "Generate new " "enrollment code",
+                "enrolment_status": "Enabled",
+                "enrolment_status_class": "ons-status--success",
+                "enrolment_status_hyperlink": "/reporting-units/49900000001/change-enrolment-status?"
                 + "ru_name=RUNAME1_COMPANY1+RUNNAME2_COMPANY1&"
                 + "survey_id=02b9c366-7397-42f7-942a-76dc5876d86d&"
                 + "survey_name=QBS&respondent_id=bf19a18f-fe15-4005-b698-fdd36f35f940&"
                 + "respondent_first_name=john&respondent_last_name=doe&"
                 + "business_id=a5348157-feb4-4bad-9614-fc76e2bfea94&"
-                + "trading_as=TOTAL+UK+ACTIVITY&change_flag=DISABLED&"
-                + 'tab=reporting_units"id="change-enrolment-status">Disable</a>',
+                + "trading_as=TOTAL+UK+ACTIVITY++&"
+                + "change_flag=DISABLED&tab=reporting_units",
+                "enrolment_status_hyperlink_text": "Disable",
                 "message": [
                     {"name": "ru_ref", "value": "49900000001"},
                     {"name": "business_id", "value": "a5348157-feb4-4bad-9614-fc76e2bfea94"},
-                    {"name": "business", "value": "RUNAME1_COMPANY1 RUNNAME2_COMPANY1"},
+                    {"name": "business", "value": "RUNAME1_COMPANY1 " "RUNNAME2_COMPANY1"},
                     {"name": "survey", "value": "QBS"},
                     {"name": "survey_id", "value": "02b9c366-7397-42f7-942a-76dc5876d86d"},
                     {"name": "msg_to_name", "value": "john doe"},
@@ -954,69 +828,85 @@ def expected_ru_context_with_multiple_ces_and_respondents():
     return {
         "collection_exercise_section": [
             {
-                "status_class": "ons-status--info",
                 "hyperlink": "/case/49900000001/response-status?survey=QBS&period=1912",
                 "hyperlink_text": "Change",
                 "period": "1912",
-                "reporting_unit_name": "RUNAME1_COMPANY1 RUNNAME2_COMPANY1 ",
-                "trading_as": "TOTAL UK ACTIVITY  ",
                 "region": "GB",
+                "reporting_unit_name": "RUNAME1_COMPANY1 " "RUNNAME2_COMPANY1 ",
                 "response_status": "Not started",
-                "status": '<span class="ons-status ons-status--info">Not started</span>&nbsp;   '
-                + '<a href="/case/49900000001/response-status?survey=QBS&period=1912">Change</a>',
+                "status": {
+                    "hyperlink": "/case/49900000001/response-status?survey=QBS&period=1912",
+                    "hyperlink_text": "Change",
+                    "response_status": "Not started",
+                    "status_class": "ons-status--info",
+                },
+                "status_class": "ons-status--info",
+                "trading_as": "TOTAL UK ACTIVITY  ",
             },
             {
-                "status_class": "ons-status--pending",
                 "hyperlink": "/case/49900000001/response-status?survey=QBS&period=202201",
                 "hyperlink_text": "Change",
                 "period": "202201",
-                "reporting_unit_name": "RUNAME1_COMPANY1 RUNNAME2_COMPANY1 ",
-                "trading_as": "TOTAL UK ACTIVITY  ",
                 "region": "GB",
+                "reporting_unit_name": "RUNAME1_COMPANY1 " "RUNNAME2_COMPANY1 ",
                 "response_status": "In progress",
-                "status": '<span class="ons-status ons-status--pending">In progress</span>&nbsp;   '
-                + '<a href="/case/49900000001/response-status?survey=QBS&period=202201">Change</a>',
+                "status": {
+                    "hyperlink": "/case/49900000001/response-status?survey=QBS&period=202201",
+                    "hyperlink_text": "Change",
+                    "response_status": "In progress",
+                    "status_class": "ons-status--pending",
+                },
+                "status_class": "ons-status--pending",
+                "trading_as": "TOTAL UK ACTIVITY  ",
             },
         ],
         "respondents_section": [
             {
+                "account_status": "Active",
+                "account_status_class": "ons-status--success",
+                "contact_details": {"email": "example@example.com", "name": "john doe", "tel": "07772257772"},
                 "enrolment_code": "99yk5r3yjycn",
-                "contact_details": {"Name": "john doe", "Email": "example@example.com", "Tel": "07772257772"},
-                "account_status": '<span class="ons-status ons-status--success">Active</span>',
-                "enrolment_status": '<span class="ons-status ons-status--success">Enabled</span> <br/> '
-                + '<a href="/reporting-units/49900000001/change-enrolment-status?'
+                "enrolment_status": "Enabled",
+                "enrolment_status_class": "ons-status--success",
+                "enrolment_status_hyperlink": "/reporting-units/49900000001/change-enrolment-status?"
                 + "ru_name=RUNAME1_COMPANY1+RUNNAME2_COMPANY1&"
-                + "survey_id=02b9c366-7397-42f7-942a-76dc5876d86d&survey_name=QBS&"
-                + "respondent_id=258b95c5-1e48-4357-881c-ad4d544eab32&respondent_first_name=john&"
-                + "respondent_last_name=doe&business_id=3d6597e3-2bee-43d7-84e0-6f4f993240eb&"
-                + "trading_as=TOTAL+UK+ACTIVITY&change_flag=DISABLED&"
-                + 'tab=reporting_units"id="change-enrolment-status">Disable</a>',
+                + "survey_id=02b9c366-7397-42f7-942a-76dc5876d86d&"
+                + "survey_name=QBS&respondent_id=bf19a18f-fe15-4005-b698-fdd36f35f940&"
+                + "respondent_first_name=john&respondent_last_name=doe&"
+                + "business_id=a5348157-feb4-4bad-9614-fc76e2bfea94&"
+                + "trading_as=TOTAL+UK+ACTIVITY++&"
+                + "change_flag=DISABLED&tab=reporting_units",
+                "enrolment_status_hyperlink_text": "Disable",
                 "message": [
                     {"name": "ru_ref", "value": "49900000001"},
-                    {"name": "business_id", "value": "3d6597e3-2bee-43d7-84e0-6f4f993240eb"},
-                    {"name": "business", "value": "RUNAME1_COMPANY1 RUNNAME2_COMPANY1"},
+                    {"name": "business_id", "value": "a5348157-feb4-4bad-9614-fc76e2bfea94"},
+                    {"name": "business", "value": "RUNAME1_COMPANY1 " "RUNNAME2_COMPANY1"},
                     {"name": "survey", "value": "QBS"},
                     {"name": "survey_id", "value": "02b9c366-7397-42f7-942a-76dc5876d86d"},
                     {"name": "msg_to_name", "value": "john doe"},
-                    {"name": "msg_to", "value": "258b95c5-1e48-4357-881c-ad4d544eab32"},
+                    {"name": "msg_to", "value": "bf19a18f-fe15-4005-b698-fdd36f35f940"},
                 ],
             },
             {
+                "account_status": "Active",
+                "account_status_class": "ons-status--success",
+                "contact_details": {"email": "test@example.com", "name": "test test", "tel": "1234567890"},
                 "enrolment_code": "99yk5r3yjycn",
-                "contact_details": {"Name": "test test", "Email": "test@example.com", "Tel": "1234567890"},
-                "account_status": '<span class="ons-status ons-status--success">Active</span>',
-                "enrolment_status": '<span class="ons-status ons-status--success">Enabled</span> <br/> '
-                + '<a href="/reporting-units/49900000001/change-enrolment-status?'
+                "enrolment_status": "Enabled",
+                "enrolment_status_class": "ons-status--success",
+                "enrolment_status_hyperlink": "/reporting-units/49900000001/change-enrolment-status?"
                 + "ru_name=RUNAME1_COMPANY1+RUNNAME2_COMPANY1&"
-                + "survey_id=02b9c366-7397-42f7-942a-76dc5876d86d&survey_name=QBS&"
-                + "respondent_id=985bf97e-4f03-4898-92ef-dd7aac23ab08&respondent_first_name=test&"
-                + "respondent_last_name=test&business_id=3d6597e3-2bee-43d7-84e0-6f4f993240eb&"
-                + "trading_as=TOTAL+UK+ACTIVITY&change_flag=DISABLED&"
-                + 'tab=reporting_units"id="change-enrolment-status">Disable</a>',
+                + "survey_id=02b9c366-7397-42f7-942a-76dc5876d86d&"
+                + "survey_name=QBS&respondent_id=985bf97e-4f03-4898-92ef-dd7aac23ab08&"
+                + "respondent_first_name=test&respondent_last_name=test&"
+                + "business_id=a5348157-feb4-4bad-9614-fc76e2bfea94&"
+                + "trading_as=TOTAL+UK+ACTIVITY++&"
+                + "change_flag=DISABLED&tab=reporting_units",
+                "enrolment_status_hyperlink_text": "Disable",
                 "message": [
                     {"name": "ru_ref", "value": "49900000001"},
-                    {"name": "business_id", "value": "3d6597e3-2bee-43d7-84e0-6f4f993240eb"},
-                    {"name": "business", "value": "RUNAME1_COMPANY1 RUNNAME2_COMPANY1"},
+                    {"name": "business_id", "value": "a5348157-feb4-4bad-9614-fc76e2bfea94"},
+                    {"name": "business", "value": "RUNAME1_COMPANY1 " "RUNNAME2_COMPANY1"},
                     {"name": "survey", "value": "QBS"},
                     {"name": "survey_id", "value": "02b9c366-7397-42f7-942a-76dc5876d86d"},
                     {"name": "msg_to_name", "value": "test test"},
@@ -1031,10 +921,10 @@ def expected_ru_context_with_multiple_ces_and_respondents():
 def expected_case_context_with_all_permissions():
     return {
         "change_response_status": {
-            "form_action": "/case/49900000001/response-status?survey=QBS&"
-            + "case_group_id=6fef0397-f07b-4d65-8988-931cec23057f&period=1912",
-            "radios": [{"id": "state-1", "label": {"text": "Not started"}, "value": "COMPLETED_TO_NOTSTARTED"}],
             "cancel_link": "/reporting-units/49900000001/surveys/02b9c366-7397-42f7-942a-76dc5876d86d",
+            "radios": [{"id": "state-1", "label": {"text": "Not started"}, "value": "COMPLETED_TO_NOTSTARTED"}],
+            "url": "/case/49900000001/response-status?survey=QBS&"
+            + "case_group_id=6fef0397-f07b-4d65-8988-931cec23057f&period=1912",
         }
     }
 
@@ -1139,3 +1029,28 @@ def transitions_for_not_started_case():
         "COMPLETED_BY_PHONE": "Completed by phone",
         "NO_LONGER_REQUIRED": "No longer required",
     }
+
+
+@pytest.fixture
+def ru_ref():
+    return "49900000001"
+
+
+@pytest.fixture
+def survey_short_name():
+    return "QBS"
+
+
+@pytest.fixture
+def case_group_id():
+    return "6fef0397-f07b-4d65-8988-931cec23057f"
+
+
+@pytest.fixture
+def ce_period():
+    return "1912"
+
+
+@pytest.fixture
+def survey_id():
+    return "02b9c366-7397-42f7-942a-76dc5876d86d"

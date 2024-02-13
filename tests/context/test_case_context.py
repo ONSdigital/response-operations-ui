@@ -1,53 +1,70 @@
-from response_operations_ui.contexts.case import build_case_context
-
-RU_REF = "49900000001"
-SURVEY_SHORT_NAME = "QBS"
-CASE_GROUP_ID = "6fef0397-f07b-4d65-8988-931cec23057f"
-CE_PERIOD = "1912"
-SURVEY_ID = "02b9c366-7397-42f7-942a-76dc5876d86d"
+from response_operations_ui.contexts.case import build_response_status_context
 
 
-def test_case_context_with_permissions(app, transitions_for_complete_case, expected_case_context_with_all_permissions):
+def test_case_context_with_permissions(
+    app,
+    transitions_for_complete_case,
+    expected_case_context_with_all_permissions,
+    ru_ref,
+    survey_short_name,
+    case_group_id,
+    ce_period,
+    survey_id,
+):
     with app.test_request_context():
-        context = build_case_context(
-            RU_REF,
-            SURVEY_SHORT_NAME,
-            CASE_GROUP_ID,
-            CE_PERIOD,
+        context = build_response_status_context(
+            ru_ref,
+            survey_short_name,
+            case_group_id,
+            ce_period,
             transitions_for_complete_case,
-            SURVEY_ID,
+            survey_id,
             True,
         )
     assert context == expected_case_context_with_all_permissions
 
 
 def test_case_context_without_permissions(
-    app, transitions_for_complete_case, expected_case_context_with_no_permissions
+    app,
+    transitions_for_complete_case,
+    expected_case_context_with_no_permissions,
+    ru_ref,
+    survey_short_name,
+    case_group_id,
+    ce_period,
+    survey_id,
 ):
     with app.test_request_context():
-        context = build_case_context(
-            RU_REF,
-            SURVEY_SHORT_NAME,
-            CASE_GROUP_ID,
-            CE_PERIOD,
+        context = build_response_status_context(
+            ru_ref,
+            survey_short_name,
+            case_group_id,
+            ce_period,
             transitions_for_complete_case,
-            SURVEY_ID,
+            survey_id,
             False,
         )
     assert context == expected_case_context_with_no_permissions
 
 
 def test_transitions_from_not_started(
-    app, transitions_for_not_started_case, expected_case_context_transitions_from_not_started
+    app,
+    transitions_for_not_started_case,
+    expected_case_context_transitions_from_not_started,
+    ru_ref,
+    survey_short_name,
+    case_group_id,
+    ce_period,
+    survey_id,
 ):
     with app.test_request_context():
-        context = build_case_context(
-            RU_REF,
-            SURVEY_SHORT_NAME,
-            CASE_GROUP_ID,
-            CE_PERIOD,
+        context = build_response_status_context(
+            ru_ref,
+            survey_short_name,
+            case_group_id,
+            ce_period,
             transitions_for_not_started_case,
-            SURVEY_ID,
+            survey_id,
             True,
         )
         radios = get_case_context(context, "change_response_status", "radios")
@@ -56,16 +73,23 @@ def test_transitions_from_not_started(
 
 
 def test_transitions_from_completed_by_phone(
-    app, transitions_for_completed_by_phone_case, expected_case_context_transitions_from_completed_by_phone
+    app,
+    transitions_for_completed_by_phone_case,
+    expected_case_context_transitions_from_completed_by_phone,
+    ru_ref,
+    survey_short_name,
+    case_group_id,
+    ce_period,
+    survey_id,
 ):
     with app.test_request_context():
-        context = build_case_context(
-            RU_REF,
-            SURVEY_SHORT_NAME,
-            CASE_GROUP_ID,
-            CE_PERIOD,
+        context = build_response_status_context(
+            ru_ref,
+            survey_short_name,
+            case_group_id,
+            ce_period,
             transitions_for_completed_by_phone_case,
-            SURVEY_ID,
+            survey_id,
             True,
         )
         radios = get_case_context(context, "change_response_status", "radios")
@@ -74,16 +98,23 @@ def test_transitions_from_completed_by_phone(
 
 
 def test_transitions_from_no_longer_required(
-    app, transitions_for_no_longer_required_case, expected_case_context_transitions_from_no_longer_required
+    app,
+    transitions_for_no_longer_required_case,
+    expected_case_context_transitions_from_no_longer_required,
+    ru_ref,
+    survey_short_name,
+    case_group_id,
+    ce_period,
+    survey_id,
 ):
     with app.test_request_context():
-        context = build_case_context(
-            RU_REF,
-            SURVEY_SHORT_NAME,
-            CASE_GROUP_ID,
-            CE_PERIOD,
+        context = build_response_status_context(
+            ru_ref,
+            survey_short_name,
+            case_group_id,
+            ce_period,
             transitions_for_no_longer_required_case,
-            SURVEY_ID,
+            survey_id,
             True,
         )
         radios = get_case_context(context, "change_response_status", "radios")
@@ -92,16 +123,23 @@ def test_transitions_from_no_longer_required(
 
 
 def test_transitions_from_in_progress(
-    app, transitions_for_in_progress_case, expected_case_context_transitions_from_in_progress
+    app,
+    transitions_for_in_progress_case,
+    expected_case_context_transitions_from_in_progress,
+    ru_ref,
+    survey_short_name,
+    case_group_id,
+    ce_period,
+    survey_id,
 ):
     with app.test_request_context():
-        context = build_case_context(
-            RU_REF,
-            SURVEY_SHORT_NAME,
-            CASE_GROUP_ID,
-            CE_PERIOD,
+        context = build_response_status_context(
+            ru_ref,
+            survey_short_name,
+            case_group_id,
+            ce_period,
             transitions_for_in_progress_case,
-            SURVEY_ID,
+            survey_id,
             True,
         )
         radios = get_case_context(context, "change_response_status", "radios")
@@ -109,15 +147,24 @@ def test_transitions_from_in_progress(
     assert expected_case_context_transitions_from_in_progress["change_response_status"]["radios"] == radios
 
 
-def test_transitions_from_complete(app, transitions_for_complete_case, expected_case_context_transitions_from_complete):
+def test_transitions_from_complete(
+    app,
+    transitions_for_complete_case,
+    expected_case_context_transitions_from_complete,
+    ru_ref,
+    survey_short_name,
+    case_group_id,
+    ce_period,
+    survey_id,
+):
     with app.test_request_context():
-        context = build_case_context(
-            RU_REF,
-            SURVEY_SHORT_NAME,
-            CASE_GROUP_ID,
-            CE_PERIOD,
+        context = build_response_status_context(
+            ru_ref,
+            survey_short_name,
+            case_group_id,
+            ce_period,
             transitions_for_complete_case,
-            SURVEY_ID,
+            survey_id,
             True,
         )
         radios = get_case_context(context, "change_response_status", "radios")

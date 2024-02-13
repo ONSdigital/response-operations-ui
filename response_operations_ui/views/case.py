@@ -10,7 +10,7 @@ from response_operations_ui.common.mappers import (
     format_short_name,
     map_ce_response_status,
 )
-from response_operations_ui.contexts.case import build_case_context
+from response_operations_ui.contexts.case import build_response_status_context
 from response_operations_ui.controllers import (
     case_controller,
     collection_exercise_controllers,
@@ -77,7 +77,7 @@ def get_response_statuses(ru_ref, error=None):
     }
 
     has_reporting_unit_permission = user_has_permission("reportingunits.edit")
-    context = build_case_context(
+    context = build_response_status_context(
         ru_ref,
         format_short_name(survey["shortName"]),
         case_group["id"],

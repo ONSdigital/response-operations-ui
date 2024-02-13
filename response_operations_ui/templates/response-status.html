@@ -90,7 +90,7 @@
                 })
             }}
             {% if isReportingUnitPermission %}
-                <form action="{{ context['change_response_status']['form_action'] }}" method="post" class="ons-u-mt-s">
+                <form action="{{ context['change_response_status']['url'] }}" method="post" class="ons-u-mt-s">
                     <input type="hidden" name="csrf_token" value="{{ csrf_token() }}" />
                     {% set radioComponent = {
                         "legend": "Change response status",

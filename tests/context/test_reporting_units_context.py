@@ -23,13 +23,13 @@ def test_no_reporting_units_edit_permission(
             survey_respondents,
             case,
             "",
-            [False, True],
+            {"reporting_unit_edit": False, "messages_edit": True},
         )
-        status = get_ru_context(context, "collection_exercise_section", 0, "status")
+        hyperlink = get_ru_context(context, "collection_exercise_section", 0, "status")["hyperlink_text"]
 
     assert context == expected_ru_context_without_ru_permission
-    assert "Change" not in status
-    assert "View" in status
+    assert "Change" not in hyperlink
+    assert "View" in hyperlink
 
 
 def test_has_both_edit_permission(
@@ -49,13 +49,13 @@ def test_has_both_edit_permission(
             survey_respondents,
             case,
             "",
-            [True, True],
+            {"reporting_unit_edit": True, "messages_edit": True},
         )
-        status = get_ru_context(context, "collection_exercise_section", 0, "status")
+        hyperlink = get_ru_context(context, "collection_exercise_section", 0, "status")["hyperlink_text"]
         message = get_ru_context(context, "respondents_section", 0, "message")
 
     assert context == expected_ru_context_with_all_permissions
-    assert "Change" in status
+    assert "Change" in hyperlink
     assert message[0]["value"] == "49900000001"
 
 
@@ -76,7 +76,7 @@ def test_no_messages_edit_permission(
             survey_respondents,
             case,
             "",
-            [True, False],
+            {"reporting_unit_edit": True, "messages_edit": False},
         )
 
     assert context == expected_ru_context_without_messages_permission
@@ -93,7 +93,7 @@ def test_collection_exercise_in_progress(
             survey_respondents,
             case,
             "",
-            [True, True],
+            {"reporting_unit_edit": True, "messages_edit": True},
         )
         collection_exercise_status = get_ru_context(context, "collection_exercise_section", 0, "status_class")
 
@@ -111,7 +111,7 @@ def test_collection_exercise_completed(
             survey_respondents,
             case,
             "",
-            [True, True],
+            {"reporting_unit_edit": True, "messages_edit": True},
         )
         collection_exercise_status = get_ru_context(context, "collection_exercise_section", 0, "status_class")
 
@@ -129,7 +129,7 @@ def test_collection_exercise_no_longer_required(
             survey_respondents,
             case,
             "",
-            [True, True],
+            {"reporting_unit_edit": True, "messages_edit": True},
         )
         collection_exercise_status = get_ru_context(context, "collection_exercise_section", 0, "status_class")
 
@@ -147,7 +147,7 @@ def test_collection_exercise_error(
             survey_respondents,
             case,
             "",
-            [True, True],
+            {"reporting_unit_edit": True, "messages_edit": True},
         )
         collection_exercise_status = get_ru_context(context, "collection_exercise_section", 0, "status_class")
 
@@ -171,9 +171,9 @@ def test_respondent_active(
             survey_respondents,
             case,
             "",
-            [True, True],
+            {"reporting_unit_edit": True, "messages_edit": True},
         )
-        respondent_status = get_ru_context(context, "respondents_section", 0, "account_status")
+        respondent_status = get_ru_context(context, "respondents_section", 0, "account_status_class")
 
     assert "ons-status--success" in respondent_status
 
@@ -195,9 +195,9 @@ def test_respondent_suspended(
             suspended_survey_respondents,
             case,
             "",
-            [True, True],
+            {"reporting_unit_edit": True, "messages_edit": True},
         )
-        respondent_status = get_ru_context(context, "respondents_section", 0, "account_status")
+        respondent_status = get_ru_context(context, "respondents_section", 0, "account_status_class")
 
     assert "ons-status--error" in respondent_status
 
@@ -219,9 +219,9 @@ def test_respondent_enrolment_enabled(
             survey_respondents,
             case,
             "",
-            [True, True],
+            {"reporting_unit_edit": True, "messages_edit": True},
         )
-        enrolment_status = get_ru_context(context, "respondents_section", 0, "enrolment_status")
+        enrolment_status = get_ru_context(context, "respondents_section", 0, "enrolment_status_class")
 
     assert "ons-status--success" in enrolment_status
 
@@ -243,9 +243,9 @@ def test_respondent_enrolment_pending(
             pending_enrolment_survey_respondents,
             case,
             "",
-            [True, True],
+            {"reporting_unit_edit": True, "messages_edit": True},
         )
-        enrolment_status = get_ru_context(context, "respondents_section", 0, "enrolment_status")
+        enrolment_status = get_ru_context(context, "respondents_section", 0, "enrolment_status_class")
 
     assert "ons-status--info" in enrolment_status
 
@@ -267,9 +267,9 @@ def test_respondent_enrolment_disabled(
             disabled_enrolment_survey_respondents,
             case,
             "",
-            [True, True],
+            {"reporting_unit_edit": True, "messages_edit": True},
         )
-        enrolment_status = get_ru_context(context, "respondents_section", 0, "enrolment_status")
+        enrolment_status = get_ru_context(context, "respondents_section", 0, "enrolment_status_class")
 
     assert "ons-status--dead" in enrolment_status
 
@@ -291,7 +291,7 @@ def test_multiple_collection_exercises_and_respondents(
             multiple_survey_respondents,
             multiple_cases,
             "99yk5r3yjycn",
-            [True, True],
+            {"reporting_unit_edit": True, "messages_edit": True},
         )
 
     assert context == expected_ru_context_with_multiple_ces_and_respondents

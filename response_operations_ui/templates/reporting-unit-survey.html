@@ -58,7 +58,7 @@
                                     {"value": ce.reporting_unit_name, "data": "Reporting unit name"},
                                     {"value": ce.trading_as, "data": "Trading as"},
                                     {"value": ce.region, "data": "Region"},
-                                    {"value": ce.status, "data": "Period"},] 
+                                    {"value": '<span class="ons-status ' + ce.status_class + '">' + ce.response_status + '</span>' + '&nbsp; <a href="' + ce.hyperlink + '">'+ ce.hyperlink_text +'</a>', "data": "Status"},] 
                     %}
                     {% do collectionExerciseTableDataRows.append({"tds": ceTds}) %}
                 {% endfor %}
@@ -120,35 +120,41 @@
                                 Name:
                             </dt>
                             <dd name="tbl-respondent-name">
-                                ' + respondent.contact_details["Name"] + '
+                                ' + respondent.contact_details["name"] + '
                             </dd>
                             <dt>
                                 Email:
                             </dt>
                             <dd name="tbl-respondent-email">
-                                ' + respondent.contact_details["Email"] + '
+                                ' + respondent.contact_details["email"] + '
                             </dd>
                             <dt>
                                 Tel:
                             </dt>
                             <dd name="tbl-respondent-phone">
-                                ' + respondent.contact_details["Tel"] + '
+                                ' + respondent.contact_details["tel"] + '
                             </dd>
                         </dl>',
                         "data": "Contact details",
                         "name": "tbl-respondents-contact-details"
                     } %}
                 
+                    {% if respondent.enrolment_status_hyperlink %}
+                        {% set enrolment_status_hyperlink = '<a href="' + respondent.enrolment_status_hyperlink + '" id="change-enrolment-status">' + respondent.enrolment_status_hyperlink_text + '</a>' %}
+                    {% else %}
+                        {% set enrolment_status_hyperlink = '' %}
+                    {% endif %}
+                
                     {% set tableColumns = 
                           [
                               contactDetailsCell,
                               {
-                                  "value": respondent.account_status,
+                                  "value": '<span class="ons-status ' + respondent.account_status_class + '">' + respondent.account_status + '</span>',
                                   "data": "Account status",
                                   "name": "tbl-respondents-account-status"
                               },
                               {
-                                  "value": respondent.enrolment_status,
+                                  "value": '<span class="ons-status ' + respondent.enrolment_status_class + '">' + respondent.enrolment_status + '</span> <br/>' + enrolment_status_hyperlink,
                                   "data": "Enrolment status",
                                   "name": "tbl-respondents-enrolment-status"
                               }
