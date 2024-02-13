@@ -5,11 +5,11 @@ from flask import Blueprint
 from flask import current_app as app
 from flask import flash, redirect, render_template, request, url_for
 from flask_login import login_required
-from flask_paginate import Pagination
 from iso8601 import parse_date
 from structlog import wrap_logger
 
 from response_operations_ui.common.mappers import map_ce_response_status, map_region
+from response_operations_ui.common.pagination_processor import pagination_processor
 from response_operations_ui.controllers import (
     case_controller,
     iac_controller,
@@ -321,28 +321,25 @@ def search_reporting_units():
     total_business_count = response_data["total_business_count"]
 
     offset = (int(page) - 1) * limit
-    last_index = (limit + offset) if total_business_count >= limit else total_business_count
 
-    pagination = Pagination(
-        page=int(page),
-        per_page=limit,
-        total=len(business_list) if len(business_list) != 0 and total_business_count <= limit else total_business_count,
-        record_name="Business",
-        prev_label="Previous",
-        next_label="Next",
-        outer_window=0,
-        format_total=True,
-        format_number=True,
-        show_single_page=False,
-    )
+    if len(business_list) == 1:
+        last_index = 0
+    elif (total_business_count >= limit) and not (len(business_list) < limit):
+        last_index = limit + offset
+    else:
+        last_index = total_business_count
+
+    href = "?query=" + search_key_words
+
+    pagination = pagination_processor(total_business_count, limit, page, href)
 
     return render_template(
         "reporting-unit-search/reporting-units.html",
         form=form,
         business_list=business_list,
-        total_business_count=len(business_list)
-        if len(business_list) != 0 and total_business_count <= limit
-        else total_business_count,
+        total_business_count=(
+            len(business_list) if len(business_list) != 0 and total_business_count <= limit else total_business_count
+        ),
         breadcrumbs=breadcrumbs,
         first_index=1 + offset,
         last_index=last_index,

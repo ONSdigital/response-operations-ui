@@ -98,10 +98,10 @@ def build_collection_exercise_details(short_name: str, period: str, include_ci: 
             collection_exercise_id, survey_id
         )
         if survey["surveyMode"] in ("EQ_AND_SEFT", "EQ"):
-            exercise_dict[
-                "eq_ci_selectors"
-            ] = collection_instrument_controllers.get_collection_instruments_by_classifier(
-                ci_type="EQ", survey_id=survey_id
+            exercise_dict["eq_ci_selectors"] = (
+                collection_instrument_controllers.get_collection_instruments_by_classifier(
+                    ci_type="EQ", survey_id=survey_id
+                )
             )
     return exercise_dict
 
