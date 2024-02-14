@@ -41,9 +41,11 @@ def _build_collection_exercise_section(
 ) -> list:
     table = [
         {
-            "status_class": CE_STATUS_CLASS[ce["responseStatus"]]
-            if ce["responseStatus"] in CE_STATUS_CLASS.keys()
-            else "ons-status--error",
+            "status_class": (
+                CE_STATUS_CLASS[ce["responseStatus"]]
+                if ce["responseStatus"] in CE_STATUS_CLASS.keys()
+                else "ons-status--error"
+            ),
             "hyperlink": url_for(
                 "case_bp.get_response_statuses",
                 ru_ref=sample_unit_ref,
@@ -78,9 +80,9 @@ def _build_ce_status(ru_ref: str, survey: str, period: str, response_status: str
             period=period,
         ),
         "hyperlink_text": "Change" if ru_permission else "View",
-        "status_class": CE_STATUS_CLASS[response_status]
-        if response_status in CE_STATUS_CLASS.keys()
-        else "ons-status--error",
+        "status_class": (
+            CE_STATUS_CLASS[response_status] if response_status in CE_STATUS_CLASS.keys() else "ons-status--error"
+        ),
         "response_status": response_status,
     }
     return ce_status
