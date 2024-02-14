@@ -21,14 +21,9 @@ def build_reporting_units_context(
     respondents_section = _build_respondents_section(
         respondents,
         case["id"],
-        collection_exercises[0]["id"],
-        collection_exercises[0]["tradingAs"],
-        ru["name"],
-        ru["sampleUnitRef"],
-        ru["id"],
-        survey["surveyRef"],
-        survey["shortName"],
-        survey["id"],
+        collection_exercises,
+        ru,
+        survey,
         unused_iac,
         permissions,
     )
@@ -41,11 +36,7 @@ def _build_collection_exercise_section(
 ) -> list:
     table = [
         {
-            "status_class": (
-                CE_STATUS_CLASS[ce["responseStatus"]]
-                if ce["responseStatus"] in CE_STATUS_CLASS.keys()
-                else "ons-status--error"
-            ),
+            "status_class": (CE_STATUS_CLASS.get(ce["responseStatus"], "ons-status--error")),
             "hyperlink": url_for(
                 "case_bp.get_response_statuses",
                 ru_ref=sample_unit_ref,
@@ -91,14 +82,9 @@ def _build_ce_status(ru_ref: str, survey: str, period: str, response_status: str
 def _build_respondents_section(
     respondents: list,
     case_id: str,
-    collection_exercise_id: str,
-    trading_as: str,
-    ru_name: str,
-    sample_unit_ref: str,
-    ru_id: str,
-    survey_ref: str,
-    survey_short_name: str,
-    survey_id: str,
+    collection_exercises: list,
+    ru: dict,
+    survey: dict,
     unused_iac: str,
     permissions: dict,
 ) -> list:
@@ -112,12 +98,12 @@ def _build_respondents_section(
                 row["enrolment_code_hyperlink"] = url_for(
                     "reporting_unit_bp.generate_new_enrolment_code",
                     case_id=case_id,
-                    collection_exercise_id=collection_exercise_id,
-                    ru_name=ru_name,
-                    ru_ref=sample_unit_ref,
-                    trading_as=trading_as,
-                    survey_ref=survey_ref,
-                    survey_name=survey_short_name,
+                    collection_exercise_id=collection_exercises[0]["id"],
+                    ru_name=ru["name"],
+                    ru_ref=ru["sampleUnitRef"],
+                    trading_as=collection_exercises[0]["tradingAs"],
+                    survey_ref=survey["surveyRef"],
+                    survey_name=survey["shortName"],
                 )
                 row["enrolment_code_hyperlink_text"] = "Generate new enrollment code"
         else:
@@ -137,25 +123,20 @@ def _build_respondents_section(
             row["enrolment_status_hyperlink_text"],
             row["enrolment_status_class"],
         ) = _build_enrollment_status_hyperlink(
-            respondent["enrolmentStatus"],
-            respondent["id"],
-            respondent["firstName"],
-            respondent["lastName"],
-            sample_unit_ref,
-            ru_name,
-            ru_id,
-            trading_as,
-            survey_id,
-            survey_short_name,
+            respondent,
+            ru,
+            collection_exercises[0]["tradingAs"],
+            survey["id"],
+            survey["surveyRef"],
             permissions["reporting_unit_edit"],
         )
         if permissions["messages_edit"]:
             row["message"] = [
-                {"name": "ru_ref", "value": sample_unit_ref},
-                {"name": "business_id", "value": ru_id},
-                {"name": "business", "value": ru_name},
-                {"name": "survey", "value": survey_short_name},
-                {"name": "survey_id", "value": survey_id},
+                {"name": "ru_ref", "value": ru["sampleUnitRef"]},
+                {"name": "business_id", "value": ru["id"]},
+                {"name": "business", "value": ru["name"]},
+                {"name": "survey", "value": survey["shortName"]},
+                {"name": "survey_id", "value": survey["id"]},
                 {"name": "msg_to_name", "value": row["contact_details"]["name"]},
                 {"name": "msg_to", "value": respondent["id"]},
             ]
@@ -165,31 +146,26 @@ def _build_respondents_section(
 
 
 def _build_enrollment_status_hyperlink(
-    enrolment_status: str,
-    respondent_id: str,
-    respondent_first_name: str,
-    respondent_last_name: str,
-    sample_unit_ref: str,
-    ru_name: str,
-    ru_id: str,
+    respondent: dict,
+    ru: dict,
     trading_as: str,
     survey_id: str,
     survey_short_name: str,
     ru_permission: bool,
 ) -> tuple[str | None, str, str]:
-    if enrolment_status == ENROLMENT_ENABLED:
+    if respondent["enrolmentStatus"] == ENROLMENT_ENABLED:
         status_class = "ons-status--success"
         hyperlink = (
             url_for(
                 "reporting_unit_bp.confirm_change_enrolment_status",
-                ru_ref=sample_unit_ref,
-                ru_name=ru_name,
+                ru_ref=ru["sampleUnitRef"],
+                ru_name=ru["name"],
                 survey_id=survey_id,
                 survey_name=survey_short_name,
-                respondent_id=respondent_id,
-                respondent_first_name=respondent_first_name,
-                respondent_last_name=respondent_last_name,
-                business_id=ru_id,
+                respondent_id=respondent["id"],
+                respondent_first_name=respondent["firstName"],
+                respondent_last_name=respondent["lastName"],
+                business_id=ru["id"],
                 trading_as=trading_as,
                 change_flag="DISABLED",
                 tab="reporting_units",
@@ -198,10 +174,10 @@ def _build_enrollment_status_hyperlink(
             else None
         )
         hyperlink_text = "Disable"
-    elif enrolment_status == ENROLMENT_PENDING:
+    elif respondent["enrolmentStatus"] == ENROLMENT_PENDING:
         status_class = "ons-status--info"
         hyperlink = (
-            url_for("reporting_unit_bp.view_resend_verification", ru_ref=sample_unit_ref, party_id=respondent_id)
+            url_for("reporting_unit_bp.view_resend_verification", ru_ref=ru["sampleUnitRef"], party_id=respondent["id"])
             if ru_permission
             else None
         )
@@ -211,14 +187,14 @@ def _build_enrollment_status_hyperlink(
         hyperlink = (
             url_for(
                 "reporting_unit_bp.confirm_change_enrolment_status",
-                ru_ref=sample_unit_ref,
-                ru_name=ru_name,
+                ru_ref=ru["sampleUnitRef"],
+                ru_name=ru["name"],
                 survey_id=survey_id,
                 survey_name=survey_short_name,
-                respondent_id=respondent_id,
-                respondent_first_name=respondent_first_name,
-                respondent_last_name=respondent_last_name,
-                business_id=ru_id,
+                respondent_id=respondent["id"],
+                respondent_first_name=respondent["firstName"],
+                respondent_last_name=respondent["lastName"],
+                business_id=ru["id"],
                 trading_as=trading_as,
                 change_flag="ENABLED",
                 tab="reporting_units",

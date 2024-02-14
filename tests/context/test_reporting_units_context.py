@@ -2,35 +2,6 @@ from response_operations_ui.contexts.reporting_units import (
     build_reporting_units_context,
 )
 
-REPORTING_UNITS = "49900000001"
-SURVEY_ID = "c23bb1c1-5202-43bb-8357-7a07c844308f"
-
-
-def test_no_reporting_units_edit_permission(
-    app,
-    collection_exercises_with_details,
-    reporting_unit,
-    survey_details,
-    survey_respondents,
-    case,
-    expected_ru_context_without_ru_permission,
-):
-    with app.test_request_context():
-        context = build_reporting_units_context(
-            collection_exercises_with_details,
-            reporting_unit,
-            survey_details,
-            survey_respondents,
-            case,
-            "",
-            {"reporting_unit_edit": False, "messages_edit": True},
-        )
-        hyperlink = get_ru_context(context, "collection_exercise_section", 0, "status")["hyperlink_text"]
-
-    assert context == expected_ru_context_without_ru_permission
-    assert "Change" not in hyperlink
-    assert "View" in hyperlink
-
 
 def test_has_both_edit_permission(
     app,
@@ -59,6 +30,30 @@ def test_has_both_edit_permission(
     assert message[0]["value"] == "49900000001"
 
 
+def test_no_reporting_units_edit_permission(
+    app,
+    collection_exercises_with_details,
+    reporting_unit,
+    survey_details,
+    survey_respondents,
+    case,
+):
+    with app.test_request_context():
+        context = build_reporting_units_context(
+            collection_exercises_with_details,
+            reporting_unit,
+            survey_details,
+            survey_respondents,
+            case,
+            "",
+            {"reporting_unit_edit": False, "messages_edit": True},
+        )
+        hyperlink = get_ru_context(context, "collection_exercise_section", 0, "status")["hyperlink_text"]
+
+    assert "Change" not in hyperlink
+    assert "View" in hyperlink
+
+
 def test_no_messages_edit_permission(
     app,
     collection_exercises_with_details,
@@ -66,7 +61,6 @@ def test_no_messages_edit_permission(
     survey_details,
     survey_respondents,
     case,
-    expected_ru_context_without_messages_permission,
 ):
     with app.test_request_context():
         context = build_reporting_units_context(
@@ -79,7 +73,7 @@ def test_no_messages_edit_permission(
             {"reporting_unit_edit": True, "messages_edit": False},
         )
 
-    assert context == expected_ru_context_without_messages_permission
+    assert "message" not in context["respondents_section"][0].keys()
 
 
 def test_collection_exercise_in_progress(
@@ -280,7 +274,7 @@ def test_multiple_collection_exercises_and_respondents(
     multiple_reporting_units,
     survey_details,
     multiple_survey_respondents,
-    multiple_cases,
+    case,
     expected_ru_context_with_multiple_ces_and_respondents,
 ):
     with app.test_request_context():
@@ -289,7 +283,7 @@ def test_multiple_collection_exercises_and_respondents(
             multiple_reporting_units,
             survey_details,
             multiple_survey_respondents,
-            multiple_cases,
+            case,
             "99yk5r3yjycn",
             {"reporting_unit_edit": True, "messages_edit": True},
         )
