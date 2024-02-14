@@ -27,7 +27,7 @@ def build_response_status_context(
     return {"change_response_status": change_response_status}
 
 
-def _generate_radios(allowed_transitions_for_case):
+def _generate_radios(allowed_transitions_for_case: dict):
     radios = [
         {"id": f"state-{index + 1}", "label": {"text": status}, "value": event}
         for index, (event, status) in enumerate(allowed_transitions_for_case.items())
