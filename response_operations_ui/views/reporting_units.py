@@ -10,6 +10,9 @@ from structlog import wrap_logger
 
 from response_operations_ui.common.mappers import map_ce_response_status, map_region
 from response_operations_ui.common.pagination_processor import pagination_processor
+from response_operations_ui.contexts.reporting_units import (
+    build_reporting_units_context,
+)
 from response_operations_ui.controllers import (
     case_controller,
     iac_controller,
@@ -22,6 +25,7 @@ from response_operations_ui.controllers.collection_exercise_controllers import (
     get_collection_exercise_by_id,
 )
 from response_operations_ui.controllers.survey_controllers import get_survey_by_id
+from response_operations_ui.controllers.uaa_controller import user_has_permission
 from response_operations_ui.exceptions.exceptions import ApiError
 from response_operations_ui.forms import EditContactDetailsForm, RuSearchForm
 
@@ -211,6 +215,20 @@ def view_reporting_unit_survey(ru_ref, survey_id):
 
     logger.info("Successfully gathered data to view reporting unit survey data", ru_ref=ru_ref, survey_id=survey_id)
 
+    permissions = {
+        "reporting_unit_edit": user_has_permission("reportingunits.edit"),
+        "messages_edit": user_has_permission("messages.edit"),
+    }
+    context = build_reporting_units_context(
+        collection_exercises_with_details,
+        reporting_unit,
+        survey_details,
+        survey_respondents,
+        case,
+        unused_iac,
+        permissions,
+    )
+
     return render_template(
         "reporting-unit-survey.html",
         ru=reporting_unit,
@@ -219,6 +237,7 @@ def view_reporting_unit_survey(ru_ref, survey_id):
         collection_exercises=collection_exercises_with_details,
         iac=unused_iac,
         case=case,
+        context=context,
     )
 
 

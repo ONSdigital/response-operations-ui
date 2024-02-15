@@ -10,11 +10,7 @@
 
     <div class="ons-grid ons-grid--gutterless">
         <div class="ons-grid__col ons-col-8@m">
-            {% if is_case_complete %}
-                <h1 class="ons-u-mt-m ons-u-fs-xl">Response status</h1>
-            {% else %}
-                <h1 class="ons-u-mt-m ons-u-fs-xl">Change response status</h1>
-            {% endif %}
+            <h1 class="ons-u-mt-m ons-u-fs-xl">Change response status</h1>
             {{
                 onsMetadata({
                     "termCol": "3",
@@ -92,30 +88,15 @@
                     ]
                 })
             }}
-            {% if is_case_complete %}
-                <a href="{{ url_for('reporting_unit_bp.view_reporting_unit_survey', ru_ref=ru_ref, survey_id=survey_id) }}" id="close-response">Close</a>
-            {% else %}
-                <form action="{{ url_for('case_bp.update_response_status', ru_ref=ru_ref, survey=survey_short_name, case_group_id=case_group_id, period=ce_period) }}" method="post" class="ons-u-mt-s">
+            {% if context['change_response_status'] %}
+                <form action="{{ context['change_response_status']['url'] }}" method="post" class="ons-u-mt-s">
                     <input type="hidden" name="csrf_token" value="{{ csrf_token() }}" />
                     {% set radioComponent = {
                         "legend": "Change response status",
                         "name": "event"
                     } %}
 
-                    {% set radios = [] %}
-                    {% for event, status in allowed_transitions_for_case.items() %}
-                        {% do radios.append(
-                            {
-                                "id": 'state-' ~ loop.index,
-                                "label": {
-                                    "text": status
-                                },
-                                "value": event
-                            }
-                        ) %}
-                    {% endfor %}
-
-                    {% do radioComponent | setAttribute("radios", radios) %}
+                    {% do radioComponent | setAttribute("radios", context["change_response_status"]["radios"]) %}
                     {{
                         onsRadios(radioComponent)
                     }}
@@ -128,7 +109,7 @@
                         })
                     }}
                     <p>
-                        <a href="{{ url_for('reporting_unit_bp.view_reporting_unit_survey', ru_ref=ru_ref, survey_id=survey_id) }}" id="cancel-change">Cancel</a>
+                        <a href="{{ context['change_response_status']['cancel_link'] }}" id="cancel-change">Cancel</a>
                     </p>
                 </form>
             {% endif %}

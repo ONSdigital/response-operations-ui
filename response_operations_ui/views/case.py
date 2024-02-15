@@ -10,6 +10,7 @@ from response_operations_ui.common.mappers import (
     format_short_name,
     map_ce_response_status,
 )
+from response_operations_ui.contexts.case import build_response_status_context
 from response_operations_ui.controllers import (
     case_controller,
     collection_exercise_controllers,
@@ -23,6 +24,7 @@ from response_operations_ui.controllers.case_controller import (
 from response_operations_ui.controllers.party_controller import (
     get_respondent_by_party_id,
 )
+from response_operations_ui.controllers.uaa_controller import user_has_permission
 from response_operations_ui.forms import ChangeGroupStatusForm
 
 ALLOWED_TRANSITIONS = ["COMPLETEDBYPHONE", "NOLONGERREQUIRED", "NOTSTARTED"]
@@ -74,6 +76,17 @@ def get_response_statuses(ru_ref, error=None):
         if status in allowed_transitions_filtered
     }
 
+    has_reporting_unit_permission = user_has_permission("reportingunits.edit")
+    context = build_response_status_context(
+        ru_ref,
+        format_short_name(survey["shortName"]),
+        case_group["id"],
+        period,
+        allowed_transitions_for_case,
+        survey["id"],
+        has_reporting_unit_permission,
+    )
+
     return render_template(
         "response-status.html",
         ru_ref=ru_ref,
@@ -90,6 +103,7 @@ def get_response_statuses(ru_ref, error=None):
         is_case_complete=is_case_complete,
         completed_timestamp=completed_timestamp,
         completed_respondent=completed_respondent,
+        context=context,
     )
 
 
