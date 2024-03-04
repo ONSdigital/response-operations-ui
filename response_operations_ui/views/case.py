@@ -1,4 +1,5 @@
 import logging
+from datetime import datetime
 
 from flask import Blueprint, render_template, request, url_for
 from flask_login import login_required
@@ -59,12 +60,9 @@ def get_response_statuses(ru_ref, error=None):
     case_group_status = case_group["caseGroupStatus"]
     case_id = get_case_by_case_group_id(case_group["id"]).get("id")
     is_case_complete = case_group_status in COMPLETE_STATE
-    completed_timestamp = get_timestamp_for_completed_case_event(case_id) if is_case_complete else None
-
-    if is_case_complete:
-        case_events = get_case_events_by_case_id(case_id=case_id)
-        case_event = get_case_event_for_seft_or_eq(case_events)
-        completed_respondent = get_user_from_case_events(case_event)
+    completed_timestamp, unformatted_timestamp = (
+        get_timestamp_for_completed_case_event(case_id) if is_case_complete else (None, None)
+    )
 
     # Using a list filter to return only the status we actually require. This is then used
     # to create the dictionary with only the required allowed transitions for certain case events
@@ -76,6 +74,11 @@ def get_response_statuses(ru_ref, error=None):
         if status in allowed_transitions_filtered
     }
 
+    if is_case_complete:
+        case_events = get_case_events_by_case_id(case_id=case_id)
+        case_event = get_case_event_for_seft_or_eq(case_events)
+        completed_respondent = get_user_from_case_events(case_event)
+
     has_reporting_unit_permission = user_has_permission("reportingunits.edit")
     context = build_response_status_context(
         ru_ref,
@@ -85,6 +88,7 @@ def get_response_statuses(ru_ref, error=None):
         allowed_transitions_for_case,
         survey["id"],
         has_reporting_unit_permission,
+        unformatted_timestamp,
     )
 
     return render_template(
@@ -138,7 +142,7 @@ def get_timestamp_for_completed_case_event(case_id):
     last_index = len(case_events) - 1
     timestamp = case_events[last_index]["createdDateTime"].replace("T", " ").split(".")[0]
 
-    return get_formatted_date(timestamp)
+    return get_formatted_date(timestamp), datetime.strptime(timestamp, "%Y-%m-%d %H:%M:%S")
 
 
 def get_case_event_for_seft_or_eq(case_events):

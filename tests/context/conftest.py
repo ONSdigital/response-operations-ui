@@ -505,11 +505,31 @@ def expected_response_status_context_for_complete_case_with_all_permissions():
     return {
         "change_response_status": {
             "cancel_link": "/reporting-units/49900000001/surveys/02b9c366-7397-42f7-942a-76dc5876d86d",
-            "radios": [{"id": "state-1", "label": {"text": "Not started"}, "value": "COMPLETED_TO_NOTSTARTED"}],
+            "radios": [
+                {
+                    "id": "state-1",
+                    "label": {"text": "Not started"},
+                    "value": "COMPLETED_TO_NOTSTARTED",
+                    "attributes": {"disabled": "true"},
+                }
+            ],
             "url": "/case/49900000001/response-status?survey=QBS&"
             + "case_group_id=6fef0397-f07b-4d65-8988-931cec23057f&period=1912",
         }
     }
+
+
+@pytest.fixture
+def expected_response_status_context_for_complete_case_after_48_hours(
+    expected_response_status_context_for_complete_case_with_all_permissions,
+):
+    expected_response_status_context_for_complete_case_after_48_hours = (
+        expected_response_status_context_for_complete_case_with_all_permissions.copy()
+    )
+    expected_response_status_context_for_complete_case_with_all_permissions["change_response_status"]["radios"][0].pop(
+        "attributes"
+    )
+    return expected_response_status_context_for_complete_case_after_48_hours
 
 
 @pytest.fixture

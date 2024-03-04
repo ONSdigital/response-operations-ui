@@ -7,6 +7,7 @@ sendEmailToGovNotify: false
 admin:
   createAccountEmailExpiry: "2419200"
   updateAccountEmailExpiry: "259200"
+  completeToNotStartedWaitTime: "259200"
 
 analytics:
   enabled: false

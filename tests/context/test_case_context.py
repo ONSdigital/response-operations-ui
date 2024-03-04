@@ -1,3 +1,5 @@
+from datetime import datetime, timedelta
+
 from response_operations_ui.contexts.case import build_response_status_context
 
 
@@ -20,6 +22,7 @@ def test_response_status_context_with_permissions(
             transitions_for_complete_case,
             survey_id,
             True,
+            datetime.now(),
         )
     assert context == expected_response_status_context_for_complete_case_with_all_permissions
 
@@ -93,6 +96,7 @@ def test_transitions_from_completed_by_phone(
             transitions_for_complete_case,
             survey_id,
             True,
+            datetime.now(),
         )
         radios = get_response_status_context(context, "change_response_status", "radios")
 
@@ -121,6 +125,7 @@ def test_transitions_from_no_longer_required(
             transitions_for_complete_case,
             survey_id,
             True,
+            datetime.now(),
         )
         radios = get_response_status_context(context, "change_response_status", "radios")
 
@@ -176,6 +181,64 @@ def test_transitions_from_complete(
             transitions_for_complete_case,
             survey_id,
             True,
+            datetime.now(),
+        )
+        radios = get_response_status_context(context, "change_response_status", "radios")
+
+    assert (
+        expected_response_status_context_for_complete_case_with_all_permissions["change_response_status"]["radios"]
+        == radios
+    )
+
+
+def test_transitions_from_complete_after_48_hours(
+    app,
+    transitions_for_complete_case,
+    expected_response_status_context_for_complete_case_after_48_hours,
+    ru_ref,
+    survey_short_name,
+    case_group_id,
+    ce_period,
+    survey_id,
+):
+    with app.test_request_context():
+        context = build_response_status_context(
+            ru_ref,
+            survey_short_name,
+            case_group_id,
+            ce_period,
+            transitions_for_complete_case,
+            survey_id,
+            True,
+            datetime.now() - timedelta(days=3),
+        )
+        radios = get_response_status_context(context, "change_response_status", "radios")
+
+    assert (
+        expected_response_status_context_for_complete_case_after_48_hours["change_response_status"]["radios"] == radios
+    )
+
+
+def test_transitions_from_complete_within_48_hours(
+    app,
+    transitions_for_complete_case,
+    expected_response_status_context_for_complete_case_with_all_permissions,
+    ru_ref,
+    survey_short_name,
+    case_group_id,
+    ce_period,
+    survey_id,
+):
+    with app.test_request_context():
+        context = build_response_status_context(
+            ru_ref,
+            survey_short_name,
+            case_group_id,
+            ce_period,
+            transitions_for_complete_case,
+            survey_id,
+            True,
+            datetime.now(),
         )
         radios = get_response_status_context(context, "change_response_status", "radios")
 
