@@ -64,6 +64,11 @@ def get_response_statuses(ru_ref, error=None):
         get_timestamp_for_completed_case_event(case_id) if is_case_complete else (None, None)
     )
 
+    if is_case_complete:
+        case_events = get_case_events_by_case_id(case_id=case_id)
+        case_event = get_case_event_for_seft_or_eq(case_events)
+        completed_respondent = get_user_from_case_events(case_event)
+
     # Using a list filter to return only the status we actually require. This is then used
     # to create the dictionary with only the required allowed transitions for certain case events
     allowed_transitions_filtered = list(filter(lambda statuses: statuses != case_group_status, ALLOWED_TRANSITIONS))
@@ -73,11 +78,6 @@ def get_response_statuses(ru_ref, error=None):
         for event, status in possible_transitions_for_case.items()
         if status in allowed_transitions_filtered
     }
-
-    if is_case_complete:
-        case_events = get_case_events_by_case_id(case_id=case_id)
-        case_event = get_case_event_for_seft_or_eq(case_events)
-        completed_respondent = get_user_from_case_events(case_event)
 
     has_reporting_unit_permission = user_has_permission("reportingunits.edit")
     context = build_response_status_context(
