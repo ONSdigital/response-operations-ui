@@ -414,7 +414,7 @@ def unused_iac():
 
 
 @pytest.fixture
-def expected_ru_context_with_all_permissions():
+def expected_ru_context():
     return {
         "collection_exercise_section": [
             {
@@ -471,8 +471,8 @@ def expected_ru_context_with_all_permissions():
 
 
 @pytest.fixture
-def expected_ru_context_with_multiple_ces_and_respondents(expected_ru_context_with_all_permissions):
-    expected_ru_context_with_multiple_ces_and_respondents = expected_ru_context_with_all_permissions.copy()
+def expected_ru_context_with_multiple_ces_and_respondents(expected_ru_context):
+    expected_ru_context_with_multiple_ces_and_respondents = expected_ru_context.copy()
     expected_ru_context_with_multiple_ces_and_respondents["collection_exercise_section"].append(
         {
             "hyperlink": "/case/49900000001/response-status?survey=MWSS&period=021123",
@@ -492,7 +492,7 @@ def expected_ru_context_with_multiple_ces_and_respondents(expected_ru_context_wi
         }
     )
     expected_ru_context_with_multiple_ces_and_respondents["respondents_section"].append(
-        expected_ru_context_with_all_permissions["respondents_section"][0]
+        expected_ru_context["respondents_section"][0]
     )
     expected_ru_context_with_multiple_ces_and_respondents["respondents_section"][0].pop("enrolment_code_hyperlink")
     expected_ru_context_with_multiple_ces_and_respondents["respondents_section"][0].pop("enrolment_code_hyperlink_text")
@@ -501,7 +501,7 @@ def expected_ru_context_with_multiple_ces_and_respondents(expected_ru_context_wi
 
 
 @pytest.fixture
-def expected_response_status_context_for_complete_case_with_all_permissions():
+def expected_response_status_context_for_complete_case():
     return {
         "change_response_status": {
             "cancel_link": "/reporting-units/49900000001/surveys/02b9c366-7397-42f7-942a-76dc5876d86d",
@@ -510,7 +510,6 @@ def expected_response_status_context_for_complete_case_with_all_permissions():
                     "id": "state-1",
                     "label": {"text": "Not started"},
                     "value": "COMPLETED_TO_NOTSTARTED",
-                    "attributes": {"disabled": "true"},
                 }
             ],
             "url": "/case/49900000001/response-status?survey=QBS&"
@@ -520,15 +519,15 @@ def expected_response_status_context_for_complete_case_with_all_permissions():
 
 
 @pytest.fixture
-def expected_response_status_context_for_complete_case_after_48_hours(
-    expected_response_status_context_for_complete_case_with_all_permissions,
+def expected_response_status_context_for_complete_case_status_change_disabled(
+    expected_response_status_context_for_complete_case,
 ):
     expected_response_status_context_for_complete_case_after_48_hours = (
-        expected_response_status_context_for_complete_case_with_all_permissions.copy()
+        expected_response_status_context_for_complete_case.copy()
     )
-    expected_response_status_context_for_complete_case_with_all_permissions["change_response_status"]["radios"][0].pop(
-        "attributes"
-    )
+    expected_response_status_context_for_complete_case["change_response_status"]["radios"][0]["attributes"] = {
+        "disabled": "true"
+    }
     return expected_response_status_context_for_complete_case_after_48_hours
 
 
@@ -539,11 +538,9 @@ def expected_response_status_context_with_no_permissions():
 
 @pytest.fixture
 def expected_response_status_context_transitions_for_incomplete_case(
-    expected_response_status_context_for_complete_case_with_all_permissions,
+    expected_response_status_context_for_complete_case,
 ):
-    expected_case_context_transitions_from_not_started = (
-        expected_response_status_context_for_complete_case_with_all_permissions.copy()
-    )
+    expected_case_context_transitions_from_not_started = expected_response_status_context_for_complete_case.copy()
     expected_case_context_transitions_from_not_started["change_response_status"]["radios"] = [
         {"id": "state-1", "label": {"text": "Completed by phone"}, "value": "COMPLETED_BY_PHONE"},
         {"id": "state-2", "label": {"text": "No longer required"}, "value": "NO_LONGER_REQUIRED"},

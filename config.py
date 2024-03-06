@@ -98,6 +98,8 @@ class Config(object):
     # 3 days in seconds
     UPDATE_ACCOUNT_EMAIL_TOKEN_EXPIRY = int(os.getenv("UPDATE_ACCOUNT_EMAIL_TOKEN_EXPIRY", "259200"))
     # 48 hours in seconds
+    # Grace period for changing the survey status from complete to not started to ensure that when an eQ status is
+    # changed, the respondent will be provided with an empty survey
     COMPLETE_TO_NOT_STARTED_WAIT_TIME = int(os.getenv("COMPLETE_TO_NOT_STARTED_WAIT_TIME", "172800"))
 
     TEST_MODE = strtobool(os.getenv("TEST_MODE", "False"))
@@ -146,8 +148,8 @@ class DevelopmentConfig(Config):
     # 3 days in seconds
     UPDATE_ACCOUNT_EMAIL_TOKEN_EXPIRY = int(os.getenv("UPDATE_ACCOUNT_EMAIL_TOKEN_EXPIRY", "259200"))
     WTF_CSRF_ENABLED = strtobool(os.getenv("WTF_CSRF_ENABLED", "False"))
-    # 12 hours in seconds
-    COMPLETE_TO_NOT_STARTED_WAIT_TIME = int(os.getenv("COMPLETE_TO_NOT_STARTED_WAIT_TIME", "43200"))
+    # 5 minutes in seconds
+    COMPLETE_TO_NOT_STARTED_WAIT_TIME = int(os.getenv("COMPLETE_TO_NOT_STARTED_WAIT_TIME", "300"))
 
 
 class TestingConfig(DevelopmentConfig):
@@ -180,5 +182,5 @@ Z5VVFymXN2n+A6UeWAnuO8/E1inhk99dBzKEGdw=
     SECRET_KEY = "sekrit!"
     SECURITY_USER_NAME = "admin"
     SECURITY_USER_PASSWORD = "secret"
-    # 12 hours in seconds
-    COMPLETE_TO_NOT_STARTED_WAIT_TIME = int(os.getenv("COMPLETE_TO_NOT_STARTED_WAIT_TIME", "43200"))
+    # 5 minutes in seconds
+    COMPLETE_TO_NOT_STARTED_WAIT_TIME = int(os.getenv("COMPLETE_TO_NOT_STARTED_WAIT_TIME", "300"))

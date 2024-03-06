@@ -60,9 +60,7 @@ def get_response_statuses(ru_ref, error=None):
     case_group_status = case_group["caseGroupStatus"]
     case_id = get_case_by_case_group_id(case_group["id"]).get("id")
     is_case_complete = case_group_status in COMPLETE_STATE
-    completed_timestamp, unformatted_timestamp = (
-        get_timestamp_for_completed_case_event(case_id) if is_case_complete else (None, None)
-    )
+    case_completed_timestamp = get_timestamp_for_completed_case_event(case_id) if is_case_complete else None
 
     if is_case_complete:
         case_events = get_case_events_by_case_id(case_id=case_id)
@@ -88,7 +86,7 @@ def get_response_statuses(ru_ref, error=None):
         allowed_transitions_for_case,
         survey["id"],
         has_reporting_unit_permission,
-        unformatted_timestamp,
+        datetime.strptime(case_completed_timestamp, "%Y-%m-%d %H:%M:%S") if case_completed_timestamp else None,
     )
 
     return render_template(
@@ -105,7 +103,7 @@ def get_response_statuses(ru_ref, error=None):
         case_group_id=case_group["id"],
         error=error,
         is_case_complete=is_case_complete,
-        completed_timestamp=completed_timestamp,
+        completed_timestamp=get_formatted_date(case_completed_timestamp) if case_completed_timestamp else None,
         completed_respondent=completed_respondent,
         context=context,
     )
@@ -141,7 +139,7 @@ def get_timestamp_for_completed_case_event(case_id):
     case_events = get_case_events_by_case_id(case_id, COMPLETED_CASE_EVENTS)
     timestamp = case_events[0]["createdDateTime"].replace("T", " ").split(".")[0]
 
-    return get_formatted_date(timestamp), datetime.strptime(timestamp, "%Y-%m-%d %H:%M:%S")
+    return timestamp
 
 
 def get_case_event_for_seft_or_eq(case_events):
