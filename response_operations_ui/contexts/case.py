@@ -41,6 +41,9 @@ def _generate_radios(allowed_transitions_for_case: dict, case_completed_time: da
                 (datetime.now() - case_completed_time) < timedelta(seconds=complete_to_not_started_wait_time)
             ):
                 radio["attributes"] = {"disabled": "true"}
+                radio["label"][
+                    "description"
+                ] = "Status can only be changed after 48 hours have passed since the submission"
         radios.append(radio)
 
     return radios

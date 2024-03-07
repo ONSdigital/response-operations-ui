@@ -528,6 +528,9 @@ def expected_response_status_context_for_complete_case_status_change_disabled(
     expected_response_status_context_for_complete_case["change_response_status"]["radios"][0]["attributes"] = {
         "disabled": "true"
     }
+    expected_response_status_context_for_complete_case["change_response_status"]["radios"][0]["label"][
+        "description"
+    ] = "Status can only be changed after 48 hours have passed since the submission"
     return expected_response_status_context_for_complete_case_after_48_hours
 
 
