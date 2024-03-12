@@ -35,11 +35,9 @@ def _generate_radios(allowed_transitions_for_case: dict, case_completed_time: da
     radios = []
     for index, (event, status) in enumerate(allowed_transitions_for_case.items()):
         radio = {"id": f"state-{index + 1}", "label": {"text": status}, "value": event}
-        if case_completed_time:
+        if event == "COMPLETED_TO_NOTSTARTED" and case_completed_time:
             complete_to_not_started_wait_time = app.config["COMPLETE_TO_NOT_STARTED_WAIT_TIME"]
-            if (radio["value"] == "COMPLETED_TO_NOTSTARTED") and (
-                (datetime.now() - case_completed_time) < timedelta(seconds=complete_to_not_started_wait_time)
-            ):
+            if (datetime.now() - case_completed_time) < timedelta(seconds=complete_to_not_started_wait_time):
                 radio["attributes"] = {"disabled": "true"}
                 radio["label"][
                     "description"
