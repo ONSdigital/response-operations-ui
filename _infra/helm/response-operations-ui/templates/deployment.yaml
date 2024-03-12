@@ -233,5 +233,7 @@ spec:
             value: "{{- if .Values.test.enabled -}}True{{- else -}}False{{- end -}}"
           - name: WTF_CSRF_ENABLED
             value: "{{- if .Values.test.enabled -}}False{{- else -}}True{{- end -}}"
+          - name: COMPLETE_TO_NOT_STARTED_WAIT_TIME
+            value: "{{ .Values.admin.completeToNotStartedWaitTime }}"
           resources:
             {{ toYaml .Values.resources | nindent 12 }}
