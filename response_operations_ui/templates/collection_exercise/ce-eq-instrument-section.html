@@ -11,6 +11,11 @@
 {% set page_title = survey.surveyRef + " " + survey.shortName + " " + ce.exerciseRef + " | Surveys" %}
 {% set surveyEditPermission = hasPermission('surveys.edit') %}
 
+{% block head %}
+    {{ super() }}
+    <script type="text/javascript" src="{{ url_for('static', filename='js/selected_ci_functions.min.js') }}"></script>
+{% endblock %}
+
 {% block main %}
     {% include 'collection_exercise/ce-success-panel.html' %}
     {% include 'collection_exercise/ce-info-panel.html' %}
