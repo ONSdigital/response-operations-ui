@@ -3,14 +3,14 @@
     "category": "COLLECTION_INSTRUMENT_DOWNLOADED",
     "subCategory": null,
     "createdBy": "SYSTEM",
-    "createdDateTime": "2017-02-22T14:16:50Z",
+    "createdDateTime": "2017-02-22T14:16:50.000Z",
     "metadata": {"partyId": "cd592e0f-8d07-407b-b75d-e01fbdae8233"}
   },
   {
     "category": "OFFLINE_RESPONSE_PROCESSED",
     "subCategory": null,
     "createdBy": "SYSTEM",
-    "createdDateTime": "2018-02-22T14:16:50Z",
+    "createdDateTime": "2018-02-22T14:16:50.000Z",
     "metadata": {"partyId": "cd592e0f-8d07-407b-b75d-e01fbdae8233"}
 
   },
@@ -18,21 +18,21 @@
     "category": "COMPLETED_BY_PHONE",
     "subCategory": null,
     "createdBy": "SYSTEM",
-    "createdDateTime": "2018-04-22T15:16:50Z",
+    "createdDateTime": "2018-04-22T15:16:50.000Z",
     "metadata": {"partyId": "cd592e0f-8d07-407b-b75d-e01fbdae8233"}
   },
   {
    "category":"COMPLETED_TO_NOTSTARTED",
    "subCategory":null,
    "createdBy":"SYSTEM",
-   "createdDateTime":"2018-04-22T15:16:50Z",
+   "createdDateTime":"2018-04-22T15:16:50.000Z",
    "metadata":{"partyId": "cd592e0f-8d07-407b-b75d-e01fbdae8233"}
   },
   {
    "category":"NO_LONGER_REQUIRED",
    "subCategory":null,
    "createdBy":"SYSTEM",
-   "createdDateTime":"2018-04-22T15:16:50Z",
+   "createdDateTime":"2018-04-22T15:16:50.000Z",
    "metadata":{"partyId": "cd592e0f-8d07-407b-b75d-e01fbdae8233"}
   }
 ]

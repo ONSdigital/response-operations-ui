@@ -10,7 +10,7 @@ def test_has_both_edit_permission(
     survey_details,
     survey_respondents,
     case,
-    expected_ru_context_with_all_permissions,
+    expected_ru_context,
 ):
     with app.test_request_context():
         context = build_reporting_units_context(
@@ -25,7 +25,7 @@ def test_has_both_edit_permission(
         hyperlink = get_ru_context(context, "collection_exercise_section", 0, "status")["hyperlink_text"]
         message = get_ru_context(context, "respondents_section", 0, "message")
 
-    assert context == expected_ru_context_with_all_permissions
+    assert context == expected_ru_context
     assert "Change" in hyperlink
     assert message[0]["value"] == "49900000001"
 
@@ -155,7 +155,7 @@ def test_respondent_active(
     survey_details,
     survey_respondents,
     case,
-    expected_ru_context_with_all_permissions,
+    expected_ru_context,
 ):
     with app.test_request_context():
         context = build_reporting_units_context(
@@ -179,7 +179,7 @@ def test_respondent_suspended(
     survey_details,
     suspended_survey_respondents,
     case,
-    expected_ru_context_with_all_permissions,
+    expected_ru_context,
 ):
     with app.test_request_context():
         context = build_reporting_units_context(
@@ -203,7 +203,7 @@ def test_respondent_enrolment_enabled(
     survey_details,
     survey_respondents,
     case,
-    expected_ru_context_with_all_permissions,
+    expected_ru_context,
 ):
     with app.test_request_context():
         context = build_reporting_units_context(
@@ -227,7 +227,7 @@ def test_respondent_enrolment_pending(
     survey_details,
     pending_enrolment_survey_respondents,
     case,
-    expected_ru_context_with_all_permissions,
+    expected_ru_context,
 ):
     with app.test_request_context():
         context = build_reporting_units_context(
@@ -251,7 +251,7 @@ def test_respondent_enrolment_disabled(
     survey_details,
     disabled_enrolment_survey_respondents,
     case,
-    expected_ru_context_with_all_permissions,
+    expected_ru_context,
 ):
     with app.test_request_context():
         context = build_reporting_units_context(
