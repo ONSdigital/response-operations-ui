@@ -1,13 +1,16 @@
 const path = require('path');
 
 module.exports = {
-    entry: [
+    entry: {
+        selected_ci_functions:  './response_operations_ui/assets/js/selected_ci_functions.js',
+		main: [
         './response_operations_ui/assets/js/main.js',
         './response_operations_ui/assets/scss/main.scss'
-    ],
+    ]
+	},
     output: {
         path: path.resolve(__dirname, './response_operations_ui/static'), 
-        filename: 'js/main.min.js',
+        filename: 'js/[name].min.js',
     },
     devtool: 'source-map',
     module: {

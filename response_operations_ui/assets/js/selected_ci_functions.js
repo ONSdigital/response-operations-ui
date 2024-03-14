@@ -1,20 +1,22 @@
 window.onload = function () {
-    const ciCheckBoxes = document.querySelectorAll("input[type=checkbox]");
-    const selectButton = document.getElementById('select-or-unselect-ci');
+   const selectButton = document.getElementById('select-or-unselect-ci');
     
-    selectButton.onclick = function (ev) {
-        if (selectButton.innerText === "Unselect all") {
-            ciSelection(false, ciCheckBoxes, ev)
-        } else {
-            ciSelection(true, ciCheckBoxes, ev)
-        }
-    };
+    if (selectButton) {
+        const ciCheckBoxes = document.querySelectorAll("input[type=checkbox]");
+        selectButton.onclick = function (ev) {
+            if (selectButton.innerText === "Unselect all") {
+                ciSelection(false, ciCheckBoxes, ev)
+            } else {
+                ciSelection(true, ciCheckBoxes, ev)
+            }
+        };
     
-    [].forEach.call(ciCheckBoxes, function (ci) {
-        ci.addEventListener("change", function () {
-            ciTextUpdates()
+        [].forEach.call(ciCheckBoxes, function (ci) {
+            ci.addEventListener("change", function () {
+                ciTextUpdates()
+            });
         });
-    });
+    }
 }
 
 function ciSelection (selected, ciCheckBoxes, ev) {

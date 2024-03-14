@@ -8,6 +8,11 @@
 {% from "components/table/_macro.njk" import onsTable %}
 {% from "components/upload/_macro.njk" import onsUpload %}
 
+{% block head %}
+    {{ super() }}
+    <script type="text/javascript" src="{{ url_for('static', filename='js/selected_ci_functions.min.js') }}"></script>
+{% endblock %}
+
 {% set page_title = survey.surveyRef + " " + survey.shortName + " " + ce.exerciseRef + " | Surveys" %}
 {% set surveyEditPermission = hasPermission('surveys.edit') %}
 
