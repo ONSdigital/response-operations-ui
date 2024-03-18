@@ -504,16 +504,13 @@ def expected_ru_context_with_multiple_ces_and_respondents(expected_ru_context):
 def expected_response_status_context_for_complete_case():
     return {
         "change_response_status": {
-            "cancel_link": "/reporting-units/49900000001/surveys/02b9c366-7397-42f7-942a-76dc5876d86d",
-            "radios": [
-                {
-                    "id": "state-1",
-                    "label": {"text": "Not started"},
-                    "value": "COMPLETED_TO_NOTSTARTED",
-                }
-            ],
+            "radios_section": {
+                "cancel_link": "/reporting-units/49900000001/surveys/02b9c366-7397-42f7-942a-76dc5876d86d",
+                "confirm_button_variant": None,
+                "radios": [{"id": "state-1", "label": {"text": "Not started"}, "value": "COMPLETED_TO_NOTSTARTED"}],
+            },
             "url": "/case/49900000001/response-status?survey=QBS&"
-            + "case_group_id=6fef0397-f07b-4d65-8988-931cec23057f&period=1912",
+            "case_group_id=6fef0397-f07b-4d65-8988-931cec23057f&period=1912",
         }
     }
 
@@ -525,12 +522,15 @@ def expected_response_status_context_for_complete_case_status_change_disabled(
     expected_response_status_context_for_complete_case_after_48_hours = (
         expected_response_status_context_for_complete_case.copy()
     )
-    expected_response_status_context_for_complete_case["change_response_status"]["radios"][0]["attributes"] = {
-        "disabled": "true"
-    }
-    expected_response_status_context_for_complete_case["change_response_status"]["radios"][0]["label"][
-        "description"
-    ] = "Status can only be changed after 48 hours have passed since the submission"
+    expected_response_status_context_for_complete_case["change_response_status"]["radios_section"]["radios"][0][
+        "attributes"
+    ] = {"disabled": "true"}
+    expected_response_status_context_for_complete_case["change_response_status"]["radios_section"]["radios"][0][
+        "label"
+    ]["description"] = "Status can only be changed after 48 hours have passed since the submission"
+    expected_response_status_context_for_complete_case["change_response_status"]["radios_section"][
+        "confirm_button_variant"
+    ] = "disabled"
     return expected_response_status_context_for_complete_case_after_48_hours
 
 
@@ -544,7 +544,7 @@ def expected_response_status_context_transitions_for_incomplete_case(
     expected_response_status_context_for_complete_case,
 ):
     expected_case_context_transitions_from_not_started = expected_response_status_context_for_complete_case.copy()
-    expected_case_context_transitions_from_not_started["change_response_status"]["radios"] = [
+    expected_case_context_transitions_from_not_started["change_response_status"]["radios_section"]["radios"] = [
         {"id": "state-1", "label": {"text": "Completed by phone"}, "value": "COMPLETED_BY_PHONE"},
         {"id": "state-2", "label": {"text": "No longer required"}, "value": "NO_LONGER_REQUIRED"},
     ]
