@@ -70,10 +70,11 @@ def test_transitions_from_not_started(
             survey_id,
             True,
         )
-        radios = get_response_status_context_element(context, "change_response_status", "radios")
+        radios_section = get_response_status_context_element(context, "change_response_status", "radios_section")
 
     assert (
-        expected_response_status_context_transitions_for_incomplete_case["change_response_status"]["radios"] == radios
+        expected_response_status_context_transitions_for_incomplete_case["change_response_status"]["radios_section"]
+        == radios_section
     )
 
 
@@ -98,9 +99,12 @@ def test_transitions_from_completed_by_phone(
             True,
             datetime.now() - timedelta(seconds=300),
         )
-        radios = get_response_status_context_element(context, "change_response_status", "radios")
+        radios_section = get_response_status_context_element(context, "change_response_status", "radios_section")
 
-    assert expected_response_status_context_for_complete_case["change_response_status"]["radios"] == radios
+        assert (
+            expected_response_status_context_for_complete_case["change_response_status"]["radios_section"]
+            == radios_section
+        )
 
 
 def test_transitions_from_no_longer_required(
@@ -124,9 +128,12 @@ def test_transitions_from_no_longer_required(
             True,
             datetime.now() - timedelta(seconds=300),
         )
-        radios = get_response_status_context_element(context, "change_response_status", "radios")
+        radios_section = get_response_status_context_element(context, "change_response_status", "radios_section")
 
-    assert expected_response_status_context_for_complete_case["change_response_status"]["radios"] == radios
+        assert (
+            expected_response_status_context_for_complete_case["change_response_status"]["radios_section"]
+            == radios_section
+        )
 
 
 def test_transitions_from_in_progress(
@@ -149,11 +156,12 @@ def test_transitions_from_in_progress(
             survey_id,
             True,
         )
-        radios = get_response_status_context_element(context, "change_response_status", "radios")
+        radios_section = get_response_status_context_element(context, "change_response_status", "radios_section")
 
-    assert (
-        expected_response_status_context_transitions_for_incomplete_case["change_response_status"]["radios"] == radios
-    )
+        assert (
+            expected_response_status_context_transitions_for_incomplete_case["change_response_status"]["radios_section"]
+            == radios_section
+        )
 
 
 def test_transitions_from_complete(
@@ -177,9 +185,12 @@ def test_transitions_from_complete(
             True,
             datetime.now() - timedelta(seconds=300),
         )
-        radios = get_response_status_context_element(context, "change_response_status", "radios")
+        radios_section = get_response_status_context_element(context, "change_response_status", "radios_section")
 
-    assert expected_response_status_context_for_complete_case["change_response_status"]["radios"] == radios
+        assert (
+            expected_response_status_context_for_complete_case["change_response_status"]["radios_section"]
+            == radios_section
+        )
 
 
 def test_transitions_from_complete_case_enabled(
@@ -203,9 +214,12 @@ def test_transitions_from_complete_case_enabled(
             True,
             datetime.now() - timedelta(seconds=300),
         )
-        radios = get_response_status_context_element(context, "change_response_status", "radios")
+        radios_section = get_response_status_context_element(context, "change_response_status", "radios_section")
 
-    assert expected_response_status_context_for_complete_case["change_response_status"]["radios"] == radios
+        assert (
+            expected_response_status_context_for_complete_case["change_response_status"]["radios_section"]
+            == radios_section
+        )
 
 
 def test_transitions_from_complete_case_disabled(
@@ -229,12 +243,14 @@ def test_transitions_from_complete_case_disabled(
             True,
             datetime.now(),
         )
-        radios = get_response_status_context_element(context, "change_response_status", "radios")
+        radios_section = get_response_status_context_element(context, "change_response_status", "radios_section")
 
-    assert (
-        expected_response_status_context_for_complete_case_status_change_disabled["change_response_status"]["radios"]
-        == radios
-    )
+        assert (
+            expected_response_status_context_for_complete_case_status_change_disabled["change_response_status"][
+                "radios_section"
+            ]
+            == radios_section
+        )
 
 
 def get_response_status_context_element(context, section, element):
