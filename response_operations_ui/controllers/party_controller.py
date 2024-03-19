@@ -183,6 +183,9 @@ def get_respondent_by_party_ids(uuids):
         return []
 
     params = urlencode([("id", uuid) for uuid in uuids])
+
+    logger.info("get_respondent_by_party_ids [-MNP9-]", params=params)
+
     url = f'{app.config["PARTY_URL"]}/party-api/v1/respondents'
     response = requests.get(url, auth=app.config["BASIC_AUTH"], params=params)
 
