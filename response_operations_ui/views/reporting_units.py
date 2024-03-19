@@ -216,7 +216,7 @@ def view_reporting_unit_survey(ru_ref, survey_id):
 
     attributes = party_controller.get_business_attributes_by_party_id(reporting_unit["id"])
 
-    logger.info("attributes [-MNP7-]", attributes_count=str(len(attributes)))
+    logger.info("attributes [-MNP8-]", attributes_count=str(len(attributes)))
 
     collection_exercises_with_details = [
         add_collection_exercise_details(ce, attributes[ce["id"]], case_groups) for ce in survey_collection_exercises
