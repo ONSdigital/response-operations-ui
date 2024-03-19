@@ -11,7 +11,7 @@
             {% if error_type == 'api error' %}
                 {% call
                     onsPanel({
-                        "type":"error",
+                        "variant":"error",
                         "classes": "ons-u-mb-s",
                         "id": "save-error"
                     })
@@ -23,7 +23,7 @@
             {% if error_type == 'email conflict' %}
                 {% call
                     onsPanel({
-                        "type":"error",
+                        "variant":"error",
                         "classes": "ons-u-mb-s",
                         "id": "save-email-error"
                     })

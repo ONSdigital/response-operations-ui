@@ -9,7 +9,7 @@
             <h1 id="respondent-data">Delete {{ respondent_details.firstName[0]|upper }}{{ respondent_details.firstName[1:] }} {{ respondent_details.lastName[0]|upper }}{{ respondent_details.lastName[1:] }}'s data</h1>
             {% call
                 onsPanel({
-                    "type":"warn",
+                    "variant":"warn",
                     "id": "warn-delete",
                     "classes": "ons-u-mb-m",
                 })
@@ -39,7 +39,7 @@
             <h1 id="undo-respondent-data">Reactivate {{ respondent_details.firstName[0]|upper }}{{ respondent_details.firstName[1:] }} {{ respondent_details.lastName[0]|upper }}{{ respondent_details.lastName[1:] }}'s account</h1>
             {% call
                 onsPanel({
-                    "type":"warn",
+                    "variant":"warn",
                     "id": "warn-delete",
                     "classes": "ons-u-mb-m",
                 })

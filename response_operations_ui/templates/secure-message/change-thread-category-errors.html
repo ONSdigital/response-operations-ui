@@ -3,7 +3,7 @@
     {%- if errors -%}
         {% call
             onsPanel({
-                "type":"error",
+                "variant":"error",
                 "title": "This page has 1 error",
                 "classes": "ons-u-mb-s",
                 "id": "save-error"
@@ -37,7 +37,7 @@
     {% call
         onsPanel({
             "title": header_text,
-            "type": "error",
+            "variant": "error",
             "classes": "ons-u-mb-m ons-col-8@m"
         })
     %}
