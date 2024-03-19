@@ -163,6 +163,9 @@ def view_reporting_unit_survey(ru_ref, survey_id):
     logger.info("Gathering data to view reporting unit survey data", ru_ref=ru_ref, survey_id=survey_id)
     # Make some initial calls to retrieve some data we'll need
     reporting_unit = party_controller.get_business_by_ru_ref(ru_ref)
+
+    logger.info("reporting_unit [-MNP1-]", reporting_unit=str(reporting_unit))
+
     max_number_of_cases = request.args.get("max-number-of-cases", app.config["MAX_CASES_RETRIEVED_PER_SURVEY"])
     if int(max_number_of_cases) == 0:
         flash("Maximum number of cases cannot be 0.  Using default maximum instead", "error")
@@ -170,24 +173,40 @@ def view_reporting_unit_survey(ru_ref, survey_id):
     cases = case_controller.get_cases_by_business_party_id(reporting_unit["id"], max_number_of_cases)
     case_groups = [case["caseGroup"] for case in cases]
 
+    logger.info("case_groups [-MNP2-]", case_groups_count=str(len(case_groups)))
+
     # Get all collection exercises for retrieved case groups and only for the survey we care about.
     collection_exercise_ids = {
         case_group["collectionExerciseId"] for case_group in case_groups if case_group["surveyId"] == survey_id
     }
     collection_exercises = [get_collection_exercise_by_id(ce_id) for ce_id in collection_exercise_ids]
+
+    logger.info("collection_exercises [-MNP3-]", collection_exercises_count=str(len(collection_exercises)))
+
     live_collection_exercises = [
         ce for ce in collection_exercises if parse_date(ce["scheduledStartDateTime"]) < datetime.now(timezone.utc)
     ]
 
+    logger.info(
+        "live_collection_exercises [-MNP4-]", live_collection_exercises_count=str(len(live_collection_exercises))
+    )
+
     # Get all respondents for the given ru
     respondent_party_ids = [respondent["partyId"] for respondent in reporting_unit.get("associations")]
+
+    logger.info("respondent_party_ids [-MNP5-]", respondent_party_ids_count=str(len(respondent_party_ids)))
+
     respondents = party_controller.get_respondent_by_party_ids(respondent_party_ids)
+
+    logger.info("respondents [-MNP6-]", respondents_count=str(len(respondents)))
 
     survey_respondents = [
         party_controller.add_enrolment_status_for_respondent(respondent, ru_ref, survey_id)
         for respondent in respondents
         if survey_id in party_controller.survey_ids_for_respondent(respondent, ru_ref)
     ]
+
+    logger.info("survey_respondents [-MNP7-]", survey_respondents_count=str(len(survey_respondents)))
 
     survey_collection_exercises = sorted(
         [collection_exercise for collection_exercise in live_collection_exercises],
@@ -196,6 +215,9 @@ def view_reporting_unit_survey(ru_ref, survey_id):
     )
 
     attributes = party_controller.get_business_attributes_by_party_id(reporting_unit["id"])
+
+    logger.info("attributes [-MNP7-]", attributes_count=str(len(attributes)))
+
     collection_exercises_with_details = [
         add_collection_exercise_details(ce, attributes[ce["id"]], case_groups) for ce in survey_collection_exercises
     ]
