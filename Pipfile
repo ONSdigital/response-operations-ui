@@ -40,8 +40,8 @@ et_xmlfile = "*"
 Jinja2 = "*"
 MarkupSafe = "*"
 WTForms = "*"
-email_validator = "*"
 jwcrypto = "*"
+email-validator = "*"
 
 [dev-packages]
 black = "*"
