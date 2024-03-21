@@ -14,7 +14,7 @@
                     {% set errorLength = errors|length %}
                     {% call
                         onsPanel({
-                            "type":"error",
+                            "variant":"error",
                             "title": "This page has 1 error" if errorLength == 1 else "There are " ~ errorLength ~ " errors on this page",
                             "classes": "ons-u-mb-s",
                             "id": "save-error"

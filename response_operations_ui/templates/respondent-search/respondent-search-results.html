@@ -10,9 +10,9 @@
 
     <h2 class="ons-u-fs-l">{{ respondent_count }} respondents found.</h2>
     {% if last_index == 0  %}
-        <h3 class="ons-u-mb-m">Displaying <strong>{{ first_index }}</strong> of <strong>{{ respondent_count }}</strong> </h3>
+        <h3 class="ons-u-mb-m">Displaying {{ first_index }} of {{ respondent_count }} </h3>
     {% else %}
-        <h3 class="ons-u-mb-m">Displaying <strong>{{ first_index }} - {{ last_index }}</strong> of <strong>{{ respondent_count }}</strong> </h3>
+        <h3 class="ons-u-mb-m">Displaying {{ first_index }} - {{ last_index }} of {{ respondent_count }} </h3>
     {% endif %}
     {% if respondents %}{% include 'respondent-search/rs-table.html' %}{% endif %}
 

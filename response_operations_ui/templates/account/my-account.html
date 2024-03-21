@@ -12,13 +12,14 @@
 <section>
     <h1 id="respondent-name">Account details</h1>
     <dl class="ons-metadata ons-metadata__list ons-grid ons-grid--gutterless ons-u-cf ons-u-mb-l" title="">
-        <dt class="ons-metadata__term ons-grid__col ons-col-4@m">Email address:</dt>
-        <dd class="ons-metadata__value ons-grid__col ons-col-8@m">{{ user.email }}</dd>
-        <dt class="ons-metadata__term ons-grid__col ons-col-4@m">Name:</dt>
-        <dd class="ons-metadata__value ons-grid__col ons-col-8@m">{{ user.name }}</dd>
-        <dt class="ons-metadata__term ons-grid__col ons-col-4@m">Password:</dt>
-        <dd class="ons-metadata__value ons-grid__col ons-col-8@m">●●●●●●●●</dd>
-        <dd class="ons-metadata__value ons-grid__col ons-col-8@m ons-u-ml-no ons-u-mb-xs ons-u-fs-s">(Last changed on {{ user.password_last_changed }})</dd>
+        <dt class="ons-metadata__term ons-grid__col ons-col-4@m"><strong>Email address:</strong></dt>
+        <dd class="ons-metadata__value ons-grid__col ons-col-4@m">{{ user.email }}</dd>
+        <dt class="ons-metadata__term ons-grid__col ons-col-4@m"><strong>Name:</strong></dt>
+        <dd class="ons-metadata__value ons-grid__col ons-col-4@m">{{ user.name }}</dd>
+        <dt class="ons-metadata__term ons-grid__col ons-col-4@m"><strong>Password:</strong></dt>
+        <dd class="ons-metadata__value ons-grid__col ons-col-4@m">●●●●●●●●</dd>
+        <dt class="ons-metadata__term ons-grid__col ons-col-4@m"> </dt>
+        <dd class="ons-metadata__value ons-grid__col ons-col-4@m ons-u-fs-s">(Last changed on {{ user.password_last_changed }})</dd>
     </dl>
     <hr class="ons-u-mb-l ons-col-8@m"/>
 </section>
