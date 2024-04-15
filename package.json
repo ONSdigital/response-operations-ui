@@ -315,7 +315,7 @@
     "style-loader": "^2.0.0",
     "supports-color": "^7.2.0",
     "tapable": "^2.2.0",
-    "tar": "^6.1.15",
+    "tar": "^6.2.1",
     "terser": "^5.14.2",
     "terser-webpack-plugin": "^5.3.9",
     "to-fast-properties": "^2.0.0",
