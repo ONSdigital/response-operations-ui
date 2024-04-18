@@ -97,7 +97,7 @@ It is a manual step to minimise the JavaScript
 make minify-install
 make minify
 ```
-
+To recreate all dependencies, delete everything between ""devDependencies": {}" in the package.json, delete the package-lock.json and run the above commands.
 
 ## Test the application
 
