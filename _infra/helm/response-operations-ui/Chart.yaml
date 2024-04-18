@@ -13,17 +13,9 @@ description: A Helm chart for Kubernetes
 type: application
 
 # This is the chart version. This version number should be incremented each time you make changes
-# to the chart and its templates, including the app version.
-<<<<<<< HEAD
-version: 3.1.61
+# to the chart and its templates, including the app version
+version: 3.1.67
 
 # This is the version number of the application being deployed. This version number should be
 # incremented each time you make changes to the application.
-appVersion: 3.1.61
-=======
-version: 3.1.66
-
-# This is the version number of the application being deployed. This version number should be
-# incremented each time you make changes to the application.
-appVersion: 3.1.66
->>>>>>> main
+appVersion: 3.1.67
