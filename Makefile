@@ -46,4 +46,4 @@ minify-install:
 	npm install -D babel-loader @babel/core @babel/preset-env webpack
 
 minify:
-	npx webpack
+	npx webpack --mode=development

@@ -39,6 +39,5 @@ module.exports = {
                 ]
             }
         ]
-    },
-    mode: 'development',
+    }
 };
