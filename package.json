@@ -359,8 +359,8 @@
     "file-loader": "^6.2.0",
     "node-sass": "^9.0.0",
     "resolve-url-loader": "^5.0.0",
-    "sass-loader": "^13.3.2",
-    "webpack": "^5.91.0",
+    "sass-loader": "^13.3.3",
+    "webpack": "^5.76.0",
     "webpack-cli": "^4.10.0"
   },
   "scripts": {
