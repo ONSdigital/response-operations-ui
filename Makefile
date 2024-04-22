@@ -42,7 +42,7 @@ docker: test
 
 minify-install:
 	npm init -y
-	npm install node-sass sass-loader file-loader resolve-url-loader --save-dev
+	npm install webpack webpack-cli node-sass file-loader resolve-url-loader --save-dev
 	npm install -D babel-loader @babel/core @babel/preset-env webpack
 
 minify:
