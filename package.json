@@ -355,11 +355,11 @@
   "devDependencies": {
     "@babel/core": "^7.24.4",
     "@babel/preset-env": "^7.24.4",
-    "babel-loader": "^8.3.0",
+    "babel-loader": "^8.2.5",
     "file-loader": "^6.2.0",
     "node-sass": "^9.0.0",
     "resolve-url-loader": "^5.0.0",
-    "sass-loader": "^13.3.2",
+    "sass-loader": "^13.3.3",
     "webpack": "^5.91.0",
     "webpack-cli": "^4.10.0"
   },
