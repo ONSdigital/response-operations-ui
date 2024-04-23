@@ -42,9 +42,8 @@ docker: test
 
 minify-install:
 	npm init -y
-	npm install webpack@5.76.0  @ampproject/remapping@2.2.1 postcss-modules-local-by-default@4.0.3 --save-dev
-	#npm install node-sass sass-loader file-loader resolve-url-loader --save-dev
-	npm install -D @babel/core@7.22.10 @babel/compat-data@7.13.12 @babel/code-frame@7.22.13 --save-dev
+	npm install webpack webpack-cli node-sass sass-loader file-loader resolve-url-loader --save-dev
+	npm install -D babel-loader @babel/core @babel/preset-env webpack
 
 minify:
 	npx webpack --mode=production
