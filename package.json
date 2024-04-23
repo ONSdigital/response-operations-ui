@@ -246,6 +246,7 @@
     "postcss-logical": "^3.0.0",
     "postcss-media-minmax": "^4.0.0",
     "postcss-modules-extract-imports": "^3.0.0",
+    "postcss-modules-local-by-default": "^4.0.3",
     "postcss-modules-scope": "^3.0.0",
     "postcss-modules-values": "^4.0.0",
     "postcss-nesting": "^7.0.1",
@@ -352,15 +353,11 @@
     "yocto-queue": "^0.1.0"
   },
   "devDependencies": {
-    "@ampproject/remapping": "^2.2.1",
-    "@babel/code-frame": "^7.22.13",
-    "@babel/compat-data": "^7.13.12",
     "@babel/core": "^7.24.4",
     "@babel/preset-env": "^7.24.4",
     "babel-loader": "^8.3.0",
     "file-loader": "^6.2.0",
     "node-sass": "^9.0.0",
-    "postcss-modules-local-by-default": "^4.0.3",
     "resolve-url-loader": "^5.0.0",
     "sass-loader": "^13.3.3",
     "webpack": "^5.91.0",
