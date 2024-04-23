@@ -44,7 +44,7 @@ minify-install:
 	npm init -y
 	npm install webpack@5.76.0  @ampproject/remapping@2.2.1 --save-dev
 	#npm install node-sass sass-loader file-loader resolve-url-loader --save-dev
-	npm install -D @babel/core@7.22.10 --save-dev
+	npm install -D @babel/core@7.22.10 @babel/compat-data@7.13.12 --save-dev
 
 minify:
 	npx webpack --mode=production

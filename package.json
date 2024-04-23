@@ -354,6 +354,7 @@
   },
   "devDependencies": {
     "@ampproject/remapping": "^2.2.1",
+    "@babel/compat-data": "^7.13.12",
     "@babel/core": "^7.22.10",
     "@babel/preset-env": "^7.19.0",
     "babel-loader": "^8.2.5",
