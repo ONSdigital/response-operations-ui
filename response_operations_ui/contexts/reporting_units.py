@@ -90,14 +90,18 @@ def _build_respondents_section(
 ) -> list:
     table = []
     for respondent in respondents:
-        row = {"contact_details": {
-            "name": f"{respondent['firstName']} {respondent['lastName']}",
-            "email": respondent["emailAddress"],
-            "tel": respondent["telephone"],
-        }, "account_status_class": (
-            "ons-status--error" if respondent["status"] == "SUSPENDED" else "ons-status--success"
-        ), "account_status": respondent["status"].capitalize(),
-            "enrolment_status": respondent["enrolmentStatus"].capitalize()}
+        row = {
+            "contact_details": {
+                "name": f"{respondent['firstName']} {respondent['lastName']}",
+                "email": respondent["emailAddress"],
+                "tel": respondent["telephone"],
+            },
+            "account_status_class": (
+                "ons-status--error" if respondent["status"] == "SUSPENDED" else "ons-status--success"
+            ),
+            "account_status": respondent["status"].capitalize(),
+            "enrolment_status": respondent["enrolmentStatus"].capitalize(),
+        }
         (
             row["enrolment_status_hyperlink"],
             row["enrolment_status_hyperlink_text"],

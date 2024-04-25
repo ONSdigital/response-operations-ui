@@ -227,8 +227,8 @@ def view_reporting_unit_survey(ru_ref, survey_id):
             ru_name=reporting_unit["name"],
             ru_ref=ru_ref,
             trading_as=reporting_unit["trading_as"],
-            survey_ref=survey_details['surveyRef'],
-            survey_name=survey_details['shortName'],
+            survey_ref=survey_details["surveyRef"],
+            survey_name=survey_details["shortName"],
         )
 
     logger.info("Successfully gathered data to view reporting unit survey data", ru_ref=ru_ref, survey_id=survey_id)
@@ -252,7 +252,7 @@ def view_reporting_unit_survey(ru_ref, survey_id):
         iac=unused_iac,
         enrolment_code_hyperlink=enrolment_code_hyperlink,
         case=case,
-        context=context
+        context=context,
     )
 
 

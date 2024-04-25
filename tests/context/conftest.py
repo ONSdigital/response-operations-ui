@@ -439,12 +439,6 @@ def expected_ru_context():
                 "account_status": "Active",
                 "account_status_class": "ons-status--success",
                 "contact_details": {"email": "example@example.com", "name": "john doe", "tel": "07772257772"},
-                "enrolment_code_hyperlink": "/reporting-units/49900000001/new_enrolment_code?"
-                + "case_id=f4056be6-2581-4308-b7cd-88118325e81d&"
-                + "collection_exercise_id=7702d7fd-f998-499d-a972-e2906b19e6cf&"
-                + "ru_name=RUNAME1_COMPANY1+RUNNAME2_COMPANY1&"
-                + "trading_as=TOTAL+UK+ACTIVITY++&survey_ref=134&survey_name=MWSS",
-                "enrolment_code_hyperlink_text": "Generate new " "enrollment code",
                 "enrolment_status": "Enabled",
                 "enrolment_status_class": "ons-status--success",
                 "enrolment_status_hyperlink": "/reporting-units/49900000001/change-enrolment-status?"
@@ -494,9 +488,6 @@ def expected_ru_context_with_multiple_ces_and_respondents(expected_ru_context):
     expected_ru_context_with_multiple_ces_and_respondents["respondents_section"].append(
         expected_ru_context["respondents_section"][0]
     )
-    expected_ru_context_with_multiple_ces_and_respondents["respondents_section"][0].pop("enrolment_code_hyperlink")
-    expected_ru_context_with_multiple_ces_and_respondents["respondents_section"][0].pop("enrolment_code_hyperlink_text")
-    expected_ru_context_with_multiple_ces_and_respondents["respondents_section"][0]["enrolment_code"] = "99yk5r3yjycn"
     return expected_ru_context_with_multiple_ces_and_respondents
 
 
