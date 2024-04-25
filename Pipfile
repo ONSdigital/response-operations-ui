@@ -42,6 +42,7 @@ MarkupSafe = "*"
 WTForms = "*"
 jwcrypto = "*"
 email-validator = "*"
+async-timeout = "*"
 
 [dev-packages]
 black = "*"
