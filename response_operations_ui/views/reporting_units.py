@@ -219,6 +219,20 @@ def view_reporting_unit_survey(ru_ref, survey_id):
         "reporting_unit_edit": user_has_permission("reportingunits.edit"),
         "messages_edit": user_has_permission("messages.edit"),
     }
+
+    # enrolment_code_hyperlink["enrolment_code_hyperlink"] = f"http://this_is_my_link_bro"
+    if permissions["reporting_unit_edit"]:
+        enrolment_code_hyperlink = url_for(
+            "reporting_unit_bp.generate_new_enrolment_code",
+            case_id=case["id"],
+            collection_exercise_id=collection_exercises[0]["id"],
+            ru_name=reporting_unit["name"],
+            ru_ref=ru_ref,
+            trading_as=reporting_unit["trading_as"],
+            survey_ref=survey_details['surveyRef'],
+            survey_name=survey_details['shortName'],
+        )
+
     context = build_reporting_units_context(
         collection_exercises_with_details,
         reporting_unit,
@@ -236,8 +250,9 @@ def view_reporting_unit_survey(ru_ref, survey_id):
         respondents=survey_respondents,
         collection_exercises=collection_exercises_with_details,
         iac=unused_iac,
+        enrolment_code_hyperlink=enrolment_code_hyperlink,
         case=case,
-        context=context,
+        context=context
     )
 
 
