@@ -43,6 +43,7 @@ WTForms = "*"
 jwcrypto = "*"
 email-validator = "*"
 async-timeout = "*"
+isort = "*"
 
 [dev-packages]
 black = "*"
