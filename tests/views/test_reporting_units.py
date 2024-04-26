@@ -319,27 +319,32 @@ class TestReportingUnits(ViewTestCase):
             "/reporting-units/50012345678/surveys/cb0711c3-0ac8-41d3-ae0e-567e5ea1ef87", follow_redirects=True
         )
 
-        enrolment_code_hyperlink1 = ("/reporting-units/50012345678/new_enrolment_code?"
-                                    "case_id=10b04906-f478-47f9-a985-783400dd8482&amp;"
-                                    "collection_exercise_id=9af403f8-5fc5-43b1-9fca-afbd9c65da5c&amp;"
-                                    "ru_name=Bolts+and+Ratchets+Ltd&amp;"
-                                    "trading_as=Bolts+and+Ratchets+Ltd&amp;"
-                                    "survey_ref=221&amp;"
-                                    "survey_name=BLOCKS")
-        
-        enrolment_code_hyperlink2 = ("/reporting-units/50012345678/new_enrolment_code?"
-                                    "case_id=10b04906-f478-47f9-a985-783400dd8482&amp;"
-                                    "collection_exercise_id=14fb3e68-4dca-46db-bf49-04b84e07e77c&amp;"
-                                    "ru_name=Bolts+and+Ratchets+Ltd&amp;"
-                                    "trading_as=Bolts+and+Ratchets+Ltd&amp;"
-                                    "survey_ref=221&amp;"
-                                    "survey_name=BLOCKS")
-              
+        enrolment_code_hyperlink1 = (
+            "/reporting-units/50012345678/new_enrolment_code?"
+            "case_id=10b04906-f478-47f9-a985-783400dd8482&amp;"
+            "collection_exercise_id=9af403f8-5fc5-43b1-9fca-afbd9c65da5c&amp;"
+            "ru_name=Bolts+and+Ratchets+Ltd&amp;"
+            "trading_as=Bolts+and+Ratchets+Ltd&amp;"
+            "survey_ref=221&amp;"
+            "survey_name=BLOCKS"
+        )
+
+        enrolment_code_hyperlink2 = (
+            "/reporting-units/50012345678/new_enrolment_code?"
+            "case_id=10b04906-f478-47f9-a985-783400dd8482&amp;"
+            "collection_exercise_id=14fb3e68-4dca-46db-bf49-04b84e07e77c&amp;"
+            "ru_name=Bolts+and+Ratchets+Ltd&amp;"
+            "trading_as=Bolts+and+Ratchets+Ltd&amp;"
+            "survey_ref=221&amp;"
+            "survey_name=BLOCKS"
+        )
+
         self.assertEqual(response.status_code, 200)
-        
-        self.assertTrue(enrolment_code_hyperlink1.encode() in response.data or
-                        enrolment_code_hyperlink2.encode() in response.data)
-        
+
+        self.assertTrue(
+            enrolment_code_hyperlink1.encode() in response.data or enrolment_code_hyperlink2.encode() in response.data
+        )
+
     @requests_mock.mock()
     def test_get_reporting_unit_survey_no_reporting_unit_edit_role(self, mock_request):
         mock_request.post(url_sign_in_data, json={"access_token": self.access_token}, status_code=201)
