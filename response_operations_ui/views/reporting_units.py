@@ -223,7 +223,7 @@ def view_reporting_unit_survey(ru_ref, survey_id):
         enrolment_code_hyperlink = url_for(
             "reporting_unit_bp.generate_new_enrolment_code",
             case_id=case["id"],
-            collection_exercise_id=collection_exercises[0]["id"],
+            collection_exercise_id=survey_collection_exercises[0]["id"],
             ru_name=reporting_unit["name"],
             ru_ref=ru_ref,
             trading_as=reporting_unit["trading_as"],

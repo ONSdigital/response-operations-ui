@@ -58,6 +58,8 @@ with open(f"{project_root}/test_data/case/case.json") as fp:
 
 with open(f"{project_root}/test_data/party/business_reporting_unit.json") as fp:
     business_reporting_unit = json.load(fp)
+with open(f"{project_root}/test_data/party/business_reporting_unit_no_enrolments.json") as fp:
+    business_reporting_unit_no_enrolments = json.load(fp)
 with open(f"{project_root}/test_data/case/cases_list.json") as fp:
     cases_list = json.load(fp)
 with open(f"{project_root}/test_data/case/cases_list_completed.json") as fp:
@@ -82,6 +84,8 @@ with open(f"{project_root}/test_data/party/respondent_party_list.json") as fp:
     respondent_party_list = json.load(fp)
 with open(f"{project_root}/test_data/iac/iac.json") as fp:
     iac = json.load(fp)
+with open(f"{project_root}/test_data/iac/iac_inactive.json") as fp:
+    iac_inactive = json.load(fp)
 
 user_permission_admin_json = {
     "id": "5902656c-c41c-4b38-a294-0359e6aabe59",
@@ -296,6 +300,46 @@ class TestReportingUnits(ViewTestCase):
         self.assertIn("Change".encode(), response.data)
         self.assertEqual(response.status_code, 200)
 
+    @requests_mock.mock()
+    def test_get_reporting_unit_survey_enrolment_code_hyperlink(self, mock_request):
+        mock_request.post(url_sign_in_data, json={"access_token": self.access_token}, status_code=201)
+        mock_request.get(url_surveys, json=self.surveys_list_json, status_code=200)
+        mock_request.get(url_permission_url, json=user_permission_reporting_unit_edit_json, status_code=200)
+        self.client.post("/sign-in", follow_redirects=True, data={"username": "user", "password": "pass"})
+        mock_request.get(url_get_business_by_ru_ref, json=business_reporting_unit_no_enrolments)
+        mock_request.get(url_get_cases_by_business_party_id, json=cases_list)
+        mock_request.get(f"{url_get_collection_exercise_by_id}/{collection_exercise_id_1}", json=collection_exercise)
+        mock_request.get(f"{url_get_collection_exercise_by_id}/{collection_exercise_id_2}", json=collection_exercise_2)
+        mock_request.get(url_get_business_attributes, json=business_attributes)
+        mock_request.get(url_get_survey_by_id, json=survey)
+        mock_request.get(f"{url_get_iac}/{iac_1}", json=iac_inactive)
+        mock_request.get(f"{url_get_iac}/{iac_2}", json=iac_inactive)
+
+        response = self.client.get(
+            "/reporting-units/50012345678/surveys/cb0711c3-0ac8-41d3-ae0e-567e5ea1ef87", follow_redirects=True
+        )
+
+        enrolment_code_hyperlink1 = ("/reporting-units/50012345678/new_enrolment_code?"
+                                    "case_id=10b04906-f478-47f9-a985-783400dd8482&amp;"
+                                    "collection_exercise_id=9af403f8-5fc5-43b1-9fca-afbd9c65da5c&amp;"
+                                    "ru_name=Bolts+and+Ratchets+Ltd&amp;"
+                                    "trading_as=Bolts+and+Ratchets+Ltd&amp;"
+                                    "survey_ref=221&amp;"
+                                    "survey_name=BLOCKS")
+        
+        enrolment_code_hyperlink2 = ("/reporting-units/50012345678/new_enrolment_code?"
+                                    "case_id=10b04906-f478-47f9-a985-783400dd8482&amp;"
+                                    "collection_exercise_id=14fb3e68-4dca-46db-bf49-04b84e07e77c&amp;"
+                                    "ru_name=Bolts+and+Ratchets+Ltd&amp;"
+                                    "trading_as=Bolts+and+Ratchets+Ltd&amp;"
+                                    "survey_ref=221&amp;"
+                                    "survey_name=BLOCKS")
+              
+        self.assertEqual(response.status_code, 200)
+        
+        self.assertTrue(enrolment_code_hyperlink1.encode() in response.data or
+                        enrolment_code_hyperlink2.encode() in response.data)
+        
     @requests_mock.mock()
     def test_get_reporting_unit_survey_no_reporting_unit_edit_role(self, mock_request):
         mock_request.post(url_sign_in_data, json={"access_token": self.access_token}, status_code=201)
