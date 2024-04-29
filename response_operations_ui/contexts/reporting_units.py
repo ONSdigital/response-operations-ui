@@ -90,34 +90,18 @@ def _build_respondents_section(
 ) -> list:
     table = []
     for respondent in respondents:
-        row = {}
-        if permissions["reporting_unit_edit"]:
-            if unused_iac:
-                row["enrolment_code"] = unused_iac
-            else:
-                row["enrolment_code_hyperlink"] = url_for(
-                    "reporting_unit_bp.generate_new_enrolment_code",
-                    case_id=case_id,
-                    collection_exercise_id=collection_exercises[0]["id"],
-                    ru_name=ru["name"],
-                    ru_ref=ru["sampleUnitRef"],
-                    trading_as=collection_exercises[0]["tradingAs"],
-                    survey_ref=survey["surveyRef"],
-                    survey_name=survey["shortName"],
-                )
-                row["enrolment_code_hyperlink_text"] = "Generate new enrollment code"
-        else:
-            row["enrolment_code"] = ""
-        row["contact_details"] = {
-            "name": f"{respondent['firstName']} {respondent['lastName']}",
-            "email": respondent["emailAddress"],
-            "tel": respondent["telephone"],
+        row = {
+            "contact_details": {
+                "name": f"{respondent['firstName']} {respondent['lastName']}",
+                "email": respondent["emailAddress"],
+                "tel": respondent["telephone"],
+            },
+            "account_status_class": (
+                "ons-status--error" if respondent["status"] == "SUSPENDED" else "ons-status--success"
+            ),
+            "account_status": respondent["status"].capitalize(),
+            "enrolment_status": respondent["enrolmentStatus"].capitalize(),
         }
-        row["account_status_class"] = (
-            "ons-status--error" if respondent["status"] == "SUSPENDED" else "ons-status--success"
-        )
-        row["account_status"] = respondent["status"].capitalize()
-        row["enrolment_status"] = respondent["enrolmentStatus"].capitalize()
         (
             row["enrolment_status_hyperlink"],
             row["enrolment_status_hyperlink_text"],

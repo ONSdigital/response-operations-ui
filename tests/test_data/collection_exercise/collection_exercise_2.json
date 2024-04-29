@@ -10,7 +10,7 @@
   "scheduledEndDateTime": "2018-06-29T23:00:00.000+0000",
   "scheduledExecutionDateTime": "2017-09-10T23:00:00.000+0000",
   "scheduledReturnDateTime": "2017-10-06T00:00:00.000+0000",
-  "scheduledStartDateTime": "2017-09-11T23:00:00.000+0000",
+  "scheduledStartDateTime": "2017-10-11T23:00:00.000+0000",
   "state": "PUBLISHED",
   "surveyId": "cb0711c3-0ac8-41d3-ae0e-567e5ea1ef87",
   "sampleSize": 8, 
