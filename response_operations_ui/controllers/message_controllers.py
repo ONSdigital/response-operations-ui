@@ -1,5 +1,4 @@
 import logging
-import time
 from json import JSONDecodeError
 
 import jwt
@@ -161,7 +160,6 @@ def send_message(message_json: dict):
             data=message_json,
         )
         response.raise_for_status()
-        time.sleep(30)
         logger.info("new message has been sent with response ", response=response.json())
     except KeyError as ex:
         logger.error("Message sending failed due to internal error", exc_info=True)
