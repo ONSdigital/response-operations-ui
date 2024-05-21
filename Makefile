@@ -31,6 +31,10 @@ test: lint-check
 	pipenv run python run_tests.py
 	rm -rf ./flask_session
 
+test-html: lint-check
+	pipenv run python run_tests.py html
+	rm -rf ./flask_session
+
 start: load-design-system-templates
 	pipenv run python run.py
 
