@@ -125,6 +125,11 @@ Run tests with Make
 make test
 ```
 
+or if you wish to generate an HTML report viewable at htmlcov/index.html
+```bash
+make test-html
+```
+
 If you get a `Too many open files` error, then run the following to fix it
 
 ```bash
