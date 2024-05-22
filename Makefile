@@ -16,7 +16,7 @@ lint:
 	pipenv check ./response_operations_ui ./tests
 	pipenv run isort .
 	pipenv run black --line-length 120 .
-	pipenv run djlint .
+	pipenv run djlint response_operations_ui/
 	pipenv run flake8 --exclude ./node_modules
 
 lint-check: load-design-system-templates
