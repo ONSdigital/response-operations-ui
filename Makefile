@@ -16,7 +16,7 @@ lint:
 	pipenv check ./response_operations_ui ./tests
 	pipenv run isort .
 	pipenv run black --line-length 120 .
-	pipenv run djlint .
+	pipenv run djlint response_operations_ui/
 	pipenv run flake8 --exclude ./node_modules
 
 lint-check: load-design-system-templates
@@ -24,11 +24,15 @@ lint-check: load-design-system-templates
 
 	pipenv run isort . --check-only
 	pipenv run black --line-length 120 --check .
-	pipenv run djlint . 
+	pipenv run djlint response_operations_ui/
 	pipenv run flake8 --exclude ./node_modules
 
 test: lint-check
 	pipenv run python run_tests.py
+	rm -rf ./flask_session
+
+test-html: lint-check
+	pipenv run python run_tests.py html
 	rm -rf ./flask_session
 
 start: load-design-system-templates
