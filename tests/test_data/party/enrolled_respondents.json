@@ -1,0 +1,13 @@
+[
+            {   "enrolment_status": "ENABLED",
+                "respondent": {
+                    "emailAddress": "Jacky.Turner@email.com",
+                    "firstName": "Jacky",
+                    "lastName": "Turner",
+                    "telephone": "7971161859",
+                    "id": "cd592e0f-8d07-407b-b75d-e01fbdae8233",
+                    "sampleUnitType": "BI",
+                    "status": "ACTIVE"
+                }
+            }
+        ]

@@ -178,16 +178,7 @@ def view_reporting_unit_survey(ru_ref, survey_id):
     live_collection_exercises = [
         ce for ce in collection_exercises if parse_date(ce["scheduledStartDateTime"]) < datetime.now(timezone.utc)
     ]
-
-    # Get all respondents for the given ru
-    respondent_party_ids = [respondent["partyId"] for respondent in reporting_unit.get("associations")]
-    respondents = party_controller.get_respondent_by_party_ids(respondent_party_ids)
-
-    survey_respondents = [
-        party_controller.add_enrolment_status_for_respondent(respondent, ru_ref, survey_id)
-        for respondent in respondents
-        if survey_id in party_controller.survey_ids_for_respondent(respondent, ru_ref)
-    ]
+    enrolled_respondents = party_controller.get_respondents_by_survey_and_business_id(survey_id, reporting_unit["id"])
 
     survey_collection_exercises = sorted(
         [collection_exercise for collection_exercise in live_collection_exercises],
@@ -237,9 +228,7 @@ def view_reporting_unit_survey(ru_ref, survey_id):
         collection_exercises_with_details,
         reporting_unit,
         survey_details,
-        survey_respondents,
-        case,
-        unused_iac,
+        enrolled_respondents,
         permissions,
     )
 
@@ -247,7 +236,6 @@ def view_reporting_unit_survey(ru_ref, survey_id):
         "reporting-unit-survey.html",
         ru=reporting_unit,
         survey=survey_details,
-        respondents=survey_respondents,
         collection_exercises=collection_exercises_with_details,
         iac=unused_iac,
         enrolment_code_hyperlink=enrolment_code_hyperlink,

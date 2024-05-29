@@ -1,15 +1,17 @@
 import logging
 from urllib.parse import urlencode
+from uuid import UUID
 
 import requests
 from flask import current_app as app
-from requests.exceptions import HTTPError, RequestException
+from requests.exceptions import ConnectionError, HTTPError, RequestException, Timeout
 from structlog import wrap_logger
 
 from response_operations_ui.controllers.survey_controllers import get_survey_by_id
 from response_operations_ui.exceptions.exceptions import (
     ApiError,
     SearchRespondentsException,
+    ServiceUnavailableException,
     UpdateContactDetailsException,
 )
 from response_operations_ui.forms import EditContactDetailsForm
@@ -39,6 +41,27 @@ def get_business_by_ru_ref(ru_ref: str):
         raise ApiError(response)
 
     logger.info("Successfully retrieved reporting unit", ru_ref=ru_ref)
+    return response.json()
+
+
+def get_respondents_by_survey_and_business_id(survey_id: UUID, business_id: UUID) -> list:
+    """
+    Gets the respondents enrolled in a survey for a business from the party services
+    :param survey_id: the id of the survey
+    :param business_id: the id of the business
+    :return: A dict of data about the business
+    """
+    url = f'{app.config["PARTY_URL"]}/party-api/v1/respondents/survey_id/{survey_id}/business_id/{business_id}'
+    try:
+        response = requests.get(url, auth=app.config["BASIC_AUTH"])
+        response.raise_for_status()
+    except HTTPError:
+        raise ApiError(response)
+    except ConnectionError:
+        raise ServiceUnavailableException("Party returned a connection error", 503)
+    except Timeout:
+        raise ServiceUnavailableException("Party has timed out", 504)
+
     return response.json()
 
 

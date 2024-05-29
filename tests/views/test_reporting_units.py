@@ -38,7 +38,9 @@ url_get_cases_by_business_party_id = f"{TestingConfig.CASE_URL}/cases/partyid/{b
 
 url_get_collection_exercise_by_id = f"{TestingConfig.COLLECTION_EXERCISE_URL}/collectionexercises"
 url_get_business_attributes = f"{TestingConfig.PARTY_URL}/party-api/v1/businesses/id/{business_party_id}/attributes"
-
+url_get_respondents_by_survey_and_business_id = (
+    f"{TestingConfig.PARTY_URL}/party-api/v1/respondents/survey_id/{survey_id}/business_id/{business_party_id}"
+)
 url_get_survey_by_id = f"{TestingConfig.SURVEY_URL}/surveys/{survey_id}"
 url_get_respondent_party_by_party_id = f"{TestingConfig.PARTY_URL}/party-api/v1/respondents/id/{respondent_party_id}"
 url_get_respondent_party_by_list = f"{TestingConfig.PARTY_URL}/party-api/v1/respondents?id={respondent_party_id}"
@@ -82,6 +84,8 @@ with open(f"{project_root}/test_data/party/respondent_party.json") as fp:
     respondent_party = json.load(fp)
 with open(f"{project_root}/test_data/party/respondent_party_list.json") as fp:
     respondent_party_list = json.load(fp)
+with open(f"{project_root}/test_data/party/enrolled_respondents.json") as fp:
+    enrolled_respondents = json.load(fp)
 with open(f"{project_root}/test_data/iac/iac.json") as fp:
     iac = json.load(fp)
 with open(f"{project_root}/test_data/iac/iac_inactive.json") as fp:
@@ -259,7 +263,7 @@ class TestReportingUnits(ViewTestCase):
         mock_request.get(url_get_respondent_party_by_party_id, json=respondent_party)
         mock_request.get(url_get_business_attributes, json=business_attributes)
         mock_request.get(url_get_survey_by_id, json=survey)
-        mock_request.get(url_get_respondent_party_by_list, json=respondent_party_list)
+        mock_request.get(url_get_respondents_by_survey_and_business_id, json=enrolled_respondents)
         mock_request.get(f"{url_get_iac}/{iac_1}", json=iac)
         mock_request.get(f"{url_get_iac}/{iac_2}", json=iac)
         mock_request.get(url_permission_url, json=user_permission_reporting_unit_edit_json, status_code=200)
@@ -286,7 +290,7 @@ class TestReportingUnits(ViewTestCase):
         mock_request.get(url_get_respondent_party_by_party_id, json=respondent_party)
         mock_request.get(url_get_business_attributes, json=business_attributes)
         mock_request.get(url_get_survey_by_id, json=survey)
-        mock_request.get(url_get_respondent_party_by_list, json=respondent_party_list)
+        mock_request.get(url_get_respondents_by_survey_and_business_id, json=enrolled_respondents)
         mock_request.get(f"{url_get_iac}/{iac_1}", json=iac)
         mock_request.get(f"{url_get_iac}/{iac_2}", json=iac)
         mock_request.get(url_permission_url, json=user_permission_reporting_unit_edit_json, status_code=200)
@@ -309,6 +313,7 @@ class TestReportingUnits(ViewTestCase):
         self.client.post("/sign-in", follow_redirects=True, data={"username": "user", "password": "pass"})
         mock_request.get(url_get_business_by_ru_ref, json=business_reporting_unit_no_enrolments)
         mock_request.get(url_get_cases_by_business_party_id, json=cases_list)
+        mock_request.get(url_get_respondents_by_survey_and_business_id, json=enrolled_respondents)
         mock_request.get(f"{url_get_collection_exercise_by_id}/{collection_exercise_id_1}", json=collection_exercise)
         mock_request.get(f"{url_get_collection_exercise_by_id}/{collection_exercise_id_2}", json=collection_exercise_2)
         mock_request.get(url_get_business_attributes, json=business_attributes)
@@ -343,10 +348,9 @@ class TestReportingUnits(ViewTestCase):
         mock_request.get(url_get_cases_by_business_party_id, json=cases_list)
         mock_request.get(f"{url_get_collection_exercise_by_id}/{collection_exercise_id_1}", json=collection_exercise)
         mock_request.get(f"{url_get_collection_exercise_by_id}/{collection_exercise_id_2}", json=collection_exercise_2)
-        mock_request.get(url_get_respondent_party_by_party_id, json=respondent_party)
+        mock_request.get(url_get_respondents_by_survey_and_business_id, json=enrolled_respondents)
         mock_request.get(url_get_business_attributes, json=business_attributes)
         mock_request.get(url_get_survey_by_id, json=survey)
-        mock_request.get(url_get_respondent_party_by_list, json=respondent_party_list)
         mock_request.get(f"{url_get_iac}/{iac_1}", json=iac)
         mock_request.get(f"{url_get_iac}/{iac_2}", json=iac)
         mock_request.get(url_permission_url, json=user_permission_admin_json, status_code=200)
@@ -367,6 +371,8 @@ class TestReportingUnits(ViewTestCase):
         mock_request.get(f"{url_get_collection_exercise_by_id}/{collection_exercise_id_1}", json=collection_exercise)
         mock_request.get(f"{url_get_collection_exercise_by_id}/{collection_exercise_id_2}", json=collection_exercise_2)
         mock_request.get(url_get_business_attributes, json=business_attributes)
+        mock_request.get(url_get_respondents_by_survey_and_business_id, json=enrolled_respondents)
+
         mock_request.get(url_get_respondent_party_by_list, json=respondent_party_list)
         mock_request.get(f"{url_get_iac}/{iac_1}", status_code=500)
 
@@ -810,7 +816,7 @@ class TestReportingUnits(ViewTestCase):
         mock_request.get(url_get_respondent_party_by_party_id, json=respondent_party)
         mock_request.get(url_get_business_attributes, json=business_attributes)
         mock_request.get(url_get_survey_by_id, json=survey)
-        mock_request.get(url_get_respondent_party_by_list, json=respondent_party_list)
+        mock_request.get(url_get_respondents_by_survey_and_business_id, json=enrolled_respondents)
         mock_request.get(f"{url_get_iac}/{iac_1}", json=iac)
         mock_request.get(f"{url_get_iac}/{iac_2}", json=iac)
         mock_request.get(url_permission_url, json=user_permission_admin_json, status_code=200)
