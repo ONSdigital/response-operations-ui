@@ -332,22 +332,17 @@ def survey_details(ce_details):
 def survey_respondents():
     return [
         {
-            "associations": [
-                {
-                    "businessRespondentStatus": "ACTIVE",
-                    "enrolments": [{"enrolmentStatus": "ENABLED", "surveyId": "02b9c366-7397-42f7-942a-76dc5876d86d"}],
-                    "partyId": "a5348157-feb4-4bad-9614-fc76e2bfea94",
-                    "sampleUnitRef": "49900000001",
-                }
-            ],
-            "emailAddress": "example@example.com",
-            "firstName": "john",
-            "id": "bf19a18f-fe15-4005-b698-fdd36f35f940",
-            "lastName": "doe",
-            "sampleUnitType": "BI",
-            "status": "ACTIVE",
-            "telephone": "07772257772",
-            "enrolmentStatus": "ENABLED",
+            "enrolment_status": "ENABLED",
+            "respondent": {
+                "emailAddress": "example@example.com",
+                "firstName": "john",
+                "id": "bf19a18f-fe15-4005-b698-fdd36f35f940",
+                "lastName": "doe",
+                "sampleUnitType": "BI",
+                "status": "ACTIVE",
+                "telephone": "07772257772",
+                "enrolmentStatus": "ENABLED",
+            },
         }
     ]
 
@@ -362,21 +357,21 @@ def multiple_survey_respondents(survey_respondents):
 @pytest.fixture
 def suspended_survey_respondents(survey_respondents):
     suspended_survey_respondents = survey_respondents.copy()
-    suspended_survey_respondents[0]["status"] = "SUSPENDED"
+    suspended_survey_respondents[0]["respondent"]["status"] = "SUSPENDED"
     return suspended_survey_respondents
 
 
 @pytest.fixture
 def pending_enrolment_survey_respondents(survey_respondents):
     pending_enrolment_survey_respondents = survey_respondents.copy()
-    pending_enrolment_survey_respondents[0]["enrolmentStatus"] = "PENDING"
+    pending_enrolment_survey_respondents[0]["enrolment_status"] = "PENDING"
     return pending_enrolment_survey_respondents
 
 
 @pytest.fixture
 def disabled_enrolment_survey_respondents(survey_respondents):
     disabled_enrolment_survey_respondents = survey_respondents.copy()
-    disabled_enrolment_survey_respondents[0]["enrolmentStatus"] = "DISABLED"
+    disabled_enrolment_survey_respondents[0]["enrolment_status"] = "DISABLED"
     return disabled_enrolment_survey_respondents
 
 

@@ -4,7 +4,9 @@ import unittest
 from collections import namedtuple
 
 import mock
+import requests_mock
 import responses
+from requests.exceptions import ConnectionError, Timeout
 
 from config import TestingConfig
 from response_operations_ui import create_app
@@ -12,6 +14,7 @@ from response_operations_ui.controllers import party_controller
 from response_operations_ui.exceptions.exceptions import (
     ApiError,
     SearchRespondentsException,
+    ServiceUnavailableException,
 )
 
 fake_response = namedtuple("Response", "status_code json")
@@ -27,6 +30,9 @@ delete_attributes_by_sample_summary_id_url = (
 )
 get_business_by_ru_ref_url = f"{TestingConfig.PARTY_URL}/party-api/v1/businesses/ref/{ru_ref}"
 get_business_by_id_url = f"{TestingConfig.PARTY_URL}/party-api/v1/businesses/id/"
+get_respondents_by_survey_and_business_id_url = (
+    f"{TestingConfig.PARTY_URL}/party-api/v1/respondents/survey_id/{survey_id}/business_id/{business_id}"
+)
 get_survey_by_id_url = f"{TestingConfig.SURVEY_URL}/surveys/"
 
 project_root = os.path.dirname(os.path.dirname(__file__))
@@ -44,6 +50,8 @@ with open(f"{project_root}/test_data/survey/survey.json") as fp:
     survey_json = json.load(fp)
 with open(f"{project_root}/test_data/survey/survey_06cad526.json") as fp:
     survey_06cad526_json = json.load(fp)
+with open(f"{project_root}/test_data/party/enrolled_respondents.json") as fp:
+    enrolled_respondents = json.load(fp)
 
 
 class TestPartyController(unittest.TestCase):
@@ -105,3 +113,53 @@ class TestPartyController(unittest.TestCase):
             with self.app.app_context():
                 with self.assertRaises(ApiError):
                     party_controller.delete_attributes_by_sample_summary_id(sample_summary_id)
+
+    @requests_mock.Mocker()
+    def test_get_respondents_by_survey_and_business_id(self, request_mock):
+        # Given the party endpoint is mocked
+        request_mock.get(get_respondents_by_survey_and_business_id_url, json=enrolled_respondents)
+
+        # When get_respondents_by_survey_and_business_id is called
+        with self.app.app_context():
+            response = party_controller.get_respondents_by_survey_and_business_id(survey_id, business_id)
+
+        # Then the right response is returned
+        self.assertEqual(response, enrolled_respondents)
+
+    @requests_mock.Mocker()
+    def test_get_respondents_by_survey_and_business_id_400(self, request_mock):
+        # Given the party endpoint is mocked to return a 400
+        request_mock.get(get_respondents_by_survey_and_business_id_url, status_code=400)
+
+        # When get_respondents_by_survey_and_business_id is called
+        with self.app.app_context():
+
+            # Then an ApiError is raised
+            with self.assertRaises(ApiError):
+                party_controller.get_respondents_by_survey_and_business_id(survey_id, business_id)
+
+    @requests_mock.Mocker()
+    def test_get_respondents_by_survey_and_business_id_connection_error(self, request_mock):
+        # Given the party endpoint is mocked to return a ConnectionError
+        request_mock.get(get_respondents_by_survey_and_business_id_url, exc=ConnectionError)
+
+        # When get_respondents_by_survey_and_business_id is called
+        with self.app.app_context():
+
+            # Then a ServiceUnavailableException is raised with the correct error
+            with self.assertRaises(ServiceUnavailableException) as exception:
+                party_controller.get_respondents_by_survey_and_business_id(survey_id, business_id)
+        self.assertEqual(["Party returned a connection error"], exception.exception.errors)
+
+    @requests_mock.Mocker()
+    def test_get_respondents_by_survey_and_business_id_timeout(self, request_mock):
+        # Given the party endpoint is mocked to return a timeout
+        request_mock.get(get_respondents_by_survey_and_business_id_url, exc=Timeout)
+
+        # When get_respondents_by_survey_and_business_id is called
+        with self.app.app_context():
+
+            # Then a ServiceUnavailableException is raised with the correct error
+            with self.assertRaises(ServiceUnavailableException) as exception:
+                party_controller.get_respondents_by_survey_and_business_id(survey_id, business_id)
+        self.assertEqual(["Party has timed out"], exception.exception.errors)

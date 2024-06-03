@@ -13,22 +13,17 @@ ENROLMENT_PENDING = "PENDING"
 
 
 def build_reporting_units_context(
-    collection_exercises: list, ru: dict, survey: dict, respondents: list, case, unused_iac: str, permissions: dict
+    collection_exercises: list, ru: dict, survey: dict, enrolled_respondents: list, permissions: dict
 ) -> dict:
-    collection_exercise_section = _build_collection_exercise_section(
-        collection_exercises, ru["sampleUnitRef"], survey["shortName"], permissions["reporting_unit_edit"]
-    )
-    respondents_section = _build_respondents_section(
-        respondents,
-        case["id"],
-        collection_exercises,
-        ru,
-        survey,
-        unused_iac,
-        permissions,
-    )
 
-    return {"collection_exercise_section": collection_exercise_section, "respondents_section": respondents_section}
+    return {
+        "collection_exercise_section": _build_collection_exercise_section(
+            collection_exercises, ru["sampleUnitRef"], survey["shortName"], permissions["reporting_unit_edit"]
+        ),
+        "respondents_section": _build_respondents_section(
+            enrolled_respondents, collection_exercises, ru, survey, permissions
+        ),
+    }
 
 
 def _build_collection_exercise_section(
@@ -80,16 +75,16 @@ def _build_ce_status(ru_ref: str, survey: str, period: str, response_status: str
 
 
 def _build_respondents_section(
-    respondents: list,
-    case_id: str,
+    enrolled_respondents: list,
     collection_exercises: list,
     ru: dict,
     survey: dict,
-    unused_iac: str,
     permissions: dict,
 ) -> list:
     table = []
-    for respondent in respondents:
+
+    for enrolled_respondent in enrolled_respondents:
+        respondent = enrolled_respondent["respondent"]
         row = {
             "contact_details": {
                 "name": f"{respondent['firstName']} {respondent['lastName']}",
@@ -100,14 +95,14 @@ def _build_respondents_section(
                 "ons-status--error" if respondent["status"] == "SUSPENDED" else "ons-status--success"
             ),
             "account_status": respondent["status"].capitalize(),
-            "enrolment_status": respondent["enrolmentStatus"].capitalize(),
+            "enrolment_status": enrolled_respondent["enrolment_status"].capitalize(),
         }
         (
             row["enrolment_status_hyperlink"],
             row["enrolment_status_hyperlink_text"],
             row["enrolment_status_class"],
         ) = _build_enrollment_status_hyperlink(
-            respondent,
+            enrolled_respondent,
             ru,
             collection_exercises[0]["tradingAs"],
             survey["id"],
@@ -130,14 +125,15 @@ def _build_respondents_section(
 
 
 def _build_enrollment_status_hyperlink(
-    respondent: dict,
+    enrolled_respondent: dict,
     ru: dict,
     trading_as: str,
     survey_id: str,
     survey_short_name: str,
     ru_permission: bool,
 ) -> tuple[str | None, str, str]:
-    if respondent["enrolmentStatus"] == ENROLMENT_ENABLED:
+    respondent = enrolled_respondent["respondent"]
+    if enrolled_respondent["enrolment_status"] == ENROLMENT_ENABLED:
         status_class = "ons-status--success"
         hyperlink = (
             url_for(
@@ -158,10 +154,14 @@ def _build_enrollment_status_hyperlink(
             else None
         )
         hyperlink_text = "Disable"
-    elif respondent["enrolmentStatus"] == ENROLMENT_PENDING:
+    elif enrolled_respondent["enrolment_status"] == ENROLMENT_PENDING:
         status_class = "ons-status--info"
         hyperlink = (
-            url_for("reporting_unit_bp.view_resend_verification", ru_ref=ru["sampleUnitRef"], party_id=respondent["id"])
+            url_for(
+                "reporting_unit_bp.view_resend_verification",
+                ru_ref=ru["sampleUnitRef"],
+                party_id=respondent["id"],
+            )
             if ru_permission
             else None
         )
