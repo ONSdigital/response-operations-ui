@@ -4,7 +4,7 @@
 {% set isMessageEditPermission = hasPermission('messages.edit') %}
 
 <div class="secure-message-form">
-    <form action="{{ url_for('messages_bp.view_conversation', thread_id=messages[0].thread_id, page=page, conversation_tab=conversation_tab, ru_ref_filter=ru_ref_filter, business_id_filter=business_id_filter) }}" method="post" id="create-message-form" class="ons-u-mb-m">
+    <form action="{{ url_for('messages_bp.view_conversation', thread_id=messages[0].thread_id, page=page, conversation_tab=conversation_tab, ru_ref_filter=ru_ref_filter, business_id_filter=business_id_filter, test_value=test_value) }}" method="post" id="create-message-form" class="ons-u-mb-m">
         {{ form.csrf_token }}
         {{ form.subject(id='secure-message-subject', type='hidden', value=subject) }}
         {{ form.hidden_to_business_id(type='hidden', value=business_id) }}

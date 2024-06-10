@@ -101,7 +101,7 @@
                             }}
                         </div>
                         <div class="ons-grid__col ons-u-ml-m">
-                            <a href=" {{ url_for('messages_bp.view_conversation', thread_id=thread_id) }}">Cancel</a>
+                            <a href=" {{ url_for('messages_bp.view_conversation', thread_id=thread_id, test_value=test_value) }}">Cancel</a>
                         </div>
                     </div>
                 {% else %}

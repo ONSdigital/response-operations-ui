@@ -2,7 +2,7 @@
 {% set isMessageEditPermission = hasPermission('messages.edit') %}
 
 {% if isMessageEditPermission %}
-  <form action="{{ url_for('messages_bp.view_conversation', thread_id=messages[0].thread_id, ru_ref_filter=ru_ref_filter, business_id_filter=business_id_filter) }}" method="post">
+  <form action="{{ url_for('messages_bp.view_conversation', thread_id=messages[0].thread_id, ru_ref_filter=ru_ref_filter, business_id_filter=business_id_filter, test_value=test_value) }}" method="post">
       <input type="hidden" name="csrf_token" value="{{ csrf_token() }}" />
       {{
           onsInput({
