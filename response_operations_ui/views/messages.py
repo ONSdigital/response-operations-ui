@@ -86,7 +86,6 @@ def view_conversation(thread_id):
     page = request.args.get("page")
     ru_ref_filter = request.args.get("ru_ref_filter")
     business_id_filter = request.args.get("business_id_filter")
-    test_value = 'THIS IS A TEST VALUE'
 
     if request.method == "POST" and request.form.get("reopen"):
         verify_permission("messages.edit")
@@ -100,7 +99,6 @@ def view_conversation(thread_id):
                 page=page,
                 ru_ref_filter=ru_ref_filter,
                 business_id_filter=business_id_filter,
-                test_value=test_value,
             )
             + "#latest-message"
         )
@@ -112,7 +110,6 @@ def view_conversation(thread_id):
                 page=page,
                 ru_ref_filter=ru_ref_filter,
                 business_id_filter=business_id_filter,
-                test_value=test_value,
             )
         )
 
@@ -154,7 +151,6 @@ def view_conversation(thread_id):
                     conversation_tab=conversation_tab,
                     ru_ref_filter=ru_ref_filter,
                     business_id_filter=business_id_filter,
-                    test_value=test_value,
                 )
                 + "#latest-message"
             )
@@ -166,7 +162,6 @@ def view_conversation(thread_id):
                     conversation_tab=conversation_tab,
                     ru_ref_filter=ru_ref_filter,
                     business_id_filter=business_id_filter,
-                    test_value=test_value,
                 )
             )
 
@@ -184,7 +179,6 @@ def view_conversation(thread_id):
                 messages=refined_thread,
                 respondent_is_deleted=respondent_is_deleted,
                 thread_data=thread_conversation,
-                test_value=test_value,
             )
 
     close_conversation_url = url_for(
@@ -196,7 +190,6 @@ def view_conversation(thread_id):
         ru_ref_filter=ru_ref_filter,
         business_id_filter=business_id_filter,
         category=thread_conversation["category"],
-        test_value=test_value,
     )
 
     return render_template(
@@ -214,8 +207,6 @@ def view_conversation(thread_id):
         close_conversation_url=close_conversation_url,
         ru_ref_filter=ru_ref_filter,
         business_id_filter=business_id_filter,
-        test_value=test_value,
-        thread_id=thread_id
     )
 
 
