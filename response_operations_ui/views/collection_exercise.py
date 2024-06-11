@@ -687,10 +687,8 @@ def create_collection_exercise(survey_ref, short_name):
         survey_ref=survey_ref,
     )
 
-    survey_eq_version = "v3" if survey_details["surveyMode"] == "EQ" else ""
-
     collection_exercise_controllers.create_collection_exercise(
-        survey_id, survey_name, form.get("user_description"), form.get("period"), survey_eq_version
+        survey_id, survey_name, form.get("user_description"), form.get("period")
     )
 
     logger.info("Successfully created collection exercise", survey=short_name, survey_ref=survey_ref)
