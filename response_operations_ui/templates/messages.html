@@ -6,24 +6,22 @@
 {% set page_title = "Messages" %}
 {% set hide_breadcrumbs = true %}
 {% block main %}
-    {% with messages = get_flashed_messages() %}
-        {% if messages %}
-            {% call
-                onsPanel({
-                    "variant":"success",
-                    "iconType": "check",
-                    "classes": "ons-u-mb-s",
-                    "bodyAttributes": {
-                        "data-qa": "success-body"
-                    }
-                })
-            %}
-                {% for message in messages %}
-                    <p id="flashed-message-{{ loop.index }}">{{ message }}</p>
-                {% endfor %}
-            {% endcall %}
-        {% endif %}
-    {% endwith %}
+      {% if thread_id %}
+          {% call
+              onsPanel({
+                  "variant":"success",
+                  "iconType": "check",
+                  "classes": "ons-u-mb-s",
+                  "bodyAttributes": {
+                      "data-qa": "success-body"
+                  }
+              })
+          %} 
+              {% if thread_url %}
+                  <p id="flashed-message"><a href="{{thread_url}}">View conversation</a></p>
+              {% endif %}
+          {% endcall %}
+      {% endif %}
     <div class="ons-grid ons-grid--flex ons-grid--between">
         <div class="ons-grid__col">
             {% if breadcrumbs %}

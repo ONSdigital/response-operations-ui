@@ -110,6 +110,7 @@ def view_conversation(thread_id):
                 page=page,
                 ru_ref_filter=ru_ref_filter,
                 business_id_filter=business_id_filter,
+                thread_id=thread_id,
             )
         )
 
@@ -162,6 +163,7 @@ def view_conversation(thread_id):
                     conversation_tab=conversation_tab,
                     ru_ref_filter=ru_ref_filter,
                     business_id_filter=business_id_filter,
+                    thread_id=thread_id,
                 )
             )
 
@@ -367,11 +369,14 @@ def mark_message_unread(message_id):
 @login_required
 def view_select_survey():
     return _view_select_survey(
-        request.args.get("conversation_tab"), request.args.get("ru_ref_filter"), request.args.get("business_id_filter")
+        request.args.get("conversation_tab"),
+        request.args.get("ru_ref_filter"),
+        request.args.get("business_id_filter"),
+        request.args.get("thread_id")
     )
 
 
-def _view_select_survey(conversation_tab, ru_ref_filter, business_id_filter):
+def _view_select_survey(conversation_tab, ru_ref_filter, business_id_filter, thread_id):
     """
     Redirects to either a survey stored in the session under the 'messages_survey_selection'
     key or to the survey selection screen if the key isn't present in the session
@@ -410,6 +415,7 @@ def _view_select_survey(conversation_tab, ru_ref_filter, business_id_filter):
                 conversation_tab=conversation_tab,
                 ru_ref_filter=ru_ref_filter,
                 business_id_filter=business_id_filter,
+                thread_id=thread_id,
             )
         )
 
@@ -480,6 +486,7 @@ def view_selected_survey(selected_survey):  # noqa: C901
     limit = request.args.get("limit", default=10, type=int)
     conversation_tab = request.args.get("conversation_tab", default="open")
     ru_ref_filter = request.args.get("ru_ref_filter", default="")
+    thread_id = request.args.get("thread_id")
     business_id_filter = request.args.get("business_id_filter", default="")
     category = "SURVEY"
 
@@ -548,6 +555,7 @@ def view_selected_survey(selected_survey):  # noqa: C901
             ru_ref_filter=ru_ref_filter,
             tab_titles=_get_tab_titles(tab_counts, ru_ref_filter),
             show_pagination=bool(tab_counts["current"] > limit),
+            thread_id=thread_id,
         )
 
     except (TypeError, KeyError):
@@ -560,6 +568,7 @@ def view_selected_survey(selected_survey):  # noqa: C901
             displayed_short_name=displayed_short_name,
             response_error=True,
             tab_titles=_get_tab_titles(),
+            thread_id=thread_id,
         )
 
 
@@ -625,6 +634,7 @@ def close_conversation(thread_id):
                 conversation_tab=conversation_tab,
                 ru_ref_filter=ru_ref_filter,
                 business_id_filter=business_id_filter,
+                thread_id=thread_id,
             )
         )
 
