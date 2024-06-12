@@ -15,7 +15,6 @@ from flask import (
     url_for,
 )
 from flask_login import current_user, login_required
-from markupsafe import Markup
 from structlog import wrap_logger
 
 from config import FDI_LIST, VACANCIES_LIST
@@ -91,18 +90,6 @@ def view_conversation(thread_id):
         verify_permission("messages.edit")
         payload = {"is_closed": False}
         message_controllers.patch_thread(thread_id, payload)
-        # thread_url = (
-        #     url_for(
-        #         "messages_bp.view_conversation",
-        #         thread_id=thread_id,
-        #         conversation_tab=conversation_tab,
-        #         page=page,
-        #         ru_ref_filter=ru_ref_filter,
-        #         business_id_filter=business_id_filter,
-        #     )
-        #     + "#latest-message"
-        # )
-        # flash(Markup(f"Conversation re-opened. <a href={thread_url}>View conversation</a>"))
         return redirect(
             url_for(
                 "messages_bp.view_select_survey",
@@ -144,18 +131,6 @@ def view_conversation(thread_id):
                 )
             else:
                 message_controllers.send_message(_get_message_json(form, thread_id=refined_thread[0]["thread_id"]))
-            thread_url = (
-                url_for(
-                    "messages_bp.view_conversation",
-                    thread_id=thread_id,
-                    page=page,
-                    conversation_tab=conversation_tab,
-                    ru_ref_filter=ru_ref_filter,
-                    business_id_filter=business_id_filter,
-                )
-                + "#latest-message"
-            )
-            flash(Markup(f"Message sent. <a href={thread_url}>View Message</a>"))
             return redirect(
                 url_for(
                     "messages_bp.view_select_survey",
@@ -627,19 +602,6 @@ def close_conversation(thread_id):
     if request.method == "POST":
         payload = {"is_closed": True}
         message_controllers.patch_thread(thread_id, payload)
-        thread_url = (
-            url_for(
-                "messages_bp.view_conversation",
-                thread_id=thread_id,
-                conversation_tab=conversation_tab,
-                page=page,
-                ru_ref_filter=ru_ref_filter,
-                business_id_filter=business_id_filter,
-            )
-            + "#latest-message"
-        )
-
-        flash(Markup(f"Conversation closed. <a href={thread_url}>View conversation</a>"))
         return redirect(
             url_for(
                 "messages_bp.view_select_survey",
