@@ -6,7 +6,6 @@
 {% set page_title = "Messages" %}
 {% set hide_breadcrumbs = true %}
 {% block main %}
-<h1>This is the thread_url: {{thread_url}}</h1>
         {% if thread_url %}
             {% call
                 onsPanel({
@@ -18,7 +17,7 @@
                     }
                 })
             %}
-                    <a href={{thread_url}}>View conversation</a>
+                <p id="notifcation_box">{{notification}} <a href={{thread_url}}>View conversation</a></p>
             {% endcall %}
         {% endif %}
     <div class="ons-grid ons-grid--flex ons-grid--between">
