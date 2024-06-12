@@ -91,18 +91,18 @@ def view_conversation(thread_id):
         verify_permission("messages.edit")
         payload = {"is_closed": False}
         message_controllers.patch_thread(thread_id, payload)
-        thread_url = (
-            url_for(
-                "messages_bp.view_conversation",
-                thread_id=thread_id,
-                conversation_tab=conversation_tab,
-                page=page,
-                ru_ref_filter=ru_ref_filter,
-                business_id_filter=business_id_filter,
-            )
-            + "#latest-message"
-        )
-        flash(Markup(f"Conversation re-opened. <a href={thread_url}>View conversation</a>"))
+        # thread_url = (
+        #     url_for(
+        #         "messages_bp.view_conversation",
+        #         thread_id=thread_id,
+        #         conversation_tab=conversation_tab,
+        #         page=page,
+        #         ru_ref_filter=ru_ref_filter,
+        #         business_id_filter=business_id_filter,
+        #     )
+        #     + "#latest-message"
+        # )
+        # flash(Markup(f"Conversation re-opened. <a href={thread_url}>View conversation</a>"))
         return redirect(
             url_for(
                 "messages_bp.view_select_survey",
@@ -539,6 +539,18 @@ def view_selected_survey(selected_survey):  # noqa: C901
 
         pagination = pagination_processor(tab_counts["current"], limit, page, href)
 
+        if thread_id:
+            thread_url = url_for(
+                "messages_bp.view_conversation",
+                thread_id=thread_id,
+                conversation_tab=conversation_tab,
+                page=page,
+                ru_ref_filter=ru_ref_filter,
+                business_id_filter=business_id_filter,
+            )
+        else:
+            thread_url = None
+
         return render_template(
             "messages.html",
             form=form,
@@ -556,6 +568,7 @@ def view_selected_survey(selected_survey):  # noqa: C901
             tab_titles=_get_tab_titles(tab_counts, ru_ref_filter),
             show_pagination=bool(tab_counts["current"] > limit),
             thread_id=thread_id,
+            thread_url=thread_url,
         )
 
     except (TypeError, KeyError):
