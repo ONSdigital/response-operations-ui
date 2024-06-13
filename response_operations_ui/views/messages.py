@@ -90,7 +90,7 @@ def view_conversation(thread_id):
         verify_permission("messages.edit")
         payload = {"is_closed": False}
         message_controllers.patch_thread(thread_id, payload)
-        notification = "Conversation re-opened."
+        flash("Conversation re-opened.")
         return redirect(
             url_for(
                 "messages_bp.view_select_survey",
@@ -99,7 +99,6 @@ def view_conversation(thread_id):
                 ru_ref_filter=ru_ref_filter,
                 business_id_filter=business_id_filter,
                 thread_id=thread_id,
-                notification=notification,
             )
         )
 
@@ -133,7 +132,7 @@ def view_conversation(thread_id):
                 )
             else:
                 message_controllers.send_message(_get_message_json(form, thread_id=refined_thread[0]["thread_id"]))
-                notification = "Message sent."
+                flash("Message sent.")
             return redirect(
                 url_for(
                     "messages_bp.view_select_survey",
@@ -142,7 +141,6 @@ def view_conversation(thread_id):
                     ru_ref_filter=ru_ref_filter,
                     business_id_filter=business_id_filter,
                     thread_id=thread_id,
-                    notification=notification,
                 )
             )
 
@@ -338,10 +336,11 @@ def mark_message_unread(message_id):
     conversation_tab = request.args.get("conversation_tab")
     ru_ref_filter = request.args.get("ru_ref_filter")
     business_id_filter = request.args.get("business_id_filter")
+    thread_id = request.args.get("thread_id")
     flash(f"Message from {msg_from} to {msg_to} marked unread")
     message_controllers.add_unread_label(message_id)
 
-    return _view_select_survey(conversation_tab, ru_ref_filter, business_id_filter)
+    return _view_select_survey(conversation_tab, ru_ref_filter, business_id_filter, thread_id)
 
 
 @messages_bp.route("/", methods=["GET"])
@@ -352,11 +351,10 @@ def view_select_survey():
         request.args.get("ru_ref_filter"),
         request.args.get("business_id_filter"),
         request.args.get("thread_id"),
-        request.args.get("notification"),
     )
 
 
-def _view_select_survey(conversation_tab, ru_ref_filter, business_id_filter, thread_id, notification):
+def _view_select_survey(conversation_tab, ru_ref_filter, business_id_filter, thread_id):
     """
     Redirects to either a survey stored in the session under the 'messages_survey_selection'
     key or to the survey selection screen if the key isn't present in the session
@@ -396,7 +394,6 @@ def _view_select_survey(conversation_tab, ru_ref_filter, business_id_filter, thr
                 ru_ref_filter=ru_ref_filter,
                 business_id_filter=business_id_filter,
                 thread_id=thread_id,
-                notification=notification,
             )
         )
 
@@ -468,7 +465,6 @@ def view_selected_survey(selected_survey):  # noqa: C901
     conversation_tab = request.args.get("conversation_tab", default="open")
     ru_ref_filter = request.args.get("ru_ref_filter", default="")
     thread_id = request.args.get("thread_id", default="")
-    notification = request.args.get("notification", default="")
     business_id_filter = request.args.get("business_id_filter", default="")
     category = "SURVEY"
 
@@ -551,7 +547,6 @@ def view_selected_survey(selected_survey):  # noqa: C901
             show_pagination=bool(tab_counts["current"] > limit),
             thread_id=thread_id,
             thread_url=thread_url,
-            notification=notification,
         )
 
     except (TypeError, KeyError):
@@ -610,7 +605,7 @@ def close_conversation(thread_id):
     if request.method == "POST":
         payload = {"is_closed": True}
         message_controllers.patch_thread(thread_id, payload)
-        notification = "Conversation closed."
+        flash("Conversation closed.")
         return redirect(
             url_for(
                 "messages_bp.view_select_survey",
@@ -619,7 +614,6 @@ def close_conversation(thread_id):
                 ru_ref_filter=ru_ref_filter,
                 business_id_filter=business_id_filter,
                 thread_id=thread_id,
-                notification=notification,
             )
         )
 
