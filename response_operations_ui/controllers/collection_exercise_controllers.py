@@ -270,7 +270,7 @@ def get_collection_exercise_by_id(collection_exercise_id):
     return response.json()
 
 
-def create_collection_exercise(survey_id, survey_name, user_description, period, eq_version=None):
+def create_collection_exercise(survey_id, survey_name, user_description, period):
     logger.info("Creating a new collection exercise for", survey_id=survey_id, survey_name=survey_name)
     header = {"Content-Type": "application/json"}
     url = f'{app.config["COLLECTION_EXERCISE_URL"]}/collectionexercises'
@@ -281,8 +281,6 @@ def create_collection_exercise(survey_id, survey_name, user_description, period,
         "userDescription": user_description,
         "exerciseRef": period,
     }
-    if eq_version != "":
-        collection_exercise_details["eqVersion"] = eq_version
     response = requests.post(
         url,
         json=collection_exercise_details,
