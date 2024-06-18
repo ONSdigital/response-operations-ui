@@ -123,7 +123,6 @@ url_get_collection_exercises_link = f"{collection_exercise_root}/link/{collectio
 url_link_sample = f"{collection_exercise_root}/link/{collection_exercise_id}"
 url_collection_exercise_survey_id = f"{collection_exercise_root}/survey/{survey_id}"
 url_update_ce_user_details = f"{collection_exercise_root}/{collection_exercise_id}/userDescription"
-url_update_ce_eq_version = f"{collection_exercise_root}/{collection_exercise_id}/eqVersion"
 url_update_ce_period = f"{collection_exercise_root}/{collection_exercise_id}/exerciseRef"
 url_get_collection_exercise_events = f"{collection_exercise_root}/{collection_exercise_id}/events"
 url_create_collection_exercise = f"{TestingConfig.COLLECTION_EXERCISE_URL}/collectionexercises"
