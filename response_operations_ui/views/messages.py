@@ -464,7 +464,7 @@ def view_selected_survey(selected_survey):  # noqa: C901
     limit = request.args.get("limit", default=10, type=int)
     conversation_tab = request.args.get("conversation_tab", default="open")
     ru_ref_filter = request.args.get("ru_ref_filter", default="")
-    thread_id = request.args.get("thread_id", default="")
+    thread_id = request.args.get("thread_id")
     business_id_filter = request.args.get("business_id_filter", default="")
     category = "SURVEY"
 
@@ -548,7 +548,6 @@ def view_selected_survey(selected_survey):  # noqa: C901
             ru_ref_filter=ru_ref_filter,
             tab_titles=_get_tab_titles(tab_counts, ru_ref_filter),
             show_pagination=bool(tab_counts["current"] > limit),
-            thread_id=thread_id,
             thread_url=thread_url,
         )
 
@@ -562,7 +561,6 @@ def view_selected_survey(selected_survey):  # noqa: C901
             displayed_short_name=displayed_short_name,
             response_error=True,
             tab_titles=_get_tab_titles(),
-            thread_id=thread_id,
         )
 
 
