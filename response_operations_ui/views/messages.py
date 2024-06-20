@@ -372,6 +372,7 @@ def _view_select_survey(conversation_tab, ru_ref_filter, business_id_filter, thr
                 conversation_tab=conversation_tab,
                 ru_ref_filter=ru_ref_filter,
                 business_id_filter=business_id_filter,
+                thread_id=thread_id,
             )
         )
     elif selected_survey == "misc":
@@ -382,6 +383,7 @@ def _view_select_survey(conversation_tab, ru_ref_filter, business_id_filter, thr
                 conversation_tab=conversation_tab,
                 ru_ref_filter=ru_ref_filter,
                 business_id_filter=business_id_filter,
+                thread_id=thread_id,
             )
         )
     else:
@@ -445,11 +447,13 @@ def clear_filter(selected_survey):
 def view_technical_inbox():  # noqa: C901
     session["messages_survey_selection"] = "technical"
     breadcrumbs = [{"text": "Technical" + " Messages"}]
+    thread_id = request.args.get("thread_id")
     return _process_non_survey_category_page(
         render_html="secure-message/technical-inbox.html",
         redirect_url="messages_bp.view_technical_inbox",
         breadcrumbs=breadcrumbs,
         category="TECHNICAL",
+        thread_id=thread_id,
     )
 
 
@@ -643,11 +647,13 @@ def close_conversation(thread_id):
 def view_misc_inbox():  # noqa: C901
     session["messages_survey_selection"] = "misc"
     breadcrumbs = [{"text": "Miscellaneous" + " Messages"}]
+    thread_id = request.args.get("thread_id")
     return _process_non_survey_category_page(
         render_html="secure-message/misc-inbox.html",
         redirect_url="messages_bp.view_misc_inbox",
         breadcrumbs=breadcrumbs,
         category="MISC",
+        thread_id=thread_id,
     )
 
 
@@ -1066,6 +1072,7 @@ def _process_non_survey_category_page(
     redirect_url: str,
     breadcrumbs: list,
     category: str,
+    thread_id: str,
 ):
     """
     This method processes message category selected and returns appropriate inbox.
@@ -1079,6 +1086,8 @@ def _process_non_survey_category_page(
     page = request.args.get("page", default=1, type=int)
     limit = request.args.get("limit", default=10, type=int)
     conversation_tab = request.args.get("conversation_tab", default="open")
+    ru_ref_filter = request.args.get("ru_ref_filter", default="")
+    business_id_filter = request.args.get("business_id_filter", default="")
     category = category
     try:
         tab_counts = _get_tab_counts("", conversation_tab, "", None, category)
@@ -1102,6 +1111,21 @@ def _process_non_survey_category_page(
         href = "?conversation_tab=" + conversation_tab
 
         pagination = pagination_processor(tab_counts["current"], limit, page, href)
+        
+        if thread_id:
+            thread_url = (
+                url_for(
+                    "messages_bp.view_conversation",
+                    thread_id=thread_id,
+                    conversation_tab=conversation_tab,
+                    page=page,
+                    ru_ref_filter=ru_ref_filter,
+                    business_id_filter=business_id_filter,
+                )
+                + "#latest-message"
+            )
+        else:
+            thread_url = None
 
         return render_template(
             render_html,
@@ -1113,6 +1137,7 @@ def _process_non_survey_category_page(
             conversation_tab=conversation_tab,
             tab_titles=_get_tab_titles(tab_counts, ""),
             show_pagination=bool(tab_counts["current"] > limit),
+            thread_url=thread_url
         )
 
     except (TypeError, KeyError):
