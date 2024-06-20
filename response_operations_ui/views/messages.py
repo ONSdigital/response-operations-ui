@@ -1137,7 +1137,7 @@ def _process_non_survey_category_page(
             conversation_tab=conversation_tab,
             tab_titles=_get_tab_titles(tab_counts, ""),
             show_pagination=bool(tab_counts["current"] > limit),
-            thread_url=thread_url
+            thread_url=thread_url,
         )
 
     except (TypeError, KeyError):
