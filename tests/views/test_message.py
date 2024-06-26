@@ -986,6 +986,24 @@ class TestMessage(ViewTestCase):
 
     @requests_mock.mock()
     @patch("response_operations_ui.controllers.message_controllers._get_jwt")
+    def test_close_conversation_technical(self, mock_request, mock_get_jwt):
+        sign_in_with_permission(self, mock_request, user_permission_messages_edit_json)
+        with self.client.session_transaction() as session:
+            session["messages_survey_selection"] = ""
+        mock_get_jwt.return_value = "blah"
+        mock_request.patch(url_get_thread, json=thread_json)
+
+        response = self.client.post(
+            "/messages/threads/fb0e79bd-e132-4f4f-a7fd-5e8c6b41b9af/close-conversation", follow_redirects=True
+        )
+
+        self.assertEqual(200, response.status_code)
+        self.assertIn("Conversation closed".encode(), response.data)
+        self.assertIn("Technical Messages".encode(), response.data)
+        self.assertIn("John Example".encode(), response.data)
+
+    @requests_mock.mock()
+    @patch("response_operations_ui.controllers.message_controllers._get_jwt")
     def test_close_conversation_http_error(self, mock_request, mock_get_jwt):
         sign_in_with_permission(self, mock_request, user_permission_messages_edit_json)
         with self.client.session_transaction() as session:
