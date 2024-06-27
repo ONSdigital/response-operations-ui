@@ -964,12 +964,17 @@ class TestMessage(ViewTestCase):
 
     @requests_mock.mock()
     @patch("response_operations_ui.controllers.message_controllers._get_jwt")
-    def test_close_conversation_technical(self, mock_request, mock_get_jwt):
+    def test_close_conversation(self, mock_request, mock_get_jwt):
         sign_in_with_permission(self, mock_request, user_permission_messages_edit_json)
         with self.client.session_transaction() as session:
-            session["messages_survey_selection"] = ""
+            session["messages_survey_selection"] = "Ashe"
         mock_get_jwt.return_value = "blah"
+        mock_request.get(url_get_thread, json=thread_json)
+        mock_request.get(url_get_surveys_list, json=survey_list)
         mock_request.patch(url_get_thread, json=thread_json)
+        mock_request.get(shortname_url + "/ASHE", json=ashe_info["survey"])
+        mock_request.get(url_messages + "/count", json={"total": 1}, status_code=200)
+        mock_request.get(url_get_threads_list, json=thread_list)
 
         response = self.client.post(
             "/messages/threads/fb0e79bd-e132-4f4f-a7fd-5e8c6b41b9af/close-conversation", follow_redirects=True
@@ -977,7 +982,7 @@ class TestMessage(ViewTestCase):
 
         self.assertEqual(200, response.status_code)
         self.assertIn("Conversation closed".encode(), response.data)
-        self.assertIn("Technical Messages".encode(), response.data)
+        self.assertIn("Ashe Messages".encode(), response.data)
         self.assertIn("John Example".encode(), response.data)
 
     @requests_mock.mock()
