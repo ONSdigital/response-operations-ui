@@ -15,7 +15,6 @@ from flask import (
     url_for,
 )
 from flask_login import current_user, login_required
-from markupsafe import Markup
 from structlog import wrap_logger
 
 from config import FDI_LIST, VACANCIES_LIST
@@ -91,18 +90,7 @@ def view_conversation(thread_id):
         verify_permission("messages.edit")
         payload = {"is_closed": False}
         message_controllers.patch_thread(thread_id, payload)
-        thread_url = (
-            url_for(
-                "messages_bp.view_conversation",
-                thread_id=thread_id,
-                conversation_tab=conversation_tab,
-                page=page,
-                ru_ref_filter=ru_ref_filter,
-                business_id_filter=business_id_filter,
-            )
-            + "#latest-message"
-        )
-        flash(Markup(f"Conversation re-opened. <a href={thread_url}>View conversation</a>"))
+        flash("Conversation re-opened.")
         return redirect(
             url_for(
                 "messages_bp.view_select_survey",
@@ -110,6 +98,7 @@ def view_conversation(thread_id):
                 page=page,
                 ru_ref_filter=ru_ref_filter,
                 business_id_filter=business_id_filter,
+                thread_id=thread_id,
             )
         )
 
@@ -143,18 +132,7 @@ def view_conversation(thread_id):
                 )
             else:
                 message_controllers.send_message(_get_message_json(form, thread_id=refined_thread[0]["thread_id"]))
-            thread_url = (
-                url_for(
-                    "messages_bp.view_conversation",
-                    thread_id=thread_id,
-                    page=page,
-                    conversation_tab=conversation_tab,
-                    ru_ref_filter=ru_ref_filter,
-                    business_id_filter=business_id_filter,
-                )
-                + "#latest-message"
-            )
-            flash(Markup(f"Message sent. <a href={thread_url}>View Message</a>"))
+                flash("Message sent.")
             return redirect(
                 url_for(
                     "messages_bp.view_select_survey",
@@ -162,6 +140,7 @@ def view_conversation(thread_id):
                     conversation_tab=conversation_tab,
                     ru_ref_filter=ru_ref_filter,
                     business_id_filter=business_id_filter,
+                    thread_id=thread_id,
                 )
             )
 
@@ -357,21 +336,25 @@ def mark_message_unread(message_id):
     conversation_tab = request.args.get("conversation_tab")
     ru_ref_filter = request.args.get("ru_ref_filter")
     business_id_filter = request.args.get("business_id_filter")
+    thread_id = request.args.get("thread_id")
     flash(f"Message from {msg_from} to {msg_to} marked unread")
     message_controllers.add_unread_label(message_id)
 
-    return _view_select_survey(conversation_tab, ru_ref_filter, business_id_filter)
+    return _view_select_survey(conversation_tab, ru_ref_filter, business_id_filter, thread_id)
 
 
 @messages_bp.route("/", methods=["GET"])
 @login_required
 def view_select_survey():
     return _view_select_survey(
-        request.args.get("conversation_tab"), request.args.get("ru_ref_filter"), request.args.get("business_id_filter")
+        request.args.get("conversation_tab"),
+        request.args.get("ru_ref_filter"),
+        request.args.get("business_id_filter"),
+        request.args.get("thread_id"),
     )
 
 
-def _view_select_survey(conversation_tab, ru_ref_filter, business_id_filter):
+def _view_select_survey(conversation_tab, ru_ref_filter, business_id_filter, thread_id):
     """
     Redirects to either a survey stored in the session under the 'messages_survey_selection'
     key or to the survey selection screen if the key isn't present in the session
@@ -389,6 +372,7 @@ def _view_select_survey(conversation_tab, ru_ref_filter, business_id_filter):
                 conversation_tab=conversation_tab,
                 ru_ref_filter=ru_ref_filter,
                 business_id_filter=business_id_filter,
+                thread_id=thread_id,
             )
         )
     elif selected_survey == "misc":
@@ -399,6 +383,7 @@ def _view_select_survey(conversation_tab, ru_ref_filter, business_id_filter):
                 conversation_tab=conversation_tab,
                 ru_ref_filter=ru_ref_filter,
                 business_id_filter=business_id_filter,
+                thread_id=thread_id,
             )
         )
     else:
@@ -410,6 +395,7 @@ def _view_select_survey(conversation_tab, ru_ref_filter, business_id_filter):
                 conversation_tab=conversation_tab,
                 ru_ref_filter=ru_ref_filter,
                 business_id_filter=business_id_filter,
+                thread_id=thread_id,
             )
         )
 
@@ -461,11 +447,13 @@ def clear_filter(selected_survey):
 def view_technical_inbox():  # noqa: C901
     session["messages_survey_selection"] = "technical"
     breadcrumbs = [{"text": "Technical" + " Messages"}]
+    thread_id = request.args.get("thread_id")
     return _process_non_survey_category_page(
         render_html="secure-message/technical-inbox.html",
         redirect_url="messages_bp.view_technical_inbox",
         breadcrumbs=breadcrumbs,
         category="TECHNICAL",
+        thread_id=thread_id,
     )
 
 
@@ -480,6 +468,7 @@ def view_selected_survey(selected_survey):  # noqa: C901
     limit = request.args.get("limit", default=10, type=int)
     conversation_tab = request.args.get("conversation_tab", default="open")
     ru_ref_filter = request.args.get("ru_ref_filter", default="")
+    thread_id = request.args.get("thread_id")
     business_id_filter = request.args.get("business_id_filter", default="")
     category = "SURVEY"
 
@@ -532,6 +521,21 @@ def view_selected_survey(selected_survey):  # noqa: C901
 
         pagination = pagination_processor(tab_counts["current"], limit, page, href)
 
+        if thread_id:
+            thread_url = (
+                url_for(
+                    "messages_bp.view_conversation",
+                    thread_id=thread_id,
+                    conversation_tab=conversation_tab,
+                    page=page,
+                    ru_ref_filter=ru_ref_filter,
+                    business_id_filter=business_id_filter,
+                )
+                + "#latest-message"
+            )
+        else:
+            thread_url = None
+
         return render_template(
             "messages.html",
             form=form,
@@ -548,6 +552,7 @@ def view_selected_survey(selected_survey):  # noqa: C901
             ru_ref_filter=ru_ref_filter,
             tab_titles=_get_tab_titles(tab_counts, ru_ref_filter),
             show_pagination=bool(tab_counts["current"] > limit),
+            thread_url=thread_url,
         )
 
     except (TypeError, KeyError):
@@ -605,19 +610,7 @@ def close_conversation(thread_id):
     if request.method == "POST":
         payload = {"is_closed": True}
         message_controllers.patch_thread(thread_id, payload)
-        thread_url = (
-            url_for(
-                "messages_bp.view_conversation",
-                thread_id=thread_id,
-                conversation_tab=conversation_tab,
-                page=page,
-                ru_ref_filter=ru_ref_filter,
-                business_id_filter=business_id_filter,
-            )
-            + "#latest-message"
-        )
-
-        flash(Markup(f"Conversation closed. <a href={thread_url}>View conversation</a>"))
+        flash("Conversation closed.")
         return redirect(
             url_for(
                 "messages_bp.view_select_survey",
@@ -625,6 +618,7 @@ def close_conversation(thread_id):
                 conversation_tab=conversation_tab,
                 ru_ref_filter=ru_ref_filter,
                 business_id_filter=business_id_filter,
+                thread_id=thread_id,
             )
         )
 
@@ -653,11 +647,13 @@ def close_conversation(thread_id):
 def view_misc_inbox():  # noqa: C901
     session["messages_survey_selection"] = "misc"
     breadcrumbs = [{"text": "Miscellaneous" + " Messages"}]
+    thread_id = request.args.get("thread_id")
     return _process_non_survey_category_page(
         render_html="secure-message/misc-inbox.html",
         redirect_url="messages_bp.view_misc_inbox",
         breadcrumbs=breadcrumbs,
         category="MISC",
+        thread_id=thread_id,
     )
 
 
@@ -1076,6 +1072,7 @@ def _process_non_survey_category_page(
     redirect_url: str,
     breadcrumbs: list,
     category: str,
+    thread_id: str,
 ):
     """
     This method processes message category selected and returns appropriate inbox.
@@ -1089,6 +1086,8 @@ def _process_non_survey_category_page(
     page = request.args.get("page", default=1, type=int)
     limit = request.args.get("limit", default=10, type=int)
     conversation_tab = request.args.get("conversation_tab", default="open")
+    ru_ref_filter = request.args.get("ru_ref_filter", default="")
+    business_id_filter = request.args.get("business_id_filter", default="")
     category = category
     try:
         tab_counts = _get_tab_counts("", conversation_tab, "", None, category)
@@ -1113,6 +1112,21 @@ def _process_non_survey_category_page(
 
         pagination = pagination_processor(tab_counts["current"], limit, page, href)
 
+        if thread_id:
+            thread_url = (
+                url_for(
+                    "messages_bp.view_conversation",
+                    thread_id=thread_id,
+                    conversation_tab=conversation_tab,
+                    page=page,
+                    ru_ref_filter=ru_ref_filter,
+                    business_id_filter=business_id_filter,
+                )
+                + "#latest-message"
+            )
+        else:
+            thread_url = None
+
         return render_template(
             render_html,
             page=page,
@@ -1123,6 +1137,7 @@ def _process_non_survey_category_page(
             conversation_tab=conversation_tab,
             tab_titles=_get_tab_titles(tab_counts, ""),
             show_pagination=bool(tab_counts["current"] > limit),
+            thread_url=thread_url,
         )
 
     except (TypeError, KeyError):

@@ -211,6 +211,24 @@ class TestMessage(ViewTestCase):
 
     @requests_mock.mock()
     @patch("response_operations_ui.controllers.message_controllers._get_jwt")
+    def test_technical_inbox_threads_list_with_thread_id(self, mock_request, mock_get_jwt):
+        print("START OF TEST")
+        thread_id = "ff4537df-2097-4a73-a530-e98dba7bf28f"
+        mock_get_jwt.return_value = "blah"
+        mock_request.get(url_messages + "/count", json={"total": 1}, status_code=200)
+        mock_request.post(url_get_threads_list, json=thread_list)
+        mock_request.get(url_get_threads_list, json=thread_list)
+        mock_request.get(url_get_surveys_list, json=self.surveys_list_json)
+        mock_request.get(shortname_url + "/technical", json=ashe_info["survey"])
+        response = self.client.post(
+            f"/messages/technical?thread_id={thread_id}",
+        )
+
+        self.assertEqual(response.status_code, 200)
+        self.assertIn("Technical Messages".encode(), response.data)
+
+    @requests_mock.mock()
+    @patch("response_operations_ui.controllers.message_controllers._get_jwt")
     def test_rft_inbox_selection(self, mock_request, mock_get_jwt):
         """
         Tests if the right messages get displayed for the RFT inbox.
