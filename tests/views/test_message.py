@@ -1025,7 +1025,7 @@ class TestMessage(ViewTestCase):
         self.assertEqual(200, response.status_code)
         self.assertIn("Conversation re-opened.".encode(), response.data)
         self.assertIn("Ashe Messages".encode(), response.data)
-    
+
     @requests_mock.mock()
     def test_reopen_conversation_technical_messages(self, mock_request):
         sign_in_with_permission(self, mock_request, user_permission_messages_edit_json)
