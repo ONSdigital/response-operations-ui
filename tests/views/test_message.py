@@ -211,21 +211,6 @@ class TestMessage(ViewTestCase):
 
     @requests_mock.mock()
     @patch("response_operations_ui.controllers.message_controllers._get_jwt")
-    def test_technical_inbox_threads_list_with_thread_id(self, mock_request, mock_get_jwt):
-        thread_id = "ff4537df-2097-4a73-a530-e98dba7bf28f"
-        mock_get_jwt.return_value = "blah"
-        mock_request.get(url_messages + "/count", json={"total": 1}, status_code=200)
-        mock_request.get(url_get_threads_list, json=thread_list)
-        mock_request.get(url_get_surveys_list, json=self.surveys_list_json)
-        response = self.client.post(
-            f"/messages/technical?thread_id={thread_id}",
-        )
-
-        self.assertEqual(response.status_code, 200)
-        self.assertIn("Technical Messages".encode(), response.data)
-
-    @requests_mock.mock()
-    @patch("response_operations_ui.controllers.message_controllers._get_jwt")
     def test_rft_inbox_selection(self, mock_request, mock_get_jwt):
         """
         Tests if the right messages get displayed for the RFT inbox.
@@ -1040,6 +1025,28 @@ class TestMessage(ViewTestCase):
         self.assertEqual(200, response.status_code)
         self.assertIn("Conversation re-opened.".encode(), response.data)
         self.assertIn("Ashe Messages".encode(), response.data)
+    
+    @requests_mock.mock()
+    def test_reopen_conversation_technical_messages(self, mock_request):
+        sign_in_with_permission(self, mock_request, user_permission_messages_edit_json)
+        with self.client.session_transaction() as session:
+            session["messages_survey_selection"] = "technical"
+        mock_request.get(url_get_thread, json=thread_json)
+        mock_request.get(url_get_surveys_list, json=survey_list)
+        mock_request.patch(url_get_thread, json=thread_json)
+        mock_request.get(url_messages + "/count", json={"total": 1}, status_code=200)
+        mock_request.get(url_get_threads_list, json=thread_list)
+
+        with self.app.app_context():
+            response = self.client.post(
+                "/messages/threads/fb0e79bd-e132-4f4f-a7fd-5e8c6b41b9af?category=TECHNICAL",
+                data={"reopen": "Re-open conversation"},
+                follow_redirects=True,
+            )
+
+        self.assertEqual(200, response.status_code)
+        self.assertIn("Conversation re-opened.".encode(), response.data)
+        self.assertIn("Technical Messages".encode(), response.data)
 
     def test_calculate_page_change(self):
         result = _verify_requested_page_is_within_bounds(3, 10, 15)
