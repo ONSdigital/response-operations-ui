@@ -1026,6 +1026,28 @@ class TestMessage(ViewTestCase):
         self.assertIn("Conversation re-opened.".encode(), response.data)
         self.assertIn("Ashe Messages".encode(), response.data)
 
+    @requests_mock.mock()
+    def test_reopen_conversation_technical_messages(self, mock_request):
+        sign_in_with_permission(self, mock_request, user_permission_messages_edit_json)
+        with self.client.session_transaction() as session:
+            session["messages_survey_selection"] = "technical"
+        mock_request.get(url_get_thread, json=thread_json)
+        mock_request.get(url_get_surveys_list, json=survey_list)
+        mock_request.patch(url_get_thread, json=thread_json)
+        mock_request.get(url_messages + "/count", json={"total": 1}, status_code=200)
+        mock_request.get(url_get_threads_list, json=thread_list)
+
+        with self.app.app_context():
+            response = self.client.post(
+                "/messages/threads/fb0e79bd-e132-4f4f-a7fd-5e8c6b41b9af?category=TECHNICAL",
+                data={"reopen": "Re-open conversation"},
+                follow_redirects=True,
+            )
+
+        self.assertEqual(200, response.status_code)
+        self.assertIn("Conversation re-opened.".encode(), response.data)
+        self.assertIn("Technical Messages".encode(), response.data)
+
     def test_calculate_page_change(self):
         result = _verify_requested_page_is_within_bounds(3, 10, 15)
         self.assertEqual(2, result)

@@ -19,7 +19,11 @@
                 })
             %}
                 {% for message in messages %}
-                    <p id="flashed-message-{{ loop.index }}">{{ message }}</p>
+                    <p id="flashed-message-{{ loop.index }}">{{ message }}
+                        {% if thread_url %}
+                            <a href={{thread_url}}>View conversation</a>
+                        {% endif %}
+                    </p>
                 {% endfor %}
             {% endcall %}
         {% endif %}
