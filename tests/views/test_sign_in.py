@@ -1,4 +1,5 @@
 import unittest
+from datetime import datetime
 
 import fakeredis
 import jwt
@@ -149,4 +150,16 @@ class TestSignIn(unittest.TestCase):
         self.assertEqual(response.status_code, 200)
         self.assertNotIn(b"Sign out", response.data)
         with self.client.session_transaction() as session:
-            self.assertEqual(session.get("next"), None)
+            self.assertIsNone(session.get("next"))
+
+        @requests_mock.mock()
+        def test_session_holds_permission_expiry_as_iso8601_date(self, mock_request):
+            mock_request.post(url_sign_in_data, json={"access_token": self.access_token}, status_code=201)
+            mock_request.get(url_surveys, json=surveys_list_json, status_code=200)
+            mock_request.get(url_permission_url, json=user_permission_admin_json, status_code=200)
+            self.client.post("/sign-in", follow_redirects=True, data={"username": "user", "password": "pass"})
+            with self.client.session_transaction() as session:
+                try:
+                    datetime.fromisoformat(session["permissions"]["expiry"])
+                except ValueError:
+                    self.fail("datetime was not able to be parsed from the session")
