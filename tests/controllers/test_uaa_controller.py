@@ -1,6 +1,7 @@
 import json
 import os
 import unittest
+from datetime import datetime, timedelta
 from unittest.mock import patch
 
 import jwt
@@ -50,6 +51,8 @@ url_uaa_verify_user = f"{TestingConfig.UAA_SERVICE_URL}/Users/{user_id}/verify"
 
 uaa_group_add_success_json = {"type": "USER", "value": user_id}
 uaa_group_remove_success_json = uaa_group_add_success_json
+
+test_groups = [{"value": "cd5cfb52-fcf8-4ff9-9a84-7f4a174b96c3", "display": "oauth.approvals", "type": "DIRECT"}]
 
 
 class TestUAAController(unittest.TestCase):
@@ -282,3 +285,34 @@ class TestUAAController(unittest.TestCase):
             output = uaa_controller.change_user_password_by_id(user_id, user_password)
             self.assertEqual(output.status_code, 200)
             self.assertEqual(output.json(), password_change_success_json)
+
+    @requests_mock.mock()
+    def test_successful_processing_of_permissions_expiry_with_a_iso8601_date(self, mock_request):
+        mock_request.post(url_uaa_token, json={"access_token": self.access_token}, status_code=201)
+        mock_request.get(url_uaa_user_by_id, json=uaa_user_by_id_json, status_code=200)
+        with self.app.test_request_context():
+            session["permissions"] = {
+                "groups": test_groups,
+                "expiry": datetime.isoformat(datetime.now() + timedelta(minutes=-5)),
+            }
+            self.assertTrue(uaa_controller.user_has_permission("oauth.approvals", user_id))
+
+    @requests_mock.mock()
+    def test_successful_processing_of_permissions_expiry_with_a_datetime(self, mock_request):
+        mock_request.post(url_uaa_token, json={"access_token": self.access_token}, status_code=201)
+        mock_request.get(url_uaa_user_by_id, json=uaa_user_by_id_json, status_code=200)
+        with self.app.test_request_context():
+            session["permissions"] = {"groups": test_groups, "expiry": str(datetime.now() + timedelta(minutes=5))}
+            self.assertTrue(uaa_controller.user_has_permission("oauth.approvals", user_id))
+
+    @requests_mock.mock()
+    def test_unsuccessful_processing_of_permissions_expiry_with_an_incorrect_datetime_format(self, mock_request):
+        mock_request.post(url_uaa_token, json={"access_token": self.access_token}, status_code=201)
+        mock_request.get(url_uaa_user_by_id, json=uaa_user_by_id_json, status_code=200)
+        with self.app.test_request_context():
+            incorrect_date_format = str((datetime.now().strftime("%d/%m/%Y, %H:%M:%S")))
+            session["permissions"] = {"groups": test_groups, "expiry": incorrect_date_format}
+            with self.assertRaises(ValueError) as e:
+                uaa_controller.user_has_permission("oauth.approvals", user_id)
+
+        self.assertEqual(e.exception.args[0], f"Invalid isoformat string: {incorrect_date_format!r}")
