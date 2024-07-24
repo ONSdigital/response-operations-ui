@@ -149,4 +149,4 @@ class TestSignIn(unittest.TestCase):
         self.assertEqual(response.status_code, 200)
         self.assertNotIn(b"Sign out", response.data)
         with self.client.session_transaction() as session:
-            self.assertEqual(session.get("next"), None)
+            self.assertIsNone(session.get("next"))
