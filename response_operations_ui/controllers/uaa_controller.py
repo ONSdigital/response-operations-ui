@@ -469,8 +469,11 @@ def user_has_permission(permission: str, user_id=None) -> bool:
             return False
         user_id = session["user_id"]
 
-    if "permissions" not in session or datetime.fromisoformat(session["permissions"]["expiry"]) < datetime.now():
-        refresh_permissions(user_id)
+    try:
+        if "permissions" not in session or datetime.fromisoformat(session["permissions"]["expiry"]) < datetime.now():
+            refresh_permissions(user_id)
+    except ValueError:
+        session["permissions"]["expiry"] = datetime.isoformat(datetime.now() + timedelta(minutes=5))
 
     return any(permission in g["display"] for g in session["permissions"]["groups"])
 

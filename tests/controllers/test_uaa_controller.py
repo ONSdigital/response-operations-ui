@@ -312,6 +312,4 @@ class TestUAAController(unittest.TestCase):
         with self.app.test_request_context():
             incorrect_date_format = str((datetime.now().strftime("%d/%m/%Y, %H:%M:%S")))
             session["permissions"] = {"groups": test_groups, "expiry": incorrect_date_format}
-            with self.assertRaises(ValueError) as e:
-                uaa_controller.user_has_permission("oauth.approvals", user_id)
-            self.assertEqual(e.exception.args[0], f"Invalid isoformat string: {incorrect_date_format!r}")
+            self.assertTrue(uaa_controller.user_has_permission("oauth.approvals", user_id))
