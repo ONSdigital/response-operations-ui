@@ -876,11 +876,11 @@
         },
         "sdc-cryptography": {
             "hashes": [
-                "sha256:1c15e8e412c89c30f129e3b60e2bfc60017a7e9a1e11ef3401e328b154958651",
-                "sha256:b39547b0d80c401e9419e44496430c2e498fd2ff59f76b7b89adf7697d5b23db"
+                "sha256:2b87da178c0d9c6a8add4e2afbe81139bbb056598af0cda61b52f421fb29451f",
+                "sha256:cea2de62e65940efb72bfd3ed677b1e685678521a52eb4c06769ffce506f5847"
             ],
             "index": "pypi",
-            "version": "==1.2.0"
+            "version": "==1.2.1"
         },
         "six": {
             "hashes": [
