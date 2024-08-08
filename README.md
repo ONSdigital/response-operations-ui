@@ -153,3 +153,4 @@ The helm chart makes `test.enabled` available which does the following:
 By default this config is set to False giving us the full security that Talisman and CSRFProtect offers. NB. the issue with testing only appears when running on a local setup, there is no such issue in preprod. It doesn't seem to work locally even if you change your /etc/hosts to simulate a FQDN with a standard TLD.
 
 The combination of this config change for testing allows us to run the app for local development and also allows us to run acceptance tests through selenium.
+
