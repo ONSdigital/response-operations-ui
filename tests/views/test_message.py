@@ -120,7 +120,10 @@ with open(f"{project_root}/test_data/message/threads_missing_business_name.json"
     threads_missing_business_name_json = json.load(json_data)
 with open(f"{project_root}/test_data/message/thread_missing_respondent.json") as json_data:
     missing_user_json = json.load(json_data)
-
+with open(f"{project_root}/test_data/message/thread_technical.json") as json_data:
+    thread_technical_json = json.load(json_data)
+with open(f"{project_root}/test_data/message/thread_misc.json") as json_data:
+    thread_misc_json = json.load(json_data)
 
 user_permission_admin_json = {
     "id": "5902656c-c41c-4b38-a294-0359e6aabe59",
@@ -1611,6 +1614,72 @@ class TestMessage(ViewTestCase):
         self.assertNotIn("Reply".encode(), response.data)
         self.assertNotIn("Close conversation".encode(), response.data)
         self.assertNotIn("Send message".encode(), response.data)
+
+    @requests_mock.mock()
+    def test_return_to_technical_inbox(self, mock_request):
+        sign_in_with_permission(self, mock_request, user_permission_messages_edit_json)
+        with self.client.session_transaction() as session:
+            session["messages_survey_selection"] = "technical"
+        mock_request.get(url_get_thread, json=thread_technical_json)
+        mock_request.get(url_get_surveys_list, json=survey_list)
+        mock_request.patch(url_get_thread, json=thread_json)
+        mock_request.get(url_messages + "/count", json={"total": 1}, status_code=200)
+        mock_request.get(url_get_threads_list, json=thread_list)
+
+        with self.app.app_context():
+            response = self.client.post(
+                "/messages/threads/fb0e79bd-e132-4f4f-a7fd-5e8c6b41b9af?page=1&conversation_tab=open&ru_ref_filter"
+                "=&business_id_filter=#latest-message",
+                follow_redirects=True,
+            )
+
+        self.assertEqual(200, response.status_code)
+        self.assertNotIn("ASHE".encode(), response.data)
+        self.assertIn(
+            "/messages/?page=1&amp;conversation_tab=open&amp;ru_ref_filter=&amp;business_id_filter=".encode(),
+            response.data,
+        )
+
+        with self.app.app_context():
+            redirect = self.client.get(
+                "/messages/?page=1&conversation_tab=open&ru_ref_filter=&business_id_filter=",
+                follow_redirects=True,
+            )
+
+        self.assertIn("Technical Messages".encode(), redirect.data)
+
+    @requests_mock.mock()
+    def test_return_to_misc_inbox(self, mock_request):
+        sign_in_with_permission(self, mock_request, user_permission_messages_edit_json)
+        with self.client.session_transaction() as session:
+            session["messages_survey_selection"] = "misc"
+        mock_request.get(url_get_thread, json=thread_misc_json)
+        mock_request.get(url_get_surveys_list, json=survey_list)
+        mock_request.patch(url_get_thread, json=thread_json)
+        mock_request.get(url_messages + "/count", json={"total": 1}, status_code=200)
+        mock_request.get(url_get_threads_list, json=thread_list)
+
+        with self.app.app_context():
+            response = self.client.post(
+                "/messages/threads/fb0e79bd-e132-4f4f-a7fd-5e8c6b41b9af?page=1&conversation_tab=open&ru_ref_filter"
+                "=&business_id_filter=#latest-message",
+                follow_redirects=True,
+            )
+
+        self.assertEqual(200, response.status_code)
+        self.assertNotIn("ASHE".encode(), response.data)
+        self.assertIn(
+            "/messages/?page=1&amp;conversation_tab=open&amp;ru_ref_filter=&amp;business_id_filter=".encode(),
+            response.data,
+        )
+
+        with self.app.app_context():
+            redirect = self.client.get(
+                "/messages/?page=1&conversation_tab=open&ru_ref_filter=&business_id_filter=",
+                follow_redirects=True,
+            )
+
+        self.assertIn("RFT Messages".encode(), redirect.data)
 
     @staticmethod
     def _mock_request_called_with_expected_query(mock_instance, query):

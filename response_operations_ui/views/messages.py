@@ -106,6 +106,12 @@ def view_conversation(thread_id):
     category = thread_conversation["category"]
     refined_thread = [_refine(message, category) for message in reversed(thread_conversation["messages"])]
     latest_message = refined_thread[-1]
+
+    # In some cases the survey_id is added to the technical and misc messages. This causes rerouting to the survey inbox
+    # By removing the survey_id from the message thread, we are redirected back to either technical or misc inboxes
+    if category != "SURVEY":
+        refined_thread[0]["survey"] = ""
+
     closed_at = _format_closed_at(thread_conversation)
     breadcrumbs = _get_conversation_breadcrumbs(thread_conversation["messages"])
 
