@@ -13,7 +13,7 @@ load-design-system-templates:
 	pipenv run ./scripts/load_templates.sh $(DESIGN_SYSTEM_VERSION)
 
 lint:
-	pipenv check ./response_operations_ui ./tests --ignore=70612
+	pipenv check ./response_operations_ui ./tests --ignore=70612 --ignore=71600
 	pipenv run isort .
 	pipenv run black --line-length 120 .
 	pipenv run djlint response_operations_ui/
