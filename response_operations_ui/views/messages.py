@@ -130,6 +130,11 @@ def view_conversation(thread_id):
                         form, thread_id=refined_thread[0]["thread_id"], category=thread_conversation["category"]
                     )
                 )
+                # Required for _view_select_survey to know what inbox to correctly redirect to
+                if category == "TECHNICAL":
+                    session["messages_survey_selection"] = "technical"
+                else:
+                    session["messages_survey_selection"] = "misc"
                 flash("Message sent.")
             else:
                 message_controllers.send_message(_get_message_json(form, thread_id=refined_thread[0]["thread_id"]))
