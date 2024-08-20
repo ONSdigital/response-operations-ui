@@ -115,6 +115,10 @@ def view_conversation(thread_id):
     if latest_message["unread"] and _can_mark_as_unread(latest_message):
         message_controllers.remove_unread_label(latest_message["message_id"])
 
+    if category != "SURVEY":
+        # Required to produce the correct back link for the messages
+        refined_thread[0]["survey"] = ""
+
     form = SecureMessageForm(request.form)
 
     if form.validate_on_submit():
@@ -130,11 +134,6 @@ def view_conversation(thread_id):
                         form, thread_id=refined_thread[0]["thread_id"], category=thread_conversation["category"]
                     )
                 )
-                # Required for _view_select_survey to know what inbox to correctly redirect to
-                if category == "TECHNICAL":
-                    session["messages_survey_selection"] = "technical"
-                else:
-                    session["messages_survey_selection"] = "misc"
                 flash("Message sent.")
             else:
                 message_controllers.send_message(_get_message_json(form, thread_id=refined_thread[0]["thread_id"]))
