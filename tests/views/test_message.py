@@ -1658,7 +1658,7 @@ class TestMessage(ViewTestCase):
                 "/messages/?page=1&conversation_tab=open&ru_ref_filter=&business_id_filter=",
                 follow_redirects=True,
             )
-        
+
         self.assertIn("Technical Messages".encode(), redirect.data)
 
     @requests_mock.mock()
