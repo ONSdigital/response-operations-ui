@@ -30,6 +30,7 @@ survey_id_3 = "02b9c366-7397-42f7-942a-76dc5876d86d"
 ru_ref = "50012345678"
 iac_1 = "jkbvyklkwj88"
 iac_2 = "ljbgg3kgstr4"
+message_thread = "/messages/threads/fb0e79bd-e132-4f4f-a7fd-5e8c6b41b9af"
 
 url_get_business_by_ru_ref = f"{TestingConfig.PARTY_URL}/party-api/v1/businesses/ref/"
 url_get_business_by_id = f"{TestingConfig.PARTY_URL}/party-api/v1/businesses/id/"
@@ -406,20 +407,20 @@ class TestMessage(ViewTestCase):
 
         # Survey messages
         mock_request.get(url_get_thread, json=thread_unread_json)
-        response = self.client.get("/messages/threads/fb0e79bd-e132-4f4f-a7fd-5e8c6b41b9af")
+        response = self.client.get(message_thread)
         self.assertIn("Unread Message Subject".encode(), response.data)
         self.assertIn("Mark as unread".encode(), response.data)
 
         # Technical messages
         mock_request.get(url_get_thread, json=thread_unread_technical_json)
-        response = self.client.get("/messages/threads/fb0e79bd-e132-4f4f-a7fd-5e8c6b41b9af")
+        response = self.client.get(message_thread)
         self.assertIn("Unread Message Subject".encode(), response.data)
         self.assertIn("Category".encode(), response.data)
         self.assertIn("TECHNICAL".encode(), response.data)
 
         # RFT messages
         mock_request.get(url_get_thread, json=thread_unread_rft_json)
-        response = self.client.get("/messages/threads/fb0e79bd-e132-4f4f-a7fd-5e8c6b41b9af")
+        response = self.client.get(message_thread)
         self.assertIn("Unread Message Subject".encode(), response.data)
         self.assertIn("Category".encode(), response.data)
         self.assertIn("MISC".encode(), response.data)
@@ -458,7 +459,7 @@ class TestMessage(ViewTestCase):
         mock_request.get(url_get_thread, json=test_data)
         mock_request.put(url_update_label)
         mock_request.get(url_get_surveys_list, json=survey_list)
-        response = self.client.get("/messages/threads/fb0e79bd-e132-4f4f-a7fd-5e8c6b41b9af")
+        response = self.client.get(message_thread)
 
         self.assertNotIn("Mark as unread".encode(), response.data)
 
@@ -473,7 +474,7 @@ class TestMessage(ViewTestCase):
         mock_request.get(url_get_surveys_list, json=survey_list)
         with self.client.session_transaction() as session:
             session["user_id"] = "test-id"
-        response = self.client.get("/messages/threads/fb0e79bd-e132-4f4f-a7fd-5e8c6b41b9af")
+        response = self.client.get(message_thread)
 
         self.assertIn("Mark as unread".encode(), response.data)
 
@@ -484,7 +485,7 @@ class TestMessage(ViewTestCase):
         mock_request.get(url_get_thread, json=thread_unread_json)
         mock_request.put(url_update_label, status_code=500)
         mock_request.get(url_get_surveys_list, json=survey_list)
-        response = self.client.get("/messages/threads/fb0e79bd-e132-4f4f-a7fd-5e8c6b41b9af")
+        response = self.client.get(message_thread)
 
         self.assertIn("Unread Message Subject".encode(), response.data)
 
@@ -700,7 +701,7 @@ class TestMessage(ViewTestCase):
         mock_request.get(url_get_respondent_party_by_id + respondent_id, json=party_response)
         mock_request.get(url_get_business_by_id + business_party_id, json=business_party)
 
-        response = self.client.get("/messages/threads/fb0e79bd-e132-4f4f-a7fd-5e8c6b41b9af/change-reporting-unit")
+        response = self.client.get(message_thread + "/change-reporting-unit")
 
         self.assertEqual(response.status_code, 200)
         self.assertIn("Assign a reporting unit to the thread".encode(), response.data)
@@ -716,7 +717,7 @@ class TestMessage(ViewTestCase):
         has_permission.return_value = True
         with self.client.session_transaction() as session:
             session["user_id"] = "test-id"
-        response = self.client.get("/messages/threads/fb0e79bd-e132-4f4f-a7fd-5e8c6b41b9af")
+        response = self.client.get(message_thread)
 
         self.assertEqual(response.status_code, 200)
         self.assertIn("Need more information on project".encode(), response.data)
@@ -732,7 +733,7 @@ class TestMessage(ViewTestCase):
         mock_request.get(url_get_surveys_list, json=survey_list)
         with self.client.session_transaction() as session:
             session["user_id"] = "test-id"
-        response = self.client.post("/messages/threads/fb0e79bd-e132-4f4f-a7fd-5e8c6b41b9af", follow_redirects=True)
+        response = self.client.post(message_thread, follow_redirects=True)
 
         self.assertEqual(response.status_code, 200)
         self.assertIn("Please enter a message".encode(), response.data)
@@ -743,7 +744,7 @@ class TestMessage(ViewTestCase):
         mock_get_jwt.return_value = "mock_jwt"
         mock_request.get(url_get_thread, status_code=500)
 
-        response = self.client.get("/messages/threads/fb0e79bd-e132-4f4f-a7fd-5e8c6b41b9af", follow_redirects=True)
+        response = self.client.get(message_thread, follow_redirects=True)
 
         request_history = mock_request.request_history
         self.assertEqual(len(request_history), 1)
@@ -768,9 +769,7 @@ class TestMessage(ViewTestCase):
         mock_request.get(url_messages + "/count", json={"total": 1}, status_code=200)
         mock_request.get(url_permission_url, json=user_permission_admin_json, status_code=200)
         mock_request.post(url_sign_in_data, json={"access_token": self.access_token}, status_code=201)
-        response = self.client.post(
-            "/messages/threads/fb0e79bd-e132-4f4f-a7fd-5e8c6b41b9af", data=self.message_form, follow_redirects=True
-        )
+        response = self.client.post(message_thread, data=self.message_form, follow_redirects=True)
 
         self.assertEqual(response.status_code, 200)
         self.assertIn("RU Ref".encode(), response.data)
@@ -784,7 +783,7 @@ class TestMessage(ViewTestCase):
         self.client.get("/logout", follow_redirects=True)
         with self.client.session_transaction() as session:
             session["user_id"] = "test-id"
-        response = self.client.get("/messages/threads/fb0e79bd-e132-4f4f-a7fd-5e8c6b41b9af")
+        response = self.client.get(message_thread)
 
         request_history = mock_request.request_history
         self.assertEqual(len(request_history), 0)
@@ -801,7 +800,7 @@ class TestMessage(ViewTestCase):
         current_user.return_value.id = 1
         mock_request.get(url_permission_url, json=user_permission_admin_json, status_code=200)
         mock_request.post(url_sign_in_data, json={"access_token": self.access_token}, status_code=201)
-        response = self.client.get("/messages/threads/fb0e79bd-e132-4f4f-a7fd-5e8c6b41b9af")
+        response = self.client.get(message_thread)
 
         request_history = mock_request.request_history
         self.assertEqual(len(request_history), 3)
@@ -913,7 +912,7 @@ class TestMessage(ViewTestCase):
         mock_request.get(url_get_surveys_list, json=survey_list)
 
         response = self.client.get(
-            "/messages/threads/fb0e79bd-e132-4f4f-a7fd-5e8c6b41b9af/close-conversation?category=SURVEY",
+            message_thread + "/close-conversation?category=SURVEY",
             follow_redirects=True,
         )
 
@@ -933,7 +932,7 @@ class TestMessage(ViewTestCase):
 
         # Technical
         response = self.client.get(
-            "/messages/threads/fb0e79bd-e132-4f4f-a7fd-5e8c6b41b9af/close-conversation?category=TECHNICAL",
+            message_thread + "/close-conversation?category=TECHNICAL",
             follow_redirects=True,
         )
         self.assertEqual(200, response.status_code)
@@ -944,7 +943,7 @@ class TestMessage(ViewTestCase):
 
         # Misc
         response = self.client.get(
-            "/messages/threads/fb0e79bd-e132-4f4f-a7fd-5e8c6b41b9af/close-conversation?category=MISC",
+            message_thread + "/close-conversation?category=MISC",
             follow_redirects=True,
         )
         self.assertEqual(200, response.status_code)
@@ -965,9 +964,7 @@ class TestMessage(ViewTestCase):
         mock_request.get(url_messages + "/count", json={"total": 1}, status_code=200)
         mock_request.get(url_get_threads_list, json=thread_list)
 
-        response = self.client.post(
-            "/messages/threads/fb0e79bd-e132-4f4f-a7fd-5e8c6b41b9af/close-conversation", follow_redirects=True
-        )
+        response = self.client.post(message_thread + "/close-conversation", follow_redirects=True)
 
         self.assertEqual(200, response.status_code)
         self.assertIn("Conversation closed".encode(), response.data)
@@ -983,9 +980,7 @@ class TestMessage(ViewTestCase):
         mock_get_jwt.return_value = "mock_jwt"
         mock_request.patch(url_get_thread, json=thread_json, status_code=500)
 
-        response = self.client.post(
-            "/messages/threads/fb0e79bd-e132-4f4f-a7fd-5e8c6b41b9af/close-conversation", follow_redirects=True
-        )
+        response = self.client.post(message_thread + "/close-conversation", follow_redirects=True)
 
         request_history = mock_request.request_history
         self.assertEqual(len(request_history), 5)
@@ -1005,7 +1000,7 @@ class TestMessage(ViewTestCase):
 
         with self.app.app_context():
             response = self.client.post(
-                "/messages/threads/fb0e79bd-e132-4f4f-a7fd-5e8c6b41b9af",
+                message_thread,
                 data={"reopen": "Re-open conversation"},
                 follow_redirects=True,
             )
@@ -1025,7 +1020,7 @@ class TestMessage(ViewTestCase):
 
         with self.app.app_context():
             response = self.client.post(
-                "/messages/threads/fb0e79bd-e132-4f4f-a7fd-5e8c6b41b9af?category=TECHNICAL",
+                message_thread + "?category=TECHNICAL",
                 data={"reopen": "Re-open conversation"},
                 follow_redirects=True,
             )
@@ -1572,7 +1567,7 @@ class TestMessage(ViewTestCase):
         mock_request.get(url_get_thread, json=thread_unread_json)
         mock_request.put(url_update_label)
         mock_request.get(url_get_surveys_list, json=survey_list)
-        response = self.client.get("/messages/threads/fb0e79bd-e132-4f4f-a7fd-5e8c6b41b9af")
+        response = self.client.get(message_thread)
 
         self.assertEqual(response.status_code, 200)
         self.assertNotIn("Reply".encode(), response.data)
@@ -1598,9 +1593,8 @@ class TestMessage(ViewTestCase):
         mock_request.get(url_messages + "/count", json={"total": 1}, status_code=200)
         mock_request.get(url_permission_url, json=user_permission_admin_json, status_code=200)
         mock_request.post(url_sign_in_data, json={"access_token": self.access_token}, status_code=201)
-        response = self.client.post(
-            "/messages/threads/fb0e79bd-e132-4f4f-a7fd-5e8c6b41b9af", data=self.message_form, follow_redirects=True
-        )
+        response = self.client.post(message_thread, data=self.message_form, follow_redirects=True)
+        self.assertIn(message_thread.encode(), response.data)
         self.assertIn("Message sent.".encode(), response.data)
         self.assertIn("Messages".encode(), response.data)
         self.assertIn("Technical Messages".encode(), response.data)
@@ -1622,15 +1616,14 @@ class TestMessage(ViewTestCase):
         mock_request.get(url_get_surveys_list, json=survey_list)
         mock_request.get(url_messages + "/count", json={"total": 1}, status_code=200)
         mock_request.post(url_sign_in_data, json={"access_token": self.access_token}, status_code=201)
-        response = self.client.post(
-            "/messages/threads/fb0e79bd-e132-4f4f-a7fd-5e8c6b41b9af", data=self.message_form, follow_redirects=True
-        )
+        response = self.client.post(message_thread, data=self.message_form, follow_redirects=True)
+        self.assertIn(message_thread.encode(), response.data)
         self.assertIn("Message sent.".encode(), response.data)
         self.assertIn("Messages".encode(), response.data)
         self.assertIn("RFT Messages".encode(), response.data)
 
     @requests_mock.mock()
-    def test_return_buttton_link_returns_to_technical_inbox(self, mock_request):
+    def test_return_button_link_returns_to_technical_inbox(self, mock_request):
         self._client_session_("technical")
         thread_json["category"] = "TECHNICAL"
         mock_request.get(url_get_thread, json=thread_json)
@@ -1641,8 +1634,7 @@ class TestMessage(ViewTestCase):
 
         with self.app.app_context():
             response = self.client.post(
-                "/messages/threads/fb0e79bd-e132-4f4f-a7fd-5e8c6b41b9af?page=1&conversation_tab=open&ru_ref_filter"
-                "=&business_id_filter=#latest-message",
+                message_thread + "?page=1&conversation_tab=open&ru_ref_filter=&business_id_filter=#latest-message",
                 follow_redirects=True,
             )
 
@@ -1661,7 +1653,7 @@ class TestMessage(ViewTestCase):
         self.assertIn("Technical Messages".encode(), redirect.data)
 
     @requests_mock.mock()
-    def test_return_buttton_link_returns_to_misc_inbox(self, mock_request):
+    def test_return_button_link_returns_to_misc_inbox(self, mock_request):
         self._client_session_("misc")
         thread_json["category"] = "MISC"
         mock_request.get(url_get_thread, json=thread_json)
@@ -1672,8 +1664,7 @@ class TestMessage(ViewTestCase):
 
         with self.app.app_context():
             response = self.client.post(
-                "/messages/threads/fb0e79bd-e132-4f4f-a7fd-5e8c6b41b9af?page=1&conversation_tab=open&ru_ref_filter"
-                "=&business_id_filter=#latest-message",
+                message_thread + "?page=1&conversation_tab=open&ru_ref_filter=&business_id_filter=#latest-message",
                 follow_redirects=True,
             )
 

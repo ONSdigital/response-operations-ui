@@ -115,10 +115,6 @@ def view_conversation(thread_id):
     if latest_message["unread"] and _can_mark_as_unread(latest_message):
         message_controllers.remove_unread_label(latest_message["message_id"])
 
-    if category != "SURVEY":
-        # Required to produce the correct back link for the messages
-        refined_thread[0]["survey"] = ""
-
     form = SecureMessageForm(request.form)
 
     if form.validate_on_submit():
@@ -818,7 +814,10 @@ def _refine(message: dict, category: str = "SURVEY") -> dict:
         refined_message["from_internal"] = False
 
     if message.get("survey_id"):
-        refined_message["survey"] = get_survey_short_name_by_id(message.get("survey_id"))
+        if category != "SURVEY":
+            refined_message["survey"] = ""
+        else:
+            refined_message["survey"] = get_survey_short_name_by_id(message.get("survey_id"))
         refined_message["survey_ref"] = get_survey_ref_by_id(message.get("survey_id"))
     else:
         refined_message["survey"] = ""
