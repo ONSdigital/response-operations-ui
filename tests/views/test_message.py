@@ -1586,7 +1586,6 @@ class TestMessage(ViewTestCase):
         self._client_session_("technical")
         mock_get_jwt.return_value = "mock_jwt"
         current_user.return_value.id = 1
-        # sign_in_with_permission(self, mock_request, user_permission_messages_edit_json)
         # Post message on reply
         thread_json["category"] = "TECHNICAL"
         mock_request.get(url_get_thread, json=thread_json)
@@ -1709,7 +1708,6 @@ class TestMessage(ViewTestCase):
         return False
 
     def _get_thread_with_deleted_respondent(self, mock_request, user_json):
-        # sign_in_with_permission(self, mock_request, user_permission_messages_edit_json)
         mock_request.get(url_get_thread, json=user_json)
         mock_request.get(url_get_surveys_list, json=survey_list)
         response = self.client.get("/messages/threads/fb0e79bd-e132-4f4f-a7fd-5e8c6b41b9af")
