@@ -130,10 +130,9 @@ def view_conversation(thread_id):
                         form, thread_id=refined_thread[0]["thread_id"], category=thread_conversation["category"]
                     )
                 )
-                flash("Message sent.")
             else:
                 message_controllers.send_message(_get_message_json(form, thread_id=refined_thread[0]["thread_id"]))
-                flash("Message sent.")
+            flash("Message sent.")
             return redirect(
                 url_for(
                     "messages_bp.view_select_survey",
@@ -814,10 +813,7 @@ def _refine(message: dict, category: str = "SURVEY") -> dict:
         refined_message["from_internal"] = False
 
     if message.get("survey_id"):
-        if category != "SURVEY":
-            refined_message["survey"] = ""
-        else:
-            refined_message["survey"] = get_survey_short_name_by_id(message.get("survey_id"))
+        refined_message["survey"] = get_survey_short_name_by_id(message.get("survey_id"))
         refined_message["survey_ref"] = get_survey_ref_by_id(message.get("survey_id"))
     else:
         refined_message["survey"] = ""
