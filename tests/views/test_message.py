@@ -968,7 +968,7 @@ class TestMessage(ViewTestCase):
 
         self.assertEqual(200, response.status_code)
         self.assertIn("Conversation closed".encode(), response.data)
-        self.assertIn("Ashe Messages".encode(), response.data)
+        self.assertIn("ASHE Messages".encode(), response.data)
         self.assertIn("John Example".encode(), response.data)
 
     @requests_mock.mock()
@@ -1007,7 +1007,7 @@ class TestMessage(ViewTestCase):
 
         self.assertEqual(200, response.status_code)
         self.assertIn("Conversation re-opened.".encode(), response.data)
-        self.assertIn("Ashe Messages".encode(), response.data)
+        self.assertIn("ASHE Messages".encode(), response.data)
 
     @requests_mock.mock()
     def test_reopen_conversation_technical_messages(self, mock_request):
@@ -1091,7 +1091,7 @@ class TestMessage(ViewTestCase):
 
                 # validate that the currently selected tab is as expected (i.e aria-current="location")
                 match = (
-                    f'"/messages/Ashe?conversation_tab={conversation_tab.replace(" ", "+")}'
+                    f'"/messages/ASHE?conversation_tab={conversation_tab.replace(" ", "+")}'
                     f'&ru_ref_filter=&business_id_filter="aria-current="location"'
                 )
 
@@ -1133,7 +1133,7 @@ class TestMessage(ViewTestCase):
 
                 # validate that the currently selected tab is as expected (i.e aria-current="location")
                 match = (
-                    f'"/messages/Ashe?conversation_tab={conversation_tab.replace(" ", "+")}'
+                    f'"/messages/ASHE?conversation_tab={conversation_tab.replace(" ", "+")}'
                     f'&ru_ref_filter=&business_id_filter="aria-current="location"'
                 )
                 self.assertIn(match, response_body.replace("amp;", ""))
@@ -1198,7 +1198,7 @@ class TestMessage(ViewTestCase):
 
         # view survey with filter of business_id
         url = (
-            f"/messages/Ashe?page={page}&limit={limit}&conversation_tab={conversation_tab}"
+            f"/messages/ASHE?page={page}&limit={limit}&conversation_tab={conversation_tab}"
             f"&business_id_filter={business_id_filter}"
         )
         response = self.client.post(url, follow_redirects=True, json={"ru_ref_filter": ru_ref_filter})
@@ -1248,7 +1248,7 @@ class TestMessage(ViewTestCase):
 
         # view survey with filter of business_id
         url = (
-            f"/messages/Ashe?page={page}&limit={limit}&conversation_tab={conversation_tab}"
+            f"/messages/ASHE?page={page}&limit={limit}&conversation_tab={conversation_tab}"
             f"&business_id_filter={business_id_filter}"
         )
         response = self.client.get(url, follow_redirects=True)
@@ -1303,7 +1303,7 @@ class TestMessage(ViewTestCase):
 
         # view survey with filter of business_id
         url = (
-            f"/messages/Ashe?page={page}&limit={limit}&conversation_tab={conversation_tab}"
+            f"/messages/ASHE?page={page}&limit={limit}&conversation_tab={conversation_tab}"
             f"&business_id_filter={business_id_filter}"
         )
 
@@ -1337,7 +1337,7 @@ class TestMessage(ViewTestCase):
 
         # Call clear filter endpoint , passing in ru ref and business id
         url = (
-            f"/messages/clear_filter/Ashe?page={page}&limit={limit}&"
+            f"/messages/clear_filter/ASHE?page={page}&limit={limit}&"
             f"conversation_tab={conversation_tab}&business_id_filter={business_id_filter}&ru_ref={ru_ref}"
         )
         response = self.client.get(url, follow_redirects=True)
@@ -1370,7 +1370,7 @@ class TestMessage(ViewTestCase):
 
         # view survey with filter of business_id
         url = (
-            f"/messages/Ashe?page={page}&limit={limit}&conversation_tab={conversation_tab}"
+            f"/messages/ASHE?page={page}&limit={limit}&conversation_tab={conversation_tab}"
             f"&business_id_filter={business_id_filter}"
         )
         response = self.client.post(url, follow_redirects=True, json={"ru_ref_filter": ru_ref_filter})
@@ -1405,7 +1405,7 @@ class TestMessage(ViewTestCase):
 
         # view survey with filter of business_id
         url = (
-            f"/messages/Ashe?page={page}&limit={limit}&conversation_tab={conversation_tab}"
+            f"/messages/ASHE?page={page}&limit={limit}&conversation_tab={conversation_tab}"
             f"&business_id_filter={business_id_filter}"
         )
         response = self.client.post(url, follow_redirects=True, json={"ru_ref_filter": ru_ref_filter})
@@ -1448,7 +1448,7 @@ class TestMessage(ViewTestCase):
         mock_get_count.return_value = 0
         # view survey with filter of business_id
         url = (
-            f"/messages/Ashe?page={page}&limit={limit}&conversation_tab={conversation_tab}"
+            f"/messages/ASHE?page={page}&limit={limit}&conversation_tab={conversation_tab}"
             f"&business_id_filter={business_id_filter}&ru_ref={ru_ref_filter}"
         )
         response = self.client.get(url, follow_redirects=True)
@@ -1478,17 +1478,17 @@ class TestMessage(ViewTestCase):
 
         # view survey with filter of business_id
         url = (
-            f"/messages/Ashe?page={page}&limit={limit}&conversation_tab={conversation_tab}"
+            f"/messages/ASHE?page={page}&limit={limit}&conversation_tab={conversation_tab}"
             f"&business_id_filter={business_id_filter}"
         )
         response = self.client.get(url, follow_redirects=True)
         response_body = response.data.decode("utf-8")
 
         self.assertEqual(200, response.status_code)
-        self.assertIn('href="/messages/Ashe?conversation_tab=my+messages', response_body)
-        self.assertIn('href="/messages/Ashe?conversation_tab=open', response_body)
-        self.assertIn('href="/messages/Ashe?conversation_tab=closed', response_body)
-        self.assertIn('href="/messages/Ashe?conversation_tab=initial', response_body)
+        self.assertIn('href="/messages/ASHE?conversation_tab=my+messages', response_body)
+        self.assertIn('href="/messages/ASHE?conversation_tab=open', response_body)
+        self.assertIn('href="/messages/ASHE?conversation_tab=closed', response_body)
+        self.assertIn('href="/messages/ASHE?conversation_tab=initial', response_body)
 
     @requests_mock.mock()
     @patch("response_operations_ui.controllers.message_controllers._get_jwt")
@@ -1536,7 +1536,7 @@ class TestMessage(ViewTestCase):
                 # view survey with filter of business_id
 
                 url = (
-                    f"/messages/Ashe?page={page}&limit={limit}&conversation_tab={conversation_tab}"
+                    f"/messages/ASHE?page={page}&limit={limit}&conversation_tab={conversation_tab}"
                     f"&business_id_filter={business_id_filter}&ru_ref_filter={ru_ref_filter}"
                 )
                 response = self.client.get(url, follow_redirects=True)
