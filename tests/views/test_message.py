@@ -30,6 +30,7 @@ survey_id_3 = "02b9c366-7397-42f7-942a-76dc5876d86d"
 ru_ref = "50012345678"
 iac_1 = "jkbvyklkwj88"
 iac_2 = "ljbgg3kgstr4"
+message_thread = "/messages/threads/fb0e79bd-e132-4f4f-a7fd-5e8c6b41b9af"
 
 url_get_business_by_ru_ref = f"{TestingConfig.PARTY_URL}/party-api/v1/businesses/ref/"
 url_get_business_by_id = f"{TestingConfig.PARTY_URL}/party-api/v1/businesses/id/"
@@ -121,7 +122,6 @@ with open(f"{project_root}/test_data/message/threads_missing_business_name.json"
 with open(f"{project_root}/test_data/message/thread_missing_respondent.json") as json_data:
     missing_user_json = json.load(json_data)
 
-
 user_permission_admin_json = {
     "id": "5902656c-c41c-4b38-a294-0359e6aabe59",
     "groups": [{"value": "f385f89e-928f-4a0f-96a0-4c48d9007cc3", "display": "uaa.user", "type": "DIRECT"}],
@@ -158,7 +158,7 @@ class TestMessage(ViewTestCase):
             host=self.app.config["REDIS_HOST"], port=self.app.config["FAKE_REDIS_PORT"], db=self.app.config["REDIS_DB"]
         )
         # sign-in to setup the user in the session
-        self.client.post("/sign-in", follow_redirects=True, data={"username": "user", "password": "pass"})
+        self.sign_in()
 
     @requests_mock.mock()
     def mock_uaa(self, mock_request):
@@ -166,9 +166,15 @@ class TestMessage(ViewTestCase):
         mock_request.post(url_sign_in_data, json={"access_token": self.access_token}, status_code=201)
 
     @requests_mock.mock()
+    def sign_in(self, mock_request):
+        mock_request.post(url_sign_in_data, json={"access_token": self.access_token}, status_code=201)
+        mock_request.get(url_permission_url, json=user_permission_messages_edit_json, status_code=200)
+        self.client.post("/sign-in", follow_redirects=True, data={"username": "user", "password": "pass"})
+
+    @requests_mock.mock()
     @patch("response_operations_ui.controllers.message_controllers._get_jwt")
     def test_threads_list(self, mock_request, mock_get_jwt):
-        mock_get_jwt.return_value = "blah"
+        mock_get_jwt.return_value = "mock_jwt"
         mock_request.get(url_messages + "/count", json={"total": 1}, status_code=200)
         mock_request.get(url_get_threads_list, json=thread_list)
         mock_request.get(url_get_surveys_list, json=self.surveys_list_json)
@@ -192,7 +198,7 @@ class TestMessage(ViewTestCase):
         of the messages.  Once we do, we can know what the requirements are (i.e., will messages of certain categories
         have survey, business and collection exercise information?)
         """
-        mock_get_jwt.return_value = "blah"
+        mock_get_jwt.return_value = "mock_jwt"
         mock_request.get(url_messages + "/count", json={"total": 1}, status_code=200)
         mock_request.get(url_get_threads_list, json=thread_list)
         mock_request.get(url_get_surveys_list, json=self.surveys_list_json)
@@ -215,7 +221,7 @@ class TestMessage(ViewTestCase):
         """
         Tests if the right messages get displayed for the RFT inbox.
         """
-        mock_get_jwt.return_value = "blah"
+        mock_get_jwt.return_value = "mock-jwt"
         mock_request.get(url_messages + "/count", json={"total": 1}, status_code=200)
         mock_request.get(url_get_threads_list, json=thread_list)
         mock_request.get(url_get_surveys_list, json=self.surveys_list_json)
@@ -240,7 +246,7 @@ class TestMessage(ViewTestCase):
         """
         Tests if the right messages get displayed for the RFT inbox.
         """
-        mock_get_jwt.return_value = "blah"
+        mock_get_jwt.return_value = "mock_jwt"
         mock_request.get(url_messages + "/count", json={"total": 1}, status_code=200)
         mock_request.get(url_get_threads_list, json=thread_list)
         mock_request.get(url_get_surveys_list, json=self.surveys_list_json)
@@ -259,7 +265,7 @@ class TestMessage(ViewTestCase):
     @requests_mock.mock()
     @patch("response_operations_ui.controllers.message_controllers._get_jwt")
     def test_survey_short_name_failure(self, mock_request, mock_get_jwt):
-        mock_get_jwt.return_value = "blah"
+        mock_get_jwt.return_value = "mock_jwt"
         mock_request.get(shortname_url + "/ASHE", status_code=500)
         response = self.client.get("/messages/ASHE", follow_redirects=True)
 
@@ -270,7 +276,7 @@ class TestMessage(ViewTestCase):
     @requests_mock.mock()
     @patch("response_operations_ui.controllers.message_controllers._get_jwt")
     def test_threads_list_missing_data(self, mock_request, mock_get_jwt):
-        mock_get_jwt.return_value = "blah"
+        mock_get_jwt.return_value = "mock_jwt"
         mock_request.get(url_messages + "/count", json={"total": 1}, status_code=200)
         mock_request.get(url_get_surveys_list, json=self.surveys_list_json)
         mock_request.get(shortname_url + "/ASHE", json=ashe_info["survey"])
@@ -322,7 +328,7 @@ class TestMessage(ViewTestCase):
     @requests_mock.mock()
     @patch("response_operations_ui.controllers.message_controllers._get_jwt")
     def test_threads_list_fail(self, mock_request, mock_get_jwt):
-        mock_get_jwt.return_value = "blah"
+        mock_get_jwt.return_value = "mock_jwt"
         mock_request.get(url_messages + "/count", json={"total": 1}, status_code=200)
         mock_request.get(url_get_threads_list, status_code=500)
         mock_request.get(shortname_url + "/ASHE", json=ashe_info["survey"])
@@ -335,7 +341,7 @@ class TestMessage(ViewTestCase):
     @requests_mock.mock()
     @patch("response_operations_ui.controllers.message_controllers._get_jwt")
     def test_threads_list_empty(self, mock_request, mock_get_jwt):
-        mock_get_jwt.return_value = "blah"
+        mock_get_jwt.return_value = "mock_jwt"
         # If response doesn't have a messages key then it shouldn't give a server error,
         # but instead log the problem and display an empty inbox to the user.
 
@@ -350,7 +356,7 @@ class TestMessage(ViewTestCase):
     @requests_mock.mock()
     @patch("response_operations_ui.controllers.message_controllers._get_jwt")
     def test_conversation_count_response_error(self, mock_request, mock_get_jwt):
-        mock_get_jwt.return_value = "blah"
+        mock_get_jwt.return_value = "mock_jwt"
         mock_request.get(shortname_url + "/ASHE", json=ashe_info["survey"])
         mock_request.get(url_messages + "/count", json={"total": 1}, status_code=500)
         response = self.client.get("/messages/ASHE", follow_redirects=True)
@@ -373,7 +379,7 @@ class TestMessage(ViewTestCase):
     @requests_mock.mock()
     @patch("response_operations_ui.controllers.message_controllers._get_jwt")
     def test_unread_messages_are_displayed_correctly(self, mock_request, mock_get_jwt):
-        mock_get_jwt.return_value = "blah"
+        mock_get_jwt.return_value = "mock_jwt"
         mock_request.get(url_messages + "/count", json={"total": 1}, status_code=200)
         mock_request.get(url_get_surveys_list, json=self.surveys_list_json)
         mock_request.get(url_get_threads_list, json=threads_unread_list)
@@ -395,26 +401,26 @@ class TestMessage(ViewTestCase):
     @requests_mock.mock()
     @patch("response_operations_ui.controllers.message_controllers._get_jwt")
     def test_get_thread_success(self, mock_request, mock_get_jwt):
-        mock_get_jwt.return_value = "blah"
+        mock_get_jwt.return_value = "mock_jwt"
         mock_request.put(url_update_label)
         mock_request.get(url_get_surveys_list, json=survey_list)
 
         # Survey messages
         mock_request.get(url_get_thread, json=thread_unread_json)
-        response = self.client.get("/messages/threads/fb0e79bd-e132-4f4f-a7fd-5e8c6b41b9af")
+        response = self.client.get(message_thread)
         self.assertIn("Unread Message Subject".encode(), response.data)
         self.assertIn("Mark as unread".encode(), response.data)
 
         # Technical messages
         mock_request.get(url_get_thread, json=thread_unread_technical_json)
-        response = self.client.get("/messages/threads/fb0e79bd-e132-4f4f-a7fd-5e8c6b41b9af")
+        response = self.client.get(message_thread)
         self.assertIn("Unread Message Subject".encode(), response.data)
         self.assertIn("Category".encode(), response.data)
         self.assertIn("TECHNICAL".encode(), response.data)
 
         # RFT messages
         mock_request.get(url_get_thread, json=thread_unread_rft_json)
-        response = self.client.get("/messages/threads/fb0e79bd-e132-4f4f-a7fd-5e8c6b41b9af")
+        response = self.client.get(message_thread)
         self.assertIn("Unread Message Subject".encode(), response.data)
         self.assertIn("Category".encode(), response.data)
         self.assertIn("MISC".encode(), response.data)
@@ -447,21 +453,20 @@ class TestMessage(ViewTestCase):
     @requests_mock.mock()
     @patch("response_operations_ui.controllers.message_controllers._get_jwt")
     def test_get_thread_sent_to_different_user_mark_unread_not_displayed(self, mock_request, mock_get_jwt):
-        mock_get_jwt.return_value = "blah"
+        mock_get_jwt.return_value = "mock_jwt"
         test_data = copy.deepcopy(thread_unread_json)
         test_data["messages"][0]["msg_to"] = ["SomeoneElse"]
         mock_request.get(url_get_thread, json=test_data)
         mock_request.put(url_update_label)
         mock_request.get(url_get_surveys_list, json=survey_list)
-        response = self.client.get("/messages/threads/fb0e79bd-e132-4f4f-a7fd-5e8c6b41b9af")
+        response = self.client.get(message_thread)
 
         self.assertNotIn("Mark as unread".encode(), response.data)
 
     @requests_mock.mock()
     @patch("response_operations_ui.controllers.message_controllers._get_jwt")
     def test_get_read_thread_sent_to_same_user_mark_unread_displayed(self, mock_request, mock_get_jwt):
-        sign_in_with_permission(self, mock_request, user_permission_messages_edit_json)
-        mock_get_jwt.return_value = "blah"
+        mock_get_jwt.return_value = "mock_jwt"
         test_data = copy.deepcopy(thread_unread_json)
         test_data["messages"][0]["msg_to"] = ["test-id"]
         mock_request.get(url_get_thread, json=test_data)
@@ -469,18 +474,18 @@ class TestMessage(ViewTestCase):
         mock_request.get(url_get_surveys_list, json=survey_list)
         with self.client.session_transaction() as session:
             session["user_id"] = "test-id"
-        response = self.client.get("/messages/threads/fb0e79bd-e132-4f4f-a7fd-5e8c6b41b9af")
+        response = self.client.get(message_thread)
 
         self.assertIn("Mark as unread".encode(), response.data)
 
     @requests_mock.mock()
     @patch("response_operations_ui.controllers.message_controllers._get_jwt")
     def test_get_thread_when_update_label_fails(self, mock_request, mock_get_jwt):
-        mock_get_jwt.return_value = "blah"
+        mock_get_jwt.return_value = "mock_jwt"
         mock_request.get(url_get_thread, json=thread_unread_json)
         mock_request.put(url_update_label, status_code=500)
         mock_request.get(url_get_surveys_list, json=survey_list)
-        response = self.client.get("/messages/threads/fb0e79bd-e132-4f4f-a7fd-5e8c6b41b9af")
+        response = self.client.get(message_thread)
 
         self.assertIn("Unread Message Subject".encode(), response.data)
 
@@ -507,7 +512,7 @@ class TestMessage(ViewTestCase):
     @requests_mock.mock()
     @patch("response_operations_ui.controllers.message_controllers._get_jwt")
     def test_request_response_malformed(self, mock_request, mock_get_jwt):
-        mock_get_jwt.return_value = "blah"
+        mock_get_jwt.return_value = "mock_jwt"
         mock_request.get(url_get_threads_list, json={})
         mock_request.get(url_messages + "/count", json={"total": 1}, status_code=200)
         mock_request.get(shortname_url + "/ASHE", json=ashe_info["survey"])
@@ -537,9 +542,7 @@ class TestMessage(ViewTestCase):
         "business_id": "c614e64e-d981-4eba-b016-d9822f09a4fb",
     }
 
-    @requests_mock.mock()
-    def test_details_fields_prepopulated(self, mock_request):
-        sign_in_with_permission(self, mock_request, user_permission_messages_edit_json)
+    def test_details_fields_prepopulated(self):
         response = self.client.post("/messages/create-message", data=self.ru_details)
 
         self.assertIn("BRES 2017".encode(), response.data)
@@ -547,9 +550,7 @@ class TestMessage(ViewTestCase):
         self.assertIn("Bolts &amp; Rachets Ltd".encode(), response.data)
         self.assertIn("Jacky Turner".encode(), response.data)
 
-    @requests_mock.mock()
-    def test_empty_subject_and_body_rejected(self, mock_request):
-        sign_in_with_permission(self, mock_request, user_permission_messages_edit_json)
+    def test_empty_subject_and_body_rejected(self):
         response = self.client.post("/messages/create-message")
 
         self.assertIn("Please enter a subject".encode(), response.data)
@@ -603,7 +604,7 @@ class TestMessage(ViewTestCase):
     @patch("flask_login.utils._get_user")
     def test_form_submit_with_valid_data(self, mock_request, current_user, mock_get_jwt):
         self.before()
-        mock_get_jwt.return_value = "blah"
+        mock_get_jwt.return_value = "mock_jwt"
         mock_request.post(url_send_message, json=threads_no_unread_list, status_code=201)
         mock_request.get(url_get_surveys_list, json=self.surveys_list_json)
         mock_request.get(url_get_business_by_ru_ref + ru_ref, json=business_by_ru_ref_json)
@@ -618,7 +619,6 @@ class TestMessage(ViewTestCase):
         mock_request.get(url_permission_url, json=user_permission_admin_json, status_code=200)
         mock_request.post(url_sign_in_data, json={"access_token": self.access_token}, status_code=201)
         current_user.return_value.id = 1
-        sign_in_with_permission(self, mock_request, user_permission_messages_edit_json)
         with self.client.session_transaction() as session:
             session["user_id"] = "test-id"
         with self.app.app_context():
@@ -631,7 +631,7 @@ class TestMessage(ViewTestCase):
     @patch("response_operations_ui.controllers.message_controllers._get_jwt")
     @patch("flask_login.utils._get_user")
     def test_form_submit_with_FDI_data(self, mock_request, current_user, mock_get_jwt):
-        mock_get_jwt.return_value = "blah"
+        mock_get_jwt.return_value = "mock_jwt"
         mock_request.post(url_send_message, json=threads_no_unread_list, status_code=201)
         mock_request.get(url_get_surveys_list, json=self.surveys_list_json)
         mock_request.get(url_get_business_by_ru_ref + ru_ref, json=business_by_ru_ref_json)
@@ -644,7 +644,6 @@ class TestMessage(ViewTestCase):
         mock_request.get(f"{url_get_iac}/{iac_1}", json=iac)
         mock_request.get(f"{url_get_iac}/{iac_2}", json=iac)
         current_user.return_value.id = 1
-        sign_in_with_permission(self, mock_request, user_permission_messages_edit_json)
         with self.client.session_transaction() as session:
             session["user_id"] = "test-id"
         with self.app.app_context():
@@ -658,9 +657,8 @@ class TestMessage(ViewTestCase):
     @patch("flask_login.utils._get_user")
     def test_form_submitted_with_api_error(self, mock_request, current_user, mock_get_jwt):
         mock_request.post(url_send_message, status_code=500)
-        mock_get_jwt.return_value = "blah"
+        mock_get_jwt.return_value = "mock_jwt"
         current_user.return_value.id = 1
-        sign_in_with_permission(self, mock_request, user_permission_messages_edit_json)
         with self.client.session_transaction() as session:
             session["user_id"] = "test-id"
         with self.app.app_context():
@@ -679,7 +677,7 @@ class TestMessage(ViewTestCase):
     @requests_mock.mock()
     @patch("response_operations_ui.controllers.message_controllers._get_jwt")
     def test_change_reporting_unit(self, mock_request, mock_get_jwt):
-        mock_get_jwt.return_value = "blah"
+        mock_get_jwt.return_value = "mock_jwt"
         mock_request.get(url_get_thread, json=thread_json)
         mock_request.get(url_get_survey_by_id_3, json=survey_02b9c366)
         party_response = {
@@ -703,7 +701,7 @@ class TestMessage(ViewTestCase):
         mock_request.get(url_get_respondent_party_by_id + respondent_id, json=party_response)
         mock_request.get(url_get_business_by_id + business_party_id, json=business_party)
 
-        response = self.client.get("/messages/threads/fb0e79bd-e132-4f4f-a7fd-5e8c6b41b9af/change-reporting-unit")
+        response = self.client.get(message_thread + "/change-reporting-unit")
 
         self.assertEqual(response.status_code, 200)
         self.assertIn("Assign a reporting unit to the thread".encode(), response.data)
@@ -713,14 +711,13 @@ class TestMessage(ViewTestCase):
     @patch("response_operations_ui.controllers.message_controllers._get_jwt")
     @patch("response_operations_ui.controllers.uaa_controller.user_has_permission")
     def test_conversation(self, mock_request, has_permission, mock_get_jwt):
-        sign_in_with_permission(self, mock_request, user_permission_messages_edit_json)
-        mock_get_jwt.return_value = "blah"
+        mock_get_jwt.return_value = "mock_jwt"
         mock_request.get(url_get_thread, json=thread_json)
         mock_request.get(url_get_surveys_list, json=survey_list)
         has_permission.return_value = True
         with self.client.session_transaction() as session:
             session["user_id"] = "test-id"
-        response = self.client.get("/messages/threads/fb0e79bd-e132-4f4f-a7fd-5e8c6b41b9af")
+        response = self.client.get(message_thread)
 
         self.assertEqual(response.status_code, 200)
         self.assertIn("Need more information on project".encode(), response.data)
@@ -731,13 +728,12 @@ class TestMessage(ViewTestCase):
     @requests_mock.mock()
     @patch("response_operations_ui.controllers.message_controllers._get_jwt")
     def test_conversation_reply_fail(self, mock_request, mock_get_jwt):
-        sign_in_with_permission(self, mock_request, user_permission_messages_edit_json)
-        mock_get_jwt.return_value = "blah"
+        mock_get_jwt.return_value = "mock_jwt"
         mock_request.get(url_get_thread, json=thread_json)
         mock_request.get(url_get_surveys_list, json=survey_list)
         with self.client.session_transaction() as session:
             session["user_id"] = "test-id"
-        response = self.client.post("/messages/threads/fb0e79bd-e132-4f4f-a7fd-5e8c6b41b9af", follow_redirects=True)
+        response = self.client.post(message_thread, follow_redirects=True)
 
         self.assertEqual(response.status_code, 200)
         self.assertIn("Please enter a message".encode(), response.data)
@@ -745,10 +741,10 @@ class TestMessage(ViewTestCase):
     @requests_mock.mock()
     @patch("response_operations_ui.controllers.message_controllers._get_jwt")
     def test_conversation_fail(self, mock_request, mock_get_jwt):
-        mock_get_jwt.return_value = "blah"
+        mock_get_jwt.return_value = "mock_jwt"
         mock_request.get(url_get_thread, status_code=500)
 
-        response = self.client.get("/messages/threads/fb0e79bd-e132-4f4f-a7fd-5e8c6b41b9af", follow_redirects=True)
+        response = self.client.get(message_thread, follow_redirects=True)
 
         request_history = mock_request.request_history
         self.assertEqual(len(request_history), 1)
@@ -758,14 +754,11 @@ class TestMessage(ViewTestCase):
     @patch("response_operations_ui.controllers.message_controllers._get_jwt")
     @patch("flask_login.utils._get_user")
     def test_conversation_reply(self, mock_request, current_user, mock_get_jwt):
-        with self.client.session_transaction() as session:
-            session["messages_survey_selection"] = "ASHE"
+        self._client_session_("ASHE")
         with self.client.session_transaction() as session:
             session["user_id"] = "test-id"
-        mock_get_jwt.return_value = "blah"
+        mock_get_jwt.return_value = "mock_jwt"
         current_user.return_value.id = 1
-        sign_in_with_permission(self, mock_request, user_permission_messages_edit_json)
-        # Post message on reply
         mock_request.get(url_get_thread, json=thread_json)
         mock_request.post(url_send_message, json=threads_no_unread_list, status_code=201)
 
@@ -776,9 +769,7 @@ class TestMessage(ViewTestCase):
         mock_request.get(url_messages + "/count", json={"total": 1}, status_code=200)
         mock_request.get(url_permission_url, json=user_permission_admin_json, status_code=200)
         mock_request.post(url_sign_in_data, json={"access_token": self.access_token}, status_code=201)
-        response = self.client.post(
-            "/messages/threads/fb0e79bd-e132-4f4f-a7fd-5e8c6b41b9af", data=self.message_form, follow_redirects=True
-        )
+        response = self.client.post(message_thread, data=self.message_form, follow_redirects=True)
 
         self.assertEqual(response.status_code, 200)
         self.assertIn("RU Ref".encode(), response.data)
@@ -788,9 +779,11 @@ class TestMessage(ViewTestCase):
     @requests_mock.mock()
     def test_conversation_decode_error(self, mock_request):
         mock_request.get(url_get_thread)
+        # This particular test requires the user to be signed out
+        self.client.get("/logout", follow_redirects=True)
         with self.client.session_transaction() as session:
             session["user_id"] = "test-id"
-        response = self.client.get("/messages/threads/fb0e79bd-e132-4f4f-a7fd-5e8c6b41b9af")
+        response = self.client.get(message_thread)
 
         request_history = mock_request.request_history
         self.assertEqual(len(request_history), 0)
@@ -800,15 +793,17 @@ class TestMessage(ViewTestCase):
     @patch("flask_login.utils._get_user")
     def test_conversation_key_error(self, mock_request, current_user):
         mock_request.get(url_get_thread, json={})
+        # This particular test requires the user to be signed out
+        self.client.get("/logout", follow_redirects=True)
         with self.client.session_transaction() as session:
             session["user_id"] = "test-id"
         current_user.return_value.id = 1
         mock_request.get(url_permission_url, json=user_permission_admin_json, status_code=200)
         mock_request.post(url_sign_in_data, json={"access_token": self.access_token}, status_code=201)
-        response = self.client.get("/messages/threads/fb0e79bd-e132-4f4f-a7fd-5e8c6b41b9af")
+        response = self.client.get(message_thread)
 
         request_history = mock_request.request_history
-        self.assertEqual(len(request_history), 2)
+        self.assertEqual(len(request_history), 3)
         self.assertEqual(response.status_code, 500)
 
     @requests_mock.mock()
@@ -856,7 +851,7 @@ class TestMessage(ViewTestCase):
     @requests_mock.mock()
     @patch("response_operations_ui.controllers.message_controllers._get_jwt")
     def test_get_messages_page_with_survey(self, mock_request, mock_get_jwt):
-        mock_get_jwt.return_value = "blah"
+        mock_get_jwt.return_value = "mock_jwt"
         mock_request.get(url_messages + "/count", json={"total": 1}, status_code=200)
         mock_request.get(url_get_threads_list, json=thread_list)
         mock_request.get(url_get_surveys_list, json=self.surveys_list_json)
@@ -877,7 +872,7 @@ class TestMessage(ViewTestCase):
     @requests_mock.mock()
     @patch("response_operations_ui.controllers.message_controllers._get_jwt")
     def test_get_messages_page_with_FDI_survey(self, mock_request, mock_get_jwt):
-        mock_get_jwt.return_value = "blah"
+        mock_get_jwt.return_value = "mock_jwt"
         mock_request.get(url_messages + "/count", json={"total": 1}, status_code=200)
         mock_request.get(url_get_threads_list, json=thread_list)
         mock_request.get(url_get_surveys_list, json=survey_list)
@@ -911,15 +906,13 @@ class TestMessage(ViewTestCase):
     @requests_mock.mock()
     @patch("response_operations_ui.controllers.message_controllers._get_jwt")
     def test_get_close_conversation_confirmation_page_for_survey(self, mock_request, mock_get_jwt):
-        sign_in_with_permission(self, mock_request, user_permission_messages_edit_json)
-        with self.client.session_transaction() as session:
-            session["messages_survey_selection"] = "QBS"
-        mock_get_jwt.return_value = "blah"
+        self._client_session_("QBS")
+        mock_get_jwt.return_value = "mock_jwt"
         mock_request.get(url_get_thread, json=thread_json)
         mock_request.get(url_get_surveys_list, json=survey_list)
 
         response = self.client.get(
-            "/messages/threads/fb0e79bd-e132-4f4f-a7fd-5e8c6b41b9af/close-conversation?category=SURVEY",
+            message_thread + "/close-conversation?category=SURVEY",
             follow_redirects=True,
         )
 
@@ -932,16 +925,14 @@ class TestMessage(ViewTestCase):
     @requests_mock.mock()
     @patch("response_operations_ui.controllers.message_controllers._get_jwt")
     def test_get_close_conversation_confirmation_page_for_categories(self, mock_request, mock_get_jwt):
-        sign_in_with_permission(self, mock_request, user_permission_messages_edit_json)
-        with self.client.session_transaction() as session:
-            session["messages_survey_selection"] = ""
-        mock_get_jwt.return_value = "blah"
+        self._client_session_("")
+        mock_get_jwt.return_value = "mock_jwt"
         mock_request.get(url_get_thread, json=thread_json)
         mock_request.get(url_get_surveys_list, json=survey_list)
 
         # Technical
         response = self.client.get(
-            "/messages/threads/fb0e79bd-e132-4f4f-a7fd-5e8c6b41b9af/close-conversation?category=TECHNICAL",
+            message_thread + "/close-conversation?category=TECHNICAL",
             follow_redirects=True,
         )
         self.assertEqual(200, response.status_code)
@@ -952,7 +943,7 @@ class TestMessage(ViewTestCase):
 
         # Misc
         response = self.client.get(
-            "/messages/threads/fb0e79bd-e132-4f4f-a7fd-5e8c6b41b9af/close-conversation?category=MISC",
+            message_thread + "/close-conversation?category=MISC",
             follow_redirects=True,
         )
         self.assertEqual(200, response.status_code)
@@ -964,10 +955,8 @@ class TestMessage(ViewTestCase):
     @requests_mock.mock()
     @patch("response_operations_ui.controllers.message_controllers._get_jwt")
     def test_close_conversation(self, mock_request, mock_get_jwt):
-        sign_in_with_permission(self, mock_request, user_permission_messages_edit_json)
-        with self.client.session_transaction() as session:
-            session["messages_survey_selection"] = "Ashe"
-        mock_get_jwt.return_value = "blah"
+        self._client_session_("ASHE")
+        mock_get_jwt.return_value = "mock_jwt"
         mock_request.get(url_get_thread, json=thread_json)
         mock_request.get(url_get_surveys_list, json=survey_list)
         mock_request.patch(url_get_thread, json=thread_json)
@@ -975,27 +964,23 @@ class TestMessage(ViewTestCase):
         mock_request.get(url_messages + "/count", json={"total": 1}, status_code=200)
         mock_request.get(url_get_threads_list, json=thread_list)
 
-        response = self.client.post(
-            "/messages/threads/fb0e79bd-e132-4f4f-a7fd-5e8c6b41b9af/close-conversation", follow_redirects=True
-        )
+        response = self.client.post(message_thread + "/close-conversation", follow_redirects=True)
 
         self.assertEqual(200, response.status_code)
         self.assertIn("Conversation closed".encode(), response.data)
-        self.assertIn("Ashe Messages".encode(), response.data)
+        self.assertIn("ASHE Messages".encode(), response.data)
         self.assertIn("John Example".encode(), response.data)
 
     @requests_mock.mock()
     @patch("response_operations_ui.controllers.message_controllers._get_jwt")
     def test_close_conversation_http_error(self, mock_request, mock_get_jwt):
+        self.client.get("/logout", follow_redirects=True)
         sign_in_with_permission(self, mock_request, user_permission_messages_edit_json)
-        with self.client.session_transaction() as session:
-            session["messages_survey_selection"] = "Ashe"
-        mock_get_jwt.return_value = "blah"
+        self._client_session_("ASHE")
+        mock_get_jwt.return_value = "mock_jwt"
         mock_request.patch(url_get_thread, json=thread_json, status_code=500)
 
-        response = self.client.post(
-            "/messages/threads/fb0e79bd-e132-4f4f-a7fd-5e8c6b41b9af/close-conversation", follow_redirects=True
-        )
+        response = self.client.post(message_thread + "/close-conversation", follow_redirects=True)
 
         request_history = mock_request.request_history
         self.assertEqual(len(request_history), 5)
@@ -1004,10 +989,8 @@ class TestMessage(ViewTestCase):
     @requests_mock.mock()
     @patch("response_operations_ui.controllers.message_controllers._get_jwt")
     def test_reopen_conversation(self, mock_request, mock_get_jwt):
-        sign_in_with_permission(self, mock_request, user_permission_messages_edit_json)
-        with self.client.session_transaction() as session:
-            session["messages_survey_selection"] = "Ashe"
-        mock_get_jwt.return_value = "blah"
+        self._client_session_("ASHE")
+        mock_get_jwt.return_value = "mock_jwt"
         mock_request.get(url_get_thread, json=thread_json)
         mock_request.get(url_get_surveys_list, json=survey_list)
         mock_request.patch(url_get_thread, json=thread_json)
@@ -1017,20 +1000,18 @@ class TestMessage(ViewTestCase):
 
         with self.app.app_context():
             response = self.client.post(
-                "/messages/threads/fb0e79bd-e132-4f4f-a7fd-5e8c6b41b9af",
+                message_thread,
                 data={"reopen": "Re-open conversation"},
                 follow_redirects=True,
             )
 
         self.assertEqual(200, response.status_code)
         self.assertIn("Conversation re-opened.".encode(), response.data)
-        self.assertIn("Ashe Messages".encode(), response.data)
+        self.assertIn("ASHE Messages".encode(), response.data)
 
     @requests_mock.mock()
     def test_reopen_conversation_technical_messages(self, mock_request):
-        sign_in_with_permission(self, mock_request, user_permission_messages_edit_json)
-        with self.client.session_transaction() as session:
-            session["messages_survey_selection"] = "technical"
+        self._client_session_("technical")
         mock_request.get(url_get_thread, json=thread_json)
         mock_request.get(url_get_surveys_list, json=survey_list)
         mock_request.patch(url_get_thread, json=thread_json)
@@ -1039,7 +1020,7 @@ class TestMessage(ViewTestCase):
 
         with self.app.app_context():
             response = self.client.post(
-                "/messages/threads/fb0e79bd-e132-4f4f-a7fd-5e8c6b41b9af?category=TECHNICAL",
+                message_thread + "?category=TECHNICAL",
                 data={"reopen": "Re-open conversation"},
                 follow_redirects=True,
             )
@@ -1063,11 +1044,8 @@ class TestMessage(ViewTestCase):
     @requests_mock.mock()
     @patch("response_operations_ui.controllers.message_controllers._get_jwt")
     def test_mark_unread_returns_expected_flash_message(self, mock_request, mock_get_jwt):
-        mock_get_jwt.return_value = "blah"
-
-        with self.client.session_transaction() as session:
-            session["messages_survey_selection"] = "ASHE"
-
+        self._client_session_("ASHE")
+        mock_get_jwt.return_value = "mock_jwt"
         mock_request.get(url_get_thread, json=thread_unread_json)
         mock_request.get(url_messages + "/count", json={"total": 1}, status_code=200)
         mock_request.get(shortname_url + "/ASHE", json=ashe_info["survey"])
@@ -1083,7 +1061,7 @@ class TestMessage(ViewTestCase):
 
     @requests_mock.mock()
     @patch("response_operations_ui.controllers.message_controllers._get_jwt")
-    def test_closeing_conversation_returns_to_correct_tab_and_page(self, mock_request, mock_get_jwt):
+    def test_closing_conversation_returns_to_correct_tab_and_page(self, mock_request, mock_get_jwt):
         """
         For each tab check that if a conversation is closed then return to the same tab at the same page
         """
@@ -1091,10 +1069,8 @@ class TestMessage(ViewTestCase):
         page = 2
         thread_id = "fb0e79bd-e132-4f4f-a7fd-5e8c6b41b9af"
 
-        sign_in_with_permission(self, mock_request, user_permission_messages_edit_json)
-        with self.client.session_transaction() as session:
-            session["messages_survey_selection"] = "Ashe"
-        mock_get_jwt.return_value = "blah"
+        self._client_session_("ASHE")
+        mock_get_jwt.return_value = "mock_jwt"
         mock_request.get(url_get_thread, json=thread_json)
         mock_request.get(url_get_surveys_list, json=survey_list)
         mock_request.patch(url_get_thread, json=thread_json)
@@ -1115,7 +1091,7 @@ class TestMessage(ViewTestCase):
 
                 # validate that the currently selected tab is as expected (i.e aria-current="location")
                 match = (
-                    f'"/messages/Ashe?conversation_tab={conversation_tab.replace(" ", "+")}'
+                    f'"/messages/ASHE?conversation_tab={conversation_tab.replace(" ", "+")}'
                     f'&ru_ref_filter=&business_id_filter="aria-current="location"'
                 )
 
@@ -1134,11 +1110,8 @@ class TestMessage(ViewTestCase):
         limit = 10
         page = 4
         thread_id = "fb0e79bd-e132-4f4f-a7fd-5e8c6b41b9af"
-
-        sign_in_with_permission(self, mock_request, user_permission_messages_edit_json)
-        with self.client.session_transaction() as session:
-            session["messages_survey_selection"] = "Ashe"
-        mock_get_jwt.return_value = "blah"
+        self._client_session_("ASHE")
+        mock_get_jwt.return_value = "mock_jwt"
         mock_request.get(url_get_thread, json=thread_json)
         mock_request.get(url_get_surveys_list, json=survey_list)
         mock_request.patch(url_get_thread, json=thread_json)
@@ -1160,7 +1133,7 @@ class TestMessage(ViewTestCase):
 
                 # validate that the currently selected tab is as expected (i.e aria-current="location")
                 match = (
-                    f'"/messages/Ashe?conversation_tab={conversation_tab.replace(" ", "+")}'
+                    f'"/messages/ASHE?conversation_tab={conversation_tab.replace(" ", "+")}'
                     f'&ru_ref_filter=&business_id_filter="aria-current="location"'
                 )
                 self.assertIn(match, response_body.replace("amp;", ""))
@@ -1175,11 +1148,8 @@ class TestMessage(ViewTestCase):
         limit = 10
         page = 4
         thread_id = "fb0e79bd-e132-4f4f-a7fd-5e8c6b41b9af"
-
-        sign_in_with_permission(self, mock_request, user_permission_messages_edit_json)
-        with self.client.session_transaction() as session:
-            session["messages_survey_selection"] = "Ashe"
-        mock_get_jwt.return_value = "blah"
+        self._client_session_("ASHE")
+        mock_get_jwt.return_value = "mock_jwt"
         mock_request.get(url_get_thread, json=thread_json)
         mock_request.get(url_get_surveys_list, json=survey_list)
         mock_request.patch(url_get_thread, json=thread_json)
@@ -1211,9 +1181,8 @@ class TestMessage(ViewTestCase):
         ru_ref_filter = "12345678901"
         conversation_tab = "closed"
 
-        with self.client.session_transaction() as session:
-            session["messages_survey_selection"] = "Ashe"
-        mock_get_jwt.return_value = "blah"
+        self._client_session_("ASHE")
+        mock_get_jwt.return_value = "mock_jwt"
         mock_get_titles.return_value = {
             "my messages": "My messages",
             "open": "Open",
@@ -1229,7 +1198,7 @@ class TestMessage(ViewTestCase):
 
         # view survey with filter of business_id
         url = (
-            f"/messages/Ashe?page={page}&limit={limit}&conversation_tab={conversation_tab}"
+            f"/messages/ASHE?page={page}&limit={limit}&conversation_tab={conversation_tab}"
             f"&business_id_filter={business_id_filter}"
         )
         response = self.client.post(url, follow_redirects=True, json={"ru_ref_filter": ru_ref_filter})
@@ -1268,9 +1237,8 @@ class TestMessage(ViewTestCase):
         conversation_tab = "closed"
         category = "SURVEY"
 
-        with self.client.session_transaction() as session:
-            session["messages_survey_selection"] = "Ashe"
-        mock_get_jwt.return_value = "blah"
+        self._client_session_("ASHE")
+        mock_get_jwt.return_value = "mock-jwt"
 
         mock_request.get(shortname_url + "/ASHE", json=ashe_info["survey"])
 
@@ -1280,7 +1248,7 @@ class TestMessage(ViewTestCase):
 
         # view survey with filter of business_id
         url = (
-            f"/messages/Ashe?page={page}&limit={limit}&conversation_tab={conversation_tab}"
+            f"/messages/ASHE?page={page}&limit={limit}&conversation_tab={conversation_tab}"
             f"&business_id_filter={business_id_filter}"
         )
         response = self.client.get(url, follow_redirects=True)
@@ -1318,9 +1286,8 @@ class TestMessage(ViewTestCase):
         ru_ref_filter = "12345678901"
         conversation_tab = "closed"
 
-        with self.client.session_transaction() as session:
-            session["messages_survey_selection"] = "Ashe"
-        mock_get_jwt.return_value = "blah"
+        self._client_session_("ASHE")
+        mock_get_jwt.return_value = "mock_jwt"
         mock_get_titles.return_value = {
             "my messages": "My messages",
             "open": "Open",
@@ -1336,7 +1303,7 @@ class TestMessage(ViewTestCase):
 
         # view survey with filter of business_id
         url = (
-            f"/messages/Ashe?page={page}&limit={limit}&conversation_tab={conversation_tab}"
+            f"/messages/ASHE?page={page}&limit={limit}&conversation_tab={conversation_tab}"
             f"&business_id_filter={business_id_filter}"
         )
 
@@ -1359,9 +1326,8 @@ class TestMessage(ViewTestCase):
         ru_ref = "12345678901"
         conversation_tab = "closed"
 
-        with self.client.session_transaction() as session:
-            session["messages_survey_selection"] = "Ashe"
-        mock_get_jwt.return_value = "blah"
+        self._client_session_("ASHE")
+        mock_get_jwt.return_value = "mock_jwt"
 
         mock_request.get(shortname_url + "/ASHE", json=ashe_info["survey"])
         mock_request.get(url_get_business_by_ru_ref + ru_ref, json={"id": business_id_filter})
@@ -1371,7 +1337,7 @@ class TestMessage(ViewTestCase):
 
         # Call clear filter endpoint , passing in ru ref and business id
         url = (
-            f"/messages/clear_filter/Ashe?page={page}&limit={limit}&"
+            f"/messages/clear_filter/ASHE?page={page}&limit={limit}&"
             f"conversation_tab={conversation_tab}&business_id_filter={business_id_filter}&ru_ref={ru_ref}"
         )
         response = self.client.get(url, follow_redirects=True)
@@ -1392,9 +1358,8 @@ class TestMessage(ViewTestCase):
         ru_ref_filter = "12345678901"
         conversation_tab = "closed"
 
-        with self.client.session_transaction() as session:
-            session["messages_survey_selection"] = "Ashe"
-        mock_get_jwt.return_value = "blah"
+        self._client_session_("ASHE")
+        mock_get_jwt.return_value = "mock_jwt"
 
         mock_request.get(shortname_url + "/ASHE", json=ashe_info["survey"])
         party_get_by_ru_ref = f"{url_get_business_by_ru_ref}{ru_ref_filter}"
@@ -1405,7 +1370,7 @@ class TestMessage(ViewTestCase):
 
         # view survey with filter of business_id
         url = (
-            f"/messages/Ashe?page={page}&limit={limit}&conversation_tab={conversation_tab}"
+            f"/messages/ASHE?page={page}&limit={limit}&conversation_tab={conversation_tab}"
             f"&business_id_filter={business_id_filter}"
         )
         response = self.client.post(url, follow_redirects=True, json={"ru_ref_filter": ru_ref_filter})
@@ -1428,9 +1393,8 @@ class TestMessage(ViewTestCase):
         ru_ref_filter = "12345678901"
         conversation_tab = "closed"
 
-        with self.client.session_transaction() as session:
-            session["messages_survey_selection"] = "Ashe"
-        mock_get_jwt.return_value = "blah"
+        self._client_session_("ASHE")
+        mock_get_jwt.return_value = "mock_jwt"
 
         mock_request.get(shortname_url + "/ASHE", json=ashe_info["survey"])
         party_get_by_ru_ref = f"{url_get_business_by_ru_ref}{ru_ref_filter}"
@@ -1441,7 +1405,7 @@ class TestMessage(ViewTestCase):
 
         # view survey with filter of business_id
         url = (
-            f"/messages/Ashe?page={page}&limit={limit}&conversation_tab={conversation_tab}"
+            f"/messages/ASHE?page={page}&limit={limit}&conversation_tab={conversation_tab}"
             f"&business_id_filter={business_id_filter}"
         )
         response = self.client.post(url, follow_redirects=True, json={"ru_ref_filter": ru_ref_filter})
@@ -1474,9 +1438,8 @@ class TestMessage(ViewTestCase):
         business_id_filter = "123"
         ru_ref_filter = "12345678901"
 
-        with self.client.session_transaction() as session:
-            session["messages_survey_selection"] = "Ashe"
-        mock_get_jwt.return_value = "blah"
+        self._client_session_("ASHE")
+        mock_get_jwt.return_value = "mock_jwt"
         mock_request.get(shortname_url + "/ASHE", json=ashe_info["survey"])
         # Party returns no data so flash should display later
         mock_request.get(url_get_business_by_ru_ref + ru_ref_filter, json={"id": ""})
@@ -1485,7 +1448,7 @@ class TestMessage(ViewTestCase):
         mock_get_count.return_value = 0
         # view survey with filter of business_id
         url = (
-            f"/messages/Ashe?page={page}&limit={limit}&conversation_tab={conversation_tab}"
+            f"/messages/ASHE?page={page}&limit={limit}&conversation_tab={conversation_tab}"
             f"&business_id_filter={business_id_filter}&ru_ref={ru_ref_filter}"
         )
         response = self.client.get(url, follow_redirects=True)
@@ -1504,9 +1467,8 @@ class TestMessage(ViewTestCase):
         business_id_filter = "123"
         conversation_tab = "closed"
 
-        with self.client.session_transaction() as session:
-            session["messages_survey_selection"] = "Ashe"
-        mock_get_jwt.return_value = "blah"
+        self._client_session_("ASHE")
+        mock_get_jwt.return_value = "mock_jwt"
 
         mock_request.get(shortname_url + "/ASHE", json=ashe_info["survey"])
 
@@ -1516,26 +1478,25 @@ class TestMessage(ViewTestCase):
 
         # view survey with filter of business_id
         url = (
-            f"/messages/Ashe?page={page}&limit={limit}&conversation_tab={conversation_tab}"
+            f"/messages/ASHE?page={page}&limit={limit}&conversation_tab={conversation_tab}"
             f"&business_id_filter={business_id_filter}"
         )
         response = self.client.get(url, follow_redirects=True)
         response_body = response.data.decode("utf-8")
 
         self.assertEqual(200, response.status_code)
-        self.assertIn('href="/messages/Ashe?conversation_tab=my+messages', response_body)
-        self.assertIn('href="/messages/Ashe?conversation_tab=open', response_body)
-        self.assertIn('href="/messages/Ashe?conversation_tab=closed', response_body)
-        self.assertIn('href="/messages/Ashe?conversation_tab=initial', response_body)
+        self.assertIn('href="/messages/ASHE?conversation_tab=my+messages', response_body)
+        self.assertIn('href="/messages/ASHE?conversation_tab=open', response_body)
+        self.assertIn('href="/messages/ASHE?conversation_tab=closed', response_body)
+        self.assertIn('href="/messages/ASHE?conversation_tab=initial', response_body)
 
     @requests_mock.mock()
     @patch("response_operations_ui.controllers.message_controllers._get_jwt")
     def test_messages_survey_dropdown_displayed_on_select_survey_page(self, mock_request, mock_get_jwt):
         """Validate that the survey drop down is in the returned"""
 
-        with self.client.session_transaction() as session:
-            session["messages_survey_selection"] = "Ashe"
-        mock_get_jwt.return_value = "blah"
+        self._client_session_("ASHE")
+        mock_get_jwt.return_value = "mock_jwt"
 
         mock_request.get(shortname_url + "/ASHE", json=ashe_info["survey"])
 
@@ -1561,9 +1522,8 @@ class TestMessage(ViewTestCase):
 
         tabs = ["closed", "closed", "initial", "my messages"]
 
-        with self.client.session_transaction() as session:
-            session["messages_survey_selection"] = "Ashe"
-        mock_get_jwt.return_value = "blah"
+        self._client_session_("ASHE")
+        mock_get_jwt.return_value = "mock_jwt"
 
         mock_request.get(shortname_url + "/ASHE", json=ashe_info["survey"])
 
@@ -1576,7 +1536,7 @@ class TestMessage(ViewTestCase):
                 # view survey with filter of business_id
 
                 url = (
-                    f"/messages/Ashe?page={page}&limit={limit}&conversation_tab={conversation_tab}"
+                    f"/messages/ASHE?page={page}&limit={limit}&conversation_tab={conversation_tab}"
                     f"&business_id_filter={business_id_filter}&ru_ref_filter={ru_ref_filter}"
                 )
                 response = self.client.get(url, follow_redirects=True)
@@ -1601,16 +1561,126 @@ class TestMessage(ViewTestCase):
     @requests_mock.mock()
     @patch("response_operations_ui.controllers.message_controllers._get_jwt")
     def test_conversation_reply_no_edit_permission(self, mock_request, mock_get_jwt):
-        mock_get_jwt.return_value = "blah"
+        # Test requires user to be logged out
+        self.client.get("/logout", follow_redirects=True)
+        mock_get_jwt.return_value = "mock_jwt"
         mock_request.get(url_get_thread, json=thread_unread_json)
         mock_request.put(url_update_label)
         mock_request.get(url_get_surveys_list, json=survey_list)
-        response = self.client.get("/messages/threads/fb0e79bd-e132-4f4f-a7fd-5e8c6b41b9af")
+        response = self.client.get(message_thread)
 
         self.assertEqual(response.status_code, 200)
         self.assertNotIn("Reply".encode(), response.data)
         self.assertNotIn("Close conversation".encode(), response.data)
         self.assertNotIn("Send message".encode(), response.data)
+
+    @requests_mock.mock()
+    @patch("response_operations_ui.controllers.message_controllers._get_jwt")
+    @patch("flask_login.utils._get_user")
+    def test_flash_redirect_to_technical_inbox(self, mock_request, current_user, mock_get_jwt):
+        self._client_session_("technical")
+        mock_get_jwt.return_value = "mock_jwt"
+        current_user.return_value.id = 1
+        # Post message on reply
+        thread_json["category"] = "TECHNICAL"
+        mock_request.get(url_get_thread, json=thread_json)
+        mock_request.post(url_send_message, json=threads_no_unread_list, status_code=201)
+
+        # Conversation list
+        mock_request.get(shortname_url + "/ASHE", json=ashe_info["survey"])
+        mock_request.get(url_get_threads_list, json=thread_list)
+        mock_request.get(url_get_surveys_list, json=survey_list)
+        mock_request.get(url_messages + "/count", json={"total": 1}, status_code=200)
+        mock_request.get(url_permission_url, json=user_permission_admin_json, status_code=200)
+        mock_request.post(url_sign_in_data, json={"access_token": self.access_token}, status_code=201)
+        response = self.client.post(message_thread, data=self.message_form, follow_redirects=True)
+        self.assertIn(message_thread.encode(), response.data)
+        self.assertIn("Message sent.".encode(), response.data)
+        self.assertIn("Messages".encode(), response.data)
+        self.assertIn("Technical Messages".encode(), response.data)
+
+    @requests_mock.mock()
+    @patch("response_operations_ui.controllers.message_controllers._get_jwt")
+    @patch("flask_login.utils._get_user")
+    def test_flash_redirect_to_misc_inbox(self, mock_request, current_user, mock_get_jwt):
+        self._client_session_("misc")
+        mock_get_jwt.return_value = "mock_jwt"
+        current_user.return_value.id = 1
+        # Post message on reply
+        thread_json["category"] = "MISC"
+        mock_request.get(url_get_thread, json=thread_json)
+        mock_request.post(url_send_message, json=threads_no_unread_list, status_code=201)
+
+        # Conversation list
+        mock_request.get(url_get_threads_list, json=thread_list)
+        mock_request.get(url_get_surveys_list, json=survey_list)
+        mock_request.get(url_messages + "/count", json={"total": 1}, status_code=200)
+        mock_request.post(url_sign_in_data, json={"access_token": self.access_token}, status_code=201)
+        response = self.client.post(message_thread, data=self.message_form, follow_redirects=True)
+        self.assertIn(message_thread.encode(), response.data)
+        self.assertIn("Message sent.".encode(), response.data)
+        self.assertIn("Messages".encode(), response.data)
+        self.assertIn("RFT Messages".encode(), response.data)
+
+    @requests_mock.mock()
+    def test_return_button_link_returns_to_technical_inbox(self, mock_request):
+        self._client_session_("technical")
+        thread_json["category"] = "TECHNICAL"
+        mock_request.get(url_get_thread, json=thread_json)
+        mock_request.get(url_get_surveys_list, json=survey_list)
+        mock_request.patch(url_get_thread, json=thread_json)
+        mock_request.get(url_messages + "/count", json={"total": 1}, status_code=200)
+        mock_request.get(url_get_threads_list, json=thread_list)
+
+        with self.app.app_context():
+            response = self.client.post(
+                message_thread + "?page=1&conversation_tab=open&ru_ref_filter=&business_id_filter=#latest-message",
+                follow_redirects=True,
+            )
+
+        self.assertEqual(200, response.status_code)
+        self.assertIn(
+            "/messages/?page=1&amp;conversation_tab=open&amp;ru_ref_filter=&amp;business_id_filter=".encode(),
+            response.data,
+        )
+
+        with self.app.app_context():
+            redirect = self.client.get(
+                "/messages/?page=1&conversation_tab=open&ru_ref_filter=&business_id_filter=",
+                follow_redirects=True,
+            )
+
+        self.assertIn("Technical Messages".encode(), redirect.data)
+
+    @requests_mock.mock()
+    def test_return_button_link_returns_to_misc_inbox(self, mock_request):
+        self._client_session_("misc")
+        thread_json["category"] = "MISC"
+        mock_request.get(url_get_thread, json=thread_json)
+        mock_request.get(url_get_surveys_list, json=survey_list)
+        mock_request.patch(url_get_thread, json=thread_json)
+        mock_request.get(url_messages + "/count", json={"total": 1}, status_code=200)
+        mock_request.get(url_get_threads_list, json=thread_list)
+
+        with self.app.app_context():
+            response = self.client.post(
+                message_thread + "?page=1&conversation_tab=open&ru_ref_filter=&business_id_filter=#latest-message",
+                follow_redirects=True,
+            )
+
+        self.assertEqual(200, response.status_code)
+        self.assertIn(
+            "/messages/?page=1&amp;conversation_tab=open&amp;ru_ref_filter=&amp;business_id_filter=".encode(),
+            response.data,
+        )
+
+        with self.app.app_context():
+            redirect = self.client.get(
+                "/messages/?page=1&conversation_tab=open&ru_ref_filter=&business_id_filter=",
+                follow_redirects=True,
+            )
+
+        self.assertIn("RFT Messages".encode(), redirect.data)
 
     @staticmethod
     def _mock_request_called_with_expected_query(mock_instance, query):
@@ -1629,11 +1699,14 @@ class TestMessage(ViewTestCase):
         return False
 
     def _get_thread_with_deleted_respondent(self, mock_request, user_json):
-        sign_in_with_permission(self, mock_request, user_permission_messages_edit_json)
         mock_request.get(url_get_thread, json=user_json)
         mock_request.get(url_get_surveys_list, json=survey_list)
         response = self.client.get("/messages/threads/fb0e79bd-e132-4f4f-a7fd-5e8c6b41b9af")
         return response
+
+    def _client_session_(self, survey_type):
+        with self.client.session_transaction() as session:
+            session["messages_survey_selection"] = survey_type
 
 
 class MockUser:

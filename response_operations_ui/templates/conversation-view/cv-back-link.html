@@ -1,1 +1,4 @@
+{% if thread_data.category != 'SURVEY' %}
+  {% set selected_survey = '' %}
+{% endif %}
 <a href="{{ url_for('messages_bp.view_selected_survey', selected_survey=selected_survey, page=page, conversation_tab=conversation_tab, ru_ref_filter=ru_ref_filter, business_id_filter=business_id_filter) }}" class="ons-u-mb-s" id="back-link">Return to messages</a>

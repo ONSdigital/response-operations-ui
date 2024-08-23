@@ -132,7 +132,7 @@ def view_conversation(thread_id):
                 )
             else:
                 message_controllers.send_message(_get_message_json(form, thread_id=refined_thread[0]["thread_id"]))
-                flash("Message sent.")
+            flash("Message sent.")
             return redirect(
                 url_for(
                     "messages_bp.view_select_survey",
