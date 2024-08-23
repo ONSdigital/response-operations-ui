@@ -754,7 +754,7 @@ class TestMessage(ViewTestCase):
     @patch("response_operations_ui.controllers.message_controllers._get_jwt")
     @patch("flask_login.utils._get_user")
     def test_conversation_reply(self, mock_request, current_user, mock_get_jwt):
-        self._client_session_("Ashe")
+        self._client_session_("ASHE")
         with self.client.session_transaction() as session:
             session["user_id"] = "test-id"
         mock_get_jwt.return_value = "mock_jwt"
@@ -955,7 +955,7 @@ class TestMessage(ViewTestCase):
     @requests_mock.mock()
     @patch("response_operations_ui.controllers.message_controllers._get_jwt")
     def test_close_conversation(self, mock_request, mock_get_jwt):
-        self._client_session_("Ashe")
+        self._client_session_("ASHE")
         mock_get_jwt.return_value = "mock_jwt"
         mock_request.get(url_get_thread, json=thread_json)
         mock_request.get(url_get_surveys_list, json=survey_list)
@@ -976,7 +976,7 @@ class TestMessage(ViewTestCase):
     def test_close_conversation_http_error(self, mock_request, mock_get_jwt):
         self.client.get("/logout", follow_redirects=True)
         sign_in_with_permission(self, mock_request, user_permission_messages_edit_json)
-        self._client_session_("Ashe")
+        self._client_session_("ASHE")
         mock_get_jwt.return_value = "mock_jwt"
         mock_request.patch(url_get_thread, json=thread_json, status_code=500)
 
@@ -989,7 +989,7 @@ class TestMessage(ViewTestCase):
     @requests_mock.mock()
     @patch("response_operations_ui.controllers.message_controllers._get_jwt")
     def test_reopen_conversation(self, mock_request, mock_get_jwt):
-        self._client_session_("Ashe")
+        self._client_session_("ASHE")
         mock_get_jwt.return_value = "mock_jwt"
         mock_request.get(url_get_thread, json=thread_json)
         mock_request.get(url_get_surveys_list, json=survey_list)
@@ -1044,7 +1044,7 @@ class TestMessage(ViewTestCase):
     @requests_mock.mock()
     @patch("response_operations_ui.controllers.message_controllers._get_jwt")
     def test_mark_unread_returns_expected_flash_message(self, mock_request, mock_get_jwt):
-        self._client_session_("Ashe")
+        self._client_session_("ASHE")
         mock_get_jwt.return_value = "mock_jwt"
         mock_request.get(url_get_thread, json=thread_unread_json)
         mock_request.get(url_messages + "/count", json={"total": 1}, status_code=200)
@@ -1069,7 +1069,7 @@ class TestMessage(ViewTestCase):
         page = 2
         thread_id = "fb0e79bd-e132-4f4f-a7fd-5e8c6b41b9af"
 
-        self._client_session_("Ashe")
+        self._client_session_("ASHE")
         mock_get_jwt.return_value = "mock_jwt"
         mock_request.get(url_get_thread, json=thread_json)
         mock_request.get(url_get_surveys_list, json=survey_list)
@@ -1110,7 +1110,7 @@ class TestMessage(ViewTestCase):
         limit = 10
         page = 4
         thread_id = "fb0e79bd-e132-4f4f-a7fd-5e8c6b41b9af"
-        self._client_session_("Ashe")
+        self._client_session_("ASHE")
         mock_get_jwt.return_value = "mock_jwt"
         mock_request.get(url_get_thread, json=thread_json)
         mock_request.get(url_get_surveys_list, json=survey_list)
@@ -1148,7 +1148,7 @@ class TestMessage(ViewTestCase):
         limit = 10
         page = 4
         thread_id = "fb0e79bd-e132-4f4f-a7fd-5e8c6b41b9af"
-        self._client_session_("Ashe")
+        self._client_session_("ASHE")
         mock_get_jwt.return_value = "mock_jwt"
         mock_request.get(url_get_thread, json=thread_json)
         mock_request.get(url_get_surveys_list, json=survey_list)
@@ -1181,7 +1181,7 @@ class TestMessage(ViewTestCase):
         ru_ref_filter = "12345678901"
         conversation_tab = "closed"
 
-        self._client_session_("Ashe")
+        self._client_session_("ASHE")
         mock_get_jwt.return_value = "mock_jwt"
         mock_get_titles.return_value = {
             "my messages": "My messages",
@@ -1237,7 +1237,7 @@ class TestMessage(ViewTestCase):
         conversation_tab = "closed"
         category = "SURVEY"
 
-        self._client_session_("Ashe")
+        self._client_session_("ASHE")
         mock_get_jwt.return_value = "mock-jwt"
 
         mock_request.get(shortname_url + "/ASHE", json=ashe_info["survey"])
@@ -1286,7 +1286,7 @@ class TestMessage(ViewTestCase):
         ru_ref_filter = "12345678901"
         conversation_tab = "closed"
 
-        self._client_session_("Ashe")
+        self._client_session_("ASHE")
         mock_get_jwt.return_value = "mock_jwt"
         mock_get_titles.return_value = {
             "my messages": "My messages",
@@ -1326,7 +1326,7 @@ class TestMessage(ViewTestCase):
         ru_ref = "12345678901"
         conversation_tab = "closed"
 
-        self._client_session_("Ashe")
+        self._client_session_("ASHE")
         mock_get_jwt.return_value = "mock_jwt"
 
         mock_request.get(shortname_url + "/ASHE", json=ashe_info["survey"])
@@ -1358,7 +1358,7 @@ class TestMessage(ViewTestCase):
         ru_ref_filter = "12345678901"
         conversation_tab = "closed"
 
-        self._client_session_("Ashe")
+        self._client_session_("ASHE")
         mock_get_jwt.return_value = "mock_jwt"
 
         mock_request.get(shortname_url + "/ASHE", json=ashe_info["survey"])
@@ -1393,7 +1393,7 @@ class TestMessage(ViewTestCase):
         ru_ref_filter = "12345678901"
         conversation_tab = "closed"
 
-        self._client_session_("Ashe")
+        self._client_session_("ASHE")
         mock_get_jwt.return_value = "mock_jwt"
 
         mock_request.get(shortname_url + "/ASHE", json=ashe_info["survey"])
@@ -1438,7 +1438,7 @@ class TestMessage(ViewTestCase):
         business_id_filter = "123"
         ru_ref_filter = "12345678901"
 
-        self._client_session_("Ashe")
+        self._client_session_("ASHE")
         mock_get_jwt.return_value = "mock_jwt"
         mock_request.get(shortname_url + "/ASHE", json=ashe_info["survey"])
         # Party returns no data so flash should display later
@@ -1467,7 +1467,7 @@ class TestMessage(ViewTestCase):
         business_id_filter = "123"
         conversation_tab = "closed"
 
-        self._client_session_("Ashe")
+        self._client_session_("ASHE")
         mock_get_jwt.return_value = "mock_jwt"
 
         mock_request.get(shortname_url + "/ASHE", json=ashe_info["survey"])
@@ -1495,7 +1495,7 @@ class TestMessage(ViewTestCase):
     def test_messages_survey_dropdown_displayed_on_select_survey_page(self, mock_request, mock_get_jwt):
         """Validate that the survey drop down is in the returned"""
 
-        self._client_session_("Ashe")
+        self._client_session_("ASHE")
         mock_get_jwt.return_value = "mock_jwt"
 
         mock_request.get(shortname_url + "/ASHE", json=ashe_info["survey"])
@@ -1522,7 +1522,7 @@ class TestMessage(ViewTestCase):
 
         tabs = ["closed", "closed", "initial", "my messages"]
 
-        self._client_session_("Ashe")
+        self._client_session_("ASHE")
         mock_get_jwt.return_value = "mock_jwt"
 
         mock_request.get(shortname_url + "/ASHE", json=ashe_info["survey"])
