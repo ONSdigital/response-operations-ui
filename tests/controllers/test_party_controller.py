@@ -28,7 +28,7 @@ sample_summary_id = "1c82f11a-b46a-4944-8ea3-be1ee79571fc"
 delete_attributes_by_sample_summary_id_url = (
     f"{TestingConfig.PARTY_URL}/party-api/v1/businesses/attributes/sample-summary/{sample_summary_id}"
 )
-get_business_by_ru_ref_url = f"{TestingConfig.PARTY_URL}/party-api/v1/businesses/ref/{ru_ref}"
+get_business_by_ru_ref_url = f"{TestingConfig.PARTY_URL}/party-api/v1/businesses/ref/reporting-unit-only/{ru_ref}"
 get_business_by_id_url = f"{TestingConfig.PARTY_URL}/party-api/v1/businesses/id/"
 get_respondents_by_survey_and_business_id_url = (
     f"{TestingConfig.PARTY_URL}/party-api/v1/respondents/survey_id/{survey_id}/business_id/{business_id}"

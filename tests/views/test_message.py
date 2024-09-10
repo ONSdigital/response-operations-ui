@@ -32,7 +32,7 @@ iac_1 = "jkbvyklkwj88"
 iac_2 = "ljbgg3kgstr4"
 message_thread = "/messages/threads/fb0e79bd-e132-4f4f-a7fd-5e8c6b41b9af"
 
-url_get_business_by_ru_ref = f"{TestingConfig.PARTY_URL}/party-api/v1/businesses/ref/"
+url_get_business_by_ru_ref = f"{TestingConfig.PARTY_URL}/party-api/v1/businesses/ref/reporting-unit-only/"
 url_get_business_by_id = f"{TestingConfig.PARTY_URL}/party-api/v1/businesses/id/"
 url_get_respondent_party_by_list = f"{TestingConfig.PARTY_URL}/party-api/v1/respondents?id={respondent_party_id}"
 url_get_respondent_party_by_id = f"{TestingConfig.PARTY_URL}/party-api/v1/respondents/id/"

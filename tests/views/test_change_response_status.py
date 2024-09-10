@@ -24,7 +24,7 @@ url_get_survey_by_short_name = f"{TestingConfig.SURVEY_URL}/surveys/shortname/{s
 url_get_collection_exercises_by_survey = (
     f"{TestingConfig.COLLECTION_EXERCISE_URL}/collectionexercises/survey/{survey_id}"
 )
-url_get_business_by_ru_ref = f"{TestingConfig.PARTY_URL}/party-api/v1/businesses/ref/{ru_ref}"
+url_get_business_by_ru_ref = f"{TestingConfig.PARTY_URL}/party-api/v1/businesses/ref/reporting-unit-only/{ru_ref}"
 url_get_available_case_group_statuses = (
     f"{TestingConfig.CASE_URL}" f"/casegroups/transitions/{collection_exercise_id}/{ru_ref}"
 )
