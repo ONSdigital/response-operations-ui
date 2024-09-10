@@ -30,7 +30,7 @@ def get_business_by_ru_ref(ru_ref: str):
     :raises ApiError: Raised if party returns a 4XX or 5XX status code.
     """
     logger.info("Retrieving reporting unit", ru_ref=ru_ref)
-    url = f'{app.config["PARTY_URL"]}/party-api/v1/businesses/ref/{ru_ref}'
+    url = f'{app.config["PARTY_URL"]}/party-api/v1/businesses/ref/reporting-unit-only/{ru_ref}'
     response = requests.get(url, auth=app.config["BASIC_AUTH"])
 
     try:
