@@ -33,7 +33,7 @@ url_change_respondent_status = (
     f"{TestingConfig.PARTY_URL}/party-api/v1/respondents/edit-account-status/" f"{respondent_party_id}"
 )
 
-url_get_business_by_ru_ref = f"{TestingConfig.PARTY_URL}/party-api/v1/businesses/ref/{ru_ref}"
+url_get_business_by_ru_ref = f"{TestingConfig.PARTY_URL}/party-api/v1/businesses/ref/reporting-unit-only/{ru_ref}"
 url_get_cases_by_business_party_id = f"{TestingConfig.CASE_URL}/cases/partyid/{business_party_id}"
 
 url_get_collection_exercise_by_id = f"{TestingConfig.COLLECTION_EXERCISE_URL}/collectionexercises"
