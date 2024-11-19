@@ -61,7 +61,7 @@
     "core-js-compat": "^3.32.1",
     "core-util-is": "^1.0.2",
     "cosmiconfig": "^7.1.0",
-    "cross-spawn": "^7.0.3",
+    "cross-spawn": "^7.0.6",
     "css-blank-pseudo": "^0.1.4",
     "css-has-pseudo": "^0.10.0",
     "css-loader": "^5.2.0",
