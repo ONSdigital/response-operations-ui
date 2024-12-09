@@ -33,7 +33,6 @@ collection_exercise_id_2 = "9af403f8-5fc5-43b1-9fca-afbd9c65da5c"
 ru_ref = "50012345678"
 
 get_business_by_id_url = f"{TestingConfig.PARTY_URL}/party-api/v1/businesses/id/{business_party_id}"
-get_respondent_by_email_url = f"{TestingConfig.PARTY_URL}/party-api/v1/respondents/email"
 get_respondent_by_id_url = f"{TestingConfig.PARTY_URL}/party-api/v1/respondents/id/{party_id}"
 get_survey_by_id_url = f"{TestingConfig.SURVEY_URL}/surveys/{survey_id}"
 url_auth_respondent_account = f"{TestingConfig.AUTH_URL}/api/account/user"

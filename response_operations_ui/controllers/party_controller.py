@@ -4,7 +4,7 @@ from uuid import UUID
 
 import requests
 from flask import current_app as app
-from requests.exceptions import ConnectionError, HTTPError, RequestException, Timeout
+from requests.exceptions import ConnectionError, HTTPError, Timeout
 from structlog import wrap_logger
 
 from response_operations_ui.controllers.survey_controllers import get_survey_by_id
@@ -262,27 +262,6 @@ def get_respondent_enrolments(respondent: dict, enrolment_status=None) -> list:
                     enrolments.append(enrolment_data)
 
     return enrolments
-
-
-def search_respondent_by_email(email):
-    logger.info("Search respondent via email")
-
-    request_json = {"email": email}
-    url = f'{app.config["PARTY_URL"]}/party-api/v1/respondents/email'
-    response = requests.get(url, json=request_json, auth=app.config["BASIC_AUTH"])
-
-    if response.status_code == 404:
-        return
-
-    try:
-        response.raise_for_status()
-    except (HTTPError, RequestException):
-        log_level = logger.warning if response.status_code == 400 else logger.exception
-        log_level("Respondent retrieval failed")
-        raise ApiError(response)
-    logger.info("Respondent retrieved successfully")
-
-    return response.json()
 
 
 def search_respondents(first_name, last_name, email_address, page, limit):

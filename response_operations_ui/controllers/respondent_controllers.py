@@ -10,26 +10,6 @@ from response_operations_ui.exceptions.exceptions import ApiError
 logger = wrap_logger(logging.getLogger(__name__))
 
 
-def search_respondent_by_email(email):
-    logger.info("Searching for respondent by email")
-
-    url = f'{app.config["PARTY_URL"]}/party-api/v1/respondents/email'
-    response = requests.get(url, json={"email": email}, auth=app.config["BASIC_AUTH"])
-
-    if response.status_code == 404:
-        logger.info("No respondent found for email address", status_code=response.status_code)
-        return
-
-    try:
-        response.raise_for_status()
-    except requests.exceptions.HTTPError:
-        logger.exception("Respondent retrieval failed")
-        raise ApiError(response)
-    logger.info("Respondent retrieved by email successfully")
-
-    return response.json()
-
-
 def find_respondent_account_by_username(username):
     logger.info("Finding respondent account")
     auth = "{}:{}".format(app.config["SECURITY_USER_NAME"], app.config["SECURITY_USER_PASSWORD"]).encode("utf-8")
