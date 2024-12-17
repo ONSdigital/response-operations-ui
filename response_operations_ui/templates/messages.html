@@ -53,14 +53,16 @@
                 {{ form.csrf_token }}
                 {{
                     onsInput({
-                        "id": 'search-field',
+                        "id": 'ru-ref-filter-field',
                         "type": 'number',
                         "width": '15',
-                        "label": 'Filter RU ref',
+                        "label": {
+                            "text": "Filter by RU ref"
+                        }
                         "name": 'ru_ref_filter',
                         "value": ru_ref_filter,
                         "searchButton": {
-                            "text": 'Filter',
+                            "text": 'Filter by RU ref',
                             "id": 'btn-filter-ru',
                             "type": 'submit'
                         },
