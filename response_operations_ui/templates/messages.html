@@ -36,11 +36,11 @@
 
             {% if change_survey %}
                 <h1 class="ons-u-fs-l ons-u-mb-xs" name="page-messages-title">
-                    {{ displayed_short_name }} Messages
+                    <br/>{{ displayed_short_name }} Messages
                     <span class="ons-u-fs-r">(<a id="change-survey" href="{{ url_for('messages_bp.select_inbox') }}">Change inbox</a>)</span>
                 </h1>
             {% else %}
-                <h1 class="ons-u-fs-xl" name="page-messages-title">Messages</h1>
+                <h1 class="ons-u-fs-xl" name="page-messages-title"><br/>Messages</h1>
             {% endif %}
             {% if ru_ref_filter %}
                 <p id="clear_ru_ref" class="ons-u-fs-s">Filtered by RU ref: {{ ru_ref_filter }}
