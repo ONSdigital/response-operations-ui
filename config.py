@@ -1,4 +1,5 @@
 import os
+
 from response_operations_ui.common.strtobool import strtobool
 
 FDI_LIST = {"AOFDI", "AIFDI", "QIFDI", "QOFDI"}
