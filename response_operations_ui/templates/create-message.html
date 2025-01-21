@@ -129,7 +129,7 @@
                         <label class="ons-label" for="secure-message-subject">Subject</label>
                         {{ form.subject(id='secure-message-subject',
                         class_='input input--text ons-u-mb-m input--w-50',
-                        maxlength='96', size=80, required=required) }}
+                        maxLength='96', size=80, required=required) }}
                     </div>
 
                     <div id="body-field"{% if form.body.errors %} class="ons-panel ons-panel--simple ons-panel--error ons-u-mb-m{% endif %}">
@@ -139,7 +139,7 @@
                         <label class="ons-label" for="secure-message-body">Message</label>
                         {{ form.body(id='secure-message-body',
                         class_='input input--textarea ons-u-mb-m',
-                        rows='10', maxlength='50000', cols=80, required=required) }}
+                        rows='10', maxLength='50000', cols=80, required=required) }}
                     </div>
                 {%- endcall -%}
                 <div class="ons-grid ons-grid--flex ons-grid--gutterless ons-grid--vertical-center ons-grid--no-wrap@s">
