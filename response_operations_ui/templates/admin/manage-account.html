@@ -4,13 +4,13 @@
 {% from "components/button/_macro.njk" import onsButton %}
 
 {% block main %}
-    <div class="ons-grid ons-grid--flex ons-grid--between">
+    <div class="ons-grid ons-grid-flex ons-grid-flex--between">
         <div class="ons-grid__col">
             <h1>{{ name }}</h1>
         </div>
     </div>
 
-    <div class="ons-grid ons-grid--flex ons-grid--between">
+    <div class="ons-grid ons-grid-flex ons-grid-flex--between">
         <div class="ons-grid__col">
             <h2>Select user permissions</h2>
             <span>All users have permission to view all the preselected Survey Data Collection areas below. </span>
@@ -203,7 +203,7 @@
                 </tbody>
             </table>
 
-          <div class="ons-grid ons-grid--flex ons-grid--gutterless ons-u-mt-l ons-u-mb-m">
+          <div class="ons-grid ons-grid-flex ons-grid--gutterless ons-u-mt-l ons-u-mb-m">
             <div class="ons-grid__col ons-col-7@m">
             <strong>Manager permissions</strong>
             {{
@@ -228,7 +228,7 @@
             </div>
         </div>
 
-          <div class="ons-grid ons-grid--flex ons-grid--gutterless ons-grid--vertical-center ons-grid--no-wrap@s ons-u-mt-m ons-u-mb-m">
+          <div class="ons-grid ons-grid-flex ons-grid--gutterless ons-grid-flex--vertical-center ons-grid--no-wrap@s ons-u-mt-m ons-u-mb-m">
             <div class="ons-grid__col">
             {{
                 onsButton({

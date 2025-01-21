@@ -76,7 +76,7 @@
                 {% if collection_instruments|length >= 3 %}
                     {% do tables.append('right') %}
                 {% endif %}
-                <div class="ons-grid ons-col-12@m ons-grid--vertical-center ons-grid--no-wrap@m ons-u-mt-m ons-u-mb-m">
+                <div class="ons-grid ons-col-12@m ons-grid-flex--vertical-center ons-grid--no-wrap@m ons-u-mt-m ons-u-mb-m">
                     {% for table in tables %}
                         {% set surveyTableData = {
                             "variants": 'responsive',
