@@ -1,6 +1,6 @@
 {% extends "layouts/base.html" %}
 {% from "components/button/_macro.njk" import onsButton %}
-{% from "components/metadata/_macro.njk" import onsMetadata %}
+{% from "components/descriptionlist/_macro.njk" import onsDescriptionList %}
 {% from "components/fieldset/_macro.njk" import onsFieldset %}
 {% from "components/input/_macro.njk" import onsInput %}
 
@@ -30,7 +30,7 @@
             <form action="" method="post">
                 {{ form.csrf_token }}
                 {{
-                    onsMetadata({
+                    onsDescriptionList({
                         "termCol": "2",
                         "descriptionCol": "10",
                         "itemsList": [

@@ -1,9 +1,9 @@
-{% from "components/metadata/_macro.njk" import onsMetadata %}
+{% from "components/descriptionlist/_macro.njk" import onsDescriptionList %}
 
 {% block main %}
     <section class="ons-u-cf ons-u-mb-l">
         {{
-            onsMetadata({
+            onsDescriptionList({
                 "metadataLabel": data.longName + "information",
                 "id": "survey-attributes",
                 "termCol": "4",
