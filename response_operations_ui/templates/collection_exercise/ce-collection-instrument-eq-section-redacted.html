@@ -26,7 +26,7 @@ ons-u-mt-l">
             <input type="hidden" name="csrf_token" value="{{ csrf_token() }}" />
             <input type="hidden" name="csrf_token" value="" />
             <input type="hidden" name="ce_id" value="{{ ce.id }}" />
-            <div class="ons-grid ons-col-12@m ons-grid--vertical-center ons-grid--no-wrap@m ons-u-mt-m ons-u-mb-m">
+            <div class="ons-grid ons-col-12@m ons-grid-flex--vertical-center ons-grid--no-wrap@m ons-u-mt-m ons-u-mb-m">
                 {% for eq_ci in all_cis_for_survey|batch(3, ' ') %}
                     {% for ci in eq_ci %}
                       {% if ci['form_type'] and ci['checked'] == 'true' %}
@@ -51,7 +51,7 @@ ons-u-mt-l">
         </form>
     {% endif %}
 </div>
-<div class="ons-grid ons-grid--flex ons-grid--between">
+<div class="ons-grid ons-grid-flex ons-grid-flex--between">
     <div class="ons-grid__col">
         <h1 class="ons-u-fs-l u-mb-xs" name="page-manage-account-title">{{ name }}</h1>
     </div>
