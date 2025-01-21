@@ -1,6 +1,6 @@
 {% extends "layouts/base.html" %}
 {% from "components/button/_macro.njk" import onsButton %}
-{% from "components/metadata/_macro.njk" import onsMetadata %}
+{% from "components/metadata/_macro.njk" import onsDescriptionList %}
 
 {% set page_title = 'New enrolment code for ' ~ trading_as ~ ' ' ~ '(' ~ ru_ref ~ ') for survey ' ~ survey_ref ~ ' ' ~ survey_name %}
 {% block main %}
@@ -8,7 +8,7 @@
         <div class="ons-grid__col ons-col-8@m">
             <h1 class="ons-u-fs-xl">New enrolment code</h1>
             {{
-                onsMetadata({
+                onsDescriptionList({
                     "termCol": "2",
                     "descriptionCol": "10",
                     "itemsList": [
