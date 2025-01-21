@@ -45,7 +45,7 @@
             {% for tab_key, tab_value in tab_titles.items() %}
                 {% do nav.append(
                     {
-                        "title": tab_value,
+                        "text": tab_value,
                         "url": url_for('messages_bp.view_technical_inbox', selected_survey=selected_survey, conversation_tab=tab_key, ru_ref_filter=ru_ref_filter, business_id_filter=business_id_filter)
                     }
                 ) %}
