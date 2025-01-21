@@ -16,7 +16,7 @@ Use pipenv to create a virtualenv and install dependencies
 pipenv install
 ```
 
-Ensure you have Node.js version >=10 installed.  The recommended way to do this is to use Creationix Node Version Manager, which works on Linux and MacOSX systems:
+Ensure you have Node.js version >=16 installed.  The recommended way to do this is to use Creationix Node Version Manager, which works on Linux and MacOSX systems:
 
 ```bash
 curl -o- https://raw.githubusercontent.com/creationix/nvm/v0.33.11/install.sh | bash
