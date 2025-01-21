@@ -1,4 +1,4 @@
-{% from "components/descriptionlist/_macro.njk" import onsDescriptionList %}
+{% from "components/description-list/_macro.njk" import onsDescriptionList %}
 {% set surveyDescription = messages[0].get('survey') + ' ' + messages[0].get('survey_ref') if messages[0].get('survey') else '' %}
 {% set categoryDescription = ' (' + thread_data.category + ') ' if thread_data.category != 'SURVEY' else '' %}
 {% set isMessageEditPermission = hasPermission('messages.edit') %}

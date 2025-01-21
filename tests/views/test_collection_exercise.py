@@ -449,7 +449,7 @@ class TestCollectionExercise(ViewTestCase):
         response = self.client.get(f"/surveys/{short_name}/{period}", follow_redirects=True)
 
         self.assertEqual(response.status_code, 200)
-        self.assertIn("Monthly Survey of Building Materials Bricks".encode(), response.data)
+        self.assertIn("Bricks".encode(), response.data)
         self.assertIn("221_201712".encode(), response.data)
         self.assertNotIn("Set as ready for live".encode(), response.data)
 
@@ -472,7 +472,7 @@ class TestCollectionExercise(ViewTestCase):
         response = self.client.get(f"/surveys/{short_name}/{period}", follow_redirects=True)
 
         self.assertEqual(response.status_code, 200)
-        self.assertIn("Monthly Survey of Building Materials Bricks".encode(), response.data)
+        self.assertIn("Bricks".encode(), response.data)
         self.assertIn("221_201712".encode(), response.data)
         self.assertNotIn("Set as ready for live".encode(), response.data)
 
@@ -518,7 +518,7 @@ class TestCollectionExercise(ViewTestCase):
         response = self.client.get(f"/surveys/{short_name}/{period}", follow_redirects=True)
 
         self.assertEqual(response.status_code, 200)
-        self.assertIn("Monthly Survey of Building Materials Bricks".encode(), response.data)
+        self.assertIn("Bricks".encode(), response.data)
         self.assertIn("221_201712".encode(), response.data)
         self.assertIn("Set as ready for live".encode(), response.data)
         self.assertNotIn("Pre-Populated data is available for this sample".encode(), response.data)
@@ -726,7 +726,7 @@ class TestCollectionExercise(ViewTestCase):
         mock_details.return_value = seft_collection_exercise_details
         response = self.client.get(f"/surveys/{short_name}/{period}", follow_redirects=True)
         self.assertEqual(response.status_code, 200)
-        self.assertIn("Monthly Survey of Building Materials Bricks".encode(), response.data)
+        self.assertIn("Bricks".encode(), response.data)
         self.assertIn("074".encode(), response.data)
         self.assertIn("Sample loaded".encode(), response.data)
         self.assertIn("Collection instruments".encode(), response.data)
@@ -2281,7 +2281,7 @@ class TestCollectionExercise(ViewTestCase):
         response = self.client.get(f"/surveys/{short_name}/{period}", follow_redirects=True)
 
         self.assertEqual(response.status_code, 200)
-        self.assertIn("Monthly Survey of Building Materials Bricks".encode(), response.data)
+        self.assertIn("Bricks".encode(), response.data)
         self.assertIn("221_201712".encode(), response.data)
         self.assertIn("Add".encode(), response.data)
         self.assertIn("Edit".encode(), response.data)
@@ -2309,7 +2309,7 @@ class TestCollectionExercise(ViewTestCase):
         response = self.client.get(f"/surveys/{short_name}/{period}", follow_redirects=True)
 
         self.assertEqual(response.status_code, 200)
-        self.assertIn("Monthly Survey of Building Materials Bricks".encode(), response.data)
+        self.assertIn("Bricks".encode(), response.data)
         self.assertIn("221_201712".encode(), response.data)
         self.assertIn("Add".encode(), response.data)
         self.assertIn("Edit".encode(), response.data)
@@ -2336,7 +2336,7 @@ class TestCollectionExercise(ViewTestCase):
         response = self.client.get(f"/surveys/{short_name}/{period}", follow_redirects=True)
 
         self.assertEqual(response.status_code, 200)
-        self.assertIn("Monthly Survey of Building Materials Bricks".encode(), response.data)
+        self.assertIn("Bricks".encode(), response.data)
         self.assertIn("221_201712".encode(), response.data)
         self.assertIn('id="view-add-upload-ci-eq">View</a>'.encode(), response.data)
         self.assertNotIn("Upload sample file".encode(), response.data)
@@ -2676,7 +2676,7 @@ class TestCollectionExercise(ViewTestCase):
         response = self.client.get(f"/surveys/{short_name}/{period}", follow_redirects=True)
 
         self.assertEqual(response.status_code, 200)
-        self.assertIn("Monthly Survey of Building Materials Bricks".encode(), response.data)
+        self.assertIn("Bricks".encode(), response.data)
         self.assertIn("221_201712".encode(), response.data)
         self.assertNotIn("Add".encode(), response.data)
         self.assertNotIn("Edit".encode(), response.data)

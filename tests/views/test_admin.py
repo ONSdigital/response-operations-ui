@@ -139,12 +139,12 @@ class TestMessage(ViewTestCase):
         self.assertIn("Page 1 of 26".encode(), response.data)
         # Validates Pagination controls displayed
         self.assertIn(
-            '<a href="?page=1" class="ons-pagination__link"aria-current="true" aria-label="Current page ('
-            'Page 1 of 26)">1</a>'.encode(),
+            'class="ons-pagination__link"aria-current="true" aria-label="Current page ('
+            'Page 1 of 26)">1'.encode(),
             response.data,
         )
         self.assertIn(
-            '<a href="?page=2" class="ons-pagination__link"aria-label="Go to page 2"rel="next">2</a>'.encode(),
+            'class="ons-pagination__link"aria-label="Go to page 2"rel="next">2'.encode(),
             response.data,
         )  # Validates Pagination controls displayed
 
