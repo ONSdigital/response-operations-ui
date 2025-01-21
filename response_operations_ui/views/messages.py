@@ -531,7 +531,6 @@ def view_selected_survey(selected_survey):  # noqa: C901
                     ru_ref_filter=ru_ref_filter,
                     business_id_filter=business_id_filter,
                 )
-                + "#latest-message"
             )
         else:
             thread_url = None
@@ -1122,7 +1121,6 @@ def _process_non_survey_category_page(
                     ru_ref_filter=ru_ref_filter,
                     business_id_filter=business_id_filter,
                 )
-                + "#latest-message"
             )
         else:
             thread_url = None
