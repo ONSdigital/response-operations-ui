@@ -40,7 +40,7 @@ npm install
 
 You can run gulp tasks using `npm run gulp <taskname>`, or just `gulp` if you have `gulp` globally installed (`npm i -g gulpjs`)
 
-For a basic build, you can just have node >=10 installed, and run `make build` to run any build tasks, which includes the installation of node packages, and running compilation/transpilation tasks.
+For a basic build, you can just have node >=16 installed, and run `make build` to run any build tasks, which includes the installation of node packages, and running compilation/transpilation tasks.
 
 Once these have been installed the app can be run from the root directory using the following
 
