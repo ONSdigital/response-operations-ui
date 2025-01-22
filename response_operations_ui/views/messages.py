@@ -522,16 +522,13 @@ def view_selected_survey(selected_survey):  # noqa: C901
         pagination = pagination_processor(tab_counts["current"], limit, page, href)
 
         if thread_id:
-            thread_url = (
-                url_for(
-                    "messages_bp.view_conversation",
-                    thread_id=thread_id,
-                    conversation_tab=conversation_tab,
-                    page=page,
-                    ru_ref_filter=ru_ref_filter,
-                    business_id_filter=business_id_filter,
-                )
-                + "#latest-message"
+            thread_url = url_for(
+                "messages_bp.view_conversation",
+                thread_id=thread_id,
+                conversation_tab=conversation_tab,
+                page=page,
+                ru_ref_filter=ru_ref_filter,
+                business_id_filter=business_id_filter,
             )
         else:
             thread_url = None
@@ -1113,16 +1110,13 @@ def _process_non_survey_category_page(
         pagination = pagination_processor(tab_counts["current"], limit, page, href)
 
         if thread_id:
-            thread_url = (
-                url_for(
-                    "messages_bp.view_conversation",
-                    thread_id=thread_id,
-                    conversation_tab=conversation_tab,
-                    page=page,
-                    ru_ref_filter=ru_ref_filter,
-                    business_id_filter=business_id_filter,
-                )
-                + "#latest-message"
+            thread_url = url_for(
+                "messages_bp.view_conversation",
+                thread_id=thread_id,
+                conversation_tab=conversation_tab,
+                page=page,
+                ru_ref_filter=ru_ref_filter,
+                business_id_filter=business_id_filter,
             )
         else:
             thread_url = None
