@@ -139,13 +139,13 @@ class TestMessage(ViewTestCase):
         self.assertIn("Page 1 of 26".encode(), response.data)
         # Validates Pagination controls displayed
         self.assertIn(
-            'class="ons-pagination__link"aria-current="true" aria-label="Current page (' 'Page 1 of 26)">1'.encode(),
+            'aria-label="Current page (' 'Page 1 of 26)">1'.encode(),
             response.data,
         )
         self.assertIn(
-            'class="ons-pagination__link"aria-label="Go to page 2"rel="next">2'.encode(),
+            'aria-label="Go to page 2"rel="next">2'.encode(),
             response.data,
-        )  # Validates Pagination controls displayed
+        )
 
     @requests_mock.mock()
     def test_manage_user_accounts_email_search(self, mock_request):
