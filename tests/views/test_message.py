@@ -1,6 +1,7 @@
 import copy
 import json
 import os
+import re
 from unittest.mock import patch
 
 import fakeredis
@@ -1163,8 +1164,8 @@ class TestMessage(ViewTestCase):
         response_body = response.data.decode("utf-8").replace(" ", "")
 
         # validate that the currently selected tab is as expected (i.e aria-current="location")
-        match_str = '"aria-current="location">Closed'
-        self.assertIn(match_str, response_body)
+        match_str = re.compile(r'"aria-current="location"\s*>Closed<')
+        self.assertRegex(response_body, match_str)
 
     @requests_mock.mock()
     @patch("response_operations_ui.controllers.message_controllers._get_jwt")
@@ -1553,11 +1554,11 @@ class TestMessage(ViewTestCase):
 
                 # Validate correct tab selected
 
-                self.assertIn(
-                    f'aria-current="location">{conversation_tab.replace(" ", "")}',
+                self.assertRegex(
                     response_body.lower().replace(" ", ""),
+                    re.compile(r'aria-current="location"\s*>' + conversation_tab.replace(" ", ""))
                 )
-
+                    
     @requests_mock.mock()
     @patch("response_operations_ui.controllers.message_controllers._get_jwt")
     def test_conversation_reply_no_edit_permission(self, mock_request, mock_get_jwt):
