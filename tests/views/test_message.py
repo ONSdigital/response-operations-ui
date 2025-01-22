@@ -1556,9 +1556,9 @@ class TestMessage(ViewTestCase):
 
                 self.assertRegex(
                     response_body.lower().replace(" ", ""),
-                    re.compile(r'aria-current="location"\s*>' + conversation_tab.replace(" ", ""))
+                    re.compile(r'aria-current="location"\s*>' + conversation_tab.replace(" ", "")),
                 )
-                    
+
     @requests_mock.mock()
     @patch("response_operations_ui.controllers.message_controllers._get_jwt")
     def test_conversation_reply_no_edit_permission(self, mock_request, mock_get_jwt):
