@@ -17,7 +17,6 @@
             {% set unreadLinkId = 'sm-mark-as-unread' %}
             {% set unreadLinkText = 'Mark as unread' %}
         {% endif %}
-        <div name="latest-message" id="latest-message">
     {% endif %}
 
     {% call onsMessage({
@@ -38,7 +37,4 @@
     }) %}
         <span style="white-space:pre-line">{{ message.get('body') }}</span>
     {% endcall %}
-    {% if loop.last %}
-        </div>
-    {% endif %}
 {% endfor %}
