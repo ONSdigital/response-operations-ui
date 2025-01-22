@@ -1,7 +1,6 @@
 import copy
 import json
 import os
-import re
 from unittest.mock import patch
 
 import fakeredis
@@ -1164,8 +1163,7 @@ class TestMessage(ViewTestCase):
         response_body = response.data.decode("utf-8").replace(" ", "")
 
         # validate that the currently selected tab is as expected (i.e aria-current="location")
-        match_str = re.compile(r'"aria-current="location"\s*>Closed<')
-        self.assertRegex(response_body, match_str)
+        self.assertRegex(response_body, r'"aria-current="location"\s*>Closed<')
 
     @requests_mock.mock()
     @patch("response_operations_ui.controllers.message_controllers._get_jwt")
@@ -1556,7 +1554,7 @@ class TestMessage(ViewTestCase):
 
                 self.assertRegex(
                     response_body.lower().replace(" ", ""),
-                    re.compile(r'aria-current="location"\s*>' + conversation_tab.replace(" ", "")),
+                    r'aria-current="location"\s*>' + conversation_tab.replace(" ", ""),
                 )
 
     @requests_mock.mock()
