@@ -5,13 +5,13 @@ import os
 import redis
 from flask import Flask, flash, redirect, session, url_for
 from flask_login import LoginManager
+from flask_session import Session
 from flask_talisman import Talisman
 from flask_wtf.csrf import CSRFError, CSRFProtect
 from jinja2 import ChainableUndefined
 from structlog import wrap_logger
 
 from config import Config
-from flask_session import Session
 from response_operations_ui.common.jinja_filters import filter_blueprint
 from response_operations_ui.controllers.uaa_controller import user_has_permission
 from response_operations_ui.logger_config import logger_initial_config
