@@ -1,5 +1,6 @@
 {% extends "layouts/base.html" %}
 {% from "components/button/_macro.njk" import onsButton %}
+{% from "components/description-list/_macro.njk" import onsDescriptionList %}
 {% from "components/table/_macro.njk" import onsTable %}
 
 {% set page_title = ru.name + " | Reporting units" %}
@@ -8,24 +9,34 @@
     {% include 'partials/flashed-messages.html' %}
 
     <h1 id="RU_NAME" class="ons-u-fs-xl">{{ ru.name }}</h1>
-
-    <dl id="RU_DETAILS" class="item-headlines">
-        <dt class="item-headlines-term">
-            Reference:
-        </dt>
-        <dd id="RU_REF" class="item-headlines-definition">
-            {{ ru.sampleUnitRef }}
-        </dd>
-        {% if ru.trading_as %}
-            <dt class="item-headlines-term">
-                Trading as:
-            </dt>
-            <dd id="TRADING_AS" class="item-headlines-definition">
-                {{ ru.trading_as }} &nbsp;
-            </dd>
-        {% endif %}
-    </dl>
-    <div class="ons-grid__col ons-col-8@m ons-u-pl-no">
+{{
+    onsDescriptionList({
+        "classes": "ons-u-mb-no",
+        "descriptionListLabel": "Information about this business and its survey requirements",
+        "termCol": "2",
+        "descriptionCol": "10",
+        "itemsList": [
+            {
+                "term": "Reference:",
+                "descriptions": [
+                    {
+                        "description": ru.sampleUnitRef
+                    }
+                ]
+            },
+            {
+                "term": "Trading as:",
+                "descriptions": [
+                    {
+                        "description": ru.trading_as
+                    }
+                ]
+            }
+        ]
+    })
+}}
+  <div class="ons-header__grid-top">
+    <div class="ons-grid__col ons-col-10@m ons-u-pl-no">
         {% include 'partials/reporting-unit-tabs.html' %}
         {% 
             set respondentTableData = {
@@ -89,4 +100,5 @@
             <p>No respondents enrolled for this reporting unit</p>
         {% endif %}
     </div>
+  </div>
 {% endblock %}
