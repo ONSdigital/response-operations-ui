@@ -5,6 +5,37 @@
 {% from "components/input/_macro.njk" import onsInput %}
 {% from "components/list/_macro.njk" import onsList %}
 
+{% if errors %}
+    {% set errorData = [] %}
+
+    {% call
+            onsPanel({
+            "variant":"error",
+            "id": "save-error",
+            "classes": "ons-u-mb-s",
+            "title": "This page has 1 error" if errors|length == 1 else "There are " + errors|length|string + " errors on this page"
+
+        })
+    %}
+        {% for field, error_list in errors %}
+            {% do errorData.append(
+                {
+                    "text": ', '.join(error_list),
+                    "index": true,
+                    "url": '#' + field,
+                    "variants": "inPageLink"
+                }
+            ) %}
+        {% endfor %}
+        {{
+            onsList({
+                "classes": "ons-list--bare",
+                "itemsList": errorData
+            })
+        }}
+    {% endcall %}
+{% endif %}
+
 {% set page_title = 'Create survey' %}
 
 {% set survey_mode_options = [
@@ -34,36 +65,6 @@
 {% block main %}
     <div class="ons-grid ons-grid--gutterless">
         <div class="ons-grid__col ons-col-8@m">
-            {% if errors %}
-                {% set errorData = [] %}
-
-                {% call
-                    onsPanel({
-                        "variant":"error",
-                        "id": "save-error",
-                        "classes": "ons-u-mb-s",
-                        "title": "This page has 1 error" if errors|length == 1 else "There are " + errors|length|string + " errors on this page"
-
-                    })
-                %}
-                    {% for field, error_list in errors %}
-                        {% do errorData.append(
-                            {
-                                "text": ', '.join(error_list),
-                                "index": true,
-                                "url": '#'.join(field),
-                                "variants": "inPageLink"
-                            }
-                        ) %}
-                    {% endfor %}
-                    {{
-                        onsList({
-                            "classes": "ons-list--bare",
-                            "itemsList": errorData
-                        })
-                    }}
-                {% endcall %}
-            {% endif %}
             <h1 class="ons-u-fs-xxl">Create survey</h1>
             <form action="" method="post">
                 {{ form.csrf_token }}
