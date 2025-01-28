@@ -11,48 +11,16 @@
 
 <section>
     <h1 id="respondent-name">Account details</h1>
-    {{
-        onsDescriptionList({
-            "classes": "ons-u-mb-l",
-            "termCol": "4",
-            "descriptionCol": "8",
-            "itemsList": [
-                {
-                    "term": "Email address:",
-                    "descriptions": [
-                        {
-                            "description": user.email
-                        }
-                    ]
-                },
-                {
-                    "term": "Name:",
-                    "descriptions": [
-                        {
-                            "description": user.name
-                        }
-                    ]
-                },
-                {
-                    "term": "Password:",
-                    "descriptions": [
-                        {
-                            "description": "●●●●●●●●"
-                        }
-                    ]
-                },
-                {
-                    "term": " ",
-                    "descriptions": [
-                        {
-                            "description": "(Last changed on " ~ user.password_last_changed ~ ")",
-                            "classes": "ons-u-fs-s"
-                        }
-                    ]
-                }
-            ]
-        })
-    }}
+    <dl class="ons-description-list ons-description-list__list ons-grid ons-grid--gutterless ons-u-cf ons-u-mb-l" title="">
+        <dt class="ons-description-list__term ons-grid__col ons-col-2@m"><strong>Email address:</strong></dt>
+        <dd class="ons-description-list__value ons-grid__col ons-col-10@m">{{ user.email }}</dd>
+        <dt class="ons-description-list__term ons-grid__col ons-col-2@m"><strong>Name:</strong></dt>
+        <dd class="ons-description-list__value ons-grid__col ons-col-10@m">{{ user.name }}</dd>
+        <dt class="ons-description-list__term ons-grid__col ons-col-2@m"><strong>Password:</strong></dt>
+        <dd class="ons-description-list__value ons-grid__col ons-col-10@m">●●●●●●●●</dd>
+        <dt class="ons-description-list__term ons-grid__col ons-col-2@m"> </dt>
+        <dd class="ons-description-list__value ons-grid__col ons-col-10@m ons-u-fs-s">(Last changed on {{ user.password_last_changed }})</dd>
+    </dl>
     <hr class="ons-u-mb-l ons-col-8@m"/>
 </section>
 <section>
