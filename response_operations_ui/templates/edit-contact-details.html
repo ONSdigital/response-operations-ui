@@ -1,6 +1,5 @@
 {% extends "layouts/base.html" %}
 {% from "components/button/_macro.njk" import onsButton %}
-{% from "components/metadata/_macro.njk" import onsMetadata %}
 {% from "components/fieldset/_macro.njk" import onsFieldset %}
 {% from "components/input/_macro.njk" import onsInput %}
 
@@ -146,7 +145,7 @@
                     }}
                     <input type="hidden" name="hidden_email" value="{{ respondent_details.emailAddress }}"/>
                 {%- endcall -%}
-                <div class="ons-grid ons-grid--flex ons-grid--gutterless ons-grid--vertical-center ons-grid--no-wrap@s ons-u-mt-m ons-u-mb-m">
+                <div class="ons-grid ons-grid-flex ons-grid--gutterless ons-grid-flex--vertical-center ons-grid--no-wrap@s ons-u-mt-m ons-u-mb-m">
                     <div class="ons-grid__col">
                         {{
                             onsButton({

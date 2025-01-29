@@ -1,6 +1,6 @@
 {% extends "layouts/base.html" %}
 {% from "components/button/_macro.njk" import onsButton %}
-{% from "components/metadata/_macro.njk" import onsMetadata %}
+{% from "components/description-list/_macro.njk" import onsDescriptionList %}
 {% set page_title = 'Edit collection exercise details' %}
 {% block main %}
     <div class="ons-grid ons-grid--gutterless">
@@ -19,7 +19,7 @@
                 {% endif %} class="ons-u-mt-l">
                 <input type="hidden" name="csrf_token" value="{{ csrf_token() }}" />
                 {{
-                    onsMetadata({
+                    onsDescriptionList({
                         "termCol": "2",
                         "descriptionCol": "10",
                         "itemsList": [

@@ -11,7 +11,7 @@
     {% endif %}
     {% if loop.last %}
         {% if show_mark_unread == True %}
-            {% set unreadLink = url_for('messages_bp.mark_message_unread',
+            {% set unreadLinkUrl = url_for('messages_bp.mark_message_unread',
                 message_id=message.message_id, from=message.from, to=message.to, page=page, 
                 conversation_tab=conversation_tab, ru_ref_filter=ru_ref_filter, business_id_filter=business_id_filter) %}
             {% set unreadLinkId = 'sm-mark-as-unread' %}
@@ -30,10 +30,10 @@
         "sentValue": message.get('sent_date'),
         "sentName": 'sm-sent-date',
         "sentId": 'sm-sent-date-' + loop.index|string,
-        "unreadLink": unreadLink,
+        "unreadLinkUrl": unreadLinkUrl,
         "unreadLinkId": unreadLinkId,
         "unreadLinkText": unreadLinkText,
-        "messageID": 'conversation-message-body-' + loop.index|string
+        "messageId": 'conversation-message-body-' + loop.index|string
     }) %}
         <span style="white-space:pre-line">{{ message.get('body') }}</span>
     {% endcall %}

@@ -28,7 +28,7 @@
             {% endcall %}
         {% endif %}
     {% endwith %}
-    <div class="ons-grid ons-grid--flex ons-grid--between">
+    <div class="ons-grid ons-grid-flex ons-grid-flex--between">
         <div class="ons-grid__col">
             {% if breadcrumbs %}
                 {% include 'layouts/configs/breadcrumbs.html' %}
@@ -86,7 +86,7 @@
             {% for tab_key, tab_value in tab_titles.items() %}
                 {% do nav.append(
                     {
-                        "title": tab_value,
+                        "text": tab_value,
                         "url": url_for('messages_bp.view_selected_survey', selected_survey=selected_survey, conversation_tab=tab_key, ru_ref_filter=ru_ref_filter, business_id_filter=business_id_filter)
                     }
                 ) %}
@@ -95,7 +95,7 @@
                 onsSectionNavigation({
                     "id": "message-menu",
                     "ariaLabel": "Messages menu",
-                    "ariraListLabel": "Navigation menu",
+                    "ariaListLabel": "Navigation menu",
                     "tabQuery": tab_titles[conversation_tab]|lower if request.args.get('conversation_tab') else tab_titles['open']|lower,
                     "itemsList": nav
                 })
