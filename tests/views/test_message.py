@@ -1163,8 +1163,7 @@ class TestMessage(ViewTestCase):
         response_body = response.data.decode("utf-8").replace(" ", "")
 
         # validate that the currently selected tab is as expected (i.e aria-current="location")
-        match_str = '"aria-current="location">Closed'
-        self.assertIn(match_str, response_body)
+        self.assertRegex(response_body, r'"aria-current="location"\s*>Closed<')
 
     @requests_mock.mock()
     @patch("response_operations_ui.controllers.message_controllers._get_jwt")
@@ -1553,9 +1552,9 @@ class TestMessage(ViewTestCase):
 
                 # Validate correct tab selected
 
-                self.assertIn(
-                    f'aria-current="location">{conversation_tab.replace(" ", "")}',
+                self.assertRegex(
                     response_body.lower().replace(" ", ""),
+                    r'aria-current="location"\s*>' + conversation_tab.replace(" ", ""),
                 )
 
     @requests_mock.mock()

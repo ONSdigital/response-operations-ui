@@ -2,7 +2,6 @@
 {% set page_title = survey.shortName + " | Surveys" %}
 {% from "components/panel/_macro.njk" import onsPanel %}
 {% from "components/table/_macro.njk" import onsTable %}
-{% from "components/metadata/_macro.njk" import onsMetadata %}
 {% from "components/button/_macro.njk" import onsButton %}
 {% from "components/status/_macro.njk" import onsStatus %}
 
@@ -21,14 +20,14 @@
         }}
     {% endif %}
     
-    <div class="ons-grid ons-grid--flex ons-grid--between">
+    <div class="ons-grid ons-grid-flex ons-grid-flex--between">
         <div class="ons-grid__col">
             <h1 name="page-survey-title">{{survey.longName}} | {{survey.shortName}} {{survey.surveyRef}}</h1>
         </div>
       </div>
     {% if collection_exercises|length > 0 %}
     <section class="ce-list">
-        <div class="ons-grid ons-grid--flex ons-grid--between">
+        <div class="ons-grid ons-grid-flex ons-grid-flex--between">
             <div class="ons-grid__col">
                 <h2 class="ons-u-fs-l u-mb-xs" name="page-survey-subtitle">Collection exercises (CE)
                 </h2>
@@ -144,7 +143,7 @@
 
     </section>
     {% else %}
-        <div class="ons-grid ons-grid--flex ons-grid--between">
+        <div class="ons-grid ons-grid-flex ons-grid-flex--between">
             <div class="ons-grid__col">
                 <h2 class="ons-u-fs-l u-mb-xs" name="page-survey-subtitle">Collection exercises (CE)
             </h2>

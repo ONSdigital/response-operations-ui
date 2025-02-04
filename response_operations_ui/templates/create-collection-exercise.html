@@ -1,6 +1,5 @@
 {% extends "layouts/base.html" %}
 {% from "components/button/_macro.njk" import onsButton %}
-{% from "components/metadata/_macro.njk" import onsMetadata %}
 {% from "components/fieldset/_macro.njk" import onsFieldset %}
 {% from "components/input/_macro.njk" import onsInput %}
 {% from "components/details/_macro.njk" import onsDetails %}
@@ -75,7 +74,7 @@
                             "variants": ['secondary'],
                             "url": url_for('surveys_bp.view_survey', short_name=short_name),
                             "submitType": "timer",
-                            "noIcon": "true"
+                            "noIcon": true,
                         })
                     }} 
                 </div>
