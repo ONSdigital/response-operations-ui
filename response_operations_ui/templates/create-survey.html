@@ -84,9 +84,11 @@
                                 "text": 'Survey title',
                                 "description": "For example: Monthly Business Survey"
                             },
-                            "error": {
-                                "text": ', '.join(errors['long_name'])
-                            }
+                            {% if errors.long_name %}
+                                "error": {
+                                    "text": ', '.join(errors['long_name'])
+                                }
+                            {% endif %}
                         })
                     }}
                     {{
@@ -104,9 +106,11 @@
                                 "text": 'Survey abbreviation',
                                 "description": "For example: MBS"
                             },
-                            "error": {
-                                "text": ', '.join(errors['short_name'])
-                            }
+                            {% if errors.short_name %}
+                                "error": {
+                                    "text": ', '.join(errors['short_name'])
+                                }
+                            {% endif %}
                         })
                     }}
                     {{
@@ -125,9 +129,11 @@
                                 "text": 'Survey ID',
                                 "description": "For example: 001"
                             },
-                            "error": {
-                                "text": ', '.join(errors['survey_ref'])
-                            }
+                            {% if errors.survey_ref %}
+                                "error": {
+                                    "text": ', '.join(errors['survey_ref'])
+                                }
+                            {% endif %}
                         })
                     }}
               </div>
@@ -140,9 +146,11 @@
                             "name": "survey_mode",
                             "borderless": true,
                             "radios": survey_mode_options,
-                            "error": {
-                                "text": ', '.join(errors['survey_mode'])
-                            }
+                            {% if errors.survey_mode %}
+                                "error": {
+                                    "text": ', '.join(errors['survey_mode'])
+                                }
+                            {% endif %}
                         })
                     }}
                 </div>
@@ -152,9 +160,11 @@
                     "name": "legal_basis",
                     "id": "legal_basis",
                     "borderless": true,
-                    "error": {
-                        "text": ', '.join(errors['legal_basis'])
-                    }
+                    {% if errors.legal_basis %}
+                        "error": {
+                            "text": ', '.join(errors['legal_basis'])
+                        }
+                    {% endif %}
 
                 } %}
 
