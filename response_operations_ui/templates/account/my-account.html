@@ -1,5 +1,5 @@
 {% extends "layouts/base.html" %}
-{% from "components/metadata/_macro.njk" import onsMetadata %}
+{% from "components/description-list/_macro.njk" import onsDescriptionList %}
 {% from "components/radios/_macro.njk" import onsRadios %}
 {% from "components/button/_macro.njk" import onsButton %}
 {% set page_title = "Account details" %}
@@ -11,15 +11,15 @@
 
 <section>
     <h1 id="respondent-name">Account details</h1>
-    <dl class="ons-metadata ons-metadata__list ons-grid ons-grid--gutterless ons-u-cf ons-u-mb-l" title="">
-        <dt class="ons-metadata__term ons-grid__col ons-col-4@m"><strong>Email address:</strong></dt>
-        <dd class="ons-metadata__value ons-grid__col ons-col-4@m">{{ user.email }}</dd>
-        <dt class="ons-metadata__term ons-grid__col ons-col-4@m"><strong>Name:</strong></dt>
-        <dd class="ons-metadata__value ons-grid__col ons-col-4@m">{{ user.name }}</dd>
-        <dt class="ons-metadata__term ons-grid__col ons-col-4@m"><strong>Password:</strong></dt>
-        <dd class="ons-metadata__value ons-grid__col ons-col-4@m">●●●●●●●●</dd>
-        <dt class="ons-metadata__term ons-grid__col ons-col-4@m"> </dt>
-        <dd class="ons-metadata__value ons-grid__col ons-col-4@m ons-u-fs-s">(Last changed on {{ user.password_last_changed }})</dd>
+    <dl class="ons-description-list ons-description-list__list ons-grid ons-grid--gutterless ons-u-cf ons-u-mb-l" title="">
+        <dt class="ons-description-list__term ons-grid__col ons-col-2@m"><strong>Email address:</strong></dt>
+        <dd class="ons-description-list__value ons-grid__col ons-col-10@m">{{ user.email }}</dd>
+        <dt class="ons-description-list__term ons-grid__col ons-col-2@m"><strong>Name:</strong></dt>
+        <dd class="ons-description-list__value ons-grid__col ons-col-10@m">{{ user.name }}</dd>
+        <dt class="ons-description-list__term ons-grid__col ons-col-2@m"><strong>Password:</strong></dt>
+        <dd class="ons-description-list__value ons-grid__col ons-col-10@m">●●●●●●●●</dd>
+        <dt class="ons-description-list__term ons-grid__col ons-col-2@m"> </dt>
+        <dd class="ons-description-list__value ons-grid__col ons-col-10@m ons-u-fs-s">(Last changed on {{ user.password_last_changed }})</dd>
     </dl>
     <hr class="ons-u-mb-l ons-col-8@m"/>
 </section>
@@ -63,7 +63,7 @@
             onsRadios(radioComponent)
         }}
 
-        <div class="ons-grid ons-grid--flex ons-grid--gutterless ons-grid--vertical-center ons-grid--no-wrap@s ons-u-mt-m ons-u-mb-m">
+        <div class="ons-grid ons-grid-flex ons-grid--gutterless ons-grid-flex--vertical-center ons-grid--no-wrap@s ons-u-mt-m ons-u-mb-m">
             <div class="ons-grid__col">
                 {{
                     onsButton({

@@ -1,3 +1,4 @@
+{% from "components/description-list/_macro.njk" import onsDescriptionList %}
 
 <h1 name="page-ce-title">{{ce.exerciseRef}} Collection Exercise | {{survey.shortName}} {{survey.surveyRef}}</h1>
 {% if show_sds %}
@@ -28,7 +29,7 @@
     {% set class = 'ons-status ons-status--info' %}
 {% endif %}
 
-{% set metaDataList = [{
+{% set descriptionList = [{
     "term": "Status:",
     "descriptions": [{
         "description": '<span class="'+ class + '">'+ ce.state + status_event +'</span>',
@@ -37,7 +38,7 @@
 }] %}
 
 {% if context["response_chasing"] %}
-    {% do metaDataList.append({
+    {% do descriptionList.append({
         "term": "Report:",
         "descriptions": [{
             "description":
@@ -60,11 +61,11 @@
 {% endif %}
 
 {{
-    onsMetadata({
-        "metadataLabel": survey.longName + "information",
+    onsDescriptionList({
+        "descriptionListLabel": survey.longName + "information",
         "termCol": "1",
         "descriptionCol": "11",
-        "itemsList": metaDataList
+        "itemsList": descriptionList
     })
 }}
 {% if show_set_live_button %}

@@ -1,5 +1,4 @@
 {% extends "layouts/base.html" %}
-{% from "components/metadata/_macro.njk" import onsMetadata %}
 {% from "components/input/_macro.njk" import onsInput %}
 {% from "components/button/_macro.njk" import onsButton %}
 {% from "components/list/_macro.njk" import onsList %}
@@ -79,7 +78,7 @@
             })
         }}
         <p><br/>You will need to sign in again after saving your changes.</p>
-        <div class="ons-grid ons-grid--flex ons-grid--gutterless ons-grid--vertical-center ons-grid--no-wrap@s ons-u-mt-m ons-u-mb-m">
+        <div class="ons-grid ons-grid-flex ons-grid--gutterless ons-grid-flex--vertical-center ons-grid--no-wrap@s ons-u-mt-m ons-u-mb-m">
             <div class="ons-grid__col">
                 {{
                     onsButton({

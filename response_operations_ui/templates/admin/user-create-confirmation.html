@@ -4,7 +4,7 @@
 {% from "components/button/_macro.njk" import onsButton %}
 
 {% block main %}
-    <div class="ons-grid ons-grid--flex ons-grid--between">
+    <div class="ons-grid ons-grid-flex ons-grid-flex--between">
       {% with messages = get_flashed_messages(category_filter=["error"]) %}
             {% if messages %}
                 {% call
