@@ -85,7 +85,7 @@
                                 "description": "For example: Monthly Business Survey"
                             },
                             "error": {
-                                "text": ', '.join(errors.get('long_name', []))
+                                "text": ', '.join(errors['long_name'])
                             }
                         })
                     }}
@@ -105,7 +105,7 @@
                                 "description": "For example: MBS"
                             },
                             "error": {
-                                "text": ', '.join(errors.get('short_name', []))
+                                "text": ', '.join(errors['short_name'])
                             }
                         })
                     }}
@@ -126,7 +126,7 @@
                                 "description": "For example: 001"
                             },
                             "error": {
-                                "text": ', '.join(errors.get('survey_ref', []))
+                                "text": ', '.join(errors['survey_ref'])
                             }
                         })
                     }}
@@ -141,7 +141,7 @@
                             "borderless": true,
                             "radios": survey_mode_options,
                             "error": {
-                                "text": ', '.join(errors.get('survey_mode', []))
+                                "text": ', '.join(errors['survey_mode'])
                             }
                         })
                     }}
@@ -153,7 +153,7 @@
                     "id": "legal_basis",
                     "borderless": true,
                     "error": {
-                        "text": ', '.join(errors.get('legal_basis', []))
+                        "text": ', '.join(errors['legal_basis'])
                     }
 
                 } %}
