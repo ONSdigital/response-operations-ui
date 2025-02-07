@@ -9,8 +9,6 @@
 {% set page_title = "Sign-In" %}
 
 {% block main %}
-{% set errorUN = { "text": "Email Address is required", "id": 'username_error' } %}
-{% set errorPW = { "text": "Password is required", "id": 'password_error' } %}
     {% with messages = get_flashed_messages(with_categories=true) %}
         {% if messages %}
             {% for category, message in messages %}
@@ -36,13 +34,8 @@
                                 "element": 'ol',
                                 "itemsList": [
                                     {
-                                        "text": errorUN.text,
+                                        "text": "Incorrect email or password",
                                         "url": '#username_error',
-                                        "variants": "inPageLink"
-                                    },
-                                    {
-                                        "text": errorPW.text,
-                                        "url": '#password_error',
                                         "variants": "inPageLink"
                                     },
                                 ]
@@ -65,6 +58,9 @@
             "legend": "Sign in",
             "legendClasses": "ons-u-vh"
         }) -%}
+        {% if failed_authentication or form.username.errors | length > 0 %}
+            {% set errorUN = { "text": "Email Address is required", "id": 'username_error' } %}
+        {% endif %}
             {{
                 onsInput({
                     "id": "username",
@@ -79,7 +75,9 @@
                     "error": errorUN
                 })
             }}
-
+            {% if failed_authentication or form.password.errors | length > 0 %}
+                {% set errorPW = { "text": "Password is required", "id": 'password_error' } %}
+            {% endif %}
             {{
                 onsPassword({
                     "id": "password",
