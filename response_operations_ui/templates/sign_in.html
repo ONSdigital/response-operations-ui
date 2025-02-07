@@ -9,27 +9,45 @@
 {% set page_title = "Sign-In" %}
 
 {% block main %}
+{% set errorUN = { "text": "Email Address is required", "id": 'username_error' } %}
+{% set errorPW = { "text": "Password is required", "id": 'password_error' } %}
     {% with messages = get_flashed_messages(with_categories=true) %}
         {% if messages %}
             {% for category, message in messages %}
                 {% if category == "failed_authentication" or category == "successful_signout" or category == "account_created" or category == "warn" %}
                     {% if category == "failed_authentication" %}
-                        {% set type = "error" %}
+                        {% set variant = "error" %}
                     {% elif category == "warn" %}
-                        {% set type = "warn" %}
+                        {% set variant = "warn" %}
                     {% else %}
-                        {% set type = "success" %}
+                        {% set variant = "success" %}
                     {% endif %}
                     {% call
                         onsPanel({
-                            "type": type,
+                            "variant": variant,
                             "classes": "ons-u-mb-s",
                             "title": message if category == "failed_authentication",
                             "iconType": "check" if category == "successful_signout" else null,
                         })
                     %}
                         {% if category == "failed_authentication" %}
-                            <p><a href="#username" id="try-again-link" class="ons-js-inpagelink">Please try again</a></p>
+                        {{
+                             onsList({
+                                "element": 'ol',
+                                "itemsList": [
+                                    {
+                                        "text": errorUN.text,
+                                        "url": '#username_error',
+                                        "variants": "inPageLink"
+                                    },
+                                    {
+                                        "text": errorPW.text,
+                                        "url": '#password_error',
+                                        "variants": "inPageLink"
+                                    },
+                                ]
+                            })
+                        }}
                         {% elif category == "warn" %}
                             <p id="signed-out-warning">{{ message }}</p>
                         {% else %}
@@ -42,47 +60,7 @@
     {% endwith %}
     <form method="post" class="form">
         {{ form.csrf_token }}
-        {% if form.errors %}
-            {% set errorData = [] %}
-            {% call
-                onsPanel({
-                    title: "This page has 1 error" if form.errors|length == 1 else "There are {{ form.errors|length }} errors on this page",
-                    type: "error"
-                })
-            %}
-                <p>These <strong>must be corrected</strong> to continue.</p>
-                {% for error in form.username.errors %}
-                    {% do errorData.append(
-                        {
-                            "text": error,
-                            "index": true,
-                            "url": "#username",
-                            "classes": "ons-js-inpagelink"
-                        }
-                    ) %}
-                {% endfor %}
-                {% for error in form.password.errors %}
-                    {% do errorData.append(
-                        {
-                            "text": error,
-                            "index": true,
-                            "url": "#password",
-                            "classes": "ons-js-inpagelink"
-                        }
-                    ) %}
-                {% endfor %}
-                {{
-                    onsList({
-                        "classes": "list--bare",
-                        "itemsList": errorData
-                    })
-                }}
-            {% endcall %}
-        {% endif %}
         <h2>Sign in</h2>
-        {% if failed_authentication or form.username.errors | length > 0 %}
-            {% set error = { "text": "Email address is required" } %}
-        {% endif %}
         {%- call onsFieldset({
             "legend": "Sign in",
             "legendClasses": "ons-u-vh"
@@ -98,13 +76,9 @@
                     "attributes": {
                         "required": true
                     },
-                    "error": error
+                    "error": errorUN
                 })
             }}
-
-            {% if failed_authentication or form.password.errors | length > 0 %}
-                {% set error = { "text": "Password is required" } %}
-            {% endif %}
 
             {{
                 onsPassword({
@@ -114,7 +88,7 @@
                         "text": "Password"
                     },
                     "showPasswordText": "Show password",
-                    "error": error
+                    "error": errorPW
                 })
             }}
         {%- endcall -%}
