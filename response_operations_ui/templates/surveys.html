@@ -37,93 +37,68 @@
             </p>
           </div>
       {% endif %}
-  </div>
-  <div class="ons-grid">
-    <div class="ons-grid__col">
-      {% set surveyTableData = {
-          "table_class": 'table--dense',
-          "variants": ['sortable', 'compact', 'responsive'],
-          "sortBy": "Sort by",
-          "ariaAsc": "ascending",
-          "ariaDesc": "descending",
-          "id": 'tbl-surveys',
-          "ths": [
-                    {
-                        "value": "Survey title","ariaSort": "none"
-                    },
-                    {
-                        "value": "Survey ID","ariaSort": "none"
-                    },
-                    {
-                        "value": "Survey mode","ariaSort": "none"
-                    },
-                    {
-                        "value": "Legal basis","ariaSort": "none"
-                    } 
-                  ] if surveyEditPermission else 
-                  [
-                      {
-                          "value": "Survey title","ariaSort": "none"
-                      },
-                      {
-                          "value": "Survey ID","ariaSort": "none"
-                      },
-                      {
-                          "value": "Survey mode","ariaSort": "none"
-                      },
-                      {
-                          "value": "Legal basis","ariaSort": "none"
-                      }
-                  ]
-      } %}
+    </div>
+    <div class="ons-grid">
+        <div class="ons-grid__col">
+            
+        {% set surveyTableHeaders = [
+        {
+            "value": "Survey title", "ariaSort": "none"
+        },
+        {
+            "value": "Survey ID", "ariaSort": "none"
+        },
+        {
+            "value": "Survey mode", "ariaSort": "none"
+        },
+        {
+            "value": "Legal basis", "ariaSort": "none"
+        }
+        ] %}
+    
+        {% if surveyEditPermission %}
+            {% do surveyTableHeaders.append({"value": "Edit Survey"}) %}
+        {% endif %}
+        
+        {% set surveyTableData = {
+            "table_class": 'table--dense',
+            "variants": ['sortable', 'compact', 'responsive'],
+            "sortBy": "Sort by",
+            "ariaAsc": "ascending",
+            "ariaDesc": "descending",
+            "id": 'tbl-surveys',
+            "ths": surveyTableHeaders
+        } %}
         {% set surveyTableDataRows = [] %}
-
         {% for survey in survey_list %}
-            {% do surveyTableDataRows.append(
-            {
-                "tds": [
-                    {
-                        "value": '<a href="/surveys/' + survey.shortName.replace(' ', '') + '" name="survey-link-' + survey.shortName + '">' + survey.longName + '</a><a style="text-decoration: none">' + ' | ' + survey.shortName + '</a>',
-                        "data": "Survey Title"
-                    },
-                    {
-                        "value": survey.surveyRef,
-                        "data": "Survey ID"
-                    },
-                    {
-                        "value": survey.surveyMode.replace('_AND_', ' and '),
-                        "data": "Survey mode"
-                    },
-                    {
-                        "value": survey.legalBasis,
-                        "data": "Legal basis"
-                    },
-                    {
-                        "value": '<a href="' + url_for("surveys_bp.view_survey_details", short_name=survey.shortName) + '">Edit survey</a>',
-                        "class": "ons-u-ta-right",
-                        "dataSort": "2",
-                    } if surveyEditPermission else 
-                        [
-                            {
-                                "value": '<a href="/surveys/' + survey.shortName.replace(' ', '') + '" name="survey-link-' + survey.shortName + '">' + survey.longName + '</a>' + ' | ' + survey.shortName,
-                                "data": "Survey Title"
-                            },
-                            {
-                                "value": survey.surveyRef,
-                                "data": "Survey ID"
-                            },
-                            {
-                                "value": survey.surveyMode.replace('_AND_', ' and '),
-                                "data": "Survey mode"
-                            },
-                            {
-                                "value": survey.legalBasis,
-                                "data": "Legal basis"
-                            }
-                        ]
-                ]
-            }
-            ) %}
+            {% set surveyRow = [
+                {
+                    "value": '<a href="/surveys/' + survey.shortName.replace(' ', '') + '" name="survey-link-' + survey.shortName + '">' + survey.longName + '</a><a style="text-decoration: none">' + ' | ' + survey.shortName + '</a>',
+                    "data": "Survey Title"
+                },
+                {
+                    "value": survey.surveyRef,
+                    "data": "Survey ID"
+                },
+                {
+                    "value": survey.surveyMode.replace('_AND_', ' and '),
+                    "data": "Survey mode"
+                },
+                {
+                    "value": survey.legalBasis,
+                    "data": "Legal basis"
+                }
+            ] %}
+        
+            {% if surveyEditPermission %}
+                {% do surveyRow.append({
+                    "value": '<a href="' + url_for("surveys_bp.view_survey_details", short_name=survey.shortName) + '">Edit survey</a>',
+                    "class": "ons-u-ta-right",
+                    "dataSort": "2"
+                }) %}
+            {% endif %}
+
+            {% do surveyTableDataRows.append({"tds": surveyRow}) %}
         {% endfor %}
 
         {% do surveyTableData | setAttribute("trs", surveyTableDataRows) %}
@@ -131,6 +106,6 @@
         {{
             onsTable(surveyTableData)
         }}
+        </div>
     </div>
-  </div>
 {% endblock %}
