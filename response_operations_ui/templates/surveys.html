@@ -43,21 +43,21 @@
             
         {% set surveyTableHeaders = [
         {
-            "value": "Survey title", "ariaSort": "none"
+            "value": "Survey title",
         },
         {
-            "value": "Survey ID", "ariaSort": "none"
+            "value": "Survey ID",
         },
         {
-            "value": "Survey mode", "ariaSort": "none"
+            "value": "Survey mode",
         },
         {
-            "value": "Legal basis", "ariaSort": "none"
+            "value": "Legal basis",
         }
         ] %}
     
         {% if surveyEditPermission %}
-            {% do surveyTableHeaders.append({"value": "Edit Survey"}) %}
+            {% do surveyTableHeaders.append({"value": "Edit survey"}) %}
         {% endif %}
         
         {% set surveyTableData = {
