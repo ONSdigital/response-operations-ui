@@ -2,7 +2,7 @@
 {% from "components/button/_macro.njk" import onsButton %}
 {% from "components/table/_macro.njk" import onsTable %}
 
-{% set pageTitle = ru.name + " | " + survey.display_name %}
+{% set page_title = ru.name + " | " + survey.display_name %}
 {% set isReportingUnitPermission = hasPermission('reportingunits.edit') %}
 {% set isMessageEditPermission = hasPermission('messages.edit') %}
 {% block main %}
