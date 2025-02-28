@@ -1,5 +1,5 @@
 {% extends "layouts/base.html" %}
-{% from "components/metadata/_macro.njk" import onsMetadata %}
+{% from "components/description-list/_macro.njk" import onsDescriptionList %}
 {% set page_title = "Respondents" %}
 
 {% block main %}
@@ -22,8 +22,8 @@
                     {% endif %}
                 {% endset %}
                 {{
-                    onsMetadata({
-                        "metadataLabel": "Information about the respondant",
+                    onsDescriptionList({
+                        "descriptionListLabel": "Information about the respondant",
                         "termCol": "3",
                         "descriptionCol": "9",
                         "itemsList": [

@@ -29,7 +29,7 @@
             {% endcall %}
         {% endif %}
     {% endwith %}
-    <div class="ons-grid ons-grid--flex ons-grid--between">
+    <div class="ons-grid ons-grid-flex ons-grid-flex--between">
         <div class="ons-grid__col"> 
             {% if breadcrumbs %}
                 {% include 'layouts/configs/breadcrumbs.html' %}
@@ -149,9 +149,9 @@
                             {% set sentDate = 'Unavailable' %}
                         {% endif %}
                         {% if message.unread %}
-                            {% set subjectLink = '<span class="ons-u-fw-b"><a href="' + url_for('messages_bp.view_conversation', thread_id=message.thread_id, page=page, conversation_tab=conversation_tab, ru_ref_filter=ru_ref_filter, business_id_filter=business_id_filter) +'#latest-message" id="message-link-' + loop.index|string + '">' + message.subject + '</a></span>' %}
+                            {% set subjectLink = '<span class="ons-u-fw-b"><a href="' + url_for('messages_bp.view_conversation', thread_id=message.thread_id, page=page, conversation_tab=conversation_tab, ru_ref_filter=ru_ref_filter, business_id_filter=business_id_filter) +'" id="message-link-' + loop.index|string + '">' + message.subject + '</a></span>' %}
                         {% else %}
-                            {% set subjectLink = '<a href="' + url_for('messages_bp.view_conversation', thread_id=message.thread_id, page=page, conversation_tab=conversation_tab, ru_ref_filter=ru_ref_filter, business_id_filter=business_id_filter) +'#latest-message" id="message-link-' + loop.index|string + '">' + message.subject + '</a>' %}
+                            {% set subjectLink = '<a href="' + url_for('messages_bp.view_conversation', thread_id=message.thread_id, page=page, conversation_tab=conversation_tab, ru_ref_filter=ru_ref_filter, business_id_filter=business_id_filter) +'" id="message-link-' + loop.index|string + '">' + message.subject + '</a>' %}
                         {% endif %}
 
                         {% do surveyTableDataRows.append(
