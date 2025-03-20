@@ -335,8 +335,8 @@ class CreateSurveyDetailsForm(FlaskForm):
         ],
     )
     survey_ref = StringField("survey_ref", validators=[InputRequired(message="Please remove spaces in Survey ID")])
-    legal_basis = StringField(validators=[InputRequired("Please select a Legal Basis")])
-    survey_mode = StringField(validators=[InputRequired("Please select a Survey Mode")])
+    legal_basis = StringField("legal_basis", validators=[InputRequired("Please select a Legal Basis")])
+    survey_mode = StringField("survey_mode", validators=[InputRequired("Please select a Survey Mode")])
 
     def __init__(self, form):
         super().__init__(form)

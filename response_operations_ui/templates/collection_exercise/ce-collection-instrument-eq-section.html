@@ -38,7 +38,7 @@ ons-u-mt-l">
                     }
                 })
             }}
-            <div class="ons-grid ons-col-12@m ons-grid--vertical-center ons-grid--no-wrap@m ons-u-mt-m ons-u-mb-m">
+            <div class="ons-grid ons-col-12@m ons-grid-flex--vertical-center ons-grid--no-wrap@m ons-u-mt-m ons-u-mb-m">
                 {% for eq_ci in all_cis_for_survey|batch(3, ' ') %}
                     {% for ci in eq_ci %}
                       {% if ci['form_type'] %}
@@ -72,7 +72,7 @@ ons-u-mt-l">
               {% endfor %}
             </div>
             <p id="ci-checked-count">{{ collection_instruments['EQ']|length }} selected out of {{ all_cis_for_survey|length }} available</p>
-            <div class="ons-u-mt-xxs">
+            <div class="ons-u-mt-2xs">
                 {{
                     onsButton({
                         "text": "Done",
@@ -84,7 +84,7 @@ ons-u-mt-l">
         </form>
     {% endif %}
 </div>
-<div class="ons-grid ons-grid--flex ons-grid--between">
+<div class="ons-grid ons-grid-flex ons-grid-flex--between">
     <div class="ons-grid__col">
         <h1 class="ons-u-fs-l u-mb-xs" name="page-manage-account-title">{{ name }}</h1>
     </div>

@@ -1,6 +1,6 @@
 {% extends "layouts/base.html" %}
 {% from "components/button/_macro.njk" import onsButton %}
-{% from "components/metadata/_macro.njk" import onsMetadata %}
+{% from "components/description-list/_macro.njk" import onsDescriptionList %}
 {% from "components/fieldset/_macro.njk" import onsFieldset %}
 {% from "components/input/_macro.njk" import onsInput %}
 
@@ -12,7 +12,7 @@
             <h1 class="ons-u-fs-xl">Close conversation</h1>
             {% if category == 'SURVEY' %}
                 {{
-                    onsMetadata({
+                    onsDescriptionList({
                         "termCol": "2",
                         "descriptionCol": "10",
                         "itemsList": [
@@ -53,7 +53,7 @@
                 }}
             {% else %}
                 {{
-                    onsMetadata({
+                    onsDescriptionList({
                         "termCol": "2",
                         "descriptionCol": "10",
                         "itemsList": [
@@ -90,7 +90,7 @@
                   }}
               </form>
             {% endif %}
-              <p><a href="{{ url_for('messages_bp.view_conversation', thread_id=thread_id, page=page, conversation_tab=conversation_tab, ru_ref_filter=ru_ref_filter, business_id_filter=business_id_filter)}}#latest-message">Return to messages</a></p>
+              <p><a href="{{ url_for('messages_bp.view_conversation', thread_id=thread_id, page=page, conversation_tab=conversation_tab, ru_ref_filter=ru_ref_filter, business_id_filter=business_id_filter)}}">Return to messages</a></p>
           </div>
     </div>
 {% endblock %}
