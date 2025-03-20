@@ -42,7 +42,6 @@ MarkupSafe = "*"
 WTForms = "*"
 jwcrypto = "*"
 email-validator = "*"
-gevent = "*"
 
 [dev-packages]
 black = "*"
