@@ -5,16 +5,18 @@ import os
 import redis
 from flask import Flask, flash, redirect, session, url_for
 from flask_login import LoginManager
-from flask_session import Session
 from flask_talisman import Talisman
 from flask_wtf.csrf import CSRFError, CSRFProtect
 from jinja2 import ChainableUndefined
 from structlog import wrap_logger
 
 from config import Config
+from flask_session import Session
 from response_operations_ui.common.jinja_filters import filter_blueprint
 from response_operations_ui.controllers.uaa_controller import user_has_permission
 from response_operations_ui.logger_config import logger_initial_config
+from response_operations_ui.oicd.gcp_oidc import OIDCCredentialsServiceGCP
+from response_operations_ui.oicd.local_oidc import OIDCCredentialsServiceLocal
 from response_operations_ui.user import User
 from response_operations_ui.views import setup_blueprints
 
@@ -149,5 +151,29 @@ def create_app(config_name=None):
     Session(app)
 
     setup_blueprints(app)
+    setup_oidc(app)
 
     return app
+
+
+class MissingEnvironmentVariable(Exception):
+    pass
+
+
+def setup_oidc(application):
+    def client_ids_exist():
+        if not application.config.get("CIR_OAUTH2_CLIENT_ID"):
+            raise MissingEnvironmentVariable("Setting CIR_OAUTH2_CLIENT_ID Missing")
+
+    if not (oidc_token_backend := application.config.get("OIDC_TOKEN_BACKEND")):
+        raise MissingEnvironmentVariable("Setting OIDC_TOKEN_BACKEND Missing")
+
+    if oidc_token_backend == "gcp":
+        client_ids_exist()
+        application.get["oidc_credentials_service"] = OIDCCredentialsServiceGCP()
+
+    elif oidc_token_backend == "local":
+        application.get["oidc_credentials_service"] = OIDCCredentialsServiceLocal()
+
+    else:
+        raise NotImplementedError("Unknown OIDC_TOKEN_BACKEND")
