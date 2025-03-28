@@ -108,6 +108,8 @@ def create_app(config_name=None):
     login_manager.init_app(app)
     login_manager.login_view = "sign_in_bp.sign_in"
 
+    app.oidc_credentials_service = ""
+
     @app.errorhandler(CSRFError)
     def handle_csrf_error(e):
         flash("Your session timed out", category="info")
@@ -163,17 +165,15 @@ class MissingEnvironmentVariable(Exception):
 def setup_oidc(application):
     def client_ids_exist():
         if not application.config.get("CIR_OAUTH2_CLIENT_ID"):
-            raise MissingEnvironmentVariable("Setting CIR_OAUTH2_CLIENT_ID Missing")
+            raise MissingEnvironmentVariable("CIR_OAUTH2_CLIENT_ID Missing")
 
     if not (oidc_token_backend := application.config.get("OIDC_TOKEN_BACKEND")):
-        raise MissingEnvironmentVariable("Setting OIDC_TOKEN_BACKEND Missing")
+        raise MissingEnvironmentVariable("OIDC_TOKEN_BACKEND Missing")
 
     if oidc_token_backend == "gcp":
         client_ids_exist()
-        application.get["oidc_credentials_service"] = OIDCCredentialsServiceGCP()
-
+        application.oidc_credentials_service = OIDCCredentialsServiceGCP()
     elif oidc_token_backend == "local":
-        application.get["oidc_credentials_service"] = OIDCCredentialsServiceLocal()
-
+        application.oidc_credentials_service = OIDCCredentialsServiceLocal()
     else:
         raise NotImplementedError("Unknown OIDC_TOKEN_BACKEND")
