@@ -108,7 +108,7 @@ def create_app(config_name=None):
     login_manager.init_app(app)
     login_manager.login_view = "sign_in_bp.sign_in"
 
-    app.oicd = {}
+    app.oidc = {}
 
     @app.errorhandler(CSRFError)
     def handle_csrf_error(e):
@@ -172,8 +172,8 @@ def setup_oidc(application):
 
     if oidc_token_backend == "gcp":
         client_ids_exist()
-        application.oicd["oidc_credentials_service"] = OIDCCredentialsServiceGCP()
+        application.oidc["oidc_credentials_service"] = OIDCCredentialsServiceGCP()
     elif oidc_token_backend == "local":
-        application.oicd["oidc_credentials_service"] = OIDCCredentialsServiceLocal()
+        application.oidc["oidc_credentials_service"] = OIDCCredentialsServiceLocal()
     else:
         raise NotImplementedError("Unknown OIDC_TOKEN_BACKEND")
