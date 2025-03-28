@@ -9,6 +9,7 @@ from response_operations_ui.common.credentials import fetch_and_apply_oidc_crede
 
 logger = wrap_logger(logging.getLogger(__name__))
 
+
 def get_cir_service_status():
     session = requests.Session()
     fetch_and_apply_oidc_credentials(session=session, client_id=app.config["CIR_OAUTH2_CLIENT_ID"])
