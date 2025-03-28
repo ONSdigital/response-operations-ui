@@ -40,12 +40,12 @@ from response_operations_ui.common.uaa import verify_permission
 from response_operations_ui.common.validators import valid_date_for_event
 from response_operations_ui.contexts.collection_exercise import build_ce_context
 from response_operations_ui.controllers import (
+    cir_controller,
     collection_exercise_controllers,
     collection_instrument_controllers,
     party_controller,
     sample_controllers,
     survey_controllers,
-    cir_controller
 )
 from response_operations_ui.controllers.uaa_controller import user_has_permission
 from response_operations_ui.exceptions.exceptions import ApiError
