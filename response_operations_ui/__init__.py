@@ -15,8 +15,8 @@ from flask_session import Session
 from response_operations_ui.common.jinja_filters import filter_blueprint
 from response_operations_ui.controllers.uaa_controller import user_has_permission
 from response_operations_ui.logger_config import logger_initial_config
-from response_operations_ui.oicd.gcp_oidc import OIDCCredentialsServiceGCP
-from response_operations_ui.oicd.local_oidc import OIDCCredentialsServiceLocal
+from response_operations_ui.oidc.gcp_oidc import OIDCCredentialsServiceGCP
+from response_operations_ui.oidc.local_oidc import OIDCCredentialsServiceLocal
 from response_operations_ui.user import User
 from response_operations_ui.views import setup_blueprints
 

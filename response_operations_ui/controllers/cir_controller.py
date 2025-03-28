@@ -14,3 +14,4 @@ logger = wrap_logger(logging.getLogger(__name__))
 def get_cir_service_status():
     logger.info("Getting CIR service status")
     # fetch_and_apply_oidc_credentials(session=session, client_id=Config.CIR_OAUTH2_CLIENT_ID)
+    return {"status": 200}

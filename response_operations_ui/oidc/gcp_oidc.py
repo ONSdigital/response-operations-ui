@@ -7,7 +7,7 @@ from google.oauth2.id_token import fetch_id_token_credentials
 from structlog import wrap_logger
 
 from config import Config
-from response_operations_ui.oicd.oidc import OIDCCredentialsService
+from response_operations_ui.oidc.oidc import OIDCCredentialsService
 
 TTL = Config.OIDC_TOKEN_VALIDITY_IN_SECONDS - Config.OIDC_TOKEN_LEEWAY_IN_SECONDS
 

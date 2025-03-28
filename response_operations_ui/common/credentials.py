@@ -1,7 +1,7 @@
 import requests
 from flask import current_app
 
-from response_operations_ui.oicd.oidc import OIDCCredentialsService
+from response_operations_ui.oidc.oidc import OIDCCredentialsService
 
 
 def fetch_and_apply_oidc_credentials(session: requests.Session, client_id: str) -> None:
