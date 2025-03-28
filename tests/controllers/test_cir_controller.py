@@ -17,7 +17,7 @@ class TestCaseControllers(unittest.TestCase):
     @responses.activate
     def test_get_cir_service_status_with_gcp_authentication(self):
         with self.app.app_context():
-            current_app.config["CIR_API_BASE_URL"] = TEST_CIR_URL
+            current_app.config["CIR_API_URL"] = TEST_CIR_URL
 
             responses.add(
                 responses.GET,

@@ -106,10 +106,10 @@ class Config(object):
     TEST_MODE = strtobool(os.getenv("TEST_MODE", "False"))
     WTF_CSRF_ENABLED = strtobool(os.getenv("WTF_CSRF_ENABLED", "True"))
 
-    CIR_API_BASE_URL = os.getenv("CIR_API_BASE_URL")
     OIDC_TOKEN_BACKEND = os.getenv("OIDC_TOKEN_BACKEND")
     OIDC_TOKEN_VALIDITY_IN_SECONDS = int(os.getenv("OIDC_TOKEN_VALIDITY_IN_SECONDS", "3600"))
     OIDC_TOKEN_LEEWAY_IN_SECONDS = int(os.getenv("OIDC_TOKEN_LEEWAY_IN_SECONDS", "300"))
+    CIR_API_URL = CIR_API_URL = os.getenv("CIR_API_URL")
     CIR_OAUTH2_CLIENT_ID = os.getenv("CIR_OAUTH2_CLIENT_ID")
 
 
@@ -160,7 +160,9 @@ class DevelopmentConfig(Config):
     OIDC_TOKEN_BACKEND = "local"
     OIDC_TOKEN_VALIDITY_IN_SECONDS = "3600"
     OIDC_TOKEN_LEEWAY_IN_SECONDS = "300"
+    CIR_API_URL = "http://localhost:5052"
     CIR_OAUTH2_CLIENT_ID = "dummy_client_id"
+    CIR_API_URL = CIR_API_URL = os.getenv("CIR_API_URL", "http://localhost:5052")
 
 
 class TestingConfig(DevelopmentConfig):
