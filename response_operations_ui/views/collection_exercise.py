@@ -45,6 +45,7 @@ from response_operations_ui.controllers import (
     party_controller,
     sample_controllers,
     survey_controllers,
+    cir_controller
 )
 from response_operations_ui.controllers.uaa_controller import user_has_permission
 from response_operations_ui.exceptions.exceptions import ApiError
@@ -1104,3 +1105,10 @@ def _add_collection_instrument(short_name, period):
 
     form.formtype.data = ""  # Reset the value on successful submission
     return get_view_sample_ci(short_name, period)
+
+
+@collection_exercise_bp.route("/cir", methods=["GET"])
+@login_required
+def get_cir_service_status():
+    logger.info("Get CIR service status")
+    return cir_controller.get_cir_service_status()
