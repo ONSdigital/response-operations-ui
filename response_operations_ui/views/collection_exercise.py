@@ -19,6 +19,7 @@ from flask import (
     url_for,
 )
 from flask_login import login_required
+from requests import HTTPError
 from structlog import wrap_logger
 from wtforms import ValidationError
 
@@ -1111,4 +1112,15 @@ def _add_collection_instrument(short_name, period):
 @login_required
 def get_cir_service_status():
     logger.info("Get CIR service status")
-    return cir_controller.get_cir_service_status()
+    error_message = None
+    response_content = None
+    try:
+        response_content = cir_controller.get_cir_service_status()
+    except HTTPError as e:
+        error_message = str(e)
+
+    return render_template(
+        "collection_exercise/cir.html",
+        error_message=error_message,
+        response_content=response_content,
+    )

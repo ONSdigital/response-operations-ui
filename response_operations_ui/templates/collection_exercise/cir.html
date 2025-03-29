@@ -1,0 +1,23 @@
+{% extends "layouts/base.html" %}
+{% set page_title = "CIR Service Page - ONS Business Surveys" %}
+
+{% block main %}
+    <h1 class="ons-u-mt-m">CIR Service Page</h1>
+    {% if error_message %}
+        {% call
+            onsPanel({
+                "type": "error",
+                "classes": "ons-u-mb-s",
+            })
+        %}
+            {{ error_message }}
+        {% endcall %}
+    {% endif %}
+
+    <p>This temporary page renders the response context from the CIR status endpoint.</p>
+
+    {% if response_content %}
+       <p>{{ response_content }}</p>
+    {% endif %}
+
+{% endblock main %}
