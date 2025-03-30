@@ -19,7 +19,6 @@ from flask import (
     url_for,
 )
 from flask_login import login_required
-from requests import HTTPError
 from structlog import wrap_logger
 from wtforms import ValidationError
 
@@ -1116,7 +1115,7 @@ def get_cir_service_status():
     response_content = None
     try:
         response_content = cir_controller.get_cir_service_status()
-    except HTTPError as e:
+    except ApiError as e:
         error_message = str(e)
 
     return render_template(

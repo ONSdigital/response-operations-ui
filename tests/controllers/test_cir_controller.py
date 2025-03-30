@@ -1,12 +1,14 @@
 import json
 import unittest
+from unittest.mock import patch
 
+import requests
 import responses
 from flask import current_app
-from requests import HTTPError
 
 from response_operations_ui import create_app
 from response_operations_ui.controllers.cir_controller import get_cir_service_status
+from response_operations_ui.exceptions.exceptions import ExternalApiError
 
 TEST_CIR_URL = "http://test.domain"
 
@@ -14,7 +16,9 @@ TEST_CIR_URL = "http://test.domain"
 class TestCIRControllers(unittest.TestCase):
     def setUp(self):
         self.app = create_app("TestingConfig")
+        self.app.testing = True
         self.client = self.app.test_client()
+        responses.reset()  # Clear responses before each test
 
     @responses.activate
     def test_get_cir_service_status(self):
@@ -32,8 +36,34 @@ class TestCIRControllers(unittest.TestCase):
             response_json = get_cir_service_status()
             self.assertEqual(response_json, {"status": "ok", "service": "cir"})
 
+    @patch("requests.Session.get")
+    def test_ApiError_thrown_when_connection_error(self, mock_get):
+        with self.app.app_context():
+            current_app.config["CIR_API_URL"] = TEST_CIR_URL
+
+            mock_get.side_effect = requests.ConnectionError("Connection error")
+
+            with self.assertRaises(ExternalApiError) as context:
+                get_cir_service_status()
+            self.assertIn("CIR0001", context.exception.error_code)
+
     @responses.activate
-    def test_get_cir_service_status_thows_exception_when_not_json(self):
+    def test_ApiError_thrown_when_not_200(self):
+        with self.app.app_context():
+            current_app.config["CIR_API_URL"] = TEST_CIR_URL
+
+            responses.add(
+                responses.GET,
+                f"{TEST_CIR_URL}/status",
+                status=401,
+            )
+
+            with self.assertRaises(ExternalApiError) as context:
+                get_cir_service_status()
+            self.assertIn("CIR0002", context.exception.error_code)
+
+    @responses.activate
+    def test_ApiError_thrown_when_content_not_json(self):
         with self.app.app_context():
             current_app.config["CIR_API_URL"] = TEST_CIR_URL
 
@@ -41,23 +71,27 @@ class TestCIRControllers(unittest.TestCase):
                 responses.GET,
                 f"{TEST_CIR_URL}/status",
                 status=200,
-                body="not json despite content_type saying it is",
+                body="not_json_despite_content_type_saying_it_is",
                 content_type="application/json",
             )
 
-            with self.assertRaises(HTTPError):
+            with self.assertRaises(ExternalApiError) as context:
                 get_cir_service_status()
+            self.assertIn("CIR0003", context.exception.error_code)
 
     @responses.activate
-    def test_get_cir_service_status_thows_exception_when_not_200(self):
+    def test_ApiError_thrown_when_content_type_not_application_json(self):
         with self.app.app_context():
             current_app.config["CIR_API_URL"] = TEST_CIR_URL
 
             responses.add(
                 responses.GET,
                 f"{TEST_CIR_URL}/status",
-                status=404,
+                status=200,
+                body="this_is_plain_text",
+                content_type="text/plain",
             )
 
-            with self.assertRaises(HTTPError):
+            with self.assertRaises(ExternalApiError) as context:
                 get_cir_service_status()
+            self.assertIn("CIR0004", context.exception.error_code)
