@@ -65,7 +65,7 @@ notify:
   deleteUserTemplate: delete_user_id
 
 cir:
-  enabled: true
+  enabled: false
   apiUrl: http://localhost:5052
   oauth2ClientId: dummy_client_id
 
