@@ -5,6 +5,7 @@ from unittest.mock import patch
 import requests
 import responses
 from flask import current_app
+from google.auth.exceptions import GoogleAuthError
 
 from response_operations_ui import create_app
 from response_operations_ui.controllers.cir_controller import get_cir_service_status
@@ -35,6 +36,17 @@ class TestCIRControllers(unittest.TestCase):
 
             response_json = get_cir_service_status()
             self.assertEqual(response_json, {"status": "OK", "version": "development"})
+
+    @patch("response_operations_ui.controllers.cir_controller.fetch_and_apply_oidc_credentials")
+    def test_GoogleAuthError_thrown_when_fetching_oidc_credentials(self, mock_fetch_and_apply_oidc_credentials):
+        with self.app.app_context():
+            current_app.config["CIR_API_URL"] = TEST_CIR_URL
+
+            mock_fetch_and_apply_oidc_credentials.side_effect = GoogleAuthError("OIDC credentials error")
+
+            with self.assertRaises(ExternalApiError) as context:
+                get_cir_service_status()
+            self.assertIn("CIR0005", context.exception.error_code)
 
     @patch("requests.Session.get")
     def test_ApiError_thrown_when_connection_error(self, mock_get):

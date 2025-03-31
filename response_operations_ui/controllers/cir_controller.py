@@ -3,6 +3,7 @@ import logging
 
 import requests
 from flask import current_app as app
+from google.auth.exceptions import GoogleAuthError
 from structlog import wrap_logger
 
 from response_operations_ui.common.credentials import fetch_and_apply_oidc_credentials
@@ -14,9 +15,15 @@ logger = wrap_logger(logging.getLogger(__name__))
 def get_cir_service_status():
 
     session = requests.Session()
-    fetch_and_apply_oidc_credentials(session=session, client_id=app.config["CIR_OAUTH2_CLIENT_ID"])
+    client_id = app.config["CIR_OAUTH2_CLIENT_ID"]
     request_url = app.config["CIR_API_URL"] + "/status"
     logger.debug("Get service status", session_headers=str(session.headers), request_url=request_url)
+
+    try:
+        fetch_and_apply_oidc_credentials(session=session, client_id=client_id)
+    except GoogleAuthError as e:
+        logger.error("Fetching and applying OIDC credentials", client_id=client_id, error=str(e))
+        raise ExternalApiError(None, "CIR0005: Fetching OIDC credentials error: " + str(e))
 
     try:
         response = session.get(request_url)
