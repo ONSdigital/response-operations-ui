@@ -16,7 +16,7 @@ def get_cir_service_status():
     session = requests.Session()
     fetch_and_apply_oidc_credentials(session=session, client_id=app.config["CIR_OAUTH2_CLIENT_ID"])
     request_url = app.config["CIR_API_URL"] + "/status"
-    logger.debug("Get CIR service status", session_headers=str(session.headers), request_url=request_url)
+    logger.debug("Get service status", session_headers=str(session.headers), request_url=request_url)
 
     try:
         response = session.get(request_url)
@@ -42,7 +42,6 @@ def get_cir_service_status():
             "Service returned unexpected content-type",
             content_type=response.headers.get("content-type"),
             request_url=request_url,
-            service="cir",
         )
         raise ExternalApiError(
             response,
