@@ -29,12 +29,12 @@ class TestCIRControllers(unittest.TestCase):
                 responses.GET,
                 f"{TEST_CIR_URL}/status",
                 status=200,
-                body=json.dumps({"status": "ok", "service": "cir"}).encode("utf-8"),
+                body=json.dumps({"status": "OK", "version": "development"}).encode("utf-8"),
                 content_type="application/json",
             )
 
             response_json = get_cir_service_status()
-            self.assertEqual(response_json, {"status": "ok", "service": "cir"})
+            self.assertEqual(response_json, {"status": "OK", "version": "development"})
 
     @patch("requests.Session.get")
     def test_ApiError_thrown_when_connection_error(self, mock_get):
