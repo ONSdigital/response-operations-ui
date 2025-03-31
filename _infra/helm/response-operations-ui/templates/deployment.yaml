@@ -234,6 +234,12 @@ spec:
           - name: WTF_CSRF_ENABLED
             value: "{{- if .Values.test.enabled -}}False{{- else -}}True{{- end -}}"
           - name: COMPLETE_TO_NOT_STARTED_WAIT_TIME
-            value: "{{ .Values.admin.completeToNotStartedWaitTime }}"
+            value: "{{ .Values.admin.completeToNotStartedWaitTime }}"            
+          - name: CIR_ENABLED
+            value: {{ .Values.cir.enabled }}
+          - name: CIR_API_URL
+            value: {{ .Values.cir.apiUrl }}
+          - name: CIR_OAUTH2_CLIENT_ID
+            value: {{ .Values.cir.oauth2ClientId }}     
           resources:
             {{ toYaml .Values.resources | nindent 12 }}
