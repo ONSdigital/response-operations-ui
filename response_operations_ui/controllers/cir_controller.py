@@ -12,19 +12,22 @@ logger = wrap_logger(logging.getLogger(__name__))
 
 
 def get_cir_service_status():
+
     session = requests.Session()
     fetch_and_apply_oidc_credentials(session=session, client_id=app.config["CIR_OAUTH2_CLIENT_ID"])
-
-    logger.debug("Get CIR service status", session_headers=str(session.headers))
+    request_url = app.config["CIR_API_URL"] + "/status"
+    logger.debug("Get CIR service status", session_headers=str(session.headers), request_url=request_url)
 
     try:
-        response = session.get(app.config["CIR_API_URL"] + "/status")
+        response = session.get(request_url)
     except requests.ConnectionError as e:
-        logger.error("CIR service connection error", error=str(e))
+        logger.error("Service connection error", error=str(e), request_url=request_url)
         raise ExternalApiError(None, "CIR0001: CIR service connection error: " + str(e))
 
     if response.status_code != 200:
-        logger.error("CIR service returned unexpected status code", status_code=str(response.status_code))
+        logger.error(
+            "Service returned unexpected status code", status_code=str(response.status_code), request_url=request_url
+        )
         raise ExternalApiError(
             response, "CIR0002: CIR service returned unexpected status code: " + str(response.status_code)
         )
@@ -32,10 +35,15 @@ def get_cir_service_status():
         try:
             return json.loads(response.text)
         except json.JSONDecodeError as e:
-            logger.error("CIR service returned unexpected content in response", error=str(e))
+            logger.error("Service returned unexpected content in response", error=str(e), request_url=request_url)
             raise ExternalApiError(response, "CIR0003: CIR service returned unexpected content in response: " + str(e))
     else:
-        logger.error("CIR service returned unexpected content-type", content_type=response.headers.get("content-type"))
+        logger.error(
+            "Service returned unexpected content-type",
+            content_type=response.headers.get("content-type"),
+            request_url=request_url,
+            service="cir",
+        )
         raise ExternalApiError(
             response,
             "CIR0004: CIR service returned unexpected content-type: " + str(response.headers.get("content-type")),
