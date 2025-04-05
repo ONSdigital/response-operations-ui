@@ -48,7 +48,8 @@ from response_operations_ui.controllers import (
     survey_controllers,
 )
 from response_operations_ui.controllers.uaa_controller import user_has_permission
-from response_operations_ui.exceptions.exceptions import ApiError
+from response_operations_ui.exceptions.error_codes import get_error_code_message
+from response_operations_ui.exceptions.exceptions import ApiError, ExternalApiError
 from response_operations_ui.forms import (
     CreateCollectionExerciseDetailsForm,
     EditCollectionExercisePeriodDescriptionForm,
@@ -1115,8 +1116,13 @@ def get_cir_service_status():
     response_content = None
     try:
         response_content = cir_controller.get_cir_service_status()
-    except ApiError as e:
-        error_message = str(e)
+    except ExternalApiError as e:
+        error_message = (
+            f"Error: {e.error_code.value} "
+            f"{get_error_code_message(e.error_code)} "
+            f"Service: {e.target_service} "
+            f"Cause Exception: {e.__cause__ if e.__cause__ else 'None'}"
+        )
 
     return render_template(
         "collection_exercise/cir.html",

@@ -9,6 +9,7 @@ from google.auth.exceptions import GoogleAuthError
 
 from response_operations_ui import create_app
 from response_operations_ui.controllers.cir_controller import get_cir_service_status
+from response_operations_ui.exceptions.error_codes import ErrorCode
 from response_operations_ui.exceptions.exceptions import ExternalApiError
 
 TEST_CIR_URL = "http://test.domain"
@@ -46,7 +47,7 @@ class TestCIRControllers(unittest.TestCase):
 
             with self.assertRaises(ExternalApiError) as context:
                 get_cir_service_status()
-            self.assertIn("CIR0005", context.exception.error_code)
+            self.assertEqual(context.exception.error_code, ErrorCode.OIDC_CREDENTIALS_ERROR)
 
     @patch("requests.Session.get")
     def test_ApiError_thrown_when_connection_error(self, mock_get):
@@ -57,7 +58,7 @@ class TestCIRControllers(unittest.TestCase):
 
             with self.assertRaises(ExternalApiError) as context:
                 get_cir_service_status()
-            self.assertIn("CIR0001", context.exception.error_code)
+            self.assertEqual(context.exception.error_code, ErrorCode.CONNECTION_ERROR)
 
     @responses.activate
     def test_ApiError_thrown_when_not_200(self):
@@ -72,7 +73,7 @@ class TestCIRControllers(unittest.TestCase):
 
             with self.assertRaises(ExternalApiError) as context:
                 get_cir_service_status()
-            self.assertIn("CIR0002", context.exception.error_code)
+            self.assertEqual(context.exception.error_code, ErrorCode.UNEXPECTED_STATUS_CODE)
 
     @responses.activate
     def test_ApiError_thrown_when_content_not_json(self):
@@ -89,7 +90,7 @@ class TestCIRControllers(unittest.TestCase):
 
             with self.assertRaises(ExternalApiError) as context:
                 get_cir_service_status()
-            self.assertIn("CIR0003", context.exception.error_code)
+            self.assertEqual(context.exception.error_code, ErrorCode.UNEXPECTED_CONTENT)
 
     @responses.activate
     def test_ApiError_thrown_when_content_type_not_application_json(self):
@@ -106,4 +107,4 @@ class TestCIRControllers(unittest.TestCase):
 
             with self.assertRaises(ExternalApiError) as context:
                 get_cir_service_status()
-            self.assertIn("CIR0004", context.exception.error_code)
+            self.assertEqual(context.exception.error_code, ErrorCode.UNEXPECTED_CONTENT_TYPE)

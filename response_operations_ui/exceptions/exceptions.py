@@ -6,9 +6,10 @@ class ApiError(Exception):
 
 
 class ExternalApiError(ApiError):
-    def __init__(self, response=None, error_code=None):
+    def __init__(self, response=None, error_code=None, target_service=None):
         self.response = response
         self.error_code = error_code
+        self.target_service = target_service
         if response:
             self.url = response.url
             self.status_code = response.status_code
