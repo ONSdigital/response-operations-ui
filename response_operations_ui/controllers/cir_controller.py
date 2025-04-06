@@ -15,14 +15,17 @@ from response_operations_ui.exceptions.exceptions import ExternalApiError
 
 logger = wrap_logger(logging.getLogger(__name__))
 
-TARGET_SERVICE = "CIR"
+TARGET_SERVICE = "cir"
 
 
 def get_cir_service_status():
+    return _get_response_content(app.config["CIR_API_URL"] + "/status")
+
+
+def _get_response_content(request_url):
     session = requests.Session()
     client_id = app.config["CIR_OAUTH2_CLIENT_ID"]
-    request_url = app.config["CIR_API_URL"] + "/status"
-    logger.debug("Get service status", session_headers=str(session.headers), request_url=request_url)
+    logger.debug(f"{TARGET_SERVICE} service request", session_headers=str(session.headers), request_url=request_url)
 
     try:
         fetch_and_apply_oidc_credentials(session=session, client_id=client_id)
@@ -54,7 +57,16 @@ def get_cir_service_status():
             target_service=TARGET_SERVICE,
         )
         raise ExternalApiError(response, ErrorCode.API_UNEXPECTED_STATUS_CODE, TARGET_SERVICE)
-    if response.headers.get("content-type") == "application/json":
+
+    if response.headers.get("content-type") != "application/json":
+        logger.error(
+            get_error_code_message(ErrorCode.API_UNEXPECTED_CONTENT_TYPE),
+            content_type=response.headers.get("content-type"),
+            request_url=request_url,
+            target_service=TARGET_SERVICE,
+        )
+        raise ExternalApiError(response, ErrorCode.API_UNEXPECTED_CONTENT_TYPE, TARGET_SERVICE)
+    else:
         try:
             return json.loads(response.text)
         except json.JSONDecodeError as e:
@@ -65,11 +77,3 @@ def get_cir_service_status():
                 target_service=TARGET_SERVICE,
             )
             raise ExternalApiError(response, ErrorCode.API_UNEXPECTED_CONTENT, TARGET_SERVICE) from e
-    else:
-        logger.error(
-            get_error_code_message(ErrorCode.API_UNEXPECTED_CONTENT_TYPE),
-            content_type=response.headers.get("content-type"),
-            request_url=request_url,
-            target_service=TARGET_SERVICE,
-        )
-        raise ExternalApiError(response, ErrorCode.API_UNEXPECTED_CONTENT_TYPE, TARGET_SERVICE)
