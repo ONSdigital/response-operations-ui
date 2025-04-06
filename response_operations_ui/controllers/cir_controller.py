@@ -28,48 +28,48 @@ def get_cir_service_status():
         fetch_and_apply_oidc_credentials(session=session, client_id=client_id)
     except GoogleAuthError as e:
         logger.error(
-            get_error_code_message(ErrorCode.OIDC_CREDENTIALS_ERROR),
+            get_error_code_message(ErrorCode.API_OIDC_CREDENTIALS_ERROR),
             client_id=client_id,
             error=str(e),
             target_service=TARGET_SERVICE,
         )
-        raise ExternalApiError(None, ErrorCode.OIDC_CREDENTIALS_ERROR, TARGET_SERVICE) from e
+        raise ExternalApiError(None, ErrorCode.API_OIDC_CREDENTIALS_ERROR, TARGET_SERVICE) from e
 
     try:
         response = session.get(request_url)
     except requests.ConnectionError as e:
         logger.error(
-            get_error_code_message(ErrorCode.CONNECTION_ERROR),
+            get_error_code_message(ErrorCode.API_CONNECTION_ERROR),
             error=str(e),
             request_url=request_url,
             target_service=TARGET_SERVICE,
         )
-        raise ExternalApiError(None, ErrorCode.CONNECTION_ERROR, TARGET_SERVICE) from e
+        raise ExternalApiError(None, ErrorCode.API_CONNECTION_ERROR, TARGET_SERVICE) from e
 
     if response.status_code != 200:
         logger.error(
-            get_error_code_message(ErrorCode.UNEXPECTED_STATUS_CODE),
+            get_error_code_message(ErrorCode.API_UNEXPECTED_STATUS_CODE),
             status_code=str(response.status_code),
             request_url=request_url,
             target_service=TARGET_SERVICE,
         )
-        raise ExternalApiError(response, ErrorCode.UNEXPECTED_STATUS_CODE, TARGET_SERVICE)
+        raise ExternalApiError(response, ErrorCode.API_UNEXPECTED_STATUS_CODE, TARGET_SERVICE)
     if response.headers.get("content-type") == "application/json":
         try:
             return json.loads(response.text)
         except json.JSONDecodeError as e:
             logger.error(
-                get_error_code_message(ErrorCode.UNEXPECTED_CONTENT),
+                get_error_code_message(ErrorCode.API_UNEXPECTED_CONTENT),
                 error=str(e),
                 request_url=request_url,
                 target_service=TARGET_SERVICE,
             )
-            raise ExternalApiError(response, ErrorCode.UNEXPECTED_CONTENT, TARGET_SERVICE) from e
+            raise ExternalApiError(response, ErrorCode.API_UNEXPECTED_CONTENT, TARGET_SERVICE) from e
     else:
         logger.error(
-            get_error_code_message(ErrorCode.UNEXPECTED_CONTENT_TYPE),
+            get_error_code_message(ErrorCode.API_UNEXPECTED_CONTENT_TYPE),
             content_type=response.headers.get("content-type"),
             request_url=request_url,
             target_service=TARGET_SERVICE,
         )
-        raise ExternalApiError(response, ErrorCode.UNEXPECTED_CONTENT_TYPE, TARGET_SERVICE)
+        raise ExternalApiError(response, ErrorCode.API_UNEXPECTED_CONTENT_TYPE, TARGET_SERVICE)

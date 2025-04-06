@@ -47,7 +47,7 @@ class TestCIRControllers(unittest.TestCase):
 
             with self.assertRaises(ExternalApiError) as context:
                 get_cir_service_status()
-            self.assertEqual(context.exception.error_code, ErrorCode.OIDC_CREDENTIALS_ERROR)
+            self.assertEqual(context.exception.error_code, ErrorCode.API_OIDC_CREDENTIALS_ERROR)
 
     @patch("requests.Session.get")
     def test_ApiError_thrown_when_connection_error(self, mock_get):
@@ -58,7 +58,7 @@ class TestCIRControllers(unittest.TestCase):
 
             with self.assertRaises(ExternalApiError) as context:
                 get_cir_service_status()
-            self.assertEqual(context.exception.error_code, ErrorCode.CONNECTION_ERROR)
+            self.assertEqual(context.exception.error_code, ErrorCode.API_CONNECTION_ERROR)
 
     @responses.activate
     def test_ApiError_thrown_when_not_200(self):
@@ -73,7 +73,7 @@ class TestCIRControllers(unittest.TestCase):
 
             with self.assertRaises(ExternalApiError) as context:
                 get_cir_service_status()
-            self.assertEqual(context.exception.error_code, ErrorCode.UNEXPECTED_STATUS_CODE)
+            self.assertEqual(context.exception.error_code, ErrorCode.API_UNEXPECTED_STATUS_CODE)
 
     @responses.activate
     def test_ApiError_thrown_when_content_not_json(self):
@@ -90,7 +90,7 @@ class TestCIRControllers(unittest.TestCase):
 
             with self.assertRaises(ExternalApiError) as context:
                 get_cir_service_status()
-            self.assertEqual(context.exception.error_code, ErrorCode.UNEXPECTED_CONTENT)
+            self.assertEqual(context.exception.error_code, ErrorCode.API_UNEXPECTED_CONTENT)
 
     @responses.activate
     def test_ApiError_thrown_when_content_type_not_application_json(self):
@@ -107,4 +107,4 @@ class TestCIRControllers(unittest.TestCase):
 
             with self.assertRaises(ExternalApiError) as context:
                 get_cir_service_status()
-            self.assertEqual(context.exception.error_code, ErrorCode.UNEXPECTED_CONTENT_TYPE)
+            self.assertEqual(context.exception.error_code, ErrorCode.API_UNEXPECTED_CONTENT_TYPE)
