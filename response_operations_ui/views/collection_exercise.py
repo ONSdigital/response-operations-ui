@@ -190,6 +190,12 @@ def view_collection_exercise(short_name, period):
     )
 
 
+def _validate_exercise(exercise: dict, period: str, short_name: str):
+    if not exercise:
+        logger.error("Failed to find collection exercise by period", short_name=short_name, period=period)
+        abort(404)
+
+
 def _delete_sample_data_if_required():
     """
     If a sample data deletion failed as part of the 'remove sample' functionality, then we can try again without having
@@ -1104,3 +1110,19 @@ def _add_collection_instrument(short_name, period):
 
     form.formtype.data = ""  # Reset the value on successful submission
     return get_view_sample_ci(short_name, period)
+
+
+@collection_exercise_bp.route("<short_name>/<period>/view-sample-ci/summary", methods=["GET"])
+@login_required
+def view_sample_ci_summary(short_name: str, period: str) -> str:
+    survey_id = survey_controllers.get_survey_by_shortname(short_name).get("id")
+    exercises = collection_exercise_controllers.get_collection_exercises_by_survey(survey_id)
+    exercise = get_collection_exercise_by_period(exercises, period)
+
+    _validate_exercise(exercise, period, short_name)
+    eq_collection_instruments = _build_collection_instruments_details(exercise["id"], survey_id).get("EQ", [])
+
+    return render_template(
+        "collection_exercise/view-sample-ci-summary.html",
+        collection_instruments=eq_collection_instruments,
+    )

@@ -1,0 +1,42 @@
+{% extends "layouts/base.html" %}
+{% from "components/table/_macro.njk" import onsTable %}
+
+{% set  formTypeCIVersionTable = {
+    "id": "form-type-ci-version",
+    "ths": [{
+        "value": "EQ form type"
+    },
+    {
+        "value": "CIR version"
+    }]
+}%}
+
+{% set formTypeCIVersionTableDataRows = [] %}
+
+{% for collection_instrument in collection_instruments %}
+    {% do formTypeCIVersionTableDataRows.append(
+        {
+            "tds": [
+                {
+                    "value": collection_instrument["classifiers"]["form_type"]
+                },
+                {
+                  "value": "Nothing selected",
+                  "tdClasses": "ons-u-ta-centre"
+                }, 
+                {
+                  "value": '<a href="">Choose a version</a>',
+                  "tdClasses": "ons-u-ta-right"
+                }
+              ] 
+          }
+      )
+    %}
+    {% endfor %}
+    {% do formTypeCIVersionTable | setAttribute("trs", formTypeCIVersionTableDataRows) %}
+
+{% block main %}
+    <h1 class="ons-u-fs-xl" >Collection instruments step 2 of 2</h1>
+    <h3 class="ons-u-fs-m">Choose a CIR version for each eQ form type</h3>
+    {{ onsTable(formTypeCIVersionTable) }}
+{% endblock %}
