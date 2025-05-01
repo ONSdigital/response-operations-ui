@@ -2767,3 +2767,12 @@ class TestCollectionExercise(ViewTestCase):
 
         self.assertEqual(response.status_code, 200)
         self.assertIn("There is a problem with this page".encode(), response.data)
+
+
+    def test_view_ci_versions(self):
+        form_type = "0001"
+
+        response = self.client.get(f"/surveys/{short_name}/{period}/view-sample-ci/summary/{form_type}")
+
+        self.assertEqual(response.status_code, 200)
+        self.assertIn(form_type.encode(), response.data)
