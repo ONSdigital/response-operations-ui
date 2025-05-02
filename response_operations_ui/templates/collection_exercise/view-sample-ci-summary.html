@@ -4,7 +4,7 @@
 {% set  formTypeCIVersionTable = {
     "id": "form-type-ci-version",
     "ths": [{
-        "value": "EQ form type"
+        "value": "EQ formtype"
     },
     {
         "value": "CIR version"
@@ -37,6 +37,6 @@
 
 {% block main %}
     <h1 class="ons-u-fs-xl" >Collection instruments step 2 of 2</h1>
-    <h3 class="ons-u-fs-m">Choose a CIR version for each eQ form type</h3>
+    <h3 class="ons-u-fs-m">Choose a CIR version for each EQ formtype</h3>
     {{ onsTable(formTypeCIVersionTable) }}
 {% endblock %}
