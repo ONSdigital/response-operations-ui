@@ -1108,6 +1108,6 @@ def _add_collection_instrument(short_name, period):
 
 @collection_exercise_bp.route("/<short_name>/<period>/view-sample-ci/summary/<form_type>", methods=["GET"])
 @login_required
-def view_ci_versions(short_name, period, form_type) -> str:
-
+def view_ci_versions(short_name: str, period: str, form_type: str) -> str:
+    
     return render_template("collection_exercise/ci-versions.html", form_type=form_type)
