@@ -2789,7 +2789,7 @@ class TestCollectionExercise(ViewTestCase):
         self.assertEqual(response.status_code, 200)
         self.assertIn("0001".encode(), response.data)
         self.assertIn("0002".encode(), response.data)
-        self.assertIn("Choose a CIR version for each eQ form type".encode(), response.data)
+        self.assertIn("Choose a CIR version for each EQ formtype".encode(), response.data)
         self.assertIn("Choose a version".encode(), response.data)
 
     @patch("response_operations_ui.views.collection_exercise.survey_controllers.get_survey_by_shortname")
