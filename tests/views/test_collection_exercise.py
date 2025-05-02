@@ -2768,6 +2768,50 @@ class TestCollectionExercise(ViewTestCase):
         self.assertEqual(response.status_code, 200)
         self.assertIn("There is a problem with this page".encode(), response.data)
 
+
+    @patch("response_operations_ui.views.collection_exercise.survey_controllers.get_survey_by_shortname")
+    @patch(
+        "response_operations_ui.views.collection_exercise."
+        "collection_exercise_controllers.get_collection_exercises_by_survey"
+    )
+    @patch("response_operations_ui.views.collection_exercise._build_collection_instruments_details")
+    def test_view_sample_ci_summary(
+        self, build_collection_instruments_details, get_ce_by_survey, get_survey_by_shortname
+    ):
+        get_survey_by_shortname.return_value = {"id": survey_id}
+        get_ce_by_survey.return_value = [
+            {"id": "d64cbfd2-20b1-4e10-962e-bd57f4946db7", "surveyId": survey_id, "exerciseRef": period}
+        ]
+        build_collection_instruments_details.return_value = {
+            "EQ": [{"classifiers": {"form_type": "0001"}}, {"classifiers": {"form_type": "0002"}}]
+        }
+        response = self.client.get(f"/surveys/{short_name}/{period}/view-sample-ci/summary")
+
+        self.assertEqual(response.status_code, 200)
+        self.assertIn("0001".encode(), response.data)
+        self.assertIn("0002".encode(), response.data)
+        self.assertIn("Choose a CIR version for each EQ formtype".encode(), response.data)
+        self.assertIn("Choose a version".encode(), response.data)
+        
+    @patch("response_operations_ui.views.collection_exercise.survey_controllers.get_survey_by_shortname")
+    @patch(
+        "response_operations_ui.views.collection_exercise."
+        "collection_exercise_controllers.get_collection_exercises_by_survey"
+    )
+    @patch("response_operations_ui.views.collection_exercise._build_collection_instruments_details")
+    def test_view_sample_ci_summary_no_cis(
+        self, build_collection_instruments_details, get_collection_exercises_by_survey, get_survey_by_shortname
+    ):
+        get_survey_by_shortname.return_value = {"id": survey_id}
+        get_collection_exercises_by_survey.return_value = [
+            {"id": "d64cbfd2-20b1-4e10-962e-bd57f4946db7", "surveyId": survey_id, "exerciseRef": period}
+        ]
+        build_collection_instruments_details.return_value = {}
+        response = self.client.get(f"/surveys/{short_name}/{period}/view-sample-ci/summary")
+
+        self.assertEqual(response.status_code, 200)
+        self.assertNotIn("Choose a version".encode(), response.data)
+ 
     def test_view_ci_versions(self):
         form_type = "0001"
 
