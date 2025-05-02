@@ -2768,7 +2768,6 @@ class TestCollectionExercise(ViewTestCase):
         self.assertEqual(response.status_code, 200)
         self.assertIn("There is a problem with this page".encode(), response.data)
 
-
     @patch("response_operations_ui.views.collection_exercise.survey_controllers.get_survey_by_shortname")
     @patch(
         "response_operations_ui.views.collection_exercise."
@@ -2792,7 +2791,7 @@ class TestCollectionExercise(ViewTestCase):
         self.assertIn("0002".encode(), response.data)
         self.assertIn("Choose a CIR version for each EQ formtype".encode(), response.data)
         self.assertIn("Choose a version".encode(), response.data)
-        
+
     @patch("response_operations_ui.views.collection_exercise.survey_controllers.get_survey_by_shortname")
     @patch(
         "response_operations_ui.views.collection_exercise."
@@ -2811,7 +2810,7 @@ class TestCollectionExercise(ViewTestCase):
 
         self.assertEqual(response.status_code, 200)
         self.assertNotIn("Choose a version".encode(), response.data)
- 
+
     def test_view_ci_versions(self):
         form_type = "0001"
 
