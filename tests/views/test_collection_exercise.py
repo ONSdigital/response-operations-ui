@@ -2775,3 +2775,4 @@ class TestCollectionExercise(ViewTestCase):
 
         self.assertEqual(response.status_code, 200)
         self.assertIn(form_type.encode(), response.data)
+        self.assertIn("Choose CIR version for EQ formtype".encode(), response.data)
