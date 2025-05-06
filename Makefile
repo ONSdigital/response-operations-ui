@@ -14,6 +14,7 @@ load-design-system-templates:
 
 lint:
 	pipenv check ./response_operations_ui ./tests --auto-install
+  
 	pipenv run isort .
 	pipenv run black --line-length 120 .
 	pipenv run djlint response_operations_ui/
