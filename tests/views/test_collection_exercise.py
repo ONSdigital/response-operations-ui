@@ -643,9 +643,9 @@ class TestCollectionExercise(ViewTestCase):
         # Then I can view eQ collection instruments but not SEFT
         self.assertEqual(response.status_code, 200)
         self.assertIn("EQ collection instruments".encode(), response.data)
-        self.assertIn('id="view-add-upload-ci-eq">View</a>'.encode(), response.data)
+        self.assertIn('id="view-choose-upload-ci-eq">View</a>'.encode(), response.data)
         self.assertNotIn("SEFT collection instruments".encode(), response.data)
-        self.assertNotIn('id="view-add-upload-ci-seft">View</a>'.encode(), response.data)
+        self.assertNotIn('id="view-choose-upload-ci-seft">View</a>'.encode(), response.data)
 
     @patch("response_operations_ui.views.collection_exercise.build_collection_exercise_details")
     def test_collection_exercise_view_seft_instruments(self, mock_details):
@@ -668,9 +668,9 @@ class TestCollectionExercise(ViewTestCase):
         # Then I can view SEFT collection instruments but not EQ
         self.assertEqual(response.status_code, 200)
         self.assertIn("SEFT collection instruments".encode(), response.data)
-        self.assertIn('id="view-add-upload-ci-seft">View</a>'.encode(), response.data)
+        self.assertIn('id="view-choose-upload-ci-seft">View</a>'.encode(), response.data)
         self.assertNotIn("EQ collection instruments".encode(), response.data)
-        self.assertNotIn('id="view-add-upload-ci-eq">View</a>'.encode(), response.data)
+        self.assertNotIn('id="view-choose-upload-ci-eq">View</a>'.encode(), response.data)
 
     @patch("response_operations_ui.views.collection_exercise.build_collection_exercise_details")
     def test_collection_exercise_view_eq_and_seft_instruments(self, mock_details):
@@ -695,8 +695,8 @@ class TestCollectionExercise(ViewTestCase):
         self.assertEqual(response.status_code, 200)
         self.assertIn("SEFT collection instruments".encode(), response.data)
         self.assertIn("EQ collection instruments".encode(), response.data)
-        self.assertIn('id="view-add-upload-ci-eq">View</a>'.encode(), response.data)
-        self.assertIn('id="view-add-upload-ci-seft">View</a>'.encode(), response.data)
+        self.assertIn('id="view-choose-upload-ci-eq">View</a>'.encode(), response.data)
+        self.assertIn('id="view-choose-upload-ci-seft">View</a>'.encode(), response.data)
 
     @requests_mock.mock()
     def test_collection_exercise_view_event_statuses(self, mock_request):
@@ -2338,7 +2338,7 @@ class TestCollectionExercise(ViewTestCase):
         self.assertEqual(response.status_code, 200)
         self.assertIn("Monthly Survey of Building Materials Bricks".encode(), response.data)
         self.assertIn("221_201712".encode(), response.data)
-        self.assertIn('id="view-add-upload-ci-eq">View</a>'.encode(), response.data)
+        self.assertIn('id="view-choose-upload-ci-eq">View</a>'.encode(), response.data)
         self.assertNotIn("Upload sample file".encode(), response.data)
 
     @requests_mock.mock()
