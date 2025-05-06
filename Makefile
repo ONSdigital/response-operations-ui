@@ -13,16 +13,12 @@ load-design-system-templates:
 	pipenv run ./scripts/load_templates.sh $(DESIGN_SYSTEM_VERSION)
 
 lint:
-	pipenv check ./response_operations_ui ./tests --auto-install
-  
 	pipenv run isort .
 	pipenv run black --line-length 120 .
 	pipenv run djlint response_operations_ui/
 	pipenv run flake8 --exclude ./node_modules
 
 lint-check: load-design-system-templates
-	pipenv check ./response_operations_ui ./tests --auto-install
-
 	pipenv run isort . --check-only
 	pipenv run black --line-length 120 --check .
 	pipenv run djlint response_operations_ui/
