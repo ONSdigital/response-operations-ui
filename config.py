@@ -151,6 +151,7 @@ class DevelopmentConfig(Config):
     WTF_CSRF_ENABLED = strtobool(os.getenv("WTF_CSRF_ENABLED", "False"))
     # 5 minutes in seconds
     COMPLETE_TO_NOT_STARTED_WAIT_TIME = int(os.getenv("COMPLETE_TO_NOT_STARTED_WAIT_TIME", "300"))
+    CIR_ENABLED = True
 
 
 class TestingConfig(DevelopmentConfig):
@@ -185,3 +186,4 @@ Z5VVFymXN2n+A6UeWAnuO8/E1inhk99dBzKEGdw=
     SECURITY_USER_PASSWORD = "secret"
     # 5 minutes in seconds
     COMPLETE_TO_NOT_STARTED_WAIT_TIME = int(os.getenv("COMPLETE_TO_NOT_STARTED_WAIT_TIME", "300"))
+    CIR_ENABLED = False

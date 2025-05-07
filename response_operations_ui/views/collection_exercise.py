@@ -18,6 +18,7 @@ from flask import (
     session,
     url_for,
 )
+from flask import current_app as app
 from flask_login import login_required
 from structlog import wrap_logger
 from wtforms import ValidationError
@@ -862,6 +863,7 @@ def get_view_sample_ci(short_name, period):
         info_panel=info_panel,
         all_cis_for_survey=all_cis_for_survey,
         breadcrumbs=breadcrumbs,
+        cir_enabled=app.config["CIR_ENABLED"],
     )
 
 
