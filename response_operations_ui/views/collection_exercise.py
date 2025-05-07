@@ -6,9 +6,9 @@ from datetime import datetime
 import iso8601
 from dateutil import tz
 from dateutil.parser import parse
+from flask import Blueprint, abort
+from flask import current_app as app
 from flask import (
-    Blueprint,
-    abort,
     flash,
     jsonify,
     make_response,
@@ -18,7 +18,6 @@ from flask import (
     session,
     url_for,
 )
-from flask import current_app as app
 from flask_login import login_required
 from structlog import wrap_logger
 from wtforms import ValidationError

@@ -9,7 +9,6 @@ import jwt
 import mock
 import requests_mock
 
-import config
 from config import TestingConfig
 from response_operations_ui.views.collection_exercise import (
     build_collection_exercise_details,
@@ -2392,6 +2391,7 @@ class TestCollectionExercise(ViewTestCase):
         self.assertIn("Select EQ collection instruments".encode(), response.data)
         self.assertIn("checkbox-answer".encode(), response.data)
         self.assertIn("Done".encode(), response.data)
+
     @requests_mock.mock()
     def test_eq_view_sample_ci_page_survey_permission_with_cir(self, mock_request):
         sign_in_with_permission(self, mock_request, user_permission_surveys_edit_json)
@@ -2419,7 +2419,7 @@ class TestCollectionExercise(ViewTestCase):
         self.assertIn("EQ formtype".encode(), response.data)
         self.assertIn("CIR version".encode(), response.data)
         self.assertIn("Continue to choose versions".encode(), response.data)
-        
+
     @requests_mock.mock()
     def test_seft_loaded_load_collection_instruments_page_survey_permission(self, mock_request):
         sign_in_with_permission(self, mock_request, user_permission_surveys_edit_json)
