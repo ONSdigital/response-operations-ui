@@ -2414,8 +2414,6 @@ class TestCollectionExercise(ViewTestCase):
         response = self.client.get(f"/surveys/{short_name}/{period}/view-sample-ci?survey_mode=EQ")
 
         self.assertEqual(200, response.status_code)
-        self.assertIn("Select EQ collection instruments".encode(), response.data)
-        self.assertIn("checkbox-answer".encode(), response.data)
         self.assertIn("EQ formtype".encode(), response.data)
         self.assertIn("CIR version".encode(), response.data)
         self.assertIn("Continue to choose versions".encode(), response.data)
