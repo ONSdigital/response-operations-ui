@@ -157,7 +157,7 @@ def expected_ce_context_no_permission():
                     "type": "eq",
                     "title": "EQ collection instruments",
                     "url": "/surveys/MWSS/021123/view-sample-ci",
-                    "link_text": "Add",
+                    "link_text": "Choose",
                     "count": "0",
                 }
             ],
