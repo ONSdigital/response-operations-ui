@@ -86,6 +86,7 @@ ons-u-mt-l">
                       {% endfor %}
                     </table>
                   </div>
+                {# Below else will be removed once the CIR journey work is complete #}
                 {% else %}
                   {% for eq_ci in all_cis_for_survey|batch(3, ' ') %}
                       {% for ci in eq_ci %}
