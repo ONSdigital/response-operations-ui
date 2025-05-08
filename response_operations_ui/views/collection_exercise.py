@@ -845,7 +845,7 @@ def get_view_sample_ci(short_name, period):
 
     success_panel = request.args.get("success_panel")
     info_panel = request.args.get("info_panel")
-    
+
     # Once the CIR work is complete, this flag can be removed
     cir_enabled = app.config["CIR_ENABLED"]
 
@@ -865,7 +865,7 @@ def get_view_sample_ci(short_name, period):
         info_panel=info_panel,
         all_cis_for_survey=all_cis_for_survey,
         breadcrumbs=breadcrumbs,
-        cir_enabled=cir_enabled, 
+        cir_enabled=cir_enabled,
     )
 
 
