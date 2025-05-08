@@ -64,6 +64,9 @@ notify:
   updateUserPermissionsTemplate: update_user_permissions_id
   deleteUserTemplate: delete_user_id
   
+cir:
+  enabled: false  
+  
 dashboard:
   hasIngress: false
   address: https://dashboard.example.com

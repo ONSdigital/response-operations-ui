@@ -235,5 +235,7 @@ spec:
             value: "{{- if .Values.test.enabled -}}False{{- else -}}True{{- end -}}"
           - name: COMPLETE_TO_NOT_STARTED_WAIT_TIME
             value: "{{ .Values.admin.completeToNotStartedWaitTime }}"
+          - name: CIR_ENABLED
+            value: "{{ .Values.cir.enabled }}"
           resources:
             {{ toYaml .Values.resources | nindent 12 }}
