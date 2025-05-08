@@ -153,7 +153,7 @@ class DevelopmentConfig(Config):
     WTF_CSRF_ENABLED = strtobool(os.getenv("WTF_CSRF_ENABLED", "False"))
     # 5 minutes in seconds
     COMPLETE_TO_NOT_STARTED_WAIT_TIME = int(os.getenv("COMPLETE_TO_NOT_STARTED_WAIT_TIME", "300"))
-    CIR_ENABLED = False
+    CIR_ENABLED = strtobool(os.getenv("CIR_ENABLED", "False"))
 
 
 class TestingConfig(DevelopmentConfig):
