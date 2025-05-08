@@ -25,7 +25,7 @@ def get_cir_service_status():
 def _get_response_content(request_url):
     session = requests.Session()
     client_id = app.config["CIR_OAUTH2_CLIENT_ID"]
-    logger.debug(f"{TARGET_SERVICE} service request", session_headers=str(session.headers), request_url=request_url)
+    logger.info(f"{TARGET_SERVICE} service request", request_url=request_url)
 
     try:
         fetch_and_apply_oidc_credentials(session=session, client_id=client_id)
