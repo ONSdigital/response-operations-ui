@@ -17,7 +17,7 @@ NUDGE_EMAILS = {
 }
 
 CI_TABLE_LINK_TEXT = {
-    "EQ": {"no_instrument": "Add", "restricted": "View", "has_permission": "Select or Add"},
+    "EQ": {"no_instrument": "Choose", "restricted": "View", "has_permission": "Choose"},
     "SEFT": {"no_instrument": "Upload", "restricted": "View", "has_permission": "View or Upload"},
 }
 

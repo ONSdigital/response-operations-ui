@@ -1130,6 +1130,12 @@ def view_sample_ci_summary(short_name: str, period: str) -> str:
     )
 
 
+@collection_exercise_bp.route("/<short_name>/<period>/view-sample-ci/summary/<form_type>", methods=["GET"])
+@login_required
+def view_ci_versions(short_name: str, period: str, form_type: str) -> str:
+
+    return render_template("collection_exercise/ci-versions.html", form_type=form_type)
+
 @collection_exercise_bp.route("/cir", methods=["GET"])
 @login_required
 def get_cir_service_status():
