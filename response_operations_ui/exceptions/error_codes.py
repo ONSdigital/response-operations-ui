@@ -12,11 +12,13 @@ class ErrorCode(Enum):
     API_UNEXPECTED_CONTENT_TYPE = "E0004"
     API_UNEXPECTED_CONTENT = "E0005"
     API_OIDC_CREDENTIALS_ERROR = "E0006"
+    API_TIMEOUT_ERROR = "E0007"
 
 
 def get_error_code_message(error_code):
     error_code_messages = {
         ErrorCode.API_CONNECTION_ERROR: "An error occurred trying to connect to the service",
+        ErrorCode.API_TIMEOUT_ERROR: "The request to the service timed out",
         ErrorCode.API_AUTHENTICATION_ERROR: "An error occurred authenticating with the service",
         ErrorCode.API_UNEXPECTED_STATUS_CODE: "The service returned an unexpected status code",
         ErrorCode.API_UNEXPECTED_CONTENT_TYPE: "The service returned an unexpected content type",

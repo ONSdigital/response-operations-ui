@@ -60,6 +60,17 @@ class TestCIRControllers(unittest.TestCase):
                 get_cir_service_status()
             self.assertEqual(context.exception.error_code, ErrorCode.API_CONNECTION_ERROR)
 
+    @patch("requests.Session.get")
+    def test_ApiError_thrown_when_timeout(self, mock_get):
+        with self.app.app_context():
+            current_app.config["CIR_API_URL"] = TEST_CIR_URL
+
+            mock_get.side_effect = requests.exceptions.Timeout("Timeout")
+
+            with self.assertRaises(ExternalApiError) as context:
+                get_cir_service_status()
+            self.assertEqual(context.exception.error_code, ErrorCode.API_TIMEOUT_ERROR)
+
     @responses.activate
     def test_ApiError_thrown_when_not_200(self):
         with self.app.app_context():

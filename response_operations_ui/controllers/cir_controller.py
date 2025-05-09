@@ -40,14 +40,17 @@ def _get_response_content(request_url):
 
     try:
         response = session.get(request_url)
-    except requests.ConnectionError as e:
+    except (requests.ConnectionError, requests.exceptions.Timeout) as e:
+        error_code = (
+            ErrorCode.API_CONNECTION_ERROR if isinstance(e, requests.ConnectionError) else ErrorCode.API_TIMEOUT_ERROR
+        )
         logger.error(
-            get_error_code_message(ErrorCode.API_CONNECTION_ERROR),
+            get_error_code_message(error_code),
             error=str(e),
             request_url=request_url,
             target_service=TARGET_SERVICE,
         )
-        raise ExternalApiError(None, ErrorCode.API_CONNECTION_ERROR, TARGET_SERVICE) from e
+        raise ExternalApiError(None, error_code, TARGET_SERVICE) from e
 
     if response.status_code != 200:
         logger.error(
