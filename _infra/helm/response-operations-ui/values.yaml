@@ -63,7 +63,12 @@ notify:
   updateAccountPasswordTemplate: update_account_password_id
   updateUserPermissionsTemplate: update_user_permissions_id
   deleteUserTemplate: delete_user_id
-  
+
+cir:
+  enabled: false
+  apiUrl: http://localhost:5052
+  oauth2ClientId: dummy_client_id
+
 dashboard:
   hasIngress: false
   address: https://dashboard.example.com
