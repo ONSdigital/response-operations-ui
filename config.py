@@ -113,6 +113,7 @@ class Config(object):
     CIR_OAUTH2_CLIENT_ID = os.getenv("CIR_OAUTH2_CLIENT_ID", "dummy_client_id")
     CIR_ENABLED = strtobool(os.getenv("CIR_ENABLED", "False"))
 
+
 class DevelopmentConfig(Config):
     DEBUG = os.getenv("DEBUG", True)
     LOGGING_LEVEL = os.getenv("LOGGING_LEVEL", "DEBUG")
