@@ -3,7 +3,7 @@
 
 {% block main %}
 <h1>Choose CIR version for EQ formtype {{ form_type }}</h1>
-<form action="" class="ons-form" method="post"></form>
+<form action="{{ url_for('collection_exercise_bp.view_collection_exercise', short_name=short_name, period=period) }}" class="ons-form" method="get"></form>
     <input type="hidden" name="csrf_token" value="{{ csrf_token() }}" />
     <div class="ons-grid__col">
         {{
