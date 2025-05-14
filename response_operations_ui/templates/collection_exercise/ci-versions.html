@@ -1,5 +1,18 @@
 {% extends "layouts/base.html" %}
+{% from "components/button/_macro.njk" import onsButton %}
 
 {% block main %}
 <h1>Choose CIR version for EQ formtype {{ form_type }}</h1>
+<form action="" class="ons-form" method="post">
+    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}" />
+    <div class="ons-grid__col">
+        {{
+        onsButton({
+        "text": "Save",
+        "id": "save",
+        "name": "save"
+        })
+        }}
+    </div>
+</form>
 {% endblock %}
