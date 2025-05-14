@@ -2393,6 +2393,32 @@ class TestCollectionExercise(ViewTestCase):
         self.assertIn("Done".encode(), response.data)
 
     @requests_mock.mock()
+    def test_eq_view_sample_ci_page_survey_permission_with_cir(self, mock_request):
+        sign_in_with_permission(self, mock_request, user_permission_surveys_edit_json)
+        mock_request.get(url_get_survey_by_short_name, json=self.eq_survey_dates)
+        mock_request.get(url_ces_by_survey, json=self.collection_exercises)
+        mock_request.get(url_ce_by_id, json=collection_exercise_eq_both_ref_date["collection_exercise"])
+        mock_request.get(url_get_collection_exercise_events, json=self.collection_exercise_ref_both_date)
+        mock_request.get(
+            f"{url_get_collection_instrument}?{ci_search_string}", json=self.eq_collection_instrument, complete_qs=True
+        )
+        mock_request.get(
+            f"{url_get_collection_instrument}?{ci_type_search_string_eq}", json=self.eq_ci_selectors, complete_qs=True
+        )
+        mock_request.get(url_link_sample, json=[""])
+        mock_request.get(url_get_sample_summary, json="")
+
+        mock_request.get(url_get_by_survey_with_ref_start_date, json=collection_exercise_eq_ref_start_date)
+        mock_request.get(url_get_by_survey_with_ref_end_date, json=collection_exercise_eq_ref_end_date)
+        self.app.config["CIR_ENABLED"] = True
+        response = self.client.get(f"/surveys/{short_name}/{period}/view-sample-ci?survey_mode=EQ")
+
+        self.assertEqual(200, response.status_code)
+        self.assertIn("EQ formtype".encode(), response.data)
+        self.assertIn("CIR version".encode(), response.data)
+        self.assertIn("Continue to choose versions".encode(), response.data)
+
+    @requests_mock.mock()
     def test_seft_loaded_load_collection_instruments_page_survey_permission(self, mock_request):
         sign_in_with_permission(self, mock_request, user_permission_surveys_edit_json)
         mock_request.get(url_get_survey_by_short_name, json=self.seft_survey)
@@ -2812,12 +2838,3 @@ class TestCollectionExercise(ViewTestCase):
 
         self.assertEqual(response.status_code, 200)
         self.assertNotIn("Choose a version".encode(), response.data)
-
-    def test_view_ci_versions(self):
-        form_type = "0001"
-
-        response = self.client.get(f"/surveys/{short_name}/{period}/view-sample-ci/summary/{form_type}")
-
-        self.assertEqual(response.status_code, 200)
-        self.assertIn(form_type.encode(), response.data)
-        self.assertIn("Choose CIR version for EQ formtype".encode(), response.data)
