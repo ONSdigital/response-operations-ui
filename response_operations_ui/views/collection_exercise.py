@@ -1141,8 +1141,13 @@ def view_ci_versions(short_name: str, period: str, form_type: str) -> str:
     breadcrumbs = [
         {"text": "Back to CIR versions", "url": "/surveys/" + short_name + "/" + period + "/view-sample-ci/summary"},
     ]
-    return render_template("collection_exercise/ci-versions.html", form_type=form_type, short_name=short_name, 
-                           period=period, breadcrumbs=breadcrumbs)
+    return render_template(
+        "collection_exercise/ci-versions.html",
+        form_type=form_type,
+        short_name=short_name,
+        period=period,
+        breadcrumbs=breadcrumbs,
+    )
 
 
 @collection_exercise_bp.route("/cir", methods=["GET"])
