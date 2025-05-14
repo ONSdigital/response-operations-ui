@@ -6,9 +6,9 @@ from datetime import datetime
 import iso8601
 from dateutil import tz
 from dateutil.parser import parse
+from flask import Blueprint, abort
+from flask import current_app as app
 from flask import (
-    Blueprint,
-    abort,
     flash,
     jsonify,
     make_response,
@@ -40,6 +40,7 @@ from response_operations_ui.common.uaa import verify_permission
 from response_operations_ui.common.validators import valid_date_for_event
 from response_operations_ui.contexts.collection_exercise import build_ce_context
 from response_operations_ui.controllers import (
+    cir_controller,
     collection_exercise_controllers,
     collection_instrument_controllers,
     party_controller,
@@ -47,7 +48,8 @@ from response_operations_ui.controllers import (
     survey_controllers,
 )
 from response_operations_ui.controllers.uaa_controller import user_has_permission
-from response_operations_ui.exceptions.exceptions import ApiError
+from response_operations_ui.exceptions.error_codes import get_error_code_message
+from response_operations_ui.exceptions.exceptions import ApiError, ExternalApiError
 from response_operations_ui.forms import (
     CreateCollectionExerciseDetailsForm,
     EditCollectionExercisePeriodDescriptionForm,
@@ -846,6 +848,9 @@ def get_view_sample_ci(short_name, period):
     success_panel = request.args.get("success_panel")
     info_panel = request.args.get("info_panel")
 
+    # Once the CIR work is complete, this flag can be removed
+    cir_enabled = app.config["CIR_ENABLED"]
+
     breadcrumbs = [{"text": "Back", "url": "/surveys/" + short_name + "/" + period}, {}]
     return render_template(
         "collection_exercise/ce-eq-instrument-section.html",
@@ -862,6 +867,7 @@ def get_view_sample_ci(short_name, period):
         info_panel=info_panel,
         all_cis_for_survey=all_cis_for_survey,
         breadcrumbs=breadcrumbs,
+        cir_enabled=cir_enabled,
     )
 
 
@@ -1133,3 +1139,26 @@ def view_sample_ci_summary(short_name: str, period: str) -> str:
 def view_ci_versions(short_name: str, period: str, form_type: str) -> str:
 
     return render_template("collection_exercise/ci-versions.html", form_type=form_type)
+
+
+@collection_exercise_bp.route("/cir", methods=["GET"])
+@login_required
+def get_cir_service_status():
+    logger.info("Get CIR service status")
+    error_message = None
+    response_content = None
+    try:
+        response_content = cir_controller.get_cir_service_status()
+    except ExternalApiError as e:
+        error_message = (
+            f"Error: {e.error_code.value} "
+            f"{get_error_code_message(e.error_code)} "
+            f"Service: {e.target_service} "
+            f"Cause Exception: {e.__cause__ if e.__cause__ else 'None'}"
+        )
+
+    return render_template(
+        "collection_exercise/cir.html",
+        error_message=error_message,
+        response_content=response_content,
+    )

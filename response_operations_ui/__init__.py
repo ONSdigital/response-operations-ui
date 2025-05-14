@@ -15,6 +15,8 @@ from config import Config
 from response_operations_ui.common.jinja_filters import filter_blueprint
 from response_operations_ui.controllers.uaa_controller import user_has_permission
 from response_operations_ui.logger_config import logger_initial_config
+from response_operations_ui.oidc.gcp_oidc import OIDCCredentialsServiceGCP
+from response_operations_ui.oidc.local_oidc import OIDCCredentialsServiceLocal
 from response_operations_ui.user import User
 from response_operations_ui.views import setup_blueprints
 
@@ -106,6 +108,8 @@ def create_app(config_name=None):
     login_manager.init_app(app)
     login_manager.login_view = "sign_in_bp.sign_in"
 
+    app.oidc = {}
+
     @app.errorhandler(CSRFError)
     def handle_csrf_error(e):
         flash("Your session timed out", category="info")
@@ -149,5 +153,27 @@ def create_app(config_name=None):
     Session(app)
 
     setup_blueprints(app)
+    setup_oidc(app)
 
     return app
+
+
+class MissingEnvironmentVariable(Exception):
+    pass
+
+
+def setup_oidc(application):
+    def client_ids_exist():
+        if not application.config.get("CIR_OAUTH2_CLIENT_ID"):
+            raise MissingEnvironmentVariable("CIR_OAUTH2_CLIENT_ID Missing")
+
+    if not (oidc_token_backend := application.config.get("OIDC_TOKEN_BACKEND")):
+        raise MissingEnvironmentVariable("OIDC_TOKEN_BACKEND Missing")
+
+    if oidc_token_backend == "gcp":
+        client_ids_exist()
+        application.oidc["oidc_credentials_service"] = OIDCCredentialsServiceGCP()
+    elif oidc_token_backend == "local":
+        application.oidc["oidc_credentials_service"] = OIDCCredentialsServiceLocal()
+    else:
+        raise NotImplementedError("Unknown OIDC_TOKEN_BACKEND")

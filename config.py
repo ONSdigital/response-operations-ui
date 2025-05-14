@@ -106,6 +106,13 @@ class Config(object):
     TEST_MODE = strtobool(os.getenv("TEST_MODE", "False"))
     WTF_CSRF_ENABLED = strtobool(os.getenv("WTF_CSRF_ENABLED", "True"))
 
+    OIDC_TOKEN_BACKEND = os.getenv("OIDC_TOKEN_BACKEND", "gcp")
+    OIDC_TOKEN_VALIDITY_IN_SECONDS = int(os.getenv("OIDC_TOKEN_VALIDITY_IN_SECONDS", "3600"))
+    OIDC_TOKEN_LEEWAY_IN_SECONDS = int(os.getenv("OIDC_TOKEN_LEEWAY_IN_SECONDS", "300"))
+    CIR_API_URL = CIR_API_URL = os.getenv("CIR_API_URL", "https://cir.integration.onsdigital.uk")
+    CIR_OAUTH2_CLIENT_ID = os.getenv("CIR_OAUTH2_CLIENT_ID", "dummy_client_id")
+    CIR_ENABLED = strtobool(os.getenv("CIR_ENABLED", "False"))
+
 
 class DevelopmentConfig(Config):
     DEBUG = os.getenv("DEBUG", True)
@@ -152,6 +159,13 @@ class DevelopmentConfig(Config):
     # 5 minutes in seconds
     COMPLETE_TO_NOT_STARTED_WAIT_TIME = int(os.getenv("COMPLETE_TO_NOT_STARTED_WAIT_TIME", "300"))
 
+    OIDC_TOKEN_BACKEND = os.getenv("OIDC_TOKEN_BACKEND", "local")
+    OIDC_TOKEN_VALIDITY_IN_SECONDS = int(os.getenv("OIDC_TOKEN_VALIDITY_IN_SECONDS", "3600"))
+    OIDC_TOKEN_LEEWAY_IN_SECONDS = int(os.getenv("OIDC_TOKEN_LEEWAY_IN_SECONDS", "300"))
+    CIR_API_URL = CIR_API_URL = os.getenv("CIR_API_URL", "http://localhost:5052")
+    CIR_OAUTH2_CLIENT_ID = os.getenv("CIR_OAUTH2_CLIENT_ID", "dummy_client_id")
+    CIR_ENABLED = strtobool(os.getenv("CIR_ENABLED", "False"))
+
 
 class TestingConfig(DevelopmentConfig):
     """Configuration used for testing.  The uaa public and private keys in this block are used ONLY for
@@ -185,3 +199,10 @@ Z5VVFymXN2n+A6UeWAnuO8/E1inhk99dBzKEGdw=
     SECURITY_USER_PASSWORD = "secret"
     # 5 minutes in seconds
     COMPLETE_TO_NOT_STARTED_WAIT_TIME = int(os.getenv("COMPLETE_TO_NOT_STARTED_WAIT_TIME", "300"))
+
+    OIDC_TOKEN_BACKEND = os.getenv("OIDC_TOKEN_BACKEND", "local")
+    OIDC_TOKEN_VALIDITY_IN_SECONDS = int(os.getenv("OIDC_TOKEN_VALIDITY_IN_SECONDS", "3600"))
+    OIDC_TOKEN_LEEWAY_IN_SECONDS = int(os.getenv("OIDC_TOKEN_LEEWAY_IN_SECONDS", "300"))
+    CIR_API_URL = CIR_API_URL = os.getenv("CIR_API_URL", "http://localhost:5052")
+    CIR_OAUTH2_CLIENT_ID = os.getenv("CIR_OAUTH2_CLIENT_ID", "dummy_client_id")
+    CIR_ENABLED = False

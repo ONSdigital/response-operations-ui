@@ -5,6 +5,21 @@ class ApiError(Exception):
         self.message = response.text
 
 
+class ExternalApiError(ApiError):
+    def __init__(self, response=None, error_code=None, target_service=None):
+        self.response = response
+        self.error_code = error_code
+        self.target_service = target_service
+        if response:
+            self.url = response.url
+            self.status_code = response.status_code
+            self.message = response.text
+        else:
+            self.url = None
+            self.status_code = None
+            self.message = None
+
+
 class InternalError(Exception):
     def __init__(self, exception, url=None, status=500):
         self.exception = exception
