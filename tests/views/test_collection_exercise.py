@@ -2390,7 +2390,7 @@ class TestCollectionExercise(ViewTestCase):
         self.assertEqual(200, response.status_code)
         self.assertIn("Select EQ collection instruments".encode(), response.data)
         self.assertIn("checkbox-answer".encode(), response.data)
-        self.assertIn("Done".encode(), response.data)
+        self.assertIn("Continue to choose versions".encode(), response.data)
 
     @requests_mock.mock()
     def test_eq_view_sample_ci_page_survey_permission_with_cir(self, mock_request):
