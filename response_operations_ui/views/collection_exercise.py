@@ -1123,17 +1123,12 @@ def view_sample_ci_summary(short_name: str, period: str) -> str:
 
     _validate_exercise(exercise, period, short_name)
     eq_collection_instruments = _build_collection_instruments_details(exercise["id"], survey_id).get("EQ", [])
-    breadcrumbs = [
-        {"text": "Back to EQ formtypes", "url": f"/surveys/{short_name}/{period}/view-sample-ci"},
-        {"text": "Choose a CIR version"},
-    ]
 
     return render_template(
         "collection_exercise/view-sample-ci-summary.html",
         collection_instruments=eq_collection_instruments,
         short_name=short_name,
         period=period,
-        breadcrumbs=breadcrumbs,
     )
 
 
