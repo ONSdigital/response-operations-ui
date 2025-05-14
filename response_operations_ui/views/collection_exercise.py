@@ -6,9 +6,9 @@ from datetime import datetime
 import iso8601
 from dateutil import tz
 from dateutil.parser import parse
+from flask import Blueprint, abort
+from flask import current_app as app
 from flask import (
-    Blueprint,
-    abort,
     flash,
     jsonify,
     make_response,
@@ -848,6 +848,9 @@ def get_view_sample_ci(short_name, period):
     success_panel = request.args.get("success_panel")
     info_panel = request.args.get("info_panel")
 
+    # Once the CIR work is complete, this flag can be removed
+    cir_enabled = app.config["CIR_ENABLED"]
+
     breadcrumbs = [{"text": "Back", "url": "/surveys/" + short_name + "/" + period}, {}]
     return render_template(
         "collection_exercise/ce-eq-instrument-section.html",
@@ -864,6 +867,7 @@ def get_view_sample_ci(short_name, period):
         info_panel=info_panel,
         all_cis_for_survey=all_cis_for_survey,
         breadcrumbs=breadcrumbs,
+        cir_enabled=cir_enabled,
     )
 
 
