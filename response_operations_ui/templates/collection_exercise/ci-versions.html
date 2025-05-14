@@ -3,7 +3,8 @@
 
 {% block main %}
 <h1>Choose CIR version for EQ formtype {{ form_type }}</h1>
-<form action="" class=""ons-form" method="post"></form>
+<form action="" class="ons-form" method="post"></form>
+    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}" />
     <div class="ons-grid__col">
         {{
             onsButton({
