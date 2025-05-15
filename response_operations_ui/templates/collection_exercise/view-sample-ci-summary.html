@@ -10,7 +10,6 @@
         "value": "CIR version"
     }]
 }%}
-
 {% set formTypeCIVersionTableDataRows = [] %}
 
 {% for collection_instrument in collection_instruments %}
@@ -25,7 +24,7 @@
                   "tdClasses": "ons-u-ta-centre"
                 }, 
                 {
-                  "value": '<a href="">Choose a version</a>',
+                  "value": "<a href='" + url_for("collection_exercise_bp.view_ci_versions", short_name=short_name, period=period, form_type=collection_instrument["classifiers"]["form_type"]) + "'>Choose a version</a>",
                   "tdClasses": "ons-u-ta-right"
                 }
               ] 
