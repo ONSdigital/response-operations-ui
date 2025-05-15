@@ -937,11 +937,10 @@ class TestCollectionExercise(ViewTestCase):
         mock_request.post(url_collection_instrument_multi_select, json=self.multi_select_response[0], status_code=200)
         mock_details.return_value = ce_details
 
-        response = self.client.post(
-            f"/surveys/{short_name}/{period}/view-sample-ci", data=post_data, follow_redirects=True
-        )
+        response = self.client.post(f"/surveys/{short_name}/{period}/view-sample-ci", data=post_data)
 
-        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.status_code, 302)
+        self.assertEqual(response.headers["Location"], f"/surveys/{short_name}/{period}/view-sample-ci/summary")
 
     @requests_mock.mock()
     @patch("response_operations_ui.views.collection_exercise.build_collection_exercise_details")
@@ -964,11 +963,10 @@ class TestCollectionExercise(ViewTestCase):
         mock_request.post(url_collection_instrument_multi_select, json=self.multi_select_response[0], status_code=200)
         mock_details.return_value = ce_details
 
-        response = self.client.post(
-            f"/surveys/{short_name}/{period}/view-sample-ci", data=post_data, follow_redirects=True
-        )
+        response = self.client.post(f"/surveys/{short_name}/{period}/view-sample-ci", data=post_data)
 
-        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.status_code, 302)
+        self.assertEqual(response.headers["Location"], f"/surveys/{short_name}/{period}/view-sample-ci/summary")
 
     @requests_mock.mock()
     @patch("response_operations_ui.views.collection_exercise.build_collection_exercise_details")
@@ -987,11 +985,10 @@ class TestCollectionExercise(ViewTestCase):
         mock_request.post(url_collection_instrument_multi_select, json=self.multi_select_response[0], status_code=200)
         mock_details.return_value = ce_details
 
-        response = self.client.post(
-            f"/surveys/{short_name}/{period}/view-sample-ci", data=post_data, follow_redirects=True
-        )
+        response = self.client.post(f"/surveys/{short_name}/{period}/view-sample-ci", data=post_data)
 
-        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.status_code, 302)
+        self.assertEqual(response.headers["Location"], f"/surveys/{short_name}/{period}/view-sample-ci/summary")
 
     @requests_mock.mock()
     @patch("response_operations_ui.views.collection_exercise.build_collection_exercise_details")
@@ -1012,11 +1009,10 @@ class TestCollectionExercise(ViewTestCase):
 
         mock_details.return_value = ce_details
 
-        response = self.client.post(
-            f"/surveys/{short_name}/{period}/view-sample-ci", data=post_data, follow_redirects=True
-        )
+        response = self.client.post(f"/surveys/{short_name}/{period}/view-sample-ci", data=post_data)
 
-        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.status_code, 302)
+        self.assertEqual(response.headers["Location"], f"/surveys/{short_name}/{period}/view-sample-ci/summary")
 
     @requests_mock.mock()
     @patch("response_operations_ui.views.collection_exercise.build_collection_exercise_details")
@@ -1037,11 +1033,10 @@ class TestCollectionExercise(ViewTestCase):
 
         mock_details.return_value = ce_details
 
-        response = self.client.post(
-            f"/surveys/{short_name}/{period}/view-sample-ci", data=post_data, follow_redirects=True
-        )
+        response = self.client.post(f"/surveys/{short_name}/{period}/view-sample-ci", data=post_data)
 
-        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.status_code, 302)
+        self.assertEqual(response.headers["Location"], f"/surveys/{short_name}/{period}/view-sample-ci/summary")
 
     @requests_mock.mock()
     @patch("response_operations_ui.views.collection_exercise.build_collection_exercise_details")
@@ -1066,11 +1061,10 @@ class TestCollectionExercise(ViewTestCase):
 
         mock_details.return_value = ce_details
 
-        response = self.client.post(
-            f"/surveys/{short_name}/{period}/view-sample-ci", data=post_data, follow_redirects=True
-        )
+        response = self.client.post(f"/surveys/{short_name}/{period}/view-sample-ci", data=post_data)
 
-        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.status_code, 302)
+        self.assertEqual(response.headers["Location"], f"/surveys/{short_name}/{period}/view-sample-ci/summary")
 
     @requests_mock.mock()
     @patch("response_operations_ui.views.collection_exercise.build_collection_exercise_details")
@@ -1095,11 +1089,10 @@ class TestCollectionExercise(ViewTestCase):
 
         mock_details.return_value = ce_details
 
-        response = self.client.post(
-            f"/surveys/{short_name}/{period}/view-sample-ci", data=post_data, follow_redirects=True
-        )
+        response = self.client.post(f"/surveys/{short_name}/{period}/view-sample-ci", data=post_data)
 
-        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.status_code, 302)
+        self.assertEqual(response.headers["Location"], f"/surveys/{short_name}/{period}/view-sample-ci/summary")
 
     @requests_mock.mock()
     @patch(
@@ -2390,7 +2383,7 @@ class TestCollectionExercise(ViewTestCase):
         self.assertEqual(200, response.status_code)
         self.assertIn("Select EQ collection instruments".encode(), response.data)
         self.assertIn("checkbox-answer".encode(), response.data)
-        self.assertIn("Done".encode(), response.data)
+        self.assertIn("Continue to choose versions".encode(), response.data)
 
     @requests_mock.mock()
     def test_eq_view_sample_ci_page_survey_permission_with_cir(self, mock_request):
@@ -2491,7 +2484,7 @@ class TestCollectionExercise(ViewTestCase):
         self.assertEqual(200, response.status_code)
         self.assertIn("Select EQ collection instruments".encode(), response.data)
         self.assertIn("btn-add-ci".encode(), response.data)
-        self.assertIn("Done".encode(), response.data)
+        self.assertIn("Continue to choose versions".encode(), response.data)
 
     @requests_mock.mock()
     @mock.patch("response_operations_ui.views.collection_exercise.build_collection_exercise_details")
