@@ -937,15 +937,10 @@ class TestCollectionExercise(ViewTestCase):
         mock_request.post(url_collection_instrument_multi_select, json=self.multi_select_response[0], status_code=200)
         mock_details.return_value = ce_details
 
-        response = self.client.post(
-            f"/surveys/{short_name}/{period}/view-sample-ci", data=post_data
-        )
+        response = self.client.post(f"/surveys/{short_name}/{period}/view-sample-ci", data=post_data)
 
         self.assertEqual(response.status_code, 302)
-        self.assertEqual(
-            response.headers["Location"],
-            f"/surveys/{short_name}/{period}/view-sample-ci/summary"
-        )
+        self.assertEqual(response.headers["Location"], f"/surveys/{short_name}/{period}/view-sample-ci/summary")
 
     @requests_mock.mock()
     @patch("response_operations_ui.views.collection_exercise.build_collection_exercise_details")
@@ -968,15 +963,10 @@ class TestCollectionExercise(ViewTestCase):
         mock_request.post(url_collection_instrument_multi_select, json=self.multi_select_response[0], status_code=200)
         mock_details.return_value = ce_details
 
-        response = self.client.post(
-            f"/surveys/{short_name}/{period}/view-sample-ci", data=post_data
-        )
+        response = self.client.post(f"/surveys/{short_name}/{period}/view-sample-ci", data=post_data)
 
         self.assertEqual(response.status_code, 302)
-        self.assertEqual(
-            response.headers["Location"],
-            f"/surveys/{short_name}/{period}/view-sample-ci/summary"
-        )
+        self.assertEqual(response.headers["Location"], f"/surveys/{short_name}/{period}/view-sample-ci/summary")
 
     @requests_mock.mock()
     @patch("response_operations_ui.views.collection_exercise.build_collection_exercise_details")
@@ -995,15 +985,10 @@ class TestCollectionExercise(ViewTestCase):
         mock_request.post(url_collection_instrument_multi_select, json=self.multi_select_response[0], status_code=200)
         mock_details.return_value = ce_details
 
-        response = self.client.post(
-            f"/surveys/{short_name}/{period}/view-sample-ci", data=post_data
-        )
+        response = self.client.post(f"/surveys/{short_name}/{period}/view-sample-ci", data=post_data)
 
         self.assertEqual(response.status_code, 302)
-        self.assertEqual(
-            response.headers["Location"],
-            f"/surveys/{short_name}/{period}/view-sample-ci/summary"
-        )
+        self.assertEqual(response.headers["Location"], f"/surveys/{short_name}/{period}/view-sample-ci/summary")
 
     @requests_mock.mock()
     @patch("response_operations_ui.views.collection_exercise.build_collection_exercise_details")
@@ -1024,15 +1009,10 @@ class TestCollectionExercise(ViewTestCase):
 
         mock_details.return_value = ce_details
 
-        response = self.client.post(
-            f"/surveys/{short_name}/{period}/view-sample-ci", data=post_data
-        )
+        response = self.client.post(f"/surveys/{short_name}/{period}/view-sample-ci", data=post_data)
 
         self.assertEqual(response.status_code, 302)
-        self.assertEqual(
-            response.headers["Location"],
-            f"/surveys/{short_name}/{period}/view-sample-ci/summary"
-        )
+        self.assertEqual(response.headers["Location"], f"/surveys/{short_name}/{period}/view-sample-ci/summary")
 
     @requests_mock.mock()
     @patch("response_operations_ui.views.collection_exercise.build_collection_exercise_details")
@@ -1053,15 +1033,10 @@ class TestCollectionExercise(ViewTestCase):
 
         mock_details.return_value = ce_details
 
-        response = self.client.post(
-            f"/surveys/{short_name}/{period}/view-sample-ci", data=post_data
-        )
+        response = self.client.post(f"/surveys/{short_name}/{period}/view-sample-ci", data=post_data)
 
         self.assertEqual(response.status_code, 302)
-        self.assertEqual(
-            response.headers["Location"],
-            f"/surveys/{short_name}/{period}/view-sample-ci/summary"
-        )
+        self.assertEqual(response.headers["Location"], f"/surveys/{short_name}/{period}/view-sample-ci/summary")
 
     @requests_mock.mock()
     @patch("response_operations_ui.views.collection_exercise.build_collection_exercise_details")
@@ -1086,15 +1061,10 @@ class TestCollectionExercise(ViewTestCase):
 
         mock_details.return_value = ce_details
 
-        response = self.client.post(
-            f"/surveys/{short_name}/{period}/view-sample-ci", data=post_data
-        )
+        response = self.client.post(f"/surveys/{short_name}/{period}/view-sample-ci", data=post_data)
 
         self.assertEqual(response.status_code, 302)
-        self.assertEqual(
-            response.headers["Location"],
-            f"/surveys/{short_name}/{period}/view-sample-ci/summary"
-        )
+        self.assertEqual(response.headers["Location"], f"/surveys/{short_name}/{period}/view-sample-ci/summary")
 
     @requests_mock.mock()
     @patch("response_operations_ui.views.collection_exercise.build_collection_exercise_details")
@@ -1119,15 +1089,10 @@ class TestCollectionExercise(ViewTestCase):
 
         mock_details.return_value = ce_details
 
-        response = self.client.post(
-            f"/surveys/{short_name}/{period}/view-sample-ci", data=post_data
-        )
+        response = self.client.post(f"/surveys/{short_name}/{period}/view-sample-ci", data=post_data)
 
         self.assertEqual(response.status_code, 302)
-        self.assertEqual(
-            response.headers["Location"],
-            f"/surveys/{short_name}/{period}/view-sample-ci/summary"
-        )
+        self.assertEqual(response.headers["Location"], f"/surveys/{short_name}/{period}/view-sample-ci/summary")
 
     @requests_mock.mock()
     @patch(
