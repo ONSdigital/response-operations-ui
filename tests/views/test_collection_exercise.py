@@ -2811,7 +2811,7 @@ class TestCollectionExercise(ViewTestCase):
     #         "EQ": [{"classifiers": {"form_type": "0001"}}, {"classifiers": {"form_type": "0002"}}]
     #     }
     #     response = self.client.get(f"/surveys/{short_name}/{period}/view-sample-ci/summary")
-    # 
+    #
     #     self.assertEqual(response.status_code, 200)
     #     self.assertIn("0001".encode(), response.data)
     #     self.assertIn("0002".encode(), response.data)
