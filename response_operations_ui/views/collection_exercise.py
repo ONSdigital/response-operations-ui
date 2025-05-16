@@ -1137,9 +1137,14 @@ def view_sample_ci_summary(short_name: str, period: str) -> str:
     )
 
 
-@collection_exercise_bp.route("/<short_name>/<period>/view-sample-ci/summary/<survey_id>/<language>/<classifier_type>/<form_type>", methods=["GET"])
+@collection_exercise_bp.route(
+    "/<short_name>/<period>/view-sample-ci/summary/<survey_id>/<language>/<classifier_type>/<form_type>",
+    methods=["GET"],
+)
 @login_required
-def view_ci_versions(short_name: str, period: str, form_type: str, survey_id: str, language: str, classifier_type: str) -> str:
+def view_ci_versions(
+    short_name: str, period: str, form_type: str, survey_id: str, language: str, classifier_type: str
+) -> str:
     logger.info("Get CIR service status")
     error_message = None
     cir_metadata = None
