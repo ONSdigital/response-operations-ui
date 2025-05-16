@@ -156,9 +156,9 @@ def view_collection_exercise(short_name, period):
 
     if survey_mode in ("EQ", "EQ_AND_SEFT"):
         show_set_live_button = (
-            ce_state in "READY_FOR_REVIEW"
-            and "ref_period_start" in ce_details["events"]
-            and "ref_period_end" in ce_details["events"]
+                ce_state in "READY_FOR_REVIEW"
+                and "ref_period_start" in ce_details["events"]
+                and "ref_period_end" in ce_details["events"]
         )
     else:
         show_set_live_button = ce_state in "READY_FOR_REVIEW"
@@ -1000,7 +1000,7 @@ def remove_loaded_sample(short_name, period):
 
 def _split_list(list_to_split, num_of_lists):
     k, m = divmod(len(list_to_split), num_of_lists)
-    return (list_to_split[i * k + min(i, m) : (i + 1) * k + min(i + 1, m)] for i in range(num_of_lists))
+    return (list_to_split[i * k + min(i, m): (i + 1) * k + min(i + 1, m)] for i in range(num_of_lists))
 
 
 def _create_seft_ci_table(collection_instruments):
@@ -1131,14 +1131,30 @@ def view_sample_ci_summary(short_name: str, period: str) -> str:
     return render_template(
         "collection_exercise/view-sample-ci-summary.html",
         collection_instruments=eq_collection_instruments,
+        survey_id=survey_id,
+        short_name=short_name,
+        period=period,
     )
 
 
-@collection_exercise_bp.route("/<short_name>/<period>/view-sample-ci/summary/<form_type>", methods=["GET"])
+@collection_exercise_bp.route("/<short_name>/<period>/view-sample-ci/summary/<survey_id>/<form_type>", methods=["GET"])
 @login_required
-def view_ci_versions(short_name: str, period: str, form_type: str) -> str:
-
-    return render_template("collection_exercise/ci-versions.html", form_type=form_type)
+def view_ci_versions(short_name: str, period: str, form_type: str, survey_id: str) -> str:
+    logger.info("Get CIR service status")
+    error_message = None
+    cir_metadata = None
+    try:
+        cir_metadata = cir_controller.get_cir_metadata(survey_id, form_type)
+    except ExternalApiError as e:
+        error_message = (
+            f"{get_error_code_message(e.error_code)} "
+        )
+    return render_template(
+        "collection_exercise/ci-versions.html",
+        form_type=form_type,
+        cir_metadata=cir_metadata,
+        error_message=error_message,
+    )
 
 
 @collection_exercise_bp.route("/cir", methods=["GET"])

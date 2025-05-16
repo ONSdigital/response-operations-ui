@@ -1,5 +1,6 @@
 import json
 import os
+import responses
 from io import BytesIO
 from unittest.mock import patch
 from urllib.parse import urlencode, urlparse
@@ -8,14 +9,18 @@ import fakeredis
 import jwt
 import mock
 import requests_mock
+from flask import current_app
 
 from config import TestingConfig
+from response_operations_ui.exceptions.error_codes import ErrorCode
+from response_operations_ui.exceptions.exceptions import ExternalApiError
 from response_operations_ui.views.collection_exercise import (
     build_collection_exercise_details,
     get_existing_sorted_nudge_events,
     validate_file_extension_is_correct,
     validate_ru_specific_collection_instrument,
 )
+from tests.controllers.test_cir_controller import TEST_CIR_URL
 from tests.views import ViewTestCase
 from tests.views.test_admin import url_permission_url, url_sign_in_data
 
@@ -31,6 +36,7 @@ sample_summary_id = "1a11543f-eb19-41f5-825f-e41aca15e724"
 short_name = "MBS"
 survey_id = "cb0711c3-0ac8-41d3-ae0e-567e5ea1ef87"
 survey_ref = "141"
+cir_guid = "427d40e6-f54a-4512-a8ba-e4dea54ea3dc"
 
 project_root = os.path.dirname(os.path.dirname(__file__))
 
@@ -102,6 +108,9 @@ with open(f"{project_root}/test_data/sample/all_sample_units_loaded.json") as fp
 
 with open(f"{project_root}/test_data/sample/not_all_sample_units_loaded.json") as fp:
     not_all_sample_units_loaded = json.load(fp)
+    
+with open(f"{project_root}/test_data/cir/cir_metadata.json") as fp:
+    cir_metadata = json.load(fp)
 
 user_permission_surveys_edit_json = {
     "id": "5902656c-c41c-4b38-a294-0359e6aabe59",
@@ -2836,3 +2845,46 @@ class TestCollectionExercise(ViewTestCase):
 
         self.assertEqual(response.status_code, 200)
         self.assertNotIn("Choose a version".encode(), response.data)
+
+
+        self.assertNotIn("Choose a version".encode(), response.data)
+
+    @patch("response_operations_ui.controllers.cir_controller.get_cir_metadata")
+    def test_view_ci_versions_metadata_returned(self, get_cir_metadata):
+        form_type = "0001"
+        get_cir_metadata.return_value = cir_metadata
+        response = self.client.get(f"/surveys/{short_name}/{period}/view-sample-ci/summary/{survey_id}/{form_type}")
+
+        self.assertEqual(response.status_code, 200)
+        self.assertIn(form_type.encode(), response.data)
+        self.assertIn("Choose CIR version for EQ formtype".encode(), response.data)
+        self.assertIn("classifier_type".encode(), response.data)
+        self.assertIn("ci_version".encode(), response.data)
+        self.assertIn("guid".encode(), response.data)
+        self.assertIn(cir_guid.encode(), response.data)
+
+    @requests_mock.mock()
+    @patch("response_operations_ui.controllers.cir_controller.get_cir_metadata")
+    @patch("response_operations_ui.controllers.cir_controller._get_response_content")
+    def test_view_ci_versions_no_metadata(self, mock_request, get_cir_metadata, _get_response_content):
+        form_type = "0001"
+        cir_url_query_parameters = (f"/v1/ci_metadata?survey_id={survey_id}&language=en&classifier_type=form_type"
+                                    f"&classifier_value={form_type}")
+        cir_url = "test" + cir_url_query_parameters
+        mock_request.get(cir_url, status_code=404)
+        test = get_cir_metadata(form_type, survey_id)
+            # get_cir_metadata.return_value = ExternalApiError(mock_request, ErrorCode.NO_RESULTS_FOUND, "cir")
+        response = self.client.get(f"/surveys/{short_name}/{period}/view-sample-ci/summary/{form_type}")
+        # 
+        self.assertEqual(response.status_code, 200)
+        # self.assertIn(form_type.encode(), response.data)
+        # self.assertIn("Choose CIR version for EQ formtype".encode(), response.data)
+        
+    def test_view_ci_versions_unable_to_connect_to_cir_api(self):
+        form_type = "0001"
+
+        response = self.client.get(f"/surveys/{short_name}/{period}/view-sample-ci/summary/{form_type}")
+
+        self.assertEqual(response.status_code, 200)
+        self.assertIn(form_type.encode(), response.data)
+        self.assertIn("Choose CIR version for EQ formtype".encode(), response.data)
