@@ -23,8 +23,9 @@ def get_cir_service_status():
 
 
 def get_cir_metadata(survey_id, formtype):
-    cir_url_query_parameters = (f"/v1/ci_metadata?survey_id={survey_id}&language=en&classifier_type=form_type"
-                                f"&classifier_value={formtype}")
+    cir_url_query_parameters = (
+        f"/v1/ci_metadata?survey_id={survey_id}&language=en&classifier_type=form_type" f"&classifier_value={formtype}"
+    )
     return _get_response_content(app.config["CIR_API_URL"] + cir_url_query_parameters)
 
 

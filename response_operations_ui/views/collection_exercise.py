@@ -156,9 +156,9 @@ def view_collection_exercise(short_name, period):
 
     if survey_mode in ("EQ", "EQ_AND_SEFT"):
         show_set_live_button = (
-                ce_state in "READY_FOR_REVIEW"
-                and "ref_period_start" in ce_details["events"]
-                and "ref_period_end" in ce_details["events"]
+            ce_state in "READY_FOR_REVIEW"
+            and "ref_period_start" in ce_details["events"]
+            and "ref_period_end" in ce_details["events"]
         )
     else:
         show_set_live_button = ce_state in "READY_FOR_REVIEW"
@@ -1000,7 +1000,7 @@ def remove_loaded_sample(short_name, period):
 
 def _split_list(list_to_split, num_of_lists):
     k, m = divmod(len(list_to_split), num_of_lists)
-    return (list_to_split[i * k + min(i, m): (i + 1) * k + min(i + 1, m)] for i in range(num_of_lists))
+    return (list_to_split[i * k + min(i, m) : (i + 1) * k + min(i + 1, m)] for i in range(num_of_lists))
 
 
 def _create_seft_ci_table(collection_instruments):
@@ -1146,9 +1146,7 @@ def view_ci_versions(short_name: str, period: str, form_type: str, survey_id: st
     try:
         cir_metadata = cir_controller.get_cir_metadata(survey_id, form_type)
     except ExternalApiError as e:
-        error_message = (
-            f"{get_error_code_message(e.error_code)} "
-        )
+        error_message = f"{get_error_code_message(e.error_code)} "
     return render_template(
         "collection_exercise/ci-versions.html",
         form_type=form_type,

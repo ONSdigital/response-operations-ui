@@ -9,7 +9,10 @@ from flask import current_app
 from google.auth.exceptions import GoogleAuthError
 
 from response_operations_ui import create_app
-from response_operations_ui.controllers.cir_controller import get_cir_service_status, get_cir_metadata
+from response_operations_ui.controllers.cir_controller import (
+    get_cir_metadata,
+    get_cir_service_status,
+)
 from response_operations_ui.exceptions.error_codes import ErrorCode
 from response_operations_ui.exceptions.exceptions import ExternalApiError
 
@@ -21,6 +24,7 @@ survey_id = "1"
 
 with open(f"{project_root}/test_data/cir/cir_metadata.json") as fp:
     cir_metadata = json.load(fp)
+
 
 class TestCIRControllers(unittest.TestCase):
     def setUp(self):
@@ -44,12 +48,11 @@ class TestCIRControllers(unittest.TestCase):
 
             response_json = get_cir_service_status()
             self.assertEqual(response_json, {"status": "OK", "version": "development"})
-            
+
     @responses.activate
     def test_get_cir_metadata(self):
         with self.app.app_context():
             current_app.config["CIR_API_URL"] = TEST_CIR_URL
-
 
             responses.add(
                 responses.GET,
@@ -109,17 +112,14 @@ class TestCIRControllers(unittest.TestCase):
             with self.assertRaises(ExternalApiError) as context:
                 get_cir_service_status()
             self.assertEqual(context.exception.error_code, ErrorCode.API_UNEXPECTED_STATUS_CODE)
-            
+
     @responses.activate
     def test_ApiError_thrown_when_404(self):
         with self.app.app_context():
             current_app.config["CIR_API_URL"] = TEST_CIR_URL
 
             responses.add(
-                responses.GET,
-                f"{TEST_CIR_URL}{metadata_url}",
-                status=404,
-                url=f"{TEST_CIR_URL}{metadata_url}"
+                responses.GET, f"{TEST_CIR_URL}{metadata_url}", status=404, url=f"{TEST_CIR_URL}{metadata_url}"
             )
 
             with self.assertRaises(ExternalApiError) as context:
