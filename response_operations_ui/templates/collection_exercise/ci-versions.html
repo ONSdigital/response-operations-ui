@@ -1,5 +1,12 @@
 {% extends "layouts/base.html" %}
 
 {% block main %}
-<h1>Choose CIR version for EQ formtype {{ form_type }}</h1>
+  <h1>Choose CIR version for EQ formtype {{ form_type }}</h1>
+  {% if error_message %}
+    {{ error_message }}
+  {% else %}
+    <p>
+      {{ cir_metadata }}
+    </p>
+  {% endif %}
 {% endblock %}

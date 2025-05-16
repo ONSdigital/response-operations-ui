@@ -1131,16 +1131,33 @@ def view_sample_ci_summary(short_name: str, period: str) -> str:
     return render_template(
         "collection_exercise/view-sample-ci-summary.html",
         collection_instruments=eq_collection_instruments,
+        survey_id=survey_id,
         short_name=short_name,
         period=period,
     )
 
 
-@collection_exercise_bp.route("/<short_name>/<period>/view-sample-ci/summary/<form_type>", methods=["GET"])
+@collection_exercise_bp.route(
+    "/<short_name>/<period>/view-sample-ci/summary/<survey_id>/<language>/<classifier_type>/<form_type>",
+    methods=["GET"],
+)
 @login_required
-def view_ci_versions(short_name: str, period: str, form_type: str) -> str:
-
-    return render_template("collection_exercise/ci-versions.html", form_type=form_type)
+def view_ci_versions(
+    short_name: str, period: str, form_type: str, survey_id: str, language: str, classifier_type: str
+) -> str:
+    logger.info("Get CIR service status")
+    error_message = None
+    cir_metadata = None
+    try:
+        cir_metadata = cir_controller.get_cir_metadata(survey_id, form_type, language, classifier_type)
+    except ExternalApiError as e:
+        error_message = f"{get_error_code_message(e.error_code)} "
+    return render_template(
+        "collection_exercise/ci-versions.html",
+        form_type=form_type,
+        cir_metadata=cir_metadata,
+        error_message=error_message,
+    )
 
 
 @collection_exercise_bp.route("/cir", methods=["GET"])
