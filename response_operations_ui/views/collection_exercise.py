@@ -1131,6 +1131,8 @@ def view_sample_ci_summary(short_name: str, period: str) -> str:
     return render_template(
         "collection_exercise/view-sample-ci-summary.html",
         collection_instruments=eq_collection_instruments,
+        short_name=short_name,
+        period=period,
     )
 
 

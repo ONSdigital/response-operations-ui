@@ -2816,6 +2816,8 @@ class TestCollectionExercise(ViewTestCase):
         self.assertIn("0001".encode(), response.data)
         self.assertIn("0002".encode(), response.data)
         self.assertIn("Choose a CIR version for each EQ formtype".encode(), response.data)
+        self.assertIn(f"/surveys/{short_name}/{period}/view-sample-ci/summary/0001".encode(), response.data)
+        self.assertIn("Return to 000000 Collection exercise".encode(), response.data)
         self.assertIn("Choose a version".encode(), response.data)
 
     @patch("response_operations_ui.views.collection_exercise.survey_controllers.get_survey_by_shortname")
