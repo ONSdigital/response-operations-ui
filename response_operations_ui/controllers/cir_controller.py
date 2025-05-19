@@ -22,15 +22,14 @@ def get_cir_service_status():
     return _get_response_content(app.config["CIR_API_URL"] + "/status")
 
 
-def get_cir_metadata(survey_id, formtype, language, classifier_type):
+def get_cir_metadata(survey_id, formtype):
     cir_url_query_parameters = (
-        f"/v1/ci_metadata?survey_id={survey_id}&language={language}"
-        f"&classifier_type={classifier_type}&classifier_value={formtype}"
+        f"/v2/ci_metadata?survey_id={survey_id}&classifier_value={formtype}"
     )
-    return _get_response_content(app.config["CIR_API_URL"] + cir_url_query_parameters)
+    return get_response_content(app.config["CIR_API_URL"] + cir_url_query_parameters)
 
 
-def _get_response_content(request_url):
+def get_response_content(request_url):
     session = requests.Session()
     client_id = app.config["CIR_OAUTH2_CLIENT_ID"]
     logger.info(f"{TARGET_SERVICE} service request", request_url=request_url)
