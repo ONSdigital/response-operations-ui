@@ -6,10 +6,7 @@ from datetime import datetime
 import iso8601
 from dateutil import tz
 from dateutil.parser import parse
-from flask import (
-    Blueprint,
-    abort,
-)
+from flask import Blueprint, abort
 from flask import current_app as app
 from flask import (
     flash,
