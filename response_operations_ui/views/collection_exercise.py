@@ -310,6 +310,7 @@ def _set_ready_for_live(short_name, period):
 
 
 def _select_eq_collection_instrument(short_name, period):
+    success_panel = None
     cis_selected = request.form.getlist("checkbox-answer")
     ce_details = build_collection_exercise_details(short_name, period, include_ci=True)
 
@@ -344,6 +345,7 @@ def _select_eq_collection_instrument(short_name, period):
             "collection_exercise_bp.view_sample_ci_summary",
             short_name=short_name,
             period=period,
+            success_panel=success_panel,
         )
     )
 
