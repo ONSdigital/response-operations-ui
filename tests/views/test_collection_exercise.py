@@ -19,7 +19,6 @@ from response_operations_ui.views.collection_exercise import (
     validate_file_extension_is_correct,
     validate_ru_specific_collection_instrument,
 )
-from tests.controllers.test_cir_controller import TEST_CIR_URL
 from tests.views import ViewTestCase
 from tests.views.test_admin import url_permission_url, url_sign_in_data
 
