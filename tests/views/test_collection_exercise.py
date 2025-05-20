@@ -2847,21 +2847,6 @@ class TestCollectionExercise(ViewTestCase):
         self.assertIn("Choose CIR version for EQ formtype 0001".encode(), response.data)
         self.assertIn("Save".encode(), response.data)
 
-    @requests_mock.mock()
-    def test_save_ci_versions(self, mock_request):
-        # This is basically a carbon copy of the View CE test, as the save functionality
-        # basically doesn't do anything right now
-        self.load_eq_survey(
-            mock_request,
-            self.eq_survey_dates,
-            self.collection_exercises,
-            collection_exercise_details["collection_exercise"],
-            self.collection_exercise_events,
-            sample_summary_id,
-            self.sample_summary,
-            self.eq_collection_instrument,
-            self.eq_ci_selectors,
-        )
+    def test_save_ci_versions(self):
         response = self.client.post(f"/surveys/{short_name}/{period}/view-sample-ci/summary/0001")
-        self.assertIn("Monthly Survey of Building Materials Bricks".encode(), response.data)
-        self.assertIn("221_201712".encode(), response.data)
+        self.assertEqual(response.status_code, 302)
