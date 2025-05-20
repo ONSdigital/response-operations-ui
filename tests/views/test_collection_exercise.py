@@ -2838,3 +2838,16 @@ class TestCollectionExercise(ViewTestCase):
 
         self.assertEqual(response.status_code, 200)
         self.assertNotIn("Choose a version".encode(), response.data)
+
+    def test_view_ci_versions(self):
+        response = self.client.get(f"/surveys/{short_name}/{period}/view-sample-ci/summary/0001")
+
+        self.assertEqual(response.status_code, 200)
+        self.assertIn("Back to CIR versions".encode(), response.data)
+        self.assertIn("Choose CIR version for EQ formtype 0001".encode(), response.data)
+        self.assertIn("Save".encode(), response.data)
+
+    def test_save_ci_versions(self):
+        response = self.client.post(f"/surveys/{short_name}/{period}/view-sample-ci/summary/0001")
+        self.assertEqual(response.status_code, 302)
+        self.assertIn(f"/surveys/{short_name}/{period}".encode(), response.data)
