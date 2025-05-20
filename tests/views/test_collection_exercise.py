@@ -2486,7 +2486,7 @@ class TestCollectionExercise(ViewTestCase):
         self.assertIn("SEFT collection instruments uploaded".encode(), response.data)
         self.assertNotIn("Remove SEFT file".encode(), response.data)
         self.assertIn("Done".encode(), response.data)
-        
+
     @requests_mock.mock()
     def test_linked_ci_eq_view_sample_ci_page_survey_permission(self, mock_request):
         sign_in_with_permission(self, mock_request, user_permission_surveys_edit_json)
@@ -2505,6 +2505,7 @@ class TestCollectionExercise(ViewTestCase):
 
         mock_request.get(url_get_by_survey_with_ref_start_date, json=collection_exercise_eq_ref_start_date)
         mock_request.get(url_get_by_survey_with_ref_end_date, json=collection_exercise_eq_ref_end_date)
+        
         response = self.client.get(f"/surveys/{short_name}/{period}/view-sample-ci?survey_mode=EQ")
 
         self.assertEqual(200, response.status_code)
@@ -2513,7 +2514,7 @@ class TestCollectionExercise(ViewTestCase):
         self.assertIn("Done".encode(), response.data)
         
     @requests_mock.mock()
-    def test_linked_ci_eq_view_sample_ci_page_survey_permission(self, mock_request):
+    def test_linked_ci_eq_view_sample_ci_page_survey_permission_with_cir(self, mock_request):
         self.app.config["CIR_ENABLED"] = True
         sign_in_with_permission(self, mock_request, user_permission_surveys_edit_json)
         mock_request.get(url_get_survey_by_short_name, json=self.eq_survey_dates)
