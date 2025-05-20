@@ -23,6 +23,9 @@ def get_cir_service_status():
 
 
 def get_cir_metadata(survey_id, formtype):
+    # The CIR API requires both classifier_type and language to be present as part of the call in order to obtain the
+    # Relevant survey with form type. After speaking with Alina, as RASRM only deals with English surveys
+    # And as we know the classifier type will be 'form_type' it was agreed to hardcode this params
     cir_url_query_parameters = (
         f"/v2/ci_metadata?classifier_type=form_type&classifier_value={formtype}&language=en&survey_id={survey_id}"
     )

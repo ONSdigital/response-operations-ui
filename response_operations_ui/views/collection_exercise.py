@@ -1137,6 +1137,9 @@ def view_sample_ci_summary(short_name: str, period: str) -> str:
     )
 
 
+# As a call is already made by 'view_sample_ci_summary' to get the 'survey_id', it didn't make sense to do this call
+# Twice, and so I've included the 'survey_id' as a url param. If we persist 'survey_id' in the future, then this param
+# Be removed
 @collection_exercise_bp.route("/<short_name>/<period>/view-sample-ci/summary/<survey_id>/<form_type>", methods=["GET"])
 @login_required
 def view_ci_versions(short_name: str, period: str, form_type: str, survey_id: str) -> str:
