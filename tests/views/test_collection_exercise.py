@@ -2849,7 +2849,7 @@ class TestCollectionExercise(ViewTestCase):
 
     @requests_mock.mock()
     def test_save_ci_versions(self, mock_request):
-        # This is basically a carbon copy of the View CE test, as the save functionality 
+        # This is basically a carbon copy of the View CE test, as the save functionality
         # basically doesn't do anything right now
         self.load_eq_survey(
             mock_request,
