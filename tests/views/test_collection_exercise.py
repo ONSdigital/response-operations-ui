@@ -2505,7 +2505,7 @@ class TestCollectionExercise(ViewTestCase):
 
         mock_request.get(url_get_by_survey_with_ref_start_date, json=collection_exercise_eq_ref_start_date)
         mock_request.get(url_get_by_survey_with_ref_end_date, json=collection_exercise_eq_ref_end_date)
-        
+
         response = self.client.get(f"/surveys/{short_name}/{period}/view-sample-ci?survey_mode=EQ")
 
         self.assertEqual(200, response.status_code)
