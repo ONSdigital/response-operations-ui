@@ -2850,3 +2850,4 @@ class TestCollectionExercise(ViewTestCase):
     def test_save_ci_versions(self):
         response = self.client.post(f"/surveys/{short_name}/{period}/view-sample-ci/summary/0001")
         self.assertEqual(response.status_code, 302)
+        self.assertIn(f"/surveys/{short_name}/{period}", response.data)
