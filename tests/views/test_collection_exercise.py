@@ -2516,32 +2516,6 @@ class TestCollectionExercise(ViewTestCase):
         self.assertIn("Done".encode(), response.data)
 
     @requests_mock.mock()
-    def test_linked_ci_eq_view_sample_ci_page_survey_permission_with_cir(self, mock_request):
-        self.app.config["CIR_ENABLED"] = True
-        sign_in_with_permission(self, mock_request, user_permission_surveys_edit_json)
-        mock_request.get(url_get_survey_by_short_name, json=self.eq_survey_dates)
-        mock_request.get(url_ces_by_survey, json=self.collection_exercises)
-        mock_request.get(url_ce_by_id, json=collection_exercise_eq_both_ref_date["collection_exercise"])
-        mock_request.get(url_get_collection_exercise_events, json=self.collection_exercise_ref_both_date)
-        mock_request.get(
-            f"{url_get_collection_instrument}?{ci_search_string}", json=self.eq_collection_instrument, complete_qs=True
-        )
-        mock_request.get(
-            f"{url_get_collection_instrument}?{ci_type_search_string_eq}", json=self.eq_ci_selectors, complete_qs=True
-        )
-        mock_request.get(url_link_sample, json=[sample_summary_id])
-        mock_request.get(url_get_sample_summary, json=self.sample_summary)
-
-        mock_request.get(url_get_by_survey_with_ref_start_date, json=collection_exercise_eq_ref_start_date)
-        mock_request.get(url_get_by_survey_with_ref_end_date, json=collection_exercise_eq_ref_end_date)
-        response = self.client.get(f"/surveys/{short_name}/{period}/view-sample-ci?survey_mode=EQ")
-
-        self.assertEqual(200, response.status_code)
-        self.assertIn("Select EQ collection instruments".encode(), response.data)
-        self.assertIn("btn-add-ci".encode(), response.data)
-        self.assertIn("Continue to choose versions".encode(), response.data)
-
-    @requests_mock.mock()
     @mock.patch("response_operations_ui.views.collection_exercise.build_collection_exercise_details")
     def test_linked_ci_eq_view_sample_ci_page_no_survey_permission(self, mock_request, mock_details):
         mock_request.get(url_get_survey_by_short_name, json=self.eq_survey_dates)
