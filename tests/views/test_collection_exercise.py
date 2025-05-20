@@ -2828,7 +2828,14 @@ class TestCollectionExercise(ViewTestCase):
         self.assertIn("0001".encode(), response.data)
         self.assertIn("0002".encode(), response.data)
         self.assertIn("Choose a CIR version for each EQ formtype".encode(), response.data)
-        self.assertIn(f"/surveys/{short_name}/{period}/view-sample-ci/summary/0001".encode(), response.data)
+        self.assertIn(
+            f"/surveys/{short_name}/{period}/view-sample-ci/summary/cb0711c3-0ac8-41d3-ae0e-567e5ea1ef87/0001".encode(),
+            response.data,
+        )
+        self.assertIn(
+            f"/surveys/{short_name}/{period}/view-sample-ci/summary/cb0711c3-0ac8-41d3-ae0e-567e5ea1ef87/0002".encode(),
+            response.data,
+        )
         self.assertIn("Return to 000000 Collection exercise".encode(), response.data)
         self.assertIn("Choose a version".encode(), response.data)
 
