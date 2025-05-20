@@ -49,6 +49,8 @@ def _get_response_content(request_url):
         raise ExternalApiError(None, ErrorCode.API_OIDC_CREDENTIALS_ERROR, TARGET_SERVICE) from e
 
     try:
+        response_all_data = session.get(app.config["CIR_API_URL"] + "/v2/ci_metadata")
+        logger.info("Test metadata: " + str(response_all_data.text))
         response = session.get(request_url)
     except (requests.ConnectionError, requests.exceptions.Timeout) as e:
         error_code = (
