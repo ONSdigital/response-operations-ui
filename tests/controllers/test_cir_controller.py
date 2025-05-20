@@ -17,8 +17,9 @@ from response_operations_ui.exceptions.error_codes import ErrorCode
 from response_operations_ui.exceptions.exceptions import ExternalApiError
 
 TEST_CIR_URL = "http://test.domain"
+TEST_CIR_API_PREFIX = "/v2/ci_metadata"
 project_root = os.path.dirname(os.path.dirname(__file__))
-metadata_url = "/v2/ci_metadata?survey_id=1&language=en&classifier_type=form_type&classifier_value=0001"
+cir_url_query_parameters = "?survey_id=1&language=en&classifier_type=form_type&classifier_value=0001"
 formtype = "0001"
 survey_id = "1"
 
@@ -53,10 +54,11 @@ class TestCIRControllers(unittest.TestCase):
     def test_get_cir_metadata(self):
         with self.app.app_context():
             current_app.config["CIR_API_URL"] = TEST_CIR_URL
+            current_app.config["CIR_API_API_PREFIX"] = TEST_CIR_API_PREFIX
 
             responses.add(
                 responses.GET,
-                f"{TEST_CIR_URL}{metadata_url}",
+                f"{TEST_CIR_URL}{TEST_CIR_API_PREFIX}{cir_url_query_parameters}",
                 status=200,
                 body=json.dumps(cir_metadata).encode("utf-8"),
                 content_type="application/json",
@@ -117,16 +119,17 @@ class TestCIRControllers(unittest.TestCase):
     def test_ApiError_thrown_when_404(self):
         with self.app.app_context():
             current_app.config["CIR_API_URL"] = TEST_CIR_URL
+            current_app.config["CIR_API_API_PREFIX"] = TEST_CIR_API_PREFIX
 
             responses.add(
                 responses.GET,
-                f"{TEST_CIR_URL}{metadata_url}",
+                f"{TEST_CIR_URL}{TEST_CIR_API_PREFIX}{cir_url_query_parameters}",
                 status=404,
             )
 
             with self.assertRaises(ExternalApiError) as context:
                 get_cir_metadata(survey_id, formtype)
-            self.assertEqual(context.exception.error_code, ErrorCode.NO_RESULTS_FOUND)
+            self.assertEqual(context.exception.error_code, ErrorCode.NOT_FOUND)
 
     @responses.activate
     def test_ApiError_thrown_when_content_not_json(self):

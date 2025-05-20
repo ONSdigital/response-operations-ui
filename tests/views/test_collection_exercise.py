@@ -2882,7 +2882,7 @@ class TestCollectionExercise(ViewTestCase):
 
         with patch(
             "response_operations_ui.controllers.cir_controller.get_cir_metadata",
-            Mock(side_effect=ExternalApiError(mock_response, ErrorCode.NO_RESULTS_FOUND)),
+            Mock(side_effect=ExternalApiError(mock_response, ErrorCode.NOT_FOUND)),
         ):
             response = self.client.get(f"/surveys/{short_name}/{period}/view-sample-ci/summary/{survey_id}/{form_type}")
             self.assertEqual(response.status_code, 200)

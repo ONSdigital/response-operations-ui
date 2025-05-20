@@ -27,9 +27,9 @@ def get_cir_metadata(survey_id, formtype):
     # Relevant survey with form type. After speaking with Alina, as RASRM only deals with English surveys
     # And as we know the classifier type will be 'form_type' it was agreed to hardcode this params
     cir_url_query_parameters = (
-        f"/v2/ci_metadata?classifier_type=form_type&classifier_value={formtype}&language=en&survey_id={survey_id}"
+        f"?classifier_type=form_type&classifier_value={formtype}&language=en&survey_id={survey_id}"
     )
-    return _get_response_content(app.config["CIR_API_URL"] + cir_url_query_parameters)
+    return _get_response_content(app.config["CIR_API_URL"] + app.config["CIR_API_PREFIX"] + cir_url_query_parameters)
 
 
 def _get_response_content(request_url):
@@ -64,12 +64,12 @@ def _get_response_content(request_url):
     if response.status_code != 200:
         if response.status_code == 404:
             logger.error(
-                get_error_code_message(ErrorCode.NO_RESULTS_FOUND),
+                get_error_code_message(ErrorCode.NOT_FOUND),
                 status_code=str(response.status_code),
                 request_url=request_url,
                 target_service=TARGET_SERVICE,
             )
-            raise ExternalApiError(response, ErrorCode.NO_RESULTS_FOUND, TARGET_SERVICE)
+            raise ExternalApiError(response, ErrorCode.NOT_FOUND, TARGET_SERVICE)
         else:
             logger.error(
                 get_error_code_message(ErrorCode.API_UNEXPECTED_STATUS_CODE),

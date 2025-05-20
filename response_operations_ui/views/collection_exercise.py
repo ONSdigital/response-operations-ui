@@ -48,7 +48,10 @@ from response_operations_ui.controllers import (
     survey_controllers,
 )
 from response_operations_ui.controllers.uaa_controller import user_has_permission
-from response_operations_ui.exceptions.error_codes import get_error_code_message
+from response_operations_ui.exceptions.error_codes import (
+    ErrorCode,
+    get_error_code_message,
+)
 from response_operations_ui.exceptions.exceptions import ApiError, ExternalApiError
 from response_operations_ui.forms import (
     CreateCollectionExerciseDetailsForm,
@@ -1149,7 +1152,12 @@ def view_ci_versions(short_name: str, period: str, form_type: str, survey_id: st
     try:
         cir_metadata = cir_controller.get_cir_metadata(survey_id, form_type)
     except ExternalApiError as e:
-        error_message = f"{get_error_code_message(e.error_code)} "
+        if e.error_code is ErrorCode.NOT_FOUND:
+            error_message = "No CIR data retrieved"
+        elif e.error_code is ErrorCode.API_CONNECTION_ERROR:
+            error_message = "Unable to connect to CIR"
+        else:
+            error_message = f"{get_error_code_message(e.error_code)}"
     return render_template(
         "collection_exercise/ci-versions.html",
         form_type=form_type,

@@ -112,6 +112,7 @@ class Config(object):
     CIR_API_URL = CIR_API_URL = os.getenv("CIR_API_URL", "https://cir.integration.onsdigital.uk")
     CIR_OAUTH2_CLIENT_ID = os.getenv("CIR_OAUTH2_CLIENT_ID", "dummy_client_id")
     CIR_ENABLED = strtobool(os.getenv("CIR_ENABLED", "False"))
+    CIR_API_PREFIX = os.getenv("CIR_API_PREFIX", "/v2/ci_metadata")
 
 
 class DevelopmentConfig(Config):
@@ -165,6 +166,7 @@ class DevelopmentConfig(Config):
     CIR_API_URL = CIR_API_URL = os.getenv("CIR_API_URL", "http://localhost:3030")
     CIR_OAUTH2_CLIENT_ID = os.getenv("CIR_OAUTH2_CLIENT_ID", "dummy_client_id")
     CIR_ENABLED = strtobool(os.getenv("CIR_ENABLED", "False"))
+    CIR_API_PREFIX = os.getenv("CIR_API_PREFIX", "/v2/ci_metadata")
 
 
 class TestingConfig(DevelopmentConfig):
@@ -206,3 +208,4 @@ Z5VVFymXN2n+A6UeWAnuO8/E1inhk99dBzKEGdw=
     CIR_API_URL = CIR_API_URL = os.getenv("CIR_API_URL", "http://localhost:3030")
     CIR_OAUTH2_CLIENT_ID = os.getenv("CIR_OAUTH2_CLIENT_ID", "dummy_client_id")
     CIR_ENABLED = False
+    CIR_API_PREFIX = os.getenv("CIR_API_PREFIX", "/v2/ci_metadata")
