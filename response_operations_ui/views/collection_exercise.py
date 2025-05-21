@@ -1150,12 +1150,12 @@ def view_sample_ci_summary(short_name: str, period: str) -> str:
 @collection_exercise_bp.route("/<short_name>/<period>/view-sample-ci/summary/<form_type>", methods=["GET"])
 @login_required
 def view_ci_versions(short_name: str, period: str, form_type: str) -> str:
-    survey_id = survey_controllers.get_survey_by_shortname(short_name).get("id")
+    survey_ref = survey_controllers.get_survey_by_shortname(short_name).get("surveyRef")
     logger.info("Retrieving CIR metadata")
     error_message = None
     cir_metadata = None
     try:
-        cir_metadata = cir_controller.get_cir_metadata(survey_id, form_type)
+        cir_metadata = cir_controller.get_cir_metadata(survey_ref, form_type)
     except ExternalApiError as e:
         if e.error_code is ErrorCode.NOT_FOUND:
             error_message = "No CIR data retrieved"

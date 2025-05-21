@@ -2882,7 +2882,7 @@ class TestCollectionExercise(ViewTestCase):
     @patch("response_operations_ui.controllers.cir_controller.get_cir_metadata")
     def test_view_ci_versions_metadata_returned(self, get_cir_metadata, get_survey_by_shortname):
         form_type = "0001"
-        get_survey_by_shortname.return_value = {"id": survey_id}
+        get_survey_by_shortname.return_value = {"id": survey_ref}
         get_cir_metadata.return_value = cir_metadata
         response = self.client.get(f"/surveys/{short_name}/{period}/view-sample-ci/summary/{form_type}")
 

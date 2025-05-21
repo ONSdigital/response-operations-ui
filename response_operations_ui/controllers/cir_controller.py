@@ -22,10 +22,10 @@ def get_cir_service_status():
     return _get_response_content(app.config["CIR_API_URL"] + "/status")
 
 
-def get_cir_metadata(survey_id, formtype):
+def get_cir_metadata(survey_ref, formtype):
     # form_type is not parameterised as it is currently the only accepted classifier type
     cir_url_query_parameters = (
-        f"?classifier_type=form_type&classifier_value={formtype}&language=en&survey_id={survey_id}"
+        f"?classifier_type=form_type&classifier_value={formtype}&language=en&survey_id={survey_ref}"
     )
     return _get_response_content(app.config["CIR_API_URL"] + app.config["CIR_API_PREFIX"] + cir_url_query_parameters)
 

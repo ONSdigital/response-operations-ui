@@ -19,9 +19,9 @@ from response_operations_ui.exceptions.exceptions import ExternalApiError
 TEST_CIR_URL = "http://test.domain"
 TEST_CIR_API_PREFIX = "/v2/ci_metadata"
 project_root = os.path.dirname(os.path.dirname(__file__))
-cir_url_query_parameters = "?survey_id=1&language=en&classifier_type=form_type&classifier_value=0001"
+cir_url_query_parameters = "?survey_id=141&language=en&classifier_type=form_type&classifier_value=0001"
 formtype = "0001"
-survey_id = "1"
+survey_ref = "141"
 
 with open(f"{project_root}/test_data/cir/cir_metadata.json") as fp:
     cir_metadata = json.load(fp)
@@ -64,7 +64,7 @@ class TestCIRControllers(unittest.TestCase):
                 content_type="application/json",
             )
 
-            response_json = get_cir_metadata(survey_id, formtype)
+            response_json = get_cir_metadata(survey_ref, formtype)
             self.assertEqual(response_json, cir_metadata)
 
     @patch("response_operations_ui.controllers.cir_controller.fetch_and_apply_oidc_credentials")
@@ -128,7 +128,7 @@ class TestCIRControllers(unittest.TestCase):
             )
 
             with self.assertRaises(ExternalApiError) as context:
-                get_cir_metadata(survey_id, formtype)
+                get_cir_metadata(survey_ref, formtype)
             self.assertEqual(context.exception.error_code, ErrorCode.NOT_FOUND)
 
     @responses.activate
