@@ -1,5 +1,6 @@
-{
-    "ci_version": 3,
+[
+  {
+    "ci_version": 1,
     "data_version": "0.0.1",
     "classifier_type": "form_type",
     "classifier_value": "0001",
@@ -8,4 +9,5 @@
     "published_at": "2024-07-16T14:26:44.609010Z",
     "survey_id": "1",
     "title": "Monthly Wages and Salaries Survey"
-}
+  }
+]
