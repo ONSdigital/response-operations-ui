@@ -339,7 +339,15 @@ def _select_eq_collection_instrument(short_name, period):
                     survey_mode="EQ",
                 )
             )
-
+    if app.config["CIR_ENABLED"]:
+        return redirect(
+            url_for(
+                "collection_exercise_bp.view_sample_ci_summary",
+                short_name=short_name,
+                period=period,
+                success_panel=success_panel,
+            )
+        )
     return redirect(
         url_for(
             "collection_exercise_bp.view_collection_exercise",
