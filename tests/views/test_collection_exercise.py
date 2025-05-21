@@ -171,9 +171,7 @@ url_party_delete_attributes = (
     f"{TestingConfig.PARTY_URL}/party-api/v1/businesses/attributes/sample-summary/{sample_summary_id}"
 )
 
-url_cir_get_metadata = (
-    f"http://test.domain/surveys/{short_name}/{period}/view-sample-ci/summary/{survey_id}/{form_type}"
-)
+url_cir_get_metadata = f"http://test.domain/surveys/{short_name}/{period}/view-sample-ci/summary/{form_type}"
 
 ci_search_string = urlencode(
     {"searchString": json.dumps({"SURVEY_ID": survey_id, "COLLECTION_EXERCISE": collection_exercise_id})}
@@ -2880,11 +2878,13 @@ class TestCollectionExercise(ViewTestCase):
         self.assertEqual(response.status_code, 200)
         self.assertNotIn("Choose a version".encode(), response.data)
 
+    @patch("response_operations_ui.views.collection_exercise.survey_controllers.get_survey_by_shortname")
     @patch("response_operations_ui.controllers.cir_controller.get_cir_metadata")
-    def test_view_ci_versions_metadata_returned(self, get_cir_metadata):
+    def test_view_ci_versions_metadata_returned(self, get_cir_metadata, get_survey_by_shortname):
         form_type = "0001"
+        get_survey_by_shortname.return_value = {"id": survey_id}
         get_cir_metadata.return_value = cir_metadata
-        response = self.client.get(f"/surveys/{short_name}/{period}/view-sample-ci/summary/{survey_id}/{form_type}")
+        response = self.client.get(f"/surveys/{short_name}/{period}/view-sample-ci/summary/{form_type}")
 
         self.assertEqual(response.status_code, 200)
         self.assertIn(form_type.encode(), response.data)
@@ -2913,7 +2913,7 @@ class TestCollectionExercise(ViewTestCase):
             "response_operations_ui.controllers.cir_controller.get_cir_metadata",
             Mock(side_effect=ExternalApiError(mock_response, ErrorCode.NOT_FOUND)),
         ):
-            response = self.client.get(f"/surveys/{short_name}/{period}/view-sample-ci/summary/{survey_id}/{form_type}")
+            response = self.client.get(f"/surveys/{short_name}/{period}/view-sample-ci/summary/{form_type}")
             self.assertEqual(response.status_code, 200)
             self.assertIn("Choose CIR version for EQ formtype".encode(), response.data)
             self.assertIn("No CIR data retrieved".encode(), response.data)
@@ -2930,7 +2930,7 @@ class TestCollectionExercise(ViewTestCase):
             "response_operations_ui.controllers.cir_controller.get_cir_metadata",
             Mock(side_effect=ExternalApiError(mock_response, ErrorCode.API_CONNECTION_ERROR)),
         ):
-            response = self.client.get(f"/surveys/{short_name}/{period}/view-sample-ci/summary/{survey_id}/{form_type}")
+            response = self.client.get(f"/surveys/{short_name}/{period}/view-sample-ci/summary/{form_type}")
             self.assertEqual(response.status_code, 200)
             self.assertIn("Choose CIR version for EQ formtype".encode(), response.data)
             self.assertIn("Unable to connect to CIR".encode(), response.data)
