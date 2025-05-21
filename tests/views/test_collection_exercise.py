@@ -2418,6 +2418,28 @@ class TestCollectionExercise(ViewTestCase):
         self.assertIn("CIR version".encode(), response.data)
         self.assertIn("Continue to choose versions".encode(), response.data)
 
+    @mock.patch(
+        "response_operations_ui.controllers.collection_instrument_controllers.update_collection_exercise_eq_instruments"
+    )
+    @mock.patch("response_operations_ui.views.collection_exercise.build_collection_exercise_details")
+    def test_cir_post_select_eq_ci(self, collection_exercise_details, update_collection_exercise_eq_instruments):
+        self.app.config["CIR_ENABLED"] = True
+        collection_exercise_details.return_value = {
+            "survey": {"surveyMode": "EQ"},
+            "collection_exercise": {"id": collection_exercise_id},
+        }
+        update_collection_exercise_eq_instruments.return_value = 200, {}
+
+        post_data = {
+            "checkbox-answer": [collection_instrument_id],
+            "ce_id": collection_exercise_id,
+            "select-eq-ci": "",
+        }
+        response = self.client.post(f"/surveys/{short_name}/{period}/view-sample-ci", data=post_data)
+
+        self.assertEqual(302, response.status_code)
+        self.assertEqual(response.headers["Location"], f"/surveys/{short_name}/{period}/view-sample-ci/summary")
+
     @requests_mock.mock()
     def test_seft_loaded_load_collection_instruments_page_survey_permission(self, mock_request):
         sign_in_with_permission(self, mock_request, user_permission_surveys_edit_json)
@@ -2816,6 +2838,8 @@ class TestCollectionExercise(ViewTestCase):
         self.assertIn("0001".encode(), response.data)
         self.assertIn("0002".encode(), response.data)
         self.assertIn("Choose a CIR version for each EQ formtype".encode(), response.data)
+        self.assertIn(f"/surveys/{short_name}/{period}/view-sample-ci/summary/0001".encode(), response.data)
+        self.assertIn("Return to 000000 Collection exercise".encode(), response.data)
         self.assertIn("Choose a version".encode(), response.data)
 
     @patch("response_operations_ui.views.collection_exercise.survey_controllers.get_survey_by_shortname")
@@ -2836,3 +2860,16 @@ class TestCollectionExercise(ViewTestCase):
 
         self.assertEqual(response.status_code, 200)
         self.assertNotIn("Choose a version".encode(), response.data)
+
+    def test_view_ci_versions(self):
+        response = self.client.get(f"/surveys/{short_name}/{period}/view-sample-ci/summary/0001")
+
+        self.assertEqual(response.status_code, 200)
+        self.assertIn("Back to CIR versions".encode(), response.data)
+        self.assertIn("Choose CIR version for EQ formtype 0001".encode(), response.data)
+        self.assertIn("Save".encode(), response.data)
+
+    def test_save_ci_versions(self):
+        response = self.client.post(f"/surveys/{short_name}/{period}/view-sample-ci/summary/0001")
+        self.assertEqual(response.status_code, 302)
+        self.assertIn(f"/surveys/{short_name}/{period}".encode(), response.data)
