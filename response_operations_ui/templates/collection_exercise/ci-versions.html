@@ -7,6 +7,15 @@
     <div class="ons-grid ons-grid--gutterless">
         <div class="ons-grid__col ons-col-8@m">
             <h1>Choose CIR version for EQ formtype {{ form_type }}</h1>
+            <div>
+              {% if error_message %}
+                {{ error_message }}
+              {% else %}
+                <p>
+                  {{ cir_metadata }}
+                </p>
+              {% endif %}
+            </div>
             {{
                 onsButton({
                     "text": "Save",

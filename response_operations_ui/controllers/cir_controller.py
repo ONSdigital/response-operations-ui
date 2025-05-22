@@ -22,6 +22,14 @@ def get_cir_service_status():
     return _get_response_content(app.config["CIR_API_URL"] + "/status")
 
 
+def get_cir_metadata(survey_ref, formtype):
+    # form_type is not parameterised as it is currently the only accepted classifier type
+    cir_url_query_parameters = (
+        f"?classifier_type=form_type&classifier_value={formtype}&language=en&survey_id={survey_ref}"
+    )
+    return _get_response_content(app.config["CIR_API_URL"] + app.config["CIR_API_PREFIX"] + cir_url_query_parameters)
+
+
 def _get_response_content(request_url):
     session = requests.Session()
     client_id = app.config["CIR_OAUTH2_CLIENT_ID"]
@@ -51,15 +59,23 @@ def _get_response_content(request_url):
             target_service=TARGET_SERVICE,
         )
         raise ExternalApiError(None, error_code, TARGET_SERVICE) from e
-
     if response.status_code != 200:
-        logger.error(
-            get_error_code_message(ErrorCode.API_UNEXPECTED_STATUS_CODE),
-            status_code=str(response.status_code),
-            request_url=request_url,
-            target_service=TARGET_SERVICE,
-        )
-        raise ExternalApiError(response, ErrorCode.API_UNEXPECTED_STATUS_CODE, TARGET_SERVICE)
+        if response.status_code == 404:
+            logger.error(
+                get_error_code_message(ErrorCode.NOT_FOUND),
+                status_code=str(response.status_code),
+                request_url=request_url,
+                target_service=TARGET_SERVICE,
+            )
+            raise ExternalApiError(response, ErrorCode.NOT_FOUND, TARGET_SERVICE)
+        else:
+            logger.error(
+                get_error_code_message(ErrorCode.API_UNEXPECTED_STATUS_CODE),
+                status_code=str(response.status_code),
+                request_url=request_url,
+                target_service=TARGET_SERVICE,
+            )
+            raise ExternalApiError(response, ErrorCode.API_UNEXPECTED_STATUS_CODE, TARGET_SERVICE)
 
     if response.headers.get("content-type") != "application/json":
         logger.error(
