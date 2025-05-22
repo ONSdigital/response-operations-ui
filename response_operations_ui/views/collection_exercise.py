@@ -1179,10 +1179,10 @@ def view_ci_versions(short_name: str, period: str, form_type: str) -> str:
             error_message = "Unable to connect to CIR"
         else:
             error_message = f"{get_error_code_message(e.error_code)}"
-            
+
     back_url = url_for("collection_exercise_bp.view_sample_ci_summary", short_name=short_name, period=period)
     breadcrumbs = [{"text": "Back to CIR versions", "url": back_url}, {}]
-    
+
     return render_template(
         "collection_exercise/ci-versions.html",
         form_type=form_type,
