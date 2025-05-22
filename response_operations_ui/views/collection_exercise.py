@@ -48,7 +48,10 @@ from response_operations_ui.controllers import (
     survey_controllers,
 )
 from response_operations_ui.controllers.uaa_controller import user_has_permission
-from response_operations_ui.exceptions.error_codes import get_error_code_message
+from response_operations_ui.exceptions.error_codes import (
+    ErrorCode,
+    get_error_code_message,
+)
 from response_operations_ui.exceptions.exceptions import ApiError, ExternalApiError
 from response_operations_ui.forms import (
     CreateCollectionExerciseDetailsForm,
@@ -339,7 +342,15 @@ def _select_eq_collection_instrument(short_name, period):
                     survey_mode="EQ",
                 )
             )
-
+    if app.config["CIR_ENABLED"]:
+        return redirect(
+            url_for(
+                "collection_exercise_bp.view_sample_ci_summary",
+                short_name=short_name,
+                period=period,
+                success_panel=success_panel,
+            )
+        )
     return redirect(
         url_for(
             "collection_exercise_bp.view_collection_exercise",
@@ -1131,14 +1142,46 @@ def view_sample_ci_summary(short_name: str, period: str) -> str:
     return render_template(
         "collection_exercise/view-sample-ci-summary.html",
         collection_instruments=eq_collection_instruments,
+        short_name=short_name,
+        period=period,
     )
 
 
 @collection_exercise_bp.route("/<short_name>/<period>/view-sample-ci/summary/<form_type>", methods=["GET"])
 @login_required
 def view_ci_versions(short_name: str, period: str, form_type: str) -> str:
+    survey_ref = survey_controllers.get_survey_by_shortname(short_name).get("surveyRef")
+    logger.info("Retrieving CIR metadata")
+    error_message = None
+    cir_metadata = None
+    try:
+        cir_metadata = cir_controller.get_cir_metadata(survey_ref, form_type)
+    except ExternalApiError as e:
+        if e.error_code is ErrorCode.NOT_FOUND:
+            error_message = "No CIR data retrieved"
+        elif e.error_code is ErrorCode.API_CONNECTION_ERROR:
+            error_message = "Unable to connect to CIR"
+        else:
+            error_message = f"{get_error_code_message(e.error_code)}"
 
-    return render_template("collection_exercise/ci-versions.html", form_type=form_type)
+    breadcrumbs = [
+        {"text": "Back to CIR versions", "url": f"/surveys/{short_name}/{period}/view-sample-ci/summary"},
+        {},
+    ]
+
+    return render_template(
+        "collection_exercise/ci-versions.html",
+        form_type=form_type,
+        cir_metadata=cir_metadata,
+        error_message=error_message,
+        breadcrumbs=breadcrumbs,
+    )
+
+
+@collection_exercise_bp.route("/<short_name>/<period>/view-sample-ci/summary/<form_type>", methods=["POST"])
+@login_required
+def save_ci_versions(short_name: str, period: str, form_type: str) -> str:
+    return redirect(url_for("collection_exercise_bp.view_collection_exercise", short_name=short_name, period=period))
 
 
 @collection_exercise_bp.route("/cir", methods=["GET"])

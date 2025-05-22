@@ -8,8 +8,11 @@ import fakeredis
 import jwt
 import mock
 import requests_mock
+from mock import Mock
 
 from config import TestingConfig
+from response_operations_ui.exceptions.error_codes import ErrorCode
+from response_operations_ui.exceptions.exceptions import ExternalApiError
 from response_operations_ui.views.collection_exercise import (
     build_collection_exercise_details,
     get_existing_sorted_nudge_events,
@@ -31,6 +34,8 @@ sample_summary_id = "1a11543f-eb19-41f5-825f-e41aca15e724"
 short_name = "MBS"
 survey_id = "cb0711c3-0ac8-41d3-ae0e-567e5ea1ef87"
 survey_ref = "141"
+cir_guid = "427d40e6-f54a-4512-a8ba-e4dea54ea3dc"
+form_type = "0001"
 
 project_root = os.path.dirname(os.path.dirname(__file__))
 
@@ -103,6 +108,9 @@ with open(f"{project_root}/test_data/sample/all_sample_units_loaded.json") as fp
 with open(f"{project_root}/test_data/sample/not_all_sample_units_loaded.json") as fp:
     not_all_sample_units_loaded = json.load(fp)
 
+with open(f"{project_root}/test_data/cir/cir_metadata.json") as fp:
+    cir_metadata = json.load(fp)
+
 user_permission_surveys_edit_json = {
     "id": "5902656c-c41c-4b38-a294-0359e6aabe59",
     "groups": [{"value": "f385f89e-928f-4a0f-96a0-4c48d9007cc3", "display": "surveys.edit", "type": "DIRECT"}],
@@ -162,6 +170,8 @@ url_get_by_survey_with_ref_start_date = (
 url_party_delete_attributes = (
     f"{TestingConfig.PARTY_URL}/party-api/v1/businesses/attributes/sample-summary/{sample_summary_id}"
 )
+
+url_cir_get_metadata = f"http://test.domain/surveys/{short_name}/{period}/view-sample-ci/summary/{form_type}"
 
 ci_search_string = urlencode(
     {"searchString": json.dumps({"SURVEY_ID": survey_id, "COLLECTION_EXERCISE": collection_exercise_id})}
@@ -2418,6 +2428,28 @@ class TestCollectionExercise(ViewTestCase):
         self.assertIn("CIR version".encode(), response.data)
         self.assertIn("Continue to choose versions".encode(), response.data)
 
+    @mock.patch(
+        "response_operations_ui.controllers.collection_instrument_controllers.update_collection_exercise_eq_instruments"
+    )
+    @mock.patch("response_operations_ui.views.collection_exercise.build_collection_exercise_details")
+    def test_cir_post_select_eq_ci(self, collection_exercise_details, update_collection_exercise_eq_instruments):
+        self.app.config["CIR_ENABLED"] = True
+        collection_exercise_details.return_value = {
+            "survey": {"surveyMode": "EQ"},
+            "collection_exercise": {"id": collection_exercise_id},
+        }
+        update_collection_exercise_eq_instruments.return_value = 200, {}
+
+        post_data = {
+            "checkbox-answer": [collection_instrument_id],
+            "ce_id": collection_exercise_id,
+            "select-eq-ci": "",
+        }
+        response = self.client.post(f"/surveys/{short_name}/{period}/view-sample-ci", data=post_data)
+
+        self.assertEqual(302, response.status_code)
+        self.assertEqual(response.headers["Location"], f"/surveys/{short_name}/{period}/view-sample-ci/summary")
+
     @requests_mock.mock()
     def test_seft_loaded_load_collection_instruments_page_survey_permission(self, mock_request):
         sign_in_with_permission(self, mock_request, user_permission_surveys_edit_json)
@@ -2816,6 +2848,15 @@ class TestCollectionExercise(ViewTestCase):
         self.assertIn("0001".encode(), response.data)
         self.assertIn("0002".encode(), response.data)
         self.assertIn("Choose a CIR version for each EQ formtype".encode(), response.data)
+        self.assertIn(
+            f"/surveys/{short_name}/{period}/view-sample-ci/summary/0001".encode(),
+            response.data,
+        )
+        self.assertIn(
+            f"/surveys/{short_name}/{period}/view-sample-ci/summary/0002".encode(),
+            response.data,
+        )
+        self.assertIn("Return to 000000 Collection exercise".encode(), response.data)
         self.assertIn("Choose a version".encode(), response.data)
 
     @patch("response_operations_ui.views.collection_exercise.survey_controllers.get_survey_by_shortname")
@@ -2836,3 +2877,60 @@ class TestCollectionExercise(ViewTestCase):
 
         self.assertEqual(response.status_code, 200)
         self.assertNotIn("Choose a version".encode(), response.data)
+
+    @patch("response_operations_ui.views.collection_exercise.survey_controllers.get_survey_by_shortname")
+    @patch("response_operations_ui.controllers.cir_controller.get_cir_metadata")
+    def test_view_ci_versions_metadata_returned(self, get_cir_metadata, get_survey_by_shortname):
+        form_type = "0001"
+        get_survey_by_shortname.return_value = {"id": survey_ref}
+        get_cir_metadata.return_value = cir_metadata
+        response = self.client.get(f"/surveys/{short_name}/{period}/view-sample-ci/summary/{form_type}")
+
+        self.assertEqual(response.status_code, 200)
+        self.assertIn(form_type.encode(), response.data)
+        self.assertIn("Back to CIR versions".encode(), response.data)
+        self.assertIn("Choose CIR version for EQ formtype".encode(), response.data)
+        self.assertIn("classifier_type".encode(), response.data)
+        self.assertIn("ci_version".encode(), response.data)
+        self.assertIn("guid".encode(), response.data)
+        self.assertIn(cir_guid.encode(), response.data)
+        self.assertIn("Save".encode(), response.data)
+
+    def test_save_ci_versions(self):
+        response = self.client.post(f"/surveys/{short_name}/{period}/view-sample-ci/summary/0001")
+        self.assertEqual(response.status_code, 302)
+        self.assertIn(f"/surveys/{short_name}/{period}".encode(), response.data)
+
+    @patch("requests.get")
+    def test_view_ci_versions_no_metadata(self, mock_response):
+        form_type = "0001"
+        mock_response = mock_response.return_value
+        mock_response.url.return_value = url_cir_get_metadata
+        mock_response.status_code.return_value = "404"
+        mock_response.message.return_value = "No results found"
+
+        with patch(
+            "response_operations_ui.controllers.cir_controller.get_cir_metadata",
+            Mock(side_effect=ExternalApiError(mock_response, ErrorCode.NOT_FOUND)),
+        ):
+            response = self.client.get(f"/surveys/{short_name}/{period}/view-sample-ci/summary/{form_type}")
+            self.assertEqual(response.status_code, 200)
+            self.assertIn("Choose CIR version for EQ formtype".encode(), response.data)
+            self.assertIn("No CIR data retrieved".encode(), response.data)
+
+    @patch("requests.get")
+    def test_view_ci_versions_unable_to_connect_to_cir(self, mock_response):
+        form_type = "0001"
+        mock_response = mock_response.return_value
+        mock_response.url.return_value = url_cir_get_metadata
+        mock_response.status_code.return_value = "E0001"
+        mock_response.message.return_value = "Unable to connect to CIR"
+
+        with patch(
+            "response_operations_ui.controllers.cir_controller.get_cir_metadata",
+            Mock(side_effect=ExternalApiError(mock_response, ErrorCode.API_CONNECTION_ERROR)),
+        ):
+            response = self.client.get(f"/surveys/{short_name}/{period}/view-sample-ci/summary/{form_type}")
+            self.assertEqual(response.status_code, 200)
+            self.assertIn("Choose CIR version for EQ formtype".encode(), response.data)
+            self.assertIn("Unable to connect to CIR".encode(), response.data)
