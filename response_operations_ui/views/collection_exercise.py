@@ -1149,7 +1149,7 @@ def view_sample_ci_summary(short_name: str, period: str) -> str:
     eq_collection_instruments = _build_collection_instruments_details(exercise["id"], survey_id).get("EQ", [])
 
     back_url = url_for("collection_exercise_bp.get_view_sample_ci", short_name=short_name, period=period)
-    breadcrumbs = [{"text": "Return to EQ formtypes", "url": back_url}, {}]
+    breadcrumbs = [{"text": "Back to EQ formtypes", "url": back_url}, {}]
 
     return render_template(
         "collection_exercise/view-sample-ci-summary.html",
