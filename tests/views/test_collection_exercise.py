@@ -2858,6 +2858,11 @@ class TestCollectionExercise(ViewTestCase):
         )
         self.assertIn("Return to 000000 Collection exercise".encode(), response.data)
         self.assertIn("Choose a version".encode(), response.data)
+        self.assertIn(
+            "A collection instrument is only created once both an EQ formtype and a CIR \n    "
+            "version are selected.<br>Each formtype requires a CIR version.".encode(),
+            response.data,
+        )
 
     @patch("response_operations_ui.views.collection_exercise.survey_controllers.get_survey_by_shortname")
     @patch(
