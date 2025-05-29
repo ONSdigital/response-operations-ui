@@ -175,6 +175,12 @@ def view_collection_exercise(short_name, period):
     has_edit_permission = user_has_permission("surveys.edit")
     context = build_ce_context(ce_details, has_edit_permission, locked)
 
+    breadcrumbs = [
+        {"text": "Surveys", "url": url_for("surveys_bp.view_surveys")},
+        {"text": "Collection exercises", "url": url_for("surveys_bp.view_survey", short_name=short_name)},
+        {},
+    ]
+
     return render_template(
         "collection_exercise/collection-exercise.html",
         has_edit_permission=has_edit_permission,
@@ -192,6 +198,7 @@ def view_collection_exercise(short_name, period):
         info_panel=info_panel,
         show_sds=show_sds,
         context=context,
+        breadcrumbs=breadcrumbs,
     )
 
 
@@ -862,7 +869,9 @@ def get_view_sample_ci(short_name, period):
     # Once the CIR work is complete, this flag can be removed
     cir_enabled = app.config["CIR_ENABLED"]
 
-    breadcrumbs = [{"text": "Back", "url": "/surveys/" + short_name + "/" + period}, {}]
+    back_url = url_for("collection_exercise_bp.view_collection_exercise", short_name=short_name, period=period)
+    breadcrumbs = [{"text": f"Back to {period} Collection exercise", "url": back_url}, {}]
+
     return render_template(
         "collection_exercise/ce-eq-instrument-section.html",
         ce=ce_details["collection_exercise"],
@@ -1139,11 +1148,15 @@ def view_sample_ci_summary(short_name: str, period: str) -> str:
     _validate_exercise(exercise, period, short_name)
     eq_collection_instruments = _build_collection_instruments_details(exercise["id"], survey_id).get("EQ", [])
 
+    back_url = url_for("collection_exercise_bp.get_view_sample_ci", short_name=short_name, period=period)
+    breadcrumbs = [{"text": "Back to EQ formtypes", "url": back_url}, {}]
+
     return render_template(
         "collection_exercise/view-sample-ci-summary.html",
         collection_instruments=eq_collection_instruments,
         short_name=short_name,
         period=period,
+        breadcrumbs=breadcrumbs,
     )
 
 
@@ -1164,10 +1177,8 @@ def view_ci_versions(short_name: str, period: str, form_type: str) -> str:
         else:
             error_message = f"{get_error_code_message(e.error_code)}"
 
-    breadcrumbs = [
-        {"text": "Back to CIR versions", "url": f"/surveys/{short_name}/{period}/view-sample-ci/summary"},
-        {},
-    ]
+    back_url = url_for("collection_exercise_bp.view_sample_ci_summary", short_name=short_name, period=period)
+    breadcrumbs = [{"text": "Back to CIR versions", "url": back_url}, {}]
 
     return render_template(
         "collection_exercise/ci-versions.html",
