@@ -37,6 +37,8 @@
 
 {% block main %}
     <h1 class="ons-u-fs-xl" >Collection instruments step 2 of 2</h1>
+    <p class="ons-u-fs-r ons-u-mb-2xl">A collection instrument is only created once both an EQ formtype and a CIR 
+    version are selected.<br>Each formtype requires a CIR version.</p>
     <h3 class="ons-u-fs-m">Choose a CIR version for each EQ formtype</h3>
     {{ onsTable(formTypeCIVersionTable) }}
     <a href="/surveys/{{short_name}}/{{period}}">Return to {{period}} Collection exercise</a>
