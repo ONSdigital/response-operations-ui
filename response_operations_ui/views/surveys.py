@@ -65,13 +65,17 @@ def view_survey(short_name):
         collex["events"] = convert_events_to_new_format(collex["events"]) if collex.get("events") else {}
 
     _sort_collection_exercise(collection_exercises)
-
+    breadcrumbs = [
+        {"text": "Surveys", "url": url_for("surveys_bp.view_surveys")},
+        {},
+    ]
     return render_template(
         "survey.html",
         survey=survey,
         collection_exercises=collection_exercises,
         updated_ce_message=updated_ce_message,
         newly_created_period=newly_created_period,
+        breadcrumbs=breadcrumbs,
     )
 
 
