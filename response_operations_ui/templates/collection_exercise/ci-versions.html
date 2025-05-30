@@ -1,12 +1,21 @@
 {% extends "layouts/base.html" %}
 {% from "components/button/_macro.njk" import onsButton %}
-
+{% from "components/details/_macro.njk" import onsDetails %}
+{% from "components/panel/_macro.njk" import onsPanel %}
 {% block main %}
 <form class="ons-form" method="post">
     <input type="hidden" name="csrf_token" value="{{ csrf_token() }}" />
     <div class="ons-grid ons-grid--gutterless">
         <div class="ons-grid__col ons-col-8@m">
             <h1>Choose CIR version for EQ formtype {{ form_type }}</h1>
+            {%
+                call onsPanel({
+                    "variant": "warn",
+                    "classes": "ons-u-mb-l"
+                })
+            %}
+                <p>The version must have successfully passed all testing. If you are unsure contact the testing team.</p>
+            {% endcall %}
             <div>
               {% if error_message %}
                 {{ error_message }}
@@ -22,7 +31,19 @@
                     "id": "save",
                     "name": "save"
             })
-        }}
+            }}
+        
+            <div class="ons-u-mb-xl ons-u-mt-l">
+            {%
+                call onsDetails({
+                "id": "Cir version not available",
+                "title": "The right version is not here"
+                })
+            %}
+                <p>The version you want to select may not yet be published or available in the Collection Instrument Registry (CIR)</p>
+                <p>If you need an older version that is not available contact the Service Desk.</p>
+            {% endcall %}
+            </div>
         </div>
     </div>
 </form>
