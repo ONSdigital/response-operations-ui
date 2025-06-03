@@ -33,8 +33,9 @@
                             "id": "cir-version-" + cir_version.ci_version,
                             "label": {
                                 "text": "Version " + cir_version.ci_version,
-                                "description": "Published: " + cir_version.published_at.strftime("%d/%m/%Y") + " at " + cir_version.published_at.strftime("%H:%M:%S"),                           }
-                            "name": cir_version.ci_version
+                                "description": "Published: " + cir_version.published_at.strftime("%d/%m/%Y") + " at " + cir_version.published_at.strftime("%H:%M:%S"),
+                            },
+                            "name": cir_version.ci_version,
                         }
                     )%}
                   {% endfor %}
