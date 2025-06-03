@@ -28,6 +28,7 @@
                     "name": "nothing",
                   }] %}
                   {% for cir_version in cir_metadata %}
+                    {% set timestamp = cir_version.published_at.split('.')[0]|replace("T", " ").strptime("%Y-%m-%d %H:%M:%S")%}
                     {% do cirRadioRows.append(
                         {
                             "id": "cir-version-" + cir_version.ci_version|string,
