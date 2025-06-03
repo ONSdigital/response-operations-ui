@@ -28,13 +28,14 @@
                     "name": "nothing",
                   }] %}
                   {% for cir_version in cir_metadata %}
-                    {% set timestamp = cir_version.published_at.split('.')[0]|replace("T", " ").strptime("%Y-%m-%d %H:%M:%S")%}
+                    {% set cir_timestamp = cir_version.published_at.split('.')[0]|replace("T", " ") %}
+                    {% set timestamp = cir_timestamp.strptime("%Y-%m-%d %H:%M:%S") %}
                     {% do cirRadioRows.append(
                         {
                             "id": "cir-version-" + cir_version.ci_version|string,
                             "label": {
                                 "text": "Version " + cir_version.ci_version|string,
-                                "description": "Published: " + cir_version.published_at.strftime("%d/%m/%Y") + " at " + cir_version.published_at.strftime("%H:%M:%S"),
+                                "description": "Published: " + timestamp.strftime("%d/%m/%Y") + " at " + timestamp.strftime("%H:%M:%S"),
                             },
                             "name": cir_version.ci_version|string,
                         }
