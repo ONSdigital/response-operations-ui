@@ -1168,7 +1168,7 @@ def view_ci_versions(short_name: str, period: str, form_type: str) -> str:
     error_message = None
     cir_metadata = None
     try:
-        cir_metadata = cir_controller.get_cir_metadata(survey_ref, form_type)
+        cir_metadata = json.loads(cir_controller.get_cir_metadata(survey_ref, form_type))
     except ExternalApiError as e:
         if e.error_code is ErrorCode.NOT_FOUND:
             error_message = "No CIR data retrieved"

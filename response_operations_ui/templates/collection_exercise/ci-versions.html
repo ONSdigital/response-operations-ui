@@ -2,6 +2,7 @@
 {% from "components/button/_macro.njk" import onsButton %}
 {% from "components/details/_macro.njk" import onsDetails %}
 {% from "components/panel/_macro.njk" import onsPanel %}
+{% from "components/radios/_macro.njk" import onsRadios %}
 {% block main %}
 <form class="ons-form" method="post">
     <input type="hidden" name="csrf_token" value="{{ csrf_token() }}" />
@@ -21,7 +22,27 @@
                 {{ error_message }}
               {% else %}
                 <p>
-                  {{ cir_metadata }}
+                  {% set cirRadioRows = [{
+                    "id": "cir-version-nothing",
+                    "label": "No version selected",
+                    "name": "nothing",
+                  }] %}
+                  {% for cir_version in cir_metadata %}
+                    {% do cirRadioRows.append(
+                        {
+                            "id": "cir-version-" + cir_version.ci_version,
+                            "label": {
+                                "text": "Version " + cir_version.ci_version,
+                                "description": "Published: " + cir_version.published_at.strftime("%d/%m/%Y") + " at " + cir_version.published_at.strftime("%H:%M:%S"),                           }
+                            "name": cir_version.ci_version
+                        }
+                    )%}
+                  {% endfor %}
+                  {{ onsRadios({
+                    "dontWrap": true,
+                    "name": "ci-version",
+                    "radios": cirRadioRows,
+                  })}}
                 </p>
               {% endif %}
             </div>
