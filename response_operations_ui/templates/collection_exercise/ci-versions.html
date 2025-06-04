@@ -24,7 +24,9 @@
                 <p>
                   {% set cirRadioRows = [{
                     "id": "cir-version-nothing",
-                    "label": "No version selected",
+                    "label": {
+                      "text": "No version selected",
+                    },
                     "name": "nothing",
                   }] %}
                   {% for cir_version in cir_metadata %}
