@@ -2,29 +2,53 @@
     <form id="form-add-ci" action="" class="form" method="post" enctype="multipart/form-data"
           xmlns="http://www.w3.org/1999/html">
         <input type="hidden" name="csrf_token" value="{{ csrf_token() }}" />
-        <div id="formtype">
-            {{
-                onsInput({
-                    "name": "formtype",
-                    "width": "7",
-                    "value": form.formtype.data,
-                    "classes": "input--w-5",
-                    "label": {
-                        "text": 'Add EQ collection instrument',
-                        "description": "It must be a 4 digit number. An EQ CI added here can be selected for any CE with the same period number."
-                    },
-                    "error": {"text": error['header']} if 'add-ci-error' in error['section'] else None,         
-                })
-            }}
-            {{
-                onsButton({
-                    "classes": "ons-u-mb-l ons-u-mt-s",
-                    "variants": ['primary', 'small'],
-                    "name": 'add-eq-ci',
-                    "text": 'Add',
-                    "id": "save-btn",
-                })
-            }}
-        </div>
+            {% if cir_enabled %}
+                <p>A collection instrument is only created once both an EQ formtype and a CIR version are selected. Each formtype requires a CIR version.</p>
+                <h2 class="ons-u-fs-l">Choose EQ formtypes</h2>
+                {{
+                    onsInput({
+                        "name": "formtype",
+                        "width": "10",
+                        "value": form.formtype.data,
+                        "label": {
+                            "text": 'Add EQ formtypes',
+                            "description": "Add an EQ formtype to the list below. It must be a 4 digit number. An EQ formtype added here can be selected for any CE with the same period number."
+                        },
+                        "error": {"text": error['header']} if 'add-ci-error' in error['section'] else None
+                    })
+                }}
+                {{
+                    onsButton({
+                        "classes": "ons-u-mb-l ons-u-mt-s",
+                        "variants": ['primary', 'small'],
+                        "name": 'add-eq-ci',
+                        "text": 'Add',
+                        "id": "add-eq-ci",
+                    })
+                }}
+                {% else %}
+                {{
+                    onsInput({
+                        "name": "formtype",
+                        "width": "7",
+                        "value": form.formtype.data,
+                        "classes": "input--w-5",
+                        "label": {
+                            "text": 'Add EQ collection instrument',
+                            "description": "It must be a 4 digit number. An EQ CI added here can be selected for any CE with the same period number."
+                        },
+                        "error": {"text": error['header']} if 'add-ci-error' in error['section'] else None
+                    })
+                }}
+                {{
+                    onsButton({
+                        "classes": "ons-u-mb-l ons-u-mt-s",
+                        "variants": ['primary', 'small'],
+                        "name": 'add-eq-ci',
+                        "text": 'Add',
+                        "id": "add-eq-ci",
+                    })
+                }}
+            {% endif %}
     </form>
 </div>
