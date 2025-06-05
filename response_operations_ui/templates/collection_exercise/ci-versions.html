@@ -23,28 +23,29 @@
               {% else %}
                 <p>
                   {% set cirRadioRows = [{
-                    "id": "cir-version-nothing",
+                    "id": "cir-version-nothing-selected",
                     "label": {
-                      "text": "No version selected",
+                      "text": "Nothing selected",
                     },
-                    "name": "nothing",
+                    "name": "nothing-selected",
                   }] %}
-                  {% for cir_version in cir_metadata %}
+                  {% for ci in cir_metadata %}
                     {% do cirRadioRows.append(
                         {
-                            "id": "cir-version-" + cir_version.ci_version|string,
-                            "label": {
-                                "text": "Version " + cir_version.ci_version|string,
-                                "description": "Published: " + cir_version.published_at,
-                            },
-                            "name": cir_version.ci_version|string,
+                          "id": "cir-version-" + ci.ci_version|string,
+                          "label": {
+                              "text": "Version " + ci.ci_version|string,
+                              "description": "Published: " + ci.published_at,
+                          },
+                          "name": ci.ci_version|string,
                         }
                     )%}
                   {% endfor %}
-                  {{ onsRadios({
-                    "dontWrap": true,
-                    "name": "ci-version",
-                    "radios": cirRadioRows,
+                  {{ 
+                    onsRadios({
+                      "dontWrap": true,
+                      "name": "ci-versions",
+                      "radios": cirRadioRows,
                   })}}
                 </p>
               {% endif %}
