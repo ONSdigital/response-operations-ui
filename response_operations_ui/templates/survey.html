@@ -24,22 +24,23 @@
         <div class="ons-grid__col">
             <h1 name="page-survey-title">{{survey.longName}} | {{survey.shortName}} {{survey.surveyRef}}</h1>
         </div>
-      </div>
+    </div>
     {% if collection_exercises|length > 0 %}
     <section class="ce-list">
         <div class="ons-grid ons-grid-flex ons-grid-flex--between">
             <div class="ons-grid__col">
-                <h2 class="ons-u-fs-l u-mb-xs" name="page-survey-subtitle">Collection exercises (CE)
-                </h2>
+                <h2 class="ons-u-fs-l u-mb-xs" name="page-survey-subtitle">Collection exercises (CE)</h2>
             </div>
-            {% if surveyEditPermission %}
-                <div class="ons-grid__col"> 
-                   <p class="ons-field">
-                      <a id="create-collection-exercise" href="{{url_for('collection_exercise_bp.get_create_collection_exercise_form', survey_ref=survey.surveyRef, short_name=survey.shortName.replace(' ', ''), previous_period=collection_exercises[0].exerciseRef)}}">Create collection exercise</a>
-                   </p>
-                </div>
-            {% endif %}
         </div>
+        {% if surveyEditPermission %}
+            <div class="ons-grid ons-grid-flex ons-grid-flex--between">
+                <div class="ons-grid__col"> 
+                    <p class="ons-field">
+                        <a id="create-collection-exercise" style="text-decoration: none;" href="{{url_for('collection_exercise_bp.get_create_collection_exercise_form', survey_ref=survey.surveyRef, short_name=survey.shortName.replace(' ', ''), previous_period=collection_exercises[0].exerciseRef)}}">Create collection exercise</a>
+                    </p>
+                </div>
+            </div>
+        {% endif %}
 
         {% set surveyTableData = {
             "variants": ['compact', 'responsive'],
@@ -145,9 +146,10 @@
     {% else %}
         <div class="ons-grid ons-grid-flex ons-grid-flex--between">
             <div class="ons-grid__col">
-                <h2 class="ons-u-fs-l u-mb-xs" name="page-survey-subtitle">Collection exercises (CE)
-            </h2>
-            <p>No collection exercises to display. {% if surveyEditPermission %}<a id="create-collection-exercise" href="{{url_for('collection_exercise_bp.get_create_collection_exercise_form', survey_ref=survey.surveyRef, short_name=survey.shortName.replace(' ', ''))}}">Create collection exercise</a>{% endif %}</p>
+                <h2 class="ons-u-fs-l u-mb-xs" name="page-survey-subtitle">Collection exercises (CE)</h2>
+                <p>No collection exercises to display.</p>
+                <p>{% if surveyEditPermission %}<a id="create-collection-exercise" style="text-decoration: none;" href="{{url_for('collection_exercise_bp.get_create_collection_exercise_form', survey_ref=survey.surveyRef, short_name=survey.shortName.replace(' ', ''))}}">Create collection exercise</a>{% endif %}</p>
+            </div>
         </div>
-        {% endif %}
+    {% endif %}
 {% endblock %}
