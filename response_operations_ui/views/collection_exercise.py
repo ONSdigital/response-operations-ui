@@ -1169,6 +1169,9 @@ def view_ci_versions(short_name: str, period: str, form_type: str) -> str:
     cir_metadata = None
     try:
         cir_metadata = cir_controller.get_cir_metadata(survey_ref, form_type)
+        # Conversion to make displaying the datetime easier in the template
+        for ci in cir_metadata:
+            ci["published_at"] = datetime.fromisoformat(ci["published_at"]).strftime("%d/%m/%Y at %H:%M:%S")
     except ExternalApiError as e:
         if e.error_code is ErrorCode.NOT_FOUND:
             error_message = "No CIR data retrieved"
