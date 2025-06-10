@@ -271,12 +271,12 @@ def _build_classifiers(collection_exercise_id=None, survey_id=None, ci_type=None
 
 
 def get_registry_instruments_by_exercise_id(exercise_id):
-    """Retrieves a registry instrument by its ID.
+    """Retrieves a list of registry instruments for a given collection exercise.
 
-    :param exercise_id: The ID of the registry instrument to retrieve.
+    :param exercise_id: The ID of the collection exercise.
     :type exercise_id: uuid
     :return: The registry instrument data if found, None otherwise.
-    :rtype: dict or None
+    :rtype: list or None
     """
     url = (
         f'{app.config["COLLECTION_INSTRUMENT_URL"]}'
