@@ -5,6 +5,7 @@ import responses
 from config import TestingConfig
 from response_operations_ui import create_app
 from response_operations_ui.controllers.collection_instrument_controllers import (
+    get_registry_instruments_by_exercise_id,
     link_collection_instrument,
     link_collection_instrument_to_survey,
     upload_collection_instrument,
@@ -153,3 +154,28 @@ class TestCollectionInstrumentController(unittest.TestCase):
             rsps.add(rsps.POST, ci_link_url, status=500, json={"errors": ["Failed to publish upload message"]})
             with self.app.app_context():
                 self.assertFalse(link_collection_instrument(collection_exercise_id, collection_instrument_id))
+
+    def test_get_registry_instruments_by_exercise_id_success(self):
+        """Tests successful retrieval (200) returns JSON data"""
+        exercise_id = collection_exercise_id
+        url = f"{TestingConfig.COLLECTION_INSTRUMENT_URL}/collection-instrument-api/1.0.2/registry-instrument/exercise-id/{exercise_id}"
+
+        sample_response = [{"id": "1", "classifier_value": "0001"}, {"id": "2", "classifier_value": "0002"}]
+
+        with responses.RequestsMock() as rsps:
+            rsps.add(rsps.GET, url, json=sample_response, status=200)
+            with self.app.app_context():
+                result = get_registry_instruments_by_exercise_id(exercise_id)
+                self.assertEqual(result, sample_response)
+
+    def test_get_registry_instruments_by_exercise_id_not_found(self):
+        """Tests when the registry instruments are not found (404), None is returned"""
+        exercise_id = collection_exercise_id
+        url = f"{TestingConfig.COLLECTION_INSTRUMENT_URL}/collection-instrument-api/1.0.2/registry-instrument/exercise-id/{exercise_id}"
+
+        with responses.RequestsMock() as rsps:
+            rsps.add(rsps.GET, url, status=404)
+            with self.app.app_context():
+                result = get_registry_instruments_by_exercise_id(exercise_id)
+                self.assertIsNone(result)
+                

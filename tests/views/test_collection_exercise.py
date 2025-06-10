@@ -11,6 +11,7 @@ import requests_mock
 from mock import Mock
 
 from config import TestingConfig
+from response_operations_ui.controllers import collection_instrument_controllers
 from response_operations_ui.exceptions.error_codes import ErrorCode
 from response_operations_ui.exceptions.exceptions import ExternalApiError
 from response_operations_ui.views.collection_exercise import (
@@ -2940,3 +2941,31 @@ class TestCollectionExercise(ViewTestCase):
             self.assertEqual(response.status_code, 200)
             self.assertIn("Choose CIR version for EQ formtype".encode(), response.data)
             self.assertIn("Unable to connect to CIR".encode(), response.data)
+
+    @patch(
+        "response_operations_ui.controllers.collection_instrument_controllers.get_registry_instruments_by_exercise_id")
+    def test_enrich_collection_instruments_with_registry_instruments(self, mock_get_registry):
+        registry_instruments = [
+            {"classifier_value": "0001", "version": 3},
+            {"classifier_value": "0002", "version": 1},
+        ]
+        mock_get_registry.return_value = collection_instrument_controllers.get_registry_instruments_by_exercise_id(collection_exercise_id)
+
+
+        all_cis_for_survey = [
+            {"form_type": "0001"},
+            {"form_type": "0002"},
+            {"form_type": "9999"},
+        ]
+
+        registry_instruments_result = collection_instrument_controllers.get_registry_instruments_by_exercise_id(ce_id)
+        for ci in all_cis_for_survey:
+            ci["registry_instrument"] = next(
+                (ri for ri in registry_instruments_result if ri["classifier_value"] == ci["form_type"]), None
+            )
+
+        for ci in all_cis_for_survey:
+            if ci["form_type"] in ["0001", "0003"]:
+                self.assertEqual(ci["registry_instrument"]["classifier_value"], ci["form_type"])
+            else:
+                self.assertIsNone(ci["registry_instrument"])

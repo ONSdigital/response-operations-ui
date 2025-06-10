@@ -22,7 +22,7 @@ ons-u-mt-l">
               {% if cir_enabled %}
                 {% set ciSubmitButtonText = "Continue to choose versions" %}
                 <div class="ons-grid ons-col-12@m ons-grid-flex--vertical-center ons-grid--no-wrap@m ons-u-mt-m ons-u-mb-m">
-                  <div class="ons-grid__col ons-col-4@m" style="padding-left: 1rem">
+                  <div class="ons-grid__col ons-col-8@m" style="padding-left: 1rem">
                     <table id="collection-instruments-left-table" class="ons-table ons-table--responsive">
                       <thead class="ons-table__head">
                         <tr class="ons-table__row" style="white-space:nowrap;">
@@ -53,9 +53,13 @@ ons-u-mt-l">
                                           })
                                       }}
                                   </td>
-                                  <td class="ons-table__cell">
-                                    -
-                                  </td>
+                                    <td class="ons-table__cell">
+                                        {% if ci['registry_instrument'] %}
+                                          <span>Version {{ ci['registry_instrument'].ci_version }}</span>
+                                        {% else %}
+                                          <span>Nothing Selected</span>
+                                        {% endif %}
+                                    </td>
                                 </tr>
                             </tbody>
                           {% endif %}
