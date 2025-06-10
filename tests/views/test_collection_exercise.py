@@ -2943,14 +2943,14 @@ class TestCollectionExercise(ViewTestCase):
             self.assertIn("Unable to connect to CIR".encode(), response.data)
 
     @patch(
-        "response_operations_ui.controllers.collection_instrument_controllers.get_registry_instruments_by_exercise_id")
+        "response_operations_ui.controllers.collection_instrument_controllers.get_registry_instruments_by_exercise_id"
+    )
     def test_enrich_collection_instruments_with_registry_instruments(self, mock_get_registry):
         registry_instruments = [
-            {"classifier_value": "0001", "version": 3},
-            {"classifier_value": "0002", "version": 1},
+            {"classifier_value": "0001"},
+            {"classifier_value": "0002"},
         ]
-        mock_get_registry.return_value = collection_instrument_controllers.get_registry_instruments_by_exercise_id(collection_exercise_id)
-
+        mock_get_registry.return_value = registry_instruments
 
         all_cis_for_survey = [
             {"form_type": "0001"},
@@ -2958,14 +2958,11 @@ class TestCollectionExercise(ViewTestCase):
             {"form_type": "9999"},
         ]
 
-        registry_instruments_result = collection_instrument_controllers.get_registry_instruments_by_exercise_id(ce_id)
         for ci in all_cis_for_survey:
             ci["registry_instrument"] = next(
-                (ri for ri in registry_instruments_result if ri["classifier_value"] == ci["form_type"]), None
+                (ri for ri in registry_instruments if ri["classifier_value"] == ci["form_type"]), None
             )
 
-        for ci in all_cis_for_survey:
-            if ci["form_type"] in ["0001", "0003"]:
-                self.assertEqual(ci["registry_instrument"]["classifier_value"], ci["form_type"])
-            else:
-                self.assertIsNone(ci["registry_instrument"])
+        self.assertEqual(all_cis_for_survey[0]["registry_instrument"]["classifier_value"], "0001")
+        self.assertEqual(all_cis_for_survey[1]["registry_instrument"]["classifier_value"], "0002")
+        self.assertIsNone(all_cis_for_survey[2]["registry_instrument"])
