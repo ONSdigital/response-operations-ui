@@ -158,7 +158,10 @@ class TestCollectionInstrumentController(unittest.TestCase):
     def test_get_registry_instruments_by_exercise_id_success(self):
         """Tests successful retrieval (200) returns JSON data"""
         exercise_id = collection_exercise_id
-        url = f"{TestingConfig.COLLECTION_INSTRUMENT_URL}/collection-instrument-api/1.0.2/registry-instrument/exercise-id/{exercise_id}"
+        url = (
+            f"{TestingConfig.COLLECTION_INSTRUMENT_URL}/collection-instrument-api/1.0.2/registry-instrument"
+            f"/exercise-id/{exercise_id}"
+        )
 
         sample_response = [{"id": "1", "classifier_value": "0001"}, {"id": "2", "classifier_value": "0002"}]
 
@@ -171,11 +174,13 @@ class TestCollectionInstrumentController(unittest.TestCase):
     def test_get_registry_instruments_by_exercise_id_not_found(self):
         """Tests when the registry instruments are not found (404), None is returned"""
         exercise_id = collection_exercise_id
-        url = f"{TestingConfig.COLLECTION_INSTRUMENT_URL}/collection-instrument-api/1.0.2/registry-instrument/exercise-id/{exercise_id}"
+        url = (
+            f"{TestingConfig.COLLECTION_INSTRUMENT_URL}/collection-instrument-api/1.0.2/registry-instrument"
+            f"/exercise-id/{exercise_id}"
+        )
 
         with responses.RequestsMock() as rsps:
             rsps.add(rsps.GET, url, status=404)
             with self.app.app_context():
                 result = get_registry_instruments_by_exercise_id(exercise_id)
                 self.assertIsNone(result)
-                

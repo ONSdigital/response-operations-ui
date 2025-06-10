@@ -278,7 +278,10 @@ def get_registry_instruments_by_exercise_id(exercise_id):
     :return: The registry instrument data if found, None otherwise.
     :rtype: dict or None
     """
-    url = f'{app.config["COLLECTION_INSTRUMENT_URL"]}/collection-instrument-api/1.0.2/registry-instrument/exercise-id/{exercise_id}'
+    url = (
+        f'{app.config["COLLECTION_INSTRUMENT_URL"]}'
+        f"/collection-instrument-api/1.0.2/registry-instrument/exercise-id/{exercise_id}"
+    )
     response = requests.get(url, auth=app.config["BASIC_AUTH"])
 
     try:
