@@ -54,7 +54,9 @@ ons-u-mt-l">
                                       }}
                                   </td>
                                     <td class="ons-table__cell">
-                                        {% if ci['registry_instrument'] %}
+                                        {% if ci['checked'] == 'false' %}
+                                          <span>-</span>
+                                        {% elif ci['registry_instrument'] %}
                                           <span>Version {{ ci['registry_instrument'].ci_version }}</span>
                                         {% else %}
                                           <span>Nothing Selected</span>

@@ -860,11 +860,12 @@ def get_view_sample_ci(short_name, period):
         _format_ci_file_name(linked_eq_ci, ce_details["survey"])
         eq_ci_selectors = ce_details.get("eq_ci_selectors", {})
         registry_instruments = collection_instrument_controllers.get_registry_instruments_by_exercise_id(ce_id)
-        # enriching the collection instruments with the registry instrument details
-        for ci in all_cis_for_survey:
-            ci["registry_instrument"] = next(
-                (ri for ri in registry_instruments if ri["classifier_value"] == ci["form_type"]), None
-            )
+        if registry_instruments:
+            # enriching the collection instruments with the registry instrument details
+            for ci in all_cis_for_survey:
+                ci["registry_instrument"] = next(
+                    (ri for ri in registry_instruments if ri["classifier_value"] == ci["form_type"]), None
+                )
 
     error_json = _get_error_from_session()
     _delete_sample_data_if_required()
