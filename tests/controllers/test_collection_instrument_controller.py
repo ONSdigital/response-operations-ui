@@ -163,13 +163,13 @@ class TestCollectionInstrumentController(unittest.TestCase):
             f"/exercise-id/{exercise_id}"
         )
 
-        sample_response = [{"id": "1", "classifier_value": "0001"}, {"id": "2", "classifier_value": "0002"}]
+        registry_instruments = [{"version": "1", "classifier_value": "0001"}, {"version": "2", "classifier_value": "0002"}]
 
         with responses.RequestsMock() as rsps:
-            rsps.add(rsps.GET, url, json=sample_response, status=200)
+            rsps.add(rsps.GET, url, json=registry_instruments, status=200)
             with self.app.app_context():
                 result = get_registry_instruments_by_exercise_id(exercise_id)
-                self.assertEqual(result, sample_response)
+                self.assertEqual(result, registry_instruments)
 
     def test_get_registry_instruments_by_exercise_id_not_found(self):
         """Tests when the registry instruments are not found (404), None is returned"""
