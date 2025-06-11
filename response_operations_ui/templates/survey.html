@@ -36,7 +36,7 @@
             <div class="ons-grid ons-grid-flex ons-grid-flex--between">
                 <div class="ons-grid__col"> 
                     <p class="ons-field">
-                        <a id="create-collection-exercise" style="text-decoration: none;" href="{{url_for('collection_exercise_bp.get_create_collection_exercise_form', survey_ref=survey.surveyRef, short_name=survey.shortName.replace(' ', ''), previous_period=collection_exercises[0].exerciseRef)}}">Create collection exercise</a>
+                        <a id="create-collection-exercise" href="{{url_for('collection_exercise_bp.get_create_collection_exercise_form', survey_ref=survey.surveyRef, short_name=survey.shortName.replace(' ', ''), previous_period=collection_exercises[0].exerciseRef)}}">Create collection exercise</a>
                     </p>
                 </div>
             </div>
@@ -148,7 +148,7 @@
             <div class="ons-grid__col">
                 <h2 class="ons-u-fs-l u-mb-xs" name="page-survey-subtitle">Collection exercises (CE)</h2>
                 <p>No collection exercises to display.</p>
-                <p>{% if surveyEditPermission %}<a id="create-collection-exercise" style="text-decoration: none;" href="{{url_for('collection_exercise_bp.get_create_collection_exercise_form', survey_ref=survey.surveyRef, short_name=survey.shortName.replace(' ', ''))}}">Create collection exercise</a>{% endif %}</p>
+                <p>{% if surveyEditPermission %}<a id="create-collection-exercise" href="{{url_for('collection_exercise_bp.get_create_collection_exercise_form', survey_ref=survey.surveyRef, short_name=survey.shortName.replace(' ', ''))}}">Create collection exercise</a>{% endif %}</p>
             </div>
         </div>
     {% endif %}
