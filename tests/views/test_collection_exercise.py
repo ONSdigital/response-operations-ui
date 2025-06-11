@@ -2898,10 +2898,8 @@ class TestCollectionExercise(ViewTestCase):
         self.assertIn(form_type.encode(), response.data)
         self.assertIn("Back to CIR versions".encode(), response.data)
         self.assertIn("Choose CIR version for EQ formtype".encode(), response.data)
-        self.assertIn("classifier_type".encode(), response.data)
-        self.assertIn("ci_version".encode(), response.data)
-        self.assertIn("guid".encode(), response.data)
-        self.assertIn(cir_guid.encode(), response.data)
+        self.assertIn("Version 1".encode(), response.data)
+        self.assertIn("Published: 16/07/2024 at 14:26:44".encode(), response.data)
         self.assertIn("Save".encode(), response.data)
 
     def test_save_ci_versions(self):
