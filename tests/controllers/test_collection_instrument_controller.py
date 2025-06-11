@@ -163,7 +163,10 @@ class TestCollectionInstrumentController(unittest.TestCase):
             f"/exercise-id/{exercise_id}"
         )
 
-        registry_instruments = [{"version": "1", "classifier_value": "0001"}, {"version": "2", "classifier_value": "0002"}]
+        registry_instruments = [
+            {"version": "1", "classifier_value": "0001"},
+            {"version": "2", "classifier_value": "0002"},
+        ]
 
         with responses.RequestsMock() as rsps:
             rsps.add(rsps.GET, url, json=registry_instruments, status=200)
@@ -184,3 +187,22 @@ class TestCollectionInstrumentController(unittest.TestCase):
             with self.app.app_context():
                 result = get_registry_instruments_by_exercise_id(exercise_id)
                 self.assertIsNone(result)
+
+    def test_get_registry_instruments_by_exercise_id_server_error(self):
+        """Tests 500 returns None and error text is logged"""
+        exercise_id = collection_exercise_id
+        url = (
+            f"{TestingConfig.COLLECTION_INSTRUMENT_URL}/collection-instrument-api/1.0.2/registry-instrument"
+            f"/exercise-id/{exercise_id}"
+        )
+
+        with responses.RequestsMock() as rsps:
+            rsps.add(rsps.GET, url, status=500)
+            with self.app.app_context():
+                with self.assertLogs(
+                    "response_operations_ui.controllers.collection_instrument_controllers", level="ERROR"
+                ) as log:
+                    result = get_registry_instruments_by_exercise_id(exercise_id)
+                    self.assertIsNone(result)
+                    error = any("Failed to retrieve registry instrument" in message for message in log.output)
+                    self.assertTrue(error)

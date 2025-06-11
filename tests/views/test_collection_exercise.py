@@ -139,7 +139,9 @@ url_get_by_survey_with_ref_end_date = f"{collection_exercise_root}/survey/{short
 
 collection_instrument_root = f"{TestingConfig.COLLECTION_INSTRUMENT_URL}/collection-instrument-api/1.0.2"
 url_collection_instrument = f"{collection_instrument_root}/upload/{collection_exercise_id}"
-url_get_registry_instruments_by_exercise_id = f"{collection_instrument_root}/registry-instrument/exercise-id/{collection_exercise_id}"
+url_get_registry_instruments_by_exercise_id = (
+    f"{collection_instrument_root}/registry-instrument/exercise-id/{collection_exercise_id}"
+)
 url_collection_instrument_unlink = (
     f"{collection_instrument_root}/unlink-exercise/{collection_instrument_id}/{collection_exercise_id}"
 )
@@ -423,25 +425,25 @@ class TestCollectionExercise(ViewTestCase):
         ]
         self.registry_instruments = [
             {
-            "ci_version": 1,
-            "classifier_type": "form_type",
-            "classifier_value": "0001",
-            "exercise_id": collection_exercise_id,
-            "guid": "c046861a-0df7-443a-a963-d9aa3bddf328",
-            "instrument_id": collection_instrument_id,
-            "published_at": "2025-12-31T00:00:00",
-            "survey_id": survey_id
+                "ci_version": 1,
+                "classifier_type": "form_type",
+                "classifier_value": "0001",
+                "exercise_id": collection_exercise_id,
+                "guid": "c046861a-0df7-443a-a963-d9aa3bddf328",
+                "instrument_id": collection_instrument_id,
+                "published_at": "2025-12-31T00:00:00",
+                "survey_id": survey_id,
             },
             {
-            "ci_version": 3,
-            "classifier_type": "form_type",
-            "classifier_value": "0002",
-            "exercise_id": collection_exercise_id,
-            "guid": "ac3c5a3a-2ebb-47dc-9727-22c473086a82",
-            "instrument_id": collection_instrument_id,
-            "published_at": "2025-12-31T00:00:00",
-            "survey_id": survey_id
-            }
+                "ci_version": 3,
+                "classifier_type": "form_type",
+                "classifier_value": "0002",
+                "exercise_id": collection_exercise_id,
+                "guid": "ac3c5a3a-2ebb-47dc-9727-22c473086a82",
+                "instrument_id": collection_instrument_id,
+                "published_at": "2025-12-31T00:00:00",
+                "survey_id": survey_id,
+            },
         ]
         self.sample_summary = {
             "id": sample_summary_id,
