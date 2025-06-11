@@ -275,8 +275,8 @@ def get_registry_instruments_by_exercise_id(exercise_id):
 
     :param exercise_id: The ID of the collection exercise the registry instruments are associated with.
     :type exercise_id: uuid
-    :return: The registry instrument data if found, None otherwise.
-    :rtype: list or None
+    :return: The registry instrument data if found, [] if not.
+    :rtype: list
     """
     url = (
         f'{app.config["COLLECTION_INSTRUMENT_URL"]}'

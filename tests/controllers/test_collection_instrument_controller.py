@@ -175,7 +175,7 @@ class TestCollectionInstrumentController(unittest.TestCase):
                 self.assertEqual(result, registry_instruments)
 
     def test_get_registry_instruments_by_exercise_id_not_found(self):
-        """Tests when the registry instruments are not found (404), None is returned"""
+        """Tests if an empty list is returned when no registry instruments are found"""
         exercise_id = collection_exercise_id
         url = (
             f"{TestingConfig.COLLECTION_INSTRUMENT_URL}/collection-instrument-api/1.0.2/registry-instrument"
@@ -183,10 +183,10 @@ class TestCollectionInstrumentController(unittest.TestCase):
         )
 
         with responses.RequestsMock() as rsps:
-            rsps.add(rsps.GET, url, status=404)
+            rsps.add(rsps.GET, url, status=200, json=[])
             with self.app.app_context():
                 result = get_registry_instruments_by_exercise_id(exercise_id)
-                self.assertIsNone(result)
+                self.assertEqual(result, [])
 
     def test_get_registry_instruments_by_exercise_id_server_error(self):
         """Tests 500 returns None and error text is logged"""
