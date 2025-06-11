@@ -6,6 +6,7 @@ from flask import current_app as app
 from structlog import wrap_logger
 
 from response_operations_ui.exceptions.exceptions import ApiError
+from response_operations_ui.common.connection_helper import get_response_content
 
 logger = wrap_logger(logging.getLogger(__name__))
 
@@ -257,6 +258,14 @@ def get_collection_instruments_by_classifier(survey_id=None, collection_exercise
         ci_type=ci_type,
     )
     return response.json()
+
+
+def get_registry_instruments(collection_exercise_id: str) -> dict:
+    url = (
+        f'{app.config["COLLECTION_INSTRUMENT_URL"]}/collection-instrument-api/1.0.2/'
+        f"registry-instrument/exercise-id/{collection_exercise_id}"
+    )
+    return get_response_content(url, "CI")
 
 
 def _build_classifiers(collection_exercise_id=None, survey_id=None, ci_type=None):
