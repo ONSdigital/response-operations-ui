@@ -3,6 +3,7 @@ import logging
 
 import requests
 from flask import current_app as app
+from requests import Session
 from structlog import wrap_logger
 
 from response_operations_ui.exceptions.error_codes import (
@@ -13,9 +14,11 @@ from response_operations_ui.exceptions.exceptions import ExternalApiError
 
 logger = wrap_logger(logging.getLogger(__name__))
 
-def get_response_content(request_url, target_service, session=None):
+
+def get_response_json_from_service(request_url: str, target_service: str, session: Session = None) -> json:
     try:
         response = session.get(request_url) if session else requests.get(request_url, auth=app.config["BASIC_AUTH"])
+
     except (requests.ConnectionError, requests.exceptions.Timeout) as e:
         error_code = (
             ErrorCode.API_CONNECTION_ERROR if isinstance(e, requests.ConnectionError) else ErrorCode.API_TIMEOUT_ERROR

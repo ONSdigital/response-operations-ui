@@ -1,4 +1,3 @@
-import json
 import logging
 
 import requests
@@ -6,14 +5,15 @@ from flask import current_app as app
 from google.auth.exceptions import GoogleAuthError
 from structlog import wrap_logger
 
+from response_operations_ui.common.connection_helper import (
+    get_response_json_from_service,
+)
 from response_operations_ui.common.credentials import fetch_and_apply_oidc_credentials
 from response_operations_ui.exceptions.error_codes import (
     ErrorCode,
     get_error_code_message,
 )
 from response_operations_ui.exceptions.exceptions import ExternalApiError
-
-from response_operations_ui.common.connection_helper import get_response_content
 
 logger = wrap_logger(logging.getLogger(__name__))
 
@@ -47,5 +47,5 @@ def _get_response_content(request_url):
             target_service=TARGET_SERVICE,
         )
         raise ExternalApiError(None, ErrorCode.API_OIDC_CREDENTIALS_ERROR, TARGET_SERVICE) from e
-    
-    return get_response_content(request_url, TARGET_SERVICE, session)
+
+    return get_response_json_from_service(request_url, TARGET_SERVICE, session)

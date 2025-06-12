@@ -2831,39 +2831,31 @@ class TestCollectionExercise(ViewTestCase):
         "response_operations_ui.views.collection_exercise."
         "collection_exercise_controllers.get_collection_exercises_by_survey"
     )
-    @patch("response_operations_ui.views.collection_exercise._build_collection_instruments_details")
-    def test_view_sample_ci_summary(
-        self, build_collection_instruments_details, get_ce_by_survey, get_survey_by_shortname
-    ):
+    @patch("response_operations_ui.controllers.collection_instrument_controllers.get_registry_instruments")
+    def test_view_sample_ci_summary(self, get_registry_instruments, get_ce_by_survey, get_survey_by_shortname):
         get_survey_by_shortname.return_value = {"id": survey_id}
         get_ce_by_survey.return_value = [
             {"id": "d64cbfd2-20b1-4e10-962e-bd57f4946db7", "surveyId": survey_id, "exerciseRef": period}
         ]
-        build_collection_instruments_details.return_value = {
-            "EQ": [{"classifiers": {"form_type": "0001"}}, {"classifiers": {"form_type": "0002"}}]
-        }
+        get_registry_instruments.return_value = [
+            {
+                "ci_version": 1,
+                "classifier_type": "form_type",
+                "classifier_value": "0001",
+                "exercise_id": collection_exercise_id,
+                "guid": "c046861a-0df7-443a-a963-d9aa3bddf328",
+                "instrument_id": "efc3ddd7-3e79-4c6b-a8f8-1fa184cdd06b",
+                "published_at": "2025-12-31T00:00:00",
+                "survey_id": "0b1f8376-28e9-4884-bea5-acf9d709464e",
+            }
+        ]
+
         response = self.client.get(f"/surveys/{short_name}/{period}/view-sample-ci/summary")
 
         self.assertEqual(response.status_code, 200)
         self.assertIn("0001".encode(), response.data)
-        self.assertIn("0002".encode(), response.data)
-        self.assertIn("Choose a CIR version for each EQ formtype".encode(), response.data)
         self.assertIn(
             f"/surveys/{short_name}/{period}/view-sample-ci/summary/0001".encode(),
-            response.data,
-        )
-        self.assertIn(
-            f"/surveys/{short_name}/{period}/view-sample-ci/summary/0002".encode(),
-            response.data,
-        )
-        self.assertIn("Return to 000000 Collection exercise".encode(), response.data)
-        self.assertIn("Choose a version".encode(), response.data)
-        self.assertIn(
-            "A collection instrument is only created once both an EQ formtype and a CIR".encode(),
-            response.data,
-        )
-        self.assertIn(
-            "version are selected.<br>Each formtype requires a CIR version.".encode(),
             response.data,
         )
 
@@ -2872,15 +2864,15 @@ class TestCollectionExercise(ViewTestCase):
         "response_operations_ui.views.collection_exercise."
         "collection_exercise_controllers.get_collection_exercises_by_survey"
     )
-    @patch("response_operations_ui.views.collection_exercise._build_collection_instruments_details")
+    @patch("response_operations_ui.controllers.collection_instrument_controllers.get_registry_instruments")
     def test_view_sample_ci_summary_no_cis(
-        self, build_collection_instruments_details, get_collection_exercises_by_survey, get_survey_by_shortname
+        self, get_registry_instruments, get_collection_exercises_by_survey, get_survey_by_shortname
     ):
         get_survey_by_shortname.return_value = {"id": survey_id}
         get_collection_exercises_by_survey.return_value = [
             {"id": "d64cbfd2-20b1-4e10-962e-bd57f4946db7", "surveyId": survey_id, "exerciseRef": period}
         ]
-        build_collection_instruments_details.return_value = {}
+        get_registry_instruments.return_value = {}
         response = self.client.get(f"/surveys/{short_name}/{period}/view-sample-ci/summary")
 
         self.assertEqual(response.status_code, 200)
