@@ -12,8 +12,8 @@
 }%}
 {% set formTypeCIVersionTableDataRows = [] %}
 
-{% for collection_instrument in collection_instruments %}
-    {% set form_type = collection_instrument["classifiers"]["form_type"] %}
+{% for ci_registry_instrument in ci_registry_instruments %}
+    {% set form_type = ci_registry_instrument["classifier_value"] %}
     {% do formTypeCIVersionTableDataRows.append(
         {
             "tds": [
@@ -21,7 +21,7 @@
                     "value": form_type
                 },
                 {
-                  "value": "Nothing selected",
+                  "value": ci_registry_instrument["ci_version"],
                   "tdClasses": "ons-u-ta-centre"
                 }, 
                 {
