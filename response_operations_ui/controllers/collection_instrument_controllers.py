@@ -268,3 +268,25 @@ def _build_classifiers(collection_exercise_id=None, survey_id=None, ci_type=None
     if ci_type:
         classifiers["TYPE"] = ci_type
     return classifiers
+
+
+def get_registry_instruments_by_exercise_id(exercise_id):
+    """Retrieves a list of registry instruments for a given collection exercise.
+
+    :param exercise_id: The ID of the collection exercise the registry instruments are associated with.
+    :type exercise_id: uuid
+    :return: The registry instrument data if found, [] if not.
+    :rtype: list
+    """
+    url = (
+        f'{app.config["COLLECTION_INSTRUMENT_URL"]}'
+        f"/collection-instrument-api/1.0.2/registry-instrument/exercise-id/{exercise_id}"
+    )
+    response = requests.get(url, auth=app.config["BASIC_AUTH"])
+
+    try:
+        response.raise_for_status()
+        return response.json()
+    except requests.exceptions.HTTPError:
+        logger.error("Failed to retrieve registry instrument", status=response.status_code)
+        return None
