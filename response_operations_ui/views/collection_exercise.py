@@ -859,8 +859,7 @@ def get_view_sample_ci(short_name, period):
         all_cis_for_survey = filter_eq_ci_selectors(all_eq_survey_ci, linked_eq_ci)
         _format_ci_file_name(linked_eq_ci, ce_details["survey"])
         eq_ci_selectors = ce_details.get("eq_ci_selectors", {})
-        registry_instruments = collection_instrument_controllers.get_registry_instruments_by_exercise_id(ce_id)
-        if registry_instruments is not None and len(registry_instruments) > 0:
+        if registry_instruments := collection_instrument_controllers.get_registry_instruments_by_exercise_id(ce_id):
             # enriching the collection instruments with the registry instrument details
             for ci in all_cis_for_survey:
                 ci["registry_instrument"] = next(
