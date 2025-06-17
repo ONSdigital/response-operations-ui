@@ -6,7 +6,7 @@ import responses
 from config import TestingConfig
 from response_operations_ui import create_app
 from response_operations_ui.controllers.collection_instrument_controllers import (
-    get_collection_instruments_and_cir_version,
+    get_cis_and_cir_version,
     link_collection_instrument,
     link_collection_instrument_to_survey,
     upload_collection_instrument,
@@ -160,7 +160,7 @@ class TestCollectionInstrumentController(unittest.TestCase):
         "response_operations_ui.controllers.collection_instrument_controllers.get_collection_instruments_by_classifier"
     )
     @patch("response_operations_ui.controllers.collection_instrument_controllers.get_response_json_from_service")
-    def test_get_collection_instruments_and_cir_version(
+    def test_get_cis_and_cir_version(
         self, get_response_json_from_service, get_collection_instruments_by_classifier
     ):
         get_response_json_from_service.return_value = [
@@ -180,7 +180,7 @@ class TestCollectionInstrumentController(unittest.TestCase):
             {"classifiers": {"form_type": "0002"}},
         ]
         with self.app.app_context():
-            cis = get_collection_instruments_and_cir_version(collection_exercise_id)
+            cis = get_cis_and_cir_version(collection_exercise_id)
 
         self.assertEqual(cis, [{"form_type": "0001", "ci_version": 1}, {"form_type": "0002", "ci_version": None}])
 
@@ -188,13 +188,13 @@ class TestCollectionInstrumentController(unittest.TestCase):
         "response_operations_ui.controllers.collection_instrument_controllers.get_collection_instruments_by_classifier"
     )
     @patch("response_operations_ui.controllers.collection_instrument_controllers.get_response_json_from_service")
-    def test_get_collection_instruments_and_cir_version_no_registry_instruments(
+    def test_get_cis_and_cir_version_no_registry_instruments(
         self, get_response_json_from_service, get_collection_instruments_by_classifier
     ):
         get_response_json_from_service.return_value = []
         get_collection_instruments_by_classifier.return_value = [{"classifiers": {"form_type": "0001"}}]
         with self.app.app_context():
-            cis = get_collection_instruments_and_cir_version(collection_exercise_id)
+            cis = get_cis_and_cir_version(collection_exercise_id)
 
         self.assertEqual(cis, [{"form_type": "0001", "ci_version": None}])
 
@@ -202,12 +202,12 @@ class TestCollectionInstrumentController(unittest.TestCase):
         "response_operations_ui.controllers.collection_instrument_controllers.get_collection_instruments_by_classifier"
     )
     @patch("response_operations_ui.controllers.collection_instrument_controllers.get_response_json_from_service")
-    def test_get_collection_instruments_and_cir_version_no_get_collection_instruments(
+    def test_get_cis_and_cir_version_no_get_collection_instruments(
         self, get_response_json_from_service, get_collection_instruments_by_classifier
     ):
         get_response_json_from_service.return_value = []
         get_collection_instruments_by_classifier.return_value = []
         with self.app.app_context():
-            cis = get_collection_instruments_and_cir_version(collection_exercise_id)
+            cis = get_cis_and_cir_version(collection_exercise_id)
 
         self.assertEqual(cis, [])

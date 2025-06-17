@@ -272,7 +272,7 @@ def get_registry_instruments(collection_exercise_id: str) -> list:
     return get_response_json_from_service(url, TARGET_SERVICE)
 
 
-def get_collection_instruments_and_cir_version(collection_exercise_id: str) -> list:
+def get_cis_and_cir_version(collection_exercise_id: str) -> list:
     registry_instruments = get_registry_instruments(collection_exercise_id)
     classifier_value_version_map = {ci["classifier_value"]: ci["ci_version"] for ci in registry_instruments}
     collection_instruments = get_collection_instruments_by_classifier(
