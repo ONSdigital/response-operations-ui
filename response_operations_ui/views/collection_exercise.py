@@ -1146,14 +1146,16 @@ def view_sample_ci_summary(short_name: str, period: str) -> str:
     exercise = get_collection_exercise_by_period(exercises, period)
 
     _validate_exercise(exercise, period, short_name)
-    ci_registry_instruments = collection_instrument_controllers.get_registry_instruments(exercise["id"])
+    collection_instruments = collection_instrument_controllers.get_collection_instruments_and_cir_version(
+        exercise["id"]
+    )
 
     back_url = url_for("collection_exercise_bp.get_view_sample_ci", short_name=short_name, period=period)
     breadcrumbs = [{"text": "Back to EQ formtypes", "url": back_url}, {}]
 
     return render_template(
         "collection_exercise/view-sample-ci-summary.html",
-        ci_registry_instruments=ci_registry_instruments,
+        collection_instruments=collection_instruments,
         short_name=short_name,
         period=period,
         breadcrumbs=breadcrumbs,
