@@ -139,9 +139,7 @@ url_get_by_survey_with_ref_end_date = f"{collection_exercise_root}/survey/{short
 
 collection_instrument_root = f"{TestingConfig.COLLECTION_INSTRUMENT_URL}/collection-instrument-api/1.0.2"
 url_collection_instrument = f"{collection_instrument_root}/upload/{collection_exercise_id}"
-url_get_registry_instruments = (
-    f"{collection_instrument_root}/registry-instrument/exercise-id/{collection_exercise_id}"
-)
+url_get_registry_instruments = f"{collection_instrument_root}/registry-instrument/exercise-id/{collection_exercise_id}"
 url_collection_instrument_unlink = (
     f"{collection_instrument_root}/unlink-exercise/{collection_instrument_id}/{collection_exercise_id}"
 )
@@ -1153,7 +1151,7 @@ class TestCollectionExercise(ViewTestCase):
             status_code=500,
             content=b'{"errors":["Error: ' b"Failed to add collection " b'instrument(s)"]}\n',
         )
-        eq_ci_to_add = {"id": collection_instrument_id, "form_type": "0001", "checked": "true"}
+        eq_ci_to_add = {"id": collection_instrument_id, "form_type": "0001", "checked": "true", "ci_version": None}
         mock_ci_selector.return_value = self.eq_ci_selectors
         mock_collective_cis.return_value = eq_ci_to_add
 
@@ -2419,7 +2417,6 @@ class TestCollectionExercise(ViewTestCase):
 
         mock_request.get(url_get_by_survey_with_ref_start_date, json=collection_exercise_eq_ref_start_date)
         mock_request.get(url_get_by_survey_with_ref_end_date, json=collection_exercise_eq_ref_end_date)
-        mock_request.get(url_get_registry_instruments, json=self.registry_instruments)
         
         response = self.client.get(f"/surveys/{short_name}/{period}/view-sample-ci?survey_mode=EQ")
 
