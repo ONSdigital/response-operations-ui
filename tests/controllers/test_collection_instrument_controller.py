@@ -200,7 +200,7 @@ class TestCollectionInstrumentController(unittest.TestCase):
         "response_operations_ui.controllers.collection_instrument_controllers.get_collection_instruments_by_classifier"
     )
     @patch("response_operations_ui.controllers.collection_instrument_controllers.get_response_json_from_service")
-    def test_get_cis_and_cir_version_no_get_collection_instruments(
+    def test_get_cis_and_cir_version_no_collection_instruments(
         self, get_response_json_from_service, get_collection_instruments_by_classifier
     ):
         get_response_json_from_service.return_value = []
