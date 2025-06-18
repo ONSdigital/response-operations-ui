@@ -1,11 +1,13 @@
 import unittest
+from unittest.mock import patch
 
 import responses
 
 from config import TestingConfig
 from response_operations_ui import create_app
 from response_operations_ui.controllers.collection_instrument_controllers import (
-    get_registry_instruments_by_exercise_id,
+
+    get_cis_and_cir_version,
     link_collection_instrument,
     link_collection_instrument_to_survey,
     upload_collection_instrument,
@@ -155,54 +157,56 @@ class TestCollectionInstrumentController(unittest.TestCase):
             with self.app.app_context():
                 self.assertFalse(link_collection_instrument(collection_exercise_id, collection_instrument_id))
 
-    def test_get_registry_instruments_by_exercise_id_success(self):
-        """Tests successful retrieval (200) returns JSON data"""
-        exercise_id = collection_exercise_id
-        url = (
-            f"{TestingConfig.COLLECTION_INSTRUMENT_URL}/collection-instrument-api/1.0.2/registry-instrument"
-            f"/exercise-id/{exercise_id}"
-        )
-
-        registry_instruments = [
-            {"version": "1", "classifier_value": "0001"},
-            {"version": "2", "classifier_value": "0002"},
+    @patch(
+        "response_operations_ui.controllers.collection_instrument_controllers.get_collection_instruments_by_classifier"
+    )
+    @patch("response_operations_ui.controllers.collection_instrument_controllers.get_response_json_from_service")
+    def test_get_cis_and_cir_version(self, get_response_json_from_service, get_collection_instruments_by_classifier):
+        get_response_json_from_service.return_value = [
+            {
+                "ci_version": 1,
+                "classifier_type": "form_type",
+                "classifier_value": "0001",
+                "exercise_id": collection_exercise_id,
+                "guid": "c046861a-0df7-443a-a963-d9aa3bddf328",
+                "instrument_id": "efc3ddd7-3e79-4c6b-a8f8-1fa184cdd06b",
+                "published_at": "2025-12-31T00:00:00",
+                "survey_id": "0b1f8376-28e9-4884-bea5-acf9d709464e",
+            }
         ]
+        get_collection_instruments_by_classifier.return_value = [
+            {"classifiers": {"form_type": "0001"}},
+            {"classifiers": {"form_type": "0002"}},
+        ]
+        with self.app.app_context():
+            cis = get_cis_and_cir_version(collection_exercise_id)
 
-        with responses.RequestsMock() as rsps:
-            rsps.add(rsps.GET, url, json=registry_instruments, status=200)
-            with self.app.app_context():
-                result = get_registry_instruments_by_exercise_id(exercise_id)
-                self.assertEqual(result, registry_instruments)
+        self.assertEqual(cis, [{"form_type": "0001", "ci_version": 1}, {"form_type": "0002", "ci_version": None}])
 
-    def test_get_registry_instruments_by_exercise_id_not_found(self):
-        """Tests if an empty list is returned when no registry instruments are found"""
-        exercise_id = collection_exercise_id
-        url = (
-            f"{TestingConfig.COLLECTION_INSTRUMENT_URL}/collection-instrument-api/1.0.2/registry-instrument"
-            f"/exercise-id/{exercise_id}"
-        )
+    @patch(
+        "response_operations_ui.controllers.collection_instrument_controllers.get_collection_instruments_by_classifier"
+    )
+    @patch("response_operations_ui.controllers.collection_instrument_controllers.get_response_json_from_service")
+    def test_get_cis_and_cir_version_no_registry_instruments(
+        self, get_response_json_from_service, get_collection_instruments_by_classifier
+    ):
+        get_response_json_from_service.return_value = []
+        get_collection_instruments_by_classifier.return_value = [{"classifiers": {"form_type": "0001"}}]
+        with self.app.app_context():
+            cis = get_cis_and_cir_version(collection_exercise_id)
 
-        with responses.RequestsMock() as rsps:
-            rsps.add(rsps.GET, url, status=200, json=[])
-            with self.app.app_context():
-                result = get_registry_instruments_by_exercise_id(exercise_id)
-                self.assertEqual(result, [])
+        self.assertEqual(cis, [{"form_type": "0001", "ci_version": None}])
 
-    def test_get_registry_instruments_by_exercise_id_server_error(self):
-        """Tests 500 returns None and error text is logged"""
-        exercise_id = collection_exercise_id
-        url = (
-            f"{TestingConfig.COLLECTION_INSTRUMENT_URL}/collection-instrument-api/1.0.2/registry-instrument"
-            f"/exercise-id/{exercise_id}"
-        )
+    @patch(
+        "response_operations_ui.controllers.collection_instrument_controllers.get_collection_instruments_by_classifier"
+    )
+    @patch("response_operations_ui.controllers.collection_instrument_controllers.get_response_json_from_service")
+    def test_get_cis_and_cir_version_no_collection_instruments(
+        self, get_response_json_from_service, get_collection_instruments_by_classifier
+    ):
+        get_response_json_from_service.return_value = []
+        get_collection_instruments_by_classifier.return_value = []
+        with self.app.app_context():
+            cis = get_cis_and_cir_version(collection_exercise_id)
 
-        with responses.RequestsMock() as rsps:
-            rsps.add(rsps.GET, url, status=500)
-            with self.app.app_context():
-                with self.assertLogs(
-                    "response_operations_ui.controllers.collection_instrument_controllers", level="ERROR"
-                ) as log:
-                    result = get_registry_instruments_by_exercise_id(exercise_id)
-                    self.assertIsNone(result)
-                    error = any("Failed to retrieve registry instrument" in message for message in log.output)
-                    self.assertTrue(error)
+        self.assertEqual(cis, [])
