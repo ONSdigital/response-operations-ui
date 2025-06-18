@@ -139,7 +139,6 @@ url_get_by_survey_with_ref_end_date = f"{collection_exercise_root}/survey/{short
 
 collection_instrument_root = f"{TestingConfig.COLLECTION_INSTRUMENT_URL}/collection-instrument-api/1.0.2"
 url_collection_instrument = f"{collection_instrument_root}/upload/{collection_exercise_id}"
-url_get_registry_instruments = f"{collection_instrument_root}/registry-instrument/exercise-id/{collection_exercise_id}"
 url_collection_instrument_unlink = (
     f"{collection_instrument_root}/unlink-exercise/{collection_instrument_id}/{collection_exercise_id}"
 )
@@ -420,28 +419,6 @@ class TestCollectionExercise(ViewTestCase):
                 "surveyId": survey_id,
                 "type": "EQ",
             }
-        ]
-        self.registry_instruments = [
-            {
-                "ci_version": 1,
-                "classifier_type": "form_type",
-                "classifier_value": "0001",
-                "exercise_id": collection_exercise_id,
-                "guid": "c046861a-0df7-443a-a963-d9aa3bddf328",
-                "instrument_id": collection_instrument_id,
-                "published_at": "2025-12-31T00:00:00",
-                "survey_id": survey_id,
-            },
-            {
-                "ci_version": 3,
-                "classifier_type": "form_type",
-                "classifier_value": "0002",
-                "exercise_id": collection_exercise_id,
-                "guid": "ac3c5a3a-2ebb-47dc-9727-22c473086a82",
-                "instrument_id": collection_instrument_id,
-                "published_at": "2025-12-31T00:00:00",
-                "survey_id": survey_id,
-            },
         ]
         self.sample_summary = {
             "id": sample_summary_id,
@@ -1167,7 +1144,6 @@ class TestCollectionExercise(ViewTestCase):
             complete_qs=True,
             status_code=200,
         )
-        mock_request.get(url_get_registry_instruments, json=self.registry_instruments)
         ce_details = {
             "survey": self.eq_survey,
             "collection_exercise": self.collection_exercises[0],
@@ -2417,7 +2393,7 @@ class TestCollectionExercise(ViewTestCase):
 
         mock_request.get(url_get_by_survey_with_ref_start_date, json=collection_exercise_eq_ref_start_date)
         mock_request.get(url_get_by_survey_with_ref_end_date, json=collection_exercise_eq_ref_end_date)
-        
+
         response = self.client.get(f"/surveys/{short_name}/{period}/view-sample-ci?survey_mode=EQ")
 
         self.assertEqual(200, response.status_code)
@@ -2443,7 +2419,6 @@ class TestCollectionExercise(ViewTestCase):
 
         mock_request.get(url_get_by_survey_with_ref_start_date, json=collection_exercise_eq_ref_start_date)
         mock_request.get(url_get_by_survey_with_ref_end_date, json=collection_exercise_eq_ref_end_date)
-        mock_request.get(url_get_registry_instruments, json=self.registry_instruments)
         self.app.config["CIR_ENABLED"] = True
         response = self.client.get(f"/surveys/{short_name}/{period}/view-sample-ci?survey_mode=EQ")
 
@@ -2541,7 +2516,6 @@ class TestCollectionExercise(ViewTestCase):
 
         mock_request.get(url_get_by_survey_with_ref_start_date, json=collection_exercise_eq_ref_start_date)
         mock_request.get(url_get_by_survey_with_ref_end_date, json=collection_exercise_eq_ref_end_date)
-        mock_request.get(url_get_registry_instruments, json=self.registry_instruments)
         response = self.client.get(f"/surveys/{short_name}/{period}/view-sample-ci?survey_mode=EQ")
 
         self.assertEqual(200, response.status_code)
@@ -2567,7 +2541,6 @@ class TestCollectionExercise(ViewTestCase):
 
         mock_request.get(url_get_by_survey_with_ref_start_date, json=collection_exercise_eq_ref_start_date)
         mock_request.get(url_get_by_survey_with_ref_end_date, json=collection_exercise_eq_ref_end_date)
-        mock_request.get(url_get_registry_instruments, json=self.registry_instruments)
         eq_cis = {"EQ": self.eq_ci_selectors}
         ce_details = {
             "survey": self.eq_survey_dates,
@@ -2809,7 +2782,6 @@ class TestCollectionExercise(ViewTestCase):
             json=self.eq_collection_instrument,
             complete_qs=True,
         )
-        mock_request.get(url_get_registry_instruments, json=self.registry_instruments)
         response = self.client.post(
             f"/surveys/{short_name}/{period}/view-sample-ci?survey_mode=EQ", data=post_data, follow_redirects=True
         )
@@ -2840,7 +2812,6 @@ class TestCollectionExercise(ViewTestCase):
         mock_request.get(url_get_collection_exercise_events, json=self.collection_exercise_events)
         mock_request.get(url_collection_exercise_link, json=[sample_summary_id])
         mock_request.get(url_get_sample_summary, json=self.sample_summary)
-        mock_request.get(url_get_registry_instruments, json=self.registry_instruments)
         mock_request.get(
             f"{url_get_collection_instrument}?{ci_search_string}",
             json=self.eq_collection_instrument,
