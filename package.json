@@ -34,7 +34,7 @@
     "balanced-match": "^1.0.0",
     "bcrypt-pbkdf": "^1.0.2",
     "big.js": "^5.2.2",
-    "brace-expansion": "^1.1.11",
+    "brace-expansion": "^1.1.12",
     "browserslist": "^4.21.10",
     "buffer-from": "^1.1.1",
     "call-bind": "^1.0.2",
