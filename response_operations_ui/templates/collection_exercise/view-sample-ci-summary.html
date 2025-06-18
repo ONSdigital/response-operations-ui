@@ -13,7 +13,9 @@
 {% set formTypeCIVersionTableDataRows = [] %}
 
 {% for collection_instruments in collection_instruments %}
-    {% set linkText = "Edit version" if collection_instruments["ci_version"] else "Choose a version" %}
+    {% set ciVersion = collection_instruments["ci_version"] %}
+    {% set linkText = "Edit version" if ciVersion else "Choose a version" %}
+    {% set versionText = "Version " + ciVersion|string if ciVersion else "Nothing selected" %}
 
     {% do formTypeCIVersionTableDataRows.append(
 
@@ -23,7 +25,7 @@
                     "value": collection_instruments["form_type"]
                 },
                 {
-                  "value": collection_instruments["ci_version"] or "Nothing selected",
+                  "value": versionText,
                   "tdClasses": "ons-u-ta-centre"
                 }, 
                 {

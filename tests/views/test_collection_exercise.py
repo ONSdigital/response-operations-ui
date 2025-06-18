@@ -2851,6 +2851,7 @@ class TestCollectionExercise(ViewTestCase):
         )
         self.assertIn("Choose a version".encode(), response.data)
         self.assertIn("Edit version".encode(), response.data)
+        self.assertIn("Version 12".encode(), response.data)
 
     @patch("response_operations_ui.views.collection_exercise.survey_controllers.get_survey_by_shortname")
     @patch(
