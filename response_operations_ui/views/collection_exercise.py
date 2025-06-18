@@ -20,6 +20,7 @@ from flask import (
 )
 from flask_login import login_required
 from structlog import wrap_logger
+from werkzeug import Response
 from wtforms import ValidationError
 
 from response_operations_ui.common.date_restriction_generator import (
@@ -1144,16 +1145,23 @@ def view_sample_ci_summary(short_name: str, period: str) -> str:
     survey_id = survey_controllers.get_survey_by_shortname(short_name).get("id")
     exercises = collection_exercise_controllers.get_collection_exercises_by_survey(survey_id)
     exercise = get_collection_exercise_by_period(exercises, period)
+    form_types = collection_instrument_controllers.get_collection_instruments_by_classifier(None, exercise["id"], None)
 
     _validate_exercise(exercise, period, short_name)
-    eq_collection_instruments = _build_collection_instruments_details(exercise["id"], survey_id).get("EQ", [])
-
+    ci_registry_instruments = collection_instrument_controllers.get_registry_instruments(exercise["id"])
+    
+    cir_form_types = {cir["classifier_value"] for cir in ci_registry_instruments}
+    ci_form_types = {ci["classifiers"]["form_type"] for ci in form_types}
+    non_registered_form_types = list(ci_form_types - cir_form_types)
+    for non_registered_form_type in non_registered_form_types:
+        ci_registry_instruments.append({"classifier_value": non_registered_form_type, "ci_version": "Nothing selected"})
+    
     back_url = url_for("collection_exercise_bp.get_view_sample_ci", short_name=short_name, period=period)
     breadcrumbs = [{"text": "Back to EQ formtypes", "url": back_url}, {}]
 
     return render_template(
         "collection_exercise/view-sample-ci-summary.html",
-        collection_instruments=eq_collection_instruments,
+        ci_registry_instruments=ci_registry_instruments,
         short_name=short_name,
         period=period,
         breadcrumbs=breadcrumbs,
@@ -1194,7 +1202,12 @@ def view_ci_versions(short_name: str, period: str, form_type: str) -> str:
 
 @collection_exercise_bp.route("/<short_name>/<period>/view-sample-ci/summary/<form_type>", methods=["POST"])
 @login_required
-def save_ci_versions(short_name: str, period: str, form_type: str) -> str:
+def save_ci_versions(short_name: str, period: str, form_type: str) -> Response:
+    ce_details = build_collection_exercise_details(short_name, period, include_ci=True)
+    ci_registry_instruments = collection_instrument_controllers.get_registry_instruments(ce_details["collection_exercise"]["id"])
+    cir_form_types = {cir["classifier_value"] for cir in ci_registry_instruments}
+    if form_type not in cir_form_types:
+        collection_instrument_controllers.delete_registry_instruments(ce_details["collection_exercise"]["id"], form_type)
     return redirect(url_for("collection_exercise_bp.view_collection_exercise", short_name=short_name, period=period))
 
 

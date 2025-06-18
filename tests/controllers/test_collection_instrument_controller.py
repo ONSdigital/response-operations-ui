@@ -29,6 +29,10 @@ ci_link_url = f"{collection_instrument_url_base}/link-exercise/{collection_instr
 ci_bres_upload_url = f"{collection_instrument_url_base}/upload/{collection_exercise_id}/{ru_ref}"
 ci_upload_url = f"{collection_instrument_url_base}/upload/{collection_exercise_id}"
 
+get_registry_instruments_url = (
+    f"{collection_instrument_url_base}/registry-instrument/exercise-id/{collection_exercise_id}"
+)
+
 
 class File:
     """Used to imitate a file being uploaded"""
