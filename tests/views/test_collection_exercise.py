@@ -139,9 +139,6 @@ url_get_by_survey_with_ref_end_date = f"{collection_exercise_root}/survey/{short
 
 collection_instrument_root = f"{TestingConfig.COLLECTION_INSTRUMENT_URL}/collection-instrument-api/1.0.2"
 url_collection_instrument = f"{collection_instrument_root}/upload/{collection_exercise_id}"
-url_get_registry_instruments_by_exercise_id = (
-    f"{collection_instrument_root}/registry-instrument/exercise-id/{collection_exercise_id}"
-)
 url_collection_instrument_unlink = (
     f"{collection_instrument_root}/unlink-exercise/{collection_instrument_id}/{collection_exercise_id}"
 )
@@ -422,28 +419,6 @@ class TestCollectionExercise(ViewTestCase):
                 "surveyId": survey_id,
                 "type": "EQ",
             }
-        ]
-        self.registry_instruments = [
-            {
-                "ci_version": 1,
-                "classifier_type": "form_type",
-                "classifier_value": "0001",
-                "exercise_id": collection_exercise_id,
-                "guid": "c046861a-0df7-443a-a963-d9aa3bddf328",
-                "instrument_id": collection_instrument_id,
-                "published_at": "2025-12-31T00:00:00",
-                "survey_id": survey_id,
-            },
-            {
-                "ci_version": 3,
-                "classifier_type": "form_type",
-                "classifier_value": "0002",
-                "exercise_id": collection_exercise_id,
-                "guid": "ac3c5a3a-2ebb-47dc-9727-22c473086a82",
-                "instrument_id": collection_instrument_id,
-                "published_at": "2025-12-31T00:00:00",
-                "survey_id": survey_id,
-            },
         ]
         self.sample_summary = {
             "id": sample_summary_id,
@@ -1169,7 +1144,6 @@ class TestCollectionExercise(ViewTestCase):
             complete_qs=True,
             status_code=200,
         )
-        mock_request.get(url_get_registry_instruments_by_exercise_id, json=self.registry_instruments)
 
         ce_details = {
             "survey": self.eq_survey,
@@ -2420,7 +2394,6 @@ class TestCollectionExercise(ViewTestCase):
 
         mock_request.get(url_get_by_survey_with_ref_start_date, json=collection_exercise_eq_ref_start_date)
         mock_request.get(url_get_by_survey_with_ref_end_date, json=collection_exercise_eq_ref_end_date)
-        mock_request.get(url_get_registry_instruments_by_exercise_id, json=self.registry_instruments)
 
         response = self.client.get(f"/surveys/{short_name}/{period}/view-sample-ci?survey_mode=EQ")
 
@@ -2447,7 +2420,6 @@ class TestCollectionExercise(ViewTestCase):
 
         mock_request.get(url_get_by_survey_with_ref_start_date, json=collection_exercise_eq_ref_start_date)
         mock_request.get(url_get_by_survey_with_ref_end_date, json=collection_exercise_eq_ref_end_date)
-        mock_request.get(url_get_registry_instruments_by_exercise_id, json=self.registry_instruments)
         self.app.config["CIR_ENABLED"] = True
         response = self.client.get(f"/surveys/{short_name}/{period}/view-sample-ci?survey_mode=EQ")
 
@@ -2545,7 +2517,6 @@ class TestCollectionExercise(ViewTestCase):
 
         mock_request.get(url_get_by_survey_with_ref_start_date, json=collection_exercise_eq_ref_start_date)
         mock_request.get(url_get_by_survey_with_ref_end_date, json=collection_exercise_eq_ref_end_date)
-        mock_request.get(url_get_registry_instruments_by_exercise_id, json=self.registry_instruments)
 
         response = self.client.get(f"/surveys/{short_name}/{period}/view-sample-ci?survey_mode=EQ")
 
@@ -2572,7 +2543,6 @@ class TestCollectionExercise(ViewTestCase):
 
         mock_request.get(url_get_by_survey_with_ref_start_date, json=collection_exercise_eq_ref_start_date)
         mock_request.get(url_get_by_survey_with_ref_end_date, json=collection_exercise_eq_ref_end_date)
-        mock_request.get(url_get_registry_instruments_by_exercise_id, json=self.registry_instruments)
         eq_cis = {"EQ": self.eq_ci_selectors}
         ce_details = {
             "survey": self.eq_survey_dates,
@@ -2814,7 +2784,6 @@ class TestCollectionExercise(ViewTestCase):
             json=self.eq_collection_instrument,
             complete_qs=True,
         )
-        mock_request.get(url_get_registry_instruments_by_exercise_id, json=self.registry_instruments)
         response = self.client.post(
             f"/surveys/{short_name}/{period}/view-sample-ci?survey_mode=EQ", data=post_data, follow_redirects=True
         )
@@ -2844,7 +2813,6 @@ class TestCollectionExercise(ViewTestCase):
         mock_request.get(url_ce_by_id, json=collection_exercise_details["collection_exercise"])
         mock_request.get(url_get_collection_exercise_events, json=self.collection_exercise_events)
         mock_request.get(url_collection_exercise_link, json=[sample_summary_id])
-        mock_request.get(url_get_registry_instruments_by_exercise_id, json=self.registry_instruments)
         mock_request.get(url_get_sample_summary, json=self.sample_summary)
         mock_request.get(
             f"{url_get_collection_instrument}?{ci_search_string}",
@@ -2959,24 +2927,3 @@ class TestCollectionExercise(ViewTestCase):
             self.assertEqual(response.status_code, 200)
             self.assertIn("Choose CIR version for EQ formtype".encode(), response.data)
             self.assertIn("Unable to connect to CIR".encode(), response.data)
-
-    @patch(
-        "response_operations_ui.controllers.collection_instrument_controllers.get_registry_instruments_by_exercise_id"
-    )
-    def test_enrich_collection_instruments_with_registry_instruments(self, mock_get_registry):
-        mock_get_registry.return_value = self.registry_instruments
-
-        all_cis_for_survey = [
-            {"form_type": "0001"},
-            {"form_type": "0002"},
-            {"form_type": "9999"},
-        ]
-
-        for ci in all_cis_for_survey:
-            ci["registry_instrument"] = next(
-                (ri for ri in mock_get_registry.return_value if ri["classifier_value"] == ci["form_type"]), None
-            )
-
-        self.assertEqual(all_cis_for_survey[0]["registry_instrument"]["classifier_value"], "0001")
-        self.assertEqual(all_cis_for_survey[1]["registry_instrument"]["classifier_value"], "0002")
-        self.assertIsNone(all_cis_for_survey[2]["registry_instrument"])
