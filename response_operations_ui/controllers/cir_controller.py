@@ -47,5 +47,5 @@ def _get_response_content(request_url):
             target_service=TARGET_SERVICE,
         )
         raise ExternalApiError(None, ErrorCode.API_OIDC_CREDENTIALS_ERROR, TARGET_SERVICE) from e
-    
+
     return get_response_json_from_service(request_url, TARGET_SERVICE, session)

@@ -6,7 +6,6 @@ import responses
 from config import TestingConfig
 from response_operations_ui import create_app
 from response_operations_ui.controllers.collection_instrument_controllers import (
-
     get_cis_and_cir_version,
     link_collection_instrument,
     link_collection_instrument_to_survey,
