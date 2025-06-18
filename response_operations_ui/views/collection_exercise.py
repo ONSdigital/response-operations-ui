@@ -853,18 +853,10 @@ def get_view_sample_ci(short_name, period):
 
     if ce_details["survey"]["surveyMode"] in ("EQ_AND_SEFT", "EQ"):
         linked_eq_ci = ce_details["collection_instruments"].get("EQ", {})
-        all_eq_survey_ci = collection_instrument_controllers.get_collection_instruments_by_classifier(
-            ci_type="EQ", survey_id=ce_details["survey"]["id"]
-        )
+        all_eq_survey_ci = collection_instrument_controllers.get_cis_and_cir_version(ce_id)
         all_cis_for_survey = filter_eq_ci_selectors(all_eq_survey_ci, linked_eq_ci)
         _format_ci_file_name(linked_eq_ci, ce_details["survey"])
         eq_ci_selectors = ce_details.get("eq_ci_selectors", {})
-        if registry_instruments := collection_instrument_controllers.get_registry_instruments_by_exercise_id(ce_id):
-            # enriching the collection instruments with the registry instrument details
-            for ci in all_cis_for_survey:
-                ci["registry_instrument"] = next(
-                    (ri for ri in registry_instruments if ri["classifier_value"] == ci["form_type"]), None
-                )
 
     error_json = _get_error_from_session()
     _delete_sample_data_if_required()
