@@ -119,23 +119,31 @@ def get_nearest_future_key_date(events):
     return closest_key_date
 
 
-def filter_eq_ci_selectors(eq_ci_selectors: list[dict], collection_instruments: list[dict]) -> list[dict]:
+def build_eq_ci_selectors(
+    eq_ci_selectors: list[dict], collection_instruments: list[dict], ci_versions: list[dict]
+) -> list[dict]:
     """
     Takes all eQ collection instruments available for the collection exercise as a list and the already linked
     instruments and returns a list of the collection instruments that have not yet been linked for this exercise.
-    The CIs already linked will be updated to show as checked true for rendering in the view. If not lnked, then false
+    The CIs already linked will be updated to show as checked true for rendering in the view. If not linked, then false.
+    Also includes the corresponding ci_version for each instrument if available.
 
     :param eq_ci_selectors: list of available eQ collection instruments
     :param collection_instruments: list of linked eQ collection instruments
-    :returns eq_ci_selectors: list of eQ collection instruments available to be linked to this exercise
+    :param ci_versions: list of dicts mapping formtype to ci_version
+    :returns: list of eQ collection instruments available to be linked to this exercise, with checked and ci_version
     """
+    ci_version_lookup = {ci["form_type"]: ci.get("ci_version") for ci in ci_versions}
+
     all_cis_for_survey = []
 
     for eq_ci in eq_ci_selectors:
+        form_type = eq_ci["classifiers"]["form_type"]
         eq_ci_to_add = {
             "id": eq_ci["id"],
-            "form_type": eq_ci["classifiers"]["form_type"],
+            "form_type": form_type,
             "checked": "true" if eq_ci in tuple(collection_instruments) else "false",
+            "ci_version": ci_version_lookup.get(form_type),
         }
         all_cis_for_survey.append(eq_ci_to_add)
 
