@@ -2831,52 +2831,47 @@ class TestCollectionExercise(ViewTestCase):
         "response_operations_ui.views.collection_exercise."
         "collection_exercise_controllers.get_collection_exercises_by_survey"
     )
-    @patch("response_operations_ui.controllers.collection_instrument_controllers.get_registry_instruments")
-    def test_view_sample_ci_summary(self, get_registry_instruments, get_ce_by_survey, get_survey_by_shortname):
+    @patch("response_operations_ui.controllers.collection_instrument_controllers.get_cis_and_cir_version")
+    def test_view_sample_ci_summary(self, get_cis_and_cir_version, get_ce_by_survey, get_survey_by_shortname):
         get_survey_by_shortname.return_value = {"id": survey_id}
         get_ce_by_survey.return_value = [
             {"id": "d64cbfd2-20b1-4e10-962e-bd57f4946db7", "surveyId": survey_id, "exerciseRef": period}
         ]
-        get_registry_instruments.return_value = [
-            {
-                "ci_version": 1,
-                "classifier_type": "form_type",
-                "classifier_value": "0001",
-                "exercise_id": collection_exercise_id,
-                "guid": "c046861a-0df7-443a-a963-d9aa3bddf328",
-                "instrument_id": "efc3ddd7-3e79-4c6b-a8f8-1fa184cdd06b",
-                "published_at": "2025-12-31T00:00:00",
-                "survey_id": "0b1f8376-28e9-4884-bea5-acf9d709464e",
-            }
+        get_cis_and_cir_version.return_value = [
+            {"form_type": "0001", "ci_version": "12"},
+            {"form_type": "0002", "ci_version": None},
         ]
 
         response = self.client.get(f"/surveys/{short_name}/{period}/view-sample-ci/summary")
 
         self.assertEqual(response.status_code, 200)
-        self.assertIn("0001".encode(), response.data)
         self.assertIn(
             f"/surveys/{short_name}/{period}/view-sample-ci/summary/0001".encode(),
             response.data,
         )
+        self.assertIn("Choose a version".encode(), response.data)
+        self.assertIn("Edit version".encode(), response.data)
+        self.assertIn("Version 12".encode(), response.data)
 
     @patch("response_operations_ui.views.collection_exercise.survey_controllers.get_survey_by_shortname")
     @patch(
         "response_operations_ui.views.collection_exercise."
         "collection_exercise_controllers.get_collection_exercises_by_survey"
     )
-    @patch("response_operations_ui.controllers.collection_instrument_controllers.get_registry_instruments")
+    @patch("response_operations_ui.controllers.collection_instrument_controllers.get_cis_and_cir_version")
     def test_view_sample_ci_summary_no_cis(
-        self, get_registry_instruments, get_collection_exercises_by_survey, get_survey_by_shortname
+        self, get_cis_and_cir_version, get_collection_exercises_by_survey, get_survey_by_shortname
     ):
         get_survey_by_shortname.return_value = {"id": survey_id}
         get_collection_exercises_by_survey.return_value = [
             {"id": "d64cbfd2-20b1-4e10-962e-bd57f4946db7", "surveyId": survey_id, "exerciseRef": period}
         ]
-        get_registry_instruments.return_value = {}
+        get_cis_and_cir_version.return_value = []
         response = self.client.get(f"/surveys/{short_name}/{period}/view-sample-ci/summary")
 
         self.assertEqual(response.status_code, 200)
         self.assertNotIn("Choose a version".encode(), response.data)
+        self.assertNotIn("Edit version".encode(), response.data)
 
     @patch("response_operations_ui.views.collection_exercise.survey_controllers.get_survey_by_shortname")
     @patch("response_operations_ui.controllers.cir_controller.get_cir_metadata")
