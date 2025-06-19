@@ -1,4 +1,3 @@
-import json
 import logging
 
 import requests
@@ -6,6 +5,9 @@ from flask import current_app as app
 from google.auth.exceptions import GoogleAuthError
 from structlog import wrap_logger
 
+from response_operations_ui.common.connection_helper import (
+    get_response_json_from_service,
+)
 from response_operations_ui.common.credentials import fetch_and_apply_oidc_credentials
 from response_operations_ui.exceptions.error_codes import (
     ErrorCode,
@@ -46,53 +48,4 @@ def _get_response_content(request_url):
         )
         raise ExternalApiError(None, ErrorCode.API_OIDC_CREDENTIALS_ERROR, TARGET_SERVICE) from e
 
-    try:
-        response = session.get(request_url)
-    except (requests.ConnectionError, requests.exceptions.Timeout) as e:
-        error_code = (
-            ErrorCode.API_CONNECTION_ERROR if isinstance(e, requests.ConnectionError) else ErrorCode.API_TIMEOUT_ERROR
-        )
-        logger.error(
-            get_error_code_message(error_code),
-            error=str(e),
-            request_url=request_url,
-            target_service=TARGET_SERVICE,
-        )
-        raise ExternalApiError(None, error_code, TARGET_SERVICE) from e
-    if response.status_code != 200:
-        if response.status_code == 404:
-            logger.error(
-                get_error_code_message(ErrorCode.NOT_FOUND),
-                status_code=str(response.status_code),
-                request_url=request_url,
-                target_service=TARGET_SERVICE,
-            )
-            raise ExternalApiError(response, ErrorCode.NOT_FOUND, TARGET_SERVICE)
-        else:
-            logger.error(
-                get_error_code_message(ErrorCode.API_UNEXPECTED_STATUS_CODE),
-                status_code=str(response.status_code),
-                request_url=request_url,
-                target_service=TARGET_SERVICE,
-            )
-            raise ExternalApiError(response, ErrorCode.API_UNEXPECTED_STATUS_CODE, TARGET_SERVICE)
-
-    if response.headers.get("content-type") != "application/json":
-        logger.error(
-            get_error_code_message(ErrorCode.API_UNEXPECTED_CONTENT_TYPE),
-            content_type=response.headers.get("content-type"),
-            request_url=request_url,
-            target_service=TARGET_SERVICE,
-        )
-        raise ExternalApiError(response, ErrorCode.API_UNEXPECTED_CONTENT_TYPE, TARGET_SERVICE)
-    else:
-        try:
-            return json.loads(response.text)
-        except json.JSONDecodeError as e:
-            logger.error(
-                get_error_code_message(ErrorCode.API_UNEXPECTED_CONTENT),
-                error=str(e),
-                request_url=request_url,
-                target_service=TARGET_SERVICE,
-            )
-            raise ExternalApiError(response, ErrorCode.API_UNEXPECTED_CONTENT, TARGET_SERVICE) from e
+    return get_response_json_from_service(request_url, TARGET_SERVICE, session)
