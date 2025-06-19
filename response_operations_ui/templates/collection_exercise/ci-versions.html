@@ -28,6 +28,7 @@
                       "text": "Nothing selected",
                     },
                     "name": "nothing-selected",
+                    "value": "nothing-selected",
                   }] %}
                   {% for ci in cir_metadata %}
                     {% do cirRadioRows.append(
@@ -38,6 +39,7 @@
                               "description": "Published: " + ci.published_at,
                           },
                           "name": ci.ci_version|string,
+                          "value": ci.ci_version|string,
                         }
                     )%}
                   {% endfor %}
@@ -54,7 +56,8 @@
                 onsButton({
                     "text": "Save",
                     "id": "save",
-                    "name": "save"
+                    "name": "save",
+                    "type": "save",
             })
             }}
         

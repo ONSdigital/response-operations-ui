@@ -272,14 +272,29 @@ def get_registry_instruments(collection_exercise_id: str) -> list:
     return get_response_json_from_service(url, TARGET_SERVICE)
 
 
+def get_cis_and_cir_version(collection_exercise_id: str) -> list:
+    registry_instruments = get_registry_instruments(collection_exercise_id)
+    classifier_value_version_map = {ci["classifier_value"]: ci["ci_version"] for ci in registry_instruments}
+    collection_instruments = get_collection_instruments_by_classifier(
+        collection_exercise_id=collection_exercise_id, ci_type="EQ"
+    )
+    return [
+        {
+            "form_type": ci["classifiers"]["form_type"],
+            "ci_version": classifier_value_version_map.get(ci["classifiers"]["form_type"]),
+        }
+        for ci in collection_instruments
+    ]
+
+
 def delete_registry_instruments(collection_exercise_id: str, form_type: str) -> str:
     url = (
         f'{app.config["COLLECTION_INSTRUMENT_URL"]}/collection-instrument-api/1.0.2/'
         f"registry-instrument/exercise-id/{collection_exercise_id}/formtype/{form_type}"
     )
-    
+
     response = requests.delete(url, auth=app.config["BASIC_AUTH"])
-    
+
     try:
         response.raise_for_status()
     except requests.exceptions.HTTPError:
@@ -294,6 +309,7 @@ def delete_registry_instruments(collection_exercise_id: str, form_type: str) -> 
         collection_exercise_id=collection_exercise_id,
         form_type=form_type,
     )
+
 
 def _build_classifiers(collection_exercise_id=None, survey_id=None, ci_type=None):
     classifiers = {}

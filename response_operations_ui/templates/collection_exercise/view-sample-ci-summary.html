@@ -12,20 +12,24 @@
 }%}
 {% set formTypeCIVersionTableDataRows = [] %}
 
-{% for ci_registry_instrument in ci_registry_instruments %}
-    {% set form_type = ci_registry_instrument["classifier_value"] %}
+{% for collection_instruments in collection_instruments %}
+    {% set ciVersion = collection_instruments["ci_version"] %}
+    {% set linkText = "Edit version" if ciVersion else "Choose a version" %}
+    {% set versionText = "Version " + ciVersion|string if ciVersion else "Nothing selected" %}
+
     {% do formTypeCIVersionTableDataRows.append(
+
         {
             "tds": [
                 {
-                    "value": form_type
+                    "value": collection_instruments["form_type"]
                 },
                 {
-                  "value": ci_registry_instrument["ci_version"],
+                  "value": versionText,
                   "tdClasses": "ons-u-ta-centre"
                 }, 
                 {
-                  "value": '<a href="' + url_for("collection_exercise_bp.view_ci_versions", short_name=short_name, period=period, form_type=form_type) + '">Choose a version</a>',
+                  "value": '<a href="' + url_for("collection_exercise_bp.view_ci_versions", short_name=short_name, period=period, form_type=collection_instruments['form_type']) + '">'+linkText+'</a>',
                   "tdClasses": "ons-u-ta-right"
                 }
               ] 
