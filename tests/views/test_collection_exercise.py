@@ -1131,7 +1131,6 @@ class TestCollectionExercise(ViewTestCase):
         )
         eq_ci_to_add = {"id": collection_instrument_id, "form_type": "0001", "checked": "true", "ci_version": None}
         mock_get_cis_and_cir_version.return_value = [{"form_type": "0001", "ci_version": None}]
-
         mock_ci_selector.return_value = self.eq_ci_selectors
         mock_collective_cis.return_value = eq_ci_to_add
 
@@ -1147,6 +1146,7 @@ class TestCollectionExercise(ViewTestCase):
             complete_qs=True,
             status_code=200,
         )
+
         ce_details = {
             "survey": self.eq_survey,
             "collection_exercise": self.collection_exercises[0],
@@ -2382,7 +2382,6 @@ class TestCollectionExercise(ViewTestCase):
     @patch("response_operations_ui.views.collection_exercise.collection_instrument_controllers.get_cis_and_cir_version")
     def test_eq_view_sample_ci_page_survey_permission(self, mock_request, mock_get_cis_and_cir_version):
         sign_in_with_permission(self, mock_request, user_permission_surveys_edit_json)
-
         mock_get_cis_and_cir_version.return_value = [{"form_type": "0001", "ci_version": None}]
         mock_request.get(url_get_survey_by_short_name, json=self.eq_survey_dates)
         mock_request.get(url_ces_by_survey, json=self.collection_exercises)
@@ -2526,6 +2525,7 @@ class TestCollectionExercise(ViewTestCase):
 
         mock_request.get(url_get_by_survey_with_ref_start_date, json=collection_exercise_eq_ref_start_date)
         mock_request.get(url_get_by_survey_with_ref_end_date, json=collection_exercise_eq_ref_end_date)
+
         response = self.client.get(f"/surveys/{short_name}/{period}/view-sample-ci?survey_mode=EQ")
 
         self.assertEqual(200, response.status_code)
@@ -2811,7 +2811,6 @@ class TestCollectionExercise(ViewTestCase):
         sign_in_with_permission(self, mock_request, user_permission_surveys_edit_json)
         post_data = {"formtype": "0001", "add-eq-ci": ""}
         mock_get_cis_and_cir_version.return_value = [{"form_type": "0001", "ci_version": None}]
-
         mock_request.get(url_survey_shortname, json=self.single_survey_eq)
         mock_request.get(
             f"{url_get_collection_instrument}?{ci_type_search_string_eq}", json=self.eq_ci_selectors, complete_qs=True
