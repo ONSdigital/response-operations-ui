@@ -834,7 +834,6 @@ def get_view_sample_ci(short_name, period):
     ce_state = ce_details["collection_exercise"]["state"]
     ce_id = ce_details["collection_exercise"]["id"]
     locked = ce_state in ("LIVE", "READY_FOR_LIVE", "EXECUTION_STARTED", "VALIDATED", "EXECUTED", "ENDED")
-    sample_load_status = None
     all_cis_for_survey = []
     if ce_details["survey"]["surveyMode"] in ("EQ_AND_SEFT", "EQ"):
         all_eq_survey_ci = ce_details.get("eq_ci_selectors", {})
@@ -864,7 +863,6 @@ def get_view_sample_ci(short_name, period):
         locked=locked,
         sample=ce_details["sample_summary"],
         survey=ce_details["survey"],
-        sample_load_status=sample_load_status,
         success_panel=success_panel,
         show_msg=show_msg,
         info_panel=info_panel,
