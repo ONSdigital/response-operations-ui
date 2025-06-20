@@ -213,7 +213,7 @@ class TestCollectionInstrumentController(unittest.TestCase):
 
     @patch("response_operations_ui.controllers.collection_instrument_controllers.get_response_json_from_service")
     def test_get_linked_cis_and_cir_version(self, get_response_json_from_service):
-        ci_id_01 = collection_exercise_id
+        ci_id_01 = collection_instrument_id
         ci_id_02 = "efc3ddd7-3e79-4c6b-a8f8-1fa184cdd06b"
         ci_id_03 = "c046861a-0df7-443a-a963-d9aa3bddf328"
         get_response_json_from_service.return_value = [
