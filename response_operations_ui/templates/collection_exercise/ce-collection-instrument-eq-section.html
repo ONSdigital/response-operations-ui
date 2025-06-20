@@ -8,7 +8,7 @@ ons-u-mt-l">
           </p>
         </div>
     {% endif %}
-    {% if eq_ci_selectors or collection_instruments['EQ'] %}
+    {% if all_cis_for_survey %}
         <form id="form-select-ci" action="" class="form" method="post" enctype="multipart/form-data">
             {{
                 onsLabel({

@@ -117,29 +117,3 @@ def get_nearest_future_key_date(events):
 
     # We either found one, or there were none in the future, so we return an empty dict.
     return closest_key_date
-
-
-def build_eq_ci_selectors(
-    eq_ci_selectors: list[dict], collection_instruments: list[dict], ci_versions: list[dict]
-) -> list[dict]:
-    """
-    Builds a list of available eQ collection instruments for a collection exercise,
-    marking those already linked as checked and attaching their ci_version if available.
-
-    :param eq_ci_selectors: Available eQ CIs for the survey
-    :param collection_instruments: CIs already linked to the collection exercise
-    :param ci_versions: CI version info, keyed by form_type
-    :return: List of CIs enriched with 'checked' and 'ci_version' values
-    """
-    ci_version_lookup = {ci["form_type"]: ci.get("ci_version") for ci in ci_versions}
-    linked_ids = {ci["id"] for ci in collection_instruments}
-
-    return [
-        {
-            "id": eq_ci["id"],
-            "form_type": eq_ci["classifiers"]["form_type"],
-            "checked": "true" if eq_ci["id"] in linked_ids else "false",
-            "ci_version": ci_version_lookup.get(eq_ci["classifiers"]["form_type"]),
-        }
-        for eq_ci in eq_ci_selectors
-    ]

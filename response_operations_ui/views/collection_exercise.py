@@ -26,10 +26,7 @@ from response_operations_ui.common.date_restriction_generator import (
     get_date_restriction_text,
 )
 from response_operations_ui.common.dates import localise_datetime
-from response_operations_ui.common.filters import (
-    build_eq_ci_selectors,
-    get_collection_exercise_by_period,
-)
+from response_operations_ui.common.filters import get_collection_exercise_by_period
 from response_operations_ui.common.mappers import (
     convert_events_to_new_format,
     format_short_name,
@@ -839,26 +836,15 @@ def get_view_sample_ci(short_name, period):
     locked = ce_state in ("LIVE", "READY_FOR_LIVE", "EXECUTION_STARTED", "VALIDATED", "EXECUTED", "ENDED")
     sample_load_status = None
     all_cis_for_survey = []
-    eq_ci_selectors = []
-    if sample_controllers.sample_summary_state_check_required(ce_details):
-        try:
-            sample_load_status = sample_controllers.check_if_all_sample_units_present_for_sample_summary(
-                ce_details["sample_summary"]["id"]
-            )
-            if sample_load_status["areAllSampleUnitsLoaded"]:
-                sample_summary = sample_controllers.get_sample_summary(ce_details["sample_summary"]["id"])
-                ce_details["sample_summary"] = _format_sample_summary(sample_summary)
-        except ApiError:
-            flash("Sample summary check failed.  Refresh page to try again", category="error")
-
     if ce_details["survey"]["surveyMode"] in ("EQ_AND_SEFT", "EQ"):
-        linked_eq_ci = ce_details["collection_instruments"].get("EQ", {})
         all_eq_survey_ci = ce_details.get("eq_ci_selectors", {})
-        ci_versions = collection_instrument_controllers.get_cis_and_cir_version(ce_id)
-        all_cis_for_survey = build_eq_ci_selectors(all_eq_survey_ci, linked_eq_ci, ci_versions)
+        linked_eq_ci = ce_details["collection_instruments"].get("EQ", {})
+        all_cis_for_survey = collection_instrument_controllers.get_linked_cis_and_cir_version(
+            ce_id, linked_eq_ci, all_eq_survey_ci
+        )
+        print("all_cis_for_survey", all_cis_for_survey)
         _format_ci_file_name(linked_eq_ci, ce_details["survey"])
-        eq_ci_selectors = ce_details.get("eq_ci_selectors", {})
-
+    print("all_cis_for_survey", all_cis_for_survey)
     error_json = _get_error_from_session()
     _delete_sample_data_if_required()
     show_msg = request.args.get("show_msg")
@@ -883,7 +869,6 @@ def get_view_sample_ci(short_name, period):
         sample_load_status=sample_load_status,
         success_panel=success_panel,
         show_msg=show_msg,
-        eq_ci_selectors=eq_ci_selectors,
         info_panel=info_panel,
         all_cis_for_survey=all_cis_for_survey,
         breadcrumbs=breadcrumbs,
