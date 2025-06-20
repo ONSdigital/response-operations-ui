@@ -842,9 +842,7 @@ def get_view_sample_ci(short_name, period):
         all_cis_for_survey = collection_instrument_controllers.get_linked_cis_and_cir_version(
             ce_id, linked_eq_ci, all_eq_survey_ci
         )
-        print("all_cis_for_survey", all_cis_for_survey)
         _format_ci_file_name(linked_eq_ci, ce_details["survey"])
-    print("all_cis_for_survey", all_cis_for_survey)
     error_json = _get_error_from_session()
     _delete_sample_data_if_required()
     show_msg = request.args.get("show_msg")
