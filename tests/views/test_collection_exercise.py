@@ -2890,7 +2890,27 @@ class TestCollectionExercise(ViewTestCase):
         self.assertIn("Save".encode(), response.data)
 
     def test_save_ci_versions(self):
-        response = self.client.post(f"/surveys/{short_name}/{period}/view-sample-ci/summary/0001")
+        post_data = {"formtype": "0001", "ci-versions": "Version 1"}
+        response = self.client.post(f"/surveys/{short_name}/{period}/view-sample-ci/summary/0001", data=post_data)
+        self.assertEqual(response.status_code, 302)
+        self.assertIn(f"/surveys/{short_name}/{period}".encode(), response.data)
+
+    @patch("response_operations_ui.views.collection_exercise.build_collection_exercise_details")
+    @patch("response_operations_ui.controllers.collection_instrument_controllers.delete_registry_instruments")
+    def test_delete_ci_versions(self, mock_details, mock_delete_registry_instruments):
+        eq_cis = {"EQ": self.eq_ci_selectors}
+        ce_details = {
+            "survey": self.eq_survey_dates,
+            "collection_exercise": self.collection_exercises[0],
+            "collection_instruments": eq_cis,
+            "events": {},
+            "sample_summary": {},
+            "sampleSize": 0,
+            "sampleLinks": [],
+        }
+        mock_details.return_value = ce_details
+        post_data = {"formtype": "0001", "ci-versions": "nothing-selected"}
+        response = self.client.post(f"/surveys/{short_name}/{period}/view-sample-ci/summary/0001", data=post_data)
         self.assertEqual(response.status_code, 302)
         self.assertIn(f"/surveys/{short_name}/{period}".encode(), response.data)
 

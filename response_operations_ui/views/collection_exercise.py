@@ -1199,7 +1199,9 @@ def save_ci_versions(short_name: str, period: str, form_type: str) -> Response:
     ci_version = request.form.get("ci-versions")
     if "nothing-selected" == ci_version:
         ce_details = build_collection_exercise_details(short_name, period, include_ci=True)
-        collection_instrument_controllers.delete_registry_instruments(ce_details["collection_exercise"]["id"], form_type)
+        collection_instrument_controllers.delete_registry_instruments(
+            ce_details["collection_exercise"]["id"], form_type
+        )
     return redirect(url_for("collection_exercise_bp.view_collection_exercise", short_name=short_name, period=period))
 
 

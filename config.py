@@ -165,7 +165,7 @@ class DevelopmentConfig(Config):
     OIDC_TOKEN_LEEWAY_IN_SECONDS = int(os.getenv("OIDC_TOKEN_LEEWAY_IN_SECONDS", "300"))
     CIR_API_URL = CIR_API_URL = os.getenv("CIR_API_URL", "http://localhost:3030")
     CIR_OAUTH2_CLIENT_ID = os.getenv("CIR_OAUTH2_CLIENT_ID", "dummy_client_id")
-    CIR_ENABLED = strtobool(os.getenv("CIR_ENABLED", "True"))
+    CIR_ENABLED = strtobool(os.getenv("CIR_ENABLED", "False"))
     CIR_API_PREFIX = os.getenv("CIR_API_PREFIX", "/v2/ci_metadata")
 
 
@@ -207,5 +207,5 @@ Z5VVFymXN2n+A6UeWAnuO8/E1inhk99dBzKEGdw=
     OIDC_TOKEN_LEEWAY_IN_SECONDS = int(os.getenv("OIDC_TOKEN_LEEWAY_IN_SECONDS", "300"))
     CIR_API_URL = CIR_API_URL = os.getenv("CIR_API_URL", "http://localhost:3030")
     CIR_OAUTH2_CLIENT_ID = os.getenv("CIR_OAUTH2_CLIENT_ID", "dummy_client_id")
-    CIR_ENABLED = True
+    CIR_ENABLED = False
     CIR_API_PREFIX = os.getenv("CIR_API_PREFIX", "/v2/ci_metadata")

@@ -297,15 +297,16 @@ def delete_registry_instruments(collection_exercise_id: str, form_type: str) -> 
 
     try:
         response.raise_for_status()
+        log_message = "Successfully deleted collection instrument from registry instruments"
     except requests.exceptions.HTTPError:
         if response.status_code == 404:
-            logger.info(f"No registry instrument")
+            log_message = "No registry instrument"
         else:
             logger.error("Error retrieving collection instruments")
             raise ApiError(response)
 
     logger.info(
-        "Successfully deleted collection instrument from registry instruments",
+        log_message,
         collection_exercise_id=collection_exercise_id,
         form_type=form_type,
     )
