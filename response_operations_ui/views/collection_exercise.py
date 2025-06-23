@@ -1148,7 +1148,6 @@ def view_sample_ci_summary(short_name: str, period: str) -> str:
 
     _validate_exercise(exercise, period, short_name)
     collection_instruments = collection_instrument_controllers.get_cis_and_cir_version(exercise["id"])
-
     back_url = url_for("collection_exercise_bp.get_view_sample_ci", short_name=short_name, period=period)
     breadcrumbs = [{"text": "Back to EQ formtypes", "url": back_url}, {}]
 
@@ -1202,6 +1201,7 @@ def save_ci_versions(short_name: str, period: str, form_type: str) -> Response:
         collection_instrument_controllers.delete_registry_instruments(
             ce_details["collection_exercise"]["id"], form_type
         )
+        return redirect(url_for("collection_exercise_bp.view_sample_ci_summary", short_name=short_name, period=period))
     return redirect(url_for("collection_exercise_bp.view_collection_exercise", short_name=short_name, period=period))
 
 
