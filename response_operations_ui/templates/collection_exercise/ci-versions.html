@@ -38,8 +38,7 @@
                               "text": "Version " + ci.ci_version|string,
                               "description": "Published: " + ci.published_at,
                           },
-                          "name": ci.ci_version|string,
-                          "value": ci.ci_version|string,
+                          "name": ci.ci_version|string
                         }
                     )%}
                   {% endfor %}
@@ -56,8 +55,7 @@
                 onsButton({
                     "text": "Save",
                     "id": "save",
-                    "name": "save",
-                    "type": "save",
+                    "name": "save"
             })
             }}
         
