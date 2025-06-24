@@ -7,6 +7,7 @@ from config import TestingConfig
 from response_operations_ui import create_app
 from response_operations_ui.controllers.collection_instrument_controllers import (
     get_cis_and_cir_version,
+    get_linked_cis_and_cir_version,
     link_collection_instrument,
     link_collection_instrument_to_survey,
     upload_collection_instrument,
@@ -209,3 +210,35 @@ class TestCollectionInstrumentController(unittest.TestCase):
             cis = get_cis_and_cir_version(collection_exercise_id)
 
         self.assertEqual(cis, [])
+
+    @patch("response_operations_ui.controllers.collection_instrument_controllers.get_response_json_from_service")
+    def test_get_linked_cis_and_cir_version(self, get_response_json_from_service):
+        ci_id_01 = collection_instrument_id
+        ci_id_02 = "efc3ddd7-3e79-4c6b-a8f8-1fa184cdd06b"
+        ci_id_03 = "c046861a-0df7-443a-a963-d9aa3bddf328"
+        get_response_json_from_service.return_value = [
+            {"classifier_type": "form_type", "classifier_value": "0001", "ci_version": 1},
+            {"classifier_type": "form_type", "classifier_value": "0002", "ci_version": 2},
+        ]
+
+        ci_linked = [
+            {"classifiers": {"form_type": "0001"}},
+            {"classifiers": {"form_type": "0003"}},
+        ]
+
+        all_cis = [
+            {"id": ci_id_01, "classifiers": {"form_type": "0001"}},
+            {"id": ci_id_02, "classifiers": {"form_type": "0002"}},
+            {"id": ci_id_03, "classifiers": {"form_type": "0003"}},
+        ]
+
+        with self.app.app_context():
+            result = get_linked_cis_and_cir_version(collection_exercise_id, ci_linked, all_cis)
+
+        expected = [
+            {"id": ci_id_01, "form_type": "0001", "checked": "true", "ci_version": 1},
+            {"id": ci_id_02, "form_type": "0002", "checked": "false", "ci_version": 2},
+            {"id": ci_id_03, "form_type": "0003", "checked": "true", "ci_version": None},
+        ]
+
+        self.assertEqual(result, expected)
