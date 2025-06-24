@@ -1140,13 +1140,16 @@ class TestCollectionExercise(ViewTestCase):
 
     @requests_mock.mock()
     @patch(
+        "response_operations_ui.views.collection_exercise.collection_instrument_controllers"
+        ".get_linked_cis_and_cir_version"
+    )
+    @patch(
         "response_operations_ui.views.collection_exercise.collection_instrument_controllers."
         "get_collection_instruments_by_classifier"
     )
-    @patch("response_operations_ui.common.filters.filter_eq_ci_selectors")
     @patch("response_operations_ui.views.collection_exercise.build_collection_exercise_details")
     def test_failed_add_eq_collection_instrument(
-        self, mock_request, mock_details, mock_collective_cis, mock_ci_selector
+        self, mock_request, mock_details, mock_collective_cis, mock_get_linked_cis_and_cir_version
     ):
         sign_in_with_permission(self, mock_request, user_permission_surveys_edit_json)
         post_data = {"checkbox-answer": [collection_instrument_id], "ce_id": collection_exercise_id, "select-eq-ci": ""}
@@ -1155,8 +1158,15 @@ class TestCollectionExercise(ViewTestCase):
             status_code=500,
             content=b'{"errors":["Error: ' b"Failed to add collection " b'instrument(s)"]}\n',
         )
-        eq_ci_to_add = {"id": collection_instrument_id, "form_type": "0001", "checked": "true"}
-        mock_ci_selector.return_value = self.eq_ci_selectors
+        eq_ci_to_add = {"id": collection_instrument_id, "form_type": "0001", "checked": "true", "ci_version": None}
+        mock_get_linked_cis_and_cir_version.return_value = [
+            {
+                "id": collection_instrument_id,
+                "form_type": "0001",
+                "checked": "true",
+                "ci_version": None,
+            }
+        ]
         mock_collective_cis.return_value = eq_ci_to_add
 
         mock_request.get(
@@ -2404,8 +2414,13 @@ class TestCollectionExercise(ViewTestCase):
         self.assertIn("Done".encode(), response.data)
 
     @requests_mock.mock()
-    def test_eq_view_sample_ci_page_survey_permission(self, mock_request):
+    @patch(
+        "response_operations_ui.views.collection_exercise.collection_instrument_controllers"
+        ".get_linked_cis_and_cir_version"
+    )
+    def test_eq_view_sample_ci_page_survey_permission(self, mock_request, mock_get_linked_cis_and_cir_version):
         sign_in_with_permission(self, mock_request, user_permission_surveys_edit_json)
+        mock_get_linked_cis_and_cir_version.return_value = [{"form_type": "0001", "ci_version": None}]
         mock_request.get(url_get_survey_by_short_name, json=self.eq_survey_dates)
         mock_request.get(url_ces_by_survey, json=self.collection_exercises)
         mock_request.get(url_ce_by_id, json=collection_exercise_eq_both_ref_date["collection_exercise"])
@@ -2430,8 +2445,20 @@ class TestCollectionExercise(ViewTestCase):
         self.assertIn("Done".encode(), response.data)
 
     @requests_mock.mock()
-    def test_eq_view_sample_ci_page_survey_permission_with_cir(self, mock_request):
+    @patch(
+        "response_operations_ui.views.collection_exercise.collection_instrument_controllers"
+        ".get_linked_cis_and_cir_version"
+    )
+    def test_eq_view_sample_ci_page_survey_permission_with_cir(self, mock_request, mock_get_linked_cis_and_cir_version):
         sign_in_with_permission(self, mock_request, user_permission_surveys_edit_json)
+        mock_get_linked_cis_and_cir_version.return_value = [
+            {
+                "id": collection_instrument_id,
+                "form_type": "0001",
+                "checked": "true",
+                "ci_version": None,
+            }
+        ]
         mock_request.get(url_get_survey_by_short_name, json=self.eq_survey_dates)
         mock_request.get(url_ces_by_survey, json=self.collection_exercises)
         mock_request.get(url_ce_by_id, json=collection_exercise_eq_both_ref_date["collection_exercise"])
@@ -2527,8 +2554,22 @@ class TestCollectionExercise(ViewTestCase):
         self.assertIn("Done".encode(), response.data)
 
     @requests_mock.mock()
-    def test_linked_ci_eq_view_sample_ci_page_survey_permission(self, mock_request):
+    @patch(
+        "response_operations_ui.views.collection_exercise.collection_instrument_controllers"
+        ".get_linked_cis_and_cir_version"
+    )
+    def test_linked_ci_eq_view_sample_ci_page_survey_permission(
+        self, mock_request, mock_get_linked_cis_and_cir_version
+    ):
         sign_in_with_permission(self, mock_request, user_permission_surveys_edit_json)
+        mock_get_linked_cis_and_cir_version.return_value = [
+            {
+                "id": collection_instrument_id,
+                "form_type": "0001",
+                "checked": "true",
+                "ci_version": None,
+            }
+        ]
         mock_request.get(url_get_survey_by_short_name, json=self.eq_survey_dates)
         mock_request.get(url_ces_by_survey, json=self.collection_exercises)
         mock_request.get(url_ce_by_id, json=collection_exercise_eq_both_ref_date["collection_exercise"])
@@ -2553,8 +2594,14 @@ class TestCollectionExercise(ViewTestCase):
         self.assertIn("Done".encode(), response.data)
 
     @requests_mock.mock()
-    @mock.patch("response_operations_ui.views.collection_exercise.build_collection_exercise_details")
-    def test_linked_ci_eq_view_sample_ci_page_no_survey_permission(self, mock_request, mock_details):
+    @patch(
+        "response_operations_ui.views.collection_exercise.collection_instrument_controllers"
+        ".get_linked_cis_and_cir_version"
+    )
+    @patch("response_operations_ui.views.collection_exercise.build_collection_exercise_details")
+    def test_linked_ci_eq_view_sample_ci_page_no_survey_permission(
+        self, mock_request, mock_details, mock_get_linked_cis_and_cir_version
+    ):
         mock_request.get(url_get_survey_by_short_name, json=self.eq_survey_dates)
         mock_request.get(url_ces_by_survey, json=self.collection_exercises)
         mock_request.get(url_ce_by_id, json=collection_exercise_eq_both_ref_date["collection_exercise"])
@@ -2581,6 +2628,14 @@ class TestCollectionExercise(ViewTestCase):
             "sampleLinks": [],
         }
         mock_details.return_value = ce_details
+        mock_get_linked_cis_and_cir_version.return_value = [
+            {
+                "id": collection_instrument_id,
+                "form_type": "0001",
+                "checked": "true",
+                "ci_version": None,
+            }
+        ]
 
         response = self.client.get(f"/surveys/{short_name}/{period}/view-sample-ci?survey_mode=EQ")
 
@@ -2786,46 +2841,65 @@ class TestCollectionExercise(ViewTestCase):
             )
 
     @requests_mock.mock()
-    def test_add_collection_instrument_success(self, mock_request):
+    @patch(
+        "response_operations_ui.views.collection_exercise.collection_instrument_controllers"
+        ".get_linked_cis_and_cir_version"
+    )
+    def test_add_collection_instrument_success(self, mock_request, mock_get_linked_cis_and_cir_version):
         sign_in_with_permission(self, mock_request, user_permission_surveys_edit_json)
+
+        mock_get_linked_cis_and_cir_version.return_value = [
+            {
+                "id": collection_instrument_id,
+                "form_type": "0001",
+                "checked": "true",
+                "ci_version": None,
+            }
+        ]
+
         post_data = {"formtype": "0001", "add-eq-ci": ""}
+
         mock_request.get(url_survey_shortname, json=self.single_survey_eq)
-        mock_request.get(
-            f"{url_get_collection_instrument}?{ci_type_search_string_eq}", json=self.eq_ci_selectors, complete_qs=True
-        )
         mock_request.post(
             f"{url_post_instrument_link}?survey_id={survey_id}&classifiers=%7B%22form_type%22%3A%220001%22%2C%22eq_id"
             f"%22%3A%22mbs%22%7D",
             status_code=200,
         )
-        mock_request.get(
-            f"{url_get_collection_instrument}?{ci_type_search_string_eq}", json=self.eq_ci_selectors, complete_qs=True
-        )
+        mock_request.get(f"{url_get_collection_instrument}?{ci_type_search_string_eq}", json=[], complete_qs=True)
         mock_request.get(url_ces_by_survey, json=self.collection_exercises)
         mock_request.get(url_ce_by_id, json=collection_exercise_details["collection_exercise"])
         mock_request.get(url_get_collection_exercise_events, json=self.collection_exercise_events)
         mock_request.get(url_collection_exercise_link, json=[sample_summary_id])
         mock_request.get(url_get_sample_summary, json=self.sample_summary)
-        mock_request.get(
-            f"{url_get_collection_instrument}?{ci_search_string}",
-            json=self.eq_collection_instrument,
-            complete_qs=True,
-        )
+        mock_request.get(f"{url_get_collection_instrument}?{ci_search_string}", json=[], complete_qs=True)
+
         response = self.client.post(
-            f"/surveys/{short_name}/{period}/view-sample-ci?survey_mode=EQ", data=post_data, follow_redirects=True
+            f"/surveys/{short_name}/{period}/view-sample-ci?survey_mode=EQ",
+            data=post_data,
+            follow_redirects=True,
         )
 
         self.assertEqual(response.status_code, 200)
         self.assertIn(collection_instrument_id.encode(), response.data)
 
     @requests_mock.mock()
-    def test_add_collection_instrument_duplicate(self, mock_request):
+    @patch(
+        "response_operations_ui.views.collection_exercise.collection_instrument_controllers"
+        ".get_linked_cis_and_cir_version"
+    )
+    def test_add_collection_instrument_duplicate(self, mock_request, mock_get_linked_cis_and_cir_version):
         sign_in_with_permission(self, mock_request, user_permission_surveys_edit_json)
         post_data = {"formtype": "0001", "add-eq-ci": ""}
+
+        mock_get_linked_cis_and_cir_version.return_value = [
+            {
+                "id": collection_instrument_id,
+                "form_type": "0001",
+                "checked": "true",
+                "ci_version": None,
+            }
+        ]
         mock_request.get(url_survey_shortname, json=self.single_survey_eq)
-        mock_request.get(
-            f"{url_get_collection_instrument}?{ci_type_search_string_eq}", json=self.eq_ci_selectors, complete_qs=True
-        )
 
         mock_request.post(
             f"{url_post_instrument_link}?survey_id={survey_id}&classifiers=%7B%22form_type%22%3A%220001%22%2C%22eq_id"
@@ -2833,9 +2907,7 @@ class TestCollectionExercise(ViewTestCase):
             status_code=400,
             content=b'{"errors":["Failed to link collection instrument to survey"]}',
         )
-        mock_request.get(
-            f"{url_get_collection_instrument}?{ci_type_search_string_eq}", json=self.eq_ci_selectors, complete_qs=True
-        )
+        mock_request.get(f"{url_get_collection_instrument}?{ci_type_search_string_eq}", json=[], complete_qs=True)
         mock_request.get(url_ces_by_survey, json=self.collection_exercises)
         mock_request.get(url_ce_by_id, json=collection_exercise_details["collection_exercise"])
         mock_request.get(url_get_collection_exercise_events, json=self.collection_exercise_events)
