@@ -274,7 +274,7 @@ def get_registry_instruments(collection_exercise_id: str) -> list:
 
 def get_cis_and_cir_version(collection_exercise_id: str) -> list:
     registry_instruments = get_registry_instruments(collection_exercise_id)
-    classifier_value_version_map = {ci["classifier_value"]: ci["ci_version"] for ci in registry_instruments}
+    classifier_value_version_map = _create_ci_version_map(registry_instruments)
     collection_instruments = get_collection_instruments_by_classifier(
         collection_exercise_id=collection_exercise_id, ci_type="EQ"
     )
@@ -285,6 +285,27 @@ def get_cis_and_cir_version(collection_exercise_id: str) -> list:
         }
         for ci in collection_instruments
     ]
+
+
+def get_linked_cis_and_cir_version(collection_exercise_id: str, linked_cis: list, all_cis: list) -> list:
+    registry_instruments = get_registry_instruments(collection_exercise_id)
+    classifier_value_version_map = _create_ci_version_map(registry_instruments)
+
+    linked_form_types = [ci["classifiers"]["form_type"] for ci in linked_cis]
+
+    return [
+        {
+            "id": ci["id"],
+            "form_type": ci["classifiers"]["form_type"],
+            "checked": "true" if ci["classifiers"]["form_type"] in linked_form_types else "false",
+            "ci_version": classifier_value_version_map.get(ci["classifiers"]["form_type"]),
+        }
+        for ci in all_cis
+    ]
+
+
+def _create_ci_version_map(registry_instruments):
+    return {ci["classifier_value"]: ci["ci_version"] for ci in registry_instruments}
 
 
 def delete_registry_instruments(collection_exercise_id: str, form_type: str) -> str:
