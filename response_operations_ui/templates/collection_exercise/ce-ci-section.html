@@ -30,6 +30,7 @@
   {% endif %}
   
     {% for ci_type in context["ci_table"]["ci_details"] %}
+      {% set ciLink = '<a href="' + ci_type.url + '" id="view-choose-upload-ci-' + ci_type.type + '">' + ci_type.link_text + '</a>' if ci_type.type != "cir" %}
       {% do collectionInstrumentTableDataRows.append(
           {
               "tds": [
@@ -41,7 +42,7 @@
                   "tdClasses": "ons-u-ta-centre"
                 }, 
                 {
-                  "value": '<a href="' + ci_type.url + '" id="view-choose-upload-ci-' + ci_type.type + '">' + ci_type.link_text + '</a>',
+                  "value": ciLink,
                   "tdClasses": "ons-u-ta-right"
                 }
               ] 

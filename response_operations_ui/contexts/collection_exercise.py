@@ -1,3 +1,4 @@
+from flask import current_app as app
 from flask import url_for
 
 REMINDER_EMAILS = {
@@ -233,25 +234,38 @@ def _build_ci_table(
     for survey_mode_type in required_survey_mode_types:
         ci_count = len(ci.get(survey_mode_type, []))
         ci_table_state_text = "no_instrument" if ci_count == 0 else ci_table_state_text
+        ci_table_link_text = CI_TABLE_LINK_TEXT[survey_mode_type][ci_table_state_text]
+
         if survey_mode_type == "EQ":
-            view_sample_ci_url = url_for(
-                "collection_exercise_bp.get_view_sample_ci", short_name=short_name, period=exercise_ref
-            )
+            eq_url = url_for("collection_exercise_bp.get_view_sample_ci", short_name=short_name, period=exercise_ref)
+
+            ci_details.append(_ci_details_item("eq", "EQ formtypes", ci_count, eq_url, ci_table_link_text))
+
+            if app.config["CIR_ENABLED"]:
+                ci_details.append(_ci_details_item("cir", "CIR version", 0))
+
         else:
-            view_sample_ci_url = url_for(
-                "collection_exercise_bp.get_seft_collection_instrument", period=exercise_ref, short_name=short_name
+            seft_url = url_for(
+                "collection_exercise_bp.get_seft_collection_instrument",
+                period=exercise_ref,
+                short_name=short_name,
             )
-        ci_details.append(
-            {
-                "type": survey_mode_type.lower(),
-                "title": f"{survey_mode_type} collection instruments",
-                "url": view_sample_ci_url,
-                "link_text": CI_TABLE_LINK_TEXT[survey_mode_type][ci_table_state_text],
-                "count": str(ci_count),
-            }
-        )
+            ci_details.append(
+                _ci_details_item("seft", "SEFT collection instruments", ci_count, seft_url, ci_table_link_text)
+            )
+
         total_ci_count += ci_count
     return {"total_ci_count": str(total_ci_count), "ci_details": ci_details}
+
+
+def _ci_details_item(ci_type: str, title: str, count: int, url: str = None, link_text: str = None) -> dict:
+    return {
+        "type": ci_type,
+        "title": title,
+        "url": url,
+        "link_text": link_text,
+        "count": str(count),
+    }
 
 
 def _build_response_chasing(ce_id: str, survey_id: str) -> dict:
