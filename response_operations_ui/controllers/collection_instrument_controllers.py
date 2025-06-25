@@ -308,7 +308,7 @@ def _create_ci_version_map(registry_instruments):
     return {ci["classifier_value"]: ci["ci_version"] for ci in registry_instruments}
 
 
-def delete_registry_instruments(collection_exercise_id: str, form_type: str) -> str:
+def delete_registry_instruments(collection_exercise_id: str, form_type: str):
     url = (
         f'{app.config["COLLECTION_INSTRUMENT_URL"]}/collection-instrument-api/1.0.2/'
         f"registry-instrument/exercise-id/{collection_exercise_id}/formtype/{form_type}"

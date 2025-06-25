@@ -20,7 +20,6 @@ from flask import (
 )
 from flask_login import login_required
 from structlog import wrap_logger
-from werkzeug import Response
 from wtforms import ValidationError
 
 from response_operations_ui.common.date_restriction_generator import (
@@ -1175,7 +1174,7 @@ def view_ci_versions(short_name: str, period: str, form_type: str) -> str:
 
 @collection_exercise_bp.route("/<short_name>/<period>/view-sample-ci/summary/<form_type>", methods=["POST"])
 @login_required
-def save_ci_versions(short_name: str, period: str, form_type: str) -> Response:
+def save_ci_versions(short_name: str, period: str, form_type: str):
     ci_version = request.form.get("ci-versions")
     if "nothing-selected" == ci_version:
         ce_details = build_collection_exercise_details(short_name, period, include_ci=True)

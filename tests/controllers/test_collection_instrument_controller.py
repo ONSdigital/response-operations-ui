@@ -32,7 +32,7 @@ ci_link_to_survey_url = (
 ci_link_url = f"{collection_instrument_url_base}/link-exercise/{collection_instrument_id}/{collection_exercise_id}"
 ci_bres_upload_url = f"{collection_instrument_url_base}/upload/{collection_exercise_id}/{ru_ref}"
 ci_upload_url = f"{collection_instrument_url_base}/upload/{collection_exercise_id}"
-cir_delete_link = (
+cir_delete_url = (
     f"{collection_instrument_url_base}/registry-instrument/exercise-id/{collection_exercise_id}/formtype/{form_type}"
 )
 
@@ -250,7 +250,7 @@ class TestCollectionInstrumentController(unittest.TestCase):
     def test_successful_delete_of_ci_and_cir_version_from_registry_table(self):
         with responses.RequestsMock() as rsps:
             rsps.add(
-                rsps.DELETE, cir_delete_link, status=200, json={"info": ["Successfully deleted registry instrument"]}
+                rsps.DELETE, cir_delete_url, status=200, json={"info": ["Successfully deleted registry instrument"]}
             )
             with self.app.app_context():
                 with self.assertLogs(level="INFO") as log:
@@ -262,7 +262,7 @@ class TestCollectionInstrumentController(unittest.TestCase):
 
     def test_delete_of_ci_and_cir_version_not_found_in_registry_table(self):
         with responses.RequestsMock() as rsps:
-            rsps.add(rsps.DELETE, cir_delete_link, status=404, json={"error": ["Not Found"]})
+            rsps.add(rsps.DELETE, cir_delete_url, status=404, json={"error": ["Not Found"]})
             with self.app.app_context():
                 with self.assertLogs(level="INFO") as log:
                     delete_registry_instruments(collection_exercise_id, form_type)
@@ -273,7 +273,7 @@ class TestCollectionInstrumentController(unittest.TestCase):
 
     def test_failed_delete_of_ci_and_cir_version_in_registry_table(self):
         with responses.RequestsMock() as rsps:
-            rsps.add(rsps.DELETE, cir_delete_link, status=400, json={"error": ["Not Found"]})
+            rsps.add(rsps.DELETE, cir_delete_url, status=400, json={"error": ["Not Found"]})
             with self.app.app_context():
                 with self.assertRaises(ApiError):
                     with self.assertLogs(level="ERROR") as log:
