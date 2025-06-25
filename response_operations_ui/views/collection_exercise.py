@@ -1229,7 +1229,7 @@ def save_ci_versions(short_name: str, period: str, form_type: str) -> Response:
             ce_details["survey"]["id"],
         )
 
-    return redirect(url_for("collection_exercise_bp.view_collection_exercise", short_name=short_name, period=period))
+    return redirect(url_for("collection_exercise_bp.view_sample_ci_summary", short_name=short_name, period=period))
 
 
 @collection_exercise_bp.route("/cir", methods=["GET"])
