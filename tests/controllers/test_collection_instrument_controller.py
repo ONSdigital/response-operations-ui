@@ -260,7 +260,7 @@ class TestCollectionInstrumentController(unittest.TestCase):
                     self.assertIn(collection_exercise_id, log_output)
                     self.assertIn(form_type, log_output)
 
-    def test_delete_of_ci_and_cir_version_not_found_in_registry_table(self):
+    def test_delete_of_registry_instrument_not_found_from_registry_table(self):
         with responses.RequestsMock() as rsps:
             rsps.add(rsps.DELETE, cir_delete_url, status=404, json={"error": ["Not Found"]})
             with self.app.app_context():
@@ -271,7 +271,7 @@ class TestCollectionInstrumentController(unittest.TestCase):
                     self.assertIn(collection_exercise_id, log_output)
                     self.assertIn(form_type, log_output)
 
-    def test_failed_delete_of_ci_and_cir_version_in_registry_table(self):
+    def test_failed_delete_of_registry_instrument_from_registry_table(self):
         with responses.RequestsMock() as rsps:
             rsps.add(rsps.DELETE, cir_delete_url, status=400, json={"error": ["Not Found"]})
             with self.app.app_context():
