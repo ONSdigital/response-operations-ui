@@ -349,12 +349,16 @@ def delete_registry_instruments(collection_exercise_id: str, form_type: str) -> 
         form_type=form_type,
     )
 
-def save_registry_instrument(collection_exercise_id: str, form_type: str,
-                             ci_version: int,
-                             guid: str,
-                             instrument_id: str,
-                             published_at: str,
-                             survey_id) -> str:
+
+def save_registry_instrument(
+    collection_exercise_id: str,
+    form_type: str,
+    ci_version: int,
+    guid: str,
+    instrument_id: str,
+    published_at: str,
+    survey_id,
+) -> str:
     url = (
         f'{app.config["COLLECTION_INSTRUMENT_URL"]}/collection-instrument-api/1.0.2/'
         f"registry-instrument/exercise-id/{collection_exercise_id}"
@@ -367,9 +371,9 @@ def save_registry_instrument(collection_exercise_id: str, form_type: str,
         "guid": guid,
         "instrument_id": instrument_id,
         "published_at": published_at,
-        "survey_id": survey_id
+        "survey_id": survey_id,
     }
-    
+
     response = requests.put(url, auth=app.config["BASIC_AUTH"], json=payload)
 
     try:
@@ -378,12 +382,13 @@ def save_registry_instrument(collection_exercise_id: str, form_type: str,
     except requests.exceptions.HTTPError:
         logger.error("Error saving selected registry instrument version")
         raise ApiError(response)
-    
+
     logger.info(
         log_message,
         collection_exercise_id=collection_exercise_id,
         form_type=form_type,
     )
+
 
 def _build_classifiers(collection_exercise_id=None, survey_id=None, ci_type=None):
     classifiers = {}
