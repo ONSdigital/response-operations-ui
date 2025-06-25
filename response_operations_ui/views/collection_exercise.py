@@ -1162,7 +1162,7 @@ def view_ci_versions(short_name: str, period: str, form_type: str) -> str:
         for ci in cir_metadata:
             ci["published_at"] = datetime.fromisoformat(ci["published_at"]).strftime("%d/%m/%Y at %H:%M:%S")
             # We need to see if this CIR version is currently selected
-            ci["selected"] = ci["guid"] == (registry_instrument["guid"] if registry_instrument else None)
+            ci["selected"] = ci["guid"] == (registry_instrument["guid"] if registry_instrument else False)
     except ExternalApiError as e:
         if e.error_code is ErrorCode.NOT_FOUND:
             error_message = "No CIR data retrieved"

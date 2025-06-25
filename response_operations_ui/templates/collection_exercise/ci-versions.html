@@ -54,6 +54,7 @@
                 </p>
               {% endif %}
             </div>
+            {% if cir_metadata %}
             {{
                 onsButton({
                     "text": "Save",
@@ -61,6 +62,7 @@
                     "name": "save"
             })
             }}
+            {% endif %}
         
             <div class="ons-u-mb-xl ons-u-mt-l">
             {%
