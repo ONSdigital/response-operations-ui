@@ -247,7 +247,7 @@ class TestCollectionInstrumentController(unittest.TestCase):
 
         self.assertEqual(result, expected)
 
-    def test_successful_delete_of_ci_and_cir_version_from_registry_table(self):
+    def test_successful_delete_of_registry_instrument_from_registry_table(self):
         with responses.RequestsMock() as rsps:
             rsps.add(
                 rsps.DELETE, cir_delete_url, status=200, json={"info": ["Successfully deleted registry instrument"]}
@@ -256,7 +256,7 @@ class TestCollectionInstrumentController(unittest.TestCase):
                 with self.assertLogs(level="INFO") as log:
                     delete_registry_instruments(collection_exercise_id, form_type)
                     log_output = log.output[0]
-                    self.assertIn("Successfully deleted collection instrument from registry instruments", log_output)
+                    self.assertIn("Successfully deleted registry instrument from registry instrument table", log_output)
                     self.assertIn(collection_exercise_id, log_output)
                     self.assertIn(form_type, log_output)
 
@@ -279,6 +279,8 @@ class TestCollectionInstrumentController(unittest.TestCase):
                     with self.assertLogs(level="ERROR") as log:
                         delete_registry_instruments(collection_exercise_id, form_type)
                         log_output = log.output[0]
-                        self.assertIn("Error retrieving collection instruments", log_output)
+                        self.assertIn(
+                            "Error retrieving registry instruments from registry instrument table", log_output
+                        )
                         self.assertIn(collection_exercise_id, log_output)
                         self.assertIn(form_type, log_output)

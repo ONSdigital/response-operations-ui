@@ -318,12 +318,12 @@ def delete_registry_instruments(collection_exercise_id: str, form_type: str):
 
     try:
         response.raise_for_status()
-        log_message = "Successfully deleted collection instrument from registry instruments"
+        log_message = "Successfully deleted registry instrument from registry instrument table"
     except requests.exceptions.HTTPError:
         if response.status_code == 404:
-            log_message = "No registry instrument"
+            log_message = "No registry instrument found"
         else:
-            logger.error("Error retrieving collection instruments")
+            logger.error("Error retrieving registry instruments from registry instrument table")
             raise ApiError(response)
 
     logger.info(
