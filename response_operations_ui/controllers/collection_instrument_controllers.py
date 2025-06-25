@@ -308,6 +308,31 @@ def _create_ci_version_map(registry_instruments):
     return {ci["classifier_value"]: ci["ci_version"] for ci in registry_instruments}
 
 
+def delete_registry_instruments(collection_exercise_id: str, form_type: str):
+    url = (
+        f'{app.config["COLLECTION_INSTRUMENT_URL"]}/collection-instrument-api/1.0.2/'
+        f"registry-instrument/exercise-id/{collection_exercise_id}/formtype/{form_type}"
+    )
+
+    response = requests.delete(url, auth=app.config["BASIC_AUTH"])
+
+    try:
+        response.raise_for_status()
+        log_message = "Successfully deleted registry instrument from registry instrument table"
+    except requests.exceptions.HTTPError:
+        if response.status_code == 404:
+            log_message = "No registry instrument found"
+        else:
+            logger.error("Error retrieving registry instruments from registry instrument table")
+            raise ApiError(response)
+
+    logger.info(
+        log_message,
+        collection_exercise_id=collection_exercise_id,
+        form_type=form_type,
+    )
+
+
 def _build_classifiers(collection_exercise_id=None, survey_id=None, ci_type=None):
     classifiers = {}
     if survey_id:

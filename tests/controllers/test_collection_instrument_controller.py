@@ -6,6 +6,7 @@ import responses
 from config import TestingConfig
 from response_operations_ui import create_app
 from response_operations_ui.controllers.collection_instrument_controllers import (
+    delete_registry_instruments,
     get_cis_and_cir_version,
     get_linked_cis_and_cir_version,
     link_collection_instrument,
@@ -31,6 +32,9 @@ ci_link_to_survey_url = (
 ci_link_url = f"{collection_instrument_url_base}/link-exercise/{collection_instrument_id}/{collection_exercise_id}"
 ci_bres_upload_url = f"{collection_instrument_url_base}/upload/{collection_exercise_id}/{ru_ref}"
 ci_upload_url = f"{collection_instrument_url_base}/upload/{collection_exercise_id}"
+cir_delete_url = (
+    f"{collection_instrument_url_base}/registry-instrument/exercise-id/{collection_exercise_id}/formtype/{form_type}"
+)
 
 
 class File:
@@ -242,3 +246,41 @@ class TestCollectionInstrumentController(unittest.TestCase):
         ]
 
         self.assertEqual(result, expected)
+
+    def test_successful_delete_of_registry_instrument_from_registry_table(self):
+        with responses.RequestsMock() as rsps:
+            rsps.add(
+                rsps.DELETE, cir_delete_url, status=200, json={"info": ["Successfully deleted registry instrument"]}
+            )
+            with self.app.app_context():
+                with self.assertLogs(level="INFO") as log:
+                    delete_registry_instruments(collection_exercise_id, form_type)
+                    log_output = log.output[0]
+                    self.assertIn("Successfully deleted registry instrument from registry instrument table", log_output)
+                    self.assertIn(collection_exercise_id, log_output)
+                    self.assertIn(form_type, log_output)
+
+    def test_delete_of_registry_instrument_not_found_from_registry_table(self):
+        with responses.RequestsMock() as rsps:
+            rsps.add(rsps.DELETE, cir_delete_url, status=404, json={"error": ["Not Found"]})
+            with self.app.app_context():
+                with self.assertLogs(level="INFO") as log:
+                    delete_registry_instruments(collection_exercise_id, form_type)
+                    log_output = log.output[0]
+                    self.assertIn("No registry instrument", log_output)
+                    self.assertIn(collection_exercise_id, log_output)
+                    self.assertIn(form_type, log_output)
+
+    def test_failed_delete_of_registry_instrument_from_registry_table(self):
+        with responses.RequestsMock() as rsps:
+            rsps.add(rsps.DELETE, cir_delete_url, status=400, json={"error": ["Not Found"]})
+            with self.app.app_context():
+                with self.assertRaises(ApiError):
+                    with self.assertLogs(level="ERROR") as log:
+                        delete_registry_instruments(collection_exercise_id, form_type)
+                        log_output = log.output[0]
+                        self.assertIn(
+                            "Error retrieving registry instruments from registry instrument table", log_output
+                        )
+                        self.assertIn(collection_exercise_id, log_output)
+                        self.assertIn(form_type, log_output)
