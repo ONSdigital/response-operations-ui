@@ -2,6 +2,7 @@ import copy
 import logging
 import os
 
+import fakeredis
 import redis
 from flask import Flask, flash, redirect, session, url_for
 from flask_login import LoginManager
@@ -87,6 +88,13 @@ def create_app(config_name=None):
     app.name = "response_operations_ui"
 
     csrf = CSRFProtect(app)
+
+    if not app.config["TESTING"]:
+        app.redis = redis.StrictRedis(
+        host=app.config["REDIS_HOST"], port=app.config["REDIS_PORT"], db=app.config["REDIS_DB"]
+    )
+    else:
+        app.redis = fakeredis.FakeRedis()
 
     if not app.config["DEBUG"]:
         app.wsgi_app = GCPLoadBalancer(app.wsgi_app)

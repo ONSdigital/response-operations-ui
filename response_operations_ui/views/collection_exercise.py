@@ -36,6 +36,7 @@ from response_operations_ui.common.mappers import (
 )
 from response_operations_ui.common.uaa import verify_permission
 from response_operations_ui.common.validators import valid_date_for_event
+from response_operations_ui.common.redis_cache import RedisCache
 from response_operations_ui.contexts.collection_exercise import build_ce_context
 from response_operations_ui.controllers import (
     cir_controller,
@@ -1199,7 +1200,8 @@ def save_ci_versions(short_name: str, period: str, form_type: str) -> Response:
         ############################################################
               
         # We need to re-retrieve the list of available CIR versions (planning on changing to a Redis cache)
-        survey_ref = survey_controllers.get_survey_by_shortname(short_name).get("surveyRef")
+        redis_cache = RedisCache()
+        survey_ref = redis_cache.get_survey_by_shortname(short_name).get("surveyRef")
         list_of_cir_metadata_objects = None
         try:
             list_of_cir_metadata_objects = cir_controller.get_cir_metadata(survey_ref, form_type)
