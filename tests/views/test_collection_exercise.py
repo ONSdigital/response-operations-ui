@@ -652,10 +652,36 @@ class TestCollectionExercise(ViewTestCase):
 
         # Then I can view eQ collection instruments but not SEFT
         self.assertEqual(response.status_code, 200)
-        self.assertIn("EQ collection instruments".encode(), response.data)
+        self.assertIn("EQ formtypes".encode(), response.data)
         self.assertIn('id="view-choose-upload-ci-eq">View</a>'.encode(), response.data)
         self.assertNotIn("SEFT collection instruments".encode(), response.data)
         self.assertNotIn('id="view-choose-upload-ci-seft">View</a>'.encode(), response.data)
+        self.assertNotIn("CIR version".encode(), response.data)  # to be removed when CIR is live
+
+    @patch("response_operations_ui.views.collection_exercise.build_collection_exercise_details")
+    def test_collection_exercise_view_cir(self, mock_details):
+        # Given I have an eQ collection exercise with a collection instrument linked and CIR_ENABLED
+        self.app.config["CIR_ENABLED"] = True
+        eq_cis = {"EQ": self.eq_collection_instrument}
+        ce_details = {
+            "survey": self.eq_survey_dates,
+            "collection_exercise": self.collection_exercises[0],
+            "collection_instruments": eq_cis,
+            "events": {},
+            "sample_summary": {},
+            "sampleSize": 0,
+            "sampleLinks": [],
+        }
+        mock_details.return_value = ce_details
+
+        # When I call the collection exercise period endpoint
+        response = self.client.get(f"/surveys/{short_name}/{period}", follow_redirects=True)
+
+        # Then I can view eQ collection instruments and get a cir
+        self.assertEqual(response.status_code, 200)
+        self.assertIn("EQ formtypes".encode(), response.data)
+        self.assertIn('id="view-choose-upload-ci-eq">View</a>'.encode(), response.data)
+        self.assertIn("CIR version".encode(), response.data)
 
     @patch("response_operations_ui.views.collection_exercise.build_collection_exercise_details")
     def test_collection_exercise_view_seft_instruments(self, mock_details):
@@ -679,8 +705,9 @@ class TestCollectionExercise(ViewTestCase):
         self.assertEqual(response.status_code, 200)
         self.assertIn("SEFT collection instruments".encode(), response.data)
         self.assertIn('id="view-choose-upload-ci-seft">View</a>'.encode(), response.data)
-        self.assertNotIn("EQ collection instruments".encode(), response.data)
+        self.assertNotIn("EQ formtypes".encode(), response.data)
         self.assertNotIn('id="view-choose-upload-ci-eq">View</a>'.encode(), response.data)
+        self.assertNotIn("CIR version".encode(), response.data)
 
     @patch("response_operations_ui.views.collection_exercise.build_collection_exercise_details")
     def test_collection_exercise_view_eq_and_seft_instruments(self, mock_details):
@@ -704,7 +731,7 @@ class TestCollectionExercise(ViewTestCase):
         # Then I can view eQ and SEFT collection instruments for both
         self.assertEqual(response.status_code, 200)
         self.assertIn("SEFT collection instruments".encode(), response.data)
-        self.assertIn("EQ collection instruments".encode(), response.data)
+        self.assertIn("EQ formtypes".encode(), response.data)
         self.assertIn('id="view-choose-upload-ci-eq">View</a>'.encode(), response.data)
         self.assertIn('id="view-choose-upload-ci-seft">View</a>'.encode(), response.data)
 

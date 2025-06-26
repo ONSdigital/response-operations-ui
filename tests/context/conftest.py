@@ -155,7 +155,7 @@ def expected_ce_context_no_permission():
             "ci_details": [
                 {
                     "type": "eq",
-                    "title": "EQ collection instruments",
+                    "title": "EQ formtypes",
                     "url": "/surveys/MWSS/021123/view-sample-ci",
                     "link_text": "Choose",
                     "count": "0",
