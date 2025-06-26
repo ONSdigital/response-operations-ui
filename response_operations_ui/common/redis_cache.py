@@ -9,12 +9,36 @@ from response_operations_ui import redis
 from response_operations_ui.controllers.survey_controllers import (
     get_survey_by_shortname,
 )
-
+from response_operations_ui.controllers.cir_controller import (
+    get_cir_metadata,
+)
 logger = wrap_logger(logging.getLogger(__name__))
 
 
 class RedisCache:
     SURVEY_EXPIRY = 600  # 10 mins
+
+    def get_cir_metadata(self, survey_ref, formtype):
+        """
+        Gets the cir_metadata from redis or the cir service
+
+        :param key: Key in redis (for this example will be a response-operations-ui:survey:<SURVEY_SHORT_NAME>)
+        :return: Result from either the cache or survey service
+        """
+        redis_key = f"response-operations-ui:cir:{survey_ref}:{formtype}"
+        try:
+            result = current_app.redis.get(redis_key)
+        except RedisError:
+            logger.error("Error getting value from cache, please investigate", key=redis_key, exc_info=True)
+            result = None
+
+        if not result:
+            logger.info("Key not in cache, getting value from CIR service", key=redis_key)
+            result = get_cir_metadata(survey_ref, formtype)
+            current_app.redis.set(redis_key,  json.dumps(result), self.SURVEY_EXPIRY)
+            return result
+
+        return json.loads(result.decode("utf-8"))
 
     def get_survey_by_shortname(self, key):
         """

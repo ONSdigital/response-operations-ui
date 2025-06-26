@@ -1204,7 +1204,7 @@ def save_ci_versions(short_name: str, period: str, form_type: str) -> Response:
         survey_ref = redis_cache.get_survey_by_shortname(short_name).get("surveyRef")
         list_of_cir_metadata_objects = None
         try:
-            list_of_cir_metadata_objects = cir_controller.get_cir_metadata(survey_ref, form_type)
+            list_of_cir_metadata_objects = redis_cache.get_cir_metadata(survey_ref, form_type)
         except ExternalApiError as e:
             logger.info("Error Retrieving CIR metadata", error=e)
 
