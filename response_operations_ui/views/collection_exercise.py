@@ -20,7 +20,6 @@ from flask import (
 )
 from flask_login import login_required
 from structlog import wrap_logger
-from werkzeug import Response
 from wtforms import ValidationError
 
 from response_operations_ui.common.date_restriction_generator import (
@@ -34,9 +33,9 @@ from response_operations_ui.common.mappers import (
     get_event_name,
     map_collection_exercise_state,
 )
+from response_operations_ui.common.redis_cache import RedisCache
 from response_operations_ui.common.uaa import verify_permission
 from response_operations_ui.common.validators import valid_date_for_event
-from response_operations_ui.common.redis_cache import RedisCache
 from response_operations_ui.contexts.collection_exercise import build_ce_context
 from response_operations_ui.controllers import (
     cir_controller,

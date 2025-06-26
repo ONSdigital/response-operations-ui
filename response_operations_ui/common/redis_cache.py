@@ -6,12 +6,11 @@ from redis.exceptions import RedisError
 from structlog import wrap_logger
 
 from response_operations_ui import redis
+from response_operations_ui.controllers.cir_controller import get_cir_metadata
 from response_operations_ui.controllers.survey_controllers import (
     get_survey_by_shortname,
 )
-from response_operations_ui.controllers.cir_controller import (
-    get_cir_metadata,
-)
+
 logger = wrap_logger(logging.getLogger(__name__))
 
 
@@ -35,7 +34,7 @@ class RedisCache:
         if not result:
             logger.info("Key not in cache, getting value from CIR service", key=redis_key)
             result = get_cir_metadata(survey_ref, formtype)
-            current_app.redis.set(redis_key,  json.dumps(result), self.SURVEY_EXPIRY)
+            current_app.redis.set(redis_key, json.dumps(result), self.SURVEY_EXPIRY)
             return result
 
         return json.loads(result.decode("utf-8"))
@@ -57,7 +56,7 @@ class RedisCache:
         if not result:
             logger.info("Key not in cache, getting value from survey service", key=redis_key)
             result = get_survey_by_shortname(key)
-            current_app.redis.set(redis_key,  json.dumps(result), self.SURVEY_EXPIRY)
+            current_app.redis.set(redis_key, json.dumps(result), self.SURVEY_EXPIRY)
             return result
 
         return json.loads(result.decode("utf-8"))

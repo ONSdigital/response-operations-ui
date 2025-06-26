@@ -91,8 +91,8 @@ def create_app(config_name=None):
 
     if not app.config["TESTING"]:
         app.redis = redis.StrictRedis(
-        host=app.config["REDIS_HOST"], port=app.config["REDIS_PORT"], db=app.config["REDIS_DB"]
-    )
+            host=app.config["REDIS_HOST"], port=app.config["REDIS_PORT"], db=app.config["REDIS_DB"]
+        )
     else:
         app.redis = fakeredis.FakeRedis()
 
