@@ -21,8 +21,8 @@ class RedisCache:
         """
         Gets the cir_metadata from redis or the cir service
 
-        :param key: Key in redis (for this example will be a response-operations-ui:survey:<SURVEY_SHORT_NAME>)
-        :return: Result from either the cache or survey service
+        :param short_name: str: the qualifying part of the redis key (response-operations-ui:survey:<SURVEY_REF>:<FORMTYPE>)
+        :return: Result from either the cache or the CIR service
         """
         redis_key = f"response-operations-ui:cir:{survey_ref}:{formtype}"
         try:
@@ -39,14 +39,14 @@ class RedisCache:
 
         return json.loads(result.decode("utf-8"))
 
-    def get_survey_by_shortname(self, key):
+    def get_survey_by_shortname(self, short_name):
         """
         Gets the survey from redis or the survey service
 
-        :param key: Key in redis (for this example will be a response-operations-ui:survey:<SURVEY_SHORT_NAME>)
+        :param short_name: str: the qualifying part of the redis key (response-operations-ui:survey:<SURVEY_SHORT_NAME>)
         :return: Result from either the cache or survey service
         """
-        redis_key = f"response-operations-ui:survey:{key}"
+        redis_key = f"response-operations-ui:survey:{short_name}"
         try:
             result = current_app.redis.get(redis_key)
         except RedisError:
@@ -55,7 +55,7 @@ class RedisCache:
 
         if not result:
             logger.info("Key not in cache, getting value from survey service", key=redis_key)
-            result = get_survey_by_shortname(key)
+            result = get_survey_by_shortname(short_name)
             current_app.redis.set(redis_key, json.dumps(result), self.SURVEY_EXPIRY)
             return result
 
