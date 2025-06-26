@@ -33,6 +33,7 @@ from response_operations_ui.common.mappers import (
     get_event_name,
     map_collection_exercise_state,
 )
+from response_operations_ui.common.redis_cache import RedisCache
 from response_operations_ui.common.uaa import verify_permission
 from response_operations_ui.common.validators import valid_date_for_event
 from response_operations_ui.contexts.collection_exercise import build_ce_context
@@ -1143,15 +1144,26 @@ def view_sample_ci_summary(short_name: str, period: str) -> str:
 @collection_exercise_bp.route("/<short_name>/<period>/view-sample-ci/summary/<form_type>", methods=["GET"])
 @login_required
 def view_ci_versions(short_name: str, period: str, form_type: str) -> str:
-    survey_ref = survey_controllers.get_survey_by_shortname(short_name).get("surveyRef")
+    redis_cache = RedisCache()
+    survey_ref = redis_cache.get_survey_by_shortname(short_name).get("surveyRef")
     logger.info("Retrieving CIR metadata")
     error_message = None
     cir_metadata = None
+    registry_instrument = None
+
+    # We need the collection exercise details to get the collection exercise id (heavy operation !!)
+    ce_details = build_collection_exercise_details(short_name, period, include_ci=True)
+    # Is there an already selected registry instrument?
+    registry_instrument = collection_instrument_controllers.get_registry_instrument(
+        ce_details["collection_exercise"]["id"], form_type
+    )
     try:
-        cir_metadata = cir_controller.get_cir_metadata(survey_ref, form_type)
+        cir_metadata = redis_cache.get_cir_metadata(survey_ref, form_type)
         # Conversion to make displaying the datetime easier in the template
         for ci in cir_metadata:
             ci["published_at"] = datetime.fromisoformat(ci["published_at"]).strftime("%d/%m/%Y at %H:%M:%S")
+            # We need to see if this CIR version is currently selected
+            ci["selected"] = ci["guid"] == (registry_instrument["guid"] if registry_instrument else False)
     except ExternalApiError as e:
         if e.error_code is ErrorCode.NOT_FOUND:
             error_message = "No CIR data retrieved"
@@ -1182,6 +1194,42 @@ def save_ci_versions(short_name: str, period: str, form_type: str):
             ce_details["collection_exercise"]["id"], form_type
         )
         return redirect(url_for("collection_exercise_bp.view_sample_ci_summary", short_name=short_name, period=period))
+    else:
+        ########################################################
+        # WE WON'T DO THIS, IT'S JUST TO TEST THE LOGICAL FLOW #
+        ########################################################
+
+        # We need to re-retrieve the list of available CIR versions (POC exemplar using a Redis cache)
+        redis_cache = RedisCache()
+        survey_ref = redis_cache.get_survey_by_shortname(short_name).get("surveyRef")
+        list_of_cir_metadata_objects = None
+        try:
+            list_of_cir_metadata_objects = redis_cache.get_cir_metadata(survey_ref, form_type)
+        except ExternalApiError as e:
+            logger.info("Error Retrieving CIR metadata", error=e)
+
+        # We need to target the CIR version selected by the user from the list re-retrieved from the CIR
+        cir_metadata_object = next((node for node in list_of_cir_metadata_objects if node["guid"] == ci_version), None)
+
+        # We need the collection exercise details to get the collection instrument id (heavy operation !!)
+        ce_details = build_collection_exercise_details(short_name, period, include_ci=True)
+        eq_list = ce_details["collection_instruments"]["EQ"]
+
+        # We need the instrument_id for the EQ collection instrument being processed
+        instrument_id = next((ci["id"] for ci in eq_list if ci["classifiers"].get("form_type") == form_type), None)
+
+        # Finally, we have all the data needed to save the registry instrument
+        collection_instrument_controllers.save_registry_instrument(
+            ce_details["collection_exercise"]["id"],
+            form_type,
+            cir_metadata_object["ci_version"],
+            cir_metadata_object["guid"],
+            instrument_id,
+            cir_metadata_object["published_at"],
+            ce_details["survey"]["id"],
+        )
+        return redirect(url_for("collection_exercise_bp.view_sample_ci_summary", short_name=short_name, period=period))
+
     return redirect(url_for("collection_exercise_bp.view_collection_exercise", short_name=short_name, period=period))
 
 
