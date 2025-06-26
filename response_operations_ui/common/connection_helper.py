@@ -29,6 +29,7 @@ def get_response_json_from_service(request_url: str, target_service: str, sessio
             request_url=request_url,
             target_service=target_service,
         )
+
         raise ExternalApiError(None, error_code, target_service) from e
     if response.status_code != 200:
         if response.status_code == 404:

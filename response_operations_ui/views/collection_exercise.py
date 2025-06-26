@@ -65,6 +65,13 @@ collection_exercise_bp = Blueprint(
     "collection_exercise_bp", __name__, static_folder="static", template_folder="templates"
 )
 
+CIR_ERROR_MESSAGES = {
+    ErrorCode.NOT_FOUND: "There are no CIR versions to display. The version you want to select "
+    "may not yet be published or available in the Collection Instrument "
+    "Registry (CIR). If you need help contact the testing team.",
+    ErrorCode.API_CONNECTION_ERROR: "Unable to connect to CIR",
+}
+
 
 def build_collection_exercise_details(short_name: str, period: str, include_ci: bool = False) -> dict:
     """
@@ -1153,12 +1160,7 @@ def view_ci_versions(short_name: str, period: str, form_type: str) -> str:
         for ci in cir_metadata:
             ci["published_at"] = datetime.fromisoformat(ci["published_at"]).strftime("%d/%m/%Y at %H:%M:%S")
     except ExternalApiError as e:
-        if e.error_code is ErrorCode.NOT_FOUND:
-            error_message = "No CIR data retrieved"
-        elif e.error_code is ErrorCode.API_CONNECTION_ERROR:
-            error_message = "Unable to connect to CIR"
-        else:
-            error_message = f"{get_error_code_message(e.error_code)}"
+        error_message = CIR_ERROR_MESSAGES.get(e.error_code, get_error_code_message(e.error_code))
 
     back_url = url_for("collection_exercise_bp.view_sample_ci_summary", short_name=short_name, period=period)
     breadcrumbs = [{"text": "Back to CIR versions", "url": back_url}, {}]
