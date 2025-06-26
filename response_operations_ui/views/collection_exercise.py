@@ -1145,7 +1145,8 @@ def view_sample_ci_summary(short_name: str, period: str) -> str:
 @collection_exercise_bp.route("/<short_name>/<period>/view-sample-ci/summary/<form_type>", methods=["GET"])
 @login_required
 def view_ci_versions(short_name: str, period: str, form_type: str) -> str:
-    survey_ref = survey_controllers.get_survey_by_shortname(short_name).get("surveyRef")
+    redis_cache = RedisCache()
+    survey_ref = redis_cache.get_survey_by_shortname(short_name).get("surveyRef")
     logger.info("Retrieving CIR metadata")
     error_message = None
     cir_metadata = None
@@ -1158,7 +1159,7 @@ def view_ci_versions(short_name: str, period: str, form_type: str) -> str:
         ce_details["collection_exercise"]["id"], form_type
     )
     try:
-        cir_metadata = cir_controller.get_cir_metadata(survey_ref, form_type)
+        cir_metadata = redis_cache.get_cir_metadata(survey_ref, form_type)
         # Conversion to make displaying the datetime easier in the template
         for ci in cir_metadata:
             ci["published_at"] = datetime.fromisoformat(ci["published_at"]).strftime("%d/%m/%Y at %H:%M:%S")
@@ -1199,7 +1200,7 @@ def save_ci_versions(short_name: str, period: str, form_type: str):
         # WE WON'T DO THIS, IT'S JUST TO TEST THE LOGICAL FLOW #
         ########################################################
 
-        # We need to re-retrieve the list of available CIR versions (planning on changing to a Redis cache)
+        # We need to re-retrieve the list of available CIR versions (POC exemplar using a Redis cache)
         redis_cache = RedisCache()
         survey_ref = redis_cache.get_survey_by_shortname(short_name).get("surveyRef")
         list_of_cir_metadata_objects = None
