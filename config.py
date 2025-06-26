@@ -111,7 +111,7 @@ class Config(object):
     OIDC_TOKEN_LEEWAY_IN_SECONDS = int(os.getenv("OIDC_TOKEN_LEEWAY_IN_SECONDS", "300"))
     CIR_API_URL = CIR_API_URL = os.getenv("CIR_API_URL", "https://cir.integration.onsdigital.uk")
     CIR_OAUTH2_CLIENT_ID = os.getenv("CIR_OAUTH2_CLIENT_ID", "dummy_client_id")
-    CIR_ENABLED = strtobool(os.getenv("CIR_ENABLED", "True"))
+    CIR_ENABLED = strtobool(os.getenv("CIR_ENABLED", "False"))
     CIR_API_PREFIX = os.getenv("CIR_API_PREFIX", "/v2/ci_metadata")
 
 
@@ -147,7 +147,7 @@ class DevelopmentConfig(Config):
 
     UAA_SERVICE_URL = os.getenv("UAA_SERVICE_URL", "http://localhost:9080")
     UAA_CLIENT_ID = os.getenv("UAA_CLIENT_ID", "response_operations")
-    UAA_CLIENT_SECRET = os.getenv("UAA_CLIENT_SECRET", "package.through.quarter.fruit")
+    UAA_CLIENT_SECRET = os.getenv("UAA_CLIENT_SECRET", "response.operations.dummy.secret")
 
     EMAIL_TOKEN_SALT = os.getenv("EMAIL_TOKEN_SALT", "aardvark")
     # 24 hours in seconds
@@ -165,7 +165,7 @@ class DevelopmentConfig(Config):
     OIDC_TOKEN_LEEWAY_IN_SECONDS = int(os.getenv("OIDC_TOKEN_LEEWAY_IN_SECONDS", "300"))
     CIR_API_URL = CIR_API_URL = os.getenv("CIR_API_URL", "http://localhost:3030")
     CIR_OAUTH2_CLIENT_ID = os.getenv("CIR_OAUTH2_CLIENT_ID", "dummy_client_id")
-    CIR_ENABLED = strtobool(os.getenv("CIR_ENABLED", "True"))
+    CIR_ENABLED = strtobool(os.getenv("CIR_ENABLED", "False"))
     CIR_API_PREFIX = os.getenv("CIR_API_PREFIX", "/v2/ci_metadata")
 
 
@@ -207,5 +207,5 @@ Z5VVFymXN2n+A6UeWAnuO8/E1inhk99dBzKEGdw=
     OIDC_TOKEN_LEEWAY_IN_SECONDS = int(os.getenv("OIDC_TOKEN_LEEWAY_IN_SECONDS", "300"))
     CIR_API_URL = CIR_API_URL = os.getenv("CIR_API_URL", "http://localhost:3030")
     CIR_OAUTH2_CLIENT_ID = os.getenv("CIR_OAUTH2_CLIENT_ID", "dummy_client_id")
-    CIR_ENABLED = True
+    CIR_ENABLED = False
     CIR_API_PREFIX = os.getenv("CIR_API_PREFIX", "/v2/ci_metadata")
