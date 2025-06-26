@@ -28,6 +28,7 @@
                       "text": "Nothing selected",
                     },
                     "name": "nothing-selected",
+                    "value": "nothing-selected",
                   }] %}
                   {% for ci in cir_metadata %}
                     {% do cirRadioRows.append(
@@ -37,7 +38,7 @@
                               "text": "Version " + ci.ci_version|string,
                               "description": "Published: " + ci.published_at,
                           },
-                          "name": ci.ci_version|string,
+                          "name": ci.ci_version|string
                         }
                     )%}
                   {% endfor %}
