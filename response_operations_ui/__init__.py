@@ -94,6 +94,7 @@ def create_app(config_name=None):
         )
     else:
         import fakeredis
+
         app.redis = fakeredis.FakeRedis()
 
     if not app.config["DEBUG"]:
