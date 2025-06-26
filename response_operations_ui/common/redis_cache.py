@@ -21,7 +21,8 @@ class RedisCache:
         """
         Gets the cir_metadata from redis or the cir service
 
-        :param short_name: str: the qualifying part of the redis key (response-operations-ui:survey:<SURVEY_REF>:<FORMTYPE>)
+        :param short_name: str: the qualifying part of the redis key
+                                (response-operations-ui:survey:<SURVEY_REF>:<FORMTYPE>)
         :return: Result from either the cache or the CIR service
         """
         redis_key = f"response-operations-ui:cir:{survey_ref}:{formtype}"
