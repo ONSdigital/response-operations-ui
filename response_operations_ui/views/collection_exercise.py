@@ -1186,7 +1186,7 @@ def view_ci_versions(short_name: str, period: str, form_type: str) -> str:
 
 @collection_exercise_bp.route("/<short_name>/<period>/view-sample-ci/summary/<form_type>", methods=["POST"])
 @login_required
-def save_ci_versions(short_name: str, period: str, form_type: str) -> Response:
+def save_ci_versions(short_name: str, period: str, form_type: str):
     ci_version = request.form.get("ci-versions")
     if "nothing-selected" == ci_version:
         ce_details = build_collection_exercise_details(short_name, period, include_ci=True)
@@ -1228,8 +1228,9 @@ def save_ci_versions(short_name: str, period: str, form_type: str) -> Response:
             cir_metadata_object["published_at"],
             ce_details["survey"]["id"],
         )
+        return redirect(url_for("collection_exercise_bp.view_sample_ci_summary", short_name=short_name, period=period))
 
-    return redirect(url_for("collection_exercise_bp.view_sample_ci_summary", short_name=short_name, period=period))
+    return redirect(url_for("collection_exercise_bp.view_collection_exercise", short_name=short_name, period=period))
 
 
 @collection_exercise_bp.route("/cir", methods=["GET"])
