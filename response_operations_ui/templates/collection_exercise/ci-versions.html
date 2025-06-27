@@ -9,6 +9,9 @@
     <div class="ons-grid ons-grid--gutterless">
         <div class="ons-grid__col ons-col-8@m">
             <h1>Choose CIR version for EQ formtype {{ form_type }}</h1>
+            {% if error_message %}
+                <p>{{ error_message }}</p>
+            {% else %}
             {%
                 call onsPanel({
                     "variant": "warn",
@@ -18,9 +21,7 @@
                 <p>The version must have successfully passed all testing. If you are unsure contact the testing team.</p>
             {% endcall %}
             <div>
-              {% if error_message %}
-                {{ error_message }}
-              {% else %}
+
                 <p>
                   {% set cirRadioRows = [{
                     "id": "cir-version-nothing-selected",
@@ -49,7 +50,6 @@
                       "radios": cirRadioRows,
                   })}}
                 </p>
-              {% endif %}
             </div>
             {{
                 onsButton({
@@ -70,6 +70,7 @@
                 <p>If you need an older version that is not available contact the Service Desk.</p>
             {% endcall %}
             </div>
+            {% endif %}
         </div>
     </div>
 </form>

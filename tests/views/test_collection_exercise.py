@@ -14,6 +14,7 @@ from config import TestingConfig
 from response_operations_ui.exceptions.error_codes import ErrorCode
 from response_operations_ui.exceptions.exceptions import ExternalApiError
 from response_operations_ui.views.collection_exercise import (
+    CIR_ERROR_MESSAGES,
     build_collection_exercise_details,
     get_existing_sorted_nudge_events,
     validate_file_extension_is_correct,
@@ -3067,7 +3068,7 @@ class TestCollectionExercise(ViewTestCase):
             response = self.client.get(f"/surveys/{short_name}/{period}/view-sample-ci/summary/{form_type}")
             self.assertEqual(response.status_code, 200)
             self.assertIn("Choose CIR version for EQ formtype".encode(), response.data)
-            self.assertIn("No CIR data retrieved".encode(), response.data)
+            self.assertIn(CIR_ERROR_MESSAGES[ErrorCode.NOT_FOUND].encode(), response.data)
 
     @patch("requests.get")
     def test_view_ci_versions_unable_to_connect_to_cir(self, mock_response):
@@ -3084,4 +3085,4 @@ class TestCollectionExercise(ViewTestCase):
             response = self.client.get(f"/surveys/{short_name}/{period}/view-sample-ci/summary/{form_type}")
             self.assertEqual(response.status_code, 200)
             self.assertIn("Choose CIR version for EQ formtype".encode(), response.data)
-            self.assertIn("Unable to connect to CIR".encode(), response.data)
+            self.assertIn(CIR_ERROR_MESSAGES[ErrorCode.API_CONNECTION_ERROR].encode(), response.data)
