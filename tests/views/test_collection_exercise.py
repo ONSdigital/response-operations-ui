@@ -3085,4 +3085,4 @@ class TestCollectionExercise(ViewTestCase):
             response = self.client.get(f"/surveys/{short_name}/{period}/view-sample-ci/summary/{form_type}")
             self.assertEqual(response.status_code, 200)
             self.assertIn("Choose CIR version for EQ formtype".encode(), response.data)
-            self.assertIn("Unable to connect to CIR".encode(), response.data)
+            self.assertIn(CIR_ERROR_MESSAGES[ErrorCode.API_CONNECTION_ERROR].encode(), response.data)
