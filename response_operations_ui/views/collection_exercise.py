@@ -1188,8 +1188,8 @@ def view_ci_versions(short_name: str, period: str, form_type: str) -> str:
 @login_required
 def save_ci_versions(short_name: str, period: str, form_type: str):
     ci_version = request.form.get("ci-versions")
+    ce_details = build_collection_exercise_details(short_name, period, include_ci=True)
     if "nothing-selected" == ci_version:
-        ce_details = build_collection_exercise_details(short_name, period, include_ci=True)
         collection_instrument_controllers.delete_registry_instruments(
             ce_details["collection_exercise"]["id"], form_type
         )
@@ -1212,7 +1212,6 @@ def save_ci_versions(short_name: str, period: str, form_type: str):
         cir_metadata_object = next((node for node in list_of_cir_metadata_objects if node["guid"] == ci_version), None)
 
         # We need the collection exercise details to get the collection instrument id (heavy operation !!)
-        ce_details = build_collection_exercise_details(short_name, period, include_ci=True)
         eq_list = ce_details["collection_instruments"]["EQ"]
 
         # We need the instrument_id for the EQ collection instrument being processed
@@ -1228,10 +1227,7 @@ def save_ci_versions(short_name: str, period: str, form_type: str):
             cir_metadata_object["published_at"],
             ce_details["survey"]["id"],
         )
-        return redirect(url_for("collection_exercise_bp.view_sample_ci_summary", short_name=short_name, period=period))
-
-    return redirect(url_for("collection_exercise_bp.view_collection_exercise", short_name=short_name, period=period))
-
+        return redirect(url_for("collection_exercise_bp.view_collection_exercise", short_name=short_name, period=period))
 
 @collection_exercise_bp.route("/cir", methods=["GET"])
 @login_required

@@ -61,6 +61,43 @@ class RedisCache:
             return result
 
         return json.loads(result.decode("utf-8"))
+    
+    def get_survey_ref_and_metadata(self, short_name, formtype=None):
+        """
+        Gets the survey from redis or the survey service
+
+        :param short_name: str: the qualifying part of the redis key (response-operations-ui:survey:<SURVEY_SHORT_NAME>)
+        :return: Result from either the cache or survey service
+        """
+        survey_ref = None
+        # redis_key = f"response-operations-ui:survey:{short_name}"
+        redis_key_survey = f"response-operations-ui:survey:{short_name}"
+        try:
+            survey_ref = current_app.redis.get(redis_key_survey)
+        except RedisError:
+            logger.error("Error getting value from cache, please investigate", key=redis_key_survey, exc_info=True)
+            result = None
+
+        if not result:
+            logger.info("Key not in cache, getting value from survey service", key=redis_key_survey)
+            survey_ref = get_survey_by_shortname(short_name)
+            current_app.redis.set(redis_key_survey, json.dumps(result), self.SURVEY_EXPIRY)
+            return result
+        
+        if survey_ref is None and formtype:
+            redis_key_metadata = f"response-operations-ui:cir:{survey_ref}:{formtype}"
+            try:
+                cir_metadata = current_app.redis.get(redis_key_metadata)
+            except RedisError:
+                logger.error("Error getting value from cache, please investigate", key=redis_key_metadata, exc_info=True)
+                result = None
+
+            if not result:
+                logger.info("Key not in cache, getting value from survey service", key=redis_key_metadata)
+                current_app.redis.set(redis_key_survey, json.dumps(result), self.SURVEY_EXPIRY)
+                return result
+                
+        return json.loads(result.decode("utf-8"))
 
     @staticmethod
     def save(key, value, expiry):
