@@ -20,6 +20,7 @@ from flask import (
 )
 from flask_login import login_required
 from structlog import wrap_logger
+from werkzeug.wrappers import Response
 from wtforms import ValidationError
 
 from response_operations_ui.common.date_restriction_generator import (
@@ -324,50 +325,57 @@ def _set_ready_for_live(short_name, period):
 
 
 def _select_eq_collection_instrument(short_name, period):
-    success_panel = None
     cis_selected = request.form.getlist("checkbox-answer")
-    ce_details = build_collection_exercise_details(short_name, period, include_ci=True)
+    if app.config["CIR_ENABLED"]:
+        if not cis_selected:
+            return _redirect_with_error("Choose one or more EQ formtypes to continue.", period, short_name)
 
+    ce_details = build_collection_exercise_details(short_name, period, include_ci=True)
+    success_panel = None
     if "EQ" in ce_details["survey"]["surveyMode"]:
         ce_id = ce_details["collection_exercise"]["id"]
         response = collection_instrument_controllers.update_collection_exercise_eq_instruments(cis_selected, ce_id)
 
         if response[0] != 200:
             if cis_selected:
-                error_message = "Error: Failed to add and remove collection instrument(s)"
-            else:
-                error_message = response[1]
+                return _redirect_with_error(
+                    "Error: Failed to add and remove collection instrument(s)", period, short_name
+                )
+            return _redirect_with_error(response[1], period, short_name)
 
-            session["error"] = json.dumps(
-                {
-                    "section": "ciSelect",
-                    "header": error_message,
-                    "message": "Please try again",
-                }
-            )
+        if app.config["CIR_ENABLED"]:
             return redirect(
                 url_for(
-                    "collection_exercise_bp.get_view_sample_ci",
+                    "collection_exercise_bp.view_sample_ci_summary",
                     short_name=short_name,
                     period=period,
-                    survey_mode="EQ",
+                    success_panel=success_panel,
                 )
             )
-    if app.config["CIR_ENABLED"]:
-        return redirect(
-            url_for(
-                "collection_exercise_bp.view_sample_ci_summary",
-                short_name=short_name,
-                period=period,
-                success_panel=success_panel,
-            )
-        )
     return redirect(
         url_for(
             "collection_exercise_bp.view_collection_exercise",
             short_name=short_name,
             period=period,
             success_panel=success_panel,
+        )
+    )
+
+
+def _redirect_with_error(error_message: str, period: str, short_name: str) -> Response:
+    session["error"] = json.dumps(
+        {
+            "section": "ciSelect",
+            "header": error_message,
+            "message": "Please try again",
+        }
+    )
+    return redirect(
+        url_for(
+            "collection_exercise_bp.get_view_sample_ci",
+            short_name=short_name,
+            period=period,
+            survey_mode="EQ",
         )
     )
 

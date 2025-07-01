@@ -1203,6 +1203,15 @@ class TestCollectionExercise(ViewTestCase):
         self.assertEqual(response.status_code, 200)
         self.assertIn("Error: Failed to add and remove collection instrument(s)".encode(), response.data)
 
+    @patch("response_operations_ui.views.collection_exercise._redirect_with_error")
+    def test_cir_no_ci_selected(self, redirect_with_error):
+        self.app.config["CIR_ENABLED"] = True
+        post_data = {"ce_id": collection_exercise_id, "select-eq-ci": ""}
+
+        self.client.post(f"/surveys/{short_name}/{period}/view-sample-ci", data=post_data, follow_redirects=False)
+
+        redirect_with_error.assert_called_once_with("Choose one or more EQ formtypes to continue.", "000000", "MBS")
+
     @requests_mock.mock()
     @patch("response_operations_ui.views.collection_exercise.build_collection_exercise_details")
     def test_view_seft_collection_instrument_after_upload(self, mock_request, mock_details):
