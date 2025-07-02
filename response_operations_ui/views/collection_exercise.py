@@ -20,6 +20,7 @@ from flask import (
 )
 from flask_login import login_required
 from structlog import wrap_logger
+from werkzeug.wrappers import Response
 from wtforms import ValidationError
 
 from response_operations_ui.common.date_restriction_generator import (
@@ -65,6 +66,13 @@ logger = wrap_logger(logging.getLogger(__name__))
 collection_exercise_bp = Blueprint(
     "collection_exercise_bp", __name__, static_folder="static", template_folder="templates"
 )
+
+CIR_ERROR_MESSAGES = {
+    ErrorCode.NOT_FOUND: "There are no CIR versions to display. The version you want to select "
+    "may not yet be published or available in the Collection Instrument "
+    "Registry (CIR). If you need help contact the testing team.",
+    ErrorCode.API_CONNECTION_ERROR: "Unable to connect to CIR",
+}
 
 
 def build_collection_exercise_details(short_name: str, period: str, include_ci: bool = False) -> dict:
@@ -318,50 +326,57 @@ def _set_ready_for_live(short_name, period):
 
 
 def _select_eq_collection_instrument(short_name, period):
-    success_panel = None
     cis_selected = request.form.getlist("checkbox-answer")
-    ce_details = build_collection_exercise_details(short_name, period, include_ci=True)
+    if app.config["CIR_ENABLED"]:
+        if not cis_selected:
+            return _redirect_with_error("Choose one or more EQ formtypes to continue.", period, short_name)
 
+    ce_details = build_collection_exercise_details(short_name, period, include_ci=True)
+    success_panel = None
     if "EQ" in ce_details["survey"]["surveyMode"]:
         ce_id = ce_details["collection_exercise"]["id"]
         response = collection_instrument_controllers.update_collection_exercise_eq_instruments(cis_selected, ce_id)
 
         if response[0] != 200:
             if cis_selected:
-                error_message = "Error: Failed to add and remove collection instrument(s)"
-            else:
-                error_message = response[1]
+                return _redirect_with_error(
+                    "Error: Failed to add and remove collection instrument(s)", period, short_name
+                )
+            return _redirect_with_error(response[1], period, short_name)
 
-            session["error"] = json.dumps(
-                {
-                    "section": "ciSelect",
-                    "header": error_message,
-                    "message": "Please try again",
-                }
-            )
+        if app.config["CIR_ENABLED"]:
             return redirect(
                 url_for(
-                    "collection_exercise_bp.get_view_sample_ci",
+                    "collection_exercise_bp.view_sample_ci_summary",
                     short_name=short_name,
                     period=period,
-                    survey_mode="EQ",
+                    success_panel=success_panel,
                 )
             )
-    if app.config["CIR_ENABLED"]:
-        return redirect(
-            url_for(
-                "collection_exercise_bp.view_sample_ci_summary",
-                short_name=short_name,
-                period=period,
-                success_panel=success_panel,
-            )
-        )
     return redirect(
         url_for(
             "collection_exercise_bp.view_collection_exercise",
             short_name=short_name,
             period=period,
             success_panel=success_panel,
+        )
+    )
+
+
+def _redirect_with_error(error_message: str, period: str, short_name: str) -> Response:
+    session["error"] = json.dumps(
+        {
+            "section": "ciSelect",
+            "header": error_message,
+            "message": "Please try again",
+        }
+    )
+    return redirect(
+        url_for(
+            "collection_exercise_bp.get_view_sample_ci",
+            short_name=short_name,
+            period=period,
+            survey_mode="EQ",
         )
     )
 
@@ -1164,12 +1179,7 @@ def view_ci_versions(short_name: str, period: str, form_type: str) -> str:
             # We need to see if this CIR version is currently selected
             ci["selected"] = ci["guid"] == (registry_instrument["guid"] if registry_instrument else False)
     except ExternalApiError as e:
-        if e.error_code is ErrorCode.NOT_FOUND:
-            error_message = "No CIR data retrieved"
-        elif e.error_code is ErrorCode.API_CONNECTION_ERROR:
-            error_message = "Unable to connect to CIR"
-        else:
-            error_message = f"{get_error_code_message(e.error_code)}"
+        error_message = CIR_ERROR_MESSAGES.get(e.error_code, get_error_code_message(e.error_code))
 
     back_url = url_for("collection_exercise_bp.view_sample_ci_summary", short_name=short_name, period=period)
     breadcrumbs = [{"text": "Back to CIR versions", "url": back_url}, {}]

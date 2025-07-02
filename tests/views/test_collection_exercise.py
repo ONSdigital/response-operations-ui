@@ -15,6 +15,7 @@ from response_operations_ui.controllers import collection_instrument_controllers
 from response_operations_ui.exceptions.error_codes import ErrorCode
 from response_operations_ui.exceptions.exceptions import ExternalApiError
 from response_operations_ui.views.collection_exercise import (
+    CIR_ERROR_MESSAGES,
     build_collection_exercise_details,
     get_existing_sorted_nudge_events,
     validate_file_extension_is_correct,
@@ -1202,6 +1203,15 @@ class TestCollectionExercise(ViewTestCase):
 
         self.assertEqual(response.status_code, 200)
         self.assertIn("Error: Failed to add and remove collection instrument(s)".encode(), response.data)
+
+    @patch("response_operations_ui.views.collection_exercise._redirect_with_error")
+    def test_cir_no_ci_selected(self, redirect_with_error):
+        self.app.config["CIR_ENABLED"] = True
+        post_data = {"ce_id": collection_exercise_id, "select-eq-ci": ""}
+
+        self.client.post(f"/surveys/{short_name}/{period}/view-sample-ci", data=post_data, follow_redirects=False)
+
+        redirect_with_error.assert_called_once_with("Choose one or more EQ formtypes to continue.", "000000", "MBS")
 
     @requests_mock.mock()
     @patch("response_operations_ui.views.collection_exercise.build_collection_exercise_details")
@@ -3008,8 +3018,8 @@ class TestCollectionExercise(ViewTestCase):
         self,
         mock_collection_instrument,
         mock_collection_exercise,
-        mock_survey_id,
         mock_delete_registry_instruments,
+        mock_survey_id,
         mock_details,
     ):
         mock_details.return_value = self.get_ce_details()
@@ -3047,7 +3057,7 @@ class TestCollectionExercise(ViewTestCase):
             response = self.client.get(f"/surveys/{short_name}/{period}/view-sample-ci/summary/{form_type}")
             self.assertEqual(response.status_code, 200)
             self.assertIn("Choose CIR version for EQ formtype".encode(), response.data)
-            self.assertIn("No CIR data retrieved".encode(), response.data)
+            self.assertIn(CIR_ERROR_MESSAGES[ErrorCode.NOT_FOUND].encode(), response.data)
 
     @patch("requests.get")
     @patch("response_operations_ui.common.redis_cache.get_survey_by_shortname")
@@ -3069,7 +3079,7 @@ class TestCollectionExercise(ViewTestCase):
             response = self.client.get(f"/surveys/{short_name}/{period}/view-sample-ci/summary/{form_type}")
             self.assertEqual(response.status_code, 200)
             self.assertIn("Choose CIR version for EQ formtype".encode(), response.data)
-            self.assertIn("Unable to connect to CIR".encode(), response.data)
+            self.assertIn(CIR_ERROR_MESSAGES[ErrorCode.API_CONNECTION_ERROR].encode(), response.data)
 
     def get_ce_details(self):
         eq_cis = {"EQ": self.eq_ci_selectors}
