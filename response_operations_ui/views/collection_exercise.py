@@ -1172,7 +1172,7 @@ def view_ci_versions(short_name: str, period: str, form_type: str) -> str:
         ce_details["collection_exercise"]["id"], form_type
     )
     try:
-        cir_metadata = cir_controller.get_cir_metadata(survey_ref, form_type)
+        cir_metadata = redis_cache.get_cir_metadata(survey_ref, form_type)
         # Conversion to make displaying the datetime easier in the template
         for ci in cir_metadata:
             ci["published_at"] = datetime.fromisoformat(ci["published_at"]).strftime("%d/%m/%Y at %H:%M:%S")
@@ -1210,8 +1210,7 @@ def save_ci_versions(short_name: str, period: str, form_type: str):
         list_of_cir_metadata_objects = None
         if survey_ref:
             try:
-                # We can't rely on cache to get the CIR versions as they may be different from the last save
-                list_of_cir_metadata_objects = cir_controller.get_cir_metadata(survey_ref, form_type)
+                list_of_cir_metadata_objects = redis_cache.get_cir_metadata(survey_ref, form_type)
             except ExternalApiError as e:
                 logger.info("Error Retrieving CIR metadata", error=e)
 
