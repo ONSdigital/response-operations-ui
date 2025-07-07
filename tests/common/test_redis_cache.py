@@ -16,6 +16,7 @@ ci_version = "ci_version': 1"
 
 project_root = os.path.dirname(os.path.dirname(__file__))
 
+
 class TestRedisCache(unittest.TestCase):
     def setUp(self):
         self.app = create_app("TestingConfig")
@@ -65,7 +66,7 @@ class TestRedisCache(unittest.TestCase):
                     self.assertIn(error_message, log.output[0])
                     self.assertIn(redis_key, log.output[0])
                     self.assertIn(survey_id, str(result))
-                    
+
     @patch("redis.StrictRedis.get")
     def test_get_cir_metadata_in_cache(self, mock_redis_get):
         with self.app.app_context():
@@ -76,14 +77,15 @@ class TestRedisCache(unittest.TestCase):
             self.assertIn(survey_id, str(result))
             self.assertIn(form_type, str(result))
             self.assertIn(ci_version, str(result))
-            
+
     @patch("redis.StrictRedis.get")
     def test_get_cir_metadata_not_in_cache(self, mock_redis_get):
         cir_metadata = open(f"{project_root}/test_data/cir/cir_metadata.json")
         with responses.RequestsMock() as rsps:
             rsps.add(
                 rsps.GET,
-                f"http://localhost:3030/v2/ci_metadata?classifier_type=form_type&classifier_value={form_type}&language=en&survey_id={short_name}",
+                f"http://localhost:3030/v2/ci_metadata?classifier_type=form_type&classifier_value={form_type}"
+                f"&language=en&survey_id={short_name}",
                 json=json.load(cir_metadata),
                 status=200,
                 content_type="application/json",
@@ -95,4 +97,3 @@ class TestRedisCache(unittest.TestCase):
                 self.assertIn(survey_id, str(result))
                 self.assertIn(form_type, str(result))
                 self.assertIn(ci_version, str(result))
-            
