@@ -19,8 +19,8 @@
     {% include 'collection_exercise/ce-success-panel.html' %}
     {% include 'collection_exercise/ce-info-panel.html' %}
     {% include 'partials/flashed-messages.html' %}
-    <h1 name="page-survey-title" class="ons-u-mb-s">EQ collection instruments | {{ survey.shortName }} {{ survey.surveyRef }}</h1>
-
+    <h1 class="ons-u-fs-m ons-u-lighter" name="page-survey-subtitle">{{ survey.longName }} | {{ ce.exerciseRef }}</h1>
+    <h1 name="page-survey-title" class="ons-u-mb-s">Collection instruments step 1 of 2</h1>
     <div class="ons-grid ons-grid--gutterless">
         {% if survey.surveyMode not in ("EQ_AND_SEFT", "EQ") %}
           {% include 'collection_exercise/ce-handle-errors.html' %}
@@ -28,7 +28,7 @@
           <h1 name="page-ce-title">Load collection instruments</h1>
         {% endif %}
         <div class="ons-grid__col ons-col-7@l">
-            <section class="ce-section {{'ons-panel ons-panel--simple ons-panel--error' if missing_ci else ''}} ons-u-mb-m ons-u-mt-m">
+            <section class="ce-section {{'ons-panel ons-panel--simple ons-panel--error' if missing_ci else ''}}">
                 {% set surveyEditPermission = hasPermission('surveys.edit') %}
                 {% if not locked and surveyEditPermission %}
                   {% include 'partials/ce-collection-instrument-eq-section-error-messages.html' %}
