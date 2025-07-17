@@ -21,6 +21,12 @@
     {% include 'partials/flashed-messages.html' %}
     <h1 class="ons-u-fs-m ons-u-lighter" name="page-survey-subtitle">{{ survey.longName }} | {{ ce.exerciseRef }}</h1>
     <h1 name="page-survey-title" class="ons-u-mb-s">Collection instruments step 1 of 2</h1>
+    {% if cir_enabled %}
+        <p>
+          A collection instrument is only created once both an EQ formtype and a CIR version are selected.<br>
+          Each formtype requires a CIR version.
+        </p>
+    {% endif %}
     <div class="ons-grid ons-grid--gutterless">
         {% if survey.surveyMode not in ("EQ_AND_SEFT", "EQ") %}
           {% include 'collection_exercise/ce-handle-errors.html' %}
