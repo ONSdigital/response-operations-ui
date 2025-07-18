@@ -230,7 +230,7 @@ def _build_url_for_event(ce: dict, event_type: str, survey_ref: str, ref: str, s
 
 
 def _build_ci_table(
-    ci: dict, locked: bool, survey_mode: str, short_name: str, exercise_ref: str, ce_id:str, has_edit_permission:bool
+    ci: dict, locked: bool, survey_mode: str, short_name: str, exercise_ref: str, ce_id: str, has_edit_permission: bool
 ) -> dict:
     required_survey_mode_types = ["SEFT", "EQ"] if survey_mode == "EQ_AND_SEFT" else [survey_mode]
     ci_table_state_text = "restricted" if locked or not has_edit_permission else "has_permission"
