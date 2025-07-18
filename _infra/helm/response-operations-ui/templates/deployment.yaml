@@ -238,7 +238,7 @@ spec:
           - name: CIR_ENABLED
             value: "{{ .Values.cir.enabled }}"
           - name: CIR_API_URL
-            value: {{- if or (eq .Values.env "prod") (eq .Values.env "preprod") -}}
+            value: {{- if .Values.cir.apiUrl }}
               {{ .Values.cir.apiUrl }}
             {{- else -}}
               http://wiremock.{{ .Values.namespace }}.svc.cluster.local:8080
