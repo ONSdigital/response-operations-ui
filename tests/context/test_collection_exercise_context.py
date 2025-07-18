@@ -17,7 +17,6 @@ def test_no_edit_permission(app, ce_details, expected_ce_context_no_permission):
 
     # Then the context is built as expected with no hyperlinks
     assert context == expected_ce_context_no_permission
-
     assert "hyperlink" not in period_id
 
 

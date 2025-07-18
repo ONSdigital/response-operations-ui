@@ -558,7 +558,7 @@ class TestCollectionExercise(ViewTestCase):
 
     @requests_mock.mock()
     @patch("response_operations_ui.controllers.collection_instrument_controllers.get_response_json_from_service")
-    def test_collection_exercise_view_eq_count_invalid(self, mock_request, registry_instrument_count):
+    def test_collection_exercise_view_cir_count_invalid(self, mock_request, registry_instrument_count):
         self.app.config["CIR_ENABLED"] = True
         registry_instrument_count.return_value = {"registry_instrument_count": 0}
         self.load_eq_survey(
