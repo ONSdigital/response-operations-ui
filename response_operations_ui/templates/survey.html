@@ -22,14 +22,14 @@
     
     <div class="ons-grid ons-grid-flex ons-grid-flex--between">
         <div class="ons-grid__col">
-            <h1 name="page-survey-title">{{survey.longName}} | {{survey.shortName}} {{survey.surveyRef}}</h1>
+            <h1 class="ons-u-fs-m ons-u-lighter" name="page-survey-title">{{survey.longName}} | {{survey.shortName}} {{survey.surveyRef}}</h1>
         </div>
     </div>
     {% if collection_exercises|length > 0 %}
     <section class="ce-list">
         <div class="ons-grid ons-grid-flex ons-grid-flex--between">
             <div class="ons-grid__col">
-                <h2 class="ons-u-fs-l u-mb-xs" name="page-survey-subtitle">Collection exercises (CE)</h2>
+                <h1 class="ons-u-fs-xxl" name="page-survey-subtitle">Collection exercises (CE)</h1>
             </div>
         </div>
         {% if surveyEditPermission %}
@@ -146,7 +146,7 @@
     {% else %}
         <div class="ons-grid ons-grid-flex ons-grid-flex--between">
             <div class="ons-grid__col">
-                <h2 class="ons-u-fs-l u-mb-xs" name="page-survey-subtitle">Collection exercises (CE)</h2>
+                <h1 class="ons-u-fs-xxl" name="page-survey-subtitle">Collection exercises (CE)</h1>
                 <p>No collection exercises to display.</p>
                 <p>{% if surveyEditPermission %}<a id="create-collection-exercise" href="{{url_for('collection_exercise_bp.get_create_collection_exercise_form', survey_ref=survey.surveyRef, short_name=survey.shortName.replace(' ', ''))}}">Create collection exercise</a>{% endif %}</p>
             </div>
