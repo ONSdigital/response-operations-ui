@@ -1,7 +1,7 @@
 {% from "components/description-list/_macro.njk" import onsDescriptionList %}
 
 <h1 class="ons-u-fs-m ons-u-lighter" name="page-ce-subtitle"> {{survey.longName}} | {{survey.shortName}} {{survey.surveyRef}}</h1>
-<h1 name="page-ce-title">{{ce.exerciseRef}} Collection Exercise</h1>
+<h1 class="ons-u-fs-xxl" name="page-ce-title">{{ce.exerciseRef}} Collection Exercise</h1>
 {% if show_sds %}
     {{
         onsPanel({
