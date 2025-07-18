@@ -272,6 +272,14 @@ def get_registry_instruments(collection_exercise_id: str) -> list:
     return get_response_json_from_service(url, TARGET_SERVICE)
 
 
+def get_cir_instrument_count(collection_exercise_id: str) -> dict:
+    url = (
+        f'{app.config["COLLECTION_INSTRUMENT_URL"]}/collection-instrument-api/1.0.2/'
+        f"registry-instrument/count/exercise-id/{collection_exercise_id}"
+    )
+    return get_response_json_from_service(url, TARGET_SERVICE)
+
+
 def get_cis_and_cir_version(collection_exercise_id: str) -> list:
     registry_instruments = get_registry_instruments(collection_exercise_id)
     classifier_value_version_map = _create_ci_version_map(registry_instruments)

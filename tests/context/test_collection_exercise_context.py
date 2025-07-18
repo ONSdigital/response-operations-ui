@@ -17,6 +17,7 @@ def test_no_edit_permission(app, ce_details, expected_ce_context_no_permission):
 
     # Then the context is built as expected with no hyperlinks
     assert context == expected_ce_context_no_permission
+
     assert "hyperlink" not in period_id
 
 
@@ -150,6 +151,43 @@ def test_response_chasing(app, ce_details, status):
     # Then response_chasing is populated correctly
     assert context["response_chasing"]["xslx_url"] == f"/surveys/response_chasing/xslx/{CE_ID}/{SURVEY_ID}"
     assert context["response_chasing"]["csv_url"] == f"/surveys/response_chasing/csv/{CE_ID}/{SURVEY_ID}"
+
+
+def test_cir_and_ci_count_match(app, ce_details_with_ci, mocker):
+    mocker.patch(
+        "response_operations_ui.controllers.collection_instrument_controllers.get_response_json_from_service",
+        return_value={"registry_instrument_count": 1},
+    )
+    app.config["CIR_ENABLED"] = True
+    with app.test_request_context():
+        context = build_ce_context(ce_details_with_ci, True, False)
+
+    assert context["ci_table"]["valid_cir_count"] is True
+
+
+def test_cir_and_ci_count_dont_match(app, ce_details_with_ci, mocker):
+    mocker.patch(
+        "response_operations_ui.controllers.collection_instrument_controllers.get_response_json_from_service",
+        return_value={"registry_instrument_count": 0},
+    )
+    app.config["CIR_ENABLED"] = True
+    with app.test_request_context():
+        context = build_ce_context(ce_details_with_ci, True, False)
+
+    assert context["ci_table"]["valid_cir_count"] is False
+
+
+def test_ci_count_zero(app, ce_details, mocker):
+    mocker.patch(
+        "response_operations_ui.controllers.collection_instrument_controllers.get_response_json_from_service",
+        return_value={"registry_instrument_count": 0},
+    )
+    app.config["CIR_ENABLED"] = True
+    with app.test_request_context():
+        context = build_ce_context(ce_details, True, False)
+
+    #
+    assert context["ci_table"]["valid_cir_count"] is False
 
 
 def _get_event_context(context, parent, event):

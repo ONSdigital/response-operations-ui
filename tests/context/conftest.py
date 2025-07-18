@@ -152,6 +152,7 @@ def expected_ce_context_no_permission():
         "response_chasing": None,
         "ci_table": {
             "total_ci_count": "0",
+            "valid_cir_count": True,
             "ci_details": [
                 {
                     "type": "eq",
@@ -163,6 +164,23 @@ def expected_ce_context_no_permission():
             ],
         },
     }
+
+
+@pytest.fixture()
+def ce_details_with_ci(ce_details):
+    ce_details_with_ci = ce_details.copy()
+    ce_details_with_ci["collection_instruments"] = {
+        "EQ": [
+            {
+                "classifiers": {"COLLECTION_EXERCISE": [], "RU_REF": [], "eq_id": "mbs", "form_type": "0001"},
+                "file_name": "0001",
+                "id": "ed5ad717-4367-499f-9f02-1e95f789c094",
+                "surveyId": "0b1f8376-28e9-4884-bea5-acf9d709464e",
+                "type": "EQ",
+            }
+        ]
+    }
+    return ce_details_with_ci
 
 
 @pytest.fixture()

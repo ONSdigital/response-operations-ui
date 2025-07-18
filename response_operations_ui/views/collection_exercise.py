@@ -162,15 +162,6 @@ def view_collection_exercise(short_name, period):
     validation_failed = ce_state == "FAILEDVALIDATION"
     ce_details["collection_exercise"]["state"] = map_collection_exercise_state(ce_state)
 
-    if survey_mode in ("EQ", "EQ_AND_SEFT"):
-        show_set_live_button = (
-            ce_state in "READY_FOR_REVIEW"
-            and "ref_period_start" in ce_details["events"]
-            and "ref_period_end" in ce_details["events"]
-        )
-    else:
-        show_set_live_button = ce_state in "READY_FOR_REVIEW"
-
     show_msg = request.args.get("show_msg")
     success_panel = request.args.get("success_panel")
     info_panel = request.args.get("info_panel")
@@ -179,6 +170,16 @@ def view_collection_exercise(short_name, period):
 
     has_edit_permission = user_has_permission("surveys.edit")
     context = build_ce_context(ce_details, has_edit_permission, locked)
+
+    if survey_mode in ("EQ", "EQ_AND_SEFT"):
+        show_set_live_button = (
+            ce_state in "READY_FOR_REVIEW"
+            and "ref_period_start" in ce_details["events"]
+            and "ref_period_end" in ce_details["events"]
+            and context["ci_table"]["valid_cir_count"]
+        )
+    else:
+        show_set_live_button = ce_state in "READY_FOR_REVIEW"
 
     breadcrumbs = [
         {"text": "Surveys", "url": url_for("surveys_bp.view_surveys")},

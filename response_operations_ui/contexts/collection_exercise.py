@@ -1,6 +1,10 @@
 from flask import current_app as app
 from flask import url_for
 
+from response_operations_ui.controllers.collection_instrument_controllers import (
+    get_cir_instrument_count,
+)
+
 REMINDER_EMAILS = {
     "reminder": "First reminder",
     "reminder2": "Second reminder",
@@ -39,6 +43,7 @@ def build_ce_context(ce_details: dict, has_edit_permission: bool, locked: bool) 
         ce_details["survey"]["surveyMode"],
         short_name,
         ce["exerciseRef"],
+        ce["id"],
         has_edit_permission,
     )
 
@@ -225,12 +230,13 @@ def _build_url_for_event(ce: dict, event_type: str, survey_ref: str, ref: str, s
 
 
 def _build_ci_table(
-    ci: dict, locked: bool, survey_mode: str, short_name: str, exercise_ref: str, has_edit_permission
+    ci: dict, locked: bool, survey_mode: str, short_name: str, exercise_ref: str, ce_id, has_edit_permission
 ) -> dict:
     required_survey_mode_types = ["SEFT", "EQ"] if survey_mode == "EQ_AND_SEFT" else [survey_mode]
     ci_table_state_text = "restricted" if locked or not has_edit_permission else "has_permission"
     ci_details = []
     total_ci_count = 0
+    valid_cir_count = True
     for survey_mode_type in required_survey_mode_types:
         ci_count = len(ci.get(survey_mode_type, []))
         ci_table_state_text = "no_instrument" if ci_count == 0 else ci_table_state_text
@@ -242,7 +248,10 @@ def _build_ci_table(
             ci_details.append(_ci_details_item("eq", "EQ formtypes", ci_count, eq_url, ci_table_link_text))
 
             if app.config["CIR_ENABLED"]:
-                ci_details.append(_ci_details_item("cir", "CIR version", 0))
+                cir_count = get_cir_instrument_count(ce_id)["registry_instrument_count"]
+                if ci_count == 0 or cir_count != ci_count:
+                    valid_cir_count = False
+                ci_details.append(_ci_details_item("cir", "CIR version", cir_count))
 
         else:
             seft_url = url_for(
@@ -255,7 +264,7 @@ def _build_ci_table(
             )
 
         total_ci_count += ci_count
-    return {"total_ci_count": str(total_ci_count), "ci_details": ci_details}
+    return {"total_ci_count": str(total_ci_count), "ci_details": ci_details, "valid_cir_count": valid_cir_count}
 
 
 def _ci_details_item(ci_type: str, title: str, count: int, url: str = None, link_text: str = None) -> dict:
