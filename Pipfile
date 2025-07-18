@@ -42,6 +42,7 @@ MarkupSafe = "*"
 WTForms = "*"
 jwcrypto = "*"
 email-validator = "*"
+pytest-mock = "*"
 
 [dev-packages]
 black = "*"
