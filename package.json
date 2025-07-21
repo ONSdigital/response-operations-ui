@@ -102,7 +102,7 @@
     "find-up": "^4.1.0",
     "flatten": "^1.0.3",
     "forever-agent": "^0.6.1",
-    "form-data": "^2.3.3",
+    "form-data": "^2.5.5",
     "fs-minipass": "^2.1.0",
     "fs.realpath": "^1.0.0",
     "function-bind": "^1.1.1",
