@@ -1164,8 +1164,7 @@ def view_sample_ci_summary(short_name: str, period: str) -> str:
 @login_required
 def view_ci_versions(short_name: str, period: str, form_type: str) -> str:
     redis_cache = RedisCache()
-    survey_ref = redis_cache.get_survey_by_shortname(short_name).get("surveyRef")
-    survey = survey_controllers.get_survey_by_shortname(short_name)
+    survey = redis_cache.get_survey_by_shortname(short_name)
     long_name = survey.get("longName")
     logger.info("Retrieving CIR metadata")
     error_message = None
@@ -1178,7 +1177,7 @@ def view_ci_versions(short_name: str, period: str, form_type: str) -> str:
         ce_details["collection_exercise"]["id"], form_type
     )
     try:
-        cir_metadata = redis_cache.get_cir_metadata(survey_ref, form_type)
+        cir_metadata = redis_cache.get_cir_metadata(survey.get("surveyRef"), form_type)
         # Conversion to make displaying the datetime easier in the template
         for ci in cir_metadata:
             ci["published_at"] = datetime.fromisoformat(ci["published_at"]).strftime("%d/%m/%Y at %H:%M:%S")
