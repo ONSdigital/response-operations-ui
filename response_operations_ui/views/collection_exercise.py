@@ -46,9 +46,6 @@ from response_operations_ui.controllers import (
     sample_controllers,
     survey_controllers,
 )
-from response_operations_ui.controllers.collection_instrument_controllers import (
-    get_collection_instruments_by_classifier,
-)
 from response_operations_ui.controllers.uaa_controller import user_has_permission
 from response_operations_ui.exceptions.error_codes import (
     ErrorCode,
