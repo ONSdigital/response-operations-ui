@@ -29,7 +29,7 @@ class RedisCache:
         try:
             result = current_app.redis.get(redis_key)
         except RedisError:
-            logger.error("Error getting value from cache, please investigate", key=redis_key, exc_info=True)
+            logger.error("Error getting value from cache", key=redis_key, exc_info=True)
             result = None
 
         if not result:
