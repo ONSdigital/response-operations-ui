@@ -68,6 +68,9 @@ with open(f"{project_root}/test_data/collection_exercise/formatted_new_collectio
 with open(f"{project_root}/test_data/collection_exercise/seft_collection_exercise_details.json") as seft:
     seft_collection_exercise_details = json.load(seft)
 
+with open(f"{project_root}/test_data/collection_exercise/collection_exercise_list.json") as json_data:
+    collection_exercise_list = json.load(json_data)
+
 with open(f"{project_root}/test_data/collection_exercise/collection_exercise.json") as json_data:
     collection_exercise = json.load(json_data)
 
@@ -2974,14 +2977,15 @@ class TestCollectionExercise(ViewTestCase):
         self.assertNotIn("Edit version".encode(), response.data)
 
     @patch("response_operations_ui.controllers.collection_instrument_controllers.get_registry_instrument")
-    @patch("response_operations_ui.views.collection_exercise.build_collection_exercise_details")
+    @patch("response_operations_ui.controllers.collection_exercise_controllers.get_collection_exercises_by_survey")
     @patch("response_operations_ui.common.redis_cache.get_survey_by_shortname")
     @patch("response_operations_ui.common.redis_cache.get_cir_metadata")
     def test_view_ci_versions_metadata_returned(
-        self, mock_cir_details, mock_get_shortname, mock_details, mock_registry
+        self, mock_cir_details, mock_get_shortname, mock_get_collection_exercises_by_survey, mock_registry
     ):
         form_type = "0001"
-        mock_details.return_value = self.get_ce_details()
+        period = "201801"
+        mock_get_collection_exercises_by_survey.return_value = collection_exercise_list
         mock_get_shortname.return_value = {"short_name": {"survey_ref": survey_id}}
         mock_cir_details.return_value = cir_metadata
         response = self.client.get(f"/surveys/{short_name}/{period}/view-sample-ci/summary/{form_type}")
@@ -3040,12 +3044,15 @@ class TestCollectionExercise(ViewTestCase):
 
     @patch("response_operations_ui.controllers.collection_instrument_controllers.get_registry_instrument")
     @patch("response_operations_ui.common.redis_cache.get_survey_by_shortname")
-    @patch("response_operations_ui.views.collection_exercise.build_collection_exercise_details")
+    @patch("response_operations_ui.controllers.collection_exercise_controllers.get_collection_exercises_by_survey")
     @patch("response_operations_ui.common.redis_cache.get_cir_metadata")
-    def test_view_ci_versions_no_metadata(self, mock_cir_details, mock_details, mock_redis, mock_response):
+    def test_view_ci_versions_no_metadata(
+        self, mock_cir_details, mock_get_collection_exercises_by_survey, mock_redis, mock_response
+    ):
         form_type = "0001"
+        period = "201801"
         mock_cir_details.side_effect = ExternalApiError(mock_response, ErrorCode.NOT_FOUND)
-        mock_details.return_value = self.get_ce_details()
+        mock_get_collection_exercises_by_survey.return_value = collection_exercise_list
         mock_response = mock_response.return_value
         mock_response.url.return_value = url_cir_get_metadata
         mock_response.status_code.return_value = "404"
@@ -3059,11 +3066,14 @@ class TestCollectionExercise(ViewTestCase):
 
     @patch("requests.get")
     @patch("response_operations_ui.common.redis_cache.get_survey_by_shortname")
-    @patch("response_operations_ui.views.collection_exercise.build_collection_exercise_details")
-    def test_view_ci_versions_unable_to_connect_to_cir(self, mock_details, mock_redis, mock_response):
+    @patch("response_operations_ui.controllers.collection_exercise_controllers.get_collection_exercises_by_survey")
+    def test_view_ci_versions_unable_to_connect_to_cir(
+        self, mock_get_collection_exercises_by_survey, mock_redis, mock_response
+    ):
         collection_instrument_controllers.get_registry_instrument = Mock()
         form_type = "0001"
-        mock_details.return_value = self.get_ce_details()
+        period = "201801"
+        mock_get_collection_exercises_by_survey.return_value = collection_exercise_list
         mock_response = mock_response.return_value
         mock_response.url.return_value = url_cir_get_metadata
         mock_response.status_code.return_value = "E0001"
@@ -3071,7 +3081,7 @@ class TestCollectionExercise(ViewTestCase):
         mock_redis.return_value = {"short_name": {"survey_ref": survey_id}}
 
         with patch(
-            "response_operations_ui.controllers.cir_controller.get_cir_metadata",
+            "response_operations_ui.common.redis_cache.get_cir_metadata",
             Mock(side_effect=ExternalApiError(mock_response, ErrorCode.API_CONNECTION_ERROR)),
         ):
             response = self.client.get(f"/surveys/{short_name}/{period}/view-sample-ci/summary/{form_type}")
