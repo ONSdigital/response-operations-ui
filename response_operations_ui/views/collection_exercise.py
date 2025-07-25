@@ -1168,10 +1168,10 @@ def view_ci_versions(short_name: str, period: str, form_type: str) -> str:
     long_name = survey.get("longName")
     error_message = None
     cir_metadata = None
-
-    ce_details = build_collection_exercise_details(short_name, period, include_ci=False)
+    collection_exercises = collection_exercise_controllers.get_collection_exercises_by_survey(survey.get("id"))
+    collection_exercise = get_collection_exercise_by_period(collection_exercises, period)
     registry_instrument = collection_instrument_controllers.get_registry_instrument(
-        ce_details["collection_exercise"]["id"], form_type
+        collection_exercise.get("id"), form_type
     )
     try:
         cir_metadata = redis_cache.get_cir_metadata(survey.get("surveyRef"), form_type)
