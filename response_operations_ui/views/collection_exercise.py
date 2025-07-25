@@ -1215,26 +1215,49 @@ def save_ci_versions(short_name: str, period: str, form_type: str):
                 list_of_cir_metadata_objects = redis_cache.get_cir_metadata(survey_ref, form_type)
             except ExternalApiError as e:
                 logger.info("Error Retrieving CIR metadata", survey_ref=survey_ref, form_type=form_type, error=e)
-
-            cir_metadata_object = next(
-                (node for node in list_of_cir_metadata_objects if node["guid"] == ci_version), None
-            )
-            eq_list = ce_details["collection_instruments"]["EQ"]
-            instrument_id = next((ci["id"] for ci in eq_list if ci["classifiers"].get("form_type") == form_type), None)
+            selected_cir_metadata_object = _get_selected_cir_metadata_object(ci_version, list_of_cir_metadata_objects)
+            instrument_id = _get_instrument_id_by_formtype(ce_details["collection_instruments"]["EQ"], form_type)
 
             collection_instrument_controllers.save_registry_instrument(
                 ce_details["collection_exercise"]["id"],
                 form_type,
-                cir_metadata_object["ci_version"],
-                cir_metadata_object["guid"],
+                selected_cir_metadata_object["ci_version"],
+                selected_cir_metadata_object["guid"],
                 instrument_id,
-                cir_metadata_object["published_at"],
+                selected_cir_metadata_object["published_at"],
                 ce_details["survey"]["id"],
             )
 
         return redirect(
             url_for("collection_exercise_bp.view_collection_exercise", short_name=short_name, period=period)
         )
+
+
+def _get_selected_cir_metadata_object(guid, list_of_cir_metadata_objects):
+    """
+    Iterates over a list of registry instrument version objects and returns the one matching the given guid.
+    :param ci_version: the guid of the registry instrument version selected by the user in the UI
+    :param list_of_cir_metadata_objects: the list of registry instrument version objects for this CE form type
+    :return: the registry instrument version object selected by the user
+    """
+    return next(
+        (
+            cir_metadata_object
+            for cir_metadata_object in list_of_cir_metadata_objects
+            if cir_metadata_object["guid"] == guid
+        ),
+        None,
+    )
+
+
+def _get_instrument_id_by_formtype(eq_list, form_type):
+    """
+    Iterates over a list of CE collection instruments and returns the instrument_id matching the given form type.
+    :param eq_list: The list of collection instruments selected for the collection exercise
+    :param form_type: The form type to search for in the list of collection instruments
+    :return: the instrument_id of the form type if found in the list, otherwise None
+    """
+    return next((ci["id"] for ci in eq_list if ci["classifiers"].get("form_type") == form_type), None)
 
 
 @collection_exercise_bp.route("/cir", methods=["GET"])
