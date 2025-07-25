@@ -1137,7 +1137,9 @@ def _add_collection_instrument(short_name, period):
 @collection_exercise_bp.route("<short_name>/<period>/view-sample-ci/summary", methods=["GET"])
 @login_required
 def view_sample_ci_summary(short_name: str, period: str) -> str:
-    survey_id = survey_controllers.get_survey_by_shortname(short_name).get("id")
+    survey = survey_controllers.get_survey_by_shortname(short_name)
+    survey_id = survey.get("id")
+    long_name = survey.get("longName")
     exercises = collection_exercise_controllers.get_collection_exercises_by_survey(survey_id)
     exercise = get_collection_exercise_by_period(exercises, period)
 
@@ -1150,6 +1152,8 @@ def view_sample_ci_summary(short_name: str, period: str) -> str:
         "collection_exercise/view-sample-ci-summary.html",
         collection_instruments=collection_instruments,
         short_name=short_name,
+        exercise=exercise,
+        long_name=long_name,
         period=period,
         breadcrumbs=breadcrumbs,
     )
@@ -1158,7 +1162,9 @@ def view_sample_ci_summary(short_name: str, period: str) -> str:
 @collection_exercise_bp.route("/<short_name>/<period>/view-sample-ci/summary/<form_type>", methods=["GET"])
 @login_required
 def view_ci_versions(short_name: str, period: str, form_type: str) -> str:
-    survey_ref = survey_controllers.get_survey_by_shortname(short_name).get("surveyRef")
+    survey = survey_controllers.get_survey_by_shortname(short_name)
+    survey_ref = survey.get("surveyRef")
+    long_name = survey.get("longName")
     logger.info("Retrieving CIR metadata")
     error_message = None
     cir_metadata = None
@@ -1177,6 +1183,8 @@ def view_ci_versions(short_name: str, period: str, form_type: str) -> str:
         "collection_exercise/ci-versions.html",
         form_type=form_type,
         cir_metadata=cir_metadata,
+        period=period,
+        long_name=long_name,
         error_message=error_message,
         breadcrumbs=breadcrumbs,
     )
