@@ -17,7 +17,7 @@ logger = wrap_logger(logging.getLogger(__name__))
 class RedisCache:
     SURVEY_EXPIRY = 600  # 10 mins
 
-    def get_cir_metadata(self, survey_ref, formtype):
+    def get_cir_metadata(self, survey_ref: str, formtype: str) -> dict:
         """
         Gets the cir_metadata from redis or the cir service
 
@@ -40,7 +40,7 @@ class RedisCache:
 
         return json.loads(result.decode("utf-8"))
 
-    def get_survey_by_shortname(self, short_name):
+    def get_survey_by_shortname(self, short_name: str) -> dict:
         """
         Gets the survey from redis or the survey service
 
