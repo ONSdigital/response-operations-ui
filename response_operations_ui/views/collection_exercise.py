@@ -1199,9 +1199,9 @@ def view_ci_versions(short_name: str, period: str, form_type: str) -> str:
 @collection_exercise_bp.route("/<short_name>/<period>/view-sample-ci/summary/<form_type>", methods=["POST"])
 @login_required
 def save_ci_versions(short_name: str, period: str, form_type: str):
-    ci_version = request.form.get("ci-versions")
+    selected_registry_instrument_guid = request.form.get("ci-versions")
     ce_details = build_collection_exercise_details(short_name, period, include_ci=True)
-    if "nothing-selected" == ci_version:
+    if "nothing-selected" == selected_registry_instrument_guid:
         collection_instrument_controllers.delete_registry_instruments(
             ce_details["collection_exercise"]["id"], form_type
         )
@@ -1215,7 +1215,9 @@ def save_ci_versions(short_name: str, period: str, form_type: str):
                 list_of_cir_metadata_objects = redis_cache.get_cir_metadata(survey_ref, form_type)
             except ExternalApiError as e:
                 logger.info("Error Retrieving CIR metadata", survey_ref=survey_ref, form_type=form_type, error=e)
-            selected_cir_metadata_object = _get_selected_cir_metadata_object(ci_version, list_of_cir_metadata_objects)
+            selected_cir_metadata_object = _get_selected_cir_metadata_object(
+                selected_registry_instrument_guid, list_of_cir_metadata_objects
+            )
             instrument_id = _get_instrument_id_by_formtype(ce_details["collection_instruments"]["EQ"], form_type)
 
             collection_instrument_controllers.save_registry_instrument(
