@@ -1230,9 +1230,7 @@ def save_ci_versions(short_name: str, period: str, form_type: str):
                 ce_details["survey"]["id"],
             )
 
-        return redirect(
-            url_for("collection_exercise_bp.view_collection_exercise", short_name=short_name, period=period)
-        )
+        return redirect(url_for("collection_exercise_bp.view_sample_ci_summary", short_name=short_name, period=period))
 
 
 def _get_selected_cir_metadata_object(guid, list_of_cir_metadata_objects):
