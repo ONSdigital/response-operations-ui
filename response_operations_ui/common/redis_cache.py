@@ -35,7 +35,7 @@ class RedisCache:
         if not result:
             logger.info("Key not in cache, getting value from CIR service", key=redis_key)
             result = get_cir_metadata(survey_ref, formtype)
-            current_app.redis.set(redis_key, json.dumps(result), self.SURVEY_EXPIRY)
+            self.set(redis_key, json.dumps(result), self.SURVEY_EXPIRY)
             return result
 
         return json.loads(result.decode("utf-8"))
@@ -57,19 +57,18 @@ class RedisCache:
         if not result:
             logger.info("Key not in cache, getting value from survey service", key=redis_key)
             result = get_survey_by_shortname(short_name)
-            current_app.redis.set(redis_key, json.dumps(result), self.SURVEY_EXPIRY)
+            self.set(redis_key, json.dumps(result), self.SURVEY_EXPIRY)
             return result
 
         return json.loads(result.decode("utf-8"))
 
-    @staticmethod
-    def save(key, value, expiry):
+
+    def set(self, key, value, expiry):
         if not expiry:
             logger.error("Expiry must be provided")
             raise ValueError("Expiry must be provided")
         try:
-            redis.set(key, json.dumps(value), ex=expiry)
+            current_app.redis.set(key, value, ex=expiry)
         except RedisError:
-            # Not bubbling the exception up as not being able to save to the cache isn't fatal, it'll just impact
-            # performance
-            logger.error("Error saving key, please investigate", key=key, exc_info=True)
+            # Not throwing an exception as the cache isn't fatal
+            logger.error("Error setting key, please investigate", key=key, exc_info=True)
