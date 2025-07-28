@@ -3001,11 +3001,12 @@ class TestCollectionExercise(ViewTestCase):
     @patch("response_operations_ui.controllers.collection_instrument_controllers.save_registry_instrument")
     @patch("response_operations_ui.views.collection_exercise.build_collection_exercise_details")
     @patch("response_operations_ui.common.redis_cache.get_survey_by_shortname")
-    def test_save_ci_versions(self, mock_get_survey_by_shortname, mock_details, mock_save_registry_instrument):
+    @patch("response_operations_ui.common.redis_cache.get_cir_metadata")
+    def test_save_ci_versions(self, mock_cir_details, mock_get_survey_by_shortname, mock_details, mock_save_registry_instrument):
         post_data = {"formtype": "0001", "ci-versions": "427d40e6-f54a-4512-a8ba-e4dea54ea3dc"}
         mock_details.return_value = self.get_ce_details()
         mock_get_survey_by_shortname.return_value = {"surveyRef": 139}
-
+        mock_cir_details.return_value = cir_metadata
         response = self.client.post(
             f"/surveys/{short_name}/{period}/view-sample-ci/summary/0001", data=post_data, follow_redirects=False
         )
@@ -3018,7 +3019,7 @@ class TestCollectionExercise(ViewTestCase):
             1,
             "427d40e6-f54a-4512-a8ba-e4dea54ea3dc",
             "a32800c5-5dc1-459d-9932-0da6c21d2ed2",
-            "2025-12-31T00:00:00.000000Z",
+            "2024-07-16T14:26:44.609010Z",
             "cb0711c3-0ac8-41d3-ae0e-567e5ea1ef87",
         )
 
