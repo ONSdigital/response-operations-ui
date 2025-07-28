@@ -2998,17 +2998,29 @@ class TestCollectionExercise(ViewTestCase):
         self.assertIn("Published: 16/07/2024 at 14:26:44".encode(), response.data)
         self.assertIn("Save".encode(), response.data)
 
+    @patch("response_operations_ui.controllers.collection_instrument_controllers.save_registry_instrument")
     @patch("response_operations_ui.views.collection_exercise.build_collection_exercise_details")
     @patch("response_operations_ui.common.redis_cache.get_survey_by_shortname")
-    def test_save_ci_versions(self, mock_redis, mock_details):
-        post_data = {"formtype": "0001", "ci-versions": "Version 1"}
+    def test_save_ci_versions(self, mock_get_survey_by_shortname, mock_details, mock_save_registry_instrument):
+        post_data = {"formtype": "0001", "ci-versions": "427d40e6-f54a-4512-a8ba-e4dea54ea3dc"}
         mock_details.return_value = self.get_ce_details()
-        mock_redis.return_value = {"short_name": {"survey_ref": survey_id}}
+        mock_get_survey_by_shortname.return_value = {"surveyRef": 139}
+
         response = self.client.post(
-            f"/surveys/{short_name}/{period}/view-sample-ci/summary/0001", data=post_data, follow_redirects=True
+            f"/surveys/{short_name}/{period}/view-sample-ci/summary/0001", data=post_data, follow_redirects=False
         )
-        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.status_code, 302)
         self.assertIn(f"/surveys/{short_name}/{period}".encode(), response.data)
+
+        mock_save_registry_instrument.assert_called_once_with(
+            "14fb3e68-4dca-46db-bf49-04b84e07e77c",
+            "0001",
+            1,
+            "427d40e6-f54a-4512-a8ba-e4dea54ea3dc",
+            "a32800c5-5dc1-459d-9932-0da6c21d2ed2",
+            "2025-12-31T00:00:00.000000Z",
+            "cb0711c3-0ac8-41d3-ae0e-567e5ea1ef87",
+        )
 
     @patch("response_operations_ui.views.collection_exercise.build_collection_exercise_details")
     @patch("response_operations_ui.controllers.collection_instrument_controllers.delete_registry_instruments")
