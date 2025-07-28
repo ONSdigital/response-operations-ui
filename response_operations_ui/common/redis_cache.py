@@ -5,7 +5,6 @@ from flask import current_app
 from redis.exceptions import RedisError
 from structlog import wrap_logger
 
-from response_operations_ui import redis
 from response_operations_ui.controllers.cir_controller import get_cir_metadata
 from response_operations_ui.controllers.survey_controllers import (
     get_survey_by_shortname,
@@ -61,7 +60,6 @@ class RedisCache:
             return result
 
         return json.loads(result.decode("utf-8"))
-
 
     def set(self, key, value, expiry):
         if not expiry:
