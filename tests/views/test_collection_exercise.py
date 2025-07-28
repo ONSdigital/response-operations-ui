@@ -3002,7 +3002,9 @@ class TestCollectionExercise(ViewTestCase):
     @patch("response_operations_ui.views.collection_exercise.build_collection_exercise_details")
     @patch("response_operations_ui.common.redis_cache.get_survey_by_shortname")
     @patch("response_operations_ui.common.redis_cache.get_cir_metadata")
-    def test_save_ci_versions(self, mock_cir_details, mock_get_survey_by_shortname, mock_details, mock_save_registry_instrument):
+    def test_save_ci_versions(
+        self, mock_cir_details, mock_get_survey_by_shortname, mock_details, mock_save_registry_instrument
+    ):
         post_data = {"formtype": "0001", "ci-versions": "427d40e6-f54a-4512-a8ba-e4dea54ea3dc"}
         mock_details.return_value = self.get_ce_details()
         mock_get_survey_by_shortname.return_value = {"surveyRef": 139}
