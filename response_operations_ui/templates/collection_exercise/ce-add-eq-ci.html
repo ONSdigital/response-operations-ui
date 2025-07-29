@@ -3,7 +3,6 @@
           xmlns="http://www.w3.org/1999/html">
         <input type="hidden" name="csrf_token" value="{{ csrf_token() }}" />
             {% if cir_enabled %}
-                <p>A collection instrument is only created once both an EQ formtype and a CIR version are selected. Each formtype requires a CIR version.</p>
                 <h2 class="ons-u-fs-l">Choose EQ formtypes</h2>
                 {{
                     onsInput({
