@@ -51,7 +51,7 @@ from response_operations_ui.exceptions.error_codes import (
     ErrorCode,
     get_error_code_message,
 )
-from response_operations_ui.exceptions.exceptions import ApiError, ExternalApiError
+from response_operations_ui.exceptions.exceptions import ApiError, ExternalApiError, InternalError
 from response_operations_ui.forms import (
     CreateCollectionExerciseDetailsForm,
     EditCollectionExercisePeriodDescriptionForm,
@@ -1166,22 +1166,7 @@ def view_ci_versions(short_name: str, period: str, form_type: str) -> str:
     redis_cache = RedisCache()
     survey = redis_cache.get_survey_by_shortname(short_name)
     long_name = survey.get("longName")
-    error_message = None
-    cir_metadata = None
-    collection_exercises = collection_exercise_controllers.get_collection_exercises_by_survey(survey.get("id"))
-    collection_exercise = get_collection_exercise_by_period(collection_exercises, period)
-    registry_instrument = collection_instrument_controllers.get_registry_instrument(
-        collection_exercise.get("id"), form_type
-    )
-    try:
-        cir_metadata = redis_cache.get_cir_metadata(survey.get("surveyRef"), form_type)
-        # Conversion to make displaying the datetime easier in the template
-        for ci in cir_metadata:
-            ci["published_at"] = datetime.fromisoformat(ci["published_at"]).strftime("%d/%m/%Y at %H:%M:%S")
-            ci["selected"] = ci["guid"] == (registry_instrument["guid"] if registry_instrument else False)
-    except ExternalApiError as e:
-        error_message = CIR_ERROR_MESSAGES.get(e.error_code, get_error_code_message(e.error_code))
-
+    cir_metadata, error_message = _build_cir_metadata(form_type, period, redis_cache, survey)
     back_url = url_for("collection_exercise_bp.view_sample_ci_summary", short_name=short_name, period=period)
     breadcrumbs = [{"text": "Back to CIR versions", "url": back_url}, {}]
 
@@ -1209,12 +1194,12 @@ def save_ci_versions(short_name: str, period: str, form_type: str):
     else:
         redis_cache = RedisCache()
         survey_ref = redis_cache.get_survey_by_shortname(short_name).get("surveyRef")
-        list_of_cir_metadata_objects = None
         if survey_ref:
             try:
                 list_of_cir_metadata_objects = redis_cache.get_cir_metadata(survey_ref, form_type)
             except ExternalApiError as e:
                 logger.info("Error Retrieving CIR metadata", survey_ref=survey_ref, form_type=form_type, error=e)
+                raise InternalError(e)
             selected_cir_metadata_object = _get_selected_cir_metadata_object(
                 selected_registry_instrument_guid, list_of_cir_metadata_objects
             )
@@ -1231,6 +1216,25 @@ def save_ci_versions(short_name: str, period: str, form_type: str):
             )
 
         return redirect(url_for("collection_exercise_bp.view_sample_ci_summary", short_name=short_name, period=period))
+
+
+def _build_cir_metadata(form_type, period, redis_cache, survey):
+    error_message = None
+    cir_metadata = None
+    collection_exercises = collection_exercise_controllers.get_collection_exercises_by_survey(survey.get("id"))
+    collection_exercise = get_collection_exercise_by_period(collection_exercises, period)
+    registry_instrument = collection_instrument_controllers.get_registry_instrument(
+        collection_exercise.get("id"), form_type
+    )
+    try:
+        cir_metadata = redis_cache.get_cir_metadata(survey.get("surveyRef"), form_type)
+        # Conversion to make displaying the datetime easier in the template
+        for ci in cir_metadata:
+            ci["published_at"] = datetime.fromisoformat(ci["published_at"]).strftime("%d/%m/%Y at %H:%M:%S")
+            ci["selected"] = ci["guid"] == (registry_instrument["guid"] if registry_instrument else False)
+    except ExternalApiError as e:
+        error_message = CIR_ERROR_MESSAGES.get(e.error_code, get_error_code_message(e.error_code))
+    return cir_metadata, error_message
 
 
 def _get_selected_cir_metadata_object(guid, list_of_cir_metadata_objects):
