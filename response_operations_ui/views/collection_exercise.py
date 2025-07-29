@@ -51,7 +51,11 @@ from response_operations_ui.exceptions.error_codes import (
     ErrorCode,
     get_error_code_message,
 )
-from response_operations_ui.exceptions.exceptions import ApiError, ExternalApiError, InternalError
+from response_operations_ui.exceptions.exceptions import (
+    ApiError,
+    ExternalApiError,
+    InternalError,
+)
 from response_operations_ui.forms import (
     CreateCollectionExerciseDetailsForm,
     EditCollectionExercisePeriodDescriptionForm,
