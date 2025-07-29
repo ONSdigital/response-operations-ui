@@ -378,7 +378,7 @@ def save_registry_instrument(
 
     try:
         response.raise_for_status()
-        log_message = "Successfully saved collection instrument from registry instruments"
+        log_message = "Successfully saved selected registry instrument version"
     except requests.exceptions.HTTPError:
         logger.error("Error saving selected registry instrument version")
         raise ApiError(response)
@@ -387,6 +387,10 @@ def save_registry_instrument(
         log_message,
         collection_exercise_id=collection_exercise_id,
         form_type=form_type,
+        ci_version=ci_version,
+        guid=guid,
+        survey_id=survey_id,
+        published_at=published_at,
     )
 
 
