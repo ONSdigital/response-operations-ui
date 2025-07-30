@@ -8,7 +8,8 @@
     <input type="hidden" name="csrf_token" value="{{ csrf_token() }}" />
     <div class="ons-grid ons-grid--gutterless">
         <div class="ons-grid__col ons-col-8@m">
-            <h1>Choose CIR version for EQ formtype {{ form_type }}</h1>
+             <h1 class="ons-u-fs-m ons-u-lighter" name="page-ci-versions-subtitle">{{ long_name }} | {{ period }} Collection exercise</h1>
+            <h1 class="ons-u-fs-xxl" name="page-ci-versions-title">Choose CIR version for EQ formtype {{ form_type }}</h1>
             {% if error_message %}
                 <p>{{ error_message }}</p>
             {% else %}
@@ -30,6 +31,7 @@
                     },
                     "name": "nothing-selected",
                     "value": "nothing-selected",
+                    "checked": true,
                   }] %}
                   {% for ci in cir_metadata %}
                     {% do cirRadioRows.append(
@@ -39,7 +41,9 @@
                               "text": "Version " + ci.ci_version|string,
                               "description": "Published: " + ci.published_at,
                           },
-                          "name": ci.ci_version|string
+                          "name": ci.ci_version|string,
+                          "value": ci.guid|string,
+                          "checked": true if ci.selected else false,
                         }
                     )%}
                   {% endfor %}
@@ -51,6 +55,7 @@
                   })}}
                 </p>
             </div>
+            {% if cir_metadata %}
             {{
                 onsButton({
                     "text": "Save",
@@ -58,6 +63,7 @@
                     "name": "save"
             })
             }}
+            {% endif %}
         
             <div class="ons-u-mb-xl ons-u-mt-l">
             {%

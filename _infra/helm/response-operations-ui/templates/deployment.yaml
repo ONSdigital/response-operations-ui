@@ -238,7 +238,11 @@ spec:
           - name: CIR_ENABLED
             value: "{{ .Values.cir.enabled }}"
           - name: CIR_API_URL
+            {{ if .Values.cir.apiUrl }}
             value: {{ .Values.cir.apiUrl }}
+            {{- else -}}
+            value: "http://wiremock.{{ .Values.namespace }}.svc.cluster.local:8080"
+            {{- end}}
           - name: CIR_OAUTH2_CLIENT_ID
             value: {{ .Values.cir.oauth2ClientId }}     
           resources:

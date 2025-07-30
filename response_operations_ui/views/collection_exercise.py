@@ -34,6 +34,7 @@ from response_operations_ui.common.mappers import (
     get_event_name,
     map_collection_exercise_state,
 )
+from response_operations_ui.common.redis_cache import RedisCache
 from response_operations_ui.common.uaa import verify_permission
 from response_operations_ui.common.validators import valid_date_for_event
 from response_operations_ui.contexts.collection_exercise import build_ce_context
@@ -50,7 +51,11 @@ from response_operations_ui.exceptions.error_codes import (
     ErrorCode,
     get_error_code_message,
 )
-from response_operations_ui.exceptions.exceptions import ApiError, ExternalApiError
+from response_operations_ui.exceptions.exceptions import (
+    ApiError,
+    ExternalApiError,
+    InternalError,
+)
 from response_operations_ui.forms import (
     CreateCollectionExerciseDetailsForm,
     EditCollectionExercisePeriodDescriptionForm,
@@ -1138,7 +1143,9 @@ def _add_collection_instrument(short_name, period):
 @collection_exercise_bp.route("<short_name>/<period>/view-sample-ci/summary", methods=["GET"])
 @login_required
 def view_sample_ci_summary(short_name: str, period: str) -> str:
-    survey_id = survey_controllers.get_survey_by_shortname(short_name).get("id")
+    survey = survey_controllers.get_survey_by_shortname(short_name)
+    survey_id = survey.get("id")
+    long_name = survey.get("longName")
     exercises = collection_exercise_controllers.get_collection_exercises_by_survey(survey_id)
     exercise = get_collection_exercise_by_period(exercises, period)
 
@@ -1151,6 +1158,8 @@ def view_sample_ci_summary(short_name: str, period: str) -> str:
         "collection_exercise/view-sample-ci-summary.html",
         collection_instruments=collection_instruments,
         short_name=short_name,
+        exercise=exercise,
+        long_name=long_name,
         period=period,
         breadcrumbs=breadcrumbs,
     )
@@ -1159,18 +1168,10 @@ def view_sample_ci_summary(short_name: str, period: str) -> str:
 @collection_exercise_bp.route("/<short_name>/<period>/view-sample-ci/summary/<form_type>", methods=["GET"])
 @login_required
 def view_ci_versions(short_name: str, period: str, form_type: str) -> str:
-    survey_ref = survey_controllers.get_survey_by_shortname(short_name).get("surveyRef")
-    logger.info("Retrieving CIR metadata")
-    error_message = None
-    cir_metadata = None
-    try:
-        cir_metadata = cir_controller.get_cir_metadata(survey_ref, form_type)
-        # Conversion to make displaying the datetime easier in the template
-        for ci in cir_metadata:
-            ci["published_at"] = datetime.fromisoformat(ci["published_at"]).strftime("%d/%m/%Y at %H:%M:%S")
-    except ExternalApiError as e:
-        error_message = CIR_ERROR_MESSAGES.get(e.error_code, get_error_code_message(e.error_code))
-
+    redis_cache = RedisCache()
+    survey = redis_cache.get_survey_by_shortname(short_name)
+    long_name = survey.get("longName")
+    cir_metadata, error_message = _build_cir_metadata(form_type, period, redis_cache, survey)
     back_url = url_for("collection_exercise_bp.view_sample_ci_summary", short_name=short_name, period=period)
     breadcrumbs = [{"text": "Back to CIR versions", "url": back_url}, {}]
 
@@ -1178,6 +1179,8 @@ def view_ci_versions(short_name: str, period: str, form_type: str) -> str:
         "collection_exercise/ci-versions.html",
         form_type=form_type,
         cir_metadata=cir_metadata,
+        period=period,
+        long_name=long_name,
         error_message=error_message,
         breadcrumbs=breadcrumbs,
     )
@@ -1186,14 +1189,84 @@ def view_ci_versions(short_name: str, period: str, form_type: str) -> str:
 @collection_exercise_bp.route("/<short_name>/<period>/view-sample-ci/summary/<form_type>", methods=["POST"])
 @login_required
 def save_ci_versions(short_name: str, period: str, form_type: str):
-    ci_version = request.form.get("ci-versions")
-    if "nothing-selected" == ci_version:
-        ce_details = build_collection_exercise_details(short_name, period, include_ci=True)
+    selected_registry_instrument_guid = request.form.get("ci-versions")
+    ce_details = build_collection_exercise_details(short_name, period, include_ci=True)
+    if "nothing-selected" == selected_registry_instrument_guid:
         collection_instrument_controllers.delete_registry_instruments(
             ce_details["collection_exercise"]["id"], form_type
         )
         return redirect(url_for("collection_exercise_bp.view_sample_ci_summary", short_name=short_name, period=period))
-    return redirect(url_for("collection_exercise_bp.view_collection_exercise", short_name=short_name, period=period))
+    else:
+        redis_cache = RedisCache()
+        survey_ref = redis_cache.get_survey_by_shortname(short_name).get("surveyRef")
+        if survey_ref:
+            try:
+                list_of_cir_metadata_objects = redis_cache.get_cir_metadata(survey_ref, form_type)
+            except ExternalApiError as e:
+                logger.info("Error Retrieving CIR metadata", survey_ref=survey_ref, form_type=form_type, error=e)
+                raise InternalError(e)
+            selected_cir_metadata_object = _get_selected_cir_metadata_object(
+                selected_registry_instrument_guid, list_of_cir_metadata_objects
+            )
+            instrument_id = _get_instrument_id_by_formtype(ce_details["collection_instruments"]["EQ"], form_type)
+
+            collection_instrument_controllers.save_registry_instrument(
+                ce_details["collection_exercise"]["id"],
+                form_type,
+                selected_cir_metadata_object["ci_version"],
+                selected_cir_metadata_object["guid"],
+                instrument_id,
+                selected_cir_metadata_object["published_at"],
+                ce_details["survey"]["id"],
+            )
+
+        return redirect(url_for("collection_exercise_bp.view_sample_ci_summary", short_name=short_name, period=period))
+
+
+def _build_cir_metadata(form_type, period, redis_cache, survey):
+    error_message = None
+    cir_metadata = None
+    collection_exercises = collection_exercise_controllers.get_collection_exercises_by_survey(survey.get("id"))
+    collection_exercise = get_collection_exercise_by_period(collection_exercises, period)
+    registry_instrument = collection_instrument_controllers.get_registry_instrument(
+        collection_exercise.get("id"), form_type
+    )
+    try:
+        cir_metadata = redis_cache.get_cir_metadata(survey.get("surveyRef"), form_type)
+        # Conversion to make displaying the datetime easier in the template
+        for ci in cir_metadata:
+            ci["published_at"] = datetime.fromisoformat(ci["published_at"]).strftime("%d/%m/%Y at %H:%M:%S")
+            ci["selected"] = ci["guid"] == (registry_instrument["guid"] if registry_instrument else False)
+    except ExternalApiError as e:
+        error_message = CIR_ERROR_MESSAGES.get(e.error_code, get_error_code_message(e.error_code))
+    return cir_metadata, error_message
+
+
+def _get_selected_cir_metadata_object(guid, list_of_cir_metadata_objects):
+    """
+    Iterates over a list of registry instrument version objects and returns the one matching the given guid.
+    :param ci_version: the guid of the registry instrument version selected by the user in the UI
+    :param list_of_cir_metadata_objects: the list of registry instrument version objects for this CE form type
+    :return: the registry instrument version object selected by the user
+    """
+    return next(
+        (
+            cir_metadata_object
+            for cir_metadata_object in list_of_cir_metadata_objects
+            if cir_metadata_object["guid"] == guid
+        ),
+        None,
+    )
+
+
+def _get_instrument_id_by_formtype(eq_list, form_type):
+    """
+    Iterates over a list of CE collection instruments and returns the instrument_id matching the given form type.
+    :param eq_list: The list of collection instruments selected for the collection exercise
+    :param form_type: The form type to search for in the list of collection instruments
+    :return: the instrument_id of the form type if found in the list, otherwise None
+    """
+    return next((ci["id"] for ci in eq_list if ci["classifiers"].get("form_type") == form_type), None)
 
 
 @collection_exercise_bp.route("/cir", methods=["GET"])
