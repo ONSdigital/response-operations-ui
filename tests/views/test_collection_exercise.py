@@ -539,6 +539,50 @@ class TestCollectionExercise(ViewTestCase):
         self.assertNotIn("Pre-Populated data is available for this sample".encode(), response.data)
 
     @requests_mock.mock()
+    @patch("response_operations_ui.controllers.collection_instrument_controllers.get_response_json_from_service")
+    def test_collection_exercise_view_cir_count_valid(self, mock_request, registry_instrument_count):
+        self.app.config["CIR_ENABLED"] = True
+        registry_instrument_count.return_value = {"registry_instrument_count": 1}
+        self.load_eq_survey(
+            mock_request,
+            self.eq_survey_dates,
+            self.collection_exercises,
+            collection_exercise_eq_both_ref_date["collection_exercise"],
+            self.collection_exercise_ref_both_date,
+            sample_summary_id,
+            self.sample_summary,
+            self.eq_collection_instrument,
+            self.eq_ci_selectors,
+        )
+        mock_request.get(url_get_by_survey_with_ref_start_date, json=collection_exercise_eq_ref_start_date)
+        mock_request.get(url_get_by_survey_with_ref_end_date, json=collection_exercise_eq_ref_end_date)
+
+        response = self.client.get(f"/surveys/{short_name}/{period}", follow_redirects=True)
+        self.assertIn("Set as ready for live".encode(), response.data)
+
+    @requests_mock.mock()
+    @patch("response_operations_ui.controllers.collection_instrument_controllers.get_response_json_from_service")
+    def test_collection_exercise_view_cir_count_invalid(self, mock_request, registry_instrument_count):
+        self.app.config["CIR_ENABLED"] = True
+        registry_instrument_count.return_value = {"registry_instrument_count": 0}
+        self.load_eq_survey(
+            mock_request,
+            self.eq_survey_dates,
+            self.collection_exercises,
+            collection_exercise_eq_both_ref_date["collection_exercise"],
+            self.collection_exercise_ref_both_date,
+            sample_summary_id,
+            self.sample_summary,
+            self.eq_collection_instrument,
+            self.eq_ci_selectors,
+        )
+        mock_request.get(url_get_by_survey_with_ref_start_date, json=collection_exercise_eq_ref_start_date)
+        mock_request.get(url_get_by_survey_with_ref_end_date, json=collection_exercise_eq_ref_end_date)
+
+        response = self.client.get(f"/surveys/{short_name}/{period}", follow_redirects=True)
+        self.assertNotIn("Set as ready for live".encode(), response.data)
+
+    @requests_mock.mock()
     def test_collection_exercise_view_with_pre_population(self, mock_request):
         self.load_eq_survey(
             mock_request,
@@ -663,10 +707,12 @@ class TestCollectionExercise(ViewTestCase):
         self.assertNotIn('id="view-choose-upload-ci-seft">View</a>'.encode(), response.data)
         self.assertNotIn("CIR version".encode(), response.data)  # to be removed when CIR is live
 
+    @patch("response_operations_ui.controllers.collection_instrument_controllers.get_response_json_from_service")
     @patch("response_operations_ui.views.collection_exercise.build_collection_exercise_details")
-    def test_collection_exercise_view_cir(self, mock_details):
+    def test_collection_exercise_view_cir(self, mock_details, registry_instrument_count):
         # Given I have an eQ collection exercise with a collection instrument linked and CIR_ENABLED
         self.app.config["CIR_ENABLED"] = True
+        registry_instrument_count.return_value = {"registry_instrument_count": 1}
         eq_cis = {"EQ": self.eq_collection_instrument}
         ce_details = {
             "survey": self.eq_survey_dates,
