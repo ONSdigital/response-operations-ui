@@ -26,58 +26,60 @@ ons-u-mt-l">
             <input type="hidden" name="csrf_token" value="{{ csrf_token() }}" />
             <input type="hidden" name="csrf_token" value="" />
             <input type="hidden" name="ce_id" value="{{ ce.id }}" />
-            <div class="ons-grid ons-col-12@m ons-grid-flex--vertical-center ons-grid--no-wrap@m ons-u-mt-m ons-u-mb-m">
-                {% for eq_ci in all_cis_for_survey|batch(3, ' ') %}
+           <div class="ons-grid ons-col-12@m ons-grid-flex--vertical-center ons-grid--no-wrap@m ons-u-mt-m ons-u-mb-m">
+              {% if cir_enabled %}
+                <div class="ons-grid__col ons-col-8@m" style="padding-left: 1rem">
+                  <table class="ons-table ons-table--responsive">
+                    <thead class="ons-table__head">
+                      <tr class="ons-table__row">
+                        <th scope="col" class="ons-table__header">
+                          <span class="ons-table__header-text">EQ formtype</span>
+                        </th>
+                        <th scope="col" class="ons-table__header">
+                          <span class="ons-table__header-text">CIR version</span>
+                        </th>
+                      </tr>
+                    </thead>
+                    <tbody class="ons-table__body">
+                      {% for ci in all_cis_for_survey %}
+                          {% if ci['form_type'] and ci['checked'] == 'true' %}
+                            <tr class="ons-table__row">
+                              <td class="ons-table__cell">{{ ci['form_type'] }}</td>
+                              <td class="ons-table__cell">
+                                {% if ci['ci_version'] %}
+                                  <span>Version {{ ci['ci_version'] }}</span>
+                                {% else %}
+                                  <span>Nothing Selected</span>
+                                {% endif %}
+                              </td>
+                            </tr>
+                          {% endif %}
+                      {% endfor %}
+                    </tbody>
+                  </table>
+                </div>
+              {% else %}
+                 {% for eq_ci in all_cis_for_survey|batch(3, ' ') %}
                     {% for ci in eq_ci %}
                       {% if ci['form_type'] and ci['checked'] == 'true' %}
-                        {% if cir_enabled %}
-                          <div class="ons-grid__col ons-col-8@m" style="padding-left: 1rem">
-                            <table id="collection-instruments-left-table" class="ons-table ons-table--responsive">
-                              <thead class="ons-table__head">
-                                <tr class="ons-table__row">
-                                  <th scope="col" class="ons-table__header">
-                                    <span class="ons-table__header-text">EQ formtype</span>
-                                  </th>
-                                  <th scope="col" class="ons-table__header">
-                                    <span class="ons-table__header-text">CIR version</span>
-                                  </th>
-                                </tr>
-                              </thead>
-                              <tbody class="ons-table__body">
-                                <tr class="ons-table__row">
-                                  <td class="ons-table__cell">
-                                    {{ ci['form_type'] }}
-                                  </td>
-                                  <td class="ons-table__cell">
-                                    {% if ci['ci_version'] %}
-                                      <span>Version {{ ci['ci_version'] }}</span>
-                                    {% else %}
-                                      <span>Nothing Selected</span>
-                                    {% endif %}
-                                  </td>
-                                </tr>
-                              </tbody>
-                            </table>
-                          </div>
-                        {% else %}
                           <div class="ons-grid__col ons-col-4@m" style="padding-left: 1rem">
                             <table id="collection-instruments-left-table" class="ons-table ons-table--responsive">
                               <thead class="ons-table__head">
-                                <tr class="ons-table__row"></tr>
+                                <tr class="ons-table__row"> </tr>
                               </thead>
                               <tbody class="ons-table__body">
                                 <tr class="ons-table__row">
-                                  <td class="ons-table__cell">
-                                    {{ ci['form_type'] }}
-                                  </td>
+                                    <td class="ons-table__cell">
+                                      {{  ci['form_type'] }}
+                                    </td>
                                 </tr>
                               </tbody>
                             </table>
                           </div>
                       {% endif %}
-                    {% endif %}
-                  {% endfor %}
-              {% endfor %}
+                   {% endfor %}
+                {% endfor %}
+              {% endif %}
             </div>
         </form>
     {% endif %}
