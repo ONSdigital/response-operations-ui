@@ -59,6 +59,7 @@
                       })}}
                     </p>
                 </div>
+            {% else %}
                 {% if cir_metadata %}
                 {{
                     onsButton({
@@ -68,21 +69,25 @@
                 })
                 }}
                 {% endif %}
-                {% else %}
-                <div class="ons-grid__col ons-col-6@m">
-                    {% set ciVersionData = [] %}
-                    {% for ci in cir_metadata %}
-                        {% do ciVersionData.append({
-                            "text": "Version " ~ ci.ci_version ~ " (Published: " ~ ci.published_at ~ ")"
-                        }) %}
-                    {% endfor %}
-                    {{ 
-                    onsList({ 
-                        "variants": "summary",
-                        "itemsList": ciVersionData 
-                            }) 
-                    }}
-                </div>
+                    <div class="ons-grid__col ons-col-6@m">
+                        {% set ciVersions = [] %}
+                        {% for ci in cir_metadata %}
+                            {% set item = {
+                                "text": "Version " ~ ci.ci_version ~ " (Published: " ~ ci.published_at ~ ")"
+                            } %}
+                            {% if ci.selected %}
+                                {% set _ = item.update({"iconType": "check"}) %}
+                            {% endif %}
+                            {% do ciVersions.append(item) %}
+                        {% endfor %}
+                        {{
+                            onsList({
+                                "iconPosition": "before",
+                                "variants": "summary",
+                                "itemsList": ciVersions
+                            })
+                        }}
+                    </div>
             {% endif %}
             <div class="ons-u-mb-xl ons-u-mt-l">
             {%
