@@ -3026,9 +3026,11 @@ class TestCollectionExercise(ViewTestCase):
     @patch("response_operations_ui.controllers.collection_exercise_controllers.get_collection_exercises_by_survey")
     @patch("response_operations_ui.common.redis_cache.get_survey_by_shortname")
     @patch("response_operations_ui.common.redis_cache.get_cir_metadata")
+    @requests_mock.mock()
     def test_view_ci_versions_metadata_returned(
-        self, mock_cir_details, mock_get_shortname, mock_get_collection_exercises_by_survey, mock_registry
+        self, mock_cir_details, mock_get_shortname, mock_get_collection_exercises_by_survey, mock_registry, mock_request
     ):
+        sign_in_with_permission(self, mock_request, user_permission_surveys_edit_json)
         form_type = "0001"
         period = "201801"
         mock_get_collection_exercises_by_survey.return_value = collection_exercise_list
@@ -3048,9 +3050,11 @@ class TestCollectionExercise(ViewTestCase):
     @patch("response_operations_ui.views.collection_exercise.build_collection_exercise_details")
     @patch("response_operations_ui.common.redis_cache.get_survey_by_shortname")
     @patch("response_operations_ui.common.redis_cache.get_cir_metadata")
+    @requests_mock.mock()
     def test_save_ci_versions(
-        self, mock_cir_details, mock_get_survey_by_shortname, mock_details, mock_save_registry_instrument
+        self, mock_cir_details, mock_get_survey_by_shortname, mock_details, mock_save_registry_instrument, mock_request
     ):
+        sign_in_with_permission(self, mock_request, user_permission_surveys_edit_json)
         post_data = {"formtype": "0001", "ci-versions": "427d40e6-f54a-4512-a8ba-e4dea54ea3dc"}
         mock_details.return_value = self.get_ce_details()
         mock_get_survey_by_shortname.return_value = {"surveyRef": 139}
@@ -3079,6 +3083,7 @@ class TestCollectionExercise(ViewTestCase):
         "collection_exercise_controllers.get_collection_exercises_by_survey"
     )
     @patch("response_operations_ui.controllers.collection_instrument_controllers.get_cis_and_cir_version")
+    @requests_mock.mock()
     def test_delete_ci_versions(
         self,
         mock_collection_instrument,
@@ -3086,7 +3091,9 @@ class TestCollectionExercise(ViewTestCase):
         mock_delete_registry_instruments,
         mock_survey_id,
         mock_details,
+        mock_request,
     ):
+        sign_in_with_permission(self, mock_request, user_permission_surveys_edit_json)
         mock_details.return_value = self.get_ce_details()
         mock_survey_id.return_value = {"id": survey_id}
         mock_collection_exercise.return_value = self.collection_exercises
