@@ -3,6 +3,10 @@
 {% from "components/details/_macro.njk" import onsDetails %}
 {% from "components/panel/_macro.njk" import onsPanel %}
 {% from "components/radios/_macro.njk" import onsRadios %}
+{% from "components/list/_macro.njk" import onsList %}
+
+{% set surveyEditPermission = hasPermission('surveys.edit') %}
+
 {% block main %}
 <form class="ons-form" method="post">
     <input type="hidden" name="csrf_token" value="{{ csrf_token() }}" />
@@ -21,50 +25,70 @@
             %}
                 <p>The version must have successfully passed all testing. If you are unsure contact the testing team.</p>
             {% endcall %}
-            <div>
-
-                <p>
-                  {% set cirRadioRows = [{
-                    "id": "cir-version-nothing-selected",
-                    "label": {
-                      "text": "Nothing selected",
-                    },
-                    "name": "nothing-selected",
-                    "value": "nothing-selected",
-                    "checked": true,
-                  }] %}
-                  {% for ci in cir_metadata %}
-                    {% do cirRadioRows.append(
-                        {
-                          "id": "cir-version-" + ci.ci_version|string,
-                          "label": {
-                              "text": "Version " + ci.ci_version|string,
-                              "description": "Published: " + ci.published_at,
-                          },
-                          "name": ci.ci_version|string,
-                          "value": ci.guid|string,
-                          "checked": true if ci.selected else false,
-                        }
-                    )%}
-                  {% endfor %}
-                  {{ 
-                    onsRadios({
-                      "dontWrap": true,
-                      "name": "ci-versions",
-                      "radios": cirRadioRows,
-                  })}}
-                </p>
-            </div>
-            {% if cir_metadata %}
-            {{
-                onsButton({
-                    "text": "Save",
-                    "id": "save",
-                    "name": "save"
-            })
-            }}
+            {% if surveyEditPermission %}
+                <div>
+                    <p>
+                      {% set cirRadioRows = [{
+                        "id": "cir-version-nothing-selected",
+                        "label": {
+                          "text": "Nothing selected",
+                        },
+                        "name": "nothing-selected",
+                        "value": "nothing-selected",
+                        "checked": true,
+                      }] %}
+                      {% for ci in cir_metadata %}
+                        {% do cirRadioRows.append(
+                            {
+                              "id": "cir-version-" + ci.ci_version|string,
+                              "label": {
+                                  "text": "Version " + ci.ci_version|string,
+                                  "description": "Published: " + ci.published_at,
+                              },
+                              "name": ci.ci_version|string,
+                              "value": ci.guid|string,
+                              "checked": true if ci.selected else false,
+                            }
+                        )%}
+                      {% endfor %}
+                      {{ 
+                        onsRadios({
+                          "dontWrap": true,
+                          "name": "ci-versions",
+                          "radios": cirRadioRows,
+                      })}}
+                    </p>
+                </div>
+                {% if cir_metadata %}
+                {{
+                    onsButton({
+                        "text": "Save",
+                        "id": "save",
+                        "name": "save"
+                })
+                }}
+                {% endif %}
+                {% else %}
+                    <div class="ons-grid__col ons-col-6@m">
+                        {% set ciVersions = [] %}
+                        {% for ci in cir_metadata %}
+                            {% set item = {
+                                "text": "Version " ~ ci.ci_version ~ " (Published: " ~ ci.published_at ~ ")"
+                            } %}
+                            {% if ci.selected %}
+                                {% set _ = item.update({"iconType": "check"}) %}
+                            {% endif %}
+                            {% do ciVersions.append(item) %}
+                        {% endfor %}
+                        {{
+                            onsList({
+                                "iconPosition": "before",
+                                "variants": "summary",
+                                "itemsList": ciVersions
+                            })
+                        }}
+                    </div>
             {% endif %}
-        
             <div class="ons-u-mb-xl ons-u-mt-l">
             {%
                 call onsDetails({
