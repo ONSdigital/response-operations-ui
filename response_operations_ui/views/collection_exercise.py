@@ -1183,12 +1183,14 @@ def view_ci_versions(short_name: str, period: str, form_type: str) -> str:
         long_name=long_name,
         error_message=error_message,
         breadcrumbs=breadcrumbs,
+        has_edit_permission=user_has_permission("surveys.edit"),
     )
 
 
 @collection_exercise_bp.route("/<short_name>/<period>/view-sample-ci/summary/<form_type>", methods=["POST"])
 @login_required
 def save_ci_versions(short_name: str, period: str, form_type: str):
+    verify_permission("surveys.edit")
     selected_registry_instrument_guid = request.form.get("ci-versions")
     ce_details = build_collection_exercise_details(short_name, period, include_ci=True)
     if "nothing-selected" == selected_registry_instrument_guid:
