@@ -31,6 +31,7 @@
                     },
                     "name": "nothing-selected",
                     "value": "nothing-selected",
+                    "checked": true,
                   }] %}
                   {% for ci in cir_metadata %}
                     {% do cirRadioRows.append(
@@ -40,7 +41,9 @@
                               "text": "Version " + ci.ci_version|string,
                               "description": "Published: " + ci.published_at,
                           },
-                          "name": ci.ci_version|string
+                          "name": ci.ci_version|string,
+                          "value": ci.guid|string,
+                          "checked": true if ci.selected else false,
                         }
                     )%}
                   {% endfor %}
@@ -52,6 +55,7 @@
                   })}}
                 </p>
             </div>
+            {% if cir_metadata and has_edit_permission %}
             {{
                 onsButton({
                     "text": "Save",
@@ -59,6 +63,7 @@
                     "name": "save"
             })
             }}
+            {% endif %}
         
             <div class="ons-u-mb-xl ons-u-mt-l">
             {%
