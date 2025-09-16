@@ -3138,8 +3138,7 @@ class TestCollectionExercise(ViewTestCase):
         self.assertEqual(response.status_code, 200)
         self.assertIn("Choose CIR version for EQ formtype".encode(), response.data)
         self.assertIn(CIR_ERROR_MESSAGES[ErrorCode.NOT_FOUND].encode(), response.data)
-        
-        
+
     @requests_mock.mock()
     @patch("response_operations_ui.common.redis_cache.get_survey_by_shortname")
     @patch("response_operations_ui.controllers.collection_exercise_controllers.get_collection_exercises_by_survey")
