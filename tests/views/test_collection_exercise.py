@@ -3110,6 +3110,7 @@ class TestCollectionExercise(ViewTestCase):
         self.assertIn(form_type.encode(), response.data)
         self.assertIn("Nothing selected".encode(), response.data)
 
+    @requests_mock.mock()
     @patch("response_operations_ui.controllers.collection_instrument_controllers.get_registry_instrument")
     @patch("response_operations_ui.common.redis_cache.get_survey_by_shortname")
     @patch("response_operations_ui.controllers.collection_exercise_controllers.get_collection_exercises_by_survey")
@@ -3137,23 +3138,23 @@ class TestCollectionExercise(ViewTestCase):
         self.assertEqual(response.status_code, 200)
         self.assertIn("Choose CIR version for EQ formtype".encode(), response.data)
         self.assertIn(CIR_ERROR_MESSAGES[ErrorCode.NOT_FOUND].encode(), response.data)
-
-    @patch("requests.get")
+        
+        
+    @requests_mock.mock()
     @patch("response_operations_ui.common.redis_cache.get_survey_by_shortname")
     @patch("response_operations_ui.controllers.collection_exercise_controllers.get_collection_exercises_by_survey")
     def test_view_ci_versions_unable_to_connect_to_cir(
-        self, mock_request, mock_get_collection_exercises_by_survey, mock_redis, mock_response
+        self, mock_request, mock_get_collection_exercises_by_survey, mock_redis
     ):
         collection_instrument_controllers.get_registry_instrument = Mock()
         form_type = "0001"
         period = "201801"
         mock_get_collection_exercises_by_survey.return_value = collection_exercise_list
-        mock_response = mock_response.return_value
+        mock_response = Mock()
         mock_response.url.return_value = url_cir_get_metadata
         mock_response.status_code.return_value = "E0001"
         mock_response.message.return_value = "Unable to connect to CIR"
         mock_redis.return_value = {"short_name": {"survey_ref": survey_id}}
-
         with patch(
             "response_operations_ui.common.redis_cache.get_cir_metadata",
             Mock(side_effect=ExternalApiError(mock_response, ErrorCode.API_CONNECTION_ERROR)),
