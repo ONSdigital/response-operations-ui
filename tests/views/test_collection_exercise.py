@@ -3115,7 +3115,12 @@ class TestCollectionExercise(ViewTestCase):
     @patch("response_operations_ui.controllers.collection_exercise_controllers.get_collection_exercises_by_survey")
     @patch("response_operations_ui.common.redis_cache.get_cir_metadata")
     def test_view_ci_versions_no_metadata(
-        self, mock_cir_details, mock_get_collection_exercises_by_survey, mock_redis, mock_response
+        self,
+        mock_request,
+        mock_cir_details,
+        mock_get_collection_exercises_by_survey,
+        mock_redis,
+        mock_response,
     ):
         form_type = "0001"
         period = "201801"
@@ -3127,6 +3132,7 @@ class TestCollectionExercise(ViewTestCase):
         mock_response.message.return_value = "No results found"
         mock_redis.return_value = {"short_name": {"survey_ref": survey_id}}
 
+        sign_in_with_permission(self, mock_request, user_permission_surveys_edit_json)
         response = self.client.get(f"/surveys/{short_name}/{period}/view-sample-ci/summary/{form_type}")
         self.assertEqual(response.status_code, 200)
         self.assertIn("Choose CIR version for EQ formtype".encode(), response.data)
@@ -3136,7 +3142,7 @@ class TestCollectionExercise(ViewTestCase):
     @patch("response_operations_ui.common.redis_cache.get_survey_by_shortname")
     @patch("response_operations_ui.controllers.collection_exercise_controllers.get_collection_exercises_by_survey")
     def test_view_ci_versions_unable_to_connect_to_cir(
-        self, mock_get_collection_exercises_by_survey, mock_redis, mock_response
+        self, mock_request, mock_get_collection_exercises_by_survey, mock_redis, mock_response
     ):
         collection_instrument_controllers.get_registry_instrument = Mock()
         form_type = "0001"
@@ -3152,6 +3158,7 @@ class TestCollectionExercise(ViewTestCase):
             "response_operations_ui.common.redis_cache.get_cir_metadata",
             Mock(side_effect=ExternalApiError(mock_response, ErrorCode.API_CONNECTION_ERROR)),
         ):
+            sign_in_with_permission(self, mock_request, user_permission_surveys_edit_json)
             response = self.client.get(f"/surveys/{short_name}/{period}/view-sample-ci/summary/{form_type}")
             self.assertEqual(response.status_code, 200)
             self.assertIn("Choose CIR version for EQ formtype".encode(), response.data)
