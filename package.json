@@ -8,7 +8,7 @@
     "test": "tests"
   },
   "dependencies": {
-    "@cypress/request": "^3.0.0",
+    "@cypress/request": "^3.0.9",
     "abbrev": "^1.1.1",
     "acorn": "^8.10.0",
     "ajv": "^6.12.6",
