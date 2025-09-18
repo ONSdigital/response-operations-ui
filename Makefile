@@ -40,11 +40,3 @@ watch_and_start:
 
 docker: test
 	docker build -t sdcplatform/response-operations-ui:latest .
-
-minify-install:
-	npm init -y
-	npm install webpack webpack-cli node-sass sass-loader file-loader resolve-url-loader --save-dev
-	npm install -D babel-loader @babel/core @babel/preset-env webpack
-
-minify:
-	npx webpack --mode=production
