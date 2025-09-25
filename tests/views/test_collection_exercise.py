@@ -2744,8 +2744,8 @@ class TestCollectionExercise(ViewTestCase):
 
         self.assertEqual(response.status_code, 200)
         self.assertIn(
-            "You do not have the required permission to "
-            "access this function under your current role profile".encode(),
+            "You do not have permission to access this page. "
+            "If you believe this is a mistake, contact your SDC champion.".encode(),
             response.data,
         )
 
@@ -2773,8 +2773,8 @@ class TestCollectionExercise(ViewTestCase):
 
         self.assertEqual(response.status_code, 200)
         self.assertIn(
-            "You do not have the required permission to "
-            "access this function under your current role profile".encode(),
+            "You do not have permission to access this page. "
+            "If you believe this is a mistake, contact your SDC champion.".encode(),
             response.data,
         )
 
@@ -2791,8 +2791,8 @@ class TestCollectionExercise(ViewTestCase):
 
         self.assertEqual(response.status_code, 200)
         self.assertIn(
-            "You do not have the required permission to "
-            "access this function under your current role profile".encode(),
+            "You do not have permission to access this page. "
+            "If you believe this is a mistake, contact your SDC champion.".encode(),
             response.data,
         )
 
@@ -2821,8 +2821,8 @@ class TestCollectionExercise(ViewTestCase):
 
         self.assertEqual(response.status_code, 200)
         self.assertIn(
-            "You do not have the required permission to "
-            "access this function under your current role profile".encode(),
+            "You do not have permission to access this page. "
+            "If you believe this is a mistake, contact your SDC champion.".encode(),
             response.data,
         )
 
@@ -2843,8 +2843,8 @@ class TestCollectionExercise(ViewTestCase):
 
         self.assertEqual(response.status_code, 200)
         self.assertIn(
-            "You do not have the required permission to "
-            "access this function under your current role profile".encode(),
+            "You do not have permission to access this page. "
+            "If you believe this is a mistake, contact your SDC champion.".encode(),
             response.data,
         )
 
@@ -3022,13 +3022,15 @@ class TestCollectionExercise(ViewTestCase):
         self.assertNotIn("Choose a version".encode(), response.data)
         self.assertNotIn("Edit version".encode(), response.data)
 
+    @requests_mock.mock()
     @patch("response_operations_ui.controllers.collection_instrument_controllers.get_registry_instrument")
     @patch("response_operations_ui.controllers.collection_exercise_controllers.get_collection_exercises_by_survey")
     @patch("response_operations_ui.common.redis_cache.get_survey_by_shortname")
     @patch("response_operations_ui.common.redis_cache.get_cir_metadata")
     def test_view_ci_versions_metadata_returned(
-        self, mock_cir_details, mock_get_shortname, mock_get_collection_exercises_by_survey, mock_registry
+        self, mock_request, mock_cir_details, mock_get_shortname, mock_get_collection_exercises_by_survey, mock_registry
     ):
+        sign_in_with_permission(self, mock_request, user_permission_surveys_edit_json)
         form_type = "0001"
         period = "201801"
         mock_get_collection_exercises_by_survey.return_value = collection_exercise_list
@@ -3044,13 +3046,15 @@ class TestCollectionExercise(ViewTestCase):
         self.assertIn("Published: 16/07/2024 at 14:26:44".encode(), response.data)
         self.assertIn("Save".encode(), response.data)
 
+    @requests_mock.mock()
     @patch("response_operations_ui.controllers.collection_instrument_controllers.save_registry_instrument")
     @patch("response_operations_ui.views.collection_exercise.build_collection_exercise_details")
     @patch("response_operations_ui.common.redis_cache.get_survey_by_shortname")
     @patch("response_operations_ui.common.redis_cache.get_cir_metadata")
     def test_save_ci_versions(
-        self, mock_cir_details, mock_get_survey_by_shortname, mock_details, mock_save_registry_instrument
+        self, mock_request, mock_cir_details, mock_get_survey_by_shortname, mock_details, mock_save_registry_instrument
     ):
+        sign_in_with_permission(self, mock_request, user_permission_surveys_edit_json)
         post_data = {"formtype": "0001", "ci-versions": "427d40e6-f54a-4512-a8ba-e4dea54ea3dc"}
         mock_details.return_value = self.get_ce_details()
         mock_get_survey_by_shortname.return_value = {"surveyRef": 139}
@@ -3071,6 +3075,7 @@ class TestCollectionExercise(ViewTestCase):
             "cb0711c3-0ac8-41d3-ae0e-567e5ea1ef87",
         )
 
+    @requests_mock.mock()
     @patch("response_operations_ui.views.collection_exercise.build_collection_exercise_details")
     @patch("response_operations_ui.controllers.collection_instrument_controllers.delete_registry_instruments")
     @patch("response_operations_ui.views.collection_exercise.survey_controllers.get_survey_by_shortname")
@@ -3081,6 +3086,7 @@ class TestCollectionExercise(ViewTestCase):
     @patch("response_operations_ui.controllers.collection_instrument_controllers.get_cis_and_cir_version")
     def test_delete_ci_versions(
         self,
+        mock_request,
         mock_collection_instrument,
         mock_collection_exercise,
         mock_delete_registry_instruments,
@@ -3093,6 +3099,7 @@ class TestCollectionExercise(ViewTestCase):
         mock_delete_registry_instruments.return_value = {"status_code": 200}
         mock_collection_instrument.return_value = [{"form_type": "0001", "ci_version": None}]
 
+        sign_in_with_permission(self, mock_request, user_permission_surveys_edit_json)
         post_data = {"formtype": "0001", "ci-versions": "nothing-selected", "period": period}
         response = self.client.post(
             f"/surveys/{short_name}/{period}/view-sample-ci/summary/0001", data=post_data, follow_redirects=True
@@ -3103,12 +3110,18 @@ class TestCollectionExercise(ViewTestCase):
         self.assertIn(form_type.encode(), response.data)
         self.assertIn("Nothing selected".encode(), response.data)
 
+    @requests_mock.mock()
     @patch("response_operations_ui.controllers.collection_instrument_controllers.get_registry_instrument")
     @patch("response_operations_ui.common.redis_cache.get_survey_by_shortname")
     @patch("response_operations_ui.controllers.collection_exercise_controllers.get_collection_exercises_by_survey")
     @patch("response_operations_ui.common.redis_cache.get_cir_metadata")
     def test_view_ci_versions_no_metadata(
-        self, mock_cir_details, mock_get_collection_exercises_by_survey, mock_redis, mock_response
+        self,
+        mock_request,
+        mock_cir_details,
+        mock_get_collection_exercises_by_survey,
+        mock_redis,
+        mock_response,
     ):
         form_type = "0001"
         period = "201801"
@@ -3120,35 +3133,62 @@ class TestCollectionExercise(ViewTestCase):
         mock_response.message.return_value = "No results found"
         mock_redis.return_value = {"short_name": {"survey_ref": survey_id}}
 
+        sign_in_with_permission(self, mock_request, user_permission_surveys_edit_json)
         response = self.client.get(f"/surveys/{short_name}/{period}/view-sample-ci/summary/{form_type}")
         self.assertEqual(response.status_code, 200)
         self.assertIn("Choose CIR version for EQ formtype".encode(), response.data)
         self.assertIn(CIR_ERROR_MESSAGES[ErrorCode.NOT_FOUND].encode(), response.data)
 
-    @patch("requests.get")
+    @requests_mock.mock()
     @patch("response_operations_ui.common.redis_cache.get_survey_by_shortname")
     @patch("response_operations_ui.controllers.collection_exercise_controllers.get_collection_exercises_by_survey")
     def test_view_ci_versions_unable_to_connect_to_cir(
-        self, mock_get_collection_exercises_by_survey, mock_redis, mock_response
+        self, mock_request, mock_get_collection_exercises_by_survey, mock_redis
     ):
         collection_instrument_controllers.get_registry_instrument = Mock()
         form_type = "0001"
         period = "201801"
         mock_get_collection_exercises_by_survey.return_value = collection_exercise_list
-        mock_response = mock_response.return_value
+        mock_response = Mock()
         mock_response.url.return_value = url_cir_get_metadata
         mock_response.status_code.return_value = "E0001"
         mock_response.message.return_value = "Unable to connect to CIR"
         mock_redis.return_value = {"short_name": {"survey_ref": survey_id}}
-
         with patch(
             "response_operations_ui.common.redis_cache.get_cir_metadata",
             Mock(side_effect=ExternalApiError(mock_response, ErrorCode.API_CONNECTION_ERROR)),
         ):
+            sign_in_with_permission(self, mock_request, user_permission_surveys_edit_json)
             response = self.client.get(f"/surveys/{short_name}/{period}/view-sample-ci/summary/{form_type}")
             self.assertEqual(response.status_code, 200)
             self.assertIn("Choose CIR version for EQ formtype".encode(), response.data)
             self.assertIn(CIR_ERROR_MESSAGES[ErrorCode.API_CONNECTION_ERROR].encode(), response.data)
+
+    @requests_mock.mock()
+    def test_post_cir_version_no_permission(self, mock_request):
+        sign_in_with_permission(self, mock_request, user_permission_messages_edit_json)
+        response = self.client.post(
+            f"/surveys/{short_name}/{period}/view-sample-ci/summary/{form_type}", follow_redirects=True
+        )
+
+        self.assertEqual(response.status_code, 200)
+        self.assertIn(
+            "You do not have permission to access this page. "
+            "If you believe this is a mistake, contact your SDC champion.".encode(),
+            response.data,
+        )
+
+    @requests_mock.mock()
+    @patch("response_operations_ui.views.collection_exercise._build_cir_metadata")
+    @patch("response_operations_ui.common.redis_cache.get_survey_by_shortname")
+    def test_get_cir_version_no_permission(self, mock_request, mock_get_shortname, build_cir_metadata):
+        sign_in_with_permission(self, mock_request, user_permission_messages_edit_json)
+        build_cir_metadata.return_value = cir_metadata, ""
+        mock_get_shortname.return_value = {"short_name": {"survey_ref": survey_id}}
+        response = self.client.get(f"/surveys/{short_name}/{period}/view-sample-ci/summary/{form_type}")
+
+        self.assertEqual(response.status_code, 200)
+        self.assertNotIn("Save".encode(), response.data)
 
     def get_ce_details(self):
         eq_cis = {"EQ": self.eq_ci_selectors}
