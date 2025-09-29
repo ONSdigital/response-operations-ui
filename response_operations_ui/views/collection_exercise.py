@@ -1106,6 +1106,7 @@ def view_sample_ci_summary(short_name: str, period: str) -> str:
 @collection_exercise_bp.route("/<short_name>/<period>/view-sample-ci/summary/<form_type>", methods=["GET"])
 @login_required
 def view_ci_versions(short_name: str, period: str, form_type: str) -> str:
+    verify_permission("surveys.edit")
     redis_cache = RedisCache()
     survey = redis_cache.get_survey_by_shortname(short_name)
     long_name = survey.get("longName")

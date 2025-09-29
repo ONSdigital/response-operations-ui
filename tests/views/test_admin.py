@@ -105,8 +105,8 @@ class TestMessage(ViewTestCase):
         self.assertEqual(response.status_code, 200)
         self.assertNotIn("Manage user accounts".encode(), response.data)
         self.assertIn(
-            "You do not have the required permission to "
-            "access this function under your current role profile".encode(),
+            "You do not have permission to access this page. "
+            "If you believe this is a mistake, contact your SDC champion.".encode(),
             response.data,
         )
 
