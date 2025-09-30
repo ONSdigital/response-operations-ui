@@ -5,6 +5,7 @@ from datetime import datetime
 
 import iso8601
 from dateutil import tz
+from dateutil.parser import parse
 from flask import (
     Blueprint,
     abort,
@@ -192,6 +193,29 @@ def _delete_sample_data_if_required():
             logger.error(
                 "Sample deletion failed, will try again on next exercise load", sample_summary_id=sample_summary_id
             )
+
+
+def get_existing_sorted_nudge_events(events):
+    sorted_nudge_list = []
+    nudge_tags = ["nudge_email_0", "nudge_email_1", "nudge_email_2", "nudge_email_3", "nudge_email_4"]
+    nudge_events = {}
+    for nudge in nudge_tags:
+        if nudge in events:
+            nudge_events[nudge] = events[nudge].copy()
+    for key, val in nudge_events.items():
+        for k, v in val.items():
+            if k == "date":
+                nudge_events[key][k] = str(parse(v, fuzzy=True).date())
+    nudge_events = sorted(
+        nudge_events.items(),
+        key=lambda x: (
+            x[1]["date"],
+            x[1]["time"],
+        ),
+    )
+    for k, v in nudge_events:
+        sorted_nudge_list.append(k)
+    return sorted_nudge_list
 
 
 def _get_error_from_session():

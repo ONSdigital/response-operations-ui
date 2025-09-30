@@ -82,7 +82,6 @@ url_get_collection_exercises_link = f"{collection_exercise_root}/link/{collectio
 url_link_sample = f"{collection_exercise_root}/link/{collection_exercise_id}"
 url_collection_exercise_survey_id = f"{collection_exercise_root}/survey/{survey_id}"
 url_update_ce_user_details = f"{collection_exercise_root}/{collection_exercise_id}/userDescription"
-url_get_collection_exercise_events = f"{collection_exercise_root}/{collection_exercise_id}/events"
 url_create_collection_exercise = f"{TestingConfig.COLLECTION_EXERCISE_URL}/collectionexercises"
 url_execute = f"{TestingConfig.COLLECTION_EXERCISE_URL}/collectionexerciseexecution/{collection_exercise_id}"
 url_get_by_survey_with_ref_end_date = f"{collection_exercise_root}/survey/{short_name}/{period}/event/ref_period_end?"
@@ -151,22 +150,10 @@ MOCK_BUILD_COLLECTION_INSTRUMENTS_DETAILS = (
 )
 MOCK_GET_SAMPLE_SUMMARY = "response_operations_ui.views.collection_exercise.get_sample_summary"
 MOCK_GET_COLLECTION_EXERCISE_EVENTS_BY_ID = (
-    "response_operations_ui.controllers.collection_exercise_controllers.get_collection_exercise_events_by_id"
+    "response_operations_ui.views.collection_exercise."
+    "collection_exercise_controllers."
+    "get_collection_exercise_events_by_id"
 )
-
-
-CE_LINK = [sample_summary_id]
-SAMPLE_SUMMARY = {
-    "id": sample_summary_id,
-    "effectiveStartDateTime": "",
-    "effectiveEndDateTime": "",
-    "surveyRef": "",
-    "ingestDateTime": "2018-03-14T14:29:51.325Z",
-    "state": "ACTIVE",
-    "totalSampleUnits": 8,
-    "expectedCollectionInstruments": 1,
-    "areAllSampleUnitsLoaded": True,
-}
 
 EQ_CI = {
     "EQ": [
@@ -211,15 +198,7 @@ CE = {
     "state": "READY_FOR_REVIEW",
     "exerciseRef": "221_201712",
     "userDescription": "exercise description",
-    "events": [
-        {
-            "collectionExerciseId": "14fb3e68-4dca-46db-bf49-04b84e07e77c",
-            "eventStatus": "PROCESSED",
-            "id": "b4a36392-a21f-485b-9dc4-d151a8fcd565",
-            "tag": "mps",
-            "timestamp": "2018-03-16T00:00:00.000Z",
-        }
-    ],
+    "events": [],
 }
 
 CE_PREPROP = CE.copy()
@@ -235,6 +214,7 @@ CE_PREPROP["supplementaryDatasetEntity"] = {
     "filename": "eccb61ad-4eb3-4714-8afd-8c8426960b43.json",
     "dataset_id": "eccb61ad-4eb3-4714-8afd-8c8426960b43",
 }
+
 CE_INIT = CE.copy()
 CE_INIT["state"] = "INIT"
 
@@ -297,52 +277,34 @@ SEFT_SURVEY = {
     "eqVersion": "",
     "surveyMode": "SEFT",
 }
+CE_LINK = [sample_summary_id]
+SAMPLE_SUMMARY = {
+    "id": sample_summary_id,
+    "effectiveStartDateTime": "",
+    "effectiveEndDateTime": "",
+    "surveyRef": "",
+    "ingestDateTime": "2018-03-14T14:29:51.325Z",
+    "state": "ACTIVE",
+    "totalSampleUnits": 8,
+    "expectedCollectionInstruments": 1,
+    "areAllSampleUnitsLoaded": True,
+}
+
 SAMPLE_SUMMARY_INIT = SAMPLE_SUMMARY.copy()
 SAMPLE_SUMMARY_INIT["state"] = "INIT"
 
 CE_EVENTS = [
-    {
-        "id": collection_exercise_event_id,
-        "collectionExerciseId": collection_exercise_id,
-        "tag": "mps",
-        "timestamp": "2018-03-16T00:00:00.000Z",
-        "eventStatus": "PROCESSED",
-    },
-    {
-        "id": collection_exercise_event_id,
-        "collectionExerciseId": collection_exercise_id,
-        "tag": "go_live",
-        "timestamp": "2018-03-17T00:00:00.000Z",
-        "eventStatus": "PROCESSED",
-    },
-    {
-        "id": collection_exercise_event_id,
-        "collectionExerciseId": collection_exercise_id,
-        "tag": "return_by",
-        "timestamp": "2018-03-17T00:00:00.000Z",
-        "eventStatus": "PROCESSED",
-    },
-    {
-        "id": collection_exercise_event_id,
-        "collectionExerciseId": collection_exercise_id,
-        "tag": "reminder",
-        "timestamp": "2018-03-18T00:00:00.000Z",
-        "eventStatus": "PROCESSED",
-    },
-    {
-        "id": collection_exercise_event_id,
-        "collectionExerciseId": collection_exercise_id,
-        "tag": "ref_period_start",
-        "timestamp": "2018-03-16T00:00:00.000Z",
-        "eventStatus": "PROCESSED",
-    },
-    {
-        "id": collection_exercise_event_id,
-        "collectionExerciseId": collection_exercise_id,
-        "tag": "ref_period_end",
-        "timestamp": "2019-03-16T00:00:00.000Z",
-        "eventStatus": "PROCESSED",
-    },
+    {"tag": "mps", "timestamp": "2018-10-11T22:00:00.000+0000", "eventStatus": "PROCESSED"},
+    {"tag": "go_live", "timestamp": "2018-10-11T22:00:00.000+0000", "eventStatus": "PROCESSED"},
+    {"tag": "return_by", "timestamp": "2018-10-30T22:00:00.000+0000", "eventStatus": "PROCESSED"},
+    {"tag": "reminder", "timestamp": "2018-10-12T22:00:00.000+0000", "eventStatus": "PROCESSED"},
+    {"tag": "exercise_end", "timestamp": "2018-10-13T22:00:00.000+0000", "eventStatus": "PROCESSED"},
+    {"tag": "nudge_email_0", "timestamp": "2018-10-14T22:00:00.000+0000", "eventStatus": "PROCESSED"},
+    {"tag": "nudge_email_1", "timestamp": "2018-10-14T22:00:00.000+0000", "eventStatus": "PROCESSED"},
+    {"tag": "nudge_email_2", "timestamp": "2018-10-15T22:00:00.000+0000", "eventStatus": "PROCESSED"},
+    {"tag": "nudge_email_3", "timestamp": "2018-10-16T22:00:00.000+0000", "eventStatus": "PROCESSED"},
+    {"tag": "ref_period_start", "timestamp": "2018-10-11T22:00:00.000+0000", "eventStatus": "PROCESSED"},
+    {"tag": "ref_period_end", "timestamp": "2019-10-11T22:00:00.000+0000", "eventStatus": "PROCESSED"},
 ]
 
 
@@ -938,7 +900,7 @@ class TestCollectionExercise(ViewTestCase):
         self.assertEqual(response.status_code, 200)
         self.assertIn("Create collection exercise".encode(), response.data)
 
-    @mock_decorator(CE, SEFT_SURVEY, SEFT_CI)
+    @mock_decorator(CE, SEFT_SURVEY, SEFT_CI, ce_events=CE_EVENTS)
     @requests_mock.mock()
     def test_create_collection_exercise(self, mock_request):
         sign_in_with_permission(self, mock_request, user_permission_surveys_edit_json)
@@ -952,7 +914,6 @@ class TestCollectionExercise(ViewTestCase):
             [{"json": {}, "status_code": 200}, {"json": CE, "status_code": 200}],
         )
         mock_request.get(url_get_survey_by_short_name, json=SEFT_SURVEY)
-        mock_request.get(url_get_collection_exercise_events, json=CE_EVENTS)
         mock_request.get(url_get_collection_exercises_link, json=CE_LINK)
         mock_request.get(url_get_sample_summary, json=SAMPLE_SUMMARY)
         mock_request.post(url_create_collection_exercise, status_code=200)
@@ -1122,12 +1083,12 @@ class TestCollectionExercise(ViewTestCase):
         self.assertEqual(response.status_code, 200)
         self.assertIn("Remove sample from test 221_201712".encode(), response.data)
 
+    @mock_decorator(CE_EVENTS)
     @requests_mock.mock()
     def test_get_create_ce_event_form_success(self, mock_request):
         sign_in_with_permission(self, mock_request, user_permission_surveys_edit_json)
         mock_request.get(url_survey_shortname, json=SEFT_SURVEY)
         mock_request.get(url_collection_exercise_survey_id, json=[collection_exercise])
-        mock_request.get(url_get_collection_exercise_events, json=CE_EVENTS)
 
         response = self.client.get(
             f"/surveys/MBS/201801/{collection_exercise_id}/confirm-create-event/mps", follow_redirects=True
@@ -1155,12 +1116,12 @@ class TestCollectionExercise(ViewTestCase):
         self.assertEqual(response.status_code, 200)
         self.assertIn("Event date added.".encode(), response.data)
 
+    @mock_decorator(CE_EVENTS)
     @requests_mock.mock()
     def test_create_collection_exercise_invalid_form(self, mock_request):
         sign_in_with_permission(self, mock_request, user_permission_surveys_edit_json)
         mock_request.get(url_survey_shortname, json=SEFT_SURVEY)
         mock_request.get(url_collection_exercise_survey_id, json=[collection_exercise])
-        mock_request.get(url_get_collection_exercise_events, json=CE_EVENTS)
 
         create_ce_event_form = {"day": "50", "month": "01", "year": "2018", "hour": "01", "minute": "00"}
 
@@ -1172,15 +1133,14 @@ class TestCollectionExercise(ViewTestCase):
 
         self.assertEqual(response.status_code, 200)
 
+    @mock_decorator(CE_EVENTS)
     @requests_mock.mock()
     def test_create_collection_exercise_date_in_past(self, mock_request):
         sign_in_with_permission(self, mock_request, user_permission_surveys_edit_json)
         mock_request.get(url_survey_shortname, json=SEFT_SURVEY)
         mock_request.get(url_collection_exercise_survey_id, json=[collection_exercise])
-        mock_request.get(url_get_collection_exercise_events, json=CE_EVENTS)
 
         create_ce_event_form = {"day": "01", "month": "01", "year": "2018", "hour": "01", "minute": "00"}
-
         response = self.client.post(
             f"/surveys/MBS/201801/{collection_exercise_id}/create-event/mps",
             data=create_ce_event_form,
@@ -1195,8 +1155,6 @@ class TestCollectionExercise(ViewTestCase):
     @mock.patch("response_operations_ui.controllers.collection_exercise_controllers.create_collection_exercise_event")
     def test_create_collection_events_not_set_sequentially(self, mock_request, mock_ce_event):
         sign_in_with_permission(self, mock_request, user_permission_surveys_edit_json)
-
-        mock_request.get(url_get_collection_exercise_events, json=events_2030)
         mock_ce_event.return_value = "Collection exercise events must be set sequentially"
 
         create_ce_event_form = {"day": "01", "month": "01", "year": "2029", "hour": "01", "minute": "00"}
@@ -1234,7 +1192,6 @@ class TestCollectionExercise(ViewTestCase):
         mock_request.get(url_get_survey_by_short_name, json=SEFT_SURVEY)
         mock_request.get(url_ces_by_survey, json=CE)
         mock_request.get(url_ce_by_id, json=collection_exercise_details["collection_exercise"])
-        mock_request.get(url_get_collection_exercise_events, json=nudge_events)
         mock_request.get(url_link_sample, json=[sample_summary_id])
         mock_request.get(url_get_sample_summary, json=SAMPLE_SUMMARY)
         mock_request.get(f"{url_get_collection_instrument}?{ci_search_string}", json=EQ_CI, complete_qs=True)
@@ -1254,7 +1211,6 @@ class TestCollectionExercise(ViewTestCase):
         def test_create_collection_events_not_set_sequentially(self, mock_request, mock_ce_event):
             mock_request.get(url_survey_shortname, json=SEFT_SURVEY)
             mock_request.get(url_collection_exercise_survey_id, json=[collection_exercise])
-            mock_request.get(url_get_collection_exercise_events, json=nudge_events)
             mock_ce_event.return_value = "Collection exercise events must be set sequentially"
 
             create_ce_event_form = {"day": "15", "month": "10", "year": "2018", "hour": "01", "minute": "00"}
@@ -1462,13 +1418,13 @@ class TestCollectionExercise(ViewTestCase):
         self.assertNotIn("Collection instrument loaded".encode(), response.data)
         self.assertIn("Error: No collection instrument supplied".encode(), response.data)
 
+    @mock_decorator(CE_EVENTS)
     @requests_mock.mock()
     def test_survey_edit_permission_collection_exercise(self, mock_request):
         sign_in_with_permission(self, mock_request, user_permission_surveys_edit_json)
         mock_request.get(url_get_survey_by_short_name, json=EQ_SURVEY)
         mock_request.get(url_ces_by_survey, json=CE)
         mock_request.get(url_ce_by_id, json=collection_exercise_details["collection_exercise"])
-        mock_request.get(url_get_collection_exercise_events, json=CE_EVENTS)
         mock_request.get(url_link_sample, json=[sample_summary_id])
         mock_request.get(url_get_sample_summary, json=SAMPLE_SUMMARY)
         mock_request.get(f"{url_get_collection_instrument}?{ci_search_string}", json=EQ_CI, complete_qs=True)
@@ -1521,12 +1477,12 @@ class TestCollectionExercise(ViewTestCase):
         self.assertIn("Upload SEFT collection instrument".encode(), response.data)
         self.assertIn("Done".encode(), response.data)
 
+    @mock_decorator(CE_EVENTS)
     @requests_mock.mock()
     def test_seft_loaded_load_collection_instrument_page_no_survey_permission(self, mock_request):
         mock_request.get(url_get_survey_by_short_name, json=SEFT_SURVEY)
         mock_request.get(url_ces_by_survey, json=CE)
         mock_request.get(url_ce_by_id, json=collection_exercise_details["collection_exercise"])
-        mock_request.get(url_get_collection_exercise_events, json=CE_EVENTS)
         mock_request.get(
             f"{url_get_collection_instrument}?{ci_search_string}",
             json=SEFT_CI,
@@ -1545,6 +1501,7 @@ class TestCollectionExercise(ViewTestCase):
         self.assertNotIn("Remove SEFT file".encode(), response.data)
         self.assertIn("Done".encode(), response.data)
 
+    @mock_decorator(CE_EVENTS)
     @requests_mock.mock()
     @patch(
         "response_operations_ui.views.collection_exercise.collection_instrument_controllers"
@@ -1565,7 +1522,6 @@ class TestCollectionExercise(ViewTestCase):
         mock_request.get(url_get_survey_by_short_name, json=EQ_SURVEY)
         mock_request.get(url_ces_by_survey, json=CE)
         mock_request.get(url_ce_by_id, json=CE)
-        mock_request.get(url_get_collection_exercise_events, json=CE_EVENTS)
         mock_request.get(f"{url_get_collection_instrument}?{ci_search_string}", json=EQ_CI, complete_qs=True)
         mock_request.get(
             f"{url_get_collection_instrument}?{ci_type_search_string_eq}", json=EQ_CI_SELECTORS, complete_qs=True
@@ -1583,7 +1539,7 @@ class TestCollectionExercise(ViewTestCase):
         self.assertIn("btn-add-ci".encode(), response.data)
         self.assertIn("Done".encode(), response.data)
 
-    @mock_decorator(CE_READY, EQ_SURVEY)
+    @mock_decorator(CE_READY, EQ_SURVEY, ce_events=CE_EVENTS)
     @requests_mock.mock()
     @patch(
         "response_operations_ui.views.collection_exercise.collection_instrument_controllers"
@@ -1593,7 +1549,6 @@ class TestCollectionExercise(ViewTestCase):
         self, mock_request, mock_get_linked_cis_and_cir_version
     ):
         mock_request.get(url_ce_by_id, json=CE)
-        mock_request.get(url_get_collection_exercise_events, json=CE_EVENTS)
         mock_request.get(f"{url_get_collection_instrument}?{ci_search_string}", json=EQ_CI, complete_qs=True)
         mock_request.get(
             f"{url_get_collection_instrument}?{ci_type_search_string_eq}", json=EQ_CI_SELECTORS, complete_qs=True
@@ -1619,13 +1574,13 @@ class TestCollectionExercise(ViewTestCase):
         self.assertIn("1 EQ collection instrument selected".encode(), response.data)
         self.assertNotIn("form-unselect-eq-ci-1".encode(), response.data)
 
+    @mock_decorator(CE_EVENTS)
     @requests_mock.mock()
     def test_loaded_sample_upload_sample_page_survey_permission(self, mock_request):
         sign_in_with_permission(self, mock_request, user_permission_surveys_edit_json)
         mock_request.get(url_get_survey_by_short_name, json=EQ_SURVEY)
         mock_request.get(url_ces_by_survey, json=CE)
         mock_request.get(url_ce_by_id, json=CE)
-        mock_request.get(url_get_collection_exercise_events, json=CE_EVENTS)
         mock_request.get(f"{url_get_collection_instrument}?{ci_search_string}", json=EQ_CI, complete_qs=True)
         mock_request.get(
             f"{url_get_collection_instrument}?{ci_type_search_string_eq}", json=EQ_CI_SELECTORS, complete_qs=True
@@ -1644,6 +1599,7 @@ class TestCollectionExercise(ViewTestCase):
         self.assertIn("Collection instruments".encode(), response.data)
         self.assertIn("Done".encode(), response.data)
 
+    @mock_decorator(CE_EVENTS)
     @requests_mock.mock()
     def test_upload_sample_page_no_survey_permission(self, mock_request):
         # Sign in without correct permissions
@@ -1651,7 +1607,6 @@ class TestCollectionExercise(ViewTestCase):
         mock_request.get(url_get_survey_by_short_name, json=EQ_SURVEY)
         mock_request.get(url_ces_by_survey, json=CE)
         mock_request.get(url_ce_by_id, json=CE)
-        mock_request.get(url_get_collection_exercise_events, json=CE_EVENTS)
         mock_request.get(f"{url_get_collection_instrument}?{ci_search_string}", json=EQ_CI, complete_qs=True)
         mock_request.get(
             f"{url_get_collection_instrument}?{ci_type_search_string_eq}", json=EQ_CI_SELECTORS, complete_qs=True
@@ -2001,7 +1956,7 @@ class TestCollectionExercise(ViewTestCase):
     ):
         collection_instrument_controllers.get_registry_instrument = Mock()
         mock_get_collection_exercises_by_survey.return_value = [CE]
-        mock_response = mock_response.return_value
+        mock_response = Mock()
         mock_response.url.return_value = url_cir_get_metadata
         mock_response.status_code.return_value = "E0001"
         mock_response.message.return_value = "Unable to connect to CIR"
