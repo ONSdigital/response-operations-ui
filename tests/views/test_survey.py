@@ -614,15 +614,16 @@ class TestSurvey(ViewTestCase):
         _sort_collection_exercise(collection_exercises)
 
         # Then CEs should be in order by mps date
-        # And CEs without mps date should be at the end
+        # And CEs without mps date should be at the end <-- THIS IS INCORRECT, THE TEST SHOWS IT IS AT THE START !!
+        # TODO: THIS TEST DOES NOT SHOW THE ORDER WHERE WE HAVE MULTIPLE CEs WITHOUT MPS DATES
         ce_ids_in_order = [ce["id"] for ce in collection_exercises]
         self.assertEqual(
             ce_ids_in_order,
             [
-                "48b6c58a-bf5b-4bb3-8d7d-5e205ff3a0fd",
-                "9f9d28c6-d010-47cc-832c-6ab9b741ee96",
-                "23a83a62-87dd-4c6c-97e2-4b207f7e57f5",
-                "bd4d2bec-28d3-421c-a399-b2840e52e36e",
+                "48b6c58a-bf5b-4bb3-8d7d-5e205ff3a0fd", # created: 2018-05-11T13:12:18.339Z mps: missing
+                "9f9d28c6-d010-47cc-832c-6ab9b741ee96", # created: 2018-05-11T13:12:18.324Z mps: Friday 19 Oct 2018 00:00 GMT
+                "23a83a62-87dd-4c6c-97e2-4b207f7e57f5", # created: 2018-05-11T13:12:18.315Z mps: Wednesday 19 Sep 2018 00:00 GMT
+                "bd4d2bec-28d3-421c-a399-b2840e52e36e", # created: 2018-05-11T13:12:18.300Z mps: Friday 20 Jul 2018 00:00 GMT
             ],
         )
 
