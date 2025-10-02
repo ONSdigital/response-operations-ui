@@ -1,7 +1,6 @@
 import json
 import os
 import unittest
-from copy import deepcopy
 
 import responses
 
@@ -42,9 +41,7 @@ class TestSampleControllers(unittest.TestCase):
             sample_state = scenario[1]
             expected_result = scenario[2]
 
-            exercise_details["collection_exercise"]["state"] = exercise_state
-            exercise_details["sample_summary"]["state"] = sample_state
-            actual = sample_controllers.sample_summary_state_check_required(exercise_details)
+            actual = sample_controllers.sample_summary_state_check_required(exercise_state, {"state": sample_state})
             self.assertEqual(expected_result, actual)
 
     def test_sample_summary_state_check_required_no_sample_loaded(self):
@@ -52,14 +49,12 @@ class TestSampleControllers(unittest.TestCase):
             ["SCHEDULED", False],
             ["CREATED", False],
         ]
-        copied_exercise_details = deepcopy(exercise_details)
-        copied_exercise_details["sample_summary"] = None
+
         for scenario in scenarios:
             exercise_state = scenario[0]
             expected_result = scenario[1]
 
-            copied_exercise_details["collection_exercise"]["state"] = exercise_state
-            actual = sample_controllers.sample_summary_state_check_required(copied_exercise_details)
+            actual = sample_controllers.sample_summary_state_check_required(exercise_state, {})
             self.assertEqual(expected_result, actual)
 
     def test_check_if_all_sample_units_present_for_sample_summary_success(self):

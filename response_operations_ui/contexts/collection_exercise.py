@@ -27,20 +27,22 @@ CI_TABLE_LINK_TEXT = {
 }
 
 
-def build_ce_context(ce_details: dict, has_edit_permission: bool, locked: bool) -> dict:
-    ce = ce_details["collection_exercise"]
-    events = ce_details["events"]
-    short_name = ce_details["survey"]["shortName"]
-    survey_ref = ce_details["survey"]["surveyRef"]
-    collection_instruments = ce_details["collection_instruments"]
+def build_ce_context(
+    collection_exercise, survey, collection_instruments, events, has_edit_permission: bool, locked: bool
+) -> dict:
+    ce = collection_exercise
+    events = events
+    short_name = survey["shortName"]
+    survey_ref = survey["surveyRef"]
+    collection_instruments = collection_instruments
 
     response_chasing = (
-        _build_response_chasing(ce["id"], ce_details["survey"]["id"]) if ce["state"] in ("Live", "Ended") else None
+        _build_response_chasing(ce["id"], survey["id"]) if ce["mapped_state"] in ("Live", "Ended") else None
     )
     ci_table = _build_ci_table(
         collection_instruments,
         locked,
-        ce_details["survey"]["surveyMode"],
+        survey["surveyMode"],
         short_name,
         ce["exerciseRef"],
         ce["id"],

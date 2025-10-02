@@ -9,48 +9,46 @@ def app():
 
 
 @pytest.fixture()
-def ce_details():
+def survey():
     return {
-        "survey": {
-            "id": "c23bb1c1-5202-43bb-8357-7a07c844308f",
-            "shortName": "MWSS",
-            "longName": "Monthly Wages and Salaries Survey",
-            "surveyRef": "134",
-            "legalBasis": "Statistics of Trade Act 1947",
-            "surveyType": "Business",
-            "surveyMode": "EQ",
-            "legalBasisRef": "STA1947",
-            "eqVersion": "v2",
-        },
-        "collection_exercise": {
-            "id": "7702d7fd-f998-499d-a972-e2906b19e6cf",
-            "surveyId": "c23bb1c1-5202-43bb-8357-7a07c844308f",
-            "name": None,
-            "actualExecutionDateTime": None,
-            "scheduledExecutionDateTime": None,
-            "scheduledStartDateTime": None,
-            "actualPublishDateTime": None,
-            "periodStartDateTime": None,
-            "periodEndDateTime": None,
-            "scheduledReturnDateTime": None,
-            "scheduledEndDateTime": None,
-            "executedBy": None,
-            "eqVersion": "v3",
-            "state": "Created",
-            "exerciseRef": "021123",
-            "userDescription": None,
-            "created": "2023-11-02T16:52:03.029Z",
-            "updated": None,
-            "deleted": None,
-            "validationErrors": None,
-            "events": [],
-            "sampleSize": None,
-            "sampleLinks": [],
-        },
-        "events": {},
-        "sample_summary": None,
-        "collection_instruments": {},
-        "eq_ci_selectors": [],
+        "id": "c23bb1c1-5202-43bb-8357-7a07c844308f",
+        "shortName": "MWSS",
+        "longName": "Monthly Wages and Salaries Survey",
+        "surveyRef": "134",
+        "legalBasis": "Statistics of Trade Act 1947",
+        "surveyType": "Business",
+        "surveyMode": "EQ",
+        "legalBasisRef": "STA1947",
+        "eqVersion": "v2",
+    }
+
+
+@pytest.fixture()
+def collection_exercise():
+    return {
+        "id": "7702d7fd-f998-499d-a972-e2906b19e6cf",
+        "surveyId": "c23bb1c1-5202-43bb-8357-7a07c844308f",
+        "name": None,
+        "actualExecutionDateTime": None,
+        "scheduledExecutionDateTime": None,
+        "scheduledStartDateTime": None,
+        "actualPublishDateTime": None,
+        "periodStartDateTime": None,
+        "periodEndDateTime": None,
+        "scheduledReturnDateTime": None,
+        "scheduledEndDateTime": None,
+        "executedBy": None,
+        "eqVersion": "v3",
+        "mapped_state": "Created",
+        "exerciseRef": "021123",
+        "userDescription": None,
+        "created": "2023-11-02T16:52:03.029Z",
+        "updated": None,
+        "deleted": None,
+        "validationErrors": None,
+        "events": [],
+        "sampleSize": None,
+        "sampleLinks": [],
     }
 
 
@@ -167,9 +165,8 @@ def expected_ce_context_no_permission():
 
 
 @pytest.fixture()
-def ce_details_with_ci(ce_details):
-    ce_details_with_ci = ce_details.copy()
-    ce_details_with_ci["collection_instruments"] = {
+def collection_instruments():
+    return {
         "EQ": [
             {
                 "classifiers": {"COLLECTION_EXERCISE": [], "RU_REF": [], "eq_id": "mbs", "form_type": "0001"},
@@ -180,13 +177,11 @@ def ce_details_with_ci(ce_details):
             }
         ]
     }
-    return ce_details_with_ci
 
 
 @pytest.fixture()
-def ce_details_event_value_dicts(ce_details):
-    ce_details_event_value_dicts = ce_details.copy()
-    ce_details_event_value_dicts["events"] = {
+def event_value_dicts():
+    return {
         "go_live": {
             "day": "Friday",
             "date": "03 Nov 2023",
@@ -204,13 +199,11 @@ def ce_details_event_value_dicts(ce_details):
             "event_status": "SCHEDULED",
         },
     }
-    return ce_details_event_value_dicts
 
 
 @pytest.fixture()
-def ce_details_event_in_the_past(ce_details):
-    ce_details_event_in_the_past = ce_details.copy()
-    ce_details_event_in_the_past["events"] = {
+def event_in_the_past():
+    return {
         "go_live": {
             "day": "Friday",
             "date": "03 Nov 2022",
@@ -220,13 +213,11 @@ def ce_details_event_in_the_past(ce_details):
             "event_status": "SCHEDULED",
         }
     }
-    return ce_details_event_in_the_past
 
 
 @pytest.fixture()
-def ce_details_dynamic_event(ce_details):
-    ce_details_dynamic_event = ce_details.copy()
-    ce_details_dynamic_event["events"] = {
+def dynamic_event():
+    return {
         "reminder": {
             "day": "Friday",
             "date": "04 Nov 2023",
@@ -252,19 +243,18 @@ def ce_details_dynamic_event(ce_details):
             "event_status": "SCHEDULED",
         },
     }
-    return ce_details_dynamic_event
 
 
 @pytest.fixture()
-def ce_details_dynamic_event_deleted(ce_details_dynamic_event):
-    ce_details_dynamic_event_deleted = ce_details_dynamic_event.copy()
-    del ce_details_dynamic_event_deleted["events"]["reminder2"]
-    return ce_details_dynamic_event_deleted
+def dynamic_event_deleted(dynamic_event):
+    dynamic_event_deleted = dynamic_event.copy()
+    del dynamic_event_deleted["reminder2"]
+    return dynamic_event_deleted
 
 
 @pytest.fixture()
-def collection_exercises_with_details(ce_details):
-    collection_exercises_with_details = ce_details["collection_exercise"].copy()
+def collection_exercises_with_details(collection_exercise):
+    collection_exercises_with_details = collection_exercise.copy()
     collection_exercises_with_details["responseStatus"] = "Not started"
     collection_exercises_with_details["companyName"] = "RUNAME1_COMPANY1 RUNNAME2_COMPANY1 "
     collection_exercises_with_details["companyRegion"] = "GB"
@@ -338,12 +328,6 @@ def multiple_reporting_units(reporting_unit):
         },
     )
     return multiple_reporting_units
-
-
-@pytest.fixture()
-def survey_details(ce_details):
-    survey_details = ce_details["survey"].copy()
-    return survey_details
 
 
 @pytest.fixture()

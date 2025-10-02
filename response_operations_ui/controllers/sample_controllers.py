@@ -119,7 +119,7 @@ def delete_sample(sample_summary_id: str) -> None:
     return
 
 
-def sample_summary_state_check_required(ce_details: dict) -> bool:
+def sample_summary_state_check_required(state, sample) -> bool:
     """
     Determines whether we need to check the sample summary to see if all the sample units have been loaded.
     We only need to do that in a few circumstances, generally when the collection exercise is still being created and
@@ -128,7 +128,7 @@ def sample_summary_state_check_required(ce_details: dict) -> bool:
     :param ce_details: A dict generated from the 'build_collection_exercise_details' function
     :return: True if we need to check and possibly modify the state of the sample summary, false otherwise.
     """
-    ce_state = ce_details["collection_exercise"]["state"]
+    ce_state = state
     ce_state_where_sample_summary_is_active = [
         "READY_FOR_REVIEW",
         "FAILEDVALIDATION",
@@ -140,5 +140,5 @@ def sample_summary_state_check_required(ce_details: dict) -> bool:
         "ENDED",
     ]
     return ce_state not in ce_state_where_sample_summary_is_active and (
-        ce_details["sample_summary"] is not None and ce_details["sample_summary"].get("state") == "INIT"
+        sample is not None and sample.get("state") == "INIT"
     )

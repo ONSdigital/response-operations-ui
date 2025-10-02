@@ -12,9 +12,9 @@
     }}
 {% endif %}
 {% set status_event = '' %}
-{% if ce.state == 'Ended' %}
+{% if ce.mapped_state == 'Ended' %}
     {% set class = 'ons-status ons-status--dead' %}
-{% elif ce.state == 'Live' %}
+{% elif ce.mapped_state == 'Live' %}
     {% set class = 'ons-status ons-status--success' %}
     {% if ce.event_status == 'Processing' or ce.event_status == 'Retrying' %}
       {% set class = 'ons-status ons-status--pending' %}
@@ -24,7 +24,7 @@
       {% set class = 'ons-status ons-status--error' %}
       {% set status_event = '(' + exercise.event_status + ')' %}
     {% endif %}
-{% elif ce.state == 'Created' or ce.state == 'Scheduled'%}
+{% elif ce.mapped_state == 'Created' or ce.mapped_state == 'Scheduled'%}
     {% set class = 'ons-status ons-status--info' %}
 {% else %}
     {% set class = 'ons-status ons-status--info' %}
@@ -33,7 +33,7 @@
 {% set descriptionList = [{
     "term": "Status:",
     "descriptions": [{
-        "description": '<span class="'+ class + '">'+ ce.state + status_event +'</span>',
+        "description": '<span class="'+ class + '">'+ ce.mapped_state + status_event +'</span>',
         "id": "ce_status"
     }]
 }] %}
@@ -69,7 +69,7 @@
         "itemsList": descriptionList
     })
 }}
-{% if show_set_live_button %}
+{% if show_set_live_button and has_edit_permission %}
     <form id="form-ready-for-live" action="" class="form ons-u-mb-l" method="post" enctype="multipart/form-data">
         <input type="hidden" name="csrf_token" value="{{ csrf_token() }}" />
         {{
