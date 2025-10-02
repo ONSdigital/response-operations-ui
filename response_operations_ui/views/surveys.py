@@ -168,11 +168,13 @@ def create_survey():
 def _sort_collection_exercise(collection_exercises):
     collection_exercises.sort(
         key=lambda ce: (
-            # datetime.strptime(ce["events"]["mps"]["date"], "%d %b %Y") if "mps" in ce["events"] else datetime.strptime(
+            # datetime.strptime(ce["events"]["mps"]["date"], "%d %b %Y") 
+            #     if "mps" in ce["events"] else datetime.strptime(
             #     ce["created"], "%Y-%m-%dT%H:%M:%S.%fZ")
             # ce["state"],
-            datetime.strptime(ce["events"]["mps"]["date"], "%d %b %Y") if "mps" in ce["events"] else datetime
-            .max
+            datetime.strptime(ce["events"]["mps"]["date"], "%d %b %Y")
+            if "mps" in ce["events"]
+            else datetime.max
         ),
         reverse=True,
     )
