@@ -25,11 +25,8 @@ module.exports = {
                 }
             }, {
                 test: /\.(sass|scss|svg|png|jpe?g)$/,
+                type: "asset/resource",
                 use: [
-                    {
-                        loader: 'file-loader',
-                        options: { outputPath: 'css', name: 'main.css'}
-                    },
                     {
                         loader: "resolve-url-loader"
                     },

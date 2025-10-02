@@ -15,35 +15,7 @@ Use pipenv to create a virtualenv and install dependencies
 ```bash
 pipenv install
 ```
-
-Ensure you have Node.js version >=10 installed.  The recommended way to do this is to use Creationix Node Version Manager, which works on Linux and MacOSX systems:
-
-```bash
-curl -o- https://raw.githubusercontent.com/creationix/nvm/v0.33.11/install.sh | bash
-```
-
-After this, run
-
-```bash
-nvm use
-```
-
-...and the node version specified in `.nvmrc` will be selected.
-
-Then, you only need run
-
-```bash
-npm install
-```
-
-...and the task runner will be installed
-
-You can run gulp tasks using `npm run gulp <taskname>`, or just `gulp` if you have `gulp` globally installed (`npm i -g gulpjs`)
-
-For a basic build, you can just have node >=10 installed, and run `make build` to run any build tasks, which includes the installation of node packages, and running compilation/transpilation tasks.
-
-Once these have been installed the app can be run from the root directory using the following
-
+And run the application using
 ```bash
 pipenv run python run.py
 ```
@@ -85,19 +57,35 @@ To update to a different version of the Design System:
 - run `make load-design-system-templates` script
 
 ### Specific response-operations-ui styling and js
-Styling is implemented using scss and javascript. You can find the styling files in [the static folder](response_operations_ui/static)
+Styling and frontend scripts are implemented using scss and javascript. You can find the minimised files in 
+[the static folder](response_operations_ui/static) and the working files in [the assets folder](response_operations_ui/assets).
 
-When the application is run the scss files are converted into css and they are minimised into one file, `all.css.min`
+Each of these working files are minimised into respective css and js files which are loaded when the application is run.
+The scss files are minimised into one file, `all.css` and the js files are minimised into two files, `main.js.min` and 
+`selected_ci_functions.min.js`
 
-Similarly the js files are minimised into one file, `all.js.min`
+It is a manual step to minimise the JavaScript and scss.
 
-It is a manual step to minimise the JavaScript
+Ensure you have Node.js version >=10 installed.  The recommended way to do this is to use Creationix Node Version Manager, which works on Linux and MacOSX systems:
 
 ```bash
-make minify-install
-make minify
+curl -o- https://raw.githubusercontent.com/creationix/nvm/v0.33.11/install.sh | bash
 ```
 
+After this, run
+
+```bash
+nvm use
+```
+
+to select the version specified in `.nvmrc`
+
+Then to install the necessary node packages and minify files, run:
+
+```bash
+npm install
+make minify
+```
 
 ## Test the application
 
