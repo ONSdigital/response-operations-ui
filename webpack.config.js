@@ -26,6 +26,9 @@ module.exports = {
             }, {
                 test: /\.(sass|scss|svg|png|jpe?g)$/,
                 type: "asset/resource",
+                generator: {
+                    filename: 'css/main.css'
+                },
                 use: [
                     {
                         loader: "resolve-url-loader"
