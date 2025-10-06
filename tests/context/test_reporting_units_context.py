@@ -7,7 +7,7 @@ def test_has_both_edit_permission(
     app,
     collection_exercises_with_details,
     reporting_unit,
-    survey_details,
+    survey,
     survey_respondents,
     case,
     expected_ru_context,
@@ -16,7 +16,7 @@ def test_has_both_edit_permission(
         context = build_reporting_units_context(
             collection_exercises_with_details,
             reporting_unit,
-            survey_details,
+            survey,
             survey_respondents,
             {"reporting_unit_edit": True, "messages_edit": True},
         )
@@ -32,7 +32,7 @@ def test_no_reporting_units_edit_permission(
     app,
     collection_exercises_with_details,
     reporting_unit,
-    survey_details,
+    survey,
     survey_respondents,
     case,
 ):
@@ -40,7 +40,7 @@ def test_no_reporting_units_edit_permission(
         context = build_reporting_units_context(
             collection_exercises_with_details,
             reporting_unit,
-            survey_details,
+            survey,
             survey_respondents,
             {"reporting_unit_edit": False, "messages_edit": True},
         )
@@ -54,7 +54,7 @@ def test_no_messages_edit_permission(
     app,
     collection_exercises_with_details,
     reporting_unit,
-    survey_details,
+    survey,
     survey_respondents,
     case,
 ):
@@ -62,7 +62,7 @@ def test_no_messages_edit_permission(
         context = build_reporting_units_context(
             collection_exercises_with_details,
             reporting_unit,
-            survey_details,
+            survey,
             survey_respondents,
             {"reporting_unit_edit": True, "messages_edit": False},
         )
@@ -71,13 +71,13 @@ def test_no_messages_edit_permission(
 
 
 def test_collection_exercise_in_progress(
-    app, in_progress_collection_exercise_with_details, reporting_unit, survey_details, survey_respondents, case
+    app, in_progress_collection_exercise_with_details, reporting_unit, survey, survey_respondents, case
 ):
     with app.test_request_context():
         context = build_reporting_units_context(
             in_progress_collection_exercise_with_details,
             reporting_unit,
-            survey_details,
+            survey,
             survey_respondents,
             {"reporting_unit_edit": True, "messages_edit": True},
         )
@@ -87,13 +87,13 @@ def test_collection_exercise_in_progress(
 
 
 def test_collection_exercise_completed(
-    app, completed_collection_exercise_with_details, reporting_unit, survey_details, survey_respondents, case
+    app, completed_collection_exercise_with_details, reporting_unit, survey, survey_respondents, case
 ):
     with app.test_request_context():
         context = build_reporting_units_context(
             completed_collection_exercise_with_details,
             reporting_unit,
-            survey_details,
+            survey,
             survey_respondents,
             {"reporting_unit_edit": True, "messages_edit": True},
         )
@@ -103,13 +103,13 @@ def test_collection_exercise_completed(
 
 
 def test_collection_exercise_no_longer_required(
-    app, no_longer_required_collection_exercise_with_details, reporting_unit, survey_details, survey_respondents, case
+    app, no_longer_required_collection_exercise_with_details, reporting_unit, survey, survey_respondents, case
 ):
     with app.test_request_context():
         context = build_reporting_units_context(
             no_longer_required_collection_exercise_with_details,
             reporting_unit,
-            survey_details,
+            survey,
             survey_respondents,
             {"reporting_unit_edit": True, "messages_edit": True},
         )
@@ -119,13 +119,13 @@ def test_collection_exercise_no_longer_required(
 
 
 def test_collection_exercise_error(
-    app, error_collection_exercise_with_details, reporting_unit, survey_details, survey_respondents, case
+    app, error_collection_exercise_with_details, reporting_unit, survey, survey_respondents, case
 ):
     with app.test_request_context():
         context = build_reporting_units_context(
             error_collection_exercise_with_details,
             reporting_unit,
-            survey_details,
+            survey,
             survey_respondents,
             {"reporting_unit_edit": True, "messages_edit": True},
         )
@@ -138,7 +138,7 @@ def test_respondent_active(
     app,
     collection_exercises_with_details,
     reporting_unit,
-    survey_details,
+    survey,
     survey_respondents,
     case,
     expected_ru_context,
@@ -147,7 +147,7 @@ def test_respondent_active(
         context = build_reporting_units_context(
             collection_exercises_with_details,
             reporting_unit,
-            survey_details,
+            survey,
             survey_respondents,
             {"reporting_unit_edit": True, "messages_edit": True},
         )
@@ -160,7 +160,7 @@ def test_respondent_suspended(
     app,
     collection_exercises_with_details,
     reporting_unit,
-    survey_details,
+    survey,
     suspended_survey_respondents,
     case,
     expected_ru_context,
@@ -169,7 +169,7 @@ def test_respondent_suspended(
         context = build_reporting_units_context(
             collection_exercises_with_details,
             reporting_unit,
-            survey_details,
+            survey,
             suspended_survey_respondents,
             {"reporting_unit_edit": True, "messages_edit": True},
         )
@@ -182,7 +182,7 @@ def test_respondent_enrolment_enabled(
     app,
     collection_exercises_with_details,
     reporting_unit,
-    survey_details,
+    survey,
     survey_respondents,
     case,
     expected_ru_context,
@@ -191,7 +191,7 @@ def test_respondent_enrolment_enabled(
         context = build_reporting_units_context(
             collection_exercises_with_details,
             reporting_unit,
-            survey_details,
+            survey,
             survey_respondents,
             {"reporting_unit_edit": True, "messages_edit": True},
         )
@@ -204,7 +204,7 @@ def test_respondent_enrolment_pending(
     app,
     collection_exercises_with_details,
     reporting_unit,
-    survey_details,
+    survey,
     pending_enrolment_survey_respondents,
     case,
     expected_ru_context,
@@ -213,7 +213,7 @@ def test_respondent_enrolment_pending(
         context = build_reporting_units_context(
             collection_exercises_with_details,
             reporting_unit,
-            survey_details,
+            survey,
             pending_enrolment_survey_respondents,
             {"reporting_unit_edit": True, "messages_edit": True},
         )
@@ -226,7 +226,7 @@ def test_respondent_enrolment_disabled(
     app,
     collection_exercises_with_details,
     reporting_unit,
-    survey_details,
+    survey,
     disabled_enrolment_survey_respondents,
     case,
     expected_ru_context,
@@ -235,7 +235,7 @@ def test_respondent_enrolment_disabled(
         context = build_reporting_units_context(
             collection_exercises_with_details,
             reporting_unit,
-            survey_details,
+            survey,
             disabled_enrolment_survey_respondents,
             {"reporting_unit_edit": True, "messages_edit": True},
         )
@@ -248,7 +248,7 @@ def test_multiple_collection_exercises_and_respondents(
     app,
     multiple_collection_exercises_with_details,
     multiple_reporting_units,
-    survey_details,
+    survey,
     multiple_survey_respondents,
     case,
     expected_ru_context_with_multiple_ces_and_respondents,
@@ -257,7 +257,7 @@ def test_multiple_collection_exercises_and_respondents(
         context = build_reporting_units_context(
             multiple_collection_exercises_with_details,
             multiple_reporting_units,
-            survey_details,
+            survey,
             multiple_survey_respondents,
             {"reporting_unit_edit": True, "messages_edit": True},
         )
