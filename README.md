@@ -66,16 +66,16 @@ The scss files are minimised into one file, `all.css` and the js files are minim
 
 It is a manual step to minimise the JavaScript and scss.
 
-Ensure you have Node.js version >=10 installed.  The recommended way to do this is to use Creationix Node Version Manager, which works on Linux and MacOSX systems:
+Ensure you have Node.js version >=24 installed.  The recommended way to do this is to use Creationix Node Version Manager, which works on Linux and MacOSX systems:
 
 ```bash
-curl -o- https://raw.githubusercontent.com/creationix/nvm/v0.33.11/install.sh | bash
+curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.40.3/install.sh | bash
 ```
 
 After this, run
 
 ```bash
-nvm use
+nvm install
 ```
 
 to select the version specified in `.nvmrc`
