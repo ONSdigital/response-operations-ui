@@ -468,16 +468,16 @@ def _validate_sample() -> bool:
 
 def _format_sample_summary(sample):
     if sample and sample.get("ingestDateTime"):
-        submission_value = sample["ingestDateTime"]
-        if isinstance(submission_value, str):
+        submission_datetime = sample["ingestDateTime"]
+        if isinstance(submission_datetime, str):
             try:
-                submission_datetime = localise_datetime(iso8601.parse_date(submission_value))
-                submission_time = submission_datetime.strftime("%d %B %Y %I:%M%p")
+                localised_submission_datetime = localise_datetime(iso8601.parse_date(submission_datetime))
+                submission_time = localised_submission_datetime.strftime("%d %B %Y %I:%M%p")
                 sample["ingestDateTime"] = submission_time
             except ValueError:
-                sample["ingestDateTime"] = submission_value
+                sample["ingestDateTime"] = submission_datetime
         else:
-            sample["ingestDateTime"] = submission_value
+            sample["ingestDateTime"] = submission_datetime
     return sample
 
 
