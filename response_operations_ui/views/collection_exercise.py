@@ -82,7 +82,6 @@ CIR_ERROR_MESSAGES = {
 def get_sample_summary(collection_exercise_id):
     summary_id = collection_exercise_controllers.get_linked_sample_summary_id(collection_exercise_id)
     sample_summary = sample_controllers.get_sample_summary(summary_id) if summary_id else None
-    sample_summary = _format_sample_summary(sample_summary)
     return sample_summary
 
 
@@ -110,6 +109,7 @@ def _build_collection_instruments_details(collection_exercise_id: str, survey_id
 def view_collection_exercise(short_name, period):
     collection_exercise, survey = get_collection_exercise_and_survey_details(short_name, period)
     sample = get_sample_summary(collection_exercise["id"])
+    formatted_sample = _format_sample_summary(sample)
     events = convert_events_to_new_format(
         collection_exercise_controllers.get_collection_exercise_events_by_id(collection_exercise["id"])
     )
@@ -118,6 +118,8 @@ def view_collection_exercise(short_name, period):
     if sample_controllers.sample_summary_state_check_required(collection_exercise["state"], sample):
         try:
             sample_load_status = sample_controllers.check_if_all_sample_units_present_for_sample_summary(sample["id"])
+            if sample_load_status["areAllSampleUnitsLoaded"]:
+                formatted_sample = _format_sample_summary(sample)
         except ApiError:
             flash("Sample summary check failed.  Refresh page to try again", category="error")
 
@@ -161,6 +163,7 @@ def view_collection_exercise(short_name, period):
         processing=processing,
         sample_load_status=sample_load_status,
         sample=sample,
+        formatted_sample=formatted_sample,
         show_set_live_button=show_set_live_button,
         survey=survey,
         success_panel=success_panel,
@@ -465,10 +468,16 @@ def _validate_sample() -> bool:
 
 def _format_sample_summary(sample):
     if sample and sample.get("ingestDateTime"):
-        submission_datetime = localise_datetime(iso8601.parse_date(sample["ingestDateTime"]))
-        submission_time = submission_datetime.strftime("%d %B %Y %I:%M%p")
-        sample["ingestDateTime"] = submission_time
-
+        submission_value = sample["ingestDateTime"]
+        if isinstance(submission_value, str):
+            try:
+                submission_datetime = localise_datetime(iso8601.parse_date(submission_value))
+                submission_time = submission_datetime.strftime("%d %B %Y %I:%M%p")
+                sample["ingestDateTime"] = submission_time
+            except ValueError:
+                sample["ingestDateTime"] = submission_value
+        else:
+            sample["ingestDateTime"] = submission_value
     return sample
 
 

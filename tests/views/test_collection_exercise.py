@@ -494,7 +494,7 @@ class TestCollectionExercise(ViewTestCase):
 
         self.assertEqual(response.status_code, 200)
         self.assertIn("Ready for live".encode(), response.data)
-        self.assertIn("Sample loaded: ".encode(), response.data)
+        self.assertIn("14 March 2018".encode(), response.data)
 
     @mock_decorator(CE_INIT, EQ_SURVEY, EQ_CI, SAMPLE_SUMMARY_INIT, CE_EVENTS)
     @patch("response_operations_ui.controllers.sample_controllers.sample_summary_state_check_required")
