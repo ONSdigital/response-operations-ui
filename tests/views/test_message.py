@@ -87,8 +87,8 @@ with open(f"{project_root}/test_data/party/business_reporting_unit.json") as fp:
     business_reporting_unit = json.load(fp)
 with open(f"{project_root}/test_data/party/get_business_by_ru_ref.json") as fp:
     business_by_ru_ref_json = json.load(fp)
-with open(f"{project_root}/test_data/case/cases_list.json") as fp:
-    cases_list = json.load(fp)
+with open(f"{project_root}/test_data/case/case_groups_list.json") as fp:
+    case_groups_list = json.load(fp)
 with open(f"{project_root}/test_data/collection_exercise/collection_exercise.json") as fp:
     collection_exercise = json.load(fp)
 with open(f"{project_root}/test_data/collection_exercise/collection_exercise_2.json") as fp:
@@ -600,15 +600,18 @@ class TestMessage(ViewTestCase):
     }
 
     @requests_mock.mock()
+    @patch("response_operations_ui.controllers.case_controller.get_case_groups_by_business_party_id")
     @patch("response_operations_ui.controllers.message_controllers._get_jwt")
     @patch("flask_login.utils._get_user")
-    def test_form_submit_with_valid_data(self, mock_request, current_user, mock_get_jwt):
+    def test_form_submit_with_valid_data(
+        self, mock_request, current_user, mock_get_jwt, case_groups_by_business_party_id
+    ):
         self.before()
+        case_groups_by_business_party_id.return_value = case_groups_list
         mock_get_jwt.return_value = "mock_jwt"
         mock_request.post(url_send_message, json=threads_no_unread_list, status_code=201)
         mock_request.get(url_get_surveys_list, json=self.surveys_list_json)
         mock_request.get(url_get_business_by_ru_ref + ru_ref, json=business_by_ru_ref_json)
-        mock_request.get(url_get_case_groups_by_business_party_id, json=cases_list)
         mock_request.get(f"{url_get_collection_exercise_by_id}/{collection_exercise_id_1}", json=collection_exercise)
         mock_request.get(f"{url_get_collection_exercise_by_id}/{collection_exercise_id_2}", json=collection_exercise_2)
         mock_request.get(url_get_business_attributes, json=business_attributes)
@@ -628,14 +631,16 @@ class TestMessage(ViewTestCase):
         self.assertIn("Messages".encode(), response.data)
 
     @requests_mock.mock()
+    @patch("response_operations_ui.controllers.case_controller.get_case_groups_by_business_party_id")
     @patch("response_operations_ui.controllers.message_controllers._get_jwt")
     @patch("flask_login.utils._get_user")
-    def test_form_submit_with_FDI_data(self, mock_request, current_user, mock_get_jwt):
+    def test_form_submit_with_FDI_data(
+        self, mock_request, current_user, mock_get_jwt, case_groups_by_business_party_id
+    ):
         mock_get_jwt.return_value = "mock_jwt"
         mock_request.post(url_send_message, json=threads_no_unread_list, status_code=201)
         mock_request.get(url_get_surveys_list, json=self.surveys_list_json)
         mock_request.get(url_get_business_by_ru_ref + ru_ref, json=business_by_ru_ref_json)
-        mock_request.get(url_get_case_groups_by_business_party_id, json=cases_list)
         mock_request.get(f"{url_get_collection_exercise_by_id}/{collection_exercise_id_1}", json=collection_exercise)
         mock_request.get(f"{url_get_collection_exercise_by_id}/{collection_exercise_id_2}", json=collection_exercise_2)
         mock_request.get(url_get_business_attributes, json=business_attributes)
@@ -644,6 +649,7 @@ class TestMessage(ViewTestCase):
         mock_request.get(f"{url_get_iac}/{iac_1}", json=iac)
         mock_request.get(f"{url_get_iac}/{iac_2}", json=iac)
         current_user.return_value.id = 1
+        case_groups_by_business_party_id.return_value = []
         with self.client.session_transaction() as session:
             session["user_id"] = "test-id"
         with self.app.app_context():

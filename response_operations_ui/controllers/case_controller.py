@@ -123,6 +123,41 @@ def get_cases_by_business_party_id(business_party_id: str, max_number_of_cases: 
     return response.json()
 
 
+def get_ru_details_by_party_and_survey_id(party_id: str, survey_id: str, limit: int) -> dict:
+    """
+    Gets the ru details for a given business and survey from the case service.
+
+    :param party_id: party uuid of the business
+    :param survey_id: survey uuid
+    :param limit: Maximum number of records that will be returned in date order
+    :return: A dictionary containing all the ru details
+    """
+    url = f'{app.config["CASE_URL"]}/casegroups/partyid/{party_id}/surveyid/{survey_id}'
+
+    response = requests.get(
+        url,
+        auth=app.config["BASIC_AUTH"],
+        params={"limit": limit},
+    )
+    try:
+        response.raise_for_status()
+        if response.status_code == 204:
+            logger.exception("No RU details found for business and survey", party_id=party_id, surveyid=survey_id)
+            raise ApiError(response)
+
+    except requests.exceptions.HTTPError as e:
+        logger.exception(
+            "Case service returned a HTTPError",
+            status_code=e.response.status_code,
+            party_id=party_id,
+            survey_id=survey_id,
+        )
+        raise ApiError(response)
+
+    logger.info("Successfully retrieved RU details", party_id=party_id, survey_id=survey_id)
+    return response.json()
+
+
 def get_case_group_by_collection_exercise(case_groups, collection_exercise_id):
     return next(
         (case_group for case_group in case_groups if case_group["collectionExerciseId"] == collection_exercise_id), None
