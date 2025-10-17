@@ -489,7 +489,7 @@ class TestCollectionExercise(ViewTestCase):
             "expectedTotal": 10,
             "currentTotal": 10,
         }
-        
+
         response = self.client.get(f"/surveys/{short_name}/{period}", follow_redirects=True)
 
         self.assertEqual(response.status_code, 200)
