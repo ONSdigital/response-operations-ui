@@ -82,8 +82,8 @@ CIR_ERROR_MESSAGES = {
 def get_sample_summary(collection_exercise_id):
     summary_id = collection_exercise_controllers.get_linked_sample_summary_id(collection_exercise_id)
     sample_summary = sample_controllers.get_sample_summary(summary_id) if summary_id else None
-    sample_summary = _format_sample_summary(sample_summary)
-    return sample_summary
+    formatted_sample_summary = _format_sample_summary(sample_summary)
+    return formatted_sample_summary
 
 
 def get_collection_exercise_and_survey_details(short_name, period):
