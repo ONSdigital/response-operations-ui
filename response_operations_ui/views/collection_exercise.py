@@ -82,6 +82,7 @@ CIR_ERROR_MESSAGES = {
 def get_sample_summary(collection_exercise_id):
     summary_id = collection_exercise_controllers.get_linked_sample_summary_id(collection_exercise_id)
     sample_summary = sample_controllers.get_sample_summary(summary_id) if summary_id else None
+    sample_summary = _format_sample_summary(sample_summary)
     return sample_summary
 
 
@@ -109,7 +110,6 @@ def _build_collection_instruments_details(collection_exercise_id: str, survey_id
 def view_collection_exercise(short_name, period):
     collection_exercise, survey = get_collection_exercise_and_survey_details(short_name, period)
     sample = get_sample_summary(collection_exercise["id"])
-    sample = _format_sample_summary(sample)
     events = convert_events_to_new_format(
         collection_exercise_controllers.get_collection_exercise_events_by_id(collection_exercise["id"])
     )
@@ -118,6 +118,8 @@ def view_collection_exercise(short_name, period):
     if sample_controllers.sample_summary_state_check_required(collection_exercise["state"], sample):
         try:
             sample_load_status = sample_controllers.check_if_all_sample_units_present_for_sample_summary(sample["id"])
+            if sample_load_status["areAllSampleUnitsLoaded"]:
+                sample = _format_sample_summary(sample)
         except ApiError:
             flash("Sample summary check failed.  Refresh page to try again", category="error")
 
