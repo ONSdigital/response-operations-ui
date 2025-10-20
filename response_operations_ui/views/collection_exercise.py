@@ -108,24 +108,26 @@ def _build_collection_instruments_details(collection_exercise_id: str, survey_id
 @login_required
 def view_collection_exercise(short_name, period):
     sample_load_status = None
-    sample_ingest_date_time =None
+    sample_ingest_date_time = None
     collection_exercise, survey = get_collection_exercise_and_survey_details(short_name, period)
     sample = get_sample_summary(collection_exercise["id"])
     events = convert_events_to_new_format(
         collection_exercise_controllers.get_collection_exercise_events_by_id(collection_exercise["id"])
     )
     collection_instruments = _build_collection_instruments_details(collection_exercise["id"], survey["id"])
-    
+    ce_state = collection_exercise["state"]
+
     if sample:
-        if sample_controllers.sample_summary_state_check_required(collection_exercise["state"], sample):
+        if sample_controllers.sample_summary_state_check_required(ce_state, sample):
             try:
-                sample_load_status = sample_controllers.check_if_all_sample_units_present_for_sample_summary(sample["id"])
+                sample_load_status = sample_controllers.check_if_all_sample_units_present_for_sample_summary(
+                    sample["id"]
+                )
             except ApiError:
                 flash("Sample summary check failed.  Refresh page to try again", category="error")
         if sample["state"] in ["ACTIVE", "COMPLETE"]:
             sample_ingest_date_time = _format_ingestion_date(sample.get("ingestDateTime"))
 
-    ce_state = collection_exercise["state"]
     survey_mode = survey["surveyMode"]
     show_sds = True if collection_exercise.get("supplementaryDatasetEntity") else False
     locked = ce_state in ("LIVE", "READY_FOR_LIVE", "EXECUTION_STARTED", "VALIDATED", "EXECUTED", "ENDED")
@@ -472,8 +474,9 @@ def _format_ingestion_date(date_time):
     try:
         localised_submission_datetime = localise_datetime(iso8601.parse_date(date_time))
         return localised_submission_datetime.strftime("%d %B %Y %I:%M%p")
-    except ValueError:
+    except (ValueError, TypeError, iso8601.ParseError):
         return date_time
+
 
 def _format_ci_file_name(collection_instruments, survey_details):
     for ci in collection_instruments:
