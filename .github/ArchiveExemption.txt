@@ -1,0 +1,1 @@
+This is a core service within ras-rm for the management of respondents and responses
