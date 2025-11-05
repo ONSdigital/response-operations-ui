@@ -123,7 +123,7 @@ def get_cases_by_business_party_id(business_party_id: str, max_number_of_cases: 
     return response.json()
 
 
-def get_ru_details_by_party_and_survey_id(party_id: str, survey_id: str, limit: int) -> dict:
+def get_case_group_cases_by_party_and_survey_id(party_id: str, survey_id: str, limit: int) -> dict:
     """
     Gets the ru details for a given business and survey from the case service.
 

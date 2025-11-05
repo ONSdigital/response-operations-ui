@@ -115,23 +115,23 @@ class TestCaseControllers(unittest.TestCase):
                 get_case_events = case_controller.get_cases_by_business_party_id(case_id, 12)
                 self.assertEqual(get_case_events, [])
 
-    def test_get_ru_details_by_party_and_survey_id(self):
+    def test_get_case_group_cases_by_party_and_survey_id(self):
         with responses.RequestsMock() as rsps:
             rsps.add(rsps.GET, url_get_ru_details, status=200, content_type="application/json", json=RU_DETAILS)
             with self.app.app_context():
-                ru_details = case_controller.get_ru_details_by_party_and_survey_id(PARTY_ID, SURVEY_ID, 1)
+                ru_details = case_controller.get_case_group_cases_by_party_and_survey_id(PARTY_ID, SURVEY_ID, 1)
                 self.assertEqual(ru_details, RU_DETAILS)
 
-    def test_get_ru_details_by_party_and_survey_id_no_data(self):
+    def test_get_case_group_cases_by_party_and_survey_id_no_data(self):
         with responses.RequestsMock() as rsps:
             rsps.add(rsps.GET, url_get_ru_details, status=204)
             with self.app.app_context():
                 with self.assertRaises(ApiError):
-                    case_controller.get_ru_details_by_party_and_survey_id(PARTY_ID, SURVEY_ID, 1)
+                    case_controller.get_case_group_cases_by_party_and_survey_id(PARTY_ID, SURVEY_ID, 1)
 
-    def test_get_ru_details_by_party_and_survey_id_exception(self):
+    def test_get_case_group_cases_by_party_and_survey_id_exception(self):
         with responses.RequestsMock() as rsps:
             rsps.add(rsps.GET, url_get_ru_details, status=404)
             with self.app.app_context():
                 with self.assertRaises(ApiError):
-                    case_controller.get_ru_details_by_party_and_survey_id(PARTY_ID, SURVEY_ID, 1)
+                    case_controller.get_case_group_cases_by_party_and_survey_id(PARTY_ID, SURVEY_ID, 1)
