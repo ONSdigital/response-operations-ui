@@ -139,11 +139,11 @@ class TestMessage(ViewTestCase):
         self.assertIn("Page 1 of 26".encode(), response.data)
         # Validates Pagination controls displayed
         self.assertIn(
-            'aria-label="Current page (' 'Page 1 of 26)">1'.encode(),
+            'aria-label="Page 1 of 26">1'.encode(),
             response.data,
         )
         self.assertIn(
-            'aria-label="Go to page 2"rel="next">2'.encode(),
+            'aria-label="Page 2"rel="next">2'.encode(),
             response.data,
         )
 
