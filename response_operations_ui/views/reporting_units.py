@@ -52,10 +52,7 @@ def view_reporting_unit(ru_ref):
         else:
             raise api_error
 
-    cases = case_controller.get_cases_by_business_party_id(
-        reporting_unit["id"], app.config["MAX_CASES_RETRIEVED_PER_SURVEY"]
-    )
-    case_groups = [case["caseGroup"] for case in cases]
+    case_groups = case_controller.get_case_groups_by_business_party_id(reporting_unit["id"])
 
     # Get all collection exercises for retrieved case groups
     collection_exercise_ids = {case_group["collectionExerciseId"] for case_group in case_groups}
@@ -167,13 +164,11 @@ def view_reporting_unit_survey(ru_ref, survey_id):
     if int(max_number_of_cases) == 0:
         flash("Maximum number of cases cannot be 0.  Using default maximum instead", "error")
         max_number_of_cases = app.config["MAX_CASES_RETRIEVED_PER_SURVEY"]
-    cases = case_controller.get_cases_by_business_party_id(reporting_unit["id"], max_number_of_cases)
-    case_groups = [case["caseGroup"] for case in cases]
 
-    # Get all collection exercises for retrieved case groups and only for the survey we care about.
-    collection_exercise_ids = {
-        case_group["collectionExerciseId"] for case_group in case_groups if case_group["surveyId"] == survey_id
-    }
+    case_group_cases = case_controller.get_case_group_cases_by_party_and_survey_id(
+        reporting_unit["id"], survey_id, max_number_of_cases
+    )
+    collection_exercise_ids = {ru["collectionExerciseId"] for ru in case_group_cases}
     collection_exercises = [get_collection_exercise_by_id(ce_id) for ce_id in collection_exercise_ids]
     live_collection_exercises = [
         ce for ce in collection_exercises if parse_date(ce["scheduledStartDateTime"]) < datetime.now(timezone.utc)
@@ -188,7 +183,8 @@ def view_reporting_unit_survey(ru_ref, survey_id):
 
     attributes = party_controller.get_business_attributes_by_party_id(reporting_unit["id"])
     collection_exercises_with_details = [
-        add_collection_exercise_details(ce, attributes[ce["id"]], case_groups) for ce in survey_collection_exercises
+        add_collection_exercise_details(ce, attributes[ce["id"]], case_group_cases)
+        for ce in survey_collection_exercises
     ]
 
     survey_details = get_survey_by_id(survey_id)
@@ -196,13 +192,17 @@ def view_reporting_unit_survey(ru_ref, survey_id):
 
     # If there's an active IAC on the newest case, return it to be displayed
     live_collection_exercise_ids = [ce["id"] for ce in survey_collection_exercises]
-    valid_cases = [
-        case for case in cases if case.get("caseGroup", {}).get("collectionExerciseId") in live_collection_exercise_ids
+    live_case_group_cases = [
+        ru for ru in case_group_cases if ru.get("collectionExerciseId") in live_collection_exercise_ids
     ]
-    case = next(iter(sorted(valid_cases, key=lambda c: c["createdDateTime"], reverse=True)), None)
+
+    live_case_group_cases = next(
+        iter(sorted(live_case_group_cases, key=lambda c: c["createdDateTime"], reverse=True)), None
+    )
     unused_iac = ""
-    if case is not None and iac_controller.is_iac_active(case["iac"]):
-        unused_iac = case["iac"]
+
+    if live_case_group_cases is not None and iac_controller.is_iac_active(live_case_group_cases["iac"]):
+        unused_iac = live_case_group_cases["iac"]
 
     permissions = {
         "reporting_unit_edit": user_has_permission("reportingunits.edit"),
@@ -213,7 +213,7 @@ def view_reporting_unit_survey(ru_ref, survey_id):
     if permissions["reporting_unit_edit"]:
         enrolment_code_hyperlink = url_for(
             "reporting_unit_bp.generate_new_enrolment_code",
-            case_id=case["id"],
+            case_id=live_case_group_cases["caseId"],
             collection_exercise_id=survey_collection_exercises[0]["id"],
             ru_name=reporting_unit["name"],
             ru_ref=ru_ref,
@@ -239,7 +239,6 @@ def view_reporting_unit_survey(ru_ref, survey_id):
         collection_exercises=collection_exercises_with_details,
         iac=unused_iac,
         enrolment_code_hyperlink=enrolment_code_hyperlink,
-        case=case,
         context=context,
     )
 

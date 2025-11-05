@@ -10,6 +10,18 @@ from response_operations_ui.controllers import case_controller
 from response_operations_ui.exceptions.exceptions import ApiError
 
 case_id = "10b04906-f478-47f9-a985-783400dd8482"
+PARTY_ID = "e467a425-cf94-44a1-8b71-163c0c383161"
+SURVEY_ID = "819306db-eb74-4e6c-8582-a6745deab975"
+RU_DETAILS = [
+    {
+        "collectionExerciseId": "14fb3e68-4dca-46db-bf49-04b84e07e77c",
+        "caseGroupStatus": "NOTSTARTED",
+        "caseId": "10b04906-f478-47f9-a985-783400dd8482",
+        "createdDateTime": "2018-02-13T15:45:13.328Z",
+        "iac": "jkbvyklkwj88",
+    }
+]
+
 project_root = os.path.dirname(os.path.dirname(__file__))
 
 with open(f"{project_root}/test_data/case/case_events.json") as fp:
@@ -17,6 +29,7 @@ with open(f"{project_root}/test_data/case/case_events.json") as fp:
 url_get_case_events = f"{TestingConfig.CASE_URL}/cases/{case_id}/events"
 url_get_case_groups = f"{TestingConfig.CASE_URL}/casegroups/partyid/{case_id}"
 url_get_cases = f"{TestingConfig.CASE_URL}/cases/partyid/{case_id}"
+url_get_ru_details = f"{TestingConfig.CASE_URL}/casegroups/partyid/{PARTY_ID}/surveyid/{SURVEY_ID}"
 
 
 class TestCaseControllers(unittest.TestCase):
@@ -101,3 +114,24 @@ class TestCaseControllers(unittest.TestCase):
             with self.app.app_context():
                 get_case_events = case_controller.get_cases_by_business_party_id(case_id, 12)
                 self.assertEqual(get_case_events, [])
+
+    def test_get_case_group_cases_by_party_and_survey_id(self):
+        with responses.RequestsMock() as rsps:
+            rsps.add(rsps.GET, url_get_ru_details, status=200, content_type="application/json", json=RU_DETAILS)
+            with self.app.app_context():
+                ru_details = case_controller.get_case_group_cases_by_party_and_survey_id(PARTY_ID, SURVEY_ID, 1)
+                self.assertEqual(ru_details, RU_DETAILS)
+
+    def test_get_case_group_cases_by_party_and_survey_id_no_data(self):
+        with responses.RequestsMock() as rsps:
+            rsps.add(rsps.GET, url_get_ru_details, status=204)
+            with self.app.app_context():
+                with self.assertRaises(ApiError):
+                    case_controller.get_case_group_cases_by_party_and_survey_id(PARTY_ID, SURVEY_ID, 1)
+
+    def test_get_case_group_cases_by_party_and_survey_id_exception(self):
+        with responses.RequestsMock() as rsps:
+            rsps.add(rsps.GET, url_get_ru_details, status=404)
+            with self.app.app_context():
+                with self.assertRaises(ApiError):
+                    case_controller.get_case_group_cases_by_party_and_survey_id(PARTY_ID, SURVEY_ID, 1)

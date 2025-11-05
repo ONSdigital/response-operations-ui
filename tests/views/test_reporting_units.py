@@ -2,6 +2,7 @@ import json
 import os
 import re
 from random import randint
+from unittest.mock import patch
 
 import fakeredis
 import jwt
@@ -102,6 +103,24 @@ user_permission_reporting_unit_edit_json = {
 }
 
 
+RU_DETAILS = [
+    {
+        "collectionExerciseId": "14fb3e68-4dca-46db-bf49-04b84e07e77c",
+        "caseGroupStatus": "NOTSTARTED",
+        "caseId": "10b04906-f478-47f9-a985-783400dd8482",
+        "createdDateTime": "2018-02-13T15:45:13.328Z",
+        "iac": "jkbvyklkwj88",
+    },
+    {
+        "collectionExerciseId": "9af403f8-5fc5-43b1-9fca-afbd9c65da5c",
+        "caseGroupStatus": "NOTSTARTED",
+        "caseId": "90bb2c1c-a04f-48c7-b008-c92450b3d164",
+        "createdDateTime": "2018-02-13T15:45:12.219Z",
+        "iac": "ljbgg3kgstr4",
+    },
+]
+
+
 class TestReportingUnits(ViewTestCase):
     def setup_data(self):
         self.app = create_app("TestingConfig")
@@ -121,9 +140,10 @@ class TestReportingUnits(ViewTestCase):
         ]
 
     @requests_mock.mock()
-    def test_get_reporting_unit(self, mock_request):
+    @patch("response_operations_ui.controllers.case_controller.get_case_groups_by_business_party_id")
+    def test_get_reporting_unit(self, mock_request, case_groups_by_business_party_id):
+        case_groups_by_business_party_id.return_value = case_groups
         mock_request.get(url_get_business_by_ru_ref, json=business_reporting_unit)
-        mock_request.get(url_get_cases_by_business_party_id, json=cases_list)
         mock_request.get(f"{url_get_collection_exercise_by_id}/{collection_exercise_id_1}", json=collection_exercise)
         mock_request.get(f"{url_get_collection_exercise_by_id}/{collection_exercise_id_2}", json=collection_exercise_2)
         mock_request.get(url_get_business_attributes, json=business_attributes)
@@ -178,33 +198,22 @@ class TestReportingUnits(ViewTestCase):
         self.assertEqual(response.status_code, 500)
 
     @requests_mock.mock()
-    def test_get_reporting_unit_cases_404(self, mock_request):
-        mock_request.get(url_get_business_by_ru_ref, json=business_reporting_unit)
-        mock_request.get(url_get_cases_by_business_party_id, status_code=404)
-        mock_request.get(url_get_business_attributes, json={})
-        mock_request.get(url_get_respondent_party_by_list, json=[])
-
-        response = self.client.get("/reporting-units/50012345678")
-
-        self.assertEqual(response.status_code, 200)
-
-    @requests_mock.mock()
     def test_get_reporting_unit_collection_exercise_fail(self, mock_request):
         mock_request.get(url_get_business_by_ru_ref, json=business_reporting_unit)
-        mock_request.get(url_get_cases_by_business_party_id, json=cases_list)
         mock_request.get(f"{url_get_collection_exercise_by_id}/{collection_exercise_id_1}", status_code=500)
         mock_request.get(f"{url_get_collection_exercise_by_id}/{collection_exercise_id_2}", status_code=500)
 
         response = self.client.get("/reporting-units/50012345678", follow_redirects=True)
 
         request_history = mock_request.request_history
-        self.assertEqual(len(request_history), 3)
+        self.assertEqual(len(request_history), 2)
         self.assertEqual(response.status_code, 500)
 
     @requests_mock.mock()
-    def test_get_reporting_unit_party_id_fail(self, mock_request):
+    @patch("response_operations_ui.controllers.case_controller.get_case_groups_by_business_party_id")
+    def test_get_reporting_unit_party_id_fail(self, mock_request, case_groups_by_business_party_id):
+        case_groups_by_business_party_id.return_value = case_groups
         mock_request.get(url_get_business_by_ru_ref, json=business_reporting_unit)
-        mock_request.get(url_get_cases_by_business_party_id, json=cases_list)
         mock_request.get(f"{url_get_collection_exercise_by_id}/{collection_exercise_id_1}", json=collection_exercise)
         mock_request.get(f"{url_get_collection_exercise_by_id}/{collection_exercise_id_2}", json=collection_exercise_2)
         mock_request.get(url_get_business_attributes, status_code=500)
@@ -212,13 +221,14 @@ class TestReportingUnits(ViewTestCase):
         response = self.client.get("/reporting-units/50012345678", follow_redirects=True)
 
         request_history = mock_request.request_history
-        self.assertEqual(len(request_history), 5)
+        self.assertEqual(len(request_history), 4)
         self.assertEqual(response.status_code, 500)
 
     @requests_mock.mock()
-    def test_get_reporting_unit_survey_fail(self, mock_request):
+    @patch("response_operations_ui.controllers.case_controller.get_case_groups_by_business_party_id")
+    def test_get_reporting_unit_survey_fail(self, mock_request, case_groups_by_business_party_id):
+        case_groups_by_business_party_id.return_value = case_groups
         mock_request.get(url_get_business_by_ru_ref, json=business_reporting_unit)
-        mock_request.get(url_get_cases_by_business_party_id, json=cases_list)
         mock_request.get(f"{url_get_collection_exercise_by_id}/{collection_exercise_id_1}", json=collection_exercise)
         mock_request.get(f"{url_get_collection_exercise_by_id}/{collection_exercise_id_2}", json=collection_exercise_2)
         mock_request.get(url_get_survey_by_id, status_code=500)
@@ -226,13 +236,16 @@ class TestReportingUnits(ViewTestCase):
         response = self.client.get("/reporting-units/50012345678", follow_redirects=True)
 
         request_history = mock_request.request_history
-        self.assertEqual(len(request_history), 5)
+        self.assertEqual(len(request_history), 4)
         self.assertEqual(response.status_code, 500)
 
     @requests_mock.mock()
-    def test_get_reporting_unit_respondent_party_fail(self, mock_request):
+    @patch("response_operations_ui.controllers.case_controller.get_case_group_cases_by_party_and_survey_id")
+    def test_get_reporting_unit_respondent_party_fail(
+        self, mock_request, case_group_cases_by_business_party_id_and_survey_id
+    ):
+        case_group_cases_by_business_party_id_and_survey_id.return_value = RU_DETAILS
         mock_request.get(url_get_business_by_ru_ref, json=business_reporting_unit)
-        mock_request.get(url_get_cases_by_business_party_id, json=cases_list)
         mock_request.get(f"{url_get_collection_exercise_by_id}/{collection_exercise_id_1}", json=collection_exercise)
         mock_request.get(f"{url_get_collection_exercise_by_id}/{collection_exercise_id_2}", json=collection_exercise_2)
         mock_request.get(url_get_business_attributes, json=business_attributes)
@@ -243,15 +256,19 @@ class TestReportingUnits(ViewTestCase):
         )
 
         request_history = mock_request.request_history
-        self.assertEqual(len(request_history), 5)
+        self.assertEqual(len(request_history), 4)
         self.assertEqual(response.status_code, 500)
 
     @requests_mock.mock()
-    def test_get_reporting_unit_survey_max_no_of_cases_0_causes_warning(self, mock_request):
+    @patch("response_operations_ui.controllers.case_controller.get_case_group_cases_by_party_and_survey_id")
+    def test_get_reporting_unit_survey_max_no_of_cases_0_causes_warning(
+        self, mock_request, case_group_cases_by_business_party_id_and_survey_id
+    ):
         """
         If the max-number-of-cases url parameter is 0 then a flashed warning will be displayed saying that it'll use
         the default value instead.
         """
+        case_group_cases_by_business_party_id_and_survey_id.return_value = RU_DETAILS
         mock_request.post(url_sign_in_data, json={"access_token": self.access_token}, status_code=201)
         mock_request.get(url_surveys, json=self.surveys_list_json, status_code=200)
         mock_request.get(url_permission_url, json=user_permission_reporting_unit_edit_json, status_code=200)
@@ -278,7 +295,11 @@ class TestReportingUnits(ViewTestCase):
         self.assertEqual(response.status_code, 200)
 
     @requests_mock.mock()
-    def test_get_reporting_unit_survey_reporting_unit_edit_role(self, mock_request):
+    @patch("response_operations_ui.controllers.case_controller.get_case_group_cases_by_party_and_survey_id")
+    def test_get_reporting_unit_survey_reporting_unit_edit_role(
+        self, mock_request, case_group_cases_by_business_party_id_and_survey_id
+    ):
+        case_group_cases_by_business_party_id_and_survey_id.return_value = RU_DETAILS
         mock_request.post(url_sign_in_data, json={"access_token": self.access_token}, status_code=201)
         mock_request.get(url_surveys, json=self.surveys_list_json, status_code=200)
         mock_request.get(url_permission_url, json=user_permission_reporting_unit_edit_json, status_code=200)
@@ -305,14 +326,17 @@ class TestReportingUnits(ViewTestCase):
         self.assertEqual(response.status_code, 200)
 
     @requests_mock.mock()
-    def test_get_reporting_unit_survey_enrolment_code_hyperlink(self, mock_request):
+    @patch("response_operations_ui.controllers.case_controller.get_case_group_cases_by_party_and_survey_id")
+    def test_get_reporting_unit_survey_enrolment_code_hyperlink(
+        self, mock_request, case_group_cases_by_business_party_id_and_survey_id
+    ):
         # Set up a business with two collection exercises and no registered respondents or active IACs
+        case_group_cases_by_business_party_id_and_survey_id.return_value = RU_DETAILS
         mock_request.post(url_sign_in_data, json={"access_token": self.access_token}, status_code=201)
         mock_request.get(url_surveys, json=self.surveys_list_json, status_code=200)
         mock_request.get(url_permission_url, json=user_permission_reporting_unit_edit_json, status_code=200)
         self.client.post("/sign-in", follow_redirects=True, data={"username": "user", "password": "pass"})
         mock_request.get(url_get_business_by_ru_ref, json=business_reporting_unit_no_enrolments)
-        mock_request.get(url_get_cases_by_business_party_id, json=cases_list)
         mock_request.get(url_get_respondents_by_survey_and_business_id, json=enrolled_respondents)
         mock_request.get(f"{url_get_collection_exercise_by_id}/{collection_exercise_id_1}", json=collection_exercise)
         mock_request.get(f"{url_get_collection_exercise_by_id}/{collection_exercise_id_2}", json=collection_exercise_2)
@@ -339,7 +363,11 @@ class TestReportingUnits(ViewTestCase):
         self.assertIn(enrolment_code_hyperlink.encode(), response.data)
 
     @requests_mock.mock()
-    def test_get_reporting_unit_survey_no_reporting_unit_edit_role(self, mock_request):
+    @patch("response_operations_ui.controllers.case_controller.get_case_group_cases_by_party_and_survey_id")
+    def test_get_reporting_unit_survey_no_reporting_unit_edit_role(
+        self, mock_request, case_group_cases_by_business_party_id_and_survey_id
+    ):
+        case_group_cases_by_business_party_id_and_survey_id.return_value = RU_DETAILS
         mock_request.post(url_sign_in_data, json={"access_token": self.access_token}, status_code=201)
         mock_request.get(url_surveys, json=self.surveys_list_json, status_code=200)
         mock_request.get(url_permission_url, json=user_permission_admin_json, status_code=200)
@@ -365,7 +393,9 @@ class TestReportingUnits(ViewTestCase):
         self.assertEqual(response.status_code, 200)
 
     @requests_mock.mock()
-    def test_get_reporting_unit_iac_fail(self, mock_request):
+    @patch("response_operations_ui.controllers.case_controller.get_case_group_cases_by_party_and_survey_id")
+    def test_get_reporting_unit_iac_fail(self, mock_request, case_group_cases_by_business_party_id_and_survey_id):
+        case_group_cases_by_business_party_id_and_survey_id.return_value = RU_DETAILS
         mock_request.get(url_get_business_by_ru_ref, json=business_reporting_unit)
         mock_request.get(url_get_cases_by_business_party_id, json=cases_list)
         mock_request.get(f"{url_get_collection_exercise_by_id}/{collection_exercise_id_1}", json=collection_exercise)
@@ -381,11 +411,13 @@ class TestReportingUnits(ViewTestCase):
         )
 
         request_history = mock_request.request_history
-        self.assertEqual(len(request_history), 7)
+        self.assertEqual(len(request_history), 6)
         self.assertEqual(response.status_code, 500)
 
     @requests_mock.mock()
-    def test_get_reporting_unit_iac_404(self, mock_request):
+    @patch("response_operations_ui.controllers.case_controller.get_case_groups_by_business_party_id")
+    def test_get_reporting_unit_iac_404(self, mock_request, case_groups_by_business_party_id):
+        case_groups_by_business_party_id.return_value = case_groups
         mock_request.get(url_get_business_by_ru_ref, json=business_reporting_unit)
         mock_request.get(url_get_cases_by_business_party_id, json=cases_list)
         mock_request.get(f"{url_get_collection_exercise_by_id}/{collection_exercise_id_1}", json=collection_exercise)
@@ -402,9 +434,12 @@ class TestReportingUnits(ViewTestCase):
         self.assertIn("50012345678".encode(), response.data)
 
     @requests_mock.mock()
-    def test_get_reporting_unit_hides_change_link_when_no_available_statuses(self, mock_request):
+    @patch("response_operations_ui.controllers.case_controller.get_case_groups_by_business_party_id")
+    def test_get_reporting_unit_hides_change_link_when_no_available_statuses(
+        self, mock_request, case_groups_by_business_party_id
+    ):
+        case_groups_by_business_party_id.return_value = case_groups
         mock_request.get(url_get_business_by_ru_ref, json=business_reporting_unit)
-        mock_request.get(url_get_cases_by_business_party_id, json=cases_list_completed)
         mock_request.get(f"{url_get_collection_exercise_by_id}/{collection_exercise_id_1}", json=collection_exercise)
         mock_request.get(f"{url_get_collection_exercise_by_id}/{collection_exercise_id_2}", json=collection_exercise_2)
         mock_request.get(url_get_business_attributes, json=business_attributes)
@@ -500,10 +535,11 @@ class TestReportingUnits(ViewTestCase):
         self.assertEqual(response.status_code, 200)
 
     @requests_mock.mock()
-    def test_change_respondent_status(self, mock_request):
+    @patch("response_operations_ui.controllers.case_controller.get_case_groups_by_business_party_id")
+    def test_change_respondent_status(self, mock_request, case_groups_by_business_party_id):
+        case_groups_by_business_party_id.return_value = case_groups
         mock_request.put(url_change_respondent_status)
         mock_request.get(url_get_business_by_ru_ref, json=business_reporting_unit)
-        mock_request.get(url_get_cases_by_business_party_id, json=cases_list)
         mock_request.get(f"{url_get_collection_exercise_by_id}/{collection_exercise_id_1}", json=collection_exercise)
         mock_request.get(f"{url_get_collection_exercise_by_id}/{collection_exercise_id_2}", json=collection_exercise_2)
         mock_request.get(url_get_business_attributes, json=business_attributes)
@@ -577,7 +613,9 @@ class TestReportingUnits(ViewTestCase):
         self.assertEqual(response.status_code, 500)
 
     @requests_mock.mock()
-    def test_edit_contact_details(self, mock_request):
+    @patch("response_operations_ui.controllers.case_controller.get_case_groups_by_business_party_id")
+    def test_edit_contact_details(self, mock_request, case_groups_by_business_party_id):
+        case_groups_by_business_party_id.return_value = case_groups
         changed_details = {
             "first_name": "Tom",
             "last_name": "Smith",
@@ -589,7 +627,9 @@ class TestReportingUnits(ViewTestCase):
         self.assertEqual(response.status_code, 200)
 
     @requests_mock.mock()
-    def test_edit_contact_details_email_failures(self, mock_request):
+    @patch("response_operations_ui.controllers.case_controller.get_case_groups_by_business_party_id")
+    def test_edit_contact_details_email_failures(self, mock_request, case_groups_by_business_party_id):
+        case_groups_by_business_party_id.return_value = case_groups
         changed_details = {
             "first_name": "Tom",
             "last_name": "Smith",
@@ -627,7 +667,9 @@ class TestReportingUnits(ViewTestCase):
         self.assertIn(CONNECTION_ERROR.encode(), response.data)
 
     @requests_mock.mock()
-    def test_edit_contact_details_last_name_change(self, mock_request):
+    @patch("response_operations_ui.controllers.case_controller.get_case_groups_by_business_party_id")
+    def test_edit_contact_details_last_name_change(self, mock_request, case_groups_by_business_party_id):
+        case_groups_by_business_party_id.return_value = case_groups
         changed_details = {
             "first_name": "Jacky",
             "last_name": "Smith",
@@ -658,7 +700,9 @@ class TestReportingUnits(ViewTestCase):
         return response
 
     @requests_mock.mock()
-    def test_edit_contact_details_telephone_change(self, mock_request):
+    @patch("response_operations_ui.controllers.case_controller.get_case_groups_by_business_party_id")
+    def test_edit_contact_details_telephone_change(self, mock_request, case_groups_by_business_party_id):
+        case_groups_by_business_party_id.return_value = case_groups
         changed_details = {
             "first_name": "Jacky",
             "last_name": "Turner",
@@ -670,7 +714,9 @@ class TestReportingUnits(ViewTestCase):
         self.assertEqual(response.status_code, 200)
 
     @requests_mock.mock()
-    def test_edit_contact_details_email_change(self, mock_request):
+    @patch("response_operations_ui.controllers.case_controller.get_case_groups_by_business_party_id")
+    def test_edit_contact_details_email_change(self, mock_request, case_groups_by_business_party_id):
+        case_groups_by_business_party_id.return_value = case_groups
         changed_details = {
             "first_name": "Jacky",
             "last_name": "Turner",
@@ -682,7 +728,11 @@ class TestReportingUnits(ViewTestCase):
         self.assertEqual(response.status_code, 200)
 
     @requests_mock.mock()
-    def test_edit_contact_details_email_change_with_trailing_space(self, mock_request):
+    @patch("response_operations_ui.controllers.case_controller.get_case_groups_by_business_party_id")
+    def test_edit_contact_details_email_change_with_trailing_space(
+        self, mock_request, case_groups_by_business_party_id
+    ):
+        case_groups_by_business_party_id.return_value = case_groups
         changed_details = {
             "first_name": "Jacky",
             "last_name": "Turner",
@@ -695,7 +745,9 @@ class TestReportingUnits(ViewTestCase):
         self.assertIsNot(r"Jacky.Turner@thisemail.com ".encode(), response.data)
 
     @requests_mock.mock()
-    def test_edit_contact_details_and_email_change(self, mock_request):
+    @patch("response_operations_ui.controllers.case_controller.get_case_groups_by_business_party_id")
+    def test_edit_contact_details_and_email_change(self, mock_request, case_groups_by_business_party_id):
+        case_groups_by_business_party_id.return_value = case_groups
         changed_details = {
             "first_name": "Jacky",
             "last_name": "Turner",
@@ -768,7 +820,9 @@ class TestReportingUnits(ViewTestCase):
         self.assertIn("Disable enrolment".encode(), response.data)
 
     @requests_mock.mock()
-    def test_disable_enrolment_post(self, mock_request):
+    @patch("response_operations_ui.controllers.case_controller.get_case_groups_by_business_party_id")
+    def test_disable_enrolment_post(self, mock_request, case_groups_by_business_party_id):
+        case_groups_by_business_party_id.return_value = case_groups
         mock_request.put(url_change_enrolment_status)
         mock_request.get(url_get_business_by_ru_ref, json=business_reporting_unit)
         mock_request.get(url_get_cases_by_business_party_id, json=cases_list)
@@ -804,7 +858,11 @@ class TestReportingUnits(ViewTestCase):
         self.assertEqual(response.status_code, 500)
 
     @requests_mock.mock()
-    def test_reporting_unit_page_no_message_edit_permission(self, mock_request):
+    @patch("response_operations_ui.controllers.case_controller.get_case_group_cases_by_party_and_survey_id")
+    def test_reporting_unit_page_no_message_edit_permission(
+        self, mock_request, case_group_cases_by_business_party_id_and_survey_id
+    ):
+        case_group_cases_by_business_party_id_and_survey_id.return_value = RU_DETAILS
         mock_request.post(url_sign_in_data, json={"access_token": self.access_token}, status_code=201)
         mock_request.get(url_surveys, json=self.surveys_list_json, status_code=200)
         mock_request.get(url_permission_url, json=user_permission_admin_json, status_code=200)
