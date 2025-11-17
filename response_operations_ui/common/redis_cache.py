@@ -75,7 +75,7 @@ class RedisCache:
         redis_hash_mapping = {}
 
         for survey in result:
-            redis_hash_mapping[f'{survey['id']}:{survey["shortName"]}:{survey["surveyRef"]}'] = json.dumps(survey)
+            redis_hash_mapping[f'{survey["id"]}:{survey["shortName"]}:{survey["surveyRef"]}'] = json.dumps(survey)
 
         current_app.redis.hset(redis_key, mapping=redis_hash_mapping)
         current_app.redis.expire(redis_key, self.EXPIRY)
