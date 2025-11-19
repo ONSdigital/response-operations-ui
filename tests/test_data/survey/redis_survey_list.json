@@ -1,0 +1,8 @@
+{"id": "cb0711c3-0ac8-41d3-ae0e-567e5ea1ef87", "shortName": "BRES", "longName": "Business Register and Employment Survey", "surveyRef": "221", "surveyMode": "SEFT"}
+{"id": "cb0711c3-0ac8-41d3-ae0e-567e5ea1ef88", "shortName": "BRUS", "longName": "Business Register and Umployment Survey", "surveyRef": "222", "surveyMode": "SEFT"}
+{"id": "cb8accda-6118-4d3b-85a3-149e28960c54", "shortName": "Bricks", "longName": "Monthly Survey of Building Materials Bricks", "surveyRef": "074", "surveyMode": "SEFT"}
+{"id": "6aa8896f-ced5-4694-800c-6cd661b0c8b2", "legalBasis": "Statistics of Trade Act 1947", "longName": "Annual Survey of Hours and Earnings", "shortName": "ASHE", "surveyRef": "141", "surveyMode": "SEFT"}
+{"id": "QOFDI_id", "legalBasis": "Statistics of Trade Act 1947", "longName": "Quarterly Outward Foreign Direct Investment Survey", "shortName": "QOFDI", "surveyRef": "065", "surveyMode": "SEFT"}
+{"id": "AIFDI_id", "legalBasis": "Statistics of Trade Act 1947", "longName": "Annual Inward Foreign Direct Investment Survey", "shortName": "AIFDI", "surveyRef": "062", "surveyMode": "SEFT"}
+{"id": "AOFDI_id", "legalBasis": "Statistics of Trade Act 1947", "longName": "Annual Outward Foreign Direct Investment Survey", "shortName": "AOFDI", "surveyRef": "063", "surveyMode": "SEFT"}
+{"id": "QIFDI_id", "legalBasis": "Statistics of Trade Act 1947", "longName": "Quarterly Inward Foreign Direct Investment Survey", "shortName": "QIFDI", "surveyRef": "064", "surveyMode": "SEFT"}

@@ -10,6 +10,7 @@ from response_operations_ui.common.mappers import (
     get_collex_event_status,
     map_collection_exercise_state,
 )
+from response_operations_ui.common.redis_cache import RedisCache
 from response_operations_ui.common.uaa import verify_permission
 from response_operations_ui.controllers import (
     collection_exercise_controllers,
@@ -27,12 +28,13 @@ INFO_MESSAGES = {
     "instrument_linked": "Collection exercise linked to survey successfully",
     "alert_published": "The alert has been published",
 }
+redis_cache = RedisCache()
 
 
 @surveys_bp.route("/", methods=["GET"])
 @login_required
 def view_surveys():
-    survey_list = survey_controllers.get_surveys_list()
+    survey_list = redis_cache.get_survey_list()
     breadcrumbs = [{"text": "Surveys"}]
     info_message = INFO_MESSAGES.get(request.args.get("message_key"))
     new_survey = session.pop("new_survey", None)
@@ -120,6 +122,7 @@ def edit_survey_details(short_name):
         survey_controllers.update_survey_details(
             form.get("hidden_survey_ref"), form.get("short_name"), form.get("long_name"), form.get("survey_mode")
         )
+        redis_cache.refresh_survey_list()
         return redirect(url_for("surveys_bp.view_surveys", message_key="survey_changed"))
 
 
@@ -151,6 +154,7 @@ def create_survey():
             "short_name": request.form.get("short_name"),
             "long_name": request.form.get("long_name"),
         }
+        redis_cache.refresh_survey_list()
         return redirect(url_for("surveys_bp.view_surveys"))
     except ApiError as err:
         # If it's conflict or bad request assume the service has returned a useful error

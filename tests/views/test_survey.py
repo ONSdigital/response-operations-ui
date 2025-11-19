@@ -2,7 +2,7 @@ import copy
 import json
 import os
 from contextlib import suppress
-from unittest.mock import MagicMock
+from unittest.mock import MagicMock, patch
 
 import fakeredis
 import jwt
@@ -162,8 +162,10 @@ class TestSurvey(ViewTestCase):
         self.assertIn("Create survey".encode(), response.data)
 
     @requests_mock.mock()
-    def test_survey_list_no_surveys(self, mock_request):
+    @patch("response_operations_ui.common.redis_cache.RedisCache.get_survey_list")
+    def test_survey_list_no_surveys(self, mock_request, mock_survey_list):
         mock_request.get(url_get_survey_list, status_code=204)
+        mock_survey_list.return_value = []
 
         response = self.client.get("/surveys")
 
