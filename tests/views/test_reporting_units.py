@@ -886,6 +886,18 @@ class TestReportingUnits(ViewTestCase):
         self.assertNotIn("Create message".encode(), response.data)
         self.assertEqual(response.status_code, 200)
 
+    @patch("response_operations_ui.views.reporting_units.get_survey_by_id")
+    @patch("response_operations_ui.controllers.party_controller.get_respondent_by_party_ids")
+    @patch("response_operations_ui.controllers.party_controller.get_business_by_ru_ref")
+    def test_view_respondents(self, business_by_ru_ref, respondent_by_party_ids, survey_by_id):
+        business_by_ru_ref.return_value = business_reporting_unit
+        respondent_by_party_ids.return_value = respondent_party_list
+        survey_by_id.return_value = survey
+        response = self.client.get("/reporting-units/50012345678/respondents")
+        self.assertIn("Jacky Turner".encode(), response.data)
+        self.assertIn("Active".encode(), response.data)
+        self.assertIn("221 BLOCKS".encode(), response.data)
+
     @staticmethod
     def _build_test_ru_search_response_data(count):
         businesses = [{"name": f"{i}_name", "ruref": f"{randint(0, 100000000000)}"} for i in range(count)]
