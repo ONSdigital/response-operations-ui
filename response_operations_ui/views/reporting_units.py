@@ -107,9 +107,7 @@ def view_respondents(ru_ref: str):
     logger.info("Gathering data to view reporting unit respondents", ru_ref=ru_ref)
     reporting_unit = party_controller.get_business_by_ru_ref(ru_ref)
     associations = reporting_unit.get("associations")
-
     respondent_table_data = build_respondent_table_data_dict(associations)
-
     breadcrumbs = create_reporting_unit_breadcrumbs(ru_ref)
     logger.info("Successfully gathered data to view reporting unit respondents", ru_ref=ru_ref)
 
@@ -123,6 +121,9 @@ def build_respondent_table_data_dict(associations: list) -> list:
     respondents = party_controller.get_respondent_by_party_ids(respondent_party_ids)
     respondents_map = {}
     survey_data = {}
+
+    if not respondents:
+        return []
 
     for respondent in respondents:
         respondents_map[respondent["id"]] = {
@@ -151,7 +152,6 @@ def build_respondent_table_data_dict(associations: list) -> list:
                 }
             )
         sorted(respondent["surveys"], key=lambda t: t["survey_details"])
-
         respondent_enrolments.append(respondent)
 
     return sorted(respondent_enrolments, key=lambda t: t["respondent"])
