@@ -10,6 +10,9 @@ import requests_mock
 
 from config import TestingConfig
 from response_operations_ui import create_app
+from response_operations_ui.views.reporting_units import (
+    build_respondent_table_data_dict,
+)
 from tests.views import ViewTestCase
 from tests.views.test_admin import url_surveys
 from tests.views.test_sign_in import url_sign_in_data
@@ -897,6 +900,41 @@ class TestReportingUnits(ViewTestCase):
         self.assertIn("Jacky Turner".encode(), response.data)
         self.assertIn("Active".encode(), response.data)
         self.assertIn("221 BLOCKS".encode(), response.data)
+
+    @patch("response_operations_ui.views.reporting_units.get_survey_by_id")
+    @patch("response_operations_ui.controllers.party_controller.get_respondent_by_party_ids")
+    @patch("response_operations_ui.controllers.party_controller.get_business_by_ru_ref")
+    def test_build_respondent_table_data_dict(self, business_by_ru_ref, respondent_by_party_ids, survey_by_id):
+        business_by_ru_ref.return_value = business_reporting_unit
+        respondent_by_party_ids.return_value = respondent_party_list
+        survey_by_id.return_value = survey
+        respondent_table_data = build_respondent_table_data_dict(business_reporting_unit["associations"])
+        self.assertEqual(len(respondent_table_data), 1)
+        self.assertEqual(
+            respondent_table_data,
+            [
+                {
+                    "respondent": "Jacky Turner",
+                    "status": "Active",
+                    "surveys": [
+                        {
+                            "survey_details": "221 BLOCKS",
+                            "status:": "ENABLED",
+                            "id": "cb0711c3-0ac8-41d3-ae0e-567e5ea1ef87",
+                        }
+                    ],
+                    "id": "cd592e0f-8d07-407b-b75d-e01fbdae8233",
+                }
+            ],
+        )
+
+    @patch("response_operations_ui.controllers.party_controller.get_respondent_by_party_ids")
+    @patch("response_operations_ui.controllers.party_controller.get_business_by_ru_ref")
+    def test_build_respondent_table_data_dict_no_respondents(self, business_by_ru_ref, respondent_by_party_ids):
+        business_by_ru_ref.return_value = business_reporting_unit
+        respondent_by_party_ids.return_value = []
+        respondent_table_data = build_respondent_table_data_dict(business_reporting_unit["associations"])
+        self.assertEqual(len(respondent_table_data), 0)
 
     @staticmethod
     def _build_test_ru_search_response_data(count):
