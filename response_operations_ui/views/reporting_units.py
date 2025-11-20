@@ -105,15 +105,9 @@ def build_survey_table_data_dict(collection_exercises: list, case_groups: list) 
 @login_required
 def view_respondents(ru_ref: str):
     logger.info("Gathering data to view reporting unit respondents", ru_ref=ru_ref)
-    # Make some initial calls to retrieve some data we'll need
     reporting_unit = party_controller.get_business_by_ru_ref(ru_ref)
-
-    # Get all respondents for the given ru
-    respondent_party_ids = [respondent["partyId"] for respondent in reporting_unit.get("associations")]
-    respondents = party_controller.get_respondent_by_party_ids(respondent_party_ids)
-
-    respondent_table_data = build_respondent_table_data_dict(respondents, ru_ref)
-
+    associations = reporting_unit.get("associations")
+    respondent_table_data = build_respondent_table_data_dict(associations)
     breadcrumbs = create_reporting_unit_breadcrumbs(ru_ref)
     logger.info("Successfully gathered data to view reporting unit respondents", ru_ref=ru_ref)
 
@@ -122,36 +116,45 @@ def view_respondents(ru_ref: str):
     )
 
 
-def build_respondent_table_data_dict(respondents: list, ru_ref: str):
-    table_data = {}
+def build_respondent_table_data_dict(associations: list) -> list:
+    respondent_party_ids = [respondent["partyId"] for respondent in associations]
+    respondents = party_controller.get_respondent_by_party_ids(respondent_party_ids)
+    respondents_map = {}
     survey_data = {}
+
+    if not respondents:
+        return []
+
     for respondent in respondents:
-        table_data[respondent["id"]] = {
+        respondents_map[respondent["id"]] = {
             "respondent": f"{respondent['firstName']} {respondent['lastName']}",
             "status": respondent["status"].title(),
-            "surveys": {},
+            "surveys": [],
             "id": respondent["id"],
         }
-        respondent_surveys = party_controller.survey_ids_for_respondent(respondent, ru_ref)
-        for survey_id in respondent_surveys:
-            # Build up a cache of survey ref/name pairs
+
+    respondent_enrolments = []
+    for association in associations:
+        respondent = respondents_map.get(association["partyId"])
+
+        for enrolment in association.get("enrolments"):
+            survey_id = enrolment["surveyId"]
+
             if survey_id not in survey_data:
                 survey = get_survey_by_id(survey_id)
                 survey_data[survey_id] = f"{survey['surveyRef']} {survey['shortName']}"
 
-            enrolment_status = next(
-                iter(party_controller.add_enrolment_status_for_respondent(respondent, ru_ref, survey_id))
+            respondent["surveys"].append(
+                {
+                    "survey_details": survey_data[survey_id],
+                    "status:": enrolment["enrolmentStatus"],
+                    "id": enrolment["surveyId"],
+                }
             )
-            table_data[respondent["id"]]["surveys"][survey_id] = {
-                "name": survey_data[survey_id],
-                "status": enrolment_status,
-            }
+        sorted(respondent["surveys"], key=lambda t: t["survey_details"])
+        respondent_enrolments.append(respondent)
 
-        table_data[respondent["id"]]["surveys"] = sorted(
-            table_data[respondent["id"]]["surveys"].items(), key=lambda t: t[1]["name"]
-        )
-
-    return sorted(table_data.values(), key=lambda t: t["respondent"])
+    return sorted(respondent_enrolments, key=lambda t: t["respondent"])
 
 
 @reporting_unit_bp.route("/<ru_ref>/surveys/<survey_id>", methods=["GET"])
