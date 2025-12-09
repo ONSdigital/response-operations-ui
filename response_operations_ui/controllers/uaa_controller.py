@@ -1,11 +1,8 @@
-import base64
-import hashlib
 import logging
 from datetime import datetime, timedelta
 from json import JSONDecodeError, dumps
-from secrets import token_urlsafe, token_bytes
+from secrets import token_urlsafe
 
-import bcrypt
 import requests
 from flask import abort
 from flask import current_app as app
@@ -245,9 +242,9 @@ def create_user_account_with_random_password(email: str, first_name: str, last_n
     access_token = login_admin()
     headers = generate_headers(access_token)
 
-    # We can't create a user without a password, so we'll create an unverified user with a password that is 72 bytes 
-    # long. Length can't be any longer when using the latest versions of UAA. When the user ends up getting a link to 
-    # verify their account and set their password, we can verify and change the password at the same time.    
+    # We can't create a user without a password, so we'll create an unverified user with a password that is 72 bytes
+    # long. Length can't be any longer when using the latest versions of UAA. When the user ends up getting a link to
+    # verify their account and set their password, we can verify and change the password at the same time.
     payload = {
         "userName": email,
         "name": {"formatted": f"{first_name} {last_name}", "givenName": first_name, "familyName": last_name},
