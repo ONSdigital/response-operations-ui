@@ -335,11 +335,8 @@ def search_reporting_units():
     breadcrumbs = [{"text": "Reporting units"}]
     form = RuSearchForm()
     form.query.data = search_key_words
-    # this tells us if the search is all numbers
-    # if yes we take it as ru search and not keyword search
-    is_ru_search = search_key_words.isdecimal()
 
-    response_data = reporting_units_controllers.search_reporting_units(search_key_words, limit, page, is_ru_search)
+    response_data = reporting_units_controllers.search_reporting_units(search_key_words, limit, page)
 
     business_list = response_data["businesses"]
     total_business_count = response_data["total_business_count"]

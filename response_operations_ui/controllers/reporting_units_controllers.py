@@ -10,11 +10,11 @@ from response_operations_ui.exceptions.exceptions import ApiError
 logger = wrap_logger(logging.getLogger(__name__))
 
 
-def search_reporting_units(query, limit, page, is_ru_search):
+def search_reporting_units(query, limit, page):
     url = f'{app.config["PARTY_URL"]}/party-api/v1/businesses/search'
     response = requests.get(
         url,
-        params={"query": query, "page": page, "limit": limit, "ru_search": is_ru_search},
+        params={"query": query, "page": page, "limit": limit},
         auth=app.config["BASIC_AUTH"],
     )
 
