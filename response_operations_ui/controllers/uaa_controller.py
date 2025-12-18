@@ -242,14 +242,14 @@ def create_user_account_with_random_password(email: str, first_name: str, last_n
     access_token = login_admin()
     headers = generate_headers(access_token)
 
-    # We can't create a user without a password, so we'll create an unverified user with a crazy long password so
-    # nobody can access it.   When the user ends up getting a link to verify their account and set their password, we
-    # can verify and change the password at the same time.
+    # We can't create a user without a password, so we'll create an unverified user with a password that is 72 bytes
+    # long. Length can't be any longer when using the latest versions of UAA. When the user ends up getting a link to
+    # verify their account and set their password, we can verify and change the password at the same time.
     payload = {
         "userName": email,
         "name": {"formatted": f"{first_name} {last_name}", "givenName": first_name, "familyName": last_name},
         "emails": [{"value": email, "primary": True}],
-        "password": token_urlsafe(64),
+        "password": token_urlsafe(54),
         "verified": False,
     }
 
