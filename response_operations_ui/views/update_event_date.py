@@ -130,7 +130,7 @@ def update_event_date_submit(short_name, period, tag):
     try:
         valid_date_for_event(tag, form)
     except ValidationError as exception:
-        flash(exception, "error")
+        flash(str(exception), "error")
         return redirect(
             url_for("collection_exercise_bp.update_event_date", short_name=short_name, period=period, tag=tag)
         )
