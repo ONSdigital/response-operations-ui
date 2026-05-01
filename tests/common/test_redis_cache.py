@@ -94,7 +94,8 @@ class TestRedisCache(unittest.TestCase):
         with responses.RequestsMock() as rsps:
             rsps.add(
                 rsps.GET,
-                f"http://localhost:3030/collection-instruments/metadata?classifier_type=form_type&classifier_value={form_type}"
+                f"http://localhost:3030/collection-instruments"
+                f"/metadata?classifier_type=form_type&classifier_value={form_type}"
                 f"&language=en&survey_id={short_name}",
                 json=json.load(cir_metadata),
                 status=200,
