@@ -1,6 +1,6 @@
 env: minikube
 namespace: clouddeploy
-publicIP: false
+publicIP: true
 
 sendEmailToGovNotify: false
 
@@ -49,9 +49,9 @@ rollingUpdate:
   maxUnavailable: 1
 
 ingress:
-  enabled: false
+  enabled: true
   timeoutSec: 60
-  gcpHost: rops-gcp.example.com
+  gcpHost: rops-sandbox.rmrasbs.gcp.onsdigital.uk
   gcpCertName: response-operations-gcp-cert
 
 notify:
@@ -81,3 +81,5 @@ dns:
 
 test:
   enabled: false
+
+

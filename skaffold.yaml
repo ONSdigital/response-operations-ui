@@ -6,5 +6,5 @@ manifests:
     releases:
     - name: response-operations-ui
       chartPath: _infra/helm/response-operations-ui
-      version: 3.1.166
+      version: 3.1.167
       namespace: clouddeploy
