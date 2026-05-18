@@ -3,6 +3,7 @@ apiVersion: cloud.google.com/v1
 kind: BackendConfig
 metadata:
   name: rops-backend-config
+  namespace: {{ .Values.namespace }}
 spec:
   securityPolicy:
     name: "ras-cloud-armor-policy"

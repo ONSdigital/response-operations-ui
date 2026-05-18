@@ -1,0 +1,10 @@
+apiVersion: skaffold/v4beta7
+kind: Config
+
+manifests:
+  helm:
+    releases:
+    - name: response-operations-ui
+      chartPath: _infra/helm/response-operations-ui
+      version: 3.1.166
+      namespace: clouddeploy
