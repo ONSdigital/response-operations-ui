@@ -1,0 +1,21 @@
+apiVersion: deploy.cloud.google.com/v1
+kind: DeliveryPipeline
+metadata:
+  name: response-operations-ui
+description: Response operations delivery pipeline
+serialPipeline:
+  stages:
+    - targetId: sandbox
+      profiles: []
+---
+
+# This is defined in mock-eq atm
+
+apiVersion: deploy.cloud.google.com/v1
+kind: Target
+metadata:
+  name: sandbox
+description: sandbox cluster
+gke:
+  cluster: projects/ras-rm-sandbox/locations/europe-west2/clusters/k8s-ras
+  dnsEndpoint: true

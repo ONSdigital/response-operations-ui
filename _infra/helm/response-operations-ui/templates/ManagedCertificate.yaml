@@ -3,6 +3,7 @@ apiVersion: networking.gke.io/v1
 kind: ManagedCertificate
 metadata:
   name: {{ .Values.ingress.gcpCertName }}
+  namespace: {{ .Values.namespace }}
 spec:
   domains:
     - {{ .Values.ingress.gcpHost }}

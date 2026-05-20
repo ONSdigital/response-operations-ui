@@ -1,6 +1,6 @@
 env: minikube
-namespace: minikube
-publicIP: false
+namespace: clouddeploy
+publicIP: true
 
 sendEmailToGovNotify: false
 
@@ -19,8 +19,8 @@ gcp:
 scheme: http
 
 image:
-  devRepo: europe-west2-docker.pkg.dev/ons-ci-rmrasbs/images
-  name: europe-west2-docker.pkg.dev/ons-ci-rmrasbs/images
+  devRepo: europe-west2-docker.pkg.dev/ras-rm-sandbox/images
+  name: europe-west2-docker.pkg.dev/ras-rm-sandbox/images
   tag: latest
   pullPolicy: Always
 
@@ -49,9 +49,9 @@ rollingUpdate:
   maxUnavailable: 1
 
 ingress:
-  enabled: false
+  enabled: true
   timeoutSec: 60
-  gcpHost: rops-gcp.example.com
+  gcpHost: rops-sandbox.rmrasbs.gcp.onsdigital.uk
   gcpCertName: response-operations-gcp-cert
 
 notify:
@@ -81,3 +81,5 @@ dns:
 
 test:
   enabled: false
+
+
