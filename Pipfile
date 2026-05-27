@@ -43,7 +43,6 @@ WTForms = "*"
 jwcrypto = "*"
 email-validator = "*"
 pytest-mock = "*"
-cachetools = "*"
 
 [dev-packages]
 black = "*"
