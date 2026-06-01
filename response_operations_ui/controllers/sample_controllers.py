@@ -70,7 +70,8 @@ def upload_sample(short_name, period, file):
 
     url = f'{app.config["SAMPLE_FILE_UPLOADER_URL"]}/samples/fileupload'
 
-    response = requests.post(url=url, auth=app.config["BASIC_AUTH"], files={"file": file})
+    files = {"file": (file.filename, file.stream, file.mimetype)}
+    response = requests.post(url=url, auth=app.config["BASIC_AUTH"], files=files)
 
     try:
         response.raise_for_status()
