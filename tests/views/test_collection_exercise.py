@@ -19,7 +19,6 @@ from response_operations_ui.views.collection_exercise import (
     CIR_ERROR_MESSAGES,
     _build_collection_instruments_details,
     get_collection_exercise_and_survey_details,
-    get_sample_summary,
     validate_file_extension_is_correct,
     validate_ru_specific_collection_instrument,
 )
@@ -1996,15 +1995,6 @@ class TestCollectionExercise(ViewTestCase):
 
         self.assertEqual(response.status_code, 200)
         self.assertNotIn("Save".encode(), response.data)
-
-    @patch("response_operations_ui.controllers.collection_exercise_controllers.get_linked_sample_summary_id")
-    @patch("response_operations_ui.controllers.sample_controllers.get_sample_summary")
-    def test_get_sample_summary(self, sample_summary, linked_sample_summary_id):
-        sample_summary.return_value = SAMPLE_SUMMARY
-        linked_sample_summary_id.return_value = sample_summary_id
-        sample_summary = get_sample_summary(collection_exercise_id)
-
-        self.assertEqual(sample_summary, SAMPLE_SUMMARY)
 
     @patch("response_operations_ui.controllers.survey_controllers.get_survey_by_shortname")
     @patch("response_operations_ui.controllers.collection_exercise_controllers.get_collection_exercises_by_survey")

@@ -5,6 +5,7 @@ from flask import current_app
 from redis.exceptions import RedisError
 from structlog import wrap_logger
 
+from response_operations_ui.controllers import collection_exercise_controllers
 from response_operations_ui.controllers.cir_controller import get_cir_metadata
 from response_operations_ui.controllers.survey_controllers import (
     get_survey_by_shortname,
@@ -99,6 +100,35 @@ class RedisCache:
 
         return result
 
+    def get_collection_exercise_metadata(self, survey_id: str) -> dict:
+        redis_key = f"{self.APPLICATION_KEY}:ce:{survey_id}"
+        try:
+            result = current_app.redis.get(redis_key)
+        except RedisError:
+            logger.error("Error getting value from cache", key=redis_key, exc_info=True)
+            result = None
+
+        if not result or result == b'[]':
+            logger.info("Key not in cache, setting collection exercises", key=redis_key)
+            result = collection_exercise_controllers.get_collection_exercises_by_survey(survey_id)
+            self.set(redis_key, json.dumps(result), self.EXPIRY)
+            return result
+        
+        return json.loads(result.decode('utf-8'))
+    
+    def update_collection_exercises(self, survey_id: str) -> dict:
+        redis_key = f"{self.APPLICATION_KEY}:ce:{survey_id}"
+        self.remove_old_collection_exercises(survey_id)
+        logger.info("Updating collection exercises", key=redis_key)
+        result = collection_exercise_controllers.get_collection_exercises_by_survey(survey_id)
+        self.set(redis_key, json.dumps(result), self.EXPIRY)
+        return result
+    
+    def remove_old_collection_exercises(self, survey_id: str) -> str:
+        redis_key = f"{self.APPLICATION_KEY}:ce:{survey_id}"
+        logger.info("Refreshing cached collection exercises", redis_key=redis_key)
+        current_app.redis.delete(redis_key)
+
     def set(self, key, value, expiry):
         if not expiry:
             logger.error("Expiry must be provided")
@@ -108,3 +138,4 @@ class RedisCache:
         except RedisError:
             # Not throwing an exception as the cache isn't fatal
             logger.error("Error setting key, please investigate", key=key, exc_info=True)
+            

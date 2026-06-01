@@ -64,6 +64,7 @@ from response_operations_ui.forms import (
     LinkCollectionInstrumentForm,
     RemoveLoadedSample,
 )
+from response_operations_ui.views.surveys import redis_cache
 
 logger = wrap_logger(logging.getLogger(__name__))
 
@@ -78,17 +79,11 @@ CIR_ERROR_MESSAGES = {
     ErrorCode.API_CONNECTION_ERROR: "Unable to connect to CIR",
 }
 
-
-def get_sample_summary(collection_exercise_id):
-    summary_id = collection_exercise_controllers.get_linked_sample_summary_id(collection_exercise_id)
-    sample_summary = sample_controllers.get_sample_summary(summary_id) if summary_id else None
-    return sample_summary
-
-
 def get_collection_exercise_and_survey_details(short_name, period):
     survey = survey_controllers.get_survey_by_shortname(short_name)
     survey["shortName"] = format_short_name(survey["shortName"])
-    collection_exercises = collection_exercise_controllers.get_collection_exercises_by_survey(survey["id"])
+    redis_cache = RedisCache()
+    collection_exercises = redis_cache.get_collection_exercise_metadata(survey["id"])
     collection_exercise = get_collection_exercise_by_period(collection_exercises, period)
     return collection_exercise, survey
 
@@ -109,8 +104,12 @@ def _build_collection_instruments_details(collection_exercise_id: str, survey_id
 def view_collection_exercise(short_name, period):
     sample_load_status = None
     sample_ingest_date_time = None
+    sample = None
+    
     collection_exercise, survey = get_collection_exercise_and_survey_details(short_name, period)
-    sample = get_sample_summary(collection_exercise["id"])
+    if collection_exercise and collection_exercise['sampleLinks']:
+        summary_id = collection_exercise['sampleLinks'][0]["sampleSummaryId"]
+        sample = sample_controllers.get_sample_summary(summary_id) if summary_id else None
     events = convert_events_to_new_format(
         collection_exercise_controllers.get_collection_exercise_events_by_id(collection_exercise["id"])
     )
@@ -268,6 +267,7 @@ def _set_ready_for_live(short_name, period):
     try:
         collection_exercise_controllers.execute_collection_exercise(collection_exercise["id"])
         success_panel = "Collection exercise executed"
+        redis_cache.update_collection_exercises(survey["id"])
 
     except ApiError:
         session["error"] = json.dumps(
@@ -578,6 +578,7 @@ def submit_collection_exercise_period_id(short_name, period):
             collection_exercise_controllers.update_collection_exercise_period(
                 form.get("collection_exercise_id"), form.get("period")
             )
+        redis_cache.update_collection_exercises(form.get("hidden_survey_id"))
 
         return redirect(
             url_for("collection_exercise_bp.view_collection_exercise", short_name=short_name, period=form.get("period"))
@@ -618,6 +619,7 @@ def submit_collection_exercise_period_description(short_name, period):
         collection_exercise_controllers.update_collection_exercise_user_description(
             form.get("collection_exercise_id"), form.get("user_description")
         )
+        redis_cache.update_collection_exercises(form.get("hidden_survey_id"))
 
         return redirect(
             url_for("collection_exercise_bp.view_collection_exercise", short_name=short_name, period=period)
@@ -694,6 +696,8 @@ def create_collection_exercise(survey_ref, short_name):
     collection_exercise_controllers.create_collection_exercise(
         survey_id, survey_name, form.get("user_description"), form.get("period")
     )
+    
+    redis_cache.remove_old_collection_exercises(survey_id)
 
     logger.info("Successfully created collection exercise", survey=short_name, survey_ref=survey_ref)
     return redirect(
@@ -811,7 +815,10 @@ def create_collection_exercise_event(short_name, period, ce_id, tag):
 @login_required
 def get_view_sample_ci(short_name, period):
     collection_exercise, survey = get_collection_exercise_and_survey_details(short_name, period)
-    sample = get_sample_summary(collection_exercise["id"])
+    sample = None
+    if collection_exercise and collection_exercise['sampleLinks']:
+        summary_id = collection_exercise['sampleLinks'][0]["sampleSummaryId"]
+        sample = sample_controllers.get_sample_summary(summary_id) if summary_id else None
 
     collection_instruments = _build_collection_instruments_details(collection_exercise["id"], survey["id"])
 
@@ -863,7 +870,10 @@ def get_view_sample_ci(short_name, period):
 def get_upload_sample_file(short_name, period):
     verify_permission("surveys.edit")
     collection_exercise, survey = get_collection_exercise_and_survey_details(short_name, period)
-    sample = get_sample_summary(collection_exercise["id"])
+    sample = None
+    if collection_exercise and collection_exercise['sampleLinks']:
+        summary_id = collection_exercise['sampleLinks'][0]["sampleSummaryId"]
+        sample = sample_controllers.get_sample_summary(summary_id) if summary_id else None
 
     ce_state = collection_exercise["state"]
     collection_exercise["mapped_state"] = map_collection_exercise_state(ce_state)  # NOQA
@@ -902,6 +912,7 @@ def post_upload_sample_file(short_name, period):
             collection_exercise_controllers.link_sample_summary_to_collection_exercise(
                 collection_exercise_id=collection_exercise["id"], sample_summary_id=sample_summary["id"]
             )
+            redis_cache.remove_old_collection_exercises(survey["id"])
         except ApiError as e:
             if e.status_code == 400:
                 flash(e.message, "error")
@@ -932,7 +943,9 @@ def get_confirm_remove_sample(short_name, period):
 def remove_loaded_sample(short_name, period):
     verify_permission("surveys.edit")
     collection_exercise, survey = get_collection_exercise_and_survey_details(short_name, period)
-    sample = get_sample_summary(collection_exercise["id"])
+    summary_id = collection_exercise['sampleLinks'][0]["sampleSummaryId"]
+    sample = sample_controllers.get_sample_summary(summary_id) if summary_id else None
+    # sample = get_sample_summary(collection_exercise["id"])
 
     sample_summary_id = sample["id"]
     collection_exercise_id = collection_exercise["id"]
@@ -952,6 +965,7 @@ def remove_loaded_sample(short_name, period):
     try:
         party_controller.delete_attributes_by_sample_summary_id(sample_summary_id)
         collection_exercise_controllers.unlink_sample_summary(collection_exercise_id, sample_summary_id)
+        redis_cache.remove_old_collection_exercises(survey["id"])
     except ApiError:
         logger.info(
             "Failed to remove sample for collection exercise",
@@ -1195,7 +1209,7 @@ def save_ci_versions(short_name: str, period: str, form_type: str):
 def _build_cir_metadata(form_type, period, redis_cache, survey):
     error_message = None
     cir_metadata = None
-    collection_exercises = collection_exercise_controllers.get_collection_exercises_by_survey(survey.get("id"))
+    collection_exercises = redis_cache.get_collection_exercise_metadata(survey.get("id"))
     collection_exercise = get_collection_exercise_by_period(collection_exercises, period)
     registry_instrument = collection_instrument_controllers.get_registry_instrument(
         collection_exercise.get("id"), form_type
