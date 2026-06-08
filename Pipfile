@@ -4,7 +4,7 @@ verify_ssl = true
 url = "https://pypi.python.org/simple"
 
 [requires]
-python_version = "3.12"
+python_version = "3.14"
 
 [packages]
 flask-talisman = "*"
@@ -35,7 +35,7 @@ Flask-WTF = "*"
 pyScss = "*"
 PyJWT = "*"
 Flask-Session = "*"
-werkzeug = "==3.1.5"
+werkzeug = "==3.1.6"
 et_xmlfile = "*"
 Jinja2 = "*"
 MarkupSafe = "*"
@@ -43,6 +43,7 @@ WTForms = "*"
 jwcrypto = "*"
 email-validator = "*"
 pytest-mock = "*"
+cachetools = "*"
 
 [dev-packages]
 black = "*"

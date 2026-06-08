@@ -17,7 +17,7 @@ from response_operations_ui.exceptions.error_codes import ErrorCode
 from response_operations_ui.exceptions.exceptions import ExternalApiError
 
 TEST_CIR_URL = "http://test.domain"
-TEST_CIR_API_PREFIX = "/v2/ci_metadata"
+TEST_CIR_API_PREFIX = "/collection-instruments/metadata"
 project_root = os.path.dirname(os.path.dirname(__file__))
 cir_url_query_parameters = "?survey_id=141&language=en&classifier_type=form_type&classifier_value=0001"
 formtype = "0001"
