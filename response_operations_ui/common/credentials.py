@@ -14,3 +14,4 @@ def fetch_and_apply_oidc_credentials(session: requests.Session, client_id: str) 
 
     credentials = oidc_credentials_service.get_credentials(iap_client_id=client_id)
     credentials.apply(headers=session.headers)
+f
