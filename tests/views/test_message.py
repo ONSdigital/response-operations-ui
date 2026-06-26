@@ -217,53 +217,6 @@ class TestMessage(ViewTestCase):
 
     @requests_mock.mock()
     @patch("response_operations_ui.controllers.message_controllers._get_jwt")
-    def test_rft_inbox_selection(self, mock_request, mock_get_jwt):
-        """
-        Tests if the right messages get displayed for the RFT inbox.
-        """
-        mock_get_jwt.return_value = "mock-jwt"
-        mock_request.get(url_messages + "/count", json={"total": 1}, status_code=200)
-        mock_request.get(url_get_threads_list, json=thread_list)
-        mock_request.get(url_get_surveys_list, json=self.surveys_list_json)
-        mock_request.get(shortname_url + "/miscellaneous", json=ashe_info["survey"])
-        form = {"inbox-radio": "misc"}
-        response = self.client.post("/messages/select-survey", data=form, follow_redirects=True)
-
-        self.assertEqual(response.status_code, 200)
-        self.assertIn("RFT Messages".encode(), response.data)
-        self.assertNotIn("Apple".encode(), response.data)
-        self.assertNotIn("50012345678".encode(), response.data)
-        self.assertIn("John Example".encode(), response.data)
-        self.assertIn("Message from respondent".encode(), response.data)
-        self.assertIn("johnexample@example.com".encode(), response.data)
-        self.assertIn(
-            'href="/respondents/respondent-details/ff4537df-2097-4a73-a530-e98dba7bf28f"'.encode(), response.data
-        )
-
-    @requests_mock.mock()
-    @patch("response_operations_ui.controllers.message_controllers._get_jwt")
-    def test_rft_inbox_threads_list(self, mock_request, mock_get_jwt):
-        """
-        Tests if the right messages get displayed for the RFT inbox.
-        """
-        mock_get_jwt.return_value = "mock_jwt"
-        mock_request.get(url_messages + "/count", json={"total": 1}, status_code=200)
-        mock_request.get(url_get_threads_list, json=thread_list)
-        mock_request.get(url_get_surveys_list, json=self.surveys_list_json)
-        mock_request.get(shortname_url + "/miscellaneous", json=ashe_info["survey"])
-        response = self.client.get("/messages/miscellaneous")
-
-        self.assertEqual(response.status_code, 200)
-        self.assertIn("RFT Messages".encode(), response.data)
-        self.assertNotIn("Apple".encode(), response.data)
-        self.assertNotIn("50012345678".encode(), response.data)
-        self.assertIn("John Example".encode(), response.data)
-        self.assertIn("ASHE Team".encode(), response.data)
-        self.assertIn("Message from respondent".encode(), response.data)
-        self.assertIn("Message from ONS".encode(), response.data)
-
-    @requests_mock.mock()
-    @patch("response_operations_ui.controllers.message_controllers._get_jwt")
     def test_survey_short_name_failure(self, mock_request, mock_get_jwt):
         mock_get_jwt.return_value = "mock_jwt"
         mock_request.get(shortname_url + "/ASHE", status_code=500)
@@ -417,13 +370,6 @@ class TestMessage(ViewTestCase):
         self.assertIn("Unread Message Subject".encode(), response.data)
         self.assertIn("Category".encode(), response.data)
         self.assertIn("TECHNICAL".encode(), response.data)
-
-        # RFT messages
-        mock_request.get(url_get_thread, json=thread_unread_rft_json)
-        response = self.client.get(message_thread)
-        self.assertIn("Unread Message Subject".encode(), response.data)
-        self.assertIn("Category".encode(), response.data)
-        self.assertIn("MISC".encode(), response.data)
 
     @requests_mock.mock()
     def test_open_thread_with_deleted_respondent(self, mock_request):
@@ -939,17 +885,6 @@ class TestMessage(ViewTestCase):
         # Technical
         response = self.client.get(
             message_thread + "/close-conversation?category=TECHNICAL",
-            follow_redirects=True,
-        )
-        self.assertEqual(200, response.status_code)
-        self.assertIn("Category".encode(), response.data)
-        self.assertNotIn("Business".encode(), response.data)
-        self.assertNotIn("Reference".encode(), response.data)
-        self.assertIn("Respondent".encode(), response.data)
-
-        # Misc
-        response = self.client.get(
-            message_thread + "/close-conversation?category=MISC",
             follow_redirects=True,
         )
         self.assertEqual(200, response.status_code)
@@ -1605,29 +1540,6 @@ class TestMessage(ViewTestCase):
         self.assertIn("Technical Messages".encode(), response.data)
 
     @requests_mock.mock()
-    @patch("response_operations_ui.controllers.message_controllers._get_jwt")
-    @patch("flask_login.utils._get_user")
-    def test_flash_redirect_to_misc_inbox(self, mock_request, current_user, mock_get_jwt):
-        self._client_session_("misc")
-        mock_get_jwt.return_value = "mock_jwt"
-        current_user.return_value.id = 1
-        # Post message on reply
-        thread_json["category"] = "MISC"
-        mock_request.get(url_get_thread, json=thread_json)
-        mock_request.post(url_send_message, json=threads_no_unread_list, status_code=201)
-
-        # Conversation list
-        mock_request.get(url_get_threads_list, json=thread_list)
-        mock_request.get(url_get_surveys_list, json=survey_list)
-        mock_request.get(url_messages + "/count", json={"total": 1}, status_code=200)
-        mock_request.post(url_sign_in_data, json={"access_token": self.access_token}, status_code=201)
-        response = self.client.post(message_thread, data=self.message_form, follow_redirects=True)
-        self.assertIn(message_thread.encode(), response.data)
-        self.assertIn("Message sent.".encode(), response.data)
-        self.assertIn("Messages".encode(), response.data)
-        self.assertIn("RFT Messages".encode(), response.data)
-
-    @requests_mock.mock()
     def test_return_button_link_returns_to_technical_inbox(self, mock_request):
         self._client_session_("technical")
         thread_json["category"] = "TECHNICAL"
@@ -1656,36 +1568,6 @@ class TestMessage(ViewTestCase):
             )
 
         self.assertIn("Technical Messages".encode(), redirect.data)
-
-    @requests_mock.mock()
-    def test_return_button_link_returns_to_misc_inbox(self, mock_request):
-        self._client_session_("misc")
-        thread_json["category"] = "MISC"
-        mock_request.get(url_get_thread, json=thread_json)
-        mock_request.get(url_get_surveys_list, json=survey_list)
-        mock_request.patch(url_get_thread, json=thread_json)
-        mock_request.get(url_messages + "/count", json={"total": 1}, status_code=200)
-        mock_request.get(url_get_threads_list, json=thread_list)
-
-        with self.app.app_context():
-            response = self.client.post(
-                message_thread + "?page=1&conversation_tab=open&ru_ref_filter=&business_id_filter=#latest-message",
-                follow_redirects=True,
-            )
-
-        self.assertEqual(200, response.status_code)
-        self.assertIn(
-            "/messages/?page=1&amp;conversation_tab=open&amp;ru_ref_filter=&amp;business_id_filter=".encode(),
-            response.data,
-        )
-
-        with self.app.app_context():
-            redirect = self.client.get(
-                "/messages/?page=1&conversation_tab=open&ru_ref_filter=&business_id_filter=",
-                follow_redirects=True,
-            )
-
-        self.assertIn("RFT Messages".encode(), redirect.data)
 
     @staticmethod
     def _mock_request_called_with_expected_query(mock_instance, query):
