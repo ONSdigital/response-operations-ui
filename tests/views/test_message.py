@@ -81,8 +81,6 @@ with open(f"{project_root}/test_data/message/thread_unread.json") as json_data:
     thread_unread_json = json.load(json_data)
 with open(f"{project_root}/test_data/message/thread_unread_technical.json") as json_data:
     thread_unread_technical_json = json.load(json_data)
-with open(f"{project_root}/test_data/message/thread_unread_rft.json") as json_data:
-    thread_unread_rft_json = json.load(json_data)
 with open(f"{project_root}/test_data/party/business_reporting_unit.json") as fp:
     business_reporting_unit = json.load(fp)
 with open(f"{project_root}/test_data/party/get_business_by_ru_ref.json") as fp:
