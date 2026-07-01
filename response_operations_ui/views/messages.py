@@ -375,17 +375,6 @@ def _view_select_survey(conversation_tab, ru_ref_filter, business_id_filter, thr
                 thread_id=thread_id,
             )
         )
-    elif selected_survey == "misc":
-        return redirect(
-            url_for(
-                "messages_bp.view_misc_inbox",
-                page=request.args.get("page"),
-                conversation_tab=conversation_tab,
-                ru_ref_filter=ru_ref_filter,
-                business_id_filter=business_id_filter,
-                thread_id=thread_id,
-            )
-        )
     else:
         return redirect(
             url_for(
@@ -416,8 +405,6 @@ def select_inbox():
                 response_error = "Select a survey sub-selection for survey inbox"
         else:
             response_error = "Select an inbox"
-        if inbox == "misc":
-            return redirect(url_for("messages_bp.view_misc_inbox"))
 
     breadcrumbs = [{"text": "Messages", "url": "/messages"}, {"text": "Filter by survey"}]
 
@@ -636,21 +623,6 @@ def close_conversation(thread_id):
         ru_ref_filter=ru_ref_filter,
         business_id_filter=business_id_filter,
         category=category,
-    )
-
-
-@messages_bp.route("/miscellaneous", methods=["GET", "POST"])
-@login_required
-def view_misc_inbox():  # noqa: C901
-    session["messages_survey_selection"] = "misc"
-    breadcrumbs = [{"text": "Miscellaneous" + " Messages"}]
-    thread_id = request.args.get("thread_id")
-    return _process_non_survey_category_page(
-        render_html="secure-message/misc-inbox.html",
-        redirect_url="messages_bp.view_misc_inbox",
-        breadcrumbs=breadcrumbs,
-        category="MISC",
-        thread_id=thread_id,
     )
 
 
