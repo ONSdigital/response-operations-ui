@@ -1858,7 +1858,7 @@ class TestCollectionExercise(ViewTestCase):
         self.assertIn("Back to CIR versions".encode(), response.data)
         self.assertIn("Choose CIR version for EQ formtype".encode(), response.data)
         self.assertIn("Version 1".encode(), response.data)
-        self.assertIn("Published: 16/07/2024 at 14:26:44".encode(), response.data)
+        self.assertIn("Published: 16/07/2024 at 15:26:44".encode(), response.data)
         self.assertIn("Save".encode(), response.data)
 
     @mock_decorator(CE, EQ_SURVEY, EQ_CI)

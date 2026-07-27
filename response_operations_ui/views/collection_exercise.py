@@ -5,7 +5,7 @@ from datetime import datetime
 
 import iso8601
 from dateutil import tz
-from dateutil.parser import parse
+from dateutil.parser import isoparse, parse
 from flask import (
     Blueprint,
     abort,
@@ -1207,7 +1207,9 @@ def _build_cir_metadata(form_type, period, redis_cache, survey):
         cir_metadata = redis_cache.get_cir_metadata(survey.get("surveyRef"), form_type)
         # Conversion to make displaying the datetime easier in the template
         for ci in cir_metadata:
-            ci["published_at"] = datetime.fromisoformat(ci["published_at"]).strftime("%d/%m/%Y at %H:%M:%S")
+            ci["published_at"] = (
+                isoparse(ci["published_at"]).astimezone(tz.gettz("Europe/London")).strftime("%d/%m/%Y at %H:%M:%S")
+            )
             ci["selected"] = ci["guid"] == (registry_instrument["guid"] if registry_instrument else False)
     except ExternalApiError as e:
         error_message = CIR_ERROR_MESSAGES.get(e.error_code, get_error_code_message(e.error_code))
