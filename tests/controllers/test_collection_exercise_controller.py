@@ -142,7 +142,7 @@ class TestCollectionExerciseController(unittest.TestCase):
                 "published_at": "2024-07-16T14:26:44.609010Z",
             }
         ]
-        
+
         cir_details = get_cir_details("0001", "12345", RedisCache(), {"id": "1", "surveyRef": "139"})
 
         self.assertEqual(cir_details.is_ce_live, False)
@@ -169,7 +169,7 @@ class TestCollectionExerciseController(unittest.TestCase):
         get_collection_exercises_by_survey.return_value = [{"exerciseRef": "12345", "state": "CREATED"}]
         get_cir_metadata.side_effect = ExternalApiError(error_code=ErrorCode.NOT_FOUND)
         get_registry_instrument.return_value = {"guid": "427d40e6-f54a-4512-a8ba-e4dea54ea3dc"}
-    
+
         cir_details = get_cir_details("0001", "12345", RedisCache(), {"id": "1", "surveyRef": "139"})
 
         self.assertEqual(cir_details.is_ce_live, False)
