@@ -154,7 +154,7 @@ class TestCollectionExerciseController(unittest.TestCase):
     @patch("response_operations_ui.controllers.collection_exercise_controllers.get_collection_exercises_by_survey")
     def test_get_cir_details_ce_is_live(self, get_collection_exercises_by_survey, get_registry_instrument):
         get_collection_exercises_by_survey.return_value = [{"exerciseRef": "12345", "state": "LIVE"}]
-        get_registry_instrument.return_value = {"version": "1"}
+        get_registry_instrument.return_value = {"ci_version": "1"}
 
         cir_details = get_cir_details("0001", "12345", RedisCache(), {"id": "1", "surveyRef": "139"})
 

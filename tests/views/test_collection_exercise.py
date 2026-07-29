@@ -1881,15 +1881,13 @@ class TestCollectionExercise(ViewTestCase):
     def test_choose_cir_version_live(self, mock_request, get_shortname, get_cir_details):
         sign_in_with_permission(self, mock_request, user_permission_surveys_edit_json)
         get_shortname.return_value = {"short_name": {"survey_ref": survey_id}}
-        get_cir_details.return_value = CirDetails(is_ce_live=True, registry_instrument={"version": "1"})
+        get_cir_details.return_value = CirDetails(is_ce_live=True, registry_instrument={"ci_version": "1"})
 
         response = self.client.get(f"/surveys/{short_name}/{period}/view-sample-ci/summary/{form_type}")
 
         self.assertEqual(response.status_code, 200)
         self.assertIn(form_type.encode(), response.data)
-        self.assertIn(
-            "The Collection exercise is now live, and CIR has been locked as Version 1".encode(), response.data
-        )
+        self.assertIn("The collection exercise is live, and Version 1 is locked".encode(), response.data)
         self.assertNotIn("Save".encode(), response.data)
 
     @mock_decorator(CE, EQ_SURVEY, EQ_CI)
