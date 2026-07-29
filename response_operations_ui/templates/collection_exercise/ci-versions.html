@@ -16,9 +16,8 @@
             <h1 class="ons-u-fs-xxl" name="page-ci-versions-title">
                 Choose CIR version for EQ formtype {{ form_type }}
             </h1>
-
             {% if cir_details.is_ce_live %}
-                <p>The Collection exercise is now live, and the CIR has been locked as Version {{ cir_details.registry_instrument.version }}</p>
+                <p>The collection exercise is now live, and CIR has been locked as Version {{ cir_details.registry_instrument.ci_version }}</p>
             {% else %}
                 {% if cir_details.error_message %}
                     <p>{{ cir_details.error_message }}</p>

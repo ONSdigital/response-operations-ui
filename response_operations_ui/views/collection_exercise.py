@@ -1157,8 +1157,16 @@ def view_ci_versions(short_name: str, period: str, form_type: str) -> str:
 @login_required
 def save_ci_versions(short_name: str, period: str, form_type: str):
     verify_permission("surveys.edit")
-    selected_registry_instrument_guid = request.form.get("ci-versions")
     collection_exercise, survey = get_collection_exercise_and_survey_details(short_name, period)
+
+    if collection_exercise["state"] == "LIVE":
+        return redirect(
+            url_for(
+                "collection_exercise_bp.view_ci_versions", short_name=short_name, period=period, form_type=form_type
+            )
+        )
+
+    selected_registry_instrument_guid = request.form.get("ci-versions")
     collection_instruments = _build_collection_instruments_details(collection_exercise["id"], survey["id"])
 
     if "nothing-selected" == selected_registry_instrument_guid:
