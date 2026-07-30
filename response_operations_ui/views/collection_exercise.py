@@ -50,10 +50,7 @@ from response_operations_ui.controllers import (
     survey_controllers,
 )
 from response_operations_ui.controllers.uaa_controller import user_has_permission
-from response_operations_ui.exceptions.error_codes import (
-    ErrorCode,
-    get_error_code_message,
-)
+from response_operations_ui.exceptions.error_codes import get_error_code_message
 from response_operations_ui.exceptions.exceptions import (
     ApiError,
     ExternalApiError,
@@ -73,13 +70,6 @@ logger = wrap_logger(logging.getLogger(__name__))
 collection_exercise_bp = Blueprint(
     "collection_exercise_bp", __name__, static_folder="static", template_folder="templates"
 )
-
-CIR_ERROR_MESSAGES = {
-    ErrorCode.NOT_FOUND: "There are no CIR versions to display. The version you want to select "
-    "may not yet be published or available in the Collection Instrument "
-    "Registry (CIR). If you need help contact the testing team.",
-    ErrorCode.API_CONNECTION_ERROR: "Unable to connect to CIR",
-}
 
 
 def get_sample_summary(collection_exercise_id):
@@ -1159,7 +1149,7 @@ def save_ci_versions(short_name: str, period: str, form_type: str):
     verify_permission("surveys.edit")
     collection_exercise, survey = get_collection_exercise_and_survey_details(short_name, period)
 
-    if collection_exercise["state"] == "LIVE":
+    if collection_exercise["state"] in ("READY_FOR_LIVE", "LIVE"):
         return redirect(
             url_for(
                 "collection_exercise_bp.view_ci_versions", short_name=short_name, period=period, form_type=form_type

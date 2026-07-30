@@ -1939,6 +1939,27 @@ class TestCollectionExercise(ViewTestCase):
             f"/surveys/{short_name}/{period}/view-sample-ci/summary/0001",
         )
 
+    @requests_mock.mock()
+    @patch("response_operations_ui.controllers.collection_exercise_controllers.get_cir_details")
+    @patch("response_operations_ui.views.collection_exercise.get_collection_exercise_and_survey_details")
+    def test_save_ci_versions_ready_for_live(
+        self, mock_request, get_collection_exercise_and_survey_details, get_cir_details
+    ):
+        sign_in_with_permission(self, mock_request, user_permission_surveys_edit_json)
+        get_collection_exercise_and_survey_details.return_value = ({"state": "READY_FOR_LIVE"}, {})
+        get_cir_details.return_value = CirDetails(is_ce_live=True, registry_instrument={"version": "1"})
+
+        post_data = {"formtype": "0001", "ci-versions": "nothing-selected", "period": period}
+
+        response = self.client.post(
+            f"/surveys/{short_name}/{period}/view-sample-ci/summary/0001", data=post_data, follow_redirects=False
+        )
+        self.assertEqual(response.status_code, 302)
+        self.assertEqual(
+            urlparse(response.location).path,
+            f"/surveys/{short_name}/{period}/view-sample-ci/summary/0001",
+        )
+
     @mock_decorator(CE, EQ_SURVEY, EQ_CI)
     @requests_mock.mock()
     @patch("response_operations_ui.controllers.collection_instrument_controllers.delete_registry_instruments")

@@ -164,6 +164,18 @@ class TestCollectionExerciseController(unittest.TestCase):
 
     @patch("response_operations_ui.controllers.collection_exercise_controllers.get_registry_instrument")
     @patch("response_operations_ui.controllers.collection_exercise_controllers.get_collection_exercises_by_survey")
+    def test_get_cir_details_ce_is_ready_for_live(self, get_collection_exercises_by_survey, get_registry_instrument):
+        get_collection_exercises_by_survey.return_value = [{"exerciseRef": "12345", "state": "READY_FOR_LIVE"}]
+        get_registry_instrument.return_value = {"ci_version": "1"}
+
+        cir_details = get_cir_details("0001", "12345", RedisCache(), {"id": "1", "surveyRef": "139"})
+
+        self.assertEqual(cir_details.is_ce_live, True)
+        self.assertEqual(cir_details.metadata, [])
+        self.assertIsNone(cir_details.error_message)
+
+    @patch("response_operations_ui.controllers.collection_exercise_controllers.get_registry_instrument")
+    @patch("response_operations_ui.controllers.collection_exercise_controllers.get_collection_exercises_by_survey")
     @patch("response_operations_ui.controllers.collection_exercise_controllers.RedisCache.get_cir_metadata")
     def test_get_cir_details_error(self, get_cir_metadata, get_collection_exercises_by_survey, get_registry_instrument):
         get_collection_exercises_by_survey.return_value = [{"exerciseRef": "12345", "state": "CREATED"}]
