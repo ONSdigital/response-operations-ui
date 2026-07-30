@@ -23,7 +23,6 @@ from response_operations_ui.exceptions.exceptions import ApiError, ExternalApiEr
 
 logger = wrap_logger(logging.getLogger(__name__))
 
-
 CIR_ERROR_MESSAGES = {
     ErrorCode.NOT_FOUND: "There are no CIR versions to display. The version you want to select "
     "may not yet be published or available in the Collection Instrument "
@@ -466,7 +465,7 @@ def get_cir_details(form_type: str, period: str, redis_cache: RedisCache, survey
     collection_exercise = get_collection_exercise_by_period(collection_exercises, period)
     registry_instrument = get_registry_instrument(collection_exercise.get("id"), form_type)
 
-    if collection_exercise["state"] == "LIVE":
+    if collection_exercise["state"] in ("READY_FOR_LIVE", "LIVE"):
         return CirDetails(
             is_ce_live=True,
             registry_instrument=registry_instrument,

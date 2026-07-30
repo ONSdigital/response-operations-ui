@@ -12,12 +12,12 @@ import requests_mock
 
 from config import TestingConfig
 from response_operations_ui.controllers.collection_exercise_controllers import (
+    CIR_ERROR_MESSAGES,
     CirDetails,
 )
 from response_operations_ui.exceptions.error_codes import ErrorCode
 from response_operations_ui.exceptions.exceptions import ApiError
 from response_operations_ui.views.collection_exercise import (
-    CIR_ERROR_MESSAGES,
     _build_collection_instruments_details,
     get_collection_exercise_and_survey_details,
     get_sample_summary,
