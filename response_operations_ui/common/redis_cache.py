@@ -1,5 +1,6 @@
 import json
 import logging
+from typing import Any
 
 from flask import current_app
 from redis.exceptions import RedisError
@@ -18,7 +19,7 @@ class RedisCache:
     EXPIRY = 600  # 10 mins
     APPLICATION_KEY = "response-operations-ui"
 
-    def get_cir_metadata(self, survey_ref: str, formtype: str) -> dict:
+    def get_cir_metadata(self, survey_ref: str, formtype: str) -> list[dict[str, Any]]:
         """
         Gets the cir_metadata from redis or the cir service
 

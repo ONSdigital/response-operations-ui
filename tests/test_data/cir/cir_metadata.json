@@ -6,7 +6,18 @@
     "classifier_value": "0001",
     "guid": "427d40e6-f54a-4512-a8ba-e4dea54ea3dc",
     "language": "en",
-    "published_at": "2024-07-16T14:26:44.609010Z",
+    "published_at": "16/07/2024 at 15:26:44",
+    "survey_id": "1",
+    "title": "Monthly Wages and Salaries Survey"
+  },
+  {
+    "ci_version": 2,
+    "data_version": "0.0.2",
+    "classifier_type": "form_type",
+    "classifier_value": "0001",
+    "guid": "893e8780-a78b-45da-86fa-6c2da41b5b28",
+    "language": "en",
+    "published_at": "17/07/2026 at 10:12:30",
     "survey_id": "1",
     "title": "Monthly Wages and Salaries Survey"
   }

@@ -8,74 +8,86 @@
     <input type="hidden" name="csrf_token" value="{{ csrf_token() }}" />
     <div class="ons-grid ons-grid--gutterless">
         <div class="ons-grid__col ons-col-8@m">
-             <h1 class="ons-u-fs-m ons-u-lighter" name="page-ci-versions-subtitle">{{ long_name }} | {{ period }} Collection exercise</h1>
-            <h1 class="ons-u-fs-xxl" name="page-ci-versions-title">Choose CIR version for EQ formtype {{ form_type }}</h1>
-            {% if error_message %}
-                <p>{{ error_message }}</p>
+            <h1 class="ons-u-fs-m ons-u-lighter" name="page-ci-versions-subtitle">
+                {{ long_name }} | {{ period }} Collection exercise
+            </h1>
+            <h1 class="ons-u-fs-xxl" name="page-ci-versions-title">
+                Choose CIR version for EQ formtype {{ form_type }}
+            </h1>
+            {% if cir_details.is_ce_live %}
+                <p>The collection exercise is live, and Version {{ cir_details.registry_instrument.ci_version }} is locked</p>
             {% else %}
-            {%
-                call onsPanel({
-                    "variant": "warn",
-                    "classes": "ons-u-mb-l"
-                })
-            %}
-                <p>The version must have successfully passed all testing. If you are unsure contact the testing team.</p>
-            {% endcall %}
-            <div>
+                {% if cir_details.error_message %}
+                    <p>{{ cir_details.error_message }}</p>
+                {% else %}
 
-                <p>
-                  {% set cirRadioRows = [{
-                    "id": "cir-version-nothing-selected",
-                    "label": {
-                      "text": "Nothing selected",
-                    },
-                    "name": "nothing-selected",
-                    "value": "nothing-selected",
-                    "checked": true,
-                  }] %}
-                  {% for ci in cir_metadata %}
-                    {% do cirRadioRows.append(
-                        {
-                          "id": "cir-version-" + ci.ci_version|string,
-                          "label": {
-                              "text": "Version " + ci.ci_version|string,
-                              "description": "Published: " + ci.published_at,
-                          },
-                          "name": ci.ci_version|string,
-                          "value": ci.guid|string,
-                          "checked": true if ci.selected else false,
-                        }
-                    )%}
-                  {% endfor %}
-                  {{ 
-                    onsRadios({
-                      "dontWrap": true,
-                      "name": "ci-versions",
-                      "radios": cirRadioRows,
-                  })}}
-                </p>
-            </div>
-            {% if cir_metadata and has_edit_permission %}
-            {{
-                onsButton({
-                    "text": "Save",
-                    "id": "save",
-                    "name": "save"
-            })
-            }}
-            {% endif %}
-        
-            <div class="ons-u-mb-xl ons-u-mt-l">
-            {%
-                call onsDetails({
-                "id": "Cir version not available",
-                "title": "The right version is not here"
-                })
-            %}
-                <p>The version you want to select may not yet be published or available in the Collection Instrument Registry (CIR)</p>
-                <p>If you need an older version that is not available contact the Service Desk.</p>
-            {% endcall %}
-            </div>
+                    {% call onsPanel({
+                        "variant": "warn",
+                        "classes": "ons-u-mb-l"
+                    }) %}
+                        <p>
+                            The version must have successfully passed all testing.
+                            If you are unsure contact the testing team.
+                        </p>
+                    {% endcall %}
+                    <div>
+                        <p>
+                            {% set cirRadioRows = [{
+                                "id": "cir-version-nothing-selected",
+                                "label": {
+                                    "text": "Nothing selected",
+                                },
+                                "name": "nothing-selected",
+                                "value": "nothing-selected",
+                                "checked": true,
+                            }] %}
+                            {% for ci in cir_details.metadata %}
+                                {% do cirRadioRows.append({
+                                    "id": "cir-version-" + ci.ci_version|string,
+                                    "label": {
+                                        "text": "Version " + ci.ci_version|string,
+                                        "description": "Published: " + ci.published_at,
+                                    },
+                                    "name": ci.ci_version|string,
+                                    "value": ci.guid|string,
+                                    "checked": true if ci.selected else false,
+                                }) %}
+                            {% endfor %}
+
+                            {{
+                                onsRadios({
+                                    "dontWrap": true,
+                                    "name": "ci-versions",
+                                    "radios": cirRadioRows,
+                                })
+                            }}
+                        </p>
+                    </div>
+                    {% if cir_details.metadata and has_edit_permission %}
+                        {{
+                            onsButton({
+                                "text": "Save",
+                                "id": "save",
+                                "name": "save"
+                            })
+                        }}
+                    {% endif %}
+                    <div class="ons-u-mb-xl ons-u-mt-l">
+                        {% call onsDetails({
+                            "id": "Cir version not available",
+                            "title": "The right version is not here"
+                        }) %}
+                            <p>
+                                The version you want to select may not yet be published
+                                or available in the Collection Instrument Registry (CIR)
+                            </p>
+                            <p>
+                                If you need an older version that is not available
+                                contact the Service Desk.
+                            </p>
+                        {% endcall %}
+                    </div>
+                {% endif %}
             {% endif %}
         </div>
     </div>

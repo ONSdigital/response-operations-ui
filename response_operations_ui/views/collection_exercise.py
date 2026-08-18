@@ -5,7 +5,7 @@ from datetime import datetime
 
 import iso8601
 from dateutil import tz
-from dateutil.parser import isoparse, parse
+from dateutil.parser import parse
 from flask import (
     Blueprint,
     abort,
@@ -50,10 +50,7 @@ from response_operations_ui.controllers import (
     survey_controllers,
 )
 from response_operations_ui.controllers.uaa_controller import user_has_permission
-from response_operations_ui.exceptions.error_codes import (
-    ErrorCode,
-    get_error_code_message,
-)
+from response_operations_ui.exceptions.error_codes import get_error_code_message
 from response_operations_ui.exceptions.exceptions import (
     ApiError,
     ExternalApiError,
@@ -73,13 +70,6 @@ logger = wrap_logger(logging.getLogger(__name__))
 collection_exercise_bp = Blueprint(
     "collection_exercise_bp", __name__, static_folder="static", template_folder="templates"
 )
-
-CIR_ERROR_MESSAGES = {
-    ErrorCode.NOT_FOUND: "There are no CIR versions to display. The version you want to select "
-    "may not yet be published or available in the Collection Instrument "
-    "Registry (CIR). If you need help contact the testing team.",
-    ErrorCode.API_CONNECTION_ERROR: "Unable to connect to CIR",
-}
 
 
 def get_sample_summary(collection_exercise_id):
@@ -1138,17 +1128,16 @@ def view_ci_versions(short_name: str, period: str, form_type: str) -> str:
     redis_cache = RedisCache()
     survey = redis_cache.get_survey_by_shortname(short_name)
     long_name = survey.get("longName")
-    cir_metadata, error_message = _build_cir_metadata(form_type, period, redis_cache, survey)
+    cir_details = collection_exercise_controllers.get_cir_details(form_type, period, redis_cache, survey)
     back_url = url_for("collection_exercise_bp.view_sample_ci_summary", short_name=short_name, period=period)
     breadcrumbs = [{"text": "Back to CIR versions", "url": back_url}, {}]
 
     return render_template(
         "collection_exercise/ci-versions.html",
         form_type=form_type,
-        cir_metadata=cir_metadata,
+        cir_details=cir_details,
         period=period,
         long_name=long_name,
-        error_message=error_message,
         breadcrumbs=breadcrumbs,
         has_edit_permission=user_has_permission("surveys.edit"),
     )
@@ -1158,8 +1147,16 @@ def view_ci_versions(short_name: str, period: str, form_type: str) -> str:
 @login_required
 def save_ci_versions(short_name: str, period: str, form_type: str):
     verify_permission("surveys.edit")
-    selected_registry_instrument_guid = request.form.get("ci-versions")
     collection_exercise, survey = get_collection_exercise_and_survey_details(short_name, period)
+
+    if collection_exercise["state"] in ("READY_FOR_LIVE", "LIVE"):
+        return redirect(
+            url_for(
+                "collection_exercise_bp.view_ci_versions", short_name=short_name, period=period, form_type=form_type
+            )
+        )
+
+    selected_registry_instrument_guid = request.form.get("ci-versions")
     collection_instruments = _build_collection_instruments_details(collection_exercise["id"], survey["id"])
 
     if "nothing-selected" == selected_registry_instrument_guid:
@@ -1193,27 +1190,6 @@ def save_ci_versions(short_name: str, period: str, form_type: str):
             )
 
         return redirect(url_for("collection_exercise_bp.view_sample_ci_summary", short_name=short_name, period=period))
-
-
-def _build_cir_metadata(form_type, period, redis_cache, survey):
-    error_message = None
-    cir_metadata = None
-    collection_exercises = collection_exercise_controllers.get_collection_exercises_by_survey(survey.get("id"))
-    collection_exercise = get_collection_exercise_by_period(collection_exercises, period)
-    registry_instrument = collection_instrument_controllers.get_registry_instrument(
-        collection_exercise.get("id"), form_type
-    )
-    try:
-        cir_metadata = redis_cache.get_cir_metadata(survey.get("surveyRef"), form_type)
-        # Conversion to make displaying the datetime easier in the template
-        for ci in cir_metadata:
-            ci["published_at"] = (
-                isoparse(ci["published_at"]).astimezone(tz.gettz("Europe/London")).strftime("%d/%m/%Y at %H:%M:%S")
-            )
-            ci["selected"] = ci["guid"] == (registry_instrument["guid"] if registry_instrument else False)
-    except ExternalApiError as e:
-        error_message = CIR_ERROR_MESSAGES.get(e.error_code, get_error_code_message(e.error_code))
-    return cir_metadata, error_message
 
 
 def _get_selected_cir_metadata_object(guid, list_of_cir_metadata_objects):

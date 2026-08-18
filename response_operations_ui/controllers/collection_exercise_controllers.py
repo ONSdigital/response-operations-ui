@@ -1,14 +1,42 @@
 import json
 import logging
+from dataclasses import dataclass, field
+from typing import Any
 
 import requests
+from dateutil import tz
+from dateutil.parser import isoparse
 from flask import current_app as app
 from requests.exceptions import HTTPError
 from structlog import wrap_logger
 
-from response_operations_ui.exceptions.exceptions import ApiError
+from response_operations_ui.common.filters import get_collection_exercise_by_period
+from response_operations_ui.common.redis_cache import RedisCache
+from response_operations_ui.controllers.collection_instrument_controllers import (
+    get_registry_instrument,
+)
+from response_operations_ui.exceptions.error_codes import (
+    ErrorCode,
+    get_error_code_message,
+)
+from response_operations_ui.exceptions.exceptions import ApiError, ExternalApiError
 
 logger = wrap_logger(logging.getLogger(__name__))
+
+CIR_ERROR_MESSAGES = {
+    ErrorCode.NOT_FOUND: "There are no CIR versions to display. The version you want to select "
+    "may not yet be published or available in the Collection Instrument "
+    "Registry (CIR). If you need help contact the testing team.",
+    ErrorCode.API_CONNECTION_ERROR: "Unable to connect to CIR",
+}
+
+
+@dataclass
+class CirDetails:
+    is_ce_live: bool = False
+    registry_instrument: dict[str, Any] | None = None
+    metadata: list[dict[str, Any]] = field(default_factory=list)
+    error_message: str | None = None
 
 
 def download_report(document_type, collection_exercise_id, survey_id):
@@ -430,3 +458,27 @@ def link_sample_summary_to_collection_exercise(collection_exercise_id, sample_su
         sample_summary_id=sample_summary_id,
     )
     return response.json()
+
+
+def get_cir_details(form_type: str, period: str, redis_cache: RedisCache, survey: dict[str, Any]) -> CirDetails:
+    collection_exercises = get_collection_exercises_by_survey(survey.get("id"))
+    collection_exercise = get_collection_exercise_by_period(collection_exercises, period)
+    registry_instrument = get_registry_instrument(collection_exercise.get("id"), form_type)
+
+    if collection_exercise["state"] in ("READY_FOR_LIVE", "LIVE"):
+        return CirDetails(
+            is_ce_live=True,
+            registry_instrument=registry_instrument,
+        )
+    try:
+        cir_metadata = redis_cache.get_cir_metadata(survey.get("surveyRef"), form_type)
+        # Conversion to make displaying the datetime easier in the template
+        for ci in cir_metadata:
+            ci["published_at"] = (
+                isoparse(ci["published_at"]).astimezone(tz.gettz("Europe/London")).strftime("%d/%m/%Y at %H:%M:%S")
+            )
+            ci["selected"] = ci["guid"] == (registry_instrument["guid"] if registry_instrument else False)
+    except ExternalApiError as e:
+        return CirDetails(error_message=CIR_ERROR_MESSAGES.get(e.error_code, get_error_code_message(e.error_code)))
+
+    return CirDetails(metadata=cir_metadata)
