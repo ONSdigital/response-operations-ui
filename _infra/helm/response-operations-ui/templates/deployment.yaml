@@ -246,6 +246,6 @@ spec:
           - name: CIR_OAUTH2_CLIENT_ID
             value: {{ .Values.cir.oauth2ClientId }}
           - name: CIR_SURVEY_EXCLUSIONS
-            value: { { .Values.cir.cir_survey_exclusion } }
+            value: {{ .Values.cir.survey_exclusion | toJson | quote }}
           resources:
             {{ toYaml .Values.resources | nindent 12 }}
