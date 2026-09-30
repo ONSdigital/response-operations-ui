@@ -9,8 +9,6 @@ from dateutil.parser import parse
 from flask import (
     Blueprint,
     abort,
-)
-from flask import (
     flash,
     jsonify,
     make_response,
